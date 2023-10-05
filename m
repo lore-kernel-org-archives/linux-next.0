@@ -2,97 +2,97 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 827C0E9270E
-	for <linux-next@archiver.kernel.org>; Thu,  5 Oct 2023 14:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29699E92706
+	for <linux-next@archiver.kernel.org>; Thu,  5 Oct 2023 15:18:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236873AbjJEOsJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55358 "EHLO
+        id S229955AbjJEPSi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 5 Oct 2023 11:18:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236865AbjJEOpr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Oct 2023 10:45:47 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D50158EC;
-        Thu,  5 Oct 2023 07:27:31 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A17C36AF1;
-        Thu,  5 Oct 2023 13:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696511529;
-        bh=0WS1XXB55RTeOyKZikpT+hiTItlnXgYlO78w1Qz1K40=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AJYrUb2K5mDzEGU373Qz1W8J7c7oD+4bIFGQ7AYRPKkwySrPrHL9XydweoIjzEziJ
-         iiP9qnHrlLaZowHJ1TQZRbejaEQdpqh1nV3kE5amFmjgnGDyPsyoPJiPexJEFmOeCc
-         CqOzRBt08AtMcGUulxq7kHhjlAPkpPmFvqTrUbNNdj6x55w08O1KtWw3j97SURhpGW
-         dCjTip6b8mrvkY8s917mh6Ps4xToG4nRLMHQqR5XeGUZOQXC1LPznwRACQzhKnKwtk
-         JzHR0Et+lqy++LfYrDcCOLLzJ+NSLa/qIsM5LzBIVjv95iQmtMD5rQ88lS+5obuL34
-         4yNXhJTvG0gag==
-Message-ID: <2905cfc2-912f-4620-9455-2e91586a2839@kernel.org>
-Date:   Thu, 5 Oct 2023 16:12:04 +0300
+        with ESMTP id S233137AbjJEPRz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Oct 2023 11:17:55 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F17B6C9;
+        Thu,  5 Oct 2023 07:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696517044; x=1728053044;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=cwMMzUWf9bNC4gOrY9JBethMndsYDf5WuH5DgSe2mv4=;
+  b=gW/jr232bjhbJkxIJWS+E18VY4lRLfXBIcnbXxbhXkxBCDjzzSRmvy99
+   B52LibcF/gL6OFXzsPa+6Wu+XpjThe8/xCDwaucHSiOSARqgobtk9i9+1
+   KHn9ja2gvjeCFZWvVHiGjIv1G2fGtr5kadcepfra0X7m6lLBD0y74yMxd
+   F+xiJu1sr0ihWzA7KgATk0G5NrbaTQ1srVo0ogc2m0O3NkfHskdDDHrCJ
+   nUt+TtLs/Kn449w20jNjQmxJbn8twnvk3taEjpqNskXDtxI/UXtfG/Mj8
+   Q1fShUnR7IChNA1JVr/cFXH4vyv//STH/3ddBhq6lI6ix8/FWYwpvW2W3
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="363797254"
+X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
+   d="scan'208";a="363797254"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 07:41:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="745471600"
+X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
+   d="scan'208";a="745471600"
+Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.162])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 07:41:32 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Dave Airlie <airlied@redhat.com>
+Cc:     Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: linux-next: manual merge of the drm-intel tree with the drm tree
+In-Reply-To: <20231003110957.34fc9483@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20231003110957.34fc9483@canb.auug.org.au>
+Date:   Thu, 05 Oct 2023 17:41:28 +0300
+Message-ID: <87zg0xb087.fsf@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warnings after merge of the ti tree
-Content-Language: en-US
-To:     "Raghavendra, Vignesh" <vigneshr@ti.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20231005141536.77538147@canb.auug.org.au>
- <f70dec2a-dbdf-479c-af5b-a70db02b27b4@ti.com>
-From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <f70dec2a-dbdf-479c-af5b-a70db02b27b4@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi,
+On Tue, 03 Oct 2023, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the drm-intel tree got a conflict in:
+>
+>   drivers/gpu/drm/i915/i915_drv.h
+>
+> between commits:
+>
+>   c9517783060a ("drm/i915/dg2: Drop Wa_16011777198")
+>   5a213086a025 ("drm/i915: Eliminate IS_MTL_GRAPHICS_STEP")
+>   81af8abe6513 ("drm/i915: Eliminate IS_MTL_MEDIA_STEP")
+>
+> from the drm tree and commits:
+>
+>   e50086f3d313 ("drm/i915/dg2: Drop pre-production display workarounds")
+>   213454b3af2e ("drm/i915: Eliminate IS_MTL_DISPLAY_STEP")
+>
+> from the drm-intel tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-On 05/10/2023 11:25, Raghavendra, Vignesh wrote:
-> + Rob and DT list
-> 
-> Hi Stephen
-> 
-> On 10/5/2023 8:45 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> [I may have missed this yesterday, sorry]
->>
->> After merging the ti tree, today's linux-next build (arm64 defconfig)
->> produced these warnings:
->>
->> arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso:65.8-140.3: Warning (avoid_default_addr_size): /fragment@3/__overlay__: Relying on default #address-cells value
->> arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso:65.8-140.3: Warning (avoid_default_addr_size): /fragment@3/__overlay__: Relying on default #size-cells value
->>
->> Introduced by commit
->>
->>   45a0c06571e1 ("arm64: dts: ti: am642-evm: Add overlay for NAND expansion card")
->>
-> 
-> Thanks for the report. I will drop the offending comment.
-> 
-> Roger,
-> 
-> Sorry, this would need to be fixed in dtc or need exception from DT
-> maintainers to ignore the warnings.
+Should be fixed now.
 
-Please don't drop this patch as the issue is not with the patch but with
-the dtc tool itself.
+BR,
+Jani.
 
-As this is a DT overlay there is no way to specify address-cells/size-cells
-of parent here. This will be resolved only after merge with base tree.
-
-This will be fixed in next dtc sync.
-https://www.spinics.net/lists/devicetree-compiler/msg04036.html
-
-See further discussion here
-https://lore.kernel.org/all/CAL_JsqLmv904+_2EOmsQ__y1yLDvsT+_02i85phuh0cpe7X8NQ@mail.gmail.com/
 
 -- 
-cheers,
--roger
+Jani Nikula, Intel
