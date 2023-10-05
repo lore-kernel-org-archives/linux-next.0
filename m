@@ -2,86 +2,97 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69626E92705
-	for <linux-next@archiver.kernel.org>; Thu,  5 Oct 2023 14:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827C0E9270E
+	for <linux-next@archiver.kernel.org>; Thu,  5 Oct 2023 14:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234410AbjJEOV1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
+        id S236873AbjJEOsJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:48:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232804AbjJEOTe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Oct 2023 10:19:34 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE521FFC;
-        Wed,  4 Oct 2023 21:01:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1696478498;
-        bh=8hwLjXwET4o8Ewk9EJoup9Fux12qGBp+CzVvTVah41A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=usACGtcVBIG5QV5n0kiT9UsPv1aFYz/MakQMgBcU/hsYJ9pBBUvipZ23LKijKCE10
-         Y3bcaxywqiimfp6hEpcmWaIurqndE+94UI8apJwmseyJNrbyv+/gwdX5OXApWsNMzZ
-         Y1bsJuf4kUi2N2TMMAdfPVBeOysGty4qsPqp0dddfarRGeEgS+1rpSV0M+5EZQZqUh
-         cEGe8jFotzwhGjIfzkZOzSNjeXYUzpOrNletEcLBe8m1PBdgqpzFLL0WpQLnfXu66I
-         ZEhHzWQAD2Xi3/vbh5+E1XhTFWKqZJFFSENDlkZoQiMirafwVNXgZz18fWhCQueZ+F
-         65aKYerik5Ytg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4S1HtV42t5z4xF2;
-        Thu,  5 Oct 2023 15:01:38 +1100 (AEDT)
-Date:   Thu, 5 Oct 2023 15:01:37 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Danilo Krummrich <dakr@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the drm-misc-fixes tree
-Message-ID: <20231005150137.7fd88e0b@canb.auug.org.au>
+        with ESMTP id S236865AbjJEOpr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Oct 2023 10:45:47 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D50158EC;
+        Thu,  5 Oct 2023 07:27:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A17C36AF1;
+        Thu,  5 Oct 2023 13:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696511529;
+        bh=0WS1XXB55RTeOyKZikpT+hiTItlnXgYlO78w1Qz1K40=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=AJYrUb2K5mDzEGU373Qz1W8J7c7oD+4bIFGQ7AYRPKkwySrPrHL9XydweoIjzEziJ
+         iiP9qnHrlLaZowHJ1TQZRbejaEQdpqh1nV3kE5amFmjgnGDyPsyoPJiPexJEFmOeCc
+         CqOzRBt08AtMcGUulxq7kHhjlAPkpPmFvqTrUbNNdj6x55w08O1KtWw3j97SURhpGW
+         dCjTip6b8mrvkY8s917mh6Ps4xToG4nRLMHQqR5XeGUZOQXC1LPznwRACQzhKnKwtk
+         JzHR0Et+lqy++LfYrDcCOLLzJ+NSLa/qIsM5LzBIVjv95iQmtMD5rQ88lS+5obuL34
+         4yNXhJTvG0gag==
+Message-ID: <2905cfc2-912f-4620-9455-2e91586a2839@kernel.org>
+Date:   Thu, 5 Oct 2023 16:12:04 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C0eruhIm2Bsg/K9zqghPzZ6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warnings after merge of the ti tree
+Content-Language: en-US
+To:     "Raghavendra, Vignesh" <vigneshr@ti.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20231005141536.77538147@canb.auug.org.au>
+ <f70dec2a-dbdf-479c-af5b-a70db02b27b4@ti.com>
+From:   Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <f70dec2a-dbdf-479c-af5b-a70db02b27b4@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/C0eruhIm2Bsg/K9zqghPzZ6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On 05/10/2023 11:25, Raghavendra, Vignesh wrote:
+> + Rob and DT list
+> 
+> Hi Stephen
+> 
+> On 10/5/2023 8:45 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> [I may have missed this yesterday, sorry]
+>>
+>> After merging the ti tree, today's linux-next build (arm64 defconfig)
+>> produced these warnings:
+>>
+>> arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso:65.8-140.3: Warning (avoid_default_addr_size): /fragment@3/__overlay__: Relying on default #address-cells value
+>> arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso:65.8-140.3: Warning (avoid_default_addr_size): /fragment@3/__overlay__: Relying on default #size-cells value
+>>
+>> Introduced by commit
+>>
+>>   45a0c06571e1 ("arm64: dts: ti: am642-evm: Add overlay for NAND expansion card")
+>>
+> 
+> Thanks for the report. I will drop the offending comment.
+> 
+> Roger,
+> 
+> Sorry, this would need to be fixed in dtc or need exception from DT
+> maintainers to ignore the warnings.
 
-After merging the drm-misc-fixes tree, today's linux-next build (htmldocs)
-produced this warning:
+Please don't drop this patch as the issue is not with the patch but with
+the dtc tool itself.
 
-include/uapi/drm/nouveau_drm.h:49: warning: Cannot understand  * @NOUVEAU_G=
-ETPARAM_EXEC_PUSH_MAX
- on line 49 - I thought it was a doc line
+As this is a DT overlay there is no way to specify address-cells/size-cells
+of parent here. This will be resolved only after merge with base tree.
 
-Introduced by commit
+This will be fixed in next dtc sync.
+https://www.spinics.net/lists/devicetree-compiler/msg04036.html
 
-  d59e75eef52d ("drm/nouveau: exec: report max pushs through getparam")
+See further discussion here
+https://lore.kernel.org/all/CAL_JsqLmv904+_2EOmsQ__y1yLDvsT+_02i85phuh0cpe7X8NQ@mail.gmail.com/
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/C0eruhIm2Bsg/K9zqghPzZ6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmUeNSEACgkQAVBC80lX
-0Gwo8wf/bkcPs2VTv8jFW7ZltypmPhFXK2vqas8Ep7Blb4k3Fwx+QpE+sEe54fWn
-YM8M583OMpLCB5Ys7kgJNm2lxzis1gizQGltnDmjzf/KqZGMrmERXwbpTIg+WLrT
-4sc1qgC9dhHDnffXDbGY+yO3jtHWNYKhN2BMQh1JLExeC/ac63L6dEVI7/VWXvIM
-lLCm2DT4sDlaawB3LzIMCsyH1i8iPGwPXffTnKYjIrOr1HhznUy2jN1vWVxnGtm+
-dRoxvnNdosFYJbLKFPE6M+uRWWZdxZoMY0YFPUHmxjmCFZlQV2w7Gz4M6IR9Uk5I
-EG+Y9ON3HDJRynWFev6D5xexw10ZCg==
-=1USU
------END PGP SIGNATURE-----
-
---Sig_/C0eruhIm2Bsg/K9zqghPzZ6--
+-- 
+cheers,
+-roger
