@@ -2,97 +2,66 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29699E92706
-	for <linux-next@archiver.kernel.org>; Thu,  5 Oct 2023 15:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E33E9271A
+	for <linux-next@archiver.kernel.org>; Thu,  5 Oct 2023 15:49:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbjJEPSi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:18:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48924 "EHLO
+        id S234609AbjJEPtG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 5 Oct 2023 11:49:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233137AbjJEPRz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Oct 2023 11:17:55 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F17B6C9;
-        Thu,  5 Oct 2023 07:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696517044; x=1728053044;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=cwMMzUWf9bNC4gOrY9JBethMndsYDf5WuH5DgSe2mv4=;
-  b=gW/jr232bjhbJkxIJWS+E18VY4lRLfXBIcnbXxbhXkxBCDjzzSRmvy99
-   B52LibcF/gL6OFXzsPa+6Wu+XpjThe8/xCDwaucHSiOSARqgobtk9i9+1
-   KHn9ja2gvjeCFZWvVHiGjIv1G2fGtr5kadcepfra0X7m6lLBD0y74yMxd
-   F+xiJu1sr0ihWzA7KgATk0G5NrbaTQ1srVo0ogc2m0O3NkfHskdDDHrCJ
-   nUt+TtLs/Kn449w20jNjQmxJbn8twnvk3taEjpqNskXDtxI/UXtfG/Mj8
-   Q1fShUnR7IChNA1JVr/cFXH4vyv//STH/3ddBhq6lI6ix8/FWYwpvW2W3
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="363797254"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="363797254"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 07:41:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="745471600"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="745471600"
-Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.162])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 07:41:32 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dave Airlie <airlied@redhat.com>
-Cc:     Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: linux-next: manual merge of the drm-intel tree with the drm tree
-In-Reply-To: <20231003110957.34fc9483@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20231003110957.34fc9483@canb.auug.org.au>
-Date:   Thu, 05 Oct 2023 17:41:28 +0300
-Message-ID: <87zg0xb087.fsf@intel.com>
+        with ESMTP id S233036AbjJEPsK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Oct 2023 11:48:10 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7357836DA;
+        Thu,  5 Oct 2023 07:17:08 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3958PDUC060718;
+        Thu, 5 Oct 2023 03:25:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1696494313;
+        bh=aNdE9+9lpU/PBM+gU6ruz+7cnqOSZMuKGfyVQxZWM+s=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=nFK8z6rzA8/SShkqxHPZe2LtFu1pAAWYbCBeEJJerhvJHK4UutEwk9yZA5NHisvQF
+         u4kreJ9KuEc4kK3vefZ9690m/ZpeesacxZJXVvzf9CG97NUHN0xcY9yR6Iw6a0GOPR
+         OXLln4lxWgOLxM5Wjb1p6vEtusXNXUQ1mbY657Yc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3958PDk7129292
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 5 Oct 2023 03:25:13 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
+ Oct 2023 03:25:13 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 5 Oct 2023 03:25:12 -0500
+Received: from [10.249.142.56] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3958P9JS009458;
+        Thu, 5 Oct 2023 03:25:10 -0500
+Message-ID: <f70dec2a-dbdf-479c-af5b-a70db02b27b4@ti.com>
+Date:   Thu, 5 Oct 2023 13:55:06 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warnings after merge of the ti tree
+Content-Language: en-US
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+CC:     Roger Quadros <rogerq@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20231005141536.77538147@canb.auug.org.au>
+From:   "Raghavendra, Vignesh" <vigneshr@ti.com>
+In-Reply-To: <20231005141536.77538147@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 03 Oct 2023, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the drm-intel tree got a conflict in:
->
->   drivers/gpu/drm/i915/i915_drv.h
->
-> between commits:
->
->   c9517783060a ("drm/i915/dg2: Drop Wa_16011777198")
->   5a213086a025 ("drm/i915: Eliminate IS_MTL_GRAPHICS_STEP")
->   81af8abe6513 ("drm/i915: Eliminate IS_MTL_MEDIA_STEP")
->
-> from the drm tree and commits:
->
->   e50086f3d313 ("drm/i915/dg2: Drop pre-production display workarounds")
->   213454b3af2e ("drm/i915: Eliminate IS_MTL_DISPLAY_STEP")
->
-> from the drm-intel tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
 
-Should be fixed now.
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel
