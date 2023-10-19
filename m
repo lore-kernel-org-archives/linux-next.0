@@ -2,105 +2,92 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBAACDB484
-	for <linux-next@archiver.kernel.org>; Thu, 19 Oct 2023 14:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0905BCDB465
+	for <linux-next@archiver.kernel.org>; Thu, 19 Oct 2023 15:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346224AbjJSOtd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 19 Oct 2023 10:49:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44226 "EHLO
+        id S1346334AbjJSPgR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 19 Oct 2023 11:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346213AbjJSOt3 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 19 Oct 2023 10:49:29 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3085D182
-        for <linux-next@vger.kernel.org>; Thu, 19 Oct 2023 07:49:26 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id ca18e2360f4ac-7a680e6a921so20131939f.1
-        for <linux-next@vger.kernel.org>; Thu, 19 Oct 2023 07:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1697726965; x=1698331765; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fgj14+mGbzySfqghRGEsyfUNl7FTLmyFIO5qq6g0dOQ=;
-        b=Bon1ZJ4ckznEr4+jOiE2FcyORSR3SwWDM/s9pd5dfT4aycF+iKpcv5xY9vBn3lHX87
-         CWGSklsZFWC2sHM5vHnN+nvj3hnYvpYAPfsHMJJTepbV/MElD/Qd5+j8XHp+bogiMUKv
-         eZxGgrIcepP/0ACg4HdSFePv10JmApSBcalXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697726965; x=1698331765;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgj14+mGbzySfqghRGEsyfUNl7FTLmyFIO5qq6g0dOQ=;
-        b=DBK0rzSr9SnOGbDDAx6XVpte2vktLe/vHHLNa9rlGx5AwbiDhK/fkaZ3qW/AZWd8pu
-         /2j26qnbJxj1pYtNi4zqJuji+BHoHNOyXg7By3bN7XNLBGCNfnxJ7jpvBMiQ4wEOhT28
-         YhAzJ8ZeFZJl/mQ+Y3dsOuhOR/+C6hfUpbNNou4GMLVYn+Yy7pPLBENSY29PmnhdAeTQ
-         dZ/XFxLpJvuGPCJRYQu1rt3CsN7RJJP6vG/k/d7IPUVK9hNs78MaQumh9SqwikUduI7d
-         +9m5jLt2Xuupjbfc+sIkrCy8A67YFI4pMBjQKbIPrSOYlIJTPR2SiTjC+s1jKIyaROwj
-         D52Q==
-X-Gm-Message-State: AOJu0YxMeuZ8iedgjLVvzcdlL0HKiIs8axdL0WwmzrYF3reH5n23Q5gF
-        awnViuXWqL8ZujVMJXOmzek1gg==
-X-Google-Smtp-Source: AGHT+IEJvu+NhAbAt9lOJPfJcfLfhJNG0EmCtjIrAEyfPzPGtvK3hdKzN6H7poN3HtanEjkNosuaeQ==
-X-Received: by 2002:a5e:db45:0:b0:79f:922b:3809 with SMTP id r5-20020a5edb45000000b0079f922b3809mr2364470iop.1.1697726965216;
-        Thu, 19 Oct 2023 07:49:25 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id x24-20020a6bfe18000000b007a6816de789sm748530ioh.48.2023.10.19.07.49.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Oct 2023 07:49:24 -0700 (PDT)
-Message-ID: <1ee483d6-3311-42b1-a3e0-3b6073913a21@linuxfoundation.org>
-Date:   Thu, 19 Oct 2023 08:49:24 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+        with ESMTP id S1346331AbjJSPgP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 19 Oct 2023 11:36:15 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D326B182;
+        Thu, 19 Oct 2023 08:36:13 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B50DC433C8;
+        Thu, 19 Oct 2023 15:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697729773;
+        bh=9q3HhsAdxkMSqIHsAAZ7hVVBLyVJc25//snPL/y8h1A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gRV3zdlwfs/mSoLE/68IWJStNeBbha5bB3aHj7BDeh+Ay/bFLM8c3MKR6Wg7n2Nbn
+         OeuM0LYwdLUxnpJqt79qMg3Ae8fx/eJQ9ABhX9FNDzj2vNYEsI97lVErXWwY15mdxC
+         NVM3xGKlZK1LcFaf2H97Sip96mxeItJ4usf3noCPSIojeYNUWPCvKCa0Wq3jPCmhKP
+         QAtzGYPzRmQ+qqtfFIpEVGJo+Di0H6hjL4Iz3+3Px8gBWBabNcYri5rQ0ccWK2XIjd
+         jEM1S7KvZB9Wpp+RefZt/J9rSY9jWYvPk70ORf4SuNvrS44leRt9W3QaidXSEuEvdg
+         oF8/D4WYVH8iw==
+Date:   Thu, 19 Oct 2023 16:36:07 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>
 Subject: Re: linux-next: manual merge of the kselftest tree with the
  mm-hotfixes tree
-Content-Language: en-US
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <038eb23d-f74f-43c6-91e8-762e6bbc7282@sirena.org.uk>
 References: <20231019163310.6c24d6ac@canb.auug.org.au>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20231019163310.6c24d6ac@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <1ee483d6-3311-42b1-a3e0-3b6073913a21@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DTFmdvUpl3i2yoH6"
+Content-Disposition: inline
+In-Reply-To: <1ee483d6-3311-42b1-a3e0-3b6073913a21@linuxfoundation.org>
+X-Cookie: Save energy:  Drive a smaller shell.
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 10/18/23 23:33, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kselftest tree got a conflict in:
-> 
->    tools/testing/selftests/clone3/clone3.c
-> 
-> between commit:
-> 
->    fc7f04dc23db ("selftests/clone3: Fix broken test under !CONFIG_TIME_NS")
-> 
-> from the mm-hotfixes tree and commit:
-> 
->    34dce23f7e40 ("selftests/clone3: Report descriptive test names")
-> 
-> from the kselftest tree.
-> 
-> I fixed it up (I used this files form the latter commit) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
-> 
 
-Thank you Stephen.
+--DTFmdvUpl3i2yoH6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I can rebase linux-kselftest next to pick up the following once it goes
-into Linus's tree.
+On Thu, Oct 19, 2023 at 08:49:24AM -0600, Shuah Khan wrote:
+> On 10/18/23 23:33, Stephen Rothwell wrote:
 
-fc7f04dc23db ("selftests/clone3: Fix broken test under !CONFIG_TIME_NS")
+> > I fixed it up (I used this files form the latter commit) and can carry the
+> > fix as necessary. This is now fixed as far as linux-next is concerned,
+> > but any non trivial conflicts should be mentioned to your upstream
+> > maintainer when your tree is submitted for merging.  You may also want
+> > to consider cooperating with the maintainer of the conflicting tree to
+> > minimise any particularly complex conflicts.
 
-thanks,
--- Shuah
+That'll drop the fix that Tiezhu did which is a good one.
+
+> I can rebase linux-kselftest next to pick up the following once it goes
+> into Linus's tree.
+
+I've got the rebase/rework locally (I did it as a new commit which isn't
+ideal but it's such a complete conflict that it felt like the best
+option).  Assuming nothing blows up in my local CI I should send it out
+later today.
+
+--DTFmdvUpl3i2yoH6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUxTOcACgkQJNaLcl1U
+h9Bv1gf9Hc4eaSUYZmGh/lRCxEFa56zuauD0fPTqXWL4iz6cl7ptwPxQsrMpxHWV
+dCzIXI9UesyWf7YSmHZ5VNDmX2f60ZHOwR4qJhddg6oraq9KZYr1MP1CrQ6bl87K
+mlUz4/zzFTVEHK4zNGQBeKHUkhjAtuzbmB+VfEtlApKD/6v+RidTDcQZ/OPC17/P
+tkivM1YNh4xXHzmZuA5n1vu/ICI1t0sKs76E1gL8FIf8yHlYXrzS/lstED6rmdGY
+PwxYsDlbjscwJUGYieeM+yPFKtPVZtg9gO9d6KRU9IKH8m51Xw/lXvC1fEAhqTfr
+odo+u0ickOuSriXPTgBd/uiuFFkYqg==
+=mN4r
+-----END PGP SIGNATURE-----
+
+--DTFmdvUpl3i2yoH6--
