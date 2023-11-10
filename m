@@ -2,94 +2,129 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EA9C05027
-	for <linux-next@archiver.kernel.org>; Fri, 10 Nov 2023 17:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E577C4332F
+	for <linux-next@archiver.kernel.org>; Fri, 10 Nov 2023 20:31:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjKJR4N (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 10 Nov 2023 12:56:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        id S236017AbjKJUbw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 10 Nov 2023 15:31:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235393AbjKJRzo (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 10 Nov 2023 12:55:44 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D037ED4;
-        Thu,  9 Nov 2023 23:02:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=M/qhtmsSp+hTWlRpgmKvovU0d5pX0M3gWO8Oakd7KOk=; b=Qj9UbBpGPLweoka2XcOIHZ44lE
-        4gDl2QxLuHH7h4fWTgrO9WGMogKvuZCcQuQlRv/rpf+jVh1WjRUei22pEXCK7eDOx0FhnjQiWWUMK
-        xujKWefrv6qw7Mr28wQXJtiE3DU+vcAhYnGdEeYHyHI9XnLGE5r6nMiGReqcOAEXb73A/brsU02pc
-        g1NTbYPlcdEfXD6n06u20STa2k7z/CsWYtHIGZjPz6xCPg/XZsyIuQz7Kh3ccl5V4JAez2WNdvYhc
-        wI+wzO+yhF0R/e+zmQSbQGmbCuBlmPpaK4mxOwVsjGhz5445yXO8xrqirxfW1Hl5yPpLv1SywAfgq
-        ZtgMg5Xg==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1r1IqL-007qjM-22;
-        Fri, 10 Nov 2023 04:10:05 +0000
-Message-ID: <c673ae1d-4eed-4e8e-9772-1de2e67a1d9a@infradead.org>
-Date:   Thu, 9 Nov 2023 20:10:04 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] linux-next build error (16)
-Content-Language: en-US
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzbot <syzbot+c65436ac3463dd64e422@syzkaller.appspotmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        with ESMTP id S230163AbjKJUbb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 10 Nov 2023 15:31:31 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791D5768C;
+        Thu,  9 Nov 2023 22:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1699597978;
+        bh=Ber9iHljyDuWmHX2CkDEf1plokLEZ1gOavg04qYWnaE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=coyWwJPUdq0UAm5elYxafSItveRp3c78H7RWI4brgoI6AbZ3OE8I4B8FbjDRAl2Az
+         p3M/SKH9I/dNbDKVvbbwTerhggKz0lR42V+uNSqNQq84BdJx+Rk4S6ZWG9NSYzNblB
+         WUyW3wWVNLEJmHklZWwm6NBMfmT8qXiLlW77+oA/9npNxymb+1RhQQaHqW6RFrtZri
+         jPbXjI3k2Nn8sjZCTzoovtvmA2NUU5KRnBCLtKpCzT8xBIqwNuyu68to/tmkEOiyZN
+         IMymnTWOO5cMJi0PP8+qxzoYxem0g8uR7MpoYA2zBzMlCkb3O1eElhsykpdcO/oEsM
+         0sO7vCqQ+SgAA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4SRTXT2t4gz4x5p;
+        Fri, 10 Nov 2023 17:32:57 +1100 (AEDT)
+Date:   Fri, 10 Nov 2023 17:32:43 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     syzbot <syzbot+c65436ac3463dd64e422@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] linux-next build error (16)
+Message-ID: <20231110173243.673501c6@canb.auug.org.au>
+In-Reply-To: <c673ae1d-4eed-4e8e-9772-1de2e67a1d9a@infradead.org>
 References: <0000000000002167ca0609c1f5d5@google.com>
- <20231110122817.47d72603@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20231110122817.47d72603@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        <20231110122817.47d72603@canb.auug.org.au>
+        <c673ae1d-4eed-4e8e-9772-1de2e67a1d9a@infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/XLV3ybuK17zgTG4T_xG9Wtm";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/XLV3ybuK17zgTG4T_xG9Wtm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Randy,
 
-On 11/9/23 17:28, Stephen Rothwell wrote:
-> Hi syzbot,
-> 
-> On Thu, 09 Nov 2023 17:08:26 -0800 syzbot <syzbot+c65436ac3463dd64e422@syzkaller.appspotmail.com> wrote:
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    b622d91ca201 Add linux-next specific files for 20231109
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=16a51397680000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=159f4f31622eb7ff
->> dashboard link: https://syzkaller.appspot.com/bug?extid=c65436ac3463dd64e422
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c65436ac3463dd64e422@syzkaller.appspotmail.com
->>
->> failed to run ["make" "-j" "64" "ARCH=x86_64" "oldconfig"]: exit status 2
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->>
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
-> 
-> #syz set subsystems: crypto
-> 
+On Thu, 9 Nov 2023 20:10:04 -0800 Randy Dunlap <rdunlap@infradead.org> wrot=
+e:
+>
+> On 11/9/23 17:28, Stephen Rothwell wrote:
+> > Hi syzbot,
+> >=20
+> > On Thu, 09 Nov 2023 17:08:26 -0800 syzbot <syzbot+c65436ac3463dd64e422@=
+syzkaller.appspotmail.com> wrote: =20
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    b622d91ca201 Add linux-next specific files for 20231109
+> >> git tree:       linux-next
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16a5139768=
+0000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D159f4f3162=
+2eb7ff
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc65436ac3463=
+dd64e422
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
+ommit:
+> >> Reported-by: syzbot+c65436ac3463dd64e422@syzkaller.appspotmail.com
+> >>
+> >> failed to run ["make" "-j" "64" "ARCH=3Dx86_64" "oldconfig"]: exit sta=
+tus 2
+> >>
+> >> ---
+> >> This report is generated by a bot. It may contain errors.
+> >> See https://goo.gl/tpsmEJ for more information about syzbot.
+> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >>
+> >> syzbot will keep track of this issue. See:
+> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >>
+> >> If the report is already addressed, let syzbot know by replying with:
+> >> #syz fix: exact-commit-title
+> >>
+> >> If you want to overwrite report's subsystems, reply with:
+> >> #syz set subsystems: new-subsystem
+> >> (See the list of subsystem names on the web dashboard) =20
+> >=20
+> > #syz set subsystems: crypto
+> >  =20
+>=20
+> This is a kconfig error. Masahiro has dropped the patch that causes it.
+>=20
+> https://lore.kernel.org/linux-kbuild/eb9cb563-d480-4000-8feb-b63b856235c3=
+@smile.fr/T/#m8762579bdcc368380788fe7a545e788ddfb306c7
 
-This is a kconfig error. Masahiro has dropped the patch that causes it.
+Right you are.
 
-https://lore.kernel.org/linux-kbuild/eb9cb563-d480-4000-8feb-b63b856235c3@smile.fr/T/#m8762579bdcc368380788fe7a545e788ddfb306c7
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/XLV3ybuK17zgTG4T_xG9Wtm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmVNzosACgkQAVBC80lX
+0GwZkgf/cLL23bXueIbhmTWwHzH4AeSN5QmNEzM8PWnBK0LrQZ30k2YMfn1BMuz1
+LPgCZzccBP/OZLS+5helXLCwHT3s4OGGwBrVuUkvl7WsYa/kYiEOniJjZhyJLpz/
+rcp/zphH5gs0oRdLTW619pKtImLG57EfwwrYLZ5lDlLsFRajdsoCSGcENOOmRQ0K
+YUprh+7+w0FrpHYozjGPyliURfQizgerq5cebQtzgmtkf5RgKCXN+IgrTrfkfXXl
+tDxDerwUkZpYb9wm/uEDuH5HgutaWzXkjG1MFfIos2ewVwImDANrZZzJo09JqgWA
+oTPROG2l2cB8QJVtXZUs7DoHY0ycow==
+=nZBy
+-----END PGP SIGNATURE-----
+
+--Sig_/XLV3ybuK17zgTG4T_xG9Wtm--
