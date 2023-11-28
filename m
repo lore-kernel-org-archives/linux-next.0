@@ -1,60 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ye4hHiBK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4151219D;
-	Mon, 27 Nov 2023 16:31:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=gsZcbpBf1LxKDmbG111ig7y/VqZMhO1at8ppX4vhYp0=; b=ye4hHiBKr0Q2dsA13Sfm4eG3LZ
-	x/IaPYOIdYXNsPUGzks+EwfbsDtmIOGczEgW1goFR8WWF0FV6s2U3MOFQnbScU4gdBDQ3kxrrPdIA
-	kv2O4JNnkJ3CcKBiFOWz9+Pv0kZ7bAjohku3tRZcuuIS+mZeJAU4VzTabM07Cp99w6XbCfE1vg7FZ
-	z7nqAZ4e4So1LFZF+T66uFYxVjngqZL7x4ixt76UIt5/8MUCKx95COOYfMG0os/bAb/S9Q7DsVla9
-	IScANFtueMFiw4GRYX2u8QINXBuibtZZ2JJqyznEhO3t8bxzK1v5MQV+O3gYyG5D/mcOuyNHwRbxo
-	p+1bpO/g==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1r7m0r-003kap-0K;
-	Tue, 28 Nov 2023 00:31:41 +0000
-Message-ID: <8b44e417-e9dc-4d6f-b0ae-f9834d0624ac@infradead.org>
-Date: Mon, 27 Nov 2023 16:31:39 -0800
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a1RLbDZ1"
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A001718F;
+	Mon, 27 Nov 2023 18:33:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1701138830;
+	bh=2NEKrV25skME0djfpzvzrt8UkkMVPNSDD71pdqpYz54=;
+	h=Date:From:To:Cc:Subject:From;
+	b=a1RLbDZ1Jku6Td+kWzKHUhh793r9et/sT14kJH24lNvpjorB2qJ74fGVIilsJY3qj
+	 m1pv8tLm6dJJQ/4xAY3+eZWZPH9yqiefF9sNnSi0loMrfMjt/QvPZxefJ91bLckPcL
+	 YbKiZmun5GsSWu4cYKeU/W0IZ6u1bkK2+buryZYJMor4Dx9eeDX4gJI9I/9Fua6Iiv
+	 nXCwbjaPKteElW8qu5eFGJuzx2arCFxT9H+sIu2faL8NkyYPRhFrAjaPeBlYr+n4/T
+	 qMA68SXuBhjvvz8EldS1qRfFhns1jv8CIBCR5261h8VooT0zKeSX0ZQiDy/pd/R0bu
+	 DwWPAwEyf6NSQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4SfRNF4XVkz4wcj;
+	Tue, 28 Nov 2023 13:33:49 +1100 (AEDT)
+Date: Tue, 28 Nov 2023 13:33:46 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>,
+ PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm tree
+Message-ID: <20231128133346.74e3ef04@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Nov 27 (drivers/memory/tegra/tegra186.c)
-Content-Language: en-US
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Ashish Mhetre <amhetre@nvidia.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20231127150547.461d8bac@canb.auug.org.au>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20231127150547.461d8bac@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/1M=UPsPTMmwHs5piAeunq9t";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/1M=UPsPTMmwHs5piAeunq9t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 11/26/23 20:05, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20231124:
-> 
+After merging the mm tree, today's linux-next build (powerpc allyesconfig)
+produced this warning:
 
-on ARCH=arm64:
-when CONFIG_IOMMU_API is not set:
+arch/powerpc/kernel/swsusp_64.c:14:6: warning: no previous prototype for 'd=
+o_after_copyback' [-Wmissing-prototypes]
+   14 | void do_after_copyback(void)
+      |      ^~~~~~~~~~~~~~~~~
 
-../drivers/memory/tegra/tegra186.c: In function 'tegra186_mc_resume':
-../drivers/memory/tegra/tegra186.c:149:17: error: implicit declaration of function 'tegra186_mc_client_sid_override' [-Werror=implicit-function-declaration]
-  149 |                 tegra186_mc_client_sid_override(mc, client, client->sid);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Exposed by commit
 
+  c6345dfa6e3e ("Makefile.extrawarn: turn on missing-prototypes globally")
 
--- 
-~Randy
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1M=UPsPTMmwHs5piAeunq9t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmVlUYoACgkQAVBC80lX
+0GyJvQf/QdU+xhWFsKVBj6OkKYjKV1OVmp93MborX7w2b7qICWr25SeHnGSXHJo4
+ogu6VF9WiXzds+7yBbeYNyQNGj+CVoRP44yDvCQbg5HUBhae0KjMzlNrTCoZ9RaN
+ka6pa9NA/n8+cL/L3RAWkGWnYGq+8UVRGi3ZGLBmYrHqBIfnPyx9/avAss2eYd4+
+ls+CtCDNbtZWisrn6JQ3FgeVFFncgBQ5oyI8Eu9IBoiucQ5fJrhHgtiNwwXjqGrk
+cG+y1w9Oo1YtXzeP11pCsLzeb9gP8pEz993lQHtSisSGxP5HT+ODtsTgdyr2NzAY
+ltLLUyV834g3V/JL/Kc0q7oqVesdJg==
+=FRcq
+-----END PGP SIGNATURE-----
+
+--Sig_/1M=UPsPTMmwHs5piAeunq9t--
