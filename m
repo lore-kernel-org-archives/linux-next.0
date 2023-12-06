@@ -1,83 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KWF9cQqn"
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502C1A5;
-	Tue,  5 Dec 2023 20:47:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1701838052;
-	bh=vVeXte/GmqKo3BeYMWbX83grmqhoPxHp5v7YTOjDpsA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KWF9cQqnSfX/77k/wycjtzFfW+925aby3FKWeEgtj3OkxaFyjT1ax1afFkn2puYTa
-	 qe1mT00hYcRq8h/L0xEGine+G/P0Wh2hnztomnNKdW/eVn3yf9NccGpjQ0bnXz7gBc
-	 2TA7b39oQAoL42fMY8QmFVF/P98crAa1XdDTcx0zk2vq5FBUsyVdCeeYvUwFfIEPcH
-	 oAZH0dctryy0XG/BrasUyHRCV+3r9ynqz8Gg+tTkjMf6sVcRXyjz8sAB+EjXzgyLWk
-	 npqSvzhO6h/WJco7mXCypLFo36BlAzv6mXQYsEjNgyEftV70MC8kNP0b4Em7z9s8QI
-	 jrceWPhZ8YAAA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4SlPyq1wJyz4wd1;
-	Wed,  6 Dec 2023 15:47:31 +1100 (AEDT)
-Date: Wed, 6 Dec 2023 15:47:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the imx-mxs tree
-Message-ID: <20231206154730.00346f93@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAB71FD2
+	for <linux-next@vger.kernel.org>; Wed,  6 Dec 2023 05:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcZx+WE0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F283AC433C8;
+	Wed,  6 Dec 2023 05:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701840364;
+	bh=mCsuqmzNCQBuIT2HaIRPP4kIonvYoG1ZmvJUL6xFUzU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BcZx+WE0P2aceV4rStln3Xjx/bKk50k9vhCCmv+F3+KXp51jRbwaQyWhkHATOk6IV
+	 YsH/IevhHvfhqW+X/gGHiWmw67ycudMhgiF7voZPLd9xKpfks5fLdhcZgX2QH8zjlo
+	 uTnJ0Hkhe9Fc69T5om98McaSNj/qOjDLR8biHeOJtCU/YrUqBf/JfzCe9bpH7Ha40Z
+	 UtSQz/yn5oNlfeyVX8XaOEwnxXYnqPC8LeHRvo2Znx4qZWN7WijeyTfbCD2ky5nhVd
+	 9wXDrqQx1L6InAwGviSfyO0Yg7JWETLfEltB/RPlAcPKhUDp99el6ugxY36tB1cTtQ
+	 IQyGAJj11ppWw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-50c0f6b1015so1118987e87.3;
+        Tue, 05 Dec 2023 21:26:03 -0800 (PST)
+X-Gm-Message-State: AOJu0YzxOy33zo1i9VDG5a1Yr0wstLJtyrwswYnTvDgnK31yUL5ekScr
+	dBaRE+a2b3I9WX5aDsLHC76wfiELjMbUeRzyPn4=
+X-Google-Smtp-Source: AGHT+IEwSyMRoA5jlfXhSkOQJSpXeiZHoZzfxHuEWR1zzWpUg+LFSGyGEw8giAsWSjeaInTaYK+fZfqSCPNKAPzIE9U=
+X-Received: by 2002:ac2:5224:0:b0:50c:e:171e with SMTP id i4-20020ac25224000000b0050c000e171emr158833lfl.5.1701840362186;
+ Tue, 05 Dec 2023 21:26:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/j7l+mD.zyoT/RVwR2qkuFR2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/j7l+mD.zyoT/RVwR2qkuFR2
-Content-Type: text/plain; charset=US-ASCII
+References: <20231206154730.00346f93@canb.auug.org.au>
+In-Reply-To: <20231206154730.00346f93@canb.auug.org.au>
+From: Shawn Guo <shawnguo@kernel.org>
+Date: Wed, 6 Dec 2023 13:25:50 +0800
+X-Gmail-Original-Message-ID: <CAJBJ56JJ4Dp+wcmfPcNek3XG=7WjkVZAjM4efrsC0Ha4=Th5Yw@mail.gmail.com>
+Message-ID: <CAJBJ56JJ4Dp+wcmfPcNek3XG=7WjkVZAjM4efrsC0Ha4=Th5Yw@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the imx-mxs tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Dec 6, 2023 at 12:47=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   50f8906b310e ("arm64: dts: freescale: imx8-ss-lsio: Fix #pwm-cells")
+>
+> Fixes tag
+>
+>   Fixes: a05c329644d81 ("arm64: dts: freescale: imx8-ss-lsio: add support=
+ for lsio_pwm0-3")
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+> Maybe you meant
+>
+> Fixes: 23fa99b205ea ("arm64: dts: freescale: imx8-ss-lsio: add support fo=
+r lsio_pwm0-3")
 
-In commit
+Fixed.  Thanks for reporting!
 
-  50f8906b310e ("arm64: dts: freescale: imx8-ss-lsio: Fix #pwm-cells")
-
-Fixes tag
-
-  Fixes: a05c329644d81 ("arm64: dts: freescale: imx8-ss-lsio: add support f=
-or lsio_pwm0-3")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 23fa99b205ea ("arm64: dts: freescale: imx8-ss-lsio: add support for =
-lsio_pwm0-3")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/j7l+mD.zyoT/RVwR2qkuFR2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmVv/OIACgkQAVBC80lX
-0GytjAf+Ib7Z+SOfFCz37uYYBm5vZqoIRqr+XT1PUGMd3uWqu13NAkhkaVmTd6iL
-+SElKoN6PvMnOOK08KT9UXZfDDu7ZltS16lYTZhwCw65FkbYpj4WODS/XLtrFnnk
-fQwzbDZR4NUmSg91gT2i4zphLIMranV4/ZRSgdcbFZ5bf427pJ0JMjzZb3mUeloJ
-ZsezDQ20GHsBXmN9fE87aDEaDYXIUg/FAanXUeoZOTetbuObN848tt+Adlj8ssOL
-/PXC++BZlSxO46Qflclh0PBCPYfApNlJ/DIxGqJffnjZ6zLeFi8NQWsgPozgXAJm
-dX0yZ9xV5bmH04dfIglv0Lemm0V3aQ==
-=Yfsc
------END PGP SIGNATURE-----
-
---Sig_/j7l+mD.zyoT/RVwR2qkuFR2--
+Shawn
