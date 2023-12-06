@@ -1,53 +1,156 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h6ZQ9lbd"
-X-Greylist: delayed 522 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Dec 2023 21:30:33 PST
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FC818F
-	for <linux-next@vger.kernel.org>; Tue,  5 Dec 2023 21:30:32 -0800 (PST)
-Date: Wed, 6 Dec 2023 00:21:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1701840105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r3uwpE6nH1ZY3NnV+4RJaHdhMr8NRwdTOin5q+eq/aQ=;
-	b=h6ZQ9lbdFCxH6KChv8hEWSc9Yr2NnPds8VUr2rbGI7dL7tdsRhwcF8Ayi4bvOoDy/zL+g4
-	JCFS5yFWReaju4Fou/43kidkddeNPny2s6uzt8HNZeWqL+H8YozsF72xRRkv9xOCTXp+V2
-	lln3skwBHbkKJHxNkcX8ScKS93zjIDw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the vfs tree
-Message-ID: <20231206052142.oreb4sczrvcbm26a@moria.home.lan>
-References: <20231206133842.104276c7@canb.auug.org.au>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="zsBLafMJ"
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6D99E
+	for <linux-next@vger.kernel.org>; Tue,  5 Dec 2023 23:18:41 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1cfb30ce241so46611125ad.0
+        for <linux-next@vger.kernel.org>; Tue, 05 Dec 2023 23:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1701847121; x=1702451921; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+JRJIqXFpIzcQS/9VkW7TzWALH1DpMmOhci/EdNKmmo=;
+        b=zsBLafMJYB8HdTEuPeO7M4EBQui/PuuMWgGzgu7SK9pzhtGpCc9aiFGooqm3zs5lgo
+         R5pVWcGcDma+NGEjstKdyxcrZMTaEQTmQobbjVRQIwysT/DsKyhCChTt/b0p3BI+E99N
+         oDNqIhvQo5KjJzyiJBG/7wfrpReoCQEaXhear1qCiD7w7rVttfjgpXpX4Oag7IdMrKhf
+         hrU4YWb27Z+lU0AxIu7aSjku3NlybSGc+cIJ8PrwwWSEe8cYPdHkIXuUnFjqraRww2eW
+         dAG10k2aiqYrVmqy+Iqb0rP6PUamA0LuXnVWivtXIM5xagvAMR84mZ75Adp2AmCSTDS0
+         kGQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701847121; x=1702451921;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+JRJIqXFpIzcQS/9VkW7TzWALH1DpMmOhci/EdNKmmo=;
+        b=eNlROZkVjCj5Zd0JnSdQeBoI2Q+cVthzdYGPWlRy9KBKaiMAnL+omMz+KrqQ+m4bOG
+         Iu4AiyVaEtzDIm/2Nw3KyKJi/3ohTl9Qu7CFxpE2o+4F7caslErJI2YEe2gGQr1FfB6c
+         Ut8DD2oX2HTVbrWHbG4I+qzkp2yUi4VEMBo1VqMYJ1pSfbq7kqT7vdLyROhZtv9AAWIP
+         iSPnP82StdOZCWw/ETmlOgNTqwiDI+LMG6rbgS9ZAN4s+fflvJY+ydka16GIdPunD90i
+         J3cwj43pyBHERfQfl21Q21r1TvDRf3Pa1uV0NiMu3ZqQaVvehZjAmo7ykh62KQ/9HOKd
+         /z4Q==
+X-Gm-Message-State: AOJu0YwUVEP+gSUPR2xfPwWx9tOLqyYhsh4aJzdJlRys6kIUVNtQbP9r
+	R+kp7tnQlH1uFKXf7nxhjGIIt4h2GBDFntH+85IF+A==
+X-Google-Smtp-Source: AGHT+IFZ3tSS2YlSVjB+U8lx8DgBL5qCtkvtIoh+HVzk/jEh2czkd0PDYIWxggy1rpSBsWN8m9E/YQ==
+X-Received: by 2002:a17:902:8491:b0:1d0:6ffe:a1f with SMTP id c17-20020a170902849100b001d06ffe0a1fmr427195plo.125.1701847120763;
+        Tue, 05 Dec 2023 23:18:40 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id w5-20020a170902904500b001cfb971edfasm11285646plz.205.2023.12.05.23.18.39
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Dec 2023 23:18:40 -0800 (PST)
+Message-ID: <65702050.170a0220.561ed.0cf5@mx.google.com>
+Date: Tue, 05 Dec 2023 23:18:40 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231206133842.104276c7@canb.auug.org.au>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+X-Kernelci-Report-Type: build
+X-Kernelci-Kernel: v6.7-rc4-256-g4f4df7fc4acb4
+Subject: next/pending-fixes build: 8 builds: 0 failed, 8 passed,
+ 4 warnings (v6.7-rc4-256-g4f4df7fc4acb4)
+To: linux-next@vger.kernel.org
+From: "kernelci.org bot" <bot@kernelci.org>
 
-On Wed, Dec 06, 2023 at 01:38:42PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commits are also in the bcachefs tree as different
-> commits (but the same patches):
-> 
->   bbe6a7c899e7 ("bch2_ioctl_subvolume_destroy(): fix locking")
->   74d016ecc1a7 ("new helper: user_path_locked_at()")
-> 
-> These are commits
-> 
->   b3057fdbaa42 ("bch2_ioctl_subvolume_destroy(): fix locking")
->   6d93d94d56e4 ("new helper: user_path_locked_at()")
-> 
-> in the bcachefs tree.
+next/pending-fixes build: 8 builds: 0 failed, 8 passed, 4 warnings (v6.7-rc=
+4-256-g4f4df7fc4acb4)
 
-Dropped from mine
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v6.7-rc4-256-g4f4df7fc4acb4/
+
+Tree: next
+Branch: pending-fixes
+Git Describe: v6.7-rc4-256-g4f4df7fc4acb4
+Git Commit: 4f4df7fc4acb43dc054b108db381a164a7e56911
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Built: 8 unique architectures
+
+Warnings Detected:
+
+arc:
+
+arm64:
+
+arm:
+
+i386:
+
+mips:
+
+riscv:
+
+sparc:
+    sparc64_defconfig (gcc-10): 4 warnings
+
+x86_64:
+
+
+Warnings summary:
+
+    2    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version genera=
+tion failed, symbol will not be versioned.
+    2    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [=
+-Wcpp]
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+sparc64_defconfig (sparc, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version generation =
+failed, symbol will not be versioned.
+    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version generation =
+failed, symbol will not be versioned.
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---
+For more info write to <info@kernelci.org>
