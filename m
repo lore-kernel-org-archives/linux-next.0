@@ -1,52 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FFB6FA3;
-	Mon, 18 Dec 2023 05:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB44263DA;
+	Mon, 18 Dec 2023 06:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BKUd9jZd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5438AC433C8;
-	Mon, 18 Dec 2023 05:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1702878870;
-	bh=epOGSnTxreQ/s5ZdzE92LmaoiqGP2R33lgR9pl8PglM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BKUd9jZdVV1i+8UHRdM6hvmutR90V3XyNx07x2hLl8whXAehi+RmHAt+kZjw4/LIr
-	 n7J3VpikTHfwJa+8mHopsb4ScysQ39i7PjkZ9Zf4Ea0tx512dZhnbhiG8VgJL46wLi
-	 5RA0Lr0W8BK7KYy4xHXB/ZRhdpOIEBK0lUgWaeFM=
-Date: Sun, 17 Dec 2023 21:54:29 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the driver-core tree
-Message-Id: <20231217215429.944b318dc38a3646e734a807@linux-foundation.org>
-In-Reply-To: <20231218154034.56bf4c68@canb.auug.org.au>
-References: <20231218154034.56bf4c68@canb.auug.org.au>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q6lDkcXe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1702879219;
+	bh=S28joTYZtopOn20eOTl3Tj2fGBi4/SWEyMyEYqjDXnc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Q6lDkcXe7k0zKGOeqCb66OYrxDxqOfV7jIQRgzHQ150OhYsPrleeOfO+vniejcXId
+	 EMeaLfKgxbcyvW8WDbTrvkaqk0bjOIOKrgW5kg331/xLTEEAgl9fHAYROZ5NQe6yEh
+	 zzPkADkf3aEdvHutqEv5xIriqPpBmwwrE5UQ18gmhphTF0FNN6Vog4Vdkg82vIDp9K
+	 ILm3mEXIJuRkxOY2Ke82FZheTGbRid/fp2znIJ2riiyZsIsl+F6/Nb34PcABRXYxvl
+	 +uuRyyxUZA/MF3fBYCoFJZngVoVvyYLmgqK9aqQ/DC0jd0PCLToZaSadL6oHVTJmMi
+	 x4AGceY6BGmOA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Stq1D0yCzz4xS0;
+	Mon, 18 Dec 2023 17:00:16 +1100 (AEDT)
+Date: Mon, 18 Dec 2023 17:00:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the header_cleanup tree with the tip
+ tree
+Message-ID: <20231218170015.6018162e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/nPPOMwgmSfm/LbKeF6n452q";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/nPPOMwgmSfm/LbKeF6n452q
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 18 Dec 2023 15:40:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi all,
 
-> Hi all,
-> 
-> The following commit is also in the mm tree as a different commit (but
-> the same patch):
-> 
->   2678fd2fe9ee ("initramfs: Expose retained initrd as sysfs file")
-> 
-> This is commit
-> 
->   426081603f6c ("initramfs: expose retained initrd as sysfs file")
-> 
-> in the mm tree.
+Today's linux-next merge of the header_cleanup tree got a conflict in:
 
-I'm suspecting that something went wrong here?
+  arch/x86/include/asm/paravirt_types.h
+
+between commit:
+
+  f7af6977621a ("x86/paravirt: Remove no longer needed paravirt patching co=
+de")
+
+from the tip tree and commit:
+
+  9483c05522c6 ("arch/x86: fix missing includes/forward declarations")
+
+from the header_cleanup tree.
+
+I fixed it up (I think, see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/include/asm/paravirt_types.h
+index d8e85d2cf8d5,3cfcd5db083b..000000000000
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@@ -5,6 -5,17 +5,7 @@@
+  #ifdef CONFIG_PARAVIRT
+ =20
+  #ifndef __ASSEMBLY__
+++#include <linux/types.h>
+ =20
+  #include <asm/desc_defs.h>
+  #include <asm/pgtable_types.h>
+
+--Sig_/nPPOMwgmSfm/LbKeF6n452q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmV/3+8ACgkQAVBC80lX
+0Gw8MAf/Xa63Bhoc8aqZn00ZlXzZrxSoDI7pz5CU51atXl7kvUKkMqHJ/6iREtwi
+RqMMSJJf+B+IliVb7x17ahfrFGGQvUCFvrSuEMmYtwUxMmGMSTAJo3hQK3xSZiU5
+QJs2Qx7qdbyGEQt1F89CckNpgyvgy12/LzRuOf9SPum7hCcSDYhaFw5Bts6X0Ub8
+xTjN3eHPWtTV40wvuTprAyvV0JWIcc+KhBooEBdurMeHW7Fber/BupOe5CbMCAlm
+DXo0w1dHSZfLdRiy5eSUZSNp16IxvxPkEe8V7OqNbYb7IZ04OpqQ/QBPPxKnbXSk
+t0Ql9CiY2McCeQNDx29RNfA3PifUlw==
+=H5bB
+-----END PGP SIGNATURE-----
+
+--Sig_/nPPOMwgmSfm/LbKeF6n452q--
