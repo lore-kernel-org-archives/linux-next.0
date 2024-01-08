@@ -1,44 +1,44 @@
 Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1B6BE58;
-	Mon,  8 Jan 2024 07:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364B48F47;
+	Mon,  8 Jan 2024 07:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="FdsUbwJh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CjXCbyxz"
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailout.west.internal (Postfix) with ESMTP id 8CB2D320128F;
-	Mon,  8 Jan 2024 02:46:04 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="mV84gpTM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cDGO2JzB"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id EB9053200B07;
+	Mon,  8 Jan 2024 02:53:28 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 08 Jan 2024 02:46:05 -0500
+  by compute5.internal (MEProxy); Mon, 08 Jan 2024 02:53:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
 	:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1704699964; x=1704786364; bh=H9r8WTz9DN
-	D0Cp3bEl392WyrJu7uzpB3aWtuQ49mSEU=; b=FdsUbwJhPPDFTiw1qrsQaX8/FE
-	es90Gg2sJUBGdwKoi79ptpprHdo2uRO95KqFKFbpB41CzQQKkuKrM+gigIaxq8YN
-	hcItO2IBD3SU78VcMMuXy4N1dlTTixf2LOeS9XLz650sSE4WrDqVh31sMdwoc72Y
-	dqfrAkKeBu5/kmbVM6d1OSj1M7kSiY2mHAtikgs2rla2QFYlsNHUrk8eKu/PyAru
-	u5b5h7gAIyBJQWvIjEhM1RqYNSNnrrFfYj6J/WK9sJhg6qT23IupDAxxWB7E1MXk
-	WmDXqndu7u0XVuleUhkY5Da3v1rF6se01PrcLYXU90XdzHCYU4ydf/oZ799g==
+	:subject:to:to; s=fm2; t=1704700408; x=1704786808; bh=vLjDuf34Jj
+	F2TkMLyKqblhCcjJFnXhKnF81wBuSsCKA=; b=mV84gpTMVeJYoxyaa1JSRshvo2
+	QprpBYJwxBM3dtuMRu+tQrOUxPV6N+BUWgLbygE2n/irvMZ/6ulkLCsCIsHYu4O1
+	/YAlu0nfhSUQ1beHOipT7m4HTgbmw7cRBuMP5iF2Teo/hBVddWYF+BLE824C1KX9
+	zclZKYkdci5C9dhL+ud1XDRDkdVxRL51Sbxxgk57uVJmcNlOyYdQP9J1ZurIbY96
+	625b03nd70Q+74lqpQ2WM+cHCZjaozdaBZpE9E8OWL6WoyUXo+NjIrni/kG3Yy1H
+	N/0f7x35T1FgLfZ9MWoBgUJiiSHGAGO/lGV4aHG0UdqpHIaerCpHVUWr4U+A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1704699964; x=1704786364; bh=H9r8WTz9DND0Cp3bEl392WyrJu7u
-	zpB3aWtuQ49mSEU=; b=CjXCbyxz5nSuNaDurZZn8V9gdG87fQy9v677uQc7s+3b
-	Dlyh0TEuCrYvjGgk47MU74daE4RklOauj/M2HJ2n2dGFpLOpBBukBPtlw2J531zr
-	NN18LZfB/ouMuA3cowqbd/uDbaSwJZ68/20Ckn5/iYNJavm+cnbyAh0Cad7dfwn1
-	vYCXBtXZwnvkMXf+zY1v6oKj0NdU2Iof4m5LZtCTmFaH2fXzCNfP6mvN3q5Ywfnx
-	IObViQNunj3mNZTsmFFRm7rvLwTQY02WQF/XNALa6+pvd4nYIzNOXo81gRHo+mO7
-	fY7yN/Ghr5OFC5TdPFKUw2lm2vrZPblRG9gznnQkLA==
-X-ME-Sender: <xms:O6ibZWO5axERj17YFXE_qkJxJwWUMTxOW81XvwuYEL8K8jFpYinfJQ>
-    <xme:O6ibZU_9pjyDVVKxvppduB_WOiSFBArkWJcy2Rz9kM-_56Jjz7AvPi6gVNLYANRl3
-    oV4KQysW7JgSw>
-X-ME-Received: <xmr:O6ibZdQs49gYsVuXQ2iNvCVH2rDx3WdfdoityGi_O4N-yHdvHvNWDX3JqGNBLXeMvcphU5LhWgDBh5SasRMKBI2eZd5xmjL9cg>
+	fm2; t=1704700408; x=1704786808; bh=vLjDuf34JjF2TkMLyKqblhCcjJFn
+	XhKnF81wBuSsCKA=; b=cDGO2JzBe7VNzVYx2c2ChB4Y52Z+JO9RjuPIJIUG4Mxg
+	aT5bm+XN2QLoQXgFrGaExaRxoK3Zy05kQVc3KuVI1axCou3g2N8mtro72xKGPF2q
+	xIaJKSy0Yt/vM/ea+wXn9aHBkPh/nVI16tWV2iqUSxCpbJf9zK+9enmSMR4pgyZe
+	nuNTriBSxMHlYlPKyGbQ2zjZjhLEJRtSVMC6wQjGU9s4yE1zzvTWAi4X2ZUaI7KN
+	PwW5PG5RJNbAMzBOO7ECb0ujzBeHppouJFtdPoyPJOx5S5FJk88CPircCm7S7R59
+	dpRNCwy3M5X7nkaHIrKRkrXHrKdCHO7fi4OmzmIX+Q==
+X-ME-Sender: <xms:-KmbZdwqfJZXwdzUj-lREVgir3oxFMKsZujzpNHo9ANidkpkZEEJCw>
+    <xme:-KmbZdQDJjTLLKqRbsTFAJL8WgWqYAnI57LBzdvFkoFmua7419QpFuNgTe9F4JvWk
+    ZwcW7yqP1vZlg>
+X-ME-Received: <xmr:-KmbZXVxcLJSMntrbUwx9pt9SxBFGHXPG2MqE0J5xscHXad8ZVOWPMzX6NASovZU8OSu2fDvEn5mxQpj-gBrc1QRy0wXwpxpdg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdehiedggeekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -47,23 +47,22 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdehiedggeekucetufdoteggod
     evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
     thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
     hhrdgtohhm
-X-ME-Proxy: <xmx:O6ibZWv6U-MIH8TXTTANV1V1ZiONphS41cgFObRwWN5Oz57lZDvsgg>
-    <xmx:O6ibZeeFpR6Gn5ki_z_VKfeoK9QLqtnHfFchG9-weyq_Sbiy1Y8BMw>
-    <xmx:O6ibZa0pogaYPvEiDln-3k4j4w5dsNhKnyupPck9YLVzgozOReo-nA>
-    <xmx:PKibZVzyxt_T5w7BDQuhRG7o9NhdPUzN1tiPlIctE4RU7qvFYAHYnw>
+X-ME-Proxy: <xmx:-KmbZfjYjlIwXKBXKSED_A21FnJrOmFbksrX1MJYRS3TctnO9h28yw>
+    <xmx:-KmbZfD1pM6_9P4ugYZb44HVIYEMLyGtXwLTxTUjKURhR3naXaK27A>
+    <xmx:-KmbZYLzWIukn13NBL9_XYgghCujaeHAZTF4PxnmbdWskKmLZj51qA>
+    <xmx:-KmbZT2hIrB23m6nlc-0p1EQ2q3sJDFSuY79ns8jrUdBsU-qYBUK3g>
 Feedback-ID: i787e41f1:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Jan 2024 02:46:02 -0500 (EST)
-Date: Mon, 8 Jan 2024 08:46:01 +0100
+ 8 Jan 2024 02:53:27 -0500 (EST)
+Date: Mon, 8 Jan 2024 08:53:26 +0100
 From: Greg KH <greg@kroah.com>
-To: Helge Deller <deller@gmx.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>,
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>, Kyle Tso <kyletso@google.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the char-misc tree
-Message-ID: <2024010857-scandal-unlit-51f7@gregkh>
-References: <20240108135842.34543bb6@canb.auug.org.au>
- <b47068a7-473e-4b0e-9511-0d3f2afc4724@gmx.de>
+Subject: Re: linux-next: manual merge of the devicetree tree with the usb tree
+Message-ID: <2024010819-isolation-android-5d2d@gregkh>
+References: <20240108150026.2c5930a4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -72,14 +71,33 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b47068a7-473e-4b0e-9511-0d3f2afc4724@gmx.de>
+In-Reply-To: <20240108150026.2c5930a4@canb.auug.org.au>
 
-On Mon, Jan 08, 2024 at 08:37:32AM +0100, Helge Deller wrote:
-> On 1/8/24 03:58, Stephen Rothwell wrote:
-> > The following commit is also in the fbdev tree as a different commit
-> > (but the same patch):
-> >    110684d58bdb ("vgacon: drop IA64 reference in VGA_CONSOLE dependency list")
+On Mon, Jan 08, 2024 at 03:00:26PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> I've dropped that patch from fbdev git tree.
+> Today's linux-next merge of the devicetree tree got a conflict in:
+> 
+>   Documentation/devicetree/bindings/connector/usb-connector.yaml
+> 
+> between commit:
+> 
+>   501b15207138 ("dt-bindings: connector: Add child nodes for multiple PD capabilities")
+> 
+> from the usb tree and commit:
+> 
+>   0d3a771610d0 ("dt-bindings: connector: Add child nodes for multiple PD capabilities")
+> 
+> from the devicetree tree.
+> 
+> I fixed it up (I used the former version as there were other changes
+> in this file in that version) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Thanks!
+Fix looks correct, thanks!
+
+greg k-h
