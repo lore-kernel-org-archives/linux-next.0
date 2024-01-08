@@ -1,105 +1,91 @@
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B014AA0;
-	Mon,  8 Jan 2024 07:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="avn53GMD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iG1NLshB"
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.west.internal (Postfix) with ESMTP id 6B9383201284;
-	Mon,  8 Jan 2024 02:54:41 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 08 Jan 2024 02:54:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1704700480; x=1704786880; bh=sJ3fesZ9Hb
-	nBImMQwIHBlbn6iJ5Wv1fhltbNw/Fo1ZI=; b=avn53GMD9CG542966rOAkkAXaY
-	2E62flLxoB7A1PiPAE0FWiaqSGpTEK2Hl+SUbtBE9eHJGIIZOhdsHwnAfXwiMOsH
-	uskBuAElZi3NZNc4xfxjjHwrxLY7pbE0MEGuPSwHbQK94WjXIvcFvxrCE+sYno0o
-	osbUa8KjcbLhuob9wYmZo/lpUGpxuBbVT4sO4QCRDis6Sp8kqUevFiBHAKheXD7A
-	FTd8kn3sYPXQYLa9QLI5UHLnrVjrYhXZYLksJIJnXylaKH4rdxuzxL6kzenxGzeL
-	UsDKY4xNSXaJhE8GMm9oDFuT9SIgIwk37GG5HX+86fYSq1mTR7s8N0/Zsu5Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1704700480; x=1704786880; bh=sJ3fesZ9HbnBImMQwIHBlbn6iJ5W
-	v1fhltbNw/Fo1ZI=; b=iG1NLshB7GwjnAxHkoDg/zYLdN+cNYX6k9AfW7AyqijD
-	HqeP22ZXUbdb7CRHzcvNJhJb2MynBgZaMfIb74mIwfsSsP6egwn1IgJs8Oy8w2rG
-	UloZjiyKV8qtwk6IydchG6WpnQ4DQmiAIihQ9f4sA8lIJfpEkhR0AaoxSyNJrl4E
-	4pMsnGT34Pfg47E+UDjXIviwSRkTKd+BOh8Tdeab/K0mYo/bMeOLtRrQx5YQEr21
-	4WjFjPpF8y36Rigj53KNG9oQnQEHEGJP6E6FDef0cQ4SXBYdKzLOqHBzNDaC+mdc
-	sSeQbHEm9qxavYlvLVgM2Ikb2Af/pLzZJgv5w+LLNw==
-X-ME-Sender: <xms:QKqbZaDpEUZA9HZzaDKCandAY--O69U86UqMEQvalq_2N9LQ0ppaIA>
-    <xme:QKqbZUhV_FTzOKofBl7aEG4yJASRjd1x8KEtmhuBJ_Qn6Vpm9FIkzsatVWnc3r9gt
-    opCf3vgTkiVxA>
-X-ME-Received: <xmr:QKqbZdlXz-lcqjPxhADJEob9RlCKrlWVH2yGsZ3T36Adm5CdQlr3OlFLQ6oJsHJQ-wuuuXFB10834OH3Pvsz288ZGu3Myd3yyw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdehiedghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
-    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
-    thgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
-    hhrdgtohhm
-X-ME-Proxy: <xmx:QKqbZYzJJEXsBDHVt9aMZnWInv2V2aTEZpOwIRBr27SgYuaQfEEDAg>
-    <xmx:QKqbZfRcEe9D1kDtKwLcrlRaxSjG1EQd9xrmySbwdDqxiAkvEjXrww>
-    <xmx:QKqbZTZovi3VpXGUBe5zmWO3TqCJXCo96Hekuty0RwrltO1qtc48Ew>
-    <xmx:QKqbZeH2THYoT5GzWU1gHdUtyo4Rlcwfhx1pHQbdnBCUNvVv8PztKg>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Jan 2024 02:54:40 -0500 (EST)
-Date: Mon, 8 Jan 2024 08:54:39 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the usb tree
-Message-ID: <2024010816-fabric-cassette-1548@gregkh>
-References: <20240108160221.743649b5@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E6A8F47;
+	Mon,  8 Jan 2024 08:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=27517e8fb8=fe@dev.tdt.de>)
+	id 1rMkLl-000MIh-Ss; Mon, 08 Jan 2024 08:47:09 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <fe@dev.tdt.de>)
+	id 1rMkLk-000MHO-E1; Mon, 08 Jan 2024 08:47:08 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id 14224240049;
+	Mon,  8 Jan 2024 08:47:08 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id A7D1C240040;
+	Mon,  8 Jan 2024 08:47:07 +0100 (CET)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+	by mail.dev.tdt.de (Postfix) with ESMTP id 54D7534839;
+	Mon,  8 Jan 2024 08:47:07 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240108160221.743649b5@canb.auug.org.au>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 08 Jan 2024 08:47:07 +0100
+From: Florian Eckert <fe@dev.tdt.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lee Jones <lee@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the leds-lj tree
+In-Reply-To: <20240105173352.6ce1a546@canb.auug.org.au>
+References: <20240105173352.6ce1a546@canb.auug.org.au>
+Message-ID: <17b4305d9fe1fbed3e39597f0767f7bd@dev.tdt.de>
+X-Sender: fe@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+X-purgate-type: clean
+X-purgate-ID: 151534::1704700028-9767C464-91F02735/0/0
+X-purgate: clean
 
-On Mon, Jan 08, 2024 at 04:02:21PM +1100, Stephen Rothwell wrote:
+Hello Stephen,
+
+thanks for your hint
+
+On 2024-01-05 07:33, Stephen Rothwell wrote:
 > Hi all,
 > 
-> After merging the usb tree, today's linux-next build (htmldocs) produced
-> this warning:
+> After merging the leds-lj tree, today's linux-next build (htmldocs)
+> produced this warning:
 > 
-> Documentation/usb/gadget-testing.rst:459: ERROR: Malformed table.
-> Text in column margin in table line 9.
-> 
-> ===============   ==================================================
-> ifname            network device interface name associated with this
->                   function instance
-> qmult             queue length multiplier for high and super speed
-> host_addr         MAC address of host's end of this
->                   Ethernet over USB link
-> dev_addr          MAC address of device's end of this
->                   Ethernet over USB link
-> max_segment_size  Segment size required for P2P connections. This
->                   will set MTU to (max_segment_size - 14 bytes)
-> ===============   ==================================================
-> 
-> Introduced by commit
-> 
->   1900daeefd3e ("usb: gadget: ncm: Add support to update wMaxSegmentSize via configfs")
+> Warning: /sys/class/leds/<led>/rx is defined 2 times:
+> Documentation/ABI/testing/sysfs-class-led-trigger-tty:7
+> Documentation/ABI/testing/sysfs-class-led-trigger-netdev:49
+> Warning: /sys/class/leds/<led>/tx is defined 2 times:
+> Documentation/ABI/testing/sysfs-class-led-trigger-tty:15
+> Documentation/ABI/testing/sysfs-class-led-trigger-netdev:34
 
-Krishna, can you send a fixup patch for this?
+The behavior of the tty trigger can be controlled via the Rx and Tx 
+file.
+If a value is set in Rx or Tx, the LED flashes when data is transmitted 
+in
+this direction. The same behavior is used for the netdev trigger.
+I have therefore used the same pattern for the new tty trigger as well.
 
-thanks,
+I didn't know that the names have to be unique!
 
-greg k-h
+I'm a bit at a loss as to what to do now. Should I put a prefix "tty_"
+in front of the names so that we have "tty_rx", "tty_tx"?
+
+If we do it this way, however, the general question arises as to whether
+we do have to use a prefix everywhere! If new triggers are added, then 
+the
+names for a config file are already used up and anyone who then wants to 
+use
+the same name for an other trigger with the same config file because it 
+describe
+the same function must then work with a prefix!
+
+Best regards
+
+Florian
