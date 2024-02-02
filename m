@@ -1,95 +1,96 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA7C15B1;
-	Fri,  2 Feb 2024 12:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DCE46448;
+	Fri,  2 Feb 2024 13:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706877541; cv=none; b=gAHDxO3XTIOStdXsH0TfiGYbUp0I70buzIL0BIRVM9yAzh9GqSpfL6HtZM+FENwAYHSxMBRo59gTGvK4d9UxewIV57Nc5eSDBW7wfFs1mipwY+my+kGuL1rBlFgB15YDQ37T+fiifHWJa2vYyOo1HCDHGLrj5TM01TR8XHk0HUE=
+	t=1706880632; cv=none; b=DfZhxaDqNbldsUuwOPWEmmtwSf166PtMt2zUMJTKZCeBMqX3Rrk0fLPK1i8gDD/43vpGvYTom8Ov7AjagYk6AsLHVxAPvICjBYTyrvoeme3BzuZAZofULn5f/YdjcNe3Fa9BszzXrdANY2xqgzGz/1EJm2vsUPOsWNeBz3DC1Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706877541; c=relaxed/simple;
-	bh=OoPjnrPr8StiPXaPppH3fvGIRnVAs2DNEdph0pRPOO8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qx77xmE8mwhIEhwvvn7YYHW3y+FE9timPOUKQa5fQZHh+dLAxgkdDruXdQIz7inY97gYcgGEuzWC1gPw2lP9/xXujxkoFHEt7gqpvE2jMzjFMnFIryv1VJaWZ+EcruP3xKWHKXpmIw4aH0N2KKx+x5aMW2gq7jVKUokyNkx1mHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VtemBZru; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1706880632; c=relaxed/simple;
+	bh=Up+XWB/zKXHCgm15f7dpGbvm8vMJ0y4JyEQDRIXfhYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G4rdLhxHnGbCacvDMiuB5GxNQ5jj2J3zWlUygT9f5n13sk8jEl5kjRvsTxG+0c1NWkrd8i0vcJ/KiKlSVq4BJGzn11B7HgUjiRdF3SM3kzyYFN38yIhbN6wCJtE05ILCRDW61wIFcP0HXOtuvWv58nn/IAnRLt3icxw6ZiTjPYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A06cgDmQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VtemBZru"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706877539; x=1738413539;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OoPjnrPr8StiPXaPppH3fvGIRnVAs2DNEdph0pRPOO8=;
-  b=VtemBZruukhEu1Jgkk5hOGGpB6U8CdgH0XIg3VFI5PYlwEs+A+H/R8xd
-   ah9AgSb62z9zCrL85f/0ZvzFfTKTmKK/ZdU2mlUSXoqp1OBGI/hCzBY0O
-   WbJXzN9H2c7z+Ij+ypTUlDpz0Kq7nhLpQNgoovWJLusng7POFlveFEm3u
-   JK/DcOb0z5LI4E3FGgFUyi37l7J/YcZT+mqQGPs7snws7GdhBKPgvMW8k
-   toxK/ncNcrczkTgdW5QEmU79voh2edpZ2Tuglp2+usuQDmb8GPk2vxcLv
-   OJk/YP8B1mNb0QMVsM9GRXeZUmfEUOVbh/2yWR/lVHb2jkqbyZv8rYEzU
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10971"; a="64235"
-X-IronPort-AV: E=Sophos;i="6.05,238,1701158400"; 
-   d="scan'208";a="64235"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2024 04:38:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,238,1701158400"; 
-   d="scan'208";a="37500256"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2024 04:38:55 -0800
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 94F661205D0;
-	Fri,  2 Feb 2024 08:40:17 +0200 (EET)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1rVnDl-000D9R-1r;
-	Fri, 02 Feb 2024 08:40:17 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: [PATCH 1/1] media: v4l: Fix link frequency helper's kernel-doc
-Date: Fri,  2 Feb 2024 08:40:07 +0200
-Message-Id: <20240202064007.50545-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240202145412.336db5b2@canb.auug.org.au>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A06cgDmQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038C7C433F1;
+	Fri,  2 Feb 2024 13:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706880632;
+	bh=Up+XWB/zKXHCgm15f7dpGbvm8vMJ0y4JyEQDRIXfhYk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A06cgDmQ7djvvPlJx4PMgdYm/JURfxYGRcmQ9WJkAmcnyTjmidvA9ZmxIH9Z+S/xc
+	 4atlDQNGJvLQnMIDSYsiciEfC1cMdes3bQc66f7zKbC2ivh+xHpQOKrZmIQoTqQ394
+	 CQlJAt3A/jcRbpZnVS3aozv1KIiR1boXTo4WmYmmJPXyZ6jkyIwD7DVrnMNUzssHKy
+	 2kjAJ79hkWXLsl7Eln2410KwwXUQnylp50ic544POdsbvibJyRkTRZvgDgefvFZFnZ
+	 QQQKWHOHIGsmNij40PKNIM7HpioViNaKQMtxGDxP7bY09Wt637hqlIj+AyxN+LDcun
+	 c5mDsxBRLNYAw==
+Date: Fri, 2 Feb 2024 14:30:27 +0100
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+ linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: [PATCH 1/1] media: v4l: Fix link frequency helper's kernel-doc
+Message-ID: <20240202143027.21fe3f5b@coco.lan>
+In-Reply-To: <20240202064007.50545-1-sakari.ailus@linux.intel.com>
 References: <20240202145412.336db5b2@canb.auug.org.au>
+	<20240202064007.50545-1-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fix kernel-doc indentation for v4l2_link_freq_to_bitmap().
+Em Fri,  2 Feb 2024 08:40:07 +0200
+Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: a68e88e2cf9e ("media: v4l: Add a helper for setting up link-frequencies control")
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-Thanks for reporting this, Stephen.
+> Fix kernel-doc indentation for v4l2_link_freq_to_bitmap().
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: a68e88e2cf9e ("media: v4l: Add a helper for setting up link-frequencies control")
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> Thanks for reporting this, Stephen.
+> 
+>  include/media/v4l2-common.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> index cd2163f24f8a..602738f7741e 100644
+> --- a/include/media/v4l2-common.h
+> +++ b/include/media/v4l2-common.h
+> @@ -563,7 +563,7 @@ u32 v4l2_fraction_to_interval(u32 numerator, u32 denominator);
+>   * Return values:
+>   *	0: Success
+>   *	-ENOENT: No match found between driver-supported link frequencies and
+> - *		 those available in firmware.
+> + *	those available in firmware.
+>   *	-ENODATA: No link frequencies were specified in firmware.
+>   */
+>  int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
 
- include/media/v4l2-common.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This won't do what's expected at documentation, as Sphinx will just
+fold everything into a single paragraph, like:
 
-diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
-index cd2163f24f8a..602738f7741e 100644
---- a/include/media/v4l2-common.h
-+++ b/include/media/v4l2-common.h
-@@ -563,7 +563,7 @@ u32 v4l2_fraction_to_interval(u32 numerator, u32 denominator);
-  * Return values:
-  *	0: Success
-  *	-ENOENT: No match found between driver-supported link frequencies and
-- *		 those available in firmware.
-+ *	those available in firmware.
-  *	-ENODATA: No link frequencies were specified in firmware.
-  */
- int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
--- 
-2.39.2
+	"0: Success -ENOENT: No match found between driver-supported link frequencies and those available in firmware. -ENODATA: No link frequencies were specified in firmware."
 
+Maybe you could try using (untested):
+
+
+	* Return values:
+        *
+	* * 0: success
+	* * -ENOENT: No match found between driver-supported link frequencies and
+	*     those available in firmware.
+        * * - ENODATA: No link frequencies were specified in firmware.
+
+Please test it and see if the "make htmldocs" output will be what it would
+be expected.
+
+Regards,
+Mauro
