@@ -1,96 +1,126 @@
 Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4696B4AEEB;
-	Tue, 12 Mar 2024 21:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690CB14293;
+	Tue, 12 Mar 2024 23:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710280303; cv=none; b=GXhlKAr9BGF0rYelmDY+601s9Cc/NPrS7XsXrAkawywQWzc+VMdAQMUFZyv7VriP0Nv375Os4cOteB72reIvltZWY452hrMShUXz5Zv3CzdHSytI0vKcG0Ijko0al6rSN18J/+k7TothrnQFsxJ9jqNL71dTh7qZr51irETfp9k=
+	t=1710285323; cv=none; b=m+rneIgzULj6cA3UvGGf0SghHBK8FhHPUQzRFi05EKmwDn+9znEbdHmNqcJPwCjEBlS03bsJcTPyygCfkjEBLmysMHtkwmUX2QVD3Mfkz+KhFvE7bJLS+DlIN+EBghIBCQ5uhrpQThueqaUfkeszG/mBuN3qf2UP0D8/rcSVNb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710280303; c=relaxed/simple;
-	bh=7NqfT9TdaICSlrZte0UgCg2l9YA4Ye8LMG1y7vQ4YSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jDYseYLXiMpn0jJMdctTwtNvZc3deePXUBCS16N1OXzt9oJAvk2U134bw1cGX+n2NqWYJF0jK0SiDEBUip00+JbD+HgLW13A6gaMB0OTmSVZcDw9AfB1pcb3sklR1Wvwkq/RQPKSpfUCc3uyOzof6Elr0+Z+pO7ICL6aSE+5Whw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GBTcO4cd; arc=none smtp.client-ip=150.107.74.76
+	s=arc-20240116; t=1710285323; c=relaxed/simple;
+	bh=YMumfy62LMbpDVBMh+X3bB7Gji5ZfK1CU4I9f8SM+fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JbfPeq8OUOYaRTfZTAIhXgWjWTI2gd+AGQ2G0I76Rf03E22r7qOqwhwW9bW9Mf723ckqoryZlQvio4CFCW2J17GvTVpPTuNToN7E+Xeqm+Yv9qtpFrT6r98yTCSEYAc5mnaIOeYGqONc5XTW9e2/qLIllL4xthdwQjmFcG178M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UuhkqJ3f; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GBTcO4cd"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UuhkqJ3f"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1710280297;
-	bh=NfQLoHYJ5DClXcTQfww+2SzYHTQ8VCi5zsfEcgF2NkY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GBTcO4cd5pIoA8qLzrR58SF7RhnjftJttvDke11txK/Q2jXKz49wT+nF0MFV/D3hP
-	 SdP3nfqdn8YLexcjTX2mLSbEF+NaGmiDxCFih4O7qjP7wNvQqEcjqeAc+nlz1SC5OY
-	 00ydZW0BQIOT/jre7HYlbh3G5j1MX1SV3dq2q0UpJ2aRYF6ByiSug//3iHKmypYweA
-	 dXxnaKF4kvaH1VaAzWmpboR7qVTjQuBpLcGl+Uqf+tNd7tOxjPpFDm1LwjnhVMcmxe
-	 xAzqMUi3HETLhjFDyGRcQFSb0BlzMxbefoIpwUCuyn4/fahAyy5tPZYES4xMIqgUpN
-	 fKnJdIjePcknw==
+	s=201702; t=1710285318;
+	bh=B+4KN1xkYdkrc/Uo268JWRZW4K2hj/u546GnWtrEepc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UuhkqJ3fnxWE6E7hcXRo2tfacrwA6vMFJjE3JZ/fRomCOHnqa5QxokDkdPMcYn4rh
+	 MNuin9bdqc+LBCu3H9f0JvHDPt1pezt6NjXVQSbScPwdSiBepmFF7CW7EMafQlI6o9
+	 vvklIWxspA33h0RBS4S9BoOZ3tlgSI3Kjn24jLTaoEFEwZ6DJLzP8gNAnu+W16OXJ5
+	 m3SdA09n6CIHsBuSdYo45nRSdwBCJ2fP9yPe/0sJ89hAK+I0tujyBr0/6KDR22Dmk/
+	 nHPB+lnXzcJ8QjAI2T66pVIQEU6Tjqz1fpVXKOg/c3/TxCZ8z8rbz8rOOBmJ7HbqIz
+	 uHRgb6W8jHchg==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4TvS5j1GfHz4wcT;
-	Wed, 13 Mar 2024 08:51:36 +1100 (AEDT)
-Date: Wed, 13 Mar 2024 08:51:36 +1100
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4TvTyF3fSVz4wqN;
+	Wed, 13 Mar 2024 10:15:17 +1100 (AEDT)
+Date: Wed, 13 Mar 2024 10:15:16 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Johan Carlsson <johan.carlsson@teenage.engineering>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sound-current tree
-Message-ID: <20240313085136.056eaf24@canb.auug.org.au>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Borislav Petkov
+ <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, Carlos Bilbao
+ <carlos.bilbao@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: Re: linux-next: manual merge of the edac tree with the jc_docs tree
+Message-ID: <20240313101516.25300dcf@canb.auug.org.au>
+In-Reply-To: <20240222142041.34342553@canb.auug.org.au>
+References: <20240222142041.34342553@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/yuQLNtLuXwX5yCCUtDYktAx";
+Content-Type: multipart/signed; boundary="Sig_/R85v+ca_wCej8xuWD0EzUH0";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/yuQLNtLuXwX5yCCUtDYktAx
+--Sig_/R85v+ca_wCej8xuWD0EzUH0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sound-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+On Thu, 22 Feb 2024 14:20:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the edac tree got a conflict in:
+>=20
+>   Documentation/index.rst
+>=20
+> between commit:
+>=20
+>   9ee367809c67 ("docs: Include simplified link titles in main index")
+>=20
+> from the jc_docs tree and commits:
+>=20
+>   1289c431641f ("Documentation: RAS: Add index and address translation se=
+ction")
+>   0e4fd816b08e ("Documentation: Move RAS section to admin-guide")
+>=20
+> from the edac tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc Documentation/index.rst
+> index 429a407470c8,9dfdc826618c..000000000000
+> --- a/Documentation/index.rst
+> +++ b/Documentation/index.rst
+> @@@ -112,8 -112,7 +112,7 @@@ to ReStructured Text format, or are sim
+>   .. toctree::
+>      :maxdepth: 1
+>  =20
+>  -   staging/index
+>  +   Unsorted documentation <staging/index>
+> -    RAS/ras
+>  =20
+>  =20
+>   Translations
 
-sound/usb/stream.c: In function 'convert_chmap':
-sound/usb/stream.c:306:34: error: 'chmaps' undeclared (first use in this fu=
-nction); did you mean 'chmap'?
-  306 |                         if (c =3D=3D chmaps->channels)
-      |                                  ^~~~~~
-      |                                  chmap
-sound/usb/stream.c:306:34: note: each undeclared identifier is reported onl=
-y once for each function it appears in
-
-Caused by commit
-
-  a94566ace3ca ("ALSA: usb-audio: Stop parsing channels bits when all chann=
-els are found.")
-
-I have reverted that commit for today.
+This is now a conflict between the jc_docs tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/yuQLNtLuXwX5yCCUtDYktAx
+--Sig_/R85v+ca_wCej8xuWD0EzUH0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmXwzmgACgkQAVBC80lX
-0GwscwgAlXVVuvuaUyEQ7JabKXohY1sAKqXask288JoeLabO9BQ5FituhwvBLjgH
-p/n5SZgijHJTgajQlnHduxalnsTwCqqg1CR4nNvhzRoizcfrJuF94FU9LgWq9fQ/
-mGPE8ijMAT4LJzu6nP3Q8q8+hAgI3NR/S3zItb/7qmaO+kqWWDhYUklnOBG+j9Lx
-ODPpP9icVTGqdrC4fqmGtRSHdrFqLxVZkT9RmJ9hcuglw6IcTMds6nJZLSEe7yeZ
-l0cTQYhRbivIY90Hc1caZMNyN4YHd52+0rdvt2xPmLie9kYBecEEyt986Xe6Zaqz
-3FEQblwf0FNVLczFDGmzlZRFKBoBQg==
-=W1PY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmXw4gQACgkQAVBC80lX
+0Gz7nAf9FufwkHzfM+WC64ASx0Ul6vPlouOO+49atpEvLejLnmGSXEJcEuqc6tld
+DlRwZsB257UAaO7gfHqQfmwwOMeXZ8rKOVolW2ffjTSxJcMr1SZl4zSrgujzSSKM
+1I8BmfMVhCFEGWQCsOn5PFJSFM2Sv4xhkyxB3EuhXrgOEYlA301Oyv26a7rZHTXQ
+G3qq59mWLpi5B9LBa8xNaNq2+it/r8B/qrydbOOxCU/Q1YBNK4gEZh7EKDCJpYzM
+o0fb/N7333eIGR561qO1dQsE9tQrI0jLlXBXTo+2diZNJnWXSpx7mvmZVW3QEoCx
+QX6lztTmO3N2q/RbYU0lsNnAfVyl/g==
+=38Lq
 -----END PGP SIGNATURE-----
 
---Sig_/yuQLNtLuXwX5yCCUtDYktAx--
+--Sig_/R85v+ca_wCej8xuWD0EzUH0--
