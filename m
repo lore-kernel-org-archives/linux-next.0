@@ -1,131 +1,138 @@
 Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14AB46421;
-	Tue, 12 Mar 2024 23:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956A726286;
+	Tue, 12 Mar 2024 23:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710285372; cv=none; b=QJCSkHBzbJCWnbow7gEIAAWudUrdHZHdNZQJ5a659dwtorwa+/+BJTx876y0J9gz4s6eMpmth2T4E98TMDmDs8NCgvPSLvAQinmm8dzj4ThaZKhph8NrPXpbOT+ip68mgv/k8g+zbU3aBP5CSM3Rbhgx7NpdNlrKh0bEmNGWgJE=
+	t=1710286925; cv=none; b=KIZZu9W2l6f1HLly/STJi3JzcecDTYcAr0kv3Z0lGboRNDofCU/mvbgM5gtobescMzFporlN5RRZUiyjsQYWpfjRrPJb7G8AVIshlBajF2rCUqUhoaqpHcsh9EET50MrsH+/AI2kCC6xB4DDPBjk8go7Gz31XxyZV+4HTDarAqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710285372; c=relaxed/simple;
-	bh=yYbbljqBsdMlF8ejFt7shK2VJEBf8Yc2Wg5G7/EOOqE=;
+	s=arc-20240116; t=1710286925; c=relaxed/simple;
+	bh=Ht/vgGvTfP6q+zutj4Q4xwtp2EYZWw9H/nQfpl+nkDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mw/odQibJoydNcNGPeQrZ33cdv3E4wsj0JByeLVmjTB2cmC8QtUN4hocnPzz7Smf4tW5pLf3KKzzssBjpmRRn3TIRZSqst6kFvGi7vhsJADjqUQO1j9ZeZ7Dk3H7CpYXpufklju4KPza+ebOjKM1RJQkDO12wBzzia+4z6ZLEW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uXpoSmgh; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=iHgkpAZ/OyGi1V4v1FtdTthQZvXnOREit4hEks5+wFmndWPtlS5pQy/ZS3xxiz9IL1cSBLGPu0vQ70OX0NMm6gICXNKKfbtltQq+XBelXXy2pRn699LXOculbvpDiZiI/FtpX6tB/m4L1PVDTK3uek4l3AJ8cMp6u6Rj64UfWoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pQs+2XKK; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uXpoSmgh"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pQs+2XKK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1710285033;
-	bh=z/6KbviX2L2Ehh45YDU0JszSdB7+7eemzTYCuV49oao=;
+	s=201702; t=1710286920;
+	bh=M7wqUR1uMhwgn2qeeoDQh7iUiljE4XKlKtAM47Rzd2I=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uXpoSmgh0cYJbyBoL7LPyjKXN2idaLZdAD/Ga6TPv4UVP3+rBuu+XTN8ObM8vrMLn
-	 EtliZRQjsH+5pRTIVOjHtX219aj0VQkx9b8Cmuucqq6oKXP6KKbDeOTUoLbUhJ2q/M
-	 0H/CD5mesCo0SdPwfvLMTE/8E1rZr42tNbMmHa5yaCYa0tFiJwarFsqKvDw7iDdFwY
-	 qjQYoyupf93jG0pr3bxXE7Gh5AokpmY76G5bHFFZYjCXhGROkX+v6IvPxppoe/1V2B
-	 30fCy+We09HHC3FAny3lbnNSUIow/xX9nvy5wdbDzhipKi6Lh5lIXprivQJJqbT5b4
-	 AXYS8DegHKq5A==
+	b=pQs+2XKKCTYqB7tmyy89+/4Txiqd6SwHDGlVBpci2+TZymPbAvFEQMzbsl5oSH/jX
+	 vSITjwswJ2n1B4tRNmwRJ13FSoUEqcnS18GrrploxN2HeM/UNUOi6qr7biKBHYwAjL
+	 vU16EQIRfAM3gERWEpJu9H84D2KT15GxlwfUK2foFiFlHImytrnKB8XGnKeFwl212J
+	 iwum/lO6TRuKFdQyGu4AF0GLmHBoVDHcyXkqA4+4XXrjfBDFcByFR5TcE9n9ReqK7h
+	 5fcWh4r6RJa+HLlNR/a2jucA5iMv+w/WANaGleFXVY3Lnx6Pf3epICfUygfTP14oXM
+	 DHCISxIqkQ6XQ==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4TvTrm6Dstz4wx5;
-	Wed, 13 Mar 2024 10:10:32 +1100 (AEDT)
-Date: Wed, 13 Mar 2024 10:10:30 +1100
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4TvVY373nXz4wqN;
+	Wed, 13 Mar 2024 10:41:59 +1100 (AEDT)
+Date: Wed, 13 Mar 2024 10:41:58 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux Kernel Mailing List
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, Dai Ngo <dai.ngo@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Linux Kernel Mailing List
  <linux-kernel@vger.kernel.org>, Linux Next Mailing List
  <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the asm-generic tree with the
- kbuild tree
-Message-ID: <20240313101030.093d755c@canb.auug.org.au>
-In-Reply-To: <20240307093807.60efa4ec@canb.auug.org.au>
-References: <20240307093807.60efa4ec@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20240313104158.5649190c@canb.auug.org.au>
+In-Reply-To: <20240219104450.4d258995@canb.auug.org.au>
+References: <20240219104450.4d258995@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oevCpfALKmGAao5f80NhQNQ";
+Content-Type: multipart/signed; boundary="Sig_/Zd.4RUrtd4Rx6L=dpQzjrfL";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/oevCpfALKmGAao5f80NhQNQ
+--Sig_/Zd.4RUrtd4Rx6L=dpQzjrfL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 7 Mar 2024 09:38:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Mon, 19 Feb 2024 10:44:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Today's linux-next merge of the asm-generic tree got a conflict in:
+> After merging the vfs-brauner tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 >=20
->   arch/hexagon/Kconfig
+> fs/nfsd/nfs4state.c: In function 'nfsd4_deleg_getattr_conflict':
+> fs/nfsd/nfs4state.c:8845:32: error: 'struct file_lease' has no member nam=
+ed 'fl_owner'
+>  8845 |                         dp =3D fl->fl_owner;
+>       |                                ^~
 >=20
-> between commit:
+> Caused by commits
 >=20
->   6b1c2a19cb30 ("hexagon: select FRAME_POINTER instead of redefining it")
+>   a69ce85ec9af ("filelock: split common fields into struct file_lock_core=
+")
+>   282c30f320ba ("filelock: remove temporary compatibility macros")
 >=20
-> from the kbuild tree and commit:
+> interacting with commit
 >=20
->   ba89f9c8ccba ("arch: consolidate existing CONFIG_PAGE_SIZE_*KB definiti=
-ons")
+>   b9b89fb3e0b6 ("NFSD: handle GETATTR conflict with write delegation")
 >=20
-> from the asm-generic tree.
+> from the nfsd tree.
 >=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> I have applied the following merge resolution patch.
 >=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 19 Feb 2024 10:38:26 +1100
+> Subject: [PATCH] fixup for "filelock: split common fields into struct
+>  file_lock_core"
+>=20
+> interacting with "NFSD: handle GETATTR conflict with write delegation"
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/nfsd/nfs4state.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 3545125c8b73..71bb0ee57cf8 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -8842,7 +8842,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp=
+, struct inode *inode,
+>  			}
+>  break_lease:
+>  			nfsd_stats_wdeleg_getattr_inc(nn);
+> -			dp =3D fl->fl_owner;
+> +			dp =3D fl->c.flc_owner;
+>  			ncf =3D &dp->dl_cb_fattr;
+>  			nfs4_cb_getattr(&dp->dl_cb_fattr);
+>  			spin_unlock(&ctx->flc_lock);
 > --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc arch/hexagon/Kconfig
-> index 89672ef0666f,1414052e7d6b..000000000000
-> --- a/arch/hexagon/Kconfig
-> +++ b/arch/hexagon/Kconfig
-> @@@ -7,9 -7,11 +7,13 @@@ config HEXAGO
->   	select ARCH_32BIT_OFF_T
->   	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
->   	select ARCH_NO_PREEMPT
->  +	select ARCH_WANT_FRAME_POINTERS
->   	select DMA_GLOBAL_POOL
->  +	select FRAME_POINTER
-> + 	select HAVE_PAGE_SIZE_4KB
-> + 	select HAVE_PAGE_SIZE_16KB
-> + 	select HAVE_PAGE_SIZE_64KB
-> + 	select HAVE_PAGE_SIZE_256KB
->   	# Other pending projects/to-do items.
->   	# select HAVE_REGS_AND_STACK_ACCESS_API
->   	# select HAVE_HW_BREAKPOINT if PERF_EVENTS
+> 2.43.0
 
-This is now a conflict between the kbuild tree and Linus' tree.
+This is now required in the merge of the nfsd tree with Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/oevCpfALKmGAao5f80NhQNQ
+--Sig_/Zd.4RUrtd4Rx6L=dpQzjrfL
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmXw4OYACgkQAVBC80lX
-0GyFWQf+JrU0hLnizJkTOHdkDs3rzwlBxeBRgsw9BYR9XjlMLmR6HBCdvoGIl2VU
-9kWnR39KY7BnODMEC+zFbnt/P85RRj6dcPUj3NgVDGZeNIPL4KoEz1cqF4oNg4KS
-N3EaoRuKxDESWLfatOL+bnA6M2tKj+Ku96Hh1unStdXa/cgyuaDjnxXNoOGmX4o3
-9wc8EESmVXCkq4T5qxWuPY7pFn6Ne+PbMsPcFxaBNXepTNtu54pJIdbgyWsYnYxU
-3znrx7m7QNrXeUcSnNFk9mHmKCSVMWh+unbg33nFl5tc5sPOeVl0A2wv9WnZY2eP
-YSdoRoYl4fYM+wIhEmNWqC/62zWXAA==
-=Pp10
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmXw6EYACgkQAVBC80lX
+0GxuEQgAmwdzCg+Z+okkA3vPask4kdQH2VbxyPkHgZcdng66p4LFz88T0OOpbz2x
+skOW9PnMKUVVd9hUTM/YknEWbaUZgxEWFhn7Z1M5xLv9bSVByJOBYxoXNwPT6cBt
+O4hphar7sDhNhrzLFv5D0jYYMNVtHKhN6d4+4Xu67ypS5jNnpTne5cEWixn9wqD1
+z4BG/D6KdFA02u8Cv2ZejqweGW0v9plMKkgJW8yS3cNixQiK7lcfNj157oEGcX38
+uG0yBwq4pO54xa1Upvxt93ELooe0DvlsOJ9Vk1CtekgBmLedOSDoQAz9QDw8AcNX
+83j7AUmjy5Jfwcbs3sV4w0DID8YiVg==
+=zFGI
 -----END PGP SIGNATURE-----
 
---Sig_/oevCpfALKmGAao5f80NhQNQ--
+--Sig_/Zd.4RUrtd4Rx6L=dpQzjrfL--
