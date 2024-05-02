@@ -1,297 +1,103 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F4017591;
-	Thu,  2 May 2024 09:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E2256B78;
+	Thu,  2 May 2024 10:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714641240; cv=none; b=j1PpyYciq532X9Anr9z4Qqkh/bRBecHMN8BzyRCNFaVrYR1jcMtO/T/b5AbFSbIQJZEubmV0dmbn9XnLTtmZuj7hNsi9xa8/N/0OlXEP/wGtHuZBW+8Sl/p3jc+2yXqX4jjLhEgD7u5BAUyhdLOxHEXwxwRKOaMPd0bZXGb/8tg=
+	t=1714644222; cv=none; b=aAPllHrfhDNokpL3NgK3RI6/WAKxMyd5L92iIBeDCV0lQXYiUjjUZbYwrcrk0NFOgR4KMkhRPTSsb2y8qlfUdua08Cx7iwzSDtX5THhy8tsTw4XWNtwgreo4gOWW7Pvgz3vsBbJg+a/g1ZmI1bJkvyHCjTix/YlVYZ+D5YqZ0dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714641240; c=relaxed/simple;
-	bh=SXEJU1F2gJzibggxU6WUh0B+WRELoNDshkPVumVraHE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=daxjKsnT3tdSbm5cRdbf13ArERrABVXWn9mGEHg+WKdxaRXJAdunFXblOe0YQvZVE3xW6TWflQfzri+I5Z7c2iqtzX0ncHu8FHINKr78YTqw8DBIT4LZ+PtSQqz77i++JGbfe27ovsCOBq3Es0eogKlRkUABfL/BjkYI0tyG6cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VVST13Lmbz67ZRh;
-	Thu,  2 May 2024 16:55:49 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E30181408F9;
-	Thu,  2 May 2024 16:58:35 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 2 May
- 2024 09:58:35 +0100
-Date: Thu, 2 May 2024 09:58:34 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-CC: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the iio tree with the iio-fixes
- tree
-Message-ID: <20240502095834.00000e7c@Huawei.com>
-In-Reply-To: <FR3P281MB1757A0D3F821CF506D79634ECE182@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-References: <20240430151510.0f49b40e@canb.auug.org.au>
-	<FR3P281MB1757A0D3F821CF506D79634ECE182@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1714644222; c=relaxed/simple;
+	bh=ENkbJLHRwFRQxCc8aY+6hcE4ZTb8Z+QG0pGceE0w8a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iw75Qxyn1OAw9suc25335ZmqOwz8Y46kwoSGzwXl3WJFBW4OPuFswerLNtDsz4MS96qz1rBPW24DOy8bj6i5GcnqsHkUJYvm8MGRB/U4FJih5fDEIzziZqiBzHoO9RxPqWp9Ads5enJ4kAEC2o9l9a2in7EA3nYXUVRD9v28DIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flyTCNeB; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flyTCNeB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E08E3C113CC;
+	Thu,  2 May 2024 10:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714644222;
+	bh=ENkbJLHRwFRQxCc8aY+6hcE4ZTb8Z+QG0pGceE0w8a4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=flyTCNeBhEr+gQyCTC5kBU39G6/4eT+ECUJ/7HXC4NLgZw/35a629PnuyYdhRRTPH
+	 PWLKBk9Wom5EjiPT9o2eB/jrJNt6RgeS2gOW5oMRG+flFq3ZhmH+BQkso+Q4LbTbmw
+	 uLIPOTNavgz9j2d0k3Te0MsWCCLNUaqJfzBA8ryUVE9mxXquQg+sgfmYLUwhDYk7Vo
+	 sAgGIjNhQWOojbKm04Bo52Uw2nPnrfFUWUh7DDahJ042yrbKNyxKRo+Pe4P5iHicIt
+	 i3OwbFv9AHyqp0yWyHhcD83uXcHL0/Z9UrfZgVzPW7u9u/nQ0wTLwtiVi6tE/nSg1N
+	 EKlp7/2aY1zMA==
+Date: Thu, 2 May 2024 11:03:35 +0100
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org,
+ Bingbu Cao <bingbu.cao@intel.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCH 1/1] media: ipu6: Fix vmalloc memory allocation
+Message-ID: <20240502110335.7b3495ab@sal.lan>
+In-Reply-To: <20240502061525.1004018-1-sakari.ailus@linux.intel.com>
+References: <20240501102236.3b2585d1@canb.auug.org.au>
+	<20240502061525.1004018-1-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=20
+Em Thu,  2 May 2024 09:15:25 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
-On Thu, 2 May 2024 08:36:21 +0000
-Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com> wrote:
+> The driver was calling vmalloc() to allocate memory, something which isn't
+> available except when particular Kconfig settings are enabled.
+> 
+> Use kvmalloc() instead.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: 25fedc021985 ("media: intel/ipu6: add Intel IPU6 PCI device driver")
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> Hi Stephen,
+> 
+> Thanks for reporting this. I'm a bit surprised this wasn't catched
+> earlier. But it seems vmalloc() is defined in some configuration.
+> 
+> - Sakari
+> 
+>  drivers/media/pci/intel/ipu6/ipu6.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
+> index 4b1f69d14d71..082b1d6196be 100644
+> --- a/drivers/media/pci/intel/ipu6/ipu6.c
+> +++ b/drivers/media/pci/intel/ipu6/ipu6.c
+> @@ -526,7 +526,7 @@ static int request_cpd_fw(const struct firmware **firmware_p, const char *name,
+>  	}
+>  
+>  	dst->size = fw->size;
+> -	dst->data = vmalloc(fw->size);
+> +	dst->data = kvmalloc(fw->size, GFP_KERNEL);
 
-> Hello Stephen and Jonathan,
->=20
-> sorry for the mess, I should have warned Jonathan about it.
->=20
-> The manual fix is obviously correct, no problem.
->=20
-> Thanks and sorry for the inconvenience,
-> JB
+Where are you freeing it? If I understood the code right, you're storing
+dst at isp->cpd_fw, but I can't see any code freeing it nor cpw_fw->data
+at device removal.
 
-This should be sorted today.
-Given timing (and busy week as ever!) I decided I didn't have enough fixes
-to do a separate pull and the merge window is close.  So I dragged
-the fixes across to the branch targeting the merge window and dealt with
-the merge there.  The togreg-fixes branch should no longer have
-thse fixes on it.
+Also, there is a logic there at the same function checking for vmalloc:
 
-Jonathan
+	if (is_vmalloc_addr(fw->data)) {
+		*firmware_p = fw;
+		return 0;
+	}
 
+As now the memory may not be inside vmalloc space, shouldn't this
+be changed as well?
 
->=20
->=20
-> ________________________________________
-> From:=A0Stephen Rothwell
-> Sent:=A0Tuesday, April 30, 2024 07:15
-> To:=A0Jonathan Cameron
-> Cc:=A0Jean-Baptiste Maneyrol; Linux Kernel Mailing List; Linux Next Maili=
-ng List
-> Subject:=A0linux-next: manual merge of the iio tree with the iio-fixes tr=
-ee
->=20
->=20
-> Hi all,
->=20
->=20
->=20
-> Today's linux-next merge of the iio tree got a conflict in:
->=20
->=20
->=20
-> =A0 drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
->=20
->=20
->=20
-> between commit:
->=20
->=20
->=20
-> =A0 d7230b995246 ("iio: invensense: fix timestamp glitches when switching=
- frequency")
->=20
->=20
->=20
-> from the iio-fixes tree and commit:
->=20
->=20
->=20
-> =A0 a1432b5b4f4c ("iio: imu: inv_icm42600: add support of ICM-42686-P")
->=20
->=20
->=20
-> from the iio tree.
->=20
->=20
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
->=20
-> is now fixed as far as linux-next is concerned, but any non trivial
->=20
-> conflicts should be mentioned to your upstream maintainer when your tree
->=20
-> is submitted for merging.=A0 You may also want to consider cooperating
->=20
-> with the maintainer of the conflicting tree to minimise any particularly
->=20
-> complex conflicts.
->=20
->=20
->=20
-> --
->=20
-> Cheers,
->=20
-> Stephen Rothwell
->=20
->=20
->=20
-> diff --cc drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
->=20
-> index 9cde9a9337ad,cfb4a41ab7c1..000000000000
->=20
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
->=20
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
->=20
-> @@@ -509,20 -512,20 +512,20 @@@ int inv_icm42600_buffer_fifo_parse(stru
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return 0;
->=20
-> =A0
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 /* handle gyroscope timestamp and FIFO data pars=
-ing */
->=20
-> =A0-=A0=A0=A0=A0=A0=A0 ts =3D &gyro_st->ts;
->=20
-> =A0-=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_interrupt(ts, st->fifo.perio=
-d, st->fifo.nb.total,
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->fifo.nb.gyro, st->timesta=
-mp.gyro);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 if (st->fifo.nb.gyro > 0) {
->=20
-> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D iio_priv(st->indio_=
-gyro);
->=20
-> ++=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D &gyro_st->ts;
->=20
-> =A0+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_inte=
-rrupt(ts, st->fifo.nb.gyro,
->=20
-> =A0+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->t=
-imestamp.gyro);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D inv_icm42600_gyr=
-o_parse_fifo(st->indio_gyro);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (ret)
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
-return ret;
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 }
->=20
-> =A0
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 /* handle accelerometer timestamp and FIFO data =
-parsing */
->=20
-> =A0-=A0=A0=A0=A0=A0=A0 ts =3D &accel_st->ts;
->=20
-> =A0-=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_interrupt(ts, st->fifo.perio=
-d, st->fifo.nb.total,
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->fifo.nb.accel, st->timest=
-amp.accel);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 if (st->fifo.nb.accel > 0) {
->=20
-> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D iio_priv(st->indio_=
-accel);
->=20
-> ++=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D &accel_st->ts;
->=20
-> =A0+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_inte=
-rrupt(ts, st->fifo.nb.accel,
->=20
-> =A0+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->t=
-imestamp.accel);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D inv_icm42600_acc=
-el_parse_fifo(st->indio_accel);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (ret)
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
-return ret;
->=20
-> @@@ -549,16 -554,20 +554,16 @@@ int inv_icm42600_buffer_hwfifo_flush(st
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return 0;
->=20
-> =A0
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 if (st->fifo.nb.gyro > 0) {
->=20
-> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D iio_priv(st->indio_=
-gyro);
->=20
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D &gyro_st->ts;
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_inte=
-rrupt(ts, st->fifo.period,
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->f=
-ifo.nb.total, st->fifo.nb.gyro,
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 gyro_=
-ts);
->=20
-> =A0+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_inte=
-rrupt(ts, st->fifo.nb.gyro, gyro_ts);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D inv_icm42600_gyr=
-o_parse_fifo(st->indio_gyro);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (ret)
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
-return ret;
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 }
->=20
-> =A0
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0 if (st->fifo.nb.accel > 0) {
->=20
-> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D iio_priv(st->indio_=
-accel);
->=20
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ts =3D &accel_st->ts;
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_inte=
-rrupt(ts, st->fifo.period,
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->f=
-ifo.nb.total, st->fifo.nb.accel,
->=20
-> =A0-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 accel=
-_ts);
->=20
-> =A0+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 inv_sensors_timestamp_inte=
-rrupt(ts, st->fifo.nb.accel, accel_ts);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D inv_icm42600_acc=
-el_parse_fifo(st->indio_accel);
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (ret)
->=20
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
-return ret;
->=20
+Regards,
+Mauro
 
+>  	if (!dst->data) {
+>  		kfree(dst);
+>  		ret = -ENOMEM;
