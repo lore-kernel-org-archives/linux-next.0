@@ -1,40 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F193015D1;
-	Fri, 21 Jun 2024 17:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3950854FB5;
+	Fri, 21 Jun 2024 17:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718990485; cv=none; b=CTdWkeHxd/J9pPFCuw/bMO0DxVoIrK3wwNm+0UqayxA17vBVqK1gIoETihcct9Bp8L0qXiyXDdQito+zOHI8pm/OK37wLvzkbDJCPQaRRA9ol4Pla5oUMfJpwM9PVLwBK27eZFT0i+ZkXMVOKEQBEq6kgipPzxzuaQxmj+7raJo=
+	t=1718992058; cv=none; b=Lriz/XHB6QDSpKXiPhmF+WtGukkCCN64YTHPl3nQtrQX5NzjP1anr3m+yISpR4Xhc/jkSy+mT8O550X1n7jr03XgRz9qXF18cvhKYNvzzk0lq80/o/c20tN1tsbSPtXjS6FzCqfhj12XBf9bsHfe8buff+u4snmc4rFOwLz9xDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718990485; c=relaxed/simple;
-	bh=gHG1QdUJNeFc3vcLi2Zi9Sh5x+SNXv0tH2HEkixWrnE=;
+	s=arc-20240116; t=1718992058; c=relaxed/simple;
+	bh=aqx777HwFvNcT/eoFXPK+umOv2NCOdADxPLgOhv7eIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MBn4BnYbIQvZhysYLDDvZgoysej+fxEPB+3OkKo3RU6+3yYbe9KSRdK0pryUpICv/UV/M7CXxX4VGdarFU4qE5b/40/6pVt52THuzmWYn5y3ZLU2xn4w7j5NeYfbu61Ra+Xxlp3f581hAGpiVMEhSEwaa9AK/Ob2FEFMsMfWoRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UC0EotE8; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=NA6Aur/zmoU+nmzyBVywfSewIYDCQcrX2jWMEQ4cqc/bWAvGx+8GS3BU4zqz2uvprYUFHIlFg+wk4WF9mVN3zM3B2h7thDXr/X4oJAJX5kNFfCKLnAkmX+iI5hy6sVZYGQGVHENy71+rK+GVS/gRgpXE1k1Phhf0dPpQfKwcJhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzi/yily; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UC0EotE8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED23C2BBFC;
-	Fri, 21 Jun 2024 17:21:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzi/yily"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCD9C2BBFC;
+	Fri, 21 Jun 2024 17:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718990484;
-	bh=gHG1QdUJNeFc3vcLi2Zi9Sh5x+SNXv0tH2HEkixWrnE=;
+	s=k20201202; t=1718992057;
+	bh=aqx777HwFvNcT/eoFXPK+umOv2NCOdADxPLgOhv7eIk=;
 	h=Date:From:To:Cc:Subject:From;
-	b=UC0EotE8rvPIrAnMCcOPUjj0whhdYdm+vevKBQRs0tTY/ABRKQ0LN9vk+z86nR3a/
-	 YJuO0hYKrQsftcYluyN3ZSpm1oNbfNni1r/r/qr7hpVBBTPS6zMBtp+4s+fjP1a/rM
-	 C1qBXmF/ejq9PsPS8pdBJcdU7qjRghMHm9cGLGMR3sexDnxgcrpheV9onayAF/fmFM
-	 PK4nEvFqRNXw7E6EYRynkFRxZ3zNLkvov6ckw0KLXJXuiGshMp0wYu0YqYvkiyy7an
-	 HXm5ADtSmbKfPUVuyouiI2HHClcsJtyjocRUzNzV/M+Ff+xV1IoeaH4oKeeT1a4w33
-	 Qu+vewO9OV6kg==
-Date: Fri, 21 Jun 2024 18:21:20 +0100
+	b=jzi/yilyBcEOU+wEadoe+lJlhDGhYmP38JUSYi9ArLCBwTbeyXLUjmYrPAUBY0Nex
+	 sSNlOtJTW1nDytLQLzMY8JNg5GZpq2XE2u92PmUF4Jljf73YRglNrumee12Yd9EXWM
+	 HWH+U4x+zo+kRivJTKdbOT47BQhY0Iy1qT8L0KujsE9cDkm3J7WUojZw82JeZ6aDYh
+	 ZNrF73DsLoXlkiaAlFoiXArykkvabkqUeU9YjcD10VD5X0L8ZEGVyqHQBv0qFBbHyL
+	 MPlZDgkI3RhJLFFD+LewihSQAIoNg+h17Eip3P0bYcFxtR+XcJqYVLPWY5FlpZ4jcL
+	 FEmEu6P76J8lg==
+Date: Fri, 21 Jun 2024 18:47:33 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Gustavo Silva <gustavograzs@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wei Wang <wei.w.wang@intel.com>
-Subject: linux-next: manual merge of the kvm-x86 tree with the origin tree
-Message-ID: <ZnW2kD1V0EoViS7i@sirena.org.uk>
+	Tejun Heo <tj@kernel.org>
+Subject: linux-next: manual merge of the char-misc tree with the sched-ext
+ tree
+Message-ID: <ZnW8tfHMHBKH4yj9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,32 +44,30 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i8rhaj9TblMjFHzw"
+	protocol="application/pgp-signature"; boundary="yhPS/foK5T+Eokda"
 Content-Disposition: inline
 
 
---i8rhaj9TblMjFHzw
+--yhPS/foK5T+Eokda
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-  arch/x86/kvm/x86.c
+  MAINTAINERS
 
 between commit:
 
-  f3ced000a2df5 ("KVM: x86: Always sync PIR to IRR prior to scanning I/O AP=
-IC routes")
+  f0e1a0643a59b ("sched_ext: Implement BPF extensible scheduler class")
 
-=66rom the origin tree and commit:
+=66rom the sched-ext tree and commit:
 
-  aebed32e4985a ("KVM: x86: Introduce kvm_x86_call() to simplify static cal=
-ls of kvm_x86_ops")
+  4c4daafc996a8 ("MAINTAINERS: Add ScioSense ENS160")
 
-=66rom the kvm-x86 tree.
+=66rom the char-misc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -76,24 +76,67 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc arch/x86/kvm/x86.c
-index ba0ad76f53bcc,c13bae3e8dfbc..0000000000000
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
+diff --cc Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 56ad56d7733e9,044e2001f4e3a..0000000000000
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@@ -1264,8 -1254,8 +1264,10 @@@ patternProperties
+      description: Smart Battery System
+    "^schindler,.*":
+      description: Schindler
+ +  "^schneider,.*":
+ +    description: Schneider Electric
++   "^sciosense,.*":
++     description: ScioSense B.V.
+    "^seagate,.*":
+      description: Seagate Technology PLC
+    "^seeed,.*":
+diff --cc MAINTAINERS
+index c3a397c60b693,24d372f7653ed..0000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -20032,19 -19947,14 +20043,27 @@@ F:	include/linux/wait.
+  F:	include/uapi/linux/sched.h
+  F:	kernel/sched/
+ =20
+ +SCHEDULER - SCHED_EXT
+ +R:	Tejun Heo <tj@kernel.org>
+ +R:	David Vernet <void@manifault.com>
+ +L:	linux-kernel@vger.kernel.org
+ +S:	Maintained
+ +W:	https://github.com/sched-ext/scx
+ +T:	git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git
+ +F:	include/linux/sched/ext.h
+ +F:	kernel/sched/ext.h
+ +F:	kernel/sched/ext.c
+ +F:	tools/sched_ext/
+ +F:	tools/testing/selftests/sched_ext
+ +
++ SCIOSENSE ENS160 MULTI-GAS SENSOR DRIVER
++ M:	Gustavo Silva <gustavograzs@gmail.com>
++ S:	Maintained
++ F:	drivers/iio/chemical/ens160_core.c
++ F:	drivers/iio/chemical/ens160_i2c.c
++ F:	drivers/iio/chemical/ens160_spi.c
++ F:	drivers/iio/chemical/ens160.h
++=20
+  SCSI LIBSAS SUBSYSTEM
+  R:	John Garry <john.g.garry@oracle.com>
+  R:	Jason Yan <yanaijie@huawei.com>
 
---i8rhaj9TblMjFHzw
+--yhPS/foK5T+Eokda
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1to8ACgkQJNaLcl1U
-h9Ak0Qf/dCGp2SGgmtyZpWIjgTQsHgHTDABWmflXw5r/HspNpxXS5s8wMfx6D6vH
-P8OeR5CxKciLKLVsOihSBgCIt2CPDM1q84x0gjWIZ2JL4VYitisCTJpZ3BoWQKwV
-E/y3rw7wNxTjs184Z5RsLK45+5CgENmkCV8do18Ss5tB5fHkrUEP8tLZkwME8ap8
-TPJkJly8mIl/Uf9zSUm1X5XYjW+A9XQIYbyRvYnkEeaIJshRX10zg5GaSvcRh2wo
-8Qtv24p7NNg43j8qKYVDKQ3/An4ZAtecJCWIUgSBhNhYoLsNTEVZoKzZOaJYM4Mt
-2ZQzVR2JZ5h4VaLdY6ti2uHR9vsqjw==
-=G2in
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1vLQACgkQJNaLcl1U
+h9C1Vgf9E4/oGzPyppL2Wj4pAosIPYjDkqeBvbpvJoJJfsqCT496C4znB0cMbiaL
+aUqc1SA9y6PLnRAJyO2vR8h0Oo7OqNjV4AwQZuKSkfnoaQGhucv0jHHf0YmGoRZs
+k9TcNpeoMFATq72YKI7nLak/xCrbOgnMvga1QyqUKV9xQi1dkQhqNWr6uA6PczfY
+FwsWsm1YqFgxreZh+wEIVCKCpSUWg85QC3OHTm6TakCOpZoTLBjL3G8W2xExIVSB
+fAxEVT8nYpurocg20N+5S4J6+NWlx9cWy06R7vFvF9Q5mb9jq9JNqGSmiF+2BqnY
+oJLxg7HnVTIHZlp/h1XDE755KEDUzA==
+=W3i2
 -----END PGP SIGNATURE-----
 
---i8rhaj9TblMjFHzw--
+--yhPS/foK5T+Eokda--
