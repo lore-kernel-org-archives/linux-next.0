@@ -1,81 +1,79 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2711741C8;
-	Mon,  9 Sep 2024 09:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FCE1B0107;
+	Mon,  9 Sep 2024 09:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874869; cv=none; b=g+Ip87ArXzWc5sjm/51uur3PeNAke3T9uzGta012jMbe9BcIZHsU/63Wbu2WpPNFINa2ULwDPDpBVyZwVj5lqZwqTaf63fUc73OiwOYM/xnoHSNbr+RWxl2Tjs9QjDOLTqvyvQBpil2yquo4LHpnR0M/twswDTUbcIFKh0eOP9I=
+	t=1725875566; cv=none; b=LX9NTrfiaCwSsSRWjPXkJl2u/c6GMFZBEvWi+P8KPZ3eDIYkfPOonGHdPFVvSfdKPJ+RYoJQySCw24b+xbOhzl1sPlHmfhApK1rsvJJ573kcD5eslVpGAlzHRYMTN5eRBH399unxKOvaO4KRb1Kbnfsp12BB5FHiuLGZP7NMkFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874869; c=relaxed/simple;
-	bh=3N42rW920d6Vugk4DbxBfxF+GZkBmGZde1OUtyetVwE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oMuU/gfrxwY3vxZR0RZ3cHqciUcxye0Mn3OFBzb633IDoTNbYJrauhRf8rQHnslDdoCxsTNDDP0kVgSQl75OTZ+qdAjGTu03xpodAh1HFhhdmbzYK4lS4BXmh/5IgDfk2UCHSXJC19obMlV4bwkaN9kexLPKvZiqNGhUBtjJDpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=a/qR3uOJ; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1725875566; c=relaxed/simple;
+	bh=IVQ6yBv9YnpU0WbC0K0SFsQdXaYFCO9tWz9GvdF9P5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NCVQTX0KGwPjV9LcBYbde9obo+9XmfHlqAO0FqjZ2KbWyVQOF7qCPLuspDviK3FLChWhVkHt5KgCZgoJtIrXC4QlKpd91d6Brpr2Lwl9XUKWbfrutArBIo2T/cETl5I5djS7Jletrs2bnREQyT8/vpCPDVrN6HmfsYF7gZIpOCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ITpYfAFl; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="a/qR3uOJ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=3rF3U3vmHpfPcmokJPPRhAa75wEQKBtpcfNTesoYMyU=;
-	t=1725874863; x=1727084463; b=a/qR3uOJUb3aWpbUQkI6Vc5NIUlzeVgK6gbFD1A2IL2MJsT
-	dcSsnzpy75lJY6qb0/a3dygL91yh03Dy7/3qKOd6iDYP4RxUn7TGcohNMjdqL3OP8MMj0D6YDTzgt
-	aDrfpqzUpTY+tGbHhQex3/IA1MD1mZTjqMQmMIXjNCILxY98DYFTqwOR2Tq5Q8lf+vUcpuKz8Aztt
-	hlr9eQH7upJa/93oaNciJFH3QVGw9iXXWJi7HYAZl9rD1vsdlIzpY9Ayxe/79xN7V+IwjXMaGYoIb
-	ERCFnxuVlNClBqdZ6J3qMOfRjMFUoUdSOFXh2ur8fwyGxJMtzYi4Wh2zLL5Am1Kg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1snaDC-00000002I2K-201P;
-	Mon, 09 Sep 2024 10:57:30 +0200
-Message-ID: <dac6bfc0a0d5b92fdcb0d330d5e4839d2e119154.camel@sipsolutions.net>
-Subject: Re: linux-next: build warnings after merge of the wireless-next tree
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@kernel.org>
-Cc: Aditya Kumar Singh <quic_adisi@quicinc.com>, Wireless
-	 <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
-	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	 <linux-next@vger.kernel.org>
-Date: Mon, 09 Sep 2024 10:57:29 +0200
-In-Reply-To: <20240909183924.73c3c91d@canb.auug.org.au>
-References: <20240909183924.73c3c91d@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ITpYfAFl"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 09D7260007;
+	Mon,  9 Sep 2024 09:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725875561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kp1w+SiUSK91jVmp1Zd9h8d+RJXOLh9lgnWoJJailgw=;
+	b=ITpYfAFltpexVybsVDnXsK5xL62YIEpxH7Kk/A9f9PlIbMdALnTz3/UnP8cWfIA3EZDyIW
+	PymJ+TFXZx50pIoLi7Tp8n9JVq/bd61+MxhFNZBnST8H17jwgfhbhFWB7int4NUrM69+5y
+	ChlNZWHqT2f9OQbMQlTfYF1mgZO+yrLewemS7NaNAim2R/Q5TM/x4l6YXvpg/TbZ4VK34L
+	YXyS9EZUnXN3pfvPiMdOSRAM+/iGKPZ8CY5S+YaHzNr0Vv1kF/qJzePZfboc3qDqB1jVmk
+	LtI6SN6ePUBSEMROXEOrT0A7mURfHsSEa8O/122bi9zkJOsZLBxR1Q+XQwuRpA==
+Date: Mon, 9 Sep 2024 11:52:38 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the nand tree
+Message-ID: <20240909115238.51b69734@xps-13>
+In-Reply-To: <20240909080150.631c7923@canb.auug.org.au>
+References: <20240909080150.631c7923@canb.auug.org.au>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, 2024-09-09 at 18:39 +1000, Stephen Rothwell wrote:
+Hi Stephen,
+
+sfr@canb.auug.org.au wrote on Mon, 9 Sep 2024 08:01:50 +1000:
+
 > Hi all,
 >=20
-> After merging the wireless-next tree, today's linux-next build (htmldocs)
-> produced these warnings:
+> In commit
 >=20
-> next/Documentation/driver-api/80211/cfg80211:14: next/include/net/cfg8021=
-1.h:6219: WARNING: Inline strong start-string without end-string.
-> next/Documentation/driver-api/80211/cfg80211:14: next/include/net/cfg8021=
-1.h:6219: WARNING: Inline strong start-string without end-string.
-> next/Documentation/driver-api/80211/cfg80211:14: next/include/net/cfg8021=
-1.h:6219: WARNING: Inline strong start-string without end-string.
+>   26935d5fa4a8 ("mtd: rawnand: mtk: Fix init error path")
 >=20
-> Introduced by commit
+> Fixes tag
 >=20
->   62c16f219a73 ("wifi: cfg80211: move DFS related members to links[] in w=
-ireless_dev")
+>   Fixes: Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device=
+")
 >=20
+> has these problem(s):
+>=20
+>   - No SHA1 recognised
+>=20
+> It is just the second "Fixes:".
 
-Thanks for the report. kernel-doc htmldocs isn't part of the process I
-usually do.
+Right, thanks for the warning, I just fixed it.
 
-I don't even really know what this means, but I'll try to figure out a
-way to fix it. Looks like it's due to the @ references there, which I'm
-not sure are correct anyway, so I guess I'll just remove those.
-johannes
+Thanks,
+Miqu=C3=A8l
