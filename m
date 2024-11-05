@@ -1,110 +1,85 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51C91E485;
-	Tue,  5 Nov 2024 12:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641711D9A48;
+	Tue,  5 Nov 2024 21:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730811370; cv=none; b=ENFPux+Bvv7Y54lPfwV159W7LzO8dCFnHwFfD3PMQJSUFFOp6vf8PEKj2pGDXujtgKPnalSp4p3eIwinrfWn0jnQ32HnA3PKag+K66WrY3g9yq0OJpiA/ZlyYTcoGYQq5HTaLWqr3A7dv6HDhUBRXjEcK39f64c1HbqIHw1DET8=
+	t=1730840422; cv=none; b=q9OWiRvA/jJCZrJTYUZfo51qSOowLe1kmFU/aAVgDDzmwoco9k9HnwG/oDYZfRj4tykJmwLswFbzKuBYJ89RcXjc0fGtTwQ8jFEYqQU1wJwJ/szRVRkthk8vq5bigaFmFgHhzlnIiFLOo14RFYMZrE8hYUb892x6buFSrd618q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730811370; c=relaxed/simple;
-	bh=w3JMgfuFTvntwMiNKM/54/p0TbGf6IGQEHhRrd75ai0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5C6FPJmoB7SKI/rlNbtfIbAiX2ZfJYU4QNHKc2DPeDPIk8lom0VxIGq/i98x9trckKpi1hCnvkNYa4fxtoXvFnHx/i4Yhje5WKyVna+n4MFD9YtJtPCplGzrQ7wpVx0CbeK7qlfiJEhtFvwfQE2X3p+DdpaZKd/gPyzcMlm2W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ODV8cuM+; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1730840422; c=relaxed/simple;
+	bh=i34XkvlmlTZ8PU14Eis5VmGEsH7AAYQu/PeweB0vAFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ce3l0bdDtFXCza/GlcQrIAa7Pa5LcKmsQQGmekgBJDfwVgKMsxbQZlkYyvHeSaWft/iah/xmlFd53kA9o0rbztDFGgWkm+ZEmnUAIEJdfl+uy4rlLS00mi9afMifnuBESpQhcfPprlNlfgjUwX2oxJ6lYXM/Z8FlSz/ApcQnFWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mgpviF1q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ODV8cuM+"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=lYh6j74LAa+ERZg3LYzldvBM6FUrcS/3jU83qs+jMws=; t=1730811366; x=1731243366;
-	 b=ODV8cuM+boYWKKsvAhtCqqHhss4QuR2BYHOzLYwgv1n+a9ANUEmqv+sxADFQRKdRWl2fpRLqoF
-	gMNLhElfYxFY9ysbdptRZYCoZQ06YOoTYtY0UYO3g16SnFhz6p56HatLRvMqbMfv2l+p9DBMQRjx9
-	NHD8+pZin7gDHoG8MBGNSacv0OFh/B0mPIGSu2YpznJhHFXHYpRLHi+q9dbTrmGQtMpjym6SMitQc
-	f5cGgeXx/JPclQMj9rsAvCkEl1jv3gVzfxAeCqE13FZrUF9WO6ciEa6AG0gsV5+pn5OxR0wWsB2UA
-	IRgqbrT6l3023S8kCd9W6a1GxUP/rJgAJAp+w==;
-Received: from ip4d148da6.dynamic.kabel-deutschland.de ([77.20.141.166] helo=truhe.fritz.box); authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	id 1t8IOq-0001oY-KB; Tue, 05 Nov 2024 13:11:08 +0100
-From: Thorsten Leemhuis <linux@leemhuis.info>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v3] docs: bug-bisect: add a note about bisecting -next
-Date: Tue,  5 Nov 2024 13:11:08 +0100
-Message-ID: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
-X-Mailer: git-send-email 2.45.0
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mgpviF1q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730840413;
+	bh=7DjIR76eOBoytrPm/23R2JQ7MEykR4zadKrddJYbEHE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mgpviF1qNmnMO+UMnKwQxKm8qjNNQtG5N16itoelXyPeyam2vs2x0mOVgbqO1qLzv
+	 hvPjqCGHxiS9kvejgMK8Ypz5VypIUUjh8HzemsaoK8unY/4iFDDbrDNNdvAiJddGfn
+	 1bCleSzOpscECgxNdeWDhatCmU5I0tC4VvN04+1APxZjGPjJTAZ0nbZsye3+rkh462
+	 jLO0wBWM8Ije8AE2gXYa4a07cCBU4+DTwnwwK7cn2yEM4GvwjCr5KxdXUdNCN8pnqp
+	 NXoPsLWKY9VximQJvHuHqYZbQfHt7A54yVc7dkAHmxjKZ9qz/HVj0tRR8PN+nnnz0R
+	 0rrHCUo3RbEYg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XjghX6xtDz4xCV;
+	Wed,  6 Nov 2024 08:00:12 +1100 (AEDT)
+Date: Wed, 6 Nov 2024 08:00:14 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: "=?UTF-8?B?Q3PDs2vDoXMs?= Bence" <csokas.bence@prolan.hu>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the sunxi tree
+Message-ID: <20241106080014.7cba0b1f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730811366;c1366f73;
-X-HE-SMSGID: 1t8IOq-0001oY-KB
+Content-Type: multipart/signed; boundary="Sig_/KjGsKan83o_d1ALY=WtnG/A";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Explicitly mention how to bisect -next, as nothing in the kernel tree
-currently explains that bisects between -next versions won't work well
-and it's better to bisect between mainline and -next.
+--Sig_/KjGsKan83o_d1ALY=WtnG/A
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Co-developed-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
----
-v3
-- add a optional 'that' for readability/understandability
+Hi all,
 
-v2:
-- slightly change patch descption
-- make the text more how-toish to better match the rest of the document
+Commit
 
-v1: https://lore.kernel.org/all/20241022-doc-bisect-next-v1-1-196c0a60d554@kernel.org/
-- initial release
----
- Documentation/admin-guide/bug-bisect.rst | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+  bd4215c71992 ("ARM: dts: allwinner: Remove accidental suniv duplicates")
 
-diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
-index 585630d14581c7..f4f867cabb1778 100644
---- a/Documentation/admin-guide/bug-bisect.rst
-+++ b/Documentation/admin-guide/bug-bisect.rst
-@@ -108,6 +108,27 @@ a fully reliable and straight-forward way to reproduce the regression, too.*
- With that the process is complete. Now report the regression as described by
- Documentation/admin-guide/reporting-issues.rst.
- 
-+Bisecting linux-next
-+--------------------
-+
-+If you face a problem only happening in linux-next, bisect between the
-+linux-next branches 'stable' and 'master'. The following commands will start
-+the process for a linux-next tree you added as a remote called 'next'::
-+
-+  git bisect start
-+  git bisect good next/stable
-+  git bisect bad next/master
-+
-+The 'stable' branch refers to the state of linux-mainline that the current
-+linux-next release (found in the 'master' branch) is based on -- the former
-+thus should be free of any problems that show up in -next, but not in Linus'
-+tree.
-+
-+This will bisect across a wide range of changes, some of which you might have
-+used in earlier linux-next releases without problems. Sadly there is no simple
-+way to avoid checking them: bisecting from one linux-next release to a later
-+one (say between 'next-20241020' and 'next-20241021') is impossible, as they
-+share no common history.
- 
- Additional reading material
- ---------------------------
+is missing a Signed-off-by from its author.
 
-base-commit: 062d98be0e3f6dcf08e40a1101e967b2eb4fb92f
--- 
-2.45.0
+It looks like the SOB address has been truncated at a comma.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KjGsKan83o_d1ALY=WtnG/A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcqh14ACgkQAVBC80lX
+0Gw91AgAnPgNrgXvJmGCZ7Ch4OB6/Dio0k/IdHsOGM+h0Gk971RVxRSYm13Spu9z
+iZUK9ol0l8zd+kYs1YawWD0xPV2+158PqrFsHhbq5dy6NgkumG1XAMqqiqGHbwRT
+Fadrpq0Ek0m8krHInBD0d+Jd+EZkSrJiBvz9xvQXXiuolBL8pd4BtisV5fvN0DWE
+gZRsPMGaFpsnXVYjf4dtPFUyBQx+JQQVFyzpBc5veodHomzTppDNJyAe0VYgsoYE
+zW+xBwITuOvHK32Blh85T6+3eJVmFVp+VWpPmqukf49p7Tl7MHgP0YdmJ9XF6jiy
+jGzpiLDyArm8tGgYd+aqsOjbiTTrrg==
+=brfv
+-----END PGP SIGNATURE-----
+
+--Sig_/KjGsKan83o_d1ALY=WtnG/A--
