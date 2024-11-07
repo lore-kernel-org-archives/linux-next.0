@@ -1,89 +1,88 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2F71EC01C;
-	Thu,  7 Nov 2024 10:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FE61373;
+	Thu,  7 Nov 2024 11:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730976541; cv=none; b=MDOtVgyiZRz4k6CnUhiGFcfRT6Nqj7A1Wvi7Auftuf1H8y5fEHxWH7uTrN4v8rJ5yNbR2u+GL+sUu58P6urr4R8JtwdSSPc0QBN0FV6L4VnQzvvtavTHBV20KM7DAE2MCoq+wbJddtQSShCsSdW24AD2bYpgVHV5HW3UDb3r5ZE=
+	t=1730977474; cv=none; b=QrJqrbrceY3n/CTJvfIViyxURrsGYRxDyaZQJOfzDQhqa9SVWjKuBeRZfCdBKuLoPvFsmSscevNMZ3yjIDRHbbnRLAZ1YvijErl2ggpqhxYTSljpV0vO7dt7KotvBPGKgBmHD+9xrsMg4mKMQqzIa920S90HXTK12UFdf21fREs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730976541; c=relaxed/simple;
-	bh=69iIimEgXf9zlgND0EXFh5dTi5/vvprbNQ6RRKcB2no=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gn2L5fsSShHTDdC70x+S7WqwSQHz8dXu4YPCDdNfOBuBTW3ZalXRnX35SUbaHp2eUaMfOrT9O2JicPSQkByKxMOoVCpQXVV2ut9uXNjDI3YrCdN4L9Xd5RRBoTrb6h1sW8099X5ZhalXuE/B+bgrgOZSUNcg+T8WhkUuWstz2Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ReuwcC3s; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+	s=arc-20240116; t=1730977474; c=relaxed/simple;
+	bh=O6xIdu6aXdyfqeAwn1cksGsn6YfOCp8120QKSZGsaGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TACc5ZXZwfg4YJyV8tk6Hue5Zcqv67u8W+/5+r91u6l8KkT3xGPGOkRY9r9DTP+H0e5EgiigIM6+b28AbmROeo9J+Er5DZNAIqBvh460688OS9GxOLql7Cgmf9hiX4dOMeke5oHf6nsGHwjuhd3KDxq5m3sIiFRquKgFcOlNkQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=XueR0Y3V; arc=none smtp.client-ip=185.87.125.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ReuwcC3s"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730976535;
-	bh=7HukMj9yu7DbJv85ts35JBj2wkftKYiK/WmpCCdDNjQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ReuwcC3s7i1+VeDrRxjceA7li7idCGbZ6g14mFYv/dm1b7hJEFpQSkOoIDpwBKfpm
-	 ntkn356BqrcXU4y6fyeJHio0AChlmSXk2thFFuxlZx0dkM/wUDFETH4ylBIbR7ycP9
-	 2QRzMcMZiMvYcl/jPnt3/wcnL9u01ryuBmIaTGu9sfQ3uViLu3MWfI3EpwiGBmEXoO
-	 RzWtGsmajTcSFbDaSQsqM8+2WlV+4piYxau50S8XWVk0LUtNLILQjsWI2yMu+Gt22D
-	 anRG1gjBDm/84iiW7IFkNJ2u9NyKets2oFh5QUSI4/H5vvQT/d40dngQCSY19kIOpD
-	 bqCyYly6kvVqA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xkf2G6ndyz4x8f;
-	Thu,  7 Nov 2024 21:48:54 +1100 (AEDT)
-Date: Thu, 7 Nov 2024 21:48:56 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the pinctrl tree
-Message-ID: <20241107214856.36aecfe9@canb.auug.org.au>
+	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="XueR0Y3V"
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+	id 2F15440A06; Thu,  7 Nov 2024 11:37:09 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 2F15440A06
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+	s=odk20180602; t=1730975829;
+	bh=O6xIdu6aXdyfqeAwn1cksGsn6YfOCp8120QKSZGsaGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XueR0Y3VMw8+KK4pEAZX9yi1eQMUozbN1KhTXnGz+B2aCQHOnO9qSGxcFxs/alOoO
+	 yo2ePMtLnnuglc9dlZ56RHirHMhG5ofn7tqlRcbG3+oeTerNkwbreNI6HhFbnpzw18
+	 fMLnwA6FJPv6CPoCX9e5P/lTjEsGnkAMmoz/wvhk=
+Date: Thu, 7 Nov 2024 11:37:08 +0100
+From: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Byoungtae Cho <bt.cho@samsung.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sunyeal Hong <sunyeal.hong@samsung.com>,
+	Taewan Kim <trunixs.kim@samsung.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: linux-next: manual merge of the watchdog tree with the
+ samsung-krzk tree
+Message-ID: <20241107103708.GB4818@www.linux-watchdog.org>
+References: <20241107165933.3e8b5af5@canb.auug.org.au>
+ <a0e3d45f-d982-4961-9945-3c81c0380806@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TdBh6H37cagsI.9sgaJqNFe";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0e3d45f-d982-4961-9945-3c81c0380806@kernel.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
 
---Sig_/TdBh6H37cagsI.9sgaJqNFe
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Krzysztof,
 
-Hi all,
+> On 07/11/2024 06:59, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the watchdog tree got a conflict in:
+> > 
+> >   arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> > 
+> > between commit:
+> > 
+> >   ef1c2a54cbc7 ("arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes")
+> > 
+> > from the samsung-krzk tree and commit:
+> > 
+> >   3595a523d043 ("arm64: dts: exynosautov920: add watchdog DT node")
+> 
+> The main problem is above patch should have never been taken to watchdog
+> tree. I never agreed on that. I never acked it. It is against SoC
+> policies which are always requesting entire DTS to go through SoC tree.
+> 
+> Please drop the patch from watchdog. Or revert it.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-The following commit is also in the mfd tree as a different commit
-(but the same patch):
+See my other e-mail. Since the 3 patches were about adding a new watchdog driver, I indeed took them in.
+This was reverted and I can only presume that you will take the 3 patches and do the necessary via the SoC tree.
 
-  50dedb1eb1e6 ("dt-bindings: mfd: Add support for Airoha EN7581 GPIO Syste=
-m Controller")
+Kind regards,
+Wim.
 
-This is commit
-
-  f49f37f3cfe1 ("dt-bindings: mfd: Add support for Airoha EN7581 GPIO Syste=
-m Controller")
-
-in the mfd tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TdBh6H37cagsI.9sgaJqNFe
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsmxgACgkQAVBC80lX
-0Gxqhgf9E2bHBSNf8RPQR6NhnYud+8QiMhijRWZP6OrFjxgKNZS55keIuCWm1IJu
-Ouixi0NMMWEuDWhDnwa7T6YZJ61KZ+g1rMEXCQ1ugwH47aAnDeKviT7HZUJOIQ9s
-oLI43yCD3Yeia64LntRqEHAoWBe/wi9ZmWKxhCg2JaDwi/ck69g/N6Ml6mhHXL9j
-C2DRew+35xuxwzmIyaIe+cNTdkBuSCZSlpRNmS1UBGehOL0RUqWcGrOiF9/3c/5Q
-KE6rMOZeRNEuRtdZuv/r+0xKGC2FsnQG634dz+xAq+cM6plRB6v+FsIog72j7lQb
-t72rzCkpkipnK+kD7YA+pH3OVWEO5g==
-=xj1O
------END PGP SIGNATURE-----
-
---Sig_/TdBh6H37cagsI.9sgaJqNFe--
