@@ -1,84 +1,109 @@
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8D41428F3;
-	Sun, 10 Nov 2024 21:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963C613B5B3;
+	Sun, 10 Nov 2024 21:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731272978; cv=none; b=STS85bt80bAXJylo7o68wNUKueH/ZJeeoIK0qEpjHdcBQFzh6G1Rmlczoex93eY4/tKdc9RO4bfnG0mIaAPhzQxHPhYUtVer6s/OgGrMpp4SjlQIVWj7dgiBnmEpqCfxcA40bGHQ1fqLUe2wa10jxmTeIV5k1rh57s3bjDD7wBM=
+	t=1731273108; cv=none; b=HJ8FXt2SvSYOrp3/ezeF/f3aQLrYa1S7CPjfyuDsNZ25emfFEkP7ANg9lsUrb+CJ1KLjMyqcK44F/P3ptFnQFL8rEjj6X7/9IUjpcTwPHvZi2yT9ZsVZiMgVsr5YHd7+bdP3cW90yf4YsRaESG16QnI8O0XsxSrOV7bszDg5lNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731272978; c=relaxed/simple;
-	bh=PfVhV/C8CuUKT8Tdz4ou0DXImHGAPL3BZ5PFi7Ng6cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LoJkKaCwTOgQI245q3WfKPs9wmkBnY6TQmOYXxXAw/T+t5Ueq5GYJffTM6icDNkvujkb0JCN/4wmOmJORAZsuBjZ5ST7QVhBhpU2QtsiHBWTUefGhMWtiRvHttAUclSw6slo55W0gQvMDWdZV9MEX6Ej/ZVcc2kgttr60zkwPgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AV+3UAbp; arc=none smtp.client-ip=150.107.74.76
+	s=arc-20240116; t=1731273108; c=relaxed/simple;
+	bh=a4J7uo9TxeW8FtDXJbmPSbLXFQS3I9mjnOfhjSrfSxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=D7QJ/Pu7CNXt6l3bs4QI5r9RrEdaIDihC3zbu7EPWKI3lM3U6JbMQ4BiRFn98L0evcdffdR+VB1P+4qQc7wvQH5Qryp3VA4xCq8P8n+6hBf0f9SfzImJ47SvpTogXtWJa46io5oGnEekOyZ3dtIjP1043Ef5lv6RBN3Zv5/++Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PB5S4dZg; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AV+3UAbp"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PB5S4dZg"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731272434;
-	bh=xeP4ouQtHa/jWKkup+EzyZ61TJaSZso9w+wwv54o4I0=;
+	s=201702; t=1731273102;
+	bh=VtMuTVScREL3afjvScqlfgfzGi41bOMCt+hjmun4zBs=;
 	h=Date:From:To:Cc:Subject:From;
-	b=AV+3UAbp0+EZOWhilYIDyTae9qPaPn4IJtIYKtOnTqJkCzZig1YrTQpw+/Pvbst5g
-	 29B9Jy4fxOu6X7SP/GW/WJOSl6IUs1DPPfDSHGNaaONs7LTUyJrCGbthXSjVQ5IGL6
-	 vzkaXX7plR82sdg0ed2gyjXWZtxq+d7aNverW/jWKWC0//DIc0YPWsrxQhtPuFEuqF
-	 ZeHJdA/VHvo3ZWFa4rgjd2xVD+Or89JFcaJzS1sbxtgaJnxbAUifjCtnNekjurav7H
-	 WBq+mLcc5uxPIyQt89HEwPwCyBo/aUjLiQAw21C3x40pb5LydeYV7N6Nx2N6lZfBbO
-	 aT5pxcZrT+tvw==
+	b=PB5S4dZge4f1SMRDJr7mAvisVU8f8MUx+FvAwSfQ+DJkYoeox7PO6VpwO7bK1s5sf
+	 y8rbkKIzupaQaDaNfAznoclyUXyJkBMPoO4/7clgi90SZyWxO0ksn/UVelSdr7wydj
+	 B9trlUalZYb0tWLXA//tf2yEeBUZUhZ6QcviDOsmurg7vjxDvwKqUjbkPXSUH87Iz1
+	 ruF1cuGK9yjl4elwLoPA1cJBWdYV4EagdlmfvvlAdUnHxWOG0dEzpihU4vm+exKKFn
+	 7N5J1DnvPsBt6PwT4hrL/Apa5BS8z+eKmqDXgQnlBcp8VoNWcC6N1ek8LSt/rJywmx
+	 ZZHGs5n5hUIJw==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmlSd6kSbz4wc2;
-	Mon, 11 Nov 2024 08:00:33 +1100 (AEDT)
-Date: Mon, 11 Nov 2024 08:00:35 +1100
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmljV0z8sz4wc2;
+	Mon, 11 Nov 2024 08:11:41 +1100 (AEDT)
+Date: Mon, 11 Nov 2024 08:11:43 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the bpf-next tree
-Message-ID: <20241111080035.10b4609e@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the bcachefs tree
+Message-ID: <20241111081143.43a59204@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xddUmqdPX56PdN2.LTScwGS";
+Content-Type: multipart/signed; boundary="Sig_/HL7tMPx6yFE+eL_kP6ZMw7m";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/xddUmqdPX56PdN2.LTScwGS
+--Sig_/HL7tMPx6yFE+eL_kP6ZMw7m
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-  9a28559932d2 ("selftests/bpf: Allow building with extra flags")
+  aaf086c1ee35 ("bcachefs: btree_cache.freeable list fixes")
+  55fcef1f90d8 ("bcachefs: check the invalid parameter for perf test")
+  52dc307cb782 ("bcachefs: add check NULL return of bio_kmalloc in journal_=
+read_bucket")
+  83c67792c91b ("bcachefs: Ensure BCH_FS_may_go_rw is set before exiting re=
+covery")
+  85a62009bd05 ("bcachefs: Fix topology errors on split after merge")
+  88f16c7b82a8 ("bcachefs: Ancient versions with bad bkey_formats are no lo=
+nger supported")
+  9d3e24c46b19 ("bcachefs: Fix error handling in bch2_btree_node_prefetch()=
+")
+  dccaf5e5a6cd ("bcachefs: Fix null ptr deref in bucket_gen_get()")
 
-is missing a Signed-off-by from its committer.
+These are commits
+
+  baefd3f849ed ("bcachefs: btree_cache.freeable list fixes")
+  9bb33852f5cc ("bcachefs: check the invalid parameter for perf test")
+  93d53f1caf2c ("bcachefs: add check NULL return of bio_kmalloc in journal_=
+read_bucket")
+  ef4f6c322bf4 ("bcachefs: Ensure BCH_FS_may_go_rw is set before exiting re=
+covery")
+  cec136d348e0 ("bcachefs: Fix topology errors on split after merge")
+  d335bb3fd3a4 ("bcachefs: Ancient versions with bad bkey_formats are no lo=
+nger supported")
+  72acab3a7c5a ("bcachefs: Fix error handling in bch2_btree_node_prefetch()=
+")
+  fd00045f383f ("bcachefs: Fix null ptr deref in bucket_gen_get()")
+
+in Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/xddUmqdPX56PdN2.LTScwGS
+--Sig_/HL7tMPx6yFE+eL_kP6ZMw7m
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxHvMACgkQAVBC80lX
-0GySnAf7BRb6WVj0AvqPVr0V6FAIoTSTTUGuVWrowaMzJ44vcjXA4Fs6T5sj0Z6K
-ydCK05994Ukhzcaz5uPgZCAfOUtlwcBIoEFSmfylK/ZX0W6oiHAISf7tkyRtpmP+
-AL1x2ftUiCqXikqqbvlblRo8CGEcUoXff8skeFAdNLBl2ku8LAFV4SJ5sZMU7GDc
-YNiDhRdDjBJQ9/rhUx3iSKZ+BAhAGTYuuWqDgwzntt+meQ7ajzNdjNPShqleJQx8
-QiiuzrdY/WnyqlatxDDWruIvNoFtcy70q2ieUY0/TULmYYLVp9hvCiLokxgzIKkX
-ukFS58X5ENgRCOb0hvO8Sv11Yj9O6w==
-=kJfa
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxIY8ACgkQAVBC80lX
+0Gy+Ngf/ZcV7c32IeF+Nlvcut4voByccSWbqUE5eARx7xMFCN+g8hNfmQjw5AGIb
+i9kkvplty7naljth32WA+k6EFY72P/2+iq3TGgEhsyZVl7ndjnMn8DisudTjLklm
+z8PInhRCV5zUAlKJW1TITkTSNoPmOXbcHCarCFsZ1WPkX1nkrbcezlQU/nlOWBuW
+UT0ZhFlNeZCM333UaLgnPyWmPVKY7wuB8tOw7JZRmb3BQsYSTqTlMXyYhNNvQW94
+P8BouV4IXprk5YTEN6P5EsNv14/a/HCtbpIngcIKRleew2CZLkyFipVVlBzdt/TW
+yLWNMhbV5grIRA0CECgNxUnobWPbnA==
+=07C2
 -----END PGP SIGNATURE-----
 
---Sig_/xddUmqdPX56PdN2.LTScwGS--
+--Sig_/HL7tMPx6yFE+eL_kP6ZMw7m--
