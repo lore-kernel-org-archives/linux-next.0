@@ -1,87 +1,93 @@
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EA41428F3;
-	Sun, 10 Nov 2024 21:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34D31531C5;
+	Sun, 10 Nov 2024 21:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731272592; cv=none; b=lhKo4Do21So46Z6IpkAtpAHD/2PfuhO3zhYfsuUNqoB+jLS1ffBbeOWeiuacggVK4JWrKjACy07T6rwFHlbIulWcMum9LN3uLQp2zSq1Y6Jk+Fw3bV7ZPO7JntwjIGjM0+WIJywSLhskYSsfQc0mcDBPUWLX3RsWlHKJu5zuaVo=
+	t=1731272829; cv=none; b=Fbhf7PWySRzGRqjeLtkp9IYbyzPcEvq8Ul/fqF/jK+XcPU8yWPO0NXngeqQsx2FYoe4tjYvh+3/bixh/YixdFRN6qUOPoefIGB9nuMzsGPGwoYALGFHR+8y2IucjVGfyFT8NH1VNkQ/OOm2rHhXydoQ0WHOiJkGXT6b+7MyAJd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731272592; c=relaxed/simple;
-	bh=ILqtH6M/KDrLXFNAEd/l+FdmZWzWFYk+QlPMDrOOmH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lNwzMyYZrZy99KfT7EEact1lc7LYDvuHqrqYw5i5Fe2k6xY5ojR8Gc2SWzusnK1ZptgS6MBTn4fLjlRM5mbCJfdfZIGXvpIe348I1HPdHlEQ9Kj++WLVQhVY8oX3q0TMyU5NgQFkHn+r4Vad3gDSr+F7f6pS2f8NTC3LhGvtXps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uLG0/niA; arc=none smtp.client-ip=150.107.74.76
+	s=arc-20240116; t=1731272829; c=relaxed/simple;
+	bh=e4bhIlqSmzoreoABky4hRFGDDd3xhqOr9evl0Ug0trk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cHjKhcdf2C2r+lEXGUvOCqSRmrRRKCOgtSeUmg0LwZbif1TzXzDw9CxvJ7ipqQL5EPU3huR3ty8WsleasP5vRWJAUZpIkck3Wu7APQk/L/nQhMxTRmFt/XZeBvMmQVxBM1g/GT16ntIebWfvSSZ4nAaVo6/ZGYvJfW5yvgrUzYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hGXTMhsb; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uLG0/niA"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hGXTMhsb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731272584;
-	bh=jF+0KS+HBap7O6Srm6X7rD9XclIA6lp7C+uo6Zv0eh0=;
+	s=201702; t=1731272822;
+	bh=PTS0ogbTlTcrdot10CqPoG9xoSvtcchg64FHPVoIvrM=;
 	h=Date:From:To:Cc:Subject:From;
-	b=uLG0/niAe2a8DrWzHA33X5rlQ7tvZdabwZruC78pX+yTR0QydbdwwfYW/nhWfi0X2
-	 Rwk6b0gDtCJ0LMfYLmvh+lzSeAW46fIQsm5KSDaa3nJQtmauy6gzdLg7PxybiApYC6
-	 wgg+kweji74g5k3I4ebeqzXmOae3/cfMtf2D8hLqDVetxRkttWBx60A0hgquamVhem
-	 bJo/DskWmuz4DDz0pSXC0jEIodzysDdm0yxhN9BZixHr63XmECxjWKfWKrSBZAwgeU
-	 rS0hD8mLjXJvPz2nKjWem/mHDpJIXR8cXuex06zPnfwEN7sKXkQ/uPDVc7vKo+GIlF
-	 9qozHAo1NvWQw==
+	b=hGXTMhsbjLQVGbOVOwk2MM/8h1NrRwVvFut0q51fqDy3gfNOLFUObMqb1RBKhMbQ+
+	 7w5VRh4eqQYwu+3gWGDvyY9HhyHiFLP/gvjX2eHt9e20gvvcZsoa3J6Mq/JXsPgeEg
+	 sYVUXRMHVeh3f0Y5sMsbNNzPC+fq9OVXY3qWahQN+SA2BBoSGgloR7HXidbl/R6HTq
+	 PndlLCvQ0GObMNVGKIIKPPDclIbna18n/QTrYN0+xBW45gQtYlaarOeDoMatVVHtuz
+	 qThRiFvq/DJy/9HNHN/hl/bMiklqR78iWRqAQvz9c2MsEqYV6XhEo80htDtkzzBjVE
+	 ODE703jOou+IQ==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmlWX2MGHz4xDQ;
-	Mon, 11 Nov 2024 08:03:04 +1100 (AEDT)
-Date: Mon, 11 Nov 2024 08:03:06 +1100
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xmlc63R6Gz4xFg;
+	Mon, 11 Nov 2024 08:07:02 +1100 (AEDT)
+Date: Mon, 11 Nov 2024 08:07:04 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the v4l-dvb tree
-Message-ID: <20241111080306.63eb2ea4@canb.auug.org.au>
+To: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: John Sperbeck <jsperbeck@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the kvm-fixes tree
+Message-ID: <20241111080704.705b2050@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dQ=USKK131M=Z4kZtdXlUZp";
+Content-Type: multipart/signed; boundary="Sig_/SLIa2pi.J/wzZtR97rM3=RT";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/dQ=USKK131M=Z4kZtdXlUZp
+--Sig_/SLIa2pi.J/wzZtR97rM3=RT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-The following commit is also in Linus Torvalds' tree as a different commit
-(but the same patch):
+In commit
 
-  bfe703ac0c9f ("media: dvb-core: add missing buffer index check")
+  10299cdde869 ("KVM: selftests: use X86_MEMTYPE_WB instead of VMX_BASIC_ME=
+M_TYPE_WB")
 
-This is commit
+Fixes tag
 
-  fa88dc7db176 ("media: dvb-core: add missing buffer index check")
+  Fixes: 08a7d2525511 ("tools arch x86: Sync the msr-index.h copy with the
 
-in Linus' tree.
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more than one line.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/dQ=USKK131M=Z4kZtdXlUZp
+--Sig_/SLIa2pi.J/wzZtR97rM3=RT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxH4oACgkQAVBC80lX
-0GzupQf+PmavADSKX4c7r2c5ayaKnct5dqqA+f5X/Jw+p2lg8OYewRc5J9XEEWnF
-S0VHGpE+OXqz/F9ojuTU7mUDf1dzkZmcJYNPcKNPtvxMbjIypnVTukfhOxTR4HvW
-9G2v3cOmPm5jyQQQeoc5FTBjNRd/PnLGBOegwoBkBtNmJrhZxaUhBsRKPEFNwh2W
-iGyzAm7JVpxDFSyETj8Hbx++DXXEh60kQj7SxdAOPzkyI1stBu1TX+bSjxFzFZnT
-9iDxNsvKbYaPgbNCRXbc7jSADnWyBRBadjO9KGO2CKtPNcoRPckSmYD1RWLjrcmG
-EYs4YD6K5Sc+mCwls6IKlqxP75zG5w==
-=QoU5
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxIHgACgkQAVBC80lX
+0Gy7rgf/VbpoGOhDjymYizlxOGYuGplYWbrKViDto581SVQT3DZaYdzwgkfUPGKI
+J2Z76rxFXivlSM48wVBVJIY6GFSwIJTStO24ErGRzY+tZ1esF/ES24ljugyb9ZS6
+2E3C8BjNXZHDCzSXhxpqke4fIqeggYLyAATkeL4OgEcpRvduILhq3/gZDuznOGhT
+WE+piUKmbARmxyrM78a3gtxaHaSkFn4GEUvyprl3vFEDjnSmVtdVva/+VlfWtlSH
+3v+9QT1pETRDBPviFUQTkCo/gRhabh97soX4GWW28zMMtfnNwiTiNpo8jkM0fAIU
+d8LWkoddH9XKnWSMYtuIRCN9RUEJwA==
+=X0lS
 -----END PGP SIGNATURE-----
 
---Sig_/dQ=USKK131M=Z4kZtdXlUZp--
+--Sig_/SLIa2pi.J/wzZtR97rM3=RT--
