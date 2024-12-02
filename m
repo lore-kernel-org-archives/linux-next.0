@@ -1,75 +1,54 @@
-Received: from pokefinder.org (pokefinder.org [135.181.139.117])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848F213C836;
-	Thu, 28 Nov 2024 06:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.181.139.117
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57119257D
+	for <linux-next@vger.kernel.org>; Mon,  2 Dec 2024 01:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732776499; cv=none; b=m1Om57vfvfYbLSuut0YMTU1nYU9Zjm+3TytrYBoHLHmnrv9TAbA9wpj9R/WFS/7N//DcMIwnY17p4wu0XWtNr/q8QfHCBikxyxnZffHwLwgJ+H62dJUbKkHPyrNXy/uEzpDNX+Ej2LtRB+aZ9m+jF+TnSCT//wq9CcMlXZoyEPw=
+	t=1733103116; cv=none; b=Wnbg30L7fWbdukVzltQVV++h2I75WBbZGlmpUEX45O5SJdtKnXAVqs2CNeAojk+rF269mh4sLOXG7/tQ0BWN8UO5Tp9JtANvsKfvK1a2326cw9IpTv+V1TtnQ/ythnjDE2cXonWeO1AcNoATwXFmr0sHqRy6CTTMbddvTKWZpbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732776499; c=relaxed/simple;
-	bh=gW802znw7yCiNjhzCYoWX42m+OHGOt22YMnVketZuXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P6Mba/ixNQOZoJ0kbFytH0SPj289zA8JrhabSLiltd+mS8WFzqQVNfHwPHMOqw9yFbWfcRSMHLHPp4yWYhNlt/v3Ro4d+AgbPPMDtPygO9M2DkXGXTCLyOqP/Z/veFHcxDOWIrRkJWGgeO49ATkU2wg9h6TP6TOMOFyoI/vunxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de; spf=pass smtp.mailfrom=the-dreams.de; arc=none smtp.client-ip=135.181.139.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-dreams.de
-Received: from localhost (i5E861614.versanet.de [94.134.22.20])
-	by pokefinder.org (Postfix) with ESMTPSA id CF421A42CCF;
-	Thu, 28 Nov 2024 07:42:54 +0100 (CET)
-Date: Thu, 28 Nov 2024 07:42:53 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+	s=arc-20240116; t=1733103116; c=relaxed/simple;
+	bh=rWvB4QzuUT5G/hjb40/6F18crPzRcYaNLoCybQttyZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BxS6gC0/7IWGJOvL4E701ywT1ed4HZEHFv4kN4qgK2Ah54TT1Ds5x6YOXAod7ox97MwuXZkW/BWaSOEz8GnCOe/oOxifa1/d7cnloQ3p/xRGSIaBSTw9wIuBqw9Yy7innIEhCn4RlcbeCbmXn41xZbLlS79pe0Ib2PQodbbdD9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDb7pR7q; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDb7pR7q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF01C4CECF;
+	Mon,  2 Dec 2024 01:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733103115;
+	bh=rWvB4QzuUT5G/hjb40/6F18crPzRcYaNLoCybQttyZk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nDb7pR7q/NobhxIqOWPvOPLGfxhOT1toM7N70aCc/q+iSa50QPep6EPASqZoBOo9X
+	 pA/Rdjl3UKbfPvBiGp4eiFntAZ4pNWjpaYqTc6hLFY5ne02kqYptC3VmMNbVBvHYEw
+	 ya7vDAcTR0toKR/9fa3pZi/FqnSVMbivV7bmkydArsY+DAj3qqvreW0kYer/SIezcV
+	 B5OZkenzjVa4N58m6KbFGAQgPMChDHgeVv153YZsYnCcVsn/hHpXkmsoUoNpSEc6lH
+	 0BrOr9QiGBbApLBvmqHPIK/7lNjqrrj5ng90oPKDwFxxvWQyBPU0R6kEY4SFZxtC27
+	 orpI9Pz3++6Pg==
+Date: Sun, 1 Dec 2024 17:31:54 -0800
+From: Eric Biggers <ebiggers@kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the i2c tree
-Message-ID: <Z0gQ7SOJZvSn2Osf@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241128130748.3949c5eb@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Subject: Add crc-next tree to linux-next
+Message-ID: <20241202013154.GA25618@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="B9sBARDz7sthjgRu"
-Content-Disposition: inline
-In-Reply-To: <20241128130748.3949c5eb@canb.auug.org.au>
-
-
---B9sBARDz7sthjgRu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+Hi Stephen,
 
-> drivers/of/base.c:661: warning: Function parameter or struct member 'prefix' not described in 'of_get_next_child_with_prefix'
+When you have a chance, can you please add the following to linux-next:
 
-A fix is already on the list. Will apply it later today.
+    Repo: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+    Branch: crc-next
+    Contacts: Eric Biggers <ebiggers@kernel.org>
 
 Thanks!
 
---B9sBARDz7sthjgRu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdIEOoACgkQFA3kzBSg
-KbYN/A//S7r02jFpJRsZzfJOa6Hu8oUlPPLIL3X1XwaVeI/y6uUAxJ/FuDlZbxGk
-QPqzzOG6RXgn9e3GCL0ulxr69dxbbcOuYsyX0e6vfrhlTRbfOoy9fvob2cMtAqkG
-C2gNOZ6vqlQp2VtRGz1LajlPefLFV6dFgV+w/hwdP+S9drX94onSozMV/Jt/7rSz
-/Pc9tBbL8Vd71KU395DeMXbNeRY9tKptUU3ON74nPrjR5dh+rHeqBAQPu9+oVSRE
-ZHvAwk21vAmfDSKllJREyGcOnR3ambpFEVy9iArX3uYrtAR0S70484FeI+EcMzt/
-5k0UCb8mFr7S6bOTxtBZmRFqz5f8aMOZ3E350bZ3ELZNjJ4VVlbIifM0THjrFVlE
-svvZ8TePRlgDhYPx5UppzHtBlEZJW2UVMNSw6JnIMUmn+nilwHjUrubEUqLJzU/C
-5kQoRuAMXzUtF9/Le3QEkTFpejoL2/Z7f/Dv/h0j1Sovrgf7lGtCbMcj6MQZWyT4
-tpuy1w6Pz0b6FTB7cH/emfHll0RdirXcJwGUoHvEvMsrFeoN9EOpaeEjNqDHWDUq
-rtrJnBTzviZ2HeHhnLp85vi7Fmm4mdEZMrGYqMJZ8RTnB5jiAtH5oEiV5Uy7jPNn
-FF9WcUf7W9avdc62iiTGUkdoXdzUxFYv5kG7L4gP5/WjVdEGqV8=
-=Xl4r
------END PGP SIGNATURE-----
-
---B9sBARDz7sthjgRu--
+- Eric
