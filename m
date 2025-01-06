@@ -1,100 +1,146 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED5A1D0F62;
-	Mon,  6 Jan 2025 05:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DFD8C1E;
+	Mon,  6 Jan 2025 05:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736142396; cv=none; b=Y25p18AgX6jLMooIfbubX0cAm4wIN0zCQdvsT7hFM5sX2XNbuoGV7FbVJ6iCj0g+Lngdysa6/hCaabaA+lstDk4yporodvJUbvsMSvRvySyGOzOA/Eud755QMJzzhbBf/3o7GgJSG7vbsvRdiBZtSvWnzNbia0bHdbyQKCjot5E=
+	t=1736143163; cv=none; b=SLHrI/nV7H4B1I+DYQZ4AJEEnlIjlU4RuXmod1DwIYziGgAOf5RsKiA9axlIYXEG2zFsFEQ8i8rOk600jHS3U6uuafI2fzcveHcTqYoOiHQuK5d+wBM56rIJwhXyDuqexs+FpyZ8snn+VmlCcLRuNQ6JW86AwVs9rM5ijGNui6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736142396; c=relaxed/simple;
-	bh=leD9MENYNTMk76rajE2E8MulQP3FwIHytDMURir9RPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NkejVmJAWeUwjdndxREckO7npPGGcyI20hO2DfCFmlHVLcmS9drv9eFLgL+Bc/qxY03wtTiJ6z2buxzZNI4SfO9ajUIo05AmTiixKHucaCIq5KFuf+qAthMMZlY4DZZaEqLR8b/UgN+CeBD17r1D50EJUIprGRnun/5r0YvAnjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lyal909r; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+	s=arc-20240116; t=1736143163; c=relaxed/simple;
+	bh=hMuVyFYYMV3fgnz0zm0lyJfZ8DHralq/FEaQK6jMzRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ImWkheotr3P8gmpmycchMQN20MU/+zuJGAuLAR0naejjcigcfYhCYbJfOpeWZneat6FhDiVcPXJwJqvs2kgBV0WlMSvHJWw+9UHrYetuoIoynvqcJAyr0HxZuYYhhFB5NP+TbY12TDenXH5nqzeqgqjUjNLeEOs/49UFvVm68Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dAHv3mx/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lyal909r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1736142384;
-	bh=3xgQZPj+VEizHtdG+0oJG5lBO99j9G6sgT3pL1Ou0fU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lyal909rlXXSzRtWq8q1iz00m268fbFlxO8lyL4VNfaSex3NmSMORLcJYgK7Ste68
-	 QBRe2+GZoXUejstg+6O53anGLF0VezZIZFJBV9pJmZIlzJdaTk10b9/M2P+0+n+o3N
-	 p7U0z0UkZoAI3ZHsbGZ/tyDkqIS8Obn9lGX0zCzI5SeEcGy7RrTWcVf9OSydZzc7gJ
-	 7vADj62l+oCr95I5tE6Iknpb4cQv6EACUcOS3/wYdHl5tY16BDa6yKh842OL50jTbJ
-	 Qk9nVmhJd06wPAjwvv1M4ULx11LIBIbjmWhXd2Z+pWPM7pmYhjsZE+O88hm3FGhQdT
-	 hipHuZ74cnA4g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YRNTX1bWRz4wyV;
-	Mon,  6 Jan 2025 16:46:24 +1100 (AEDT)
-Date: Mon, 6 Jan 2025 16:46:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, Frank Wunderlich
- <frank-w@public-files.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Message-ID: <20250106164630.4447cd0d@canb.auug.org.au>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dAHv3mx/"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50610FaL017083;
+	Mon, 6 Jan 2025 05:31:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XJ6gFo3lcT8PSgi80zIm5qWmu/Qgx+ePQVYeNFMKsRk=; b=dAHv3mx/DHBz0Qs0
+	FKERcPeJWqTR70/Q0f8BA1jk4n7ikkdpjIy1GwnfW1xejVsCNL6l2qLc/13dwioW
+	saxHh1ivp3L2CUOjmDtOl3bQPdncjACaoJ9P+VSbNmFzHQZUbNWAJ6br8zte07g3
+	sUTQxzCRC4htDZqA2+3qxBy/fpHC4JBVh2MOgupDEzAwpLcTTbIhN2cHtzyEl6ua
+	zSgcCMUFRHBSL6/YPZzUamw6uRbT9IH+bm+dsouPGzHGtHNQbeQ4vy/4ft7x/9w4
+	3yiAUAbZjuGXSb9QO8EhamsqzVB4jRvvqOjZcWCBZmkSCaZqsN7Ujq9bEtVafXor
+	E0xyrg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44054eget8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 Jan 2025 05:31:34 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5065VXuo030571
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 6 Jan 2025 05:31:33 GMT
+Received: from [10.253.37.44] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 Jan 2025
+ 21:31:32 -0800
+Message-ID: <a1fd1874-5c29-4fb8-b8cd-6833d87ec0f3@quicinc.com>
+Date: Mon, 6 Jan 2025 13:31:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/b8ypKZdt6Ohp4ya=tg4e=NG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        Lee
+ Jones <lee@kernel.org>
+CC: =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+References: <20250106160451.277432a1@canb.auug.org.au>
+Content-Language: en-US
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+In-Reply-To: <20250106160451.277432a1@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sVqLmwN2CfKY3cA4jnbXCIm1qKMuMkv2
+X-Proofpoint-ORIG-GUID: sVqLmwN2CfKY3cA4jnbXCIm1qKMuMkv2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0 clxscore=1011
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2501060047
 
---Sig_/b8ypKZdt6Ohp4ya=tg4e=NG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-After merging the pinctrl tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c: In function 'mtk_pinconf_=
-bias_set_pd':
-drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c:606:13: error: unused vari=
-able 'err' [-Werror=3Dunused-variable]
-  606 |         int err, pd;
-      |             ^~~
-drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c: At top level:
-drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c:602:12: error: 'mtk_pincon=
-f_bias_set_pd' defined but not used [-Werror=3Dunused-function]
-  602 | static int mtk_pinconf_bias_set_pd(struct mtk_pinctrl *hw,
-      |            ^~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  1673d720b7e2 ("pinctrl: mediatek: add support for MTK_PULL_PD_TYPE")
-
-I have used the pinctrl tree from next-20241220 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/b8ypKZdt6Ohp4ya=tg4e=NG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmd7bjYACgkQAVBC80lX
-0Gx7Qgf+KV0woTIURPXqafOT9GOblHtNa+Lm2x/+zZoSTdHWswe7WhPqWe2R5W1z
-BPsRL6SqpM/z/e4ZumC6PIU/PD1+O6PMyiBD1pFzU4K3r07gIsdxQiHnAaJ5J5Si
-PUu3f6Z6YdeEflfebUWs6mCe0zuijzERcR4CGikSLSjyn8MqGEvuWfgtLwV+yV09
-17SM63vSVIUzUCEX0ConEOs0FMIaZiVYN14LuZCJ3p1sfqzO7+VW/5iO+ufcZeVE
-JCqtKNqFNnyN2GJWM+ZIkSajfbDE2cG8T6tA2+aGDxQ2Zh88giqn5Pxg3xo+gjv0
-1sgXDD8yukPyWXa3r+6Iaek36sDCwQ==
-=M/ot
------END PGP SIGNATURE-----
-
---Sig_/b8ypKZdt6Ohp4ya=tg4e=NG--
+On 1/6/2025 1:04 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/leds/leds-turris-omnia.c: In function 'omnia_find_mcu_and_get_features':
+> drivers/leds/leds-turris-omnia.c:457:56: error: passing argument 3 of 'device_find_child' from incompatible pointer type [-Wincompatible-pointer-types]
+>   457 |         mcu_dev = device_find_child(dev->parent, NULL, omnia_match_mcu_client);
+>       |                                                        ^~~~~~~~~~~~~~~~~~~~~~
+>       |                                                        |
+>       |                                                        int (*)(struct device *, void *)
+> In file included from include/linux/acpi.h:14,
+>                  from include/linux/i2c.h:13,
+>                  from drivers/leds/leds-turris-omnia.c:8:
+> include/linux/device.h:1085:49: note: expected 'device_match_t' {aka 'int (*)(struct device *, const void *)'} but argument is of type 'int (*)(struct device *, void *)'
+>  1085 |                                  device_match_t match);
+>       |                                  ~~~~~~~~~~~~~~~^~~~~
+> 
+> Caused by commit
+> 
+>   f1e8bf56320a ("driver core: Constify API device_find_child() and adapt for various usages")
+> 
+> interacting with commit
+> 
+>   b4c3960da27d ("leds: turris-omnia: Use command execution functions from the MCU driver")
+> 
+> from the leds-lj tree.
+> 
+> I have applied the following merge fix patch.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 6 Jan 2025 15:58:47 +1100
+> Subject: [PATCH] fix up 2 for "driver core: Constify API device_find_child()
+>  and adapt for various usages"
+> 
+> interacting with commit
+> 
+>   b4c3960da27d ("leds: turris-omnia: Use command execution functions from the MCU driver")
+> 
+> from the leds-lj tree.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/leds/leds-turris-omnia.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+> index 7d3b24c8ecae..4fe1a9c0bc1b 100644
+> --- a/drivers/leds/leds-turris-omnia.c
+> +++ b/drivers/leds/leds-turris-omnia.c
+> @@ -438,7 +438,7 @@ static int omnia_mcu_get_features(const struct i2c_client *mcu_client)
+>  	return reply;
+>  }
+>  
+> -static int omnia_match_mcu_client(struct device *dev, void *data)
+> +static int omnia_match_mcu_client(struct device *dev, const void *data)
+>  {
+>  	struct i2c_client *client;
+>  
+LGTM, thank you Stephen for this fix.
+Reviewed-by: Zijun Hu <quic_zijuhu@quicinc.com>
