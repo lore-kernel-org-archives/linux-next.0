@@ -1,68 +1,67 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8053C25B68F;
-	Tue, 11 Mar 2025 14:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E623625D908;
+	Tue, 11 Mar 2025 15:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702913; cv=none; b=PNwc09HE7PhsbJMJX9hi1Km42zPBeOZJfhxnbI7kMxFokcUpRxY5t7pFEujwpl+3gwA3ofgCvlSDWu4VFXt4rBHAH1B9F0yIZRT0ONXfkHsXMW/tBB7L3WElZXJVd3Uu4bjJpjS3dwKgsqkpITn5LYFyVBvDkS5Kxp0oRKkR/s4=
+	t=1741705502; cv=none; b=Ov3oTmRqXgp/ySdsdyjxICTr03NrEgWe84azoHVnPasRxsWf9fIQfzTzV3+fbMESYAQiIjFfteiSJQRh8QxDm5KZrPxry69/I/HfonY/Z5WW9xHwsmqr1EofZqtAglMfbiLsWnNvfTEcmREJXF2qdOaiNTUzWUleGy7Yzo9AIi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702913; c=relaxed/simple;
-	bh=gnnxfXrI/j17ReBUFkKwGmj3BFF/0mbRExyDYdjISKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mnBuYaB3o45xT7XiUrEZ/1QnRCr4nPKm1+M7OyfDmFvvldD2+R+NfLy4J4LNaqE8X/aGTosP9v4u9ULHY26oiNkVucH57ptEb+9vtW0Onq7Mj7QmxVYD6uORzzB7ba1r/f1hUWsY++4JyeUrGrb+tv9laBbCnsPLs5A0C4FT/BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C43DF1516;
-	Tue, 11 Mar 2025 07:22:01 -0700 (PDT)
-Received: from [10.119.37.172] (unknown [10.119.37.172])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 725473F694;
-	Tue, 11 Mar 2025 07:21:50 -0700 (PDT)
-Message-ID: <affd759b-d84a-4aaa-8de2-812558f1ff49@arm.com>
-Date: Tue, 11 Mar 2025 09:21:49 -0500
+	s=arc-20240116; t=1741705502; c=relaxed/simple;
+	bh=hVRGAaROVstkuDKcIwRl5NfstUXXW5m6OJ5hohHyGd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BompavNeKbmpFSvMZtEmYoBlRVIkIfnzeXstArEwYV/vZOQYZ4Hv7BUqJC4ptq55uQm3fDrsc2mo9reWGNrRIR6UuXwVndKJ7uJCuSbT9mt/z/CypPJ/UNG1F+x0PsTylrIkC4YVCYO5SkFZ63f2pLzu60acYaPkmk0YtsM7PuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fW0qzI9U; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fW0qzI9U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CCA4C4CEED;
+	Tue, 11 Mar 2025 15:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741705501;
+	bh=hVRGAaROVstkuDKcIwRl5NfstUXXW5m6OJ5hohHyGd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fW0qzI9Ug1LUYTGx2ldIkXjmsPHXN6o1Us204AY/fdfW5KgMD5V2Qwz6eLouDAkxP
+	 kSv2QTWMGCU+xJNoejzgz9xE0biRkUfj3rlfNnIhIilYx9z2XoZNE0FJjtpDnCY8Gy
+	 RW7E0EIfFev76w4hcGTkdr+iH2CmdOHvfhwMIDQE5JMLAoHnq0WyDUgSg8BghLW/Ta
+	 RUukNYdTrfn72wYxfQx1WEv12lgtbWkSWH4ziF/c1wyk8pk/jgBjF2/2QjFjCU97Fr
+	 7Y3yhmQdKSgiIIQ164jcaWX6wAmMSV6Sel7oqrozX3UL15Ht42HVPLnotkcvDYfyeI
+	 PgvKN/O+xSRXg==
+Date: Tue, 11 Mar 2025 15:05:00 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Helge Deller <deller@gmx.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Wei Liu <wei.liu@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the fbdev tree
+Message-ID: <Z9BRHCZq_iXN818e@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250311143021.0cc40c0e@canb.auug.org.au>
+ <efa8ffb6-2d6f-4007-94d9-2e41b4e7410a@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the tpmdd tree
-To: Jarkko Sakkinen <jarkko@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250311210011.18b7ab80@canb.auug.org.au>
- <Z9AMEZw1dm80mwx0@kernel.org>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <Z9AMEZw1dm80mwx0@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efa8ffb6-2d6f-4007-94d9-2e41b4e7410a@gmx.de>
 
-
-
-On 3/11/25 5:10 AM, Jarkko Sakkinen wrote:
-> On Tue, Mar 11, 2025 at 09:00:11PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the tpmdd tree, today's linux-next build (htmldocs)
->> produced this warning:
->>
->> Documentation/security/tpm/tpm_ffa_crb.rst: WARNING: document isn't included in any toctree
->>
->> Introduced by commit
->>
->>    115be78c0bfe ("Documentation: tpm: add documentation for the CRB FF-A interface")
->>
->> -- 
->> Cheers,
->> Stephen Rothwell
+On Tue, Mar 11, 2025 at 07:22:00AM +0100, Helge Deller wrote:
+> On 3/11/25 04:30, Stephen Rothwell wrote:
+> > The following commit is also in the hyperv-fixes tree as a different
+> > commit (but the same patch):
+> > 
+> >    f2b558988c7d ("fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyper-V Gen 2 VMs")
+> > 
+> > This is comment
+> > 
+> >    304386373007 ("fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyper-V Gen 2 VMs")
+> > 
+> > in the hyperv-fixes tree.
 > 
-> Stuart, could you send a replacement patch and I'll repeal and replace?
+> I've dropped that patch from the fbdev tree.
 
-Replacement patch is set.  I just sent v7 patch 5/5.  If you need me to
-resend the entire series as v7 I'll do that.
+Thank you!
 
-Thanks!
-Stuart
+> 
+> Helge
