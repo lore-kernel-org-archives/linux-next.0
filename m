@@ -1,83 +1,41 @@
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F66824BC09;
-	Wed, 12 Mar 2025 17:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA6C1ADC6C;
+	Wed, 12 Mar 2025 20:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800054; cv=none; b=gjByeObuccBZBt3mip5R8ShyvEzdzgRfkbg8DoVIelcNT9nx1186jM4uRX6uEF5/9BaBdfSIjXGN81A48QS61fIvZWgREm3j2DfPMgeep3D86vCtHjr88pjGTj6p/KLe7htwOmqN8eMGzR8QnqXEFX2GYAmps8jJsAI48QdVpZM=
+	t=1741810055; cv=none; b=fCkJ28muIg8r3UgJnfa3PyD6c3wB3LDfmDTZ2ehL0x/opuAUugfvEDTeji3IYALtzILQUKuf4HDkxDP8/uSE00TpXFlk6tUBU8+CFXgnuWOBK8AMoBlYkJqvVVLMt2rEf1m/uSczkpP4CFV6scN111+0zjqBMuBnTVcOozIJMSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800054; c=relaxed/simple;
-	bh=5O13yplnFhNunuhJ3wr9SnEC4OAOFAhqMT5eu6N73PE=;
+	s=arc-20240116; t=1741810055; c=relaxed/simple;
+	bh=AAj1WohNGpVntpbLCYIMfXYBSA1bw1W1ywTKwXFLj1M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kd9OjFLRscck0CL2c9RnlNgheFaHnRbsd9V1HVtBi6vpC/qWcv93diPx9uEmUA/Rma6ExR60YATHJi6qXE06v1+GZ8TKIRez8W7HWZJ4SnYCkp9aLx3UBnqBreafBjcd8SmlOd4574EOcabQYXk2+Cwm5WIHccjH6S5yYVN8gsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=ESlNCfYp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oOLWqqPe; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLDwYFG0MWouCxGmaJIkEk0gzIzTchM/GEnIikKxUVUPfcZ2qn5a1/lGndv3UwJFAuk+xIMC4BPOKxLQRWdhEzNKeXxFvhlTi2ap3fU8YOxcKsU/APxC1VqWtxLswUwDS1CaUnUf8TXRU5ilUFS0wfNwOE3zt8EzJytaCjw8EuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbzIfjSt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ESlNCfYp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oOLWqqPe"
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 62EE125402DB;
-	Wed, 12 Mar 2025 13:20:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 12 Mar 2025 13:20:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1741800050; x=1741886450; bh=1/6diSKHHw
-	xZi7Q5f0dDcfiEIdTViztZvS+b3ZuEBj4=; b=ESlNCfYpliwTi2JDBB7PwCYBG4
-	nzmaU6WeWt3AkReAAsYyW15A6sjGyrEt7n23ZGbQXjQ1C9CGIXqlOLumP2JvT/bg
-	ddKclGfAIYBn2IawSrrNTSX6v3L3OL6MXLo7hKJRTDV6VSfQ8Rb0te3gwq9ByLXS
-	IpPkdSJf8vikV9gze7knWG9YCT1x8uVaVU4ioVSwmPkcAT9ZPrqQ6ewNd8JdV+jp
-	1nbxl04O7uFGbnIKzhROArhKG3cNZMVYCuHjdLE4giHNNesA+BGSUmEE4ibbPRZB
-	RgD34z5NYsuqxu2FFde/8wfA9zuYo58lN0xhqL7ODOThdj1zZyukgPTgoBBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741800050; x=1741886450; bh=1/6diSKHHwxZi7Q5f0dDcfiEIdTViztZvS+
-	b3ZuEBj4=; b=oOLWqqPel1N9bBe3316fSDcmCy1MYoAldK2Da47If9fuiiFOC7h
-	GBSWJOayA1Ma+9WqsOmlp8nLp3JQHP1saTstjXqK0/2CDt7wL0EtRW3vOA2zLSkH
-	uKgQL1hotGJ5ng7eALG5gYc0ag2NbbBhIIlhbife6y7sQcQSj+Vs0lVOny2xirAY
-	DBIwDVghg5Ue4kkSGwg4iXSEndF8D758syoYbR2Nioc7Z5Mn6CuTEkCGahg4vbRc
-	B8oNo8HKaLXMv9AYYe3hfs7R8xy4BDfqaCnEOyhwbzkdnHep1Db94yNiQgIWIJB7
-	vB2nkRi0scHA4O3s+eFTMwU0rsxyzvMOYjA==
-X-ME-Sender: <xms:cMLRZzVkCojzny6SeSOWfgK3IY8Vw-LnhxzERX62YgzrRhqCG6w_Qg>
-    <xme:cMLRZ7lkRuF0V6Yg3INZDebcAaZlQVKD0QjJ4cWneT7LeYx6YCgBaLVTVQ5QRxMD2
-    hSVfVN87alqhA>
-X-ME-Received: <xmr:cMLRZ_ZwY2l6sraCTCXYquckomQdLjpHohp3BIrjpS2g4iH6kueCf8wmUZUfNM8ojuJBhZ4R4ahQz3UKoPJwKMl5_Tnzk8sO5YDfog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdehieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
-    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
-    hupdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmvges
-    khhlohgvnhhkrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:cMLRZ-WIf_IldB65gC4WVYA5MBZPczpfBIquCgXx4zGovduoCc6Cmg>
-    <xmx:cMLRZ9nLqtrwUzoAyBWG9VJRhcSUfM5ocW46qV5c6SdbPPRHvDGutA>
-    <xmx:cMLRZ7dd0CijYbC_nX_LTFrzVSdFVyjBahFQEjh33hmBSJObQhmphg>
-    <xmx:cMLRZ3HiOx5bKDGxibopUpsbiJ51FlLs7ycNM5WjR1CnaapF2prYiA>
-    <xmx:csLRZ2cGsCmrFjJlK6FFn_kROxkxmvuzoTBAyk2ly2XvAg1ZIHkeQsCi>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Mar 2025 13:20:47 -0400 (EDT)
-Date: Wed, 12 Mar 2025 18:20:45 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbzIfjSt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A86C4CEEA;
+	Wed, 12 Mar 2025 20:07:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741810054;
+	bh=AAj1WohNGpVntpbLCYIMfXYBSA1bw1W1ywTKwXFLj1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZbzIfjStT03wY2zFOxCagp4rgvx9+Auxn4LoiqSIaeuBOwQ1eNRT+xMk7/4GkP38b
+	 KPnpcxlJ8uLNU/lWqtXn8Q6cb0KA6Lgl37ySgRg9l088XzOORDhQTrYTcAEr4WG2UP
+	 xKgrFGKLC79EHjDFAcJw5Kepw3SG8evjW7ZSnv9tbRBt/Zgfkxkmg/ydyBS27KtSep
+	 CpZGgBxw7j1FXAyAD9nshox8Mgmzw3uaIJIKu7zxgFELSqiPE2XiqqGhcpux1+bEhj
+	 D4bniiHaJRjj07LmCVSlpaM028R1YH9Gbfyfyl5Y27R4EfeqUrskTGbvd6reOprZmz
+	 6eWJFGSYjmEfg==
+Date: Wed, 12 Mar 2025 21:07:30 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fiona Behrens <me@kloenk.dev>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <2025031235-trailside-unexpired-88c6@gregkh>
+Message-ID: <Z9Hpggn_HE3uMGCo@cassiopeiae>
 References: <20250312220950.28ed9ad7@canb.auug.org.au>
+ <2025031235-trailside-unexpired-88c6@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -86,69 +44,70 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312220950.28ed9ad7@canb.auug.org.au>
+In-Reply-To: <2025031235-trailside-unexpired-88c6@gregkh>
 
-On Wed, Mar 12, 2025 at 10:09:50PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed, Mar 12, 2025 at 06:20:45PM +0100, Greg KH wrote:
+> On Wed, Mar 12, 2025 at 10:09:50PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the driver-core tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > error[E0599]: no method named `readl` found for reference `&Bar<8>` in the current scope
+> >   --> drivers/gpu/nova-core/regs.rs:38:18
+> >    |
+> > 38 |         Self(bar.readl(BOOT0_OFFSET))
+> >    |                  ^^^^^
+> >    |
+> > help: there is a method `read8` with a similar name
+> >    |
+> > 38 |         Self(bar.read8(BOOT0_OFFSET))
+> >    |                  ~~~~~
+> > 
+> > error: aborting due to 1 previous error
+> > 
+> > For more information about this error, try `rustc --explain E0599`.
+> > 
+> > Caused by commit
+> > 
+> >   354fd6e86fac ("rust: io: rename `io::Io` accessors")
+> > 
+> > interacting with commit
+> > 
+> >   54e6baf123fd ("gpu: nova-core: add initial driver stub")
+> > 
+> > from the drm-nova tree.
+> > 
+> > I applied the following merge fix patch for today.
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Wed, 12 Mar 2025 21:36:48 +1100
+> > Subject: [PATCH] fix up for "rust: io: rename `io::Io` accessors"
+> > 
+> > interacting with "gpu: nova-core: add initial driver stub"
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/gpu/nova-core/regs.rs | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
+> > index 50aefb150b0b..b1a25b86ef17 100644
+> > --- a/drivers/gpu/nova-core/regs.rs
+> > +++ b/drivers/gpu/nova-core/regs.rs
+> > @@ -35,7 +35,7 @@
+> >  impl Boot0 {
+> >      #[inline]
+> >      pub(crate) fn read(bar: &Bar0) -> Self {
+> > -        Self(bar.readl(BOOT0_OFFSET))
+> > +        Self(bar.read32(BOOT0_OFFSET))
+> >      }
+> >  
+> >      #[inline]
+> > -- 
+> > 2.45.2
+> > 
 > 
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> error[E0599]: no method named `readl` found for reference `&Bar<8>` in the current scope
->   --> drivers/gpu/nova-core/regs.rs:38:18
->    |
-> 38 |         Self(bar.readl(BOOT0_OFFSET))
->    |                  ^^^^^
->    |
-> help: there is a method `read8` with a similar name
->    |
-> 38 |         Self(bar.read8(BOOT0_OFFSET))
->    |                  ~~~~~
-> 
-> error: aborting due to 1 previous error
-> 
-> For more information about this error, try `rustc --explain E0599`.
-> 
-> Caused by commit
-> 
->   354fd6e86fac ("rust: io: rename `io::Io` accessors")
-> 
-> interacting with commit
-> 
->   54e6baf123fd ("gpu: nova-core: add initial driver stub")
-> 
-> from the drm-nova tree.
-> 
-> I applied the following merge fix patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 12 Mar 2025 21:36:48 +1100
-> Subject: [PATCH] fix up for "rust: io: rename `io::Io` accessors"
-> 
-> interacting with "gpu: nova-core: add initial driver stub"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/gpu/nova-core/regs.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> index 50aefb150b0b..b1a25b86ef17 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -35,7 +35,7 @@
->  impl Boot0 {
->      #[inline]
->      pub(crate) fn read(bar: &Bar0) -> Self {
-> -        Self(bar.readl(BOOT0_OFFSET))
-> +        Self(bar.read32(BOOT0_OFFSET))
->      }
->  
->      #[inline]
-> -- 
-> 2.45.2
-> 
+> Fix looks good to me, thanks!
 
-Fix looks good to me, thanks!
-
-greg k-h
++1, thanks for fixing it up!
