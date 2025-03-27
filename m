@@ -1,49 +1,65 @@
-Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F7C157A67;
-	Thu, 27 Mar 2025 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300CE2AF1C
+	for <linux-next@vger.kernel.org>; Thu, 27 Mar 2025 16:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087736; cv=none; b=njv49HZq8LQFid444UC5a9V5VtPG6/kNV4c50O/Dw6b2Cjn5PHsmD+RguqJgoZ6WUS+ZLvMzGXHYpxN2BkfpaPQPLUBVje+4fnY3waZdKU0Lmy9+Be6IFzSkBkS28HNmUetwnaCg/4++0iupfENOfW7jPhMf8S1tywKGN+q1vWs=
+	t=1743093831; cv=none; b=KLhpB98lW4Z/s2fwmeNvK9+PyQMzo37aCFc6krmnWy6lUAe2YxLtPWYIK1UIzJFxMOtgNgq4qa5UUEKJciaZpi6EgiXAdCbHtMNXUEkmaIvC+Bi9+ch6Z3NDP6+5/R+X+N0xerBH9V65CSfL83ePlIsBAcVw8PPHQTIZQVvJI1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087736; c=relaxed/simple;
-	bh=OE6oiY0nSPPuNUu7YpqG+RqZI7ITGNCaVXamDmTr+no=;
+	s=arc-20240116; t=1743093831; c=relaxed/simple;
+	bh=VSgzcBYwY2oX2th1qZYE/J0ND1I/Q4yGhZR5vEg4m40=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LESqdexpGQZrfzHL+hPz+eKjfty3WE7Fqrp4nTzkC9hQUccnXJAeMaiaP1kgrq83huN7XtiT4+dknOFVVzliXf5CgSqlSJZzrVTu3dCHqqpRHXWi+o7IC02vIRaQXeg38P7gLldErEmOKKdxeyzDe09+o+sh7kiwN6TtrD+xgGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=M0s7jEl9; arc=none smtp.client-ip=67.231.149.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+	 In-Reply-To:Content-Type; b=V6VuioqTjJ26fN0sSiu7SA5/TX0U/I7tuZ6VL1IntsWwSpu931XWcLy6x3a6KMJlKnhCVOwszFTqVT2lvtKbDYh+of6KU/tlizYvUCjwo0zD73axBhFjFJFqj3RjV9Z3ZLRWmbd2/Zhj1uSfsmju/N98GHQKUJOndJa7KAi7i4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZgYFPyeN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="M0s7jEl9"
-Received: from pps.filterd (m0050095.ppops.net [127.0.0.1])
-	by m0050095.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 52R8iofe012268;
-	Thu, 27 Mar 2025 14:35:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=vZfj3Afs41hYu1dHv9/e2igxXfM/rkKPJf0BWi3Cq7I=; b=M0s7jEl9aM/C
-	cBy5mOZ/WL2VrstsaYAuNCbSBlt1dkQmiuBZJv9fbRIOW9SC4/gOSZg/pQtc3cTD
-	hMqO40qCwjKV8zloozNYHizRsuXU89iBdH9SYqg1yM4Vcv/AAkQJRMTFZg0xLqsY
-	HPcT3UfwUG0P1U8EcpwwgH/VwrNblXanq2ZFV8zHhpun4BOzyB/SXfwFLeljtgFR
-	hWp6ZqX7/NQ2URyyLjV7wSNJJJbWaq123a0/es+RulpY5UoI2RRfU6lBwjcvpoub
-	T5y+fQouNW3ATj8smPOcRih+FYv4tvnBmZ+hr9CQWcUmPsePARTZtM2du/AZ3BpF
-	ImDfE2zsag==
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-	by m0050095.ppops.net-00190b01. (PPS) with ESMTPS id 45hnmmbd71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Mar 2025 14:35:35 +0000 (GMT)
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-	by prod-mail-ppoint1.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDuoCU006214;
-	Thu, 27 Mar 2025 10:35:34 -0400
-Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
-	by prod-mail-ppoint1.akamai.com (PPS) with ESMTP id 45mvqa2qgf-1;
-	Thu, 27 Mar 2025 10:35:34 -0400
-Received: from [172.19.46.102] (bos-lpa4700a.bos01.corp.akamai.com [172.19.46.102])
-	by prod-mail-relay10.akamai.com (Postfix) with ESMTP id E29F365F2A;
-	Thu, 27 Mar 2025 14:35:33 +0000 (GMT)
-Message-ID: <4f258a96-42fe-4567-886b-e8e2b949ab1a@akamai.com>
-Date: Thu, 27 Mar 2025 10:35:33 -0400
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZgYFPyeN"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf848528aso10327665e9.2
+        for <linux-next@vger.kernel.org>; Thu, 27 Mar 2025 09:43:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1743093827; x=1743698627; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VSgzcBYwY2oX2th1qZYE/J0ND1I/Q4yGhZR5vEg4m40=;
+        b=ZgYFPyeNp8Pb3hW+bMo9zVhKbdI1Mq+QwQROo67OySONII0wcbPwcQxRnqUrXGHJe/
+         x9JMcVA62Z2ZGLl6lQdnYCgbr8eItHbjilf2Qt6OLZ4zSDuo7sYR3HWg/1Xg13/GS5Dr
+         fWMTintuCsVQWE9+8rivLHvpEDb+Z6v/Q2k1R62VHlejqmmUXoS3Tl5j0fQHs34bGEaQ
+         mXOUDgjT5sWeC8+7GyHzEg+hI3j1htJbidV13+C+8rjnIJapgxa7hNrXIbNXbXtSByfT
+         TvjB42ajR6wv4bmrqsypm0W6EJj/SogskFUbQYo84mgAVlCX/6ssEmklTrsucymQ2KGl
+         8hog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743093827; x=1743698627;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VSgzcBYwY2oX2th1qZYE/J0ND1I/Q4yGhZR5vEg4m40=;
+        b=DGKNUOLcV1U4e4v2T6vA7yKBmLmT+SApQpO10VS3nOgQKRwvJs+exKxerROFiz7s0n
+         bxXR6KaX1kEAb8YjMef/3i7UQkXE5Vlkcp4bR78KxbUPHTo4U7RlgkIqXqh/5EPpbzJz
+         kJyJwxUWwv9Ack4VP0ZpHkrR8Mx44vuXDv3N+XRKpPw7KLqfoAtnyi8PFlmbClTOeq3W
+         MChPDwYl8G+pdb0oxtaduzrG23/f9nmy63OhDOIvTUBGBDKC6XNgUt7GeWsLuHtys18p
+         SiyD8f9arm46va5udJxjUOlSP/mNWrsEcEP3xNwOU3yc1p+YZuV4gyft2lhYmOhSqzoC
+         WlqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNkOiL1nveTONZ778alDhtkBtbsvD2N74hDr18kNAX3bLnG569xoh7/3Irw1Ix4Ky24aC6E7aq5X/Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIOjJj4lgcTwzzzVuHyircBdoos6q5HJ+2St4K3dj0faQdBaQV
+	1Ydor6s0927NuGV6CGpB0GBYQ+X60qkQ9YqIfVpZNPNyygCf6acy8YoCjLbkPVQ=
+X-Gm-Gg: ASbGncvsGFCFY0XoT+EQhRZ7o3vxPqq5WbrRPfOBDR/z+LABRz1puPJiJRaSyyY+F/i
+	Vqb0AaXVPTOqAp/h0mO2WpggwXcuwJHPL0Mcqm6fDCn+Xt5m267RLqW1T/OvI+S8JJM1Grrx2DG
+	RHby0RqsfPTMJ5+lTegDMVXP116J317oGHxhfO2WAbbqGDVC5xSROOL9a4uOnntqo7vKXq/PVw5
+	3fVCyA+gsJXW8K2D9BReSVOp5IlJ6Pf4SfCO4PEhOBMDFfJHv3vQtLtAN7fJEChES+UjAh9nzPh
+	IQ/u2R+nUEqODVLyKqrfdsTucAxzPc022Z27VRxmuFOmrUmm+NhJmzarhxwWBxDaDlKHSHSztpL
+	nJT1SEaamIlQ/SAPdUy6U+jQ6yIy65WSvXHIJiMDHJzOlJy7tQZ99GdthU8S97WkBknTH8A==
+X-Google-Smtp-Source: AGHT+IGETcCS+lcvQ/bSXVfV+j4aKq6osQvey1TCkg1OOeguFpcPDmpGzo2tnIRTmUzy/vERexcqMA==
+X-Received: by 2002:a05:6000:4203:b0:391:31c8:ba59 with SMTP id ffacd0b85a97d-39ad173eea2mr3280210f8f.4.1743093827292;
+        Thu, 27 Mar 2025 09:43:47 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873d:1a00:8e99:ce06:aa4a:2e7b? (p200300e5873d1a008e99ce06aa4a2e7b.dip0.t-ipconnect.de. [2003:e5:873d:1a00:8e99:ce06:aa4a:2e7b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b662c1csm35842f8f.28.2025.03.27.09.43.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Mar 2025 09:43:46 -0700 (PDT)
+Message-ID: <385a8a49-262e-45d5-a642-50b778014e7d@suse.com>
+Date: Thu, 27 Mar 2025 17:43:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -51,220 +67,177 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next regression: SNP Guest boot hangs with certain cpu/mem
- config combination
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "Aithal, Srikanth" <sraithal@amd.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "Roth, Michael" <Michael.Roth@amd.com>
-References: <363f8293-23e3-44d3-8005-b31eb5b7f975@amd.com>
- <rar5bkfy7iplfhitsbna3b2dmxbk7nunlaiclwars6kffdetl4@lzm7iualliua>
- <08981771-39ac-af66-e2ec-e8f9bf6aed0a@amd.com>
- <idlcitykk3hxg5by5sltuljyjf7uanmve5fspu6dectubhy5za@mjmv4i5vwyby>
- <ydvzjdcauzyvv7hxtra6l2gh4diz7zp4wx46eqculr7azynjke@z4x6eryq3rqd>
+Subject: Re: [PATCH 05/10] xenbus: add module description
+To: Arnd Bergmann <arnd@kernel.org>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Stefano Stabellini <sstabellini@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20250324173242.1501003-1-arnd@kernel.org>
+ <20250324173242.1501003-5-arnd@kernel.org>
 Content-Language: en-US
-From: Jason Baron <jbaron@akamai.com>
-In-Reply-To: <ydvzjdcauzyvv7hxtra6l2gh4diz7zp4wx46eqculr7azynjke@z4x6eryq3rqd>
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20250324173242.1501003-5-arnd@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------w8keZHt3rHXk8cRy2eo8QCgL"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------w8keZHt3rHXk8cRy2eo8QCgL
+Content-Type: multipart/mixed; boundary="------------F1AG3EiYN9pow4cgn9Y0uDto";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Arnd Bergmann <arnd@kernel.org>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Stefano Stabellini <sstabellini@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Message-ID: <385a8a49-262e-45d5-a642-50b778014e7d@suse.com>
+Subject: Re: [PATCH 05/10] xenbus: add module description
+References: <20250324173242.1501003-1-arnd@kernel.org>
+ <20250324173242.1501003-5-arnd@kernel.org>
+In-Reply-To: <20250324173242.1501003-5-arnd@kernel.org>
+
+--------------F1AG3EiYN9pow4cgn9Y0uDto
+Content-Type: multipart/mixed; boundary="------------0xl5rnPzp8wogKixk8qdxDys"
+
+--------------0xl5rnPzp8wogKixk8qdxDys
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 phishscore=0 adultscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2503270099
-X-Proofpoint-GUID: KubT_C3ekVS3SxSr3F5pJOdAO2O81AM6
-X-Proofpoint-ORIG-GUID: KubT_C3ekVS3SxSr3F5pJOdAO2O81AM6
-X-Authority-Analysis: v=2.4 cv=HYMUTjE8 c=1 sm=1 tr=0 ts=67e56237 cx=c_pps a=StLZT/nZ0R8Xs+spdojYmg==:117 a=StLZT/nZ0R8Xs+spdojYmg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=QyXUC8HyAAAA:8 a=1wTiysn-UDBPyNMy3dsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 clxscore=1011 spamscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503270099
+Content-Transfer-Encoding: base64
 
+T24gMjQuMDMuMjUgMTg6MzIsIEFybmQgQmVyZ21hbm4gd3JvdGU6DQo+IEZyb206IEFybmQg
+QmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+DQo+IA0KPiBNb2R1bGVzIHdpdGhvdXQgYSBkZXNj
+cmlwdGlvbiBub3cgY2F1c2UgYSB3YXJuaW5nOg0KPiANCj4gV0FSTklORzogbW9kcG9zdDog
+bWlzc2luZyBNT0RVTEVfREVTQ1JJUFRJT04oKSBpbiBkcml2ZXJzL3hlbi94ZW5idXMveGVu
+YnVzX3Byb2JlX2Zyb250ZW5kLm8NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21h
+bm4gPGFybmRAYXJuZGIuZGU+DQo+IC0tLQ0KPiAgIGRyaXZlcnMveGVuL3hlbmJ1cy94ZW5i
+dXNfcHJvYmVfZnJvbnRlbmQuYyB8IDEgKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
+dGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMveGVuL3hlbmJ1cy94ZW5idXNf
+cHJvYmVfZnJvbnRlbmQuYyBiL2RyaXZlcnMveGVuL3hlbmJ1cy94ZW5idXNfcHJvYmVfZnJv
+bnRlbmQuYw0KPiBpbmRleCBmY2IzMzViYjdiMTguLjhiNzVmODIzNGJhZiAxMDA2NDQNCj4g
+LS0tIGEvZHJpdmVycy94ZW4veGVuYnVzL3hlbmJ1c19wcm9iZV9mcm9udGVuZC5jDQo+ICsr
+KyBiL2RyaXZlcnMveGVuL3hlbmJ1cy94ZW5idXNfcHJvYmVfZnJvbnRlbmQuYw0KPiBAQCAt
+NTEzLDQgKzUxMyw1IEBAIHN0YXRpYyBpbnQgX19pbml0IGJvb3Rfd2FpdF9mb3JfZGV2aWNl
+cyh2b2lkKQ0KPiAgIGxhdGVfaW5pdGNhbGwoYm9vdF93YWl0X2Zvcl9kZXZpY2VzKTsNCj4g
+ICAjZW5kaWYNCj4gICANCj4gK01PRFVMRV9ERVNDUklQVElPTigiRnJvbnRlbmQgZm9yIFhl
+biBidXMgcHJvYmUiKTsNCg0KTWF5IEkgc3VnZ2VzdCAiWGVuIFBWLWRldmljZSBmcm9udGVu
+ZCBzdXBwb3J0IiBpbnN0ZWFkPw0KDQoNCkp1ZXJnZW4NCg0K
+--------------0xl5rnPzp8wogKixk8qdxDys
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-On 3/27/25 10:25 AM, Kirill A. Shutemov wrote:
-> !-------------------------------------------------------------------|
->    This Message Is From an External Sender
->    This message came from outside your organization.
-> |-------------------------------------------------------------------!
-> 
-> On Thu, Mar 27, 2025 at 02:58:12PM +0200, Kirill A. Shutemov wrote:
->> On Wed, Mar 26, 2025 at 05:30:35PM -0500, Tom Lendacky wrote:
->>> On 3/25/25 08:33, Kirill A. Shutemov wrote:
->>>> On Tue, Mar 25, 2025 at 02:40:00PM +0530, Aithal, Srikanth wrote:
->>>>> Hello,
->>>>>
->>>>>
->>>>> Starting linux-next build next-20250312, including recent build 20250324, we
->>>>> are seeing an issue where the SNP guest boot hangs at the "boot smp config"
->>>>> step:
->>>>>
->>>>>
->>>>>   [ 2.294722] smp: Bringing up secondary CPUs ...
->>>>> [    2.295211] smpboot: Parallel CPU startup disabled by the platform
->>>>> [    2.309687] smpboot: x86: Booting SMP configuration:
->>>>> [    2.310214] .... node  #0, CPUs:          #1   #2   #3   #4 #5   #6
->>>>> #7   #8   #9  #10  #11  #12  #13  #14  #15  #16  #17 #18  #19  #20  #21
->>>>> #22  #23  #24  #25  #26  #27  #28  #29  #30 #31  #32  #33  #34  #35  #36
->>>>> #37  #38  #39  #40  #41  #42  #43 #44  #45  #46  #47  #48  #49  #50  #51
->>>>> #52  #53  #54  #55  #56 #57  #58  #59  #60  #61  #62  #63  #64  #65  #66
->>>>> #67  #68  #69 #70  #71  #72  #73  #74  #75  #76  #77  #78  #79  #80  #81
->>>>> #82 #83  #84  #85  #86  #87  #88  #89  #90  #91  #92  #93  #94  #95 #96
->>>>> #97  #98  #99 #100 #101 #102 #103 #104 #105 #106 #107 #108 #109 #110 #111
->>>>> #112 #113 #114 #115 #116 #117 #118 #119 #120 #121 #122 #123 #124 #125 #126
->>>>> #127 #128 #129 #130 #131 #132 #133 #134 #135 #136 #137 #138 #139 #140 #141
->>>>> #142 #143 #144 #145 #146 #147 #148 #149 #150 #151 #152 #153 #154 #155 #156
->>>>> #157 #158 #159 #160 #161 #162 #163 #164 #165 #166 #167 #168 #169 #170 #171
->>>>> #172 #173 #174 #175 #176 #177 #178 #179 #180 #181 #182 #183 #184 #185 #186
->>>>> #187 #188 #189 #190 #191 #192 #193 #194 #195 #196 #197 #198
->>>>> --> The guest hangs forever at this point.
->>>>>
->>>>>
->>>>> I have observed that certain vCPU and memory combinations work, while others
->>>>> do not. The VM configuration I am using does not have any NUMA nodes.
->>>>>
->>>>> vcpus             Mem        SNP guest boot
->>>>> <=240            19456M    Boots fine
->>>>>> =241,<255   19456M    Hangs
->>>>> 1-255              2048M    Boots fine
->>>>> 1-255              4096M    Boots fine
->>>>>> 71                 8192M    Hangs
->>>>>> 41                 6144M    Hangs
->>>>>
->>>>> When I bisected this issue, it pointed to the following commit :
->>>>>
->>>>>
->>>>> *commit 800f1059c99e2b39899bdc67a7593a7bea6375d8*
->>>>> Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>> Date:   Mon Mar 10 10:28:55 2025 +0200
->>>>>
->>>>>      mm/page_alloc: fix memory accept before watermarks gets initialized
->>>>
->>>> Hm. It is puzzling for me. I don't see how this commit can cause the hang.
->>>>
->>>> Could you track down where hang happens?
->>>
->>> Let me say that the guest config is key for this. Using that config, I
->>> think you might be able to repro this on TDX. The config does turn off TDX
->>> support, so I'm hoping that turning it on doesn't change anything.
->>>
->>> I've been able to track it down slightly... It is happening during the CPU
->>> bringup trace points and it eventually gets to line 2273 in
->>> rb_allocate_cpu_buffer() and never comes back from an alloc_pages_node()
->>> call. That's as far as I've gotten so far. I'm not a mm expert so not sure
->>> if I'll be able to progress much further.
->>
->> Urgh... It is deadlock on cpu_hotplug_lock :/
->>
->> _cpu_up() takes the lock on write and starts CPU bring up under it.
->> If during CPU bringup we accept the last page in the zone, __accept_page()
->> calls static_branch_dec() which takes the lock again.
->>
->> Oopsie.
->>
->> So the patch itself doesn't introduce a regression, but uncovers
->> preexisting deadlock. With the patch we accept more pages during the boot
->> and it triggers the deadlock.
->>
->> Let me think about the fix.
-> 
-> + Static branch maintainers
-> 
-> The only option I see so far is to drop static branch from this path.
-> 
-> But I am not sure if it the only case were we use static branch from CPU
-> hotplug callbacks.
-> 
-> Any other ideas?
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
+--------------0xl5rnPzp8wogKixk8qdxDys--
 
-Hmmm, didn't take too close a look here, but there is the 
-static_key_slow_dec_cpuslocked() variant, would that work here? Is the 
-issue the caller may or may not have the cpu_hotplug lock?
+--------------F1AG3EiYN9pow4cgn9Y0uDto--
 
-Thanks,
+--------------w8keZHt3rHXk8cRy2eo8QCgL
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
--Jason
+-----BEGIN PGP SIGNATURE-----
 
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmflgEIFAwAAAAAACgkQsN6d1ii/Ey8l
+Cgf/QdTgh0S8GyuOrXH4CS4NQcobLgn90Kiaq0zOu9lWQsP+ZmmErrpyL35QGksWt++2Im+FMNO2
+FuJdlBfbDHZKy+I031s09fzIaMt/8xXpQF6e8HdDQHWWUzxzZ7tsHsaXOhGmi4wDh98P9MVL9nuG
+6iJ7mRSSRW7VVoHl7A3DVUQxw4oxuiSkEl82OnBYre2bbyfl4j6PrsoFieGW+7a3LvJVqmH/sD6r
+t14w6TWb3aT6AUnQCnabc0peyZA/QHbWSZnLVDmFnGvc0sa5FlpvfTNeVjyrj9QrAodBXewg8W2A
+A/iQOgMOkxjoA3+jxig/eTaweP6QlcCcF2L06Jzi+g==
+=jn45
+-----END PGP SIGNATURE-----
 
-
-> 
-> The deadlock I'm talking about:
-> 
-> ============================================
-> WARNING: possible recursive locking detected
-> 6.14.0-rc5+ #13 Tainted: G S
-> --------------------------------------------
-> swapper/0/1 is trying to acquire lock:
-> ffffffffbdc7e150 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> 
-> but task is already holding lock:
-> ffffffffbdc7e150 (cpu_hotplug_lock){++++}-{0:0}, at: _cpu_up (./arch/x86/include/asm/bitops.h:227 ./arch/x86/include/asm/bitops.h:239 ./include/asm-generic/bitops/instrumented-non-atomic.h:142 ./include/linux/cpumask.h:570 ./include/linux/cpumask.h:1131 kernel/cpu.c:1641)
-> 
-> other info that might help us debug this:
->   Possible unsafe locking scenario:
-> 
->         CPU0
->         ----
->    lock(cpu_hotplug_lock);
->    lock(cpu_hotplug_lock);
-> 
->   *** DEADLOCK ***
-> 
->   May be due to missing lock nesting notation
-> 
-> 2 locks held by swapper/0/1:
-> #0: ffffffffbdc7e058 (cpu_add_remove_lock){+.+.}-{4:4}, at: cpu_up (kernel/cpu.c:? kernel/cpu.c:1712)
-> #1: ffffffffbdc7e150 (cpu_hotplug_lock){++++}-{0:0}, at: _cpu_up (./arch/x86/include/asm/bitops.h:227 ./arch/x86/include/asm/bitops.h:239 ./include/asm-generic/bitops/instrumented-non-atomic.h:142 ./include/linux/cpumask.h:570 ./include/linux/cpumask.h:1131 kernel/cpu.c:1641)
-> 
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G S                 6.14.0-rc5+ #13
-> Tainted: [S]=CPU_OUT_OF_SPEC
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
-> Call Trace:
->   <TASK>
-> dump_stack_lvl (lib/dump_stack.c:122)
-> print_deadlock_bug (kernel/locking/lockdep.c:3041)
-> __lock_acquire (kernel/locking/lockdep.c:? kernel/locking/lockdep.c:3893 kernel/locking/lockdep.c:5228)
-> ? asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:702)
-> ? free_one_page (mm/page_alloc.c:?)
-> ? static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> lock_acquire (kernel/locking/lockdep.c:5851)
-> ? static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> cpus_read_lock (./include/linux/percpu-rwsem.h:51)
-> ? static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> cond_accept_memory (mm/page_alloc.c:7024)
-> get_page_from_freelist (./arch/x86/include/asm/bitops.h:206 ./arch/x86/include/asm/bitops.h:238 ./include/asm-generic/bitops/instrumented-non-atomic.h:142 mm/page_alloc.c:3417)
-> ? lock_release (kernel/locking/lockdep.c:469)
-> __alloc_frozen_pages_noprof (mm/page_alloc.c:4740)
-> __alloc_pages_noprof (mm/page_alloc.c:4774)
-> rb_allocate_cpu_buffer (kernel/trace/ring_buffer.c:2235)
-> ? _raw_spin_unlock_irqrestore (./arch/x86/include/asm/irqflags.h:42 ./arch/x86/include/asm/irqflags.h:97 ./arch/x86/include/asm/irqflags.h:155 ./include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
-> trace_rb_cpu_prepare (kernel/trace/ring_buffer.c:7322)
-> cpuhp_invoke_callback (kernel/cpu.c:216)
-> ? __pfx_trace_rb_cpu_prepare (kernel/trace/ring_buffer.c:7297 kernel/trace/ring_buffer.c:7304)
-> _cpu_up (kernel/cpu.c:967 kernel/cpu.c:990 kernel/cpu.c:1021 kernel/cpu.c:1691)
-> cpu_up (kernel/cpu.c:473 kernel/cpu.c:1725)
-> cpuhp_bringup_mask (kernel/cpu.c:1789)
-> ? kernel_init (init/main.c:1459)
-> smp_init (./include/linux/bitmap.h:445 ./include/linux/nodemask.h:241 ./include/linux/nodemask.h:438 kernel/smp.c:1012)
-> kernel_init_freeable (init/main.c:1561)
-> ? __pfx_kernel_init (init/main.c:1455)
-> kernel_init (init/main.c:1459)
-> ret_from_fork (arch/x86/kernel/process.c:148)
-> ? __pfx_kernel_init (init/main.c:1455)
-> ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
->   </TASK>
+--------------w8keZHt3rHXk8cRy2eo8QCgL--
