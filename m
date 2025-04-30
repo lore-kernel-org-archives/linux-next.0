@@ -1,100 +1,181 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504FF1C7017
-	for <linux-next@vger.kernel.org>; Wed, 30 Apr 2025 08:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CE7158DAC
+	for <linux-next@vger.kernel.org>; Wed, 30 Apr 2025 09:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746003241; cv=none; b=LF1iDsjvnInDrPgZWkUzSVG0rkslq/2aYP0QNuZVowpRvtr1xI8Jd59BHZd28e6v4Neh84rrxahTzEVwvGJAXeRE3wK0rNPhy8N5UyK+4ph+kGK8l4TapdIsA3Ii9217RygdUjmL+JeP43fFRfqZUAoAx8j1ceVkq+hDL9gUc3Y=
+	t=1746004092; cv=none; b=H7E/5+2Adm4x5PA/BOlF/+fPp/5BtXvbVc6lHQd2EHWtgc1q142racRttLumC1G1wsaNlLDJ5nrw8NJ7cXEufVI4k7mPzVQ8BusunILCh63zZaQzM3sdgtXdtA9jLVMvj0Ai3l678pnUweEfblZOY2c0hPSQ0cFRo1TXy6KfYtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746003241; c=relaxed/simple;
-	bh=pkk4FnwFjZbg+KuXgTwOxKB73qBogdOwMrt/pQB1i8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q7+8RvTTuxBwQCIkI4XiqWCIqTRZM/limFUmgf6TR5t8yVE2JEnusNDRudmoKplairG65+o51GcqFnA7mM/xqqkuWlebkrS9biBxA+mtuNnPF8slvQovJP7ia1pq35u8LaRgUYvQfFH0wFLq+IX1til7kG92Ps9eVH290JLsdAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W9grG9AF; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746004092; c=relaxed/simple;
+	bh=ZTiKbaSMf8anCR8rGN6vJZzC5O77MozU0CITgBq89Oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBwLF+wMi9NPBG5B46ECD6/JKd7UwDZ4H12REH7QS+IR9ud++NVyUTUqFplCnFOOrIKEu/5nVTmUx6M2vcmQrdkbsFNnahiygmpCjFGqGi2D8k2M38GES/ta7j3FQoN5y9OaPVSeyIzsMwRveltHXbet8sNbFrjUAfvANxpT3f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvuWXgU+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W9grG9AF"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54af20849adso786278e87.1
-        for <linux-next@vger.kernel.org>; Wed, 30 Apr 2025 01:53:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvuWXgU+"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22da3b26532so60141555ad.0
+        for <linux-next@vger.kernel.org>; Wed, 30 Apr 2025 02:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746003237; x=1746608037; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yr3vymS/gup0DlCuygO2tVK9TIK2xinHjdJneX0gB48=;
-        b=W9grG9AFeY/OKPMMUK2/i99fhl9LHZ2AlTnTFXryhqEfT2QWnq2uELQ3wSHGSd/qsq
-         P7uxzY9er7MaP0TNsgj/LNXPpT09tkZSjQw97owVkHmAggu9IeREH5A2CQHoGB8yLC9t
-         hxRi5WZ1FqsuUCTr57DVfHaYDHmUQ1OVGNMcMflJHTDPFqJL0MS02WA47xDAmymSlNMn
-         o/dIxYOqVFrgdz74n5g+Y/UMa72EDzT3XlpXHX+wT+C69xZZPCJpd2RJgN6267DdL0oz
-         WlG+VCrFlxn+D8pHXT4gKfCNnj6Acc6z2CAgIPNvO6crwNvmiSkEXFQC5y590gbIC3bY
-         HL/Q==
+        d=gmail.com; s=20230601; t=1746004089; x=1746608889; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PGk49vERce9Ao/sNmnIwPGXqhBWoOxQGOUY1KUCkyrw=;
+        b=jvuWXgU+NGOzgQQLDEBaeGxGHDSD0OLGTUdgyBPk9K1e5W1OVGG9I17A0PZjhmCX9v
+         KqMX6piD+FgWjsHbqydaZUq3QkZUbfOsYXfpM763Ypg8t/fqXD0MVIEo8CtPqE3sqPQc
+         ZIWs7lH0X8bwRYUOZkLHmo8wi3k37vHJSXH5k3u+ZUyBYIiWyRfHHojtBSp790UJLnqW
+         Id/Hk5cZa6xZtr8WLJeyNCLrpBV6VVmvfF4tdFxHWUMId3LQP5Csp1wcikOJ+rfszAXo
+         XY8d9Z6xF7PO730FawHCTTU3uEnF1CBfO4LwfJKoXSSmLFrH3kL9Zhso8UhlCmxbmgyW
+         3o1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746003237; x=1746608037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yr3vymS/gup0DlCuygO2tVK9TIK2xinHjdJneX0gB48=;
-        b=LQNShjGYLzk6sT3anU6IKGf0FzNCq7WX63vxpQVuACU180QjGKzIvdduRMOBSkzmDh
-         mPzQX4gpNfT93VcrAi6xd5bmTzIgbeKwbw6KwinEwYSEm2Wsbz6OR7VzYuLGZPBFS0RH
-         c7X3l+aZ/janQEl3D+BOba8NoB+XfLHBEfe2C75S2uX51v+omCu8+SCsB0ALpVG2UlKD
-         HpJCVX58SzMoeTUG5oOqqkcg2JW6uqmR6sYYyOohIVxq2wQ8ABqHUkPhgtHH8fpcfsyo
-         Tl80cdQVVeuQzLdlhHVn2i0+piacaMVRq57DspGsgp5dI5ufYZ31p7zlPeLUBO78l2bF
-         DeLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6OuveteA2iXwN3lbPWDJxAF3jTvPYhN3DbhOiGyuMbbeAfWkVRgOedaKzCsddP5rzDSUfCGyT41AF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2iN3pDUQCPXswQH+IkF+agoOFDucABosh5U0GgpgtOZq4I/t8
-	rqKWEaE+xDqMs6FjxJWKYU3Ce5m4fXzwfVygGaVYBF8h4cPJqL8V64Unt7ifS4+19+6F2fEdeyv
-	YBoSlbjV7vaTMhQ9ByQDT68I8aKUroL06GeugSZlXNzY03khb
-X-Gm-Gg: ASbGnct8WKvwXByA78Enu1sG4HfwHz5Hdcz/c75cjZ7/CfWNDekcuXxHPcuwvMsLExO
-	EL35NrG4/gfLbHDiPsoJXAfavPCXwJ1iOM/g8LJTDnHFZ94/Cdwx0T3LOR775/gS0+eUgXwT5qu
-	jAfS7XFIoCGOGTmspG2tCziA==
-X-Google-Smtp-Source: AGHT+IHpp2NWMXBPtPmK+nwFyhBtZNA2vTr8wwH2QoJMNsLq4Gpf5YQeAvTFVW+tFyTNW4iV9HptwjcCEVW6Oahyl44=
-X-Received: by 2002:a05:651c:54a:b0:309:20da:6188 with SMTP id
- 38308e7fff4ca-31e7cff0c78mr7933041fa.6.1746002863004; Wed, 30 Apr 2025
- 01:47:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746004089; x=1746608889;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PGk49vERce9Ao/sNmnIwPGXqhBWoOxQGOUY1KUCkyrw=;
+        b=pHuXoj38oM0iHEKeFuVWslT4cur8u6fa373XiXugljAI+p1mYiEhVsb/9IAwEwlce2
+         PYZOIp4PG+WD3owVmNGwOM6mVLk0035MFCd5AgvVJ+LeyXW4C+5yhb5V+4izXZE3C+lU
+         Rp8BIAUsFRZlHrcAB06zJ6AoRLgXOhiIHCMqvqq0BPb7+qNGanSnnSBLY5M2VUZhUjUr
+         /43fbiqiqtRcy1T3uBNasdsZ7493Z8FMFHtF82M5RijZcSw2q9b+uaQT1YsHtnC+rt41
+         Pjl96rW9iqqiJCcA6l5ayzJf6IG5NuKJtEPwofdkGADRkpP8FvxL9G4FiG5Yf0lgvfYY
+         5mpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjnCwZpp32la+tJbhlN3RN/vJECBk98FWxIvDLpQqBwND33yiuZXbGGgLtEh/JJJV69UV8B0NG1r+u@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJkMout+wyYJ1PrGem/Tw+t9eJx9e8gBQquvF2NrmEp/C7e3rs
+	3XVjNwr5nIg4uSlUa7mqa6msghYqBni3ZisBdL8+oasllPLTrQjE3wJ8JQ==
+X-Gm-Gg: ASbGncs6+O6LE33WfN81M9+ubFtSY41BcBLouEVaMic5qEtpaJo1mEXpRtHX5O9MHQk
+	V4/+S1XKtGFVJVh5kWx1bTqttcNIojFfh2jebuIKP8nuDUqASEunFiSlm/9N68f7uZd4a5V3aXp
+	NKaLOedZL8I4HRDDCo7pe80suxUgJbBqvEc0bG1R9k/WEx68DEnOTyTFG2kWdbvAT+2NIMFZlse
+	9wxfK494iKZy1LdTC7rR6wroPCZhcSIHpEBNJG3VXumkBX8rqi20D4y+XbBzEZGt1Y5lGViV2N9
+	2nEGQf3rL6KY0LEDuelqs2okexiN1BRm36TWsPcu
+X-Google-Smtp-Source: AGHT+IGNdId1ZgH8N9ypLITt6W5dX5KSuwIUHGHLCKO4dd9hafaceBcm+alDaSMKQP3rtTIjMT4g6w==
+X-Received: by 2002:a17:902:ce91:b0:22c:33e4:fa5a with SMTP id d9443c01a7336-22df34aa1fbmr36008895ad.9.1746004089231;
+        Wed, 30 Apr 2025 02:08:09 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5102e13sm116931085ad.201.2025.04.30.02.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 02:08:08 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8F47B4208F70; Wed, 30 Apr 2025 16:08:05 +0700 (WIB)
+Date: Wed, 30 Apr 2025 16:08:05 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Haren Myneni <haren@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, sfr@canb.auug.org.au, tyreld@linux.ibm.com,
+	linux-next@vger.kernel.org, hbabu@us.ibm.com
+Subject: Re: [PATCH] Documentation: Fix description format for powerpc RTAS
+ ioctls
+Message-ID: <aBHodTu4IjqzZeXb@archie.me>
+References: <20250430022847.1118093-1-haren@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430175001.4d12e01f@canb.auug.org.au> <4386227a-3dc9-42c4-9cc1-827dad1556be@kernel.org>
-In-Reply-To: <4386227a-3dc9-42c4-9cc1-827dad1556be@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 30 Apr 2025 10:47:32 +0200
-X-Gm-Features: ATxdqUH8wc4eV2JI38qs8w_0ktGCGFATczhejqgAF5f1Rqzi-aVwrIV_qYeISlk
-Message-ID: <CACRpkdaxTJ96hpJqs=xWVD4gSLdgc=m9uq+rbJKrJL+jgC645g@mail.gmail.com>
-Subject: Re: linux-next: duplicate patch in the pinctrl-samsung tree
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IyftOE3+/ex4fxHI"
+Content-Disposition: inline
+In-Reply-To: <20250430022847.1118093-1-haren@linux.ibm.com>
+
+
+--IyftOE3+/ex4fxHI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 30, 2025 at 10:29=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
-> On 30/04/2025 09:50, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > The following commit is also in the pinctrl tree as a different commit
-> > (but the same patch):
-> >
-> >   0a5b9be31f78 ("pinctrl: samsung: use new GPIO line value setter callb=
-acks")
-> >
-> > This is commit
-> >
-> >   9e4c444755b1 ("pinctrl: samsung: use new GPIO line value setter callb=
-acks")
-> >
->
-> Thanks, I will drop mine.
+On Tue, Apr 29, 2025 at 07:28:47PM -0700, Haren Myneni wrote:
+> Fix the description format for the following build warnings:
+>=20
+> "Documentation/userspace-api/ioctl/ioctl-number.rst:369:
+> ERROR: Malformed table. Text in column margin in table line 301.
+>=20
+> 0xB2  03-05 arch/powerpc/include/uapi/asm/papr-indices.h
+> powerpc/pseries indices API
+>                             <mailto:linuxppc-dev>
+> 0xB2  06-07 arch/powerpc/include/uapi/asm/papr-platform-dump.h
+> powerpc/pseries Platform Dump API
+>                             <mailto:linuxppc-dev>
+> 0xB2  08  arch/powerpc/include/uapi/asm/papr-physical-attestation.h
+> powerpc/pseries Physical Attestation API
+>                             <mailto:linuxppc-dev>"
+>=20
 
-Thanks Krzysztof, my bad I didn't think about splitting the series across
-submaintainers, I should have. I hope this doesn't collide with anything
-in your tree.
+Hi,
 
-Yours,
-Linus Walleij
+FYI, I've also submitted the fix earlier at [1] (but different approach).
+ppc maintainers, would you like taking this patch instead or mine?
+
+[1]: https://lore.kernel.org/linuxppc-dev/20250429130524.33587-2-bagasdotme=
+@gmail.com/
+
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+> Fixes: 43d869ac25f1 ("powerpc/pseries: Define papr_indices_io_block for p=
+apr-indices ioctls")
+> Fixes: 8aa9efc0be66 ("powerpc/pseries: Add papr-platform-dump character d=
+river for dump retrieval")
+> Fixes: 86900ab620a4 ("powerpc/pseries: Add a char driver for physical-att=
+estation RTAS")
+> Closes: https://lore.kernel.org/linux-next/20250429181707.7848912b@canb.a=
+uug.org.au/
+> ---
+>  Documentation/userspace-api/ioctl/ioctl-number.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documen=
+tation/userspace-api/ioctl/ioctl-number.rst
+> index 017a23aeadc3..fee5c4731501 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -366,11 +366,11 @@ Code  Seq#    Include File                         =
+                  Comments
+>                                                                       <ma=
+ilto:linuxppc-dev>
+>  0xB2  01-02  arch/powerpc/include/uapi/asm/papr-sysparm.h            pow=
+erpc/pseries system parameter API
+>                                                                       <ma=
+ilto:linuxppc-dev>
+> -0xB2  03-05 arch/powerpc/include/uapi/asm/papr-indices.h             pow=
+erpc/pseries indices API
+> +0xB2  03-05  arch/powerpc/include/uapi/asm/papr-indices.h            pow=
+erpc/pseries indices API
+>                                                                       <ma=
+ilto:linuxppc-dev>
+> -0xB2  06-07 arch/powerpc/include/uapi/asm/papr-platform-dump.h       pow=
+erpc/pseries Platform Dump API
+> +0xB2  06-07  arch/powerpc/include/uapi/asm/papr-platform-dump.h      pow=
+erpc/pseries Platform Dump API
+>                                                                       <ma=
+ilto:linuxppc-dev>
+> -0xB2  08  arch/powerpc/include/uapi/asm/papr-physical-attestation.h  pow=
+erpc/pseries Physical Attestation API
+> +0xB2  08     powerpc/include/uapi/asm/papr-physical-attestation.h    pow=
+erpc/pseries Physical Attestation API
+>                                                                       <ma=
+ilto:linuxppc-dev>
+>  0xB3  00     linux/mmc/ioctl.h
+>  0xB4  00-0F  linux/gpio.h                                            <ma=
+ilto:linux-gpio@vger.kernel.org>
+
+In any case,
+
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--IyftOE3+/ex4fxHI
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaBHobgAKCRD2uYlJVVFO
+o9WtAQDoPqj9Ii+tUdaxb4jYF5hN6yZ+QHVuccrGg0VCgwEwpAD/erW3LCkPQzuB
++WtWvCiOKZZIKZbGiIFyERE+4TOJCwU=
+=9R4X
+-----END PGP SIGNATURE-----
+
+--IyftOE3+/ex4fxHI--
