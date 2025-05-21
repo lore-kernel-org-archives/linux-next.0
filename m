@@ -1,116 +1,93 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCC222F169;
-	Wed, 21 May 2025 06:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B866199EAF;
+	Wed, 21 May 2025 07:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747810104; cv=none; b=csUqr7PGJACJXrGSdTHMQaSo4NO58KjNYBZ/eUEkMp7GjETNS3GSrI5QWk+2EraAf9oEky6ZLKTi05ubChb1WPgvYrFx0t91Cl/tK9SF7grqDTICWi4xuiSOBm/0DqmTsq89WmKYp3OL96S8Zst4axGIYi5b0BBMhO+ecMfLAM0=
+	t=1747812266; cv=none; b=HyE6imU/CiyTr9oxGLLva+qalxauhQUIfzIr4nnNfDJyenfAJzgXbiacfs84SbwBWXYVzNZDBfowxCxDPEEC2siLxXirmmKsJfy+0li0iW4Fjy2hAuvxqU0k2qpOttThagadw1Avpp/YULV/YSrgHP1d0GVd3M5xdeeddq68EWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747810104; c=relaxed/simple;
-	bh=I6xLSaFBQIId3MObCRNMgHxI1jqvUum8SVBf6dSTczs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Pb9Ld5rCHbODBBxkMBaPFeiYMHHsRcYS6U2Wt68IObRaedXkcX6TYP+VhieXMHgYrjBGnsvkfNGYWKB4VewUdliGCLVIVU7lh0QLLZPXIZPfiFIxusfyNvwfzygvLsYdJZd8SMpGSDSvwyLeWnCRNCImDOd6K8hjsBUgQUNhGBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FNtyNu/g; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+	s=arc-20240116; t=1747812266; c=relaxed/simple;
+	bh=bsRKvz0IeflenEfvIJXltQBXIEynMd8vYvMNQDAeBNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j7yjPyYeuGO/p0yLido0kEqcPm5SEqDvuNXvCXjmrRoBIpAb6yJj0qHdJEwiJX0s1r0m75KcH03m9sTD1F5xrpPK10pm255pUm2gvIbO95JHEgLX7VD2AWOI83IYRIuL3cF477AUJJi6jmKIXxaE+Bp0jqUaUeKh5FzpXBYF3Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avpLffxl; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FNtyNu/g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747810096;
-	bh=KcYnKHf3wC05iJ0U5CbH9mfNcFKPffOomDQHqODaKBA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FNtyNu/g18YjzqfAEBMCGPKSadTvWAhI/UQ+EElRAXPkM6vU7DSE/pAnpAunNjg2Y
-	 GdnRHRl7e4NAINGZI+Tdf11R5N8n98dMRdxjeAHdg+Bbt5lAJTcxCnpHyXo3xk0YTw
-	 uQI56v84jTeb11grhYJQp17cKLNwvnf0EgSIvOi+Jmuf0R6/GwkOWLJvGs0bRpajPk
-	 SweOrGsavMBznW87rfUsOlOXpWwb8ev8xoA0AH9KzFBrz+IWUxfEXthC4LZZoG3Oyh
-	 aGfrdhbdAJi9uEd0npn3M33yYzXmUE0/LyLAumH9EbDR9SXDYx9LoU8kfYlO2XYg4K
-	 cvXi3uqQRTnPw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b2MSb6DcGz4xck;
-	Wed, 21 May 2025 16:48:15 +1000 (AEST)
-Date: Wed, 21 May 2025 16:48:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Anup Patel <anup@brainfault.org>, Christoffer Dall
- <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Radim =?UTF-8?B?S3LEjW3DocWZ?=
- <rkrcmar@ventanamicro.com>
-Subject: linux-next: manual merge of the kvm-riscv tree with the kvm-arm
- tree
-Message-ID: <20250521164814.3fddb821@canb.auug.org.au>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avpLffxl"
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-861d7a09c88so154212839f.2;
+        Wed, 21 May 2025 00:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747812264; x=1748417064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bsRKvz0IeflenEfvIJXltQBXIEynMd8vYvMNQDAeBNo=;
+        b=avpLffxlLvZPCPH7ewdoPbFaR2a7Snr70IFgMAUf6h5tGeH9/vKhahlqrzvbiVzczP
+         ZsqQloFKWYc1Qu5HjD0IbfuaTHMPW2RjfRbdMK/z/jbWptdKM1yfght7LUSEA4BZLWEu
+         n3m6crFKtsWFjfNnBRWuPreRMUqzJZCrGarkHy4moclgLec2qaCLgVs6Nht2MBnB9osx
+         cvnVz8SJUtMy/e4IX1jKqYocQQuW6OJ3bIe9ydqDqyv1NAc0aOBz2daQOgTMQEjzYqDU
+         Y1vaDRP7WKHE1xJCGAHjdgWcmcxNhdQ5YI3uPTsevd+mRaKBh0htTpANTF1t+rLtL5a6
+         wHKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747812264; x=1748417064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bsRKvz0IeflenEfvIJXltQBXIEynMd8vYvMNQDAeBNo=;
+        b=hr18D+5mxpUuM8nmcIHaTR8QaSQ4dDmz+u+BwE3huKLIPiUKQMwmyaJnamLDnYVbYb
+         hUhWjQF88aeMGNfa29f2TgmTAedw+QIH48n/tsmdibjnONvLdoH32tsuqtXim+ENYIFx
+         0eOwiZIa0io/ORKLYPplEsSLYEcrcwhUraFpW9XfjeeRPAPbvcFoZ3L873J9TDe9DcKZ
+         0Lslcvf5BeJrYgfBUsP3l3lbXwq21IGaHAXuth2IOwwe2MYNfhoeOYZKNGTHICHD46SV
+         9wR2FFV+zpoGvnRS+2CRhvd2IRktDF1CMbPGGxzX9tUksR0eHjQw0SzNqUtSNwuxBMoR
+         5PuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkidpvfVsjSX2aV/oh02XRj8KMYUtfk9Fdq0oubRalPu/2Zx9y69xNdu6sbukV4StbsIu9NII1z6VXHMs=@vger.kernel.org, AJvYcCVArbWAdKULrxxdNHGvxSGJe0na1hoZFJ3gcSFivIKD5HoLDO1dVnFgB/XQMIkK/Q+qSr4WSz0CMPKvXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDHAwPqixGolaWQQqNwdIsTo7GimlGEhHsM7Vx6g7IkQ2bubyy
+	mQFdKxM2T0wdf/nYFMyd0p9N5KaCuXwFc4eOrPpoHJTDuCbmSOK6wuF1z8FX+Ptpinluqh4uRfI
+	S74gInZkFYantHDuKUoMWfYNYq2sPZcE=
+X-Gm-Gg: ASbGncuoqGxSFyCn7tkPQWtdpcPPKO0SfIKOvW1fY5/TXhnOEU2inWmN/q5DQRaa4S0
+	6r5v4Er0KpIhVL6rr5v+VcAVVTSO3HETinNhKx1yHnV6JgSD2p3qEqfj9NHSVCLnzG6IBkWdBQz
+	cOsyKGnAgXCmNWCCq49SrcR55IL1bg8616
+X-Google-Smtp-Source: AGHT+IGFDYBRiQXD5xgvrn5c6GrFeLVxKsut4Q0h05F8cCwAOAEYT3ecSVh9wv9zXcr7frmDxZ0UC4M6jQeMmcdwzfo=
+X-Received: by 2002:a5e:da43:0:b0:86a:2523:a9fc with SMTP id
+ ca18e2360f4ac-86a2523ab62mr1661574539f.0.1747812264166; Wed, 21 May 2025
+ 00:24:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oyjzgwhEdqI0nbDxuIbcnjE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/oyjzgwhEdqI0nbDxuIbcnjE
-Content-Type: text/plain; charset=US-ASCII
+References: <20250520223430.6875-1-spasswolf@web.de>
+In-Reply-To: <20250520223430.6875-1-spasswolf@web.de>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Wed, 21 May 2025 15:23:47 +0800
+X-Gm-Features: AX0GCFttNynCNWUpGDwxv5Ee1zvFjTDsRbF65Fu6DSl_bVrh9rFic3i78TZ0q48
+Message-ID: <CAL+tcoDtk2vNqiNWdG1hvo3jMNt0_fPffi5ts8LZWZzMDvsLXg@mail.gmail.com>
+Subject: Re: [PATCH] wifi: add sk_requests_wifi_status()
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, May 21, 2025 at 6:34=E2=80=AFAM Bert Karwatzki <spasswolf@web.de> w=
+rote:
+>
+> Checking the SOCK_WIFI_STATUS flag bit in sk_flags, may give a wrong resu=
+lt
+> since sk_flags are part of a union and the union is used otherwise. Add
+> a sk_requests_wifi_status() which checks if sk is non-NULL, sk is a full =
+socket
+> and checks the flag bit.
+>
+> Fixes: 76a853f86c97 ("wifi: free SKBTX_WIFI_STATUS skb tx_flags flag")
+> Idea-by: Johannes Berg <johannes.berg@intel.com>
+> Signed-off-by: Bert Karwatzki <spasswolf@web.de>
 
-Today's linux-next merge of the kvm-riscv tree got a conflict in:
+Since Johannes will modify it manually, so...
+Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
 
-  include/uapi/linux/kvm.h
-
-between commit:
-
-  a7484c80e5ca ("KVM: arm64: Allow userspace to request KVM_ARM_VCPU_EL2*")
-
-from the kvm-arm tree and commit:
-
-  5b9db9c16f42 ("RISC-V: KVM: add KVM_CAP_RISCV_MP_STATE_RESET")
-
-from the kvm-riscv tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/uapi/linux/kvm.h
-index e6ed559d9091,454b7d4a0448..000000000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -931,8 -930,7 +931,9 @@@ struct kvm_enable_cap=20
-  #define KVM_CAP_X86_APIC_BUS_CYCLES_NS 237
-  #define KVM_CAP_X86_GUEST_MODE 238
-  #define KVM_CAP_ARM_WRITABLE_IMP_ID_REGS 239
- -#define KVM_CAP_RISCV_MP_STATE_RESET 240
- +#define KVM_CAP_ARM_EL2 240
- +#define KVM_CAP_ARM_EL2_E2H0 241
-++#define KVM_CAP_RISCV_MP_STATE_RESET 242
- =20
-  struct kvm_irq_routing_irqchip {
-  	__u32 irqchip;
-
---Sig_/oyjzgwhEdqI0nbDxuIbcnjE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgtdy4ACgkQAVBC80lX
-0GyoKAf+I862MD67KZ6UCXiVNKahuKuKJ5yyIV15ir1ssuB/0Z+tKxNltgJe65/0
-8r+BL3AjEOCIREIWd9GnEmvd/Sr1xk6R70qNmMddFzxlElfrRN3I4JKE7NM8ooU1
-aMMgqcgINBifx2VMsGKaQBpzMRSKkuMQe8SeAZ4ysQH0piS488vZlffRS/KcfXVq
-9AaBiOlh2tLtUVbNLSomfs2l+Iq6LAt2tQOVFjeimopgVww9aTH5EvFgUD8E5fGH
-If74AD1hC1OfYbEdqwgu4dPYq1i/cT35a+vNeohDxkWHKJ6WWHPudyOachRakVXa
-RN3QvjLnysJapHzKy8WsV22Os6VufA==
-=I7y7
------END PGP SIGNATURE-----
-
---Sig_/oyjzgwhEdqI0nbDxuIbcnjE--
+Thanks,
+Jason
