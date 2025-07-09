@@ -1,40 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160282E370B;
-	Wed,  9 Jul 2025 17:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B479CF;
+	Wed,  9 Jul 2025 18:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752082874; cv=none; b=nT/0abUglDP1D1bEWq531m/INpFlQQTIsCKSediaax91RrZYmEiD/kH07oxFVhOlaU9T2eLJ5sfmJKo1XyjEpRRO7E8TDtaSk2MfhD6vBBh8Ax7Js/kBzizOe36JaZiRtS020/LMENxpnGwDgvE29jCp0Y3WDjVFcFLBeq82Qg0=
+	t=1752084996; cv=none; b=EnWNrZk40Qxmlo+tuCfS5OF7gt0cZGWkbDrmXMA9ODJSXp8gDtjA8zdVgcVi/Gp8XoqIObR2AngfMz9m7nK3MqkUhRM2ozyPKNVGTif2ySc4YeWvfohEbD/aYvtzRNzS+uNkDq57vO/e0TN7d8rlgNY41S9eHBI7ed7ZELw0ios=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752082874; c=relaxed/simple;
-	bh=ERI9xBq39mzDkL3fuk11Ct3eUM0V2AyCkctUtBuVPRY=;
+	s=arc-20240116; t=1752084996; c=relaxed/simple;
+	bh=0iHY9sqA2qRSH+kBXaBssmwLuomOoFqDfka44SKj5Kw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvEuyJGi2hQ3GFMrY/tmVtMThRgrz11IEAPFX2ZlY6DUgcXQdA2+JZqF0BqBJxdhmfCz7z/xWfvJGqi/Lzexj6GUwYCAbHBuK1LC1pW2DLIbIe5vgENO5mU2l2vtK/OaOPWI1hK4A+VmX6vgpBpsu7gMj2nXsY1YA1MzFJutdec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKVs8qem; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5Wdxx1Ay4WRJJJb47huxg5XBXUUUk24c8sDQtyiOFW+mV8aYFKGJdJTCPEUAxPobLXDmjAAnBbM9xduHAEHe3mss9slo1KhS0xi5uTl7qz2vXYrdJ5tQasTZlFA65NFI028TK69CrtlT22btPF3gSvv8zvsCTFKcXuJ8epORHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9uOhpdW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKVs8qem"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4011BC4CEEF;
-	Wed,  9 Jul 2025 17:41:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9uOhpdW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D41F8C4CEEF;
+	Wed,  9 Jul 2025 18:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752082873;
-	bh=ERI9xBq39mzDkL3fuk11Ct3eUM0V2AyCkctUtBuVPRY=;
+	s=k20201202; t=1752084995;
+	bh=0iHY9sqA2qRSH+kBXaBssmwLuomOoFqDfka44SKj5Kw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CKVs8qemZvPtHE7dY03bvqpAdgVHcG9aa99xujt1xnsyF6b63ZZEK5AY2IeqDdnb8
-	 K2iaLtfA+qAJ8S8g+2m/Nm1h/vYz00ECHmI6KauteNgt4WMsyU8klEKicOpMrrMCXN
-	 3RNtpAb8xOD77Ygl1GVPEG477M8FSps8AHmhYc5I6G97PFQKcl5yBIxMu6SY2vactS
-	 QB8+9CcMApDGD5/6/tvlAwUemLYx9eqA1sZ9lJ/hPWDkz70tzGQlOVMX/dn4B/oNQY
-	 LCj9BYHAARgU0OrAq2ArKjZzmbW/EWkU+C+p3BozAMHN3eEDn2iqsOTxxPWZW9InbR
-	 NmP1iRXIuJDgA==
-Date: Wed, 9 Jul 2025 20:41:08 +0300
+	b=h9uOhpdW24XnOHxR7/euz9c1VHd/33fjO1xT0y5mXeRtPvgl0gJrQFraDKuLDOkYP
+	 510zmuYLjzfsLAnOx3L6EQ/qbcaBLsskmXlrvr1CVIQ9GAFB+MIcRjFcbL85J2GBXa
+	 xWhayk35KEZOT9g5xoDgQhAX8UnxMGqYAgIW2Bqyzs+Iowj/l0nSXlYQUjykwLoKIn
+	 YzkQa8nFqSHhuejNjL2f+2EJkNJZwcflYrkeEsIDifP0/qUOu48Grz1LsHYCTsrCGg
+	 9rPCKHA7VdjDWMXpPqgch20uL+FmK6ZEFloWxmamodjfyHMHL9YZosejAGK8W8KKuJ
+	 3xrgBqar9WfrQ==
+Date: Wed, 9 Jul 2025 21:16:31 +0300
 From: Leon Romanovsky <leon@kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: boot failure after merge of the dma-mapping tree
-Message-ID: <20250709174108.GH592765@unreal>
+Message-ID: <20250709181631.GI592765@unreal>
 References: <20250709233953.7afb7a8a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -80,12 +79,23 @@ On Wed, Jul 09, 2025 at 11:39:53PM +1000, Stephen Rothwell wrote:
 > And reverting that commit, and the following one, in today's linux-next
 > release, fixes the problem.
 
-Stephen,
+I assume that this will fix the issue:
 
-Can you please provide the kernel command line to determine which DMA
-path is taken?
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index 29e8594a725a..cb8936e4ffab 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -157,7 +157,7 @@ dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
+ {
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 	struct page *page = phys_to_page(phys);
+-	size_t offset = offset_in_page(page);
++	size_t offset = offset_in_page(phys);
+ 	bool is_pfn_valid = true;
+ 	dma_addr_t addr;
+ 
 
-Thanks
+
 
 > 
 > -- 
