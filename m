@@ -1,39 +1,39 @@
 Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5BC1C5D57;
-	Wed, 30 Jul 2025 14:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9096F2DBF6E;
+	Wed, 30 Jul 2025 14:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753887037; cv=none; b=DDRNHb7l/CuFU5YzFGBSxC+lu+tORt9MSAvke2joKoOomCYFSyWnuJ7TkJ5ac4c1mUqaxwAT6ckCNtTKQj7Gr7tsfidxhsJ2v+NVu/CKFHefD7UPALwGtHrYh3nxvU86lrN6FdGhaEklwcQ39ULLELeMaCynE5yTlAND3dCb7aw=
+	t=1753887042; cv=none; b=Hz4LgPmaSY99JkSRxnDpvOXkOX9iWQVlVQbaiN19rephIUVZ21s5ithpw+FfUhEiCq+qKvmlvHLrdyxxCYnsVdyH53jt1vqva6sfOpWyxibgcv70yJbrSzY1wme81d9+xfnWRKgrIRZdhEv26FTZqz9WHccAf4zvb28ZZ5EwsiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753887037; c=relaxed/simple;
-	bh=5yrtCX1rakIYpyeza+67Nx1m0XD8w3FmoiKcIKuQ+Mc=;
+	s=arc-20240116; t=1753887042; c=relaxed/simple;
+	bh=ipMp8TX+lrqL/DeEImPv43Slyek9RxaFSPed91niKYk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rwXao+yzCxRNe16ATKezHjzCekCcCt5+cIx39TKHnD6S4r71FJQa4nyVq8qd7H4FWAHt1hOLqZh7Onp3fORcIuSlUzJhQdeWFvoIwfM0c+AHrali+7h3fYEi1VClambiCl/JqRHOHL/9SwSIYiFwZHGG+hNstQMsu0E+/Zysazc=
+	 In-Reply-To:Content-Type; b=QegSUMU3UIfx4bm760/gqYBU39UhKrG23qEhsGa1zpUUf9OxUfGajLokITLMXyGJDM58o7Rl5l8+hNjHrxRSa/AiOUy0OZpCEtEaKg9oGCBMLtAlFa82kg4vjm+8HJCfvpdMmcwgqKkO/vF+LhuwbMZ91ZUIc9ioLFENzmZx8HY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bsZPW0HHCz9snk;
-	Wed, 30 Jul 2025 16:30:23 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4bsZFZ1tCWz9s92;
+	Wed, 30 Jul 2025 16:23:30 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
 	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id xsGl8q2AKTJb; Wed, 30 Jul 2025 16:30:22 +0200 (CEST)
+	with ESMTP id yTpZs2Ci7_Z8; Wed, 30 Jul 2025 16:23:30 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsZPH0JDCz9sps;
-	Wed, 30 Jul 2025 16:30:11 +0200 (CEST)
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsZF53rFRz9sZD;
+	Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 042698B76E;
-	Wed, 30 Jul 2025 16:30:11 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7EB158B76E;
+	Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id jj0F2l6esWm3; Wed, 30 Jul 2025 16:30:10 +0200 (CEST)
+	with ESMTP id 0bwy9QcKhoSZ; Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
 Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBF298B763;
-	Wed, 30 Jul 2025 16:30:10 +0200 (CEST)
-Message-ID: <f10f6457-1a19-47cf-86d1-eb787badd6dd@csgroup.eu>
-Date: Wed, 30 Jul 2025 16:30:10 +0200
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A8928B763;
+	Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
+Message-ID: <0b738b01-8574-49b1-b89c-3c96e9a56b28@csgroup.eu>
+Date: Wed, 30 Jul 2025 16:23:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,52 +41,44 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the jc_docs tree
-To: Jonathan Corbet <corbet@lwn.net>, Stephen Rothwell
- <sfr@canb.auug.org.au>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Randy Dunlap <rdunlap@infradead.org>
-Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>,
- Vishal Parmar <vishistriker@gmail.com>,
- Brigham Campbell <me@brighamcampbell.com>,
+Subject: Re: linux-next: duplicate patch in the fsl tree
+To: Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250730102931.6334022c@canb.auug.org.au>
- <87cy9hx272.fsf@trenco.lwn.net>
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ linux-next <linux-next@vger.kernel.org>
+References: <20250723094558.5bcfca69@canb.auug.org.au>
+ <627cbb55-2a55-4124-8f6e-7b4ba0441558@csgroup.eu>
+ <6eac14b4-765b-4a29-b278-364dba47e0e9@app.fastmail.com>
 Content-Language: fr-FR
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <87cy9hx272.fsf@trenco.lwn.net>
+In-Reply-To: <6eac14b4-765b-4a29-b278-364dba47e0e9@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-Le 30/07/2025 à 15:01, Jonathan Corbet a écrit :
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Le 30/07/2025 à 15:55, Arnd Bergmann a écrit :
+> On Wed, Jul 30, 2025, at 15:41, Christophe Leroy wrote:
+>>
+>> Le 23/07/2025 à 01:45, Stephen Rothwell a écrit :
+>>
+>> I was going to send a pull request for this fix but I see the duplicate
+>> patch is already tagged in the soc tree:
+>>
+>> $ git tag --contains 12702f0c3834
+>> next-20250728
+>> next-20250730
+>> soc-drivers-6.17
+>>
+>> Shall I do anything or just ignore it and drop it from my tree ?
 > 
->> Hi all,
->>
->> After merging the jc_docs tree, today's linux-next build (htmldocs)
->> produced this warning:
->>
->> Documentation/arch/powerpc/index.rst:7: WARNING: duplicated entry found in toctree: arch/powerpc/htm
->>
->> Introduced by commit
->>
->>    c361f76da696 ("docs: powerpc: Add htm.rst to table of contents")
->>
->> interacting with commit
->>
->>    19122a7c28ed ("docs: powerpc: add htm.rst to toctree")
->>
->> from the powerpc tree.
-> 
-> Did that just get added there?  I've had that fix since early June...I'd
-> rather not drop it (and have to redo my 6.17 pull request) now if
-> possible...
-> 
+> Linus has already pulled the soc-drivers-6.17 tags, so I think
+> both copies of the patch ended up in mainline and there is nothing
+> left you can do to change that.
 
-There was a ping from Randy about it recently so that Maddy added it the 
-powerpc tree, see 
-https://lore.kernel.org/all/5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org/
+The one in my tree is in Linux next, nowhere else for the time being as 
+far as I know, as it was not included in the pull request I sent three 
+weeks ago.
 
 Christophe
