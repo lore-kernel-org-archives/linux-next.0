@@ -1,39 +1,37 @@
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9096F2DBF6E;
-	Wed, 30 Jul 2025 14:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C012DC345;
+	Wed, 30 Jul 2025 15:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753887042; cv=none; b=Hz4LgPmaSY99JkSRxnDpvOXkOX9iWQVlVQbaiN19rephIUVZ21s5ithpw+FfUhEiCq+qKvmlvHLrdyxxCYnsVdyH53jt1vqva6sfOpWyxibgcv70yJbrSzY1wme81d9+xfnWRKgrIRZdhEv26FTZqz9WHccAf4zvb28ZZ5EwsiU=
+	t=1753888455; cv=none; b=IjJjU2b2Z1fClvXStYweK6E7f3IpU6eCFjXkye3wc2/nO+kaF9J1wtcmjqL5RJMxa+OX7iMgukDLi4AsiQkAfURhQ781PqD9JwRoEFfW6WCK1haLG2CK5npz7EbiDU5bwYSF4XKMydLZlN4kwKq8vTCsMvT6tNm75RqlEtZO1S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753887042; c=relaxed/simple;
-	bh=ipMp8TX+lrqL/DeEImPv43Slyek9RxaFSPed91niKYk=;
+	s=arc-20240116; t=1753888455; c=relaxed/simple;
+	bh=rXgxOJXKazwcCCy2Fo+fCW58qMIKsjE4k03ekkUv2ME=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QegSUMU3UIfx4bm760/gqYBU39UhKrG23qEhsGa1zpUUf9OxUfGajLokITLMXyGJDM58o7Rl5l8+hNjHrxRSa/AiOUy0OZpCEtEaKg9oGCBMLtAlFa82kg4vjm+8HJCfvpdMmcwgqKkO/vF+LhuwbMZ91ZUIc9ioLFENzmZx8HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bsZFZ1tCWz9s92;
-	Wed, 30 Jul 2025 16:23:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id yTpZs2Ci7_Z8; Wed, 30 Jul 2025 16:23:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsZF53rFRz9sZD;
-	Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7EB158B76E;
-	Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 0bwy9QcKhoSZ; Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A8928B763;
-	Wed, 30 Jul 2025 16:23:05 +0200 (CEST)
-Message-ID: <0b738b01-8574-49b1-b89c-3c96e9a56b28@csgroup.eu>
-Date: Wed, 30 Jul 2025 16:23:05 +0200
+	 In-Reply-To:Content-Type; b=r3YTxfUCRsW1T7Qrb4k7T1egcLbMYP+3bx5UkWTjqW7ou6wYQsXU344oVZ4tBweVOPbe4rBn93SfLD1GjU7K7BN0uVN5HuM0cwlfL+ZIw9r7/82/EsuIic4+TLeOpDRrAWnozZSSrzkD20dhnthbArPsDDta11ru7FyciGxFHR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aLKsDrfg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aLKsDrfg"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=m+oXDpSbXkFh02pwXQyjxgNWqMEN7+TwK51jzavy4dI=; b=aLKsDrfgV3sov/S+dwotba19Rr
+	NSv7IwEYsciotk4atSDJHXMTBFeSjc3JdOf5RA3qyzMIZ0kQYfUtDNlTPtzZoUlQ2W4f7NhMnY00A
+	6Rcip4sjW0bCZBtxgXIlU4AbJta+AERHElD/pHf4ndlnYATDk4QBpVjwEDiY8oSwROZRydRu3yaTb
+	dzXbcwVOvxMOSzQptRDj/mFimyhWizXZ7ez9UtCfeHBZVK0ZsuKO+fccFFNGrPAa5htWjgciTKp+Q
+	jEcZlLepI7SKxc5DVbO2only1mreG1D+Kde/Xbnhnbsjz1JURzGwm5waVYXMcr6T/S2cyQwQiodho
+	GIrMrxyQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uh8VK-00000001pES-3Y92;
+	Wed, 30 Jul 2025 15:14:06 +0000
+Message-ID: <7cedcdd9-c89e-4194-98ad-d3426a240863@infradead.org>
+Date: Wed, 30 Jul 2025 08:14:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,44 +39,60 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patch in the fsl tree
-To: Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>,
+Subject: Re: linux-next: build warning after merge of the jc_docs tree
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jonathan Corbet <corbet@lwn.net>, Stephen Rothwell <sfr@canb.auug.org.au>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>
+Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>,
+ Vishal Parmar <vishistriker@gmail.com>,
+ Brigham Campbell <me@brighamcampbell.com>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- linux-next <linux-next@vger.kernel.org>
-References: <20250723094558.5bcfca69@canb.auug.org.au>
- <627cbb55-2a55-4124-8f6e-7b4ba0441558@csgroup.eu>
- <6eac14b4-765b-4a29-b278-364dba47e0e9@app.fastmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <6eac14b4-765b-4a29-b278-364dba47e0e9@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250730102931.6334022c@canb.auug.org.au>
+ <87cy9hx272.fsf@trenco.lwn.net>
+ <f10f6457-1a19-47cf-86d1-eb787badd6dd@csgroup.eu>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <f10f6457-1a19-47cf-86d1-eb787badd6dd@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
 
-Le 30/07/2025 à 15:55, Arnd Bergmann a écrit :
-> On Wed, Jul 30, 2025, at 15:41, Christophe Leroy wrote:
->>
->> Le 23/07/2025 à 01:45, Stephen Rothwell a écrit :
->>
->> I was going to send a pull request for this fix but I see the duplicate
->> patch is already tagged in the soc tree:
->>
->> $ git tag --contains 12702f0c3834
->> next-20250728
->> next-20250730
->> soc-drivers-6.17
->>
->> Shall I do anything or just ignore it and drop it from my tree ?
+On 7/30/25 7:30 AM, Christophe Leroy wrote:
 > 
-> Linus has already pulled the soc-drivers-6.17 tags, so I think
-> both copies of the patch ended up in mainline and there is nothing
-> left you can do to change that.
+> 
+> Le 30/07/2025 à 15:01, Jonathan Corbet a écrit :
+>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>>
+>>> Hi all,
+>>>
+>>> After merging the jc_docs tree, today's linux-next build (htmldocs)
+>>> produced this warning:
+>>>
+>>> Documentation/arch/powerpc/index.rst:7: WARNING: duplicated entry found in toctree: arch/powerpc/htm
+>>>
+>>> Introduced by commit
+>>>
+>>>    c361f76da696 ("docs: powerpc: Add htm.rst to table of contents")
+>>>
+>>> interacting with commit
+>>>
+>>>    19122a7c28ed ("docs: powerpc: add htm.rst to toctree")
+>>>
+>>> from the powerpc tree.
+>>
+>> Did that just get added there?  I've had that fix since early June...I'd
+>> rather not drop it (and have to redo my 6.17 pull request) now if
+>> possible...
+>>
+> 
+> There was a ping from Randy about it recently so that Maddy added it the powerpc tree, see https://lore.kernel.org/all/5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org/
 
-The one in my tree is in Linux next, nowhere else for the time being as 
-far as I know, as it was not included in the pull request I sent three 
-weeks ago.
+IDK. Maybe the patch that I replied to there was made against mainline instead of linux-next.
+I should have checked linux-next.
 
-Christophe
+-- 
+~Randy
+
