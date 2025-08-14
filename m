@@ -1,157 +1,76 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC2E2248B5
-	for <linux-next@vger.kernel.org>; Thu, 14 Aug 2025 05:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF91301016;
+	Thu, 14 Aug 2025 13:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755150549; cv=none; b=BE4hILjC0ikczdNs2camFpe8wyo+paQTLxY9JUGMIBYqK3Ty8LwC6cvDfr5mI6fH/N+HoGOO/6rZ5ztw098EYxOPXs7j42nYuR6ij7T78n4G7i72vF76DmQgxH5OSt3ye+/pdaJoRiSjShB1O6AzvNNTE4hw+SryV1LlQxtywKU=
+	t=1755178437; cv=none; b=JvSfRiut15rCU2kiPEhJIQJx8/wPKjfAHcu9sTAGLTpyA9QnliCx/yconnPzSzS5Rzfm2CUQg/mFWwZxtLmoBccPjwDt/VySuIK1r3K/BQHl+CiwiQpi3UoE110dYlPnMtmOnXqkqr+m09jrrdFZ30hVKYhkvoZyA3/WgpOFYrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755150549; c=relaxed/simple;
-	bh=pZ/gOI0k4sDj/lLAzb/QoiEwC4zgMq88cnBUTJoxozQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g9rZ4l90v4T6T8dWNDiXfbZdS7W98JuhmYue+ym7Mnu6V7WUe/I4koqVFvdo8EoEZisZXQkRat1aOBuV4gZujEoZEetUyXwJIzXlcPlZpQ93U9lGqAjnSyeTXIg+aN/FO/mAvg3seiucYbdLW7K9nCZ6LE/IIpJSDeEP1modrOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eqn3nTfJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hM6/zLqM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eqn3nTfJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hM6/zLqM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1755178437; c=relaxed/simple;
+	bh=6lQwBEN6NnKvVOc4VGYaCNS1h36Oq19PKgeMm3+l0DM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UQhX9Ei21MOzH/xLRCM/CdgTZAzjwtrjee+U+DvS1KtlFFHW4kAbQlQfIR5P7kvGldS+i4Vc4J4ISQtxmpuxyYFHCcF2mYXXVDUMweHOryB0KtW8ADwJluUwyoljDgYf7332qP5IW7jp/FCL1yP9O5Ps8DG9V4iBSENfQsD3e4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dqs2LwWK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eqn3nTfJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hM6/zLqM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eqn3nTfJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hM6/zLqM"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0597E1F7D1;
-	Thu, 14 Aug 2025 05:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755150531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=eqn3nTfJtIY5OSOrkYm3Yxi2JUXwvS8SjiwKxPUhNumfJQDnaeu+F15zeNpM3v37vy5Apn
-	duNYTSHZeM/OQJpBIir8GZzaeBenUCe0FSCxtaZz5/wEY0QyR+IbAVvQKFmUT6ib88g+p8
-	+0NYVofrLI1P0lOVTXiwjzDzznUQFG8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755150531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=hM6/zLqMQSikb1oDd88BfOctuxaa5YzMNr8G4k0XZ7/Gu5vTZEqza9ucruIxQM8VMns9mE
-	mjVWUG0OPrUq+YCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755150531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=eqn3nTfJtIY5OSOrkYm3Yxi2JUXwvS8SjiwKxPUhNumfJQDnaeu+F15zeNpM3v37vy5Apn
-	duNYTSHZeM/OQJpBIir8GZzaeBenUCe0FSCxtaZz5/wEY0QyR+IbAVvQKFmUT6ib88g+p8
-	+0NYVofrLI1P0lOVTXiwjzDzznUQFG8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755150531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lnh4KOoFyfui8L9tod3Xuqssl1j5kS74I0ySiKi//IU=;
-	b=hM6/zLqMQSikb1oDd88BfOctuxaa5YzMNr8G4k0XZ7/Gu5vTZEqza9ucruIxQM8VMns9mE
-	mjVWUG0OPrUq+YCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C94913479;
-	Thu, 14 Aug 2025 05:48:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cB7eAcF4nWiEYQAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Thu, 14 Aug 2025 05:48:49 +0000
-From: David Disseldorp <ddiss@suse.de>
-To: linux-kbuild@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-next@vger.kernel.org,
-	David Disseldorp <ddiss@suse.de>
-Subject: [PATCH v2 5/7] gen_initramfs.sh: use gen_init_cpio -o parameter
-Date: Thu, 14 Aug 2025 15:18:03 +1000
-Message-ID: <20250814054818.7266-6-ddiss@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250814054818.7266-1-ddiss@suse.de>
-References: <20250814054818.7266-1-ddiss@suse.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dqs2LwWK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F099C4CEED;
+	Thu, 14 Aug 2025 13:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755178437;
+	bh=6lQwBEN6NnKvVOc4VGYaCNS1h36Oq19PKgeMm3+l0DM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Dqs2LwWKGnPtWmgtxdcX55BubfCaw152kCnFHquK7YKChy0fpwmLyg2ut7P0z5iBJ
+	 iNLCwKWL8O7qKVE5sIUFMVbVdwDdpRr8Ctd7BKtNpTLhGAeyOJECUM5B/ET08K8Aq5
+	 AHsHj/NUoQvPBwYePxjNOerCSqavnHp6zSv27yiKrwjOOgb2VM6jy0WNa9AzlsrWYR
+	 f0aEZrKdVku0WrXgShPVcCKSiUiZiSpCnwdiVFvfEA22vTFyu0HxuYESMxijLlswd0
+	 g9VKBxREqrIXbbhxSRxyo38pZyFmG5TtXX/Cm47i9oK8XS/KXKfawziPF7IcUdiAAt
+	 CtlKhYu5/GjdA==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6188b74eb30so1482669a12.3;
+        Thu, 14 Aug 2025 06:33:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrgiL0e6wAriSDlMYvUT69tyn2ZZGqB6fX4lV5ZllyXH744543/rN3LokCQ3Xl4C+VCxDGE9u1Dtm+KA==@vger.kernel.org, AJvYcCWjvkbjpBa1Qo9SHDG7y2YGnNaYjn86pSNfA+XpTjeE5i/uUNgcjW120CPj0kRoE0tJOEUTcGpJ0uhMokQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyROrkPUIcbSYDULyfrq8/da65ubPmvsUBgq5hdO8xDRTqZkueR
+	jpNPtFNPZLG1AJn85Z6727uIjJdHP58XgAv+jX1f6jAzycf4oNBuQrF5254FU8U9PHwXu0uNTWg
+	E6r98tvacZ6GWCDNJwhRhclvHp93q+Q==
+X-Google-Smtp-Source: AGHT+IEraJ/scYOqLChqQUlIniyfXQkQHLMqUYZSPPTNMjc6ZCI1Q+HLbv38H5lgSxm0haBSn5nH0MLc1O9EmgU6PfY=
+X-Received: by 2002:a17:907:3f18:b0:add:fb01:c64a with SMTP id
+ a640c23a62f3a-afcb98a51a3mr335748466b.43.1755178435670; Thu, 14 Aug 2025
+ 06:33:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -6.80
+References: <20250814114214.609818aa@canb.auug.org.au> <aJ1M883eMiVCtoaO@mail.minyard.net>
+In-Reply-To: <aJ1M883eMiVCtoaO@mail.minyard.net>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 14 Aug 2025 08:33:43 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKargdocdTUwqW2O4FPsFiygUJ0j+o9tshGo=J3S1Zg8g@mail.gmail.com>
+X-Gm-Features: Ac12FXx8l57rXBeNRbTDZdH2ifLuVXIXl2aJgCE5WHZI9VUg-2ecu_mTCyObZ0w
+Message-ID: <CAL_JsqKargdocdTUwqW2O4FPsFiygUJ0j+o9tshGo=J3S1Zg8g@mail.gmail.com>
+Subject: Re: linux-next: duplicate patch in the ipmi tree
+To: corey@minyard.net
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-gen_init_cpio can now write to a file directly, so use it when
-gen_initramfs.sh is called with -o (e.g. usr/Makefile invocation).
+On Wed, Aug 13, 2025 at 9:42=E2=80=AFPM Corey Minyard <corey@minyard.net> w=
+rote:
+>
+> On Thu, Aug 14, 2025 at 11:42:14AM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > The following commit is also in the devicetree tree as a different comm=
+it
+> > (but the same patch):
+>
+> I think by normal rules this belongs in my tree.  I'm not sure how it
+> got into the devicetree tree without my ack.  Or maybe the rules around
+> device tree are different.
 
-Signed-off-by: David Disseldorp <ddiss@suse.de>
----
- usr/gen_initramfs.sh | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+My mistake. I've dropped it now.
 
-diff --git a/usr/gen_initramfs.sh b/usr/gen_initramfs.sh
-index 14b5782f961a8..7eba2fddf0ef2 100755
---- a/usr/gen_initramfs.sh
-+++ b/usr/gen_initramfs.sh
-@@ -193,7 +193,8 @@ root_gid=0
- dep_list=
- timestamp=
- cpio_list=$(mktemp ${TMPDIR:-/tmp}/cpiolist.XXXXXX)
--output="/dev/stdout"
-+# gen_init_cpio writes to stdout by default
-+output=""
- 
- trap "rm -f $cpio_list" EXIT
- 
-@@ -207,7 +208,7 @@ while [ $# -gt 0 ]; do
- 			shift
- 			;;
- 		"-o")	# generate cpio image named $1
--			output="$1"
-+			output="-o $1"
- 			shift
- 			;;
- 		"-u")	# map $1 to uid=0 (root)
-@@ -246,4 +247,4 @@ done
- 
- # If output_file is set we will generate cpio archive
- # we are careful to delete tmp files
--usr/gen_init_cpio $timestamp $cpio_list > $output
-+usr/gen_init_cpio $output $timestamp $cpio_list
--- 
-2.43.0
-
+Rob
