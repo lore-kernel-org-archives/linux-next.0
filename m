@@ -1,88 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD413270578;
-	Mon, 18 Aug 2025 18:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2933451D0;
+	Mon, 18 Aug 2025 21:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755542481; cv=none; b=kngCj+7IJnSvvXkxOpVvVREIeVIzaJyYsXxYM9+xFwwnQ4ZmUav8ZJB+2QOVQw1n2t8qDtKRS8kDPhH/i3G3zYSgHSCVtGs2OEuDsiKwsG95DCXJgOz7xa7+zGDtn3tzdTRzE44oa1wlrPSj9qfvfFqb4vWgb84sQoNTF3/y+gE=
+	t=1755552255; cv=none; b=XHJVZCzpntZ6HpRLp2DmKHlndNFQ5rkbEMf/VZz+zuszj1vfnrcBgCNJ24eeKbP9hhlMvwTP9CGSDqGSM8dkAKgD1pLqQOiKSXGQ/xD7+BIAPEB8hFF3dYEudSRh7uMfamyfaM0Di7pOCzPqJLOBKYeDmPdb3ieyn/2CcsYR2hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755542481; c=relaxed/simple;
-	bh=CtAYfO2IYLVcLxjp6Yh8VbsIO3Fxt3jRtboig2jxedM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFqaMIUh81LwgmB+4AXC1tuzVznOztAeaeyT7jU0FTAOAaOEzYE6Klfz9p0BGDkdtM8fQnmdX+ASXnaWdiBXGlCJ3nS6WFfNmXgP+alC8jmGeZX3z0POFESQx249DRrpHQjc6v01AL3FSrdhbg9SFPmmKnbLjxJYptq5pr7KECc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHJ4Xe3m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755552255; c=relaxed/simple;
+	bh=ekjT8zu5mtRL34qSYlLxoND/4cFMOxhaaNd03ZHsNac=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MRcOfJJi+DY12LGeDdTiIX076TchQV08uiTWlidjf+RXoXHMupUrRCt6i73Yr36GibJvhXIVX3czWfV/5ayuPs2IvA0WEA1RprDlszp/koqBMpNNOzU6QIgm7l9jIJokLuLPEKzNzteVRXC2VmXhZO8nT+DYNHIExKIBS7zK84c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=G72pRFXY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHJ4Xe3m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2BFC4CEEB;
-	Mon, 18 Aug 2025 18:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755542481;
-	bh=CtAYfO2IYLVcLxjp6Yh8VbsIO3Fxt3jRtboig2jxedM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rHJ4Xe3mHyBvDvHkEEzvJW+TKn/uLLAayLKSMg5DU+g5nd9ub4cO3h+bo3oKHd7Lo
-	 dDlYiEhrEpIR0WSx68ioefVcrJQEFDIFUEqt5mnuLkuV2YCQhkcsOxwbpcfxcTaa5Q
-	 vUmHjAfstKRxm4c4I0IrHu79x59WBellDrjuNdPe0hfOOp6JckeMNXMiirj1/NwVWF
-	 tv66KPtGDDzqioK9wWu43hSKXMEFejTbUWovxtAmUDTBdjYodNobkFP5t0/tu0oXFP
-	 d1o5VkcN73HHzgGAkrIAK0auGyN6C94waH6/03L4sGxoHTE2JB00GiVMOwrsElrXdb
-	 TDuDgzNAaMGOQ==
-Date: Mon, 18 Aug 2025 20:40:44 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: David Disseldorp <ddiss@suse.de>
-Cc: linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] gen_initramfs.sh: use gen_init_cpio -o parameter
-Message-ID: <aKNzrJfBXTMaBiVi@levanger>
-References: <20250814054818.7266-1-ddiss@suse.de>
- <20250814054818.7266-6-ddiss@suse.de>
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="G72pRFXY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755552249;
+	bh=eULIdFDx/i3XYrZXExG7p3i3YNMfjTRyAaMpr5DSuBM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=G72pRFXY8KEYM7KZny9AfomRrK46TtNxMdKLvW01ZcnFP2XmxvQMJrXhhuwgH7GgH
+	 gAp4Am9eO7g+5982n9I1zZ4Y40k/Yq2zKBgce+2koOelVBNl7JFIUCNjnmOp1NXRJT
+	 Vo1PQ3mRmpxLZR15qWHxCYrO3mw7zvTNkNQSQ8ZCa+FVUSdAaYxE//BfbYEydIdVCj
+	 DoZA7WF0u5M9cNja+JQx95qnCBIvkVjQnZDmTshXXpKp84P9gFVbN14OwP3EK+u7gR
+	 bE/vV0vA7LDWSDUViq24tlFs3WsgJ6PRvzfvvahB6bakDuzWHW5kf7ckgAF6RP4vsy
+	 /0bZhfwp5AioQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c5Qh90M9Jz4wbc;
+	Tue, 19 Aug 2025 07:24:08 +1000 (AEST)
+Date: Tue, 19 Aug 2025 07:23:28 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sang-Heon Jeon <ekffu200098@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mm-unstable tree
+Message-ID: <20250819072328.509608a3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814054818.7266-6-ddiss@suse.de>
+Content-Type: multipart/signed; boundary="Sig_/8nmMSgUskQvNoF9U_wHFGqy";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Aug 14, 2025 at 03:18:03PM +1000, David Disseldorp wrote:
-> gen_init_cpio can now write to a file directly, so use it when
-> gen_initramfs.sh is called with -o (e.g. usr/Makefile invocation).
-> 
-> Signed-off-by: David Disseldorp <ddiss@suse.de>
-> ---
->  usr/gen_initramfs.sh | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/usr/gen_initramfs.sh b/usr/gen_initramfs.sh
-> index 14b5782f961a8..7eba2fddf0ef2 100755
-> --- a/usr/gen_initramfs.sh
-> +++ b/usr/gen_initramfs.sh
-> @@ -193,7 +193,8 @@ root_gid=0
->  dep_list=
->  timestamp=
->  cpio_list=$(mktemp ${TMPDIR:-/tmp}/cpiolist.XXXXXX)
-> -output="/dev/stdout"
-> +# gen_init_cpio writes to stdout by default
-> +output=""
->  
->  trap "rm -f $cpio_list" EXIT
->  
-> @@ -207,7 +208,7 @@ while [ $# -gt 0 ]; do
->  			shift
->  			;;
->  		"-o")	# generate cpio image named $1
-> -			output="$1"
-> +			output="-o $1"
->  			shift
->  			;;
->  		"-u")	# map $1 to uid=0 (root)
-> @@ -246,4 +247,4 @@ done
->  
->  # If output_file is set we will generate cpio archive
->  # we are careful to delete tmp files
-> -usr/gen_init_cpio $timestamp $cpio_list > $output
-> +usr/gen_init_cpio $output $timestamp $cpio_list
+--Sig_/8nmMSgUskQvNoF9U_wHFGqy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think it would have been sufficient to replace '> $output' by
-'-o $output'.
+Hi all,
+
+In commit
+
+  1ce24beaff3f ("selftests/damon: change wrong json.dump usage to json.dump=
+s")
+
+Fixes tag
+
+  Fixes: 441f487d6ebf ("selftests/damon: test no-op commit broke DAMON stat=
+us")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: a0b60d083fb6 ("selftests/damon: test no-op commit broke DAMON status=
+")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8nmMSgUskQvNoF9U_wHFGqy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmijmdAACgkQAVBC80lX
+0Gy/pAf7BcYlj+q3gxjKbx8/hg2sxWhIL8gNCLnlTeB+FFfgIlqUQDr4DCo2+WRA
+kTAH8ibngjeG4b5vXljvFX3fKjvUhCMuqBkjL0/auRFTk0vG2pmKlMoVZRE5WosJ
+EQxiVWsi7un5Jh6VKD+xG09ACxB/xiBKxxNRvA7vmbqPDCwWj9z/GeR0htdbj50L
+PGNT/4FnbAJar2Qt0T+RBifVrCkcugl27B0ML7EvRW0wEviDEcXxEmRmZOUGFBb1
+enYdim+VqssRdke71zIYkuVB03MJl2pTVFQRCN1DNJ0PfICZjTPky++8rmhSwMBp
+Z627uq50zI2KKYtJFNjY7IMbLnzmqg==
+=xiR1
+-----END PGP SIGNATURE-----
+
+--Sig_/8nmMSgUskQvNoF9U_wHFGqy--
