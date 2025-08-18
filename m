@@ -1,111 +1,158 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C12765EA;
-	Tue, 19 Aug 2025 14:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A2021FF48;
+	Tue, 19 Aug 2025 15:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614999; cv=none; b=QkTuNZqShEH3v5hm9qU7wSwHDzxG8nPINM6tBOYOOs7q4ZKS2WlpqzxQNqF90zu+EWOVJQwLLYNxuIizVMdz9C2k0afleT1lq4ZDFgngjRwCnPpA/Xp/IHsI2CTcDTA3frCFKOKkkOzoTt8TvE94sz4aaYNk+KztrcPk2dD/bhk=
+	t=1755616666; cv=none; b=GOikiTw25HMIaWcxIhl9HgAJen0wEpHEMq0GAz4xzKwJgD0UPyrNYLb5xS7lsv6S9PTf4Bo3ZFPQmyMVa0ql6aYmlsgtauObkqDHg8YXFTx4optN8j7ZWfD+bmr0A0jAOgh13S1rezzx4mXg8c2UCqmCWVugWwqDjnaIwZd0mRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614999; c=relaxed/simple;
-	bh=tpqiMTM5UpUIFcGXnDC0RmaB5DPbw815TlZW+yJkuQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Di4yh47fthth2IDRomYRa7+Z+nHJkSHbNg8MUqgXXhewzuuElMXrnZymgC8M3YjwYlQXQf2DfMvSU4qXAkJMgQDrrm2FivYWABLjRWMsQuIP6Z0iAOMl5BPVlotzwIZZA8unBxiqjhCI4LwwsQYFQ6dEpEXJ9aR7etIIpAWtYWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QD7tcl5g; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1755616666; c=relaxed/simple;
+	bh=YC3YqkY+ubMJ+BckfgV8x/v8nTzqCv3hnNV1WNYIJqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9OticoUjFR81/LZ1mxWK71qyoI2JzSVXhtV1xC9CqUaSw6R2JeWygbtwADJb9lrJAijWXNrhMHNa3lqxWltRp4r9ANxiYY697EV4e5tNBmxB9qgD4vjh1k7Bg/RpRyNFs9hJW/1V4jJLvlKZZLkD+IW2mP+PxPrWrIyFjGW/p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD6Nm8hx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QD7tcl5g"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=R83gvwHkvhtEf5FMXSyKQp25l/8zfAekoxVagLjzT18=; b=QD7tcl5gNiF7TA95P5DNco3ds+
-	A6BWit/p3PcIQyIAlTjY4NM4WiV9zy7OZTEQUI5kD894KqVOQBRttyC5SY1fiXzN5qAD+0gxddwo2
-	cWCY17wUrg0kXvLU0UUMP14Nd1mOy4QfbzzXuZ9L9pSDVVj0HK+rZwXZYUn5opOhTYcVwjAHs3Wr1
-	qJNlZ6JBsr3adQdL4AwNs+J7bQ4tCiT9r8tVAQiG4LrFKwtacbeXgwAwISKbv+uULEvAz+bavNkz6
-	WxT+C38TcbAop7MfM1z+sb7AqCFTsngbOXRorFBr2JKuFUW+aTFyD4waN2XKsob5UVcb+Exzm9Jd/
-	yAglE/+A==;
-Received: from i53875a31.versanet.de ([83.135.90.49] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uoNes-0002aD-FU; Tue, 19 Aug 2025 16:49:54 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Srinivas Kandagatla <srini@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Lee Jones <lee@kernel.org>
-Subject: Re: linux-next: build failure after merge of the nvmem tree
-Date: Tue, 19 Aug 2025 16:49:53 +0200
-Message-ID: <3593278.som1txNFv6@diego>
-In-Reply-To: <20be4ac4-42c0-422c-bcd4-8d49527f217f@kernel.org>
-References:
- <20250819134039.5742c60e@canb.auug.org.au> <10708013.qUNvkh4Gvn@diego>
- <20be4ac4-42c0-422c-bcd4-8d49527f217f@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD6Nm8hx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A38DC4CEF1;
+	Tue, 19 Aug 2025 15:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755616665;
+	bh=YC3YqkY+ubMJ+BckfgV8x/v8nTzqCv3hnNV1WNYIJqA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bD6Nm8hxsVqxV6iX0p8kZ95x/tUAVmv+VI7eQPr5Jd0OewxBu+WwuPok1kZiL9MfK
+	 zXcheZ5nVB3l7NQCxUqXAvrveLMeeXaFRE6VwBqtNbdmzldBlAJgPSGuCszNZwYd4A
+	 jDDH/hPB2yyjRFvoggiNU2TAv4GygI/iwznAIaQR/V10I+sqrwmZshlvnzMvH+vQDk
+	 4x0O/cN3oq4keY0xgornwcUx/U1F2hjRgoTA4hvqyhk1hRsDwPpoCUF/qB0bvv4NRp
+	 hiu+rL5hRGT91qdCmifo37zUFRDQNFPKhAz5dftSbKacOVTm/Oc7r5yDeJJ2oLdk1N
+	 mZ/xLrIak4efA==
+Date: Mon, 18 Aug 2025 21:23:36 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: David Disseldorp <ddiss@suse.de>
+Cc: linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] gen_init_cpio: add -a <data_align> as reflink
+ optimization
+Message-ID: <aKN9uMf0HeD1Fgqk@levanger>
+References: <20250814054818.7266-1-ddiss@suse.de>
+ <20250814054818.7266-8-ddiss@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814054818.7266-8-ddiss@suse.de>
 
-Am Dienstag, 19. August 2025, 15:58:32 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb Srinivas Kandagatla:
->=20
-> On 8/19/25 2:54 PM, Heiko St=C3=BCbner wrote:
-> > Am Dienstag, 19. August 2025, 13:22:04 Mitteleurop=C3=A4ische Sommerzei=
-t schrieb Srinivas Kandagatla:
-> >> On 8/19/25 12:14 PM, Heiko St=C3=BCbner wrote:
-> >>> Hi,
-> >>>
-> >>> Am Dienstag, 19. August 2025, 05:40:39 Mitteleurop=C3=A4ische Sommerz=
-eit schrieb Stephen Rothwell:
-> >>>> After merging the nvmem tree, today's linux-next build (x86_64
-> >>>> allmodconfig) failed like this:
-> >>>>
-> >>>> In file included from drivers/nvmem/qnap-mcu-eeprom.c:12:
-> >>>> include/linux/mfd/qnap-mcu.h:13:9: error: unknown type name 'u32'
-> >>>>    13 |         u32 baud_rate;
-> >>>>       |         ^~~
-> >>>
-> >>> [...]
-> >>>
-> >>>>
-> >>>> Caused by commit
-> >>>>
-> >>>>   117c3f3014a9 ("nvmem: add driver for the eeprom in qnap-mcu contro=
-llers")
-> >>>>
-> >>>> I have used the nvmem tree from next-20250818 for today.
-> >>>
-> >>> bah, sorry about messing this up.
-> >>>
-> >>> While I encountered this, and fixed that with the pending
-> >>>   https://lore.kernel.org/all/20250804130726.3180806-2-heiko@sntech.d=
-e/
-> >>>
-> >>> I completely missed that the nvmem driver applied alone would break
-> >>> without that change :-( .
-> >>
-> >> I have now reverted this change, @Heiko Please let me know if you want
-> >> to take this to mfd tree or vice-versa.
-> >=20
-> > ok, no worries :-) .
-> >=20
-> > I guess for now, I'll just make sure the header patch gets somewhere.
-> > And I guess I'll re-try the nvmem driver once that has happened,
-> > probably for the next cycle.
->=20
-> I don't think we need to wait till next cycle, Lee can pick up this
-> patch via mfd tree if header change is going via mfd tree.
+On Thu, Aug 14, 2025 at 03:18:05PM +1000, David Disseldorp wrote:
+> As described in buffer-format.rst, the existing initramfs.c extraction
+> logic works fine if the cpio filename field is padded out with trailing
+> zeros, with a caveat that the padded namesize can't exceed PATH_MAX.
+> 
+> Add filename zero-padding logic to gen_init_cpio, which can be triggered
+> via the new -a <data_align> parameter. Performance and storage
+> utilization is improved for Btrfs and XFS workloads, as copy_file_range
+> can reflink the entire source file into a filesystem block-size aligned
+> destination offset within the cpio archive.
+> 
+> Btrfs benchmarks run on 6.15.8-1-default (Tumbleweed) x86_64 host:
+>   > truncate --size=2G /tmp/backing.img
+>   > /sbin/mkfs.btrfs /tmp/backing.img
+>   ...
+>   Sector size:        4096        (CPU page size: 4096)
+>   ...
+>   > sudo mount /tmp/backing.img mnt
+>   > sudo chown $USER mnt
+>   > cd mnt
+>   mnt> dd if=/dev/urandom of=foo bs=1M count=20 && cat foo >/dev/null
+>   ...
+>   mnt> echo "file /foo foo 0755 0 0" > list
+>   mnt> perf stat -r 10 gen_init_cpio -o unaligned_btrfs list
+>   ...
+>             0.023496 +- 0.000472 seconds time elapsed  ( +-  2.01% )
+> 
+>   mnt> perf stat -r 10 gen_init_cpio -o aligned_btrfs -a 4096 list
+>   ...
+>            0.0010010 +- 0.0000565 seconds time elapsed  ( +-  5.65% )
+> 
+>   mnt> /sbin/xfs_io -c "fiemap -v" unaligned_btrfs
+>   unaligned_btrfs:
+>    EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>      0: [0..40967]:      695040..736007   40968   0x1
+>   mnt> /sbin/xfs_io -c "fiemap -v" aligned_btrfs
+>   aligned_btrfs:
+>    EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>      0: [0..7]:          26768..26775         8   0x0
+>      1: [8..40967]:      269056..310015   40960 0x2000
+>      2: [40968..40975]:  26776..26783         8   0x1
+>   mnt> /sbin/btrfs fi du unaligned_btrfs aligned_btrfs
+>        Total   Exclusive  Set shared  Filename
+>     20.00MiB    20.00MiB       0.00B  unaligned_btrfs
+>     20.01MiB     8.00KiB    20.00MiB  aligned_btrfs
+> 
+> XFS benchmarks run on same host:
+>   > sudo umount mnt && rm /tmp/backing.img
+>   > truncate --size=2G /tmp/backing.img
+>   > /sbin/mkfs.xfs /tmp/backing.img
+>   ...
+>            =                       reflink=1    ...
+>   data     =                       bsize=4096   blocks=524288, imaxpct=25
+>   ...
+>   > sudo mount /tmp/backing.img mnt
+>   > sudo chown $USER mnt
+>   > cd mnt
+>   mnt> dd if=/dev/urandom of=foo bs=1M count=20 && cat foo >/dev/null
+>   ...
+>   mnt> echo "file /foo foo 0755 0 0" > list
+>   mnt> perf stat -r 10 gen_init_cpio -o unaligned_xfs list
+>   ...
+>             0.011069 +- 0.000469 seconds time elapsed  ( +-  4.24% )
+> 
+>   mnt> perf stat -r 10 gen_init_cpio -o aligned_xfs -a 4096 list
+>   ...
+>             0.001273 +- 0.000288 seconds time elapsed  ( +- 22.60% )
+> 
+>   mnt> /sbin/xfs_io -c "fiemap -v" unaligned_xfs
+>    unaligned_xfs:
+>    EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>      0: [0..40967]:      106176..147143   40968   0x0
+>      1: [40968..65023]:  147144..171199   24056 0x801
+>   mnt> /sbin/xfs_io -c "fiemap -v" aligned_xfs
+>    aligned_xfs:
+>    EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>      0: [0..7]:          120..127             8   0x0
+>      1: [8..40967]:      192..41151       40960 0x2000
+>      2: [40968..40975]:  236728..236735       8   0x0
+>      3: [40976..106495]: 236736..302255   65520 0x801
+> 
+> The alignment is best-effort; a stderr message is printed if alignment
+> can't be achieved due to PATH_MAX overrun, with fallback to non-padded
+> filename. This allows it to still be useful for opportunistic alignment,
+> e.g. on aarch64 Btrfs with 64K block-size. Alignment failure messages
+> provide an indicator that reordering of the cpio-manifest may be
+> beneficial.
+> 
+> Archive read performance for reflinked initramfs images may suffer due
+> to the effects of fragmentation, particularly on spinning disks. To
+> mitigate excessive fragmentation, files with lengths less than
+> data_align aren't padded.
+> 
+> Signed-off-by: David Disseldorp <ddiss@suse.de>
+> ---
+>  usr/gen_init_cpio.c | 50 ++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 38 insertions(+), 12 deletions(-)
 
-Okay ... if that is fine with you then great.
-
-I guess for less confusion, I'll re-submit the driver, reference the header
-patch it needs and you can Ack it to go via the mfd tree.
+Thanks!  Testing with a massively oversized initramfs (600MB) was fun:
+from 2:44 down to 38s.
 
 
+Questions that pop up in my mind:
+Now, how can we make other benefit from this?  Might it make sense to
+introduce a kconfig variable for initramfs alignment -- even though this
+is just a build-time optimisation of few seconds?
+
+
+Kind regards,
+Nicolas
