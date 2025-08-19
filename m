@@ -1,88 +1,88 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2338827AC4D
-	for <linux-next@vger.kernel.org>; Tue, 19 Aug 2025 03:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B782FDC3F
+	for <linux-next@vger.kernel.org>; Tue, 19 Aug 2025 03:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755575423; cv=none; b=re6GxpJDd1WTF3TY1N5HyZ0R0zZaaEq+vS60hYrJI2o7Q+Vb9Ec05n8YcMv7/x35p9W2lFd08ozsWS6TxaQaAE8E0faop8I11G2MEyPFrNyUOWR+k1PtYXOobupinzxrCn27/H6P4zmJ8qUf7OmzK2PWWFFwmzLqAxyaD7Hw3Ik=
+	t=1755575432; cv=none; b=AVLNfocI/t0x7d2YO8Qtz1MI30KwPsCCcQ38vdgdVH6U5GhJYMC0PivmGnYZIgoEd/LWyVrsBO166GM4u+oINBkYq9pTkoJ1E1V5X5fu7Ql0gskMZHVa72II/Al0F3aMdvWLvhThHrFAyxl7cFpa8lkxu6U2E0u9TbAkqYm0kj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755575423; c=relaxed/simple;
-	bh=dJY/yrWeyGTUSMgmResl3zq7c3MiCNI7XHkTzvNE8xY=;
+	s=arc-20240116; t=1755575432; c=relaxed/simple;
+	bh=/8GqTouvpICO3rq8wyUVLvRahyM05Hooc+oHUOGuVq4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nl0IsH71/tfIm9488oBLpGyL++JzNC2ERfiSTsrO8PS93NKiGxzd+9GinQyzLi7ktq0DTnNbYzdI9dxIxWZot+8eIREuz1ElHPP82mMNRa9xI4PJOrDtFVQ0IwLebtiq2uCC6VaBR//42BDTtdkCNmuJOtmQQiTAY/HGxUBBbu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QXBrw7Sr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KTVnwTXP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QXBrw7Sr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KTVnwTXP; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=CGk1nI2IPR2b4OSQoMPIS9Ihp9l0ej+3MOHn2hqljSu6Ai/TrX8/fOhGorEdLfEeJlj53rMOsr9KFSnZoLSaRqtCTZjzcBM73aEPX3D/F8l1zdExJXTI8pHUMYcpRx+MOTurhUejYwZYk6PdoP9jk94Hpaq9jMOOMSdZOYiIoZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j63QoSB7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sQuBBuu+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DD2WIiAt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kr2zPdhF; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QXBrw7Sr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KTVnwTXP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QXBrw7Sr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KTVnwTXP"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j63QoSB7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sQuBBuu+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DD2WIiAt";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kr2zPdhF"
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5773D1F749;
-	Tue, 19 Aug 2025 03:50:00 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 32F682126B;
+	Tue, 19 Aug 2025 03:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755575400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1755575409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G9iEMriPEeHMof6rdt/bDONZWYyBB7uxBBW3k6Uf3kY=;
-	b=QXBrw7SrHUx04szst50cinGO/hWTDMUoLjWgbK/lr+0XV8db9SV8Op1hyFScChpFdh2UmQ
-	lExQgTzQDWySDfXjFsR/gO6U6FRfdfpb0mr4mb3qPrupNBwxEqhq59NHEZnsIE0NS+FdHR
-	d9S2tsqUoZ3PSrA4kYJX5Gftpxmjiac=
+	bh=YvemnRgmpNJUIGNceWAMhu36Hgm3Z0Mi60ibkK3Z2u4=;
+	b=j63QoSB7DP9bZ1BUkn1wLjXvysmP/6SOcwzsUHtaCBRPifhwN5ZhdWIQu1sBznk+VyKGK2
+	Awpb5uSazzh/RaRsVfGuaid8A0fXmMeqkuB9ty+W1yzvqotwRLp4JUSvcC9yrPVUUDoOuH
+	QJooKaRYoInBHHgE0vu3RMDOcOZXpJg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755575400;
+	s=susede2_ed25519; t=1755575409;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G9iEMriPEeHMof6rdt/bDONZWYyBB7uxBBW3k6Uf3kY=;
-	b=KTVnwTXPmn9HcM+rBJrbHF6vcROnCWEMNYj9vAhVfUKa9OxiJ/S9VVjFDbS1D5KDFsqyz5
-	kkK5/YizQH9zDTCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=QXBrw7Sr;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KTVnwTXP
+	bh=YvemnRgmpNJUIGNceWAMhu36Hgm3Z0Mi60ibkK3Z2u4=;
+	b=sQuBBuu+R6zIycqTZM1S8lL55XuejmXQtSQPKLAOQjlNKc9RLEzCGOxMnjYv1YkXgyikqG
+	CuAtpTbt1vWMdFDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DD2WIiAt;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kr2zPdhF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755575400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1755575408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G9iEMriPEeHMof6rdt/bDONZWYyBB7uxBBW3k6Uf3kY=;
-	b=QXBrw7SrHUx04szst50cinGO/hWTDMUoLjWgbK/lr+0XV8db9SV8Op1hyFScChpFdh2UmQ
-	lExQgTzQDWySDfXjFsR/gO6U6FRfdfpb0mr4mb3qPrupNBwxEqhq59NHEZnsIE0NS+FdHR
-	d9S2tsqUoZ3PSrA4kYJX5Gftpxmjiac=
+	bh=YvemnRgmpNJUIGNceWAMhu36Hgm3Z0Mi60ibkK3Z2u4=;
+	b=DD2WIiAtysH/hm1mHlkUIiBsB//18lQn4VwiZ4EJsE5kflDTwTcgJPPJU326yfD3x6k9iM
+	4BN+Qd6gtCZn4C/rmJyJtIx2mkMzkXqefgpjLptmQhSTlOHTWfdSZ2D6sHj/o+KqGZ18ED
+	ub/F3bXvk8ZZP+V//W/istI2LwiMxbw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755575400;
+	s=susede2_ed25519; t=1755575408;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G9iEMriPEeHMof6rdt/bDONZWYyBB7uxBBW3k6Uf3kY=;
-	b=KTVnwTXPmn9HcM+rBJrbHF6vcROnCWEMNYj9vAhVfUKa9OxiJ/S9VVjFDbS1D5KDFsqyz5
-	kkK5/YizQH9zDTCw==
+	bh=YvemnRgmpNJUIGNceWAMhu36Hgm3Z0Mi60ibkK3Z2u4=;
+	b=kr2zPdhF8VEdaMVMlGbSHI8R8WBUXbzIFTBOXI244vNaTIQQ+ixMAJfp61Sf8+9fO/E7wi
+	PyaKGFdW574DWDCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A36C139B3;
-	Tue, 19 Aug 2025 03:49:58 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2610E13686;
+	Tue, 19 Aug 2025 03:50:05 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YPLPAGb0o2gJawAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Tue, 19 Aug 2025 03:49:58 +0000
+	id MI+UM230o2gJawAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Tue, 19 Aug 2025 03:50:05 +0000
 From: David Disseldorp <ddiss@suse.de>
 To: linux-kbuild@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Cc: linux-next@vger.kernel.org,
 	ddiss@suse.de,
 	nsc@kernel.org
-Subject: [PATCH v3 1/8] gen_init_cpio: write to fd instead of stdout stream
-Date: Tue, 19 Aug 2025 13:05:44 +1000
-Message-ID: <20250819032607.28727-2-ddiss@suse.de>
+Subject: [PATCH v3 4/8] gen_init_cpio: avoid duplicate strlen calls
+Date: Tue, 19 Aug 2025 13:05:47 +1000
+Message-ID: <20250819032607.28727-5-ddiss@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250819032607.28727-1-ddiss@suse.de>
 References: <20250819032607.28727-1-ddiss@suse.de>
@@ -93,6 +93,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 32F682126B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -112,315 +117,186 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	RCPT_COUNT_FIVE(0.00)[5];
 	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 5773D1F749
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
 X-Spam-Score: -3.01
 
-In preparation for more efficient archiving using copy_file_range(),
-switch from writing archive data to stdout to using STDOUT_FILENO and
-I/O via write(), dprintf(), etc.
-Basic I/O error handling is added to cover cases such as ENOSPC. Partial
-writes are treated as errors.
+We determine the filename length for the cpio header, so shouldn't
+recalculate it when writing out the filename.
 
 Signed-off-by: David Disseldorp <ddiss@suse.de>
 Reviewed-by: Nicolas Schier <nsc@kernel.org>
 ---
- usr/gen_init_cpio.c | 139 ++++++++++++++++++++++++++------------------
- 1 file changed, 81 insertions(+), 58 deletions(-)
+ usr/gen_init_cpio.c | 40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
 diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-index edcdb8abfa31c..235bfc574e6b1 100644
+index aa73afd3756c8..729585342e16e 100644
 --- a/usr/gen_init_cpio.c
 +++ b/usr/gen_init_cpio.c
-@@ -23,64 +23,71 @@
- #define xstr(s) #s
+@@ -25,6 +25,7 @@
  #define str(s) xstr(s)
  #define MIN(a, b) ((a) < (b) ? (a) : (b))
-+#define CPIO_HDR_LEN 110
-+#define padlen(_off, _align) (((_align) - ((_off) & ((_align) - 1))) % (_align))
+ #define CPIO_HDR_LEN 110
++#define CPIO_TRAILER "TRAILER!!!"
+ #define padlen(_off, _align) (((_align) - ((_off) & ((_align) - 1))) % (_align))
  
-+static char padding[512];
- static unsigned int offset;
- static unsigned int ino = 721;
- static time_t default_mtime;
- static bool do_file_mtime;
- static bool do_csum = false;
-+static int outfd = STDOUT_FILENO;
- 
- struct file_handler {
- 	const char *type;
+ static char padding[512];
+@@ -40,9 +41,8 @@ struct file_handler {
  	int (*handler)(const char *line);
  };
  
--static void push_string(const char *name)
-+static int push_string(const char *name)
+-static int push_string(const char *name)
++static int push_buf(const char *name, size_t name_len)
  {
- 	unsigned int name_len = strlen(name) + 1;
-+	ssize_t len;
-+
-+	len = write(outfd, name, name_len);
-+	if (len != name_len)
-+		return -1;
+-	unsigned int name_len = strlen(name) + 1;
+ 	ssize_t len;
  
--	fputs(name, stdout);
--	putchar(0);
- 	offset += name_len;
-+	return 0;
+ 	len = write(outfd, name, name_len);
+@@ -69,9 +69,8 @@ static int push_pad(size_t padlen)
+ 	return 0;
  }
  
--static void push_pad (void)
-+static int push_pad(size_t padlen)
+-static int push_rest(const char *name)
++static int push_rest(const char *name, size_t name_len)
  {
--	while (offset & 3) {
--		putchar(0);
--		offset++;
--	}
-+	ssize_t len = 0;
-+
-+	if (!padlen)
-+		return 0;
-+
-+	if (padlen < sizeof(padding))
-+		len = write(outfd, padding, padlen);
-+	if (len != padlen)
-+		return -1;
-+
-+	offset += padlen;
-+	return 0;
- }
+-	unsigned int name_len = strlen(name) + 1;
+ 	ssize_t len;
  
--static void push_rest(const char *name)
-+static int push_rest(const char *name)
+ 	len = write(outfd, name, name_len);
+@@ -85,8 +84,8 @@ static int push_rest(const char *name)
+ 
+ static int cpio_trailer(void)
  {
- 	unsigned int name_len = strlen(name) + 1;
--	unsigned int tmp_ofs;
-+	ssize_t len;
+-	const char name[] = "TRAILER!!!";
+ 	int len;
++	unsigned int namesize = sizeof(CPIO_TRAILER);
  
--	fputs(name, stdout);
--	putchar(0);
--	offset += name_len;
-+	len = write(outfd, name, name_len);
-+	if (len != name_len)
-+		return -1;
- 
--	tmp_ofs = name_len + 110;
--	while (tmp_ofs & 3) {
--		putchar(0);
--		offset++;
--		tmp_ofs++;
--	}
--}
-+	offset += name_len;
- 
--static void push_hdr(const char *s)
--{
--	fputs(s, stdout);
--	offset += 110;
-+	return push_pad(padlen(name_len + CPIO_HDR_LEN, 4));
- }
- 
--static void cpio_trailer(void)
-+static int cpio_trailer(void)
- {
--	char s[256];
- 	const char name[] = "TRAILER!!!";
-+	int len;
- 
--	sprintf(s, "%s%08X%08X%08lX%08lX%08X%08lX"
-+	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
+ 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
  	       "%08X%08X%08X%08X%08X%08X%08X",
- 		do_csum ? "070702" : "070701", /* magic */
- 		0,			/* ino */
-@@ -96,23 +103,24 @@ static void cpio_trailer(void)
+@@ -102,12 +101,12 @@ static int cpio_trailer(void)
+ 		0,			/* minor */
+ 		0,			/* rmajor */
  		0,			/* rminor */
- 		(unsigned)strlen(name)+1, /* namesize */
+-		(unsigned)strlen(name)+1, /* namesize */
++		namesize,		/* namesize */
  		0);			/* chksum */
--	push_hdr(s);
--	push_rest(name);
-+	offset += len;
+ 	offset += len;
  
--	while (offset % 512) {
--		putchar(0);
--		offset++;
--	}
-+	if (len != CPIO_HDR_LEN ||
-+	    push_rest(name) < 0 ||
-+	    push_pad(padlen(offset, 512)) < 0)
-+		return -1;
-+
-+	return 0;
- }
+ 	if (len != CPIO_HDR_LEN ||
+-	    push_rest(name) < 0 ||
++	    push_rest(CPIO_TRAILER, namesize) < 0 ||
+ 	    push_pad(padlen(offset, 512)) < 0)
+ 		return -1;
  
- static int cpio_mkslink(const char *name, const char *target,
+@@ -118,9 +117,12 @@ static int cpio_mkslink(const char *name, const char *target,
  			 unsigned int mode, uid_t uid, gid_t gid)
  {
--	char s[256];
-+	int len;
+ 	int len;
++	unsigned int namesize, targetsize = strlen(target) + 1;
  
  	if (name[0] == '/')
  		name++;
--	sprintf(s,"%s%08X%08X%08lX%08lX%08X%08lX"
-+	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
++	namesize = strlen(name) + 1;
++
+ 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
  	       "%08X%08X%08X%08X%08X%08X%08X",
  		do_csum ? "070702" : "070701", /* magic */
- 		ino++,			/* ino */
-@@ -128,12 +136,17 @@ static int cpio_mkslink(const char *name, const char *target,
+@@ -130,19 +132,19 @@ static int cpio_mkslink(const char *name, const char *target,
+ 		(long) gid,		/* gid */
+ 		1,			/* nlink */
+ 		(long) default_mtime,	/* mtime */
+-		(unsigned)strlen(target)+1, /* filesize */
++		targetsize,		/* filesize */
+ 		3,			/* major */
+ 		1,			/* minor */
+ 		0,			/* rmajor */
  		0,			/* rminor */
- 		(unsigned)strlen(name) + 1,/* namesize */
+-		(unsigned)strlen(name) + 1,/* namesize */
++		namesize,		/* namesize */
  		0);			/* chksum */
--	push_hdr(s);
--	push_string(name);
--	push_pad();
--	push_string(target);
--	push_pad();
-+	offset += len;
-+
-+	if (len != CPIO_HDR_LEN ||
-+	    push_string(name) < 0 ||
-+	    push_pad(padlen(offset, 4)) < 0 ||
-+	    push_string(target) < 0 ||
-+	    push_pad(padlen(offset, 4)) < 0)
-+		return -1;
-+
- 	return 0;
-+
- }
+ 	offset += len;
  
- static int cpio_mkslink_line(const char *line)
-@@ -157,11 +170,11 @@ static int cpio_mkslink_line(const char *line)
- static int cpio_mkgeneric(const char *name, unsigned int mode,
+ 	if (len != CPIO_HDR_LEN ||
+-	    push_string(name) < 0 ||
++	    push_buf(name, namesize) < 0 ||
+ 	    push_pad(padlen(offset, 4)) < 0 ||
+-	    push_string(target) < 0 ||
++	    push_buf(target, targetsize) < 0 ||
+ 	    push_pad(padlen(offset, 4)) < 0)
+ 		return -1;
+ 
+@@ -172,9 +174,12 @@ static int cpio_mkgeneric(const char *name, unsigned int mode,
  		       uid_t uid, gid_t gid)
  {
--	char s[256];
-+	int len;
+ 	int len;
++	unsigned int namesize;
  
  	if (name[0] == '/')
  		name++;
--	sprintf(s,"%s%08X%08X%08lX%08lX%08X%08lX"
-+	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
++	namesize = strlen(name) + 1;
++
+ 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
  	       "%08X%08X%08X%08X%08X%08X%08X",
  		do_csum ? "070702" : "070701", /* magic */
- 		ino++,			/* ino */
-@@ -177,8 +190,12 @@ static int cpio_mkgeneric(const char *name, unsigned int mode,
+@@ -189,12 +194,12 @@ static int cpio_mkgeneric(const char *name, unsigned int mode,
+ 		1,			/* minor */
+ 		0,			/* rmajor */
  		0,			/* rminor */
- 		(unsigned)strlen(name) + 1,/* namesize */
+-		(unsigned)strlen(name) + 1,/* namesize */
++		namesize,		/* namesize */
  		0);			/* chksum */
--	push_hdr(s);
--	push_rest(name);
-+	offset += len;
-+
-+	if (len != CPIO_HDR_LEN ||
-+	    push_rest(name) < 0)
-+		return -1;
-+
- 	return 0;
- }
+ 	offset += len;
  
-@@ -246,7 +263,7 @@ static int cpio_mknod(const char *name, unsigned int mode,
- 		       uid_t uid, gid_t gid, char dev_type,
+ 	if (len != CPIO_HDR_LEN ||
+-	    push_rest(name) < 0)
++	    push_rest(name, namesize) < 0)
+ 		return -1;
+ 
+ 	return 0;
+@@ -265,6 +270,7 @@ static int cpio_mknod(const char *name, unsigned int mode,
  		       unsigned int maj, unsigned int min)
  {
--	char s[256];
-+	int len;
+ 	int len;
++	unsigned int namesize;
  
  	if (dev_type == 'b')
  		mode |= S_IFBLK;
-@@ -255,7 +272,7 @@ static int cpio_mknod(const char *name, unsigned int mode,
+@@ -273,6 +279,8 @@ static int cpio_mknod(const char *name, unsigned int mode,
  
  	if (name[0] == '/')
  		name++;
--	sprintf(s,"%s%08X%08X%08lX%08lX%08X%08lX"
-+	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
++	namesize = strlen(name) + 1;
++
+ 	len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
  	       "%08X%08X%08X%08X%08X%08X%08X",
  		do_csum ? "070702" : "070701", /* magic */
- 		ino++,			/* ino */
-@@ -271,8 +288,12 @@ static int cpio_mknod(const char *name, unsigned int mode,
+@@ -287,12 +295,12 @@ static int cpio_mknod(const char *name, unsigned int mode,
+ 		1,			/* minor */
+ 		maj,			/* rmajor */
  		min,			/* rminor */
- 		(unsigned)strlen(name) + 1,/* namesize */
+-		(unsigned)strlen(name) + 1,/* namesize */
++		namesize,		/* namesize */
  		0);			/* chksum */
--	push_hdr(s);
--	push_rest(name);
-+	offset += len;
-+
-+	if (len != CPIO_HDR_LEN ||
-+	    push_rest(name) < 0)
-+		return -1;
-+
+ 	offset += len;
+ 
+ 	if (len != CPIO_HDR_LEN ||
+-	    push_rest(name) < 0)
++	    push_rest(name, namesize) < 0)
+ 		return -1;
+ 
  	return 0;
- }
+@@ -426,7 +434,7 @@ static int cpio_mkfile(const char *name, const char *location,
+ 		offset += len;
  
-@@ -324,11 +345,9 @@ static int cpio_mkfile(const char *name, const char *location,
- 			unsigned int mode, uid_t uid, gid_t gid,
- 			unsigned int nlinks)
- {
--	char s[256];
- 	struct stat buf;
- 	unsigned long size;
--	int file;
--	int retval;
-+	int file, retval, len;
- 	int rc = -1;
- 	time_t mtime;
- 	int namesize;
-@@ -386,7 +405,7 @@ static int cpio_mkfile(const char *name, const char *location,
- 		if (name[0] == '/')
- 			name++;
- 		namesize = strlen(name) + 1;
--		sprintf(s,"%s%08X%08X%08lX%08lX%08X%08lX"
-+		len = dprintf(outfd, "%s%08X%08X%08lX%08lX%08X%08lX"
- 		       "%08lX%08X%08X%08X%08X%08X%08X",
- 			do_csum ? "070702" : "070701", /* magic */
- 			ino,			/* ino */
-@@ -402,9 +421,12 @@ static int cpio_mkfile(const char *name, const char *location,
- 			0,			/* rminor */
- 			namesize,		/* namesize */
- 			size ? csum : 0);	/* chksum */
--		push_hdr(s);
--		push_string(name);
--		push_pad();
-+		offset += len;
-+
-+		if (len != CPIO_HDR_LEN ||
-+		    push_string(name) < 0 ||
-+		    push_pad(padlen(offset, 4)) < 0)
-+			goto error;
+ 		if (len != CPIO_HDR_LEN ||
+-		    push_string(name) < 0 ||
++		    push_buf(name, namesize) < 0 ||
+ 		    push_pad(padlen(offset, 4)) < 0)
+ 			goto error;
  
- 		while (size) {
- 			unsigned char filebuf[65536];
-@@ -417,14 +439,15 @@ static int cpio_mkfile(const char *name, const char *location,
- 				goto error;
- 			}
- 
--			if (fwrite(filebuf, this_read, 1, stdout) != 1) {
-+			if (write(outfd, filebuf, this_read) != this_read) {
- 				fprintf(stderr, "writing filebuf failed\n");
- 				goto error;
- 			}
- 			offset += this_read;
- 			size -= this_read;
- 		}
--		push_pad();
-+		if (push_pad(padlen(offset, 4)) < 0)
-+			goto error;
- 
- 		name += namesize;
- 	}
-@@ -691,7 +714,7 @@ int main (int argc, char *argv[])
- 		}
- 	}
- 	if (ec == 0)
--		cpio_trailer();
-+		ec = cpio_trailer();
- 
- 	exit(ec);
- }
 -- 
 2.43.0
 
