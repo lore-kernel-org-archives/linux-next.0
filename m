@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492C2773F0;
-	Wed, 17 Sep 2025 07:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE5D2E2DFE;
+	Wed, 17 Sep 2025 07:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758095192; cv=none; b=KY6LIglalcRiVEZyU+zx5K0tOTyJTe4oVrtb0xYbYkL+d4/BgN1bFAiJM3YpWI3KVU6z5Lpu3QLwmB9YEz44ho4eLb+1lsK3JoFsqqHu/RPzZqlb1wxSIP6NNOKJNC9EKSWP8zlUVsrbTcAHlbvuVEvMNfclXY2iv+mxJ7DR1hY=
+	t=1758095195; cv=none; b=qEFEd4Cx7AJySQvXBYYxX64qj2S661D/Hp7LEuklocnFpDQAw91Iv2WGhvgIcQXby/XmclUWQrKmONZPx8fnVdy5uExm3IPslF69W1AfQbidTiVTR9nEgltM7NYsLZdBobzbVkIPPZEIkmruxx2BGIVJ1HqZRPtgvZoJVOPsM9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758095192; c=relaxed/simple;
-	bh=qulyf2x3ovCrkpojNcqaI9BFWYLuH6KOYPY/FS9U6yw=;
+	s=arc-20240116; t=1758095195; c=relaxed/simple;
+	bh=f4QsgvOKY8b95x6FQDUL6uMm5pnw0xlJZP3JlPjGc/0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KFHhJpb0HEF89A2Men0alI7//nEJRYGGLj7zVRnRMy1KYrJEMiLvsihwGJi0dzyozrJ+1Yb3F/RzQ1GkGjZQGRr/r1t/q1izbfh7xCf/72WHin1nAC7Yt1fYG0rDpz7KOLsQA9rGnQCU/ncWB22yYPXEHvewGbuQolggths+fmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsAQKhmy; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=S9ogknH8P0Yl1eCTWqZw1rzsga66IBYrewmNLzX+k9of9Da+clEBiFCeM9B2vXEn+32uhMgPCvDrqPdQjK0w7Q1VIukHOk+4vpZmYnO8euK3YI50+bROn3zQ8p7gjyGt3szacEq3ce/nBXvfbqY5t+R9JXSZhAMuKhBN/DFXvsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ih0wrNBh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsAQKhmy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B05DCC4CEF0;
-	Wed, 17 Sep 2025 07:46:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ih0wrNBh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A40C4CEF0;
+	Wed, 17 Sep 2025 07:46:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758095191;
-	bh=qulyf2x3ovCrkpojNcqaI9BFWYLuH6KOYPY/FS9U6yw=;
+	s=k20201202; t=1758095195;
+	bh=f4QsgvOKY8b95x6FQDUL6uMm5pnw0xlJZP3JlPjGc/0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OsAQKhmyIKAJfluHy6bw8MkIehm5IEb/9ZDvupSKiRahviiMrX8drdB/x1qh06R3X
-	 L34E7v4n2D3JbhBz/J5ux+3vOM9McCHqwqpf/qMhw1oaCFvxXM1/k+hhsG5lFiLXsq
-	 hnmrPpZabulipxRgCtC0DU3z1X+xncIHsc8k6ocgy8PGgyp9MB01m2OZDye5WunExo
-	 LBQ3iH/AmUQqYWmVfGIUt8qa1klPDqm3OZXteejfZVk+3FAHZoclHM6eTCCY0Wk49I
-	 KGtl6O4ZjCVbfXS3HtN7rpKB+Bpc8CBDABs06mnRdLJefuU+jAyq7fs2TW9VAUHWxQ
-	 ofiGuCcM/RS7g==
+	b=ih0wrNBhunE9a2CzYnt9F+4/I/XOkWbOyq5uV/rPYEOCWklc0WrXzYr8BNcnGfvyx
+	 6Nz4lZ6J7YsSOr9mdiVz2JqobWQsXduRBIIdroHPksChBgZhJIMZmEG2pmVrdabDSs
+	 RJT6uHiY300rusD2BX8fFIVMi6FLk43VNu0c2fPSY+cHTU1CzozrfU/nF58RKk6j0x
+	 5lVj1PDbMU1rzekykNPdexYjXCBqWmBUYYrhSe/x+kZP6ZWelgRoJKZPlOtGn2upG1
+	 /g1vNW+fUX+wWJbOeNqw5/aFJe/P1bNxX4C06NsV+ksPvj2bu+Z0letXDXcjRajnEl
+	 kDTabtMm3bgbg==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Jens
- Axboe <axboe@kernel.dk>, Linux Kernel Mailing List
+To: Mark Brown <broonie@kernel.org>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Linux Kernel Mailing List
  <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the block tree
-In-Reply-To: <aMiScHEWoOABPgt9@sirena.org.uk>
-References: <1Vn5Pr0rEN5VNr1V-oUtQYs_wVms3VZ7jsttDqMtVv3XxoMEIBc7Yf3FJhEanCMsvJe9z8HjzX7cEMedSJX68A==@protonmail.internalid>
- <aMiScHEWoOABPgt9@sirena.org.uk>
-Date: Wed, 17 Sep 2025 09:46:09 +0200
-Message-ID: <87tt11wmgu.fsf@t14s.mail-host-address-is-not-set>
+ <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the block tree
+In-Reply-To: <aMlkUu2MzRYxh96v@sirena.org.uk>
+References: <tIE_kvneh6miIKUKHYGGt286j3LmCrKMfENd03aIk-ojsDOR1vkjVpf9RSrCM_ZheU65PMmUalkvqToq_Ttxew==@protonmail.internalid>
+ <aMlkUu2MzRYxh96v@sirena.org.uk>
+Date: Wed, 17 Sep 2025 09:42:16 +0200
+Message-ID: <87wm5xwmnb.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -52,19 +49,21 @@ Content-Type: text/plain
 
 > Hi all,
 >
-> Today's linux-next merge of the tip tree got a conflict in:
+> Today's linux-next merge of the rust tree got a conflict in:
 >
->   rust/kernel/block/mq/operations.rs
+>   rust/kernel/block/mq/gen_disk.rs
 >
-> between commit:
+> between commits:
 >
+>   f4b72f1558be1 ("rust: block: normalize imports for `gen_disk.rs`")
+>   c3a54220b54a1 ("rust: block: use `NullTerminatedFormatter`")
 >   90d952fac8ac1 ("rust: block: add `GenDisk` private data support")
 >
 > from the block tree and commit:
 >
->   b6dd7b75496c5 ("rust: block: convert `block::mq` to use `Refcount`")
+>   e0be3d34f1089 ("rust: block: use `kernel::{fmt,prelude::fmt!}`")
 >
-> from the tip tree.
+> from the rust tree.
 >
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -73,33 +72,38 @@ Content-Type: text/plain
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 >
-> diff --cc rust/kernel/block/mq/operations.rs
-> index d098a8a3e4340,c0f95a9419c4e..0000000000000
-> --- a/rust/kernel/block/mq/operations.rs
-> +++ b/rust/kernel/block/mq/operations.rs
-> @@@ -6,15 -6,15 +6,16 @@@
+> diff --cc rust/kernel/block/mq/gen_disk.rs
+> index 46ec802699706,be92d0e5f0312..0000000000000
+> --- a/rust/kernel/block/mq/gen_disk.rs
+> +++ b/rust/kernel/block/mq/gen_disk.rs
+> @@@ -3,19 -3,12 +3,19 @@@
+>   //! Generic disk abstraction.
+>   //!
+>   //! C header: [`include/linux/blkdev.h`](srctree/include/linux/blkdev.h)
+> - //! C header: [`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
+> + //! C header: [`include/linux/blk-mq.h`](srctree/include/linux/blk-mq.h)
 >   
->   use crate::{
->       bindings,
->  -    block::mq::request::RequestDataWrapper,
->  -    block::mq::Request,
->  +    block::mq::{request::RequestDataWrapper, Request},
->       error::{from_result, Result},
->       prelude::*,
-> +     sync::Refcount,
->  -    types::ARef,
->  +    types::{ARef, ForeignOwnable},
->   };
-> - use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::Ordering};
-> + use core::marker::PhantomData;
+>  -use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
+>  -use crate::fmt::{self, Write};
+>  -use crate::{bindings, error::from_err_ptr, error::Result, sync::Arc};
+>  -use crate::{error, static_lock_class};
+>  +use crate::{
+>  +    bindings,
+>  +    block::mq::{Operations, TagSet},
+>  +    error::{self, from_err_ptr, Result},
+> ++    fmt::{self, Write};
+>  +    prelude::*,
+>  +    static_lock_class,
+>  +    str::NullTerminatedFormatter,
+>  +    sync::Arc,
+>  +    types::{ForeignOwnable, ScopeGuard},
+>  +};
+> - use core::fmt::{self, Write};
 >   
->  +type ForeignBorrowed<'a, T> = <T as ForeignOwnable>::Borrowed<'a>;
->  +
->   /// Implement this trait to interface blk-mq as block devices.
+>   /// A builder for [`GenDisk`].
 >   ///
->   /// To implement a block device driver, implement this trait as described in the
 
-Looks good to me, thanks!
+This looks good to me, thanks!
 
 
 Best regards,
