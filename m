@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F1625A353;
-	Thu, 18 Sep 2025 12:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD87257853;
+	Thu, 18 Sep 2025 12:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758196933; cv=none; b=ZxBwMixR2DTP8tsRlYKKEg7hSLkPoB3jhPLglCyZbcoLqiJXRQr+idmiDefZn0TeNBckPudMKZQq20cnfqr7GU2rOpzDmD0i9bAw/0IRacoaYlfflynI5B3FBFBB9EoaSnNhLJ+k94GkNMx5zq5tWMHNuGz8/43ydhPS87Z1gL0=
+	t=1758198947; cv=none; b=ZIkdO6BbiKSsJPIcoz5ARNKLu6Z834Tg1JHi4+36GWCCh7m9KsYEM6iNNgrmc0eYza7IAppS9vgaTn1r4kwlqgaNS3oX8HcW6wQK4NMT+NAoPktq14dvbAnXKNW0RsqvWod1pRiTgsNx58w6Bmx2F3TytbWQIYonzjptIfH2d3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758196933; c=relaxed/simple;
-	bh=WUP2CSIe/DTTCGdb9sMgBgHdLX5/ucssxx5lQ3U6Q6k=;
+	s=arc-20240116; t=1758198947; c=relaxed/simple;
+	bh=XMABYdCsaZ05yg+jZdDt4/GbQBY/OYuDjEEyFUkd+xo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qRu1k2uiodrMSvEQtfjzoonBX2Me/S8o4Rd2BdZRbfj++Gj3IKM5/h1Y/hqnoFTFvNxABq7qijjKyyo70MzlCrBE0uVOKA1x5Rqq+DtHJFV4+Sw1j01iyguBUiPBORqjwoWTTBJbSMFDOJgX1aHoq4stynHxIqcsLo5gYJCLO5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQ4QnmeR; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=LBeTjXUzNrtXiyXQWSSyDxQtokN0tD78lOCLcJwS3mb5fttvDBWonGR9ilkH4MGIjcINZBqEmxhSF+IVblclGgHoIL9IDvZbZNTX9b7dXfI8v0oA8N1w8WP+kUeoA5jTNT6jfcYjj2/XnemfhOjC/Ty5a0ms8FKyHY922c+Q9d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TamGKSEj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQ4QnmeR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F10C4CEE7;
-	Thu, 18 Sep 2025 12:02:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TamGKSEj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E55C4CEE7;
+	Thu, 18 Sep 2025 12:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758196932;
-	bh=WUP2CSIe/DTTCGdb9sMgBgHdLX5/ucssxx5lQ3U6Q6k=;
+	s=k20201202; t=1758198946;
+	bh=XMABYdCsaZ05yg+jZdDt4/GbQBY/OYuDjEEyFUkd+xo=;
 	h=Date:From:To:Cc:Subject:From;
-	b=RQ4QnmeRTUjd8DecR0JYC2j/TMIHo+qUxywllIDbSPg4WUa1TFWChQu7fNjD7hAsB
-	 Ir9uofb1ITSzM4ubsqiNugBmeqzPxxJj3DH80BKv2zI/Z/kDifunb7HlLeUCkccE6Y
-	 Lgn2/92/IQ03HMKJqKZ/yIUSDW4Dolq1a2we1quryUxJgFWvXGF+CZABMw5O8G/y4h
-	 aPnLnhJnk29od7hHuEW9TnVeD45641Rg1COVekCZmcpPOsgNfD237D/o1rw7URpuFs
-	 4HqVb4h2Ab7wZqTMVcs73fY9w6VJDA9DPobIooLXI4bPDYgmbxvPMPA0uX/cVZmFmm
-	 WOLkJaHB+oyCw==
-Date: Thu, 18 Sep 2025 13:02:09 +0100
+	b=TamGKSEjbwZ7Cb6Qm9GkiTVILpAmcpN2rCR2GU1wEmIyvYjIXWMiUE3N87WSppu0R
+	 +Rksr2shogCBMqzbtWcQ1Jrnay6hnQf0KkunRVO2T+qXEukrBWyVuR+3KGUqXuheXy
+	 aP4eUWKzzblXCTV6N9t24LGpV/4D0EyDNdSLbVZU6+GQV+osBUYUtIFLxv9cJhEHKs
+	 YxWyqmi64m+FeNJ6LqNoGnBCRw2g3ytu3RrCbAvrv/3CPUIjU9U+uvRAnkrPz5dKx5
+	 Giy+9PKfGg+lwkUa3lxjTnPpsyw5CBQQzghZy4q1ycP9Gy4Qy8ypPEpxqVdXlAP+wc
+	 lzWpTszerB8Ag==
+Date: Thu, 18 Sep 2025 13:35:41 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@gmail.com>,
+	NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Jonathan Curley <jcurley@purestorage.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs tree with the vfs-bruaner tree
-Message-ID: <aMv0wbOcpRnXYU7F@sirena.org.uk>
+Subject: linux-next: build failure after merge of the nfs-anna tree
+Message-ID: <aMv8ncNIMJw58v4O@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,83 +42,105 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xqVK6GFTEBchIfmc"
+	protocol="application/pgp-signature"; boundary="fY1yt8U20mIVi2nD"
 Content-Disposition: inline
 
 
---xqVK6GFTEBchIfmc
+--fY1yt8U20mIVi2nD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+After merging the nfs-anna tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  fs/namespace.c
+In file included from /tmp/next/build/arch/arm/include/asm/div64.h:114,
+                 from /tmp/next/build/include/linux/math.h:6,
+                 from /tmp/next/build/include/linux/kernel.h:27,
+                 from /tmp/next/build/include/linux/uio.h:8,
+                 from /tmp/next/build/include/linux/socket.h:8,
+                 from /tmp/next/build/include/uapi/linux/in.h:25,
+                 from /tmp/next/build/include/linux/in.h:19,
+                 from /tmp/next/build/include/linux/nfs_fs.h:22,
+                 from /tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:10:
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c: In function 'calc_mirror_idx_from_commit':
+/tmp/next/build/include/asm-generic/div64.h:183:35: warning: comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]
+  183 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+      |                                   ^~
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:685:9: note: in expansion of macro 'do_div'
+  685 |         do_div(mirror_idx, flseg->mirror_array[0]->dss_count);
+      |         ^~~~~~
+In file included from /tmp/next/build/include/linux/array_size.h:5,
+                 from /tmp/next/build/include/linux/kernel.h:16:
+/tmp/next/build/include/asm-generic/div64.h:195:32: warning: right shift count >= width of type [-Wshift-count-overflow]
+  195 |         } else if (likely(((n) >> 32) == 0)) {          \
+      |                                ^~
+/tmp/next/build/include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+   76 | # define likely(x)      __builtin_expect(!!(x), 1)
+      |                                             ^
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:685:9: note: in expansion of macro 'do_div'
+  685 |         do_div(mirror_idx, flseg->mirror_array[0]->dss_count);
+      |         ^~~~~~
+/tmp/next/build/include/asm-generic/div64.h:199:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
+  199 |                 __rem = __div64_32(&(n), __base);       \
+      |                                    ^~~~
+      |                                    |
+      |                                    u32 * {aka unsigned int *}
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:685:9: note: in expansion of macro 'do_div'
+  685 |         do_div(mirror_idx, flseg->mirror_array[0]->dss_count);
+      |         ^~~~~~
+/tmp/next/build/arch/arm/include/asm/div64.h:24:45: note: expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is of type 'u32 *' {aka 'unsigned int *'}
+   24 | static inline uint32_t __div64_32(uint64_t *n, uint32_t base)
+      |                                   ~~~~~~~~~~^
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c: In function 'calc_dss_id_from_commit':
+/tmp/next/build/include/asm-generic/div64.h:183:35: warning: comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]
+  183 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+      |                                   ^~
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:696:16: note: in expansion of macro 'do_div'
+  696 |         return do_div(mirror_idx, flseg->mirror_array[0]->dss_count);
+      |                ^~~~~~
+/tmp/next/build/include/asm-generic/div64.h:195:32: warning: right shift count >= width of type [-Wshift-count-overflow]
+  195 |         } else if (likely(((n) >> 32) == 0)) {          \
+      |                                ^~
+/tmp/next/build/include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+   76 | # define likely(x)      __builtin_expect(!!(x), 1)
+      |                                             ^
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:696:16: note: in expansion of macro 'do_div'
+  696 |         return do_div(mirror_idx, flseg->mirror_array[0]->dss_count);
+      |                ^~~~~~
+/tmp/next/build/include/asm-generic/div64.h:199:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
+  199 |                 __rem = __div64_32(&(n), __base);       \
+      |                                    ^~~~
+      |                                    |
+      |                                    u32 * {aka unsigned int *}
+/tmp/next/build/fs/nfs/flexfilelayout/flexfilelayout.c:696:16: note: in expansion of macro 'do_div'
+  696 |         return do_div(mirror_idx, flseg->mirror_array[0]->dss_count);
+      |                ^~~~~~
+/tmp/next/build/arch/arm/include/asm/div64.h:24:45: note: expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is of type 'u32 *' {aka 'unsigned int *'}
+   24 | static inline uint32_t __div64_32(uint64_t *n, uint32_t base)
+      |                                   ~~~~~~~~~~^
+make[6]: *** [/tmp/next/build/scripts/Makefile.build:287: fs/nfs/flexfilelayout/flexfilelayout.o] Error 1
 
-between commit:
+Caused by commit
 
-  96ff702edaec8 ("mnt: support ns lookup")
+   67ee714244dfb ("NFSv4/flexfiles: Commit path updates for striped layouts")
 
-=66rom the vfs-bruaner tree and commit:
+I have used the tree from yesterday instead.
 
-  144acef3334eb ("fs: add mount namespace to rbtree late")
-
-=66rom the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/namespace.c
-index e3ac6e06be70d,b9430a5cc987f..0000000000000
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@@ -90,7 -80,16 +90,15 @@@ static DECLARE_RWSEM(namespace_sem)
-  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-  static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
- -static DEFINE_SEQLOCK(mnt_ns_tree_lock);
- =20
-+ static inline void namespace_lock(void);
-+ static void namespace_unlock(void);
-+ DEFINE_LOCK_GUARD_0(namespace_excl, namespace_lock(), namespace_unlock())
-+ DEFINE_LOCK_GUARD_0(namespace_shared, down_read(&namespace_sem),
-+ 				      up_read(&namespace_sem))
-+=20
-+ DEFINE_FREE(mntput, struct vfsmount *, if (!IS_ERR(_T)) mntput(_T))
-+=20
-  #ifdef CONFIG_FSNOTIFY
-  LIST_HEAD(notify_list); /* protected by namespace_sem */
-  #endif
-@@@ -3229,7 -3304,7 +3244,7 @@@ static int do_reconfigure_mnt(const str
-   * If you've mounted a non-root directory somewhere and want to do remount
-   * on it - tough luck.
-   */
-- static int do_remount(struct path *path, int sb_flags,
- -static int do_remount(const struct path *path, int ms_flags, int sb_flags,
-++static int do_remount(const struct path *path, int sb_flags,
-  		      int mnt_flags, void *data)
-  {
-  	int err;
-
---xqVK6GFTEBchIfmc
+--fY1yt8U20mIVi2nD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjL9MAACgkQJNaLcl1U
-h9AEcAf/VXsIeITVjg1sR5zXtS4K4Rqx//cMg6Zkx/0/GWodt7mXx0Q3Y/ywh7Rg
-zpd/2RxCBRMYlF/+jKMKY4UWkJqTvBJQqwYFsfe0+U1sZ+yKD0Uz5P3LrIr2aLuh
-ZVaYmBXZ/L5V86qZCQNXz4l6W07e8Um4AN1hn60LEoRLDK6TW8rabhB1nP2VAyHd
-PC74b7TVCxmXBMz9LWXyZDC7j54uCUxOOTfPDc1IwFmrKltDyc7nZIV9Z6B2sTIS
-KXc5MR/D29cl9Ws9+jntYw4rJInd8DyrvjVkCiOCi14vFJ6/g/z3xRWtNT4QluD2
-ssX2LgH6rt+1JufDjWtvFIvWMZ4Ckw==
-=GHqN
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjL/J0ACgkQJNaLcl1U
+h9C/igf/Z9g54/pzM3yurEyLhVZb5OvGo/HZ/WrqTgSBzQaHKxxddNDVin/XYfZ8
+ZlqDqIPfIBUe9XAjskU1meGI1KHZJYxTxLdwHX6QrcQuA5+azBUB5PAX/Xbombqp
+jQAfP0aA9lJ7ggOQmqD8JZhUlRH7K76BIrkaQzGr9u2g+fAaa3Oa7TKpR0cuQRzQ
+Gcy3J56So1QfC/hcdGBEBZUmsO08sRsyYbP5ZBH7g43OI7F+5GyFHC0dJwbbAw2V
+3pvJBfennJkJK9VWwLuyGSyc+9YnktlvBb7B0qaXbCATnYuPGrMnFSt80DgiKABn
+tjm6K2GxT3cMJ3p+fVsxwLjLj1cKEw==
+=KaX4
 -----END PGP SIGNATURE-----
 
---xqVK6GFTEBchIfmc--
+--fY1yt8U20mIVi2nD--
