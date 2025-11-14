@@ -1,68 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD24215F42;
-	Fri, 14 Nov 2025 14:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3121215F42;
+	Fri, 14 Nov 2025 14:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763131709; cv=none; b=rYN3kwgPlaJoC0S8d2bghiiWT0dv3adtcdULcihpbdA1906sO0Va0DMvSyTorJYrrZ4cM9L3sMBR2x2bJhLDkCiFuJukQHUS1lAkznseQ7oX9ZpCAIsPjgNx1ziN7ihJD+mC2m+dFyyeQS/M03KXrG6T7ILMV5bN5Nk6qHrSwVI=
+	t=1763131735; cv=none; b=a+tyR7SKuu02CLti1OJMWEeQ1kZSQpJ3cgqZwtvOLahkC5ctho6u1LgrbAOa88+grue7ZcFesXlkHeQeDLxun7bVBnj0trD//hbIL1KDbqxIbdIW17YVp7NTitzZGr4A7YBa2IqMiTkeji1VIeA1QUFc69iGWQtEGhbMuP27kVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763131709; c=relaxed/simple;
-	bh=pU+xc/bSgqQkmaSsmClRlFgjR/zNb9Qfzyof87UEzX4=;
+	s=arc-20240116; t=1763131735; c=relaxed/simple;
+	bh=2s10Oc3FM2bCGELw8+LPnTQhTxTU08gxxlwc1Kuc6BI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtqAUmpTKQhtGP+CF5r6UWFrW5y6anvnG19zMED7m9+Yne5vTG391AspXERO8xBeeXbk0CozAvanXRVUiGLwnObsL5zTKEx2WyaD0iEJtlMlX685U/xMeTlIPQ+3CQS2N9epDmrANSev+fyRwsgwSRoNeikoNZQm+uUt84jQ+xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVWIMPAs; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQWIR1ySqHDAhtSIRHkGAo6kTZBv8xn/ABv0tDNs697yg97hh0Bx4SasODF7HR3ecED7kmU3Ng2WvcMRjRiOv9HkCzjX5huq+KuoJ9J1b62GScJhzlwA8+bGIi9eYZNS28LWAAGAONwKiLH0HvR5yUvrsfZTttfxDFkF2tme6Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouADgnvK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVWIMPAs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C335DC113D0;
-	Fri, 14 Nov 2025 14:48:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouADgnvK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64D6C4CEF8;
+	Fri, 14 Nov 2025 14:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763131709;
-	bh=pU+xc/bSgqQkmaSsmClRlFgjR/zNb9Qfzyof87UEzX4=;
+	s=k20201202; t=1763131735;
+	bh=2s10Oc3FM2bCGELw8+LPnTQhTxTU08gxxlwc1Kuc6BI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RVWIMPAs73x2LLWefEWLdeW16et5ZUKUksqHjBfnoubL6cdrJe3MaIId7F/ELmTyN
-	 RtPXFRTZyM90vklRVGUffo9enWKwDxk61KLqettkxnbKrZvM+VdXVN3D6Nlu5E9Bta
-	 gXX9CqWJnoWgj5BCsCFVJbbM/Mdk2IXK9n1Y8sGTo64gz/DBhwe34KYaJE6q6y2PNb
-	 s2iP7Wmk0x1gRdQcLWQs5mDbUU6eQgPSdqE45GIdOMohIHYSu6uXJrw4eR2SPK0Z/r
-	 Cnsefk+yTsJdQOidiS7eXuT7blhEZ3FdJj/5bReGL6jIJaefc5UVakgekC9olDm97H
-	 Lzkb4mNXJTAFQ==
-Date: Fri, 14 Nov 2025 08:52:56 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Gross <agross@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the qcom tree
-Message-ID: <354exsajyhyicn7xkdefigrpmh3sbnacz35bke5ufgybwdqotp@27544snjqozv>
-References: <20251114170125.2a8f6f3c@canb.auug.org.au>
+	b=ouADgnvKSF7mOVcBi/jAXNlaQrN5l7azsWIAM9V2tbLN8klB/I25l2yfa6jkzwPz+
+	 RvJY5lyPi8/rTr241IsfGbEshDCidpGufl/lRJCUVfPzN/Sk4ZKdIQcLHbDytDs4lL
+	 cKQ0vihrsyPoqkgbuF9io5KYeNgBLDwhYavKQVdz53LobuOg0Xy3IAtWK/gkCnKY/Y
+	 i1Aqjs5+QE+xCgq0FTLZdigbsIOUYgfGkREScme8LZriDFWiSiUr8b8RMSuhGZAsQu
+	 a7BOqizCoXEZSVKo3atDzZkTAEDn8LFts/27Dz3daeSNDeJENTIQEkAtBYpkvyGyrR
+	 czLrvnMifK/ew==
+Date: Fri, 14 Nov 2025 15:48:52 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: linux-next: manual merge of the rcu tree with the ftrace tree
+Message-ID: <aRdBVFSmgvPWuY2k@localhost.localdomain>
+References: <20251114135226.64831207@canb.auug.org.au>
+ <20251114074255.3e535084@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251114170125.2a8f6f3c@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251114074255.3e535084@gandalf.local.home>
 
-On Fri, Nov 14, 2025 at 05:01:25PM +1100, Stephen Rothwell wrote:
-> Hi all,
+Le Fri, Nov 14, 2025 at 07:42:55AM -0500, Steven Rostedt a écrit :
+> On Fri, 14 Nov 2025 13:52:26 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Commit
+> > Hi all,
+> > 
+> > Today's linux-next merge of the rcu tree got a conflict in:
+> > 
+> >   kernel/trace/trace_syscalls.c
+> > 
+> > between commit:
+> > 
+> >   a544d9a66bdf ("tracing: Have syscall trace events read user space string")
+> > 
+> > from the ftrace tree and commit:
+> > 
+> >   35587dbc58dd ("tracing: Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast")
+> > 
+> > from the rcu tree.
+> > 
+> > I fixed it up (Maybe - see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
 > 
->   1a0eea58d21d ("Revert "arm64: dts: qcom: sc7280: Increase config size to 256MB for ECAM feature"")
+> Thanks for the update.
 > 
-> is missing a Signed-off-by from its author and committer.
+> > 
 > 
-> Reverts are commits as well.
+> > diff --cc kernel/trace/trace_syscalls.c
+> > index e96d0063cbcf,3f699b198c56..000000000000
+> > --- a/kernel/trace/trace_syscalls.c
+> > +++ b/kernel/trace/trace_syscalls.c
+> > @@@ -878,6 -322,8 +890,7 @@@ static void ftrace_syscall_enter(void *
+> >   	 * buffer and per-cpu data require preemption to be disabled.
+> >   	 */
+> >   	might_fault();
+> > + 	preempt_rt_guard();
+> >  -	guard(preempt_notrace)();
 > 
+> My code made it so that preemption is not needed here but is moved later
+> down for the logic that does the reading of user space data.
+> 
+> Note, it must have preemption disabled for all configs (including RT).
+> Otherwise, the data it has can get corrupted.
+> 
+> Paul, can you change it so that you *do not* touch this file?
 
-Thank you Stephen!
+Ok, I've zapped the commit for now until we sort this out.
 
-Regards,
-Bjorn
+Thanks.
 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
-
+-- 
+Frederic Weisbecker
+SUSE Labs
