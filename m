@@ -1,16 +1,16 @@
 Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8B35B13F;
-	Wed,  7 Jan 2026 18:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F393A0B3D;
+	Wed,  7 Jan 2026 18:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767810416; cv=none; b=bhgKh9dYIF/l2jAgLkX3/FB5xgH2EEMrH6+N23I/SAm5RcuRnMzsu0ag+D1TaIMReTuPl2Zp25/N42ff7GD8Csp1pHDR5J3DJqQWSf/wksoTMcZG4fULjU9gJwlQTIWeiD0Cks6JLkctN5rdmpbVBp76KbotBihcr4EOhOKrFSQ=
+	t=1767810717; cv=none; b=sSedcpqFbBbETsGJW+sStVIFFcqdqZIjLHJbR6ZZXDm53l/+yj4j5EzZGPx6N/FSU0+bbZEQtPVhy+jFYR76d8/jDYR/1ShPrI4xlcw6I/GSbGtFuwXKurc5fdPLfJMhtfloO1oRAz16hkte9YvlqdbexYWJkpwrH578DLUI4X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767810416; c=relaxed/simple;
-	bh=qxCddJs6VFrJE4PQolecJMOvvT4YHafsISGSeJkS1jA=;
+	s=arc-20240116; t=1767810717; c=relaxed/simple;
+	bh=Rj323hX9QvKiZWerlzHeclatqdwCrPScXn7DPgRsRXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UTlXcWfmq7+y7hE3J02PXy9d2YN9d4zLA3O+neS9ZDjms9SyApHsfZTyiP49pYXCqPIAFz+pg8sx76v0vrzdBYU6UIepEgBwdgX11F+xyUOqqFrM3b6BUXO5W2CVjc7A6ALFUIFT71NS5NANhaFKqaURJmOrIQsIeS4QdMWqg6I=
+	 MIME-Version; b=QflNjr2m8RpJkevZvyYR3nn7o4mkrlDadvQKtJNe4kESl4+92nr+hUnda3WjDX7HstOJfGc/gJPZv+cOo6nwxCPSyoAh7XMsVRt8oJvvSAPpgCzoro9stIt0Zve88Twzw+GKdwHXnT36jwUYQye+yEtP1zY97YSRgphUlq/YM5I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
@@ -18,21 +18,20 @@ Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4df
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id 38A1349027;
-	Wed,  7 Jan 2026 19:26:46 +0100 (CET)
+	by psionic.psi5.com (Postfix) with ESMTPSA id AAC2A3F104;
+	Wed,  7 Jan 2026 19:26:24 +0100 (CET)
 From: Simon Richter <Simon.Richter@hogyros.de>
 To: linux-kernel@vger.kernel.org,
 	linux-next@vger.kernel.org
 Cc: Simon Richter <Simon.Richter@hogyros.de>,
-	"Usyskin, Alexander" <alexander.usyskin@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 4/4] misc/mei: gsc_proxy: add dependency on Xe driver
-Date: Thu,  8 Jan 2026 03:26:05 +0900
-Message-ID: <20260107182615.488194-5-Simon.Richter@hogyros.de>
+Subject: [PATCH v2 0/4] Intel MEI Kconfig cleanups
+Date: Thu,  8 Jan 2026 03:26:01 +0900
+Message-ID: <20260107182615.488194-1-Simon.Richter@hogyros.de>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260107182615.488194-1-Simon.Richter@hogyros.de>
+In-Reply-To: <20260107174646.GA1230850@psionic12.psi5.com>
 References: <20260107174646.GA1230850@psionic12.psi5.com>
- <20260107182615.488194-1-Simon.Richter@hogyros.de>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,29 +40,47 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This driver is useful if at least one DRM driver registers an auxiliary device
-for the ME interface. With the addition of Xe, this is no longer just i915.
+Hi,
 
-Cc: Usyskin, Alexander <alexander.usyskin@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
----
+this enables GPU firmware updates on Intel dGPUs plugged into non-x86
+machines. The most important patches are the first and last.
+
+The second patch switches the ME interfaces for GPUs to use !=n tests, so
+it is possible for them to be builtins when the GPU drivers themselves are
+modules (as is likely). MEI is built-in by default on x86_64 (and Atom).
+
+This might need some discussion what is desirable here:
+
+ - this is a strong dependency from an "early" directory (misc/mei) to a
+   later one (gpu/drm), causing backtracking
+ - does it make sense for MEI to be built-in by default, or should it
+   default to being a module?
+ - is the strong dependency desired because if the code is compiled as
+   built-in, it will not be used until the module is loaded?
+
+There is no strong functional dependency here, no symbol references, as
+these devices are enumerated over an auxiliary bus.
+
+Also, enable building without the GPU drivers for compile testing.
+
+No stable backport.
+
+   Simon
+
+Simon Richter (4):
+  misc/mei: Allow building Intel ME interface on non-x86
+  misc/mei: Decouple ME interfaces from GPU drivers
+  misc/mei: Allow building standalone for compile testing
+  misc/mei: gsc_proxy: add dependency on Xe driver
+
+ drivers/misc/mei/Kconfig           | 6 +++---
  drivers/misc/mei/gsc_proxy/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/mei/hdcp/Kconfig      | 2 +-
+ drivers/misc/mei/pxp/Kconfig       | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/misc/mei/gsc_proxy/Kconfig b/drivers/misc/mei/gsc_proxy/Kconfig
-index b80024c5189b..bd8f955f548e 100644
---- a/drivers/misc/mei/gsc_proxy/Kconfig
-+++ b/drivers/misc/mei/gsc_proxy/Kconfig
-@@ -4,7 +4,7 @@
- config INTEL_MEI_GSC_PROXY
- 	tristate "Intel GSC Proxy services of ME Interface"
- 	depends on INTEL_MEI_ME
--	depends on DRM_I915!=n || COMPILE_TEST
-+	depends on DRM_I915!=n || DRM_XE!=n || COMPILE_TEST
- 	help
-          MEI Support for GSC Proxy Services on Intel platforms.
- 
+
+base-commit: f8f9c1f4d0c7a64600e2ca312dec824a0bc2f1da
 -- 
 2.47.3
 
