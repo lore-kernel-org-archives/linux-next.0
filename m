@@ -1,86 +1,98 @@
-Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F393A0B3D;
-	Wed,  7 Jan 2026 18:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE72272803;
+	Wed,  7 Jan 2026 19:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767810717; cv=none; b=sSedcpqFbBbETsGJW+sStVIFFcqdqZIjLHJbR6ZZXDm53l/+yj4j5EzZGPx6N/FSU0+bbZEQtPVhy+jFYR76d8/jDYR/1ShPrI4xlcw6I/GSbGtFuwXKurc5fdPLfJMhtfloO1oRAz16hkte9YvlqdbexYWJkpwrH578DLUI4X4=
+	t=1767815209; cv=none; b=XAHRofbdd/7f71Xvm7fVRJ1YeS/0dBHw+LpE5bZFJuqj5WBaSNKU5fdEyu5vRWgox2giEoHkewhD9yE6UYk5Fb28klqxX7pizOMvaOcLkNV5CtxRcnkLxUc63qVxv0VLKgK+V+/629zdRDpdU3f1yJVLw8TQlSLq7WR/DpoSpek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767810717; c=relaxed/simple;
-	bh=Rj323hX9QvKiZWerlzHeclatqdwCrPScXn7DPgRsRXI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QflNjr2m8RpJkevZvyYR3nn7o4mkrlDadvQKtJNe4kESl4+92nr+hUnda3WjDX7HstOJfGc/gJPZv+cOo6nwxCPSyoAh7XMsVRt8oJvvSAPpgCzoro9stIt0Zve88Twzw+GKdwHXnT36jwUYQye+yEtP1zY97YSRgphUlq/YM5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
-Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4dff:fe00:2e9])
+	s=arc-20240116; t=1767815209; c=relaxed/simple;
+	bh=IZjDV7BJVGHLEQj3+nSODjdtGUczwZym/zi8B++sa54=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AElJaeJS0lkZeZ2mku3SStb6lZFlPCvAhzqqWi5PauMNo9+N+ZKa3kYxDg/fqsqgkp13w05k2MuroNOzEAjaY+V2v3hGnPOj7zMdbEWEdIEKhj/MlUNX8snbEA41a8FqRhMbqLOEZUpggDmz1PrdRXHWzS5Qz+gy2WSiVEP725A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kvaGE+NH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kvaGE+NH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1767815196;
+	bh=Dws0CK4NkOdres1vwotOePAz/DT8iaMJZsdzwBJNgdM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kvaGE+NHKeJp/l+StKwxVmXE9tt1u1D2bz4nFo+9q61O32o/6db9zzQZ2l33CR2HV
+	 7kLez/sYHt1wTvkWNe/qmEW869k0SbtncMnMDpcxq2XS23J3XA2GZycwMC2CukpMst
+	 OMWD6jCAb6gxxGp2laucn/9fd3dfkHHM6EyQ2RfIp16+JSfWNh5fx0Zo9PitWlQG8z
+	 5OSGsokKGWgcnZfLBu1jj0V3l7KKeOed8Q/j+oy+ScWPcciYWZ3yBbacCGKGr+nSzv
+	 DrqqlxqEMGPjjK8wNmiI7tYjdCRW3DCwDmverCAyM8fhYvrwxKRgR2xH8ftAuaN7f3
+	 7tQ+O4QM5dyow==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id AAC2A3F104;
-	Wed,  7 Jan 2026 19:26:24 +0100 (CET)
-From: Simon Richter <Simon.Richter@hogyros.de>
-To: linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Cc: Simon Richter <Simon.Richter@hogyros.de>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 0/4] Intel MEI Kconfig cleanups
-Date: Thu,  8 Jan 2026 03:26:01 +0900
-Message-ID: <20260107182615.488194-1-Simon.Richter@hogyros.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260107174646.GA1230850@psionic12.psi5.com>
-References: <20260107174646.GA1230850@psionic12.psi5.com>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4dmdp40Hvjz4wC8;
+	Thu, 08 Jan 2026 06:46:36 +1100 (AEDT)
+Date: Thu, 8 Jan 2026 06:46:35 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the mediatek tree
+Message-ID: <20260108064635.42e96272@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/WmcyK5qflZR6Ja_4/+C986.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi,
+--Sig_/WmcyK5qflZR6Ja_4/+C986.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-this enables GPU firmware updates on Intel dGPUs plugged into non-x86
-machines. The most important patches are the first and last.
+Hi all,
 
-The second patch switches the ME interfaces for GPUs to use !=n tests, so
-it is possible for them to be builtins when the GPU drivers themselves are
-modules (as is likely). MEI is built-in by default on x86_64 (and Atom).
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-This might need some discussion what is desirable here:
+  34e7595912cf ("arm64: dts: mediatek: Apply mt8395-radxa DT overlay at bui=
+ld time")
+  d977b61d3803 ("arm64: dts: mediatek: mt7988: add dtbs with applied overla=
+ys for bpi-r4 (pro)")
+  0516c548883b ("arm64: dts: mediatek: mt7986: add dtbs with applied overla=
+ys for bpi-r3")
 
- - this is a strong dependency from an "early" directory (misc/mei) to a
-   later one (gpu/drm), causing backtracking
- - does it make sense for MEI to be built-in by default, or should it
-   default to being a module?
- - is the strong dependency desired because if the code is compiled as
-   built-in, it will not be used until the module is loaded?
+These are commits
 
-There is no strong functional dependency here, no symbol references, as
-these devices are enumerated over an auxiliary bus.
+  ce7b1d58609a ("arm64: dts: mediatek: Apply mt8395-radxa DT overlay at bui=
+ld time")
+  0773bc6ab7ec ("arm64: dts: mediatek: mt7988: add dtbs with applied overla=
+ys for bpi-r4 (pro)")
+  987697749def ("arm64: dts: mediatek: mt7986: add dtbs with applied overla=
+ys for bpi-r3")
 
-Also, enable building without the GPU drivers for compile testing.
+In Linus' tree.
 
-No stable backport.
+--=20
+Cheers,
+Stephen Rothwell
 
-   Simon
+--Sig_/WmcyK5qflZR6Ja_4/+C986.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Simon Richter (4):
-  misc/mei: Allow building Intel ME interface on non-x86
-  misc/mei: Decouple ME interfaces from GPU drivers
-  misc/mei: Allow building standalone for compile testing
-  misc/mei: gsc_proxy: add dependency on Xe driver
+-----BEGIN PGP SIGNATURE-----
 
- drivers/misc/mei/Kconfig           | 6 +++---
- drivers/misc/mei/gsc_proxy/Kconfig | 2 +-
- drivers/misc/mei/hdcp/Kconfig      | 2 +-
- drivers/misc/mei/pxp/Kconfig       | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmleuBsACgkQAVBC80lX
+0Gwd6Qf/TqmS5DekKHbr68zCso/szKgjsqaSQiT14MBkeGbNMW4qV75odw1PTML8
+ks2tjP9e/dGnXBmvBbGiz2dcw3Uy6el9G5FSXcYB8JDoZyKHQuhiXekRZ8ZU5Dq0
+PjadKKjQ5G7wBulQEyfvI+R+WSZgMxS312+nOSOk12L+xYfPikAwvizjtsOct8gy
+Vp8GzPuShu7f5exzuzPx3eHpLpz+cOJbWuaA9i1pDiYFRENRn8K9DtkCZUJOf7u+
+YwjFHY6W1DWPk3twCa7q+0Bt6Vnr1SHKsz0LdpjJhry8kiqb50pvMODYfryw/mFb
+Z2t5k5sTLdmEheQrkxkeoo0QTyYC9g==
+=qCbA
+-----END PGP SIGNATURE-----
 
-
-base-commit: f8f9c1f4d0c7a64600e2ca312dec824a0bc2f1da
--- 
-2.47.3
-
+--Sig_/WmcyK5qflZR6Ja_4/+C986.--
