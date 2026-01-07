@@ -1,16 +1,16 @@
 Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF5C35A943;
-	Wed,  7 Jan 2026 18:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779EE35A94E;
+	Wed,  7 Jan 2026 18:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767810413; cv=none; b=bgK+XG0vlP5gh738NBifMaxTnhlfXd23UqqwwJC2rgvkCKMSUe30OCRTbT+SL/wK2uL2487WiNvouA6gYi1v1rKiYTgzrdOS0GFOfXkVL2YdajGaWTMiD3Oy95sECUHbuKnXF4lMDyqHHxWUVEVCaHokuJj2rP9ecOBad9qeHyw=
+	t=1767810414; cv=none; b=tBIOVsGFfOB8r0YGfTPpaCfPafGOsXvfSpNLNgEkTqq5BqQoMMtidUI78ZBnE/QuOX7F5X1A16bUleN5KSB9ciynqFs4Uyq+Yv57vomZI06xLm63f0MqgIb9Y11tcBx4SSRlvkmN9/0vtdPSMjukIdlmO+ppVnmpi6LTYiIJpe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767810413; c=relaxed/simple;
-	bh=MtzWk5ZFMIsqv5Q6Oo0Q6w9DeS02A9zrdcb1uyhAWBI=;
+	s=arc-20240116; t=1767810414; c=relaxed/simple;
+	bh=/bGRPjNcj+2MkJ94ED+Qip/2QDPLPn5+jQvVqTwdF/Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CNVuiEyyPaBrFwru/g4XPewlkNK2NS4FIFq7bAot5DV7qPYZwnKytlo7RH2N6KN8VficY75PkvFW15uXFkosjycrH1R6LnPHRBNUT2tKu0XKgUNLLQYDkpwhvWfimqs5EwlOUzM7h4ZF6foEUWsdMQLQ0X4LpYkXRIywB7vEyjM=
+	 MIME-Version; b=a69HyVlfsKFO/ipBVteS9OjVR3C7bGJ3i3cT4NG+UbFfq5JMzcMh8QNGNf0h5uFX7Voteb83L+RGq2UWGwX74PdZ0JDRwhS9eJeUBtVlcG+IhctWZlKx4QTcHgvwQagv0HpObuBm+lr5p7wWi4CUDjvrV3dFuZcfcIyZJPGjf5A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
@@ -18,17 +18,17 @@ Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4df
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id D766C3F9A6;
-	Wed,  7 Jan 2026 19:26:42 +0100 (CET)
+	by psionic.psi5.com (Postfix) with ESMTPSA id 0DD403F9B3;
+	Wed,  7 Jan 2026 19:26:44 +0100 (CET)
 From: Simon Richter <Simon.Richter@hogyros.de>
 To: linux-kernel@vger.kernel.org,
 	linux-next@vger.kernel.org
 Cc: Simon Richter <Simon.Richter@hogyros.de>,
 	"Usyskin, Alexander" <alexander.usyskin@intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 2/4] misc/mei: Decouple ME interfaces from GPU drivers
-Date: Thu,  8 Jan 2026 03:26:03 +0900
-Message-ID: <20260107182615.488194-3-Simon.Richter@hogyros.de>
+Subject: [PATCH v2 3/4] misc/mei: Allow building standalone for compile testing
+Date: Thu,  8 Jan 2026 03:26:04 +0900
+Message-ID: <20260107182615.488194-4-Simon.Richter@hogyros.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260107182615.488194-1-Simon.Richter@hogyros.de>
 References: <20260107174646.GA1230850@psionic12.psi5.com>
@@ -41,9 +41,9 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These are enumerated via an auxiliary bus, so there is no functional
-dependency between these drivers, therefore allow compiling MEI as builtin
-even when i915/xe are built as modules.
+While this is not a particularly useful configuration, the MEI code should
+compile even when no drivers for a GPU containing a management engine are
+built.
 
 Cc: Usyskin, Alexander <alexander.usyskin@intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -56,15 +56,15 @@ Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
  4 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
-index 6da518f3b73c..a62992909f85 100644
+index a62992909f85..5902dd1ee44b 100644
 --- a/drivers/misc/mei/Kconfig
 +++ b/drivers/misc/mei/Kconfig
 @@ -49,7 +49,7 @@ config INTEL_MEI_TXE
  config INTEL_MEI_GSC
  	tristate "Intel MEI GSC embedded device"
  	depends on INTEL_MEI_ME
--	depends on DRM_I915 || DRM_XE
-+	depends on DRM_I915!=n || DRM_XE!=n
+-	depends on DRM_I915!=n || DRM_XE!=n
++	depends on DRM_I915!=n || DRM_XE!=n || COMPILE_TEST
  	help
  	  Intel auxiliary driver for GSC devices embedded in Intel graphics devices.
  
@@ -72,47 +72,47 @@ index 6da518f3b73c..a62992909f85 100644
  config INTEL_MEI_LB
  	tristate "Intel Late Binding (LB) support on ME Interface"
  	depends on INTEL_MEI_ME
--	depends on DRM_XE
-+	depends on DRM_XE!=n
+-	depends on DRM_XE!=n
++	depends on DRM_XE!=n || COMPILE_TEST
  	help
  	  Enable support for Intel Late Binding (LB) via the MEI interface.
  
 diff --git a/drivers/misc/mei/gsc_proxy/Kconfig b/drivers/misc/mei/gsc_proxy/Kconfig
-index ac78b9d1eccd..30811117fc65 100644
+index 30811117fc65..b80024c5189b 100644
 --- a/drivers/misc/mei/gsc_proxy/Kconfig
 +++ b/drivers/misc/mei/gsc_proxy/Kconfig
 @@ -4,7 +4,7 @@
  config INTEL_MEI_GSC_PROXY
  	tristate "Intel GSC Proxy services of ME Interface"
  	depends on INTEL_MEI_ME
--	depends on DRM_I915
-+	depends on DRM_I915!=n
+-	depends on DRM_I915!=n
++	depends on DRM_I915!=n || COMPILE_TEST
  	help
           MEI Support for GSC Proxy Services on Intel platforms.
  
 diff --git a/drivers/misc/mei/hdcp/Kconfig b/drivers/misc/mei/hdcp/Kconfig
-index 631dd9651d7c..a9af4918e5b2 100644
+index a9af4918e5b2..b9d5205c5b1a 100644
 --- a/drivers/misc/mei/hdcp/Kconfig
 +++ b/drivers/misc/mei/hdcp/Kconfig
 @@ -4,7 +4,7 @@
  config INTEL_MEI_HDCP
  	tristate "Intel HDCP2.2 services of ME Interface"
  	depends on INTEL_MEI_ME
--	depends on DRM_I915 || DRM_XE
-+	depends on DRM_I915!=n || DRM_XE!=n
+-	depends on DRM_I915!=n || DRM_XE!=n
++	depends on DRM_I915!=n || DRM_XE!=n || COMPILE_TEST
  	help
  	  MEI Support for HDCP2.2 Services on Intel platforms.
  
 diff --git a/drivers/misc/mei/pxp/Kconfig b/drivers/misc/mei/pxp/Kconfig
-index aa2dece4a927..d0f8bb6aa2de 100644
+index d0f8bb6aa2de..2c5c00dc4b6f 100644
 --- a/drivers/misc/mei/pxp/Kconfig
 +++ b/drivers/misc/mei/pxp/Kconfig
 @@ -4,7 +4,7 @@
  config INTEL_MEI_PXP
  	tristate "Intel PXP services of ME Interface"
  	depends on INTEL_MEI_ME
--	depends on DRM_I915 || DRM_XE
-+	depends on DRM_I915!=n || DRM_XE!=n
+-	depends on DRM_I915!=n || DRM_XE!=n
++	depends on DRM_I915!=n || DRM_XE!=n || COMPILE_TEST
  	help
  	  MEI Support for PXP Services on Intel platforms.
  
