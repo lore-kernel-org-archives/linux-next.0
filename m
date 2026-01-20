@@ -1,145 +1,115 @@
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ixit.cz (ixit.cz [185.100.197.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FF23D410E
-	for <linux-next@vger.kernel.org>; Tue, 20 Jan 2026 22:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768946942; cv=pass; b=jLqsX+Y5ie+Ytc9nT3cMBw5BWGukrvHX6d008Dcryn0gC6BEDtfSn2OV/5LfmmQCVFLjsRoHw1K4Jy/NXqMjKUOwkn0rgivWvrY04Og4ai7ueGxPL0K5cm+qrQvuyo2m0Bqp58U2sIoTis0UeWrQ2LJ76pHhINik7z3RvOZkCCk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768946942; c=relaxed/simple;
-	bh=z1bB8kSjZa9JR9hWpCGXZYW8uom6DdNyXKm2SLrmLeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jYnXrfvglxfYV70cpq7ecw5xfEBLNJS8SUMntaztCJPP4zUIVUA1ykl7raq4mu81u4MiuDSLdLkS4/pgddVsyGtFX48znDg4M7WTWuWwuHBc6BDmV9RxHO+Ozja7lqrEg/40IEVLY6BGsUbJbaL2OMbmBSy8QQrtN2Vp8h0pMKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJUow7EV; arc=pass smtp.client-ip=74.125.82.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262ED3EFD35;
+	Tue, 20 Jan 2026 23:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768950198; cv=none; b=P9sHJWBDc8JpDmA1MW4tZvXCU5wKvR5DpSCfMVoeCtpM7APQQUi8mWMJWUh3q52EO2tK7ILZNFdv+G31zgiNXll8EbxO+QRTcGBGHVAj8UdT5V5RpCs8pgCSh3evw7GCjasBx1Qo++MPZVtMBChehpFU8E2el5UaREY9cJRRCzA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768950198; c=relaxed/simple;
+	bh=3SkqePa7F4GgOrv16HvTmu1l/9Jlmxv9+bA42DDfZic=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JKKVfeywJt48su1p9saKUQffIwMZNSQUgyeL9SpzU0OeCgInJQvueTMHTRBqJ7CWmSFM/nrDInWR4/ozrEVzvq4VPmmlp5jSJUZjTOMKg4wd/2EoSv446GRMkhdm/DZqQDSruJOE7ukhKOW56Fj2fC+M60DpTm2lJyCTNclQz9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=yYgIl8ce; arc=none smtp.client-ip=185.100.197.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJUow7EV"
-Received: by mail-dl1-f53.google.com with SMTP id a92af1059eb24-1233608c7e9so407085c88.2
-        for <linux-next@vger.kernel.org>; Tue, 20 Jan 2026 14:08:58 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768946935; cv=none;
-        d=google.com; s=arc-20240605;
-        b=VbrM1r85Qi38Ga/Co5agtnMbdcla0IHnzDEJ5neTWD7c1K/uP45TICrh18L8ErWt2C
-         rcuYC8dbGrhQ4p2DdqIQStayUHj/TycjUd6LjmJoOGW1fEUOHyT+cjfunAxwlcXWQhEK
-         J9QJed/uHOaIe9oc5rcC/uajyn7w5uxu8Z7YIw3a4NO/mEVyOcEY2sSPMUn2+KIYOJtd
-         N2kTQwibzhsb5N4lcdvrPsVoS/pRxTVnQkywIbQUCyxeQkn5Bks+LS3bxL5KwIiG1ZZ5
-         wMjRT6e0Kzy7Hv/rlONQ1HEAj6TZpXPgAmJ6+Djj2kCIYtq1U9S755rFFgbTU+5m3tKX
-         Tgjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=z7bY4pt0TpwLdWyK3UcQIm5nIRWEvAUNKg7Ktb/sGrs=;
-        fh=C2sBImAtLhpQTGUaEiUfh5pZqDgjcRXxBY6fDduizOY=;
-        b=A5hfm/zlwbm3nwOC2J9HtXKfw5GqI+vo1PcxRA1FYrhVYKRnhpZOHYzhLMy9ieUZKD
-         9teYpbfmW2PoyH8zeZ59c5YTYCZ+6REL/3n842S8Cwv6LQnyx3+sTrnGWpDJ0vR5rWkh
-         7nbbrIIlxalb1FlSMQQV1/5G33YOfFn57b5vo5UGtgxP7WMPnnATG8Mlk88yk3FFphFE
-         bHwNFHDaFCjxcmIoHUUWoGFhxLbBdkDJUFJkI7w+x8zMkLy89foQUXlXPch9kgyBKEMd
-         b+z77Tzpg0wLQe0XE43gJMvZrFFtE9oIAZBka3iKC4qXzr5lRJmxtUiayQrkxoDgD1oQ
-         Jrlw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768946935; x=1769551735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z7bY4pt0TpwLdWyK3UcQIm5nIRWEvAUNKg7Ktb/sGrs=;
-        b=CJUow7EVN/kPlCTOpu+1fLLR2gmtefuIwCw/PtedUQFYVL40RaGyG9KfwZNyLOSdzp
-         YWbn/ACOkusWRk/DlLEeZANf9i6PNC6U+E9hQk8AaYhw3gB9JgGv37yorvZpArQb7I+Q
-         BqKhKwbXVw1q7Mo2LdEChE1mwR3GHfbj+eoYs5sqS9BmOZ5EKljTpbg8HEbA20KlsIL3
-         YtuYzne42Vd9ZyoqjFX3TFwkbnskyPgELh8WQFPlBiTtPw6HFC/PJukkM7W3mz8j2GYS
-         vMtXAJ+QW8vtCL0OxvS5k9Mbo+X0iEvalZfWMYagR8u9NTD4ILiL9dbcXOZID35bCvgx
-         QXRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768946935; x=1769551735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=z7bY4pt0TpwLdWyK3UcQIm5nIRWEvAUNKg7Ktb/sGrs=;
-        b=tRh18PDpld+mrYbveAjy7JsweS8ds/5P/iCTcug1hssflyaBDsUr8ohsqy5Ee3E31V
-         EJgjCPvUHdSAoPSzMyfedSpBTX988IGceBubF/ruZTyPkNBO4wrMis3sM49SKLjeNAHc
-         BP9vKQmjBBeMlRgVPby3W8HpL9aO1mRKMv5qrtEE+mG3oQyElgumfN92VvfW4oJXBizG
-         V4MSyYJXVK4QQk5i5oJh30uKQIyD5F9JxaTu6QKK/HaHuE3KUubDactwGvzYHBA11/9C
-         S3t0nbWnJssAPilILSzQWmlREzLi/6Hr94UQkrD4bilxMSocL6TIwdvdiZCY8jir22jo
-         FlTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdLP4fXVSAe2yE9rV2fEj3cI8gMHv1ihP2eo0k4sWV5aL/JXOOVxcJ4+2rraUyWahVDtK5Y1GsDjk3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAbvvpBzVvZCcd/4hsYE5iTPDmQLJxJHGQ6/ZCAdCb2OCnXYCN
-	MG0bO+1bSxVHOiFGMOhFql/7h8xG9t+6jUWS6WldWKvc1HBMeTZ6C+OQdMgC/F4xXT0hgPgj7H6
-	0RDVAbZJ4x2QSZU6N0WE/x6mYBJbB8tE=
-X-Gm-Gg: AZuq6aKqJ6FcrLZgh5UM3aV0MVp11B/zE0yBCWYBPXBPlaldJV+1k9r7wn8HsUUwI13
-	wJB/mXwQZnun1eHm+73KJ58dsVQ7V5Cxpw6cQSnNddryw+90jPFCGo7O97VULWNMaKHE5bZMCqd
-	oNAgEg9Y2CgjR7FW+adUF7D7DjkxdO52iNP+AGsqUjbTtUUUSGJTizk7eRm6U4HKWoHaXpzjpwv
-	icAJgtbhyjiGJcP3I/TmWTs+j+UOCsrjxAutr2RxXb5EU4thu7KYTkFtZdGgJhNDLUPgt4IMwIV
-	fPabTvOqZO6BGt3/uSlHahKsmssBAAvoZ1BRx+4HlspU+wpSfAw2m4Xxe2WaT2ulR4pmZjpfZ2s
-	K3N59u/EoKNfC
-X-Received: by 2002:a05:7301:4196:b0:2ae:5b23:1601 with SMTP id
- 5a478bee46e88-2b6b380ec2fmr6526477eec.0.1768946933909; Tue, 20 Jan 2026
- 14:08:53 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="yYgIl8ce"
+Received: from [IPV6:2a02:f000:10bd:e301::f31] (unknown [IPv6:2a02:f000:10bd:e301::f31])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 3D3715340B79;
+	Wed, 21 Jan 2026 00:03:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1768950186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=x7MRDdbzlQeW/VlH/7DqJdS9gXtRL9mTDSmljfQzFWI=;
+	b=yYgIl8ceYxQQbxbVu4G9vJp+ctUgUVLRQ4v3cscpYaVS1u4d3TPCaNrZu1+amRw/PYDrUN
+	PJxQn4x6n9qYT1XMtTRarZqp7JvUzFlrHFCSfkata2azfmV+eHxMaCgiePhU57oCDhGFSM
+	tTC423I2xFS+emcNJhGwT2XieHh/V0Q=
+Message-ID: <7b29f6a4-7ca3-41ef-a8ea-969c401a5c38@ixit.cz>
+Date: Wed, 21 Jan 2026 00:03:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aW5xqLq7gatOy1DV@sirena.org.uk> <fc855e76-5f3a-458e-82f9-f43c7d23932e@sirena.org.uk>
- <CAJ-ks9=V_JmzEaXUrHPm6K-DyTgkxEhrPCW=2ZgDJpc+4Z83_A@mail.gmail.com>
- <27b562ca-d79b-4f80-be71-ebf5e26ed9ab@sirena.org.uk> <CANiq72nS94wv50XyOJq5CeiVQvb0+3mNdWxJpFy_+2FH1x4RYQ@mail.gmail.com>
- <aa4bc767-8128-440c-a2a2-81fbb6992a8d@sirena.org.uk>
-In-Reply-To: <aa4bc767-8128-440c-a2a2-81fbb6992a8d@sirena.org.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 20 Jan 2026 23:08:40 +0100
-X-Gm-Features: AZwV_QjLtYDILmpKHWe3iMB1h0JQyHghHH-t9TiUCmEBYDe7OUkU46R4cUv7SAQ
-Message-ID: <CANiq72njSUPt2CvjBiNyKw1KHSgnMdcBnXNL_pHV4iURYL1n6g@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the block tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: phone-devel <phone-devel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+ Pavel Pisa <pisa@cmp.felk.cvut.cz>, Petr Hodina <petr.hodina@protonmail.com>
+From: David Heidelberg <david@ixit.cz>
+Subject: sdm845 broken on next-20260119 & 20
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 19, 2026 at 8:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> :) What I have figured out ready for deployment (I'm introducing one
-> thing per day, today is kselftest) is:
->
->   ./scripts/config --file foo/.config --enable RUST
->   make LLVM=3D1 rustdoc rusftmt
->
-> though it looks like allmodconfig has actually picked up CONFIG_RUST so
-> I might just be able to add the rustdoc/fmt to that.  I might split the
-> two makes for ease of reporting.
+Heya,
 
-That is great, thanks!
+not bisected yet, but we having problems with 20260119 & 20.
 
-`rustfmt` + `rustdoc` already cover the most important bits, indeed. I
-definitely recommend separating them.
+No usb initalization on any device.
 
-Are you checking the `git status` after `make ... rustfmt` or similar?
-Otherwise, you may want to use `rustfmtcheck` instead.
+Pixel 3
+  - serial doesn't work
+  - framebuffer shows early fb init and logos, freeing initrd memory
 
-Apart from those, the other main one is adding `CLIPPY=3D1` to your main
-`make` line (i.e. not as a new line or command, but in the normal
-build one -- the reason is it would otherwise rebuild all the Rust
-code constantly if you set/unset it back and forth).
+OnePlus 6T
+  - we get a penguins logos, but nothing else than blinking cursor
 
-`CLIPPY=3D1` will catch stuff that we want to keep clean, i.e. if there
-is a positive, then it should be fixed, thus it would be great if it
-is run on linux-next integration. It will break the build with
-`WERROR=3Dy` (it just adds more warnings to the compiler), so I think
-you should be able to just reuse your workflow/automation.
+For now, working version is based on next-20260109 (we have to test more 
+recent tags). Version next-20260115 somehow (with some IRQ issues) 
+worked too.
 
-There are others, but they are not really important compared to that one.
+If anyone has tips what to look for, we're grateful.
 
-More details on what I told Linus back then:
+-- 
+David Heidelberg
 
-    https://lore.kernel.org/rust-for-linux/CANiq72kkjGVAtWNZjz5VGen4xoVLfRa=
-+Wv399PUO=3DEfcA4TEfQ@mail.gmail.com/
-
-Thanks Mark!
-
-Cheers,
-Miguel
