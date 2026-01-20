@@ -1,99 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED8E2472A5;
-	Tue, 20 Jan 2026 14:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2C242883E;
+	Tue, 20 Jan 2026 14:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768919461; cv=none; b=EUEwmARdSVipo1Wcethio8fI+OKGIzZOsn6cFSycm3MOSdW3G9WA37MIQiEOht3LjAenaYs0fgX7Nd0cBoZi2coQgyTuTSVGYdSDpi2AjCpHf21XxrYCNW11LrRIAJPgrHlTXFPxaubcpvh+jPbM865zjJKG7vn0r+KDbjFVesw=
+	t=1768919859; cv=none; b=pQZDEpfwT+fwGCt5Q4gjZCbRDkrJJujquOkCnB54Ik8kFV0vXpEFQBEyCZJ7G6jb8o5fMSTXj70Wb1hJYp7QW6iyqMzh67DwG/MZculwIvdqIfSfoELINzB/M6np5Hnp1enWCTbrNgXlPSqPabHIH9qpdSvfO9vQncSEjuy7IuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768919461; c=relaxed/simple;
-	bh=8kwLq8A6UNQfbJ+AhubQeU6mlyEurtih7K4BeillPc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WJDSHquj4ftytuw4FkfCFWa3K7Rk2OK90w7O5E4JewANaoo7inQakn4ko5OWVyPMw1k6kziQMFcnpX3VDsABOEJkKp5canQ0qpd+byiEAsz/Zk3D6zLzZSL8XjzoTLjjLu/XCM7SyIrgruie6idfQaFynZzU8Q5znmFcgDvTYv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5RlXDPc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768919859; c=relaxed/simple;
+	bh=ktoZiPD4sV0Sr90jexrbsSh8x19kSh4JwxlNAbAw0X0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rx1SxYioG8w78xsT2fXpODEIoRhVKNKzUTu53heddkyAO242rQk+Pr8r2NhFeiQoaeWNUA2oXOjv4OCzD+ybvGfLvIi+iGdKwT0UHre6t7LF6Ztab0XZ2/dkRxG17yX9wRtINHCI2BFAdDx2ZqS0v5DcjAMxXSxrQ3co66T4VJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kwoIkDxF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5RlXDPc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC073C16AAE;
-	Tue, 20 Jan 2026 14:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768919460;
-	bh=8kwLq8A6UNQfbJ+AhubQeU6mlyEurtih7K4BeillPc0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=o5RlXDPcG7+agj1oKLLXB4r4z0IS6zStphWgikSpLRsOdLFUPmO2DhAgPxnNDhZxi
-	 fVuBEmEWl8hefSIUh+Qiy/YcL4HQBHZPH6EOYdw+CTuijAfFuMx9sRXaL0lYFYwFYc
-	 Sh9iEUKm+p+GF4nWJZ5C8D/7o6heRknlshA99T6ywup5cq+geUFuZ5ai6wu7bLIkmJ
-	 4epHVR7HmiQADLgeJB+otCLoTzYUnx6bJ05RJD2KIUh7sLw7BZgBkopiP6++TdLuwL
-	 mprQskmuda8dn3ubEr+UPln+Xi5fzqLtMNicXJGzmnQF+nKBMt1AWZi7R6JIgDl4ju
-	 c2X25+fh/ABbA==
-Date: Tue, 20 Jan 2026 14:30:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>
-Cc: Chen Ni <nichen@iscas.ac.cn>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-misc tree with the drm-next tree
-Message-ID: <aW-Rn_qcNP2CgOm2@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kwoIkDxF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768919857; x=1800455857;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ktoZiPD4sV0Sr90jexrbsSh8x19kSh4JwxlNAbAw0X0=;
+  b=kwoIkDxFaQhQJPJYQ+f6nyy/nChfJCTjQk3XuPIyKR1vpQk52TVrL86a
+   hS/9iuUtyFDWbSSTqVXJHKZ0Rtjm6qk/tvcgEw+c7GxMtZPtcG25mcPGP
+   B0fcbkcvonUW3hUciT+nMkrObkoBKZpIfvrjyk3WHZCTcOdhobyJrJg6H
+   1Ee6R2rM9SX5zDr7inc8SpS1R+Zz3wI5Cn6bkXyM3CkXWNvrFBFaAuCLH
+   gLc3BhCO0X5NUa6RExN/x40lddNp/WgczJSivjHGwNks5ov9MEgkZYMVc
+   ARGqrIWlhSiCapSPVqrelkbdsylQrHZ9m3mBiHfFaOahJJlzGX7Vs22PZ
+   w==;
+X-CSE-ConnectionGUID: 5gST6TCUTICo6LQMsT7ihA==
+X-CSE-MsgGUID: B/xTp+AeS7ebtnkraB9fTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11677"; a="70183688"
+X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
+   d="scan'208";a="70183688"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 06:37:37 -0800
+X-CSE-ConnectionGUID: oXGGcwwpQ5G9D5u07jm8ig==
+X-CSE-MsgGUID: dXJREl33Thy5ul3EYR2z9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
+   d="scan'208";a="229074750"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.10])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 06:37:34 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 20 Jan 2026 16:37:31 +0200 (EET)
+To: Mark Brown <broonie@kernel.org>
+cc: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the drivers-x86-fixes tree
+In-Reply-To: <aW-LCX4W9qIWNSdx@sirena.org.uk>
+Message-ID: <ee1f1510-2935-587c-d459-af9c1680c25c@linux.intel.com>
+References: <aW-LCX4W9qIWNSdx@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9jgTUlvssYY4I/1+"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 
+On Tue, 20 Jan 2026, Mark Brown wrote:
 
---9jgTUlvssYY4I/1+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Commit
+> 
+>   bb820f17b68f6 ("platform/x86: hp-bioscfg: Fix kernel panic in GET_INSTANCE_ID macro")
+> 
+> is missing a Signed-off-by from its author
 
-Hi all,
+Thanks for the heads up.
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+The patch was submitted with Signed-off-by but git interpret-trailers --in-place
+seems to mess the tag up for some reason.
 
-  drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
+-- 
+ i.
 
-between commit:
-
-  f9c68b1c5be43 ("drm/mediatek: mtk_hdmi_v2: Remove unneeded semicolon")
-
-=66rom the drm-next tree and commit:
-
-  b626b1a1c9cca ("drm/bridge: refactor HDMI InfoFrame callbacks")
-
-=66rom the drm-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
-index d510ca8cfc4a5,d0e4440b74911..0000000000000
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
-
---9jgTUlvssYY4I/1+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlvkZ8ACgkQJNaLcl1U
-h9BcWgf/f1PZ+vimrziCa4UmeSm0BThty9/eQhnU7AQaPN6eBJK3xnkjPEVElaKK
-vZmUvvBazSxIRd2Y2rUPBnG754LXtzBYWrg3KQraJZj91seqKmi6XN+aFpeKQJha
-g9sCisXi5XIsxF2IFS1zYVU6P0P9J8oOnQ3ilNCwMbVMb/iYeuZN3IuW+Fe/zemz
-ZGdK5spoTMmpqsP07IBdgQ6B1eaZ84SShGxILaOsS3eYFdu0jEJTm/Tdb3UOkVzr
-5mWgGaE4tLPAPTJVvX3vmKXqzaH2egTPRUxIXORcI8x0KnY3eZARSWMTd0DuZbuy
-Kd76V0digS1dvkh2+r3HAbzq1vxzUg==
-=6n4G
------END PGP SIGNATURE-----
-
---9jgTUlvssYY4I/1+--
