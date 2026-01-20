@@ -1,37 +1,66 @@
-Received: from ixit.cz (ixit.cz [185.100.197.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262ED3EFD35;
-	Tue, 20 Jan 2026 23:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E0E3ACA6C
+	for <linux-next@vger.kernel.org>; Tue, 20 Jan 2026 23:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768950198; cv=none; b=P9sHJWBDc8JpDmA1MW4tZvXCU5wKvR5DpSCfMVoeCtpM7APQQUi8mWMJWUh3q52EO2tK7ILZNFdv+G31zgiNXll8EbxO+QRTcGBGHVAj8UdT5V5RpCs8pgCSh3evw7GCjasBx1Qo++MPZVtMBChehpFU8E2el5UaREY9cJRRCzA=
+	t=1768951994; cv=none; b=RUMMfhRaQ5PVI+zB7Dm/HrdwGcL/0C0J7cpJP5Um4f373JMdoRnt6af/9bFJ2pJ87i3GH0EfZFRNupdAvJ5gtiEBW62vZhoCA+cDk5ZZqOJqotL4JZ3+n8cVYWOjeHkD/1lPbrdlWAk3x9A4nthZgzaQehUhxydgplId40Oc+rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768950198; c=relaxed/simple;
-	bh=3SkqePa7F4GgOrv16HvTmu1l/9Jlmxv9+bA42DDfZic=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JKKVfeywJt48su1p9saKUQffIwMZNSQUgyeL9SpzU0OeCgInJQvueTMHTRBqJ7CWmSFM/nrDInWR4/ozrEVzvq4VPmmlp5jSJUZjTOMKg4wd/2EoSv446GRMkhdm/DZqQDSruJOE7ukhKOW56Fj2fC+M60DpTm2lJyCTNclQz9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=yYgIl8ce; arc=none smtp.client-ip=185.100.197.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	s=arc-20240116; t=1768951994; c=relaxed/simple;
+	bh=iKhM/x7gQHmun+/TZcTN8LpnwZ1oJ4H4oG0z1Bgw/Js=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SCUlNYfJxbq9/8KalIR4foJHQEBGUfFf1RGW38Ru3Y6UAH3QdKDg3mV1qNpnvqvXwUbCu+kDVV87bXjlLplFRwPO7CBcdA86a1k+wx4371ww2UO5fIBmiRHCkZ9Pk+NzTFNBg4ZXxng5sv1pazFswke+sTRQFogiZVfbUOvu8HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KucL2TWD; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="yYgIl8ce"
-Received: from [IPV6:2a02:f000:10bd:e301::f31] (unknown [IPv6:2a02:f000:10bd:e301::f31])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 3D3715340B79;
-	Wed, 21 Jan 2026 00:03:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1768950186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=x7MRDdbzlQeW/VlH/7DqJdS9gXtRL9mTDSmljfQzFWI=;
-	b=yYgIl8ceYxQQbxbVu4G9vJp+ctUgUVLRQ4v3cscpYaVS1u4d3TPCaNrZu1+amRw/PYDrUN
-	PJxQn4x6n9qYT1XMtTRarZqp7JvUzFlrHFCSfkata2azfmV+eHxMaCgiePhU57oCDhGFSM
-	tTC423I2xFS+emcNJhGwT2XieHh/V0Q=
-Message-ID: <7b29f6a4-7ca3-41ef-a8ea-969c401a5c38@ixit.cz>
-Date: Wed, 21 Jan 2026 00:03:05 +0100
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KucL2TWD"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4801eb2c0a5so39831635e9.3
+        for <linux-next@vger.kernel.org>; Tue, 20 Jan 2026 15:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1768951990; x=1769556790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=gRSyiv+q0ykG1uHygozoaN5UIXoutL9qeV3+AwotnBE=;
+        b=KucL2TWDhtbAp5FZS6A/M1Uapg/gZZuFlL4Lui1wJZ3UyMdtL4lvPVb62qjwCPDAlS
+         zvm4nuHlK8uQkXt+hus94LZ334j9WlpCxsV0Ct/uT9Z77vyANND5NcO3HF6AlfW2TavJ
+         //n/+MDIDMQEwPXZivn6lwsndSLN/Mo9FslDIblduqlKlUaXlzeWwLCZ6wR4zeXywcWc
+         3VXFJnI68BDt7g5MvI+ORVZr9Ll/jR/iwg/uPgVVZuTzDX74fHCNr+fuzNceR6wyJY7l
+         k2gGcAkfh3NK+jy6l2mIMsg5L9Rdz6f3EhCUsC+QmjibaWJp5ERjM/1pdQli7QgU10OL
+         NJ7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768951990; x=1769556790;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gRSyiv+q0ykG1uHygozoaN5UIXoutL9qeV3+AwotnBE=;
+        b=YdGyjV48zeovPR0VbflgO4ZW2/XmTYDlpayJXfqkF0QIILsnpG7L3EVBmwvKFQ5ksp
+         h+DHC7Dtnki2drOnT7bdiB35zubnKWX6q0lZaJ2hjJ5Qi8KrViPhc96lvEkQ8giV13jw
+         ZG1k6NkLZcJNS4WPMPTgMFemyl75+RTu6D9rIFLw5ram/k6DYgTkC3oNjmFfmvisLY71
+         //QttTBpv2rAXRXjgl3afZCA+2AD0bzNvdYBTn7YybdZZp3BTVoy3EtnwCGa7Ssoyp1+
+         7hG53l6mq8sR34X/eekg7Z7VZ3q3jTCZItb+0geLAv69zhB4yf3oKWgQQzfUk6pr8ug5
+         /5Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqZhAghzs7hA9iLi7pMpqgzzqfX2HEgh1dQEp6CGpIBCBppOsId9PKJ/9lRnPykhkAySLHFyre6t29@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOLQ43pK0waUp0cUxbpJCLen16soiH+ksndfU6gL5YibD3Ae0C
+	6qSZKlc6IuBEWGaHB34FI+ij72utMMvBFNzDfoSXlTbEnPnr9sbkeypY8JA7/gbIQX8=
+X-Gm-Gg: AY/fxX4Q9+oV/rPw/BDPh4rGZyDsoOYgtC6kWAziHgcPZGBrbHNdS947n5OvllsonmW
+	TH9ipf4JydPhCRHH4mbuNmC0tls7cwbSu1sMbiFJlymnBPS0ZKoc8GkuwVoariiS6jT7kVThiQu
+	Y8v5iLwV04DC7mLueo3oLSFBzFDht/GjKvHdbvDwAaA94s9i1uLEnnfqTXPYTZJIOSTlJSMJxnA
+	UKZgwkP0P3QdgKbkY0mzyMHHFZPt0+UxqHe/X8dJQ3p5lv6+h4j+VPwAkt6cDk/nOWElMs9WHZB
+	wLXYkNN2thPaAIhAW4OqpkYKd9baIRn+blrNw0alWao4QF8C/iyE47/HrM3Ea1rJU0j6wvu8vEV
+	y4t8UR4luqw/e1iNJN6Ek6oYwS4DA1n51ft+i31CMWA0MjetgPwQya0uGCY34ptGujmUJdBnpsa
+	sEIcmG25ZDlODCdZEiv+rcTnaW/2egtLgEgP6tbjc=
+X-Received: by 2002:a05:600c:1549:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-48038b7872amr96058785e9.27.1768951990132;
+        Tue, 20 Jan 2026 15:33:10 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a719107c34sm122338785ad.44.2026.01.20.15.33.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Jan 2026 15:33:09 -0800 (PST)
+Message-ID: <33551776-18b2-4279-96c0-b7d1aadc0319@suse.com>
+Date: Wed, 21 Jan 2026 10:03:05 +1030
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,77 +68,77 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the btrfs-fixes tree
+To: dsterba@suse.cz, Mark Brown <broonie@kernel.org>
+Cc: Boris Burkov <boris@bur.io>,
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <aW9wHq0fs8KpLCyj@sirena.org.uk> <20260120161838.GD26902@suse.cz>
 Content-Language: en-US
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: phone-devel <phone-devel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
- Pavel Pisa <pisa@cmp.felk.cvut.cz>, Petr Hodina <petr.hodina@protonmail.com>
-From: David Heidelberg <david@ixit.cz>
-Subject: sdm845 broken on next-20260119 & 20
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20260120161838.GD26902@suse.cz>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Heya,
 
-not bisected yet, but we having problems with 20260119 & 20.
 
-No usb initalization on any device.
+在 2026/1/21 02:48, David Sterba 写道:
+> On Tue, Jan 20, 2026 at 12:07:58PM +0000, Mark Brown wrote:
+>> Hi all,
+>>
+>> After merging the btrfs-fixes tree, today's linux-next build
+>> (arm64 defconfig) failed like this:
+>>
+>> /tmp/next/build/fs/btrfs/free-space-tree.c: In function 'btrfs_delete_orphan_free_space_entries':
+>> /tmp/next/build/fs/btrfs/free-space-tree.c:1765:9: error: implicit declaration of function 'BTRFS_PATH_AUTO_RELEASE'; did you mean 'BTRFS_PATH_AUTO_FREE'? [-Wimplicit-function-declaration]
+>>   1765 |         BTRFS_PATH_AUTO_RELEASE(path);
+>>        |         ^~~~~~~~~~~~~~~~~~~~~~~
+>>        |         BTRFS_PATH_AUTO_FREE
+>> /tmp/next/build/fs/btrfs/free-space-tree.c:1765:33: error: 'path' undeclared (first use in this function)
+>>   1765 |         BTRFS_PATH_AUTO_RELEASE(path);
+>>        |                                 ^~~~
+>> /tmp/next/build/fs/btrfs/free-space-tree.c:1765:33: note: each undeclared identifier is reported only once for each function it appears in
+>> /tmp/next/build/fs/btrfs/free-space-tree.c:1817:1: error: control reaches end of non-void function [-Werror=return-type]
+>>   1817 | }
+>>        | ^
+>> cc1: some warnings being treated as errors
+>>
+>> Caused by commit
+>>
+>>     7fcf8455f610b (btrfs: reject new transactions if the fs is fully read-only)
+>>
+>> I have used the version from 20260119 instead.
+> 
+> Sorry, I'll drop the patch from next-fixes.
 
-Pixel 3
-  - serial doesn't work
-  - framebuffer shows early fb init and logos, freeing initrd memory
+Or should I update the patch to use traditional manual path releasing?
 
-OnePlus 6T
-  - we get a penguins logos, but nothing else than blinking cursor
+As this one may need to be backported for older kernels.
 
-For now, working version is based on next-20260109 (we have to test more 
-recent tags). Version next-20260115 somehow (with some IRQ issues) 
-worked too.
-
-If anyone has tips what to look for, we're grateful.
-
--- 
-David Heidelberg
-
+Thanks,
+Qu
