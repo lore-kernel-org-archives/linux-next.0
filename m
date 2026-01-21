@@ -1,78 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475663A35AA;
-	Wed, 21 Jan 2026 11:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4537333B979;
+	Wed, 21 Jan 2026 11:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768993916; cv=none; b=U/pLP4hsk3zSjV84mqhgsvg7nSeGyY2blwQu4k4QFIp6QaODfPDdfSHL2uC/HutPbM2IyxWRy9QP23pf5V+OKDO3Gk/v6J9GZjhLrVff5K6HQKA8Ijfk9yvmhwUbngqkqn2blznjpvN9BTa1Mdzp/hxrkZtBM7MXN4d/kTgYJWE=
+	t=1768994288; cv=none; b=pA1lAA+zk7Km8AJP7xU8sBrZRAq8Pbp0IpCw+PSHy2H949Y4p0kSgtpSvme6N4BGhZ3uJJ0dF1TcgRvd0H9U37XGB7gscIKwE0yx7/Dh4GP9AEgXT9W8vkj1RIipENRJ+cDf80FAIdm/xhU9OWT7s0wmP4cX6E1ftuBdKEizpWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768993916; c=relaxed/simple;
-	bh=9VudwIupjnwW0DRRjtWHZ8714uQ7sMoSshYo89AJXqw=;
+	s=arc-20240116; t=1768994288; c=relaxed/simple;
+	bh=lFKp8Dr1w5WjVnelGIRLA/CQtVyOwSzkgQCzWHx/1sY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YeMGB54c427qc/1Hrlwn+nA+fh2BE7oXoQrI7d0uXseNjy/P8CmMjqKyG2oJBPOqyxDtfEjPQ3lT0ezFsvUw6M6Qxb9fgr4Mw96FQrFtDP1YcQ60h1crKVgQ/advureA+xJEcn12gze2uKOC77lh7imMGmBiN+ECAfR6szdrI6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=el6Kmyms; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=iOv/AISAKggQgszSSX5wKcOVWhL5QH4dtpE/aBncERnesWwy5ktzgyDCPMJxNHQBEYNKONUx5gVfE/iMvYhNIcXzRm7Yop6sdcOIC5DUl9AZXLu7aEnaDnU6PQhDDZC92C/EKiz2G1KWLa9F/pXhOW09oTLj8qctVcYpgSnCz7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqXAv90U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="el6Kmyms"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0244EC116D0;
-	Wed, 21 Jan 2026 11:11:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqXAv90U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAC7C116D0;
+	Wed, 21 Jan 2026 11:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768993915;
-	bh=9VudwIupjnwW0DRRjtWHZ8714uQ7sMoSshYo89AJXqw=;
+	s=k20201202; t=1768994284;
+	bh=lFKp8Dr1w5WjVnelGIRLA/CQtVyOwSzkgQCzWHx/1sY=;
 	h=Date:From:To:Cc:Subject:From;
-	b=el6KmymsIcx1hK/Dvj8uU3/69yRTsNiFTtAQsrNGfr4v7YRKdZ87sOh5pdzPeNbvG
-	 PKYBpPDes70hU7iPvfg8uo3nNF8bfuE1aSP1ky4HO3WPT+vnu1T458WEG4ANsLWGpx
-	 f2s7Pe3fwoQQWfN/8UPoFdaw8FXD4VBS0tLGQufOfkqNC7bsdB45NcBGHpgl4Y/y6h
-	 OsQQMwc5HXX0HKxDCGU/8GQHoKiiGsHeIgsn0nVVU44FDLB3LrcRsm2JJtowxfOetu
-	 hh1DjQYBhOi7wAG+/tQGkeKsmqxYNEsigDC+8evE7v7hTpkeAScfUVzgHT7czC8a/d
-	 Nc374kkAYJa5w==
-Date: Wed, 21 Jan 2026 11:11:52 +0000
+	b=CqXAv90Up/ovQmvcTA6VaAxbUtuCphHeQ08+q8coNV2snMIVwIRrWBQDdhMaabybA
+	 gkQ93RrISrLgg9r00yNwE7xm95kb7g3O/+9+mmg6R1ZMBVkSwdrrLvfOpkw2+PBHBG
+	 bdzg8iQXdXRLpsMfCa0fXTfQtocEnM3EwZfpL49xo7Mfm5nwBQMKwBfVPDVVLHAGED
+	 KdeFxkGejwBAJfba1NDAbEuwrbYUwM/9Fq0Ur8vUtcy756C0a8wI8kilcEW90xwhoj
+	 Ip/UlZXVh/3hV3HCfQYA0WlXiwTcDNUyTehib4YyZTNUs0KI0JRbpq/l8J81OzQ+Kc
+	 JBFYIchio3M7w==
+Date: Wed, 21 Jan 2026 11:18:01 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Fixes tag needs some work in the mm-unstable tree
-Message-ID: <1dcdcd6f-781c-4152-996b-6d33f15ed135@sirena.org.uk>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Fixes tags need work in the pwm tree
+Message-ID: <aXC16aWHr9SPX07J@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OAkdXLz+x1Pr7ZBL"
-Content-Disposition: inline
-X-Cookie: Eschew obfuscation.
-
-
---OAkdXLz+x1Pr7ZBL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 In commit
 
-  3a006d3ab2b2e ("mm: fix uffd-wp bit loss when batching file folio unmapping")
+  d2252319f89e4 ("pwm: tiehrpwm: Enable pwmchip's parent device before setting configuration")
 
 Fixes tag
 
-  Fixes: 8798e255b5ec ("mm: rmap: support batched unmapping for file large folios")
+  Fixes: 5f027d9b83db("pwm: tiehrpwm: Implement .apply() callback")
 
 has these problem(s):
 
-  - Target SHA1 does not exist
-
---OAkdXLz+x1Pr7ZBL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlwtHcACgkQJNaLcl1U
-h9BRawf/QCugAjFkNm0yJLTkvA6X0qIH7eKkeeObGpfNeEoxTaD5TzZ56PY5qUuD
-rLpTry3KpjxUbHXeTfn008Xdzk7BRvtqTQHD9spZelLmo6he16jdlbeIdXhfufFH
-04J9YPkH1ZvPQVT8J3hliOqeM83mKwogaKfdCAbRjXr+RxezdukgDRIcwBErUOu5
-rFMgSFOmjbAnK5fPaL8B0Vh/ilB2jZTutnB+nkYcsfwakb6dGkPRtge9LiMQY5g+
-wooXdzhAzcbA1mToduk5L3FCTpyp9pPASR62ujCaJjzkP7lRc9VDjMLZUq9lngBA
-gdKSQizNyXdINaYxyINXymVDmNzN5w==
-=hQp5
------END PGP SIGNATURE-----
-
---OAkdXLz+x1Pr7ZBL--
+  - missing space between the SHA1 and the subject
