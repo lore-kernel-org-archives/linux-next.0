@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C26A355042;
-	Wed, 21 Jan 2026 16:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E76335073;
+	Wed, 21 Jan 2026 16:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769011881; cv=none; b=EzDVzOg6UsbBEmnHxXgFLXVRjUWyhsOf/VyqBnDfAMWYc+e+BH+NnxX2BFfR2qdJ/qZgJOTPlzfE+fVgDeO+bQrU9RuBWlOFxJvezv+C5Dr4O9dDrePRrQTH1aQke12alYOPkVcs57k82k3n8OHvqbILEs53Hmn2sGsCZdYBw7U=
+	t=1769012020; cv=none; b=ZZBAkQqKBnUikbbHilOk+jBwe05OCY4N1vjx/Qitr76htJhHpN8G3nwwTtp1lvmsHfn/5abCNrETncR84GkgYKMT2PZwN1dDoRbvs7uMnQDgjCZPA9bnX9MRUjvOCW6GmejQdCE30LgN7IVl8CkyD07zzGKTsFGu13OqEaNAumc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769011881; c=relaxed/simple;
-	bh=NoLx22csg/fh2wncBPu+Jix0zRVpVDUbEYr/WLv8pwU=;
+	s=arc-20240116; t=1769012020; c=relaxed/simple;
+	bh=k7ybXQyeTG/2ccuLUHQXXMjT/RjzupbpuqjFTU4XYTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZEy24N3XFc9gzhlRxMUlsrmthwmW+JKS06CuO1mJ5fLoTTsrflNKzNzOOUWzMJ5E/FcPNJHewuNM4/2vZrMH5TqmuToxp7/Fi3MNfDNOHqwxB0vKl5oc5oojAt+4MAHuofXi/rzOKnfpGRG6xiCfeiWG1+aJf/+1f90Ms5hO6/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ry4xScR/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=KgeZKJFaVb0qTE0eyvZIs7fdIPkYABoyGSHa1dunbs5+QibveX8dO5MTpsksSNYl3Jc53nQ/jzWfP21hzrM/V1Z3A7oZywxawYWOpKkGjairv9WUeLLF29CsK0MFjxp9PqZJiVzqHOU2sT5Vi5fx3igCKhMrR6SGylPNBshS/wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9jDlKhn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ry4xScR/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF37C4CEF1;
-	Wed, 21 Jan 2026 16:11:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9jDlKhn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F379C4CEF1;
+	Wed, 21 Jan 2026 16:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769011880;
-	bh=NoLx22csg/fh2wncBPu+Jix0zRVpVDUbEYr/WLv8pwU=;
+	s=k20201202; t=1769012019;
+	bh=k7ybXQyeTG/2ccuLUHQXXMjT/RjzupbpuqjFTU4XYTg=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Ry4xScR/u7oCaZbrUOZww6nzRL6wQpMSsRvF37mi/YIjWhI5c/2HcsvNgPcj/7HI/
-	 20p7MX+v/flvMLjXzOlk1uoRdlbE9iRHvA4ltts2d0NFvJbY/kXAZWofaIUU4vpmeE
-	 ssP/lOU5Q+xYuW5EgjbEjD2C2iKv2DUBzIaN9H7SV3lzVksK1o5GWYPx0WcoiJGkFj
-	 h85/Mpp/+ZQwIZ4MlPDuPmvm7o/vzhEtZcHKSeUeveIkcIXS0st91DPlegb8dT/HQY
-	 Pe3+tD04TpO8e5K7xXMeoLDmXSkISMGFc14Exb+hYHA2W5CZtqmyoSjLyOKb4YwsE6
-	 oFfOO2nJzC6nQ==
-Date: Wed, 21 Jan 2026 16:11:17 +0000
+	b=U9jDlKhna1CB5+1JpEln/eIiTQFQbRgDhsUQusUgxIeNOacOWzqg4fPE5H4Ye4F+l
+	 aLTxRin18oIKCnKOYJ0s1vzOEeFfzHfnUey84usW00Cc1R4/qT9aswpqRTQzsoSHFB
+	 mUcbWBtzTRMoW1Sk2TlGhwtGwSx5IyVfmn1v6KZX+F1Mz+NHbrj2PIB3PwHfQgFb2w
+	 Hsdv8GasJYle7zdiKeuxmmdDJlB+x7aYyoGG1VpRscLsdaq0bMn7hKW2E1P8/Bxny8
+	 H6vvhUCZE3+6hYX/vlQmKzT6OwOnA5253Zzxy4xhP0Djt/eu1TZTDtDq+7mCF0YtEI
+	 KUiU7JW6OxR0w==
+Date: Wed, 21 Jan 2026 16:13:35 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Deepak Gupta <debug@rivosinc.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-Subject: linux-next: manual merge of the slab tree with the slab-fixes tree
-Message-ID: <aXD6peMfe2HrLKOd@sirena.org.uk>
+	Paul Walmsley <pjw@kernel.org>
+Subject: linux-next: manual merge of the kthread tree with the risc-v tree
+Message-ID: <aXD7L7Ivizu4HRY0@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,31 +42,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SEtNCLvNpVhnyEqY"
+	protocol="application/pgp-signature"; boundary="ZVPxxG/cmXpbrfe9"
 Content-Disposition: inline
 
 
---SEtNCLvNpVhnyEqY
+--ZVPxxG/cmXpbrfe9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the slab tree got a conflict in:
+Today's linux-next merge of the kthread tree got a conflict in:
 
-  mm/slub.c
+  include/linux/cpu.h
 
 between commit:
 
-  99a3e3a1cfc93 ("slab: fix kmalloc_nolock() context check for PREEMPT_RT")
+  d3d1efd48b3b6 ("prctl: add arch-agnostic prctl()s for indirect branch tra=
+cking")
 
-=66rom the slab-fixes tree and commit:
+=66rom the risc-v tree and commit:
 
-  da6ed0180825d ("slab: simplify kmalloc_nolock()")
-  a4ae75d1b6a24 ("slab: fix kmalloc_nolock() context check for PREEMPT_RT")
+  658d3c155c301 ("sched/arm64: Move fallback task cpumask to HK_TYPE_DOMAIN=
+")
 
-=66rom the slab tree.
+=66rom the kthread tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -74,43 +76,40 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc mm/slub.c
-index c58e664bb312a,331d274ba0a8c..0000000000000
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@@ -5694,13 -5166,13 +5166,13 @@@ void *kmalloc_nolock_noprof(size_t size
-  	if (unlikely(!size))
-  		return ZERO_SIZE_PTR;
+diff --cc include/linux/cpu.h
+index 8239cd95a0053,0b48af25ab5cb..0000000000000
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@@ -229,8 -229,8 +229,12 @@@ static inline bool cpu_attack_vector_mi
+  #define smt_mitigations SMT_MITIGATIONS_OFF
+  #endif
  =20
-+ 	/*
-+ 	 * See the comment for the same check in
-+ 	 * alloc_frozen_pages_nolock_noprof()
-+ 	 */
- -	if (IS_ENABLED(CONFIG_PREEMPT_RT) && (in_nmi() || in_hardirq()))
- +	if (IS_ENABLED(CONFIG_PREEMPT_RT) && !preemptible())
-- 		/*
-- 		 * kmalloc_nolock() in PREEMPT_RT is not supported from
-- 		 * non-preemptible context because local_lock becomes a
-- 		 * sleeping lock on RT.
-- 		 */
-  		return NULL;
-  retry:
-  	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-  		return NULL;
+ +int arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __us=
+er *status);
+ +int arch_set_indir_br_lp_status(struct task_struct *t, unsigned long stat=
+us);
+ +int arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long sta=
+tus);
+ +
++ struct cpumask;
++=20
++ bool arch_isolated_cpus_can_update(struct cpumask *new_cpus);
++=20
+  #endif /* _LINUX_CPU_H_ */
 
---SEtNCLvNpVhnyEqY
+--ZVPxxG/cmXpbrfe9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlw+qQACgkQJNaLcl1U
-h9C25gf/VY6QgyL+WPcBg0L4spuSFenyQDPQiygUiCIQkAn6mJbg2qNRozDzmI1+
-Yvui0jdUO9iWlvXSSreuPJDzzK3WFo6cJGwYc1fUVwN8fntDivPrJM8+Ggr8jO2/
-/X2T5nQcj0A+2LL88ue3iVa6J1IM+fYUGxNQ/FBF3CkOd3//+C+w1OsUa/vyb9iU
-noWQR87xZC64+W/dpvSHXpd5XC4+0SQJAhMuI5MWAd72F4WZbUxeA2oBggv+LY+J
-8wQlbj+gv4f/qcKwk3BIapCYZIY6Pw++6MKsYXjeyt/LZFz75mkzkTizkors1gc0
-BdsrIIKhUIt9U7wD2QhTls5OdemA7Q==
-=Ls+A
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlw+y4ACgkQJNaLcl1U
+h9DPqQf/U9uCOeAHCwMJ6XgBraj84r3SBMLW3roK4sj5qLt4dgmH+mr4xAEiOLiN
+acSP5wsN7q+G84YhrUt9QXySMJ7MVPIJUYSSlUKJ0IIH+4rb5z/m71xhyQY49LuP
+w4Tzv8dbi2Yk87HA78sMuDQmlniFfSu+QZn8dBC+BBfvHzCOzk2p6td9GQYDbqHt
+ozNAyOzc7zPasPuZsjhgsYmbcaFvioX2d5ALCFdKW8j9rwjxkYOleyYfTxP245pe
++3suFhwbloMeXN0PqIvrZm6kphJsEY22nS6vDvAjZEZYAmh7+9XSyyqTq2HXY/np
+Dp4rkUrUU1mHh/QKPpmK6wuN7ZKdGA==
+=+Bzh
 -----END PGP SIGNATURE-----
 
---SEtNCLvNpVhnyEqY--
+--ZVPxxG/cmXpbrfe9--
