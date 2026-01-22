@@ -1,93 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f66.google.com (mail-dl1-f66.google.com [74.125.82.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545D92BD033;
-	Thu, 22 Jan 2026 18:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B45330F925
+	for <linux-next@vger.kernel.org>; Thu, 22 Jan 2026 18:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769106311; cv=none; b=sT59VLCmpADg2KELsm91AoNc0ulsUnTeKl8I1yjXqEXhJFqSc30WpN+ovPycXdqFEHQ6RmmExj36BPuOCBcD+4Yfc2CKf5+ft6IjVTGVPu7e2aUZfer0CoZ07PzXObqG+IccfW+n2heFDeRxvK+fqLFQVlLSPOcdOjlmJD+zFFQ=
+	t=1769108357; cv=none; b=dRvXO0JjNcCrJXWqXXq60DpYtzBURb13LJpEdmm7+DDT+uTZaZvqMn44CUWKxaRCMec3+SIjGej+oqsjRyHIW8+CKHpjM0RK5luH5bkdDRY1q0oRXkSOci6TgwYzJEw3gjbkK/KZ+hEgnNfOB+bTeWgAPRjJd2oPOIiFdwCYWwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769106311; c=relaxed/simple;
-	bh=zL2gFPFI22aw+eEzv1uPLP5RhqkpvCt7uScDUQ6q3Lw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pJuXzhxJOQPG2tTwaJxC5a3CrMjd3ct4cgHTAPlCsGfTIyYSf/DfSKkkszTZCrzCl3IUsKayc+8cJXdl8lxwpYklxOoqVotORxw05m8CtIVDJl21VaPANubvgzXnhEIMXfjVmYwav84UjaP2Qjqf47iZ+WiNSUoMTH/IXW0sI0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDOLcq0Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769108357; c=relaxed/simple;
+	bh=4hu1g6v6fa86edOO4CtgsbDn0dI/VTmtx7rVd9sxHOk=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=NanPJbvK9QPNRKFbMeulpuFoCF82el4X0V2354Gm7CG/m2w/UnE56wEF8qwzmN8GWexg8lx8Hg/szCRQ/VTZyNxogEGa7VHn1RJeTn7r9F8Ac4ejhe6HPyENsO4o6Wu7sv8xh1hOqEzk49j24X5Ux0JwCs6t09PSzLfroWcTdaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=o3q/9Rhu; arc=none smtp.client-ip=74.125.82.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDOLcq0Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34E5C116C6;
-	Thu, 22 Jan 2026 18:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769106309;
-	bh=zL2gFPFI22aw+eEzv1uPLP5RhqkpvCt7uScDUQ6q3Lw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZDOLcq0Qza/TwH3Q3iDdOaWtD3TB3QqbwTlbmJwKOHA3SCxvydoniXxNSaWqGvdyW
-	 NuNXgvWIWKE4TOFY6PfvjW4rrxq7rZ0JwuLjRpilMc5CfKxwB17QCDqaR+A8N8MIk8
-	 UVytNXRDlQiLd3XrddG8HmQMQIceEO5tltGFNGVsN28rJTBeAucnM//6Ym4rwDjqQQ
-	 D7MRzHDSkg6ZI3KjfenWCS6wauVai69mcYsYoZUCUgSt5F6I+llInppTNl69+pWhd2
-	 tTUj9ENJ46I1pwjMAfeR+zXx9u5QzVtl28uWGY4QAlVvi5Z/8IgD9ui2Vc5giQG9iX
-	 xOz0iVUtLU6bA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Mark Brown <broonie@kernel.org>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>
-Cc: David Gow <davidgow@google.com>, Tamir Duberstein <tamird@gmail.com>, Jens
- Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the block tree
-In-Reply-To: <8cc01720-427d-4cec-b4d0-721b22c47552@sirena.org.uk>
-References: <aW5xqLq7gatOy1DV@sirena.org.uk>
- <fc855e76-5f3a-458e-82f9-f43c7d23932e@sirena.org.uk>
- <CAJ-ks9=V_JmzEaXUrHPm6K-DyTgkxEhrPCW=2ZgDJpc+4Z83_A@mail.gmail.com>
- <27b562ca-d79b-4f80-be71-ebf5e26ed9ab@sirena.org.uk>
- <CANiq72nS94wv50XyOJq5CeiVQvb0+3mNdWxJpFy_+2FH1x4RYQ@mail.gmail.com>
- <aa4bc767-8128-440c-a2a2-81fbb6992a8d@sirena.org.uk>
- <CANiq72njSUPt2CvjBiNyKw1KHSgnMdcBnXNL_pHV4iURYL1n6g@mail.gmail.com>
- <b17da8b5-6640-46ea-ba73-d2f4a08e246c@sirena.org.uk>
- <CANiq72kT9ThJcr5W0OhBmbwKZCpULjUehNjijTt8W09yB0CxSg@mail.gmail.com>
- <vTqxQtPb82EIUJtln5_7rGW5a8ot7hGZeTwDlTSiQPJwSr8IZ5COad9CBcZY9jg8YssEH6NyvESidrBA1sx4JA==@protonmail.internalid>
- <8cc01720-427d-4cec-b4d0-721b22c47552@sirena.org.uk>
-Date: Thu, 22 Jan 2026 19:25:00 +0100
-Message-ID: <874iodtshv.fsf@t14s.mail-host-address-is-not-set>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="o3q/9Rhu"
+Received: by mail-dl1-f66.google.com with SMTP id a92af1059eb24-1232d9f25e9so586081c88.0
+        for <linux-next@vger.kernel.org>; Thu, 22 Jan 2026 10:59:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1769108346; x=1769713146; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hrIzk2/xJmwFk/zbADXcPOxmFVVXMdsJP8L/1g75haU=;
+        b=o3q/9Rhub6UFaL7LmEi4BKBkS9SS7vH5c9MVWTnuqKlZbuqfV4T4Z0obUnxlupUENX
+         kbQl9lkKYTv2iz2clTTPKDHFBLx/Mv5DDhiEbSJ/XUaz8aWpTlxcDem9r9T/VWy9YCnZ
+         qOeFsdGjvHfjqOvK5FX9+UVlSaNZ+LPc9Txv0Ns3UzTYQMcU3LlBLjxowF6BR1QUVK+g
+         tovPKzu6rORfy7Ifgner05iCPgh593Vn+TwNa3xhR2dSHkrYM+opdGOAKwB3aFQQOKSr
+         6r1JKadSKeEIin2ZcApKcLRpeuqXqbFu6vv1H8sK6zp5cNqm/rBT02t9Dth/ZoDyBlwA
+         nRYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769108346; x=1769713146;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hrIzk2/xJmwFk/zbADXcPOxmFVVXMdsJP8L/1g75haU=;
+        b=g23fpetPIUhd5KGkfQ3hzLZV8Jy5JVbJcBPwVcbDf8CkvgW4tbnts8XgT6fcFYHoZr
+         D6sFKQnNS3DomNi+l/DHZt2waJHFKH8ssh7ngpli39hB+cjXjuvLfgjQ31f8MramwbX+
+         YdZciKSKJWZlGxRhek7Z5EBhGNWgB/UlRNhnpEC96KtShqpaQn08dIlImVYv6GX6z3Rh
+         Pd9Up4HVsltP9443fMgG41/qaKQnPWGOukto+wGHm3NR2uQnwBrNxxHgfOjKvs162qpj
+         ypYPu7iyws0qjpuHXJIpEFXwT2AZjp1sykvyIZ87LyYoNsGfasQ0Gb+tlUAb04G130p7
+         rR1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVbZaA+zjcfJYUYC+L46MviNlzEoqrlxfreJ+LGy0oxiFe2zRtjBxJvKQaAWujY0lxeluSfFTRHS12p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6+ORB6Fkyk+T4h/CUV+syHZ3KbPrLjzJvv0objINVk3De/FjB
+	iYzAzxPq0DkML3l76cZrLSxKFiN3cN91Gco87vQCmPz9RokPBviN134jPQwOadkaNNI=
+X-Gm-Gg: AZuq6aK2Q6i+XAhlbZ4kcvcWbAtLUDc8PArJKtn2kHOH720K96p8GqdBksdXT8KBlxE
+	7x7N8wQZc2C9GYB8iC8AMbF3tQfDCA9ZUX2kSeIQqqm5IKTyRE3nPqp3kmCz/ZuI0urGhDwx7k6
+	V1ZpNVQ/58zzsYlVZKHyaAN8zFQjEJcJyJfDCYo2N+xTTJosVKlABS9QWG7suqZ1s4W8AbOFkpA
+	f4x0Iq8jpI+jXYhzkeQXWmCDSLfqfcSwhvhfinhtG7SSfuRkn0jZvcGYFfnEIneDbOfnaVhr/v7
+	x8hIe5jLnMpV3Kh+wJn1RuFNs/ve0Dl0ZP7tmHnxP8Jxk2UvOK9dbQcTobwX4DavcrlpglY9EH6
+	lHiO8c3O0fw0oaYEU3spXpyaLy5EwTh3e1P/U/S+3lZzn6jsTFxlYAnUue/cds0HQ9LhuSj322C
+	ct2BrJ
+X-Received: by 2002:a05:7022:e1d:b0:11b:9386:8260 with SMTP id a92af1059eb24-1247dc161d9mr172847c88.45.1769108345973;
+        Thu, 22 Jan 2026 10:59:05 -0800 (PST)
+Received: from 22d5995788c3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1247d90ce0dsm484390c88.4.2026.01.22.10.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 10:59:05 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-"Mark Brown" <broonie@kernel.org> writes:
-
-> On Wed, Jan 21, 2026 at 07:55:39PM +0100, Miguel Ojeda wrote:
->> On Wed, Jan 21, 2026 at 3:56=E2=80=AFPM Mark Brown <broonie@kernel.org> =
-wrote:
->
->> > We do really want things to respect O=3D, all the -next builds are usi=
-ng
->> > that, so if anything shows up in the source tree that's a concern.  I =
-am
->> > bodging that for the kselftest build at the minute but it's not great.
->
->> Not sure what you mean about `O=3D`. Using `O=3D` is supported (both for
->> the subdir and external dir cases which are slightly different in the
->> build system). Modulo bugs, of course.
->
->> If you mean to ask whether `rustfmt` creates files: no, it replaces
->> in-place, i.e. by `git status` I meant you would see modified files,
->> not new ones.
->
-> I was asking because you were mentioning checking git status and since
-> we are doing out of tree builds there should be nothing changing in the
-> source at all.  I think with the way we get trees to the build machine
-> it won't make a difference in the end though if no new files are
-> created so it'll actually be fine...
-
-The `rustfmt` target will change the source directory even when building
-with `O=3D...`, if it decides formatting changes are required.
+Content-Transfer-Encoding: 7bit
+Subject: [REGRESSION] next/master: (build)
+ ./include/trace/define_trace.h:118:42: fatal
+ error: ./panthor_trac...
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 22 Jan 2026 18:59:05 -0000
+Message-ID: <176910834460.1005.16968493744924197735@22d5995788c3>
 
 
-Best regards,
-Andreas Hindborg
 
 
+
+Hello,
+
+New build issue found on next/master:
+
+---
+ ./include/trace/define_trace.h:118:42: fatal error: ./panthor_trace.h: No such file or directory in drivers/gpu/drm/panthor/panthor_gpu.o (drivers/gpu/drm/panthor/panthor_gpu.c) [logspec:kbuild,kbuild.compiler.error]
+---
+
+- dashboard: https://d.kernelci.org/i/maestro:3b4c709e81fe466ab9d16c4b959dd04ed77493da
+- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+- commit HEAD:  a0c666c25aeefd16f4b088c6549a6fb6b65a8a1d
+- tags: next-20260122
+
+Please include the KernelCI tag when submitting a fix:
+
+Reported-by: kernelci.org bot <bot@kernelci.org>
+
+
+Log excerpt:
+=====================================================
+                 from drivers/gpu/drm/panthor/panthor_gpu.c:26:
+./include/trace/define_trace.h:118:42: fatal error: ./panthor_trace.h: No such file or directory
+  118 | #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+      |                                          ^
+compilation terminated.
+
+=====================================================
+
+
+# Builds where the incident occurred:
+
+## defconfig+arm64-chromebook+CONFIG_CPU_BIG_ENDIAN=y+debug+kselftest+tinyconfig on (arm64):
+- compiler: gcc-14
+- config: https://files.kernelci.org/kbuild-gcc-14-arm64-mainline-big_endian-697269601908a6300d90db79/.config
+- dashboard: https://d.kernelci.org/build/maestro:697269601908a6300d90db79
+
+## defconfig+arm64-chromebook+kcidebug+lab-setup on (arm64):
+- compiler: gcc-14
+- config: https://files.kernelci.org/kbuild-gcc-14-arm64-chromebook-kcidebug-697269581908a6300d90db73/.config
+- dashboard: https://d.kernelci.org/build/maestro:697269581908a6300d90db73
+
+## defconfig+lab-setup+kselftest on (arm64):
+- compiler: gcc-14
+- config: https://files.kernelci.org/kbuild-gcc-14-arm64-build-only-697269541908a6300d90db70/.config
+- dashboard: https://d.kernelci.org/build/maestro:697269541908a6300d90db70
+
+## defconfig+netdev+nfs-root-boot+kselftest on (arm64):
+- compiler: gcc-14
+- config: https://files.kernelci.org/kbuild-gcc-14-arm64-nfsboot-697269371908a6300d90db59/.config
+- dashboard: https://d.kernelci.org/build/maestro:697269371908a6300d90db59
+
+
+#kernelci issue maestro:3b4c709e81fe466ab9d16c4b959dd04ed77493da
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
