@@ -1,108 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C003B36EAAD;
-	Thu, 22 Jan 2026 17:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545D92BD033;
+	Thu, 22 Jan 2026 18:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769102599; cv=none; b=TKfhgQg/eqXePrrEGdIjSC4KKtLjJWCnu2/NJzfQZdb/3at+ilTuoeNu5tFvrOfhkdd+6i2Jzb28M9qfMShym1r1kvFiMeQ0d5MsyXqAiIjFB3zd0gJwyJbaQTYP0IFK/E3vgkdt6+qZ1kdfoT3YlF2CQ/ndobbLjDI7fBIrXN8=
+	t=1769106311; cv=none; b=sT59VLCmpADg2KELsm91AoNc0ulsUnTeKl8I1yjXqEXhJFqSc30WpN+ovPycXdqFEHQ6RmmExj36BPuOCBcD+4Yfc2CKf5+ft6IjVTGVPu7e2aUZfer0CoZ07PzXObqG+IccfW+n2heFDeRxvK+fqLFQVlLSPOcdOjlmJD+zFFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769102599; c=relaxed/simple;
-	bh=1VrGt+M81cxLp1FmdN3fnoEBtKrtUT1ibiqJipJkasA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ndsArbmCDUo7fYu2dQtO0xjoEYp/KogICPzTXf33F8vjKVxLFxi7NTKamn6B9VJWFoLXOm2sQvkU8ApAHsnMPlDAg9hL5tL6oaUm8k2bUdMxGqfgWqb8VGSFcy2pVfLlQET6MszHqJ/hzBm6/iAivmm/IhAEq0Z2M9cSS7JjHlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haiTRgei; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769106311; c=relaxed/simple;
+	bh=zL2gFPFI22aw+eEzv1uPLP5RhqkpvCt7uScDUQ6q3Lw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pJuXzhxJOQPG2tTwaJxC5a3CrMjd3ct4cgHTAPlCsGfTIyYSf/DfSKkkszTZCrzCl3IUsKayc+8cJXdl8lxwpYklxOoqVotORxw05m8CtIVDJl21VaPANubvgzXnhEIMXfjVmYwav84UjaP2Qjqf47iZ+WiNSUoMTH/IXW0sI0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDOLcq0Q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haiTRgei"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3EB2C116C6;
-	Thu, 22 Jan 2026 17:23:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDOLcq0Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34E5C116C6;
+	Thu, 22 Jan 2026 18:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769102597;
-	bh=1VrGt+M81cxLp1FmdN3fnoEBtKrtUT1ibiqJipJkasA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=haiTRgei2DpJZMj2UX7/IMHet+Ov++E0wj31VJT2eU6UYCezBHfdP3/JbZbu2hqEa
-	 zF/RuOkW6xEuMLfBiki8BaT1kIUn4Tik11Ck2Uz6aXq0+rm7HQG3CZnA13rUifHaVe
-	 dtAal0SgrzvGYWz8zfzkgBA/olD5YW749knbvUUZAfnA8QXlbPrSZaoVsmZX2I1lm3
-	 gTfUUMkNshi/8Xqja2XQ9JftujaqVS5g8h4fWGtHJtF62zDASFfsJlJt2HUOOu052C
-	 zo0MaIaOChSOn1XxBpQbXiTWS3NLpla7nuwCVu5vQxEJInYaYcuOdJEQ5RHCKiF84B
-	 LRovOWs5CbDnQ==
-Date: Thu, 22 Jan 2026 17:23:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jan 22
-Message-ID: <aXJdAt5G-O4DEG0g@sirena.org.uk>
+	s=k20201202; t=1769106309;
+	bh=zL2gFPFI22aw+eEzv1uPLP5RhqkpvCt7uScDUQ6q3Lw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ZDOLcq0Qza/TwH3Q3iDdOaWtD3TB3QqbwTlbmJwKOHA3SCxvydoniXxNSaWqGvdyW
+	 NuNXgvWIWKE4TOFY6PfvjW4rrxq7rZ0JwuLjRpilMc5CfKxwB17QCDqaR+A8N8MIk8
+	 UVytNXRDlQiLd3XrddG8HmQMQIceEO5tltGFNGVsN28rJTBeAucnM//6Ym4rwDjqQQ
+	 D7MRzHDSkg6ZI3KjfenWCS6wauVai69mcYsYoZUCUgSt5F6I+llInppTNl69+pWhd2
+	 tTUj9ENJ46I1pwjMAfeR+zXx9u5QzVtl28uWGY4QAlVvi5Z/8IgD9ui2Vc5giQG9iX
+	 xOz0iVUtLU6bA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Mark Brown <broonie@kernel.org>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>
+Cc: David Gow <davidgow@google.com>, Tamir Duberstein <tamird@gmail.com>, Jens
+ Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the block tree
+In-Reply-To: <8cc01720-427d-4cec-b4d0-721b22c47552@sirena.org.uk>
+References: <aW5xqLq7gatOy1DV@sirena.org.uk>
+ <fc855e76-5f3a-458e-82f9-f43c7d23932e@sirena.org.uk>
+ <CAJ-ks9=V_JmzEaXUrHPm6K-DyTgkxEhrPCW=2ZgDJpc+4Z83_A@mail.gmail.com>
+ <27b562ca-d79b-4f80-be71-ebf5e26ed9ab@sirena.org.uk>
+ <CANiq72nS94wv50XyOJq5CeiVQvb0+3mNdWxJpFy_+2FH1x4RYQ@mail.gmail.com>
+ <aa4bc767-8128-440c-a2a2-81fbb6992a8d@sirena.org.uk>
+ <CANiq72njSUPt2CvjBiNyKw1KHSgnMdcBnXNL_pHV4iURYL1n6g@mail.gmail.com>
+ <b17da8b5-6640-46ea-ba73-d2f4a08e246c@sirena.org.uk>
+ <CANiq72kT9ThJcr5W0OhBmbwKZCpULjUehNjijTt8W09yB0CxSg@mail.gmail.com>
+ <vTqxQtPb82EIUJtln5_7rGW5a8ot7hGZeTwDlTSiQPJwSr8IZ5COad9CBcZY9jg8YssEH6NyvESidrBA1sx4JA==@protonmail.internalid>
+ <8cc01720-427d-4cec-b4d0-721b22c47552@sirena.org.uk>
+Date: Thu, 22 Jan 2026 19:25:00 +0100
+Message-ID: <874iodtshv.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hCppJl1iCfdHV5PG"
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+"Mark Brown" <broonie@kernel.org> writes:
+
+> On Wed, Jan 21, 2026 at 07:55:39PM +0100, Miguel Ojeda wrote:
+>> On Wed, Jan 21, 2026 at 3:56=E2=80=AFPM Mark Brown <broonie@kernel.org> =
+wrote:
+>
+>> > We do really want things to respect O=3D, all the -next builds are usi=
+ng
+>> > that, so if anything shows up in the source tree that's a concern.  I =
+am
+>> > bodging that for the kselftest build at the minute but it's not great.
+>
+>> Not sure what you mean about `O=3D`. Using `O=3D` is supported (both for
+>> the subdir and external dir cases which are slightly different in the
+>> build system). Modulo bugs, of course.
+>
+>> If you mean to ask whether `rustfmt` creates files: no, it replaces
+>> in-place, i.e. by `git status` I meant you would see modified files,
+>> not new ones.
+>
+> I was asking because you were mentioning checking git status and since
+> we are doing out of tree builds there should be nothing changing in the
+> source at all.  I think with the way we get trees to the build machine
+> it won't make a difference in the end though if no new files are
+> created so it'll actually be fine...
+
+The `rustfmt` target will change the source directory even when building
+with `O=3D...`, if it decides formatting changes are required.
 
 
---hCppJl1iCfdHV5PG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Best regards,
+Andreas Hindborg
 
-Hi all,
 
-Changes since 20260121:
-
-The mtd tree gained a conflict with Linus' tree.
-
-The tip tree gained a conflict with the risc-v tree.
-
-Non-merge commits (relative to Linus' tree): 8375
- 8183 files changed, 478222 insertions(+), 167031 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests and a native build of tools/perf.
-After the final fixups (if any), I do an x86_64 modules_install followed
-by builds for x86_64 allnoconfig, arm64 allyesconfig, powerpc
-allnoconfig (32 and 64 bit), ppc44x_defconfig and pseries_le_defconfig
-and i386, s390, sparc and sparc64 defconfig and htmldocs. And finally, a
-simple boot test of the powerpc pseries_le_defconfig kernel in qemu
-(with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 404 trees (counting Linus' and 121 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---hCppJl1iCfdHV5PG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlyXQEACgkQJNaLcl1U
-h9A/GQf/e30BmwlvBOt09hxeUPIVZGv84AMVLzYlX2Xy0HD78/aDMIo3ZUA92y49
-d3t7S4RK8eJh3TcRDP2kc6mhlxf4wDYpQ0XFPQB7oirICLYcH7EwHXqQweWmPXMq
-4qXnXFEG5gp5QGBl23SETeLGcwSj4RDmDTLNra54Za613+o62+2fnAcIzLbJ4Ieb
-UKPGOKfwncD3iLgI6o6So1fEF0JwrpYonD2tI3gajbrdRCCq/usqB4U1ACt5Bx8G
-Q2uKNlFmAgXqHRv9jqKIW1H07E5a9aEqOcQaM8loVq82Ag1TBjJwSN8grtT+ai/w
-OPAoKf7ca9Vm+IEXbU8FjkmtI0xkGQ==
-=PEm8
------END PGP SIGNATURE-----
-
---hCppJl1iCfdHV5PG--
