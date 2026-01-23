@@ -1,216 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806121BDCF;
-	Fri, 23 Jan 2026 17:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A263EBF09
+	for <linux-next@vger.kernel.org>; Fri, 23 Jan 2026 18:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769190340; cv=none; b=L/ZUiWyMEgbMudNMh7Qoc2D7Z5xUJInu6AxTBCR1NLpbVcnk44L7FD7MJIn4TqEkzHPJGIy2Cbf3BV8kJJXpP9NlGFzOcF/dXTdc/stpt60/bzSxd7QwkxbFm6SXycudNnqmSXzDR2QCg+utZAgf/w8Ol8M9VYV5ZVMNE4Gkvt8=
+	t=1769191261; cv=none; b=tJ9gOZ+PxP5FTIHofhT2CYnWrgaTiJWfkIEUQUxem9LW/7USQBytxqv9kZNIhLXPaaEY/Sc/sMazMNdUA+4ARSbZRvQ8j0TDNNH2dlehJItEuZJd3zrXlID+aePx9iHF4kfRxPnFcEEdAq3h9ajZ9BmjXFl7IFP88jE34UWSJ08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769190340; c=relaxed/simple;
-	bh=On5W4DpasCDZqy0SIpDx69gtPIvdnD3pmryfp09bKPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mCFov0JQBQVbbzCFtqubvW4HMG6Q17S69Ua07hdHw3asUqWUmjo1F3nmihFPEpr/2G3T+68xnZnJgiBvSny5cbHftqevO1bwIZrMR2NWOm0f+7gfYNgiLgaBF2n0gwVsuMw45oFkCpL7AN8iDPro72ihuwqYG48O5rWDjdi3CQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiwJBok4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769191261; c=relaxed/simple;
+	bh=HG8KgjEPaPNnDoUuHfEZrus4aJDzD0BmQZ8Q7j4fWcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iycGBGB7dsP9h8xEHe3HfK5AA9v+kESG2+l9lo4DX0JStprcl1sZJeVMiAN8zgIl887PgXPgtTwOkYM7OwrZi/pe9MsDlKEiP8ShTEO3tRHXJn7U7O0md8Ogir+OEq8RbzhNE5oXmL6fnBEiW8fVNE3eKGnExoLxoY4srDFTWf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CJKeBS7U; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiwJBok4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4ED8C4CEF1;
-	Fri, 23 Jan 2026 17:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769190340;
-	bh=On5W4DpasCDZqy0SIpDx69gtPIvdnD3pmryfp09bKPg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aiwJBok4Dt5ZV0cMTWceCmYjAw8lFwmn+gVqMUMpizTAW+AiB2R2NS0IagmbdIr8s
-	 +3ttDY/oD5IHDVaaa7EwP6LRWMO4tLEYYwi2D/zXu9iBUAJ3X7yWEIPkzrYIsbjIzO
-	 OdZzEnNMXtVS88t8g9Qri4LdSvPO6U4dncACZP07ZYfZwaiPC4yXwfAeSBukm1HbUf
-	 y+VuD09X/y7CVuzufadfXZNDhE1BlkBw8x0h8Zut+Y1uG36U9WOMgVzGYS6yviGDqD
-	 Iu/SVFeHyAqsHo/4Nw1htTicX/Y9yqm7fkfiQUl23B8tODpLGrQqr72a0SK1kxsNmk
-	 Eu6AzKChhjQRQ==
-Date: Fri, 23 Jan 2026 17:45:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <aXOzwL50DYVm570X@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CJKeBS7U"
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-45c958d480aso777495b6e.1
+        for <linux-next@vger.kernel.org>; Fri, 23 Jan 2026 10:00:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769191258; x=1769796058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oQaE181ppOlEYSq+SNMh1azWF7TvP0ivnIMtoU6cvx0=;
+        b=CJKeBS7UYn3Jy1WpgUiibt/IDf+vLKtMcihjAMV6FpBk747V17PXfWFeOHjuP3/uMr
+         LlEI52kysTSJ01BBGb4AvfsCTcU/YHZC31AhgVkeNgcY+DCKgqWrnAT6iGBKAHlzAlND
+         mpkeBSy9dDwP6cjTLOkNhTySbBhJXwPXR6HuXxCL+aJK2c4GjAV778ATgEdvbDWy1hlI
+         BjiDvf9s9/4AIwzpDQzim4YYF+IeFOWrv37MfdpHBWjF4nmnr4rXQ2eZ1P/m9Bp7EPNi
+         OvNc9XC3Ky+F+FfvLwjaat08mMqSUjR2K4g5TuGuXiFL9xZwn8PafbmzSlWWuUG6BxQe
+         waJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769191258; x=1769796058;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oQaE181ppOlEYSq+SNMh1azWF7TvP0ivnIMtoU6cvx0=;
+        b=uM2s0znBCByCMxpAug+Cs94XUKv/h5gUgjH4xIJQCWqb1QpKPR8RhmMushiol3cTvB
+         4dpH33dLEXY8MICCJ9r1ij/q7yPrac+gbh76PlzDXevfiOrgVKctvJTvFr2uvUXd1htn
+         EHEbSN4fpBW5O48Jvxs4xh0U30yMbmMqnFkL5KpmE9gMwjxvWWZG6PBl1LK5KhgFgNn6
+         JisKZohiE0QzasQ78TnUMtL5y0imSIsC4+7vEH1DdNhNsJuOl2SteIVRi9Ibuo3IFb8p
+         eSG6XqMCqp5I8Nu49sHgwxc7EU0egFEyjDaMKko9c4boI8LPVroSkFvrJCRqyhZXx+VQ
+         YPHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4PLTxA/oTfZCn/yRnVjLQfuVTENInBkjMw1slWqs2wh/chjB2WwAqFl+oGbViPCbdub4hgs1dsCZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFStLjzfvUNrm7j928r7vTiQpYcPyMg6CHHFJP+WSCQ073mFq1
+	xAJh+44bT0GFAJrR9CdJTjRclAdEzUYktJ2LspLS6HnEQ20qbbHcCLDBEdxX77R4KLzKVnMpFRf
+	O1IfFSMo=
+X-Gm-Gg: AZuq6aLkfnUitQWcAXgIXaWCE4xdqPIBfPRzozJ1Hzp2781qr5D3X3kvluk8zYUdoQk
+	jNmEeyM/KVADS2zNAGf6481NG3s4c6G1fdPNuoPfYFxWUpJ3xoOO/xziPZtI+aaPPUS6bx9DZZt
+	WFaeIghIPA6uZl10/aCVAO/foCZeHoeWItvIARlf2g+JoIob004JEFORT5BOeuyeXAeoLkv9fcI
+	YnvPR858lV8xv8R0mk5MhfHwtIOKm7JSJykmqtFZ1+PTOXtoaxTBnC+ynjOIDwaV1IB+327O71k
+	yUdZfdkWaJGiqeMYaL5HnAyppwnqIOYNzJbH+RG4OoK+ojs/DiP9DYXhyTyySkvY+1I9gD7g1PK
+	AUAm31JxsjCfs4W/plRwzvJIQ6KZypVk+cAJvZLZXSftKTWURgxqSpm/i4rK862OEDzogQbtsE0
+	0kAMJaZs09G+UVhhk1vqrdNajKTmSCz6tzkNjfbBtiYr8PIqiDvwHP8La83nQM0HpD05RZ
+X-Received: by 2002:a05:6808:2384:b0:45c:9a6e:1ea1 with SMTP id 5614622812f47-45eb1d52cd7mr1481429b6e.66.1769191257983;
+        Fri, 23 Jan 2026 10:00:57 -0800 (PST)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45eb425513asm1501767b6e.17.2026.01.23.10.00.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jan 2026 10:00:57 -0800 (PST)
+Message-ID: <cb962e32-7d04-44a1-b99c-4d1889ffdbf5@kernel.dk>
+Date: Fri, 23 Jan 2026 11:00:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t7Mo67/N8DZDOQvB"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the block tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <aXOzI6sVTBTdJE5j@sirena.org.uk>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <aXOzI6sVTBTdJE5j@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 1/23/26 10:42 AM, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the block tree, today's linux-next build (x86 allmodconfig)
+> failed like this:
+> 
+> In file included from /tmp/next/build/include/linux/string.h:386,
+>                  from /tmp/next/build/include/linux/bitmap.h:13,
+>                  from /tmp/next/build/include/linux/cpumask.h:11,
+>                  from /tmp/next/build/arch/x86/include/asm/paravirt.h:21,
+>                  from /tmp/next/build/arch/x86/include/asm/cpuid/api.h:57,
+>                  from /tmp/next/build/arch/x86/include/asm/processor.h:19,
+>                  from /tmp/next/build/include/linux/sched.h:13,
+>                  from /tmp/next/build/include/linux/io_uring.h:5,
+>                  from /tmp/next/build/io_uring/bpf_filter.c:7:
+> In function 'fortify_memset_chk',
+>     inlined from 'io_uring_populate_bpf_ctx' at /tmp/next/build/io_uring/bpf_filter.c:33:2:
+> /tmp/next/build/include/linux/fortify-string.h:480:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>   480 |                         __write_overflow_field(p_size_field, size);
+>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
+> 
+> Caused by commit
+> 
+>   f1e3672e49e2c (io_uring: add support for BPF filtering for opcode restrictions)
 
---t7Mo67/N8DZDOQvB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Huh, that am I missing here? The struct looks as follows:
 
-Hi all,
+struct io_uring_bpf_ctx {
+	__u64	user_data;
+	__u8	opcode;
+	__u8	sqe_flags;
+	__u8	pad[6];
+	union {
+		__u64	resv[6];
+		struct {
+			__u32	family;
+			__u32	type;
+			__u32	protocol;
+		} socket;
+		struct {
+			__u64	flags;
+			__u64	mode;
+			__u64	resolve;
+		} open;
+	};
+};
 
-Today's linux-next merge of the drm tree got a conflict in:
+and the offending line is:
 
-  include/drm/drm_pagemap.h
+memset(bctx->pad, 0, sizeof(bctx->pad) + sizeof(bctx->resv));
 
-between commits:
+which should clear from offset 10 (start of pad) for a total of 6 + 48
+bytes, which is 54 bytes. The size of the struct is 64b.
 
-  754c232384386 ("drm/pagemap, drm/xe: Ensure that the devmem allocation is=
- idle before use")
-  bdcdf968be314 ("drm, drm/xe: Fix xe userptr in the absence of CONFIG_DEVI=
-CE_PRIVATE")
+I guess the part it doesn't like is that it thinks we're clearing the
+pad field, which would of course be way overwriting it. Guess we can do
+something ala:
 
-=66rom the drm-fixes tree and commits:
+memset((void *) bctx + offsetof(struct io_uring_bpf_ctx, pad), 0,
+	sizeof(bctx->pad) + sizeof(bctx->resv));
 
-  a599b98607dec ("drm/pagemap, drm/xe: Add refcounting to struct drm_pagema=
-p")
-  75af93b3f5d0a ("drm/pagemap, drm/xe: Support destination migration over i=
-nterconnect")
-  77f14f2f2d73f ("drm/pagemap: Add a drm_pagemap cache and shrinker")
+to make it happier.
 
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/drm/drm_pagemap.h
-index eb29e5309f0ab,46e9c58f09e01..0000000000000
---- a/include/drm/drm_pagemap.h
-+++ b/include/drm/drm_pagemap.h
-@@@ -209,19 -243,56 +243,69 @@@ struct drm_pagemap_devmem_ops=20
-  			   struct dma_fence *pre_migrate_fence);
-  };
- =20
- +#if IS_ENABLED(CONFIG_ZONE_DEVICE)
- +
- +struct drm_pagemap *drm_pagemap_page_to_dpagemap(struct page *page);
- +
- +#else
- +
- +static inline struct drm_pagemap *drm_pagemap_page_to_dpagemap(struct pag=
-e *page)
- +{
- +	return NULL;
- +}
- +
- +#endif /* IS_ENABLED(CONFIG_ZONE_DEVICE) */
- +
-+ int drm_pagemap_init(struct drm_pagemap *dpagemap,
-+ 		     struct dev_pagemap *pagemap,
-+ 		     struct drm_device *drm,
-+ 		     const struct drm_pagemap_ops *ops);
-+=20
-+ struct drm_pagemap *drm_pagemap_create(struct drm_device *drm,
-+ 				       struct dev_pagemap *pagemap,
-+ 				       const struct drm_pagemap_ops *ops);
-+=20
-+ #if IS_ENABLED(CONFIG_DRM_GPUSVM)
-+=20
-+ void drm_pagemap_put(struct drm_pagemap *dpagemap);
-+=20
-+ #else
-+=20
-+ static inline void drm_pagemap_put(struct drm_pagemap *dpagemap)
-+ {
-+ }
-+=20
-+ #endif /* IS_ENABLED(CONFIG_DRM_GPUSVM) */
-+=20
-+ /**
-+  * drm_pagemap_get() - Obtain a reference on a struct drm_pagemap
-+  * @dpagemap: Pointer to the struct drm_pagemap, or NULL.
-+  *
-+  * Return: Pointer to the struct drm_pagemap, or NULL.
-+  */
-+ static inline struct drm_pagemap *
-+ drm_pagemap_get(struct drm_pagemap *dpagemap)
-+ {
-+ 	if (likely(dpagemap))
-+ 		kref_get(&dpagemap->ref);
-+=20
-+ 	return dpagemap;
-+ }
-+=20
-+ /**
-+  * drm_pagemap_get_unless_zero() - Obtain a reference on a struct drm_pag=
-emap
-+  * unless the current reference count is zero.
-+  * @dpagemap: Pointer to the drm_pagemap or NULL.
-+  *
-+  * Return: A pointer to @dpagemap if the reference count was successfully
-+  * incremented. NULL if @dpagemap was NULL, or its refcount was 0.
-+  */
-+ static inline struct drm_pagemap * __must_check
-+ drm_pagemap_get_unless_zero(struct drm_pagemap *dpagemap)
-+ {
-+ 	return (dpagemap && kref_get_unless_zero(&dpagemap->ref)) ? dpagemap : N=
-ULL;
-+ }
-+=20
-  /**
-   * struct drm_pagemap_devmem - Structure representing a GPU SVM device me=
-mory allocation
-   *
-@@@ -246,8 -317,23 +330,25 @@@ struct drm_pagemap_devmem=20
-  	struct dma_fence *pre_migrate_fence;
-  };
- =20
-+ /**
-+  * struct drm_pagemap_migrate_details - Details to govern migration.
-+  * @timeslice_ms: The time requested for the migrated pagemap pages to
-+  * be present in @mm before being allowed to be migrated back.
-+  * @can_migrate_same_pagemap: Whether the copy function as indicated by
-+  * the @source_peer_migrates flag, can migrate device pages within a
-+  * single drm_pagemap.
-+  * @source_peer_migrates: Whether on p2p migration, The source drm_pagemap
-+  * should use the copy_to_ram() callback rather than the destination
-+  * drm_pagemap should use the copy_to_devmem() callback.
-+  */
-+ struct drm_pagemap_migrate_details {
-+ 	unsigned long timeslice_ms;
-+ 	u32 can_migrate_same_pagemap : 1;
-+ 	u32 source_peer_migrates : 1;
-+ };
-+=20
- +#if IS_ENABLED(CONFIG_ZONE_DEVICE)
- +
-  int drm_pagemap_migrate_to_devmem(struct drm_pagemap_devmem *devmem_alloc=
-ation,
-  				  struct mm_struct *mm,
-  				  unsigned long start, unsigned long end,
-@@@ -269,6 -356,7 +369,10 @@@ int drm_pagemap_populate_mm(struct drm_
-  			    struct mm_struct *mm,
-  			    unsigned long timeslice_ms);
- =20
- +#endif /* IS_ENABLED(CONFIG_ZONE_DEVICE) */
- +
-+ void drm_pagemap_destroy(struct drm_pagemap *dpagemap, bool is_atomic_or_=
-reclaim);
-+=20
-+ int drm_pagemap_reinit(struct drm_pagemap *dpagemap);
-++
-  #endif
-
---t7Mo67/N8DZDOQvB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlzs78ACgkQJNaLcl1U
-h9DgFwf/VYWqILaSRQFpmD336OmNc9V1ARzwvyBLXNiGytt9cobc+dKCsHi8Rm0/
-zIKLYcFSdgU2FPkPBWpJQDNcNaFhQyS+gJhIlw+XecMeQTpchlsgHTsPe3Rrfbc/
-ilnEdjx6Fz/Sogf0ck8m3ZPbyTywTR/lGvPYfZSBn8l2GG8xxeRDcacj72slymKC
-1gAvJohLItWvN0C+ymQqV10PQGv2mSG04SFtWm+Lv6ySyQGFmpIhpdCWHiGlx6Vr
-bBCRGI6BYCHMpcpROn4ArD4b4byWWVP/bwWie22bol88o2tYUf7X6pE0WifZCmrn
-rlbfEi4CH5SC9OZwaN/PVUSkPuO13A==
-=PhOR
------END PGP SIGNATURE-----
-
---t7Mo67/N8DZDOQvB--
+-- 
+Jens Axboe
