@@ -1,79 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD2525BEF8;
-	Fri, 23 Jan 2026 11:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4348342C80;
+	Fri, 23 Jan 2026 11:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769167691; cv=none; b=ZZ6xAKGsU5GpG8ll1epZNaxjMnBJijyDykLs3qerLMg7eb3KgysVKOZSyOdiPoyJTHf+gZu99sy79UB+vb9ilPKx0zIOfv0/gefM6jF/ambIcwMumEWdjDJEQuBklVGGTuV5K+HS4XgeKZO4LRI/JLfubtsMOcW9B3yvCnh89vY=
+	t=1769167750; cv=none; b=VAryrxQFHprtH5U2oKr5pAmxQIUi685p5sRo5STZaXgoMLIpA55+l8U0bjjKk/iRfnXUpQ+2U9NU5CFqQFtCekzeGwFvcIBASi0Zir/KltiKz7aW5WHJebc13BhRXbGrq/IeEzZrbTFYr1+Mh+YBWpoz3hK0WUyscF8LTCHnyUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769167691; c=relaxed/simple;
-	bh=RxVpmJdCjrivRll4uOmVa64p5tw55xMroactfceMo7k=;
+	s=arc-20240116; t=1769167750; c=relaxed/simple;
+	bh=o//Yy/h1wLD7d4NpbTv1GBy8VAJdNSFupU+MpU9R9WQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L66uAoEnP2372SvImNWjr5bfsr/OEZblsmGoOK/NV+bczzKz4OTq2ndXgN0n/9TiOOJ12UmYF01gz/VQOR22OZKPzUbIw6AxNzu+1LkRSjsygn9A7fSZ3fEHFC8JngLAJjtYAaT3I1LaP8CQPh3TaFgtJjm2iG0hzC6ltRu1urk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sm6g1PbQ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQi2/dPdPL1kR2cg040rTtcqEjmuMCk5Q2ISlCmf7X+F/cbIWN7/IVApPUB2AeJ4sLej0R63hJ4RoHdt6gPq8e+g3cP7RY7TODLxtItKcw/iv6NyczLrZfPpHJbkKRRktHSuTYORKqveljlY0rtgWNJePR1Fa4Hnqk2npU3e3wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KtmFhkBk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sm6g1PbQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C4BC4CEF1;
-	Fri, 23 Jan 2026 11:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769167690;
-	bh=RxVpmJdCjrivRll4uOmVa64p5tw55xMroactfceMo7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sm6g1PbQ5DljY0bPMjPN4oRI4K9n8ug8qjP7niI0PDrMY14AxPuQ+PMrAQMRcB4zM
-	 R/iUQlC/vsuVE5dordmcnX9I0nVjYH/keNe6rCSULQk4YeajFN4nO9dTzTxMsLowSf
-	 rqdIGDxW8NE1QE3lo6Vc9+vs1lrrexUvejFBoW8Th5/0vB9FaRW8HoD+S+v+/pDkmk
-	 fSSMhi9fUQQGia/b5H4/eilUTNTQ/pqfhoxOz/ryw9wf2kk63e/X2MKGq1BrPjd3Qz
-	 vNCghBXfbreaQqmn2y4c9G5V1lAhBaJ6oM3kt9Ve29dnoYe421P1j/6lwzeX3x8ofg
-	 RdYliR7L4TinA==
-Date: Fri, 23 Jan 2026 11:28:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KtmFhkBk"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T6zr5jmxbD64PQutuhCPjXlkQksgf806zBwZpt7CAZw=; b=KtmFhkBkJQH6IFeT83rpw1ewa1
+	uvdHaLXJLWqfX3vvQjqeMT8EjzNXrG28bjBXQ/TPL0bn3tg7zieNQJPqZZFZDhEkEPBuBPiCdcytC
+	4/GFjyorm0kcjBxLwgR4pFv/g8EGA40vsMfKLMt5+6PnARzyaLILbTyzNi/FgwJLHqbl75q8MIJ9o
+	U2hQWCADPumNsi4gTznfA12UausEto/8ZCZ8eM6zPelW1cdqF2JjKRzri263VA7nDkmwLHTW+7hEO
+	JgtELxeKBjt0ZzSecrq8E5BTfCP+3h3QwdaEvW1/pWT5T+7hg+ZZ2elmuhwa5MyEAy/6USmmvRPbs
+	iDAMEyvA==;
+Received: from 2001-1c00-8d85-5700-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:5700:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vjFLV-00000001gzA-3lmJ;
+	Fri, 23 Jan 2026 11:28:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D3A943007E1; Fri, 23 Jan 2026 12:28:56 +0100 (CET)
+Date: Fri, 23 Jan 2026 12:28:56 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Marco Elver <elver@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [next-20260122] Build failure on IBM Power Server
-Message-ID: <13c1bea8-c2e9-4b07-a05a-3553bab0b9de@sirena.org.uk>
-References: <43ea0202-891d-4582-980b-5cb557b41114@linux.ibm.com>
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: [DOCS] build warning after merge of the tip tree
+Message-ID: <20260123112856.GS166857@noisy.programming.kicks-ass.net>
+References: <20260107161548.45530e1c@canb.auug.org.au>
+ <20260107215409.GB694817@noisy.programming.kicks-ass.net>
+ <803d1946-6935-452d-953a-90f6e73d53a2@infradead.org>
+ <91c5386a-2c1b-476a-b189-86d80c0d9e96@infradead.org>
+ <20260123081126.3f0f152c@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l0YcFpOWC0Adhz3o"
-Content-Disposition: inline
-In-Reply-To: <43ea0202-891d-4582-980b-5cb557b41114@linux.ibm.com>
-X-Cookie: HAIR TONICS, please!!
-
-
---l0YcFpOWC0Adhz3o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20260123081126.3f0f152c@foz.lan>
 
-On Fri, Jan 23, 2026 at 09:45:52AM +0530, Venkat Rao Bagalkote wrote:
+On Fri, Jan 23, 2026 at 08:11:26AM +0100, Mauro Carvalho Chehab wrote:
 
-> # first bad commit: [a0c666c25aeefd16f4b088c6549a6fb6b65a8a1d] Add
-> linux-next specific files for 20260122
+> >  tools/lib/python/kdoc/kdoc_parser.py |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > --- a/tools/lib/python/kdoc/kdoc_parser.py
+> > +++ b/tools/lib/python/kdoc/kdoc_parser.py
+> > @@ -186,6 +186,7 @@ function_xforms  = [
+> >      (KernRe(r"__sched +"), ""),
+> >      (KernRe(r"_noprof"), ""),
+> >      (KernRe(r"__always_unused *"), ""),
+> > +    (KernRe(r"__cond_acquires\s*\(.*\)"), ""),
+> 
+> Regex here is too broad, as it is greedy: it may drop more
+> than expected. Perhaps:
+> 
+>     (KernRe(r"__cond_acquires\s*\([^\)]*\)"), ""),
 
-This bisection is obviously broken, adding the -next files is clearly
-going to have no impact on the build.
+I have of course no idea what so ever how any of this works, but it
+occurs to me that __acquires() and __releases() are not in that same
+list, what happens to them?
 
---l0YcFpOWC0Adhz3o
-Content-Type: application/pgp-signature; name="signature.asc"
+Also, there will 'soon' be an equivalent: __cond_releases():
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlzW0YACgkQJNaLcl1U
-h9AjKAf8CewPI+S5yQZbxZOrhFrkXWBUf45g8vevgCd7lgXOcyYxDbYhctWVPAw/
-Rpb972elYzxpbzXiKUoaYAJNyPcLtUb19QK8i0sbyQt9oe16gT7Op1WANCdw+CD8
-6XMj0mBIYVPmpmAadvfo8M41YbKznCEgwLJ779v/EVjVdr37YSpRosH9AMEApjAl
-vYRaJlSU0B2xegpA6BW5ihdwchhXFiPYtzNvhckvF6TERiRRsqwrjYUc7aTMJrf5
-yAItqr8ZI7amnvNS6NAsaSUJTXCy0cEpFK2S6rIHVw10vTKegkvJLUTAbkGRbIVb
-X7IrjLusr/plFNngKls7zaRgS2LXTg==
-=HRFD
------END PGP SIGNATURE-----
-
---l0YcFpOWC0Adhz3o--
+  https://lkml.kernel.org/r/20260121111213.634625032@infradead.org
