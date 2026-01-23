@@ -1,40 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304EB1662E7;
-	Fri, 23 Jan 2026 15:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AA72652B6;
+	Fri, 23 Jan 2026 17:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769182471; cv=none; b=p9dRB79NkMEu7n3T5VYCeJuEMkteL2wYPsCjrTGJfnOH7TwDVrkMA1RDi93hp9qluHQ1xUpw2Q006W10gHfmRdhlmjbv30ES+4bmghQcJiG5gpBb6DxUUy3Cn/ay+bqIcc1z1jEGNgEeLw7T0tQ1MgsQoaprOr5lztpucxjrPy0=
+	t=1769190183; cv=none; b=dJh6LN+S9D4nQ4FwjjlzSK1yBBbJB6bLej9Vqt0XApIZfeod76DRXFG6DkPda+SkLOcE39+X+tyDi8BhrPGMjjdgqdFZYhvZ8g83ECEpR32DgE2wsoG/ku7wAi52Zv156JnU7Hlu+ElW6j+8w6/q15ZS1pWIY6uMqBwYUJcP2mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769182471; c=relaxed/simple;
-	bh=YseJkVABJlm/jhvdY1L58/hMfxdtbJczxH6fIXRkGEI=;
+	s=arc-20240116; t=1769190183; c=relaxed/simple;
+	bh=FQYhr2rxEtvxx5dj0UjbQ+jBRiNZsXlWZ1dYSQlSL9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BaVMdMoRZ/BYuZkrLWiGSq83Q/BVfqlxwvUYmh9qzUIZb2tsX8L9jOQ0mzwxIXRuj8iljsGIdyxvKni0N5e8Go3D1aOz+GAPeHROUToaOhikR/L1tRViS1T886yvcT7UjeJ12PsmWO1lxMWClVKE1zT+ykbj+yECoaH81l97SA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEUi3UDH; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=LimRi7+AVI8zrVw6h4ZDU/Z7eoMO6uRSoFWzosTyOju0kBKDnSfJcJ9PUSaZ8vY0Lts7UsVRlpbaeUS0o7qCKytPsQOlwM9aZojSqeu7dMRFRReYxwuiGFmH0h72XBj+LxYa+l4xYt6VVeqDUNytX1AKMyWtKekzm0DN+f2Cs4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfKb6wy0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEUi3UDH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4815C4CEF1;
-	Fri, 23 Jan 2026 15:34:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfKb6wy0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A1BC4CEF1;
+	Fri, 23 Jan 2026 17:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769182470;
-	bh=YseJkVABJlm/jhvdY1L58/hMfxdtbJczxH6fIXRkGEI=;
+	s=k20201202; t=1769190183;
+	bh=FQYhr2rxEtvxx5dj0UjbQ+jBRiNZsXlWZ1dYSQlSL9s=;
 	h=Date:From:To:Cc:Subject:From;
-	b=nEUi3UDHo7zwvCliR3TkXUEhWp5O8g4Mcx0kD45s5h3GeiHPgHPfEOYynmJYCevuA
-	 uEk3O2FgTusGHg/P0kHMIcIdRnN0141qBHSr1og80y0eIWOgUu2M+vI06/yjUmpRtf
-	 pZN5zIpyP46F6IIlbsvo+f/uNzmEVNMlik/gZ/1NtCRszCPjdg8H1seNYl5reW3YAv
-	 ToeQujjfh34EtjUziDMZWImPOlK1dx9ucvB3xTvaCS7YB+dMsFf9i5Im8mejYOb0tv
-	 ru0ZCDJbrdgtx2+G8iEfASbKDGYrmVJS9bvnE5pguWM8gEno2pq7h3CtK4LJ/M1+4n
-	 ySgzh9nLGhnOA==
-Date: Fri, 23 Jan 2026 15:34:27 +0000
+	b=IfKb6wy0ngHYBAjYknDO5UiyUN+l6u/T4pGORMtqmSxAMjSAr96fyl8jaOs0EFjBq
+	 38ozpgpvjbhe+hH0PA5z7LP3Rb5dVnTTKBEF4GwZV9nDFGxDwUlPYr9by65cl2lGRJ
+	 iSiyVQnCYuWlzDtVoYWgLLrKAisH6fbZs7O/XNSYpJ/LBggsRLCfazR+OBUl6sRT5a
+	 lka/xfFq7+lFz3L4XWeTUrZdZl6nfwqG3n3vd6DOrFMuY735U4QRVeJRKZsuYhrB9L
+	 xfNsZRAh0ZZ7C43T+u6VX+5bTQuqRXOmj06Xc/ffJqWfwLM4deG8tzGhKDcEeInuXE
+	 dGsVR2LiV25ag==
+Date: Fri, 23 Jan 2026 17:42:59 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
+To: Jens Axboe <axboe@kernel.dk>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
-Message-ID: <aXOVAyMnaCIwgF6r@sirena.org.uk>
+Subject: linux-next: build failure after merge of the block tree
+Message-ID: <aXOzI6sVTBTdJE5j@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,28 +44,27 @@ Content-Disposition: inline
 
 Hi all,
 
-Today's linux-next merge of the drm-xe tree got a conflict in:
+After merging the block tree, today's linux-next build (x86 allmodconfig)
+failed like this:
 
-  include/drm/drm_pagemap.h
+In file included from /tmp/next/build/include/linux/string.h:386,
+                 from /tmp/next/build/include/linux/bitmap.h:13,
+                 from /tmp/next/build/include/linux/cpumask.h:11,
+                 from /tmp/next/build/arch/x86/include/asm/paravirt.h:21,
+                 from /tmp/next/build/arch/x86/include/asm/cpuid/api.h:57,
+                 from /tmp/next/build/arch/x86/include/asm/processor.h:19,
+                 from /tmp/next/build/include/linux/sched.h:13,
+                 from /tmp/next/build/include/linux/io_uring.h:5,
+                 from /tmp/next/build/io_uring/bpf_filter.c:7:
+In function 'fortify_memset_chk',
+    inlined from 'io_uring_populate_bpf_ctx' at /tmp/next/build/io_uring/bpf_filter.c:33:2:
+/tmp/next/build/include/linux/fortify-string.h:480:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+  480 |                         __write_overflow_field(p_size_field, size);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
-between commit:
+Caused by commit
 
-  bdcdf968be314 ("drm, drm/xe: Fix xe userptr in the absence of CONFIG_DEVICE_PRIVATE")
+  f1e3672e49e2c (io_uring: add support for BPF filtering for opcode restrictions)
 
-from the drm-fixes tree and commit:
-
-  1e372b246199c ("drm, drm/xe: Fix xe userptr in the absence of CONFIG_DEVICE_PRIVATE")
-
-from the drm-xe tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/drm/drm_pagemap.h
-index b7a78c1ca7670,2baf0861f78f3..0000000000000
---- a/include/drm/drm_pagemap.h
-+++ b/include/drm/drm_pagemap.h
+I have used the tree from 20260122 instead.
