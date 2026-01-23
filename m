@@ -1,86 +1,116 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992BF27FB1C;
-	Fri, 23 Jan 2026 22:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E01D3EBF3B;
+	Fri, 23 Jan 2026 23:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769208255; cv=none; b=r+M3M9Ft96tAHhpKQs8D43NykEFPu4rXytTja3Mzc6PhPpZUr4hUeGoLKkfFJSuLgtad1makfNOkKYnVOhMwuH/suAoNH8hRB4f7qDzNonjAe9PEO2sbppcGEPZlfSCsliErFJYk7n+X4JwKQOaUw/tmmWqFy9GKHfzRLKXOq7g=
+	t=1769211499; cv=none; b=NjnsncnQ8UCQJjsOu2gMw34Cz79qU2sqZVDa3OLijj6FyBUxRDwK9HT6dCZ3kxLLXZxcUo8qRGVVr5m5e4F+xGqEAild7wNGKMVMzNFT8thpWXWSgAEqr94TleD0sqe9ZcInyF7gmJM+evajwZmv/I4L9N+M73XkZNLdWmm5T58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769208255; c=relaxed/simple;
-	bh=KrGpDkz0uSgndEXFGZQADVlMcQPw+u1FpyDbu0zW//Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tvTE1RU/5aV6lWh6hZv0fEpdblNxDLy+u1U8rkGkQSNLg2TCYeWe1T+HRsCnu660nSVnMi8Hd2eVHXHPlYONo+wIK+9jgq7NWaJ2GjfcMEdMSB3FHsl+z+c+smaslD2IaMdSuJCsz51RFFOunNLM/D1qXXwS5JxAkRmoyD3u8mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zi4//WFp; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1769211499; c=relaxed/simple;
+	bh=KfvsAELXE4sqliyMi/reWA/rqizM/AnsEgYroG7kGy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q/7p1GpSYC6rKoZOZ/mll0U8jo+gdhV9RiuiEu6Wkm0aK9zCWiWRk0ZK2mab5SVcGsCRnY+ncETZsgvAwvXHCZMwbMFUMqFu3s6IZsYq5cy8zNplJBB8ar50miOCQJu0dmowwc1Jwj39fDfNgW/+zBs60hsOREuOPnLCfsfn9Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6DLO6i3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zi4//WFp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769208254; x=1800744254;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KrGpDkz0uSgndEXFGZQADVlMcQPw+u1FpyDbu0zW//Y=;
-  b=Zi4//WFpQBRKNjQOomxqAsEZYJ89D2QKr2oclqPupsu1udwRSXBKb+HM
-   AC7eVA0NS8TBKctA3UmJiFYp5JI4a2MkTYjFjZgoYxPHA7cGBg1VLCrMF
-   YeSBwrWp7ZnOVVHQK3pK3ejdw9iQuDIyc7j+zTmm4H9HZL0Lep0CSGLU6
-   t9hERTnE7qSQuJEAVklXtClRoaFTQA7jzukcIk5I/9M3ruoIdN52i3Ksg
-   RAucrSUSEk8tdCNNjJa/kc/kXGgnTvmvMl11OfTIiX+i1oAnbZh5TNb6l
-   Btk73BTUTZ0KwJ7GXO9DAKiLuzHNdJDgk+ezFm/V5X12PL47xNHRY1VCU
-   Q==;
-X-CSE-ConnectionGUID: injOyIhRSqqfaCqTg9kgdg==
-X-CSE-MsgGUID: 9FYKkqnbRBWXu03Eg12ZFw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11680"; a="70515193"
-X-IronPort-AV: E=Sophos;i="6.21,249,1763452800"; 
-   d="scan'208";a="70515193"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 14:44:14 -0800
-X-CSE-ConnectionGUID: NVwTJNBvR52UF+hyeUvrcg==
-X-CSE-MsgGUID: 24bGEo8lQ5GZkoHlRYUHfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,249,1763452800"; 
-   d="scan'208";a="211996049"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.244.112])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 14:44:13 -0800
-Date: Sat, 24 Jan 2026 00:44:10 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the random tree
-Message-ID: <aXP5um_qyYUmOzMd@smile.fi.intel.com>
-References: <aXPso7beaFvlUYiP@sirena.org.uk>
- <aXPudNLOPmXd-U2O@smile.fi.intel.com>
- <f0a1812e-4235-4d32-ac72-f2d8f1cb0d5d@sirena.org.uk>
- <aXPzxa58ZA38QIG-@smile.fi.intel.com>
- <12f27fef-34d1-48ff-a89f-47df92bcb7c0@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6DLO6i3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21922C4CEF1;
+	Fri, 23 Jan 2026 23:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769211498;
+	bh=KfvsAELXE4sqliyMi/reWA/rqizM/AnsEgYroG7kGy4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k6DLO6i3XwublK5tAcknS3lOtvqmu11BgLwakI9Tjx8oDSA3lFaQ/sHbn6whIOXfQ
+	 nSMTc0NuyqxvnBb4uVgRYQ5f1phkBmtUmFncmYMM+knwWh5G2JALiN4QxX5LORe48j
+	 yQyFI9fvkxdGVrzN8OHK95zSqT6z2152LrwkWdSS4xO+DoVu8vS27lVRyMQG54hvH7
+	 UgSfu2cwOBfsvyE0nc5RdTeYxgtxvDJ3e531OpJHhPM5ZSq8Ii3HliwzfUYCYkQFpz
+	 n0Rfero9xzYLwBWTclszfkhEXTo+C95QM6l2Vw2ubIq7m4Wvw7ofFV2l5tOP1qmkDm
+	 Pk/N22eB22yZg==
+Date: Fri, 23 Jan 2026 23:38:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jan 23
+Message-ID: <aXQGZ99IJLq-r4cX@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h3yz3c3jmzdZKRbM"
+Content-Disposition: inline
+
+
+--h3yz3c3jmzdZKRbM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12f27fef-34d1-48ff-a89f-47df92bcb7c0@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jan 23, 2026 at 10:22:47PM +0000, Mark Brown wrote:
-> On Sat, Jan 24, 2026 at 12:18:45AM +0200, Andy Shevchenko wrote:
-> 
-> > Okay, I need to reproduce that.
-> 
-> I'd suggest testing some other configs/arches too, the -next build gives
-> up as soon as one thing errors out so there's possibly other things with
-> issues.
+Hi all,
 
-Yeah, it was x86 builds that I tested.
+Changes since 20260122:
 
--- 
-With Best Regards,
-Andy Shevchenko
+The drm-misc tree gained multiple conflcits with the drm-fixes tree.
 
+The drm-xe tree gained a conflict with the drm-fixes tree.
 
+The block tree gained a build failure, I used the version from 20260122
+instead.
+
+The random tree gained a build failure, I used the version from 20260122
+instead.
+
+The drm-rust tree lost its build failure.
+
+Non-merge commits (relative to Linus' tree): 8405
+ 8215 files changed, 488720 insertions(+), 168749 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests and a native build of tools/perf.
+After the final fixups (if any), I do an x86_64 modules_install followed
+by builds for x86_64 allnoconfig, arm64 allyesconfig, powerpc
+allnoconfig (32 and 64 bit), ppc44x_defconfig and pseries_le_defconfig
+and i386, s390, sparc and sparc64 defconfig and htmldocs. And finally, a
+simple boot test of the powerpc pseries_le_defconfig kernel in qemu
+(with and without kvm enabled).
+
+Below is a summary of the state of the merge.
+
+I am currently merging 404 trees (counting Linus' and 121 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--h3yz3c3jmzdZKRbM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml0BmYACgkQJNaLcl1U
+h9Aanwf+Pb5GIepo7r9mwcK9PqM6YdTNlY0Be32pCE3/vxqQeGG97l2OhFEva8u9
+BSYM99DQD0BvTD2v3mHbdnxNNmEiond3rrid3+AR9RHpGq/zgOXKZ9pZk1lRNZwh
+vrvp2PgFKdqRUnq9je61iXYl7JeiVUAGPYNo2fs4ixqmWusUl98umIdc1GD3gmUO
+zqFq1hmLVVGIiJKRkzM27WLjcB0KmUcYHf2SWVA6ZflPrMcGVv5I/zfFox/1y04g
+bZcZhsX2WmcXijJQPAslxB1gdKUU9Q6kgnxC38/tfCA9zu2KdK/fTz4ud8EqT4dn
+BTnbSDQ4Eh2m13wdAIShZxKwlUJcbQ==
+=byjt
+-----END PGP SIGNATURE-----
+
+--h3yz3c3jmzdZKRbM--
