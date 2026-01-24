@@ -1,116 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E01D3EBF3B;
-	Fri, 23 Jan 2026 23:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9DD82866;
+	Sat, 24 Jan 2026 00:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769211499; cv=none; b=NjnsncnQ8UCQJjsOu2gMw34Cz79qU2sqZVDa3OLijj6FyBUxRDwK9HT6dCZ3kxLLXZxcUo8qRGVVr5m5e4F+xGqEAild7wNGKMVMzNFT8thpWXWSgAEqr94TleD0sqe9ZcInyF7gmJM+evajwZmv/I4L9N+M73XkZNLdWmm5T58=
+	t=1769215032; cv=none; b=FoGNInuN3G78VvoKICPhSVt30mjp6s4hYkOQEdB5v8SABpI8kG6elR5qS75UNeTqpHCFMUI9wbRhSHcw6WShsI6BQBUGHZ9y0/omT/DVRxmUTc0LvNv9sIRQsi1FKxsglclqhljt6DWG0jn6+I8zl48/xKoNdp9R76NfqxWumfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769211499; c=relaxed/simple;
-	bh=KfvsAELXE4sqliyMi/reWA/rqizM/AnsEgYroG7kGy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q/7p1GpSYC6rKoZOZ/mll0U8jo+gdhV9RiuiEu6Wkm0aK9zCWiWRk0ZK2mab5SVcGsCRnY+ncETZsgvAwvXHCZMwbMFUMqFu3s6IZsYq5cy8zNplJBB8ar50miOCQJu0dmowwc1Jwj39fDfNgW/+zBs60hsOREuOPnLCfsfn9Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6DLO6i3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769215032; c=relaxed/simple;
+	bh=wAXTvH1maN85hr3RfdeH9UsxVN0a60QJqdMB4yISpkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FYTv0g7gC7Xu0cgQPzDHmcet5dTSO/NW5+A+yIfTor/c8SvVTN5E8hdFJ/fgTksy9o9JFq3WMNnks6ufBcKtn8/N1ZSgjTlXDeew18kMJpbi78PgGY3aMV1+dHkHToipWDufgl7a9oELO6+z/Mhg2FSG/jVTB5fLJSp2yKcXN3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yN2Q9Eh1; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6DLO6i3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21922C4CEF1;
-	Fri, 23 Jan 2026 23:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769211498;
-	bh=KfvsAELXE4sqliyMi/reWA/rqizM/AnsEgYroG7kGy4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=k6DLO6i3XwublK5tAcknS3lOtvqmu11BgLwakI9Tjx8oDSA3lFaQ/sHbn6whIOXfQ
-	 nSMTc0NuyqxvnBb4uVgRYQ5f1phkBmtUmFncmYMM+knwWh5G2JALiN4QxX5LORe48j
-	 yQyFI9fvkxdGVrzN8OHK95zSqT6z2152LrwkWdSS4xO+DoVu8vS27lVRyMQG54hvH7
-	 UgSfu2cwOBfsvyE0nc5RdTeYxgtxvDJ3e531OpJHhPM5ZSq8Ii3HliwzfUYCYkQFpz
-	 n0Rfero9xzYLwBWTclszfkhEXTo+C95QM6l2Vw2ubIq7m4Wvw7ofFV2l5tOP1qmkDm
-	 Pk/N22eB22yZg==
-Date: Fri, 23 Jan 2026 23:38:15 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jan 23
-Message-ID: <aXQGZ99IJLq-r4cX@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yN2Q9Eh1"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZF3w+bfdsuVIG4y2ZxlqSkJ5Ys1l78zUshnxHSf11Og=; b=yN2Q9Eh1OuUIAiLrg0JA7kRHuk
+	0dwqAPzU7JXlYLuIhXabSnsXNgdSkzQXwXXVNQ/0XLEiPhMwWpYPZmvRvVM1nfYiuHi7bHWRN3SuJ
+	yHKMYhEj1BChK6nzlVSKZyWg5HALkz0bgC1FOerQIk7UqqI42vemTFOHsS/3oNL16U0TGs/sUUqIr
+	I9KhUf3ngGDv33WwUise0g44QE89ZuAqfTSwpExA8qpJ+kUG1RSNuABVY5wG7lLrPXsmrLdA/woTx
+	QkuqYabGqKTRGx0VEqYTIE8OLgE5Nfek0KMk4jOHml5QTpwQjkfw9E5epD2E7aEICa8Vf8uHzcyCw
+	QPhaUNuQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vjRe9-00000009dok-2xnO;
+	Sat, 24 Jan 2026 00:37:01 +0000
+Message-ID: <1ac1c25f-9f4a-45ea-8ce5-c4a381941d60@infradead.org>
+Date: Fri, 23 Jan 2026 16:37:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h3yz3c3jmzdZKRbM"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: [DOCS] build warning after merge of the tip tree
+To: Peter Zijlstra <peterz@infradead.org>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Marco Elver <elver@google.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>
+References: <20260107161548.45530e1c@canb.auug.org.au>
+ <20260107215409.GB694817@noisy.programming.kicks-ass.net>
+ <803d1946-6935-452d-953a-90f6e73d53a2@infradead.org>
+ <91c5386a-2c1b-476a-b189-86d80c0d9e96@infradead.org>
+ <20260123081126.3f0f152c@foz.lan>
+ <20260123112856.GS166857@noisy.programming.kicks-ass.net>
+ <20260123132054.2d46fb97@foz.lan>
+ <20260123151856.GT166857@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260123151856.GT166857@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---h3yz3c3jmzdZKRbM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi all,
+On 1/23/26 7:18 AM, Peter Zijlstra wrote:
+> On Fri, Jan 23, 2026 at 01:20:54PM +0100, Mauro Carvalho Chehab wrote:
+> 
+>>> I have of course no idea what so ever how any of this works, but it
+>>> occurs to me that __acquires() and __releases() are not in that same
+>>> list, what happens to them?
+>>
+>> You mean in functions like those, for instance:
+>>
+>> 	int device_links_read_lock(void) __acquires(&device_links_srcu)
+>> 	{
+>> 	        return srcu_read_lock(&device_links_srcu);
+>> 	}
+>>
+>> 	void device_links_read_unlock(int idx) __releases(&device_links_srcu)
+>> 	{
+>> 	        srcu_read_unlock(&device_links_srcu, idx);
+>> 	}
+>>
+>> Yeah, we need to add something for those as well.
+> 
+> Yes those. They are pre-existing sparse annotations that have been
+> co-opted and morphed into the clang thread-safety-analysis.
+> 
+>>> Also, there will 'soon' be an equivalent: __cond_releases():
+>>>
+>>>   https://lkml.kernel.org/r/20260121111213.634625032@infradead.org
+>>
+>> The table "function_xforms" is a set of regular expressions to replace 
+>> macros into something that will be a pure C function declaration.
+>> It should be able to handle most macros (*).
+>>
+>> Each line in the table has two arguments:
+>>
+>> 	- a regex
+>> 	- a replace expression
+>>
+>> In this specific case, if we remove __cond_acquires(.*) from the
+>> function prototype, the remaining function will be a pure C 
+>> prototype.
+>>
+>> So, I'd say we need to have all 4 macros there:
+>>
+>> 	(KernRe(r"__cond_acquires\s*\([^\)]*\)"), ""),
+>> 	(KernRe(r"__cond_releases\s*\([^\)]*\)"), ""),
+>> 	(KernRe(r"__acquires\s*\([^\)]*\)"), ""),
+>> 	(KernRe(r"__releases\s*\([^\)]*\)"), ""),
+>>
+>> to avoid any warnings related to such annotations.
+> 
+> There's also:
+> 
+> 	__must_hold()
+> 	__must_not_hold()
+> 	__must_hold_shared()
+> 
+> 	__acquires_shared()
+> 	__cond_acquires_shared()
+> 	__releases_shared()
+> 
+> 	__no_context_analysis
+> 
+> On top of that, structure members can be annotated with:
+> 
+> 	__guarded_by()
+> 	__pt_guarded_by()
 
-Changes since 20260122:
+I was aware of some of these but not all of them.
+Thanks for the list.
+I'll update my patch for one regex to include all of these.
 
-The drm-misc tree gained multiple conflcits with the drm-fixes tree.
+-- 
+~Randy
 
-The drm-xe tree gained a conflict with the drm-fixes tree.
-
-The block tree gained a build failure, I used the version from 20260122
-instead.
-
-The random tree gained a build failure, I used the version from 20260122
-instead.
-
-The drm-rust tree lost its build failure.
-
-Non-merge commits (relative to Linus' tree): 8405
- 8215 files changed, 488720 insertions(+), 168749 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests and a native build of tools/perf.
-After the final fixups (if any), I do an x86_64 modules_install followed
-by builds for x86_64 allnoconfig, arm64 allyesconfig, powerpc
-allnoconfig (32 and 64 bit), ppc44x_defconfig and pseries_le_defconfig
-and i386, s390, sparc and sparc64 defconfig and htmldocs. And finally, a
-simple boot test of the powerpc pseries_le_defconfig kernel in qemu
-(with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 404 trees (counting Linus' and 121 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---h3yz3c3jmzdZKRbM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml0BmYACgkQJNaLcl1U
-h9Aanwf+Pb5GIepo7r9mwcK9PqM6YdTNlY0Be32pCE3/vxqQeGG97l2OhFEva8u9
-BSYM99DQD0BvTD2v3mHbdnxNNmEiond3rrid3+AR9RHpGq/zgOXKZ9pZk1lRNZwh
-vrvp2PgFKdqRUnq9je61iXYl7JeiVUAGPYNo2fs4ixqmWusUl98umIdc1GD3gmUO
-zqFq1hmLVVGIiJKRkzM27WLjcB0KmUcYHf2SWVA6ZflPrMcGVv5I/zfFox/1y04g
-bZcZhsX2WmcXijJQPAslxB1gdKUU9Q6kgnxC38/tfCA9zu2KdK/fTz4ud8EqT4dn
-BTnbSDQ4Eh2m13wdAIShZxKwlUJcbQ==
-=byjt
------END PGP SIGNATURE-----
-
---h3yz3c3jmzdZKRbM--
