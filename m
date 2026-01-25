@@ -1,167 +1,133 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from mail-dy1-f194.google.com (mail-dy1-f194.google.com [74.125.82.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651A821C9F9
-	for <linux-next@vger.kernel.org>; Sat, 24 Jan 2026 15:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B93A92E
+	for <linux-next@vger.kernel.org>; Sun, 25 Jan 2026 02:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769266827; cv=none; b=tvdKFdQhqfcOCy/xsf0Zi/KVBBYxQKwNKNQu9mCe8Cuo1B//LDOYXmNFzJowi76vmPN01Zmet9cBwXEw/C6HxVYjEP76Jx2VSeKvw76N74RktqdUuRaA7opgwFEl/2rC1UB1eFfA6dEMcMfMs57bEj/IjMEoduKnC9IVVG0beD4=
+	t=1769308247; cv=none; b=ljP8HrcConucsn6xdVvVKdeJjaIDFEwF4BacAWieQ08uiQqs0OBS3nCDTWkeM3YDxIp7Bl7J5z7PK+IUOWgBip/tb1wluPYr8Y9Ft2AqIQYTqLwqKZnc0qo8PHLF2J9NP1klvyzYyQFoXWDjjIH84szK0tjIE7Mqsvj+DMeoaLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769266827; c=relaxed/simple;
-	bh=6HrUoe1kZh/iI+guNdW5pOruzGgoM4/QRAGeumTZ9wE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Llzjd6koY1rLCY6HkdNXngiEi9Y9ViJA2oCmnKDYdAVekcHHdiG7iMQs5tTufmzsydVmMTtdEcT5F84ltGS9cxD7VluDXW9P0qyAeXNSvLNYkzWeC4L5qJ93BUI20QpfKziOt36fwIheAWsBWCNp09kknBNyFHIusdryjFNT91U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dirwl1mJ; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1769308247; c=relaxed/simple;
+	bh=feSefyAEIz0A+KB+JB3V40+MFYdXSKXLvaHDvUMByBk=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=tEnJJVef3uzgdLaUchpwSZBnCQN2nl/lAdIrfa26DiHuEL/pQon+1o2s2mKeQiwvRLwN8sHbF48RjZo4Q4PCQsdDycYZDdWoMqNTEvlNYnp/FjVfhTaLG+d/oB9sj4/QVO00AA6BHi7hjDRaWaS6X5s0gNvR/uU1q+UmefaiN8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=e/wJNwHK; arc=none smtp.client-ip=74.125.82.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dirwl1mJ"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-4042fe53946so1013464fac.3
-        for <linux-next@vger.kernel.org>; Sat, 24 Jan 2026 07:00:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="e/wJNwHK"
+Received: by mail-dy1-f194.google.com with SMTP id 5a478bee46e88-2b720e4dcb4so3364271eec.0
+        for <linux-next@vger.kernel.org>; Sat, 24 Jan 2026 18:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769266824; x=1769871624; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KPQY7I+g/cUTl6X/qpTV4vJTMxd/5TTcOzc9jOcFEvM=;
-        b=dirwl1mJIc3w1Y3WNlbHi4ZkPxnZMHns+OPbZzK/FD2pu1crBFb6GKnICGDWoYhsHV
-         qj/ay6fB6w4sGwX1g8O7b3JCRwTTohDJEpkvzrHuaiVblTX0DSlvkCF12FcZo6XTsaux
-         l15vSrEYdArtnqE8y30/a4EjtUqKE4JWwti91mHkveU4VdO/xv2BWK/SbxgR/Q573/o6
-         Sh4cNZK9otrGYSK6vOZScNvPm/uIt/jlRnBy0fVGDSlTxibghRB1P9ibGtmw/waYAJtE
-         VoLlat5keLip/wVZNRPL0hS5U26zEBdTDYOHajAzuUAuQGBCY7rPPw/HKEP0L/gFbSsH
-         qDrQ==
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1769308245; x=1769913045; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HocXw8L31zfMca0uKu8WCx5a/jgCnKwwzl4D73o8TRA=;
+        b=e/wJNwHKOeC8SEg910QvT+4kQslDfma1DC740JI/pUweqNoQvay6gOAsIDo1PqHjNA
+         GRHbj8sfzHic7EwT0ZI4DjJjeURvIJgi/q0ILpF6AA5+jVs4yZpM2tZM1C7hwpaZA9Zy
+         BegQvI6/KWRjcg8kTRbroPlQlravjoYSDCiWk1YAIZVLUvfNPcpuhClGYctvMacMRDRy
+         a3O/miAJfCNIDo/2B5hohrj3XhMLNF37FwozOLhyuKczcpfnvQiSo/0+Zyluzg63RR5c
+         y9HMQlcozDWyUYpX7LpDzZY/YNolHajEw17iO1rVblg0nVKBTJiOwK1lQbKKb6S2dJTG
+         WSyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769266824; x=1769871624;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KPQY7I+g/cUTl6X/qpTV4vJTMxd/5TTcOzc9jOcFEvM=;
-        b=dLC+BWPbEpfSk3HCZHnYXyGw3AsiNZ7IvBAIpsXtAIz0zSYVIE3n6Cx04O8u0Zpaet
-         jKMfVSz8CNiAxG+8U+7/sin5zzTstI1mE+qOi6hZeCU0Xrgaut7cZm1MISt+p26XIjtz
-         bGghXf9S5tCAlHKEvIEevoipQUMqJ5Bwuqk7W7xKeUXFbzCXzEN1WC+Oa5LHLO2xHmQ5
-         81GPHmdri23batipYxxrnXerFhj3LpEl4WCy8/HUdAJvID0W7euC6SWbcjBmzW/UAVIc
-         7HUTHU/PwZCvleaaO/ClSJM/8HRyzY+3L8UmoTHjIKx12hMaP+1hO1Cxx9Y8qhVc+GhS
-         wT5A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0yt3EJnRFhlFSc+J7JhF0UoRavPvvWcSuDltnYTpA4iudObT4+yeLk+lFzqWp5Y4sdq+cfZyG7JXD@vger.kernel.org
-X-Gm-Message-State: AOJu0YykqcHblRz/XkDfU8pPmWc4T/ST0DmC1oen/rcEu3K0YEcrUape
-	RCKF4Z5XydHv+bzd8F4+XjxZzPqZySKcAHaBnj1bYiaxvQOKv+5YVKz0wsd1jXemqHI=
-X-Gm-Gg: AZuq6aLynrw1iqD5SbCN4iBm1W/6q87pIuDe80xCgp3NlBPko77eoiPon7Y5wKJfofW
-	crdtIDV3QMTJrRNUpoa/1789wsSaLcZNh2L2Rq0zDicaUZcCMLyv6hoAlYU0qKwiIcGrU5CcjpJ
-	ztfLyoz2WdUUjIGcuw9oKdy7rtVBWx/sIsYBcvLTdhOr8sVCM5RCx7YMk2RMuVX6o3umRZESlM0
-	RbHexTR005/rKtyotvQkE+jTuvLgiipnvE9LejRMSC0EXlDCEOdZl89vAPPGkUt00R3txx4wLhj
-	Rjnahs0Tw1Beudb8uK+uEMas9mV0WaKdCjTGOg1Nv+GCxHUGRMcxTXNzCvYKQLkMWNSyVL5z+/X
-	LQ9+dXm8HdsHaqMc3urPT54FkcDF7S3l/IfOPh2nsvKsM/PZQbDGCCEkbYKMxiNzlWvRi37TarJ
-	KeMtzoViGuITDRMwItaR2VGK+v0eAHG2V2SXKAWUFrLIJJ+X6l0pNZtC81U4DUTk88uJFVDw==
-X-Received: by 2002:a05:6871:5225:b0:404:3805:1dde with SMTP id 586e51a60fabf-408ab3b3b5cmr3355162fac.8.1769266823625;
-        Sat, 24 Jan 2026 07:00:23 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-408af88d1c2sm3749680fac.8.2026.01.24.07.00.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jan 2026 07:00:22 -0800 (PST)
-Message-ID: <5e31c5fc-15e5-4ef1-944e-b4ba097829ed@kernel.dk>
-Date: Sat, 24 Jan 2026 08:00:21 -0700
+        d=1e100.net; s=20230601; t=1769308245; x=1769913045;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HocXw8L31zfMca0uKu8WCx5a/jgCnKwwzl4D73o8TRA=;
+        b=otp+0QE/koznQEdIaOMyoI6TIYHBvcfUUSm82dce5EODF/9z8fS/8pYgDMeS3ZWJer
+         YciiiZUyOqvxekdsMKQQ8HTIHmLOdsozvMKLq6MHf0Niar6Kfcq1bVqepe/Xjc3MzJJD
+         5sIkVr2ELYS4XM5Bl6RyFI1JB9bG9qti8xPjVHpK2KyoxIX/omlve9OH+naTmq4kdzGW
+         rHelPWlFiUylnR0Q/ptXboccRRxUhIC7Sd0P4YuyMOqgqgkTnDkbkyLgdSF4Btu62jFK
+         TdikOQ8srhCOqiqekMk0AUvvxPvMzWJrA6GkQhiQkPovEVT1rCfVdEIkLM0R8b+N/Xa3
+         Dg1g==
+X-Gm-Message-State: AOJu0YzUrbLZ+qYbFFhrS2wN4ts5qtBoSBC0EMSeeGuDoOYaAP2gXCYa
+	7FMtURSxs8iu+Un0VLt06epmHbKaoIpt513uzQeMrkD3mGmtaJFFtdoUpfiuCq1LW18=
+X-Gm-Gg: AZuq6aICbSdz8hDwI26ToQ2fWvs+H2u0c7jJZx5mlI4TX1RgeHtcjJM5wd0t8IR60Qz
+	6DRy6xxXjHnuM0yWbP3+l0wy0wp3azCKGG5a2jBPWJlGbDPa65el1Hjg+kO1b7u1SMJJTH6Blkv
+	5pBZjEn6OMaNoeh83tAZYaLxVhFEvEdV7hBMR7505adAx/RSBNYRL9bvytDvSOyyKLYQhiGC5FC
+	iPF/Pe46JHMFht28F6AqMG+U+6pVX2Mmx8wB6dtc0IMFgAripYjSSEOrXWfsLthA3bw9YuevNjw
+	FyT0PHjpfJDkw8mCHYOGtKwiFT0H7uB0RtoaoJI8F7JeT2x4bkQYhkGrmNKAR03hYbzT7xbYB7b
+	KrDgIPc8F3d+9PAOBK28UxCiPpLfTN5Qz1dkUE8KivlPqN/ZchF/kQLbiaeyLJs3IKxVsQH3Wza
+	TJD2m5G/J1XwENDII=
+X-Received: by 2002:a05:7301:fa0e:b0:2b1:7486:3a06 with SMTP id 5a478bee46e88-2b764345c7bmr202473eec.18.1769308244754;
+        Sat, 24 Jan 2026 18:30:44 -0800 (PST)
+Received: from 22d5995788c3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1247d90cda6sm11184625c88.1.2026.01.24.18.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Jan 2026 18:30:44 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the block tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <aXOzI6sVTBTdJE5j@sirena.org.uk>
- <cb962e32-7d04-44a1-b99c-4d1889ffdbf5@kernel.dk>
- <ed061c97-9d4f-41c1-a340-1b1e57985e50@kernel.dk>
- <20260124114635.10bff99f@canb.auug.org.au>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260124114635.10bff99f@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - ca3a02fda4da8e2c1cb6baee5d72352e9e2cfaea
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Sun, 25 Jan 2026 02:30:44 -0000
+Message-ID: <176930824377.2074.2111489973153786953@22d5995788c3>
 
-On 1/24/26 4:46 AM, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> On Fri, 23 Jan 2026 11:06:43 -0700 Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 1/23/26 11:00 AM, Jens Axboe wrote:
->>> On 1/23/26 10:42 AM, Mark Brown wrote:  
->>>> Hi all,
->>>>
->>>> After merging the block tree, today's linux-next build (x86 allmodconfig)
->>>> failed like this:
->>>>
->>>> In file included from /tmp/next/build/include/linux/string.h:386,
->>>>                  from /tmp/next/build/include/linux/bitmap.h:13,
->>>>                  from /tmp/next/build/include/linux/cpumask.h:11,
->>>>                  from /tmp/next/build/arch/x86/include/asm/paravirt.h:21,
->>>>                  from /tmp/next/build/arch/x86/include/asm/cpuid/api.h:57,
->>>>                  from /tmp/next/build/arch/x86/include/asm/processor.h:19,
->>>>                  from /tmp/next/build/include/linux/sched.h:13,
->>>>                  from /tmp/next/build/include/linux/io_uring.h:5,
->>>>                  from /tmp/next/build/io_uring/bpf_filter.c:7:
->>>> In function 'fortify_memset_chk',
->>>>     inlined from 'io_uring_populate_bpf_ctx' at /tmp/next/build/io_uring/bpf_filter.c:33:2:
->>>> /tmp/next/build/include/linux/fortify-string.h:480:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->>>>   480 |                         __write_overflow_field(p_size_field, size);
->>>>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>> cc1: all warnings being treated as errors
->>>>
->>>> Caused by commit
->>>>
->>>>   f1e3672e49e2c (io_uring: add support for BPF filtering for opcode restrictions)  
->>>
->>> Huh, that am I missing here? The struct looks as follows:
->>>
->>> struct io_uring_bpf_ctx {
->>> 	__u64	user_data;
->>> 	__u8	opcode;
->>> 	__u8	sqe_flags;
->>> 	__u8	pad[6];
->>> 	union {
->>> 		__u64	resv[6];
->>> 		struct {
->>> 			__u32	family;
->>> 			__u32	type;
->>> 			__u32	protocol;
->>> 		} socket;
->>> 		struct {
->>> 			__u64	flags;
->>> 			__u64	mode;
->>> 			__u64	resolve;
->>> 		} open;
->>> 	};
->>> };
->>>
->>> and the offending line is:
->>>
->>> memset(bctx->pad, 0, sizeof(bctx->pad) + sizeof(bctx->resv));
->>>
->>> which should clear from offset 10 (start of pad) for a total of 6 + 48
->>> bytes, which is 54 bytes. The size of the struct is 64b.
->>>
->>> I guess the part it doesn't like is that it thinks we're clearing the
->>> pad field, which would of course be way overwriting it. Guess we can do
->>> something ala:
->>>
->>> memset((void *) bctx + offsetof(struct io_uring_bpf_ctx, pad), 0,
->>> 	sizeof(bctx->pad) + sizeof(bctx->resv));
->>>
->>> to make it happier.  
->>
->> Folded that in and pushed it out, should be happy for you now. I wonder
->> if we have a helper for that...
-> 
-> The origin warning did suggest using struct_group().
 
-Right, and I do use that in io_uring in other spots already, but it's
-pretty ugly for user facing structs. Both because they are harder to
-read, and because it's bleeding internal detail into userspace. So don't
-really like that for this use case.
 
--- 
-Jens Axboe
+
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/ca3a02fda4da8e2c1cb6baee5d72352e9e2cfaea/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: ca3a02fda4da8e2c1cb6baee5d72352e9e2cfaea
+origin: maestro
+test start time: 2026-01-24 00:19:05.175000+00:00
+
+Builds:	   38 ✅   17 ❌    0 ⚠️
+Boots: 	   43 ✅    3 ❌    0 ⚠️
+Tests: 	 5523 ✅  534 ❌  316 ⚠️
+
+### POSSIBLE REGRESSIONS
+
+  No possible regressions observed.
+
+
+### FIXED REGRESSIONS
+    
+Hardware: acer-chromebox-cxi4-puff
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - kselftest.cpufreq.suspend
+      last run: https://d.kernelci.org/test/maestro:697424621908a6300d9429b9
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: acer-chromebox-cxi4-puff
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - kselftest.cpufreq.suspend.cpufreq_main_sh
+      last run: https://d.kernelci.org/test/maestro:697426e41908a6300d944081
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+
+
+
+This branch has 17 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
