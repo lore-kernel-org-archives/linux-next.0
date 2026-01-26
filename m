@@ -1,50 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B8633F8C4;
-	Mon, 26 Jan 2026 15:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FD32264A3;
+	Mon, 26 Jan 2026 15:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769441982; cv=none; b=LIPeLdOmzCXHKCO6cKsaturfhQE5G+10h9zHsxjLFlPT/JBxQVqtaCRpFh7rBWoeNknpZc8OR2fE4zxKZI2cCzmorq+4eidiZQZcrk/YNAzc9oRa5IQJtvIFJAyxq/G/a5ESYqHSI/r6/oPWoYyE8TsDakmML0P7voVCZQH+wmw=
+	t=1769442838; cv=none; b=lEZdr+Fkc5V72xXTtl1dfWY4A/+QDN/ZhY9a7cZo/3nxpP31ymOTRHPrC6lUgiU23l5iy0TgVgFK+V92oIEiuNR5kktq9GHc4z8/gsp5p2W6o7YdgnKCQq90yH+GozWOoc/xDmarSbuaUMRcMmZG5vNUDeEeGgZiSjB14jrxbkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769441982; c=relaxed/simple;
-	bh=IV6yQq0SmCS9QcWaKJHNEPIHiNlA6PvJc531TCCub/o=;
+	s=arc-20240116; t=1769442838; c=relaxed/simple;
+	bh=VoD5up+mpiF72NW0r4LMA5o7Czcs0rPWeFhQb968KWs=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KnBY6bN2zCm+gSxsph0Jv0K0ueZ0/xxtzjWmZUXkrYwyF0pWxpfvo0OVhYfj8VAnylYup6dd8hAYpE7em2bIqXSC3lTqjLskrA2B7YETBfNi7SdMbxy9NkVmjIQ5Tfg/vbmLxj1D9PHytlTdY4GGVco3LUJFOSHJg22Ja+pWbYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QobNhNcc; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=mg08aEB54sWJHkIQbWtv0BEM82OKjY1qSoTmMyxQlFSnXAzOi3Sm8ZFHOkF/1PMBY93n0QJiFoFicS6eRafO7GXVoRQQQ+hjexr0vXKzXmcGF2xdWkpVPnSJq3Zs+15RCVCm09EfhvzgIW17gC5mLH9FLUmGaoEb5oO4x5q/m/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ct0ByyOl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QobNhNcc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D80C116C6;
-	Mon, 26 Jan 2026 15:39:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ct0ByyOl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47380C116C6;
+	Mon, 26 Jan 2026 15:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769441981;
-	bh=IV6yQq0SmCS9QcWaKJHNEPIHiNlA6PvJc531TCCub/o=;
+	s=k20201202; t=1769442838;
+	bh=VoD5up+mpiF72NW0r4LMA5o7Czcs0rPWeFhQb968KWs=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QobNhNccdCZPfDZ5jlM35Cx/xz9R5icq+PQQkOFDaDBe8fA6DQuPkcsLRwpcRUPIu
-	 FmP50IqtO3oeotm6I+oWTxtFbZfs8ibyvSlJG64utEE1z/8ixXzQDTTDn2nwKXtGP6
-	 xk4ycT7fXdxVVG6137C9LmMWBkV5t6jh1qp8vncDEKn99K5ToKVPRKTvtjVYZeswsC
-	 9UhY+0HNhRLNDXIzbxpHicaYxVpWjzrZR9IprAoY6RN5H4K9Dg3trf26VM0CgbklMO
-	 v2qXxIro6tdgHs4O7SLnC3G4RilQ6HK4vlzsn0GOH7FcwIPfcE7l6Wbrlty3WLSmqJ
-	 y4tnnnvpHADVw==
+	b=ct0ByyOlpbz8rKBLDyElnjfOC9AeiH7qY5pndzjQ5FPDd3mxNhhfr0dSc2aY9gOwv
+	 xyxhpWjsNJlApP6s9fPSKE9STmOLfd+ENjm/9jiqel1yZV8sYh6IqlwmRdO+zCspkC
+	 dnypwGZRoEufpxRHuHDaGvDnyTRz4ITXHbT/ZQaGOT7JsP1BgXlGjXQwpnGYzK57EK
+	 A+vEt6gz+Mvs+4Yh2FlXCEtcq2WfgoZmPb5ZDfl6OhRO9f/22/HzVwVvEVoavKxxaO
+	 c4m5ZfNSDWu1FlgUp1awEVaMR039oYJeANa1fQGN/TsuZhj2RXacbb1n5bvmcEx722
+	 iH/cSyE419IbA==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <maz@kernel.org>)
-	id 1vkOgl-00000005lKP-206L;
-	Mon, 26 Jan 2026 15:39:39 +0000
-Date: Mon, 26 Jan 2026 15:39:39 +0000
-Message-ID: <86ikcobcxw.wl-maz@kernel.org>
+	id 1vkOua-00000005lYo-0rJi;
+	Mon, 26 Jan 2026 15:53:56 +0000
+Date: Mon, 26 Jan 2026 15:53:55 +0000
+Message-ID: <86h5s8bca4.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
+To: Will Deacon <will@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
 	Oliver Upton <oupton@kernel.org>,
 	Paolo Bonzini <pbonzini@redhat.com>
 Subject: Re: linux-next: manual merge of the arm64 tree with the origin tree
-In-Reply-To: <aXeEH-iffNS9VIrA@sirena.org.uk>
+In-Reply-To: <aXeG9FIIP_-hpCHm@willie-the-truck>
 References: <aXeEH-iffNS9VIrA@sirena.org.uk>
+	<aXeG9FIIP_-hpCHm@willie-the-truck>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -56,55 +57,131 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
 X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, oupton@kernel.org, pbonzini@redhat.com
+X-SA-Exim-Rcpt-To: will@kernel.org, broonie@kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, oupton@kernel.org, pbonzini@redhat.com
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, 26 Jan 2026 15:11:27 +0000,
-Mark Brown <broonie@kernel.org> wrote:
+On Mon, 26 Jan 2026 15:23:32 +0000,
+Will Deacon <will@kernel.org> wrote:
 > 
-> [1  <text/plain; us-ascii (quoted-printable)>]
-> Hi all,
+> On Mon, Jan 26, 2026 at 03:11:27PM +0000, Mark Brown wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the arm64 tree got a conflict in:
+> > 
+> >   arch/arm64/kvm/hyp/entry.S
+> > 
+> > between commit:
+> > 
+> >   86364832ba6f2 ("KVM: arm64: Don't blindly set set PSTATE.PAN on guest exit")
+> > 
+> > from the origin tree and commit:
+> > 
+> >   018a231b0260e ("arm64: Unconditionally enable PAN support")
+> > 
+> > from the arm64 tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > [Took the version from Linus' tree.]
 > 
-> Today's linux-next merge of the arm64 tree got a conflict in:
-> 
->   arch/arm64/kvm/hyp/entry.S
-> 
-> between commit:
-> 
->   86364832ba6f2 ("KVM: arm64: Don't blindly set set PSTATE.PAN on guest exit")
-> 
-> from the origin tree and commit:
-> 
->   018a231b0260e ("arm64: Unconditionally enable PAN support")
-> 
-> from the arm64 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> [Took the version from Linus' tree.]
+> Hmm, I suspect that's not quite right because CONFIG_ARM64_PAN doesn't
+> exist anymore in the arm64 tree and so the hunk in
+> arch/arm64/kvm/va_layout.c probably needs tweaking.
 
-I can't see the latest next yet, but this doesn't sound right.
+The whole function in va_layout.c should simply disappear and whatever
+is in arm64 be kept. That's what I did when I merged
+arm64/for-next/cpufeature and kvm-arm64/vtcr in kvmarm/next.
 
-The correct resolution for this is in the kvmarm/next branch,
-effectively reverting most of 86364832ba6f2 ("KVM: arm64: Don't
-blindly set set PSTATE.PAN on guest exit").
+But I now realise that because all these changes happen only in the
+kvmarm/next branch (what was added is now removed), nobody sees that
+outside of that tree, and next ends up with something that isn't quite
+right.
 
-Keeping the version from Linus' tree doesn't work, as
-kvm_pan_patch_el2_entry() references CONFIG_ARM64_PAN, which is
-removed by 018a231b0260e ("arm64: Unconditionally enable PAN
-support").
+> Marc -- how would you prefer to handle this? I could bring back
+> CONFIG_ARM64_PAN as a hidden Kconfig option =y and then we could clean
+> up the stragglers at -rc1?
 
-So the arm64 version should be the correct one.
+As long as entry.S reflects what is in arm64 tree, we don't need this.
+We just have a dangling patch function that is never called, and we
+can cull that later. But if entry.S stays with Linus' version, then we
+definitely need something of the sort.
+
+FWIW, my own resolution is below.
 
 Thanks,
 
 	M.
+
+diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+index ce516d8187b1b..a1ad12c72ebf1 100644
+--- a/arch/arm64/include/asm/kvm_asm.h
++++ b/arch/arm64/include/asm/kvm_asm.h
+@@ -300,8 +300,6 @@ void kvm_get_kimage_voffset(struct alt_instr *alt,
+ 	__le32 *origptr, __le32 *updptr, int nr_inst);
+ void kvm_compute_final_ctr_el0(struct alt_instr *alt,
+ 	__le32 *origptr, __le32 *updptr, int nr_inst);
+-void kvm_pan_patch_el2_entry(struct alt_instr *alt,
+-			     __le32 *origptr, __le32 *updptr, int nr_inst);
+ void __noreturn __cold nvhe_hyp_panic_handler(u64 esr, u64 spsr, u64 elr_virt,
+ 	u64 elr_phys, u64 par, uintptr_t vcpu, u64 far, u64 hpfar);
+ 
+diff --git a/arch/arm64/kvm/hyp/entry.S b/arch/arm64/kvm/hyp/entry.S
+index d1ccddf9e87d9..11a10d8f5beb2 100644
+--- a/arch/arm64/kvm/hyp/entry.S
++++ b/arch/arm64/kvm/hyp/entry.S
+@@ -126,9 +126,7 @@ SYM_INNER_LABEL(__guest_exit, SYM_L_GLOBAL)
+ 
+ 	add	x1, x1, #VCPU_CONTEXT
+ 
+-	alternative_cb ARM64_ALWAYS_SYSTEM, kvm_pan_patch_el2_entry
+-	nop
+-	alternative_cb_end
++	ALTERNATIVE(nop, SET_PSTATE_PAN(1), ARM64_HAS_PAN)
+ 
+ 	// Store the guest regs x2 and x3
+ 	stp	x2, x3,   [x1, #CPU_XREG_OFFSET(2)]
+diff --git a/arch/arm64/kvm/va_layout.c b/arch/arm64/kvm/va_layout.c
+index bf888d150dc79..91b22a014610b 100644
+--- a/arch/arm64/kvm/va_layout.c
++++ b/arch/arm64/kvm/va_layout.c
+@@ -296,31 +296,3 @@ void kvm_compute_final_ctr_el0(struct alt_instr *alt,
+ 	generate_mov_q(read_sanitised_ftr_reg(SYS_CTR_EL0),
+ 		       origptr, updptr, nr_inst);
+ }
+-
+-void kvm_pan_patch_el2_entry(struct alt_instr *alt,
+-			     __le32 *origptr, __le32 *updptr, int nr_inst)
+-{
+-	/*
+-	 * If we're running at EL1 without hVHE, then SCTLR_EL2.SPAN means
+-	 * nothing to us (it is RES1), and we don't need to set PSTATE.PAN
+-	 * to anything useful.
+-	 */
+-	if (!is_kernel_in_hyp_mode() && !cpus_have_cap(ARM64_KVM_HVHE))
+-		return;
+-
+-	/*
+-	 * Leap of faith: at this point, we must be running VHE one way or
+-	 * another, and FEAT_PAN is required to be implemented. If KVM
+-	 * explodes at runtime because your system does not abide by this
+-	 * requirement, call your favourite HW vendor, they have screwed up.
+-	 *
+-	 * We don't expect hVHE to access any userspace mapping, so always
+-	 * set PSTATE.PAN on enty. Same thing if we have PAN enabled on an
+-	 * EL2 kernel. Only force it to 0 if we have not configured PAN in
+-	 * the kernel (and you know this is really silly).
+-	 */
+-	if (cpus_have_cap(ARM64_KVM_HVHE) || IS_ENABLED(CONFIG_ARM64_PAN))
+-		*updptr = cpu_to_le32(ENCODE_PSTATE(1, PAN));
+-	else
+-		*updptr = cpu_to_le32(ENCODE_PSTATE(0, PAN));
+-}
 
 -- 
 Without deviation from the norm, progress is not possible.
