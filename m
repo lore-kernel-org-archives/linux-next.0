@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CD6E55C;
-	Mon, 26 Jan 2026 12:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EDE338586;
+	Mon, 26 Jan 2026 13:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769430120; cv=none; b=PG33kfgt8ezCwxV/q+85qHGqqxZHME6IGnYbXIcodC+Wy32C/QeG3dxcU5NaggZ6s4pXY8DSfqLR8K6M1LWoVC0vBqk6pEtemk9k3g3vW43pyX3xThc4xg1pTcYKWeuL9CqerJ5pdiG9A+bKLQ20M1FWwzh0aXkGvIG/k/sTdUA=
+	t=1769432878; cv=none; b=M4/2875RWJ8vx8EFIegIFPReHfHmYUm/hCqRFqhz0rpPLNL9Vjcna+TfCYvv3UPE7lgyceBLEiJEQ9/5HzrL+UBr/CQwu/dwGJXhlDtdrucXQ+8xwjVxhdVOsIzbriMAaLPMd0e/9YDYJBb7VDOYCmaqyVEVVkHY5BMZhwK90FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769430120; c=relaxed/simple;
-	bh=a5OXUMDZpV/uYOBsmnG6p7YO+00Z/60yDGHsMS6/e9E=;
+	s=arc-20240116; t=1769432878; c=relaxed/simple;
+	bh=cOfH95iDKaBe/9QMXpvBhYJY7JBwmjKg8JZci6QJ06E=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BTIf0xB0OCEMrEeUi6bCeeAlk9nNcHC0+iDjbdc1VprG3jJ/EZJMdS6HUjRxHeSyQcFYGEEHtTJO43Kj2NeC/WPrO9XJT2aEONDx3Ck1EKG9w0xmZ8UYMSscAVeqHK2CH5shqG6xUiCqarFa42czexlpwWJmks3JcDFlyfsOYOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKMjkxNn; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=tmtu1bfx99iOl4UxV9rQ7Z9DMR7MzqlfcR76AMBSo5AmB6FGqiy5gf9lYu1bYj6S2YerEdE11DWHYOQpFK/na9PvuJNG53W0Ff3EzE6NtThxF+Zh9Aih9iCHNMYHZXBDa2bIRgIzJW1PqnCkVN+e0tS+0hHG1hC3dNh1Q0QkMeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vh6kT9ft; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKMjkxNn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACCF2C116C6;
-	Mon, 26 Jan 2026 12:21:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vh6kT9ft"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1874C116C6;
+	Mon, 26 Jan 2026 13:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769430119;
-	bh=a5OXUMDZpV/uYOBsmnG6p7YO+00Z/60yDGHsMS6/e9E=;
+	s=k20201202; t=1769432878;
+	bh=cOfH95iDKaBe/9QMXpvBhYJY7JBwmjKg8JZci6QJ06E=;
 	h=Date:From:To:Cc:Subject:From;
-	b=EKMjkxNnZsBF5ixDFmIZET76whQLrBdVvyetfFvDlk0b5pSC/WNy6nSuKlAR5Pgkx
-	 kkvUiHXSQl32oqpnzPgy/0BLAaVgEZ3Ts8ZrOH7c7eDY3XOzOho2VBUQ0AHYbNXc3Y
-	 HLfW+K05UBGVbaelErmRU0HAbaVg40Qh3krzzsaUqlC1qlyi0p63Ys54ss9vd+dYCx
-	 vCLrd2yNy72/ZOob8jd4S8O7i6XGg/nsf49ge5V0qiqlwp+3I52WQgWuJhmz6NEYwq
-	 0D7vIX5WmD8Ef/jT4IqJHzYdRusUM7fG9oqWBfdkduvuBC+I/X5Jnw4bnIHmWJvsr/
-	 15loZ/zIqjWYw==
-Date: Mon, 26 Jan 2026 12:21:55 +0000
+	b=Vh6kT9fttRYUxV9BCHdRelkBxDZWsZfm+EBNOLqm/NHjZsCfSbktAMxtLHUw9zOAz
+	 0fXsY7+D5bsGPQsDz0il4HIcq6ZA3wUA+hLLnzb7AwQ0qIhyFrEJ+AmBRrLqSA1fcW
+	 GF+P0blBDtQ2XCvwoRe2xFViGsWZ0P2BntEXe1JvqvQsItyZfx8UAQNtz7stiSnEIi
+	 cbunIXX43vWS1jMlmg7JNLFtIV8UNJUHGv8GmwCfZqjpYdRpamYvRba6APSvon8e1a
+	 s3nwencmOuDo3ec2CoqmaRfN2CSvyXy2ddyXXAmpWNu7M80+7NdZvbYd5wk8HuQ8il
+	 oiQhnrmvSaLIA==
+Date: Mon, 26 Jan 2026 13:07:54 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Andreas Gruenbacher <agruenba@redhat.com>,
-	Steven Whitehouse <swhiteho@redhat.com>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Christian Brauner <brauner@kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the gfs2 tree with the origin tree
-Message-ID: <aXdcYzuVogTFGWyf@sirena.org.uk>
+Subject: linux-next: build failure after merge of the ntfs3 tree
+Message-ID: <aXdnKldyCVLxrk78@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,57 +42,64 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wFIZknKIfJFGPqf3"
+	protocol="application/pgp-signature"; boundary="dc524tRZhsXDn8QV"
 Content-Disposition: inline
 
 
---wFIZknKIfJFGPqf3
+--dc524tRZhsXDn8QV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the gfs2 tree got a conflict in:
+After merging the ntfs3 tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  fs/gfs2/lops.c
+/tmp/next/build/fs/ntfs3/inode.c: In function 'ntfs_read_folio':
+/tmp/next/build/fs/ntfs3/inode.c:678:9: error: too few arguments to functio=
+n 'iomap_read_folio'
+  678 |         iomap_read_folio(&ntfs_iomap_ops, &ctx);
+      |         ^~~~~~~~~~~~~~~~
+In file included from /tmp/next/build/fs/ntfs3/inode.c:15:
+/tmp/next/build/include/linux/iomap.h:347:6: note: declared here
+  347 | void iomap_read_folio(const struct iomap_ops *ops,
+      |      ^~~~~~~~~~~~~~~~
+/tmp/next/build/fs/ntfs3/inode.c: In function 'ntfs_readahead':
+/tmp/next/build/fs/ntfs3/inode.c:702:9: error: too few arguments to functio=
+n 'iomap_readahead'
+  702 |         iomap_readahead(&ntfs_iomap_ops, &ctx);
+      |         ^~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/iomap.h:349:6: note: declared here
+  349 | void iomap_readahead(const struct iomap_ops *ops,
+      |      ^~~~~~~~~~~~~~~
 
-between commit:
 
-  469d71512d135 ("Revert "gfs2: Fix use of bio_chain"")
+Caused by commit
 
-=66rom the origin tree and commits:
+   099ef9ab9203d (fs/ntfs3: implement iomap-based file operations)
 
-  c0c8c960ab932 ("Revert "gfs2: Fix use of bio_chain"")
-  910869abc1ca8 ("gfs2: gfs2_chain_bio start sector fix")
+interacting with commit
 
-=66rom the gfs2 tree.
+   b2f35ac4146d3 (iomap: add caller-provided callbacks for read and readahe=
+ad)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+=66rom Linus' tree. I have moved the merge fixup from the vfs-brauner
+tree.
 
-diff --cc fs/gfs2/lops.c
-index d27a0b1080a97,e03928def87ed..0000000000000
---- a/fs/gfs2/lops.c
-+++ b/fs/gfs2/lops.c
-
---wFIZknKIfJFGPqf3
+--dc524tRZhsXDn8QV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3XGMACgkQJNaLcl1U
-h9DxcAf/e+NIboBSb6vIk88ThcYUX3il5bTpKzpB1oEOyJGRp0QCJxw/oszsaR45
-AcjJfLAac4eDasoy2FSc23GhUgy8+z65XSV77+KYgTHsyTbpyRWL1vuvyVNCRVQb
-G+5CoDtsMKxtOFl0fRoNQlCjVQKmSts2ZdoiXL4QyqoJ8VaMG4XqDcP0soBRMZsK
-mWQkoFKKXTzd9xp/72ySeFhzuL+TRLOb6lAP/jVbNaY3UL6+umiDteoHeNO4OJjx
-3o1q8i8pjA+sy4bxS+i2QxGBx8quhq/oHe+daFFM6YXZ5iPmjICBc/3W5yAL6312
-2lNUoAPe/ou+MRDPHgroxaUb/TodNQ==
-=Ew1G
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3ZykACgkQJNaLcl1U
+h9C6Sgf/aVZaIi5Q84l0ny0g41gb5iseFdVpMeIVJEpBfD5PNXmv/BgsI7siYcDe
+hLIHZaOmwrhwADEhl+PCzEphxVznIfJuENfENMEEZX6gYyx+/iG9iTpJoXnWN1A+
+2s4cbVi/EnZdn16a1XAuZyUs2OEFYbIeNNecCpVKvzEeds4AYrNtTjv5lYmSTs06
+YiYrerAR7cqN5FdeChiZ8lSHCe7lFxmg2R5cdFBDyV7TQeuFJO+ALGdgVaPzHUNb
+CsxHuBCCmW1x6SduIePgOGMC+Zme5fGNWEuvWk6fTz7cirmIbYzQN9cZ0NvAjBiT
+uCWqBkXXSTRIOdcnJFA4KLxN6f3fUw==
+=80DI
 -----END PGP SIGNATURE-----
 
---wFIZknKIfJFGPqf3--
+--dc524tRZhsXDn8QV--
