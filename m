@@ -1,41 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01222874FA;
-	Mon, 26 Jan 2026 22:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4291946BF;
+	Mon, 26 Jan 2026 22:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769465692; cv=none; b=At8pkn+X/05/ti1r5KfzT0Ah+hbydtDSsvq8kfhjpfKc5zvYDosmmTTh0TFUgvNCWSMf9hEyqKT9Qnx5kUZ4bsxlfDMQgq3JPK8U4LAltbANFZRsuLt1VBCz27knkG261lmH015rHQYgk4kmQIVDXrywWBk/y/2rUtaHK/G8EQ4=
+	t=1769467790; cv=none; b=H36U4lQGVgpdJLSI2P0a/HrimAEeVM0baBdDq+CWzrgdgh1+gmpE63//AftSHkISE9xw8WJGzonwg9e8dxhf/O58K59k2vS8NxnfS4ocUT5+Ptu38nvNcUYfF4YxXQaYfsDncVo3/ozoM8JX1YxTCJqRDp6BwjsZ6x1PPpt0c6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769465692; c=relaxed/simple;
-	bh=0PoTJI2SMgFnSh9VOdC7uO8jyV9IdWUwDUGhTs6yflA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ASwj0rC+7cY7xYtGFaXiIsCdGVZryGpUfQG6HTkNVHcsFOng8oM63uyippv0fpt1jEUkR2PGAeXhioO7D5l6egyhB0x0LmtJVAQMu+p+bgOB5KZpBAm6u7EqATr7b3xh0IqZwegASpG/XbeobMaEkG6UBYIwzhtx7Wf54qhJ3zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGubj4II; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769467790; c=relaxed/simple;
+	bh=+P/dl16MiFHyS0Gs3dEXR36hN+mrIl42x0I6KdhwJAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oK2OIStfOkJ12/yDgEqqLFzuLVgwbAY6U6WB7W1zuKY/0yH6ykRkU0fZsPPyd7ALG+jv00FLu97axQnlHZVlhLWFg4NjHt2gyYswm1O+ltGxlJqEFmbNlDhY8s3VxPUAESO0UcbNvOJV+EOp4ORj/bwgn8X2oIbmtTLsLMYJ0IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n49T/2c2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGubj4II"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBC5C116C6;
-	Mon, 26 Jan 2026 22:14:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n49T/2c2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C079C116C6;
+	Mon, 26 Jan 2026 22:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769465692;
-	bh=0PoTJI2SMgFnSh9VOdC7uO8jyV9IdWUwDUGhTs6yflA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kGubj4IIDUu5ygGeZqWZ23489LjMCQtcXf/9VgHXVwGrHANHBGG0ye14WgcSx77OD
-	 tLV5iw2vKij5wYKqkQxR8o6xuBGUdstXd51Toqov3qwJRBC5Nirch1id5KzwBo8kdf
-	 UIDuFhou8mH1kePiDyFxvPxBjNEAwAPzN50SZwUu7O8D3kPSuZRN6E7i7/Exxyb5my
-	 OOjmf8+5L5LdLVr8SGZ+5/Djf9p0XeOoGnO9nr4Tl8dZSIrTrsk+4MAgMZPh5BvsAR
-	 QpdPeEhovhUNqunc/XDASect2nqC63AdmNiDDAVldpqGt1jVytkaQuchUs7yT2TIHs
-	 4oRmJIZf9jYjQ==
-Date: Mon, 26 Jan 2026 22:14:48 +0000
+	s=k20201202; t=1769467789;
+	bh=+P/dl16MiFHyS0Gs3dEXR36hN+mrIl42x0I6KdhwJAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n49T/2c2UUczHvAfb5chNPnFWGUaMa0bYUWx5ZKuAJNf4IGwWUIa6qVZsLv7HPoz2
+	 Yr6wfzTIs3C/WMQUrNrRHfQ+NSyAAxjNowYb6jOwpkYAVnnEliiwJeqPTx5oq8TCAR
+	 n6x1XaKghF9TZsHW0tDwXiVzhmK3r2Qbq/bAreMXInGttLYs10LslcqxQJPodUQefT
+	 CcGh1xYdohx1m06+6817RxhEoLuK2qeZQ9oSQbBswDZ4orzx7vVTdWm12tDAIw8BZ5
+	 g56PyAHMYZafr3gr5D7Y9zX8tNPAFN05HVVp48EWPi0IxWgDYgd6V2Fwk+DZfBVa0o
+	 tWYNtcYy8F1DA==
+Date: Mon, 26 Jan 2026 22:49:45 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Shuah Khan <shuah@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Clint George <clintbgeorge@gmail.com>,
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ming Lei <ming.lei@redhat.com>,
-	Uday Shankar <ushankar@purestorage.com>
-Subject: linux-next: manual merge of the kselftest tree with the block tree
-Message-ID: <aXfnWL8Wh5jKAE71@sirena.org.uk>
+	Oliver Upton <oupton@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the origin tree
+Message-ID: <a8f3a715-6e24-4f79-8300-d8f89430bebe@sirena.org.uk>
+References: <aXeEH-iffNS9VIrA@sirena.org.uk>
+ <86ikcobcxw.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,73 +46,44 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ziJ/LH+GlcP3jABu"
+	protocol="application/pgp-signature"; boundary="hIZWGSJGC0WRepkQ"
 Content-Disposition: inline
+In-Reply-To: <86ikcobcxw.wl-maz@kernel.org>
+X-Cookie: Haste makes waste.
 
 
---ziJ/LH+GlcP3jABu
+--hIZWGSJGC0WRepkQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Jan 26, 2026 at 03:39:39PM +0000, Marc Zyngier wrote:
 
-Today's linux-next merge of the kselftest tree got a conflict in:
+> Keeping the version from Linus' tree doesn't work, as
+> kvm_pan_patch_el2_entry() references CONFIG_ARM64_PAN, which is
+> removed by 018a231b0260e ("arm64: Unconditionally enable PAN
+> support").
 
-  tools/testing/selftests/ublk/kublk.h
+I was expecting some fixup to be required in there, yes - at a first
+glance the VHE based decisions looked like they'd still want to be made,
+though I didn't check in detail.
 
-between commit:
+> So the arm64 version should be the correct one.
 
-  584709ad5ce35 ("selftests: ublk: replace assert() with ublk_assert()")
+I've applied a fixup doing that.
 
-=66rom the block tree and commit:
-
-  3e6ad272bb8b3 ("kselftest/kublk: include message in _Static_assert for C1=
-1 compatibility")
-
-=66rom the kselftest tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc tools/testing/selftests/ublk/kublk.h
-index ca97deb5e2082,e5eb5f762c1c1..0000000000000
---- a/tools/testing/selftests/ublk/kublk.h
-+++ b/tools/testing/selftests/ublk/kublk.h
-@@@ -333,10 -217,10 +333,10 @@@ static inline __u64 build_user_data(uns
-  		unsigned tgt_data, unsigned q_id, unsigned is_target_io)
-  {
-  	/* we only have 7 bits to encode q_id */
-- 	_Static_assert(UBLK_MAX_QUEUES_SHIFT <=3D 7);
-+ 	_Static_assert(UBLK_MAX_QUEUES_SHIFT <=3D 7, "UBLK_MAX_QUEUES_SHIFT must=
- be <=3D 7");
- -	assert(!(tag >> 16) && !(op >> 8) && !(tgt_data >> 16) && !(q_id >> 7));
- +	ublk_assert(!(tag >> 16) && !(op >> 8) && !(tgt_data >> 16) && !(q_id >>=
- 7));
- =20
- -	return tag | (op << 16) | (tgt_data << 24) |
- +	return tag | ((__u64)op << 16) | ((__u64)tgt_data << 24) |
-  		(__u64)q_id << 56 | (__u64)is_target_io << 63;
-  }
- =20
-
---ziJ/LH+GlcP3jABu
+--hIZWGSJGC0WRepkQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml351cACgkQJNaLcl1U
-h9DCIgf/S9CKliS83zmVghhi1yeIZ32AA6E5DJMe2jN2ABYSn9B9BzpXndvcS9/8
-VAL+rxxbaojtL/fytWqHkAnMg2tHOFNVnTLlwWcAyOKhVmhqwoYC+W3znDeevF2d
-zEFnzBmhV3VpQQ4tKpb7WlRzNX6s0s5dthx+eS1JGrQcJauDP7VD9UkD1CTFrvwA
-tJmBe/up7r4TO458JJ4n+J9sa9LDW2tN1vAi1UkEUVojTQQ9Ds+gyYnkXsDDJP/j
-EgoL6XQXsI8ctM/OFfvHsRkZABlxoxNwsdSKpqjYjTbRAMOOEKJnCDc4vtBdnOzX
-qfnB2nA8oHS1p9In1y44B3GZEyYhsA==
-=H4mk
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml374gACgkQJNaLcl1U
+h9D3LAf/Yxv3xVWPx5i9nANNANKSAjM8F6Kov6Hxo+FnS+6fl99yCfbePvEZEzfq
+c6+6lNQZMP9xikbKkXn6AQ0HJKfdV0/QwB/Y53730m71KL9maRHVO3Vv92v2aCkc
+On2TDjlExLzMTtXiqU3gTZ5cjKtqoWcbKOVdzznHC+lJ3L0TGa3e/FxhVSrXeV1L
+J5JWRMR0puRTEk+O5NyAR7lFNpZUr8dmxgo8yubbJSUfUT7St798d4K1m1Xu+ZaV
+Y6GXOr5qUFM1pNs/FojGmeCDGwmvCtGEYvehsGJZQVplRhWb00oUlhSuS1/c3oYJ
+D8tE7gUBTmg/wcKKCwDT1Kp5VscNhA==
+=mlZz
 -----END PGP SIGNATURE-----
 
---ziJ/LH+GlcP3jABu--
+--hIZWGSJGC0WRepkQ--
