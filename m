@@ -1,142 +1,122 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3622833970F
-	for <linux-next@vger.kernel.org>; Mon, 26 Jan 2026 13:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C340C239E80
+	for <linux-next@vger.kernel.org>; Mon, 26 Jan 2026 14:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.181
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769434284; cv=pass; b=XKmuNTmA2A+t2wCkqEC2kONcIihrtchO7RhghIwOOiLrdD2XOUarjAznlOWzQDb051KzOwrQuaS/ECaEljeJ5a8Ee90t9gFXwz6PLPUn7M+jLKmq/buRgs4lg4+XmSP36gDsDR+eTkx/ubTslCwASATo1307/NN8Bi8k+4hfhLQ=
+	t=1769437918; cv=pass; b=KWYyfM/Qae/6Q7aT+6HvjRjnmLuz+dLbSdaeFadQ4SlmE3vZ/Xbta11ji55E2seh0oHRVvHfITCN5W0EcDEQyzTcbKqsEhZWFx8Jj/pXWNqh7xRkV1dcYLyoAOeWCCPGVR1TyIyctz3hBoOy1WaslhHl/QJEibiCRXex8j4DfrQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769434284; c=relaxed/simple;
-	bh=qt7mlIklihLmjkDd8dY8YfWhhgYjyiAJSSlIjNdSFLE=;
+	s=arc-20240116; t=1769437918; c=relaxed/simple;
+	bh=xi++//p9mPgCpqvLhDy3ZiOM7NuFTZ1rJLnz2axqRFc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BbwXDoOs3xgkMn0bJnhpnE3VhkrZYKS/uVr9VxeOqmQGu05qMISgeog4EsqReySfDA6bU1fyXFfBEC04Mq34Bj6CSo8pKB7rOJbS9QFz6O62kDghslJi9TBfXqJjzJJPqb0vAjmLjzRXKLtfJxJcEH+g3v9mPUlDHurEFlHPn98=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=amPjoFtA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dBsB2r63; arc=pass smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 To:Cc:Content-Type; b=h8msFJW44t8uFfSCnp4TOsMDD4rm7FYg6+wabCwmH3CwVg7iYuqFF5U4lngTrUXPt89c24vCcSPGSABZ+1+XLNtn7YRdwpnpZAulqCx7J17hksBAMNsBHLT/xq4msAjGoSRK5zMjvvOyVxQ1OabqgqgPyA4XDTe6qbn+dBq1HXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXKUevzw; arc=pass smtp.client-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="amPjoFtA";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dBsB2r63"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769434282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dlb3MXXP18fpDwvU4AfALafX8e8k9Ge00v8//yPYZZU=;
-	b=amPjoFtAozPTJp2xDNxGCK+n9qFtLWdby3e5NJE5ugUdbgqeGAku6d3VNSIM/2g2wyk+fq
-	Y+G8NrLDnBrwNvzMBDdxoxe0MkWreUUP3quvnLfhbwyZ5LLQ4pgZrWucIl8JxD3axqZS28
-	AzKu4fbDtUmbiRzhQmLUlfu7Ggag2is=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-Ivst-LKkNfGwe5vG2fpK4Q-1; Mon, 26 Jan 2026 08:31:21 -0500
-X-MC-Unique: Ivst-LKkNfGwe5vG2fpK4Q-1
-X-Mimecast-MFC-AGG-ID: Ivst-LKkNfGwe5vG2fpK4Q_1769434280
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-78e7aadfbbfso47427137b3.0
-        for <linux-next@vger.kernel.org>; Mon, 26 Jan 2026 05:31:21 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769434280; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXKUevzw"
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-2b718524994so209902eec.1
+        for <linux-next@vger.kernel.org>; Mon, 26 Jan 2026 06:31:56 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769437916; cv=none;
         d=google.com; s=arc-20240605;
-        b=FSAiHIll3A+Ai/7CrFV5wiYXJaKat/txnAaTUwWirHwZntQDS20mcvARHLu/QH3AXw
-         o1lC7cCMxXL4syDueeKvHsimpgewTZffcd14vYXSfQ6M2u6v3NQ/zm1v2ojhPR3gWFVM
-         4Vxr4sSL0P51lt32SKVj4sAfrNtRqP+syju3NwtQF+LI1AyQRkDZrgTmrk7UXxbJOTGI
-         Z8EJaX4cj7MW2BSRGtuEd1wOPjzfyZpaYQB/lh3fO6X0FbtwipIWN2tbo8ON+dP+yAag
-         1ZfOfq/exks+2DlhaMehQl4pKeXo3EYuoMloPY2zRp5uw6KexdYLl9UsjPQXWelzEIK8
-         WGzQ==
+        b=c7xRomEMRZIE5DuYhIjudjZurxaEBABw8pUnEYeA8DydK1hF1orSErBp/d5da9IBTL
+         pSr/ZSeR/WmjgCHiZa3m1+2RtQnYnx2weTvfXB/VpePZgwUfFHkC5Dc1KW+B1nEUn4XQ
+         mxkCM+DBJgbQSumstTQxLIgOPBFYRorgWERrC4GaocOPOVHl1MANhqAKaEsxCrMK7ZNU
+         XGsJZr2GZ3vZUsDWOPdptW3z203s85UK3+5XiWFVP6F6RfPHmMda3G3H3obDlN84BNcd
+         KG2S7hIz9JGHE0XEXZhHeS+qGopLDh5mo8W6ESukdvSFCL3gpc9M8jEYQTgg0TVsXdCu
+         8F6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=Dlb3MXXP18fpDwvU4AfALafX8e8k9Ge00v8//yPYZZU=;
-        fh=D0WAnH3RYko0IysOZGtu5LLc1PgDxRm7aHEOQCb/ZLc=;
-        b=QYAeyfzPWLXtIN4CAmcFfXiQMpS9g6gewTqMmm0/dNckMGvcbwHNep9s06Hc+rmr5P
-         RUrDyADJXQlez/I/FKM/oXYYuILKmAl+v1Akif6XWvXWMOHXPbNFKOZP1pfWznvHGv6/
-         +y75520PIATb7Ju+61iKQtmBzvX9ahpqSit/yAk98FvL/omVkcAvCh3BbxVfscQ1GFyt
-         uDDVXFeRyrjxyrGN9OAtLUEW7WqjT5ZvMN5na31LELVWn8C69gMUxvrHDExg7atBa+wV
-         121w7Ning3VtCYuPpz2U8uFH3QZSRqP+6niVEbHkWs4E1zYOR8WCrOZhTU2EW+5v3ahR
-         VdXA==;
+        bh=xi++//p9mPgCpqvLhDy3ZiOM7NuFTZ1rJLnz2axqRFc=;
+        fh=8QVfzxcm24vprt6cVVOkov7CblmXwAVygyjrGju2pJU=;
+        b=IWBCVfY+iB56M1I2xTLrkvX4JOhL4rY+Z/+k05XRdN5Ek3/OQhnQsxxi5YPmBFJGcW
+         HYGBHTldakcdXEtX+NvVaFRY2KuvsjdMmhlM4iYMVIr2+cOQyMlU4UnQRRKemM+xbHkG
+         LHo4NgTVrQ4Q/qGOtuKxa/fxNAQdQyHsypf2eLekA53VlZnU3HAow6E9hQfaHeB+7ZRG
+         a+agD7KZc8hzegNFv0gN984aEO45FFconaajI1LFGjhmbSQAmMuyQ7nHeKLPuUe5mbhF
+         KTRqt2PRFKkktgY7z/KFewusSo8f7YJEQgiyzT248Rt+/ybI+DTVn6OlQxeet8jew5K7
+         Jt8A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1769434280; x=1770039080; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769437916; x=1770042716; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dlb3MXXP18fpDwvU4AfALafX8e8k9Ge00v8//yPYZZU=;
-        b=dBsB2r63DgE30hV+OufnPcAQOAosZRGwcVjEPGKE4ryQEyAwrtQkKAKity8u18g1qG
-         YkAEZ3H4B5Up54YZCynTjzaLOGXXUA84oCsq4w1ODiPk3tXOhgXJRrDkPN9gNKV/+KBr
-         8qBqh//p3Z4jt/dtjY0X5UdBovhoEPMUsJWsykOZNArCUIkgFgIrjx9tK2ZKXnonaqtP
-         oIUsZc4R8F+kBeZKYvD2h0tR7+YGgGYHi/9CInuUpml7L7Bho8PPwBN29mAHcrx+2jtO
-         WAAkUdwgrkd1rJELhM05gTNlqipwFk5qdS4DXqJ0sS99v3y9KTeg5GNQSTSUyS3qaoWc
-         /r8g==
+        bh=xi++//p9mPgCpqvLhDy3ZiOM7NuFTZ1rJLnz2axqRFc=;
+        b=eXKUevzwdoAicv7M+hOqijDOLWs5dkDxldHf3ENyVVMzn5EHps+SPwcFwq0y0smZGT
+         RLDJCd6KbG+v2YPFZD6oclAOH/G0EgStHMyy7fGqVY34VEcbsDrerN1SdziKMWu4Hj/I
+         avFfuGW0h01vqGLBBHqmSuyNHXJXbzpsGOO1ELFO4ez2lrPQIaWVD2j9a+gMYgNt/fyS
+         rh73Nug1t+Md1IVwrpFH3wiYcRSNVbNcEJAkZnPr+o+8++GWFNavaohKPyOKEhxCKxDG
+         Lbauv9I89tF20pAN7eCml/TjD3c560haE00rOuAt+7/HPSzZ4T4Xlg+picBKqYlvcnf1
+         EBgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769434280; x=1770039080;
+        d=1e100.net; s=20230601; t=1769437916; x=1770042716;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Dlb3MXXP18fpDwvU4AfALafX8e8k9Ge00v8//yPYZZU=;
-        b=Movick4t06WdrQMoaOCmTn9Au92B8bVsFixxfm5Gw/W6dj3b18+ygQrJuUj4lm8MMH
-         PR8l8HaH89Y/SV9RzX90ZK6jC90XkcqpuCzvSLZbSVm2Z4IVXlK814d1KBj+UCHzsZjg
-         h5iPEIKuAIKxvNke01jHEq0PsQSvouU5tGLw595eYcw95JlvtZJyGSzZpSiWYYL4C0H1
-         s+SiS6KXd2evzLOil8zKlRn3/GU54LC7CV4JKX5MNqMp3nvS+GwQLIBX/DrWIy2wYyYf
-         DULZ6HmvZxht5g6BN52k6Vbw4RxIJLvx2f720i9ipo5OvjHfISassHA2T67j4xJUWeRZ
-         u6nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXi5TbnLjK9aOp+PWovJ1HZtmddRLqqFTP9HNOXdJhjOVv70ZraxILDXOqYIysi8AZ4tWI328RzJTUx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwX2YrM74+tmyBRNJHG55qxLS5s2lIJh8Ad6RuKiUz2BM4de0a
-	30Qt2lE4eFVb5M3HIvZT/3RmDkRKi4a0lOyZ2itaKZcXRXJ0PGZ4JvxEI430dpV/GCAhlmI8O5d
-	fY+SQcptCZoYSQWorv6D/kr4F2ZfAV8q6ncIhHM7X/HYmCgiiz5emyiTL/26loAIDoTAEPLAXw0
-	b+joHH06cEMiHzVJDDe7n48mDb8qSBQCPxH+3A1101HAJtYA==
-X-Gm-Gg: AZuq6aJdruMf58HonSqFuyTem99C30BmiWi4QsQp5IiBUs9kexlPR2nHj8odr4/7Kw9
-	s0NBgwTM/pkT0XMNzS8YOon3fpVQmMeuTsmpBZZSHDFMAs3ay4G9pLO9hRSF4Cu3Vz0NyKFiWSQ
-	TazsGWVp9X5XrLdAzcfbl8KDMigsgHFU69o2XOWiowQ080FO2B0ce/bHPYhay++rc3K+dDPfs7H
-	UaDFPuOFZquKTz1e9W1b0evIhlvFSltoCcseIPSBlX/5vOzT7ZOQw==
-X-Received: by 2002:a05:690e:120e:b0:63e:1ee2:eb03 with SMTP id 956f58d0204a3-64970cad41emr3320852d50.45.1769434280398;
-        Mon, 26 Jan 2026 05:31:20 -0800 (PST)
-X-Received: by 2002:a05:690e:120e:b0:63e:1ee2:eb03 with SMTP id
- 956f58d0204a3-64970cad41emr3320840d50.45.1769434280049; Mon, 26 Jan 2026
- 05:31:20 -0800 (PST)
+        bh=xi++//p9mPgCpqvLhDy3ZiOM7NuFTZ1rJLnz2axqRFc=;
+        b=hzkJOV8+RRiLbHt5fWAYRUaXhhoW77CBkeDFwGCh1+8PJPnWYVZGt0TdHT2VWC4GaH
+         VrCE+CBIlguHsduIS1pUUMyE257616IcSW9OGDVAHCTfbPMiwb8wdugpcN01A3ATZJEI
+         Sh5WNFm3IG5MUj94dmlpQlyl+dqLn/+7IzAnGLEUYc5i5cFOksLCdg/+amJYJD6jaIZN
+         dPCY3/6O1r5gavbcmwJ2ChWES3QG/G2sXtsghktblt97QGZd+Co7i33u7P+zWEbnLmuz
+         YQ8dVVxGm5rzOBnITb76ViINE+V+y0ubpOe84QuHyzMISd7fv3vedQO95Gn5mKCod/ut
+         n/tw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7TotxcuwP7DYOtAOujaOCB33Sp5ZZ3sso2orM2H/i/0Fp9QrZasEsbDFQa3gfKxXxCTYsfNbtaTpW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDmGOTsUwy6MI6o979ycNHOEPx6OgY/VlsV6AJPvr0Z4tCac7B
+	pyU0edy+mAW8lJZ6NbFVsqZ/cJ7togf51YGOuD+FGZK8GrTxbvrAs7cjAsHXHEoswvRLgWybJ9+
+	KCWcpo5AJ8VZyQARmugnH0+uYJ93Wzwc=
+X-Gm-Gg: AZuq6aJqNZnhkGGzZVlXk5eG4fUKsc37Ag4kkUVk0U4L/YrvA/cnFmGGJVIJgzP2VGD
+	6z/sShVFbabClQZpbP8YkFaUH5acmBwDvBKyDoM4z2Q/lUtqbBe/mLRs88L95KkCLHjR1Lvwien
+	rLT6TQTYFOefjevgF69tPEX7Lh4gNKuL1SGo+OKHVgFhVahtkDmyrEUOwTSKmioWpKgGgEodecp
+	g16GaTvIX1uOlO6KN8g73eIezO7jbSOIxw/7uwrGnBuzuaHnh95UsJGTJYSedBezBhlq28Mupem
+	KVUnY7pV5We15NO2+iHBfCEJcQzoLU/lXOsvDyqaAlHAouABaLh5nyWaFeiBwAeeRCeaZD9sJmi
+	UQwbLYuzvcBraRh1LFJ0YPi0=
+X-Received: by 2002:a05:7300:730c:b0:2b7:103a:7697 with SMTP id
+ 5a478bee46e88-2b764828e58mr1098566eec.5.1769437915831; Mon, 26 Jan 2026
+ 06:31:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aXdcYzuVogTFGWyf@sirena.org.uk>
-In-Reply-To: <aXdcYzuVogTFGWyf@sirena.org.uk>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Mon, 26 Jan 2026 14:31:07 +0100
-X-Gm-Features: AZwV_Qibe7YFWvz2LiMCRQSZ99I9A5DO5qKbpyaoD5sbifka9nP1MsK04YXYLLo
-Message-ID: <CAHc6FU6y4S46nCKHMmxtRHo5rEdbTdMVsxyv_VTzHGCa1A8i6w@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the gfs2 tree with the origin tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Steven Whitehouse <swhiteho@redhat.com>, 
+References: <aW5xqLq7gatOy1DV@sirena.org.uk> <fc855e76-5f3a-458e-82f9-f43c7d23932e@sirena.org.uk>
+ <CAJ-ks9=V_JmzEaXUrHPm6K-DyTgkxEhrPCW=2ZgDJpc+4Z83_A@mail.gmail.com>
+ <27b562ca-d79b-4f80-be71-ebf5e26ed9ab@sirena.org.uk> <CANiq72nS94wv50XyOJq5CeiVQvb0+3mNdWxJpFy_+2FH1x4RYQ@mail.gmail.com>
+ <aa4bc767-8128-440c-a2a2-81fbb6992a8d@sirena.org.uk> <CANiq72njSUPt2CvjBiNyKw1KHSgnMdcBnXNL_pHV4iURYL1n6g@mail.gmail.com>
+ <b17da8b5-6640-46ea-ba73-d2f4a08e246c@sirena.org.uk> <CANiq72kT9ThJcr5W0OhBmbwKZCpULjUehNjijTt8W09yB0CxSg@mail.gmail.com>
+ <CABVgOS=DHdF6XmVUKH1zTML3kV7ozy8BG4o1dyd07BnngpYx4A@mail.gmail.com>
+In-Reply-To: <CABVgOS=DHdF6XmVUKH1zTML3kV7ozy8BG4o1dyd07BnngpYx4A@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 26 Jan 2026 15:31:42 +0100
+X-Gm-Features: AZwV_QgGEyw9CJb-uZGi9661oycpowA5WWyOeY0XaeNPcbQBd660gLmJIyINtH4
+Message-ID: <CANiq72n7EspYnQ-8WLhVAdqsPk1B6=gVmMiWdoCwMxkHC-boKA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+To: David Gow <davidgow@google.com>
+Cc: Mark Brown <broonie@kernel.org>, Tamir Duberstein <tamird@gmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
 	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On Mon, Jan 26, 2026 at 1:31=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+On Thu, Jan 22, 2026 at 7:36=E2=80=AFAM David Gow <davidgow@google.com> wro=
 te:
-> Hi all,
 >
-> Today's linux-next merge of the gfs2 tree got a conflict in:
+> The UML Rust support is pretty stable for the core Rust bits, KUnit
+> tests, etc. It can get a little broken from time to time with new
+> drivers, gcc-based builds (instead of LLVM=3D1), or 32-bit builds.
+> Ideally, those will work as well --- everything seems fine at the
+> moment --- and you shouldn't have any problems with just running:
 >
->   fs/gfs2/lops.c
+> ./tools/testing/kunit/kunit.py run --kconfig_add CONFIG_RUST=3Dy
+> --make_options LLVM=3D1
 >
-> between commit:
->
->   469d71512d135 ("Revert "gfs2: Fix use of bio_chain"")
->
-> from the origin tree and commits:
->
->   c0c8c960ab932 ("Revert "gfs2: Fix use of bio_chain"")
->   910869abc1ca8 ("gfs2: gfs2_chain_bio start sector fix")
->
-> from the gfs2 tree.
+> But do let me know if anything is broken.
 
-I've updated gfs2's for-next branch to fix this.
+Thanks David!
 
-Thanks,
-Andreas
-
+Cheers,
+Miguel
