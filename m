@@ -1,41 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE152EB845;
-	Mon, 26 Jan 2026 21:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A022EB87F;
+	Mon, 26 Jan 2026 21:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769463769; cv=none; b=Jgw60F9btuPdtZnjjoMl89oBwsAUF9Ia29NKnS3d1ZrH0JgjE6ZpGIsEEQAihOkyVFrosFIiV54UOlvkM+nIv+6/BJy808H+attIjSStICxtky9dbafTGZwPtFB2Sdbgu4FQ8UA02JT/jg2m4xcoktCU5QSAB4xxAQhTWrMjTyk=
+	t=1769463797; cv=none; b=fjd/wCLbbNd63f78VxG7eL0IO/EVXPJMGSkzwNZeP0Ta6sJHQcVgJEbtLhS7VqnsmeUMMO8JTNzqYZqjrvEjgZUiy+fuG4slV5NaZ3OArNt2mJMD0kCayggTKnO+UGV6sZKsq1PAeeiiGPhluh7Dx/AB6BA1Ck61ATqyDqScSW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769463769; c=relaxed/simple;
-	bh=0XwfaN7TNermJJdxAEMUL0E5D5F9kfb9ovrqjHdruEg=;
+	s=arc-20240116; t=1769463797; c=relaxed/simple;
+	bh=0pDiwxWDBLpHoviMn2h/TI2v2/8tghZFt4HdfNlf63c=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=b4rP+6apGG+HvyUnxIfz8YeX2TsZzV51ZQM/leFgd3s/lvBkDbB54jqO4gKw7nolI1tOl21AIs8UDpB63MLl6FbZFxY0ylxAtEJkVctDlfPk0uZ2S56Phzt21gpN/R3uFjk6YXy6wz1UpXt+9it7AyHNMAF/CkzeV23M6rOEUuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqadrNKV; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=jvHZSLS4ljr+mY8dYm9Go6DVjBQl9Z7EyaBrRNJExspZ1UwV4mD1K3CRwe9G4DN7HBe7O0L3wfV8DHmIBO+Tm5m98a6DJiTv23MsNaV4L7u5opwcP8YfRN+/hno6ZmYbTLKWKVCMLTBduOTP21ztOC/h1jvcVhnunrYzVAc38cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGm51pT+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqadrNKV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F1F5C116C6;
-	Mon, 26 Jan 2026 21:42:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGm51pT+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057A2C19422;
+	Mon, 26 Jan 2026 21:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769463768;
-	bh=0XwfaN7TNermJJdxAEMUL0E5D5F9kfb9ovrqjHdruEg=;
+	s=k20201202; t=1769463796;
+	bh=0pDiwxWDBLpHoviMn2h/TI2v2/8tghZFt4HdfNlf63c=;
 	h=Date:From:To:Cc:Subject:From;
-	b=jqadrNKVWnvbsz0APuZWRDVAIxb+Y2V57g2v8bO2ep+taLYr6yW8DDshejKjxuYCq
-	 6uUPsh3OhGR2NzLALnQQdgWlP7zhK79z7IitegI8KYDqHn388cqoC/1K74z0B6nMra
-	 hDEDSfqUp4NG/IcQAY+5kv5aT1T2hG6K7dgxZdYg5GA1yWum17LL3YjYMmCwFKJ7r1
-	 fBM9vjMv5TVhxP4SR9J2XRXXPG+6pHi4fmNulaxZA182eR4Rur24AcDvWsuEJo7oCl
-	 nRgIiKI2Chq7qw2nA1jO/U5DHuTGfPn/HQDNALwPgTTgJF2/OuVmODOfDVYhNn5BuA
-	 DAEO6No36R7qg==
-Date: Mon, 26 Jan 2026 21:42:44 +0000
+	b=eGm51pT+D3dK6PqS2apdw0nYntVPq8Nq47bBeyv4cNQC6WcHogEVi4A8KFyGZMorS
+	 WFJ5WbE0tbTtt+ngpTbJmarqx0H4kP+MpPJ2hZ40gqXfzGexytZos6nCgDF76H+U92
+	 784K3eIB/sGodL5ZrKA4KmpRRJVDjE/Y7g1jn2Q4UN5wagu+XHRwvqnCyDt9diA6gv
+	 R0Da8v/usd7RhpFlPttvASgFKVyljcfOYd09kkkK39Q6n4x9HztCf4E9o7x3idW6T1
+	 IdpiQffhWNnEl7cVU2wEbysbqltUIEwCcPJphQf5XLJfKBWQetqGETbq2kptBl7rB+
+	 vy6MMy2V/QZxw==
+Date: Mon, 26 Jan 2026 21:43:12 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the mailbox tree with the qcom tree
-Message-ID: <aXff1Fr89fqs5CEO@sirena.org.uk>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Melody Wang <huibo.wang@amd.com>,
+	Michael Roth <michael.roth@amd.com>, Will Deacon <will@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Zhou Wang <wangzhou1@hisilicon.com>
+Subject: linux-next: manual merge of the kvm-x86 tree with the kvm-arm tree
+Message-ID: <aXff8E59WOnTEA59@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,34 +44,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eUgEMA620yunzck5"
+	protocol="application/pgp-signature"; boundary="Uc0MPH6g9gemGvcd"
 Content-Disposition: inline
 
 
---eUgEMA620yunzck5
+--Uc0MPH6g9gemGvcd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mailbox tree got a conflict in:
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-  Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+  include/uapi/linux/kvm.h
 
-between commits:
+between commit:
 
-  65ce09d2f164a ("dt-bindings: mailbox: qcom: Document SM8750 CPUCP mailbox=
- controller")
-  58e69e8f9c9a4 ("dt-bindings: mailbox: qcom: Add CPUCP mailbox controller =
-bindings for Kaanapali")
+  f174a9ffcd48d ("KVM: arm64: Add exit to userspace on {LD,ST}64B* outside =
+of memslots")
 
-=66rom the qcom tree and commit:
+=66rom the kvm-arm tree and commit:
 
-  d96ebba37b7d0 ("dt-bindings: mailbox: qcom: Add CPUCP mailbox controller =
-bindings for Kaanapali")
+  fa9893fadbc24 ("KVM: Introduce KVM_EXIT_SNP_REQ_CERTS for SNP certificate=
+-fetching")
 
-=66rom the mailbox tree.
+=66rom the kvm-x86 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -79,24 +78,34 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-index 90bfde66cc4a6,9e91247c521a1..0000000000000
---- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+diff --cc include/uapi/linux/kvm.h
+index 88cca0e22ecea,9b96a6e73a53f..0000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -180,7 -190,7 +190,8 @@@ struct kvm_exit_snp_req_certs=20
+  #define KVM_EXIT_MEMORY_FAULT     39
+  #define KVM_EXIT_TDX              40
+  #define KVM_EXIT_ARM_SEA          41
+ -#define KVM_EXIT_SNP_REQ_CERTS    42
+ +#define KVM_EXIT_ARM_LDST64B      42
+++#define KVM_EXIT_SNP_REQ_CERTS    43
+ =20
+  /* For KVM_EXIT_INTERNAL_ERROR */
+  /* Emulate instruction failed. */
 
---eUgEMA620yunzck5
+--Uc0MPH6g9gemGvcd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml339MACgkQJNaLcl1U
-h9Bnqwf+IS1XhXRs1CUKOSdnSGIzApH2mNFPgSq3a/1uZNzqs3duPIlziSeynwGP
-Lo0RG454kQZbrNZM9V0UQIbHB8HYqTxVDw6+AKhtlsU6k2NnoOI84HroT/fortGb
-aVIjP/uqLrnST3pG08cVBqAMtUB6BPooFghWMZ+c6n5DxeTGM16sCNWUc8Fmj/xr
-0nMja7HsjUuyOQdjO8NOqDtfXR2Dz4Ef/hiH2xYPzBASYoDOD3GZypoO5QdlYvgw
-Nkf38jD4n7wckeF83ZSTVc2xKJVspyKJVWvJRY6q7oROxGEGdUlJhur+AJnhRfsJ
-HYD9JTOJ9Pc6urVrK1zZxE8WKL+fIA==
-=vDm0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml33+8ACgkQJNaLcl1U
+h9Ad3wgAgSgyzgYnOEJ0xwKzHYsJWjOlnv8f/zgtIVpyBwunyjJ1S2VTrqiP2aMy
+PQv7Ebr2htVLuDSIcUFH/jC5WgRruF0Zf7+zRiS5ISr9bfbw12fEnbW/vc226GFl
+y9LaHt+P5IRciULUg9l6J0on2HN+A38XrRyfGvVWGi+tNvzDLQoIyseL231MrA55
+w2VP8APrrK3tl/p1QRpA4cvGjpbkRgPFdxM5hybujuwH3G4cAG4+yvyoR1f8H/l6
+mIQUDMcyQWjO5MOonQXWAKLRlKsN5B8L3RWkDJ67GfpTKLL2lUzyOd5lMS4FLpDH
+7t4R9VJpB1EpoZdiYpyY06eZZhyVag==
+=ro+j
 -----END PGP SIGNATURE-----
 
---eUgEMA620yunzck5--
+--Uc0MPH6g9gemGvcd--
