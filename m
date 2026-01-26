@@ -1,40 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2079B349AE3;
-	Mon, 26 Jan 2026 17:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997F534D902;
+	Mon, 26 Jan 2026 17:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769448807; cv=none; b=Z7hWtvCth4LJTp/ENzGjEEDNekbpF/1ejxbDpc4E3STUz+s7xf+kusHpxoMdoMjV7P+5LnxAZCqmILYseMEVe6UMh+v2Bp2mWs2GnPxEQUvANHy0FjZOuEvF9M2sSBIks77yUW/Awtu+1g6HnhAp09L4mQJojKUhFR8yDTCVTO8=
+	t=1769450292; cv=none; b=Q5PIZV6EraXeIfFBX82YO80ZAl8/7p+eJXXki2DnWgEPJ/BRuR61FfQI3g2zbzZvDn7LHE40TzvYNX0tRmMfopfgb2S5DFQpqeTir6OKiYAcpRUjnitAkV++Gv4lTCPaHLyLRt+Dyd4LqIRgS9j3jw6E9Q6xRf1OYu2uE8WHnU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769448807; c=relaxed/simple;
-	bh=RTnQAThxZQ4mGDr0FVtCNU1odvU8zVd00HzieRYHjMs=;
+	s=arc-20240116; t=1769450292; c=relaxed/simple;
+	bh=kuQG20g8zvZ5vAgg1w+mMVMd7qWXKLVSY6x84fQoFos=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H/g0XNDXrkYBLwxzaWps6io0zwc1Vslai6rnt/FtLUSN9fve5pKkRw4oQTe+O59CPCSUJYlfmSpHBSqIi+bpMDjTbEAzTIMVRl26VTgsjb/UT/i6RdoWEcomL7AaNk7Jjzs13Q2n5pdd9kNDxb/u9WW7vQLdI7XzuXp7D3/zkLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFpCwAwy; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=Y8/q1re50F2hXf5Dcit97Aq/jHg3XssYWogLiFV8Em3a7kgt8OJ5v0HnFkXnGEGyz+kV68svNakclQGX/XAHHO2rKIJVldp9bPVc5atDk1Hi+oTsN4xutYnNK62n7bX79jre1gnCPwj+WpuqVP5DUNag9GNYGyZj0pGP0cj3qg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcIJGIkH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFpCwAwy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A92C116C6;
-	Mon, 26 Jan 2026 17:33:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcIJGIkH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E1DC116C6;
+	Mon, 26 Jan 2026 17:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769448806;
-	bh=RTnQAThxZQ4mGDr0FVtCNU1odvU8zVd00HzieRYHjMs=;
+	s=k20201202; t=1769450292;
+	bh=kuQG20g8zvZ5vAgg1w+mMVMd7qWXKLVSY6x84fQoFos=;
 	h=Date:From:To:Cc:Subject:From;
-	b=uFpCwAwymg82JGRuNsh9iJqlqWaGs9VusJ1j9WNdfR1eO3rSh3/UvQ1c1L9E//lib
-	 CyvxN5DmzInDUpn/9WV5CB/2tzHv+0EprktLjFOMpxrwsK7Q2RnLTRV7RscvBvUx1d
-	 ddJ/u3qZnWQZ/UvjrQ3le9pVAAkk4YqYT8LXAmz+4kLbdy/fUynm4q17A705TTL+kQ
-	 2Q2gkHhz2ydCUK3RaW7eN4CidmIeiUZkOVjsh+mqhPkjyeDEH9WbKRnrJ5ySWsnmqZ
-	 QuT+0veb2dmZsUThBn4RrezYjpgHDKeE1lIO7PXKc2rWmcIEacfFOnKuI5TwN19Cv1
-	 887HoVh4xK7nA==
-Date: Mon, 26 Jan 2026 17:33:22 +0000
+	b=ZcIJGIkHyPYQJGCDm5Cq4L3c54KQnahQcHg3FMYMCrpI9SXEimKRCKhc5t8Ls+ZLm
+	 p/UcO05fDt1uezQObCWXqZFl6SYTYqoYMK7fC5cZtiD0e0U3WrBWJpWeWaT9vp/O37
+	 Cg5515GDAEO+sSoyhvPs2n8LTpoKHwZyH0eAoUj080D6TEgVZXQCQxrKa7JdPYOn3h
+	 YTBQiB8XnL98UrSA69klL468I3mHwvWIKlUULqKhMwqfcAuNAzNtRD63aEEfgZo7VI
+	 RmTNOA0rkMsowVqETGOg6HwZlVSrDxzpG5KjtKAIJ/GKh2n3j4QB5bfmul3uVznKY4
+	 yIST0dkiKTpVw==
+Date: Mon, 26 Jan 2026 17:58:07 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ipsec-next tree
-Message-ID: <aXelYpP4MFOuc4vY@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	=?iso-8859-1?Q?Lo=EFc?= Molinari <loic.molinari@collabora.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: linux-next: manual merge of the drm tree with the mm-unstable tree
+Message-ID: <aXerLzIbpMy9d4lx@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,46 +44,72 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BZba/mD07nBR9scq"
+	protocol="application/pgp-signature"; boundary="1eFnNaNa6x8oeO9X"
 Content-Disposition: inline
 
 
---BZba/mD07nBR9scq
+--1eFnNaNa6x8oeO9X
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the ipsec-next tree, today's linux-next build (arm64
-defconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in:
 
-/tmp/next/build/net/core/sysctl_net_core.c: In function 'proc_do_rss_key':
-/tmp/next/build/net/core/sysctl_net_core.c:333:23: error: implicit declaration of function 'hex_byte_pack' [-Wimplicit-function-declaration]
-  333 |                 pos = hex_byte_pack(pos, netdev_rss_key[i]);
-      |                       ^~~~~~~~~~~~~
-/tmp/next/build/net/core/sysctl_net_core.c:333:21: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-  333 |                 pos = hex_byte_pack(pos, netdev_rss_key[i]);
-      |                     ^
+  drivers/gpu/drm/i915/gem/i915_gem_shmem.c
 
-Caused by commit
+between commit:
 
-   37b0ea8fef56c (net: expand NETDEV_RSS_KEY_LEN to 256 bytes)
+  0c21ec1416a33 ("mm: update shmem_[kernel]_file_*() functions to use vma_f=
+lags_t")
 
-I have used the tree from 20260123 instead.
+=66rom the mm-unstable tree and commit:
 
---BZba/mD07nBR9scq
+  a8a9a590221c1 ("drm/i915: Use huge tmpfs mountpoint helpers")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+index fe1843497b27d,6ad1d6f99363e..0000000000000
+--- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+@@@ -494,9 -496,11 +496,11 @@@ const struct drm_i915_gem_object_ops i9
+ =20
+  static int __create_shmem(struct drm_i915_private *i915,
+  			  struct drm_gem_object *obj,
+- 			  resource_size_t size)
++ 			  resource_size_t size,
++ 			  unsigned int flags)
+  {
+- 	const vma_flags_t flags =3D mk_vma_flags(VMA_NORESERVE_BIT);
+ -	unsigned long shmem_flags =3D VM_NORESERVE;
+++	const vma_flags_t shmem_flags =3D mk_vma_flags(VMA_NORESERVE_BIT);
++ 	struct vfsmount *huge_mnt;
+  	struct file *filp;
+ =20
+  	drm_gem_private_object_init(&i915->drm, obj, size);
+
+--1eFnNaNa6x8oeO9X
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3pWEACgkQJNaLcl1U
-h9CXvQf/ZvmrvGtqc+I2r3nNtsBQnE/KrW2v5gJi5ML+iNQyYo0k5N4XjGh08baX
-V96If216kWEJFu/kLhxfpeJxbYKjifuu2hZ55imH5fydMKP4VfnU+mlzrnCatfmi
-Hb8UWAg5CzIKo+2sl9UmWzlMPm0l4M2mWwfsG5li9Xrj8lUnhHkDK58I6bxTtv8k
-9NaGRPJHvz/LeNNJGxt+fLY2e3HPPmVk1ZvUgHNn1id4NpXUtquZWIaex0BQpW6T
-+qLJKzB9rtAxBzPcW9NXeEPpqzJV29YM5buqFWo8k7ImqXkxMG8AcG0jDMNtGcTv
-70EYriAut6ndHED8B8r7wwH/sQCMBw==
-=WKbk
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3qy4ACgkQJNaLcl1U
+h9ACgAf/VRMmmY0iN/iFkpxw/bHJPUPV20kF7BeELc1R2cRNJ6Yu8t3LAHatkbm0
+VljYl/3OOgvd2U3npfpxd8DBngWRQ2o7M5yjOm/u5VNBWhWXgGBg0huXQDaZFM3m
+taf+9S40UnxhGwsF0SynJ/F/0+gxflqRfcdork/srOzWQG6tOdV/chMGSmogSq03
+MbqkSxuitXyb4EyFx5VN0tuAkOQQaD4HGX1TYupsBn5aedz444bJ9i6ahk2uNymi
+XUxndnzogDUXlV5L3GVeKcnaM6EL31tC+dmp0rFzTL6Ln+mXt+feTGb4DP3nfEvY
+I/Q92Ub5c1i6pBPRhc9hnIhtNZr2Cw==
+=oFVz
 -----END PGP SIGNATURE-----
 
---BZba/mD07nBR9scq--
+--1eFnNaNa6x8oeO9X--
