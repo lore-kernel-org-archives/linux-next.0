@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD93446C8;
-	Mon, 26 Jan 2026 16:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88DC3375A6;
+	Mon, 26 Jan 2026 16:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769445704; cv=none; b=oCm68UWHF1M5U+eURwy6p6tfAnjS94sGZKdZQyOKJZCXTb81wxbUFuwrUwbnvhYuF3eXXu8cx6bc+IGYSacmmWG4+A3mSWfwOnPm2vSQB6DVcNFKRK9ngKniXz93V0wZqGaorIqP8KWHeFzUn2/odXA5sbZwe2M26WkyYI5aoCg=
+	t=1769445715; cv=none; b=aInBmhqs73inkWlqwHXpXlJFu3P6zJjG7/Hxq7r8IgzwOhcTg/vX1SWYBsO9KL+XPUcc/X1ollO2sViwEUVpeing5mhCi/vGYOZ0TDoV5dRGrzLgkO4+xMXKrDntDKYYFo+hpWlJQYrAH6zO+dALEp+Og9KBY3Oi08a4TG4Ufb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769445704; c=relaxed/simple;
-	bh=9os1/9VL4i6srmXQflSFe3sOQzc73/L+WBkKavM6CiI=;
+	s=arc-20240116; t=1769445715; c=relaxed/simple;
+	bh=fd2EhuaIQolD9fN48YZldF8d6n2I8GC+FGQKQwylFuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ieOAo4z/197moYUssXB2g8UFIw+TzEqqvvOdui2a7NvWRoUfXKTgMJZheLPYnrSw1hEjjPqkDe+3iUF0ojfVqYd4gPmkR1rPM42SkErwvJcLV8Gc/rMvRxKVE2JAuHytYWZ3hwo4scQV7SLTGj2pEa/O4ewF1cQWLeCLEty0tV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKisdULy; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=KHJsiEgBVn3ajEnkAJ6qDbP3S3ylZEm7H2lGlwYTeM4BNQVdtW0Ay0fi2aAH6ldvPlrViZWzXvWxlzRY43iSl66ZmyGk7FuSl4zU1T7vyxf7oRUsgdUE6ooMqap/NleEsN51iBswtRd/LNcGOrpcwDyNGZAbjtZDKdiIeXSFMuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2MU4Fu5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKisdULy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D1AC2BCB0;
-	Mon, 26 Jan 2026 16:41:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2MU4Fu5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26179C116C6;
+	Mon, 26 Jan 2026 16:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769445704;
-	bh=9os1/9VL4i6srmXQflSFe3sOQzc73/L+WBkKavM6CiI=;
+	s=k20201202; t=1769445715;
+	bh=fd2EhuaIQolD9fN48YZldF8d6n2I8GC+FGQKQwylFuM=;
 	h=Date:From:To:Cc:Subject:From;
-	b=eKisdULypygUZlZaj3FEgIoh5XVyBOu9rUmGsLbg7iuavAAYwvk9Q7VatD1ND/jZr
-	 pgvGmtYv91p5eOLf9SbVfZybinM2vaoVe+oE9+iefoNdRd002DMt3PWPliSoHkv2qT
-	 /fV96Tm91GrLjdeWfhzgr0hWQvj3Q+FaUDFoflhAAU6LxHm0lyfMlYTIUFrCjGp/MT
-	 QezszE0Pa43nNSdI3qdLho1Lxjum+3msNaXj5bNzNP3LJb76fHBzfEy3505tHd+VTe
-	 KSijIm96V5+nU1QnpY8g3PomvMSHvsMcv5OHR+EhsRuGMhewxNNorySVfxYH8vgc2W
-	 f9nggUVfP6EnQ==
-Date: Mon, 26 Jan 2026 16:41:39 +0000
+	b=i2MU4Fu5hi6mE50545RqxG96I4IFq3LjnR2tjsJBahp3mWmgGyQsehDy2DgnG9lnS
+	 7wpuiatVO04sidkYdlXlqp9bOrkQJSEpoPdrWuTj2jhFAe7puvMK2VYdZssHWIA9AQ
+	 4xaE33JZDQEtsoiJ82kjLfC06sWv0i+WxBfxUwxiImnS11ybjdLCLz3E2KTXmoV0o1
+	 bYkwH1jqAn5ehemVci3OUfi4D65xGWZQpiilrDPP6AedZDJHzuGKoZ0LoydlDxioNN
+	 l/vZhxJidRKinDETngQ0hZIqrMytebyPEftDKWQS+C7PEU6JPzH1M5O/vhcjSHWhWE
+	 noEqE9Uk9xOUQ==
+Date: Mon, 26 Jan 2026 16:41:51 +0000
 From: Mark <broonie@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+Cc: Guillaume Tucker <gtucker@gtucker.io>,
 	Jani Nikula <jani.nikula@intel.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mike Rapoport <rppt@kernel.org>
-Subject: linux-next: manual merge of the jc_docs tree with the mm-nomm-stable
- tree
-Message-ID: <aXeZQy24nAzwEKF3@sirena.org.uk>
+	Nathan Chancellor <nathan@kernel.org>
+Subject: linux-next: manual merge of the jc_docs tree with the kbuild tree
+Message-ID: <aXeZT4VGXCf3a6CF@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,11 +43,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VXigG6u5s6cIcQCA"
+	protocol="application/pgp-signature"; boundary="X40wF7pY6yuhnbn1"
 Content-Disposition: inline
 
 
---VXigG6u5s6cIcQCA
+--X40wF7pY6yuhnbn1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -57,13 +56,13 @@ Hi all,
 
 Today's linux-next merge of the jc_docs tree got a conflict in:
 
-  Documentation/core-api/kho/index.rst
+  Documentation/dev-tools/index.rst
 
 between commit:
 
-  35c554410d81c ("kho: docs: combine concepts and FDT documentation")
+  6eac13c876805 ("Documentation: dev-tools: add container.rst page")
 
-=66rom the mm-nomm-stable tree and commit:
+=66rom the kbuild tree and commit:
 
   a592a36e49372 ("Documentation: use a source-read extension for the index =
 link boilerplate")
@@ -77,24 +76,37 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc Documentation/core-api/kho/index.rst
-index dcc6a36cc134c,51ea41c6a20d5..0000000000000
---- a/Documentation/core-api/kho/index.rst
-+++ b/Documentation/core-api/kho/index.rst
+diff --cc Documentation/dev-tools/index.rst
+index 527a0e4cf2ed8,4fc9d15f91d09..0000000000000
+--- a/Documentation/dev-tools/index.rst
++++ b/Documentation/dev-tools/index.rst
+@@@ -38,12 -38,3 +38,4 @@@ Documentation/process/debugging/index.r
+     gpio-sloppy-logic-analyzer
+     autofdo
+     propeller
+ +   container
+-=20
+-=20
+- .. only::  subproject and html
+-=20
+-    Indices
+-    =3D=3D=3D=3D=3D=3D=3D
+-=20
+-    * :ref:`genindex`
 
---VXigG6u5s6cIcQCA
+--X40wF7pY6yuhnbn1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3mUMACgkQJNaLcl1U
-h9AqrQf+NcIVKvmLApRBNpWQEa27pxq0pausZXvusYigIaSxLNJ8P5AOJIjP40Xu
-wSc2MulO1CT3/N1l7TTo1dJyQ2T3GKfbnlCv5Tt4Gjdi1M4fSjpPVMiW/kh1mWeP
-gpKd7VMA7gE2vVnP8/vtVGWEaC8qGW5PSgfI7afQ9lHAPStUxZ+MFhOr3DGUJjid
-tCRHzm2xtLQmPjlXqbgPU4HGCes8agmhuKyIkbrTYF3arviy8uQn0SUlZuwFG+Oe
-/KUv5id2sWrnp635ZSmDTPQyrUVpK5Mr4zHqq3mlFMHm/6s+Wto6fLqQ4jokwzhy
-WJk7gfgt/aX+avbqkxZhsNH1Mi5GEA==
-=hBO5
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3mU4ACgkQJNaLcl1U
+h9DZSgf/elMF+/T+mrIQs5O7t35bUuXVJcXjNv3LSCWCeYms07KuspHruXBwNaUW
+fuSkyqkZHJWqbaLqCn0kixQdon7gL0B065e0rdUxl7/yw9+RWG2xhNPTJcKSGpxP
+Q4vsqbfKHDdpfAnXDD2Wzw7PDKWM1LBeDFJPiH3LCKbLfVs0QRRkPZaOwSCZNPo6
+YW/zPkQcgTwb/9b8jgFdJqIyIRGznJOGyfh/+ld7Y87u6uH86jrfeoCxMJxcu9Kn
+uzsvt+G0xNh+IHc+nNtbZj26uDjQ0Z9HPYSStQrf80ssch7nNrAraPf3Zi2XZabH
+cOZW8fQ/w4R37BYioUAP/oq3dA7EKA==
+=wt8Y
 -----END PGP SIGNATURE-----
 
---VXigG6u5s6cIcQCA--
+--X40wF7pY6yuhnbn1--
