@@ -1,90 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2B283FEA;
-	Mon, 26 Jan 2026 16:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B06336EE9;
+	Mon, 26 Jan 2026 16:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769443694; cv=none; b=IGXO2IGW7jCPdIzUmmEvmw33GfM6roQc7+wRmsxAXCr16D6scj8myYhyk+E8nYQFuVTG7p4S1bB8E5i65lBTWMl/cL4arGYrN8uvoHKhuyTZ+t44uDwhIeTx0jzum/6SsNLhtlBUvJo3YnVB/rJkXi/4TGuSLAEIrGtlIVocPyo=
+	t=1769445690; cv=none; b=DPFlgxH8FmIC1+B0zun3I80XnF9GPupOSHzPO7Zt4Wu+jiVI/GucROFCJL4rIUN7gHaDITkfI27FkOU//XhcyNKRWebiNmt69X4wjXTfc86KzdZks36ZLgic/vHqGTayomo90xmNtDLL3FqhUgNy+vl+tN5Kh7IN4dpNAGg8iic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769443694; c=relaxed/simple;
-	bh=qfZll0rizhG+zZ2fPLEbuNTjJdqLOrehIO+SRzebdbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsD2vHKV9pq46iybD3sU6+YVbX/H0JbugHEOaBYjgmN5vrfPVjo/bvpMda8Gf+bYLIWOXdRcwYQnij+Cg50Z6XlcG9VqHfOzV2GLsXWjq4xu4KrtJuTMIkwtxCD7+EBD8j55hNsMuVTcy1aNYne+75iuUUdMdcNQYhU3a2UnFcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BY3jXWeH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769445690; c=relaxed/simple;
+	bh=Z74lkMJb3I9UKlJrSNVP86KkQlF+aZZsJUIMVfLvrVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N28KgTOz6ixGDHvI6qaNNWaary56QBRMKBxEROSqtB1SjhZWyOF9I92fZXoAnNt8FzVKimTYm+Ah3FWCfBoKS3/cY7pEwMFhOZEz8V1KvZdrc7HCVhonlWUaPVYGhYL6IZGHHTbY0JBNb8Q9H97nHwduadOEUx77kRJ0u3W9RB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljWBMUeF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BY3jXWeH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B089C19425;
-	Mon, 26 Jan 2026 16:08:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljWBMUeF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A446C116C6;
+	Mon, 26 Jan 2026 16:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769443694;
-	bh=qfZll0rizhG+zZ2fPLEbuNTjJdqLOrehIO+SRzebdbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BY3jXWeH0+RuHXaARdZIySrrQgiq17pLfHc/5es9CauiAwHbpG0JV9rB2ZP1MsBNJ
-	 6wqbWNCisj5BchZtpPy0atwXNaNOGMW3PYrRmfyioNOrnoOwWPj+GxNR00b/XyAGlM
-	 SUcpf1JWWAJeIhVgKMb3Ipq+KCd+CPi2eHy0FJbFijERx4lDGEVmMVwyiDP7Q+Aznd
-	 OmGCAmG5o1EK8e3m7MZmH7yNvFz/jcgTSmH9bIsVTHLgukSK5nFGm7AeO6BSlEWuyl
-	 iOGdJARp3CPpDQ6IMrO51R7MzyXAepevyynWZsj3bGJYjlU4Z5zL+WphoexeMmHqLM
-	 4D9SP0/ZyEbOg==
-Date: Mon, 26 Jan 2026 16:08:09 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: maz@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+	s=k20201202; t=1769445689;
+	bh=Z74lkMJb3I9UKlJrSNVP86KkQlF+aZZsJUIMVfLvrVA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ljWBMUeFBnpUQcFtzkEuIe4gZVvUkq7BqaapwOKnNQmVPy4Pmb4goUF/EymyhNfli
+	 M3BQLE9tr9QjgZO59vIeZC89hoGfBVxVD30+wStJgBM+pYjvpai+/BTeli461zUaEe
+	 vtMWCVBphR3KMGwO3JV0kYqSoq1OTU+fP3fWfGdxj4731vkNoN09z6Vk7jgOIzx0qU
+	 1EQswfWX6x5tvxZBczTjvHOc6bzybkKnDOkdSHcWbt7bxqZthfkjhm4stxJKkipfa8
+	 H5G3mu620Pyis4y1inahOvXbNH4onOByfvwNSXs/l/CfpM4mHdvw0T50TJeMWhbLzv
+	 RZU2/RVMGLnwA==
+Date: Mon, 26 Jan 2026 16:41:25 +0000
+From: Mark <broonie@kernel.org>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Oliver Upton <oupton@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with the origin tree
-Message-ID: <abb2c706-d599-43b5-8277-37d85efe96b5@sirena.org.uk>
-References: <aXeEH-iffNS9VIrA@sirena.org.uk>
- <aXeG9FIIP_-hpCHm@willie-the-truck>
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: linux-next: manual merge of the fs-next tree with the mm-unstable
+ tree
+Message-ID: <aXeZNSiVv82Gc9HF@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l7JQAMcj22smxuLI"
-Content-Disposition: inline
-In-Reply-To: <aXeG9FIIP_-hpCHm@willie-the-truck>
-X-Cookie: Haste makes waste.
-
-
---l7JQAMcj22smxuLI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Jan 26, 2026 at 03:23:32PM +0000, Will Deacon wrote:
-> On Mon, Jan 26, 2026 at 03:11:27PM +0000, Mark Brown wrote:
+Hi all,
 
-> > [Took the version from Linus' tree.]
+Today's linux-next merge of the fs-next tree got a conflict in:
 
-> Hmm, I suspect that's not quite right because CONFIG_ARM64_PAN doesn't
-> exist anymore in the arm64 tree and so the hunk in
-> arch/arm64/kvm/va_layout.c probably needs tweaking.
+  fs/ntfs3/file.c
 
-Indeed - there's updates needed elsewhere.
+between commit:
 
-> Marc -- how would you prefer to handle this? I could bring back
-> CONFIG_ARM64_PAN as a hidden Kconfig option =y and then we could clean
-> up the stragglers at -rc1?
+  77a150da4e780 ("mm: update all remaining mmap_prepare users to use vma_flags_t")
 
-I guess you could also merge up -rc7 given that this is in Linus' tree?
+from the mm-unstable tree and commit:
 
---l7JQAMcj22smxuLI
-Content-Type: application/pgp-signature; name="signature.asc"
+  9d5403b1036cd ("fs: convert most other generic_file_*mmap() users to .mmap_prepare()")
+  099ef9ab9203d (fs/ntfs3: implement iomap-based file operations)
 
------BEGIN PGP SIGNATURE-----
+from the fs-next tree.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3kWkACgkQJNaLcl1U
-h9AZ+Af/Yb7Hfvf+CNgnMSRmfHbZpLMNp4RuVu7mjVjoqVpjuf3p+uoIuPULXo1w
-wIXa4HAubWtIJKaKLnQ+AbDLw7WDj4cLmJ1wVAUpQN868si2hDM3g+w90R0kAoBE
-mTxYL0+00yyoBN3gVc7HVyyUkgwemmeq5QLZpdKgAy7+cs6B1j6YE1yfQt5HXdG+
-4jDgo3UuNDCqZcwJURYIkDK/O8GG+BMFZKHxgxJxqr0LKlwG2TqaNSm9hJ2MDjR8
-JTDvmk7u20EVNHvTs3ndKeUc4nUbAnKPDXLZPLysWXriZThiXkJ/jTKZqnTqvT3C
-ng0FB/gt6oZg9PnYDNIdBBc82km76Q==
-=pDX6
------END PGP SIGNATURE-----
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
---l7JQAMcj22smxuLI--
+diff --cc fs/ntfs3/file.c
+index 2902fc6d9a85d,571ee85e82594..0000000000000
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@@ -346,8 -246,7 +246,7 @@@ static int ntfs_file_mmap_prepare(struc
+  	struct file *file = desc->file;
+  	struct inode *inode = file_inode(file);
+  	struct ntfs_inode *ni = ntfs_i(inode);
+- 	u64 from = ((u64)desc->pgoff << PAGE_SHIFT);
+ -	bool rw = desc->vm_flags & VM_WRITE;
+ +	const bool rw = vma_desc_test_flags(desc, VMA_WRITE_BIT);
+  	int err;
+  
+  	/* Avoid any operation if inode is bad. */
