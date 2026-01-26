@@ -1,53 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1896B38DF9;
-	Mon, 26 Jan 2026 15:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B8633F8C4;
+	Mon, 26 Jan 2026 15:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769441018; cv=none; b=ghcmEuybuqg+PvF9qdJ8IGZSWxKhFmjRlSJPvEQYq5Vpx3/g9sNd//z2gH8QWO3+40xn0Ikylf7LMes8M4GvgAO6UobACsB8YqOLusoKF5Dgh5AspSbwUa5yCvFZbF1+wQMUVuLsCxS2gsB+yJUrRKCeLpDrBpsKdCUe/ctVvug=
+	t=1769441982; cv=none; b=LIPeLdOmzCXHKCO6cKsaturfhQE5G+10h9zHsxjLFlPT/JBxQVqtaCRpFh7rBWoeNknpZc8OR2fE4zxKZI2cCzmorq+4eidiZQZcrk/YNAzc9oRa5IQJtvIFJAyxq/G/a5ESYqHSI/r6/oPWoYyE8TsDakmML0P7voVCZQH+wmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769441018; c=relaxed/simple;
-	bh=JMy4MT5jEMoG+ecywv179W5xYmGUpiWznA14EjEQTO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMbVf9CurOsfhBoRVdcMLWfmZA6MCmcNvKL6rBCvCkIMpabuOuvbxXfeeSckS2p6w51BmEPCFZDyx/alqxlgUS0bhf6rLdOpbSl3FdMlh2X0FWGjwcZKNpbtxTd+vxqoBHMrPl3EP3Hx9jRPkNPe4bY6Lg1IvN6U8/SGOnj95ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDXt6nL+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769441982; c=relaxed/simple;
+	bh=IV6yQq0SmCS9QcWaKJHNEPIHiNlA6PvJc531TCCub/o=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KnBY6bN2zCm+gSxsph0Jv0K0ueZ0/xxtzjWmZUXkrYwyF0pWxpfvo0OVhYfj8VAnylYup6dd8hAYpE7em2bIqXSC3lTqjLskrA2B7YETBfNi7SdMbxy9NkVmjIQ5Tfg/vbmLxj1D9PHytlTdY4GGVco3LUJFOSHJg22Ja+pWbYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QobNhNcc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDXt6nL+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAD0C116C6;
-	Mon, 26 Jan 2026 15:23:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QobNhNcc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D80C116C6;
+	Mon, 26 Jan 2026 15:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769441017;
-	bh=JMy4MT5jEMoG+ecywv179W5xYmGUpiWznA14EjEQTO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YDXt6nL+k0fnFUWVcwGtZUBfsspGzdO1nINC3Th2VS3DdFQuHV1LxrQk6bP7lNJvT
-	 tYTcWZiD/Iea5BMdAeZi507UEbTGvmDPvG/GaBiCL8W+dqFjvU3J9DZd4f5hqrfYGx
-	 WvNqXk4t506KTQNiE5RrbhXM7hdOlOEEViBYaJJejuqukOrtEcUGW8Q9izKeYVwNvu
-	 hoNT/QqoHLsJJN4XdmhsGLDNZ3vXW1epGpRUJnLPhCpb5Z9Bh2DoSNOAxR4W9wwbHp
-	 LuTzIkXMN5Ux5GzM693Ljn+gEw8eG8KV4m480lRHbH6+HQzIm/Lg0+WihoTSj+zNke
-	 ewwkLrzzGNlIg==
-Date: Mon, 26 Jan 2026 15:23:32 +0000
-From: Will Deacon <will@kernel.org>
-To: Mark Brown <broonie@kernel.org>, maz@kernel.org
+	s=k20201202; t=1769441981;
+	bh=IV6yQq0SmCS9QcWaKJHNEPIHiNlA6PvJc531TCCub/o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QobNhNccdCZPfDZ5jlM35Cx/xz9R5icq+PQQkOFDaDBe8fA6DQuPkcsLRwpcRUPIu
+	 FmP50IqtO3oeotm6I+oWTxtFbZfs8ibyvSlJG64utEE1z/8ixXzQDTTDn2nwKXtGP6
+	 xk4ycT7fXdxVVG6137C9LmMWBkV5t6jh1qp8vncDEKn99K5ToKVPRKTvtjVYZeswsC
+	 9UhY+0HNhRLNDXIzbxpHicaYxVpWjzrZR9IprAoY6RN5H4K9Dg3trf26VM0CgbklMO
+	 v2qXxIro6tdgHs4O7SLnC3G4RilQ6HK4vlzsn0GOH7FcwIPfcE7l6Wbrlty3WLSmqJ
+	 y4tnnnvpHADVw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vkOgl-00000005lKP-206L;
+	Mon, 26 Jan 2026 15:39:39 +0000
+Date: Mon, 26 Jan 2026 15:39:39 +0000
+Message-ID: <86ikcobcxw.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
 	Oliver Upton <oupton@kernel.org>,
 	Paolo Bonzini <pbonzini@redhat.com>
 Subject: Re: linux-next: manual merge of the arm64 tree with the origin tree
-Message-ID: <aXeG9FIIP_-hpCHm@willie-the-truck>
+In-Reply-To: <aXeEH-iffNS9VIrA@sirena.org.uk>
 References: <aXeEH-iffNS9VIrA@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aXeEH-iffNS9VIrA@sirena.org.uk>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, oupton@kernel.org, pbonzini@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Jan 26, 2026 at 03:11:27PM +0000, Mark Brown wrote:
+On Mon, 26 Jan 2026 15:11:27 +0000,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> [1  <text/plain; us-ascii (quoted-printable)>]
 > Hi all,
 > 
 > Today's linux-next merge of the arm64 tree got a conflict in:
@@ -73,12 +89,22 @@ On Mon, Jan 26, 2026 at 03:11:27PM +0000, Mark Brown wrote:
 > 
 > [Took the version from Linus' tree.]
 
-Hmm, I suspect that's not quite right because CONFIG_ARM64_PAN doesn't
-exist anymore in the arm64 tree and so the hunk in
-arch/arm64/kvm/va_layout.c probably needs tweaking.
+I can't see the latest next yet, but this doesn't sound right.
 
-Marc -- how would you prefer to handle this? I could bring back
-CONFIG_ARM64_PAN as a hidden Kconfig option =y and then we could clean
-up the stragglers at -rc1?
+The correct resolution for this is in the kvmarm/next branch,
+effectively reverting most of 86364832ba6f2 ("KVM: arm64: Don't
+blindly set set PSTATE.PAN on guest exit").
 
-Will
+Keeping the version from Linus' tree doesn't work, as
+kvm_pan_patch_el2_entry() references CONFIG_ARM64_PAN, which is
+removed by 018a231b0260e ("arm64: Unconditionally enable PAN
+support").
+
+So the arm64 version should be the correct one.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
