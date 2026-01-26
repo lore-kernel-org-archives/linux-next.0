@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB6F34676E;
-	Mon, 26 Jan 2026 16:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0022425B;
+	Mon, 26 Jan 2026 17:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769445948; cv=none; b=DPZ/hwuPLo/sSaFaLVnVKjzT0ULqVlWjloVI3fYdRDAN/I5YP4jJFLAx7eBkgaE0JA3QpM5y1llZC5QVv9Rbj+Z42ZaAh2qxvtPacLluwflv7sgyi1kGWKHrqhHlexoakIBybhLJHYPIuOfZ5Fg5WMDN1am0AEaW4UKdOvLLP7w=
+	t=1769448560; cv=none; b=prrsEbO3Jfpa4h9JG4PBZlaBSa8eFxs3o5AV8nhYlpGErgz+55rQG3aaKzqpKrSD/64EsrlLiDngJ6KIpZ5uEPIZVOHoR0sfwkiZeKIpsHcir9zy2R4z1D83r+cQbBF/vvhhtqZsUkMmUh15wXnRH/INSmRYjJbDDhEnxdHBCeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769445948; c=relaxed/simple;
-	bh=GT26Zpr29H5LRjogQakWTly1eg+89IM78ULh5nY5/48=;
+	s=arc-20240116; t=1769448560; c=relaxed/simple;
+	bh=Zl/sz5JxPdJBFc7UhewHGLry9GR2H34k1pBIhH4BcVg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kPTM4O8DkAuxF83kXD+KK7g1+TbV8xi0VtFk2Flhor83Pk8aCGBoMXG1e2+xH8ePum+HVAUqmx1kdqCOEKVSij2/OKGQduIAjrD+A8KBD+NYc5ALGxH9OLVoQkoN1fNGkcDR4td0wS1l7CoFnK0vZivQjw6PKBVepoZ1MesFN3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiH28SNt; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=ENxtH5UsaBu2Eiu/GjUItr7qskT185P5D4+NOurkF0nSxwWe1rrV2b0G9o6aqFOwC7FdiP65TQtWkTniy91nGPpLo1nt6hOcEmalasytUmyc2YeGZmXzDJd0Cfior1GjaLqNmSuJMio3ZgVT9UCs7BaLV6VWFbWkPy63QDkTw40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emNAK8Ca; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiH28SNt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDFBAC116C6;
-	Mon, 26 Jan 2026 16:45:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emNAK8Ca"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85956C2BC86;
+	Mon, 26 Jan 2026 17:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769445947;
-	bh=GT26Zpr29H5LRjogQakWTly1eg+89IM78ULh5nY5/48=;
+	s=k20201202; t=1769448560;
+	bh=Zl/sz5JxPdJBFc7UhewHGLry9GR2H34k1pBIhH4BcVg=;
 	h=Date:From:To:Cc:Subject:From;
-	b=GiH28SNto6/BgaZMVq9sSBTYM4i0hB18Gv1aA+AoG1jRFvPjebJJgcFnFUY4aUpgH
-	 V5z/dQ4axVHY242/VJglOH4pkZ4PrUKg4OV7pUzTqiExYAqpySJb506ZLa0J0TD6vs
-	 2cw5sY3F3Uw5bvF3MeOZjJT/vCkH+p5wkl4SS6Tul2WXotmY23IWAkR53W99Gnk80p
-	 HHEm4v4YJct4ACP/LJ0BqKBCNnWXdpls9N3OEiIaCyM78YSldBJ/J6k9lHtIG+0aUT
-	 E0aCZOLR9qVLWTsl1G1CBtAp2Q1TmLCqVfTZZYR6rjgQy5SzzJYtD96tqD9nTwpzGM
-	 Urlzhe9YnkPFw==
-Date: Mon, 26 Jan 2026 16:45:43 +0000
+	b=emNAK8CabNLu47KYx54Qh1iSQ6mDkHIAr51MWfo6PHWCiolHUKFPtAHd9kLDeEgYv
+	 r5I/GUi+c41nR6nIdeYbsTIfch7igkZLwuWZXFypfaW1zEwD3zQhu7+evNvDBN+Jc3
+	 HX/mQbgCwIGrp/6LVq2KZXad3R9pcqqcxqWxtRrNYpi2Dfs1PKkLZMHi6Q7FSQZ45s
+	 Bp/m2TCSOZv1XJGPq4mugKB8mAhSjnajtBCWY8fLt/ZKD+290NPmPDdkwylQzH/bhM
+	 c30/C+w+XS5S6+72EM0PBzGriYFkfZPXcx4EShWxluazK4d6c+ocrA3+NmnzC+BJX2
+	 IuE1LxtRudH1w==
+Date: Mon, 26 Jan 2026 17:29:15 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: linux-next: manual merge of the thermal tree with the pm tree
-Message-ID: <aXeaN2nPs3EexjXv@sirena.org.uk>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <aXeka0KYBnrkwUcF@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,58 +43,46 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CZVVSG7EsjTRb8Sq"
+	protocol="application/pgp-signature"; boundary="Be5jyZhEdi46WJsj"
 Content-Disposition: inline
 
 
---CZVVSG7EsjTRb8Sq
+--Be5jyZhEdi46WJsj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the thermal tree got a conflict in:
+After merging the net-next tree, today's linux-next build (arm64
+defconfig) failed like this:
 
-  tools/lib/thermal/libthermal.pc.template
+/tmp/next/build/net/core/sysctl_net_core.c: In function 'proc_do_rss_key':
+/tmp/next/build/net/core/sysctl_net_core.c:333:23: error: implicit declaration of function 'hex_byte_pack' [-Wimplicit-function-declaration]
+  333 |                 pos = hex_byte_pack(pos, netdev_rss_key[i]);
+      |                       ^~~~~~~~~~~~~
+/tmp/next/build/net/core/sysctl_net_core.c:333:21: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  333 |                 pos = hex_byte_pack(pos, netdev_rss_key[i]);
+      |                     ^
 
-between commit:
+Caused by commit
 
-  5addf72e4f7ef ("tools: lib: thermal: Correct CFLAGS and LDFLAGS in pkg-co=
-nfig template")
+   37b0ea8fef56c (net: expand NETDEV_RSS_KEY_LEN to 256 bytes)
 
-=66rom the pm tree and commit:
+I have used the tree from 20260123 instead.
 
-  965ef09a26f3e ("tools: lib: thermal: Correct CFLAGS and LDFLAGS in pkg-co=
-nfig template")
-
-=66rom the thermal tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc tools/lib/thermal/libthermal.pc.template
-index b984c5ecd20a9,3b8a24d0a8b8c..0000000000000
---- a/tools/lib/thermal/libthermal.pc.template
-+++ b/tools/lib/thermal/libthermal.pc.template
-
---CZVVSG7EsjTRb8Sq
+--Be5jyZhEdi46WJsj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3mjYACgkQJNaLcl1U
-h9B7mwf9FxPHePpf4NqbFQrIbdNYWy5AGWJXg8B4gLHPn7BGr0QYvzeoMtdDH6lh
-TJFGgm3bVi9HtN6B9RuIFPgFU6TVhZFMw6RGzzQT4QyrLg8YRp6mHBsz7gukpZCq
-FQWjxXTK2JPdFrsICgD9OWYIScXG3jQTP3yLYgeD/N8YxTS9RbYeCvYhMjQDOess
-QCEX49XkxNUtQsh5dlbcv0N/NzOQB/RUvgUl6VHJDakVcwabUzxksXWY1YvT5J1x
-9dZIwRr0bKv6KexAUfZv60BiKiOWjuWEYn2+qKEyaVis+qrArdtkjsGXB+rnh+oF
-GWjT6SkxD6waiVhzOJEfF+vOLvmuBQ==
-=B+9f
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3pGsACgkQJNaLcl1U
+h9Dw/gf+N+Rh7tqMkxLOertiD58s4VyQ0vuv2dpx4El31mUPYJOa3zFRCu8K6QFx
+jeLcB4GW36GXf2vvzy0Rz3zs1wQV17Mga2baRq7XvexnkSLZ4zlDTZuvTeJmkDEl
+/PCXhHTgYgYEItdtr/1WaHqTqdlX88bVvGafO/iDW5ctLTMjc6AbWVjlO91zr9oG
+QUCX1s+qhfcWiJHAQ6PG95P0yfn4v6R7oKG3FzZbG2ScIWc+krHV8ev9XhZ4a92f
+DOIBxqvuFTrI9g9h4tn2nM1G9cYdzb4nGyDZPFLpE2yKZAndvKEvoGAE5f2oALXe
+lozfoPuFWy3q/jt/J/eq/U5ibZcCuw==
+=T6/r
 -----END PGP SIGNATURE-----
 
---CZVVSG7EsjTRb8Sq--
+--Be5jyZhEdi46WJsj--
