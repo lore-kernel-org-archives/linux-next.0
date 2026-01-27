@@ -1,143 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E20F2E54DE;
-	Mon, 26 Jan 2026 23:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997081F5858;
+	Tue, 27 Jan 2026 02:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769471813; cv=none; b=GWxznWsjdi8jiJzdsJky8F7RMvOIVN7xw58sCDotQwWMc2QX/1s1xsr31s1bVl62hudomy7rZaK+DBwxQlB8i13PgKp5dKnkoovreOtMU57amh/yw3/N+5XpOJT/FQRP6Yes/ITdCA50WZ7kHQzrzCRBMnYEFoHaqBXoV5nMdro=
+	t=1769479798; cv=none; b=izgW/JFIFBKmVxam+3CF0+n5hBfrnURD6NlZ597wQlTlc7BSaj4iSvBZ3L6KDx9F6Oz2V9F+xZMbgIkrr/I5bprZbaWSPkiFyEfBatQCIsVGAZZLEqd3l07KnfbXD75pvMwBfmZ3mNz90y+Ixvcf5SLDiQWUNWUqBIGPXQz5uIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769471813; c=relaxed/simple;
-	bh=AT/vZyIz6F3+0iVc0cM887qzriHFou+H4+2RTfbXVe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=k5ZPFDZJlwplYJcVN0hcpjbq8zgVx2BlX5Jmx9Z/ENA3LhITWolTR5vVQHH3t8XdEgvuJoTVcw0oFM6obkHUk9FL8Vsxpl2VGXbPJWMby5tTniUjHBWgZ+Ap7mjZxL/sTs21UyzyTv3p/YSC+3zSRcvwy7OW0ghjBVHMazt6rCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0s258rl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769479798; c=relaxed/simple;
+	bh=Osmfo+MIqAdMbnUgZCe6SI2z+gGdIieo1OBlsSNeroU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fY2m66FD1ZHx6jJFjXPazipnwvqK7cr7kHJ1xSxI4ZHHFkh/x9HV56cUOEfCUrN5xmNS49hRymQL4UNrtJZDHIRCE7Hb5B89KVCls73MNivyWVa1sQWkrVbvcdy7OEJCRkq1IzvjdwxGxfXrW8YBrFn2/SmotGydLKioP3iknOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OowC8toZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0s258rl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B1DC116C6;
-	Mon, 26 Jan 2026 23:56:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OowC8toZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D433C116C6;
+	Tue, 27 Jan 2026 02:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769471813;
-	bh=AT/vZyIz6F3+0iVc0cM887qzriHFou+H4+2RTfbXVe0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Y0s258rlVHvVat4WLV9WEylHc55Ryul9rrS0f7C7aHRE/oyoSANJOAtT3R9OQDXSl
-	 h2nD48vKVPKu/okAqheu/qq+VWccGJ6U2nFXbUFfOcnM1U772yaMC+DzHwPEuRmJnb
-	 kwLa3w0aclScaNKaQhiy6kZITXg+T4DW53YIXiq2UQ4fcmccTf2WCn3GCtkmzar/ED
-	 LuovBcV5cKjuIcSgJbbAu7354CvJZK29mETYt85GT0f3Rq/BjHvcUZPvQc5Z+aS07S
-	 rV1pXGexy0AJPyi5ApOFIM6louNW6XTsFnTyBHIpzQpjbJSiSWXRQl+8woj2sxLI/i
-	 HE8tKQlbWGtOA==
-Date: Mon, 26 Jan 2026 23:56:49 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jan 26
-Message-ID: <aXf_QXYQW59bMKbG@sirena.org.uk>
+	s=k20201202; t=1769479798;
+	bh=Osmfo+MIqAdMbnUgZCe6SI2z+gGdIieo1OBlsSNeroU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OowC8toZywiGtsXaHJZ444LOHPAb50Ok7SfmSV+K4o0ITsV+wffiQuwihPa9rgenc
+	 qDgN6WUnR53YFURpdgi5ZJaLOGzHggC6q4fV3jcgPL54WOo2UUnSSibu+6lE52hWhL
+	 5DpBYehRldZIhYJbqSmKDTMI3tpvnnSyTFDqRQAbd8LDR8IBACiZtZUKANv6iepF+T
+	 /o/gYNuF/mRjxYfoTsG/lwAQ5ERD6WfLTJ6lgQXve/sgKxvPr0TMddQh0nluJVcKfb
+	 TbTB7LrbxRFjOG67AejEt5uEaErnKJNXn9BXcLZN4cEotaFVEC29QNBQZUXvK8MFsk
+	 ME9ebxPud0KGQ==
+Message-ID: <74c0bf0c-1a7e-41aa-a9d5-2b7d8f4275e1@kernel.org>
+Date: Tue, 27 Jan 2026 11:09:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6ZQhiJYw0bIZWCL2"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the libata
+ tree
+To: Mark Brown <broonie@kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <aXfldIKLh35dGHjN@sirena.org.uk>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <aXfldIKLh35dGHjN@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 1/27/26 07:06, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> 
+>   drivers/ata/libata.h
+> 
+> between commit:
+> 
+>   0ea84089dbf62 ("ata: libata-scsi: avoid Non-NCQ command starvation")
+> 
+> from the libata tree and commit:
+> 
+>   0db3f51839fe7 ("scsi: Change the return type of the .queuecommand() callback")
+> 
+> from the scsi-mkp tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Mark,
+
+Thank you for the fix. It looks good.
+
+Martin,
+
+What do you want to do ? I can rebase the 2 ata patches involved with this
+conflict and you can take them in the scsi tree (that should not generate
+another conflict with libata). Or we just leave this as is and sync up our PRs
+for 6.20 so that Linus is notified of the conflict by one of us ?
+
+> 
+> diff --cc drivers/ata/libata.h
+> index 9b4e578ad07ec,0e48bd1c0c206..0000000000000
+> --- a/drivers/ata/libata.h
+> +++ b/drivers/ata/libata.h
+> @@@ -165,9 -164,8 +165,10 @@@ extern int ata_scsi_user_scan(struct Sc
+>   void ata_scsi_sdev_config(struct scsi_device *sdev);
+>   int ata_scsi_dev_config(struct scsi_device *sdev, struct queue_limits *lim,
+>   		struct ata_device *dev);
+> - int __ata_scsi_queuecmd(struct scsi_cmnd *scmd, struct ata_device *dev);
+> + enum scsi_qc_status __ata_scsi_queuecmd(struct scsi_cmnd *scmd,
+> + 					struct ata_device *dev);
+>  +void ata_scsi_deferred_qc_work(struct work_struct *work);
+>  +void ata_scsi_requeue_deferred_qc(struct ata_port *ap);
+>   
+>   /* libata-eh.c */
+>   extern unsigned int ata_internal_cmd_timeout(struct ata_device *dev, u8 cmd);
 
 
---6ZQhiJYw0bIZWCL2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi all,
-
-Changes since 20260123:
-
-The gfs2 tree gained a conflict with Linus' tree.
-
-The ntfs3 tree gained a build failure due to an interaction with Linus'
-tree for which I applied a fixup.
-
-The arm64 tree gained a conflict with Linus' tree.
-
-The mm-unstable tree gained a conflict with the fs-next tree.
-
-The jc_docs tree gained a conflcit with the mm-nomm-stable tree.
-
-The jc_docs tree gained a conflcit with the kbuild tree.
-
-The jc_docs tree gained a conflict with Linus' tree.
-
-The thermal tree gained a conflict with the pm tree.
-
-The net-next tree gained a build failure, I used the version from
-20260123.
-
-The drm-next tree gained a conflict with the mm-unstable tree.
-
-The block lost it's build failure.
-
-The mailbox tree gained a conflict with the qcom tree.
-
-The kvm-x86 tree gained a conflict with the kvm-arm tree.
-
-The driver-core gained a conflict with the jc_docs tree.
-
-The scsi tree gained a conflict with the libata tree.
-
-The kselftest tree gained a conflict with the block tree.
-
-The cxl tree gained a conflict with the tip tree.
-
-One of the mm trees gained a build failure for which I reverted a
-commit.
-
-Non-merge commits (relative to Linus' tree): 8791
- 8687 files changed, 509076 insertions(+), 178448 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests and a native build of tools/perf.
-After the final fixups (if any), I do an x86_64 modules_install followed
-by builds for x86_64 allnoconfig, arm64 allyesconfig, powerpc
-allnoconfig (32 and 64 bit), ppc44x_defconfig and pseries_le_defconfig
-and i386, s390, sparc and sparc64 defconfig and htmldocs. And finally, a
-simple boot test of the powerpc pseries_le_defconfig kernel in qemu
-(with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 404 trees (counting Linus' and 121 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---6ZQhiJYw0bIZWCL2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml3/0EACgkQJNaLcl1U
-h9DbHwf9FRGZZpSzLra2bPivzO2tElKL+MsttnB+VB7W5GLrPFIy91AOCmOFnTeq
-qzs6bdHITV4xgIZYp/cvHhQJZM8sFZQxKBru5NaDxlETCU4XH9yKw/7OGBhrKec3
-8DAoBVv4o5j1PA4VUKA2qCB9khMqIkTlugDJwqbRZ1yy4t0KA3BSDC0X6E6LjrSj
-NKVgAUWbjYzhPxrjoiLGcet0u/rea6wb2SmcS2Ou0xCwqV/mTDwWmdz8PlBZnIjO
-PbUriWhrg9HAxQr6ZSmv88e0T8/pHkQPpOtj5m1DIJjkJ3hifFLc9OKW6EiaYZ8U
-BD3HV7ri1YkvUqpV12fpvUJwhcInfA==
-=DS/G
------END PGP SIGNATURE-----
-
---6ZQhiJYw0bIZWCL2--
+-- 
+Damien Le Moal
+Western Digital Research
