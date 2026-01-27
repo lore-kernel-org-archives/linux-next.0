@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1DC21772A;
-	Tue, 27 Jan 2026 14:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06279306B1B;
+	Tue, 27 Jan 2026 16:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769523470; cv=none; b=WJROc+gMQ0JZC2nhrkXKSRgvHJBE7+0gco6dcuJ49spBX4h3C0VjaPePFcLbd0nDdRjcYBuoaQ2HQRBLkhl+pJkxHaDB1E0yk6bv7hLgag7KTzaPOXIg+J89OhXAmE7MrqEP2OM9o8jsJFrty9xNyfYNtKwrEat+U7GrE0rby6I=
+	t=1769529900; cv=none; b=kYls2BRJFTx7xt/Ci83Bi1zSoRAR6zT/7g/wmEQNGwKmtwvLiz3m13Q3gERGZEaenlLyee2VkU2IrZFfgjA7M+VkMmK/5CQXC3ujsoKM/r37osXctjiNqZfob/RbP5ykesN6Ac9IXvfhoozmq2Pkj9JyWEIvPF1pNeTxyH2oohA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769523470; c=relaxed/simple;
-	bh=Wej2MOWpAG+SIElNaf3Kl2Rp9CHikAlyCHOcfjpccbw=;
+	s=arc-20240116; t=1769529900; c=relaxed/simple;
+	bh=8N+ah0P+/jHBhcbBl1XRvE9P/Gzo/H0TG3Xd9y6/4PM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D3BCqXTUuW1Q7Tqx2fb4VQYhc7vE8RkkZqAi/gZEsLGa2FfkqSox3aaKfpZ+xYJFQ8kd6m0knc2cl3EDiwUV0vIC+p0paKZBt5WZHbZuM8kaiF2nIHWQAU10ixnEb+XEPxbuwQzmSZXEQOqlQq180Dr4igaLJ+AplQt3Oq43XvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfZPBDvj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=qsN5tZ1KQzTxiB51S6Z4f8ZnLIBB/fxR/uEqisPE2ZqscGRxatBl3NGqcBwVHJ85XGknvbGNkV055O6VlW4qlz8/iJTz5vMxXHlmVyioeNRublKg440LJpNTWCGlh130zDg5ORkwSP6QdN4tr3hT6k4vJB+suqOryvPj8R21EaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WY1l450A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfZPBDvj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14A2C116C6;
-	Tue, 27 Jan 2026 14:17:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WY1l450A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8097AC116C6;
+	Tue, 27 Jan 2026 16:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769523470;
-	bh=Wej2MOWpAG+SIElNaf3Kl2Rp9CHikAlyCHOcfjpccbw=;
+	s=k20201202; t=1769529899;
+	bh=8N+ah0P+/jHBhcbBl1XRvE9P/Gzo/H0TG3Xd9y6/4PM=;
 	h=Date:From:To:Cc:Subject:From;
-	b=nfZPBDvjTmcOwjqRY/NDCZdNunfbJ5hvnoAutYLRgdimdA4VmR9cWcvIIA9ek08Ih
-	 OTLAdPOTr/ZKtfoT8Zwhas1Nc45J61N3t7LWviAogl4IZk23kZQULkv+VGK4+Lxm0F
-	 Kj3G1VUsA5qj7y7ISLMOD3MakIaBWhQx++K4LMIL6CgHORmppnrlWF3U0DM6kP3Nv5
-	 zHwAMao3QG/mEKtODiHnQcn2wQBIi0/ha23X+CJgRTfKQtQA53jOa0HpqjkwhjDY8x
-	 EwhV6wpf86wUGh4j63cXAgi0PSI99msOT5Qc1ZWKx2VqJzj7wq2Dn9ToLF6B14ndXW
-	 OQE5BSCm9pcUg==
-Date: Tue, 27 Jan 2026 14:17:46 +0000
+	b=WY1l450Auee/cSKJ1COLc1ZbpYy21GK7a84oFlwCP//bUg046nj/98r319V1gNjPC
+	 YI/XPpSHxWd/SafJwWLh9mM+B8cUwGuCy3CGYSIADdEfEOaUzen0R/5CBrwPmzAcqr
+	 SdOS7tNX7Tu6W8rHRsxNffotG9tPse2Y2Ax1phFuLYDl4XRft7uxx2RCAKRjHF764p
+	 a3uMpWzI9PYVyXWufpKd/1EnaDCrOlbDiUMb9VBFoKXqJW3GA7Enk594JRLKTJLpfB
+	 hmUGHw1q5tbSFC1TP4DLV4h0yvE6JtHKpJqQfYulrCmfOrPoBShq1xNaOODBy9HnAu
+	 lS8SZWWTY/fFQ==
+Date: Tue, 27 Jan 2026 16:04:54 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
+To: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>
+Cc: Antheas Kapenekakis <lkml@antheas.dev>,
+	Connor Belli <connorbelli2003@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Ionut Nechita <ionut_n2001@yahoo.com>,
+	Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Zhu Lingshan <lingshan.zhu@amd.com>
-Subject: linux-next: manual merge of the drm tree with the mm-unstable tree
-Message-ID: <aXjJCmDiKFYA0-P6@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drivers-x86 tree with the hid tree
+Message-ID: <aXjiJsJamyzEU8Xi@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,31 +45,34 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MgnZV3muts1xuYCF"
+	protocol="application/pgp-signature"; boundary="53aj9JnqlFBqxJ+Q"
 Content-Disposition: inline
 
 
---MgnZV3muts1xuYCF
+--53aj9JnqlFBqxJ+Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-  drivers/gpu/drm/amd/amdkfd/kfd_process.c
+  drivers/hid/hid-asus.c
 
-between commit:
+between commits:
 
-  8635c94737032 ("drm/amd: kill the outdated "Only the pthreads threading m=
-odel is supported" checks")
+  f631011e36b87 ("HID: hid-asus: Implement fn lock for Asus ProArt P16")
+  06501b557faec ("HID: asus: Replace magic number with HID_UP_ASUSVENDOR co=
+nstant")
 
-=66rom the mm-unstable tree and commit:
+=66rom the hid tree and commits:
 
-  d59e9d2d556ad ("amdkfd: process pointer of a HIQ should be NULL")
+  3415a1beb3d87 ("HID: asus: initialize additional endpoints only for certa=
+in devices")
+  8baca948f6aad ("HID: asus: move vendor initialization to probe")
 
-=66rom the drm tree.
+=66rom the drivers-x86 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,24 +81,73 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpu/drm/amd/amdkfd/kfd_process.c
-index f8ef18a3aa71d,ba25d83c23e78..0000000000000
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+diff --cc drivers/hid/hid-asus.c
+index df7c03dde67fa,f5c8df20b88bf..0000000000000
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@@ -101,7 -90,7 +101,8 @@@ MODULE_DESCRIPTION("Asus HID Keyboard a
+  #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
+  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
+  #define QUIRK_ROG_ALLY_XPAD		BIT(13)
+ -#define QUIRK_ROG_NKEY_ID1ID2_INIT		BIT(14)
+ +#define QUIRK_HID_FN_LOCK		BIT(14)
+++#define QUIRK_ROG_NKEY_ID1ID2_INIT		BIT(15)
+ =20
+  #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
+  						 QUIRK_NO_INIT_REPORTS | \
+@@@ -1490,10 -1372,10 +1464,10 @@@ static const struct hid_device_id asus_
+  	  QUIRK_USE_KBD_BACKLIGHT },
+  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+  	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD),
+- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
++ 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_ID1=
+ID2_INIT },
+  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+  	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
+- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_HID_FN_LOCK =
+},
+ -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_ID1=
+ID2_INIT },
+++	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_HID_FN_LOCK =
+| QUIRK_ROG_NKEY_ID1ID2_INIT },
+  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+  	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
+  	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
 
---MgnZV3muts1xuYCF
+index 876529df0d6ae..1b9793f7c07ed 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -959,6 +959,12 @@ static int asus_input_configured(struct hid_device *hd=
+ev, struct hid_input *hi)
+ 		}
+ 	}
+=20
++	if (drvdata->quirks & QUIRK_HID_FN_LOCK) {
++		drvdata->fn_lock =3D true;
++		INIT_WORK(&drvdata->fn_lock_sync_work, asus_sync_fn_lock);
++		asus_kbd_set_fn_lock(hdev, true);
++	}
++
+ 	if (drvdata->tp) {
+ 		int ret;
+=20
+--=20
+2.47.3
+
+
+--53aj9JnqlFBqxJ+Q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml4yQkACgkQJNaLcl1U
-h9BdxAf9HizhRgpOuFZEcZVOt/JDkla+mvNH2QT0ALavkbXjAdtjHHe91j5W6vHu
-sOaO1ObsoXNjPEv8REPQNwYvigCUgEM+oihFjxw3KisU3rBrnx19e1unEaMGEVDx
-XWCE+n+vDUF5+YOEXPef0d4sW/i9nqYMmqYEybzrnir/QQGTlpr8ZFHseZW5pa5p
-uOXdsAgtV3vZevXx4Pn5dfPy6r2vK5crlw0PAF4U6nFidgMaqMpNHFDeWBqnP5Fw
-MnyvIuWAC4XMEKxvB6aTQNb0+epOytySQmXjq8SZQm3jyCCBbaKxtM68USFcalsA
-yhDfuuuNrYvv2szeHBRIjCDIiuIw9Q==
-=npR3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml44iUACgkQJNaLcl1U
+h9D7igf/RCoVs1DsNqCG2Cu1XQsnNu8q4WKh8ZKYQb4tKLSHxVtJ1hL7JZrP71iL
+woeL1917+BOQDbOr+wVjR9NeT76OH6fL8gdccij3O5yv4JoovIBw/0KnJCqJezKy
+RqbSD71lB+B5959Osx7b2tb81fv2eOitu9DIGXoHuW4ts5b3fkSY7+uhAcBf/tTj
+bTyyhLv5jfYIG61AttQB/t0gA4DVcW5LbYqeT/3hZrne56zItPUEMt2ZPgKLFhMU
+QAjaxvpkr1hEeU4AlXukkmnqJFkRsqFHyk8sasHK9lHc2pLqvuZZ87E98Igmc0ZO
+wr/v/XZshzw6a4dphhf4RqyYWjbF6g==
+=oGHm
 -----END PGP SIGNATURE-----
 
---MgnZV3muts1xuYCF--
+--53aj9JnqlFBqxJ+Q--
