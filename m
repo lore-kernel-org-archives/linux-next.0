@@ -1,73 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961E1253F07;
-	Wed, 28 Jan 2026 17:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB1E32AADA;
+	Wed, 28 Jan 2026 20:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769620829; cv=none; b=jZZtpCwnVoYvVNigKxFLfTBsHanE9BTwYoD+kBMVi0QS8W8Yx/KDWws0+OtJvnFcCd5TueT9xrFVVwkC2lOZ26jdQZRWLqI3/M2/JBkYeBmnxumAa6A85woBNU9SBhSEYWYG1TDfJ2318rYzeGwcZQtOgE1+C6ZR19ESc9qdH+g=
+	t=1769631997; cv=none; b=mpkSilrk2zls03KYaqEPup4WqXfEShcPlzhEwEpUkaSgtg10gmleO+84sHwRqEm83r7u3ZmVdNmjo3E8wxNmmeW8t2puWqipU03WpvA6g8TZrJBR9rVQqTTmvSmmShWKu3Pz1y+3NK9UYxy8eL3T+mZy0/wZ57H7wvw5YsXixqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769620829; c=relaxed/simple;
-	bh=nN1/LQFxOOXVnpy8O/J7EGqjZPkSaVGqaL01AAhD2RM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Mo/t8/lbeOos+Yq52wgvXX4VzaGOP9HSuDNaKEyRUlXmR6AJBk21NO71t3ApV7qV5LZ9S8IKX67XeghPLVU2ugTU6ARyLzoYt7iC9UO95haJMCitDs7oXmqg911arrpeo8qm155xIvpWDG55IKzDA5tDoPJG1WLaVSl3drly2QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXoBqrO8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769631997; c=relaxed/simple;
+	bh=55mPlje3DzkTDicAZBLS12jerYqr9DRfWOC3bwIxPWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UP6jKGwnWfZQesvK/UXfssMUQKTfJKazSKQZ1fMrKvm4iMV4P81ydLuFVbisXiK0Xch7gj+hL1D0sEA3rQenofxI9Wruis1DI2uw8t+b2g6HD5BZ/mWDxlvXePCMG4gpKsfMmLcd/XvHlaEsXsFT0QVpPKKwH+hCLikcB8nJsgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9EIcIQr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXoBqrO8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D5DC4CEF1;
-	Wed, 28 Jan 2026 17:20:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9EIcIQr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C060CC4CEF1;
+	Wed, 28 Jan 2026 20:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769620829;
-	bh=nN1/LQFxOOXVnpy8O/J7EGqjZPkSaVGqaL01AAhD2RM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=HXoBqrO80Gi2cSQWaKTh6VPXze/eIxvW6BaD/HFcqBuMaJau/MPI8HfIsVfZ60Id/
-	 vsTI08SBVWnTQlWV9NALU4P7cfQwxVVJPlgGOXOVgujgSGBZ95gXfA0+ddwD0uvFiZ
-	 qObSg/aqN9BF8BXrCCpdOVBYRShZnSrREBIxNHBE/m7oWu5/5pSuTcddr7fjctzLde
-	 t1WS9UJnc1hnUROQwI5MR6jKOgO3JwJLJNEVwdIjD1lnZAudCPcwzylJqG+58wm4IV
-	 AUiyiw+DE6Qb+hxcKVBOYxopQhL7kUWXItdpyEgMfufR7bp25ZojmKU3LjO/kq7NZC
-	 S3G9XJ8ciN5tQ==
-Date: Wed, 28 Jan 2026 18:20:26 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: Mark Brown <broonie@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-    Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>, 
-    Antheas Kapenekakis <lkml@antheas.dev>, 
-    Connor Belli <connorbelli2003@gmail.com>, 
-    Ionut Nechita <ionut_n2001@yahoo.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the drivers-x86 tree with the hid
- tree
-In-Reply-To: <8f5f8746-e248-08b4-50da-11a2b58e1d12@linux.intel.com>
-Message-ID: <5q8qo934-17p0-7q87-37n4-691rr34q7n5p@xreary.bet>
-References: <aXjiJsJamyzEU8Xi@sirena.org.uk> <8f5f8746-e248-08b4-50da-11a2b58e1d12@linux.intel.com>
+	s=k20201202; t=1769631997;
+	bh=55mPlje3DzkTDicAZBLS12jerYqr9DRfWOC3bwIxPWU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=s9EIcIQrn0677og+uU8FKKIQmv7sixy+gDHH7WPODLdUUIT7I1IiEEF/zsCWF3vqc
+	 rlxPk2D7xbkNChmm1YkXtb8gAU4yAz5xI16Xv1yqZq80HReqQX8ft3suwySLWYEgD5
+	 qrWn9Mu9IaVfSfpzYu4tq3A+gCmENB3qeEhttJW5emhoOOsHNOhIwhrHuLsiXetGmC
+	 D1csvHl0QP4myXIlZLP6hACQALGX7jmF9BUGOrAOoTmJ48sW89KjGOFPDwcIlMlpaa
+	 qxr1Qkk/LUC8sKjby5GKr/ClluTT3uwNApajzf+uoKH+exDImBDdn5Jd+nx0DVAi7c
+	 7NQyRA3+gNW3A==
+Date: Wed, 28 Jan 2026 20:26:34 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the iommufd-fixes tree
+Message-ID: <aXpw-gyz5sBkJcDY@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V7khnmgeC068PLWh"
+Content-Disposition: inline
 
-On Wed, 28 Jan 2026, Ilpo J=E4rvinen wrote:
 
-> I moved this asus kbd series into a separate branch and merged that into=
-=20
-> my for-next branch. I could create an IB PR for that branch if HID=20
-> maintainers so prefer, though admittedly the conflict doesn't look=20
-> particularly complex.
+--V7khnmgeC068PLWh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yeah, the conflict is trivial, and Linus likes to see conflicts between=20
-trees himself.
+Commit
 
-The one of us who sends pull request to Linus should just point it out in=
-=20
-pull request.
+  928f9d3956511 ("iommufd: Initialize batch->kind in batch_clear()")
 
-Thanks,
+is missing a Signed-off-by from its committer
 
---=20
-Jiri Kosina
-SUSE Labs
+--V7khnmgeC068PLWh
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml6cPkACgkQJNaLcl1U
+h9CfTAf/YD8maNBBqRs1gfh+TU/I219JKue38wWzb+eNjThKUeWnM2g4DyurnP8d
+JtNgHvxKEK9VQsViapROU2GnDHCYisgFJ8s7vjdDUuSF174l7xPu7ZTeMux7VxzM
+ndkhN8pGkrHi/ewOGFOSaer+iukkMAHTIMZAwr4KC0afI3XE8a/SCp6h2KcWUTvw
+DuPbKykzwpTOo3Jm8tl0yNV2WlSgkkfIogbtSGmaIL0jHJK5vKzTsNfsinPHlWl3
+o+99i7j2WZe898Oo141RgQbaUkVQ5GTfaAML4EXm5goa6fXsjYRhZaCP1KRPrdeR
+KyhbFiYe/x2ed0/BrAz+AUpDmNn5KA==
+=dg3a
+-----END PGP SIGNATURE-----
+
+--V7khnmgeC068PLWh--
