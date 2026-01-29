@@ -1,71 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935BD257854;
-	Wed, 28 Jan 2026 20:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C172133BBC8;
+	Thu, 29 Jan 2026 02:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769632354; cv=none; b=MyMosf4j0FvEk7LXoN4YEEDkM90h7NosxLy3p8sW9vD9C9W8r1g5Uo2MQqcZl6MzkaxCdrPAP+CqxparsjtVXpqr3xTEZPNUzDzFBP62gd4Ow61Puh/wbp+BkAoXBkVXg8K4F29/pSRnFGJoAK7OSa98dmoCcdjA9/o7Ikg1Y6Y=
+	t=1769652192; cv=none; b=tUalsAJViVfaelTBJ3v0DqvWs4FmoycrmdNsJ/8yTUftmwqXrOSMmQAV8ojRi29Xl/muSAbhJl3zyhlur2vPnSO4VDaxSJ7lt1huN+cszLaHHLU8J9jjqy8rVASsjqU4Hq+oLI8qhk/NqxOQ2GChKBxYHNUEKkd14cde6G5SRlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769632354; c=relaxed/simple;
-	bh=ScaFbVk6dQO6rputL2y6CmTOCxnxrTt8LIDCJnQeb/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=A2gJSkBGfIg7AMJcs30DcRhYA1tLQRT8wu8I8YT+Dv0frlLvwu6tmGe8xFzWAKRIGqWA+jvtfmX9flr5gAs+yJ981v/oB9xUJ218Xuw/rZH4Mx1MMHiXM5c8tf1+WIQhXC8hd+cVNm4dHYNsyWcmD3F19MLo0Cs1O9A6GVIu8NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRFFBM7B; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRFFBM7B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EC8C4CEF1;
-	Wed, 28 Jan 2026 20:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769632354;
-	bh=ScaFbVk6dQO6rputL2y6CmTOCxnxrTt8LIDCJnQeb/k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JRFFBM7BDlzwIaD25lTsuxXx9AT/mS3qQtT/7+Z7Y+eIjQnvtkdhyN6vQsST4aqGg
-	 8UXBJLI6m6Q2K/VFXXpgZ6kgZsSS8LfuNVvLy2Iup3TZqVaOqqG/wfxdIiH872Asw4
-	 xa6P1XBd8jy/vmmFniVh6w/MgMDUlcSaULP7V4BX9facMpn37MjYrgxuH9L6wNmGVA
-	 cxidaytWWgxIncWl50gW8qPc0YEoZqTq4kYzi0XaF3xKUYao0rZuSee92nXcdSo43y
-	 iXkBL0GZluUAfU050BdIBxJsOOI+dADZMdlZBMeqXn/c1/wJXQhRvlBr4DWOmD4dcD
-	 vUIv27XwOCoWA==
-Date: Wed, 28 Jan 2026 20:32:30 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the device-mapper tree
-Message-ID: <aXpyXrnoOJI7EkyL@sirena.org.uk>
+	s=arc-20240116; t=1769652192; c=relaxed/simple;
+	bh=iwzUO1fhRKg8BsP6aGwy6dry5lodHaaYp7ieNBc2KC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l7dUf2gNatcfZ4X9EPyOoz8sW3VSla6KrKaUNzfo6jS7IK9VQvZtbWWopRlQF4rw8bFka/lirnh0ME8V/s78Vsv476lfpN5M3eIYgJ1J66stBujAg+EKclsFH1vbGs0mBDIUdLzaiP0nwx+9UkODrQEdAvmUO4eNFpT+7mnJoZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [10.213.18.206] (unknown [210.73.43.101])
+	by APP-05 (Coremail) with SMTP id zQCowABn9gnPv3pp0r30Bg--.36283S2;
+	Thu, 29 Jan 2026 10:02:55 +0800 (CST)
+Message-ID: <d9c8d246-87aa-4a49-be17-4d0a77dc33a3@iscas.ac.cn>
+Date: Thu, 29 Jan 2026 10:02:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bXkMWt+mjZs897Jo"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+To: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Networking <netdev@vger.kernel.org>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <aXjAqZA3iEWD_DGM@sirena.org.uk>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <aXjAqZA3iEWD_DGM@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowABn9gnPv3pp0r30Bg--.36283S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruryrCw43Gr17Ar13WF18Grg_yoWxurXEgr
+	1Yvan2ka12yrs5Ca17Kw4agryF9FsrZr1xZFZrKrW5AayqgFWUA34kKF1xJr13ur13WF98
+	Krs3G3Wxuw4UKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIAYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUAVWUtwCY
+	02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUcoGQUUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+Hi Mark,
 
---bXkMWt+mjZs897Jo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 1/27/26 21:42, Mark Brown wrote:
+> [...]
+>
+> diff --cc drivers/net/ethernet/spacemit/k1_emac.c
+> index 88e9424d2d51a,c85dc742c404d..0000000000000
+> --- a/drivers/net/ethernet/spacemit/k1_emac.c
+> +++ b/drivers/net/ethernet/spacemit/k1_emac.c
+> @@@ -1648,14 -1531,6 +1545,12 @@@ static void emac_adjust_link(struct net
+>   		}
+>   
+>   		emac_wr(priv, MAC_GLOBAL_CONTROL, ctrl);
+>  +
+> - 		emac_set_fc_autoneg(priv);
+> - 
+>  +		/*
+>  +		 * Reschedule stats updates now that link is up. See comments in
+>  +		 * emac_stats_update().
+>  +		 */
+>  +		mod_timer(&priv->stats_timer, jiffies);
+>   	}
+>   
+>   	phy_print_status(phydev);
 
-Commit
+This merge is correct.
 
-  218b16992a37e ("dm mpath: make pg_init_delay_msecs settable")
+Thanks,
+Vivian "dramforever" Wang
 
-is missing a Signed-off-by from its committer
-
---bXkMWt+mjZs897Jo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml6cl0ACgkQJNaLcl1U
-h9DUYwf6AlGZmofDpap7z4WQULpxkUJlqIB3tE90CU8qLNACjhiS817YGFemroTo
-yA8iBf6L/tEXVJ79RoLCsJsb677zzveuawtVvj9q6f6y/N+ASGQiIN7HKzt66N/2
-sZ7q1YhZhp/U6lBwrJ/sOAeN0kTyAde7n50Q6ILafq5aAt4b/n+kXRVEdhyQNnGW
-5jZnIgftwJe7/KKXF5xCXn1VcpgjvGSDIykFVhT3pgLoLGj/PXIX05q/YcjLe2Xc
-GX0VQKcp7DI6ktaGaTndA6M0/lDMNRdsW1tt9ycdxZk1GEsGHvl++piP3W37tJaO
-ORyGOu0uQRb4Ld4Fz5te5l1XdyUzIQ==
-=tsV2
------END PGP SIGNATURE-----
-
---bXkMWt+mjZs897Jo--
