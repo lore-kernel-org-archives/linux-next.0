@@ -1,69 +1,136 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D442E2665;
-	Thu, 29 Jan 2026 12:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156A7305E3B;
+	Thu, 29 Jan 2026 13:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769691079; cv=none; b=oCmDCdqaXNbmZssn6KnNuL588bJvZWpW7l8l3gkOrUz/fyp7Dkp2k2b3ofTtjpSj0mCqXewWIWpr1Ycn97fqk/2W9fU4zIJEKX+yrP++Mqhne1Xo3gXL79frDkUHkHT8x7tKgcYcQe05XIL/BFPr8/SIe80Gu4pra799IMsklMc=
+	t=1769694641; cv=none; b=s000MU5hhCjkNdzqqYdcy7gIv7jtuLCiVmeow4YSgWSYmjj/p2VDbvmeppomE2u8SbqqDhmVwh0uc/2Xo0OmvGEZ8C4yFCXnH+h7y0NOq/iwNKc/+70hfDquresTQNUsF7cAakaddhPtuNPaJ7x2EcZPYCTvtyaVz7GBZpDN5Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769691079; c=relaxed/simple;
-	bh=gytquQeBkKU73EH8XBR+K0TT7uQ14NH8JiSoNEVhmoc=;
+	s=arc-20240116; t=1769694641; c=relaxed/simple;
+	bh=WyilHLmNkuKjKBaRuHegv0qoYQMIENZ/5VESlcwLcec=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=blOzmwpKQfOZ4blqQpmL1vg76GeYbmwIEIdh6Y8mu6psGZ6FsQscoBJSKheaRiUZsLIYiKhtSuzmqk7d8pfIQ/NwdfAT95PzHYfK5DAm6DOuavLXgVMShEJTR3ob3XbvQ8nk4iS3ebAk5Zc5f6fwG5ioB2R84IJB76amF4yBh34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRUhxob0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=r3JpTbtFzXHyzh5D6WvffZS2RrZk2degADo3XtxLEZJ0VxyYy3ZHrNu3wxTrTbu3t25mVqJSC+cSaLcYxeME0c192iDWTjacJlKDa8MH6t5mWheZuJ+MIk3cRMGlTam/rnyfrg+3tfP/kRYZ3MAYR5g5m88BP2lMx3tgSm3/Ik8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK7HtoEq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRUhxob0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DBB9C4CEF7;
-	Thu, 29 Jan 2026 12:51:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK7HtoEq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491CCC4CEF7;
+	Thu, 29 Jan 2026 13:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769691079;
-	bh=gytquQeBkKU73EH8XBR+K0TT7uQ14NH8JiSoNEVhmoc=;
+	s=k20201202; t=1769694640;
+	bh=WyilHLmNkuKjKBaRuHegv0qoYQMIENZ/5VESlcwLcec=;
 	h=Date:From:To:Cc:Subject:From;
-	b=oRUhxob0jeW0hxZ0TQ3wqN0qycdnZrhyo7kOVFrMUHuhI+l5/qNHr911kr2G7BRW+
-	 f1fTYAf3kQq4weL0TA1SrcOVqbSHDqUeC0uDqbWHae65OSuc9ea8khUzo0vMDMVzx0
-	 cI0jPIFzV99lcA+EaB0tXwAVSiCPERR3f26cCcCGGxNxCgs91+EbUcSuUQXu/P3BOa
-	 3xB+GlIRGq+p85fXbUVJ9G+TxavQnoen1bhId/2Ni4WHQm4VwlJ1ZBBmUPyz07UfFh
-	 NwIVuEjKJecqv877QqSlztVdcLhfnePmrFMOFIU+2fJuK69CKEf1gQJGf5pSmximxs
-	 NHEtokuW3TFFQ==
-Date: Thu, 29 Jan 2026 12:51:15 +0000
+	b=AK7HtoEqR9AfRJP4rHcQOnm3sgYSI9qnV7ye39fwFyttpUAcRQRXdA9YZonul51fC
+	 OQnknkLuzyHiuxMs49uj7Owuxthv+4sAuuvVYo9viSF+DxIqFIhzgI/UUfXxUW7Cw9
+	 KLisTJhkV5Lh01ltbMPVln85XUOPhHcWCdJ64eGerzwbFfFaf1E7rhi9AhNM3knXn0
+	 MEEirZM/lei6iw5M+ahn3NIxsqWN/avcoAxQ7hI5B15PMm36tsj9XSg7JeLRl95Ikl
+	 faZDFB03USQJstENw/n15zkV5n/PyIhXTRkzzh1RpPtrjfZYY5jrZZTaSA7In5SNgv
+	 dmlIBC9VEPI2w==
+Date: Thu, 29 Jan 2026 13:50:36 +0000
 From: Mark Brown <broonie@kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the btrfs-fixes tree
-Message-ID: <aXtXw3_wMDnrrOxW@sirena.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
+Subject: linux-next: manual merge of the mm-stable tree with the
+ dma-mapping-fixes tree
+Message-ID: <aXtlrOzrFg5XMSkj@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UxwAfq/lWjF1z51t"
+Content-Disposition: inline
+
+
+--UxwAfq/lWjF1z51t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the btrfs-fixes tree, today's linux-next build
-(arm64 defconfig) failed like this:
+Today's linux-next merge of the mm-stable tree got a conflict in:
 
-/tmp/next/build/fs/btrfs/bio.c: In function 'btrfs_split_bio':
-/tmp/next/build/fs/btrfs/bio.c:102:13: error: 'struct btrfs_bio' has no member named 'can_use_append'
-  102 |         bbio->can_use_append = orig_bbio->can_use_append;
-      |             ^~
-/tmp/next/build/fs/btrfs/bio.c:102:41: error: 'struct btrfs_bio' has no member named 'can_use_append'
-  102 |         bbio->can_use_append = orig_bbio->can_use_append;
-      |                                         ^~
-/tmp/next/build/fs/btrfs/bio.c:104:13: error: 'struct btrfs_bio' has no member named 'is_remap'
-  104 |         bbio->is_remap = orig_bbio->is_remap;
-      |             ^~
-/tmp/next/build/fs/btrfs/bio.c:104:35: error: 'struct btrfs_bio' has no member named 'is_remap'
-  104 |         bbio->is_remap = orig_bbio->is_remap;
-      |                                   ^~
+  include/linux/cma.h
 
-Caused by commit
+between commit:
 
-   4b40b1c47f937 (btrfs: fix copying the flags of btrfs_bio after split)
+  0fd17e5983337 ("of: reserved_mem: Allow reserved_mem framework detect "cm=
+a=3D" kernel param")
 
-I have used the version from 20260128 instead.
+=66rom the dma-mapping-fixes tree and commits:
 
+  9bda131c6093e ("mm: cma: add cma_alloc_frozen{_compound}()")
+
+=66rom the mm-stable tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc include/linux/cma.h
+index 2e6931735880b,e2a690f7e77eb..0000000000000
+--- a/include/linux/cma.h
++++ b/include/linux/cma.h
+@@@ -57,33 -62,4 +62,13 @@@ extern bool cma_intersects(struct cma *
+ =20
+  extern void cma_reserve_pages_on_error(struct cma *cma);
+ =20
+ +#ifdef CONFIG_DMA_CMA
+ +extern bool cma_skip_dt_default_reserved_mem(void);
+ +#else
+ +static inline bool cma_skip_dt_default_reserved_mem(void)
+ +{
+ +	return false;
+ +}
+ +#endif
+ +
+- #ifdef CONFIG_CMA
+- struct folio *cma_alloc_folio(struct cma *cma, int order, gfp_t gfp);
+- bool cma_free_folio(struct cma *cma, const struct folio *folio);
+- bool cma_validate_zones(struct cma *cma);
+- #else
+- static inline struct folio *cma_alloc_folio(struct cma *cma, int order, g=
+fp_t gfp)
+- {
+- 	return NULL;
+- }
+-=20
+- static inline bool cma_free_folio(struct cma *cma, const struct folio *fo=
+lio)
+- {
+- 	return false;
+- }
+- static inline bool cma_validate_zones(struct cma *cma)
+- {
+- 	return false;
+- }
+- #endif
+-=20
+  #endif
+
+--UxwAfq/lWjF1z51t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml7ZasACgkQJNaLcl1U
+h9AHLQgAhrihooyqwNsRY+tG1utYibr7SPyNuItyYRDheltMqJy9xnMIwbNhs+Of
+A5nCVwDTjrgRjJf5b5sH09Wj0THA78LHKxmPSS/M2bolQe9PUDqxGaxihxBu4LTx
+K1cumCmuKdi0k1QCuwchT/Y0SnNKSF8HiQUsoApdy4A5RnMJ/glMAzZ2QMyKsYA1
+C6WcqEkKzA4rXNxv4GwAK9tiMuGQxuyosxC/M8CacjI3sm/mYtIqc9K53EO5qfk9
+mw8jcPYRq9JwEGgaibsjuLlZl8gZ/yl/3EKpNTOQesFyj4cX2r7k49Y8Ol2p+9aY
+8L6WMuRuzeWfDsHkr4KE2yX1qiyzKQ==
+=PM3e
+-----END PGP SIGNATURE-----
+
+--UxwAfq/lWjF1z51t--
