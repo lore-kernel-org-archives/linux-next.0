@@ -1,40 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392ED192B90;
-	Thu, 29 Jan 2026 15:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2C227563;
+	Thu, 29 Jan 2026 15:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769698844; cv=none; b=UzRJn/6nhaSrwMX38ul9fWtgFOeMmsRFQdqwHr1JdtPN5cOgZpBUWUHXDWkyJOTc0FGr3mGC+/KItA2xxVbxmdBShYocUAq9G4yG0FREGVE4L4hFbJxJyvMudmXky5owMZgijwLMF3u+sIucq8o0Gg3oaWw5ufGM6bKhLKi7dmE=
+	t=1769700000; cv=none; b=g7dpSU6tqyB4jzyjVPxh9sxJIEqbXiB4yND/Joytk7Fo72/vcCBXH7yFDKgkKCEamnp83geukGjj0UxtDaV/StvHeJrWF1IFjmeWqNBzohDiQVhNOMQCiWj3lu6+uI2koOoUhjOe0yUgBAWqcgE5mV01qJ25H/8iEZEJvozDHm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769698844; c=relaxed/simple;
-	bh=zyHoDOQ2BElbZnCszVkpyvzIlEwtMJEe1Hh+xfSphpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HIXB8UitqbSTqQ+YJEH+sPZGNbfRspYU/9AYFoU6hg65GEmD4ehdaVl4ZZlj7StCKAbb8RP2G6fdHLE11KHuaDlftpg9yxxh3sjxqfPvmUTas/hJL4ePBcYy3tpOzy3AOmOWe+triRcnylXt6GVIPTR0SUO3AB/6P1DqRT6f3Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obEoujsx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769700000; c=relaxed/simple;
+	bh=u9HpuymB4jnQsWOHqBJ7eyGnxrVbHZmh9qRqhQi99N8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBjOYdi9G/GTPQ9VGX1/cmbOssnb3KEgIfLZiMX0wfweuUXZCk/b7dIFiBFFza2e9Xsd9i0/4zIUpA8Q6MqXbREKZiZY+yuNSfPLmgyXTYImTZ3JR0b3gciyU2/VUrB/EpMN6b5k3SrlktoCHzfP+1/yIu0ii5P5K+4Oln7Puqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0+iV1pU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obEoujsx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA13C4CEF7;
-	Thu, 29 Jan 2026 15:00:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0+iV1pU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C7B6C4CEF7;
+	Thu, 29 Jan 2026 15:19:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769698843;
-	bh=zyHoDOQ2BElbZnCszVkpyvzIlEwtMJEe1Hh+xfSphpM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=obEoujsxBcwY01FtAJt8+x4IB3ZGCSGY8z0GeRoeIHo6YahM+STXDOUPmSDO5WWMB
-	 XdUFkO5NZjX7+Cp8IE9pEjrBFMVAVifCT+IbV83K91C1soE5fx59MTx6tx8Rj9yNNt
-	 Dkd4YxluJCuo0UE6X+H6EwboK5v+3vWNgVT4Z9ybPRrybKmvH9Mh+m/hqsSOWT82Gl
-	 Z+F/LcE/BwgDXMseKuxjWTaer6VPPZcMub90dEHz8qgKXaM8lBQG9+br936WCMAA1N
-	 1gq4+fHJzH+scMe+GiIOBBweAjIqQ0ROI4/XAQ5UeJD1rY2frn2B80tBcioiGvCo3t
-	 wILADnwDHHjzA==
-Date: Thu, 29 Jan 2026 15:00:39 +0000
+	s=k20201202; t=1769700000;
+	bh=u9HpuymB4jnQsWOHqBJ7eyGnxrVbHZmh9qRqhQi99N8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G0+iV1pUYi+7u2bvs2tDWZww/ItvCjdiATm2wDlF4Bcaj4z1YLoj5Z1KJbgSgBWW0
+	 DrcUZJhN8iyZc4vij53UX0/u1Tkxv53p9GMABNUBOUbdOT7MprpVr3jggBgK1K4HmK
+	 7LFVifFhQO1Q/iwFx0s9K4UEdUh8KC78rnvWQIIAZzsxs65cpQ8K3f9wuCIuknQbUy
+	 Ugy51fIQY7Ci08Am8oo9+R6fhwCCwxP6lRAAKl3FfvkSpugUkoGlOh2E/N7VWVMuJR
+	 rsVpT6McN31MOJP46Q57EV0iKlMO0zzQxF/cik1kRVyzSCdY0pxyEvQ0fO2MJTPsDF
+	 6IyE6Npop447g==
+Date: Thu, 29 Jan 2026 15:19:56 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Anup Patel <anup@brainfault.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
 	Wu Fei <wu.fei9@sanechips.com.cn>
-Subject: linux-next: manual merge of the kvm-x86 tree with the kvm-riscv tree
-Message-ID: <aXt2F2jIm5YK8LB1@sirena.org.uk>
+Subject: Re: linux-next: manual merge of the kvm-x86 tree with the kvm-riscv
+ tree
+Message-ID: <1b6ee2e4-c880-4d8f-af16-aeeadaffb1ae@sirena.org.uk>
+References: <aXt2F2jIm5YK8LB1@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,97 +44,90 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OC7PgvLGfSkGD0Vc"
+	protocol="application/pgp-signature"; boundary="28sTDVHcnSsrXys2"
 Content-Disposition: inline
+In-Reply-To: <aXt2F2jIm5YK8LB1@sirena.org.uk>
+X-Cookie: You have taken yourself too seriously.
 
 
---OC7PgvLGfSkGD0Vc
+--28sTDVHcnSsrXys2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Jan 29, 2026 at 03:00:39PM +0000, Mark Brown wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the kvm-x86 tree got a conflict in:
+>=20
+>   tools/testing/selftests/kvm/lib/riscv/processor.c
+>=20
+> between commit:
+>=20
+>   7631f7b1ccc9e ("KVM: riscv: selftests: Add riscv vm satp modes")
+>=20
+> from the kvm-riscv tree and commit:
+>=20
+>   9f073ac25b4c4 ("KVM: selftests: Add "struct kvm_mmu" to track a given M=
+MU instance")
+>=20
+> from the kvm-x86 tree.
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+This also nsees the semantic fixup below:
 
-  tools/testing/selftests/kvm/lib/riscv/processor.c
+=46rom 11021bad2a6d62224d9216da62023e1a79cdd0dc Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Thu, 29 Jan 2026 15:12:25 +0000
+Subject: [PATCH] KVM: selftests: Fix up semantic changes
 
-between commit:
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/kvm/lib/kvm_util.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-  7631f7b1ccc9e ("KVM: riscv: selftests: Add riscv vm satp modes")
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/sel=
+ftests/kvm/lib/kvm_util.c
+index 265e173b73709..1959bf556e88e 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -359,17 +359,17 @@ struct kvm_vm *____vm_create(struct vm_shape shape)
+ 	case VM_MODE_P56V57_4K:
+ 	case VM_MODE_P50V57_4K:
+ 	case VM_MODE_P41V57_4K:
+-		vm->pgtable_levels =3D 5;
++		vm->mmu.pgtable_levels =3D 5;
+ 		break;
+ 	case VM_MODE_P56V48_4K:
+ 	case VM_MODE_P50V48_4K:
+ 	case VM_MODE_P41V48_4K:
+-		vm->pgtable_levels =3D 4;
++		vm->mmu.pgtable_levels =3D 4;
+ 		break;
+ 	case VM_MODE_P56V39_4K:
+ 	case VM_MODE_P50V39_4K:
+ 	case VM_MODE_P41V39_4K:
+-		vm->pgtable_levels =3D 3;
++		vm->mmu.pgtable_levels =3D 3;
+ 		break;
+ 	default:
+ 		TEST_FAIL("Unknown guest mode: 0x%x", vm->mode);
+--=20
+2.47.3
 
-=66rom the kvm-riscv tree and commit:
 
-  9f073ac25b4c4 ("KVM: selftests: Add "struct kvm_mmu" to track a given MMU=
- instance")
-
-=66rom the kvm-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc tools/testing/selftests/kvm/lib/riscv/processor.c
-index 373cf4d1ed809,e6ec7c224fc3e..0000000000000
---- a/tools/testing/selftests/kvm/lib/riscv/processor.c
-+++ b/tools/testing/selftests/kvm/lib/riscv/processor.c
-@@@ -64,15 -68,15 +64,15 @@@ static uint64_t pte_index(struct kvm_v
- =20
-  void virt_arch_pgd_alloc(struct kvm_vm *vm)
-  {
- -	size_t nr_pages =3D page_align(vm, ptrs_per_pte(vm) * 8) / vm->page_size;
- +	size_t nr_pages =3D vm_page_align(vm, ptrs_per_pte(vm) * 8) / vm->page_s=
-ize;
- =20
-- 	if (vm->pgd_created)
-+ 	if (vm->mmu.pgd_created)
-  		return;
- =20
-- 	vm->pgd =3D vm_phy_pages_alloc(vm, nr_pages,
-- 				     KVM_GUEST_PAGE_TABLE_MIN_PADDR,
-- 				     vm->memslots[MEM_REGION_PT]);
-- 	vm->pgd_created =3D true;
-+ 	vm->mmu.pgd =3D vm_phy_pages_alloc(vm, nr_pages,
-+ 					 KVM_GUEST_PAGE_TABLE_MIN_PADDR,
-+ 					 vm->memslots[MEM_REGION_PT]);
-+ 	vm->mmu.pgd_created =3D true;
-  }
- =20
-  void virt_arch_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr)
-@@@ -220,14 -212,8 +221,14 @@@ void riscv_vcpu_mmu_setup(struct kvm_vc
-  		TEST_FAIL("Unknown guest mode, mode: 0x%x", vm->mode);
-  	}
- =20
- +	max_satp_mode =3D vcpu_get_reg(vcpu, RISCV_CONFIG_REG(satp_mode));
- +
- +	if ((satp_mode >> SATP_MODE_SHIFT) > max_satp_mode)
- +		TEST_FAIL("Unable to set satp mode 0x%lx, max mode 0x%lx\n",
- +			  satp_mode >> SATP_MODE_SHIFT, max_satp_mode);
- +
-- 	satp =3D (vm->pgd >> PGTBL_PAGE_SIZE_SHIFT) & SATP_PPN;
-+ 	satp =3D (vm->mmu.pgd >> PGTBL_PAGE_SIZE_SHIFT) & SATP_PPN;
- -	satp |=3D SATP_MODE_48;
- +	satp |=3D satp_mode;
- =20
-  	vcpu_set_reg(vcpu, RISCV_GENERAL_CSR_REG(satp), satp);
-  }
-
---OC7PgvLGfSkGD0Vc
+--28sTDVHcnSsrXys2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml7dhcACgkQJNaLcl1U
-h9Bi+Qf+NT3KpU0jt2+8u8w9wQ44E8bB+O7UHXxhi5LdANq6lpyQqkryI5J9HzZk
-rsooKbScoJj5kFByqYz0GSh3v6cvNZweE+9OZRaLtZurfbyupcC79YNbJkyNyEEL
-6r9g8ARuP7biRLhRZP/fA2KMf1wEarcem9quJdKpb53vQFXLMQn2gz3X/FHyJ1bB
-khQ0eTm5EIq+qoyCxqEiovL6OxT/YOojMk2C3gH7p+pZbaOW7YdIP6OC1LhF/2fZ
-gcsszVHhw8CvdYxI5XmrUQ1RB619zO6pggC0aWFNeQoFZaN9evnSVY6CFEN/Uv0Y
-u/tCThJBo04cBsY9ihhqdseExyzZbQ==
-=HC68
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml7epsACgkQJNaLcl1U
+h9D+/Qf/Zyv1XKrqO8blTdg/U8Y1D8SAvyLs7XKVt/Yh5C07kxAn1VsS/1Oif/BF
+0XhBtH7cuxe0PIpDYOAllYzC4cdZpsfX+lIIOzlE1tpjv+Sq5o+LEIl6BifwNJJ1
+Zqin7Mzl5N2PcUYD5Vbc1th412qIE4mO9rCSK1ymF6/u+sjT4mwAH27pXAEAbtOt
+NBc8Oj2vS5Nq4YWT1MBA5nKyaZLgLbPKWPc+mqMeyaDepfB9urFppU7qOHJ331R9
+UoUUDMbFShrQrvoFUVOh914GeQSDr2ej7XCKTlrgg8ot9WfdBsdorIP3A8t7gyDz
+pb5pOkXrXlyKAZ8wQMj9Cg3g/ppCbw==
+=JpFf
 -----END PGP SIGNATURE-----
 
---OC7PgvLGfSkGD0Vc--
+--28sTDVHcnSsrXys2--
