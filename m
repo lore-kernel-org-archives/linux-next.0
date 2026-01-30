@@ -1,122 +1,110 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E1836C0B2
-	for <linux-next@vger.kernel.org>; Fri, 30 Jan 2026 18:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769796674; cv=pass; b=kSFWBKNuRzjavbBhdXRpqKsGXK0zP3M1njC2jMMufUIY+Paa3TmVqk1F93UkY9Ai5ES90Oj+S6WFcugI8VXrvKCGSQGB3706LqcMCTjqE5hTCL6ddvZCIaBN+tbrSYADMmNLwfIkQRVTCGSJGTfhSSzycY0AKwY7LgaKteQAerc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769796674; c=relaxed/simple;
-	bh=MERQg1C6IZ343zcOAZleJo2BzWbg4OGEsKEpkWTTTz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/SO0oe0s7NbosfgEsMSkHljm8Mx5tCSJ1FEowbCvwGk5rKFelaQKRfX+7O7K1bxFocjhQdHxw0v8UMI9CtqbBpD9eAkUe99gXN5r8ME0q6fNnvb7kevYtHm0toQKMmxTund8Xoim8jDkYqGLvuKpnvq22BxuQzajzAmUuIZTm4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dXC3NoXx; arc=pass smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA20F36CE0A;
+	Fri, 30 Jan 2026 18:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769796719; cv=none; b=AIjwSGSbsCZiylCzb7eSrI9I3XHx2q6WcrClR+1SJzxxmDniEoTcFLS8mp0wqoRga3Mb8Np/JlzlTqTnGIK2DNytvLu++ZalCX8Jjcr4caE4ylbUPtKOEvM/jCHE9qBsyVOgHDM621T4Rxf7Jn4ErOaXnBi2PW5CO8GfVQHw/VQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769796719; c=relaxed/simple;
+	bh=Ye7xnT4REmfre54wKc+cI1NbTXc1ZmiIp93TVdyA8JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1h1aWVWQNLjuF9bzqWLiEdqtRNA0D6+884xWYIRI9NgxhrwO36hDFEPhuNZdfTv5jncir2VkoDnQtvneL1aV7rURKwFXbvrxSOeokiXm4QoVpSiMm/EB8uSOvqqFIQWhaj/qGju291pRr8JrAJBNb/fhAJ/Jgj/0YBJEenzlh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LdhGAFER; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dXC3NoXx"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6581551aa88so515a12.0
-        for <linux-next@vger.kernel.org>; Fri, 30 Jan 2026 10:11:13 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769796672; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ROuS/dtPwiW9jMC5gvPg4zp3gQOk/mkmZpLtf+KQ3PtrHtf6aJl/IiWK1qI4fMbv8z
-         Pje2mP0nJcUkW45AE2Hy9ETCj3xL6DgHfc4cB0YdctWHiWU9tXWeUCmvfwfMX8hLaS5j
-         cdY7JRFAKZbh30+sSm1TlwXtiFY8LoeSre7wxoxXObNCtP0MK4FcWmGc9p45DKK2gbDO
-         Iq1mv/uF7JjjvipDK/SIMYp/IaZDv+qF2F1LaCr+zIbCZKJU5NMVx0y6eTuxtA6mQM66
-         AhE6Sx/fSmpaq91imm/xh/JrHuGxIQ/uaEBL3+J9sRf2/8enDW04kZ7B2sffiR6LTsr2
-         IMVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=MERQg1C6IZ343zcOAZleJo2BzWbg4OGEsKEpkWTTTz4=;
-        fh=qk1o1Ew13Fy6MC8Ld1pCSx0vznfbhVObCsOyzyOofFo=;
-        b=d+BRKHixU7z3echwIC5GEdluIyxXCJAgWhWYJ+yUWj7LYMAfCNVA+4k/QMFZs4acer
-         b5hnD9bKgiAAMvJmi98+n1AqFp5bGMCRKWr3H0XlEHdaIuMgGIausr3HwnOJJ3z2fB1R
-         TIL+pjhR+L24d2T21BktoGLLSv110MHRoYQZyoDcwjCTDALdjrOIOo36ATkM2Fe2P8xq
-         UZnC1MzDtVofCbpbh8Vw1gnvtxF/lG8ZZLvT2hSiMht0fv3E4gFyp6egPOUtWQASGBuJ
-         vDq1Ea5SocT7B9d/tXhHB/tg5GbhRn2mjJLYggYHl51sVZr8ual9qRfnXUFwBzWUdiSw
-         J57g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769796672; x=1770401472; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MERQg1C6IZ343zcOAZleJo2BzWbg4OGEsKEpkWTTTz4=;
-        b=dXC3NoXxMqX0tgAWN58O0LyYMi78tRDtjGuIjuM4TXhufqfWKACuF4qKxL48eHhi0R
-         wudwUXt+SCorK/WlEKtxPgHP3PJV1kvDE9fkFiva3VXSVXy7mK/PVYU1vaDPYPehcNFd
-         okBeAdNOH3JKKUoHyGwbmqA+XMlczVTfXhvg2nOyl0dFXAgQDw1EN/THXza0k/cNUZYZ
-         cWZpy72RTKchBgvZ0NGtFC2AIRWL+w83rB4KnQfR3WEUJQKwvoOwK86cqBJQfZ+G6x7Z
-         dFcDxOu2Z1Zvb0C6RgNIyy2vxPNLsbNd/hpbx76nQdkmM6qCo5DPhbeCaz/1L0ABwK7y
-         WeFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769796672; x=1770401472;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MERQg1C6IZ343zcOAZleJo2BzWbg4OGEsKEpkWTTTz4=;
-        b=KAYUpKF79nZlifEGLTQNd19/neNHt8Lu4Y+7Huw7hMOHdN4PedzaLl2ucEIQQYEuH8
-         H4MeBuzZ6POAdd+Q1FMdTgwuS1MGuBiSskSZ8Ns5nVRETrxvBxdDE0OPjNi0/bl8vfco
-         rap1N/pyA0tBo3BXxvhbsX1rofZwRK+l7qkQvqEAG9U0ZszLfPfOh+QjyB+84bGl4zjL
-         J6JQsfvUOUxmxBr741K6exY9HRRvAy1b7AHbtCPIKYKOAb1SnOQFs0L6hevc14toXr86
-         GZlagl4CjulxXcU8VZD6ezQ3ot5ivGDQg0bS5NFm7vwpM4JFTWsa2ISnHisVYE9+0h/1
-         U8jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSaSd2IP9WiLBl0pFYybm+vjP2/t7YPm1pHnYZFh2g+FjlTUGpATbkbR4j588ODNjzxGAHg5Yijq8j@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuQECSnEoqpsYMAbv9bElv7aoyAQPhO+Q+g9jcc4PgsCw5WPFo
-	Rd34NsspWFxREspCH3mL0bmxGfeIzp2cn9SZYnLEy3srvgYroG/S9cj8FpTOgKTw7SN2MpXK2pz
-	iLOb6RidBFQgpSdJSstdZVX9i0UNOX6trvUnz6Qei
-X-Gm-Gg: AZuq6aLkOjZ0xWy/8DQ8cbY7K6f2sdGZmeksujxhU/d5FqntH+c53xgcv/3Ob2CEQC3
-	zh1qjGyf2sAsaGWk7yfF3W23HuASOiE2Rq+733aJPNPV8AXv3MV9F7qjbtSQ5HZ6UvU4Lke8ahE
-	IRFXynH8pU3xyRctfztSTc0KQJJY7ThSXV1axiTkR1RVhGVjjS9wA8vxgzDY7YGw4vVzuTsFvh8
-	dcNQjg7CBFZ1lDEW3nr3qXOm4WLrtNdr9O2YUcOpiCmHXDeNxskpF1t03HZOAjKR2T7
-X-Received: by 2002:a05:6402:42c9:b0:658:eee:f21a with SMTP id
- 4fb4d7f45d1cf-658f7cf2aaemr910a12.10.1769796671512; Fri, 30 Jan 2026 10:11:11
- -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LdhGAFER"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BAD6C116C6;
+	Fri, 30 Jan 2026 18:11:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769796719;
+	bh=Ye7xnT4REmfre54wKc+cI1NbTXc1ZmiIp93TVdyA8JY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LdhGAFERA1dE9c68wOO16LRo/LoW7+qYw1NI8VCxPkuXK2QGOBCE1BvIKvWNkV/wG
+	 8viZ/LybubPdNuniBTIti4au38pA2HTbwjwj/Yo6gAddAebVvvoWmvASeTH7Wrxn+0
+	 Jzr/kBKJojqeUhi6dTl06IY1XxiEmHeEipezx1Eu/c9YTk9m/r7o/uh4UNWB3MY4gD
+	 uRlkT7BFVqPHWg5MCIs9RCOyvwDC1IVlh+4KYBRK7jR9VFjL9bQtqM8CWyFCBtfNJ8
+	 M9hxOIh1k4WqWrHeM2N5HtA7NfhGe6r+i7cZ5bjqLDdNLfGk8/WFtgx0V46Hez4tPy
+	 ryfw3DPn1qljw==
+Date: Fri, 30 Jan 2026 18:11:55 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: linux-next: manual merge of the keys-next tree with the modules
+ tree
+Message-ID: <c80f3db9-168f-4e05-b7a1-b1d4f702e9f0@sirena.org.uk>
+References: <aXzoSci8NPhIwDf-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aXzoSci8NPhIwDf-@sirena.org.uk> <CABCJKueCeHDpu+KMTT9z_iNP2Ljipt6r4KkJ-8h4ysoTRoCW4A@mail.gmail.com>
- <2274419.1769795849@warthog.procyon.org.uk>
-In-Reply-To: <2274419.1769795849@warthog.procyon.org.uk>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Fri, 30 Jan 2026 10:10:34 -0800
-X-Gm-Features: AZwV_QgSxitGmxVzK1MltqA6sUCfpgWaPz4_Gb7KaGpgwIfUq3mFlfVWdCXReTo
-Message-ID: <CABCJKuf10mJnunp0gt0r-5Jnumss5LS1VjN51WQmJgnggE+BGA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the keys-next tree with the modules tree
-To: David Howells <dhowells@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Petr Pavlu <petr.pavlu@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="P0tNkgv8EjUxyjp7"
+Content-Disposition: inline
+In-Reply-To: <aXzoSci8NPhIwDf-@sirena.org.uk>
+X-Cookie: War is an equal opportunity destroyer.
+
+
+--P0tNkgv8EjUxyjp7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 30, 2026 at 9:57=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Sami Tolvanen <samitolvanen@google.com> wrote:
->
-> > Thanks, Mark. David, I see the patches in keys-next were updated just
-> > a few hours ago. Would it make sense for you to rebase them on top of
-> > next-20260129? Petr's patch removed the use_signed_attrs variable, so
-> > we should ensure it's still initialized correctly. Otherwise the
-> > resolution looks trivial.
->
-> Wouldn't that mean having to rebase before sending to Linus?
+On Fri, Jan 30, 2026 at 05:20:09PM +0000, Mark Brown wrote:
 
-Do you plan to send these to Linus for 7.0-rc1? The patches already
-depend on libcrypto-next landing first, right? If the patches were
-last rebased 6h ago, I'm not sure if rebasing them on top of
-modules-next would significantly affect the linux-next soak time, but
-I'm fine either way.
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-> What's your branch that is being taken into linux-next?
+Also needs this (or something):
 
-https://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/log/?h=3D=
-modules-next
+=46rom 6d9a82fe703a084c1dc0d5a1d184bea787aa7d9a Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Fri, 30 Jan 2026 17:56:06 +0000
+Subject: [PATCH] keys: Merge fixup
 
-Sami
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ scripts/sign-file.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/sign-file.c b/scripts/sign-file.c
+index a65c3e0c40b66..ef8a33ba9c529 100644
+--- a/scripts/sign-file.c
++++ b/scripts/sign-file.c
+@@ -206,6 +206,7 @@ int main(int argc, char **argv)
+ 	bool raw_sig =3D false;
+ 	unsigned char buf[4096];
+ 	unsigned long module_size, sig_size;
++	unsigned int use_signed_attrs =3D PKCS7_NOATTR;
+ 	const EVP_MD *digest_algo;
+ 	EVP_PKEY *private_key;
+ 	CMS_ContentInfo *cms =3D NULL;
+--=20
+2.47.3
+
+
+--P0tNkgv8EjUxyjp7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml89GoACgkQJNaLcl1U
+h9Avwwf3dn2pMxCTv1s1LUJIypm92YD093JfCevC4VJZCg69lA4tYM34dF6QEL9Q
+efB6whUJjbaWVjx4RvNNrLmyg/D5rdz8Qgvaoy+HSAWegVn/pOByU8Z2dq+1/UsZ
+fADnlH6WehG2S708HiP+KX7WFvTNUCS7Q2gDjU+4dS/pA8AYwExMg+8e+r8i4tz/
+9Pu+Ut7L3iIzan1dvK7A5HBl8zzXcfaL5mv0dckt1L88K1shXaCk5fIHqE65kDGO
+qSYOPdYe1Pfiky7kcKh8K3iYBsiJPspxlVPPNWwXmvVvByeLETXes4EkLS9hqB8z
+6cfcrrnzNM4oHg9x+MjhcuKXzEak
+=sRkR
+-----END PGP SIGNATURE-----
+
+--P0tNkgv8EjUxyjp7--
