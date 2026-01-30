@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC152F4A05;
-	Fri, 30 Jan 2026 16:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107002E06E6;
+	Fri, 30 Jan 2026 17:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769789150; cv=none; b=ZMzON5ldvoxxlKWw28VxDdK5WviP5Ru8OQ1Gb8JijhQAg5/ze3S+5waK/AltVr6Hrqrx6XhGPSSBpgVGLyCh0IiZqmvAlwDiY5GeWldfrsFARGHAm065by1dALCjxL4VQNPwJn5I7Js9u5PDtQzTLfDVypq+IvHgFk+NLymsC4w=
+	t=1769793614; cv=none; b=CWbspszI1EOtZDlRCNSINgVilgavy2rOgbrAkYR5GcKlMlkbjx7fJ0jwS3FVOx96AlB2Y1N3Ez/y3bbs7Y1Yqr4zR4KWFwQpdRiswRAhyCOCF+m5mOdktXct7KfE1e4LTZYS9QZouOJao0AcHMhK+eEcniCsp4U1BPU8HU5+pFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769789150; c=relaxed/simple;
-	bh=DZ4KO2Z5a+isJNIjaIfUiwgAnYx0w+55wm3dNaxc0n8=;
+	s=arc-20240116; t=1769793614; c=relaxed/simple;
+	bh=SpwfvTyeZIZwbLVUT0SOkCYfcU+WB08zL+Gvb471nJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V4WwmXj8JzspGe+5r0KAm/W3RushRPtxNjxeDTUw0zPPiWDeVKc/aiR8LDZgTzEWR5soYSh8gxy8r8rtXPp+4wze0TvLnLvnow3s1S2YsZ6B8urecTZG/H1MdpL5oCBv+nEIPAGPvkwdsz0Iyj68cfAkTXOU39LfoS+fzRz1vPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrgwlajY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=seFyq93zkOXfCn5/nmraSZkABoA6ZGqVkfvqKdKnhuGnjqahG4QNLD871hFRFMK/lQ71yv2gkcagEFmDXIriHKBBW8xzzxHOAfL9z/iba+iXG/WGQ8PC2RYS1L3M84m5cMt9xOeF0HXmpJwoXSAatpFCXhaG1074jWJngwsRwRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqmXuy6P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrgwlajY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0BBC4CEF7;
-	Fri, 30 Jan 2026 16:05:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqmXuy6P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA70C4CEF7;
+	Fri, 30 Jan 2026 17:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769789150;
-	bh=DZ4KO2Z5a+isJNIjaIfUiwgAnYx0w+55wm3dNaxc0n8=;
+	s=k20201202; t=1769793613;
+	bh=SpwfvTyeZIZwbLVUT0SOkCYfcU+WB08zL+Gvb471nJU=;
 	h=Date:From:To:Cc:Subject:From;
-	b=SrgwlajYamNeaBOMfhqdqpxPqtYW40jy9nCq6leoeaLQ7kcAYjHNJJX8LJ7zSpCi7
-	 pb5ThenmRth9DFRXa/+XvqK7cEnk9im36ZOYR0E3xUoCRyYQL6lkbHxMaApWWeMU9t
-	 MIYjuwrKP3VHYCEvYpBLFsypiseWH0sIVjqVQCne8dGFrT2DoFzmHeFA0CmEJ0fgha
-	 dk2MjLDZpMEr1xGDhLiEBTNA3t6Fp20u1k1bog7rywOI7NKZ/4zfMAubEqCyqYOtFt
-	 2AukmiZVq4lEG58RC5QhQBOQavern7YjeCABEYrNfCHvHUrl7+MyntTYAXZtoteAwf
-	 U21gVJNOID+kw==
-Date: Fri, 30 Jan 2026 16:05:46 +0000
+	b=tqmXuy6PxtGRfzBmt4ttegtSBq1q3Mz3EVMnLE9ThcS3CW8Rbxb67QzSKCMkdFwyr
+	 U/YsExb4YXRg0LeRIrRMCeMrdPOkka61L2kOXxinPTwSBKSfqt3o072mwFkg0JQBCi
+	 eK4gyBfekFGLzzCmVSW6E/ec3psD1/KQwzF6VuvCTvBtC+U7c4QlS10I6MBvW8mWKK
+	 kfvUkS4dIXFQGuSiIon8RqOoG+EtjpQIDLiLZuY8nENN6zcT0EuQt9YAIa8KyNWKq1
+	 EQ1rNuBaK4rLqfvVI1RMdbPzsMn3daB0Y/cnosll1SKMLN3G9qBLZ6WoBdl3AaO5zR
+	 GYWj3ue7q8eSQ==
+Date: Fri, 30 Jan 2026 17:20:09 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: David Howells <dhowells@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Shuicheng Lin <shuicheng.lin@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
-Message-ID: <aXzW2mZ0Wn9PaNAG@sirena.org.uk>
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: linux-next: manual merge of the keys-next tree with the modules tree
+Message-ID: <aXzoSci8NPhIwDf-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,32 +42,30 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aWUnuYGGi8r63wGC"
+	protocol="application/pgp-signature"; boundary="SeuXsVOTjfjAlXPB"
 Content-Disposition: inline
 
 
---aWUnuYGGi8r63wGC
+--SeuXsVOTjfjAlXPB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-xe tree got a conflict in:
+Today's linux-next merge of the keys-next tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_nvm.c
+  scripts/sign-file.c
 
 between commit:
 
-  8a44241b0b83a ("drm/xe/nvm: Fix double-free on aux add failure")
+  d7afd65b4acc7 ("sign-file: Use only the OpenSSL CMS API for signing")
 
-=66rom the drm-fixes tree and commits:
+=66rom the modules tree and commit:
 
-  11035eab1b7d8 ("drm/xe/nvm: Manage nvm aux cleanup with devres")
-  a3187c0c2bbd9 ("drm/xe/nvm: Fix double-free on aux add failure")
-  7755ed58a49f4 ("drm/xe/nvm: Defer xe->nvm assignment until init succeeds")
+  7ca1c9dcb7b0c ("modsign: Enable ML-DSA module signing")
 
-=66rom the drm-xe tree.
+=66rom the keys-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,58 +74,79 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/gpu/drm/xe/xe_nvm.c
-index 6f9dd519371c9,bc88804de5146..0000000000000
---- a/drivers/gpu/drm/xe/xe_nvm.c
-+++ b/drivers/gpu/drm/xe/xe_nvm.c
-@@@ -133,12 -133,10 +133,10 @@@ int xe_nvm_init(struct xe_device *xe
-  	if (WARN_ON(xe->nvm))
-  		return -EFAULT;
+diff --cc scripts/sign-file.c
+index 16f2bf2e1e3ce,547b970972301..0000000000000
+--- a/scripts/sign-file.c
++++ b/scripts/sign-file.c
+@@@ -271,20 -314,46 +271,37 @@@ int main(int argc, char **argv
+  		digest_algo =3D EVP_get_digestbyname(hash_algo);
+  		ERR(!digest_algo, "EVP_get_digestbyname");
  =20
-- 	xe->nvm =3D kzalloc(sizeof(*nvm), GFP_KERNEL);
-- 	if (!xe->nvm)
-+ 	nvm =3D kzalloc(sizeof(*nvm), GFP_KERNEL);
-+ 	if (!nvm)
-  		return -ENOMEM;
- =20
-- 	nvm =3D xe->nvm;
--=20
-  	nvm->writable_override =3D xe_nvm_writable_override(xe);
-  	nvm->non_posted_erase =3D xe_nvm_non_posted_erase(xe);
-  	nvm->bar.parent =3D &pdev->resource[0];
-@@@ -165,7 -163,6 +163,6 @@@
-  	if (ret) {
-  		drm_err(&xe->drm, "xe-nvm aux init failed %d\n", ret);
-  		kfree(nvm);
-- 		xe->nvm =3D NULL;
-  		return ret;
-  	}
- =20
-@@@ -173,8 -170,9 +170,9 @@@
-  	if (ret) {
-  		drm_err(&xe->drm, "xe-nvm aux add failed %d\n", ret);
-  		auxiliary_device_uninit(aux_dev);
-- 		xe->nvm =3D NULL;
-  		return ret;
-  	}
+ -#ifndef USE_PKCS7
+ -
++ 		unsigned int flags =3D
++ 			CMS_NOCERTS |
++ 			CMS_PARTIAL |
++ 			CMS_BINARY |
++ 			CMS_DETACHED |
++ 			CMS_STREAM  |
++ 			CMS_NOSMIMECAP |
++ 			CMS_NO_SIGNING_TIME |
++ 			use_keyid;
 +=20
-+ 	xe->nvm =3D nvm;
-  	return devm_add_action_or_reset(xe->drm.dev, xe_nvm_fini, xe);
-  }
++ 		if ((EVP_PKEY_is_a(private_key, "ML-DSA-44") ||
++ 		     EVP_PKEY_is_a(private_key, "ML-DSA-65") ||
++ 		     EVP_PKEY_is_a(private_key, "ML-DSA-87")) &&
++ 		    OPENSSL_VERSION_MAJOR < 4) {
++ 			 /* ML-DSA + CMS_NOATTR is not supported in openssl-3.5
++ 			  * and before.
++ 			  */
++ 			use_signed_attrs =3D 0;
++ 		}
++=20
++ 		flags |=3D use_signed_attrs;
++=20
+  		/* Load the signature message from the digest buffer. */
+- 		cms =3D CMS_sign(NULL, NULL, NULL, NULL,
+- 			       CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
+- 			       CMS_DETACHED | CMS_STREAM);
++ 		cms =3D CMS_sign(NULL, NULL, NULL, NULL, flags);
+  		ERR(!cms, "CMS_sign");
+ =20
+- 		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo,
+- 				     CMS_NOCERTS | CMS_BINARY |
+- 				     CMS_NOSMIMECAP | CMS_NOATTR |
+- 				     use_keyid),
++ 		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo, flags),
+  		    "CMS_add1_signer");
+- 		ERR(CMS_final(cms, bm, NULL, CMS_NOCERTS | CMS_BINARY) !=3D 1,
++ 		ERR(CMS_final(cms, bm, NULL, flags) !=3D 1,
+  		    "CMS_final");
+ =20
+ -#else
+ -		pkcs7 =3D PKCS7_sign(x509, private_key, NULL, bm,
+ -				   PKCS7_NOCERTS | PKCS7_BINARY |
+ -				   PKCS7_DETACHED | use_signed_attrs);
+ -		ERR(!pkcs7, "PKCS7_sign");
+ -#endif
+ -
+  		if (save_sig) {
+  			char *sig_file_name;
+  			BIO *b;
 
---aWUnuYGGi8r63wGC
+--SeuXsVOTjfjAlXPB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml81tkACgkQJNaLcl1U
-h9B9gAf9Gz81T0ak8MX2C4I+KsQJbwSlibrrAD/mXwsiyF3spycSsdqJcxVrxry9
-beQ49ppkSocN2TKIPmKaW04HARPJ/HxVfSzM1teiojNW4oao+zW6ujpQhcOJ4Yk8
-iUhfovUMit0CgsUOgIicvP8C9v5WtnRzu6Vo5RUclMAksvuW19EDjT0swL5KXlTR
-5L3/hlO2fyEsLWBxX8XI1a65ViJAOBPio/wXs2v6MF6l4gqQNT5be9DAd98jLO4l
-jRf0e1ShS+CHjxcf8+rljDG4FwhjfJvnLI7ytNeWLqipfApWtQ0LhuCecUXz2Xho
-sOLbygMvSS50ecCY/2dmz9yZXHRGtA==
-=r4ld
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml86EgACgkQJNaLcl1U
+h9CQCwf+OdaiKkEIBpKd0m1rYUfrqVh87Cowhwt9uVMGhHMqnzg5Zaq/1/M+qURV
+uyCptPOwPXg5Qd3a/6BSOO7z4DpaTS5HhHWULz2qG3rmtHeAxKk0rtKmr5Z47elP
+c4FbMImor8WGpU8laF1P3lbrBriU+qvlCpH6LOzX/uJOnWy66Goj7ZUWrnj1vYDV
+5jx/w3jMs4xTchHFjtySQmrFWPgrQ3TFPr6upb4KuWuGTxNqDoh4ky5sd8uOjoRM
+t79XGDhDj4qnHAhJEIX6DIUbOv0N92z9Mj7rXjAdv+lSXBENjPfjg+e+Ov7RQRD3
+FBZPL2R8OMzrP4010f0Pp8BERCiW5A==
+=lGW6
 -----END PGP SIGNATURE-----
 
---aWUnuYGGi8r63wGC--
+--SeuXsVOTjfjAlXPB--
