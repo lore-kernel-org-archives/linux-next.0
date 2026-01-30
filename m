@@ -1,90 +1,115 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC72A344D8C
-	for <linux-next@vger.kernel.org>; Fri, 30 Jan 2026 21:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769810230; cv=none; b=EXxhmGnsodLpkCZSB1YSEFDjf+gj7r1sX/Dtm1vmN02XJXqyolBCQCyIRUWqU0N/IfQdldIXnvPrNj7Xz47F1C3ptRG2qnk3jeUK1s3qAJernPv1SX59tSZ/pt63awx8HzKR1jlfniNg7xWh45pghi/kCEvRi1vYFjFQxuH6tDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769810230; c=relaxed/simple;
-	bh=M6/5o4+JGea55KW7ZMzXhfR/yhFL4omJuIMlv4sdcn0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=B62qRPlMwWPfbfjcF5PepwD0xMGkV47iINBGvyHyU8/mtsOqjOgjadiC+kCzg78wM97w3USinOwRy9PoTf1BpPxa2yFHko18u65HIEd2O8rb96pLI2wmUNii4vs0c9SpVRTDd4BCNKbpSjNTRzZs1xrtW26ZfvXslWH9GzNOddo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tm/UzEio; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0985F365A0C
+	for <linux-next@vger.kernel.org>; Fri, 30 Jan 2026 23:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769814029; cv=pass; b=ffLSkncXITMqaocvaaK33TT6hr3wb8y+VwosjKtZMvORYmp1yz6dyW52+3p8LfZsNxpwUPpmHRpbh5lfNmZSrYVwuwCuC97DJ9t3dC4pP0f6eDAkcMafD1/03kk3DvIOnGyGIZWoLJ9qVNkbbjLOxpjEHBl9SvSq4q0t+droas4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769814029; c=relaxed/simple;
+	bh=b0/Gen12rggPEC5sLWg6a8eu7WwNMstDOZsLiSVA94c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bed1xWaOdPn3JGBkTOzqLyfzX/0goTgOAoPxogJyz2HpD3WbvmfsZHZlVsxXpE9NLNs+Qg2okHalQ0VHQUHbljyLKosUZB9nmSPfBKfE/dYlcGOvLXi9PyBtbOWxh1sk1u5MUnW6YscFSrlbdBwEFIeJ5H5iTgfVOCvsuFuCvK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u17zQlwG; arc=pass smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tm/UzEio"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769810227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSoEaRWTcTvxMBESK8unAv3qC2lHv1zUGYHPHFjrwyI=;
-	b=Tm/UzEioEPJB+upElpKjdw3Y9zNGvcUe5ACe6pAfbZ6qkzksi3F3Gu4pLQuBwprCSY0xI4
-	xTfDTW3AFtH9tGyUpIaD7sP0q5PKH4kIwqtKg7qvXsP9vytWDVWLd04ZGkc0VsChy2ye0i
-	kUsH1XTesoNKFqO+J5edKvdJCbBCfIc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-643-GTgToD_qPrGk6-0wvTNeaw-1; Fri,
- 30 Jan 2026 16:57:04 -0500
-X-MC-Unique: GTgToD_qPrGk6-0wvTNeaw-1
-X-Mimecast-MFC-AGG-ID: GTgToD_qPrGk6-0wvTNeaw_1769810223
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B26B195605B;
-	Fri, 30 Jan 2026 21:57:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.33.164])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2C8911956056;
-	Fri, 30 Jan 2026 21:57:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CABCJKuf10mJnunp0gt0r-5Jnumss5LS1VjN51WQmJgnggE+BGA@mail.gmail.com>
-References: <CABCJKuf10mJnunp0gt0r-5Jnumss5LS1VjN51WQmJgnggE+BGA@mail.gmail.com> <aXzoSci8NPhIwDf-@sirena.org.uk> <CABCJKueCeHDpu+KMTT9z_iNP2Ljipt6r4KkJ-8h4ysoTRoCW4A@mail.gmail.com> <2274419.1769795849@warthog.procyon.org.uk>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: dhowells@redhat.com, Mark Brown <broonie@kernel.org>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Linux Next Mailing List <linux-next@vger.kernel.org>,
-    Petr Pavlu <petr.pavlu@suse.com>
-Subject: Re: linux-next: manual merge of the keys-next tree with the modules tree
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u17zQlwG"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64baa44df99so1554a12.0
+        for <linux-next@vger.kernel.org>; Fri, 30 Jan 2026 15:00:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769814026; cv=none;
+        d=google.com; s=arc-20240605;
+        b=a0IjdqgAIp1fX1uXlRx9LMh33pnlsgWQU2ISvaWdEoJRd3RtbKCopWmh41YdgHJ1Aa
+         wjEQX7GJ7rck2JA9LO4h4u4w7RnzOGJssPS/Fo7PQU1NeV3Zj+GyHm2tASOUOwh3mSXl
+         kzHy37HUNAnUvRFHcifKk2YxPM53um1hJStt5vIA335uBkCCY1QOz6iboz+T3+x+LfeI
+         hYjQ9mdcsLNJaZP9ly2H+K128fduXPsbvrDpaCzH15W45Et5W+llr1nmoq/py11+gb65
+         4JS4tGjq3w+1V2SSxxXGCikn7tjT6lsD3fo+xc8TmOR8mALfEJwsPppbPRaJ5+92y8Fe
+         bSSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=b0/Gen12rggPEC5sLWg6a8eu7WwNMstDOZsLiSVA94c=;
+        fh=6Q02jkYQfMT7fNt51DAZZtfmWrliXnxgLx0QJQqeIWQ=;
+        b=cIEz4qbQgroe3Ma5eZ2GECo4FLWEqI5ca0EUdAU86alTs9SBnLp519XNIF1a0S/mow
+         tQg8gbc6gdfGUkG3Ns1LkBmKw2AJ11S7IPgYyk8isa2T9+nDIqJTYBckLXOGkzSjji73
+         ygaTCqysynGzRkVI5YN2mjugExOnl6wk3gYgXz3fEV+KuiAk6RUC2ac98wSSWgDTBAxK
+         0hXq++OMjLN9ECCaDrOPOdAKf9bvI0qFlmbR4JnyCKMuNek5DwWdhMEdUkMYPTDtJjxs
+         xCY0rXbT2dinouXzZf5mPn3uUuKR7Xb0d2uh+XMlADO+MY/pEpyc60c87koD4ud+rSWa
+         tEIQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1769814026; x=1770418826; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b0/Gen12rggPEC5sLWg6a8eu7WwNMstDOZsLiSVA94c=;
+        b=u17zQlwGnZFh10TyBdM1/KBZ8vhKpo9V8/YfipkXJ/p1306Z9YVVm1y6GoJOqc2Daz
+         RxPCOM9UWPMSEzchuyiyN2o8dP13ZLeGU8zpn6y/DNhv/Nx/pX+ZnRcRFUavNFzW6OGw
+         CsWD7V4Or8z/gLicY64bypLevta3ALEvysxD2mYR8oGKv85dxhSyTpu83k2dHRWQ0x0Z
+         M6smMRBz3mMjPrSv2HadopKQbvhiSSHVKxe037/UQnQ91m8jKfwspeWRMm4lXBuhi7Pv
+         qGrDdMpaXf9kaYMl2Nsr6hx3O9W8IC0g0/Dzx2kT0EY9AOMQwW4jZ0jIe6DDwxQ2b7h2
+         WNFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769814026; x=1770418826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=b0/Gen12rggPEC5sLWg6a8eu7WwNMstDOZsLiSVA94c=;
+        b=UDvbor175BhWdHkwGFy0iusz9HQ0nQd7XPYBhrVNaP8eugpRYfOZw6AQj22cPnlBTZ
+         RzZbV+2q07UKFOUSluDaq7+AXBtEW4blEHRJQgbBUvZR4AyLstZzwNlF8rpUjptaBymU
+         VgCJ2bz6e6YNqkaT3d06xKmQPYnyQ4gpMdMUlHJNNBppD7Mql1ZPnQ1vCzF0NiCXObf8
+         UD/eqIDQDbQe3k7b1yNNKJy9J5CtdYMoerhJuu3oMvKV/UO/wAn9IhMPswEYPVFVSvXb
+         UannubdqXnrASlPp3mYma9NhVVkxeeSB2zF/MglDIgvxFG7vSF0mzm1GOPbYdf4pEWTT
+         ty1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUjJN56urAZNQRJ+k+nUG2rM8DuD6yvkyn39qu8O51xH2eBFgNRKB6kQOKtxAgSLCs3YW/Tjv8k9kS5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMZZ7zSvdlXh88AoLLWMJXjIyoXdg5qzn6SxeWgKYuFN/ThIds
+	uoleuIf31xPvkwycvlAdfbJkinTpbddc3CPHNF1SieZtusoLTK9VxliyvllPt7ubUDTEMc+Pj2l
+	rVWmK2WzszABLQVUWvHc0m8D9OcnwvrB8O4vgMmqT
+X-Gm-Gg: AZuq6aKgD21tl1B9FA7+b8SJPbk5+/nt1SlmN1Kt90EVB5CuR1ZVAtrX6vBTunoJCkU
+	pTc3hVZ4WX9uRaFEHc8TtJ+IXdH3Ucc9KV1WIc+nenw10OiIAhnF6uNNB5bwrkQ+3hCEO34MJXi
+	F5Y5Oka0QEMHL3VgHWy11MH4A1tgkqL9hKBwctRIxr/LOKJBSvyqYtkyhhp7blWOSYF4BDp0pXV
+	t7830EvHenjxbruBQeTkTtGHpie4t7VE+wvq5/9qQxirCB8VG/QcbEgN93LTpMIfz4+
+X-Received: by 2002:a05:6402:208b:10b0:655:cf98:d07c with SMTP id
+ 4fb4d7f45d1cf-658fa27dfc7mr3777a12.3.1769814026335; Fri, 30 Jan 2026 15:00:26
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2281243.1769810219.1@warthog.procyon.org.uk>
-Date: Fri, 30 Jan 2026 21:56:59 +0000
-Message-ID: <2281244.1769810219@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <aXzoSci8NPhIwDf-@sirena.org.uk> <CABCJKueCeHDpu+KMTT9z_iNP2Ljipt6r4KkJ-8h4ysoTRoCW4A@mail.gmail.com>
+ <2274419.1769795849@warthog.procyon.org.uk> <CABCJKuf10mJnunp0gt0r-5Jnumss5LS1VjN51WQmJgnggE+BGA@mail.gmail.com>
+ <2281244.1769810219@warthog.procyon.org.uk>
+In-Reply-To: <2281244.1769810219@warthog.procyon.org.uk>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Fri, 30 Jan 2026 14:59:50 -0800
+X-Gm-Features: AZwV_QgzXGNLU14VlKQYQJoqtUUV9IRKtlj1bNNPKBVXLGmEkjDB83OvbsD0HxE
+Message-ID: <CABCJKufJFgnDAuK+n37rha6L9OZugyviVJNrZOCsSnAckHp1ag@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the keys-next tree with the modules tree
+To: David Howells <dhowells@redhat.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Petr Pavlu <petr.pavlu@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sami Tolvanen <samitolvanen@google.com> wrote:
+On Fri, Jan 30, 2026 at 1:57=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+>
+> Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> > > Wouldn't that mean having to rebase before sending to Linus?
+> >
+> > Do you plan to send these to Linus for 7.0-rc1?
+>
+> Yes, hopefully.
 
-> > Wouldn't that mean having to rebase before sending to Linus?
-> 
-> Do you plan to send these to Linus for 7.0-rc1?
+Ah, OK. I initially thought these might not be for the next release
+yet. In that case, it's probably just best to include the suggested
+resolution in the pull request and let Linus handle the conflict.
+Mark's changes looked correct to me.
 
-Yes, hopefully.
-
-> The patches already depend on libcrypto-next landing first, right?
-
-Yes - if that was the only thing, I'd just ask Linus to pull them after that.
-
-> If the patches were last rebased 6h ago, I'm not sure if rebasing them on
-> top of modules-next would significantly affect the linux-next soak time, but
-> I'm fine either way.
-
-Rebasing on modules-next wouldn't work unless modules-next has Eric's branch
-merged in for the ML-DSA bits.  I could maybe merge the two and rebase on
-that, but I think Linus isn't keen on that.
-
-David
-
+Sami
