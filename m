@@ -1,117 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380C9369975;
-	Fri, 30 Jan 2026 18:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518F0274FEB
+	for <linux-next@vger.kernel.org>; Fri, 30 Jan 2026 21:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769799160; cv=none; b=e+qPgJUPikqDsvyFfz57ZjIxui3OrnLGTpZ5VbOKR57Vhnz7yxFE9npwpxxSbg3d96MTs/Zl/3ll800BZcdM24xfJk+ySRESFAJvOy1LhUvR+r3rgj4yYfODTXSsnTmR/J7m+0QLUNcOV17R4+Cu9OHVG44zyC/pwBoSVCudJPQ=
+	t=1769809846; cv=none; b=O8qyunhB2t1KGguR/I+IHzcsy7pi624xEOBJqLW8nJ2L4sBMuSq5aTw1rl0k8jIYRF6Ju6jeWVGbyIKebCsBlhvmfesZSvOdITfWEYB6RbGNjHcUdv52WOajpkuN0wmJcG5WMrtmW1v+x0v1LfRM7AlG6/dSQmuPUj6bcf7B4hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769799160; c=relaxed/simple;
-	bh=td3GNBGEm7k5sY5/R9PjmsDkCOvmX5+ZXabVXP4hWA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=abfI5ovJsLQ4hv2iaj1hGRzCgFMDkPtp1/M+C7dzVYmGKNW4TiWaHtVCF8zkjbIuJ6cB9I55dgw5fTxJbIiHeM5dDU1fXONTjsCYzMFvZ6JC+LnX2Hyvy8HK/26eX90q1EujW0HCkiVc21sWAf0MQpdNYQyi9OTXFPmu6kpmBvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRPFEvWl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769809846; c=relaxed/simple;
+	bh=TsMsJILKN5IZIFtagkN45eiTeHpsm035umuII9ApRJc=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=jRpj/GUKdMUzVBzo5oPp72CRFTD4ixw2lg7VIoB1mXlzUTvHJ63FIs7FORu6gVkxdvux1D4KFO9Z4NMQmDJ5ebh93jay3NmcH27QyrSJMeBQC40nGUBXyyi0Ws2NxY2Et1LPBHpGzU1JXw/g3JEfXM9S1HhvQRMSITDGa4KzUWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jx+o2dWZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRPFEvWl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EBD4C4CEF7;
-	Fri, 30 Jan 2026 18:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769799159;
-	bh=td3GNBGEm7k5sY5/R9PjmsDkCOvmX5+ZXabVXP4hWA8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CRPFEvWlqdMPmEzF51zjzVK5vSi//mTVB57by5fBMNDJ1gMyt4++UcNnDGbd18jPA
-	 aPjvnZeZi4rhgAaAf+vzuwN98Z9V69mebNAyyG26wi13B9JDMp/O8TowSbVonJSH6N
-	 01Rmy6kL+hoWsGBc+r+4Hr5WG+GWMJ0DU1JctbVhwh5YE6zRSFDyYSv0PNpOfpUW1R
-	 SZjKGRQHKxCMMkzX/YGPrt6XM0Ksko96PW32XaeIGOdoyLljl7EygEaxNz+/1mPpLV
-	 BYC8VelOzZR1MD7yW0sj3PcJrEn2zGslMEOKbcyzb0CW8ook7NK696VW4XtUX3m1WZ
-	 eohhaL+1/cUDA==
-Date: Fri, 30 Jan 2026 18:52:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jan 30
-Message-ID: <aXz99P76SX65G2CT@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jx+o2dWZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769809844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WOmEr/K5yvfEJ/3Svi7ggBB7bbWHsPKECBhFjeeSJg8=;
+	b=Jx+o2dWZIe5Zno4srSfRdTC3tHSF0cIrTH3LjFPZAwxytjjNB7uMRCIrY8w0nkvL8jhG6Z
+	plKT39CnSF8oz7xF/YWRKkB49T+3luQseDFp78lHwrLvdkOcNfoP3tjvW0I+Dv7mMyZN/h
+	e/H3qwgvfa3iH6I1UIo1PLPYuz1lVRM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-59-JwHQvZ3NMd6kPHjC7n5edw-1; Fri,
+ 30 Jan 2026 16:50:41 -0500
+X-MC-Unique: JwHQvZ3NMd6kPHjC7n5edw-1
+X-Mimecast-MFC-AGG-ID: JwHQvZ3NMd6kPHjC7n5edw_1769809840
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D8D7A1800378;
+	Fri, 30 Jan 2026 21:50:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.33.164])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1BFBC180097D;
+	Fri, 30 Jan 2026 21:50:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <33417587-10b3-4cea-ad5f-595af16174fb@sirena.org.uk>
+References: <33417587-10b3-4cea-ad5f-595af16174fb@sirena.org.uk> <aXzoSci8NPhIwDf-@sirena.org.uk> <CABCJKueCeHDpu+KMTT9z_iNP2Ljipt6r4KkJ-8h4ysoTRoCW4A@mail.gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: dhowells@redhat.com, Sami Tolvanen <samitolvanen@google.com>,
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+    Linux Next Mailing List <linux-next@vger.kernel.org>,
+    Petr Pavlu <petr.pavlu@suse.com>
+Subject: Re: linux-next: manual merge of the keys-next tree with the modules tree
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="urOyBXxbeGRcWRRn"
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2280989.1769809836.1@warthog.procyon.org.uk>
+Date: Fri, 30 Jan 2026 21:50:36 +0000
+Message-ID: <2280990.1769809836@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+Mark Brown <broonie@kernel.org> wrote:
 
---urOyBXxbeGRcWRRn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > Thanks, Mark. David, I see the patches in keys-next were updated just
+> > a few hours ago. Would it make sense for you to rebase them on top of
+> > next-20260129? Petr's patch removed the use_signed_attrs variable, so
+> > we should ensure it's still initialized correctly. Otherwise the
+> > resolution looks trivial.
+> 
+> Please don't base anything on -next itself, that causes all kinds of
+> problems and clearly isn't what you should be sending to Linus.
 
-Hi all,
+I was wondering if I should rebase on a merge between Eric's branch and Sami's
+branch and "pre-handle" the conflict.
 
-I have an added an arm64 allnoconfig intermediate build.
+David
 
-Changes since 20260129:
-
-The keys-next tree was added.
-
-The drm tree acquired multiple conflicts with the drm-fixes tree.
-
-The mtd tree acquired a build failure, I have used the version from
-20260129 instead.
-
-The drm-xe tree acquired a conflict with the drm-fixes tree.
-
-The keys-next tree acquired a conflict with the modules tree.
-
-Non-merge commits (relative to Linus' tree): 9978
- 9682 files changed, 563559 insertions(+), 207870 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests and a native build of tools/perf.
-After the final fixups (if any), I do an x86_64 modules_install followed
-by builds for x86_64 allnoconfig, arm64 allyesconfig, powerpc
-allnoconfig (32 and 64 bit), ppc44x_defconfig and pseries_le_defconfig
-and i386, s390, sparc and sparc64 defconfig and htmldocs. And finally, a
-simple boot test of the powerpc pseries_le_defconfig kernel in qemu
-(with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 405 trees (counting Linus' and 121 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---urOyBXxbeGRcWRRn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml8/fMACgkQJNaLcl1U
-h9DMUAf/aVV9hY70wLrUQT5UQ0cUdFW1CX8UyWDt+cU/EUvPhRGxLEqetWZF7sbe
-FLGoTb/Q9EPd0ig3ZGV1ats3UFwlEplt1Fy8OuZR1KVAoOa0TrRcOV1d5t0xq4ar
-QPxS4hB/7b2uBF+1UwN94qDXtEaNwAv9cVpNcq/CPwk0i0ZwUwaP75YBrCOujGe2
-CyO9q128Gi9IhAiTT0JNG+JEXMjabFPaA0qL+QnqMvCK9lGQ8Vztit44fzbtjNzI
-xphE5WETu6nM9zFN2o66BCfMxXqVycShCrsTwbm2fE6nCUOJPXLYzw+79iUWEKvK
-hOsxtO3XAtQfob6z3JuzhqfXKPmfng==
-=NgCK
------END PGP SIGNATURE-----
-
---urOyBXxbeGRcWRRn--
