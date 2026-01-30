@@ -1,152 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107002E06E6;
-	Fri, 30 Jan 2026 17:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602FE346769;
+	Fri, 30 Jan 2026 17:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769793614; cv=none; b=CWbspszI1EOtZDlRCNSINgVilgavy2rOgbrAkYR5GcKlMlkbjx7fJ0jwS3FVOx96AlB2Y1N3Ez/y3bbs7Y1Yqr4zR4KWFwQpdRiswRAhyCOCF+m5mOdktXct7KfE1e4LTZYS9QZouOJao0AcHMhK+eEcniCsp4U1BPU8HU5+pFU=
+	t=1769795597; cv=none; b=Fs1HkTBkTgfDE43I7r2WLEjJs8Vsu9hv9KfYAErKOF2C65tNnmqmdeCQ+G4qyixdZCpI+Wff/6lgnpzsjeY85UOMIg3q+c1WmOzgVHak0/WaaB061mQNwchLIgRKUdPY5SCYCpi8goxyv2OI3he4hz+f2igskH6/pa2o8t4fAJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769793614; c=relaxed/simple;
-	bh=SpwfvTyeZIZwbLVUT0SOkCYfcU+WB08zL+Gvb471nJU=;
+	s=arc-20240116; t=1769795597; c=relaxed/simple;
+	bh=Fvzjnm1BSzgie1uymrozaGAhgc1GaOmYdIyNREAsqCI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=seFyq93zkOXfCn5/nmraSZkABoA6ZGqVkfvqKdKnhuGnjqahG4QNLD871hFRFMK/lQ71yv2gkcagEFmDXIriHKBBW8xzzxHOAfL9z/iba+iXG/WGQ8PC2RYS1L3M84m5cMt9xOeF0HXmpJwoXSAatpFCXhaG1074jWJngwsRwRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqmXuy6P; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition:In-Reply-To; b=ZJDI7w4Wy3rVT+1WjdSr5KA1t1xtket8mHzzkX8JaNePvI/cw4JiUaanS5f05yliJCQZijKHiX7lzz3BpF22RbF2a3wJIPZ28nHLWE+cvTXEonzV9Xj1KARngpZd0U7OlPiJ+GYSEsRGvAq0iDFGWKatMSo1iruAZw7ATrSd/Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esjOSTqt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqmXuy6P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA70C4CEF7;
-	Fri, 30 Jan 2026 17:20:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esjOSTqt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23962C4CEF7;
+	Fri, 30 Jan 2026 17:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769793613;
-	bh=SpwfvTyeZIZwbLVUT0SOkCYfcU+WB08zL+Gvb471nJU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tqmXuy6PxtGRfzBmt4ttegtSBq1q3Mz3EVMnLE9ThcS3CW8Rbxb67QzSKCMkdFwyr
-	 U/YsExb4YXRg0LeRIrRMCeMrdPOkka61L2kOXxinPTwSBKSfqt3o072mwFkg0JQBCi
-	 eK4gyBfekFGLzzCmVSW6E/ec3psD1/KQwzF6VuvCTvBtC+U7c4QlS10I6MBvW8mWKK
-	 kfvUkS4dIXFQGuSiIon8RqOoG+EtjpQIDLiLZuY8nENN6zcT0EuQt9YAIa8KyNWKq1
-	 EQ1rNuBaK4rLqfvVI1RMdbPzsMn3daB0Y/cnosll1SKMLN3G9qBLZ6WoBdl3AaO5zR
-	 GYWj3ue7q8eSQ==
-Date: Fri, 30 Jan 2026 17:20:09 +0000
-From: Mark Brown <broonie@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>
-Subject: linux-next: manual merge of the keys-next tree with the modules tree
-Message-ID: <aXzoSci8NPhIwDf-@sirena.org.uk>
+	s=k20201202; t=1769795597;
+	bh=Fvzjnm1BSzgie1uymrozaGAhgc1GaOmYdIyNREAsqCI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=esjOSTqt3nZQ1d2HC3LTdmG1kxvFJJzTGQiPzjpQDyFexpx7BmMfmVMqC1Sn6dtP3
+	 T/ueqmn85RMJc2QFRjGAcS7104wLAh+edqKFIgaxX0v+W0mE9MXLHeqilPtHuTYpfS
+	 a4l6B5rDgkygYE5MxI3R4lBxB4wa3Jry2aS3p0TmZSXF/RUUKyRe8fFbzhbJgQjDsl
+	 QmGjufPWWhUp2i+HGcWze9vDY7642DD60vDA61jt0WIQ3nYzkvKUDRhYDNUw2PeFVE
+	 ND/inEbG3+Via1VpFTfU6uJG1AcSTsOnMz4YSFfc9sTzscTTyulpYer2cG647yuL8l
+	 3XC0yciN6iB9w==
+Date: Fri, 30 Jan 2026 11:53:15 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Fixes tags need work in the pci tree
+Message-ID: <20260130175315.GA541767@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SeuXsVOTjfjAlXPB"
-Content-Disposition: inline
-
-
---SeuXsVOTjfjAlXPB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aXyjEAHpQaqRcUj0@sirena.org.uk>
 
-Hi all,
+On Fri, Jan 30, 2026 at 12:24:48PM +0000, Mark Brown wrote:
+> In commit
+> 
+>   924385b745b5b ("PCI: Initialize RCB from pci_configure_device()")
+> 
+> Fixes tag
+> 
+>   Fixes: Commit e42010d8207f ("PCI: Set Read Completion Boundary to 128 iff Root Port supports it (_HPX)")
+> 
+> has these problem(s):
+> 
+>   - leading word 'Commit' unexpected
 
-Today's linux-next merge of the keys-next tree got a conflict in:
-
-  scripts/sign-file.c
-
-between commit:
-
-  d7afd65b4acc7 ("sign-file: Use only the OpenSSL CMS API for signing")
-
-=66rom the modules tree and commit:
-
-  7ca1c9dcb7b0c ("modsign: Enable ML-DSA module signing")
-
-=66rom the keys-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc scripts/sign-file.c
-index 16f2bf2e1e3ce,547b970972301..0000000000000
---- a/scripts/sign-file.c
-+++ b/scripts/sign-file.c
-@@@ -271,20 -314,46 +271,37 @@@ int main(int argc, char **argv
-  		digest_algo =3D EVP_get_digestbyname(hash_algo);
-  		ERR(!digest_algo, "EVP_get_digestbyname");
- =20
- -#ifndef USE_PKCS7
- -
-+ 		unsigned int flags =3D
-+ 			CMS_NOCERTS |
-+ 			CMS_PARTIAL |
-+ 			CMS_BINARY |
-+ 			CMS_DETACHED |
-+ 			CMS_STREAM  |
-+ 			CMS_NOSMIMECAP |
-+ 			CMS_NO_SIGNING_TIME |
-+ 			use_keyid;
-+=20
-+ 		if ((EVP_PKEY_is_a(private_key, "ML-DSA-44") ||
-+ 		     EVP_PKEY_is_a(private_key, "ML-DSA-65") ||
-+ 		     EVP_PKEY_is_a(private_key, "ML-DSA-87")) &&
-+ 		    OPENSSL_VERSION_MAJOR < 4) {
-+ 			 /* ML-DSA + CMS_NOATTR is not supported in openssl-3.5
-+ 			  * and before.
-+ 			  */
-+ 			use_signed_attrs =3D 0;
-+ 		}
-+=20
-+ 		flags |=3D use_signed_attrs;
-+=20
-  		/* Load the signature message from the digest buffer. */
-- 		cms =3D CMS_sign(NULL, NULL, NULL, NULL,
-- 			       CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
-- 			       CMS_DETACHED | CMS_STREAM);
-+ 		cms =3D CMS_sign(NULL, NULL, NULL, NULL, flags);
-  		ERR(!cms, "CMS_sign");
- =20
-- 		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo,
-- 				     CMS_NOCERTS | CMS_BINARY |
-- 				     CMS_NOSMIMECAP | CMS_NOATTR |
-- 				     use_keyid),
-+ 		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo, flags),
-  		    "CMS_add1_signer");
-- 		ERR(CMS_final(cms, bm, NULL, CMS_NOCERTS | CMS_BINARY) !=3D 1,
-+ 		ERR(CMS_final(cms, bm, NULL, flags) !=3D 1,
-  		    "CMS_final");
- =20
- -#else
- -		pkcs7 =3D PKCS7_sign(x509, private_key, NULL, bm,
- -				   PKCS7_NOCERTS | PKCS7_BINARY |
- -				   PKCS7_DETACHED | use_signed_attrs);
- -		ERR(!pkcs7, "PKCS7_sign");
- -#endif
- -
-  		if (save_sig) {
-  			char *sig_file_name;
-  			BIO *b;
-
---SeuXsVOTjfjAlXPB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml86EgACgkQJNaLcl1U
-h9CQCwf+OdaiKkEIBpKd0m1rYUfrqVh87Cowhwt9uVMGhHMqnzg5Zaq/1/M+qURV
-uyCptPOwPXg5Qd3a/6BSOO7z4DpaTS5HhHWULz2qG3rmtHeAxKk0rtKmr5Z47elP
-c4FbMImor8WGpU8laF1P3lbrBriU+qvlCpH6LOzX/uJOnWy66Goj7ZUWrnj1vYDV
-5jx/w3jMs4xTchHFjtySQmrFWPgrQ3TFPr6upb4KuWuGTxNqDoh4ky5sd8uOjoRM
-t79XGDhDj4qnHAhJEIX6DIUbOv0N92z9Mj7rXjAdv+lSXBENjPfjg+e+Ov7RQRD3
-FBZPL2R8OMzrP4010f0Pp8BERCiW5A==
-=lGW6
------END PGP SIGNATURE-----
-
---SeuXsVOTjfjAlXPB--
+Fixed, thanks!
