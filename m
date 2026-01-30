@@ -1,44 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD52FBE1C;
-	Fri, 30 Jan 2026 12:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4B28D8F1;
+	Fri, 30 Jan 2026 15:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769777363; cv=none; b=Ft/bxMa/vYIWAzNu1bCHwqRhCDQ2IuCEJA6u1633g63SS/7s7bpALI9UxSK+VzsiTuG5DrNjmfW1jNOhCerqhX4PeuN2IVlGZUnvFx9RkU7AwlIIvOjosRnxG6k26Jq3dIIq7kMNkucICerd9QDOsN+2qcKY0m+vULohqmOiIWQ=
+	t=1769786922; cv=none; b=uGpnXKFVShOA8dcxM4pjahJcslhGae8D+EE4Cdg8oflRqR7jmJ8JM/cl11ZeZp5CaibIZV2a1ofL1gQLekGLtk6hw+BeSutlH8ObQdy0G53pPGPdggRGB5pZWcY9Kq5P1MHq5g5sr4oGNvediLQnYI+jJWLdAe7Gm/7uqSG8kZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769777363; c=relaxed/simple;
-	bh=cAX2yMpHCzbcKbcgdb9q0rgQh4WMr5xY/ZQPAOFUx5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfrHggI/woOnuRTQANUBir4wGU0TV5SDhD7WGind+5EBnUOU3fyrWI3LUbt6k2rpw7UmHGCO5jD9RluJ9KCOhdnvN/UbgaY9LWAgxosArISgr61wOWJWCM88i6Uxt2DVDkUu8zlQGB9/RGfvMTYJcDbGJZ9vrpvbp1uZlTi96eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQnVS/MY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769786922; c=relaxed/simple;
+	bh=uA8YZORO7B+yXHQ+TgVUI9wt71XGHm11ITXH1rE8ObI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=p82kHN4X104Z197mgkNLJSUHgxECA7ZGRuCKMxHqwz/JsYYY9VPqyQB+nQqZQU4BTIs3zA/6tlhWJiFDv09vcDe8PWyjKD2dvMB2uAGd1GJjo9ZRJknv+Co9WZ3VFZkLc+px5Vh5sM/2mG1uHAMBOPIhHBHwaiK6PsErdItgsIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pB2wvjKV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQnVS/MY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D29A0C116D0;
-	Fri, 30 Jan 2026 12:49:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pB2wvjKV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6649C4CEF7;
+	Fri, 30 Jan 2026 15:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769777363;
-	bh=cAX2yMpHCzbcKbcgdb9q0rgQh4WMr5xY/ZQPAOFUx5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LQnVS/MY94zvVXcqxpPESkFLKApvATe6Zaj4fGsLJ1eMtOS5AKEogzH6nkCdLBM2B
-	 XFElEGiEnRyGYf8Tb50LdpWk9oFEAE3tNKOZ88TfYwFM46f2g9djJ8fG/Cm6bVVIVC
-	 P6PLJJtYZOt/AKeO1b9CmtzES2KOSGGFZEEwHfOXXLjHttbUi69FjfdCh2GUBokq24
-	 Ntp/ypY65vPeClkGaUcC50guUqt3XnNlejlfj/f0Ifv50yHuxQMQXzjjZ7KfRFuhvK
-	 A19DbmH0qGH5KWC7fI160Za+MJBOEpI1o/NVUOYJRqGRqdSrfQdGDePOUiOa2FqjWi
-	 bIxbezZ7+vkhA==
-Date: Fri, 30 Jan 2026 12:49:18 +0000
+	s=k20201202; t=1769786922;
+	bh=uA8YZORO7B+yXHQ+TgVUI9wt71XGHm11ITXH1rE8ObI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pB2wvjKV2TLs4GUXvrB8bfZqa20XG+Tn11dKAKEkjfTLjPfdDNlROlMHDt/7yrz3N
+	 RoAxs39O1Iu9NMNy1h3ERHU8XOaCHr+QE+NtcS9ynpPtR9slm5XKPiotaGm2HgLn1G
+	 GWfJbauKjTVcCrpHiAVqbWH+PRUDxTXSu/Z6ix+aw+PXS1APb8xaOD0+SxdpmaXqXT
+	 MvSVFshvb4F3ZaXjVJ1YAp8CAtQteJt8+p/ONuD5vhWlqQt1QuunaO95Xbl3EHeP4E
+	 8gAoAvzz3Q/NjYxuzJVOrxAqyyE5IGS0krO94dmwxmfCVjcc1w9t+xe9PgghVTXVs0
+	 UNSynFX1k7XLg==
+Date: Fri, 30 Jan 2026 15:28:38 +0000
 From: Mark Brown <broonie@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Pick up keys-next branch for linux-next?
-Message-ID: <daf8d8d0-60e4-4f0a-b535-25b99559aa79@sirena.org.uk>
-References: <2261418.1769775448@warthog.procyon.org.uk>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Jack Xiao <Jack.Xiao@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <aXzOJoJ6zhgtFL5u@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,59 +41,140 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+lGDKZdOwVpbLOWc"
+	protocol="application/pgp-signature"; boundary="TLCRHCZHnl+s3H3W"
 Content-Disposition: inline
-In-Reply-To: <2261418.1769775448@warthog.procyon.org.uk>
-X-Cookie: War is an equal opportunity destroyer.
 
 
---+lGDKZdOwVpbLOWc
+--TLCRHCZHnl+s3H3W
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 30, 2026 at 12:17:28PM +0000, David Howells wrote:
+Hi all,
 
-> Can you pick up my keys-next branch for linux-next please?  It can be found at:
+Today's linux-next merge of the drm tree got conflicts in:
 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/
-> 	keys-next
+  drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+  drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
 
-> Note that it's based on part of Eric Bigger's libcrypto/libcrypto-next branch
-> which I believe you already have in order to get ML-DSA support.
+between commits:
 
-I'll add this from today, called "keys-next", with you as the contact -
-anyone else?
+  3eb46fbb601f9 ("drm/amdgpu/gfx11: adjust KGQ reset sequence")
+  dfd64f6e8cd7b ("drm/amdgpu/gfx12: adjust KGQ reset sequence")
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.
+=66rom the drm-fixes tree and commit:
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and
-     * destined for the current or next Linux merge window.
+  d09c7e266c8cd ("drm/amdgpu/mes: add multi-xcc support")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+=66rom the drm tree.
 
---+lGDKZdOwVpbLOWc
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+index e642236ea2c51,3a4ca104b1612..0000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+@@@ -6828,7 -6832,7 +6833,7 @@@ static int gfx_v11_0_reset_kgq(struct a
+ =20
+  	amdgpu_ring_reset_helper_begin(ring, timedout_fence);
+ =20
+- 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio);
+ -	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, false, 0);
+++	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio, 0);
+  	if (r) {
+ =20
+  		dev_warn(adev->dev, "reset via MES failed and try pipe reset %d\n", r);
+@@@ -6837,18 -6841,16 +6842,18 @@@
+  			return r;
+  	}
+ =20
+ -	r =3D gfx_v11_0_kgq_init_queue(ring, true);
+ -	if (r) {
+ -		dev_err(adev->dev, "failed to init kgq\n");
+ -		return r;
+ -	}
+ +	if (use_mmio) {
+ +		r =3D gfx_v11_0_kgq_init_queue(ring, true);
+ +		if (r) {
+ +			dev_err(adev->dev, "failed to init kgq\n");
+ +			return r;
+ +		}
+ =20
+- 		r =3D amdgpu_mes_map_legacy_queue(adev, ring);
+ -	r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
+ -	if (r) {
+ -		dev_err(adev->dev, "failed to remap kgq\n");
+ -		return r;
+++		r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
+ +		if (r) {
+ +			dev_err(adev->dev, "failed to remap kgq\n");
+ +			return r;
+ +		}
+  	}
+ =20
+  	return amdgpu_ring_reset_helper_end(ring, timedout_fence);
+diff --cc drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+index 4aab89a9ab401,40660b05f9794..0000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+@@@ -5302,7 -5296,7 +5297,7 @@@ static int gfx_v12_0_reset_kgq(struct a
+ =20
+  	amdgpu_ring_reset_helper_begin(ring, timedout_fence);
+ =20
+- 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio);
+ -	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, false, 0);
+++	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio, 0);
+  	if (r) {
+  		dev_warn(adev->dev, "reset via MES failed and try pipe reset %d\n", r);
+  		r =3D gfx_v12_reset_gfx_pipe(ring);
+@@@ -5310,18 -5304,16 +5305,18 @@@
+  			return r;
+  	}
+ =20
+ -	r =3D gfx_v12_0_kgq_init_queue(ring, true);
+ -	if (r) {
+ -		dev_err(adev->dev, "failed to init kgq\n");
+ -		return r;
+ -	}
+ +	if (use_mmio) {
+ +		r =3D gfx_v12_0_kgq_init_queue(ring, true);
+ +		if (r) {
+ +			dev_err(adev->dev, "failed to init kgq\n");
+ +			return r;
+ +		}
+ =20
+- 		r =3D amdgpu_mes_map_legacy_queue(adev, ring);
+ -	r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
+ -	if (r) {
+ -		dev_err(adev->dev, "failed to remap kgq\n");
+ -		return r;
+++		r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
+ +		if (r) {
+ +			dev_err(adev->dev, "failed to remap kgq\n");
+ +			return r;
+ +		}
+  	}
+ =20
+  	return amdgpu_ring_reset_helper_end(ring, timedout_fence);
+
+--TLCRHCZHnl+s3H3W
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml8qM0ACgkQJNaLcl1U
-h9AbNAf9GOugPnvrCKzHbhNTJQc+43n7GS+0TdUTBtMMAJr0SD9rcJ4wSAjf/1wl
-pTkZgkMyddvNH5GAdbL0qQdf4+9IH83yaH9hTV609LLgj9/KLUAdyzSJMW6EN45M
-vhHBbIBU176X57yfdk5flfWXfzjoYIcGc39vXPDsoGQtUIh/+rr/fsByGT7cyzjV
-3kdU3DldSbEWVlEF+U3xhAVxO4KWGJwGbRWiS/P4L4ic1qhDj3ry0FkIMKrWEu7K
-3clXUYFgLz60HSFO9DsXV812KrcT4hNTJGasY5P3y5JX3L+15sI/FrTCYB4Xc5GI
-qzEcEsWTvFWl/JbBhKAn8T7he+IWlA==
-=890+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml8ziUACgkQJNaLcl1U
+h9DblggAhksD09t0akRktEE//4f51U7wqQGjVJ8AbbWsqjgfV57nq7AwpCFJzMCH
+A+dxsHvK1PrBQqd3bvR7UMe5Tnbb1sDUgvRLSKAtD18khZLPIbVE7xMfgDWml9VP
+Tyv24kN4wN5YNUT3MzqQ384c/kUvl47tBGP56Q5jPQP+0q28fQkVqMdOdEtCyoFH
+w5sBZt7VV0VitUURPJ7Zm7Wf5IFrmfz+XJXd4SYO9plLKRZlsDqgw6z/0VXwqeG/
+H6XXOOYFkS13LkTVwZJHMM2QyrSKVBajs66lagyrlGBRhurSuURYFAman7diSrjt
+jfoDSodrIyvnevZwKmXMsfya/PgCnA==
+=taB6
 -----END PGP SIGNATURE-----
 
---+lGDKZdOwVpbLOWc--
+--TLCRHCZHnl+s3H3W--
