@@ -1,39 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703AF274643;
-	Fri, 30 Jan 2026 12:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD52FBE1C;
+	Fri, 30 Jan 2026 12:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769775901; cv=none; b=T/7ReLXToMwVOlIw7JmEm4kfN6lljTOIh+3+PHvPwqtVPeQTK80WxoHyjpsjjUhj0Q9Gj50f5mW9IZISBsktCt/D8Fp7cV678oKqy7UERsdStJe9JhhzhyXf1pBJS3dkfBviMqFidd2+y7oOq8xNsw+3jY5XUtswlmTD28YXrl4=
+	t=1769777363; cv=none; b=Ft/bxMa/vYIWAzNu1bCHwqRhCDQ2IuCEJA6u1633g63SS/7s7bpALI9UxSK+VzsiTuG5DrNjmfW1jNOhCerqhX4PeuN2IVlGZUnvFx9RkU7AwlIIvOjosRnxG6k26Jq3dIIq7kMNkucICerd9QDOsN+2qcKY0m+vULohqmOiIWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769775901; c=relaxed/simple;
-	bh=g75Znyfo80zvr+2S7cUIcFyWaEArW+u9PqGVL0jnNBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NKTBfdnt1CA0mwFSyx85Xu+Wh5X0rVnwMH0hgcr8NLK1uXs2hCf/OOO8QBmKGgHQP6LxkzZXfEGLB8oJQju/RtFcSWalfPoWfLxCCc+eUyNSkdEZtWp2qDUeJMLFZO8bzs0yTAMtsAuRNdSKTYhbs0HV6HkEYgSZptlGcLqLM5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsdLO6xG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769777363; c=relaxed/simple;
+	bh=cAX2yMpHCzbcKbcgdb9q0rgQh4WMr5xY/ZQPAOFUx5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfrHggI/woOnuRTQANUBir4wGU0TV5SDhD7WGind+5EBnUOU3fyrWI3LUbt6k2rpw7UmHGCO5jD9RluJ9KCOhdnvN/UbgaY9LWAgxosArISgr61wOWJWCM88i6Uxt2DVDkUu8zlQGB9/RGfvMTYJcDbGJZ9vrpvbp1uZlTi96eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQnVS/MY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsdLO6xG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FE9C4CEF7;
-	Fri, 30 Jan 2026 12:24:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQnVS/MY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D29A0C116D0;
+	Fri, 30 Jan 2026 12:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769775901;
-	bh=g75Znyfo80zvr+2S7cUIcFyWaEArW+u9PqGVL0jnNBY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tsdLO6xG1u+EfdVwcQgAKdoUCVNsDFiS5gmyVZ8ksRt9QdkX7N7MtdkvgLs2tPDeS
-	 Ax0c/dvnlSIEtjdpfkfqd9CmUF7P4f84uQQTnQAgv+rYUZq/2RKgK83SF0X6rhTcHc
-	 WrRBKEc9CyRW8st45G0lCK92YrNhv05larBj1L47g2FYZNX+gQ7NZjAXrkjaLuGAqN
-	 4Qcmlm+3g1TLETgFplkKNqneE3/H4zt+vaO/6f4AMVf4YclOeQJfiEqCYFH37mHJjj
-	 gc28E3hRrmvYr/r9lvUnUGFnBGzU++sJfQ1HlBeLyvtc3ivzYczkVVdpde8g0PeUTc
-	 b3vKvzt/tq/XQ==
-Date: Fri, 30 Jan 2026 12:24:57 +0000
+	s=k20201202; t=1769777363;
+	bh=cAX2yMpHCzbcKbcgdb9q0rgQh4WMr5xY/ZQPAOFUx5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LQnVS/MY94zvVXcqxpPESkFLKApvATe6Zaj4fGsLJ1eMtOS5AKEogzH6nkCdLBM2B
+	 XFElEGiEnRyGYf8Tb50LdpWk9oFEAE3tNKOZ88TfYwFM46f2g9djJ8fG/Cm6bVVIVC
+	 P6PLJJtYZOt/AKeO1b9CmtzES2KOSGGFZEEwHfOXXLjHttbUi69FjfdCh2GUBokq24
+	 Ntp/ypY65vPeClkGaUcC50guUqt3XnNlejlfj/f0Ifv50yHuxQMQXzjjZ7KfRFuhvK
+	 A19DbmH0qGH5KWC7fI160Za+MJBOEpI1o/NVUOYJRqGRqdSrfQdGDePOUiOa2FqjWi
+	 bIxbezZ7+vkhA==
+Date: Fri, 30 Jan 2026 12:49:18 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the tip tree
-Message-ID: <aXyjGa_Oz5OzdbxD@sirena.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Pick up keys-next branch for linux-next?
+Message-ID: <daf8d8d0-60e4-4f0a-b535-25b99559aa79@sirena.org.uk>
+References: <2261418.1769775448@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,33 +46,59 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gA/+lgEoyRZrbD+e"
+	protocol="application/pgp-signature"; boundary="+lGDKZdOwVpbLOWc"
 Content-Disposition: inline
+In-Reply-To: <2261418.1769775448@warthog.procyon.org.uk>
+X-Cookie: War is an equal opportunity destroyer.
 
 
---gA/+lgEoyRZrbD+e
+--+lGDKZdOwVpbLOWc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+On Fri, Jan 30, 2026 at 12:17:28PM +0000, David Howells wrote:
 
-  8f9e1849402b3 ("tick/nohz: Optimize check_tick_dependency() with early return")
+> Can you pick up my keys-next branch for linux-next please?  It can be found at:
 
-is missing a Signed-off-by from its author
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/
+> 	keys-next
 
---gA/+lgEoyRZrbD+e
+> Note that it's based on part of Eric Bigger's libcrypto/libcrypto-next branch
+> which I believe you already have in order to get ML-DSA support.
+
+I'll add this from today, called "keys-next", with you as the contact -
+anyone else?
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--+lGDKZdOwVpbLOWc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml8oxgACgkQJNaLcl1U
-h9DrUAf/ZPR6yvUX1MTqO/od6sDFc38vABIzWnb1B/LofRD13HCzXd4pEf2tUsi6
-ubK87V6E+4Lgq5Pj6pqTxoS+H7vhqh5LtF2eRCgWXyk5B1WXWTnHCVQ1JSZNg1tx
-MWkdVln1QltH+PL8hPcyqFXq9oLLs5oFg4uUbgaHDvSXOvy7NjRcdgihFGNK/xOS
-odwgPrRLEtACxt0XeoIUXXnc/Dc+h6OsHkem6yRQS+L+y7UP47pFmraSg56vrQ6O
-Aj1S39VOuBQHKAa4/x8R017bTWCoC7CUY6WLmsUdbNc6AEizIkdyi+3QFEHDTIrT
-6A7c8f7wRm6RJtGmm0WXyACTj1d17w==
-=lOPl
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml8qM0ACgkQJNaLcl1U
+h9AbNAf9GOugPnvrCKzHbhNTJQc+43n7GS+0TdUTBtMMAJr0SD9rcJ4wSAjf/1wl
+pTkZgkMyddvNH5GAdbL0qQdf4+9IH83yaH9hTV609LLgj9/KLUAdyzSJMW6EN45M
+vhHBbIBU176X57yfdk5flfWXfzjoYIcGc39vXPDsoGQtUIh/+rr/fsByGT7cyzjV
+3kdU3DldSbEWVlEF+U3xhAVxO4KWGJwGbRWiS/P4L4ic1qhDj3ry0FkIMKrWEu7K
+3clXUYFgLz60HSFO9DsXV812KrcT4hNTJGasY5P3y5JX3L+15sI/FrTCYB4Xc5GI
+qzEcEsWTvFWl/JbBhKAn8T7he+IWlA==
+=890+
 -----END PGP SIGNATURE-----
 
---gA/+lgEoyRZrbD+e--
+--+lGDKZdOwVpbLOWc--
