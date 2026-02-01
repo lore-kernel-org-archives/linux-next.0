@@ -1,50 +1,79 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C2429405;
-	Sun,  1 Feb 2026 00:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62133D3B3;
+	Sun,  1 Feb 2026 00:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769905524; cv=none; b=MLgahgUqCMnc4MEEIhqSLDWAnhGEVjfvGjaJ42yPJ4zQrgwKo2BnQMZriUgye5GVXcu3/b9+1jAq9+x4GT2AGp+M8Y+/ICm50TZtIymT119NMGNyNLht+h+JPwK7zPRIPTQPStS9mmAG/LER4MSJ49rbElAvUPNEVDMdluRT6Cg=
+	t=1769906246; cv=none; b=fpkh3Q3GClxfKpRxYAJciM4pXOt/Yp5Y5eaSuF6hhIJOkEckCEkTaa3M1R++ey2FrcUe2JDHqFK26WGekZrwGTQY9xoMPwgF6rS/BBiIdEMGweyJ1n38fHDYYgjP5P35qhSEN/fghZDDGGZb4vGFFa9z9GiKD9+eyAGMTH/Bfyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769905524; c=relaxed/simple;
-	bh=PZtxJfmdOPtRZwLhvDvV8HeLjdPhsDGOn/NbKAs4ui8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PxwyRZ38CtALk5EHfcKHfV/vj/pfOXXEEYe5M74UaLJPm1+SSMoDLeCM13zfE6DpWtUuSYdmsHt19hEJ7d5rGm2em+rk8Y/xaEHScmUOSpgrYaRdbBR8DrTgaFIE3vVw6iK62N272G34wNz/+l1N4leXoAxR4Lu/AbIU1U1eeXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Wrv/ky33; arc=none smtp.client-ip=212.227.15.4
+	s=arc-20240116; t=1769906246; c=relaxed/simple;
+	bh=M9f3xQcMKfs3bdFACBnKQPaShhwNpcUNN6CNNUiur7g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Je+jRGjxeJ8AhE1WHv4EZElE5BPSqQAuZJsRILpyHhN3XO1RMJt09c/c53vbFmd6H7PQNi+pU29FiMNWSvxo28JOK1QNj3emSWRMfOCzxyI12IGzO9YDwzKKZUtG0V0hbdj5JKyYPnSJ1iRl/ZywH1cIVH1R1lQ7bKsu4cCFsjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=AEB0eUox; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Wrv/ky33"
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="AEB0eUox"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1769905511; x=1770510311; i=spasswolf@web.de;
-	bh=d6RYlx3yK4P+6jd/5Dgx/Cn1UsWZNBAbdIwOfCNrkiM=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s29768273; t=1769906234; x=1770511034; i=spasswolf@web.de;
+	bh=uV1KkRkswps/y1vskJMTVFJUBHlJRig50GzAfcy3NiU=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=Wrv/ky33+cxtxmn/0lxWgytAxFt4NLKpeGuagb7/ERzGZo2j2ryxfQkcWKmJBUol
-	 HLhGJhbtLi/IVHUYnd8Qc1bVZc1G02jLqt2ewjGlAPVpgCis5Yk1ECCbCIJnz61xH
-	 CvD2SAsmB8HQFhOoMdeutiIehxUIRehh7yc6j67WMs7+UZQlu8ofctOtHcWSH7Sou
-	 aUdLLa+DBWGB06maYVbZjIodZUt0hpEEXjBImH3fhfoA6zNN4iR01l1sFBc35B3KM
-	 cRlj9yxD1oUfM1gzCEBmWvvBsaFIsx1+/bJupGlgugNCPdmC02YCM68n91yCRljuV
-	 mOfO2HabSIEOhLNp1Q==
+	b=AEB0eUox1bmxRX3KdqrdCQzc7IMb3ayTelSJVJGxfJlzR4/vI0Ii26UqENl6waLJ
+	 kmjYfXzHPJCiJykx59MVdtbsBU7BN+hZTdkZ5Lbx2bqG4+1NHpv+heGjekzRj8xah
+	 uT6oE3a5c7oZ0sR8l3Tl9k8QnysWXtBEkfN7egVOo9ityBnaUHcpOPksP1gblTFyV
+	 YWLMTSx0ML+2kcGh/QuD941XHTI93SlfnOlFvstXa2uSLvs5VQQfxOHMwRhKPh36K
+	 SYsyRCszXWFi7BVu2YVKe+Rq2AiOOwpwfF12Z0OtjCOqvp6uPPJn1BCS/H0vgisvp
+	 I1QoYpKsBIJUS9yRuQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
- (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1MxHYK-1vxFOR2bt2-013256; Sun, 01 Feb 2026 01:25:11 +0100
+Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSqTE-1vI99Y1Vvi-00LtdD; Sun, 01
+ Feb 2026 01:37:14 +0100
+Message-ID: <630a4020c87c122c004321971e43c334fd7aceb4.camel@web.de>
+Subject: Re: crash during resume of PCIe bridge from v5.17 to next-20260130
+ (v5.16 works)
 From: Bert Karwatzki <spasswolf@web.de>
-To: linux-kernel@vger.kernel.org
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	linux-next@vger.kernel.org,
-	stable@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH 6.18.8] Revert "drm/amd: Check if ASPM is enabled from PCIe subsystem"
-Date: Sun,  1 Feb 2026 01:25:06 +0100
-Message-ID: <20260201002508.1293510-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.47.3
+To: Thomas Gleixner <tglx@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, spasswolf@web.de, Mario Limonciello	
+ <mario.limonciello@amd.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>,  Clark Williams <clrkwllms@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Christian =?ISO-8859-1?Q?K=F6nig?=	
+ <christian.koenig@amd.com>, regressions@lists.linux.dev, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J . Wysocki"
+	 <rafael.j.wysocki@intel.com>, acpica-devel@lists.linux.dev, Robert Moore	
+ <robert.moore@intel.com>, Saket Dumbre <saket.dumbre@intel.com>, Bjorn
+ Helgaas	 <bhelgaas@google.com>, Clemens Ladisch <clemens@ladisch.de>,
+ Jinchao Wang	 <wangjinchao600@gmail.com>, Yury Norov
+ <yury.norov@gmail.com>, Anna Schumaker	 <anna.schumaker@oracle.com>,
+ Baoquan He <bhe@redhat.com>, "Darrick J. Wong"	 <djwong@kernel.org>, Dave
+ Young <dyoung@redhat.com>, Doug Anderson	 <dianders@chromium.org>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Helge Deller <deller@gmx.de>,
+ Ingo Molnar <mingo@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,  Joanthan
+ Cameron <Jonathan.Cameron@huawei.com>, Joel Granados
+ <joel.granados@kernel.org>, John Ogness	 <john.ogness@linutronix.de>, Kees
+ Cook <kees@kernel.org>, Li Huafei	 <lihuafei1@huawei.com>, "Luck, Tony"
+ <tony.luck@intel.com>, Luo Gengkun	 <luogengkun@huaweicloud.com>, Max
+ Kellermann <max.kellermann@ionos.com>, Nam Cao <namcao@linutronix.de>,
+ oushixiong <oushixiong@kylinos.cn>, Petr Mladek	 <pmladek@suse.com>,
+ Qianqiang Liu <qianqiang.liu@163.com>, Sergey Senozhatsky	
+ <senozhatsky@chromium.org>, Sohil Mehta <sohil.mehta@intel.com>, Tejun Heo	
+ <tj@kernel.org>, Thomas Zimemrmann <tzimmermann@suse.de>, Thorsten Blum	
+ <thorsten.blum@linux.dev>, Ville Syrjala <ville.syrjala@linux.intel.com>, 
+ Vivek Goyal <vgoyal@redhat.com>, Yunhui Cui <cuiyunhui@bytedance.com>,
+ Andrew Morton	 <akpm@linux-foundation.org>, W_Armin@gmx.de
+Date: Sun, 01 Feb 2026 01:36:59 +0100
+In-Reply-To: <82b4d69a5b943aa5e8aa7cc33fcc00bce02e557c.camel@web.de>
+References: <20260113094129.3357-1-spasswolf@web.de> <87h5spk01t.ffs@tglx>
+				 <bc20529d7520e7db7de2022bf9c96a1bc3a2f0df.camel@web.de>
+				 <87v7h5ia3d.ffs@tglx>
+			 <99f1aaba32030d2b9285dbd983fdf8518a181a8d.camel@web.de>
+		 <82b4d69a5b943aa5e8aa7cc33fcc00bce02e557c.camel@web.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -52,120 +81,115 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Kkjx055O66fHG9mySxQvFWsbp905osS4cpb77/CuMdx4sMVBqsY
- XQeU5h7om42I93gOtTaJbVlwu8tokQuw2xCtLQYBwnSK7bCEeZC9cD+7Yb+k60SFAfI+ul7
- hvKBJV2yfi8bxe1U2sdyQ/C5/DzbyhFdy1LjqKIKWx1cEU548hHVJDnVWvMldZWrk7onEfl
- 2qL9pjBbYFKAIMEIxj8sA==
+X-Provags-ID: V03:K1:ldg1CeCCa6IXoP+cbbNUJlfqAbKLGP9lWuW1VHGnbikA2PH9fxH
+ tf4RgYBTf5J8afA50l1gkRj+jjICujNwLQOedJqTyw1boPyUcVN3JUm0LwfA9Crsl5utYy4
+ 0hlfkQrT/JN3xuEHo+PCbzYW55VyxJSRHLIJDUDIe6E6Zgw7HNn0Ap+KXMuek8T/yyB6Obd
+ 4kLsS25u2ylVm3iX7GLVg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NPTQ6chlcsQ=;SoZF6uygBJcWsVoUMftlDbkCkSf
- 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
+UI-OutboundReport: notjunk:1;M01:P0:7bvmpxHrgwI=;/MwO6G0jMF6J5q3ySvLB1ZndN0n
+ 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
 
-This reverts commit 7294863a6f01248d72b61d38478978d638641bee.
+I found the error, the commit=20
+("drm/amd: Check if ASPM is enabled from PCIe subsystem")
+has been applied twice first as cba07cce39ac and a second time
+as 7294863a6f01 after it had been superseeded by commit
+0ab5d711ec74 ("drm/amd: Refactor `amdgpu_aspm` to be evaluated per device"=
+)=20
+This effectively disables ASPM globally after the built-in GPU (which does=
+ not
+support ASPM) is probed. This is the reason for the crashes and loss of de=
+vices
+errors which on average occur after ~1000 resumes of the discrete GPU.
 
-This commit was erroneously applied again after commit 0ab5d711ec74=20
-("drm/amd: Refactor `amdgpu_aspm` to be evaluated per device")
-removed it, leading to very hard to debug crashes, when used with a system=
- with two
-AMD GPUs of which only one supports ASPM.
+snippet from git log --oneline drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c in =
+linux-next:
+158a05a0b885 drm/amdgpu: Add use_xgmi_p2p module parameter
+7294863a6f01 drm/amd: Check if ASPM is enabled from PCIe subsystem  <--- T=
+his does not belong here!
+b784f42cf78b drm/amdgpu: drop testing module parameter
+0b1a63487b0f drm/amdgpu: drop benchmark module parameter
+cec2cc7b1c4a drm/amdgpu: Fix typo in *whether* in comment
+0ab5d711ec74 drm/amd: Refactor `amdgpu_aspm` to be evaluated per device <-=
+=2D- This removes the code from the previous commit.
+cba07cce39ac drm/amd: Check if ASPM is enabled from PCIe subsystem  <--- T=
+he first time the commit was applied.
+dfcc3e8c24cc drm/amdgpu: make cyan skillfish support code more consistent
 
-Link: https://lore.kernel.org/linux-acpi/20251006120944.7880-1-spasswolf@w=
-eb.de/
-Link: https://github.com/acpica/acpica/issues/1060
-Fixes: 0ab5d711ec74 ("drm/amd: Refactor `amdgpu_aspm` to be evaluated per =
-device")
+The fix is simply to revert commit 7294863a6f01.
 
-Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-=2D--
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 3 ---
- 1 file changed, 3 deletions(-)
+I sent a patch for linux-next (unfortunately without CC'ing stable) and a =
+seperate patch for
+v6.18.8, I hope this does not cause confusion ...
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd=
-/amdgpu/amdgpu_drv.c
-index 7333e19291cf..ec9516d6ae97 100644
-=2D-- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2334,9 +2334,6 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
- 			return -ENODEV;
- 	}
-=20
--	if (amdgpu_aspm =3D=3D -1 && !pcie_aspm_enabled(pdev))
--		amdgpu_aspm =3D 0;
--
- 	if (amdgpu_virtual_display ||
- 	    amdgpu_device_asic_has_dc_support(pdev, flags & AMD_ASIC_MASK))
- 		supports_atomic =3D true;
-=2D-=20
-2.47.3
-
+Bert Karwatzki
