@@ -1,124 +1,227 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F5B277037
-	for <linux-next@vger.kernel.org>; Mon,  2 Feb 2026 16:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770050590; cv=pass; b=sUzmNoma5V+Vd3RQMu6E1C0s6YgBHdmJJgaAysqfMVJgq8drjE5iPdrY2vrtu+tHgdsylYPVX2CxWnkbYyDHnJlsv58opphruCUVKaEDqRo06a2ld8FJmJ/Rv6btXD8Z+dcs5/X48PM01P4n2rmOdSDeP3fwsoZwzKlVLUVPhi0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770050590; c=relaxed/simple;
-	bh=gz3yuC7l35zroo0EInRyeQcnYyGkSrI/GFIPfdx5eN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rP/KPw0MdOIW+kRLsaYBJlb/I85FDIUmPxGKAl9zy/hcoOzLZVbvMQjcH7Yd+/qAAAMMk42sAXV2xTSulqzTdR++B85rRP5pKC1Yt9QtLWjOcqv7WAwucSECWbxFbR7EW9daLirFewsVJEelIS4xY5XgLe4JKtHOrFGD605uxqQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7TQ9XnP; arc=pass smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4DF273D77;
+	Mon,  2 Feb 2026 16:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770050635; cv=none; b=ofvT+f6pyqh+Xdq2zqZnwnS93J/0tRl8C2P25kd8qYIlS6qiRqBOzgLp06p1flALlk+OVJqvuh7hNteYiEwiZ3sFeMlBsj5/8s1DOCHCycbv8HGJ+DE4b7+4Jq7528QOLjty2MXfPwFbyEQFnz3NAU1II6CKXouNxmWQ8oqr7eM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770050635; c=relaxed/simple;
+	bh=ZgjBWo4gTBbfRfvElecb7ZkpaiBMZ/dnCnPYbBNh6fg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NNE+lp7oR3oEI0f/DP/c6xWSUwX/6rGz1LFDL8E4kdt9PvbtQ6XvibF9YEJZN5FuFhHRFz/OZ445e5BbR2YBezTcf7yFz7gM6ZWu/zHYYrZGoTd5gLX7rT8nW69YzI4/tb9wBfh03230VVh69KZxx53jvlALR6u0lZtIFHn5MWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=a/t9msPn; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7TQ9XnP"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-432d2c7dd52so4940210f8f.2
-        for <linux-next@vger.kernel.org>; Mon, 02 Feb 2026 08:43:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770050587; cv=none;
-        d=google.com; s=arc-20240605;
-        b=jktbeXangywS9qPX/fbteAgM92PLocbhD/JubiD5udyxxTzZN3O/HBV1g0TGMKX5Ho
-         c9Z61IlOu6YDCInWjThi7becYpmMdftRaeDTUvc0c/z4n8pzZw5wKOxItzGayX5iv668
-         P3QQukXRKo7DmE8GB/52uInaNU1tlaI1nQrtCQsH56Bf+kmY2EFo4NKIho4RDLShkXM8
-         42d6UnaH6LTMfjIrJAH+WlgICJ8e3aPtwjfaqWBGJ482lluOYe2FyvAMfv25pa2o6aIT
-         wF4paqwzBiogEJTkqUyAn0DLiK/i+IJSx5SnRTmGjN/rDsXEV5Mm65N3JMtZ6ilqNMci
-         kIxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Z582UOlUNYe5JMRaep81RTVUHc3+fGxXZPvJPubU7sI=;
-        fh=Uuz9x/xpKBckg7GJMtDLIpg2Bk5+9bt/zc8OogcG8ro=;
-        b=k5D0Q7lwTeqYvFnGB7z3ROijeMR3HXPb+QSiTX2KzrC4LPrkCZySj26GCPO11Kp5Yr
-         W+kXl1OtMIzpISdtJN+EvFTqxokhj1D0NuLKDacD6fPaL8PPWnXLGRNU2j4lF9ko8m32
-         EV2nMFrR6Uuys+P/dajJi0HDm4Urk93s7lu+9KH6l1SX396OJvvCaFHDJYPKbH8wudKD
-         KnFpZxaEd58t9UZULrCleZMOJwEIIk3u8RvLqWzRATD6RueviQStIqDvNgrEyAcKJGI0
-         cbSPrhlMUCq0cs4qNVQTWOpUT7FiKdebj6ydoFxyfUUdwGSLvGiDthePZlWoBMvghIfb
-         i6pg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770050587; x=1770655387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z582UOlUNYe5JMRaep81RTVUHc3+fGxXZPvJPubU7sI=;
-        b=f7TQ9XnPSc7DQ1W6jys3ehhbCMb74xYcL4dJFwBSIB3/5vpjZdfAhomAHuTHAc/kBR
-         KMXA99GrAeqKwfBCdRLbBF8hYhtLKnHW+V/UPzCr2BP0KVat0R9+QpLOtTq9/okR6UPS
-         lw4Sxi0EpXg6Bw/spV+nEqxF5zH1iHABHXT4qeztMW8CXrpXzb2CKlNd4PhpimAuofE4
-         prN9/4hPcMretkFZIf4z2Ky5vriZDfgS5FmNBzix6Ry+JZqpujTEYOiSeOTPMrk2Xggj
-         Hi9gTsH70lg0h0hCvLPP/J6LMjCA/NQphBzwq22chxpBSzPgeOid+9a1UwAj7IKrPoSW
-         z1ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770050587; x=1770655387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Z582UOlUNYe5JMRaep81RTVUHc3+fGxXZPvJPubU7sI=;
-        b=vGwBj/Vd38flgTSJePKYXhLkU9Djt7OuFIr9hyl8kFuaQLWz1xCc/yD7n43GLb6u4F
-         KLjG/ghxHJyGM1fRavLx/RColXoAUbo7gUMQ2IGYLAN17aRqiJ/3nYeE+JMGYJhYVsne
-         +fQFWpJrz3SrzeWyDZiMTPuEnY9/9i1HRvgbZ5nk6BWoBWMT/1OntogrMybifPgcXEkN
-         coPtRZ98FTj5/qHBvfCE2y9UnQx0kZLW4EEIbUHb+EUEzF9GniPz9sjDO1aA9oxGyT/T
-         VXkW2vcmEmx9W5pmqggmnGTOMs6TbEolZhkrDpJYU6Cy+y/QJOJpGQNel3pwoqnFpFji
-         H3OA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNw/r4SRzE1ZSYs1O1MfgiXs1IfQCOc4HmkChyhhfpWqck+xmWXY99pO+Wzc0ynkVMBhFFRrkka+iW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzakHVmCCayWv2Q3yyOkV3R3oLOWUwhrMcvkbWRumtK2pFyZHrV
-	tEX2AhWQZ+DhQWcVLCue4A0IPSB7RE4gFj6gWZZlqqzmlipo/haG2BVQFr1Rdvv5IHTS0YuXgQT
-	yl2jpYGy0pMDPVxPMKBqnNaoQTWv4sgU=
-X-Gm-Gg: AZuq6aIvqR8j8ymz/2qU4QhLsBg7YhuOlT+l52/DXt05jHOuQ/WZL/iZHSvGLB7NxrR
-	1aMhwLxeBYJwwoD4Gw2O7/S0dx1EP1cZeu/GNeNG/eK1HtiyaFRn7KkFGkpB1D2AWHt3wHl1Ddg
-	7EQFmG5fDycHExdbrNqAE9ZSVDqba2ryQdRkqvwnKm73wiqI2jJQzWG0xByd/jr9/d+Jal6Xuse
-	vY8tQMkWsvREIR4wIeC2mIewBrWwJz2aqdPETeIbQel0caA/qUrxgHUpnq39ItiycRKmE+WFKIp
-	tUwy6nDqQL490GGE6sa1Q4SbNMyQ418N9wdvMZ/xYbSnKyybWHl05qzTNSicw3+WbjJ4oQQ0
-X-Received: by 2002:a5d:584d:0:b0:435:a2f8:1533 with SMTP id
- ffacd0b85a97d-435f3abc7ccmr18865667f8f.52.1770050587301; Mon, 02 Feb 2026
- 08:43:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="a/t9msPn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1770050612; x=1770655412; i=spasswolf@web.de;
+	bh=ENTp8VHg33h9pNxYKf9XDLYo/AKVopqbK/7amWnv09E=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=a/t9msPn0wIFGjtxq2NMNAllmfRR94uPYSZV4SQVi9tdt7B/D0TQJV7tT2tDLIE5
+	 lLOf7s8bXASw9KiFAkdqkY6iqK04D4njQcXirw8LLPAksRdeQ5SgacYIjoOImhAgY
+	 khQ9i9hGEmf7rW4pUHPERFr53Bbhh2iaw7AcYtUCBhXP42j5c5xJ8d85VOYfOEINu
+	 JNYi/ofYMnAmOWNgE2jxnjeayUI2tgWG7+IHc5+Ggbf3Eh8rh42tntsVKplsyc4LJ
+	 BDBNLsoOmhlJPn8Wder1dSr6XhVsrlgh2fPKL5TlQ0zv2FZIUURc0VklX5hwkyno5
+	 W3LFs7qgVcISFOiPTw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3m59-1vnmMx1MRf-00FDjO; Mon, 02
+ Feb 2026 17:43:32 +0100
+Message-ID: <15517fd926161aee77b4df2ffa8bab4bd08eab9a.camel@web.de>
+Subject: Re: [PATCH] Revert "drm/amd: Check if ASPM is enabled from PCIe
+ subsystem"
+From: Bert Karwatzki <spasswolf@web.de>
+To: Mario Limonciello <superm1@kernel.org>, Christian
+ =?ISO-8859-1?Q?K=F6nig?=
+	 <christian.koenig@amd.com>, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, amd-gfx@lists.freedesktop.org, Alex Deucher
+	 <alexander.deucher@amd.com>, spasswolf@web.de
+Date: Mon, 02 Feb 2026 17:43:31 +0100
+In-Reply-To: <2a3a3d4f-efa2-46e5-8fee-f51cf12812a9@kernel.org>
+References: <20260201002446.1293486-1-spasswolf@web.de>
+	 <02fe7f9e-f25b-4b6b-8420-57de982147bd@kernel.org>
+	 <b978d83d-3bd2-4ef0-8a2c-eb756a880fa4@amd.com>
+	 <2a3a3d4f-efa2-46e5-8fee-f51cf12812a9@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aYC09rYDOvkNNOaA@sirena.org.uk> <20260202112010.0e46018a@gandalf.local.home>
-In-Reply-To: <20260202112010.0e46018a@gandalf.local.home>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 2 Feb 2026 08:42:55 -0800
-X-Gm-Features: AZwV_QiNa_BMzphl8GY0f6UFV6RAp95m6_hf-XIg1aIi0Jjfq-JwzOZ00Js_F5E
-Message-ID: <CAADnVQLa2z9mr856XStTFvfZxi8or1f9j8Gfu1h6m_A5ZN5eSw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the ftrace tree with the bpf-next tree
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mark Brown <broonie@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Puranjay Mohan <puranjay@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ELMzLWC9PMm6/EueKpEGN48lvtDj/NLre9vVu8514K8ptzZiRpL
+ v8zgQQBVHrgJbLzzoqPEgjK8MS5zDGJqmBqpzh29K/rusd+XJoNzdNvCJ7AESoablcYGnGI
+ CwE26zqFmL0UAzN2OhnoECbjd2nHygwnGilYkIf1EtBL63T4aYnwy2d+dRraav21Q02E49W
+ E9mCiXg96S8L2amo1jSkw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FIhk1fMje0M=;TvPDCBVTL7haW7pbmotNX14LQ5K
+ 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
 
-On Mon, Feb 2, 2026 at 8:19=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
->
-> On Mon, 2 Feb 2026 14:30:14 +0000
-> Mark Brown <broonie@kernel.org> wrote:
->
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tre=
-e
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularl=
-y
-> > complex conflicts.
->
-> Thanks Mark, the fix looks good to me. The conflict was caused by ftrace
-> doing a small change that was recommended by Alexei so I hope this isn't =
-a
-> complex conflict ;-)
+Am Montag, dem 02.02.2026 um 10:11 -0600 schrieb Mario Limonciello:
+> On 2/2/26 8:35 AM, Christian K=C3=B6nig wrote:
+> > On 2/2/26 15:25, Mario Limonciello wrote:
+> > > On 1/31/26 6:24 PM, Bert Karwatzki wrote:
+> > > > This reverts commit 7294863a6f01248d72b61d38478978d638641bee.
+> > > >=20
+> > > > This commit was erroneously applied again after commit 0ab5d711ec7=
+4
+> > > > ("drm/amd: Refactor `amdgpu_aspm` to be evaluated per device")
+> > > > removed it, leading to very hard to debug crashes, when used with =
+a system with two
+> > > > AMD GPUs of which only one supports ASPM.
+> > > >=20
+> > > > Link: https://lore.kernel.org/linux-acpi/20251006120944.7880-1-spa=
+sswolf@web.de/
+> > > > Link: https://github.com/acpica/acpica/issues/1060
+> > > > Fixes: 0ab5d711ec74 ("drm/amd: Refactor `amdgpu_aspm` to be evalua=
+ted per device")
+> > > >=20
+> > > > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+> > > > ---
+> > >=20
+> > > Amazing detective work, thanks so much.
+> > >=20
+> > > This added the code initially:
+> > > cba07cce39ace drm/amd: Check if ASPM is enabled from PCIe subsystem
+> > >=20
+> > > This effectively removed it:
+> > > 0ab5d711ec74d drm/amd: Refactor `amdgpu_aspm` to be evaluated per de=
+vice
+> > >=20
+> > > This was the accidental re-apply:
+> > > 7294863a6f012 drm/amd: Check if ASPM is enabled from PCIe subsystem
+> > >=20
+> > > It looks like this as right on the edge of the 5.17-rc6 and 5.18-rc1=
+.
+> > > I think drm-fixes-2022-02-25 and amd-drm-next-5.18-2022-02-25 ended =
+up with different content.
+> > >=20
+> > > Nonethless this is the correct change and I've applied it to amd-sta=
+ging-drm-next.
+> > >=20
+> > > Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> >=20
+> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> >=20
+> > There is just one major question left: Why is disabling ASPM causing p=
+roblems?
+> >=20
+>=20
+> My theory is that it's a mismatch of PCIe core and AMDGPU.  IE if the=20
+> PCIe core thinks it's enabled but amdgpu thinks it is disabled can hit=
+=20
+> some corner scenarios.
 
-yep.
-Conflict resolution is correct.
+That's also my theory. In my case the discrete GPU is probed first
 
-I wonder whether we should take the whole srcu_fast in tracepoints
-patch set into bpf-next to avoid this conflict ?
-Probably not worth it in the last week before the merge window.
-Just a thought.
+[    1.652505] [    T194] amdgpu 0000:03:00.0: enabling device (0000 -> 00=
+02)
+[    1.658662] [    T194] amdgpu 0000:03:00.0: amdgpu: initializing kernel=
+ modesetting (DIMGREY_CAVEFISH 0x1002:0x73FF 0x1462:0x1313 0xC3).
+[    1.665045] [    T194] amdgpu 0000:03:00.0: amdgpu: register mmio base:=
+ 0xFCA00000
+[    1.671399] [    T194] amdgpu 0000:03:00.0: amdgpu: register mmio size:=
+ 1048576
+[    1.681596] [    T194] amdgpu 0000:03:00.0: amdgpu: detected ip block n=
+umber 0 <common_v1_0_0> (nv_common)
+
+then the built-in GPU is probed and set amdgpu_aspm =3D 0.
+
+[    4.883191] [    T194] amdgpu 0000:08:00.0: enabling device (0006 -> 00=
+07)
+[    4.890078] [    T194] amdgpu 0000:08:00.0: amdgpu: initializing kernel=
+ modesetting (RENOIR 0x1002:0x1638 0x1462:0x1313 0xC5).
+[    4.895907] [    T194] amdgpu 0000:08:00.0: amdgpu: register mmio base:=
+ 0xFC900000
+[    4.901640] [    T194] amdgpu 0000:08:00.0: amdgpu: register mmio size:=
+ 524288
+[    4.909833] [    T194] amdgpu 0000:08:00.0: amdgpu: detected ip block n=
+umber 0 <common_v2_0_0> (soc15_common)
+
+I'm going to monitor calls to amdgpu_device_should_use_aspm() to check if =
+it's called during
+the suspend/resumes cycle giving the wrong answer (i.e. false when ASPM is=
+ actually enabled)
+
+Bert Karwatzki
+
