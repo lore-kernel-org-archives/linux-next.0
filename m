@@ -1,80 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B791236166F;
-	Mon,  2 Feb 2026 11:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37EB125A9;
+	Mon,  2 Feb 2026 13:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770032929; cv=none; b=A5p1LdX3MtWH8U2mZjP+TSSxu/4tQ/0wqo5U3lj1fIBVqGOPOTmiFJ8rePMy9VqLS+cyhvD0CX64OmtAX99gtunFvT7zqQGzqhuzONADkn7eGTsa8W1o16n5J7G7HIQwUL7lHOLDSPxT7gSwlaMZFp4iiFLNA6NX8BMunx4DuQQ=
+	t=1770037301; cv=none; b=dfooD9WFEIKaNcvabHtJn82MQSUtplUq097+UyTqN6DZ6B4ul6hcgeQ8JqNxa2F14RUZlGsWbDAkerQWAiFfo45OwApif6AtCf8KiO2hC+79SBI98HjWD2Dxw2wdVXTGhu3ryKTGw4MewwhN372ydCRnJdBj+trg77zMkK0R72c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770032929; c=relaxed/simple;
-	bh=aF10hVwpMF7kCFOCVoE58w1+kWNP3uRHSEwKQn4iB9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HISbpJLss+AIO07xHx0LiZ55L5bG+YomaiqVLmxLA/TRX4++wmMx7VgJrF0Q43hW6G0KKq9zWcQYmRca5FQiQcbjbB64rJeXBzq0ippzk0gMTY04xRbiVtaZxhvIRME0SM4Te68VyiZnyb0Syc6a3Ys+tMWqhzqjiTMfvDPi8pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmcJ1C0G; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770037301; c=relaxed/simple;
+	bh=YLoJNsSqNeTUW4J8dCSph3IZ8r9yzogAvfBzlFDKAGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eop/jIYRAHvcC8BMQQ+8/OO+tOHgZT/1n4sIzI7QqBx8pU2oYcvnlYkBIqJCFvnBrs+OrkBLFvPt6OlJt1s0TLLhIily7x9l71YjDLWxVoBZy1pXZmQmL83HV+mT3+ejfYrlsOR8AvwXJw7tCr+zUX4mMa0bR0ZkPAF9qoI2+54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOqnKZ2w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmcJ1C0G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4527C116C6;
-	Mon,  2 Feb 2026 11:48:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOqnKZ2w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C60C116C6;
+	Mon,  2 Feb 2026 13:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770032929;
-	bh=aF10hVwpMF7kCFOCVoE58w1+kWNP3uRHSEwKQn4iB9g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SmcJ1C0GMBzzuZP8wfJnB3a1tnwLLYJToJ2jdmdgAZbqBlci4ZLgK/MPYgaW9CX24
-	 TEhYNDt8j7AgySoC5YfoU4swdQtBHWCFc9IiWX/+QydAaG7S972lj02G3Vz70/ujOO
-	 IXpa3kVO0SB9aiL9FOKSeGBSBThSWptzAZIHKhbRkXgrZt03c2TXhTxIELtmO/zww7
-	 L7Qv5r+NyMTJEQqBG3qG3NLNcwIjdJ6YUCGBKVptaSv6h0qlMVSM42VbDT/Kket3qb
-	 pumS8j0NU8QS6a+SItSMfWfeMZZu8XIBtBRrz+Vxv6G8Xyvc3hnvVtraBEgKWQfBaE
-	 DP77dQz5phy7A==
-Date: Mon, 2 Feb 2026 11:48:44 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Fixes tags could use some work in the pci tree
-Message-ID: <484d687e-4ce1-442e-b8c1-9299631a7fe1@sirena.org.uk>
+	s=k20201202; t=1770037301;
+	bh=YLoJNsSqNeTUW4J8dCSph3IZ8r9yzogAvfBzlFDKAGA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FOqnKZ2w1HsrQ0cG7+KxZtOlDl1i8vB6RPHt5FUdQJVcRhk4SL4o2ixV3y5oBXMzq
+	 iW6oQyjo59EgrMnP2/CHYy6UPovXraz1QawX1HNJZ1KBcFJrs9+kiSYvb5Lbefu0GZ
+	 rmzu8avPHpc/tDqKQoUwN6P3TxIc/8tXStmeRqCybTYEtKWFcNCqlZRxysNQDaFARm
+	 A550x8qDCEGVudsbrYvYxXR7V6BDyDbb/ZrKFtK9Tkk7lu9nI/cP8SkybK4Q5g0huh
+	 8McxNMZuqbCza6axqVcN4WaTaP6ICRCMoypIE8ck6B/yKBvIMy7OJS0RC9lgWtJoM0
+	 Yf0cZUwz7tbYA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: venkat88@linux.ibm.com,
+	David Howells <dhowells@redhat.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Cc: broonie@kernel.org,
+	christophe.leroy@csgroup.eu,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	maddy@linux.ibm.com,
+	petr.pavlu@suse.com,
+	samitolvanen@google.com
+Subject: Re: [next-20260130] scripts/sign-file: build failure on OpenSSL < CMS_NO_SIGNING_TIME
+Date: Mon,  2 Feb 2026 14:01:23 +0100
+Message-ID: <20260202130124.354758-1-ojeda@kernel.org>
+In-Reply-To: <47fa2bc6-e137-4123-b00c-937a8fd82968@linux.ibm.com>
+References: <47fa2bc6-e137-4123-b00c-937a8fd82968@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CHipa+R1Z14vgXqW"
-Content-Disposition: inline
-X-Cookie: Bedfellows make strange politicians.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Mon, 2 Feb 2026 10:06:41 +0530 Venkat Rao Bagalkote <venkat88@linux.ibm.com> wrote:
+>
+> scripts/sign-file.c:282:25: error: ‘CMS_NO_SIGNING_TIME’ undeclared
+> (first use in this function)
+>    282 |                         CMS_NO_SIGNING_TIME |
 
---CHipa+R1Z14vgXqW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have also been seeing the error this weekend -- this was already
+reported in:
 
-In commit
+  https://lore.kernel.org/all/SN6PR02MB415708C0A6E2EB1B5C7BBFB0D49CA@SN6PR02MB4157.namprd02.prod.outlook.com/
 
-  b386d03d6aad2 ("PCI: dwc: ep: Add per-PF BAR and inbound ATU mapping support")
+Could you please try the patch David suggests?
 
-Fixes tag
+Thanks!
 
-  Fixes: cfbc98dbf44d ("PCI: dwc: ep: Support BAR subrange inbound mapping via Address Match Mode iATU")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
---CHipa+R1Z14vgXqW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAjxwACgkQJNaLcl1U
-h9BhDAf+NlPM12cfHLJH6N8YGP5ul7Uo7wi8ib15onoYbJ52+Mic5HaGnerbcHS+
-f4BghTS4UG9V+p6WFhkavcASPWLw+7jQjbX+rlVUl+HXUq+6a+NFkZZqBsXcleEe
-Vk/4JlKGsdL/7AvwZYx5hH6aS717LLm8+M6LFj8kqZTx1yNNII8K3wgTEVtyCcOu
-Yz1we757l8+B/sRIcijJMwp92nrsuyIwSaQl0BbU6M9vhHlmn9xPbbeZyHWQvaIb
-e3ibeF1GeErDSooaTtRt5Xb/zBoSxw/eskvwLUQxX9y/rfpeNJkf3uk65J64JEeZ
-bXAnMYtdEfoQUvC9qg1k3N1fdC2JWQ==
-=41ew
------END PGP SIGNATURE-----
-
---CHipa+R1Z14vgXqW--
+Cheers,
+Miguel
