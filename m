@@ -1,41 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D752136F43E;
-	Mon,  2 Feb 2026 14:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335BA37472B;
+	Mon,  2 Feb 2026 14:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770044191; cv=none; b=q9cvVIOsKnqRRBGN5j5cN89BsHt+6OQyZrUp2d4o1+rfQaj6uaYi7v37RCOYZfGaIvCi8M6zIy24kFUOfj8Q4p7U/pcfTr8H5xnnYRod0BYNyeHcAZZEmtMq6pVM7AeM8D5+jTEF3iY2bw2usySGlJVLORfoQb9mmTxISq913t8=
+	t=1770044249; cv=none; b=fFFiYk2UiMHy3ha45qizrMOEUNxWcokEq7mBkOcyT6GXkBUeBIGUqjaCLjSRfYXY0BTk7/sBbzjlTJjXR3goW9Q6bBL7Y1gJk8/55YEK9fEPgZZldj194mFKbvENZFXzQGMNM4f69GXdFJfhX/+YBPJl5A071nNy4xSCwXZqJ6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770044191; c=relaxed/simple;
-	bh=xmwx7OIwijZF+b4qpuOsoAQH9IFDxQXDStZ6hgeWbeI=;
+	s=arc-20240116; t=1770044249; c=relaxed/simple;
+	bh=IucgTfEMtvDR762VyZjNuzv//w8VQYM387Z30zTAVhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktFao9dcFuBdfpKU6jDmju0++r1lcfz940sy8bg6w8zXN9QQnK+IzPVY3wsEXH5RluXLy5vK/U9a+i+D9TllvrxkFxU6kfAz8j7IL4+tIU258ibrFRLSUo7q7jQ87ZwJzWkcYHHnuycc2sn4COvvV+/Z+4MuMHknDs2UBHOBYR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHBZs2j7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUKOM/hdnOe0SvtXj0n7glc/1yoNPmlGtkSeMxVtmUTWGLxiJUDPJCLleo6ZM5oL87QJ77CAlUTpR5aiShZnAn26eOLriYXt/Z6LqflF5WXYx9qDYroMflcwJnU/kfODlYiNibUPjOApSci4ExmkehtMYodElE3k/o+1s6vc8qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kunk+NbC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHBZs2j7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F9CC19425;
-	Mon,  2 Feb 2026 14:56:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kunk+NbC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F275AC116C6;
+	Mon,  2 Feb 2026 14:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770044191;
-	bh=xmwx7OIwijZF+b4qpuOsoAQH9IFDxQXDStZ6hgeWbeI=;
+	s=k20201202; t=1770044248;
+	bh=IucgTfEMtvDR762VyZjNuzv//w8VQYM387Z30zTAVhA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CHBZs2j7lpDlU212zQ2vj+FE1XTJvFnCRQC8VSiZZC+Lpa9mRTcQ88S0APjFGtU8r
-	 JlHbq3VbXwXLH/MBKlGBFvpsUchOx/nIX6gZyNK+XDxnxcJIcz0Y4ubvaa92hltuq2
-	 iFUDJvVED9ptA1vQLIP6BmxFO1w5q91Tv3CZWKHQNwQIJ7SZHpPLukmm6Q+VSEmbpG
-	 8mSrHC4pdon+CHYAbVsjO8TVDhJAV2vajxlh0m9adYMq5zpwFQui+CatM/UsgKTBIL
-	 sHB+TrUkGHc4meKAk9Vb4qu0aWaL5BEN/siwG/eJ7EnrytPh8RCFOUGq8wZFbgvAzP
-	 3AF08ReMAP5RA==
-Date: Mon, 2 Feb 2026 14:56:27 +0000
+	b=kunk+NbCyvt6tJy/dAPoPkgHTwjlbauRF7jfuFyKhgOO2d4ff009eNY4G3HMT4d5v
+	 7ivgJsFyQ36xPUpc/rbzjYqvkn6Jd7oMV6qLm5ig9q8PZVFur5rg7F1Gy3lQ/+xeRp
+	 hL17sc6zzFoR4/sHkHB7ty+9GKDdpkGWH7UnrARBsEgvH9K+fXXsZ7uRLij7zFRHTI
+	 CV4WVgnnIFjwwUJnNVPWZsU7xsVuThIbO1lEQf9ZFzJgI/uFy2SY1OKr5tsaD8C4cw
+	 Fc6NxyBCDq1ZyrwaLykMQJ1b8Ul/+LV7bkzB0GltVKDpYWIIJGGXgEwrcC5rycKQNA
+	 kJiE+geHO8RTw==
+Date: Mon, 2 Feb 2026 14:57:25 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee@kernel.org>,
-	Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the leds-lj tree
-Message-ID: <aca32e97-9fc5-4cb7-908c-a4410ff98055@sirena.org.uk>
-References: <20260109124558.25b0eebc@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the btrfs-fixes tree
+Message-ID: <541681ab-07f7-49ce-bb74-c3e52b71b659@sirena.org.uk>
+References: <aXtXw3_wMDnrrOxW@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,39 +41,38 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zBU5l9eNU0b54IuQ"
+	protocol="application/pgp-signature"; boundary="rJpP6pEc9ZjplqTf"
 Content-Disposition: inline
-In-Reply-To: <20260109124558.25b0eebc@canb.auug.org.au>
+In-Reply-To: <aXtXw3_wMDnrrOxW@sirena.org.uk>
 X-Cookie: Bedfellows make strange politicians.
 
 
---zBU5l9eNU0b54IuQ
+--rJpP6pEc9ZjplqTf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 09, 2026 at 12:45:58PM +1100, Stephen Rothwell wrote:
+On Thu, Jan 29, 2026 at 12:51:15PM +0000, Mark Brown wrote:
 > Hi all,
 >=20
-> After merging the leds-lj tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> After merging the btrfs-fixes tree, today's linux-next build
+> (arm64 defconfig) failed like this:
 
-This issue is still present in today's -next, the leds-lj tree is still
-using the version from 8th January.
+This issue is still present in today's -next.
 
---zBU5l9eNU0b54IuQ
+--rJpP6pEc9ZjplqTf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAuxoACgkQJNaLcl1U
-h9AVQgf/X//R3K8YZdt8eQtUx216AQDd8oROKWFlSosmhoScWwrX5ewvsz+29NzK
-Onni/LcBiwKecaWhvg3cxm42oYBN9QVxaKOAZXAOHL41TRdLRiCt/qzpNPKv7/0Q
-kagWhATFqo6fK08fOS6Hhn5UUpyUqVXC44Kw1h/WwpdvRLhbtuD9cuLt83TJwhd/
-zAZhu9ThE7V4r289KUjcwQ/jw1orAqhQ5MJJgLhv7V6QBwv2SmoKRpqn3YJABjzo
-NffKvq6gu8f3ov00crO+/idzKUsZbt92oRy1hRguJ/jxI6IHkfbvMRpN82jOeR0T
-cFj3gRDqxW+Ctmc+hrqhaRm4e6gGMQ==
-=m0VD
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAu1QACgkQJNaLcl1U
+h9CR/gf/ah3XzxJcX6UuUjYwU8nEZVLubLp+XXLVibb3xyTybYqmHZL7vQeuJel6
+naIt8Sa9FRKig8E7wX/pXGCllXcITxWCHI3hw7YeRLvjID1aPrLZYQKe/FFlTkxi
+C1FrR31kK8QkEFzTlYqjrXddOJvsA7XVsoAQj6DQR3oQFQ/SJU++uumVymFktfXO
+hnsVtMMZaNAgqVEiRqHlILri0lXMD+fEk411lSC0qbKhZMDrsE1ZCi4EZE/Gedeo
+JP9d8Bx1MJaM/XUrcSfRArsl2BQiFx+PZ/xXbEXg04KRn4hyJatlgsAdQStZfGMY
+1h2sphN0xOpFYBGspaduB5T5Qy9E9g==
+=0VYs
 -----END PGP SIGNATURE-----
 
---zBU5l9eNU0b54IuQ--
+--rJpP6pEc9ZjplqTf--
