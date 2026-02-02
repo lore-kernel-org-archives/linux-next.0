@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DB637D123;
-	Mon,  2 Feb 2026 14:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E744B3783AE;
+	Mon,  2 Feb 2026 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770044319; cv=none; b=obJN1mU5uTd57jFWkJpGsvLfrnsy6G+gkSDbQC76yhaY+2KUZSoeCXwWZBekZfju+CyTuCmJ5QajAZCSZgLQrO4hCWs0X5kZj6MWa7KbT9XHDslirlX2mOp9bcwqjj5y2FNPND00PRkGEwoiDT/vXIOqFzS6HshmFQMG6ynysE8=
+	t=1770045049; cv=none; b=ZT4LsH6Boiw+qfz/ntVAq9oMe+V0cnwtCmdNSvoAq0OoYj3FfGtA0acM5rIEnnZl1oXKASiAvfKBXzsR+LTuIWXzd6Pv4VmN42kc/hMhv3V9DmlDVLkhqdugGFn3VIYBgSm/FXjaUZztl8Y+bwcjrZGYeGG3n8lDxiCwIfKnyic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770044319; c=relaxed/simple;
-	bh=7ZGImHU0GcYAdoazFO2AQDmnGSEnm1zvIYbhLqP0xbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuuzraVP4W2xMT9BVa2/KTkHmWr2tFCZVnFBM/ONZWZB4SF4+CMSW0HSpbiVYqq7R88IjB7ZukMoyE7/kTYIy7FgZE7QcbtZz2OFJQ9rmM+Nb/ACAqAGLzXvnyKPvIhJBVJ9AJEFoaMYjzuZuradksAaXfHNysBiVn6ekYkzafc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jA6MfjRp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770045049; c=relaxed/simple;
+	bh=Y1ley3AIGzu2Mvq8iLkFCE/c8wtIW5DJJUlNqyqNUmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GaSh01a27NDhBp1q79HYyn0/L9/X8wB1KW65ZqP+nR6HZyidqONhnmh1Ct1+29xjfebuueswOrKuWWA3YFZTSXt0w1gJ4ufl/o0CR3Sr/ETb8UxrVF1ugENSMsLcdJa+Ve/rBSpVVpQFLUzuoM30ENpz0VPI09ksG+qxBVuuqBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCYgkxn8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jA6MfjRp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7668C116C6;
-	Mon,  2 Feb 2026 14:58:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCYgkxn8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C447DC116C6;
+	Mon,  2 Feb 2026 15:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770044318;
-	bh=7ZGImHU0GcYAdoazFO2AQDmnGSEnm1zvIYbhLqP0xbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jA6MfjRpzXHfD8plRbFublf9eNlm6JTH1A7VsljASnJtYeSOqCgbwI+cDVySnO7W9
-	 9u46jtEe1i8IW6LM0qVczC3UT9vlXhgqmynT3c/8akCzKbtmdt8z1aYn0ntDP0alVH
-	 uh/CAUwQTaH/boK50cj4tarlevWhS6sbWb+jZ9vx9/EkvxaJJYvuXgSmkFDpCchMTZ
-	 uVYpkl1CL+tJXTakNLgR2R6Hww+YJep3BWrRlQ/QTTAHSXzYiTurkDocWy4LE+lcTX
-	 P5ZoZETTshv4gUhTLHd5WacojxKUPN+ZhR7V9ErFSBiA1PP4k+DJdSzsSVVnp4cKdL
-	 Fsd6/ywQwUCeQ==
-Date: Mon, 2 Feb 2026 14:58:35 +0000
+	s=k20201202; t=1770045048;
+	bh=Y1ley3AIGzu2Mvq8iLkFCE/c8wtIW5DJJUlNqyqNUmo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QCYgkxn8nD11+WtE95tAE0S3GOXa60pAofV5PCv62neP8Q+sfFzxbB8pq+EuDswLj
+	 OUhvz+4AW2ahlIqLt5DXrHWxReY9Hh5dTsb852Wecw0/rP0GpHbrlWkK4QEAhCDrZQ
+	 51j+vru9slPn8+hUFsNrCRLgZPGz2OXoYlwoged6nIgSKBVCOTvTZwOpxjOgc+J4sa
+	 K+eo8egGfNoVuhCs5Mjd4qo47jKTe/I3VblJH1wOV3Oq4Z9wyjq1aZT3DwXOGhez2g
+	 kcdE/YL5L2o3XW6dc0TGNbTGGRbzQNo+Z2aognflcm9TXBhQJPzi4hx88WbuB8aIsG
+	 +TJaojgB6CEpQ==
+Date: Mon, 2 Feb 2026 15:10:44 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <f9afaed3-9db5-4725-a0e5-cb6d6873b3c6@sirena.org.uk>
-References: <aXilaLSzB1xsGWCb@sirena.org.uk>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Thomas Gleixner <tglx@kernel.org>
+Subject: linux-next: manual merge of the iio tree with the tip tree
+Message-ID: <aYC-dATLw09TXP4K@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,38 +43,58 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PaIZePWGbgjUfpY+"
+	protocol="application/pgp-signature"; boundary="JUh7micIPHPXDOZq"
 Content-Disposition: inline
-In-Reply-To: <aXilaLSzB1xsGWCb@sirena.org.uk>
-X-Cookie: Bedfellows make strange politicians.
 
 
---PaIZePWGbgjUfpY+
+--JUh7micIPHPXDOZq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 27, 2026 at 11:45:44AM +0000, Mark Brown wrote:
-> Hi all,
->=20
-> After merging the vfs-brauner tree, today's linux-next build
-> (arm64 kselftest) failed like this:
+Hi all,
 
-This issue is still present in today's -next.
+Today's linux-next merge of the iio tree got a conflict in:
 
---PaIZePWGbgjUfpY+
+  drivers/iio/adc/ad7768-1.c
+
+between commit:
+
+  c04731b5f1502 ("iio: Replace IRQF_ONESHOT with IRQF_NO_THREAD")
+
+=66rom the tip tree and commits:
+
+  ff085189cb170 ("iio: adc: ad7768-1: add support for ADAQ776x-1 ADC Family=
+")
+  ac9fabd578a03 ("iio: Replace IRQF_ONESHOT with IRQF_NO_THREAD")
+
+=66rom the iio tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/iio/adc/ad7768-1.c
+index 84ce23c8e5782,fcd8aea7152e8..0000000000000
+--- a/drivers/iio/adc/ad7768-1.c
++++ b/drivers/iio/adc/ad7768-1.c
+
+--JUh7micIPHPXDOZq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAu5oACgkQJNaLcl1U
-h9Dfcgf/dSPAhaAQoyKSdIvJ5VnwIJSbr2Gsg1ip5BpChrsXSSpfrAwYFEbrjzUQ
-qhDijJV4n2guHKMiArxmwG5bu2QOvrLfxwre7XJZh8N3Is/yYcLaixsMW28yQOHV
-eRn+SAYsh1fOCxIefP0gg1u2G/WYEMWpirTo+qpG+K5L9qP3naiZQfbFDcHW/SKc
-J4KjaeQ04Pl7WM/MB7EnVp1xib+ewDxYu+zIBmD7ESUfLBeUbg3zIjC5SfdcnTBk
-SFQAe2JOi9gL6sRB2OMV3GMGR2xblKYGICmg5hRDpJxQ0kpWb9i8tXlvkHB9Q1DZ
-vz35vyhkbvXwfN9oD6/axywWmSqw0w==
-=oqXt
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAvnMACgkQJNaLcl1U
+h9BS+wf/cctgSwThmBYPC86ne0HreodX2slpE7qrTxWXO0mHlyxoARfM0I6X6CH2
+V9xSXwdL05SyS8otN282QBQB1Ozwqq5MSkrR9spwiuSfKFqv3z+V74GtaPvA6Uzd
+qffATw81dN7nmovvF7SWGPvSWSata77ogzdc/nZKV+FMd4EWhIjhcwgyB9ZQMQWr
+o0aPoMiHvHPRvhRdoyy7Y5srMibdhoXR17vDa9FCreHH1McS08bCUQewfc5gr/z+
+9VvuDzhxD1WOsb38WNxV09uH1og4WSDGrioiDCUHANHdPOj4WcIgbzM+JzzqGhS7
+YJQljeWzBq/mmK1l4BMYRkiW8W1tQQ==
+=ldEI
 -----END PGP SIGNATURE-----
 
---PaIZePWGbgjUfpY+--
+--JUh7micIPHPXDOZq--
