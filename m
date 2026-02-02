@@ -1,83 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1102DCF61
-	for <linux-next@vger.kernel.org>; Mon,  2 Feb 2026 19:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F7835A936;
+	Mon,  2 Feb 2026 23:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770061898; cv=none; b=a0Bi5EUB3YyqXv+ZfoO2S8DXIRkuRvnTPxuPd6sKGdijXOiQqzBJeFJluhERVV8cr+bsxuxXep7M0AucTG+CXKn/yCuvXQOO1SvgrCXGdWeZTebtzNpPqILVmytETk4oBr7T5V1nYO8yY0844GQba89RJ0PvcfapyGPnRQ7e7ss=
+	t=1770076125; cv=none; b=WkBbS2UM9frWVboRXPswfCBIo1oe8fpmsA+HJ/CFNboUK7Gp9w2L9h5iaLrMh8XA2WEIVYdt/gt0ZKpAI7urAXuExTHUx10AkcLYAt2w9lxre6OK81amuWJoNTIaQDQquxn1G5OX673qIRxBiP2cus57jhG6UWagjKwjF81Z7rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770061898; c=relaxed/simple;
-	bh=3D1iSmSfGYtUcqQvAzQU8zYRtaNDe5SjyDYoqUWEnBc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L2f4/AOhFPOH0I5mkcWgX/Zj5cAtuMZwJBe7DR7z8e0VNLODHFhxMjaUfDYcyG8ph31jtG20mibWP3ABR5/p0uhKzFKQXHWhS6k8w2uARxU1WQF62GrQhDhsXJupuuOSJYUgoQu1wBDVS/4rImzZLqHd7e05Cx5ljZjQt38gwZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=gioJe2WJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770076125; c=relaxed/simple;
+	bh=oBmjb42nXkY5DZ1gCF1XyNBRo4afUVVrnWe1Li9NLm0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SH+7sQL4XlxdjosXlzOAjyv9mktef2caXto0KAtJmS+L6PJ8JhOgTHxjYcgvsY1mmWytLw799U++lSLw18gUqZyxQU6ud3Ozl4iVvW5xqx/eFa5gnV9Gi298FwFd7ot3K+MvxZA9JqEDQQTsBkT7haOHd+reuAQaOv0leBmKSoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boxXZdnR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="gioJe2WJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEEA0C116C6
-	for <linux-next@vger.kernel.org>; Mon,  2 Feb 2026 19:51:37 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="gioJe2WJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1770061895;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3D1iSmSfGYtUcqQvAzQU8zYRtaNDe5SjyDYoqUWEnBc=;
-	b=gioJe2WJN53PZV/ks3LwmyPYgtlQqE/QXRUnRMbzzI2/1fiPMzVV1GUc+l5UWlhrLWTD+E
-	0QuOnqo8X0m1gBKQByrasgA352IzmtCBMuC9X1EQE8G65WLA20QDmGLjsd6wTDeHFxrti0
-	4rG1STeFLogxqrnkrYAopOOqNJ5V3ww=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id bf04dc5e (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-next@vger.kernel.org>;
-	Mon, 2 Feb 2026 19:51:35 +0000 (UTC)
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7d196a2334fso86532a34.1
-        for <linux-next@vger.kernel.org>; Mon, 02 Feb 2026 11:51:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXUj/11IAz8u6KN2Nhl3SN/6SSQZGA9m9RfhE5DHl93KhEdJDaNZMw6LmmEOrUm67AQuPuGkM2yRv2I@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXn0bvjRPRJCCaVWomlb8q9m/18q+iNRJngT6OxtDLsPZUiMfH
-	VXiOM3gzBBudV9GacGPgTyDDYHKM+ay40HEitBA51YDe0L68hmDmsyPIghKOjCzcWLJ/1DqwBIw
-	5QAWlAi+VTabkO5Gqv4vf6vN3WNbl8FE=
-X-Received: by 2002:a05:6830:830f:b0:7c7:48b7:640a with SMTP id
- 46e09a7af769-7d439e4d2e7mr234138a34.7.1770061894536; Mon, 02 Feb 2026
- 11:51:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boxXZdnR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71026C116C6;
+	Mon,  2 Feb 2026 23:48:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770076125;
+	bh=oBmjb42nXkY5DZ1gCF1XyNBRo4afUVVrnWe1Li9NLm0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=boxXZdnROYL3EkGmYivMQ/eGnS5O2YggQ8fmzTwtewJ5qs5Nhdm4414U1rL/EDjtT
+	 wTxsmlP7IX/QgYOJ7j9C/vusGdt3nVkq/qszKttP+bMW2Vb+RfC7DSLAQJB+o3z5et
+	 MqpJ/VQVM868Antz+97TcZUSetVrPn9oJ/j/EO5t/ReE7EKiC+uDkQ1/1XwI3rUrCN
+	 5yCLm6FYEVpkE4TTxu+EYIqplF2VH2V8UDQJIGFQ0NSRANqmz2Q2Qtk3VLjgTuOdSD
+	 gJpySHA95BIYGH9UvmZV2CTCXJNSc8LxyU9bUNlsTeYpdBnPzz6CyL/fe77zLDJOtF
+	 aanFy5LoQFkGA==
+From: Thomas Gleixner <tglx@kernel.org>
+To: Mark Brown <broonie@kernel.org>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: linux-next: manual merge of the iio tree with the tip tree
+In-Reply-To: <aYC-dATLw09TXP4K@sirena.org.uk>
+References: <aYC-dATLw09TXP4K@sirena.org.uk>
+Date: Tue, 03 Feb 2026 00:48:41 +0100
+Message-ID: <87sebi4sh2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aXPso7beaFvlUYiP@sirena.org.uk> <7bad538d-5b90-4741-9bf9-b4f6f708048c@sirena.org.uk>
- <aYDgGTtXCN8GMVI8@smile.fi.intel.com>
-In-Reply-To: <aYDgGTtXCN8GMVI8@smile.fi.intel.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Mon, 2 Feb 2026 20:51:22 +0100
-X-Gmail-Original-Message-ID: <CAHmME9qhEZOiyu7JfP6uouuhuZO7XRaVdrC=hh88bVzZaeKasQ@mail.gmail.com>
-X-Gm-Features: AZwV_QhAAylAWiST602emiVG3f01e7dA2aB2-N8jFL57z-XXysFv1SYYkGApNLY
-Message-ID: <CAHmME9qhEZOiyu7JfP6uouuhuZO7XRaVdrC=hh88bVzZaeKasQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the random tree
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Feb 2, 2026 at 6:34=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Feb 02 2026 at 15:10, Mark Brown wrote:
+> Today's linux-next merge of the iio tree got a conflict in:
 >
-> On Mon, Feb 02, 2026 at 03:22:44PM +0000, Mark Brown wrote:
-> > On Fri, Jan 23, 2026 at 09:48:19PM +0000, Mark Brown wrote:
-> > >
-> > > After merging the random tree, today's linux-next build (arm
-> > > multi_v7_defconfig) failed like this:
-> >
-> > This regression is still present in today's -next.
+>   drivers/iio/adc/ad7768-1.c
 >
-> Please, revert this patch, as it shows more work is needed on arm (and ma=
-ybe
-> other) side. Meanwhile I installed compiler for ARM and I see some issues=
- even
-> after I fixed quite a few by the proposed changes (in this email thread).
+> between commit:
+>
+>   c04731b5f1502 ("iio: Replace IRQF_ONESHOT with IRQF_NO_THREAD")
+>
+> from the tip tree and commits:
+>
+>   ff085189cb170 ("iio: adc: ad7768-1: add support for ADAQ776x-1 ADC Family")
+>   ac9fabd578a03 ("iio: Replace IRQF_ONESHOT with IRQF_NO_THREAD")
+>
+> from the iio tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc drivers/iio/adc/ad7768-1.c
+> index 84ce23c8e5782,fcd8aea7152e8..0000000000000
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
 
-Reverted.
+That's an impressive fixup diff :)
+
+I'll zap the iio: commit from my tree tomorrow...
+
+Thanks,
+
+        tglx
