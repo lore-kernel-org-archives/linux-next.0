@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA7F36D4E4;
-	Mon,  2 Feb 2026 14:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24C536D51E;
+	Mon,  2 Feb 2026 14:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770042600; cv=none; b=OBE2JaVOIStF0KYMDXkugvsL/VjNE8z7jHNDyR26Oxm3F0HvF5x5OyVnuvKc/CMtPp8RRAVZH33kgWd86PDdckJ7eKwR4ER/2+pPs8S5EQQP2T677psmx/NxjjrwaMBA8hNfhuCv6hbqi7JtFcUvRH+Crhg4fJLPt8hidh4c/T8=
+	t=1770042619; cv=none; b=d1VH+WM716AnJErIILZxGF7nLp6OKXCqispO4cl/DiwFgacrce4HgyO4jwluw40uPxZWi+8R2yCjmiiZx6Fnx+8GwScWywsoIMhR1FNYoD7UKjfU33kwh297NbLBLC6j+5kuGcQinDKlwA26vTX73aPkYvWSR31kXRFDa2lI01A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770042600; c=relaxed/simple;
-	bh=jck2a35rH44Ec7cxfa7Y2xQGNeiOO0ZAj1HORneLmO0=;
+	s=arc-20240116; t=1770042619; c=relaxed/simple;
+	bh=D1dbk0VFiLgCUx3q7No2yBY7EzHRSWg6ldmMlTc02gc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p/alfZZcnL89U/NGU2+RnPiGkAljpTMBvYd2Kijk0Pm2bOVVz9jQvtlx/HJPqb03SKg9njXGkcZ8LIerE8cha8j+jXv+lVKE97N7cwgoJqfw/kBX4VVuvkqtgIjwNJUSH7ik2O43lHTnA3qX5NXTRmkTSvQCu8B9KZBc1ecQ928=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Csq8q+mu; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=Z7snXyHQ7Y2lIR/H6vHBUF2CVjdIHmd96eZY7TSjoviqpzRi2QWitzjhD5Bz2x3xHVV1HMM8W66Kup8wIdTT9dXuMgFmU4TivTJtDOIgxsWUaYOYFGg5MDHk3WcZr1B/ZzK9IuQHCKeRPgoUiyigHiDAvq2USrrEcbktAeemDnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZ8UDnx0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Csq8q+mu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80121C2BC9E;
-	Mon,  2 Feb 2026 14:29:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZ8UDnx0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B5EC2BCF6;
+	Mon,  2 Feb 2026 14:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770042599;
-	bh=jck2a35rH44Ec7cxfa7Y2xQGNeiOO0ZAj1HORneLmO0=;
+	s=k20201202; t=1770042618;
+	bh=D1dbk0VFiLgCUx3q7No2yBY7EzHRSWg6ldmMlTc02gc=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Csq8q+mugnalzEqKqFs6kZyiHZXgqiXHc9dVagaWin5vEBxihXBTcoHdECBuUd0vJ
-	 z7o9mvRi9rd9hx3xF5NQWmSQ9BcbQhtEwdXlL7zAkR+JiQ6wENPs6kNDJuw62I6t7P
-	 t4lUOGwfTYFAVMFcpFHVJf64wiv/WC7idd6SlHrhPwp7oi0Go4Y70KgMjvfbw1AJyR
-	 lBJ8qxlQsrD5dm2pkkNibESeHFPuFAJgrWfRBfNRoyNjICnW2JwTsNivHNG65vPkvh
-	 vakkeQCNbv/VMAwvNxnLg4cKYQmMqeagDYWXqSu92LJ/u5g/ex0XXhM2eUrJK2Az8w
-	 iZj5X7coHWKeQ==
-Date: Mon, 2 Feb 2026 14:29:55 +0000
+	b=RZ8UDnx0iPUd9CKeZ0qmTvtHXBYoRBpRN8O34ZTZHw6ffj6cIEcve3qolvi/5VU0p
+	 Yfcs0QSLfTJ6nrBPAy3K3nu+S1oTjuvdMHWsiy7Vd6DDrU7sWB82YPAjRz6C0QSP10
+	 xySkT0WlevFIpuY3w4JQzLol0AbQ3eiIOyGFqxzlr3HLLdbR7J9YJcif7Fzwa11Xno
+	 qT1WnU8PpXAi6PCqud4m10MYUpJpfwxo49ASzWLJZYwLpvXxM2ak6acgjn8K3Dq0hs
+	 ZFpFw85AUOjpB7lTyHvX41SPVuz3CyFDeu+xA8KJ+Ao/WJ5mT1vFv7nMddtnW/m8Ba
+	 +QoTmIYvmczLw==
+Date: Mon, 2 Feb 2026 14:30:14 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm tree with the origin tree
-Message-ID: <aYC0403AEWZMbHaY@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>
+Subject: linux-next: manual merge of the ftrace tree with the bpf-next tree
+Message-ID: <aYC09rYDOvkNNOaA@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,33 +43,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8v59VJ8uYhvNlyh4"
+	protocol="application/pgp-signature"; boundary="/R5sBwaMyJ7MhrQt"
 Content-Disposition: inline
 
 
---8v59VJ8uYhvNlyh4
+--/R5sBwaMyJ7MhrQt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got conflicts in:
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-  drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-  drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+  kernel/trace/bpf_trace.c
 
-between commits:
+between commit:
 
-  3eb46fbb601f9 ("drm/amdgpu/gfx11: adjust KGQ reset sequence")
-  dfd64f6e8cd7b ("drm/amdgpu/gfx12: adjust KGQ reset sequence")
+  93f0d09697613 ("bpf: move recursion detection logic to helpers")
 
-=66rom the origin tree and commits:
+=66rom the bpf-next tree and commit:
 
-  b340ff216fdab ("drm/amdgpu/gfx11: adjust KGQ reset sequence")
-  0a6d6ed694d72 ("drm/amdgpu/gfx12: adjust KGQ reset sequence")
+  f7d327654b886 ("bpf: Have __bpf_trace_run() use rcu_read_lock_dont_migrat=
+e()")
 
-=66rom the drm tree.
+=66rom the ftrace tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -75,482 +75,46 @@ conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
-diff --combined drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-index e642236ea2c51,427975b5a1d97..0000000000000
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-@@@ -120,6 -120,10 +120,10 @@@ MODULE_FIRMWARE("amdgpu/gc_11_5_3_pfp.b
-  MODULE_FIRMWARE("amdgpu/gc_11_5_3_me.bin");
-  MODULE_FIRMWARE("amdgpu/gc_11_5_3_mec.bin");
-  MODULE_FIRMWARE("amdgpu/gc_11_5_3_rlc.bin");
-+ MODULE_FIRMWARE("amdgpu/gc_11_5_4_pfp.bin");
-+ MODULE_FIRMWARE("amdgpu/gc_11_5_4_me.bin");
-+ MODULE_FIRMWARE("amdgpu/gc_11_5_4_mec.bin");
-+ MODULE_FIRMWARE("amdgpu/gc_11_5_4_rlc.bin");
- =20
-  static const struct amdgpu_hwip_reg_entry gc_reg_list_11_0[] =3D {
-  	SOC15_REG_ENTRY_STR(GC, 0, regGRBM_STATUS),
-@@@ -416,7 -420,8 +420,8 @@@ static void gfx11_kiq_unmap_queues(stru
-  	uint32_t eng_sel =3D ring->funcs->type =3D=3D AMDGPU_RING_TYPE_GFX ? 4 :=
- 0;
- =20
-  	if (adev->enable_mes && !adev->gfx.kiq[0].ring.sched.ready) {
-- 		amdgpu_mes_unmap_legacy_queue(adev, ring, action, gpu_addr, seq);
-+ 		amdgpu_mes_unmap_legacy_queue(adev, ring, action,
-+ 					      gpu_addr, seq, 0);
-  		return;
-  	}
- =20
-@@@ -566,8 -571,8 +571,8 @@@ static int gfx_v11_0_ring_test_ring(str
-  	WREG32(scratch, 0xCAFEDEAD);
-  	r =3D amdgpu_ring_alloc(ring, 5);
-  	if (r) {
-- 		DRM_ERROR("amdgpu: cp failed to lock ring %d (%d).\n",
-- 			  ring->idx, r);
-+ 		drm_err(adev_to_drm(adev), "cp failed to lock ring %d (%d).\n",
-+ 			ring->idx, r);
-  		return r;
-  	}
- =20
-@@@ -623,7 -628,7 +628,7 @@@ static int gfx_v11_0_ring_test_ib(struc
- =20
-  	r =3D amdgpu_ib_get(adev, NULL, 20, AMDGPU_IB_POOL_DIRECT, &ib);
-  	if (r) {
-- 		DRM_ERROR("amdgpu: failed to get ib (%ld).\n", r);
-+ 		drm_err(adev_to_drm(adev), "failed to get ib (%ld).\n", r);
-  		goto err1;
-  	}
- =20
-@@@ -917,7 -922,7 +922,7 @@@ static int gfx_v11_0_rlc_init(struct am
- =20
-  	/* init spm vmid with 0xf */
-  	if (adev->gfx.rlc.funcs->update_spm_vmid)
-- 		adev->gfx.rlc.funcs->update_spm_vmid(adev, NULL, 0xf);
-+ 		adev->gfx.rlc.funcs->update_spm_vmid(adev, 0, NULL, 0xf);
- =20
-  	return 0;
-  }
-@@@ -1052,10 -1057,14 +1057,14 @@@ static void gfx_v11_0_select_me_pipe_q(
-  static void gfx_v11_0_get_gfx_shadow_info_nocheck(struct amdgpu_device *a=
-dev,
-  					 struct amdgpu_gfx_shadow_info *shadow_info)
-  {
-+ 	/* for gfx */
-  	shadow_info->shadow_size =3D MQD_SHADOW_BASE_SIZE;
-  	shadow_info->shadow_alignment =3D MQD_SHADOW_BASE_ALIGNMENT;
-  	shadow_info->csa_size =3D MQD_FWWORKAREA_SIZE;
-  	shadow_info->csa_alignment =3D MQD_FWWORKAREA_ALIGNMENT;
-+ 	/* for compute */
-+ 	shadow_info->eop_size =3D GFX11_MEC_HPD_SIZE;
-+ 	shadow_info->eop_alignment =3D 256;
-  }
- =20
-  static int gfx_v11_0_get_gfx_shadow_info(struct amdgpu_device *adev,
-@@@ -1080,6 -1089,7 +1089,7 @@@ static const struct amdgpu_gfx_funcs gf
-  	.select_me_pipe_q =3D &gfx_v11_0_select_me_pipe_q,
-  	.update_perfmon_mgcg =3D &gfx_v11_0_update_perf_clk,
-  	.get_gfx_shadow_info =3D &gfx_v11_0_get_gfx_shadow_info,
-+ 	.get_hdp_flush_mask =3D &amdgpu_gfx_get_hdp_flush_mask,
-  };
- =20
-  static int gfx_v11_0_gpu_early_init(struct amdgpu_device *adev)
-@@@ -1107,6 -1117,7 +1117,7 @@@
-  	case IP_VERSION(11, 5, 1):
-  	case IP_VERSION(11, 5, 2):
-  	case IP_VERSION(11, 5, 3):
-+ 	case IP_VERSION(11, 5, 4):
-  		adev->gfx.config.max_hw_contexts =3D 8;
-  		adev->gfx.config.sc_prim_fifo_size_frontend =3D 0x20;
-  		adev->gfx.config.sc_prim_fifo_size_backend =3D 0x100;
-@@@ -1589,6 -1600,7 +1600,7 @@@ static int gfx_v11_0_sw_init(struct amd
-  	case IP_VERSION(11, 5, 1):
-  	case IP_VERSION(11, 5, 2):
-  	case IP_VERSION(11, 5, 3):
-+ 	case IP_VERSION(11, 5, 4):
-  		adev->gfx.me.num_me =3D 1;
-  		adev->gfx.me.num_pipe_per_me =3D 1;
-  		adev->gfx.me.num_queue_per_pipe =3D 2;
-@@@ -3046,7 -3058,8 +3058,8 @@@ static int gfx_v11_0_wait_for_rlc_autol
-  		    amdgpu_ip_version(adev, GC_HWIP, 0) =3D=3D IP_VERSION(11, 5, 0) ||
-  		    amdgpu_ip_version(adev, GC_HWIP, 0) =3D=3D IP_VERSION(11, 5, 1) ||
-  		    amdgpu_ip_version(adev, GC_HWIP, 0) =3D=3D IP_VERSION(11, 5, 2) ||
-- 		    amdgpu_ip_version(adev, GC_HWIP, 0) =3D=3D IP_VERSION(11, 5, 3))
-+ 		    amdgpu_ip_version(adev, GC_HWIP, 0) =3D=3D IP_VERSION(11, 5, 3) ||
-+ 		    amdgpu_ip_version(adev, GC_HWIP, 0) =3D=3D IP_VERSION(11, 5, 4))
-  			bootload_status =3D RREG32_SOC15(GC, 0,
-  					regRLC_RLCS_BOOTLOAD_STATUS_gc_11_0_1);
-  		else
-@@@ -3617,7 -3630,7 +3630,7 @@@ static int gfx_v11_0_cp_gfx_start(struc
-  	ring =3D &adev->gfx.gfx_ring[0];
-  	r =3D amdgpu_ring_alloc(ring, gfx_v11_0_get_csb_size(adev));
-  	if (r) {
-- 		DRM_ERROR("amdgpu: cp failed to lock ring (%d).\n", r);
-+ 		drm_err(&adev->ddev, "cp failed to lock ring (%d).\n", r);
-  		return r;
-  	}
- =20
-@@@ -3662,7 -3675,7 +3675,7 @@@
-  		ring =3D &adev->gfx.gfx_ring[1];
-  		r =3D amdgpu_ring_alloc(ring, 2);
-  		if (r) {
-- 			DRM_ERROR("amdgpu: cp failed to lock ring (%d).\n", r);
-+ 			drm_err(adev_to_drm(adev), "cp failed to lock ring (%d).\n", r);
-  			return r;
-  		}
- =20
-@@@ -4593,7 -4606,7 +4606,7 @@@ static int gfx_v11_0_cp_resume(struct a
-  	}
- =20
-  	if (adev->enable_mes_kiq && adev->mes.kiq_hw_init)
-- 		r =3D amdgpu_mes_kiq_hw_init(adev);
-+ 		r =3D amdgpu_mes_kiq_hw_init(adev, 0);
-  	else
-  		r =3D gfx_v11_0_kiq_resume(adev);
-  	if (r)
-@@@ -4783,7 -4796,7 +4796,7 @@@ static int gfx_v11_0_hw_init(struct amd
-  	adev->gfx.is_poweron =3D true;
- =20
-  	if(get_gb_addr_config(adev))
-- 		DRM_WARN("Invalid gb_addr_config !\n");
-+ 		drm_warn(adev_to_drm(adev), "Invalid gb_addr_config !\n");
- =20
-  	if (adev->firmware.load_type =3D=3D AMDGPU_FW_LOAD_PSP &&
-  	    adev->gfx.rs64_enable)
-@@@ -4901,7 -4914,7 +4914,7 @@@ static int gfx_v11_0_hw_fini(struct amd
-  		if (amdgpu_gfx_disable_kcq(adev, 0))
-  			DRM_ERROR("KCQ disable failed\n");
- =20
-- 		amdgpu_mes_kiq_hw_fini(adev);
-+ 		amdgpu_mes_kiq_hw_fini(adev, 0);
-  	}
- =20
-  	if (amdgpu_sriov_vf(adev))
-@@@ -5568,7 -5581,8 +5581,8 @@@ static int gfx_v11_0_update_gfx_clock_g
-  	return 0;
-  }
- =20
-- static void gfx_v11_0_update_spm_vmid(struct amdgpu_device *adev, struct =
-amdgpu_ring *ring, unsigned vmid)
-+ static void gfx_v11_0_update_spm_vmid(struct amdgpu_device *adev, int xcc=
-_id,
-+ 		struct amdgpu_ring *ring, unsigned vmid)
-  {
-  	u32 reg, pre_data, data;
- =20
-@@@ -5633,6 -5647,7 +5647,7 @@@ static void gfx_v11_cntl_power_gating(s
-  		case IP_VERSION(11, 5, 1):
-  		case IP_VERSION(11, 5, 2):
-  		case IP_VERSION(11, 5, 3):
-+ 	        case IP_VERSION(11, 5, 4):
-  			WREG32_SOC15(GC, 0, regRLC_PG_DELAY_3, RLC_PG_DELAY_3_DEFAULT_GC_11_0_=
-1);
-  			break;
-  		default:
-@@@ -5671,6 -5686,7 +5686,7 @@@ static int gfx_v11_0_set_powergating_st
-  	case IP_VERSION(11, 5, 1):
-  	case IP_VERSION(11, 5, 2):
-  	case IP_VERSION(11, 5, 3):
-+ 	case IP_VERSION(11, 5, 4):
-  		if (!enable)
-  			amdgpu_gfx_off_ctrl(adev, false);
- =20
-@@@ -5705,6 -5721,7 +5721,7 @@@ static int gfx_v11_0_set_clockgating_st
-  	case IP_VERSION(11, 5, 1):
-  	case IP_VERSION(11, 5, 2):
-  	case IP_VERSION(11, 5, 3):
-+ 	case IP_VERSION(11, 5, 4):
-  	        gfx_v11_0_update_gfx_clock_gating(adev,
-  	                        state =3D=3D  AMD_CG_STATE_GATE);
-  	        break;
-@@@ -5831,25 -5848,13 +5848,13 @@@ static void gfx_v11_0_ring_emit_hdp_flu
-  {
-  	struct amdgpu_device *adev =3D ring->adev;
-  	u32 ref_and_mask, reg_mem_engine;
-- 	const struct nbio_hdp_flush_reg *nbio_hf_reg =3D adev->nbio.hdp_flush_re=
-g;
- =20
-- 	if (ring->funcs->type =3D=3D AMDGPU_RING_TYPE_COMPUTE) {
-- 		switch (ring->me) {
-- 		case 1:
-- 			ref_and_mask =3D nbio_hf_reg->ref_and_mask_cp2 << ring->pipe;
-- 			break;
-- 		case 2:
-- 			ref_and_mask =3D nbio_hf_reg->ref_and_mask_cp6 << ring->pipe;
-- 			break;
-- 		default:
-- 			return;
-- 		}
-- 		reg_mem_engine =3D 0;
-- 	} else {
-- 		ref_and_mask =3D nbio_hf_reg->ref_and_mask_cp0 << ring->pipe;
-- 		reg_mem_engine =3D 1; /* pfp */
-+ 	if (!adev->gfx.funcs->get_hdp_flush_mask) {
-+ 		dev_err(adev->dev, "%s: gfx hdp flush is not supported.\n", __func__);
-+ 		return;
-  	}
- =20
-+ 	adev->gfx.funcs->get_hdp_flush_mask(ring, &ref_and_mask, &reg_mem_engine=
-);
-  	gfx_v11_0_wait_reg_mem(ring, reg_mem_engine, 0, 1,
-  			       adev->nbio.funcs->get_hdp_flush_req_offset(adev),
-  			       adev->nbio.funcs->get_hdp_flush_done_offset(adev),
-@@@ -6664,7 -6669,7 +6669,7 @@@ static int gfx_v11_0_bad_op_irq(struct=20
-  				struct amdgpu_irq_src *source,
-  				struct amdgpu_iv_entry *entry)
-  {
-- 	DRM_ERROR("Illegal opcode in command stream \n");
-+ 	DRM_ERROR("Illegal opcode in command stream\n");
-  	gfx_v11_0_handle_priv_fault(adev, entry);
-  	return 0;
-  }
-@@@ -6828,7 -6833,7 +6833,7 @@@ static int gfx_v11_0_reset_kgq(struct a
- =20
-  	amdgpu_ring_reset_helper_begin(ring, timedout_fence);
- =20
-- 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio);
-+ 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio, 0);
-  	if (r) {
- =20
-  		dev_warn(adev->dev, "reset via MES failed and try pipe reset %d\n", r);
-@@@ -6844,7 -6849,7 +6849,7 @@@
-  			return r;
-  		}
- =20
-- 		r =3D amdgpu_mes_map_legacy_queue(adev, ring);
-+ 		r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
-  		if (r) {
-  			dev_err(adev->dev, "failed to remap kgq\n");
-  			return r;
-@@@ -6993,7 -6998,7 +6998,7 @@@ static int gfx_v11_0_reset_kcq(struct a
- =20
-  	amdgpu_ring_reset_helper_begin(ring, timedout_fence);
- =20
-- 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, true);
-+ 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, true, 0);
-  	if (r) {
-  		dev_warn(adev->dev, "fail(%d) to reset kcq and try pipe reset\n", r);
-  		r =3D gfx_v11_0_reset_compute_pipe(ring);
-@@@ -7006,7 -7011,7 +7011,7 @@@
-  		dev_err(adev->dev, "fail to init kcq\n");
-  		return r;
-  	}
-- 	r =3D amdgpu_mes_map_legacy_queue(adev, ring);
-+ 	r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
-  	if (r) {
-  		dev_err(adev->dev, "failed to remap kcq\n");
-  		return r;
-@@@ -7480,7 -7485,7 +7485,7 @@@ static int gfx_v11_0_get_cu_info(struc
-  	if (!adev || !cu_info)
-  		return -EINVAL;
- =20
-- 	amdgpu_gfx_parse_disable_cu(disable_masks, 8, 2);
-+ 	amdgpu_gfx_parse_disable_cu(adev, disable_masks, 8, 2);
- =20
-  	mutex_lock(&adev->grbm_idx_mutex);
-  	for (i =3D 0; i < adev->gfx.config.max_shader_engines; i++) {
-diff --combined drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-index 4aab89a9ab401,79ea1af363a53..0000000000000
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-@@@ -355,7 -355,8 +355,8 @@@ static void gfx_v12_0_kiq_unmap_queues(
-  	uint32_t eng_sel =3D ring->funcs->type =3D=3D AMDGPU_RING_TYPE_GFX ? 4 :=
- 0;
- =20
-  	if (adev->enable_mes && !adev->gfx.kiq[0].ring.sched.ready) {
-- 		amdgpu_mes_unmap_legacy_queue(adev, ring, action, gpu_addr, seq);
-+ 		amdgpu_mes_unmap_legacy_queue(adev, ring, action,
-+ 					      gpu_addr, seq, 0);
-  		return;
-  	}
- =20
-@@@ -458,8 -459,8 +459,8 @@@ static int gfx_v12_0_ring_test_ring(str
-  	WREG32(scratch, 0xCAFEDEAD);
-  	r =3D amdgpu_ring_alloc(ring, 5);
-  	if (r) {
-- 		dev_err(adev->dev,
-- 			"amdgpu: cp failed to lock ring %d (%d).\n",
-+ 		drm_err(adev_to_drm(adev),
-+ 			"cp failed to lock ring %d (%d).\n",
-  			ring->idx, r);
-  		return r;
-  	}
-@@@ -516,7 -517,7 +517,7 @@@ static int gfx_v12_0_ring_test_ib(struc
- =20
-  	r =3D amdgpu_ib_get(adev, NULL, 16, AMDGPU_IB_POOL_DIRECT, &ib);
-  	if (r) {
-- 		dev_err(adev->dev, "amdgpu: failed to get ib (%ld).\n", r);
-+ 		drm_err(adev_to_drm(adev), "failed to get ib (%ld).\n", r);
-  		goto err1;
-  	}
- =20
-@@@ -760,7 -761,7 +761,7 @@@ static int gfx_v12_0_rlc_init(struct am
- =20
-  	/* init spm vmid with 0xf */
-  	if (adev->gfx.rlc.funcs->update_spm_vmid)
-- 		adev->gfx.rlc.funcs->update_spm_vmid(adev, NULL, 0xf);
-+ 		adev->gfx.rlc.funcs->update_spm_vmid(adev, 0, NULL, 0xf);
- =20
-  	return 0;
-  }
-@@@ -908,10 -909,14 +909,14 @@@ static void gfx_v12_0_select_me_pipe_q(
-  static void gfx_v12_0_get_gfx_shadow_info_nocheck(struct amdgpu_device *a=
-dev,
-  						  struct amdgpu_gfx_shadow_info *shadow_info)
-  {
-+ 	/* for gfx */
-  	shadow_info->shadow_size =3D MQD_SHADOW_BASE_SIZE;
-  	shadow_info->shadow_alignment =3D MQD_SHADOW_BASE_ALIGNMENT;
-  	shadow_info->csa_size =3D MQD_FWWORKAREA_SIZE;
-  	shadow_info->csa_alignment =3D MQD_FWWORKAREA_ALIGNMENT;
-+ 	/* for compute */
-+ 	shadow_info->eop_size =3D GFX12_MEC_HPD_SIZE;
-+ 	shadow_info->eop_alignment =3D 256;
-  }
- =20
-  static int gfx_v12_0_get_gfx_shadow_info(struct amdgpu_device *adev,
-@@@ -936,6 -941,7 +941,7 @@@ static const struct amdgpu_gfx_funcs gf
-  	.select_me_pipe_q =3D &gfx_v12_0_select_me_pipe_q,
-  	.update_perfmon_mgcg =3D &gfx_v12_0_update_perf_clk,
-  	.get_gfx_shadow_info =3D &gfx_v12_0_get_gfx_shadow_info,
-+ 	.get_hdp_flush_mask =3D &amdgpu_gfx_get_hdp_flush_mask,
-  };
- =20
-  static int gfx_v12_0_gpu_early_init(struct amdgpu_device *adev)
-@@@ -3469,7 -3475,7 +3475,7 @@@ static int gfx_v12_0_cp_resume(struct a
-  	}
- =20
-  	if (adev->enable_mes_kiq && adev->mes.kiq_hw_init)
-- 		r =3D amdgpu_mes_kiq_hw_init(adev);
-+ 		r =3D amdgpu_mes_kiq_hw_init(adev, 0);
-  	else
-  		r =3D gfx_v12_0_kiq_resume(adev);
-  	if (r)
-@@@ -3650,7 -3656,7 +3656,7 @@@ static int gfx_v12_0_hw_init(struct amd
-  	adev->gfx.is_poweron =3D true;
- =20
-  	if (get_gb_addr_config(adev))
-- 		DRM_WARN("Invalid gb_addr_config !\n");
-+ 		drm_warn(adev_to_drm(adev), "Invalid gb_addr_config !\n");
- =20
-  	if (adev->firmware.load_type =3D=3D AMDGPU_FW_LOAD_PSP)
-  		gfx_v12_0_config_gfx_rs64(adev);
-@@@ -3758,7 -3764,7 +3764,7 @@@ static int gfx_v12_0_hw_fini(struct amd
-  		if (amdgpu_gfx_disable_kcq(adev, 0))
-  			DRM_ERROR("KCQ disable failed\n");
- =20
-- 		amdgpu_mes_kiq_hw_fini(adev);
-+ 		amdgpu_mes_kiq_hw_fini(adev, 0);
-  	}
- =20
-  	if (amdgpu_sriov_vf(adev)) {
-@@@ -3955,6 -3961,7 +3961,7 @@@ static void gfx_v12_0_update_perf_clk(s
-  }
- =20
-  static void gfx_v12_0_update_spm_vmid(struct amdgpu_device *adev,
-+ 				      int xcc_id,
-  				      struct amdgpu_ring *ring,
-  				      unsigned vmid)
-  {
-@@@ -4386,25 -4393,13 +4393,13 @@@ static void gfx_v12_0_ring_emit_hdp_flu
-  {
-  	struct amdgpu_device *adev =3D ring->adev;
-  	u32 ref_and_mask, reg_mem_engine;
-- 	const struct nbio_hdp_flush_reg *nbio_hf_reg =3D adev->nbio.hdp_flush_re=
-g;
- =20
-- 	if (ring->funcs->type =3D=3D AMDGPU_RING_TYPE_COMPUTE) {
-- 		switch (ring->me) {
-- 		case 1:
-- 			ref_and_mask =3D nbio_hf_reg->ref_and_mask_cp2 << ring->pipe;
-- 			break;
-- 		case 2:
-- 			ref_and_mask =3D nbio_hf_reg->ref_and_mask_cp6 << ring->pipe;
-- 			break;
-- 		default:
-- 			return;
-- 		}
-- 		reg_mem_engine =3D 0;
-- 	} else {
-- 		ref_and_mask =3D nbio_hf_reg->ref_and_mask_cp0;
-- 		reg_mem_engine =3D 1; /* pfp */
-+ 	if (!adev->gfx.funcs->get_hdp_flush_mask) {
-+ 		dev_err(adev->dev, "%s: gfx hdp flush is not supported.\n", __func__);
-+ 		return;
-  	}
- =20
-+ 	adev->gfx.funcs->get_hdp_flush_mask(ring, &ref_and_mask, &reg_mem_engine=
-);
-  	gfx_v12_0_wait_reg_mem(ring, reg_mem_engine, 0, 1,
-  			       adev->nbio.funcs->get_hdp_flush_req_offset(adev),
-  			       adev->nbio.funcs->get_hdp_flush_done_offset(adev),
-@@@ -5040,7 -5035,7 +5035,7 @@@ static int gfx_v12_0_bad_op_irq(struct=20
-  				struct amdgpu_irq_src *source,
-  				struct amdgpu_iv_entry *entry)
-  {
-- 	DRM_ERROR("Illegal opcode in command stream \n");
-+ 	DRM_ERROR("Illegal opcode in command stream\n");
-  	gfx_v12_0_handle_priv_fault(adev, entry);
-  	return 0;
-  }
-@@@ -5302,7 -5297,7 +5297,7 @@@ static int gfx_v12_0_reset_kgq(struct a
- =20
-  	amdgpu_ring_reset_helper_begin(ring, timedout_fence);
- =20
-- 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio);
-+ 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, use_mmio, 0);
-  	if (r) {
-  		dev_warn(adev->dev, "reset via MES failed and try pipe reset %d\n", r);
-  		r =3D gfx_v12_reset_gfx_pipe(ring);
-@@@ -5317,7 -5312,7 +5312,7 @@@
-  			return r;
-  		}
- =20
-- 		r =3D amdgpu_mes_map_legacy_queue(adev, ring);
-+ 		r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
-  		if (r) {
-  			dev_err(adev->dev, "failed to remap kgq\n");
-  			return r;
-@@@ -5419,7 -5414,7 +5414,7 @@@ static int gfx_v12_0_reset_kcq(struct a
- =20
-  	amdgpu_ring_reset_helper_begin(ring, timedout_fence);
- =20
-- 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, true);
-+ 	r =3D amdgpu_mes_reset_legacy_queue(ring->adev, ring, vmid, true, 0);
-  	if (r) {
-  		dev_warn(adev->dev, "fail(%d) to reset kcq  and try pipe reset\n", r);
-  		r =3D gfx_v12_0_reset_compute_pipe(ring);
-@@@ -5432,7 -5427,7 +5427,7 @@@
-  		dev_err(adev->dev, "failed to init kcq\n");
-  		return r;
-  	}
-- 	r =3D amdgpu_mes_map_legacy_queue(adev, ring);
-+ 	r =3D amdgpu_mes_map_legacy_queue(adev, ring, 0);
-  	if (r) {
-  		dev_err(adev->dev, "failed to remap kcq\n");
-  		return r;
-@@@ -5724,7 -5719,7 +5719,7 @@@ static int gfx_v12_0_get_cu_info(struc
-  	if (!adev || !cu_info)
-  		return -EINVAL;
- =20
-- 	amdgpu_gfx_parse_disable_cu(disable_masks, 8, 2);
-+ 	amdgpu_gfx_parse_disable_cu(adev, disable_masks, 8, 2);
- =20
-  	mutex_lock(&adev->grbm_idx_mutex);
-  	for (i =3D 0; i < adev->gfx.config.max_shader_engines; i++) {
 
---8v59VJ8uYhvNlyh4
+diff --cc kernel/trace/bpf_trace.c
+index f7baeb8278cac,abbf0177ad20b..0000000000000
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@@ -2076,8 -2062,8 +2076,8 @@@ void __bpf_trace_run(struct bpf_raw_tp_
+  	struct bpf_run_ctx *old_run_ctx;
+  	struct bpf_trace_run_ctx run_ctx;
+ =20
+- 	cant_sleep();
++ 	rcu_read_lock_dont_migrate();
+ -	if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
+ +	if (unlikely(!bpf_prog_get_recursion_context(prog))) {
+  		bpf_prog_inc_misses_counter(prog);
+  		goto out;
+  	}
+@@@ -2090,8 -2075,8 +2089,8 @@@
+ =20
+  	bpf_reset_run_ctx(old_run_ctx);
+  out:
+ -	this_cpu_dec(*(prog->active));
+ +	bpf_prog_put_recursion_context(prog);
++ 	rcu_read_unlock_migrate();
+  }
+ =20
+  #define UNPACK(...)			__VA_ARGS__
+
+--/R5sBwaMyJ7MhrQt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAtOIACgkQJNaLcl1U
-h9APXgf+LA+Dte69OMKZ3icUUfgH0B7nn8pUMZMeT79chQhNcCruWj8s2PHlKYpU
-VCzY1rAShCSq3uPldSX+2k4ikGX0hlX3UJmDcFU3emtwUYc/EU3TyBCiKLXZhU21
-Gkra1qe95NQXOTSdiOmqLBwRMUBrdz2Bx+zQ7cMFjratWDpLHxDMoe6YwO0qVwkv
-Tw3t2FzkY5YlVQCFTFIR1yfDT75X/+UNbLs4JxbHWJGLM1nrLZ5oT5MYQ0I+LWfi
-hVdamnZXpg/MLdtqPo5j+Ybyay4t0Lsm3/4jJcL5wSmpO22JRTCoe81p95ZMello
-3wySToZ/3jJOX2SRaVFInQiBICJRqw==
-=iP/o
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmAtPUACgkQJNaLcl1U
+h9CwPQf9H42nP8Kc8HgMO25k8BG7s278+vqpklf36Y/sRDk/62p+x3jTTR5x5Xq1
+RyNlHZTLXJGNT5AZdUJmsAJ7f+7oN/8MmcCVWTLT6f6MV0PJi4QCCNhNB7EF1dRf
+6bzpMQ62Q9Ux3oqMWoeuJXptROuUATv7lIZwSth0hRu6H2Jbm3sCGZNfJ8s0BDWw
+bIu6QXXAzqCv/PHk7zeqyDxQ8dkh+ESVNyHiT3gVzuxWwe+IXLxpofQbIAS6yi3J
+PmBEDg3I8Qx/Cs7rbuGaQpJmZlMa6ozR3XZVdceVCwlmIj3wws6T7aySnXAm6WIJ
+FaBufMP5EAiLBM2EEGErrDXmDDVJpw==
+=TANY
 -----END PGP SIGNATURE-----
 
---8v59VJ8uYhvNlyh4--
+--/R5sBwaMyJ7MhrQt--
