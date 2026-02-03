@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BE83D3CF1;
-	Tue,  3 Feb 2026 17:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B342A4A35;
+	Tue,  3 Feb 2026 17:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770138164; cv=none; b=Jty9aDyj2EeBRDcfp50wYxzAbUDUPu2WONmky43OjDQXAGe4rMTFKkEN8atcBRcamSeStzLm6q+TZIl9q96jgJJfZ4Z/ARJesp6YnhorHHHY+W/f05caSnYOb/6xOpvXw7nHi4x/5zlNJRxIbCe6wAs2UbIOAuVPmLbEXoj5kkk=
+	t=1770140341; cv=none; b=h04EtVjHUkxQt1gV9lzO6CadTnWC6zVwCRj02puA4fbiy0ox3R8xnBBczn3LPYtLRYeOVOetETGm3EJwu9uajA/8bhHdGdvUfxvjCg3s2KPMvfLRdv+IiOGzYhtTm5KIAVLwmFLCPzjFW0kDoJryCreky7zigp+OZ0n2C/Dyc1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770138164; c=relaxed/simple;
-	bh=/+qHCVOKB0OYm7f+EgS9uSM5DP4tn+yQztZT2JhEj7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkFhFwGcjwPc13yB1qS5o2vkgfXZev1lksKWV0oR5Y26HNWM4r255NfEfHVze6YG8X/PiVRTRHkO5SKiBIV9fxDg8Mqh8io1qr/GFzGxIISiCXNZaIfdFpDaUkgbCCr+UrLUhbkIHC728jrBPvHHwAJpd7tgehF3zD762AJTO+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSaPboWx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770140341; c=relaxed/simple;
+	bh=LsPMK9Gl0InO1O9IIX6oGTQbjGIWk74dRMibVKKXQIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gIRFqiivXb+ddooIwgmrr/RDXMsqhTig2CEeNm04u4KbLQXXzbgZpnWm/V3F0o8SFA+rjsmzySWSUJhgn92aqSs9QtpMVomuMxI2ZbAA9PAIEjesO3eO7s1fIt6obovesdhmkzn+KlwlkLl+hFAzspW2uhpqKMcL4p7zqMrBGmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwSNskwZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSaPboWx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521D5C116D0;
-	Tue,  3 Feb 2026 17:02:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwSNskwZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1DBC19421;
+	Tue,  3 Feb 2026 17:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770138163;
-	bh=/+qHCVOKB0OYm7f+EgS9uSM5DP4tn+yQztZT2JhEj7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pSaPboWxWKLd0TQhOa8czY/yuW5L48RUN/psxu0WisEAEZhY1My7Re4d3iaBX3X0s
-	 V+jTba1jsBUlMl0iuKDWohYtNW3iveZgME5hJwhLV3E31KE+6iMD9xXO6UZhVYDEVw
-	 AekUhGr8KdF53CGiWWa4ziUjaa4CVsHohM4aQP9hvMasqXLOfEhKPP5nluUi2vwD+X
-	 e1+pNHpLm3b3a5K9q/5G1mh1hlxhoOZTDsjI74wVj4j5TSyxWg0RBJTM3tedr9ARp0
-	 BOMvgKxlieanioUqUzP+D6iBTfSRvQngdeh31PYODTLpX1C/NVpM2H1ZqeyxzBiI7U
-	 yAG5l02Fs86BA==
-Date: Tue, 3 Feb 2026 17:02:37 +0000
+	s=k20201202; t=1770140341;
+	bh=LsPMK9Gl0InO1O9IIX6oGTQbjGIWk74dRMibVKKXQIw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FwSNskwZ4hRTQjcsF/9ginUNfoZ6kPPr56DmBj95rOyYPZT+viNhb5oDYRYiNNXip
+	 sgYr2hZz4LE9MiNL1H2m2b8yswYtNaW+ZIjSP7/DuFGV/+3D3My7iVFXzeXCkTzQA4
+	 VfQSPVnCHlnadgb3kv7htcVj+GUCrXFwvI2AramtVzhsQNR3fCLCVb2Dr9QAFjF+rm
+	 v6uu0WeOqEyw7JRXaKb+kuUirKRXGriO7mBwuDeVpE497YzuWsjMz1lledw1umG78o
+	 z5YV3kfEcox25VThVLlaG2S5L6qZWzGfeys6qjMZNaB2wMrJtUGHOggDnexOSLGtD5
+	 DwMkafQQpMg6g==
+Date: Tue, 3 Feb 2026 17:38:56 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the fsverity tree
-Message-ID: <e062c6a3-b6ec-4be9-a1d8-c3775e0bd451@sirena.org.uk>
-References: <aYH54qJee85qLLkN@sirena.org.uk>
- <20260203162913.GA28595@lst.de>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Tomas Hlavacek <tmshlvck@gmail.com>,
+	Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aYIysFIE9ooavWia@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,49 +44,89 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mFLLqTOOOJqAgSag"
+	protocol="application/pgp-signature"; boundary="lkug/g3BTk7qqesV"
 Content-Disposition: inline
-In-Reply-To: <20260203162913.GA28595@lst.de>
-X-Cookie: Do you know Montana?
 
 
---mFLLqTOOOJqAgSag
+--lkug/g3BTk7qqesV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 03, 2026 at 05:29:13PM +0100, Christoph Hellwig wrote:
-> On Tue, Feb 03, 2026 at 01:36:34PM +0000, Mark Brown wrote:
-> >  		} else {
-> >  			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
-> >  			if (f2fs_need_verity(inode, index) &&
+Hi all,
 
-> This also need to be replaced with a
+Today's linux-next merge of the net-next tree got a conflict in:
 
-> 			if (vi &&
+  drivers/net/ethernet/spacemit/k1_emac.c
 
-Thanks, I'll roll that in - I was a bit suspicious of that bit.
+between commit:
 
-> Eric already posted the conflict resultion here:
->=20
-> https://lore.kernel.org/fsverity/20260203053604.GC15956@lst.de/T/#m291294=
-c1f6b7368d3c426ee47e6d23dc854b3ba6
+  3125fc1701694 ("net: spacemit: k1-emac: fix jumbo frame support")
 
-Looks the same otherwise modulo whitespace changes.
+=66rom the net tree and commit:
 
---mFLLqTOOOJqAgSag
+  f66086798f91f ("net: spacemit: Remove broken flow control support")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/net/ethernet/spacemit/k1_emac.c
+index b49c4708bf9eb,40c9504b74445..0000000000000
+--- a/drivers/net/ethernet/spacemit/k1_emac.c
++++ b/drivers/net/ethernet/spacemit/k1_emac.c
+@@@ -201,9 -193,7 +194,7 @@@ static void emac_reset_hw(struct emac_p
+ =20
+  static void emac_init_hw(struct emac_priv *priv)
+  {
+- 	/* Destination address for 802.3x Ethernet flow control */
+- 	u8 fc_dest_addr[ETH_ALEN] =3D { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x01 };
+ -	u32 rxirq =3D 0, dma =3D 0;
+ +	u32 rxirq =3D 0, dma =3D 0, frame_sz;
+ =20
+  	regmap_set_bits(priv->regmap_apmu,
+  			priv->regmap_apmu_offset + APMU_EMAC_CTRL_REG,
+@@@ -228,21 -218,6 +219,15 @@@
+  		DEFAULT_TX_THRESHOLD);
+  	emac_wr(priv, MAC_RECEIVE_PACKET_START_THRESHOLD, DEFAULT_RX_THRESHOLD);
+ =20
+ +	/* Set maximum frame size and jabber size based on configured MTU,
+ +	 * accounting for Ethernet header, double VLAN tags, and FCS.
+ +	 */
+ +	frame_sz =3D priv->ndev->mtu + ETH_HLEN + 2 * VLAN_HLEN + ETH_FCS_LEN;
+ +
+ +	emac_wr(priv, MAC_MAXIMUM_FRAME_SIZE, frame_sz);
+ +	emac_wr(priv, MAC_TRANSMIT_JABBER_SIZE, frame_sz);
+ +	emac_wr(priv, MAC_RECEIVE_JABBER_SIZE, frame_sz);
+ +
+- 	/* Configure flow control (enabled in emac_adjust_link() later) */
+- 	emac_set_mac_addr_reg(priv, fc_dest_addr, MAC_FC_SOURCE_ADDRESS_HIGH);
+- 	emac_wr(priv, MAC_FC_PAUSE_HIGH_THRESHOLD, DEFAULT_FC_FIFO_HIGH);
+- 	emac_wr(priv, MAC_FC_HIGH_PAUSE_TIME, DEFAULT_FC_PAUSE_TIME);
+- 	emac_wr(priv, MAC_FC_PAUSE_LOW_THRESHOLD, 0);
+-=20
+  	/* RX IRQ mitigation */
+  	rxirq =3D FIELD_PREP(MREGBIT_RECEIVE_IRQ_FRAME_COUNTER_MASK,
+  			   EMAC_RX_FRAMES);
+
+--lkug/g3BTk7qqesV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCKiwACgkQJNaLcl1U
-h9A4Mgf+IwNbLoklcC2+yCL1vhiBLgB0G8kwlSDZHHjD9iXDWNy4ir/a1TpxijXf
-ny0paqyZ8FFICn1F2/t7do2N7r9pBwyIYK05WktfTW0NE9eQQKYC91KKxKEEYnL4
-DJn2Nz0LRmWpW6TFQ727mIow6iO4hqL/2MWMGXa+1GAeEBnvg48UXpm/qK9Ywf52
-DFYtUXlUYQym4QdjhPOtDjyAGnWSStoktKrGlVdcAGaHY8KnHFPy7YYO6HudeNUL
-Ym814tbmF0KcihgI05wOWxHGkdyFEDsGDJCuepR0ZSD4mNkAaXYv3OdulPDHi7Oi
-xXK7xcGBTradiYFehOXZUyQ6S0Syrw==
-=cbrB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCMrAACgkQJNaLcl1U
+h9Bvkgf/Vb8/B9F03SSUrMuREqVeo7lVL+iojs2fETc3dZ2310pYt7ZhvAJMSsmZ
+KXy/d5ziPfNn9/F89vt0PLDCPPcZ5dz9F0x8MH5weE62KC/OxY1F6zZslzQj/IOF
+ugt8qeLf5rVXJ3/zbCj5veAsOxnCNj8q+3litS5TQ0IYEH6bkFfvHYKGTWm7pjOo
+QjHnv7viY4o8d7XrtCYu+LRdpFTFNndEbu0ihXGEdPCyiHHCHJncs9pPpktWeGaW
+Nv6Lh9z88IkoM2zdroFzSMLNZiX/bO8tjzP5zmo7v/GA53pOH/XbOKqrpYCeYtr3
+o6nwixOmlZtAmQj5c9N0Y7v9xqNgPQ==
+=C+SL
 -----END PGP SIGNATURE-----
 
---mFLLqTOOOJqAgSag--
+--lkug/g3BTk7qqesV--
