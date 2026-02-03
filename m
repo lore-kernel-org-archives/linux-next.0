@@ -1,137 +1,133 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E76F3033E2
-	for <linux-next@vger.kernel.org>; Tue,  3 Feb 2026 07:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF09A396D09;
+	Tue,  3 Feb 2026 09:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770104875; cv=none; b=UwgYst4gc0tQN5BCDaGYKOlnLorQM1Ff/pWMIqX7Xs0ZmOQgfaXsDmNeOS3i1H90YQ3jRgd65Ww2KAC2kGflvoV6GmRYhOP5CT+pDZemZGU8FOqqLaQeDSbEh1YBA3dySpdagYlYmSfYTDkp9bRskIAUymcDcEvAs3oNNEN6JW0=
+	t=1770111589; cv=none; b=a5AEtjDkL7WjRhEN8k39Qiyr0J9Kva2gfQxXVF70HXRMbXtYaJIfsfUT/BDQAnUZHwHYDgevmwzLnlo3aMZXFYYUhZfJYZhQgrougSVgS+nDBJgOASe3MMNTF7JOrAT/KQDIpmJkt9zvLqOYV+kBmkbT014CUAM4m0TXEaVlIig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770104875; c=relaxed/simple;
-	bh=y3CanROtzDGs4J8qH2HpkKMv7vKMorR2gHZYAoDiiEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RuDG8TyMwaxu5rCqsxmfApG3IRKYJORSQDqJsnt2KnLSW1bDjeUdIMNhKPA0fcCYVdTokxaTpYwfKknT67D/xvVu/WcTb7kF9zyf/100TARyoAR3kDF561ackU6I7A9hTQyAfa3n+oN1JKk45SadRhVnH1dxdEZhHXxgITH+trM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DGwW6Noy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VTqfh3RF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DGwW6Noy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VTqfh3RF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1770111589; c=relaxed/simple;
+	bh=bj6wcH5XOkXjFT0N8pgBnVw5n77z+D7mHX81vSBerqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KG4U5NHRvTFv9TyzZsT4HhJs0DhoHAJU/rsRT47U+WHHjLr9K3KHwd/sFBuhP5cKAsIKg8W4UHiKEcFYOxTy2hG6eBPZepi9SwMP7lXbhTAfafOJaYGJWy2GUc3pY3OY8LOtGVR/NAh+GODZR9fnrFrcmq/rCIyY3FIE79fWlbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nfV/kYB9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DGwW6Noy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VTqfh3RF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DGwW6Noy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VTqfh3RF"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B04413E6CB;
-	Tue,  3 Feb 2026 07:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770104872;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkLco+mcQ/LXocsQcpRSGQsVmu8mb4bSH4gHJJHOeEo=;
-	b=DGwW6NoydbVYk0Yxv4X5gw/Nbuv0ubiyEwZWQaRzPKQDEJxxKigXWYe04RIqGCpQE+IAXW
-	va0r2uO7dCDHfbtvVw3NijP6B9ECRMBhakQ8tjIvWZa3kUA4bHyDQpQOtr+WDPtDjW1Jrc
-	UpN6PuC397o35GRjGX5n+DV17TdBLyI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770104872;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkLco+mcQ/LXocsQcpRSGQsVmu8mb4bSH4gHJJHOeEo=;
-	b=VTqfh3RFX04eG9XlZMYgNGamjEzir/4kTbPbebv17jkM5h/FVeZZ5ud5rIaLwzvK6P9Psy
-	JCOoXlrfQ7X1swBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DGwW6Noy;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VTqfh3RF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770104872;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkLco+mcQ/LXocsQcpRSGQsVmu8mb4bSH4gHJJHOeEo=;
-	b=DGwW6NoydbVYk0Yxv4X5gw/Nbuv0ubiyEwZWQaRzPKQDEJxxKigXWYe04RIqGCpQE+IAXW
-	va0r2uO7dCDHfbtvVw3NijP6B9ECRMBhakQ8tjIvWZa3kUA4bHyDQpQOtr+WDPtDjW1Jrc
-	UpN6PuC397o35GRjGX5n+DV17TdBLyI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770104872;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkLco+mcQ/LXocsQcpRSGQsVmu8mb4bSH4gHJJHOeEo=;
-	b=VTqfh3RFX04eG9XlZMYgNGamjEzir/4kTbPbebv17jkM5h/FVeZZ5ud5rIaLwzvK6P9Psy
-	JCOoXlrfQ7X1swBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8DD3B3EA62;
-	Tue,  3 Feb 2026 07:47:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pxB5IiiogWlbZAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 03 Feb 2026 07:47:52 +0000
-Date: Tue, 3 Feb 2026 08:47:51 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the btrfs-fixes tree
-Message-ID: <20260203074751.GM26902@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <aXtXw3_wMDnrrOxW@sirena.org.uk>
- <541681ab-07f7-49ce-bb74-c3e52b71b659@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nfV/kYB9"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 612L82rP004012;
+	Tue, 3 Feb 2026 09:39:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=nviGb0
+	PfO8ho2ksD5sEuYJ5GXQovShNqzUmWXzkdElE=; b=nfV/kYB9pCs3QcFbJwULwD
+	9iqeSG9CMSYl0zGlZKeK6iGzJOgclAA920eGSgQNEkYGjzYC57c/rtJMJbUHsShP
+	ErUUd4IPojz4sMsWkG6vhLRf0x5QYBZTayMqNXlHPEhWAMhresnhBFdHT6I7Wa5I
+	xYtTNJxZf02hbWRwgWUIWEQWAZ79fdUaYVtMQ+GTEr9tVTO9oQ8WysBQTHXR2/Ey
+	cZ5jr+G6zscI73ZQz4J6v/2YDT8TsIC+pMgfJ1d9jPfhdQYK7p5A9M+opSaIBD5f
+	YBGqAM17J9YaZQ4NMZqXe24EgGUQQLAtdzpJi/B9Wx8PcOZ22VX2mOHQcqLBDi5w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c19f6cn5p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Feb 2026 09:39:39 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 6139ddI9001578;
+	Tue, 3 Feb 2026 09:39:39 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c19f6cn5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Feb 2026 09:39:39 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 6134dtS1029068;
+	Tue, 3 Feb 2026 09:39:38 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4c1v2s8ns9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Feb 2026 09:39:38 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6139dHK423986878
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Feb 2026 09:39:18 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4267158065;
+	Tue,  3 Feb 2026 09:39:37 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 32FC158056;
+	Tue,  3 Feb 2026 09:39:34 +0000 (GMT)
+Received: from [9.109.248.127] (unknown [9.109.248.127])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  3 Feb 2026 09:39:33 +0000 (GMT)
+Message-ID: <82be27bf-b6c0-44e9-8c09-7a5764f1db08@linux.ibm.com>
+Date: Tue, 3 Feb 2026 15:09:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <541681ab-07f7-49ce-bb74-c3e52b71b659@sirena.org.uk>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.21
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[]
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: B04413E6CB
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [next-20260130] scripts/sign-file: build failure on OpenSSL <
+ CMS_NO_SIGNING_TIME
+Content-Language: en-GB
+To: Miguel Ojeda <ojeda@kernel.org>, David Howells <dhowells@redhat.com>,
+        Michael Kelley <mhklinux@outlook.com>
+Cc: broonie@kernel.org, christophe.leroy@csgroup.eu,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        maddy@linux.ibm.com, petr.pavlu@suse.com, samitolvanen@google.com
+References: <47fa2bc6-e137-4123-b00c-937a8fd82968@linux.ibm.com>
+ <20260202130124.354758-1-ojeda@kernel.org>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <20260202130124.354758-1-ojeda@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: fhQGMATs5fInGxILt3i4B4K3kMyh2Y4V
+X-Authority-Analysis: v=2.4 cv=drTWylg4 c=1 sm=1 tr=0 ts=6981c25b cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=UqCG9HQmAAAA:8 a=VnNF1IyMAAAA:8 a=NH0QSD6g-PdmOT69jSEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: sO4RY7f18Mb42fIpvgxy8BQkh1n4PHNO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAzMDA3NCBTYWx0ZWRfX9ENx4f0r9Pvl
+ mJ4ishifcm1a7IHu7KYoHFpVWbqP4QC4o/IQviTMndpzMkIrURrXVfDTaRT845eVJKC0Jpk0keJ
+ gIftkzXFkgr02PT73Q7dv4s8g3J5U9igB7hbdqkIaZr0h6p7jtI/cbel7gJn76zjsZqrlgHwzKr
+ ig5aspCgRU20SQ0yxd4DKYohEKKupVc07KrLMQ4w8ZENLFTwovZGppJdC8z+2cYx7c6YJQUQDbS
+ 5ajASMUNgc4URPM6OKpF7lFqYgxOg+xlvlxB14zkyCsTJpzU4Cf/Up+mR/luGCAEIGgabivIQwg
+ DS1a7apY9LDg3hax5gey06zZRp6jx2EhR6Sz0SIH3xoopLVpWdyr0X97/gayJ/xHEfiuV5Gz3FC
+ 8AIu1jOHzFf3EKSfl1xq2G1UisdT/Ze/3elBsIN9LsRO2CRXQg73Yh+ueGJhiF6Wpf4+o3Pkv/I
+ JawoRHngb7N1vXBWFmA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-03_03,2026-02-02_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1011 spamscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2601150000
+ definitions=main-2602030074
 
-On Mon, Feb 02, 2026 at 02:57:25PM +0000, Mark Brown wrote:
-> On Thu, Jan 29, 2026 at 12:51:15PM +0000, Mark Brown wrote:
-> > Hi all,
-> > 
-> > After merging the btrfs-fixes tree, today's linux-next build
-> > (arm64 defconfig) failed like this:
-> 
-> This issue is still present in today's -next.
 
-I forgot to push the fixed branch, should be fixed in today's snapshot.
-Thanks.
+On 02/02/26 6:31 pm, Miguel Ojeda wrote:
+> On Mon, 2 Feb 2026 10:06:41 +0530 Venkat Rao Bagalkote <venkat88@linux.ibm.com> wrote:
+>> scripts/sign-file.c:282:25: error: ‘CMS_NO_SIGNING_TIME’ undeclared
+>> (first use in this function)
+>>     282 |                         CMS_NO_SIGNING_TIME |
+> I have also been seeing the error this weekend -- this was already
+> reported in:
+>
+>    https://lore.kernel.org/all/SN6PR02MB415708C0A6E2EB1B5C7BBFB0D49CA@SN6PR02MB4157.namprd02.prod.outlook.com/
+>
+> Could you please try the patch David suggests?
+
+
+Thanks for pointing to this. Its working.
+
+>
+> Thanks!
+>
+> Cheers,
+> Miguel
+>
