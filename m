@@ -1,42 +1,32 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D473A9DB9;
-	Tue,  3 Feb 2026 14:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2670332142F;
+	Tue,  3 Feb 2026 16:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770130340; cv=none; b=NjJAd2S+MLfVJJXcL5FCJuqxHWBmnJ/eiJMZC1ioU44Kjkg4WV05JzIUnDGdAlOXkA+141yc3Bx3Tp/iqH6jAJbnL2u218zsOGGbq4N5uBM5+RKZBmgRsecWiHw0JTkL/Djt5GjC7Cy2r9I/yTXIBAvHKnvHKFzN6eiih/wvQF8=
+	t=1770136158; cv=none; b=RgGmAUCOCj+Q+eH0Lh9vpRu6GsvL+x59UkzasSED67wLuIk/zItbgihvNKvSC80oeAy6h2c+21bp2Qk/bJc5nuZfQ5ahl0cUQ42YSeBK9L2sZBDf0HYSe1HusehY1a26nUTmrO6CpPR4XbNhKIyGu6tngQ8+oLHhGoOFWl5eSMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770130340; c=relaxed/simple;
-	bh=QwEIeEKpwyUYysR33TYAJDVz/kfO8UKNBpifO8v/BYo=;
+	s=arc-20240116; t=1770136158; c=relaxed/simple;
+	bh=f/TRia/N5QF+eOIu95D0pIEuluqKvByHhWwuULxnU/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPPJkmjAbVklUx375Kp/b6bAb0JVGiug1283DRHNAglJuTASdBYaIMWmhDjFof++Nb6Zk5ZSGWCYNt30xWgTOepEhGsckWay/v6mGVuMmVLX7P5eGCn4NEKdZES1UhIZElmnRZ+zgyb141Mnd/kMIQrHLm9eIRj0VbiFIJMa9aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ewi/tLdW; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ewi/tLdW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04759C16AAE;
-	Tue,  3 Feb 2026 14:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1770130340;
-	bh=QwEIeEKpwyUYysR33TYAJDVz/kfO8UKNBpifO8v/BYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ewi/tLdWUFx8NfTW42yfQD+E2Zr4Rmg3uY7evwTH9wh/6fI5MLLAMd0tyw7J46jgk
-	 ZSMsAVdOtV45EAzKgwD91akAhpePF3NCiOevJQ53aO3ClMs6fL/hPdy7hEcp5XgKoH
-	 ENIjn0SWRldIXMKKT6mHtFG/xoNtHbjzkA/rrHQs=
-Date: Tue, 3 Feb 2026 15:52:17 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org, stable@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH 6.18.8] Revert "drm/amd: Check if ASPM is enabled from
- PCIe subsystem"
-Message-ID: <2026020308-darling-corroding-d951@gregkh>
-References: <20260201002508.1293510-1-spasswolf@web.de>
- <2026020334-vividly-cognitive-e0b6@gregkh>
- <2fcded69-e458-431d-886b-b76c7e3fd9d0@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAL33lXv3Wb8PGD1YywTkIjNZnoUu4SA0ewZyq3gJ4iBlBfHp4niWiZkb+ruSmj/1kplE9p6CaOIGIc+7+SVkBWj5lQH7oroyXc8OH5So7lPPUJBTC1QLeU5cFccX79tbgkF0Q4H1husEjNOoUnFuGSr0vkyLOPRkA903hw+9GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 56A8768B05; Tue,  3 Feb 2026 17:29:13 +0100 (CET)
+Date: Tue, 3 Feb 2026 17:29:13 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the fsverity tree
+Message-ID: <20260203162913.GA28595@lst.de>
+References: <aYH54qJee85qLLkN@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,58 +35,20 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2fcded69-e458-431d-886b-b76c7e3fd9d0@amd.com>
+In-Reply-To: <aYH54qJee85qLLkN@sirena.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Feb 03, 2026 at 08:42:15AM -0600, Mario Limonciello wrote:
-> On 2/3/26 8:39 AM, Greg KH wrote:
-> > On Sun, Feb 01, 2026 at 01:25:06AM +0100, Bert Karwatzki wrote:
-> > > This reverts commit 7294863a6f01248d72b61d38478978d638641bee.
-> > > 
-> > > This commit was erroneously applied again after commit 0ab5d711ec74
-> > > ("drm/amd: Refactor `amdgpu_aspm` to be evaluated per device")
-> > > removed it, leading to very hard to debug crashes, when used with a system with two
-> > > AMD GPUs of which only one supports ASPM.
-> > > 
-> > > Link: https://lore.kernel.org/linux-acpi/20251006120944.7880-1-spasswolf@web.de/
-> > > Link: https://github.com/acpica/acpica/issues/1060
-> > > Fixes: 0ab5d711ec74 ("drm/amd: Refactor `amdgpu_aspm` to be evaluated per device")
-> > > 
-> > > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> > > ---
-> > >   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 3 ---
-> > >   1 file changed, 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> > > index 7333e19291cf..ec9516d6ae97 100644
-> > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> > > @@ -2334,9 +2334,6 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
-> > >   			return -ENODEV;
-> > >   	}
-> > > -	if (amdgpu_aspm == -1 && !pcie_aspm_enabled(pdev))
-> > > -		amdgpu_aspm = 0;
-> > > -
-> > >   	if (amdgpu_virtual_display ||
-> > >   	    amdgpu_device_asic_has_dc_support(pdev, flags & AMD_ASIC_MASK))
-> > >   		supports_atomic = true;
-> > > -- 
-> > > 2.47.3
-> > > 
-> > > 
-> > 
-> > 
-> > <formletter>
-> > 
-> > This is not the correct way to submit patches for inclusion in the
-> > stable kernel tree.  Please read:
-> >      https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> > for how to do this properly.
-> > 
-> > </formletter>
-> 
-> FWIW I added a stable tag to the patch when applied to amd-staging-drm-next
-> for this.  So it should come back to stable once it merges in Linus' tree.
+On Tue, Feb 03, 2026 at 01:36:34PM +0000, Mark Brown wrote:
+>  		} else {
+>  			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
+>  			if (f2fs_need_verity(inode, index) &&
 
-Great, thanks!
+This also need to be replaced with a
 
-greg k-h
+			if (vi &&
+
+Eric already posted the conflict resultion here:
+
+https://lore.kernel.org/fsverity/20260203053604.GC15956@lst.de/T/#m291294c1f6b7368d3c426ee47e6d23dc854b3ba6
+
+and I independently verified it.
