@@ -1,54 +1,92 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2670332142F;
-	Tue,  3 Feb 2026 16:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BE83D3CF1;
+	Tue,  3 Feb 2026 17:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770136158; cv=none; b=RgGmAUCOCj+Q+eH0Lh9vpRu6GsvL+x59UkzasSED67wLuIk/zItbgihvNKvSC80oeAy6h2c+21bp2Qk/bJc5nuZfQ5ahl0cUQ42YSeBK9L2sZBDf0HYSe1HusehY1a26nUTmrO6CpPR4XbNhKIyGu6tngQ8+oLHhGoOFWl5eSMY=
+	t=1770138164; cv=none; b=Jty9aDyj2EeBRDcfp50wYxzAbUDUPu2WONmky43OjDQXAGe4rMTFKkEN8atcBRcamSeStzLm6q+TZIl9q96jgJJfZ4Z/ARJesp6YnhorHHHY+W/f05caSnYOb/6xOpvXw7nHi4x/5zlNJRxIbCe6wAs2UbIOAuVPmLbEXoj5kkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770136158; c=relaxed/simple;
-	bh=f/TRia/N5QF+eOIu95D0pIEuluqKvByHhWwuULxnU/U=;
+	s=arc-20240116; t=1770138164; c=relaxed/simple;
+	bh=/+qHCVOKB0OYm7f+EgS9uSM5DP4tn+yQztZT2JhEj7g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAL33lXv3Wb8PGD1YywTkIjNZnoUu4SA0ewZyq3gJ4iBlBfHp4niWiZkb+ruSmj/1kplE9p6CaOIGIc+7+SVkBWj5lQH7oroyXc8OH5So7lPPUJBTC1QLeU5cFccX79tbgkF0Q4H1husEjNOoUnFuGSr0vkyLOPRkA903hw+9GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 56A8768B05; Tue,  3 Feb 2026 17:29:13 +0100 (CET)
-Date: Tue, 3 Feb 2026 17:29:13 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Mark Brown <broonie@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkFhFwGcjwPc13yB1qS5o2vkgfXZev1lksKWV0oR5Y26HNWM4r255NfEfHVze6YG8X/PiVRTRHkO5SKiBIV9fxDg8Mqh8io1qr/GFzGxIISiCXNZaIfdFpDaUkgbCCr+UrLUhbkIHC728jrBPvHHwAJpd7tgehF3zD762AJTO+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSaPboWx; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSaPboWx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521D5C116D0;
+	Tue,  3 Feb 2026 17:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770138163;
+	bh=/+qHCVOKB0OYm7f+EgS9uSM5DP4tn+yQztZT2JhEj7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pSaPboWxWKLd0TQhOa8czY/yuW5L48RUN/psxu0WisEAEZhY1My7Re4d3iaBX3X0s
+	 V+jTba1jsBUlMl0iuKDWohYtNW3iveZgME5hJwhLV3E31KE+6iMD9xXO6UZhVYDEVw
+	 AekUhGr8KdF53CGiWWa4ziUjaa4CVsHohM4aQP9hvMasqXLOfEhKPP5nluUi2vwD+X
+	 e1+pNHpLm3b3a5K9q/5G1mh1hlxhoOZTDsjI74wVj4j5TSyxWg0RBJTM3tedr9ARp0
+	 BOMvgKxlieanioUqUzP+D6iBTfSRvQngdeh31PYODTLpX1C/NVpM2H1ZqeyxzBiI7U
+	 yAG5l02Fs86BA==
+Date: Tue, 3 Feb 2026 17:02:37 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
 Cc: Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
 	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the fsverity tree
-Message-ID: <20260203162913.GA28595@lst.de>
+Message-ID: <e062c6a3-b6ec-4be9-a1d8-c3775e0bd451@sirena.org.uk>
 References: <aYH54qJee85qLLkN@sirena.org.uk>
+ <20260203162913.GA28595@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mFLLqTOOOJqAgSag"
+Content-Disposition: inline
+In-Reply-To: <20260203162913.GA28595@lst.de>
+X-Cookie: Do you know Montana?
+
+
+--mFLLqTOOOJqAgSag
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aYH54qJee85qLLkN@sirena.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 03, 2026 at 01:36:34PM +0000, Mark Brown wrote:
->  		} else {
->  			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
->  			if (f2fs_need_verity(inode, index) &&
+On Tue, Feb 03, 2026 at 05:29:13PM +0100, Christoph Hellwig wrote:
+> On Tue, Feb 03, 2026 at 01:36:34PM +0000, Mark Brown wrote:
+> >  		} else {
+> >  			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
+> >  			if (f2fs_need_verity(inode, index) &&
 
-This also need to be replaced with a
+> This also need to be replaced with a
 
-			if (vi &&
+> 			if (vi &&
 
-Eric already posted the conflict resultion here:
+Thanks, I'll roll that in - I was a bit suspicious of that bit.
 
-https://lore.kernel.org/fsverity/20260203053604.GC15956@lst.de/T/#m291294c1f6b7368d3c426ee47e6d23dc854b3ba6
+> Eric already posted the conflict resultion here:
+>=20
+> https://lore.kernel.org/fsverity/20260203053604.GC15956@lst.de/T/#m291294=
+c1f6b7368d3c426ee47e6d23dc854b3ba6
 
-and I independently verified it.
+Looks the same otherwise modulo whitespace changes.
+
+--mFLLqTOOOJqAgSag
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCKiwACgkQJNaLcl1U
+h9A4Mgf+IwNbLoklcC2+yCL1vhiBLgB0G8kwlSDZHHjD9iXDWNy4ir/a1TpxijXf
+ny0paqyZ8FFICn1F2/t7do2N7r9pBwyIYK05WktfTW0NE9eQQKYC91KKxKEEYnL4
+DJn2Nz0LRmWpW6TFQ727mIow6iO4hqL/2MWMGXa+1GAeEBnvg48UXpm/qK9Ywf52
+DFYtUXlUYQym4QdjhPOtDjyAGnWSStoktKrGlVdcAGaHY8KnHFPy7YYO6HudeNUL
+Ym814tbmF0KcihgI05wOWxHGkdyFEDsGDJCuepR0ZSD4mNkAaXYv3OdulPDHi7Oi
+xXK7xcGBTradiYFehOXZUyQ6S0Syrw==
+=cbrB
+-----END PGP SIGNATURE-----
+
+--mFLLqTOOOJqAgSag--
