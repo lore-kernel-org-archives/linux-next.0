@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4266631B83B;
-	Tue,  3 Feb 2026 18:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7B2F6164;
+	Tue,  3 Feb 2026 19:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770143218; cv=none; b=kVXLLdYMfz6uaEmP42TzkFRUtJ1KA0PNBnEtCyh/5Qp9BWt7XMiB0CyrvrMBO4P5z5DnoVrwtilRfYTnBUfibtLBIUQuFwYdDem5FFOuV3SkanpLge8tnnxTPtgcWCkn4Ol5x3YoYf16pmgD21+iBsdPfLsGfPKsi3//aAl32Ec=
+	t=1770146307; cv=none; b=kk8qmlkqPaQftZcjAzUHvdKdGIx17RwMzd2Yt7EjcKs/qIfY5anlhTE8HHykK8aadFGC/ArVaSV7S599iOm8gKi8AFZKGic52pRYgVOYTQ5ZJi31aTM+dIrKaH30QFBFRl4riG636ay84IHokyqRle4nJ4jXpX6VxV9G5sgKyjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770143218; c=relaxed/simple;
-	bh=zeB2S3w7onqdAeN0kxM9NydRbxSVel7JYqM6jR9Vc98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AOZklRZEAGKnPAn1zMlHm8LM9gVtj5JO4q+5NQVd1hjPxyjIG5p6zE4YivevnW+dzAjLpp8nxllVAGkOzWec0wi3BHlgt1KkiYTIluL02MMjw7H6u/XXcV5zNnwS1T1w7gPY4E53FkL1ha4FHr6EiZGXMkYe7iHrSWYtU8bPbpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0hAAtyA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770146307; c=relaxed/simple;
+	bh=rxH2m+FoFJnUNHe3cZwvXKG3s0lgRdBWcdA/6pGlIbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=u3Mdf4W/WxvYol0k7so9TM0UJ59hNeSn6VlW3Xq4InS7tIPVqPMTOk33syHoTqoG50Vs+4Oc8i3/JjUGkXIzH9ORMuE59wLqAhmpxKwt8B8O5nFC9b6QBlKLSatX1nroEOcC1iNDPGIyap6MRcZI3Qo9ajajgnP/+YhNIcwIbtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bui75ggt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0hAAtyA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD57C116D0;
-	Tue,  3 Feb 2026 18:26:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bui75ggt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FCEAC19421;
+	Tue,  3 Feb 2026 19:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770143217;
-	bh=zeB2S3w7onqdAeN0kxM9NydRbxSVel7JYqM6jR9Vc98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0hAAtyAq0X2BMx5erg5o9lETn1cR699mIZcJtrXUmiDEkrN1wf2oqswa1PX3xyyc
-	 FQgs5A0UVtcn0Nr0gqpOMiUM8I33FZZgbm10pFJqBt31WZuOb7BAyf0W3pZT2m9dwE
-	 bD5MM5U6bID6hIsm5lGBL9Hoj9Tg1nTuiaCtpeQmsOAYLZdSISpHt2y+CbrR7KtJRo
-	 UD1SgeOLHS6cT7X5NxMCvYtCA6eXMGkMM9klVFt0fYpIAWJWNnTZSN3C4EWEXwXwYD
-	 W+Rt/aK3IxDW8sjNSxYzYssHer2DvhFXZK9PiCRRSX+cyLc8z4pMdFPdXMbdcxYhEm
-	 sbYqbPV2dbyRA==
-Date: Tue, 3 Feb 2026 18:26:54 +0000
+	s=k20201202; t=1770146307;
+	bh=rxH2m+FoFJnUNHe3cZwvXKG3s0lgRdBWcdA/6pGlIbI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Bui75ggtxaFT7zhZm633fu40l4udZA6cy04Suhc09LeqXYefWUjuqtGngClfgih3I
+	 NqLXI8qFW9scZHMjyF2BZUqKWh8AVPDsOWsIK2RZmx9jhD8/H3/7cL5vbBSlLkfnQh
+	 TZXlPn+P1AQqg11BFaLoelB+eoeXF6l2IGrw1HSuR+bdouyAFgmmuHipATY43U+3ma
+	 wNeXvTJVAugejNoInHXGC/QVJI7TCYd9Vo3as81AOlKmVaXDtrwnd0dYN05zeO2xKL
+	 glddULsVXN/rGxXNxwqofqaXXE26I5fE9oGOQ/6CMWRNQEP/epb8XWn5k4OMUS/P1/
+	 oMMANE8E2KrPA==
+Date: Tue, 3 Feb 2026 19:18:23 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>,
-	Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the leds-lj tree
-Message-ID: <3cd56914-a83d-468f-9a1c-76c24cfd2c5e@sirena.org.uk>
-References: <20260109124558.25b0eebc@canb.auug.org.au>
- <aca32e97-9fc5-4cb7-908c-a4410ff98055@sirena.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: linux-next: manual merge of the keys-next tree with the modules tree
+Message-ID: <aYJJ_w0_9DjvXYai@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,88 +42,115 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c5J9nDVkPWFSbzY6"
+	protocol="application/pgp-signature"; boundary="bS7/BB2Y/zfWneex"
 Content-Disposition: inline
-In-Reply-To: <aca32e97-9fc5-4cb7-908c-a4410ff98055@sirena.org.uk>
-X-Cookie: Your supervisor is thinking about you.
 
 
---c5J9nDVkPWFSbzY6
-Content-Type: text/plain; charset=utf-8
+--bS7/BB2Y/zfWneex
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 02, 2026 at 02:56:27PM +0000, Mark Brown wrote:
-> On Fri, Jan 09, 2026 at 12:45:58PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the leds-lj tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
->=20
-> This issue is still present in today's -next, the leds-lj tree is still
-> using the version from 8th January.
+Hi all,
 
-This means that these commits have never been in -next and we're at -rc8
-now:
+Today's linux-next merge of the keys-next tree got a conflict in:
 
-Daniel Mack (3):
-      dt-bindings: leds: Add issi,is31fl3293 to leds-is31fl32xx
-      leds: is31f132xx: Re-order code to remove forward declarations
-      leds: is31f132xx: Add support for is31fl3293
+  scripts/sign-file.c
 
-Nam Tran (3):
-      dt-bindings: leds: add TI/National Semiconductor LP5812 LED Driver
-      leds: Add basic support for TI/National Semiconductor LP5812 LED Driv=
-er
-      docs: leds: Document TI LP5812 LED driver
+between commit:
 
-Steffen Trumtrar (3):
-      dt-bindings: leds: Add LP5860 LED controller
-      leds: Add support for TI LP5860 LED driver chip
-      leds: lp5860: Fix unused-but-set-variable warning
+  d7afd65b4acc7 ("sign-file: Use only the OpenSSL CMS API for signing")
 
-Jishnu Prakash (2):
-      dt-bindings: leds: leds-qcom-lpg: Add support for PMH0101 PWM
-      dt-bindings: leds: qcom,spmi-flash-led: Add PMH0101 compatible
+=66rom the modules tree and commit:
 
-Lukas Timmermann (2):
-      dt-bindings: leds: Add new as3668 support
-      leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
+  0ad9a71933e73 ("modsign: Enable ML-DSA module signing")
 
-Duje Mihanovi=C4=87 (1):
-      leds: expresswire: Fix chip state breakage
+=66rom the keys-next tree.
 
-Haotian Zhang (1):
-      leds: qcom-lpg: Check the return value of regmap_bulk_write()
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-J. Neusch=C3=A4fer (1):
-      dt-bindings: leds: Allow differently named multicolor LEDs
+diff --cc scripts/sign-file.c
+index 16f2bf2e1e3ce,78276b15ab23c..0000000000000
+--- a/scripts/sign-file.c
++++ b/scripts/sign-file.c
+@@@ -271,20 -314,49 +271,40 @@@ int main(int argc, char **argv
+  		digest_algo =3D EVP_get_digestbyname(hash_algo);
+  		ERR(!digest_algo, "EVP_get_digestbyname");
+ =20
+ -#ifndef USE_PKCS7
+ -
++ 		unsigned int flags =3D
++ 			CMS_NOCERTS |
++ 			CMS_PARTIAL |
++ 			CMS_BINARY |
++ 			CMS_DETACHED |
++ 			CMS_STREAM  |
++ 			CMS_NOSMIMECAP |
++ #ifdef CMS_NO_SIGNING_TIME
++ 			CMS_NO_SIGNING_TIME |
++ #endif
++ 			use_keyid;
++=20
++ #if OPENSSL_VERSION_NUMBER >=3D 0x30000000L && OPENSSL_VERSION_NUMBER < 0=
+x40000000L
++ 		if (EVP_PKEY_is_a(private_key, "ML-DSA-44") ||
++ 		    EVP_PKEY_is_a(private_key, "ML-DSA-65") ||
++ 		    EVP_PKEY_is_a(private_key, "ML-DSA-87")) {
++ 			 /* ML-DSA + CMS_NOATTR is not supported in openssl-3.5
++ 			  * and before.
++ 			  */
++ 			use_signed_attrs =3D 0;
++ 		}
++ #endif
++=20
++ 		flags |=3D use_signed_attrs;
++=20
+  		/* Load the signature message from the digest buffer. */
+- 		cms =3D CMS_sign(NULL, NULL, NULL, NULL,
+- 			       CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
+- 			       CMS_DETACHED | CMS_STREAM);
++ 		cms =3D CMS_sign(NULL, NULL, NULL, NULL, flags);
+  		ERR(!cms, "CMS_sign");
+ =20
+- 		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo,
+- 				     CMS_NOCERTS | CMS_BINARY |
+- 				     CMS_NOSMIMECAP | CMS_NOATTR |
+- 				     use_keyid),
++ 		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo, flags),
+  		    "CMS_add1_signer");
+- 		ERR(CMS_final(cms, bm, NULL, CMS_NOCERTS | CMS_BINARY) !=3D 1,
++ 		ERR(CMS_final(cms, bm, NULL, flags) !=3D 1,
+  		    "CMS_final");
+ =20
+ -#else
+ -		pkcs7 =3D PKCS7_sign(x509, private_key, NULL, bm,
+ -				   PKCS7_NOCERTS | PKCS7_BINARY |
+ -				   PKCS7_DETACHED | use_signed_attrs);
+ -		ERR(!pkcs7, "PKCS7_sign");
+ -#endif
+ -
+  		if (save_sig) {
+  			char *sig_file_name;
+  			BIO *b;
 
-Krzysztof Kozlowski (1):
-      leds: lp55xx: Simplify with scoped for each OF child loop
-
-Vivek BalachandharTN (1):
-      leds: lm3692x: Fix kernel-doc for struct lm3692x_led
-
-The leds-lj tree in -next currently contains only:
-
-Lukas Timmermann (2):
-      dt-bindings: leds: Add new as3668 support
-      leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
-
---c5J9nDVkPWFSbzY6
+--bS7/BB2Y/zfWneex
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCPe0ACgkQJNaLcl1U
-h9Atrwf/X4IQkDzAS0fJiefJ6Z4YDz3y5kR1fLMvEcHMbxB/sGSlRvUs19+tdugT
-eORVmPYLd+OQDH8k93LSr+EjeuODDjhu/tjG2qGo4ylEI4H77GlZBj9GmH//o7S6
-G3XtlHVsohrcYMkB7Kq9Yy+WZ6exalCFo1Q6KwlQtn7iiIPpXZMAtmEUS5+8Gpdr
-0FEKYgabKwyF5cTbDe4KGPJ566ElMgCKPJiETSVbY9o2kvtLm4nt92iuWE9XLbgj
-xE2DhHZiEr1b98Jpuhu0nJWx3RwrKmBYMveWA8VCxbJ+VhnuvacmEJlSGpCkVY9U
-/Gkk6zgfl8gqIFZNW7IP2jFZzYyXXw==
-=+BgO
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCSf4ACgkQJNaLcl1U
+h9AhUwf9FKmJMx8f0zi6ZB+NleucczmjKdAm4nFeNVeDRt7f9YAZIfz2IshbbYtb
+RuCuJJGUhETHttWimZs4I4p4pe1ZXml2py9P3yABlSTYcW+0SlY958VQf2Xme12J
+CEGVHd8B/PaYjvqoc9LHVVCln0Tah/OUmoXSE+BongJFoPE2iDTIqhqfkwPrj39L
+8jk3Nd6BiyE4WK8dDuL06yvmVW2uRwsg+LhqAzZShlXq+yPQFlHdJ09uV49tsHLN
+zvRS2o1YCiHumUwfIsDilIt0RDvgzOl3oSvLy+6EEmXXFii1dSeyFZPQyd95D0vF
+DGb7Ddt1zE7Xr+W3gXI5Fh0iYIviWA==
+=UI6w
 -----END PGP SIGNATURE-----
 
---c5J9nDVkPWFSbzY6--
+--bS7/BB2Y/zfWneex--
