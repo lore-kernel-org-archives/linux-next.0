@@ -1,92 +1,185 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f195.google.com (mail-dy1-f195.google.com [74.125.82.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B2A35E544;
-	Mon,  2 Feb 2026 23:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6616486348
+	for <linux-next@vger.kernel.org>; Tue,  3 Feb 2026 02:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770076320; cv=none; b=tCb7++VdEBFK4I5Q0zrHahomMysq+9N7D1K/wDdviWYvt+7/18y72JjpDvubpwwM6mWs6foU+nN/af0T4+HPpGQMRFXCGOVMfBfYi3/vpBKANlfVCCWED3/5dzaMqqgDZJIAXH6s6W1zDrAFaYjENlA6vdG7emDqao/cbDzqCRc=
+	t=1770085814; cv=none; b=C79S5eHeYm+lZ/bcqp7Lub941UCrOVXTlBCgXUACAU6ncr0DZsO5gZMMs36JT9x6NgKgpiWLEtUmwJbdShnL3pF52hPLDlMLzsPftw6dFFhVHNGnWbK1adJX5c0iWDlfUZ5yXkVPjF/JH+4Wl0R+jBhxLbAbSKWApA1q/2AbSUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770076320; c=relaxed/simple;
-	bh=35uKuJPBBXBo8rI6WU3Tyr44dchwkBmtkD3OnPtIXIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KuCvk7jVS1RnoPbARZNlptiUbLVka0TmIX+WcmXFkOVShXOElWGDjTc0Dkttk6IZVTrXrdGP7TxqhymAFRZaYWQzCWpnm4pTuhh99/HUtsYeKQMsn2FL8JW4xhIyhqmI6Ll8e0RPnp+DLAIvkv0ZNg4gwK7lyEyHsEeG+rp6PVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlTZyOFo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770085814; c=relaxed/simple;
+	bh=TFVwAUHaRCdbk2SBEMhLzkWxnEvVg3rEx23fgzmmewU=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=DjRCqqSk+f7GMG/C4NfSsHpH+u2XzaZ/Uj+odmY0/gaNfYFQAdMmiMNtVJ9OaEyZ2ITRID5TDaVpfZIK6NdG92cv7ie7qMqWFKSgr5MqH6yDy5TtXQUCZup8457yY8FBgeeNGLEqs235+6S9BcbXWLntfE2zXr7YQxBWdZaECeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=Hr3UvydR; arc=none smtp.client-ip=74.125.82.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlTZyOFo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F8E7C116C6;
-	Mon,  2 Feb 2026 23:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770076319;
-	bh=35uKuJPBBXBo8rI6WU3Tyr44dchwkBmtkD3OnPtIXIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WlTZyOFoA/KHvJpjJFQR7EGKD2XpgqmCjp2q5JhLmgb7ITOWwVjaMhYc7zIm1UIWH
-	 3CRX+oPmC04q8j8tRyO+smZTI2HPYdJGZcXhOUEoCFgnfZcraTrd0paSeeJtFQZG34
-	 iLcRTi2aPHaGWF1TLj1P6txhpWbajJdYGQjE/tTMiUFT4mdtSgALMdA6dmn6Ypi8Ol
-	 lKT2gxa3GO/WE3utmYCrONiKGoFeGUtVvQX3D4KwvXeRU+/i7ulcwEDE6XO1S9B0Xq
-	 361LVVkDAg9GcIdW0tvLn/mrgtT3mwCxMUz8iZcgtURiGHpfenbfi5rN2AT0SVCxAu
-	 0QbcVyoG2uTzA==
-Date: Mon, 2 Feb 2026 23:51:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: linux-next: manual merge of the iio tree with the tip tree
-Message-ID: <f9021d1c-4f49-4e6e-bf12-9ae0bc633507@sirena.org.uk>
-References: <aYC-dATLw09TXP4K@sirena.org.uk>
- <87sebi4sh2.ffs@tglx>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="Hr3UvydR"
+Received: by mail-dy1-f195.google.com with SMTP id 5a478bee46e88-2ae2eb49b4bso1203276eec.0
+        for <linux-next@vger.kernel.org>; Mon, 02 Feb 2026 18:30:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1770085812; x=1770690612; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u+81R+8HYRj7w5xKwV4Zk6c96AwBeJ0nE7ENNs0eiBs=;
+        b=Hr3UvydRCIHD7lGo9sUCwLjFWQ+Ss3ER86bQUT5e2WadHcjssVLp50pPw+l4EJ6zVR
+         kEfu3WSwncoxXYVNvK3DiSLr1kMr9029HptSPuiU/B0aAz/AvoPci3O+Dx/YeM7uiBMm
+         Ydpqwk/111NlGsAKlxWpiPkVhBTNe1GY8c7Cdu3GYK0yp6OnNf5mDSlk5KGEen4/cXZn
+         XSlYxcXTOB/kTGBJydRnv27FM5glhf14cGj/lyFnvCYRlrV0gmv73UG9M9BoKzWqQGJg
+         ryBcIUs5DMwZD9CZMVXRXxhTagJASwZbbKxNP7gtwGruchrcKbHQ+7UukPB9TpX+b5i/
+         7c7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770085812; x=1770690612;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u+81R+8HYRj7w5xKwV4Zk6c96AwBeJ0nE7ENNs0eiBs=;
+        b=sVfGvbb6FX7d3eyFFee7msDY8ONh3wlnbel7AGMDI9ytUFAm9RDiyiFe8Y+Dt7Vr+W
+         tLqjjearmGrFeXi7u0dBvc/cyxE24k1/MIWoDi4PO0vcGpuVcb6pWRzTpNmyUjsSgeCg
+         zwZdRq3R8t9q77MvHUYiJKxU0+whQBkgQ6PWSgSzzdoKKB1GqQ4Lm4I8cqmQ4FtAQhz0
+         ku++95qGCBLfHgIfSZzkyBa6Xlb3XFkFhC1l7VUzBE4td99/CJljFGSMrN9MbUKjEzOu
+         VDpl2P6OeK964xBpmYRRa4ysLJp0P5AW3FcghpuHK9QIfl7/h2AsXVwoqAdwoCzYI8aE
+         9ZUQ==
+X-Gm-Message-State: AOJu0YyNWYp25uGxyTUcGw7Tq5i1EEc2kjaSAVUxhh5IIymXkYTwNooc
+	aEN1874pXZx+Q9PMSW/kiGMdb3VXJ6p/6giC/UzSy2XRMrQdyDoN5+XmdLVsgpqQ46rS2iaLshl
+	X+pwycjwv6A==
+X-Gm-Gg: AZuq6aLGns4h9ENC8y1cOTMESSvoob2xMJBze/B4Of+aHCDJXclA9aaK7dl8r3ICm20
+	A0Xr1KyJjOaq4XNAbAEungoowwAvdAaRPMohaQMsmKfuSTMhGGeVWCQqiH/JyJpfWWqKy2GY/9v
+	fTV89wqjsh3HRiFa/oUo0BRSGyW/UqlQYqADGtOErowUumYrJLaXa0incK7i4o+Z/JCffDGl4Lc
+	MsKEMHxrG06LlUUC+DyAxJAssW6JpSpZ/6Vp2q9ijeK4p/uhxRCq9WbQ0JmBcBqnxyUmq/868d7
+	fnHjpnI9ir1dUhnZhdpm+JIn3Ph3e4VbSHhOIgJ9N9lAlliAdseEdYWbrXgAKpC4OG/yydS4Cse
+	OSzaHC60BJyj36Exn7eAREpiJ06Gcp6203Z1dNuSaxUmzqpGOB+P0RgLkhDTqMAYeRCuiA4j5Zp
+	4pJQ2T
+X-Received: by 2002:a05:7300:bc11:b0:2ae:5020:afe1 with SMTP id 5a478bee46e88-2b7c86506f1mr6007736eec.14.1770085812376;
+        Mon, 02 Feb 2026 18:30:12 -0800 (PST)
+Received: from 22d5995788c3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b7a17083dasm25773082eec.14.2026.02.02.18.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Feb 2026 18:30:11 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2TZjChMBovQne36a"
-Content-Disposition: inline
-In-Reply-To: <87sebi4sh2.ffs@tglx>
-X-Cookie: Bedfellows make strange politicians.
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 193579fe01389bc21aff0051d13f24e8ea95b47d
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 03 Feb 2026 02:30:11 -0000
+Message-ID: <177008581094.6222.1777926422809833674@22d5995788c3>
 
 
---2TZjChMBovQne36a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Feb 03, 2026 at 12:48:41AM +0100, Thomas Gleixner wrote:
-> On Mon, Feb 02 2026 at 15:10, Mark Brown wrote:
 
-> > diff --cc drivers/iio/adc/ad7768-1.c
-> > index 84ce23c8e5782,fcd8aea7152e8..0000000000000
-> > --- a/drivers/iio/adc/ad7768-1.c
-> > +++ b/drivers/iio/adc/ad7768-1.c
 
-> That's an impressive fixup diff :)
+Hello,
 
-Yeah, git does that sometimes - AFAICT it's when the resolution
-corresponds entirely to one side of the diff (which it does in this
-case), possibly other times too.  I'm sure there's a way to persuade it
-to do something sensible here but didn't figure it out yet.
+Status summary for next/master
 
-> I'll zap the iio: commit from my tree tomorrow...
+Dashboard:
+https://d.kernelci.org/c/next/master/193579fe01389bc21aff0051d13f24e8ea95b47d/
 
-Thanks.
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 193579fe01389bc21aff0051d13f24e8ea95b47d
+origin: maestro
+test start time: 2026-02-02 17:09:41.951000+00:00
 
---2TZjChMBovQne36a
-Content-Type: application/pgp-signature; name="signature.asc"
+Builds:	   48 ✅    7 ❌    0 ⚠️
+Boots: 	  156 ✅    1 ❌    0 ⚠️
+Tests: 	11917 ✅ 1450 ❌ 3459 ⚠️
 
------BEGIN PGP SIGNATURE-----
+### POSSIBLE REGRESSIONS
+    
+Hardware: sun50i-h5-libretech-all-h3-cc
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6980f049a1ae387ffbb9b621
+      history:  > ✅  > ❌  
+            
+      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
+      last run: https://d.kernelci.org/test/maestro:6980f177a1ae387ffbb9bd70
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt
+      last run: https://d.kernelci.org/test/maestro:6980f05da1ae387ffbb9b676
+      history:  > ✅  > ❌  > ❌  
+            
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmBOJoACgkQJNaLcl1U
-h9Ag0wf/XUyUcb0PxnbSV6yI7A8G78fSgWDVR5ICAWpPN3DHLhfoZzszJSsd2rzV
-jYSn1+QE0+Y+61JFbylFBmOZ4/zVC0c3YgNvbpcctkfQFexOp34IbhK8RLvrz3lH
-34+7cllTrJxixYGp9DqRsP2OCzz4xUf3deiuP81hLl3XiIrifvC7Ylr9tZzvj6nT
-oAxKAzZUuFtEZr/h2Gj/FepTcg7AwaqlNmwcZUUdGOphgW3NjdbwUqj17ON8Rshu
-1BN11j9Byln6rvsKxa8V5lywvUOacse2hqQCEwT+A7LWKT8ICqTY48EVpcOW01Xb
-5c11cMqzY7hC3ZIX4YMxhWsvvIkp5w==
-=0NC0
------END PGP SIGNATURE-----
 
---2TZjChMBovQne36a--
+### FIXED REGRESSIONS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6980f025a1ae387ffbb9b5a0
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6980f034a1ae387ffbb9b5de
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_h264_frext.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69810e67a1ae387ffbb9f5ea
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+      - fluster.debian.v4l2.gstreamer_h264.JVT-AVC_V1-GStreamer-H-264-V4L2SL-Gst1-0.SL1_SVA_B
+      last run: https://d.kernelci.org/test/maestro:69810ddea1ae387ffbb9f2ff
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: mt8186-corsola-steelix-sku131072
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69810f37a1ae387ffbb9fd7b
+      history:  > ✅  > ✅  > ❌  > ✅  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_av1_chromium.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69810da6a1ae387ffbb9f1ff
+      history:  > ✅  > ✅  > ❌  > ✅  
+            
+      - fluster.debian.v4l2.gstreamer_h265.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69810f0aa1ae387ffbb9fc0e
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.capabilities
+      last run: https://d.kernelci.org/test/maestro:6980ef91a1ae387ffbb9b23c
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:6980efb0a1ae387ffbb9b308
+      history:  > ✅  > ❌  > ✅  > ❌  
+            
+
+
+
+This branch has 7 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
