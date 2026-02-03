@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B342A4A35;
-	Tue,  3 Feb 2026 17:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E7D34CFCF;
+	Tue,  3 Feb 2026 17:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770140341; cv=none; b=h04EtVjHUkxQt1gV9lzO6CadTnWC6zVwCRj02puA4fbiy0ox3R8xnBBczn3LPYtLRYeOVOetETGm3EJwu9uajA/8bhHdGdvUfxvjCg3s2KPMvfLRdv+IiOGzYhtTm5KIAVLwmFLCPzjFW0kDoJryCreky7zigp+OZ0n2C/Dyc1o=
+	t=1770141032; cv=none; b=icP06a+yzrEjwGyYZLSlxycFqnaopGvBDozTbnimnb4kP24gwFZtHtiePgC+Myi7ZXcphHBxOrVX+WfFMjdNT8f2pbWSRXLocEaqXzT1coC7+33V7g9EFih18ZHrFDeCZTMdYsnAbnr3w1PFzPXEBTTRyaB1oyQ718Obw0fz29k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770140341; c=relaxed/simple;
-	bh=LsPMK9Gl0InO1O9IIX6oGTQbjGIWk74dRMibVKKXQIw=;
+	s=arc-20240116; t=1770141032; c=relaxed/simple;
+	bh=vpw2jpu7s/ndVNQcpVU3ZGY7t0SCnxRf+YsPlCajq9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gIRFqiivXb+ddooIwgmrr/RDXMsqhTig2CEeNm04u4KbLQXXzbgZpnWm/V3F0o8SFA+rjsmzySWSUJhgn92aqSs9QtpMVomuMxI2ZbAA9PAIEjesO3eO7s1fIt6obovesdhmkzn+KlwlkLl+hFAzspW2uhpqKMcL4p7zqMrBGmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwSNskwZ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=GfPbHfP5gRHzIpw/tWagbcnIYIcAz6S6uKjwrjBEI0zCNkASoBK0e9aZyChKzy7Q2HqF5ApWj47Dqr5H7Z5g4cEw/Ua/8KGjfC1mzeOPpWLpEIZmdlgtqq4cerrDlPkpr2F3aA1X6xRvrqRsmCwVd8yZ6bMpDXZvw37vNsmSKmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1VSndcV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwSNskwZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1DBC19421;
-	Tue,  3 Feb 2026 17:38:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1VSndcV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9809C16AAE;
+	Tue,  3 Feb 2026 17:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770140341;
-	bh=LsPMK9Gl0InO1O9IIX6oGTQbjGIWk74dRMibVKKXQIw=;
+	s=k20201202; t=1770141032;
+	bh=vpw2jpu7s/ndVNQcpVU3ZGY7t0SCnxRf+YsPlCajq9Y=;
 	h=Date:From:To:Cc:Subject:From;
-	b=FwSNskwZ4hRTQjcsF/9ginUNfoZ6kPPr56DmBj95rOyYPZT+viNhb5oDYRYiNNXip
-	 sgYr2hZz4LE9MiNL1H2m2b8yswYtNaW+ZIjSP7/DuFGV/+3D3My7iVFXzeXCkTzQA4
-	 VfQSPVnCHlnadgb3kv7htcVj+GUCrXFwvI2AramtVzhsQNR3fCLCVb2Dr9QAFjF+rm
-	 v6uu0WeOqEyw7JRXaKb+kuUirKRXGriO7mBwuDeVpE497YzuWsjMz1lledw1umG78o
-	 z5YV3kfEcox25VThVLlaG2S5L6qZWzGfeys6qjMZNaB2wMrJtUGHOggDnexOSLGtD5
-	 DwMkafQQpMg6g==
-Date: Tue, 3 Feb 2026 17:38:56 +0000
+	b=e1VSndcV26Nv6NP5OtatOjT4/D3hEEGtS/CVfKM/JV848enqMTz6L3os2xo0tehHg
+	 XbZRCoKek3xXhxOoG4+I57OotgLwKNfzxrQC7NArRAbdJMk2P3RY/YF6KgDYMAeteV
+	 06mB+dc41qZonnLiqzf+ZXk1w+JMz6LEpr5T6cD6S+Dw5mrQSmDm/GZForO/IMNFnz
+	 kMfMJ4DbkjqmldcfqqzKouum7ZEP5EqbnGMCOuHPgYIti5zCxw2XNu2+xMD7nS5T5U
+	 bSkVff6kmJcVw1KPUuBCxpa0QBUmsh5h+Uj+gXPWRinp7r6j5jCvE9pTHu0kHGBZt1
+	 a0qcFvaenw+Fg==
+Date: Tue, 3 Feb 2026 17:50:27 +0000
 From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Tomas Hlavacek <tmshlvck@gmail.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <aYIysFIE9ooavWia@sirena.org.uk>
+To: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>
+Cc: Antheas Kapenekakis <lkml@antheas.dev>,
+	Connor Belli <connorbelli2003@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Ionut Nechita <ionut_n2001@yahoo.com>,
+	Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drivers-x86 tree with the hid tree
+Message-ID: <aYI1Yyof6IL5-HUz@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,30 +45,34 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lkug/g3BTk7qqesV"
+	protocol="application/pgp-signature"; boundary="sLfSgYwH8FYS0r5J"
 Content-Disposition: inline
 
 
---lkug/g3BTk7qqesV
+--sLfSgYwH8FYS0r5J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-  drivers/net/ethernet/spacemit/k1_emac.c
+  drivers/hid/hid-asus.c
 
-between commit:
+between commits:
 
-  3125fc1701694 ("net: spacemit: k1-emac: fix jumbo frame support")
+  f631011e36b87 ("HID: hid-asus: Implement fn lock for Asus ProArt P16")
+  06501b557faec ("HID: asus: Replace magic number with HID_UP_ASUSVENDOR co=
+nstant")
 
-=66rom the net tree and commit:
+=66rom the hid tree and commits:
 
-  f66086798f91f ("net: spacemit: Remove broken flow control support")
+  4ac51daa5078e ("HID: asus: initialize additional endpoints only for certa=
+in devices")
+  2b92b797a1532 ("HID: asus: move vendor initialization to probe")
 
-=66rom the net-next tree.
+=66rom the drivers-x86 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -76,57 +81,65 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/net/ethernet/spacemit/k1_emac.c
-index b49c4708bf9eb,40c9504b74445..0000000000000
---- a/drivers/net/ethernet/spacemit/k1_emac.c
-+++ b/drivers/net/ethernet/spacemit/k1_emac.c
-@@@ -201,9 -193,7 +194,7 @@@ static void emac_reset_hw(struct emac_p
+diff --cc drivers/hid/hid-asus.c
+index d55ad1f2f71e5,f5c8df20b88bf..0000000000000
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@@ -101,7 -90,7 +101,8 @@@ MODULE_DESCRIPTION("Asus HID Keyboard a
+  #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
+  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
+  #define QUIRK_ROG_ALLY_XPAD		BIT(13)
+ -#define QUIRK_ROG_NKEY_ID1ID2_INIT		BIT(14)
+ +#define QUIRK_HID_FN_LOCK		BIT(14)
+++#define QUIRK_ROG_NKEY_ID1ID2_INIT		BIT(15)
  =20
-  static void emac_init_hw(struct emac_priv *priv)
-  {
-- 	/* Destination address for 802.3x Ethernet flow control */
-- 	u8 fc_dest_addr[ETH_ALEN] =3D { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x01 };
- -	u32 rxirq =3D 0, dma =3D 0;
- +	u32 rxirq =3D 0, dma =3D 0, frame_sz;
+  #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
+  						 QUIRK_NO_INIT_REPORTS | \
+@@@ -988,6 -870,6 +959,12 @@@ static int asus_input_configured(struc
+  		}
+  	}
  =20
-  	regmap_set_bits(priv->regmap_apmu,
-  			priv->regmap_apmu_offset + APMU_EMAC_CTRL_REG,
-@@@ -228,21 -218,6 +219,15 @@@
-  		DEFAULT_TX_THRESHOLD);
-  	emac_wr(priv, MAC_RECEIVE_PACKET_START_THRESHOLD, DEFAULT_RX_THRESHOLD);
+++	if (drvdata->quirks & QUIRK_HID_FN_LOCK) {
+++		drvdata->fn_lock =3D true;
+++		INIT_WORK(&drvdata->fn_lock_sync_work, asus_sync_fn_lock);
+++		asus_kbd_set_fn_lock(hdev, true);
+++	}
+++
+  	if (drvdata->tp) {
+  		int ret;
  =20
- +	/* Set maximum frame size and jabber size based on configured MTU,
- +	 * accounting for Ethernet header, double VLAN tags, and FCS.
- +	 */
- +	frame_sz =3D priv->ndev->mtu + ETH_HLEN + 2 * VLAN_HLEN + ETH_FCS_LEN;
- +
- +	emac_wr(priv, MAC_MAXIMUM_FRAME_SIZE, frame_sz);
- +	emac_wr(priv, MAC_TRANSMIT_JABBER_SIZE, frame_sz);
- +	emac_wr(priv, MAC_RECEIVE_JABBER_SIZE, frame_sz);
- +
-- 	/* Configure flow control (enabled in emac_adjust_link() later) */
-- 	emac_set_mac_addr_reg(priv, fc_dest_addr, MAC_FC_SOURCE_ADDRESS_HIGH);
-- 	emac_wr(priv, MAC_FC_PAUSE_HIGH_THRESHOLD, DEFAULT_FC_FIFO_HIGH);
-- 	emac_wr(priv, MAC_FC_HIGH_PAUSE_TIME, DEFAULT_FC_PAUSE_TIME);
-- 	emac_wr(priv, MAC_FC_PAUSE_LOW_THRESHOLD, 0);
--=20
-  	/* RX IRQ mitigation */
-  	rxirq =3D FIELD_PREP(MREGBIT_RECEIVE_IRQ_FRAME_COUNTER_MASK,
-  			   EMAC_RX_FRAMES);
+@@@ -1490,10 -1372,10 +1470,10 @@@ static const struct hid_device_id asus_
+  	  QUIRK_USE_KBD_BACKLIGHT },
+  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+  	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD),
+- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
++ 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_ID1=
+ID2_INIT },
+  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+  	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
+- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_HID_FN_LOCK =
+},
+ -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_ID1=
+ID2_INIT },
+++	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_HID_FN_LOCK =
+| QUIRK_ROG_NKEY_ID1ID2_INIT },
+  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+  	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
+  	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
 
---lkug/g3BTk7qqesV
+--sLfSgYwH8FYS0r5J
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCMrAACgkQJNaLcl1U
-h9Bvkgf/Vb8/B9F03SSUrMuREqVeo7lVL+iojs2fETc3dZ2310pYt7ZhvAJMSsmZ
-KXy/d5ziPfNn9/F89vt0PLDCPPcZ5dz9F0x8MH5weE62KC/OxY1F6zZslzQj/IOF
-ugt8qeLf5rVXJ3/zbCj5veAsOxnCNj8q+3litS5TQ0IYEH6bkFfvHYKGTWm7pjOo
-QjHnv7viY4o8d7XrtCYu+LRdpFTFNndEbu0ihXGEdPCyiHHCHJncs9pPpktWeGaW
-Nv6Lh9z88IkoM2zdroFzSMLNZiX/bO8tjzP5zmo7v/GA53pOH/XbOKqrpYCeYtr3
-o6nwixOmlZtAmQj5c9N0Y7v9xqNgPQ==
-=C+SL
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmCNWIACgkQJNaLcl1U
+h9Cq6Af/T7aeTaWZGjp/v+/4TY0uo7iKHDAUqhrLFtybtMJGm6ZZIuN6c8BLnU3D
+/PNr3KxpAjDzCNu9xyE2jMrbyRYpnYE+y//e5I/bfDJBcBtnUZyHInQFZD2/woFz
+of/pULWromPZfW6y+Ebjs3xRs/NFdvPmP1rDKxit7VpWdfzfVheA5F2UQy/CVfpl
+oHVYG7QLYmTtYXkwjpJXSXn9dcl6mV/+abLPVyJz82VSfnTXyiIwV9E08GNwQH1C
+DA+oQRbFeQjct/d8+73SzJEX/JeVDG17XoAqYoXC0EBxcHWhJu40Mrgsn8/CXweG
++hIeqos3bh47rxlsnPJgsqc97wlf5g==
+=V0eO
 -----END PGP SIGNATURE-----
 
---lkug/g3BTk7qqesV--
+--sLfSgYwH8FYS0r5J--
