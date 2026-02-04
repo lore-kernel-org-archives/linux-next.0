@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D78940FDB2;
-	Wed,  4 Feb 2026 14:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288D913B293;
+	Wed,  4 Feb 2026 14:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770214755; cv=none; b=MVNzI4k0FwMRNnVI482ewh/LwOLZQrmq+A4Kj22KtMPi4HLP9ySf1VdwygpsjbPdgcbChP+yDXp2C19Um0g1v+C9jfTrdXTheiY6avxVf3e6WrtopGvW/i61coZHgh0MPyZqAELjKoLSr/eGCly/TqudWibdcIH6JM5P3JxIyDg=
+	t=1770215471; cv=none; b=Hx7cYx6f81Y4HFypH8LL4gSRjsq6AcEBQeS0t95tdsqLP+dCw6cgxBsNzs0pLAiqCPBWwoYPoz6I7wRZT4awGMlfVSjC2hV8Uu89ufGU3Go4StupE8wuZ7KpHeGl6tj8FK02HB9qZo2vFmtw0LwKriEqyySfO/6VI1+SJXEVCkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770214755; c=relaxed/simple;
-	bh=x7AixGXwNIac+RP1XfwUAor8+SZa8T4pp47tFQ5uzqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OiXbhl71Vi5J4P39TTktfTWX4HN2W7/01BYXxAiMEGCdkH/hg8g+g2MIylnhbXlHo8lIFcBkhgeV/LmY6mPe6BZycm31ZdpeeiKL5/WofhCfVS5NqI84fR1Q80WlCrPGtK0R08gsrCnbR35b0fwMGbdEMkQC8dJkUkma+pTjgL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4wTpUr1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770215471; c=relaxed/simple;
+	bh=I9eRiGvOfSoXxU63sDVC9HA6MuyWy+NAP7YTRMlyWYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/T97nR9JpinuffkzU8rnBM25KVxi4eF0EG/3YHex8Q77t3BdQb2+B78nCRohjnXJJBCnXF6HUVaGUkL+T43xij0o4ELDwhZmW1gt8Dic5bmP6Gqc1noATpmjx5nYARhH9pplfGib4FOmhdObn8J8RZT0pMW0sWBJeIBuejFWxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMly7MJq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4wTpUr1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964AAC4CEF7;
-	Wed,  4 Feb 2026 14:19:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMly7MJq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69D1C4CEF7;
+	Wed,  4 Feb 2026 14:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770214754;
-	bh=x7AixGXwNIac+RP1XfwUAor8+SZa8T4pp47tFQ5uzqY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=O4wTpUr1cZ6UMbm21h2daf8H0x77vt57/Q31ntt671pKrucoBAfQ3ItPHMCjmoGMq
-	 Y+xbFW0axjhxiQBZldflIcbr/mase9UFd9Nl2r0VkqYzE4Y6nFStFj6kj9S2pRZ9aK
-	 tMgRTLirwk7CvdMubkTA2JrdLlvfq/aNonEqaYCSAV8fhiyxo3LFVIwUw8Eu1GraCa
-	 IogLHMUEvpT1wTktBftRk3+IUGt6bM6KEPYOwDfjZJArPNdKA8mxqpKyD89G+0L4yM
-	 AfpmPKzmt/x0UDoKQOjzbMJeroB8FfQjO/T4wa9yyT+xpPeJOisGcg8A3tF3CM/+HA
-	 Dddd8DROe1dHw==
-Date: Wed, 4 Feb 2026 14:19:10 +0000
+	s=k20201202; t=1770215470;
+	bh=I9eRiGvOfSoXxU63sDVC9HA6MuyWy+NAP7YTRMlyWYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XMly7MJqVQZ+Rc+ecDzjx3SKnadsBN/Z82a50KwVXaJG/TkhYMa7OcMCa8+SmfGL3
+	 HqNpFqdram1Qw+EHTzlW5Ydg1Iy+vZowI5wHfIpPYPHOIZBOJVC+j/b71QYCewz0cb
+	 VbAEOlmNzn/yUah8ARcacwMlKDG0+CWfs7ys88NoXFmB81q3LY5J4PiwsWHLTWz4Vu
+	 wEto52pV2KHBwILTQAOepk+Lf7o7WtsWWBAUhy+uN/izk6hPR4NrTavOuCTtZ4ki+5
+	 0zOyTDFAmFo0EgjuFboXsvoSyMHT4WxY2zw3efYUSnW7HD1UAS5QHPZUam9c8PlVa/
+	 re8dcfY2m+zPQ==
+Date: Wed, 4 Feb 2026 14:31:06 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, Li Chen <me@linux.beauty>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>
-Subject: linux-next: manual merge of the nvdimm tree with the vhost tree
-Message-ID: <aYNVXlLl98EbCBBO@sirena.org.uk>
+	linux-fsdevel@vger.kernel.org
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <ef58e561-b366-4eb8-bad6-9d0e748f49c1@sirena.org.uk>
+References: <aXilaLSzB1xsGWCb@sirena.org.uk>
+ <f9afaed3-9db5-4725-a0e5-cb6d6873b3c6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,68 +43,78 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H5kK8TVjiqeX+yd/"
+	protocol="application/pgp-signature"; boundary="sCS5F8kU5fnMaysT"
 Content-Disposition: inline
+In-Reply-To: <f9afaed3-9db5-4725-a0e5-cb6d6873b3c6@sirena.org.uk>
+X-Cookie: Are you having fun yet?
 
 
---H5kK8TVjiqeX+yd/
+--sCS5F8kU5fnMaysT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Feb 02, 2026 at 02:58:35PM +0000, Mark Brown wrote:
+> On Tue, Jan 27, 2026 at 11:45:44AM +0000, Mark Brown wrote:
+> > Hi all,
+> >=20
+> > After merging the vfs-brauner tree, today's linux-next build
+> > (arm64 kselftest) failed like this:
+>=20
+> This issue is still present in today's -next.
 
-Today's linux-next merge of the nvdimm tree got a conflict in:
+This means that vfs-brauner is still held at the version from
+next-20260126 and none of the below commits have been in -next:
 
-  drivers/nvdimm/nd_virtio.c
+Amir Goldstein (4):
+      fs: add helpers name_is_dot{,dot,_dotdot}
+      ovl: use name_is_dot* helpers in readdir code
+      exportfs: clarify the documentation of open()/permission() expotrfs o=
+ps
+      nfsd: do not allow exporting of special kernel filesystems
 
-between commit:
+Andrey Albershteyn (3):
+      fs: reset read-only fsflags together with xflags
+      fs: add FS_XFLAG_VERITY for fs-verity files
+      fsverity: add tracepoints
 
-  b381542686726 ("nvdimm: virtio_pmem: serialize flush requests")
+Chelsy Ratnawat (1):
+      fs: dcache: fix typo in enum d_walk_ret comment
 
-=66rom the vhost tree and commit:
+Christian Brauner (6):
+      mount: start iterating from start of rbtree
+      mount: simplify __do_loopback()
+      mount: add FSMOUNT_NAMESPACE
+      tools: update mount.h header
+      selftests/statmount: add statmount_alloc() helper
+      selftests: add FSMOUNT_NAMESPACE tests
 
-  c4ae8ec088db0 ("nvdimm: virtio_pmem: serialize flush requests")
+Joanne Koong (1):
+      iomap: fix invalid folio access after folio_end_read()
 
-=66rom the nvdimm tree.
+Qiliang Yuan (1):
+      fs/file: optimize close_range() complexity from O(N) to O(Sparse)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Qing Wang (1):
+      ovl: Fix uninit-value in ovl_fill_real
 
-(note that the changes to add out_unlock are dropped)
+Tamir Duberstein (1):
+      rust: seq_file: replace `kernel::c_str!` with C-Strings
 
-diff --cc drivers/nvdimm/nd_virtio.c
-index 827a17fe7c710,af82385be7c6a..0000000000000
---- a/drivers/nvdimm/nd_virtio.c
-+++ b/drivers/nvdimm/nd_virtio.c
-@@@ -44,8 -44,7 +44,8 @@@ static int virtio_pmem_flush(struct nd_
-  	unsigned long flags;
-  	int err, err1;
- =20
- +	might_sleep();
-- 	mutex_lock(&vpmem->flush_lock);
-+ 	guard(mutex)(&vpmem->flush_lock);
- =20
-  	/*
-  	 * Don't bother to submit the request to the device if the device is
 
---H5kK8TVjiqeX+yd/
+--sCS5F8kU5fnMaysT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmDVV4ACgkQJNaLcl1U
-h9AbYgf+JRP/1mq1Wq256ARlf/9OeEIypcqzwOCo4vNA4JrRBexVO/ci24DuwMc1
-ZGIpvDa14t0rImG3vpMz2lfcqZqULvREBil0COPQ0D+QNB+msm+nDTVjJQYrp6tF
-EMTUYzFHUQS6Xr5WhDfpXlxOJFdBoyycbvaWrV3oy9B2YKGfFCnHKEIFxSNDE+nJ
-WeGzztloWrv0qybaE0lYcVewUxCG7tLMjUrOk0iOriSdF5Mml79fDsSucun6og26
-XJ1XG7a9pHppkSdfdpxxpLxxZf6tXkzfLE9yv4/U63MR/MWuewuJopvVe+Exk6jY
-2JbEQypgR13Bc9RZs0Dd0KUv5mVghQ==
-=nxs6
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmDWCoACgkQJNaLcl1U
+h9AAPwf+ITWvAN7AzIeHR7ZenRYTrfReVstgfxbB3r1uuJ6YUMDeQvzHWWr7HW7l
+CGf7cXliqEVnGPbzZM+8khsA1p8s0HqGOGtavATXOYm0n6i6/ozeTg77DSGF5EMH
+pAynndInl6qTCENPHMdzJQrdPeJn6zhnoW9pTH4hu0gJ47M64BDL02pc6KaWVYIc
+UeqtCW1SeuW3WyYbq2bmtLISwi9UkkzD9oPD1Fc8jTG0qAk4Gk5YdIo87UtR8Ywc
+WV67sFPGSFF7M3GnNfGN5MUYrnhW3d4kISoGsb5N254tTzcrtuHnn1OhR8nRHnZr
+1LcXLJAGxA6UkqwBgiufClsLbTrZSw==
+=Yjta
 -----END PGP SIGNATURE-----
 
---H5kK8TVjiqeX+yd/--
+--sCS5F8kU5fnMaysT--
