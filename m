@@ -1,112 +1,290 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFC3D413D;
-	Wed,  4 Feb 2026 14:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA26E31B107;
+	Wed,  4 Feb 2026 17:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770217186; cv=none; b=TH8r2Xm5t/Kk2+iiFQcnmibyzcJEsYd+xO3FbvruxBXF3qiGktQYMDgHc0FqZWydh+kDcmKE6KtZrthzj3mxumZxCaBciGixcSMgMcWWa49AT8qhc10uKdTXJt9DJfq+AGANRXFSF0ypUuBFUgYAinuZ2vEuvFccKGiZy74u3t4=
+	t=1770226774; cv=none; b=TbcRyaWV+zEN9mRZybqX0JNr1wyKKA+UOOMVb+/5hveE/aNbKG/4ZZ8E4W/hjhzmNt233TQtB30wiLauka66gddC0dROTrWKUcK0exaFhjSsFL1jEYlJJubecdFtcRCb5wLT/NyXwcXWI2WdHQyvFwmQOfD5Bp0FXm+zsUWsnF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770217186; c=relaxed/simple;
-	bh=GbES7aG2mQfMLb3/jx1ri1+13Q6gUPgKpMi3ZlKcqM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G2LYjGU1A9QEySuFKQ/la9qxO1gY0ertZzlUktO0iS+1TUmlvXUOzQK0+X1s0000Vyv6ZIiy14tAuW7L5Cg5/DW5YFkg/5a4zii4N/V+gyQS0T5yqgHfjMT6o2B2YgCUfHRfENiK2njT8aQPeEoEoPCePjGGj4r5QNKuoUdy7Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9eYd4Oe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770226774; c=relaxed/simple;
+	bh=20wE3V0NZ7OcLhBcviVaSvBz9Ju7uQObH903A5xByBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4R80nu1ikDQbj1hcmgD3tuPzSZcwQmXONkzkRftlcY35on6b0bhhGHQ/zsa+ZXzZHbJXzieLkmzO1I+m/bFnCAOcPCIEBSjCCXKeLYKsbGJ9rvuL7N3Xcat61ZKA9ZCQXdy5YV0J09aPVIzB1BNiIVlZJBsOtkXd1mxhz1KHLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjVtyzs5; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9eYd4Oe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A67DC116C6;
-	Wed,  4 Feb 2026 14:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770217186;
-	bh=GbES7aG2mQfMLb3/jx1ri1+13Q6gUPgKpMi3ZlKcqM4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=K9eYd4Oew63OwUq5vuBIejtNgo9tFS9zq4rAEAgvGwr70liFuFKfzfU0eVCvA+2TP
-	 RKX92TL2ELzFFuqCRDxlkVmVa/0nbRrBX+xtP2wRUWFoPX3ovIe8ZxM8ngBogsoFFR
-	 GiW51RLvdog5LUBqHVwDhShv1r98XJ0+GPhYp62FZGwhxam/1T7DL6m9vokhhzYhR8
-	 W3BG+fNOdWm1Vdv1wzu0lURXAjmtv3fptmYGKgGRp2ZO6501LUzevr+N2B5RlQCVpA
-	 vO81KlyAOnmbpxUyREW5Vt3xiW74PnQuTbHOA6OnNyEm88wKvICWW2wDMqgqWaYovZ
-	 MU+BoGIVX4rsQ==
-Date: Wed, 4 Feb 2026 14:59:42 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	kunit-dev@googlegroups.com, rust-for-linux@vger.kernel.org
-Subject: linux-next: Tree for Feb 4
-Message-ID: <aYNe3khJcKy-N1ga@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjVtyzs5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1770226774; x=1801762774;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=20wE3V0NZ7OcLhBcviVaSvBz9Ju7uQObH903A5xByBI=;
+  b=OjVtyzs5hxZ9txwjBxnv1WBF01dkXSFKBu8H3jRT6b2VkRRHOktnTXRy
+   XidLS+V10cgHQc5Y11APcY/gKwtl/ujMEN9RvR8r/QWBTmhLpNdXkg1wD
+   ZX2RB9O/4Jg9K68wyZtkL/RHFlLOPo87J+nfYkkne7WFqLz+6o5QL1A7s
+   aFAAlrzfLVKaBNX+1AqU0vtI8J40kmjrAKdk3IQyzBc4LEVeMAf6mQZM5
+   QRxuSDpmLb49JXKrfo6FKeK4TgvwtAAo9XGWhIRIeB3pC44b2nNtSVY61
+   rs4SRSlEQlnve5W2jCtXh40FoyDSU2rGqzIlO1JOfwTxD+fc2lvJv45y+
+   w==;
+X-CSE-ConnectionGUID: VfL95lnDQXClsFh1G7bRiQ==
+X-CSE-MsgGUID: 4JoR497bR9a5MZw+gRumOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11691"; a="71315591"
+X-IronPort-AV: E=Sophos;i="6.21,273,1763452800"; 
+   d="scan'208";a="71315591"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2026 09:39:33 -0800
+X-CSE-ConnectionGUID: h62gMYhtROSWnZc66OjUHw==
+X-CSE-MsgGUID: mOs4kMELQCmS6itbcUF5Rw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,273,1763452800"; 
+   d="scan'208";a="214756247"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 04 Feb 2026 09:39:30 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vngqe-00000000j3q-1Mv8;
+	Wed, 04 Feb 2026 17:39:28 +0000
+Date: Thu, 5 Feb 2026 01:39:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mark Brown <broonie@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Christoph Hellwig <hch@lst.de>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the fsverity tree
+Message-ID: <202602050113.5EtCPNU4-lkp@intel.com>
+References: <aYH54qJee85qLLkN@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fg4z2F3rYwFbJl6Z"
-Content-Disposition: inline
-
-
---fg4z2F3rYwFbJl6Z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aYH54qJee85qLLkN@sirena.org.uk>
 
-Hi all,
+Hi Mark,
 
-The KUnit coverage now runs with CONFIG_RUST=y
+kernel test robot noticed the following build errors:
 
-Changes since 20260203:
+[auto build test ERROR on jaegeuk-f2fs/dev-test]
+[also build test ERROR on jaegeuk-f2fs/dev]
+[cannot apply to linus/master v6.19-rc8 next-20260204]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The tip tree acquired a conflict with the pm tree.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mark-Brown/linux-next-build-failure-after-merge-of-the-fsverity-tree/20260203-214224
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+patch link:    https://lore.kernel.org/r/aYH54qJee85qLLkN%40sirena.org.uk
+patch subject: linux-next: build failure after merge of the fsverity tree
+config: x86_64-rhel-9.4-bpf (https://download.01.org/0day-ci/archive/20260205/202602050113.5EtCPNU4-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260205/202602050113.5EtCPNU4-lkp@intel.com/reproduce)
 
-The leds-lj lost it's build failure.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602050113.5EtCPNU4-lkp@intel.com/
 
-The nvdimm tree acquired a conflict with the vhost tree.
+All errors (new ones prefixed by >>):
 
-Non-merge commits (relative to Linus' tree): 10777
- 10460 files changed, 596349 insertions(+), 221690 deletions(-)
+   fs/f2fs/data.c: In function 'f2fs_read_data_large_folio':
+   fs/f2fs/data.c:2523:51: error: passing argument 1 of 'fsverity_verify_page' from incompatible pointer type [-Wincompatible-pointer-types]
+    2523 |                             !fsverity_verify_page(vi, folio_file_page(folio,
+         |                                                   ^~
+         |                                                   |
+         |                                                   struct fsverity_info *
+   In file included from fs/f2fs/f2fs.h:29,
+                    from fs/f2fs/data.c:24:
+   include/linux/fsverity.h:298:54: note: expected 'struct page *' but argument is of type 'struct fsverity_info *'
+     298 | static inline bool fsverity_verify_page(struct page *page)
+         |                                         ~~~~~~~~~~~~~^~~~
+>> fs/f2fs/data.c:2523:30: error: too many arguments to function 'fsverity_verify_page'
+    2523 |                             !fsverity_verify_page(vi, folio_file_page(folio,
+         |                              ^~~~~~~~~~~~~~~~~~~~
+   include/linux/fsverity.h:298:20: note: declared here
+     298 | static inline bool fsverity_verify_page(struct page *page)
+         |                    ^~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/data.c:2555:57: error: passing argument 2 of 'f2fs_grab_read_bio' makes integer from pointer without a cast [-Wint-conversion]
+    2555 |                         bio = f2fs_grab_read_bio(inode, vi, block_nr,
+         |                                                         ^~
+         |                                                         |
+         |                                                         struct fsverity_info *
+   fs/f2fs/data.c:1097:68: note: expected 'block_t' {aka 'unsigned int'} but argument is of type 'struct fsverity_info *'
+    1097 | static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+         |                                                            ~~~~~~~~^~~~~~~
+>> fs/f2fs/data.c:2555:31: error: too many arguments to function 'f2fs_grab_read_bio'
+    2555 |                         bio = f2fs_grab_read_bio(inode, vi, block_nr,
+         |                               ^~~~~~~~~~~~~~~~~~
+   fs/f2fs/data.c:1097:20: note: declared here
+    1097 | static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+         |                    ^~~~~~~~~~~~~~~~~~
+   fs/f2fs/data.c: In function 'f2fs_mpage_readpages':
+   fs/f2fs/data.c:2629:58: error: 'vi' undeclared (first use in this function)
+    2629 |                 return f2fs_read_data_large_folio(inode, vi, rac, folio);
+         |                                                          ^~
+   fs/f2fs/data.c:2629:58: note: each undeclared identifier is reported only once for each function it appears in
 
-----------------------------------------------------------------------------
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+vim +/fsverity_verify_page +2523 fs/f2fs/data.c
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
+  2449	
+  2450	static int f2fs_read_data_large_folio(struct inode *inode,
+  2451			struct fsverity_info *vi,
+  2452			struct readahead_control *rac, struct folio *folio)
+  2453	{
+  2454		struct bio *bio = NULL;
+  2455		sector_t last_block_in_bio = 0;
+  2456		struct f2fs_map_blocks map = {0, };
+  2457		pgoff_t index, offset, next_pgofs = 0;
+  2458		unsigned max_nr_pages = rac ? readahead_count(rac) :
+  2459					folio_nr_pages(folio);
+  2460		unsigned nrpages;
+  2461		struct f2fs_folio_state *ffs;
+  2462		int ret = 0;
+  2463		bool folio_in_bio;
+  2464	
+  2465		if (!IS_IMMUTABLE(inode) || f2fs_compressed_file(inode)) {
+  2466			if (folio)
+  2467				folio_unlock(folio);
+  2468			return -EOPNOTSUPP;
+  2469		}
+  2470	
+  2471		map.m_seg_type = NO_CHECK_TYPE;
+  2472	
+  2473		if (rac)
+  2474			folio = readahead_folio(rac);
+  2475	next_folio:
+  2476		if (!folio)
+  2477			goto out;
+  2478	
+  2479		folio_in_bio = false;
+  2480		index = folio->index;
+  2481		offset = 0;
+  2482		ffs = NULL;
+  2483		nrpages = folio_nr_pages(folio);
+  2484	
+  2485		for (; nrpages; nrpages--, max_nr_pages--, index++, offset++) {
+  2486			sector_t block_nr;
+  2487			/*
+  2488			 * Map blocks using the previous result first.
+  2489			 */
+  2490			if (map.m_flags & F2FS_MAP_MAPPED) {
+  2491				if (index > map.m_lblk &&
+  2492					index < (map.m_lblk + map.m_len))
+  2493					goto got_it;
+  2494			} else if (index < next_pgofs) {
+  2495				/* hole case */
+  2496				goto got_it;
+  2497			}
+  2498	
+  2499			/*
+  2500			 * Then do more f2fs_map_blocks() calls until we are
+  2501			 * done with this page.
+  2502			 */
+  2503			memset(&map, 0, sizeof(map));
+  2504			map.m_next_pgofs = &next_pgofs;
+  2505			map.m_seg_type = NO_CHECK_TYPE;
+  2506			map.m_lblk = index;
+  2507			map.m_len = max_nr_pages;
+  2508	
+  2509			ret = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_DEFAULT);
+  2510			if (ret)
+  2511				goto err_out;
+  2512	got_it:
+  2513			if ((map.m_flags & F2FS_MAP_MAPPED)) {
+  2514				block_nr = map.m_pblk + index - map.m_lblk;
+  2515				if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
+  2516							DATA_GENERIC_ENHANCE_READ)) {
+  2517					ret = -EFSCORRUPTED;
+  2518					goto err_out;
+  2519				}
+  2520			} else {
+  2521				folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
+  2522				if (f2fs_need_verity(inode, index) &&
+> 2523				    !fsverity_verify_page(vi, folio_file_page(folio,
+  2524									index))) {
+  2525					ret = -EIO;
+  2526					goto err_out;
+  2527				}
+  2528				continue;
+  2529			}
+  2530	
+  2531			/* We must increment read_pages_pending before possible BIOs submitting
+  2532			 * to prevent from premature folio_end_read() call on folio
+  2533			 */
+  2534			if (folio_test_large(folio)) {
+  2535				ffs = ffs_find_or_alloc(folio);
+  2536	
+  2537				/* set the bitmap to wait */
+  2538				spin_lock_irq(&ffs->state_lock);
+  2539				ffs->read_pages_pending++;
+  2540				spin_unlock_irq(&ffs->state_lock);
+  2541			}
+  2542	
+  2543			/*
+  2544			 * This page will go to BIO.  Do we need to send this
+  2545			 * BIO off first?
+  2546			 */
+  2547			if (bio && (!page_is_mergeable(F2FS_I_SB(inode), bio,
+  2548							last_block_in_bio, block_nr) ||
+  2549				!f2fs_crypt_mergeable_bio(bio, inode, index, NULL))) {
+  2550	submit_and_realloc:
+  2551				f2fs_submit_read_bio(F2FS_I_SB(inode), bio, DATA);
+  2552				bio = NULL;
+  2553			}
+  2554			if (bio == NULL)
+> 2555				bio = f2fs_grab_read_bio(inode, vi, block_nr,
+  2556						max_nr_pages,
+  2557						f2fs_ra_op_flags(rac),
+  2558						index, false);
+  2559	
+  2560			/*
+  2561			 * If the page is under writeback, we need to wait for
+  2562			 * its completion to see the correct decrypted data.
+  2563			 */
+  2564			f2fs_wait_on_block_writeback(inode, block_nr);
+  2565	
+  2566			if (!bio_add_folio(bio, folio, F2FS_BLKSIZE,
+  2567						offset << PAGE_SHIFT))
+  2568				goto submit_and_realloc;
+  2569	
+  2570			folio_in_bio = true;
+  2571			inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+  2572			f2fs_update_iostat(F2FS_I_SB(inode), NULL, FS_DATA_READ_IO,
+  2573					F2FS_BLKSIZE);
+  2574			last_block_in_bio = block_nr;
+  2575		}
+  2576		trace_f2fs_read_folio(folio, DATA);
+  2577	err_out:
+  2578		if (!folio_in_bio) {
+  2579			folio_end_read(folio, !ret);
+  2580			if (ret)
+  2581				return ret;
+  2582		}
+  2583		if (rac) {
+  2584			folio = readahead_folio(rac);
+  2585			goto next_folio;
+  2586		}
+  2587	out:
+  2588		f2fs_submit_read_bio(F2FS_I_SB(inode), bio, DATA);
+  2589		if (ret) {
+  2590			/* Wait bios and clear uptodate. */
+  2591			folio_lock(folio);
+  2592			folio_clear_uptodate(folio);
+  2593			folio_unlock(folio);
+  2594		}
+  2595		return ret;
+  2596	}
+  2597	
 
-Below is a summary of the state of the merge.
-
-I am currently merging 405 trees (counting Linus' and 121 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---fg4z2F3rYwFbJl6Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmDXt0ACgkQJNaLcl1U
-h9A8OQf/bq/LFBg924nn7AdH03pLYU+Da94xfABh2XI3COTdgquT86ouZ7F82X4d
-LMazwqT2d5u6LgTwRjOAA9YG0+aYAoVDawhFRrBU3Qrg67QwrLL75PQOm9JXAvyK
-mWXNoFKxc2yG3F0YtWbRKSwUEuI+YycNapo1/e3xppDiUpqNH+j4OjYykPERCB/i
-d/r120c6Lf06WCxrjXu6sircZiCtwfr0pAQQEEML3kIt+ltvhOdOjLKgAhoLyZaQ
-hntRx0TMAoETWrMr/0qt6Mct449YFMJzd5I5s1dL8rYAOEJdn4/VahY1z8RoxFDe
-dXYB5N0dhmAa5jWROXvg7RZ6Nuw9jw==
-=H6Ce
------END PGP SIGNATURE-----
-
---fg4z2F3rYwFbJl6Z--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
