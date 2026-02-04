@@ -1,81 +1,112 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BB6280CD2;
-	Wed,  4 Feb 2026 14:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFC3D413D;
+	Wed,  4 Feb 2026 14:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770216977; cv=none; b=BlcPMTUeziDdgbz/68ndXJLMqEsZpZRE5SAk4eIz5DqfUF+4TcowENETfjGzml+6d07DOffHvWygbXTK2wz/66JHr9crXP1UEW42s8cPT6M8Uts1I2J978vrbyGwHv9SdnFjJ5vBToPh3iXtFUP4YsqwLZ3aKnXrbj1BkaurZ3o=
+	t=1770217186; cv=none; b=TH8r2Xm5t/Kk2+iiFQcnmibyzcJEsYd+xO3FbvruxBXF3qiGktQYMDgHc0FqZWydh+kDcmKE6KtZrthzj3mxumZxCaBciGixcSMgMcWWa49AT8qhc10uKdTXJt9DJfq+AGANRXFSF0ypUuBFUgYAinuZ2vEuvFccKGiZy74u3t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770216977; c=relaxed/simple;
-	bh=onCDEBzeb3EDS2ExfR6dIkEK0hVm71Fe4xKUsqXjaQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIDKNEQSj1+8dIvYerAMq/6ALAQF1xkMk1CS0aqKVxexFWsgEA0aCfbkzm7DfBP0j24EP+iC91+ep624CM8SFHN4EJDYIIUeDjyPbGec+ZDDfj5ZP9DyUU3c5wrbafpWtz/G9iZBKnK1z97yC7ExgCyvQ5aueJKfmwwlpoEgkAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZDffdkIf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ujxYFcuE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1770217186; c=relaxed/simple;
+	bh=GbES7aG2mQfMLb3/jx1ri1+13Q6gUPgKpMi3ZlKcqM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G2LYjGU1A9QEySuFKQ/la9qxO1gY0ertZzlUktO0iS+1TUmlvXUOzQK0+X1s0000Vyv6ZIiy14tAuW7L5Cg5/DW5YFkg/5a4zii4N/V+gyQS0T5yqgHfjMT6o2B2YgCUfHRfENiK2njT8aQPeEoEoPCePjGGj4r5QNKuoUdy7Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9eYd4Oe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZDffdkIf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ujxYFcuE"
-Date: Wed, 4 Feb 2026 15:56:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1770216975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hc9FTJPTt88zJ6Ys+z9tCzTZ/0Oi2WzPyQsrnsZQ/vM=;
-	b=ZDffdkIfvhSLxd41yS1rcQz4mqft/vhmxzpXDAeiY9gWmuTaLl8evscms+Z0tV6n3/VmTs
-	Lrc8uw96tpi454rqJB2oZ2Y1PEfkU0ImqHOI4gMoPsOPa1l7LnhR79HlrF2aesICeVuD+P
-	dnBf2FRbETpHWq/H0hUt7NsO8z5hHbHm7dQYka6n8UPZ6ezloqsDdFc1Zrd23LFOUeZGcm
-	EVTjuxhKThKDYn6gQr1mf4BVD+YS8hbQ+DIJAw5dZqx+0tBIFV3/VJm0LP7414lxaXRcYs
-	b4P2T2uDO1w9yKkadaSpH9IQjBya0+a9OGh+teLssg1CRAi7a/2bG2lfci1lrA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1770216975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hc9FTJPTt88zJ6Ys+z9tCzTZ/0Oi2WzPyQsrnsZQ/vM=;
-	b=ujxYFcuElA2qR5srhHkimLw3ZsshcpjGh9Ev/O6PNkfAM6BKfP6RN8lfcSSnHTAsrFsbhG
-	Avo6JVZRJRO3E0DA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <20260204145614.UgtBZzv9@linutronix.de>
-References: <aYNPFdTRx4WDKlTV@sirena.org.uk>
- <e4acdf40-7d6d-48ee-9880-17bacc033961@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9eYd4Oe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A67DC116C6;
+	Wed,  4 Feb 2026 14:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770217186;
+	bh=GbES7aG2mQfMLb3/jx1ri1+13Q6gUPgKpMi3ZlKcqM4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=K9eYd4Oew63OwUq5vuBIejtNgo9tFS9zq4rAEAgvGwr70liFuFKfzfU0eVCvA+2TP
+	 RKX92TL2ELzFFuqCRDxlkVmVa/0nbRrBX+xtP2wRUWFoPX3ovIe8ZxM8ngBogsoFFR
+	 GiW51RLvdog5LUBqHVwDhShv1r98XJ0+GPhYp62FZGwhxam/1T7DL6m9vokhhzYhR8
+	 W3BG+fNOdWm1Vdv1wzu0lURXAjmtv3fptmYGKgGRp2ZO6501LUzevr+N2B5RlQCVpA
+	 vO81KlyAOnmbpxUyREW5Vt3xiW74PnQuTbHOA6OnNyEm88wKvICWW2wDMqgqWaYovZ
+	 MU+BoGIVX4rsQ==
+Date: Wed, 4 Feb 2026 14:59:42 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	kunit-dev@googlegroups.com, rust-for-linux@vger.kernel.org
+Subject: linux-next: Tree for Feb 4
+Message-ID: <aYNe3khJcKy-N1ga@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fg4z2F3rYwFbJl6Z"
 Content-Disposition: inline
-In-Reply-To: <e4acdf40-7d6d-48ee-9880-17bacc033961@intel.com>
 
-On 2026-02-04 15:48:33 [+0100], Wysocki, Rafael J wrote:
-> On 2/4/2026 2:52 PM, Mark Brown wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the tip tree got a conflict in:
-> > 
-> >    drivers/thermal/qcom/lmh.c
-> > 
-> > between commit:
-> > 
-> >    80883ce8b1fd2 ("thermal/drivers/qcom/lmh: Remove spurious IRQF_ONESHOT")
-> 
-> I'll drop this one because I think that it's better to use IRQF_NO_THREAD in
-> that driver.
 
-I second this. IRQF_NO_THREAD should be used.
+--fg4z2F3rYwFbJl6Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Thanks!
+Hi all,
 
-Sebastian
+The KUnit coverage now runs with CONFIG_RUST=y
+
+Changes since 20260203:
+
+The tip tree acquired a conflict with the pm tree.
+
+The leds-lj lost it's build failure.
+
+The nvdimm tree acquired a conflict with the vhost tree.
+
+Non-merge commits (relative to Linus' tree): 10777
+ 10460 files changed, 596349 insertions(+), 221690 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 405 trees (counting Linus' and 121 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--fg4z2F3rYwFbJl6Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmDXt0ACgkQJNaLcl1U
+h9A8OQf/bq/LFBg924nn7AdH03pLYU+Da94xfABh2XI3COTdgquT86ouZ7F82X4d
+LMazwqT2d5u6LgTwRjOAA9YG0+aYAoVDawhFRrBU3Qrg67QwrLL75PQOm9JXAvyK
+mWXNoFKxc2yG3F0YtWbRKSwUEuI+YycNapo1/e3xppDiUpqNH+j4OjYykPERCB/i
+d/r120c6Lf06WCxrjXu6sircZiCtwfr0pAQQEEML3kIt+ltvhOdOjLKgAhoLyZaQ
+hntRx0TMAoETWrMr/0qt6Mct449YFMJzd5I5s1dL8rYAOEJdn4/VahY1z8RoxFDe
+dXYB5N0dhmAa5jWROXvg7RZ6Nuw9jw==
+=H6Ce
+-----END PGP SIGNATURE-----
+
+--fg4z2F3rYwFbJl6Z--
