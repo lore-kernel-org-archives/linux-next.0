@@ -1,45 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356243876D2;
-	Wed,  4 Feb 2026 12:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860BD21C9E5;
+	Wed,  4 Feb 2026 13:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770208941; cv=none; b=glaXWzNys2GFSXaST1f4yPg1SPFqrWKnTEcf14045UOdFQwgtWQfKacqmErGgz52MN34uZFz4LP83na22cdaORbR095VbXAtR5miUvUVUZwEufrfpAxMzorT5fpwuy9pbL5lsfTelZ2N6mgpPQnG12URAdNOAcLTzJBO0QTteKk=
+	t=1770213146; cv=none; b=gzDFccmZqO6RpsxRP/7ATiJ9daMv/n/CuCiqY1oMdLv73XYpXK8v8JBnu5tciKZqZRcGABTux+AMQM5PNWHlTy4KATxOHBj6m/NNTd4SuyQdbX+WryJYqbjeqhDwYeAgjJBWA6ADjFZfIYdH0e493yrqFoZ9/aYkXIlysbqiz4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770208941; c=relaxed/simple;
-	bh=xGa1il5zolt9Mzta9dr+PxlQYmtTEjS97AgSTf6mHh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KKCc40Br7DSk+fNM4mqTGJ5TPsZXJxqmQlLS6U0okMcF2XMxnqoDqvO0Zej7T0QMSZPzqkhc7WqwS7AaZdFKFNrybkuiwP2uVgJiu9hanIFnFhsWsHg+55WG/URDIAlTaWgXYBreinxx8fcqUpNgVS1J4ARHYlayAeO6nhOrDPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGkk990M; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770213146; c=relaxed/simple;
+	bh=FYvUcoSI5sMPE5a2xVpFPIXfMU52725HfqsffvhY8F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=P4HRYTGSq2qA7Cw4/a3gp9i3LS68LRWPjEwxeL1frF5sxtdVa5tNYCX7jWhzPkscukn9pUNXa9DdRJAloJgSITpapmoQlHNMRyUYQMtFa//8UMDPwrp8AdSZxME9SJPasc8Aw96U2A7zq+MRPE7WMHnAvw1TjudXefwKAlVZecs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMprKnMY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGkk990M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05723C4CEF7;
-	Wed,  4 Feb 2026 12:42:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMprKnMY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D4F6C4CEF7;
+	Wed,  4 Feb 2026 13:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770208940;
-	bh=xGa1il5zolt9Mzta9dr+PxlQYmtTEjS97AgSTf6mHh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oGkk990M2dyfo3rnCjixRtqJ05W7ujd/1a1dIi1ZMWnyMTKjpGDgGsPdn8qGL4A2s
-	 qKAIk0uVrSegRUIBppGtWs+bQvK/tc+rq0eIc3dLbV5/6olXWz3/Ai3og/27keq1cF
-	 h3U86iHc6cEgqqbSmZ/N2LjT+q4oaX8s4/H7rBs40caXLNyApGwDhmBndmyW2+HiLW
-	 OS3zIjXKVlSEiAxCxolnLlmCGWnkLrskJkkIqmyNqUCisqE3HDS9KBuft680R29kNH
-	 DjjsXmRLU2RWOZaTph59mGa/2PH9VcQUtiqrv28diE4dWBU1Mzrctie0qU8Wky9MsM
-	 AXF7rLOJ2Lz5g==
-Date: Wed, 4 Feb 2026 12:42:16 +0000
+	s=k20201202; t=1770213146;
+	bh=FYvUcoSI5sMPE5a2xVpFPIXfMU52725HfqsffvhY8F8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qMprKnMYcvjz0eBBuGewiagej4j72/7mzdIsn4m8YaPjdXA+I47YPCvfKmv43mGwo
+	 vHhicLZV4mbbsNKbHoOatt9Lt86aq2UK+LCavq8x7H+tPn5pAbkZIc3a5shdRLTTS/
+	 hndILJYJlK2S8FYiCvyCLqt9Npj3/bVhkT2G9hjVMOiXVF/hZmpzY/in4JzEHLSk0q
+	 OJQPRMxMviZXaNo8e69zjld4QRabafJc0Wd2gIbxBbEoz6U0MVLjBbdO8lckOp5Roz
+	 B0lyffjFp7Vbwpcd74QmHKH1wZLbbqheHKv8jh5B7HKBYJqwnaIgqfHu8+sUlfPZJp
+	 mGlzw7CZzHgjw==
+Date: Wed, 4 Feb 2026 13:52:21 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Aksh Garg <a-garg7@ti.com>, Koichiro Den <den@valinux.co.jp>
-Subject: Re: Fixes tags could use some work in the pci tree
-Message-ID: <f2485555-d59d-4931-90df-890e0b7cf558@sirena.org.uk>
-References: <484d687e-4ce1-442e-b8c1-9299631a7fe1@sirena.org.uk>
- <20260203231352.GA195886@bhelgaas>
- <3232b98d-a091-49be-ab81-28bfb41b148e@sirena.org.uk>
- <imn5t7cmr7wxunaowyknhe3kavvja3uqmjwnr2q2jt4wviyklm@qb75ya7o2tgf>
+To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Message-ID: <aYNPFdTRx4WDKlTV@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,43 +45,68 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JWZJOfSK9Rw5GSLP"
+	protocol="application/pgp-signature"; boundary="KG4MEBVYT1/4qJTh"
 Content-Disposition: inline
-In-Reply-To: <imn5t7cmr7wxunaowyknhe3kavvja3uqmjwnr2q2jt4wviyklm@qb75ya7o2tgf>
-X-Cookie: Are you having fun yet?
 
 
---JWZJOfSK9Rw5GSLP
+--KG4MEBVYT1/4qJTh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 04, 2026 at 05:54:04PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Feb 04, 2026 at 11:58:05AM +0000, Mark Brown wrote:
-> > On Tue, Feb 03, 2026 at 05:13:52PM -0600, Bjorn Helgaas wrote:
-> > > [+cc Mani (should be cc'd for all PCI emails like this), Aksh, Koichiro]
+Hi all,
 
-> > I've added him as a contact for pci and pci-current, note that -next has
-> > a separately maintained list of contacts for each tree so if something
-> > changes with who should be emailed please let me know.
+Today's linux-next merge of the tip tree got a conflict in:
 
-> Mark, I'd like to get added to the -next contact list.
+  drivers/thermal/qcom/lmh.c
 
-Like I say I already added you - the thing about letting me know was for
-future updates.
+between commit:
 
---JWZJOfSK9Rw5GSLP
+  80883ce8b1fd2 ("thermal/drivers/qcom/lmh: Remove spurious IRQF_ONESHOT")
+
+=66rom the pm tree and commit:
+
+  781b391557a74 ("thermal/qcom/lmh: Replace IRQF_ONESHOT with IRQF_NO_THREA=
+D")
+
+=66rom the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/thermal/qcom/lmh.c
+index b6b7f1193c441,3d072b7a4a6dd..0000000000000
+--- a/drivers/thermal/qcom/lmh.c
++++ b/drivers/thermal/qcom/lmh.c
+@@@ -220,7 -220,8 +220,7 @@@ static int lmh_probe(struct platform_de
+  	/* Disable the irq and let cpufreq enable it when ready to handle the in=
+terrupt */
+  	irq_set_status_flags(lmh_data->irq, IRQ_NOAUTOEN);
+  	ret =3D devm_request_irq(dev, lmh_data->irq, lmh_handle_irq,
+ -			       IRQF_NO_THREAD | IRQF_NO_SUSPEND,
+ -			       "lmh-irq", lmh_data);
+ +			       IRQF_NO_SUSPEND, "lmh-irq", lmh_data);
+  	if (ret) {
+  		dev_err(dev, "Error %d registering irq %x\n", ret, lmh_data->irq);
+  		irq_domain_remove(lmh_data->domain);
+
+--KG4MEBVYT1/4qJTh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmDPqcACgkQJNaLcl1U
-h9C4gwf/UtlTlEvJCIG9lrzHCtxRxi68PbWhoxfMmGycgyQElGfrreie3oCZ4kL4
-ZsqadftLNvs7fUgTcFM5Mb3FAzqfMJcp/dC7He5VtaTgts6+DtLT3FLRtH2ahf9o
-408zYGiGXbTPjuxWEMobtoPX/T3smriufXR7vbw4z6/5K7yu75MfCxwoNXd7D0mC
-q2cxtA3hQ5haKxuZg5SX+PzeeouAeY71AE6LvbKS6GI02NHUHj/wLsywRGLlnVit
-hFll9xDMCaWkAY27Y44oBSoPhK965T9uu71poUkIroa9o322fDHFLrYijnNJsXr1
-aweRt5klMlyw3UuCuqIAlYX4aX5gUQ==
-=pu2L
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmDTxQACgkQJNaLcl1U
+h9A2Qwf/bDc3w/838LISATt6ti4B33RP+Vk7VnabfPxPKrCc+wDDf4uCxoTEDi93
+LVTW3Th0n0FBTCfBy7mlwDKUIIkhXLFJnhkI5cBN57wuiEh2BRg7031XIeIhI8lW
+5cKMdTV8MgfUaHl4H8UhU5VxV/3SEsjlbqlSJgBXt8eVsW5I7zgP7g09i8frTqP4
+qEjgHI82qHPcPZe6qkPX6OUwfqHVPXeOndl+A43c1Dmj/U4dftrUjBQWWOOp6hH2
+mvUBBty9/MFQrj3M6KLAhOhnVsb2ovqki2Hi0o9ddwr3oqfapParDBwCmVmD5drn
+Hm3dZXS1yfSVcGShD4Lr+FG5dA2WNg==
+=cdGU
 -----END PGP SIGNATURE-----
 
---JWZJOfSK9Rw5GSLP--
+--KG4MEBVYT1/4qJTh--
