@@ -1,150 +1,180 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f68.google.com (mail-dl1-f68.google.com [74.125.82.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3BB38737B
-	for <linux-next@vger.kernel.org>; Wed,  4 Feb 2026 19:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5912BDC2F
+	for <linux-next@vger.kernel.org>; Thu,  5 Feb 2026 02:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770232512; cv=none; b=tKIIP9QdO3yHNzhQ5LT2o9MQsdxqnH8lztY4kJXqYVA1rMofGNXXSzlaYaoGUHXWALmyx63D8f5nOvucqT7/HEk/nkkT67h7M7KV2ZRK/RRD6KnU2B+IM3IZUT2wHun31mgAQpxym5UAGmeGV/M2ajB+ztda2jS1z5DozclrXCc=
+	t=1770258612; cv=none; b=czVwB1SEto93qt/GdoE59CAPCEtryt8Ksa+2ha7Yb/WFaPC3twe7/p7sxnfe6EkSGzHYAU1OJLMnDmzfs3Vpag8v12iNxga4snJ9NZ7ln394Gfuap0ndbAVxu7hxdyaD8VSv0j9CZGxfc9WwOAVr8v9X+h81+aW6+3YpyZfQkNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770232512; c=relaxed/simple;
-	bh=QwXMpvEjpmwlx5iZRshD+ibL+awMEH7eTVeraZrvIN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UoeD+mHWRXoOFNjs852zvnjFRtGUWGGCsYLHiBO7HSnnpkfoaXyaDJaGToSWpImzHYy8wLMGqztKfPfc+o/+zJEqL5SqGQ8m0kA2HQUKHSowHDaV/OuJQC3ixS7rMIckonI8HPtZ3XiPdjjc5zNELNyEuLHLmCMXbG+2YkNeOjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dtajeZwS; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJY5bcgn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1770258612; c=relaxed/simple;
+	bh=p0hHMjEGslukK00fxLC2TVbUnXJMr9dgYxp1Y8lBurs=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=qB+LYVGVNtMu6W1BTRt/HIyf4XDCR9SQ5gYzN6gMpESp+OMf60adYcjq8JjAGOD8d3ARUjxQ7X5mTg8RYsufF/T5cR0R4+JxqP6bokYxEyF+XTSMfwE34Ay2MByAQiqkHXEYxhq+iHGKPxPuQEaSSYjPCYZumiKKJm91bANdM7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=ooi3bED2; arc=none smtp.client-ip=74.125.82.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtajeZwS";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJY5bcgn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770232511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tqmai0XOq22QbtgtcTu8Te/h8pcU3CnbiTMqhAWwGCo=;
-	b=dtajeZwSBy7vVs39zCCbjF5uXrPlP1h8aUPDus8qq0dpWtyQZ9JnjQ0SrdE2d2OUj3uOMN
-	ZWpb1iJlB3enbHWLEp9hP0fDDpryRn5i1613dA7qWHDM3K5lM6GExom6OgNW9kE0xXl3tf
-	li63wqwGNFKk2jqPLpUUeDWTwrCbn9o=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-387-zidPJHXUP8mnfpPI37UNHw-1; Wed, 04 Feb 2026 14:15:08 -0500
-X-MC-Unique: zidPJHXUP8mnfpPI37UNHw-1
-X-Mimecast-MFC-AGG-ID: zidPJHXUP8mnfpPI37UNHw_1770232507
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-435af2d3144so103689f8f.3
-        for <linux-next@vger.kernel.org>; Wed, 04 Feb 2026 11:15:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="ooi3bED2"
+Received: by mail-dl1-f68.google.com with SMTP id a92af1059eb24-124566b6693so1482863c88.0
+        for <linux-next@vger.kernel.org>; Wed, 04 Feb 2026 18:30:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1770232507; x=1770837307; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tqmai0XOq22QbtgtcTu8Te/h8pcU3CnbiTMqhAWwGCo=;
-        b=DJY5bcgn8yJNAGZjo9FUL+A3Pcb+WgJcv+9ZPyb6oSMWNvv02lPPOC/zRtlLFw5jrY
-         xzTu0hcf/n3bDDgG3bCdqleKtAH2Wx3N9bYqKQ+A8YfF3pGGiegK8TvGyOshK4T1j4/4
-         wOQnO5ChF0RHn4Gai0bBFoLpo5m3ZWbiQohRy++aoTrdqFywJQIXwtj+2Td62d7mQRHd
-         MsK+e5/NbqL34kS4tae8tlU8NYfzhFwN3EsTzMw+ZauZXWO+KVtCWlNprpHs8/ZIR6mi
-         8M6d72EzPTz4luME+wO0wwc2o2w/K2bSxz0G0IoHFYrVLsIywiEmv9Lx90Mh3pBWvZGc
-         hCuw==
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1770258611; x=1770863411; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hna90pcKI661Wt9uYulVQ2PEHhqP3tlAKFAEzjRifQg=;
+        b=ooi3bED2ApbsmWWJPaMAE2gS2z5PFgq0yVwr4xmRDGUlOQJ5hcR0Mf8oSBmkjQUXwJ
+         dM3PphvBg7uax5hwmGi9YLVHqNbcqEq7yeNhPlN12WvGYyUkzhvPm3FWvSTM+f9fNXBg
+         WKEPo6dls7IU1UmFK9Voc6aAXrVrMPu4vSiY3fjTKuu7s7vgYU9vLLHMsRvyQaMJQKQ8
+         XrVbf+ae2l9rjzTP7brE+LaQn8yeMRu5DCug2vztf1hjfa+cfzOmYsLsc469Z2c+Z+Y2
+         J8ifLoNovACzhLjgdvJnKxN3oQhflkP01D70SJl1YonrSNY2rQpDd9q6xmhic0/WQnI6
+         hcTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770232507; x=1770837307;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tqmai0XOq22QbtgtcTu8Te/h8pcU3CnbiTMqhAWwGCo=;
-        b=XvCGswCY1vG7PLrqhjDj/iTZ4XMoh1lyeLqTyg2FIVk+hMumAqqJySUWzcIumsMhYq
-         XK20ex3ZhfFtKz/Yame5q6E8i8WL7i92z0xIgxwUhoxv/PDDRpxn0ObJkvMD762/jAzm
-         +FqaHNdgmfZG9k5pWRvafTJHYbxxZ1HXxK2VltEUBsN5EZX47BN1dA1tsCM9s0z70D0L
-         WXiW69BJXaCv5WOqVl+2GgeNOXDG86z04gGLRKPTFjbAsgUYisYXJVdf+ROtn1VZtA5I
-         5pUnYjKjjlCZo8vH9yIA7RJX/XbG4n0PcWRzpJjxaDIv2L1t06xPkviD/7uDkTZc5Ukm
-         6NSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZHe4AxmolkYH/qTrWXULWtr5wGcpDvwMiVOKB+WLbDpK6B8eE2ppgUCx2YtUT4bK1l7nFyHITLjqB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxClFcq4B/Z7p2k4K3CjabAqw2mXw5lJs+mG2rd46IouP42qe6C
-	feBjJFC3u+dqYtfdB4A3lQE8w7wkexDsHI4EATPlW01ZU6Qf9UveilYNq/PCOzLrAZUYzhYuVae
-	sDTiRWITAlo7a5UXixqt5dsW1oHrIhtVGwWan/Vnji4BxXClIazaQ5g0+OnDlxfk=
-X-Gm-Gg: AZuq6aLIb0XtrnJzhzvRsUizrL+uqUYorUEZ9Uae2mIjD1Vcq8JrskW7telYiNR3bFJ
-	IyHqe+b+5zYG9OFEDMCvXQiSLtxHph6kl/F6B5lRg08fLPPPvyrXlG2gFNDxy5uhulOAopjiDLv
-	r+PZqwxchfV7opmbcgt6+5XvzruTNJIRQRVft5APSSrUJooSK1kDpN1fh66Hq0dYio4Y/LozGkD
-	yDSuCVezJ76xVQGZXH0I0b9dyYtiYXcfH2MIkkYNYd+iIC9vd7zWX+vsOA1+Dm+A/kz9YmsAWZg
-	Er9vHlo+u/3VSPTFB5yCwR+cPdKU3MJHu4goAb3Ogk2va0QcYmhK/Hf+QGvTEE+fds0ZAb+cBUe
-	WB7TH5SXi3q5bTTrM2ihF9rovEBm6gaJUWA==
-X-Received: by 2002:a05:6000:2881:b0:435:a135:7772 with SMTP id ffacd0b85a97d-43617e35407mr5586045f8f.4.1770232506618;
-        Wed, 04 Feb 2026 11:15:06 -0800 (PST)
-X-Received: by 2002:a05:6000:2881:b0:435:a135:7772 with SMTP id ffacd0b85a97d-43617e35407mr5586015f8f.4.1770232506117;
-        Wed, 04 Feb 2026 11:15:06 -0800 (PST)
-Received: from redhat.com (IGLD-80-230-34-155.inter.net.il. [80.230.34.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43617e25d0dsm8601974f8f.7.2026.02.04.11.15.04
+        d=1e100.net; s=20230601; t=1770258611; x=1770863411;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hna90pcKI661Wt9uYulVQ2PEHhqP3tlAKFAEzjRifQg=;
+        b=SvWzTZboOAD0T96ghxpaR+vYtM8KRsFUzX64C4FzILYMksW0JBENfpOugPmHUs0bIn
+         LQ7kaAlidDdnBY4INr2rv1bhfM6rbUzpAHyLIikBiojTg4LTHP0855LWdosz1qV79MT1
+         DxZYMOuszEtdiwQqes+2pJA0KARqyvWw/zVr+qZDw/jUUQUPeaHLtSnA7zPWat/x2G8u
+         dAVhc/nKnc34Ln8POrwRRdT7VEDkrBhDgdtn4Xt9WmnIqbA6Bi7bmImS6DSEhnhjovF/
+         m/RnRITMpWVEudTX+iFGl0Fsol4UNAv5YT5n/+pNk+YJK4REV5+0p5a3oArykakVGvrq
+         ig0A==
+X-Gm-Message-State: AOJu0Yyg8YaFr0Z0+muuLqwHxEt2H0hJYj+9T2i17L5CeRVUYFD68qr3
+	WvaMU8qj0DEuGUE/gVB5MCKzW7q0Jv14SbTbvHd0sdL3+ynhB/cG0CId/B7KRUKO2s+QJHxmGYU
+	QpKpu54xzNQ==
+X-Gm-Gg: AZuq6aK0iuVyPaXayMDfNr05gbW40UkWDLU0cVtD+piwSPtozzEfcyY2OSiqdB1Vco8
+	wV2GOx3ZMzyvFOLnn5qqE8IecJqM8QKyEGIMkM1xrvRgmgJMhRm9U5p4M7au2NWPPnXZYmdjT6Q
+	Snr6joG/CHsFjTzytb2t2HzUUDcv6nnTEu5YiMrjsemyIMFZJnJmquuQQF0gIwEJCLw+dPSb0lp
+	qPupwhxsNn40VXfAMVL9+yUwcG7ZDJ/HEWRmjg1HfqMht2QxAz+Purta2/Z6IToiObbubTqZbU+
+	Xj04NgTF7Q8W8DQOUB8I7h9zWsnRmTWSc2yPbFX9byF6wpGES5S/Nx28OGU8lemd5rFymZsk8in
+	GaA1tSIOJ3uI54Zv16jtE5N935LL2mddJN3rV643mXGgRQdbv3rNEqn/3AsL0J9mvoAkG4DU0TA
+	CczTbD
+X-Received: by 2002:a05:7022:426:b0:11a:51f9:daf with SMTP id a92af1059eb24-126f478c6b4mr2071159c88.14.1770258611152;
+        Wed, 04 Feb 2026 18:30:11 -0800 (PST)
+Received: from 22d5995788c3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-126f4e111efsm2950371c88.8.2026.02.04.18.30.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Feb 2026 11:15:05 -0800 (PST)
-Date: Wed, 4 Feb 2026 14:15:02 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>, Li Chen <me@linux.beauty>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the vhost tree
-Message-ID: <20260204141450-mutt-send-email-mst@kernel.org>
-References: <aYNVXlLl98EbCBBO@sirena.org.uk>
- <69839b4bdf198_58e21100f@iweiny-mobl.notmuch>
+        Wed, 04 Feb 2026 18:30:10 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69839b4bdf198_58e21100f@iweiny-mobl.notmuch>
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 0f8a890c4524d6e4013ff225e70de2aed7e6d726
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 05 Feb 2026 02:30:10 -0000
+Message-ID: <177025860986.7167.3057853236503107933@22d5995788c3>
 
-On Wed, Feb 04, 2026 at 01:17:31PM -0600, Ira Weiny wrote:
-> Mark Brown wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the nvdimm tree got a conflict in:
-> > 
-> >   drivers/nvdimm/nd_virtio.c
-> > 
-> > between commit:
-> > 
-> >   b381542686726 ("nvdimm: virtio_pmem: serialize flush requests")
-> 
-> Michael,
-> 
-> I assume you will drop the v1?
-> 
-> Ira
 
-just did that.
 
-> > 
-> > from the vhost tree and commit:
-> > 
-> >   c4ae8ec088db0 ("nvdimm: virtio_pmem: serialize flush requests")
-> > 
-> > from the nvdimm tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > (note that the changes to add out_unlock are dropped)
-> > 
-> > diff --cc drivers/nvdimm/nd_virtio.c
-> > index 827a17fe7c710,af82385be7c6a..0000000000000
-> > --- a/drivers/nvdimm/nd_virtio.c
-> > +++ b/drivers/nvdimm/nd_virtio.c
-> > @@@ -44,8 -44,7 +44,8 @@@ static int virtio_pmem_flush(struct nd_
-> >   	unsigned long flags;
-> >   	int err, err1;
-> >   
-> >  +	might_sleep();
-> > - 	mutex_lock(&vpmem->flush_lock);
-> > + 	guard(mutex)(&vpmem->flush_lock);
-> >   
-> >   	/*
-> >   	 * Don't bother to submit the request to the device if the device is
-> 
 
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/0f8a890c4524d6e4013ff225e70de2aed7e6d726/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 0f8a890c4524d6e4013ff225e70de2aed7e6d726
+origin: maestro
+test start time: 2026-02-04 15:17:02.259000+00:00
+
+Builds:	   48 ✅    7 ❌    0 ⚠️
+Boots: 	  115 ✅    1 ❌    0 ⚠️
+Tests: 	 7780 ✅ 1256 ❌  980 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp9.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:6983d087a1ae387ffbbff6ca
+      history:  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: sc7180-trogdor-kingoftown
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2-Gst1-0.vp90-2-09-subpixel-00-ivf
+      last run: https://d.kernelci.org/test/maestro:6983d24da1ae387ffbbffe5b
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.proc.proc_proc-net-dev-lseek
+      last run: https://d.kernelci.org/test/maestro:698385eaa1ae387ffbbe9a00
+      history:  > ✅  > ❌  
+            
+      - kselftest.proc.proc_read
+      last run: https://d.kernelci.org/test/maestro:698385eaa1ae387ffbbe99f4
+      history:  > ✅  > ❌  
+            
+      - kselftest.proc.proc_setns-dcache
+      last run: https://d.kernelci.org/test/maestro:698385eaa1ae387ffbbe99f2
+      history:  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_h265.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:6983d045a1ae387ffbbff35b
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: mt8186-corsola-steelix-sku131072
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:6983cff9a1ae387ffbbff188
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_av1_chromium.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:6983cfbda1ae387ffbbfebc1
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.capabilities
+      last run: https://d.kernelci.org/test/maestro:6983730ca1ae387ffbbe6a51
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:69837318a1ae387ffbbe6a93
+      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
+            
+
+
+
+This branch has 7 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
