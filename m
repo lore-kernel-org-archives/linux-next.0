@@ -1,45 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1654923DEB6;
-	Sun,  8 Feb 2026 20:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2768B665;
+	Sun,  8 Feb 2026 22:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770584105; cv=none; b=ZZi3iGBGyd+4OE69TtY7Xm5um49hLVNcdXMgM36nILjYvMjz1pCxfs5IFHNHoEGwWxi3NxjLBSlVr2QamABoGcs0W9GbP6eomo+R4jZiKXhHiTX27xluTV3wmOTKKwSU2yZULG1bCwhiGfl91Z7OLpRMbEjR8oVzlvlqb3dPY5A=
+	t=1770590813; cv=none; b=YLpBq7U/sK/TyqrbzJ4tKGSTYBUceXkGn6KzSdUlDWucnn/+VvrBEGTUu59mPQbRBB5IeVSvjT/qD84ZehlePOyiAuTTLVbMCyq26vtkSOopGen2WuLSdaEjZCaV5J983SltJmUIXaMmuQI/jLUWUjbEoe6TqS8e6DcNlzZweRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770584105; c=relaxed/simple;
-	bh=1ibsnJnBFq+C9SAgY4KCPc13PZBD+2+YbljuBe7Coqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaTfkf+EAN0cioXvVR1EvDjeUPXnjDAdsUAZLJxg0L5tLAeQuHQ4wW7W8jiYaOk6WpbNeLebCLIag0IZObQAqKjd2OKGVXNJliPFj9qCVAA5M2cbPnb9Ldlq3cbTXeF+g2vueEbirk9f9vb/ZfKj/XC1nj0sMxu/RdZzP+QXq68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CG5X9olp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770590813; c=relaxed/simple;
+	bh=hEzUixNjVVNaa3Bxv+XxJ+VxH06BOg0rYo4G6AVrlLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bUpFoniR6Zrdn4XnOmvfwOLBwjd/vtiyqQYoQGVEYRfc3E54W4lMm4IlTGHDMuEhA5zT90ehucMqLmeHGZmlVvAXUTnC9heboNnp5WjcPBpYcrwgn4lpbr1Q9mAoPCA1ft3YLY7EcwZeTr896GgO6t4HdAyvP0nq7j7nhwR2b/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz+zDOcx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CG5X9olp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CDE0C4CEF7;
-	Sun,  8 Feb 2026 20:55:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz+zDOcx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987C4C4CEF7;
+	Sun,  8 Feb 2026 22:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770584104;
-	bh=1ibsnJnBFq+C9SAgY4KCPc13PZBD+2+YbljuBe7Coqk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CG5X9olpgApxh5ajpfBIViPvJFrIPidzh4udR8f3zkjFhSmOO+WoIOaPlx+/D0aSy
-	 NLdNCM6Dpp98LwVLWRjkQR/EZpfXOTO3qHAK5aLowFfHlEK7b5Eme0PYHomwD3m+wC
-	 EUbuPG2fcyhjCZbJ8DcpXrI2RLTWtnnVe/r6ObgxR1hhUNJtQwhLhvsPth51zYRXVs
-	 nBotS2VZ+89lMJVhanf40gjoPZpHBm9d537KHToVOHFGuBUmaoCVHF4/zUG2uPN6wb
-	 3TUTe10OXy+EuIPHZkiw1Jdg0JsRkNQHHVJgf2KYuUOn1Uy4jHFURVEgkT7YEYLFlD
-	 3IB9d4vbitLwA==
+	s=k20201202; t=1770590813;
+	bh=hEzUixNjVVNaa3Bxv+XxJ+VxH06BOg0rYo4G6AVrlLA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mz+zDOcxqewnhtiTyX911RPqDHx555kfBqnju6WLfG64Hxge/kJq+aZwdvMiDzr1Q
+	 FslSqj4B80BLSqr41PgoxSvf9qgQuAK98roGE1VWOLiU1uvuxIB5ZrH3H+3p3e/k5n
+	 1K4kuR3SgnmDEMvpXTTjBjf6zSn33HWCtxgrIEKNaGbITHk01uG7AxNu3cYVeVsjUJ
+	 VesUndK6otkBjaQP60X4Oz6SQrkoNGXmdcUSP1pCyX0V4hdi0pTx1MUD5/XbnmqmkO
+	 eW8ejU1xGzK/j9zzQGVHr1u30Ds7z0M2tfZQyj6/niAbMVP2VBpXUuq1lZVI3kmhsO
+	 dmKArDU7ELYSw==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 359D61AC57EF; Sun, 08 Feb 2026 20:55:01 +0000 (GMT)
-Date: Sun, 8 Feb 2026 20:55:01 +0000
+	id 51EBF1AC57F1; Sun, 08 Feb 2026 22:46:50 +0000 (GMT)
+Date: Sun, 8 Feb 2026 22:46:50 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <aYj4JRK023heQnFy@sirena.co.uk>
-References: <aXilaLSzB1xsGWCb@sirena.org.uk>
- <f9afaed3-9db5-4725-a0e5-cb6d6873b3c6@sirena.org.uk>
- <ef58e561-b366-4eb8-bad6-9d0e748f49c1@sirena.org.uk>
- <20260206-euter-weilen-610fef8cb79a@brauner>
+	Matthew Brost <matthew.brost@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Satyanarayana K V P <satyanarayana.k.v.p@intel.com>,
+	Shuicheng Lin <shuicheng.lin@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Subject: linux-next: manual merge of the drm tree with the origin tree
+Message-ID: <aYkSWobP3JUatoHn@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,52 +48,58 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="14qO3GYUpEirAdoT"
+	protocol="application/pgp-signature"; boundary="B62MvGnV4Ep6+BKn"
 Content-Disposition: inline
-In-Reply-To: <20260206-euter-weilen-610fef8cb79a@brauner>
-X-Cookie: Think big.  Pollute the Mississippi.
 
 
---14qO3GYUpEirAdoT
+--B62MvGnV4Ep6+BKn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 06, 2026 at 01:19:12PM +0100, Christian Brauner wrote:
-> On Wed, Feb 04, 2026 at 02:31:06PM +0000, Mark Brown wrote:
+Hi all,
 
-> > This means that vfs-brauner is still held at the version from
-> > next-20260126 and none of the below commits have been in -next:
+Today's linux-next merge of the drm tree got a conflict in:
 
-> This should've been fixed. Not sure what happened.
-> I've reassembled vfs.all completely just to be sure.
+  drivers/gpu/drm/xe/xe_migrate.c
 
-I am seeing an updated version (I've currently got commit
-91dfa1c939f479938d83793389ad7cb9c1faa4de dated 7th Feb) but I'm still
-seeing the same build failure:
+between commit:
 
-  CC       statmount_test
-statmount_test.c:36:26: error: conflicting types for 'statmount_alloc'; have 'struct statmount *(uint64_t,  int,  uint64_t,  unsigned int)' {aka 'struct statmount *(long unsigned int,  int,  long unsigned int,  unsigned int)'}
-   36 | static struct statmount *statmount_alloc(uint64_t mnt_id, int fd, uint64_t mask, unsigned int flags)
-      |                          ^~~~~~~~~~~~~~~
-In file included from statmount_test.c:15:
-statmount.h:91:33: note: previous definition of 'statmount_alloc' with type 'struct statmount *(uint64_t,  uint64_t,  uint64_t)' {aka 'struct statmount *(long unsigned int,  long unsigned int,  long unsigned int)'}
-   91 | static inline struct statmount *statmount_alloc(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask)
-      |                                 ^~~~~~~~~~~~~~~
+  e022c16965b834 ("drm/xe: Fix kerneldoc for xe_migrate_exec_queue")
 
+=66rom the origin tree and commits:
 
---14qO3GYUpEirAdoT
+  fa18290bf0723b ("drm/xe/vf: Shadow buffer management for CCS read/write o=
+perations")
+  5d5ef695497950 ("drm/xe: Fix kerneldoc for xe_migrate_exec_queue")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/drm/xe/xe_migrate.c
+index 9d7329cef910af,078a9bc2821dd6..00000000000000
+--- a/drivers/gpu/drm/xe/xe_migrate.c
++++ b/drivers/gpu/drm/xe/xe_migrate.c
+
+--B62MvGnV4Ep6+BKn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmI+CQACgkQJNaLcl1U
-h9D+rAf/QOf0NJgZDVLj4NHAIFZ/Cet/7m1LoSXz5EqJWDRz5Ejcan/GYFpb1m8b
-SbSgaZ5RUDRLC8q0Qg9fY2zzVJpl2Blb2LMBSb6FKBI3LfQQNG/QDzUELg8oya/j
-7Mlt2HqjKIDp7FHdqelWLzjKvq9m6bCH3yR0ocssjPkXKR4icj7trSXPmPbI0gc0
-45BJNUeJzESvCx9703ld0MNJN1T26IWwas44CTsZPxo+XNyROWg5bZblbcWIL4rS
-d9jnAkbJWa7i8GlEo6Ao8HKxGo/Wt0GSBhZuv4eveF919s54yYeBdpFALC/o1vcS
-EGD+21qktKF9pDspF873dYre68chRw==
-=tHkF
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmJElkACgkQJNaLcl1U
+h9C5MQf+IrUNqHN8u1iJNvgbL+Rmuk+uWKvtZkzWNqaBKGwomc9eAUJk7ocSV1cA
+TuXps/mInmsctnzM89VN3+lLiwDiFg7Ps1TKF5bkcCvKn3WqrV8q0ZRWU9am4oGI
+/fjLRIO163o/+BJDKXfYE+ifepdP10o9IGcOob4n0Hda2Im8+Y08xfXqVovPL99N
+bngNPWxUc0nQzdgzgvYKAlZL21cQhSNrIePe95VMbpuqYbtjCL8EID5b6CyhiNIi
+uB7Ghpz3US7BlCnjVZauHhSNM0uZk0kKQGvCVwaU3itrEfixHBxVH+lTsVVVU8rK
+03tQXUgGJC6lHcVfD5CFv25m0U0bBQ==
+=veOn
 -----END PGP SIGNATURE-----
 
---14qO3GYUpEirAdoT--
+--B62MvGnV4Ep6+BKn--
