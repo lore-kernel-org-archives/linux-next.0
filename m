@@ -1,38 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949E7368276;
-	Fri,  6 Feb 2026 17:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1654923DEB6;
+	Sun,  8 Feb 2026 20:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770397934; cv=none; b=SgAmfOyjy1mkh81LxQzXPxfAb17m4/ih2xiPz53aQCNgQkTaVLMC6j+8hhRRrO2CgoyjST74WHXm2sCLJfxihXB8gL8jRXQqaOmYrfTxb90SCvKrcCBP11JhD1s0GwPvcMuKPAzIK228CMdjHtSTzBv51ZOWI5mTcWKiVMKR1Tw=
+	t=1770584105; cv=none; b=ZZi3iGBGyd+4OE69TtY7Xm5um49hLVNcdXMgM36nILjYvMjz1pCxfs5IFHNHoEGwWxi3NxjLBSlVr2QamABoGcs0W9GbP6eomo+R4jZiKXhHiTX27xluTV3wmOTKKwSU2yZULG1bCwhiGfl91Z7OLpRMbEjR8oVzlvlqb3dPY5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770397934; c=relaxed/simple;
-	bh=8AVwtm++MbnTl9yIRt4zODVRtC92nW/Tdb7STQMC7ts=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rsWEGOq48++RorKarTW/3MzL7ZdIrUYY69MdRnx27dP7HcaHpzK87YZvlZfS16EqhUHl1NDq0F8HA33LCSOo7voKmbUJNOBX6FHOeap0ZjvtIgc2ShbZXZGuib/Yn4YOskFkGHZVgBfF29zovRyNDMcjkAkrFru14BBZDHvL0oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ut46QfW7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770584105; c=relaxed/simple;
+	bh=1ibsnJnBFq+C9SAgY4KCPc13PZBD+2+YbljuBe7Coqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iaTfkf+EAN0cioXvVR1EvDjeUPXnjDAdsUAZLJxg0L5tLAeQuHQ4wW7W8jiYaOk6WpbNeLebCLIag0IZObQAqKjd2OKGVXNJliPFj9qCVAA5M2cbPnb9Ldlq3cbTXeF+g2vueEbirk9f9vb/ZfKj/XC1nj0sMxu/RdZzP+QXq68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CG5X9olp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut46QfW7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E424AC116C6;
-	Fri,  6 Feb 2026 17:12:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CG5X9olp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CDE0C4CEF7;
+	Sun,  8 Feb 2026 20:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770397934;
-	bh=8AVwtm++MbnTl9yIRt4zODVRtC92nW/Tdb7STQMC7ts=;
-	h=Date:From:To:Subject:From;
-	b=Ut46QfW7nFwYr9HI7YmZ3Lfu6wi/PUWJvOvk/azAhjfcoLBmkls7dTghROQFnfERE
-	 twtxfvfg+UlFKsQ+LmotVuCsbsq3fwemhT28MAYVLWjVIX0tOU1kH+fbUzdtm8/iYX
-	 DOc2R8nU4tjn4Ejz+6x69jald2R4cf2e4ox0grHLeTcDExzihwhbGJs1lVnHmvFMkw
-	 icgGX2Gm1scj8NlV3mEonx4EZoRpRhtbDkdQhcFyb8OsmzkssOPBpUf8z2KHASmDE/
-	 bwGHqC+yhT/j2pYoWKrREsLxdDErJ+xu+Tqv7zy6n9PnuBRtlC787TnwrW9OnpEWRU
-	 4uD+3GDRK+U6Q==
+	s=k20201202; t=1770584104;
+	bh=1ibsnJnBFq+C9SAgY4KCPc13PZBD+2+YbljuBe7Coqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CG5X9olpgApxh5ajpfBIViPvJFrIPidzh4udR8f3zkjFhSmOO+WoIOaPlx+/D0aSy
+	 NLdNCM6Dpp98LwVLWRjkQR/EZpfXOTO3qHAK5aLowFfHlEK7b5Eme0PYHomwD3m+wC
+	 EUbuPG2fcyhjCZbJ8DcpXrI2RLTWtnnVe/r6ObgxR1hhUNJtQwhLhvsPth51zYRXVs
+	 nBotS2VZ+89lMJVhanf40gjoPZpHBm9d537KHToVOHFGuBUmaoCVHF4/zUG2uPN6wb
+	 3TUTe10OXy+EuIPHZkiw1Jdg0JsRkNQHHVJgf2KYuUOn1Uy4jHFURVEgkT7YEYLFlD
+	 3IB9d4vbitLwA==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 672701AC57F6; Fri, 06 Feb 2026 17:12:10 +0000 (GMT)
-Date: Fri, 6 Feb 2026 17:12:10 +0000
+	id 359D61AC57EF; Sun, 08 Feb 2026 20:55:01 +0000 (GMT)
+Date: Sun, 8 Feb 2026 20:55:01 +0000
 From: Mark Brown <broonie@kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: No tree for 6th Febuary
-Message-ID: <aYYg6venQi_rIShV@sirena.co.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <aYj4JRK023heQnFy@sirena.co.uk>
+References: <aXilaLSzB1xsGWCb@sirena.org.uk>
+ <f9afaed3-9db5-4725-a0e5-cb6d6873b3c6@sirena.org.uk>
+ <ef58e561-b366-4eb8-bad6-9d0e748f49c1@sirena.org.uk>
+ <20260206-euter-weilen-610fef8cb79a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,36 +47,52 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="U+oeuyZQwYk2Hkp3"
+	protocol="application/pgp-signature"; boundary="14qO3GYUpEirAdoT"
 Content-Disposition: inline
+In-Reply-To: <20260206-euter-weilen-610fef8cb79a@brauner>
 X-Cookie: Think big.  Pollute the Mississippi.
 
 
---U+oeuyZQwYk2Hkp3
+--14qO3GYUpEirAdoT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+On Fri, Feb 06, 2026 at 01:19:12PM +0100, Christian Brauner wrote:
+> On Wed, Feb 04, 2026 at 02:31:06PM +0000, Mark Brown wrote:
 
-Due to a mess up with the scripting there will be no -next tree today, I
-will push one out on Sunday all being well.
+> > This means that vfs-brauner is still held at the version from
+> > next-20260126 and none of the below commits have been in -next:
 
-Thanks,
-Mark
+> This should've been fixed. Not sure what happened.
+> I've reassembled vfs.all completely just to be sure.
 
---U+oeuyZQwYk2Hkp3
+I am seeing an updated version (I've currently got commit
+91dfa1c939f479938d83793389ad7cb9c1faa4de dated 7th Feb) but I'm still
+seeing the same build failure:
+
+  CC       statmount_test
+statmount_test.c:36:26: error: conflicting types for 'statmount_alloc'; have 'struct statmount *(uint64_t,  int,  uint64_t,  unsigned int)' {aka 'struct statmount *(long unsigned int,  int,  long unsigned int,  unsigned int)'}
+   36 | static struct statmount *statmount_alloc(uint64_t mnt_id, int fd, uint64_t mask, unsigned int flags)
+      |                          ^~~~~~~~~~~~~~~
+In file included from statmount_test.c:15:
+statmount.h:91:33: note: previous definition of 'statmount_alloc' with type 'struct statmount *(uint64_t,  uint64_t,  uint64_t)' {aka 'struct statmount *(long unsigned int,  long unsigned int,  long unsigned int)'}
+   91 | static inline struct statmount *statmount_alloc(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask)
+      |                                 ^~~~~~~~~~~~~~~
+
+
+--14qO3GYUpEirAdoT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmGIOkACgkQJNaLcl1U
-h9DH5wf/UlhLUjWbM6L4gI7jD/B+VNXxF5FsPq1NE1JzkTAlyUgxIQ4bR+i5mgBk
-3FWvnVA3Z0ylPqAeQdBEcMAfyV/OtzqUkQUy9D5DATo/cw363ldsLLUPzqcNSgFr
-BizHY12QIcis2A7IpCCEpEK7/oBC2tp5tjPPs9FjTyPwcomUqL8yFFlkXlZgsT26
-G3WHZ81+XPvFdgf22q5FLLUuKK+ODawvhXrD/kyRfS9+PvCI00CuGqoPvw/sZxId
-4Hkev7DBaFqFEU9o/3AYNxNVQ51VuvO5GRV+0883C0WHSLeC8yP934b/mP5RWTnK
-tGBEmn5D9mpAE2peEIhFUvCGIUFuoQ==
-=m2Pv
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmI+CQACgkQJNaLcl1U
+h9D+rAf/QOf0NJgZDVLj4NHAIFZ/Cet/7m1LoSXz5EqJWDRz5Ejcan/GYFpb1m8b
+SbSgaZ5RUDRLC8q0Qg9fY2zzVJpl2Blb2LMBSb6FKBI3LfQQNG/QDzUELg8oya/j
+7Mlt2HqjKIDp7FHdqelWLzjKvq9m6bCH3yR0ocssjPkXKR4icj7trSXPmPbI0gc0
+45BJNUeJzESvCx9703ld0MNJN1T26IWwas44CTsZPxo+XNyROWg5bZblbcWIL4rS
+d9jnAkbJWa7i8GlEo6Ao8HKxGo/Wt0GSBhZuv4eveF919s54yYeBdpFALC/o1vcS
+EGD+21qktKF9pDspF873dYre68chRw==
+=tHkF
 -----END PGP SIGNATURE-----
 
---U+oeuyZQwYk2Hkp3--
+--14qO3GYUpEirAdoT--
