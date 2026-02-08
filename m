@@ -1,41 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB71E344031;
-	Sun,  8 Feb 2026 23:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05824086A;
+	Sun,  8 Feb 2026 23:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770594249; cv=none; b=AgRoGNVVRmDyTpJeg1URJLCOYEkhuIYV9tQMqia1XCMTY0ZslLznVN8xhxGNePyV7M/WnqWxJc53OnYmgqZQNQHHPyg1yGSQZvYQ9mvt9bI+0+47x6h+htaqLv6SMup5IxM1qcW/cPya0+AAJCWBlRCKdyfWZKLveW3mdVDy4iY=
+	t=1770595144; cv=none; b=SGhPAOAPA20jU87nqaeVS2JRypce4JAdEbzwzCEZaWvxbPiH189+EJ4Fy2XEyjPRqIr2X77nmAus6hkEtGlPW0GAhvU97ZKMjVHSOnWqRsYFf9n++1UxOy+hjhF20WU4pu7b9GMaUQ+iXD9tGQ5eVhnsnRpKOQBtFRv8w0yV24k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770594249; c=relaxed/simple;
-	bh=86jNGteaTIhW6F0bybGtyMb1/Ca2/rBLt2gs2P55uN0=;
+	s=arc-20240116; t=1770595144; c=relaxed/simple;
+	bh=wcxtqooFWfZU4NNuxhxqV81XMsZEIHvUSPzdRWukosI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=a4cfri7QRPRbTs5ttD6PRxyw5X0bAeA0N/s6LjWJwf0KTqgNyXSutQrm7aH19qmdu/WyYvT/srBMky/y5cVBUCmP0pnSiIQL/68m0mv7WezDHvL3Xz8Uk2RExuEw249po2FEHaVEVMy3+bu+h0lyCHhBcMv75OCaSiyoifb6N90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMDSBvHU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=tWLSSdEmsUonX5u+bDPCwB0jKvvXGHTiTLxndrP5o608/6BhmaavYXSmXcuquA8HIAPQzICbQbNrVFIjElYToA6Nud4ldydu2hr1FykQOwVwcHFHRj/8UWjjkUzOmL1GgrZexYeUvcMkp0KdqLaGMe2luyBQb20eUupe+awN/QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgtYSZGL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMDSBvHU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23BEAC4CEF7;
-	Sun,  8 Feb 2026 23:44:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgtYSZGL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C267C4CEF7;
+	Sun,  8 Feb 2026 23:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770594249;
-	bh=86jNGteaTIhW6F0bybGtyMb1/Ca2/rBLt2gs2P55uN0=;
+	s=k20201202; t=1770595144;
+	bh=wcxtqooFWfZU4NNuxhxqV81XMsZEIHvUSPzdRWukosI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=LMDSBvHU7DZXWZWz3XI0lYfJz8ENRK9XE85EO28WmUqd++Azcnyu/Dz/79e3h7Rqz
-	 whXu9nITw8cjHimRqRsSzeXvu2aMGcIptEw5DUw8drh1IiZiyPaao4gG4O6Uiwjbjq
-	 vx9YRpOFb8c7p8N09o4dadzk5kx5e7uI+D3jWQJu3LFF7j6usb669YdLk9LXEN2v9E
-	 eCL9QB1IOumXA0kqKm8gdFqnZ89uyHqZHeL+tW7FyqPs7OUiS7ioa7cAsfgy3a8usz
-	 AAI9oKdgRo4DADFaK/UI7BvQC+DZdZekkq5gELTiz5z/fmB0P8gz88X7cAV296JRtC
-	 KYDVKgP1gKyeA==
+	b=KgtYSZGL6Zg6/IlnICYcyefNNJ7mra0s5kbTD0B0PoclrP1AIj9EYlMbI8m1Y8tpz
+	 1ismE79KMpkix4JgziEVpHer6GfJBxwxgsyadt1ehsJNEZBe+Q11bQjPFcEACd7t6Y
+	 t0E8Warg0legS2ej9uVgYHDnxeebzGHRfX4ZDYtTLMk9DrYRyzaayk3p5Zep4xuQ66
+	 WWidIUxPURCSS2PkXbRonbkoSkQ3CnXss6YshebX2u5S9jhU7Xrd/rpy/qC4h0r+lh
+	 g/3NDeotkctyzBSV6FpWYGIv8PsVA/SiFjfKa7CMj0QLwpKZPodr4kT0n120twIgaU
+	 Gp9CL2L+Np+jA==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 84D121AC57F0; Sun, 08 Feb 2026 23:44:06 +0000 (GMT)
-Date: Sun, 8 Feb 2026 23:44:06 +0000
+	id AFAE51AC57F0; Sun, 08 Feb 2026 23:59:01 +0000 (GMT)
+Date: Sun, 8 Feb 2026 23:59:01 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Helge Deller <deller@gmx.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the fbdev tree
-Message-ID: <aYkfxvZGxTwUTQfK@sirena.co.uk>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Joerg Roedel <joerg.roedel@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Subject: linux-next: manual merge of the iommu tree with the pci tree
+Message-ID: <aYkjRSFQwbF0-9vi@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,56 +46,66 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="meA3W6zzJdnTaZUw"
+	protocol="application/pgp-signature"; boundary="VnzwO4LM2u5loZRc"
 Content-Disposition: inline
 
 
---meA3W6zzJdnTaZUw
+--VnzwO4LM2u5loZRc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the fbdev tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the iommu tree got a conflict in:
 
-x86_64-linux-gnu-ld: vmlinux.o: in function `au1100fb_drv_remove':
-au1100fb.c:(.text+0x251e220): undefined reference to `unregister_framebuffer'
-x86_64-linux-gnu-ld: au1100fb.c:(.text+0x251e22c): undefined reference to `fb_dealloc_cmap'
-x86_64-linux-gnu-ld: vmlinux.o: in function `au1100fb_setup':
-au1100fb.c:(.text+0x251ec0f): undefined reference to `fb_get_options'
-x86_64-linux-gnu-ld: vmlinux.o: in function `au1100fb_drv_probe':
-au1100fb.c:(.text+0x252096f): undefined reference to `fb_alloc_cmap'
-x86_64-linux-gnu-ld: au1100fb.c:(.text+0x2520997): undefined reference to `register_framebuffer'
-x86_64-linux-gnu-ld: au1100fb.c:(.text+0x2520c08): undefined reference to `fb_dealloc_cmap'
-x86_64-linux-gnu-ld: vmlinux.o: in function `BSWAP_SHUFB_CTL':
-sha1-avx2-asm.o:(.rodata+0xc38498): undefined reference to `fb_io_read'
-x86_64-linux-gnu-ld: sha1-avx2-asm.o:(.rodata+0xc384a0): undefined reference to `fb_io_write'
-x86_64-linux-gnu-ld: sha1-avx2-asm.o:(.rodata+0xc384d8): undefined reference to `cfb_fillrect'
-x86_64-linux-gnu-ld: sha1-avx2-asm.o:(.rodata+0xc384e0): undefined reference to `cfb_copyarea'
-x86_64-linux-gnu-ld: sha1-avx2-asm.o:(.rodata+0xc384e8): undefined reference to `cfb_imageblit'
-make[3]: *** [/tmp/next/build/scripts/Makefile.vmlinux:72: vmlinux.unstripped] Error 1
-make[2]: *** [/tmp/next/build/Makefile:1280: vmlinux] Error 2
+  drivers/pci/pci.c
 
-Caused by commit
+between commit:
 
-  c357150378862b (fbdev: au1100fb: Make driver compilable on non-mips platforms)
+  183c291caa34cc ("PCI: Use lockdep_assert_held(pci_bus_sem) to verify lock=
+ is held")
 
-I have used the version from 20260205 instead.
+=66rom the pci tree and commit:
 
---meA3W6zzJdnTaZUw
+  f5b16b802174fe ("PCI: Suspend iommu function prior to resetting a device")
+
+=66rom the iommu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/pci/pci.c
+index f7630fb3092857,a0ba42ae7ee01e..00000000000000
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@@ -13,7 -13,7 +13,8 @@@
+  #include <linux/delay.h>
+  #include <linux/dmi.h>
+  #include <linux/init.h>
++ #include <linux/iommu.h>
+ +#include <linux/lockdep.h>
+  #include <linux/msi.h>
+  #include <linux/of.h>
+  #include <linux/pci.h>
+
+--VnzwO4LM2u5loZRc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmJH8UACgkQJNaLcl1U
-h9CzwAf/dcGHtOs76Kp3fqnetxkrzWsWpaAEobJ0+s/5Wj+GpAhjfzN+oIHfNM5g
-iBOglAaWBOv2gAYLOs3h+8+t8tq/znEVLcvCXPsUiqill/6u/J4/nvae39ZrT4LX
-rbNVfNrfqJZ8lyeRrvtAqsaqjOt0NUXkXbOlTyncEbJW/Azh1Mn0sDC5VbZ6BExE
-IxDdHA7dCGl1u6iIC1ShY28W3dhekwSkGbuaRc0W5+zNLJ/uvFMZCofdxkVwNnH3
-FbyTZqhSxOw5X2eYqeeWNRvGQeVOE5THrKMVe8cX8/DouK9L/zXGgUcqFSJyw8ht
-BWnfsEHaf/LzrgrDeP5tl02NLAxgkQ==
-=Xbq0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmJI0QACgkQJNaLcl1U
+h9Dltwf/TPBjT9CRP2gVyAj3CxAuICjyuIHWgvGuZpeBX5++P1FiuGKN4Vo5ZaWO
+wBybfhuaPbntje8CHIr7CBNW3O1NcfzAWSv/qFvIAQvcD5BhL+wrr0JvUgoxnG1E
+CvHJT+Lc/WzpbeK62gI4MZP4GrW77m7K/zkyE+VA6O5OqlZkNkQwaWIE+cZQV2N6
+K+kgidsXbzfE+d2BED68WrXczrlpEr43tqMdLdwMRrhxDmPcWfWBDFg8cWUnfVlo
+GjP6TJNO9DuBvyTHyzyszfAezfKC0KIMkpiF644ryQDpFlfdFpmfdUEl9s9REaeE
+UQojMJSfNDb8EEIC8bWnUtTgGNi8ag==
+=a8um
 -----END PGP SIGNATURE-----
 
---meA3W6zzJdnTaZUw--
+--VnzwO4LM2u5loZRc--
