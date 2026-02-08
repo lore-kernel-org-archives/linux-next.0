@@ -1,46 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2768B665;
-	Sun,  8 Feb 2026 22:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C53B665;
+	Sun,  8 Feb 2026 22:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770590813; cv=none; b=YLpBq7U/sK/TyqrbzJ4tKGSTYBUceXkGn6KzSdUlDWucnn/+VvrBEGTUu59mPQbRBB5IeVSvjT/qD84ZehlePOyiAuTTLVbMCyq26vtkSOopGen2WuLSdaEjZCaV5J983SltJmUIXaMmuQI/jLUWUjbEoe6TqS8e6DcNlzZweRE=
+	t=1770590826; cv=none; b=OU2a3Vy7ShJqPh5W1wIq8j5SFP+URUN8YB8+NsfeYz5eDRcMwXEWi+L9Kb4PpityhsHc5GUC0KzuEwgoW92PPMVQmKUwaMGkdiDkQF5ogz1fc2ShMWfwr2w7I9v8Rq3qzYMwl2hfn1fMhJ8pCU7XUv0I4mSh4+fd8OFVpueAh1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770590813; c=relaxed/simple;
-	bh=hEzUixNjVVNaa3Bxv+XxJ+VxH06BOg0rYo4G6AVrlLA=;
+	s=arc-20240116; t=1770590826; c=relaxed/simple;
+	bh=LQ4s2e8Lj7w21FEOqYhdWpp7zK/QswGp8/y51DxHH1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bUpFoniR6Zrdn4XnOmvfwOLBwjd/vtiyqQYoQGVEYRfc3E54W4lMm4IlTGHDMuEhA5zT90ehucMqLmeHGZmlVvAXUTnC9heboNnp5WjcPBpYcrwgn4lpbr1Q9mAoPCA1ft3YLY7EcwZeTr896GgO6t4HdAyvP0nq7j7nhwR2b/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz+zDOcx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=ub88W3qpvCnjPjoyIFragzV+3jvO5F9a9MK93mcMz1H45BsE6EeWn6it/sTAjaZfcVNmEu9RrB9P7bpC1oVy2obr0mkIMplH2vJ2tmCMKv6cDVY7Zce1yikEMJ8aLo4a7ga7o22dguM+hFopOThTXxUC6+9XS0ezZyaSYggcumU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKA8gGtX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz+zDOcx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987C4C4CEF7;
-	Sun,  8 Feb 2026 22:46:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKA8gGtX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D863C4CEF7;
+	Sun,  8 Feb 2026 22:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770590813;
-	bh=hEzUixNjVVNaa3Bxv+XxJ+VxH06BOg0rYo4G6AVrlLA=;
+	s=k20201202; t=1770590825;
+	bh=LQ4s2e8Lj7w21FEOqYhdWpp7zK/QswGp8/y51DxHH1g=;
 	h=Date:From:To:Cc:Subject:From;
-	b=mz+zDOcxqewnhtiTyX911RPqDHx555kfBqnju6WLfG64Hxge/kJq+aZwdvMiDzr1Q
-	 FslSqj4B80BLSqr41PgoxSvf9qgQuAK98roGE1VWOLiU1uvuxIB5ZrH3H+3p3e/k5n
-	 1K4kuR3SgnmDEMvpXTTjBjf6zSn33HWCtxgrIEKNaGbITHk01uG7AxNu3cYVeVsjUJ
-	 VesUndK6otkBjaQP60X4Oz6SQrkoNGXmdcUSP1pCyX0V4hdi0pTx1MUD5/XbnmqmkO
-	 eW8ejU1xGzK/j9zzQGVHr1u30Ds7z0M2tfZQyj6/niAbMVP2VBpXUuq1lZVI3kmhsO
-	 dmKArDU7ELYSw==
+	b=VKA8gGtXiMn7/AEZ76qtATkcCdfMhC8l4N8MJtEvLUNOw4IEl+/3vUyQ1c+RakH/E
+	 3XYBGG7D2mk2JaUhgXAHSCbSB+9sHAv2duMV/o0z8YfdqT6DE11Jmflonkhbbc1esM
+	 UUVneykSDtRy2bHMNeRu/0pNC06+i3D2pmZ1JHxOnkftSKfcboMOWj60RKS0hmxW4V
+	 JXPV+DCMcf1nESnfXktVZq9z8klgvPwnAudYP8WGnQnDJPxRIUybCJ47aw0HU/CRix
+	 DyNrJOBMaVndSTueBEGaBDgpw2ceEVaJRMBh2THkmV5v30ThyibSxZUeligjL08P7v
+	 oAYNUJQuRr5HQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 51EBF1AC57F1; Sun, 08 Feb 2026 22:46:50 +0000 (GMT)
-Date: Sun, 8 Feb 2026 22:46:50 +0000
+	id E6DEF1AC57F1; Sun, 08 Feb 2026 22:47:02 +0000 (GMT)
+Date: Sun, 8 Feb 2026 22:47:02 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>,
+	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Raag Jadav <raag.jadav@intel.com>,
+	Riana Tauro <riana.tauro@intel.com>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Satyanarayana K V P <satyanarayana.k.v.p@intel.com>,
-	Shuicheng Lin <shuicheng.lin@intel.com>,
 	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
 Subject: linux-next: manual merge of the drm tree with the origin tree
-Message-ID: <aYkSWobP3JUatoHn@sirena.co.uk>
+Message-ID: <aYkSZpjepGCh6ZGI@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,11 +49,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="B62MvGnV4Ep6+BKn"
+	protocol="application/pgp-signature"; boundary="9UUSVj4PRQBDK18F"
 Content-Disposition: inline
 
 
---B62MvGnV4Ep6+BKn
+--9UUSVj4PRQBDK18F
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -61,17 +62,17 @@ Hi all,
 
 Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_migrate.c
+  drivers/gpu/drm/xe/xe_guc.c
 
 between commit:
 
-  e022c16965b834 ("drm/xe: Fix kerneldoc for xe_migrate_exec_queue")
+  4cb1b327135ddd ("drm/xe/guc: Fix CFI violation in debugfs access.")
 
 =66rom the origin tree and commits:
 
-  fa18290bf0723b ("drm/xe/vf: Shadow buffer management for CCS read/write o=
-perations")
-  5d5ef695497950 ("drm/xe: Fix kerneldoc for xe_migrate_exec_queue")
+  43fb9e113bf11d ("drm/xe/gt: Introduce runtime suspend/resume")
+  6e035abf98b05f ("drm/xe/guc: Fix CFI violation in debugfs access.")
+  3947e482b5ebb9 ("drm/xe/guc: Use scope-based cleanup")
 
 =66rom the drm tree.
 
@@ -82,24 +83,24 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpu/drm/xe/xe_migrate.c
-index 9d7329cef910af,078a9bc2821dd6..00000000000000
---- a/drivers/gpu/drm/xe/xe_migrate.c
-+++ b/drivers/gpu/drm/xe/xe_migrate.c
+diff --cc drivers/gpu/drm/xe/xe_guc.c
+index edb939f2626851,6df7c3f260e5bd..00000000000000
+--- a/drivers/gpu/drm/xe/xe_guc.c
++++ b/drivers/gpu/drm/xe/xe_guc.c
 
---B62MvGnV4Ep6+BKn
+--9UUSVj4PRQBDK18F
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmJElkACgkQJNaLcl1U
-h9C5MQf+IrUNqHN8u1iJNvgbL+Rmuk+uWKvtZkzWNqaBKGwomc9eAUJk7ocSV1cA
-TuXps/mInmsctnzM89VN3+lLiwDiFg7Ps1TKF5bkcCvKn3WqrV8q0ZRWU9am4oGI
-/fjLRIO163o/+BJDKXfYE+ifepdP10o9IGcOob4n0Hda2Im8+Y08xfXqVovPL99N
-bngNPWxUc0nQzdgzgvYKAlZL21cQhSNrIePe95VMbpuqYbtjCL8EID5b6CyhiNIi
-uB7Ghpz3US7BlCnjVZauHhSNM0uZk0kKQGvCVwaU3itrEfixHBxVH+lTsVVVU8rK
-03tQXUgGJC6lHcVfD5CFv25m0U0bBQ==
-=veOn
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmJEmYACgkQJNaLcl1U
+h9Bmswf+PHJQScW6m6tWHwj5lGFXMZq35rX5mR1zBpuhozezd71BbCpnGv7vXFSU
+BxfdB27gB4JzphXY7ZXu9vhpUfJioU4mNyV30XKTC9BowNa7pncg4E+2uEkK7+lI
+Ran6ByjlyGHi2R7TMIdJNDEUUTd09WKQ/+FLoj4Wyr3OgHv21+gySiAfgsMhkDXA
+/j/m9mT2WrFMM2vttLHVCOzNkb6N8E2u+dkKpe/JqO1FpaehblzXxoUQtvdOzB2I
+J+NiZejfNensiPU4wPmGr/QeGty6a4/FxbSMDUxK8LJEjVcmZPUFc/DgsbuA46ds
+XVpUSDRzMuGBalAE3yiPkwgHD5r13g==
+=edQg
 -----END PGP SIGNATURE-----
 
---B62MvGnV4Ep6+BKn--
+--9UUSVj4PRQBDK18F--
