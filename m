@@ -1,76 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B883815D0;
-	Mon,  9 Feb 2026 16:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9444A2D372D;
+	Mon,  9 Feb 2026 17:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770656291; cv=none; b=oItgtKiThUqStg7fcwQGdWNx0lcWOqmgTRDMPtsITMVIZ6g5/yg71bpdy+lWkEXcHTVM3oMfxupZPU95TdL0NF7NbFemm0ju+/yFN/itoDiWrChPIFtWxA+TwfEYsmNv79McdYgkgVI/pRQZ8izpLsEJ/z0lTReeXUKZKp0FElA=
+	t=1770656466; cv=none; b=Rox50GRfjjoPCzZIx6IxqjBmAUrtb9g2nzc8Lv/HbcBUKxlN0uqmmVby8wAKrr8XX+snOmw27RDz5iUQU62eX9t+O8yi5ng+YEAhL+2uNHRsXibVw8hVLJBBHPSnS25P43szCioYKRKZRKygkY4UjCvwBFKQaN1jned6j1Bph8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770656291; c=relaxed/simple;
-	bh=h32mq7vh6uiki+RD8P3XcMxIXHYNE1xMDIfwFh+CdOI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AtZlmU6q3SmviVMeauq2MYxoIjlA6tbChXtDWecCfRsS4KfYr3lc7mCwFMwwmbGwFsBgKDokxoCt1RzR0/Cyf0tlHFQOQ4sWOclSsC/r6qROHAMWucMnyC1mdEtshHy2To5l/1pUD6WdXY+pI77azvcllfA4keL7WQTaHkCkcUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TBDTUWKb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770656466; c=relaxed/simple;
+	bh=SKewjU7CYdvaDIEpLc94wL1gMWBWulcxkimjBffNuMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pog9JOZN18QcWo2EbOd5vImHuUuQRz91cCQ2Rq/GBO0JBFks7nsSn+Ka1YMGQoQGJ1H0wnVNyThhS/eeWLrVAJjtlPo0mwELTIkhiAhqBq8ELXUdvnPaaboX4yX00lR6T21vqoUjshSyoLpeBCvbJRtkBvTTwpYxkmLUr83CZoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anKIre/J; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TBDTUWKb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7CADC19423;
-	Mon,  9 Feb 2026 16:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1770656291;
-	bh=h32mq7vh6uiki+RD8P3XcMxIXHYNE1xMDIfwFh+CdOI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TBDTUWKb0jp7MYE2hbxkzrnWJdbIHXCFReopekZhwPAiFl7r1QVOIJdBxGOWb7IX9
-	 mGKFagzVDkuyOXu6O1iIw2Q2J/aLN7+eAaL8V2LHKIssnktk1vNd5OJxFSm0ulOmG8
-	 T5IZ2ylw+J70UeX42NGWYDMeyS06LtHtBTHxlmWM=
-Date: Mon, 9 Feb 2026 08:58:10 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Yury Norov <ynorov@nvidia.com>
-Subject: Re: linux-next: manual merge of the ftrace tree with the
- mm-nonmm-stable tree
-Message-Id: <20260209085810.9aa1e0c9e8cac00ba9585171@linux-foundation.org>
-In-Reply-To: <aYoAtbc4L0N-g6C-@sirena.co.uk>
-References: <aYoAtbc4L0N-g6C-@sirena.co.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anKIre/J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB670C116C6;
+	Mon,  9 Feb 2026 17:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770656466;
+	bh=SKewjU7CYdvaDIEpLc94wL1gMWBWulcxkimjBffNuMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=anKIre/Jh1HtSnVt2tRbTo0o4ItdSkqas86oXaTNZw1I2hpQ2vRyb8oMxGCVK9gww
+	 WRxe9hVDGCvgoEpYrhCXT2lwr3r8nkwNPtkdHcvs3yOPd7qj9A6/P08132Jzz1iJf4
+	 khx1RWmqrD9TkTnWWe8/rYllIkfVgqoVHnPe1/HaeLE2lZcXYxkNnUUtbQn30tRbox
+	 0zsfE0yNrYqfBhcE/GBur1yoL8NtY3m+PtUYGncKGMA+mw8rMun6mCmbbafJX+MJtL
+	 kYK3XIKp9YS7XlJBtk8iuZwHse9QaCjNX4FGdy1OaoJjWV+3aZzPQfR5sVNHVOsgHo
+	 aVMUHXlC9vrUw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id D1DCA1AC57F0; Mon, 09 Feb 2026 17:01:02 +0000 (GMT)
+Date: Mon, 9 Feb 2026 17:01:02 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the device-mapper tree
+Message-ID: <aYoSziMI3eg7BDAo@sirena.co.uk>
+References: <aXpyXrnoOJI7EkyL@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u0p64MRMeRyXdFlJ"
+Content-Disposition: inline
+In-Reply-To: <aXpyXrnoOJI7EkyL@sirena.org.uk>
+X-Cookie: Think big.  Pollute the Mississippi.
 
-On Mon, 9 Feb 2026 15:43:49 +0000 Mark Brown <broonie@kernel.org> wrote:
 
-> Today's linux-next merge of the ftrace tree got a conflict in:
-> 
->   kernel/trace/trace.c
-> 
-> between commit:
-> 
->   86e685ff364394 ("tracing: remove size parameter in __trace_puts()")
-> 
-> from the mm-nonmm-stable tree and commits:
-> 
->   27931ee8f45415 ("tracing: Move trace_printk functions out of trace.c and into trace_printk.c")
->   0e730bc067e7a7 ("tracing: Move __trace_buffer_{un}lock_*() functions to trace.h")
-> 
-> from the ftrace tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+--u0p64MRMeRyXdFlJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yikes.
+On Wed, Jan 28, 2026 at 08:32:30PM +0000, Mark Brown wrote:
+> Commit
+>=20
+>   218b16992a37e ("dm mpath: make pg_init_delay_msecs settable")
+>=20
+> is missing a Signed-off-by from its committer
 
-How about I drop "tracing: remove size parameter in __trace_puts()" and
-"tracing: move tracing declarations from kernel.h to a dedicated
-header"?
+This issue is still present in today's -next.
+
+--u0p64MRMeRyXdFlJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmKEs4ACgkQJNaLcl1U
+h9Digwf9HKVinxqAG5iN4sq8rWKU1tvgnOLZaCBglJTVyunvfCjwIsSCzGcZ9VE+
+fDoE8ReUetk+TdLdu7xqTITAdzl1nN7sbu7GsH1SU6+VlOK2jWxxLc8HrgEgvVsC
+dZyiv4Rfzjd3IaCIYwfE866j6jKOlUpWpMZBWMtO9sYKbKeOo4fbJkclmkD04SX6
+HiDqwB+pX6MOyjt7v+v9UIQu9GheWdVlbtGxO4STdJLJVQRvsB4RWHoPGvKRS4dz
+X6bOo+JOH/JBF7qRffVRpdXnrVu4gjVCOtBPOoIfs9JYt0X4qT2ajTAhtzoLO64m
+vJD71ek/oIvMmvzvqhLghhUzopjeSQ==
+=THl2
+-----END PGP SIGNATURE-----
+
+--u0p64MRMeRyXdFlJ--
