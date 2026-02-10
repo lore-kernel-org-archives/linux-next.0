@@ -1,122 +1,127 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3102D3733;
-	Tue, 10 Feb 2026 05:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770700760; cv=none; b=DTN5jNghpW9vU2D99dRLdA4wOhxlGhKBYResZd1EdPDIhPIS2rLwz1FPsIgOCZqVV2b9dZdDu0jcKZpF4a2ix/18y8d5sW9criH+isHz/aveQ1ab8aRJ0O0R+8Pkn9nn+a2RIw0y9na+JLfPJPa8cZTzcq7uB8T+2oHmrf/jJis=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770700760; c=relaxed/simple;
-	bh=RO8xhFWKjwhDTNMhmsrm32RpgUP7sLJn6gmilTiP+rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XQ1N8NUaJxmfopJaU94pPj/vwG2jratjtqCj6Hck3xHtTAu84Ta569o1u/F5XpCEvy5ihkjpT23Q7stFE7dlxgzqqQ3IBBG4XibGJ8s+Wv2pCVEO+bzdup6rvFcREmfkWZaQ3y6/K8Ov22KoQlV17MGcaLclbjMyBQIgKlAsXxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ideP3PQu; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5974B33A9E5
+	for <linux-next@vger.kernel.org>; Tue, 10 Feb 2026 08:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770713811; cv=pass; b=CEBwOvV31gd6Hmwru+ne6XOAs++BDgU/2ahzYTVkJ0VUgvoWYydY1Q5bGmSOR/yiin4df91aDv+GiyJq2FFdHKi19xeORvqquCMSqkkhmwM8/N4atPszoAgVqoVV7QR/0rSKK3uD2sJ1n6bQs02/X6Q1L9M4dBmAh2jh5+IMsps=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770713811; c=relaxed/simple;
+	bh=aXBxYbeVhZxo6I3+OIVlYQrgePmLDGWZfPjy2dNKowg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CajyOXq65loKhOh+k0DLRV2HnKF3XV0t4MewAaH1H2eel+zPjgUUkPr3R0pfKAE3dl/N80xhKreuyapVGTaRNx+6AtdouJABug02Fv3Off3AxOSMqptb+bWN7YBBuxQAIsHzF7O6EMOZbMIwBKEI/EAYx0Hm2ysRWKweAETPzmQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwoHZKFN; arc=pass smtp.client-ip=74.125.82.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ideP3PQu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1770700749;
-	bh=PQkOaom1fuMH2JcH7GusxpQcGSzRYXx3nMv6e1NaaFA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ideP3PQuuRIUkhM38lRZvpSO42MTZWm0AUwU1MQJO7E24O4rEkS2Lnipv7AXC7qch
-	 yepseeRzSGoaX+DVVUTeDBOcOdXZS+qMhsN4goPcvt8rrXoTFkkRK2nwRUhs/VbtIW
-	 aQku+//06ynKQ0/J3tfYMAWishZxovv+XpYK6No+b4hMyVeWKRxJdusLRTsM9jdv5G
-	 JDSCnt5D0hRAARH/jBJkx03lximO9F2rBaymgIQYDXH+hxCcwNj1BIBy2OLNAwERZS
-	 w26qMV5zLqMsG4OlAP9P+WMUFyUL8ZsLDp6Fu9NfAzp4MB1ZMDupC93PWxR/0lGZn5
-	 +DjW55mpOE/qA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4f98xQ5Rqzz4wH9;
-	Tue, 10 Feb 2026 16:19:06 +1100 (AEDT)
-Date: Tue, 10 Feb 2026 16:19:04 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linux Next Mailing List  <linux-next@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Andreas Larsson
- <andreas@gaisler.com>, Christoph Lameter <cl@linux-foundation.org>, Chuck
- Lever <chuck.lever@oracle.com>, Dennis Zhou <dennis@kernel.org>, Dipen
- Patel <dipenp@nvidia.com>, Gabriel Krisman Bertazi <krisman@collabora.com>,
- Ingo Molnar <mingo@kernel.org>, Lee Jones <lee@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Miguel Ojeda <ojeda@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, Tyler Hicks
- <code@tyhicks.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: trees being removed
-Message-ID: <20260210051904.1d22a634@canb.auug.org.au>
-In-Reply-To: <8b249d75a33bfde87f725e89c2b82c297a2b1b45.camel@suse.de>
-References: <20251215184126.39dae2c7@canb.auug.org.au>
-	<8b249d75a33bfde87f725e89c2b82c297a2b1b45.camel@suse.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwoHZKFN"
+Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-124b07e5fe4so377430c88.3
+        for <linux-next@vger.kernel.org>; Tue, 10 Feb 2026 00:56:49 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770713808; cv=none;
+        d=google.com; s=arc-20240605;
+        b=jBVsQyqofnnV41F8opKLS11TTImHyyCFilrLi9ldbbofsW+Y0p1Y2OkCmp+KMg9CFA
+         w8sTRvTKIt0zH3FrxjDA54qeeSDqo1pGWGaXIwT060ULnboBXiR4mMpDw+R5Y2Y1SAvA
+         Rs0m/gZzHkU6wKP2wR43Z4mqCzs6y2GQ0nI5gYWZuyGPLe6wb0YwnXfXpD7We7RNETeR
+         qa1v7daI+LO70hLdw3+7+0+qawlt527eR8tXgf04O4LWxPr6BCrm1frNsWLUYhI9rhHo
+         tkHzJ++zBRcQuKyk2ZrvH9jvJHwxDdAwcFcRH6AqOR8cO2qimWIPBwHzjWbBjB8jr1CL
+         XmGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=o0TbjqkXCG8vCO0P97Z3XLOfGaNWuyWnyzx2yegPCmA=;
+        fh=HjJ+tPyDwbf3JCSDod14VCHBlpjIpkJ3BI03+Ov3b7k=;
+        b=CLRmlqTE9xkH3GuQknw1iWD2KfHIxjf9eVqXTPPLvIpV8/i2+Pyn9xUcXAgXDQ3uL8
+         pkA1K9CdUq8Y+S6mvDpGIA7d/kXoF8rpr2TZG9vXFQ+UZoOsW+Q4Gk3sx3NudQ3is9mj
+         iys/otmsVAc9dE5ELCXUf3D9NovTrkW8f8Fb45ZpUMTT0QhYEdcgDAUhJyiPW5c7l4Hx
+         y0Ody5CFrUU35yXtXtGlOfmPRRjF57JIYViS7GB0tgIoN4YUtmNB45RzeLlWehLf3mv+
+         2+avRNkZAgM2iXhFmdKJHb8raUScU+mG7LCfQempvWzkCkEm1YQ7EvyPqamDnFSt3nDr
+         0B2g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770713808; x=1771318608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o0TbjqkXCG8vCO0P97Z3XLOfGaNWuyWnyzx2yegPCmA=;
+        b=bwoHZKFN4OtaX56U5SnDa2uG5nngOkA+ncUaq9AmIusMKkTkuwv9+xnveE7z9j+pj0
+         TK1GSoSWTagKv1lLorYDKdGiHffj+YrO4uqSxYla6rYohMFpaSRV6a0zKB/7Kns2efBT
+         yV61bsBK/KWkgrYonb5NdZcQM6qYY1tnsTa+6aHqKPn2xB8SPMRl/Rl8SHHfoDj5+Aeo
+         rDZjsojNpI0b6sDT+dJT2pJI2YH7zwKlLXYEFxnw9OqHzfw2skYerUXSZoNdYhxXdlSq
+         LFJegnObhq6aIAYKQGrt3WKgCp2kxCqY8M4h+5TBWIon/RfT4JtKCmoTc0DdF+g78rg1
+         CfyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770713808; x=1771318608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=o0TbjqkXCG8vCO0P97Z3XLOfGaNWuyWnyzx2yegPCmA=;
+        b=YcxnbVytN9t+acCJ7vQy33A1HjpZxmVbC8gd5zdZqGtaefIAggh+bVBmesvQjXm8gi
+         cENEN/76FO9d5TzXLZSBJQXN4ieJUeney1hiN2TFvW0PMTF1uF3aQB+63tPS+weItGL/
+         M1nTIdqiM5aWBJ3Dlh3Gr1AE6sjmCaP/0nDn3TlgELBkSpxKGYmlyrKkHDSE5pYPv2Ag
+         Aw4eiEqUR4iawDI4JwyXS/p6Aiastk47rjLULVJGc6jFapSJsWjmJrKoI17kYdWFLtHJ
+         juKGtIOPS7zgE6aQBJ2axsIRZwzRkLW5w0ox8g9TWxZCtQSEKxu/sdK5D8di5KyCIHRz
+         5u7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWVGv7sRsJA5FH5dMYb1oDiROaEUpxOBuQJbR8ktLJHBZvckFqNSyaRZUclF6+2tiJEE2vc0YuswO41@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBLPx/0BgKRAOP/jCQM9v019CCv479P4q6wXAJpGjVm4aZkFic
+	dXeJ6suZTcp23nFKyHzlImufpIZwZyOWJUtM+4ySdbXwKtWfXK+9H9kY8HIuEDJjYQgrIXi01ZC
+	R6S/fF3VOeLaapyXACX2e2Tvl6NFyHlY=
+X-Gm-Gg: AZuq6aJFryE2BsS8kcfG7n6o3nlI9rLsm8cCvTgQZ+a2OFDIKFVkSDZO5ZGN5SkYqYO
+	uSe9EKdhdU75sFbBppx+GWEYZAY540e3yAMs3wT7tOHDOB/EWdI4ppoUY8w7Wxl2RuYEdqw/Nzm
+	SjeTT3obx6s2D0LPQfAeggfBo/2d/uLhMEGv523uCooFLh3C5ffSpGEVJInnUpkN5DSlDQUJCmF
+	IH3j+dN1FZNC2HbrZUbF7j+/E5WzgSb8+G8J0sAZt9poT0ALPhWNYx1b2H68P1qionDcEn1nO6S
+	IrsUAUMn1tLLmp+omyCUjMT/SLCPnTaYCJO/Y5jvt33G/q6ykJdBEog0tpYa78jfoLXnOqaAd+X
+	0ZF5Poiw9q1fTqEZbDWFlNrO7
+X-Received: by 2002:a05:7301:d17:b0:2b7:121a:99f with SMTP id
+ 5a478bee46e88-2ba8caf671fmr212585eec.0.1770713808366; Tue, 10 Feb 2026
+ 00:56:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fOni75moMGcGp2gQK+OJsog";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/fOni75moMGcGp2gQK+OJsog
-Content-Type: text/plain; charset=UTF-8
+References: <20260209140533.194251-1-9erthalion6@gmail.com>
+In-Reply-To: <20260209140533.194251-1-9erthalion6@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 10 Feb 2026 09:56:36 +0100
+X-Gm-Features: AZwV_QhoQIBrlXQb9p-Te6elgDG-x3oBl25Rk3Aj45Sd7rj9jbMPlIwZYS--B8Q
+Message-ID: <CANiq72mW=hcvUGt=WENRiYVeVbb2bnYzizE00Eo-MW3b_MwRrg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf tests workload: Formatting for code_with_type.rs
+To: Dmitrii Dolgov <9erthalion6@gmail.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Mark Brown <broonie@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>, 
+	Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jean,
-
-On Mon, 09 Feb 2026 13:33:32 +0100 Jean Delvare <jdelvare@suse.de> wrote:
+On Mon, Feb 9, 2026 at 3:05=E2=80=AFPM Dmitrii Dolgov <9erthalion6@gmail.co=
+m> wrote:
 >
-> Hi Stephen,
->=20
-> On Mon, 2025-12-15 at 18:41 +1100, Stephen Rothwell wrote:
-> > The following trees are going to be removed from linux-next because they
-> > have not been updated in more than a year.=C2=A0 If you want a tree kep=
-t,
-> > please just reply and let me know (and update its branch).=C2=A0 If you=
- want
-> > a tree restored after it has been removed, just let me know (and update
-> > its branch).
-> >=20
-> > Tree			Last commit date
-> > =C2=A0 URL
-> > =C2=A0 comits (if any)
-> > ----			----------------
-> > (...)
-> > dmi			2024-05-14 11:23:02 +0200
-> > =C2=A0 https://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging=
-.git#dmi-for-next
-> >  =20
->=20
-> I have DMI updates to send to Linus again, so I have updated the DMI
-> tree above, and I would appreciate if you could include it in linux-
-> next again. Thanks for your work.
->=20
-> --=20
-> Jean Delvare
-> SUSE L3 Support
+> One part of the rust code for code_with_type workload wasn't properly
+> formatted. Pass it through rustfmt to fix that.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202602091357.oyRv6hgQ-lkp@i=
+ntel.com/
+> Signed-off-by: Dmitrii Dolgov <9erthalion6@gmail.com>
 
-Mark (cc'd) has taken over linux-next ...
+Could this please be applied (or fixed in-place)?
 
---=20
+It is now in next-20260209, and we check this in different CIs. It
+also makes LKP give spurious reports, e.g.:
+
+  https://lore.kernel.org/all/202602100751.ldfRitCJ-lkp@intel.com/
+
+Thanks!
+
+Fixes: 2e05bb52a12d ("perf test workload: Add code_with_type test workload"=
+)
+
+Cc'ing Mark since I think the plan is to check in linux-next.
+
 Cheers,
-Stephen Rothwell
-
---Sig_/fOni75moMGcGp2gQK+OJsog
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmmKv8gACgkQAVBC80lX
-0Gxaggf+LN3yBRs+rDdBu6fef9+KWPSYhRu0gMCx8WzitaF0Pnvyn2x2DSxgEc8E
-m7mf/rMcrvQ9Rdgpj6t1BTR/OkN9fwzfHD03yDBDWQb+tbTiLIfQimgG4AOZ5msD
-TyUskjboOHU5GvN+orpjaD7vwJCnSMJMch40wZWOQKfWBiTfdXePmAASYFij8pai
-tNuEam7mx4j5eoh1F/eMt0Di9UtD4gnZkyLQVB2g/xvA73gdVm2MQc/GJ4zdWkce
-V0sqtLYDYhUP0bozHEDMFqsO5C4Eo8RputBTV9oc2iqbN3k5XroeRrfALr55oQLX
-vP0l8ksEkfFHwTrO7vvdC0VRrJYWLA==
-=hOPJ
------END PGP SIGNATURE-----
-
---Sig_/fOni75moMGcGp2gQK+OJsog--
+Miguel
