@@ -1,65 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B22C32E745;
-	Tue, 10 Feb 2026 23:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32631DF748;
+	Wed, 11 Feb 2026 14:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770766985; cv=none; b=c4O6SgLkp1Dw71aXP9g8BfeIaJFePzp8xCYIfhnexRsBCD2t1teQdFCdF7XY0CGtprqtRRL8J4nMsxBVOHvjvDUK4olsu1ZUza/z7SAiITQ9xjrAm0tsek/GVn06zHN5WdHETh2KqLmnIc8qrJKwUS8zT2I20WPnFeo8qzWNv68=
+	t=1770819872; cv=none; b=PaxE636MLkL5TSSAiOjZLThE5PoCZ/G+O7ETTozcp/BtCFDDjt8Pp2czkRo3qpivircTxKd1Miv5zEU2bb6XI6shmBYuz10o1WB6TpQVYYRQ8HcWXgA3j0nghdQWe7cRIcPs7cfC4nRHv83771dqoZj7lcKazK+n3zZY7cEDjE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770766985; c=relaxed/simple;
-	bh=3p7Ju/F/kVlPo5wUaFO7BpMzgPYClr63rj4e51XtAPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvRKaq44dm/8xBY326d1hybdkTSehX6JGyV2qR1A6KQ81c2WiC8+0GD5fTNwH3CY5VFr7Xz/FHNkRhOQlBdkxxcNpjw4zzOBS7HHbd7PR+W830qKql/uVmmoZQqlYsJbgGXgIeAaSPAZc0Z4Jy1eBdm+FDqmyp8yO4+VZOPTl+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUGdGG+4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770819872; c=relaxed/simple;
+	bh=RwwELisyL12ZJtwn1mO1KXfoZEPzGHT0jh+WyvmJkuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ejrFm+jYnaxf4LM1+xKbLUBFIGAkiWxKOX9vWrqilTnQ/85WAQTpqUjge7Uj+PYWTjnejn+bT9q2mT7L1tBigyzNXnLreMvt3RcQAavYFav9Tfz5knQB6zzludG5Io/RqDq9CHvfIZVp9B4vZbfpg+DcgML8Cb2MXJrOzIKQ2f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJ5jRVkM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUGdGG+4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D80FC116C6;
-	Tue, 10 Feb 2026 23:43:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJ5jRVkM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E38C4CEF7;
+	Wed, 11 Feb 2026 14:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770766984;
-	bh=3p7Ju/F/kVlPo5wUaFO7BpMzgPYClr63rj4e51XtAPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BUGdGG+4DxfYUOE7JNvOkFfEbsfChM01F43EIOjM3MQjQYVEJJ98vvwdMmxtHIS/B
-	 4GQbq9Ouz22llrG7xydw9MIc/UkCUHVsHFi/N65PDWuH+9LhEYb/CdV4SqP0UqX6/9
-	 u0OzCgTU9PWWkznC5nEIbxxbeYxk2JB5VQdazDGb/OM81q3eVbbiE4Zv60sa7ASDjz
-	 XQ7pVKAidct1twZotkSVmOJsvVMS5touCbd0e6VAtacPIHTp0p1oeIvE1pw5yiRzcP
-	 6d1DwqfELSECmoxnjVelrd8fv1sj/TgQgTGEgIOWayfdIJw9roQsiTVEBzjG01BGqx
-	 R2AYbFas8lMFg==
-Date: Tue, 10 Feb 2026 15:43:04 -0800
-From: Kees Cook <kees@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the kspp tree with the origin tree
-Message-ID: <202602101542.AA78E518@keescook>
-References: <aYueRmtXzWX5UGf2@sirena.org.uk>
+	s=k20201202; t=1770819871;
+	bh=RwwELisyL12ZJtwn1mO1KXfoZEPzGHT0jh+WyvmJkuM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tJ5jRVkMLaXBYCo3RP8FS3Al20MaA6V+f5h1pTiZz40R702Dz3+rjN+VKutkrt6v6
+	 4tmlw/4tIPiFge3LSWgfqJsv+J7/j4qUzIAczY44EnCIl9ZuHLv46HGoYlb1Vrn03n
+	 xr2g3bHSf3d0/OC9fUefgVDcfjEam70ILi3yGFSdMA02IoRV2jMRHK6uVPQpQUwgmz
+	 bMiOFpCzoQYFyjiOg5I5IiTMBy7ClPPUIUkb4HkrL+lUv6becGTpMK5uFfCmJFAqNo
+	 gfPTwvGBCZLm86HeLyp4j11TmVIY9f5nRu3s2zYiMIigCbH0P3UFgAtSyYBAzTP5Wj
+	 nS3cv1guBB5Ig==
+Date: Wed, 11 Feb 2026 14:24:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Feb 11
+Message-ID: <aYyRHBz6wUeVgM3I@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fOW2SMsUa3r8O3BO"
+Content-Disposition: inline
+
+
+--fOW2SMsUa3r8O3BO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aYueRmtXzWX5UGf2@sirena.org.uk>
 
-On Tue, Feb 10, 2026 at 09:08:22PM +0000, Mark Brown wrote:
-> Today's linux-next merge of the kspp tree got a conflict in:
-> 
->   scripts/coccinelle/api/kmalloc_objs.cocci
-> 
-> between commit:
-> 
->   bdc5071d7f7bb ("coccinelle: Add kmalloc_objs conversion script")
-> 
-> from the origin tree and commit:
-> 
->   52d3cfa9bfcd4 ("coccinelle: Add kmalloc_objs conversion script")
-> 
-> from the kspp tree.
+Hi all,
 
-Oops! Sorry, I have refreshed the tree now. Thanks!
+Changes since 20260210:
 
--- 
-Kees Cook
+None.
+
+Non-merge commits (relative to Linus' tree): 8191
+ 7612 files changed, 479317 insertions(+), 170489 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 405 trees (counting Linus' and 121 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--fOW2SMsUa3r8O3BO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmMkRsACgkQJNaLcl1U
+h9CPHwf/Uzm+o5Qqytg5YmCaFrAWVTiJ5IjC1GJOLMFiEbK+M8tuKg+Q3+3RAlHX
+bBs1fZfGcL6wg4THOKYHfvQOWx9prXUkimGpXXaV74NjOnGWj00VluVYvL/plYgO
+UezalUiUvCE9k/Q6FunbXA3JHtAVmlponS35wDl2A5Ca9Rcr1fxH0xHy7b2fEj4z
+EhiZdqM/GDOHHzNlFMA+UibV7Zed2jqpc2IHu8xQ2m/Na8EH7SH2lLjDOGEwaXRh
+AORjTBa6lOVFqwrsP4BNkFbd2cr7Rqwo1ajbwFayc9yMXaoTrj0bu8utBeOnmzxZ
+UwDnuMxAhccaWOl6rtwge7j29/+fOg==
+=co2J
+-----END PGP SIGNATURE-----
+
+--fOW2SMsUa3r8O3BO--
