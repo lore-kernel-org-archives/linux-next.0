@@ -1,168 +1,112 @@
-Received: from mail-dl1-f67.google.com (mail-dl1-f67.google.com [74.125.82.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E131E492D
-	for <linux-next@vger.kernel.org>; Thu, 12 Feb 2026 02:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FB324503C;
+	Thu, 12 Feb 2026 04:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770863420; cv=none; b=LUqsvK5k5tSaekzkUcadCB5S4OlGznRJ9zr0I6SAELdAcYJYUG+HwCbOFwbJdsBC9fVYdf0iH6DWZ1cbHYBYNd3KMWCvdOXfZzt8EjP7exlJm6EaujXySStLEoW2DRU0LyafuhdUgyWy5BTB07TH7k16m5BZCPFucC5MS8kj2n0=
+	t=1770872356; cv=none; b=CPUk2gs5Rwg6g+4b01+9TL7rLGdMSTO47TkFBiJpMA9g4/XmAKwZMqyYalG4HsCLs57raQlM7foGpWNgIABlngI3a6tb+wOaQ6nk6LFHbNzEe55DEd4IHrLtuI1R22oZjgdJxFH6/Ozfu2FaDbzduiFhRCqV7hLPBe1Xht7nAbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770863420; c=relaxed/simple;
-	bh=VFGcoFeSXyTzaSTNlmqAfBQ1xu5unCzPpFgrNzWuPUA=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=AhFUw04baR5m7BVinEVrCIusQ3TdkzZigYWmzG/X85S3MjV+wZvLgHlGBVBss5fnb9GRlvUp0KSGw7dhgQWUBy4YSdQqwhppwYuCtfa5hXgLKaKH7cvzPU581PHSJ02mv9Ks7sAeDfdMjX+V8Ht0c8sXoC9QhROFBQCzXYIRepU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=knYhpwhQ; arc=none smtp.client-ip=74.125.82.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1770872356; c=relaxed/simple;
+	bh=UnAdBLauz4b5Df5C+3yEl1YgYjyNNMVaiRJ8Yi+kh58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mr8nbu9TevgVEJva/KnK9PmRPXrv9qpQb1tAREltXp0Hsf6PLuj3fZuB0vhnG/iSYisOOcSz7xvDzhHtGNNRHEM8g3pVWoAvSloeScXGpUkpd95l/pqgLLeMDnTaIxuzwkBHApf2dcumexwv5iVX+/eeq6tgGUVr8eA+rPGBa5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r71Kt3KM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="knYhpwhQ"
-Received: by mail-dl1-f67.google.com with SMTP id a92af1059eb24-1270ac5d3efso5270833c88.1
-        for <linux-next@vger.kernel.org>; Wed, 11 Feb 2026 18:30:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1770863418; x=1771468218; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gE2pwaNrm4zQIpL7qHAbMXtOWy25LrNRQz7aGZYiojg=;
-        b=knYhpwhQTya5wr9oM14MAk5FQQoBW/H3F1hFjW7GU3dE2KEiPCVKnj5aOjgWSdZvT9
-         WRSxlwjxglZq4qllZC1BFIwofb0qJtGSffGHqOIbyJX91n0WDtzOFXWL1WSATTl580m6
-         hCzVRFYkKGgQtI3rR8olpSVw3vsKsTorIrpXg0ukGiMc++7cJrIZfZ2R0JY6krjvRhmZ
-         dGQ25xgmQ2GAXSXl6dPnMxST/dBBAsnr82n/TbMd4ELDDcfEOPXfkwrAOlnilxweIk9Y
-         gW9gL1nIMX89Vf0+xcWzdoEMbB/ebl85Y0snepSKAxIhmtoNEEMXXZOZuirkxWn9U3YQ
-         GYFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770863418; x=1771468218;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gE2pwaNrm4zQIpL7qHAbMXtOWy25LrNRQz7aGZYiojg=;
-        b=kOYCdGfvU0F+AQWMUXAQACbG6K2ul+77yTwSj14OdK0Kr2I703EpkME+GCO/xfu9/k
-         CMfkR0WqPGbnt7PrT4McnWKns5T8TESU2Jltchqt/q7U/91J+Zmq7dK6vvAEZf4+KdpV
-         rqKxnmOF3ayhTunp5G5I+RHHpmmMLeBpcZ8B6NI8e9fo7Cec/AhZ7EnonHCHOuX5nbVA
-         ZZQYIMIsvCIEsmK5koRKCuNjn10FrJIoTimD2ISLcLb/I2EyG3+YOXGj8DPvj8IrXOJP
-         sXIQSnEGZsHFyMOjFy4mC69mjN4t7xOqdIFMrfVH0AHmWLDYyeSbdyJzfERV5bKf9TNa
-         nydg==
-X-Gm-Message-State: AOJu0YwzSHFcTtaS/r1OtmG2YWC+eVYmAUMVwKVYGAZlKNoMStKah2Wg
-	Bl9vyNI4M1wU8U2efJjJXQPdJO8ikkGokly7pNT3NdRGmj3vnebeJiYe79v+sx+UcEM=
-X-Gm-Gg: AZuq6aKgEcul6MbCMR+BesSXLXZ94GZp4wxkMMflZjoEUXbMwp5VqWMgDxR37asH7St
-	l1tKt/YzM4X+w3A59fQbwr/FYkVEJVbQU3zS7awS4QDdeioYFwgYGHMcYUeLz9eRtPwadZDUlB7
-	uun89RNWyrKKkf80QqMqqJr+fTjk2HOPa/6ZovXp92KH+VMdYBJlUtHchLbTnPbT6NUrKuBj+XQ
-	V1JkqDNjSdL4hQJiKhjDZHh16FurkyK+BrK0J580VOKEnqdR77JGsJ7tas3sMzvaIHY5fKaDjZ6
-	SOJA5JC/Tl/HxphGWwZWLPR6QNGD9J6CFl3vklJ1q1KZbBsMHlbPc766CMKUbHEMxfezQ/oYXSn
-	CggAJF5OgltTmfnPfgsDsB4s68L7ZWZoEz3gGvVd2vUHcoR/Y0pUm6v/1ADsjQp9cXcVmVeThq/
-	1PW7/jxfwxc1X3yrPb
-X-Received: by 2002:a05:7022:6610:b0:123:35a4:e8be with SMTP id a92af1059eb24-1272f74eca9mr711995c88.13.1770863418063;
-        Wed, 11 Feb 2026 18:30:18 -0800 (PST)
-Received: from f55b40a4666e ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1272a6e9966sm4464958c88.10.2026.02.11.18.30.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Feb 2026 18:30:17 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r71Kt3KM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8AD6C19424;
+	Thu, 12 Feb 2026 04:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770872356;
+	bh=UnAdBLauz4b5Df5C+3yEl1YgYjyNNMVaiRJ8Yi+kh58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r71Kt3KMl5dacM2hd4zRiZPY9ASgouLClvQBczCm3QC9WC32MM0S8Hwc3BFNXel/z
+	 8E85PQjPgucKv2aY0Qe1lRyBjf/0jHDOW4sjafOdjoEXg7L7DXqaHN5lLuYE2HNOuw
+	 nev3+RaV1XqAQg3nfOWnJwOlfn1HvyBgcZzPkTHuQvKnC8iDBLj3EHxn1gIkujcl/I
+	 t7cWKeP92BLzkj/focLbKecUoPXAlvtKipAKaDuJL2Y2IimbTH5m/RtYzQADtxEnno
+	 U9JnjcQsnDCos36AnTjNk5L5gRPD8/gk9zt4TemhW1iePMfNclRwBdZXZsj36Wn0Ce
+	 P6mVdDJufGYnw==
+Date: Thu, 12 Feb 2026 10:29:12 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Josua Mayer <josua@solid-run.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] phy: renesas: rcar-gen3-usb2: Drop local
+ devm_mux_state_get_optional()
+Message-ID: <aY1eIG_U_GBOFQGt@vaman>
+References: <67c8c4f9bf9f09fd0c13daedef27b82ff389ddfb.1770720452.git.geert+renesas@glider.be>
+ <CAPDyKFpY2X8hephSfHq7rj_DaKX76ZSkWSCYXrGTEBUFHkvOzg@mail.gmail.com>
+ <aYyrsPTH1923jV7y@vaman>
+ <CAMuHMdUHNRuMmHU2ACX84nsZdXn_-fSamnF+LMFvZS3vkHnEWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 9152bc8cebcb14dc16b03ec81f2377ee8ce12268
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 12 Feb 2026 02:30:17 -0000
-Message-ID: <177086341711.629.14396387548019836973@f55b40a4666e>
+In-Reply-To: <CAMuHMdUHNRuMmHU2ACX84nsZdXn_-fSamnF+LMFvZS3vkHnEWA@mail.gmail.com>
 
+Hi Geert,
 
+On 11-02-26, 17:30, Geert Uytterhoeven wrote:
+> Hi Vinod,
+> 
+> On Wed, 11 Feb 2026 at 17:17, Vinod Koul <vkoul@kernel.org> wrote:
+> > On 10-02-26, 14:34, Ulf Hansson wrote:
+> > > On Tue, 10 Feb 2026 at 11:53, Geert Uytterhoeven
+> > > <geert+renesas@glider.be> wrote:
+> > > > Now the mux core provides devm_mux_state_get_optional():
+> > > >
+> > > >     drivers/phy/renesas/phy-rcar-gen3-usb2.c:944:1: error: static declaration of ‘devm_mux_state_get_optional’ follows non-static
+> > > >      declaration
+> > > >       944 | devm_mux_state_get_optional(struct device *dev, const char *mux_name)
+> > > >           | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > >     In file included from drivers/phy/renesas/phy-rcar-gen3-usb2.c:20:
+> > > >     include/linux/mux/consumer.h:64:19: note: previous declaration of ‘devm_mux_state_get_optional’ with type ‘struct mux_state *(struct device *, const char *)’
+> > > >        64 | struct mux_state *devm_mux_state_get_optional(struct device *dev, const char *mux_name);
+> > > >           |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > >
+> > > > Fix this by dropping the temporary local wrapper.
+> > > >
+> > > > Fixes: ad314348ceb4fe1f ("mux: Add helper functions for getting optional and selected mux-state")
+> > > > Fixes: 8bb92fd7a0407792 ("phy: renesas: rcar-gen3-usb2: Use mux-state for phyrst management")
+> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > Thanks Geert for helping out!
+> > >
+> > > > ---
+> > > >   - ad314348ceb4fe1f is in mmc/next, and a PR has already been sent
+> > > >     https://lore.kernel.org/20260209133441.556464-1-ulf.hansson@linaro.org
+> > > >   - 8bb92fd7a0407792 is in phy/next
+> > >
+> > > Vinod, do you want to pick up the $subject patch as a fix for 7.0-rc1
+> > > or do you prefer me to handle it?
+> >
+> > Should I drop the 8bb92fd7a0407792 and it makes things easier for
+> > everyone and then we can pick fixed commit for 7.1 cycle..
+> >
+> > Does that work for everyone. I was about to send PR, will hold off for a
+> > bit.
+> 
+> Alternatively, you can mention the semantic conflict in your PR to Linus,
+> and ask him to fold my patch into the merge commit.
 
+Hmmm, that is also a good option but might leave Linus a bit grumpy so
+bit reluctant. Dropping and getting right implementation would be
+better. I think it was a mistake to pick or this all could have gone
+thru mux tree.
 
-
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/9152bc8cebcb14dc16b03ec81f2377ee8ce12268/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 9152bc8cebcb14dc16b03ec81f2377ee8ce12268
-origin: maestro
-test start time: 2026-02-11 15:21:00.698000+00:00
-
-Builds:	   55 ✅    0 ❌    0 ⚠️
-Boots: 	  165 ✅    4 ❌    0 ⚠️
-Tests: 	12469 ✅ 1073 ❌ 5623 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: meson-g12b-a311d-khadas-vim3
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:698caeeca1ae387ffbcc68ea
-      history:  > ✅  > ❌  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:698caf8ca1ae387ffbcc7149
-      history:  > ✅  > ❌  
-            
-Hardware: x1e80100
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.proc.proc_read
-      last run: https://d.kernelci.org/test/maestro:698cb064a1ae387ffbcc73a5
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - kselftest.dt
-      last run: https://d.kernelci.org/test/maestro:698cbe96a1ae387ffbcc8e81
-      history:  > ❌  > ✅  
-            
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:698ca8e1a1ae387ffbcc4aa3
-      history:  > ❌  > ✅  
-            
-Hardware: qcs615-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.proc.proc_read
-      last run: https://d.kernelci.org/test/maestro:698cb49ea1ae387ffbcc7b33
-      history:  > ❌  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:698cbeb3a1ae387ffbcc8ebf
-      history:  > ✅  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.svsematest
-      last run: https://d.kernelci.org/test/maestro:698cb017a1ae387ffbcc7314
-      history:  > ✅  > ⚠️  > ✅  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Thanks
+-- 
+~Vinod
