@@ -1,109 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB763382F7;
-	Thu, 12 Feb 2026 14:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1474D136672
+	for <linux-next@vger.kernel.org>; Thu, 12 Feb 2026 15:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770907802; cv=none; b=VgB4AQj9ubUp0mO/Pt7A2iLkg6zvXj3Y9lWijZrff5bQpp1j2RxaeoaU3RRHUoFyFMThURVWbhCgtsTxXRItJDSuImVAp5LO/HLoeZAeeHiuu5KqYf7CybYOWCEEarEAxvLLLHfHxq53sBlvziOhp5+Ub5CC6wKr90fOyIjpalQ=
+	t=1770909665; cv=none; b=Z1LyNvUBiSBNHY3ooLWRRZP2z6IlUCiN8tJVwVp78ylcSU2nS255SZd2rRsEzOPyg9WZIZ5o7FelQfAmwR5ZU0Z4TgrtfavFpgDNfTyMuWQnr8Vty8btD4cQB+4/m6Zltl7HNV06pgFi/wB6/Mpk2ksqjocMF6XJVoqD6+D3xlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770907802; c=relaxed/simple;
-	bh=AxkpoO5jJrXbtI8n8bK1eU06dG2+XOVw8YBOUdc09S8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KAJASQXPv+YT7MbYa+eBulOGOZ5L/Oou4EklBeDdBeDtnkgK8Y8Vcys2wI0nSjmTeTGUwRcdNIURN8DwLIKlqEWqf0CJpHUgeK5YtyRcBgdOIRf6yFBRMRnRa0IlPR/Md7iqZ8HeXKUH+vx10pYWUQ3QA8jWgTcrnxq+k9/VKV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNJpTIWJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770909665; c=relaxed/simple;
+	bh=zQYMwoUuR9D4tz+mipTBZ8v7LNfQhGKkUErj4L7cs74=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BHOBu3z062pCoJzpqdTg5QN4Q0D44xUMGGgZiFQqWHy192/+JzLcqDMrqBNk92M+70x1EoHaQfi1ogGYUpc7oyFWwGTZDM0rbBr8wEXo7UBnGHwPg4edVCPOAjPPrXgXjrfSCwYw+OfHzl4eLiOglHTr+q2V/NnYcf7LhrAJfx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w+gaxzT6; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNJpTIWJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C573C4CEF7;
-	Thu, 12 Feb 2026 14:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770907802;
-	bh=AxkpoO5jJrXbtI8n8bK1eU06dG2+XOVw8YBOUdc09S8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dNJpTIWJqf00JerMxe7/gQ6kgXfJqibxK38/0saz9bgQp4E85csLjsTzklkBrV+8x
-	 xYu9QBJENHFM1qL/Llmdq+u0AMGn3tCk+oxSAb0InfFStGZ6PfIuenz4LQLUcyGOpT
-	 3CE8MpxgZrm9rXDFWubJZk+qSiszxFTAMGJ2CRo7mN8oJDseUvjr6+iknEpNbgyL+l
-	 +iWpkQH/Y3+D6KMtS4OXJOYrzO2k+aQeg/UOHPmhf5P3p+gNlAgJcuQb4fhC2dgmNX
-	 XrpiBNp13/kZEUrfIvB7lGoF/nPWofhFowT09p4CtjhXhNqm0RLcILB/4QtH6SanjM
-	 9dxVXMi7dyHuQ==
-Date: Thu, 12 Feb 2026 14:49:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Feb 12
-Message-ID: <aY3olu0xPwMs_4k6@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w+gaxzT6"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-c5291b89733so1980258a12.0
+        for <linux-next@vger.kernel.org>; Thu, 12 Feb 2026 07:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1770909662; x=1771514462; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oVrUsLQlAckaCNk2C4sj42DJVtIN4Um6DekJOAfydLA=;
+        b=w+gaxzT6tob8eD7+RlIc5iXluPMNS1DRMXVjN+w1aaVnUBBvqtKWwxMniEG8+ZtNRE
+         z/cBxX+ahJ30xsbQtY6xDIkoD33r79lPGfXe2n7zSgc0wE6a+ROIhKOpapft6vg8tIpV
+         ymTzCf537k3QFDmomWVzHmr+pQlTpJ/TkWzQF5LxcGC3IcYqo078CMAq0uQVg9jr5Syq
+         R2Sd9XIRyhSpToW2Xe+e8TF5l6XqbYI91FeyqSQMmWViWpkmi6bJzfWbiEqtsA/jyqQV
+         Cfs9TpyMTvNolklsnyCNEqdoXvUtsNCSldVGVQSAXQPkuqC8WYnsLIXtWUGx5AysgFgk
+         0dkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770909662; x=1771514462;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oVrUsLQlAckaCNk2C4sj42DJVtIN4Um6DekJOAfydLA=;
+        b=r1Zu/yo6l0weBjBUgxmuwlvKpd4/lpiVM4nZ0spet/cD1JZN0o883VpgBncFhp7xTn
+         EjObj0Ppl80LOJ2uVifbUiohVBquOS/s0+g5crrvOXOaQsbayUaImiz9ohkED9nq3Aap
+         6rIQaXOEwPM99aHxlraCkXz9mvSF5jw2MUFOXarpu2dOzlJTVvlkq3OBtPYad7emHb2g
+         3b31/ZzFn2mAPKgUW23RJTA6aENwoL2H70rJkNGyUr7kW3BpXRE8eVDC/thFnEuOibD3
+         NmkMphkQsmeCpIqeNvHHFTg44aK8u4+JyZvqH1cUPl5+dB1QCzrQTqjuHZKt0wtPWAsl
+         cqdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX66/3O3Qyvk97pVc86jXEvk401PnmxjgJZjzLurJcwYKnQhOP3KBtEilutZTiXHq+90jBTo64fDSkh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx81n2FLlcZ21VKNw0xDdoh7Xm1qJz8V5MfYVZQPAL4z0FyXzCG
+	iuDkzqM5uuZY4NCPDDLju+sg07EDhzQkEC0zClxODxOpLP8T36DKJZpWC2OzxqI4MqVYKNFRkq7
+	Wgje7+g==
+X-Received: from pgbdo14.prod.google.com ([2002:a05:6a02:e8e:b0:c63:59f0:d588])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:7103:b0:35d:d477:a7ea
+ with SMTP id adf61e73a8af0-3944ce47727mr2698982637.19.1770909662322; Thu, 12
+ Feb 2026 07:21:02 -0800 (PST)
+Date: Thu, 12 Feb 2026 07:21:00 -0800
+In-Reply-To: <d68022c2-0c62-4acd-b287-8a409daa2c89@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fjYhpIGIR6mhtbrq"
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <aY3e0hIT1UDqLcvK@sirena.org.uk> <d68022c2-0c62-4acd-b287-8a409daa2c89@redhat.com>
+Message-ID: <aY3v3BRx745P5d0y@google.com>
+Subject: Re: linux-next: manual merge of the kvm-x86 tree with the kvm tree
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Feb 12, 2026, Paolo Bonzini wrote:
+> On 2/12/26 15:08, Mark Brown wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the kvm-x86 tree got conflicts in:
+> > 
+> >    arch/x86/kvm/svm/svm.c
+> >    arch/x86/kvm/vmx/vmx.c
+> > 
+> > between commit:
+> > 
+> >    9e03b7caf4e65 ("Merge tag 'kvm-x86-misc-6.20' of https://github.com/kvm-x86/linux into HEAD")
+> > 
+> > from the kvm tree and commit:
+> > 
+> >    f8ade833b733a ("KVM: x86: Explicitly configure supported XSS from {svm,vmx}_set_cpu_caps()")
+> > 
+> > from the kvm-x86 tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> 
+> Thanks, this is the tree that will go to Linus later today, so Sean will
+> simply have to reset his tree to Linus's as usual.
 
---fjYhpIGIR6mhtbrq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi all,
-
-Changes since 20260211:
-
-The drm lost it's build failure.
-
-The mmc lost it's build failure.
-
-The kvm-x86 tree acquired a conflict with the kvm tree.
-
-Non-merge commits (relative to Linus' tree): 3874
- 3907 files changed, 164054 insertions(+), 66206 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 405 trees (counting Linus' and 121 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---fjYhpIGIR6mhtbrq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmN6JUACgkQJNaLcl1U
-h9Al2wf9HIeaHtP2ctW36QM03FUXHbmZi+VLha+Fn7Kfw/mCfnuiS2N+dxB1osH2
-rFlcBZGBsUYLTRU/L1Zya1eTXwfHmQfCq75bhE5jjPsB0Cu6+XqDA8vi1rGGxy1G
-C/m2PDAVFPEzlsAePIlLqhEB7Qc63KEdz0vKbZPlRoUE+XRmL8DnAvRNO+UaECps
-qrsQ6mZREy81O5VBa5pNVSozZjXsP13mf/UPKzm6UisAYdL+3MoaPMyW7RR7Hh7Y
-vksb4Ip9D0W59YaSLvARb7Skvlt664i0UzuVnqDagX680k7Nq5edUo/ybUW9H+BG
-x4gjTtxYL9uUpgkk/XMqs94pD8Qr6g==
-=COQC
------END PGP SIGNATURE-----
-
---fjYhpIGIR6mhtbrq--
+Done (reset base to kvm/next).
