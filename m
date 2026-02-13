@@ -1,98 +1,152 @@
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-dy1-f193.google.com (mail-dy1-f193.google.com [74.125.82.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1474D136672
-	for <linux-next@vger.kernel.org>; Thu, 12 Feb 2026 15:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5023EBF1F
+	for <linux-next@vger.kernel.org>; Fri, 13 Feb 2026 02:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770909665; cv=none; b=Z1LyNvUBiSBNHY3ooLWRRZP2z6IlUCiN8tJVwVp78ylcSU2nS255SZd2rRsEzOPyg9WZIZ5o7FelQfAmwR5ZU0Z4TgrtfavFpgDNfTyMuWQnr8Vty8btD4cQB+4/m6Zltl7HNV06pgFi/wB6/Mpk2ksqjocMF6XJVoqD6+D3xlk=
+	t=1770949838; cv=none; b=UAjXZCOdYvZkwb78yJsZ7p5iMfWpjHgjlzaFKje0bU+Dum9AjKgQkYxms2lPaGlZ0KodZ1RrF2mxmK2EwCvWjEZ/UzoZgJV7qPye9VUkKBhyZc8tFR/gNXyYVbpvyhmnkRO1N4LLfcA6+KR7cr/QgrTtQqarCwAiEGfc4LDWTC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770909665; c=relaxed/simple;
-	bh=zQYMwoUuR9D4tz+mipTBZ8v7LNfQhGKkUErj4L7cs74=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BHOBu3z062pCoJzpqdTg5QN4Q0D44xUMGGgZiFQqWHy192/+JzLcqDMrqBNk92M+70x1EoHaQfi1ogGYUpc7oyFWwGTZDM0rbBr8wEXo7UBnGHwPg4edVCPOAjPPrXgXjrfSCwYw+OfHzl4eLiOglHTr+q2V/NnYcf7LhrAJfx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w+gaxzT6; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1770949838; c=relaxed/simple;
+	bh=sxGEbUiz7ev2UoAuQsTkjoNph9E3N5MDu6goQWeVWTI=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=ltftG0fIENMEfr7or6nu2nfwkgWDSpGC7ZX/swgo0S1XEltPWZB4xEFouh5FFinC2yYm6XDLNAm1BtSu9dLJk6FLU1MCkkDenwSRDDQrLWhhNP1eZZ+WIq6murDGGj2cQuP+Z8k02vtMqV53zHcIUoAhNBu9Z+Z+AuppskK2fNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=LsZi/GEq; arc=none smtp.client-ip=74.125.82.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w+gaxzT6"
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-c5291b89733so1980258a12.0
-        for <linux-next@vger.kernel.org>; Thu, 12 Feb 2026 07:21:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="LsZi/GEq"
+Received: by mail-dy1-f193.google.com with SMTP id 5a478bee46e88-2b6b0500e06so528415eec.1
+        for <linux-next@vger.kernel.org>; Thu, 12 Feb 2026 18:30:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770909662; x=1771514462; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVrUsLQlAckaCNk2C4sj42DJVtIN4Um6DekJOAfydLA=;
-        b=w+gaxzT6tob8eD7+RlIc5iXluPMNS1DRMXVjN+w1aaVnUBBvqtKWwxMniEG8+ZtNRE
-         z/cBxX+ahJ30xsbQtY6xDIkoD33r79lPGfXe2n7zSgc0wE6a+ROIhKOpapft6vg8tIpV
-         ymTzCf537k3QFDmomWVzHmr+pQlTpJ/TkWzQF5LxcGC3IcYqo078CMAq0uQVg9jr5Syq
-         R2Sd9XIRyhSpToW2Xe+e8TF5l6XqbYI91FeyqSQMmWViWpkmi6bJzfWbiEqtsA/jyqQV
-         Cfs9TpyMTvNolklsnyCNEqdoXvUtsNCSldVGVQSAXQPkuqC8WYnsLIXtWUGx5AysgFgk
-         0dkA==
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1770949837; x=1771554637; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/4Z0U0jgPvhMEpCKI6Cc+r7ewjuXnttc+RLkLsnK60=;
+        b=LsZi/GEquBLp8pYZ1FWpJfyKii/3HinJIEdPI5xxBfPalIXqVOE9r4VXSFOaJ0RwUW
+         j1uxxp00jVtYwZwxoGtehxLTmAFteu0nMiOgLguARTB/swKQUzzMF2sTavyE/p5DOrM+
+         fQXhALJ/iytEl0EnUyZxegCnJrPvmwwxxXnPoah5Bcdo9YNffrOc1tNQc0gC82fyZNxR
+         G3LY8CofpbOk0jxjnsqYF13Nn1fH1i/f6/RW2OG+S6AvyQVNw149qgTG5fyBntpylt9X
+         MSDE+MdGZgtb/z3EZBI68lHB6Z7UpauBcwbXsVLgtMVLLRzxObUQFTxsN+sw3eOycymL
+         kr3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770909662; x=1771514462;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVrUsLQlAckaCNk2C4sj42DJVtIN4Um6DekJOAfydLA=;
-        b=r1Zu/yo6l0weBjBUgxmuwlvKpd4/lpiVM4nZ0spet/cD1JZN0o883VpgBncFhp7xTn
-         EjObj0Ppl80LOJ2uVifbUiohVBquOS/s0+g5crrvOXOaQsbayUaImiz9ohkED9nq3Aap
-         6rIQaXOEwPM99aHxlraCkXz9mvSF5jw2MUFOXarpu2dOzlJTVvlkq3OBtPYad7emHb2g
-         3b31/ZzFn2mAPKgUW23RJTA6aENwoL2H70rJkNGyUr7kW3BpXRE8eVDC/thFnEuOibD3
-         NmkMphkQsmeCpIqeNvHHFTg44aK8u4+JyZvqH1cUPl5+dB1QCzrQTqjuHZKt0wtPWAsl
-         cqdA==
-X-Forwarded-Encrypted: i=1; AJvYcCX66/3O3Qyvk97pVc86jXEvk401PnmxjgJZjzLurJcwYKnQhOP3KBtEilutZTiXHq+90jBTo64fDSkh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx81n2FLlcZ21VKNw0xDdoh7Xm1qJz8V5MfYVZQPAL4z0FyXzCG
-	iuDkzqM5uuZY4NCPDDLju+sg07EDhzQkEC0zClxODxOpLP8T36DKJZpWC2OzxqI4MqVYKNFRkq7
-	Wgje7+g==
-X-Received: from pgbdo14.prod.google.com ([2002:a05:6a02:e8e:b0:c63:59f0:d588])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:7103:b0:35d:d477:a7ea
- with SMTP id adf61e73a8af0-3944ce47727mr2698982637.19.1770909662322; Thu, 12
- Feb 2026 07:21:02 -0800 (PST)
-Date: Thu, 12 Feb 2026 07:21:00 -0800
-In-Reply-To: <d68022c2-0c62-4acd-b287-8a409daa2c89@redhat.com>
+        d=1e100.net; s=20230601; t=1770949837; x=1771554637;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T/4Z0U0jgPvhMEpCKI6Cc+r7ewjuXnttc+RLkLsnK60=;
+        b=EEkKBArsNmS1/dC3Yk4JgclRcCL2MoxBofBBJJq8PAV8ufl+naSOYp+Ag9IlCDBSVo
+         0VWEBZSEyLOlO9hB9ys4x9poR5Oi9aprXelPWKgmc5ZLfK5hrrGchvyWpuJ2wAksIfP8
+         V00T/qQaUvsjEyFCgxdQoFbqc5LnJ5j4UO2OZ/DQ8v2d/D21U4Xwoxr5U/5UzfeE7EAX
+         u/tqf2fMmJ4zH6SbA5/Fn7lBbpawaKZerzITz8851tsr4e8Scy5wUhrI/HGk18fsPTXL
+         RokO2cscRprHBw1XbVuGGQJzUpZiw/b8aH63XcH0g6MFBCaLko2kFwQBX4KUplgm9TJH
+         cHUg==
+X-Gm-Message-State: AOJu0YxI/Mj7v08nGAZ6AL+p8RCcMpaUMDzEDW4NdG0rBOqV97hrMN7p
+	yFP2tkNjaccZ1iOY/2TCkZ6AxtKO6uG/qm0bpZlyeyeqVvJPAHQKMRE2g33aPkpv1EFgBsfF+RE
+	HM7brpCk=
+X-Gm-Gg: AZuq6aKS4keEANRrusPTq8YTqspGeqW9z0ajjgJs0nUllmdH15uL/OXxvetTYJ14lZ1
+	8kM0h+9MAeC7XkFEzpjPuxS+CCvXXwE5N4YTcQ3+etibCAIJkGdEJWv95gWWlnllkjDiM0AFUuU
+	IwBVwHfb7lI6aR6s9fviSpctNasiDTrwySBoajiVIsGcTt7pGnQvAYs5dHb6eY+HcJmt9Swln3A
+	CjX+vVlOF/c2TaGzrckXQ1+U9sAW1zs3ZVnbsFb6x0IWYpQv0EoeCs5IYGUh2GA7uwz91zD8XDx
+	Qs4gRcaaSsFqLmp8gCshml83QdUrG1GbVFqj0S2YOKJF+J2ghzAdDETtmNDy/8xt5CKMQrSZHpB
+	tYG6HbFglKPzw1G7RqENiI9a2RLNSwHFOCUyt1beba4DmeJXmOtrEMhvbgdC+zUU+Q0tlyQKHRA
+	gB0MnClKxu5+TKY+dq
+X-Received: by 2002:a05:7300:e824:b0:2ba:37a2:4aff with SMTP id 5a478bee46e88-2baba04c9dcmr356885eec.14.1770949836514;
+        Thu, 12 Feb 2026 18:30:36 -0800 (PST)
+Received: from f55b40a4666e ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ba9dce80f9sm4577561eec.23.2026.02.12.18.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Feb 2026 18:30:36 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aY3e0hIT1UDqLcvK@sirena.org.uk> <d68022c2-0c62-4acd-b287-8a409daa2c89@redhat.com>
-Message-ID: <aY3v3BRx745P5d0y@google.com>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with the kvm tree
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - af98e93c5c39e6d0b87b42f0a32dd3066f795718
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Fri, 13 Feb 2026 02:30:35 -0000
+Message-ID: <177094983554.1089.8019327683842127067@f55b40a4666e>
 
-On Thu, Feb 12, 2026, Paolo Bonzini wrote:
-> On 2/12/26 15:08, Mark Brown wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the kvm-x86 tree got conflicts in:
-> > 
-> >    arch/x86/kvm/svm/svm.c
-> >    arch/x86/kvm/vmx/vmx.c
-> > 
-> > between commit:
-> > 
-> >    9e03b7caf4e65 ("Merge tag 'kvm-x86-misc-6.20' of https://github.com/kvm-x86/linux into HEAD")
-> > 
-> > from the kvm tree and commit:
-> > 
-> >    f8ade833b733a ("KVM: x86: Explicitly configure supported XSS from {svm,vmx}_set_cpu_caps()")
-> > 
-> > from the kvm-x86 tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> 
-> Thanks, this is the tree that will go to Linus later today, so Sean will
-> simply have to reset his tree to Linus's as usual.
 
-Done (reset base to kvm/next).
+
+
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/af98e93c5c39e6d0b87b42f0a32dd3066f795718/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: af98e93c5c39e6d0b87b42f0a32dd3066f795718
+origin: maestro
+test start time: 2026-02-12 15:29:13.600000+00:00
+
+Builds:	   47 ✅    0 ❌    0 ⚠️
+Boots: 	  165 ✅    3 ❌    0 ⚠️
+Tests: 	10485 ✅  610 ❌ 5945 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:698e023ba1ae387ffbd1d191
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
+      last run: https://d.kernelci.org/test/maestro:698e0c50a1ae387ffbd21251
+      history:  > ✅  > ❌  
+            
+Hardware: qcs615-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.proc.proc_read
+      last run: https://d.kernelci.org/test/maestro:698e2813a1ae387ffbd25af6
+      history:  > ✅  > ❌  
+            
+Hardware: mt8395-genio-1200-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:698e036ca1ae387ffbd1e5f0
+      history:  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+
+  No fixed regressions observed.
+
+
+### UNSTABLE TESTS
+    
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.dt
+      last run: https://d.kernelci.org/test/maestro:698e01f8a1ae387ffbd1cc01
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
