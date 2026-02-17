@@ -1,41 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492D36AB7A;
-	Tue, 17 Feb 2026 14:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A22A338F52;
+	Tue, 17 Feb 2026 16:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771338240; cv=none; b=X4/0J8D+FTJN7/C00NkRyCTuIzG4wUDXQJQALDcRW3DqbKkPmLXy7Waqlvethm1cf9DKmtXI6+/RNXSYNZ/mBzloW/NJdo0ZFCvdxBHyylBcCWBtCe9Jn9W0c4Q4jEeypZ9vnu16l0L6bqMHVx7ZEfrf6mqC7eB5tDtiwHAHUmA=
+	t=1771344114; cv=none; b=GnopCZbHG/efR5wyrBBa3r9cyrxcTLLnjJAworpwBjJc1J02fB2jvv2e29kUmKR5MEXvz6EZJ8zghR4tJ+F0y1zXm6WqADJFSQ9g7l3zxRns6A5lTgiCJzCf58ppxLy6vnKRXuKdDWdPfNo7qwM1L9/Vst58TGFfNsxKnGI/8So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771338240; c=relaxed/simple;
-	bh=SSLQPz96Hs7wezPOswuv2lh94n8DhOrJpnDjld/DNbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RSt1FpPbaui2rWFAmqqx0/gaU2+topnxeH5Wuc7ADwo4bTL7ErtKW7gDQmxB8eQ6VVXDJk7+4ilEGWlUKB+RdHGwMgiLMgtLdMS1yrsoBOR6MMr/5U0oASgCUJe1tmc+KS5rtkhltDFboJtI7r99xQ4RCdoHHwrkNTog6CT4VLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KoH1ll6A; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771344114; c=relaxed/simple;
+	bh=YOU/DtvTFPcX1+ZQzf4/Sg1szRUtDaJyK7HbPxENQWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KapVis5QN51wQnjPgtJrGEnFh54Qa5/Z2yN2VS/5HW2+PmbimTPrZXDSvBztBbzJI2JVGYQPH6eWl4xny8nJFfxLNxPiPqLB/UlL9oqqDo7RLMlvLOWfBOuxtLk1l3hBnjVFCPq22Y6VFnxFS5nsnLkO3OM/z7TdSy7GqJeccZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KS0Ca5ht; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KoH1ll6A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A546CC4CEF7;
-	Tue, 17 Feb 2026 14:23:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KS0Ca5ht"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0958BC19421;
+	Tue, 17 Feb 2026 16:01:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771338239;
-	bh=SSLQPz96Hs7wezPOswuv2lh94n8DhOrJpnDjld/DNbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KoH1ll6A3U34DWI2jhqTRgJDLbsvFFmqPRrufbpCWIk9+2Kxzuj07dTj7yUFUf7KG
-	 jKnDCHCUsw55OAt/l+kBSc5SKrN8wkhvWi8Agz+QdG1o5B1vSuvgGFI4h5KFiHxbvF
-	 UYh01Aq4xRBqNJQLrxXtJ+ilSzsQeztzNyHPi223pVwnL0O+TM6fVjD4IOhGED0veR
-	 q+HUkYAa0xv2CFCPT6WsonmSE3p574/G9O0YioJF2tfeATndHA9J3Rj2taYaO38v1+
-	 tpbCJeqqZE49QMQOc8ttm7IKwiWzfRbdrZDSYUXeQ/9jnpi3cam0EFXXmv0NUr4n4m
-	 ul51/rVmqjkPw==
-Date: Tue, 17 Feb 2026 14:23:55 +0000
+	s=k20201202; t=1771344113;
+	bh=YOU/DtvTFPcX1+ZQzf4/Sg1szRUtDaJyK7HbPxENQWc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KS0Ca5htnYi+M3IrRT0yavPD9i0MuqGsupcrhsVJTUpofZXFylLOZkrxau0lkDrMi
+	 yfyrQdQ6wKfW4ciQnp1xCdJCA65aALYMQB+OXDOm2BiMM8OniI0c6jD2ORG9PxduhD
+	 VFxRrZVBTk9KUvOI7IXEpE3K8bMbZA24G6eUaUXlj20M650hS6lNmiXUwUUeUYoDsc
+	 KqxL2SyiCX+yDBCV/2zEiSH+y21Oy//l6KZOzyQAvNOgkMXq3HPi6TRG5EpwPuEYSh
+	 tpbsZZZvG1bZcJdLMGTgZDW1QL25ZE+Ud+BF8cg3A4J8FFO/wyRoZ/izqOr9PcAL20
+	 VCxFDmkLPbC6Q==
+Date: Tue, 17 Feb 2026 16:01:50 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next inclusion request : ntfs filesystem
-Message-ID: <d4e59537-f51e-4860-bc66-8fe5f9f3e66f@sirena.org.uk>
-References: <CAKYAXd_rfwTt+uhOgBa4mEO5j0CQhZdTp=YcoU2RCng+scDbXQ@mail.gmail.com>
- <1dc54be7-f8f1-4555-9004-8e15437023ef@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Feb 17
+Message-ID: <aZSQ7h2kRstIA21k@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,56 +39,71 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qQNFeSlXIEsSJp4A"
+	protocol="application/pgp-signature"; boundary="jtq4dz/mXKyT8mLr"
 Content-Disposition: inline
-In-Reply-To: <1dc54be7-f8f1-4555-9004-8e15437023ef@sirena.org.uk>
-X-Cookie: Information is the inverse of entropy.
 
 
---qQNFeSlXIEsSJp4A
+--jtq4dz/mXKyT8mLr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 16, 2026 at 04:05:42PM +0000, Mark Brown wrote:
-> On Sun, Feb 15, 2026 at 03:02:34PM +0900, Namjae Jeon wrote:
->=20
-> > Could you please add ntfs -ntfs-next tree to linux-next ?
->=20
-> > git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git ntfs-=
-next
->=20
-> I've done this, with you as the contact - let me know if you want to add
-> anyone else.  It should start appearing tomorrow, though I note that it
-> is the middle of the merge window so if it were going to go to Linus
-> this time around it should really have already been there already.  If
-> you want to also add a separate fixes branch let me know about that too.
+Hi all,
 
-This is breaking at least an arm multi_v7_defconfig in conjunction with
-things already in -next:
+Changes since 20260213:
 
-/tmp/next/build/fs/ntfs/file.c: In function 'ntfs_file_mmap_prepare':
-/tmp/next/build/fs/ntfs/file.c:657:19: error: 'struct vm_area_desc' has no =
-member named 'vm_flags'; did you mean 'vma_flags'?
-  657 |         if (desc->vm_flags & VM_WRITE) {
-      |                   ^~~~~~~~
-      |                   vma_flags
+The vfs-brauner tree acquired a conflict with the vfs-fixes tree.
 
-so I'll drop it for now, I'll try again after -rc1 (next week).
+The mm-nonmm-unstable lost it's build failure.
 
---qQNFeSlXIEsSJp4A
+The amdgpu tree acquired a conflict with the origin tree.
+
+Non-merge commits (relative to Linus' tree): 2123
+ 1902 files changed, 77999 insertions(+), 35233 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 405 trees (counting Linus' and 121 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--jtq4dz/mXKyT8mLr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmUefsACgkQJNaLcl1U
-h9CxMAf/TvTfjA4nQTc175sS2noBnQeCdh/y92fVq4oxWKPjvH3NckWtQu7UwvL8
-XLbQHVQxphtQQLh9+loQX7mds5dLg24+S/xPpi4TAbO9jX11apJuJAWE7hpHVS3l
-L2SjYHfPPfcU/i0lHQ9iNPIWKLzq7giJxgWnR8Uq9ZsSSBRKN1ZNY28iybcpFo6r
-Bd/iDkr1fztmOUjQdIOw5NyBDQbEEQMne+mJXZrQh3UJ/xyWn4/r1MiDDGc4UYDd
-xaarZtS2G80OlsedsAyTx4nuaOlZNaHaJWXQredIT/aStXlTTagXrIiKTfq8aDWf
-cN0J8pGcf2McNyC8RGNxbYoBZZgQAw==
-=ZL72
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmUkO0ACgkQJNaLcl1U
+h9Aqbwf/c0vv4NkvAUixcU+Du0Dl+4a4BfMxSO86mQna0UjV4Ido3g39XM3MaROe
+jk8wSz8rvK8e3S2rlBmSex5UPmKWJ0fKRfOhLKeKe/eB2h2kKDWDnuS2tec9AcAY
+SfmExpulFzDSmIzM08ZI09LXrMvzJviyaO30DdImM4gz+6AX0SJFbxZywnIPoNgG
+8w59lt2oJMHyDjN3G+ZxU7aRi5Qaomnm+TQ9rJLPrXJwQ6MmUQ3SHmmLKS8pVz6R
+FkieZvxMKUAXWGhh4cZ0BE7QcevLxWoU8gGVbx6EqGRSeOwC4Bp4ezxvlwCXY4il
+ZxgICykwx3Mx/MsHdC449gGpW++gNg==
+=UJQb
 -----END PGP SIGNATURE-----
 
---qQNFeSlXIEsSJp4A--
+--jtq4dz/mXKyT8mLr--
