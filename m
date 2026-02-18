@@ -1,94 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f195.google.com (mail-dy1-f195.google.com [74.125.82.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1523A1C69D
-	for <linux-next@vger.kernel.org>; Wed, 18 Feb 2026 00:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5494CB5B
+	for <linux-next@vger.kernel.org>; Wed, 18 Feb 2026 02:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771372933; cv=none; b=nfzxyksDEAaBCQw25ni01XB0EvYkc/OOv7l2/SBi2wbJLaUg3m5NIeQ+cjC0uifsIapPsQXTjEoGwLokpDpPw5NluKH5oTdVRYw2Fr0B0QbkHCGGo4Us72K0pr8RQxuaLwUbvda60KH7mSQbm/gS41k9ibOvu5PSjOG3cULXZ94=
+	t=1771381823; cv=none; b=GKM/iYLrUyDj/QwsJdC268YgXQBMeGhdcjRUmMNTAvhp6kBqeO0Nnuh5APF0o8UupZgjLWYyGtFWp5Hj2d0cdnMD70hDVZJQ2XOgq8NJmPEfZyWcVJaojSQXL/f8NKx/uPG+RSjpd/1BjOgTGWBwqIY4bU6B40RswWVP1SfIb7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771372933; c=relaxed/simple;
-	bh=ENoo5Ga/HWAJuW65PGj98x96A+R4ScAa0jEytccWqn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jXIh1+VXqGDX765DT/nZU923XBcHcyz9Y3OsODQ1HaWEJ2OD6hW0vYm5FwGMm3VUYliVeLnczFBdHY7kHq9Cl0JfqyNfieQs1WM3FqDjHjT8c2j7efZ/ovkJJ18NnNhN8t0PsvqUcIhdS1Y3vnv5pJgSEHcyoLnj3WVaH3z1KjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEirBBx4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771381823; c=relaxed/simple;
+	bh=QmalsR4xVptG5dkRSm5bA0Ye44wgngG4OlTc/qHUmqc=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=ALKZwjNCI032N07tlVTNcqeEVpWfJ6R9v9F5DZTEMBdAHxKLxPiQjl3Da/JH0lX71nNRJcW3kdMrtqowkdccMNUF967aCZKfyqJFKbuXXxiZd18alQBwUVFrpA7GErPubCeCafveEmwaKy2BEv4MSIk9B2CR5FIUmyVGMHStMGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=kcGoK9Do; arc=none smtp.client-ip=74.125.82.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEirBBx4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA221C19425
-	for <linux-next@vger.kernel.org>; Wed, 18 Feb 2026 00:02:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771372932;
-	bh=ENoo5Ga/HWAJuW65PGj98x96A+R4ScAa0jEytccWqn4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LEirBBx43fuCODr+9/lUoX3SuSqcwzIS79cFG2bA3cu8wXh5J71fQUsWCS0ql/P8j
-	 sCxatnkJxU9Su9l0QsKoBbtn/F4KH9kPvrwmScHbwI3tvE3HbcPHzOTA4H1juW4K03
-	 M3OF8qCbus7ALvYuWbYcyPPQzlIPvXeK6kcrpwYsVIa0Rpp6VCuKG/mBuMMDubNDNl
-	 87+KWOdNEPDrC4QbMLq2K+J7DR0IkSCVOQKglDVHNRRriYylf0LmD9xuIs7cUeG/1D
-	 awZxeKlDJ4QhL/kk9QuhXhXJ3DaTUxrM1u7omHKMH7TIJdaIKlKZgLyLgRhxy3Mjp7
-	 9Hd0avqxsK0bA==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-65c20dc9577so2375166a12.2
-        for <linux-next@vger.kernel.org>; Tue, 17 Feb 2026 16:02:12 -0800 (PST)
-X-Gm-Message-State: AOJu0YwwFagGRB+9uHJHrhmyzIBQBYNlfQZei/VpbBaeAgZoMmZTN0sC
-	eFqCBX8ZvxW/Nut7JMkfCA7LejXJ5bNsHPIbvzQcENda65ubgP5Y3fn9DhrSRebnba6nHoBcrhq
-	mfXqhRlazRh2KkMdGORCnm1bgM6xnPJk=
-X-Received: by 2002:a17:907:9289:b0:b8f:f136:20f6 with SMTP id
- a640c23a62f3a-b8ff136212fmr522641066b.22.1771372931135; Tue, 17 Feb 2026
- 16:02:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="kcGoK9Do"
+Received: by mail-dy1-f195.google.com with SMTP id 5a478bee46e88-2baa098ffc6so4119454eec.0
+        for <linux-next@vger.kernel.org>; Tue, 17 Feb 2026 18:30:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1771381821; x=1771986621; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fc007As0Ixun7ND5t+dNpxdrjEo19u3i+2UY3CcojUc=;
+        b=kcGoK9DojhcK4EbUgvYgJFl6nW0oSldUubjmM1t/Uiji7orQdAEojxY/iiSCOlDlmX
+         s0w07ZBgMp2xNJWT1spuXJsfSrTAP1aNeGAn93IFZXFabNJgiRw8dnC6JKMCOe+XjtLr
+         gqOFf7/BuAkelNIDRYbNNZUPPkf0OGgapANe3/BPZ9qKKYACGKs4MdS1nODmLIXHNk5E
+         FwHzMw/Qn9Xy7mRRHZjrSqpaPc/uKazJqhkeKuBgXYvFYhKC8jf1lF5CP65ct8PuRzgi
+         jDTHCSYUKI5Ur/6N+GAeMbaWILdHYz3EX0KRFEy7WQr/mTngMtchYvlfXsK+gQor0JQj
+         UnBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771381821; x=1771986621;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fc007As0Ixun7ND5t+dNpxdrjEo19u3i+2UY3CcojUc=;
+        b=W0tFB1bkzBBM836/fBa1LqjVdt9IZc+xaV85e1ncUelaxNPsxDVayAjrlcADcBCuNk
+         QRwIQwNKtewKP1evEX5bJY5kbRgz0JU6zRa5TTmQ/9FcRM9EaEhux1QaYHKpmGkMAG0f
+         tOw4FpzSc8BzMjsIupb0lYFgxDrIOwSWoZmUp8gMTbGBjE7Lrr5S/h+4eDn8vJifORx4
+         zMmDkSmmFJGRzHKivhGnWiqCeA2GNn6e4Im4wgjVFl1kYeq9t9QGJ/I4hhTLCAOYiq9Y
+         hsKcV0oHr5vFadeGYrwmO4zDfMBqT79Bu+TpEVHe+bYsQUdFdP8HPNICIfNqq2QPJnj2
+         YhXQ==
+X-Gm-Message-State: AOJu0YwrrGTmE4qgs1W0T1pTSEoIISdNMHS6yVaUsoBZXkgbCTjMAAJp
+	2Hp37Mz1T35X+cau/Wkw0bRRTdMAZyQHHfyikHgrXIOtyKQda79R3kVaQ6KHm3VES1Mj3J/ytPF
+	3pHLK1H8=
+X-Gm-Gg: AZuq6aLMqy0TxsvVw4NCsLgCQqhJgVuzni8WXcveT/RMMcpbZBX5l+KYRKntT9Jrukx
+	OWAbmuDHOLNcb6JNzwfusDs/LRyTq+UgDBDVOThxiP5EI6a5ISaH4xiGkKmwPS+rPF0E+9QvxxY
+	/X9hJM1XWELyrW76CiEyr8REyxLLuij2fQTt8r+gUu3sBiSEWVQFo1ntCjUghH8PASV4Rwo4RyP
+	ZTxR9ez8iYRNprA00k23UMJKk1o7y3+mPY88y1cW+SwbHyPdZI0sXJ5CYHst8CuOJBpGXwvL0rW
+	FaCZh7xom7MwC8vij5gU+7EmRMBAs8Sf0m/CGkNwjK/YV+Z8mQatHwgzyMac933b0ziD1SXC+CA
+	1/JmjstPpe532EZxDT4a1jnD8us60y+gC9BjcRow/FMJ6jkcmAcz2N+EZez6DJiH3v5Y4Ujm4tj
+	L99EfmlRVaywHqCruy
+X-Received: by 2002:a05:7300:1348:b0:2b8:30b8:58c0 with SMTP id 5a478bee46e88-2baba01159amr6299559eec.6.1771381821322;
+        Tue, 17 Feb 2026 18:30:21 -0800 (PST)
+Received: from f55b40a4666e ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bacb5575b3sm15492954eec.9.2026.02.17.18.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Feb 2026 18:30:20 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKYAXd_rfwTt+uhOgBa4mEO5j0CQhZdTp=YcoU2RCng+scDbXQ@mail.gmail.com>
- <1dc54be7-f8f1-4555-9004-8e15437023ef@sirena.org.uk> <d4e59537-f51e-4860-bc66-8fe5f9f3e66f@sirena.org.uk>
-In-Reply-To: <d4e59537-f51e-4860-bc66-8fe5f9f3e66f@sirena.org.uk>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 18 Feb 2026 09:01:59 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-M+apvWoQUD=ucj0zhz3bN=Efi0GV8h+LtEhQZC4PU1Q@mail.gmail.com>
-X-Gm-Features: AaiRm52-q2Ab1wF-6-uaHv7lt6dd9QFO9mk6eX0PR3Rjbln8ooUwqkVY4wE8FHY
-Message-ID: <CAKYAXd-M+apvWoQUD=ucj0zhz3bN=Efi0GV8h+LtEhQZC4PU1Q@mail.gmail.com>
-Subject: Re: linux-next inclusion request : ntfs filesystem
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - fe9e3edb6a215515d1148d32a5c445c5bdd7916f
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Wed, 18 Feb 2026 02:30:20 -0000
+Message-ID: <177138182014.3393.3030416504892816271@f55b40a4666e>
 
-On Tue, Feb 17, 2026 at 11:24=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> On Mon, Feb 16, 2026 at 04:05:42PM +0000, Mark Brown wrote:
-> > On Sun, Feb 15, 2026 at 03:02:34PM +0900, Namjae Jeon wrote:
-> >
-> > > Could you please add ntfs -ntfs-next tree to linux-next ?
-> >
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git ntf=
-s-next
-> >
-> > I've done this, with you as the contact - let me know if you want to ad=
-d
-> > anyone else.  It should start appearing tomorrow, though I note that it
-> > is the middle of the merge window so if it were going to go to Linus
-> > this time around it should really have already been there already.  If
-> > you want to also add a separate fixes branch let me know about that too=
-.
->
-> This is breaking at least an arm multi_v7_defconfig in conjunction with
-> things already in -next:
->
-> /tmp/next/build/fs/ntfs/file.c: In function 'ntfs_file_mmap_prepare':
-> /tmp/next/build/fs/ntfs/file.c:657:19: error: 'struct vm_area_desc' has n=
-o member named 'vm_flags'; did you mean 'vma_flags'?
->   657 |         if (desc->vm_flags & VM_WRITE) {
->       |                   ^~~~~~~~
->       |                   vma_flags
->
-> so I'll drop it for now, I'll try again after -rc1 (next week).
-It seems the build error is caused by a dependency on Lorenzo Stoakes'
-recent MM change ("mm: update all remaining mmap_prepare users to use
-vma_flags_t"), which replaces vm_flags with vma_flags in struct
-vm_area_desc.
-I will update the ntfs tree to align with this change and ensure it
-builds correctly against the current -next.
-Thanks for your help!
+
+
+
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/fe9e3edb6a215515d1148d32a5c445c5bdd7916f/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: fe9e3edb6a215515d1148d32a5c445c5bdd7916f
+origin: maestro
+test start time: 2026-02-17 16:13:42.312000+00:00
+
+Builds:	   55 ✅    0 ❌    0 ⚠️
+Boots: 	   52 ✅    0 ❌    0 ⚠️
+Tests: 	 3265 ✅  181 ❌ 2452 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: mt8395-genio-1200-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6994b2e7a1ae387ffbdf43b2
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+Hardware: sun50i-h5-libretech-all-h3-cc
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6994b2e4a1ae387ffbdf43a0
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
+      last run: https://d.kernelci.org/test/maestro:6994b405a1ae387ffbdf4e21
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6994b2b0a1ae387ffbdf416c
+      history:  > ❌  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6994b2bfa1ae387ffbdf42c6
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
