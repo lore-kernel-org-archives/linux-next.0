@@ -1,471 +1,175 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010007.outbound.protection.outlook.com [40.93.198.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D591D33A9C1;
-	Thu, 19 Feb 2026 13:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771507678; cv=none; b=NSBg+nnwyzXbrIySD2nfYQYPYcqJCn8GjIHnAzCJ0HRzKcpPMFuFZ9d6MGyfXuTaplOK8h8XxFgCABz90fLjvANZ3VRjrRImVfg372++PCZxiJaXTA+eEg8yTbe4XQ3hEDmiG6rOage4gzau7FZi73VuIKYZgB72Al64WxAC07M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771507678; c=relaxed/simple;
-	bh=3QRFq64j/wlLU+Ft7BGflFT8nBnnufcjGJdREyqTvV0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:Message-ID:Content-Type; b=jqRQm2xPc7klfAhjXl7hsb2m4kLdHSKL6WUuKGmnP/G6Aenyd2w/PFSBOrbfg2wcpkQ7kdTG6auuIYw6xSfXpQHSxlsDD60e+Yd+/ew5wCDAXs+v3IkryepMXDk7tvYdoNXqDLqfdNsTQuurNrn+aTOtSi83K9LIIRXBP/RdyDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PaclBfMd; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA143382E8;
+	Thu, 19 Feb 2026 14:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771511641; cv=fail; b=Go+7gMxpeZBKnWwC+uzIQXZv700DLpXJ4skzlIeo6ffvQuIuhFkMX9MyeeDB4Irup8uduuWJJ4nam7Vjph/t//tcUNaJIx1ZFEb9dzDx2oDtty2ZRsU/EEQO1tltWS9/GEobmE1FBBjiJjFdhmzPpDGfVjOBa8BhBxxladI7VQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771511641; c=relaxed/simple;
+	bh=zBxf+kDXbE/lt4RNZSG1jOtSTjx0be2rYGh/lw0ouAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eWQIybmoJxtUtKg07fuDz31z2jZOh4pfw5l0eDdzcYDEPTmzFjmj5H8NRsEi2HUj8hgcMblZ77mQDhIyLI6iqirzu0ywtRIvE+397i0QF9eOjoQtCNvvaaGk5dZS37g20BBnKyhHpg3UjSA36vls0/qKb5UvuJSseB4yk4dKQoE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AExY/YD2; arc=fail smtp.client-ip=40.93.198.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PaclBfMd"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61J9A5Bw1602113;
-	Thu, 19 Feb 2026 13:27:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=JCHlV5EvVFPz9lEcPTQ5bZ5Z3rtt
-	Iz2QPyt558X+ruY=; b=PaclBfMdfrgfoP/2NI4uE0E1a0fUBWOb7zmJYrD0vw/9
-	V6neZApIawQOT7rXsgIFMpkz8GSK+OzfnufRiXG8LbKXCwDkCiibZ/YRzcdJZBJN
-	v8LnryPWjQVlEcxRBgwi5Ude7fCXlbtU8OhQnJ42hp00WFAVcucswvKl7XTPkH+j
-	pSXokKw/BFrLUrMuGKMUj367eOKZrLM7zsHdIw49TcVD0cAPdtZyASb68Q55YqAf
-	n+LUHKRGZM4MYythaMcxgOIKZFNU8WShlxik746V1CxFVPG+pnq65h5pzd8y71v3
-	eafeAog4aE1HWobN/nyytD3YxrPa/AqEXV1duh4L3w==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cajcr68h3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Feb 2026 13:27:47 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61J8nLWf030217;
-	Thu, 19 Feb 2026 13:27:46 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4ccb45c93y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Feb 2026 13:27:46 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61JDROv925231956
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Feb 2026 13:27:24 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 410D458067;
-	Thu, 19 Feb 2026 13:27:45 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D362658056;
-	Thu, 19 Feb 2026 13:27:44 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 19 Feb 2026 13:27:44 +0000 (GMT)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AExY/YD2"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lGVxCpZGRDJ7P9RrGLvzXLSwInzle0ym+TLtfe2KzRFQ0VqRm6d5vzmujEN6UphYoK+mnrlTpXy4EHL6VRcnOSI3yYW0SQwleX/g5BDmNVdWAMjYAM6PjtP5MhKj5HBLbAZjp7SUZuz8E1nJdabiyW8GR8xNYCiGRkeZAJ/uXT7ULNUGDcLRASFwXMbp3IWfd9gjPiJWavqRF+w61XB/SujincKy8UrSllq3b04sqtFYT6jBZPmGLcaQUbV9bsDjrUgvF+qCfo31O7YRHIMjtEveRrK9yEkdO6GXpnRGSXXHyQzaSaqbpNL9gZHlPddG/LHJH2VUoaGrJQ8Cc6ju3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4P5v3UqPttVO4XyMpb7U2fBaFhrUGUzG6UCbnxEbueU=;
+ b=rSc6aDAPgd/E0Zjg4TRN1dJTNENqk7SEa+ANU4vECc+8eIY9VbZH0rbd6IdVnfn5a68k34AIyj2y3yITvIu4XgYAVLi4l31Wf3iEYX+RcOLWTVUpFjsPfYX5Iss6NDDO5xsZAQ/ipuHw+8N/SMOHL/IVjfvcBW/m4kFfpQY1ywYt6SpXWg4M+i7s3hXCGd+im/nP8I317e5sGk6MF3GmSF6FvOu4F6BH67V48IU71jJLybbQLY2+ILtRVMDzsPZRZn7zrHjhjXL0mx9W11J9ifAwi07iAEhrCy5vkhQvAVfRh6MRH3JBgbgVCGXLR1FxUfsMlNw9Wv1ZLnACkUbh6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4P5v3UqPttVO4XyMpb7U2fBaFhrUGUzG6UCbnxEbueU=;
+ b=AExY/YD2vU2tmdu9yGdPl6dpRFL0CQ3qFtTPH4jexS5Tz+hODL0gGwUVJ58aBIS8eC6LN6rdeU+O0r53fLVOlhV53xrrqFtdoapvinh4bP8pqHPblCPBZfCmM4LBD2KvQY6dwp29aL7mUxIVoDBU1zDXooFXfld0paWJws14apY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ SJ1PR12MB6217.namprd12.prod.outlook.com (2603:10b6:a03:458::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.13; Thu, 19 Feb 2026 14:33:55 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::7da:cc3:cf2e:8ebf]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::7da:cc3:cf2e:8ebf%4]) with mapi id 15.20.9632.010; Thu, 19 Feb 2026
+ 14:33:54 +0000
+Date: Thu, 19 Feb 2026 09:33:45 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Nikolay Borisov <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org, linux-edac@vger.kernel.org,
+	linux-acpi@vger.kernel.org, x86@kernel.org, rafael@kernel.org,
+	qiuxu.zhuo@intel.com, Smita.KoralahalliChannabasappa@amd.com,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: spurious (?) mce Hardware Error messages in v6.19
+Message-ID: <20260219143345.GA5486@yaz-khff2.amd.com>
+References: <be9e2759c1c474364e78ef291c33bc0506942669.camel@web.de>
+ <20250917144148.GA1313380@yaz-khff2.amd.com>
+ <6e1eda7dd55f6fa30405edf7b0f75695cf55b237.camel@web.de>
+ <20250917192652.GA1610597@yaz-khff2.amd.com>
+ <5ba955fe-2b96-429e-b2e8-5e1bf19d8e8e@suse.com>
+ <20250918210005.GA2150610@yaz-khff2.amd.com>
+ <67c7de1011ea7b8863051889ee2a41512fb0e044.camel@web.de>
+ <20251009132055.GA472268@yaz-khff2.amd.com>
+ <21ba47fa8893b33b94370c2a42e5084cf0d2e975.camel@web.de>
+ <20260216202546.GA420258@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260216202546.GA420258@yaz-khff2.amd.com>
+X-ClientProxiedBy: SN7PR04CA0002.namprd04.prod.outlook.com
+ (2603:10b6:806:f2::7) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 19 Feb 2026 18:57:44 +0530
-From: Misbah Anjum N <misanjum@linux.ibm.com>
-To: Linux Next <linux-next@vger.kernel.org>, linux-nfs@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linuxppc Dev
- <linuxppc-dev@lists.ozlabs.org>, chuck.lever@oracle.com,
-        jlayton@kernel.org
-Subject: [BUG] [powerpc] [next-20260216/17] nfsd: use-after-free in
- cache_check_rcu() triggered by sosreport on ppc64le
-Message-ID: <dcd371d3a95815a84ba7de52cef447b8@linux.ibm.com>
-X-Sender: misanjum@linux.ibm.com
-Organization: IBM
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: StfXldVJY_8vxmh0IVfp407gplE6OIud
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDEyMCBTYWx0ZWRfX6zdL3Opy2Xpb
- e0A3DNc//Hs32Cn5+211CyVT0aPik9VEmyxQjEmQgzaSQNAZWpFJtsmBvNlEv2i/aIBYXO136Op
- 66Uic3RGQJgDKmH1chAmTusI1BgFvdWqk1jKwyNSF65o9+wDWxN89PX0Dh7rq0VW1TG6D38LfIF
- Vnp+6bX77J9CdNNlvKOJvzQcQ+5RO0Ep/3Rxpn5m9js4SrUwME0tVbnp6mm2C9dWQoSVlEdxQv+
- 05Pme//aQg9jdIE/JpImD8hqEjDoHq90qjEg+aTDAlfB7DBn4BvBhbwHX0Hrf38LBc6czHIHKEP
- tNUM+0MXBXAA3RmGsPsEoDJso1+DB/H+gvdxb5Ho8qPzFXjHzYpgcw31zZ4i8v3yTGa+FJDDDI3
- PGOMjWVk0BNT3z/6h5Az/2nyWHyU4mp831OQFsPjlhoWFTaNixJuD8jYknTh72adwbR8kdF8I/i
- vIC3WqjDvQQQyys9h8Q==
-X-Authority-Analysis: v=2.4 cv=UPXQ3Sfy c=1 sm=1 tr=0 ts=69970fd3 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=fLEW9mKOiIiKqoFP268A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: StfXldVJY_8vxmh0IVfp407gplE6OIud
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-19_03,2026-02-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 phishscore=0 impostorscore=0 adultscore=0
- bulkscore=0 clxscore=1011 lowpriorityscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602190120
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SJ1PR12MB6217:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8eb37118-5562-48e3-6c4f-08de6fc3e8ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Run9KpfJALjgZEFuKXIkpE4TGheIckWv7ywIEy12GxQNvFG6rAThtLte3qiK?=
+ =?us-ascii?Q?7gNo6X1bUHOOSi5ve/q14nHcgwqZivFg2WhIbRWYkphV1B9glVMp9udMc0+F?=
+ =?us-ascii?Q?J81ZWgTWr1RRSig+GOm+iXs2gjyfgoGxVXwEXKEeLwihzBa+AdUMUWTZsCBd?=
+ =?us-ascii?Q?C9aiIQzAY485hlgYffZ4qzk270KQhGxluydG5DoBwxe/2dndfPNRFc0mNUjS?=
+ =?us-ascii?Q?jRxMfF7HZUDgCBUZwy4WAutUYSK6UatDh0L3Nih8IbZFgbuZQJPegnXWETUY?=
+ =?us-ascii?Q?A2ChqdD+3OJZ5xmUT0WnR04dGlqs1zHkgQqPTeZbVDwM4tYVG3qfblKeOlax?=
+ =?us-ascii?Q?gOewUhi00u187dHN9DeuS3KQ4vi0VyMcPgZ4eUnTpvmIEztdxmL0LfUk+RVp?=
+ =?us-ascii?Q?hl2trN8R9gM3SD11O18X1L9Gy7h5fmoa5PP5ykUi9Zs/22Idmvu3MtPHNbnc?=
+ =?us-ascii?Q?B85+eICKJ3fv/vNakMeGmJAJCMnM8XEik1cV5NHzwhhEeKnNPH+NbaodBzJE?=
+ =?us-ascii?Q?iLl1SzvPpc1SbB1FcR2UQvlLxPBHgVJrRUCmGtIR4b+j5LnkNYsqygNl6AVU?=
+ =?us-ascii?Q?WLjWbplNh0XCrLo1rilocOtzDZpUuZqrfY1JVVTKxn/wBpxalNZLp4OKl5rt?=
+ =?us-ascii?Q?ocDU/tfI3L/VRORq3ujmqsrwifjF7ia3A84RRDOCdCw6ZT8oj9h7b7TdxR0P?=
+ =?us-ascii?Q?rFkRtaH7PClKfYrsJewPi9qrBb1grHne9bHRtkQRQoSCZUnEkp4NDqeJl09n?=
+ =?us-ascii?Q?LegTTQ9ebDTKmCcuqTC4LdwoYmf+V9B2R9xPpMtY+f7s0wq+LLk4eazc6DIS?=
+ =?us-ascii?Q?sMg/0BKA9k7J8tg6a8zEzeyF2rS6ctaF0LeQKWgHviSWkqePibvvXOBfFZrF?=
+ =?us-ascii?Q?LdRmm5A1gzYqst28Rqrm/hTUX79gaDHSKqD/1xHCEhKGShbr1Zbuq0NLzVk0?=
+ =?us-ascii?Q?ETeG5H4NUY1Bbgdv4ixQ3Yc9kBN34ZKc5mMqB5lC4QjG8uRgm1JwnOLGB3Ai?=
+ =?us-ascii?Q?DhiRXQ3/t4MvKnJeTZno77tN4KKcqqx26L1ON+J2JF6jNxGUFgMZ+Mm88WL2?=
+ =?us-ascii?Q?EqlAbvzd3LwEtI2oPKeKxgioBul9pg1c7/LBv0uFwVxQrDs/2gsr3X/vPhW1?=
+ =?us-ascii?Q?EA2aUp0p0Z8y1fpkjBeAZhsTO6+uQAlH/Jyibtif1AnY8sEY9NOmutI7vd58?=
+ =?us-ascii?Q?QSDVdfQSru4vfCJUGEZFcmMd5nMPEcyabKx3BMgDVUrIvXv6YU+U04XXf0r4?=
+ =?us-ascii?Q?WFQyF8d1deai8i2wg9Zeg55hoVDPtc4ah1zpaWeEiH1ABhVGW6ktKOhHv7bm?=
+ =?us-ascii?Q?KyfmLDrBNLv1SLDfgbTDgQ675qZ9JNzu3a2CUVEAycDFHc2nbOXU81se+vda?=
+ =?us-ascii?Q?HuUVaSvsfT5/+DwInVDCV/Km2bwUmKlvgTSmS2eHk6E4Hggwd3m5mieIaA7g?=
+ =?us-ascii?Q?qjgj9z3LkVqb0bZmsV1Xivs4HEVsJq/V3KGjg66Z44Ncap2z3cRDV9jN8Du0?=
+ =?us-ascii?Q?sxgjBVlisdKqfNHU5tWBTsTZUdLZIK34elUkTTK+/vSXy3SyrdEm4nX1PA5Y?=
+ =?us-ascii?Q?XLKuYQWNtsUnff6l0dQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?55eRbuCeDitCBg0tetZrGEI6D3mpxZBU5kKW0bgoTountQnKlUynHEILYHwu?=
+ =?us-ascii?Q?kZzzcuAkkPOpmrkeQH4aJHEy6IVw6IzJfjfJdO0kP5cdrb7njDVMjOqct32o?=
+ =?us-ascii?Q?4wdT/O5x9P8J9fQ3EfungTKL+mz1f0EA6GUjr7W8CD9mEa5U8wgy1d9z+l2Y?=
+ =?us-ascii?Q?XuWZLt0X46WbkBhd26k9X2CW392ZyQkcX1OMGlGP6ydWKbCg8aRyM3xnM71q?=
+ =?us-ascii?Q?v/cHT0bYDrD522tPR0OK7C8HcTSlIRO3GvjtSF29dNzLH4MGgWyPsL3tyut6?=
+ =?us-ascii?Q?OlnSwsDnV311Lw7WGCuNgVkB7bihunxOT9nB+IFrcUTKx/eAuMREkj1Jji14?=
+ =?us-ascii?Q?DINNJvH+kMWmpv/vzvyHPh9xxbbxRGlRQoD/pHgeWOD/QNofbKJ9u9bvFJoc?=
+ =?us-ascii?Q?M9uuzmGuaUytULgGDCUB5Z9hHpxc2yMuYWbo8W+5pyi9q8T57peNlGixsedp?=
+ =?us-ascii?Q?7PnmiYc/u/CgTfIczfonJtCFJmSiM2fmzmP1cMaGrZ+aQRA2BsaWy/X25ekT?=
+ =?us-ascii?Q?WrLIvnwd/QICMoim9hLjay+WXe6KwXxpYz1tbGcAbNIAhv24shPjF5TcH06d?=
+ =?us-ascii?Q?p91A3Kn8JwtPzQov1bqJNaDBKKPb16CTfK2i2IvutXmERHPyjcUS9H7US/e/?=
+ =?us-ascii?Q?64b2HetGGQbxXD3K98WSBwjNrNJ32RO3E31p9aeY2V8n7HSSQvBKkE0ByHv3?=
+ =?us-ascii?Q?ZC4lkoE7QoTD3fFm6WQdKK9/ubRriM59U3saZUGOwXzdI8N7FcMt1Oo9qrgP?=
+ =?us-ascii?Q?24aoQDgg9qXMa7/knEIzVHn2ZMpXJDWbvVx8bihFSYe+06ED+pqvsGHa2NKq?=
+ =?us-ascii?Q?pf7mLmMQbQJAAYqYWl1S5qYpoaeGZo8xCjHSJlF/3SS1Dj/AGszOrkMTg1nj?=
+ =?us-ascii?Q?IS/U4h0y15wHVaBTsXu2J2UOeoHXdyxXBStPtWfBbBuO1bO5+reixFBtJrzo?=
+ =?us-ascii?Q?aBHPaW2tAp6yP3i+grQ7zznKvqL6oQO8mcf1BXL/28QPGHbhLlxAdZ+Cas2Z?=
+ =?us-ascii?Q?RWUf2OUZiXS/nhBoln5+3q6ufmzmqDo2BwcpMfwXsN5Q7fh1qZdQMCjmkmAT?=
+ =?us-ascii?Q?NNaRkVjB+Ylb/gsj6uun0nFU5ygQ12CAz+mHa2UzxWVx3sG8LeoNpsTqMD+W?=
+ =?us-ascii?Q?1JP0VuzYmQEUUu8vjhKkp83We55DLAvv/Q8R3aipnl9OIT2tQlG3w9kKZ6kW?=
+ =?us-ascii?Q?sRtrsVwqN+St5KjlfLNWpa85ulRmKTfph4ErUrD/0FC8idxbtQfL0DrA0hQ0?=
+ =?us-ascii?Q?aAZL2ACpYwbGmCv5c8z4oBZlgUo2yjpo8gh0K6agwjcpMxTVj7Blo4aZXMuJ?=
+ =?us-ascii?Q?QmJa7ji6RZndIs6s4AF6WbDwUIFt8BygxHQn28rpykQgNdhaU3/o1/u62xd1?=
+ =?us-ascii?Q?e1nfeX+hf9lt18zZZ9k3Xcr3ICqWVhjhkuxJghWUAmBpWld8LjBtIchmFquB?=
+ =?us-ascii?Q?7Hvdm3+f1PoGzbE1jqVL7wOUdEh546sxv8WWAbxKQYQppJxUarl33R4HjNei?=
+ =?us-ascii?Q?UcX01ngk3rvunoua5t95+jUibF5Rk3gegV4GjFEEgW8hWAwVxnA+eJjTisrG?=
+ =?us-ascii?Q?kWOcoWvCHIF8bvb5b0XerES1BcUS5rygJFhJZPSNuud2uRsBFPDsScyl22n7?=
+ =?us-ascii?Q?8nsHe5LCItlaJxgsR4jNjhju5X2KqN8q7CMVmc9yH3VssXIsRcLI8S7LMsGL?=
+ =?us-ascii?Q?Zd+YP7GepNbpCzymu2VqL6MfwKjMzKxkaO7Y9sjV4fWOwtG2sForAtaX2FBr?=
+ =?us-ascii?Q?dCtMsYcxKA=3D=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eb37118-5562-48e3-6c4f-08de6fc3e8ba
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2026 14:33:54.9118
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xeTKWhsar97NthWHhwlVGYyx5gHjoc9kPxFrQO1e/yd5YBZKKQMoLUyk77vI+VUt+f29OJu6h7rb2u3urXg6Dg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6217
 
-Hi,
+On Mon, Feb 16, 2026 at 03:25:46PM -0500, Yazen Ghannam wrote:
+> On Thu, Feb 12, 2026 at 01:50:05PM +0100, Bert Karwatzki wrote:
 
-I'm reporting a critical use-after-free bug in linux-next NFS server 
-code that causes kernel crashes when sosreport reads /proc/fs/nfsd/* 
-files. This appears to be a recent regression affecting ppc64le systems.
-The bug is 100% reproducible and shows corrupted pointers containing 
-ASCII strings (library names, export cache names) instead of valid 
-kernel addresses, indicating freed memory has been reallocated.
+[...]
+
+> > 
+> > 2026-02-10T16:15:01.001203+01:00 lisa kernel: [    C0] smca_should_log_poll_error: 1
+> > 2026-02-10T16:15:01.001815+01:00 lisa kernel: [T45426] mce: [Hardware Error]: Machine check events logged
+> > 2026-02-10T16:15:01.001818+01:00 lisa kernel: [T45426] [Hardware Error]: Deferred error, no action required.
+> > 2026-02-10T16:15:01.001819+01:00 lisa kernel: [T45426] [Hardware Error]: CPU:0 (19:50:0) MC14_STATUS[-|-|-|AddrV|PCC|-|-|Deferred|-|-]: 0x8700900800000000
+
+Hi Bert,
+
+The CPU stepping indicates that this isn't a production model.
+
+Can you please share more info on your system? Is it a production laptop
+or a pre-production sample?
 
 Thanks,
-Misbah Anjum N
-
-Bug Description:
-The kernel crashes with use-after-free in cache_check_rcu() [sunrpc] 
-when sosreport reads NFS export information from /proc. The bug is 
-highly reproducible and consistently shows corrupted pointers containing 
-ASCII strings (library names, export cache names, filesystem paths) 
-instead of valid kernel addresses.
-This is a critical regression in linux-next that needs to be fixed 
-before reaching mainline.
-
-System Information:
-Kernel: 6.19.0-next-20260216 and 6.19.0-next-20260217
-Architecture: ppc64le (IBM Power11, 9080-HEX)
-Hardware: IBM,9080-HEX Power11 (architected) 0x820200 0xf000007
-Firmware: IBM,FW1110.11 (NH1110_102)
-Hypervisor: phyp (PowerVM)
-Distribution: Fedora 42 (Server Edition Prerelease)
-Reproducible: 100%
-
-Reproduction Steps:
-On ppc64le system with kernel 6.19.0-next-20260216/17:
-1. Run: modprobe nfsd
-2. Run: sosreport
-System crashes (typically within 30-60 seconds)
-
-Important notes:
-1. Direct cat /proc/fs/nfsd/exports does NOT trigger the crash
-2. The crash is triggered by sosreport's specific access pattern to 
-/proc/fs/nfsd/* files
-3. No NFS exports or active NFS server configuration needed
-4. Reproducible 100% of the time with sosreport
-
-Kernel Configuration:
-Relevant NFS configuration options:
-CONFIG_NFSD=m
-CONFIG_NFSD_V3_ACL=y
-CONFIG_NFSD_V4=y
-CONFIG_NFSD_PNFS=y
-CONFIG_NFSD_SCSILAYOUT=y
-CONFIG_NFSD_V4_2_INTER_SSC=y
-CONFIG_NFSD_V4_SECURITY_LABEL=y
-CONFIG_NFS_FS=m
-CONFIG_NFS_V3=m
-CONFIG_NFS_V3_ACL=y
-CONFIG_NFS_V4=m
-CONFIG_NFS_V4_1=y
-CONFIG_NFS_V4_2=y
-CONFIG_NFS_V4_SECURITY_LABEL=y
-CONFIG_NFS_FSCACHE=y
-CONFIG_NFS_DEBUG=y
-CONFIG_NFS_DISABLE_UDP_SUPPORT=y
-CONFIG_NFS_ACL_SUPPORT=m
-CONFIG_NFS_COMMON=y
-CONFIG_SUNRPC=m
-CONFIG_SUNRPC_DEBUG=y
-
-Detailed Crash Traces:
-Crash #1 - cache_check_rcu() with "export_cap" pointer 
-(6.19.0-next-20260216)
-[ 3162.071511] BUG: Unable to handle kernel data access at 
-0x657079745f70618b
-[ 3162.071529] Faulting instruction address: 0xc0080000083322bc
-[ 3162.071534] Oops: Kernel access of bad area, sig: 11 [#1]
-[ 3162.071537] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=2048 NUMA pSeries
-[ 3162.071542] Modules linked in: binfmt_misc vhost_net vhost 
-vhost_iotlb tap tun nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 
-nft_reject act_csum cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack 
-nf_defrag_ipv6 nf_defrag_ipv4 nf_tables bridge stp llc rpcrdma rdma_cm 
-iw_cm kvm_hv ib_cm ib_core kvm bonding rfkill nfsd auth_rpcgss nfs_acl 
-lockd grace pseries_rng vmx_crypto drm loop drm_panel_orientation_quirks 
-nfnetlink vsock_loopback vmw_vsock_virtio_transport_common vsock zram 
-xfs dm_service_time sd_mod ibmvscsi ibmveth scsi_transport_srp tg3 ipr 
-btrfs xor libblake2b raid6_pq zstd_compress sunrpc dm_mirror 
-dm_region_hash dm_log be2iscsi bnx2i cnic uio cxgb4i cxgb4 tls libcxgbi 
-libcxgb qla4xxx iscsi_boot_sysfs iscsi_tcp libiscsi_tcp libiscsi 
-scsi_transport_iscsi dm_multipath fuse dm_mod
-[ 3162.071618] CPU: 51 UID: 0 PID: 52936 Comm: sosreport Kdump: loaded 
-Not tainted 6.19.0-next-20260216 #1 PREEMPTLAZY
-[ 3162.071623] Hardware name: IBM,9080-HEX Power11 (architected) 
-0x820200 0xf000007 of:IBM,FW1110.11 (NH1110_102) hv:phyp pSeries
-[ 3162.071627] NIP:  c0080000083322bc LR: c0080000115f6b48 CTR: 
-c008000008332278
-[ 3162.071631] REGS: c0000000b353f7c0 TRAP: 0380   Not tainted  
-(6.19.0-next-20260216)
-[ 3162.071635] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-48044402  XER: 00000000
-[ 3162.071643] CFAR: c00800001164e15c IRQMASK: 0
-[ 3162.071643] GPR00: c0080000115f6b48 c0000000b353fa60 c008000008397600 
-c00000012a758700
-[ 3162.071643] GPR04: 657079745f706163 0000000000000000 0000000000000000 
-c000000144b4d000
-[ 3162.071643] GPR08: c00000012a758700 0000000000000000 0000000000400cc0 
-c00800001164e148
-[ 3162.071643] GPR12: c008000008332278 c0000027fde49f00 0000000000000000 
-0000000000000000
-[ 3162.071643] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[ 3162.071643] GPR20: 0000000000000000 0000000000000000 c000000145433788 
-c000000145433778
-[ 3162.071643] GPR24: 000000007fff0000 0000000000000000 fffffffffffff000 
-0000000000000000
-[ 3162.071643] GPR28: c00000012a758700 0000000000000000 c00000012a758700 
-657079745f706163
-[ 3162.071682] NIP [c0080000083322bc] cache_check_rcu+0x44/0x2c0 
-[sunrpc]
-[ 3162.071716] LR [c0080000115f6b48] e_show+0x40/0x260 [nfsd]
-[ 3162.071747] Call Trace:
-[ 3162.071749] [c0000000b353fa60] [c0000000b353fb50] 0xc0000000b353fb50 
-(unreliable)
-[ 3162.071754] [c0000000b353fb10] [c0080000115f6b48] e_show+0x40/0x260 
-[nfsd]
-[ 3162.071780] [c0000000b353fb50] [c0000000007a7468] 
-seq_read_iter+0x1a8/0x680
-[ 3162.071787] [c0000000b353fc20] [c0000000007a7a44] 
-seq_read+0x104/0x150
-[ 3162.071791] [c0000000b353fcc0] [c00000000084ecb0] 
-proc_reg_read+0xf0/0x160
-[ 3162.071796] [c0000000b353fcf0] [c000000000756b00] vfs_read+0xe0/0x3d0
-[ 3162.071800] [c0000000b353fdb0] [c000000000757a08] 
-ksys_read+0x78/0x140
-[ 3162.071804] [c0000000b353fe00] [c0000000000348c8] 
-system_call_exception+0x128/0x350
-[ 3162.071809] [c0000000b353fe50] [c00000000000d6a0] 
-system_call_common+0x160/0x2e4
-[ 3162.071815] ---- interrupt: c00 at 0x7fff7ecb9fc8
-[ 3162.071818] NIP:  00007fff7ecb9fc8 LR: 00007fff7eca8438 CTR: 
-0000000000000000
-[ 3162.071821] REGS: c0000000b353fe80 TRAP: 0c00   Not tainted  
-(6.19.0-next-20260216)
-[ 3162.071824] MSR:  800000000280f033 
-<SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 28044404  XER: 00000000
-[ 3162.071834] IRQMASK: 0
-[ 3162.071834] GPR00: 0000000000000003 00007fff6afdd9d0 00007fff7ee47c00 
-0000000000000005
-[ 3162.071834] GPR04: 00007fff5c0223c0 0000000000010000 0000000000000000 
-0000000000000000
-[ 3162.071834] GPR08: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[ 3162.071834] GPR12: 0000000000000000 00007fff6afe68a0 0000000000000000 
-0000000000000000
-[ 3162.071834] GPR16: 0000000000000000 0000000000000000 00007fff7d800828 
-00007fff6afddf88
-[ 3162.071834] GPR20: 00007fff7d800830 00007fff7f3ed480 00007fff7d800838 
-00007fff7f40d480
-[ 3162.071834] GPR24: 00007fff7f58e0f0 00007fff5c0223c0 0000000000000005 
-00007fff6c001290
-[ 3162.071834] GPR28: 0000000000000000 00007fff6afdf8d0 00007fff79db3140 
-0000000000010000
-[ 3162.071870] NIP [00007fff7ecb9fc8] 0x7fff7ecb9fc8
-[ 3162.071872] LR [00007fff7eca8438] 0x7fff7eca8438
-[ 3162.071875] ---- interrupt: c00
-[ 3162.071877] Code: fba1ffe8 fbe1fff8 fb61ffd8 fbc1fff0 7c9f2378 
-7c7c1b78 7cbd2b78 f8010010 f821ff51 e92d0c78 f9210078 39200000 
-<e9240028> 71290001 418201cc fb410080
-[ 3162.071890] ---[ end trace 0000000000000000 ]---
-
-Crash #2 - d_path() NULL pointer dereference (6.19.0-next-20260217)
-[ 5489.374563] Kernel attempted to read user page (60) - exploit 
-attempt? (uid: 0)
-[ 5489.374582] BUG: Kernel NULL pointer dereference on read at 
-0x00000060
-[ 5489.374586] Faulting instruction address: 0xc0000000007cb354
-[ 5489.374590] Oops: Kernel access of bad area, sig: 11 [#1]
-[ 5489.374593] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=2048 NUMA pSeries
-[ 5489.374598] Modules linked in: binfmt_misc vhost_net vhost 
-vhost_iotlb tap tun nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 
-nft_reject act_csum cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack 
-nf_defrag_ipv6 nf_defrag_ipv4 nf_tables bridge stp llc rpcrdma rdma_cm 
-iw_cm kvm_hv ib_cm kvm ib_core bonding rfkill nfsd auth_rpcgss nfs_acl 
-lockd grace pseries_rng vmx_crypto drm loop drm_panel_orientation_quirks 
-nfnetlink vsock_loopback vmw_vsock_virtio_transport_common vsock zram 
-xfs dm_service_time sd_mod ibmvscsi tg3 ibmveth scsi_transport_srp ipr 
-btrfs xor libblake2b raid6_pq zstd_compress sunrpc dm_mirror 
-dm_region_hash dm_log be2iscsi bnx2i cnic uio cxgb4i cxgb4 tls libcxgbi 
-libcxgb qla4xxx iscsi_boot_sysfs iscsi_tcp libiscsi_tcp libiscsi 
-scsi_transport_iscsi dm_multipath fuse dm_mod
-[ 5489.374671] CPU: 2 UID: 0 PID: 45718 Comm: sosreport Kdump: loaded 
-Not tainted 6.19.0-next-20260217 #1 PREEMPTLAZY
-[ 5489.374676] Hardware name: IBM,9080-HEX Power11 (architected) 
-0x820200 0xf000007 of:IBM,FW1110.11 (NH1110_102) hv:phyp pSeries
-[ 5489.374680] NIP:  c0000000007cb354 LR: c0000000007a7ed0 CTR: 
-c0000000007a7e60
-[ 5489.374683] REGS: c00000026f2676b0 TRAP: 0300   Not tainted  
-(6.19.0-next-20260217)
-[ 5489.374688] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-88044408  XER: 00000000
-[ 5489.374696] CFAR: c0000000007a7ecc DAR: 0000000000000060 DSISR: 
-40000000 IRQMASK: 0
-[ 5489.374696] GPR00: c0000000007a7ed0 c00000026f267950 c000000001868100 
-0000000000000000
-[ 5489.374696] GPR04: c0000012e1350002 000000000000fffe c00800000ee360f0 
-c0000012e1350002
-[ 5489.374696] GPR08: 000000000000fffe c000000146400840 c0000012e1360000 
-0000000000000000
-[ 5489.374696] GPR12: c0000000007a7e60 c0000027ffffdf00 0000000000000000 
-0000000000000000
-[ 5489.374696] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[ 5489.374696] GPR20: 0000000000000000 0000000000000000 c0000000bbca06c8 
-c0000000bbca06b8
-[ 5489.374696] GPR24: 000000007fff0000 0000000000000000 fffffffffffff000 
-0000000000000000
-[ 5489.374696] GPR28: c00000026f267c50 c000000140db5800 c000000146400800 
-c0000012e1350002
-[ 5489.374736] NIP [c0000000007cb354] d_path+0x44/0x210
-[ 5489.374742] LR [c0000000007a7ed0] seq_path+0x70/0x160
-[ 5489.374747] Call Trace:
-[ 5489.374749] [c00000026f267950] [0000000000000006] 0x6 (unreliable)
-[ 5489.374755] [c00000026f2679b0] [c0000000007a7ed0] seq_path+0x70/0x160
-[ 5489.374759] [c00000026f2679f0] [c00800001144673c] 
-svc_export_show+0x1d4/0x5a0 [nfsd]
-[ 5489.374789] [c00000026f267aa0] [c008000004a126fc] c_show+0xa4/0x1c0 
-[sunrpc]
-[ 5489.374819] [c00000026f267b50] [c0000000007a7468] 
-seq_read_iter+0x1a8/0x680
-[ 5489.374824] [c00000026f267c20] [c0000000007a7a44] 
-seq_read+0x104/0x150
-[ 5489.374829] [c00000026f267cc0] [c00000000084ecb0] 
-proc_reg_read+0xf0/0x160
-[ 5489.374833] [c00000026f267cf0] [c000000000756af0] vfs_read+0xe0/0x3d0
-[ 5489.374837] [c00000026f267db0] [c0000000007579f8] 
-ksys_read+0x78/0x140
-[ 5489.374841] [c00000026f267e00] [c0000000000348c8] 
-system_call_exception+0x128/0x350
-[ 5489.374846] [c00000026f267e50] [c00000000000d6a0] 
-system_call_common+0x160/0x2e4
-[ 5489.374852] ---- interrupt: c00 at 0x7fff866b9fc8
-[ 5489.374855] NIP:  00007fff866b9fc8 LR: 00007fff866a8438 CTR: 
-0000000000000000
-[ 5489.374858] REGS: c00000026f267e80 TRAP: 0c00   Not tainted  
-(6.19.0-next-20260217)
-[ 5489.374861] MSR:  800000000280f033 
-<SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 28044404  XER: 00000000
-[ 5489.374871] IRQMASK: 0
-[ 5489.374871] GPR00: 0000000000000003 00007fff71fbd9d0 00007fff86847c00 
-0000000000000008
-[ 5489.374871] GPR04: 00007fff600228e0 0000000000010000 0000000000000000 
-0000000000000000
-[ 5489.374871] GPR08: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[ 5489.374871] GPR12: 0000000000000000 00007fff71fc68a0 0000000000000000 
-0000000000000000
-[ 5489.374871] GPR16: 0000000000000000 0000000000000000 00007fff847f0828 
-00007fff71fbdf88
-[ 5489.374871] GPR20: 00007fff847f0830 00007fff86ded480 00007fff847f0838 
-00007fff86e0d480
-[ 5489.374871] GPR24: 00007fff86f8e0f0 00007fff600228e0 0000000000000008 
-00007fff6c0016a0
-[ 5489.374871] GPR28: 0000000000000000 00007fff71fbf8d0 00007fff80548c40 
-0000000000010000
-[ 5489.374906] NIP [00007fff866b9fc8] 0x7fff866b9fc8
-[ 5489.374909] LR [00007fff866a8438] 0x7fff866a8438
-[ 5489.374912] ---- interrupt: c00
-[ 5489.374914] Code: f8010010 f821ffa1 f8410018 e92d0c78 f9210058 
-39200000 91410044 7c691b78 7d442a14 f9410038 e8630008 90a10040 
-<e9430060> 2c2a0000 41820064 e98a0048
-[ 5489.374927] ---[ end trace 0000000000000000 ]---
-
-Crash #3 - cache_check_rcu() with "libz.so." pointer 
-(6.19.0-next-20260217)
-[   63.748591] BUG: Unable to handle kernel data access at 
-0x2e6f732e7a626994
-[   63.748601] Faulting instruction address: 0xc008000009de22bc
-[   63.748606] Oops: Kernel access of bad area, sig: 11 [#1]
-[   63.748609] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=2048 NUMA pSeries
-[   63.748614] Modules linked in: nft_masq nft_ct nft_reject_ipv4 
-nf_reject_ipv4 nft_reject act_csum cls_u32 sch_htb nft_chain_nat nf_nat 
-nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables bridge stp llc 
-binfmt_misc rpcrdma rdma_cm iw_cm kvm_hv ib_cm kvm ib_core bonding 
-rfkill nfsd auth_rpcgss nfs_acl lockd grace pseries_rng vmx_crypto drm 
-loop drm_panel_orientation_quirks nfnetlink vsock_loopback 
-vmw_vsock_virtio_transport_common vsock zram xfs dm_service_time sd_mod 
-tg3 ibmvscsi ibmveth scsi_transport_srp ipr btrfs xor libblake2b 
-raid6_pq zstd_compress sunrpc dm_mirror dm_region_hash dm_log be2iscsi 
-bnx2i cnic uio cxgb4i cxgb4 tls libcxgbi libcxgb qla4xxx 
-iscsi_boot_sysfs iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi 
-dm_multipath fuse dm_mod
-[   63.748680] CPU: 58 UID: 0 PID: 5675 Comm: sosreport Kdump: loaded 
-Not tainted 6.19.0-next-20260217 #1 PREEMPTLAZY
-[   63.748686] Hardware name: IBM,9080-HEX Power11 (architected) 
-0x820200 0xf000007 of:IBM,FW1110.11 (NH1110_102) hv:phyp pSeries
-[   63.748690] NIP:  c008000009de22bc LR: c00800000f086b48 CTR: 
-c008000009de2278
-[   63.748693] REGS: c0000000a3a4f7c0 TRAP: 0380   Not tainted  
-(6.19.0-next-20260217)
-[   63.748697] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-48044402  XER: 00000000
-[   63.748706] CFAR: c00800000f0de15c IRQMASK: 0
-[   63.748706] GPR00: c00800000f086b48 c0000000a3a4fa60 c008000006f47600 
-c0000000b70f9b00
-[   63.748706] GPR04: 2e6f732e7a62696c 0000000000000000 0000000000000000 
-c000000152f70800
-[   63.748706] GPR08: c0000000b70f9b00 0000000000000000 0000000000400cc0 
-c00800000f0de148
-[   63.748706] GPR12: c008000009de2278 c0000027fde40700 0000000000000000 
-0000000000000000
-[   63.748706] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[   63.748706] GPR20: 0000000000000000 0000000000000000 c0000000e2e17b08 
-c0000000e2e17af8
-[   63.748706] GPR24: 000000007fff0000 0000000000000000 fffffffffffff000 
-0000000000000000
-[   63.748706] GPR28: c0000000b70f9b00 0000000000000000 c0000000b70f9b00 
-2e6f732e7a62696c
-[   63.748744] NIP [c008000009de22bc] cache_check_rcu+0x44/0x2c0 
-[sunrpc]
-[   63.748776] LR [c00800000f086b48] e_show+0x40/0x260 [nfsd]
-[   63.748805] Call Trace:
-[   63.748807] [c0000000a3a4fa60] [c0000000a3a4fb50] 0xc0000000a3a4fb50 
-(unreliable)
-[   63.748812] [c0000000a3a4fb10] [c00800000f086b48] e_show+0x40/0x260 
-[nfsd]
-[   63.748839] [c0000000a3a4fb50] [c0000000007a7468] 
-seq_read_iter+0x1a8/0x680
-[   63.748845] [c0000000a3a4fc20] [c0000000007a7a44] 
-seq_read+0x104/0x150
-[   63.748850] [c0000000a3a4fcc0] [c00000000084ecb0] 
-proc_reg_read+0xf0/0x160
-[   63.748855] [c0000000a3a4fcf0] [c000000000756af0] vfs_read+0xe0/0x3d0
-[   63.748859] [c0000000a3a4fdb0] [c0000000007579f8] 
-ksys_read+0x78/0x140
-[   63.748862] [c0000000a3a4fe00] [c0000000000348c8] 
-system_call_exception+0x128/0x350
-[   63.748868] [c0000000a3a4fe50] [c00000000000d6a0] 
-system_call_common+0x160/0x2e4
-[   63.748873] ---- interrupt: c00 at 0x7fffa74b9fc8
-[   63.748876] NIP:  00007fffa74b9fc8 LR: 00007fffa74a8438 CTR: 
-0000000000000000
-[   63.748879] REGS: c0000000a3a4fe80 TRAP: 0c00   Not tainted  
-(6.19.0-next-20260217)
-[   63.748882] MSR:  800000000280f033 
-<SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 28044404  XER: 00000000
-[   63.748892] IRQMASK: 0
-[   63.748892] GPR00: 0000000000000003 00007fff8b7ed9d0 00007fffa7647c00 
-0000000000000008
-[   63.748892] GPR04: 00007fff7c021af0 0000000000010000 0000000000000000 
-0000000000000000
-[   63.748892] GPR08: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[   63.748892] GPR12: 0000000000000000 00007fff8b7f68a0 0000000000000000 
-0000000000000000
-[   63.748892] GPR16: 0000000000000000 0000000000000000 00007fffa55f0828 
-00007fff8b7edf88
-[   63.748892] GPR20: 00007fffa55f0830 00007fffa7bed480 00007fffa55f0838 
-00007fffa7c0d480
-[   63.748892] GPR24: 00007fffa7d8e0f0 00007fff7c021af0 0000000000000008 
-00007fff94001290
-[   63.748892] GPR28: 0000000000000000 00007fff8b7ef8d0 00007fffa062be00 
-0000000000010000
-[   63.748927] NIP [00007fffa74b9fc8] 0x7fffa74b9fc8
-[   63.748930] LR [00007fffa74a8438] 0x7fffa74a8438
-[   63.748933] ---- interrupt: c00
-[   63.748935] Code: fba1ffe8 fbe1fff8 fb61ffd8 fbc1fff0 7c9f2378 
-7c7c1b78 7cbd2b78 f8010010 f821ff51 e92d0c78 f9210078 39200000 
-<e9240028> 71290001 418201cc fb410080
-[   63.748948] ---[ end trace 0000000000000000 ]---
-
-Next Steps:
-I have vmcore dumps from multiple crashes and am working on:
-1. Crash utility analysis to examine the corrupted cache structures
-2. Git bisect to identify the problematic commit
+Yazen
