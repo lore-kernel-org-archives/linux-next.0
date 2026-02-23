@@ -1,91 +1,163 @@
-Received: from smtp6.goneo.de (smtp6.goneo.de [85.220.129.31])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9AA3396E9;
-	Mon, 23 Feb 2026 18:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.220.129.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C1F366DD5;
+	Mon, 23 Feb 2026 18:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771870727; cv=none; b=G+DNkhwhTUaw0XpJTNzJdOJECU08W9cG8tAAD7gtxBLW1tUpCWqleZUEj4ZGi7nAbyvJWKiI6oob2iGkonnJn722TeyVML/YvcVJO3AVaOmyyscZoRK1D3wb2hzRdgsHIlZoZE2hULTfLK2JdcnF+Pny1KBchS8Akrkd98PLdRQ=
+	t=1771872531; cv=none; b=VtD88bOgUKFQrtNxk3oRW73gtSKlI3bgZsnWB6fnX4XNntluauplJxPrQ1e4D+PIdi5k1NKuE5gmYwDovoC8XLIbJ0Y0uh6E3UpIli3AQJDFt6WKoQNaucxcfTu5hIiOPpGAFvWYoFeanhophgAC4CgeXDlqbwyCsxImRQUGLpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771870727; c=relaxed/simple;
-	bh=wI9zV2lfvN7SHgvqkGv/swFRTetbqLneNnhYz0AjVkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WNdmFyoHjGNMb+6FnHb/g3g9h684yt/uawZukPdgS5baTb0FNW+bvjMFcYs9HVfr7W4MyPObvt/euaTahABVkd0Qyahnip4b2hH6v7D6lqQezdNVvvevIEBMcUt0rF6A5ePTCbq1JbpGtz/5yMAKK+2zwWKytodanGS815CqADo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devpi.de; spf=pass smtp.mailfrom=devpi.de; dkim=pass (2048-bit key) header.d=devpi.de header.i=@devpi.de header.b=Gs+NVsst; arc=none smtp.client-ip=85.220.129.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devpi.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=devpi.de
+	s=arc-20240116; t=1771872531; c=relaxed/simple;
+	bh=JtbFDM7WjuI/7Hr+yPjLM2J761mXUzMOmE4fh+JSMxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BHvzkMj6FLxofCNx+U7Q/wfB9tzzu4or8kibYQoiKBAOv3BlvdM0ucJDFfEfm3PSRrCsMZzxp0gdML+dSQcAP9uNVoggKPkYp+aUPJPOWeCAtWCHHs+UHh4XU4M2nKotD4/6d7xVGnZ47tPVi2cDtHP6AYxdqFz0eooaviBL2HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqdCN925; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=devpi.de header.i=@devpi.de header.b="Gs+NVsst"
-Received: from hub2.goneo.de (hub2.goneo.de [85.220.129.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by smtp6.goneo.de (Postfix) with ESMTPS id E401F2404B6;
-	Mon, 23 Feb 2026 19:08:34 +0100 (CET)
-Received: from hub2.goneo.de (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by hub2.goneo.de (Postfix) with ESMTPS id 4B32B240123;
-	Mon, 23 Feb 2026 19:08:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devpi.de; s=DKIM001;
-	t=1771870113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GlZkdgh+0RXMt11PcYdBb1OEcUpR0hv/k9oD3/CWmRY=;
-	b=Gs+NVsstrcdCeHZw3Sn0F7fyfp30qFHrajiZomcgH+7gbWN7+q2uVQUYs76VKaS0NutZFm
-	OqfP4A9id4wN1EFUwjbQgif2AhMymtgiMWShPoKg0e4hzjqUa3hccCVn69QJ/n6AXD1+0i
-	NWOw76tCy0WrNOXBACSQKUcGheXW5YBP4/JNbdSPTgH+hw6JboGtyyY+r3DSmhOg9OcxtJ
-	uwol/wgno9I++TtqzaRGZQynAYmyR1uBzPHytwsKJ9pVCTrgXIY9lKDIT4dETG+lp9NwXz
-	tE29DLGivu5Yd09XY3/W2EKJrdXJDbxKGqa8nh8jzldTEwjnUpKPjzqjk33jeg==
-Received: from [IPV6:2001:9e8:7344:c410:f6a8:dff:fe29:81ba] (unknown [IPv6:2001:9e8:7344:c410:f6a8:dff:fe29:81ba])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hub2.goneo.de (Postfix) with ESMTPSA id 0113F240027;
-	Mon, 23 Feb 2026 19:08:32 +0100 (CET)
-Message-ID: <5386c18c-9326-4df5-99d9-30727b0c48b1@devpi.de>
-Date: Mon, 23 Feb 2026 19:08:32 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqdCN925"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F2FFC116C6;
+	Mon, 23 Feb 2026 18:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771872531;
+	bh=JtbFDM7WjuI/7Hr+yPjLM2J761mXUzMOmE4fh+JSMxk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qqdCN925frY92DgtmwmKSKyNFOFVNp08ZR60n6+AKvFcLNL6oINSCitrddwYCaTOi
+	 zMgxWEbaom5ENQ4j4weJs/rjrJdDQHzSc8H/qN0v2fSZ2eXjp8frZPNe55wTrwC/c1
+	 9oSfBetVlgasj5fcgu8Sd6gBoiRBkVMcDIq1kEakzKrjRhc9LLV/4TsFyOLnQaHCud
+	 hOwVfqtdXYpAZPBBm4QvsXmXYuUjsKAp5sBrr2d+a3jjpPkTJ+csKvkAs2OyKG4quj
+	 swarDd5nqIlIUyNq0WwyU8Z2NK52uqXtWUzwU8SJowqvVddkVDfOhEUoxB++pbnGcx
+	 OJmdXTHtA6tsA==
+Date: Mon, 23 Feb 2026 18:48:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Leon Romanovsky <leonro@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <aZyhDuaF5vi05KBY@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Missing signoff in the hid tree
-To: Jiri Kosina <jikos@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-References: <aZxFiDybKKxezaYc@sirena.org.uk>
- <70o4n987-9s87-rrr1-qrrr-r351qs44957p@xreary.bet>
-Content-Language: en-US
-From: Julius Lehmann <lehmanju@devpi.de>
-In-Reply-To: <70o4n987-9s87-rrr1-qrrr-r351qs44957p@xreary.bet>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-UID: e96bf3
-X-Rspamd-UID: 9da1f2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rDEVY5bnA85zyF2e"
+Content-Disposition: inline
 
-On 2/23/26 13:20, Jiri Kosina wrote:
-> On Mon, 23 Feb 2026, Mark Brown wrote:
->
->> Commit
->>
->>    6b409da663270 ("HID: magicmouse: fix battery reporting for Apple Magic Trackpad 2")
->>
->> is missing a Signed-off-by from its author
-> D'oh, thanks for spotting this.
->
-> CCing Julius -- could you please provide your Signed-off-by: line? I'll
-> take this as a sufficient reason to rebase the branch.
 
-sorry for messing up my commit, has been some time since my last mail patch.
+--rDEVY5bnA85zyF2e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julius Lehmann<lehmanju@devpi.de>
+Hi all,
 
->
-> Thanks,
->
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+/tmp/next/build/drivers/infiniband/core/ib_core_uverbs.c: In function 'rdma=
+_user_mmap_entry_remove':
+/tmp/next/build/drivers/infiniband/core/ib_core_uverbs.c:249:17: error: imp=
+licit declaration of function 'dma_buf_move_notify' [-Wimplicit-function-de=
+claration]
+  249 |                 dma_buf_move_notify(uverbs_dmabuf->dmabuf);
+      |                 ^~~~~~~~~~~~~~~~~~~
+make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/infiniban=
+d/core/ib_core_uverbs.o] Error 1
+make[6]: *** Waiting for unfinished jobs....
+/tmp/next/build/drivers/infiniband/core/uverbs_std_types_dmabuf.c: In funct=
+ion 'uverbs_dmabuf_fd_destroy_uobj':
+/tmp/next/build/drivers/infiniband/core/uverbs_std_types_dmabuf.c:170:17: e=
+rror: implicit declaration of function 'dma_buf_move_notify' [-Wimplicit-fu=
+nction-declaration]
+  170 |                 dma_buf_move_notify(uverbs_dmabuf->dmabuf);
+      |                 ^~~~~~~~~~~~~~~~~~~
+make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/infiniban=
+d/core/uverbs_std_types_dmabuf.o] Error 1
+
+Caused by commit
+
+  95308225e5bae (dma-buf: Rename dma_buf_move_notify() to dma_buf_invalidat=
+e_mappings())
+
+interacting with
+
+  0ac6f4056c4a2 (RDMA/uverbs: Add DMABUF object type and operations)
+
+=66rom Linus' tree.  I have fixed this up as below and can carry as
+needed.
+
+=46rom 89e7d4987e08a46f2db151cebba258a1bc01d628 Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Mon, 23 Feb 2026 18:27:51 +0000
+Subject: [PATCH] RDMA/uverbs: Update for semantic conflict with drm-misc
+
+/tmp/next/build/drivers/infiniband/core/ib_core_uverbs.c: In function 'rdma=
+_user_mmap_entry_remove':
+/tmp/next/build/drivers/infiniband/core/ib_core_uverbs.c:249:17: error: imp=
+licit declaration of function 'dma_buf_move_notify' [-Wimplicit-function-de=
+claration]
+  249 |                 dma_buf_move_notify(uverbs_dmabuf->dmabuf);
+      |                 ^~~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/infiniband/core/ib_core_uverbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/core/ib_core_uverbs.c b/drivers/infiniband/=
+core/ib_core_uverbs.c
+index d3836a62a0049..d6e99c79cf183 100644
+--- a/drivers/infiniband/core/ib_core_uverbs.c
++++ b/drivers/infiniband/core/ib_core_uverbs.c
+@@ -246,7 +246,7 @@ void rdma_user_mmap_entry_remove(struct rdma_user_mmap_=
+entry *entry)
+ 		dma_resv_lock(uverbs_dmabuf->dmabuf->resv, NULL);
+ 		list_del(&uverbs_dmabuf->dmabufs_elm);
+ 		uverbs_dmabuf->revoked =3D true;
+-		dma_buf_move_notify(uverbs_dmabuf->dmabuf);
++		dma_buf_invalidate_mappings(uverbs_dmabuf->dmabuf);
+ 		dma_resv_wait_timeout(uverbs_dmabuf->dmabuf->resv,
+ 				      DMA_RESV_USAGE_BOOKKEEP, false,
+ 				      MAX_SCHEDULE_TIMEOUT);
+diff --git a/drivers/infiniband/core/uverbs_std_types_dmabuf.c b/drivers/in=
+finiband/core/uverbs_std_types_dmabuf.c
+index dfdfcd1d1a446..149220a1599cf 100644
+--- a/drivers/infiniband/core/uverbs_std_types_dmabuf.c
++++ b/drivers/infiniband/core/uverbs_std_types_dmabuf.c
+@@ -167,7 +167,7 @@ static void uverbs_dmabuf_fd_destroy_uobj(struct ib_uob=
+ject *uobj,
+        if (!uverbs_dmabuf->revoked) {
+                uverbs_dmabuf->revoked =3D true;
+                list_del(&uverbs_dmabuf->dmabufs_elm);
+-               dma_buf_move_notify(uverbs_dmabuf->dmabuf);
++               dma_buf_invalidate_mappings(uverbs_dmabuf->dmabuf);
+                dma_resv_wait_timeout(uverbs_dmabuf->dmabuf->resv,
+                                      DMA_RESV_USAGE_BOOKKEEP, false,
+                                      MAX_SCHEDULE_TIMEOUT);
+
+--=20
+2.47.3
+
+
+--rDEVY5bnA85zyF2e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmcoQ0ACgkQJNaLcl1U
+h9APZAgAhL9bq8QpFXnRk85LCkfVsVbf+MEC+n+rsCUsOWl0D9OzAP4MB4SKjarG
+mXweGrr+1Gq8jZcK6VnebpVR+n4C9ZHOj9meGGmzTcpClG7uhn9Cs838sBKoWsm2
+lHWWv5EKgCwohLMHG+hXHJh9H2kSN3+5O39N3UmD0ExAhShW+tGxEIm3Rbt0dHxT
+ASBNx1Vl8Hg5mnll67PGg7BXHvl4C5kFIirhtWy+K9+5YuVQGl4nIV4GFcIPyRNZ
++pHi4gUDNRR0qlZ8qIUDtpAZfYA4Mo9ga7uMhYM8kVt6eOTVnspS/zYEBS1Ijxcm
+oyhRSQqKjLVkWg1XikKF78W0yl/HQg==
+=ICkP
+-----END PGP SIGNATURE-----
+
+--rDEVY5bnA85zyF2e--
