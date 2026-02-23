@@ -1,43 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB451E834B;
-	Mon, 23 Feb 2026 13:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DF02264A3;
+	Mon, 23 Feb 2026 13:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771853719; cv=none; b=iXgat9Nvd/nfzwbYbdTgxJXV07p1KE/2CjzJHqSFq0eV46hvxr6mv+PsO8SXIrppYwweSeevfdABVrdAX18lsT5chBNv1868Tp+f0h2yFxgNttOUNgA/UKR+riitOF+H2z6HDHLTI35a3DQEmQmX90qsvCzAK1kLWAFzcSai03A=
+	t=1771854000; cv=none; b=eLZNzeaU6HduUFEqojaWoZCTUDx8rcUwz2ezVUkS0rxjNHm58COz0Zd9/wq5+19ce/fr9D2209kzUDPJiXH/UBXuLHP/TTsf5IUOwrQpM+IetwMf2tloIPrUISlSBLYUoDOBCUlKyX3toGCJc4YG4ym+k9B1/b3YNvp0w5OMmPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771853719; c=relaxed/simple;
-	bh=8u9ds5fqNJrRhe3s51z54/M0BIl2FP4xRR5tCzH0FiY=;
+	s=arc-20240116; t=1771854000; c=relaxed/simple;
+	bh=q4GPTAsy19VuzybidodS7xjYwLsGreVbTNCJmOvzRPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vGucgwe97szFa9/rsLP8JR5s0Yz0Mrfgb3KBlV3B9etT4pUehbnE8kBYzS5WtVv29fbdESuAJuPO9EQP+mQC6zFMyiZUhRuJLMbDlusk02OSZk92+6GtlSqxX6zyj0A2fn3S9Lo14B7euUQPijHbSH8RXfa3VcqkToItOvlOqwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fmn+x16e; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=A+NtMSeQVAzoHRhteftcgp1IUnKWOa73qIMsm0MAD8nZls+l8JQdjZnfzurXU9lXb68Tv0slxdHCu3ajZN6khgONEJfAYFQ+GErL+b6BykCBcotnFUI2OK57nSYXxSEbPMDD9fvqyDsc3w0bjKxomohK77crgAa2t+kyZiU8hWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTEXT5aJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fmn+x16e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1E0C116C6;
-	Mon, 23 Feb 2026 13:35:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTEXT5aJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E66C116C6;
+	Mon, 23 Feb 2026 13:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771853718;
-	bh=8u9ds5fqNJrRhe3s51z54/M0BIl2FP4xRR5tCzH0FiY=;
+	s=k20201202; t=1771854000;
+	bh=q4GPTAsy19VuzybidodS7xjYwLsGreVbTNCJmOvzRPg=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Fmn+x16eoq9zj6AVKUbggFRHaSyLaKu83h9Nx13Je9ghWDElz6XdgvLBviYblIhCh
-	 CfVeWQMX6BIV5fZqNuQednWJNKc1dzqe/fdS03je8tkWkTNDtf/Au8y7W3WCnW0+CK
-	 rJbNb7r8MkjZG+IWDdOSiDTd6OuVLJotPpI5PSCPFAx1hSOu19sgXBRnLLhwdru8he
-	 rFLXXZFHlHOdMAINuGBneZzgqdv4zS8huS1wkXmlqwsDkvsaRpYKGIcJupYy1PCFkL
-	 5mEPhOPZCRdIB0IlSZ+6RCV7osg3z3FSqlNP3ivyjHF9Jt/Q9Bl52yBuffs5Pyl+ki
-	 IRnGqn+H+jJNA==
-Date: Mon, 23 Feb 2026 13:35:14 +0000
+	b=oTEXT5aJFwOciLUwqrHmO+FAKK+xQ6pQrdxVcQuiJRFouQCNTz+j1MnPDc1IAdM5/
+	 mUMKV5k/hAEeTg4VP7+mjGZ4QgBQpXd3V766oVo0LQNxZGL8oAX7fcXImkHARY9pYd
+	 TU7wu6cqMIx+FV2EvfpC+q3CnyJOipRNbhwM0MccErmT1vfeoHqFEFB0pIwNFUmps1
+	 U90HZtOx8BQNFY3pvbmkFDfz36IrCFYLdKkIWPhgq3TqOkDXkvpsl+gCGS5KfuJPfO
+	 JFUrJPvp99q7AcX3zZz5ohTaYYPKv2O23rHcpzsQbvKchuzNA3OLKGL+t15N2d0Lvb
+	 W379lFnIhrrBg==
+Date: Mon, 23 Feb 2026 13:39:55 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
 	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: Dave Airlie <airlied@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
+Cc: Kees Cook <kees@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Sanjay Yadav <sanjay.kumar.yadav@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-misc tree
-Message-ID: <aZxXktNIJQ192N4a@sirena.org.uk>
+	Matthew Brost <matthew.brost@intel.com>,
+	Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with the origin tree
+Message-ID: <aZxYq5neAWCi6NUN@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,11 +45,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="it5+89qN7EPvYTzh"
+	protocol="application/pgp-signature"; boundary="VRcgmX3Swi8+r40y"
 Content-Disposition: inline
 
 
---it5+89qN7EPvYTzh
+--VRcgmX3Swi8+r40y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -58,16 +58,19 @@ Hi all,
 
 Today's linux-next merge of the drm-xe tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_ttm_vram_mgr.c
+  drivers/gpu/drm/xe/xe_bb.c
 
-between commit:
+between commits:
 
-  ba110db8e1bc2 ("gpu: Move DRM buddy allocator one level up (part two)")
+  69050f8d6d075 ("treewide: Replace kmalloc with kmalloc_obj for non-scalar=
+ types")
+  bf4afc53b77ae ("Convert 'alloc_obj' family to use the new default GFP_KER=
+NEL argument")
 
-=66rom the drm-misc tree and commit:
+=66rom the origin tree and commit:
 
-  dc2fc00ba94de ("drm/xe: Use DRM_BUDDY_CONTIGUOUS_ALLOCATION for contiguou=
-s allocations")
+  bcd768d787e7b ("drm/xe/vf: Fix fs_reclaim warning with CCS save/restore B=
+B allocation")
 
 =66rom the drm-xe tree.
 
@@ -78,57 +81,48 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpu/drm/xe/xe_ttm_vram_mgr.c
-index 2c44aa4b5562b,d6aa61e55f4d7..0000000000000
---- a/drivers/gpu/drm/xe/xe_ttm_vram_mgr.c
-+++ b/drivers/gpu/drm/xe/xe_ttm_vram_mgr.c
-@@@ -80,10 -79,13 +80,13 @@@ static int xe_ttm_vram_mgr_new(struct t
-  	INIT_LIST_HEAD(&vres->blocks);
+diff --cc drivers/gpu/drm/xe/xe_bb.c
+index 4749aa7f94660,b0aceaec2685e..0000000000000
+--- a/drivers/gpu/drm/xe/xe_bb.c
++++ b/drivers/gpu/drm/xe/xe_bb.c
+@@@ -59,12 -59,18 +59,18 @@@ err
+  	return ERR_PTR(err);
+  }
  =20
-  	if (place->flags & TTM_PL_FLAG_TOPDOWN)
- -		vres->flags |=3D DRM_BUDDY_TOPDOWN_ALLOCATION;
- +		vres->flags |=3D GPU_BUDDY_TOPDOWN_ALLOCATION;
+- struct xe_bb *xe_bb_ccs_new(struct xe_gt *gt, u32 dwords,
+- 			    enum xe_sriov_vf_ccs_rw_ctxs ctx_id)
++ /**
++  * xe_bb_alloc() - Allocate a new batch buffer structure
++  * @gt: the &xe_gt
++  *
++  * Allocates and initializes a new xe_bb structure with an associated
++  * uninitialized suballoc object.
++  *
++  * Returns: Batch buffer structure or an ERR_PTR(-ENOMEM).
++  */
++ struct xe_bb *xe_bb_alloc(struct xe_gt *gt)
+  {
+ -	struct xe_bb *bb =3D kmalloc(sizeof(*bb), GFP_KERNEL);
+ +	struct xe_bb *bb =3D kmalloc_obj(*bb);
+- 	struct xe_device *xe =3D gt_to_xe(gt);
+- 	struct xe_sa_manager *bb_pool;
+  	int err;
  =20
-+ 	if (place->flags & TTM_PL_FLAG_CONTIGUOUS)
-+ 		vres->flags |=3D DRM_BUDDY_CONTIGUOUS_ALLOCATION;
-+=20
-  	if (place->fpfn || lpfn !=3D man->size >> PAGE_SHIFT)
- -		vres->flags |=3D DRM_BUDDY_RANGE_ALLOCATION;
- +		vres->flags |=3D GPU_BUDDY_RANGE_ALLOCATION;
- =20
-  	if (WARN_ON(!vres->base.size)) {
-  		err =3D -EINVAL;
-@@@ -111,15 -113,7 +114,7 @@@
-  		goto error_unlock;
-  	}
- =20
-- 	if (place->fpfn + (size >> PAGE_SHIFT) !=3D lpfn &&
-- 	    place->flags & TTM_PL_FLAG_CONTIGUOUS) {
-- 		size =3D roundup_pow_of_two(size);
-- 		min_page_size =3D size;
--=20
-- 		lpfn =3D max_t(unsigned long, place->fpfn + (size >> PAGE_SHIFT), lpfn);
-- 	}
--=20
- -	err =3D drm_buddy_alloc_blocks(mm, (u64)place->fpfn << PAGE_SHIFT,
- +	err =3D gpu_buddy_alloc_blocks(mm, (u64)place->fpfn << PAGE_SHIFT,
-  				     (u64)lpfn << PAGE_SHIFT, size,
-  				     min_page_size, &vres->blocks, vres->flags);
-  	if (err)
+  	if (!bb)
 
---it5+89qN7EPvYTzh
+--VRcgmX3Swi8+r40y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmcV5EACgkQJNaLcl1U
-h9BKygf7BHi5DF86Mxf9Wn54wFbPY39BwlSmtne56jkgm7VmiH3OJey2gGaGfp92
-ce8ASM6ob7U91+a485LAkvh54Uzoa7hg5EWXXqtT8dzeeBXA14kUHmRtqEWO/c9K
-pRa9fntFCd7hDZt9wD8eN5TCVK/nfcO2cVNiPTa7NYAa0hHUT2kNktxZssCBD+ai
-mzqGwTdy4sgak6wDyVQ4Eae/8Ii8NXOyt+8nBefXfS7AnRYJwJIL3UhP8jyGPlJz
-+9Xm22e8waSnlXke5DtY3T2S1VGsRs4o0wmvln1sdVSCUGYoamkzGIexfhAy2Tyt
-lT/h+6rgZJpqYSENGCVfpwNAb09VMg==
-=jQQA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmcWKsACgkQJNaLcl1U
+h9BeuQf7B6fIJ9WvL51pF87bUdkhlk2zXk5MARMWmkN/HnQDaPhHex4nTwSd0tqK
+rnABE8SeiBc/h+7MnCmjuHpdhaqGtUKWza+Tx49eMUKivtHjcQo2Oi3fb5O42nxc
+8jzFhD7mGvGvW4Q8/MZ0NogJd549Z6HJy+dyCo4sNvuFiiPW7TOJFY9Z6CGrrNdW
+mxeqMO8zQUwx6JO6n5Mtn9wFq5x6LaD7wv5quD1TIvFVSzVz5fK0YmyGOFTjpUu7
+4EoztWoiAuwm6v+GKl6sBXs97UuqmuDyhPiBtQS9b8OqSpCDEVgAlL0FtxZ0+Q0T
+ribcpoeLv+N2ayiLedhN+ZkPPutM+Q==
+=Lkpt
 -----END PGP SIGNATURE-----
 
---it5+89qN7EPvYTzh--
+--VRcgmX3Swi8+r40y--
