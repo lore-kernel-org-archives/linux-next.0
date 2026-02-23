@@ -1,73 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp6.goneo.de (smtp6.goneo.de [85.220.129.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFF6314A9E;
-	Mon, 23 Feb 2026 16:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9AA3396E9;
+	Mon, 23 Feb 2026 18:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.220.129.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771865140; cv=none; b=pvRES12VQMaGoixDhxzTtXkY0b40Zrv3B36TbN2IB2G9QkymtqHJ+eA7yFGvXvclOKcWhkVihyiZfN0TulyVkqv0f+y/GStg5g/w0dCIV2E2PCEsf6zPdfRtSGJbeAuwBf4y5cCK8MEVy15+B2jiqkmgk69kWup7oKVvS2dNRms=
+	t=1771870727; cv=none; b=G+DNkhwhTUaw0XpJTNzJdOJECU08W9cG8tAAD7gtxBLW1tUpCWqleZUEj4ZGi7nAbyvJWKiI6oob2iGkonnJn722TeyVML/YvcVJO3AVaOmyyscZoRK1D3wb2hzRdgsHIlZoZE2hULTfLK2JdcnF+Pny1KBchS8Akrkd98PLdRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771865140; c=relaxed/simple;
-	bh=rVr3dIHvhgefOPU3qvFop7ViANPhq0n+p8nBE7atE6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X5DqcHqdk6QMHUpl1jhwFrGDoXQQeDVQrLAtkQvc+ziMP+sAQZk5o6lWb39oYPMVlxkwrotTz1Zy/qXO3plOQPJVws/ZqyVix1dJAzkiOkBkN+D5DF2NMbxla0P2DnY8ubSj48EOMboJ+n5I7gvrAtYDoij7R6LDVOVPGtIK1n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P07vsdkE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771870727; c=relaxed/simple;
+	bh=wI9zV2lfvN7SHgvqkGv/swFRTetbqLneNnhYz0AjVkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WNdmFyoHjGNMb+6FnHb/g3g9h684yt/uawZukPdgS5baTb0FNW+bvjMFcYs9HVfr7W4MyPObvt/euaTahABVkd0Qyahnip4b2hH6v7D6lqQezdNVvvevIEBMcUt0rF6A5ePTCbq1JbpGtz/5yMAKK+2zwWKytodanGS815CqADo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devpi.de; spf=pass smtp.mailfrom=devpi.de; dkim=pass (2048-bit key) header.d=devpi.de header.i=@devpi.de header.b=Gs+NVsst; arc=none smtp.client-ip=85.220.129.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devpi.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=devpi.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P07vsdkE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856C5C116C6;
-	Mon, 23 Feb 2026 16:45:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771865140;
-	bh=rVr3dIHvhgefOPU3qvFop7ViANPhq0n+p8nBE7atE6A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=P07vsdkEa8adbVFf5yg+406Jp1gTjBlOQieNFt7YbPfuQUgq3saAwZnhu6rCok/qd
-	 3xUrYnYFPUf3PVJBZ96ZgJuncQkyTg7S6kOvWqpWfqgQKMQ7YObVnlxnAgVCnhTIPJ
-	 MdZQjKFA3WyA4PczZBraTJpEiZXighO7yf5tvauVC+3eW5pBJsLahjX1Jvecft8cok
-	 QCsrEIE9pfTw3c/0ac/qmXR0FEc/XMGTNFl6iW4e9IM8XO+EzvO40iX1hxblCjObY0
-	 qOAC9bRSVn1+TeaQ/0tAc6STso2CDK+Elo2lOr4v3INMA/drCNdsF25YN75sJq9BJu
-	 a6KGJs9FPu6gQ==
-Date: Mon, 23 Feb 2026 16:45:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the mmc tree
-Message-ID: <aZyEMMrxY05IOSZt@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=devpi.de header.i=@devpi.de header.b="Gs+NVsst"
+Received: from hub2.goneo.de (hub2.goneo.de [85.220.129.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by smtp6.goneo.de (Postfix) with ESMTPS id E401F2404B6;
+	Mon, 23 Feb 2026 19:08:34 +0100 (CET)
+Received: from hub2.goneo.de (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by hub2.goneo.de (Postfix) with ESMTPS id 4B32B240123;
+	Mon, 23 Feb 2026 19:08:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devpi.de; s=DKIM001;
+	t=1771870113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GlZkdgh+0RXMt11PcYdBb1OEcUpR0hv/k9oD3/CWmRY=;
+	b=Gs+NVsstrcdCeHZw3Sn0F7fyfp30qFHrajiZomcgH+7gbWN7+q2uVQUYs76VKaS0NutZFm
+	OqfP4A9id4wN1EFUwjbQgif2AhMymtgiMWShPoKg0e4hzjqUa3hccCVn69QJ/n6AXD1+0i
+	NWOw76tCy0WrNOXBACSQKUcGheXW5YBP4/JNbdSPTgH+hw6JboGtyyY+r3DSmhOg9OcxtJ
+	uwol/wgno9I++TtqzaRGZQynAYmyR1uBzPHytwsKJ9pVCTrgXIY9lKDIT4dETG+lp9NwXz
+	tE29DLGivu5Yd09XY3/W2EKJrdXJDbxKGqa8nh8jzldTEwjnUpKPjzqjk33jeg==
+Received: from [IPV6:2001:9e8:7344:c410:f6a8:dff:fe29:81ba] (unknown [IPv6:2001:9e8:7344:c410:f6a8:dff:fe29:81ba])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hub2.goneo.de (Postfix) with ESMTPSA id 0113F240027;
+	Mon, 23 Feb 2026 19:08:32 +0100 (CET)
+Message-ID: <5386c18c-9326-4df5-99d9-30727b0c48b1@devpi.de>
+Date: Mon, 23 Feb 2026 19:08:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aoiYoX1PXsGdcAiU"
-Content-Disposition: inline
-Fro: Mark Brown <broonie@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Missing signoff in the hid tree
+To: Jiri Kosina <jikos@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+References: <aZxFiDybKKxezaYc@sirena.org.uk>
+ <70o4n987-9s87-rrr1-qrrr-r351qs44957p@xreary.bet>
+Content-Language: en-US
+From: Julius Lehmann <lehmanju@devpi.de>
+In-Reply-To: <70o4n987-9s87-rrr1-qrrr-r351qs44957p@xreary.bet>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-UID: e96bf3
+X-Rspamd-UID: 9da1f2
 
+On 2/23/26 13:20, Jiri Kosina wrote:
+> On Mon, 23 Feb 2026, Mark Brown wrote:
+>
+>> Commit
+>>
+>>    6b409da663270 ("HID: magicmouse: fix battery reporting for Apple Magic Trackpad 2")
+>>
+>> is missing a Signed-off-by from its author
+> D'oh, thanks for spotting this.
+>
+> CCing Julius -- could you please provide your Signed-off-by: line? I'll
+> take this as a sufficient reason to rebase the branch.
 
---aoiYoX1PXsGdcAiU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+sorry for messing up my commit, has been some time since my last mail patch.
 
-Commits
+Signed-off-by: Julius Lehmann<lehmanju@devpi.de>
 
-  00a1b09fee7fc ("dt-bindings: mmc: rockchip-dw-mshc: Add RV1103B compatible")
-  50af1aaea994d ("mmc: host: Remove unnecessary module_init/exit functions")
-
-are missing a Signed-off-by from their committers
-
---aoiYoX1PXsGdcAiU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmchC8ACgkQJNaLcl1U
-h9CLggf/UAdKi/Tshx9H9cz6QcgjlvR21+S5X+cOxqYjsDVi0cF8IMe1kFkAI+1C
-WGybIOk1TzPsdbB6eTAQhXNrQAStNfB+A/RLN8yYWBbRf+TTDoLWgNgEmqjRAc6W
-1TtLvVOG9zmulyitr2u0I8+GkWRMjg3lgZArXLYvlUCkLJbwAa1P7Txb+aVkIHob
-G6JNooJ1S6myAuCKehylkXYVwJHBG5nyS31MAraBMjpeSpw3+F6YCAuOdXTomEPG
-U5evT9QIQmIWK09QtpXbKNtgZ7vqXqRBd8zbNJa7q2KxETJXbgv7uR9dNU2R7Rvp
-wA7WehWVZ1ZiPkQiB2xzaTF70ZUUUw==
-=gfja
------END PGP SIGNATURE-----
-
---aoiYoX1PXsGdcAiU--
+>
+> Thanks,
+>
