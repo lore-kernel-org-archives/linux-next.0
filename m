@@ -1,65 +1,56 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AE034D4DE;
-	Mon, 23 Feb 2026 12:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7EC36073E;
+	Mon, 23 Feb 2026 12:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771849223; cv=none; b=uhbDkjaFfm2x8nVLcZxBCoZ69mUNpPmQwTQYQr2kBp2zGpnGdeJ0VeQB6D+gRRps23r2tGV/hY2AnIxjeAupiEbbeZeJ7gi+NN2LZ5HATfES0czZ3I1myzHZdpxoWvIBqlasHBy3p6x4hl1b2x0IdnkhVKEe8/viTInurK6aGUQ=
+	t=1771850786; cv=none; b=rO1R1trKv/ibdW5phYxbGtKkc5V7DULKab4i5O7Sqtj/+wdMDJ9j/NtnS1Vn4lBYPu87YPAwspK+7VeYj6V4Dvq45YYWvgvnxdk46z0ZOG3qKQBZnHd12iWm+iBQKW7+nJ/EwbPVIv/kUTFEO/Turo+LeqZexHI+KJWH5Uh3IQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771849223; c=relaxed/simple;
-	bh=e9vu2WssLvQms0wD8rTfOhVzJHvp7Yb+QKagc7o40r0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=EzKkQxsWH7WnOGOaggP/QIIvYcZuChqphYRt5uJBxAbtQAXKdl8ZGth2YcVbUMsYxc+V+1US4pqmaRStMN0BllhlByBFiSKDddMDVLV84iWbykZhSS0wMSv2PY/Cdw8stsmQ8ui8ah6dlfucdleRS8YELDU/lUzRNKEiULbMqQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+6cRZH4; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+6cRZH4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5746BC116C6;
-	Mon, 23 Feb 2026 12:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771849222;
-	bh=e9vu2WssLvQms0wD8rTfOhVzJHvp7Yb+QKagc7o40r0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=Y+6cRZH4uaWfc9OROQCAqUOT0nFV9Igwu7iwFpzhQqyMnL/5+s2S8EsHlP5AznWbJ
-	 Z+959gLb7ZbHIZgnySo7PFBrwDWoTR8yvEn+nZwuNRO9qNM5aBQ65P53ZFRQzXfx34
-	 46UQEs57m0xtogKMVhML+muWtuoPnly2msXOL+av+W/KdqdFNjFGwAS9G/TET37QiA
-	 mfH4c1UDbzsdlOC5qet/FSJi4UNQ4LMtLLoHRRWCVbvBx7koP75VMV+9lpWnqwKFNv
-	 La67Cge+P7pmvyP4DiL6gZNi6vwrgvvyYQ85BczKnYuWWzMhpvlp0KXtfrPfyG58Mb
-	 ff+ILIG5eH5yA==
-Date: Mon, 23 Feb 2026 13:20:20 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-    Julius Lehmann <lehmanju@devpi.de>
-Subject: Re: Missing signoff in the hid tree
-In-Reply-To: <aZxFiDybKKxezaYc@sirena.org.uk>
-Message-ID: <70o4n987-9s87-rrr1-qrrr-r351qs44957p@xreary.bet>
-References: <aZxFiDybKKxezaYc@sirena.org.uk>
+	s=arc-20240116; t=1771850786; c=relaxed/simple;
+	bh=pI3XQWYcIJuq3tnndLuTIzmpaX+xphaJA4vftOmEn6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y7nOfUiUIiUyjFfW3YOlQXjXHo3AU8CT+7dchh/cYH/arJ3CRTaKpzWFtcEo2XU+AhpFyp8FUqzWT/UN4BPBKkgCVbh9ReLBb49ZYF0MUKHsivPPy+AUj7f5olU5fkQYHqM0txiQz8LDL2lK8G94ypVgyTp4cBS2iqAnv6x7QFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61NCk7Xo054711;
+	Mon, 23 Feb 2026 21:46:07 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61NCk75G054705
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 23 Feb 2026 21:46:07 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <12e21542-d402-460f-ab32-a6ecfbe1ee0b@I-love.SAKURA.ne.jp>
+Date: Mon, 23 Feb 2026 21:46:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: Missing signoff in the tomoyo tree
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+References: <aZxFe2cmZS2Eu7St@sirena.org.uk>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <aZxFe2cmZS2Eu7St@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
 
-On Mon, 23 Feb 2026, Mark Brown wrote:
-
+On 2026/02/23 21:18, Mark Brown wrote:
 > Commit
 > 
->   6b409da663270 ("HID: magicmouse: fix battery reporting for Apple Magic Trackpad 2")
+>   af5c75cd122aa ("RDMA/core: Fix stale RoCE GIDs during netdev events at registration")
 > 
-> is missing a Signed-off-by from its author
+> is missing a Signed-off-by from its committer
 
-D'oh, thanks for spotting this.
-
-CCing Julius -- could you please provide your Signed-off-by: line? I'll 
-take this as a sufficient reason to rebase the branch.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+Thank you. Fixed now.
 
