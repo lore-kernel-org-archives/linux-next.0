@@ -1,41 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3252618787A;
-	Mon, 23 Feb 2026 13:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97F1A9FA8;
+	Mon, 23 Feb 2026 13:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771852542; cv=none; b=mV8H4JBzmDW0yXRP2A5liQS/wJFuatRWFgfjQnm5Uh9bh1adcLjECoMc6kUz+ixxPdoxv6R0beSTqbOFgvKqSyu3BDHlN6hNZFBGtsUROdxZA3YHGyeA7j1tZcbtWQyzvDQY3NXX3VXEhz8ZKTekuA70YxqoPy3JKPfcEYzMi6E=
+	t=1771852870; cv=none; b=k2WfVQtnwc727I5SWlRtVkvDhjt6EQ4Mv/U4OhqqHzKG8EZmBxVxlUE29WvmWwZrw6JX3CkmdruC8jAPMk5yWXoKhzumAQdDrtd8ACtNB1JT8ei4PvhRCZFbX8w9/j4wh6jDnjxKiceY/zOA1qHajy+Gxmr2mZNcACAIkxz3HuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771852542; c=relaxed/simple;
-	bh=7qbDC0Kc7/F2oKms8dmSw0lFNsPLif88sQn8WXRjClQ=;
+	s=arc-20240116; t=1771852870; c=relaxed/simple;
+	bh=esYROmLayN67zd4/klQySKts+dfakkGdQsAAyJD7Ai0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s68WCt0AVbrIQEk7KszpJsv6yKn2GcNgxde0WkTBorZ44c7MHzYuGA+pHUBJRbIYKcPsxDXQXqnLPE9riNTkZ43PyNpZfvkyhUhhpJ0IbMQSCPHG6lK7MNH0evOCLFo0n82oUr+xz4JMO2wAq42pwU/+s0nD2ld82OWRhZvysLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuBgJlQB; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=ng5FFCyD8RvbxJ3O5X829xVQAMOsTsSeD1qXiO3lQeCc1lTEsH1o+ZrmpGt5sQszb7LjK5YWiqLcFerTGCNvUOF+moLdayGUe2PtKIhwtogzGnpiAlISy2f0LjMaQ+1Hqt82wSXxRZOdDUFdDX/Pr65ZPXnf7O57e0JijfG/RtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tudLUDhC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuBgJlQB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BABC116C6;
-	Mon, 23 Feb 2026 13:15:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tudLUDhC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81EEFC116C6;
+	Mon, 23 Feb 2026 13:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771852541;
-	bh=7qbDC0Kc7/F2oKms8dmSw0lFNsPLif88sQn8WXRjClQ=;
+	s=k20201202; t=1771852870;
+	bh=esYROmLayN67zd4/klQySKts+dfakkGdQsAAyJD7Ai0=;
 	h=Date:From:To:Cc:Subject:From;
-	b=TuBgJlQBWoX2B8DjLmuhQRdsiq6GLm/M5zNEiOQTA7/X1EsQkYsVQDUcLTbJcg5cw
-	 tOZlhSqpfQnrP1GH93ZFouDC+N0d7ns0l/gg9/OHJ9XDC5GDXsZZ3wbdKHFOsJ2PC4
-	 d9/rNGvWqaaQema05NgZMLLruYnpzMUhxtghHYMtOqw5Pm9PpSeVqGBIeNh52jWFVO
-	 xDfChe31wmvbfI9DZAqWTWMADmdxWYIneTFX+AJ1UWwvbceworHPAPDQfqkoXI4xO5
-	 R/wzUaN5PdrpnmHbx2/WOLLMKIu63YiOI0WxiK07v+qMntRjl6XleZMfjEw8uJT+mC
-	 wlGUtco6LX1BQ==
-Date: Mon, 23 Feb 2026 13:15:37 +0000
+	b=tudLUDhCSftVvc50ZkidF3a5fB85wRyISmRU2GWzP3awrpUQR8NdrTgPZ4lh++xNN
+	 ONtJc/gaWrCMHRLr1kNNyrHqhiLAkdHQB8zg5ppdb8A6bahA4WsuJl9OAL0hx/kgiK
+	 M+nowu6uJ9Xk0+yTHlthcEtezHuMg3kPocRkDDrH5TDJ6QQTW8W2lkp/2mRB7GU6TX
+	 FpMtCLFYm3QUg4Iz5IElzPKwBSeshNG8mTKTxIuxzd4/N39E4+0rJO+acuMhMAaEbp
+	 FyauhPYwGcMiJEpnhicADQGQtpqvr0E3LOPt2KwK5XoJiSVhiLNx6oYIYyZsr5VgNv
+	 0+v7A6M8itvtg==
+Date: Mon, 23 Feb 2026 13:21:05 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jason Miu <jasonmiu@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Imre Deak <imre.deak@intel.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the mm-nonmm-unstable tree with the
- origin tree
-Message-ID: <aZxS-VCXOieQ0mG0@sirena.org.uk>
+Subject: linux-next: manual merge of the drm-intel tree with the origin tree
+Message-ID: <aZxUQTisi4qLAVRB@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,31 +46,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n3P6RfSBncHYw2Od"
+	protocol="application/pgp-signature"; boundary="oLsdrSVh99ZEKIbX"
 Content-Disposition: inline
 
 
---n3P6RfSBncHYw2Od
-Content-Type: text/plain; charset=us-ascii
+--oLsdrSVh99ZEKIbX
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mm-nonmm-unstable tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  kernel/liveupdate/kexec_handover.c
+  drivers/gpu/drm/i915/display/intel_dp.c
 
 between commit:
 
-  bf4afc53b77ae ("Convert 'alloc_obj' family to use the new default GFP_KER=
-NEL argument")
+  fe26ae6ac8b88 ("drm/i915/dp: Fix pipe BPP clamping due to HDR")
 
-=66rom the origin tree and commit:
+=66rom the origin tree and commits:
 
-  0dfbae48e1f5d ("kho: adopt radix tree for preserved memory tracking")
+  08b7ef16b6a03 ("drm/i915/dp: Fix pipe BPP clamping due to HDR")
+  7229474d41548 ("drm/i915/dp: Verify valid pipe BPP range")
 
-=66rom the mm-nonmm-unstable tree.
+=66rom the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -76,984 +79,899 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-(the actual conflict should be trivial, this is a diff -c to get a
-non-empty diff)
-
-diff --combined kernel/liveupdate/kexec_handover.c
-index cc68a3692905d,59b47fa077198..0000000000000
---- a/kernel/liveupdate/kexec_handover.c
-+++ b/kernel/liveupdate/kexec_handover.c
-@@@ -5,6 -5,7 +5,7 @@@
-   * Copyright (C) 2025 Microsoft Corporation, Mike Rapoport <rppt@kernel.o=
-rg>
-   * Copyright (C) 2025 Google LLC, Changyuan Lyu <changyuanl@google.com>
-   * Copyright (C) 2025 Pasha Tatashin <pasha.tatashin@soleen.com>
-+  * Copyright (C) 2026 Google LLC, Jason Miu <jasonmiu@google.com>
-   */
- =20
-  #define pr_fmt(fmt) "KHO: " fmt
-@@@ -15,6 -16,7 +16,7 @@@
-  #include <linux/count_zeros.h>
-  #include <linux/kexec.h>
-  #include <linux/kexec_handover.h>
-+ #include <linux/kho_radix_tree.h>
-  #include <linux/kho/abi/kexec_handover.h>
-  #include <linux/libfdt.h>
-  #include <linux/list.h>
-@@@ -64,163 -66,316 +66,316 @@@ static int __init kho_parse_enable(cha
-  }
-  early_param("kho", kho_parse_enable);
+diff --combined drivers/gpu/drm/i915/display/intel_dp.c
+index 559cf3bb23fdf,025e906b63a97..0000000000000
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@@ -107,20 -107,6 +107,6 @@@
+  /* Constants for DP DSC configurations */
+  static const u8 valid_dsc_bpp[] =3D {6, 8, 10, 12, 15};
  =20
 - /*
--  * Keep track of memory that is to be preserved across KHO.
+-  * With Single pipe configuration, HW is capable of supporting maximum of:
+-  * 2 slices per line for ICL, BMG
+-  * 4 slices per line for other platforms.
+-  * For now consider a max of 2 slices per line, which works for all platf=
+orms.
+-  * With this we can have max of 4 DSC Slices per pipe.
 -  *
--  * The serializing side uses two levels of xarrays to manage chunks of pe=
-r-order
--  * PAGE_SIZE byte bitmaps. For instance if PAGE_SIZE =3D 4096, the entire=
- 1G order
--  * of a 8TB system would fit inside a single 4096 byte bitmap. For order 0
--  * allocations each bitmap will cover 128M of address space. Thus, for 16=
-G of
--  * memory at most 512K of bitmap memory will be needed for order 0.
+-  * For higher resolutions where 12 slice support is required with
+-  * ultrajoiner, only then each pipe can support 3 slices.
 -  *
--  * This approach is fully incremental, as the serialization progresses fo=
-lios
--  * can continue be aggregated to the tracker. The final step, immediately=
- prior
--  * to kexec would serialize the xarray information into a linked list for=
- the
--  * successor kernel to parse.
+-  * #TODO Split this better to use 4 slices/dsc engine where supported.
 -  */
+- static const u8 valid_dsc_slicecount[] =3D {1, 2, 3, 4};
 -=20
-- #define PRESERVE_BITS (PAGE_SIZE * 8)
--=20
-- struct kho_mem_phys_bits {
-- 	DECLARE_BITMAP(preserve, PRESERVE_BITS);
-- };
--=20
-- static_assert(sizeof(struct kho_mem_phys_bits) =3D=3D PAGE_SIZE);
--=20
-- struct kho_mem_phys {
-- 	/*
-- 	 * Points to kho_mem_phys_bits, a sparse bitmap array. Each bit is sized
-- 	 * to order.
-- 	 */
-- 	struct xarray phys_bits;
-- };
--=20
-- struct kho_mem_track {
-- 	/* Points to kho_mem_phys, each order gets its own bitmap tree */
-- 	struct xarray orders;
-- };
--=20
-- struct khoser_mem_chunk;
--=20
-  struct kho_out {
-  	void *fdt;
-- 	bool finalized;
-- 	struct mutex lock; /* protects KHO FDT finalization */
-+ 	struct mutex lock; /* protects KHO FDT */
+  /**
+   * intel_dp_is_edp - is the given port attached to an eDP panel (either C=
+PU or PCH)
+   * @intel_dp: DP struct
+@@@ -508,11 -494,16 +494,16 @@@ bool intel_dp_has_joiner(struct intel_d
+  	struct intel_display *display =3D to_intel_display(intel_dp);
+  	struct intel_digital_port *intel_dig_port =3D dp_to_dig_port(intel_dp);
+  	struct intel_encoder *encoder =3D &intel_dig_port->base;
++ 	struct intel_connector *connector =3D intel_dp->attached_connector;
  =20
-- 	struct kho_mem_track track;
-+ 	struct kho_radix_tree radix_tree;
-  	struct kho_debugfs dbg;
-  };
+  	/* eDP MSO is not compatible with joiner */
+  	if (intel_dp->mso_link_count)
+  		return false;
  =20
-  static struct kho_out kho_out =3D {
-  	.lock =3D __MUTEX_INITIALIZER(kho_out.lock),
-- 	.track =3D {
-- 		.orders =3D XARRAY_INIT(kho_out.track.orders, 0),
-+ 	.radix_tree =3D {
-+ 		.lock =3D __MUTEX_INITIALIZER(kho_out.radix_tree.lock),
-  	},
-- 	.finalized =3D false,
-  };
- =20
-- static void *xa_load_or_alloc(struct xarray *xa, unsigned long index)
-+ /**
-+  * kho_radix_encode_key - Encodes a physical address and order into a rad=
-ix key.
-+  * @phys: The physical address of the page.
-+  * @order: The order of the page.
-+  *
-+  * This function combines a page's physical address and its order into a
-+  * single unsigned long, which is used as a key for all radix tree
-+  * operations.
-+  *
-+  * Return: The encoded unsigned long radix key.
-+  */
-+ static unsigned long kho_radix_encode_key(phys_addr_t phys, unsigned int =
-order)
-  {
-- 	void *res =3D xa_load(xa, index);
-+ 	/* Order bits part */
-+ 	unsigned long h =3D 1UL << (KHO_ORDER_0_LOG2 - order);
-+ 	/* Shifted physical address part */
-+ 	unsigned long l =3D phys >> (PAGE_SHIFT + order);
- =20
-- 	if (res)
-- 		return res;
--=20
-- 	void *elm __free(free_page) =3D (void *)get_zeroed_page(GFP_KERNEL);
--=20
-- 	if (!elm)
-- 		return ERR_PTR(-ENOMEM);
--=20
-- 	if (WARN_ON(kho_scratch_overlap(virt_to_phys(elm), PAGE_SIZE)))
-- 		return ERR_PTR(-EINVAL);
--=20
-- 	res =3D xa_cmpxchg(xa, index, NULL, elm, GFP_KERNEL);
-- 	if (xa_is_err(res))
-- 		return ERR_PTR(xa_err(res));
-- 	else if (res)
-- 		return res;
--=20
-- 	return no_free_ptr(elm);
-+ 	return h | l;
++ 	if (intel_dp_is_edp(intel_dp) &&
++ 	    !connector->panel.vbt.edp.pipe_joiner_enable)
++ 		return false;
++=20
+  	return DISPLAY_VER(display) >=3D 12 ||
+  		(DISPLAY_VER(display) =3D=3D 11 &&
+  		 encoder->port !=3D PORT_A);
+@@@ -959,18 -950,24 +950,24 @@@ u32 get_max_compressed_bpp_with_joiner(
+  	return max_bpp;
   }
  =20
-- static void __kho_unpreserve_order(struct kho_mem_track *track, unsigned =
-long pfn,
-- 				   unsigned int order)
-+ /**
-+  * kho_radix_decode_key - Decodes a radix key back into a physical addres=
-s and order.
-+  * @key: The unsigned long key to decode.
-+  * @order: An output parameter, a pointer to an unsigned int where the de=
-coded
-+  *         page order will be stored.
-+  *
-+  * This function reverses the encoding performed by kho_radix_encode_key(=
-),
-+  * extracting the original physical address and page order from a given k=
-ey.
-+  *
-+  * Return: The decoded physical address.
-+  */
-+ static phys_addr_t kho_radix_decode_key(unsigned long key, unsigned int *=
-order)
+- u8 intel_dp_dsc_get_slice_count(const struct intel_connector *connector,
+- 				int mode_clock, int mode_hdisplay,
+- 				int num_joined_pipes)
++ static int intel_dp_dsc_min_slice_count(const struct intel_connector *con=
+nector,
++ 					int mode_clock, int mode_hdisplay)
   {
-- 	struct kho_mem_phys_bits *bits;
-- 	struct kho_mem_phys *physxa;
-- 	const unsigned long pfn_high =3D pfn >> order;
-+ 	unsigned int order_bit =3D fls64(key);
-+ 	phys_addr_t phys;
+  	struct intel_display *display =3D to_intel_display(connector);
+- 	u32 sink_slice_count_mask =3D
+- 		drm_dp_dsc_sink_slice_count_mask(connector->dp.dsc_dpcd, false);
+- 	u8 min_slice_count, i;
++ 	bool is_edp =3D
++ 		connector->base.connector_type =3D=3D DRM_MODE_CONNECTOR_eDP;
++ 	int min_slice_count;
+  	int max_slice_width;
+  	int tp_rgb_yuv444;
+  	int tp_yuv422_420;
  =20
-- 	physxa =3D xa_load(&track->orders, order);
-- 	if (WARN_ON_ONCE(!physxa))
-- 		return;
-+ 	/* order_bit is numbered starting at 1 from fls64 */
-+ 	*order =3D KHO_ORDER_0_LOG2 - order_bit + 1;
-+ 	/* The order is discarded by the shift */
-+ 	phys =3D key << (PAGE_SHIFT + *order);
++ 	/*
++ 	 * TODO: allow using less than the maximum number of slices
++ 	 * supported by the eDP sink, to allow using fewer DSC engines.
++ 	 */
++ 	if (is_edp)
++ 		return drm_dp_dsc_sink_max_slice_count(connector->dp.dsc_dpcd, true);
++=20
+  	/*
+  	 * TODO: Use the throughput value specific to the actual RGB/YUV
+  	 * format of the output.
+@@@ -1011,7 -1008,7 +1008,7 @@@
+  	 * slice and VDSC engine, whenever we approach close enough to max CDCLK
+  	 */
+  	if (mode_clock >=3D ((display->cdclk.max_cdclk_freq * 85) / 100))
+- 		min_slice_count =3D max_t(u8, min_slice_count, 2);
++ 		min_slice_count =3D max(min_slice_count, 2);
  =20
-- 	bits =3D xa_load(&physxa->phys_bits, pfn_high / PRESERVE_BITS);
-- 	if (WARN_ON_ONCE(!bits))
-- 		return;
--=20
-- 	clear_bit(pfn_high % PRESERVE_BITS, bits->preserve);
-+ 	return phys;
-  }
- =20
-- static void __kho_unpreserve(struct kho_mem_track *track, unsigned long p=
-fn,
-- 			     unsigned long end_pfn)
-+ static unsigned long kho_radix_get_bitmap_index(unsigned long key)
-+ {
-+ 	return key % (1 << KHO_BITMAP_SIZE_LOG2);
-+ }
-+=20
-+ static unsigned long kho_radix_get_table_index(unsigned long key,
-+ 					       unsigned int level)
-+ {
-+ 	int s;
-+=20
-+ 	s =3D ((level - 1) * KHO_TABLE_SIZE_LOG2) + KHO_BITMAP_SIZE_LOG2;
-+ 	return (key >> s) % (1 << KHO_TABLE_SIZE_LOG2);
-+ }
-+=20
-+ /**
-+  * kho_radix_add_page - Marks a page as preserved in the radix tree.
-+  * @tree: The KHO radix tree.
-+  * @pfn: The page frame number of the page to preserve.
-+  * @order: The order of the page.
-+  *
-+  * This function traverses the radix tree based on the key derived from @=
-pfn
-+  * and @order. It sets the corresponding bit in the leaf bitmap to mark t=
-he
-+  * page for preservation. If intermediate nodes do not exist along the pa=
-th,
-+  * they are allocated and added to the tree.
-+  *
-+  * Return: 0 on success, or a negative error code on failure.
-+  */
-+ int kho_radix_add_page(struct kho_radix_tree *tree,
-+ 		       unsigned long pfn, unsigned int order)
-+ {
-+ 	/* Newly allocated nodes for error cleanup */
-+ 	struct kho_radix_node *intermediate_nodes[KHO_TREE_MAX_DEPTH] =3D { 0 };
-+ 	unsigned long key =3D kho_radix_encode_key(PFN_PHYS(pfn), order);
-+ 	struct kho_radix_node *anchor_node =3D NULL;
-+ 	struct kho_radix_node *node =3D tree->root;
-+ 	struct kho_radix_node *new_node;
-+ 	unsigned int i, idx, anchor_idx;
-+ 	struct kho_radix_leaf *leaf;
-+ 	int err =3D 0;
-+=20
-+ 	if (WARN_ON_ONCE(!tree->root))
-+ 		return -EINVAL;
-+=20
-+ 	might_sleep();
-+=20
-+ 	guard(mutex)(&tree->lock);
-+=20
-+ 	/* Go from high levels to low levels */
-+ 	for (i =3D KHO_TREE_MAX_DEPTH - 1; i > 0; i--) {
-+ 		idx =3D kho_radix_get_table_index(key, i);
-+=20
-+ 		if (node->table[idx]) {
-+ 			node =3D phys_to_virt(node->table[idx]);
-+ 			continue;
-+ 		}
-+=20
-+ 		/* Next node is empty, create a new node for it */
-+ 		new_node =3D (struct kho_radix_node *)get_zeroed_page(GFP_KERNEL);
-+ 		if (!new_node) {
-+ 			err =3D -ENOMEM;
-+ 			goto err_free_nodes;
-+ 		}
-+=20
-+ 		node->table[idx] =3D virt_to_phys(new_node);
-+=20
-+ 		/*
-+ 		 * Capture the node where the new branch starts for cleanup
-+ 		 * if allocation fails.
-+ 		 */
-+ 		if (!anchor_node) {
-+ 			anchor_node =3D node;
-+ 			anchor_idx =3D idx;
-+ 		}
-+ 		intermediate_nodes[i] =3D new_node;
-+=20
-+ 		node =3D new_node;
-+ 	}
-+=20
-+ 	/* Handle the leaf level bitmap (level 0) */
-+ 	idx =3D kho_radix_get_bitmap_index(key);
-+ 	leaf =3D (struct kho_radix_leaf *)node;
-+ 	__set_bit(idx, leaf->bitmap);
-+=20
-+ 	return 0;
-+=20
-+ err_free_nodes:
-+ 	for (i =3D KHO_TREE_MAX_DEPTH - 1; i > 0; i--) {
-+ 		if (intermediate_nodes[i])
-+ 			free_page((unsigned long)intermediate_nodes[i]);
-+ 	}
-+ 	if (anchor_node)
-+ 		anchor_node->table[anchor_idx] =3D 0;
-+=20
-+ 	return err;
-+ }
-+ EXPORT_SYMBOL_GPL(kho_radix_add_page);
-+=20
-+ /**
-+  * kho_radix_del_page - Removes a page's preservation status from the rad=
-ix tree.
-+  * @tree: The KHO radix tree.
-+  * @pfn: The page frame number of the page to unpreserve.
-+  * @order: The order of the page.
-+  *
-+  * This function traverses the radix tree and clears the bit correspondin=
-g to
-+  * the page, effectively removing its "preserved" status. It does not free
-+  * the tree's intermediate nodes, even if they become empty.
-+  */
-+ void kho_radix_del_page(struct kho_radix_tree *tree, unsigned long pfn,
-+ 			unsigned int order)
-+ {
-+ 	unsigned long key =3D kho_radix_encode_key(PFN_PHYS(pfn), order);
-+ 	struct kho_radix_node *node =3D tree->root;
-+ 	struct kho_radix_leaf *leaf;
-+ 	unsigned int i, idx;
-+=20
-+ 	if (WARN_ON_ONCE(!tree->root))
-+ 		return;
-+=20
-+ 	might_sleep();
-+=20
-+ 	guard(mutex)(&tree->lock);
-+=20
-+ 	/* Go from high levels to low levels */
-+ 	for (i =3D KHO_TREE_MAX_DEPTH - 1; i > 0; i--) {
-+ 		idx =3D kho_radix_get_table_index(key, i);
-+=20
-+ 		/*
-+ 		 * Attempting to delete a page that has not been preserved,
-+ 		 * return with a warning.
-+ 		 */
-+ 		if (WARN_ON(!node->table[idx]))
-+ 			return;
-+=20
-+ 		node =3D phys_to_virt(node->table[idx]);
-+ 	}
-+=20
-+ 	/* Handle the leaf level bitmap (level 0) */
-+ 	leaf =3D (struct kho_radix_leaf *)node;
-+ 	idx =3D kho_radix_get_bitmap_index(key);
-+ 	__clear_bit(idx, leaf->bitmap);
-+ }
-+ EXPORT_SYMBOL_GPL(kho_radix_del_page);
-+=20
-+ static int kho_radix_walk_leaf(struct kho_radix_leaf *leaf,
-+ 			       unsigned long key,
-+ 			       kho_radix_tree_walk_callback_t cb)
-+ {
-+ 	unsigned long *bitmap =3D (unsigned long *)leaf;
-+ 	unsigned int order;
-+ 	phys_addr_t phys;
-+ 	unsigned int i;
-+ 	int err;
-+=20
-+ 	for_each_set_bit(i, bitmap, PAGE_SIZE * BITS_PER_BYTE) {
-+ 		phys =3D kho_radix_decode_key(key | i, &order);
-+ 		err =3D cb(phys, order);
-+ 		if (err)
-+ 			return err;
-+ 	}
-+=20
-+ 	return 0;
-+ }
-+=20
-+ static int __kho_radix_walk_tree(struct kho_radix_node *root,
-+ 				 unsigned int level, unsigned long start,
-+ 				 kho_radix_tree_walk_callback_t cb)
-+ {
-+ 	struct kho_radix_node *node;
-+ 	struct kho_radix_leaf *leaf;
-+ 	unsigned long key, i;
-+ 	unsigned int shift;
-+ 	int err;
-+=20
-+ 	for (i =3D 0; i < PAGE_SIZE / sizeof(phys_addr_t); i++) {
-+ 		if (!root->table[i])
-+ 			continue;
-+=20
-+ 		shift =3D ((level - 1) * KHO_TABLE_SIZE_LOG2) +
-+ 			KHO_BITMAP_SIZE_LOG2;
-+ 		key =3D start | (i << shift);
-+=20
-+ 		node =3D phys_to_virt(root->table[i]);
-+=20
-+ 		if (level =3D=3D 1) {
-+ 			/*
-+ 			 * we are at level 1,
-+ 			 * node is pointing to the level 0 bitmap.
-+ 			 */
-+ 			leaf =3D (struct kho_radix_leaf *)node;
-+ 			err =3D kho_radix_walk_leaf(leaf, key, cb);
-+ 		} else {
-+ 			err  =3D __kho_radix_walk_tree(node, level - 1,
-+ 						     key, cb);
-+ 		}
-+=20
-+ 		if (err)
-+ 			return err;
-+ 	}
-+=20
-+ 	return 0;
-+ }
-+=20
-+ /**
-+  * kho_radix_walk_tree - Traverses the radix tree and calls a callback fo=
-r each preserved page.
-+  * @tree: A pointer to the KHO radix tree to walk.
-+  * @cb: A callback function of type kho_radix_tree_walk_callback_t that w=
-ill be
-+  *      invoked for each preserved page found in the tree. The callback r=
-eceives
-+  *      the physical address and order of the preserved page.
-+  *
-+  * This function walks the radix tree, searching from the specified top l=
-evel
-+  * down to the lowest level (level 0). For each preserved page found, it =
-invokes
-+  * the provided callback, passing the page's physical address and order.
-+  *
-+  * Return: 0 if the walk completed the specified tree, or the non-zero re=
-turn
-+  *         value from the callback that stopped the walk.
-+  */
-+ int kho_radix_walk_tree(struct kho_radix_tree *tree,
-+ 			kho_radix_tree_walk_callback_t cb)
-+ {
-+ 	if (WARN_ON_ONCE(!tree->root))
-+ 		return -EINVAL;
-+=20
-+ 	guard(mutex)(&tree->lock);
-+=20
-+ 	return __kho_radix_walk_tree(tree->root, KHO_TREE_MAX_DEPTH - 1, 0, cb);
-+ }
-+ EXPORT_SYMBOL_GPL(kho_radix_walk_tree);
-+=20
-+ static void __kho_unpreserve(struct kho_radix_tree *tree,
-+ 			     unsigned long pfn, unsigned long end_pfn)
-  {
-  	unsigned int order;
- =20
-  	while (pfn < end_pfn) {
-  		order =3D min(count_trailing_zeros(pfn), ilog2(end_pfn - pfn));
- =20
-- 		__kho_unpreserve_order(track, pfn, order);
-+ 		kho_radix_del_page(tree, pfn, order);
- =20
-  		pfn +=3D 1 << order;
+  	max_slice_width =3D drm_dp_dsc_sink_max_slice_width(connector->dp.dsc_dp=
+cd);
+  	if (max_slice_width < DP_DSC_MIN_SLICE_WIDTH_VALUE) {
+@@@ -1021,39 -1018,64 +1018,64 @@@
+  		return 0;
   	}
-  }
+  	/* Also take into account max slice width */
+- 	min_slice_count =3D max_t(u8, min_slice_count,
+- 				DIV_ROUND_UP(mode_hdisplay,
+- 					     max_slice_width));
++ 	min_slice_count =3D max(min_slice_count,
++ 			      DIV_ROUND_UP(mode_hdisplay, max_slice_width));
  =20
-- static int __kho_preserve_order(struct kho_mem_track *track, unsigned lon=
-g pfn,
-- 				unsigned int order)
-- {
-- 	struct kho_mem_phys_bits *bits;
-- 	struct kho_mem_phys *physxa, *new_physxa;
-- 	const unsigned long pfn_high =3D pfn >> order;
--=20
-- 	might_sleep();
-- 	physxa =3D xa_load(&track->orders, order);
-- 	if (!physxa) {
-- 		int err;
--=20
-- 		new_physxa =3D kzalloc_obj(*physxa);
-- 		if (!new_physxa)
-- 			return -ENOMEM;
--=20
-- 		xa_init(&new_physxa->phys_bits);
-- 		physxa =3D xa_cmpxchg(&track->orders, order, NULL, new_physxa,
-- 				    GFP_KERNEL);
--=20
-- 		err =3D xa_err(physxa);
-- 		if (err || physxa) {
-- 			xa_destroy(&new_physxa->phys_bits);
-- 			kfree(new_physxa);
--=20
-- 			if (err)
-- 				return err;
-- 		} else {
-- 			physxa =3D new_physxa;
-- 		}
-- 	}
--=20
-- 	bits =3D xa_load_or_alloc(&physxa->phys_bits, pfn_high / PRESERVE_BITS);
-- 	if (IS_ERR(bits))
-- 		return PTR_ERR(bits);
--=20
-- 	set_bit(pfn_high % PRESERVE_BITS, bits->preserve);
--=20
+- 	/* Find the closest match to the valid slice count values */
+- 	for (i =3D 0; i < ARRAY_SIZE(valid_dsc_slicecount); i++) {
+- 		u8 test_slice_count =3D valid_dsc_slicecount[i] * num_joined_pipes;
++ 	return min_slice_count;
++ }
+ =20
+- 		/*
+- 		 * 3 DSC Slices per pipe need 3 DSC engines, which is supported only
+- 		 * with Ultrajoiner only for some platforms.
+- 		 */
+- 		if (valid_dsc_slicecount[i] =3D=3D 3 &&
+- 		    (!HAS_DSC_3ENGINES(display) || num_joined_pipes !=3D 4))
++ static bool
++ intel_dp_dsc_get_slice_config(const struct intel_connector *connector,
++ 			      int mode_clock, int mode_hdisplay,
++ 			      int num_joined_pipes,
++ 			      struct intel_dsc_slice_config *config_ret)
++ {
++ 	struct intel_display *display =3D to_intel_display(connector);
++ 	int min_slice_count =3D
++ 		intel_dp_dsc_min_slice_count(connector, mode_clock, mode_hdisplay);
++ 	bool is_edp =3D
++ 		connector->base.connector_type =3D=3D DRM_MODE_CONNECTOR_eDP;
++ 	u32 sink_slice_count_mask =3D
++ 		drm_dp_dsc_sink_slice_count_mask(connector->dp.dsc_dpcd, is_edp);
++ 	int slices_per_pipe;
++=20
++ 	/*
++ 	 * Find the closest match to the valid slice count values
++ 	 *
++ 	 * Max HW DSC-per-pipe x slice-per-DSC (=3D slice-per-pipe) capability:
++ 	 * ICL:  2x2
++ 	 * BMG:  2x2, or for ultrajoined 4 pipes: 3x1
++ 	 * TGL+: 2x4 (TODO: Add support for this)
++ 	 *
++ 	 * TODO: Explore if it's worth increasing the number of slices (from 1
++ 	 * to 2 or 3), so that multiple VDSC engines can be used, thus
++ 	 * reducing the minimum CDCLK requirement, which in turn is determined
++ 	 * by the 1 pixel per clock VDSC engine throughput in
++ 	 * intel_vdsc_min_cdclk().
++ 	 */
++ 	for (slices_per_pipe =3D 1; slices_per_pipe <=3D 4; slices_per_pipe++) {
++ 		struct intel_dsc_slice_config config;
++ 		int slices_per_line;
++=20
++ 		if (!intel_dsc_get_slice_config(display,
++ 						num_joined_pipes, slices_per_pipe,
++ 						&config))
+  			continue;
+ =20
+- 		if (!(drm_dp_dsc_slice_count_to_mask(test_slice_count) &
++ 		slices_per_line =3D intel_dsc_line_slice_count(&config);
++=20
++ 		if (!(drm_dp_dsc_slice_count_to_mask(slices_per_line) &
+  		      sink_slice_count_mask))
+  			continue;
+ =20
+- 		 /*
+- 		  * Bigjoiner needs small joiner to be enabled.
+- 		  * So there should be at least 2 dsc slices per pipe,
+- 		  * whenever bigjoiner is enabled.
+- 		  */
+- 		if (num_joined_pipes > 1 && valid_dsc_slicecount[i] < 2)
++ 		if (mode_hdisplay % slices_per_line)
+  			continue;
+ =20
+- 		if (mode_hdisplay % test_slice_count)
+- 			continue;
++ 		if (min_slice_count <=3D slices_per_line) {
++ 			*config_ret =3D config;
+ =20
+- 		if (min_slice_count <=3D test_slice_count)
+- 			return test_slice_count;
++ 			return true;
++ 		}
+  	}
+ =20
+  	/* Print slice count 1,2,4,..24 if bit#0,1,3,..23 is set in the mask. */
+@@@ -1064,7 -1086,21 +1086,21 @@@
+  		    min_slice_count,
+  		    (int)BITS_PER_TYPE(sink_slice_count_mask), &sink_slice_count_mask);
+ =20
 - 	return 0;
++ 	return false;
++ }
++=20
++ u8 intel_dp_dsc_get_slice_count(const struct intel_connector *connector,
++ 				int mode_clock, int mode_hdisplay,
++ 				int num_joined_pipes)
++ {
++ 	struct intel_dsc_slice_config config;
++=20
++ 	if (!intel_dp_dsc_get_slice_config(connector,
++ 					   mode_clock, mode_hdisplay,
++ 					   num_joined_pipes, &config))
++ 		return 0;
++=20
++ 	return intel_dsc_line_slice_count(&config);
+  }
+ =20
+  static bool source_can_output(struct intel_dp *intel_dp,
+@@@ -1335,44 -1371,9 +1371,9 @@@ intel_dp_mode_valid_downstream(struct i
+  	return MODE_OK;
+  }
+ =20
+- static
+- bool intel_dp_needs_joiner(struct intel_dp *intel_dp,
+- 			   struct intel_connector *connector,
+- 			   int hdisplay, int clock,
+- 			   int num_joined_pipes)
++ int intel_dp_max_hdisplay_per_pipe(struct intel_display *display)
+  {
+- 	struct intel_display *display =3D to_intel_display(intel_dp);
+- 	int hdisplay_limit;
+-=20
+- 	if (!intel_dp_has_joiner(intel_dp))
+- 		return false;
+-=20
+- 	num_joined_pipes /=3D 2;
+-=20
+- 	hdisplay_limit =3D DISPLAY_VER(display) >=3D 30 ? 6144 : 5120;
+-=20
+- 	return clock > num_joined_pipes * display->cdclk.max_dotclk_freq ||
+- 	       hdisplay > num_joined_pipes * hdisplay_limit;
 - }
 -=20
-  /* For physically contiguous 0-order pages. */
-  static void kho_init_pages(struct page *page, unsigned long nr_pages)
-  {
-- 	for (unsigned long i =3D 0; i < nr_pages; i++)
-+ 	for (unsigned long i =3D 0; i < nr_pages; i++) {
-  		set_page_count(page + i, 1);
-+ 		/* Clear each page's codetag to avoid accounting mismatch. */
-+ 		clear_page_tag_ref(page + i);
+- int intel_dp_num_joined_pipes(struct intel_dp *intel_dp,
+- 			      struct intel_connector *connector,
+- 			      int hdisplay, int clock)
+- {
+- 	struct intel_display *display =3D to_intel_display(intel_dp);
+-=20
+- 	if (connector->force_joined_pipes)
+- 		return connector->force_joined_pipes;
+-=20
+- 	if (HAS_ULTRAJOINER(display) &&
+- 	    intel_dp_needs_joiner(intel_dp, connector, hdisplay, clock, 4))
+- 		return 4;
+-=20
+- 	if ((HAS_BIGJOINER(display) || HAS_UNCOMPRESSED_JOINER(display)) &&
+- 	    intel_dp_needs_joiner(intel_dp, connector, hdisplay, clock, 2))
+- 		return 2;
+-=20
+- 	return 1;
++ 	return DISPLAY_VER(display) >=3D 30 ? 6144 : 5120;
+  }
+ =20
+  bool intel_dp_has_dsc(const struct intel_connector *connector)
+@@@ -1395,6 -1396,51 +1396,51 @@@
+  	return true;
+  }
+ =20
++ static
++ bool intel_dp_can_join(struct intel_dp *intel_dp,
++ 		       int num_joined_pipes)
++ {
++ 	struct intel_display *display =3D to_intel_display(intel_dp);
++=20
++ 	if (num_joined_pipes > 1 && !intel_dp_has_joiner(intel_dp))
++ 		return false;
++=20
++ 	switch (num_joined_pipes) {
++ 	case 1:
++ 		return true;
++ 	case 2:
++ 		return HAS_BIGJOINER(display) ||
++ 		       HAS_UNCOMPRESSED_JOINER(display);
++ 	case 4:
++ 		return HAS_ULTRAJOINER(display);
++ 	default:
++ 		return false;
 + 	}
++ }
++=20
++ bool intel_dp_dotclk_valid(struct intel_display *display,
++ 			   int target_clock,
++ 			   int htotal,
++ 			   int dsc_slice_count,
++ 			   int num_joined_pipes)
++ {
++ 	int max_dotclk =3D display->cdclk.max_dotclk_freq;
++ 	int effective_dotclk_limit;
++=20
++ 	effective_dotclk_limit =3D max_dotclk * num_joined_pipes;
++=20
++ 	if (dsc_slice_count)
++ 		target_clock =3D intel_dsc_get_pixel_rate_with_dsc_bubbles(display,
++ 									 target_clock,
++ 									 htotal,
++ 									 dsc_slice_count);
++ 	else
++ 		effective_dotclk_limit =3D
++ 			intel_max_uncompressed_dotclock(display) * num_joined_pipes;
++=20
++ 	return target_clock <=3D effective_dotclk_limit;
++ }
++=20
+  static enum drm_mode_status
+  intel_dp_mode_valid(struct drm_connector *_connector,
+  		    const struct drm_display_mode *mode)
+@@@ -1406,9 -1452,7 +1452,7 @@@
+  	const struct drm_display_mode *fixed_mode;
+  	int target_clock =3D mode->clock;
+  	int max_rate, mode_rate, max_lanes, max_link_clock;
+- 	int max_dotclk =3D display->cdclk.max_dotclk_freq;
+  	u16 dsc_max_compressed_bpp =3D 0;
+- 	u8 dsc_slice_count =3D 0;
+  	enum drm_mode_status status;
+  	bool dsc =3D false;
+  	int num_joined_pipes;
+@@@ -1424,6 -1468,9 +1468,9 @@@
+  	if (mode->clock < 10000)
+  		return MODE_CLOCK_LOW;
+ =20
++ 	if (intel_dp_hdisplay_bad(display, mode->hdisplay))
++ 		return MODE_H_ILLEGAL;
++=20
+  	fixed_mode =3D intel_panel_fixed_mode(connector, mode);
+  	if (intel_dp_is_edp(intel_dp) && fixed_mode) {
+  		status =3D intel_panel_mode_valid(connector, mode);
+@@@ -1433,23 -1480,9 +1480,9 @@@
+  		target_clock =3D fixed_mode->clock;
+  	}
+ =20
+- 	num_joined_pipes =3D intel_dp_num_joined_pipes(intel_dp, connector,
+- 						     mode->hdisplay, target_clock);
+- 	max_dotclk *=3D num_joined_pipes;
+-=20
+  	sink_format =3D intel_dp_sink_format(connector, mode);
+  	output_format =3D intel_dp_output_format(connector, sink_format);
+ =20
+- 	status =3D intel_pfit_mode_valid(display, mode, output_format, num_joine=
+d_pipes);
+- 	if (status !=3D MODE_OK)
+- 		return status;
+-=20
+- 	if (target_clock > max_dotclk)
+- 		return MODE_CLOCK_HIGH;
+-=20
+- 	if (intel_dp_hdisplay_bad(display, mode->hdisplay))
+- 		return MODE_H_ILLEGAL;
+-=20
+  	max_link_clock =3D intel_dp_max_link_rate(intel_dp);
+  	max_lanes =3D intel_dp_max_lane_count(intel_dp);
+ =20
+@@@ -1460,52 -1493,92 +1493,92 @@@
+  					   target_clock, mode->hdisplay,
+  					   link_bpp_x16, 0);
+ =20
+- 	if (intel_dp_has_dsc(connector)) {
+- 		int pipe_bpp;
++ 	/*
++ 	 * We cannot determine the required pipe=E2=80=91join count before knowi=
+ng whether
++ 	 * DSC is needed, nor can we determine DSC need without knowing the pipe
++ 	 * count.
++ 	 * Because of this dependency cycle, the only correct approach is to ite=
+rate
++ 	 * over candidate pipe counts and evaluate each combination.
++ 	 */
++ 	status =3D MODE_CLOCK_HIGH;
++ 	for_each_joiner_candidate(connector, mode, num_joined_pipes) {
++ 		int dsc_slice_count =3D 0;
+ =20
+- 		/*
+- 		 * TBD pass the connector BPC,
+- 		 * for now U8_MAX so that max BPC on that platform would be picked
+- 		 */
+- 		pipe_bpp =3D intel_dp_dsc_compute_max_bpp(connector, U8_MAX);
++ 		status =3D intel_pfit_mode_valid(display, mode, output_format, num_join=
+ed_pipes);
++ 		if (status !=3D MODE_OK)
++ 			continue;
+ =20
+- 		/*
+- 		 * Output bpp is stored in 6.4 format so right shift by 4 to get the
+- 		 * integer value since we support only integer values of bpp.
+- 		 */
+- 		if (intel_dp_is_edp(intel_dp)) {
+- 			dsc_max_compressed_bpp =3D
+- 				drm_edp_dsc_sink_output_bpp(connector->dp.dsc_dpcd) >> 4;
+- 			dsc_slice_count =3D
+- 				drm_dp_dsc_sink_max_slice_count(connector->dp.dsc_dpcd,
+- 								true);
+- 			dsc =3D dsc_max_compressed_bpp && dsc_slice_count;
+- 		} else if (drm_dp_sink_supports_fec(connector->dp.fec_capability)) {
+- 			unsigned long bw_overhead_flags =3D 0;
++ 		if (intel_dp_has_dsc(connector)) {
++ 			int pipe_bpp;
+ =20
+- 			if (!drm_dp_is_uhbr_rate(max_link_clock))
+- 				bw_overhead_flags |=3D DRM_DP_BW_OVERHEAD_FEC;
++ 			dsc_slice_count =3D intel_dp_dsc_get_slice_count(connector,
++ 								       target_clock,
++ 								       mode->hdisplay,
++ 								       num_joined_pipes);
+ =20
+- 			dsc =3D intel_dp_mode_valid_with_dsc(connector,
+- 							   max_link_clock, max_lanes,
+- 							   target_clock, mode->hdisplay,
+- 							   num_joined_pipes,
+- 							   output_format, pipe_bpp,
+- 							   bw_overhead_flags);
++ 			/*
++ 			 * TBD pass the connector BPC,
++ 			 * for now U8_MAX so that max BPC on that platform would be picked
++ 			 */
++ 			pipe_bpp =3D intel_dp_dsc_compute_max_bpp(connector, U8_MAX);
++=20
++ 			/*
++ 			 * Output bpp is stored in 6.4 format so right shift by 4 to get the
++ 			 * integer value since we support only integer values of bpp.
++ 			 */
++ 			if (intel_dp_is_edp(intel_dp)) {
++ 				dsc_max_compressed_bpp =3D
++ 					drm_edp_dsc_sink_output_bpp(connector->dp.dsc_dpcd) >> 4;
++=20
++ 				dsc =3D dsc_max_compressed_bpp && dsc_slice_count;
++ 			} else if (drm_dp_sink_supports_fec(connector->dp.fec_capability)) {
++ 				unsigned long bw_overhead_flags =3D 0;
++=20
++ 				if (!drm_dp_is_uhbr_rate(max_link_clock))
++ 					bw_overhead_flags |=3D DRM_DP_BW_OVERHEAD_FEC;
++=20
++ 				dsc =3D intel_dp_mode_valid_with_dsc(connector,
++ 								   max_link_clock, max_lanes,
++ 								   target_clock, mode->hdisplay,
++ 								   num_joined_pipes,
++ 								   output_format, pipe_bpp,
++ 								   bw_overhead_flags);
++ 			}
+  		}
++=20
++ 		if (intel_dp_joiner_needs_dsc(display, num_joined_pipes) && !dsc) {
++ 			status =3D MODE_CLOCK_HIGH;
++ 			continue;
++ 		}
++=20
++ 		if (mode_rate > max_rate && !dsc) {
++ 			status =3D MODE_CLOCK_HIGH;
++ 			continue;
++ 		}
++=20
++ 		status =3D intel_mode_valid_max_plane_size(display, mode, num_joined_pi=
+pes);
++ 		if (status !=3D MODE_OK)
++ 			continue;
++=20
++ 		if (!dsc)
++ 			dsc_slice_count =3D 0;
++=20
++ 		if (!intel_dp_dotclk_valid(display,
++ 					   target_clock,
++ 					   mode->htotal,
++ 					   dsc_slice_count,
++ 					   num_joined_pipes)) {
++ 			status =3D MODE_CLOCK_HIGH;
++ 			continue;
++ 		}
++=20
++ 		break;
+  	}
+ =20
+- 	if (intel_dp_joiner_needs_dsc(display, num_joined_pipes) && !dsc)
+- 		return MODE_CLOCK_HIGH;
+-=20
+- 	if (mode_rate > max_rate && !dsc)
+- 		return MODE_CLOCK_HIGH;
+-=20
+- 	status =3D intel_dp_mode_valid_downstream(connector, mode, target_clock);
+  	if (status !=3D MODE_OK)
+  		return status;
+ =20
+- 	return intel_mode_valid_max_plane_size(display, mode, num_joined_pipes);
++ 	return intel_dp_mode_valid_downstream(connector, mode, target_clock);
   }
  =20
-  static void kho_init_folio(struct page *page, unsigned int order)
-@@@ -229,6 -384,8 +384,8 @@@
+  bool intel_dp_source_supports_tps3(struct intel_display *display)
+@@@ -1696,7 -1769,7 +1769,7 @@@ static int intel_dp_max_bpp(struct inte
+  	struct intel_connector *connector =3D intel_dp->attached_connector;
+  	int bpp, bpc;
  =20
-  	/* Head page gets refcount of 1. */
-  	set_page_count(page, 1);
-+ 	/* Clear head page's codetag to avoid accounting mismatch. */
-+ 	clear_page_tag_ref(page);
+- 	bpc =3D crtc_state->pipe_bpp / 3;
++ 	bpc =3D crtc_state->max_pipe_bpp / 3;
  =20
-  	/* For higher order folios, tail pages get a page count of zero. */
-  	for (unsigned long i =3D 1; i < nr_pages; i++)
-@@@ -265,14 -422,6 +422,6 @@@ static struct page *kho_restore_page(ph
-  	else
-  		kho_init_pages(page, nr_pages);
+  	if (intel_dp->dfp.max_bpc)
+  		bpc =3D min_t(int, bpc, intel_dp->dfp.max_bpc);
+@@@ -2032,12 -2105,14 +2105,14 @@@ static int dsc_compute_link_config(stru
+  			} else {
+  				unsigned long bw_overhead_flags =3D
+  					pipe_config->fec_enable ? DRM_DP_BW_OVERHEAD_FEC : 0;
++ 				int line_slice_count =3D
++ 					intel_dsc_line_slice_count(&pipe_config->dsc.slice_config);
  =20
-- 	/* Always mark headpage's codetag as empty to avoid accounting mismatch =
-*/
-- 	clear_page_tag_ref(page);
-- 	if (!is_folio) {
-- 		/* Also do that for the non-compound tail pages */
-- 		for (unsigned int i =3D 1; i < nr_pages; i++)
-- 			clear_page_tag_ref(page + i);
-- 	}
--=20
-  	adjust_managed_page_count(page, nr_pages);
-  	return page;
-  }
-@@@ -321,161 -470,24 +470,24 @@@ struct page *kho_restore_pages(phys_add
-  }
-  EXPORT_SYMBOL_GPL(kho_restore_pages);
+  				if (!is_bw_sufficient_for_dsc_config(intel_dp,
+  								     link_rate, lane_count,
+  								     adjusted_mode->crtc_clock,
+  								     adjusted_mode->hdisplay,
+- 								     pipe_config->dsc.slice_count,
++ 								     line_slice_count,
+  								     dsc_bpp_x16,
+  								     bw_overhead_flags))
+  					continue;
+@@@ -2382,47 -2457,10 +2457,10 @@@ int intel_dp_dsc_compute_config(struct=
+=20
+  		}
+  	}
  =20
-- /* Serialize and deserialize struct kho_mem_phys across kexec
--  *
--  * Record all the bitmaps in a linked list of pages for the next kernel to
--  * process. Each chunk holds bitmaps of the same order and each block of =
-bitmaps
--  * starts at a given physical address. This allows the bitmaps to be spar=
-se. The
--  * xarray is used to store them in a tree while building up the data stru=
-cture,
--  * but the KHO successor kernel only needs to process them once in order.
--  *
--  * All of this memory is normal kmalloc() memory and is not marked for
--  * preservation. The successor kernel will remain isolated to the scratch=
- space
--  * until it completes processing this list. Once processed all the memory
--  * storing these ranges will be marked as free.
--  */
+- 	/* Calculate Slice count */
+- 	if (intel_dp_is_edp(intel_dp)) {
+- 		pipe_config->dsc.slice_count =3D
+- 			drm_dp_dsc_sink_max_slice_count(connector->dp.dsc_dpcd,
+- 							true);
+- 		if (!pipe_config->dsc.slice_count) {
+- 			drm_dbg_kms(display->drm,
+- 				    "Unsupported Slice Count %d\n",
+- 				    pipe_config->dsc.slice_count);
+- 			return -EINVAL;
+- 		}
+- 	} else {
+- 		u8 dsc_dp_slice_count;
 -=20
-- struct khoser_mem_bitmap_ptr {
-- 	phys_addr_t phys_start;
-- 	DECLARE_KHOSER_PTR(bitmap, struct kho_mem_phys_bits *);
-- };
--=20
-- struct khoser_mem_chunk_hdr {
-- 	DECLARE_KHOSER_PTR(next, struct khoser_mem_chunk *);
-- 	unsigned int order;
-- 	unsigned int num_elms;
-- };
--=20
-- #define KHOSER_BITMAP_SIZE                                   \
-- 	((PAGE_SIZE - sizeof(struct khoser_mem_chunk_hdr)) / \
-- 	 sizeof(struct khoser_mem_bitmap_ptr))
--=20
-- struct khoser_mem_chunk {
-- 	struct khoser_mem_chunk_hdr hdr;
-- 	struct khoser_mem_bitmap_ptr bitmaps[KHOSER_BITMAP_SIZE];
-- };
--=20
-- static_assert(sizeof(struct khoser_mem_chunk) =3D=3D PAGE_SIZE);
--=20
-- static struct khoser_mem_chunk *new_chunk(struct khoser_mem_chunk *cur_ch=
-unk,
-- 					  unsigned long order)
-+ static int __init kho_preserved_memory_reserve(phys_addr_t phys,
-+ 					       unsigned int order)
-  {
-- 	struct khoser_mem_chunk *chunk __free(free_page) =3D NULL;
-+ 	union kho_page_info info;
-+ 	struct page *page;
-+ 	u64 sz;
- =20
-- 	chunk =3D (void *)get_zeroed_page(GFP_KERNEL);
-- 	if (!chunk)
-- 		return ERR_PTR(-ENOMEM);
-+ 	sz =3D 1 << (order + PAGE_SHIFT);
-+ 	page =3D phys_to_page(phys);
- =20
-- 	if (WARN_ON(kho_scratch_overlap(virt_to_phys(chunk), PAGE_SIZE)))
-- 		return ERR_PTR(-EINVAL);
--=20
-- 	chunk->hdr.order =3D order;
-- 	if (cur_chunk)
-- 		KHOSER_STORE_PTR(cur_chunk->hdr.next, chunk);
-- 	return no_free_ptr(chunk);
-- }
--=20
-- static void kho_mem_ser_free(struct khoser_mem_chunk *first_chunk)
-- {
-- 	struct khoser_mem_chunk *chunk =3D first_chunk;
--=20
-- 	while (chunk) {
-- 		struct khoser_mem_chunk *tmp =3D chunk;
--=20
-- 		chunk =3D KHOSER_LOAD_PTR(chunk->hdr.next);
-- 		free_page((unsigned long)tmp);
-- 	}
-- }
--=20
-- /*
--  *  Update memory map property, if old one is found discard it via
--  *  kho_mem_ser_free().
--  */
-- static void kho_update_memory_map(struct khoser_mem_chunk *first_chunk)
-- {
-- 	void *ptr;
-- 	u64 phys;
--=20
-- 	ptr =3D fdt_getprop_w(kho_out.fdt, 0, KHO_FDT_MEMORY_MAP_PROP_NAME, NULL=
-);
--=20
-- 	/* Check and discard previous memory map */
-- 	phys =3D get_unaligned((u64 *)ptr);
-- 	if (phys)
-- 		kho_mem_ser_free((struct khoser_mem_chunk *)phys_to_virt(phys));
--=20
-- 	/* Update with the new value */
-- 	phys =3D first_chunk ? (u64)virt_to_phys(first_chunk) : 0;
-- 	put_unaligned(phys, (u64 *)ptr);
-- }
--=20
-- static int kho_mem_serialize(struct kho_out *kho_out)
-- {
-- 	struct khoser_mem_chunk *first_chunk =3D NULL;
-- 	struct khoser_mem_chunk *chunk =3D NULL;
-- 	struct kho_mem_phys *physxa;
-- 	unsigned long order;
-- 	int err =3D -ENOMEM;
--=20
-- 	xa_for_each(&kho_out->track.orders, order, physxa) {
-- 		struct kho_mem_phys_bits *bits;
-- 		unsigned long phys;
--=20
-- 		chunk =3D new_chunk(chunk, order);
-- 		if (IS_ERR(chunk)) {
-- 			err =3D PTR_ERR(chunk);
-- 			goto err_free;
+- 		dsc_dp_slice_count =3D
+- 			intel_dp_dsc_get_slice_count(connector,
+- 						     adjusted_mode->crtc_clock,
+- 						     adjusted_mode->crtc_hdisplay,
+- 						     num_joined_pipes);
+- 		if (!dsc_dp_slice_count) {
+- 			drm_dbg_kms(display->drm,
+- 				    "Compressed Slice Count not supported\n");
+- 			return -EINVAL;
 - 		}
 -=20
-- 		if (!first_chunk)
-- 			first_chunk =3D chunk;
--=20
-- 		xa_for_each(&physxa->phys_bits, phys, bits) {
-- 			struct khoser_mem_bitmap_ptr *elm;
--=20
-- 			if (chunk->hdr.num_elms =3D=3D ARRAY_SIZE(chunk->bitmaps)) {
-- 				chunk =3D new_chunk(chunk, order);
-- 				if (IS_ERR(chunk)) {
-- 					err =3D PTR_ERR(chunk);
-- 					goto err_free;
-- 				}
-- 			}
--=20
-- 			elm =3D &chunk->bitmaps[chunk->hdr.num_elms];
-- 			chunk->hdr.num_elms++;
-- 			elm->phys_start =3D (phys * PRESERVE_BITS)
-- 					  << (order + PAGE_SHIFT);
-- 			KHOSER_STORE_PTR(elm->bitmap, bits);
-- 		}
+- 		pipe_config->dsc.slice_count =3D dsc_dp_slice_count;
 - 	}
--=20
-- 	kho_update_memory_map(first_chunk);
-+ 	/* Reserve the memory preserved in KHO in memblock */
-+ 	memblock_reserve(phys, sz);
-+ 	memblock_reserved_mark_noinit(phys, sz);
-+ 	info.magic =3D KHO_PAGE_MAGIC;
-+ 	info.order =3D order;
-+ 	page->private =3D info.page_private;
+- 	/*
+- 	 * VDSC engine operates at 1 Pixel per clock, so if peak pixel rate
+- 	 * is greater than the maximum Cdclock and if slice count is even
+- 	 * then we need to use 2 VDSC instances.
+- 	 * In case of Ultrajoiner along with 12 slices we need to use 3
+- 	 * VDSC instances.
+- 	 */
+- 	if (pipe_config->joiner_pipes && num_joined_pipes =3D=3D 4 &&
+- 	    pipe_config->dsc.slice_count =3D=3D 12)
+- 		pipe_config->dsc.num_streams =3D 3;
+- 	else if (pipe_config->joiner_pipes || pipe_config->dsc.slice_count > 1)
+- 		pipe_config->dsc.num_streams =3D 2;
+- 	else
+- 		pipe_config->dsc.num_streams =3D 1;
++ 	if (!intel_dp_dsc_get_slice_config(connector, adjusted_mode->crtc_clock,
++ 					   adjusted_mode->crtc_hdisplay, num_joined_pipes,
++ 					   &pipe_config->dsc.slice_config))
++ 		return -EINVAL;
+ =20
+  	ret =3D intel_dp_dsc_compute_params(connector, pipe_config);
+  	if (ret < 0) {
+@@@ -2440,7 -2478,7 +2478,7 @@@
+  		    "Compressed Bpp =3D " FXP_Q4_FMT " Slice Count =3D %d\n",
+  		    pipe_config->pipe_bpp,
+  		    FXP_Q4_ARGS(pipe_config->dsc.compressed_bpp_x16),
+- 		    pipe_config->dsc.slice_count);
++ 		    intel_dsc_line_slice_count(&pipe_config->dsc.slice_config));
  =20
   	return 0;
--=20
-- err_free:
-- 	kho_mem_ser_free(first_chunk);
-- 	return err;
-- }
--=20
-- static void __init deserialize_bitmap(unsigned int order,
-- 				      struct khoser_mem_bitmap_ptr *elm)
-- {
-- 	struct kho_mem_phys_bits *bitmap =3D KHOSER_LOAD_PTR(elm->bitmap);
-- 	unsigned long bit;
--=20
-- 	for_each_set_bit(bit, bitmap->preserve, PRESERVE_BITS) {
-- 		int sz =3D 1 << (order + PAGE_SHIFT);
-- 		phys_addr_t phys =3D
-- 			elm->phys_start + (bit << (order + PAGE_SHIFT));
-- 		struct page *page =3D phys_to_page(phys);
-- 		union kho_page_info info;
--=20
-- 		memblock_reserve(phys, sz);
-- 		memblock_reserved_mark_noinit(phys, sz);
-- 		info.magic =3D KHO_PAGE_MAGIC;
-- 		info.order =3D order;
-- 		page->private =3D info.page_private;
-- 	}
+  }
+@@@ -2476,8 -2514,8 +2514,8 @@@ dsc_throughput_quirk_max_bpp_x16(const=20
+  	return fxp_q4_from_int(12);
   }
  =20
-  /* Returns physical address of the preserved memory map from FDT */
-@@@ -486,25 -498,13 +498,13 @@@ static phys_addr_t __init kho_get_mem_m
+- static int compute_min_compressed_bpp_x16(struct intel_connector *connect=
+or,
+- 					  enum intel_output_format output_format)
++ int intel_dp_compute_min_compressed_bpp_x16(struct intel_connector *conne=
+ctor,
++ 					    enum intel_output_format output_format)
+  {
+  	int dsc_src_min_bpp, dsc_sink_min_bpp, dsc_min_bpp;
+  	int min_bpp_x16;
+@@@ -2543,7 -2581,8 +2581,8 @@@ bool intel_dp_mode_valid_with_dsc(struc
+  				  int pipe_bpp, unsigned long bw_overhead_flags)
+  {
+  	struct intel_dp *intel_dp =3D intel_attached_dp(connector);
+- 	int min_bpp_x16 =3D compute_min_compressed_bpp_x16(connector, output_for=
+mat);
++ 	int min_bpp_x16 =3D intel_dp_compute_min_compressed_bpp_x16(connector,
++ 								  output_format);
+  	int max_bpp_x16 =3D compute_max_compressed_bpp_x16(connector,
+  							 mode_clock, mode_hdisplay,
+  							 num_joined_pipes,
+@@@ -2597,7 -2636,8 +2636,8 @@@ intel_dp_compute_config_link_bpp_limits
+  		limits->link.min_bpp_x16 =3D fxp_q4_from_int(limits->pipe.min_bpp);
+  	} else {
+  		limits->link.min_bpp_x16 =3D
+- 			compute_min_compressed_bpp_x16(connector, crtc_state->output_format);
++ 			intel_dp_compute_min_compressed_bpp_x16(connector,
++ 								crtc_state->output_format);
  =20
-  	mem_ptr =3D fdt_getprop(fdt, 0, KHO_FDT_MEMORY_MAP_PROP_NAME, &len);
-  	if (!mem_ptr || len !=3D sizeof(u64)) {
-- 		pr_err("failed to get preserved memory bitmaps\n");
-+ 		pr_err("failed to get preserved memory map\n");
-  		return 0;
+  		max_link_bpp_x16 =3D
+  			compute_max_compressed_bpp_x16(connector,
+@@@ -2691,7 -2731,7 +2731,7 @@@ intel_dp_compute_config_limits(struct i
+  		 * previously. This hack should be removed once we have the
+  		 * proper retry logic in place.
+  		 */
+- 		limits->pipe.max_bpp =3D min(crtc_state->pipe_bpp, 24);
++ 		limits->pipe.max_bpp =3D min(crtc_state->max_pipe_bpp, 24);
+  	} else {
+  		limits->pipe.max_bpp =3D intel_dp_max_bpp(intel_dp, crtc_state,
+  							respect_downstream_limits);
+@@@ -2710,9 -2750,39 +2750,39 @@@
+  								     crtc_state)));
   	}
  =20
-  	return get_unaligned((const u64 *)mem_ptr);
-  }
- =20
-- static void __init kho_mem_deserialize(struct khoser_mem_chunk *chunk)
-- {
-- 	while (chunk) {
-- 		unsigned int i;
--=20
-- 		for (i =3D 0; i !=3D chunk->hdr.num_elms; i++)
-- 			deserialize_bitmap(chunk->hdr.order,
-- 					   &chunk->bitmaps[i]);
-- 		chunk =3D KHOSER_LOAD_PTR(chunk->hdr.next);
-- 	}
-- }
--=20
-  /*
-   * With KHO enabled, memory can become fragmented because KHO regions may
-   * be anywhere in physical address space. The scratch regions give us a
-@@@ -815,14 -815,14 +815,14 @@@ EXPORT_SYMBOL_GPL(kho_remove_subtree)
-   */
-  int kho_preserve_folio(struct folio *folio)
-  {
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	const unsigned long pfn =3D folio_pfn(folio);
-  	const unsigned int order =3D folio_order(folio);
-- 	struct kho_mem_track *track =3D &kho_out.track;
- =20
-  	if (WARN_ON(kho_scratch_overlap(pfn << PAGE_SHIFT, PAGE_SIZE << order)))
-  		return -EINVAL;
- =20
-- 	return __kho_preserve_order(track, pfn, order);
-+ 	return kho_radix_add_page(tree, pfn, order);
-  }
-  EXPORT_SYMBOL_GPL(kho_preserve_folio);
- =20
-@@@ -836,11 -836,11 +836,11 @@@
-   */
-  void kho_unpreserve_folio(struct folio *folio)
-  {
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	const unsigned long pfn =3D folio_pfn(folio);
-  	const unsigned int order =3D folio_order(folio);
-- 	struct kho_mem_track *track =3D &kho_out.track;
- =20
-- 	__kho_unpreserve_order(track, pfn, order);
-+ 	kho_radix_del_page(tree, pfn, order);
-  }
-  EXPORT_SYMBOL_GPL(kho_unpreserve_folio);
- =20
-@@@ -856,7 -856,7 +856,7 @@@
-   */
-  int kho_preserve_pages(struct page *page, unsigned long nr_pages)
-  {
-- 	struct kho_mem_track *track =3D &kho_out.track;
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	const unsigned long start_pfn =3D page_to_pfn(page);
-  	const unsigned long end_pfn =3D start_pfn + nr_pages;
-  	unsigned long pfn =3D start_pfn;
-@@@ -872,7 -872,7 +872,7 @@@
-  		const unsigned int order =3D
-  			min(count_trailing_zeros(pfn), ilog2(end_pfn - pfn));
- =20
-- 		err =3D __kho_preserve_order(track, pfn, order);
-+ 		err =3D kho_radix_add_page(tree, pfn, order);
-  		if (err) {
-  			failed_pfn =3D pfn;
-  			break;
-@@@ -882,7 -882,7 +882,7 @@@
-  	}
- =20
-  	if (err)
-- 		__kho_unpreserve(track, start_pfn, failed_pfn);
-+ 		__kho_unpreserve(tree, start_pfn, failed_pfn);
- =20
-  	return err;
-  }
-@@@ -900,11 -900,11 +900,11 @@@ EXPORT_SYMBOL_GPL(kho_preserve_pages)
-   */
-  void kho_unpreserve_pages(struct page *page, unsigned long nr_pages)
-  {
-- 	struct kho_mem_track *track =3D &kho_out.track;
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	const unsigned long start_pfn =3D page_to_pfn(page);
-  	const unsigned long end_pfn =3D start_pfn + nr_pages;
- =20
-- 	__kho_unpreserve(track, start_pfn, end_pfn);
-+ 	__kho_unpreserve(tree, start_pfn, end_pfn);
-  }
-  EXPORT_SYMBOL_GPL(kho_unpreserve_pages);
- =20
-@@@ -963,14 -963,14 +963,14 @@@ err_free
-  static void kho_vmalloc_unpreserve_chunk(struct kho_vmalloc_chunk *chunk,
-  					 unsigned short order)
-  {
-- 	struct kho_mem_track *track =3D &kho_out.track;
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	unsigned long pfn =3D PHYS_PFN(virt_to_phys(chunk));
- =20
-- 	__kho_unpreserve(track, pfn, pfn + 1);
-+ 	__kho_unpreserve(tree, pfn, pfn + 1);
- =20
-  	for (int i =3D 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
-  		pfn =3D PHYS_PFN(chunk->phys[i]);
-- 		__kho_unpreserve(track, pfn, pfn + (1 << order));
-+ 		__kho_unpreserve(tree, pfn, pfn + (1 << order));
-  	}
-  }
- =20
-@@@ -1090,7 -1090,7 +1090,7 @@@ void *kho_restore_vmalloc(const struct=20
-  		return NULL;
- =20
-  	total_pages =3D preservation->total_pages;
- -	pages =3D kvmalloc_array(total_pages, sizeof(*pages), GFP_KERNEL);
- +	pages =3D kvmalloc_objs(*pages, total_pages);
-  	if (!pages)
-  		return NULL;
-  	order =3D preservation->order;
-@@@ -1239,33 -1239,9 +1239,9 @@@ void kho_restore_free(void *mem
-  }
-  EXPORT_SYMBOL_GPL(kho_restore_free);
- =20
-- int kho_finalize(void)
-- {
-- 	int ret;
--=20
-- 	if (!kho_enable)
-- 		return -EOPNOTSUPP;
--=20
-- 	guard(mutex)(&kho_out.lock);
-- 	ret =3D kho_mem_serialize(&kho_out);
-- 	if (ret)
-- 		return ret;
--=20
-- 	kho_out.finalized =3D true;
--=20
-- 	return 0;
-- }
--=20
-- bool kho_finalized(void)
-- {
-- 	guard(mutex)(&kho_out.lock);
-- 	return kho_out.finalized;
-- }
--=20
-  struct kho_in {
-  	phys_addr_t fdt_phys;
-  	phys_addr_t scratch_phys;
-- 	phys_addr_t mem_map_phys;
-  	struct kho_debugfs dbg;
-  };
- =20
-@@@ -1333,18 -1309,46 +1309,46 @@@ int kho_retrieve_subtree(const char *na
-  }
-  EXPORT_SYMBOL_GPL(kho_retrieve_subtree);
- =20
-+ static int __init kho_mem_retrieve(const void *fdt)
-+ {
-+ 	struct kho_radix_tree tree;
-+ 	const phys_addr_t *mem;
-+ 	int len;
++ 	if (limits->pipe.min_bpp <=3D 0 ||
++ 	    limits->pipe.min_bpp > limits->pipe.max_bpp) {
++ 		drm_dbg_kms(display->drm, "[CONNECTOR:%d:%s] Invalid pipe bpp range: %d=
+-%d\n",
++ 			    connector->base.base.id, connector->base.name,
++ 			    limits->pipe.min_bpp, limits->pipe.max_bpp);
 +=20
-+ 	/* Retrieve the KHO radix tree from passed-in FDT. */
-+ 	mem =3D fdt_getprop(fdt, 0, KHO_FDT_MEMORY_MAP_PROP_NAME, &len);
-+=20
-+ 	if (!mem || len !=3D sizeof(*mem)) {
-+ 		pr_err("failed to get preserved KHO memory tree\n");
-+ 		return -ENOENT;
++ 		return false;
 + 	}
 +=20
-+ 	if (!*mem)
+  	if (dsc && !intel_dp_dsc_compute_pipe_bpp_limits(connector, limits))
+  		return false;
+ =20
++ 	/*
++ 	 * crtc_state->pipe_bpp is the non-DP specific baseline (platform /
++ 	 * EDID) maximum pipe BPP limited by the max-BPC connector property
++ 	 * request. Since by now pipe.max_bpp is <=3D the above baseline
++ 	 * maximum BPP, the only remaining reason for adjusting pipe.max_bpp
++ 	 * is the max-BPC connector property request. Adjust pipe.max_bpp to
++ 	 * this request within the current valid pipe.min_bpp .. pipe.max_bpp
++ 	 * range.
++ 	 */
++ 	limits->pipe.max_bpp =3D clamp(crtc_state->pipe_bpp, limits->pipe.min_bp=
+p,
++ 				     limits->pipe.max_bpp);
++ 	if (dsc)
++ 		limits->pipe.max_bpp =3D align_max_sink_dsc_input_bpp(connector,
++ 								    limits->pipe.max_bpp);
++=20
++ 	if (limits->pipe.max_bpp !=3D crtc_state->pipe_bpp)
++ 		drm_dbg_kms(display->drm,
++ 			    "[CONNECTOR:%d:%s] Adjusting requested max pipe bpp %d -> %d\n",
++ 			    connector->base.base.id, connector->base.name,
++ 			    crtc_state->pipe_bpp, limits->pipe.max_bpp);
++=20
+  	if (is_mst || intel_dp->use_max_params) {
+  		/*
+  		 * For MST we always configure max link bw - the spec doesn't
+@@@ -2764,13 -2834,13 +2834,13 @@@ bool intel_dp_joiner_needs_dsc(struct i
+  }
+ =20
+  static int
+- intel_dp_compute_link_config(struct intel_encoder *encoder,
+- 			     struct intel_crtc_state *pipe_config,
+- 			     struct drm_connector_state *conn_state,
+- 			     bool respect_downstream_limits)
++ intel_dp_compute_link_for_joined_pipes(struct intel_encoder *encoder,
++ 				       struct intel_crtc_state *pipe_config,
++ 				       struct drm_connector_state *conn_state,
++ 				       bool respect_downstream_limits)
+  {
+  	struct intel_display *display =3D to_intel_display(encoder);
+- 	struct intel_crtc *crtc =3D to_intel_crtc(pipe_config->uapi.crtc);
++ 	int num_joined_pipes =3D intel_crtc_num_joined_pipes(pipe_config);
+  	struct intel_connector *connector =3D
+  		to_intel_connector(conn_state->connector);
+  	const struct drm_display_mode *adjusted_mode =3D
+@@@ -2778,19 -2848,8 +2848,8 @@@
+  	struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
+  	struct link_config_limits limits;
+  	bool dsc_needed, joiner_needs_dsc;
+- 	int num_joined_pipes;
+  	int ret =3D 0;
+ =20
+- 	if (pipe_config->fec_enable &&
+- 	    !intel_dp_supports_fec(intel_dp, connector, pipe_config))
+- 		return -EINVAL;
+-=20
+- 	num_joined_pipes =3D intel_dp_num_joined_pipes(intel_dp, connector,
+- 						     adjusted_mode->crtc_hdisplay,
+- 						     adjusted_mode->crtc_clock);
+- 	if (num_joined_pipes > 1)
+- 		pipe_config->joiner_pipes =3D GENMASK(crtc->pipe + num_joined_pipes - 1=
+, crtc->pipe);
+-=20
+  	joiner_needs_dsc =3D intel_dp_joiner_needs_dsc(display, num_joined_pipes=
+);
+ =20
+  	dsc_needed =3D joiner_needs_dsc || intel_dp->force_dsc_en ||
+@@@ -2813,7 -2872,13 +2872,13 @@@
+  							     fxp_q4_from_int(pipe_config->pipe_bpp),
+  							     fxp_q4_from_int(pipe_config->pipe_bpp),
+  							     0, false);
+- 		if (ret)
++=20
++ 		if (ret ||
++ 		    !intel_dp_dotclk_valid(display,
++ 					   adjusted_mode->crtc_clock,
++ 					   adjusted_mode->crtc_htotal,
++ 					   0,
++ 					   num_joined_pipes))
+  			dsc_needed =3D true;
+  	}
+ =20
+@@@ -2823,6 -2888,8 +2888,8 @@@
+  	}
+ =20
+  	if (dsc_needed) {
++ 		int dsc_slice_count;
++=20
+  		drm_dbg_kms(display->drm,
+  			    "Try DSC (fallback=3D%s, joiner=3D%s, force=3D%s)\n",
+  			    str_yes_no(ret), str_yes_no(joiner_needs_dsc),
+@@@ -2838,6 -2905,15 +2905,15 @@@
+  						  conn_state, &limits, 64);
+  		if (ret < 0)
+  			return ret;
++=20
++ 		dsc_slice_count =3D intel_dsc_line_slice_count(&pipe_config->dsc.slice_=
+config);
++=20
++ 		if (!intel_dp_dotclk_valid(display,
++ 					   adjusted_mode->crtc_clock,
++ 					   adjusted_mode->crtc_htotal,
++ 					   dsc_slice_count,
++ 					   num_joined_pipes))
++ 			return -EINVAL;
+  	}
+ =20
+  	drm_dbg_kms(display->drm,
+@@@ -2854,6 -2930,55 +2930,55 @@@
+  	return 0;
+  }
+ =20
++ static int
++ intel_dp_compute_link_config(struct intel_encoder *encoder,
++ 			     struct intel_crtc_state *crtc_state,
++ 			     struct drm_connector_state *conn_state,
++ 			     bool respect_downstream_limits)
++ {
++ 	struct intel_crtc *crtc =3D to_intel_crtc(crtc_state->uapi.crtc);
++ 	struct intel_connector *connector =3D
++ 		to_intel_connector(conn_state->connector);
++ 	const struct drm_display_mode *adjusted_mode =3D
++ 		&crtc_state->hw.adjusted_mode;
++ 	struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
++ 	int num_joined_pipes;
++ 	int ret =3D -EINVAL;
++=20
++ 	if (crtc_state->fec_enable &&
++ 	    !intel_dp_supports_fec(intel_dp, connector, crtc_state))
 + 		return -EINVAL;
 +=20
-+ 	tree.root =3D phys_to_virt(*mem);
-+ 	mutex_init(&tree.lock);
-+ 	return kho_radix_walk_tree(&tree, kho_preserved_memory_reserve);
-+ }
++ 	for_each_joiner_candidate(connector, adjusted_mode, num_joined_pipes) {
++ 		/*
++ 		 * NOTE:
++ 		 * The crtc_state->joiner_pipes should have been set at the end
++ 		 * only if all the conditions are met. However that would mean
++ 		 * that num_joined_pipes is passed around to all helpers and
++ 		 * make them use it instead of using crtc_state->joiner_pipes
++ 		 * directly or indirectly (via intel_crtc_num_joined_pipes()).
++ 		 *
++ 		 * For now, setting crtc_state->joiner_pipes to the candidate
++ 		 * value to avoid the above churn and resetting it to 0, in case
++ 		 * no joiner candidate is found to be suitable for the given
++ 		 * configuration.
++ 		 */
++ 		if (num_joined_pipes > 1)
++ 			crtc_state->joiner_pipes =3D GENMASK(crtc->pipe + num_joined_pipes - 1,
++ 							   crtc->pipe);
 +=20
-  static __init int kho_out_fdt_setup(void)
-  {
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	void *root =3D kho_out.fdt;
-- 	u64 empty_mem_map =3D 0;
-+ 	u64 preserved_mem_tree_pa;
-  	int err;
- =20
-  	err =3D fdt_create(root, PAGE_SIZE);
-  	err |=3D fdt_finish_reservemap(root);
-  	err |=3D fdt_begin_node(root, "");
-  	err |=3D fdt_property_string(root, "compatible", KHO_FDT_COMPATIBLE);
-- 	err |=3D fdt_property(root, KHO_FDT_MEMORY_MAP_PROP_NAME, &empty_mem_map,
-- 			    sizeof(empty_mem_map));
-+=20
-+ 	preserved_mem_tree_pa =3D virt_to_phys(tree->root);
-+=20
-+ 	err |=3D fdt_property(root, KHO_FDT_MEMORY_MAP_PROP_NAME,
-+ 			    &preserved_mem_tree_pa,
-+ 			    sizeof(preserved_mem_tree_pa));
-+=20
-  	err |=3D fdt_end_node(root);
-  	err |=3D fdt_finish(root);
- =20
-@@@ -1353,16 -1357,23 +1357,23 @@@
- =20
-  static __init int kho_init(void)
-  {
-+ 	struct kho_radix_tree *tree =3D &kho_out.radix_tree;
-  	const void *fdt =3D kho_get_fdt();
-  	int err =3D 0;
- =20
-  	if (!kho_enable)
-  		return 0;
- =20
-+ 	tree->root =3D kzalloc(PAGE_SIZE, GFP_KERNEL);
-+ 	if (!tree->root) {
-+ 		err =3D -ENOMEM;
-+ 		goto err_free_scratch;
++ 		ret =3D intel_dp_compute_link_for_joined_pipes(encoder, crtc_state, con=
+n_state,
++ 							     respect_downstream_limits);
++ 		if (ret =3D=3D 0 || ret =3D=3D -EDEADLK)
++ 			break;
 + 	}
 +=20
-  	kho_out.fdt =3D kho_alloc_preserve(PAGE_SIZE);
-  	if (IS_ERR(kho_out.fdt)) {
-  		err =3D PTR_ERR(kho_out.fdt);
-- 		goto err_free_scratch;
-+ 		goto err_free_kho_radix_tree_root;
-  	}
- =20
-  	err =3D kho_debugfs_init();
-@@@ -1408,6 -1419,9 +1419,9 @@@
- =20
-  err_free_fdt:
-  	kho_unpreserve_free(kho_out.fdt);
-+ err_free_kho_radix_tree_root:
-+ 	kfree(tree->root);
-+ 	tree->root =3D NULL;
-  err_free_scratch:
-  	kho_out.fdt =3D NULL;
-  	for (int i =3D 0; i < kho_scratch_cnt; i++) {
-@@@ -1447,10 -1461,12 +1461,12 @@@ static void __init kho_release_scratch(
- =20
-  void __init kho_memory_init(void)
-  {
-- 	if (kho_in.mem_map_phys) {
-+ 	if (kho_in.scratch_phys) {
-  		kho_scratch =3D phys_to_virt(kho_in.scratch_phys);
-  		kho_release_scratch();
-- 		kho_mem_deserialize(phys_to_virt(kho_in.mem_map_phys));
++ 	if (ret < 0)
++ 		crtc_state->joiner_pipes =3D 0;
 +=20
-+ 		if (kho_mem_retrieve(kho_get_fdt()))
-+ 			kho_in.fdt_phys =3D 0;
-  	} else {
-  		kho_reserve_scratch();
++ 	return ret;
++ }
++=20
+  bool intel_dp_limited_color_range(const struct intel_crtc_state *crtc_sta=
+te,
+  				  const struct drm_connector_state *conn_state)
+  {
+@@@ -4293,20 -4418,24 +4418,24 @@@ static bool intel_dp_get_colorimetry_st
+  	return dprx & DP_VSC_SDP_EXT_FOR_COLORIMETRY_SUPPORTED;
+  }
+ =20
+- static void intel_dp_read_dsc_dpcd(struct drm_dp_aux *aux,
+- 				   u8 dsc_dpcd[DP_DSC_RECEIVER_CAP_SIZE])
++ static int intel_dp_read_dsc_dpcd(struct drm_dp_aux *aux,
++ 				  u8 dsc_dpcd[DP_DSC_RECEIVER_CAP_SIZE])
+  {
+- 	if (drm_dp_dpcd_read(aux, DP_DSC_SUPPORT, dsc_dpcd,
+- 			     DP_DSC_RECEIVER_CAP_SIZE) < 0) {
+- 		drm_err(aux->drm_dev,
+- 			"Failed to read DPCD register 0x%x\n",
+- 			DP_DSC_SUPPORT);
+- 		return;
++ 	int ret;
++=20
++ 	ret =3D drm_dp_dpcd_read_data(aux, DP_DSC_SUPPORT, dsc_dpcd,
++ 				    DP_DSC_RECEIVER_CAP_SIZE);
++ 	if (ret) {
++ 		drm_dbg_kms(aux->drm_dev,
++ 			    "Could not read DSC DPCD register 0x%x Error: %pe\n",
++ 			    DP_DSC_SUPPORT, ERR_PTR(ret));
++ 		return ret;
   	}
-@@@ -1528,7 -1544,6 +1544,6 @@@ void __init kho_populate(phys_addr_t fd
  =20
-  	kho_in.fdt_phys =3D fdt_phys;
-  	kho_in.scratch_phys =3D scratch_phys;
-- 	kho_in.mem_map_phys =3D mem_map_phys;
-  	kho_scratch_cnt =3D scratch_cnt;
+  	drm_dbg_kms(aux->drm_dev, "DSC DPCD: %*ph\n",
+  		    DP_DSC_RECEIVER_CAP_SIZE,
+  		    dsc_dpcd);
++ 	return 0;
+  }
  =20
-  	populated =3D true;
+  static void init_dsc_overall_throughput_limits(struct intel_connector *co=
+nnector, bool is_branch)
+@@@ -4357,8 -4486,9 +4486,9 @@@ void intel_dp_get_dsc_sink_cap(u8 dpcd_
+  	if (dpcd_rev < DP_DPCD_REV_14)
+  		return;
+ =20
+- 	intel_dp_read_dsc_dpcd(connector->dp.dsc_decompression_aux,
+- 			       connector->dp.dsc_dpcd);
++ 	if (intel_dp_read_dsc_dpcd(connector->dp.dsc_decompression_aux,
++ 				   connector->dp.dsc_dpcd) < 0)
++ 		return;
+ =20
+  	if (drm_dp_dpcd_readb(connector->dp.dsc_decompression_aux, DP_FEC_CAPABI=
+LITY,
+  			      &connector->dp.fec_capability) < 0) {
+@@@ -4388,7 -4518,9 +4518,9 @@@ static void intel_edp_get_dsc_sink_cap(
+  	if (edp_dpcd_rev < DP_EDP_14)
+  		return;
+ =20
+- 	intel_dp_read_dsc_dpcd(connector->dp.dsc_decompression_aux, connector->d=
+p.dsc_dpcd);
++ 	if (intel_dp_read_dsc_dpcd(connector->dp.dsc_decompression_aux,
++ 				   connector->dp.dsc_dpcd) < 0)
++ 		return;
+ =20
+  	if (connector->dp.dsc_dpcd[0] & DP_DSC_DECOMPRESSION_IS_SUPPORTED)
+  		init_dsc_overall_throughput_limits(connector, false);
+@@@ -7086,6 -7218,8 +7218,8 @@@ int intel_dp_compute_config_late(struc
+  	if (ret)
+  		return ret;
+ =20
++ 	intel_alpm_lobf_compute_config_late(intel_dp, crtc_state);
++=20
+  	return 0;
+  }
+ =20
+@@@ -7134,3 -7268,22 +7268,22 @@@ int intel_dp_sdp_min_guardband(const st
+ =20
+  	return sdp_guardband;
+  }
++=20
++ bool intel_dp_joiner_candidate_valid(struct intel_connector *connector,
++ 				     int hdisplay,
++ 				     int num_joined_pipes)
++ {
++ 	struct intel_display *display =3D to_intel_display(connector);
++ 	struct intel_dp *intel_dp =3D intel_attached_dp(connector);
++=20
++ 	if (!intel_dp_can_join(intel_dp, num_joined_pipes))
++ 		return false;
++=20
++ 	if (hdisplay > num_joined_pipes * intel_dp_max_hdisplay_per_pipe(display=
+))
++ 		return false;
++=20
++ 	if (connector->force_joined_pipes && connector->force_joined_pipes !=3D =
+num_joined_pipes)
++ 		return false;
++=20
++ 	return true;
++ }
 
---n3P6RfSBncHYw2Od
+--oLsdrSVh99ZEKIbX
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmcUvkACgkQJNaLcl1U
-h9BvGAf/Z09HtO2DwY7K8XBW948UGGh5ahNXKf85Ttab/SmU/5RVZmF8gTs8c7ix
-EVkPXkEJ1f8Mj6TAqPLg/7iZdm5WFJO0dy9xm8NLih3Qokk6VW37hv/SQnCFLW0q
-mjqDcLTO5+HJIp4THgYMAO5v/LzqaArdCi92t/aKQcNDJUbhSfwYRtYM1JNV7pmN
-m+PFFwqvbE9Agxmo2EatTmLwfMVfIid/OBwsbc3xGEN+OrLAu4WnGoFhTR9IUKam
-s7ItOJi4VFZnxBPDCA+wSonTbSR17hfhn83qfpqcDP7rjeZnHWNtBBjCsmK+Ok0e
-XqNYqHG+ZgHtj7jcAc4S3pwEk833Jg==
-=4CIZ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmcVEEACgkQJNaLcl1U
+h9Cg0Qf/QnMgZbktRQy7f7/LPFa7iOsNJ8dm9uLUQ3lkmHQJCcrR4VALmWZ8p0ut
+ZYYA3lgKHEuAaSKz+ZX2Q9dkpLaP1oHq50458jGBpxxVMFjNENbiLOLeElkgIK63
+dxOdjk1Q7UKdygRyk5XnWBFaQ9Y1vZrWew1MAooimzM8BYSBw47N7UmM1M1SdGnn
+sOw4k91q7L9atTb5OLGVM40PXdAAAx7LNEsGMTx+6btI6o8csQBvqrKSsSwrptIA
+L/qEJSklEWekogNJUF6YdOJg10oQSZKl6ruPlK+SB0lE0nfHZiLiGGW3zx9o5e6G
+Tx78u5OeJOh8TqoNokZAUO0d9GhZaA==
+=0VB2
 -----END PGP SIGNATURE-----
 
---n3P6RfSBncHYw2Od--
+--oLsdrSVh99ZEKIbX--
