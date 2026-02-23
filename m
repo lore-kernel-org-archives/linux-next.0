@@ -1,72 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE47364021;
-	Mon, 23 Feb 2026 12:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AE034D4DE;
+	Mon, 23 Feb 2026 12:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771849100; cv=none; b=qX9J10J0bve5BQh3ZcAzkQLCbzyXgD9rlZC7SwQUcWgn09kao5Mf4GVFnPxA2pVh9alRLd8z58ebvIdT23NC1xuwgOfTlcjy3yxbG9xw9A8pVz5971eFtT8dktPy8CKhVbCGiuOimsYUXxi5mWHGMfue91prEzaP9SSnDp9UnDM=
+	t=1771849223; cv=none; b=uhbDkjaFfm2x8nVLcZxBCoZ69mUNpPmQwTQYQr2kBp2zGpnGdeJ0VeQB6D+gRRps23r2tGV/hY2AnIxjeAupiEbbeZeJ7gi+NN2LZ5HATfES0czZ3I1myzHZdpxoWvIBqlasHBy3p6x4hl1b2x0IdnkhVKEe8/viTInurK6aGUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771849100; c=relaxed/simple;
-	bh=SAsrEMA7uuoZ2gplkm3xcESYDt9AQ125e9bIYYhelOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Dx+VIkRSOHzE6BclxkNhRxw7yysfQHJN3ShV3ZIQXf/e511JNlBZzh0SUOQe9wuMG3PayfKaDkhN2Ow2k8wAyMk4rSkI7U1z13X1y7IRVhrCRD/A61cXtbvPxflnzWnrQRUjLu4H4WWzBUI/zy0KGFg2dvsw1w2itjXklG4J9sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eh0qX1x6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771849223; c=relaxed/simple;
+	bh=e9vu2WssLvQms0wD8rTfOhVzJHvp7Yb+QKagc7o40r0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EzKkQxsWH7WnOGOaggP/QIIvYcZuChqphYRt5uJBxAbtQAXKdl8ZGth2YcVbUMsYxc+V+1US4pqmaRStMN0BllhlByBFiSKDddMDVLV84iWbykZhSS0wMSv2PY/Cdw8stsmQ8ui8ah6dlfucdleRS8YELDU/lUzRNKEiULbMqQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+6cRZH4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eh0qX1x6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 099A1C116C6;
-	Mon, 23 Feb 2026 12:18:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+6cRZH4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5746BC116C6;
+	Mon, 23 Feb 2026 12:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771849100;
-	bh=SAsrEMA7uuoZ2gplkm3xcESYDt9AQ125e9bIYYhelOw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eh0qX1x6v+ZSTVsU25+yKXUcSqNi3KDSk3+5E9JEinTokW+Lj115HINZ4gDuDxGM8
-	 +3EdxrDB5JpMPxOuzs/i87ILMUNqbvvMhgB2LIsK5p6jl5jsvbe2izlkdvW1GzqKvO
-	 FK5mJBFCCXWowL+QAXjvbnTMMUl/6Jtjw5E6yJtIN8br1W0LNKtPvSCqVVwsEr4NvX
-	 6jmigTFwpUG2Zl1MxDNBlOEZe78eVYUq1AekJ4QLWRpvs5G8ipfTBm44iv3Z926INO
-	 F1xTRpY6Ax0YIyYpYUnqXJK99A3mLQpqJGflLPkIfumOGVmEYsAO2w9sjgKPgilDI5
-	 IRNdW6iN+qqGw==
-Date: Mon, 23 Feb 2026 12:18:16 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the hid tree
-Message-ID: <aZxFiDybKKxezaYc@sirena.org.uk>
+	s=k20201202; t=1771849222;
+	bh=e9vu2WssLvQms0wD8rTfOhVzJHvp7Yb+QKagc7o40r0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=Y+6cRZH4uaWfc9OROQCAqUOT0nFV9Igwu7iwFpzhQqyMnL/5+s2S8EsHlP5AznWbJ
+	 Z+959gLb7ZbHIZgnySo7PFBrwDWoTR8yvEn+nZwuNRO9qNM5aBQ65P53ZFRQzXfx34
+	 46UQEs57m0xtogKMVhML+muWtuoPnly2msXOL+av+W/KdqdFNjFGwAS9G/TET37QiA
+	 mfH4c1UDbzsdlOC5qet/FSJi4UNQ4LMtLLoHRRWCVbvBx7koP75VMV+9lpWnqwKFNv
+	 La67Cge+P7pmvyP4DiL6gZNi6vwrgvvyYQ85BczKnYuWWzMhpvlp0KXtfrPfyG58Mb
+	 ff+ILIG5eH5yA==
+Date: Mon, 23 Feb 2026 13:20:20 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
+    linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+    Julius Lehmann <lehmanju@devpi.de>
+Subject: Re: Missing signoff in the hid tree
+In-Reply-To: <aZxFiDybKKxezaYc@sirena.org.uk>
+Message-ID: <70o4n987-9s87-rrr1-qrrr-r351qs44957p@xreary.bet>
+References: <aZxFiDybKKxezaYc@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Wk3fIaspuEBPlVZt"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 23 Feb 2026, Mark Brown wrote:
 
---Wk3fIaspuEBPlVZt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Commit
+> 
+>   6b409da663270 ("HID: magicmouse: fix battery reporting for Apple Magic Trackpad 2")
+> 
+> is missing a Signed-off-by from its author
 
-Commit
+D'oh, thanks for spotting this.
 
-  6b409da663270 ("HID: magicmouse: fix battery reporting for Apple Magic Trackpad 2")
+CCing Julius -- could you please provide your Signed-off-by: line? I'll 
+take this as a sufficient reason to rebase the branch.
 
-is missing a Signed-off-by from its author
+Thanks,
 
---Wk3fIaspuEBPlVZt
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Jiri Kosina
+SUSE Labs
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmcRYcACgkQJNaLcl1U
-h9C54gf/Tc6aMT/Yt/8VimlmnXd2ucvV9wFoPuSDF2n4KO0yCYEYTcNImQV4TQP4
-8xnk/WJw5pvEGM/bVNTSnDwLsaIDPx20YZ4Hdwyufk1X1Jx4n9XDJ0wVUD2A8RC7
-MY6vKsu/8h68lJS9e05y6SHPXfBGhzZRpdBFlPRyX+f0n2EavQ6JM9FImGZpmPTn
-1LlIddTtadRQvrSTeyPCBohIZwwyDltP0p4HUI/dfTor7DXe4aYoJBlOnhVmdKM6
-FUq2EzdKTQk4m4KGP5AKdcBgVgwxsCq65/hMa7Vyn8DKVNyg21gb9F6k15K9ZcCd
-sNGkHXu70w7TssN103/d3vridhFfjA==
-=/tmP
------END PGP SIGNATURE-----
-
---Wk3fIaspuEBPlVZt--
