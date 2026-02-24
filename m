@@ -1,39 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE32369990;
-	Tue, 24 Feb 2026 10:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D2425A2C9;
+	Tue, 24 Feb 2026 12:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771930429; cv=none; b=YVffQUl71erewmyeb4Ddi+QJXbRtR3IRhJXjqWAO0Sly8wFd9W+GwRhlCHZkAxE26oPRv8ULjXR385nkKkeiDvOlEP1i10LkZz136HBJ7ir5SuwBVvgDN/HiUJfCJOtERRsFq1q/xFCfa63kFFUavMqSuJqNXJf0IkuDQCdEE0w=
+	t=1771936778; cv=none; b=jpTSemmc1KUbpYHB6BSVnw3kvwtzAL8/KeZdHoMKtGOKiCHRq0GLO2Ep7jj049EOKLZo/rC73jjuo6VMcpENJ/OuqspLZs3k1pg//u6FiJkHZcfF8Mxj6tpbWsJL2rvoXGyAua+LacZSAzxx2w29q3MwGZ9OqtkbXzT+6PXd3mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771930429; c=relaxed/simple;
-	bh=UDuqIt/Q1vkN/KlGimiJ34H4r04zjCy6kSE72WWG6lA=;
+	s=arc-20240116; t=1771936778; c=relaxed/simple;
+	bh=YKI1upsRFHpQ70GhUF+nMVLZfbcZ0yrmnGFgevv0qF4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WI/FfeaOEpz1MaAB/d6SlTl/CDsHz4DKDne6uFEwjXHy3oMK0YTHKZRALbMeG3tvYsMAAAg/Fskb4QSw63q6qj98lWryGzpB04wn2MXp+n9kHVEu+vWNTRM2k8OnPUnt2cJKKJ9TONjckh5/DjrPJvl2v2gc9v++l9V0Nz7xo8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgLM36xe; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=mRaSnPbnXVZgQjDq1i4M7EtrUpu7mX5dA9EHwZd2Hz5JtGcTJj2QH2eE4x3WmS+DVBSPv0VPVWRleVTNfLJrnoVt8WP2MaBnCnBRjDJKLqQlkMCA9JipC32sPQnKzBxvg8Solasf+Tk6CIAg/rtgFVYFkd5Yv7Oe5s45A+8bO2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmeYc8Xm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgLM36xe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A400EC116D0;
-	Tue, 24 Feb 2026 10:53:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmeYc8Xm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0A8C116D0;
+	Tue, 24 Feb 2026 12:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771930429;
-	bh=UDuqIt/Q1vkN/KlGimiJ34H4r04zjCy6kSE72WWG6lA=;
+	s=k20201202; t=1771936777;
+	bh=YKI1upsRFHpQ70GhUF+nMVLZfbcZ0yrmnGFgevv0qF4=;
 	h=Date:From:To:Cc:Subject:From;
-	b=OgLM36xeYufiAzBeFxdjIE5GVBtYkXy/FMefO2q/XaHuI0TIbhttwXczGXA0naL4o
-	 H4PXab8GnJLYS9RldSNP+7FNPZkiIUR6gDowpGOxxKg4j/WT1MlbuczFVJea0LiNRH
-	 DWaoaElGi71AbjlNxm3StXWoE/Mi2MYG4/JZTAGB8z3E1WWd7HjNYUjzNPECMtp6QY
-	 J17th5w6o7f7s1nnvwCYWPSHMDN/4q5zGm5cd2HDUzILVpVHfpA/DF52S//FAA59Tj
-	 ifw2jAs4pvailOh8M+Rt/Co2lIiL+yw9QjkEp6AwAt9gSXOvPZZZlxoadDJVF8S0zf
-	 LEDEc7Xc+T90w==
-Date: Tue, 24 Feb 2026 10:53:44 +0000
+	b=UmeYc8Xmc8q6Ktw+pmpjpo4rcg2rpxPqLSrwhmop88ELBL6oqGNEFUfyO8nY4jYQV
+	 njgml2tRuM0x+L5NVrghIbPf5VhJmV8K/sj9s1GcfqaPxOpyksU7kKSkq6wxd/sQZu
+	 HGvo4R002MKuxjywktj/HwrpgJJ0CUqQSFQUQnxVB2v6XJF3iePXxJJ/vifAPer+sw
+	 5cHFlAEzvJLq48o7hyaaQFesLtuWs9H6N91DjY9w4oa6QfLpvlhqELvaIS/+gsbdn6
+	 v6heGMiR7IF8V8vbEkGWopsSbzFnDLNpaCWw/4OA90O6NjwQACnp8PhU9B2n05Bsqb
+	 2iANhGgZ4e5nQ==
+Date: Tue, 24 Feb 2026 12:39:33 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the tip tree
-Message-ID: <aZ2DOE3Tt7wCSL6-@sirena.org.uk>
+To: Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>
+Cc: Eduard Zingerman <eddyz87@gmail.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
+Message-ID: <aZ2cBWyiG_fKSjIq@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,41 +45,54 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i8JdMP0EkQpvldai"
+	protocol="application/pgp-signature"; boundary="MRWQfcW/ZMqR3ZoK"
 Content-Disposition: inline
 
 
---i8JdMP0EkQpvldai
+--MRWQfcW/ZMqR3ZoK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In commit
+Hi all,
 
-  486ff5ad49bc5 ("perf/core: Fix invalid wait context in ctx_sched_in()")
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-Fixes tag
+  tools/testing/selftests/bpf/prog_tests/align.c
 
-  Fixes: f4b07fd62d4d ("perf/core: Use POLLHUP for a pinned event in error")
+between commit:
 
-has these problem(s):
+  05849ec34f3d7 ("selftests/bpf: Replace strncpy() with strscpy()")
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
+=66rom the bpf tree and commit:
 
---i8JdMP0EkQpvldai
+  f632de6e19553 ("selftests/bpf: Migrate align.c tests to test_loader frame=
+work")
+
+=66rom the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+(deleted the file)
+
+--MRWQfcW/ZMqR3ZoK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmdgzgACgkQJNaLcl1U
-h9D4agf/ainFEuJjbIrLCPdvWTz0tOJ49eGGR+Qp9kF7DECWsD/na9Xmwk98G1HY
-di2fLEZLnmuGHqcbPHtIFtI8+DHGgOJqXEhl8Z04Zp0A4ZxgsF1LwURr03PN7dp2
-b5Ba7e9fxiAlICJORbQwfays+vte78I0NxMULgLF6DChmHK4nuZK1BBKt/mXoogw
-mNM5WR2ZvoUKqxNQHFAhftn42iv/pDoAMOBrl8r73DSICcua8B0IoH7hmBKTT4SO
-t4KE+A6dh3QpEtxldbkU8RL1uSOtw4XGqojDiVXYBs0Dmz7TZViBO0WiGxejHy1i
-ddVyRbUo4q5/fpTmA/CkLWWDi7VDlg==
-=H8As
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmdnAQACgkQJNaLcl1U
+h9CPLwf/WVi/v65yvxIWLU0e2i7lyr7/Gx18hXCvU8X+jNYcVqEmOjTGksRrkwEH
+FhZBM8r6iOWq7LXevWqXgtlNfs8u+M7zwWw/GgH6aubqBGo84PMiNei66qhlLLWl
+WTtkhpcazy5qizI/h3SXNJw0ywMUX8OefTRfpyJ0ywhEe/gi65QMeFMdwzv9rF4V
+/V981ojtcQ46skIMA/YfDoEGTRnoOJOzEIoRg94HBKYMLOsjvqz87CF5hq1mcpKJ
+Ol8MYGIhVF8GSOWM8/u613hTCrL9SZ+H+RJDBcjPo/GKlOb4BIh9hA+QZ64DiGgD
++tPDXy5IebLIo8HQX1qPApehFenxEA==
+=fAsj
 -----END PGP SIGNATURE-----
 
---i8JdMP0EkQpvldai--
+--MRWQfcW/ZMqR3ZoK--
