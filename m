@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBD42517AA;
-	Tue, 24 Feb 2026 10:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE32369990;
+	Tue, 24 Feb 2026 10:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771930415; cv=none; b=oDaKGBE4BNdh9EMN6uyQShvDYyguCJXnpmH68JFXpP3LFod7ncTC2qNkwlU2/zoscbEQQB9UwjzUAl2xn8UmOgpzsYi9IZI3qsBtEQ/3DY/jHpOsPcDkxqYhU6Ocy+GTInHVA2OEJqWsodIkpyMmgyutC3l3u46wwufvUiLv4+Y=
+	t=1771930429; cv=none; b=YVffQUl71erewmyeb4Ddi+QJXbRtR3IRhJXjqWAO0Sly8wFd9W+GwRhlCHZkAxE26oPRv8ULjXR385nkKkeiDvOlEP1i10LkZz136HBJ7ir5SuwBVvgDN/HiUJfCJOtERRsFq1q/xFCfa63kFFUavMqSuJqNXJf0IkuDQCdEE0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771930415; c=relaxed/simple;
-	bh=cOk3p3RrL4VlATqETlifacxX0XLdjKD2F0FfnZoc6ZQ=;
+	s=arc-20240116; t=1771930429; c=relaxed/simple;
+	bh=UDuqIt/Q1vkN/KlGimiJ34H4r04zjCy6kSE72WWG6lA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=O/0H3nKVnZCC4YXlU8HkefBBjKsMnCw1LJ6T6F4t2z3dTelfGPLdBnC7u76Kd8QhzcKG9yXtkIqVyjY9jriKo3wqCEdGupAkbkhQPbT4hEB/oiN/qDdPGPMj23PwofuZtfA/Uly0Q1gXTQDGVUed9pNHfZ9qpp6bxH/o8tcRzok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wa3F7677; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=WI/FfeaOEpz1MaAB/d6SlTl/CDsHz4DKDne6uFEwjXHy3oMK0YTHKZRALbMeG3tvYsMAAAg/Fskb4QSw63q6qj98lWryGzpB04wn2MXp+n9kHVEu+vWNTRM2k8OnPUnt2cJKKJ9TONjckh5/DjrPJvl2v2gc9v++l9V0Nz7xo8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgLM36xe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa3F7677"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67303C116D0;
-	Tue, 24 Feb 2026 10:53:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgLM36xe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A400EC116D0;
+	Tue, 24 Feb 2026 10:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771930414;
-	bh=cOk3p3RrL4VlATqETlifacxX0XLdjKD2F0FfnZoc6ZQ=;
+	s=k20201202; t=1771930429;
+	bh=UDuqIt/Q1vkN/KlGimiJ34H4r04zjCy6kSE72WWG6lA=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Wa3F7677ZmBa0PA8pMm3VG4R1qonISMKBett/VwI54PyLPP0bzQ/tDuSysU1tBb5k
-	 Q6E2e+3yEzQrI/VOGBBgOP0hGx3W4q3GvxlqheDU/Th8tQVbBEqtJv6FAUR1aDXyad
-	 dzB6phMk9EuWd0Wx05YwyKE91xcAAnY3UtTuppOKOkLZ51/zj9l8PhJWnWEe27orYH
-	 oL3eXicPnmusmADmfAmngwrnnxtZXlG9dKMex2nnHbwqR8Ouv66JLR7eNGF+tnlFAn
-	 O52ILaY4Qci/jq0McbJdcOAc+JSKBGL/vsQMfdMA1p7mdE5nj26G52iTJSsAoKLdAK
-	 NpS6C/F9pM50A==
-Date: Tue, 24 Feb 2026 10:53:29 +0000
+	b=OgLM36xeYufiAzBeFxdjIE5GVBtYkXy/FMefO2q/XaHuI0TIbhttwXczGXA0naL4o
+	 H4PXab8GnJLYS9RldSNP+7FNPZkiIUR6gDowpGOxxKg4j/WT1MlbuczFVJea0LiNRH
+	 DWaoaElGi71AbjlNxm3StXWoE/Mi2MYG4/JZTAGB8z3E1WWd7HjNYUjzNPECMtp6QY
+	 J17th5w6o7f7s1nnvwCYWPSHMDN/4q5zGm5cd2HDUzILVpVHfpA/DF52S//FAA59Tj
+	 ifw2jAs4pvailOh8M+Rt/Co2lIiL+yw9QjkEp6AwAt9gSXOvPZZZlxoadDJVF8S0zf
+	 LEDEc7Xc+T90w==
+Date: Tue, 24 Feb 2026 10:53:44 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	Peter Zijlstra <peterz@infradead.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the tip-fixes tree
-Message-ID: <aZ2DKWBP38Po8LzT@sirena.org.uk>
+Subject: Fixes tags need work in the tip tree
+Message-ID: <aZ2DOE3Tt7wCSL6-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,11 +41,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gey1LxbW05zAQyec"
+	protocol="application/pgp-signature"; boundary="i8JdMP0EkQpvldai"
 Content-Disposition: inline
 
 
---gey1LxbW05zAQyec
+--i8JdMP0EkQpvldai
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -63,19 +63,19 @@ has these problem(s):
     Just use
 	git log -1 --format='Fixes: %h ("%s")'
 
---gey1LxbW05zAQyec
+--i8JdMP0EkQpvldai
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmdgykACgkQJNaLcl1U
-h9BAwwf9Fzueo2FfK7BH0y/hU0i51J1xpQ+p+E/pDXStQ6UAiT7d/hRSFwV2uOIH
-WuBihQN48KNLYgXPjYXeceANqLpakf8kkreiBZHOTa81npM/pzY0jNnOgbxtMnf+
-XKJNvMibfYMpxtFqawoEkyE1SgCa9nBuJD164XX6H/Ky7xcM39xQt6+JH2mED/ol
-oC+QXVMy/bNUWf3gQriDEPIKgV1oFh2uVKVOI+38qVs1Gtz/7Yrra/RuuzjepG6D
-1uNh32UCQSd8aQ1FmruCbERB7S6TzSBH4h/8OTdGymjuEZTAFJUtEzB6ZfXokcmd
-9JQddrBelFm60vrFaImBA6xWFQYC7Q==
-=8vuK
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmdgzgACgkQJNaLcl1U
+h9D4agf/ainFEuJjbIrLCPdvWTz0tOJ49eGGR+Qp9kF7DECWsD/na9Xmwk98G1HY
+di2fLEZLnmuGHqcbPHtIFtI8+DHGgOJqXEhl8Z04Zp0A4ZxgsF1LwURr03PN7dp2
+b5Ba7e9fxiAlICJORbQwfays+vte78I0NxMULgLF6DChmHK4nuZK1BBKt/mXoogw
+mNM5WR2ZvoUKqxNQHFAhftn42iv/pDoAMOBrl8r73DSICcua8B0IoH7hmBKTT4SO
+t4KE+A6dh3QpEtxldbkU8RL1uSOtw4XGqojDiVXYBs0Dmz7TZViBO0WiGxejHy1i
+ddVyRbUo4q5/fpTmA/CkLWWDi7VDlg==
+=H8As
 -----END PGP SIGNATURE-----
 
---gey1LxbW05zAQyec--
+--i8JdMP0EkQpvldai--
