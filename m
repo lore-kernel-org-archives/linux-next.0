@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935C73D523F;
-	Wed, 25 Feb 2026 15:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5998395255;
+	Wed, 25 Feb 2026 15:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772031848; cv=none; b=GO62r812gsOJwQHviJMXAj3uvobshoAsuhfxcQaEQnE1+F3p+y+egzXjKRjWp1DYBDib0J2heWMxb7DJMfscS2TBWMENmhqZgZkyZPvzCc9b30R8/0qwDO2Obg5NLTgAN1D38Uoetb6Q/2h1yZg1vfnr7TkkfAAbaTTP6rJt450=
+	t=1772031862; cv=none; b=ClTwzB9zqkDFPYcGzCa/4grYZnOFSb3HjkeuxBu12p2dPDnWm2c6kgQQLqViRnb/UdsYWDOqKzP0Bp+9/4wC1W420uc8kAFjRXkPvsqKEEEEXdSZsHvbv8LTNAkjsyKg1ZZLr8l1TYXHWUV2MLpQe4WunnJFCb2fkgj0qm6oi5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772031848; c=relaxed/simple;
-	bh=Ai5NdgApN4tV+xQUHe4GDxzCYbraeO+hCI9J+eylAFo=;
+	s=arc-20240116; t=1772031862; c=relaxed/simple;
+	bh=+5h+6YiaviOAGeakccp8CJtOgDMv66j3ZqLmWW6gBK0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Eb414k+hEFC7NnEGRXAHIP7C9Zyf9BdGDAmNAJlHkuPFrc9y4IRNIaNL4LYWfZjazLyX4gZxKK5gdxXw5wkzAaTQHX5eNbMK0iH0sTaKSJtvTU2+YWbclVi29WyAr9DKW6csAcZwmW14u0Og5oZypWBpf9S7MPbfmKFcuvlLkVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2hFCRIu; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=dzMGK/OwChC6L881KdFqH0FGzAZCjLseteTAkvnyM8sD6+iJUbhYG4JQhxaQ/I0sIIDau/wVSg+OTF8hovgJkYpvXBXH9gbAyv7VtJ2Y3iX6GeppN2QPjU6+1/GDpOIag66LE7fvdT0LsdzreWKXelC+T2gPPxFjVTTsO66bs/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXwE7gmn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2hFCRIu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33B9C116D0;
-	Wed, 25 Feb 2026 15:04:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXwE7gmn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56ACCC116D0;
+	Wed, 25 Feb 2026 15:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772031848;
-	bh=Ai5NdgApN4tV+xQUHe4GDxzCYbraeO+hCI9J+eylAFo=;
+	s=k20201202; t=1772031862;
+	bh=+5h+6YiaviOAGeakccp8CJtOgDMv66j3ZqLmWW6gBK0=;
 	h=Date:From:To:Cc:Subject:From;
-	b=H2hFCRIuRVmRjDyg7dw8yM1QplmUgQTyx3GipmIsa2f4bbL6CXqTDDCb+gpfziNbs
-	 W6p7BGN0VZ9ZqQBXDa0pdNp2k70wKXeG18syHx57oqCT3yfQjvAOV3ZfgvHVjsnN+8
-	 eqmpFfxdiMvj9O0vJ/qp0dk8LS0+qizFA1eLpEudaFm9n0w3TBaMOQ57x9llfECz1X
-	 i1znci6l9HvHBZKLcoO2qsgEr0lal0BhGGnGxBF/b9q4EC26CIT9K/CD38WaXIqsEC
-	 2AE9sY6dOrqjdefNxv+jowTh9eF4kz7n+JE487kRMTz5P5ky1JH5DaGUKAI7TR5Bzw
-	 6i4d2w9L8RcVg==
-Date: Wed, 25 Feb 2026 15:04:03 +0000
+	b=UXwE7gmneiLCd+AfqGACF+FtWIJbc7rm19KhwMALomm944O8B2xgKFLWOuSFqu9q7
+	 tPuVpWDMRvtUmp9aMEGvYW1sqxeFilIbIM9ueO4ILXj4JMrakDidKkEcHGh2seTvMX
+	 4ITRzqWrE0jMPjpNS7Nyzg1h20Ojs4qOPGPHFUq54QFL56bLeC8MOgjWTuGEKHy+aM
+	 OhdVS1r5pdSJ6ULmSJl7Ux/vCG18H78GMeR28kbyow37WpQTo/9VycwJoFVVK6fhlX
+	 QYrylXcT5xQltRzDZhoIpV7wX+XSJrDVKHMsC2mfP4VPRAd1aahaAvLOfvhKshAxhr
+	 LwRVkcU/cWJAQ==
+Date: Wed, 25 Feb 2026 15:04:18 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Hans de Goede <johannes.goede@oss.qualcomm.com>,
-	Jinwang Li <jinwang.li@oss.qualcomm.com>,
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Subject: linux-next: manual merge of the bluetooth tree with the net tree
-Message-ID: <aZ8PYys8LFH5WNbQ@sirena.org.uk>
+	Nikolay Kulikov <nikolayof23@gmail.com>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Message-ID: <aZ8PcvFgmYITOmjg@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,32 +43,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HAqkT2kRX5P5/cRb"
+	protocol="application/pgp-signature"; boundary="rLy9erXFGIeCTzXa"
 Content-Disposition: inline
 
 
---HAqkT2kRX5P5/cRb
+--rLy9erXFGIeCTzXa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bluetooth tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  drivers/bluetooth/hci_qca.c
+  drivers/staging/rtl8723bs/core/rtw_ieee80211.c
 
 between commit:
 
-  5c4e9a8b18457 ("Bluetooth: hci_qca: Cleanup on all setup failures")
+  f0109b9d3e1e4 ("staging: rtl8723bs: properly validate the data in rtw_get=
+_ie_ex()")
 
-=66rom the net tree and commits:
+=66rom the staging.current tree and commit:
 
-  facc2350b0df6 ("Bluetooth: hci_qca: Cleanup on all setup failures")
-  88b5c728a785c ("Bluetooth: hci_qca: Fix confusing shutdown() and power_of=
-f() naming")
+  0c9d1b56f9af0 ("staging: rtl8723bs: fix spaces around binary operators")
 
-=66rom the bluetooth tree.
+=66rom the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -78,240 +76,353 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/bluetooth/hci_qca.c
-index bb9f002aa85e9,6928820380b80..0000000000000
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@@ -236,8 -236,7 +236,7 @@@ struct qca_serdev=20
+diff --combined drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+index 3e2b5e6b07f93,605c32fd2e881..0000000000000
+--- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+@@@ -109,7 -109,7 +109,7 @@@ int rtw_check_network_type(unsigned cha
+  u8 *rtw_set_fixed_ie(unsigned char *pbuf, unsigned int len, unsigned char=
+ *source,
+  				unsigned int *frlen)
+  {
+- 	memcpy((void *)pbuf, (void *)source, len);
++ 	memcpy(pbuf, source, len);
+  	*frlen =3D *frlen + len;
+  	return pbuf + len;
+  }
+@@@ -126,7 -126,7 +126,7 @@@ u8 *rtw_set_ie(u8 *pbuf
+  	*(pbuf + 1) =3D (u8)len;
  =20
-  static int qca_regulator_enable(struct qca_serdev *qcadev);
-  static void qca_regulator_disable(struct qca_serdev *qcadev);
-- static void qca_power_shutdown(struct hci_uart *hu);
-- static int qca_power_off(struct hci_dev *hdev);
-+ static void qca_power_off(struct hci_uart *hu);
-  static void qca_controller_memdump(struct work_struct *work);
-  static void qca_dmp_hdr(struct hci_dev *hdev, struct sk_buff *skb);
+  	if (len > 0)
+- 		memcpy((void *)(pbuf + 2), (void *)source, len);
++ 		memcpy(pbuf + 2, source, len);
  =20
-@@@ -585,7 -584,7 +584,7 @@@ static int qca_open(struct hci_uart *hu
-  	if (!hci_uart_has_flow_control(hu))
-  		return -EOPNOTSUPP;
+  	*frlen =3D *frlen + (len + 2);
  =20
- -	qca =3D kzalloc(sizeof(*qca), GFP_KERNEL);
- +	qca =3D kzalloc_obj(*qca);
-  	if (!qca)
-  		return -ENOMEM;
+@@@ -186,25 -186,20 +186,25 @@@ u8 *rtw_get_ie_ex(u8 *in_ie, uint in_le
  =20
-@@@ -723,6 -722,10 +722,10 @@@ static int qca_close(struct hci_uart *h
+  	cnt =3D 0;
  =20
-  	BT_DBG("hu %p qca close", hu);
+ -	while (cnt < in_len) {
+ -		if (eid =3D=3D in_ie[cnt] &&
+ -		    (!oui || !memcmp(&in_ie[cnt + 2], oui, oui_len))) {
+ +	while (cnt + 2 <=3D in_len) {
+ +		u8 ie_len =3D in_ie[cnt + 1];
+ +
+ +		if (cnt + 2 + ie_len > in_len)
+ +			break;
+ +
+ +		if (eid =3D=3D in_ie[cnt]
+ +			&& (!oui || (ie_len >=3D oui_len && !memcmp(&in_ie[cnt + 2], oui, oui_=
+len)))) {
+  			target_ie =3D &in_ie[cnt];
  =20
-+ 	/* BT core skips qca_hci_shutdown() which calls qca_power_off() on rmmod=
- */
-+ 	if (!test_bit(QCA_BT_OFF, &qca->flags))
-+ 		qca_power_off(hu);
-+=20
-  	serial_clock_vote(HCI_IBS_VOTE_STATS_UPDATE, hu);
+  			if (ie)
+ -				memcpy(ie, &in_ie[cnt], in_ie[cnt + 1] + 2);
+ +				memcpy(ie, &in_ie[cnt], ie_len + 2);
  =20
-  	skb_queue_purge(&qca->tx_wait_q);
-@@@ -1057,7 -1060,7 +1060,7 @@@ static void qca_controller_memdump(stru
+  			if (ielen)
+ -				*ielen =3D in_ie[cnt + 1] + 2;
+ +				*ielen =3D ie_len + 2;
+ =20
+  			break;
   		}
+ -		cnt +=3D in_ie[cnt + 1] + 2; /* goto next */
+ +		cnt +=3D ie_len + 2; /* goto next */
+  	}
  =20
-  		if (!qca_memdump) {
- -			qca_memdump =3D kzalloc(sizeof(*qca_memdump), GFP_ATOMIC);
- +			qca_memdump =3D kzalloc_obj(*qca_memdump, GFP_ATOMIC);
-  			if (!qca_memdump) {
-  				mutex_unlock(&qca->hci_memdump_lock);
-  				return;
-@@@ -1850,6 -1853,7 +1853,7 @@@ static int qca_power_on(struct hci_dev=20
-  		return 0;
- =20
-  	switch (soc_type) {
-+ 	case QCA_QCA6390:
-  	case QCA_WCN3950:
-  	case QCA_WCN3988:
-  	case QCA_WCN3990:
-@@@ -1858,7 -1862,6 +1862,6 @@@
-  	case QCA_WCN6750:
-  	case QCA_WCN6855:
-  	case QCA_WCN7850:
-- 	case QCA_QCA6390:
-  		ret =3D qca_regulator_init(hu);
-  		break;
- =20
-@@@ -2047,7 -2050,7 +2050,7 @@@ retry
- =20
-  out:
-  	if (ret) {
-- 		qca_power_shutdown(hu);
-+ 		qca_power_off(hu);
- =20
-  		if (retries < MAX_INIT_RETRIES) {
-  			bt_dev_warn(hdev, "Retry BT power ON:%d", retries);
-@@@ -2096,6 -2099,18 +2099,18 @@@ static const struct hci_uart_proto qca_
-  	.dequeue	=3D qca_dequeue,
-  };
- =20
-+ static const struct qca_device_data qca_soc_data_qca2066 __maybe_unused =
-=3D {
-+ 	.soc_type =3D QCA_QCA2066,
-+ 	.num_vregs =3D 0,
-+ 	.capabilities =3D QCA_CAP_WIDEBAND_SPEECH | QCA_CAP_VALID_LE_STATES |
-+ 			QCA_CAP_HFP_HW_OFFLOAD,
-+ };
-+=20
-+ static const struct qca_device_data qca_soc_data_qca6390 __maybe_unused =
-=3D {
-+ 	.soc_type =3D QCA_QCA6390,
-+ 	.num_vregs =3D 0,
-+ };
-+=20
-  static const struct qca_device_data qca_soc_data_wcn3950 __maybe_unused =
-=3D {
-  	.soc_type =3D QCA_WCN3950,
-  	.vregs =3D (struct qca_vreg []) {
-@@@ -2152,18 -2167,6 +2167,6 @@@ static const struct qca_device_data qca
-  	.num_vregs =3D 4,
-  };
- =20
-- static const struct qca_device_data qca_soc_data_qca2066 __maybe_unused =
-=3D {
-- 	.soc_type =3D QCA_QCA2066,
-- 	.num_vregs =3D 0,
-- 	.capabilities =3D QCA_CAP_WIDEBAND_SPEECH | QCA_CAP_VALID_LE_STATES |
-- 			QCA_CAP_HFP_HW_OFFLOAD,
-- };
--=20
-- static const struct qca_device_data qca_soc_data_qca6390 __maybe_unused =
-=3D {
-- 	.soc_type =3D QCA_QCA6390,
-- 	.num_vregs =3D 0,
-- };
--=20
-  static const struct qca_device_data qca_soc_data_wcn6750 __maybe_unused =
-=3D {
-  	.soc_type =3D QCA_WCN6750,
-  	.vregs =3D (struct qca_vreg []) {
-@@@ -2211,7 -2214,7 +2214,7 @@@ static const struct qca_device_data qca
-  			QCA_CAP_HFP_HW_OFFLOAD,
-  };
- =20
-- static void qca_power_shutdown(struct hci_uart *hu)
-+ static void qca_power_off(struct hci_uart *hu)
+  	return target_ie;
+@@@ -291,7 -286,7 +291,7 @@@ uint rtw_get_rateset_len(u8 *rateset
+  int rtw_generate_ie(struct registry_priv *pregistrypriv)
   {
-  	struct qca_serdev *qcadev;
-  	struct qca_data *qca =3D hu->priv;
-@@@ -2261,7 -2264,7 +2264,7 @@@
-  		qca_regulator_disable(qcadev);
-  		if (qcadev->sw_ctrl) {
-  			sw_ctrl_state =3D gpiod_get_value_cansleep(qcadev->sw_ctrl);
-- 			bt_dev_dbg(hu->hdev, "SW_CTRL is %d", sw_ctrl_state);
-+ 			BT_DBG("SW_CTRL is %d", sw_ctrl_state);
+  	u8 wireless_mode;
+- 	int	sz =3D 0, rateLen;
++ 	int	sz =3D 0, rate_len;
+  	struct wlan_bssid_ex *pdev_network =3D &pregistrypriv->dev_network;
+  	u8 *ie =3D pdev_network->ies;
+ =20
+@@@ -326,13 -321,13 +326,13 @@@
+ =20
+  	rtw_set_supported_rate(pdev_network->supported_rates, wireless_mode);
+ =20
+- 	rateLen =3D rtw_get_rateset_len(pdev_network->supported_rates);
++ 	rate_len =3D rtw_get_rateset_len(pdev_network->supported_rates);
+ =20
+- 	if (rateLen > 8) {
++ 	if (rate_len > 8) {
+  		ie =3D rtw_set_ie(ie, WLAN_EID_SUPP_RATES, 8, pdev_network->supported_r=
+ates, &sz);
+- 		/* ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rateLen - 8), (pdev_=
+network->supported_rates + 8), &sz); */
++ 		/* ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rate_len - 8), (pdev=
+_network->supported_rates + 8), &sz); */
+  	} else {
+- 		ie =3D rtw_set_ie(ie, WLAN_EID_SUPP_RATES, rateLen, pdev_network->suppo=
+rted_rates, &sz);
++ 		ie =3D rtw_set_ie(ie, WLAN_EID_SUPP_RATES, rate_len, pdev_network->supp=
+orted_rates, &sz);
+  	}
+ =20
+  	/* DS parameter set */
+@@@ -342,8 -337,8 +342,8 @@@
+ =20
+  	ie =3D rtw_set_ie(ie, WLAN_EID_IBSS_PARAMS, 2, (u8 *)&(pdev_network->con=
+figuration.atim_window), &sz);
+ =20
+- 	if (rateLen > 8)
+- 		ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rateLen - 8), (pdev_net=
+work->supported_rates + 8), &sz);
++ 	if (rate_len > 8)
++ 		ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rate_len - 8), (pdev_ne=
+twork->supported_rates + 8), &sz);
+ =20
+  	/* HT Cap. */
+  	if ((pregistrypriv->wireless_mode & WIRELESS_11_24N) &&
+@@@ -455,10 -450,10 +455,10 @@@ int rtw_parse_wpa_ie(u8 *wpa_ie, int wp
+  		return _FAIL;
+  	}
+ =20
+- 	if ((*wpa_ie !=3D WLAN_EID_VENDOR_SPECIFIC) || (*(wpa_ie+1) !=3D (u8)(wp=
+a_ie_len - 2)) ||
+- 	   (memcmp(wpa_ie+2, RTW_WPA_OUI_TYPE, WPA_SELECTOR_LEN))) {
++ 	if ((*wpa_ie !=3D WLAN_EID_VENDOR_SPECIFIC) ||
++ 	    (*(wpa_ie + 1) !=3D (u8)(wpa_ie_len - 2)) ||
++ 	    (memcmp(wpa_ie + 2, RTW_WPA_OUI_TYPE, WPA_SELECTOR_LEN)))
+  		return _FAIL;
+- 	}
+ =20
+  	pos =3D wpa_ie;
+ =20
+@@@ -518,7 -513,7 +518,7 @@@ int rtw_parse_wpa2_ie(u8 *rsn_ie, int r
+  		return _FAIL;
+  	}
+ =20
+- 	if ((*rsn_ie !=3D WLAN_EID_RSN) || (*(rsn_ie+1) !=3D (u8)(rsn_ie_len - 2=
+)))
++ 	if ((*rsn_ie !=3D WLAN_EID_RSN) || (*(rsn_ie + 1) !=3D (u8)(rsn_ie_len -=
+ 2)))
+  		return _FAIL;
+ =20
+  	pos =3D rsn_ie;
+@@@ -585,18 -580,18 +585,18 @@@ int rtw_get_wapi_ie(u8 *in_ie, uint in_
+  	while (cnt < in_len) {
+  		authmode =3D in_ie[cnt];
+ =20
+- 		/* if (authmode =3D=3D WLAN_EID_BSS_AC_ACCESS_DELAY) */
+- 		if (authmode =3D=3D WLAN_EID_BSS_AC_ACCESS_DELAY && (!memcmp(&in_ie[cnt=
++6], wapi_oui1, 4) ||
+- 					!memcmp(&in_ie[cnt+6], wapi_oui2, 4))) {
++ 		if (authmode =3D=3D WLAN_EID_BSS_AC_ACCESS_DELAY &&
++ 		    (!memcmp(&in_ie[cnt + 6], wapi_oui1, 4) ||
++ 		     !memcmp(&in_ie[cnt + 6], wapi_oui2, 4))) {
+  			if (wapi_ie)
+- 				memcpy(wapi_ie, &in_ie[cnt], in_ie[cnt+1]+2);
++ 				memcpy(wapi_ie, &in_ie[cnt], in_ie[cnt + 1] + 2);
+ =20
+  			if (wapi_len)
+- 				*wapi_len =3D in_ie[cnt+1]+2;
++ 				*wapi_len =3D in_ie[cnt + 1] + 2;
+ =20
+- 			cnt +=3D in_ie[cnt+1]+2;  /* get next */
++ 			cnt +=3D in_ie[cnt + 1] + 2;  /* get next */
+  		} else {
+- 			cnt +=3D in_ie[cnt+1]+2;   /* get next */
++ 			cnt +=3D in_ie[cnt + 1] + 2;   /* get next */
   		}
-  		break;
+  	}
  =20
-@@@ -2272,7 -2275,7 +2275,7 @@@
-  	set_bit(QCA_BT_OFF, &qca->flags);
-  }
+@@@ -619,9 -614,10 +619,10 @@@ void rtw_get_sec_ie(u8 *in_ie, uint in_
+  	while (cnt < in_len) {
+  		authmode =3D in_ie[cnt];
  =20
-- static int qca_power_off(struct hci_dev *hdev)
-+ static int qca_hci_shutdown(struct hci_dev *hdev)
+- 		if ((authmode =3D=3D WLAN_EID_VENDOR_SPECIFIC) && (!memcmp(&in_ie[cnt+2=
+], &wpa_oui[0], 4))) {
++ 		if ((authmode =3D=3D WLAN_EID_VENDOR_SPECIFIC) &&
++ 		    (!memcmp(&in_ie[cnt + 2], &wpa_oui[0], 4))) {
+  			if (wpa_ie)
+- 				memcpy(wpa_ie, &in_ie[cnt], in_ie[cnt+1]+2);
++ 				memcpy(wpa_ie, &in_ie[cnt], in_ie[cnt + 1] + 2);
+ =20
+  			*wpa_len =3D in_ie[cnt + 1] + 2;
+  			cnt +=3D in_ie[cnt + 1] + 2;  /* get next */
+@@@ -630,10 -626,10 +631,10 @@@
+  				if (rsn_ie)
+  					memcpy(rsn_ie, &in_ie[cnt], in_ie[cnt + 1] + 2);
+ =20
+- 				*rsn_len =3D in_ie[cnt+1]+2;
+- 				cnt +=3D in_ie[cnt+1]+2;  /* get next */
++ 				*rsn_len =3D in_ie[cnt + 1] + 2;
++ 				cnt +=3D in_ie[cnt + 1] + 2;  /* get next */
+  			} else {
+- 				cnt +=3D in_ie[cnt+1]+2;   /* get next */
++ 				cnt +=3D in_ie[cnt + 1] + 2;   /* get next */
+  			}
+  		}
+  	}
+@@@ -665,20 -661,20 +666,20 @@@ u8 *rtw_get_wps_ie(u8 *in_ie, uint in_l
+  	while (cnt < in_len) {
+  		eid =3D in_ie[cnt];
+ =20
+- 		if ((eid =3D=3D WLAN_EID_VENDOR_SPECIFIC) && (!memcmp(&in_ie[cnt+2], wp=
+s_oui, 4))) {
++ 		if ((eid =3D=3D WLAN_EID_VENDOR_SPECIFIC) && (!memcmp(&in_ie[cnt + 2], =
+wps_oui, 4))) {
+  			wpsie_ptr =3D &in_ie[cnt];
+ =20
+  			if (wps_ie)
+- 				memcpy(wps_ie, &in_ie[cnt], in_ie[cnt+1]+2);
++ 				memcpy(wps_ie, &in_ie[cnt], in_ie[cnt + 1] + 2);
+ =20
+  			if (wps_ielen)
+- 				*wps_ielen =3D in_ie[cnt+1]+2;
++ 				*wps_ielen =3D in_ie[cnt + 1] + 2;
+ =20
+- 			cnt +=3D in_ie[cnt+1]+2;
++ 			cnt +=3D in_ie[cnt + 1] + 2;
+ =20
+  			break;
+  		}
+- 		cnt +=3D in_ie[cnt+1]+2; /* goto next */
++ 		cnt +=3D in_ie[cnt + 1] + 2; /* goto next */
+  	}
+ =20
+  	return wpsie_ptr;
+@@@ -756,12 -752,12 +757,12 @@@ u8 *rtw_get_wps_attr_content(u8 *wps_ie
+ =20
+  	if (attr_ptr && attr_len) {
+  		if (buf_content)
+- 			memcpy(buf_content, attr_ptr+4, attr_len-4);
++ 			memcpy(buf_content, attr_ptr + 4, attr_len - 4);
+ =20
+  		if (len_content)
+- 			*len_content =3D attr_len-4;
++ 			*len_content =3D attr_len - 4;
+ =20
+- 		return attr_ptr+4;
++ 		return attr_ptr + 4;
+  	}
+ =20
+  	return NULL;
+@@@ -851,9 -847,9 +852,9 @@@ static int rtw_ieee802_11_parse_vendor_
+   * @show_errors: Whether to show parsing errors in debug log
+   * Returns: Parsing result
+   */
+- enum ParseRes rtw_ieee802_11_parse_elems(u8 *start, uint len,
+- 				struct rtw_ieee802_11_elems *elems,
+- 				int show_errors)
++ enum parse_result rtw_ieee802_11_parse_elems(u8 *start, uint len,
++ 					     struct rtw_ieee802_11_elems *elems,
++ 					     int show_errors)
   {
-  	struct hci_uart *hu =3D hci_get_drvdata(hdev);
-  	struct qca_data *qca =3D hu->priv;
-@@@ -2291,7 -2294,7 +2294,7 @@@
-  		usleep_range(8000, 10000);
+  	uint left =3D len;
+  	u8 *pos =3D start;
+@@@ -869,7 -865,7 +870,7 @@@
+  		left -=3D 2;
+ =20
+  		if (elen > left)
+- 			return ParseFailed;
++ 			return PARSE_FAILED;
+ =20
+  		switch (id) {
+  		case WLAN_EID_SSID:
+@@@ -972,9 -968,9 +973,9 @@@
   	}
  =20
-- 	qca_power_shutdown(hu);
-+ 	qca_power_off(hu);
-  	return 0;
+  	if (left)
+- 		return ParseFailed;
++ 		return PARSE_FAILED;
+ =20
+- 	return unknown ? ParseUnknown : ParseOK;
++ 	return unknown ? PARSE_UNKNOWN : PARSE_OK;
   }
  =20
-@@@ -2402,6 -2405,7 +2405,7 @@@ static int qca_serdev_probe(struct serd
-  		qcadev->btsoc_type =3D QCA_ROME;
+  void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
+@@@ -1012,20 -1008,25 +1013,25 @@@ static int rtw_get_cipher_info(struct w
+  	int group_cipher =3D 0, pairwise_cipher =3D 0, is8021x =3D 0;
+  	int ret =3D _FAIL;
  =20
-  	switch (qcadev->btsoc_type) {
-+ 	case QCA_QCA6390:
-  	case QCA_WCN3950:
-  	case QCA_WCN3988:
-  	case QCA_WCN3990:
-@@@ -2410,7 -2414,6 +2414,6 @@@
-  	case QCA_WCN6750:
-  	case QCA_WCN6855:
-  	case QCA_WCN7850:
-- 	case QCA_QCA6390:
-  		qcadev->bt_power =3D devm_kzalloc(&serdev->dev,
-  						sizeof(struct qca_power),
-  						GFP_KERNEL);
-@@@ -2422,9 -2425,9 +2425,9 @@@
-  	}
+- 	pbuf =3D rtw_get_wpa_ie(&pnetwork->network.ies[12], &wpa_ielen, pnetwork=
+->network.ie_length-12);
++ 	pbuf =3D rtw_get_wpa_ie(&pnetwork->network.ies[12],
++ 			      &wpa_ielen,
++ 			      pnetwork->network.ie_length - 12);
  =20
-  	switch (qcadev->btsoc_type) {
-+ 	case QCA_WCN6750:
-  	case QCA_WCN6855:
-  	case QCA_WCN7850:
-- 	case QCA_WCN6750:
-  		if (!device_property_present(&serdev->dev, "enable-gpios")) {
-  			/*
-  			 * Backward compatibility with old DT sources. If the
-@@@ -2530,7 -2533,7 +2533,7 @@@
+  	if (pbuf && (wpa_ielen > 0)) {
+- 		if (rtw_parse_wpa_ie(pbuf, wpa_ielen+2, &group_cipher, &pairwise_cipher=
+, &is8021x) =3D=3D _SUCCESS) {
++ 		if (rtw_parse_wpa_ie(pbuf, wpa_ielen + 2, &group_cipher,
++ 				     &pairwise_cipher, &is8021x) =3D=3D _SUCCESS) {
+  			pnetwork->bcn_info.pairwise_cipher =3D pairwise_cipher;
+  			pnetwork->bcn_info.group_cipher =3D group_cipher;
+  			pnetwork->bcn_info.is_8021x =3D is8021x;
+  			ret =3D _SUCCESS;
+  		}
+  	} else {
+- 		pbuf =3D rtw_get_wpa2_ie(&pnetwork->network.ies[12], &wpa_ielen, pnetwo=
+rk->network.ie_length-12);
++ 		pbuf =3D rtw_get_wpa2_ie(&pnetwork->network.ies[12], &wpa_ielen,
++ 				       pnetwork->network.ie_length - 12);
  =20
-  	if (power_ctrl_enabled) {
-  		hci_set_quirk(hdev, HCI_QUIRK_NON_PERSISTENT_SETUP);
-- 		hdev->shutdown =3D qca_power_off;
-+ 		hdev->shutdown =3D qca_hci_shutdown;
-  	}
+  		if (pbuf && (wpa_ielen > 0)) {
+- 			if (rtw_parse_wpa2_ie(pbuf, wpa_ielen+2, &group_cipher, &pairwise_ciph=
+er, &is8021x) =3D=3D _SUCCESS) {
++ 			if (rtw_parse_wpa2_ie(pbuf, wpa_ielen + 2, &group_cipher,
++ 					      &pairwise_cipher, &is8021x) =3D=3D _SUCCESS) {
+  				pnetwork->bcn_info.pairwise_cipher =3D pairwise_cipher;
+  				pnetwork->bcn_info.group_cipher =3D group_cipher;
+  				pnetwork->bcn_info.is_8021x =3D is8021x;
+@@@ -1094,21 -1095,21 +1100,21 @@@ u16 rtw_mcs_rate(u8 bw_40MHz, u8 short_
+  	u16 max_rate =3D 0;
  =20
-  	if (data) {
-@@@ -2565,7 -2568,7 +2568,7 @@@ static void qca_serdev_remove(struct se
-  	case QCA_WCN6855:
-  	case QCA_WCN7850:
-  		if (power->vregs_on)
-- 			qca_power_shutdown(&qcadev->serdev_hu);
-+ 			qca_power_off(&qcadev->serdev_hu);
-  		break;
-  	default:
-  		break;
-@@@ -2574,10 -2577,11 +2577,10 @@@
-  	hci_uart_unregister_device(&qcadev->serdev_hu);
+  	if (MCS_rate[0] & BIT(7))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?1500:1350):((short_GI)?722:650);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 1500 : 1350) : ((short_GI) ? 72=
+2 : 650);
+  	else if (MCS_rate[0] & BIT(6))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?1350:1215):((short_GI)?650:585);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 1350 : 1215) : ((short_GI) ? 65=
+0 : 585);
+  	else if (MCS_rate[0] & BIT(5))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?1200:1080):((short_GI)?578:520);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 1200 : 1080) : ((short_GI) ? 57=
+8 : 520);
+  	else if (MCS_rate[0] & BIT(4))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?900:810):((short_GI)?433:390);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 900 : 810) : ((short_GI) ? 433 =
+: 390);
+  	else if (MCS_rate[0] & BIT(3))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?600:540):((short_GI)?289:260);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 600 : 540) : ((short_GI) ? 289 =
+: 260);
+  	else if (MCS_rate[0] & BIT(2))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?450:405):((short_GI)?217:195);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 450 : 405) : ((short_GI) ? 217 =
+: 195);
+  	else if (MCS_rate[0] & BIT(1))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?300:270):((short_GI)?144:130);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 300 : 270) : ((short_GI) ? 144 =
+: 130);
+  	else if (MCS_rate[0] & BIT(0))
+- 		max_rate =3D (bw_40MHz) ? ((short_GI)?150:135):((short_GI)?72:65);
++ 		max_rate =3D (bw_40MHz) ? ((short_GI) ? 150 : 135) : ((short_GI) ? 72 :=
+ 65);
+ =20
+  	return max_rate;
   }
- =20
- -static void qca_serdev_shutdown(struct device *dev)
- +static void qca_serdev_shutdown(struct serdev_device *serdev)
-  {
-  	int ret;
-  	int timeout =3D msecs_to_jiffies(CMD_TRANS_TIMEOUT_MS);
- -	struct serdev_device *serdev =3D to_serdev_device(dev);
-  	struct qca_serdev *qcadev =3D serdev_device_get_drvdata(serdev);
-  	struct hci_uart *hu =3D &qcadev->serdev_hu;
-  	struct hci_dev *hdev =3D hu->hdev;
-@@@ -2799,11 -2803,11 +2802,11 @@@ static void hciqca_coredump(struct devi
-  static struct serdev_device_driver qca_serdev_driver =3D {
-  	.probe =3D qca_serdev_probe,
-  	.remove =3D qca_serdev_remove,
- +	.shutdown =3D qca_serdev_shutdown,
-  	.driver =3D {
-  		.name =3D "hci_uart_qca",
-  		.of_match_table =3D of_match_ptr(qca_bluetooth_of_match),
-  		.acpi_match_table =3D ACPI_PTR(qca_bluetooth_acpi_match),
- -		.shutdown =3D qca_serdev_shutdown,
-  		.pm =3D &qca_pm_ops,
-  #ifdef CONFIG_DEV_COREDUMP
-  		.coredump =3D hciqca_coredump,
 
---HAqkT2kRX5P5/cRb
+--rLy9erXFGIeCTzXa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmfD2MACgkQJNaLcl1U
-h9BQWwf+ObMlYdNllTcylDHoMbNIg2Uuk8p5uyYZdPtD9u8sFNTAt2lBfawZQcPx
-WrdF+hn10GXuCsYCI8oPRR1DKNtFPwCC6ZhW2JEb+NxfbG7o0yMNI1yKWxM2Xrec
-aPlfoOfyq7C8nZvVQ+PyyvlENdI0ACWbxbp2WdJe1S/agDnqGzSesNKjRY1Iui/B
-TC6Hn53S63RbIYctDqF8+tZOpfLzIXCTIS61aK57TqdH+tbJrpTKSiiBqk3u54kO
-YKvypWSnjoOtXX4oFvV06GuwNxLn3t7gjJtJnuEoD189klMRPEgYK2RUPl0xIMKR
-zga6qfEY4sY+zE8nMrB+mtmR9UOnqA==
-=8eQc
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmfD3EACgkQJNaLcl1U
+h9C+YQf+LInQfGlqOGOiONI14fVQUCCy4PUeOxjIlIBIL1itppA8Mthct4A4SfB8
+1XaXiDezXgonL9FG6Rvc+uUTdM+Q6uWaKEOGnuHGf+6P7Kr9/J3nL89s9rq9b2+3
+0bgx9S5bgrTyHQ8T3pOWHNIXLMDrXUZ+OuZKpDA1RqdDAJ9f/4s83FSekXwLr62/
+kpP1Imh2T7dvx2OPvOVy4krPJy9NIJgIEwCEuOSSXqUbLJ3TlTjcgOc/9SB3aVS+
+g4CBUnFY8+4KsAKQ5NYI9RWgPkBqL/G+YoDqQ5ba7tJszd8p/KwxGKsGnx2vKNfZ
+14zjdF/YEX39nbhv6+63/74SuGeYWg==
+=NX1w
 -----END PGP SIGNATURE-----
 
---HAqkT2kRX5P5/cRb--
+--rLy9erXFGIeCTzXa--
