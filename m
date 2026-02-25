@@ -1,75 +1,110 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1A334F49A
-	for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 13:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C25A3D3D03;
+	Wed, 25 Feb 2026 15:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772025768; cv=none; b=LgffJxfPkOu6P/1fVmreETk93HPyF5rjQ8gebtj2c7MI3pPXVfCEpnne71dAWCrhXE4aq8NrECQ+U5DkTuXnTOH+IH/eTZioPJ6W4/9MPV9fGqxuZb7WUiXkQBoeIRm+9oI4gbxCCPwXo2J0iKAp1RSkqO+eqVLdST+H75d3h/s=
+	t=1772031821; cv=none; b=PbIQeW9D0kuWJZan9fLOvLW4x+ud0AGPIQnQtkCtnbpmu4oYt4CdVbgsaaHNlv0orkvg85UlVhTNPhDGo2BKjMOLnjBPAu7ziM1ADLfBO3EWK+hhBUQSK5uEwfRO7+D6lTWgZqusnxnKrsIyWo8P3a/wyTfTsOFZ6fo1o1Psssc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772025768; c=relaxed/simple;
-	bh=yUcnVdzaps8pHAPyb7UZRWv6/WE6Q0YyIhQgKksTSXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VYv18zqLn0CuCV9AkzwastUjuhzxIshKJV8Rlt6aJ1NDBpPrRAvJu9JS1VyH352bk5E82w1MIXYIpQhmsFpx7+9lj3FtSUMzgd8LSeAozKv0oWH28D2T8aSKRVvA1TUInhPHw52RHKbUJz35Vfn8yhvzNESn9nJRbZHI/5hqbd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohvLESXR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772031821; c=relaxed/simple;
+	bh=QN7ZJdtc/ozhlLaHW7uYptsjLSToVtIBzHuU8im4kWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VSGq6UU8vkIE9jELdEvZ+DYxZgE2h4C5bYCpfaWEPvxVYLC7iurAEWGNgUoN9IevWkYtRVdqPxalrkZE434uhhrOvr+k7Fv/cYh19qDhRI5Y6NSFUlZ/J5z/2ocZgl4HdyhSVbhv3wwEDUICvyGPv7fSPS1gxAyVE17/Ja8aeOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=co2AlpS4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohvLESXR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC513C116D0
-	for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 13:22:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="co2AlpS4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD7CC116D0;
+	Wed, 25 Feb 2026 15:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772025768;
-	bh=yUcnVdzaps8pHAPyb7UZRWv6/WE6Q0YyIhQgKksTSXY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ohvLESXRsDMpdFB72Ne64IISovpebvrwZh4dFUYv4g8z3SfPWlT9fTbNSzb4W+qjb
-	 utXkCc+68wS2PhFDrM92zfhYZtnYG2MdVYbIZa0WpCx9y4ZvoKEdNdPL126EfZeECX
-	 MH5oqBJtA+3K5gDQCPEECjOlmEVdazRfo4qlVwyIMHX5Gxh0JlbflLbcXpG1e3/iQN
-	 ROpOQ6CQ5x0g3m3WEUNpcTFNo8qmGujiowQkaVODcIM75/0NHB8+3oAuR6TztwZ8zZ
-	 2+8T+uOcIaU9kzY7sn094Kk4UKRuRf9Nj2gv6vLuh3fMhauDI3whMsrBLbYD1bRcKU
-	 Vjv/e4mA90dow==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b8fb6ad3243so936492166b.1
-        for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 05:22:47 -0800 (PST)
-X-Gm-Message-State: AOJu0YwYrWnzECWgHvnuBG1Ok/lrVOcNp93LJGW0/QyTjYOQAUHsjVI9
-	8YicQLHzbq3xrrTbA1EWzPxcsOY1UTXa8jyInXRqZg8QW9MWwMiRLRcEF4JY7BnxGanw5apIasB
-	QBFYXT+klj+QtcMKVVf/4b7TN1jgPs+Y=
-X-Received: by 2002:a17:907:96a8:b0:b8d:bf38:7025 with SMTP id
- a640c23a62f3a-b9081a0250fmr987188466b.16.1772025766451; Wed, 25 Feb 2026
- 05:22:46 -0800 (PST)
+	s=k20201202; t=1772031820;
+	bh=QN7ZJdtc/ozhlLaHW7uYptsjLSToVtIBzHuU8im4kWQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=co2AlpS4vccR71sVZhjLLQB/sBtysZ0Gax8OcAyig2RHhbQH3rCWGENT0hpzF3dag
+	 ChTTsW/XGpdzxjfl84Bbcqg26wOrELu4NT9w7QJXyfeOrP7iJ60WSQODJ61eNDA5+H
+	 YN+Yklolv4pNJou1qESNUzIsADhIMwN1d6SY4M+oBjs9FD1S5ngb2zD6+IKSIgEMtS
+	 1/31MUMQea2LvX5jSwyoGj9u38FoYVG9NrzVyQa9dCSAFTU2zdc41qHKeJ5oh6O3EU
+	 zMDVV2MfklThyIA27kYhUNAlKxPq3fkWBff+vlbD8yzwu7R4FMBVLMVILNR5UEOTxs
+	 830vylWV/LSJg==
+Date: Wed, 25 Feb 2026 15:03:36 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aZ8PSFLzBrEU3I89@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKYAXd_rfwTt+uhOgBa4mEO5j0CQhZdTp=YcoU2RCng+scDbXQ@mail.gmail.com>
- <1dc54be7-f8f1-4555-9004-8e15437023ef@sirena.org.uk> <d4e59537-f51e-4860-bc66-8fe5f9f3e66f@sirena.org.uk>
- <CAKYAXd-M+apvWoQUD=ucj0zhz3bN=Efi0GV8h+LtEhQZC4PU1Q@mail.gmail.com> <ecada199-b746-426d-9207-c2d6da2c2034@sirena.org.uk>
-In-Reply-To: <ecada199-b746-426d-9207-c2d6da2c2034@sirena.org.uk>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 25 Feb 2026 22:22:34 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-HvwQXeLSL3bE4ie9Ce+WwGnFW0FPwSmM3v+d3Xv6tKw@mail.gmail.com>
-X-Gm-Features: AaiRm50zK6XhHoFukIJyk0OWd6gtWC2_AjWHDOnaHMY4THLXF6htN2M9uF8jAgY
-Message-ID: <CAKYAXd-HvwQXeLSL3bE4ie9Ce+WwGnFW0FPwSmM3v+d3Xv6tKw@mail.gmail.com>
-Subject: Re: linux-next inclusion request : ntfs filesystem
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QMKYyv9/62lws9d/"
+Content-Disposition: inline
+
+
+--QMKYyv9/62lws9d/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 25, 2026 at 9:41=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Wed, Feb 18, 2026 at 09:01:59AM +0900, Namjae Jeon wrote:
->
-> > It seems the build error is caused by a dependency on Lorenzo Stoakes'
-> > recent MM change ("mm: update all remaining mmap_prepare users to use
-> > vma_flags_t"), which replaces vm_flags with vma_flags in struct
-> > vm_area_desc.
-> > I will update the ntfs tree to align with this change and ensure it
-> > builds correctly against the current -next.
->
-> I checked again today and it looks like the tree wasn't updated - if you
-> could let me know when it is that'd be great.
-I updated the tree and re-applied the patch last week. I just tested
-it again against the latest linux-next, and there are no build errors.
-Thanks!
+Hi all,
+
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  include/net/inet_connection_sock.h
+
+between commit:
+
+  858d2a4f67ff6 ("tcp: fix potential race in tcp_v6_syn_recv_sock()")
+
+=66rom the net tree and commit:
+
+  fcd3d039fab69 ("tcp: make tcp_v{4,6}_send_check() static")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc include/net/inet_connection_sock.h
+index 5cb3056d6ddc7,bbc9355871c76..0000000000000
+--- a/include/net/inet_connection_sock.h
++++ b/include/net/inet_connection_sock.h
+@@@ -42,10 -42,7 +42,9 @@@ struct inet_connection_sock_af_ops=20
+  				      struct request_sock *req,
+  				      struct dst_entry *dst,
+  				      struct request_sock *req_unhash,
+ -				      bool *own_req);
+ +				      bool *own_req,
+ +				      void (*opt_child_init)(struct sock *newsk,
+ +							     const struct sock *sk));
+- 	u16	    net_header_len;
+  	int	    (*setsockopt)(struct sock *sk, int level, int optname,
+  				  sockptr_t optval, unsigned int optlen);
+  	int	    (*getsockopt)(struct sock *sk, int level, int optname,
+
+--QMKYyv9/62lws9d/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmfD0cACgkQJNaLcl1U
+h9Dofwf7BX6pxkyrHNFlvAU7ffZ/Q2hssJ8XCjwdBJXKoxWISMCUCUAOy0En9lzO
+kVRXlFPfkztphCl9Pj4wD6C08Jix5E/tqmkDgInKSNafHR2zcD819D3NALLx9pd4
+Z3yIQJvuZcsikuMBYUupuOopb0Flp3VvUgAVlPSdQY9PADZnxW7l6QD6RxEya8Ep
+JySihEGGPrNbtO/7/15cJYTInuGaUUikSe95u5d3a9nsVSZowNo/rZ5ujK8N6hdr
+WPEFUBGMUIn6dO0tc8jgPoLnne8nfXz3h3a4uU82YW2UiAmcRQp7wFhWInG0kKFN
+h7c4k/Dntn5Kf1hInM91w429n31o+Q==
+=LLwQ
+-----END PGP SIGNATURE-----
+
+--QMKYyv9/62lws9d/--
