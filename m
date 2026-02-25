@@ -1,85 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEF225390
-	for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 12:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864AE3921F2;
+	Wed, 25 Feb 2026 12:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772023584; cv=none; b=eG94isMSatjsErN1L5+oWCPZNrGuOP7f7/5KTFuJ+rwso+hacJM4dVxziBXAoy2Y7F3szxb6sFDPzfznvTv5vyLHvDPlxIhvZNbOVzMLO/fuLvI1wDgW3Y+TXd86yzu+nlu8f6bscr/TvXXY34k8W0sG8W3kLEN2SsRUgBUx11E=
+	t=1772024257; cv=none; b=Yl7i3k/BTuhAJRJaR8DXWQY/mGgLnWlXT8aejrimqEV5k7nEQHELmJs36KhchtYHaTFfMeyYEuMwNEU7w+A7BnJWw3cyxZ+yPalP7wQXG9GIO817InxcXUbp3ZMxTUloMX6f3/WMc9w6/SwQFI/FHzbe4KQwvfHi9/wM9opzMAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772023584; c=relaxed/simple;
-	bh=yoP33XFHjj9ErbXdhVYajM7vuXNNvjeT/NEI814iX6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fo+2Hed4IIKkvC2L2s7Ozkk0JhVBF77PdRMLcPoG49CSUYmwv+6VS2aBcr8yBhWqfX/JXIvozlMBvp82oN4VcdsLVrhCJ1f2Jmn7gMMK4A+esko1xFBTs87YN5eEQd1mG7Asf7yWKMtnZAFM+SLxZPDpx4hCyHz5mcAx6PlWat4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKkt0Kou; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772024257; c=relaxed/simple;
+	bh=WEy/q3CypdQpDik13GhYoQJexm3cqGsoLeXusxa5/Xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WXpC9X3nbi5kNm0KItwPu+HTtMliSiFoR8b0zigGhL8w3rXuWPwOkzaestsDIafovkK5rcNhvCOeX6HtGarNUFNA72/LHwacXKzT8iV8Ik4zDSXWwoF6r+7Qpy1SaVOWzmDGETGgzT9rukyF++ojpLloupcuu8eG598XHLj0RRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCDdPZ0U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKkt0Kou"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504FBC116D0;
-	Wed, 25 Feb 2026 12:46:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCDdPZ0U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B33C116D0;
+	Wed, 25 Feb 2026 12:57:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772023584;
-	bh=yoP33XFHjj9ErbXdhVYajM7vuXNNvjeT/NEI814iX6o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OKkt0KouzU8ZF343NC7I0F3CPSXqmBiP3qZf6sJnL+mQOvLTiDjQ8KHSVTgU1wzJP
-	 zavVWZ7a2iTFdJJ+zUH5d81qJVxEMo05ufP+GdFIbXxq08vLlol56lZczpnKi5XG3o
-	 klKjkJ9qDFp5IMIENdzgaK4JhsReOZ+Q3aoBsV8ld5IuWn0ZVh9lUvVg2tOsL06wCa
-	 w1L6qgLMEI9+wCtvxeTYPSmdaBtwAqj/bfKzazJoR6vMcUnehW5tHVSBUnGyxtCPxD
-	 wqtznHVgmL3pkm5MTFC59Bgnuvze7pko4XL+QFTg8wLz2bOIPFmn3LDaST80aR1x+/
-	 C7QTAwjE6D/6Q==
-Message-ID: <dc81bd41-3957-486a-8a8b-272798e49341@kernel.org>
-Date: Wed, 25 Feb 2026 06:46:23 -0600
+	s=k20201202; t=1772024257;
+	bh=WEy/q3CypdQpDik13GhYoQJexm3cqGsoLeXusxa5/Xk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SCDdPZ0UMCNy0ydCEhWSvqmSKwrDyrLOH+xMaSJi62PN0uKrEolhV7P+7FFKwI94t
+	 4+rs7Zbi+KQFRnq9vFuDEjaVuModaFNE/t6J72lkE1DYfcuZNOWmuVItYP9HCHAiIa
+	 AWqeIW/O6uzH/aCocUWIOMKWBfyHB7lAee5lc5ui+ezV7ClnKQHCgWA+2Hzg/8K4cY
+	 fRF++Cc1Z6mFrpg3D+oSoLr9V1FRTRNcTV2A3fdC3mx7NrdlqmJIe5zOX7Fuz6YqQS
+	 pE+vSvVX+hkjGXrhwVX/7Lw7AXExSlMJ807Ga1aoXqKk28PN3ZxQVeSZs8qyIxT7Zd
+	 rMBY5Cl8125YA==
+Date: Wed, 25 Feb 2026 13:57:32 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the xfs tree
+Message-ID: <aZ7wTqG8WfuBWn0A@nidhogg.toxiclabs.cc>
+References: <aZ7axQdS829sxNtl@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Include Altera's SoCFPGA tree
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <537c455e-36bb-4f80-a910-10a58247a67d@kernel.org>
- <42b96da6-ffb3-4fd9-8821-9093a323507c@sirena.org.uk>
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <42b96da6-ffb3-4fd9-8821-9093a323507c@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aZ7axQdS829sxNtl@sirena.org.uk>
 
-
-
-On 2/25/26 06:37, Mark Brown wrote:
-> On Tue, Feb 24, 2026 at 10:25:58PM -0600, Dinh Nguyen wrote:
->> Hi linux-next maintainers,
->>
->> Could you please add the SoCFPGA tree to linux-next? The branch contains
->> patches intended for the next merge window for the SoCFPGA subsystem.
->>
->>
->> Git Repo: https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git
->>
->> Branch: for-next
+On Wed, Feb 25, 2026 at 11:19:33AM +0000, Mark Brown wrote:
+> Commits
 > 
-> I've added this, all being well it will appear in today's next.
+>   d412c65646d37 ("xfs: don't report half-built inodes to fserror")
+>   d33f104ea40e7 ("xfs: don't report metadata inodes to fserror")
+>   253b1a2ac9db6 ("xfs: fix potential pointer access race in xfs_healthmon_get")
+>   fd992a409aef6 ("xfs: fix xfs_group release bug in xfs_dax_notify_dev_failure")
+>   61a02d38303fa ("xfs: fix xfs_group release bug in xfs_verify_report_losses")
+>   9ee0cb71de74b ("xfs: fix copy-paste error in previous fix")
 > 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgement of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window.
-> 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->       * submitted under GPL v2 (or later) and include the Contributor's
->          Signed-off-by,
->       * posted to the relevant mailing list,
->       * reviewed by you (or another maintainer of your subsystem tree),
->       * successfully unit tested, and
->       * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
+> are missing a Signed-off-by from their committers
 
-Thank you so much!
-
-Dinh
+Oh, thanks... Those belong to a pull request, but as I rebased the
+branch, the merge went away. I'll fix it.
