@@ -1,85 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609461C84B8;
-	Wed, 25 Feb 2026 12:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEF225390
+	for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 12:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772023285; cv=none; b=mi6EB+GhDnO+yMXYODUWlXwF5cgN2Lv2gyzQ1i8yi67juoqL4p+IvhCXs9gwEcVom0PksaqgER0+1eGC/V1oP7fHSgbiKOnVGuN9BNwdch7QkL7FhcVN/ssyy2SJ8lyMaOOME+I0Hj8UAPGngt4JYGPKNwnquvjzhmb1h6utQ7E=
+	t=1772023584; cv=none; b=eG94isMSatjsErN1L5+oWCPZNrGuOP7f7/5KTFuJ+rwso+hacJM4dVxziBXAoy2Y7F3szxb6sFDPzfznvTv5vyLHvDPlxIhvZNbOVzMLO/fuLvI1wDgW3Y+TXd86yzu+nlu8f6bscr/TvXXY34k8W0sG8W3kLEN2SsRUgBUx11E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772023285; c=relaxed/simple;
-	bh=Oly1PLc6JSM0QRpE3DI2QsrcTF3N+jFY1AnQ2y+sVEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1dVx26YIeiuh0mVgp+5JJtZsbhyD+chICAGmj2mljFzRTNX7g2KLkJxmB2AWz4ObrfgU6BBaA+NvExsUVrM0kD0nAPbTnVGJUgN08sFTdZh1SpJiV+8oM55WcpQOIBXoVb+I00nRw4DLZg8nr18ekEB5PeKfeM6Xe/YSIblLUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AM/VGfG+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772023584; c=relaxed/simple;
+	bh=yoP33XFHjj9ErbXdhVYajM7vuXNNvjeT/NEI814iX6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fo+2Hed4IIKkvC2L2s7Ozkk0JhVBF77PdRMLcPoG49CSUYmwv+6VS2aBcr8yBhWqfX/JXIvozlMBvp82oN4VcdsLVrhCJ1f2Jmn7gMMK4A+esko1xFBTs87YN5eEQd1mG7Asf7yWKMtnZAFM+SLxZPDpx4hCyHz5mcAx6PlWat4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKkt0Kou; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AM/VGfG+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1050C116D0;
-	Wed, 25 Feb 2026 12:41:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKkt0Kou"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504FBC116D0;
+	Wed, 25 Feb 2026 12:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772023285;
-	bh=Oly1PLc6JSM0QRpE3DI2QsrcTF3N+jFY1AnQ2y+sVEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AM/VGfG+yinud/HOzIx5asNqQMCPzIF4x1ziQzRUFZpKd6FdRE45kNd9F3voEiS66
-	 aS4xvgm4woS6X1OfQhv2iyrQmv2DX31NJ3cnvlPAFn8fYyN8mLFx6VmDZmMU51sj5z
-	 1K6VLdbN3Q9ufUS3an/s09J8XhUf2baNZZdkuRd4igoksesaYs3kUD1saCx5th5ZvL
-	 MVTJ66P8iAJjEhKFRXtjNiGgAYEgmVdcYX22qAQruqJdgLkJhlHrA9sP2JkABqU2KN
-	 9ddDpYB+Vp+WpEjj1bB49Liu8lhFhwJucVULx98gE1kll31LRBzclvQC/rjdHNlx8c
-	 3SOh6VskUqiDQ==
-Date: Wed, 25 Feb 2026 12:41:21 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next inclusion request : ntfs filesystem
-Message-ID: <ecada199-b746-426d-9207-c2d6da2c2034@sirena.org.uk>
-References: <CAKYAXd_rfwTt+uhOgBa4mEO5j0CQhZdTp=YcoU2RCng+scDbXQ@mail.gmail.com>
- <1dc54be7-f8f1-4555-9004-8e15437023ef@sirena.org.uk>
- <d4e59537-f51e-4860-bc66-8fe5f9f3e66f@sirena.org.uk>
- <CAKYAXd-M+apvWoQUD=ucj0zhz3bN=Efi0GV8h+LtEhQZC4PU1Q@mail.gmail.com>
+	s=k20201202; t=1772023584;
+	bh=yoP33XFHjj9ErbXdhVYajM7vuXNNvjeT/NEI814iX6o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OKkt0KouzU8ZF343NC7I0F3CPSXqmBiP3qZf6sJnL+mQOvLTiDjQ8KHSVTgU1wzJP
+	 zavVWZ7a2iTFdJJ+zUH5d81qJVxEMo05ufP+GdFIbXxq08vLlol56lZczpnKi5XG3o
+	 klKjkJ9qDFp5IMIENdzgaK4JhsReOZ+Q3aoBsV8ld5IuWn0ZVh9lUvVg2tOsL06wCa
+	 w1L6qgLMEI9+wCtvxeTYPSmdaBtwAqj/bfKzazJoR6vMcUnehW5tHVSBUnGyxtCPxD
+	 wqtznHVgmL3pkm5MTFC59Bgnuvze7pko4XL+QFTg8wLz2bOIPFmn3LDaST80aR1x+/
+	 C7QTAwjE6D/6Q==
+Message-ID: <dc81bd41-3957-486a-8a8b-272798e49341@kernel.org>
+Date: Wed, 25 Feb 2026 06:46:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WH1H+MWrIr9CS8sO"
-Content-Disposition: inline
-In-Reply-To: <CAKYAXd-M+apvWoQUD=ucj0zhz3bN=Efi0GV8h+LtEhQZC4PU1Q@mail.gmail.com>
-X-Cookie: From concentrate.
+User-Agent: Mozilla Thunderbird
+Subject: Re: Include Altera's SoCFPGA tree
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <537c455e-36bb-4f80-a910-10a58247a67d@kernel.org>
+ <42b96da6-ffb3-4fd9-8821-9093a323507c@sirena.org.uk>
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <42b96da6-ffb3-4fd9-8821-9093a323507c@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---WH1H+MWrIr9CS8sO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Feb 18, 2026 at 09:01:59AM +0900, Namjae Jeon wrote:
+On 2/25/26 06:37, Mark Brown wrote:
+> On Tue, Feb 24, 2026 at 10:25:58PM -0600, Dinh Nguyen wrote:
+>> Hi linux-next maintainers,
+>>
+>> Could you please add the SoCFPGA tree to linux-next? The branch contains
+>> patches intended for the next merge window for the SoCFPGA subsystem.
+>>
+>>
+>> Git Repo: https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git
+>>
+>> Branch: for-next
+> 
+> I've added this, all being well it will appear in today's next.
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgement of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window.
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>       * submitted under GPL v2 (or later) and include the Contributor's
+>          Signed-off-by,
+>       * posted to the relevant mailing list,
+>       * reviewed by you (or another maintainer of your subsystem tree),
+>       * successfully unit tested, and
+>       * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
 
-> It seems the build error is caused by a dependency on Lorenzo Stoakes'
-> recent MM change ("mm: update all remaining mmap_prepare users to use
-> vma_flags_t"), which replaces vm_flags with vma_flags in struct
-> vm_area_desc.
-> I will update the ntfs tree to align with this change and ensure it
-> builds correctly against the current -next.
+Thank you so much!
 
-I checked again today and it looks like the tree wasn't updated - if you
-could let me know when it is that'd be great.
-
---WH1H+MWrIr9CS8sO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmme7fAACgkQJNaLcl1U
-h9At8wf+MD1W9jzNJTWGvUDUv6KJmQkXj7kKINpk1HSqQORaJtA24XuaHq5Pg4VZ
-c3rZrW37L8YEsO4FKYq9K9fjU6us5DVABjWD/CmxXkrmuB7Ru10ZoHHeyNgR9rk2
-zIe88AZRGscaCPtfVa1pNz7b1HvwR0NbrKA0LFD0Co67olqex463+MUdRbUIK2PP
-SE/QfAu/21YfeK9XbKWJaNlFP4CQTDTKwS+HZvhhwIXxCPI1m1eUhYbwmQLUvBct
-zHQ4up0GkD2TBoNs4N6FETXzeAmIQE6q+1BIpJdQ6rrqsGEVB+BOtTP4xxCAgyf6
-xEvcWJvThNxMoyGrn2bAo211X712oA==
-=xU3u
------END PGP SIGNATURE-----
-
---WH1H+MWrIr9CS8sO--
+Dinh
