@@ -1,138 +1,94 @@
-Received: from mail-dy1-f194.google.com (mail-dy1-f194.google.com [74.125.82.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8037285404
-	for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 18:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C27239099;
+	Wed, 25 Feb 2026 20:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772045946; cv=none; b=bKbzQUpc0rbLj1wH/0HWfFrqGXahDglGt9TB+8G3TnkRyDJRiMsPNH4yOe9k4/L+7i7Q3EUXs7GWBs85oyatk4JlT9R9je85Hwh/IrJ8UKpPty7Avjf0YS7g8f782ng2UAXbH8G0pkDMq4av1H/41/OYdAOiWHRsOeH9eh7Wx5I=
+	t=1772051878; cv=none; b=OxOk+OCBFHHtPIpWbJEQJUB4WNoaUqiJR5YyPBmSTWDdgr8bw8XPytAmPDLuB6MzKrV20zxqO/mMJWNn8jBYKK8jMoXzgAi/ogXjUM7a5K/OI9x6TKEFMa7DBJM8p4OMNaozedHo1Usr5eZE/8kQQNXMaeCQ4fwcTiF2QZtScmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772045946; c=relaxed/simple;
-	bh=IIFWxI4/xm/9MJArSe7B/vP3QzaE2u2z9J9PxBlwCRI=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=GfUcNQ+4PlspwuCJ79TGv3T8uSTgRtUmnQuZyIoTAU7nYWvj1AC8pmQDGu1dCu+J1sQebivhTGUKhJQVvkHku4bUY2vKFaqS+KBG6yiO1OQoJzhqkHcC+hIfDBS9pXZQ4F3QNROQIZ6qyzsv8PvKqPH1GnAlkD12+qbouVsJfXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=yXrXRqOd; arc=none smtp.client-ip=74.125.82.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1772051878; c=relaxed/simple;
+	bh=EfvOsuMh6TRLkWqOKhSj3i1RIw0cv4TZoYG/lRhXETA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCkc1hVCrA7+Fj4B5GzNCp1L1/MuPcPLICvIqrZwxTFNArZvOUEkdoW1fSOanT6ORjz7j3IJbXeTc+sQFB4J8rpqVJFbZnbIN5qWPk6appojq9bQieO436Fu9xnK4xvS4TEjNPtBHCjJjHXFIgztEImalzSZWFqrI38hkF7Mw0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DU9zvwc1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="yXrXRqOd"
-Received: by mail-dy1-f194.google.com with SMTP id 5a478bee46e88-2bdca815fdfso213292eec.1
-        for <linux-next@vger.kernel.org>; Wed, 25 Feb 2026 10:59:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1772045944; x=1772650744; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DWi4WFAKbgRRzjrcgiHjdpqpwcDEWF//ta0ZSqcdU6E=;
-        b=yXrXRqOd9hIqMEPm26/88ip6vkfblIXNGSvtK1HFE5ABy2oxNxwtxN5YUOMgQ4oGTa
-         HPwrt4ojfNCjVUTuDkPfbVz7op4/pfPynWUUtLIrn7N63eZ+VP1aP83Gr3cuKtXr6l3a
-         adYQJNlC2HJnlrHddS4qj0rsJRFDvGaNSK2wSqfLTel34WPUNO2dBvbL94O5hidYq2Xz
-         +AVNWv7vemw4NBiWx/V6KoaU1ggUwd76rmvXI7ayC9ycTnT9msqm5LXHEqB/Mp3qAiN6
-         atdmol8eYvQ6gLS6A2r7Myt7ysRMvD6UUDOoeV49J00mGWufuQzADcupaMxm1pqZkfim
-         rmdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772045944; x=1772650744;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DWi4WFAKbgRRzjrcgiHjdpqpwcDEWF//ta0ZSqcdU6E=;
-        b=q/O+azbXZnrc7Zi0L5gJ4HLWy81cM9TMsuuqHxXeziJKwGZXaWR6XOzWCRxH3Vi9AL
-         27ZBO811j0uca9elOrbl1xB+4NzsqbTAF/WQYhwxxUw+Qyl0PyRm7umkVVJdSTN6FfH7
-         3i6qWNSeUd4ux8zsrIcbSwPIvzhAgXXW+4/Hi5rELKg6ApezRY+0JelfPNvRNZK5PDNM
-         LW8Df3eSJmfWq4iNY3yrjRs/9Tem1oaeGrI8NZ4pnZsbpwL/q2bk7olGtuwkTCSEYQGm
-         QOeLKGeh8jOJgQ6OPZgmt+UjqdkuJn1EPJ1CJN724tyqmxJbVmJa2GHym6zcgdbyRDrd
-         XcWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYNsjK5fFeBNRrXzju48VbsruTc1LXGw918ftOB1EemHkVgW6+HxC1QNsRw3+oiqjDhRYGTiEH0jvg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTBKmj9XS+/Hlbmi6zR1TfMddK4zz6zp4C2c3IDIHjPWcUMPwC
-	DXVcDymS5q+DcBioHkkiOy6l/VQ8W/YxlsdGy5lEIVNGFypf0WyJlnp+yX5UsmooVgY=
-X-Gm-Gg: ATEYQzzRW0DXPnDpq6CW/2XkUvxRrHtfgDqrSPyqVbUpRkP/lEwVjWI47Lkx0aAkfWu
-	vnvwZAq0Zhmlp3pPW3V5TMLcU8TyfqCQpIkI3AE7fFj0VkGYAgxGy5aDonOoUqZM+cLIYsWYXMH
-	/mn1ha00ZBu6T4Sy13GWnhhTaBu79lmcPFatktynn0ol0uTwbdr8YbUKUuIEhBMG0zObqe8LL2K
-	a8BfcrvVXxtORe5jV1WXAfQMhCUgwgIbJWE1Lt41Wf9i0gTfqFkLvNxtnwZJddu7l6nFh4jOsNT
-	PtuJpRbXoJFsPHKhg36Odk9+x3EzKsro12p+nMy5Cy32nw0vP++4jK6n5nSrEaSLt8p9KLsP/6N
-	HjhrwhP9M2ExVBU3Gjwoh+AsxHwIrmu1sW8RDhvPJbgXozzH8u7nYhXNhKyPMorrgJSKUOtIUVx
-	AOD5wg8c91fTzq6fup
-X-Received: by 2002:a05:7300:e8a3:b0:2b8:66f3:2502 with SMTP id 5a478bee46e88-2bd7b9f084emr7565157eec.1.1772045943880;
-        Wed, 25 Feb 2026 10:59:03 -0800 (PST)
-Received: from d14e337afe00 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bd7daa35f7sm9827304eec.8.2026.02.25.10.59.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 10:59:02 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DU9zvwc1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A58AC116D0;
+	Wed, 25 Feb 2026 20:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772051878;
+	bh=EfvOsuMh6TRLkWqOKhSj3i1RIw0cv4TZoYG/lRhXETA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DU9zvwc1w4x2Nbe8qm3uqc2rgiLrcaMLtC7eeoBUORn3nUup2Vom/KRhNnKwRbf25
+	 zFTd0lZl1fvMR/MFejTb4gaa8Mwcye5n+8NWzP7c1aGqtZ8y8ZCpNc9KyoYuRkrWCp
+	 f9bgL7GLcIYd6r/U7+NAsaa86FoKISKvyfJsApcahABxyfTJGmr20ppMk3FLNm7WoN
+	 2fRlhqndo7g2w50gbcXZzNzJydTUXP/GhKxJJUftc8V9lOlMc9SZfaS0ezHRY+Z320
+	 FYjeyZQMoL+Rng7+BndjgXddUUlEZrhgTPc2KXVEu1+Mdrn5JO+ZRHJc3n9YBecHPL
+	 co2h1qqpbX5Ew==
+Date: Wed, 25 Feb 2026 12:37:58 -0800
+From: Kees Cook <kees@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Clark <robdclark@gmail.com>,
+	Sean Paul <seanpaul@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the drm-msm-fixes tree with the
+ origin tree
+Message-ID: <202602251233.8DCB8E1@keescook>
+References: <aZ73gWMLc_kMCIrA@sirena.org.uk>
+ <CAO9ioeUM6ypgSLfZYj41LcjjENVpCuJ6ffk7f5yybdmd8UGJ3Q@mail.gmail.com>
+ <202602250951.FBB79714E@keescook>
+ <CAO9ioeW__4fBAFM=dLKkKiyGNXJsZUNKbTSzywHhK=oNtKQk+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [REGRESSION] next/master: (build)
- ./arch/arm64/include/asm/vdso/gettimeofday.h:89:44: error: initial...
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Wed, 25 Feb 2026 18:59:02 -0000
-Message-ID: <177204594245.2922.15031164626959805297@d14e337afe00>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO9ioeW__4fBAFM=dLKkKiyGNXJsZUNKbTSzywHhK=oNtKQk+g@mail.gmail.com>
 
+On Wed, Feb 25, 2026 at 08:11:21PM +0200, Dmitry Baryshkov wrote:
+> On Wed, 25 Feb 2026 at 19:56, Kees Cook <kees@kernel.org> wrote:
+> >
+> > On Wed, Feb 25, 2026 at 07:42:12PM +0200, Dmitry Baryshkov wrote:
+> > > On Wed, 25 Feb 2026 at 15:22, Mark Brown <broonie@kernel.org> wrote:
+> > > >
+> > > > Hi all,
+> > > >
+> > > > Today's linux-next merge of the drm-msm-fixes tree got a conflict in:
+> > > >
+> > > >   drivers/gpu/drm/msm/msm_iommu.c
+> > > >
+> > > > between commits:
+> > > >
+> > > >   48634a9ea06a4 ("drm/msm: Adjust msm_iommu_pagetable_prealloc_allocate() allocation type")
+> > >
+> > > Kees, why was it landed? And how? It was not Ack'ed (nor was it
+> > > requested) to go through the non-drm-msm tree. There was no note that
+> > > it got applied. What is going on?
+> >
+> > It was a prerequisite for the tree-wide changes, so I had to send it to
+> > Linus ahead of the -rc1 release. Sorry for the collision there! I waited
+> > as long as I could, but the msm-fixes tree wasn't sent for -rc1, so I
+> > had to include the patch in the prep patches:
+> > https://lore.kernel.org/lkml/202602191029.2F0E7F01@keescook/
+> 
+> Was it coordinated with drm/msm maintainers? Not with me at least. Did
+> we hear anything from you, like `Would you ack merging it through the
+> XYZ tree`? Did we at least get the `b4 ty` or `picked up, sorry, I was
+> in a rush to merge my changes which were tested in linux-next`? Nope.
+> Is it how the community is expected to work? Not really.
 
+I apologize for not communicating this in a more direct and timely
+fashion. It was a rare case, and I didn't follow the expected
+procedures. I'll be sure to do such notifications if there is ever need
+for such out-of-band patch handling like this again. It's been a lot of
+years since I did my last large-scale tree-wide refactoring, so I was
+a bit rusty.
 
-
-
-Hello,
-
-New build issue found on next/master:
-
----
- ./arch/arm64/include/asm/vdso/gettimeofday.h:89:44: error: initialization of ‘const struct vdso_time_data *’ from incompatible pointer type ‘struct vdso_time_data (*)[]’ [-Wincompatible-pointer-types] in arch/arm64/kernel/vdso/vgettimeofday.o (scripts/Makefile.build:289) [logspec:kbuild,kbuild.compiler.error]
----
-
-- dashboard: https://d.kernelci.org/i/maestro:acf8242e63eea4d9f840982fc65be8d739de5428
-- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-- commit HEAD:  877552aa875839314afad7154b5a561889e87ea9
-- tags: next-20260225
-
-Please include the KernelCI tag when submitting a fix:
-
-Reported-by: kernelci.org bot <bot@kernelci.org>
-
-
-Log excerpt:
-=====================================================
-  CC      arch/arm64/kernel/vdso/vgettimeofday.o
-  AS      arch/arm64/kernel/vdso/note.o
-  AS      arch/arm64/kernel/vdso/sigreturn.o
-  CC      arch/arm64/kernel/vdso/vgetrandom.o
-  AS      arch/arm64/kernel/vdso/vgetrandom-chacha.o
-In file included from ./include/vdso/datapage.h:196,
-                 from /tmp/kci/linux/lib/vdso/gettimeofday.c:6,
-                 from <command-line>:
-./arch/arm64/include/asm/vdso/gettimeofday.h: In function ‘__arch_get_vdso_u_time_data’:
-./arch/arm64/include/asm/vdso/gettimeofday.h:89:44: error: initialization of ‘const struct vdso_time_data *’ from incompatible pointer type ‘struct vdso_time_data (*)[]’ [-Wincompatible-pointer-types]
-   89 |         const struct vdso_time_data *ret = &vdso_u_time_data;
-      |                                            ^
-In file included from ./include/vdso/datapage.h:196,
-                 from /tmp/kci/linux/lib/vdso/getrandom.c:8,
-                 from <command-line>:
-./arch/arm64/include/asm/vdso/gettimeofday.h: In function ‘__arch_get_vdso_u_time_data’:
-./arch/arm64/include/asm/vdso/gettimeofday.h:89:44: error: initialization of ‘const struct vdso_time_data *’ from incompatible pointer type ‘struct vdso_time_data (*)[]’ [-Wincompatible-pointer-types]
-   89 |         const struct vdso_time_data *ret = &vdso_u_time_data;
-      |                                            ^
-
-=====================================================
-
-
-# Builds where the incident occurred:
-
-## defconfig+arm64-chromebook+CONFIG_ARM64_64K_PAGES=y on (arm64):
-- compiler: gcc-14
-- config: https://files.kernelci.org/kbuild-gcc-14-arm64-64k_pages-699f38261f24bb69463a9fd2/.config
-- dashboard: https://d.kernelci.org/build/maestro:699f38261f24bb69463a9fd2
-
-
-#kernelci issue maestro:acf8242e63eea4d9f840982fc65be8d739de5428
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+-- 
+Kees Cook
