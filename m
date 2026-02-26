@@ -1,37 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3459B337BBF;
-	Thu, 26 Feb 2026 11:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDC9285056;
+	Thu, 26 Feb 2026 12:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772103963; cv=none; b=SajrshRKMx/R+AA2vhKTHGkKLIuVQac3ZLIqzvNM58Of/5QMUZ3+Bil92EV2GA6MvHMXQ04bnaKnyluVA9Jlk8tAWqOJa1JfryHjL1XpJFFDKRkVfi4guKob1b3Nm1Hd1HBW8DdnZQQV24VXthXWsqMo7+WdVCoRtJLi2oN76co=
+	t=1772109148; cv=none; b=nANOcVG7W+eRv8R7x0a6pccts3NLXvokjRYbxmcUblK3wx7bD7r3uIl3KgozlqPidteGjq6w+UhEiTRqkTTdDS5XKp0xileoVye2GoaHiO5brKBYAgVybUerogY2jSgT1f6HCka0Hg7r86Hpr7eZXBm9ql2ADTvnt0IoSlTTSa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772103963; c=relaxed/simple;
-	bh=i9nMG+t1+b7oj8i3jnNgfbR0UjtuP79Nb3TiF20hNEU=;
+	s=arc-20240116; t=1772109148; c=relaxed/simple;
+	bh=7G/Xw0vgEtxD1MOJ5DsyAXBv4m0BhjJ7WjEoAC/FN7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RdSbxiUGA2SW4j78dioMxVr8syXVtNVG42bDq4hTk5L+50IbL5zHXPU1HkNzWdLFE2DZq4RdFx32GAGIKgB6XC/rNLEvQi0TQH+p2C+y7kqo9URd8LWFvWcc1bAEQWTOqThtTEE2EOTNfGk7IQqToPKosfHZxvOQPdPsp8lkSqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIiq+y1J; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=qv0kLa04IoSzCJoiyw2YTDjazSCRV3DV7X5KcSpiplCLCmQf3DEg0W3g5kmHgJ+yNG8wUWX9zg1f0/6k56OYFklsNUdq8TOBu1yL7Y+Oz2meMvJ470nugkhfBt+X4tabCPWypY8+fHxKah+7wmGv91qY80xPUcgZfkX+C3KKayQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rKSYeHdv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIiq+y1J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E25EC116C6;
-	Thu, 26 Feb 2026 11:06:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKSYeHdv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD23C116C6;
+	Thu, 26 Feb 2026 12:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772103962;
-	bh=i9nMG+t1+b7oj8i3jnNgfbR0UjtuP79Nb3TiF20hNEU=;
+	s=k20201202; t=1772109148;
+	bh=7G/Xw0vgEtxD1MOJ5DsyAXBv4m0BhjJ7WjEoAC/FN7w=;
 	h=Date:From:To:Cc:Subject:From;
-	b=IIiq+y1JkITjDWEREkj0DCMmIoDWFGbdsKjOtPAgk5/GiWqNry0RNLKS64I4otBbR
-	 6Y+UKpEfX4K/w2fxNfHeYIrxB+f2pcq9Kw8Kf2Wpcf7nENcvYNkyEt7SZDvK6iFLzp
-	 1UK/6sWwhf3BseOgI3Ekod2uOXSYuW117g9Ujkk7b/AhVU5OIVKinj4Rzwqzzmnm3Z
-	 La5lain+2KzmUQ7xQEHovAJWE5LMdKXBNJXZDZSvcP13lgKB0B2EJCLbEkGhqhPY2g
-	 Zc7KtfcNUmRmZgkALE+l2cUXvLz0/C6mmDhyFPnxaXZnfKHGd8ooEzu6P6Qrr0Lidy
-	 j36tRlXmoZV8w==
-Date: Thu, 26 Feb 2026 11:05:58 +0000
+	b=rKSYeHdvxwWcz2zrqb4a+n2StLPH4R6X00yArzd/4tsIc141if/3Av3bqcR0HDAfb
+	 5Ce8WShRiYCo6DazoQW9TcKFETB6MiQoJ2ofWhyfo74o8db9KYZch6o6dbmjcnvu7V
+	 nfWtXqBpsYi+U+tIIBWWJR+RKw77Gdo1MiQ8hU06vW4ziUPny6Dz2NAxUm6aa2exOi
+	 WivIaWdw5NwzmxxO61Mwdgu4Ei5pRTaF9rVHYTUdPxzQb0byznAwrZsgO1eDw38QmB
+	 +D/t/OcgW34Y+qTRvaoX8h/b8YvKtFKWB2EWKw/P3s1+s66JrFyMUXj2d46V500rOC
+	 CAsL3xhl0e59w==
+Date: Thu, 26 Feb 2026 12:32:24 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Fixes tag could use some work in dmaengine tree
-Message-ID: <6e72cc74-943a-4321-9be0-8347544165e5@sirena.org.uk>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Dimitri Daskalakis <dimitri.daskalakis1@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aaA9WOQzW2ylYjRx@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,40 +45,71 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KYKJEaA/Dgm8IwhE"
+	protocol="application/pgp-signature"; boundary="Ic8H4ymLkqF9lgLP"
 Content-Disposition: inline
-X-Cookie: Honk if you love peace and quiet.
 
 
---KYKJEaA/Dgm8IwhE
+--Ic8H4ymLkqF9lgLP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In commit
+Hi all,
 
-  a1adb6de361be ("dmaengine: dw-axi-dmac: Add blank line after function")
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Fixes tag
+  tools/testing/selftests/drivers/net/hw/rss_ctx.py
 
-  Fixes: 82b5c9d6d4de ("dmaengine: dw-axi-dmac: Add Intel KeemBay AxiDMA BYTE and HALFWORD registers")
+between commit:
 
-has these problem(s):
+  ce5a0f4612dba ("selftests: drv-net: rss_ctx: test RSS contexts persist af=
+ter ifdown/up")
 
-  - Target SHA1 does not exist
+=66rom the net tree and commit:
 
---KYKJEaA/Dgm8IwhE
+  19c3a2a81d2bc ("selftests: drv-net: rss: Generate unique ports for RSS co=
+ntext tests")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc tools/testing/selftests/drivers/net/hw/rss_ctx.py
+index b9b7527c2c6b9,cbeb3a38fdfeb..0000000000000
+--- a/tools/testing/selftests/drivers/net/hw/rss_ctx.py
++++ b/tools/testing/selftests/drivers/net/hw/rss_ctx.py
+@@@ -10,9 -9,8 +10,9 @@@ from lib.py import ksft_eq, ksft_ne, ks
+  from lib.py import NetDrvEpEnv
+  from lib.py import EthtoolFamily, NetdevFamily
+  from lib.py import KsftSkipEx, KsftFailEx
+ +from lib.py import ksft_disruptive
+- from lib.py import rand_port
++ from lib.py import rand_port, rand_ports
+ -from lib.py import ethtool, ip, defer, GenerateTraffic, CmdExitFailure
+ +from lib.py import cmd, ethtool, ip, defer, GenerateTraffic, CmdExitFailu=
+re, wait_file
+ =20
+ =20
+  def _rss_key_str(key):
+
+--Ic8H4ymLkqF9lgLP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmgKRYACgkQJNaLcl1U
-h9DeKgf6AjLdliRW1q6BUK4y1BPq1JuPqTwbHx1qSD0VB1V6/mVJPb1kIVvCyrVh
-DAZa4jphhjzVdUQWT/RidnkmT1KFUpRq5G9DkyeaRkH644qKbVLYHXMMHZzieVjV
-s0JSgJI7+OWQA0Q84KlcCb0rtqUO95bZBdy6qY4OF4USDTD9UiX8bCa7ssRSKc6h
-CFSCmrjqJtqmZlfh3dj5DmfT6zt8nNfOTfOHv600L3nONMuwnXtjWq0F6sj8hEo5
-B7JwGotDiORHsjJ29Lsm6M1x7+zmkTYC+WTd4BJme8KFmHREMSKGYrKwyzDtCwk+
-Pm/icHiC0Ydfzumj8VxerRnkm8bltg==
-=y9h8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmgPVcACgkQJNaLcl1U
+h9DngAf8CIjoSMK1++TkATfroGzHi2Md2eVH/xtpF5Xr8SjogurNkuDHHi8SxEAy
+rcfGmNxQtBuqCNELBAhjW3hRTclHR4IWyRomB3NLMpThfH/QoKXOj/BDjKkZoU1k
++KI5IlHBk/r5zDg/OlMUk2AnrZ3TN0RTFsUgyd2cz46uPh+M0PFG2MHdJMQGeb6n
+yCmlNifShHVlFlk59T/bTmsIImaJxXtSFPZiDNcGgO2V+B1P310v/SvMUTgf0W+R
+TiWU4H66fSXJMRnS7M/vwzEZbCq+ppF0uNAO0a3nj01YwumKc57w3cB50XU6Cta2
+6D4UfgdwNnQvvJpVsnFSjSqgqHw3qA==
+=72R2
 -----END PGP SIGNATURE-----
 
---KYKJEaA/Dgm8IwhE--
+--Ic8H4ymLkqF9lgLP--
