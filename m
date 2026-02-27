@@ -1,44 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F76A26B2D2;
-	Fri, 27 Feb 2026 13:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DA828641E;
+	Fri, 27 Feb 2026 14:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772200465; cv=none; b=CX+pTI+d8Y4Xo/LpV0SFk84jaYWvJY4kF+o8C7G3ou5Iqq8ThdaSLNLGabm+Uszl2vopdbdpdYeXiYCaFsEMkBQJS9Sbp72p4G3+4p8J4RymTugSZVHpzPxjyDTQUoXUDd9EMdk5SbJkd6ZqPfoPYVVCH9Q0/40ACwDoXBYxTd8=
+	t=1772200843; cv=none; b=UoeZmsIhsit+6bOe2WV8jTfbDII/iRYJkgiBRUyDrdbucxZiDu0yj7TrXV+5HUbrMVCu7ug+HtsQ2yqzCc1IqYRITC5rL4tqew5nr1g2+iApkOOsfZWXGf583qYo78xFVL3w5LjgO40qwZLJRCTgUGoH/gDlIrdM++C1plqf5/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772200465; c=relaxed/simple;
-	bh=AMjvPTzkrN1sRlxoYkeE7+Ga8oRyi6yLKgdP8QAuuwY=;
+	s=arc-20240116; t=1772200843; c=relaxed/simple;
+	bh=aSticSv3KOgCLg6dp2Hwdk7UJeJ3pZbUlkZ8LzARx5g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RlYB0swgDb0Llssr19UrYDnZW9WFyE0O5gTRvIp8k1NOcZalZE8huZOtSSL0PWhtWX+Bo0A1s7vqfg9NEnwVa1G9ZXFxnDMZLW/971jDsa7smQpfJGaSveBLujepDx9o3HxUc8pI494fopnP60qswrBDZfP1OKbWM9M/3uKbhT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0Wxb1rh; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=D7b0iDLK8gyKl+vAEUtqSggmhDEfmkVeI2ZR/ndWUCb3P7DFHbyRb4v3rPQ2bO8SlhwMNVLKW/mRkNhjXnLJXszPFjT3+jvz8l4oF/PmuEUhM8jEqFx651TqBNmkftZ8fRyHbu62LtqtYllun39rn5QwkRYN0+AUWp8Cvm6snY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2MNH5XG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0Wxb1rh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1E7C116C6;
-	Fri, 27 Feb 2026 13:54:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2MNH5XG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E67C116C6;
+	Fri, 27 Feb 2026 14:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772200464;
-	bh=AMjvPTzkrN1sRlxoYkeE7+Ga8oRyi6yLKgdP8QAuuwY=;
+	s=k20201202; t=1772200842;
+	bh=aSticSv3KOgCLg6dp2Hwdk7UJeJ3pZbUlkZ8LzARx5g=;
 	h=Date:From:To:Cc:Subject:From;
-	b=k0Wxb1rh5xllwE7Q0RchFMSdUwcZ3vGpQFK1A71xdK5k2jXuUesWT2ViE/Jt4tZkU
-	 lPCS90TfPPYAhcFDYcaP8QakshdgsXw1LNiMii8fNEzB1dVrDpNq5pX6ddkOAzYZ3U
-	 EMr5OT5gUPfMEtbhIWhP3P0DyPSTrIzsnBGDPMpjBAUtdnzY9UIsKeXFbsEXTC2ogq
-	 z2bxx2jMYCsIBTtaDW5n2gg5tM2UL+uaEFt97/wQ2WsfFpXFrffoKkrDrfDaF8eNIY
-	 0fyX++5ILpMRaWd1fzGW0vbiQwk4+dhvNYV5yScvJsC5GcEl/50FHbv00X+KRlkEks
-	 pJZ07z1vtynfA==
-Date: Fri, 27 Feb 2026 13:54:20 +0000
+	b=j2MNH5XGIre3m9jdBqGru8on96AXFwTlfp2/fO4gNciaRyX0yOgr9CJ2ZQgJd3Aom
+	 JQKayBGvKid0ClhPsVRP8QscfJJ3mcTUtGBVXlrqHwkFzJYSGAE9lCWZ2V/FxmdFt6
+	 /gZqW43aYLhyAzm/lKlN2cJ14DgenO0RI7o+Mx3rYYQ00ap2MSjE1Zm+POQIMtHiPO
+	 Ore1j0Wae6cWY399cFraRuiwhtNGAbQeR6UVzFYDVySHMtpNTwX9WW+QhFNg0Dxcoa
+	 XXu30rGXFQVjbmQTAur8Gc63eVfPP3ftQK/ygnjRGs7QwWMQMfPZPRNsxC8+rniFCp
+	 8fc0E3/KP31XA==
+Date: Fri, 27 Feb 2026 14:00:39 +0000
 From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Byungchul Park <byungchul@sk.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Subject: linux-next: manual merge of the net-next tree with the mm-unstable
- tree
-Message-ID: <aaGiDINfnUexT9Px@sirena.org.uk>
+To: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the drivers-x86-fixes tree
+Message-ID: <aaGjh51jAbyO15Eo@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,97 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="B8qdWzXhJo42/F/5"
+	protocol="application/pgp-signature"; boundary="4S7zHf4dB1UoExeW"
 Content-Disposition: inline
 
 
---B8qdWzXhJo42/F/5
+--4S7zHf4dB1UoExeW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Commit
 
-Today's linux-next merge of the net-next tree got a conflict in:
+  729ffcffa7306 ("platform/x86: hp-wmi: add Omen 14-fb1xxx (board 8E41) support")
 
-  include/net/netmem.h
+is missing a Signed-off-by from its author
 
-between commit:
-
-  0a8a9198a887f ("mm: introduce a new page type for page pool in page type")
-
-=66rom the mm-unstable tree and commit:
-
-  fd6dad4e1ae29 ("netmem: remove the pp fields from net_iov")
-
-=66rom the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/net/netmem.h
-index 85e3b26ec547f,a6d65ced52315..0000000000000
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@@ -93,38 -93,11 +93,21 @@@ enum net_iov_type=20
-   *		supported.
-   */
-  struct net_iov {
-- 	union {
-- 		struct netmem_desc desc;
--=20
-- 		/* XXX: The following part should be removed once all
-- 		 * the references to them are converted so as to be
-- 		 * accessed via netmem_desc e.g. niov->desc.pp instead
-- 		 * of niov->pp.
-- 		 */
-- 		struct {
-- 			unsigned long _flags;
-- 			unsigned long pp_magic;
-- 			struct page_pool *pp;
-- 			unsigned long _pp_mapping_pad;
-- 			unsigned long dma_addr;
-- 			atomic_long_t pp_ref_count;
-- 		};
-- 	};
--=20
-+ 	struct netmem_desc desc;
- -	struct net_iov_area *owner;
- +	unsigned int page_type;
-  	enum net_iov_type type;
- +	struct net_iov_area *owner;
-  };
- =20
- +/* Make sure 'the offset of page_type in struct page =3D=3D the offset of
- + * type in struct net_iov'.
- + */
- +#define NET_IOV_ASSERT_OFFSET(pg, iov)			\
- +	static_assert(offsetof(struct page, pg) =3D=3D	\
- +		      offsetof(struct net_iov, iov))
- +NET_IOV_ASSERT_OFFSET(page_type, page_type);
- +#undef NET_IOV_ASSERT_OFFSET
- +
-  struct net_iov_area {
-  	/* Array of net_iovs for this area. */
-  	struct net_iov *niovs;
-
---B8qdWzXhJo42/F/5
+--4S7zHf4dB1UoExeW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmhogsACgkQJNaLcl1U
-h9BB1Qf9HlbCj0VUO362KK37n6HFhXaEmxth6wOpaEIDm76hjBl494XxP48Rvbzr
-pI269EOusl05dwESwsN6vA2ItoxMorQGSAR8+dZLjFDPriR7vqWCpYaixkMEwZ4o
-KvbER5niIpv5QOCmz/427xr4vMvjsNcHJ9O+xMZidC9/C61EdfiTV4KUyUpU2l7l
-vk7NOx8oClAdFdPXhQvI+7iMhNno15J9UPHsqLdBoTCoa1VkE+gq/yHt3uPYHdmX
-SYTsC3OaPZ5eQQn3DtOGmDLLeWnEOhvOGHGRD0f+2FWDtqqY5axUibi+8uQDaMdy
-AcBvWeyXHfbsNGR/drsXozD9/LmMhg==
-=bZ9K
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmho4YACgkQJNaLcl1U
+h9DftQf/XonBhFNAnED6Ur5PvYGCIMyFVlqAiUkLd/yoBBJVCdQ8mBopLBXtwiXK
+UXEUAZUKjaYs6nRC2QSsDHzQ8YnQVbyIVO7G/afB5N1tL+WFYE1UfXcDHDQzT0Rp
+TBBsdPc+96XUB2sbpqr2WmMwQ2nJTzGkXi7/cQffPZegBSSwhqo4z9szwNG5bI14
+yJtF9ZSVRRGFMW5+47lE2MlC6K4Gt2VmNvK1n8JL09lEEq/MLul3gCCOfLD9RcrB
+S7q6+Zsc0ZkfRHMGZiN9iX/nG1LxLb15iqTN/f+Ebqy/U2035LPBScrZI+E7syK9
+12/e+4t6UgvAU7ZgmDTY4Sr1a+Gwfw==
+=X822
 -----END PGP SIGNATURE-----
 
---B8qdWzXhJo42/F/5--
+--4S7zHf4dB1UoExeW--
