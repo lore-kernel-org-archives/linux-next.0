@@ -1,40 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E53FB04A;
-	Mon,  2 Mar 2026 13:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DE823183C;
+	Mon,  2 Mar 2026 15:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772459801; cv=none; b=WW6HnkEI8iLm7O2SzUg7ecsWjzsicIWLfyaHWm6RSRScPYFqKX9RuSC6Ygydm96VDcH8cPddZkExk2dE67wH7xJKeYynDZok7dx66cS+MR/nbmm4Nh8fGsex3tGTyxOSZ1rToFBa4DqsNJ6XQ55Cpc8msUkxrsYxV43ndD8uW0g=
+	t=1772464405; cv=none; b=t1x8nMEKJblnkfz6XeOz00+ohRlc8C4kvl6UrzXmkN/TPxGXrCm/5HvrH/S4OnMAvjAsLcS+IGbaN4s//hh/zrWsAYehW7MsVjGedGuuoMSY059YMoLVcMyy5jTnNzO0KL7LFvZUH/osaTumFcTGclDZN+lg7YAZcKJ+C9H686A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772459801; c=relaxed/simple;
-	bh=K/LfMhKwld2nMtGfQzxwkhSiv4tTLmGCq+XWGsTZb5I=;
+	s=arc-20240116; t=1772464405; c=relaxed/simple;
+	bh=v3/qwEQUbFTcKeMyPh28L7MbrIXacPwocp/0ZGtyBJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IFyKWEUZt5O5M+U9IoAPDNTUp291IWPFJLSOYUq+C5FhwU2k2c8V1iopnfpPd3iTwggp5kGBWsiXLy8Silidmdrd2xE4fpVPPgOZrEcNoyPsUsNcV+yKsKCBspfL9Ov0bbsfDxghZN0pWcG3t5SjxRsS5dVztF3ct1YqJrdvU74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBtoMyuD; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=YTYe5YslLvKjAYfOWlXdYUgkkbjEYbcsVgFGxPplRTiy78447sY6QHCviC/tZPNaHxONnjDJrzPJPewD/28iFWPqYl+F8gtLn6a3N9eIDrR3LLcmo8P9kjD/qkSInLavm8MS6IMAlxTN4EKjVzbQxAfE7j08qQyVTLGNHJXiBa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d79ov7X/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBtoMyuD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A1D9C19423;
-	Mon,  2 Mar 2026 13:56:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d79ov7X/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3112C2BC87;
+	Mon,  2 Mar 2026 15:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772459801;
-	bh=K/LfMhKwld2nMtGfQzxwkhSiv4tTLmGCq+XWGsTZb5I=;
+	s=k20201202; t=1772464404;
+	bh=v3/qwEQUbFTcKeMyPh28L7MbrIXacPwocp/0ZGtyBJc=;
 	h=Date:From:To:Cc:Subject:From;
-	b=cBtoMyuDmTlIG9P0fhZxAIDm+0qnEWdsstz5N1/gPC50+FZeIfttn+56zopk9SZ/V
-	 MWeVLLp148B2BVJLbdof0De6L/vssHcwYmI2hb8gdpi8qZM6dfkNItYOLRRIq6cosQ
-	 Z4MBiZv7op7a80aS7HV7ZUN3icWlysz5qdqLLe7WuYtu2wlqnyWTzLKttfauJ0C8lY
-	 EoF8U6RR/8UF02ok7Y03/vSHZaBW+BAy6XBuJApVwzndJGkGxRjI0vu6hK+dDFbvhA
-	 nO6fj6Ce467iZhMTgd8Kx4V3TxvdgFRHX77OGZq3wXyRs/3/CAQQ9to9zwK3Tjm8OD
-	 j8q7/UVitmGIw==
-Date: Mon, 2 Mar 2026 13:56:37 +0000
+	b=d79ov7X/zhb6YOcvW1QvG5PFkOYbGFXlYp5nc/yjJrCb+rRSD9eof85f7RVSeUAKv
+	 f/6D9Iq1qwIfS0wdgUOOF7kS96UycswqarLC4lDsaxG2f3DjCzga2jw1HfVs74dLLr
+	 hYE3HFf+tb2CRFPrx8UpteAZ/0lRzB2W8Ct4C0S7jeGwok2wYV5hsjfO5CbWcFNMZ/
+	 4GRoqvA3BTYSJZTBae/DjL688hdbpFz6GkM2UBsf5buuAX84Or/0V/yN5QAVkRlCJ4
+	 2uRkurcKmtRUF7XakeUmOUIqdPGmQy2+6Jln0QOC98258sbyIF8aGxgJ1yHmdmhbvd
+	 mMsLrc5x5b11A==
+Date: Mon, 2 Mar 2026 15:13:21 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Denis Benato <denis.benato@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the hid tree
-Message-ID: <aaWXFVxygHFpKNxv@sirena.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -next status as at v7.0-rc2
+Message-ID: <885cdd60-f272-48bd-ad98-4acd0de352c6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,51 +39,55 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0b6HJuZAUosO7Fhd"
+	protocol="application/pgp-signature"; boundary="Hi3RdtsBASxOfnzs"
 Content-Disposition: inline
+X-Cookie: You love peace.
 
 
---0b6HJuZAUosO7Fhd
+--Hi3RdtsBASxOfnzs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi all,
+Hi Linus,
 
-After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+We now run rustfmtcheck as part of the build.
 
-/tmp/next/build/drivers/hid/hid-asus.c: In function 'asus_has_report_id':
-/tmp/next/build/drivers/hid/hid-asus.c:732:22: error: unused variable 'err' [-Werror=unused-variable]
-  732 |         int t, f, u, err = 0;
-      |                      ^~~
-/tmp/next/build/drivers/hid/hid-asus.c:732:19: error: unused variable 'u' [-Werror=unused-variable]
-  732 |         int t, f, u, err = 0;
-      |                   ^
-/tmp/next/build/drivers/hid/hid-asus.c:732:16: error: unused variable 'f' [-Werror=unused-variable]
-  732 |         int t, f, u, err = 0;
-      |                ^
-cc1: all warnings being treated as errors
+Trees being held at old versions:
 
+  hid 	next-20260226	(Trivial allyesconfig coverage issue on Friday,
+			 fixed but another new -Werror thing today)
 
-Caused by commit
+Trees with signoff problems:
 
-  Fixes: 0919db9f35832 (HID: asus: always fully initialize devices)
+  drivers-x86-fixes	(missing author)
 
-I have used the tree from next-20260226 instead.
+Non-merge commits relative to Linus' tree: 2601
+ 3030 files changed, 228180 insertions(+), 43394 deletions(-)
 
---0b6HJuZAUosO7Fhd
+Top trees adding commits to -next:
+
+  191	drm-xe
+  188	drm-intel
+  165	drm-misc
+  124	mm-unstable
+  117	net-next
+
+Thanks,
+Mark
+
+--Hi3RdtsBASxOfnzs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmllxQACgkQJNaLcl1U
-h9BrOQf/aeXi4JsxWg/oIiOKiz7wFJc0bM92yahp7XxKrvvkyFDLdCRKLDRiJYmV
-3YDNmez92Pr+kiB3KN//eLxfH0m3Wo2y6fsAKCQG7cRFzwM0EiP3F38lUSFng5Xb
-+cj8HUchavAZMBKkUvy2VgJKXVTLOMMsKCLOugF/lFbLlev6VJ7S/3bkPaBEidvK
-RfPncAqdmhMLEpyhmoUy3GeFnKyecGr7JcpSWrhQiWo5+vml1jt26DA9lbFQGItM
-IBQ1a+dDbfejxHRRFeTMwZQrjXqVFJVVZ/6ui7eWYhCPwfXLQyjpsAcHZHuAd3U+
-wigo1OakWycGzbo07/w87hmwGmfWBw==
-=G+o5
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmlqRAACgkQJNaLcl1U
+h9DdKwf/fAWOZyTITlIRb3OTov5Hu1kHm0sz0WbZaIlNTyIxEoAUlv6q90YLlPru
+MOBWDZM6p/ShARMGmb5imSrj/xHXovupiv4Ts7Op7mKsMMsQU0HwlgqJ/i5Ka1py
+LfqlMMVWjZhJgY2zS7Zi5ilGE6MN/mUakII2gA1C6a18ZiZ47GFdcxpSm8ruar1E
+qt1XiLC6pJjprz95j21loHq/ZjuDnuEWePPPqyJlwnDHsiBF6ATB+lf/CjT62SHF
+0KNKXNi6/4EGmOeX3UlseBbhWnPQwSIU1aSgsQEDbOKV5UDfjL+cHltph0T0Pckz
+wiGSL/lJLZZ1B+kPKMoPKXQVFaf1Mw==
+=Pf8I
 -----END PGP SIGNATURE-----
 
---0b6HJuZAUosO7Fhd--
+--Hi3RdtsBASxOfnzs--
