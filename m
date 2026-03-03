@@ -1,124 +1,368 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7288A384CBF;
-	Mon,  2 Mar 2026 20:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5DA280037
+	for <linux-next@vger.kernel.org>; Tue,  3 Mar 2026 02:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772484549; cv=none; b=CFVmA3LfQqg/nemYSpKOmN5gI4dNJ48m2Gr5nkBNO24O6dMxhmSoKW37tnpb74SWiFqYQnFKEgUYMGOL95jP94ZEjsJ+MnU0UlVwi+xh1qZFW7J3UBhrHPiDsdscbfLomwrolcP+pIi6BcYXCl1CXKIJhVUdlX8Ao3szifvZ81c=
+	t=1772505053; cv=none; b=spWktGjrA3A9Hf31jL0V0Pz4mQ8TNKj5QkWIMxFAqwKz54V2QRrli1pURd1Vu6JjrdO7xkKnZwYNrL/4jO/7R8/Sp5vZsfogy2uEX/HJFxER5mVSWG5q3ltBchSK7Ps+U0HLGng5QFi8Phlqi4v77FmEM4TGgQq+YmjDzKtvtzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772484549; c=relaxed/simple;
-	bh=B3ZA9o5zRO2yOzXEjcCbY3SyEa0cr+byBzCZz1FWVSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oGUNckHEj2cxPI2ckdtoQ94zonWgNJcurmA/Mj9DOytDPLwiHfjDZpoghEG4CgGmdScr2J5oKBN9K4W4ekc5n8t2SLtU1/GXbpU4+HCcP12Cfsra5KLRE8jOM2EY4uqJgKpqpnLuQSlNHVl8CupSXDCtnXWXT27RQTw1KRFe4ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIhx94tz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772505053; c=relaxed/simple;
+	bh=wzUhFRQMVmMtFLazlsPkjLgXx1Vt6DJDFoImtk4KJb0=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=MF1Nze07P7B5MypXcfDjsj6P557X9ZqzDU5DW3MaGocXCugJTN0vkQAQCZdt1P6nwdlMfKE1AdBpXUlvjqJwh/fFZCfKC0/8CC5QH3kKKFN9EmN7m1oYbvobsEm0Qv+lpeFoaidr7SQUx4S6wRxrpgaFNvswTRmCz2Y5XXWDdCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=14FTi1uS; arc=none smtp.client-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIhx94tz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6FFEC19423;
-	Mon,  2 Mar 2026 20:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772484549;
-	bh=B3ZA9o5zRO2yOzXEjcCbY3SyEa0cr+byBzCZz1FWVSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tIhx94tz3/cMKL2ABo3XqtxfzJfDq3/32HQ2MaLoxvOIYAA2u/7pDHO7p4lxEbCu4
-	 6Psq/0w8VEjYZ1GnLCsqJd2ayH9WAki0rJenNYpPYFJwnSVj52gONlhtHuepsCg/RR
-	 YejxX2Mbx2Yd4/wKMlhEB75ipQNJJTt8DhXGf9OkjnVdBgUqzQbmzN+0qxsY1BJxso
-	 5/pPqb7B8xiGO/xk1ijNvrbXdmsTAZ4oet005wtapib7nEETgGTYOL1CXL1KNZtlGg
-	 EgwW98wLV2AoBvAyr7X4KucIKrtxUPLU1a26fu1tKi8yGBwZKbISx1PLSbZBYUCZKk
-	 DM2d/xDtQF5bA==
-Date: Mon, 2 Mar 2026 13:49:03 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Nicolas Schier <nsc@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Rainer Fiebig <jrf@mailbox.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: -next build error due to "kbuild: Leave objtool binary around
- with 'make clean'"
-Message-ID: <20260302204903.GA2007498@ax162>
-References: <20260227-avoid-objtool-binary-removal-clean-v1-1-122f3e55eae9@kernel.org>
- <03045f41-fe4c-44ff-b01c-6e325d82255a@leemhuis.info>
- <aaXofbe_5QGYYuMB@kitsune.suse.cz>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="14FTi1uS"
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-2b6b0500e06so6210694eec.1
+        for <linux-next@vger.kernel.org>; Mon, 02 Mar 2026 18:30:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1772505051; x=1773109851; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+RqdO3GhHFHqGnOjZ3fHsjhrQyJNaCj5t4YsJtDCTKM=;
+        b=14FTi1uSEVB8P7Pxyr8kKgtE1YL3kyz54/S0xFYWA5y27hXB47DKBEowh5rmL/Leev
+         MoMZhW5tVs6IP8usIuEqZmQiS10TvJ79eh1um25adMa1ZQn8MqV6xoBn3lB4Wel6udTi
+         riTz1HBlQqQ/PaZVXZD2t1tkNCCLATVFlIXDP0NIrlt1AB6f9ivLIbt24+QXl6LdAyvl
+         +xvaStnPVVB2h1a/t1y42ZRcY2vM/7ivVdqEy0LZzt+p76l1OuhowS0SrA8POzqmUxzE
+         BSevKIkyHuetE+bbJBl2P5hbxcolOC1ddAhWrCs5zgPav3lAe6/BvOH3kbxyytsGa2D6
+         FTew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772505051; x=1773109851;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+RqdO3GhHFHqGnOjZ3fHsjhrQyJNaCj5t4YsJtDCTKM=;
+        b=O7omjGNmWImFcEkfMiEPXSq5mAMzSL8QSNf/rFYos4EhbRtN7PM4WZPtgHSv9xmZTC
+         NlgFCjQX05//78LJu0qecfwuizz2Do4PSJyGt8MeZxtmcXxYXj8AIDNotfD1OzzUHgvh
+         E4YwxDL3aOnOWX9n5PsRLO3OprmVokU2mvxGpeuuB2YQPYnbRyxE7qcd0Dup5eovO9xJ
+         6AYDWSGIDbrZMM68KTDHWVFj5Bnr4/9Bri4++JiG35gvNnSy5UQb24MH1WWdZXJgs2Kr
+         l6tyquctVNw+/C+x66ifpcwWtd+eJyWFzyf3auTjEE1fxHN6J6051350bk2eoLh9i8m2
+         ytYA==
+X-Gm-Message-State: AOJu0Ywr5uBrOELwfgGKC9DMKWbAeENrhwJHumALUpoafsRWNI5kuVc2
+	Y6ABU6iZMCYdG+kwB6kCm4r+jNJFlUPNYvtS6ceONVx0dSQAQLZfIcD2/BRBb1c9y9We7/x1n8m
+	ub3bh
+X-Gm-Gg: ATEYQzxyv6IUHL+A06MGL09m19hPkdUQFN1O1tyE82NdfYdHm8DDupr3ujTaOsqOXSK
+	7EJ4hYt2xBvlG1vLTFMkN4XImLNP3GrH1/6wpiVae+5XUjkJH8K456wMZkvHmV/f4c+3JKgwRtH
+	AfCY9b5/Hp6sneeTmM7RwZcQYJf5og9fa9QyRktx/PtTTNPLfSiqviSWeWgUrcBFSP/Ibtg5uK2
+	OkId/IyQV0656G2a/I2jU+GgfeTvDL/ywKYlT+9he3IPXQizdeF4RFmNijLG2sWTLXOgnfwBrV/
+	lxhU18OtwgxXVF/cF0y30W1azgQS5XD2sjlQoLtI4d9ecZYJIhfluBAF7keeDENQzcMO2HYEoj3
+	EM1+78/9H+ciFfC/c4+cUsY5JMHed5VvRj8q8fDFrt8XPEp3nROReP3QBwo9SgN4ROJ1+z/y4ww
+	l3BXA2tWXUCm/SpWtG
+X-Received: by 2002:a05:7301:4195:b0:2b7:4157:9afc with SMTP id 5a478bee46e88-2bde1d6f3d0mr5925942eec.19.1772505050739;
+        Mon, 02 Mar 2026 18:30:50 -0800 (PST)
+Received: from c9e0f4cb7c74 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bded67cce6sm9645266eec.6.2026.03.02.18.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2026 18:30:50 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aaXofbe_5QGYYuMB@kitsune.suse.cz>
+Subject: [STATUS] next/master - d517cb8cea012f43b069617fc8179b45404f8018
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 03 Mar 2026 02:30:49 -0000
+Message-ID: <177250504953.201.3866640938640386325@c9e0f4cb7c74>
 
-On Mon, Mar 02, 2026 at 08:43:57PM +0100, Michal Suchánek wrote:
-> On Mon, Mar 02, 2026 at 08:18:17PM +0100, Thorsten Leemhuis wrote:
-> > On 2/28/26 06:40, Nathan Chancellor wrote:
-> > > The difference between 'make clean' and 'make mrproper' is documented in
-> > > 'make help' as:
-> > > 
-> > >   clean     - Remove most generated files but keep the config and
-> > >               enough build support to build external modules
-> > >   mrproper  - Remove all generated files + config + various backup files
-> > > 
-> > > After commit 68b4fe32d737 ("kbuild: Add objtool to top-level clean
-> > > target"), running 'make clean' then attempting to build an external
-> > > module with the resulting build directory fails with
-> > > 
-> > >   $ make ARCH=x86_64 O=build clean
-> > > 
-> > >   $ make -C build M=... MO=...
-> > >   ...
-> > >   /bin/sh: line 1: .../build/tools/objtool/objtool: No such file or directory
-> > > 
-> > > as 'make clean' removes the objtool binary.
-> > > 
-> > > Split the objtool clean target into mrproper and clean like Kbuild does
-> > > and remove all generated artifacts with 'make clean' except for the
-> > > objtool binary, which is removed with 'make mrproper'.
-> > 
-> > Thx for fixing this regression, sadly this caused my daily -next rpm
-> > builds for Fedora to fail on x86_64 during a "make mrproper":
-> > 
-> > ""
-> > kernel.spec:2485: InitBuildVars: Copy files
-> > + /usr/bin/make -s 'HOSTCFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   ' 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' -j32 mrproper
-> > find: cannot delete ‘/builddir/build/BUILD/kernel-7.0.0-build/kernel-next-20260302/linux-7.0.0-0.0.next.20260302.121.vanilla.fc42.x86_64/tools/objtool/.check.o.cmd’: No such file or directory
-> > find: cannot delete ‘/builddir/build/BUILD/kernel-7.0.0-build/kernel-next-20260302/linux-7.0.0-0.0.next.20260302.121.vanilla.fc42.x86_64/tools/objtool/.elf.o.cmd’: No such file or directory
-> > [and many more like these]
-> > ""
-> > For the full build log, see:
-> > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-42-x86_64/10183736-next-next-all/builder-live.log.gz
-> > 
-> > This is almost exactly the rpm spec file that is used in Fedora rawhide.
-> > The sections that causes this looks like this:
-> > 
-> > """
-> >     %{log_msg "InitBuildVars: Copy files"}
-> >     %{make} %{?_smp_mflags} mrproper
-...
-> Or does the objtool_clean run multiple times in parallel, once through
-> the clean target, and once as dependency of the mrproper target?
 
-More than likely this based on my reading of the submake processes from
-the build log. For what it's worth, I cannot reproduce this error on
-either a really fast or really slow build machine but it should not be
-hard to avoid by using 'xargs rm -f' like the rest of Kbuild does for
-removing things, which should suppress the error if the file does not
-exist. Thorsten, could you see if this diff makes a difference for you?
-If so, I'll squash it in with a note.
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index 50d3e38e6137..76bcd4e85de3 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -142,7 +142,7 @@ $(LIBSUBCMD)-clean:
- 	$(Q)$(RM) -r -- $(LIBSUBCMD_OUTPUT)
- 
- clean: $(LIBSUBCMD)-clean
--	$(Q)find $(OUTPUT) -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete
-+	$(Q)find $(OUTPUT) \( -name '*.o' -o -name '\.*.cmd' -o -name '\.*.d' \) -type f -print | xargs $(RM)
- 	$(Q)$(RM) $(OUTPUT)arch/x86/lib/cpu-feature-names.c $(OUTPUT)fixdep
- 	$(Q)$(RM) $(OUTPUT)arch/x86/lib/inat-tables.c $(OUTPUT)fixdep
- 	$(Q)$(RM) -- $(OUTPUT)FEATURE-DUMP.objtool
+
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/d517cb8cea012f43b069617fc8179b45404f8018/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: d517cb8cea012f43b069617fc8179b45404f8018
+origin: maestro
+test start time: 2026-03-02 15:27:08.680000+00:00
+
+Builds:	   57 ✅    0 ❌    0 ⚠️
+Boots: 	  174 ✅    8 ❌    0 ⚠️
+Tests: 	12820 ✅ 1971 ❌ 3811 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig+kselftest
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.uevent
+      last run: https://d.kernelci.org/test/maestro:69a5b4317136242fe3914f2b
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+      - kselftest.uevent.uevent_uevent_filtering
+      last run: https://d.kernelci.org/test/maestro:69a60d267136242fe394ab94
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+      - kselftest.uevent.uevent_uevent_filtering_global_uevent_filtering
+      last run: https://d.kernelci.org/test/maestro:69a60d267136242fe394ab95
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_bus_f0000_pruss_30040000_interrupt-controller_20000
+      last run: https://d.kernelci.org/test/maestro:69a613437136242fe394d1b5
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_bus_f0000_pruss_30040000_pru_34000
+      last run: https://d.kernelci.org/test/maestro:69a613437136242fe394d1b4
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_bus_f0000_pruss_30040000_pru_38000
+      last run: https://d.kernelci.org/test/maestro:69a613437136242fe394d1b3
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+Hardware: mt8183-kukui-jacuzzi-juniper-sku16
+  > Config: defconfig+arm64-chromebook+preempt_rt
+    - Architecture/compiler: arm64/gcc-14
+      - rt-tests.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:69a5b9a77136242fe39173a1
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - rt-tests.rt-migrate-test.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:69a5ba727136242fe39174a0
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_h265.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69a5dafd7136242fe3928dc4
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: mt8395-genio-1200-evk
+  > Config: defconfig+preempt_rt
+    - Architecture/compiler: arm64/gcc-14
+      - rt-tests.sigwaittest
+      last run: https://d.kernelci.org/test/maestro:69a5c3c17136242fe391bf53
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:69a5e7bf7136242fe39301bc
+      history:  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.alsa.alsa_mixer-test_name_fslimx6qudooac9_22
+      last run: https://d.kernelci.org/test/maestro:69a5bf737136242fe39192fb
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: imx6q-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.alsa.alsa_mixer-test_name_fslimx6qudooac9_22
+      last run: https://d.kernelci.org/test/maestro:69a5bf617136242fe39190f8
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_bus_f0000_gpu_fd00000
+      last run: https://d.kernelci.org/test/maestro:69a613437136242fe394d1cc
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.cpufreq.cpufreq_main_sh
+      last run: https://d.kernelci.org/test/maestro:69a5d1c47136242fe3923539
+      history:  > ❌  > ✅  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_h264.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69a5dac47136242fe3928a1b
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: monaco-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:69a5c0af7136242fe39197a7
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:69a5c0e07136242fe39198e0
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:69a5c0f67136242fe391991a
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.cpufreq
+      last run: https://d.kernelci.org/test/maestro:69a5c0dc7136242fe39198d0
+      history:  > ✅  > ❌  > ✅  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.validate-fluster-results
+      last run: https://d.kernelci.org/test/maestro:69a5dae27136242fe3928c5f
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_mt8195-sound
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927d5c
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c104000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cfb
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c105000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cfa
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c106000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf9
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c107000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf8
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c108000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf7
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c109000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf6
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c10a000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf5
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c10b000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf4
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dp-intf_1c015000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf3
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dp-intf_1c113000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf2
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dp-tx_1c600000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cf1
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_edp-tx_1c500000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cee
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_edp-tx_1c500000_aux-bus_panel
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927ced
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_hdr-engine_1c114000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927ce9
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd8
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000_jpgdec_0_0
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd7
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000_jpgdec_0_10000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd6
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000_jpgdec_1_0
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd5
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_1a030000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd4
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_1a030000_jpgenc_0_0
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd3
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_1a030000_jpgenc_1_0
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927cd2
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1c000000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927ca9
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1c002000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927c9f
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927c7b
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000_video-codec_10000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927c7a
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000_video-codec_2000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927c79
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000_video-codec_25000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927c78
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_1a020000
+      last run: https://d.kernelci.org/test/maestro:69a5da4e7136242fe3927c77
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:69a5c0aa7136242fe3919791
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
