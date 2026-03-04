@@ -1,109 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sphereful.davidgow.net (sphereful.davidgow.net [203.29.242.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B4434252D;
-	Tue,  3 Mar 2026 23:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF68937F004;
+	Wed,  4 Mar 2026 09:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.242.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772578951; cv=none; b=LLxhlaGfkQFbW5/seuegMiJc7czY5qRWVCm5sAgm0LYbzmL7Rsb52jIOFysTHPUMDRPOv98x6hntOKei8/04781y9nDiv9dqtfxx3/3minbIMkDzpw0LKab2to4iSHJkZ92uhIRwcgy7thAxBk4s/hf9120Er3COVWSUb6sTJzs=
+	t=1772615790; cv=none; b=olITQ1T/lsczQxgAp+GIydozpvljUPsmJvph/Xt4J4GB1ddcXUU5D9bRIx+qLWKC5brmk59ikJQqgYsb2y9lxfU93aaCbccmxG1BXtf9qAsV/VDDyqtXhUURkV8WrDgahwHtfHGxzXwcMI00mdeItUNGQoIMECrPOVjb0EBQObo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772578951; c=relaxed/simple;
-	bh=LB8CL5q9eGDLCjX7+/HPwDbCV78Sg55CFzTwPVYy7WI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EHTagKnF/wfJCmZUFXWT/coL3iN+DxD0Nlk7n6NB+hHf8UoOUargN+Q2RWqc9DTitr/wHm0CARkykgxojms+Cfp/VNKuzDXwjpGcewSCfrpPADvu8nRVwCOLQboH9LcNn+k0mjPbu9eMddLUkH4nEiwx1TpRdAx/kNsDURVtj5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzouPMpi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772615790; c=relaxed/simple;
+	bh=p1S8W2bDBnZOMR5TVn0SFhPfN4ayTxVH96b3QKO9V9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K/uxKEqaj4whZF9DOvgMUlz3fptI+bqcn3WBVA1vclQbkBKGDIFMNE80eq8O5bva1zcP3ljDZZvN5Oeu860v45wC2Ealo60PDzrUVwVdZvjBFpNzXMN/p5AV3GRzoA/7LyLV+eQZaXmX8osbyv7rPlSWu9XeObScIQAPlmkfLh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=davidgow.net; spf=pass smtp.mailfrom=davidgow.net; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=jSobDkIC; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=NQ6vilbC; arc=none smtp.client-ip=203.29.242.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=davidgow.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidgow.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzouPMpi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2621BC116C6;
-	Tue,  3 Mar 2026 23:02:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772578951;
-	bh=LB8CL5q9eGDLCjX7+/HPwDbCV78Sg55CFzTwPVYy7WI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WzouPMpishaBH14bl49zR3ockQO4x1Dp8W9DXjJ3Fyx8pw6/JdUJVLd8MH1C8kft4
-	 Jl+eaW2xtZOoDxFV5KZph3cDHw42w4RGn7I9yMXh/LilzbmHxKiDbIYx5+JLm20el8
-	 2medXnExP+A4QAMiG94U5bo6qKMpo6hU4aCV8ZKPZLfRms4RqrNmpafH9j+lrySDf1
-	 XEEBnmFRdEMYcvbzR5NoSnbB7RHe9mplcVFDNuWslz/VLjwyCnhyB29qIePIXK/0lO
-	 oLjqUbNtjto8JzNDBrOR3Ivety0s1bz8MrZpy08kqLP8s+UxH/Q3dSoFs73wLq/9H0
-	 SpEZtvDeTGAkA==
-Received: by venus (Postfix, from userid 1000)
-	id EDE79180D07; Wed, 04 Mar 2026 00:02:28 +0100 (CET)
-Date: Wed, 4 Mar 2026 00:02:28 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Davis <afd@ti.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Message-ID: <aadn_VyAcUIIFTwn@venus>
-References: <aaboD-MS-2BbfEty@sirena.org.uk>
+	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="jSobDkIC";
+	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="NQ6vilbC"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
+	s=201606; t=1772615780;
+	bh=p1S8W2bDBnZOMR5TVn0SFhPfN4ayTxVH96b3QKO9V9M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jSobDkICCCVCEynas6OJt2OdpgFaTjqmbx9+AtjASUwYrUANeKarMeqOB2djugrMh
+	 DCUqr1o95/PZhY7/wSNqaaLa1wPQ9Cit/vV/DUvmDq/m09adbxmVm0nnY/UtP3cUVP
+	 AU2SN20mM5m0vGCsv/Fh81fUUi1EXj6yt0CtClFUof2ujaGoaxWcLOs1oQTUAvDXSZ
+	 sfgnFs6lQiBwAij+v1jJdhferL0OIxdlBPO5cj/IPDCoLGtGPNBwe8Ti0SYf8bG1To
+	 hdyOjGLGQa8iMEm2NrVsgd75znDBx+0wrPF6n2EXf9EJRXSBTm0ndl3EG64mhOTGsD
+	 fT2aTJAaLFOhFbmDqroan0qPd/ykdSunG3OWxAsziwo+M/GHnfbgsfGyOHkGjwZmm8
+	 C6TTLZ6ozb5JjVXdmYNCnH/Cy97cg0uJkVLYkyb2Wf43EQoO7nxFlxQBdGDb+9/VNo
+	 PaG2SAR+bYvme30Up12+UE4J//BNMl1HYVLB9wLZKfwra/Vd+n8R0a86UWJACSrJ65
+	 DYbr8ich48h4TvSWu+xk+dAHasM/nchZQmO8t7t+PwIndSsr/3OU+DTQyJUKEX5ZI7
+	 +UPG02AAxT+uiph3L4L5toWe/zuno6jqTfzTAH79HayqVFPXZ4LVHtkm6Wu8Pp6j6e
+	 ko7Snv2/gk8gkgyQtx91rgOA=
+Received: by sphereful.davidgow.net (Postfix, from userid 119)
+	id 507BA1E7BD8; Wed,  4 Mar 2026 17:16:20 +0800 (AWST)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
+	s=201606; t=1772615777;
+	bh=p1S8W2bDBnZOMR5TVn0SFhPfN4ayTxVH96b3QKO9V9M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NQ6vilbCTxRrdyNTHUJBNgwrzdtnSxuBQO9Qy25iqZWBjoHm+FP+bwLMVjSxbPFgr
+	 /FV02pcn9rrywkutrYWQZzvFqA4a6lLRhrv6hV6Y6gHMjyy6nchjOL+ZGiQsiM5Crw
+	 P6V4PQnNXF5PMIQThiyA2W5ahEBvl4Vh2lG/co/lhnqolNWcpE7fc/tj9O7xMen0wX
+	 r9Exb8eheMfhWcbIhwHfCijMUq8GYSp8xapx8MV3cXVZ9G5CEeq/3K5yK9pV5L6Qso
+	 qUbuSEjmBPGznn+nKZdB3hZBytFGzeTvLdcn0/sR4m3ZoKv1R3/f2pBN2vG4VxGblf
+	 n/QvxoGDgwjFtRqKK0VPG+e5nKTHv/ISGuL1hg0dYGa5imWIIeWu0HR9wbrpmlQB3U
+	 jq/tet/01BuuYNISliOVZhetxKZUEyGwjg7/Ce/aSUg9ViiZFyaA1FRmGTr+FbLou1
+	 tBMRQMgVqhHak3AaG7J1wHExxSeIHspgt4Jt/TEj8WXVo+mZyrDa35dqsf16Jsree6
+	 Sz+npRa/drASEo/ihEQ3ksBFWCy2hLb7r3RMDU4WhkTqVuukc4cY3wWMmJRi2sXtrt
+	 Rfft2fK91b4zxrVdJ0KYi5PCGeeCryTVPA4rexjJhbyrVVPXvlFfGoswlciywvy+Rq
+	 B3N4tP7s0UVGO6B9b7WrQ/tQ=
+Received: from [IPV6:2001:8003:8824:9e00:6d16:7ef9:c827:387c] (unknown [IPv6:2001:8003:8824:9e00:6d16:7ef9:c827:387c])
+	by sphereful.davidgow.net (Postfix) with ESMTPSA id BAF2B1E7BD0;
+	Wed,  4 Mar 2026 17:16:17 +0800 (AWST)
+Message-ID: <e305159b-13fc-4084-bcbe-968388575627@davidgow.net>
+Date: Wed, 4 Mar 2026 17:16:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fgufvaorwtzxmime"
-Content-Disposition: inline
-In-Reply-To: <aaboD-MS-2BbfEty@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the kunit-next tree with the
+ kunit-fixes tree
+To: Mark Brown <broonie@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <raemoar63@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Shuvam Pandey <shuvampandey1@gmail.com>
+References: <aabpbnOt9nCuQrfu@sirena.org.uk>
+Content-Language: fr
+From: David Gow <david@davidgow.net>
+In-Reply-To: <aabpbnOt9nCuQrfu@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Le 03/03/2026 à 10:00 PM, Mark Brown a écrit :
+> Hi all,
+> 
+> [I note that Shuah is the only contact listed for the KUnit trees, is
+> that right?]
+> 
+> Today's linux-next merge of the kunit-next tree got a conflict in:
+> 
+>    tools/testing/kunit/kunit_tool_test.py
+> 
+> between commit:
+> 
+>    40804c4974b8d ("kunit: tool: copy caller args in run_kernel to prevent mutation")
+> 
+> from the kunit-fixes tree and commit:
+> 
+>    7e331b560a76d ("kunit: tool: skip stty when stdin is not a tty")
+> 
+> from the kunit-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> [Sorry, forgot to diff - it's a simple add/add.]
 
 
---fgufvaorwtzxmime
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: build failure after merge of the battery tree
-MIME-Version: 1.0
+Thanks, Mark. Shuah is definitely the right contact, given the KUnit 
+branches live in the kselftest trees, but I won't object to being CCed 
+as well. :-)
 
-Hi,
+Shuah: I suspect the simplest resolution here is just to rebase the 
+kunit branch on top of kunit-fixes. But it wouldn't be a problem if you 
+wanted to shunt the stty fix into kunit-fixes instead (though that'd 
+still require a rebase for the SIGINT handling patch).
 
-On Tue, Mar 03, 2026 at 01:54:23PM +0000, Mark Brown wrote:
-> After merging the battery tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> /tmp/next/build/drivers/power/reset/keystone-reset.c: In function 'rsctrl=
-_probe':
-> /tmp/next/build/drivers/power/reset/keystone-reset.c:137:13: error: assig=
-nment to 'int' from 'struct sys_off_handler *' makes integer from pointer w=
-ithout a cast [-Wint-conversion]
->   137 |         ret =3D register_sys_off_handler(SYS_OFF_MODE_RESTART, 12=
-8,
->       |             ^
->=20
-> Caused by commit
->=20
->   a065176301754 (power: reset: keystone: Use register_sys_off_handler(SYS=
-_OFF_MODE_RESTART))
->=20
-> I have used the tree from next-20260302 instead.
-
-Thanks and sorry for the noise. I've rebased the tree and replaced
-the patch with an updated version. Apparently my local test config
-did not enable that driver, so my own build test was actually a
-nop :(
-
-Greetings,
-
--- Sebastian
-
---fgufvaorwtzxmime
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmmnaIAACgkQ2O7X88g7
-+ppBWhAAgLIUbTg887VEY16JjTW9YIUd4mw1ye6wMrxg/987yaXPoduuqSKa59fR
-ymGxh7kQWEFedoZqntRHK3Se7ZUU/8fS+2vJSUXzWyu49m7KE3ZySO7NG4J6n9cT
-anwNwDaxfa+zxdCOWyPxgNxWLTNwnBLGn3EngypcrOgdFfe9qGN7n5+CHAYYHwRn
-1r8jwRcknfwR66fDBf/rq8VT6YRA6Q0bgkNOR+4nhh6ebS1XmxxTZlC4mCnL0Dev
-eESv7GVK6VdVrohJzbJo5BbJTBxm7DJzV/shlvgOwlyyFm5WUYi3qbmO3cZp5Dqd
-EeRzfLbIVS9KzzHRzHCajRxgjjXOr0aHGeXpEqs0uhT6g7SxDbBKFi3iQHoQgrm1
-QfFzRFKEcfzxsUPaN3Ps97WteB2+xNmwCgNl75GQsn7jW4QhjSkea8Xq+qxiPp3E
-6Nh4MD4jkjSEuJ3M81cqFXPMAHd7Xlzs1wfsyV2dyptqraTLAzHoJp54/6A8ny2w
-28KvjkF+TuTVJBFiE4sdzH50v7ho8YTX/jzKuuPHGzwDVwlTrrCXxwlr5qRca7/Q
-0lDH+BXJ/CQ5jOst7W3gaSjeAWkqrnVdtU1heQwm+GNmZ6Id/+g7OkRY4t6ctVcO
-6lyMCeSZE9YywqR8Go4etNA+ajrxHTyheLiGFWLZ45x5ikGuMKo=
-=ThlX
------END PGP SIGNATURE-----
-
---fgufvaorwtzxmime--
+Cheers,
+-- David
