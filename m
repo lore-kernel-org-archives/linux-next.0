@@ -1,40 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0209C39B489;
-	Fri,  6 Mar 2026 13:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6F430C37C;
+	Fri,  6 Mar 2026 13:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772804858; cv=none; b=ksspnAY13FLEttu169xQeOR8fYSNW7Gng7hPRoROyz0ypGSs7MiD4MTYMRDE/0Dce13Il7nXbTgGeYATreg1I5NpO7SQL7GRRqvSjtSP+RRIHpoiFNnjuLwyDByaWVWL5Lot+zrVyfhD6cGDL2XV4SaubiKthJUJCHGmSClfEqk=
+	t=1772804866; cv=none; b=rwVZp4nfbDX3KA1g8RHnaghZunGzQak4G03Cw5mknNOLnZmOwQNg5bVmevbJ89m0aqe2aU10Fk0aX1WsQhq7n1dBIA7Ru/0UuGUo37x+mIhcwzZAa3S4fW/Lc5WGovnlnXH9Usw13whShti8G5M1i+D8Tt6a3BbT6KMO5RV1Fjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772804858; c=relaxed/simple;
-	bh=0ukStTyGnIIvoK4UDcCYldUsJPcmS2GrzcUY4SL21gE=;
+	s=arc-20240116; t=1772804866; c=relaxed/simple;
+	bh=7VI9Z57IW5lnoIdJKDb55CIWuW0C9oyviSyFoUx6cP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dJDrqThoC4SB6eGHy8tRlJ4nOdZMCUkOAqT7mWJbDTcH42Xxacl26kV01xSxk/zIugm9Gq1F5G03WYpqhn3wefxQYjSE4B8TAmUbwLu+K7F/p4BXQZyZYM+lIluq6pei3hsGal+eRAF88J10oO9xtb67r1ZaGj0Nkxk1aSDJmpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6kMNgAG; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=HKmQ9OBLMqmbCCf7JFeEHFxi+PkoaEM6f3Vm7lXUaMzhyDOgn+x6XHzRpO3HVaKdK5DazfMD7XrsXsJUCD4BvhejQ+hXSIbNX99G4dJaLOwGPOUDgO9M9UDRxN4hm5cNlatXpa2PiPPp4NA9EWCxGZ+UkpwPj3sx7w1oiDjO4HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ9aRW3P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6kMNgAG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D286C4CEF7;
-	Fri,  6 Mar 2026 13:47:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ9aRW3P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54D2C2BC86;
+	Fri,  6 Mar 2026 13:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772804857;
-	bh=0ukStTyGnIIvoK4UDcCYldUsJPcmS2GrzcUY4SL21gE=;
+	s=k20201202; t=1772804865;
+	bh=7VI9Z57IW5lnoIdJKDb55CIWuW0C9oyviSyFoUx6cP4=;
 	h=Date:From:To:Cc:Subject:From;
-	b=n6kMNgAGRJ1za0nKAdnK+tIqO1rcqzH/J3BUCC2W2e/3r/X8VkCXp2z4sMY4fLODa
-	 NsGIfvS/qH6MZD5SQEYfTu9wb1RsAi90Pv5NIZEGsI6bFh2vfFm/JJqCwLgruc4MVW
-	 UX4TprS7JWx8XthtAZ2nIYSpBd1pRZKk87upq2oEvk3XpZSw6kfSqkPH3HyNZo/2wD
-	 FxO1p00hm3aYwZjL3JB846e/k8Qml+BF5xC/3hPe2sMim31NxJ5suJdztJcHINd+Ai
-	 ms/Vmrqv5yHkyJSZ19QkZ3IOWFq6J+aT/bsfqEyxqNmWZzjD52+CoUbeKtKLRMfir1
-	 syXKOQHT+H3Tw==
-Date: Fri, 6 Mar 2026 13:47:33 +0000
+	b=SQ9aRW3PDlHkFAO1zND0LjxPJfozp697bpGO21W9qTRG7cLfcuVd6BkChmfRpMxM0
+	 qo91VIHqTkZFG+d499n5+Fdm5PYypUVbLTf0A3lBvKNwww8xIpq+K52ZeQFP5P0hMI
+	 /XNIX167cGIHnVM9RlP3pLNqscOu007R2FolQRECGfez8UnbZdoBOS8Osh7a9iPLhP
+	 ZKoG78OEn43tdegIdaI4dpjeuQxnzyHjiVUr5ujbzOKxfnrDB/6yBpGdUVzGJv0ijY
+	 r6nTBxh1svrmaH1s8Jz+M5V2rPFzb5aeSsuF5iGNc5cN3X38z/O4YhhneYdjLkyz7p
+	 BBykHuY0RU5GQ==
+Date: Fri, 6 Mar 2026 13:47:42 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+To: Lee Jones <lee@kernel.org>, Michael Tretter <m.tretter@pengutronix.de>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <aara9fmCbTdROliH@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the leds-lj tree
+Message-ID: <aara_h8QDdY9N7GR@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,57 +40,64 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Nky8M7ub3zJ4eLnz"
+	protocol="application/pgp-signature"; boundary="+8ieQjihicoR7YuD"
 Content-Disposition: inline
 
 
---Nky8M7ub3zJ4eLnz
+--+8ieQjihicoR7YuD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+After merging the leds-lj tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  drivers/gpu/drm/xe/xe_wa.c
+/tmp/next/build/drivers/leds/led-class-multicolor.c: In function 'multi_intensity_store':
+/tmp/next/build/include/linux/compiler_types.h:706:45: error: call to '__compiletime_assert_434' declared with attribute error: min(intensity_value[i], led_cdev->max_brightness) signedness error
+  706 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+/tmp/next/build/include/linux/compiler_types.h:687:25: note: in definition of macro '__compiletime_assert'
+  687 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+/tmp/next/build/include/linux/compiler_types.h:706:9: note: in expansion of macro '_compiletime_assert'
+  706 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/build_bug.h:40:37: note: in expansion of macro 'compiletime_assert'
+   40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/minmax.h:93:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+   93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
+      |         ^~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/minmax.h:98:9: note: in expansion of macro '__careful_cmp_once'
+   98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+      |         ^~~~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/minmax.h:105:25: note: in expansion of macro '__careful_cmp'
+  105 | #define min(x, y)       __careful_cmp(min, x, y)
+      |                         ^~~~~~~~~~~~~
+/tmp/next/build/drivers/leds/led-class-multicolor.c:51:38: note: in expansion of macro 'min'
+   51 |                 intensity_value[i] = min(intensity_value[i],
+      |                                      ^~~
 
-between commit:
+Caused by commit
 
-  89865e6dc8487 ("drm/xe/xe2_hpg: Correct implementation of Wa_16025250150")
+  787130d7bc49e (leds: multicolor: Limit intensity to max_brightness of LED)
 
-=66rom the drm-fixes tree and commit:
+I have used the version from next-20260305 instead.
 
-  941f538b0af81 ("drm/xe: Consolidate workaround entries for Wa_16021867713=
-")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/drm/xe/xe_wa.c
-index 462c2fa712e01,289acac2c3c82..0000000000000
---- a/drivers/gpu/drm/xe/xe_wa.c
-+++ b/drivers/gpu/drm/xe/xe_wa.c
-
---Nky8M7ub3zJ4eLnz
+--+8ieQjihicoR7YuD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmq2vQACgkQJNaLcl1U
-h9A+Pgf9GLG/N23ED2iT/BnDDvEPH25nVyO1wvmJ3D3/tesRhl+J+4pM3am9o5oe
-cyqhQX/79nKf7pFX7C9FM/RahXb6pui8xE4cl2OEc8uh+qCfkSbPKjy1Mt52pEJ9
-dKBjoEg4oyBTXmUZI+WONOi947h/gxgyinT25Y/SntfksjMLYoSyfuHYf7kSF547
-khk9aEKS8sII/Fzf3YsFMX/o7PyJot/rKTy/k1TgeQ85AXPr4/Ao3BNjg2CNOTZY
-lTpAmqGVzl1LaSuKhySp+vUXvO9FOLC6qkux80qiOuyatuf7C/Nf4B9Zdl/WB7ND
-n/Umc/cQjokU/n23hnw/fAKU/GA7QA==
-=ThXb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmq2v0ACgkQJNaLcl1U
+h9Dj3gf/Ujhkd2WttJ8zQEecZiiyKja/rm69rsHnvRuVyUtEqsZgmzrD72Xv5Vvj
+W/QsZs/rQP5FLKR1IstuVe9dk/KRZujcLmGVOl1ddkYJG77qkQ8U3N+u3FMMpL9B
+2t1i+ruUeMA0XHbgaPNHIL2vWArdAVZ/b/J2Kj2v9d914wi2drGpDJl50Aqv+1jz
+C0CwKpQOE4D0vJ3loNLyBteeAal6J5davXGMTHEL9y2P6mP6ONSxP12DfwHK9Iiy
+NTO5d6F64nQYTgc7am6odDMKA2HJ6TW49Zyj3ftjZ1QXcnOHtT/7vs0YpxkYuDbd
+KQkVbymgKQ7ZHvdQdyg2aEsZdNTWdw==
+=dJGs
 -----END PGP SIGNATURE-----
 
---Nky8M7ub3zJ4eLnz--
+--+8ieQjihicoR7YuD--
