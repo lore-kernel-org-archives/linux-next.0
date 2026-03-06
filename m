@@ -1,38 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB7C35BDB9;
-	Fri,  6 Mar 2026 11:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828A13624B8;
+	Fri,  6 Mar 2026 12:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772798367; cv=none; b=Dz3KPW1054RQ+NIXbtNGlVDPIEAUmLBZ+OEph0Qw9aUSEg0BWy01BktCEln2DGt97Fqq2mrgBbMLsKU19MTUX0DQ68eT8C+d96eTUiP5rbCGpsXLOWMCCa1nL7wgX3/7DwrQHBsyxE9JLGnyOPiXkqHEl/F+nA+9c9p0U1wH1tc=
+	t=1772801927; cv=none; b=kwAeapz/+z+z63QA1vSIcxJDhTFMDbyYupaZq75MdyQEQN4/LWVTg/seoUBDDSB4IiaEhADNXucJHniEA4skoVQoPmjyEf54CzWc5RryP0m17ilWupHv9OX0Jd7eTIrgt6vMjeSv4XOI8jGNATEEzA3B0vkixxqDmEtRwUcnWjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772798367; c=relaxed/simple;
-	bh=HCK4ckJYAv8LxLaH5J/EcltsobtcDChBjE0VMGHBn1I=;
+	s=arc-20240116; t=1772801927; c=relaxed/simple;
+	bh=qkjbMpCxpkt6aCVMXAbZsBf26ONdRhk73SzT9XMJUQU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JcOOiQEZsjIXgBc1FzJgY0jdWiEdT28ZxW2XsYrrSTcRZ1Do3nUwXtFx123i6r1JvG8F6gD4kJOdDLKnUXbDe55SLUHRXjBASjNH8aN6QJp88athv3vWEmREmxUHueegu2cLUvzCZzNxvZtijZDH6vSMjUrgh2FKcUw9ChwDRsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQrbvdF6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=Dp/XitQsFXSMJAE86Hxv6FkYP5CoM6CPERzCRiIjhfMf6J4BWBjiy86bupn5wrAu9B2Npvz+QHjsueA57TBTRYjjCE8gB3PDmT2RqS4B+hjrap581RlfrJSA770oD8ThfOov64Le4tTpIGGVmzuY1R9KPzPJz32p6McBqhwHGcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhTE0S+H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQrbvdF6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840C7C2BC87;
-	Fri,  6 Mar 2026 11:59:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhTE0S+H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C50BFC2BC86;
+	Fri,  6 Mar 2026 12:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772798367;
-	bh=HCK4ckJYAv8LxLaH5J/EcltsobtcDChBjE0VMGHBn1I=;
+	s=k20201202; t=1772801927;
+	bh=qkjbMpCxpkt6aCVMXAbZsBf26ONdRhk73SzT9XMJUQU=;
 	h=Date:From:To:Cc:Subject:From;
-	b=VQrbvdF6Z/SDX9qjrJIUSLmQ45GpjPMDEFbFAbeDg3QcNZhUT+LUiIkeJbHhQnM4r
-	 Lz26qRBFZMPrbhxjkoRIgkRApzyxeUFLj6LtEEX1BlxSMjunKxCNFh3Fp7KNYQmbbS
-	 sh5k5LavievcoBb8EPMb/I9/jgr8UHnD7z7StNpunWS2yjGzcoDUcduipbjRupNsxF
-	 z3t/eFX7LGL3zufeiuE9Tx0V7r298zRz3PyuDD1zMO/f+FjHQO+d6cdqSlSpxYQSZ2
-	 qPBCgPNgPKHfa3q+azn/pwZc00BDhpxQVqk9YtgmirIsAX+lT0n9JBuT479uBHmwPH
-	 lNA4ogdRQWflQ==
-Date: Fri, 6 Mar 2026 11:59:23 +0000
+	b=bhTE0S+Hmb86JueebPQKObM28hvZ4/Qlbka0MlTnOw4FnRsnfHhMm3mNvWrFi7+x8
+	 95DE+pstfVq+zHIwAdLQGrysx2JQ/lCebuyLZEEzuazwrl7pY2qLajTCR1NnqeG/Db
+	 qkLEDR5Ba/ufVV++XkWsrsyrl8Wmj7nH0mxiK1EWEMrTk0wRVIeGWhVd80xSMhfJCc
+	 z2eDCp98MNFB44Q1i/LedvqsM0UBDy2W3NylnK5YWoraXlDsDGaZex/p5193o/RJYc
+	 Cj/PbXA/48E5k8u9no3bHGVXxrsKolg2ZAmTMDLO9hHyzhuCh67FNZMK1p1+qnkFFw
+	 RiNCWBNS9JzSA==
+Date: Fri, 6 Mar 2026 12:58:43 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the rpmsg tree
-Message-ID: <aarBm-e3NUl9XnY8@sirena.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, David Hildenbrand <david@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the mm-unstable tree with the
+ char-misc.current tree
+Message-ID: <aarPg_AVR3TN9frW@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,34 +43,72 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dtPSTYP3t6LB9ugs"
+	protocol="application/pgp-signature"; boundary="dutRrOaDo7JBUUuJ"
 Content-Disposition: inline
 
 
---dtPSTYP3t6LB9ugs
+--dutRrOaDo7JBUUuJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commits
+Hi all,
 
-  390045a24591a ("dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali CDSP")
-  0af8802175d2d ("dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali ADSP")
+Today's linux-next merge of the mm-unstable tree got a conflict in:
 
-are missing a Signed-off-by from their committers
+  drivers/android/binder/page_range.rs
 
---dtPSTYP3t6LB9ugs
+between commit:
+
+  8ef2c15aeae07 ("rust_binder: check ownership before using vma")
+
+=66rom the char-misc.current tree and commit:
+
+  3c9b6aa5c9119 ("mm: rename zap_page_range_single() to zap_vma_range()")
+
+=66rom the mm-unstable tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/android/binder/page_range.rs
+index 9dfc154e5dd4e,2fddd4ed8d4c4..0000000000000
+--- a/drivers/android/binder/page_range.rs
++++ b/drivers/android/binder/page_range.rs
+@@@ -759,11 -717,9 +759,11 @@@ unsafe extern "C" fn rust_shrink_free_p
+      // SAFETY: The lru lock is locked when this method is called.
+      unsafe { bindings::spin_unlock(&raw mut (*lru).lock) };
+ =20
+ -    if let Some(vma) =3D mmap_read.vma_lookup(vma_addr) {
+ -        let user_page_addr =3D vma_addr + (page_index << PAGE_SHIFT);
+ -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+ +    if let Some(unchecked_vma) =3D mmap_read.vma_lookup(vma_addr) {
+ +        if let Some(vma) =3D check_vma(unchecked_vma, range_ptr) {
+ +            let user_page_addr =3D vma_addr + (page_index << PAGE_SHIFT);
+-             vma.zap_page_range_single(user_page_addr, PAGE_SIZE);
+++            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+ +        }
+      }
+ =20
+      drop(mmap_read);
+
+--dutRrOaDo7JBUUuJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmqwZsACgkQJNaLcl1U
-h9Bqwgf7Bsdpq9QsXXZ2GBf7kAopQ68WL/3s73wuKbinPYyKm8uYo2qmFhtGfCLb
-yTlFBPR5XS19mGr/cyxL2+oF1EgFJ1Qu1gVryRmhtIYbKPoreePh9vXWG7uUxMFg
-joZnND66pQzTIClMdjhJxRsW2XIDOrOPSLne8abweS1PblcwueSiWDxwtrOKL+ey
-XVrxAYHGKKU6LdLa9F2EtiA/86JLdM+dpSH+Ji1T3wqfrFND6XXPxhBEqduX+qgn
-r8je1x8cbniaUsL7sc5cDNQm3EKz//3iWeRDKXjDmJoo2CX4k3kmATEPZdp0P3Zp
-Ceflw2xxSvw9kYMwlMENskFbKzCRgw==
-=snty
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmqz4IACgkQJNaLcl1U
+h9CIegf/Unl2v4sioCZWDjMi6be31k3dQW1T7z5TbaE3SXyVDD8s4Vw0azkhfQZ1
+nu2g1zdyfYLBDUXITusYv+cxtGiKDQO1b4JSsJBIyvUBY9lpzReK+kCAvwWk+Pk2
+FIgh8EIQMPWC8MTGbjXZpqMCt5qfbtTebu7UzV5zWoeGb1IdXJGXbzk2MhGHchy2
+fEdOelLrw4yR7vqg2EybEriU4hi5STMXddX2PO+3FIe/xe2Fhr6S5hwWd9VMehrY
+//z3to69XWCBHDoGnrM3hJa6ld51GPDGZ5sLxhsVecJcT+71v5peAbXHCgEt720s
+1d1x05Tk+VJ23pMwSnH219/v1xsSpQ==
+=yx/z
 -----END PGP SIGNATURE-----
 
---dtPSTYP3t6LB9ugs--
+--dutRrOaDo7JBUUuJ--
