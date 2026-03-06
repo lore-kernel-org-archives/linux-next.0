@@ -1,90 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DAF1A6821;
-	Fri,  6 Mar 2026 14:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDF238BF9F
+	for <linux-next@vger.kernel.org>; Fri,  6 Mar 2026 14:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772807341; cv=none; b=AmI0nwXp9a+PuqLVJfG251j+iaAbK/5IQHUc1Bw/YY1CR/umZzCJ3cHKR7oaC5sPdPl8GVGXcKD9B9l5GH9KQL+9fQPtru+vCrpGbuxQ0Jm2kKROrhv6URcJnU+BtEhflSPn+UM6LPxg/aTUOxjSaUhBGwcGRHCcw1Ola4rTI+c=
+	t=1772807919; cv=none; b=jBkXwKvCjQVr595Pi51eL9bCSWbDnkbtXkm52Ghp0a0a09aekgUABR+4KMzyBEKlnWO2onJwxx279lKhsIjhTrS7lgsS95WSU0Tl3M1v9WMZEP7dxS+Ye4pGP97JDFMqkvW3qen+GiybOhwtnYBqMtOXJNsSlKAHe3zI6jj3ffw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772807341; c=relaxed/simple;
-	bh=YtNiMYnwE8YcuPU7Pu79/HiaBUNg1xHyKb0YQ233szw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvK3U2asHKtEKojz2OoMM1UL6Vcfy6fpdPKe79C3Jtpyf+HvjCdxMVJuSMX2adIfHyQPHtdHr30IsASwmxfVny2BJ/UrVnbibIBxrm+FBG8bBgrkxr9KAE051T6HbY+7h1e2kFvPeac37OJ3/1Mj1mdqIbkWoxPgfYOI9maj16c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/6vnMft; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772807919; c=relaxed/simple;
+	bh=q1mdQxP70RrQv0FYyXGyehwbnlfa4Xr6GVJQJYVFteM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=t5vaCW300FLWTf26thrFUK9DR195RdD7mwWWmjtillQUZSRNvQVW2rJUJGoyste0GCl1kvscuTO9xa9c57oSx/iuiPDNvtl8bv/oCuoAiMpC5mdYyMpL5sjXQDSlIBDAPjk8rd551FS9Jt0k60uv1WpxjCfNuJkd8vdGadNYj/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XJ0+eZA3; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/6vnMft"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F6AC4CEF7;
-	Fri,  6 Mar 2026 14:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772807341;
-	bh=YtNiMYnwE8YcuPU7Pu79/HiaBUNg1xHyKb0YQ233szw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M/6vnMftdhh4DPnkgEMcArC33MHbYenhcl+rtYzCewSebX2Xns7B7gczMvKIzG2Ad
-	 XaVGE0N4RqN+fzsOnoF23dYym10fvbNJmC+pWhIEQF2DkDXTL8cQtJ1hR4Q1doxumA
-	 n+R4prde7DXSDYYqhj7YclIfpYRKIOPi8EnbWAJ4bZTgwFtXgpxjt8mTPR1fid9Uto
-	 zMgXMq3ijskxbSTuPZeiQtM55mvCGbOM1+A2SLl04/Lya3AYgLC06pJ52asU/6wQg7
-	 GuWkK9uEbKMm7YRwc3wvGJrudHMx0SPzf/lDSwL3wQzTuiR6zyGCMggtyptljgzjkq
-	 hL7kKVJxupUdg==
-Date: Fri, 6 Mar 2026 14:28:57 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-next@vger.kernel.org
-Subject: Re: linux-next: build failure after merge of the block tree
-Message-ID: <e7a09f3f-777c-446c-aaf2-0e01ec45b48f@sirena.org.uk>
-References: <aargMJFh-37NAsbc@sirena.org.uk>
- <218A0752-97E0-4291-99B3-6D7D1283A513@kernel.dk>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XJ0+eZA3"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-661420734b7so3110442a12.1
+        for <linux-next@vger.kernel.org>; Fri, 06 Mar 2026 06:38:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1772807916; x=1773412716; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KbSWWVhxILTIKnFJVXIh92bVPsvqoeNRzf6Hu2YgsRw=;
+        b=XJ0+eZA3bj5Iy8NBPSOiAY9w2Q61/+6AHuOEggYR8x7RNXg04gEfLnU25CxdvfMghD
+         ab9Ai4H6ifcIZ0zwo/HG9RD/EOFzstZfmdcr+60zPhTSGA6hUSip/SYoKSBllKt/RUSx
+         QzjujN+NN88/n5cOL1LbJM2MWuNB3RQAwRViXhRqjLGT2pV0FPXdE1nL+0HENJNLqRGC
+         UpX74ekiIOwnv7uIi1Z7EVcWDPr5/51wYAxctjKa0vN/Yl+pmYGJoBHV+SuyHRrIolm6
+         XCnjWO2VEizeNfDuHHr9pX2RFt864kyKDZDkiF/rfwfbBiNwC9UWu5AcMjRSiHty/QH1
+         ie+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772807916; x=1773412716;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KbSWWVhxILTIKnFJVXIh92bVPsvqoeNRzf6Hu2YgsRw=;
+        b=AZqWtmzrZ1Ik+hnRr81VfschveGjkdny159FhxtowE7mFsy9UIyK0TAbpoMUEYmxww
+         FnWIDUIzJymHYGd3NHJyIp97wvQmXDID00Z8xf1RZKdPXKT00838UzBU/qAyYFZMPCbC
+         eVc0SDtFICz+XX0o2hL6eD4Jexm3JTi/+GL2J32vnN5x9rKPQTP01MIJ+IpAS92axiQ3
+         tANZXbUa2hOI2ELjhQSzBVnK22UYimvt/HmNp8CcyawO/d6BYyWqcSnKTYrGCgyhRBUu
+         wi47DJpqWTNBuSYzKP83Cf3+Arx8l1VKOYlOhmPXR/sVHED0KxC1pyQfDpyCim0SvSPP
+         Pp4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBB4/v/fxICTBNiumxtRpqHLf85k48RIAJd7DyTVXLsoCISfIbNZkC61AnKCVXnehHmoc8LrlK7mXG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygux/1xZCvjFIfpsThXK1Zw8aCOVHasSXWq1KZ0OpidvFUKeoy
+	2p3Kv+v0F6rcKqVK3CVUm+PvhzGBrtfbbVquQKbcTriY684Plh8mDjYeZEoqP0MIhBKO2yNUPij
+	fnFLSq4kq/u6ArWYnIQ==
+X-Received: from ejdbv13.prod.google.com ([2002:a17:907:fd0d:b0:b93:391a:d36c])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:2d10:b0:b8f:8660:3caf with SMTP id a640c23a62f3a-b942da2ac30mr135285766b.5.1772807915784;
+ Fri, 06 Mar 2026 06:38:35 -0800 (PST)
+Date: Fri, 6 Mar 2026 14:38:34 +0000
+In-Reply-To: <aarPg_AVR3TN9frW@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0HObocPonmNFMU3t"
-Content-Disposition: inline
-In-Reply-To: <218A0752-97E0-4291-99B3-6D7D1283A513@kernel.dk>
-X-Cookie: A nuclear war can ruin your whole day.
+Mime-Version: 1.0
+References: <aarPg_AVR3TN9frW@sirena.org.uk>
+Message-ID: <aarm6urW8_v25Nj3@google.com>
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ char-misc.current tree
+From: Alice Ryhl <aliceryhl@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
+On Fri, Mar 06, 2026 at 12:58:43PM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the mm-unstable tree got a conflict in:
+> 
+>   drivers/android/binder/page_range.rs
+> 
+> between commit:
+> 
+>   8ef2c15aeae07 ("rust_binder: check ownership before using vma")
+> 
+> from the char-misc.current tree and commit:
+> 
+>   3c9b6aa5c9119 ("mm: rename zap_page_range_single() to zap_vma_range()")
+> 
+> from the mm-unstable tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc drivers/android/binder/page_range.rs
+> index 9dfc154e5dd4e,2fddd4ed8d4c4..0000000000000
+> --- a/drivers/android/binder/page_range.rs
+> +++ b/drivers/android/binder/page_range.rs
+> @@@ -759,11 -717,9 +759,11 @@@ unsafe extern "C" fn rust_shrink_free_p
+>       // SAFETY: The lru lock is locked when this method is called.
+>       unsafe { bindings::spin_unlock(&raw mut (*lru).lock) };
+>   
+>  -    if let Some(vma) = mmap_read.vma_lookup(vma_addr) {
+>  -        let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
+>  -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+>  +    if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
+>  +        if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
+>  +            let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
+> -             vma.zap_page_range_single(user_page_addr, PAGE_SIZE);
+> ++            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+>  +        }
+>       }
 
---0HObocPonmNFMU3t
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 06, 2026 at 09:13:33AM -0500, Jens Axboe wrote:
-> On Mar 6, 2026, at 9:09=E2=80=AFAM, Mark Brown <broonie@kernel.org> wrote:
-
-> > I suspect I ought to be applying a merge fixup however since the block
-> > tree obviously isn't intended to be in the state it's in anyway I've
-> > merged the version from 20260305 for now instead.
-> > <signature.asc>
-
-> What branch are you merging? rw_iter is just a test branch. Next should o=
-nly be merging my for-next branch. I=E2=80=99ll check later if I messed up,=
- if the above commit is in my for-next by some accident, just drop my tree =
-for today and I=E2=80=99ll take a look later when I=E2=80=99m on my laptop.=
-=20
-
-It's the for-next branch, the current HEAD of which is the merge
-e356b1868a62cf4a650b451a7296ea4762038666.  The first parent of that is
-the fixup commit, the second is a merge up of block-7.0.  Looks like the
-fixup ended up on the wrong branch perhaps?
-
---0HObocPonmNFMU3t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmq5KgACgkQJNaLcl1U
-h9BvEwf+IYCy3J2F612kYVimtC3cMOGHd0s98KxTWFMdJf6Dc//wcGTin/wuwJ6v
-EnqtsfOCJGct+JWs2gPw5w7i/DvDRL6NKHIEIG9WUgQg2li1xlEpSL0aot7SEYpg
-amhaW3D9XtjJ+lgivhabm8tvwpFCSvC5zyYPVGd2n3/KKtbgGW1qT3jw1DL0Z1FF
-fkbJWpj493grq2SHGXfiDcKUoz+g9oyHM6T5J+zUTQvW9xeg8sZpPgGKfJbnmx0N
-xxWiw0Px8WgWz67Nc94W5zrvjQgqZS941Usu0wfR8ijWmsc1taSDGb6Xbpuxq5em
-82T+dMFB7Ou89KTOoydApRlV/qcSHw==
-=Yfld
------END PGP SIGNATURE-----
-
---0HObocPonmNFMU3t--
+LGTM thanks!
