@@ -1,142 +1,198 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013014.outbound.protection.outlook.com [40.93.201.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B665332633;
-	Mon,  9 Mar 2026 12:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773060503; cv=fail; b=PcwXKj7GNbFcsd3L22grnhfs4wJgMUG9Z/1CN+n7IU2MxsYTwje0a4PKTjDhcATzSKOZKkUnAI282NXnkoLTQbXtKuccyM54idta9/61UG4ZlDoY1Xci/r5DwB3Db7rE4GH7xbK57I+PEqXvWL1VtzNCFxQjABUmCAUJDwWfTf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773060503; c=relaxed/simple;
-	bh=QIamQ0r/FpAYE0PGbv7HhG3gnI2hnzuQc2lj/sEzX0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WD9ijVAE8eRyI4LSuk5wNVgyBTqC0iDTKQua5w0A3ZMqZidwLAR3aNgufG40MdRoj3IZz9/3OOo3FMIzWZcNLLBOPZ827KpzCjYlVTf8g9gv9NXqfLH6w232LaGRwVlDHEgW5GBc+EVAavK8HoP++eMeMS6gXJOw7qBxbv34dwQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ASPCnGBm; arc=fail smtp.client-ip=40.93.201.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0627B27CCE0;
+	Mon,  9 Mar 2026 12:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773060742; cv=none; b=M6kIqSFTHvxXzO6g7iFmMFq5wC3427dydMNe1EkNzWcp9XA/rQu0HCB7yEPtapK6XSgoiztOr6zjY+J86fF5NAPywJNqlyianfjSBbhsgJiDP+4hB9zF0bfCcI8/EHkj0fGvG5PF82vxtympZVI4ZcIvq01eg6LJPcuOV24SvC8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773060742; c=relaxed/simple;
+	bh=y/jG+6uQ1t0ozNKeVUtujZ0ZKaA2GN0iLu+iflTIVOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lEMbGy0V46WQYHZLuKG33Yp66YltdT7TK0yeCxYYihdOmwK5bjfibByGSykUguZBILs6CsdToLIBF6nz5CVojHgUjW4aQ3MrOqsBBs/xzgNDsvaEmHS2GZeFy4+OkVijW33rQLYqbpGmTrwemTZqRAOv44CuqX9k7iwQ0cJpS7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldURGgjZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ASPCnGBm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gTFajAYX639zfQHcRcQBaDuqiD3QJbuMO8ZNYr34YMxg38pQaFvPH6xfgHwxEWL0+ixrWcDBXzUUnk4sXfVFtwHj61RaPCvBvHE7nMaKUgup72a7tahVqWv+E8QM6gcsMYTvK2ecLWY3TjCRRMcQXL4Jvi2d0TXpT3+dsB6NSJIgMvJqwlFMHRYK99skMeV9t5Zwq6nLTRGDF4KqmpGep9lKCOma2giai7sEMH32QNmjEZ6Qg9w6C63MdecmtIFhZTuSKzdyGxxnQzu/HDZE5O8my9pfHsEy04zl/8rhQ3QIm3RegGzD7paKQOSt1O3ArJ2UzBOoPKKxqMz8tuFw0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9FRpCxiyU1VKZ5wMaiWnrGbm4DDTsWzd4uZV+EP2GjE=;
- b=rueRo0kxAZ7s3Xyt8KwrU8Q5ILhVqLSJtkzY0tIxGm2zh/meThMu5VzAa+us9V90QF1uVeFPCuUmEVEhVdLz/a6rDjT6o58IgHniyYyfuHXzHldToSJRtDMVQv7tQk1SOQCg44RK4eoUIeS+s5f3SlI6VnTI2RwfTQPMksz4tndpro/J9pdliiMoTtBy5hJcKCEn1Hi1vZ9gVizKq3qBC28PSxBLviQ2qB7lbOaMZXnKfb3M70S3ta6p2PVzZfXcaXImMO/Ynd27kEoiK6OGmLgMeayvfIzL2WyROCRpre9xPKd/jqcJWL2nQU74H+q9J3KqUUkYb2HpBYlRGvQWiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9FRpCxiyU1VKZ5wMaiWnrGbm4DDTsWzd4uZV+EP2GjE=;
- b=ASPCnGBmbjdi2KunnkCv9LHXoqhsXksov3FGydFYx3TAcWhMmWeitsvSfqZ5p9dCpK7LwuyJn0S81Big7L4n9FtBNE94C/Dk5XBVy3qqvHizDvb8tjFfJ1hrINs22y+LsXUQhSPKeGe0bf30knsIQsKRJCweb/wKNHZIgkkyAAmmEMruZ6kdd0VUP96tBXWMmKtErJiHGu7CQjupk4CB0QeEh1vCa2ivlGXZPSe5lwqk2dB6ZKWqVVaGUKMW2Iy8TwD7jGPK6ycNnr2eJfcfm5tTMjnIU7+pbzQ27l//GRr39v6CXEhac9FLuTr0Es1WxfV1kiAd0xHqDLzfVqf3Bw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DM4PR12MB9734.namprd12.prod.outlook.com (2603:10b6:8:225::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.6; Mon, 9 Mar
- 2026 12:48:19 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::299d:f5e0:3550:1528]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::299d:f5e0:3550:1528%5]) with mapi id 15.20.9654.022; Mon, 9 Mar 2026
- 12:48:19 +0000
-Date: Mon, 9 Mar 2026 09:48:18 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the rdma tree
-Message-ID: <20260309124818.GD3717316@nvidia.com>
-References: <aa6qqi-GmXZXxubE@sirena.org.uk>
- <20260309114020.GU12611@unreal>
- <f41b2391-d202-4d2b-96d0-4f9040003a35@sirena.org.uk>
- <20260309115226.GV12611@unreal>
- <091dbc25-06d6-4847-af50-6349f1acbf17@sirena.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <091dbc25-06d6-4847-af50-6349f1acbf17@sirena.org.uk>
-X-ClientProxiedBy: BL1PR13CA0450.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::35) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldURGgjZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6D6C4CEF7;
+	Mon,  9 Mar 2026 12:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773060741;
+	bh=y/jG+6uQ1t0ozNKeVUtujZ0ZKaA2GN0iLu+iflTIVOA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ldURGgjZsupuiOEO8szY33Gv/w+ULtozZoSBSo5IQVXqhoQhUcsCx0Zgys2VjhVIf
+	 XnKGHJhLZPWQk2hRodapK9iZ9+DPqAAg0di8KkMwUHFnWOwwYk3LrPq3XWv4D60fSm
+	 lBg6JImoLkDIgNjxuRpw4o1D/geJl7QjJcuo5jLAfBr8zU2ewgEU9W7V0yDQLNLwgT
+	 gzl+2ZHX3B0pqhwOxlUt0ECHEBrtLS2ysXNPuXRjkNt6xAjHCcBqhSasV3YANLhMgG
+	 5Ax23x/6raTJ/TFoxxfBwyEg6rBi70TldCa80OBwAp5X/nN7ymxdq8RVZfj+Ury4Lp
+	 kpMXnSdk5N14g==
+Message-ID: <9f5282ed-ddda-4d7c-b033-5b6d544d6cf4@kernel.org>
+Date: Mon, 9 Mar 2026 13:52:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DM4PR12MB9734:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12ace9c6-2918-4475-33b4-08de7dda23fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	vdCZ4Gy6D6eDV5BCwm1KzEINwmTz+21Tu7DNlaMuhv9yDcGwXoqskwuSrJInfziHPozAWFd8lHY/as8Fu98e4tgiRu3K2+alhTMwx4dIvkmi79k+fZBDf0pbaN8Abq4ia+ryNO1FC58goKd0XHhCnT5bqaK77xt/4ZeoDPkdVwuJccXFGZp+30jDiJ1EyMcDTZCGyXyCA6XIc24XAGgvR3kuU5KXxuLod9rGcRnm8Uwi6LJu4WGAGbkdAJp2KI7dWADB0rs5YRgv5mSqx5n7JFBDD5GkWCtH17yaBXZ6V5TCHjuukgb40AFL/Llz8M/zCamTzF8JEmJPrU3cV3LhRNM3J2qWy/BcQR61Cvu0WD1L3VhrzQtUfkRStBl3XfXtwlBQOsfBYsCsu9oQhrTYTJGsjaROC+tD9ZmKt0dbSf3hiVF4MZpb/dX/09wXMSGiSYXte8Wm+WmYcAClnoeVX3yrsai8UeMKXksVUhl0KQWV/DH9ibQKUIHpUcf8FPaFapYx018z4NI7n5uBrNY39ZVlCS2H/1a0fXBxhOf+tKZwznBXf8ymmZWTpDV9Jbe1afwcxqHy/rb5v+XxocvgFVR/uK8xUukfhBw77j9JiepkwuDb3WxlVpDtA2Qs7PZ+lIuoKeNug9oWMRofcBY/EsLStiQ8jwIZpjCFPAjpLo3XQFgjd9WV/R3+ku10TQg3luuR4/L1A2m6aU6dtvQHl4WFksprZWNLvGS8+LYnrdw=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lin4MgKeuLkmJiFNakfx71PSDG9YdQaaq4rEEsvYW1vgP9DWrIUTpvAo1eyH?=
- =?us-ascii?Q?/b1i5R+sKX5pcqQrDi+rdJVX7mfeKU5u84VWlV6lfSTg57eJV/YSPrndIIb0?=
- =?us-ascii?Q?pCcsLdPcjRuKTNee9Sagi9BEpqPYsYjMAfo9BIiMy/mIBWtroaOmu1CZ+1uA?=
- =?us-ascii?Q?LuITuIGCuLfzE0vBf8u5QH6NVhill6yKMa6QERZPzzJxwo7Q5LLjEVNgd5Z7?=
- =?us-ascii?Q?u3QKujiv+s7qT6EqbORtE7RmaanTQvkt+aXDh+uWTdoyvCwqDlHtKNK3mCeU?=
- =?us-ascii?Q?KKyChYItbMWUlbrtaDuY4fT2VFwuKE2VEwgqRbqFbqQln1zoYwkyB85k8dsz?=
- =?us-ascii?Q?J2VietHVwYF43aPIjUXuSB7qRW/EWtZVuHjYuHjnyje9q/IXfUM8n1zIWwnM?=
- =?us-ascii?Q?mZFaZoTQ2qkw9CBglCOAhY17hwQKSS2RMpm39k/aNy4lujNwuylRvGV//GCr?=
- =?us-ascii?Q?niCYUJnWK/3a/idRd2hZ2jrEKYKjqNy2r2p4sofzgsIsk3o1zogu2eikHSmN?=
- =?us-ascii?Q?dBBFP5IgtYA2MGwtFdkG0RoVU89hwrVMqB/HnsKLqlr4xN7nQ35o5hlaxu6A?=
- =?us-ascii?Q?OUf+Er2QRXn8BmyxDV+qJVCaC9Z8l9Ad3IBa43TE9HekyA1b2N7906PmcNyy?=
- =?us-ascii?Q?GRwIRXqiJe5C1z9dT+toLQ7o4F70Nf15bOZOJhGJJFAe1OUvOOTWSynqX/cn?=
- =?us-ascii?Q?oA9WqiaeHMUpd7W4YExm83wnYt9vaDio5X/XDjoyKSMPQGbK2hsLAIUxRr1P?=
- =?us-ascii?Q?FrXsdPlt+zKJR9RM87aFCF6CMQ69K0ypoxSYkUaQ7YX3DyL4LlBF/w1+sKp8?=
- =?us-ascii?Q?1t35ikv5FUSf/LQ1bSdLzEp1OFtSliR0XSHqj0hMibg9SiAaWecUd1r8lW1P?=
- =?us-ascii?Q?GAWbJflA06Woi9jO95uUPBu2ro81/OLEnMtGMrELNIOH7aeyMUZU0P5tJroC?=
- =?us-ascii?Q?jvDmqp+F6DgLCM7NnffsXgF0uF9yT3fROn89ZnNUg5VK5rmKazqV+q5CWona?=
- =?us-ascii?Q?yajrL3R+BIeMdfq/+2nCk1Z8anTxy+S5ZyeLR8wIZYZI1jzLaD5fTkJhVPJV?=
- =?us-ascii?Q?uFv3/XzxX7rvHupMqvsymc6idYvFmcjHHAecCZS7ikEmrIoPiqxs5l0ndkur?=
- =?us-ascii?Q?Vf2GOug5/EYmJ1BvJvw4ElxSEv3NcM0/bqXl+Syid5/dzjEdokYaGdP6KFqk?=
- =?us-ascii?Q?NFxSvq+VWcJma7mn/AKnZY5t+kv/1o6h9xaiRBEEscuvDAHA5lQFrmqwlUtT?=
- =?us-ascii?Q?lJrmlqu/L18FIlwcCJEjLIPlE5vVbqiPzmFhCh62rOLBpWlNZ2LMBFi6QFnM?=
- =?us-ascii?Q?oWrQqd5yhojZ+BM+vC3YLRuH6r0IOkXIWloM/fp1yzED9xdILejzYBG3MyQo?=
- =?us-ascii?Q?/lZo/aznpcQmVcLu+ueirGCSPYvbrLtRak+Vmpu/kpB85WG0LvtNU676PtKt?=
- =?us-ascii?Q?/8xVKBryOyWOybkl7suFOtyITqv0z+v0fqcmVg9tHbEVjlUpySCSsjDB8KJn?=
- =?us-ascii?Q?9CqEmnkqupzwwQW3BDJAgkeKPAVXGBc7pMIUvqCRNluuMEE8B/anHRgtkOqh?=
- =?us-ascii?Q?GyTHnJt+6700pT1dJ2Yy8mCrxobYVEsxGhv0gaGsfYhAKvJwrd0CYYGuSVrK?=
- =?us-ascii?Q?QVJOLsYNtiUH5NML5CtzokDCLziMLAgU9gd/lGoUATcvsGBepgkN4i1tv0Mo?=
- =?us-ascii?Q?TnqEJQHYnC0pNWGpxj9E4Ubt2L01/rfmd2+uZl+aj32T08XbM2FUfu9e/Xl9?=
- =?us-ascii?Q?MNmXionCiw=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12ace9c6-2918-4475-33b4-08de7dda23fe
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 12:48:19.5536
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0xkW3ykdVXIuIer5WSU8XngQvZ0AYXh/79U00uO0W4IEswiDXRUYhm1HA/jfWuoX
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB9734
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net 4/5] net/mlx5e: RX, Fix XDP multi-buf frag counting
+ for striding RQ: manual merge
+To: Tariq Toukan <tariqt@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
+ Moshe Shemesh <moshe@nvidia.com>, Amery Hung <ameryhung@gmail.com>,
+ Nimrod Oren <noren@nvidia.com>, Mark Brown <broonie@kernel.org>,
+ linux-next@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
+References: <20260305142634.1813208-1-tariqt@nvidia.com>
+ <20260305142634.1813208-5-tariqt@nvidia.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Content-Language: fr
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20260305142634.1813208-5-tariqt@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 09, 2026 at 12:43:16PM +0000, Mark Brown wrote:
-> On Mon, Mar 09, 2026 at 01:52:26PM +0200, Leon Romanovsky wrote:
-> > On Mon, Mar 09, 2026 at 11:46:07AM +0000, Mark Brown wrote:
-> 
-> > > No, I see signoffs from Sriharsha and Jason but not you and it's you who
-> > > actually did the commit (see above, git show --pretty=fuller).  Did you
-> > > by any chance rebase a branch where you'd pulled something from Jason
-> > > (or which Jason had pushed to)?
-> 
-> > Jason applied, but I rebased that branch to drop patch which was taken
-> > by mistake.
-> 
-> Right, if you do that you need to add your signoff to the rebased
-> commits since they get rewritten during the rebase making you the
-> committer.  Nothing looking at history can tell a rebase happened.  git
-> rebase has a --signoff option for this.
+Hi Tariq, Dragos,
 
-I have to say we have tripped on this issue alot over the years :(
++cc: linux-next
 
-Jason
+On 05/03/2026 15:26, Tariq Toukan wrote:
+> From: Dragos Tatulea <dtatulea@nvidia.com>
+> 
+> XDP multi-buf programs can modify the layout of the XDP buffer when the
+> program calls bpf_xdp_pull_data() or bpf_xdp_adjust_tail(). The
+> referenced commit in the fixes tag corrected the assumption in the mlx5
+> driver that the XDP buffer layout doesn't change during a program
+> execution. However, this fix introduced another issue: the dropped
+> fragments still need to be counted on the driver side to avoid page
+> fragment reference counting issues.
+
+FYI, we got a small conflict when merging 'net' in 'net-next' in the
+MPTCP tree due to this patch applied in 'net':
+
+  db25c42c2e1f ("net/mlx5e: RX, Fix XDP multi-buf frag counting for striding RQ")
+
+and this one from 'net-next':
+
+  dff1c3164a69 ("net/mlx5e: SHAMPO, Always calculate page size")
+
+----- Generic Message -----
+The best is to avoid conflicts between 'net' and 'net-next' trees but if
+they cannot be avoided when preparing patches, a note about how to fix
+them is much appreciated.
+
+The conflict has been resolved on our side [1] and the resolution we
+suggest is attached to this email. Please report any issues linked to
+this conflict resolution as it might be used by others. If you worked on
+the mentioned patches, don't hesitate to ACK this conflict resolution.
+---------------------------
+
+Rerere cache is available in [2].
+
+[1] https://github.com/multipath-tcp/mptcp_net-next/commit/9cbb5f8a4a18
+[2] https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/0bbafdd
+
+(...)
+
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+> index efcfcddab376..40e53a612989 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+
+(...)
+
+> @@ -1975,13 +1974,12 @@ mlx5e_skb_from_cqe_mpwrq_nonlinear(struct mlx5e_rq *rq, struct mlx5e_mpw_info *w
+>  			return NULL; /* page/packet was consumed by XDP */
+>  		}
+>  
+> -		nr_frags_free = old_nr_frags - sinfo->nr_frags;
+> -		if (unlikely(nr_frags_free)) {
+> -			frag_page -= nr_frags_free;
+> +		new_nr_frags = sinfo->nr_frags;
+> +		nr_frags_free = old_nr_frags - new_nr_frags;
+> +		if (unlikely(nr_frags_free))
+>  			truesize -= (nr_frags_free - 1) * PAGE_SIZE +
+
+The conflict is in the context: this line above has been modified on
+'net-next' (s/PAGE_SIZE/page_size/), while the ones above it have been
+modified on 'net'.
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
+---
+diff --cc drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+index 8fb57a4f36dd,268e20884757..f5c0e2a0ada9
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@@ -1977,13 -1971,12 +1973,12 @@@ mlx5e_skb_from_cqe_mpwrq_nonlinear(stru
+  			return NULL; /* page/packet was consumed by XDP */
+  		}
+  
+- 		nr_frags_free = old_nr_frags - sinfo->nr_frags;
+- 		if (unlikely(nr_frags_free)) {
+- 			frag_page -= nr_frags_free;
++ 		new_nr_frags = sinfo->nr_frags;
++ 		nr_frags_free = old_nr_frags - new_nr_frags;
++ 		if (unlikely(nr_frags_free))
+ -			truesize -= (nr_frags_free - 1) * PAGE_SIZE +
+ +			truesize -= (nr_frags_free - 1) * page_size +
+  				ALIGN(pg_consumed_bytes,
+  				      BIT(rq->mpwqe.log_stride_sz));
+- 		}
+  
+  		len = mxbuf->xdp.data_end - mxbuf->xdp.data;
+  
+
