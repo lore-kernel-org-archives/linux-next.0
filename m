@@ -1,93 +1,114 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0ED36C0BB;
-	Mon,  9 Mar 2026 21:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE4934F479
+	for <linux-next@vger.kernel.org>; Mon,  9 Mar 2026 23:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773093204; cv=none; b=o2hAcNCTXir1Xt3XXIiCRlglOrL54C2JVHehy00mdxOyTs0EsejagiUCQy5gmczyO34e8w/NCGbyNyy1g4d5Y/oxkPJY/mEKgKqtincGU4W6+E+bpc3lDnQJYum6o2a+38nAeMlXtCeXLcx0FXeCYxhrmLNDLDZmC4iwBf5QIUI=
+	t=1773097717; cv=none; b=IqJz4DYHENEJRwP2DtYclxTN55MZ0x9oUEk1fm6746l0EGaV3UsG6rxfEdFuGPfcnhbLpcz7VczEJa4Pddjun0lw7cnwWxpROTFRRr5G8hVGJoAKfa2fJZjsaSlZu7yvLh0dll0ldS1Ppz1+MceYeNRh49c5SXcqzbZJnlWMFkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773093204; c=relaxed/simple;
-	bh=+kFgppPy3/Gh9u5N1rRAyzzZbUJ0E0o2FMiGzCQ79Ok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F83x9CTXQg3482VfhgoxMT4ZtedyRjv/B+9GLByI5v8wcrXrt40p/5WD2jM9l4cNxPS+z5dhCxhsePAu2YPduzIkTcFjuaJZjqePhWWtK1zOsHOdiqz/31nrnnecEsLJtu1ZT5kQHDVIVRcHZaJPTucZEDlRc+9Tv9VEHYJiHAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fbmDOCyR; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1773097717; c=relaxed/simple;
+	bh=VvOnQkOeuN2Hx/XiZQ+IcI6Hxn2CeLn7WfQqN5oGmDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qab3LsVTuTYlrh0hFiUqL/RpZHXBsoVzGMd0dh41clr6FaYNee+0C/v5t0h2sFwzZhVaMwaCY0sXr6SMGBJPoY4nbZiQuClWM0yzO84/Zu4Cr3pdOLVJAdGjJa/exCuWjGC9rpT9MMSENe+ui+NAoLkKr3fN+XTwE4uWxj8XZ/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGPHMvSk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fbmDOCyR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=iVEmQLqe/tsMBxlLD0Wqf9BfJxBNGSFc+SNC2crCmIA=; b=fbmDOCyRhCDYX5ahEKtMkcYmU7
-	SxANs3OKlBxn7swDVpV5PhDT3fU0IIxiWmE9WLdfUCOVvgheLb0S+dbkz5tFOnvbFwZ1V54+6HqzX
-	U82jUFpkcmdsehIm2WzRX829bRS1atebXqxxKzQIJxcZqiL/8bmtOdF/+ma1uUPLYgw9eI/bGmnuf
-	U2qodBd8KRblAvleS1j2zvECDn56Q45S9vswY3xQax3EY6n7w2cRNgFkQhDpVKs1Lfa8gaJoUlMuD
-	XzITarKTiQKu8EOUMNOEj2pSw+6BvU9lKwfqv5MYqFPCH/QMwKJnaY/mS7VdevmbstAy39W/7x9b6
-	PUQcnbAg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vziXT-00000008CIR-1BFM;
-	Mon, 09 Mar 2026 21:53:23 +0000
-Message-ID: <69576db3-352c-41fd-a96e-a1bc6ed7b74b@infradead.org>
-Date: Mon, 9 Mar 2026 14:53:21 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGPHMvSk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7901C2BCAF
+	for <linux-next@vger.kernel.org>; Mon,  9 Mar 2026 23:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773097716;
+	bh=VvOnQkOeuN2Hx/XiZQ+IcI6Hxn2CeLn7WfQqN5oGmDo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EGPHMvSk8pFHPp+lezHQHgzWakFvCVK+rqDeWMGANimA3yO9zCE6kK6TTHZ5mskpY
+	 +6D9QJWdVmD0BAOVSWlLoZnlAVKtK5WtMsxDPqVnoDpqBA9xtHNu9c3YrWhj88WnNU
+	 Cti1eeUyy1MHC+5AViQExAW2u6/praEes5iUaXCDnFvkW9YEzHZEsaMjDB6dOYtRSE
+	 gQCdtP9OHb0nCQSqimJ9yOxj82hBzOBXp2GMmXSbeQk3PKsv5nvtjH9sBqNxLyy/az
+	 SHDHm4pULIk5oM06OThB7e8OJNdy3728f/8UeGSYCeuTS/pourDTV78sRlxJIgbchn
+	 OtddU1Nkb6LuA==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b7cf4a975d2so1466627366b.2
+        for <linux-next@vger.kernel.org>; Mon, 09 Mar 2026 16:08:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVklcKJoNC5XKIbRqTn7559XkkmiwyXqmazfibNa7ifbGoYd2w5z4PkJOaeTLBpJwN60qv3OtfFBmgO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxROT+8vWvl2VgAEmUm8Zk5J3urfjWqopnyt0qPsrKsLBGJxmdJ
+	4m476Pp5EtdLqAYig6cUT5IC//4khA/c7wEHKWEV3Vx3QwpNIVn1O02EiayJKBi/957L6h2Z+Jz
+	ZKhEsHvgKtSAfYhrCZWv2lO5HUeIvNkg=
+X-Received: by 2002:a17:907:d09:b0:b93:ff4d:8e38 with SMTP id
+ a640c23a62f3a-b942dbde65amr733554966b.20.1773097715032; Mon, 09 Mar 2026
+ 16:08:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Mar 9
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Jim Mattson <jmattson@google.com>, Sean Christopherson <seanjc@google.com>
-References: <aa8WV_KvEV_TFPPZ@sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aa8WV_KvEV_TFPPZ@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <aa7ZT-cQMVdQOOAj@sirena.org.uk>
+In-Reply-To: <aa7ZT-cQMVdQOOAj@sirena.org.uk>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 10 Mar 2026 08:08:22 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9m6j8SLdCSssoNz-0pKV0UnoN1zgxFXfTJZ-btpyb3pw@mail.gmail.com>
+X-Gm-Features: AaiRm52ANdTn0fvMcSTQQ1FwbacODXwuEYz9XpK7qKoGc-5JjfYGC2vJVSV3zvs
+Message-ID: <CAKYAXd9m6j8SLdCSssoNz-0pKV0UnoN1zgxFXfTJZ-btpyb3pw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the fs-next tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Lorenzo Stoakes <ljs@kernel.org>, David Hildenbrand <david@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 3/9/26 11:49 AM, Mark Brown wrote:
+On Mon, Mar 9, 2026 at 11:29=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
 > Hi all,
-> 
-> Changes since 20260306:
-> 
-
-for linux-next 2026030[459]:
-
-linux-next/Documentation/virt/kvm/api.rst:8547: ERROR: Malformed table.
-Text in column margin in table line 110.
-
-=================================== ============================================
- KVM_X86_QUIRK_LINT0_REENABLED      By default, the reset value for the LVT
-                                    LINT0 register is 0x700 (APIC_MODE_EXTINT).
-                                    When this quirk is disabled, the reset value
-                                    is 0x10000 (APIC_LVT_MASKED).
-...
-KVM_X86_QUIRK_VMCS12_FREEZE_IN_SMM_CC By default, KVM relaxes the consistency
-                                      check for GUEST_IA32_DEBUGCTL in vmcs12
-                                      to allow FREEZE_IN_SMM to be set.  When
-                                      this quirk is disabled, KVM requires this
-                                      bit to be cleared.  Note that the vmcs02
-                                      bit is still completely controlled by the
-                                      host, regardless of the quirk setting.
-=================================== ============================================
-
-The last table entry does not fit into the table's "columns".
-
-From:
-commit 0f70db0758be
-Author: Jim Mattson <jmattson@google.com>
-Date:   Thu Feb 5 15:15:26 2026 -0800
-    KVM: x86: Introduce KVM_X86_QUIRK_VMCS12_FREEZE_IN_SMM_CC
-
-
--- 
-~Randy
-
+Hi Mark,
+>
+> After merging the fs-next tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> /tmp/next/build/fs/ntfs/file.c: In function 'ntfs_file_mmap_prepare':
+> /tmp/next/build/fs/ntfs/file.c:657:13: error: implicit declaration of fun=
+ction 'vma_desc_test_flags'; did you mean 'vma_desc_set_flags'? [-Wimplicit=
+-function-declaration]
+>   657 |         if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
+>       |             ^~~~~~~~~~~~~~~~~~~
+>       |             vma_desc_set_flags
+>
+> Caused by an interaction with commit:
+>
+>   2c3b5ea7028fa (mm: reintroduce vma_desc_test() as a singular flag test)
+>
+> from one of the mm trees, I've fixed it up as below and can carry as
+> needed.
+>
+> commit 8cbd256f4ac9d0b08b6fc30b305cfcb51b9de9f7
+> Author: Mark Brown <broonie@kernel.org>
+> Date:   Mon Mar 9 13:24:55 2026 +0000
+>
+>     ntfs: Fix up mm merge
+>
+>     /tmp/next/build/fs/ntfs/file.c: In function 'ntfs_file_mmap_prepare':
+>     /tmp/next/build/fs/ntfs/file.c:657:13: error: implicit declaration of=
+ function 'vma_desc_test_flags'; did you mean 'vma_desc_set_flags'? [-Wimpl=
+icit-function-declaration]
+>       657 |         if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
+>           |             ^~~~~~~~~~~~~~~~~~~
+>
+>     Signed-off-by: Mark Brown <broonie@kernel.org>
+>
+> diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
+> index 2735780159999..e5b897a6c1e15 100644
+> --- a/fs/ntfs/file.c
+> +++ b/fs/ntfs/file.c
+> @@ -654,7 +654,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc=
+ *desc)
+>         if (NInoCompressed(NTFS_I(inode)))
+>                 return -EOPNOTSUPP;
+>
+> -       if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
+> +       if (vma_desc_test(desc, VMA_WRITE_BIT)) {
+>                 struct inode *inode =3D file_inode(file);
+>                 loff_t from, to;
+>                 int err;
+Looks good to me:)
+Thanks for fixing it up and carrying the patch!
