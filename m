@@ -1,191 +1,118 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011008.outbound.protection.outlook.com [52.101.52.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774BA1D90DF;
-	Mon,  9 Mar 2026 13:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773061464; cv=fail; b=htQxzFskDq6WkSAIPCgFGoIoaGguzXURrRig3pEhtuKSt5Dxku4/YLmqGSGYS06JZwut1VlRY2T/YjOSGFxGllBxA1bcp2N37FDYMqmhSaI9qnDIVPxCdeRN0MfRfwXid1HVbAYRwGxT5DLiKAGLTX6vKn1RS6dUodp9XUq9F5g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773061464; c=relaxed/simple;
-	bh=MNyY/rEzkqlIPYA5fX+2YVaHixVYPpD8KnFYhOcPHPM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VeQIZoBUBV2LQ4R0qJFOh/V4WQudqfKfMA385AFejCe3bAbkURMKnaGpipheZZHf241eVo+mxTiy3vY7HdVUw7cLDPVFKb5yjuHJTGhIIfZ2F2xy/Qcvylsg8VmEKShtems98qjeU5P4rzYIOCAv8kZONHk8ZzfoxtCmNY20cig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pTqojE8O; arc=fail smtp.client-ip=52.101.52.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909413BD623;
+	Mon,  9 Mar 2026 13:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773063755; cv=none; b=dfSG6mhMSyX6VWnnfPsmxl4J+e+vzU4LPYP33uddc1CoGSRdvHSIunK9QfAfB2moo9KwNj9Hj5x85YSC+7c2EGIlPQtdxa2mTgM6qYKtU4cl61LFWZlo/FkZ9uMBBmuWAaynytE26UjO7QvAkiTQPsZjA7n8e/m0aXNc2x1gF0c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773063755; c=relaxed/simple;
+	bh=Fdl8FJojdFPF1FUx1e+Rv2JUkktdlZW2eiayHkO7iv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UasuXBd//dyIvDJfsbWupVfNwtnFxFXzszV9vdjVs+wCOdEyKx+Jqqz3Uzi5ELrOOMGol8vWsrDJwahnDNn62TDDwjVvTG7YbUEmnlBEmQGofIDZ1wq5xmGjn6I3M7sNtQv4w5pb9rRFfAJCayj7U7PDLdgcsGMMb+B1927+l6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjrmkW3Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pTqojE8O"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GQZj2TeagzpofvPlOxYRwU0pm//ruaj2WKVONF3bMgagtm0xE28BWiqmBDew9W2p2sFsQt3qkARfD1fxVGTthkC/4u9DDXhcHuUmvavd+6yZmW6IuYAXKSVxPpQu7+hAOjCuO2vEn/jCvcS1ho6OHX0NX9WlVxeKPu1gvxwOWRL4LiGhGsatxz1QnNe+BDNaYALf8478xdm6twHAd1AQsdCLS69YTDyh7F5luM2+T1hIO9xo88roVa0P51bU0qtHECH2X7idSbr+DgtTAKvh/ylowFOgYA0VhqImMO+zubToCj3ZdnBBlCMflwK1ls97oy/RbpqUCI5w2GVQLKwUdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yv1qp4m1Be/IRQXkM1RtrDTWGUZ7tKUIiZzDC55RYe0=;
- b=Y8Uky3aaoh7I1OK004Ayn7YinivGGnkhxJQidYPGPbqr95m0rSTHd2pm0XwsqX50MRhkjaXJJqk6GoZeWF+ykISiXEHQxT6lcAEI90bo8crEmHzhFIExuMvuK0OP5mbVtrNBVWW7/QxDpAJXBVFqH+U7CxiGx6WP8enqqCsUeO6kfHFa5PR8SUwez1w2MMJHu+u7ChSRtMRuSReIfEs7bdVib2tqBMpgnjlDzc2dhfqOlJjiBIikEVhXzjsQnisbXwZk9GLgcmxpeU29Cp3DyvnPH3XYilpVvUq2A/4pGWwVSBtZwVAqoz6glLg/PfvYW7TMyIKkXkj1j4r4Kmubdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yv1qp4m1Be/IRQXkM1RtrDTWGUZ7tKUIiZzDC55RYe0=;
- b=pTqojE8OQLN2k32m9fQ6EsPZzoZZzjhR09XA7nBlSvNkGYPKUojkHv2aB+9Kr3x/f9W4kbzFEJkkrXJu7XmaaE8W8fxngsrbKINvic2oxqYtOm9axenUIypsviQRy/jQnThXzHvAFx9c83HjJtJoV6QhIVA5KIYn+UTV47wR3RMzrUP7HyT35fFIrhS/I2NvunyvBLzxdnCUumZiLAAduRTyY0yirDgiIiOe0L9yP4M6RYxUaWWfHGv/N00y4iABmN6zPATVS6Tp32mUrHfBDnlD6GF8wT9MklpOvnvIQOfPOayCnzTgKDPf/sahvtYdWkn9rcM8UuzaazyEhaYU4w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8728.namprd12.prod.outlook.com (2603:10b6:610:171::12)
- by IA0PR12MB7649.namprd12.prod.outlook.com (2603:10b6:208:437::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.11; Mon, 9 Mar
- 2026 13:04:17 +0000
-Received: from CH3PR12MB8728.namprd12.prod.outlook.com
- ([fe80::2641:1046:bdf3:93d7]) by CH3PR12MB8728.namprd12.prod.outlook.com
- ([fe80::2641:1046:bdf3:93d7%6]) with mapi id 15.20.9700.010; Mon, 9 Mar 2026
- 13:04:15 +0000
-Message-ID: <ffed5999-71b3-48cf-a669-2004696dfd6d@nvidia.com>
-Date: Mon, 9 Mar 2026 14:04:08 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 4/5] net/mlx5e: RX, Fix XDP multi-buf frag counting
- for striding RQ: manual merge
-To: Matthieu Baerts <matttbe@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
- Moshe Shemesh <moshe@nvidia.com>, Amery Hung <ameryhung@gmail.com>,
- Nimrod Oren <noren@nvidia.com>, Mark Brown <broonie@kernel.org>,
- linux-next@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-References: <20260305142634.1813208-1-tariqt@nvidia.com>
- <20260305142634.1813208-5-tariqt@nvidia.com>
- <9f5282ed-ddda-4d7c-b033-5b6d544d6cf4@kernel.org>
-Content-Language: en-US
-From: Dragos Tatulea <dtatulea@nvidia.com>
-In-Reply-To: <9f5282ed-ddda-4d7c-b033-5b6d544d6cf4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0285.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::19) To CH3PR12MB8728.namprd12.prod.outlook.com
- (2603:10b6:610:171::12)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjrmkW3Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C506C4CEF7;
+	Mon,  9 Mar 2026 13:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773063755;
+	bh=Fdl8FJojdFPF1FUx1e+Rv2JUkktdlZW2eiayHkO7iv4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BjrmkW3Zr2SH+Wm7b+tx8B/mPCsCp2tpivIfWmZAE33S/KEoG2bNi9NmR4sXz4OBO
+	 cWIR6eSbASwSZFExdk+TNwIbuh0QN7O+nodVGuJnsRbsrENjFMKPtuvV751oGjgKOb
+	 1aogQzKswagsChUTcC4HFFGE+bHYYNoB+GaSIfW3feqzuV01nc3u/6eTVUDNIYo4if
+	 GcBDy/R5GSchddRNd7bQ5LEtVO73dbUkOgIoCMPl3oGdUUBYl9HGJD0tKJYAnvhqbl
+	 35LEjNRiT5N+NX7WX9zhU2DYOKxb03tARqg0GquVsLYowT/jhC3mIUaS8ab/8jlqH6
+	 QDGhBGhtYbzew==
+Date: Mon, 9 Mar 2026 13:42:30 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aa7ORohmf67EKihj@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8728:EE_|IA0PR12MB7649:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35ef0cba-7342-478a-fd14-08de7ddc5dbc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	KVMp2W/2gOT6PUCe+kf7hjZAgFfoBqAlnNTfePfYE70Fb74KkQE8MzSgonoKmVHVWw0Xk3wIDbfD+i6Y/OrgNQMPcQZY5wGPtbAMaM04IRZadcsiChuinHDe28l5QHh4wU3vPUhpia+FVN6zyJsup+HkcMRZOt/hYDC5ccqq46nCxcHI/2zRC1nnX+OxYt26RCFt142o6gs8e/+yeUYKCyhAI9b7P7vexPkXS/stK8fWPuEHxS0MUMzmlhtbdjDQ3gLolsq4DWLan0PZgZp3YVQ7mQ57tZ/3NgVGHNwypLQ7TI+0yHVk7MJAwU7D4sFsZOWqiR1ONV7i4uqj27IX+klOsQ3/b2w3JfTfhWcdPlbC2M+BbPI9wu5W/ag50J1xuu1RPziQWhe5SJtD+T48knZAdeLuDJCsxuYPGbH1sA932z1bySK0Q7EK9E7p3vE7raPi7tbhb5jzD4y4FnegtXOy5uatPnjUo247IS4IKf4m1wpWFvq5rssD6hEy2EyrTCuEi0zsK857zLDh8hrIS7FdkntA30P8Ugo+PuVHWGo35Jyb0GXbTJQ2ydO8FVaiZFw8xZpMNpQn2MSu0ma8dDzlURYqgDH+Rlsoy0wUfkbZM0I7pasiqiwkpHPoV5k3+2xtXMP/863z+wXjKn6N6GYli2MtMMpSCkS7jSp01EI3oy7LQaUdTARM9LMMtHZ+nEZqJbyW4NLup6RSogMOm6PHvEpXLw+U7HS6sJZe5Cc=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8728.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VmcxNldxTjZEazJlQWtLMlpLWWxmbnZMUG9nTElwbWxXNktpR2FpZXg3M0V2?=
- =?utf-8?B?OTl3amZBL2xhVGdCRVRXbkhiS3FiMUN4ejhZWUNoWmRCYS9Salk2NTRob0FY?=
- =?utf-8?B?VWlBc3VLbXZlakVCN0JIcXhKRTl2R1JHbUJtZ3Z2RmhzRkZPOVdHVUF6Z1Rj?=
- =?utf-8?B?V2Y2ZFV6THovQk9NeUl5UmdFdkN5TmUxK2JNM3gzUWJaemRxTXhRaGVNek1p?=
- =?utf-8?B?OThSSjNzTWFRaXByM2JQT2JDKzgvZGpoeGdGWG5kaTc4blZybzF0K09lTDBw?=
- =?utf-8?B?ckFkREZpK3NPZDNYVnVlVCt5Ymp4VTFwekRIeUZneEFQN0NOV2hZd0xTWjZj?=
- =?utf-8?B?bnAyVkZjeW9zeG5HQ1BYYkJBTmZPNHM2Yi9ubHpGUEJ0dXhDR05uYlB2S0xG?=
- =?utf-8?B?K3dtRHJwd1F5RWY3a0FiMEZmNW5KQWg0QjNIYTdvMGFnZzZJdUxjbWdGZGpz?=
- =?utf-8?B?NXBTVEZXcVRlOVR1dnJlVWJxNWRtdjVQVUpZTDhOYzRSZzFjMVY2WHFYY3p1?=
- =?utf-8?B?TUVYS3NRdk1TU3laMy81N29Fc1ppb05kWFh5TDRUQWx2cmMzTVliSWFiZTJL?=
- =?utf-8?B?d1hQK3E2dFRWYzF0bGw3dG15K2FWZ0I5M1dkR2NjZXdZMjRZVDRVeHExTGZ1?=
- =?utf-8?B?U0Z3VXhmMFphQjdoR2ZoTlVjZlB1anNwQXVsNERNVkF1MjB0b09WczZMSWkv?=
- =?utf-8?B?S2JXMWtmQUYxaWhabHFOZnhrU043TGRKbUlKTnZTRm9BcmpmZG8zbW84d2wy?=
- =?utf-8?B?SVFIY1ZHTTZreWJZZjRSUlNoak9wR2FPSE9kR3VWQU1KaWNrNlp2elVNaGRW?=
- =?utf-8?B?NmdpaElBYzJ4MzhnZ2JrNTJINEZMTFpWc1EvVUdlT0V6NE1PZjZPUndPOFNl?=
- =?utf-8?B?cjB6bG5sZHIrV09iTk9wVGVKcU9PTThkOENma0FYMHVNUmN5L3ZJTDJkWU8z?=
- =?utf-8?B?VTl4UWZqME9Odis3aWNiRHR2b3lNWnpZNTRscjlPUUtveGFSRUFqSzlnN1RW?=
- =?utf-8?B?TDVSN1VQanhsUEtpRE1CdE8rb0c2cHR4WUlJZkYrUlY3QnowQjRvVUlVTHlR?=
- =?utf-8?B?UHlTWU9jTno1ZHQwYlpDY1NvcnU2cTBuMGhRTmlWdGdGWkx0cUszbXVuL2lS?=
- =?utf-8?B?NGdkSG5kWjFOaDRKQ2hZL0VqK0pIOEZxUUpzY0RJeTh3SGdzc1VBcGo4enVk?=
- =?utf-8?B?aS83ekIxcEdWTzV6VktrTkpHUDF1T0p5cUtBR3ErbURZOWdvQVN3N0xGcWF0?=
- =?utf-8?B?YXNIT0NTaTkwd0JBOUQ2Mk9aay82Ymtka2FtTXd6V3pKSUV6ZlpDWENOZ2Rl?=
- =?utf-8?B?ZnBpN1Q5L0hzQVIweDNFR0ZKcWNvQWtZeEJJUDAxQnhHN2FVbkg1S1JZOHow?=
- =?utf-8?B?bElDQnNKOEI2b3VnM0lheGdqMGNnN2QySDJwaEQzY004Y05HZXlVamFMMGsv?=
- =?utf-8?B?NEM5REJwcXYxYWpZUGFUOXhYZ2d6YnQyaWFIci9XbHIreWRSUjgwSUlnY2p1?=
- =?utf-8?B?RzE3RExaQ0E5cEl5cHdURkdMV3FXejY1Zi9EcnY1cmVieUd6NnA0QWJ5dERx?=
- =?utf-8?B?dUdGaUR4dzlsZ3ZCK01kQXBRa0dGWjZMN2t3ejVUMVQraHFhYkJUZlNMcHFK?=
- =?utf-8?B?SWp3SnlCenpIYUhlTzlpSnhvQVdVWEljSDZQcUZlRHY3MHNuMHBHNEhkRFdT?=
- =?utf-8?B?YlJCM2sxQWhjcjJjMzlRcmxXMDhVcEVKcm1URVRoNjVNYmRFRXRkMExSdWNo?=
- =?utf-8?B?VVk4RlRBN3EwWGNiQlRKeVVQMGhDK2NhS3d2TTBrN3UxUGhHVDJKUmJPWVdy?=
- =?utf-8?B?K3FRaldNU205MUJMa1czOThWODlUVG9ZSVd3cnN2eVhEd1BQWXE2S0t4c3F6?=
- =?utf-8?B?ZUpsU2NMVEU0VEhLVXhueFUzVHNJZHVQM1phcDBJSGx5Tzd5T3VMak9NZFVv?=
- =?utf-8?B?WEVnM1FtOUVHZXZCeXBkOW10ZUVYdWJnWDZMTkVRb1VIYXBncnVYNW5mc0ha?=
- =?utf-8?B?Z1NZUTRqa1BhNG8vZ0dTY0VsVGZZcWxSVmpxODh4OUM3ZG5FVnVoZWd2TjRl?=
- =?utf-8?B?NXRRVlhLOEtybkFMK2pZWSt4ckZHUmtQWHhQQURIRkhQTDdhcGFrR1pWbUZq?=
- =?utf-8?B?dnVuZkE0dm5PTUhnNFF2SHBsZVJZMktmNGxVS0hiaWh6cVArWE5YV3hHcVFE?=
- =?utf-8?B?ejVBSFZDUzE3NUxwenFOaFdLR0cxdUpTUGxaQlVTbE93M0M1VzlIQjhieXA0?=
- =?utf-8?B?ZG5JQjBCSkttWllPdVNQbVRIYklhMDlIMldNaUZHcS9NR1MxN3dlcGRvWTFp?=
- =?utf-8?B?NnR0VjM3SGpEZHpzdUNOVVdPdGNyRy81R2dGV084MmNHSzU4WE9lZz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35ef0cba-7342-478a-fd14-08de7ddc5dbc
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8728.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 13:04:15.4376
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uiVmwRK5owNHacGzBF11HSZJdbukwGd8YNobGX9p0EDPKdef5DnOk93TntlGuD1bdlpI3IvR0WiDi+yo1L7GAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7649
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ySJF7kGR7n2ojKAD"
+Content-Disposition: inline
 
-Hi Matthieu,
 
-On 09.03.26 13:52, Matthieu Baerts wrote:
-> Hi Tariq, Dragos,
-> 
-> +cc: linux-next
-> 
-> On 05/03/2026 15:26, Tariq Toukan wrote:
->> From: Dragos Tatulea <dtatulea@nvidia.com>
->>
->> XDP multi-buf programs can modify the layout of the XDP buffer when the
->> program calls bpf_xdp_pull_data() or bpf_xdp_adjust_tail(). The
->> referenced commit in the fixes tag corrected the assumption in the mlx5
->> driver that the XDP buffer layout doesn't change during a program
->> execution. However, this fix introduced another issue: the dropped
->> fragments still need to be counted on the driver side to avoid page
->> fragment reference counting issues.
-> 
-> FYI, we got a small conflict when merging 'net' in 'net-next' in the
-> MPTCP tree due to this patch applied in 'net':
-> 
->   db25c42c2e1f ("net/mlx5e: RX, Fix XDP multi-buf frag counting for striding RQ")
-> 
-> and this one from 'net-next':
-> 
->   dff1c3164a69 ("net/mlx5e: SHAMPO, Always calculate page size")
-> 
-> ----- Generic Message -----
-> The best is to avoid conflicts between 'net' and 'net-next' trees but if
-> they cannot be avoided when preparing patches, a note about how to fix
-> them is much appreciated.
-> 
-Apologies for this. Will take note next time.
+--ySJF7kGR7n2ojKAD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The conflict has been resolved on our side [1] and the resolution we
-> suggest is attached to this email. Please report any issues linked to
-> this conflict resolution as it might be used by others. If you worked on
-> the mentioned patches, don't hesitate to ACK this conflict resolution.
-> ---------------------------
-> 
-> Rerere cache is available in [2].
-> 
-> [1] https://github.com/multipath-tcp/mptcp_net-next/commit/9cbb5f8a4a18
-Conflict resolution from [1] seems good.
+Hi all,
 
-Acked-by: Dragos Tatulea <dtatulea@nvidia.com>
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Thanks,
-Dragos
+  drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+
+between commit:
+
+  db25c42c2e1f9 ("net/mlx5e: RX, Fix XDP multi-buf frag counting for stridi=
+ng RQ")
+
+=66rom the net tree and commit:
+
+  dff1c3164a692 ("net/mlx5e: SHAMPO, Always calculate page size")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+index 268e208847577,8fb57a4f36dd8..0000000000000
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@@ -1971,12 -1977,13 +1973,12 @@@ mlx5e_skb_from_cqe_mpwrq_nonlinear(stru
+  			return NULL; /* page/packet was consumed by XDP */
+  		}
+ =20
+ -		nr_frags_free =3D old_nr_frags - sinfo->nr_frags;
+ -		if (unlikely(nr_frags_free)) {
+ -			frag_page -=3D nr_frags_free;
+ +		new_nr_frags =3D sinfo->nr_frags;
+ +		nr_frags_free =3D old_nr_frags - new_nr_frags;
+ +		if (unlikely(nr_frags_free))
+- 			truesize -=3D (nr_frags_free - 1) * PAGE_SIZE +
++ 			truesize -=3D (nr_frags_free - 1) * page_size +
+  				ALIGN(pg_consumed_bytes,
+  				      BIT(rq->mpwqe.log_stride_sz));
+ -		}
+ =20
+  		len =3D mxbuf->xdp.data_end - mxbuf->xdp.data;
+ =20
+
+--ySJF7kGR7n2ojKAD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmuzkUACgkQJNaLcl1U
+h9CF4AgAgEzpN8P7HDKLKz3jWKWCIkbEixssWOKt0d5kjiF1/hLAo5wUeoLaovSp
+yDv3ZP1DthcYDy2Dcmkq2cW5Bud9G1HFwlc84zO627R8/XI1CFA/zuJrNRAAqMYM
+xvn2Am3rreMTGZvDKbvNT+d6/Cplklr0TjUTYg4w42WoI5y6Z0Y3LjvYNUGLWlXF
+tSzD4GK2a7/tAEAwSBKd1RuUz5igvW4ye9enHf6Yvml8RzbwBr0bhBcLxqCw5rDF
+q0qyuHh2nBJE6qXGDv9GVvWObbFeeW/k+4B7N3AtOGPYnUUh0tA4Hwex9E399tQf
+QuGNsekrPuUYPfMZ2jR9Kv8zVcaNWA==
+=KVdP
+-----END PGP SIGNATURE-----
+
+--ySJF7kGR7n2ojKAD--
