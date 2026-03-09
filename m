@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00EB395DA4;
-	Mon,  9 Mar 2026 11:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E94B395DBD;
+	Mon,  9 Mar 2026 11:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773054626; cv=none; b=prqsjBGDTF+OmrLdg9YH6ucP6c5orn63VyHNndkvA5NeCqzMag2TDMrLUrulRt9B7EOeIjqvDSq5xZ1Dt2axMOOCNFVMM1N57iX4AOat12TK9LaPk57vz/5147CEdQf+KjbYstkPLjJDPEriqSPK7jyLSExDYOl60g60nT+XI8M=
+	t=1773054638; cv=none; b=fvUbVHrmEE1jLqkVXmEUCKwlzTOCAib0mxKvCdKEfi5HRSxMeXFnCUgTpKxsIOfTBhw4UiX8lTYQ16geChd4m9XWoQQm24XY5NbNfx2a3CEwtxc6X8wLVoyYVJ6pYE3jR+5kzWG5h706jsP0EgZNQtasBUAjIly9pSSDHjwfTPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773054626; c=relaxed/simple;
-	bh=/G3kp6EgkCac9y5/bp9nX73WKLJ4Ze9fEpxM2LGHOZY=;
+	s=arc-20240116; t=1773054638; c=relaxed/simple;
+	bh=2Z6P5u/hvxCYVjB2JMkqEmxrwYaQzkMGprH6KMAwaAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pM4QE5i89mnMxvhXXQ9MLpj732EOfL5eGgHyo2ILbnUIHIYo3BFTnqcjjVG3qnA7bf5Juwl6edj1BYasTojsCIIfGEIG+Eqc43+GLfnN0bqtbn9qRFkLCn9nVorTHWGKlWRIIn9Un1R/IKW4u7fLNnS4sYsjD1h9iBd2W20/Vkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/fVbI/G; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=T93o/GqE/Y7aWX87chXTfdNfSPTxUjEdCRufCaOL4vWZNnfJpssuZZO/3F/X5x3YXVx6JslfvQ4rRIi3yDcz6EurmTVypMuAl/YVBPaXKtBbMUUHfqAJ5d3PALdiZDJlqq1GyPyJldHYYE+E5V9kd1xwYkwwPLo4m1fn+V8870o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqF75EnN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/fVbI/G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B423DC2BC87;
-	Mon,  9 Mar 2026 11:10:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqF75EnN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2612BC4CEF7;
+	Mon,  9 Mar 2026 11:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773054626;
-	bh=/G3kp6EgkCac9y5/bp9nX73WKLJ4Ze9fEpxM2LGHOZY=;
+	s=k20201202; t=1773054638;
+	bh=2Z6P5u/hvxCYVjB2JMkqEmxrwYaQzkMGprH6KMAwaAk=;
 	h=Date:From:To:Cc:Subject:From;
-	b=e/fVbI/GHmB4uRSx40LrjCwNrlhn8BjwM7D3vszq73D3qhDZ0DyZ/hchHGBeE7IMu
-	 0wdz46dapaLc8jX/b518JDJVA3w2e2tXh6Qsrty9mKfT/ei1mMZ3SwJowTs82NOWl8
-	 sO7bk4bIRPP6W6Siz3X2pnY4JX87WuKX5dlpLGiJkqxvZ4/tx8RHdA7lOciE61vn1n
-	 6+CgRnJLqPm+Nj/XC2P0A56mYdE3lAnN5ae/o4nwWqtWQ20NWL3Hd5QvRiX6ENM5Z6
-	 Kzafh30GA49Ok4JYEeLTAImdZISuzyhZh+Rmm1M1RUOigkqXBArWI9Pg+dTCGg4ZgP
-	 hLoawAbH/pzdQ==
-Date: Mon, 9 Mar 2026 11:10:22 +0000
+	b=cqF75EnNIS+yApY87erNt4WZDO6btWgHeOdZUktuPnlG8+mwBOv7hv0jBPjEe7laS
+	 8Kbov9RBrognSdTa/jXJb7Sm/MSXfPObV5EevZ2sOgB/5eJaNUzhckHO5uzQ8AqdWE
+	 Yi9H2zuns4aCgGgvYv2Ds+XzkXh9aFp06dLKASSdiy+HmMKyGp+yWCwlMuqaT0c3Cw
+	 9dIimx4byMxX6Xmbqz9qdtWlUa8GWU6LgDRAjVGWzHLdyDZWJPBN8qhEC3KOV3MfZ3
+	 8F9n48hL2PAJxtRtFOIeciEB9gq0XjORDxrAtY4z71OMZ8DUz1a/6xGh8bLcxRQUUy
+	 l/CKa04wSYeMw==
+Date: Mon, 9 Mar 2026 11:10:34 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Shawn Guo <shawnguo@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the imx-mxs tree
-Message-ID: <aa6qnpEoSaiP4B--@sirena.org.uk>
+Subject: Missing signoff in the rdma tree
+Message-ID: <aa6qqi-GmXZXxubE@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,33 +39,51 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aAoRLKa6ZTbcUiXc"
+	protocol="application/pgp-signature"; boundary="ubcCwsrn5U9VqvNT"
 Content-Disposition: inline
 
 
---aAoRLKa6ZTbcUiXc
+--ubcCwsrn5U9VqvNT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+Commits
 
-  587096ada5204 ("Revert "ARM: dts: imx: move nand related property under nand@0"")
+  eb15cffa15201 ("RDMA/bnxt_re: Support application specific CQs")
+  485a21c14b413 ("RDMA/bnxt_re: Separate kernel and user CQ creation paths")
+  9ed273bbe6637 ("RDMA/bnxt_re: Refactor bnxt_re_create_cq()")
+  0edac801a2693 ("RDMA/bnxt_re: Support doorbell extensions")
+  4e99362444a2f ("RDMA/bnxt_re: Refactor bnxt_qplib_create_qp() function")
+  f0579e330b773 ("RDMA/bnxt_re: Move the UAPI methods to a dedicated file")
+  9db6a217ba5dd ("RDMA: Add IB_UVERBS_CORE_SUPPORT_ROBUST_UDATA")
+  ce150a8376e1e ("RDMA/bnxt_re: Use ib_respond_empty_udata()")
+  d59f007207b39 ("RDMA/bnxt_re: Use ib_respond_udata()")
+  ac4bb15208d1f ("RDMA/bnxt_re: Add missing comp_mask validation")
+  12c73bee53133 ("RDMA/bnxt_re: Add compatibility checks to the uapi path for no data")
+  ac593f5b66c9d ("RDMA/bnxt_re: Add compatibility checks to the uapi path")
+  6df3a6414d736 ("RDMA: Provide documentation about the uABI compatibility rules")
+  42d2a291ef474 ("RDMA: Add ib_is_udata_in_empty()")
+  f1cac281b4245 ("RDMA: Add ib_respond_udata()")
+  4ac738c6a7b90 ("RDMA: Add ib_copy_validate_udata_in_cm()")
+  715eccd4798ec ("RDMA: Add ib_copy_validate_udata_in()")
+  ea08d8cb8b520 ("RDMA/core: Add rdma_udata_to_dev()")
+  8e886928a19d7 ("RDMA: Use copy_struct_from_user() instead of open coding")
 
-is missing a Signed-off-by from its committer
+are missing a Signed-off-by from their committers
 
---aAoRLKa6ZTbcUiXc
+--ubcCwsrn5U9VqvNT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmuqp4ACgkQJNaLcl1U
-h9BGqQf+IRNDxSzFYYPJ03a5n+T74e7LQCsbW5trjHx98yjyWXdE5iG+2VmKZA4n
-AwXEKaR3qsC+erZQkDkvqSYxslR4CjxHJ5f17Jp565ln/2Hvyi7mZc6lIh0QvZt7
-RJvZ9gKR//mwzrHUckQx7ztHXe/1BsDVOvuzikx2bPJCnTiMn/kt5iBkaM/TGCh+
-XT7K68YqOOO1Oq8MJ9M6hgO3DqaJDLa8UISLtRff04Oxihfxu9zzI1loFcGIjome
-ys6inI5JQqCaRnXtcTHlnleqFcqEvRCX07xShHYgNSCdC1wTY62j7WS9gokxjtJ4
-QlODR/uIx+paqUaKHywIcfNLMOcXlQ==
-=JzRo
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmuqqkACgkQJNaLcl1U
+h9D1fgf/TCSkfX/RsDbAgiyih7atGVeMRMoMZvELHEU12Tp5P1DlMrTIyzmjDgwk
+Zy5kYPhc4JhvDOEUbDrh7z0AkBmSRYd0i6OcbYjq4A3gUkCyxPwIi257gRnXjUTe
+fZbF5+QqDe51zksc1HD4Th9elDEaT2kUg8CQt1g753YnR1d0mxIKaEIVt6fIQj0D
+bpWFEVjDuGGdcEY61YNYA+SC5j5SzciBRXgHI9j+V/VJglOyLcltEDYNTvl2vwz8
+1DB1xCB+b5TakP4Mwuk9UuNLSsUwBnl0csraLoSsBK7BzF1csDBZhfXQSqbUg6id
+Pq/EshCnGrveqt5eUPU08RVWEEdXwA==
+=L79I
 -----END PGP SIGNATURE-----
 
---aAoRLKa6ZTbcUiXc--
+--ubcCwsrn5U9VqvNT--
