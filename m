@@ -1,85 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270E6410D39;
-	Mon,  9 Mar 2026 19:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0D7355F31;
+	Mon,  9 Mar 2026 20:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773085975; cv=none; b=M3VKNZ0AQlh8Que+Zy9KsKEeau6beUfiqkw6ILGidgaQVkgKA+qyMN8KkkhUDgbYbaEjje7KHyyJzSq674UB8MWNiDYAjk9Y51CmvFbx2OytrMcWZjDaZBt6TWgCAidL3NxR5YvZZ9xs/hL3uw+HwApQ5J61LD/sQBomxGPloD0=
+	t=1773086526; cv=none; b=B0DaFp8zOH6/LE8Rrytat/q+R7MQ6j0a6SB2Hymb2Rq2fEk1k5Bk6Iq2oZKHcrwVcjfDGqinp91Y/LBPF7rAINzrfRYW02EwbL/QxjBwGifheDJFXGGUmpaKXdVAiXWI+s1vi+sgcMzZaDXcJbht+1qVFQk4P26X9YJ/HF65CNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773085975; c=relaxed/simple;
-	bh=GVf5sOrlTZdPtTTlfa1C00VkXQ8wpoutSeVidUtHsGQ=;
+	s=arc-20240116; t=1773086526; c=relaxed/simple;
+	bh=pwRaZr17rsPcRVVyjdmu37TB6zAEf7CZfkEoadllZoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdV1J20QXqO5DnP8nLKXBJNOfgQsHuO7xTxq67mz2cJCOVQrWoDHbpKLf9aWg3EHh1E7WLWyhsCtUXyl3i6mQoLKsAKp/PtYW2KUpwkpun8CKlpGnj0XSMDBqtTq0FSlrxnUw6QAqq+1YUrKwCBxTC3wcdjbijsRR/VE6mbzOWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VC0iMzaP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJI2JVMw1uaMaos4AbtrXD8MprXXgH6R/XVIY5URQjpiAJONf2nm09a/QoleaGeKlbdv1osha1GeAwMAvW8YF6e4ESkNJ4yqmxLhZ0t7ySrLVE95OfQCDgRQ3/Oz2hpJn7sQgtYLPh5WL+U1NVda/E/5Y9L1bKf2dfulhVEWqsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEcyggSV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VC0iMzaP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4052C2BCAF;
-	Mon,  9 Mar 2026 19:52:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEcyggSV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1A2C4CEF7;
+	Mon,  9 Mar 2026 20:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773085974;
-	bh=GVf5sOrlTZdPtTTlfa1C00VkXQ8wpoutSeVidUtHsGQ=;
+	s=k20201202; t=1773086526;
+	bh=pwRaZr17rsPcRVVyjdmu37TB6zAEf7CZfkEoadllZoQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VC0iMzaPMN9QAh4szURHHHkYM2Nsg8V+6Qlj1BLzXyXENSmS1JnWq/RNRbQLgBFKk
-	 0YE2AIVDFpbxyVWkHvbgc1wm0m4RF+zzYs2JOBsqTjJH91XFjRGCTmCsH92A3v4kdO
-	 JM+7nWfI0c/hxxfGwIRIdM/u8l49UuUlurBbwqNyZz+U4KDtjuF/+Rw7bl6mX+qicH
-	 H0ElnEX1rWBq2bkVMA77+hNrFr4boPobPy8ngEp5W2Ar49vUV4pBGCOxMFcN4p0LsM
-	 YBAmx9mFzExGVto4YuW+j5FMx3K6tI9YV9Qfe3emh7sXrRYZME10qUev03uDKUjYrw
-	 RAvN5k27C/i7w==
-Date: Mon, 9 Mar 2026 19:52:51 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Mar 9
-Message-ID: <76203f3a-87d7-497c-a6aa-acd0aef036f7@sirena.org.uk>
-References: <aa8WV_KvEV_TFPPZ@sirena.org.uk>
- <aa8kpRLIdvA98N-J@black.igk.intel.com>
+	b=fEcyggSVqwoD+aM0aIzFTefzXFO//+sbJwUwJBqcjkjcmeVhEF+sbQyoJ5R0sDkgp
+	 /hqa0Z0olxRPptnuCl2rIj00mnxutd7tYWdaDVWYlyXQFDGyTEIw33T7oGMbHIbGcE
+	 IWjHhCrhvqZtpX7hKzGWcY7NyzqQUmyjhwCKu+kVv0fBwYJecc9MqvPquH+FonqLAV
+	 k6H20URl6rgtjpOWRnHodFqUjGnn0e36CfUndD/x07i4m8IhdB4DtM5CA6Bqk02pdY
+	 M1RRXyGV65cd1EHU7SIb7g25VprY7uqqKpAUmtCEI5qr/760Bp2J3hCDqQjWHNRVL6
+	 ky7uSAp8X/G/g==
+Date: Mon, 9 Mar 2026 10:02:04 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the sched-ext tree with the tip tree
+Message-ID: <aa8nPDUD8bqIyfx0@slm.duckdns.org>
+References: <aa8WSH-ILSebstIB@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z0beUxMklRrG4FyW"
-Content-Disposition: inline
-In-Reply-To: <aa8kpRLIdvA98N-J@black.igk.intel.com>
-X-Cookie: Do not dry clean.
-
-
---z0beUxMklRrG4FyW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aa8WSH-ILSebstIB@sirena.org.uk>
 
-On Mon, Mar 09, 2026 at 08:51:01PM +0100, Andy Shevchenko wrote:
-> On Mon, Mar 09, 2026 at 06:49:59PM +0000, Mark Brown wrote:
-> > Hi all,
-> >=20
-> > Changes since 20260306:
+On Mon, Mar 09, 2026 at 06:49:44PM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the sched-ext tree got a conflict in:
+> 
+>   kernel/sched/ext.c
+> 
+> between commits:
+> 
+>   c2a57380df9dd ("sched: Replace use of system_unbound_wq with system_dfl_wq")
+> 
+> from the tip tree and commit:
+> 
+>   cde94c032b32b ("sched_ext: Make watchdog sub-sched aware")
+> 
+> from the sched-ext tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-> The 20260309 contains a file (some bug?) of more than 1GiB in size with i=
-nteresting name:
-> ": change inode->i_ino from unsigned long to u64" (without surrounding do=
-uble quotes).
+I pulled in sched/core into sched_ext/for-7.1 and resolved the conflict.
 
-Yes, the scripting tripped over itself during a conflict resolution and
-I didn't notice.  It'll be gone tomorrow.
+> I do note there's another system_unbound_wq usage there which for some
+> reason wasn't updated...
 
---z0beUxMklRrG4FyW
-Content-Type: application/pgp-signature; name="signature.asc"
+Yeah, I'll queue a patch to convert that one too.
 
------BEGIN PGP SIGNATURE-----
+Thanks.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmvJRIACgkQJNaLcl1U
-h9DeYwf9Gv3ZJsI+/7LvCU3NSaQG69NrciqtVZcFZfSu1f3kiqoFaRfIoFvh45b/
-MTdk9nQydQzAQDNVlNRYVemqZ0CC6uUu9UriQiDJ8KRqdunRRSdXFtRGVanIJnLC
-kw+qv33sDy7amrH3Byf9txVQij1bAKxifvSiu4eTK3G+5B31oWtCv/EjODdruQ1V
-+gtDEx/T0uykeJQ6jC6QuyfahYFVFkEHPQrn7Hvfc6JUXOucYpsno/exB1ZKQXsd
-1tP880QdWHWDzFaW4zIUQ7zQ7BAwcHrDsuJPLiBETuYVPKKIvNJaaAXFQ9X4RPND
-p/8Gfphpst2UrdZ1jRRDQeg4Ne5C7Q==
-=FEIG
------END PGP SIGNATURE-----
-
---z0beUxMklRrG4FyW--
+-- 
+tejun
