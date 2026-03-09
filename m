@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701283D1CA7;
-	Mon,  9 Mar 2026 14:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C3E3D2FEC;
+	Mon,  9 Mar 2026 14:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773066580; cv=none; b=mJ1CvCDX7a8QazioRrLaOczas8Tu9yFF9NcenhICB8vyQ+KoNLlFyjhFtNeMnPf/hhcznEwx0U5JUq5nc1Z28U3E8lYRVFsyHEjdvwBYVyNltx6qufKiQ1VbTZP/HPxwIimzQHh3rKOETD3kqSQ6VG957n3UgAL+9DOuJYRAvMQ=
+	t=1773066907; cv=none; b=SpZ60+QCNTF9W4QOGnHEcu3hM10Qb+JYM/rC4UEMLygq0ewVsW01CTO5s8fm4TP3iFNoNy8UuhBNjTftGsrQ+mZfryDjb+D6RiIuTePfAzBYGQbR0NjeSoXNLhFRWKMz4xhP6b98iSlWnwlR4W1ADapA04+fg8Avh0c0ubl7TqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773066580; c=relaxed/simple;
-	bh=AsFH0HBq5dqKEcOxfOx+0w5Nb0IJbiqSud7zDizNtsE=;
+	s=arc-20240116; t=1773066907; c=relaxed/simple;
+	bh=9rr+QD/P/lYXiDjOo0kLnRzDrnNdMzuEFBf6qRH/QeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gIaLnmOQxHCGia0aXXXgTkX2RfC+su4zUUDg1gR9O55PKu7bp/r1Id0tBwjEWaQFjqt3nYERxGrL2HjK9huh58kHYkjaJ2Zmpg2YSFzhRGOFXdQ+r/qJSkBoW3Qqy/1i9UXAI2EJsjf+rEQeMmCIv2zlutEjcGa9n1CiEhgZ8FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URatpSB9; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=SGxecp+C0BQzd17SX6ixiQ1Psx+XrP/yHBG9o4UFCdqvfELiBiOWPm03TRe3P27wspILJAnc0+mHx8DAQ4EzYK4PiplxOqV/lL9jDv1uu4Zl+F1n3eQlEjduYqrQ8RNUygHSIwz8Zsmsk2TVy/nCkzTQujOdm0wWxfP4sNND69o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQRIhSj3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URatpSB9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B541DC4CEF7;
-	Mon,  9 Mar 2026 14:29:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQRIhSj3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F9FC2BC86;
+	Mon,  9 Mar 2026 14:35:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773066580;
-	bh=AsFH0HBq5dqKEcOxfOx+0w5Nb0IJbiqSud7zDizNtsE=;
+	s=k20201202; t=1773066907;
+	bh=9rr+QD/P/lYXiDjOo0kLnRzDrnNdMzuEFBf6qRH/QeE=;
 	h=Date:From:To:Cc:Subject:From;
-	b=URatpSB9sQZL+ghO1A5KwV8WpCEoiSfGJMeIuIOHhwhsqUgX+v7RsvDCv+mXDTzPC
-	 UwpZsCTHsh35yx7StnLd6IMM7heZ8tZNnxxs34dflAeZUIQ54b6e4NlFCRb0ROSnrQ
-	 VmaBJd+LkeNIaG0PpdTCFLgiaZ+pFYXUwTOXtPlqI7uy9aXEqnVYDK4WZ/87P9P5zd
-	 IKAbDSRjxewKnOsyiuDjJg/66dBN+PKPFHgq9tRK3r+05daaQghib3qsZVGwRvKrlW
-	 4syxWT1z0WAxGuuWXqyGn0NKabRAfSDudZGaF2mj8WqKmOTublfBX5fc1yKhZehbYl
-	 cwmMGAj1K666g==
-Date: Mon, 9 Mar 2026 14:29:35 +0000
+	b=RQRIhSj3mq4fmMOFm2atl3diqTXwrB5N+ZYXbIChQDa6xlixz4HXNz7Q997Uzhcz4
+	 His/eEZe0ISBDZkhjH14nezNft4s6DLfys4+XoS/isWUlDQMY3YS8LkuSmU5lIXGVn
+	 460beo86od+Iq+FY6CD5sPIt2k4By+n1Wz9tSb/gS+Z28D4KvQl5hs3LV8GI/lx68x
+	 9Lhw2o4A+Ih7v+DCr40NhpbGJGfBGLlVyBuuE/3APlMRY3z6IJ7XemL/gHjZl+RdGI
+	 gcTjf/cZaNYsFdRN23aZxECFldDWIY22adXI9dnV/w7on8l+oFTw4otHI5ZmwSozeD
+	 eBkIlqnCL3a4g==
+Date: Mon, 9 Mar 2026 14:35:03 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Lorenzo Stoakes <ljs@kernel.org>, David Hildenbrand <david@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the fs-next tree
-Message-ID: <aa7ZT-cQMVdQOOAj@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: linux-next: manual merge of the drm-misc tree with the amdgpu tree
+Message-ID: <aa7alzO1DPSnmSIs@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,78 +42,185 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BuwbS+7/sGbNgLhr"
+	protocol="application/pgp-signature"; boundary="5XM4+rh9C8fQU+4n"
 Content-Disposition: inline
 
 
---BuwbS+7/sGbNgLhr
+--5XM4+rh9C8fQU+4n
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the fs-next tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-/tmp/next/build/fs/ntfs/file.c: In function 'ntfs_file_mmap_prepare':
-/tmp/next/build/fs/ntfs/file.c:657:13: error: implicit declaration of funct=
-ion 'vma_desc_test_flags'; did you mean 'vma_desc_set_flags'? [-Wimplicit-f=
-unction-declaration]
-  657 |         if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
-      |             ^~~~~~~~~~~~~~~~~~~
-      |             vma_desc_set_flags
+  include/drm/drm_fb_helper.h
 
-Caused by an interaction with commit:
+between commit:
 
-  2c3b5ea7028fa (mm: reintroduce vma_desc_test() as a singular flag test)
+  1837c76b780a4 ("drm/amdgpu: Move test for fbdev GEM object into generic h=
+elper")
 
-=66rom one of the mm trees, I've fixed it up as below and can carry as
-needed.
+=66rom the amdgpu tree and commit:
 
-commit 8cbd256f4ac9d0b08b6fc30b305cfcb51b9de9f7
-Author: Mark Brown <broonie@kernel.org>
-Date:   Mon Mar 9 13:24:55 2026 +0000
+  6d438685340df ("drm/fbdev-emulation: Remove empty placeholders")
 
-    ntfs: Fix up mm merge
-   =20
-    /tmp/next/build/fs/ntfs/file.c: In function 'ntfs_file_mmap_prepare':
-    /tmp/next/build/fs/ntfs/file.c:657:13: error: implicit declaration of f=
-unction 'vma_desc_test_flags'; did you mean 'vma_desc_set_flags'? [-Wimplic=
-it-function-declaration]
-      657 |         if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
-          |             ^~~~~~~~~~~~~~~~~~~
-   =20
-    Signed-off-by: Mark Brown <broonie@kernel.org>
+=66rom the amdgpu tree.
 
-diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-index 2735780159999..e5b897a6c1e15 100644
---- a/fs/ntfs/file.c
-+++ b/fs/ntfs/file.c
-@@ -654,7 +654,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc *=
-desc)
- 	if (NInoCompressed(NTFS_I(inode)))
- 		return -EOPNOTSUPP;
-=20
--	if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
-+	if (vma_desc_test(desc, VMA_WRITE_BIT)) {
- 		struct inode *inode =3D file_inode(file);
- 		loff_t from, to;
- 		int err;
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
---BuwbS+7/sGbNgLhr
+diff --cc include/drm/drm_fb_helper.h
+index 15274b8a1d978,ca214b5c02833..0000000000000
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@@ -271,6 -271,119 +271,8 @@@ int drm_fb_helper_ioctl(struct fb_info=20
+ =20
+  int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper);
+  int drm_fb_helper_initial_config(struct drm_fb_helper *fb_helper);
++ bool drm_fb_helper_gem_is_fb(const struct drm_fb_helper *fb_helper,
++ 			     const struct drm_gem_object *obj);
+ -#else
+ -static inline bool drm_fb_helper_gem_is_fb(const struct drm_fb_helper *fb=
+_helper,
+ -					   const struct drm_gem_object *obj)
+ -{
+ -	return false;
+ -}
+ -
+ -static inline void drm_fb_helper_prepare(struct drm_device *dev,
+ -					 struct drm_fb_helper *helper,
+ -					 unsigned int preferred_bpp,
+ -					 const struct drm_fb_helper_funcs *funcs)
+ -{
+ -}
+ -
+ -static inline void drm_fb_helper_unprepare(struct drm_fb_helper *fb_helpe=
+r)
+ -{
+ -}
+ -
+ -static inline int drm_fb_helper_init(struct drm_device *dev,
+ -		       struct drm_fb_helper *helper)
+ -{
+ -	/* So drivers can use it to free the struct */
+ -	helper->dev =3D dev;
+ -	dev->fb_helper =3D helper;
+ -
+ -	return 0;
+ -}
+ -
+ -static inline void drm_fb_helper_fini(struct drm_fb_helper *helper)
+ -{
+ -	if (helper && helper->dev)
+ -		helper->dev->fb_helper =3D NULL;
+ -}
+ -
+ -static inline int drm_fb_helper_blank(int blank, struct fb_info *info)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline int drm_fb_helper_pan_display(struct fb_var_screeninfo *var,
+ -					    struct fb_info *info)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline int drm_fb_helper_set_par(struct fb_info *info)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+ -					  struct fb_info *info)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline int
+ -drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline void drm_fb_helper_unregister_info(struct drm_fb_helper *fb=
+_helper)
+ -{
+ -}
+ -
+ -static inline void
+ -drm_fb_helper_fill_info(struct fb_info *info,
+ -			struct drm_fb_helper *fb_helper,
+ -			struct drm_fb_helper_surface_size *sizes)
+ -{
+ -}
+ -
+ -static inline int drm_fb_helper_setcmap(struct fb_cmap *cmap,
+ -					struct fb_info *info)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline int drm_fb_helper_ioctl(struct fb_info *info, unsigned int =
+cmd,
+ -				      unsigned long arg)
+ -{
+ -	return 0;
+ -}
+ -
+ -#ifdef CONFIG_FB_DEFERRED_IO
+ -static inline void drm_fb_helper_deferred_io(struct fb_info *info,
+ -					     struct list_head *pagelist)
+ -{
+ -}
+ -#endif
+ -
+ -static inline void drm_fb_helper_set_suspend(struct drm_fb_helper *fb_hel=
+per,
+ -					     bool suspend)
+ -{
+ -}
+ -
+ -static inline void
+ -drm_fb_helper_set_suspend_unlocked(struct drm_fb_helper *fb_helper, bool =
+suspend)
+ -{
+ -}
+ -
+ -static inline int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_he=
+lper)
+ -{
+ -	return 0;
+ -}
+ -
+ -static inline int drm_fb_helper_initial_config(struct drm_fb_helper *fb_h=
+elper)
+ -{
+ -	return 0;
+ -}
+  #endif
+ =20
+  #endif
+
+--5XM4+rh9C8fQU+4n
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmu2U8ACgkQJNaLcl1U
-h9BPywf9GDIiaf2asLFk/p+n9n7BndWbb2PDaox0vFWs3KgNja1x4cCSfyXBDxIO
-EndZjHXjk7Pd6Ix5aMu1Hm7fKfiGeGwo6DvEw0a868ZyyAbWBMIiLeJadvOudEjT
-XE7A/ipkiX5rb3t/DS+2jULsLuwWkUGb8TuMc/XEUeLZE5OF1HXEngMIJCgVNDPk
-fgf35ofAc7NFe/z4QRD0MuSlm6YtkF9ilzrLLCh8WrM30U+cnK1W3m3QE4axQjHX
-pt5/wg6DBj1PTNMa1WxdYrhDWPHUcKSUv7bgK4BATDLnKs+wkWhdvLmhnetJ/Q6m
-xjWgkW6YMgeWU4Y4sHbpS0naJSZ60w==
-=ACt2
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmu2pYACgkQJNaLcl1U
+h9AcOwf/WcSimoUmYj5nrebS+Gw6T/OXV3UtxWFQgVg7LpX2vVDcdw1VjQqWYVNi
+HtDNckfK5hrm9i9EK5yedfkbNGxPXltHTKuYz+YDFZRa7doUyV8f+TJAsyF5wumX
+NJ8oxpceSbHbq+Iid0xHmOoxMryymyTwrck1bU+Y7KchsJ7yACBf1WS/Ry0eqxEG
+FCjvweMRaA+P91OBRvv6RwsGuW5crNLi8WfVsljCajjqQlImyeIYOOf367RlIZlN
+W+s8hGwa7qQ8sXaokV8ZRB0++wgOSFYNPn/GRsM+p+t18sEd8cJeb/QIarUM4rsy
+CRhOvUA15Tf5mSbHQ2NKX6MjrkxKcg==
+=UWn/
 -----END PGP SIGNATURE-----
 
---BuwbS+7/sGbNgLhr--
+--5XM4+rh9C8fQU+4n--
