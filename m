@@ -1,77 +1,85 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D84C320A04;
-	Tue, 10 Mar 2026 03:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932719EED3
+	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2026 04:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773114608; cv=none; b=lbgA3HO++jF57XmZ7BpHerjPM63kUaa1QcZhScqFLgkjYZ4n8vZSrnh5VJpJKNBkQ2v4ahf6ZQ/GU9opDBKbAP5HLYAwIR+FDWWt8n/3AvqjmJMXUso1b94vpq2tis2pSjpt3qWB8QT2TirxomuJ7hCC3Fz/pdH0qYZNKx9qvqY=
+	t=1773115563; cv=none; b=oRx4VWgxpKKsQNvbIC9fH/RoFDeu3pTJADay7uWfE7ebYiZOKeLGX0eIJUF5xlF75xQ3jf1dPuP6/T8+Abs6Tw8gpbaz6QmC5osJSAI0imOVWCyPvzCv4KTFCWmw/vFdtC0slHjt9iFsl9CYOIZ1tHR0WgIrfad4gqXSwP5xrvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773114608; c=relaxed/simple;
-	bh=08NZ+Tw3qv920gOa8hGaCxOPb1fEcvIi2et2+XzIvGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lgT1wLFGr5HFaroFekNusA1jiLVR48D26uUpqxPrz9WS4eyhy2X/bEwBPoYNOkQ/EMHINvRzLkQfCbdzMK9Jctem+rW10lD4BF7q0O+XjESDuIqsqyPuPAH5pdsaqO5wj3I/sn2EYMVIjNSWX4bVY2c7kVoiov2LVDP1s4awXWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1hDsLUSu; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1773115563; c=relaxed/simple;
+	bh=w9gspbJWGA4sIYYj2j/RnwFgusI3VScNFSOjNNGIkIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kpQEQcLfANoWA2fYeSuxHGQGIxSV0G8JRz6JLJ2u7xNdp2QdZdxFvzWBGML7x27Yadu6ARbo3IWSlIiJ5+sE8fHkTSX8aYTzOY/ztUqkUBhwybEE3u82NHWsLrCd5VY3JSp9DW3KYEyB6q9BW0yGuu78cRc8nuB/Rp55MQelBMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yp9kP4i6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1hDsLUSu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=KiMjX/yEqsV4wrwCPAl510Spg1vMYOTtNmsnpLdg4mU=; b=1hDsLUSutu3zoCRG/DUtiK9Ql+
-	XLoB6gmFb1gcuMOeyypHjgFuNCQZoEdJ4Vnwj1NTFng+xH2IxjlP9M768Lbc+qQyplLf71U5l4O2V
-	8a8JERRyRsTm+TPyIwAqppI0wMHZ89J+TMlNd8tcwETugGntIM2OVYf1bYl4MTdpqkq4azpHCQGqd
-	0ab0xOSrxPz97SPtPyIP16Asz08ens9INI1Vv5Z4WDevn67t7GRoXg/1oTV2my4ahJBSv03nbV5AO
-	0g2OwOFrtshqeUCbab5KAjU/aVcLoCVJdwQ/uiiEgfWbIXqdEW8q/7MzKEyDutqP+eCZiPD4aNThY
-	T1hwd4Vw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vzo6d-00000008gDM-3QBt;
-	Tue, 10 Mar 2026 03:50:03 +0000
-Message-ID: <a1c852e6-85a9-4de2-a6ac-9a100e4a169d@infradead.org>
-Date: Mon, 9 Mar 2026 20:50:02 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yp9kP4i6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4A6C2BCB0
+	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2026 04:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773115563;
+	bh=w9gspbJWGA4sIYYj2j/RnwFgusI3VScNFSOjNNGIkIs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Yp9kP4i69KjEeYwbDD3flbT9/p2V4VQu9D7/DvjMbZeiqVGjm2wvsryHEwBQue+0K
+	 zv6IXVodhS7F2HKHHovIXTyeXu/+ROTDn0lFv3MgEbyP3qE78gIPASzAcl3cPyIYxe
+	 3CkBjvRMTIqPDvQ+gqYZc8xj9szQmBeGRPk5PvyAhTtIRr/ionTY8+fxm9deIjwtml
+	 JXpLPms/w8S3cvQuZ+X90RGTYXDwYDct6iQNEcHsSBHeA30DQWCQHeXq/svy5kaim1
+	 t+dMQlvPF/Szjv286OYW6HRRTmHoSbwwJBNA1FYt9/dbtBnBnSWoQGUMaju/E6DKa4
+	 oaiNxXGIKxpNA==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b95c0fc928bso475359166b.0
+        for <linux-next@vger.kernel.org>; Mon, 09 Mar 2026 21:06:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXXwbkgLWcG9Jv5qP5XydgTVhPVcaS3SMQI0r32ZqArQdlPvsXK+lGZh/wcl2MvCeQnBnsgscO8etcL@vger.kernel.org
+X-Gm-Message-State: AOJu0YymxYLGHFo/5suX8rFnbxFMlI+osa9rJVFfaO2DzUdTE2Wv1dsK
+	IYybBfbLQZed1rTOdg4e55n27WRh4HhmmQ7Oq++MsqetuzC6/t2XzG8LZU2x0h9lGAnnR+pEv6b
+	hnnphSVPMNpJMVx0+da0gLqkOFa+T9/I=
+X-Received: by 2002:a17:907:3e9e:b0:b87:bb45:bd5c with SMTP id
+ a640c23a62f3a-b942e05d987mr712637966b.58.1773115561515; Mon, 09 Mar 2026
+ 21:06:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <aa8WV_KvEV_TFPPZ@sirena.org.uk> <a1c852e6-85a9-4de2-a6ac-9a100e4a169d@infradead.org>
+In-Reply-To: <a1c852e6-85a9-4de2-a6ac-9a100e4a169d@infradead.org>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 10 Mar 2026 13:05:49 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8DEQ+qn=Y91rSmr7k4Xrf7Mo-yzWmuv=PvWRv2uFKFmA@mail.gmail.com>
+X-Gm-Features: AaiRm52ddVW0XM_-ZNQi8iIVuTSTAoPiISf7VFc8N9hUcYKLfQc_Pw2NyEP76Tc
+Message-ID: <CAKYAXd8DEQ+qn=Y91rSmr7k4Xrf7Mo-yzWmuv=PvWRv2uFKFmA@mail.gmail.com>
 Subject: Re: linux-next: Tree for Mar 9 (ntfs)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Namjae Jeon <linkinjeon@kernel.org>, Hyunchul Lee <hyc.lee@gmail.com>,
- Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
-References: <aa8WV_KvEV_TFPPZ@sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aa8WV_KvEV_TFPPZ@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hyunchul Lee <hyc.lee@gmail.com>, 
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 3/9/26 11:49 AM, Mark Brown wrote:
-> Hi all,
-> 
-> Changes since 20260306:
-> 
-
-on ARCH=arm (32-bit):
-
-../fs/ntfs/namei.c: In function 'ntfs_test_inode_attr':
-../fs/ntfs/namei.c:813:22: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-  813 |         u64 mft_no = (u64)data;
-      |                      ^
-../fs/ntfs/namei.c: In function 'ntfs_delete':
-../fs/ntfs/namei.c:993:44: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-  993 |                                            (void *)ni->mft_no)) != NULL) {
-      |    
-
-
--- 
-~Randy
-
+On Tue, Mar 10, 2026 at 12:50=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
+>
+>
+>
+> On 3/9/26 11:49 AM, Mark Brown wrote:
+> > Hi all,
+> >
+> > Changes since 20260306:
+> >
+>
+> on ARCH=3Darm (32-bit):
+>
+> ../fs/ntfs/namei.c: In function 'ntfs_test_inode_attr':
+> ../fs/ntfs/namei.c:813:22: warning: cast from pointer to integer of diffe=
+rent size [-Wpointer-to-int-cast]
+>   813 |         u64 mft_no =3D (u64)data;
+>       |                      ^
+> ../fs/ntfs/namei.c: In function 'ntfs_delete':
+> ../fs/ntfs/namei.c:993:44: warning: cast to pointer from integer of diffe=
+rent size [-Wint-to-pointer-cast]
+>   993 |                                            (void *)ni->mft_no)) !=
+=3D NULL) {
+>       |
+We will fix it.
+Thanks for the report.
