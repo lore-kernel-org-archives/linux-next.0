@@ -1,37 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583EE3D1716;
-	Tue, 10 Mar 2026 17:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5CB2E11D2;
+	Tue, 10 Mar 2026 18:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773163127; cv=none; b=eMmEz87eh/4bhyz6Og3O0UGe2EgXZCHDDbQtQK4EAS/o8aIcm/4AeRzbCEHxtuvKr+HaFe0XrB6faMkDfGfJC3u4rxh7Fo/CmOwWF2ermLBJsXsDTR5Djacp7tlJ6RVhGfLCfLeXqSkZys31JtdlHmdPw8+Wh9JCRIZYQk64B7c=
+	t=1773167314; cv=none; b=nqQK1mZYJdc056EnKtUTni0+YoLep6ZyBRgC7/OhfDypCXBkajXMc6wk4lS7W9FJrJxklPScn6ReZIh9Ck2D/1RJjyn7Jg7fiQKxwhvRtwPH2OhZkKwxXaVEdtxj+cC/0qDzjcwr85A0+q2e+bXmfaBjjkpKkeY7gxrofwN2eqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773163127; c=relaxed/simple;
-	bh=IoHs+wXjCHnPk9b5t1n9Cj8LdtgaDG7codn3B5RSWyk=;
+	s=arc-20240116; t=1773167314; c=relaxed/simple;
+	bh=CpI7VS27vX/Hobt51mkUh7SEVzah/CDBVDL3D1L8aQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rxPIkCtEvnAA8QUiTC2qiWIlyvUG1fyM4ABsH2H7ju8MrFgaABjboAbIfskhYJRq6Jv1sF5D9rZl/BISNmwO5+WXL6T5rEfUvbiKD8DGCDwoTk9sbafMtkY0A1ia79nn0zECGhZG5naJS+Ueeq38+vNt9/NE5S3AfALQ4PxXYWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8X3v0Kg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=RAR6MZxj8vnStee30QfhB0+RTv79WvL1ZsUbqlWhgofT9yJiRG3+YMg+TLbEEFnfOcgGqxglXapArjwIiRdGJIT3N+uO7cXEfouvRZec3Wqw7kG7lSl76In6xquBaz/z0N4Mh0EWbmBpdSyXdcuWDs8uT2lk+5jxcYe6el582vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsEkEScs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8X3v0Kg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AE2DC19423;
-	Tue, 10 Mar 2026 17:18:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsEkEScs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97F3C19423;
+	Tue, 10 Mar 2026 18:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773163127;
-	bh=IoHs+wXjCHnPk9b5t1n9Cj8LdtgaDG7codn3B5RSWyk=;
+	s=k20201202; t=1773167314;
+	bh=CpI7VS27vX/Hobt51mkUh7SEVzah/CDBVDL3D1L8aQs=;
 	h=Date:From:To:Cc:Subject:From;
-	b=C8X3v0Kg1iKigKgBRWyafqgUR4qoCI5oSZs9LKFT3FHQWu0jdOqQe1kAjbUlhxqas
-	 lRokqd9n3b8toZp5IXSsBEcmBosdW52U63plvz1Ji07q3beb9KsaabJNcW7ZdLceoN
-	 wHFzV37TEcOJRoGwt8TO0QldNskDhA003xHdkIE4UVvo/F9O67R62q/w2eI8zONRWt
-	 nB/ysDiTxuNrmmOh+LkUlN3PzNhkBsABwxwCNnGowjM5refjQkPUBiInlbnQ5Bpk8x
-	 aJBiHo7ffpF8weLORG38A+YUKXKxEjVmOr5EYFKQerxYtaJU629r9WfZUARhVzzU3+
-	 0VsDnK+Oyo3/w==
-Date: Tue, 10 Mar 2026 17:18:43 +0000
+	b=jsEkEScsTAJa9SKOEHiwXfZWu9cA5cz/7k7LBLozSOBE2m05qM0XUmiIpA0HsXjIo
+	 XzRjpANjM1KWzbEw4LLbY9wDTXrTlRNhIK8AfxCzZZE2jrFfE00JutBMptZS9G91VN
+	 GFRWcU/SV0LcIOiNxuWXq5GNaxq1gBrM/j3OHsd5EnLv4Vxwaod6KfJhrRKsPXzraD
+	 31OI2iAuqZzECXCYKs2L9TVEu+F6zCNQH8tIe2WxBBIKJDm7pb/gB0uNxcZM3SOfDq
+	 OmMwb8feNq9OPc4BVlMu6+6DiyRCdl3ehg00PRlmIhV0pXKMYaNqwkN9JSqZSfMpha
+	 if2A0B7pgHvhA==
+Date: Tue, 10 Mar 2026 18:28:30 +0000
 From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the landlock tree
-Message-ID: <abBSc6SqkHp63o6p@sirena.org.uk>
+To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <abBizpKaBlTZSYh6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,34 +42,41 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bmxsSte8CK1EB3Lk"
+	protocol="application/pgp-signature"; boundary="HM+z55HJTiSOmXh/"
 Content-Disposition: inline
 
 
---bmxsSte8CK1EB3Lk
+--HM+z55HJTiSOmXh/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commits
+Hi all,
 
-  c9e4ca4e3c028 ("landlock: Clean up interrupted thread logic in TSYNC")
-  b6172434e6cf3 ("landlock: Serialize TSYNC thread restriction")
+After merging the tip tree, today's linux-next started crashing running
+arm64 KUnit like this:
 
-are missing a Signed-off-by from their committers
+[18:12:16] [PASSED] split unwrit extent to 3 extents and convert 2nd half writ (non-endio, zeroout) (highlevel)
+[18:12:16] =============== [PASSED] test_split_convert ================
+[18:12:16] ================ [PASSED] ext4_extents_test ================
+[18:12:16] ============== ext4_mballoc_test (7 subtests) ==============
+Command '['qemu-system-aarch64', '-nodefaults', '-m', '1024', '-kernel', '/tmp/next/arm64_kunit/arch/arm64/boot/Image.gz', '-append', 'kunit.enable=1 console=ttyAMA0 kunit_shutdown=reboot', '-no-reboot', '-nographic', '-accel', 'kvm', '-accel', 'hvf', '-accel', 'tcg', '-serial', 'stdio', '-machine', 'virt', '-cpu', 'max']' timed out after 300 seconds
 
---bmxsSte8CK1EB3Lk
+I didn't figure out what the source of the issue was, I merged the tip
+tree from 20260309 instead.
+
+--HM+z55HJTiSOmXh/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmwUnIACgkQJNaLcl1U
-h9CcPgf/RbKTIVt21JHKw5wYGe6FXOx4r91avUEqN1+V7VViXzSL9OmSEwgVoST0
-ttfoQzgS6YVuLT/bD0l+zWYOXTJBXed5JJb5DYsrr1u1a3p4LbECwyp8guj6bAsw
-RmaboXZZN2dFdbBa/fmoJ+oZh+aDRev7vIFvdLhRGQ0/aRzyH6GKop5rFXXBkvED
-vYm4vUEXMSL9q0tSPzWuKUH4GtXT2Fwlh2DR4TtvsM2OYE/c4Etl9l6qnBkbCn2I
-byFCBUBRJ7r2V9ToFJ+GARGiQVGEoa1QKIuyBnZoPrtrKp8wRB1vKtd/GgLUtxiE
-EbqRgqX4+JQfE1LZ1ObnCswXINduKw==
-=OAOV
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmwYs0ACgkQJNaLcl1U
+h9CuZAf7BbQob5naroGZGabzqG7ijJh304DAnh1oXQXDNpZbgpKFtMVTVTQQCR/8
+6p20j39sDo2KpXp3mUcE43mBzmJGzuMpHLawa8omUvmutc4RaxGfQG+CHToR9ia1
+D/Kf2NXcEYUlqIbZAUtxA/C4D8fXLXmdmQU7hcAteoFw1z0du+9dUXWQAxCbOvBG
+pc4V++b5J5DGjZhMWcYyUV97DwPlTfLGR/YpxXZ6FyA64BT/k7nCtInWzBEejrfC
+xyhMHDUdy5ionXXn5N9V3ld6uG5Qeyf3ciouuIRfGOOU5DN3HPjvLJglcY1TePb0
+E7t3Shlb6ScDwFbgF5mTSr5xfTP56w==
+=7T1Z
 -----END PGP SIGNATURE-----
 
---bmxsSte8CK1EB3Lk--
+--HM+z55HJTiSOmXh/--
