@@ -1,43 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A511F5834;
-	Wed, 11 Mar 2026 15:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA73DDDD6;
+	Wed, 11 Mar 2026 15:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773241262; cv=none; b=dT+Ios1szu3vDXibjUH/nDRssDma+pB8dHZ2pzXP+rxwf2h7AHvA+J7qWOKcy9m6vkw30CiByxk6I/gYAwU59yePeEM2cmHI3pv0RL1AobWvz/XdMjJzKaMbp6amfLAxY6BG+9cvE3b6+um73XfGRJrT5i0BTsEKQ2S2q9pMgXQ=
+	t=1773242405; cv=none; b=od1HpIB+M9w4wpvSKFOgpzPreHB1rp8nCS6ACb65BDX70lSxuNOmkzlRJU5jyJJ+oxR0x9uaSiBDkmEVWj5D/wOawT12B5q7hZagAvrbtHPfOJQLjzkCO3kPreMuNy/uD2PW0+utzhY46GrMcMyAXVAe7LPCCL953c/pCYnSq8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773241262; c=relaxed/simple;
-	bh=ymcERCacbn6nFb2qoMB7fYvlfWhBEYXJCANo3OS2jJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tcVTVQD2EtJhxOd5J3Qnr5TMvVq8cB++VJYXQiJgv245dpoF+KgDCLAJjudwMUcv3R7VlNNH+8+Hy+tye7D+tHhoNCKszoFNlWqs1SeD0ppp5yr5FNHxtDmGJJJ8TKo8XK2J8sgIYpsX+Qim08X/0jQWOcnhetc0K3s9uydABJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1poh5U/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773242405; c=relaxed/simple;
+	bh=6sza7y7uKWq/vhCCqgYT/199EsrT2RMiaTENv912ApE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPyoUOpvrq2QXYGbSyaB2mgYgx6ozlKb5fIhhv35FqGY13Ef1rChkT2+cEgfWKRjsyghzfej6WMDTmkWYV9uriTecaSH0Cjzbh6pMDynGBv48H/MZFoTeteR5+Tgoya+2++vMWfP1emUhKqijqzpKLIgiG/rZ0C3N68/YA1w1Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY5ygLBs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1poh5U/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB54C4CEF7;
-	Wed, 11 Mar 2026 15:00:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY5ygLBs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E0F3C19424;
+	Wed, 11 Mar 2026 15:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773241261;
-	bh=ymcERCacbn6nFb2qoMB7fYvlfWhBEYXJCANo3OS2jJ4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=g1poh5U/JzJSsqXQfbXqS2476M6rEUhrJgcBzbFGbVICHpdSlZU+KbXY28cyWr/k7
-	 X+0OOls54afCyGbOHNIdTu2tiOnpDbZge5pOVWCjNBsdCp+Si6SBEJ904kY6pkpaWl
-	 2mBu0hO7nz0moTfsbDZx6kbljmNh779z82YzDzb9XdNwrMRdipNcrRfGU9OKgriDbX
-	 vvSeZJ1poJsHlxGKtUZr0wCfuKdf2hbjR9IEahBRVH1P6n79QtzeFydj68hgJUA4ys
-	 kl/JIqXAm+tSdUFEZ3YfVmc37AGzEbCjV96QRd9d8qQUoZRK+C4CBqrkqa05Gi2w/o
-	 4mHw0HOg9x6uA==
-Date: Wed, 11 Mar 2026 15:00:55 +0000
+	s=k20201202; t=1773242404;
+	bh=6sza7y7uKWq/vhCCqgYT/199EsrT2RMiaTENv912ApE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZY5ygLBsxK5MmsWOiyvBF/k1R8udGJhU2MvlVsDsaJGCFsjtPlSUoW2VdJqkexE0Q
+	 jfrpCf8xrZfIDcEzLMoxnpndS/aU2uadgnfi+T2ntG9SjpQ5heCwxTy0iPwl0e3b2i
+	 QYiuNNdjN8/i74Nr3RoLE9uOzlDm2bZhRfb25URAn8HyWdoKvFrOtyKuEAzawr4/R5
+	 KpDzsEZmq+ZK6KYm+G9xJ00agwgztba/6o2bFJmp5uU7iNI+5Ut/QjtY03AlFZ2IfH
+	 yO/DH01Hlm8xqZedzEPpJn8A4kEuC0iDV5mz0BvigahB+/8l808WZeSAGiXzKP2Nyk
+	 7F+OhoJ+opJiw==
+Date: Wed, 11 Mar 2026 15:20:00 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Nikita Kalyazin <kalyazin@amazon.com>
-Subject: linux-next: manual merge of the kvm-x86 tree with the mm-unstable
- tree
-Message-ID: <abGDp4jguPV2H2Mf@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <feb7b428-eab3-4cec-a004-6067e621398f@sirena.org.uk>
+References: <abBizpKaBlTZSYh6@sirena.org.uk>
+ <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk>
+ <abGBhmJ7827npf4D@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,103 +46,64 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="korurQc/11RgqHhh"
+	protocol="application/pgp-signature"; boundary="3rNxsdcYxIYYTpHN"
 Content-Disposition: inline
+In-Reply-To: <abGBhmJ7827npf4D@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-Cookie: When all else fails, EAT!!!
 
 
---korurQc/11RgqHhh
+--3rNxsdcYxIYYTpHN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Mar 11, 2026 at 08:21:50PM +0530, Ojaswin Mujoo wrote:
+> On Wed, Mar 11, 2026 at 12:00:20AM +0000, Mark Brown wrote:
+> > On Tue, Mar 10, 2026 at 06:28:30PM +0000, Mark Brown wrote:
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+> > > I didn't figure out what the source of the issue was, I merged the tip
+> > > tree from 20260309 instead.
 
-  virt/kvm/guest_memfd.c
+> > with just tip/master.  My KUnit command line running on current Debian
+> > stable is:
 
-between commit:
+> >     ./tools/testing/kunit/kunit.py run --alltests --arch arm64 --cross_compile=aarch64-linux-gnu-
 
-  83f131e867e17 ("KVM: guest_memfd: implement userfaultfd operations")
+> >     ./tools/testing/kunit/kunit.py run --alltests --arch x86_64 --cross_compile=x86_64-linux-gnu-
 
-=66rom the mm-unstable tree and commit:
+> Hi Mark, I'm unable to hit this bug with the 20260310 branch [1]. Am I
+> on the wrong branch? I'm using the following command on x86 machine:
 
-  6dad5447c7bfc ("KVM: guest_memfd: Don't set FGP_ACCESSED when getting fol=
-ios")
+See above, because of this test failure I did not merge the current
+version of the tip tree which triggers the issue, you need to fetch the
+tip tree:
 
-=66rom the kvm-x86 tree.
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+> Also IIUC there's another deadlock issue you are
+> facing other than the one here? Would you be able to try out this
+> patchset [2], it fixes some of the cleanup related functions which might
+> fix this issue.
 
-diff --cc arch/x86/virt/vmx/tdx/tdx_global_metadata.c
-index 4c9917a9c2c39,360963bc9328f..0000000000000
---- a/arch/x86/virt/vmx/tdx/tdx_global_metadata.c
-+++ b/arch/x86/virt/vmx/tdx/tdx_global_metadata.c
-@@@ -7,22 -7,7 +7,22 @@@
-   * Include this file to other C file instead.
-   */
- =20
- +static int get_tdx_sys_info_version(struct tdx_sys_info_version *sysinfo_=
-version)
- +{
- +	int ret =3D 0;
- +	u64 val;
- +
- +	if (!ret && !(ret =3D read_sys_metadata_field(0x0800000100000003, &val)))
- +		sysinfo_version->minor_version =3D val;
- +	if (!ret && !(ret =3D read_sys_metadata_field(0x0800000100000004, &val)))
- +		sysinfo_version->major_version =3D val;
- +	if (!ret && !(ret =3D read_sys_metadata_field(0x0800000100000005, &val)))
- +		sysinfo_version->update_version =3D val;
- +
- +	return ret;
- +}
- +
-- static int get_tdx_sys_info_features(struct tdx_sys_info_features *sysinf=
-o_features)
-+ static __init int get_tdx_sys_info_features(struct tdx_sys_info_features =
-*sysinfo_features)
-  {
-  	int ret =3D 0;
-  	u64 val;
-diff --cc virt/kvm/guest_memfd.c
-index 46582feeed75a,462c5c5cb602a..0000000000000
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@@ -108,12 -107,6 +108,11 @@@ static int kvm_gmem_prepare_folio(struc
-  	return __kvm_gmem_prepare_folio(kvm, slot, index, folio);
-  }
- =20
- +static struct folio *kvm_gmem_get_folio_noalloc(struct inode *inode, pgof=
-f_t pgoff)
- +{
-- 	return __filemap_get_folio(inode->i_mapping, pgoff,
-- 				   FGP_LOCK | FGP_ACCESSED, 0);
-++	return filemap_lock_folio(inode->i_mapping, pgoff);
- +}
- +
-  /*
-   * Returns a locked folio on success.  The caller is responsible for
-   * setting the up-to-date flag before the memory is mapped into the guest.
+There was a delightful issue which is already fixed in current mainline:
 
---korurQc/11RgqHhh
+   https://lore.kernel.org/r/20260224-mittlerweile-besessen-2738831ae7f6@brauner
+
+but which was present in -rc1.  I've not seen anything specifically
+about any ext4 issues.
+
+--3rNxsdcYxIYYTpHN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmxg6cACgkQJNaLcl1U
-h9BYFQf9FVgmq1ggslNAP95zXMFd44P0UCY9ADx94dWnCrxma2aufbPwLVpbbdKo
-GiQoMQHTi8kdrEfY7upJ141Lo0/OhFJi0TMO73NKMuRxjABoEHJQH3z6tlM2l2BQ
-+BN7X3znOphYlbBsPc7KOf5Lfr2SWEQ/NXenXZgBENg07b8XjeQRQ03RLEU9Us4x
-89tQWZetB6OIhKyidL3JTnp1XJIn2msfOMGFxB9dXAlBGcrj8JIOlCn7EiwKJvSh
-UN1gtqzWH1jSrvP0F2ZAeQ41BZQY3uVtiKzxxw26KEKOiqxotOGFbYiSiaADd+y6
-hM7UdBJNhiQ6VJaQJyFumuZkCKGxpg==
-=ol1t
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmxiB8ACgkQJNaLcl1U
+h9DXfQf+IueGf3Y+vVrVPSbuI3SycWmPog3hMBIGbz2ik9RqUxW7bZYIcWwVatkp
+5/UiTP/aZINhCdIStCUdSkUQ1KsjQF+8L7C8S157thhcZYkNAfpmabXqrilToGvk
+74d1xEjvzhYRaylLUR8SwZpihFrA7ZG0ewod67zE+uuygR+aeszGEk3me/Tcx8a+
++Bkg+c1D/+/L2Ew4L9DIs0Av27XO/ZeXMVhdAlaZE4bl31gpnLf01DgGmqjju/Vb
+3ML2hKSc+1SovkF+hyikze53juj9f367EG+kM+fAAltuGGJihX60Ttg32UbmCgPI
+iQWop9K99UmulhJJniiUPPGMyTGakA==
+=7MlZ
 -----END PGP SIGNATURE-----
 
---korurQc/11RgqHhh--
+--3rNxsdcYxIYYTpHN--
