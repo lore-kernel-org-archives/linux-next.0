@@ -1,109 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA73DDDD6;
-	Wed, 11 Mar 2026 15:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773242405; cv=none; b=od1HpIB+M9w4wpvSKFOgpzPreHB1rp8nCS6ACb65BDX70lSxuNOmkzlRJU5jyJJ+oxR0x9uaSiBDkmEVWj5D/wOawT12B5q7hZagAvrbtHPfOJQLjzkCO3kPreMuNy/uD2PW0+utzhY46GrMcMyAXVAe7LPCCL953c/pCYnSq8E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773242405; c=relaxed/simple;
-	bh=6sza7y7uKWq/vhCCqgYT/199EsrT2RMiaTENv912ApE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPyoUOpvrq2QXYGbSyaB2mgYgx6ozlKb5fIhhv35FqGY13Ef1rChkT2+cEgfWKRjsyghzfej6WMDTmkWYV9uriTecaSH0Cjzbh6pMDynGBv48H/MZFoTeteR5+Tgoya+2++vMWfP1emUhKqijqzpKLIgiG/rZ0C3N68/YA1w1Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY5ygLBs; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A8A7261A
+	for <linux-next@vger.kernel.org>; Wed, 11 Mar 2026 15:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773244665; cv=pass; b=RH1QUgT30cFAIwYeq2rZcYtgH/vtdEtAvd5TAuIAcYSK2dCPdRFVWJ7urTcX98OZQlzkMwqaXP4itsPy4Ff4w9ZTzEBto9prso9Ute87fwmTTrml1Vt6NMps2oI1aQj9IXZoYhdnPygjVmYaUtznVYWQlp0Ww+vMtwz1Su+Unic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773244665; c=relaxed/simple;
+	bh=fiSsOTO5YIWpFPGnljLnQwS9BMbtKhkuIsBCUE2pgzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nbtMlKw0Pw3Fm83pU5gVCZgQOPP1ZYepZoPrBdPmvnfz9eFd71BhSDZuQGdXAtEwX5krQ/rmTQXPkMvEMWnh0gm5sByCZQSak+vtJxMXeOukzr+EDq6L5jwbSaL08QEYrH//jD9SQXc01NurWsaAH5R4EzI7YeMT/iiEQ4YTlHo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e2e3aJEs; arc=pass smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY5ygLBs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E0F3C19424;
-	Wed, 11 Mar 2026 15:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773242404;
-	bh=6sza7y7uKWq/vhCCqgYT/199EsrT2RMiaTENv912ApE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZY5ygLBsxK5MmsWOiyvBF/k1R8udGJhU2MvlVsDsaJGCFsjtPlSUoW2VdJqkexE0Q
-	 jfrpCf8xrZfIDcEzLMoxnpndS/aU2uadgnfi+T2ntG9SjpQ5heCwxTy0iPwl0e3b2i
-	 QYiuNNdjN8/i74Nr3RoLE9uOzlDm2bZhRfb25URAn8HyWdoKvFrOtyKuEAzawr4/R5
-	 KpDzsEZmq+ZK6KYm+G9xJ00agwgztba/6o2bFJmp5uU7iNI+5Ut/QjtY03AlFZ2IfH
-	 yO/DH01Hlm8xqZedzEPpJn8A4kEuC0iDV5mz0BvigahB+/8l808WZeSAGiXzKP2Nyk
-	 7F+OhoJ+opJiw==
-Date: Wed, 11 Mar 2026 15:20:00 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <feb7b428-eab3-4cec-a004-6067e621398f@sirena.org.uk>
-References: <abBizpKaBlTZSYh6@sirena.org.uk>
- <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk>
- <abGBhmJ7827npf4D@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e2e3aJEs"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-35980423087so5417146a91.3
+        for <linux-next@vger.kernel.org>; Wed, 11 Mar 2026 08:57:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773244664; cv=none;
+        d=google.com; s=arc-20240605;
+        b=lW9/9g6yPKj2IrkJI2E8NBj/JFOG6HFzfAKghdNTv7M5x1PbJDZdp4FK6oDllyL/2C
+         iiNWwxvj3Y4GgAM4mGCT44hyqTK65LhNcJIg9zJNyD4v1gJUp5zOUf39oV9CoWh5+5Qb
+         Bvc4dbTHfBhV69MqQSVCGiJFCqWYzJbXEKp4G1CZ+zyEiYXaWUJhKTHfUIgeCKcV2Za4
+         qZARKIoeT8FBt6o44eCn6tGaNPivKZYQgpKpgo9g5q+78kYvCzSjiQHofrxuN+17PUsH
+         QVUYPqpahVjy7NWFIJwSKj3TKUtuWFRKeMn4x9kTsMGlRJWc8oNDKA5PoqZvEHsSSATz
+         tS0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=85bNr93+TgX278eUKFxfX2YCZZttBPI3CKaN7k9lFIM=;
+        fh=sXRf/quO+2TYvDRnHIAJruzYp2Miiq0itK0GjsVf5+Y=;
+        b=Zd6dwTOcs11crzrnCa+M2L+SbepeINSACiI9ACuY3YGKC9Ep70mooFBle/Txz+yHik
+         FH1rNgvRp9LqHPLRn0xE2zPOtLJLApqv+aOKobzkWBT3CnTQoiy5aPTvDW1kw2p7/rVN
+         tb0Xg6AOVaQyk8ooZLjUrMshpsLwmkksPvQVkjzmek6atVxrEaktMjS7NjVr9VHuzEw/
+         7qukzjtqNqkqBOV0pVdpu44CpPUlSOTNm0wGo4IwXdOo/fbkgcp4wwpVLQvdJviQM8p+
+         uHLU3o2l60+/1zbqqg8qdHiQfKszXlfzPXHWbX9tVvy7zMlRX1oqnm1HQo71Kt/dQR6k
+         dTSQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1773244664; x=1773849464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=85bNr93+TgX278eUKFxfX2YCZZttBPI3CKaN7k9lFIM=;
+        b=e2e3aJEsuIe1xrFVFriSPMBEu48A6fn7pVOZhkr/zJESj4KIP4oefelasP7vyapfWU
+         IOdEWUwtB2cZeAO2BPHenZlxdjCVSf+AMBMXpgh5JdXwnTcp9Vdyr45kAaiiEDEc1vXh
+         7Lm2P/umOaJ6ecphMUr/+d6gbF5cpBe4kUDgVQIL5bqFTCRow4k9Vms7Ma73wqar4yRw
+         plJrJp4qr1Rcug5LA1qDKoQqF9r8+2h39H5rNgEG1zT7yccuFFKwD0cUdfAW8CKSm0+a
+         /XaLuJmEkJveeXdIA7Fx9Oh5i2Zdzq2oyuURsineWGRSKMoIj/GNlw/7xlstwpRQ/DUx
+         LFFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773244664; x=1773849464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=85bNr93+TgX278eUKFxfX2YCZZttBPI3CKaN7k9lFIM=;
+        b=Fz5MTvfnmRZa148GKPzdhlR0/cvq4mmrBMZP2PLC9AGpqzJoMXflBNYE1g0CqGl0p4
+         mIt4uuza1jzmpe+KvWrFXksAT8+NCLEJDyLxGO52Lfc5KLwCB4f3g3V66Ui1EzKTcLLn
+         0So/UQq3fAkkNLw7HysVpo19zRkiCIat9XpqgzIX3b04fnNF0fFZurByiWohtPcL1VRd
+         KB+4q5Jl8ZK+x1hljSodbLtRvM1gyJNt7K5BlW1ATkZhjozROAH+ENl9y+vEfPaQAuIF
+         cgF8faTaN8HvEUsT/Su0YEmH8qeTsqZlC/+29ES+8iiELNZxdXGZgfnKetWXzFaL2btV
+         5sdw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5gBCGzzUwj+7mwvTQODFyd+sz6vqE/jO98EOzd02KB860GBWCv89PQFCM7xY8Koq3j/j28HATXZLi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxciDcnR+yVIUNM1NoroL679dDZOD6UuvmibASUaLBhLE1YPpJ1
+	TbkYzveQrC9X4yIIIiBZCsfiRobA7mmZS1eOZOWtjfP8Ofp4fBx6enc+JqJVj5avOoXnUlxgRSh
+	t/vqdm9GFRg5NZOY/U87H51vcN2DiPM8gAquMKrj6
+X-Gm-Gg: ATEYQzyEaLLn2JNoddXROPKCjS/iFwZq9tu8iR+/o0+QB7qiWQD3cXF0Vw8EjDvq82T
+	D7iZ95h9/N8l2pnL7SLGT61fFH2jDBGu5HSiwUutr3cFxKBF9a/BhoR6cqcWSdcdvXM3sRqcPXi
+	LbaWUkCVIgcbkKzOj3qGBVt3GLh+PJK0mfCVvuKA/1R4rfc7c0NY6wzZz+OaLR96PFCe+Pgm5To
+	1QYH6Cfa2w5PAN/qVRl2BZQ8XstGM0lZ+qRExleZXqVE29zrMXVT1EF508J1ts4E9b0hXv5WZVH
+	zeB1IW4=
+X-Received: by 2002:a17:90b:540c:b0:34e:63c1:4a08 with SMTP id
+ 98e67ed59e1d1-35a012eebc5mr2787013a91.20.1773244663657; Wed, 11 Mar 2026
+ 08:57:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3rNxsdcYxIYYTpHN"
-Content-Disposition: inline
-In-Reply-To: <abGBhmJ7827npf4D@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-X-Cookie: When all else fails, EAT!!!
+References: <abFeUpxZzjZBdsSx@sirena.org.uk>
+In-Reply-To: <abFeUpxZzjZBdsSx@sirena.org.uk>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 11 Mar 2026 11:57:32 -0400
+X-Gm-Features: AaiRm52LUH2HGDfJTNDC0ZIP-bvjbF8YPLMO6N7oi72kkaTcSCnDm6_SSq_kUkE
+Message-ID: <CAHC9VhRndi9kMUNQFA9J1exr2G0uQ-A-wKDqJLhUntMYdnUrsQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the audit tree with the vfs-brauner tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Ricardo Robaina <rrobaina@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 11, 2026 at 8:21=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> Hi all,
+>
+> Today's linux-next merge of the audit tree got a conflict in:
+>
+>   include/linux/audit.h
+>
+> between commit:
+>
+>   125dfa218134d ("audit: widen ino fields to u64")
+>
+> from the vfs-brauner tree and commit:
+>
+>   360160f75592b ("audit: handle unknown status requests in audit_receive_=
+msg()")
+>
+> from the audit tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc include/linux/audit.h
+> index b915aaa7ed739,d79218bf075a0..0000000000000
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@@ -15,7 -15,16 +15,16 @@@
+>   #include <uapi/linux/audit.h>
+>   #include <uapi/linux/fanotify.h>
+>
+> + #define AUDIT_STATUS_ALL (AUDIT_STATUS_ENABLED | \
+> +                         AUDIT_STATUS_FAILURE | \
+> +                         AUDIT_STATUS_PID | \
+> +                         AUDIT_STATUS_RATE_LIMIT | \
+> +                         AUDIT_STATUS_BACKLOG_LIMIT | \
+> +                         AUDIT_STATUS_BACKLOG_WAIT_TIME | \
+> +                         AUDIT_STATUS_LOST | \
+> +                         AUDIT_STATUS_BACKLOG_WAIT_TIME_ACTUAL)
+> +
+>  -#define AUDIT_INO_UNSET ((unsigned long)-1)
+>  +#define AUDIT_INO_UNSET ((u64)-1)
+>   #define AUDIT_DEV_UNSET ((dev_t)-1)
+>
+>   struct audit_sig_info {
 
---3rNxsdcYxIYYTpHN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+That looks correct, thanks Mark.
 
-On Wed, Mar 11, 2026 at 08:21:50PM +0530, Ojaswin Mujoo wrote:
-> On Wed, Mar 11, 2026 at 12:00:20AM +0000, Mark Brown wrote:
-> > On Tue, Mar 10, 2026 at 06:28:30PM +0000, Mark Brown wrote:
-
-> > > I didn't figure out what the source of the issue was, I merged the tip
-> > > tree from 20260309 instead.
-
-> > with just tip/master.  My KUnit command line running on current Debian
-> > stable is:
-
-> >     ./tools/testing/kunit/kunit.py run --alltests --arch arm64 --cross_compile=aarch64-linux-gnu-
-
-> >     ./tools/testing/kunit/kunit.py run --alltests --arch x86_64 --cross_compile=x86_64-linux-gnu-
-
-> Hi Mark, I'm unable to hit this bug with the 20260310 branch [1]. Am I
-> on the wrong branch? I'm using the following command on x86 machine:
-
-See above, because of this test failure I did not merge the current
-version of the tip tree which triggers the issue, you need to fetch the
-tip tree:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-
-> Also IIUC there's another deadlock issue you are
-> facing other than the one here? Would you be able to try out this
-> patchset [2], it fixes some of the cleanup related functions which might
-> fix this issue.
-
-There was a delightful issue which is already fixed in current mainline:
-
-   https://lore.kernel.org/r/20260224-mittlerweile-besessen-2738831ae7f6@brauner
-
-but which was present in -rc1.  I've not seen anything specifically
-about any ext4 issues.
-
---3rNxsdcYxIYYTpHN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmxiB8ACgkQJNaLcl1U
-h9DXfQf+IueGf3Y+vVrVPSbuI3SycWmPog3hMBIGbz2ik9RqUxW7bZYIcWwVatkp
-5/UiTP/aZINhCdIStCUdSkUQ1KsjQF+8L7C8S157thhcZYkNAfpmabXqrilToGvk
-74d1xEjvzhYRaylLUR8SwZpihFrA7ZG0ewod67zE+uuygR+aeszGEk3me/Tcx8a+
-+Bkg+c1D/+/L2Ew4L9DIs0Av27XO/ZeXMVhdAlaZE4bl31gpnLf01DgGmqjju/Vb
-3ML2hKSc+1SovkF+hyikze53juj9f367EG+kM+fAAltuGGJihX60Ttg32UbmCgPI
-iQWop9K99UmulhJJniiUPPGMyTGakA==
-=7MlZ
------END PGP SIGNATURE-----
-
---3rNxsdcYxIYYTpHN--
+--=20
+paul-moore.com
