@@ -1,90 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799243803D2;
-	Wed, 11 Mar 2026 15:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337623E0C45;
+	Wed, 11 Mar 2026 16:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773244675; cv=none; b=Abb++tIo5ilI8q3KlXCXvNfQkudhErRWpke2n3rco4GWKdt0lYGrOb4kf2+t1pWxxblzFsTsHtF3Mvz1XQgXfJcBc2DDFL6+e5vRlF+Sd+savTnWSekZGZhI5V+0SNlunGydSGJo215XSSAJ5znMi8s+OmEDVh3WuIMjGfrQKw8=
+	t=1773245362; cv=none; b=r+jccB/Uis53u/gXi+NcGZnQFSozufsPdkiLwRejHyBwKDlorRZVz6VoVIlSAqoGqHmsMtr/6KHU/dQLvyDWBJXsdIS7et164kaxyjbEldg7dCB/BdeLF+xXsYc6SUC03ICmqjK7ANsYtqmQ8/yHjEbqHS8T/t/dbxUKJP0XNAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773244675; c=relaxed/simple;
-	bh=WdrHs3xeblzXL/s8QYf1gPYPUnOfZjhZt+KsxlhRCWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sAW8eMKQ+RCHGwmDkei2naGPEA5K/JznFuTiuCgBoMsxM/e3wCq8bN+u2lqdwXEvdG0hif/o5R8MBIZLvICW2PqiEg6ng+mKH0tiYQFnZDDYfx64e2w0bY8yj2j1vI19N6JBBmmfnQMGzzjGIlZrxO9RB4HjNTi9bUsp5/U5zUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOvvqtpc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773245362; c=relaxed/simple;
+	bh=sLYoC4x0PRetjEgC2mMKS7HLMiaKR7qwjU5E5l2BM1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGYAeaV22YCJ9WiA1PBQ+KiroAASuu+kaW+sewqtPnuqG2DD2OUT7f/0YExLxUCum0beIujktMdTyENJpeEi/jYRfukRmsEzchfL4JFPPvZzy5o0Msq0zt7jHD6OwI0UZPQTkf11j96a7fQSBdwbHSHsFyVSNyTNV6O1dJ+mSeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Vjd+nSSH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOvvqtpc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E106EC19424;
-	Wed, 11 Mar 2026 15:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773244675;
-	bh=WdrHs3xeblzXL/s8QYf1gPYPUnOfZjhZt+KsxlhRCWc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rOvvqtpcd0d5KWRFOj24b3n52oa+DpKuOAoAnut5mMZOWaPoYQX9rvDMMgqkXDiZD
-	 3myz9BuO4hWSijSRfYhNzqGW7YF65az4QZ9ZUrim+4iCPHvYgbECQX+MM4x15PL1EN
-	 h/rZjJpglX5pzCaD+bRg09A8SmLqMpXQN9/z5urDVhFj37oBww3nLEL76MVqaOgCI0
-	 SGo3W3hYZDxomsYg7/Jys6/qVhu9XggF0/WBBKspXyomeSgESjwYYV/KeG1WGzRiAA
-	 MB7xQsk6t8DsFvvH6Cazg6CcF1xlp3y+eADdeXPvpu9t8ulCEsIqc11ft2II2O+a8t
-	 XZuPOFiDVCh5Q==
-Date: Wed, 11 Mar 2026 15:57:50 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
-	Vincent Donnefort <vdonnefort@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the final tree
-Message-ID: <abGQ_oGjSltl7yxe@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vjd+nSSH"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=W46aJluoqKux6fwx+EHjqsNWBvOg56m85xWwAY0SG5U=; b=Vjd+nSSHq/17q09xsiNJoRR1VO
+	KqWXREVgdnt3UaHsRssgj4qnRNZIyBK4hfR/okpYAzJmlwHrXw9vx0N0yDYYX3ML5FvWqh4YCGd/3
+	KyiEKYOTwh4AQRL5QPR+nTQUQGc6wg8m1x0MENg07Cvj2lzsu6N9vLpBI1fgh0PIwRSvdUE212ozN
+	WZPb96Ufrf8PTGvHOisoPCLIHUYy0oJwyHTJrftM/dARSb9cgc7slLg/Jgd155trVlcEYmum1QS5E
+	emglzcFcACfIJe083/q64eF5VTIp8wVzOpjNYAdkxLsyDE80zbAspaMEEBOyrMEXyMtEtVAqnBwsH
+	J9k11OUA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1w0M7N-00000009rjs-3zPv;
+	Wed, 11 Mar 2026 16:09:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D98B7300462; Wed, 11 Mar 2026 17:09:04 +0100 (CET)
+Date: Wed, 11 Mar 2026 17:09:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	willy@infradead.org, yi.zhang@huawei.com, jack@suse.cz,
+	tytso@mit.edu
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20260311160904.GP606826@noisy.programming.kicks-ass.net>
+References: <abBizpKaBlTZSYh6@sirena.org.uk>
+ <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk>
+ <20260311103743.GK606826@noisy.programming.kicks-ass.net>
+ <abF9Ti4pTYnnsMdq@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fGdriS3ta0b6V+wl"
-Content-Disposition: inline
-
-
---fGdriS3ta0b6V+wl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <abF9Ti4pTYnnsMdq@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-Hi all,
+On Wed, Mar 11, 2026 at 08:03:50PM +0530, Ojaswin Mujoo wrote:
+> On Wed, Mar 11, 2026 at 11:37:43AM +0100, Peter Zijlstra wrote:
 
-During the final build, today's linux-next build (arm64 allyesconfig)
-failed like this:
+> > [11:17:27] ==================================================================
+> > [11:17:27] BUG: KASAN: slab-use-after-free in __percpu_counter_init_many+0x21b/0x2f0
+> > [11:17:27] Write of size 8 at addr ffff8880029425a8 by task kunit_try_catch/37
+> 
+> Hi Peter,
+> 
+> I believe this issue is resolved with [1]. However, I think this might
+> not be the same as the issue reported originally as we the original
+> issue seems to be in mballoc-tests rather than extent-tests. I'll try to
+> look into it a bit more.
+> 
+> [1] https://lore.kernel.org/linux-ext4/5bb9041471dab8ce870c191c19cbe4df57473be8.1772381213.git.ritesh.list@gmail.com/
 
-/tmp/next/build/arch/arm64/kvm/hyp/nvhe/trace.c:16:10: fatal error: simple_ring_buffer.c: No such file or directory
-   16 | #include "simple_ring_buffer.c"
-      |          ^~~~~~~~~~~~~~~~~~~~~~
+I can confirm that solves the KASAN splat; it also cures the defconfig
+hang that was initially mis-attributed to the mutex patch, but turned
+out to be memory corruption due to that issue KASAN found.
 
+FWIW:
 
-Caused by commit
-
-  680a04c333fa2 (KVM: arm64: Add tracing capability for the nVHE/pKVM hyp)
-
-It's not clear to me how this is supposed to work for O= builds like
--next does, the Makefile does:
-
-   CFLAGS_trace.nvhe.o += -I$(objtree)/kernel/trace/
-
-which is pointing at the object directory but simple_ring_buffer.c isn't
-generated so I'd expect to be looking for it relative to $(src).  I have
-ignored this for today for the purposes of -next.
-
---fGdriS3ta0b6V+wl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmxkP4ACgkQJNaLcl1U
-h9CCZAf+I+tXYpmBKN9YYKMCQm+xl2nCMg744lhw8ZIOeL69wivsJWU46jWS/qNN
-bQQXxqOJprE70qdBRu0k3uU4axZlHhzrqFueIOaNwPcUauVlJpBLsg81BBjRL/H4
-7r6UrUfmg05N/8fI6FMnJDk0cnw3Ee36yJaNg2FXHgWqQF0eUN0EnRbTWW9KZ5/k
-AcKQsW/Db0H2gC81pYSJhpC2PYvc81vq0/Qqg/f5+04Uf2BOVTSAWdRH0Q3ZXARl
-ih1nURdIYFmZltxyfKFINZL88wHghgsOI32zKA8igt4DMQmz13OpTlZgkJ7fEg/4
-LynQ7n35ov1Y8mouEO6gW87cTwhvYA==
-=722Z
------END PGP SIGNATURE-----
-
---fGdriS3ta0b6V+wl--
+Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org> 
