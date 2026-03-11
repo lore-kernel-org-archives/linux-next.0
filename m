@@ -1,41 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB521A682F;
-	Wed, 11 Mar 2026 12:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F25730594F;
+	Wed, 11 Mar 2026 13:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773231702; cv=none; b=beGeC2zJ/hdE97ZgoIs5EtzF4+s+/D70oWiGcnr7OtseeMeU1NgapPl+yNKm8gE9eWn8KOFpoOm6LWDpsdVeTwgMs45TU2GnThd5yiCne6ALyAFgHXOtaV1++l1JW0lf5LEDx+QEt6KLyy8wnbXJw3f90iBjr5kThadMyHfAIO8=
+	t=1773234488; cv=none; b=ppHlTve2ugQwEi3pFH+BtnO/Ob52qCGmo9Le2w5x995NUuh6Wu189GZo5sQSB4fna6aNBL758SImKzYU3kJPX3V5kq7HYw32sDcnj3J/Wp9jp5YLIaZIB9IhGHFQ2n4aLomxJwooMS4oXtH/pcU6+feKo0a1XMWH5TXqb/jt7ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773231702; c=relaxed/simple;
-	bh=09ZphwjCiEM+164trmBOpnWofJVnReb7rKNf75H0KCQ=;
+	s=arc-20240116; t=1773234488; c=relaxed/simple;
+	bh=7ywf9RD+3P81dPWLDBvGPBHIgKieALGAnaLQrifR8lI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u1iyBlWchNGe6TriSLNOGz+I5Ahr3mNa09lIZ0MKh5xa4Po+p+RQXGW5OTR5faCljK+uEcOWXufUwUssTSi427Ljrq9hCq05YhD0hBbJc2pGinCLDnx8vzT0FQ4TeZPuGIJMTUTAaRD+Stqo0HP3qd0irsvu+2j26NM5Htf1Bwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5tgGmcH; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=Ij8k6wzpecJw2vJTl8F0i8Is7wwPuIyfqINfZcbqmxkX5iY3/4OoS7mHmpsJk+pCWbFYHlkDvSIh0xqEPTGwyo+lcjq/fB0/EE8e2PjXcHZldPPt0H6Lmu1RCyvKJ2zTPeJjOPxbAbaswRgebaP9bOpMIpKTssDdFe4gsJeA80I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZ6RuWfS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5tgGmcH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4BF0C4CEF7;
-	Wed, 11 Mar 2026 12:21:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZ6RuWfS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E3EC19425;
+	Wed, 11 Mar 2026 13:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773231702;
-	bh=09ZphwjCiEM+164trmBOpnWofJVnReb7rKNf75H0KCQ=;
+	s=k20201202; t=1773234487;
+	bh=7ywf9RD+3P81dPWLDBvGPBHIgKieALGAnaLQrifR8lI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=n5tgGmcHhfhz6Tt8pACZLpiE2fMQvIp28jPRQ8mFC0lW+HkBErzyqthu3k7XtTHyn
-	 LT1IC6B4hLkdKUYKGOisX9YL4oMeQ4dySbowP51CEXzBvmHOYW3rNedJu8mlqcXvoC
-	 4Iqs843GRz+nCWorWsitDDOqt4p/vVDnqpY3vo3Br6ig1Hwuhn+afzmpnXhZbW9H6x
-	 4TdaBOC/gJl6qXBg0L4CDQcaWEC9wmrtdYMW/OFIizPQU9jzBfBeWrBOapX3RRr+w9
-	 1TWmKHI0y971ucX39LOmyb9al9mE9E4oMn9R3L3qanQioB+JPbo5FFzvXu9ufM99hm
-	 M/OukitVRCLGw==
-Date: Wed, 11 Mar 2026 12:21:38 +0000
+	b=TZ6RuWfSNomSLTQYszKCWY1N+MALH1Iq9z7rzQ3giHWROKlxnJarysqTWxyJ7Xg6i
+	 +Z21zR9IlIYLnXQlmqSbem/3HE15vJ1IxtupqFGlzRJeKi7uxApnyoj/pBmm7J61o3
+	 Fdphc7VR44LWlKz1L5Q8EHZ6m8FXsg8roy6RIWtG8Yk9JbT7kp9yU6KXuARMbXWc6L
+	 A9lIHKxcTRtJLzZ3QmYtd9BxRVn5P/TUfGsTucP73a6ULvtSfRb0iFaLTiBf5cF0wK
+	 xp0qq4nH/UwQPYsWB9a4thpVT7xPChZxYtOZO3L7pNZNBvPWBL5ttvGLKhlVAa+PY9
+	 p6rDzmk8rNWHQ==
+Date: Wed, 11 Mar 2026 13:08:03 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ricardo Robaina <rrobaina@redhat.com>
-Subject: linux-next: manual merge of the audit tree with the vfs-brauner tree
-Message-ID: <abFeUpxZzjZBdsSx@sirena.org.uk>
+To: =?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>,
+	Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-xe tree
+Message-ID: <abFpM1FHgzgARB88@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,75 +41,44 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Z1rLQHiW7eMe9fT2"
+	protocol="application/pgp-signature"; boundary="pSWo/HbXfnDl56bd"
 Content-Disposition: inline
 
 
---Z1rLQHiW7eMe9fT2
+--pSWo/HbXfnDl56bd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the audit tree got a conflict in:
+After merging the drm-xe tree, today's linux-next build (KCONFIG_NAME)
+failed like this:
 
-  include/linux/audit.h
+/tmp/next/build/drivers/gpu/drm/xe/xe_lrc.c: In function 'xe_lrc_ctx_init':
+/tmp/next/build/drivers/gpu/drm/xe/xe_lrc.c:1554:43: error: implicit declaration of function '_MASKED_BIT_ENABLE'; did you mean 'REG_MASKED_FIELD_ENABLE'? [-Wimplicit-function-declaration]
+ 1554 |                 state_cache_perf_fix[2] = _MASKED_BIT_ENABLE(DISABLE_STATE_CACHE_PERF_FIX);
+      |                                           ^~~~~~~~~~~~~~~~~~
+      |                                           REG_MASKED_FIELD_ENABLE
 
-between commit:
+Caused by commit
 
-  125dfa218134d ("audit: widen ino fields to u64")
+  0e07b16371b6e (drm/xe: Allow per queue programming of COMMON_SLICE_CHICKEN3 bit13)
 
-=66rom the vfs-brauner tree and commit:
+I have used the tree from next-20260310 instead.
 
-  360160f75592b ("audit: handle unknown status requests in audit_receive_ms=
-g()")
-
-=66rom the audit tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/linux/audit.h
-index b915aaa7ed739,d79218bf075a0..0000000000000
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@@ -15,7 -15,16 +15,16 @@@
-  #include <uapi/linux/audit.h>
-  #include <uapi/linux/fanotify.h>
- =20
-+ #define AUDIT_STATUS_ALL (AUDIT_STATUS_ENABLED | \
-+ 			  AUDIT_STATUS_FAILURE | \
-+ 			  AUDIT_STATUS_PID | \
-+ 			  AUDIT_STATUS_RATE_LIMIT | \
-+ 			  AUDIT_STATUS_BACKLOG_LIMIT | \
-+ 			  AUDIT_STATUS_BACKLOG_WAIT_TIME | \
-+ 			  AUDIT_STATUS_LOST | \
-+ 			  AUDIT_STATUS_BACKLOG_WAIT_TIME_ACTUAL)
-+=20
- -#define AUDIT_INO_UNSET ((unsigned long)-1)
- +#define AUDIT_INO_UNSET ((u64)-1)
-  #define AUDIT_DEV_UNSET ((dev_t)-1)
- =20
-  struct audit_sig_info {
-
---Z1rLQHiW7eMe9fT2
+--pSWo/HbXfnDl56bd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmxXlEACgkQJNaLcl1U
-h9DSjgf/RpWGA9jCa8ffPbW/osbY72wsCkkzuzhYpaDCRnCCMQay/mTUHhbhnOmx
-sivxOLTKmqb+qXYSo8ABRHvNzqZlKR/BaC0MFzS2bMLxaj4ovODJn8T0Yi6/LFrb
-w0A5FzvwwIL4+85CtaZC9KMHeLOIqw7fQLhWm8HQvU/te/2PvIoLFHKQqQKsvjRm
-kN8rUn2LhjiZyxdkfjxaN2AMQ7nJX6BOMhnqkS2VlT6UvlJwmsR6UDc2qJfKyV+r
-aAmfcqK6pn0eZGfjKlBPi8xX9ymie5gczKJLxjf+xC9rhDlITqBA1VPjZ6QSmx/z
-wpM/QkRorcfgMbnO02WwOLiht8N/NA==
-=fqvN
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmxaTMACgkQJNaLcl1U
+h9BiWAf/cn3yGEprozafe3EHyMCNoqA8rHv3JOJhAbpky93wk2KEPdC7W89RRfF/
+u2Cszrl1zbYPuFsAoDDesJoT0uMgSi+BhG1PsbHzK90sQX7Vdifn652vNRfat+2r
+fbtWj58iZKHalerHTGda3XVVspYmB5pSQnmpIF4KZjegNlkAUNrfC5mWhrPVj95J
+LhdsKOYGOpUeBy08gYwQrL/HCCOL8duaoe28t4qfDPn8p9uTclt2cKtmWPWMQCOW
+1GBSvzY3tyDU5lLhZWA6Gytr5Vtgw/24ksUUpvAQwA5+N0Z2/SK1EnGpLQ/iTIlp
+fN7tRIqdDKWrAJUcsH4jKh7Qotna0g==
+=xFSt
 -----END PGP SIGNATURE-----
 
---Z1rLQHiW7eMe9fT2--
+--pSWo/HbXfnDl56bd--
