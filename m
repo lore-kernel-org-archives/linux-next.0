@@ -1,162 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D65A388E74;
-	Thu, 12 Mar 2026 10:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61F73A168C;
+	Thu, 12 Mar 2026 11:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773312797; cv=none; b=t3DIJosqRNYfJeswyNO5NbLqJkDyNCPIoa+E9aO22EFfYomkYgSYKraB6ytMHbgww55YRp91PAWIHwk55FqXGFPXi/MWiofpDv8hWIGf4sl99StWk3Auk2TkHot8O/xQY/vzQ+akwMI0dQGZAjhIQd9h+6ZZaFYCU70DqvCEu/Y=
+	t=1773315824; cv=none; b=S12fIMqvY9dv5OB+ppadWoeGkETrLz1/sx10i/UK0mXfzkZ8KDpA2fRJy2ZS7eKwdSsNrdiSlpiih8EZGVMkAJjl0q1qd8lhJ9WDYJsgY5GFBgea7WqyCztRQraPG/M8jdtEOp8mYIiEGVHVe82aJj5ksDkpIYFTwf2omKTbIyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773312797; c=relaxed/simple;
-	bh=1+8+XjrK7jO24bo8LDi66k0D/UNmRuJY8jK0hfbGfLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UVoqazRdiLMoWo52GLnX20r/DNr2a+ME+ql9AayfkiktCSRq7TAfOyzq3oJggON1p2x1P4YOTTaOxt4fvSXox9T3s7Hz5vIqXO/xQvPczE8lTBnwXs/fBi7orxwnSR/kczMk63IPyGqEr6hMj31ets/6DlZ48iit8jEBqiJ4CvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSTWUdTg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773315824; c=relaxed/simple;
+	bh=KviNKT5cGVrb29a9TtMHC/xexwyR2yPqFTHkYD6I2y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRS6qdjN+4M8luYYUyCEyxdtynNqam3bXKKsAAtVP5pk4X3vsfgJR/z4XdqDUklQd7YvZC0Z+zLjKYDS8JjnUXXn229Smve99JGtBhNP0TCIDoiWIOhXprO3py12U+FrEa42MX6Tc3STVOesuIuMWxJuQq5ij9uNdGKx0LIkhLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT20aFh9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSTWUdTg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B481EC19424;
-	Thu, 12 Mar 2026 10:53:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT20aFh9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC42C4CEF7;
+	Thu, 12 Mar 2026 11:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773312796;
-	bh=1+8+XjrK7jO24bo8LDi66k0D/UNmRuJY8jK0hfbGfLM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZSTWUdTg38joWylX5oE9mqRa+Kp/Yce0+4KDWynILpm/YX5UkVt/dF5wdfGJ8bDwR
-	 wyGwVhCpcUeHokDorBnKlyz2Fd4inWfV4LPmj29sBNKvBEXlMRL84GeNLZLLnqwYMo
-	 MtSoWZHzvvH3uS2lZlUU3xV9VhuBD/YUwOz49G/04we0iGz6Zbp8aesdJ2cw38RLLZ
-	 afsJ3A4MqYi7PmCbCCogH7fq2U2tkyPbbTh1PkWNro+CT6PAJ8qx0Q548m1qcLv4QV
-	 78kO8Sx77FpGv55rJA6wVGoxL7vZxzJy5F2nK0HP7ceoYpcwy1f+GPHG2qjYPjSP2y
-	 /VMrC1CP/7uqg==
-Message-ID: <2658280e-0206-4326-b8dd-d201fc604dbd@kernel.org>
-Date: Thu, 12 Mar 2026 11:53:07 +0100
+	s=k20201202; t=1773315824;
+	bh=KviNKT5cGVrb29a9TtMHC/xexwyR2yPqFTHkYD6I2y0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oT20aFh9S9ZPFL5uJWEAcK9UE+QB131yrlLvJsQGZ+j2DqgcJOYWnE2CSNHLhOrd9
+	 HCwfPkAvKAM/bZMDsFhT59pOPvM5lfu2W6a+1BOkKYWmOXHqtF7Est54LeAxM7PLFN
+	 taqqoZZ68e1xt7uJkqwoO7OD9pfAeVAaLPo8y1PKNc9vvcluoUllz2hIOhB6WDE/RD
+	 npFJqVfkHvJjA85EZSq/o0Ew5DkfQvQgKWIcLu8RhgtSfNVewDNqS7ytNRE2BK6H/s
+	 QeerpOxNtjWiKiyuSHjVnkV5FZpA2rsAUapqWwZuM5y5EEQIUbvtU/mVkV/r7cwfDZ
+	 Kp+Bi+1/OiEFg==
+Date: Thu, 12 Mar 2026 11:43:40 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	"Souza, Jose" <jose.souza@intel.com>,
+	"linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Nikula, Jani" <jani.nikula@intel.com>
+Subject: Re: linux-next: build failure after merge of the drm-xe tree
+Message-ID: <b7f67081-7b8f-48e0-8f9e-bcbad47165d6@sirena.org.uk>
+References: <abFpM1FHgzgARB88@sirena.org.uk>
+ <ae413dfe2aa2d18c0b4c44d4bdb15bb630db177d.camel@intel.com>
+ <abGv-5kXSCtOTO8M@intel.com>
+ <8ec7f38d87fd49a4c81a228b87b1ad244c9b9df8.camel@intel.com>
+ <abHMaBe4Wo_PH4uR@intel.com>
+ <7df1c2dd-1e62-4cc6-9fb8-9f4ac160077f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net v2] net: ethernet: ti: am65-cpsw-nuss: Fix rx_filter
- value for PTP support: manual merge
-Content-Language: fr
-To: Chintan Vankar <c-vankar@ti.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Michael Walle <mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Vignesh Raghavendra <vigneshr@ti.com>,
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- MD Danish Anwar <danishanwar@ti.com>, Vishnu Singh <v-singh1@ti.com>,
- linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20260310160940.109822-1-c-vankar@ti.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20260310160940.109822-1-c-vankar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iSty4Hq7CECcRi/n"
+Content-Disposition: inline
+In-Reply-To: <7df1c2dd-1e62-4cc6-9fb8-9f4ac160077f@intel.com>
+X-Cookie: I feel better about world problems now!
 
-Hi Chintan,
 
-+cc linux-next
+--iSty4Hq7CECcRi/n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/03/2026 17:09, Chintan Vankar wrote:
-> The "rx_filter" member of "hwtstamp_config" structure is an enum field and
-> does not support bitwise OR combination of multiple filter values. It
-> causes error while linuxptp application tries to match rx filter version.
-> Fix this by storing the requested filter type in a new port field.
-FYI, we got a small conflict when merging 'net' in 'net-next' in the
-MPTCP tree due to this patch applied in 'net':
+On Thu, Mar 12, 2026 at 09:47:26AM +0200, Lionel Landwerlin wrote:
+> On 11/03/2026 22:11, Rodrigo Vivi wrote:
 
-  840c9d13cb1c ("net: ethernet: ti: am65-cpsw-nuss: Fix rx_filter value for PTP support")
+> > We are in -rc3. Jani might be sending a PR in 2 weeks from now.
+> > So, we might be in sync in 3 weeks. Worst case 30 days.
+> > But it can be speed up with the help of the maintainers I mentioned.
 
-and this one from 'net-next':
+> > Lionel, what do you think?
 
-  a23c657e332f ("net: ethernet: ti: am65-cpsw: Use also port number to identify timestamps")
+> Is there no process to deal with kind of merge issues quickly?
 
------ Generic Message -----
-The best is to avoid conflicts between 'net' and 'net-next' trees but if
-they cannot be avoided when preparing patches, a note about how to fix
-them is much appreciated.
+> If someone comes along and changes the bitmask macros again, do we have to
+> wait another month after that?
 
-The conflict has been resolved on our side [1] and the resolution we
-suggest is attached to this email. Please report any issues linked to
-this conflict resolution as it might be used by others. If you worked on
-the mentioned patches, don't hesitate to ACK this conflict resolution.
----------------------------
+The usual thing that normal trees would do would be to make a shared
+branch with just the API change in it that all the affected trees could
+merge and base their ongoing work off.
 
-Rerere cache is available in [2].
+--iSty4Hq7CECcRi/n
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The conflict was in the context: this patch here in 'net' modified the
-if condition, while the one in 'net-next' modified the line below.
+-----BEGIN PGP SIGNATURE-----
 
------------ 8< -----------
-diff --cc drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index a38bf7f4f434,265ce5479915..d9400599e80a
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@@ -1351,8 -1351,8 +1351,8 @@@ static int am65_cpsw_nuss_rx_packets(st
-        ndev_priv = netdev_priv(ndev);
-        am65_cpsw_nuss_set_offload_fwd_mark(skb, ndev_priv->offload_fwd_mark);
-        skb_put(skb, pkt_len);
--       if (port->rx_ts_enabled)
-+       if (port->rx_ts_filter)
- -              am65_cpts_rx_timestamp(common->cpts, skb);
- +              am65_cpts_rx_timestamp(common->cpts, port_id, skb);
-        skb_mark_for_recycle(skb);
-        skb->protocol = eth_type_trans(skb, ndev);
-        am65_cpsw_nuss_rx_csum(skb, csum_info);
------------ 8< -----------
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmypusACgkQJNaLcl1U
+h9D1hgf/UPPecP+7mamz7y49yGlIgpN7IqjGebC/b9Pu3iHNsofv1eAjDE2+Z14I
+hm7CGBFveZh9TZpjJ3K8HfEtGT665l4V+kORPv3GEy6AgtvTc5RleKBHx6ACCU8l
+gyxI0+XNEgV6y/FLhRFPpWlwauwTnuCTKmGqXU9Try8jSG97LDsu2HPhXIaiFEiQ
+btw6oaKYIE/rB9rSM773jnK05H6lwpUaYEZDcFGyWD6vmDdZ/zNMbSMZ5WdhkBfp
+OiadqQkeJ7KHinGN3nOmVBsJHvUtM/RU0laZbu4h5R4i7/9akOmeCGPxdSQmvJAs
+NAuzX2UMqurQeNnBCspmCS+qyqWuQg==
+=UFBQ
+-----END PGP SIGNATURE-----
 
-1: https://github.com/multipath-tcp/mptcp_net-next/commit/e9021220744d
-2: https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/c39c9fa
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+--iSty4Hq7CECcRi/n--
