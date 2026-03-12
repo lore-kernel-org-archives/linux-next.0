@@ -1,47 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB043750C6;
-	Thu, 12 Mar 2026 15:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9437B011;
+	Thu, 12 Mar 2026 17:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773330923; cv=none; b=GAp2Tacx1yDAeRaouHILmmgGywHvLmIw6sAi3SjYm/r/79hXVQWT0wgiFuSLUnJpnDfHuZe5RVC0LGvAnYrUeefJipK5RVSFgPvdXKtnM+2dKeFpgtU5HAqdIBB85xd+GnGhI80upqVQYARREATjRqYUsiff4mRi45bQDYqAkkM=
+	t=1773336116; cv=none; b=B/8Pd2lPg1Fdj5iHtzBfBdYGkjbm/CvSll2jut+z1SXMfLABnGtose5ayv0roLkYkURf+RH7L/5f1rxkqMYdtyKYJzM1/McKZIYYdkExZdawmr2WKnb5eVE7njKGBzhY8jrsI3hbiAYxfRfjIsxwOUbG8xg6xvLEZt2+6hRKq2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773330923; c=relaxed/simple;
-	bh=n6GXNEBVeQR/v9tTlJf0SHo8j54knFDB/A62Yxf1Q4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkRc/MT8Urzr3Cb+N4PVCVw9wssN99D/zU17GInpz9Tuon67rLHflO8/2V/IF0TcXtkwHQ2HvfLjgR9tTSGU8JwTNi+DR5dR/FsvOwO57TC5OAgEtTJ7eh2pAbZ5gpzfR0aNWv8Rw0FNuU9pYcK5rQDg0Gy2jjkEvdis5CZVfuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExlS7FLE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773336116; c=relaxed/simple;
+	bh=ZnumChsu9TL5PS/aR9BWNSOOjJabFh6+lF4CSUCedBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=chWcNLE1HJhlWWLjXY2nCPEE36pBZBZmM11LSgZnXoMlWfm3ydZwQhKAsKaLl9mIEVAYDz6+n9brHbpnCvRWXT5Zep/Sj/BGyXyFGWsg5Y7iCSkEkpHFzUTgPTApTRZ/AqZg+qz0s+yEF262SypypF0FVZI4eBhfZRh07T9HF8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvRO3h6X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExlS7FLE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E12C4CEF7;
-	Thu, 12 Mar 2026 15:55:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvRO3h6X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347D0C4CEF7;
+	Thu, 12 Mar 2026 17:21:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773330923;
-	bh=n6GXNEBVeQR/v9tTlJf0SHo8j54knFDB/A62Yxf1Q4w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ExlS7FLEKgW4LOPZ87dlRM1K/6ToVu6+CWw6+3L76/ZHRx+zmUMRgMnQeyJIBsfz8
-	 mpITPgVTXvWYp3zkdwnrtv7FqJWwKetHwocqzDBHTdXLepUiMoxhC5WZOLM5Yadf2t
-	 WerEN+8HboXma7E8OpruKvz9Su78IgwO57dqMJJCc7fMgA/Dn4wsFDTl5W7MVTEANE
-	 ++69qU+m0PSbKSu06kV+IQOkJ3lknTWIKMJ8KCwvwku/FWJphru/SnSbCtCQcxOd3g
-	 NJJiTHuOOiK1mxqyYaFaXZWkHS+OcALQScC515PJKRpQxWLfeILdD/EaCLAOCE0KH9
-	 y6MeCKDgg3s0w==
-Date: Thu, 12 Mar 2026 15:55:18 +0000
+	s=k20201202; t=1773336116;
+	bh=ZnumChsu9TL5PS/aR9BWNSOOjJabFh6+lF4CSUCedBQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MvRO3h6XNyXrx0P+B0NKShdYtmdbRF0e68FxACw1CeucHx/C0nZTPa1IL3cqGunaO
+	 OM0zC2Mv3edAX0VT3k8PCfqdlx+X7s/JwV5vAtVue6OStQJd18BDG7DLGxpDul3VZm
+	 CpcgZC82WRZl+NSocC4rZLY78lFrqYWZlsTVgfabYAeS5ST/yfvYnmBNg8NKIColjp
+	 CehX31fz1fRqZDwjyOgPtViqQFxA92hL4ujBtVWIK2oqhAARnqfzf2iU37xYnn6wni
+	 3ToPMkY5bIRftox+i7BsgwS1Iu+OMT4KxDuhL7buyt0t76ca1V1P2gl6hSPnyBUqmr
+	 eDxeGwUtLyxMg==
+Date: Thu, 12 Mar 2026 17:21:52 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <1f304ceb-06f3-4158-99af-c5e6321e177f@sirena.org.uk>
-References: <abBizpKaBlTZSYh6@sirena.org.uk>
- <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk>
- <abGBhmJ7827npf4D@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <feb7b428-eab3-4cec-a004-6067e621398f@sirena.org.uk>
- <abGYiyHJHWOgH65W@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <abJe1PAf4JbwGGRI@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, Yosry Ahmed <yosry@kernel.org>
+Subject: linux-next: manual merge of the kvm-x86 tree with the kvm-fixes tree
+Message-ID: <abL2MPhXKOn_Zdz9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -49,43 +41,79 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jcvzAXPN4bX6hXmy"
+	protocol="application/pgp-signature"; boundary="TyqfN1doM8m6JuYM"
 Content-Disposition: inline
-In-Reply-To: <abJe1PAf4JbwGGRI@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-X-Cookie: I feel better about world problems now!
 
 
---jcvzAXPN4bX6hXmy
+--TyqfN1doM8m6JuYM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 12, 2026 at 12:06:04PM +0530, Ojaswin Mujoo wrote:
+Hi all,
 
-> Hi Mark,
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-> Im able to replicate and confirm the following patch fixes it:
+  arch/x86/kvm/svm/svm.c
 
->   https://lore.kernel.org/linux-ext4/5bb9041471dab8ce870c191c19cbe4df57473be8.1772381213.git.ritesh.list@gmail.com/
+between commit:
 
-> I believe the previous test's cleanup is not going through properly
-> causing the mballoc test to fault.
+  6b1ca262a943a ("KVM: x86: clarify leave_smm() return value")
 
-What's the plan on getting this merged, this is fairly disruptive in
--next?
+=66rom the kvm-fixes tree and commit:
 
---jcvzAXPN4bX6hXmy
+  84dc9fd0354d3 ("KVM: nSVM: Cache all used fields from VMCB12")
+
+=66rom the kvm-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+I suspect this may be flagging an issue with the merge I just posted and
+removal of the check for the cache...
+
+diff --cc arch/x86/kvm/svm/svm.c
+index e6477affac9a0,3407deac90bd6..0000000000000
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@@ -4880,15 -5030,11 +5030,11 @@@ static int svm_leave_smm(struct kvm_vcp
+  	vmcb12 =3D map.hva;
+  	nested_copy_vmcb_control_to_cache(svm, &vmcb12->control);
+  	nested_copy_vmcb_save_to_cache(svm, &vmcb12->save);
+ -	ret =3D enter_svm_guest_mode(vcpu, smram64->svm_guest_vmcb_gpa, false);
+ =20
+- 	if (nested_svm_check_cached_vmcb12(vcpu) < 0)
+- 		goto unmap_save;
+-=20
+- 	if (enter_svm_guest_mode(vcpu, smram64->svm_guest_vmcb_gpa,
+- 				 vmcb12, false) !=3D 0)
+ -	if (ret)
+++	if (enter_svm_guest_mode(vcpu, smram64->svm_guest_vmcb_gpa, false) !=3D =
+0)
+  		goto unmap_save;
+ =20
+ +	ret =3D 0;
+  	svm->nested.nested_run_pending =3D 1;
+ =20
+  unmap_save:
+
+--TyqfN1doM8m6JuYM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmy4eUACgkQJNaLcl1U
-h9AoWggAgc8Onhv7++Qc67QGg/kcoK8JeT5QNk8KKrTNRr4zDSZzGVfwGsUFtm+m
-1v8gutKeKNgOlbvOShH28VUGrQjXkgtQP1OoHOphyJO5xkHAUZjd1MVAgobUHhpr
-plIKPdYrhavYby9WoH2fEng4yuAYz2GjJFtjegFTs99ArB1dItBXf0hNVfzXVCTz
-/Pe3NlHtzF+KOMA3I3icyQqvHMSWlmIFBoLLsJd2pTBI1W+0Zt4tADsvDHlRpM9x
-92XkaTbqQWdtCJh4PBPHAu8ameGDleTtXvxmZ1Asxtl3m0a3Lp2p663uGiAkKjYq
-yM6OaY9FPQYiiYRU4QV0skSLvkwmSQ==
-=/M+v
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmy9i8ACgkQJNaLcl1U
+h9AAYwf/YyDGa+La636B6s4xTFBNFpe8wgyRDEdVZxarfqYSZRYPkRJ3iI+460ng
+oMr6aGni3aUNeT1o2AcUp9M7kmGfOEeeCZCSa7aWzBtucp2tQaBHFE+oncAAOx64
+u3f2nZ8QDYLz4v4z7evn2GyGaTa2obKTa0IjcYdHJA6nYkgFF8BknpW1lq1V/Hkl
+gGs14NSJwtvgrsjnKxrbXhwgVBSx0Fgqb0Cq+GI5ahCdwz5HfxnwlC1JSD/0mNvD
+5dKHskk9KFKpQF8I47vB965gSVa4y8diUfeXTPVmCp4v5/+BoysSyX5nAeQOWbTg
+piQuKVvniFZ51iMcXGE3KZz4PZaBGQ==
+=b/tF
 -----END PGP SIGNATURE-----
 
---jcvzAXPN4bX6hXmy--
+--TyqfN1doM8m6JuYM--
