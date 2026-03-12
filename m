@@ -1,103 +1,91 @@
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1258A3E6DE3
-	for <linux-next@vger.kernel.org>; Thu, 12 Mar 2026 15:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB043750C6;
+	Thu, 12 Mar 2026 15:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773330458; cv=none; b=DblANZPF0wBnlU+ZGSB4ASG28lnN5WaWGJDZm8WuujBjIFfudRNqIG1Pbh9bUhyyhIvl00LkN9EBjfsL6ifxFxZFk/afcSDtHwtpq8zJGxbbEmb6NIP9BUSmLpsQt+3GPxGDdb7MVIyEEslWK2jSTxz0v1o+tbSkG1oudk2ztp8=
+	t=1773330923; cv=none; b=GAp2Tacx1yDAeRaouHILmmgGywHvLmIw6sAi3SjYm/r/79hXVQWT0wgiFuSLUnJpnDfHuZe5RVC0LGvAnYrUeefJipK5RVSFgPvdXKtnM+2dKeFpgtU5HAqdIBB85xd+GnGhI80upqVQYARREATjRqYUsiff4mRi45bQDYqAkkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773330458; c=relaxed/simple;
-	bh=Z86+A8JRng7UI2sF2Tua+R88v0ug0pwspifJ/PNCf28=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=UV7IPHONhPZgLEU9hJNKqCmSc401nPYEXAL/Ib3SisSAyQwKJQILpggEDH4wrmTlgbVrOgwiiV3AwAmlGlEd7G3Nxshe8A21gjA5wy355/TxlA+cNx3L+QgAQebACUAFzV98e5CWm6+YUtVFCS7Co90U8753wrjhOlmxT8MqzjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqPu6mhn; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773330923; c=relaxed/simple;
+	bh=n6GXNEBVeQR/v9tTlJf0SHo8j54knFDB/A62Yxf1Q4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkRc/MT8Urzr3Cb+N4PVCVw9wssN99D/zU17GInpz9Tuon67rLHflO8/2V/IF0TcXtkwHQ2HvfLjgR9tTSGU8JwTNi+DR5dR/FsvOwO57TC5OAgEtTJ7eh2pAbZ5gpzfR0aNWv8Rw0FNuU9pYcK5rQDg0Gy2jjkEvdis5CZVfuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExlS7FLE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqPu6mhn"
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso533681a12.3
-        for <linux-next@vger.kernel.org>; Thu, 12 Mar 2026 08:47:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773330453; x=1773935253; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D885OaMthHKzMazfSmWLjhSizdtYPijabBVqN1Os/BE=;
-        b=LqPu6mhnKK1TDBKEOSkdpxYoNOUohdhgI2YvQcmdU8a7tLxho0GkvhfDGDITWR6iaN
-         3/5jtCVR/tmFlDr+CoiG5Nef1S+poILn5dgLmBXbNTvjj2lEO5PqqJfK/Ql8Laol7ACJ
-         kyFAIgm1ZVGc0WNrY01cnwhGNj/oi2Wjj7I79CXc5VB+LbBEpmpgPtr1uGb3xDMJkDGu
-         fSdS+Ci7vJ7cQaQknG7vyso+9kWdQ1xkGU4PdKndDWswsqk6GC9eHyzwcWaDrdB31mnA
-         wr3wbB+fg7FpR27vSF0CE4lWtch7k0svxOqNhmRjgSePEOQbu78/LqPIqDpshsRDSbGg
-         SPMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773330453; x=1773935253;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D885OaMthHKzMazfSmWLjhSizdtYPijabBVqN1Os/BE=;
-        b=OFX1vk0asYiIJo9gfB3iDcGBRb7FWTDrDqR5UmeuNJxsG/z0a/rag4jvR6FJpGDYPj
-         6qRtc8Gmo6RspX2sZehEmZ6aFGDWBAE0vkGasi7RRUE8jnKxIaSDQ66V50EheDmk8HCe
-         bLLaTZzmAbSLZkj6vrSh8Jwkdv2frMsXlWYJe7/2WoySheN5oxpPj0k6dJWkNfMfb3Ae
-         93f8HUAlsoYyAfh8VdhrtudVA0WnvX6w/K9rBvkhqWQzPkMPn8W9lJgm+bCB1CjiQDes
-         rcfUCuIlspVZsDbv4de3EZqPNgI5bKz+APDBcuDEZDTH4hlUYDeIlWauedsIcVx49iIn
-         npQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSuA3FBeqWZwxNnoo2sFBPfLd8Z2zzFcwVSkRzluD/s++WlVIJRsX8cJKaKD+/ToahlqZCwogTMLku@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4/Sl/+yS/aVdUiUEG/WrK+z7zBGtWWbkpXha8ppPaG6PNSnZ0
-	LJoSE1DnMvZ5otmIasymiWxYTNys+9BwTsaLI6cf480pKIT47YPe2ta6
-X-Gm-Gg: ATEYQzzFMdV+WKoXm8dQgn8U9HjT5yefzVWr3vUWxffma/soUQmfb3qKx5FJgHM4oJk
-	5dV+XRDGkVb6OiY42X5APpq4Zd7WwJ2RWa48Kb3FDIwZefUvPbLLnvJ0xdAfEf0BXayPSNr/wPQ
-	1yawX3OhJB5OM+pheJgxAg6rssUWj+clamMxRGvmWoL6TItnltfuZm426Qwa+kmPSmHgzSgqfSu
-	p8VL49Ll16QuOB2cQkSPqqk9AgXHCZI5fJhwXNYQAo+fjwIJ50dHTMV0bGEVSZTIa/W7y3NUT5X
-	4tmsjN4sIHmBKkctl0/bTahEGnc3eJV8tDXwGJHOJBny+Y1c24wp8T4pxb2ySulS2bVsPOBZOII
-	4+gcyJLo8OfRBUMOp1AXFKYMhhzQTVY48BOHW+72eXWSptG1nnxgxsnW1jDjIUnUkxpUB9bCm39
-	8uWDXp3kb8zWMIJ7sGcd+4zA==
-X-Received: by 2002:a05:6a21:6e0c:b0:398:a71b:a0f8 with SMTP id adf61e73a8af0-398c5ee81femr6563496637.14.1773330452717;
-        Thu, 12 Mar 2026 08:47:32 -0700 (PDT)
-Received: from pve-server ([49.205.216.49])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c73cdf0e5afsm5678092a12.2.2026.03.12.08.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 08:47:32 -0700 (PDT)
-From: Ritesh Harjani <ritesh.list@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, willy@infradead.org, yi.zhang@huawei.com, jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExlS7FLE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E12C4CEF7;
+	Thu, 12 Mar 2026 15:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773330923;
+	bh=n6GXNEBVeQR/v9tTlJf0SHo8j54knFDB/A62Yxf1Q4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ExlS7FLEKgW4LOPZ87dlRM1K/6ToVu6+CWw6+3L76/ZHRx+zmUMRgMnQeyJIBsfz8
+	 mpITPgVTXvWYp3zkdwnrtv7FqJWwKetHwocqzDBHTdXLepUiMoxhC5WZOLM5Yadf2t
+	 WerEN+8HboXma7E8OpruKvz9Su78IgwO57dqMJJCc7fMgA/Dn4wsFDTl5W7MVTEANE
+	 ++69qU+m0PSbKSu06kV+IQOkJ3lknTWIKMJ8KCwvwku/FWJphru/SnSbCtCQcxOd3g
+	 NJJiTHuOOiK1mxqyYaFaXZWkHS+OcALQScC515PJKRpQxWLfeILdD/EaCLAOCE0KH9
+	 y6MeCKDgg3s0w==
+Date: Thu, 12 Mar 2026 15:55:18 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the tip tree
-In-Reply-To: <0d21783c-5299-4488-9708-def0b1a4dcbe@sirena.org.uk>
-Date: Thu, 12 Mar 2026 21:13:47 +0530
-Message-ID: <wlzht5n0.ritesh.list@gmail.com>
-References: <abBizpKaBlTZSYh6@sirena.org.uk> <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk> <20260311103743.GK606826@noisy.programming.kicks-ass.net> <abF9Ti4pTYnnsMdq@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <20260311160904.GP606826@noisy.programming.kicks-ass.net> <0d21783c-5299-4488-9708-def0b1a4dcbe@sirena.org.uk>
+Message-ID: <1f304ceb-06f3-4158-99af-c5e6321e177f@sirena.org.uk>
+References: <abBizpKaBlTZSYh6@sirena.org.uk>
+ <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk>
+ <abGBhmJ7827npf4D@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <feb7b428-eab3-4cec-a004-6067e621398f@sirena.org.uk>
+ <abGYiyHJHWOgH65W@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <abJe1PAf4JbwGGRI@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jcvzAXPN4bX6hXmy"
+Content-Disposition: inline
+In-Reply-To: <abJe1PAf4JbwGGRI@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-Cookie: I feel better about world problems now!
 
-Mark Brown <broonie@kernel.org> writes:
 
-> On Wed, Mar 11, 2026 at 05:09:04PM +0100, Peter Zijlstra wrote:
->> On Wed, Mar 11, 2026 at 08:03:50PM +0530, Ojaswin Mujoo wrote:
->> > On Wed, Mar 11, 2026 at 11:37:43AM +0100, Peter Zijlstra wrote:
->
->> > I believe this issue is resolved with [1]. However, I think this might
->> > not be the same as the issue reported originally as we the original
->> > issue seems to be in mballoc-tests rather than extent-tests. I'll try to
->> > look into it a bit more.
->
->> > [1] https://lore.kernel.org/linux-ext4/5bb9041471dab8ce870c191c19cbe4df57473be8.1772381213.git.ritesh.list@gmail.com/
->
->> I can confirm that solves the KASAN splat; it also cures the defconfig
->> hang that was initially mis-attributed to the mutex patch, but turned
->> out to be memory corruption due to that issue KASAN found.
->
->> FWIW:
->
->> Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org> 
->
-> Yes, that seems to work for me too - looks like tip just triggers it
-> more aggressively for some reason:
->
-> Tested-by: Mark Brown <broonie@kernel.org>
+--jcvzAXPN4bX6hXmy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks Mark, Peter & Ojaswin for testing.
+On Thu, Mar 12, 2026 at 12:06:04PM +0530, Ojaswin Mujoo wrote:
 
-++linux-ext4 so that if someone observes the same issue in ext4 kunit
-tests, they could find this discussion on linux-ext4.
+> Hi Mark,
 
--ritesh
+> Im able to replicate and confirm the following patch fixes it:
+
+>   https://lore.kernel.org/linux-ext4/5bb9041471dab8ce870c191c19cbe4df57473be8.1772381213.git.ritesh.list@gmail.com/
+
+> I believe the previous test's cleanup is not going through properly
+> causing the mballoc test to fault.
+
+What's the plan on getting this merged, this is fairly disruptive in
+-next?
+
+--jcvzAXPN4bX6hXmy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmy4eUACgkQJNaLcl1U
+h9AoWggAgc8Onhv7++Qc67QGg/kcoK8JeT5QNk8KKrTNRr4zDSZzGVfwGsUFtm+m
+1v8gutKeKNgOlbvOShH28VUGrQjXkgtQP1OoHOphyJO5xkHAUZjd1MVAgobUHhpr
+plIKPdYrhavYby9WoH2fEng4yuAYz2GjJFtjegFTs99ArB1dItBXf0hNVfzXVCTz
+/Pe3NlHtzF+KOMA3I3icyQqvHMSWlmIFBoLLsJd2pTBI1W+0Zt4tADsvDHlRpM9x
+92XkaTbqQWdtCJh4PBPHAu8ameGDleTtXvxmZ1Asxtl3m0a3Lp2p663uGiAkKjYq
+yM6OaY9FPQYiiYRU4QV0skSLvkwmSQ==
+=/M+v
+-----END PGP SIGNATURE-----
+
+--jcvzAXPN4bX6hXmy--
