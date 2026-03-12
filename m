@@ -1,343 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE9123D281;
-	Thu, 12 Mar 2026 14:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1258A3E6DE3
+	for <linux-next@vger.kernel.org>; Thu, 12 Mar 2026 15:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773325617; cv=none; b=BqfHfkySe+ij/T975scTovs35pMICFSiW5DlzBvTI/buKhsweVNzkW9e1W36JsU+uMqD4OY15Cc2MegA6JeijA9YRMHYZkLi4yjxSQA0Z+ONAxniIYlrIPtOhSiAwaG0XNK87XpiJ/MtgDyev6fVe91k9IsauK9vl8FNbIESlCM=
+	t=1773330458; cv=none; b=DblANZPF0wBnlU+ZGSB4ASG28lnN5WaWGJDZm8WuujBjIFfudRNqIG1Pbh9bUhyyhIvl00LkN9EBjfsL6ifxFxZFk/afcSDtHwtpq8zJGxbbEmb6NIP9BUSmLpsQt+3GPxGDdb7MVIyEEslWK2jSTxz0v1o+tbSkG1oudk2ztp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773325617; c=relaxed/simple;
-	bh=pFIycD2h9kuZzhfWtTrr3WvzGycntn6WbnjX/JR8ijY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=U2w6dO6VAJqSqe1vEPHh12Twg8YzRmSO9aIjW+Rt2460Lz2fMXpU0NvMHDW2VWhJIPj14CUyGj98PDXACcxx3CeXWgo9Yf5omG55Al/IGZ3rBMnpciA0iUdcP6jvnZkfjGkIkK7TGtCLk53g3AOzmIJxWcxwWWRKmuhll/yjfGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SROaxN4r; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773330458; c=relaxed/simple;
+	bh=Z86+A8JRng7UI2sF2Tua+R88v0ug0pwspifJ/PNCf28=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=UV7IPHONhPZgLEU9hJNKqCmSc401nPYEXAL/Ib3SisSAyQwKJQILpggEDH4wrmTlgbVrOgwiiV3AwAmlGlEd7G3Nxshe8A21gjA5wy355/TxlA+cNx3L+QgAQebACUAFzV98e5CWm6+YUtVFCS7Co90U8753wrjhOlmxT8MqzjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqPu6mhn; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SROaxN4r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867C2C4CEF7;
-	Thu, 12 Mar 2026 14:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773325617;
-	bh=pFIycD2h9kuZzhfWtTrr3WvzGycntn6WbnjX/JR8ijY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SROaxN4rXibiO+e/g8sIWxhfYxwINfDPBl1dxIsB+xGzj/YbTesqV799NLTV8TXW7
-	 2MGwvL1/j0duMiXGPa8+mjIyVNc0e8QOnRUreZJ1g+3BjMA7LbM8KO6PUbOL/q9XAE
-	 JU1UjbIZneUkyoe3X05KOv8T2ueKyiPPstk4RiF9vjP8PQrjGRAgiciXABeF4Ot+F/
-	 yZTWpIadlxEJ7HkaUcZucc3TVTiiqgCJk3YlQmr1DZqScMB+a2Yws5kOVRV2DleJJE
-	 Wl6DVAqd4ULgQBNUeDCn2guyEovVy37LJw/G9rp7tZk3bOohEZTwpre8sKJFTZjd1I
-	 I6oh8OIvxjhrg==
-Date: Thu, 12 Mar 2026 14:26:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Eliot Courtney <ecourtney@nvidia.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Tim Kovalenko <tim.kovalenko@proton.me>
-Subject: linux-next: manual merge of the drm-rust tree with the
- drm-rust-fixes tree
-Message-ID: <abLNLEf0TMz3ytmX@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqPu6mhn"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso533681a12.3
+        for <linux-next@vger.kernel.org>; Thu, 12 Mar 2026 08:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773330453; x=1773935253; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D885OaMthHKzMazfSmWLjhSizdtYPijabBVqN1Os/BE=;
+        b=LqPu6mhnKK1TDBKEOSkdpxYoNOUohdhgI2YvQcmdU8a7tLxho0GkvhfDGDITWR6iaN
+         3/5jtCVR/tmFlDr+CoiG5Nef1S+poILn5dgLmBXbNTvjj2lEO5PqqJfK/Ql8Laol7ACJ
+         kyFAIgm1ZVGc0WNrY01cnwhGNj/oi2Wjj7I79CXc5VB+LbBEpmpgPtr1uGb3xDMJkDGu
+         fSdS+Ci7vJ7cQaQknG7vyso+9kWdQ1xkGU4PdKndDWswsqk6GC9eHyzwcWaDrdB31mnA
+         wr3wbB+fg7FpR27vSF0CE4lWtch7k0svxOqNhmRjgSePEOQbu78/LqPIqDpshsRDSbGg
+         SPMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773330453; x=1773935253;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D885OaMthHKzMazfSmWLjhSizdtYPijabBVqN1Os/BE=;
+        b=OFX1vk0asYiIJo9gfB3iDcGBRb7FWTDrDqR5UmeuNJxsG/z0a/rag4jvR6FJpGDYPj
+         6qRtc8Gmo6RspX2sZehEmZ6aFGDWBAE0vkGasi7RRUE8jnKxIaSDQ66V50EheDmk8HCe
+         bLLaTZzmAbSLZkj6vrSh8Jwkdv2frMsXlWYJe7/2WoySheN5oxpPj0k6dJWkNfMfb3Ae
+         93f8HUAlsoYyAfh8VdhrtudVA0WnvX6w/K9rBvkhqWQzPkMPn8W9lJgm+bCB1CjiQDes
+         rcfUCuIlspVZsDbv4de3EZqPNgI5bKz+APDBcuDEZDTH4hlUYDeIlWauedsIcVx49iIn
+         npQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSuA3FBeqWZwxNnoo2sFBPfLd8Z2zzFcwVSkRzluD/s++WlVIJRsX8cJKaKD+/ToahlqZCwogTMLku@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4/Sl/+yS/aVdUiUEG/WrK+z7zBGtWWbkpXha8ppPaG6PNSnZ0
+	LJoSE1DnMvZ5otmIasymiWxYTNys+9BwTsaLI6cf480pKIT47YPe2ta6
+X-Gm-Gg: ATEYQzzFMdV+WKoXm8dQgn8U9HjT5yefzVWr3vUWxffma/soUQmfb3qKx5FJgHM4oJk
+	5dV+XRDGkVb6OiY42X5APpq4Zd7WwJ2RWa48Kb3FDIwZefUvPbLLnvJ0xdAfEf0BXayPSNr/wPQ
+	1yawX3OhJB5OM+pheJgxAg6rssUWj+clamMxRGvmWoL6TItnltfuZm426Qwa+kmPSmHgzSgqfSu
+	p8VL49Ll16QuOB2cQkSPqqk9AgXHCZI5fJhwXNYQAo+fjwIJ50dHTMV0bGEVSZTIa/W7y3NUT5X
+	4tmsjN4sIHmBKkctl0/bTahEGnc3eJV8tDXwGJHOJBny+Y1c24wp8T4pxb2ySulS2bVsPOBZOII
+	4+gcyJLo8OfRBUMOp1AXFKYMhhzQTVY48BOHW+72eXWSptG1nnxgxsnW1jDjIUnUkxpUB9bCm39
+	8uWDXp3kb8zWMIJ7sGcd+4zA==
+X-Received: by 2002:a05:6a21:6e0c:b0:398:a71b:a0f8 with SMTP id adf61e73a8af0-398c5ee81femr6563496637.14.1773330452717;
+        Thu, 12 Mar 2026 08:47:32 -0700 (PDT)
+Received: from pve-server ([49.205.216.49])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c73cdf0e5afsm5678092a12.2.2026.03.12.08.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 08:47:32 -0700 (PDT)
+From: Ritesh Harjani <ritesh.list@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, willy@infradead.org, yi.zhang@huawei.com, jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org
+Subject: Re: linux-next: build failure after merge of the tip tree
+In-Reply-To: <0d21783c-5299-4488-9708-def0b1a4dcbe@sirena.org.uk>
+Date: Thu, 12 Mar 2026 21:13:47 +0530
+Message-ID: <wlzht5n0.ritesh.list@gmail.com>
+References: <abBizpKaBlTZSYh6@sirena.org.uk> <1e549c32-ea40-40a1-a0bd-0ee87652ad21@sirena.org.uk> <20260311103743.GK606826@noisy.programming.kicks-ass.net> <abF9Ti4pTYnnsMdq@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <20260311160904.GP606826@noisy.programming.kicks-ass.net> <0d21783c-5299-4488-9708-def0b1a4dcbe@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LlT4UTfoMVosdU6R"
-Content-Disposition: inline
 
+Mark Brown <broonie@kernel.org> writes:
 
---LlT4UTfoMVosdU6R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Wed, Mar 11, 2026 at 05:09:04PM +0100, Peter Zijlstra wrote:
+>> On Wed, Mar 11, 2026 at 08:03:50PM +0530, Ojaswin Mujoo wrote:
+>> > On Wed, Mar 11, 2026 at 11:37:43AM +0100, Peter Zijlstra wrote:
+>
+>> > I believe this issue is resolved with [1]. However, I think this might
+>> > not be the same as the issue reported originally as we the original
+>> > issue seems to be in mballoc-tests rather than extent-tests. I'll try to
+>> > look into it a bit more.
+>
+>> > [1] https://lore.kernel.org/linux-ext4/5bb9041471dab8ce870c191c19cbe4df57473be8.1772381213.git.ritesh.list@gmail.com/
+>
+>> I can confirm that solves the KASAN splat; it also cures the defconfig
+>> hang that was initially mis-attributed to the mutex patch, but turned
+>> out to be memory corruption due to that issue KASAN found.
+>
+>> FWIW:
+>
+>> Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org> 
+>
+> Yes, that seems to work for me too - looks like tip just triggers it
+> more aggressively for some reason:
+>
+> Tested-by: Mark Brown <broonie@kernel.org>
 
-Hi all,
+Thanks Mark, Peter & Ojaswin for testing.
 
-Today's linux-next merge of the drm-rust tree got conflicts in:
+++linux-ext4 so that if someone observes the same issue in ext4 kunit
+tests, they could find this discussion on linux-ext4.
 
-  drivers/gpu/nova-core/gsp/cmdq.rs
-  drivers/gpu/nova-core/gsp/fw.rs
-
-between commits:
-
-  c7940c8bf215b ("gpu: nova-core: fix stack overflow in GSP memory allocati=
-on")
-  0073a17b46668 ("gpu: nova-core: gsp: fix UB in DmaGspMem pointer accessor=
-s")
-
-=66rom the drm-rust-fixes tree and commit:
-
-  e8f4f9ae86a46 ("gpu: nova-core: gsp: support large RPCs via continuation =
-record")
-
-=66rom the drm-rust tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/nova-core/gsp/cmdq.rs
-index 03a4f35998498,e0b096546d233..0000000000000
---- a/drivers/gpu/nova-core/gsp/cmdq.rs
-+++ b/drivers/gpu/nova-core/gsp/cmdq.rs
-@@@ -1,9 -1,14 +1,8 @@@
-  // SPDX-License-Identifier: GPL-2.0
- =20
-- use core::{
--     cmp,
--     mem, //
-- };
-+ mod continuation;
-+=20
- -use core::{
- -    mem,
- -    sync::atomic::{
- -        fence,
- -        Ordering, //
- -    }, //
- -};
-++use core::mem;
- =20
-  use kernel::{
-      device,
-@@@ -154,24 -170,21 +165,26 @@@ pub(super) struct Msgq=20
- =20
-  /// Structure shared between the driver and the GSP and containing the co=
-mmand and message queues.
-  #[repr(C)]
- -struct GspMem {
- +// TODO: Revert to private once `IoView` projections replace the `gsp_mem=
-` module.
- +pub(super) struct GspMem {
-      /// Self-mapping page table entries.
- -    ptes: PteArray<{ GSP_PAGE_SIZE / size_of::<u64>() }>,
- +    ptes: PteArray<{ Self::PTE_ARRAY_SIZE }>,
-      /// CPU queue: the driver writes commands here, and the GSP reads the=
-m. It also contains the
--     /// write and read pointers that the CPU updates.
-+     /// write and read pointers that the CPU updates. This means that the=
- read pointer here is an
-+     /// index into the GSP queue.
-      ///
-      /// This member is read-only for the GSP.
- -    cpuq: Msgq,
- +    pub(super) cpuq: Msgq,
-      /// GSP queue: the GSP writes messages here, and the driver reads the=
-m. It also contains the
--     /// write and read pointers that the GSP updates.
-+     /// write and read pointers that the GSP updates. This means that the=
- read pointer here is an
-+     /// index into the CPU queue.
-      ///
-      /// This member is read-only for the driver.
- -    gspq: Msgq,
- +    pub(super) gspq: Msgq,
- +}
- +
- +impl GspMem {
- +    const PTE_ARRAY_SIZE: usize =3D GSP_PAGE_SIZE / size_of::<u64>();
-  }
- =20
-  // SAFETY: These structs don't meet the no-padding requirements of AsByte=
-s but
-@@@ -327,27 -359,42 +369,27 @@@ impl DmaGspMem=20
-      //
-      // # Invariants
-      //
--     // - The returned value is between `0` and `MSGQ_NUM_PAGES`.
-+     // - The returned value is within `0..MSGQ_NUM_PAGES`.
-      fn gsp_write_ptr(&self) -> u32 {
- -        let gsp_mem =3D self.0.start_ptr();
- -
- -        // SAFETY:
- -        //  - The 'CoherentAllocation' contains at least one object.
- -        //  - By the invariants of `CoherentAllocation` the pointer is va=
-lid.
- -        (unsafe { (*gsp_mem).gspq.tx.write_ptr() } % MSGQ_NUM_PAGES)
- +        super::fw::gsp_mem::gsp_write_ptr(&self.0)
-      }
- =20
-      // Returns the index of the memory page the GSP will read the next co=
-mmand from.
-      //
-      // # Invariants
-      //
--     // - The returned value is between `0` and `MSGQ_NUM_PAGES`.
-+     // - The returned value is within `0..MSGQ_NUM_PAGES`.
-      fn gsp_read_ptr(&self) -> u32 {
- -        let gsp_mem =3D self.0.start_ptr();
- -
- -        // SAFETY:
- -        //  - The 'CoherentAllocation' contains at least one object.
- -        //  - By the invariants of `CoherentAllocation` the pointer is va=
-lid.
- -        (unsafe { (*gsp_mem).gspq.rx.read_ptr() } % MSGQ_NUM_PAGES)
- +        super::fw::gsp_mem::gsp_read_ptr(&self.0)
-      }
- =20
-      // Returns the index of the memory page the CPU can read the next mes=
-sage from.
-      //
-      // # Invariants
-      //
--     // - The returned value is between `0` and `MSGQ_NUM_PAGES`.
-+     // - The returned value is within `0..MSGQ_NUM_PAGES`.
-      fn cpu_read_ptr(&self) -> u32 {
- -        let gsp_mem =3D self.0.start_ptr();
- -
- -        // SAFETY:
- -        //  - The ['CoherentAllocation'] contains at least one object.
- -        //  - By the invariants of CoherentAllocation the pointer is vali=
-d.
- -        (unsafe { (*gsp_mem).cpuq.rx.read_ptr() } % MSGQ_NUM_PAGES)
- +        super::fw::gsp_mem::cpu_read_ptr(&self.0)
-      }
- =20
-      // Informs the GSP that it can send `elem_count` new pages into the m=
-essage queue.
-@@@ -359,9 -416,14 +401,9 @@@
-      //
-      // # Invariants
-      //
--     // - The returned value is between `0` and `MSGQ_NUM_PAGES`.
-+     // - The returned value is within `0..MSGQ_NUM_PAGES`.
-      fn cpu_write_ptr(&self) -> u32 {
- -        let gsp_mem =3D self.0.start_ptr();
- -
- -        // SAFETY:
- -        //  - The 'CoherentAllocation' contains at least one object.
- -        //  - By the invariants of `CoherentAllocation` the pointer is va=
-lid.
- -        (unsafe { (*gsp_mem).cpuq.tx.write_ptr() } % MSGQ_NUM_PAGES)
- +        super::fw::gsp_mem::cpu_write_ptr(&self.0)
-      }
- =20
-      // Informs the GSP that it can process `elem_count` new pages from th=
-e command queue.
-diff --cc drivers/gpu/nova-core/gsp/fw.rs
-index 040b30ec3089b,25fca1f6db2c8..0000000000000
---- a/drivers/gpu/nova-core/gsp/fw.rs
-+++ b/drivers/gpu/nova-core/gsp/fw.rs
-@@@ -40,75 -39,10 +39,79 @@@ use crate::
-      },
-  };
- =20
- +// TODO: Replace with `IoView` projections once available; the `unwrap()`=
- calls go away once we
- +// switch to the new `dma::Coherent` API.
- +pub(super) mod gsp_mem {
- +    use core::sync::atomic::{
- +        fence,
- +        Ordering, //
- +    };
- +
- +    use kernel::{
- +        dma::CoherentAllocation,
- +        dma_read,
- +        dma_write,
- +        prelude::*, //
- +    };
- +
- +    use crate::gsp::cmdq::{
- +        GspMem,
- +        MSGQ_NUM_PAGES, //
- +    };
- +
- +    pub(in crate::gsp) fn gsp_write_ptr(qs: &CoherentAllocation<GspMem>) =
--> u32 {
- +        // PANIC: A `dma::CoherentAllocation` always contains at least on=
-e element.
- +        || -> Result<u32> { Ok(dma_read!(qs, [0]?.gspq.tx.0.writePtr) % M=
-SGQ_NUM_PAGES) }().unwrap()
- +    }
- +
- +    pub(in crate::gsp) fn gsp_read_ptr(qs: &CoherentAllocation<GspMem>) -=
-> u32 {
- +        // PANIC: A `dma::CoherentAllocation` always contains at least on=
-e element.
- +        || -> Result<u32> { Ok(dma_read!(qs, [0]?.gspq.rx.0.readPtr) % MS=
-GQ_NUM_PAGES) }().unwrap()
- +    }
- +
- +    pub(in crate::gsp) fn cpu_read_ptr(qs: &CoherentAllocation<GspMem>) -=
-> u32 {
- +        // PANIC: A `dma::CoherentAllocation` always contains at least on=
-e element.
- +        || -> Result<u32> { Ok(dma_read!(qs, [0]?.cpuq.rx.0.readPtr) % MS=
-GQ_NUM_PAGES) }().unwrap()
- +    }
- +
- +    pub(in crate::gsp) fn advance_cpu_read_ptr(qs: &CoherentAllocation<Gs=
-pMem>, count: u32) {
- +        let rptr =3D cpu_read_ptr(qs).wrapping_add(count) % MSGQ_NUM_PAGE=
-S;
- +
- +        // Ensure read pointer is properly ordered.
- +        fence(Ordering::SeqCst);
- +
- +        // PANIC: A `dma::CoherentAllocation` always contains at least on=
-e element.
- +        || -> Result {
- +            dma_write!(qs, [0]?.cpuq.rx.0.readPtr, rptr);
- +            Ok(())
- +        }()
- +        .unwrap()
- +    }
- +
- +    pub(in crate::gsp) fn cpu_write_ptr(qs: &CoherentAllocation<GspMem>) =
--> u32 {
- +        // PANIC: A `dma::CoherentAllocation` always contains at least on=
-e element.
- +        || -> Result<u32> { Ok(dma_read!(qs, [0]?.cpuq.tx.0.writePtr) % M=
-SGQ_NUM_PAGES) }().unwrap()
- +    }
- +
- +    pub(in crate::gsp) fn advance_cpu_write_ptr(qs: &CoherentAllocation<G=
-spMem>, count: u32) {
- +        let wptr =3D cpu_write_ptr(qs).wrapping_add(count) % MSGQ_NUM_PAG=
-ES;
- +
- +        // PANIC: A `dma::CoherentAllocation` always contains at least on=
-e element.
- +        || -> Result {
- +            dma_write!(qs, [0]?.cpuq.tx.0.writePtr, wptr);
- +            Ok(())
- +        }()
- +        .unwrap();
- +
- +        // Ensure all command data is visible before triggering the GSP r=
-ead.
- +        fence(Ordering::SeqCst);
- +    }
- +}
- +
-+ /// Maximum size of a single GSP message queue element in bytes.
-+ pub(crate) const GSP_MSG_QUEUE_ELEMENT_SIZE_MAX: usize =3D
-+     num::u32_as_usize(bindings::GSP_MSG_QUEUE_ELEMENT_SIZE_MAX);
-+=20
-  /// Empty type to group methods related to heap parameters for running th=
-e GSP firmware.
-  enum GspFwHeapParams {}
- =20
-
---LlT4UTfoMVosdU6R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmyzSwACgkQJNaLcl1U
-h9AlGwf+OPw6Ia8ePF3OcG6W379B8GTAKqU1evt8q9Yh8snaRIpUF/kwZ+RfPC3X
-e3i0SPsv34z867HNKUHCpkNSYSZphAoTEvIyB9trcCVS1aiCe308Ov737j/b8z1F
-nwKP4xJobN9r78Y0lLDjYhGK63LNwTzYHTCG15iNpJc1CUt708pEKPXTjB+OtcOq
-r5onik7F/cW5jDZlRz7W7OwWjIZqjo6Ez+iAtVcFwJrf57xYJqRD5W0j7dKoPqsW
-rf06yIo7Cy/oh6JDtgUVyGo+PwV8zcnDdU6QPDv+KKTLRJ4fhXGUzTagP2gN7TFe
-yr9TbQWJ2uadEWDF7n3DLDgUK86ryg==
-=iIoZ
------END PGP SIGNATURE-----
-
---LlT4UTfoMVosdU6R--
+-ritesh
