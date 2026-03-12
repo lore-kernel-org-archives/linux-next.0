@@ -1,47 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61F73A168C;
-	Thu, 12 Mar 2026 11:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729A92D8DC2;
+	Thu, 12 Mar 2026 12:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773315824; cv=none; b=S12fIMqvY9dv5OB+ppadWoeGkETrLz1/sx10i/UK0mXfzkZ8KDpA2fRJy2ZS7eKwdSsNrdiSlpiih8EZGVMkAJjl0q1qd8lhJ9WDYJsgY5GFBgea7WqyCztRQraPG/M8jdtEOp8mYIiEGVHVe82aJj5ksDkpIYFTwf2omKTbIyU=
+	t=1773319959; cv=none; b=aakc8qiZAGWXLeWipLdjbFBAN1KY1ZXRWS73zK3BztbyfOn36/z9Al9wXxpb36Cy8GtiRl14oHvkJUdfyT6ExIcD3+d0m/15oNxxCb6+zORvc17NzAMyepsGFhMAvg9CIX4f8vhzLkHlHuuiiQigVxvA+Vv0GCUpqWdyBk0Rwhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773315824; c=relaxed/simple;
-	bh=KviNKT5cGVrb29a9TtMHC/xexwyR2yPqFTHkYD6I2y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRS6qdjN+4M8luYYUyCEyxdtynNqam3bXKKsAAtVP5pk4X3vsfgJR/z4XdqDUklQd7YvZC0Z+zLjKYDS8JjnUXXn229Smve99JGtBhNP0TCIDoiWIOhXprO3py12U+FrEa42MX6Tc3STVOesuIuMWxJuQq5ij9uNdGKx0LIkhLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT20aFh9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773319959; c=relaxed/simple;
+	bh=XU3qMOLHx5LF82p/dzJ0X7DRVsKLx2VKAUG2jpRhIbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FRHmnmVojGQ4l3kLe9aqwGFkHvkSb5jIV7gVXxM7XvL3AtLcNDS45EH+VPko6maN4nMTTu+VB3Bpn2/QgwtKtpiR8MS76fRVgufaITvxw9+YwNw/w8Zc0etNwE5UvwQdMSZNFnuMOxiqKJN/IHxBJG9hsEhLbYGJsn3Acri/MnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSaWi2gP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT20aFh9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC42C4CEF7;
-	Thu, 12 Mar 2026 11:43:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSaWi2gP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EAEAC4CEF7;
+	Thu, 12 Mar 2026 12:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773315824;
-	bh=KviNKT5cGVrb29a9TtMHC/xexwyR2yPqFTHkYD6I2y0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oT20aFh9S9ZPFL5uJWEAcK9UE+QB131yrlLvJsQGZ+j2DqgcJOYWnE2CSNHLhOrd9
-	 HCwfPkAvKAM/bZMDsFhT59pOPvM5lfu2W6a+1BOkKYWmOXHqtF7Est54LeAxM7PLFN
-	 taqqoZZ68e1xt7uJkqwoO7OD9pfAeVAaLPo8y1PKNc9vvcluoUllz2hIOhB6WDE/RD
-	 npFJqVfkHvJjA85EZSq/o0Ew5DkfQvQgKWIcLu8RhgtSfNVewDNqS7ytNRE2BK6H/s
-	 QeerpOxNtjWiKiyuSHjVnkV5FZpA2rsAUapqWwZuM5y5EEQIUbvtU/mVkV/r7cwfDZ
-	 Kp+Bi+1/OiEFg==
-Date: Thu, 12 Mar 2026 11:43:40 +0000
+	s=k20201202; t=1773319959;
+	bh=XU3qMOLHx5LF82p/dzJ0X7DRVsKLx2VKAUG2jpRhIbw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TSaWi2gPT0Fw5brUD+oEH/XSmmorUTSfBFou+F4EFlOtupQndlTy/pIvo0ps4BORl
+	 I5p6AuL8lhTH9v2GkNQNLBx0egM2sRL0pLp/jxfH8YwhHGRKyU4Z1YcGWmggLbjMhE
+	 Xd8uIL1eTOBAuCI/Zd3AonJInZZN5wALOpLy+YouIu5gkZ9DhyHaimn8WnOMvlAwpD
+	 7TzE7WJAhr8eX163NhgyIBWNKQwXMJW55t6z6YbS1K2tG27PjMY5A2R2z/3WZWsNbY
+	 PIKGmR4ImAGLQxl/AbR293U6MjL8OZPN37YMFiXHyZPVagCCMbBr1xiMZ25l6yehIf
+	 /MKax7YF1U45g==
+Date: Thu, 12 Mar 2026 12:52:34 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	"Souza, Jose" <jose.souza@intel.com>,
-	"linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Nikula, Jani" <jani.nikula@intel.com>
-Subject: Re: linux-next: build failure after merge of the drm-xe tree
-Message-ID: <b7f67081-7b8f-48e0-8f9e-bcbad47165d6@sirena.org.uk>
-References: <abFpM1FHgzgARB88@sirena.org.uk>
- <ae413dfe2aa2d18c0b4c44d4bdb15bb630db177d.camel@intel.com>
- <abGv-5kXSCtOTO8M@intel.com>
- <8ec7f38d87fd49a4c81a228b87b1ad244c9b9df8.camel@intel.com>
- <abHMaBe4Wo_PH4uR@intel.com>
- <7df1c2dd-1e62-4cc6-9fb8-9f4ac160077f@intel.com>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Chintan Vankar <c-vankar@ti.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <abK3EkIXuVgMyGI7@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -49,47 +44,69 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iSty4Hq7CECcRi/n"
+	protocol="application/pgp-signature"; boundary="BKOKz4LaxThvnM+6"
 Content-Disposition: inline
-In-Reply-To: <7df1c2dd-1e62-4cc6-9fb8-9f4ac160077f@intel.com>
-X-Cookie: I feel better about world problems now!
 
 
---iSty4Hq7CECcRi/n
+--BKOKz4LaxThvnM+6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 12, 2026 at 09:47:26AM +0200, Lionel Landwerlin wrote:
-> On 11/03/2026 22:11, Rodrigo Vivi wrote:
+Hi all,
 
-> > We are in -rc3. Jani might be sending a PR in 2 weeks from now.
-> > So, we might be in sync in 3 weeks. Worst case 30 days.
-> > But it can be speed up with the help of the maintainers I mentioned.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-> > Lionel, what do you think?
+  drivers/net/ethernet/ti/am65-cpsw-nuss.c
 
-> Is there no process to deal with kind of merge issues quickly?
+between commit:
 
-> If someone comes along and changes the bitmask macros again, do we have to
-> wait another month after that?
+  840c9d13cb1ca ("net: ethernet: ti: am65-cpsw-nuss: Fix rx_filter value fo=
+r PTP support")
 
-The usual thing that normal trees would do would be to make a shared
-branch with just the API change in it that all the affected trees could
-merge and base their ongoing work off.
+=66rom the net tree and commit:
 
---iSty4Hq7CECcRi/n
+  a23c657e332f2 ("net: ethernet: ti: am65-cpsw: Use also port number to ide=
+ntify timestamps")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 265ce5479915f,a38bf7f4f4343..0000000000000
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@@ -1351,8 -1351,8 +1351,8 @@@ static int am65_cpsw_nuss_rx_packets(st
+  	ndev_priv =3D netdev_priv(ndev);
+  	am65_cpsw_nuss_set_offload_fwd_mark(skb, ndev_priv->offload_fwd_mark);
+  	skb_put(skb, pkt_len);
+ -	if (port->rx_ts_enabled)
+ +	if (port->rx_ts_filter)
+- 		am65_cpts_rx_timestamp(common->cpts, skb);
++ 		am65_cpts_rx_timestamp(common->cpts, port_id, skb);
+  	skb_mark_for_recycle(skb);
+  	skb->protocol =3D eth_type_trans(skb, ndev);
+  	am65_cpsw_nuss_rx_csum(skb, csum_info);
+
+--BKOKz4LaxThvnM+6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmypusACgkQJNaLcl1U
-h9D1hgf/UPPecP+7mamz7y49yGlIgpN7IqjGebC/b9Pu3iHNsofv1eAjDE2+Z14I
-hm7CGBFveZh9TZpjJ3K8HfEtGT665l4V+kORPv3GEy6AgtvTc5RleKBHx6ACCU8l
-gyxI0+XNEgV6y/FLhRFPpWlwauwTnuCTKmGqXU9Try8jSG97LDsu2HPhXIaiFEiQ
-btw6oaKYIE/rB9rSM773jnK05H6lwpUaYEZDcFGyWD6vmDdZ/zNMbSMZ5WdhkBfp
-OiadqQkeJ7KHinGN3nOmVBsJHvUtM/RU0laZbu4h5R4i7/9akOmeCGPxdSQmvJAs
-NAuzX2UMqurQeNnBCspmCS+qyqWuQg==
-=UFBQ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmytxEACgkQJNaLcl1U
+h9Ce4Qf/QPfy8FS3+1+khTB0KrNCnmKU0ylwfvhaX1tdznGj4KU/CepWn/xjjYUa
+3k7nVtTP12SbqEUMTgTcT/j2SOhj/C7SfBJBMSBZIm1mjihgSffHLEC6uwHKDmM8
+bqWjgG2q9REu7yNPGKD2CKNOLhXVaocMADhD9azPeOCleclRo6tWaZ45BIwKIpKh
+n2a8XMlr7AmbAiumB00gkWVyWMHDrOjf9l3dZeHCOqGOBCI2t/m/LaLgjWbGEr7J
+I4CpZQ8TaTJjdHGo1cCM0hXvMhDxKIaG9cVdurRbp2IbW+PzqBQkIfXc9A+QbJQA
+u8/vuVFbucpZrxZ92/RFQsUva6SPCA==
+=122z
 -----END PGP SIGNATURE-----
 
---iSty4Hq7CECcRi/n--
+--BKOKz4LaxThvnM+6--
