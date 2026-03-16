@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8C3225403;
-	Mon, 16 Mar 2026 12:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC68190473;
+	Mon, 16 Mar 2026 12:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773664764; cv=none; b=SXTiA976C4+zA95DHg12PTAPjNA/tYUvaK0Wlqn0yBR9EBxEw+/7rpqNiYCAI+aMRMp6tU+rChFKb7QJPfS94TnRrzyvjZz4ENdeDx6anwMyqXCvWghAbZcgV+JxLAXOTi9CeE8VtOglermh1aCbg2/mjnYiR0SEEnmPbobWns8=
+	t=1773664773; cv=none; b=I6BWrZ1kln6+cZ8RHNl3EPW772TIGL/C8R7xi/lU/9+EIKl2Z/MwQrSJ1EwSKxTo6JoIxh6QxA8jiNPRU2YdwIG3mIYq8/CIidBOz5LhS4+ssJvXtDPACSmvb9XruddstsKDpdnzNWn8jDzBlAi3zOLrULJZ58uaeBNlnuSb8oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773664764; c=relaxed/simple;
-	bh=TNU3AMLpCm7231RB7oUcjatcLbtiv7+dWBPWo5d4YJc=;
+	s=arc-20240116; t=1773664773; c=relaxed/simple;
+	bh=Y26ztZVzePNqEFpatcJ/5y/jybGEpB0EFgJJ4KyiA4g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=biDXym5RovKDXGkWzXgZ21qwceW+kjYgQspWqSdMLXQcDhNFsWnV71ac5MT5yl8h3IasIXpQheRiOjTo9JszoH/fgDCizMVJeGSkJP5WtMKotNf9yyzbGsuWG86JcVj7ndQ5Ua5iscYT/3fvx7y3xaTuWAKKUJ5XSfB5DGPDVdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNSz6eWI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=tNnkyF6Zq2c+SMyfvdnpCB7PZe/Jw+38l7nZi3UBQnJMZv0EhmKy3TMWJwdT9Ad9+xBhEu8G+IVa34op4pYvrKq83BRoMQ+lPj/HA6lBL09lxylNWZnq3IYQVinncSrZLaAzr1UkTdBidejie+eV6/Aadnb5+ImdV5Gx4RWoY3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2r9p+dN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNSz6eWI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85A2C19421;
-	Mon, 16 Mar 2026 12:39:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2r9p+dN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA1DC19421;
+	Mon, 16 Mar 2026 12:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773664763;
-	bh=TNU3AMLpCm7231RB7oUcjatcLbtiv7+dWBPWo5d4YJc=;
+	s=k20201202; t=1773664772;
+	bh=Y26ztZVzePNqEFpatcJ/5y/jybGEpB0EFgJJ4KyiA4g=;
 	h=Date:From:To:Cc:Subject:From;
-	b=tNSz6eWIYkYuG9Z/cmX6+KPbvAIgImFgJRt3EOJhnD9q0/MyCNfm4XcQYPM1iKoLS
-	 1FZpkoP5M0iI2nMlbGf1+KK6wcsqpUjjzQ2TflmA6bsv6eWJL9g95m96U1HRRfPbMI
-	 ORc5/Lb7q0A+aLDvawHIC226ad1MuHaTM+2jh+ZQKDkBa3SNVSp5F8Q+yzq3RWJaK6
-	 0ig7RtFgFUx+Ba6prtwrwpYOfHy/3hjd/hFCb20c37lbAAENmpzhFlMwkLbQ+twWYC
-	 89kvx4QfAiohPGaaZWJXaZ7HUDyQL/kxoptzXQ2rBcFN2jeh5fTSii2I1Utsp1QW3x
-	 O4VN1+AlbR6zw==
-Date: Mon, 16 Mar 2026 12:39:19 +0000
+	b=D2r9p+dNI+A8yfW6HWrwxLgtflCObT1MVSpAPSmYxs3AMyJmsVvljCQvKKRiqVPIK
+	 652Vw/qVjdX4TJPuL0qk6B3CZw5qQMSMeSEPm3OoYAdr4P1R1MQIUm9jh5N7k3Bugy
+	 6hZX53RbnQq44FpcSyLF6HhQbqMpVmLjGTolZpIBBQI9M7gSzQr/Eb++Vsk4C4HR63
+	 CfPwpM2yfTbh2Ls2Q8W7Iyjxz9eSQQZQ4S6qYfAwix6KzlPiku/Br69ECdJGo76ppS
+	 ohVW3aVEenSNsagoXKoFGIQGBkVi8rfZZXD1hDLasNhZ78blNR3oGaGGEf1bDzOfsH
+	 /ybM1MOm5RBhg==
+Date: Mon, 16 Mar 2026 12:39:29 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the imx-mxs tree
-Message-ID: <abf599v2LbZcplqW@sirena.org.uk>
+Subject: Missing signoff in the iommufd tree
+Message-ID: <abf6AXKjaNTekKmy@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,33 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cxG6KRoNd9YU8Gdp"
+	protocol="application/pgp-signature"; boundary="EeKp+dFJuhmphkZZ"
 Content-Disposition: inline
 
 
---cxG6KRoNd9YU8Gdp
+--EeKp+dFJuhmphkZZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Commit
 
-  2632979d613ab ("arm64: dts: imx91: Remove TMU's superfluous sensor ID")
+  a964eaad9356b ("iommufd: vfio compatibility extension check for noiommu mode")
 
 is missing a Signed-off-by from its committer
 
---cxG6KRoNd9YU8Gdp
+--EeKp+dFJuhmphkZZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm3+fcACgkQJNaLcl1U
-h9BEIgf/U6zLd+ZzmyWoMOAtsW7KNvihspdWVPcwPj7ezM3hmmSJOkIyiGKlFxc1
-NlAwXKgU5qPRWNqteSSQWoEPRyTeVHDnkEpGLi+gdxx7NlQPVVG5xrH9ZfkUAOrC
-j2ILheesCIZZXQFZgXNs3A7NQ4dH2xcjp0Mu5YODxB/X53dtHT3rtiEo3aY0aFrC
-kr2s9VcweXcGtgeq8vc+9XIAye626Qw1nkeorSROrn7yrMnLCSVH1y2yx2wv2t15
-Fygvh+yD9wwUW+OFWbZvdg8Evnbzev/ssidJfJykvR7dSM/IXrNfxFc+vLDNqs7k
-8P9Ips5jMtwhUmBVjwOkKTac421hrA==
-=GSs2
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm3+gAACgkQJNaLcl1U
+h9BNZwf8CNhmFS7P6wuQtUH3SAykRf4VY2dDEijMDDnUmkxLscuTmSXn6XlYcoj7
+Slg8I67zwhT4rTmRj+WbNLAc+rMF91fQTc5iS/RPWvTUvm/uLok1ZJcgvodMO5Aj
+5MjDVVV3L1ykJ+dD664umTkcpncN0DQY7m3OF39ZEh/xhoyWOkwf+mOJN6Rpjf5E
+7FhSZorwHRFzAihOM9Elzg9u6ZgAWm/Ifg5mreZdkLJrKxw1x+y+ZChwoFtGdmrW
+C5RIsILCwEitG/ieqb4kzUXIsdZZOTHCU3xfONgd4pG91ICEKko+lPQ9WmAUZCUe
+KQ9cdODtA5XBzE8ZCjcLm3N1fodW4w==
+=V5FR
 -----END PGP SIGNATURE-----
 
---cxG6KRoNd9YU8Gdp--
+--EeKp+dFJuhmphkZZ--
