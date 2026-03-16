@@ -1,41 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD1E3D091D;
-	Mon, 16 Mar 2026 17:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF70288AD;
+	Mon, 16 Mar 2026 17:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773681206; cv=none; b=aafXQPydM8A2FCu1dNhnIfkcc5jM1MzHwl6B6Y4eEsuKDoELUarSnHDtMKcKLUXhhioXG+s/UBiWww1j25b0f4+eXPiaMmkZy0QYJZq5yMnBMVnqNF0q9CdrdRFREuar0YPxEjCZRIDsIdyuflUoT1rnpdTPj04/MrEfrMqIDpg=
+	t=1773681344; cv=none; b=ung4rTxcet0Dyo9jBEQ3RlEwaZCi8J4fHI/mfOdDbNA466Q/p1EF/ttgXA9UAea4qYET2IJ6YF3XznY+iJVQuXiWcaER4MXTLZfp14Q7PvkeBezSosFx8Xx21zjwmN5tbDBsalSbV6dTHydQZ4kAZGx0OvJwbzSr45D912Ni0kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773681206; c=relaxed/simple;
-	bh=wR1jw6wJVE0yDqB4ULdFi56xF5B+VN+txMliwMmjunc=;
+	s=arc-20240116; t=1773681344; c=relaxed/simple;
+	bh=iSlF4zlqIDCA6gK7HutoWfysGMTms7jpLdMF1JoK120=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RBFXHy6Ru6g1Q1ItKPXojDHf9eBJtFlMG0vL+uItdmKKfmclrEEf6q7sJ/C9bT+2+8P4PKRVeWxA+JpkZp48g6/Pkbykkfxd9/KikoWVI33ZT1yQlGpWIgUeTUr+OxJNpmJZGhqGjY4DfBypBgtz3IvcshPXMwn4I9ldP3HQNio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iegn/zeL; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=qjvgwlXPHewArec8px7UdX3UIk0JhO0Q8N8dCAzXc4doBQ+k3k+rfEGFGwB+xrl9B+TeyGti8Uma1VPWasbDjucVnGDXR8OejbBMBH6PZiG5PEUNGAV9UUn40qek2bmKG+hdyFDtzqdMh51nWe3Sd17Br/x6NRYOumNKPvwyMwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzpVpooO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iegn/zeL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E56FC19421;
-	Mon, 16 Mar 2026 17:13:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzpVpooO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D50C2BC87;
+	Mon, 16 Mar 2026 17:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773681206;
-	bh=wR1jw6wJVE0yDqB4ULdFi56xF5B+VN+txMliwMmjunc=;
+	s=k20201202; t=1773681344;
+	bh=iSlF4zlqIDCA6gK7HutoWfysGMTms7jpLdMF1JoK120=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Iegn/zeLFyAyoGl7f8HQUPEXkFTT3NI+GuDxQfoVqc96uubA0ps+X3fnCCHLflU0r
-	 0fpZCeaq8pQaJCWsdq9J28td/1MIUYkmRIcTUd4PcXApZpsJlW0FZ5wZ6OaDWH0/xG
-	 OQpeqZB65r7V82PiVtdF/9BDDjLDXVRUEaIAdgRcsuDywDEV2uXMcnzSvNgwF9X7Pt
-	 PPFEdllYhlDc/Ei+0/HDh1j/JG9YKgkd43bzNDZDJ5VHgYNqP89PZbrK+Dl8VjnCA0
-	 iUW4PmwiW1bbIQ/eZdHgcvlkJuxWXR/ARBuzQVez4aqoopLaYaaJyxJYcqVQhs39cm
-	 gHkL2135A3Q2g==
-Date: Mon, 16 Mar 2026 17:13:22 +0000
+	b=DzpVpooOLlPuqJp3uc2kqIlmJ7NKBzFilvG4zGp2Hvu87TkMIG2M5qYzJtumBWFdz
+	 arUSy1sLe6pY5W/UmWN1ocSGZ9aknRSN/ZYFPFf0O61er94ijGqyYizKhlPLWsim7u
+	 Q4vRbsfeBhYA5WYv7TfgqXKe/Fm4oW58MJ2EcO1PJHyuY1rX0Fmc8VW/I46rAhoFk6
+	 CKSJW+Z0S5wN5u0Y8D3budS0VYLLTRyk+qIjLIpa3PAdXIijBqAmmMbOVjYZBuncuI
+	 g4fJBSE6Ps1fct7X9KCV1Iew/iIGCgjkBmU2knt+/D3XhYQqbxLRfyWFiGLlhrA914
+	 s9aG8+xA/l/Vg==
+Date: Mon, 16 Mar 2026 17:15:39 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Christian Eggers <ceggers@arri.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Subject: linux-next: manual merge of the bluetooth tree with the net tree
-Message-ID: <abg6Ms9h71og0q7_@sirena.org.uk>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	=?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>,
+	Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-intel tree
+Message-ID: <abg6u6o_Pjxkvi0A@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,95 +48,53 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m09IT1SFcTDY8O0t"
+	protocol="application/pgp-signature"; boundary="3Assb2b4LU8n49id"
 Content-Disposition: inline
 
 
---m09IT1SFcTDY8O0t
+--3Assb2b4LU8n49id
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bluetooth tree got a conflict in:
+After merging the drm-intel tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  net/bluetooth/l2cap_core.c
+/tmp/next/build/drivers/gpu/drm/xe/xe_lrc.c: In function 'xe_lrc_ctx_init':
+/tmp/next/build/drivers/gpu/drm/xe/xe_lrc.c:1554:43: error: implicit declar=
+ation of function '_MASKED_BIT_ENABLE'; did you mean 'REG_MASKED_FIELD_ENAB=
+LE'? [-Wimplicit-function-declaration]
+ 1554 |                 state_cache_perf_fix[2] =3D _MASKED_BIT_ENABLE(DISA=
+BLE_STATE_CACHE_PERF_FIX);
+      |                                           ^~~~~~~~~~~~~~~~~~
+      |                                           REG_MASKED_FIELD_ENABLE
 
-between commit:
+This is caused by an interaction with:
 
-  e1d9a66889867 ("Bluetooth: LE L2CAP: Disconnect if received packet's SDU =
-exceeds IMTU")
+   0e07b16371b6e (drm/xe: Allow per queue programming of COMMON_SLICE_CHICK=
+EN3 bit13)
 
-=66rom the net tree and commits:
+=66rom the drm tree and is obviously related to:
 
-  b65e87418bb37 ("Bluetooth: LE L2CAP: Disconnect if received packet's SDU =
-exceeds IMTU")
-  cb75c9a0505b8 ("Bluetooth: L2CAP: CoC: Disconnect if received packet size=
- exceeds MPS")
+   https://lore.kernel.org/r/abFpM1FHgzgARB88@sirena.org.uk
 
-=66rom the bluetooth tree.
+This has been broken for almost a week now and just keeps getting worse.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-I note that the bluetooth tree does not seem to have merged up v7.0-rcX
-at all.
-
-diff --combined net/bluetooth/l2cap_core.c
-index 5deb6c4f1e41d,475fdf1908cb8..0000000000000
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@@ -442,7 -442,7 +442,7 @@@ struct l2cap_chan *l2cap_chan_create(vo
-  {
-  	struct l2cap_chan *chan;
- =20
- -	chan =3D kzalloc(sizeof(*chan), GFP_ATOMIC);
- +	chan =3D kzalloc_obj(*chan, GFP_ATOMIC);
-  	if (!chan)
-  		return NULL;
- =20
-@@@ -6675,6 -6675,13 +6675,13 @@@ static int l2cap_ecred_data_rcv(struct=20
-  		return -ENOBUFS;
-  	}
- =20
-+ 	if (skb->len > chan->mps) {
-+ 		BT_ERR("Too big LE L2CAP MPS: len %u > %u", skb->len,
-+ 		       chan->mps);
-+ 		l2cap_send_disconn_req(chan, ECONNRESET);
-+ 		return -ENOBUFS;
-+ 	}
-+=20
-  	chan->rx_credits--;
-  	BT_DBG("chan %p: rx_credits %u -> %u",
-  	       chan, chan->rx_credits + 1, chan->rx_credits);
-@@@ -6958,7 -6965,7 +6965,7 @@@ static struct l2cap_conn *l2cap_conn_ad
-  	if (!hchan)
-  		return NULL;
- =20
- -	conn =3D kzalloc(sizeof(*conn), GFP_KERNEL);
- +	conn =3D kzalloc_obj(*conn);
-  	if (!conn) {
-  		hci_chan_del(hchan);
-  		return NULL;
-
---m09IT1SFcTDY8O0t
+--3Assb2b4LU8n49id
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4OjEACgkQJNaLcl1U
-h9BtFAf/TEmtdWUdrqIYvY7jeZZdilsHOEhHwjzeZiiUKfVnPKJH2mhnhTQeWVQm
-lS3a7bO4D/LZ4fjtNlFGQqwQIF42KlUUK3l9LarzURJor98/OQFOxuvxTiCehUkf
-h2wyymhRKRv88GdWC51ntSIaQS+SSUZXEtCZqlCYhRCbDVjLjktQTSDMuHNOYmT0
-ZPPfWmPrc2n2jfw08rR6YmtdYqHBmBjUCMHomJyNal9mIlzuM4i5YJ+eBqbrHuWi
-fZnF/3Pcbfx1Fzbi8cJJFjY4yzM8X22BALZJaGvrez8qMRbU2yfUlZxrvi6qugoS
-bMsEQSNfm8kXM9IJW5/Y2qVwMr13iQ==
-=43mB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4OroACgkQJNaLcl1U
+h9B3xgf/TB/nRjpziRmRjEb+oAUtnN2Y6hHetyrv/oe5mxMQbUB/pZHZ9wgioPeN
+4Eryx1w/7b6ZY2onX++VMqi390Q0w3ljjC4GxQK5wWkzOouZgZxjqJkuHNWYejTo
+fBXSEiGFc483BsVco9NjLT4n3TJLKumBFfN8dVgQYAyOwEtoOfUlJyMuZq7mH6G1
+VOHpjWxgrkT8o001TEieQYiD+/gsxl5dBqN1olYnPv0zSP27s+bvbDj1dBGG86Yn
+pmnSqsAh58NkDpKrQT9kWWaEAQ8MfYgOlhQigHpyc3OkwFpRhgNZ9e8kOGkbtrDx
+UIdwF8QhRuFyoW9jt0izTZUDeiDzGg==
+=PxS4
 -----END PGP SIGNATURE-----
 
---m09IT1SFcTDY8O0t--
+--3Assb2b4LU8n49id--
