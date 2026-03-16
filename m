@@ -1,180 +1,296 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2764B34DCCC;
-	Mon, 16 Mar 2026 08:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052526059D;
+	Mon, 16 Mar 2026 09:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773648880; cv=none; b=R6uifiXiLHKtekGvGFZHlgopOJ3rI64uioDzTcaLsOo1hjwDQdYn9uz1/8wPu5hy1Vbl5h/9hTcXOMiGDXjzZrCFhefjyE29gZBN2rDgpjekavyF28mS2+XVznrzblsPRvKiAmKRvzvy0i1bFrTKY7s3aRDQ3O1/JKrO9IOyhyk=
+	t=1773654545; cv=none; b=rdsc2lyH3u5d4ifzWVU3e0opidGr4HwkwoQcS0iY9uhpeNXacAhGzjKMUf3HVDt2mOE7/A22ORbHB4fteyTopDrybBAS1TIMHDBNe/LrPxssF4VgPvVcANwK7eFRBW5LPtaETq94WRhzgSdQ4yvzD5DBoNyk6PaA2XxZm3y2TdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773648880; c=relaxed/simple;
-	bh=b2j34XojWvxpTyiKlIsQIbjuS132RtdM75MXanwM9Jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QWa92uK4pRXTeI7vFt6qAWy7ZiIaFFNDY+vm8z+OnjIsFZCB9Tm/pcNl2JEbCIpLEYE9OPnWXVbzpXfp49UByKcsRt4ITs8GNfc+r0wduobH2L+7J/nojnyS5KP3WBJ5SQFNQwh4XuYES888iKCbOjn7rLFL/w0ACqxPuGaDK4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPUhZkxi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773654545; c=relaxed/simple;
+	bh=wkLxPy2QDOXB8q1SH3m6AVAZj6viVmt1TGoTMFtu2uc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=CTz1mEIjFPXNuLEvtKFLkfZ5ZeVGDPXrxQGQC3BjavmJWw6X6Bw+oic5xufE8w0cHUzFjaEFk1QekEglp+znUmTEizSoGQ1N04loheI1TScZB+MwS8vMvpnKSRonKeIubVj//XXdcZfb5ToGAOAsx8Z/IdoEJxVdGTtcSp4wcc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eHdMfEzp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPUhZkxi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A3FC19421;
-	Mon, 16 Mar 2026 08:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773648879;
-	bh=b2j34XojWvxpTyiKlIsQIbjuS132RtdM75MXanwM9Jg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uPUhZkxim25wWZXzpgbSheIErlUFekp/qR6UUT+slOHt30dzJ02wLS6A0zLY0L35I
-	 zdvD7s9jjev7+waAnavON1Ue4EktLPew7msSGk249SkKXGomKpxuGwXuMcR4R/NAF2
-	 Gpws6P0u5Xji6mO0x5prCS+S5S1sIVFt4hMeYf5w7kFJRK7p7gUCanvt8AaaFDwDAs
-	 GaiX8kbWZiMCgp92oTcuJKrU5N3pll2+c2AJiLBAD+xQgvrki8GjtXLlX2EdzPGqPz
-	 wQmBWVco/TW+eB0vSxDyMITwJFKXvJjTn0kBgWVjkO5LpQWCQHYSy3a85rminZ9Mmx
-	 u5knf9ffVS4bw==
-Message-ID: <e45a039e-3b91-466f-b89c-c1fdc3a8b2b4@kernel.org>
-Date: Mon, 16 Mar 2026 09:14:34 +0100
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eHdMfEzp"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62FIFgvQ442363;
+	Mon, 16 Mar 2026 09:48:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=UoMtsZ
+	uwOsAX2SqQE1TRmRqWsmRwynCjL8cY978eafM=; b=eHdMfEzpqlBt9fBlqslaAU
+	L8vZNLKHDCmnMyY1jn2KmVFs0rnUEgPhN6gpD13vF+jW8uegNu+IUMeNmzUktzpS
+	0JG0ig7gc6PyUkfsW3ThcyxYxPhdGzYPub7eH2JEUjQCCI53XuUiwN0VKxNhAoHL
+	f7nK6B79eSSqIJXiXKXmoAwHh6tynrTZ34WJ4Q84M4weTluf7AFz8dmUEXncWjJf
+	w8LV+IayPxmw7H2+oeegSqZuidWVqCGXTnFjpXUahcS2NXtHZml+0iasfWfm3kXH
+	KywXC5MjBzG7JlH6DaBnVjQv4dGpqDgYzmhhpgJxl9knJ4dKMfbExmcm8Nm2rVXA
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cvybry6hb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Mar 2026 09:48:57 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62G5UEqR015676;
+	Mon, 16 Mar 2026 09:48:56 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4cwk0n49hb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Mar 2026 09:48:56 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62G9mtc133555046
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Mar 2026 09:48:55 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 58A0358057;
+	Mon, 16 Mar 2026 09:48:55 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 268FD58058;
+	Mon, 16 Mar 2026 09:48:52 +0000 (GMT)
+Received: from [9.61.247.98] (unknown [9.61.247.98])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Mar 2026 09:48:51 +0000 (GMT)
+Message-ID: <de14e6d6-fad4-4e9a-8004-66a28db31faa@linux.ibm.com>
+Date: Mon, 16 Mar 2026 15:18:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net 04/11] netfilter: revert nft_set_rbtree: validate open
- interval overlap: manual merge
-To: Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org
-Cc: Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- netfilter-devel@vger.kernel.org, pablo@netfilter.org,
- linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20260313150614.21177-1-fw@strlen.de>
- <20260313150614.21177-5-fw@strlen.de>
-From: Matthieu Baerts <matttbe@kernel.org>
-Content-Language: fr
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20260313150614.21177-5-fw@strlen.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?Re=3A_=5Bnext-20260313=5D_kernel_build_fails_with_?=
+ =?UTF-8?B?4oCcYXI6IHVucmVjb2duaXplZCBvcHRpb24gJy0tdGhpbifigJ0=?=
+Content-Language: en-GB
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        broonie@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>, xur@google.com,
+        Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+        Kees Cook <kees@kernel.org>
+References: <476507c9-a371-4864-9e87-572c1ecae82d@linux.ibm.com>
+In-Reply-To: <476507c9-a371-4864-9e87-572c1ecae82d@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=MMttWcZl c=1 sm=1 tr=0 ts=69b7d209 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=5KLPUuaC_9wA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22
+ a=bC-a23v3AAAA:8 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8
+ a=VnNF1IyMAAAA:8 a=6gyJ9jAq2XY_wWfpFN0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=FO4_E8m0qiDe52t0p3_H:22
+X-Proofpoint-ORIG-GUID: 5rBuZtvQWa3EMAAGKQCt6RwVAWrjaU8d
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE2MDA3NCBTYWx0ZWRfX1lDmpwy3O6Ur
+ rthc3XWUvm/h8q6pcQqWNIKf61/bjr+JwfhvWidW+XzZBdxFkWjvX+cFlvFarRAHuR90jJjTpSa
+ IjfIfnK45GA+zNyy0NoMbZH+2urhojaxA+uuysfn9sKuhkx2ScXPXaWKbGz9P/Ro8IIgwCLoy5v
+ RhzXBZshlXvcbpYgapXgTZ+ky4794C1DNPGNMHbD5LPymcCd+t7xILkZ8v2RxtQ5gzYTo3/Md8Z
+ 5EWgaXPu/rFGfemgTXyaXYWrCQFWxrAxorDKXp/cIhyUdRekA0PB0UW84I1LJ9Zveb+DOOoYuSV
+ SGX8N9PUPuxh8xXBbPYWBDtHZPxtGRHTx0Xd+xUnzKydJJTNYoc55TqOdOMAq7JnCMnDA7SJhBR
+ x+tNuha5PnQEZ3u63qaBUgLNbL54PSD9Tny+/Ad7D3xK0+UwLIHAeFcExzliq9Y840hbNOTx8GZ
+ J7bjCxvB3iaihVTV9Mg==
+X-Proofpoint-GUID: rrAFbrdkiKYnAvjgQCd3bItWN4fqUfn0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-16_03,2026-03-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 phishscore=0 clxscore=1011
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603160074
 
-Hi Florian,
 
-(+cc linux-next)
+On 16/03/26 11:41 am, Venkat Rao Bagalkote wrote:
+> Greetings!!
+>
+>
+> I am seeing a repeatable build failure in current mainline when 
+> generating vmlinux.a.
+>
+> The build stops with an error from ar regarding the --thin option.
+>
+> This issue is seen on IBM Power11 System.
+>
+> Attached is the .config file.
+>
+> Also, I see couple of build warnings, before the build fails.
+> Note: These warnings and build failure are not see on 20260312 build.
+>
+>
+> Warnings:
+>
+> In file included from ./include/linux/seqlock.h:20,
+>                  from ./include/linux/mmzone.h:17,
+>                  from ./include/linux/gfp.h:7,
+>                  from ./include/linux/umh.h:4,
+>                  from ./include/linux/kmod.h:9,
+>                  from ./include/linux/module.h:18,
+>                  from drivers/char/nvram.c:34:
+> drivers/char/nvram.c:56:21: warning: ‘nvram_mutex’ defined but not 
+> used [-Wunused-variable]
+>    56 | static DEFINE_MUTEX(nvram_mutex);
+>       |                     ^~~~~~~~~~~
+> ./include/linux/mutex.h:87:22: note: in definition of macro 
+> ‘DEFINE_MUTEX’
+>    87 |         struct mutex mutexname = __MUTEX_INITIALIZER(mutexname)
+>
+>
+> Below are the failure logs.
+>
+>
+> ar: unrecognized option '--thin'
+> Usage: ar [emulation options] [-]{dmpqrstx}[abcDfilMNoOPsSTuvV] 
+> [--plugin <name>] [member-name] [count] archive-file file...
+>        ar -M [<mri-script]
+>  commands:
+>   d            - delete file(s) from the archive
+>   m[ab]        - move file(s) in the archive
+>   p            - print file(s) found in the archive
+>   q[f]         - quick append file(s) to the archive
+>   r[ab][f][u]  - replace existing or insert new file(s) into the archive
+>   s            - act as ranlib
+>   t[O][v]      - display contents of the archive
+>   x[o]         - extract file(s) from the archive
+>  command specific modifiers:
+>   [a]          - put file(s) after [member-name]
+>   [b]          - put file(s) before [member-name] (same as [i])
+>   [D]          - use zero for timestamps and uids/gids
+>   [U]          - use actual timestamps and uids/gids (default)
+>   [N]          - use instance [count] of name
+>   [f]          - truncate inserted file names
+>   [P]          - use full path names when matching
+>   [o]          - preserve original dates
+>   [O]          - display offsets of files in the archive
+>   [u]          - only replace files that are newer than current 
+> archive contents
+>  generic modifiers:
+>   [c]          - do not warn if the library had to be created
+>   [s]          - create an archive index (cf. ranlib)
+>   [S]          - do not build a symbol table
+>   [T]          - make a thin archive
+>   [v]          - be verbose
+>   [V]          - display the version number
+>   @<file>      - read options from <file>
+>   --target=BFDNAME - specify the target object format as BFDNAME
+>   --output=DIRNAME - specify the output directory for extraction 
+> operations
+>  optional:
+>   --plugin <p> - load the specified plugin
+>  emulation options:
+>   No emulation specific options
+> ar: supported targets: elf64-powerpcle elf64-powerpc elf32-powerpcle 
+> elf32-powerpc aixcoff-rs6000 aixcoff64-rs6000 aix5coff64-rs6000 
+> elf64-little elf64-big elf32-little elf32-big ppcboot elf32-spu 
+> pe-x86-64 pei-x86-64 pe-bigobj-x86-64 elf64-x86-64 elf64-l1om 
+> elf64-k1om pe-i386 pei-i386 elf32-i386 elf32-iamcu elf64-bpfle 
+> elf64-bpfbe srec symbolsrec verilog tekhex binary ihex plugin
+> make[2]: *** [scripts/Makefile.vmlinux_a:22: built-in-fixup.a] Error 1
+> make[1]: *** [/root/linux-next/Makefile:1278: vmlinux_a] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+>
+>
 
-On 13/03/2026 16:06, Florian Westphal wrote:
-> This reverts commit 648946966a08 ("netfilter: nft_set_rbtree: validate
-> open interval overlap").
-> 
-> There have been reports of nft failing to laod valid rulesets after this
-> patch was merged into -stable.
-> 
-> I can reproduce several such problem with recent nft versions, including
-> nft 1.1.6 which is widely shipped by distributions.
-> 
-> We currently have little choice here.
-> This commit can be resurrected at some point once the nftables fix that
-> triggers the false overlap positive has appeared in common distros
-> (see e83e32c8d1cd ("mnl: restore create element command with large batches" in
->  nftables.git).
+Git bisect is pointing to below commit as first bad commit.
 
-FYI, we got a small conflict when merging 'net' in 'net-next' in the
-MPTCP tree due to this patch applied in 'net':
 
-  598adea720b9 ("netfilter: revert nft_set_rbtree: validate open interval overlap")
+4519221849f26a3b0c0dc45b9914a0f9cdc00740 is the first bad commit
+commit 4519221849f26a3b0c0dc45b9914a0f9cdc00740 (HEAD)
+Author: Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue Oct 28 18:28:21 2025 +0000
 
-and this one from 'net-next':
+     kbuild: move vmlinux.a build rule to scripts/Makefile.vmlinux_a
 
-  3aea466a4399 ("netfilter: nft_set_rbtree: don't disable bh when acquiring tree lock")
+     Move the build rule for vmlinux.a to a separate file in preparation
+     for supporting distributed builds with Clang ThinLTO.
 
-(...)
+     Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+     Tested-by: Rong Xu <xur@google.com>
+     Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+     Tested-by: Nathan Chancellor <nathan@kernel.org>
+     Link: https://patch.msgid.link/20251028182822.3210436-2-xur@google.com
+     Signed-off-by: Nicolas Schier <nsc@kernel.org>
 
-> diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbtree.c
-> index ee3d4f5b9ff7..fe8bd497d74a 100644
-> --- a/net/netfilter/nft_set_rbtree.c
-> +++ b/net/netfilter/nft_set_rbtree.c
+  Makefile                   | 16 ++++++----------
+  scripts/Makefile.vmlinux_a | 46 
+++++++++++++++++++++++++++++++++++++++++++++++
+  2 files changed, 52 insertions(+), 10 deletions(-)
+  create mode 100644 scripts/Makefile.vmlinux_a
 
-(...)
 
-> @@ -685,12 +640,8 @@ static int nft_rbtree_insert(const struct net *net, const struct nft_set *set,
->  		cond_resched();
->  
->  		write_lock_bh(&priv->lock);
-> -		err = __nft_rbtree_insert(net, set, rbe, elem_priv, tstamp, last);
-> +		err = __nft_rbtree_insert(net, set, rbe, elem_priv, tstamp);
->  		write_unlock_bh(&priv->lock);
+Git bisect log:
 
-The conflict was in the context: the patch in "net-next" stop disabling
-bh, modifying the two write_(un)lock_bh() calls, while here the code
-executed with the lock and just after is modified.
+git bisect log
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [b84a0ebe421ca56995ff78b66307667b62b3a900] Add linux-next 
+specific files for 20260313
+git bisect bad b84a0ebe421ca56995ff78b66307667b62b3a900
+# status: waiting for good commit(s), bad commit known
+# good: [1f318b96cc84d7c2ab792fcc0bfd42a7ca890681] Linux 7.0-rc3
+git bisect good 1f318b96cc84d7c2ab792fcc0bfd42a7ca890681
+# bad: [ddc6cc7f66af99528c8a827d4ba835fb650b6446] Merge branch 'main' of 
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect bad ddc6cc7f66af99528c8a827d4ba835fb650b6446
+# bad: [06da2b04b5f2f11952969e813d8dd8f0c7617b79] Merge branch 
+'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+git bisect bad 06da2b04b5f2f11952969e813d8dd8f0c7617b79
+# good: [85689b69dad24170252dc5be8238de2388e68871] Merge branch 
+'rust-analyzer-next' of https://github.com/Rust-for-Linux/linux.git
+git bisect good 85689b69dad24170252dc5be8238de2388e68871
+# bad: [5457bcbc73733c7268108a2acfc35c6505f3cbf3] Merge branch 
+'for-next/core' of 
+https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux
+git bisect bad 5457bcbc73733c7268108a2acfc35c6505f3cbf3
+# good: [5473c1ee6462a5d3543c2b4c7dc6f1aac71eb082] userfaultfd: 
+introduce mfill_copy_folio_locked() helper
+git bisect good 5473c1ee6462a5d3543c2b4c7dc6f1aac71eb082
+# good: [d1b4433308592363d133a788f0443d5d63872bdd] CREDITS: simplify the 
+end-of-file alphabetical order comment
+git bisect good d1b4433308592363d133a788f0443d5d63872bdd
+# good: [ff28b3bb65c3eafeece9334b908e62c492f341e5] mm/damon/core: allow 
+quota goals set zero effective size quota
+git bisect good ff28b3bb65c3eafeece9334b908e62c492f341e5
+# bad: [4f6ad15007039f296611ee76dad9f6ed071e63fb] Merge branch 
+'kbuild-for-next' of 
+https://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
+git bisect bad 4f6ad15007039f296611ee76dad9f6ed071e63fb
+# good: [07bc816c63b94e83dbe311d84b0278e54f6b83db] Merge branch 
+'mm-unstable' of https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect good 07bc816c63b94e83dbe311d84b0278e54f6b83db
+# good: [aad94ba683adc6ff7ff4e29ae48184b42782dd97] kbuild: uapi: provide 
+stub includes for some libc headers
+git bisect good aad94ba683adc6ff7ff4e29ae48184b42782dd97
+# good: [0d3fccf68d9873a3c824fb70be0dbb2c4642aa90] kbuild: Use 
+'-fms-anonymous-structs' if it is available
+git bisect good 0d3fccf68d9873a3c824fb70be0dbb2c4642aa90
+# bad: [8e786d89efce381609bd7fb9e8d6c52429e8b753] kbuild: distributed 
+build support for Clang ThinLTO
+git bisect bad 8e786d89efce381609bd7fb9e8d6c52429e8b753
+# bad: [4519221849f26a3b0c0dc45b9914a0f9cdc00740] kbuild: move vmlinux.a 
+build rule to scripts/Makefile.vmlinux_a
+git bisect bad 4519221849f26a3b0c0dc45b9914a0f9cdc00740
+# first bad commit: [4519221849f26a3b0c0dc45b9914a0f9cdc00740] kbuild: 
+move vmlinux.a build rule to scripts/Makefile.vmlinux_a
 
-Rerere cache is available in [1]. The patch is attached below.
 
-Cheers,
-Matt
+Regards,
 
-1: https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/a0ec8d0
+Venkat.
 
--------------------- 8< --------------------
-diff --cc net/netfilter/nft_set_rbtree.c
-index e42905376654,fe8bd497d74a..b7501b2b873e
---- a/net/netfilter/nft_set_rbtree.c
-+++ b/net/netfilter/nft_set_rbtree.c
-@@@ -684,13 -639,9 +639,9 @@@ static int nft_rbtree_insert(const stru
-  
-  		cond_resched();
-  
- -		write_lock_bh(&priv->lock);
- +		write_lock(&priv->lock);
-- 		err = __nft_rbtree_insert(net, set, rbe, elem_priv, tstamp, last);
-+ 		err = __nft_rbtree_insert(net, set, rbe, elem_priv, tstamp);
- -		write_unlock_bh(&priv->lock);
- +		write_unlock(&priv->lock);
-- 
-- 		if (nft_rbtree_interval_end(rbe))
-- 			priv->start_rbe_cookie = 0;
-- 
-  	} while (err == -EAGAIN);
-  
-  	return err;
--------------------- 8< --------------------
-
--- 
-Sponsored by the NGI0 Core fund.
-
+>
+> If you happen to fix this issue, please add below tag.
+>
+>
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>
+>
+> Regards,
+>
+> Venkat.
