@@ -1,38 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F7238F932
-	for <linux-next@vger.kernel.org>; Mon, 16 Mar 2026 12:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38AD278E5D;
+	Mon, 16 Mar 2026 14:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773665812; cv=none; b=LNVpuYakvfZcyXHoIddCr9DfWNEL9Uw/PcD5rYZLOhWf7Rz8NNES/XTQtkL8GYjM6mIDvTQtaPuHVpww/eq66eELgY5GfdpZRUzTWA+G5ZO6vuRFZSr2l4LIgFi61B6Xt85WXrxFgHf47bQIvnHL8S3a9tTpiZcpQIKtlM1cqfI=
+	t=1773670730; cv=none; b=FYNLT28TwH7SQ/xp5k5zgVn5wtpg83Ey+hoR9fU1VBEXbyDMjBJxTuhXGpuV6hWzInQN2esHu6wQyIInUG2423GJR6dXed8rvLhFr7JLsINgKtyXYCVtwpd4Up7xa715jfUpsS4FUWV1vRRZzvwRANNhwPwZa6KSHTKS/FMjsWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773665812; c=relaxed/simple;
-	bh=NYLV1a5Abv4MXq+yg8ePcsdYCzLWxHz3JmVAr3AAlrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eKL1m7o2pRKcyvNPbjA2uUpfwdV7EtioXW2Y+k7/K8ZFDTkKrJvgdM/CTIPMC1OBOt3cjwb3OsvpkgmHlnjVis+rbs0O1Wm/5DMp4/JZ21z2+9y9YBULOmHA0yWUXl5hEuFvvh9qnINpkoAcA8vTpROivK3AqVDMhMEVvK/upb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bctn5RZk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773670730; c=relaxed/simple;
+	bh=Eh6+Ra1uIlYoV+YML7v1kKQNweB0CJtWMN+N/yQcdzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gHLwLyyKbebdT6i4WFQ2LsKEhEp1/sh3cX6TcfKripIKKwSS15wnc7F357TRNv0zjlqR0idOTXhhUy8JFaqjwMTw4OoCXW+AmhOczOrVQY5vL7wwCYsW+BvxkqZAF4WkZE75qvei46ysO+X9/vCgw+txJe3xzxuIPLeyl1A1wyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxrnmH/d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bctn5RZk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10645C19421;
-	Mon, 16 Mar 2026 12:56:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxrnmH/d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F429C19421;
+	Mon, 16 Mar 2026 14:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773665811;
-	bh=NYLV1a5Abv4MXq+yg8ePcsdYCzLWxHz3JmVAr3AAlrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bctn5RZkLjMxL5DMq7ZSRG9XMohaXfuNG64Y7AwRC2naQT8ZFJ1LPbJtHieG4QnRF
-	 KIA2omeP+gHhae+TYeP0D5bu4vTZXfYhN15u1rQxy76McCwtb+FKGRup4PDf8XSH/1
-	 ZYOas+S7YUL4pot2EyiuDSdqrlUoDbcMnTzmj9xrBLMF/2XXbCOy7VVJR51Y2tk/lj
-	 E4PpnV48NFKpFRarSHdcb1P7YHmnp+uztL6APBkAKDDAo7Ef5gTT1XntEG1iWYxrN5
-	 YpbpR4X8iyOV7hS7X0mQsQPGdLA0qx+puEDaG4hBnkfd6oUKGwisqTFZyTlxqOxVKd
-	 k2Ir9wZe4fYJA==
-Date: Mon, 16 Mar 2026 12:56:48 +0000
+	s=k20201202; t=1773670729;
+	bh=Eh6+Ra1uIlYoV+YML7v1kKQNweB0CJtWMN+N/yQcdzE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TxrnmH/dVUDu3m++MUMtMz3CgTWQY7iU/Uvn5SDQG3CrFiNtJUHeMdY6bLLpf8nDe
+	 7g62KK+5v9sWCDGQiYyy3/rhau0YEr2srSZ71AoCZRz/bqDowkEFSvRqHK0Ce2jF20
+	 rRTrEGqmghd+rYB2GZ5BMf0pIZDJrNKRjIEoMiLd0lQz9EpK1+RZem4hTOUTs7V9Gn
+	 fRbidD4B399xmmy8YtSxISSAKWOp4vmu7bK4dak/kUo94oeRxo3wZSGVeIjR3WNMgW
+	 aG1YDr9kUWlDex1WC6ooM6Iyh6+6HeNJnXc0cCFgARv7GUD2eWkZwUBaTA2fFIfGxc
+	 ECczPh1dzOcog==
+Date: Mon, 16 Mar 2026 14:18:45 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>
-Cc: linux-next@vger.kernel.org
-Subject: Re: linux-next inclusion request for DRBD
-Message-ID: <425ab0e1-d160-493b-8a0e-f395540452fb@sirena.org.uk>
-References: <0b11c582-ef6d-4998-94fb-3ff606903481@linbit.com>
+To: Yonghong Song <yonghong.song@linux.dev>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nsc@kernel.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kbuild tree
+Message-ID: <abgRRX3PH9IaExi8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,66 +43,64 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vT+J72wS31K/C5wt"
+	protocol="application/pgp-signature"; boundary="Ud++p15tp78O80wH"
 Content-Disposition: inline
-In-Reply-To: <0b11c582-ef6d-4998-94fb-3ff606903481@linbit.com>
-X-Cookie: Not a flying toy.
 
 
---vT+J72wS31K/C5wt
-Content-Type: text/plain; charset=iso-8859-1
+--Ud++p15tp78O80wH
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 15, 2026 at 10:28:38PM +0100, Christoph B=F6hmwalder wrote:
+Hi all,
 
-> we are currently in the process of getting version 9 of the DRBD driver
-> upstream. As this is rather complex and requires some large changes, we
-> would like to have the tree added to linux-next first. The tree is
-> available at:
+After merging the kbuild tree, today's linux-next build (arm64 perf)
+failed like this:
 
-> https://github.com/LINBIT/linux-drbd drbd-next
+Auto-detecting system features:
+...                                   libdw: [ on  ]
+...                                   glibc: [ on  ]
+...                                  libelf: [ on  ]
+...                                 libnuma: [ on  ]
+...                  numa_num_possible_cpus: [ on  ]
+...                               libpython: [ on  ]
+...                             libcapstone: [ on  ]
+...                               llvm-perf: [ on  ]
+...                                    zlib: [ on  ]
+...                                    lzma: [ on  ]
+...                                     bpf: [ on  ]
+...                                  libaio: [ on  ]
+...                                 libzstd: [ on  ]
+...                              libopenssl: [ on  ]
+...                                    rust: [ on  ]
 
-> We will keep this branch updated during the next few release cycles
-> until the patches actually land.
+Makefile:2254: *** extraneous 'endif'.  Stop.
+Makefile:2254: *** extraneous 'endif'.  Stop.
+  PERF_VERSION = .gbc1f864a1976
+52.34user 4.91system 0:56.88elapsed 100%CPU (0avgtext+0avgdata 140840maxresident)k
+0inputs+0outputs (0major+1379795minor)pagefaults 0swaps
+Building: arm64 allnoconfig
+Makefile:2254: *** extraneous 'endif'.  Stop.
 
-> Please add the DRBD maintainers as contacts.
-> M:	Philipp Reisner <philipp.reisner@linbit.com>
-> M:	Lars Ellenberg <lars.ellenberg@linbit.com>
-> M:	Christoph B=F6hmwalder <christoph.boehmwalder@linbit.com>
+Presumably caused by commit
 
-I've added this, it should appear from today all being well.
+  6a76b3c06a1d3 (kbuild: Reduce the number of compiler-generated suffixes for clang thin-lto build)
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.
+though I don't immediately see how.  I have used the version from
+next-20260313 instead.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---vT+J72wS31K/C5wt
+--Ud++p15tp78O80wH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm3/g8ACgkQJNaLcl1U
-h9BOWgf/SLWTfxOyyU7zRib4GxVV2XV1QEnYtkVbPYlyEuv9P660kId71QIkvXMS
-AGu/VqZkEFhp7MRmSiCSFZZb1Eu81KB1tIui15QpVycJidEwB2WIpiiroEPzLGuq
-X+L/heJHnkC48IF/evqTD4JhikD+jGF2s+1P/py4aH3LutfQNSQpSl86tacSnHza
-ygE764yWWOp4SscMU4H/STmsVV2r0Q0cfYNONvpJNqgdaPj9Bxzofn2QEtCHMmFj
-TcQM5KvEakKXLviVzTUADsQjGiS2BQVL2x6jJo1oUguE06ZsaW0X1sfxJ1XK4QID
-viPnrIIHeq3atXhBFJGeImk1apUqAA==
-=q3CP
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4EUQACgkQJNaLcl1U
+h9Dh4Af/cclyVX0ulliB623X6Ip6B0A/yvqphBaP5DPXq7eu5K1vy6hQo6pb0G2F
+UNmuzPzcWda377ZU9AA3bgu4xmmECrncMWAW8XmvEJd+52dDpQqhliB1AabKzx4j
+C1Ot/VlHNAKPUu+FzsSrXJbKnAq0ltm26u/mJ0y0TsIhx2hMSmvAMxd5QVx+25Uh
+D/r6iXPRAHf3xnDkWDzDZtHpthJYdNUOhkwxO73GZm0qcTTBEl8nw8LuyILFRI+a
+YSaAwa6i2fPBlZ2lJIXGudy8I3TH99vqvoBgDjX8tnglXTtH2CvQHhmnWG6ii5/s
+zeLHbkahXMQJvr07Yg5IiXABkyR65A==
+=8glC
 -----END PGP SIGNATURE-----
 
---vT+J72wS31K/C5wt--
+--Ud++p15tp78O80wH--
