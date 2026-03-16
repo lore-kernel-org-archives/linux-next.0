@@ -1,87 +1,118 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF5A33A9DD;
-	Mon, 16 Mar 2026 17:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F707313E18;
+	Mon, 16 Mar 2026 19:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773683813; cv=none; b=OZC/Yf1HcURds0YO4wMxGWc9ZaydCkLDSUQFvJGqQNU8P/bN0usKDFhzB8zJ5592rHLJ+bJwMb3PjfQts5LubJu7rJgSbe28LTwvqcInauSciPycc3wQkVwkG0N+/cynmcsMqnRif4Re3VqFZx6dV6frr9XuBD6o2BBUvf9TVk0=
+	t=1773687781; cv=none; b=BKDCEWKXWUSBCfzHfFftPqI8mzf4anLm/r3b9tBeJ9fP8KyyGcDb55x1I5NQsMKhPtG50dgBjcwArmrrv5wppu3Eu693RXplZSrJT/J1gxda75IxpxiGbTY+L0u7BCbU6F2mB+ZJ6hQaxBCciwPYX2nMN1tnR1S5jOZQqbtppG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773683813; c=relaxed/simple;
-	bh=q0y8BC7GzfesebMNcpcg7i9dnaVgrshHFWjsHC4iOu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=soe/mTVQTavOw6YDZE5d5t9xTrFk87Fg+fgFSlgh62XnwGEbYcCTCRBsMzFIFueCigFeuaXdXJ3MGqNW+WhXpk5UtUEfddKd9tDF1YQVOa1cYOMj69FxIWg+Bi6Tu2AzcM5tX8iBZslQ3sg0QQMK0Z/j+NcYx1ssumVCV0SOquI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFlEJVaX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773687781; c=relaxed/simple;
+	bh=u/6tgDFGzxP+xMF2PTO2Q4WK+p1ipuiYVd4Ia8cJ/QA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fA7dQlN/D6K857iD4r4TF8mdh0IpL4IoYjmdibDzQCgRly4/h1FbqIwqUd5cIs6cI50mVEkUP26o5JrvS3nASdHTTkWJcAlB++LMQtn+/wVBjQvEnHuC8S7UE48U+biFlnrafyp5R/hy2wl/9NjDubeel1mxFYOgkuVh5roeJyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2KXydcZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFlEJVaX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBD6C2BC87;
-	Mon, 16 Mar 2026 17:56:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2KXydcZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A233AC19421;
+	Mon, 16 Mar 2026 19:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773683813;
-	bh=q0y8BC7GzfesebMNcpcg7i9dnaVgrshHFWjsHC4iOu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFlEJVaXpE6jStGa3SJRMs060nrfHkpqXCSBBlRrN5jlZ/2qTCqCOaIOFhz6yK08u
-	 h0ZHmDZ6uMxqh3dzNGC7B+4KlewKD4gWjipXHt3XGStjoVWJqtQRjFYh77YRGv+Ed7
-	 /gTxcDluk4uDbiuffzVUWqD8LTMZQnbdS9pvhyDSrGj2cXHpxjBCzuUF+zRcnoaalM
-	 ij6Y4zrqahjLuLGyfZ3BJZFj/mFNZR+14bm0GtP1qwi8DYOiIsiDjeqwWcHJdVYyGU
-	 kG3KAfJvJEiNF5Rgvh27N5evzBrmHNTHTlX5YxxkRkJr2zTE9ubF+qmOH7AeUk/5Gx
-	 +UHjmssSaMbCQ==
-Date: Mon, 16 Mar 2026 18:56:29 +0100
-From: Nicolas Schier <nsc@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Yonghong Song <yonghong.song@linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Message-ID: <abhETba3IvIH1BU9@levanger>
-Mail-Followup-To: Nicolas Schier <nsc@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <abgRRX3PH9IaExi8@sirena.org.uk>
- <abgph5Gk1G8UgG2E@levanger>
- <d9a3537a-9abc-49f0-86df-13089ff35a3a@sirena.org.uk>
+	s=k20201202; t=1773687781;
+	bh=u/6tgDFGzxP+xMF2PTO2Q4WK+p1ipuiYVd4Ia8cJ/QA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Y2KXydcZ5zwzdKZT/0LqAii1lDrWkeWkpz/Eq4fF/gT/VWwUllwF9QUoRu0LHDvNl
+	 RJyXSfZGs40X0o8/LTwg5Ol564Yfk38KC+4emn5jGhy+87upSzXYf+b1sYJ+tWHV80
+	 Q1xHJiShU/ZkYsqZ10BKJ7HsYA3UeqxkqVBwx0saZaERd7mYsVgYnIw6+LGeRsJytx
+	 OVndiIxlpb0ZP1HgxU2K0eMByNk6WeJLmMCsg8Nygr510cYEQg8jE26c3UvrD/pbrc
+	 /ozpGKw1iGHHWKnLwJXv/wQK6nW4ganNqhMNfvvoH5cplbUOQ38w69Hw9qY43RzbPG
+	 N0ydqxn66SvxA==
+Date: Mon, 16 Mar 2026 19:02:57 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Mar 16
+Message-ID: <abhT4QLK9ta8459G@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0/y1Y1ITQatstcpN"
+Content-Disposition: inline
+
+
+--0/y1Y1ITQatstcpN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d9a3537a-9abc-49f0-86df-13089ff35a3a@sirena.org.uk>
 
-On Mon, Mar 16, 2026 at 05:42:17PM +0000, Mark Brown wrote:
-> On Mon, Mar 16, 2026 at 05:02:15PM +0100, Nicolas Schier wrote:
-> > On Mon, Mar 16, 2026 at 02:18:45PM +0000, Mark Brown wrote:
-> 
-> > > Makefile:2254: *** extraneous 'endif'.  Stop.
-> > > Makefile:2254: *** extraneous 'endif'.  Stop.
-> > >   PERF_VERSION = .gbc1f864a1976
-> > > 52.34user 4.91system 0:56.88elapsed 100%CPU (0avgtext+0avgdata 140840maxresident)k
-> > > 0inputs+0outputs (0major+1379795minor)pagefaults 0swaps
-> > > Building: arm64 allnoconfig
-> > > Makefile:2254: *** extraneous 'endif'.  Stop.
-> 
-> > thanks for the report.  Unfortunately, I cannot reproduce that anyhow;
-> > but I pushed to kbuild/kbuild-for-next at 12:36 UTC, might that have
-> > been a bad point in time?  Do you have your merge somewhere around where
-> > I can fetch it for investigation?
-> 
-> I tend to start late mornings UTC so something in the middle of the
-> night won't be noticed.  I don't have my merge to hand, sorry - you'll
-> be able to see where I merged things by looking at the history of -next
-> for the kbuild merge when I publish today's -next.  IIRC there as
-> nothing other than merges and the commit I flagged in there, it's
-> possibly a merge issue with Linus' tree?
+Hi all,
 
-Ok, thanks!  Then I'll have a look at it tomorrow (14h ahead) and hope
-to fix it for the next '-next' round.
+Changes since 20260313:
 
--- 
-Nicolas
+The drbd tree was added.
+
+The kbuild tree acquired a build failure, I used the version from
+next-20260313 instead.
+
+The net-next tree acquired a conflict with the net tree.
+
+The bluetooth tree acquired a conflict with the net tree.
+
+The drm-intel tree acquired a build failure due to the breakage that has
+been affecting the drm-xe tree propagating around for which I
+reluctantly applied a revert.
+
+The drm-xe lost it's build failure.
+
+Non-merge commits (relative to Linus' tree): 5901
+ 6084 files changed, 417387 insertions(+), 125394 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 412 trees (counting Linus' and 123 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--0/y1Y1ITQatstcpN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4U+AACgkQJNaLcl1U
+h9Cn3gf/Un+K+eNPoZWf+XhUykQXYp11+WLV05wKxRcJgA/ffMVxt/493MRDqGKq
+PUxw2wLoplpiAhPaGZn8OnkimrCKciQPrPtIF7Ia/rvpuPn9QmsCBnfuM44OC0sq
+4XfFi+JFqvHHU1QUpuTu2pyRFAVFja3A4AaIFBhCMFWkFSWblApfltxEQPznunID
+838XyuQDQiBx6TszmykC0RltV7bw6X0ycfzZplCb/yUY9s57AHKmyv8oe01TGVI2
+nO2H3ZXtcjn8O4hKDXKZVVKcXM0DaoSdgYW34wp5L69v1nBiVHErJPEtDmwQvaTu
+ze2KyrXFwK1gVl7h2X1neJ2ICgwBSg==
+=hmHl
+-----END PGP SIGNATURE-----
+
+--0/y1Y1ITQatstcpN--
