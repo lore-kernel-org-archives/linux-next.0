@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38AD278E5D;
-	Mon, 16 Mar 2026 14:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1C4306B1B;
+	Mon, 16 Mar 2026 14:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773670730; cv=none; b=FYNLT28TwH7SQ/xp5k5zgVn5wtpg83Ey+hoR9fU1VBEXbyDMjBJxTuhXGpuV6hWzInQN2esHu6wQyIInUG2423GJR6dXed8rvLhFr7JLsINgKtyXYCVtwpd4Up7xa715jfUpsS4FUWV1vRRZzvwRANNhwPwZa6KSHTKS/FMjsWE=
+	t=1773673028; cv=none; b=XipANJZ8dGdQxp9Px0NIALkbeNoCV3X3wMO3vZWJCMvewXYxL4NriY37X6PPQcmf2Is/wpxdkHdWrPMMX/Y9wLq1eZ48l2fXdyTPvSn11L64vDWzr5HnyDdqHUn9pfuRNMc21KePh42pOXjfjQVJ2+g+ZQnmA8CHGRAgYsAiPhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773670730; c=relaxed/simple;
-	bh=Eh6+Ra1uIlYoV+YML7v1kKQNweB0CJtWMN+N/yQcdzE=;
+	s=arc-20240116; t=1773673028; c=relaxed/simple;
+	bh=wU2u/ScqWZ+YM3WroBO+6Ni7Gc4USP2uHkXeyYSxM4U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gHLwLyyKbebdT6i4WFQ2LsKEhEp1/sh3cX6TcfKripIKKwSS15wnc7F357TRNv0zjlqR0idOTXhhUy8JFaqjwMTw4OoCXW+AmhOczOrVQY5vL7wwCYsW+BvxkqZAF4WkZE75qvei46ysO+X9/vCgw+txJe3xzxuIPLeyl1A1wyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxrnmH/d; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=YOxwzfp1cl//pOTqBV9MEt2kVqMOOwC1F1R5v6ehG7/4lmaUaFYhvKlS/br5Wxbmk5Hwhx/zTmFI5hYbV4IW20hO/puK3Cr9r/6+xqZS1AEJh+nHdg+BefUzMmv3+g6RlVsphROivKNxAB8xhUggSl9tLNT2Sz6MO/GfIVhQwGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGe7C04r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxrnmH/d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F429C19421;
-	Mon, 16 Mar 2026 14:18:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGe7C04r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D758DC2BC9E;
+	Mon, 16 Mar 2026 14:57:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773670729;
-	bh=Eh6+Ra1uIlYoV+YML7v1kKQNweB0CJtWMN+N/yQcdzE=;
+	s=k20201202; t=1773673028;
+	bh=wU2u/ScqWZ+YM3WroBO+6Ni7Gc4USP2uHkXeyYSxM4U=;
 	h=Date:From:To:Cc:Subject:From;
-	b=TxrnmH/dVUDu3m++MUMtMz3CgTWQY7iU/Uvn5SDQG3CrFiNtJUHeMdY6bLLpf8nDe
-	 7g62KK+5v9sWCDGQiYyy3/rhau0YEr2srSZ71AoCZRz/bqDowkEFSvRqHK0Ce2jF20
-	 rRTrEGqmghd+rYB2GZ5BMf0pIZDJrNKRjIEoMiLd0lQz9EpK1+RZem4hTOUTs7V9Gn
-	 fRbidD4B399xmmy8YtSxISSAKWOp4vmu7bK4dak/kUo94oeRxo3wZSGVeIjR3WNMgW
-	 aG1YDr9kUWlDex1WC6ooM6Iyh6+6HeNJnXc0cCFgARv7GUD2eWkZwUBaTA2fFIfGxc
-	 ECczPh1dzOcog==
-Date: Mon, 16 Mar 2026 14:18:45 +0000
+	b=CGe7C04rggSN/IMb9KpRUMnHS8Ia4V9wCObGk8do2Dp3vqNnWcAf7RmuaNCzorJAX
+	 fYJzEWtxXNkX7V92xrV8mOTXEUReBJ9dwOz2rd7guIDQpfQAHSXWs2k/HqbsaiFMfj
+	 HC/3Zbjzhy+rggDuIXniMDcvW+Atsn6JyIoS592ZyegB0shnV7cVkzO3eKu0ggbE19
+	 vMpupOzlo+GDQci5U0/AykAS00UP4GOpiIM3PcD5oyOsC5XWG2IlR8I7PGo0Co3T5u
+	 SVZT4diWUoxJsISfMONteLJaHfDtDpko/qqEM32UxnkUuziUO7ccNtFHoeGDcXs3IN
+	 lLLJSxxGEfY2A==
+Date: Mon, 16 Mar 2026 14:57:04 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Yonghong Song <yonghong.song@linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nsc@kernel.org>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Florian Westphal <fw@strlen.de>, Matthieu Baerts <matttbe@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kbuild tree
-Message-ID: <abgRRX3PH9IaExi8@sirena.org.uk>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <abgaQBpeGstdN4oq@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,64 +43,77 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ud++p15tp78O80wH"
+	protocol="application/pgp-signature"; boundary="Y/aQFCUClaw1/FeL"
 Content-Disposition: inline
 
 
---Ud++p15tp78O80wH
+--Y/aQFCUClaw1/FeL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the kbuild tree, today's linux-next build (arm64 perf)
-failed like this:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Auto-detecting system features:
-...                                   libdw: [ on  ]
-...                                   glibc: [ on  ]
-...                                  libelf: [ on  ]
-...                                 libnuma: [ on  ]
-...                  numa_num_possible_cpus: [ on  ]
-...                               libpython: [ on  ]
-...                             libcapstone: [ on  ]
-...                               llvm-perf: [ on  ]
-...                                    zlib: [ on  ]
-...                                    lzma: [ on  ]
-...                                     bpf: [ on  ]
-...                                  libaio: [ on  ]
-...                                 libzstd: [ on  ]
-...                              libopenssl: [ on  ]
-...                                    rust: [ on  ]
+  net/netfilter/nft_set_rbtree.c
 
-Makefile:2254: *** extraneous 'endif'.  Stop.
-Makefile:2254: *** extraneous 'endif'.  Stop.
-  PERF_VERSION = .gbc1f864a1976
-52.34user 4.91system 0:56.88elapsed 100%CPU (0avgtext+0avgdata 140840maxresident)k
-0inputs+0outputs (0major+1379795minor)pagefaults 0swaps
-Building: arm64 allnoconfig
-Makefile:2254: *** extraneous 'endif'.  Stop.
+between commit:
 
-Presumably caused by commit
+  598adea720b97 ("netfilter: revert nft_set_rbtree: validate open interval =
+overlap")
 
-  6a76b3c06a1d3 (kbuild: Reduce the number of compiler-generated suffixes for clang thin-lto build)
+=66rom the net tree and commit:
 
-though I don't immediately see how.  I have used the version from
-next-20260313 instead.
+  3aea466a43998 ("netfilter: nft_set_rbtree: don't disable bh when acquirin=
+g tree lock")
 
---Ud++p15tp78O80wH
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+(resolution should be the one supplied by Matthieu Baerts)
+
+diff --cc net/netfilter/nft_set_rbtree.c
+index fe8bd497d74a7,e429053766545..0000000000000
+--- a/net/netfilter/nft_set_rbtree.c
++++ b/net/netfilter/nft_set_rbtree.c
+@@@ -639,9 -684,13 +639,9 @@@ static int nft_rbtree_insert(const stru
+ =20
+  		cond_resched();
+ =20
+- 		write_lock_bh(&priv->lock);
++ 		write_lock(&priv->lock);
+ -		err =3D __nft_rbtree_insert(net, set, rbe, elem_priv, tstamp, last);
+ +		err =3D __nft_rbtree_insert(net, set, rbe, elem_priv, tstamp);
+- 		write_unlock_bh(&priv->lock);
++ 		write_unlock(&priv->lock);
+ -
+ -		if (nft_rbtree_interval_end(rbe))
+ -			priv->start_rbe_cookie =3D 0;
+ -
+  	} while (err =3D=3D -EAGAIN);
+ =20
+  	return err;
+
+--Y/aQFCUClaw1/FeL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4EUQACgkQJNaLcl1U
-h9Dh4Af/cclyVX0ulliB623X6Ip6B0A/yvqphBaP5DPXq7eu5K1vy6hQo6pb0G2F
-UNmuzPzcWda377ZU9AA3bgu4xmmECrncMWAW8XmvEJd+52dDpQqhliB1AabKzx4j
-C1Ot/VlHNAKPUu+FzsSrXJbKnAq0ltm26u/mJ0y0TsIhx2hMSmvAMxd5QVx+25Uh
-D/r6iXPRAHf3xnDkWDzDZtHpthJYdNUOhkwxO73GZm0qcTTBEl8nw8LuyILFRI+a
-YSaAwa6i2fPBlZ2lJIXGudy8I3TH99vqvoBgDjX8tnglXTtH2CvQHhmnWG6ii5/s
-zeLHbkahXMQJvr07Yg5IiXABkyR65A==
-=8glC
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4Gj8ACgkQJNaLcl1U
+h9BKnAf/e3+X+B/lsXD4bfaOMbScncAyKIXjLxw6yYkvrTDf+RE0MOtF/O96bq/f
+j5Eqj2FjfTxCpRIY1FNS37BUj+2rH65n39GaX/K/5E++9RYAQJ6ImEihXpcbYJ/G
+58GtKUNpQCYnl/tqEQje6h2UxINlH12Rq1daktZiPsK691VKa4DyUWRFP5jAYYRp
+ukSL8SRgNtVzptp4KStc24VdM1xiEiCaSnSzQo1Afl7Pvrji57r/w8gyrNKLsajP
+vhxQUHkFaUT6ULrQXbdNQw3JMsImeoaHeNAqnSmpRn+8mXCbmG5GfJ+EfjJl9sLl
+chjUMF34xh3dm6CDMQt4P0U/0AcjWA==
+=DF4n
 -----END PGP SIGNATURE-----
 
---Ud++p15tp78O80wH--
+--Y/aQFCUClaw1/FeL--
