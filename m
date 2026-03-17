@@ -1,204 +1,121 @@
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520BB3E95A7
-	for <linux-next@vger.kernel.org>; Tue, 17 Mar 2026 15:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773760065; cv=pass; b=a3oXtIV8mH65fIDxhp9J2jZIi9Ox3gJPXAUnVHL5lUoV+G34u1Xy6+bSNIdT6PzmxZctXO2eUIvVSaM2qffocZKQcng00x/ytGv2mjuHb7EtwzLk9C6EbzAyRLVm8gspRs8FXNaliAS/IpFoGkz6Upb1V4hjhQdCeSjkUoO7INE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773760065; c=relaxed/simple;
-	bh=iacGR+dLcrJn5jW4hL5FkpXaxtjv9MhzWWSRiVGm2Ro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c+8TLyR4QpJtQD7QgvN2jw9DVDHJspfYXD4NIxJyQ8m238UoQXwnYHPAyo4oRyCAftPzxQHlG5Wx5rmuLda1weKc3HgSeDIeN4McwTHFKIn8sAhHrkw5dKbdHvSmSzcBCERe+zmomIMFKGoPGpwCQDf4Jz1vX1b1D97wqyxGk2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKOC/PKa; arc=pass smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37382DA769;
+	Tue, 17 Mar 2026 16:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773763228; cv=none; b=jYrVl+UmABU+iCdvTk9C/D2cHSrZU4Zf9D3zksSlcOkMqNJHpVcR4PtvahW+4/ZY6yL7J5JFpP1j6ch06Mn9SIfNFAfzHhUAZRolH/Cd1VwXnj4FamDPGD5FxWAYNkiOULqv2ZWlnb2wc1d2bkto0sbLXmukNsN0uasoXwPfZ98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773763228; c=relaxed/simple;
+	bh=MMpDbTWQSWGHLLGWQOSZFBVCR1MUm5haRm1cuvsXDoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BzIQ/yfbEl7aBpITL0xWG5DCe8Cvsn4KF3QFGmClFII2oUcb+9x47qN+uZVe0U1bQpnGsy6fiqymlBf6CyHggxTH+vTtcnS1o/aIkrS59vAxhD6BaM38EbXxwGx8JKqv19QJgur3S20PZnQwbXxHQcXTa25COzltvXRVOf764AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZi1bSFA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKOC/PKa"
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-417c34b0509so3003315fac.1
-        for <linux-next@vger.kernel.org>; Tue, 17 Mar 2026 08:07:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773760063; cv=none;
-        d=google.com; s=arc-20240605;
-        b=S2Fdk7PHmYq2GuP+7tkwOYLVfszZ87gRkuIZXQ8nuJ0fg/vVgxrZKe0FAfTd06HfCd
-         c0gFkpSKF+hUba2tOM3DHRDRP8AYVbw7stNj6pxuUKN2hb0CnbXBAEyOT0HH7B2QaRC9
-         DSXYOks4/+DB0HyyyOiZHgIiVIjgYFn4CazzmkpktOqYKsuplUIqmTd8XFSDeXQgG2TE
-         LY29O/S4AmnBXk1yKCdvI30ZlZouwQwGjnOvEFajKN6TaEThcAgu6BSajMtxU8TaaETK
-         IuVoI19ggNPuRzWEaYoyTxFLgZL0KQkyqOg4otWRWDNZIcl1GSd+U5WCIx+2cWaGZN3A
-         sgQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=GTP8JPFg9FfbjKKhMUsizMb4WgMFG5B+JV8fQsoWREo=;
-        fh=CcRDFyL4VfCdrNDQ4VQQ4VT59sQVc8xlubltOr/4kOE=;
-        b=f2NisoHJpMxXFqCjxnMndIm4rfLoT3bMkJSZPUyyp78lpJcXR9OgtSeQz5QkQIVXXB
-         AgMCiOpjGSGiRK0is1DNQLTG/Z/uYf5HMoC2WytDJewpFNr8Eq7Pv/4PDhBf7NRiPEPJ
-         f1TfiO6zfaasxFC/AZrt6/+b7B60TQ4lZOTM+hDgpn/JD57whrxwfNbaXEJZ+aUiQH+j
-         eZUdZ+D1OUXWrVXgtd4pfMSgKbOVrsu8oqzmHBGxx0/0FAU43bRAGFwkVPuMKPfk5CeR
-         tVf/kn6lYMQVPT79jTqQ7jXZP9/pBXfKuHItjoDmNbDNe2YZxR6v7XMKkGtggSRXCJYC
-         8qbw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773760063; x=1774364863; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GTP8JPFg9FfbjKKhMUsizMb4WgMFG5B+JV8fQsoWREo=;
-        b=jKOC/PKaaPX99J2FuX33fiKOomtZtE+EhNkydLB/6ruZebnvHOMkVfZBL/xTo3rF20
-         9Kp485xPGrMJl3oTXKKXnqgmM2BWXOZutLiRUUEqU+yRQvQTzQ5uSASMaUBG6VIXsOse
-         mL0bqUDd0OKt8DI57e8+njGGeyu5IwkIkcBaS7OCie6x3g0C7sbf9ioMkLerABrYTlLv
-         bxQjXmB+zSfUidIVeqT68uaTx5J/1HaAJWVGuoht0IK2mo9bvFIwuQAUtWQFrat3KXGO
-         WMJiTPE5PVBiM0UHt/DImcsAwmD4NG4MQQF2crCTQ2khI9NDGSAUN+P+OK+W60aupMGn
-         HwIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773760063; x=1774364863;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GTP8JPFg9FfbjKKhMUsizMb4WgMFG5B+JV8fQsoWREo=;
-        b=Sk/AXqF5inzfYibx6rLmaMGf1GZrZv1I25qRkbuGWa3JFyL3dFLrlRrYZVN3J7WvC7
-         1SWJL7m/bRIo1f6+NhVUlE7cvIEi8nxdwYfuWMYZH52sQ9uDDELei8rUbPTCnedI6u3D
-         UCN93HNyGGlIJSmnN84pj9NPIR2kftL+/d+AJB+yP2sHEtF7Yxo/7wckur/M9TMSoUFr
-         bV08V3frDvjnbH6glquvPWtDTDsy9nEDl5Oq/HNZHSoYoPvF9i75h8pAvh+Zepxqpa4d
-         Kkyxw9UeDPBE70b0qRIyjT3rAhLgQ/G0xdvpDOgSQQ+int1o1ZroPvRT2Y3FCxpi/kHa
-         52ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQQvbDkF5Z1JtJe4fYoPd0hzln/NgbWB8XNnOfX081tafHpX32GIAEbmsuIBIrCta4rY30wEI11d2@vger.kernel.org
-X-Gm-Message-State: AOJu0YznzyZ2s+TEtNqLOqV1VrOUgh+ZveAbhiVh+x2zq9nR1LNDMHOI
-	V4WMXw5C5K75bnJVW1kgL7x5GMj52rYrdN/4tuyNCj9/zD52gfn6nUqLpw+zRlExdnn/7chz1s8
-	Gc6LxZVMuKHmhxtwDuJRA8ZEzXNFBY6k=
-X-Gm-Gg: ATEYQzyIyLo50pHvvsDU2XWJ8gVfup1UxPhl59tIVlfmcgy/c0mJ28Gd2zKrJtAK+Tn
-	H7ht8WRc+Gdx3yxIamtaUtIjEntYuVBYNq31j98XlaQuBbbB98VhzMGfIaxe++5Ows3w2dZ5Ikl
-	rEBiYqLUQNVuAKhHrpcbz2TwXmJxuizDOZEwooF9oAlrtXz+o8MlepKbMUFhBp86wbBCF/Zot2m
-	Kt6uooRbbwlveqKbLNdjgs99pVMcOlrnr0hOsN6pNbkOhzgglPYOShAAcofyfGsFRazw1SIWoK2
-	uy1Ydech9RSE5vKBYV/AGZjMHPFGrpcY8iKT1w==
-X-Received: by 2002:a05:6871:4704:b0:417:6041:7740 with SMTP id
- 586e51a60fabf-417b9484475mr10559305fac.49.1773760063174; Tue, 17 Mar 2026
- 08:07:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZi1bSFA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D981C19424;
+	Tue, 17 Mar 2026 16:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773763228;
+	bh=MMpDbTWQSWGHLLGWQOSZFBVCR1MUm5haRm1cuvsXDoQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YZi1bSFAv8Xv/Pq4QbiRfGBgJaSLoXIHWhByhfx/nzI4PAqzJAC3J98UmRBPZXNpY
+	 73tZq8L/H2GbEO949Yik0I6mRuBAtlB7BYq/oGHs8ZY/HHLnRQPd4mjGfPJwJ+vegS
+	 mxkcpcrdPLq05DlwOVQR9TB0aZgV4DiGkNtdmpnGpfQu0lu88MsDLuo/omkmzr9XQ0
+	 jb4TnJZCndO3gky8BTjFvxOuCaLrFf4EglppX8XnHXOHtw38E1Qo4kTZn8lgnx6iik
+	 gpsBRaVdum222yN9oQRRG2mQgemJiZX44X3EG7mgelGWcv0VOHGettdTkAloQcMIWv
+	 OAdCoTtJTwSIg==
+Date: Tue, 17 Mar 2026 16:00:24 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Edward Srouji <edwards@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: linux-next: manual merge of the mlx5-next tree with the rdma tree
+Message-ID: <abl6mNj76d4TwtQR@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ablmE1TqDmIYHiBH@sirena.org.uk> <412389f8-7d8f-414c-91f0-e748f370ad04@efficios.com>
-In-Reply-To: <412389f8-7d8f-414c-91f0-e748f370ad04@efficios.com>
-From: David CARLIER <devnexen@gmail.com>
-Date: Tue, 17 Mar 2026 15:07:31 +0000
-X-Gm-Features: AaiRm50DWc2x2E3smV9U6My8Y_M_IB7voxhc0A0QslW91F4X9Ptn1VHvXX78X28
-Message-ID: <CA+XhMqzNiEnNFXhqwuX=GSWa3YqfbTX23dTvA5FUUp8zMy-ObQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the mm-nonmm-unstable tree
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Josh Law <objecting@objecting.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mHxEOMOb5kQbQLiH"
+Content-Disposition: inline
 
-Hi all I ve send a patch to all involved parties. Cheers.
 
-On Tue, 17 Mar 2026 at 15:06, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2026-03-17 10:32, Mark Brown wrote:
-> > Hi all,
-> >
-> > After merging the mm-unstable tree, today's linux-next build (arm64
-> > kunit) failed like this:
-> >
-> > [13:30:42] # hpcc_test_compare_value_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:157
-> > [13:30:42] Expected 1 == percpu_counter_tree_precise_compare_value(&pct, (long)under), but
-> > [13:30:42]     percpu_counter_tree_precise_compare_value(&pct, (long)under) == 0 (0x0)
-> > [13:30:42] # hpcc_test_compare_value_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:160
-> > [13:30:42] Expected -1 == percpu_counter_tree_precise_compare_value(&pct, -(long)over), but
-> > [13:30:42]     percpu_counter_tree_precise_compare_value(&pct, -(long)over) == 0 (0x0)
-> > [13:30:42] [FAILED] hpcc_test_compare_value_boundaries
-> > [13:30:42] # hpcc_test_compare_counter_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:246
-> > [13:30:42] Expected 1 == percpu_counter_tree_precise_compare(&pct[0], &pct[1]), but
-> > [13:30:42]     percpu_counter_tree_precise_compare(&pct[0], &pct[1]) == 0 (0x0)
-> > [13:30:42] # hpcc_test_compare_counter_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:251
-> > [13:30:42] Expected -1 == percpu_counter_tree_precise_compare(&pct[0], &pct[1]), but
-> > [13:30:42]     percpu_counter_tree_precise_compare(&pct[0], &pct[1]) == 0 (0x0)
-> > [13:30:42] [FAILED] hpcc_test_compare_counter_boundaries
-> > [13:30:42] [PASSED] hpcc_test_init_one
-> > [13:30:42] [PASSED] hpcc_test_set
-> > [13:30:42]     # module: percpu_counter_tree_kunit
-> > [13:30:42] # percpu_counter_tree: pass:8 fail:2 skip:0 total:10
-> >
-> > ...
-> >
-> > [13:30:47] Testing complete. Ran 9088 tests: passed: 9015, failed: 2, skipped: 71
-> > [13:30:47] Failures: percpu_counter_tree.hpcc_test_compare_value_boundaries, percpu_counter_tree.hpcc_test_compare_counter_boundaries
-> >
-> > Triggered by commit
-> >
-> >    ebc1ff504f557 (lib: add kunit boundary tests for percpu_counter_tree comparisons)
-> >
-> > though as it's a newly added test it's obviously entirely plausible that
-> > it's flagging an existing bug.  I used the tree from next-20260316
-> > instead.
->
-> I've been able to reproduce with 1 cpu:
->
-> branch: mm-unstable
-> commit dffde584d805 ("zram: propagate read_from_bdev_async() errors")
->
-> cat .kunit/.kunitconfig
-> CONFIG_KUNIT=y
-> CONFIG_SMP=y
-> CONFIG_PREEMPT=y
-> CONFIG_NR_CPUS=32
-> CONFIG_HOTPLUG_CPU=y
-> CONFIG_PERCPU_COUNTER_TREE_TEST=y
->
-> /tools/testing/kunit/kunit.py run --arch=x86_64 --qemu_args="-smp 1"
->
-> [10:48:04] Configuring KUnit Kernel ...
-> [10:48:04] Building KUnit Kernel ...
-> Populating config with:
-> $ make ARCH=x86_64 O=.kunit olddefconfig
-> Building with:
-> $ make all compile_commands.json scripts_gdb ARCH=x86_64 O=.kunit --jobs=384
-> [10:48:07] Starting KUnit Kernel (1/1)...
-> [10:48:07] ============================================================
-> Running tests with:
-> $ qemu-system-x86_64 -nodefaults -m 1024 -kernel .kunit/arch/x86/boot/bzImage -append 'kunit.enable=1 console=ttyS0 kunit_shutdown=reboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -serial stdio -bios qboot.rom -smp 1
-> [10:48:08] ============ percpu_counter_tree (10 subtests) =============
-> [10:48:08] [PASSED] hpcc_print_info
-> [10:48:15] [PASSED] hpcc_test_single_thread_first
-> [10:48:19] [PASSED] hpcc_test_single_thread_first_random
-> [10:48:19] [PASSED] hpcc_test_single_thread_random
-> [10:48:34] [PASSED] hpcc_test_multi_thread_batch_increment
-> [10:48:34] [PASSED] hpcc_test_multi_thread_random_walk
-> [10:48:34] # hpcc_test_compare_value_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:157
-> [10:48:34] Expected 1 == percpu_counter_tree_precise_compare_value(&pct, (long)under), but
-> [10:48:34]     percpu_counter_tree_precise_compare_value(&pct, (long)under) == 0 (0x0)
-> [10:48:34] # hpcc_test_compare_value_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:160
-> [10:48:34] Expected -1 == percpu_counter_tree_precise_compare_value(&pct, -(long)over), but
-> [10:48:34]     percpu_counter_tree_precise_compare_value(&pct, -(long)over) == 0 (0x0)
-> [10:48:34] [FAILED] hpcc_test_compare_value_boundaries
-> [10:48:34] # hpcc_test_compare_counter_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:246
-> [10:48:34] Expected 1 == percpu_counter_tree_precise_compare(&pct[0], &pct[1]), but
-> [10:48:34]     percpu_counter_tree_precise_compare(&pct[0], &pct[1]) == 0 (0x0)
-> [10:48:34] # hpcc_test_compare_counter_boundaries: EXPECTATION FAILED at lib/tests/percpu_counter_tree_kunit.c:251
-> [10:48:34] Expected -1 == percpu_counter_tree_precise_compare(&pct[0], &pct[1]), but
-> [10:48:34]     percpu_counter_tree_precise_compare(&pct[0], &pct[1]) == 0 (0x0)
-> [10:48:34] [FAILED] hpcc_test_compare_counter_boundaries
-> [10:48:34] [PASSED] hpcc_test_init_one
-> [10:48:34] [PASSED] hpcc_test_set
-> [10:48:34]     # module: percpu_counter_tree_kunit
-> [10:48:34] # percpu_counter_tree: pass:8 fail:2 skip:0 total:10
-> [10:48:34] # Totals: pass:8 fail:2 skip:0 total:10
-> [10:48:34] =============== [FAILED] percpu_counter_tree ===============
-> [10:48:34] ============================================================
-> [10:48:34] Testing complete. Ran 10 tests: passed: 8, failed: 2
-> [10:48:34] Elapsed time: 30.726s total, 0.001s configuring, 3.074s building, 27.600s running
->
-> Thanks,
->
-> Mathieu
->
->
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
+--mHxEOMOb5kQbQLiH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the mlx5-next tree got a conflict in:
+
+  drivers/infiniband/hw/mlx5/mr.c
+
+between commit:
+
+  36680ef7bceb0 ("RDMA/mlx5: Switch from MR cache to FRMR pools")
+
+=66rom the rdma tree and commit:
+
+  4dd2115f43594 ("net/mlx5: Expose MLX5_UMR_ALIGN definition")
+
+=66rom the mlx5-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/infiniband/hw/mlx5/mr.c
+index cbe34251e340b,ff56948597ddb..0000000000000
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@@ -46,15 -46,14 +46,14 @@@
+  #include "data_direct.h"
+  #include "dmah.h"
+ =20
+- #define MLX5_UMR_ALIGN 2048
+ -enum {
+ -	MAX_PENDING_REG_MR =3D 8,
+ -};
+ =20
+ -#define MLX5_MR_CACHE_PERSISTENT_ENTRY_MIN_DESCS 4
+ +static int mkey_max_umr_order(struct mlx5_ib_dev *dev)
+ +{
+ +	if (MLX5_CAP_GEN(dev->mdev, umr_extended_translation_offset))
+ +		return MLX5_MAX_UMR_EXTENDED_SHIFT;
+ +	return MLX5_MAX_UMR_SHIFT;
+ +}
+ =20
+ -static void
+ -create_mkey_callback(int status, struct mlx5_async_work *context);
+  static struct mlx5_ib_mr *reg_create(struct ib_pd *pd, struct ib_umem *um=
+em,
+  				     u64 iova, int access_flags,
+  				     unsigned long page_size, bool populate,
+
+--mHxEOMOb5kQbQLiH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm5epcACgkQJNaLcl1U
+h9BXnAgAhSb6vwgeLiWqKJf5eUL6nAF30mviZi9NMUNl8hnbyFXEvfdy3WEHCYni
+lZkrAEgAKCFv9VPV1um+3uBVSTEihb1DaNBxruFi7c78TUqUX5dRUpCk+K9ZRGOA
+0lzS1nGHzjr7m8h7nB2GOy4lCFpsKX5BP3e3CDr+0wDWCq7Fnd7wwpLvjWODJdpZ
+K3sGsL8TP1wg8g1qyQ/zPu5rgobUYuuDK4Gndux6LH/pi9d+IMGrZcrU+84rRdoI
+AEosEpgtT0viRSv6VScXt3ZR4Trx3TlTAllK/Wtux2lFK6TkBS4fJdztoPj2yUGJ
+rCPA2rWu8ULDdZ8Qota0TTJNOZd4JA==
+=p79o
+-----END PGP SIGNATURE-----
+
+--mHxEOMOb5kQbQLiH--
