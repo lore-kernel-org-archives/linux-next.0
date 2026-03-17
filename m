@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4403290D2;
-	Tue, 17 Mar 2026 13:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437AE3290D2;
+	Tue, 17 Mar 2026 13:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773755307; cv=none; b=Th9vMJ/6Qcvz6R7ThoKNkEY6HnmIYMDzRX4wK5cwy2RpArM5w6yS7dTYKfP5E0EZn7XfD2fvFHaqBJP1TjtdZA1863iKJtbizdy5ytmvklvg3lwFpsRWTvEvYFDdc/CvobVJ2xDzfX8smlrOxmqyXvMbNO3b+YL+YdTzrJPBWVc=
+	t=1773755318; cv=none; b=jnyuxndB5kB1Lnk2ffMCkuesj2UBTdA7yHrgJyJ3HsCNQXpv2hmo6LvOSoD0rH1Lc6KM7hQZYdI+aMdO6cSuspYmMjzUgKv6Sm9GX8C3hh3ajHC45HYsiJ2Kjp2zHkeU/oMqPe/Kio1pIVX2hA7JfSB8LlTv94lmj90Ci0TuEP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773755307; c=relaxed/simple;
-	bh=KAdwf0yIRx6r0uKeXQ5p0L4qovIIKYzbhEcgEvSeIl8=;
+	s=arc-20240116; t=1773755318; c=relaxed/simple;
+	bh=AO3AaOae+8CFTegd04lIu0wBmhJNXHZByfw0xHDm3To=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aXxMd3IhymjGS/XCOdrUauVEnXrv+4WSNZz8XGNi0zEADzTokwNBkL9GFphdzJmZ4Z/1nX99BQsMei0cMiiAQdyiF7IV+n1AjFp+vjscaJK3/k5Qqn23Pl9+kq0n1MN97hw3nifGoeiw1vwkw9om0vzmo8TC/8nuAC4vdZy8pBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqafIE8B; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=H5HfNkxtuynKWTwYmQKb9LatxMcfoHdDNysd/f46S4pfDDuYsaOVroyEzlpfdxAraePhfnw4sXbzPs4ljFFY3O0QqQ3oTdPc6x/4XeDzzxjUGFsYBIkT+rqrzjgGzByQ6ryT84MMPC8T6IpUJRHhvRIrSc/kdwaux1ST5KzjxOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJqUxgl3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqafIE8B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F352C4CEF7;
-	Tue, 17 Mar 2026 13:48:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJqUxgl3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0C4C4CEF7;
+	Tue, 17 Mar 2026 13:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773755306;
-	bh=KAdwf0yIRx6r0uKeXQ5p0L4qovIIKYzbhEcgEvSeIl8=;
+	s=k20201202; t=1773755317;
+	bh=AO3AaOae+8CFTegd04lIu0wBmhJNXHZByfw0xHDm3To=;
 	h=Date:From:To:Cc:Subject:From;
-	b=EqafIE8BUORVDYqZRjnsGwhoonKcy9r52WMpygPPBdWlRyVizVW8W20V74dDWNwTy
-	 CynSt+pCl9dyclltdyeYWhMqVmqRwh+FxFnW4Sc8EX4JFqkrifgcizaP2Y+c+669Bg
-	 6tSF5PjbOq8tAX9EEEGRvCht2ZeL2uJql45Q39KQA7uNpaG06ASwQ0/n4MlnKfyx/a
-	 yN6hAkpqcbjSAFxmtchA3K3j6MZZc5ZCremBV3E+KF83fFPiGyK+rLyjvaS2Omqkfw
-	 vI3ba/lYMGW+XnfNMq4L59z79iWPZwoK6bFdNvia3xzR/WWphxg5JfA+mmq+ivW2Nr
-	 RZaCx99wRp4gA==
-Date: Tue, 17 Mar 2026 13:48:22 +0000
+	b=pJqUxgl30TpQMqNi9bYa/xS7GOm7KXq7d2Az4t+aW0/dnLw+gTxlsEa6JpkyR/Ky7
+	 LvYdMpkIpmJh+FXL3Gcj5Pgw6I2xLVPYdl7jvoUG6QaFq3IFX0hzk1UF5FbjSWXTm8
+	 ypXrFoWTTZRzeamC/9sv4YaPK1Eism5CgNZSRweQm13VXhsRtZPFFBxBBDMD513Ew7
+	 LJveHY2HSxGB41mscD3KZdSFlC1NIAj9/Es5S6WYitIRe6Hvezvcb0ypUY61PMx0ox
+	 pE3ZIaHHd6ezdt/mXyiTcbmV3R4uzrt1ykvsIsnX0XbpN9u6Fm1lHjPa9HM+MRIjIH
+	 wAF756wq/3eIw==
+Date: Tue, 17 Mar 2026 13:48:33 +0000
 From: Mark Brown <broonie@kernel.org>
 To: David Sterba <dsterba@suse.cz>
 Cc: David Sterba <dsterba@suse.com>, Filipe Manana <fdmanana@suse.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Qu Wenruo <wqu@suse.com>
 Subject: linux-next: manual merge of the btrfs tree with the btrfs-fixes tree
-Message-ID: <ablbpijj6320hWVQ@sirena.org.uk>
+Message-ID: <ablbsQZEOkzcDrHC@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,11 +42,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="my7knnTzq3QvUCrW"
+	protocol="application/pgp-signature"; boundary="LQEHhWml4Ga9Kg08"
 Content-Disposition: inline
 
 
---my7knnTzq3QvUCrW
+--LQEHhWml4Ga9Kg08
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -54,19 +55,21 @@ Hi all,
 
 Today's linux-next merge of the btrfs tree got a conflict in:
 
-  fs/btrfs/disk-io.c
+  fs/btrfs/inode.c
 
 between commit:
 
-  50242828700f0 ("btrfs: check for NULL root after calls to btrfs_extent_ro=
-ot()")
+  2b4cb4e58f346 ("btrfs: check for NULL root after calls to btrfs_csum_root=
+()")
 
 =66rom the btrfs-fixes tree and commits:
 
-  6960a23c3d592 ("btrfs: check for NULL root after calls to btrfs_extent_ro=
-ot()")
-  a1f82939d6410 ("btrfs: remove max_mirrors argument from write_all_supers(=
-)")
+  95c2b73d28d71 ("btrfs: check for NULL root after calls to btrfs_csum_root=
+()")
+  0d0b5f693bf44 ("btrfs: make add_pending_csums() to take an ordered extent=
+ as parameter")
+  30525e90e1e86 ("btrfs: rename btrfs_csum_file_blocks() to btrfs_insert_da=
+ta_csums()")
 
 =66rom the btrfs tree.
 
@@ -77,625 +80,619 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined fs/btrfs/disk-io.c
-index 01f2dbb698326,45e6dde602744..0000000000000
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@@ -50,7 -50,6 +50,6 @@@
-  #include "relocation.h"
-  #include "scrub.h"
-  #include "super.h"
-- #include "delayed-inode.h"
+diff --combined fs/btrfs/inode.c
+index f643a05208720,8d97a8ad3858b..0000000000000
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@@ -74,7 -74,6 +74,6 @@@
+  #include "delayed-inode.h"
  =20
-  #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
-  				 BTRFS_HEADER_FLAG_RELOC |\
-@@@ -110,19 -109,26 +109,26 @@@ static void csum_tree_block(struct exte
-   * detect blocks that either didn't get written at all or got written
-   * in the wrong place.
-   */
-- int btrfs_buffer_uptodate(struct extent_buffer *eb, u64 parent_transid, b=
-ool atomic)
-+ int btrfs_buffer_uptodate(struct extent_buffer *eb, u64 parent_transid, b=
-ool atomic,
-+ 			  const struct btrfs_tree_parent_check *check)
-  {
-  	if (!extent_buffer_uptodate(eb))
-  		return 0;
+  #define COW_FILE_RANGE_KEEP_LOCKED	(1UL << 0)
+- #define COW_FILE_RANGE_NO_INLINE	(1UL << 1)
  =20
-- 	if (!parent_transid || btrfs_header_generation(eb) =3D=3D parent_transid)
-+ 	if (!parent_transid || btrfs_header_generation(eb) =3D=3D parent_transid=
-) {
-+ 		/*
-+ 		 * On a cache hit, the caller may still need tree parent
-+ 		 * verification before reusing the buffer.
-+ 		 */
-+ 		if (unlikely(check && btrfs_verify_level_key(eb, check)))
-+ 			return -EUCLEAN;
-  		return 1;
-+ 	}
+  struct btrfs_iget_args {
+  	u64 ino;
+@@@ -424,7 -423,7 +423,7 @@@ static inline void btrfs_cleanup_ordere
+  		folio_put(folio);
+  	}
  =20
-  	if (atomic)
-  		return -EAGAIN;
- =20
-- 	if (!extent_buffer_uptodate(eb) ||
-- 	    btrfs_header_generation(eb) !=3D parent_transid) {
-+ 	if (btrfs_header_generation(eb) !=3D parent_transid) {
-  		btrfs_err_rl(eb->fs_info,
-  "parent transid verify failed on logical %llu mirror %u wanted %llu found=
- %llu",
-  			eb->start, eb->read_mirror,
-@@@ -730,7 -736,7 +736,7 @@@ void btrfs_global_root_delete(struct bt
+- 	return btrfs_mark_ordered_io_finished(inode, NULL, offset, bytes, false);
++ 	return btrfs_mark_ordered_io_finished(inode, offset, bytes, false);
   }
  =20
-  struct btrfs_root *btrfs_global_root(struct btrfs_fs_info *fs_info,
-- 				     struct btrfs_key *key)
-+ 				     const struct btrfs_key *key)
-  {
-  	struct rb_node *node;
-  	struct btrfs_root *root =3D NULL;
-@@@ -767,7 -773,7 +773,7 @@@ static u64 btrfs_global_root_id(struct=20
+  static int btrfs_dirty_inode(struct btrfs_inode *inode);
+@@@ -622,6 -621,10 +621,10 @@@ static bool can_cow_file_range_inline(s
+   *
+   * If being used directly, you must have already checked we're allowed to=
+ cow
+   * the range by getting true from can_cow_file_range_inline().
++  *
++  * Return 0 if the inlined extent is created successfully.
++  * Return <0 for critical error, and should be considered as an writeback=
+ error.
++  * Return >0 if can not create an inlined extent (mostly due to lack of m=
+eta space).
+   */
+  static noinline int __cow_file_range_inline(struct btrfs_inode *inode,
+  					    u64 size, size_t compressed_size,
+@@@ -703,55 -706,6 +706,6 @@@ out
+  	return ret;
+  }
  =20
-  struct btrfs_root *btrfs_csum_root(struct btrfs_fs_info *fs_info, u64 byt=
-enr)
-  {
-- 	struct btrfs_key key =3D {
-+ 	const struct btrfs_key key =3D {
-  		.objectid =3D BTRFS_CSUM_TREE_OBJECTID,
-  		.type =3D BTRFS_ROOT_ITEM_KEY,
-  		.offset =3D btrfs_global_root_id(fs_info, bytenr),
-@@@ -778,7 -784,7 +784,7 @@@
- =20
-  struct btrfs_root *btrfs_extent_root(struct btrfs_fs_info *fs_info, u64 b=
-ytenr)
-  {
-- 	struct btrfs_key key =3D {
-+ 	const struct btrfs_key key =3D {
-  		.objectid =3D BTRFS_EXTENT_TREE_OBJECTID,
-  		.type =3D BTRFS_ROOT_ITEM_KEY,
-  		.offset =3D btrfs_global_root_id(fs_info, bytenr),
-@@@ -994,8 -1000,11 +1000,11 @@@ static struct btrfs_root *read_tree_roo
-  		root->node =3D NULL;
-  		goto fail;
-  	}
-- 	if (unlikely(!btrfs_buffer_uptodate(root->node, generation, false))) {
-- 		ret =3D -EIO;
-+=20
-+ 	ret =3D btrfs_buffer_uptodate(root->node, generation, false, &check);
-+ 	if (unlikely(ret <=3D 0)) {
-+ 		if (ret =3D=3D 0)
-+ 			ret =3D -EIO;
-  		goto fail;
-  	}
- =20
-@@@ -2025,11 -2034,6 +2034,6 @@@ static int btrfs_replay_log(struct btrf
-  		btrfs_put_root(log_tree_root);
-  		return ret;
-  	}
-- 	if (unlikely(!extent_buffer_uptodate(log_tree_root->node))) {
-- 		btrfs_err(fs_info, "failed to read log tree");
-- 		btrfs_put_root(log_tree_root);
-- 		return -EIO;
+- static noinline int cow_file_range_inline(struct btrfs_inode *inode,
+- 					  struct folio *locked_folio,
+- 					  u64 offset, u64 end,
+- 					  size_t compressed_size,
+- 					  int compress_type,
+- 					  struct folio *compressed_folio,
+- 					  bool update_i_size)
+- {
+- 	struct extent_state *cached =3D NULL;
+- 	unsigned long clear_flags =3D EXTENT_DELALLOC | EXTENT_DELALLOC_NEW |
+- 		EXTENT_DEFRAG | EXTENT_DO_ACCOUNTING | EXTENT_LOCKED;
+- 	u64 size =3D min_t(u64, i_size_read(&inode->vfs_inode), end + 1);
+- 	int ret;
+-=20
+- 	if (!can_cow_file_range_inline(inode, offset, size, compressed_size))
+- 		return 1;
+-=20
+- 	btrfs_lock_extent(&inode->io_tree, offset, end, &cached);
+- 	ret =3D __cow_file_range_inline(inode, size, compressed_size,
+- 				      compress_type, compressed_folio,
+- 				      update_i_size);
+- 	if (ret > 0) {
+- 		btrfs_unlock_extent(&inode->io_tree, offset, end, &cached);
+- 		return ret;
 - 	}
+-=20
+- 	/*
+- 	 * In the successful case (ret =3D=3D 0 here), cow_file_range will retur=
+n 1.
+- 	 *
+- 	 * Quite a bit further up the callstack in extent_writepage(), ret =3D=
+=3D 1
+- 	 * is treated as a short circuited success and does not unlock the folio,
+- 	 * so we must do it here.
+- 	 *
+- 	 * In the failure case, the locked_folio does get unlocked by
+- 	 * btrfs_folio_end_all_writers, which asserts that it is still locked
+- 	 * at that point, so we must *not* unlock it here.
+- 	 *
+- 	 * The other two callsites in compress_file_range do not have a
+- 	 * locked_folio, so they are not relevant to this logic.
+- 	 */
+- 	if (ret =3D=3D 0)
+- 		locked_folio =3D NULL;
+-=20
+- 	extent_clear_unlock_delalloc(inode, offset, end, locked_folio, &cached,
+- 				     clear_flags, PAGE_UNLOCK |
+- 				     PAGE_START_WRITEBACK | PAGE_END_WRITEBACK);
+- 	return ret;
+- }
+-=20
+  struct async_extent {
+  	u64 start;
+  	u64 ram_size;
+@@@ -797,7 -751,7 +751,7 @@@ static int add_async_extent(struct asyn
+   * options, defragmentation, properties or heuristics.
+   */
+  static inline int inode_need_compress(struct btrfs_inode *inode, u64 star=
+t,
+- 				      u64 end)
++ 				      u64 end, bool check_inline)
+  {
+  	struct btrfs_fs_info *fs_info =3D inode->root->fs_info;
  =20
-  	/* returns with log_tree_root freed on success */
-  	ret =3D btrfs_recover_log_trees(log_tree_root);
-@@@ -2299,6 -2303,15 +2303,15 @@@ static int validate_sys_chunk_array(con
-  		return -EUCLEAN;
-  	}
- =20
-+ 	/* It must hold at least one key and one chunk. */
-+ 	if (unlikely(sys_array_size < sizeof(struct btrfs_disk_key) +
-+ 		     sizeof(struct btrfs_chunk))) {
-+ 		btrfs_err(fs_info, "system chunk array too small %u < %zu",
-+ 			  sys_array_size,
-+ 			  sizeof(struct btrfs_disk_key) + sizeof(struct btrfs_chunk));
-+ 		return -EUCLEAN;
-+ 	}
+@@@ -811,8 -765,10 +765,10 @@@
+  	 * do not even bother try compression, as there will be no space saving
+  	 * and will always fallback to regular write later.
+  	 */
+- 	if (start !=3D 0 && end + 1 - start <=3D fs_info->sectorsize)
++ 	if (end + 1 - start <=3D fs_info->sectorsize &&
++ 	    (!check_inline || (start > 0 || end + 1 < inode->disk_i_size)))
+  		return 0;
 +=20
-  	while (cur < sys_array_size) {
-  		struct btrfs_disk_key *disk_key;
-  		struct btrfs_chunk *chunk;
-@@@ -2365,11 -2378,11 +2378,11 @@@ int btrfs_validate_super(const struct b
+  	/* Defrag ioctl takes precedence over mount options and properties. */
+  	if (inode->defrag_compress =3D=3D BTRFS_DEFRAG_DONT_COMPRESS)
+  		return 0;
+@@@ -890,28 -846,20 +846,20 @@@ static struct folio *compressed_bio_las
+  	return page_folio(phys_to_page(paddr));
+  }
+ =20
+- static void zero_last_folio(struct compressed_bio *cb)
+- {
+- 	struct bio *bio =3D &cb->bbio.bio;
+- 	struct folio *last_folio =3D compressed_bio_last_folio(cb);
+- 	const u32 bio_size =3D bio->bi_iter.bi_size;
+- 	const u32 foffset =3D offset_in_folio(last_folio, bio_size);
+-=20
+- 	folio_zero_range(last_folio, foffset, folio_size(last_folio) - foffset);
+- }
+-=20
+  static void round_up_last_block(struct compressed_bio *cb, u32 blocksize)
+  {
+  	struct bio *bio =3D &cb->bbio.bio;
+  	struct folio *last_folio =3D compressed_bio_last_folio(cb);
+  	const u32 bio_size =3D bio->bi_iter.bi_size;
+  	const u32 foffset =3D offset_in_folio(last_folio, bio_size);
++ 	const u32 padding_len =3D round_up(foffset, blocksize) - foffset;
+  	bool ret;
+ =20
+  	if (IS_ALIGNED(bio_size, blocksize))
+  		return;
+ =20
+- 	ret =3D bio_add_folio(bio, last_folio, round_up(foffset, blocksize) - fo=
+ffset, foffset);
++ 	folio_zero_range(last_folio, foffset, padding_len);
++ 	ret =3D bio_add_folio(bio, last_folio, padding_len, foffset);
+  	/* The remaining part should be merged thus never fail. */
+  	ASSERT(ret);
+  }
+@@@ -935,9 -883,7 +883,7 @@@ static void compress_file_range(struct=20
+  		container_of(work, struct async_chunk, work);
+  	struct btrfs_inode *inode =3D async_chunk->inode;
+  	struct btrfs_fs_info *fs_info =3D inode->root->fs_info;
+- 	struct address_space *mapping =3D inode->vfs_inode.i_mapping;
+  	struct compressed_bio *cb =3D NULL;
+- 	const u32 min_folio_size =3D btrfs_min_folio_size(fs_info);
+  	u64 blocksize =3D fs_info->sectorsize;
+  	u64 start =3D async_chunk->start;
+  	u64 end =3D async_chunk->end;
+@@@ -947,7 -893,6 +893,6 @@@
   	int ret =3D 0;
-  	const bool ignore_flags =3D btrfs_test_opt(fs_info, IGNORESUPERFLAGS);
+  	unsigned long total_compressed =3D 0;
+  	unsigned long total_in =3D 0;
+- 	unsigned int loff;
+  	int compress_type =3D fs_info->compress_type;
+  	int compress_level =3D fs_info->compress_level;
  =20
-- 	if (btrfs_super_magic(sb) !=3D BTRFS_MAGIC) {
-+ 	if (unlikely(btrfs_super_magic(sb) !=3D BTRFS_MAGIC)) {
-  		btrfs_err(fs_info, "no valid FS found");
-  		ret =3D -EINVAL;
-  	}
-- 	if ((btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)) {
-+ 	if (unlikely(btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)) {
-  		if (!ignore_flags) {
-  			btrfs_err(fs_info,
-  			"unrecognized or unsupported super flag 0x%llx",
-@@@ -2381,17 -2394,17 +2394,17 @@@
-  				   btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP);
-  		}
-  	}
-- 	if (btrfs_super_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
-+ 	if (unlikely(btrfs_super_root_level(sb) >=3D BTRFS_MAX_LEVEL)) {
-  		btrfs_err(fs_info, "tree_root level too big: %d >=3D %d",
-  				btrfs_super_root_level(sb), BTRFS_MAX_LEVEL);
-  		ret =3D -EINVAL;
-  	}
-- 	if (btrfs_super_chunk_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
-+ 	if (unlikely(btrfs_super_chunk_root_level(sb) >=3D BTRFS_MAX_LEVEL)) {
-  		btrfs_err(fs_info, "chunk_root level too big: %d >=3D %d",
-  				btrfs_super_chunk_root_level(sb), BTRFS_MAX_LEVEL);
-  		ret =3D -EINVAL;
-  	}
-- 	if (btrfs_super_log_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
-+ 	if (unlikely(btrfs_super_log_root_level(sb) >=3D BTRFS_MAX_LEVEL)) {
-  		btrfs_err(fs_info, "log_root level too big: %d >=3D %d",
-  				btrfs_super_log_root_level(sb), BTRFS_MAX_LEVEL);
-  		ret =3D -EINVAL;
-@@@ -2401,65 -2414,65 +2414,65 @@@
-  	 * Check sectorsize and nodesize first, other check will need it.
-  	 * Check all possible sectorsize(4K, 8K, 16K, 32K, 64K) here.
+@@@ -1009,7 -954,7 +954,7 @@@ again
+  	 * been flagged as NOCOMPRESS.  This flag can change at any time if we
+  	 * discover bad compression ratios.
   	 */
-- 	if (!is_power_of_2(sectorsize) || sectorsize < BTRFS_MIN_BLOCKSIZE ||
-- 	    sectorsize > BTRFS_MAX_METADATA_BLOCKSIZE) {
-+ 	if (unlikely(!is_power_of_2(sectorsize) || sectorsize < BTRFS_MIN_BLOCKS=
-IZE ||
-+ 		     sectorsize > BTRFS_MAX_METADATA_BLOCKSIZE)) {
-  		btrfs_err(fs_info, "invalid sectorsize %llu", sectorsize);
-  		ret =3D -EINVAL;
-  	}
+- 	if (!inode_need_compress(inode, start, end))
++ 	if (!inode_need_compress(inode, start, end, false))
+  		goto cleanup_and_bail_uncompressed;
  =20
-- 	if (!btrfs_supported_blocksize(sectorsize)) {
-+ 	if (unlikely(!btrfs_supported_blocksize(sectorsize))) {
-  		btrfs_err(fs_info,
-  			"sectorsize %llu not yet supported for page size %lu",
-  			sectorsize, PAGE_SIZE);
-  		ret =3D -EINVAL;
-  	}
- =20
-- 	if (!is_power_of_2(nodesize) || nodesize < sectorsize ||
-- 	    nodesize > BTRFS_MAX_METADATA_BLOCKSIZE) {
-+ 	if (unlikely(!is_power_of_2(nodesize) || nodesize < sectorsize ||
-+ 		     nodesize > BTRFS_MAX_METADATA_BLOCKSIZE)) {
-  		btrfs_err(fs_info, "invalid nodesize %llu", nodesize);
-  		ret =3D -EINVAL;
-  	}
-- 	if (nodesize !=3D le32_to_cpu(sb->__unused_leafsize)) {
-+ 	if (unlikely(nodesize !=3D le32_to_cpu(sb->__unused_leafsize))) {
-  		btrfs_err(fs_info, "invalid leafsize %u, should be %llu",
-  			  le32_to_cpu(sb->__unused_leafsize), nodesize);
-  		ret =3D -EINVAL;
-  	}
- =20
-  	/* Root alignment check */
-- 	if (!IS_ALIGNED(btrfs_super_root(sb), sectorsize)) {
-+ 	if (unlikely(!IS_ALIGNED(btrfs_super_root(sb), sectorsize))) {
-  		btrfs_err(fs_info, "tree_root block unaligned: %llu",
-  			  btrfs_super_root(sb));
-  		ret =3D -EINVAL;
-  	}
-- 	if (!IS_ALIGNED(btrfs_super_chunk_root(sb), sectorsize)) {
-+ 	if (unlikely(!IS_ALIGNED(btrfs_super_chunk_root(sb), sectorsize))) {
-  		btrfs_err(fs_info, "chunk_root block unaligned: %llu",
-  			   btrfs_super_chunk_root(sb));
-  		ret =3D -EINVAL;
-  	}
-- 	if (!IS_ALIGNED(btrfs_super_log_root(sb), sectorsize)) {
-+ 	if (unlikely(!IS_ALIGNED(btrfs_super_log_root(sb), sectorsize))) {
-  		btrfs_err(fs_info, "log_root block unaligned: %llu",
-  			  btrfs_super_log_root(sb));
-  		ret =3D -EINVAL;
-  	}
- =20
-- 	if (!fs_info->fs_devices->temp_fsid &&
-- 	    memcmp(fs_info->fs_devices->fsid, sb->fsid, BTRFS_FSID_SIZE) !=3D 0)=
- {
-+ 	if (unlikely(!fs_info->fs_devices->temp_fsid &&
-+ 		     memcmp(fs_info->fs_devices->fsid, sb->fsid, BTRFS_FSID_SIZE) !=3D =
-0)) {
-  		btrfs_err(fs_info,
-  		"superblock fsid doesn't match fsid of fs_devices: %pU !=3D %pU",
-  			  sb->fsid, fs_info->fs_devices->fsid);
-  		ret =3D -EINVAL;
-  	}
- =20
-- 	if (memcmp(fs_info->fs_devices->metadata_uuid, btrfs_sb_fsid_ptr(sb),
-- 		   BTRFS_FSID_SIZE) !=3D 0) {
-+ 	if (unlikely(memcmp(fs_info->fs_devices->metadata_uuid, btrfs_sb_fsid_pt=
-r(sb),
-+ 			    BTRFS_FSID_SIZE) !=3D 0)) {
-  		btrfs_err(fs_info,
-  "superblock metadata_uuid doesn't match metadata uuid of fs_devices: %pU =
-!=3D %pU",
-  			  btrfs_sb_fsid_ptr(sb), fs_info->fs_devices->metadata_uuid);
-  		ret =3D -EINVAL;
-  	}
- =20
-- 	if (memcmp(fs_info->fs_devices->metadata_uuid, sb->dev_item.fsid,
-- 		   BTRFS_FSID_SIZE) !=3D 0) {
-+ 	if (unlikely(memcmp(fs_info->fs_devices->metadata_uuid, sb->dev_item.fsi=
-d,
-+ 			    BTRFS_FSID_SIZE) !=3D 0)) {
-  		btrfs_err(fs_info,
-  			"dev_item UUID does not match metadata fsid: %pU !=3D %pU",
-  			fs_info->fs_devices->metadata_uuid, sb->dev_item.fsid);
-@@@ -2470,9 -2483,9 +2483,9 @@@
-  	 * Artificial requirement for block-group-tree to force newer features
-  	 * (free-space-tree, no-holes) so the test matrix is smaller.
-  	 */
-- 	if (btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE) &&
-- 	    (!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
-- 	     !btrfs_fs_incompat(fs_info, NO_HOLES))) {
-+ 	if (unlikely(btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE) &&
-+ 		     (!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
-+ 		      !btrfs_fs_incompat(fs_info, NO_HOLES)))) {
-  		btrfs_err(fs_info,
-  		"block-group-tree feature requires free-space-tree and no-holes");
-  		ret =3D -EINVAL;
-@@@ -2483,25 -2496,25 +2496,25 @@@
-  		 * Reduce test matrix for remap tree by requiring block-group-tree
-  		 * and no-holes. Free-space-tree is a hard requirement.
-  		 */
-- 		if (!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
-- 		    !btrfs_fs_incompat(fs_info, NO_HOLES) ||
-- 		    !btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE)) {
-+ 		if (unlikely(!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
-+ 			     !btrfs_fs_incompat(fs_info, NO_HOLES) ||
-+ 			     !btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE))) {
-  			btrfs_err(fs_info,
-  "remap-tree feature requires free-space-tree, no-holes, and block-group-t=
-ree");
-  			ret =3D -EINVAL;
-  		}
- =20
-- 		if (btrfs_fs_incompat(fs_info, MIXED_GROUPS)) {
-+ 		if (unlikely(btrfs_fs_incompat(fs_info, MIXED_GROUPS))) {
-  			btrfs_err(fs_info, "remap-tree not supported with mixed-bg");
-  			ret =3D -EINVAL;
-  		}
- =20
-- 		if (btrfs_fs_incompat(fs_info, ZONED)) {
-+ 		if (unlikely(btrfs_fs_incompat(fs_info, ZONED))) {
-  			btrfs_err(fs_info, "remap-tree not supported with zoned devices");
-  			ret =3D -EINVAL;
-  		}
- =20
-- 		if (sectorsize > PAGE_SIZE) {
-+ 		if (unlikely(sectorsize > PAGE_SIZE)) {
-  			btrfs_err(fs_info, "remap-tree not supported when block size > page si=
-ze");
-  			ret =3D -EINVAL;
-  		}
-@@@ -2511,66 -2524,47 +2524,47 @@@
-  	 * Hint to catch really bogus numbers, bitflips or so, more exact checks=
- are
-  	 * done later
-  	 */
-- 	if (btrfs_super_bytes_used(sb) < 6 * btrfs_super_nodesize(sb)) {
-+ 	if (unlikely(btrfs_super_bytes_used(sb) < 6 * btrfs_super_nodesize(sb)))=
- {
-  		btrfs_err(fs_info, "bytes_used is too small %llu",
-  			  btrfs_super_bytes_used(sb));
-  		ret =3D -EINVAL;
-  	}
-- 	if (!is_power_of_2(btrfs_super_stripesize(sb))) {
-+ 	if (unlikely(!is_power_of_2(btrfs_super_stripesize(sb)))) {
-  		btrfs_err(fs_info, "invalid stripesize %u",
-  			  btrfs_super_stripesize(sb));
-  		ret =3D -EINVAL;
-  	}
-- 	if (btrfs_super_num_devices(sb) > (1UL << 31))
-+ 	if (unlikely(btrfs_super_num_devices(sb) > (1UL << 31)))
-  		btrfs_warn(fs_info, "suspicious number of devices: %llu",
-  			   btrfs_super_num_devices(sb));
-- 	if (btrfs_super_num_devices(sb) =3D=3D 0) {
-+ 	if (unlikely(btrfs_super_num_devices(sb) =3D=3D 0)) {
-  		btrfs_err(fs_info, "number of devices is 0");
-  		ret =3D -EINVAL;
-  	}
- =20
-- 	if (mirror_num >=3D 0 &&
-- 	    btrfs_super_bytenr(sb) !=3D btrfs_sb_offset(mirror_num)) {
-- 		btrfs_err(fs_info, "super offset mismatch %llu !=3D %u",
-- 			  btrfs_super_bytenr(sb), BTRFS_SUPER_INFO_OFFSET);
-+ 	if (unlikely(mirror_num >=3D 0 &&
-+ 		     btrfs_super_bytenr(sb) !=3D btrfs_sb_offset(mirror_num))) {
-+ 		btrfs_err(fs_info, "super offset mismatch %llu !=3D %llu",
-+ 			  btrfs_super_bytenr(sb), btrfs_sb_offset(mirror_num));
-  		ret =3D -EINVAL;
-  	}
- =20
-- 	if (ret)
-+ 	if (unlikely(ret))
-  		return ret;
- =20
-  	ret =3D validate_sys_chunk_array(fs_info, sb);
+  	if (0 < inode->defrag_compress && inode->defrag_compress < BTRFS_NR_COMP=
+RESS_TYPES) {
+@@@ -1030,43 -975,13 +975,13 @@@
+  	total_compressed =3D cb->bbio.bio.bi_iter.bi_size;
+  	total_in =3D cur_len;
  =20
 - 	/*
-- 	 * Obvious sys_chunk_array corruptions, it must hold at least one key
-- 	 * and one chunk
+- 	 * Zero the tail end of the last folio, as we might be sending it down
+- 	 * to disk.
 - 	 */
-- 	if (btrfs_super_sys_array_size(sb) > BTRFS_SYSTEM_CHUNK_ARRAY_SIZE) {
-- 		btrfs_err(fs_info, "system chunk array too big %u > %u",
-- 			  btrfs_super_sys_array_size(sb),
-- 			  BTRFS_SYSTEM_CHUNK_ARRAY_SIZE);
-- 		ret =3D -EINVAL;
-- 	}
-- 	if (btrfs_super_sys_array_size(sb) < sizeof(struct btrfs_disk_key)
-- 			+ sizeof(struct btrfs_chunk)) {
-- 		btrfs_err(fs_info, "system chunk array too small %u < %zu",
-- 			  btrfs_super_sys_array_size(sb),
-- 			  sizeof(struct btrfs_disk_key)
-- 			  + sizeof(struct btrfs_chunk));
-- 		ret =3D -EINVAL;
+- 	loff =3D (total_compressed & (min_folio_size - 1));
+- 	if (loff)
+- 		zero_last_folio(cb);
+-=20
+- 	/*
+- 	 * Try to create an inline extent.
+- 	 *
+- 	 * If we didn't compress the entire range, try to create an uncompressed
+- 	 * inline extent, else a compressed one.
+- 	 *
+- 	 * Check cow_file_range() for why we don't even try to create inline
+- 	 * extent for the subpage case.
+- 	 */
+- 	if (total_in < actual_end)
+- 		ret =3D cow_file_range_inline(inode, NULL, start, end, 0,
+- 					    BTRFS_COMPRESS_NONE, NULL, false);
+- 	else
+- 		ret =3D cow_file_range_inline(inode, NULL, start, end, total_compressed,
+- 					    compress_type,
+- 					    bio_first_folio_all(&cb->bbio.bio), false);
+- 	if (ret <=3D 0) {
+- 		cleanup_compressed_bio(cb);
+- 		if (ret < 0)
+- 			mapping_set_error(mapping, -EIO);
+- 		return;
 - 	}
 -=20
   	/*
-  	 * The generation is a global counter, we'll trust it more than the othe=
-rs
-  	 * but it's still possible that it's the one that's wrong.
+  	 * We aren't doing an inline extent. Round the compressed size up to a
+  	 * block size boundary so the allocator does sane things.
   	 */
-- 	if (btrfs_super_generation(sb) < btrfs_super_chunk_root_generation(sb))
-+ 	if (unlikely(btrfs_super_generation(sb) < btrfs_super_chunk_root_generat=
-ion(sb)))
-  		btrfs_warn(fs_info,
-  			"suspicious: generation < chunk_root_generation: %llu < %llu",
-  			btrfs_super_generation(sb),
-  			btrfs_super_chunk_root_generation(sb));
-- 	if (btrfs_super_generation(sb) < btrfs_super_cache_generation(sb)
-- 	    && btrfs_super_cache_generation(sb) !=3D (u64)-1)
-+ 	if (unlikely(btrfs_super_generation(sb) < btrfs_super_cache_generation(s=
-b) &&
-+ 		     btrfs_super_cache_generation(sb) !=3D (u64)-1))
-  		btrfs_warn(fs_info,
-  			"suspicious: generation < cache_generation: %llu < %llu",
-  			btrfs_super_generation(sb),
-@@@ -2601,7 -2595,7 +2595,7 @@@ static int btrfs_validate_write_super(s
-  	int ret;
+- 	total_compressed =3D ALIGN(total_compressed, blocksize);
+  	round_up_last_block(cb, blocksize);
++ 	total_compressed =3D cb->bbio.bio.bi_iter.bi_size;
++ 	ASSERT(IS_ALIGNED(total_compressed, blocksize));
  =20
-  	ret =3D btrfs_validate_super(fs_info, sb, -1);
-- 	if (ret < 0)
-+ 	if (unlikely(ret < 0))
-  		goto out;
-  	if (unlikely(!btrfs_supported_super_csum(btrfs_super_csum_type(sb)))) {
-  		ret =3D -EUCLEAN;
-@@@ -2618,7 -2612,7 +2612,7 @@@
-  		goto out;
-  	}
-  out:
-- 	if (ret < 0)
-+ 	if (unlikely(ret < 0))
-  		btrfs_err(fs_info,
-  		"super block corruption detected before writing it to disk");
-  	return ret;
-@@@ -2639,11 -2633,6 +2633,6 @@@ static int load_super_root(struct btrfs
-  		root->node =3D NULL;
-  		return ret;
-  	}
-- 	if (unlikely(!extent_buffer_uptodate(root->node))) {
-- 		free_extent_buffer(root->node);
-- 		root->node =3D NULL;
-- 		return -EIO;
+  	/*
+  	 * One last check to make sure the compression is really a win, compare
+@@@ -1437,11 -1352,6 +1352,6 @@@ free_reserved
+   *
+   * When this function fails, it unlocks all folios except @locked_folio.
+   *
+-  * When this function successfully creates an inline extent, it returns 1=
+ and
+-  * unlocks all folios including locked_folio and starts I/O on them.
+-  * (In reality inline extents are limited to a single block, so locked_fo=
+lio is
+-  * the only folio handled anyway).
+-  *
+   * When this function succeed and creates a normal extent, the folio lock=
+ing
+   * status depends on the passed in flags:
+   *
+@@@ -1485,25 -1395,6 +1395,6 @@@ static noinline int cow_file_range(stru
+  	ASSERT(num_bytes <=3D btrfs_super_total_bytes(fs_info->super_copy));
+ =20
+  	inode_should_defrag(inode, start, end, num_bytes, SZ_64K);
+-=20
+- 	if (!(flags & COW_FILE_RANGE_NO_INLINE)) {
+- 		/* lets try to make an inline extent */
+- 		ret =3D cow_file_range_inline(inode, locked_folio, start, end, 0,
+- 					    BTRFS_COMPRESS_NONE, NULL, false);
+- 		if (ret <=3D 0) {
+- 			/*
+- 			 * We succeeded, return 1 so the caller knows we're done
+- 			 * with this page and already handled the IO.
+- 			 *
+- 			 * If there was an error then cow_file_range_inline() has
+- 			 * already done the cleanup.
+- 			 */
+- 			if (ret =3D=3D 0)
+- 				ret =3D 1;
+- 			goto done;
+- 		}
 - 	}
- =20
-  	btrfs_set_root_node(&root->root_item, root->node);
-  	root->commit_root =3D btrfs_root_node(root);
-@@@ -3766,8 -3755,7 +3755,7 @@@ static void btrfs_end_super_write(struc
-   * Write superblock @sb to the @device. Do not wait for completion, all t=
-he
-   * folios we use for writing are locked.
-   *
--  * Write @max_mirrors copies of the superblock, where 0 means default tha=
-t fit
--  * the expected device size at commit time. Note that max_mirrors must be
-+  * Write @max_mirrors copies of the superblock. Note that max_mirrors mus=
-t be
-   * same for write and wait phases.
-   *
-   * Return number of errors when folio is not found or submission fails.
-@@@ -3783,9 -3771,6 +3771,6 @@@ static int write_dev_supers(struct btrf
- =20
-  	atomic_set(&device->sb_write_errors, 0);
- =20
-- 	if (max_mirrors =3D=3D 0)
-- 		max_mirrors =3D BTRFS_SUPER_MIRROR_MAX;
 -=20
-  	for (i =3D 0; i < max_mirrors; i++) {
-  		struct folio *folio;
-  		struct bio *bio;
-@@@ -3870,16 -3855,13 +3855,13 @@@ static int wait_dev_supers(struct btrfs
-  	int ret;
-  	u64 bytenr;
+  	alloc_hint =3D btrfs_get_extent_allocation_hint(inode, start, num_bytes);
  =20
-- 	if (max_mirrors =3D=3D 0)
-- 		max_mirrors =3D BTRFS_SUPER_MIRROR_MAX;
--=20
-  	for (i =3D 0; i < max_mirrors; i++) {
-  		struct folio *folio;
- =20
-  		ret =3D btrfs_sb_log_location(device, i, READ, &bytenr);
-  		if (ret =3D=3D -ENOENT) {
-  			break;
-- 		} else if (ret < 0) {
-+ 		} else if (unlikely(ret < 0)) {
-  			errors++;
-  			if (i =3D=3D 0)
-  				primary_failed =3D true;
-@@@ -3901,9 -3883,8 +3883,8 @@@
+  	/*
+@@@ -1581,7 -1472,6 +1472,6 @@@
   	}
+  	extent_clear_unlock_delalloc(inode, orig_start, end, locked_folio, &cach=
+ed,
+  				     EXTENT_LOCKED | EXTENT_DELALLOC, page_ops);
+- done:
+  	if (done_offset)
+  		*done_offset =3D end;
+  	return ret;
+@@@ -1701,7 -1591,7 +1591,7 @@@ static bool run_delalloc_compressed(str
+  	struct async_cow *ctx;
+  	struct async_chunk *async_chunk;
+  	unsigned long nr_pages;
+- 	u64 num_chunks =3D DIV_ROUND_UP(end - start, SZ_512K);
++ 	u64 num_chunks =3D DIV_ROUND_UP(end - start, BTRFS_COMPRESSION_CHUNK_SIZ=
+E);
+  	int i;
+  	unsigned nofs_flag;
+  	const blk_opf_t write_flags =3D wbc_to_write_flags(wbc);
+@@@ -1718,7 -1608,7 +1608,7 @@@
+  	atomic_set(&ctx->num_chunks, num_chunks);
  =20
-  	errors +=3D atomic_read(&device->sb_write_errors);
-- 	if (errors >=3D BTRFS_SUPER_PRIMARY_WRITE_ERROR)
-- 		primary_failed =3D true;
-- 	if (primary_failed) {
+  	for (i =3D 0; i < num_chunks; i++) {
+- 		u64 cur_end =3D min(end, start + SZ_512K - 1);
++ 		u64 cur_end =3D min(end, start + BTRFS_COMPRESSION_CHUNK_SIZE - 1);
+ =20
+  		/*
+  		 * igrab is called higher up in the call chain, take only the
+@@@ -1853,7 -1743,7 +1743,7 @@@ static int fallback_to_cow(struct btrfs
+  	 */
+  	btrfs_lock_extent(io_tree, start, end, &cached_state);
+  	count =3D btrfs_count_range_bits(io_tree, &range_start, end, range_bytes,
+- 				       EXTENT_NORESERVE, 0, NULL);
++ 				       EXTENT_NORESERVE, false, NULL);
+  	if (count > 0 || is_space_ino || is_reloc_ino) {
+  		u64 bytes =3D count;
+  		struct btrfs_fs_info *fs_info =3D inode->root->fs_info;
+@@@ -1884,7 -1774,7 +1774,7 @@@
+  	 * a locked folio, which can race with writeback.
+  	 */
+  	ret =3D cow_file_range(inode, locked_folio, start, end, NULL,
+- 			     COW_FILE_RANGE_NO_INLINE | COW_FILE_RANGE_KEEP_LOCKED);
++ 			     COW_FILE_RANGE_KEEP_LOCKED);
+  	ASSERT(ret !=3D 1);
+  	return ret;
+  }
+@@@ -1936,6 -1826,11 +1826,11 @@@ static int can_nocow_file_extent(struc
+  	int ret =3D 0;
+  	bool nowait =3D path->nowait;
+ =20
++ 	/* If there are pending snapshots for this root, we must do COW. */
++ 	if (args->writeback_path && !is_freespace_inode &&
++ 	    atomic_read(&root->snapshot_force_cow))
++ 		goto out;
 +=20
-+ 	if (unlikely(primary_failed || errors >=3D BTRFS_SUPER_PRIMARY_WRITE_ERR=
-OR)) {
-  		btrfs_err(device->fs_info, "error writing primary super block to device=
- %llu",
-  			  device->devid);
-  		return -1;
-@@@ -3954,7 -3935,7 +3935,7 @@@ static bool wait_dev_flush(struct btrfs
+  	fi =3D btrfs_item_ptr(leaf, path->slots[0], struct btrfs_file_extent_ite=
+m);
+  	extent_type =3D btrfs_file_extent_type(leaf, fi);
  =20
-  	wait_for_completion_io(&device->flush_wait);
- =20
-- 	if (bio->bi_status) {
-+ 	if (unlikely(bio->bi_status)) {
-  		set_bit(BTRFS_DEV_STATE_FLUSH_FAILED, &device->dev_state);
-  		btrfs_dev_stat_inc_and_print(device, BTRFS_DEV_STAT_FLUSH_ERRS);
-  		return true;
-@@@ -3992,7 -3973,7 +3973,7 @@@ static int barrier_all_devices(struct b
-  	list_for_each_entry(dev, head, dev_list) {
-  		if (test_bit(BTRFS_DEV_STATE_MISSING, &dev->dev_state))
-  			continue;
-- 		if (!dev->bdev) {
-+ 		if (unlikely(!dev->bdev)) {
-  			errors_wait++;
-  			continue;
-  		}
-@@@ -4000,7 -3981,7 +3981,7 @@@
-  		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))
-  			continue;
- =20
-- 		if (wait_dev_flush(dev))
-+ 		if (unlikely(wait_dev_flush(dev)))
-  			errors_wait++;
+@@@ -1997,11 -1892,6 +1892,6 @@@
+  		path =3D NULL;
   	}
  =20
-@@@ -4043,26 -4024,27 +4024,27 @@@ int btrfs_get_num_tolerated_disk_barrie
-  	return min_tolerated;
+- 	/* If there are pending snapshots for this root, we must COW. */
+- 	if (args->writeback_path && !is_freespace_inode &&
+- 	    atomic_read(&root->snapshot_force_cow))
+- 		goto out;
+-=20
+  	args->file_extent.num_bytes =3D min(args->end + 1, extent_end) - args->s=
+tart;
+  	args->file_extent.offset +=3D args->start - key->offset;
+  	io_start =3D args->file_extent.disk_bytenr + args->file_extent.offset;
+@@@ -2435,6 -2325,91 +2325,91 @@@ static bool should_nocow(struct btrfs_i
+  	return false;
   }
  =20
-- int write_all_supers(struct btrfs_fs_info *fs_info, int max_mirrors)
-+ int write_all_supers(struct btrfs_trans_handle *trans)
-  {
-+ 	struct btrfs_fs_info *fs_info =3D trans->fs_info;
-  	struct list_head *head;
-  	struct btrfs_device *dev;
-  	struct btrfs_super_block *sb;
-  	struct btrfs_dev_item *dev_item;
-+ 	int max_mirrors;
-  	int ret;
-  	int do_barriers;
-  	int max_errors;
-  	int total_errors =3D 0;
-- 	u64 flags;
- =20
-  	do_barriers =3D !btrfs_test_opt(fs_info, NOBARRIER);
- =20
-- 	/*
-- 	 * max_mirrors =3D=3D 0 indicates we're from commit_transaction,
-- 	 * not from fsync where the tree roots in fs_info have not
-- 	 * been consistent on disk.
-- 	 */
-- 	if (max_mirrors =3D=3D 0) {
-+ 	if (trans->transaction->state < TRANS_STATE_UNBLOCKED) {
-+ 		/* We are called from fsync. */
-+ 		max_mirrors =3D 1;
-+ 	} else {
-+ 		/* We are called from transaction commit. */
-+ 		max_mirrors =3D BTRFS_SUPER_MIRROR_MAX;
-  		ret =3D backup_super_roots(fs_info);
-  		if (ret < 0)
-  			return ret;
-@@@ -4077,17 -4059,19 +4059,19 @@@
- =20
-  	if (do_barriers) {
-  		ret =3D barrier_all_devices(fs_info);
-- 		if (ret) {
-+ 		if (unlikely(ret)) {
-  			mutex_unlock(
-  				&fs_info->fs_devices->device_list_mutex);
-- 			btrfs_handle_fs_error(fs_info, ret,
-- 					      "errors while submitting device barriers.");
-+ 			btrfs_abort_transaction(trans, ret);
-+ 			btrfs_err(fs_info, "error while submitting device barriers");
-  			return ret;
-  		}
-  	}
- =20
-+ 	btrfs_set_super_flags(sb, btrfs_super_flags(sb) | BTRFS_HEADER_FLAG_WRIT=
-TEN);
++ /*
++  * Return 0 if an inlined extent is created successfully.
++  * Return <0 if critical error happened.
++  * Return >0 if an inline extent can not be created.
++  */
++ static int run_delalloc_inline(struct btrfs_inode *inode, struct folio *l=
+ocked_folio)
++ {
++ 	struct btrfs_fs_info *fs_info =3D inode->root->fs_info;
++ 	struct compressed_bio *cb =3D NULL;
++ 	struct extent_state *cached =3D NULL;
++ 	const u64 i_size =3D i_size_read(&inode->vfs_inode);
++ 	const u32 blocksize =3D fs_info->sectorsize;
++ 	int compress_type =3D fs_info->compress_type;
++ 	int compress_level =3D fs_info->compress_level;
++ 	u32 compressed_size =3D 0;
++ 	int ret;
 +=20
-  	list_for_each_entry(dev, head, dev_list) {
-- 		if (!dev->bdev) {
-+ 		if (unlikely(!dev->bdev)) {
-  			total_errors++;
-  			continue;
-  		}
-@@@ -4109,19 -4093,17 +4093,17 @@@
-  		memcpy(dev_item->fsid, dev->fs_devices->metadata_uuid,
-  		       BTRFS_FSID_SIZE);
++ 	ASSERT(folio_pos(locked_folio) =3D=3D 0);
++=20
++ 	if (btrfs_inode_can_compress(inode) &&
++ 	    inode_need_compress(inode, 0, blocksize, true)) {
++ 		if (inode->defrag_compress > 0 &&
++ 		    inode->defrag_compress < BTRFS_NR_COMPRESS_TYPES) {
++ 			compress_type =3D inode->defrag_compress;
++ 			compress_level =3D inode->defrag_compress_level;
++ 		} else if (inode->prop_compress) {
++ 			compress_type =3D inode->prop_compress;
++ 		}
++ 		cb =3D btrfs_compress_bio(inode, 0, blocksize, compress_type, compress_=
+level, 0);
++ 		if (IS_ERR(cb)) {
++ 			cb =3D NULL;
++ 			/* Just fall back to non-compressed case. */
++ 		} else {
++ 			compressed_size =3D cb->bbio.bio.bi_iter.bi_size;
++ 		}
++ 	}
++ 	if (!can_cow_file_range_inline(inode, 0, i_size, compressed_size)) {
++ 		if (cb)
++ 			cleanup_compressed_bio(cb);
++ 		return 1;
++ 	}
++=20
++ 	btrfs_lock_extent(&inode->io_tree, 0, blocksize - 1, &cached);
++ 	if (cb) {
++ 		ret =3D __cow_file_range_inline(inode, i_size, compressed_size, compres=
+s_type,
++ 					      bio_first_folio_all(&cb->bbio.bio), false);
++ 		cleanup_compressed_bio(cb);
++ 		cb =3D NULL;
++ 	} else {
++ 		ret =3D __cow_file_range_inline(inode, i_size, 0, BTRFS_COMPRESS_NONE,
++ 					      NULL, false);
++ 	}
++ 	/*
++ 	 * We failed to insert inline extent due to lack of meta space.
++ 	 * Just unlock the extent io range and fallback to regular COW/NOCOW pat=
+h.
++ 	 */
++ 	if (ret > 0) {
++ 		btrfs_unlock_extent(&inode->io_tree, 0, blocksize - 1, &cached);
++ 		return ret;
++ 	}
++=20
++ 	/*
++ 	 * In the successful case (ret =3D=3D 0 here), btrfs_run_delalloc_range()
++ 	 * will return 1.
++ 	 *
++ 	 * Quite a bit further up the callstack in extent_writepage(), ret =3D=
+=3D 1
++ 	 * is treated as a short circuited success and does not unlock the folio,
++ 	 * so we must do it here.
++ 	 *
++ 	 * For failure case, the @locked_folio does get unlocked by
++ 	 * btrfs_folio_end_lock_bitmap(), so we must *not* unlock it here.
++ 	 *
++ 	 * So if ret =3D=3D 0, we let extent_clear_unlock_delalloc() to unlock t=
+he
++ 	 * folio by passing NULL as @locked_folio.
++ 	 * Otherwise pass @locked_folio as usual.
++ 	 */
++ 	if (ret =3D=3D 0)
++ 		locked_folio =3D NULL;
++ 	extent_clear_unlock_delalloc(inode, 0, blocksize - 1, locked_folio, &cac=
+hed,
++ 				     EXTENT_DELALLOC | EXTENT_DELALLOC_NEW | EXTENT_DEFRAG |
++ 				     EXTENT_DO_ACCOUNTING | EXTENT_LOCKED,
++ 				     PAGE_UNLOCK | PAGE_START_WRITEBACK | PAGE_END_WRITEBACK);
++ 	return ret;
++ }
++=20
+  /*
+   * Function to process delayed allocation (create CoW) for ranges which a=
+re
+   * being touched for the first time.
+@@@ -2451,11 -2426,26 +2426,26 @@@ int btrfs_run_delalloc_range(struct btr
+  	ASSERT(!(end <=3D folio_pos(locked_folio) ||
+  		 start >=3D folio_next_pos(locked_folio)));
  =20
-- 		flags =3D btrfs_super_flags(sb);
-- 		btrfs_set_super_flags(sb, flags | BTRFS_HEADER_FLAG_WRITTEN);
--=20
-  		ret =3D btrfs_validate_write_super(fs_info, sb);
-  		if (unlikely(ret < 0)) {
-  			mutex_unlock(&fs_info->fs_devices->device_list_mutex);
-- 			btrfs_handle_fs_error(fs_info, -EUCLEAN,
-- 				"unexpected superblock corruption detected");
-- 			return -EUCLEAN;
-+ 			btrfs_abort_transaction(trans, ret);
-+ 			btrfs_err(fs_info,
-+ 			  "unexpected superblock corruption before writing it");
++ 	if (start =3D=3D 0 && end + 1 <=3D inode->root->fs_info->sectorsize &&
++ 	    end + 1 >=3D inode->disk_i_size) {
++ 		int ret;
++=20
++ 		ret =3D run_delalloc_inline(inode, locked_folio);
++ 		if (ret < 0)
 + 			return ret;
++ 		if (ret =3D=3D 0)
++ 			return 1;
++ 		/*
++ 		 * Continue regular handling if we can not create an
++ 		 * inlined extent.
++ 		 */
++ 	}
++=20
+  	if (should_nocow(inode, start, end))
+  		return run_delalloc_nocow(inode, locked_folio, start, end);
+ =20
+  	if (btrfs_inode_can_compress(inode) &&
+- 	    inode_need_compress(inode, start, end) &&
++ 	    inode_need_compress(inode, start, end, false) &&
+  	    run_delalloc_compressed(inode, locked_folio, start, end, wbc))
+  		return 1;
+ =20
+@@@ -2745,17 -2735,19 +2735,19 @@@ void btrfs_clear_delalloc_extent(struc
+  }
+ =20
+  /*
+-  * given a list of ordered sums record them in the inode.  This happens
+-  * at IO completion time based on sums calculated at bio submission time.
++  * Given an ordered extent and insert all its checksums into the csum tre=
+e.
++  *
++  * This happens at IO completion time based on sums calculated at bio
++  * submission time.
+   */
+  static int add_pending_csums(struct btrfs_trans_handle *trans,
+- 			     struct list_head *list)
++ 			     struct btrfs_ordered_extent *oe)
+  {
+  	struct btrfs_ordered_sum *sum;
+  	struct btrfs_root *csum_root =3D NULL;
+  	int ret;
+ =20
+- 	list_for_each_entry(sum, list, list) {
++ 	list_for_each_entry(sum, &oe->csum_list, list) {
+  		if (!csum_root) {
+  			csum_root =3D btrfs_csum_root(trans->fs_info,
+  						    sum->logical);
+@@@ -2767,7 -2759,7 +2759,7 @@@
+  			}
   		}
- =20
-  		ret =3D write_dev_supers(dev, sb, max_mirrors);
-- 		if (ret)
-+ 		if (unlikely(ret))
-  			total_errors++;
+  		trans->adding_csums =3D true;
+- 		ret =3D btrfs_csum_file_blocks(trans, csum_root, sum);
++ 		ret =3D btrfs_insert_data_csums(trans, csum_root, sum);
+  		trans->adding_csums =3D false;
+  		if (ret)
+  			return ret;
+@@@ -2956,7 -2948,9 +2948,9 @@@ out_page
+  		 * to reflect the errors and clean the page.
+  		 */
+  		mapping_set_error(folio->mapping, ret);
+- 		btrfs_mark_ordered_io_finished(inode, folio, page_start,
++ 		btrfs_folio_clear_ordered(fs_info, folio, page_start,
++ 					  folio_size(folio));
++ 		btrfs_mark_ordered_io_finished(inode, page_start,
+  					       folio_size(folio), !ret);
+  		folio_clear_dirty_for_io(folio);
   	}
-  	if (unlikely(total_errors > max_errors)) {
-@@@ -4130,29 -4112,27 +4112,27 @@@
-  		mutex_unlock(&fs_info->fs_devices->device_list_mutex);
+@@@ -3271,8 -3265,8 +3265,8 @@@ int btrfs_finish_one_ordered(struct btr
  =20
-  		/* FUA is masked off if unsupported and can't be the reason */
-- 		btrfs_handle_fs_error(fs_info, -EIO,
-- 				      "%d errors while writing supers",
-- 				      total_errors);
-+ 		btrfs_abort_transaction(trans, -EIO);
-+ 		btrfs_err(fs_info, "%d errors while writing supers", total_errors);
-  		return -EIO;
+  	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+  		/* Logic error */
+- 		ASSERT(list_empty(&ordered_extent->list));
+- 		if (unlikely(!list_empty(&ordered_extent->list))) {
++ 		ASSERT(list_empty(&ordered_extent->csum_list));
++ 		if (unlikely(!list_empty(&ordered_extent->csum_list))) {
+  			ret =3D -EINVAL;
+  			btrfs_abort_transaction(trans, ret);
+  			goto out;
+@@@ -3321,7 -3315,7 +3315,7 @@@
+  		goto out;
   	}
  =20
-  	total_errors =3D 0;
-  	list_for_each_entry(dev, head, dev_list) {
-- 		if (!dev->bdev)
-+ 		if (unlikely(!dev->bdev))
-  			continue;
-  		if (!test_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &dev->dev_state) ||
-  		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))
-  			continue;
+- 	ret =3D add_pending_csums(trans, &ordered_extent->list);
++ 	ret =3D add_pending_csums(trans, ordered_extent);
+  	if (unlikely(ret)) {
+  		btrfs_abort_transaction(trans, ret);
+  		goto out;
+@@@ -3427,7 -3421,7 +3421,7 @@@ out
+  	 * This needs to be done to make sure anybody waiting knows we are done
+  	 * updating everything for this ordered extent.
+  	 */
+- 	btrfs_remove_ordered_extent(inode, ordered_extent);
++ 	btrfs_remove_ordered_extent(ordered_extent);
  =20
-  		ret =3D wait_dev_supers(dev, max_mirrors);
-- 		if (ret)
-+ 		if (unlikely(ret))
-  			total_errors++;
+  	/* once for us */
+  	btrfs_put_ordered_extent(ordered_extent);
+@@@ -4697,7 -4691,7 +4691,7 @@@ static noinline int may_destroy_subvol(
+  	dir_id =3D btrfs_super_root_dir(fs_info->super_copy);
+  	di =3D btrfs_lookup_dir_item(NULL, fs_info->tree_root, path,
+  				   dir_id, &name, 0);
+- 	if (di && !IS_ERR(di)) {
++ 	if (!IS_ERR_OR_NULL(di)) {
+  		btrfs_dir_item_key_to_cpu(path->nodes[0], di, &key);
+  		if (key.objectid =3D=3D btrfs_root_id(root)) {
+  			ret =3D -EPERM;
+@@@ -6859,7 -6853,7 +6853,7 @@@ int btrfs_create_new_inode(struct btrfs
+  		}
+  	} else {
+  		ret =3D btrfs_add_link(trans, BTRFS_I(dir), BTRFS_I(inode), name,
+- 				     0, BTRFS_I(inode)->dir_index);
++ 				     false, BTRFS_I(inode)->dir_index);
+  		if (unlikely(ret)) {
+  			btrfs_abort_transaction(trans, ret);
+  			goto discard;
+@@@ -7075,7 -7069,7 +7069,7 @@@ static int btrfs_link(struct dentry *ol
+  	inode_set_ctime_current(inode);
+ =20
+  	ret =3D btrfs_add_link(trans, BTRFS_I(dir), BTRFS_I(inode),
+- 			     &fname.disk_name, 1, index);
++ 			     &fname.disk_name, true, index);
+  	if (ret)
+  		goto fail;
+ =20
+@@@ -8173,7 -8167,7 +8167,7 @@@ void btrfs_destroy_inode(struct inode *
+  			if (!freespace_inode)
+  				btrfs_lockdep_acquire(root->fs_info, btrfs_ordered_extent);
+ =20
+- 			btrfs_remove_ordered_extent(inode, ordered);
++ 			btrfs_remove_ordered_extent(ordered);
+  			btrfs_put_ordered_extent(ordered);
+  			btrfs_put_ordered_extent(ordered);
+  		}
+@@@ -8495,14 -8489,14 +8489,14 @@@ static int btrfs_rename_exchange(struc
   	}
-  	mutex_unlock(&fs_info->fs_devices->device_list_mutex);
-  	if (unlikely(total_errors > max_errors)) {
-- 		btrfs_handle_fs_error(fs_info, -EIO,
-- 				      "%d errors while writing supers",
-- 				      total_errors);
-+ 		btrfs_abort_transaction(trans, -EIO);
-+ 		btrfs_err(fs_info, "%d errors while writing supers", total_errors);
-  		return -EIO;
+ =20
+  	ret =3D btrfs_add_link(trans, BTRFS_I(new_dir), BTRFS_I(old_inode),
+- 			     new_name, 0, old_idx);
++ 			     new_name, false, old_idx);
+  	if (unlikely(ret)) {
+  		btrfs_abort_transaction(trans, ret);
+  		goto out_fail;
   	}
-  	return 0;
+ =20
+  	ret =3D btrfs_add_link(trans, BTRFS_I(old_dir), BTRFS_I(new_inode),
+- 			     old_name, 0, new_idx);
++ 			     old_name, false, new_idx);
+  	if (unlikely(ret)) {
+  		btrfs_abort_transaction(trans, ret);
+  		goto out_fail;
+@@@ -8793,7 -8787,7 +8787,7 @@@ static int btrfs_rename(struct mnt_idma
+  	}
+ =20
+  	ret =3D btrfs_add_link(trans, BTRFS_I(new_dir), BTRFS_I(old_inode),
+- 			     &new_fname.disk_name, 0, index);
++ 			     &new_fname.disk_name, false, index);
+  	if (unlikely(ret)) {
+  		btrfs_abort_transaction(trans, ret);
+  		goto out_fail;
 
---my7knnTzq3QvUCrW
+--LQEHhWml4Ga9Kg08
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm5W6YACgkQJNaLcl1U
-h9B8Ggf9Gx9GDqSPJ9Rlf1QPnkLA79kFzK5lsqEFqk7/7qpoEvMWb2wDjXEtDQSO
-egPEArbx+LdVxM/YIIDfkMZTg9NIKt8mIfdV3GCQv3QAltddNAK0sy3+4Ep2G3uL
-tMxhCcJ2cUB0CPqSgn2F9HDj6K0kilpSFQnVhHq/07zT9kERFo08M6/c4dw8/P4N
-TEuvl0bXvUQ8pT1loufyj8K8pUkKYMOwVzBl2oCsQAyEN3a7Zt6jaUEgm9RynPC1
-qaoAHZtT9UnWqYW3+llJrrNxG/ujewzKZDSBjJ1T+8IKben9UvAsyZ/tThNJTiS0
-G5azF63K+oRloS6bjP8a/5PxQkwhOw==
-=l/z+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm5W7EACgkQJNaLcl1U
+h9BC3wf/Xhc4ZJzQYuQBKG6BsbaewtGdDfMEmfN+aKA9xoH5ereHyDTpMz4L94i2
+liblGM8RycPZYmbWdzUFQL8ahb93bVLT8zavfonYioZ2UXThZRkiAB/NkNpDVFH8
+zPD4blf13x6/aeRmzoPVau8bsmKqqGssPwJdNVeF2G5kcPLFQn7OYi4ijbZRIdnT
+3Riqiu7JU8gEDOr1NzqEuv/isUFhvACGgPkoWuhF6rmla2ENgu9K/eXPhTRDULcB
+TmGToEA8O+WJBwVHWOvE+eUx+e/BaMSetLHpaEyZfX2cM6uWqhdj+ISY91JZU0p6
+nEC+IFgt5ghXLtjVeyEeVfhlv3PDuQ==
+=WZee
 -----END PGP SIGNATURE-----
 
---my7knnTzq3QvUCrW--
+--LQEHhWml4Ga9Kg08--
