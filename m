@@ -1,109 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDF53D7D70;
-	Wed, 18 Mar 2026 19:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124453033FF;
+	Wed, 18 Mar 2026 22:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773860909; cv=none; b=UZvNR0Qyqp3QO+w9TuvPZ07jnx3dURpgxnbpVf4zFUtdcUtJO6AMxV9uY2iNVUkdIAIsEHzO6KIIhoscTiVUcTY9j2kpRP5xCB8LRFzk61TytxMaasUApXr41hKQ51znQp67vy6EAn8Bi/08ftaiNTTFkbcIwOBT4HDXcMvWxgw=
+	t=1773871963; cv=none; b=nLQVal4WUAZt4MeI4P0+l0syBHufqNpLC+clqU/0son6Ce7XEkgfo1R/3S0xJtDVd6+8N/Si/VnepId8zYN/T0enls4kqScnoXYzxhpTUN8qqGoKBZwJdJwLfX8ybjDBlBYKEf/xfncbyApRX0qAdBYwK3/QNoAXeckhwYYpW7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773860909; c=relaxed/simple;
-	bh=4c635ByKKB8h+jvuMjY1GkQZ5DofyEBnDp4MPKYzvxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1NsK7RXyPRdGOxel0NxmMzeH8Qybf/Rm7u7W7h3UG6rysI8CiJGLV+iWlEL9hUQvdSon8DlcpsZyQv5rHnKNGgXimmehXzyyDqxhWLZOlKgt8gF4ruU7zPPri4cjseg+VOn4WXycnGDN4bw/IEGS/RbelsGMj1orXuKMBREfqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DszX8MXZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773871963; c=relaxed/simple;
+	bh=A/YFEWmQFkLBq9Mlf1e19+zH9zHfMrictWL2PzF8c/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BWt0JRCB1Wot/Bi7lkmHZ7eqcsZ/32QGj4IiTmCsPyZNmkrnTEOvkoPs8WIRt7BXDetu7JxZpM043VdCdIeb2QORPL9DLBFJjUiyXJn8D8Jy4Tze+CrGKP4BZm3snZa7FZ9hnrgWtf3LBTI0U6+UO70R/d4W3R/M/m+bqBFeI2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZsGk+gZu; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DszX8MXZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E6F1C19421;
-	Wed, 18 Mar 2026 19:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773860908;
-	bh=4c635ByKKB8h+jvuMjY1GkQZ5DofyEBnDp4MPKYzvxc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DszX8MXZj1X9nigHmx/ekhkElxJVeRdWsb/97/nf0+lGiadD6brLchtcdx/qtwGI7
-	 +kX5beS84M6bQDf3z7V/lqGHMJNMsmEHZR0iYHgGWQqbRmBG//FSuXDBQiMU+HKgYG
-	 CrGokH4NAiCmV0NQBwm8ng8huPaIIRBa0ObKdXUSzD20c/WakLjIeFAEEJKq359m4Y
-	 eQNH3X+sgPIJ2ng56W4lsgylOAys3yg05S9K/V3cpXXJQ1wIg57nonXJ56fXaV4/yt
-	 dnhF2by7sWJAJW22a32xCuN6uWTv9h7DjCDkzsIEcoP00nvnwQdanylzzEJcYcRnYj
-	 qFU5Bc7XEl+iw==
-Date: Wed, 18 Mar 2026 19:08:24 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>
-Cc: David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm-unstable tree
-Message-ID: <885f722d-a639-4a62-b810-2e0cd6c15867@sirena.org.uk>
-References: <abqtxbX0eW1Ljdhx@sirena.org.uk>
- <20260318112001.d67d0e84a4d69b991f0f97f4@linux-foundation.org>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZsGk+gZu"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=wx4UUAh+LQNE6uFenGJ2i4m1LUK5OoHCvU8Zj8sS1Ns=; b=ZsGk+gZuB3ZWjDO2sqvsNZUScc
+	/rjPKX4k5VBbZreyFYaNIr/molV8erbCZXRDPu9BPmmHSfYLz5kYvyWywustRd9gBHszccJjN1NjO
+	WQ0jKvDkXjiMDh4DyEjNcpziT6NB1LXs5rBWpxNkd1xLAF7sP6NAiNQXB9m6tSGvlPTKERgZNAiwm
+	8amej3cSK4M+zH5Up1AJjAvCGJzn5QSXKK29zb5FxtppDqRp8KQwyJRcLYFod7z34P0tXoKD3OnaM
+	8eDCwD84tJ+r/WQAKem5g/R42XnqnRYK8P0oX9VoYlyuvGZNWThoY5xZjgJVfa65D6cpi0vRj+Q15
+	U83bKmHw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1w2z84-00000009Q04-3azN;
+	Wed, 18 Mar 2026 22:12:40 +0000
+Message-ID: <f2a83432-f0ee-40a2-a3d0-71eef9db48fc@infradead.org>
+Date: Wed, 18 Mar 2026 15:12:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="itlC+aPBtizBp7zY"
-Content-Disposition: inline
-In-Reply-To: <20260318112001.d67d0e84a4d69b991f0f97f4@linux-foundation.org>
-X-Cookie: The coast was clear.
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Mar 18 (landlock docs)
+To: Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Dan Cojocaru <dan@dcdev.ro>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, git@n0toose.net, linux-security-module@vger.kernel.org
+References: <abrYTGOZRH9oP2GQ@sirena.org.uk>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <abrYTGOZRH9oP2GQ@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---itlC+aPBtizBp7zY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Mar 18, 2026 at 11:20:01AM -0700, Andrew Morton wrote:
-> On Wed, 18 Mar 2026 13:51:01 +0000 Mark Brown <broonie@kernel.org> wrote:
+On 3/18/26 9:52 AM, Mark Brown wrote:
+> Hi all,
+> 
+> Changes since 20260317:
+> 
 
-> > Diff in /tmp/next/build/drivers/android/binder/page_range.rs:762:
-> >      if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
-> >          if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
-> >              let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
-> > -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-> > +            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-> >          }
-> >      }
+linux-next/Documentation/userspace-api/landlock.rst:198: ERROR: Error in "code-block" directive:
+maximum 1 argument(s) allowed, 105 supplied.
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-> > Caused by commit
+.. code-block:: c
+    __u32 restrict_flags =
 
-> >   320e410f0294b (mm: rename zap_page_range_single() to zap_vma_range())
 
-> > I have used the tree from next-20260317 instead.
+Please insert a blank line between ".. code-block:: c"
+and the code.
 
-> huh, is this python?
 
-There's standard formatting for Rust, though it's not syntactic like it
-is for Python.
+d37d3347aa59 ("landlock: Expand restrict flags example for ABI version 8")
 
-> --- a/drivers/android/binder/page_range.rs~mm-rename-zap_page_range_single-to-zap_vma_range-fix
-> +++ a/drivers/android/binder/page_range.rs
-> @@ -762,7 +762,7 @@ unsafe extern "C" fn rust_shrink_free_pa
->      if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
->          if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
->              let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
-> -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-> +            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
->          }
->      }
+-- 
+~Randy
 
-That should be it, yes.
-
---itlC+aPBtizBp7zY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm6+CcACgkQJNaLcl1U
-h9DMmQf/S2OGR1tE6V0SBUi8kN1hAWQhPEnkuvD8KR5cwyUhvPgOIrhu95rcQei0
-Gy+9cDUOjMnUcwUWKcdx8K9ykVj6X8OUnUeCsps+JvAnQFUYaeXdtxIM4AMDNtzs
-7IgcLmaq41DeMNgufeEgixamPKgC+hQANgy0jNnjUUyJP01t4eMZLmyNBT1V7NsJ
-pGbGsauHAibgtNyQnbuAw/WcalnGOXOEBnWqW8JT87KLsWQJUY1B70PqBf8s9Hv8
-2QfVNHdPPN8ykVPSYWeDTeg4im9pBGQyCbxwiExC/gBN87nWOgYIgoh6nRmjLagm
-xYpBp9agtFpCBBA1jyzACRz+cSq4Gw==
-=xLPy
------END PGP SIGNATURE-----
-
---itlC+aPBtizBp7zY--
