@@ -1,87 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DFA29B8CF
-	for <linux-next@vger.kernel.org>; Wed, 18 Mar 2026 03:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A510036B04D;
+	Wed, 18 Mar 2026 07:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773803623; cv=none; b=rE77nRXWCITY7KCiEpdAwOm6ltR4nTJRr6Euj6erBTnOjsj9M0Hyz+XLypySSUUaQVJ4EMEEdIn27mlqe85jReD9s+3MVIvxleMYK4RyvkfMMbqI4el156gswPa34X3MBBUWuG902+ON1dAy0BP6g8/wa0jIeic77qGtPXO0xfU=
+	t=1773819457; cv=none; b=mJOZHXRbTHWU2kyi6SecPZbeKH7eQqZ+d4SXRvsT+KJPx/m4NX6ehVDwO5aJHruZRc0DkG8Zq8NbrH2jK8g6YYDA9oBksUIJvoXCDCi5ZFh4UsISMUYgRgrrxcEefEwyk+IFkPORcRvkmRqQZc1x8TZywvX4oDy/ilpNtB6eFJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773803623; c=relaxed/simple;
-	bh=CGVoJ7/mw0CojrRZ8H6VM2kQeK9ko6CvVEDR9iKqurE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GBxJFwCQCRSzDuujQa5Yihi0XE19hS8sVDUBT0R2pj+RGGrtfpio2py3j+/oyKn3S0pbbr8QbhCzBBtNAtrcU4/Tjs+rTu45pydlZ6qdKqf6tlENYY0KXQM5mfGfvX0eCbSbDcqwegUVnnGZ9ut6Z3ciKLgepc3VInyV4XR4p80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLuV/QG6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773819457; c=relaxed/simple;
+	bh=lCj3TPDc9see1TZLDPe8eMXO3kMJqmIn9vxCTYJI7zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLsggPhRsknP0tVyII1uGPSCxmEUJ7kdNfjru8/6dcUFrWJB/4mfIR31CP8/5vsoKIBbId7y9Nlr07MqV4PM1NMrLurlK86z1FMINd0hYTJRTuxOxT8vQBA++75DMYfSsv4SfS4LIeSHU8r7nlQmUqFG+/eImsxsB12HWjIWOUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=UmpE5A+M; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=3Qe9KqMj; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLuV/QG6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177EAC2BC86
-	for <linux-next@vger.kernel.org>; Wed, 18 Mar 2026 03:13:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773803623;
-	bh=CGVoJ7/mw0CojrRZ8H6VM2kQeK9ko6CvVEDR9iKqurE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hLuV/QG66uhve3lTeaYvZ0rTqleB/D9N0Vr+xiZJrClSZ3B9Vw2zJo5TSZ7xKfzEJ
-	 7bwFPxkSpMWOO0WZAsc0mZ71Qd9R1szbIKBAfv6MiI8NQ4oiQKNpc91aeNxJAHhJh8
-	 KYU8cc3JCSKdeuHLz0+9tAYlua/Ht3JwixXA/OghXlpN9EeLwR8a2lWnKbpoZB5YGm
-	 D3J5rgJ+vYHPhAgA95VP9y5/lbej4fgq7fNQj9t/+U3MvtM5uLvJnsmHVlUcmzoO71
-	 vQ4Em6TcE3zoD7A2brdyUs5X4Ku3J+t2XXcr/ewTzPIZ1crmOwjpHOKcPu2Rdod6Vg
-	 YJMUoSRntUbgA==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6655469237aso4991210a12.0
-        for <linux-next@vger.kernel.org>; Tue, 17 Mar 2026 20:13:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPiaMz0KL1tWzA+xY3XDfgi14+p06VaTahmdTQhmFprKLplDFAe6iwGDY2Vp0SBtrX3VeUXyPDFaqe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrleDRSoaGpop00oPUrT6T3lKk4TIwLegXao/9jDH8a1LUcTRL
-	/4syw6PAW/VzHqfHfdJ61T51pauUrMCdhAr7k3eI8RJh+LLbEKzme8g16wApprSCq+Q2FUGwJGi
-	xeHoREu2LeY7EQXnAVMjDTf2y0Ok/ReY=
-X-Received: by 2002:a05:6402:2806:b0:65f:7f90:fb89 with SMTP id
- 4fb4d7f45d1cf-667b27223c1mr1366868a12.17.1773803621928; Tue, 17 Mar 2026
- 20:13:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="UmpE5A+M";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3Qe9KqMj"
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A0C381400205;
+	Wed, 18 Mar 2026 03:37:34 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Wed, 18 Mar 2026 03:37:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1773819454; x=1773905854; bh=P99+ZcPxNY
+	Xl1RambXle5Wga2OTjjaAnQG9RiueLheM=; b=UmpE5A+Muz6VA1bOnYTDwGpwN8
+	bJKCitnnn5U8j/pnwla2GCA5Xzf3aXhFdlDicfdfk/21EH+Nps4aR5esEqHVIw7f
+	qJdSFQBqdWS0KEnPYB840tTsk/FqViigg2v/USLurtQbGZ627KtAaUgCSuD+160g
+	+DyHBl45XUaORHGhQ3V5H5aXNtJlRYQaca66CESl8L61kfEEzqTTG/9L5UhmZNUn
+	/umkqjmso51B6T/QidsnrRv4VRA3GG0vXLPsMZTFro/h29V5GSK+mAUvwO/7M8Hp
+	ktFdR36jRIdTDT+I87+QYWyexR+BEups0IqjNOs8sneDDUQz3nUS6/KkizHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1773819454; x=1773905854; bh=P99+ZcPxNYXl1RambXle5Wga2OTjjaAnQG9
+	RiueLheM=; b=3Qe9KqMjXlQii3P0ooEMu35PabStIHkU0xtlotjMpFfUeRn4Yqk
+	1S87rHh6WG9/eQXOVaZWrZnTfB70vbqol5XS2T3F6KOFtAZLXKUBwlHTK2EXkw62
+	NBrGJIhjmaYBexjOMFqXzjXxWrsHfeIT8oKAoWob9u7jaNYbHTId2MMMJCI71S7A
+	N/3s5e2caRN//BnyXqU7JvHCthZSlm4dKyjA3c8TBW50rgrfo2TGKCO8Aa6Ds1re
+	QcTyv6H1yRBWmNCdACtBjPY8LoxscT5dW4XkZarnymzQ+6+G0txqj7WmWozE3ml4
+	Nx3H5Rkia1HJoVDOe6TTxyHlutTCP/eXxMA==
+X-ME-Sender: <xms:Pla6aYymBr0h3-f5vSSFXS0yFH2PB8AKBZwmrRyeywE_eX5_zAZ3Ng>
+    <xme:Pla6adMvv6L2QmYxvuu-NEmHOClsBYf53MTIty9lPNMPon9IqABn-S0_EdJttkZ0K
+    W6nCA9oXq6f1gStF7AS9ytVLAsEy4RfjqIyDziBOnOU5VXhPIg>
+X-ME-Received: <xmr:Pla6aar0j_-0RwIzzJ5K90yJHPcHKrmUEdv6WlJAlPdyVItQ-GTUCSrYNc7wX-j9oCgVObsdntfAWgNy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdefheehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
+    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvdevvd
+    eljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
+    gtohhmpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepsggrrhhtohhsiidrghholhgrshiivgifshhkihesohhsshdrqhhurghltg
+    homhhmrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghr
+    rdgsvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Pla6aU-yVcyTjdO9L6mlR9ql0ySz6K67_qvApX9ieotCtkTY_OvzTw>
+    <xmx:Pla6aQ2IeZvQzp71dBbmZHS_olxCQ9UneJj-NAlLUDZ8gPojUD1UtQ>
+    <xmx:Pla6aXBaO15VHLBRLPwGpM3e6tjWFy_2M7vV6DHKrqYYbdt5BNXCag>
+    <xmx:Pla6afC9p7T0G-kt3FaWaX8HOVBjS036f1sR6LgnQEgCPRPKwcWuUw>
+    <xmx:Pla6aa0EN50aEUfNaQ04ncEsxiTWIuCd2vl_Jc9EmpXqyG-G1nUSzYTX>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 18 Mar 2026 03:37:33 -0400 (EDT)
+Date: Wed, 18 Mar 2026 08:37:15 +0100
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ devicetree tree
+Message-ID: <2026031803-chirping-promotion-4c3a@gregkh>
+References: <abl_FcMjGGAf1YHt@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <abFMR6ep2r2CxlMr@sirena.org.uk>
-In-Reply-To: <abFMR6ep2r2CxlMr@sirena.org.uk>
-From: Len Brown <lenb@kernel.org>
-Date: Tue, 17 Mar 2026 23:13:30 -0400
-X-Gmail-Original-Message-ID: <CAJvTdK=oNnTJzXj93okrBqGsyx-HdHJ_gMtGfBX5uXjwSuWDYw@mail.gmail.com>
-X-Gm-Features: AaiRm50NnC1aU-qkbOheKP3HdbWavObFrctb3nA1rnSzjNsThWko_cRhhX-BDzo
-Message-ID: <CAJvTdK=oNnTJzXj93okrBqGsyx-HdHJ_gMtGfBX5uXjwSuWDYw@mail.gmail.com>
-Subject: Re: Fixes tags need work in the turbostat tree
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abl_FcMjGGAf1YHt@sirena.org.uk>
 
-Interesting.
+On Tue, Mar 17, 2026 at 04:19:33PM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in:
+> 
+>   drivers/of/base.c
+> 
+> between commit:
+> 
+>   82b6c1b542ea0 ("of: Add of_machine_get_match() helper")
+> 
+> from the devicetree tree and commits:
+> 
+>   59621105ffca7 ("of: provide of_machine_read_compatible()")
+>   c86d3b7b847cc ("of: provide of_machine_read_model()")
+> 
+> from the driver-core tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-I truncated that subject manually on a whim, because I thought it was
-unnecessarily verbose, and IIR checkpatch complained about long lines
-in commit messages...
-Didn't realize that tools were checking for an exact match...  Okay.
+Fix looks good, thanks!
 
--L
-
-On Wed, Mar 11, 2026 at 7:04=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> In commit
->
->   04486a0f831ea ("tools/power turbostat: Fix swidle header vs data displa=
-y")
->
-> Fixes tag
->
->   Fixes: 1a23ba6a1ba2 ("Print wide names only for RAW 64-bit columns")
->
-> has these problem(s):
->
->   - Subject does not match target commit subject
->     Just use
->         git log -1 --format=3D'Fixes: %h ("%s")'
-
-
-
---=20
-Len Brown, Intel Open Source Technology Center
+greg k-h
