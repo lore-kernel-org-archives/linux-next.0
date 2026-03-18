@@ -1,93 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CEE1F192E;
-	Wed, 18 Mar 2026 18:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343FB30FC26;
+	Wed, 18 Mar 2026 18:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773858002; cv=none; b=GSX/2IGjSNZxn2GU4gx8LYIgYvqc2+SNEsa5oOztJwTM5s36xmF8l5NdY1QlWK8RxUFUofHIOJ2mcOJu7sPDdg8UvMGONMMc+O6gKJf6+VqR4/nQUc8b0sKbllfAmW49gRq/4xyywL57wZCr8y8E0BZxOMrM3Sz4912dr9xJ48Y=
+	t=1773858057; cv=none; b=h/leZT8d5WLNU+gmU2oHO3iuUng2MExWtYYit6tAX0ex5lCwJVSCc9QLxteQR62pBrfyyaOMrejqZJypIIAe9LfboWIlgI6Q9IewKfKEvt6RaY/TtITfZm59Zuo8q4//wKo//UCVZpOGZY2xRqPt0j5WRpCysv7nmMvAWzq7x4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773858002; c=relaxed/simple;
-	bh=nAfgr/dPQQiWm6fZTzBvAndw3PuCiaKqXHaMkQu5TJ4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=KvGh5+CpTunTL94SrdIRlfV1XA7Lr7obvweDpI5T6/+PbMBnxVWpdGGXd8ExNBrtSskbsVVLSAySgBsaDuVkaaSB+d1GKzroU6oJETPIxy2sspRcXFtF6+av+90jzgh8CIezCij5+8qWJaEvBRRT9WclxshogiAnZ2qwAPp6bYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VIzZ1nW7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773858057; c=relaxed/simple;
+	bh=Otyq5IMCKF3NfhxRL77MgdLZe6Iglf56XF0yqwLf3jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G09F+Fff/incEtKZ6JuSUBJjQ5WxsuHFraCNVwImooDnLtS7sDT53Nxm61jfZixSahQukaL9G7AuUHXdmc25twdIYXIqsLpOlumT1/S1mID5gVd6gEKo7y8MSBq5M1SJ7EiYczLwwUOFLhEDWfVglAwoS01i34u9MyhgDgn1Bl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Kz7gWbfM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VIzZ1nW7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4EB7C2BC87;
-	Wed, 18 Mar 2026 18:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1773858001;
-	bh=nAfgr/dPQQiWm6fZTzBvAndw3PuCiaKqXHaMkQu5TJ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VIzZ1nW7c9O8h/Be8mQPB/b3hyD4C1txhgSDjvF0jUTa3rfeY/ft53Dn2CvLQ+xHz
-	 Z29VGwCQVB0+KAz5HfA1Xybe+n1MNKGeLPnkX5M1YgLuNtaxL1NQ+VHzr3JBzqMjPO
-	 OLiikU8TfG/p5hf9TzBVRcvXIayA8i0cs5je30h8=
-Date: Wed, 18 Mar 2026 11:20:01 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Puranjay Mohan <puranjay@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm-unstable tree
-Message-Id: <20260318112001.d67d0e84a4d69b991f0f97f4@linux-foundation.org>
-In-Reply-To: <abqtxbX0eW1Ljdhx@sirena.org.uk>
-References: <abqtxbX0eW1Ljdhx@sirena.org.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Kz7gWbfM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1773858054;
+	bh=Otyq5IMCKF3NfhxRL77MgdLZe6Iglf56XF0yqwLf3jk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Kz7gWbfM6kkX3CwpU2QD/fzBLkSpLf3KkLUuJWwIqTdOFokX6CwiBxkKxB+YBLiqH
+	 iYSnRODvLl/Hpkolu/pa17hSWRzpHDiV3voLECjqQtppJ8wEOV7M9tU6kVOS9aeDUH
+	 HMeba71ZKprhg4Rd3Omx9cCiWYOjMv2asgL7W/1B29C0yn9LMwWB4zMxcN/QpjWNFu
+	 yo2ZaegaGpgC5vxiIOQeSNS5xDotWV1BWOxGigH4iNuHMkZ+L2ozf7vQi+UBRbh2Cu
+	 QIzhSYTJ8js8XO1VBAjyXNQWG9+xvycoIapTmtB/3+ElP6fkgeW9qeiTfTH6KQYG4l
+	 LZ7U8vnVwJkOg==
+Received: from [192.168.1.90] (unknown [86.123.23.225])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0500017E0619;
+	Wed, 18 Mar 2026 19:20:53 +0100 (CET)
+Message-ID: <d13e23a3-af02-475f-ae54-3ce90968447f@collabora.com>
+Date: Wed, 18 Mar 2026 20:20:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the drm tree with the drm-misc-fixes
+ tree
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Mark Brown
+ <broonie@kernel.org>, Dave Airlie <airlied@redhat.com>,
+ DRI <dri-devel@lists.freedesktop.org>
+Cc: Christian Hewitt <christianshewitt@gmail.com>,
+ Daniel Stone <daniels@collabora.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <abq4YV8QgsmpUoHI@sirena.org.uk>
+ <DH60ZGTHFMZ5.HOOT9GVR0Q0V@bootlin.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <DH60ZGTHFMZ5.HOOT9GVR0Q0V@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 18 Mar 2026 13:51:01 +0000 Mark Brown <broonie@kernel.org> wrote:
+Hi Luca,
 
-> Hi all,
+On 3/18/26 5:49 PM, Luca Ceresoli wrote:
+> Hello Mark, all,
 > 
-> After merging the mm-unstable tree, today's linux-next build
-> (x86_64 allmodconfig rustfmtcheck) failed like this:
+> On Wed Mar 18, 2026 at 3:36 PM CET, Mark Brown wrote:
+>> Hi all,
+>>
+>> Today's linux-next merge of the drm tree got a conflict in:
+>>
+>>   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+>>
+>> between commit:
+>>
+>>   cffcb42c57686 ("drm/bridge: dw-hdmi-qp: fix multi-channel audio output")
+>>
+>> from the drm-misc-fixes tree and commit:
+>>
+>>   3ea699b56d31c ("drm/bridge: dw-hdmi-qp: Rework Audio InfoFrame handler")
+>>
+>> from the drm tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
 > 
-> Diff in /tmp/next/build/drivers/android/binder/page_range.rs:762:
->      if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
->          if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
->              let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
-> -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-> +            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
->          }
->      }
->  
-> Diff in /tmp/next/build/drivers/android/binder/page_range.rs:762:
->      if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
->          if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
->              let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
-> -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-> +            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
->          }
->      }
->  
+> The conflict originated as I applied cffcb42c57686 on drm-misc-fixes. I
+> carefully followed the dim procedure as I know it, so I'm not sure I did
+> anything wrong, but if I did I apologize.
 > 
-> Caused by commit
+> The steps I did are:
 > 
->   320e410f0294b (mm: rename zap_page_range_single() to zap_vma_range())
+>  - dim update-branches
+>  - dim checkout drm-misc-fixes
+>  - dim b4-shazam URL
+>  - dim checkpatch+sparse ...
+>  - dim push-branch drm-misc-fixes
 > 
-> I have used the tree from next-20260317 instead.
+> One thing with this procedure is that dim push-branch pushes first, then
+> finds out any conflicts. I wonder whether dim could be changed to find any
+> conflicts before pushing.
+> 
+> As soon as dim push-branch warned me about the conflict I tried solving it
+> myself as per [0], but the patches on drm-misc-next (3ea699b56d31c) changed
+> the codebase completely and was unable to sort it out fully.
+> 
+> I at least fixed the conflict at a pure patch application level, so I would
+> expect the rerere cache would avoid future conflicts.  I was wrong
+> apparently. It had worked in the past, no idea what went wrong this time.
+> 
+> Then, as far as the original bug is concerned, I notified the involved
+> patch authors [1] hoping they could find out whether there is the same bug
+> in the drm-misc-next code and fix it if needed.
 
-huh, is this python?
+I've already confirmed that commit 3ea699b56d31c in drm-misc-next does also
+handle the audio bug, therefore no additional fix is required.
 
---- a/drivers/android/binder/page_range.rs~mm-rename-zap_page_range_single-to-zap_vma_range-fix
-+++ a/drivers/android/binder/page_range.rs
-@@ -762,7 +762,7 @@ unsafe extern "C" fn rust_shrink_free_pa
-     if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
-         if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
-             let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
--        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-+            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
-         }
-     }
- 
-_
-
+Regards,
+Cristian
