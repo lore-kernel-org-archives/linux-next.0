@@ -1,129 +1,112 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC7F292B54
-	for <linux-next@vger.kernel.org>; Wed, 18 Mar 2026 15:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3411233121E;
+	Wed, 18 Mar 2026 16:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773848999; cv=none; b=rHwtZnskpp79xBk1/7p0LwUYf0D5rhRWWOUZAtpzlmiW0G18QmDLr5tmQYMSaV0TNDSfUfmMCWZmftYcdAHZX9SuIjNKKnW2h4OeBNs28760TVQVWmNAY5vMlcKeTUnjyzoTQs/wViTqR+Uqh5agEiUEPeu9Ibjsezb+NnDnlRM=
+	t=1773852752; cv=none; b=he+KVjxez30QX6KnbJJcMNxMDMgr4Xb7wNM2VQb1AYxtS8tZf1JbAknwNUQeyd5uV1BhMam3qN/tQF0VGAILy0hD+gjLX0u68XgjN0OpJsQq4SQA0ylsNSuMeOFfViNJQHR1ymftNSvavmZFQdTctiBNIkmL9Jaokuybv3aFDws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773848999; c=relaxed/simple;
-	bh=JlOu3IxuxQxhTcEAJQYW0u1B7eoV2X8BJFS/ERJefp0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=B9nS2B9Hyx+AoXhScS7hbuO0B9sZzEUxNuzz84SMrrR31Wxen8dQOhPQ7jNRtwjikAVsXcq7clyCDPTF8LFMjrqT93DlnPBswYca2aEA1wayw2I61R5+RyfOvcT1NKR5EhiJYTv9XOlKqdmR2Leg97fT9s4bWJ38s2shfYYDoSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cer95wW7; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1773852752; c=relaxed/simple;
+	bh=S4v5CoD5UGRpmsPi1+3MmGk+jI5EHbzuGSDsYkwS05I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=am0l9HweW+TjPOOaMxJR+sEe/Ew8HcbQldp+GkpTG9NDsc8NiuBokQb3lKBWGzyQ9E7Bwht8lij0aub56bhIbf7h6RGq8RXLowY2OMCq5AyDygcn9w574HIGfNg/CpMeGWPKPmbxmN2Qh5KSmEjrpYC1FASDyeS7/Lw7XVknwn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+4yXeD6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cer95wW7"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A5B784E426F5
-	for <linux-next@vger.kernel.org>; Wed, 18 Mar 2026 15:49:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6CFC96004F;
-	Wed, 18 Mar 2026 15:49:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8FFDA10450528;
-	Wed, 18 Mar 2026 16:49:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773848986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=CbtO5U8FaZ71dSZYe1vxqKTd7QimlGKBm+QnX+YHrdI=;
-	b=cer95wW7P12CuQTCVwrWeLkS30amE39NNGi9Gb7re7p2x7pIt+pTmh6fsw3DtAPGmmr2e3
-	aLI3pJtjGCEro597k5jO6H9YX6Wqz9iK1JUXrL4Spm9IYBZI454gpC8KHeM+0qCQ5Ma9co
-	AmTZVE4eMiCL8vqRtQwVDJCbuq+1Dwg40s1a900Cbwj1w+9uo4KWCkM8FVgpkzMHT77i5J
-	7uVWmpVKHcWOXiavWA/cB9Qn0MoL26F9LbPOQrY3ZLU9mBGNOgt+BEKvOSst8NA4W04N1i
-	/8M8pwib/fIlTL6WTFyNC1daiHHSjXLCPH3EFmErGA2xm4+9MFqPg3dWGst2BQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+4yXeD6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3813FC19421;
+	Wed, 18 Mar 2026 16:52:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773852751;
+	bh=S4v5CoD5UGRpmsPi1+3MmGk+jI5EHbzuGSDsYkwS05I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Y+4yXeD6BXsEBaPQoUl7fMc5XaDe4VPBLmIu1Snp6pYJwTlnyZHatdhBJeM8nWDIY
+	 i4s2aEwIsvmGN8h8wihoUpW9XR94uv18+r8JkKRtfJ7zY1cnsrcN5eSSo973uEvCRK
+	 I/2FBaHHNODNrJLXGjJq8Y6YeoBTuJsZUlbTUri6mb/QCE8i5qCxl/6P+T2dWCcsWK
+	 oAz5NNolyKyiYgBWt4V97kFMZNs3KxzXFz5AQmbVX17IZt7q1nqFNxJU3CJty1G5aH
+	 kTPOzPWmzAZ0UA0pMjdLQWdzhYHrHDR4JCYAdIhnwc98m5bl3i1Iiju0R5kwSlhgQ/
+	 hNrV6W4jy7IfA==
+Date: Wed, 18 Mar 2026 16:52:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Mar 18
+Message-ID: <abrYTGOZRH9oP2GQ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 18 Mar 2026 16:49:42 +0100
-Message-Id: <DH60ZGTHFMZ5.HOOT9GVR0Q0V@bootlin.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: linux-next: manual merge of the drm tree with the
- drm-misc-fixes tree
-Cc: "Christian Hewitt" <christianshewitt@gmail.com>, "Cristian Ciocaltea"
- <cristian.ciocaltea@collabora.com>, "Daniel Stone" <daniels@collabora.com>,
- "Jonas Karlman" <jonas@kwiboo.se>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>
-To: "Mark Brown" <broonie@kernel.org>, "Dave Airlie" <airlied@redhat.com>,
- "DRI" <dri-devel@lists.freedesktop.org>
-X-Mailer: aerc 0.20.1
-References: <abq4YV8QgsmpUoHI@sirena.org.uk>
-In-Reply-To: <abq4YV8QgsmpUoHI@sirena.org.uk>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kkUcvvRUADQSaTtT"
+Content-Disposition: inline
 
-Hello Mark, all,
 
-On Wed Mar 18, 2026 at 3:36 PM CET, Mark Brown wrote:
-> Hi all,
->
-> Today's linux-next merge of the drm tree got a conflict in:
->
->   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
->
-> between commit:
->
->   cffcb42c57686 ("drm/bridge: dw-hdmi-qp: fix multi-channel audio output"=
-)
->
-> from the drm-misc-fixes tree and commit:
->
->   3ea699b56d31c ("drm/bridge: dw-hdmi-qp: Rework Audio InfoFrame handler"=
-)
->
-> from the drm tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+--kkUcvvRUADQSaTtT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The conflict originated as I applied cffcb42c57686 on drm-misc-fixes. I
-carefully followed the dim procedure as I know it, so I'm not sure I did
-anything wrong, but if I did I apologize.
+Hi all,
 
-The steps I did are:
+Changes since 20260317:
 
- - dim update-branches
- - dim checkout drm-misc-fixes
- - dim b4-shazam URL
- - dim checkpatch+sparse ...
- - dim push-branch drm-misc-fixes
+The mm-unstable tree gained a build failure, I used the version from
+next-20260318 instead.
 
-One thing with this procedure is that dim push-branch pushes first, then
-finds out any conflicts. I wonder whether dim could be changed to find any
-conflicts before pushing.
+The bluetooth tree acquired a conflict with the net tree.
 
-As soon as dim push-branch warned me about the conflict I tried solving it
-myself as per [0], but the patches on drm-misc-next (3ea699b56d31c) changed
-the codebase completely and was unable to sort it out fully.
+The drm tree acquired a conflict with the drm-misc-fixes tree.
 
-I at least fixed the conflict at a pure patch application level, so I would
-expect the rerere cache would avoid future conflicts.  I was wrong
-apparently. It had worked in the past, no idea what went wrong this time.
+The sound-asoc lost it's build failure.
 
-Then, as far as the original bug is concerned, I notified the involved
-patch authors [1] hoping they could find out whether there is the same bug
-in the drm-misc-next code and fix it if needed.
+Non-merge commits (relative to Linus' tree): 6514
+ 6652 files changed, 440309 insertions(+), 133980 deletions(-)
 
-If there is anything I should have done differently I'd be happy to know in
-order to adjust my process in the future.
+----------------------------------------------------------------------------
 
-[0] https://drm.pages.freedesktop.org/maintainer-tools/committer/conflict-r=
-esolution.html
-[1] https://lore.kernel.org/lkml/DH58MAETGDMM.2QS6VJDQ7UXIV@bootlin.com/
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-Luca
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Below is a summary of the state of the merge.
+
+I am currently merging 412 trees (counting Linus' and 123 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--kkUcvvRUADQSaTtT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm62EsACgkQJNaLcl1U
+h9C0aQf+MD1s4rQz20JW3BivINLc8LrPcBCknKeEQ2cdh9kJyvQTZGXiSgYfoNkI
+IuqVUhZ5nGIMmy+brCB4n96qDUjAkMCLyMQI6BPZayDfU2CHjEcyDTlqSQswb9xz
+5432+8Epaspwqr5R072APCCHyXr0PcvJVogrAWZBw4DmwNCk2fOsak/6TPqYWFPB
+0xsee6gQ98gzcpq+y669Wk9RywLzYJlfzN9zN13d0JxI0m/9iKNwei3t9ieaxbOJ
+P34f1gnmim0dOS1JI2qH+moNlPZstIGdCZl62JdpWdOWlFkJM3evi/QhoibwYn8z
+Vx9ncW4ziIO5cUCYdHnwPak77pxjuw==
+=AFWN
+-----END PGP SIGNATURE-----
+
+--kkUcvvRUADQSaTtT--
