@@ -1,415 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DB43DCDA4;
-	Wed, 18 Mar 2026 14:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC7F292B54
+	for <linux-next@vger.kernel.org>; Wed, 18 Mar 2026 15:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773844582; cv=none; b=QL+iJqD1ex05k5u0ssNB+TUJvyasDqg5k6i+K0QywjK978WrHGNoZEgKmX9EO+g5tXwmFeR7xRMPRWrQV9WLRtUcTXjAly4k691OFmdc9RW0XYmWVq47buQPfLK8jaY/vPcSRs8i7ZEiSuJf2xtssS+Yg/FC3G7ReHulNLUR/YE=
+	t=1773848999; cv=none; b=rHwtZnskpp79xBk1/7p0LwUYf0D5rhRWWOUZAtpzlmiW0G18QmDLr5tmQYMSaV0TNDSfUfmMCWZmftYcdAHZX9SuIjNKKnW2h4OeBNs28760TVQVWmNAY5vMlcKeTUnjyzoTQs/wViTqR+Uqh5agEiUEPeu9Ibjsezb+NnDnlRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773844582; c=relaxed/simple;
-	bh=7cwu4Ega8UtaQtRj9zVbnViUcpr1YFc56yM6AII7k6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DfUy9bzJw+iNvy/UrCdbCYkZL5pEKcgoFHQVsA0LS36A7YkEpAzULVb0v5nj17Qb+dnAZJwGgFHFdxo6Xk4oui2SbYFItMDhASxn0lqmZBBzJB+sUJDgKUekVAXPQKr0+b97K5kCs7mrDEc82x0uS50oUN8aqK+n8IalcVrX6G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzJQfpLN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773848999; c=relaxed/simple;
+	bh=JlOu3IxuxQxhTcEAJQYW0u1B7eoV2X8BJFS/ERJefp0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=B9nS2B9Hyx+AoXhScS7hbuO0B9sZzEUxNuzz84SMrrR31Wxen8dQOhPQ7jNRtwjikAVsXcq7clyCDPTF8LFMjrqT93DlnPBswYca2aEA1wayw2I61R5+RyfOvcT1NKR5EhiJYTv9XOlKqdmR2Leg97fT9s4bWJ38s2shfYYDoSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cer95wW7; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzJQfpLN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FAFC19421;
-	Wed, 18 Mar 2026 14:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773844582;
-	bh=7cwu4Ega8UtaQtRj9zVbnViUcpr1YFc56yM6AII7k6Y=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VzJQfpLN3zU6pDsKrUbRq5lKmDn9M33EwTEe7LucUUHE/qGehTFxwtgKV1JPx+uSs
-	 66E/JZHvr5keb3muK5LR9CQkNHCh8stbM7Eg89OG1PyOQ5IQ3zfztG+bv9UPrqWxj3
-	 L9BWXStF0vXm+HZEUekTTI7wT5HSuBdGOYCI3mZHGrX845RnGIpGBpp2KCrmTfLlkI
-	 dLzvEz+HyUuyef3OOPH0MplJ0CaFk2nBHBOpHJThi7wR9o6RvW1JVJxgi+CTpcAkgl
-	 wtSEMaHJjJwu28tjeCeZJZis4SgZaeMxS7WKLcRMRS2tYyRDd4beS4WnVv/wrd0Siu
-	 +bTZoOp7wDHZQ==
-Date: Wed, 18 Mar 2026 14:36:17 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Christian Hewitt <christianshewitt@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Daniel Stone <daniels@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes tree
-Message-ID: <abq4YV8QgsmpUoHI@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cer95wW7"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id A5B784E426F5
+	for <linux-next@vger.kernel.org>; Wed, 18 Mar 2026 15:49:47 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6CFC96004F;
+	Wed, 18 Mar 2026 15:49:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8FFDA10450528;
+	Wed, 18 Mar 2026 16:49:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773848986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=CbtO5U8FaZ71dSZYe1vxqKTd7QimlGKBm+QnX+YHrdI=;
+	b=cer95wW7P12CuQTCVwrWeLkS30amE39NNGi9Gb7re7p2x7pIt+pTmh6fsw3DtAPGmmr2e3
+	aLI3pJtjGCEro597k5jO6H9YX6Wqz9iK1JUXrL4Spm9IYBZI454gpC8KHeM+0qCQ5Ma9co
+	AmTZVE4eMiCL8vqRtQwVDJCbuq+1Dwg40s1a900Cbwj1w+9uo4KWCkM8FVgpkzMHT77i5J
+	7uVWmpVKHcWOXiavWA/cB9Qn0MoL26F9LbPOQrY3ZLU9mBGNOgt+BEKvOSst8NA4W04N1i
+	/8M8pwib/fIlTL6WTFyNC1daiHHSjXLCPH3EFmErGA2xm4+9MFqPg3dWGst2BQ==
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xbJjccWe39/nGeLS"
-Content-Disposition: inline
-
-
---xbJjccWe39/nGeLS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 18 Mar 2026 16:49:42 +0100
+Message-Id: <DH60ZGTHFMZ5.HOOT9GVR0Q0V@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: linux-next: manual merge of the drm tree with the
+ drm-misc-fixes tree
+Cc: "Christian Hewitt" <christianshewitt@gmail.com>, "Cristian Ciocaltea"
+ <cristian.ciocaltea@collabora.com>, "Daniel Stone" <daniels@collabora.com>,
+ "Jonas Karlman" <jonas@kwiboo.se>, "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+To: "Mark Brown" <broonie@kernel.org>, "Dave Airlie" <airlied@redhat.com>,
+ "DRI" <dri-devel@lists.freedesktop.org>
+X-Mailer: aerc 0.20.1
+References: <abq4YV8QgsmpUoHI@sirena.org.uk>
+In-Reply-To: <abq4YV8QgsmpUoHI@sirena.org.uk>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi all,
+Hello Mark, all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+On Wed Mar 18, 2026 at 3:36 PM CET, Mark Brown wrote:
+> Hi all,
+>
+> Today's linux-next merge of the drm tree got a conflict in:
+>
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+>
+> between commit:
+>
+>   cffcb42c57686 ("drm/bridge: dw-hdmi-qp: fix multi-channel audio output"=
+)
+>
+> from the drm-misc-fixes tree and commit:
+>
+>   3ea699b56d31c ("drm/bridge: dw-hdmi-qp: Rework Audio InfoFrame handler"=
+)
+>
+> from the drm tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+The conflict originated as I applied cffcb42c57686 on drm-misc-fixes. I
+carefully followed the dim procedure as I know it, so I'm not sure I did
+anything wrong, but if I did I apologize.
 
-between commit:
+The steps I did are:
 
-  cffcb42c57686 ("drm/bridge: dw-hdmi-qp: fix multi-channel audio output")
+ - dim update-branches
+ - dim checkout drm-misc-fixes
+ - dim b4-shazam URL
+ - dim checkpatch+sparse ...
+ - dim push-branch drm-misc-fixes
 
-=66rom the drm-misc-fixes tree and commit:
+One thing with this procedure is that dim push-branch pushes first, then
+finds out any conflicts. I wonder whether dim could be changed to find any
+conflicts before pushing.
 
-  3ea699b56d31c ("drm/bridge: dw-hdmi-qp: Rework Audio InfoFrame handler")
+As soon as dim push-branch warned me about the conflict I tried solving it
+myself as per [0], but the patches on drm-misc-next (3ea699b56d31c) changed
+the codebase completely and was unable to sort it out fully.
 
-=66rom the drm tree.
+I at least fixed the conflict at a pure patch application level, so I would
+expect the rerere cache would avoid future conflicts.  I was wrong
+apparently. It had worked in the past, no idea what went wrong this time.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Then, as far as the original bug is concerned, I notified the involved
+patch authors [1] hoping they could find out whether there is the same bug
+in the drm-misc-next code and fix it if needed.
 
-diff --combined drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-index facfb7526928d,d649a1cf07f5c..0000000000000
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-@@@ -11,6 -11,7 +11,7 @@@
-  #include <linux/export.h>
-  #include <linux/i2c.h>
-  #include <linux/irq.h>
-+ #include <linux/minmax.h>
-  #include <linux/module.h>
-  #include <linux/mutex.h>
-  #include <linux/of.h>
-@@@ -748,120 -749,6 +749,6 @@@ static struct i2c_adapter *dw_hdmi_qp_i
-  	return adap;
-  }
- =20
-- static int dw_hdmi_qp_config_avi_infoframe(struct dw_hdmi_qp *hdmi,
-- 					   const u8 *buffer, size_t len)
-- {
-- 	u32 val, i, j;
--=20
-- 	if (len !=3D HDMI_INFOFRAME_SIZE(AVI)) {
-- 		dev_err(hdmi->dev, "failed to configure avi infoframe\n");
-- 		return -EINVAL;
-- 	}
--=20
-- 	/*
-- 	 * DW HDMI QP IP uses a different byte format from standard AVI info
-- 	 * frames, though generally the bits are in the correct bytes.
-- 	 */
-- 	val =3D buffer[1] << 8 | buffer[2] << 16;
-- 	dw_hdmi_qp_write(hdmi, val, PKT_AVI_CONTENTS0);
--=20
-- 	for (i =3D 0; i < 4; i++) {
-- 		for (j =3D 0; j < 4; j++) {
-- 			if (i * 4 + j >=3D 14)
-- 				break;
-- 			if (!j)
-- 				val =3D buffer[i * 4 + j + 3];
-- 			val |=3D buffer[i * 4 + j + 3] << (8 * j);
-- 		}
--=20
-- 		dw_hdmi_qp_write(hdmi, val, PKT_AVI_CONTENTS1 + i * 4);
-- 	}
--=20
-- 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_AVI_FIELDRATE, PKTSCHED_PKT_CONFIG1);
--=20
-- 	dw_hdmi_qp_mod(hdmi, PKTSCHED_AVI_TX_EN | PKTSCHED_GCP_TX_EN,
-- 		       PKTSCHED_AVI_TX_EN | PKTSCHED_GCP_TX_EN, PKTSCHED_PKT_EN);
--=20
-- 	return 0;
-- }
--=20
-- static int dw_hdmi_qp_config_drm_infoframe(struct dw_hdmi_qp *hdmi,
-- 					   const u8 *buffer, size_t len)
-- {
-- 	u32 val, i;
--=20
-- 	if (len !=3D HDMI_INFOFRAME_SIZE(DRM)) {
-- 		dev_err(hdmi->dev, "failed to configure drm infoframe\n");
-- 		return -EINVAL;
-- 	}
--=20
-- 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_DRMI_TX_EN, PKTSCHED_PKT_EN);
--=20
-- 	val =3D buffer[1] << 8 | buffer[2] << 16;
-- 	dw_hdmi_qp_write(hdmi, val, PKT_DRMI_CONTENTS0);
--=20
-- 	for (i =3D 0; i <=3D buffer[2]; i++) {
-- 		if (i % 4 =3D=3D 0)
-- 			val =3D buffer[3 + i];
-- 		val |=3D buffer[3 + i] << ((i % 4) * 8);
--=20
-- 		if ((i % 4 =3D=3D 3) || i =3D=3D buffer[2])
-- 			dw_hdmi_qp_write(hdmi, val,
-- 					 PKT_DRMI_CONTENTS1 + ((i / 4) * 4));
-- 	}
--=20
-- 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_DRMI_FIELDRATE, PKTSCHED_PKT_CONFIG1);
-- 	dw_hdmi_qp_mod(hdmi, PKTSCHED_DRMI_TX_EN, PKTSCHED_DRMI_TX_EN,
-- 		       PKTSCHED_PKT_EN);
--=20
-- 	return 0;
-- }
--=20
-- /*
--  * Static values documented in the TRM
--  * Different values are only used for debug purposes
--  */
-- #define DW_HDMI_QP_AUDIO_INFOFRAME_HB1	0x1
-- #define DW_HDMI_QP_AUDIO_INFOFRAME_HB2	0xa
--=20
-- static int dw_hdmi_qp_config_audio_infoframe(struct dw_hdmi_qp *hdmi,
-- 					     const u8 *buffer, size_t len)
-- {
-- 	/*
-- 	 * AUDI_CONTENTS0: { RSV, HB2, HB1, RSV }
-- 	 * AUDI_CONTENTS1: { PB3, PB2, PB1, PB0 }
-- 	 * AUDI_CONTENTS2: { PB7, PB6, PB5, PB4 }
-- 	 *
-- 	 * PB0: CheckSum
-- 	 * PB1: | CT3    | CT2  | CT1  | CT0  | F13  | CC2 | CC1 | CC0 |
-- 	 * PB2: | F27    | F26  | F25  | SF2  | SF1  | SF0 | SS1 | SS0 |
-- 	 * PB3: | F37    | F36  | F35  | F34  | F33  | F32 | F31 | F30 |
-- 	 * PB4: | CA7    | CA6  | CA5  | CA4  | CA3  | CA2 | CA1 | CA0 |
-- 	 * PB5: | DM_INH | LSV3 | LSV2 | LSV1 | LSV0 | F52 | F51 | F50 |
-- 	 * PB6~PB10: Reserved
-- 	 *
-- 	 * AUDI_CONTENTS0 default value defined by HDMI specification,
-- 	 * and shall only be changed for debug purposes.
-- 	 */
-- 	u32 header_bytes =3D (DW_HDMI_QP_AUDIO_INFOFRAME_HB1 << 8) |
-- 			  (DW_HDMI_QP_AUDIO_INFOFRAME_HB2 << 16);
--=20
-- 	regmap_bulk_write(hdmi->regm, PKT_AUDI_CONTENTS0, &header_bytes, 1);
-- 	regmap_bulk_write(hdmi->regm, PKT_AUDI_CONTENTS1, &buffer[3], 1);
-- 	regmap_bulk_write(hdmi->regm, PKT_AUDI_CONTENTS2, &buffer[7], 1);
--=20
-- 	/* Enable ACR, AUDI, AMD */
-- 	dw_hdmi_qp_mod(hdmi,
-- 		       PKTSCHED_ACR_TX_EN | PKTSCHED_AUDI_TX_EN | PKTSCHED_AMD_TX_EN,
-- 		       PKTSCHED_ACR_TX_EN | PKTSCHED_AUDI_TX_EN | PKTSCHED_AMD_TX_EN,
-- 		       PKTSCHED_PKT_EN);
--=20
-- 	/* Enable AUDS */
-- 	dw_hdmi_qp_mod(hdmi, PKTSCHED_AUDS_TX_EN, PKTSCHED_AUDS_TX_EN, PKTSCHED_=
-PKT_EN);
--=20
-- 	return 0;
-- }
--=20
-  static void dw_hdmi_qp_bridge_atomic_enable(struct drm_bridge *bridge,
-  					    struct drm_atomic_state *state)
-  {
-@@@ -970,9 -857,9 +857,9 @@@ static int dw_hdmi_qp_bridge_clear_avi_
- =20
-  static int dw_hdmi_qp_bridge_clear_hdmi_infoframe(struct drm_bridge *brid=
-ge)
-  {
-- 	/* FIXME: add support for this InfoFrame */
-+ 	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
- =20
-- 	drm_warn_once(bridge->encoder->dev, "HDMI VSI not supported\n");
-+ 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_VSI_TX_EN, PKTSCHED_PKT_EN);
- =20
-  	return 0;
-  }
-@@@ -986,6 -873,15 +873,15 @@@ static int dw_hdmi_qp_bridge_clear_hdr_
-  	return 0;
-  }
- =20
-+ static int dw_hdmi_qp_bridge_clear_spd_infoframe(struct drm_bridge *bridg=
-e)
-+ {
-+ 	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
-+=20
-+ 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_SPDI_TX_EN, PKTSCHED_PKT_EN);
-+=20
-+ 	return 0;
-+ }
-+=20
-  static int dw_hdmi_qp_bridge_clear_audio_infoframe(struct drm_bridge *bri=
-dge)
-  {
-  	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
-@@@ -999,6 -895,32 +895,32 @@@
-  	return 0;
-  }
- =20
-+ static void dw_hdmi_qp_write_pkt(struct dw_hdmi_qp *hdmi, const u8 *buffe=
-r,
-+ 				 size_t start, size_t len, unsigned int reg)
-+ {
-+ 	u32 val =3D 0;
-+ 	size_t i;
-+=20
-+ 	for (i =3D start; i < start + len; i++)
-+ 		val |=3D buffer[i] << ((i % 4) * BITS_PER_BYTE);
-+=20
-+ 	dw_hdmi_qp_write(hdmi, val, reg);
-+ }
-+=20
-+ static void dw_hdmi_qp_write_infoframe(struct dw_hdmi_qp *hdmi, const u8 =
-*buffer,
-+ 				       size_t len, unsigned int reg)
-+ {
-+ 	size_t i;
-+=20
-+ 	/* InfoFrame packet header */
-+ 	dw_hdmi_qp_write_pkt(hdmi, buffer, 1, 2, reg);
-+=20
-+ 	/* InfoFrame packet body */
-+ 	for (i =3D 0; i < len - 3; i +=3D 4)
-+ 		dw_hdmi_qp_write_pkt(hdmi, buffer + 3, i, min(len - i - 3, 4),
-+ 				     reg + i + 4);
-+ }
-+=20
-  static int dw_hdmi_qp_bridge_write_avi_infoframe(struct drm_bridge *bridg=
-e,
-  						 const u8 *buffer, size_t len)
-  {
-@@@ -1006,15 -928,27 +928,27 @@@
- =20
-  	dw_hdmi_qp_bridge_clear_avi_infoframe(bridge);
- =20
-- 	return dw_hdmi_qp_config_avi_infoframe(hdmi, buffer, len);
-+ 	dw_hdmi_qp_write_infoframe(hdmi, buffer, len, PKT_AVI_CONTENTS0);
-+=20
-+ 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_AVI_FIELDRATE, PKTSCHED_PKT_CONFIG1);
-+ 	dw_hdmi_qp_mod(hdmi, PKTSCHED_AVI_TX_EN | PKTSCHED_GCP_TX_EN,
-+ 		       PKTSCHED_AVI_TX_EN | PKTSCHED_GCP_TX_EN, PKTSCHED_PKT_EN);
-+=20
-+ 	return 0;
-  }
- =20
-  static int dw_hdmi_qp_bridge_write_hdmi_infoframe(struct drm_bridge *brid=
-ge,
-  						  const u8 *buffer, size_t len)
-  {
-+ 	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
-+=20
-  	dw_hdmi_qp_bridge_clear_hdmi_infoframe(bridge);
- =20
-- 	/* FIXME: add support for the HDMI VSI */
-+ 	dw_hdmi_qp_write_infoframe(hdmi, buffer, len, PKT_VSI_CONTENTS0);
-+=20
-+ 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_VSI_FIELDRATE, PKTSCHED_PKT_CONFIG1);
-+ 	dw_hdmi_qp_mod(hdmi, PKTSCHED_VSI_TX_EN, PKTSCHED_VSI_TX_EN,
-+ 		       PKTSCHED_PKT_EN);
- =20
-  	return 0;
-  }
-@@@ -1026,7 -960,28 +960,28 @@@ static int dw_hdmi_qp_bridge_write_hdr_
- =20
-  	dw_hdmi_qp_bridge_clear_hdr_drm_infoframe(bridge);
- =20
-- 	return dw_hdmi_qp_config_drm_infoframe(hdmi, buffer, len);
-+ 	dw_hdmi_qp_write_infoframe(hdmi, buffer, len, PKT_DRMI_CONTENTS0);
-+=20
-+ 	dw_hdmi_qp_mod(hdmi, 0, PKTSCHED_DRMI_FIELDRATE, PKTSCHED_PKT_CONFIG1);
-+ 	dw_hdmi_qp_mod(hdmi, PKTSCHED_DRMI_TX_EN, PKTSCHED_DRMI_TX_EN,
-+ 		       PKTSCHED_PKT_EN);
-+=20
-+ 	return 0;
-+ }
-+=20
-+ static int dw_hdmi_qp_bridge_write_spd_infoframe(struct drm_bridge *bridg=
-e,
-+ 						 const u8 *buffer, size_t len)
-+ {
-+ 	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
-+=20
-+ 	dw_hdmi_qp_bridge_clear_spd_infoframe(bridge);
-+=20
-+ 	dw_hdmi_qp_write_infoframe(hdmi, buffer, len, PKT_SPDI_CONTENTS0);
-+=20
-+ 	dw_hdmi_qp_mod(hdmi, PKTSCHED_SPDI_TX_EN, PKTSCHED_SPDI_TX_EN,
-+ 		       PKTSCHED_PKT_EN);
-+=20
-+ 	return 0;
-  }
- =20
-  static int dw_hdmi_qp_bridge_write_audio_infoframe(struct drm_bridge *bri=
-dge,
-@@@ -1036,7 -991,31 +991,31 @@@
- =20
-  	dw_hdmi_qp_bridge_clear_audio_infoframe(bridge);
- =20
-- 	return dw_hdmi_qp_config_audio_infoframe(hdmi, buffer, len);
-+ 	/*
-+ 	 * AUDI_CONTENTS0: { RSV, HB2, HB1, RSV }
-+ 	 * AUDI_CONTENTS1: { PB3, PB2, PB1, PB0 }
-+ 	 * AUDI_CONTENTS2: { PB7, PB6, PB5, PB4 }
-+ 	 *
-+ 	 * PB0: CheckSum
-+ 	 * PB1: | CT3    | CT2  | CT1  | CT0  | F13  | CC2 | CC1 | CC0 |
-+ 	 * PB2: | F27    | F26  | F25  | SF2  | SF1  | SF0 | SS1 | SS0 |
-+ 	 * PB3: | F37    | F36  | F35  | F34  | F33  | F32 | F31 | F30 |
-+ 	 * PB4: | CA7    | CA6  | CA5  | CA4  | CA3  | CA2 | CA1 | CA0 |
-+ 	 * PB5: | DM_INH | LSV3 | LSV2 | LSV1 | LSV0 | F52 | F51 | F50 |
-+ 	 * PB6~PB10: Reserved
-+ 	 */
-+ 	dw_hdmi_qp_write_infoframe(hdmi, buffer, len, PKT_AUDI_CONTENTS0);
-+=20
-+ 	/* Enable ACR, AUDI, AMD */
-+ 	dw_hdmi_qp_mod(hdmi,
-+ 		       PKTSCHED_ACR_TX_EN | PKTSCHED_AUDI_TX_EN | PKTSCHED_AMD_TX_EN,
-+ 		       PKTSCHED_ACR_TX_EN | PKTSCHED_AUDI_TX_EN | PKTSCHED_AMD_TX_EN,
-+ 		       PKTSCHED_PKT_EN);
-+=20
-+ 	/* Enable AUDS */
-+ 	dw_hdmi_qp_mod(hdmi, PKTSCHED_AUDS_TX_EN, PKTSCHED_AUDS_TX_EN, PKTSCHED_=
-PKT_EN);
-+=20
-+ 	return 0;
-  }
- =20
-  #ifdef CONFIG_DRM_DW_HDMI_QP_CEC
-@@@ -1227,6 -1206,8 +1206,8 @@@ static const struct drm_bridge_funcs dw
-  	.hdmi_write_hdmi_infoframe =3D dw_hdmi_qp_bridge_write_hdmi_infoframe,
-  	.hdmi_clear_hdr_drm_infoframe =3D dw_hdmi_qp_bridge_clear_hdr_drm_infofr=
-ame,
-  	.hdmi_write_hdr_drm_infoframe =3D dw_hdmi_qp_bridge_write_hdr_drm_infofr=
-ame,
-+ 	.hdmi_clear_spd_infoframe =3D dw_hdmi_qp_bridge_clear_spd_infoframe,
-+ 	.hdmi_write_spd_infoframe =3D dw_hdmi_qp_bridge_write_spd_infoframe,
-  	.hdmi_clear_audio_infoframe =3D dw_hdmi_qp_bridge_clear_audio_infoframe,
-  	.hdmi_write_audio_infoframe =3D dw_hdmi_qp_bridge_write_audio_infoframe,
-  	.hdmi_audio_startup =3D dw_hdmi_qp_audio_enable,
-@@@ -1344,7 -1325,8 +1325,8 @@@ struct dw_hdmi_qp *dw_hdmi_qp_bind(stru
-  			   DRM_BRIDGE_OP_EDID |
-  			   DRM_BRIDGE_OP_HDMI |
-  			   DRM_BRIDGE_OP_HDMI_AUDIO |
-- 			   DRM_BRIDGE_OP_HDMI_HDR_DRM_INFOFRAME;
-+ 			   DRM_BRIDGE_OP_HDMI_HDR_DRM_INFOFRAME |
-+ 			   DRM_BRIDGE_OP_HDMI_SPD_INFOFRAME;
-  	if (!hdmi->no_hpd)
-  		hdmi->bridge.ops |=3D DRM_BRIDGE_OP_HPD;
-  	hdmi->bridge.of_node =3D pdev->dev.of_node;
+If there is anything I should have done differently I'd be happy to know in
+order to adjust my process in the future.
 
---xbJjccWe39/nGeLS
-Content-Type: application/pgp-signature; name="signature.asc"
+[0] https://drm.pages.freedesktop.org/maintainer-tools/committer/conflict-r=
+esolution.html
+[1] https://lore.kernel.org/lkml/DH58MAETGDMM.2QS6VJDQ7UXIV@bootlin.com/
 
------BEGIN PGP SIGNATURE-----
+Luca
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm6uGAACgkQJNaLcl1U
-h9A4Bgf+Ou80IHlwE99ccpMSbaWYyIj5zdrHUint6uiDAfT1xCK0yFumhbb937ik
-UuiKPkVz001tAdKYLFD8CnPqdQZIftGMyPwaTjPRf7lWXXfIfZN/QMYKjoxAhZeL
-YiKaCLyCAfBjuSxqZj63/tZg9JDR8R+2uYyEr3ylkMi3WNGt/H2uUjST1Z9fyURB
-29aPDSWlqelj6VYSeO+i2f7fPc8T8KL/soNnjGSiXstdKDpa7nWpcvGPwGQRjfxk
-coR9OhIaRFuX3h8HEzqX5WHdXlmIHBh4BhdXYLUKiRQlJxKbhXcpZddKbGI8h+nu
-x0M2bQAbVDj52J5VWsgu9IJJvWD5pg==
-=udv0
------END PGP SIGNATURE-----
-
---xbJjccWe39/nGeLS--
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
