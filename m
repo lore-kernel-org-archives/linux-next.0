@@ -1,91 +1,93 @@
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AB53587D7;
-	Wed, 18 Mar 2026 17:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CEE1F192E;
+	Wed, 18 Mar 2026 18:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773856196; cv=none; b=FeLH/S8WbkSjs4hpzYDl3uHRnI+iv9VuIqpXuwXpGPZ8QFVGJkMmQvLIhABF5kzMZneAh+yisaGfcIxZ9LJzfPJMryEJbWgMmUI54VRo8pM9wPXsXE+4YbPRy2aP5wxm97y/6tfGF9XjexxfRoJRnOPoiyxF/uCu0shQTb1ngNw=
+	t=1773858002; cv=none; b=GSX/2IGjSNZxn2GU4gx8LYIgYvqc2+SNEsa5oOztJwTM5s36xmF8l5NdY1QlWK8RxUFUofHIOJ2mcOJu7sPDdg8UvMGONMMc+O6gKJf6+VqR4/nQUc8b0sKbllfAmW49gRq/4xyywL57wZCr8y8E0BZxOMrM3Sz4912dr9xJ48Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773856196; c=relaxed/simple;
-	bh=ZA1ncH987c8Np+jN1DlvSABXRC/iBzs19nI28TuoEfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wjwet+64Bzod/mJqdWsBsDArNO83d0RKzCoiLz9e6RsxTgk6IH4KTgSn6DnSSZ/SmpJynIa3kC7EGFrd8TenCEsRH/bfHvZjamhN0G+lAF53dY/7eVe+8ERAV9Of+Qn/9k+wQ3ObkI58EreeOC+pP1YqiIYVGLYkmSU/ZyzPEQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=JBKCQ+IX; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1773858002; c=relaxed/simple;
+	bh=nAfgr/dPQQiWm6fZTzBvAndw3PuCiaKqXHaMkQu5TJ4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KvGh5+CpTunTL94SrdIRlfV1XA7Lr7obvweDpI5T6/+PbMBnxVWpdGGXd8ExNBrtSskbsVVLSAySgBsaDuVkaaSB+d1GKzroU6oJETPIxy2sspRcXFtF6+av+90jzgh8CIezCij5+8qWJaEvBRRT9WclxshogiAnZ2qwAPp6bYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VIzZ1nW7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="JBKCQ+IX"
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4fbbv62zcNz1XMFkQ;
-	Wed, 18 Mar 2026 17:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1773856182; x=1776448183; bh=4h0N8je/sz5bGwtAWF3aYW9e
-	v7ftX3/0RxXE553oLWc=; b=JBKCQ+IXQy5HdmncVg3SxjIpbRowkyoIVr5bWrrq
-	MY14kmD9Xhta4+EEd371vszocgYZjEdVZMo1FMN9A4g7BVlBXI0n8D7XTCJp/nI4
-	s0vj+koMgBdngF+AtNlCVuJYtWbF0rpljRohxLjwIhWEtRZlc/RoF3VmBcxvgFXU
-	XpBZHjLk6ICbfHyUmxx682279kXLfSdeLVC/KjMrTg+CxU/dLxS/F+sltw2H++dz
-	6cF29ToTz5wui2BqdWTRbpvvuzNLJFeI3a8gCIsHqrt2GabZzLqdj6zW5gC02g9o
-	MYfypqP6A1/nNxNQu3RqnPFiRFLlQ5f6VtqwMXXHL58DhA==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id fzVt-KjtLjDN; Wed, 18 Mar 2026 17:49:42 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4fbbtn00zMz1XM31H;
-	Wed, 18 Mar 2026 17:49:35 +0000 (UTC)
-Message-ID: <f0e6452b-868f-4d57-b2cc-98daf16cdecd@acm.org>
-Date: Wed, 18 Mar 2026 10:49:34 -0700
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VIzZ1nW7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4EB7C2BC87;
+	Wed, 18 Mar 2026 18:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1773858001;
+	bh=nAfgr/dPQQiWm6fZTzBvAndw3PuCiaKqXHaMkQu5TJ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VIzZ1nW7c9O8h/Be8mQPB/b3hyD4C1txhgSDjvF0jUTa3rfeY/ft53Dn2CvLQ+xHz
+	 Z29VGwCQVB0+KAz5HfA1Xybe+n1MNKGeLPnkX5M1YgLuNtaxL1NQ+VHzr3JBzqMjPO
+	 OLiikU8TfG/p5hf9TzBVRcvXIayA8i0cs5je30h8=
+Date: Wed, 18 Mar 2026 11:20:01 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
+ Puranjay Mohan <puranjay@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm-unstable tree
+Message-Id: <20260318112001.d67d0e84a4d69b991f0f97f4@linux-foundation.org>
+In-Reply-To: <abqtxbX0eW1Ljdhx@sirena.org.uk>
+References: <abqtxbX0eW1Ljdhx@sirena.org.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression: scsi: ufs: core: Avoid IRQ thread wakeup during
- active UIC command
-To: Tj <tj.iam.tj@proton.me>, Peter Wang <peter.wang@mediatek.com>,
- linux-next@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <abmMptgPR581bPUS@mail.iam.tj>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <abmMptgPR581bPUS@mail.iam.tj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 3/17/26 10:17 AM, Tj wrote:
-> #regzbot ^introduced: 6475cfb81fc4f6175b6d15d1c205a5168dc10b46
+On Wed, 18 Mar 2026 13:51:01 +0000 Mark Brown <broonie@kernel.org> wrote:
+
+> Hi all,
 > 
-> I've had to revert this commit because it breaks UFS on Samsung Book2
-> W737 sdm850. Below is transcribed from a blurry video so apologies if it
-> is not exact:
+> After merging the mm-unstable tree, today's linux-next build
+> (x86_64 allmodconfig rustfmtcheck) failed like this:
 > 
-> | BUG: Invalid wait context |
-> ufshcd-qcom 1d84000.ufshc: uic cmd 0x1 with arg3 0x0 completion timeout
-> 7.0.0-rc3-next-202603110sdm845 #103 Not tainted
-> -----------------------------
-> ufshcd-qcom 1d84000.ufshc: dme-get: attr-id 0x41 failed 0 retries
-> swapper/0/0 is trying to lock:
-> ffff000087ba4048 (shost->host_lock)(....)-(3:3). at: ufshcd_sl_intr+0x3dc/0x7a0
+> Diff in /tmp/next/build/drivers/android/binder/page_range.rs:762:
+>      if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
+>          if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
+>              let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
+> -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+> +            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+>          }
+>      }
+>  
+> Diff in /tmp/next/build/drivers/android/binder/page_range.rs:762:
+>      if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
+>          if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
+>              let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
+> -        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+> +            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+>          }
+>      }
+>  
+> 
+> Caused by commit
+> 
+>   320e410f0294b (mm: rename zap_page_range_single() to zap_vma_range())
+> 
+> I have used the tree from next-20260317 instead.
 
-Thanks for having reported this. Is this perhaps the same issue as what
-has been reported by Marek in
-https://lore.kernel.org/linux-scsi/1f88b91c-59e6-4347-84c2-50b7cf106c47@samsung.com/?
+huh, is this python?
 
-I propose to revert commit 6475cfb81fc4 ("scsi: ufs: core: Avoid IRQ
-thread wakeup during active UIC command") if a fix is not found before
-the end of this week.
+--- a/drivers/android/binder/page_range.rs~mm-rename-zap_page_range_single-to-zap_vma_range-fix
++++ a/drivers/android/binder/page_range.rs
+@@ -762,7 +762,7 @@ unsafe extern "C" fn rust_shrink_free_pa
+     if let Some(unchecked_vma) = mmap_read.vma_lookup(vma_addr) {
+         if let Some(vma) = check_vma(unchecked_vma, range_ptr) {
+             let user_page_addr = vma_addr + (page_index << PAGE_SHIFT);
+-        vma.zap_vma_range(user_page_addr, PAGE_SIZE);
++            vma.zap_vma_range(user_page_addr, PAGE_SIZE);
+         }
+     }
+ 
+_
 
-Bart.
