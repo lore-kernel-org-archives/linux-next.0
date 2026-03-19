@@ -1,411 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169B61F4CA9;
-	Thu, 19 Mar 2026 13:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114D0372692
+	for <linux-next@vger.kernel.org>; Thu, 19 Mar 2026 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773927971; cv=none; b=ExP/MFaSJvLiyQZsY+r/EJCcqfxdJ+kC2q266gJfXaajWaBaVzrGuMK+AcDMhaevh5X106W6J3eQWe28Ct1iGleLjKraaduAtV37hbC8RkEcyDHYqrpd1V34CS6vJGOHcgCZlxCR3dwbRgFiJGCQdS2mLx7uCN6UhAkYtFI6NjI=
+	t=1773930284; cv=none; b=seQGyWxoIdOxYGfzXDvu0aOJCFqsIPRzusY/qop5Kc1SWDKJkZNNdVSuwoWiFp1MnyrkH6yYjeCs8h9eOgYZeoXdd5X7xINm3ZggvntBP+m/qKdG6WTsQvv/LPoKVRZKFET8C/T6TCytpB9Ex4XsXjHiXJM+pE/lc9tiTtKPB+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773927971; c=relaxed/simple;
-	bh=JlonrD06TGhdnCnz2oCE6/vEJKZ12IHS6NE9p4Pj42o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jvDvDNhHSRv37Opf+aUy9mUi48sPKoTtfP2OFJSgjrpIgVv+v9HgXf1K/0lpmcki790RfGueehC/z1QLmFNUgk3Xq32OeFlik+V+M+cHStaome6S38hscZ2Y2hNS59Dj2aRHeNGZISK/ZRVAjN3AAr6s7PGT38NDICGQ0P8AE7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEkZ/Frv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773930284; c=relaxed/simple;
+	bh=EBDnfXo3mcxO0cTkgFLb/cSZiJCVroQxIaasDMmAhHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFU8Ku5M3e+1weEdJVNewAeW6dyOAcAxTmmojEScBqTA89J92saRa+KS4HIzK2COPTF8WFCYRer5js/M4sI8fdn7kBXgbOqvvseSumUSXQ14+elxbmdAoLpfl5YY7gecPWGO6w88bmUPW44pHpsF6eAmqb1LsN8Ck2gEhLrao7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dEyv2PBB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RWxho0kH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEkZ/Frv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183B5C19424;
-	Thu, 19 Mar 2026 13:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773927970;
-	bh=JlonrD06TGhdnCnz2oCE6/vEJKZ12IHS6NE9p4Pj42o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QEkZ/Frv3xNxLiDIETDzv3K8CWHBbacebyjaj40T7W8qpRVZmmV7UsyOfbJ/69Zqj
-	 a+mi3Q2TpnFgHknQBLqb5hGfP+PHSaAEqf2Q82NLqexrzDjlCG3Besa7TxD0WK1h/p
-	 F1s5vmB9g8KkMtoij5v4FETmYGxdIrrR80IerovNT7LW6ZJZicktQ+GlgKz9WDVkXT
-	 k1Jt05FY9EDIZp2RPTsuhWnTxYfXnDcdGa1gqcwKOhJhCMSNDG0jJ9PfHE5UIrzSuP
-	 IttQP34V1wji2IgdWmWuDvX//Dmw4T2HaUqDtTTY78WGnOMnmSk1BvxyLbYHqa6SXR
-	 MNk0tnTyUXLAQ==
-Date: Thu, 19 Mar 2026 13:46:06 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: linux-next: manual merge of the devicetree tree with the qcom tree
-Message-ID: <abv-Htq1mSjVaYja@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dEyv2PBB";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RWxho0kH"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62J73s3r1567058
+	for <linux-next@vger.kernel.org>; Thu, 19 Mar 2026 14:24:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=sA+146zFbw9F4w0Za+p26oOY
+	VRn7u4SEFt5aaUsyZkU=; b=dEyv2PBBFmsktpCj+evMzmn7QENq8eTiSyg8c4Bu
+	lkr686ycBurQ6rkcpYOt9+oYRZA9TP0kfaRVuRWOXnpVKna8mEKQbIqZ2JSja3RY
+	we4RzvhMvVBYqOZ2+6DKPOoyG8yHRY0v3M2FdeBGkxJQcC7Xa25Lp1/lZm4It2EH
+	15TpJEDHio9YKfT5rW/ZYZKeF4EYgkchnleIZILhi6Tr/Xtp26GdNq39juqMiomc
+	rZb8Xh/DeMdUAARqhZKws83tH1BGN6Tk0bMY50zkBafjcc0XFuTsJ1+Ps+lkrt6h
+	YvYnoOrI/3HyqFqOfr6R45xQ16DSAHVdFzD5ssZVGvvf7A==
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d0akxhp56-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-next@vger.kernel.org>; Thu, 19 Mar 2026 14:24:41 +0000 (GMT)
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-950c91e200dso8322903241.2
+        for <linux-next@vger.kernel.org>; Thu, 19 Mar 2026 07:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773930281; x=1774535081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sA+146zFbw9F4w0Za+p26oOYVRn7u4SEFt5aaUsyZkU=;
+        b=RWxho0kHKKmA2AdRqNPda0DrKVUFHppoRFw83cA4b48rDylBhhyWeyQFQlcovZ/46Y
+         QwJK+dGOC5uCNTHE0JdmPmaJKYS26iEI+8aIGp6HCHPFBANgup2Sld2KfOM0ccjS/u7c
+         f1GTf2fuFbzoyKg2iHHj1lki2gehntwhEFHrpsb68AU9Sa5V9KgIyrgMjRGdWCXjNmeX
+         OE7FRmnsVQyw/Ol56R7jksxABWJK28aO7V9oyseVwGW1XjPBg7c2MaZX6d/8Ovv5V4Ez
+         P4L+4j2e7cdp3Z6XFJwixZO7ZGmvK+7Sq0qQBd7OyIE/aYcMn4V4C76O7tej+kudcWRT
+         HcdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773930281; x=1774535081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sA+146zFbw9F4w0Za+p26oOYVRn7u4SEFt5aaUsyZkU=;
+        b=htgqqiR2Gcjba9aIronwu+T6tUFplt+m2JawXHqACD4ZUztK172GcXaKrcHc39V8F9
+         +e4fWOl0L1hMXQew15BdFk76ATzbGJjyh6krlE0CfV4xb5IIqJJkCWBeZ0nz/L7WW4FC
+         RASQHvX180Ib8PGoRrWdrEQBK6pTHCQk+QKrIl3AwxGl8g3ovxyUcJA5lXsYDgoh78Vt
+         951+FzOYbClPNY59PzafrgBHKUPoT9J1R70SxD278ITg760DIcJ9mabrGtnsWr6QaBAH
+         xjtpuaTIOo7roJPHmYoX/VDWYsiW2bojx+rd25SXj1waMwbwBY786UG8ewjLkKT2T3Ie
+         oDdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3jNmI5yUlQxfxC1IUxlwYra/Q/t4ORr4ph0WN2yOSc40xPjf+tUI7rVvKyK1JsNqEHIEKhXcFxTa7@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr8CBjIy3sRDUVn8rrispzS32OhAYymJnS14ffHYDyWoQfQ6FS
+	Wt31Ft4C1Nzo2wa3FKko2Ns9vKKnIMNjCjxVOwsZhuWWh1zxziX7Ipe6HafutcMzeA3BtR8c+AA
+	4y0InWAAKqIiYCnoi1sCyedSNxsKHv3AEvUdx3O/mQjmpYrhpGlWKrZKz+OBMfhvStGziWUDd
+X-Gm-Gg: ATEYQzyMIu3YOa/WwlznXc2rBGHzWBV6nfc5PyPTjhYIjlOavZLBWMBfPh9hsrBOu/M
+	1jbEuhtqd0CDWD4YapR12kJ3olHSweD0hKgSD6dVQy/rSZ44hu+KWTbmPDkd+o2f1BGTalWI364
+	TU24Cazch9zr9HuptwOkB9HHBk0UICkQ08Ri3egmnHhWuuR8XYygmbkJqUrKUDMOsHlNQQnXa+U
+	ijl8ieXcEdQreUuXOa42ZLQHSsOgdzowClmmLByJr0L0s4MMqe/Xn/bkP36Rtl776orSOlWvqcO
+	W0DplsRyFXfWkNkSGZ8I0hxcm0OmAawIpTolJLZpyg3wcMLl4yBsfYMSIAXdzerDpKTJ4Uteeq5
+	qwZ4ckLhvBTrU1k+v7orMynXY7bozYUz1nw==
+X-Received: by 2002:a05:6102:1611:b0:602:7627:6c4f with SMTP id ada2fe7eead31-6027d2b2f4amr3968801137.17.1773930281076;
+        Thu, 19 Mar 2026 07:24:41 -0700 (PDT)
+X-Received: by 2002:a05:6102:1611:b0:602:7627:6c4f with SMTP id ada2fe7eead31-6027d2b2f4amr3968783137.17.1773930280451;
+        Thu, 19 Mar 2026 07:24:40 -0700 (PDT)
+Received: from oss.qualcomm.com ([82.79.95.133])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f8c350aesm66713115e9.4.2026.03.19.07.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2026 07:24:39 -0700 (PDT)
+Date: Thu, 19 Mar 2026 16:24:38 +0200
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the clk-imx tree
+Message-ID: <tawqp2mkgpqzpyvelpzf2s6keq22hi5vjehyvnjcxacfkswwr5@kxt5wok5xpqp>
+References: <abv-EiiKz0ZpmhJZ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CO4GWMDUepHdGQ9C"
-Content-Disposition: inline
-
-
---CO4GWMDUepHdGQ9C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <abv-EiiKz0ZpmhJZ@sirena.org.uk>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE5MDExMyBTYWx0ZWRfX5LOVtaTjACh8
+ Ryju5GH4ct9z1FYS44eBXSRuFmddybjokJaT+9xmfP9RV0+RsFvIIhe4yanw5AiBoc/jf+XvS+4
+ y4yhyqnh/Q1yZQS0+7/BtZelHdLwhwb2HGevDFO1GwvPu5FmYQUDV2vdxMC+IvIK55kGAfIVTfQ
+ w2X7VPPdSJIDCjzc5yS/mpZCF6O7ki1iwe2x6Rg0H+OjDS7j6oztkaz2w3/45/m5nhnFcbJsuZa
+ etY+daOt8SbsyA38rwWQNFu34d2JpDIw0JuHq4DX6ENlzQlr9R5y5VGOwZC4T+560ySfrxMSS9H
+ E4HHdqserRjoOrOblxfDviFKMCFGyqWFAfHFrkdgahaBLd1/syr1PYHoJv9LVk4DNxcPGSbf4cD
+ jHmMCvX4YEdX7YxlCghc75uHWNYQQhn8eSOINw2haBB2RXMCEpPUUh7dkMBr2TMf/Gn//WLNGfV
+ +jXt8lOaD6jMwYMXhEQ==
+X-Proofpoint-GUID: GeysnF113ISUofAL6QRBMX81K2GFIU-m
+X-Authority-Analysis: v=2.4 cv=ZeMQ98VA c=1 sm=1 tr=0 ts=69bc0729 cx=c_pps
+ a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=iKs3dpp2RB4k51ZqCjcyjQ==:17
+ a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=B9gMt3HSeTy7V9-alo8A:9 a=CjuIK1q_8ugA:10 a=TD8TdBvy0hsOASGTdmB-:22
+X-Proofpoint-ORIG-GUID: GeysnF113ISUofAL6QRBMX81K2GFIU-m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-19_01,2026-03-19_05,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 bulkscore=0 clxscore=1011 spamscore=0 suspectscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603190113
 
-Hi all,
+On 26-03-19 13:45:54, Mark Brown wrote:
+> Commits
+> 
+>   0463762fa001c ("clk: imx: fracn-gppll: Add 477.4MHz support")
+>   3cbcf93329c0d ("clk: imx: fracn-gppll: Add 333.333333 MHz support")
+> 
+> are missing a Signed-off-by from their committers
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+Fixed.
 
-  Documentation/devicetree/bindings/arm/cpus.yaml
-
-between commit:
-
-  96e71f817b02c ("dt-bindings: arm: cpus: Extend Qualcomm Oryon compatibles=
-")
-
-=66rom the qcom tree and commit:
-
-  0220405d7e099 ("dt-bindings: arm: cpus: Deprecate Qualcomm generic compat=
-ibles")
-
-=66rom the devicetree tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/devicetree/bindings/arm/cpus.yaml
-index 07f3c6a525541,700255e9a0022..0000000000000
---- a/Documentation/devicetree/bindings/arm/cpus.yaml
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@@ -79,156 -79,153 +79,160 @@@ properties
-        All other bits in the reg cells must be set to 0.
- =20
-    compatible:
--     enum:
--       - apm,potenza
--       - apm,strega
--       - apple,avalanche
--       - apple,blizzard
--       - apple,cyclone
--       - apple,firestorm
--       - apple,hurricane-zephyr
--       - apple,icestorm
--       - apple,mistral
--       - apple,monsoon
--       - apple,twister
--       - apple,typhoon
--       - arm,arm710t
--       - arm,arm720t
--       - arm,arm740t
--       - arm,arm7ej-s
--       - arm,arm7tdmi
--       - arm,arm7tdmi-s
--       - arm,arm9es
--       - arm,arm9ej-s
--       - arm,arm920t
--       - arm,arm922t
--       - arm,arm925
--       - arm,arm926e-s
--       - arm,arm926ej-s
--       - arm,arm940t
--       - arm,arm946e-s
--       - arm,arm966e-s
--       - arm,arm968e-s
--       - arm,arm9tdmi
--       - arm,arm1020e
--       - arm,arm1020t
--       - arm,arm1022e
--       - arm,arm1026ej-s
--       - arm,arm1136j-s
--       - arm,arm1136jf-s
--       - arm,arm1156t2-s
--       - arm,arm1156t2f-s
--       - arm,arm1176jzf
--       - arm,arm1176jz-s
--       - arm,arm1176jzf-s
--       - arm,arm11mpcore
--       - arm,armv8 # Only for s/w models
--       - arm,c1-nano
--       - arm,c1-premium
--       - arm,c1-pro
--       - arm,c1-ultra
--       - arm,cortex-a5
--       - arm,cortex-a7
--       - arm,cortex-a8
--       - arm,cortex-a9
--       - arm,cortex-a12
--       - arm,cortex-a15
--       - arm,cortex-a17
--       - arm,cortex-a32
--       - arm,cortex-a34
--       - arm,cortex-a35
--       - arm,cortex-a53
--       - arm,cortex-a55
--       - arm,cortex-a57
--       - arm,cortex-a65
--       - arm,cortex-a72
--       - arm,cortex-a73
--       - arm,cortex-a75
--       - arm,cortex-a76
--       - arm,cortex-a77
--       - arm,cortex-a78
--       - arm,cortex-a78ae
--       - arm,cortex-a78c
--       - arm,cortex-a320
--       - arm,cortex-a510
--       - arm,cortex-a520
--       - arm,cortex-a520ae
--       - arm,cortex-a710
--       - arm,cortex-a715
--       - arm,cortex-a720
--       - arm,cortex-a720ae
--       - arm,cortex-a725
--       - arm,cortex-m0
--       - arm,cortex-m0+
--       - arm,cortex-m1
--       - arm,cortex-m3
--       - arm,cortex-m4
--       - arm,cortex-r4
--       - arm,cortex-r5
--       - arm,cortex-r7
--       - arm,cortex-r52
--       - arm,cortex-x1
--       - arm,cortex-x1c
--       - arm,cortex-x2
--       - arm,cortex-x3
--       - arm,cortex-x4
--       - arm,cortex-x925
--       - arm,neoverse-e1
--       - arm,neoverse-n1
--       - arm,neoverse-n2
--       - arm,neoverse-n3
--       - arm,neoverse-v1
--       - arm,neoverse-v2
--       - arm,neoverse-v3
--       - arm,neoverse-v3ae
--       - arm,rainier
--       - brcm,brahma-b15
--       - brcm,brahma-b53
--       - brcm,vulcan
--       - cavium,thunder
--       - cavium,thunder2
--       - faraday,fa526
--       - intel,sa110
--       - intel,sa1100
--       - marvell,feroceon
--       - marvell,mohawk
--       - marvell,pj4a
--       - marvell,pj4b
--       - marvell,sheeva-v5
--       - marvell,sheeva-v7
--       - nvidia,tegra132-denver
--       - nvidia,tegra186-denver
--       - nvidia,tegra194-carmel
--       - qcom,krait
--       - qcom,kryo
--       - qcom,kryo240
--       - qcom,kryo250
--       - qcom,kryo260
--       - qcom,kryo280
--       - qcom,kryo360
--       - qcom,kryo385
--       - qcom,kryo465
--       - qcom,kryo468
--       - qcom,kryo470
--       - qcom,kryo485
--       - qcom,kryo560
--       - qcom,kryo570
--       - qcom,kryo660
--       - qcom,kryo670
--       - qcom,kryo685
--       - qcom,kryo780
--       - qcom,oryon
--       - qcom,oryon-1-1
--       - qcom,oryon-1-2
--       - qcom,oryon-1-3
--       - qcom,oryon-1-4
--       - qcom,oryon-2-1
--       - qcom,oryon-2-2
--       - qcom,oryon-2-3
--       - qcom,scorpion
--       - samsung,mongoose-m2
--       - samsung,mongoose-m3
--       - samsung,mongoose-m5
-+     oneOf:
-+       - enum:
-+           - apm,potenza
-+           - apm,strega
-+           - apple,avalanche
-+           - apple,blizzard
-+           - apple,cyclone
-+           - apple,firestorm
-+           - apple,hurricane-zephyr
-+           - apple,icestorm
-+           - apple,mistral
-+           - apple,monsoon
-+           - apple,twister
-+           - apple,typhoon
-+           - arm,arm710t
-+           - arm,arm720t
-+           - arm,arm740t
-+           - arm,arm7ej-s
-+           - arm,arm7tdmi
-+           - arm,arm7tdmi-s
-+           - arm,arm9es
-+           - arm,arm9ej-s
-+           - arm,arm920t
-+           - arm,arm922t
-+           - arm,arm925
-+           - arm,arm926e-s
-+           - arm,arm926ej-s
-+           - arm,arm940t
-+           - arm,arm946e-s
-+           - arm,arm966e-s
-+           - arm,arm968e-s
-+           - arm,arm9tdmi
-+           - arm,arm1020e
-+           - arm,arm1020t
-+           - arm,arm1022e
-+           - arm,arm1026ej-s
-+           - arm,arm1136j-s
-+           - arm,arm1136jf-s
-+           - arm,arm1156t2-s
-+           - arm,arm1156t2f-s
-+           - arm,arm1176jzf
-+           - arm,arm1176jz-s
-+           - arm,arm1176jzf-s
-+           - arm,arm11mpcore
-+           - arm,armv8 # Only for s/w models
-+           - arm,c1-nano
-+           - arm,c1-premium
-+           - arm,c1-pro
-+           - arm,c1-ultra
-+           - arm,cortex-a5
-+           - arm,cortex-a7
-+           - arm,cortex-a8
-+           - arm,cortex-a9
-+           - arm,cortex-a12
-+           - arm,cortex-a15
-+           - arm,cortex-a17
-+           - arm,cortex-a32
-+           - arm,cortex-a34
-+           - arm,cortex-a35
-+           - arm,cortex-a53
-+           - arm,cortex-a55
-+           - arm,cortex-a57
-+           - arm,cortex-a65
-+           - arm,cortex-a72
-+           - arm,cortex-a73
-+           - arm,cortex-a75
-+           - arm,cortex-a76
-+           - arm,cortex-a77
-+           - arm,cortex-a78
-+           - arm,cortex-a78ae
-+           - arm,cortex-a78c
-+           - arm,cortex-a320
-+           - arm,cortex-a510
-+           - arm,cortex-a520
-+           - arm,cortex-a520ae
-+           - arm,cortex-a710
-+           - arm,cortex-a715
-+           - arm,cortex-a720
-+           - arm,cortex-a720ae
-+           - arm,cortex-a725
-+           - arm,cortex-m0
-+           - arm,cortex-m0+
-+           - arm,cortex-m1
-+           - arm,cortex-m3
-+           - arm,cortex-m4
-+           - arm,cortex-r4
-+           - arm,cortex-r5
-+           - arm,cortex-r7
-+           - arm,cortex-r52
-+           - arm,cortex-x1
-+           - arm,cortex-x1c
-+           - arm,cortex-x2
-+           - arm,cortex-x3
-+           - arm,cortex-x4
-+           - arm,cortex-x925
-+           - arm,neoverse-e1
-+           - arm,neoverse-n1
-+           - arm,neoverse-n2
-+           - arm,neoverse-n3
-+           - arm,neoverse-v1
-+           - arm,neoverse-v2
-+           - arm,neoverse-v3
-+           - arm,neoverse-v3ae
-+           - arm,rainier
-+           - brcm,brahma-b15
-+           - brcm,brahma-b53
-+           - brcm,vulcan
-+           - cavium,thunder
-+           - cavium,thunder2
-+           - faraday,fa526
-+           - intel,sa110
-+           - intel,sa1100
-+           - marvell,feroceon
-+           - marvell,mohawk
-+           - marvell,pj4a
-+           - marvell,pj4b
-+           - marvell,sheeva-v5
-+           - marvell,sheeva-v7
-+           - nvidia,tegra132-denver
-+           - nvidia,tegra186-denver
-+           - nvidia,tegra194-carmel
-+           - qcom,krait
-+           - qcom,kryo240
-+           - qcom,kryo250
-+           - qcom,kryo260
-+           - qcom,kryo280
-+           - qcom,kryo360
-+           - qcom,kryo385
-+           - qcom,kryo465
-+           - qcom,kryo468
-+           - qcom,kryo470
-+           - qcom,kryo485
-+           - qcom,kryo560
-+           - qcom,kryo570
-+           - qcom,kryo660
-+           - qcom,kryo670
-+           - qcom,kryo685
-+           - qcom,kryo780
-++          - qcom,oryon-1-1
-++          - qcom,oryon-1-2
-++          - qcom,oryon-1-3
-++          - qcom,oryon-1-4
-++          - qcom,oryon-2-1
-++          - qcom,oryon-2-2
-++          - qcom,oryon-2-3
-+           - qcom,scorpion
-+           - samsung,mongoose-m2
-+           - samsung,mongoose-m3
-+           - samsung,mongoose-m5
-+       - enum:
-+           - qcom,kryo
-+           - qcom,oryon
-+         # Too generic, do not use in new code
-+         deprecated: true
- =20
-    enable-method:
-      $ref: /schemas/types.yaml#/definitions/string
-
---CO4GWMDUepHdGQ9C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm7/h0ACgkQJNaLcl1U
-h9BGywf/XF+o933w8eb/+AcMKYsdKrGj1UZNgw947lKQAnan4fIF1ebGjEijdhyW
-e/r6D8JEwevuF8c5wopjzntxR7b5Ni44iFFekjVwffv6bSyRt2oiTJTAi2IRxv3W
-uGEV0bGgbbj52MyNMGydscrarWkjZvdmmn0aPgfhRUiucOsABhjtf+7Fgm+x0dSI
-e3RtRAKj/MqAKQklQ92uinCWjN0EWGpGky9GZUfmqFW0wUiYabhqLWcj3j2SOXrV
-rfhIYEGqMPw4KrrdrBGaxtzwVvhNpsVaNgy38iDu6hBwxCHHNgkgjZ9DKZ896GJz
-8zIUnm8Sg8NuKILNU1/+S38DRawz9Q==
-=RbbT
------END PGP SIGNATURE-----
-
---CO4GWMDUepHdGQ9C--
+Thanks for reporting it.
