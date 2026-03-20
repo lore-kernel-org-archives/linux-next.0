@@ -1,70 +1,86 @@
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B298344031;
-	Fri, 20 Mar 2026 08:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773995729; cv=none; b=vA4wtN/fPoGI40oQZy0VR6xoE9kDgDTRLeUpmxYRk6u5WUgzFrTery5vl8y2mQPV/2hfgn8aFr7soiDLxydZXuwJs67282EmUPFcy0pIdxHLjgzOsaChXAVKqYqcTBuH+/9X2EC0Fo/Rgz/XFEHrX1ydZjl3Oe0oeE2TmSdvFQo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773995729; c=relaxed/simple;
-	bh=S2m08pZGLQ/8pmGmWH5q27DIoV6bxy3kBNcOrxjlj4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boa0owEKbt+arCByZxArWXsxVx5BqbBzk4e+tqzow/M5XMUuNO5+5mO9Y1lxQtv6EEueE5p7IHfA04ggKHx6doo03raaFvx4iTJDs6v/o8PMlHdoqKBeiec+xjQsAwJXAIfkHCa6h+CX8oFOoH4ks/6tjtj6hxKNcjOukHnAfWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=Dd8dG1MV; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Dd8dG1MV"
-Received: from 8bytes.org (p4ffe051a.dip0.t-ipconnect.de [79.254.5.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id D6A7E1A5E41;
-	Fri, 20 Mar 2026 09:35:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1773995719;
-	bh=S2m08pZGLQ/8pmGmWH5q27DIoV6bxy3kBNcOrxjlj4w=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB353750CC;
+	Fri, 20 Mar 2026 12:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774009391; cv=none; b=Sbz+05sXtR0gj2mAhtCKn5e8Q28N1rGhDkOlp7Bbd7MHwfurEBCAlAr1wnLJl6dL/Dndf4YH1p2/a51KOu4MvQBQKDR8ZdihoNAHV9in5bl30FCNabiTNccPUWj6OeZwbmvviAiH66K+LEvhU0OQUuaY0T+bfAiWeraQ2G7+3wM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774009391; c=relaxed/simple;
+	bh=D5+hawYL9k8tzejwYq6yVSrxPzwneHu5h3EXuHjkwHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8StImgh0SugGWJ/AyUyCzJKDQQXXuzSfRnjzXjdsKAS8f9FAWelWaYLF0nN7BOJ/bLhuiZe6oFWUPY24O76lvXf8YfpyvNq1ils3owJ4hTTJ4gLM79KOmOlbhQGNa1G0bBd+sZ6cfp+6rXpStL4srMECDEvWOrp8tuxRgXciAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKLO1F7W; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKLO1F7W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90045C4CEF7;
+	Fri, 20 Mar 2026 12:23:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774009391;
+	bh=D5+hawYL9k8tzejwYq6yVSrxPzwneHu5h3EXuHjkwHo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dd8dG1MVNNWV9z/NoJK7/tTfKJe7xAEGSovsM4yjZfQijgLyuQaI9GfhJgOL2zspp
-	 jyzaqcpGy9jretDL5JS97OA0pvL6JbiXVhJA/sJUjk22dfz5uRCHS33F5Cd1694rRz
-	 RQ3ENpUD0Rvb91KnI1sUiKt8sCi4+jGcU9t28mW8Q+XG/kLdxzEpDDi/Qjhv+JwlqK
-	 wBxk9VhdwLK8kEuApVzomapLrXeRCgmjs0KtY+DcZ2D20eUeYnBoFM3/wPdUBxJAvH
-	 M91wkBflPKtm/+guw3q4OIym8yLJggA0XbJEyJtAcGuZSJMs+LshHAVG6I/Gi0QMyT
-	 on5hBeWsnJTwg==
-Date: Fri, 20 Mar 2026 09:35:18 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Mark Brown <broonie@kernel.org>
+	b=uKLO1F7W705xBMt40Yz3+/hJKFiKoDwJF6Z+TYxACVMav+6fE32+nj8HRymvmXP8+
+	 s4w5GN0PVFpJWCMjv3o4bQvsQkDJC1WzfFgKlex9ciZLrQ6iIoIAZeOFjmPR70gawH
+	 2P3POfWsyfyvXKWfseoNN93QnnSW02kIQVJdQnv8ZzIxtQo5hRx7JSVj2ySO1ImTXe
+	 f9fSa/YOE6o4nL+8FLvKiyVETwqq5LsPNaqgYo7SKpj4JkO4/JaqRr+ug1A279sJEw
+	 JGZPMcaiezpauEgr4GpRMMw4AgSmqcFrrMoXV+KFTDfYkE5WfVkx3INrICqHL23FqF
+	 iq+kilgWAFe/Q==
+Date: Fri, 20 Mar 2026 12:23:07 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Re: Fixes tags need work in the iommu tree
-Message-ID: <dznhib6fkodnu74vyqgz5jgqchv4lhhrviw6urp6ul4jxzffva@hvls3ks5dwnb>
+Message-ID: <5945c555-45ae-4adf-a956-eaddd0ea3efb@sirena.org.uk>
 References: <abqQBPG__RWan2RB@sirena.org.uk>
+ <dznhib6fkodnu74vyqgz5jgqchv4lhhrviw6urp6ul4jxzffva@hvls3ks5dwnb>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PldfH8JeMDkqemz2"
+Content-Disposition: inline
+In-Reply-To: <dznhib6fkodnu74vyqgz5jgqchv4lhhrviw6urp6ul4jxzffva@hvls3ks5dwnb>
+X-Cookie: Who's on first?
+
+
+--PldfH8JeMDkqemz2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <abqQBPG__RWan2RB@sirena.org.uk>
 
-Hi Mark,
+On Fri, Mar 20, 2026 at 09:35:18AM +0100, Joerg Roedel wrote:
+> On Wed, Mar 18, 2026 at 11:44:04AM +0000, Mark Brown wrote:
+> > In commit
 
-On Wed, Mar 18, 2026 at 11:44:04AM +0000, Mark Brown wrote:
-> In commit
-> 
->   fe89277c9ceb0 ("iommu/vt-d: Fix intel iommu iotlb sync hardlockup and retry")
-> 
-> Fixes tag
-> 
->   Fixes: 8a1d82462540 ("iommu/vt-d: Multiple descriptors per  qi_submit_sync()")
-> 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h ("%s")'
+> >   fe89277c9ceb0 ("iommu/vt-d: Fix intel iommu iotlb sync hardlockup and retry")
 
-Sorry, but I don't get what the problem is, the Fixes line generated by the
-command is identical with the line in the commit. What am I missing?
+> > Fixes tag
 
--Joerg
+> >   Fixes: 8a1d82462540 ("iommu/vt-d: Multiple descriptors per  qi_submit_sync()")
+
+> > has these problem(s):
+
+> Sorry, but I don't get what the problem is, the Fixes line generated by the
+> command is identical with the line in the commit. What am I missing?
+
+Yeah, I don't see it either - looks fine?  I'll peer at the script.
+
+--PldfH8JeMDkqemz2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm9PCoACgkQJNaLcl1U
+h9AEcgf9Gp86wLshdsXHXV1ijGOylXrt89Wycdsmq+h1W1geWXaA17miAtXPSR5y
+bBAsv+A9piH6gR5DOaqEvOE2Ivzhsd4SSgZ2u5dN3pCLXl5aRtlS2elhewW4uSCG
+H7esgN3dzpggmNbG+xKvODSWos+yZa49Kb0t7NIvzuXwES0NhOzhxf57F60+QzUX
+iYFBkvMU7yDgBuzWjMT4KgDgHqKrVDDx6uiLrsdzkZzekw0+ZhhcEbUSRbZWZ3gr
+wmErM8uRRmnDboRgl5UzNowsSFkYiGgBMWnwQXoJtAjJBnFIR3U51swhTjWoArv/
+HaLhF1VO9vee+qAT2MlrC7LpBfIb3w==
+=QUyv
+-----END PGP SIGNATURE-----
+
+--PldfH8JeMDkqemz2--
