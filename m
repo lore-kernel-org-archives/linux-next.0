@@ -1,45 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D498F3B19AF;
-	Mon, 23 Mar 2026 16:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1998B3B9DB7;
+	Mon, 23 Mar 2026 18:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774282288; cv=none; b=W03GWGWt4sFvh+xl5ivmdoqkLCtFv1hL22q+xK2Yy6at1VXTbkauuS9EGGOf950E7OcsgqtPV/2A2XllCzt70ru9CrxfUqHTmBtJZ/KjrDN/2SMYJDmAdyxC76gkvqdytT9avoCx9QWQcKQO/tt6JMwq9K736Ooj21YNPb6q7bc=
+	t=1774289335; cv=none; b=Hu/LsOi+ZpK1nQcuACxQTjMoVKeAb30CIDOfw6Fg6dZEt5nPSdCc+iR0Jf0YWIF01Mj5CTtn/wrpxVL/x+E2a/GY2GSlnaV1FCY6mtFurIeUI5x+VnAmmVSM6lOiUUPHZqABiSyXqn4Btrzpyj6M0wAlxiojK0xDpvfRAwMxVWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774282288; c=relaxed/simple;
-	bh=V1LVRrZnRMFi9aIQt/j+G/0pQkJFmJQGCM1dZ8y49SM=;
+	s=arc-20240116; t=1774289335; c=relaxed/simple;
+	bh=tGEvD37Xcm77lhVJ4TlELVN0KVqsRZDQUD4pDGeTygw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EOp19CLpPKEhQy55lMWJBGd3y2upiCHfp4+sy6REIdPXbdbOoYK53ZWXz5jTOilhLyCK66jj0uIsI+VyHxndSwOMtsvoJXyNGb5UsCy1feBpfYzY2EA+vMnemsTlcnS8RySkRBFLuvXvuvtAupTkto8mb2tASh4jY3Dk51ScFN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SA55263E; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=d0r5tEbDbIiNIfVoc9xsEzHb2wVdiliHUEOJ6wHuqyP730l70UEug369ZMb1/Uku7zsAeU/MtFu9mSXkLjVQohvPvAQGbIzH/GppHYKq3fMtzY9+vJ8xXo0bJqtxHJ0k1Xfho+BHQgN1jxo9Z+ifl5T0EUQatQkCgAbs9DsP28A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HM5rdWuT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SA55263E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7250CC2BC9E;
-	Mon, 23 Mar 2026 16:11:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HM5rdWuT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9221C4CEF7;
+	Mon, 23 Mar 2026 18:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774282288;
-	bh=V1LVRrZnRMFi9aIQt/j+G/0pQkJFmJQGCM1dZ8y49SM=;
+	s=k20201202; t=1774289334;
+	bh=tGEvD37Xcm77lhVJ4TlELVN0KVqsRZDQUD4pDGeTygw=;
 	h=Date:From:To:Cc:Subject:From;
-	b=SA55263E31kI8Si4S8zxuSxtt2si9huauHQlIn+23XRK6E7GZGD4GTZQZr/Yos3pC
-	 WIzbnXDDCFwsHoUat1XqiAS3rbX++QVmXHEvF9IgYYrllyPeRGlcD1mRXsaR4OZo8g
-	 qf//fGZf4u7O9gNSJaAW3j+niN8JMqK3iGioFk5qhFRD6jRNOno+UrXHXrnnaGCkmd
-	 mtpGGk2CmlkpIReBICI1bHvyJ0YVM8zfJx/oDTKSDBXOxqDV4U9TAzT3rw9IZG8ziy
-	 ltZ8wHO0Lg7BooScd7ibiYyp2tZMp4XiqCJutuwUfP02kITbc/8/11MJeNVE0yPpZF
-	 IEnd6ss77VJJw==
-Date: Mon, 23 Mar 2026 16:11:23 +0000
+	b=HM5rdWuTMsO+Thk7e10yyyhpfDBS8XWgES3e6O49RqkpOE0mbCNYDHFEr6GtVvMcz
+	 yvbSFGjCR3iN/Pu3S6j3nWobBpqzJ+Mc/ovdBSKg9dSemr0G+2QdsywCVHUh/AQjTo
+	 2ohawktes+GavJWwzY6NQ+M45qBpIAVpI77dYqUSzdh5UrHHi/tyNT7XPkOV0KqY5L
+	 qxnhfwTmLJF9wXZ/pxMGj5A738PHR3hkoEDtaKlln0a8+TNFM3lUv+DDKSt+/Ff0jl
+	 wKpW+Dml9tUYrztd0P7w7oXMw4w7cCmvVP4w8XZq/pASwf4stNytJzRg06ozgfZxpL
+	 4SnYgaGuv8b0w==
+Date: Mon, 23 Mar 2026 18:08:40 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Zubin Mithra <zsm@google.com>
-Subject: linux-next: manual merge of the tip tree with the devsec-tsm-fixes
- tree
-Message-ID: <acFmK57zs5UhM0sg@sirena.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -next status as at v7.0-rc5
+Message-ID: <cb2256d0-cfa9-424f-9dff-8704c3c8a1fa@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,76 +39,66 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IBdSIgHAu8lO+gjc"
+	protocol="application/pgp-signature"; boundary="0uaGxlVVTt4ddwxt"
 Content-Disposition: inline
+X-Cookie: This is a good time to punt work.
 
 
---IBdSIgHAu8lO+gjc
+--0uaGxlVVTt4ddwxt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Linus,
 
-Today's linux-next merge of the tip tree got a conflict in:
+Trees being held at old versions:
 
-  drivers/virt/coco/tdx-guest/tdx-guest.c
+  vfs-brauner    	next-20260312	(Fix applied today)
 
-between commit:
+I'm also carrying a patch for ext4 fixing KUnit memory corruption that
+manifests when we merge with the tip tree, the ext4 tree hasn't been
+updated since January (before the fix was posted).
 
-  c3fd16c3b98ed ("virt: tdx-guest: Fix handling of host controlled 'quote' =
-buffer length")
+Trees with signoff problems:
 
-=66rom the devsec-tsm-fixes tree and commit:
+  hid		(missing committer)
+  iommufd	(missing committer)
+  qcom		(missing author)
+  rdma-fixes	(missing committer)
+  rdma		(missing committer)
+  rpmsg		(missing committer)
 
-  0f409eaea53e4 ("virt: tdx-guest: Return error for GetQuote failures")
+Non-merge commits relative to Linus' tree: 7417
+ 7501 files changed, 482067 insertions(+), 147610 deletions(-)
 
-=66rom the tip tree.
+Top trees adding commits to -next:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  1073	drm
+  633	net-next
+  436	mm-unstable
+  272	tip
+  221	qcom
+  152	ksmbd
+  143	iio
+  139	sound-asoc
+  137	v4l-dvb
+  131	imx-mxs
 
-diff --cc drivers/virt/coco/tdx-guest/tdx-guest.c
-index 7cee97559ba29,23ef3991c4d5a..0000000000000
---- a/drivers/virt/coco/tdx-guest/tdx-guest.c
-+++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
-@@@ -309,12 -306,12 +309,17 @@@ static int tdx_report_new_locked(struc
-  		return ret;
-  	}
- =20
-+ 	if (quote_buf->status !=3D GET_QUOTE_SUCCESS) {
-+ 		pr_debug("GetQuote request failed, status:%llx\n", quote_buf->status);
-+ 		return -EIO;
-+ 	}
-+=20
- -	buf =3D kvmemdup(quote_buf->data, quote_buf->out_len, GFP_KERNEL);
- +	out_len =3D READ_ONCE(quote_buf->out_len);
- +
- +	if (out_len > TDX_QUOTE_MAX_LEN)
- +		return -EFBIG;
- +
- +	buf =3D kvmemdup(quote_buf->data, out_len, GFP_KERNEL);
-  	if (!buf)
-  		return -ENOMEM;
- =20
+Thanks,
+Mark
 
---IBdSIgHAu8lO+gjc
+--0uaGxlVVTt4ddwxt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBZisACgkQJNaLcl1U
-h9CyfQf/dacL1NAFXJWL+FxAOwhtvt1TD4xBI1nEB1iTAN+x7soGOuC/MUHTJeo3
-V9kaNPZZsXkDbJb521y8QiCVnf2vEPbosh0ItSubPFH5sFjq70RUq+BpRfiIuDjX
-S+Q3zOOLeO+kYgHKLqbJtWhPqjABq6G8tUYmYx03X3h2vHTO+X8URDD76lNdCY0w
-F9fGRluLzZZARQT+YcHCS0IVIkBmYWTqWhfHpo0otmoHCcwVgxBtDMpFXdO+s6G2
-gSDKYXriZBQX2aLff8yk9OuuE5BgoG5pNrxBLfGVo731Sq2BX89R4Umz/lMiXy2W
-Tz1GbZNIU/vdkETlu3LXVC3jB03vuA==
-=69Xg
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBgagACgkQJNaLcl1U
+h9AXoAf/U8Lz4aQ8jHSrPJ1IYe8cAwOZPd9rYuFlhIHiajOJXUs/SpcIalEVS/53
+hfxxA7WXBT8aIxkv4DM7EzHQXeacFC854vGkQiGp8dDOBckpjwRga2Bozqn7jwn6
+oRxJEn+064ZWkaVEbQFZrqlaLoLlH2VLrtCUqjJOCmvPTtvPVlXIOUe4h4h0A1dH
+soUi0TxlcopUgme9DFzk2aIM8bgaDde3ncp+LKX8fhfMLW79FrVs8PQDg0qTiBVq
+zho9l0YnU0j6SV3//ptYhMhpFphiawVTJvMWBYSr6DwuX7Asimmm3Fe06yIxg9kl
+wWAXtL24qEb/kdbWXpLGwFNZ1wrxag==
+=3sYL
 -----END PGP SIGNATURE-----
 
---IBdSIgHAu8lO+gjc--
+--0uaGxlVVTt4ddwxt--
