@@ -1,131 +1,160 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E71388E7D;
-	Mon, 23 Mar 2026 15:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61018271A6D;
+	Mon, 23 Mar 2026 15:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774280250; cv=none; b=tP1X7M2wrI0hHRITjLSfkdQDQlO+TS4I5R93wfNseiPJkoqJ3EaHsoQmZRqaI0cZdJc/1nbAysFvU2BMc1zcWG6ZVdxxqCsprgb0XouXk5HzTdXN5ZSV9DuIJXypa9a3Zl87P57iyyaDiWzwrkA0aqM11Ge6GpUuDBc5LT7ORdM=
+	t=1774280961; cv=none; b=UY3QB4TIVfdjb1kHX7W6o6K4nvjXjfqdgHmuf90+rcSyH+AHvsfgwq+DvZ35XInp6YE+DVoXrpmVEsBsJNoYxF5ao23HL7ZM0h73rQl+9m6TqrkKYQ054ONz3yDOX7MCiLP36s6GRgF0/Q7OenySR8+Vd2b8Yv7w0jt+wPGtqnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774280250; c=relaxed/simple;
-	bh=TMHujvxZ/oJ6A9L/a0Srod7FXviAILVmEwoTSJs2wrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dk7SFxXQxbiY0Q67j2H8dL00JPbEFwlDaUT41/+6BD/RoadzVdsHgbrtI2C5bopJoYTiIVURbkmqxW0r0vGSwzEG+/xtnq1DfmY1jRd8WeoUN141nTdsgNsEWAHfYT+1ywFiwhHPLEbQn1icmlQUzavBLMOJUNv7yQzl41YZDBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnBhQBAF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774280961; c=relaxed/simple;
+	bh=lxS4nBMo8We4F74POduxni4DB+9Z0VFoL+7C3D1E5sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FZa36SX4vG+2hzmMTb7mXi3nAxhg/wCJMrsN+Zm/P17RfMRm8sUir1AnDmQ4ZTN7qXmIydV53ltDLvUorftvUkGnXpYL3kPg1RyHtzZCHc2SkVcsHDaeJdepnPkuJ1VzDO50x4PJPQfzX6PJmKUvgPxwEO52HKyuykBkQx3zbn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlaICk+L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnBhQBAF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225E8C4CEF7;
-	Mon, 23 Mar 2026 15:37:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlaICk+L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F54C4CEF7;
+	Mon, 23 Mar 2026 15:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774280249;
-	bh=TMHujvxZ/oJ6A9L/a0Srod7FXviAILVmEwoTSJs2wrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fnBhQBAFUoGNGEcWdolRdaLQradh5Sy1jhAYQ8B1jwJpDUPAtB2A80bQlWnvXFsXR
-	 tmFKcnU4IptjLpCFV2YyjPammn7FMY/p4hmyHddOIbaFZejFsaxrCe7mt7kNc0I9G1
-	 0JHPmsz6hJd/M6TMB8TvsfOWnu8qYMqBHGkbpmHghcaUdTNJ9dYBvlkkKmglXDNnU9
-	 6d0ZE/oFO0LAms4204HkzYVQjZKRaoNw/L1m9eEMaUc2HYzhhpdT6H/cx5F1OPcQQm
-	 ssqy+w68XH/sDyvzY/HP9KK+sGnvJMFHkcMwoNlDO+Z+KsH/yvCPWXn5HiwR6FYlc7
-	 mo0bA1F3E6KSg==
-Date: Mon, 23 Mar 2026 16:37:25 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20260323-empfunden-innovation-6caf40d8e6e5@brauner>
-References: <abQKe58fc13oRFfB@sirena.org.uk>
- <0eb49c98-13cd-4ad9-87f3-7c7b0ace242c@sirena.org.uk>
+	s=k20201202; t=1774280961;
+	bh=lxS4nBMo8We4F74POduxni4DB+9Z0VFoL+7C3D1E5sw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IlaICk+LhcgnkeK5vgnpeRFNmg8YAuxO2THBEO4qtShe+qoR7c0TLOKibTgwHe5OH
+	 DyWo9C4bKLn2MSP43lku9Cq+NpGEjpOnwTN5zI1Dey+UwWrgZJVqDSUzIytvNTQXZj
+	 /pXkk66G8ED0gNJdJI7oNI7GLaJ9nI9+GHsHJlNhsmMmkufEvWS00XXCxMIcygiLN4
+	 sgAIh2X2KJnEdJgUWBvagyUyf0NLlIoOX0Kurw9uYRdYbotraorqwSDsG7U2DI/Wtn
+	 DXgTWJthPD60DCcwvWs4XzQRJ3pPfmshBu5APO7OAJsL4abuFPPCR0tabXSSx4Qxaq
+	 Gl3VnElSIzX3g==
+Date: Mon, 23 Mar 2026 15:49:16 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Subject: linux-next: manual merge of the drm tree with the origin tree
+Message-ID: <acFg_IktBmoIf1CV@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="hupxdcqzotiucho2"
-Content-Disposition: inline
-In-Reply-To: <0eb49c98-13cd-4ad9-87f3-7c7b0ace242c@sirena.org.uk>
-
-
---hupxdcqzotiucho2
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IAfpwK6E9G4qaQbC"
 Content-Disposition: inline
 
-On Mon, Mar 23, 2026 at 01:56:59PM +0000, Mark Brown wrote:
-> On Fri, Mar 13, 2026 at 01:00:43PM +0000, Mark Brown wrote:
-> > Hi all,
-> > 
-> > After merging the vfs-brauner tree, today's linux-next build (arm64
-> > kselftest) failed like this:
-> > 
-> >   CC       statmount_test_ns
-> > statmount_test_ns.c:37:19: error: static declaration of 'wait_for_pid' follows non-static declaration
-> >    37 | static inline int wait_for_pid(pid_t pid)
-> >       |                   ^~~~~~~~~~~~
-> 
-> This issue is still present in today's -next, the version of the
-> vfs-brauner tree being merged is currently that from next-20260312.
 
-Sorry about this. Fixed now by appended patch.
+--IAfpwK6E9G4qaQbC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---hupxdcqzotiucho2
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-selftests-statmount-remove-duplicate-wait_for_pid.patch"
+Hi all,
 
-From 418d1c0cdd872493731cf1f10f16a54b38a9ef57 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 23 Mar 2026 16:31:30 +0100
-Subject: [PATCH] selftests/statmount: remove duplicate wait_for_pid()
+Today's linux-next merge of the drm tree got a conflict in:
 
-Remove the local static wait_for_pid() definition from
-statmount_test_ns.c as it conflicts with the extern declaration in
-utils.h. The identical function is already provided by utils.c.
+  drivers/gpu/drm/xe/xe_ggtt_types.h
 
-Fixes: 32f54f2bbccf (your "add tests for empty mount namespaces")
-Cc: <stable@kernel.org> # mainline only
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../filesystems/statmount/statmount_test_ns.c | 25 -------------------
- 1 file changed, 25 deletions(-)
+between commit:
 
-diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-index 063d9de46431..e500905e4c07 100644
---- a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-+++ b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-@@ -34,31 +34,6 @@ static void handle_result(int ret, const char *testname)
- 		ksft_test_result_skip("%s\n", testname);
- }
- 
--static inline int wait_for_pid(pid_t pid)
--{
--	int status, ret;
--
--again:
--	ret = waitpid(pid, &status, 0);
--	if (ret == -1) {
--		if (errno == EINTR)
--			goto again;
--
--		ksft_print_msg("waitpid returned -1, errno=%d\n", errno);
--		return -1;
--	}
--
--	if (!WIFEXITED(status)) {
--		ksft_print_msg(
--		       "waitpid !WIFEXITED, WIFSIGNALED=%d, WTERMSIG=%d\n",
--		       WIFSIGNALED(status), WTERMSIG(status));
--		return -1;
--	}
--
--	ret = WEXITSTATUS(status);
--	return ret;
--}
--
- static int get_mnt_ns_id(const char *mnt_ns, uint64_t *mnt_ns_id)
- {
- 	int fd = open(mnt_ns, O_RDONLY);
--- 
-2.47.3
+  01f2557aa684e ("drm/xe: Open-code GGTT MMIO access protection")
 
+=66rom the origin tree and commit:
 
---hupxdcqzotiucho2--
+  95f5f9a96dcfb ("drm/xe: Move struct xe_ggtt to xe_ggtt.c")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/drm/xe/xe_ggtt_types.h
+index c002857bb7611,cf754e4d502ad..0000000000000
+--- a/drivers/gpu/drm/xe/xe_ggtt_types.h
++++ b/drivers/gpu/drm/xe/xe_ggtt_types.h
+@@@ -6,57 -6,12 +6,13 @@@
+  #ifndef _XE_GGTT_TYPES_H_
+  #define _XE_GGTT_TYPES_H_
+ =20
++ #include <linux/types.h>
+  #include <drm/drm_mm.h>
+ =20
+- #include "xe_pt_types.h"
+-=20
+- struct xe_bo;
++ struct xe_ggtt;
+  struct xe_ggtt_node;
+ +struct xe_gt;
+ =20
+- /**
+-  * struct xe_ggtt - Main GGTT struct
+-  *
+-  * In general, each tile can contains its own Global Graphics Translation=
+ Table
+-  * (GGTT) instance.
+-  */
+- struct xe_ggtt {
+- 	/** @tile: Back pointer to tile where this GGTT belongs */
+- 	struct xe_tile *tile;
+- 	/** @start: Start offset of GGTT */
+- 	u64 start;
+- 	/** @size: Total usable size of this GGTT */
+- 	u64 size;
+-=20
+- #define XE_GGTT_FLAGS_64K       BIT(0)
+- #define XE_GGTT_FLAGS_ONLINE	BIT(1)
+- 	/**
+- 	 * @flags: Flags for this GGTT
+- 	 * Acceptable flags:
+- 	 * - %XE_GGTT_FLAGS_64K - if PTE size is 64K. Otherwise, regular is 4K.
+- 	 * - %XE_GGTT_FLAGS_ONLINE - is GGTT online, protected by ggtt->lock
+- 	 *   after init
+- 	 */
+- 	unsigned int flags;
+- 	/** @scratch: Internal object allocation used as a scratch page */
+- 	struct xe_bo *scratch;
+- 	/** @lock: Mutex lock to protect GGTT data */
+- 	struct mutex lock;
+- 	/**
+- 	 *  @gsm: The iomem pointer to the actual location of the translation
+- 	 * table located in the GSM for easy PTE manipulation
+- 	 */
+- 	u64 __iomem *gsm;
+- 	/** @pt_ops: Page Table operations per platform */
+- 	const struct xe_ggtt_pt_ops *pt_ops;
+- 	/** @mm: The memory manager used to manage individual GGTT allocations */
+- 	struct drm_mm mm;
+- 	/** @access_count: counts GGTT writes */
+- 	unsigned int access_count;
+- 	/** @wq: Dedicated unordered work queue to process node removals */
+- 	struct workqueue_struct *wq;
+- };
+-=20
+  typedef void (*xe_ggtt_set_pte_fn)(struct xe_ggtt *ggtt, u64 addr, u64 pt=
+e);
+  typedef void (*xe_ggtt_transform_cb)(struct xe_ggtt *ggtt,
+  				     struct xe_ggtt_node *node,
+
+--IAfpwK6E9G4qaQbC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBYPsACgkQJNaLcl1U
+h9BKDQf/QvCH+61bMR3hDTTDmSSXw8t2IJRlctlClnpZedMGPcP9Vt7jTPKMUDFI
+QgM8vdxvcJIpZ4E77Ab7V3ZxozG9AbwDz+LXKWgTEAVqw67zb9dY89LbRsNt27hk
+bHK3ADb04MMIRGh3VgYkFoM0ZanGGzDUTwTsDlcnB8jD4nWUmKRqLVx9AlxYrnzl
+4GIefe45y3CPAfpiWm3hrfihKT54d7gDJSpHJNRNVsFBDhM+2Ep0K0Q4sGrmRLSd
+xJ5sVGW2yoEAtLbARB/m8ndnu1xdWMaYgBvG2SOjM27VfTC7UXPNKNprilTj8QTA
+2Uvzxm/QCQxEuaWwnfdfKcSFncdiEA==
+=L4Jp
+-----END PGP SIGNATURE-----
+
+--IAfpwK6E9G4qaQbC--
