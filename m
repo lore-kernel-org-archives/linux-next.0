@@ -1,43 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0B43AF67D;
-	Mon, 23 Mar 2026 15:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DA3257851;
+	Mon, 23 Mar 2026 16:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774281339; cv=none; b=uw6gBcB8a2QMTp53B2LyXarrMiUP4NuxThatpnbChPhisXx6TE23IL0ibNXEy/AAVhtNKG0/pgM4AbK5HlBa1ydur09wmwLIxZzXVRdl8adl127OZq4xcO/GOQEY/zdtvdtw/RIirO+O//lkvBT4syNocB25HFv811PtjgnaLiQ=
+	t=1774282250; cv=none; b=scvFiiRJQKuFvoY+g9z9zH0F+FhXudgccCbrO07cWJ88UjJk0okwtREjIHk/31m/G9725y/AJlIyWRI2IaM6js4fIxYOBMQqVIPROUweVJ37iPGf1DqmtC3eUwvdv1apzVx6rDYQwfBxSaV2F/tziavwykLu5Jlra7Z7TtDtNL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774281339; c=relaxed/simple;
-	bh=wHzaRl+PH4iWK+jpXaqEHqAp1wRSlwfsE0mEj9+UiRs=;
+	s=arc-20240116; t=1774282250; c=relaxed/simple;
+	bh=ZoF6xupyTlTv3+792NBhfg/e7BseX4uCTwsWp6/Ht5o=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RLvz0ziWlftGzgtFX64sEPBLv/3uD+4i9KhaAMQd7qYKoXqM5tjFpCEuX8ho8dMGoKYhsl4EL6dmb4cyGaDH+zCpxWwNqIR5bN4j12zac3MkQoB14fxNcBbpSYPK72+sXp6yoiChWGxyB3/nlYrz2+UHILM5l64+pcY829qizPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klu2AOTl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=VJ0ooIdI1JKkKjqhh115GZmgLaf7BNCv8wUsMiJ3QGYzVlQ7hdUygyJ9RRhT7auOy+fNgx4U5enkKqxhgSK2zDDAI6dT3F42Pp+v7bF2sRazQojgkgQim4uS3bS6lZZJMXhYiCslDb2bBW78oPOtg/alNglEj5Tlj+qCrm/KuQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECcKQQMM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klu2AOTl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1197C4CEF7;
-	Mon, 23 Mar 2026 15:55:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECcKQQMM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83931C2BC9E;
+	Mon, 23 Mar 2026 16:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774281339;
-	bh=wHzaRl+PH4iWK+jpXaqEHqAp1wRSlwfsE0mEj9+UiRs=;
+	s=k20201202; t=1774282250;
+	bh=ZoF6xupyTlTv3+792NBhfg/e7BseX4uCTwsWp6/Ht5o=;
 	h=Date:From:To:Cc:Subject:From;
-	b=klu2AOTl43S6BkI2DPD7hK74g/CgvZrMBISIIvo/HV4VoUMrT12KexibKJzK2vNW6
-	 3NnKfS1MTT0Z4iLlE256HYhSc8OGxzu+fn/AG0RShZ5jzD9ns/RtKCv9W4mzx8CDRz
-	 93NpiThgZBeC22IaEofdspQaYfHGp3Ne3oNaUL5ssP2AgaQjzNvJNOQMUeuY6C9Ifh
-	 81bnHATnJKCCdNnxeZC846z38rcDB6OQJsiiypAbDFsauhzs3vRGNEb6Mc5jD50E+u
-	 B8sjUajDrbI9TwdqybiJr/LhyFzsczGSk333QW2sZo+tbRdFEwumDzBkchp3BpR9jC
-	 spVtuHUPgJJzw==
-Date: Mon, 23 Mar 2026 15:55:35 +0000
+	b=ECcKQQMMWU2dOCMAt5/a29k+/CM78UaRqJB2AIlhQmkr+pJbb9NNKHBe5fjIfSfby
+	 5Q61bd8MSML5hT0XC1RFwswkg5SF3eThQg51onLwHHvckIm4/Y8u3DDGNCEdQ8fYkI
+	 /mEofa/HxUC9h5WmsrXgUt+cy20BPIo1BkwDofIdDL5XtM4IYwLWOgK651JMxoXmT9
+	 WlpdgReSsRkgHpXM3NhYNhrzOf/6yQBARoBqNnBmYFQZI5HzWAi47dMxTKKtOFewzM
+	 Qd7TdU6mNW0uIX+OgNS/Lmn//JB+LuyQLr/LTCxzx3sjgAfxMchREDSJv0NLv8Ougm
+	 ndJ4bIQ9MntGA==
+Date: Mon, 23 Mar 2026 16:10:45 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Nareshkumar Gollakoti <naresh.kumar.g@intel.com>,
-	Sanjay Yadav <sanjay.kumar.yadav@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-Subject: linux-next: manual merge of the drm tree with the origin tree
-Message-ID: <acFid74H4aSWfrBg@sirena.org.uk>
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Message-ID: <acFmBW6nKf6-3ufe@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,31 +47,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WhwODcKUFgG2HqjC"
+	protocol="application/pgp-signature"; boundary="aL9nb2R2bPSwnBDn"
 Content-Disposition: inline
 
 
---WhwODcKUFgG2HqjC
+--aL9nb2R2bPSwnBDn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_gt_ccs_mode.c
+  drivers/gpu/drm/i915/display/intel_plane.c
 
 between commit:
 
-  65d046b2d8e0d ("drm/xe: Fix missing runtime PM reference in ccs_mode_stor=
-e")
+  bfa71b7a9dc6b ("drm/i915: Unlink NV12 planes earlier")
 
-=66rom the origin tree and commit:
+=66rom the drm-intel-fixes tree and commits:
 
-  9b5e995e61290 ("drm/xe: Mutual exclusivity between CCS-mode and PF")
+  017ecd0498557 ("drm/i915: Unlink NV12 planes earlier")
+  7b3a14322d1a8 ("drm/i915: Relocate unlink_nv12_plane()")
+  c5121204ad991 ("drm/i915: Skip redundant NV12 plane unlinking")
 
-=66rom the drm tree.
+=66rom the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -78,72 +81,105 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpu/drm/xe/xe_gt_ccs_mode.c
-index 03c1862ba497a,b35be36b0eaa2..0000000000000
---- a/drivers/gpu/drm/xe/xe_gt_ccs_mode.c
-+++ b/drivers/gpu/drm/xe/xe_gt_ccs_mode.c
-@@@ -12,8 -12,8 +12,9 @@@
-  #include "xe_gt_printk.h"
-  #include "xe_gt_sysfs.h"
-  #include "xe_mmio.h"
- +#include "xe_pm.h"
-  #include "xe_sriov.h"
-+ #include "xe_sriov_pf.h"
- =20
-  static void __xe_gt_apply_ccs_mode(struct xe_gt *gt, u32 num_engines)
-  {
-@@@ -147,15 -145,29 +146,30 @@@ ccs_mode_store(struct device *kdev, str
-  		return -EBUSY;
-  	}
- =20
-- 	if (gt->ccs_mode !=3D num_engines) {
-- 		xe_gt_info(gt, "Setting compute mode to %d\n", num_engines);
-- 		gt->ccs_mode =3D num_engines;
-- 		xe_gt_record_user_engines(gt);
-- 		guard(xe_pm_runtime)(xe);
-- 		xe_gt_reset(gt);
-+ 	if (gt->ccs_mode =3D=3D num_engines)
-+ 		return count;
-+=20
-+ 	/*
-+ 	 * Changing default CCS mode is only allowed when there
-+ 	 * are no VFs. Try to lockdown PF to find out.
-+ 	 */
-+ 	if (gt_ccs_mode_default(gt) && IS_SRIOV_PF(xe)) {
-+ 		ret =3D xe_sriov_pf_lockdown(xe);
-+ 		if (ret) {
-+ 			xe_gt_dbg(gt, "Can't change CCS Mode: VFs are enabled\n");
-+ 			return ret;
-+ 		}
-  	}
- =20
-- 	mutex_unlock(&xe->drm.filelist_mutex);
-+ 	xe_gt_info(gt, "Setting compute mode to %d\n", num_engines);
-+ 	gt->ccs_mode =3D num_engines;
-+ 	xe_gt_record_user_engines(gt);
-++	guard(xe_pm_runtime)(xe);
-+ 	xe_gt_reset(gt);
-+=20
-+ 	/* We may end PF lockdown once CCS mode is default again */
-+ 	if (gt_ccs_mode_default(gt) && IS_SRIOV_PF(xe))
-+ 		xe_sriov_pf_end_lockdown(xe);
- =20
-  	return count;
+diff --combined drivers/gpu/drm/i915/display/intel_plane.c
+index 076b9b3564816,5390ceb21ca42..0000000000000
+--- a/drivers/gpu/drm/i915/display/intel_plane.c
++++ b/drivers/gpu/drm/i915/display/intel_plane.c
+@@@ -437,7 -437,29 +437,29 @@@ void intel_plane_copy_hw_state(struct i
   }
+ =20
+  static void unlink_nv12_plane(struct intel_crtc_state *crtc_state,
+- 			      struct intel_plane_state *plane_state);
++ 			      struct intel_plane_state *plane_state)
++ {
++ 	struct intel_display *display =3D to_intel_display(plane_state);
++ 	struct intel_plane *plane =3D to_intel_plane(plane_state->uapi.plane);
++=20
++ 	if (!plane_state->planar_linked_plane)
++ 		return;
++=20
++ 	plane_state->planar_linked_plane =3D NULL;
++=20
++ 	if (!plane_state->is_y_plane)
++ 		return;
++=20
++ 	drm_WARN_ON(display->drm, plane_state->uapi.visible);
++=20
++ 	plane_state->is_y_plane =3D false;
++=20
++ 	crtc_state->enabled_planes &=3D ~BIT(plane->id);
++ 	crtc_state->active_planes &=3D ~BIT(plane->id);
++ 	crtc_state->update_planes |=3D BIT(plane->id);
++ 	crtc_state->data_rate[plane->id] =3D 0;
++ 	crtc_state->rel_data_rate[plane->id] =3D 0;
++ }
+ =20
+  void intel_plane_set_invisible(struct intel_crtc_state *crtc_state,
+  			       struct intel_plane_state *plane_state)
+@@@ -1512,31 -1534,6 +1534,6 @@@ static void link_nv12_planes(struct int
+  	icl_link_nv12_planes(uv_plane_state, y_plane_state);
+  }
+ =20
+- static void unlink_nv12_plane(struct intel_crtc_state *crtc_state,
+- 			      struct intel_plane_state *plane_state)
+- {
+- 	struct intel_display *display =3D to_intel_display(plane_state);
+- 	struct intel_plane *plane =3D to_intel_plane(plane_state->uapi.plane);
+-=20
+- 	if (!plane_state->planar_linked_plane)
+- 		return;
+-=20
+- 	plane_state->planar_linked_plane =3D NULL;
+-=20
+- 	if (!plane_state->is_y_plane)
+- 		return;
+-=20
+- 	drm_WARN_ON(display->drm, plane_state->uapi.visible);
+-=20
+- 	plane_state->is_y_plane =3D false;
+-=20
+- 	crtc_state->enabled_planes &=3D ~BIT(plane->id);
+- 	crtc_state->active_planes &=3D ~BIT(plane->id);
+- 	crtc_state->update_planes |=3D BIT(plane->id);
+- 	crtc_state->data_rate[plane->id] =3D 0;
+- 	crtc_state->rel_data_rate[plane->id] =3D 0;
+- }
+-=20
+  static int icl_check_nv12_planes(struct intel_atomic_state *state,
+  				 struct intel_crtc *crtc)
+  {
+@@@ -1550,17 -1547,6 +1547,6 @@@
+  	if (DISPLAY_VER(display) < 11)
+  		return 0;
+ =20
+- 	/*
+- 	 * Destroy all old plane links and make the Y plane invisible
+- 	 * in the crtc_state->active_planes mask.
+- 	 */
+- 	for_each_new_intel_plane_in_state(state, plane, plane_state, i) {
+- 		if (plane->pipe !=3D crtc->pipe)
+- 			continue;
+-=20
+- 		unlink_nv12_plane(crtc_state, plane_state);
+- 	}
+-=20
+  	if (!crtc_state->nv12_planes)
+  		return 0;
+ =20
 
---WhwODcKUFgG2HqjC
+--aL9nb2R2bPSwnBDn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBYnYACgkQJNaLcl1U
-h9BruQf8C+ZOaWjO01sNrbKsaYQGkI8YKrGZvrBCpwExXo/1Rwsjwq1HjNT9iqHx
-m/jCTs7D80u+7GvD7NCYGsxDmChotzPbCisJofosybr6dwNMS3Uq1Q/f4L8ruqvn
-CAOkVQGSxw6EeqnI+x+rKsLZgrLWNj579b1RAFi3X/7hSvTEqRUeu4e9m0h5+Hkn
-pf+DxKKdvm0gKCjkZDRBG8aUvmgC5x6UJVNMDmHgZJQBTvJMp9EGgGyBuCP0idCE
-UeGD2/afZac3aCT/eYEMIFDw5BLdRoO4PVq36gUBT7liEo4VOtL0OIhlI3lBrTre
-m8uQvwtTCT9ayH1qRtPwyA0mbyrOOw==
-=/hto
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBZgUACgkQJNaLcl1U
+h9AIzwf+ISvVVdgyEcks5gQhMPiY6ZQJnrEsybRPvGC+0xBAL01/09v/+3vLLkiw
+a8QzekfS2/ErTHjAC3s6h8Slx4Sr05mKcry69xQkl6sU4322W9pVHyMmvDgaGj/i
+w+KUHIUrryjwyPUE5OrPOaEgG63ls0pUtYSB9WyCpwFwJ9jmjcikIz7fYqXd6hpw
+9zjXDc4K+EEuwRCCrB9AKbeRzW7SBKag2xQURd+6FUvDFvr4xA1Sll+IJ1jNvP6t
+oiDRfMYHl7Kv6W/h5OnP+lCdSm+YF/DHpDw71onMF6iI2NsrFeK0FAH7gFdSlSF7
+uEnZhCLN38ZJfH8vbTP2LoNu054Skg==
+=YpWH
 -----END PGP SIGNATURE-----
 
---WhwODcKUFgG2HqjC--
+--aL9nb2R2bPSwnBDn--
