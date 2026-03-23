@@ -1,45 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DA3257851;
-	Mon, 23 Mar 2026 16:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F060E3AA1BB;
+	Mon, 23 Mar 2026 16:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774282250; cv=none; b=scvFiiRJQKuFvoY+g9z9zH0F+FhXudgccCbrO07cWJ88UjJk0okwtREjIHk/31m/G9725y/AJlIyWRI2IaM6js4fIxYOBMQqVIPROUweVJ37iPGf1DqmtC3eUwvdv1apzVx6rDYQwfBxSaV2F/tziavwykLu5Jlra7Z7TtDtNL8=
+	t=1774282271; cv=none; b=IxynRcMNjT+t9JwpVIr53jzuulSy9kgPohJ11YtUdo78CALjs7m/IqbRfiiP1II5FHItgrGoJL2sxz4XB40gz0a0C7jTBaNf0h8jJQuxehWS6fyQkKFO8+NV5l6fpkoSyS1Vousb1CMkWCp5UFBG9i7NKWdslZib9tqileGO1Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774282250; c=relaxed/simple;
-	bh=ZoF6xupyTlTv3+792NBhfg/e7BseX4uCTwsWp6/Ht5o=;
+	s=arc-20240116; t=1774282271; c=relaxed/simple;
+	bh=BcDYyj49bw4n/hc4XnOoc/hEdS+K+t7CoHp7vPgOvQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VJ0ooIdI1JKkKjqhh115GZmgLaf7BNCv8wUsMiJ3QGYzVlQ7hdUygyJ9RRhT7auOy+fNgx4U5enkKqxhgSK2zDDAI6dT3F42Pp+v7bF2sRazQojgkgQim4uS3bS6lZZJMXhYiCslDb2bBW78oPOtg/alNglEj5Tlj+qCrm/KuQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECcKQQMM; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=diLHh36iy/Ue+g3XQGiHjw1/kosBXXtalzBii/eBF0/UFiu+7sZb2typt+bhwbs/enzLXkCjm/9JKYWo0IvO+nOxkRejHpycGrSLrarmuLkc+OUvcBGMzkfL3cmJxvNfMPKeZY6FIAgiXuy8pQQ1g/U9a9cvznmcPsBlVwhIumQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GcOE6xw/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECcKQQMM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83931C2BC9E;
-	Mon, 23 Mar 2026 16:10:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcOE6xw/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731C7C4CEF7;
+	Mon, 23 Mar 2026 16:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774282250;
-	bh=ZoF6xupyTlTv3+792NBhfg/e7BseX4uCTwsWp6/Ht5o=;
+	s=k20201202; t=1774282270;
+	bh=BcDYyj49bw4n/hc4XnOoc/hEdS+K+t7CoHp7vPgOvQ0=;
 	h=Date:From:To:Cc:Subject:From;
-	b=ECcKQQMMWU2dOCMAt5/a29k+/CM78UaRqJB2AIlhQmkr+pJbb9NNKHBe5fjIfSfby
-	 5Q61bd8MSML5hT0XC1RFwswkg5SF3eThQg51onLwHHvckIm4/Y8u3DDGNCEdQ8fYkI
-	 /mEofa/HxUC9h5WmsrXgUt+cy20BPIo1BkwDofIdDL5XtM4IYwLWOgK651JMxoXmT9
-	 WlpdgReSsRkgHpXM3NhYNhrzOf/6yQBARoBqNnBmYFQZI5HzWAi47dMxTKKtOFewzM
-	 Qd7TdU6mNW0uIX+OgNS/Lmn//JB+LuyQLr/LTCxzx3sjgAfxMchREDSJv0NLv8Ougm
-	 ndJ4bIQ9MntGA==
-Date: Mon, 23 Mar 2026 16:10:45 +0000
+	b=GcOE6xw/4F+xKbxUTpT+vsNSIXR+EmttUIhmkuhMnAE2yPZOe0tb2ttUNZZaF+ZjY
+	 MOabgFz/rLQzk3IbcvE57bj8opGYN0JF+DY2PorHkAvyI37aOrxgpYFdqi3vkmoPQa
+	 HaNRLyUuQ3+FDRDb3k071DAIIYgM0ckX7qyHZt/9VE/MhfJBqTPOq4I2jVdxc6spxz
+	 8odF+m1z7ixytEx26qnN2NZ8fOcn44sQN3p21Q//vXw+CoU8gNfYwPSTFFWwuXohgj
+	 YIVILUrEx+vfYnW8UhhMme80BKCPoz/bX6x5aWCn4feK5Sy0+8CUOlAFwBj8zJl5hS
+	 6LkgOSImj+E9A==
+Date: Mon, 23 Mar 2026 16:11:06 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: linux-next: manual merge of the drm-intel tree with the
- drm-intel-fixes tree
-Message-ID: <acFmBW6nKf6-3ufe@sirena.org.uk>
+	Matthew Brost <matthew.brost@intel.com>,
+	Zhanjun Dong <zhanjun.dong@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with the origin tree
+Message-ID: <acFmGjCJdAZ26Zw9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,32 +43,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aL9nb2R2bPSwnBDn"
+	protocol="application/pgp-signature"; boundary="x4w9fyO9O0Hv+qc4"
 Content-Disposition: inline
 
 
---aL9nb2R2bPSwnBDn
+--x4w9fyO9O0Hv+qc4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+Today's linux-next merge of the drm-xe tree got a conflict in:
 
-  drivers/gpu/drm/i915/display/intel_plane.c
+  drivers/gpu/drm/xe/xe_guc_submit.c
 
 between commit:
 
-  bfa71b7a9dc6b ("drm/i915: Unlink NV12 planes earlier")
+  e0f82655df6fb ("drm/xe: Trigger queue cleanup if not in wedged mode 2")
 
-=66rom the drm-intel-fixes tree and commits:
+=66rom the origin tree and commits:
 
-  017ecd0498557 ("drm/i915: Unlink NV12 planes earlier")
-  7b3a14322d1a8 ("drm/i915: Relocate unlink_nv12_plane()")
-  c5121204ad991 ("drm/i915: Skip redundant NV12 plane unlinking")
+  e25ba41c8227c ("drm/xe: Trigger queue cleanup if not in wedged mode 2")
+  a7f607610da72 ("drm/xe: Use XE_WEDGED_MODE_UPON_ANY_HANG_NO_RESET enum in=
+stead of magic number")
 
-=66rom the drm-intel tree.
+=66rom the drm-xe tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -81,105 +77,42 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/gpu/drm/i915/display/intel_plane.c
-index 076b9b3564816,5390ceb21ca42..0000000000000
---- a/drivers/gpu/drm/i915/display/intel_plane.c
-+++ b/drivers/gpu/drm/i915/display/intel_plane.c
-@@@ -437,7 -437,29 +437,29 @@@ void intel_plane_copy_hw_state(struct i
-  }
+diff --combined drivers/gpu/drm/xe/xe_guc_submit.c
+index cb32053d57ecd,a145234f662b5..0000000000000
+--- a/drivers/gpu/drm/xe/xe_guc_submit.c
++++ b/drivers/gpu/drm/xe/xe_guc_submit.c
+@@@ -1334,12 -1334,13 +1334,13 @@@ void xe_guc_submit_wedge(struct xe_guc=
+=20
+  	if (!guc->submission_state.initialized)
+  		return;
  =20
-  static void unlink_nv12_plane(struct intel_crtc_state *crtc_state,
-- 			      struct intel_plane_state *plane_state);
-+ 			      struct intel_plane_state *plane_state)
-+ {
-+ 	struct intel_display *display =3D to_intel_display(plane_state);
-+ 	struct intel_plane *plane =3D to_intel_plane(plane_state->uapi.plane);
-+=20
-+ 	if (!plane_state->planar_linked_plane)
-+ 		return;
-+=20
-+ 	plane_state->planar_linked_plane =3D NULL;
-+=20
-+ 	if (!plane_state->is_y_plane)
-+ 		return;
-+=20
-+ 	drm_WARN_ON(display->drm, plane_state->uapi.visible);
-+=20
-+ 	plane_state->is_y_plane =3D false;
-+=20
-+ 	crtc_state->enabled_planes &=3D ~BIT(plane->id);
-+ 	crtc_state->active_planes &=3D ~BIT(plane->id);
-+ 	crtc_state->update_planes |=3D BIT(plane->id);
-+ 	crtc_state->data_rate[plane->id] =3D 0;
-+ 	crtc_state->rel_data_rate[plane->id] =3D 0;
-+ }
- =20
-  void intel_plane_set_invisible(struct intel_crtc_state *crtc_state,
-  			       struct intel_plane_state *plane_state)
-@@@ -1512,31 -1534,6 +1534,6 @@@ static void link_nv12_planes(struct int
-  	icl_link_nv12_planes(uv_plane_state, y_plane_state);
-  }
- =20
-- static void unlink_nv12_plane(struct intel_crtc_state *crtc_state,
-- 			      struct intel_plane_state *plane_state)
-- {
-- 	struct intel_display *display =3D to_intel_display(plane_state);
-- 	struct intel_plane *plane =3D to_intel_plane(plane_state->uapi.plane);
--=20
-- 	if (!plane_state->planar_linked_plane)
-- 		return;
--=20
-- 	plane_state->planar_linked_plane =3D NULL;
--=20
-- 	if (!plane_state->is_y_plane)
-- 		return;
--=20
-- 	drm_WARN_ON(display->drm, plane_state->uapi.visible);
--=20
-- 	plane_state->is_y_plane =3D false;
--=20
-- 	crtc_state->enabled_planes &=3D ~BIT(plane->id);
-- 	crtc_state->active_planes &=3D ~BIT(plane->id);
-- 	crtc_state->update_planes |=3D BIT(plane->id);
-- 	crtc_state->data_rate[plane->id] =3D 0;
-- 	crtc_state->rel_data_rate[plane->id] =3D 0;
-- }
--=20
-  static int icl_check_nv12_planes(struct intel_atomic_state *state,
-  				 struct intel_crtc *crtc)
-  {
-@@@ -1550,17 -1547,6 +1547,6 @@@
-  	if (DISPLAY_VER(display) < 11)
-  		return 0;
- =20
-- 	/*
-- 	 * Destroy all old plane links and make the Y plane invisible
-- 	 * in the crtc_state->active_planes mask.
-- 	 */
-- 	for_each_new_intel_plane_in_state(state, plane, plane_state, i) {
-- 		if (plane->pipe !=3D crtc->pipe)
-- 			continue;
--=20
-- 		unlink_nv12_plane(crtc_state, plane_state);
-- 	}
--=20
-  	if (!crtc_state->nv12_planes)
-  		return 0;
+- 	if (xe->wedged.mode =3D=3D 2) {
++ 	if (xe->wedged.mode =3D=3D XE_WEDGED_MODE_UPON_ANY_HANG_NO_RESET) {
+  		err =3D devm_add_action_or_reset(guc_to_xe(guc)->drm.dev,
+  					       guc_submit_wedged_fini, guc);
+  		if (err) {
+- 			xe_gt_err(gt, "Failed to register clean-up on wedged.mode=3D2; "
+- 				  "Although device is wedged.\n");
++ 			xe_gt_err(gt, "Failed to register clean-up on wedged.mode=3D%s; "
++ 				  "Although device is wedged.\n",
++ 				  xe_wedged_mode_to_string(XE_WEDGED_MODE_UPON_ANY_HANG_NO_RESET));
+  			return;
+  		}
  =20
 
---aL9nb2R2bPSwnBDn
+--x4w9fyO9O0Hv+qc4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBZgUACgkQJNaLcl1U
-h9AIzwf+ISvVVdgyEcks5gQhMPiY6ZQJnrEsybRPvGC+0xBAL01/09v/+3vLLkiw
-a8QzekfS2/ErTHjAC3s6h8Slx4Sr05mKcry69xQkl6sU4322W9pVHyMmvDgaGj/i
-w+KUHIUrryjwyPUE5OrPOaEgG63ls0pUtYSB9WyCpwFwJ9jmjcikIz7fYqXd6hpw
-9zjXDc4K+EEuwRCCrB9AKbeRzW7SBKag2xQURd+6FUvDFvr4xA1Sll+IJ1jNvP6t
-oiDRfMYHl7Kv6W/h5OnP+lCdSm+YF/DHpDw71onMF6iI2NsrFeK0FAH7gFdSlSF7
-uEnZhCLN38ZJfH8vbTP2LoNu054Skg==
-=YpWH
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnBZhoACgkQJNaLcl1U
+h9AwYQf4yiwz8BPXaNwYn2lhzwpfcNviHcRIPottkR80+U0yKg+sbkjARSr2br0C
+2ci7tHbQutaBh4BNiWRmYk9m6j+/bhG//kuGzRq5UWHNpcXu+BoqtjXc59Mm6nt0
+uOmdyfYcNW0i7QRlAKDhU2aiGucprKYslLOByoJo0Sv9lFd4+y9pyMd1G3tPpqmR
+TApNT52hJh1x2DTaiqDbIOFsuI6Bv8dusR5qV/t29cjz7egN8zfu+mc4ZcV9LZzS
+y51EWePQRgPedz9DfVP26YENKEOcsM0Gzg5p0NoitYhJ6tmo1rNe5TpF7jLA44lD
+a+z7hZsskeIFWFoZTONbG0hst7bj
+=sM9S
 -----END PGP SIGNATURE-----
 
---aL9nb2R2bPSwnBDn--
+--x4w9fyO9O0Hv+qc4--
