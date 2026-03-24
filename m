@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03013FFADE;
-	Tue, 24 Mar 2026 15:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0A938CFF1;
+	Tue, 24 Mar 2026 15:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774365078; cv=none; b=IQrJ6nS63hRSg5k19ihut3ZtnelP/79pr2vBI2v7dm9qnpNjurFi+OvDgEVDbUrMXZwoZ6a1MI9FfIVRmQp7ikbXwWq4VS7Nt9x68UceY7WFuks03R4Vm8Z8ew8A18KLpTbOYfh6xcoqbwmvtSLOyF0iZDCtCfIO7s+aw7uVF54=
+	t=1774367893; cv=none; b=r2abkxZlgyQoCGyDaMUfGJQDGA/BELiPRBiHs5+ZCqU6MgH2KZzYrX89j0qLl2dOPmmhXnWVAZOO+etVTLqvJu10Trce9XG9yZpLojCrvd48LvMAvln3sUMGGnsNExzjCF1GUzMPqhsvMRMuaAclhAHH+mYSYvOmhr4H5s500nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774365078; c=relaxed/simple;
-	bh=AXLEmFNlT8FJprI9SDtxmgf0B28rB8B9GFCkHdS5uVU=;
+	s=arc-20240116; t=1774367893; c=relaxed/simple;
+	bh=nfvT7C3boUea9Lgsel3AgYnobBRnYb4pzdyapS8q7yQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ivaoa/cPxTzNVxAyfK5/zyV+5D55z8lvAH3PWpkaxhxzQ1uPpRp1MVhtqgbSu+gV90/8VhnFU7UhZtJDGbBRoKKysjHj4qEbDRC+Svwb2rzzMEoB2Rlqm7Rnzpl9CMb6xW4aEZcTudeJR+1dQi/s7Xpnli0BMo7Xg9NcGymYLIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/049k5D; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=JJvMfG9w4d7Ppkok385xvTHNI8+FxCJbug3ADDuoENs3+RfvmeU3CYsWJFjK+mXerOapZfaSLHPFSi3UxN9GPgWKlwRLK1RMrWjT6LQZ7jTbh16uUB95uyzUQfV8soLd+CZ8M/nqVQ4npa3ycsoF/VMqA5VNjR8PxdM5xg5t7lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIHzeR0f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/049k5D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A239C19424;
-	Tue, 24 Mar 2026 15:11:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIHzeR0f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB6EC19424;
+	Tue, 24 Mar 2026 15:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774365078;
-	bh=AXLEmFNlT8FJprI9SDtxmgf0B28rB8B9GFCkHdS5uVU=;
+	s=k20201202; t=1774367892;
+	bh=nfvT7C3boUea9Lgsel3AgYnobBRnYb4pzdyapS8q7yQ=;
 	h=Date:From:To:Cc:Subject:From;
-	b=M/049k5Dh8SdFTBKwVU9cWfrl78OmKWxKnbfvO/ZyS2j8NLacEW3FJfB+BLxwXGQ+
-	 WtHnY7ceDa3+X8FOJZC5RTFGYtdtqrN3NlAw4hU3lIYIA76Ql7nyieKLRJf3jVFHKJ
-	 FZug1e3f+/PWkFyz0hFomm196rR6793t5CDyw+ueiXFqFtUpEqJPrLCoQAGx/1TRMV
-	 bke9yDsZW1baeu16N0VeFjG7FqHCAmm/BvS4SFclBEs1uvb70hrrJT4YSq4xACP99z
-	 IsWS32D53Uuy5YNOCdSsfQ5lrEQYEjpNXs0Y7fDufPp2B7K+/YicfgzvZzOTpyK+uT
-	 ZGBV/F2H3G4Uw==
-Date: Tue, 24 Mar 2026 15:11:14 +0000
+	b=NIHzeR0fSO66+CAgXWLH8V3YvNePaix74ulGlhsugavnss4RYxClInMAnBYkO9qto
+	 lvyez2zgBzvq421ehcC4vIP+4WXtraq9Ae6PbvIEASIXJ99VTLhG6QS4yD0lGZ93jS
+	 AOKvYyrBwzxa7zlpZTIbCK67gHXVqrrrHBZEqr8yb8fiT0GrovuXm4a9unGiq1iRgH
+	 jYSoJmb+eVt+jAhtgDMQokzXUvc6oi5HTuQVdK5ooLKJXsEgIbHhE0rL3GBCesz5Ro
+	 XV0dJBgg4wNfCMoZW7FCCX/d8z1Qkdc5yExIhCVPdcjgGICGvQ6lidbgkvybkKV2I0
+	 I2+jtTB8injdQ==
+Date: Tue, 24 Mar 2026 15:58:09 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the bitmap tree
-Message-ID: <acKpkuWNBR8_91kF@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Mar 24
+Message-ID: <acK0kdnGj8-vT0Vd@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,42 +39,70 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GmWjedNJkXnHLhAe"
+	protocol="application/pgp-signature"; boundary="FDkqIwXvqWJSrDdT"
 Content-Disposition: inline
 
 
---GmWjedNJkXnHLhAe
+--FDkqIwXvqWJSrDdT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi all,
 
-After merging the bitmap tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Changes since 20260323:
 
-ERROR: modpost: "__bitmap_or_equal" [lib/test_bitmap.ko] undefined!
-ERROR: modpost: "__bitmap_weighted_or" [lib/test_bitmap.ko] undefined!
+The btrfs tree acquired multiple conflicts with the btrfs-fixes tree.
 
+The bitmap tree acquired a build failure, I used the version from
+next-20260323 instead.
 
-Caused by commit
+Non-merge commits (relative to Linus' tree): 7866
+ 7810 files changed, 513548 insertions(+), 154944 deletions(-)
 
-  3ceb692949ab9 (bitmap: add test_zero_nbits())
+----------------------------------------------------------------------------
 
-I have used the version from next-20260323 instead.
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
---GmWjedNJkXnHLhAe
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 411 trees (counting Linus' and 123 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--FDkqIwXvqWJSrDdT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnCqZIACgkQJNaLcl1U
-h9C8dwf7BT4IStz/+Gg0ffZpaXO5lJButkO4QUyHlbnOSssEp1kSqg77jOlPKLz/
-WGAWMB5CsL8i4VRqFlIRGIH/EI4Ol5sfpO3XuU/jPljpRvGjNOFdNLp0VyIFrvoD
-nFnpFt5Ddz2nkL8cPh4ytuk9dKb76cl0r7hBUGeJ4te7zQ5iAX/mOcSlOXON6Qcx
-6m1JmxnXb8iFgFRjOfAjiQ9qybyasj2A2r15ypWiPBotAsg8LFwe81qU+bQNBGIF
-tThD1CbVPnr+/JBMNCjf4LkP1sP8SkxC4vz6BE0slQsLAwJGsuuWoyKzRRxnHve2
-HI0Dh/3skEXEh2l/AcNv8A74P3oFUg==
-=WokB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnCtJAACgkQJNaLcl1U
+h9BmIwf7BIjs04rtDxJHPOaAATbE8mEwGtyAxq6FIqVI+YyGkAMpKEf77IjVEJmE
+SbMljx5VhdI0iFs3w7NMHpfU1mH0vBxdkFuP65TlsHT4VMr2xRghc5lsRkbM0p8e
+EChFu9S/aLG2hqLJukt6ccGwia3mrCAiHB1t/Wv3kVMFEesXLu4iZdAvIlkbBmh1
+LmTPawlBF8pgigVDPgOYLwbkwws3iYqIHZyxIq1orVh2qXtMiyBmA20FlFSI5vKe
+rKBokT/4ycQaJQP1SpUq9PmP9CRJMxoRzPITkmxQKcguYsHcRz8KA5xaS7KPAc4o
+3eyTM5lEKSKpKiAq+vTK88hfzxR2lA==
+=0ARZ
 -----END PGP SIGNATURE-----
 
---GmWjedNJkXnHLhAe--
+--FDkqIwXvqWJSrDdT--
