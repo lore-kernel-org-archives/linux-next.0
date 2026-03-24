@@ -1,37 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAE43F7E75;
-	Tue, 24 Mar 2026 13:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED0F3F8E0A;
+	Tue, 24 Mar 2026 13:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774358729; cv=none; b=iAu7gbXthcVex0jtDxtvxAj2TnTJI701BxI4UYGjuwNRgBJJFgjVxKYU+K03ntLixgKt905mLL4YHoo5OSpv76u2GBXQWANTIuAjeFAt7LGdNJNXbY/loyA1FmKTlnnee4yh3a4G7igVkjYUq26wSGAngiDO08qLGXvtmL1MJ6Q=
+	t=1774358740; cv=none; b=G467lzEgucqfVa7NQWEOnWI4NFMlQKWvaCUn+lQ7DZdfmBy+CJ+yzh9FyGuvScNDKVoK7iqqB/s40WizFckWFcTKrQSUunW3FnGkAlhVeg52XrTvp0bG3AJ1iRIDS1c7bpLwMSsAAs2OSzoDKI98PY5ST5dp/iYgmoa48/crjL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774358729; c=relaxed/simple;
-	bh=4cCMU4CAiRRlOTyF/V3SM6pVAGLLuRL6M6AlJ29XZXQ=;
+	s=arc-20240116; t=1774358740; c=relaxed/simple;
+	bh=ZXg7c7a7olkaD0YDa0oU+2n7l0BkrVgonZNw6pquiOI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I1aRSyDh9+nhkSshNwPjHLN2FmCISMGj4bHKK2CAsgNtLDJ/s6IWtyaFql6OdAnkmXQbSB/m1b39GUjrh+BIVmM+agEZYKpVUTnfoFXBJ/rtCg/f79NFyGYwvI8dra1ui5xL9B+pIIzBihzlvE2bO0J8mb91OPzXTXowGEu9lG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kxh7nnCm; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=V+96jLm5Dm19JlioLW0AkHyJJ951EFTZKEmfasj8ZqXxfybFeWiRdTq18ameNPHQYkHX6eJkw2zOdZsb+4TL0BDJgZn72Yse+2bhdQ8rWW7YGxpxYWfUcU4bAXqPZgGn75iKq/FirpezFMo+bByGilIHSdASojVHpbErDCmyDBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fC0aDf5N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kxh7nnCm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9848C19424;
-	Tue, 24 Mar 2026 13:25:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fC0aDf5N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5D2C19424;
+	Tue, 24 Mar 2026 13:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774358729;
-	bh=4cCMU4CAiRRlOTyF/V3SM6pVAGLLuRL6M6AlJ29XZXQ=;
+	s=k20201202; t=1774358739;
+	bh=ZXg7c7a7olkaD0YDa0oU+2n7l0BkrVgonZNw6pquiOI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Kxh7nnCmUwokJx0ZeDB/UbOHJNI4cafqGmM+0C2qW+cJIgwhpd9nP8S+3ha7etNJb
-	 a/A1njWDEjnrr+XGyXw4fvKUbcP/gg7W0WHaMlY63NEvUkh5qAHfgGpkkC51JDcUr7
-	 TkjANZrrNGyWo00rRJvmnFqc2h8osUxgmQS/DYSEphe1GFYfoCKdhiH/X+mJ4uefi2
-	 pdut7FbrewBE7at/e939V3/CW46SE19opQOcMXMY/FJe5Vu18Mnk5yHiOimwDwMFzq
-	 ISi0NxBhyB8W1HJjfsy86AwycTs3jZHuBcWNUPBIjb477G4UIH8WkaG96nztKas/Bt
-	 9RNU4cHkfd7DA==
-Date: Tue, 24 Mar 2026 13:25:26 +0000
+	b=fC0aDf5N5ts8EqoxMq29Tlab4PZbldpBlDcNKVTLwTSWC+kmtZQd+34g+h/n/89KC
+	 9gG7ZBWGbMpzE/Nb/WvTcomB8IyqssJMrY3jhQYIvojPQRVlWVJaCLmqS97musD1LY
+	 yTgDKm0OoI1I5Vak07ybyjSHrk7RYNSNq87JOZx606cJICjaoSHOl6c2RU0SYMpWUv
+	 lsFZiXn5JS7JZRSAAAL9KFzGTPUtHqe3hySk+sSxghqVEV8n5wpgJ1nagcOfTXdDBu
+	 FTeiG3ogtdDoF61gk7aw+X3HCE7c5tVQOKJHLAcPsTWmD/BI8d6vRAqtt7taNOdW3u
+	 6wQDc6RPjOlIg==
+Date: Tue, 24 Mar 2026 13:25:35 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the drm-msm-lumag tree
-Message-ID: <acKQxkSqGoOTXhtd@sirena.org.uk>
+To: David Sterba <dsterba@suse.cz>
+Cc: David Sterba <dsterba@suse.com>, Filipe Manana <fdmanana@suse.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mark Harmstone <mark@harmstone.com>
+Subject: linux-next: manual merge of the btrfs tree with the btrfs-fixes tree
+Message-ID: <acKQz9KjRW3GiI12@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,35 +42,656 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ue+C+7HFO5ruK83B"
+	protocol="application/pgp-signature"; boundary="+ECvwl0rAj5NuQrK"
 Content-Disposition: inline
 
 
---Ue+C+7HFO5ruK83B
+--+ECvwl0rAj5NuQrK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commits
+Hi all,
 
-  769874594fe22 ("drm/ci: add rk3588-rock-5b")
-  6545c64843ac5 ("drm/ci: i915: cml: update runner tag")
-  9878b138ab72b ("drm/ci: reduce sm8350-hdk parallel jobs from 4 to 2")
+Today's linux-next merge of the btrfs tree got conflicts in:
 
-are missing a Signed-off-by from their committers
+  fs/btrfs/disk-io.c
 
---Ue+C+7HFO5ruK83B
+between commit:
+
+  b52fe51f72438 ("btrfs: fix super block offset in error message in btrfs_v=
+alidate_super()")
+
+=66rom the btrfs-fixes tree and commit:
+
+  5814cb220921a ("btrfs: mark all error and warning checks as unlikely in b=
+trfs_validate_super()")
+
+=66rom the btrfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined fs/btrfs/disk-io.c
+index 1b0eb246b7147,c835141ee384f..0000000000000
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@@ -50,7 -50,6 +50,6 @@@
+  #include "relocation.h"
+  #include "scrub.h"
+  #include "super.h"
+- #include "delayed-inode.h"
+ =20
+  #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
+  				 BTRFS_HEADER_FLAG_RELOC |\
+@@@ -110,19 -109,23 +109,23 @@@ static void csum_tree_block(struct exte
+   * detect blocks that either didn't get written at all or got written
+   * in the wrong place.
+   */
+- int btrfs_buffer_uptodate(struct extent_buffer *eb, u64 parent_transid, b=
+ool atomic)
++ int btrfs_buffer_uptodate(struct extent_buffer *eb, u64 parent_transid,
++ 			  const struct btrfs_tree_parent_check *check)
+  {
+  	if (!extent_buffer_uptodate(eb))
+  		return 0;
+ =20
+- 	if (!parent_transid || btrfs_header_generation(eb) =3D=3D parent_transid)
++ 	if (!parent_transid || btrfs_header_generation(eb) =3D=3D parent_transid=
+) {
++ 		/*
++ 		 * On a cache hit, the caller may still need tree parent
++ 		 * verification before reusing the buffer.
++ 		 */
++ 		if (unlikely(check && btrfs_verify_level_key(eb, check)))
++ 			return -EUCLEAN;
+  		return 1;
++ 	}
+ =20
+- 	if (atomic)
+- 		return -EAGAIN;
+-=20
+- 	if (!extent_buffer_uptodate(eb) ||
+- 	    btrfs_header_generation(eb) !=3D parent_transid) {
++ 	if (btrfs_header_generation(eb) !=3D parent_transid) {
+  		btrfs_err_rl(eb->fs_info,
+  "parent transid verify failed on logical %llu mirror %u wanted %llu found=
+ %llu",
+  			eb->start, eb->read_mirror,
+@@@ -730,7 -733,7 +733,7 @@@ void btrfs_global_root_delete(struct bt
+  }
+ =20
+  struct btrfs_root *btrfs_global_root(struct btrfs_fs_info *fs_info,
+- 				     struct btrfs_key *key)
++ 				     const struct btrfs_key *key)
+  {
+  	struct rb_node *node;
+  	struct btrfs_root *root =3D NULL;
+@@@ -767,7 -770,7 +770,7 @@@ static u64 btrfs_global_root_id(struct=20
+ =20
+  struct btrfs_root *btrfs_csum_root(struct btrfs_fs_info *fs_info, u64 byt=
+enr)
+  {
+- 	struct btrfs_key key =3D {
++ 	const struct btrfs_key key =3D {
+  		.objectid =3D BTRFS_CSUM_TREE_OBJECTID,
+  		.type =3D BTRFS_ROOT_ITEM_KEY,
+  		.offset =3D btrfs_global_root_id(fs_info, bytenr),
+@@@ -778,7 -781,7 +781,7 @@@
+ =20
+  struct btrfs_root *btrfs_extent_root(struct btrfs_fs_info *fs_info, u64 b=
+ytenr)
+  {
+- 	struct btrfs_key key =3D {
++ 	const struct btrfs_key key =3D {
+  		.objectid =3D BTRFS_EXTENT_TREE_OBJECTID,
+  		.type =3D BTRFS_ROOT_ITEM_KEY,
+  		.offset =3D btrfs_global_root_id(fs_info, bytenr),
+@@@ -994,8 -997,11 +997,11 @@@ static struct btrfs_root *read_tree_roo
+  		root->node =3D NULL;
+  		goto fail;
+  	}
+- 	if (unlikely(!btrfs_buffer_uptodate(root->node, generation, false))) {
+- 		ret =3D -EIO;
++=20
++ 	ret =3D btrfs_buffer_uptodate(root->node, generation, &check);
++ 	if (unlikely(ret <=3D 0)) {
++ 		if (ret =3D=3D 0)
++ 			ret =3D -EIO;
+  		goto fail;
+  	}
+ =20
+@@@ -2025,11 -2031,6 +2031,6 @@@ static int btrfs_replay_log(struct btrf
+  		btrfs_put_root(log_tree_root);
+  		return ret;
+  	}
+- 	if (unlikely(!extent_buffer_uptodate(log_tree_root->node))) {
+- 		btrfs_err(fs_info, "failed to read log tree");
+- 		btrfs_put_root(log_tree_root);
+- 		return -EIO;
+- 	}
+ =20
+  	/* returns with log_tree_root freed on success */
+  	ret =3D btrfs_recover_log_trees(log_tree_root);
+@@@ -2299,6 -2300,15 +2300,15 @@@ static int validate_sys_chunk_array(con
+  		return -EUCLEAN;
+  	}
+ =20
++ 	/* It must hold at least one key and one chunk. */
++ 	if (unlikely(sys_array_size < sizeof(struct btrfs_disk_key) +
++ 		     sizeof(struct btrfs_chunk))) {
++ 		btrfs_err(fs_info, "system chunk array too small %u < %zu",
++ 			  sys_array_size,
++ 			  sizeof(struct btrfs_disk_key) + sizeof(struct btrfs_chunk));
++ 		return -EUCLEAN;
++ 	}
++=20
+  	while (cur < sys_array_size) {
+  		struct btrfs_disk_key *disk_key;
+  		struct btrfs_chunk *chunk;
+@@@ -2365,11 -2375,11 +2375,11 @@@ int btrfs_validate_super(const struct b
+  	int ret =3D 0;
+  	const bool ignore_flags =3D btrfs_test_opt(fs_info, IGNORESUPERFLAGS);
+ =20
+- 	if (btrfs_super_magic(sb) !=3D BTRFS_MAGIC) {
++ 	if (unlikely(btrfs_super_magic(sb) !=3D BTRFS_MAGIC)) {
+  		btrfs_err(fs_info, "no valid FS found");
+  		ret =3D -EINVAL;
+  	}
+- 	if ((btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)) {
++ 	if (unlikely(btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)) {
+  		if (!ignore_flags) {
+  			btrfs_err(fs_info,
+  			"unrecognized or unsupported super flag 0x%llx",
+@@@ -2381,17 -2391,17 +2391,17 @@@
+  				   btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP);
+  		}
+  	}
+- 	if (btrfs_super_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
++ 	if (unlikely(btrfs_super_root_level(sb) >=3D BTRFS_MAX_LEVEL)) {
+  		btrfs_err(fs_info, "tree_root level too big: %d >=3D %d",
+  				btrfs_super_root_level(sb), BTRFS_MAX_LEVEL);
+  		ret =3D -EINVAL;
+  	}
+- 	if (btrfs_super_chunk_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
++ 	if (unlikely(btrfs_super_chunk_root_level(sb) >=3D BTRFS_MAX_LEVEL)) {
+  		btrfs_err(fs_info, "chunk_root level too big: %d >=3D %d",
+  				btrfs_super_chunk_root_level(sb), BTRFS_MAX_LEVEL);
+  		ret =3D -EINVAL;
+  	}
+- 	if (btrfs_super_log_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
++ 	if (unlikely(btrfs_super_log_root_level(sb) >=3D BTRFS_MAX_LEVEL)) {
+  		btrfs_err(fs_info, "log_root level too big: %d >=3D %d",
+  				btrfs_super_log_root_level(sb), BTRFS_MAX_LEVEL);
+  		ret =3D -EINVAL;
+@@@ -2401,65 -2411,65 +2411,65 @@@
+  	 * Check sectorsize and nodesize first, other check will need it.
+  	 * Check all possible sectorsize(4K, 8K, 16K, 32K, 64K) here.
+  	 */
+- 	if (!is_power_of_2(sectorsize) || sectorsize < BTRFS_MIN_BLOCKSIZE ||
+- 	    sectorsize > BTRFS_MAX_METADATA_BLOCKSIZE) {
++ 	if (unlikely(!is_power_of_2(sectorsize) || sectorsize < BTRFS_MIN_BLOCKS=
+IZE ||
++ 		     sectorsize > BTRFS_MAX_METADATA_BLOCKSIZE)) {
+  		btrfs_err(fs_info, "invalid sectorsize %llu", sectorsize);
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (!btrfs_supported_blocksize(sectorsize)) {
++ 	if (unlikely(!btrfs_supported_blocksize(sectorsize))) {
+  		btrfs_err(fs_info,
+  			"sectorsize %llu not yet supported for page size %lu",
+  			sectorsize, PAGE_SIZE);
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (!is_power_of_2(nodesize) || nodesize < sectorsize ||
+- 	    nodesize > BTRFS_MAX_METADATA_BLOCKSIZE) {
++ 	if (unlikely(!is_power_of_2(nodesize) || nodesize < sectorsize ||
++ 		     nodesize > BTRFS_MAX_METADATA_BLOCKSIZE)) {
+  		btrfs_err(fs_info, "invalid nodesize %llu", nodesize);
+  		ret =3D -EINVAL;
+  	}
+- 	if (nodesize !=3D le32_to_cpu(sb->__unused_leafsize)) {
++ 	if (unlikely(nodesize !=3D le32_to_cpu(sb->__unused_leafsize))) {
+  		btrfs_err(fs_info, "invalid leafsize %u, should be %llu",
+  			  le32_to_cpu(sb->__unused_leafsize), nodesize);
+  		ret =3D -EINVAL;
+  	}
+ =20
+  	/* Root alignment check */
+- 	if (!IS_ALIGNED(btrfs_super_root(sb), sectorsize)) {
++ 	if (unlikely(!IS_ALIGNED(btrfs_super_root(sb), sectorsize))) {
+  		btrfs_err(fs_info, "tree_root block unaligned: %llu",
+  			  btrfs_super_root(sb));
+  		ret =3D -EINVAL;
+  	}
+- 	if (!IS_ALIGNED(btrfs_super_chunk_root(sb), sectorsize)) {
++ 	if (unlikely(!IS_ALIGNED(btrfs_super_chunk_root(sb), sectorsize))) {
+  		btrfs_err(fs_info, "chunk_root block unaligned: %llu",
+  			   btrfs_super_chunk_root(sb));
+  		ret =3D -EINVAL;
+  	}
+- 	if (!IS_ALIGNED(btrfs_super_log_root(sb), sectorsize)) {
++ 	if (unlikely(!IS_ALIGNED(btrfs_super_log_root(sb), sectorsize))) {
+  		btrfs_err(fs_info, "log_root block unaligned: %llu",
+  			  btrfs_super_log_root(sb));
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (!fs_info->fs_devices->temp_fsid &&
+- 	    memcmp(fs_info->fs_devices->fsid, sb->fsid, BTRFS_FSID_SIZE) !=3D 0)=
+ {
++ 	if (unlikely(!fs_info->fs_devices->temp_fsid &&
++ 		     memcmp(fs_info->fs_devices->fsid, sb->fsid, BTRFS_FSID_SIZE) !=3D =
+0)) {
+  		btrfs_err(fs_info,
+  		"superblock fsid doesn't match fsid of fs_devices: %pU !=3D %pU",
+  			  sb->fsid, fs_info->fs_devices->fsid);
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (memcmp(fs_info->fs_devices->metadata_uuid, btrfs_sb_fsid_ptr(sb),
+- 		   BTRFS_FSID_SIZE) !=3D 0) {
++ 	if (unlikely(memcmp(fs_info->fs_devices->metadata_uuid, btrfs_sb_fsid_pt=
+r(sb),
++ 			    BTRFS_FSID_SIZE) !=3D 0)) {
+  		btrfs_err(fs_info,
+  "superblock metadata_uuid doesn't match metadata uuid of fs_devices: %pU =
+!=3D %pU",
+  			  btrfs_sb_fsid_ptr(sb), fs_info->fs_devices->metadata_uuid);
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (memcmp(fs_info->fs_devices->metadata_uuid, sb->dev_item.fsid,
+- 		   BTRFS_FSID_SIZE) !=3D 0) {
++ 	if (unlikely(memcmp(fs_info->fs_devices->metadata_uuid, sb->dev_item.fsi=
+d,
++ 			    BTRFS_FSID_SIZE) !=3D 0)) {
+  		btrfs_err(fs_info,
+  			"dev_item UUID does not match metadata fsid: %pU !=3D %pU",
+  			fs_info->fs_devices->metadata_uuid, sb->dev_item.fsid);
+@@@ -2470,9 -2480,9 +2480,9 @@@
+  	 * Artificial requirement for block-group-tree to force newer features
+  	 * (free-space-tree, no-holes) so the test matrix is smaller.
+  	 */
+- 	if (btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE) &&
+- 	    (!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
+- 	     !btrfs_fs_incompat(fs_info, NO_HOLES))) {
++ 	if (unlikely(btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE) &&
++ 		     (!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
++ 		      !btrfs_fs_incompat(fs_info, NO_HOLES)))) {
+  		btrfs_err(fs_info,
+  		"block-group-tree feature requires free-space-tree and no-holes");
+  		ret =3D -EINVAL;
+@@@ -2483,25 -2493,25 +2493,25 @@@
+  		 * Reduce test matrix for remap tree by requiring block-group-tree
+  		 * and no-holes. Free-space-tree is a hard requirement.
+  		 */
+- 		if (!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
+- 		    !btrfs_fs_incompat(fs_info, NO_HOLES) ||
+- 		    !btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE)) {
++ 		if (unlikely(!btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID) ||
++ 			     !btrfs_fs_incompat(fs_info, NO_HOLES) ||
++ 			     !btrfs_fs_compat_ro(fs_info, BLOCK_GROUP_TREE))) {
+  			btrfs_err(fs_info,
+  "remap-tree feature requires free-space-tree, no-holes, and block-group-t=
+ree");
+  			ret =3D -EINVAL;
+  		}
+ =20
+- 		if (btrfs_fs_incompat(fs_info, MIXED_GROUPS)) {
++ 		if (unlikely(btrfs_fs_incompat(fs_info, MIXED_GROUPS))) {
+  			btrfs_err(fs_info, "remap-tree not supported with mixed-bg");
+  			ret =3D -EINVAL;
+  		}
+ =20
+- 		if (btrfs_fs_incompat(fs_info, ZONED)) {
++ 		if (unlikely(btrfs_fs_incompat(fs_info, ZONED))) {
+  			btrfs_err(fs_info, "remap-tree not supported with zoned devices");
+  			ret =3D -EINVAL;
+  		}
+ =20
+- 		if (sectorsize > PAGE_SIZE) {
++ 		if (unlikely(sectorsize > PAGE_SIZE)) {
+  			btrfs_err(fs_info, "remap-tree not supported when block size > page si=
+ze");
+  			ret =3D -EINVAL;
+  		}
+@@@ -2511,66 -2521,47 +2521,47 @@@
+  	 * Hint to catch really bogus numbers, bitflips or so, more exact checks=
+ are
+  	 * done later
+  	 */
+- 	if (btrfs_super_bytes_used(sb) < 6 * btrfs_super_nodesize(sb)) {
++ 	if (unlikely(btrfs_super_bytes_used(sb) < 6 * btrfs_super_nodesize(sb)))=
+ {
+  		btrfs_err(fs_info, "bytes_used is too small %llu",
+  			  btrfs_super_bytes_used(sb));
+  		ret =3D -EINVAL;
+  	}
+- 	if (!is_power_of_2(btrfs_super_stripesize(sb))) {
++ 	if (unlikely(!is_power_of_2(btrfs_super_stripesize(sb)))) {
+  		btrfs_err(fs_info, "invalid stripesize %u",
+  			  btrfs_super_stripesize(sb));
+  		ret =3D -EINVAL;
+  	}
+- 	if (btrfs_super_num_devices(sb) > (1UL << 31))
++ 	if (unlikely(btrfs_super_num_devices(sb) > (1UL << 31)))
+  		btrfs_warn(fs_info, "suspicious number of devices: %llu",
+  			   btrfs_super_num_devices(sb));
+- 	if (btrfs_super_num_devices(sb) =3D=3D 0) {
++ 	if (unlikely(btrfs_super_num_devices(sb) =3D=3D 0)) {
+  		btrfs_err(fs_info, "number of devices is 0");
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (mirror_num >=3D 0 &&
+- 	    btrfs_super_bytenr(sb) !=3D btrfs_sb_offset(mirror_num)) {
++ 	if (unlikely(mirror_num >=3D 0 &&
++ 		     btrfs_super_bytenr(sb) !=3D btrfs_sb_offset(mirror_num))) {
+  		btrfs_err(fs_info, "super offset mismatch %llu !=3D %llu",
+  			  btrfs_super_bytenr(sb), btrfs_sb_offset(mirror_num));
+  		ret =3D -EINVAL;
+  	}
+ =20
+- 	if (ret)
++ 	if (unlikely(ret))
+  		return ret;
+ =20
+  	ret =3D validate_sys_chunk_array(fs_info, sb);
+ =20
+- 	/*
+- 	 * Obvious sys_chunk_array corruptions, it must hold at least one key
+- 	 * and one chunk
+- 	 */
+- 	if (btrfs_super_sys_array_size(sb) > BTRFS_SYSTEM_CHUNK_ARRAY_SIZE) {
+- 		btrfs_err(fs_info, "system chunk array too big %u > %u",
+- 			  btrfs_super_sys_array_size(sb),
+- 			  BTRFS_SYSTEM_CHUNK_ARRAY_SIZE);
+- 		ret =3D -EINVAL;
+- 	}
+- 	if (btrfs_super_sys_array_size(sb) < sizeof(struct btrfs_disk_key)
+- 			+ sizeof(struct btrfs_chunk)) {
+- 		btrfs_err(fs_info, "system chunk array too small %u < %zu",
+- 			  btrfs_super_sys_array_size(sb),
+- 			  sizeof(struct btrfs_disk_key)
+- 			  + sizeof(struct btrfs_chunk));
+- 		ret =3D -EINVAL;
+- 	}
+-=20
+  	/*
+  	 * The generation is a global counter, we'll trust it more than the othe=
+rs
+  	 * but it's still possible that it's the one that's wrong.
+  	 */
+- 	if (btrfs_super_generation(sb) < btrfs_super_chunk_root_generation(sb))
++ 	if (unlikely(btrfs_super_generation(sb) < btrfs_super_chunk_root_generat=
+ion(sb)))
+  		btrfs_warn(fs_info,
+  			"suspicious: generation < chunk_root_generation: %llu < %llu",
+  			btrfs_super_generation(sb),
+  			btrfs_super_chunk_root_generation(sb));
+- 	if (btrfs_super_generation(sb) < btrfs_super_cache_generation(sb)
+- 	    && btrfs_super_cache_generation(sb) !=3D (u64)-1)
++ 	if (unlikely(btrfs_super_generation(sb) < btrfs_super_cache_generation(s=
+b) &&
++ 		     btrfs_super_cache_generation(sb) !=3D (u64)-1))
+  		btrfs_warn(fs_info,
+  			"suspicious: generation < cache_generation: %llu < %llu",
+  			btrfs_super_generation(sb),
+@@@ -2601,7 -2592,7 +2592,7 @@@ static int btrfs_validate_write_super(s
+  	int ret;
+ =20
+  	ret =3D btrfs_validate_super(fs_info, sb, -1);
+- 	if (ret < 0)
++ 	if (unlikely(ret < 0))
+  		goto out;
+  	if (unlikely(!btrfs_supported_super_csum(btrfs_super_csum_type(sb)))) {
+  		ret =3D -EUCLEAN;
+@@@ -2618,7 -2609,7 +2609,7 @@@
+  		goto out;
+  	}
+  out:
+- 	if (ret < 0)
++ 	if (unlikely(ret < 0))
+  		btrfs_err(fs_info,
+  		"super block corruption detected before writing it to disk");
+  	return ret;
+@@@ -2639,11 -2630,6 +2630,6 @@@ static int load_super_root(struct btrfs
+  		root->node =3D NULL;
+  		return ret;
+  	}
+- 	if (unlikely(!extent_buffer_uptodate(root->node))) {
+- 		free_extent_buffer(root->node);
+- 		root->node =3D NULL;
+- 		return -EIO;
+- 	}
+ =20
+  	btrfs_set_root_node(&root->root_item, root->node);
+  	root->commit_root =3D btrfs_root_node(root);
+@@@ -3766,8 -3752,7 +3752,7 @@@ static void btrfs_end_super_write(struc
+   * Write superblock @sb to the @device. Do not wait for completion, all t=
+he
+   * folios we use for writing are locked.
+   *
+-  * Write @max_mirrors copies of the superblock, where 0 means default tha=
+t fit
+-  * the expected device size at commit time. Note that max_mirrors must be
++  * Write @max_mirrors copies of the superblock. Note that max_mirrors mus=
+t be
+   * same for write and wait phases.
+   *
+   * Return number of errors when folio is not found or submission fails.
+@@@ -3783,9 -3768,6 +3768,6 @@@ static int write_dev_supers(struct btrf
+ =20
+  	atomic_set(&device->sb_write_errors, 0);
+ =20
+- 	if (max_mirrors =3D=3D 0)
+- 		max_mirrors =3D BTRFS_SUPER_MIRROR_MAX;
+-=20
+  	for (i =3D 0; i < max_mirrors; i++) {
+  		struct folio *folio;
+  		struct bio *bio;
+@@@ -3870,16 -3852,13 +3852,13 @@@ static int wait_dev_supers(struct btrfs
+  	int ret;
+  	u64 bytenr;
+ =20
+- 	if (max_mirrors =3D=3D 0)
+- 		max_mirrors =3D BTRFS_SUPER_MIRROR_MAX;
+-=20
+  	for (i =3D 0; i < max_mirrors; i++) {
+  		struct folio *folio;
+ =20
+  		ret =3D btrfs_sb_log_location(device, i, READ, &bytenr);
+  		if (ret =3D=3D -ENOENT) {
+  			break;
+- 		} else if (ret < 0) {
++ 		} else if (unlikely(ret < 0)) {
+  			errors++;
+  			if (i =3D=3D 0)
+  				primary_failed =3D true;
+@@@ -3901,9 -3880,8 +3880,8 @@@
+  	}
+ =20
+  	errors +=3D atomic_read(&device->sb_write_errors);
+- 	if (errors >=3D BTRFS_SUPER_PRIMARY_WRITE_ERROR)
+- 		primary_failed =3D true;
+- 	if (primary_failed) {
++=20
++ 	if (unlikely(primary_failed || errors >=3D BTRFS_SUPER_PRIMARY_WRITE_ERR=
+OR)) {
+  		btrfs_err(device->fs_info, "error writing primary super block to device=
+ %llu",
+  			  device->devid);
+  		return -1;
+@@@ -3954,7 -3932,7 +3932,7 @@@ static bool wait_dev_flush(struct btrfs
+ =20
+  	wait_for_completion_io(&device->flush_wait);
+ =20
+- 	if (bio->bi_status) {
++ 	if (unlikely(bio->bi_status)) {
+  		set_bit(BTRFS_DEV_STATE_FLUSH_FAILED, &device->dev_state);
+  		btrfs_dev_stat_inc_and_print(device, BTRFS_DEV_STAT_FLUSH_ERRS);
+  		return true;
+@@@ -3992,7 -3970,7 +3970,7 @@@ static int barrier_all_devices(struct b
+  	list_for_each_entry(dev, head, dev_list) {
+  		if (test_bit(BTRFS_DEV_STATE_MISSING, &dev->dev_state))
+  			continue;
+- 		if (!dev->bdev) {
++ 		if (unlikely(!dev->bdev)) {
+  			errors_wait++;
+  			continue;
+  		}
+@@@ -4000,7 -3978,7 +3978,7 @@@
+  		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))
+  			continue;
+ =20
+- 		if (wait_dev_flush(dev))
++ 		if (unlikely(wait_dev_flush(dev)))
+  			errors_wait++;
+  	}
+ =20
+@@@ -4043,26 -4021,27 +4021,27 @@@ int btrfs_get_num_tolerated_disk_barrie
+  	return min_tolerated;
+  }
+ =20
+- int write_all_supers(struct btrfs_fs_info *fs_info, int max_mirrors)
++ int write_all_supers(struct btrfs_trans_handle *trans)
+  {
++ 	struct btrfs_fs_info *fs_info =3D trans->fs_info;
+  	struct list_head *head;
+  	struct btrfs_device *dev;
+  	struct btrfs_super_block *sb;
+  	struct btrfs_dev_item *dev_item;
++ 	int max_mirrors;
+  	int ret;
+  	int do_barriers;
+  	int max_errors;
+  	int total_errors =3D 0;
+- 	u64 flags;
+ =20
+  	do_barriers =3D !btrfs_test_opt(fs_info, NOBARRIER);
+ =20
+- 	/*
+- 	 * max_mirrors =3D=3D 0 indicates we're from commit_transaction,
+- 	 * not from fsync where the tree roots in fs_info have not
+- 	 * been consistent on disk.
+- 	 */
+- 	if (max_mirrors =3D=3D 0) {
++ 	if (trans->transaction->state < TRANS_STATE_UNBLOCKED) {
++ 		/* We are called from fsync. */
++ 		max_mirrors =3D 1;
++ 	} else {
++ 		/* We are called from transaction commit. */
++ 		max_mirrors =3D BTRFS_SUPER_MIRROR_MAX;
+  		ret =3D backup_super_roots(fs_info);
+  		if (ret < 0)
+  			return ret;
+@@@ -4077,17 -4056,19 +4056,19 @@@
+ =20
+  	if (do_barriers) {
+  		ret =3D barrier_all_devices(fs_info);
+- 		if (ret) {
++ 		if (unlikely(ret)) {
+  			mutex_unlock(
+  				&fs_info->fs_devices->device_list_mutex);
+- 			btrfs_handle_fs_error(fs_info, ret,
+- 					      "errors while submitting device barriers.");
++ 			btrfs_abort_transaction(trans, ret);
++ 			btrfs_err(fs_info, "error while submitting device barriers");
+  			return ret;
+  		}
+  	}
+ =20
++ 	btrfs_set_super_flags(sb, btrfs_super_flags(sb) | BTRFS_HEADER_FLAG_WRIT=
+TEN);
++=20
+  	list_for_each_entry(dev, head, dev_list) {
+- 		if (!dev->bdev) {
++ 		if (unlikely(!dev->bdev)) {
+  			total_errors++;
+  			continue;
+  		}
+@@@ -4109,19 -4090,17 +4090,17 @@@
+  		memcpy(dev_item->fsid, dev->fs_devices->metadata_uuid,
+  		       BTRFS_FSID_SIZE);
+ =20
+- 		flags =3D btrfs_super_flags(sb);
+- 		btrfs_set_super_flags(sb, flags | BTRFS_HEADER_FLAG_WRITTEN);
+-=20
+  		ret =3D btrfs_validate_write_super(fs_info, sb);
+  		if (unlikely(ret < 0)) {
+  			mutex_unlock(&fs_info->fs_devices->device_list_mutex);
+- 			btrfs_handle_fs_error(fs_info, -EUCLEAN,
+- 				"unexpected superblock corruption detected");
+- 			return -EUCLEAN;
++ 			btrfs_abort_transaction(trans, ret);
++ 			btrfs_err(fs_info,
++ 			  "unexpected superblock corruption before writing it");
++ 			return ret;
+  		}
+ =20
+  		ret =3D write_dev_supers(dev, sb, max_mirrors);
+- 		if (ret)
++ 		if (unlikely(ret))
+  			total_errors++;
+  	}
+  	if (unlikely(total_errors > max_errors)) {
+@@@ -4130,29 -4109,27 +4109,27 @@@
+  		mutex_unlock(&fs_info->fs_devices->device_list_mutex);
+ =20
+  		/* FUA is masked off if unsupported and can't be the reason */
+- 		btrfs_handle_fs_error(fs_info, -EIO,
+- 				      "%d errors while writing supers",
+- 				      total_errors);
++ 		btrfs_abort_transaction(trans, -EIO);
++ 		btrfs_err(fs_info, "%d errors while writing supers", total_errors);
+  		return -EIO;
+  	}
+ =20
+  	total_errors =3D 0;
+  	list_for_each_entry(dev, head, dev_list) {
+- 		if (!dev->bdev)
++ 		if (unlikely(!dev->bdev))
+  			continue;
+  		if (!test_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &dev->dev_state) ||
+  		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))
+  			continue;
+ =20
+  		ret =3D wait_dev_supers(dev, max_mirrors);
+- 		if (ret)
++ 		if (unlikely(ret))
+  			total_errors++;
+  	}
+  	mutex_unlock(&fs_info->fs_devices->device_list_mutex);
+  	if (unlikely(total_errors > max_errors)) {
+- 		btrfs_handle_fs_error(fs_info, -EIO,
+- 				      "%d errors while writing supers",
+- 				      total_errors);
++ 		btrfs_abort_transaction(trans, -EIO);
++ 		btrfs_err(fs_info, "%d errors while writing supers", total_errors);
+  		return -EIO;
+  	}
+  	return 0;
+
+--+ECvwl0rAj5NuQrK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnCkMUACgkQJNaLcl1U
-h9Dqgwf/V6wwlaZInx2FidMdp79IPnzMTPB/e/juG+TZRMR7zfNRwR1l7xc9btJt
-BRYOkpIWFDR0eXMWESastD8nWQ8LphYW+FD3oX3MaxwZMDPPVXrGUfuYe2y/FhDx
-ZkvVn2g/DS8n6oTJ7f4wB5wsaoXgVb7yHHTU7IIqwzS+tGTwguWesPLhKZjENilK
-qPAczHW1K4F7MozbkRgNAWJTl/hshmjf3fRgCYlXZnjEtGSJ+inqSCtxdmnq3tjM
-L+Q9OVHpVuGe/GyIDdCNpCHVA/cKGh2q+eWQZgBqzZLeMbSje7WOTeTjE2755O5R
-OTTj1YJnt+jOFisgCRxmg9CzLRjqDQ==
-=l91c
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnCkM4ACgkQJNaLcl1U
+h9BLDggAghq65EeNk1GbboLu8uJk29s86h6GCSnb+kYZuQwwuAhbDjaV2DhqInip
+y7yu/my6trWPoBn4ICqyEXckN2dKrZXPH0JwAuUeANxSOIUNqEx9FDdPImHDziOk
+MXEIme/UDdi9Sys0TMR/B02WBDoMHx/R2OZgo89AyNXNyh41sdOQ6SZAYg6lILbK
+RAYql+7wc7qcgztC2CxsvXCaNgj7OaihOosvUk2aif4ymzFpLtFgJSimHqPpk4JI
+ji0TmD9VxXvpXz6TJPYYuQGGyXH3/FrErPtvR0v0MJpmmb0NOFRsrzssTORxLd98
+awWh6VQEBhvjYYZ4bqfD8Km79F+baw==
+=Amy9
 -----END PGP SIGNATURE-----
 
---Ue+C+7HFO5ruK83B--
+--+ECvwl0rAj5NuQrK--
