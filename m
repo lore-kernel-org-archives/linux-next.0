@@ -1,67 +1,67 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C623E3156
-	for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 15:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D643ED13E
+	for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 16:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774454221; cv=none; b=qO2LP2Ako9vOK313Ps2Map5DSEihND0JvQayrpe1HMg3dfsWiB7soxfAAUk8toKiSy3wkbHlD1hMOUpr2xe+8jtU+JEGgxaXAoIrFYlRz+Efp4EqLXvqDKV2rrAQOeQMQLgKBwpE1cctqeZZM+u3XglM23dMQwkVLsdEQ6cM0QM=
+	t=1774454854; cv=none; b=G0Zzl8LcdTevKpiERuTmNZw+tKqSNZsxw8q+G71vYDiV8sguat/mEri4+p45X+7C+mPvOmeLz+8WbBjyM3yJomRNhkZ04O4/E7VzyoV8qsqTvNjZ6Ub72kcmW1Dxa/mtbl8lcXTQQArXWuReG4aEgTCx30aeHSYkqemtxld/gso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774454221; c=relaxed/simple;
-	bh=DKN8i8jOf5NuUa1gZlgxBbn2Fc5ZKuuYcSXkGO0mlbk=;
+	s=arc-20240116; t=1774454854; c=relaxed/simple;
+	bh=FH5JCd6BfJHiLBlh4yk5NBY0gRb7erW1xuTyJM3f280=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LphqnW+5pOFaccbRnQPe9SOr/9Oa+VLbR4Ie/Xupt+TYcT/KxjeyiuqCaww4yXZhNFCi1TcnnmCcAeFnfGxdpYuEmjUn7k/A4I002xLSSdulnla9evl8E5L0cPwz+25iXLHx0TRWyS0o4hM09fEDJXlMv4wpPJtngtfluOhGzrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2TP18ePm; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	 In-Reply-To:Content-Type; b=C9hqGDosMIMT/5DOKGBY5fPg/M/6xCF+3aDMYIGSTp0Lvai5ariEmp2TwTuO03tvAIh4uwZPaU6dmxQYEofDA70qBSIbWpY42RQHzJB6CcfNqDhqdbYO6mSYqLiRbjvv7lDYNLtJUr3Ez1w4rm3h+Kw1R+Gs+6/65eqqnSYbLyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=gR7aztUB; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2TP18ePm"
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7d7422b4ff1so2285479a34.3
-        for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 08:56:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="gR7aztUB"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-43b5bded412so2049791f8f.0
+        for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 09:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1774454219; x=1775059019; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1774454850; x=1775059650; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mr0E5mH6E+HB2qNXgv+E+FIaRdPop+SyDUYPeWja64M=;
-        b=2TP18ePm0okfSEz1T1KAxBve4TOO5DFC8xUwYKVvgBVnWHaqSek2/jMr4DVp8za1XN
-         2ZeV9kn3klGXopV51tBi0vIbTxo7SG2rwBw32uRUS2RI7MwpcEhTQvD5vBnYLzDfHYyN
-         uuO+sAcpjTMGDsKwOv5cWnivP+Ubs0me3EA+X3S1o1XNyRrtCAhJDxELUwdd2YwATTeg
-         eVi0BzXDWeGZHtSc3CTa/md/ZaMk1FYCvR1toMsXI0hS/ekhd3YBGpqwr7A8pPEZ11kt
-         m3lhMOWEEZb3DD73dbpFmy6y1pXR4KXGhLtE2r2YUbCo1NQyrGuZJzRT4pvnQqpXlBom
-         HPQA==
+        bh=WoigNGk5cMWhKXOt/Vv6EUh1Su5Qhq3xBfx8jQN83d0=;
+        b=gR7aztUBjwnYg+R5GgeC9wgsGeuP397+w36d0uZiYydxZTYPTwmS874IjqeH5s2xkZ
+         k5VXC+baIn9mVOR/FAW6fE2YwQtPtyKjg3oJ4GZ/S296OKQSJkoXUZksbScLy/ASTZBH
+         DxhqMbV5u6/QXu3o8HfCP54Rr2iDNHiQ8rdO2/lwa/k6cOdZg74izkqEk4zd99MwKt2g
+         sgrhYMWac1qHZ+BOnLV6Ss5syVpBygMup0+TaprlMVtbyb6eIqncJ7KwoT69HEDVw2xm
+         wCAAbpYMgChyVERBVRO+wkfeWx7mzp45WsK+eNjxgIz4K6jHDU788z0EscsnrFXCWEDM
+         MHUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774454219; x=1775059019;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20251104; t=1774454850; x=1775059650;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Mr0E5mH6E+HB2qNXgv+E+FIaRdPop+SyDUYPeWja64M=;
-        b=QFdMZU43acjoLbumwjd7F3nO6a525Xv3tMSXmHMNGQoOkkMY6x9gxD70vDGGPoPyj7
-         jgXcOmEPCbm7I7UGsS10FRgMG5O7lJDb5NGGGyfNg8XJh25LdrV3ysRx8gJ2qQgCMU4i
-         OJS/B0W+gQiVua6RwIcXdH6AKnIyjw5nbr2oo7iiMS0voTuLzTIsLzh6PWVvMPIBrs6b
-         GSFaqfFdwqkvpBDAcv/jr4F4UCA98VUSTwi50oRolavXzlztl0UGtvvI0tzbzdponX0K
-         3Kr1bfAhOGgvSYXIsLFG5GoEw/oMF/a69Jr16V0hU/k8iw25yM5RCaTu6Qq99o7/4vcJ
-         A/iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq9CN/rqYO/KAUyHNIVmFmva4KOcldlGRvSWT2WCcP7p7LpEBp3EsM4v/cN2yQvXdk1P2urSx7PN3r@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQzpL6e/N/GpJCzWhueDusRKIXRXpFcedVb2fQnrpcSlALrM4w
-	JqOZB90MKG+SBpvDiDbazz483N0cnI2YK4D/zR08j7MyWX7LGRoQ/mW3bO98f0TqPNs=
-X-Gm-Gg: ATEYQzyJUdOpJH1cppUW6ze/bOd6kkPz1KLoZObaZxzWt5Fi+nfAOJrBO1t2KyY4jKP
-	L3bGd/BnajIlPLtRVsaMzvhEr9VJ1LSVja8O0LByvWGGTDgLFEaAtaQymdzkP436U7PuA04DG9n
-	FiRHtoHB+0BRJgnlmmLGYpFnXJIUBo6CcTndEFRTzroEGnVoAVbu5q1DtbFETKGBt6ioRANY0cr
-	/KfPcFtzsiidNUgOIndr1y9/MQ+mkd1cy8FQYq9KfaLsc4K2XlJ18bmDNvo1LiE1l/+g9xyS/32
-	E7W0WzYmUDjtJfSlSCU+c5HrGIuUooUkdLjOn8iCVjcKmFtgOVc8tjwne/jiWv5TMZAEEZYUtZb
-	Kds+1PwlqEb44PqynFO7qqIKuNJz8Wtc69EdHJI+jrxE8Emo/sfklmocD4lbCcKJJdBu3bpXIs+
-	eEYRZ4cKsGr8qMymvzciSXf9vWyuQHm9swCP8NadIiew2wktcj79aTEbrr+Oyx+Hvp+Ek2L9eGt
-	w1rsm4Y
-X-Received: by 2002:a05:6830:3698:b0:7d7:dfc6:e1d1 with SMTP id 46e09a7af769-7d9d662b9admr1937890a34.3.1774454218635;
-        Wed, 25 Mar 2026 08:56:58 -0700 (PDT)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d9e6fb2e11sm57802a34.3.2026.03.25.08.56.57
+        bh=WoigNGk5cMWhKXOt/Vv6EUh1Su5Qhq3xBfx8jQN83d0=;
+        b=GF9BozkVPFGgRF8sFXEzu9eRychHpswzNf7Ijoa6Fy5mgkloT73/Jun1+8BrZPEL16
+         v4xTPwjdADH8At4yYyMuCOyhZDS+Ehcdij5KLyeLR/U2LRXDeambj5O6lOdX0aV7L/LE
+         fmwyKJQGZmF0GUBwVu5U+6YyqLx/4ohlYOK7rqZiCmx0AmPj7wWojZgi97G7QUtSgtzf
+         5bAPhb8PCwgM1t0j5diMbY6q+Pel/VkHYWkLZeGIbMGA22EqSgtKlmYDBZYgeWqiKWgR
+         y9GRVbzTSdTQQjcI0x0Gg+RP8riPytKSdsE7xqWMVMP816E6IggdlIL5TIR0Z6nJCp2M
+         vMLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSMIdSbL/4jbLoBNbUJPKGk0xq8+hzmEj+yJr9sFj5TfLp5tQ2KCkOy52U6LMOAASYMxdnZDino1n9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN91DQy/KQ7fXQpfTtexfJERgrhz214FZ39iTGWO5W4mU43+zh
+	RTro4xHuQKqjgYAd3r5Y0qNQv5xUs8/1JqbraSQHYGUTKAzfGT0ICDq9nLKdG1/Ue3M=
+X-Gm-Gg: ATEYQzzwly07cJwVkgTDlYDn9J+R6xJj81583gbNY8aCxXgJGmzbAVbcXAqfQm0dkbX
+	aQOmovRViTfVO8QWMaQ7xZLhoNG7O4Bq3VOkiezQF5EZd8zdA+GfkK/m/qabaP9Obfe33X0c5Vh
+	QqzAPUi+pdgZ/22bnkSZI32oAokZS3CoQ+MTJflt0+q8tbVUaFq3BVVX2i3YgCQLewGa2bXsqyn
+	Z6p1zQn/FG2UFTcHMQGNQdVht9hQU6olStiwtcdXEC0aWqfmphFmQ0TOyIszImXiwv6Mk7JZN7U
+	k67kPUk6HujLltM6PShS6JRRRcdGdml3+OznXMzW3OY3LFcwknmhNBO/t4H5hoCBi24PE9uW6fZ
+	lrianbfQ4mR3Ydo87utDlS4EpLFuF8nVeqkKd07S/MH+TvCjopz1snqzPozQMOg06m8bOj+jO5D
+	OfXLvtMJrOImA3+LkQFl2Jba38PyMbJnRAMo1n/ixnBBq4Fn4OZDs5fcTs+R0/d98uiLz5I5KKA
+	AygHn+Ye8vG2vk=
+X-Received: by 2002:adf:f78c:0:b0:43b:9111:a1d1 with SMTP id ffacd0b85a97d-43b9111a1dbmr951145f8f.0.1774454850327;
+        Wed, 25 Mar 2026 09:07:30 -0700 (PDT)
+Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919df903sm655408f8f.30.2026.03.25.09.07.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2026 08:56:58 -0700 (PDT)
-Message-ID: <1fdb5cbf-fd41-456b-a2cb-c270353cb871@kernel.dk>
-Date: Wed, 25 Mar 2026 09:56:57 -0600
+        Wed, 25 Mar 2026 09:07:29 -0700 (PDT)
+Message-ID: <c9512d9a-e654-41ae-9d61-9e3af53f815e@linbit.com>
+Date: Wed, 25 Mar 2026 17:07:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -70,20 +70,19 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: linux-next: manual merge of the block tree with the drbd tree
-To: Mark Brown <broonie@kernel.org>
-Cc: =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
- Philipp Reisner <philipp.reisner@linbit.com>,
+To: Mark Brown <broonie@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>,
  Lars Ellenberg <lars.ellenberg@linbit.com>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Linux Next Mailing List <linux-next@vger.kernel.org>
 References: <acQCDMhGqwhzLuzt@sirena.org.uk>
+From: =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
 In-Reply-To: <acQCDMhGqwhzLuzt@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/25/26 9:41 AM, Mark Brown wrote:
+Am 25.03.26 um 16:41 schrieb Mark Brown:
 > Hi all,
 > 
 > Today's linux-next merge of the block tree got a conflict in:
@@ -99,9 +98,7 @@ On 3/25/26 9:41 AM, Mark Brown wrote:
 >   630bbba45cfd3 ("drbd: use genl pre_doit/post_doit")
 > 
 > from the block tree.
-
-Christian... See previous reply on this.
-
+> 
 > These changes are both quite large and the conflicts substantial,
 > ffa847f8ff11d ("drbd: rework netlink interface for DRBD 9 multi-peer
 > config") in particular has a diffstat of:
@@ -124,9 +121,44 @@ Christian... See previous reply on this.
 > and I will reorder the drbd tree after the block tree going forward
 > since it seems to feed into there.
 
-It _should_ feed into there, for some reason their tree got added to
--next rather than go the usual route.
+Ah, sorry, that's on me, I should have called ahead.
+
+It's a long story: the DRBD changes in drbd-next (and thus linux-next)
+replay about 15 years of development history. The out-of-tree DRBD
+module got de-synced from the in-tree version, and never truly caught
+up. The gap just grew over the years, and we're trying to fix that now.
+That's how we ended up with the enormous patch series that is now in
+linux-next.
+
+We submitted the preliminary series to linux-next to "test the waters"
+in regards to integration with the mainline kernel, CI checks, etc.
+This preliminary series still breaks some old userspace tooling, though,
+so we can't truly submit it "officially" yet.
+
+And that is precisely what we are working on now: we intend on starting
+a new genetlink family that enables compatibility with both the old and
+new userspace tools. This will take some more time, we are taking the
+first preparing steps now (such as "drbd: use genl pre_doit/post_doit").
+Since this is useful for the current in-tree module as well, we have
+decided to submit those patches "normally" via the block tree.
+And obviously that caused conflicts with the next tree, since that has
+not been rebased (yet).
+
+Jens, how do you want to handle this?
+Should I send the (technically working, but maybe
+old-userspace-breaking) DRBD 9 patch series to you so you can carry it
+in block/for-next? So far I was under the impression that these patches
+would be too large and unfinished for the block/for-next branch.
+
+Mark, thanks for your efforts and please keep the drbd-next branch
+marked as broken for now. I will rebase the tree in the following days,
+and we'll see via which path it gets resubmitted.
+
+Thanks,
+Christoph
 
 -- 
-Jens Axboe
+Christoph Böhmwalder
+LINBIT | Keeping the Digital World Running
+DRBD HA —  Disaster Recovery — Software defined Storage
 
