@@ -1,139 +1,174 @@
-Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22A33F167F
-	for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 16:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07CD3FB042
+	for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 16:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774455952; cv=none; b=A15ULPPJFrxTZKFED38vB1C9R2JKawlXwz2E4wPIjYm0qwbfbt3p95y7K3KjjHzUEVA/VcUOdVhPMjFZwwMz5Jh9W58rNG/32awhx/TMc2sIPlA8iLOgAZPCru9mXN2Dizh4SP15XY+c0ofEiBrjoG9BaKsay8rxW4RVpQipaxM=
+	t=1774456243; cv=none; b=l2ekWFFYqqmSmsLMOWekGpJ2Dgt6oV27Kk7To7EuOTbeh0PPCgME09Avhs39XfOhbdk4GPOz0ljHZtkvFBaRJNz6WC72VDXIY8+bh/JrGeEW7Nj+ld8fvbYrqe+XJUJ82kVWaVx0KVZcLbwrDVUI3tSojH6TVI54uzmU0KoDUdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774455952; c=relaxed/simple;
-	bh=j+JpOTxoiaC4a3ZwzKzJu6hgT0risfLAx+5XEX+zV0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XcvkHAVeqSJps5I6Bh3nZmywKVyhGoX0GxJTCxrFFuQZPJD1B2ZDydLtzbqCYNFhzyQWw4JxEN9u+k5jvPThE0rfiL9PI7IiPLKNp+ZYq0rEDnn3Iuy+sBQCCh9Oree1rlSYYoT/LDa+CdsoihsRkoeYEgce/Rd4+Z0gmSiVQYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0s1KqnK; arc=none smtp.client-ip=74.125.82.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774456243; c=relaxed/simple;
+	bh=lT2ALcUCCqZWxU5iQHgAoKe0cGnXaF8tvbAiiagQ3CA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SfivMxx3xKv57CX95KgdOQ3nJL9P7xyH9B1SWTWzUDSsoNJeJTUPvDBDDVWIxDk5Q7rvRKvX47gIH0B5W6/8hMXUFvuUK+0O0JuV7obYHrUjJVhh0qcW1HsP4iVS5V9Rn+Zi2yr36eFemYRhZcLwvcCgpnAt05bNWp2gZLjUWTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CjMVrqaT; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0s1KqnK"
-Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-128e4d0cc48so6261100c88.1
-        for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 09:25:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CjMVrqaT"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7d7e5e8c907so3771282a34.0
+        for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 09:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774455949; x=1775060749; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PHuReD7+FVWhNLpyHRhbYrIKNtPz37kFn9VqK6liQg=;
-        b=A0s1KqnKsm90w4A0hvnbWrnex0lBPuOdiBYLd67UawbajHcYU+jVlHZD9M53JL5Kdc
-         YEPyqk5vlnc1fokSbSS5oOPA1ThioShH9+baS7i3TydK+nZpW8UNkoDR4k6n6znveC/M
-         KbZ86fFopYxbciMOrOxMGe48U6/eVuNqSYS9RXoCtzToXTeKbglC5IWRxGl1c9cIwxNE
-         7cJESzlbFUJQnPd0Dh3Cav2cilMxicfvYqa3l/2cfhtZwcWr2J9u9muWhn+S9jLvEd8Q
-         Ce9jVYVRXZ82OtE6JGbSdlRJd7fDAxmQujbn1dbgMtffwcBqedGky6SFIz0fWV52r+UV
-         3hug==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1774456237; x=1775061037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WgIg+cFiInAhwUxmjGvPfIq4uIe/XeIJrcZrRaOQ0Lk=;
+        b=CjMVrqaT+CMxx5VTIiG/DaP6Us93AxSfIeBwtGpYP3VLX0euBqWTmWO+JF5rqR3I28
+         2osiJhyGDg3kYKSN/6mqBvqTyqFr1dqxkvdcI5cy00TI9ZtgveE6OSkvgdYBGxM8UEkU
+         mEj5AE/4ilK++oXywa8poR1VeXoXdrknO6fPb7DOs/Rdk6AXGTUFjs8jj7XqoNCMrFod
+         KCSzFdcFQdMa7B2TjX2KgXO2nm/oajd89geb8qE0kWFTBM2kIYzo4/e5p0+XkF2hZMKG
+         Tr1sYm/cwvkzXBTvWYgr5g2dnmfXAOAaD4t+TdId4pPGI+eyS7aCzRU75bG3exZlDlYm
+         q1Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774455949; x=1775060749;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4PHuReD7+FVWhNLpyHRhbYrIKNtPz37kFn9VqK6liQg=;
-        b=RYkPHp2lyftkBKbAxm7eY+7zhHiM5ZvfCiGcCVkkvzd79oTVHvOXNiPwvOGG14OObk
-         bKMgcIvgQEsIpcmjzLVakBNVlN/kHnWk42fBtC+ucXmZ8dCuGn//wZENfvhKxO6ZLU4H
-         oaBDbNWQVxbJkqWhlO4u1xZr99R0cTyPNTX8alGJQWYtzEflfVrGM9oiGSdYRYcycfZe
-         tNdmI6O2VM9VVUXnmnKQoE+BYcR9yANphJKnuTZTqJALBb0135bzKCEwq8CLpP3oQEfE
-         o7BCEWx7suReCE5yGQQTRKi7rra7NdeggpxzWKB1JV7SHOOG7PPqLRUu7864nOzu1YvF
-         64XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8xqlqhi9jgDJc3SD+KpUGkltBpIauXjm1LwwyOUPCCBUBC51oTQDJVaMTk6MNKuQ1kq4sv2X7wIN/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu+EhYDexoG4r0f5vGZ94PIi7xmEMSDClG9Hj3LUSDpXgzdNFO
-	Hso6ix3OOfdGLj3x51Ad6/5qTmniR/lYZYXM0JqawmUBte5GhtMLcWa3
-X-Gm-Gg: ATEYQzxIWUIWCp/y/htHFcRWxsJQ3PYV4itKYq3vEHkUSEml+xshnmm5ByKxjYvJiYB
-	jTGdyzfTCsdquHUgMpFoiXh8Hmy8Dja90IXP4/L5vBfQBngAIEjGlXZPdZRTq+OkBsu9HzXOL5Y
-	Gi7UBtNJy1Lr0DtpFi4kh7018XwkkTdhalSv4aEaRg9FMlycQq4ldsJbVFXBWno1roXeh0H8A06
-	n2CXcDUekpX9Vbcew5dux/wH/Np9xpEu3W/fcVP3sZclzUcem72wRqaLF5ZSlu6OYb7FBdyUVBu
-	4Co3SNsyePvky+lyFKm2BTRCO5lJloqllRoaTVz7AEmu3E/Dhe8IaLhXH+kLySJO5E4AA9X5dG/
-	zlE5+/m0etf2FiqukWBEDBqKbIr2kjCYksD8OCp/OC5NCNemZKNsy53kppt1XRyb510yCYLl2lt
-	6W2k2o+H+FSfB4gVtMzPk8jbx7yTYMPmYrI7L7oQw8TRp31tEkOWhXR7dBKMkxrcKpN7+BKoAmT
-	E8=
-X-Received: by 2002:a05:7022:69a:b0:128:cf5c:535a with SMTP id a92af1059eb24-12a96e5c913mr2203493c88.11.1774455948769;
-        Wed, 25 Mar 2026 09:25:48 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:b7b4:352d:eb23:66e5])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12aa6e5beb2sm284580c88.1.2026.03.25.09.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 09:25:48 -0700 (PDT)
-Date: Wed, 25 Mar 2026 09:25:45 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the input tree
-Message-ID: <acQMdgYC2IqFgQv5@google.com>
-References: <acQLxuMKNAbtQDef@sirena.org.uk>
+        d=1e100.net; s=20251104; t=1774456237; x=1775061037;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WgIg+cFiInAhwUxmjGvPfIq4uIe/XeIJrcZrRaOQ0Lk=;
+        b=gqRb5ustRJY68BMywjojt3pG6BMBoRii7EzVFLhQXJxnaq4LcQJfyF+/m7gOgGfzfT
+         ZfeZwokOOmmKoNOsKG79GnzeTvIXtfMzcLNIIpo+AFYiyatyLdYGXjH60cb6fNZm0Lby
+         lE5W6YNWl2K4q9Hz+KemrhSqtoGe5qfr7Nk4XQnvxQeHqgQ23cxV9izTJnSz4kqC58QU
+         NElwG9DJyjKmA8MWQxv8flLUgxvtvDT0GCPEDqLX/reQytTkI4PYPNySP0X14V0sh48X
+         O9KY9nxnlTIKCM9eTSNbsvya1U15g4bxYif3EjNKqYSERZ56nvxvbtslArvz8p5AlUEH
+         glYg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2on6SiQyq05pbxCsFgJKfn87RLIMNkjmZn3BwYVF5pxe9wzDlO3YgVlak8cTt4UT6kBJaxLe02uwh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3EuLNPunnwWBTJAWkEDerYP3qTHXcCY9vY56txkQGNzYgY9bG
+	hiWN/iSfloaezGoAx3GgaSO/qNJDeL1vqwtxaSDx/FYUDIvCC3NOlUcYE9Kp7iJIOZY=
+X-Gm-Gg: ATEYQzxxRL6wQxXR3gK3/xVxPXt3wULnEP+vgxmnCyxsMXKxVMHQDb0aTstRqtBBJi7
+	e+SdFuzHir1hFqZSU4MOA2RbEcsx3FPPAlaNVOmMpFgHr0w1UaNW1gE3D5i4CCT2x+gH8+6thZG
+	GvzIQHPt4RcLovs5p3ShFeT92JwCGPp1BDD1JQkHv7oIueOCL72W2HZZV9fzyFVvrBBe4CxpbDW
+	9JfsAqMzBbkSxqEPB4yf2/LyFvU2B08pVbvtpoY0jF5Gg4G6XZX/eg/VR/3pLGi9eh9Toj7sFWt
+	UNEo12gCU4c6meu2ZNWeK0mFMQMa/FXPNHHDby8e2+aEp/bTIcKyVV0caPcIeV83yxfbaytKBqm
+	PyHuQfKjxSkfBsw0t79YTLEfem1Fnp37r+4jMmqdYCUoSomH5bacvqGAUNSu6gXIptlDsL+oJWN
+	xZbk+2NBdW1wfrdLCfIExfVEYCSR6mVwriFg4bqPZKJiGfKJ0gh8fITwjnl1gCuSAVIOhUNGOd+
+	xlCPD+MEkP11Dq/vE8=
+X-Received: by 2002:a05:6830:43aa:b0:7d7:ea9f:c104 with SMTP id 46e09a7af769-7d9d63b3aeamr1942585a34.0.1774456237611;
+        Wed, 25 Mar 2026 09:30:37 -0700 (PDT)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d9e680456bsm168775a34.0.2026.03.25.09.30.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2026 09:30:37 -0700 (PDT)
+Message-ID: <899e0337-9642-4ca6-9050-aeab14fa22ef@kernel.dk>
+Date: Wed, 25 Mar 2026 10:30:36 -0600
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acQLxuMKNAbtQDef@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the block tree with the drbd tree
+To: =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>,
+ Lars Ellenberg <lars.ellenberg@linbit.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <acQCDMhGqwhzLuzt@sirena.org.uk>
+ <c9512d9a-e654-41ae-9d61-9e3af53f815e@linbit.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <c9512d9a-e654-41ae-9d61-9e3af53f815e@linbit.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 25, 2026 at 04:22:30PM +0000, Mark Brown wrote:
-> Hi all,
+On 3/25/26 10:07 AM, Christoph B?hmwalder wrote:
+> Am 25.03.26 um 16:41 schrieb Mark Brown:
+>> Hi all,
+>>
+>> Today's linux-next merge of the block tree got a conflict in:
+>>
+>>   drivers/block/drbd/drbd_nl.c
+>>
+>> between commit:
+>>
+>>   ffa847f8ff11d ("drbd: rework netlink interface for DRBD 9 multi-peer config")
+>>
+>> from the drbd tree and commit:
+>>
+>>   630bbba45cfd3 ("drbd: use genl pre_doit/post_doit")
+>>
+>> from the block tree.
+>>
+>> These changes are both quite large and the conflicts substantial,
+>> ffa847f8ff11d ("drbd: rework netlink interface for DRBD 9 multi-peer
+>> config") in particular has a diffstat of:
+>>
+>>  drivers/block/drbd/drbd_nl.c | 7260 ++++++++++++++++++++++++++++++------------
+>>  1 file changed, 5167 insertions(+), 2093 deletions(-)
+>>
+>> which would be enormous even for a non-mechanical change, based on the
+>> size and a glance over the changelog it seems clear to me that it should
+>> be split up into a series of patches.  This would make resolving the
+>> conflicts much more tractable as it would be clearer what each change is
+>> trying to accomplish.
+>>
+>> 630bbba45cfd3 ("drbd: use genl pre_doit/post_doit") is much less of a
+>> concern as while it's fairly large it is mostly mechanical.
+>>
+>> Since I've got no confidence in my ability to do so rather than
+>> resolving this I have marked the DRBD driver as BROKEN for today
+>> (there's a half completed merge in the tree which shows how far I got)
+>> and I will reorder the drbd tree after the block tree going forward
+>> since it seems to feed into there.
 > 
-> After merging the input tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Ah, sorry, that's on me, I should have called ahead.
 > 
-> /tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:
-> In function 'mxs_lradc_ts_handle_irq':
-> /tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:508:8: error:
-> macro "class_spinlock_irqsave_constructor" passed 2 arguments, but takes
-> just 1
->   508 |                 scoped_guard(spinlock_irqsave, &ts->lock, flags) {
->       | ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from /tmp/next/build/include/linux/sched.h:37,
->                  from /tmp/next/build/include/linux/ratelimit.h:6,
->                  from /tmp/next/build/include/linux/dev_printk.h:16,
->                  from /tmp/next/build/include/linux/device.h:15,
->                  from /tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:13:
-> /tmp/next/build/include/linux/spinlock.h:623:9: note: macro
-> "class_spinlock_irqsave_constructor" defined here
->   623 | #define class_spinlock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_irqsave, _T)
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from /tmp/next/build/include/linux/jump_label.h:78,
->                  from /tmp/next/build/include/linux/dynamic_debug.h:6,
->                  from /tmp/next/build/include/linux/printk.h:620,
->                  from /tmp/next/build/include/asm-generic/bug.h:31,
->                  from /tmp/next/build/arch/x86/include/asm/bug.h:193,
->                  from /tmp/next/build/arch/x86/include/asm/alternative.h:9,
->                  from /tmp/next/build/arch/x86/include/asm/segment.h:6,
->                  from /tmp/next/build/arch/x86/include/asm/ptrace.h:5,
->                  from /tmp/next/build/arch/x86/include/asm/math_emu.h:5,
->                  from /tmp/next/build/arch/x86/include/asm/processor.h:13,
->                  from /tmp/next/build/include/linux/sched.h:13:
-> /tmp/next/build/include/linux/cleanup.h:300:17: error: invalid initializer
->   300 |                 class_##_name##_constructor
->       |                 ^~~~~~
-> /tmp/next/build/include/linux/cleanup.h:438:14: note: in expansion of
-> macro 'CLASS'
->   438 |         for (CLASS(_name, scope)(args);                                 \
->       |              ^~~~~
-> /tmp/next/build/include/linux/cleanup.h:447:9: note: in expansion of macro
-> '__scoped_guard'
->   447 |         __scoped_guard(_name, __UNIQUE_ID(label), args)
->       |         ^~~~~~~~~~~~~~
-> /tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:508:17: note:
-> in expansion of macro 'scoped_guard'
->   508 |                 scoped_guard(spinlock_irqsave, &ts->lock, flags) {
->       |                 ^~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   a995f3ca3bd51 (Input: mxs-lradc-ts - use guard notation when acquiring spinlock)
-> 
-> I have used the tree from next-20260324 instead.
+> It's a long story: the DRBD changes in drbd-next (and thus linux-next)
+> replay about 15 years of development history. The out-of-tree DRBD
+> module got de-synced from the in-tree version, and never truly caught
+> up. The gap just grew over the years, and we're trying to fix that now.
+> That's how we ended up with the enormous patch series that is now in
+> linux-next.
 
-Yeah, this should be fixed now.
+At least that's a worthy goal, I believe I have complained about that
+multiple times over the last couple of years :)
 
-Thanks.
+> We submitted the preliminary series to linux-next to "test the waters"
+> in regards to integration with the mainline kernel, CI checks, etc.
+> This preliminary series still breaks some old userspace tooling, though,
+> so we can't truly submit it "officially" yet.
+> 
+> And that is precisely what we are working on now: we intend on starting
+> a new genetlink family that enables compatibility with both the old and
+> new userspace tools. This will take some more time, we are taking the
+> first preparing steps now (such as "drbd: use genl pre_doit/post_doit").
+> Since this is useful for the current in-tree module as well, we have
+> decided to submit those patches "normally" via the block tree.
+> And obviously that caused conflicts with the next tree, since that has
+> not been rebased (yet).
+> 
+> Jens, how do you want to handle this?
+> Should I send the (technically working, but maybe
+> old-userspace-breaking) DRBD 9 patch series to you so you can carry it
+> in block/for-next? So far I was under the impression that these patches
+> would be too large and unfinished for the block/for-next branch.
+
+How about this - rebase it against for-7.1/block, and send the series.
+I can stash it in for-7.1/drbd, which can go into for-next. Then the
+separate tree can be dropped.
+
+I won't submit the changes in for-7.1/drbd, but just expect you to send
+a new series against for-7.2/block when that is a thing. The 7.2 one
+should be closer to going upstream, and so forth. Within a few revisions
+of the mainline kernel, we'll get to the point where for-7.x/drbd can be
+included in the merge window pull request as well, and we're done at
+that point and future drbd changes will just get submitted against
+for-7.x/block like any other block driver.
+
+?
 
 -- 
-Dmitry
+Jens Axboe
