@@ -1,99 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAFC3FBEC3;
-	Wed, 25 Mar 2026 16:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE0A3E9580
+	for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 17:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774457847; cv=none; b=L9o7DszFO9K7s2zZq1V3+RFTYjlfeyv+oldnY1KY4kHJjqWBVezcko/uyM7EE7AIUZf0HbcGe4XvG+gUIgrOYGMZe2pD3lsZlgxs3XSlK7VGxZWGIcihXvHJQOPSNzjjXZTVJQ0NIEHZsZNYtg6JiVWOejzOqb+110OKATWe+Q0=
+	t=1774459994; cv=none; b=qDU4zyuhoLphJjDgzWz7DOohdwHm3oHu3xP7GlfcJ/xTWbaL8i40dnCPb0z3fG2KO1qisDBzjPcbtd+niKlx7OVxGdTupq/HyvBI70oHqBdlFQ2eBoFnw0kTRWyDgncVkfmw6KqkXnvpEsbXQqRLeh+uYNrhCsDX4mQrqvHb0mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774457847; c=relaxed/simple;
-	bh=Jmw/HaBM/+H27X/iAAUVe2eHLoryNsj+P9Airdy3RS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqqmHPbk6oxhCxCul9KOzcoWiKcMdM/X819YcEUSG2u8t7IXihnQHY2M0n6Deo/A7wDIQfmc8Y6GhaPXbjSWaGsz8xrRMyZ3isTEVOoaBcaraCjCodA3eH4KMNtKUPmuKY3YA0LI8L7gOg0LN9JWwqckdO5HDwHwimVjcwqefSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiWytlA4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774459994; c=relaxed/simple;
+	bh=6mC6rnROd5UC1Xykedq/XYApI5Pw9LFgMLHdSq7X8X0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qq2F/iYUPaY5CjX1xf569q9bJPoNt4GdbqM+5+VAvMDf+oPl9ne4V32nvqktxoaT8o5Wk8zulTb/rjwlfI/S7G2mlw2C1lLbowdehsea4XedOGe+YJbBIUzPHm0bE9WGNHHJHDhqEOuXN+QmFyRLsp088p3P0mQTAvSZVYqK1NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=FW+Rdcof; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiWytlA4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D707C4CEF7;
-	Wed, 25 Mar 2026 16:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774457846;
-	bh=Jmw/HaBM/+H27X/iAAUVe2eHLoryNsj+P9Airdy3RS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YiWytlA41YtB6QdNnfCVabaTNewpc6v+lrlSilokg3pOBt/I4yYBK3fOCxr99td/x
-	 gFBE37lOlM/tTE3x/P0mg7KpnmymizfCijL2Yy8kfrx4bzDVYDpuWPLoGIBEuwVz3v
-	 8l5fnGm5GlzXOdTJfCdCV9gC6kTp6WGRxEMMZGSRjaIu7l5tXkGm7YlQsqVK89qcWa
-	 1e9WJLN6k+nGt4FljpeZr0M3GwhT+CRgVL158KQq+x61ADSnUuqZjy3B1tnKR66AdK
-	 kGWbOEu+iN72mQEJ/mFEhWZtLNmNbMrdwL7w2+o6GeY+y/FrwWA2O8+pU97Dv4UlDG
-	 eP11g7AG84qvw==
-Date: Wed, 25 Mar 2026 16:57:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the block tree with the drbd tree
-Message-ID: <be3cce14-c069-4325-b093-12dd26892119@sirena.org.uk>
-References: <acQCDMhGqwhzLuzt@sirena.org.uk>
- <c9512d9a-e654-41ae-9d61-9e3af53f815e@linbit.com>
- <899e0337-9642-4ca6-9050-aeab14fa22ef@kernel.dk>
- <9e8b388d-ca6d-4e78-bbb8-3b6cdd731777@linbit.com>
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="FW+Rdcof"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-487012ce896so767355e9.0
+        for <linux-next@vger.kernel.org>; Wed, 25 Mar 2026 10:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1774459992; x=1775064792; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5sZ1KbtfZr+zgwPW/a767v1N740zE1aNzyInaMTvgi8=;
+        b=FW+Rdcof60Rhq62Ojg5gycHGEFybdRqQf4jJuif5v7g7GzEy83Xa/V0syrFwsd9CVZ
+         o9cdT1L2H7CvTjjjMHlHpUPKSjSDyJa/sIfFEYlfyJtMYqOL9Dgtj76gIN0KHuipZTe3
+         A/V78pPvvqvyrc2u+oT43qovTH/48CoJ5/ZlMVryAVEnAx2nm8RE6nyNlgRLHcgOttoS
+         dTJClTfjFJSEfZJsC0VTtmfECXho+58pxbDP/b3C3P1c3LbnKVrckFLrVjC6f0lWiEbR
+         6HkDylfk9xhyrmgcESgu7TZjtaoZe9+OiyV09Q29G2T4YoaHnGitLSzF0CoZnjJZEKFk
+         Kqvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774459992; x=1775064792;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5sZ1KbtfZr+zgwPW/a767v1N740zE1aNzyInaMTvgi8=;
+        b=OW15MaqsLX4OVEuywS20KGymL2VbvWBgHNrnzxRDOkwvBoBS/yTGmmPFkDMcyJtGdp
+         1E+wUK3CBbY+7yvGq2TigH7nIAYPwoquw0R0yg2h99Bde9Ykw44WOlDalzc8RPhudsdh
+         +12WZaAZhf8LRAOXBuBz15f7ElaTI7kMKGquAMHjdfxlZvlVhk/0thLkvWQnLFOqv8wH
+         /Ft1IUZ9ailT/2dj8loCAf8i+h5APpyqb2DpmH5q8ERFint/D2170VodIOXt5E9mci9C
+         AAcO8BZ4ZbU0EE4VbozrVmUBhcRHk2kvFmygjPtw19CoSbWcxsosagxWcwKt+1nmQZ69
+         7EIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRPsL5EIRgVKIkBGd83kLR6SRcb5Rsj83zNmOOfN3Ynr92GQHOjWaDvq1/7ynA+howSe37vXtogFxO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV+iDYg/jQ6H9zepPyQ4vygnp4gopI3+mVJtz+9ciA2HgR+YCU
+	3WNuqc/Jbd/+o31tPQv+WaH5JWkM1cxNhRTChTK16C6o43LFOr430t5X7PrpgS7Zau8=
+X-Gm-Gg: ATEYQzzOC7G5UvIEStQ5CCEHCCx1K9JoPmmeSG3paPzixekJ1OMd9M71eCJ2acqSP/e
+	dBwqO7XX5qoJW/qhaQGfclmJayDwsvFX3WY4vRTQsePQtRMK8RvPtMpMBAABsade4loOvN++sZY
+	AaRVTH6vsho9LPUGixyXOgjvduW/1M17mPjSyFGpEAyCXTNdwj9SNMtfBQBoTUWrMF44MwOouhy
+	1nk8RD+ZdD6oJYeZn+4ROw8/UZ8os5lIwHRSvdoXRhN64vXcQGswZecOJEII4ZbfnCxDi+yYcn9
+	iNSCdT7GcsdWAP7+nSkJDJATAXL/Svlo5+qVaL+CLvOtlDzWJr2DU4HE2qzkM1dM2Dhuq09a5Np
+	Q4glYS5goPx9xxEPN9dEvL6X4kcMeu3eWcxoAMuK4+qvp6GjFBV4QAcLUtLs+RiaBwE3fH6irVv
+	8J71HMFBqBKhqy1jvUsTqSJO1QOHI/ARfZfkRnTN+ZTKpDSYZHpCrdgoxO4XLLwIREvfZkrof+B
+	POa6QH7K2IFHXA=
+X-Received: by 2002:a05:600c:5296:b0:485:364e:9328 with SMTP id 5b1f17b1804b1-4871605ceb5mr68310965e9.16.1774459991563;
+        Wed, 25 Mar 2026 10:33:11 -0700 (PDT)
+Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4871e5ec987sm8271955e9.4.2026.03.25.10.33.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2026 10:33:10 -0700 (PDT)
+Message-ID: <ea26bf6b-ad04-4d7e-9f6a-bdbbc8acf594@linbit.com>
+Date: Wed, 25 Mar 2026 18:33:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EUXxIJme1xlKOCW1"
-Content-Disposition: inline
-In-Reply-To: <9e8b388d-ca6d-4e78-bbb8-3b6cdd731777@linbit.com>
-X-Cookie: -- I have seen the FUN --
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the block tree with the drbd tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Philipp Reisner
+ <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <acQCDMhGqwhzLuzt@sirena.org.uk>
+ <c9512d9a-e654-41ae-9d61-9e3af53f815e@linbit.com>
+ <899e0337-9642-4ca6-9050-aeab14fa22ef@kernel.dk>
+ <9e8b388d-ca6d-4e78-bbb8-3b6cdd731777@linbit.com>
+ <be3cce14-c069-4325-b093-12dd26892119@sirena.org.uk>
+From: =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
+Content-Language: en-US
+In-Reply-To: <be3cce14-c069-4325-b093-12dd26892119@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---EUXxIJme1xlKOCW1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 25, 2026 at 05:47:34PM +0100, Christoph B=F6hmwalder wrote:
-> Am 25.03.26 um 17:30 schrieb Jens Axboe:
+Am 25.03.26 um 17:57 schrieb Mark Brown:
+> On Wed, Mar 25, 2026 at 05:47:34PM +0100, Christoph Böhmwalder wrote:
+>> Am 25.03.26 um 17:30 schrieb Jens Axboe:
+> 
+>>> I won't submit the changes in for-7.1/drbd, but just expect you to send
+>>> a new series against for-7.2/block when that is a thing. The 7.2 one
+>>> should be closer to going upstream, and so forth. Within a few revisions
+>>> of the mainline kernel, we'll get to the point where for-7.x/drbd can be
+>>> included in the merge window pull request as well, and we're done at
+>>> that point and future drbd changes will just get submitted against
+>>> for-7.x/block like any other block driver.
+> 
+>> Sounds like a plan. I'll send the rebased series this week.
+>> We already have a few "get it closer to going upstream" patches in the
+>> pipeline targeted for the 7.1 and 7.2 merge windows, but none of them
+>> are truly ready yet. So this approach would fit very well.
+> 
+>> Exactly, once we are done with all this we will adopt a "normal"
+>> upstream-first dev approach again. We've already discussed changes to
+>> our internal workflow to make sure we never digress this far from
+>> upstream again -- I think that's in all our interests :)
+> 
+> So I should just drop the drbd tree entirely from tomorrow?
 
-> > I won't submit the changes in for-7.1/drbd, but just expect you to send
-> > a new series against for-7.2/block when that is a thing. The 7.2 one
-> > should be closer to going upstream, and so forth. Within a few revisions
-> > of the mainline kernel, we'll get to the point where for-7.x/drbd can be
-> > included in the merge window pull request as well, and we're done at
-> > that point and future drbd changes will just get submitted against
-> > for-7.x/block like any other block driver.
+I guess that would actually be the easiest path then, yes.
+Sorry for the churn on your side.
 
-> Sounds like a plan. I'll send the rebased series this week.
-> We already have a few "get it closer to going upstream" patches in the
-> pipeline targeted for the 7.1 and 7.2 merge windows, but none of them
-> are truly ready yet. So this approach would fit very well.
+-- 
+Christoph Böhmwalder
+LINBIT | Keeping the Digital World Running
+DRBD HA —  Disaster Recovery — Software defined Storage
 
-> Exactly, once we are done with all this we will adopt a "normal"
-> upstream-first dev approach again. We've already discussed changes to
-> our internal workflow to make sure we never digress this far from
-> upstream again -- I think that's in all our interests :)
-
-So I should just drop the drbd tree entirely from tomorrow?
-
---EUXxIJme1xlKOCW1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnEE/EACgkQJNaLcl1U
-h9CeqAf+N6xCE23NdVkfYNs8+55eY/Ily/kqNvMKZLMNVZmjhsmzLuxo7aur0LDG
-BfqiSYEm0LRYSwdVWyXlKd2ozmjxUEFgMzhIKnXY+uvpCmDSdHgbYNg/LGsK3A1m
-NHt3liWKVzanN+9BFwBRPkGEhWCDir8fRLeFnqP262TW6WpCMn2FR56Eob4GRktZ
-QswMnRNw3ZJAyWkBzvmtJP1CFv29A1JapJnvKY7VnVgiFzB6k3f+0F4RKt/X9kNW
-HXlr0M766Frvn8qeiLmqdTT7CraJLSNkCNz/GykB6Mu+rLxxrwRhKCVH6jD4nx5p
-G6V3OHwJGJMF6F9PocmN2/ALYD9HJA==
-=5a9y
------END PGP SIGNATURE-----
-
---EUXxIJme1xlKOCW1--
