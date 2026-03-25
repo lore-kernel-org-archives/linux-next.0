@@ -1,38 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C2E38D6BC;
-	Wed, 25 Mar 2026 16:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943B73E9F85;
+	Wed, 25 Mar 2026 16:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774455754; cv=none; b=Pji6b1X0Yn4qHbhUpP/RUGKbGcWxq3pARefCjUa3VqZDEGYuj+yziQdbpkC4XMlaV+o70UL15VILvWm0ojrj1Gwb+P93O8O23jp3Ldhb/U0l0DmULw/ixmopXblvufQ5msKS0xMilffzAQc+jI6pxZWAt5z6AYNzme2qC8nGT3E=
+	t=1774455931; cv=none; b=IMs5DMrWzGhex4kO7Q2AtXknP8EU5MR1BlvWHJciuE4z4uDX98erdcwlDPXAwE6J4E1E6kas9lvzM52uMokdAoNA2wwJ+LZEPgXvK34NlqSRxdZdAldcC9a/rSjsOsyoBvfabtk4nwF/ugMRkFh/YvxlcjNiprIyXkvql93kbg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774455754; c=relaxed/simple;
-	bh=C9m+O1LHNRzeumvhKxqQM9w4sFUx4JIpaZWqLoRoQ18=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Rv98u2/c5dXifwuuQHtX53EPCdrkPnFIErWSzQ8mQ0Lvm5G7Q1BlK4i1Tf91meD6sXyqNuimOomu+Ot+mgaea/Dis+jfWe0rKNlSXVixLOfTblf3Rr+LX31bZjGub1wTsSsgiwJ9ktXtXCkVN6LN54PBqyq3h7lNLx+w3m911S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmPOBYKa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774455931; c=relaxed/simple;
+	bh=xwckAkZbwI/208JX/TLiw3VB9/wUx0OGdh1zgEylEcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JyNs1Nc49u/chhzwUHDceKoJTUtNZiCN9wwRlWmUuBtO5n7hbbyj4Iemrl0A0PY+ISCEaovWmvNTUCfx194jd0BoJiZmV2XK9Q4fkOz6PRHcp3U4WEk5TIivBkIqSEenAopOpfJLOwDJHCXW1gO8AjXUMjoQvg2qfblesyYYxRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFJ9cG3A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmPOBYKa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21082C4CEF7;
-	Wed, 25 Mar 2026 16:22:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFJ9cG3A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C09E3C4CEF7;
+	Wed, 25 Mar 2026 16:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774455753;
-	bh=C9m+O1LHNRzeumvhKxqQM9w4sFUx4JIpaZWqLoRoQ18=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qmPOBYKaja4K+/4zceHtZXE8udCd5jPl/l2luJOn3SivTy860bsCiYkj1gCW2589+
-	 p4OMMqjKYJY49Fah5b4fvv8RGPZ2IPTfcp4V1zd/ZpfCABI9dL79oYl2v9r9C3p6x6
-	 YkizRT7VgR6bNi6vPjVv5Z/z1hb8nkWBNur+wKiJkLdZJzd40oPRrkmvFfN+IVb0Ar
-	 QUNUfJikRcY559D/YLKfPHb7snP91dDL3/gUWyNyRYlcL7T4KbvF/2wxJoaJZ7UHCi
-	 1GY8PlZwdg/aHB7KdlwR3FTRqY8bQjXVs8v+Ttr7ARYkhW4peGltIcH16O2oHUwwx8
-	 vv1SNp0Fdt2CA==
-Date: Wed, 25 Mar 2026 16:22:30 +0000
+	s=k20201202; t=1774455931;
+	bh=xwckAkZbwI/208JX/TLiw3VB9/wUx0OGdh1zgEylEcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rFJ9cG3AQff+Q0BIgKon8VZaKhpQ7rr9d3g8kmFp6umtg5DAhj2y0gIc/jRrFCukC
+	 K+ZyvIXKMatVCeTyJhX17hqElIinqapGJKoAtvh8m5RN7fZHUJ2EXxoigbu0mqoDyx
+	 40wXpVAjdAvHj5qOd30PInd+MQGl7Qdb94pr82vK/YVVY0q2HZv9Wf4W4srKoiM4VI
+	 L2HWV7T1OMqOsIOQAWPRIKMrHMUIM1QcStc/guxbPtevMwwdgioHUKURNbZYYZ1Kr9
+	 IYWA71iqQAIW2nZFmYXfwiwEbqrg0nrTPLlU0kA0QlHBB6KZJgBPGPXefybRT476Ue
+	 ruo/edwx+MIWw==
+Date: Wed, 25 Mar 2026 16:25:27 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the input tree
-Message-ID: <acQLxuMKNAbtQDef@sirena.org.uk>
+Subject: Re: linux-next: manual merge of the block tree with the drbd tree
+Message-ID: <902d1ca6-efc9-4c22-b2cb-b07cc27511a8@sirena.org.uk>
+References: <acQCDMhGqwhzLuzt@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,81 +44,40 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="egYshBt7HoHr+f5a"
+	protocol="application/pgp-signature"; boundary="c9IBNKmLX5/FTuaU"
 Content-Disposition: inline
+In-Reply-To: <acQCDMhGqwhzLuzt@sirena.org.uk>
+X-Cookie: -- I have seen the FUN --
 
 
---egYshBt7HoHr+f5a
+--c9IBNKmLX5/FTuaU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi all,
+On Wed, Mar 25, 2026 at 03:41:05PM +0000, Mark Brown wrote:
 
-After merging the input tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Since I've got no confidence in my ability to do so rather than
+> resolving this I have marked the DRBD driver as BROKEN for today
+> (there's a half completed merge in the tree which shows how far I got)
+> and I will reorder the drbd tree after the block tree going forward
+> since it seems to feed into there.
 
-/tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:
-In function 'mxs_lradc_ts_handle_irq':
-/tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:508:8: error:
-macro "class_spinlock_irqsave_constructor" passed 2 arguments, but takes
-just 1
-  508 |                 scoped_guard(spinlock_irqsave, &ts->lock, flags) {
-      | ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from /tmp/next/build/include/linux/sched.h:37,
-                 from /tmp/next/build/include/linux/ratelimit.h:6,
-                 from /tmp/next/build/include/linux/dev_printk.h:16,
-                 from /tmp/next/build/include/linux/device.h:15,
-                 from /tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:13:
-/tmp/next/build/include/linux/spinlock.h:623:9: note: macro
-"class_spinlock_irqsave_constructor" defined here
-  623 | #define class_spinlock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_irqsave, _T)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from /tmp/next/build/include/linux/jump_label.h:78,
-                 from /tmp/next/build/include/linux/dynamic_debug.h:6,
-                 from /tmp/next/build/include/linux/printk.h:620,
-                 from /tmp/next/build/include/asm-generic/bug.h:31,
-                 from /tmp/next/build/arch/x86/include/asm/bug.h:193,
-                 from /tmp/next/build/arch/x86/include/asm/alternative.h:9,
-                 from /tmp/next/build/arch/x86/include/asm/segment.h:6,
-                 from /tmp/next/build/arch/x86/include/asm/ptrace.h:5,
-                 from /tmp/next/build/arch/x86/include/asm/math_emu.h:5,
-                 from /tmp/next/build/arch/x86/include/asm/processor.h:13,
-                 from /tmp/next/build/include/linux/sched.h:13:
-/tmp/next/build/include/linux/cleanup.h:300:17: error: invalid initializer
-  300 |                 class_##_name##_constructor
-      |                 ^~~~~~
-/tmp/next/build/include/linux/cleanup.h:438:14: note: in expansion of
-macro 'CLASS'
-  438 |         for (CLASS(_name, scope)(args);                                 \
-      |              ^~~~~
-/tmp/next/build/include/linux/cleanup.h:447:9: note: in expansion of macro
-'__scoped_guard'
-  447 |         __scoped_guard(_name, __UNIQUE_ID(label), args)
-      |         ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/input/touchscreen/mxs-lradc-ts.c:508:17: note:
-in expansion of macro 'scoped_guard'
-  508 |                 scoped_guard(spinlock_irqsave, &ts->lock, flags) {
-      |                 ^~~~~~~~~~~~
+Actually I had to redo the merge so the partial resolution got lost,
+sorry.
 
-Caused by commit
-
-  a995f3ca3bd51 (Input: mxs-lradc-ts - use guard notation when acquiring spinlock)
-
-I have used the tree from next-20260324 instead.
-
---egYshBt7HoHr+f5a
+--c9IBNKmLX5/FTuaU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnEC8UACgkQJNaLcl1U
-h9ABlAgAhn1SMliu6GbCeHynUKTTNHVUZ4OjE6Xz8POle2bSYauBbVaz4tp5MWwb
-qzcmFMQXMdoF2fDa3PKpN2fR/m8didOQRXbqpNZC1hWyZTTvsjugobS3sTej9/cp
-f8rDNRM1frk0bDhrNNrrRTOg3WDPnwIy5WWKOwiCQfz7mUKHG7OHDCE8Jdh21hnr
-ajMP9QoY5KYaz+qUegaqI3INHB4IHSRdpjcB5s8UvP8inO/CvznuxsmoJ0o5rUU0
-TAruYnFyOvlzD1jY/Nk8/BmXxyj9Nmr7fpjwKtKlG4fklVvJqjGbiRm76imWPBsb
-OXNl68L4m+54BAPY+u05ET9QiSpBdA==
-=9rZ7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnEDHYACgkQJNaLcl1U
+h9BVFQf/WhA+ShKs0jUdMewvRJ2jE0+QmlVGrhIu9AksSB/vBGHNYKuyB+KVRFw/
+SPjtVJ1ZJVDW0J8LoHZuxcZRSh9o2HFgj/6lXtKohCymH+U1+rWX/LiLCVL1FQMY
+uio3QAfKp3YdSQRj1DrBWxvxij7MLtaR5w17B0yM1Xh/ktfaD16hLbG0LMhXjHNI
+a73e4jO9YMWP87SoKaM9shZA/k1jYI2sneeuBl8HmXIkUpP4BI6oSiwdQPwoVn2M
+eUon1kn3zeZWrb991ooMGixoCRBr/JnInJ12r0IITuBMdwcgkQpTXnx5xWBMmM25
+2MU/AYAqqbgVkImRjv2lnLRzHu+vHg==
+=6OAW
 -----END PGP SIGNATURE-----
 
---egYshBt7HoHr+f5a--
+--c9IBNKmLX5/FTuaU--
