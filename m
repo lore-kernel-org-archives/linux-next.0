@@ -1,88 +1,68 @@
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFEB408222
-	for <linux-next@vger.kernel.org>; Thu, 26 Mar 2026 16:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585F041C309;
+	Thu, 26 Mar 2026 17:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774544200; cv=none; b=SeyvYwOlYYvuUE5sb0Lnii7mmMC/YCpTqj1G7cw6P2JIgKDfbOzTpCYEwkXO7b1Km+TFKZtBKqseiZebEU2kJ5N5SXzruNMOYruOm1UIMqf1CROz9dPa83ruyWqbgTYX0ywVGPio5ewt3ICvplguP4kbJdgDSH1JOofKWY7tllk=
+	t=1774544748; cv=none; b=RhMqdhQl7wyYgd8oSc2VD8LWiieVZ8exFdPDvJ2ixpHkzDzVHysqtkDFmF1HcY+ptr/XWSgIUOq+X757CesTbvp0B0Ld0bZPJ9WTQu1anbx64+PWEBudSurmn9EoUGUyljP5BUfxvWDz/nvRLVR3z0slN7t5v6RsLLIDn0P3Avg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774544200; c=relaxed/simple;
-	bh=l+Buo8lc2M8erSCkcpVjzM057SVlFxwNwQcRGGdiwp8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VIt2CgboIf+Ex9q/NOdWn3OHgb2uyph/w2LYsbiRlZHM82Srj+UlKKJ7sg3jRviCLNYUue7F2A7sdf9jJ2Xm4glu9Afjkku8M8tegpz7LoZ+JfBQAqPLHJ21rT9ZLL9vnYFNSSR0/WHMXc8uP8WNaWznp28WnHY74iwUFFHJrfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-67dfa1ab0b1so3418475eaf.0
-        for <linux-next@vger.kernel.org>; Thu, 26 Mar 2026 09:56:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774544198; x=1775148998;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5CemXAlcvWx1RJEvEirl//T8A4CILZj/AJxSkYplQL0=;
-        b=mUqjLFi2FfBbOczQHT5dm8Cr8XV29M3XNqQKi2pCvAJ5l9U0zQBPvNDaR2VWmFC8xY
-         53cOjm7AfSPax77j+sQOtKbmDEfH0jLM2VuOY+rzLPh3hvuyJJ/5Oy9199/A0hXix4C1
-         OjOtsTlAEA+Lf3Td9n7IvQJpnWbLdjCoZDC9fJvxjizutg6MIykhCa2vitxr2NJV7eax
-         e47wp7Vt4hgx289pC2aNiFpnfLa9PBHyrI31TSGLySUFY6kysHM6U+VkzL0fAOcUKG0F
-         In2uW3HkzoAbZFSSBF+v0Q/8nD/H2LYNO2p7zvY4EdH30eWJsMh0KXvtP7SsgpxIY44L
-         N4mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Fd26Q2jPZU1FcCJLZVOoTgicr70SmZ67PRZdvLeQ/ikVlahVxlPGFlXVWCUlrU98vgVY7buQ8ec/@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx4WSTYp4Atjn1NXSlXwa0MnGzkSS0dkvuFpKr14qbNfZ7nAhZ
-	FbAat/RXcEpVZYiY69+cnRmLRijjg/BUgNmUgIi7Y2hL/CXk8N/OXhcZNKjQCNBkKtGlhH+5XEs
-	x2b7gvXH08fRoCbl9DiIskjlmn7RSVl/GTsr5TT0U4A/AuxiWGDCHN4r2eQQ=
+	s=arc-20240116; t=1774544748; c=relaxed/simple;
+	bh=Md/qLmweY1ca5kMblMGpcsqgOpTWfh5VGHI9lA6vS48=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=RPrjhumX5c7ffinT7C49ijM0m7hQrb+WVqtChPLTiYtIjjeNftpZ+rwcx0vp001Wr4bFXr+qJuLjSc23ghHC18vRkVzPCtH7eRUyO1MH5yO8YQk+mkPZ7lik7UXpOTaiEImrBrOjxs7PZ9ZmjZQAHOjBG3tB2LU+iGI+2wNfZkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHTLnO6B; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHTLnO6B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A4AC116C6;
+	Thu, 26 Mar 2026 17:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774544747;
+	bh=Md/qLmweY1ca5kMblMGpcsqgOpTWfh5VGHI9lA6vS48=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=UHTLnO6Bx9uFDJjHFqjmWyy/U0qYPOJiDSIhnqmGsKd8iWBZmBTxO2za/i/JtW4ft
+	 9BSYWMUVNN32XRCj+G92PCmjghRk8eeRTEfAp0lRe0cXMXIDw3IFZomszBLbPYK1e9
+	 4V5paBHYVxBR/uCLxeBpZl8RlQ4LG1soZUJguBoN+XKtabZrR8aC28gluvDTZSqRjX
+	 9PS1MZK3FXwqTBqIMw5J+177Lj4ySFUz1tXnzwdv8YJt3NGX4YXa9x+xJpd0Z7zpgJ
+	 grjheHc+VIoovKF7OpjjI47nUojADVh8eaxR6aJzcv4PcecA2Azf9GnDNYzAACWqYy
+	 ZeKfcd6bDJ/vw==
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6820:1998:b0:67d:e5ad:4bc5 with SMTP id
- 006d021491bc7-67dff3ad479mr4342010eaf.14.1774544197867; Thu, 26 Mar 2026
- 09:56:37 -0700 (PDT)
-Date: Thu, 26 Mar 2026 09:56:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69c56545.a70a0220.3d5e5.0009.GAE@google.com>
-Subject: [syzbot] linux-next build error (25)
-From: syzbot <syzbot+3e8b0c8d4773f0d46956@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Mar 2026 18:05:44 +0100
+Message-Id: <DHCVM1KT0ITU.4WWXA8YQZME6@kernel.org>
+Cc: "Lyude Paul" <lyude@redhat.com>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>, "Janne Grunau"
+ <j@jananu.net>, "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Next Mailing List" <linux-next@vger.kernel.org>
+To: "Mark Brown" <broonie@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: linux-next: build failure in final build
+References: <acVZB6iMoUrV45zH@sirena.org.uk>
+In-Reply-To: <acVZB6iMoUrV45zH@sirena.org.uk>
 
-Hello,
+On Thu Mar 26, 2026 at 5:04 PM CET, Mark Brown wrote:
+> Hi all,
+>
+> During the final builds, today's linux-next build (arm64 allyesconfig)
+> failed like this:
+>
+> error[E0405]: cannot find trait `AlwaysRefCounted` in module
 
-syzbot found the following issue on:
+This is due to a conflict with rust-next, which eventually removed the old
+import path of AlwaysRefCounted (kernel::types::AlwaysRefCounted).
 
-HEAD commit:    e77a5a5cfe43 Add linux-next specific files for 20260326
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=100b1cba580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=688da9f197ce7fae
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e8b0c8d4773f0d46956
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+We've already fixed this up in [1] and applied it to the drm-rust tree, so =
+those
+should be gone for the next round.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3e8b0c8d4773f0d46956@syzkaller.appspotmail.com
+Thanks,
+Danilo
 
-error[E0405]: cannot find trait `AlwaysRefCounted` in module `$crate::types`
-error[E0277]: the trait bound `Object<T>: AlwaysRefCounted` is not satisfied
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+[1] https://lore.kernel.org/all/20260326-drm-rust-next-fix-aref-v1-0-7f6f58=
+d2828a@google.com/
