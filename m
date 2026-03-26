@@ -1,39 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489B0271A7C;
-	Thu, 26 Mar 2026 13:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2DE2E1EE5;
+	Thu, 26 Mar 2026 13:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774532214; cv=none; b=Y92ZVLb4l+O9P7hDZOAYNcOwYvDrLqEiw0KqALViHr/RnfVhr3g9H81/+GKEl2xI20alJCUpItYX18FSYWRdjXMQrJpsN66jQnkSJ7you64Wym4kqq2A1pR4/l53SmsBEXtGPzMuo+r06fHRrj5Q7cECe+X17+gSdOd6dOW5H7U=
+	t=1774532573; cv=none; b=BAMl+mteEEWDetGu33voS/pIKGaSrSuxS9xEhb4UcFASSDpoF9GF9gB2C89Vak8kOkNANdMPEeRwh8q/cJfGAVB3z4WURNmPFCv4ulWUVcxpffrFN9qBy1R5+CP/eMth50JcjjDcDVDQy/PGlSvO3Z/ibpponGCumca+XRuc1zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774532214; c=relaxed/simple;
-	bh=cTJScizcuo+nkGoBcEegnzHULeuFDN4v9Nsxyt1voAI=;
+	s=arc-20240116; t=1774532573; c=relaxed/simple;
+	bh=aNV+AqUpmwgGUfdJfkBONzLUqACYRDlKx4Ms9UzHMUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NaSgXIbGjvyG3I4Ylp6xCOIs2qfKj6338I2hCJmCpEzAdrz0IsiTwboDmLtDM3Tf8rE5bEIWVu7lJYc5+IJb78v+6y18GdY92PcAeayEpfrWFUS3FRwn2RMOpbYzLUpENGFGtmmA7SnGtoKh1mX5y0a3Bc2eDQKOOE/GFzfhvWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goFQpdGV; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQw3Zm/ULyREJzz2xIMqUUUieJfdRvRhNI8RISQi0z2pIx3u3uE4owoS2AB0BEidPHzBcaAgVOZqZ31hOuNso0H5+aYT+e9Q0+JuPc6cf2GXGohzhzaRv3ieGOp1kBW6gByW83/+lJPmse+iSetVm296Ty77VvuONXXy3gYYISk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dv31ylyI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goFQpdGV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA118C116C6;
-	Thu, 26 Mar 2026 13:36:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dv31ylyI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81B26C19423;
+	Thu, 26 Mar 2026 13:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774532213;
-	bh=cTJScizcuo+nkGoBcEegnzHULeuFDN4v9Nsxyt1voAI=;
+	s=k20201202; t=1774532572;
+	bh=aNV+AqUpmwgGUfdJfkBONzLUqACYRDlKx4Ms9UzHMUw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=goFQpdGVjKljt/oijxaoRcxv3u/ZBjlAmuSpJ2PKzGFyaJ0469nAnbTEgNowDHIV3
-	 DzEYPddWBGSOK6k7uxtdK5J3nEBDdNP9FJpXCnNZMs4k/DlQsY/ChCXdDPkgF64Tm5
-	 G2ODeehzXDJDVT2zKqLTyIzNPSYjoDU7QMeDTv5/2CLFTVUBOVbuhj4jt9HQKKtzeK
-	 TyAZUhPWA53/3r4nfkJzgwTZmU/Ne+0wNVeYP611Nb9Cy4OCzR/GkZOUlhzQUcVV2h
-	 upe7C/l3YYTmaSfKVEITytBX8GuGT75+g+iaBZnzF9XKT2oK3Mlk/lss7Rf8Vq0s9O
-	 Ixd7HDL3cLckA==
-Date: Thu, 26 Mar 2026 14:36:50 +0100
+	b=dv31ylyINM/WZskxrdhFd1JG5Rir/yzx3rfEJ7GVyj1w/MSH7TrYH+ZZAE2r9hLPw
+	 1fujAVKJ0lKEo1HepQwbpB8hovWR4hwI5TWQaUl5WqAUTuxAKL/DaXb7v1ScXbNNpC
+	 Qyx0w8gDc/59uwIgi0eGyDwrz6rLVxSbkrDhx42Ij7GwxK8NL27mk5lFOpMxYoAee0
+	 jTq45rATRt2paeO5JBdltNX+G71CtM8iABILJ1DCdjPyYXeXVzZsE37o16MkA9fzlU
+	 gGQeMBVdPLrw9BxTaVOqt+ui1BxrseC1sFs7a2kEPrH442v1aFzEkb2A0UccKzygXb
+	 c/J8RFISdS8vw==
+Date: Thu, 26 Mar 2026 14:42:48 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Mark Brown <broonie@kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
 	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20260326-gefeiert-beschaffen-edf852a3aa71@brauner>
-References: <acPV19IY3Gna6Ira@sirena.org.uk>
+Message-ID: <20260326-zierlich-gliederung-a9745f2fec3d@brauner>
+References: <abQKe58fc13oRFfB@sirena.org.uk>
+ <0eb49c98-13cd-4ad9-87f3-7c7b0ace242c@sirena.org.uk>
+ <20260323-empfunden-innovation-6caf40d8e6e5@brauner>
+ <a9f82835-9caa-4ea1-b676-04bcb1a06a93@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,31 +45,23 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <acPV19IY3Gna6Ira@sirena.org.uk>
+In-Reply-To: <a9f82835-9caa-4ea1-b676-04bcb1a06a93@sirena.org.uk>
 
-On Wed, Mar 25, 2026 at 12:32:23PM +0000, Mark Brown wrote:
-> Hi all,
+On Tue, Mar 24, 2026 at 01:28:30PM +0000, Mark Brown wrote:
+> On Mon, Mar 23, 2026 at 04:37:25PM +0100, Christian Brauner wrote:
+> > On Mon, Mar 23, 2026 at 01:56:59PM +0000, Mark Brown wrote:
 > 
-> After merging the vfs-brauner tree, today's linux-next build
-> (arm64 kselftest) failed like this:
+> > > This issue is still present in today's -next, the version of the
+> > > vfs-brauner tree being merged is currently that from next-20260312.
 > 
-> In file included from listns_efault_test.c:23:
-> ../pidfd/pidfd.h:229:19: error: static declaration of 'wait_for_pid' follows non-static declaration
->   229 | static inline int wait_for_pid(pid_t pid)
->       |                   ^~~~~~~~~~~~
-> In file included from listns_efault_test.c:22:
-> ../filesystems/utils.h:47:12: note: previous declaration of 'wait_for_pid' with type 'int(pid_t)' {aka 'int(int)'}
->    47 | extern int wait_for_pid(pid_t pid);
->       |            ^~~~~~~~~~~~
+> > Sorry about this. Fixed now by appended patch.
 > 
-> ie, a new instance of a similar issue (probably masked by the build
-> system with the earlier issue).  This is due to a conflict with the
-> preexisting wait_for_pid() in pidfd.h triggered by:
+> > Remove the local static wait_for_pid() definition from
+> > statmount_test_ns.c as it conflicts with the extern declaration in
+> > utils.h. The identical function is already provided by utils.c.
 > 
->    32f54f2bbccfd (selftests/filesystems: add tests for empty mount namespaces)
-> 
-> I am continuing to use the tree from next-20260312.
+> Thanks, that looks like it should do it - I didn't see an update to the
+> tree today though, did you forget to push or something?
 
-This should be fixed now. Sorry.
-
-
+The test-suite hadn't finished so I didn't want to risk it. Pushing in a
+bit.
