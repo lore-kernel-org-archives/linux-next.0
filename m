@@ -1,172 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFA837BE7E;
-	Thu, 26 Mar 2026 16:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFEB408222
+	for <linux-next@vger.kernel.org>; Thu, 26 Mar 2026 16:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774541068; cv=none; b=W5NspkNLw3I4MmINgh/WS/simeWp12a2pXO8DigJHVyqWKJEUBl+oti/+UyZik4Z/2gEDCoZp1Hcu9V3+DRu4V6vdcsO83oDYB4UYoo4eXIiVmOzz9r+9RD9ZFQl5HW5fIeHbPiX0GCFOJgL0fA+Wl8UoZlyt0KG8IhBT08QX9w=
+	t=1774544200; cv=none; b=SeyvYwOlYYvuUE5sb0Lnii7mmMC/YCpTqj1G7cw6P2JIgKDfbOzTpCYEwkXO7b1Km+TFKZtBKqseiZebEU2kJ5N5SXzruNMOYruOm1UIMqf1CROz9dPa83ruyWqbgTYX0ywVGPio5ewt3ICvplguP4kbJdgDSH1JOofKWY7tllk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774541068; c=relaxed/simple;
-	bh=mhzDJjtnWbeRqiBSmrSbxwEBFY2YnE9bEA8IwopVG0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l94GAt7q/4ojcxJH+N2ZtUtbw7V8dQz+p8YQ+Wy9wnuQiswsBINalIODT4mBNBUJ2StCeUF6cMMvtKDPSPIr3+Mee1KSGRrplCsbZjhw8iHVYWHqumMyOyqEHoyHZL+1OlLErK+QhmLyXMH89U4HJKo6UrYBf/6N6BjtS2EeR+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgqG1Mqt; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgqG1Mqt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6338C116C6;
-	Thu, 26 Mar 2026 16:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774541068;
-	bh=mhzDJjtnWbeRqiBSmrSbxwEBFY2YnE9bEA8IwopVG0M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MgqG1MqtlbEkYaWnlKBoc0CFERhrnH5mzVNJkhuNSVqkyjzemblHOFKO7uddIFJL6
-	 GVHI/IfJvARyvs3IVfuBnf5HucnCel1C5O0UKH4CyNd+eCpxK0FfAaPMKrjAW+ezTO
-	 QC4M1l8yU9TOOs/MIBe4zsXSQnv4HlCnTZCVQ5E7QsxPgCb7bSJRmKi7qwV+VGE367
-	 8ib3L5xBk7MBC4FOgEf+zw8cnhtmxS+8qw/THXJbxT9aOS6RIjkZc9B+8bfJcfGY18
-	 a+ySOb2bL9ndW1Mja0qzQTi8baUQMOnzdHwkfm/B4+ffl7kDEpYSoCkbzhTrSZEruU
-	 REqFrtoL6Jmiw==
-Date: Thu, 26 Mar 2026 16:04:23 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Janne Grunau <j@jananu.net>, Danilo Krummrich <dakr@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure in final build
-Message-ID: <acVZB6iMoUrV45zH@sirena.org.uk>
+	s=arc-20240116; t=1774544200; c=relaxed/simple;
+	bh=l+Buo8lc2M8erSCkcpVjzM057SVlFxwNwQcRGGdiwp8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VIt2CgboIf+Ex9q/NOdWn3OHgb2uyph/w2LYsbiRlZHM82Srj+UlKKJ7sg3jRviCLNYUue7F2A7sdf9jJ2Xm4glu9Afjkku8M8tegpz7LoZ+JfBQAqPLHJ21rT9ZLL9vnYFNSSR0/WHMXc8uP8WNaWznp28WnHY74iwUFFHJrfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-67dfa1ab0b1so3418475eaf.0
+        for <linux-next@vger.kernel.org>; Thu, 26 Mar 2026 09:56:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774544198; x=1775148998;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5CemXAlcvWx1RJEvEirl//T8A4CILZj/AJxSkYplQL0=;
+        b=mUqjLFi2FfBbOczQHT5dm8Cr8XV29M3XNqQKi2pCvAJ5l9U0zQBPvNDaR2VWmFC8xY
+         53cOjm7AfSPax77j+sQOtKbmDEfH0jLM2VuOY+rzLPh3hvuyJJ/5Oy9199/A0hXix4C1
+         OjOtsTlAEA+Lf3Td9n7IvQJpnWbLdjCoZDC9fJvxjizutg6MIykhCa2vitxr2NJV7eax
+         e47wp7Vt4hgx289pC2aNiFpnfLa9PBHyrI31TSGLySUFY6kysHM6U+VkzL0fAOcUKG0F
+         In2uW3HkzoAbZFSSBF+v0Q/8nD/H2LYNO2p7zvY4EdH30eWJsMh0KXvtP7SsgpxIY44L
+         N4mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Fd26Q2jPZU1FcCJLZVOoTgicr70SmZ67PRZdvLeQ/ikVlahVxlPGFlXVWCUlrU98vgVY7buQ8ec/@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx4WSTYp4Atjn1NXSlXwa0MnGzkSS0dkvuFpKr14qbNfZ7nAhZ
+	FbAat/RXcEpVZYiY69+cnRmLRijjg/BUgNmUgIi7Y2hL/CXk8N/OXhcZNKjQCNBkKtGlhH+5XEs
+	x2b7gvXH08fRoCbl9DiIskjlmn7RSVl/GTsr5TT0U4A/AuxiWGDCHN4r2eQQ=
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9yt+LFmTTuB4vkFf"
-Content-Disposition: inline
+X-Received: by 2002:a05:6820:1998:b0:67d:e5ad:4bc5 with SMTP id
+ 006d021491bc7-67dff3ad479mr4342010eaf.14.1774544197867; Thu, 26 Mar 2026
+ 09:56:37 -0700 (PDT)
+Date: Thu, 26 Mar 2026 09:56:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69c56545.a70a0220.3d5e5.0009.GAE@google.com>
+Subject: [syzbot] linux-next build error (25)
+From: syzbot <syzbot+3e8b0c8d4773f0d46956@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---9yt+LFmTTuB4vkFf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot found the following issue on:
 
-Hi all,
+HEAD commit:    e77a5a5cfe43 Add linux-next specific files for 20260326
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=100b1cba580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=688da9f197ce7fae
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e8b0c8d4773f0d46956
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
 
-During the final builds, today's linux-next build (arm64 allyesconfig)
-failed like this:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3e8b0c8d4773f0d46956@syzkaller.appspotmail.com
 
-error[E0405]: cannot find trait `AlwaysRefCounted` in module
-`$crate::types`
-   --> /tmp/next/build/rust/kernel/drm/gem/mod.rs:42:62
-    |
-42 | unsafe impl $( <$( $tparam_id ),+> )? $crate::types::AlwaysRefCounted
-for $type
-    |                                                              ^^^^^^^^^^^^^^^^
-    |                                                              not
-    |                                                              found in
-    |                                                              `$crate::types`
-...  308 | impl_aref_for_gem_obj!(impl<T> for Object<T> where T:
-DriverObject);
-    | -------------------------------------------------------------------
-    | in this macro invocation
-    |
-    = note: this error originates in the macro `impl_aref_for_gem_obj` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: consider importing this trait
-    |
-7 + use crate::sync::aref::AlwaysRefCounted;
-    |
+error[E0405]: cannot find trait `AlwaysRefCounted` in module `$crate::types`
+error[E0277]: the trait bound `Object<T>: AlwaysRefCounted` is not satisfied
 
-error[E0277]: the trait bound `Object<T>: aref::AlwaysRefCounted` is
-not satisfied
-   --> /tmp/next/build/rust/kernel/drm/gem/mod.rs:142:41
-    |
-142 | impl<T: DriverObject> IntoGEMObject for Object<T> {
-    |                                         ^^^^^^^^^ the trait
-    |                                         `aref::AlwaysRefCounted`
-    |                                         is not implemented for
-    |                                         `Object<T>`
-    |
-    = help: the following other types implement trait `aref::AlwaysRefCounted`:
-              Chip<T>
-              Credential
-              FwNode
-              I2cAdapter
-              I2cClient
-              Interface
-              LocalFile
-              Mm
-            and 12 others
-note: required by a bound in `IntoGEMObject`
-   --> /tmp/next/build/rust/kernel/drm/gem/mod.rs:96:59
-    |
-96 | pub trait IntoGEMObject: Sized + super::private::Sealed +
-AlwaysRefCounted {
-    |                                                           ^^^^^^^^^^^^^^^^
-    |                                                           required
-    |                                                           by this
-    |                                                           bound in
-    |                                                           `IntoGEMObject`
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-error[E0277]: the trait bound `Object<T>: aref::AlwaysRefCounted` is
-not satisfied
-   --> /tmp/next/build/rust/kernel/drm/gem/mod.rs:320:37
-    |
-320 | impl<T: DriverObject> AllocImpl for Object<T> {
-    |                                     ^^^^^^^^^ the trait
-    |                                     `aref::AlwaysRefCounted` is
-    |                                     not implemented for `Object<T>`
-    |
-    = help: the following other types implement trait `aref::AlwaysRefCounted`:
-              Chip<T>
-              Credential
-              FwNode
-              I2cAdapter
-              I2cClient
-              Interface
-              LocalFile
-              Mm
-            and 12 others
-note: required for `Object<T>` to implement `IntoGEMObject`
-   --> /tmp/next/build/rust/kernel/drm/gem/mod.rs:96:11
-    |
-96 | pub trait IntoGEMObject: Sized + super::private::Sealed +
-AlwaysRefCounted {
-    |           ^^^^^^^^^^^^^
-note: required by a bound in `AllocImpl`
-   --> /tmp/next/build/rust/kernel/drm/driver.rs:90:47
-    |
-90 | pub trait AllocImpl: super::private::Sealed + drm::gem::IntoGEMObject
-{
-    |                                               ^^^^^^^^^^^^^^^^^^^^^^^
-    |                                               required by this
-    |                                               bound in `AllocImpl`
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-error: aborting due to 3 previous errors
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Some errors have detailed explanations: E0277, E0405.  For more
-information about an error, try `rustc --explain E0277`.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Presumably caused by one of these commits:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-  442ba16a5a513 (rust: gem: Introduce DriverObject::Args)
-  e64b9cc293ae7 (rust: drm: Add gem::impl_aref_for_gem_obj!)
-
-I have ignored this for today.
-
---9yt+LFmTTuB4vkFf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnFWQcACgkQJNaLcl1U
-h9B/dwf8CfiEhM9rMzVSbvhM9O0SMhUFzouz85mLz/+AhUVW3zZJl5J4yNRK3nJ1
-8m89csp+O4zrfneiIrVkNsiCL0muU1M9OsdYFMWISfq2LHN1aJJbNtdgGwXVfijY
-PadFKpN4djZ+616yWcMoMGYCIgtynkwrQtN4/Msjbpv7+DKSj13ZnfV7vosMC5fQ
-b/dzm2hXQhV111zDmQB/R/OUZuZPg07w4YdagERUpbTMzpDhab14s5lHN2EQTQCI
-I2My1lFFxL0bZIPGo6tFw2//5bjCpuQJb89m2sOibONpjyVuLtsg2t7bif7rnh01
-cX3+OP/Kqwoqm/5hvD9ZXcNaHQfCeg==
-=n2o5
------END PGP SIGNATURE-----
-
---9yt+LFmTTuB4vkFf--
+If you want to undo deduplication, reply with:
+#syz undup
