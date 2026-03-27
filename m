@@ -1,115 +1,57 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9132341163E;
-	Fri, 27 Mar 2026 18:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D9F3815C0;
+	Fri, 27 Mar 2026 18:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774637101; cv=none; b=UMlK6j4rN1xvFU/eUEl6It3lmTrERpw/xaA7BbNiMpmWlCBC2Zr2ajbKLo+oAOqnc0KH99a3umtzer0hJjGp0drrfVR4rFStmEzH63HcthhGfi0hD/AWIxJw+UYLBYqiCny/3xDvgNhynSPJBMbQVsLZVtsLpLWRxMeA8VjqHgk=
+	t=1774637862; cv=none; b=FMsD1UR7V1uKT6DSN4aOFeewCsHccHObwMsgNWJFtpfJi0Lc1TbVtfPfEN3DSGus9N69nsKy82pMG787LOjsRlRF71L2Aq0G+quIJ0yJY/1QBIYSphQxd8p5o3ob9lSua+jepAFfUJHfqjyDRhdBo2p9TDbLZJ2jpN1matQUaX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774637101; c=relaxed/simple;
-	bh=vn0mrFBwMMeGcfxROPOg8GRUmv7mgmoODJklMK9tMhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ee8U860nG9sJeWEJ1v7A1PMOGTTh7d7BDdC9GCZuPjwq/5EmTm/67HG5xN70tJyraF0gxN+rkP18lW4wPYmVWzPQO0HpzusGCLcIykKEkNVGYFbL7zEqMRIbBn8IInGd/01MakAya2WK2RZMfYJ168sseUMTLZmmNLMEUnxou/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYNYFrDm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774637862; c=relaxed/simple;
+	bh=B4C6ATQ++NMj8UsGQ2rKlei0LQeS4D8Iz0pblmrHe5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gbt5mjYBmraKhH7nYHi0vKH8IFiQKQfaaazV4mh5PKLxOvKiZNfqSPI71Z0bHaFG+XQMNjwWN+HQjDv9BAP+kWGfCwoypiiPrq94qaUl2mkk7UzgvQUde3g51UH+/uRVCjwJa/biPzxZCFIQ49qkTCT1cy3l2z5wg4mJSqMJ8CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=viEPpMmZ; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYNYFrDm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1BCC19423;
-	Fri, 27 Mar 2026 18:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774637101;
-	bh=vn0mrFBwMMeGcfxROPOg8GRUmv7mgmoODJklMK9tMhI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tYNYFrDmjJA+8Cg+P7ukqRYfSeteqmcD45NKH/EVOBXx1dNI8/hU6wjCLcm3oyD7r
-	 dU1D5PsC5gy3ezzBeqhDUMTwqGf5Yq3AydMJB+XghOnnkWs+B+ylv0j4CJsEmXYIYe
-	 75dEirR7fqTAHtPtF2jZVxiEGcCKdWOD1gLhHVnV2vk6bJZrJX/bwf5T1kc4rTlwqZ
-	 i8+vO0gNt9AD/Dhh+ExB5r/F5bydxDJjjgB3uRlvsbTuj3Sx2tNaP8ykp8SJkRtGHa
-	 C2xUeL0+v4F7E9+dIipLQ9YbD4ay2CC1JPMM6gpIqnW54kzqv0TAl3RnEhNX/Ob2rj
-	 O/EwjZ9y8AFTA==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id A7C361AC5847; Fri, 27 Mar 2026 18:44:58 +0000 (GMT)
-Date: Fri, 27 Mar 2026 18:44:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-	Zenghui Yu <zenghui.yu@linux.dev>
-Subject: linux-next: manual merge of the arm64 tree with the kvm-arm tree
-Message-ID: <acbQKqGV50jNaDBU@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="viEPpMmZ"
+Received: from 8bytes.org (p4ffe051a.dip0.t-ipconnect.de [79.254.5.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 069161A49E8;
+	Fri, 27 Mar 2026 19:57:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1774637859;
+	bh=B4C6ATQ++NMj8UsGQ2rKlei0LQeS4D8Iz0pblmrHe5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=viEPpMmZR6ypHWCPZtAy2/0qa/Jxy2c9fLcHf0lXLZ8nhE6S2M0m0QMktvqWMJzqo
+	 thlT7VsbMBRN7EAoMsd0bmNNYNlOkrjP3p/vOHFtKTVFO/zypkkMCMfjUFmA0sfHEO
+	 jvNosuYfZPV9AeAnn5Mf5vdTJC8BFjKWXqwInFAVflUqkbXlT81UJSDZTV0dQQU3ng
+	 a0tvDrC9atBUc85ojXRSpWZV0Q3MACEsOqT3uKZZMZpC5BNz9cRBHWQmv/2faEARPG
+	 SKpGo1/iuw6xNdUpN2XlZcxCM3xFyr9RSNU8PZ3rFFX3W4IHN7RTJp+tzka2dxOPX6
+	 HzubfYcHV1/vA==
+Date: Fri, 27 Mar 2026 19:57:37 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the iommu tree
+Message-ID: <rqh76k3fn3lwr6zz4mixcdffznxpu23olb5engo4h37vsvwamw@2ys4xrlc7v5e>
+References: <aca10hdkzbvpNGNs@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mKOFv0yilbSz7/1b"
-Content-Disposition: inline
-
-
---mKOFv0yilbSz7/1b
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aca10hdkzbvpNGNs@sirena.co.uk>
 
-Hi all,
+On Fri, Mar 27, 2026 at 04:52:34PM +0000, Mark Brown wrote:
+> Commit
+> 
+>   00a7eef2eef218 ("iommu/riscv: Fix signedness bug")
+> 
+> is missing a Signed-off-by from its committer
 
-Today's linux-next merge of the arm64 tree got a conflict in:
-
-  arch/arm64/kvm/at.c
-
-between commit:
-
-  0496acc42fb51e ("KVM: arm64: Fix the descriptor address in __kvm_at_swap_=
-desc()")
-
-=66rom the kvm-arm tree and commit:
-
-  16dbe77a5be2de ("KVM: arm64: Use CAST instruction for swapping guest desc=
-riptor")
-
-=66rom the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/arm64/kvm/at.c
-index a024d9a770dc74,1adf88a5732840..00000000000000
---- a/arch/arm64/kvm/at.c
-+++ b/arch/arm64/kvm/at.c
-@@@ -1753,8 -1785,10 +1783,10 @@@ int __kvm_at_swap_desc(struct kvm *kvm
-  	if (!writable)
-  		return -EPERM;
- =20
- -	ptep =3D (u64 __user *)hva + offset;
- +	ptep =3D (void __user *)hva + offset;
-- 	if (cpus_have_final_cap(ARM64_HAS_LSE_ATOMICS))
-+ 	if (cpus_have_final_cap(ARM64_HAS_LSUI))
-+ 		r =3D __lsui_swap_desc(ptep, old, new);
-+ 	else if (cpus_have_final_cap(ARM64_HAS_LSE_ATOMICS))
-  		r =3D __lse_swap_desc(ptep, old, new);
-  	else
-  		r =3D __llsc_swap_desc(ptep, old, new);
-
---mKOFv0yilbSz7/1b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnG0CkACgkQJNaLcl1U
-h9AvQAf9HdLaIhutQAAATpiZH3IaSe3nv0598oBCPoIX3O4EvE2/wZaIL73OIhxi
-PeWM+ViKzqehRo80A1a5cSm5DRlvEGjT5IuPusNXNRcyhwB6Lty8wLP5pknmtkhN
-8KzUr7C/FlGOhbJrDgclMXyuTWFyQgRV5ixANsHqC9KJqAM6M81qvtiFCpDCyijd
-5x3xH8QCm8qhMgn1zDY2o5na1yCFBnrFoEfdXui9Nd9HmO6jn/edfRn7v59A4Vf5
-b1nyvSwYkTdQQ/wKtXYAWfx1ZcU4dvZTqyiVEMMaIFQ8CoPdPqeTawFjsZ2b9RyG
-lU9XhPFXq9AL+7Uiho2Vy6TILnzZIw==
-=XOpN
------END PGP SIGNATURE-----
-
---mKOFv0yilbSz7/1b--
+Fixed now, thanks for the heads-up.
