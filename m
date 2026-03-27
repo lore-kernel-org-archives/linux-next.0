@@ -1,57 +1,129 @@
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D9F3815C0;
-	Fri, 27 Mar 2026 18:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774637862; cv=none; b=FMsD1UR7V1uKT6DSN4aOFeewCsHccHObwMsgNWJFtpfJi0Lc1TbVtfPfEN3DSGus9N69nsKy82pMG787LOjsRlRF71L2Aq0G+quIJ0yJY/1QBIYSphQxd8p5o3ob9lSua+jepAFfUJHfqjyDRhdBo2p9TDbLZJ2jpN1matQUaX8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774637862; c=relaxed/simple;
-	bh=B4C6ATQ++NMj8UsGQ2rKlei0LQeS4D8Iz0pblmrHe5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gbt5mjYBmraKhH7nYHi0vKH8IFiQKQfaaazV4mh5PKLxOvKiZNfqSPI71Z0bHaFG+XQMNjwWN+HQjDv9BAP+kWGfCwoypiiPrq94qaUl2mkk7UzgvQUde3g51UH+/uRVCjwJa/biPzxZCFIQ49qkTCT1cy3l2z5wg4mJSqMJ8CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=viEPpMmZ; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="viEPpMmZ"
-Received: from 8bytes.org (p4ffe051a.dip0.t-ipconnect.de [79.254.5.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 069161A49E8;
-	Fri, 27 Mar 2026 19:57:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1774637859;
-	bh=B4C6ATQ++NMj8UsGQ2rKlei0LQeS4D8Iz0pblmrHe5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=viEPpMmZR6ypHWCPZtAy2/0qa/Jxy2c9fLcHf0lXLZ8nhE6S2M0m0QMktvqWMJzqo
-	 thlT7VsbMBRN7EAoMsd0bmNNYNlOkrjP3p/vOHFtKTVFO/zypkkMCMfjUFmA0sfHEO
-	 jvNosuYfZPV9AeAnn5Mf5vdTJC8BFjKWXqwInFAVflUqkbXlT81UJSDZTV0dQQU3ng
-	 a0tvDrC9atBUc85ojXRSpWZV0Q3MACEsOqT3uKZZMZpC5BNz9cRBHWQmv/2faEARPG
-	 SKpGo1/iuw6xNdUpN2XlZcxCM3xFyr9RSNU8PZ3rFFX3W4IHN7RTJp+tzka2dxOPX6
-	 HzubfYcHV1/vA==
-Date: Fri, 27 Mar 2026 19:57:37 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the iommu tree
-Message-ID: <rqh76k3fn3lwr6zz4mixcdffznxpu23olb5engo4h37vsvwamw@2ys4xrlc7v5e>
-References: <aca10hdkzbvpNGNs@sirena.co.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEC72E8882;
+	Fri, 27 Mar 2026 19:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774639336; cv=none; b=tLf2gaLXvDzbwevAuyZ3hZb1tZGc6NAjZTVEcJIYCiV8E+LzL59/CDvZCS8hixRuJZ93+jGz86/RHpi0iWUcPnRJOdhCEKSPLxgzldvSY7TVrkp6TIu4yW7/LniU68Vyu9MAfadOxZP9tj7qKUBHlXs+Rz85HrSz4ciwiZymo1U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774639336; c=relaxed/simple;
+	bh=etkEgqcw0pGeZtGpRrHWzjNRUB++kL1KoRYxkD1hhQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=huaLDGQLssLahvlbCz95q+4vawDwEjQdCdy5Q2kpI52BlZazmOZlvH62JGKU3vO8B1Zz5eCwsnmaXQjXS25Ct7jQ/aZ17xmMufeOb6TQurZXZlWYQkNbT/9it4uTIO7KwL4tystXVFrQMuzF1MljzIVhdsgz+xXZVrheioKFPgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHgGTjbw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHgGTjbw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA92C19423;
+	Fri, 27 Mar 2026 19:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774639336;
+	bh=etkEgqcw0pGeZtGpRrHWzjNRUB++kL1KoRYxkD1hhQ4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FHgGTjbwtsdvPX+1OO5S4yoF9jq2LOtt3FZ34QGHDmuIpRXb7waMRLqqa5zTH5ZCf
+	 Wjisvi9aGulLGzpwxamtgwM2lx5H1XU4PYt/xV3QJTP85uQVYgit7+ZdfB1NfK09TM
+	 T8r1LOsJe/1g8vKAawJRlY8M+fKbK9wWneySfjjiFZkuMaRwwy00e8rViGGme2JhfB
+	 JuwC/KwGg1kqQFD9RAa24VRDp5ikkNHs6c6HGSpIIk03Hew7WASpRYsng7L9zrI+jw
+	 VOiHDjmCdDHZBGxDgxkqDcDpYSuduid7RxbMVnXGu896uaLaytSpd/jPCkzfOq/FBv
+	 mAE2anQ1KHlRQ==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id A7C6B1AC5847; Fri, 27 Mar 2026 19:22:12 +0000 (GMT)
+Date: Fri, 27 Mar 2026 19:22:12 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Namjae Jeon <linkinjeon@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the fs-next tree
+Message-ID: <acbY5CCmsk8C95m5@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7Riw+trt5T602orO"
+Content-Disposition: inline
+
+
+--7Riw+trt5T602orO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aca10hdkzbvpNGNs@sirena.co.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 27, 2026 at 04:52:34PM +0000, Mark Brown wrote:
-> Commit
-> 
->   00a7eef2eef218 ("iommu/riscv: Fix signedness bug")
-> 
-> is missing a Signed-off-by from its committer
+Hi all,
 
-Fixed now, thanks for the heads-up.
+After merging the fs-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+/tmp/next/build/fs/exfat/file.c: In function 'exfat_file_mmap_prepare':
+/tmp/next/build/fs/exfat/file.c:842:13: error: implicit
+declaration of function 'vma_desc_test_flags'; did you mean
+'vma_desc_set_flags'? [-Wimplicit-function-declaration]
+  842 |         if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
+      |             ^~~~~~~~~~~~~~~~~~~ vma_desc_set_flags
+
+Caused by commit
+
+  9b373eacd6e6c4 (exfat: add iomap buffered I/O support)
+
+=66rom the exfat tree interacting with
+
+  2c3b5ea7028fa (mm: reintroduce vma_desc_test() as a singular flag test)
+
+=66rom one of the mm trees.  I have applied a fixup which I can carry as
+needed.
+
+=46rom c4935dbc4b15a9119616ac73b17eff29a7e2ec87 Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Fri, 27 Mar 2026 19:08:13 +0000
+Subject: [PATCH] exfat: Fix up merge with mm
+
+/tmp/next/build/fs/exfat/file.c: In function 'exfat_file_mmap_prepare':
+/tmp/next/build/fs/exfat/file.c:842:13: error: implicit
+declaration of function 'vma_desc_test_flags'; did you mean
+'vma_desc_set_flags'? [-Wimplicit-function-declaration]
+  842 |         if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
+      |             ^~~~~~~~~~~~~~~~~~~ vma_desc_set_flags
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ fs/exfat/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 9a30c32b3a0526..82db5ebaaad7b7 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -839,7 +839,7 @@ static int exfat_file_mmap_prepare(struct vm_area_desc =
+*desc)
+ 	if (unlikely(exfat_forced_shutdown(file_inode(desc->file)->i_sb)))
+ 		return -EIO;
+=20
+-	if (vma_desc_test_flags(desc, VMA_WRITE_BIT)) {
++	if (vma_desc_test(desc, VMA_WRITE_BIT)) {
+ 		struct inode *inode =3D file_inode(file);
+ 		loff_t from, to;
+ 		int err;
+--=20
+2.47.3
+
+
+--7Riw+trt5T602orO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnG2OMACgkQJNaLcl1U
+h9BGHAf/bt0s4jKbqMcCJ5537OvpCctk0aeP0L2Y5AKGJIN5ktZEIShw5wv571Nu
+Bzx9osuXxK9XZ76M0t5X/eFLF6TO0dfezrrH20vqZXMPSy0Jnj3XcAO2UnFZDwzk
+ybLj7+YMhE5QbPzKgh4NniEclsjyrJRtJquuXNnYDZdQjKckP7DNvdJIOPD4fhlJ
+41mFq13elbSXzJMsSUoR1vjL1xcpprooeK/6dFq91IpE2vWTgu2ubhwuHcWgg63U
+z31PnyEg6uf7XrzUIlxa6+SXwkdCoMXxNyZ27GSC7fd0oZ0VPoflfrxtDKrMn0mL
+oDee5WxDoA0t5vO9qtRzyxJgYNKEzg==
+=Ja7j
+-----END PGP SIGNATURE-----
+
+--7Riw+trt5T602orO--
