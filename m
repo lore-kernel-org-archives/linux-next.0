@@ -1,41 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393BB2D0620;
-	Fri, 27 Mar 2026 22:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F88393DD9;
+	Fri, 27 Mar 2026 22:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774649133; cv=none; b=kUf+BSCrfN9ppt4qfRhStu7oN6zj7n2WxuXKJQHPL/kIZ2YFcOJTW0IWACgLu9ehVvsQFNbcWVI9N50B6PVzDHj03jZ2tYdUjpSAVwjUkjl7jHjUTQM/PL4algaFtliqe/xLleUuwlkmDTirJiATA+J9cxzuH6Px9KByEyKQq34=
+	t=1774649163; cv=none; b=faZq+yl5D/sGey7XjwiCx4+8YzRZE4SuC3USY+EN66Z7MRkvqxiN9q8d9VzaJydqGpQzkhE5xekyIrWYzy1vruA4Exqnzobj7CfsIRLFSYsFJy9vqn0UjEEG7f11F6TaxEajNxrc0E1BzHvl5JNfOO0PEwYpTLpD4JYI52a1hW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774649133; c=relaxed/simple;
-	bh=npKx+5M/0pevpoOr3rCdqc478AZV1oipvEHaa9ptGas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PuVnpCQgO9JjiNSrDgt2d7guZiixRs1ekLTuPuvDzka3L47+EcyWy3hqbHTCh9mRjchIpxpj64WqygvbpH9IeEZk484MChBM9LjshaP1CHWhvAYrlf16/QXRK4oP4PesqTyAzlAmskD3c9GDz5XMCMvpKaLCDTcTrDTFmO5mw7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIOBWyJM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774649163; c=relaxed/simple;
+	bh=m1HETNHfdCWX9ou8HwqN0ebdnDbaGrn8udlSrnI3Ieg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=V8BJDc67OvlhNvWBHUzzzVp+/h0vTvU/af26CL2iULttEVnMBgVFbZvaXU0rGD8dYuaXMrbrheAz2H15o0cZHGDGZmOAbDQu/YmhZo9m6b/QCUzDZiNSIpl0727GMmycme+tTWcceOiwE/4b5w8DQ4rFj4QhhHVzI126GHtGihE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW5sgFAR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIOBWyJM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5264C19423;
-	Fri, 27 Mar 2026 22:05:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW5sgFAR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ADCAC19423;
+	Fri, 27 Mar 2026 22:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774649133;
-	bh=npKx+5M/0pevpoOr3rCdqc478AZV1oipvEHaa9ptGas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kIOBWyJMUdO24hbWYQiZnX5Jza62DWeajkKJiNtcFAxiOcTkRxb6mrkF5scllsdt5
-	 LY5PLZLnAnkKyzihzXhw1rmHbug7CvTUTSNKL+4Yhgh03QvOxGf1VbND9qyMWzEYdp
-	 ZOx6UH/9N53UsbSyeB9vjiSPXsnzLs9fSXw2GdzF8gK7aWOv0Igu3F/py8Y46Q8jeK
-	 pYQLmGIUZeNAKKUteSLEEA3AoP1biNh25AbxbE2uq3ojJC/NxQOJV5TOPUGCDxWFLS
-	 hkw6hkntumdVTTJe2KguykopapWqsrw9gkAM+TdVpRlmPl3Q9caqSsgoVyDHXuG+jk
-	 vlZONRbqJdd3A==
+	s=k20201202; t=1774649163;
+	bh=m1HETNHfdCWX9ou8HwqN0ebdnDbaGrn8udlSrnI3Ieg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VW5sgFARvMhR7GJgKbH+JqaePKYRW16KUiK40k7WY9U1uv5UoM++TmOODlMRPaB71
+	 3Y9rfAS21amwzRuFxh3Yk2b3q/wHb6cO2551YSamle5ZE4W3UaT3+2q/s5b/W+ZjFp
+	 PnHw9dCepKMbrbAuBBAvbyyqQvIpP7tSCM5PAmxXkwEpmWlmL73fF2ipsDaMc2u77d
+	 W/6CDTUwv2pmSQSpRhBOiMfx3530SFVrAZ02uBOwusKHpt+m0aRgj0+06ccd9eq3ui
+	 tC7zFt7Do/ThqLGACEdS12W+dij1McBNMGTSc0yZoZh9B0uvyuoKzO5RzAF0TWYNI1
+	 pUxzWGYTESPUA==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 0F5E11AC589B; Fri, 27 Mar 2026 22:05:30 +0000 (GMT)
-Date: Fri, 27 Mar 2026 22:05:30 +0000
+	id ADFA81AC589B; Fri, 27 Mar 2026 22:06:00 +0000 (GMT)
+Date: Fri, 27 Mar 2026 22:06:00 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in final build
-Message-ID: <acb_KohgLVh5u1yO@sirena.co.uk>
-References: <acb-IuZ4vDkwwQLW@sirena.co.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Mar 27
+Message-ID: <acb_SCAzAHPms4S3@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,39 +41,88 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/yrPCFYSunxlvJJi"
+	protocol="application/pgp-signature"; boundary="ojizP/vFfO7O0Z4S"
 Content-Disposition: inline
-In-Reply-To: <acb-IuZ4vDkwwQLW@sirena.co.uk>
-X-Cookie: Are we not men?
 
 
---/yrPCFYSunxlvJJi
+--ojizP/vFfO7O0Z4S
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 27, 2026 at 10:01:06PM +0000, Mark Brown wrote:
-> Hi all,
->=20
-> After merging the kthread tree, today's linux-next build (i386
-> defconfig) failed like this:
+Hi all,
 
-Sorry, didn't finish updating the template before I gut send - the
-kthread tree is fine.
+Changes since 20260326:
 
---/yrPCFYSunxlvJJi
+The vfs-brauner tree acquired a conflict with the exfat tree.
+
+The vfs-brauner tree acquired a conflict with the ext4 tree.
+
+The arm64 tree acquired a conflict with the kvm-arm tree.
+
+The exfat tree acquired a semantic conflict with a mm change which I
+applied a fixup for.
+
+The dma-mapping tree acquired a build failure, I used the version from
+next-20260326 instead.
+
+The pci tree acquired a build failure, I used the version from
+next-20260326 instead.
+
+The drm tree acquired multiple conflicts with the drm-fixes tree.
+
+The drm tree acquired a conflict with the origin tree.
+
+The tip tree acquired a conflict with the mm-unstable tree.
+
+The tracing tree acquired a build failure in the final build.
+
+Non-merge commits (relative to Linus' tree): 9270
+ 8901 files changed, 537418 insertions(+), 164520 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 411 trees (counting Linus' and 124 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--ojizP/vFfO7O0Z4S
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnG/ykACgkQJNaLcl1U
-h9CxcQf+PJxlQQbbxNvTYX2HLw6Y10ffVUMzuBAt0rqKYu51AlRZmsyRmekuOTeO
-Pa5VkS7R9G37dCiamifhXojVDMM2JP3ct6ObYhCklESEhc1JIMG0IRf23yJKU1Uc
-d4yAHYvZTrn6enR+0VLZwsK5NHBaiU2JJkbpRhdgxmJ+f5O3od3ajwQHdIuRRxKC
-MaQPFVGH8kTuuE8eXtdTaRBaI95rlXk5kqT/ipHxZxERcDkuXr9ekhqTBjAQahtm
-Q/v4ycJUc6G1qxp3qIfzvQoomLDFXejqCkf3ytvzza+zGck56WktDL3VaSqJ8VE0
-Sk5dmbLm+3a/SmbD/8cag5FfwqWx4w==
-=rBd+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnG/0cACgkQJNaLcl1U
+h9BnFAf/dzw+Dd5V/5SV+luZ8KYSj6GYtNlV6BGSW1Xr8kkQri5HWcjgNKbyZq/v
+s9/a4rnaIOsTJWqeZqxPct+PEZV3YB7H+ITLkiyg1hNtRu8syi5MnyUnH+WJPHXs
+CKynMzvr5CkR6zInJrKbhBQbx5KYfXDnO8kB6rEn/z9Gch5Q4dgpAs/DqdGQTxvc
+ZMM/axefMojZc0MU4IaXTo+HOAFXqx5r/hgJMpnJt/DZ1oA+qiEEVdBE6GPxJKpb
+zamtdru0ILr1kVQTULbVg3OGbeOSepHEk3aklRtrPSzh4XLGxaFN8d+grz3hfze9
+Ze+qUzh//2sePBj2K/u8nAYPwqEkSg==
+=ZlxD
 -----END PGP SIGNATURE-----
 
---/yrPCFYSunxlvJJi--
+--ojizP/vFfO7O0Z4S--
