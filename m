@@ -1,69 +1,55 @@
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402B128371;
-	Sat, 28 Mar 2026 02:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D0E2D3ED1
+	for <linux-next@vger.kernel.org>; Sat, 28 Mar 2026 21:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774664305; cv=none; b=VZ6yJ5VvpFPed8BJstM92sPPYBX6dGeTFRNDDb152wwTKFqOErRRfrXQSla0HG/nDMEhKq7BuRYt34PL41UG5ZkUN+XojMIXBXu9T1JnKXZFC1AWkABXfo2FpdK/KijgBVgt7fQW9BShFt5LwES8iDcgjHqIG/aVR6Fm5DQ5Xwg=
+	t=1774732659; cv=none; b=E4oXb3R/n94PfrhTe8b9CIAiYk/CI7173AjnvAuqSZ7FAoeFw1DyPxs98O5w4o0Zrk4BEIYWrp0XUU8QpUchxfYrg/8DHo2kwxY2j0VlbKXPp+xYO5gCLiLyjuLlLXxCNiZOGlL7ZCqozfbqcPc/GR2xNEx0CeRfiGH/fefa4Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774664305; c=relaxed/simple;
-	bh=BBJuagGGnQLIX9SgsIJGOqaq3hGkkdTko6lQX5383As=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bc1qIuci7hX3xIBzit5f17Ja9UP2ZrXn1cuuD9G+BT0Nz9UXR37uv5MUL87doVBT+xDN1sHUIne8bGReSfy1XsniP1SYrjOdz8hQNf51K3bNF2+ndPZQnmVxNmOYV5+mckFMbPHYqrVZetrKO8xbI6bgAqSyp2nuBmGnq5cZJCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 2375F5F7BB;
-	Sat, 28 Mar 2026 02:18:23 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 8961531;
-	Sat, 28 Mar 2026 02:18:21 +0000 (UTC)
-Date: Fri, 27 Mar 2026 22:18:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in final build
-Message-ID: <20260327221820.380c19bd@robin>
-In-Reply-To: <acb-IuZ4vDkwwQLW@sirena.co.uk>
-References: <acb-IuZ4vDkwwQLW@sirena.co.uk>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1774732659; c=relaxed/simple;
+	bh=qco5cyASbKPLVv6resOfPW9e8eSir0N5UVy/wKiswxs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=C4IBhYI0yviEqpL+8FESNn6hy0vPjRhOzgVShJxbaPDejX4g3qVthr5/ywXeTNvNSN931Nn68CNSz33A6ubJoB73kJbutWTcSt10gClVTPA5HCFejaZRc7oWabmSwGBkAJgv5pZFB+flquUtSNqCn2pWykDG1JH1WaGJM2CTuDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qQsJ1PIM; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qQsJ1PIM"
+Message-ID: <02908210-0ed5-42a7-b725-8bf70f936828@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1774732654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qco5cyASbKPLVv6resOfPW9e8eSir0N5UVy/wKiswxs=;
+	b=qQsJ1PIMRu1WtH2C0GIo6QEfJYR705mC/FC7sD/XpiCWBE0Qdqw57oMcbGj9xgBZ9Sdkwp
+	6I8MFnw7E2BiRZjGxjPzdFnY0etw7J+hlGI5hGRV2wXaDqCShJXif0hBgoBuk3OU6EOb+H
+	sLA1DoxeNlf6s0N+z5q3umPg72tUVLI=
+Date: Sat, 28 Mar 2026 21:17:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Language: en-US
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Igor Korotin <igor.korotin@linux.dev>
+Subject: Please add rust-i2c-next and rust-i2c-fixes to linux-next
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 8961531
-X-Stat-Signature: s6x7378j7m4iff7m53q89mqa8mmh4rxw
-X-Rspamd-Server: rspamout03
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19bKDHq1fBGopyd/KN9nQ71Br6AcnXN4Aw=
-X-HE-Tag: 1774664301-955140
-X-HE-Meta: U2FsdGVkX1++RJ6Oz6oI6yiTbCSsuCg69aUC5K0tsIiiyl4aN29LnjusBiNYk3RlJkKeC59/TbCWX6v6qDMt3h83Zy+DhLeygbTuV5aaOK2m+QxO/UKbfWVMMqL1B8siR2xqTukShdWFD152zK+RTh/eJTdjB/i4ojxF9I+qMNZm+zgsvO2NA+zr/0R/X0+6/NjB08p7M6SwsvU05wJiFmZPGZh/Wyr0xhS72xLrq0Mgz6n8JrQAP98+OusbPd+stDatDfYKRMUZxoA+9AgjAG9jkfmuY6ceMJ2jgs9EN7x1IG6unWauPHY8VPS4HyS+OgWggMzxeTSCFns0L8wKisdURh26anXD
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 27 Mar 2026 22:03:39 +0000
-Mark Brown <broonie@kernel.org> wrote:
+Hi Stephen,
 
-> Hi all,
-> 
-> In the final build, today's linux-next build (i386 defconfig) failed
-> like this:
-> 
-> /tmp/next/build/kernel/trace/trace.c:820:5: error: no previous prototype for 'tracing_alloc_snapshot' [-Werror=missing-prototypes]
->   820 | int tracing_alloc_snapshot(void)
->       |     ^~~~~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-> 
-> Caused by commit
-> 
->   bade44fe546212 (tracing: Move snapshot code out of trace.c and into trace_snapshot.c)
->    
-> I've left this for today.
+Please add the following tree to linux-next:
+Tree: https://github.com/ikrtn/rust-for-linux
+- Branch: rust-i2c-next
+- Branch: rust-i2c-fixes
 
-Thanks, I'll take a look.
+This is the maintainer tree for the Rust I2C subsystem.
 
--- Steve
+Thanks,
+Igor
