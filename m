@@ -1,108 +1,178 @@
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C7B3603FB
-	for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 16:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774887341; cv=pass; b=uU2ZY3RF7PNm1iYl3FeBmp0ZF8aHmpiRyH+fync6pFDm2QPV5LeDOwJpRa+E4K/TByb6HdOTtKJuuXyf4BLdJ0NnamwnA4ou9fGRICsh7WG3e1wio3Xn9M+da0/aTfkxNzuZ6tPgb84/h4ob6hAmuj//GHz+GqZjhhxOt+CIEVw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774887341; c=relaxed/simple;
-	bh=YoXnh1e6jS9v+cuTyEPB/vqSlD/+iKKqYLt7YGn0iEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EQWYYnt/bncWeFrVEg8vjnKk1C1ZQXeHWWoan0m/zPL2u1kYZ7gM7E581diZe9KEljBAXZjYwNnJZBZphvPL6xvr2Kq5aEpfQwuWc/Ztnh70f6spGJ4Evel0TXQh2BxCNXqoZwYPR5tw6EjFt2mFPNnKAj6kqqGxmEpEUmO8YCI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rzsn3bad; arc=pass smtp.client-ip=74.125.82.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B7936215B;
+	Mon, 30 Mar 2026 16:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774887484; cv=none; b=mx9QYTjb4SKZ8MPXW70HZy3divP5BuQQz3KYDwCjMTQCIoogod+8RudKU0Jw8wlfQRftMm+Hm2MwcMyw6/nLl4wSVUjOa99hyE5kM+nnuSNcpynZkQg5qla7c3I9OXmECsiMhVl8bcugR60pJ0bS1MUgsubhDARKhQrfHGytCDQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774887484; c=relaxed/simple;
+	bh=O2cIEBY9nUpVAn2H3q24PwK7pKs2T/eh5k99lNUtjw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KRL5Kj4ymRhct2ZRi9A6IHBgheDmlRHVbze/mCwVvaZ+98dSYhdNq3Ty06cBl9HbGYpE/KpL/VhLbzF8EqhBmEJOPF9HX7reNBVa4PR4gGSx9kLnyOEjkBXWkYM2rxfqAAlLdclRD6P0Szs3tObswJ8yi9JLvvnECDcTPCvNx/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSWEyLTj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rzsn3bad"
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-12a70b4de9bso277686c88.3
-        for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 09:15:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774887339; cv=none;
-        d=google.com; s=arc-20240605;
-        b=i+pfqTyAxGHd5k3Lj1+HtPPq/Sg0k188I0CRXxvYh5TcAJQCsnTWXQEq72YRHdwgOI
-         0jX5wOpijyhBRCrupKz85Tp6CXGgcR4bCIgFU5pCWl5jUvPPRqKJwkwpYaOMNhhBmYu0
-         7yXNPMVbyjPQnZJvArvwnt8lhokTLUeXVa1FrX4MTBWDl6GLCEImnBXEyLoZDBqJXPGy
-         9qLNex7r+DuiBoCzkFfOHDAaPd/AVhGzYqQPTM5CSeBo+5iLSRzCZeS0SNl9zX7Ql5Hx
-         uhMib8nZow/LQcN9DM2DKhhOVgcEm2aWLvRzY00k9bwtbwFH4znMuMsLSzi1tlCVLOoQ
-         zDZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=YoXnh1e6jS9v+cuTyEPB/vqSlD/+iKKqYLt7YGn0iEE=;
-        fh=h5rZjuueARSIoM9reB+fctQgk0C+XLNOsf15xeZb1+w=;
-        b=hrnR2w4mXWRMU80M4tDKmuDbJy//h4Uo5YiBQ28/qvXwF4+AjUlZmpIGt3A8IzUZSV
-         ZcHb856gsHiGVFsi4HB4DUg0GZavLL5qFNxKU6AJQ6FHXignfDkCDuq8ioAzGGNB1F84
-         QjlGu/2IUOlcTW/KqFgCFKLQRDL+mnuCKC1RDCD69LU6FE8esN4YzK9Kmwm+fHi7n82k
-         aXviFXRvoiejbfUfwuCVpGeM1BXHkmRol6VWJJoTVE82RCguAVLDbiQ/DqbFlkK30AeP
-         79wuePN0s3sx/kw3objSptRcvl1Cn+BHpy9SVcj+9yAHksMXXm/KR+XsPV6AFuWpVzTq
-         BKmQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774887339; x=1775492139; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YoXnh1e6jS9v+cuTyEPB/vqSlD/+iKKqYLt7YGn0iEE=;
-        b=Rzsn3badYKuza2mIFbwJuM9LktM8hWyVB1ThvtaabOGWEw5CatN4uy5oHOCcVDHN57
-         PNJhh/J+RoXpAXLvqWt4H5vwfp8cFG+X07xs6g4PtqRlVtBaeUkG4UZuaVFOUlgif1z+
-         wxR/iqwFpQAD92Dux4eOlEv6P7Fjl7iYZG/Mtc5v1wiZVH8svkHCui8p6i27p1n4P1Kj
-         FcAcMTO1DUwMjUquDdn2c/6JtKn8XszbUswFypQFjt1WBcgv9Fwn2OlEIlNuCSZdifxa
-         lSd7eRY/1vfJfaMa1fcrjPL9H/yTjeQtWKXGdI0ZQQ49mWPz7TonpiV7WJ9QVyso+FkC
-         DQtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774887339; x=1775492139;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=YoXnh1e6jS9v+cuTyEPB/vqSlD/+iKKqYLt7YGn0iEE=;
-        b=DSx2iDKgsG0LqTKt5sKtwF1CQ9TTuS3ajl3cQS/qFs227+YYLtj2uQ4RdNCdVB7Hjn
-         jJWOnIHKK6HSUVaqdHiuCGnbmvjDLqrY6bwBLFSSRX/XNlV/DwNqu4kHANi8BBWCLCSq
-         bB7y0dSfy511zXa1zZOk102wvZekIE+OAsd57oU/4KRpHhB1CMB9ps2ndko2b5EphVMT
-         3c35zXTz0RA88AWh5mk3La7dKOjgflqOIJr0BLAZ09qzi74fhioOuwoKqSC215efY9fe
-         FeWOJjZIqZ2+MbQjeJE9xz0PEO4Puua2Xha3tTRdpizkmvPq/qEkjy2fGevNr2rWk6yE
-         QDgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfJ6DpRh+PoBNooM7M9GgBZ4cPeK/kyQBDRS9XQkK9X2hozGkrBNB9NXqRzh/jqYY+1DtWTFtyhy5w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB4zTTFSI3W0G4Dm00ERoozYx10wJXfRlU6k8Gq/wpDFuXg9RE
-	SaDAApKgfBFVA6Qmu6kOlVzvUUulx+ktkemkai+5ZMaBAYOT+Tg5CSeUZIzjYKr1ucP27UkXKDf
-	fQdHVV1Q4Y+ch4nm12eC2JoEcAkW9pV8=
-X-Gm-Gg: ATEYQzzaPaoS3N3gx1ryi2ReVSlWvCFX+UXU0ucuW8XbGx17PFTcXHigwnQBuLEKGF1
-	/q98wFhhxXVDCLfJCSHPUtQ9iM8J+xPYVG+yiCCuNL88AIx/FQ31z7l2B8uABYN2VVqCc8kzzXh
-	OxDTom6WWKpvzSoXrakd1zkmoysBH/iNU2SIiMfchwFSZVAckZ6mHe1duSAYQcDIEUE3SWH2c7X
-	b2GCJitMvfmKRZkxGoEsQDc/rindKG2eDmhEE0fksPtK0S3FijUGe1lxUaGZaTG+czrwZM6KGNc
-	iVHfJaEsgfkrL2jquAIMlKaK757QTHBquOdxpXY8de3NSHk1tQZ7P1fV13lIPNFpRvhJxyzT0+L
-	UX5VDWOJlrI7gKnJ2VoM+eyQ=
-X-Received: by 2002:a05:693c:3106:b0:2be:e92:7f44 with SMTP id
- 5a478bee46e88-2c185f383ccmr3426489eec.8.1774887338951; Mon, 30 Mar 2026
- 09:15:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSWEyLTj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7705C4CEF7;
+	Mon, 30 Mar 2026 16:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774887484;
+	bh=O2cIEBY9nUpVAn2H3q24PwK7pKs2T/eh5k99lNUtjw4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gSWEyLTjSSTRqpK1RALsYFd7zoMIfq2W1TUm4NDtp91Lc56RyAWLHFErfSmsV7kYa
+	 9p8NUaToVRm3OoGY5VkjH1sRBr2Nvy0OTii3GeBya1+q2wEbIvrZToWyE8ztnWOtlu
+	 f1Vi55QCnsDZkxQ/hoQWa9CMQ0HjRHhs+epBEgKEb6GpxkSm7q/aLmJCc783lBjLSL
+	 7zgHVmztz2Cz11CrOHEfrFIAfmi8qbd+GzVIKLmNUAvzQ1Lrr9JZ3UTqnrtHW2StQ1
+	 Kecxr/d/Pk2ayCDVgxSf84vGwkCkR8rNaVLmk+InCc7vBBNjjEH0eYpMdFsw026MTA
+	 EdO8JjW4qe9QQ==
+Date: Mon, 30 Mar 2026 11:18:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Simon Richter <Simon.Richter@hogyros.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Message-ID: <20260330161802.GA79047@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <acqgbrNT--j-1wh8@sirena.org.uk>
-In-Reply-To: <acqgbrNT--j-1wh8@sirena.org.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 30 Mar 2026 18:15:26 +0200
-X-Gm-Features: AQROBzCFLO5wXKwPGUoUDf-zg0k24CEnrRjXOdiNyHhgQfqGu2iAH1AKfBiWddA
-Message-ID: <CANiq72m4nYVWkid0Dtn4Wwde8j6xA-UCpGwmAhCw57SbV2hzgw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the drm-rust tree with the rust-next tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Gary Guo <gary@garyguo.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1af4c63-185f-4252-b280-bb20ce9047a8@sirena.org.uk>
 
-On Mon, Mar 30, 2026 at 6:10=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> I fixed it up (see below) and can carry the fix as necessary.
+On Mon, Mar 30, 2026 at 03:51:47PM +0100, Mark Brown wrote:
+> On Mon, Mar 30, 2026 at 11:48:58PM +0900, Simon Richter wrote:
+> > On 3/30/26 23:06, Mark Brown wrote:
+> 
+> > > > After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+> > > > failed like this:
+> 
+> > >> /tmp/next/build/drivers/gpu/drm/i915/display/intel_vga.c:
+> > >> In function 'intel_vga_disable':
+> > >> /tmp/next/build/drivers/gpu/drm/i915/display/intel_vga.c:68:9: error:
+> > ignoring return value of 'vga_get_uninterruptible' declared with attribute
+> > 'warn_unused_result' [-Werror=unused-result]
+> > >>    68 |         vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
+> > >>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> > > This is still present today.
+> 
+> > The fix for that should have gone in through drm-next. The version where the
+> > warning occurs in line 68 is ancient however (that was changed[2] in
+> > December).
+> 
+> The DRM tree is merged into -next after the PCI tree so that's not going
+> to work, and in any case your tree really should work independently.
 
-Looks good, thanks!
+I dropped these these patches from the PCI tree for now, sorry for the
+trouble:
 
-Cheers,
-Miguel
+  21b082bd2a45 ("PCI/VGA: Mark pci_set_vga_state() as __must_check")
+  dc582b5ed4b7 ("PCI/VGA: Mark vga_get() and wrappers as __must_check")
+
+For reference, I'm attaching the patches below.  We can deal with them
+later.
+
+
+commit 21b082bd2a45 ("PCI/VGA: Mark pci_set_vga_state() as __must_check")
+Author: Simon Richter <Simon.Richter@hogyros.de>
+Date:   Sun Mar 8 02:35:38 2026 +0900
+
+    PCI/VGA: Mark pci_set_vga_state() as __must_check
+    
+    pci_set_vga_state() can return an error, usually on non-x86 or virtualized
+    environments, so mark it as __must_check.
+    
+    The only caller so far is __vga_tryget() in vgaarb.
+    
+    Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Link: https://patch.msgid.link/20260307173538.763188-6-Simon.Richter@hogyros.de
+
+
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 1c270f1d5123..aa1451d402d1 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1720,8 +1720,8 @@ resource_size_t pcibios_window_alignment(struct pci_bus *bus,
+ #define PCI_VGA_STATE_CHANGE_BRIDGE (1 << 0)
+ #define PCI_VGA_STATE_CHANGE_DECODES (1 << 1)
+ 
+-int pci_set_vga_state(struct pci_dev *pdev, bool decode,
+-		      unsigned int command_bits, u32 flags);
++int __must_check pci_set_vga_state(struct pci_dev *pdev, bool decode,
++				   unsigned int command_bits, u32 flags);
+ 
+ /*
+  * Virtual interrupts allow for more interrupts to be allocated
+commit dc582b5ed4b7 ("PCI/VGA: Mark vga_get() and wrappers as __must_check")
+Author: Simon Richter <Simon.Richter@hogyros.de>
+Date:   Sun Mar 8 02:35:36 2026 +0900
+
+    PCI/VGA: Mark vga_get() and wrappers as __must_check
+    
+    The vga_get() function and the two wrappers vga_get_interruptible() and
+    vga_get_uninterruptible() can return errors. As these are paired with
+    vga_put(), which must only be called after vga_get() returned success, all
+    callers need to check the return code.
+    
+    Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Link: https://patch.msgid.link/20260307173538.763188-4-Simon.Richter@hogyros.de
+
+
+diff --git a/include/linux/vgaarb.h b/include/linux/vgaarb.h
+index 97129a1bbb7d..eed524c67c22 100644
+--- a/include/linux/vgaarb.h
++++ b/include/linux/vgaarb.h
+@@ -27,7 +27,8 @@ struct pci_dev;
+ 
+ #ifdef CONFIG_VGA_ARB
+ void vga_set_legacy_decoding(struct pci_dev *pdev, unsigned int decodes);
+-int vga_get(struct pci_dev *pdev, unsigned int rsrc, int interruptible);
++int __must_check vga_get(struct pci_dev *pdev, unsigned int rsrc,
++			 int interruptible);
+ void vga_put(struct pci_dev *pdev, unsigned int rsrc);
+ struct pci_dev *vga_default_device(void);
+ void vga_set_default_device(struct pci_dev *pdev);
+@@ -39,8 +40,8 @@ static inline void vga_set_legacy_decoding(struct pci_dev *pdev,
+ 		unsigned int decodes)
+ {
+ };
+-static inline int vga_get(struct pci_dev *pdev, unsigned int rsrc,
+-		int interruptible)
++static inline int __must_check vga_get(struct pci_dev *pdev, unsigned int rsrc,
++				       int interruptible)
+ {
+ 	return 0;
+ }
+@@ -74,8 +75,8 @@ static inline int vga_client_register(struct pci_dev *pdev,
+  *
+  * On success, release the VGA resource again with vga_put().
+  */
+-static inline int vga_get_interruptible(struct pci_dev *pdev,
+-					unsigned int rsrc)
++static inline int __must_check vga_get_interruptible(struct pci_dev *pdev,
++						     unsigned int rsrc)
+ {
+ 	return vga_get(pdev, rsrc, 1);
+ }
+@@ -89,8 +90,8 @@ static inline int vga_get_interruptible(struct pci_dev *pdev,
+  *
+  * On success, release the VGA resource again with vga_put().
+  */
+-static inline int vga_get_uninterruptible(struct pci_dev *pdev,
+-					  unsigned int rsrc)
++static inline int __must_check vga_get_uninterruptible(struct pci_dev *pdev,
++						       unsigned int rsrc)
+ {
+ 	return vga_get(pdev, rsrc, 0);
+ }
