@@ -1,100 +1,182 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A303A1E9E;
-	Mon, 30 Mar 2026 08:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F893AF674
+	for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 08:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774858287; cv=none; b=swVcubA6p/93yELrnqPxlC2w1jobjitvDM2FmJU1c5BCURLEidzIAMae4r6Kr/2jsz5cEjwkmTqjfounGuWTWyJRa9BfOvennrSXQHmnkKPXexxYj2SDO3NHFJEWH2/gRfSGrWiV1MzTw/EcbSM3ggdnwnlu3io1Qw3OjH86KtA=
+	t=1774860032; cv=none; b=DwuybRe/KvvbjPN6U4fNeYSbqO8O+BFfDokx3m3ojBnIngdvzSiB0ht/+7nVAJXjp8zUKBltkKZs0QZfDbSwW7EZZ2vp2Tmx3A1nYbpEI6lAhUW6hSqgBP5DXBb/QN1cK6j1BENCCLiwyXFfQCgg23fG0xGY41IeH+UQZnV8bN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774858287; c=relaxed/simple;
-	bh=FxU3BzdU1Yd+vw5pB6zrVobeJeXNX9eeDPDfmbR5WZY=;
+	s=arc-20240116; t=1774860032; c=relaxed/simple;
+	bh=4T1ZH0NOBdL7c3JpqUItrqaJqjxfb1jAnChaf1gEq4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mkAtSt35rJFIhxB/qLmo4lSirSaKwhXBACi4riqoRm3ZEikoQk0CZPSVkI3OTqeEn+yWKwz5VqgPLXbccNeF20lKQ7OHNJN5xpzg8fK1fI1R09vDXgXtaRcUTK4kfC0cM3FEulhndforaw/ZknSdZcSD9QTaW76VuhblP60LE2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaI1ENst; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQlxtd3ou1xW6MxkPwLolre7nIC0SA2BkfUqlp6ng2THvAkcYByVxqZx8CnltLN997c04hxi49Ggk5HS+wq3FeMamlmLnyCqQoWMDuIWNOD7y4Idba9Hg+6Ryv/+XM8wupJJ4Sin9M64i4GLcO9Uhkyo/Bnif6+pL/vu5qxuvIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SPENjS+W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j7IXlHks; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SPENjS+W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j7IXlHks; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaI1ENst"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18D34C4CEF7;
-	Mon, 30 Mar 2026 08:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774858286;
-	bh=FxU3BzdU1Yd+vw5pB6zrVobeJeXNX9eeDPDfmbR5WZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gaI1ENstfyuSXngRaENSpeK4Bo5czHOCIGnNdx5l+2C2rG3nJNvOyHX+5xC6pMoeK
-	 L8ZvYEjPQ/d6m5/aZex6UpzSsdlXgwAoLljLYHP0Wjm1WVGkIQ7BixGnt9AxO5sytE
-	 kBsmLipUaM6tn7U52oSEigaaqTMybUyhZdIX+Ml6hPV7vznPPCL1O3opJ6ANtjak3i
-	 A8Ryx+zqWJuuecuXBzhpq+MnNIaS+x4HXz1G5EPRyY95pxHuiWgb2HofO+08dyXWZM
-	 YtuXbB1nnwTcCf/gGaD/Pn3Ce3o3xA8nnc5jWPw7TL89xf753ay/NHEEKqsv6n4rdm
-	 OV1d9Y067b2Dw==
-Date: Mon, 30 Mar 2026 10:11:23 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Albert Esteve <aesteve@redhat.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the dma-mapping tree
-Message-ID: <20260330-petite-gifted-wildebeest-ff150a@houat>
-References: <CGME20260327200715eucas1p1953ce4c0b4d4e0cd95844f0acdb7ac3a@eucas1p1.samsung.com>
- <acbjaDJ1a-YQC64d@sirena.co.uk>
- <9f63a789-79b6-46fe-8177-b08e1ec120f9@samsung.com>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SPENjS+W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j7IXlHks";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SPENjS+W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j7IXlHks"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D47F05BED0;
+	Mon, 30 Mar 2026 08:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1774860027; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7fsciCF0m/o/Q3WijYo7f/indCrHNUUk8Gr5E+FAR2E=;
+	b=SPENjS+Wgxrj4k1YeyZ8En2GOxuoCCrgZcGXUpnt0xEPkgJuzOwRbGUoOglnQFI8g2h7gU
+	wI5Sau1odqI9QYEKS7qgECHFM6p4N7Map+PRjtHrnZ+aEXPXMbABDANUmZBt9XpaQBOgyA
+	NqrhzgLx3Hav75hwGotNKb2bRUAyBdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1774860027;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7fsciCF0m/o/Q3WijYo7f/indCrHNUUk8Gr5E+FAR2E=;
+	b=j7IXlHkseCbCz528mm/frh2Q8EjjVPjbOG6PECy/wrO7clIK+YBHf3KbX95J2Yipql/+HT
+	04Iwe2g35BDmoODg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1774860027; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7fsciCF0m/o/Q3WijYo7f/indCrHNUUk8Gr5E+FAR2E=;
+	b=SPENjS+Wgxrj4k1YeyZ8En2GOxuoCCrgZcGXUpnt0xEPkgJuzOwRbGUoOglnQFI8g2h7gU
+	wI5Sau1odqI9QYEKS7qgECHFM6p4N7Map+PRjtHrnZ+aEXPXMbABDANUmZBt9XpaQBOgyA
+	NqrhzgLx3Hav75hwGotNKb2bRUAyBdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1774860027;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7fsciCF0m/o/Q3WijYo7f/indCrHNUUk8Gr5E+FAR2E=;
+	b=j7IXlHkseCbCz528mm/frh2Q8EjjVPjbOG6PECy/wrO7clIK+YBHf3KbX95J2Yipql/+HT
+	04Iwe2g35BDmoODg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD86F4A0A2;
+	Mon, 30 Mar 2026 08:40:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fbcqMvs2ymkCawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 30 Mar 2026 08:40:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3AB95A0AE1; Mon, 30 Mar 2026 10:30:26 +0200 (CEST)
+Date: Mon, 30 Mar 2026 10:30:26 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the ext4
+ tree
+Message-ID: <qljzxwmb5wtritfvhrjw6e2mo4ow52j6v34j7pcc3dog5dkg2f@cdzoawvadgsj>
+References: <acbAlnfUcjBSLNpt@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="mdnd254ui5mvsqd2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9f63a789-79b6-46fe-8177-b08e1ec120f9@samsung.com>
+In-Reply-To: <acbAlnfUcjBSLNpt@sirena.co.uk>
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+
+On Fri 27-03-26 17:38:30, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+> 
+>   fs/ext4/fsync.c
+> 
+> between commit:
+> 
+>   3a0fb9e5017077 ("ext4: fix fsync(2) for nojournal mode")
+> 
+> from the ext4 tree and commit:
+> 
+>   41189b49bcf1c2 ("ext4: Track metadata bhs in fs-private inode part")
+> 
+> from the vfs-brauner tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+The resolution looks good. Thanks!
+
+								Honza
+
+> 
+> diff --cc fs/ext4/fsync.c
+> index bd8f230fa507e7,aa80af2b4eea28..00000000000000
+> --- a/fs/ext4/fsync.c
+> +++ b/fs/ext4/fsync.c
+> @@@ -83,23 -83,12 +83,24 @@@ static int ext4_fsync_nojournal(struct 
+>   				int datasync, bool *needs_barrier)
+>   {
+>   	struct inode *inode = file->f_inode;
+>  +	struct writeback_control wbc = {
+>  +		.sync_mode = WB_SYNC_ALL,
+>  +		.nr_to_write = 0,
+>  +	};
+>   	int ret;
+>   
+> - 	ret = generic_buffers_fsync_noflush(file, start, end, datasync);
+> + 	ret = mmb_fsync_noflush(file, &EXT4_I(inode)->i_metadata_bhs,
+> + 				start, end, datasync);
+>  -	if (!ret)
+>  -		ret = ext4_sync_parent(inode);
+>  +	if (ret)
+>  +		return ret;
+>  +
+>  +	/* Force writeout of inode table buffer to disk */
+>  +	ret = ext4_write_inode(inode, &wbc);
+>  +	if (ret)
+>  +		return ret;
+>  +
+>  +	ret = ext4_sync_parent(inode);
+>  +
+>   	if (test_opt(inode->i_sb, BARRIER))
+>   		*needs_barrier = true;
+>   
 
 
---mdnd254ui5mvsqd2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: build failure after merge of the dma-mapping tree
-MIME-Version: 1.0
-
-Hi Mark, Marek,
-
-On Mon, Mar 30, 2026 at 09:56:30AM +0200, Marek Szyprowski wrote:
-> On 27.03.2026 21:07, Mark Brown wrote:
-> > After merging the dma-mapping tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > x86_64-linux-gnu-ld: vmlinux.o: in function `dma_contiguous_reserve':
-> > (.init.text+0xbf3bb): undefined reference to `dma_heap_cma_register_hea=
-p'
-> >
-> > Caused by commit
-> >
-> >   3a236f6a5cf2da (dma: contiguous: Turn heap registration logic around)
-> >
-> > I have used the version from next-20260326 instead.
->=20
-> Thanks for the information. I've dropped that commit from dma-mapping-for=
--next.
-
-I'm not sure how it ended up that way, but I have a fix queued up. It
-should just remove a bunch of loose ends that were left with the
-original patch.
-
-I'm waiting for allmodconfig to finish and I'll send it.
-
-Sorry,
-Maxime
-
---mdnd254ui5mvsqd2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCacowKwAKCRAnX84Zoj2+
-dofsAX0Xr3OoVOePrt9b+2B+ZRuI4gMCn+XAxW067yhaEZvvcajXRZv7/adq1Akz
-U3hHxNABf2YNlDVBcK+bqKUa1FHuvOAlD6ofx0TWxNd+/hHGGfVU310F95+Db3Rn
-LnJZYcJ0lA==
-=Wekb
------END PGP SIGNATURE-----
-
---mdnd254ui5mvsqd2--
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
