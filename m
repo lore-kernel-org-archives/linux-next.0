@@ -1,130 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A71B3B8945;
-	Mon, 30 Mar 2026 19:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9541B4257
+	for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 20:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774900732; cv=none; b=hDWIBUzD401w8jkRIs2mgzaNGhnE0Gtv+V4nn7k0PRebJevfGR7wgwvPnz+y3xb8ILkKYj0eHkwEXwI/M/Pe7yGs/k66L4v6HloSqeB400Lhsa+eQVh9b4hXGOgMzzYVS/qB1r4I08ECSR102AEkm0snQtVlwVDn3VK4h4YE2z0=
+	t=1774900803; cv=none; b=i1c5hC39ZNjhNySkXecnyCfsHGtJ9sralg9ilQnlSr9LuCaaJtSkEQq/I/1UnjYUztK5i38fvkvvPJQY9wSV6JCFieI2+9eu5172N6aqW9F5LeuK1SMcJ2onadmoifmZhWtwy/c4BAq9/hlhy01EUBCld6tERD//wfpn2hpbF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774900732; c=relaxed/simple;
-	bh=lZVJKC6pnEp1BcoiCGQB0J0PUcH36eQIXHZtT1zPt0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=knD9T1rK5VdXfgJFnn+v1YmKthalrIY3NvtKPILl4bm15jpfiNEDcf1MKkyG2AOOI78ppfKtBiLwCijIRWZr3gYeGx79wH19HvXRxRMZUJjFcJUQ8UAkm+d0buy6/DckAP0voXw7yhR2xrWJ9uRzi8n9D1NKcSmZg4vlA2uCo3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGK/01vX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774900803; c=relaxed/simple;
+	bh=3JvRu2l1oz6PycC3pQwJg3VDuSeIE7T44GfVA0Ygdb8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lm4X3PWcnyT4gTTxAYM8j8+Szldzawl0wZutn4VpWfgN340mn5QHOisJ+vX/uQHbo4GMDuKsweS1wMUAIsaGSLl+0VGCW0edDowI9rqnmZP+VsE5/nnK9WRrqVW5uZAEcaWKZutAFJRFiNsCvVqlNEUZb+NaZqztDCUGRWOIQEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCsfcvBv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGK/01vX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1D9C4CEF7;
-	Mon, 30 Mar 2026 19:58:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCsfcvBv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332B9C2BCB2
+	for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 20:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774900731;
-	bh=lZVJKC6pnEp1BcoiCGQB0J0PUcH36eQIXHZtT1zPt0Y=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hGK/01vX3Cey/m8iqe42p1Bi826n4ee2AwjmC2Ywo+6VYB7AHk/JfW0fqyfdzBF0m
-	 R0xuQe2AnAccFwwBKkXTxRGCavTMvOoM9eO9mTP1K4goW0hoPvjB1HT11ccXMwTHDv
-	 YRu+KqYDYMVfaj0D8U0ngFDHopNCGCUj+lWVvQwyqmBekdtW5+SjT3gqki/+hFRJ4R
-	 /pQatl9OJ2aZETgt1ZRG1wr0MJrdCkHT6ygNOzjQLML5i6mcyMpxPH1rYq47AIWVgm
-	 PZt1/IA26HypjLSkHPYgIfzG4dCdH0pSLcd9Y9TweEbMCS9Bn5Fax75wKlFXrJxN5b
-	 pISm3t+OtYcog==
-Date: Mon, 30 Mar 2026 20:58:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Jamie Gibbons <jamie.gibbons@microchip.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the gpio-brgl tree with the
- gpio-brgl-fixes tree
-Message-ID: <acrV903iryXvDjyA@sirena.org.uk>
+	s=k20201202; t=1774900803;
+	bh=3JvRu2l1oz6PycC3pQwJg3VDuSeIE7T44GfVA0Ygdb8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VCsfcvBvRh2ZJEUq4JlM2p5INwtIN43qie7kMrIsvgjInqpDQSbkFGQPxQkBET3WC
+	 0QQ0VLY2OnhL0nKGpGBWX84WaXL7bp2nSHkGddCt3jio8umtM4N9RIQql1s1snuhdv
+	 zkwcTgHDWFX40Srk0WkXjFr6INCNrjPJ42bcH13diu7QBvn5DyVaw14M36UvIw+7OO
+	 OczBnzkTq0lPGwucTSwghCfpQYm12L1XE4ObFr6xX5kokvbbUfIyh/qrSwfFLxlPdZ
+	 6nX1I7d9dN+QvG+X7LNtulxAtKpPg+wPaxzuBZD1rFpWPJuDSlS7HzJZ957VS7qXwg
+	 LAZpg8c93jp1Q==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-41708f6aa5fso3510934fac.2
+        for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 13:00:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVle85DZKO7T1Z8TWDJ2892biNYFbS1RWHy3uQFo2n8C7IdcTStcgxstTVuch2IG/J6bLdo1u03OoCJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtL8GQubgrRb7CpryMXha/3e9PTx5Wph8x6dbf1h4XuuvbLLWm
+	B0rgJkJCDVVrLAutQt7n2zO6JJCCvyvN0t1f8839b0i/z4y/8F1voZ0TfKeNepe9JYNsJ6+MOGW
+	ncCRCjvUh5PysTfLqK4PSzQBw3XX72Wo=
+X-Received: by 2002:a05:6808:1493:b0:468:698:a5fc with SMTP id
+ 5614622812f47-46a8a5961a2mr6026006b6e.31.1774900802300; Mon, 30 Mar 2026
+ 13:00:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QVceulZvY8rafgeA"
-Content-Disposition: inline
-
-
---QVceulZvY8rafgeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <acrVduPfV42PD2_q@sirena.org.uk>
+In-Reply-To: <acrVduPfV42PD2_q@sirena.org.uk>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 30 Mar 2026 21:59:51 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j2R-vTM+Zaq+hWgC7F7HxaOOHs00zL9+9-QUHzUanRhg@mail.gmail.com>
+X-Gm-Features: AQROBzBUSOiY0-DpR-ufhvIpXh8tvMcfoPpmBwF9XKePGj30Vtm51lesmCCc_1E
+Message-ID: <CAJZ5v0j2R-vTM+Zaq+hWgC7F7HxaOOHs00zL9+9-QUHzUanRhg@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the pm tree
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Mar 30, 2026 at 9:56=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> Hi all,
+>
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> /tmp/next/build/drivers/powercap/intel_rapl_common.c:1143:32: error:
+> 'IOSF_CPU_POWER_BUDGET_CTL_BYT' undeclared here (not in a function)
+>  1143 |         .floor_freq_reg_addr =3D IOSF_CPU_POWER_BUDGET_CTL_BYT,
+>       |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/powercap/intel_rapl_common.c:1150:32: error:
+> 'IOSF_CPU_POWER_BUDGET_CTL_TNG' undeclared here (not in a function)
+>  1150 |         .floor_freq_reg_addr =3D IOSF_CPU_POWER_BUDGET_CTL_TNG,
+>       |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   6cec0a0079bc1 (powercap: intel_rapl: Remove unused macro definitions)
+>
+> I have used the tree from next-20260327 instead.
 
-Today's linux-next merge of the gpio-brgl tree got a conflict in:
+This has been fixed already by dropping the above commit.
 
-  Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-
-between commit:
-
-  6b5ef8c88854b ("dt-bindings: gpio: fix microchip #interrupt-cells")
-
-=66rom the gpio-brgl-fixes tree and commit:
-
-  ececb46fc9477 ("dt-bindings: gpio: fix microchip,mpfs-gpio interrupt docu=
-mentation")
-
-=66rom the gpio-brgl tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-index f42c54653d521,6a0c5341d8a42..0000000000000
---- a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-@@@ -82,18 -90,19 +90,19 @@@ examples
-          compatible =3D "microchip,mpfs-gpio";
-          reg =3D <0x20122000 0x1000>;
-          clocks =3D <&clkcfg 25>;
--         interrupt-parent =3D <&plic>;
-+         interrupt-parent =3D <&irqmux>;
-          gpio-controller;
-          #gpio-cells =3D <2>;
-+         ngpios =3D <32>;
-          interrupt-controller;
- -        #interrupt-cells =3D <1>;
- +        #interrupt-cells =3D <2>;
--         interrupts =3D <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>,
--                      <53>, <53>, <53>, <53>;
-+         interrupts =3D <64>, <65>, <66>, <67>,
-+                      <68>, <69>, <70>, <71>,
-+                      <72>, <73>, <74>, <75>,
-+                      <76>, <77>, <78>, <79>,
-+                      <80>, <81>, <82>, <83>,
-+                      <84>, <85>, <86>, <87>,
-+                      <88>, <89>, <90>, <91>,
-+                      <92>, <93>, <94>, <95>;
-      };
-  ...
-
---QVceulZvY8rafgeA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnK1fYACgkQJNaLcl1U
-h9DrdQf/eipNT9Wc4qARIOdxfEH+hsh5oF2OtBPYRbdo+RaISzJuiTmi45zOmFVK
-C1Xqgdsw3DSTebKk3IFaS9XWZk6Qf5Rp12QmoiUWcmOm5FnNMhqcGTeXBsQI1kAM
-mzAWrBbVMSVu8wDnlXVIHUG9bnPrwidmr08/chY6Ov49hr5vbUacNDh84Une/XTk
-j+pFvg/mQKtStZEbKQlXW1EbL5uL3H/g81uM/VFOlPDdIl1MZAnqVDlLGvO0EeAf
-g1MDr9CONvvU1i+ZAYfWWd6CWji0E5o3BGZ/nzu4z8dLBSLJwQFyT/PuiZ+sVrkY
-nheb2pnBo3AUIALrpPq7/LYCCuejkQ==
-=hsXS
------END PGP SIGNATURE-----
-
---QVceulZvY8rafgeA--
+Thanks!
