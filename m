@@ -1,41 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A313D3D01;
-	Mon, 30 Mar 2026 13:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB533D1CD5;
+	Mon, 30 Mar 2026 13:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774876657; cv=none; b=s5+lf69ea7I9PsUr/qMD+e2DKw8Soi7Px4skAX5OZZ03qp6d6o9HPoz+5Bqtq3PRiKLnLOlHV9rpciLESCwWl/QFhre8EG+OmgnkzlLDAySfuFHodG1+Z//09fL45IkjElQGzWzkszKlXGZ/spOvemZpPTyI7U7OLLdI+pC2diw=
+	t=1774876677; cv=none; b=bemk+mu9ahR/T2GcbUt5/f8NBtIQZ/mlY7JPwsb1HBaR+rrdtyNynV6Wfr3IUVZjF/bdmnhMLMKyeQgO75nUpQBBTyybCIi+gwIcKVQyUIP1aXMX6Q5qEtwS5YilpQ/dqQLF1KlKh3Xp4mHkTHJtHpO5FpZLrdXPVJyf0e9oXgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774876657; c=relaxed/simple;
-	bh=ssTsDtldSiXIb6ZLl7sQm6b8jCHSfqGCOIPdB24ZHjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toEgp97m66YM4URrB6uRBVFgtYfLQl5BAqLNOXZAVTL9JUtsbzmAdObtbiIDC7BUXFrnhTUCZY0SdVxNT4OAufZTyaqj4AXjVxjxlIfhzfCdExfnvBdXrvhcmtq3cvu4yjOCOvbxCE1ikRHxPQPlTleh2aderHS8Jf5ps+1Smig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OB3lY35v; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774876677; c=relaxed/simple;
+	bh=yfM3h0JYdLVpgPtY6DotCckQ5QpGZWGKAKvtDbLIGdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VM3oOMn68roQyIsUnS+pJd32Thb19SXITcV2XpQgYNOMPoGuwChEpmx9QKA83kVAQoL55IkiKhZIYja0MgXm85+758NJsiYb8vNoJzZgKuJvlEKXq0IZXQ83O9Aq3Mizf7oOUjSLUe8TJxHGxS09Tzsjbqmt23L+QPzr6NM+UDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0TcdvX8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OB3lY35v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96324C4CEF7;
-	Mon, 30 Mar 2026 13:17:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0TcdvX8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96964C2BCB1;
+	Mon, 30 Mar 2026 13:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774876656;
-	bh=ssTsDtldSiXIb6ZLl7sQm6b8jCHSfqGCOIPdB24ZHjE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OB3lY35vI3UbyXsDmQ3lVGQILsrzz675WiP3r15ASTAnqLGU8XkJIq/VYopjJnWAx
-	 JfStXcn5roIWQRCGp3ZXEB6UJds8U/dYg8cB0Sqrt8ha9lYEwtEntYXz0y23QM4y2C
-	 yZGr38FDpAK7cIG14RHdE0YZZvTjrDGCWlHLPhNnlnn/8INXhQ4G7YrJWwMBGNXhKh
-	 FuU2uF1+Q3OvsJhQWPfLhwU6tDzuf6/dZNDY+yO93ht07e+x8Rx8AVH4iZEVX17JMK
-	 itta32afzeAD8QJ2fjOoFkH9BUNh3ITX06+49sjddG4uj5Nz7HJqO2M/lBlvvUd5ZV
-	 En+Ov4W4SBCkw==
-Date: Mon, 30 Mar 2026 14:17:32 +0100
+	s=k20201202; t=1774876676;
+	bh=yfM3h0JYdLVpgPtY6DotCckQ5QpGZWGKAKvtDbLIGdo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=T0TcdvX8tmjCo2axCA9jH2mfV50aAfDiZGTzamctdgF8RB1DpEau2PHY9fFI5KX+Y
+	 IHAvw6y/A0XhsNbcTmeXOUyQ+aR1Gsba8H14HpxDD9Z9ISF4fXbhrriYSsTrSi4y5B
+	 056jzS3KE65UBiEStne547l74ZSku5eE42220/baTtCMOhpKqXtJqj0J7NL55Eb7Wp
+	 zeW+HAqatTgm1uFR1m2iNNfuL325vC23ndYPVQo/OieJGt8e4YofHOcltj/9Utkn5B
+	 1e1NaaDQsS8KRcG5anehVK9tmEQXuPxJkGhNtEIfG+bQWcawiJGHXC/NWNuo8/Xoaf
+	 pdAAzXaNMq9Bw==
+Date: Mon, 30 Mar 2026 14:17:53 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <bdfb46ce-1585-4c42-af55-a2202aa4ee9c@sirena.org.uk>
-References: <acPV19IY3Gna6Ira@sirena.org.uk>
- <20260326-gefeiert-beschaffen-edf852a3aa71@brauner>
- <acbDBxR6tgO6WzCB@sirena.co.uk>
+Subject: linux-next: manual merge of the rust tree with the origin tree
+Message-ID: <acp4AY8W5_jOo56Z@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,54 +41,83 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NFhym8FIINf7fnmo"
+	protocol="application/pgp-signature"; boundary="L6aatmk7CatRGyWR"
 Content-Disposition: inline
-In-Reply-To: <acbDBxR6tgO6WzCB@sirena.co.uk>
-X-Cookie: HUGH BEAUMONT died in 1982!!
 
 
---NFhym8FIINf7fnmo
+--L6aatmk7CatRGyWR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 27, 2026 at 05:48:55PM +0000, Mark Brown wrote:
-> On Thu, Mar 26, 2026 at 02:36:50PM +0100, Christian Brauner wrote:
-> > On Wed, Mar 25, 2026 at 12:32:23PM +0000, Mark Brown wrote:
->=20
-> > > In file included from listns_efault_test.c:23:
-> > > ../pidfd/pidfd.h:229:19: error: static declaration of 'wait_for_pid' =
-follows non-static declaration
-> > >   229 | static inline int wait_for_pid(pid_t pid)
-> > >       |                   ^~~~~~~~~~~~
->=20
-> > > I am continuing to use the tree from next-20260312.
->=20
-> > This should be fixed now. Sorry.
->=20
-> I'm still seeing this today.  I have:
->=20
-> 84f524dca4b8bc9e9aca8ea1dbbd2aa3a239d998 Merge branch 'namespaces-7.1.mis=
-c' into vfs.all
->=20
-> as the vfs-brauner tree, I'm not seeing any new patches to the test case
-> there.
+Hi all,
 
-Still seeing this today.
+Today's linux-next merge of the rust tree got a conflict in:
 
---NFhym8FIINf7fnmo
+  scripts/Makefile.build
+
+between commit:
+
+  f41941aab3acd ("rust: ptr: add projection infrastructure")
+
+=66rom the origin tree and commit:
+
+  560a7a9b9267f ("rust: add `const_assert!` macro")
+
+=66rom the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc scripts/Makefile.build
+index 3652b85be5459,a6d1a2b210aaa..0000000000000
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@@ -310,7 -310,7 +310,8 @@@ $(obj)/%.lst: $(obj)/%.c FORC
+ =20
+  # The features in this list are the ones allowed for non-`rust/` code.
+  #
+ +#   - Stable since Rust 1.79.0: `feature(slice_ptr_len)`.
++ #   - Stable since Rust 1.79.0: `feature(inline_const)`.
+  #   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
+  #   - Stable since Rust 1.82.0: `feature(asm_const)`,
+  #     `feature(offset_of_nested)`, `feature(raw_ref_op)`.
+@@@ -321,7 -320,7 +322,7 @@@
+  #
+  # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details=
+ on
+  # the unstable features in use.
+- rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
+easons,offset_of_nested,raw_ref_op,slice_ptr_len,strict_provenance,used_wit=
+h_arg
+ -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,inline=
+_const,lint_reasons,offset_of_nested,raw_ref_op,used_with_arg
+++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,inline=
+_const,lint_reasons,offset_of_nested,raw_ref_op,slice_ptr_lenstrict_provena=
+nce,used_with_arg
+ =20
+  # `--out-dir` is required to avoid temporaries being created by `rustc` i=
+n the
+  # current working directory, which may be not accessible in the out-of-tr=
+ee
+
+--L6aatmk7CatRGyWR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKd+wACgkQJNaLcl1U
-h9A4IQf9FCy+TdMxLjzecYdmkTbVmnsX65Mkc3HnffIoHkhklTWyaDJz/tEYVrhr
-B0LsgIN0/gbXoC5TlqWx5zAmoxjb/rXruy6p7WFwahNx8lNo7/HCFqT1coLtN7E0
-wQY38DLVxCTCuOBHBIdhFUVgp+e6ZqxJfpNxwrt4Uonhy142+sCjfLcoVzq3X0S5
-GFMcPwlPwryqkoV3I1GAxXvzYXjGgPKAAbOW/rzenFJVGIeO9BD2buvH4JirgVh1
-FPLcnov/6IGJzPm6syQW9d9xLINPe6wLydZqW7YgrPeLQUcmBfYKYoOKKV3y34Qt
-WHXH6FMYvIMzM4hFqFx0xAdBmfC5MQ==
-=9fW8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKeAAACgkQJNaLcl1U
+h9CuDwf+OpRzCjM4ZBAMtYOmtvQEa9by82CO5VpZuNe19GTDCu3hIUfqJwlqwLwp
+x+zOWTUE3Ef//b/Ta/6Lm/3xaJiYcz6gsZlkzNd04uuvzhig9lJiQYsSlHYxGwuB
+lm6AquFcJbYUa9c6mas1EmrKgIwPxM54cP033iugx1sU/GQ0ucGFLHhtQxzvgMxl
+8C9RQowpiWjqviZSsOWJLdUG+yL0Ujk7lT6xs2bfabtfV56NTUO7rdJVImWGZHvu
+S5YBtBA5m6EeSJkDtakDcIFazQcmHS5uw0EuQSQO6h3UFxAV3QLc8vXu2auZGlaQ
+Ol8FXITJM/KfrRg7qxA+EsV5TeQ5eA==
+=/Voi
 -----END PGP SIGNATURE-----
 
---NFhym8FIINf7fnmo--
+--L6aatmk7CatRGyWR--
