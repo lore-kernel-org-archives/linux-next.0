@@ -1,39 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14CE2DEA68;
-	Mon, 30 Mar 2026 22:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6D12D97BA;
+	Mon, 30 Mar 2026 22:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774908761; cv=none; b=FlplefucosQmx248doXIMgxIaw0nC4Mfu7Pr6TSeIEU/WPB2avBt1gJZJo24B+SpZf62CAt6dL58i9sxBbSgJrkybMcH1BogqQGuiO5tIMfReTWksbr8FdNWo+tustmHHBDG+BB42upOd/yU3s19EjOSNMmdJiGB9MiKMo6h0JQ=
+	t=1774908854; cv=none; b=k4cagFGiX/UAsjGio9Sz9sGHsP0XSVZTVw0ydyK3uwq0M8y1IYntLexHWhlGV0oVqjwyZGMSKHXXJGvIIGGovPqGF/1uIJPEeY/zYy1R9HsS14OTe6Qu2om9b7sHiPRvZq8NdwizpZ0D/4eRC01vVq9s4HwW624xJAN7e9f9Fhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774908761; c=relaxed/simple;
-	bh=OzE+AyVFnQn3pwCOWRJy6q0Dz9zb6lseqn+VWVIi2MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xa3qMxFsVTkdwqrkBiGHQKt6nDNIS5oRwgK0fIIwDynE0BKSxY79yiU6nOncmy14TU3F4aWarnrLxQVUeLjb9LCIMJvdlju2YADEB9f8lnfos3nCEKVzOoHItXC7erVzq6NWWl/fRWNRLmuwQEBwooCwrDoBzYcGNFsG1m/wbG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZHxwxXz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774908854; c=relaxed/simple;
+	bh=OCG+3hU5K3Gq7p4S+ZLvN4TKUV+f691+PCIVEA4ddHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VYHrIh3gWsqyxdM4qJKx2hF67cYIc3/HBKhK8VND1FfUc99jFbZ1/YqsX6Ft4tMDlOdfBOZqChfwqcTadq6dv2SC2Wh1hrpUh+9NlW871ITtJ/m6KC2UjPk4NjQcydO0Iuw0lryNP9JpinKnPlyHT9nlsovbk7nYZy/25JX5sSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frlWqfg9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZHxwxXz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713ACC4CEF7;
-	Mon, 30 Mar 2026 22:12:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frlWqfg9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB14DC4CEF7;
+	Mon, 30 Mar 2026 22:14:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774908761;
-	bh=OzE+AyVFnQn3pwCOWRJy6q0Dz9zb6lseqn+VWVIi2MI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mZHxwxXzdY6cc45j3F88EJfYqrQXKXfa3WCwnX7qwFq//0ZdzWRtxJAOL1H0zF9Ok
-	 2ewzHXtX7Cs5escSOtXMaVElhIxaG5rcwxZAWG8QGtAMSl/pCaspVTPCD0mrtwmyI0
-	 NSgqqnzjn9eTXj2TNZ2MRwJmXvhCA5vC2N1Gc5aXEgmPv0BN051UEIH626BRaWWJPf
-	 W5tRDgU3zalMq6tAktTga5MhT95/V+8JiAL2qUgj+ZevWCOS8aPDhArneJ8nDLt2kq
-	 SFLaB0kduIde5n5A4u4OR/S9dE84fCacfefLjpZZc05VdH2RdqQ5f1S9KnsVSTe1H+
-	 MZq4s5HhNtwiQ==
-Date: Mon, 30 Mar 2026 23:12:37 +0100
+	s=k20201202; t=1774908853;
+	bh=OCG+3hU5K3Gq7p4S+ZLvN4TKUV+f691+PCIVEA4ddHk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=frlWqfg94VfREdJGxJZ/1E0JoWhvmEl2ZiA2oEkixqVShb3PxeX3arx894AJfSAhp
+	 cUhoKmCO4IIXgILmfeJhBRnWfBXrl5iwofO1pln12uPo4aS61aOj5byboKNi3oDDQh
+	 NP4rF9YYEwEeYrbjPq48h4Simy2LjSDzs7T2JIQBxqZM/RwnOZqebFIbCiA77ojz6d
+	 Xon0nt7M24PbvAEZmAkCZV4x1qQUTVUh27jD/Hj8sh/yE531Hbhy7MxNeazphs+2Pq
+	 WopBlZSw5DMpQZo5T7dKywCM8k8T13/jqKU3Q9d0u7PM1Qsnbdi7bK7RSm8fR94R4v
+	 Ecz+CUWkF7TNw==
+Date: Mon, 30 Mar 2026 23:14:10 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the hid tree
-Message-ID: <fa4b8b25-8b34-4314-a7f3-ea7143ed9247@sirena.org.uk>
-References: <ab096wLbcpu0M-GF@sirena.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -next status as at v7.0-rc6
+Message-ID: <c6bfc4bc-ba8b-4402-be9a-518091c91237@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,40 +39,63 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NOSOtbKuEYS/Xscz"
+	protocol="application/pgp-signature"; boundary="mRsiJpBWMpvAjlvt"
 Content-Disposition: inline
-In-Reply-To: <ab096wLbcpu0M-GF@sirena.org.uk>
-X-Cookie: Two percent of zero is almost nothing.
+X-Cookie: HUGH BEAUMONT died in 1982!!
 
 
---NOSOtbKuEYS/Xscz
+--mRsiJpBWMpvAjlvt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 20, 2026 at 12:30:35PM +0000, Mark Brown wrote:
-> Commit
->=20
->   142068281f513 ("HID: input: use __free(kfree) to clean up temporary buf=
-fers")
->=20
-> is missing a Signed-off-by from its committer
+Hi Linus,
 
-This issue is still present today.
+Trees being held at old versions:
 
---NOSOtbKuEYS/Xscz
+  pci            	next-20260326 (Fixed today)
+  pm             	next-20260327 (Fixed today)
+  vfs-brauner    	next-20260312 (Original issue got fixed, made a
+				       further issue visible - fix
+				       posted but not yet pushed.)
+
+Trees with signoff problems:
+
+  hid	(missing committer)
+  rdma	(missing committer)
+  rpmsg	(missing committer)
+
+Non-merge commits relative to Linus' tree: 9468
+ 9078 files changed, 554820 insertions(+), 171917 deletions(-)
+
+Top trees adding commits to -next:
+
+  1378	drm
+  973	net-next
+  337	qcom
+  333	tip
+  300	mm-stable
+  251	v4l-dvb
+  229	char-misc
+  212	imx-mxs
+  181	sound-asoc
+  149	block
+
+Thanks,
+Mark
+
+--mRsiJpBWMpvAjlvt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnK9VUACgkQJNaLcl1U
-h9C3EAf6Ao1a5fHNs/5fXh+e57IhWTQccZ92IK2wi74r+Nrvu9Miij4YOmnJkjcd
-BlkCPXtmCo7gsGOXwZHpEuViQWz9Ka+w6GXsBdUjxKTcWHOwRe9SiciC+ykrItEW
-aQg719lfBQEC9b0Ys8cHwT78ECjQdSjHidceU8ncAKhicG3WRXRvIuM6Akiys2K2
-v5DmQnk3mgtEjUYX7r8m1pBYkKQKtdakpWY6ynHjr8bWizCU98MrLtqM5d8ryRTq
-68tPhbaTuRNDN4xFbZMlClm6N6Ht4+n8LRmu8ImkxldYGPZnSjmn5IKj87e2NKWo
-m5jZUDi09QrzV4zkkyFYEOAT6DM25A==
-=75k1
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnK9bEACgkQJNaLcl1U
+h9CCHgf/fxgAidMMnQwuy6dQ9Hj+DkbGRpLaqnP9P8Baf5yHU2N8NaNvNB5RIO9M
+fRPXR7i56WCs9LdlDw0DIGEeDokutu2NfjVQWl/AmKjsoiUtREXcnEgppkmST8Fj
+eu+IAs0+e2oKdc0eXA3nPuE8PWh8c/4Ohl69UIzTGvYKHuH/Lp1F2W00O1DQTRQ6
+2aFFQMH2k0ek0+AleKkdiIdydwDkJxZVPKSvL0PFaRgOGVOJ0xs2DeM4y+XL8cR7
+S6RFUrm/lj25OZRs9ZL55IGuzNddA0RXx71pWxCHvNWQn2OPMn6wIjdnb6Ad2kNg
+JpTDZjW+mbY13BqMr4ZZUinqmEZ6SA==
+=TtfE
 -----END PGP SIGNATURE-----
 
---NOSOtbKuEYS/Xscz--
+--mRsiJpBWMpvAjlvt--
