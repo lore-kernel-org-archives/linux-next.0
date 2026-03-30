@@ -1,118 +1,117 @@
-Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062593264FF;
-	Mon, 30 Mar 2026 14:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F92C32ED21;
+	Mon, 30 Mar 2026 15:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774882507; cv=none; b=FUdrLNR8iljTe9W31eI96ZSk90wqrq+bB3b+TZEjEUYaWR44I/R4DnD0oWKGzwI6VQY0wqcQ1eK1hxWBdAqzMDYOdV9/PiCG6aqPLU57Owa+WJGK7+rxAOlURUF4d/YkKMEnGFNrrZpsHDjaiaChGmE3QXbGisqhp+dKrBa7ivQ=
+	t=1774882970; cv=none; b=QQxsP6yRJfmaYymthC/Fizfs1T65gqoZSPug2eo0dvKhjaTPYoxbsQ6gU9pUyS1cv+omzr/cpuTHbnGpoDjtkUX3nChA4pNB3PsA90x+BvPne1FA6lGqrCpAJ5o+LqYcihaxW3v7jrO2C01wZGkY5GlI82RyyVcBr7+I31kwmDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774882507; c=relaxed/simple;
-	bh=H5yJrA/1CzjkU+Du+zFrF8PJ6izEYeWTnbsqZ9SNWJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CDH3AjvMVbQWhBTjTyfCLE8IKMZp2gNJZeNGaXQhfWF4Q+mAIKHeNmYiIAlL9pygWAVSSM+hjevhzjxW8nNKD43YYkijIyhOc80uCi8qMgaXiI/IJ402clgBCdP/J3kTS3YsoV7/eVof2ew9p1MNlEq6WX09LGDlkYXBjfYLX3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
-Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4dff:fe00:2e9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id E6CBE3F01D;
-	Mon, 30 Mar 2026 16:55:00 +0200 (CEST)
-From: Simon Richter <Simon.Richter@hogyros.de>
-To: Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Simon Richter <Simon.Richter@hogyros.de>,
+	s=arc-20240116; t=1774882970; c=relaxed/simple;
+	bh=0UOIFMhQKOklg3R3612sioG87Ps9KaLdTK71ubPMDZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=saicw2NICDg9F0VFqM0HeLPpdQ6/EmAHl4AszDuEu2ZdwNHLaPQGr5h5H80u4nqFXsZBnkurgbTZ18hTSqwBzn+cXiWFyYVt9ZpyDDP3TQVt3Am9K4ZyCaCDxX4CTOL7eIllq+1uhvg0HJJs8SYI47Q6ZyvoW+hrBEN8+8r8n/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6ZgIO1L; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6ZgIO1L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BFCC4CEF7;
+	Mon, 30 Mar 2026 15:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774882970;
+	bh=0UOIFMhQKOklg3R3612sioG87Ps9KaLdTK71ubPMDZA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=G6ZgIO1LADkfURvzlTSBk9OGr4W/m++tm9dAqczimORu63+S/sNABjMPLoBo9ggds
+	 I2h2oXVoy9QEYgDT6HQFIVb+EXTUN0gOMoXSwchQunm6JmreqmNzRm5+vsp9rCEUZD
+	 Up8pc7mTAWKhCIKlwmpLLVSiIZcn4qRk1KDPFBATBhE4z0fcLQ8wyUW3U2nOne4bsG
+	 qelb91X7Q3e7FfR8bQo0A/fhJXsZBw++wx+6XUG7xsAYrGpE2YfHwkpbj/mcOcdnzn
+	 wPudwBweCsxOBGuOjdsYzjyChCUxHdmQuCbZ82YPiBgd+Monz6I2UhQVFQ5zo5ejLp
+	 w8jqeTKoGW6Tg==
+Date: Mon, 30 Mar 2026 16:02:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Fernando Fernandez Mancera <fmancera@suse.de>,
+	Leon Romanovsky <leon@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH 1/1] drm/i915: handle failure from vga_get_uninterruptible()
-Date: Mon, 30 Mar 2026 23:53:02 +0900
-Message-ID: <20260330145420.6884-1-Simon.Richter@hogyros.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <0e1a5161-ca49-4fad-9ef3-640236c2600f@sirena.org.uk>
-References: <0e1a5161-ca49-4fad-9ef3-640236c2600f@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Zhu Yanjun <yanjun.zhu@linux.dev>
+Subject: linux-next: manual merge of the net-next tree with the rdma tree
+Message-ID: <acqQlcV326LWAtyp@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FrMZQnoAwEPKyjGO"
+Content-Disposition: inline
 
-The vga_get_uninterruptible() function can return an error if it fails to
-set up VGA decoding for the requested device.
 
-If VGA decoding is unavailable, we don't need to be careful to leave the
-VGA emulation in a usable state, as vgacon will also be unable to get
-access later on, so just skip over the VGA accesses and the vga_put() call
-matching the failed vga_get_uninterruptible().
+--FrMZQnoAwEPKyjGO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
----
- drivers/gpu/drm/i915/display/intel_vga.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/gpu/drm/i915/display/intel_vga.c b/drivers/gpu/drm/i915/display/intel_vga.c
-index 6e125564db34..dd581f20e962 100644
---- a/drivers/gpu/drm/i915/display/intel_vga.c
-+++ b/drivers/gpu/drm/i915/display/intel_vga.c
-@@ -49,6 +49,7 @@ void intel_vga_disable(struct intel_display *display)
- 	enum pipe pipe;
- 	u32 tmp;
- 	u8 sr1;
-+	int err;
- 
- 	tmp = intel_de_read(display, vga_reg);
- 	if (tmp & VGA_DISP_DISABLE)
-@@ -65,13 +66,22 @@ void intel_vga_disable(struct intel_display *display)
- 		    pipe_name(pipe));
- 
- 	/* WaEnableVGAAccessThroughIOPort:ctg,elk,ilk,snb,ivb,vlv,hsw */
--	vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
-+	/*
-+	 * if the VGA ports are inaccessible now, the chance that vgacon
-+	 * will be able to access them later is low enough that we don't
-+	 * have to care about the emulation state machines being in sync
-+	 */
-+	err = vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
-+	if (err)
-+		goto skip;
-+
- 	outb(0x01, VGA_SEQ_I);
- 	sr1 = inb(VGA_SEQ_D);
- 	outb(sr1 | VGA_SR01_SCREEN_OFF, VGA_SEQ_D);
- 	vga_put(pdev, VGA_RSRC_LEGACY_IO);
- 	udelay(300);
- 
-+skip:
- 	intel_de_write(display, vga_reg, VGA_DISP_DISABLE);
- 	intel_de_posting_read(display, vga_reg);
- }
-@@ -79,6 +89,7 @@ void intel_vga_disable(struct intel_display *display)
- void intel_vga_reset_io_mem(struct intel_display *display)
- {
- 	struct pci_dev *pdev = to_pci_dev(display->drm->dev);
-+	int err;
- 
- 	/*
- 	 * After we re-enable the power well, if we touch VGA register 0x3d5
-@@ -89,8 +100,14 @@ void intel_vga_reset_io_mem(struct intel_display *display)
- 	 * console_unlock(). So make here we touch the VGA MSR register, making
- 	 * sure vgacon can keep working normally without triggering interrupts
- 	 * and error messages.
-+	 *
-+	 * We ignore this issue if we can't access the VGA registers, because
-+	 * neither can vgacon.
- 	 */
--	vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
-+	err = vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
-+	if (err)
-+		return;
-+
- 	outb(inb(VGA_MIS_R), VGA_MIS_W);
- 	vga_put(pdev, VGA_RSRC_LEGACY_IO);
- }
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  drivers/infiniband/sw/rxe/rxe_net.c
+
+between commit:
+
+  d0ee939f7703f ("RDMA/rxe: Support RDMA link creation and destruction per =
+net namespace")
+
+=66rom the net-next tree and commit:
+
+  29ae61b2fe7ee ("drivers: net: drop ipv6_stub usage and use direct functio=
+n calls")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/infiniband/sw/rxe/rxe_net.c
+index 211bd3000acc8,cbc646a300035..0000000000000
+--- a/drivers/infiniband/sw/rxe/rxe_net.c
++++ b/drivers/infiniband/sw/rxe/rxe_net.c
+@@@ -141,9 -138,9 +141,9 @@@ static struct dst_entry *rxe_find_route
+  	memcpy(&fl6.daddr, daddr, sizeof(*daddr));
+  	fl6.flowi6_proto =3D IPPROTO_UDP;
+ =20
+- 	ndst =3D ipv6_stub->ipv6_dst_lookup_flow(net,
+- 					       rxe_ns_pernet_sk6(net), &fl6,
+- 					       NULL);
+ -	ndst =3D ip6_dst_lookup_flow(sock_net(recv_sockets.sk6->sk),
+ -				   recv_sockets.sk6->sk, &fl6,
+++	ndst =3D ip6_dst_lookup_flow(net, rxe_ns_pernet_sk6(net),
+++				   &fl6,
++ 				   NULL);
+  	if (IS_ERR(ndst)) {
+  		rxe_dbg_qp(qp, "no route to %pI6\n", daddr);
+  		return NULL;
+
+--FrMZQnoAwEPKyjGO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKkJQACgkQJNaLcl1U
+h9DQcgf+MXCNcc0mickFgqMmi3/3U81RQa83wuNY5dQK2gPGJX1lcL2YBhypsM/I
+py70wScnTRSv5X82JE1OEX3+Ur8YqtwDXH9FALNL01s1cb5ABAJn+YshZGSyajj5
++zoby7uZu+FMGalmhAdMbhUzlWdtPMtGRB1Oyqs/aPno/OaRf6+z3Fx2tV2I4pIa
+4Zt+l7yHXV63Eupr/vQgaSNzFiJ93w1MfRCdOxzoY2/KJHW+o0uw6l+DwcKUirMJ
+77CO5oP4zcbc2plr2o7GlS/4WSZyJUuJtB9wYZQGUwm1Twng1TF1fEjfzfF6AJK6
+KYw9BZIzYIDieGvmMC+8j4ViLgrxHQ==
+=MH3J
+-----END PGP SIGNATURE-----
+
+--FrMZQnoAwEPKyjGO--
