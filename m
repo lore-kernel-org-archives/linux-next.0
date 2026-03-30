@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9729B3A640F;
-	Mon, 30 Mar 2026 22:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14CE2DEA68;
+	Mon, 30 Mar 2026 22:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774908705; cv=none; b=DEBbtThNsfs5d4WEvhhRDxQayCgLt0/WSK6SXcs3nK+TJxxH/XkiBjWemfAN5AP5RRc9fYitJqUrT3pCH8ZNQqCEXVFc3+gRE6sG/EexliAeJeu9ovNtYFUh1t/8milLhMj7kOWO3cmFM6NSwPMclUh7B0Ju9aa/sDcUXpSd66Q=
+	t=1774908761; cv=none; b=FlplefucosQmx248doXIMgxIaw0nC4Mfu7Pr6TSeIEU/WPB2avBt1gJZJo24B+SpZf62CAt6dL58i9sxBbSgJrkybMcH1BogqQGuiO5tIMfReTWksbr8FdNWo+tustmHHBDG+BB42upOd/yU3s19EjOSNMmdJiGB9MiKMo6h0JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774908705; c=relaxed/simple;
-	bh=wpHwLgClr4DBuGBt7N2y0PWUeDI6oyZBL48l2NqR9Jo=;
+	s=arc-20240116; t=1774908761; c=relaxed/simple;
+	bh=OzE+AyVFnQn3pwCOWRJy6q0Dz9zb6lseqn+VWVIi2MI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipxIyGlVWKvEGbv/YRXBTjmn+igz3x792ZVNtriYbZG3RV1Xjbo6/bJGYO4dm4VzLH0gfTOAJjRI8Ny6E6MKkin2NAKdwhnyDkbFefi2qW46M6J7neP67n+1BEHxDNyreQ4v6A9vKa3IORWGtN1VBZ7rgTtGxqtK2NEDIJoq36A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/NxYWUN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xa3qMxFsVTkdwqrkBiGHQKt6nDNIS5oRwgK0fIIwDynE0BKSxY79yiU6nOncmy14TU3F4aWarnrLxQVUeLjb9LCIMJvdlju2YADEB9f8lnfos3nCEKVzOoHItXC7erVzq6NWWl/fRWNRLmuwQEBwooCwrDoBzYcGNFsG1m/wbG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZHxwxXz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/NxYWUN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A00C4CEF7;
-	Mon, 30 Mar 2026 22:11:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZHxwxXz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713ACC4CEF7;
+	Mon, 30 Mar 2026 22:12:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774908705;
-	bh=wpHwLgClr4DBuGBt7N2y0PWUeDI6oyZBL48l2NqR9Jo=;
+	s=k20201202; t=1774908761;
+	bh=OzE+AyVFnQn3pwCOWRJy6q0Dz9zb6lseqn+VWVIi2MI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/NxYWUNd8g4CfXDlRq7qCJ/ZIR/vQtKgnYfSIaQUlP/M7BiqYdksO+vbOgJOm6TS
-	 jOC54fJOh3wzCcw6K06WlNidBsW/3yZWoWHh/K2n19fUcdTp4XJ/d+l5XnQtAmpk02
-	 4PEu1CziUq5Wq8C0hi/TBu35Zv7w1sBq5/TEOQWiizIrzPfSnpbnaAzeWpYjOamAd6
-	 Nz5jAM4qJ/CvCwryafLU2aRhMnoBsLZRCkNXju5QtbSa8DqdDZi1shT8snrw62/0tu
-	 IFPL4CezE1KTa2Wv4UHZ25Rbr3wEcGOBjlH21FkBMCDkiwLHhojULOZhpZ1wmq7JIq
-	 uX6Tx50vapFiw==
-Date: Mon, 30 Mar 2026 23:11:41 +0100
+	b=mZHxwxXzdY6cc45j3F88EJfYqrQXKXfa3WCwnX7qwFq//0ZdzWRtxJAOL1H0zF9Ok
+	 2ewzHXtX7Cs5escSOtXMaVElhIxaG5rcwxZAWG8QGtAMSl/pCaspVTPCD0mrtwmyI0
+	 NSgqqnzjn9eTXj2TNZ2MRwJmXvhCA5vC2N1Gc5aXEgmPv0BN051UEIH626BRaWWJPf
+	 W5tRDgU3zalMq6tAktTga5MhT95/V+8JiAL2qUgj+ZevWCOS8aPDhArneJ8nDLt2kq
+	 SFLaB0kduIde5n5A4u4OR/S9dE84fCacfefLjpZZc05VdH2RdqQ5f1S9KnsVSTe1H+
+	 MZq4s5HhNtwiQ==
+Date: Mon, 30 Mar 2026 23:12:37 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the rpmsg tree
-Message-ID: <aee116cb-6335-47e0-8634-2ad208f4fcd5@sirena.org.uk>
-References: <aarBm-e3NUl9XnY8@sirena.org.uk>
+Subject: Re: Missing signoff in the hid tree
+Message-ID: <fa4b8b25-8b34-4314-a7f3-ea7143ed9247@sirena.org.uk>
+References: <ab096wLbcpu0M-GF@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,42 +41,40 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pb14nQJO1aWdpb+M"
+	protocol="application/pgp-signature"; boundary="NOSOtbKuEYS/Xscz"
 Content-Disposition: inline
-In-Reply-To: <aarBm-e3NUl9XnY8@sirena.org.uk>
+In-Reply-To: <ab096wLbcpu0M-GF@sirena.org.uk>
 X-Cookie: Two percent of zero is almost nothing.
 
 
---pb14nQJO1aWdpb+M
+--NOSOtbKuEYS/Xscz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 06, 2026 at 11:59:23AM +0000, Mark Brown wrote:
-> Commits
+On Fri, Mar 20, 2026 at 12:30:35PM +0000, Mark Brown wrote:
+> Commit
 >=20
->   390045a24591a ("dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali=
- CDSP")
->   0af8802175d2d ("dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali=
- ADSP")
+>   142068281f513 ("HID: input: use __free(kfree) to clean up temporary buf=
+fers")
 >=20
-> are missing a Signed-off-by from their committers
+> is missing a Signed-off-by from its committer
 
 This issue is still present today.
 
---pb14nQJO1aWdpb+M
+--NOSOtbKuEYS/Xscz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnK9RwACgkQJNaLcl1U
-h9B4Iwf+IhLYn1mZ/5BJdbGibtOUNpPHiMlwyuGzMgcgi/TrIFjFBAIkOzDS+WmD
-c6enRgeICoCQGjbZNV/SRwdFb9HLF8juiAn4BS5R4EUOWvR0VbsTvLrh47+8Ovt2
-+b4ggXmbjO+Eyi7eLKSZSIGB8+CXDMCv5LbOcRjkWdNJy8yopAgsgkVGnojq84Cz
-CqjwljQn4V2AeMDwMc0TdMjf/0AZWgWal0ZcOBiGnRz4W6wdtCfolBsYuzA58WLo
-Ou0/Db1z4a8dLcCGCMZ+vcZIUf7ikx+FDrHZ7e+9f9+SfmfW11v01A6Cl177xQFB
-69Cmhfap8kXCiJAeihUxXEiyDu4ODg==
-=WWku
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnK9VUACgkQJNaLcl1U
+h9C3EAf6Ao1a5fHNs/5fXh+e57IhWTQccZ92IK2wi74r+Nrvu9Miij4YOmnJkjcd
+BlkCPXtmCo7gsGOXwZHpEuViQWz9Ka+w6GXsBdUjxKTcWHOwRe9SiciC+ykrItEW
+aQg719lfBQEC9b0Ys8cHwT78ECjQdSjHidceU8ncAKhicG3WRXRvIuM6Akiys2K2
+v5DmQnk3mgtEjUYX7r8m1pBYkKQKtdakpWY6ynHjr8bWizCU98MrLtqM5d8ryRTq
+68tPhbaTuRNDN4xFbZMlClm6N6Ht4+n8LRmu8ImkxldYGPZnSjmn5IKj87e2NKWo
+m5jZUDi09QrzV4zkkyFYEOAT6DM25A==
+=75k1
 -----END PGP SIGNATURE-----
 
---pb14nQJO1aWdpb+M--
+--NOSOtbKuEYS/Xscz--
