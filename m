@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C37C3D6CA1;
-	Mon, 30 Mar 2026 16:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A89540DFC2;
+	Mon, 30 Mar 2026 16:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774886537; cv=none; b=tAmUvfFsOD5nGBRPaVDHoep/ausFpcG9mvw2Tp2UPe4XVHTHo3arwplijinnPaFXf5o5sz0y7TVZv56SRJGI+KXRKnQBlA7vq1s4mbCi7JafCUZxbhZtiOpirIokZ9pc87leMn/A9hmYhAOpFkXLQqyKuB+cVfGwGEP5+nszdYo=
+	t=1774887027; cv=none; b=D5xnH99GeVs+PACyfCTZleIp3EVkUUx3WehPzLpErlLyHvKZbJ1GPTcmmDVWaPX6v0YyIdaDiBPv2nkd8czUj0/1f9Hnb1EXi0cWapDZVhzC+q0jTL1202Uof/xoiwUXZcxFUK7aCya6E4ae8ZAKxhN1CRE1/7l0vLlFgJXEt4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774886537; c=relaxed/simple;
-	bh=JHsk56sU/D4uSJv9rCQtZc/uAUqmgJU0I37W1S+Lpu4=;
+	s=arc-20240116; t=1774887027; c=relaxed/simple;
+	bh=yMV0vYN6EHLbUOYDQ3eLLlc+RQt2Qbu7otrTzdFFW1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q94Pq6O77xAYBhVyqaXTluDLTKGXFhsIwdp/s2+ziGdUGIazCMS7ELNJn7c50GGUjrv+PEohrd7fHFW3Ckqxi7fDOA8pWN62MdEYVD9e0DyVO1lt/5QGWKaexdwBDHspLPjHgORTtSO9ZE2nXPKJGhbC135qTM4Gyh865Nfy1I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSKb8EfV; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=JAycg5O2ol1v2EF13w6Pp0ATAYHJzoSqVA8B1cVDOtRuMMZo6t5vOkj19R9Bit/vzS64vIjgfJgg8csWzZ0PuuqwcIf/JtXU/C5CLomSYk0J4p3xziL7CvscTGAzMJtppiCUnW2Q1IFaT0gpgsK9DDsr5elLW1P408IshSnOJrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6/Xq8Lv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSKb8EfV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49843C19423;
-	Mon, 30 Mar 2026 16:02:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6/Xq8Lv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867D4C4CEF7;
+	Mon, 30 Mar 2026 16:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774886536;
-	bh=JHsk56sU/D4uSJv9rCQtZc/uAUqmgJU0I37W1S+Lpu4=;
+	s=k20201202; t=1774887027;
+	bh=yMV0vYN6EHLbUOYDQ3eLLlc+RQt2Qbu7otrTzdFFW1o=;
 	h=Date:From:To:Cc:Subject:From;
-	b=lSKb8EfVixD2LlTjyPnjQgzoLECyQEHAOYMUhuv9+QnXzggh47q6sdS37QG4xp4Ez
-	 dkPWGt61YeuM/KUajyiD8ylUBoPky8582osWymMQYE7sdcqURnFZZGHIluGeKxInEv
-	 GpWDxtjnUt1G1iclwpn21Wuu3kp7AsDlTV/ky6yVHKI/8wH5oonSbhb76qS7zbd19d
-	 SCpHHYumD+aM21uqh6WOcWdM6XMQzwcMIX393d0mmXK2UPpaLAvzZZJ/2GYVl42OA8
-	 dyof6XMD7ZBjysFyatVnxuKMhzmONxtRdTzePi56+kzj5antsHKLMyq0J2379udWwN
-	 wMJRkwp+N0DHg==
-Date: Mon, 30 Mar 2026 17:02:12 +0100
+	b=T6/Xq8LvuK3ZTc4uRxImd2AHAO/4Hgrl2Tpy3AKJE744yJau4mtoJy6dW7H4+M2Lm
+	 NIaOkX+i217CS6V317ziaj8jiHe03JyhRZA5yNsqomjB3iC8byJqemc5UoBbtzl2r6
+	 qmD9a2uGBKvMzJnO7268pUcN0XaR+t1bqVvgOS0PuR/Rk9rHxp7bj+j80PfGcrDWVi
+	 RN2KSeW4UD4eM0Iyo5YuT1wJd77ujrykwcszCubhqIlMGQFCw/KtEX9do2cRfMEp/m
+	 vUtmtgitmOgceqw/qP1nlcNEilBnpZLMHaGHxXzb+LKmvD0aeEMN/i2FhJEEfu4Ti/
+	 47b2fcsXAH2CQ==
+Date: Mon, 30 Mar 2026 17:10:22 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>
-Cc: Dave Airlie <airlied@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Gary Guo <gary@garyguo.net>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-misc tree with the drm tree
-Message-ID: <acqehIhXNVZYxrrY@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: linux-next: manual merge of the drm-rust tree with the rust-next tree
+Message-ID: <acqgbrNT--j-1wh8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,31 +42,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wjKSOlVC0gZOJw5h"
+	protocol="application/pgp-signature"; boundary="YZcFtL7hj7rj30Wp"
 Content-Disposition: inline
 
 
---wjKSOlVC0gZOJw5h
+--YZcFtL7hj7rj30Wp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+Today's linux-next merge of the drm-rust tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_ggtt_types.h
+  scripts/Makefile.build
 
-between commit:
+between commits:
 
-  d9a4a2021d4a5 ("Merge tag 'drm-misc-next-2026-03-12' of https://gitlab.fr=
-eedesktop.org/drm/misc/kernel into drm-next")
+  560a7a9b9267f ("rust: add `const_assert!` macro")
+  3a2486cc1da5c ("kbuild: rust: provide an option to inline C helpers into =
+Rust")
 
-=66rom the drm tree and commit:
+=66rom the rust-next tree and commit:
 
-  7aaa8047eafd0 ("Linux 7.0-rc6")
+  3cc319d5f433a ("rust: enable the `generic_arg_infer` feature")
 
-=66rom the drm-misc tree.
+=66rom the drm-rust tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,33 +76,43 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/gpu/drm/xe/xe_ggtt_types.h
-index 9af448cde3a1d,cf754e4d502ad..0000000000000
---- a/drivers/gpu/drm/xe/xe_ggtt_types.h
-+++ b/drivers/gpu/drm/xe/xe_ggtt_types.h
-@@@ -11,7 -11,6 +11,7 @@@
+diff --cc scripts/Makefile.build
+index d2372d15f74c9,010d08472fb2b..0000000000000
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@@ -322,7 -322,7 +323,7 @@@ $(obj)/%.lst: $(obj)/%.c FORC
+  #
+  # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details=
+ on
+  # the unstable features in use.
+- rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,inline=
+_const,lint_reasons,offset_of_nested,raw_ref_op,slice_ptr_len,strict_proven=
+ance,used_with_arg
+ -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,generi=
+c_arg_infer,lint_reasons,offset_of_nested,raw_ref_op,slice_ptr_len,strict_p=
+rovenance,used_with_arg
+++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,generi=
+c_arg_infer,inline_const,lint_reasons,offset_of_nested,raw_ref_op,slice_ptr=
+_len,strict_provenance,used_with_arg
  =20
-  struct xe_ggtt;
-  struct xe_ggtt_node;
- +struct xe_gt;
- =20
-  typedef void (*xe_ggtt_set_pte_fn)(struct xe_ggtt *ggtt, u64 addr, u64 pt=
-e);
-  typedef void (*xe_ggtt_transform_cb)(struct xe_ggtt *ggtt,
+  # `--out-dir` is required to avoid temporaries being created by `rustc` i=
+n the
+  # current working directory, which may be not accessible in the out-of-tr=
+ee
 
---wjKSOlVC0gZOJw5h
+--YZcFtL7hj7rj30Wp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKnoMACgkQJNaLcl1U
-h9BO4gf/SYqtRsYqhr1GglyLs7K8cwckwaUSxGPZBoM7UCn4NkCBfpx1etSR7TGu
-Vyl7aKHqFvV4HbEmqE2A2yLkHB8TqNEQQDLGQF3IFCrmoNmpMcoQRDFoR4btBnaq
-DhwQ7yDPFKfEAj58waPSpgGhGZh+TiTfEZIBwcdFDkTpogFBTGdoXMKj5gBpWojY
-GLUK52KbIHiwTgQg2lP5+EZBKry813y3DnkV+RFj577BZA90nVOHXEg68yoB2ke1
-ZDjsVgbtWNxRYoP9QKXLgiVuYQpnm9jxj6j5eeDYBubIAHfdRuN352UsfODnSCtz
-RJoCoJvp84XQi1eD/2Bb7FV1OxjtqA==
-=k8T1
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKoG4ACgkQJNaLcl1U
+h9B1Pgf9HoYYOptWsLLQpBhVnnaom8E0Mp4f4kTSmtUqtiPKQrjE1LQ5zGYczGZR
+e6K36wWaPnud/7sWlIiLLQ/8zRutZGXrat8GIwGFVKHXW0pPzpdBBbnEGiZJPkkT
+CKvas+58zT1DA/4qJGp+U6M7BpCEJHOnGX+tTwKYjbt2v57vtKbTfGZT9WaDZEfV
+ZgzIpO7oHzPVP5CIJKIMky7iINkx76KiJnvyD3/Cs5f0A6MnWRan4px+VRlWFIvS
+GYe/C2KMlPUCvpZCKopmCM7WS4+yiihaEs5UfrI7jQYLTg4WNRU3itI+dDeI4k0W
+zfNZT318vvZDGAgnXoEdV4X21EnNUw==
+=6LAX
 -----END PGP SIGNATURE-----
 
---wjKSOlVC0gZOJw5h--
+--YZcFtL7hj7rj30Wp--
