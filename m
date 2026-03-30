@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103EA3CFF5C
-	for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 13:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A313D3D01;
+	Mon, 30 Mar 2026 13:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774876349; cv=none; b=EQ+g11XkE0FtuI4EBWlQ8qpQCBSHRNmYStYtE7SvsL7uU+7Qywh0SAIAnlewHaMAxb4A6+EP2QCbJcinUiv3Os/OgemsGfLn+VCIWyb32bKcO1pvgq3TgfMjNAawWaKARg+upRi4fSrxRq0LfL7K0Eac/4xktCCUdJqHkoHJPSE=
+	t=1774876657; cv=none; b=s5+lf69ea7I9PsUr/qMD+e2DKw8Soi7Px4skAX5OZZ03qp6d6o9HPoz+5Bqtq3PRiKLnLOlHV9rpciLESCwWl/QFhre8EG+OmgnkzlLDAySfuFHodG1+Z//09fL45IkjElQGzWzkszKlXGZ/spOvemZpPTyI7U7OLLdI+pC2diw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774876349; c=relaxed/simple;
-	bh=0snltg1Mb8qeZxHCy4QPnp4aYEdQca3mog5GhFUq0K8=;
+	s=arc-20240116; t=1774876657; c=relaxed/simple;
+	bh=ssTsDtldSiXIb6ZLl7sQm6b8jCHSfqGCOIPdB24ZHjE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WzSa7tgHuXE90Qz/BcNTIDB7MAxDACiefeNGPMpvU6MGxhBMzT41sXgzUPHyBerz3+bG25dKRmktOwcfJGJPMBWyWQ1/OYPhQLT0vqyoZYlZeLYrRbDHvbdvW4D0FXa1TkeiT7a9lBFfpptHF8fsRAyvC2BiTR4kKD5PEIZc0tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQPgFqX6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=toEgp97m66YM4URrB6uRBVFgtYfLQl5BAqLNOXZAVTL9JUtsbzmAdObtbiIDC7BUXFrnhTUCZY0SdVxNT4OAufZTyaqj4AXjVxjxlIfhzfCdExfnvBdXrvhcmtq3cvu4yjOCOvbxCE1ikRHxPQPlTleh2aderHS8Jf5ps+1Smig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OB3lY35v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQPgFqX6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6277C2BCB0;
-	Mon, 30 Mar 2026 13:12:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OB3lY35v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96324C4CEF7;
+	Mon, 30 Mar 2026 13:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774876348;
-	bh=0snltg1Mb8qeZxHCy4QPnp4aYEdQca3mog5GhFUq0K8=;
+	s=k20201202; t=1774876656;
+	bh=ssTsDtldSiXIb6ZLl7sQm6b8jCHSfqGCOIPdB24ZHjE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QQPgFqX6KBJjXbPQix/HXJNWzdZxETTs/zBn05Robt22+tGXL2JZsfKdznVAp9mDl
-	 l+aZyGPEgDAkCisRp6JlZAIop/XvrNeEczPGdkqJblEPDSxdkb5J7TZGBqoCPXAVzQ
-	 7egwvd1Kd7SwKmGdB2ia745xuf5xUK/vb40QmsF1NRKWq7xNqLY0Z93Tg/w5pdfCdl
-	 neD/mRQhHgkm+5RkugTUYX5X3kT0gL9kw6rFY685SMvTt/hoClA2jKbc0cQgC1Fh7G
-	 E9R81ExRgx90LSJeaXe8kDQ920y22CbxlENygXC3K6OAlLiTob1rgWQBiewiaHyUgJ
-	 IzGyJFBgLIFlg==
-Date: Mon, 30 Mar 2026 14:12:25 +0100
+	b=OB3lY35vI3UbyXsDmQ3lVGQILsrzz675WiP3r15ASTAnqLGU8XkJIq/VYopjJnWAx
+	 JfStXcn5roIWQRCGp3ZXEB6UJds8U/dYg8cB0Sqrt8ha9lYEwtEntYXz0y23QM4y2C
+	 yZGr38FDpAK7cIG14RHdE0YZZvTjrDGCWlHLPhNnlnn/8INXhQ4G7YrJWwMBGNXhKh
+	 FuU2uF1+Q3OvsJhQWPfLhwU6tDzuf6/dZNDY+yO93ht07e+x8Rx8AVH4iZEVX17JMK
+	 itta32afzeAD8QJ2fjOoFkH9BUNh3ITX06+49sjddG4uj5Nz7HJqO2M/lBlvvUd5ZV
+	 En+Ov4W4SBCkw==
+Date: Mon, 30 Mar 2026 14:17:32 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Igor Korotin <igor.korotin@linux.dev>, linux-next@vger.kernel.org
-Subject: Re: Please add rust-i2c-next and rust-i2c-fixes to linux-next
-Message-ID: <ec1752c1-a170-4473-9ecf-d6d93b31dcd6@sirena.org.uk>
-References: <02908210-0ed5-42a7-b725-8bf70f936828@linux.dev>
- <20260329105919.73dea963@canb.auug.org.au>
- <b239bb2f-15d3-4d30-9b3b-8008864d8d62@sirena.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <bdfb46ce-1585-4c42-af55-a2202aa4ee9c@sirena.org.uk>
+References: <acPV19IY3Gna6Ira@sirena.org.uk>
+ <20260326-gefeiert-beschaffen-edf852a3aa71@brauner>
+ <acbDBxR6tgO6WzCB@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,46 +43,54 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BRq/ucDBeYQY5NJS"
+	protocol="application/pgp-signature"; boundary="NFhym8FIINf7fnmo"
 Content-Disposition: inline
-In-Reply-To: <b239bb2f-15d3-4d30-9b3b-8008864d8d62@sirena.org.uk>
+In-Reply-To: <acbDBxR6tgO6WzCB@sirena.co.uk>
 X-Cookie: HUGH BEAUMONT died in 1982!!
 
 
---BRq/ucDBeYQY5NJS
+--NFhym8FIINf7fnmo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 30, 2026 at 12:27:55PM +0100, Mark Brown wrote:
-> On Sun, Mar 29, 2026 at 10:59:19AM +1100, Stephen Rothwell wrote:
+On Fri, Mar 27, 2026 at 05:48:55PM +0000, Mark Brown wrote:
+> On Thu, Mar 26, 2026 at 02:36:50PM +0100, Christian Brauner wrote:
+> > On Wed, Mar 25, 2026 at 12:32:23PM +0000, Mark Brown wrote:
 >=20
-> > > Please add the following tree to linux-next:
-> > > Tree: https://github.com/ikrtn/rust-for-linux
-> > > - Branch: rust-i2c-next
-> > > - Branch: rust-i2c-fixes
+> > > In file included from listns_efault_test.c:23:
+> > > ../pidfd/pidfd.h:229:19: error: static declaration of 'wait_for_pid' =
+follows non-static declaration
+> > >   229 | static inline int wait_for_pid(pid_t pid)
+> > >       |                   ^~~~~~~~~~~~
 >=20
-> > Mark Brown (cc'd) now maintains the linux-next tree.
+> > > I am continuing to use the tree from next-20260312.
 >=20
-> All being well these should be included from today.
+> > This should be fixed now. Sorry.
+>=20
+> I'm still seeing this today.  I have:
+>=20
+> 84f524dca4b8bc9e9aca8ea1dbbd2aa3a239d998 Merge branch 'namespaces-7.1.mis=
+c' into vfs.all
+>=20
+> as the vfs-brauner tree, I'm not seeing any new patches to the test case
+> there.
 
-BTW I note that both trees have the same content and that looks like
--next material, I would expect the -fixes branch to be based on Linus'
-tree and only contain bug fixes.
+Still seeing this today.
 
---BRq/ucDBeYQY5NJS
+--NFhym8FIINf7fnmo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKdrgACgkQJNaLcl1U
-h9BxeQf+Kdh+a8B3itK+/HjFTlGBuLEYbQ0zT3DdSQZUs0+7GRMoZUynwvpo4+E2
-ScC6aVSwVUipeFhjI3wXt7ObnQgo4OhihFAMUWbqk1WJvHTItKrlRLgWWcIWLcWQ
-wy/f1H5k2UCicB0mNpYIU2I8lwA+bolzats8nFcNXWVEmAlPhT4ptVA9z4vTKOg2
-UokW6eSO0ZkIO2g7NqvwPEYtrZSglQGXc3sNrXtcPnbuMfh1SkEYuR3sMwbDTzBi
-r0TTylXDiqCOYBSbvloCsGszgvJKz8JKbIPdZe8xBTiZjNGebgsx/TydbC1rGRj/
-OK/4uLHYefoi9AvjFw+3aBWM+QcYsQ==
-=ig3J
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnKd+wACgkQJNaLcl1U
+h9A4IQf9FCy+TdMxLjzecYdmkTbVmnsX65Mkc3HnffIoHkhklTWyaDJz/tEYVrhr
+B0LsgIN0/gbXoC5TlqWx5zAmoxjb/rXruy6p7WFwahNx8lNo7/HCFqT1coLtN7E0
+wQY38DLVxCTCuOBHBIdhFUVgp+e6ZqxJfpNxwrt4Uonhy142+sCjfLcoVzq3X0S5
+GFMcPwlPwryqkoV3I1GAxXvzYXjGgPKAAbOW/rzenFJVGIeO9BD2buvH4JirgVh1
+FPLcnov/6IGJzPm6syQW9d9xLINPe6wLydZqW7YgrPeLQUcmBfYKYoOKKV3y34Qt
+WHXH6FMYvIMzM4hFqFx0xAdBmfC5MQ==
+=9fW8
 -----END PGP SIGNATURE-----
 
---BRq/ucDBeYQY5NJS--
+--NFhym8FIINf7fnmo--
