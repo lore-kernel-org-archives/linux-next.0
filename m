@@ -1,129 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3E03EC2F4;
-	Tue, 31 Mar 2026 09:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCAD3A9623;
+	Tue, 31 Mar 2026 10:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774948902; cv=none; b=ETmJEYQKxo44V4Bf2zuTeorL/yHX1FGQfsPoZGP2XXh3JjCMSK6z2IIOXbEUsAAU8wVNq0AXN3ASAaj29HCnF4gal44OCKs81FlVc3XTeluo40IpWQjwa+KSIbAHdY4kM+JnyXA7bu2VPiozH9CjFisluviupZ090IJ6cwzqR1Q=
+	t=1774954367; cv=none; b=UwGc0G6E+O2RsbpuzEipAuPbQ65ynoasJ4N6em5jhVlybA8hSirgL56acsKSl8buIkSp6u6XGP37KThl2RE5KGz0neK52O0AE4AsLkXDsvNLx4kJDZ5r/F6ixlDzDMxOqrFDSifP2bvADlSd5YKIPw+ftDAQ4PKuT/7wdT2Qfz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774948902; c=relaxed/simple;
-	bh=Jyr0HxPHf3ZmsPGwifgt9XWR69TJgtYhGG49YXLWQRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xy//gnaFu7357QpYGpET95s3wwAuNWBvEAk+jQYMu5L4zAUfHfnOP9SvDGfmvVp+yg/LXldQ/oW8c2AOHyS1fboLIT84LK1rekZfQZi9WGmPnWMRtNGI2uxyUu8S6LNDDZ2zP4rHyoxibIxek7djUx97HNQaVwzyY3gOzfzHrI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUKB0HRw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774954367; c=relaxed/simple;
+	bh=XFhbjT7U92kTrDT1hMwM2EzXYKAaGALMBFpFTgfInN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gep1I6TBilTHfciGQJCrWg0O7MRlr+Lm/MZrFCYzncMR4Z8zFcnyhZYv5lOKfkzBYJtWKEE6VvfIxGr9zrF0DUJY5z96BH6b5dmbwjHjI3l1uK5tljmFvYWBQG3pyt7X3lL5p8uouu8uVJs2xZS9MikguxwiUmNO2IYQABoV9AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jh2Mo7AG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUKB0HRw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B6DC19423;
-	Tue, 31 Mar 2026 09:21:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jh2Mo7AG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E33CC2BCB0;
+	Tue, 31 Mar 2026 10:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774948902;
-	bh=Jyr0HxPHf3ZmsPGwifgt9XWR69TJgtYhGG49YXLWQRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dUKB0HRwjLtZ4YtHbLMEhmZ5J2SgqSa7wcYXnEyobnjbHRJ+mfIE6CEgM+J+95as9
-	 stfVIaE/VfzFeDQT6ceQzBD9OkAifz13xrEEaUwMEkAE4KTSyHFeYe9tLI+JHRsHij
-	 o5VVEy41lsfFaf9PsFsrhjGnpe+rbu8I+WUQ0m1tmC3d+FzEkQsYmlBMQM6c0LMqYF
-	 vGbqEYsMkmYaucL1HMx5QNiC+V2rP2wq5clP8lsAml8oJ+hp3n+MGKcRx+Bq1yDbtX
-	 6JU7zPq7/pAcNU/HHwarMvmQeUyYLu/J6/1R3cDMJcZGABswgAMakAWwJtmX7CJAXr
-	 bFC5r5BgQaGKg==
-Date: Tue, 31 Mar 2026 11:21:38 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20260331-mondphase-schwalben-72b291049031@brauner>
-References: <acPV19IY3Gna6Ira@sirena.org.uk>
- <20260326-gefeiert-beschaffen-edf852a3aa71@brauner>
- <acbDBxR6tgO6WzCB@sirena.co.uk>
- <bdfb46ce-1585-4c42-af55-a2202aa4ee9c@sirena.org.uk>
+	s=k20201202; t=1774954367;
+	bh=XFhbjT7U92kTrDT1hMwM2EzXYKAaGALMBFpFTgfInN8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jh2Mo7AGuMlmi7SD46Jdmh7aMr0KkGErS5wCXLvWiFb6v87SvtlwQFVU7HkNqOvG3
+	 8pD0HvjLN9nBqrShenzORE75UOqVoUByYdVyqAKFwY+K/6BSwIeyv5kt8JDzaAh5eV
+	 nOBUayNXTed/W7XP+MfBtzeaw/vEGvxj91apni1d3DWGO1+M7A3VDWNjjdYeWT3rAv
+	 FIs8CoIUbeHFzSKwLTaZiEk4lUOA6RCpKx1dpGOJWzLZuBKV4Nd6N+DL/FPdE8qH0x
+	 QwavfxlNOLOibPqhl4ML6Iwvxeanq0h2EQPfqmUgrdHzF9Go/tHBI1Pd3vi9MhEqzg
+	 Cs2X4ZIWVzWTw==
+Date: Tue, 31 Mar 2026 11:52:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the omap tree
+Message-ID: <acune820bjA13Sw4@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="u72fpjal2tpzleo4"
-Content-Disposition: inline
-In-Reply-To: <bdfb46ce-1585-4c42-af55-a2202aa4ee9c@sirena.org.uk>
-
-
---u72fpjal2tpzleo4
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V1UbsR15s1Fhf5xD"
 Content-Disposition: inline
 
-On Mon, Mar 30, 2026 at 02:17:32PM +0100, Mark Brown wrote:
-> On Fri, Mar 27, 2026 at 05:48:55PM +0000, Mark Brown wrote:
-> > On Thu, Mar 26, 2026 at 02:36:50PM +0100, Christian Brauner wrote:
-> > > On Wed, Mar 25, 2026 at 12:32:23PM +0000, Mark Brown wrote:
-> > 
-> > > > In file included from listns_efault_test.c:23:
-> > > > ../pidfd/pidfd.h:229:19: error: static declaration of 'wait_for_pid' follows non-static declaration
-> > > >   229 | static inline int wait_for_pid(pid_t pid)
-> > > >       |                   ^~~~~~~~~~~~
-> > 
-> > > > I am continuing to use the tree from next-20260312.
-> > 
-> > > This should be fixed now. Sorry.
-> > 
-> > I'm still seeing this today.  I have:
-> > 
-> > 84f524dca4b8bc9e9aca8ea1dbbd2aa3a239d998 Merge branch 'namespaces-7.1.misc' into vfs.all
-> > 
-> > as the vfs-brauner tree, I'm not seeing any new patches to the test case
-> > there.
-> 
-> Still seeing this today.
 
-Sorry, this was _yet_ another callsite that completely duplicates
-wait_for_pid() for whatever reason. The following patch should fix it.
-I'm adding this to vfs-7.1.mount today.
+--V1UbsR15s1Fhf5xD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Commit
 
---u72fpjal2tpzleo4
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-selftests-namespaces-remove-unused-utils.h-include-f.patch"
+  2a274187dd023 ("ARM: dts: am335x: Add Seeed Studio BeagleBone HDMI cape overlay")
 
-From ef6960362e5b33402b9977972ab2a9fabc4c8cb9 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 31 Mar 2026 10:58:58 +0200
-Subject: [PATCH] selftests/namespaces: remove unused utils.h include from
- listns_efault_test
+is missing a Signed-off-by from its committer
 
-Remove the inclusion of ../filesystems/utils.h from listns_efault_test.c.
-The test doesn't use any symbols from that header. Including it alongside
-../pidfd/pidfd.h causes a build failure because both headers define
-wait_for_pid() with conflicting linkage:
+--V1UbsR15s1Fhf5xD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  ../filesystems/utils.h:  extern int wait_for_pid(pid_t pid);
-  ../pidfd/pidfd.h:        static inline int wait_for_pid(pid_t pid)
+-----BEGIN PGP SIGNATURE-----
 
-All symbols the test actually uses (create_child, read_nointr,
-write_nointr, sys_pidfd_send_signal) come from pidfd.h.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnLp3oACgkQJNaLcl1U
+h9BB3Qf+MTR8zXnTJIgitgp8frgz2rsnZkWFW1244P2+ejssrb5qUXoa6tuycHqq
+z6rOO7slyaVkIP/hXYzh5M4anR+m10ROK26zxp/NuBgFx0d8RMFKKfD34AN0uvY0
+fxwFcYLU0A93DWCABjitlbAV5eFWlBLU9nKRC1EaGOgKIWqJBZbVCMskA6ZNLCou
+dFFlYFoVM7D9tbu79ZCNbyoDU5md/U/8rLtbuhnZ+JmTf8BcreujFVJ5gnAr5/6p
+wnPyW+f1nCig20Sxciw24Ht0vyeATLlhXNxpZzdp0BZNMUp1HO/ByamJq/k7n3IC
+zPNAz0zCHhOFT4lWXFNdWli1uqOlEA==
+=8S/S
+-----END PGP SIGNATURE-----
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/all/acPV19IY3Gna6Ira@sirena.org.uk
-Fixes: 07d7ad46dad4 ("selftests/namespaces: test for efault")
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/namespaces/listns_efault_test.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/tools/testing/selftests/namespaces/listns_efault_test.c b/tools/testing/selftests/namespaces/listns_efault_test.c
-index c7ed4023d7a8..b570746e917c 100644
---- a/tools/testing/selftests/namespaces/listns_efault_test.c
-+++ b/tools/testing/selftests/namespaces/listns_efault_test.c
-@@ -19,7 +19,6 @@
- #include <sys/wait.h>
- #include <unistd.h>
- #include "../kselftest_harness.h"
--#include "../filesystems/utils.h"
- #include "../pidfd/pidfd.h"
- #include "wrappers.h"
- 
--- 
-2.47.3
-
-
---u72fpjal2tpzleo4--
+--V1UbsR15s1Fhf5xD--
