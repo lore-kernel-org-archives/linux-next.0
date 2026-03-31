@@ -1,219 +1,126 @@
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012006.outbound.protection.outlook.com [52.101.43.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C322121E091
-	for <linux-next@vger.kernel.org>; Tue, 31 Mar 2026 02:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774924217; cv=none; b=JHHXH9z9l3loxZ/HSWpPR8KlfKolcH4gTV7KFqM5GRh14EFWANFBuUn563DLPFvg4QD8F6U2FN3S1Wn0m+T8yvpWc1AuHpe/lzhx+kIaN0jJYnau63f8Km5U0rFNclJRh4zqpjsSN/tWy7v0xC3yffFAihabpkcODe8A4hGjrms=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774924217; c=relaxed/simple;
-	bh=vl5pwS+aFi37/thT0mK0B+1NOnhWQ8USaYridJfucUU=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=gZOTBMMOsDgCZbyKz6DMEqifEIma1v83qjKO0Wa+/0xydAhU2gmS6JStklXlYUsf5+WWbz0JYOEds/HHjqbyglaM/iYHih+Xwl5HFs2MIth/5BXedtflkfv87Z/64B/nQ1C5og47EM96/oCyRYuXRhV69mQE7u+fma0jB0xZTmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=zYFUt5xc; arc=none smtp.client-ip=74.125.82.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B7B3630B5;
+	Tue, 31 Mar 2026 04:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774933190; cv=fail; b=ivcwe17/FD/5g6Ecg0thRaGRhmyzjPN/YZVu51YPFegMebyPXcErncDlT6hspyhbOuLZBPxIu02rjMhAq8ez93sOsAZC04Du4v5qFlTvWaNuyNRBvMr8muS3lbC5tepTFKaebVPE5jfo9Vit9gztn1XT28FRbNa6ihljtNTa+Zs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774933190; c=relaxed/simple;
+	bh=uJJcD7QWNCem7hWFkfg+2H4WCYnSM48MpgB++T0pS40=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOCsZgYI8UQv1tpkGLs9XnBOCeicwK1Iek++2PdFktl1ytHvufbzbdxR259YIvUmZ/UQWjrjqVmMXcGMpelD5BYbltqcvELdAHnmbRus4Bt/M9P2lJgVyM3KZDT3/dZx18mVtXzQ1xqI1XwmOdQigNs2gJ55tSjUqBGUdBpNU0o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=STeBwHq2; arc=fail smtp.client-ip=52.101.43.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="zYFUt5xc"
-Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-128b9b7e3edso208614c88.0
-        for <linux-next@vger.kernel.org>; Mon, 30 Mar 2026 19:30:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1774924215; x=1775529015; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJ3Xuxsut09k5cZLaRh1MAn/ilcZcdD+3/vbDu2zjtk=;
-        b=zYFUt5xc2YiM9SNuKI9EoDp+3LqMgjOzfQ6bJen2JoqFd/wPjzVuQuKaFix0Dg+bFY
-         SMvGA2OERU2kbUSYfAvtut/Z7EevOI2Avj4vkHRDvJgIeVEotXFdNFDMUEs3/tOjl/Mv
-         iae26anuSG1QaKYrolkBWLNq6SmKVBPG0I54eyvvoa0AEJQnzUe5SWpSky/Rk+TlmQXD
-         qvlpZG6vzH+06erGPU/VcttabKkpUavCwJJX9VtLAnjQOVrTfRe0lbgD+OJtPjX4BQg1
-         3Se4cUWJRmkxu8f72HILyZ+IaYz2UUXQ1pXOriQ3I5Wxv6GA4zfn4q8HF4WcDpqsFu37
-         t+Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774924215; x=1775529015;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GJ3Xuxsut09k5cZLaRh1MAn/ilcZcdD+3/vbDu2zjtk=;
-        b=S6+86T0db9EjcXe5eBY9+0yOpdwz2mzRkRg1hPbFjnOmTYnDei3Wc91mE+q+fvnDSP
-         s7/CHI6sbMEsC5B3LgaYkh3OR0dQwdXMxkYxUaNyvyopinAT8CbRr+hAQBiG5ahWPKYD
-         DGI/vnYVRiS5I+hDbuDzm42DNWafM8wRGJ5DGxk7wSRAVHPGnNFWM41w/CRwzuMayYPZ
-         AHnL+PVgRMXhCMNIhaILeY/bJFqjJ9/Go0sApbXhN4fGAL7MWX3o81NfT29XFkOlXzya
-         n5p4tssKkeA44tw7ZembI2mafxkneFJnAHYdcF8WDEYsv57uYV77VVnqdszBNg7zvHIa
-         A5gg==
-X-Gm-Message-State: AOJu0YxpaLSOe4AJ5voTk/7dgOX3nDLvpXwpWk6OXLy1OEIxq+68QCrM
-	DhDybVmVSSQV4OYerzKWndiFy85ak7S52yql9+mD8SFd5DpLQEoA2PgooPjrIbx5Tzl2oNY5HQU
-	keWpA
-X-Gm-Gg: ATEYQzwVcZ20nq71Db9SNAy5rX6/RhPqBsQOBCtsPe9p4lGlMb+kGiEiz7vJCnAyH31
-	DSqUtrHS5ZZ5A1xb5Us364RPVnMH8QXVYTmKvIEHDQ3zuZPnYYCDapK7F200Bp7o3y0tokHmYF7
-	XqT2fWnNiWy9T0dvmG+BCLahLAHgIkjwwlU8Zjwbr9yoNMf122bxMxXMyLqR4WwGsYrtHiBGK7L
-	O074n4cU7w7HWwuARX423ZTZRHfZQfsbXtyz8AdOpGUeRFi+xZAxMs3wGiK+PcCmk2OAVWgYKbp
-	y0b+7HPb7grYW+vY9OXvvd+s/O3oI74wdhUKyNur3fujZdoTArqkoLSwZxpqV2uUXogMph/8G1x
-	4/gK0eYvIwnYEsCV0qWIMFGkAqVbXbOUibQy8yVpI824exVgR6zoZ6DyOf9z72f7oZyEpfSJlBU
-	Cm9oeC75tPpt0iQ1dm
-X-Received: by 2002:a05:7022:f102:b0:11d:fd26:234e with SMTP id a92af1059eb24-12ab28cdebbmr8781415c88.16.1774924214488;
-        Mon, 30 Mar 2026 19:30:14 -0700 (PDT)
-Received: from 984b78e0ad75 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12aba581027sm13921491c88.4.2026.03.30.19.30.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 19:30:13 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="STeBwHq2"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EZvSwox3qzbYRIjClN3y5wxzy06Eo7Ybm3hNtaFKh3bKRZ7kuoJ0t+3cx8txa5jQ9tGlyzkkP+EdeRuN0gsChBbdm1oNUOmgrcchABtXRqthNCynz3FQA6M/VFvIvYgzintf7dAXpAkZuDo0ggdoP8kzpA6N8rRJJ4vN3aIeNk++0WHKr7FncXPQa94NO3ZWUFwSLS1n1IZzwpheoS3BbFZi4FAGr+4jsHaymTeXTSIVPLgBV1yN5F+K2wVcfeLuudEa0l3gd0f9JGB+n2i+ypGffgM0hQSn7Av04tTeRMVcoDvzJM35HrM86EgNXfnQb1uFuVrRQk+sldU7Td7G/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ee+lP6GBzeFD8HYRZe76HksWXVWBltH0ATXEjuy+eHQ=;
+ b=lMIRiAmYrHtMHJIAmAe9n06Ld0abIvm7VKIz+kcLomYeyI+NHUuKSTt0ooKROccwgXCFMXXPGGmuYFmEQw94eDO3uD2e3XnMWcxByPI1EogRIgARD6r7ZtVIPxMJggMx6ewLoo32QjZXYJRuPVhRtcLZpmvT13YMsU5m3EI2GZWfSeZcFcZelzCx+P8DQm7mBQu+m9Ao5/i82CgYgfUo9L6G6clhRyok4XUpOSXQYGMwXR8+yGaysrpJnjtYiVwdlj/VAS6fMhlN6PLdqqcBqRf9PONIBfCYhtpZYtMXOV3tSomP8XuKMhdKKhMO3fw1OqPXINBbZtWcIh4k9AXhfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ee+lP6GBzeFD8HYRZe76HksWXVWBltH0ATXEjuy+eHQ=;
+ b=STeBwHq2WB3DMP/dh69rP4rPGQ7g5yTWnguuscNa3hC8/f5kjVcwdJ34cf4FmS+1wcZpcKXlxD00W/FYmpmZYtN7rHw6plw88J/ZpdDyzr6pkhCSFojBHAF1XBka5UMxr5Tv4g87QMiWw/uT3JJrML7BpDUoWK2LDIekBbawQm+9Bk4oBul0pna0/9dlmWtbLwOl5AHUR1fZA7l38qHxQNnIKuRi5n4PEbxmyTp7cWeBXVA+wap5PD8UuGcPreT5QSfCPhm9p3ENIxfPv+oxBmF7mrvM66ZST+JJb5idwPjfW34oEMhLlqoTCsFbTW/L4JhS6FwrQMVZINiKMzje1A==
+Received: from BN9PR03CA0084.namprd03.prod.outlook.com (2603:10b6:408:fc::29)
+ by SN7PR12MB6981.namprd12.prod.outlook.com (2603:10b6:806:263::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.15; Tue, 31 Mar
+ 2026 04:59:44 +0000
+Received: from BN1PEPF00004687.namprd05.prod.outlook.com
+ (2603:10b6:408:fc:cafe::ea) by BN9PR03CA0084.outlook.office365.com
+ (2603:10b6:408:fc::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.28 via Frontend Transport; Tue,
+ 31 Mar 2026 04:59:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00004687.mail.protection.outlook.com (10.167.243.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.21 via Frontend Transport; Tue, 31 Mar 2026 04:59:44 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 30 Mar
+ 2026 21:59:35 -0700
+Received: from localhost (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 30 Mar
+ 2026 21:59:34 -0700
+Date: Tue, 31 Mar 2026 07:59:29 +0300
+From: Leon Romanovsky <leonro@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Jason Gunthorpe <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<linux-next@vger.kernel.org>
+Subject: Re: Missing signoff in the rdma tree
+Message-ID: <20260331045929.GX814676@unreal>
+References: <acE_P6P7vp0LmTHT@sirena.org.uk>
+ <999d3ed6-bab5-453a-aeae-d33b1a958d32@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - cf7c3c02fdd0dfccf4d6611714273dcb538af2cb
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 31 Mar 2026 02:30:13 -0000
-Message-ID: <177492421323.345.6003596771436215612@984b78e0ad75>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <999d3ed6-bab5-453a-aeae-d33b1a958d32@sirena.org.uk>
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004687:EE_|SN7PR12MB6981:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0528c750-dd8f-478f-a855-08de8ee2532e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|1800799024|376014|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	ltJlvLR8Hai3hX2u9b/rrvLgu2eZEFmK/GeNbmhWMcP9JXp7b+W6J5oP6wPXOIxi7QOxZTNcGJ0W31OmbFpktZJwszv5mqPw9oXY/ScXtdL8TlO7A9G0fO5yAct/+wY7UAB2hzKi+/MuS7zOLKPXACY5re3mDFwewYm9SFHdUajosEYQDPhWRtPdB9b3zQnhIdXO29TZafLeo2yJoK0v8n47o2aCausEmL/U8XwzJLvdr2AnPOCTikZpM7VOBjutsjnvyqx6u283IIGHjg5RGKD0BMdT7OGcBWbY5nRK5mrG1sWd01tTaIay3CbfYZ/mBu/U4yDYEAoTH1t4UsiW6If+PsXjHxS/UujhWtBK5Qgoc+/VLf6AHSO6U+vllEs8vOBrC2nSbgMaIbQIiC/DdeA7Dk9o3Qe7TVAMBYj2DYvH+5E37COMaAA1yS2KS31wGRoO2FgJVacnE31N8ThK6LdQW7L2DpoNZpzeWYrC8paKzHipvorFCPXOdRpG4W7n3/d3/xaghJvFYoZrIjVecaE1Iz3k8f0pH2UAha1FvC8xQOMk7J147EHZSt/e3kWyR+LMLkoS1NHcnfAhtKi2Wa54cBXoKVI+1PofEUWtehqSvmZRiqHRzSvHug67M+xG5JaI8sIdzXIQr34JUP0md/RgwOjFdUm/YVTbiQozIAo1eKtceRN/+md5dcIR2a8r3fI+L+XtDUns3nTtSUmDwy9BNiLVtxKhg1nYGaRi32U93zE6myLKNRg73IOQ1GyDVB/ovf5OaW4Q4liDZ5tdDw==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(1800799024)(376014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	U9EGWO0eHKHmIhCZe7cG2zIUk+Rve7xTKfRpTDEANNTBnS8CAsFpRPwRenGuwgZdI6iZltyzFwXvLo7wnpqXOIyqKiuMAffCC6dwZ9SXRMG0aUVkA5dNbgkTw4cdrvgLfI8hyMYdfIbF6d3gmH6DPZpBa1089YL//S0TQhWamTtBOrwEN93xRat3GjrX1nCIAUCEgGx+tm3myhs25E74y4ZF41EvnMfy885Jn8AUeh4dDp4GBqSEYE0diFhvVzurjUBO/eoNuki99+svP1fNjw7Bydh3sTHYm5r5t77covzlZGnxIvd7Q5UryfjFj0mzP/5ZPoam+Lc9L+JUGjmAYus9xwSIkrIiUZ1uhh5//tjXmArlxHCZ/eteKS+WLvOcccWvohKn4Aj4BraIf1mkPZn/blAKLAOcmW9JSXR8Q7LB7jmxjtnwidELELdTLaO7
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2026 04:59:44.0745
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0528c750-dd8f-478f-a855-08de8ee2532e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004687.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6981
 
+On Mon, Mar 30, 2026 at 11:10:59PM +0100, Mark Brown wrote:
+> On Mon, Mar 23, 2026 at 01:25:19PM +0000, Mark Brown wrote:
+> > Commits
+> > 
+> >   c50be61e277e1 ("RDMA/irdma: Add support for GEN4 hardware")
+> >   333ad1665dbc4 ("RDMA/irdma: Provide scratch buffers to firmware for internal use")
+> > 
+> > are missing a Signed-off-by from their committers
+> 
+> This issue is still present today.
 
+I fixed it,
 
+dfd4d5a38e653 RDMA/irdma: Add support for GEN4 hardware
+4ae130ccec08d RDMA/irdma: Provide scratch buffers to firmware for internal use
 
-
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/cf7c3c02fdd0dfccf4d6611714273dcb538af2cb/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: cf7c3c02fdd0dfccf4d6611714273dcb538af2cb
-origin: maestro
-test start time: 2026-03-30 20:56:35.827000+00:00
-
-Builds:	   57 ✅    0 ❌    0 ⚠️
-Boots: 	   98 ✅   89 ❌    0 ⚠️
-Tests: 	11899 ✅ 3374 ❌ 4256 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: qcs9100-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.cpufreq
-      last run: https://d.kernelci.org/test/maestro:69caf0cadcae953c05650e25
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.cpufreq.cpufreq_main_sh
-      last run: https://d.kernelci.org/test/maestro:69caf61cdcae953c056555cc
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_utimer-test
-      last run: https://d.kernelci.org/test/maestro:69cb0607dcae953c0565db93
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: imx8mp-verdin-nonwifi-dahlia
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_utimer-test
-      last run: https://d.kernelci.org/test/maestro:69caf25ddcae953c05652a3d
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: meson-gxl-s905x-libretech-cc
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_utimer-test
-      last run: https://d.kernelci.org/test/maestro:69caf222dcae953c056528af
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: sun50i-a64-pine64-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_utimer-test
-      last run: https://d.kernelci.org/test/maestro:69caf39cdcae953c0565458f
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: sun50i-h5-libretech-all-h3-cc
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa
-      last run: https://d.kernelci.org/test/maestro:69caf0f9dcae953c05650f16
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_utimer-test
-      last run: https://d.kernelci.org/test/maestro:69caf1ffdcae953c05652777
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_17030000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652342
-      history:  > ❌  > ✅  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: acer-R721T-grunt
-  > Config: defconfig+preempt_rt+x86-board
-    - Architecture/compiler: x86_64/gcc-14
-      - rt-tests.pi-params
-      last run: https://d.kernelci.org/test/maestro:69cae91fdcae953c0564d587
-      history:  > ⚠️  > ✅  > ⚠️  > ✅  > ✅  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652359
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dsi_14014000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652356
-      history:  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c0565234e
-      history:  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c0565234d
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652331
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652330
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c0565232f
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652324
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
-      last run: https://d.kernelci.org/test/maestro:69caf1cfdcae953c05652323
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Thanks
