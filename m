@@ -1,39 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAEE1C84BB;
-	Wed,  1 Apr 2026 14:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B3678F2B;
+	Wed,  1 Apr 2026 15:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775052462; cv=none; b=SCMFhULGWMMMYfpAHUo6Lh55hxcN6XOsjG/A0Q3m4SUZTvAsgmBTljvARO3AjVi3TwdHGNASKnkxl3WeA29Gw74/u/WRGiLt0nziF8B6PTSXo5NxdVmR2CZO3S/Wm8KXwGtcI+z6+/1/BqpPkKADaK8WLMbra9v0MhRD1XVk3so=
+	t=1775056173; cv=none; b=Bc0N4BIyuxOd93CqmiKIyDEHiE0xPsCXf2YpUP8rDyK1w/ILEMJIdMBR1zWqzjzG5eFTnW+Uiaj4Ceqd2n1kEakLMDcsUq2AmRUzb0tPWOW2n7UYVqVuQRwWUuQrPaBujGIKEX4w0sLnpvz92SQirUQtszFojGT/WNjmTzdqXN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775052462; c=relaxed/simple;
-	bh=ikhatxBZq6Z/B6o3ja7E6A6ZANNgbjK65FC2T4FOwzg=;
+	s=arc-20240116; t=1775056173; c=relaxed/simple;
+	bh=wGmWDEbWGJZhllc3xqORcl9zu/tLiAWGapMJ/Z511wI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hxp9hLK4dkTtXpTAwu45DXnMI7+qi7po4d48KFYvmICERe3BG/Ga/k6WH4JT0GnIYZfn8YDwe+hET0Mlu7ScNP1bytbOzpie1jh7Sc9fVFn27RjlCDjNHxFRDqZlamSPEyQ4yaXBXPBBY22XUf8bg4uwxHDinIvc0cK+MafsqFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQHHtQgH; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=sq7AQFvh1O+gkDAAINNysIGWxlgaVwRT8oVD0mABa+Hob/OpG9SrMn0mTY53ku1zN3vxxp94Ke47RqtdPQMvnuDA42aYSiljFPmLluxQaZvGihx+G3JoBPeFknCgfxLeP/9L8k5LeVRDyCE1WPciBNTzRk8qEVSoMgqyYzLvfMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBqujZoM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQHHtQgH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126C4C4CEF7;
-	Wed,  1 Apr 2026 14:07:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBqujZoM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16173C4CEF7;
+	Wed,  1 Apr 2026 15:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775052462;
-	bh=ikhatxBZq6Z/B6o3ja7E6A6ZANNgbjK65FC2T4FOwzg=;
+	s=k20201202; t=1775056172;
+	bh=wGmWDEbWGJZhllc3xqORcl9zu/tLiAWGapMJ/Z511wI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=NQHHtQgHl2dmAlkUEjWMLFrcNc7vqABpio635HUCYNxiBwNH5+KkvixBT783hfUMB
-	 pF6xPFgh4LogQ53iWKau/Cy3qYJSQI62a7nbqBEWU/0lxEhxFpX4QxlE5ReRVG7ApR
-	 lpevcob394PAvEMQwUN+4HVmaMrygWhi8Ohk14Ol/+C1Ftu3PEDHbuR+IzGgrFBYdO
-	 4yJBrdQfDQAp4CzcHahU9XPZR0Ecr6XJWUi+RvoEIg0WPuFPDsFIdkMrjE3tdadRjl
-	 khV9/UYDyLqtNrqOdA6LXBrf/1IHpG57F2Ell1J1CN0kfuv7vAdWQMes3Jt91I+wU/
-	 D7WHVxCDlrZ8A==
-Date: Wed, 1 Apr 2026 15:07:38 +0100
+	b=TBqujZoMC+RyUfbZIvqcwWZg+BkENth8sjNXQnrHQU6yjPzu8XgcWESZpbpi1Drdu
+	 fErkv4MADWw+jekCiKWX8OQtw4rYhQ+g2etjGgKhnOaTre3FdWjldcB1uormKUXQGR
+	 vrErRVzFID70ewlHy5IV3tl96BVUQB54BUxAHvfrsbjhWnHj82ctfpbSqpzo70k7Xp
+	 K3TjA08FRXkdstd+Peb6RlDU2Ul5dQDxzUBEnN/u2EXINfX+V13KUBtPoKuSqMD1gC
+	 Evj9gpc+kUmjp6nS40M68KtD4kFx69Qu+b1pE0qUic/hzbfkaUyBBblPd9lEvG+vwJ
+	 8XU4DUFiBs//g==
+Date: Wed, 1 Apr 2026 16:09:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Muchun Song <songmuchun@bytedance.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure in final build
-Message-ID: <ac0mqrDGf_pvx4jb@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Apr 1
+Message-ID: <ac01KcHzDErLkPHl@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,76 +39,74 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mHSO47euoKjOdQ2p"
+	protocol="application/pgp-signature"; boundary="CPM6N+dHpD2K+VF7"
 Content-Disposition: inline
 
 
---mHSO47euoKjOdQ2p
+--CPM6N+dHpD2K+VF7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-During the final build, today's linux-next build (sparc64 defconfig)
-failed like this:
+Changes since 20260331:
 
-In file included from <command-line>:
-In function 'sparse_init_one_section',
-    inlined from 'sparse_init_early_section' at /tmp/next/build/mm/sparse.c=
-:323:2:
-/tmp/next/build/include/linux/compiler_types.h:699:45: error: call to '__co=
-mpiletime_assert_420' declared with attribute error: BUILD_BUG_ON failed: S=
-ECTION_MAP_LAST_BIT > min(PFN_SECTION_SHIFT + __ffs(sizeof(struct page)), P=
-AGE_SHIFT)
-  699 |         _compiletime_assert(condition, msg, __compiletime_assert_, =
-__COUNTER__)
-      |                                             ^
-/tmp/next/build/include/linux/compiler_types.h:680:25: note: in definition =
-of macro '__compiletime_assert'
-  680 |                         prefix ## suffix();                        =
-     \
-      |                         ^~~~~~
-/tmp/next/build/include/linux/compiler_types.h:699:9: note: in expansion of=
- macro '_compiletime_assert'
-  699 |         _compiletime_assert(condition, msg, __compiletime_assert_, =
-__COUNTER__)
-      |         ^~~~~~~~~~~~~~~~~~~
-/tmp/next/build/include/linux/build_bug.h:40:37: note: in expansion of macr=
-o 'compiletime_assert'
-   40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ^~~~~~~~~~~~~~~~~~
-/tmp/next/build/include/linux/build_bug.h:51:9: note: in expansion of macro=
- 'BUILD_BUG_ON_MSG'
-   51 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condit=
-ion)
-      |         ^~~~~~~~~~~~~~~~
-/tmp/next/build/mm/internal.h:975:9: note: in expansion of macro 'BUILD_BUG=
-_ON'
-  975 |         BUILD_BUG_ON(SECTION_MAP_LAST_BIT > min(PFN_SECTION_SHIFT +=
- __ffs(sizeof(struct page)),
-      |         ^~~~~~~~~~~~
+The bpf-next tree acquired a conflict with the bpf tree.
 
-Caused by commit
+The usb tree acquired a conflict with the battery tree.
 
-   28208ad9dae4d (mm/sparse: fix BUILD_BUG_ON check for section map alignme=
-nt)
+The cxl tree acquired a conflict with the nvdimm tree.
 
-=66rom the mm-unstable tree.  I have reverted that commit for today.
+The mm-unstable tree introduced a build failure in the final build for
+which I applied a revert.
 
---mHSO47euoKjOdQ2p
+Non-merge commits (relative to Linus' tree): 10090
+ 9631 files changed, 581498 insertions(+), 187717 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 413 trees (counting Linus' and 125 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--CPM6N+dHpD2K+VF7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnNJqkACgkQJNaLcl1U
-h9Avbwf9FzmaxTUBdg2HHT8iIKqOmNOlnPlwdGDa4quUjbPShtHfBAPCAdzMj9Pt
-GGWZX5PbcB58tuFMgi6zWKiuG213OWXHTzusM4pCGXUJUqGN/lTlbEBBHG85ff90
-wDOymRLY7xzLqhKPemr5hwZuc6qJuwHol6pc0gqr1T0FqPAtN/JzTjeFZb730Cgp
-/Hcg79qVJ4H24jpZ5DLxYi2Ixxv+XlbP4jhre9C60FSmQYbm97RUza4bd0toJjhW
-+CmRoiEfeX1J7mfne0jL9uoJMT8sXgw9cVyZTi2RsE+Jysy1vhfbSwDV3oybeCgX
-fnEN7wO8GfQGDeTD1Jzggut6O4XEfw==
-=wGDZ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnNNSgACgkQJNaLcl1U
+h9A3sAf+MD/MCSXIz3owdN9H78RIkwtRo4AyJPM5sMnJxWUT+S/w11gXawO+mcLi
+SwDkpVISIu7wfZGPPEQLa2vnJc4VepwEBgKCB0yjF9mQidKGw5tnBpI40bIHrH5q
+jykZCf/cPtb0xN84wp2WIdVXXDYvcgFJCR4RUBZ67vV3X3SI+gj1CoO2DoH2NEbe
+HWoo6df/rVF8ufaASaFWMo7y5tlErpQl408LFN81yZiWB+m7UW+Svfx0bETWKx9f
+qlUZWjltxPSy0+X5yAADz6NGai24mfz28ns+Tm8UYD0vWnLNTC2+c+Ofwf0dJOog
+rZDYJYuJv7Jqk4Z7HZBzbO8xFwkXFg==
+=w9IA
 -----END PGP SIGNATURE-----
 
---mHSO47euoKjOdQ2p--
+--CPM6N+dHpD2K+VF7--
