@@ -1,88 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9A53F54C5;
-	Wed,  1 Apr 2026 10:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9378CC2FD;
+	Wed,  1 Apr 2026 11:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775040931; cv=none; b=jbAOoYDYQNfZmF9ZcPXCLfa7YOMCk3g79NPabsLGePeXhd6ZtYj+uDFZ6erZjCXOZR6wosDeeUM7oDIAVd0IOysszAIm8nJIHvCe6HXLL1aN/z5SiyZFoDXhRTUEr76y0hl6Qd3qdl1Rvj3qpaBxnF3cnmRwYTZiYbZeOrdSOKM=
+	t=1775041266; cv=none; b=mZdSUtN4yjFcVvzfAmezZHDZ3tIzsxwWbdp9VLm7aNSPG3ujNLKOfhxcLVfJ63PHRvlOKecwDd7r41GfSH9zFZsHpb7AtUZQ5WviQ5k7N0nmsRpLfCJZ1gBJtfXPQ6AjbZijDMszbB9l6koGvfh151Y7RCr7PfJDt3LByQobo2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775040931; c=relaxed/simple;
-	bh=LcghJW1keJKwCb4+7wFVgZDpjCPdIVTya5C1BV9YgC0=;
+	s=arc-20240116; t=1775041266; c=relaxed/simple;
+	bh=0CDOI2eJCoNEnbrA0KkK7IgYz3OYddwXFGRDwAvNIq8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLS0zxHYdyrcp6LtFOT+ysDWH7WSBracpQkiN7wdOfGZ90PBMdVKm8Ng4hFJFjBn3eJeychDBN8qudzzQK/0NC34sZvMnRoYxkDSpm3TJcoiMcsFhuXDjPn1FGiB5Qkbbfl01+vFnpW0XR6Hh14RBphCXXwY6Muj6Xd6SnsWAis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FvHNRMPS; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=bNirO3K0mLJXd0PW7ZoXH7vR8FM6nfLFS8lgD017XjgSeJ+o1/tdP0JZI+HC/TxRBqm1IBNWYUblblEBPh0b4d2BrjZY7UgAsR8WOuHZWc3eKSyBU/js+rFLam/bc3Aq+LzqJ5xBPhlwZByxJ1VpKlt3z80GfOl1Gipp7z8yh5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=RqXk2gRv; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvHNRMPS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97635C2BC9E;
-	Wed,  1 Apr 2026 10:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775040930;
-	bh=LcghJW1keJKwCb4+7wFVgZDpjCPdIVTya5C1BV9YgC0=;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="RqXk2gRv"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C9771692;
+	Wed,  1 Apr 2026 04:00:59 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D63A63F915;
+	Wed,  1 Apr 2026 04:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1775041265; bh=0CDOI2eJCoNEnbrA0KkK7IgYz3OYddwXFGRDwAvNIq8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FvHNRMPSsGKTr1ZUdyhR2ojXVFj56MhN8CiMvqfXxIiUkKXbYcUZI0doaNxbskscs
-	 zSGJPAX1kEiy86pL5iWbJjGpqOUTKaceLSgMiWDoOnx6Sk8SgMhihwX8vhEkui8kXv
-	 CH8UDy8tXrLfhPE66rck0jvsrPEgmWWvZZ2uB+a+kJ/65qge7X2996PMXNQL/WwBPq
-	 O3rHaKnzJZsV34P/vFSkIRMU7XxmqYuRA8jQZs2NRJjicTxopTbRJfrqbqvWYVjwn6
-	 htIj0p1GNbHgFnFt3qY6XIFDG2jzGJsp1qlWNxh1ytcQZtNue5yZF1DfhQgZBI/5iM
-	 y/TL0Lgmdoktg==
-Date: Wed, 1 Apr 2026 11:55:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <e3f3d679-61a8-4a2c-92ea-e93fff846938@sirena.org.uk>
-References: <acPV19IY3Gna6Ira@sirena.org.uk>
- <20260326-gefeiert-beschaffen-edf852a3aa71@brauner>
- <acbDBxR6tgO6WzCB@sirena.co.uk>
- <bdfb46ce-1585-4c42-af55-a2202aa4ee9c@sirena.org.uk>
- <20260331-mondphase-schwalben-72b291049031@brauner>
+	b=RqXk2gRvHzPhXCFfzL+5VvuZAH/pEtHdAVcJGM5ZjhTzl+ukkuoKD+FUZzOZZZPlY
+	 /G5Z74iz2WW9WCH5+XZfiILLVTxVcVfhTdVDVG6T7U+dcGtKmXEn1aeqZSCD8a+ZbR
+	 bU1Pnmj0BHDUxKodujYt3fwdvlrxL5QBJf/7C3hk=
+Date: Wed, 1 Apr 2026 12:01:00 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+	Zenghui Yu <zenghui.yu@linux.dev>
+Subject: Re: linux-next: manual merge of the arm64 tree with the kvm-arm tree
+Message-ID: <acz67AZyiMZHyPKr@arm.com>
+References: <acbQKqGV50jNaDBU@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Rwf37Ujo+MirfZdk"
-Content-Disposition: inline
-In-Reply-To: <20260331-mondphase-schwalben-72b291049031@brauner>
-X-Cookie: "Yo baby yo baby yo."
-
-
---Rwf37Ujo+MirfZdk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <acbQKqGV50jNaDBU@sirena.co.uk>
 
-On Tue, Mar 31, 2026 at 11:21:38AM +0200, Christian Brauner wrote:
+On Fri, Mar 27, 2026 at 06:44:58PM +0000, Mark Brown wrote:
+> diff --cc arch/arm64/kvm/at.c
+> index a024d9a770dc74,1adf88a5732840..00000000000000
+> --- a/arch/arm64/kvm/at.c
+> +++ b/arch/arm64/kvm/at.c
+> @@@ -1753,8 -1785,10 +1783,10 @@@ int __kvm_at_swap_desc(struct kvm *kvm
+>   	if (!writable)
+>   		return -EPERM;
+>   
+>  -	ptep = (u64 __user *)hva + offset;
+>  +	ptep = (void __user *)hva + offset;
+> - 	if (cpus_have_final_cap(ARM64_HAS_LSE_ATOMICS))
+> + 	if (cpus_have_final_cap(ARM64_HAS_LSUI))
+> + 		r = __lsui_swap_desc(ptep, old, new);
+> + 	else if (cpus_have_final_cap(ARM64_HAS_LSE_ATOMICS))
+>   		r = __lse_swap_desc(ptep, old, new);
+>   	else
+>   		r = __llsc_swap_desc(ptep, old, new);
 
-> Sorry, this was _yet_ another callsite that completely duplicates
-> wait_for_pid() for whatever reason. The following patch should fix it.
-> I'm adding this to vfs-7.1.mount today.
+It looks fine. Thanks Mark.
 
-I'm not seeing that patch yet so the issue still remains, the current
-vfs-brauner tree I have is
-
-84f524dca4b8bc9e9aca8ea1dbbd2aa3a239d998 Merge branch 'namespaces-7.1.misc'=
- into vfs.all
-
-=66rom Thu Mar 26 17:02:16 2026 +0100 - did you forget to push?
-
---Rwf37Ujo+MirfZdk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnM+Z4ACgkQJNaLcl1U
-h9Cfnwf+L3iBWcOinh55vEIeRflX/YeHQm8vIsTMO8GhhIKd+JBxTVRKUdqtCe81
-UoLMgFGLIvuf0jeL/N5b3HRPKWsxI4yVOqhCwOiD2awYIRf9emBmin5UhgO6hXpo
-8YARkaF4uA7m43qm2sLadbYGua3s75brZShW/k1D7BwAzRmMx/RbPaEYrlg1tE01
-HX08C8pHdY4cvfS0FDycJCoWf5jnaqCDgHYtPcRwX3Znkx4cq5I597tQqRPCxm/l
-JdGRcj5Fb/L6da6tzg9KzL/IqYYZarTD6TrfNPNZdg6XU1EAV+iFpen3j2hrN7PB
-06MkYXiRu0s1znoxkOCWb5ZGxPXVIg==
-=Z2RF
------END PGP SIGNATURE-----
-
---Rwf37Ujo+MirfZdk--
+-- 
+Catalin
