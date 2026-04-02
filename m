@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F5C26E711;
-	Thu,  2 Apr 2026 11:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A52932C94B;
+	Thu,  2 Apr 2026 11:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775129695; cv=none; b=OaYsSrPDVJtTTXBgjEJeAWoDzyGhaCCRlX9QWDQno4hVsVpARaMqjK5LpPve6uo6gtH704VMyM2r72z9x9bHQc400E2CF5PpweAInmfpw4fHyhk41aND1qWV2bn4+ssFL0BlRIul+zr8wqKflFQ+K+9l1c/NgdL6jagixTuae5M=
+	t=1775129703; cv=none; b=duzEpSixzoWOvLzZKbGfIQqI5RpdlsSmy8dnrVZmL+v7b5log7CJ9/VubNvMy6G6qldVeeZvUsjW1YFh7//acsVvUyWxFr4mg3C6qBt0jQnHRpuKnZ7UBjNPDp6uSfe3spECfJWsQH7Cn1rboAr6JYDnHUyz7368hLrUa/JNX5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775129695; c=relaxed/simple;
-	bh=a6W4jON4rxT2DeuaEK/64b23bT0IGYA72RXps1TG1sI=;
+	s=arc-20240116; t=1775129703; c=relaxed/simple;
+	bh=BNK/HQM4cIneCDWMrxLAhSb7FcqkdYiudT1PxFKpFIo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AQVwRcJUuW6YViQe2cjm6x6OZi8mG+btaAexQnC0H/8+1jHxo4ve+cjnd7pe7Y94p8CjKEaIA40c/LCFbx+gljEhzbgG6b55BwcRjW7yNTrZ9+5F2qZOP/Svn5sMzzsrB8c5pp+jm+VpS3NQDyAErA+d2dwNNPFrn0rQAq/xbQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHP85khc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=JSSw/pwao6hz9K14SWAWhMIG8jeBtD6GOoIKnpk3Uk7R44li4dAcoQhazlBNgv3g751vd+//U/0pTB89p5s0D1yuiJtZbbxbyMi3AE/3OekC8y1zZ2jxrJSQ810PBisfGJXUU+RwCdi9VzbpiJlqLSn2Q/vUZCoMp1YeYsIBc+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXZA+Rjp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHP85khc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1430C19423;
-	Thu,  2 Apr 2026 11:34:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXZA+Rjp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5EAC116C6;
+	Thu,  2 Apr 2026 11:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775129694;
-	bh=a6W4jON4rxT2DeuaEK/64b23bT0IGYA72RXps1TG1sI=;
+	s=k20201202; t=1775129702;
+	bh=BNK/HQM4cIneCDWMrxLAhSb7FcqkdYiudT1PxFKpFIo=;
 	h=Date:From:To:Cc:Subject:From;
-	b=bHP85khceAo7zs0UM3eIW8crcQuJ9XkJuVDo0VZkF803l7CpMNjCs8GaJxzaRpaVx
-	 2Ob3MAtbjJQkX0yOnSVdwYMta3VozecL0BnQmefJ+8MEINxZo9HR+dyntAz5n8xO6j
-	 LOgniqN2OMd6twoPKmbZQPhfv3xyE/V2c+5XOIwZoYLDQ16zwBaP6JeSRDTbGMzY7k
-	 odcHsz7CEVSV5Th2PM48kXOrT+QBHKf5IGnjCRhZeoM6R/Ez6E/BR9fszSu/LbSKBU
-	 1RKOakAOXiSWd054HLo3FdzTpDwH22LJdgfFLvI1XQ+FZNOb+c1GmwMr3j1SLFZmfC
-	 0mvZazL0yPq8A==
-Date: Thu, 2 Apr 2026 12:34:50 +0100
+	b=jXZA+RjpLOKwjGEhg3GRjpklX3JnQXyelHeZoxR5AnNxTSCAUBxX5nRfK0V0wGs1K
+	 5Mtp5XlSgKwm8vSQjhM5tKX9FZCkVjJoBifz+GOZC32/l1Ar80BnrQeN+dRd/tJFf0
+	 eIM0Zqcbyw6C07sHvgxaMNRt+W4lJkWf0YPU60BvIQg1AgwmL9vYCkUGKuBixps+Y2
+	 27KrP/Kj8QXMe3OnO1c61EMwYz45/8J7ccNnr1bk92li6BefAXjktAZZHpUsEx+3dD
+	 44ra9XK6dPHnshZEpU9r1R45aqBU3aJZAa9GABn6Qj8avYowCQWQXVPEV8OIbHz/iH
+	 Lsz86v/w/Xi3g==
+Date: Thu, 2 Apr 2026 12:34:59 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Fixes tags need work in the block tree
-Message-ID: <ac5UWqRPp54d1bM0@sirena.org.uk>
+Message-ID: <ac5UYwbVneKIyfAE@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,17 +39,17 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vU2F3dGTDIWEFgKR"
+	protocol="application/pgp-signature"; boundary="CkYTYd1i+25TxDIM"
 Content-Disposition: inline
 
 
---vU2F3dGTDIWEFgKR
+--CkYTYd1i+25TxDIM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 In commit
 
-  7a9ffcf2cbf88 ("io_uring/zcrx: use dma_len for chunk size calculation")
+  5c34e65e5678f ("io_uring/zcrx: don't clear not allocated niovs")
 
 Fixes tag
 
@@ -61,19 +61,19 @@ has these problem(s):
     Just use
 	git log -1 --format='Fixes: %h ("%s")'
 
---vU2F3dGTDIWEFgKR
+--CkYTYd1i+25TxDIM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnOVFkACgkQJNaLcl1U
-h9DmzAf/R7VEnC4gqC3up/7vJ3hYosY+QH+VL54TGFlAP6tzGeikWji0njFdqBuN
-Xj62weUreo5CLAnF6/RkXRLOUkYj8NAJc3X9FMWpZ9oXn6NuMODYLS+cQrezOXhC
-MqzV5W9yI3w36Zf7PE4daC0edupdHw9lWtSO2pjwAaPbU+I81nIAl5zZVR0u7RHD
-Y0VIFNA7bMWY7LiifyWUFNL+mMtdPhjqmO8S6tQD8uG4rU5G1cA9k9NKI5TrPeKc
-hnv+7C5TLMmah2fI3ewRhBWT2svrxONefvfYFGV8wHtdSPqzSc2fnyJ/ut7bWcMP
-iUobio6ygK8lFuijd2y5H8Z+f0vbbQ==
-=sL2X
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnOVGIACgkQJNaLcl1U
+h9CAuwf+LcOCmYwGc86+SjfgXklwt5Tm1QwqkKdx1RNtrNJjup772cA/6+Eunu/g
+qIkf/eLIXrkI9eErUJHPh0zDTJYtn9mNa6LQg8Gepje1I4acb5DY7cN2xvf/rMFP
+Whrwnj7Dewx/XAJEukVkT1cXAIXVUk4Ibo53JfVF6mzEPBTgI3IT5xN7m4no+tyP
+8hP9o9ettw++O/JKY8udIxYFmut39uJWHU2IbA1/t89v5owqAVC+1LYyBsNEKWYu
+HjbwIN3jno3arkGvR7hXHlAZO4XKtZ+Q8koMJtfSs5RTeWKTXKWqebkGLCD3DrSq
+aNu8GPC/c/SfvxQ3Zs9kyOcMlpKwTQ==
+=EWKt
 -----END PGP SIGNATURE-----
 
---vU2F3dGTDIWEFgKR--
+--CkYTYd1i+25TxDIM--
