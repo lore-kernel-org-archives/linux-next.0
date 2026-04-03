@@ -1,169 +1,100 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8726E3ACA77;
-	Fri,  3 Apr 2026 14:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCE8318EF6;
+	Fri,  3 Apr 2026 14:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775225123; cv=none; b=GW2Z3tmBZZagj/hmq2hrJnGpL+U6ud1389IBEPjbqPkqF608XoFpwz8AcOICrGZdYdmQgmmcWeJ6kAGHxsmKFQG3Dc8DMe5GXkwZKYe0LiGyu8hoaH3zaD/8syqutER6lvsrTQ0TnKxZepMJQv0pqmSabYWiellHbipmFsrl980=
+	t=1775227383; cv=none; b=CHkHvhWOAbj9GfaaZt4e5uxzyF44uXcvsVycffHUeGNhbc3QZhL8IAlbJUQNM+v314eUqzQrMYQKAG7W+Mdyqo8fNRF6zbVAwgV4NrcrXwqiTNUUOjBFfHdVsW7DQivvILX6EU6wvqhj1+Sae1JDgm6gEIFOUmYCN+RaBnjdPzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775225123; c=relaxed/simple;
-	bh=ACyD9VPlxH4DuZr6Xy0SSxZORID6JjdVrt9U7rl1ID4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dRlvA2mtZWctC1iBzFt2/osuhgJBIvA+coDngE+p+ekd+n+NHe1ztmsMTi6shsf8yd4MVqquCqEn27aw69ftkpseDJSaLsTrTAIY4FpmSX4VvXHeG295Fg2EP8BtSkE5vECGJYr7b4OvipOIpPlmc79+24HhC8KixzFKiqYIjeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=T8P+nj2z reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1775227383; c=relaxed/simple;
+	bh=NNeXi8Y4j3OaaEEhCLtpPPABZ7ksrCmCHM6oFxZr7ZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ld5zRcxqyVVxHAjZ4ULiVYIOXd2BeWi0Qm4F5ovnqFQ/krlgmHc3wJg6j4Yk8rvakpcmupBBq5nbojMk0MWW90PT6p1EyQ675cw/f5QphFN8ycFK7KIpE3hJkCCBfNcenbZMgknf9jjZu6tiAWJCeDh+GRg93D+o2e6W2KRoCK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPc5wVSL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="T8P+nj2z"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B94C440E0031;
-	Fri,  3 Apr 2026 14:05:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id AkY9n7tBmiH2; Fri,  3 Apr 2026 14:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1775225115; bh=3LzBlPp578dQdg5dxIS/Ahl9D0iuA9KuJ3bxld0SUkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T8P+nj2zV5MZpoafA7H3AEuEZRNVxK590h0oDNGndJaqm3tvoQtWDqYk2aZxw5L2z
-	 t8+4GqKWqguN5EyIiJPGX9u4Y+A6LtkPxtPVnnr24KfW/ViBQaF/xC0dsqnQccH02g
-	 bUmzmvB5viRmm5ztIPLrtM2RnN74jr/ikCuVqVXlfZLDgMIso1LUMXX0K7d6SY+iBU
-	 b4VIiP3caU0mStR/7W8d8UPieGID+1mnkyWny3wLykRjvLDYQmvDTLYJkVddoMb4fo
-	 Rp/SexBGUKbGP3YqxpBXvIwWhD353BmfaGA7G8OEmdDkFZrYEY7nKKbFwyn5Mb+GWr
-	 rPm19DMNFw9Qy9yTGB5uQn0yFBs8Hc15fASHtKASpw1+56Qd0h3hIlvhRr4txJOnwj
-	 LDGZlsgmJYrv8h+RXlAIDolTqMD54ppsDMNRUQjR+T01KQ3/coY/E+R+/xcv4q8YRG
-	 pxj351To4xQBy8n2NEm3JL8KpY1daSyulnYVGFppn7GsEmpZaUVenTVA8OxNdv4ON4
-	 XCdotH9Ah88PFnzi/EPEvyj4mb/6iL8Bv3nFPA5Pn8BlpGDKtfCh7WQTe+WxjiQn58
-	 00vDg4r1VCFwPGukyP8mjNS3HtihI7aiWnmtNSQqQk7ssAXHjqv9RahCebYo8AmfAw
-	 EtNZqPtD50MEsw5H8lDruDxc=
-Received: from zn.tnic (p5de8e020.dip0.t-ipconnect.de [93.232.224.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 62C9440E00DE;
-	Fri,  3 Apr 2026 14:05:02 +0000 (UTC)
-Date: Fri, 3 Apr 2026 16:05:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-acpi@vger.kernel.org, x86@kernel.org, rafael@kernel.org,
-	qiuxu.zhuo@intel.com, Smita.KoralahalliChannabasappa@amd.com
-Subject: Re: spurious (?) mce Hardware Error messages in v6.19
-Message-ID: <20260403140501.GCac_JDVCaX0eCIDUj@fat_crate.local>
-References: <20250918210005.GA2150610@yaz-khff2.amd.com>
- <67c7de1011ea7b8863051889ee2a41512fb0e044.camel@web.de>
- <20251009132055.GA472268@yaz-khff2.amd.com>
- <21ba47fa8893b33b94370c2a42e5084cf0d2e975.camel@web.de>
- <20260216202546.GA420258@yaz-khff2.amd.com>
- <20260219143345.GA5486@yaz-khff2.amd.com>
- <4e0c5a7ce9f1ab35eaec2c2908df3681ce6eda4d.camel@web.de>
- <8530d765-6676-4ba4-98b5-07326c8dc924@amd.com>
- <290ee50cbe68d246a9899b03d5c7ddebc549f0bf.camel@web.de>
- <20260223214825.GA3130@yaz-khff2.amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPc5wVSL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B77C4CEF7;
+	Fri,  3 Apr 2026 14:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775227382;
+	bh=NNeXi8Y4j3OaaEEhCLtpPPABZ7ksrCmCHM6oFxZr7ZQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XPc5wVSLe2DX/BryhtBCN3l8gxsfcHoFE3DxUhDHtpz5hMLUGGFK51guKmkkSYVQB
+	 B2gkGvsHs2QgFunONZGWk5q4QhstTCvzO7qnHPUitjKy39NeKMBojoTQqakP2tGoev
+	 6JRSDJeJ6K3lUEkdUr7Qrs2E2hsv09rctF69yQiPSkVY+JcMcMJscw0lxqqWMTTlUh
+	 54cp3BAnSxiPSPo7MCRhMnNBkTby+e3oERShOaGFpeS86eeBWGcja/ZtTuUprF1N1K
+	 WvS7PtJu+lA2rH1iTt8gdQDNFcyH2fLcqKcmSRGPA/RBSEAlnDmYExH+VQ+EXY1W7X
+	 ER9zp3KMVNFSg==
+Date: Fri, 3 Apr 2026 15:42:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Christophe Leroy <chleroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Subject: linux-next: manual merge of the tip tree with the powerpc tree
+Message-ID: <ac_R8cR5A-YtcRpi@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cSeJNcjFaJG2ggMQ"
 Content-Disposition: inline
-In-Reply-To: <20260223214825.GA3130@yaz-khff2.amd.com>
+
+
+--cSeJNcjFaJG2ggMQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 23, 2026 at 04:53:16PM -0500, Yazen Ghannam wrote:
-> Thanks Bert for confirming.
->=20
-> I'll send a patch to filter this signature.
+Hi all,
 
-Bert, pls try this:
+Today's linux-next merge of the tip tree got a conflict in:
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-Date: Sat, 28 Feb 2026 09:08:14 -0500
-Subject: [PATCH] x86/mce/amd: Filter bogus hardware errors on Zen3 client=
-s
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+  arch/powerpc/kernel/compat_audit.c
 
-Users have been observing multiple L3 cache deferred errors after recent
-kernel rework of deferred error handling.=C2=B9 =E2=81=B4
+between commit:
 
-The errors are bogus due to inconsistent status values. Also, user verifi=
-ed
-that bogus MCA_DESTAT values are present on the system even with an older
-kernel.=C2=B2
+  f26ad12356a27 ("powerpc/audit: Convert powerpc to AUDIT_ARCH_COMPAT_GENER=
+IC")
 
-The errors seem to be garbage values present in the MCA_DESTAT of some L3
-cache banks. These were implicitly ignored before the recent kernel rewor=
-k
-because these do not generate a deferred error interrupt.
+=66rom the powerpc tree and commit:
 
-A later revision of the rework patch was merged for v6.19. This naturally
-filtered out most of the bogus error logs. However, a few signatures stil=
-l
-remain.=C2=B3
+  9b444349a2e96 ("powerpc/audit: Directly include unistd_32.h from compat_a=
+udit.c")
 
-Minimize the scope of the filter to the reported CPU
-family/model/stepping and only for errors which don't have the Enabled
-bit in the MCi status MSR.
+=66rom the tip tree.
 
-=C2=B9 https://lore.kernel.org/20250915010010.3547-1-spasswolf@web.de
-=C2=B2 https://lore.kernel.org/6e1eda7dd55f6fa30405edf7b0f75695cf55b237.c=
-amel@web.de
-=C2=B3 https://lore.kernel.org/21ba47fa8893b33b94370c2a42e5084cf0d2e975.c=
-amel@web.de
-=E2=81=B4 https://lore.kernel.org/r/CAKFB093B2k3sKsGJ_QNX1jVQsaXVFyy=3DwN=
-wpzCGLOXa_vSDwXw@mail.gmail.com
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-  [ bp: Generalize the condition according to which errors are bogus. ]
+[Deleted the file as per the PowerPC tree]
 
-Fixes: 7cb735d7c0cb ("x86/mce: Unify AMD DFR handler with MCA Polling")
-Closes: https://lore.kernel.org/20250915010010.3547-1-spasswolf@web.de
-Reported-by: Bert Karwatzki <spasswolf@web.de>
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/20250915010010.3547-1-spasswolf@web.de
----
- arch/x86/kernel/cpu/mce/amd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+--cSeJNcjFaJG2ggMQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.=
-c
-index 146f4207a863..7fc78759cd4e 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -606,6 +606,14 @@ bool amd_filter_mce(struct mce *m)
- 	enum smca_bank_types bank_type =3D smca_get_bank_type(m->extcpu, m->ban=
-k);
- 	struct cpuinfo_x86 *c =3D &boot_cpu_data;
-=20
-+	/* Bogus hw errors on Cezanne A0. */
-+	if (c->x86 =3D=3D 0x19 &&
-+	    c->x86_model =3D=3D 0x50 &&
-+	    c->x86_stepping =3D=3D 0x0) {
-+		if (!(m->status & MCI_STATUS_EN))
-+			return true;
-+	}
-+
- 	/* See Family 17h Models 10h-2Fh Erratum #1114. */
- 	if (c->x86 =3D=3D 0x17 &&
- 	    c->x86_model >=3D 0x10 && c->x86_model <=3D 0x2F &&
---=20
-2.51.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnP0fEACgkQJNaLcl1U
+h9AyKAf/dpJkjgmieexeeafjOojG6WBKQQmCTyWgj3yfGPujALL/kNbFFZqM/WNd
+TIH9S8sEzUtz7k8v3AMy234XKip6DJ+tBR/PbGB2NYizdf37UuNkPwURKAjqK63g
+zn14+9VhPG5pGMhpmA6EFolwcp/Kq9lX6H5eFUJ5JyJr+PO11KGrsQtNPOzx1+OR
+FLpxXj1MouupVfU/0R+VGUIQ3Uo07nk+kvB1VkugyvbwZOWov5K1UfhsCryyQ8wW
++hhtrA7/mxODzVK8yVZoqOhoDhJB73y7z77z3iFNwKKpYPy8tHcV6sbmouuDw49E
+m5+GS/ddspPiL3mOT5V9RzdXwnqYrg==
+=/qGW
+-----END PGP SIGNATURE-----
 
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--cSeJNcjFaJG2ggMQ--
