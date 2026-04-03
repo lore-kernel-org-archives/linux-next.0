@@ -1,44 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCE8318EF6;
-	Fri,  3 Apr 2026 14:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4DE22A4EE;
+	Fri,  3 Apr 2026 14:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775227383; cv=none; b=CHkHvhWOAbj9GfaaZt4e5uxzyF44uXcvsVycffHUeGNhbc3QZhL8IAlbJUQNM+v314eUqzQrMYQKAG7W+Mdyqo8fNRF6zbVAwgV4NrcrXwqiTNUUOjBFfHdVsW7DQivvILX6EU6wvqhj1+Sae1JDgm6gEIFOUmYCN+RaBnjdPzI=
+	t=1775227398; cv=none; b=dgfb3y5yFcW9plj1/U6RdiZEymtCUXZrgVsxx8zhB0Dsy8K/GTfnp3U+wbOzQtzZdBtft3gQVg+ZM1UCzRCVO+r8kd3LFWs/M+s3mYacCE4FeEBH2QfKx7dEJKm99sU0HIrJ+tP2Nk8O5zki+Z6hc2URlDmy+nyP2uhIBJ6IJVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775227383; c=relaxed/simple;
-	bh=NNeXi8Y4j3OaaEEhCLtpPPABZ7ksrCmCHM6oFxZr7ZQ=;
+	s=arc-20240116; t=1775227398; c=relaxed/simple;
+	bh=TP30K2tFnrIoi7NLfbMjiuL+6HBwjUmNHDvyD5fVagE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ld5zRcxqyVVxHAjZ4ULiVYIOXd2BeWi0Qm4F5ovnqFQ/krlgmHc3wJg6j4Yk8rvakpcmupBBq5nbojMk0MWW90PT6p1EyQ675cw/f5QphFN8ycFK7KIpE3hJkCCBfNcenbZMgknf9jjZu6tiAWJCeDh+GRg93D+o2e6W2KRoCK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPc5wVSL; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=XnETWxDi+IgouvGYYVOy8KL2ucLD559s7hDLsOwtuuNZOvUoXlnHq/EDefWeYrxwE34jCgLkc/e2RqoVyhfkyNQA1wdSJeqeYExCyq5q2Zqnd0geeLvoFQatWHr+YTy1wJKkBML6ow2VtkfSF6j4zmGtZvfVLOrNHqxqHk0hzis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9sigdRa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPc5wVSL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B77C4CEF7;
-	Fri,  3 Apr 2026 14:43:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9sigdRa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A78DEC4CEF7;
+	Fri,  3 Apr 2026 14:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775227382;
-	bh=NNeXi8Y4j3OaaEEhCLtpPPABZ7ksrCmCHM6oFxZr7ZQ=;
+	s=k20201202; t=1775227398;
+	bh=TP30K2tFnrIoi7NLfbMjiuL+6HBwjUmNHDvyD5fVagE=;
 	h=Date:From:To:Cc:Subject:From;
-	b=XPc5wVSLe2DX/BryhtBCN3l8gxsfcHoFE3DxUhDHtpz5hMLUGGFK51guKmkkSYVQB
-	 B2gkGvsHs2QgFunONZGWk5q4QhstTCvzO7qnHPUitjKy39NeKMBojoTQqakP2tGoev
-	 6JRSDJeJ6K3lUEkdUr7Qrs2E2hsv09rctF69yQiPSkVY+JcMcMJscw0lxqqWMTTlUh
-	 54cp3BAnSxiPSPo7MCRhMnNBkTby+e3oERShOaGFpeS86eeBWGcja/ZtTuUprF1N1K
-	 WvS7PtJu+lA2rH1iTt8gdQDNFcyH2fLcqKcmSRGPA/RBSEAlnDmYExH+VQ+EXY1W7X
-	 ER9zp3KMVNFSg==
-Date: Fri, 3 Apr 2026 15:42:57 +0100
+	b=B9sigdRaxEC3v4qVdm2xVUEvMsrO3KsnFgDiUDzg4E8eVBPnb7ht36fDntaD7aaWA
+	 QH6pwGgqGuDaewXv+MTBO0ZD9SRkO0b1OZoF/D1AdzMkHxOQwm+WISJMsFavw7XRCw
+	 F8wul0N9jLNbDmsWgqUubaaZZRGcAjUtM7d0iQ8xQg8EDBLWrd1uFwEZPr0mwZcdz8
+	 et+JQC6fzItgR9nRG5c3AtWXbCUHEi3Lf4mD7RbIHpUYQNlyhTtzXbR9fEleq4n7oO
+	 fBgU0VHYA72NBInvXMGf7Zlc179iUK8038IPiMmoI3JfLJaBGXaPeAJvmj38xyavcn
+	 5QO0/v82CLCcw==
+Date: Fri, 3 Apr 2026 15:43:15 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Christophe Leroy <chleroy@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Subject: linux-next: manual merge of the tip tree with the powerpc tree
-Message-ID: <ac_R8cR5A-YtcRpi@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Apr 3
+Message-ID: <ac_SA_LdNS0Y6tTM@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,55 +39,78 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cSeJNcjFaJG2ggMQ"
+	protocol="application/pgp-signature"; boundary="DJHCZW/5dYcYTaYV"
 Content-Disposition: inline
 
 
---cSeJNcjFaJG2ggMQ
+--DJHCZW/5dYcYTaYV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+Changes since 20260402:
 
-  arch/powerpc/kernel/compat_audit.c
+The rust tree acquired a conflict with the origin tree.
 
-between commit:
+The drm tree acquired a conflict with the drm-fixes tree.
 
-  f26ad12356a27 ("powerpc/audit: Convert powerpc to AUDIT_ARCH_COMPAT_GENER=
-IC")
+The drm tree acquired a conflict with the rust tree.
 
-=66rom the powerpc tree and commit:
+The drm-misc tree acquired a conflict with the drm tree.
 
-  9b444349a2e96 ("powerpc/audit: Directly include unistd_32.h from compat_a=
-udit.c")
+The tip tree acquired a conflict with the powerpc tree.
 
-=66rom the tip tree.
+The ipmi tree acquired a build failure, I used the version from
+next-20260402 instead.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Non-merge commits (relative to Linus' tree): 10937
+ 10229 files changed, 604250 insertions(+), 201199 deletions(-)
 
-[Deleted the file as per the PowerPC tree]
+----------------------------------------------------------------------------
 
---cSeJNcjFaJG2ggMQ
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 414 trees (counting Linus' and 125 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--DJHCZW/5dYcYTaYV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnP0fEACgkQJNaLcl1U
-h9AyKAf/dpJkjgmieexeeafjOojG6WBKQQmCTyWgj3yfGPujALL/kNbFFZqM/WNd
-TIH9S8sEzUtz7k8v3AMy234XKip6DJ+tBR/PbGB2NYizdf37UuNkPwURKAjqK63g
-zn14+9VhPG5pGMhpmA6EFolwcp/Kq9lX6H5eFUJ5JyJr+PO11KGrsQtNPOzx1+OR
-FLpxXj1MouupVfU/0R+VGUIQ3Uo07nk+kvB1VkugyvbwZOWov5K1UfhsCryyQ8wW
-+hhtrA7/mxODzVK8yVZoqOhoDhJB73y7z77z3iFNwKKpYPy8tHcV6sbmouuDw49E
-m5+GS/ddspPiL3mOT5V9RzdXwnqYrg==
-=/qGW
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnP0gIACgkQJNaLcl1U
+h9Czowf+PgbPkg2EwEKEmjqzAUS0wwtAmkjwWnPtiTBSnLeaxRXoyCSsW1zI8TJO
+XYmoxoEBFI+2oY3REzToMlqfyLTLtLAqEnrUfZlQdt6Ct1T3C8axgDj5hhBx9A+B
+2dHp+B7GiNv0X+PKTilA3K8I3tkjUorlVA66p5jXzbnWg7WDjHsHWsYv75OACsmy
+d8Jrhkkt5w3UHpVuY1071fHwUNE8EjNytxcyxm62/p1EBH8d5RJPltWgVPgG4+tj
+07XNLf5+kb2EeXfNC47iMs456MM824iw8EX20EhocqyD4MIO6HR+4NA89bJLkDg/
+G2ELiM2HZzOEOTAdwn+AzwzoV95kyQ==
+=01gS
 -----END PGP SIGNATURE-----
 
---cSeJNcjFaJG2ggMQ--
+--DJHCZW/5dYcYTaYV--
