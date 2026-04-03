@@ -1,122 +1,308 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1732D222582
-	for <linux-next@vger.kernel.org>; Fri,  3 Apr 2026 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775220827; cv=pass; b=WB2pQmet7Ji2H8C5vDFyihVTpRrpxvoojjNdMh0ps4LhCcP3SKJYy42QByfQb8Zv/l5hcQ1oTNURVXAzRqY5POl/lTtsZxtVa/C9mc9VmoWCvM8W0OxSZfF3fP26qFzFP6s4d9l8iFQ91gu+pvjgEwEUFZMRz1KiDNaLz2iO8xo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775220827; c=relaxed/simple;
-	bh=Dfcq+dixRkh0i7wu3PbkKK9K+WdDGDtr4qA8Z63jjz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bj96RPiV0GrV/sojXByXk+8Oy/nJ0n9s4Id8WNQPGQnpkM5j/XuFjcEjgJIRhTafmE6Mhmzp9BXNcjHshcbLqazjf/dKKeVu8x5zdymkusJnoDN1XbnnTUxIISTNGKqdcpcb+aIt0KcZgyrpRUD7e5GGrfNkihgejXrteU7e0k4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRTNS51E; arc=pass smtp.client-ip=74.125.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922BD398919;
+	Fri,  3 Apr 2026 13:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775223238; cv=none; b=qSxKzT/LQ3L91tSZ25X6Opqe1e56PfO2JAi7NjtPD4HgwfV923c0rTQRdGgwaXahrtvFWMUvr1Yh59edOQDliJ76whxKN/oKal68S1lbXADU4cgeedcj2cQu0mB39QEbCIqgMLFl/CfQiPz83MYOIb11uutCwPCfKoWDCOjF0Ww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775223238; c=relaxed/simple;
+	bh=55i/c5lvlRWPg2Xg8EGYTojiNtSSlmXver3/W4dI8hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=b4hcfbeW7J5bvbKBC3eVjMWgxv/gmaAbMrv78sIADigMR+WF/hiSOPETZ82dvAC1S55sNQp9xLmNHlYE7g9BKVOWYoFhij8u0f5b7hDzPtLliy0XFpzrvXG77+UrxyLsXB6SwpxO4EeuUOrUWN3fpnuPizxy5C3WlNS0/3Uoznk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIGqkbXA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRTNS51E"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2bd801b4078so225224eec.2
-        for <linux-next@vger.kernel.org>; Fri, 03 Apr 2026 05:53:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775220822; cv=none;
-        d=google.com; s=arc-20240605;
-        b=JU6J7PC0e8eciq9uMrZxc8uZqNm7f2SGlBhZ9bASwWAwQ3uunvtJrgW1qreMztZeaN
-         Z2LaOoYbkqs/UvQZV8T20UGBvCbfRAMv26nqriZKURf3pG604QjPfZWBvsy3C/wKcST2
-         w95XKboknb7p2nbBChUb8CXQ1a2eKDqKQ4CouCQj5jBVXYnfByhQwJNx+Tq1sGRSE/Y1
-         hbLq3i3drBa4+4z4et5szKSTOlJwqD5nZj+9l4XV7zsl42lbLPr7cDg8UqKysN1KNrhe
-         WJ9ksqv1FZW4lk21j+ltbHHXGcS7Oq3CDycheEmGR3AZf5LdptpJOpYIzJLPpQ4ls9hh
-         In0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=7AbnUuFchRyOcLkuVbbi6yedSKLsUdHAskJPEZg5SOs=;
-        fh=0dZU1Z0Eef7mIf4xWnO2ilHPKoiP+9PoZLPSlJiVAWc=;
-        b=ayVBjmpw2PS2oITR5paG25RJe5IoOD0b5DREQC+B/bBYih3KjPXSW0XenuKos3Knqh
-         hmD6NnpAaegzLcSNs8TcQhT97cWP512ZgNH9OzreuzTke17fYZc1pbutkc0axgE2IpNW
-         ro2YTqya0E2Gi9HH9lD4tlaXVPzAizmkzDt0OYCkRmR2z1U/KqT3q6Yv0qNSOYXb2EEa
-         oqsV4OXjJ2mrkBvPyEud/DM9y3w+MGDLvuDqbvR619FbRooZ+P/XPkQ+AGHm0dfX8zl3
-         arLN6riwWxeKluRDl4IxGTdZP888ucAw+lbMGVWhRjZgHvkSOCBL3llXnXJ6KhXrVh5K
-         gPhQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775220822; x=1775825622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7AbnUuFchRyOcLkuVbbi6yedSKLsUdHAskJPEZg5SOs=;
-        b=WRTNS51Ega8Bx2jpxCG041cy+eRPiFLfVRrS+LsS4XIPdoYYcVsUOHUnusJkbDp8h7
-         qSSyKuAGtfzl+Pd4YUDUbP0fzxoGOJgYJ+sy+GyB+QJe4k7FV0+RLGgK/9uo5sey2K0K
-         nEBa7xQP92xXVg6gQVkOy/YLd89xcR+fGjkrsnJJSU1p8GSMyKi2p8mX9GgXY/mMJZ5E
-         iEZag9es1MT02gh4+s+j2oaDooS1gE9mzgcY6mxtvp5v4ZdKdFKYzC0vH5fZqGRXm4cJ
-         FJJYCUHBbGstGDdefb4ScHuANFY93Ed2g0ljCY3uTSBMzIhPg1cjESGl+RtTzo52Tzoe
-         jz5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775220822; x=1775825622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7AbnUuFchRyOcLkuVbbi6yedSKLsUdHAskJPEZg5SOs=;
-        b=o8P0PTu2EBDOnFFHnOoIkAdrOcfz2qAJD2cb2JvXs0itZJFnxcr0a8HYz+1OeeZOKt
-         vtHLpIXdmVYhM74UXt17SBdAcp+wh7bVFTGfz3KaxLYB/fx7s/PCcQp4PcR7cdDBJdjH
-         ll4jtjGi+2DXeN2DGhJaFuLvEM3UqhgplNUNFOADYzeVt5WFb+NDZOov3X2yRefDGeQV
-         JAFwKGQPOwpBi8c2+7j4haLCpq9eWbCvDQrqLgRtCz+gvjl6s+Jv8Ea1QTcf8MEXXzNa
-         mOKHvSOd0QMgZTiCKyP1UvSBpl5K4dSS9F9jSbgp/yB8rPrOUKTIkc4AJhPyLvjAML78
-         UJ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU70wA04WPl5tTeGT6DtrtI5UWg2hzFYxq4V7RExSzsBxWFzTrvfsOZq3pbi9RusqWf+dMUG8DZb3H4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlkNfYT1mG2ZPFmPcR6iCnjvcY5QqH+BQDyB6dKdhV6oNb/zFX
-	aXKhRnqFgowaEN6k8R0F6FdwcvHEbHFBWfSD1dZaAOiIG6kZQ9tkV+ttzPvUVWRS1ZhJRLvWW6D
-	pUKYHphHTMhpp6NXpDa/ejnJvruypNEQ=
-X-Gm-Gg: AeBDiev2qitj5ngMJM7jpmU7bkphVH1Xmdd+zJeMrA2QwaspdLpUAHhRa6LkCXQVxNc
-	xEjinvs6254nkKxiXOK159qxN4gcFFhteGK1Hst20kXrAJPlS6nbNTzsFpwwqxzNOGRAogHjXZG
-	orScZ5Slj05tPEwHVxaXgoQsy3NE3ZhBtvzi+UwYoUpNtt7aV+mfJvOrIqpfQjue3pqpPWYCWxT
-	NSbIkPzzDhFUJtE8txTIfOy7Fr97PR6tleefAmuWTDupsGvXCAKLz3zUfytqYUybyq92llZIw1u
-	nHsG4s4kSrWNHbolYEsYZe4kCDUieAVqkj5iFzQQsHEB4bqbxjbaKif8AjllHASigbI+KT27pTI
-	7gdmfMvrCpwghDbKwchkAOgY=
-X-Received: by 2002:a05:7300:fb91:b0:2c7:3c4f:7eb7 with SMTP id
- 5a478bee46e88-2cbf6b96759mr658721eec.0.1775220821531; Fri, 03 Apr 2026
- 05:53:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIGqkbXA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C46C4CEF7;
+	Fri,  3 Apr 2026 13:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775223238;
+	bh=55i/c5lvlRWPg2Xg8EGYTojiNtSSlmXver3/W4dI8hI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mIGqkbXAo+lkeSD/zYFAfj+Fn50Zrb+62b1Wpgs/kbplORzv61Cr+sQa0UR6ZhZ5e
+	 yb1wcYuVSAfuQYnvpGai9UE7kCBbi8zu1EZMc/4g5tCBM6GNIGzgtsS9gShSUt9I10
+	 /Tru8sXEFlLaNuk/dBjxJoo0OxDFhokxCcAAvd2w+GgwazHYtdnuiFR+VgulpuhAlp
+	 koVmnFykFoCjUOCAUfFJBzmFytPH+mbB/SLQZuykB5fcVKBzPpeng/hOii2vW/PrC1
+	 B8tLIGaNF1NBN030Si2LyJgQgCdnPLbnqQZVD3oDO4vcfEGNzzi8Xg6Jv8v+dT14Mw
+	 960R2xVLYgmxA==
+Date: Fri, 3 Apr 2026 14:33:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <ac_BwiAI8NwRwubJ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ac-0Eb8leHb-h3FE@sirena.org.uk>
-In-Reply-To: <ac-0Eb8leHb-h3FE@sirena.org.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 3 Apr 2026 14:53:28 +0200
-X-Gm-Features: AQROBzAcCCDeZaim_2mSuIOgHqFAlVFSQKpk4P8lxzmXsMoJGg1Z63B2Cn-zzxU
-Message-ID: <CANiq72mW-OvbB2Zr7f2TjZgr6dYY=n2Uf_rZh5uJ98hO0_59ug@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the origin tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	John Hubbard <jhubbard@nvidia.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PdPPV9cII2aZSET3"
+Content-Disposition: inline
+
+
+--PdPPV9cII2aZSET3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 3, 2026 at 2:35=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
->  +use core::mem::{
->  +    align_of,
->  +    size_of, //
->  +};
->   use core::num::NonZero;
+Hi all,
 
-Looks good -- it could be nice to take the chance to "merge" these two:
+Today's linux-next merge of the drm tree got conflicts in:
 
-    use core::{
-        mem::{
-            align_of,
-            size_of, //
-        },
-        num::NonZero, //
-    };
+  drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+  drivers/gpu/drm/amd/pm/swsmu/smu12/smu_v12_0.c
+  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0.c
 
-Thanks as usual!
+between commit:
 
-Cheers,
-Miguel
+  a3ffaa5b397f4 ("drm/amdgpu/pm: drop SMU driver if version not matched mes=
+sages")
+
+=66rom the drm-fixes tree and commits:
+
+  6b0a6116286ef ("drm/amd/pm: Unify version check in SMUv11")
+  353f200825051 ("drm/amd/pm: Unify version check in SMUv12")
+  964e532d58378 ("drm/amd/pm: Unify version check in SMUv14")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+index 7ca8fdd23206e,d68ceee16d8f1..0000000000000
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+@@@ -192,81 -192,6 +192,6 @@@ int smu_v11_0_check_fw_status(struct sm
+  	return -EIO;
+  }
+ =20
+- int smu_v11_0_check_fw_version(struct smu_context *smu)
+- {
+- 	struct amdgpu_device *adev =3D smu->adev;
+- 	uint32_t if_version =3D 0xff, smu_version =3D 0xff;
+- 	uint8_t smu_program, smu_major, smu_minor, smu_debug;
+- 	int ret =3D 0;
+-=20
+- 	ret =3D smu_cmn_get_smc_version(smu, &if_version, &smu_version);
+- 	if (ret)
+- 		return ret;
+-=20
+- 	smu_program =3D (smu_version >> 24) & 0xff;
+- 	smu_major =3D (smu_version >> 16) & 0xff;
+- 	smu_minor =3D (smu_version >> 8) & 0xff;
+- 	smu_debug =3D (smu_version >> 0) & 0xff;
+- 	if (smu->is_apu)
+- 		adev->pm.fw_version =3D smu_version;
+-=20
+- 	switch (amdgpu_ip_version(adev, MP1_HWIP, 0)) {
+- 	case IP_VERSION(11, 0, 0):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_NV10;
+- 		break;
+- 	case IP_VERSION(11, 0, 9):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_NV12;
+- 		break;
+- 	case IP_VERSION(11, 0, 5):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_NV14;
+- 		break;
+- 	case IP_VERSION(11, 0, 7):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_Sienna_Cichlid;
+- 		break;
+- 	case IP_VERSION(11, 0, 11):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_Navy_Flounder;
+- 		break;
+- 	case IP_VERSION(11, 5, 0):
+- 	case IP_VERSION(11, 5, 2):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_VANGOGH;
+- 		break;
+- 	case IP_VERSION(11, 0, 12):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_Dimgrey_Cavefish;
+- 		break;
+- 	case IP_VERSION(11, 0, 13):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_Beige_Goby;
+- 		break;
+- 	case IP_VERSION(11, 0, 8):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_Cyan_Skillfish;
+- 		break;
+- 	case IP_VERSION(11, 0, 2):
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_ARCT;
+- 		break;
+- 	default:
+- 		dev_err(smu->adev->dev, "smu unsupported IP version: 0x%x.\n",
+- 			amdgpu_ip_version(adev, MP1_HWIP, 0));
+- 		smu->smc_driver_if_version =3D SMU11_DRIVER_IF_VERSION_INV;
+- 		break;
+- 	}
+-=20
+- 	/*
+- 	 * 1. if_version mismatch is not critical as our fw is designed
+- 	 * to be backward compatible.
+- 	 * 2. New fw usually brings some optimizations. But that's visible
+- 	 * only on the paired driver.
+- 	 * Considering above, we just leave user a verbal message instead
+- 	 * of halt driver loading.
+- 	 */
+- 	if (if_version !=3D smu->smc_driver_if_version) {
+- 		dev_info(smu->adev->dev, "smu driver if version =3D 0x%08x, smu fw if v=
+ersion =3D 0x%08x, "
+- 			"smu fw program =3D %d, version =3D 0x%08x (%d.%d.%d)\n",
+- 			smu->smc_driver_if_version, if_version,
+- 			smu_program, smu_version, smu_major, smu_minor, smu_debug);
+- 	}
+-=20
+- 	return ret;
+- }
+-=20
+  static int smu_v11_0_set_pptable_v2_0(struct smu_context *smu, void **tab=
+le, uint32_t *size)
+  {
+  	struct amdgpu_device *adev =3D smu->adev;
+diff --combined drivers/gpu/drm/amd/pm/swsmu/smu12/smu_v12_0.c
+index ac5e44dff6c97,f09da4d14510b..0000000000000
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu12/smu_v12_0.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu12/smu_v12_0.c
+@@@ -70,42 -70,6 +70,6 @@@ int smu_v12_0_check_fw_status(struct sm
+  	return -EIO;
+  }
+ =20
+- int smu_v12_0_check_fw_version(struct smu_context *smu)
+- {
+- 	struct amdgpu_device *adev =3D smu->adev;
+- 	uint32_t if_version =3D 0xff, smu_version =3D 0xff;
+- 	uint8_t smu_program, smu_major, smu_minor, smu_debug;
+- 	int ret =3D 0;
+-=20
+- 	ret =3D smu_cmn_get_smc_version(smu, &if_version, &smu_version);
+- 	if (ret)
+- 		return ret;
+-=20
+- 	smu_program =3D (smu_version >> 24) & 0xff;
+- 	smu_major =3D (smu_version >> 16) & 0xff;
+- 	smu_minor =3D (smu_version >> 8) & 0xff;
+- 	smu_debug =3D (smu_version >> 0) & 0xff;
+- 	if (smu->is_apu)
+- 		adev->pm.fw_version =3D smu_version;
+-=20
+- 	/*
+- 	 * 1. if_version mismatch is not critical as our fw is designed
+- 	 * to be backward compatible.
+- 	 * 2. New fw usually brings some optimizations. But that's visible
+- 	 * only on the paired driver.
+- 	 * Considering above, we just leave user a verbal message instead
+- 	 * of halt driver loading.
+- 	 */
+- 	if (if_version !=3D smu->smc_driver_if_version) {
+- 		dev_info(smu->adev->dev, "smu driver if version =3D 0x%08x, smu fw if v=
+ersion =3D 0x%08x, "
+- 			"smu fw program =3D %d, smu fw version =3D 0x%08x (%d.%d.%d)\n",
+- 			smu->smc_driver_if_version, if_version,
+- 			smu_program, smu_version, smu_major, smu_minor, smu_debug);
+- 	}
+-=20
+- 	return ret;
+- }
+-=20
+  int smu_v12_0_powergate_sdma(struct smu_context *smu, bool gate)
+  {
+  	if (!smu->is_apu)
+diff --combined drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0.c
+index e38354c694c95,d0a8df1aa6b64..0000000000000
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0.c
+@@@ -229,66 -229,6 +229,6 @@@ int smu_v14_0_check_fw_status(struct sm
+  	return -EIO;
+  }
+ =20
+- int smu_v14_0_check_fw_version(struct smu_context *smu)
+- {
+- 	struct amdgpu_device *adev =3D smu->adev;
+- 	uint32_t if_version =3D 0xff, smu_version =3D 0xff;
+- 	uint8_t smu_program, smu_major, smu_minor, smu_debug;
+- 	int ret =3D 0;
+-=20
+- 	ret =3D smu_cmn_get_smc_version(smu, &if_version, &smu_version);
+- 	if (ret)
+- 		return ret;
+-=20
+- 	smu_program =3D (smu_version >> 24) & 0xff;
+- 	smu_major =3D (smu_version >> 16) & 0xff;
+- 	smu_minor =3D (smu_version >> 8) & 0xff;
+- 	smu_debug =3D (smu_version >> 0) & 0xff;
+- 	if (smu->is_apu)
+- 		adev->pm.fw_version =3D smu_version;
+-=20
+- 	switch (amdgpu_ip_version(adev, MP1_HWIP, 0)) {
+- 	case IP_VERSION(14, 0, 0):
+- 	case IP_VERSION(14, 0, 4):
+- 	case IP_VERSION(14, 0, 5):
+- 		smu->smc_driver_if_version =3D SMU14_DRIVER_IF_VERSION_SMU_V14_0_0;
+- 		break;
+- 	case IP_VERSION(14, 0, 1):
+- 		smu->smc_driver_if_version =3D SMU14_DRIVER_IF_VERSION_SMU_V14_0_1;
+- 		break;
+- 	case IP_VERSION(14, 0, 2):
+- 	case IP_VERSION(14, 0, 3):
+- 		smu->smc_driver_if_version =3D SMU14_DRIVER_IF_VERSION_SMU_V14_0_2;
+- 		break;
+- 	default:
+- 		dev_err(adev->dev, "smu unsupported IP version: 0x%x.\n",
+- 			amdgpu_ip_version(adev, MP1_HWIP, 0));
+- 		smu->smc_driver_if_version =3D SMU14_DRIVER_IF_VERSION_INV;
+- 		break;
+- 	}
+-=20
+- 	if (adev->pm.fw)
+- 		dev_dbg(smu->adev->dev, "smu fw reported program %d, version =3D 0x%08x=
+ (%d.%d.%d)\n",
+- 			 smu_program, smu_version, smu_major, smu_minor, smu_debug);
+-=20
+- 	/*
+- 	 * 1. if_version mismatch is not critical as our fw is designed
+- 	 * to be backward compatible.
+- 	 * 2. New fw usually brings some optimizations. But that's visible
+- 	 * only on the paired driver.
+- 	 * Considering above, we just leave user a verbal message instead
+- 	 * of halt driver loading.
+- 	 */
+- 	if (if_version !=3D smu->smc_driver_if_version) {
+- 		dev_info(adev->dev, "smu driver if version =3D 0x%08x, smu fw if versio=
+n =3D 0x%08x, "
+- 			 "smu fw program =3D %d, smu fw version =3D 0x%08x (%d.%d.%d)\n",
+- 			 smu->smc_driver_if_version, if_version,
+- 			 smu_program, smu_version, smu_major, smu_minor, smu_debug);
+- 	}
+-=20
+- 	return ret;
+- }
+-=20
+  static int smu_v14_0_set_pptable_v2_0(struct smu_context *smu, void **tab=
+le, uint32_t *size)
+  {
+  	struct amdgpu_device *adev =3D smu->adev;
+
+--PdPPV9cII2aZSET3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnPwcEACgkQJNaLcl1U
+h9AfmQf9GkQPCkfqCTXWnDy8UvZehlkNcxtd9S/DShRIVpgEUKaS17Qmkf4BB+hd
+3t/oI1yjgNoaspEioBtZ6ANO2atY7u+lIroeuN197luvsqo7hBK3hJAXXbaF4Jez
+amOtdi3Hq+6YyK5Zx3FMTdOFk+nE27Bz/pmG4xJuZtWysYDGLKz8FWeH0dNAKB0k
+xvbNB1GUV7YJSljAphhEjU4JxqIu9OIbdoGeAOWMxdTHMEAdgmBXpwNsV3d7ZSdB
++UOnnOfMgDpEr2gnjhWk1SSOnlnPu4hNFic4NJSAV60nO4+iHGp6KHYJFU2h/m26
+oYydofy6pLe73s+CoTCedpn9ff6mFw==
+=A0ak
+-----END PGP SIGNATURE-----
+
+--PdPPV9cII2aZSET3--
