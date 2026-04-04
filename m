@@ -1,101 +1,80 @@
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA0D38D684
-	for <linux-next@vger.kernel.org>; Fri,  3 Apr 2026 15:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D799C8E6
+	for <linux-next@vger.kernel.org>; Sat,  4 Apr 2026 14:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775230917; cv=none; b=frAi2Eu2IWWRFdcQvzwl5Zxh/kPyoe+5WOUFd9pOIwLb2O8LEYt4Jsc0cCq6KRWj/3OuZHJK6KzjcfkyS/jLQxkF0Ic1h3ma8KKqKQanV7/5mBcXMIeG5wrmtMPyPk/+RGFyecpIHQncBnHwZ2Oa13Xm0D0oGFlAtmwtFjWGuPA=
+	t=1775314273; cv=none; b=PXtYwWXgWtRCEA4PuYkiH5CjuhvmaQuxOtV5w+QslPN7y9YpXSbxi62T71tOTTNj44eoNxgwmm2bEk5k+rg2d3ySve4fnpasq72SWoU0inBrTl4JxvrGvr5GyTMZQTB2pGHU+j6/yyHEtxkGjP7d2pYqXURucAVx/mkK44aCzb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775230917; c=relaxed/simple;
-	bh=DSHQUxyQrtuka6e7TbT/do91thLyrf2wAYzU+AqlmvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHDrjINQUr3c3D6enT5A0WoAg0QV8e03yqk0GJhyGqXgziUSewEbRjqXtbwC5mmkCeHjxTZMYlItwQ6oTxxlvlgoZdba7HqsAaPQh3vqf2zs3VaCtF2bAvjHgutqYqCPaZ3nis/f+PQQpLmiDFA3qCm2tLRc0gdbwfEdDFUcEj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net; spf=pass smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b=oMKyuK6l; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=minyard.net
+	s=arc-20240116; t=1775314273; c=relaxed/simple;
+	bh=eXXGY65yQbjqTCJAdffT5TRfg0jKNW9bIdNInhzDrRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g3KrnvgtKnIGSyCJqqdhSN/j2Tk27Cam3LAK5PZv/oKARjxlNMeHulWeLjQBg9vM5rCJbXOyfOJkSyk7/6UpkYMENs3Lhd6ix1d8i+ef85lpCkzSvbNQqCHwXxAooJPBW3nzsmL8PrLXOBZIzX0JIMBg2u+OB2x4VkrO2ovYWuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W+J7XWyS; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b="oMKyuK6l"
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-40ee9b945d5so1622617fac.0
-        for <linux-next@vger.kernel.org>; Fri, 03 Apr 2026 08:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard.net; s=google; t=1775230915; x=1775835715; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vxm5/2GVdEZo1ciBag50G9amtXzLYIgHb6ISfoYhwiQ=;
-        b=oMKyuK6ln4HEomUD1V0cuwClKZZ6i9/yxp2HpvQaL6O/KMGFeHPBqRqZHNsVefNwYI
-         MWoZEeBx5P5wecOl111Z86Jiur5hUsWm/tboMCKOJ4BtwFdVj0QtOixu0o8OSd7OET8e
-         /jnCkJwqu7uiy+WbX46LI/v1Eu0EajS1G9V1BoAyTLJVjY5lIbOr0pGPXOME+gSc3pKm
-         PtXI+676Up7uk7f0iPsKKzPeJwMTLuQ+WD3SmIqk1aFQg09DFNnTswqUUPnMscGMGkTL
-         y7vNgozyIrYv8TMGYYB6jym+AQBFhPu+7KLtj2b+eaV657ulbnJ8zR05KJbrB1+0ZdVK
-         2FRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775230915; x=1775835715;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Vxm5/2GVdEZo1ciBag50G9amtXzLYIgHb6ISfoYhwiQ=;
-        b=URxOrGylVRUFjJlW3z6WLYXfEEdoED7++7rs87+rMqZJvBtfAIkLhArsd+WG47RHdb
-         oAWymddaJmiXA6IlVol2+iXh+gC1Dsz3bfojwPf5HGuTODZtwuIMa/y3KgWbi7mMrwjY
-         jOQdN8qig/1Zg5bWkPKYidKfXhwT+NuP2JZKupPCkwdur3RLmQYHYuwfbgrT2S6WSvC8
-         7svVcNXQmnDsboNWexWwkQb9DWrBntAsEEdyimIvWYakKQn56LQtQXzfs0VFYdljDqfU
-         EQrWQPqNMV1Pzt5cPoHL0Au9QswuMXCr+Pavykew+a5wbtIlYkh9NgYbkrEzt/IGsDZL
-         9uag==
-X-Forwarded-Encrypted: i=1; AJvYcCWmgEfWFnSKeGxFaVui7NLRUNm1kVgBF3NDF21giQD0CmxOiTiJpY+finYkzI1HuGh1mjOUPjxtnmL9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYyzJUSuOl3ttyMPfEieIAD6hf2PmBl23o1slA1P3XK9eBS0eY
-	LI8m5h6oOdw7D2wM/O5PJK7sKYaHghXf+HoIuw8OVTFE5rged1ptg0emt476EZyVqAo=
-X-Gm-Gg: AeBDiesJZ2QfDof8RGGK8ozIpnceHYnyrrUmPbTPfXoPG9WM0+Xt/hd06mEXFfL1V1S
-	KHyGJx5sCAr4uQAfO4dDok2wkzRIf1p9azsqxyEvvFQh8/9//RXkRV/K9NmCHWoTJtoYbiuccu+
-	RNV6CXXHTPhuq/wnlpbtedFSFpggcrTRp/XK+0h95roDpDmRib8lmCnHNlF/dKcWx0kyvBwxcDA
-	9Uj6B4OCABR2Vs7cfNq4wbwkaqGJjw7TEkYA7cCWf8LRx2RuCX/P3X8soGsJaDkpI8ZI3J+4sXn
-	igjfdT3sPhfrXRa+NIpLssNlF3o3oLQ+a+5evChz9RZJhOryeP6Uk3o5p/Z+v/d8LdJ7Sf1if80
-	0nrZhLL8BzqyUZXCh9gbnNA9mbIfTBLx1Z0tAYF9M0RCWLptjSiWpOLb2Eqnlg+KtYMRUoby/j4
-	lZSZejBHsFjxEEzf0mFGXZ9sHERR8mgs/4bfaI0Zhz6as6UtJ9+i9maEQ1PI7pRK/cwkqNc5sP9
-	9gPDGRDwOgdmSg=
-X-Received: by 2002:a05:6870:cc8a:b0:417:4693:ca0 with SMTP id 586e51a60fabf-4230fd536a4mr2034783fac.14.1775230915501;
-        Fri, 03 Apr 2026 08:41:55 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:67f7:eb47:a398:6ff2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-422eb25ad44sm4725907fac.12.2026.04.03.08.41.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2026 08:41:54 -0700 (PDT)
-Date: Fri, 3 Apr 2026 10:41:49 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Jian Zhang <zhangjian.3032@bytedance.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the ipmi tree
-Message-ID: <ac_fvQUf9-kAe-pI@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <ac_ILgraQZ1KcNDF@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W+J7XWyS"
+Message-ID: <e41bf6d6-810a-455d-81cd-9104d205524e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1775314270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYHRYlnSBx4/kcPH5WdquDIpIV1olp37fUOVSMfoMPc=;
+	b=W+J7XWySSqmygWJf3mqeQ0lO9keWCTazufEKjj1smyHIzkUNPVqMqx19P1YqE7EtaGR2U3
+	4B5RGYNQm0RYp7DwqZlDFQ+i9w55qKyzkxcQjmTp/CUGTshfbYVsSyTUdtnDdO9hc3IHa0
+	gEHx2amdjNeT4gmNXutVJFddzAGAq8U=
+Date: Sat, 4 Apr 2026 15:50:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac_ILgraQZ1KcNDF@sirena.org.uk>
+Subject: Re: Please add rust-i2c-next and rust-i2c-fixes to linux-next
+To: Mark Brown <broonie@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
+References: <02908210-0ed5-42a7-b725-8bf70f936828@linux.dev>
+ <20260329105919.73dea963@canb.auug.org.au>
+ <b239bb2f-15d3-4d30-9b3b-8008864d8d62@sirena.org.uk>
+ <ec1752c1-a170-4473-9ecf-d6d93b31dcd6@sirena.org.uk>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Igor Korotin <igor.korotin@linux.dev>
+In-Reply-To: <ec1752c1-a170-4473-9ecf-d6d93b31dcd6@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Apr 03, 2026 at 03:01:18PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> After merging the ipmi tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> /tmp/next/build/drivers/char/ipmi/ssif_bmc.c: In function 'ssif_bmc_remove': 
-> /tmp/next/build/drivers/char/ipmi/ssif_bmc.c:865:9: error: implicit declaration of function 'del_timer_sync' [-Wimplicit-function-declaration]
->   865 |         del_timer_sync(&ssif_bmc->response_timer);
->       |         ^~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   e1748349a14d3 (ipmi: ssif_bmc: cancel response timer on remove)
-> 
-> I have used the version from next-20260402 instead.
+Hello Mark
 
-Thank you, we have fixed this.
+On 3/30/2026 2:12 PM, Mark Brown wrote:
+> On Mon, Mar 30, 2026 at 12:27:55PM +0100, Mark Brown wrote:
+>> On Sun, Mar 29, 2026 at 10:59:19AM +1100, Stephen Rothwell wrote:
+>>
+>>>> Please add the following tree to linux-next:
+>>>> Tree: https://github.com/ikrtn/rust-for-linux
+>>>> - Branch: rust-i2c-next
+>>>> - Branch: rust-i2c-fixes
+>>
+>>> Mark Brown (cc'd) now maintains the linux-next tree.
+>>
+>> All being well these should be included from today.
+> 
+> BTW I note that both trees have the same content and that looks like
+> -next material, I would expect the -fixes branch to be based on Linus'
+> tree and only contain bug fixes.
 
--corey
+Both branches currently have identical content because they are newly
+created.
+If the -fixes branch is expected to be based on Linus’s tree and contain
+only bug fixes, I can rebase it accordingly. Please confirm the preferred
+base branch.
+Thanks
+Igor
+
+
+
