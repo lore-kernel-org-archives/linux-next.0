@@ -1,127 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583A9175A9E;
-	Mon,  6 Apr 2026 16:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B454351C13;
+	Mon,  6 Apr 2026 16:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775491819; cv=none; b=sIM0QcmB3DQ8v/DCVOwvs58AuxBh82K6lhIwJDsq0JhGlN3iSaKhdjM51Y7rymx50v+pWdidBZYyHePabxodzK1v3/4U4HbdjBvCUg9iOBw2AjQI5BqExiYr5CVzfZdEKd0nDY+iU9fdSxVLCwcBD0BYuJhuEcDIPrlA47hB9yk=
+	t=1775492494; cv=none; b=Td7FxPhk21W35fxRzd/QiukD51j37j2skUwFE++8CODOizp3oLsBybwUq/NyEZNuTalf7blxIuWjeFxISbycbsqnT1pFEh06aw8pib1+In6rniluNcMFL8LFKLlL7hl/Lr6jh1UvI27FfT7QPGvqlmzWZsTKd1qZjCS88Syr4zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775491819; c=relaxed/simple;
-	bh=O/RWsRDKEHDA4E49tLLuhyJYglBGzwIiv7RVX/KL+j4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OjEy6T5PK7G5SMuGODVwiP/BnhX21N5TPK35wXzsfqM1qG68zlisqQQiRhF+jYLzQil9HBjh7Rves45/gMTB0bBWERS3DzdOKMI0U94fi/7ux2k4Gf1wya5nFli4R0QKJT3wmCUZcAG4dgD3vocCX1n5VICW5hOR+e1mbl1CQRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=De+xjYWw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775492494; c=relaxed/simple;
+	bh=o2m2Zg8RjvNqM2KJ0XIBG9IPHvPxQsxFARbTO9/6ywg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SVX8EXLzOXB2h3PwCZ1RtDxJfRe2/b4RrrzxfBZcGjvQeuwFvMKpN58OoQUiiwG+uCTTL560jaAQZy6zmqD+heCGQnIpFeifleieVfESZ27KXq9i6Pf2MZDTFw8WmRJU0OW7ZAXCT1ZKjgzw8nAMtKG1fX9VcJtIzusLiwGLeqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rR3Z+abb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="De+xjYWw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD9E2C4CEF7;
-	Mon,  6 Apr 2026 16:10:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rR3Z+abb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB09DC4CEF7;
+	Mon,  6 Apr 2026 16:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775491818;
-	bh=O/RWsRDKEHDA4E49tLLuhyJYglBGzwIiv7RVX/KL+j4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=De+xjYWwU3bbS6qi2icbqjPc7P80ls6Bv6EfMFJLnSiSheC6VdeoVJHM6rr+SZQzB
-	 RUYwwa2ThDAz2kxCBtRvWeSkxbkr8WiUUeBYB3ZR8kPxaUBE/DUgHf6DljkJDWpXtn
-	 EFIJ8HR0BzrYpx266TnEosYiDzt+InpMWLfareZwhIChSWXTWOADnwu1xaE37dStQm
-	 Ft5mVF0rNwtzzY/ldivBk9rvMdozq+S1p1CsYD3YtttvET6cdGT+bKOxO+qB0R25xN
-	 aGPyAIHUxDVp5CQe5IRB5auou1DplZLXsSEWfxOmI+BRA5S8/HZGKcS5hFvvnSFlJz
-	 1N9d/AhWnl/Qg==
-Message-ID: <80348cc5-195d-4acf-9d20-2ddc0da92ef5@kernel.org>
-Date: Mon, 6 Apr 2026 18:10:14 +0200
+	s=k20201202; t=1775492493;
+	bh=o2m2Zg8RjvNqM2KJ0XIBG9IPHvPxQsxFARbTO9/6ywg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rR3Z+abbMmqBPga4PQzbRXoFAFpwPuCpUsIWjdw1TuKJCN8ZUrcPf9Fk4u4yWCeMi
+	 pjn87MItTAlsK4r+NsFcpCGa0e0zJc7qnAOW0J7zPp7FHm2rNoivQ4U9XainBCPtrP
+	 K25nsI6M5J/RJK+uEAiqSlVtO5tPxAs+fRDpEgEDLUv/sSZRbCE0gGAwJZvHu74nHF
+	 lKxPuANPUoOWsxVWqawpcUfjIlShpLS00A9DeSR1htIaUTM50VKz3ElyIEqrnrCMsE
+	 V1QbW4pBLWQ7XwN5m3V/+zvIbqJGOe/89HjZ9v1P3/KG5Oc9MgRrytxt8y/uvI2V0A
+	 lHZv8Aw7GioDg==
+Date: Mon, 6 Apr 2026 17:21:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the vfs-brauner-fixes tree
+Message-ID: <9af71475-ec7b-4267-97dd-a35a1c56238e@sirena.org.uk>
+References: <ac5NL-ClYJZWAGJO@sirena.org.uk>
+ <20260402-festrede-bussard-dd3e564414cb@brauner>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net] ipv4: icmp: fix null-ptr-deref in icmp_build_probe():
- manual merge
-Content-Language: fr
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Yiqi Sun <sunyiqixm@gmail.com>, horms@kernel.org, netdev@vger.kernel.org,
- davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- pabeni@redhat.com, Mark Brown <broonie@kernel.org>,
- linux-next@vger.kernel.org
-References: <20260402070419.2291578-1-sunyiqixm@gmail.com>
- <c7df7e27-992e-4973-b6fb-63cdb7b40158@kernel.org>
- <20260406083615.32f44e4f@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20260406083615.32f44e4f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="17rzFB5+immilgnE"
+Content-Disposition: inline
+In-Reply-To: <20260402-festrede-bussard-dd3e564414cb@brauner>
+X-Cookie: One FISHWICH coming up!!
 
-Hi Jakub,
 
-Thank you for your reply!
+--17rzFB5+immilgnE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06/04/2026 17:36, Jakub Kicinski wrote:
-> On Mon, 6 Apr 2026 12:48:28 +0200 Matthieu Baerts wrote:
->>  -			dev = ipv6_stub->ipv6_dev_find(net, &iio->ident.addr.ip_addr.ipv6_addr, dev);
->>  +			dev = ipv6_dev_find(net, &iio->ident.addr.ip_addr.ipv6_addr, dev);
->> + 			/*
->> + 			 * If IPv6 identifier lookup is unavailable, silently
->> + 			 * discard the request instead of misreporting NO_IF.
->> + 			 */
->> + 			if (IS_ERR(dev))
->> + 				return false;
->> + 
->>   			dev_hold(dev);
->>   			break;
-> 
-> See my reply, AFAIU we can just delete this new check in net-next.
+On Thu, Apr 02, 2026 at 09:45:46PM +0200, Christian Brauner wrote:
+> On Thu, Apr 02, 2026 at 12:04:15PM +0100, Mark Brown wrote:
+> > Commit
+> >=20
+> >   fa430096c7100 ("eventpoll: defer struct eventpoll free to RCU grace p=
+eriod")
+> >=20
+> > is missing a Signed-off-by from its committer
 
-Good idea.
+> Fixed, thank you!
 
-Should this not be done in an explicit patch, rather than "hidden"
-during the merge?
+Did this get pushed out?
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+--17rzFB5+immilgnE
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnT3YkACgkQJNaLcl1U
+h9BGkQf/RfW1Lf/1Jxq+rT/xCh+YYpWOhBPbZ0WpZuuNo05OaTHX7QzmbAv9f4cH
+Uljfcx2BP/ZoDAm/iEkV3nibAO5VOGoqqesGl+0272oXdtPApcWZCDn4Rf4h2c6A
+Ds6GTYMYfA4+bYgQdZzZgZqxlkP6bN4tTbk5PEnHsp30NsUTzPAKpE/fbRGMd+gu
+/dIXTOg7Dj73k3UNwqIMdVz7YAYz9+nRTTWTf0O+hhlbRho33BPxQ5TkaoqsGKCD
+uzsOsF8Exp7ZN9y/iuU2GW6w4/2dtvte/JP9iRnJF9AJWfePzWVw5G0AvpIgyjdt
+rhBfOX/Sn0aYVTtx73vw5uPxc1mIoA==
+=Dosi
+-----END PGP SIGNATURE-----
+
+--17rzFB5+immilgnE--
