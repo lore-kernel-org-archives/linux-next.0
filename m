@@ -1,140 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EAE8472;
-	Mon,  6 Apr 2026 14:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775484343; cv=none; b=DUG+fSWrOManrWnWqKoegG4kq8dqBv3kbboVN1Kk81BPxziv16PrRzKxvQOW0oMS8W1aJw334ubneuOhjl1H/6cXn2FHLKcOz3Mys54fRLINhfeK0gBkFOj9y01dpTwht0RKX3RVzO69NK56L16Tjhq3yS/9RIqDn1IbeDt+4Qg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775484343; c=relaxed/simple;
-	bh=m8M6HfqomcOnVcyEC3qf+a0hDBNNK7dOGROtCU5jmdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uvAk6XzlHDGdh6LZoKLYRPnNgL2L1b2YNO57pdkH4K/2OoBpSUyDajYOvXXj+9nMlI5fLTzTOnq2kYrkfkqHW8sNoHSVOKWDDEvOKwH7awuIMVvGIhTMe4JRXTKcNpKF5dbY9Q+DIzVZpCPimLXj/QopO8fep8EPbrvFb/ZVuNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vd+U4F+P; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390CD3806DA
+	for <linux-next@vger.kernel.org>; Mon,  6 Apr 2026 14:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775486089; cv=pass; b=rGokKEmn0duHqCcc7Mday8xsQkrTiOQAF4zwXs2P3S+SKap3/71nuUvIMYj7ocP9HMMKtuzKuBOFBVc5J1ZugybVUMZhgBrzFXew9EhN3R5fGL0z2LUDQfLNDGSxPjegosJbZZ2jmyZQ+4xRO+apIL00JjGIHuC1sE2NSi/Zap4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775486089; c=relaxed/simple;
+	bh=txc1GgXszHVDSxiwgLcr3FoLM/49u5UMyHGBJqURxJA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WYx+QiIxL2Hed8yufesV7opsBEqfuLYJcgd5NJtDbDpqW5Wnfb2FmpF4uKFGfwdgfl3xWfj8zdt7k6qFFgiFlY7h59g/aud6tShSZvEZ38PYpDYbYtQqC5Ze5x+uWADidWtekIRabKioZcAMbFgrNyTOgMRKkyYgOzzLbWXbGwg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jayoA9dg; arc=pass smtp.client-ip=74.125.82.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vd+U4F+P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3895FC4CEF7;
-	Mon,  6 Apr 2026 14:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775484343;
-	bh=m8M6HfqomcOnVcyEC3qf+a0hDBNNK7dOGROtCU5jmdc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Vd+U4F+PIH3WZxagoyE/u61kZ3JvrhAdsOiYDgCkLRS+9MOlPd550J8Uw8GaihvzA
-	 oGapxjHeTQmtbp9GDjupCFO5EMEGOw0faL6/woznKdjOOIDpBrI1QK/wGhXJjMvMkn
-	 VcDJBT3Ht53vhU8uTSaFwkloliPP0EK3cJ9Ui7RSDpLq8zYbe0fEd387nFqu/oCVp1
-	 U9+5iks3UsCNyELrB9hWVpIy+SqWLDQTx3teDHhsyoBKY28sq9d0JpNXtvo49c76aG
-	 nG7zEnaTw50nmzkIhxxXFElz/Atv5iLjtFziBO5tTOImYA1l3ik0OrVS+IFAL9rnuW
-	 dyEVZrQxCK3qA==
-Date: Mon, 6 Apr 2026 15:05:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: linux-next: manual merge of the security tree with the vfs-brauner
- tree
-Message-ID: <adO9szS5_I7TmAjz@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jayoA9dg"
+Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-12736a0147cso226566c88.1
+        for <linux-next@vger.kernel.org>; Mon, 06 Apr 2026 07:34:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775486087; cv=none;
+        d=google.com; s=arc-20240605;
+        b=W+GsNRkdPJR9JUDVx85sKbc3hVwhY1XanV1hdQYx789z1ak8cPhG0lK1d04TriXJQ9
+         WM2BSdjok3fiv7IxwgLAniZv2xoKAMOjLsZvRsghxzcHlgYqTcOEbVusN3V0eeo/jHcA
+         JN7E71iQscwjKKObh5IBou1K/EvFIYJkDYYR4a1Q6k2ixyW8s439KO1V58hi+Wf3BIcv
+         KKw2Yh9b/5syI/cGIHCXrbEkwAI8yGt5ynG5qz4SzB0wFzs8C3xGd5xA+7xTK0C1oKPV
+         xgcYJCDeLtrhl2CNS8UF+gAjcsjIwUUw5PPBOBx7c3z5DQeGF7b1751Dk2H3h4IeCaCa
+         9vvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=txc1GgXszHVDSxiwgLcr3FoLM/49u5UMyHGBJqURxJA=;
+        fh=+GhzwcfqGIkfIgFJ4f0uDLdcJiwWYBpGJhKiw0RMt8Y=;
+        b=U+mn0OppXQl8jfMKDmDXUFEpwMlrF+6NFkWjyJuSnTBICQ4EeCr46qUSRanVDM9szj
+         GuY7YPUFv2k4E8yQoXsCuV8mQJD8tUT8iyhE9i962th0U5QtlptAitfV7bXZMwjF8p/u
+         YiXyD1Figqh/ywqu6YZNxIpUy4GuV4cZZ8o7fyM9jzpwlEtviNJZ4yZJvmSrh6HmVuI/
+         1JxgPbMmf7Wc93sibSWYhirfunrI3+1zMMVJXotS92xjOrI2lVP3BbelDswvdt3ue4fD
+         NIhCIOs5IqZIMrJEg+L+nucYpYVBCc9evyKd0p2WN40gqEu1IOIfxMHTQNJydT8OzMbS
+         fang==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775486087; x=1776090887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=txc1GgXszHVDSxiwgLcr3FoLM/49u5UMyHGBJqURxJA=;
+        b=jayoA9dgIJM/cTsAdPEn4mfdaDHggQ76xCikP9fbCJ1p7TBFgDyCKQ+AqDO1wwYQ4K
+         cPqk4u+f1SOOPsnnDNu/VsXLvpkUAC1udr6Pa0vmHrp9iI/0c/HKj4gMCVH7JPG7P4hL
+         /ymX65EQpmJs5uqWGNmmoEBMs3xkCb49lSkMQce73YNdY78Pq5FjqWMK9fxczd+MjV7Y
+         jjIDbNS270vsh9oOD33ZKN6n7rd0Obj+rZueFKvXWxVQ1KBTM8bQ0W01HP6xbmJESahA
+         41eTs2q7HbP7MqG5Iqnjucr1ithJPgYwPwQnEEv2VUTV9xhOo5iR/iTtelGP4OiMpWWX
+         qYOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775486087; x=1776090887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=txc1GgXszHVDSxiwgLcr3FoLM/49u5UMyHGBJqURxJA=;
+        b=h8oPjvdhmTihWYJMt6WMAq2QPE/FqQrBLC547cG1ZP1YNuXFR7hVVD439/cNkiBCS4
+         SPQ6Z7Qs2abOlaiw6dCQuTVHKDf+Uyeqi89VtyEuFW0QCmI6mToEc57d8tJ9rWMkUTBV
+         qA6KTuvBzwgr9t6f3PImUlKqUmHGPefqrcM59Yh8sE+lvfJ46hAJB+sZ7GxYlhM/rYP6
+         g/3KTG/uXooN1vhQ+sxERyyX3SpajuRORZo6gdBPrbPSZ7XmifIreXalqKHZQ8KsZ+Dn
+         UpUgMaOAEcqJ7zOQdVP2CXO5KFgaO1GryUT0OdrPcoOGsaicPa2VxlBpwqnDHpm+KvDm
+         o6ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWn8Za3zhJvYGOYs8Pj/Tv3OPB7faxr9nD3M9qXohVAWJrbV35mr2Ss5Hcf6xJ0JUdML2zMViNRMRW2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5YQMevSHqAbTyuGoc31WkyKnb/GsKtL+UAiuPyMBC2Cn2JyFs
+	KxSXLA1GCRLZrhAS7d2T15WOAgndPFZWJbD9orJotc5BGVm3w8vB7gqbif5E4Q15XWnBc5lMePZ
+	tgf09R6tralo2g9BHOJThXrxqo/WMREg=
+X-Gm-Gg: AeBDietzgTHRkwoCtnpmaW6Ws/41inPwxnX+ulrfuvZC4m1kFxu5zHOPr8vr1CfzI4z
+	FxzLAYuxf7rkSbr6MQq50S88EIG/sa2yabbryj3NL0nc9KvDXFJ/bJeVqSXTsDKox24Ye6EQtVc
+	3J+TXVy4J47weOGtE/LDZfgqhS4tB3X7AUXuF19umAJub2MqZPLjEOkFBmDEHkZAdz0ZUmh68Ss
+	AEw5yj0GOLXKClHzFM94ctXw5orxdlM+0TL22ydE0mtTJH245LcLLbWYaTcchjFyp4ydmFDUjEy
+	Gl7nRp9CN5jIeEwfAwc+5uPtGSp1rnleIFYcft/gaQ3C5LL1l+sSSX8FUiaqvkvJ0THVUolDQuR
+	ROgp24nAFklTvkagcqUEgK4E=
+X-Received: by 2002:a05:7301:2f8b:b0:2c7:2cac:8162 with SMTP id
+ 5a478bee46e88-2cbfd5652c8mr2525685eec.5.1775486087120; Mon, 06 Apr 2026
+ 07:34:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GRQ03595chXysmwE"
-Content-Disposition: inline
-
-
---GRQ03595chXysmwE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <adO3fzHT81hnO2B4@sirena.org.uk>
+In-Reply-To: <adO3fzHT81hnO2B4@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 6 Apr 2026 16:34:34 +0200
+X-Gm-Features: AQROBzCX_P08GU-8bqwxCda3woDdlNoD5iWxzaK9HD93KlyqVNZ07s90bW7xWu4
+Message-ID: <CANiq72=On8c2zXqzkyyV7rHGu+r5peRzhJCFf1XLS6wjU-RktA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the drm tree with the rust tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Asahi Lina <lina+kernel@asahilina.net>, 
+	Danilo Krummrich <dakr@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Apr 6, 2026 at 3:39=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Today's linux-next merge of the security tree got a conflict in:
+Looks good, thanks!
 
-  fs/file_table.c
-
-between commit:
-
-  1f1651d6dc2ac ("fs: hide file and bfile caches behind runtime const machi=
-nery")
-
-=66rom the vfs-brauner tree and commit:
-
-  fbec24706feb2 ("fs: prepare for adding LSM blob to backing_file")
-
-=66rom the security tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/file_table.c
-index c40ec1be28992,d19d879b6efc1..0000000000000
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@@ -70,6 -69,25 +73,25 @@@ void backing_file_set_user_path(struct=20
-  }
-  EXPORT_SYMBOL_GPL(backing_file_set_user_path);
- =20
-+ #ifdef CONFIG_SECURITY
-+ void *backing_file_security(const struct file *f)
-+ {
-+ 	return backing_file(f)->security;
-+ }
-+=20
-+ void backing_file_set_security(struct file *f, void *security)
-+ {
-+ 	backing_file(f)->security =3D security;
-+ }
-+ #endif /* CONFIG_SECURITY */
-+=20
-+ static inline void backing_file_free(struct backing_file *ff)
-+ {
-+ 	security_backing_file_free(&ff->file);
-+ 	path_put(&ff->user_path);
- -	kmem_cache_free(bfilp_cachep, ff);
-++	kmem_cache_free(bfilp_cache, ff);
-+ }
-+=20
-  static inline void file_free(struct file *f)
-  {
-  	security_file_free(f);
-@@@ -77,10 -95,9 +99,9 @@@
-  		percpu_counter_dec(&nr_files);
-  	put_cred(f->f_cred);
-  	if (unlikely(f->f_mode & FMODE_BACKING)) {
-- 		path_put(backing_file_user_path(f));
-- 		kmem_cache_free(bfilp_cache, backing_file(f));
-+ 		backing_file_free(backing_file(f));
-  	} else {
- -		kmem_cache_free(filp_cachep, f);
- +		kmem_cache_free(filp_cache, f);
-  	}
-  }
- =20
-
---GRQ03595chXysmwE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnTvbIACgkQJNaLcl1U
-h9AZEgf+O+3Q918PhpUAgAU6EV+lYdcTPMdKqeAl5jUGQEWp2M7vFHFgu+dSiFJa
-oU3CHKZIxm6iCk3zwNnQVI9DbMS3ahRgXTTySQ99qv1IQ73L71RvHMnK4RfcsLyF
-WrjeJLQQ3SD4l5nzGT+cIpVO4cHqR6PZgbbx0uuTaC8vL9+YSoTx5vI8kwCjDv3V
-VMiXm1IB5P92aUOHUvwlPO8fJDLsfJKhSOIanuN29yng94wgYO+TldtvW+r17Z3q
-59sWH4h7yPA/+r3G/iE3A228p4/tgnNorRlv7+Z23FR0SnK7rrseCdXcMTOSwYsD
-Mwt958RoGdZx9v8aVaD9ytnNU5zzoA==
-=Pao5
------END PGP SIGNATURE-----
-
---GRQ03595chXysmwE--
+Cheers,
+Miguel
