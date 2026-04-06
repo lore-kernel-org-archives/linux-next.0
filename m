@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44B037267B;
-	Mon,  6 Apr 2026 13:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADAF2F28E3;
+	Mon,  6 Apr 2026 13:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775481155; cv=none; b=qkOtbNmB3401eEzLIp4eYjqRx0k9FyGI7VvYLb/zKPHGFyfJ30U7BqY4W0eW3SfNhYw3bjLrbRHHvJQXhvqLkU3t2mQEa3kCN1mxTWZRPFXRHGkotu9pL15Ubc1SGMiArkQruAN5W8FwtSfq+wYI6ceQKVzJYeIMilUYrf5VK1w=
+	t=1775481186; cv=none; b=NPoexJdc4lWAhFin8+ZGLCeHOl0xDGB2GnwSsFr/lUbmtd2jDqkxB4f9cfL0N0X4RtRuf6R7zYHghfcuVEhs6+XTgJri7mOaBEwdK4USW2G9+HS42FiAjIQWh6dAosQF/uhNm/ylMSvOE1QlEChc37QTVErrNLIKikGkMG8KVho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775481155; c=relaxed/simple;
-	bh=Cf3OqK5dhus2lnbIqnndVfDbveVe8j0f/FUEcfKYJ8I=;
+	s=arc-20240116; t=1775481186; c=relaxed/simple;
+	bh=iGQshtb9en5Wo4qLfv3Twv7pXWYI95Boysan120G38g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MW1/j4MNVShFE3M+rV2z0LMtDnJ30e9EMJc3fWv/hpEI7kIYoFXbVNsTkK7aC6sJpHEbd+magx7Opn0qDE1w6MwG29k0+GK+0V8tp71NZ6NWdZL6OepMM3dxPHuln0VdfJCx3lb2u5BbHXKmEx7hxqwXiTRsIXP0F7xPXfiyTfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2tEG1uZ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=I6syptXqsoNvRtjpvDAD9Ve8C/hi1iCxCo0jAihW4Qb0taapQbjN9dEo+cMoX8ext1NTsMwjtbx0fa404upb2lqBFRPwH5G2VjBsHLIZvOQ0m6Y4tYMiUGVcUMlmaOsjSFFD+S/PulTco38frhoiMSR2kyewH6PqmwdALAOz/pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tM30VazN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2tEG1uZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D14BC4CEF7;
-	Mon,  6 Apr 2026 13:12:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tM30VazN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E5CC4CEF7;
+	Mon,  6 Apr 2026 13:13:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775481155;
-	bh=Cf3OqK5dhus2lnbIqnndVfDbveVe8j0f/FUEcfKYJ8I=;
+	s=k20201202; t=1775481185;
+	bh=iGQshtb9en5Wo4qLfv3Twv7pXWYI95Boysan120G38g=;
 	h=Date:From:To:Cc:Subject:From;
-	b=m2tEG1uZYQTuJygsmAmVzvqGWCvY+JCrtVmpZ+6A5VTxHxyqXYTtHzC3xkPjl3AxJ
-	 eW1w/97Q30G7oJJhJN6a/lhzmmynAeHqPCFhOVjChs1YQu0o/XEKYyWQ5DEUAH308e
-	 TyGAmtYWq2XiS30NTCvSpUMVsrgJA6RjAlBP8aZHav9zfZ5oHf2YrW3HcVeEjwFC2t
-	 x7TMsQAonD+FmHk9fiTtn0QHwbM1ObPUtT8NnR4uUq4Vi2c9qEs8OOpY/7n93VVuJm
-	 G2Ypoh81/o6taMqKzddZA9gdE3esR+/klDGIDBIiNWuohagsb8bBxx8YKn6MF9yccz
-	 LjcVnDimZFVlA==
-Date: Mon, 6 Apr 2026 14:12:31 +0100
+	b=tM30VazN5fx/4Kqi4Z9CpMmbEASfd+rHEha6IEhbJuEw3VvbqmpLwfU92ryr+9SRr
+	 KeyiHxQ7sDecjdlJaE3sCT+d1696Jvz26H+YwdrXIqalmHZz1VJHDhYZdZmgJ/yDg3
+	 tFtokSYY2dXrqwhcHB0ivmfjHGuWnL1rvN+ps4aoGwKxMugkjszaKoZxm5TSWmpZ6v
+	 a5gOZVwnoyAXht7qTna5zjX9WJlKvlbCdjZekGQCKyntlfe1XcrFcH0gymoI6SUKM0
+	 TE4dIBvl+m/IVq1wn+e7OHP694kYdMa/9hFe2vtIeeVgVPaftNzzkX3obDtLbZJZ0Y
+	 Uxnjxjon1kQyA==
+Date: Mon, 6 Apr 2026 14:13:02 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>,
+Cc: Gary Guo <gary@garyguo.net>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: linux-next: manual merge of the rust tree with the origin tree
-Message-ID: <adOxP2EZn8V0RmPZ@sirena.org.uk>
+Message-ID: <adOxXnpJpmQk-opP@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,11 +41,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="R4ijibj2EszzY20l"
+	protocol="application/pgp-signature"; boundary="idUnWrcHmnfT8KNQ"
 Content-Disposition: inline
 
 
---R4ijibj2EszzY20l
+--idUnWrcHmnfT8KNQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -54,15 +54,15 @@ Hi all,
 
 Today's linux-next merge of the rust tree got a conflict in:
 
-  scripts/Makefile.build
+  rust/Makefile
 
 between commit:
 
-  f41941aab3acd ("rust: ptr: add projection infrastructure")
+  dda135077ecc9 ("rust: build: remap path to avoid absolute path")
 
 =66rom the origin tree and commit:
 
-  7fa2b092b1ff8 ("rust: kbuild: remove `feature(...)`s that are now stable")
+  8980db6e99870 ("rust: kbuild: remove `--remap-path-prefix` workarounds")
 
 =66rom the rust tree.
 
@@ -73,51 +73,49 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc scripts/Makefile.build
-index 3652b85be5459,57cff77c28973..0000000000000
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@@ -310,18 -310,13 +310,14 @@@ $(obj)/%.lst: $(obj)/%.c FORC
- =20
-  # The features in this list are the ones allowed for non-`rust/` code.
-  #
-- #   - Stable since Rust 1.79.0: `feature(slice_ptr_len)`.
-- #   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
-- #   - Stable since Rust 1.82.0: `feature(asm_const)`,
-- #     `feature(offset_of_nested)`, `feature(raw_ref_op)`.
- +#   - Stable since Rust 1.84.0: `feature(strict_provenance)`.
-  #   - Stable since Rust 1.87.0: `feature(asm_goto)`.
-  #   - Expected to become stable: `feature(arbitrary_self_types)`.
-  #   - To be determined: `feature(used_with_arg)`.
-  #
-  # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details=
- on
-  # the unstable features in use.
-- rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
-easons,offset_of_nested,raw_ref_op,slice_ptr_len,strict_provenance,used_wit=
-h_arg
- -rust_allowed_features :=3D arbitrary_self_types,asm_goto,used_with_arg
-++rust_allowed_features :=3D arbitrary_self_types,asm_goto,slice_ptr_len,st=
-rict_provenance,used_with_arg
- =20
-  # `--out-dir` is required to avoid temporaries being created by `rustc` i=
-n the
-  # current working directory, which may be not accessible in the out-of-tr=
-ee
+diff --cc rust/Makefile
+index 9801af2e1e027,866f9afc1b7f8..0000000000000
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@@ -144,12 -145,7 +145,7 @@@ doctests_modifiers_workaround :=3D $(rust
+  quiet_cmd_rustdoc =3D RUSTDOC $(if $(rustdoc_host),H, ) $<
+        cmd_rustdoc =3D \
+  	OBJTREE=3D$(abspath $(objtree)) \
+- 	$(RUSTDOC) $(filter-out $(skip_flags) --remap-path-prefix=3D% --remap-pa=
+th-scope=3D%, \
+- 			$(if $(rustdoc_host),$(rust_common_flags),$(rust_flags))) \
+ -	$(RUSTDOC) $(filter-out $(skip_flags),$(if $(rustdoc_host),$(rust_common=
+_flags),$(rust_flags))) \
+++	$(RUSTDOC) $(filter-out $(skip_flags) --remap-path-scope=3D%,$(if $(rust=
+doc_host),$(rust_common_flags),$(rust_flags))) \
+  		$(rustc_target_flags) -L$(objtree)/$(obj) \
+  		-Zunstable-options --generate-link-to-definition \
+  		--output $(rustdoc_output) \
+@@@ -335,7 -329,7 +329,7 @@@ quiet_cmd_rustdoc_test_kernel =3D RUSTDO
+  	rm -rf $(objtree)/$(obj)/test/doctests/kernel; \
+  	mkdir -p $(objtree)/$(obj)/test/doctests/kernel; \
+  	OBJTREE=3D$(abspath $(objtree)) \
+- 	$(RUSTDOC) --test $(filter-out --remap-path-prefix=3D% --remap-path-scop=
+e=3D%,$(rust_flags)) \
+ -	$(RUSTDOC) --test $(rust_flags) \
+++	$(RUSTDOC) --test $(filter-out --remap-path-scope=3D%,$(rust_flags)) \
+  		-L$(objtree)/$(obj) --extern ffi --extern pin_init \
+  		--extern kernel --extern build_error --extern macros \
+  		--extern bindings --extern uapi \
 
---R4ijibj2EszzY20l
+--idUnWrcHmnfT8KNQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnTsT4ACgkQJNaLcl1U
-h9B7jQf/XKKwxjzHoOesnOKO8ed1TyAS0RjVt3vuRku8k5NWrusU7wDfp+nNEpm1
-talW2fyExIIcolHlygB3nG2qEtTBAEMJhWczRn65QvPuNWPVtuvUJM76/RblE5M6
-+/r4vFEsD0UCuYTfZ8ffydFDC5J5gX56fE0FGyy9ZmAyi+9xK6TcoR+IUUDhUVwK
-V4ll8yvz+YY8T1K75VSIZROXJ9T5SCmfBBL3NAdUBjdXYun6R4hxsxsWB7PnXRTR
-ydPjLkzHUznbDrGXXwmeY3bvQniDU/UrXPvjmUWR86D8yt4d/uWhoU1qoFJK/BKR
-dk84QiG6kV9yluws2v3ZQkqc0wcwpw==
-=ty40
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnTsV0ACgkQJNaLcl1U
+h9DG0wf+KSRQRiZP5KIKonkpPEXnlpxb3SqV9jctEveok6EM9Slfta2m1b9ofZfp
+gB0/7yelJ+BbCC2uxBSdwaG8d/hG3plSRc3lL8zshTyQh/1TVhHD4MoKo+pKa/Ob
+A7JmV/Q6b8GaHGg1kr1e3wCNZfGAtCQ6sIN7Cu5y8+FX21JtIJkYxzomXQWEDMIg
+n4BggPAnssiJrCv3CZ2sT+8xMWq16TGreNBlAYNg5qTI2hwyWFzaYJxy5LVJdGXq
+QvHvNJKsFWvITv36VAUZxLBkPbrCZRFnio2Rc7QGIviH/N6F27KRWIuMgRkQlbjD
+oNFKxVXoDUynOAic72o9w3hdJDHlQQ==
+=RORs
 -----END PGP SIGNATURE-----
 
---R4ijibj2EszzY20l--
+--idUnWrcHmnfT8KNQ--
