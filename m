@@ -1,75 +1,101 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667E25776;
-	Mon,  6 Apr 2026 16:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462D138F62F;
+	Mon,  6 Apr 2026 17:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775493986; cv=none; b=PZ41/CXZ6B0FiJJiEcdCVMHEKtrkx8w1utv0SozZfVoI+8bJk+MsBz20PB9iAlRg0gAOEUB+2smCNghE0t4kWJfGRxV9fZfNPU7y/NNx7BBIPBohf6i0UXn8NRcV7nC7Fe9PTcUJztB2BVbLTx2rlymYHOCJIqhyEpeDBg68ofE=
+	t=1775495163; cv=none; b=sE1xi1/RwNzVFusolwbAKuz9J4pNDad6Y8MquuroDiQtM0JAgRzAKI+NAgc5XOB7ifWpjNOYW0YWtT3sbPVFm7YxOia/zYuwIPvE8my1SuxoMB6QCiayV6fXM3Dv4t8FxeZRNgrgvY+IeNkjlukDCRZnif7ndsma8VpVyCqxwNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775493986; c=relaxed/simple;
-	bh=w7ilhOLnMp5wknDWz/9lNlLZdxQo+8GSJ2ogFLcQlxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YNso4Vgk0yQsHyarvQy2wwV+H/s27e7U4D9N+DFumCcotLl6Ar/4GQdF152k2VH8vsVTXvum7XuXbKQUA3A3o7RYLBKolnzyzS2/3QrkeYiWOikk+7L9NuP7YY7c3FgaF+5cdM3vUm07X9S/X4iEiu4pWi8jE0gSAU07SEL2+BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkGwYExh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775495163; c=relaxed/simple;
+	bh=O7TGyR11nhmJBXsCNKeRlrQTEhWru66mvSNab6SxSI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQkZc5RHcAK0/9Sfi21pbcDElodi8YYksXOxLNFN2lQfFoOF8Z0NebIejdfs6zHxsGmg6lH9MOiA3+84ol6yIBy+KRGrOjWiR5B14y9lRQobsDeXRsggx36dC/Wj6zHbo10A1bhIZJjQpBHLkb5HgUWUTfth2JKLcZFk0KAFoHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oh/Y855+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkGwYExh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1ED4C4CEF7;
-	Mon,  6 Apr 2026 16:46:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oh/Y855+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC670C4CEF7;
+	Mon,  6 Apr 2026 17:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775493986;
-	bh=w7ilhOLnMp5wknDWz/9lNlLZdxQo+8GSJ2ogFLcQlxA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZkGwYExhTfFNHrQWWgGX7gQeFvmjNivBLZHVCGy5/Gq0Lfkj6lFjHQW5rRIVoNfDc
-	 FMOpFccWedg8zx8pwIRJGC0f8EmMlSmQC6IYsqflqJUlwcWL3NoKPn8TeyixaWGEXr
-	 ZrXHlIEoznygY7gohLBnJHuIkFYR4JAyqf/rfPWiumTAj9X1t8JdvBwVKcnKFn43M+
-	 +73JD6O542D7IMf17s2fXEmNTFJMjkfUmvV5VCipeGebUJ2KoJIIUC785mPjWVrb69
-	 uJzsFrwSPbbrohd/S1YIGJVs0AsRj8aB+qlAtWGcrh23i9Uropc5/6jR9hWy5qA3HQ
-	 3wiUvkUxTiiuw==
-Date: Mon, 6 Apr 2026 09:46:24 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: Yiqi Sun <sunyiqixm@gmail.com>, horms@kernel.org,
- netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, pabeni@redhat.com, Mark Brown <broonie@kernel.org>,
- linux-next@vger.kernel.org
-Subject: Re: [PATCH net] ipv4: icmp: fix null-ptr-deref in
- icmp_build_probe(): manual merge
-Message-ID: <20260406094624.79736044@kernel.org>
-In-Reply-To: <80348cc5-195d-4acf-9d20-2ddc0da92ef5@kernel.org>
-References: <20260402070419.2291578-1-sunyiqixm@gmail.com>
-	<c7df7e27-992e-4973-b6fb-63cdb7b40158@kernel.org>
-	<20260406083615.32f44e4f@kernel.org>
-	<80348cc5-195d-4acf-9d20-2ddc0da92ef5@kernel.org>
+	s=k20201202; t=1775495162;
+	bh=O7TGyR11nhmJBXsCNKeRlrQTEhWru66mvSNab6SxSI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oh/Y855+GMsiImIdLq52HHzHjwbMKTiSDWLrn+MFN3kifklQtScQnT+2VIUimy/1d
+	 5whZtHhOncMswCxe97I+lPrphmWFp5iRYKq2qvoZ+kYweBNBNTrBAPxroWygAm3B5d
+	 0Lthj0m501b/1Q2DfyJ0hRYcnpBfj2cSgsIGVUfGEDGJRT5GKgZ53WI1O5Zk1phMBT
+	 bTPsKJwkN+W0oGHS8bK42hIvxTDLIBSUalm4pfLS7tcxANFR7REvhK0hW26lDUN5gQ
+	 inHCRUAdFasU86PnILl+tb8YwRX5D+guTYt28UT/vDDwmo/DtbFXaNw9rD/CcB8Ude
+	 QlnhNilR4Ezmw==
+Date: Mon, 6 Apr 2026 18:05:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: -next status as at v7.0-rc6
+Message-ID: <ef6aa13d-fb7a-4831-bca7-6c825f83cdd3@sirena.org.uk>
+References: <c6bfc4bc-ba8b-4402-be9a-518091c91237@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yH7xGkiWX3ffryIZ"
+Content-Disposition: inline
+In-Reply-To: <c6bfc4bc-ba8b-4402-be9a-518091c91237@sirena.org.uk>
+X-Cookie: Offer void where prohibited by law.
 
-On Mon, 6 Apr 2026 18:10:14 +0200 Matthieu Baerts wrote:
-> On 06/04/2026 17:36, Jakub Kicinski wrote:
-> > On Mon, 6 Apr 2026 12:48:28 +0200 Matthieu Baerts wrote:  
-> >>  -			dev = ipv6_stub->ipv6_dev_find(net, &iio->ident.addr.ip_addr.ipv6_addr, dev);
-> >>  +			dev = ipv6_dev_find(net, &iio->ident.addr.ip_addr.ipv6_addr, dev);
-> >> + 			/*
-> >> + 			 * If IPv6 identifier lookup is unavailable, silently
-> >> + 			 * discard the request instead of misreporting NO_IF.
-> >> + 			 */
-> >> + 			if (IS_ERR(dev))
-> >> + 				return false;
-> >> + 
-> >>   			dev_hold(dev);
-> >>   			break;  
-> > 
-> > See my reply, AFAIU we can just delete this new check in net-next.  
-> 
-> Good idea.
-> 
-> Should this not be done in an explicit patch, rather than "hidden"
-> during the merge?
 
-Dunno, it's not a huge change, feels like a good fit for a merge.
+--yH7xGkiWX3ffryIZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Linus,
+
+No trees are held at old versions
+
+Trees with signoff problems:
+
+  hid			(missing committer)
+  rdma			(missing committer)
+  rpmsg			(missing committer)
+  vfs-brauner-fixes	(missing committer)
+
+The hid and rdma ones are comaintainers rebasing things without adding
+their own signoffs.
+
+Non-merge commits relative to Linus' tree: 11181
+ 10381 files changed, 612553 insertions(+), 205276 deletions(-)
+
+Top trees adding commits to -next:
+
+  1732	drm
+  1084	net-next
+  948	arm-soc
+  370	tip
+  369	mm-stable
+  348	char-misc
+  251	v4l-dvb
+  233	sound-asoc
+  184	kvm-arm
+  176	vfs-brauner
+
+Thanks,
+Mark
+
+--yH7xGkiWX3ffryIZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnT5/YACgkQJNaLcl1U
+h9ADpgf/Sc2ZdeA2nu36X6xze6Rt2vHWW6PHKeXkeYXAMI+lhJhNB0wVicPOjjky
+vy/8OKVPMXipwXTEj2nRpiCsDVhS/89lcODrxEti0jibzWSFGqYoTNNu6VZ+fZEB
+TmEuA9gQJ8rhtkm/G8SVboVvgV9ESFrVA+a1f1LNE5JmxRu/Rg1HRl9k1vkEe0ro
+k2tPMPPtfmCOydTn41mRiW23SC3KVakzfVbxx+89dNHBj2+xDo1tN0i7zgQEtMPx
+MqPU3LulSNDOxQihqsIxlC8XgaZKT4vPiwvWNKCIz364EErnirKJXmmjyFUbl6sX
+EhjzuTcLvnqEuADHN1eCdXX989fwPg==
+=lunn
+-----END PGP SIGNATURE-----
+
+--yH7xGkiWX3ffryIZ--
