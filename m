@@ -1,69 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2AD175A9E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04972D0614;
 	Mon,  6 Apr 2026 16:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775493497; cv=none; b=Eko74YLgOZsWYqI4jjEw55K3wMYM2D+7e2uV5ATVVktoeiWIzr2/IUjh1JdOpAbibrcT0rQcIGwKdZJwf/zLRezOqdF9J03fO00HJMm4lRdGtgVV3k33lmcGzAOsmYSlDB37P4chVHT2cBFkiOnauvO9vo33Ii8QRaKO9s/b5tA=
+	t=1775493498; cv=none; b=GFMXPqZQqwzjQsjn6PF0X+4+4hcmWtmeFtC656drKJqEv4n6Nl/WRpfONYktBp6Xq980iRupMRikOC4yXnMrBRq/+KkqkTHg4237bgH/1Up9M1k7WiTvx3vYphF9gxRpuv3MxhpovPKn66R75nVpQOQogo3ZR+nGuxO5ln/VKKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775493497; c=relaxed/simple;
-	bh=zMouZCiKC8cmLmJ6pk+vFsfeOoCgTOe3l/dHYCZSg70=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=tMecMTzfgx8tQ3BvRI6jq1iu7fsnW3YZeGceSvfJCjjIrTGHEf33UE4Zaw/ECpJOlOBTM0izR4PsJnX7jCHBa5zdNF2d58MFU8GZSEY5TpE29HgxmT46xmbH50NhKxJMaDlgOHcbFZ7G5N5iHQPldwSU49MUJwoAs8Y/brPPOfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKPB7Kny; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775493498; c=relaxed/simple;
+	bh=DIqG42+fZcictkcXN498kxvORLlRudcTT5eY3qnAmrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=teGPOaBIqrBU5tRzy6Aknrb11DkByY7nHY5wrC2uTc+MJYo6NbSHhrF8pDML1auseXPCIfytxEsUDCvWPIc4svkQuzRyiGuu/YHrtLIq2Sgh2ns1q+bnuwuoIsl0ARwohZnZgNLkeaaHjTeDQV1NPDGn39hBgwdIstgzkB+wDRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USB+qmnb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKPB7Kny"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32347C19421;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USB+qmnb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4206C4CEF7;
 	Mon,  6 Apr 2026 16:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1775493497;
-	bh=zMouZCiKC8cmLmJ6pk+vFsfeOoCgTOe3l/dHYCZSg70=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=DKPB7KnypFUOTVgy2RwSzaNrVXJjAiPwECeACaTAnePf99aUxHGUsX+O2wYDdFY9q
-	 mR7y+WeyeUW4FrxdzR2NVLTC901rYMhUZsfU8WbFql1TYVdz7WB/Z11P4y2JDQDPiH
-	 +4TSBk1vF4+6BuKck7j5pxmqtj8mXncsdURsXKguw25G0E/6KJ6hrlzQ7aST5ZiZwD
-	 QP+qsb7PYtE+oFMHDBAx/XZIjw941tkeV271jS/TMqkbj6X0iUqjP3KODPr5Qyp3Lu
-	 u9RVfN+ccerimrmCDcK2Bco2E8lymZPrjVxg5hj9fBCxy1SEFG2kZnLTW1xUxGNJvl
-	 gsnlEAUZwrJwA==
-Date: Mon, 6 Apr 2026 18:38:14 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the hid tree
-In-Reply-To: <782cb718-33dd-47c3-b5a4-d95440c2d09b@sirena.org.uk>
-Message-ID: <61868409-rs8p-rq71-q852-5296pnp42srs@xreary.bet>
-References: <ab096wLbcpu0M-GF@sirena.org.uk> <fa4b8b25-8b34-4314-a7f3-ea7143ed9247@sirena.org.uk> <782cb718-33dd-47c3-b5a4-d95440c2d09b@sirena.org.uk>
+	bh=DIqG42+fZcictkcXN498kxvORLlRudcTT5eY3qnAmrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USB+qmnbgntShLVULS7Zl1Ptzm3pdFzeWhPsSHVHB4xuCcvFe7R3/MnConbo3oQbI
+	 Xn/3z6ZIRGZ/LnBfOpwuR6IIQ2SILU90ExpQ4Prptb711ScBRzpIkCd2mhLn0GOuDL
+	 PnfCXybnIxMVE7t5IXLOivBar6FXz+70gmlXVhfbVcZR4lSyrS/NrRFJTQxpxrDpfa
+	 FmF9aFYGYcxxi8vm5XdvfQp+UHAjTLxkeyTF3Rv7/kNSTUAxP/STp6bphRMTYMIuIM
+	 iGxZtvs0HCBjy2sszeivg1E0NW7t9FXHdF00qoXoV9F++bkRlGLrlMsUleotBsSfCi
+	 fR7I+yQynDf9Q==
+Date: Mon, 6 Apr 2026 17:38:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the rdma tree
+Message-ID: <df6f8a58-5c8d-437e-aad6-fee85a89f5e6@sirena.org.uk>
+References: <aa6qqi-GmXZXxubE@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BspWlFfqw9yomuyS"
+Content-Disposition: inline
+In-Reply-To: <aa6qqi-GmXZXxubE@sirena.org.uk>
+X-Cookie: One FISHWICH coming up!!
 
-On Mon, 6 Apr 2026, Mark Brown wrote:
 
-> > >   142068281f513 ("HID: input: use __free(kfree) to clean up temporary buffers")
-> > > 
-> > > is missing a Signed-off-by from its committer
-> > 
-> > This issue is still present today.
-> 
-> And today.
+--BspWlFfqw9yomuyS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, this happened because Benjamin rebased a tree with commit a that I 
-originally comitted and SOBed (the tree has a shared maintainership).
+On Mon, Mar 09, 2026 at 11:10:34AM +0000, Mark Brown wrote:
+> Commits
+>=20
+>   eb15cffa15201 ("RDMA/bnxt_re: Support application specific CQs")
+>   485a21c14b413 ("RDMA/bnxt_re: Separate kernel and user CQ creation path=
+s")
+>   9ed273bbe6637 ("RDMA/bnxt_re: Refactor bnxt_re_create_cq()")
+>   0edac801a2693 ("RDMA/bnxt_re: Support doorbell extensions")
+>   4e99362444a2f ("RDMA/bnxt_re: Refactor bnxt_qplib_create_qp() function")
+>   f0579e330b773 ("RDMA/bnxt_re: Move the UAPI methods to a dedicated file=
+")
+>   9db6a217ba5dd ("RDMA: Add IB_UVERBS_CORE_SUPPORT_ROBUST_UDATA")
+>   ce150a8376e1e ("RDMA/bnxt_re: Use ib_respond_empty_udata()")
+>   d59f007207b39 ("RDMA/bnxt_re: Use ib_respond_udata()")
+>   ac4bb15208d1f ("RDMA/bnxt_re: Add missing comp_mask validation")
+>   12c73bee53133 ("RDMA/bnxt_re: Add compatibility checks to the uapi path=
+ for no data")
+>   ac593f5b66c9d ("RDMA/bnxt_re: Add compatibility checks to the uapi path=
+")
+>   6df3a6414d736 ("RDMA: Provide documentation about the uABI compatibilit=
+y rules")
+>   42d2a291ef474 ("RDMA: Add ib_is_udata_in_empty()")
+>   f1cac281b4245 ("RDMA: Add ib_respond_udata()")
+>   4ac738c6a7b90 ("RDMA: Add ib_copy_validate_udata_in_cm()")
+>   715eccd4798ec ("RDMA: Add ib_copy_validate_udata_in()")
+>   ea08d8cb8b520 ("RDMA/core: Add rdma_udata_to_dev()")
+>   8e886928a19d7 ("RDMA: Use copy_struct_from_user() instead of open codin=
+g")
+>=20
+> are missing a Signed-off-by from their committers
 
-If you strongly believe that this is worth another rebase, I can happily 
-do that, but given the fact that it contains signoff of one of the 
-co-maintainers, I wouldn't lose sleep over it (but I can be probably 
-easily convinced otherwise).
+This issue is still present today.
 
-Thanks,
+--BspWlFfqw9yomuyS
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Jiri Kosina
-SUSE Labs
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnT4XUACgkQJNaLcl1U
+h9AHFQf/ec3vGZZOojidEUZ2E3elQLBmbVBUIiULTuBRGLmejXKMiwhaq9q48kim
+KKe5pVYLlx8bLVKa4fyDiv9V15ImcQlB/y17teXW4W5pqC8hD8ZTvIOHYIb79laH
+LEB+fpnnnA+b+neocKzRedJK/EMUlMVcMZbqV8gFfeQfbJoQ6158OvozzCDpZakJ
+LQDpSD2uCXweAIOCOk20mTFS8suK42+cqXeoHU5B8zvuIfyZs11kA0Bs0Xz2wzwl
+dTM/q2W13RDnU9HWKOzDHvkkBITKmV9YXJ6kLEtw33jf2S9nol2/sqC+vJv7gIxH
+Qa5EfHgAK3md48cAc3O9Kkuve6LoRQ==
+=jI0K
+-----END PGP SIGNATURE-----
+
+--BspWlFfqw9yomuyS--
