@@ -1,359 +1,2039 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012013.outbound.protection.outlook.com [52.101.43.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C589640DFCB;
-	Mon,  6 Apr 2026 17:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775496628; cv=fail; b=bBUA4cah6UF+y6SeBP6mcR/NfVuQhM6ibeSsJB2tIOAaMfDn5eCXnPX4wiWmEAsvvBQgyb2r1Z0YJvPS08RaI6dV77yiQi22RmoJzZ7wFxwoZ5fndeD/sxJNecjRWwkZevR80il7iI4nkTi+yozqB3Ge05q9gc8x9eex6a4fitA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775496628; c=relaxed/simple;
-	bh=2bXsSvlbjQ72+UAw47HK7LYYpzXLhTp8s0346zK0WN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bU8cWhT9ljnu3F8W5Z0sPotHpFWgLggew6gtEpMAuYSqCWbtLwnjJ2ymv8xaRHuZXnB1qabrkiqoqcrW/QjEXm9nuSTWZv8h1+oeBK3ndEOLIUKjEVgSUc/dhzM4ftDQ7Frr+OLyXP0+HpusSn6Cv06XBI0yYUlvqk6q75qoFts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mcUXiLYD; arc=fail smtp.client-ip=52.101.43.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE031EA84
+	for <linux-next@vger.kernel.org>; Mon,  6 Apr 2026 21:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775512750; cv=none; b=n1s4wezRsUg1EFXKRoA/rgTX5dG3WIkBU1fQK/l/TeIddpO0i8utImK8CLaeFoVIiqXuoixNIDWwi/7LBoIRCz0p/VzIyrsI0kGJFSDt4WJqDrmx8cqCh2YWyM/C983gSMOURWjH7VtYT2pCrRIt9sUWLmIBAk+H/UG3vdhMCw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775512750; c=relaxed/simple;
+	bh=DvDwwyJoeEabhVtWAPveLDjeBkkoPCkf8NhGgWkFdOw=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=qsLwjxiEKsqOYkxUnodygU+r0UFuwvg+NilOqOPnofnUWz9h2cnnjSm5x0cbEb2FpHsRjuhzb11oVFxPbOK5UPDsDfDehNLxzHdTQKzPGFZrISTsfZImfgFnBUKBNzB1CBYCegjIfywZbtx0dIyE6/NPX9rMSVu73RQeUSez4/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20251104.gappssmtp.com header.i=@kernelci-org.20251104.gappssmtp.com header.b=dKIRApSV; arc=none smtp.client-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mcUXiLYD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OknwoF1948nRB+lBhXAYjZ/j25W4JnnUpXeyKYZQ0/+P4BTxsCTxWO+yRKCdcifYClGAm512XJGPTRspWdJJiqeitUQ4XAS9vnOC57d1Esbw5JaSct7m+U/1kkLCxiIa+SW4XBtmm42lIyMcJ/J+czOPmTOidOBD3bKDcDZ9KJH6nU+HwMkKS69qNrPNeTTe9JhEEPT0KEitb74AsiviLEXNe1V4GVi8RFdSluXh/1v9+LI14VXGaScz85vpE13wQtjTYX1POVgVxEuO+L+aCoeIJ91q57ygww/dZERE/BbNz74R7TgvCCLxbD6IMLSc2VtgqYrM5lDfdWF3GOUbcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WmlqwTI96wf2m6eDalnr5t3FEETXBjLwGuX2OftfV2U=;
- b=MB7zCUoAYGmaSb0MSQTVBb1pcPZnTP1aohN+mN7CBVmLu6ywXwpOyQFADkjB7aN3yUxFhNL0k5GI0rozl9RNCaNM+hcR9aroKsc8Z0foDRKenfXghohs/dIkV7UgaNtfKEcadBUU4JcC+pUBhcCsoaAvCUGvlRgN+O1N++gaORiEAn2YZKlFg+1Opco4xRNC++ABXUZXifbLxOS4cR5tSRBXI9uOokHVoRZIrwR+XLZVXe7mSOHBJnEYkAFdjlZxwfXhiZCkb3ocpbM8g29yiXSjqc5m1Zk+73MJcrNVbN8V3tzjydNewKq8sKdczj9ZI2iBcgc68IvWzxR2IpQ7YA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WmlqwTI96wf2m6eDalnr5t3FEETXBjLwGuX2OftfV2U=;
- b=mcUXiLYDTYSoDdoI3XopVGg4EU7khHTchAcbp7W3tIAuLV57mUrH6Cu2F4IBQdcdGb4mOd35vbvOnOZYJOAuwFK+ZH0ZulAOCtaStSQAYwVe/nbt3ilDWw5nFTpDo0VlFcmpMdE+N3LwPgRq54FZTsoqlKW0XsF9U250qy7BmJxL6rsLF1UujcflGwNf6CHLgBkBLxZwFHx6TKCM5vKhRBLV1gaAVJBrs+qEBwo3fbSWe6AgMuLi1MCQ40SBrRjTs4Zlfjrb1c+D4b7QsQUUVfxFDpK1xDzVqlYHPuFVFyRSG+qtN471SQZCfvbjRSnBbsO/b1Al5aN8wVbtcdZUCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DS0PR12MB7653.namprd12.prod.outlook.com (2603:10b6:8:13e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Mon, 6 Apr
- 2026 17:30:20 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::299d:f5e0:3550:1528]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::299d:f5e0:3550:1528%5]) with mapi id 15.20.9769.017; Mon, 6 Apr 2026
- 17:30:19 +0000
-Date: Mon, 6 Apr 2026 14:30:18 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the rdma tree
-Message-ID: <20260406173018.GO310919@nvidia.com>
-References: <aa6qqi-GmXZXxubE@sirena.org.uk>
- <df6f8a58-5c8d-437e-aad6-fee85a89f5e6@sirena.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df6f8a58-5c8d-437e-aad6-fee85a89f5e6@sirena.org.uk>
-X-ClientProxiedBy: BLAPR03CA0044.namprd03.prod.outlook.com
- (2603:10b6:208:32d::19) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20251104.gappssmtp.com header.i=@kernelci-org.20251104.gappssmtp.com header.b="dKIRApSV"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-2c7d8bbad06so9778795eec.1
+        for <linux-next@vger.kernel.org>; Mon, 06 Apr 2026 14:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20251104.gappssmtp.com; s=20251104; t=1775512745; x=1776117545; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+VRRpzCKb+3H5cc/vpU3H8WxK3wrABzuH3XSkEv/sg=;
+        b=dKIRApSVAh/NdiXVt9FzZWogZQjDKge2lJ/FtUawHycQOoWfeLmGdr/+sUpiAwmlLV
+         di+qVr0UhFwdh+ZMMlCY/8TBV9/VYnpxkGjf+AJsJ8F9m/ekq2M4eCldhtFW10AGRyis
+         ibQMMmjcZk5h9WMD2ceuQRc5xLHRuCyjaq786HyAJCf1FjdoCsamznY+D4zLTKK4fFo+
+         V4F8ZY1Ozg3GkW0gB+PjScKUZBz76V6qN8GZdGEmw/lyVJ89FZq+miZmaf3jVvChnCF5
+         MKISgjDNQHkN3yT45HDjrWANiS2tascJPRyCCcTBuXNf95eicUxoNUZZJS9Any6ghV5n
+         wmIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775512745; x=1776117545;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0+VRRpzCKb+3H5cc/vpU3H8WxK3wrABzuH3XSkEv/sg=;
+        b=R5KQ6ohypbYXeWNu07WuRuHtQtN0eZx0bNriXtsRFwCRK80QivRgWnQiqsMm8xbtkR
+         hItgfaJfNRidiRdlv0QcWrtgCoxquPErzH3J4n41pqe4l8JN9lSjKs5wUGmkBXpasndM
+         lI4NA9HjgYbQFMVfII/bsHP8IPNq9kGb4MRtX2dHAUytRYTdhsfjLsjB69SuUZyuBPnU
+         gGvgjjVXDh0b2vkEaW/xSL+dRUXK+E0g4dgxG5vdUeiDhV2JsVG79tVAnEuavYYLoKDC
+         0R8seV04vLIUEOKQ6ocdNwO+SvCXs9V3Ka5H4syd4vqNKHlmmE8HLqOR4q8WzCCFAMEE
+         eGZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfCFb/JZ8gV/tZoTereqOucd8+I55G1fEIGpTaxUTtiDScaXzgI+AR8naqRKMyaVBOlrnEw8oOtIgw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv3MKibRQQ7jR5yEcQ22xfcEc6BFm4dZ7TjDQjnUsEKuNZ2j8Y
+	/sLFLFvdhRrE/qj5CgTUJCfgB1TxkjqUa0mv0L4mm8rpE9RwAIvMxYrIkXaSL2SfSk4nmkocs7m
+	cZY8D
+X-Gm-Gg: AeBDievrkdlS2L2bG7kCDxN33lvbJ2uV3lk8kKzS6sfgsZa/PitZM1iLGcsBkQKlL4g
+	mz6KJmI1XndHfiWow2cjvMPtddjdwugqdWUvQlWxnFXxgo9lXGbmCacDryeMZkzB+KEzaUA94o4
+	bn9OfL2XsR4Ke/Zp31ffTwXYOXYUCpEmTXR83X1uQ/LGoOn+AW9N/j0aZat0ApxmNXLnhHbpzOc
+	cLUhzfGF4JZMMg17iucC8xtD5vdPEaOyPIXDFFCXMtS3f2rRGif5UgozndHB0cx6OZAjrFJYxok
+	pc8WWQbyCOAfMW+wfNndYGGWQKPk6VQ87+JAoQiAtiD57VHYygkOrqnHbwrxLOAyG99Ut3LAELa
+	V2gOPd0wYbYgUz42A9HOrMM6jz2J2E3MOqCh6BxaFBQzLbhP94xlLTrYR61JyybUo0wGO9i8BZu
+	jeeXNHFm+wT1XqYbv9
+X-Received: by 2002:a05:7300:f589:b0:2d1:a3ea:d8cb with SMTP id 5a478bee46e88-2d1a3eaeb30mr33260eec.4.1775512744625;
+        Mon, 06 Apr 2026 14:59:04 -0700 (PDT)
+Received: from 8692ffc4d55e ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ca7c20c0c2sm14495131eec.17.2026.04.06.14.59.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Apr 2026 14:59:03 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB7653:EE_
-X-MS-Office365-Filtering-Correlation-Id: b156ed47-c7be-4ed5-e207-08de94022c8b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	7SVDbSw2gSgquZnVxOaGUGoOq+HF4eb14mZ/q+eO9sjL0mg08HPSXEaOxeVtqIOIV1WpdZUY1nA9M96jkSeglzGwjYcvRu8ZnGcizHAHeTH+zFA6bmzMFzn7EQEDzun/iUI6AzPoyNVJJEQWwUfNLUYB5vIP31U6oWuRMXFC/9j2Hx9+cju4SjX87aeyDD2/M+SQscsiqmpLSpcV52wEZhoNc9OnP1o223i9/67rv3JEAx5h4vAay/RueHSn5KuzTDRsZYftFjqK8YwuOdQvZx3q0B+XOjDKKcWqCoLIHxJV+1qE9f0CaQNn9/mZbQKyGFbwlAl2+mR+FhyTCC4aAhOEe+TmJYmX4v2JZzskeE7EXxWWCBvLzPjdCui8P1YU23pVqU86TH5o4K4f7coltnXbEngjDImFi5sZAeEDuNZFGjue3dMbPNBx0VTn+XUM8n0qpMIAF2rIFewu7ivuF2qYVeDdC7UCNBVotUOxwobp+l1AyRnmXUfC0DqfCyn50hm5hvbRn8/0fX6boWzo85vDRYqjHgSJ2C4CgyofRpJ2t6XwWFofzEyELSs14UHbEadZnZ4X9x9ltR0P2n7VHVbhgDG0hjdX7b+iTlE1yVWHZEwalz76xXzFTJNmMlxDTlGtAQKMN1YfDuyixXPRbnqYTyJ/hsp9ErMs8izgHSa3JOWveEKG8a9Xt9oTHLpxR7tb1osExqbbae/tRRWQT3hQu/2m7oRDQt02ZX8N9ow=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?b48/mmU1N55HN2gta4gxZWse508sDtjbe/df2WFSn7bDMPjcAuKkBzGahZCA?=
- =?us-ascii?Q?SGSFjnkOKuam7qbYJJR6Hyor8RPH2Kuf5ADriJPxQds97WWgKwgNVVrlB0DD?=
- =?us-ascii?Q?j93ao+AaHEhC2o/gyRiG6fsXWq8sX+AX+i1IRuPMPdQQNewgGbySSVenlJhk?=
- =?us-ascii?Q?K15oVryI63EqWJs2juuJ90kuidxdV/fIt3Na9bIyI9y78FDcNs+4phqIJmMs?=
- =?us-ascii?Q?WTgyi6sD/k/aZx21MqfFGP+SbKiMrZxfQZYJMwVavGqdrhy0t+kMwe3lQg5H?=
- =?us-ascii?Q?pnj1nN9BRmNY1c2dZmqM7NbiN/klBYaCU9XNIPph8WwHPai0khtGztwO4QX8?=
- =?us-ascii?Q?BYE85pUzZStMWyRtEQHEoyC8/zuUwsgV1A5p1ZkIJxtU5ddTSAWibw8t0gco?=
- =?us-ascii?Q?4llCMBXgpvgON98GDrZO/M84iaD/IOU1XO+dqVOjxBWA4HOo3SZap6we8ELg?=
- =?us-ascii?Q?kUvPJKDrSVR19ziPMFf/47p+Dh+rbdYrpXiJLEDpAdd/w2feofBuXkhY+seZ?=
- =?us-ascii?Q?gNaqHXeuTQgj8STQpVRzQGfucZ5Ic9l0VZiuEbxIHI6AiA6IiiyAunPNLeeq?=
- =?us-ascii?Q?ByqM0smYy0u7rF+6HJea1WP9x+DVdUTftxW7EFaB0fGk/EPevjdghBCnP/Zu?=
- =?us-ascii?Q?Ixi2eU3UvzLfJwP9+Q2Jeaqrf18zXqRkR1EnKuKh4Kuq114ljQq39O+WGlja?=
- =?us-ascii?Q?uW/Cc7OshTRvrL9nByFei22jEIDy056J+G9dHiNrnif0S+1RTv3aPkdQmuLc?=
- =?us-ascii?Q?DM7pCmUxZJB2VwFBMHYPSBuppqUGqKKEkgSh0/qWjZcHWpxtW4FvdMJX5r37?=
- =?us-ascii?Q?tXdYlfivAZLRIopWys16y6Xql3osxCZ5ghfwfMt7xBjptkPzwb3V2ULN5CGT?=
- =?us-ascii?Q?sU6+bksDa4vVVDuGcJ6hFl3KdHGNU5NnomujyBN2PmutXIZIkjyDzzCqqnXm?=
- =?us-ascii?Q?/q+ex40fnYwp7+fRy9fByJUCl5tTeROfTVi1HZDvgnybTQWDBRLSniSh6XNz?=
- =?us-ascii?Q?Lr9wAeH515OkVZDUl+aAgd1WF0bHaG+hSOrBzgDhzN/NuG3oTC3OgLQ1CJSM?=
- =?us-ascii?Q?YgCPZoTJLRW/dA0jTDD87zoK4NIikyJqOEU3nl21S8mxfL1f3UMyrFO7sJkJ?=
- =?us-ascii?Q?HVPRDHm0kPMXOQNdyvJNawEcc5xGA/O/CQ1PkOK1UUOkJv0nr+hgPcjAmp3G?=
- =?us-ascii?Q?hT2SxbudoL3Xn1IrigYmdK7EvopSMRLKutkMxTE8V864qWJyz8yi1i0yYbcl?=
- =?us-ascii?Q?e7zkye6djILaBo5dCPmq07uPuketSvrF5Yxveqy2BqAxhTMHRMjLSTdkxXNi?=
- =?us-ascii?Q?VNd4aa27mrZtu6AqC09sZ4lcoFd5L72SAMbmBOiIhX1YsMXM0aiut2K+ZOTF?=
- =?us-ascii?Q?woTppRFm8OshSPKDw8AkjpE3kLIfA7qDqTZ8H7UW18LzXvYeopPx7UolCjiT?=
- =?us-ascii?Q?h08jbsUR41TQR0ESjtz6T1iqrXoDQFyuzZ0zmAt8EpohS5tq5Rw7zOkXq5HR?=
- =?us-ascii?Q?UDpWD9o9dpjLcpst5xvhIIjibXE7dtTqY3TYakRaS2wcsYC4++d/WNSlDyp/?=
- =?us-ascii?Q?fpT8JgspRbN45Hnc0OBvf00QYAXaxGJE5WpolT5F+1p/fBDpDAc7LDyuqnqp?=
- =?us-ascii?Q?YBmUjVMoFb5NPrV8Hf6rIzVRkv9RKoYff52pal9ebsx9QSEUryH9e6daiNIb?=
- =?us-ascii?Q?GXey90TsBYLC201uPENmuqKesBwcSYaQxVYAHR8vrrGJL7qS?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b156ed47-c7be-4ed5-e207-08de94022c8b
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2026 17:30:19.4111
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZQ8O/BcOS239gUUzSVHZMKp8aXK2yQdMm7W/+KWw/E8ONLaAipua175aJs+e/UG+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7653
-
-On Mon, Apr 06, 2026 at 05:38:14PM +0100, Mark Brown wrote:
-
-> > are missing a Signed-off-by from their committers
-> 
-> This issue is still present today.
-
-When Leon fixed the previous mistake with rebase it caused all of
-this. filter-repo isn't good about not changing commits it doesn't
-have to change, so it isn't so useful when merges are present.
-rebase -r will reset the commiter for other commits.
-
-Couldn't find a built in alternative and got tired of this, so I ended
-up using AI to build a script based on an commit editor I already had
-to fix it. I've included it below incase anyone else finds it useful
-someday.
-
-$ python3 edit_committer.py refs/heads/k.o/for-next \
-        "Jason Gunthorpe" "jgg@nvidia.com" \
-        v7.0-rc1 \
-        eb15cffa15201b 485a21c14b4133 9ed273bbe66370 \
-        0edac801a2693e 4e99362444a2f6 f0579e330b7736 \
-        9db6a217ba5ddf ce150a8376e1ee d59f007207b394 \
-        ac4bb15208d1f0 12c73bee531336 ac593f5b66c9d1 \
-        6df3a6414d7364 42d2a291ef4748 f1cac281b42456 \
-        4ac738c6a7b906 715eccd4798ec7 ea08d8cb8b5203 \
-        8e886928a19d70
-
- Processing 2536 commits from v7.0-rc1 to 69db255d5faf
-       8e886928a19d -> 38a6e5579d0d (target)
-       ea08d8cb8b52 -> b51caeb24aad (target)
-       715eccd4798e -> 1de9287ece44 (target)
-       4ac738c6a7b9 -> dbf6491bb98d (target)
-       f1cac281b424 -> 14badc323ed7 (target)
-       42d2a291ef47 -> 4c379ba04c11 (target)
-       6df3a6414d73 -> 5ebe8832ef90 (target)
-       ac593f5b66c9 -> b33d860a13b4 (target)
-       12c73bee5313 -> 3f6b103c4bf2 (target)
-       ac4bb15208d1 -> 0cee3acab27a (target)
-       d59f007207b3 -> bc30311e492e (target)
-       ce150a8376e1 -> bed686d8dcd4 (target)
-       9db6a217ba5d -> 613713f251c8 (target)
-       f0579e330b77 -> eee6268421a2 (target)
-       4e99362444a2 -> 13f9a813eee5 (target)
-       0edac801a269 -> 1234a9d8aebb (target)
-       9ed273bbe663 -> 3d4a42360c33 (target)
-       485a21c14b41 -> cec5157b6c73 (target)
-       eb15cffa1520 -> a06165a705ee (target)
-       8db7b7d9ba17 -> 1dc469f669fe (parent changed)
-       33960c206db2 -> 553dfa8cbd0c (parent changed)
-       e86b2bf1c311 -> 797291a66ce3 (parent changed)
-       932f1eef09ec -> ff85a2ebacbd (parent changed)
-       f39003e8fa8c -> 3a0b171302ee (parent changed)
-       5c3f6de46d6a -> 4707bf5f6c86 (parent changed)
-       353b3bbdb2c4 -> 2afa8b9f5ff8 (parent changed)
-       76ae14db9058 -> 1b50f42049d8 (parent changed)
-       120ad1fd5914 -> 56521f587704 (parent changed)
-       ba8c700185d6 -> 786ee8ddf47a (parent changed)
-       e2849b392974 -> 679eb25de4ee (parent changed)
-       2ad64eeaefd2 -> 0fed679e0862 (parent changed)
-       1487bad4ea51 -> 6be4ca0ab3a2 (parent changed)
-       5122be2a19aa -> 5aeb6e039972 (parent changed)
-       4ae130ccec08 -> 9d6ba4ced734 (parent changed)
-       dfd4d5a38e65 -> f3cf74933c9c (parent changed)
-       a8f6ced534c0 -> 2bb02691df65 (parent changed)
-       cdb802af06d6 -> 5aa437c93d90 (parent changed)
-       ffdf34ca1a47 -> a60e3f3d6fba (parent changed)
-       c8cc77c8418f -> 13f2a53c2a71 (parent changed)
-       e5ef99e3401c -> f1327abd6abe (parent changed)
-       a7a49104859d -> e01027cab38a (parent changed)
-       a2347bc64b89 -> 6c45efd8f9bb (parent changed)
-       ada307fd98db -> ce68351be075 (parent changed)
-       b8934c5c3f83 -> dc76086a2d94 (parent changed)
-       f0c62197416b -> b247ed6f60bd (parent changed)
-       c291b1133360 -> 2b2f078236a4 (parent changed)
-       d8d84ea1abcc -> 345f842771ff (parent changed)
-       933153ef70b8 -> e69609c5d469 (parent changed)
-       f9616c93912e -> 2f49e1590344 (parent changed)
-       09220f0b8388 -> adc09d7fbbb9 (parent changed)
-       b5bc2b6ef6fe -> e6fd24917897 (parent changed)
-       997f21ed1e93 -> 179b32095854 (parent changed)
-       578cb2be0db2 -> 911e5ca3e169 (parent changed)
-       f968d01f47d0 -> dbeb256e8dd8 (parent changed)
-       74e2711bb2af -> cef2842c922c (parent changed)
-       7a8b545a8012 -> ae638288b202 (parent changed)
-       e81275b67f59 -> 8d7573b19402 (parent changed)
-       092585a85a19 -> e910d98dc440 (parent changed)
-       7fde9cc10f60 -> 54b3bce97211 (parent changed)
-       56f6ff43f486 -> 3268330fa84f (parent changed)
-       4698e4c4a163 -> c8f9a7a96e9a (parent changed)
-       d21477adfa80 -> 530b251b0f7a (parent changed)
-       9b4e46b8cce6 -> f899787095cd (parent changed)
-       fda720ddb439 -> 0453bf09a68b (parent changed)
-       ab214eefaac1 -> d5c8f2f39907 (parent changed)
-       03f4c8090204 -> 604caebc7f06 (parent changed)
-       7186189cfa22 -> 676b570707be (parent changed)
-       16d0d9d4e2e9 -> 67820de31679 (parent changed)
-       5af7526eeb73 -> 69309e17293c (parent changed)
-       a9cd442a5347 -> 8e3e07cca004 (parent changed)
-       69db255d5faf -> fdcbddcd3aa1 (parent changed)
-
-     71 commits rewritten
-     Updating refs/heads/k.o/for-next from 69db255d5faf to fdcbddcd3aa1
-
-#!/usr/bin/env python3
-"""Change the committer on specific commits without altering unmodified commits.
-"""
-import re
-import subprocess
-import sys
-import tempfile
-
-IDRE = re.compile(rb"^[0-9a-fA-F]{40}$")
+Content-Transfer-Encoding: 7bit
+Subject: [REGRESSION] next/master: (build) ./test_signals.h:15:10: fatal
+ error:
+ 'asm/hwcap.h' file not found ...
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Mon, 06 Apr 2026 21:59:03 -0000
+Message-ID: <177551274342.2091.11408021395894546995@8692ffc4d55e>
 
 
-def git_output(args, mode=None):
-    o = subprocess.check_output(["git"] + args)
-    if mode == "lines":
-        return o.splitlines()
-    return o.strip()
 
 
-def git_read_commit(commit_id):
-    """Read a commit object and return (raw_keys, desc_lines)"""
-    lines = git_output(["cat-file", "commit", commit_id], mode="lines")
 
-    keys = []
-    itr = iter(lines)
-    for line in itr:
-        stripped = line.rstrip()
-        if not stripped:
-            break
-        # Indented lines (e.g. gpgsig continuation) belong to previous key
-        if line.startswith(b" "):
-            keys[-1] = (keys[-1][0], keys[-1][1] + b"\n" + line)
-            continue
-        kv = stripped.partition(b" ")
-        keys.append((kv[0], kv[2]))
+Hello,
 
-    desc = list(itr)
-    return keys, desc
+New build issue found on next/master:
+
+---
+ ./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found in testcases/fake_sigreturn_misaligned_sp (testcases/fake_sigreturn_misaligned_sp.c) [logspec:kbuild,kbuild.compiler.error]
+---
+
+- dashboard: https://d.kernelci.org/i/maestro:914cbb905f3bdc6704f58e8fddef408bafdb622e
+- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+- commit HEAD:  816f193dd0d95246f208590924dd962b192def78
+- tags: next-20260406
+
+Please include the KernelCI tag when submitting a fix:
+
+Reported-by: kernelci.org bot <bot@kernelci.org>
 
 
-def rebuild_commit(keys, desc):
-    """Rebuild a commit object and return its new hash"""
-    with tempfile.NamedTemporaryFile() as f:
-        for k, v in keys:
-            f.write(k + b" " + v + b"\n")
-        f.write(b"\n")
-        for line in desc:
-            f.write(line + b"\n")
-        f.flush()
+Log excerpt:
+=====================================================
+In file included from testcases/fake_sigreturn_misaligned_sp.c:13:
+In file included from ./test_signals_utils.h:14:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from testcases/fake_sigreturn_bad_size.c:13:
+In file included from ./test_signals_utils.h:14:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+In file included from testcases/fake_sigreturn_missing_fpsimd.c:14:
+In file included from ./test_signals_utils.h:14:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+1 error generated.
+1 error generated.
+In file included from testcases/fake_sigreturn_sve_change_vl.c:14:
+In file included from ./test_signals_utils.h:14:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+In file included from testcases/fake_sigreturn_bad_magic.c:13:
+In file included from ./test_signals_utils.h:14:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from testcases/fake_sigreturn_sme_change_vl.c:14:
+In file included from ./test_signals_utils.h:14:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+11 error generated.
+ error generated.
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+In file included from test_signals.c:16:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.1 error generated.
+h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+1 error generated.
+1 error generated.
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:40:8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_bytes {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31:8: note: previous definition is here
+   31 | struct _fpx_sw_bytes
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:85:8: error: redefinition of '_fpreg'
+   85 | struct _fpreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+   40 | struct _fpreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+   91 | struct _fpxreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:46:8: note: previous definition is here
+   46 | struct _fpxreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:98:8: error: redefinition of '_xmmreg'
+   98 | struct _xmmreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:53:8: note: previous definition is here
+   53 | struct _xmmreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:180:8: error: redefinition of '_ymmh_state'
+  180 | struct _ymmh_state {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | struct _ymmh_state
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8: error: redefinition of '_xstate'
+  192 | struct _xstate {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:189:8: note: previous definition is here
+  189 | struct _xstate
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:317:8: error: redefinition of 'sigcontext'
+  317 | struct sigcontext {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:139:8: note: previous definition is here
+  139 | struct sigcontext
+      |        ^
+In file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!head || resv_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:104:27: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+In file included from    testcases/testcases.c95: | sta7t:
+iIn file included from ctestcases/testcases.h :i15n:
+li/usr/include/x86_64-linux-gnu/asm/sigcontext.hn:e40 :s8t:r uerror: ctredefinition of '_fpx_sw_bytes' 
+_aarch64_ctx *get_header(struct _   a40a | rscthr6u4c_tc t_xf p*xh_esawd_,b yutienst 3{2
+_      t|         ^m
+agic,
+      |                      ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31testcases/testcases.h::8105:: 13note: :previous definition is here 
+error: incomplete definition of type 'struct _aarch64_ctx'
+   31 | st  r105u | c        t   _     head->magic != magic && headf-p>xm_asgwi_cb)y t{e
+s      
+|                      ~~~~^| 
+       ^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *heIn file included from atestcases/testcases.cd:,7 :
+uIn file included from itestcases/testcases.hn:t153:
+2/usr/include/x86_64-linux-gnu/asm/sigcontext.h_:t85 :m8a:g ierror: credefinition of '_fpreg',
 
-        return git_output(["hash-object", "-t", "commit", "-w", f.name]).decode()
+      |                      ^
+   85 | struct _fpreg {testcases/testcases.h
+:      105| :       ^37
+: error: incomplete definition of type 'struct _aarch64_ctx'
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+     10540 |  |         s t r u c t   _hfeparde-g>
+m      a| g       ^i
+c != magic && head->magic) {
+      |                                        ~~~~^
+In file included from testcases/testcases.htestcases/testcases.c::957::
+22In file included from :testcases/testcases.h :note: 15forward declaration of 'struct _aarch64_ctx':
+
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+      9195 |  | ssttrautcitc  _ifnplxirneeg  s{t
+r      u| c       ^t
+ _aa/usr/include/x86_64-linux-gnu/bits/sigcontext.hr:c46h:684:_ cnote: tprevious definition is herex
+ *ge   t46_ | hsetarduecrt( s_tfrpuxcrte g_
+a      a| r       ^c
+h64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:98:8: error: redefinition of '_xmmreg'
+testcases/testcases.h   :98106 | :s15t:r uerror: cincomplete definition of type 'struct _aarch64_ctx't
+ _xmmre  g106  | {        
+              o| f       ^f
+s +=/usr/include/x86_64-linux-gnu/bits/sigcontext.h :h53e:a8d:- >note: sprevious definition is herei
+ze;
+         | 53                        ~~~~^ | 
+structestcases/testcases.ht: 95_:x22m:m rnote: eforward declaration of 'struct _aarch64_ctx'g
+
+      |        ^
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctxIn file included from  *testcases/testcases.cg:e7t:
+_In file included from htestcases/testcases.he:a15d:
+e/usr/include/x86_64-linux-gnu/asm/sigcontext.hr:(180s:t8r:u cerror: tredefinition of '_ymmh_state' 
+_aarch64_  ct180x |  s*threuacdt,  u_iynmtm3h2__stt amtaeg i{c
+,      
+|              ^| 
+                     ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | struct _ymmh_state
+      |        ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+In file included from testcases/testcases.c:7:
+  In file included from 109testcases/testcases.h | :        15i:
+f/usr/include/x86_64-linux-gnu/asm/sigcontext.h :(192h:e8a:d -error: >redefinition of '_xstate'm
+agic   =192= |  smtarguicct)  _{x
+s      t| a            ~~~~^t
+e {
+      | testcases/testcases.h       ^:
+95:22:/usr/include/x86_64-linux-gnu/bits/sigcontext.h :note: 189forward declaration of 'struct _aarch64_ctx':
+8: note: previous definition is here
+  189 |    s95t | rsutcatt i_cx sitnaltien
+e       | s       ^t
+ruct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:317:8: error: redefinition of 'sigcontext'
+  317 | strtestcases/testcases.huc:t129 :s7i:g cerror: oincomplete definition of type 'struct _aarch64_ctx'n
+text {
+      |        ^
+  129 |         /usr/include/x86_64-linux-gnu/bits/sigcontext.h        :t139a:i8l:- >note: mprevious definition is herea
+gic =   0139; | 
+s      t| r                ~~~~^u
+ct sigtestcases/testcases.hc:o95n:t22e:x tnote: 
+forward declaration of 'struct _aarch64_ctx'      
+|        ^
+   95 | static inline struct _aarch64_ctx *get_header(struct _aaIn file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!head || resv_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:104:27: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:13: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                                        ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:106:15: error: incomplete definition of type 'struct _aarch64_ctx'
+  106 |                 offs += head->size;
+      |                         ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  109 |         if (head->magic == magic) {
+      |             ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:129:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  129 |                 tail->magic = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+rch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:40:8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_bytes {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31:8: note: previous definition is here
+   31 | struct _fpx_sw_bytes
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:85:8: error: redefinition of '_fpreg'
+   85 | struct _fpreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+   40 | struct _fpreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+   91 | struct _fpxreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:46:8: note: previous definition is here
+   46 | struct _fpxreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:98:8: error: redefinition of '_xmmreg'
+   98 | struct _xmmreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:53:8: note: previous definition is here
+   53 | struct _xmmreg
+      |        ^
+In file included from test_signals_utils.c:18:
+./test_signals.h:15:10: fatal error: 'asm/hwcap.h' file not found
+   15 | #include <asm/hwcap.h>
+      |          ^~~~~~~~~~~~~
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:180:8: error: redefinition of '_ymmh_state'
+  180 | struct _ymmh_state {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | struct _ymmh_state
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8: error: redefinition of '_xstate'
+  192 | struct _xstate {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:189:8: note: previous definition is here
+  189 | struct _xstate
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:317:8: error: redefinition of 'sigcontext'
+  317 | struct sigcontext {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:139:8: note: previous definition is here
+  139 | struct sigcontext
+      |        ^
+In file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!head || resv_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:104:27: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:13: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                                        ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:106:15: error: incomplete definition of type 'struct _aarch64_ctx'
+  106 |                 offs += head->size;
+      |                         ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  109 |         if (head->magic == magic) {
+      |             ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:129:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  129 |                 tail->magic = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:40:8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_bytes {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31:8: note: previous definition is here
+   31 | struct _fpx_sw_bytes
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:85:8: error: redefinition of '_fpreg'
+   85 | struct _fpreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+   40 | struct _fpreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+   91 | struct _fpxreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:46:8: note: previous definition is here
+   46 | struct _fpxreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:98:8: error: redefinition of '_xmmreg'
+   98 | struct _xmmreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:53:8: note: previous definition is here
+   53 | struct _xmmreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:180:8: error: redefinition of '_ymmh_state'
+  180 | struct _ymmh_state {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | struct _ymmh_state
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8: error: redefinition of '_xstate'
+  192 | struct _xstate {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:189:8: note: previous definition is here
+  189 | struct _xstate
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:317:8: error: redefinition of 'sigcontext'
+  317 | struct sigcontext {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:139:8: note: previous definition is here
+  139 | struct sigcontext
+      |        ^
+In file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!head || resv_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:104:27: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:13: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                                        ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:106:15: error: incomplete definition of type 'struct _aarch64_ctx'
+  106 |                 offs += head->size;
+      |                         ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  109 |         if (head->magic == magic) {
+      |             ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uiIn file included from nttestcases/testcases.c32:_1t error7  generated:
+mIn file included from a.
+testcases/testcases.hg:i15c:
+,
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h      :| 40                     ^:
+8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_bytes {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31:8: note: previous definition is here
+   31 | struct _fpx_sw_bytes
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:85:8: error: redefinition of '_fpreg'
+   85 | struct _fpreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+   40 | struct _fpreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+testcases/testcases.h   91: | 129s:t7r:u cerror: tincomplete definition of type 'struct _aarch64_ctx' 
+_fpxreg {
+      |          ^129
+ |                 t/usr/include/x86_64-linux-gnu/bits/sigcontext.ha:i46l:-8>:m anote: gprevious definition is herei
+c =    046; | 
+s      t|                 ~~~~^r
+uct _fptestcases/testcases.hx:r95e:g22
+:       | note:        ^forward declaration of 'struct _aarch64_ctx'
+
+   95 | static inline struct _aarcIn file included from htestcases/testcases.c6:47_:
+cIn file included from ttestcases/testcases.hx: 15*:
+g/usr/include/x86_64-linux-gnu/asm/sigcontext.he:98t:_8h:e aerror: dredefinition of '_xmmreg'e
+r(stru   c98t |  s_taraurccht6 4__cxtxm m*rheega d{,
+       u| i       ^n
+t32_/usr/include/x86_64-linux-gnu/bits/sigcontext.ht: 53m:a8g:i cnote: ,previous definition is here
+
+      |                      ^
+   53 | struct _xmmreg
+      |        ^testcases/testcases.h
+:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:180:8: error: redefinition of '_ymmh_state'
+  180 | struct _ymmh_state {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | struct _ymmh_state
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8: error: redefinition of '_xstate'
+  192 | struct _xstate {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:189:8: note: previous definition is here
+  189 | struct _xstate
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:317:8: error: redefinition of 'sigcontext'
+  317 | struct sigcontext {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:139:8: note: previous definition is here
+  139 | struct sigcontext
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:40:8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_bytes {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31:8: note: previous definition is here
+   31 | struct _fpx_sw_bytes
+      |        ^
+In file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!heIn file included from atestcases/testcases.cd:7 :
+|In file included from |testcases/testcases.h: 15r:
+e/usr/include/x86_64-linux-gnu/asm/sigcontext.hs:v85_:s8z:  <error:  redefinition of '_fpreg'H
+DR_S   Z85) | 
+s      t| r                               ^~~~~~u
+ct _fpreg testcases/testcases.h{:
+28:2: note: expanded from macro 'HDR_SZ'
+         28|  |        ^        
+size/usr/include/x86_64-linux-gnu/bits/sigcontext.ho:f40(:s8:t rnote: uprevious definition is herec
+t _aa   r40 | csht6r4uc_tc _tfxp)r
+e      g| 
+        ^     ~~~~~~~~~~~~~~~~~~~~~      
+|        ^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8   :95  | error: redefinition of '_fpxreg's
+tat   i91 | cs tirnulcitn e_ fsptxrruecgt  {_
+      a| a       ^r
+ch/usr/include/x86_64-linux-gnu/bits/sigcontext.h6:446_:8c: tnote: xprevious definition is here
+ *   g46 | estt_rhuecatd e_rf(psxtrreugc
+      t|        ^ 
+_aarch64_ctx *head, uinIn file included from ttestcases/testcases.c:372:
+_In file included from ttestcases/testcases.h :m15a:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.hg:98i:8c: ,error: 
+redefinition of '_xmmreg'      
+|                      ^
+   98 | struct _xmmreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:53:8: note: previous definition is here
+   53 | struct _xmmreg
+      |        ^
+testcases/testcases.h:104:27: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch6In file included from 4testcases/testcases.c_:c7t:
+xIn file included from  testcases/testcases.h*:h15e:
+a/usr/include/x86_64-linux-gnu/asm/sigcontext.hd:,180 :8u: ierror: redefinition of '_ymmh_state'n
+t32  _180t |  smtarguicct ,_
+y      m| m                     ^h
+_state {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | stestcases/testcases.ht:ru105c:t13 :_ yerror: mincomplete definition of type 'struct _aarch64_ctx'm
+h_state
+      |        ^
+  105 |               In file included from testcases/testcases.c :7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8: error: redefinition of '_xstate'
+  192 | struct _xstathe e{a
+d      -| >       ^m
+agi/usr/include/x86_64-linux-gnu/bits/sigcontext.hc:189 :8!:=  note: previous definition is herem
+agi  c189  | s&tr&uc t h_xesatda-te>
+      m|        ^a
+gic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      In file included from | testcases/testcases.c                                       ~~~~^:
+7:
+In file included from testcases/testcases.h:15:
+testcases/testcases.h/usr/include/x86_64-linux-gnu/asm/sigcontext.h::95317::228::  note: error: forward declaration of 'struct _aarch64_ctx'redefinition of 'sigcontext'
+
+  317 | struct    s95i | gsctoanttiecx ti n{l
+      i| n       ^e
+ st/usr/include/x86_64-linux-gnu/bits/sigcontext.hr:u139c:t8 :_ anote: aprevious definition is herer
+ch64  _139c | tsxt r*ugcett _shiegacdoenrt(esxttr
+u      c| t       ^ 
+_aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:106:15: error: incomplete definition of type 'struct _aarch64_ctx'
+  106 |                 offs += head->size;
+      |                         ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(strIn file included from utestcases/testcases.c:c7t:
+ testcases/testcases.h_:a101a:r25:c herror: 6invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'4
+_ctx *head,   u101i | n        ti3f2 _(t! hmeaagdi c|,|
+       r| e                     ^s
+v_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.htestcases/testcases.h::95:10922::10 :note:  forward declaration of 'struct _aarch64_ctx'
+error: incomplete definition of type 'struct _aarch64_ctx'
+   95 |   s109t | a        tiifc  (ihnelaidn-e> msatgriucc t= =_ amaargcihc6)4_ctx *get _h{e
+a      d| e            ~~~~^r
+(struct _testcases/testcases.ha:a95r:c22h:6 4note: _forward declaration of 'struct _aarch64_ctx'c
+tx *head, uint32_t    95m | asgtiact,i
+c       | i                     ^n
+line struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uinttestcases/testcases.h3:2104_:t27 :m aerror: ginvalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'i
+c,
+      |                      ^
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:13: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:129:7: error: incomplete definition of type 'struct _aarch64_ctx'
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'  
+129 |                 tail->mag  i105c |          =   0 ; 
+        |  h                ~~~~^e
+ad->magic testcases/testcases.h!:=95 :m22a:g inote: cforward declaration of 'struct _aarch64_ctx' 
+&& head->magic) {
+      |                                        ~~~~^
+   95 | testcases/testcases.hs:t95a:t22i:c  note: iforward declaration of 'struct _aarch64_ctx'n
+line struc   t95 |  s_taaatric1ch error 6i generated4n_lc.
+itnxe  s*tgreutc_th e_aadaercrh(6s4t_rcutcxt  *_gaeatr_cheha6d4e_rc(tsxt r*uhceta d_,a auricnht6342__ctt xm a*ghieca,d
+,       | u                     ^i
+nt32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+testcases/testcases.h:106:15: error:   incomplete definition of type 'struct _aarch64_ctx'130
+ |                 tail-  >106s | i        z        eo f=f s0 ;+
+=       | h                ~~~~^e
+ad->sitestcases/testcases.hz:e95;:
+22      :|                          ~~~~^note: 
+forward declaration of 'struct _aarch64_ctx'
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 |    s95t | asttiact iicn liinnlei nset rsutcrtu c_ta a_racahr6c4h_6c4t_xc t*xge t*_gheeta_dheera(dsetrr(uscttr u_cata r_caha6r4c_hc6t4x_ c*thxe a*dh,e audi,n tu3i2n_tt3 2m_agti cm,a
+g      i| c                     ^,
+
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  109 |         if (head->magic == magic) {
+      |             ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:129:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  129 |                 tail->magic = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:40:8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_bytes {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:31:8: note: previous definition is here
+   31 | struct _fpx_sw_bytes
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:85:8: error: redefinition of '_fpreg'
+   85 | struct _fpreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+   40 | struct _fpreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+   91 | struct _fpxreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:46:8: note: previous definition is here
+   46 | struct _fpxreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:98:8: error: redefinition of '_xmmreg'
+   98 | struct _xmmreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:53:8: note: previous definition is here
+   53 | struct _xmmreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:180:8: error: redefinition of '_ymmh_state'
+  180 | struct _ymmh_state {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:184:8: note: previous definition is here
+  184 | struct _ymmh_state
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8: error: redefinition of '_xstate'
+  192 | struct _xstate {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:189:8: note: previous definition is here
+  189 | struct _xstate
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:40:8: error: redefinition of '_fpx_sw_bytes'
+   40 | struct _fpx_sw_In file included from btestcases/testcases.cy:t7e:
+sIn file included from  testcases/testcases.h{:
+15      :
+| /usr/include/x86_64-linux-gnu/asm/sigcontext.h       ^:
+317:8: error: redefinition of 'sigcontext'
+  317 | struct sigcontext {
+      | /usr/include/x86_64-linux-gnu/bits/sigcontext.h       ^:
+31:/usr/include/x86_64-linux-gnu/bits/sigcontext.h8::139 :note: 8previous definition is here:
+ note: previous definition is here
+   31   | 139s | tsrturcutc t_ fspixg_csonwt_ebxytt
+e      s| 
+       ^      
+|        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:85:8: error: redefinition of '_fpreg'
+   85 | struct _fpreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:40:8: note: previous definition is here
+   40 | struct _fpreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:91:8: error: redefinition of '_fpxreg'
+   91 | struct _fpxreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:46:8: note: previous definition is here
+   46 | struct _fpxreg
+      |        ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:98:8: error: redefinition of '_xmmreg'
+   98 | struct _xmmreg {
+      |        ^
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:53:8: note: previous definition is here
+   53 | struct _xmmreg
+      |        ^
+In file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!head || resv_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:180:8:testcases/testcases.h :104error: :27redefinition of '_ymmh_state':
+ error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  180 |   s104t | r        uwchti l_ey m(mohf_fsst a<t=e  r{e
+s      v| _       ^s
+z /usr/include/x86_64-linux-gnu/bits/sigcontext.h-: 184H:D8R:_ Snote: Zprevious definition is here 
+&&
+      |                                  ^~~~~~
+  184testcases/testcases.h | :s28t:r2u:c tnote:  expanded from macro 'HDR_SZ'_
+ymmh_st   a28t | e        
+s      i| z       ^e
+of(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22:In file included from  testcases/testcases.cnote: :forward declaration of 'struct _aarch64_ctx'
+7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:192:8:    error: 95redefinition of '_xstate' | 
+static i  n192l | isnter sutcrtu c_tx s_taaartceh6 4{_
+c      t| x       ^ 
+*get_/usr/include/x86_64-linux-gnu/bits/sigcontext.hh:e189a:d8e:r (note: sprevious definition is heret
+ruct _  a189a | rscthr6u4c_tc t_xx s*thaetaed
+,       | u       ^i
+nt32_t magic,
+      |                      ^
+testcases/testcases.h:105:13: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                                        ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:106:15: error: incomplete definition of type 'struct _aarch64_ctx'
+  106 |                 offs += head->size;
+      |                         ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+In file included from testcases/testcases.h:15:
+/usr/include/x86_64-linux-gnu/asm/sigcontext.h:317:8: error: redefinition of 'sigcontext'
+  317 | struct sigcontext {
+      | testcases/testcases.h       ^:
+107:10: error: /usr/include/x86_64-linux-gnu/bits/sigcontext.hincomplete definition of type 'struct _aarch64_ctx':
+139:8: note: previous definition is here  
+107 |                 hea  d139  | =s tGrEuTc_tR EsSiVg_cNoEnXtTe_xHtE
+A      D| (       ^h
+ead);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  109 |         if (head->magic == magic) {
+      |             ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:129:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  129 |                 tail->magic = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+In file included from testcases/testcases.c:7:
+testcases/testcases.h:101:25: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  101 |         if (!head || resv_sz < HDR_SZ)
+      |                                ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:104:27: error: invalid application of 'sizeof' to an incomplete type 'struct _aarch64_ctx'
+  104 |         while (offs <= resv_sz - HDR_SZ &&
+      |                                  ^~~~~~
+testcases/testcases.h:28:2: note: expanded from macro 'HDR_SZ'
+   28 |         sizeof(struct _aarch64_ctx)
+      |         ^     ~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:13: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:105:37: error: incomplete definition of type 'struct _aarch64_ctx'
+  105 |                head->magic != magic && head->magic) {
+      |                                        ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:106:15: error: incomplete definition of type 'struct _aarch64_ctx'
+  106 |                 offs += head->size;
+      |                         ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:107:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  107 |                 head = GET_RESV_NEXT_HEAD(head);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+testcases/testcases.h:85:43: note: expanded from macro 'GET_RESV_NEXT_HEAD'
+   85 |         (struct _aarch64_ctx *)((char *)(h) + (h)->size)
+      |                                               ~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:109:10: error: incomplete definition of type 'struct _aarch64_ctx'
+  109 |         if (head->magic == magic) {
+      |             ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:129:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  129 |                 tail->magic = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.h:130:7: error: incomplete definition of type 'struct _aarch64_ctx'
+  130 |                 tail->size = 0;
+      |                 ~~~~^
+testcases/testcases.h:95:22: note: forward declaration of 'struct _aarch64_ctx'
+   95 | static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+testcases/testcases.c:9:36: warning: declaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]
+testcases/testcases.c:9:36: warning: declaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]
+    9 | bool validate_extra    _9c | obnotoelxtestcases/testcases.c :tv(9as:l36testcases/testcases.cti::r9u:c36t:  dtestcases/testcases.c testcases/testcases.cewarning: a:t9ewarning: :xdeclaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]:_36e:x tdeclaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]9t
+warning: r
+declaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]:r36a:
+a_ c_ocnowarning: t    declaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]n    e99
+ | tx | bbetx(    o9o | lo ts t*reuxct    bovoatr9lol ae,x tcrh |  ivdaalla _acrbtivo e*_*odoantteexee_xetx traallrtr,
+      |                                    ^
+*_ irecvoadax_tnltactornat,eieex_ exdtc(xstahtatt(rsutcrtu cer_ret  *eexxttarxa*r_tcroa_earn_tceor_,cxntt(ecx
+o      n| tseoxt                                   ^(
+ttr nsu*ttecetr uxxtecxt ttrraa_,c*o  enecxxtterxahtt,a rr c ha**e*ae_rxrrctorn,t a*
+e,* ecrh      x| r                                   ^,
+
+a      t| r                                   ^  
+***eexrtrr,a
+,       | c                                   ^h
+ar **err,
+      |                                    ^
+testcases/testcases.c:18:34: error: incomplete definition of type 'struct extra_context'
+   18 |         term = GET_RESV_NEXT_HEAD(&extra->head);
+      |                                    ~~~~~^
+testcases/testcases.c:9testcases/testcases.c::testcases/testcases.c3618::: testcases/testcases.cnote: 18forward declaration of 'struct extra_context'34:::
+3418:  error: error: :incomplete definition of type 'struct extra_context'incomplete definition of type 'struct extra_context'
+
+34testcases/testcases.c::     189error: : | incomplete definition of type 'struct extra_context'34b
+:o o   error: l18incomplete definition of type 'struct extra_context'   
+  | v        atlei18dr    | amt18e | _        e   x         t=t18t | re ea        rGmEr_mc ot T=_=n teertestcases/testcases.cm  RGxE:G=EtT(_E18 SsRtErSuVc_tN EeXxTt_T:GVrH_34E_aN_EcERA:DT(XoTn_tHeExAtE _&D S*Ve_error: Reincomplete definition of type 'struct extra_context'(
+xNEEx&terSXtTxaVr_t,r a   -_aH-c18> | hNEEAXDT>hhee        (t&_eaaaedHxrt r*dr)Ea*-)>m;A
+D      | e;r
+h (=                                   ~~~~~^r      ,| e& e
+x
+t                                         ~~~~~^aGrE| T
+_dR)a;-
+>      testcases/testcases.c| :                                   ~~~~~^                                   ^testcases/testcases.cE:h9e:a36d
+
+S9V:_)N:E36 ;Xtestcases/testcases.cT::note: 
+forward declaration of 'struct extra_context'      
+_9 :note: | H36E:forward declaration of 'struct extra_context'                                   ~~~~~^A 
+note: 
+    Dforward declaration of 'struct extra_context'(
+testcases/testcases.c9& | :b18eoxtestcases/testcases.ct:    99     | :9or:b3634 | lao-o:l:b oerror:  incomplete definition of type 'struct extra_context'v> h ovl
+ avlaildiadnote: eaa   d18t | a        tteeforward declaration of 'struct extra_context'l
+)e;_
+r      i| d_eexxttrrma t=e                                   ~~~~~^    
+aa _Gc_oenx9_Etttestcases/testcases.c | :b9o:o36l: cvTaelxir ao_tR(EsStdranote: _nVtuecxtt tforward declaration of 'struct extra_context'c_(esxe
+_oeNxttrrutcrnEat_ ceoantX    T9x_ttreexx_tH | cab_tc(Eoon(osAotsnttrDlet eu(cxttrvx&ae xe xutcrta _tc o*nelxttrr*ae,etiadx tcrhxe-aaa,rtxr>t  ta _*heceh_*c*oexaaerxentd trtrear_a),*r*,exrtr ,c; 
+*      
+e      o| 
+                                   ^      
+c| xn| h                                   ~~~~~^                                   ^tatr
+
+re a*,*xetestcases/testcases.c :c9testcases/testcases.c:trh:3618:(rsa: ,tr34 :note: 
+forward declaration of 'struct extra_context'r*testcases/testcases.c*       error: | 
+u:eincomplete definition of type 'struct extra_context'                                   ^c18r:
+34
+tr ,    :9e | 
+b      o|     error: xo                                   ^l18  | vincomplete definition of type 'struct extra_context'a
+t
+r        al_itestcases/testcases.cdcatt   e:_oeexrtm1818n:r34  | =t a:_        cGoEnTt_ee xerror: tincomplete definition of type 'struct extra_context'e
+rtestcases/testcases.cRxtt (ms :=   E18S*Vt18 : | _        NerGuEcT34tEermxt_t rea, char :*X RxEtS Verror: _*=Tr_aH_incomplete definition of type 'struct extra_context'N
+EeX TG_EHAcEorEDrAnDt(e&   T18(,xe_xRt | &        etxetr
+t      E| S                                   ^rrm  *=e xVt
+aaG-E>_hNrE-XTT_eRaEaS>V__d,h HcN)eEaAdDh(E;X
+T)_a&testcases/testcases.c      H;re :| E18A
+x*                                   ~~~~~^:D      t| r                                   ~~~~~^a*-
+e34(
+:> hre&atestcases/testcases.cd:)error: ;rincomplete definition of type 'struct extra_context',
+etestcases/testcases.cx9t
+
+::936::36r a      -| >                                   ~~~~~^      :   note: 18h
+e|                                     ^forward declaration of 'struct extra_context' | a        dnote: 
+forward declaration of 'struct extra_context'
+testcases/testcases.ct)
+:;e9r
+m:           369    =|  | :b 9                                    ~~~~~^onote:  | forward declaration of 'struct extra_context'G
+ob
+oEoll testcases/testcases.cv:a9l:iT 36_dRaEvSa:V     tlenote: _9testcases/testcases.c | i_forward declaration of 'struct extra_context'e
+N:E19bdxXa:Tot19r:at_e    _o Herror: c_o9lE Aincomplete definition of type 'struct _aarch64_ctx'De(n& | vba
+xteexxoltirdaa_tcet_te(o   lorxsttr19a _vnar | -        catu>chiefo l(i!etxta netdetrdx)eax(ms t;r
+ttt(|sa      e| r                                   ~~~~~^u
+c|t tt_r_ eecutestcases/testcases.ce:xrocxt9tmr-n>tt :eaxmer36_taax:t  crga_note: cforward declaration of 'struct extra_context'*
+eoinc_ coxnttreax,t  t|o|     c*heaern9t | etbeorxx xoml-t>rt*t sai(z* v*a,l siedeaecxht)r urctta{rte rr
+, _ea      ,
+ *exx| t      rc*hta                     ~~~~^r|                                     ^ae_rrr
+,
+*c*ae
+o      _| testcases/testcases.hc:rn                                   ^to95n:r
+et22e,x
+:      x| t t                                   ^(
+snote: t rforward declaration of 'struct _aarch64_ctx'u
+c*testcases/testcases.ce:tx 19t:r19ea:x,t     rerror: 95c | haaincomplete definition of type 'struct _aarch64_ctx's_rc 
+toan*t*testcases/testcases.cte   x19te:rirctestcases/testcases.c |          *ie19x, :f:t
+i      n19 19r:|                                     ^l
+:(a!,error: i19t incomplete definition of type 'struct _aarch64_ctx'n:eecrhma
+r  error:   *incomplete definition of type 'struct _aarch64_ctx's*|e
+t   |19r | r        ,i
+r      u f   | 19                                   ^ct e( | 
+        ti testcases/testcases.cr:!19f: 19(_!mt-e>rmmat:a agrie r|m|c cerror:  incomplete definition of type 'struct _aarch64_ctx' 
+h|6t4e||_ crt|x     t19m | t        e*rgtestcases/testcases.ce:r-imfe19t:m19-:>>-m>a g(_ msiicz !hterror: ae|e|e rtmegriincomplete definition of type 'struct _aarch64_ctx')
+a m|c d-| e{>   s19  | t        |i|r
+i      efr (tze|  m(s!ter                     ~~~~^m
+-->>str)testcases/testcases.hm:i95z:eu cat){gic ||erm || ter22m->m a 
+ :_ ag{      tnote: aforward declaration of 'struct _aarch64_ctx'i
+| errc
+c                           ~~~~^ 
+|mh| 6|-                     ~~~~^>testcases/testcases.h
+:4 s   i95z:_22t:95testcases/testcases.he:)95ce  | note: sforward declaration of 'struct _aarch64_ctx't
+ :{22
+:t ra      note: xt m| -                     ~~~~^forward declaration of 'struct _aarch64_ctx'i*   h95>
+
+ce | s iazdsitestcases/testcases.he:,95tn) :a   l95i | usi n22t:ntta{i
+ e3tci       inote:  forward declaration of 'struct _aarch64_ctx'2c|  ns
+t_                     ~~~~^tilr
+ inulcmnita gei   ctestcases/testcases.hn_ea  95s,t:as | 
+r95rts      t| a                     ^t
+iu:crcu cc22h:i ntt6note: l i_nfatal error:  too many errors emitted, stopping now [-ferror-limit=]4forward declaration of 'struct _aarch64_ctx'a
+ae_ 
+_rccthx6 4*asa_g   trrcett95c | husxt_6c4 _*cgtextahte a*dge_t ireh_ec(taa ds_ahientrecra(dsltrrheiuncut6 rec4t__c(t  asaxr s_tarcuhc6t4 *ta__cgreurcatatr_ctxc hhh *6h4e_ae6a_cada4r_dcet,crt(x hxs6t 4u_ c*thre*ahienatxudd3,2 _c t*,g eutiuntt  _ih3em_na2a_raadgetr3t2c hm6a4gi(__ticsct rmca,g
+t      u,cix| 
+t       | c                     ^, 
+                     ^_
+*      
+ah| eaa                     ^r
+dc,h 6ufatal error: 4i_ntoo many errors emitted, stopping now [-ferror-limit=]tfatal error: c3
+2fatal error: too many errors emitted, stopping now [-ferror-limit=]too many errors emitted, stopping now [-ferror-limit=]
+
+t_xt  *mhaegaidc,, 
+u      i| n                     ^t
+32_t magic,
+      |                      ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+1 warning and 20 errors generated.
+1 warning and 20 errors generated.
+1 warning and 20 errors generated.
+1 warning and 20 errors generated.
+1 warning and 20 errors generated.
+1 warning and 20 errors generated.
+testcases/testcases.ctestcases/testcases.c::99::3636::  warning: warning: declaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]declaration of 'struct extra_context' will not be visible outside of this function [-Wvisibility]
+
+        99 |  | bbooooll  vvaalliiddaattee__eexxttrraa__ccoonntteexxtt((ssttrurcutc te xetxrtar_ac_ocnotnetxte x*te x*treax,t crhaa,r c h*a*re r**re,r
+r      ,| 
+                                         ^| 
+                                   ^
+testcases/testcases.c:18:34: error: incomplete definition of type 'struct extra_context'
+testcases/testcases.c:18:34:    error: 18 | incomplete definition of type 'struct extra_context'        
+term = GET_RESV_NEXT_H   E18A | D        (t&eerxmt r=a -G>EhTe_aRdE)S;V
+_      N| E                                   ~~~~~^X
+T_HEAD(&exttestcases/testcases.cr:a9-:>36h:e anote: dforward declaration of 'struct extra_context')
+;
+      |                                    ~~~~~^
+    9 | bootestcases/testcases.cl: 9v:a36l:i dnote: aforward declaration of 'struct extra_context't
+e_extra_conte    x9t | (bsotorlu cvta leixdtartae__ceoxnttreax_tc o*netxetxrta(,s tcrhuacrt  *e*xetrrra,_
+c      o| n                                   ^t
+ext *extra, char **err,
+      |                                    ^
+testcases/testcases.c:18:34: error: incomplete definition of type 'struct extra_context'
+   18 |         term = GET_testcases/testcases.cR:E18S:V34_:N Eerror: XTincomplete definition of type 'struct extra_context'_
+HEAD(&extra   -18> | h        etaedr);m
+ =       | G                                   ~~~~~^E
+T_REStestcases/testcases.cV:_9N:E36X:T _note: Hforward declaration of 'struct extra_context'E
+AD(&extra->    h9e | abdo)o;l
+       v| a                                   ~~~~~^l
+idate_exttestcases/testcases.cr:a9_:c36o:n tnote: eforward declaration of 'struct extra_context'x
+t(struct extr    a9_ | cboonotelx tv a*leixdtartae,_ ecxhtarra _**ceorrn,t
+ex      t| (                                   ^s
+truct extra_context *extra, char **err,
+      |                                    ^
+testcases/testcases.c:19:19: error: incomplete definition of type 'struct _aarch64_ctx'
+   19 |         if (!term || term->magic || term->sizetestcases/testcases.c): 19{:
+19      :|                       ~~~~^error: 
+incomplete definition of type 'struct _aarch64_ctx'
+testcases/testcases.h:95:22: note:    forward declaration of 'struct _aarch64_ctx'19
+ |         if (!term |   |95  | tsetramt-i>cm aignilci n|e|  stterrumc-t> s_iazaer)c h{6
+4      _| c                     ~~~~^t
+x *getestcases/testcases.ht:_95h:e22a:d enote: rforward declaration of 'struct _aarch64_ctx'(
+struct _aarch64   _95c | tsxt a*thieca di,n luiinnet 3s2t_rtu mcagti c_,a
+a      r| c                     ^h
+64_ctx *get_fatal error: htoo many errors emitted, stopping now [-ferror-limit=]e
+ader(struct _aarch64_ctx *head, uint32_t magic,
+      |                      ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+1 warning and 20 errors generated.
+1 warning and 20 errors generated.
+signals.Ssignals.Ssignals.Ssignals.S:::1616::161919: :: 19error: : expected ']' in brackets expressionerror: 
+error: expected ']' in brackets expressionexpected ']' in brackets expression
+
+ stp x29, x30, [sp, #-16]!
+ stp x29, x30, [sp, #-16]! 
+  signals.S  :signals.S:  16 stp x29, x30, [sp, #-16]!:
+ 16  19 :           : 19 :       error:  error:   expected ']' in brackets expression 
+ expected ']' in brackets expression       
+   stp x29, x30, [sp, #-16]!      
+ ^   ^ 
+ 
+  stp x29, x30, [sp, #-16]!^ 
+ 
+                            ^ 
+   ^
+signals.S:16:19: error: expected ']' in brackets expression
+ stp x29, x30, [sp, #-16]!
+                  ^
+:16:19: error: expected ']' in brackets expression
+ stp x29, x30, [sp, #-16]!
+                  ^
+signals.S:16:19: error: expected ']' in brackets expression
+ stp x29, x30, [sp, #-16]!
+                  ^
+signals.S:17:2: error: unknown use of instruction mnemonic without a size suffix
+ mov x29, sp
+ signals.S^signals.S
+::1717::22: : error: error: unknown use of instruction mnemonic without a size suffixunknown use of instruction mnemonic without a size suffix
+
+ mov x29, sp mov x29, sp
+
+  ^^
+
+signals.Ssignals.S:17::172:signals.S: :2error: 17: :error: unknown use of instruction mnemonic without a size suffix2unknown use of instruction mnemonic without a size suffix
+: 
+error:  mov x29, spunknown use of instruction mnemonic without a size suffix mov x29, sp
+
+signals.S  mov x29, sp
+
+signals.S:signals.S17^: 2 :^:
+^: 17error: :
+19
+:signals.Ssignals.Sunknown use of instruction mnemonic without a size suffix2
+2::: :  mov x29, sp1919error: error: 
+::unknown use of instruction mnemonic without a size suffixunknown use of instruction mnemonic without a size suffix
+ 22 mov x29, sp: 
+error:  unknown use of instruction mnemonic without a size suffix^
 
 
-def get_commit_list(ancestor, newest):
-    """Return commit IDs from newest to ancestor (exclusive), topological order"""
-    ids = git_output(["rev-list", "--topo-order", newest, "^" + ancestor],
-                     mode="lines")
-    return [i.decode() for i in ids]
+^signals.S
+::  mov x20, x0 mov x20, x0
+
+19 :error: signals.Ssignals.S: ^^
+2unknown use of instruction mnemonic without a size suffix: 
+error: :unknown use of instruction mnemonic without a size suffix19
+:192
+ mov x20, x0 mov x20, x0:: 
+signals.S
+2error: signals.Sunknown use of instruction mnemonic without a size suffixsignals.S
+signals.S : : ::19 mov x20, x0:^2020::^2
+error: 19::22
+
+2: : unknown use of instruction mnemonic without a size suffixerror: 
+:  mov x20, x0:  error: ^unknown use of instruction mnemonic without a size suffix
+
+unknown use of instruction mnemonic without a size suffixsignals.S
+error: 
+unknown use of instruction mnemonic without a size suffix error: ^signals.S
+: mov x21, x120
+:signals.S20:: mov x21, x1
+unknown use of instruction mnemonic without a size suffix: 202
+:  error: ^unknown use of instruction mnemonic without a size suffix
+ mov x20, x0
+2 mov x20, x0^:signals.S
+
+: 
+
+2:: signals.Serror: :unknown use of instruction mnemonic without a size suffix21 mov x21, x1:
+2 error: ^ 20signals.S:
+2  mov x21, x1^: unknown use of instruction mnemonic without a size suffix
+^:: 
+
+error: 
+
+ mov x21, x121error:  unknown use of instruction mnemonic without a size suffix
+:unknown use of instruction mnemonic without a size suffix2
+^
+ signals.S: :signals.S20 mov x21, x1
+
+signals.S :^21
+: mov x22, x2^error: ::202:
+2
+unknown use of instruction mnemonic without a size suffix2:  : signals.Serror: :signals.S21: :
+error:  mov x22, x2unknown use of instruction mnemonic without a size suffix
+
+^ mov x22, x2
+
+unknown use of instruction mnemonic without a size suffix :error: 212:signals.S 
+^^unknown use of instruction mnemonic without a size suffix
+: 2error: : unknown use of instruction mnemonic without a size suffixerror: : mov x21, x121
+: 2^: 
+error: 
 
 
-def main():
-    ref = sys.argv[1]
-    new_committer_name = sys.argv[2]
-    new_committer_email = sys.argv[3]
-    ancestor = sys.argv[4]
-    target_prefixes = sys.argv[5:]
+unknown use of instruction mnemonic without a size suffixsignals.Sunknown use of instruction mnemonic without a size suffix: mov x21, x1 mov x22, x2
 
-    if not target_prefixes:
-        print("Usage: edit_committer.py <ref> <name> <email> <ancestor> <commit-prefix>...")
-        sys.exit(1)
+ mov x22, x2 24signals.S
+: mov x22, x2
 
-    newest = git_output(["rev-parse", ref]).decode()
-    commit_ids = get_commit_list(ancestor, newest)
+signals.S^:212:
+   :
+: 2signals.S: ^error: 
+^^
 
-    print(f"Processing {len(commit_ids)} commits from {ancestor[:12]} to {newest[:12]}")
+24error: :unknown use of instruction mnemonic without a size suffix24::22unknown use of instruction mnemonic without a size suffix
+: : signals.Serror: :unknown use of instruction mnemonic without a size suffix mov x22, x2
+signals.Serror: :unknown use of instruction mnemonic without a size suffix2421::
+2signals.Ssignals.S
+ add x0, x21, x22
 
-    # Process oldest first
-    commit_ids.reverse()
+2  add x0, x21, x22: 
+error:  unknown use of instruction mnemonic without a size suffix::24  add x0, x21, x22^
 
-    commit_map = {}
-    changed = 0
-
-    for cid in commit_ids:
-        keys, desc = git_read_commit(cid)
-
-        # Check if this commit is a target for committer rewrite
-        is_target = any(cid.startswith(prefix) for prefix in target_prefixes)
-
-        # Update parent pointers if any parents were rewritten
-        new_keys = []
-        parents_changed = False
-        for k, v in keys:
-            if k == b"parent":
-                old_parent = v.decode()
-                new_parent = commit_map.get(old_parent, old_parent)
-                if new_parent != old_parent:
-                    parents_changed = True
-                new_keys.append((k, new_parent.encode()))
-            elif is_target and k == b"committer":
-                # Rewrite committer, preserving the date portion
-                old_val = v.decode()
-                # Format: "Name <email> timestamp timezone"
-                m = re.match(r".*>(.+)$", old_val)
-                date_part = m.group(1) if m else ""
-                new_val = f"{new_committer_name} <{new_committer_email}>{date_part}"
-                new_keys.append((k, new_val.encode()))
-                parents_changed = True  # force rebuild
-            else:
-                new_keys.append((k, v))
-
-        if not parents_changed and not is_target:
-            commit_map[cid] = cid
-            continue
-
-        new_id = rebuild_commit(new_keys, desc)
-        commit_map[cid] = new_id
-        if new_id != cid:
-            changed += 1
-            label = "(target)" if is_target else "(parent changed)"
-            print(f"  {cid[:12]} -> {new_id[:12]} {label}")
-
-    new_head = commit_map.get(newest, newest)
-    if new_head == newest:
-        print("No changes needed.")
-    else:
-        # Verify trees match
-        diff = git_output(["diff-tree", "-r", newest, new_head])
-        assert diff == b"", f"Tree mismatch!\n{diff}"
-        print(f"\n{changed} commits rewritten")
-        print(f"Updating {ref} from {newest[:12]} to {new_head[:12]}")
-        subprocess.check_call(
-            ["git", "update-ref", "-m", "edit_committer", ref, new_head, newest])
-
-    return 0
+ : ^error: ^^
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+24 mov x22, x2::
+2unknown use of instruction mnemonic without a size suffix: 
+2 add x0, x21, x22
+signals.Ssignals.S:error: : unknown use of instruction mnemonic without a size suffix
+
+  :2525signals.Serror: signals.Sunknown use of instruction mnemonic without a size suffix:
+24^ add x0, x21, x22 add x0, x21, x22^:
+:::
+2
+
+  ^14
+14signals.S: 25: :error: ^unknown use of instruction mnemonic without a size suffixsignals.S: error: error: :unknown token in expression2514
+
+: add x0, x21, x2225
+: 14unknown token in expressionsignals.S
+::: 14error: : unknown token in expressionerror: 
+unknown token in expression^: 
+error: signals.S
+ add x0, x0, #15 add x0, x0, #1524 add x0, x0, #15:
+2 
+ unknown token in expression 
+:
+signals.S
+:  add x0, x0, #15error: 
+unknown use of instruction mnemonic without a size suffix  add x0, x0, #1525 ::       
+ 
+  1425:     add x0, x21, x22 
+    :error: 14unknown token in expression          : 
+  ^   error:  add x0, x0, #15   
+   unknown token in expression 
+  signals.S    
+       :    ^ add x0, x0, #15  25 :^14
+:     
+ 
+^ signals.S :  error: ^ 
+ 26 : ^signals.S
+:unknown token in expression26signals.S::1426: :
+ 14 :  
+error: 14 add x0, x0, #15: 
+signals.S error:      unknown token in expression 
+^signals.S
+:error:  : 26unknown token in expression 
+  bic x0, x0, #1526
+unknown token in expression 
+ : bic x0, x0, #15 signals.S::  bic x0, x0, #15 
+14
+:  error:  1426:           unknown token in expression^:
+error:          signals.S   
+14unknown token in expression ^:
+    bic x0, x0, #15: 
+ 26  
+error:  bic x0, x0, #15unknown token in expression
+
+:   signals.S :     bic x0, x0, #1514^: 
+error:  unknown token in expression26
+  bic x0, x0, #15   
+ :  
+     14 :   signals.S     ^ error: ^ :     
+unknown token in expression
+27    
+:     bic x0, x0, #152 :  error:         ^ 
+ unknown use of instruction mnemonic without a size suffix 
+ signals.S
+         signals.S sub sp, sp, x0 
+:^27  : 27 :^
+
+: 2^ 
+ signals.S^:
+2 : 27:  error:  unknown use of instruction mnemonic without a size suffix : signals.Serror: :
+2 unknown use of instruction mnemonic without a size suffix28 sub sp, sp, x0: 
+ 
+signals.S sub sp, sp, x0:error: 2 signals.Ssignals.S^:
+unknown use of instruction mnemonic without a size suffix: ^:
+:
+2727::2 : ^error: 
+error: 272
+unknown use of instruction mnemonic without a size suffix sub sp, sp, x0unknown use of instruction mnemonic without a size suffix
+signals.S :: 
+
+error:  sub sp, sp, x0:^2
+signals.S add x23, sp, x22unknown use of instruction mnemonic without a size suffix
+
+ 
+signals.S 28^: 
+error: : sub sp, sp, x027^:
+::unknown use of instruction mnemonic without a size suffix2
+
+: 228signals.S sub sp, sp, x0 error: signals.S: :signals.S2:: 28error: :unknown use of instruction mnemonic without a size suffix2
+:
+ add x23, sp, x22^unknown use of instruction mnemonic without a size suffix
+:error: : unknown use of instruction mnemonic without a size suffix28 
+^
+
+30error: 
+: 2^: 
+signals.S add x23, sp, x22:unknown use of instruction mnemonic without a size suffix10 sub sp, sp, x0: 
+error: :
+
+signals.S add x23, sp, x22error:  unknown use of instruction mnemonic without a size suffix28
+: add x23, sp, x222signals.S ::
+30 unknown token in expression^
+:  ^^
+28:^
+
+error: 
+:10
+ ldr x0, =call_fmtunknown use of instruction mnemonic without a size suffixsignals.Ssignals.S2:: 
+
+  add x23, sp, x22:
+30 :^10
+: signals.S: 30error: error: unknown use of instruction mnemonic without a size suffixunknown token in expression signals.S :error: 28unknown token in expression:::30signals.S
+
+  ldr x0, =call_fmt
+210: : error: error: :: add x23, sp, x2230 
+   ldr x0, =call_fmtunknown use of instruction mnemonic without a size suffixunknown token in expression10
+
+:  
+
+:  ldr x0, =call_fmt 
+^10    ^ 
+ add x23, sp, x22error:  
+ :   
+unknown token in expression 
+error:  unknown token in expression 
+  ldr x0, =call_fmt 
+  signals.S :^30
+: 10 :  signals.S signals.S  ldr x0, =call_fmt         error: :unknown token in expression: 
+^ ^31
+
+30 ldr x0, =call_fmt:
+^  
+ 
+ :102:     : error: error: signals.Ssignals.S::    unknown token in expression unknown use of instruction mnemonic without a size suffix^
+31 mov x1, x21:312signals.S::2  
+
+
+:  error: ^31: :error:  unknown use of instruction mnemonic without a size suffix 
+ ldr x0, =call_fmt mov x1, x21
+signals.S :unknown use of instruction mnemonic without a size suffix
+
+2 mov x1, x21  
+  31^:
+: 
+error:      2 signals.S :^unknown use of instruction mnemonic without a size suffix
+
+^ mov x1, x21
+
+^:  32signals.S :^
+error:  :2
+signals.S : unknown use of instruction mnemonic without a size suffix32: signals.S:32^
+:error: 2unknown use of instruction mnemonic without a size suffix: signals.S:
+2 mov x1, x2131signals.S:
+error: :unknown use of instruction mnemonic without a size suffix: 
+:2signals.S:  mov x2, x23error: 31
+: mov x2, x232error: : unknown use of instruction mnemonic without a size suffix 32:
+31 unknown use of instruction mnemonic without a size suffix
+
+error: 
+^ mov x2, x23
+
+::22^  mov x1, x21^unknown use of instruction mnemonic without a size suffix 
+signals.S^:: 32: 
+error: 
+
+ mov x1, x21
+
+error:  :unknown use of instruction mnemonic without a size suffix unknown use of instruction mnemonic without a size suffix^2
+
+^
+
+signals.S: :error: 33unknown use of instruction mnemonic without a size suffix mov x1, x21 mov x2, x23
+signals.S signals.Ssignals.S::
+32 mov x2, x23:
+2signals.S:^:
+2
+ : ^:3333: :error: 2 error: ^unknown use of instruction mnemonic without a size suffix
+32:signals.Sinvalid instruction mnemonic 'bl': 
+error: 
+:2:
+invalid instruction mnemonic 'bl' mov x2, x232
+:  32signals.S bl printf
+: error: error: ^invalid instruction mnemonic 'bl'
+
+:signals.S::
+ bl printf 
+^ ~unknown use of instruction mnemonic without a size suffix bl printf
+signals.S23333^
+~
+ mov x2, x23 :: 33::
+
+^ ~error: 
+unknown use of instruction mnemonic without a size suffix:22: : error: signals.Sinvalid instruction mnemonic 'bl':
+^
+
+ mov x2, x232error: : invalid instruction mnemonic 'bl'error: 
+invalid instruction mnemonic 'bl'signals.S36: bl printf36
+: 2^signals.S
+: bl printf36
+::signals.S: :~ 
+^  bl printf22error: : unknown use of instruction mnemonic without a size suffixerror: 
+33
+:
+^
+~: unknown use of instruction mnemonic without a size suffix mov x0, x232
+  
+signals.Serror: 
+:  mov x0, x23error: ^^~:unknown use of instruction mnemonic without a size suffixsignals.S
+invalid instruction mnemonic 'bl'signals.S
+:
+36
+::33:2: error: invalid instruction mnemonic 'bl'
+signals.S:37:2: signals.S:36:2:  error: 
+unknown use of instruction mnemonic without a size suffix36
+: mov x0, x232
+ mov x0, x23 2error: ^unknown use of instruction mnemonic without a size suffix
+ mov x1, x20
+  bl printf^ bl printf
+
+:  
+^ ~^: 
+error: 
+signals.S
+:error: ^unknown use of instruction mnemonic without a size suffix
+
+unknown use of instruction mnemonic without a size suffix 38
+
+ mov x0, x23^
+~ 
+^:
+2signals.S mov x0, x23:signals.S37:: signals.S
+::37237: :error: signals.Sunknown use of instruction mnemonic without a size suffixsignals.S
+: mov x1, x20error:  :signals.S2:: 36error: 
+unknown use of instruction mnemonic without a size suffix^2:3637::unknown use of instruction mnemonic without a size suffix 
+
+: :22
+^ mov x1, x20 mov x2, x21
+error: 2unknown use of instruction mnemonic without a size suffix: 
+error:  mov x1, x20: : 
+
+ signals.S^unknown use of instruction mnemonic without a size suffix
+
+error: error:  :^
+signals.S :unknown use of instruction mnemonic without a size suffixunknown use of instruction mnemonic without a size suffix
+
+ mov x0, x2337
+: mov x1, x20^
+
+ 38signals.S mov x0, x23
+2^::2
+:  : 
+error: signals.S38signals.S: 2error: : ^error: 
+unknown use of instruction mnemonic without a size suffixunknown use of instruction mnemonic without a size suffix:
+: mov x1, x20^unknown use of instruction mnemonic without a size suffix
+signals.S
+: mov x2, x2138
+39 38^:
+2signals.S
+
+  mov x2, x21signals.S
+:::2: :^ 372:: 2: error: error: unknown use of instruction mnemonic without a size suffixunknown use of instruction mnemonic without a size suffix37
+:signals.S
+:^39
+:error: : 
+ mov x2, x21 mov x2, x21
+
+2 2invalid instruction mnemonic 'bl': 
+error:  unknown use of instruction mnemonic without a size suffixsignals.S: ^error: 
+unknown use of instruction mnemonic without a size suffixerror:  bl memcpysignals.S
+^
+: mov x1, x2038
+:
+2 mov x1, x20: 
+invalid instruction mnemonic 'bl':signals.S39 
+ error:  
+^ bl memcpy::^2~^unknown use of instruction mnemonic without a size suffix
+
+
+39: 
+error: 
+invalid instruction mnemonic 'bl' mov x2, x21signals.S :
+
+ bl memcpy:239: :error: signals.S^signals.S~ 
+signals.S :2invalid instruction mnemonic 'bl':
+: bl memcpy38
+^^51: :error: 2invalid instruction mnemonic 'bl'38
+
+ bl memcpy:signals.S
+~: : 2
+: 2:: 
+error: ^ ~error: 
+unknown use of instruction mnemonic without a size suffix51error: :unknown use of instruction mnemonic without a size suffix2invalid instruction mnemonic 'ldr': 
+error: ^invalid instruction mnemonic 'ldr'~
+
+signals.S
+
+ mov x2, x21signals.S ldr x0, current:signals.S51 ldr x0, current::239: :error: 2 mov x2, x21
+
+ :
+51 signals.Sinvalid instruction mnemonic 'ldr':: 
+ ^:
+^
+~51 ldr x0, current:error: 2invalid instruction mnemonic 'bl': 
+error:  bl memcpyinvalid instruction mnemonic 'ldr'
+
+   ldr x0, current^
+
+ ^2~
+^signals.S^:~~: 
+ ~^39~~error: 
+invalid instruction mnemonic 'ldr'signals.S~::
+
+
+~392signals.S ldr x0, current
+::: signals.S
+:signals.S :^522:52error: :invalid instruction mnemonic 'bl'2
+:  bl memcpyerror: 
+signals.S51~: ~error: 2signals.S: :unknown use of instruction mnemonic without a size suffix52 :^2~::
+invalid instruction mnemonic 'bl'error: 
+unknown use of instruction mnemonic without a size suffix
+: 
+522
+:  bl memcpy str x23, [x0]error: :signals.S2 str x23, [x0]: error: error: invalid instruction mnemonic 'ldr'
+
+unknown use of instruction mnemonic without a size suffix :
+signals.Sunknown use of instruction mnemonic without a size suffix 
+
+ str x23, [x0] 
+^52 str x23, [x0]:^ ldr x0, current
+^
+~:
+251
+
+ 
+ : signals.S:: ^^
+^error: 2unknown use of instruction mnemonic without a size suffix: 54~
+signals.Ssignals.S:
+54signals.S::254: error: error: invalid instruction mnemonic 'ldr'unknown use of instruction mnemonic without a size suffix
+
+:~2:: 51error: :unknown use of instruction mnemonic without a size suffix2 str x23, [x0]: 
+:signals.S ldr x0, current mov sp, x23
+
+
+error:  2:: 54error: :
+ invalid instruction mnemonic 'ldr'^
+
+ mov sp, x23 ldr x0, current
+
+  ^^^unknown use of instruction mnemonic without a size suffix
+
+2 : signals.Ssignals.S:
+~ mov sp, x23^error: :unknown use of instruction mnemonic without a size suffixsignals.S52:~56
+:~10
+: signals.Serror: :unknown token in expression56
+: mov sp, x23:
+2 : ~ 54
+signals.S10:^error: 
+unknown use of instruction mnemonic without a size suffix^:
+ mov x8, #15: 
+error:  unknown token in expression 
+signals.S52
+
+2  mov x8, #15 
+::56signals.S str x23, [x0]: 
+error:  signals.S :2:: 10::  unknown use of instruction mnemonic without a size suffix  56error: :unknown use of instruction mnemonic without a size suffix1052error: 
+^ mov sp, x23 
+ 
+  str x23, [x0]: :error: unknown token in expression
+
+  mov x8, #15   
+ 2unknown token in expression: 
+error: ^^ 
+ 
+ unknown use of instruction mnemonic without a size suffix signals.S
+^signals.S
+:  mov x8, #15 
+
+:5654:  ^ 
+   str x23, [x0]:
+2signals.S10signals.S:54 signals.S : 57^:2: error: invalid instruction mnemonic 'svc'
+ svc #0
+ ^~~
+:: :  
+ : 57error: error: signals.Sunknown use of instruction mnemonic without a size suffix:
+2 mov sp, x23  signals.S :unknown token in expression264: :error: 
+^:
+ 
+ : 2error: unknown use of instruction mnemonic without a size suffix 54 mov x8, #15 
+^: 
+invalid instruction mnemonic 'svc'error: 
+
+ svc #0^:
+ invalid instruction mnemonic 'b' mov sp, x23
+
+  2^: ~error: signals.Sunknown use of instruction mnemonic without a size suffix:
+57 
+^signals.S~signals.S
+: mov sp, x2357
+: 2 :   b .
+:: 2^: error: error: invalid instruction mnemonic 'svc' 
+56
+:signals.S10:signals.Sinvalid instruction mnemonic 'svc':
+64 svc #0:
+   svc #0^: 56error: :unknown token in expression10
+:  mov x8, #15signals.S
+:
+2 :  error:  invalid instruction mnemonic 'b'
+
+ 
+error:  unknown token in expression 
+  mov x8, #15 
+56^^~
+^ b .~  : ~
+
+ ~^
+
+ 10  :   error:   signals.Sunknown token in expression^
+
+ mov x8, #15 signals.S :
+: 64  64:  :2 ^2
+:  : signals.Serror: error: invalid instruction mnemonic 'b'invalid instruction mnemonic 'b'
+
+ : b .  b . 57
+: 
+ 2signals.S^ ^^: 
+:
+
+error: 57invalid instruction mnemonic 'svc':
+2 svc #0: 
+signals.Serror:  :invalid instruction mnemonic 'svc'57^:
+~2~ svc #0signals.S: 
+
+: 57error: ^invalid instruction mnemonic 'svc':~
+~2
+:  svc #0error: 
+invalid instruction mnemonic 'svc' signals.S
+^: svc #0~64~
+:
+signals.S 2:: ^64error: ~:invalid instruction mnemonic 'b'2
+: ~ b .error: signals.Sinvalid instruction mnemonic 'b'
+
+: 64^
+
+: b .2
+:  error: ^invalid instruction mnemonic 'b'
+signals.S
+: b .64
+: 2^: 
+error: invalid instruction mnemonic 'b'
+ b .
+ ^
+sve_helpers.csve_helpers.c:13:18: error: use of undeclared identifier 'SVE_VQ_MAX'
+   13 | unsigned int vls[SVE_VQ_MAX];
+      |                  ^~~~~~~~~~
+:13:18: error: use of undeclared identifier 'SVE_VQ_MAX'
+   13 | unsigned int vls[SVE_VQ_MAX];
+      |                  ^~~~~~~~~~
+sve_helpers.c:25:12: error: use of undeclared identifier 'SVE_VQ_MAX'
+   25 |         for (vq = SVE_VQ_MAX; vq > 0; --vq) {
+      |                   ^~~~~~~~~~
+sve_helpers.c:13:18: error: use of undeclared identifier 'SVE_VQ_MAX'
+   13 | unsigned int vls[SVE_VQ_MAX];
+      |                  ^~~~~~~~~~
+sve_helpers.c:25:12: error: use of undeclared identifier 'SVE_VQ_MAX'
+sve_helpers.c:13:18:    error: 25 | use of undeclared identifier 'SVE_VQ_MAX'        
+fsve_helpers.cor: (13v:q18 :=  error: Suse of undeclared identifier 'SVE_VQ_MAX'V
+E_VQ_MAX; vq > 0; --vq) {
+         | 13                  ^~~~~~~~~~ |    u13
+ | nusnisgingende di nitn tv lvsl[sS[VSEV_EV_QV_QM_AMXA]X;]
+;      
+|                        ^~~~~~~~~~| 
+                 ^~~~~~~~~~
+sve_helpers.csve_helpers.c::1313:18::18 :error:  error: use of undeclared identifier 'SVE_VQ_MAX'
+use of undeclared identifier 'SVE_VQ_MAX'
+sve_helpers.c:13:18: error: use of undeclared identifier 'SVE_VQ_MAX'
+      1313 |  | uunnssiiggnneedd  iinntt  vvllss[[SSVVEE__VVQQ__M   AM13AX | X]];u
+;      n| 
+s                       ^~~~~~~~~~i
+| g                 ^~~~~~~~~~n
+ed int vls[SVE_VQ_MAX];
+      |                  ^~~~~~~~~~
+sve_helpers.c:25:12: error: use of undeclared identifier 'SVE_VQ_MAX'
+   25 |         for (vq = SVE_VQ_MAX; vq > 0; --vq) {
+      |                   ^~~~~~~~~~
+sve_helpers.c:25:12: error: use of undeclared identifier 'SVE_VQ_MAX'
+sve_helpers.c:25:12: error: use of undeclared identifier 'SVE_VQ_MAX'
+   25 |         for    (25v | q         =f oSrV E(_vVqQ _=M ASXV;E _vVqQ _>M A0X;;  -v-qv q>)  0{
+      |                   ^~~~~~~~~~
+; --vq) {
+      |                   ^~~~~~~~~~
+sve_helpers.c:41:12: error: call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   41 |                 if (vq < svesve_helpers.c_sve_helpers.cv:q:_25f25::12r:12o: merror:  _use of undeclared identifier 'SVE_VQ_MAX'error: 
+vuse of undeclared identifier 'SVE_VQ_MAX'sve_helpers.cl
+:(25v:l12):) 
+error:       | use of undeclared identifier 'SVE_VQ_MAX'                         ^
+
+      2525 |  |                 ffoorr  ((vvqq  ==  SSVV   EE25__VV | QQ        __fMMoAArXX ;;  v(vqqv  >q>   0=;0 ; S- V--Ev-_vqV)qQ) _{ M{
+A      
+X|                         ^~~~~~~~~~| 
+;                  ^~~~~~~~~~ 
+vq > 0; --vq) {
+      |                   ^~~~~~~~~~
+sve_helpers.c:41:12: error: call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   41 |                 if (vq < sve_vq_from_vl(vl))
+      |                          ^
+3 errors generated.
+3 errors generated.
+sve_helpers.c:41:12: error: call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   41 |                 if (vq < sve_vq_from_vl(vl))
+      |                          ^
+sve_helpers.c:41:12: error: call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   41 |         sve_helpers.c        i:f41 :(12v:q  error: <call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration] 
+sve_vq_from_v   l41( | v        l        )i)f
+       (| v                         ^q
+ < sve_vq_from_vl(vl))
+      |                          ^
+sve_helpers.c:41:12: 3error:  errorcall to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]s
+ generated.
+   41 |                 if (vq < sve_vq_from_vl(vl))
+      |                          ^
+sve_helpers.c:41:12: error: call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+sve_helpers.c:41:12:    41error:  | call to undeclared function 'sve_vq_from_vl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]        
+        if (vq < s   v41e | _        v        qi_ff r(ovmq_ v<l (svvle)_)v
+q      _| f                         ^r
+om_vl(vl))
+      |                          ^
+3 errors generated.
+3 errors generated.
+3 errors generated.
+3 errors generated.
+3 errors generated.
+
+=====================================================
+
+
+# Builds where the incident occurred:
+
+## defconfig+arm64-chromebook+kselftest on (arm64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:69d3d6fedcae953c056c1a9f
+
+
+#kernelci issue maestro:914cbb905f3bdc6704f58e8fddef408bafdb622e
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
