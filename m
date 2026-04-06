@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561CE370D48;
-	Mon,  6 Apr 2026 13:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BED2372667;
+	Mon,  6 Apr 2026 13:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775481234; cv=none; b=sNiIsQ6N69duqGZz01RDtvKpEGMleIVBtENOzp7xu40QdFlgnqfrRBs9KRtTWPQoCoj1roFOFwXV5Lkl/WuHVAKQuiVac8KrfPKZ1HKB322lA8grHkrEe4daDqk73iZrOnlCubNw0ZKp6FpRwVZ8iofl7lzdlqF/9EKZ8Drfn3k=
+	t=1775481244; cv=none; b=iu9aPGq89+oAWiNaB8zdCAHRnmXpHhf1lbZQ5vmWYKNtf5m/y5rqmjVe7Y2H0iWxLg2wrKkPI9F05j2uBveZuoIJ5vDjC/8xjUW0WQjnk7H4o6C4lNjBdRScOQ45e9wC375T1GPs1C67Ayge24YxwJnLSgoPx6BdmQ0nd4JRzzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775481234; c=relaxed/simple;
-	bh=Ib95lEzrb4lSDQJUtetYHBm4lcai51X1I5BDIk+Uc7A=;
-	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=coJ7bADRS+libZdQZXGXt3Z+ig3FpAzsZINt3D9UWObi9TYlYSJKjLHUJJAs5q/8fkgoxe45Na+PYy3CMAT9ghpVwTz+Rmg1Z1CZCiFhVS8s0CipCSMbavBLN6cw5xnjry7MG5qeMG9ycwwwyhn+j4Vw/TAQFjxVfVKzfFGdeqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJNF71ry; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775481244; c=relaxed/simple;
+	bh=7rwIDcE/MwQeP/3oqDtBB1UXn5AoF+DlFSR0bs/+wjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gxo6k7G/RtaneTUhO+S+22uXrSXELVnVEhAGeOU2htMsXRVtaizTk65STmR61Va7pfqcGtCuucxK2lVHwY3wIn79Kdl3lxSbpj4qKi7FFumw+NnRczUhrn6NSUweeHE6qeO16EyoTizn7mMRVuZ+4eJfAJj/cBj2UIV6efLE7F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lq2ZNOpu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJNF71ry"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5BFC4CEF7;
-	Mon,  6 Apr 2026 13:13:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lq2ZNOpu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F4FC4CEF7;
+	Mon,  6 Apr 2026 13:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775481233;
-	bh=Ib95lEzrb4lSDQJUtetYHBm4lcai51X1I5BDIk+Uc7A=;
-	h=Date:From:Cc:Subject:From;
-	b=MJNF71ryRqVPmbzOK+qq+/tdy9MqPmCeQuZoXHeLZOK3KpkbbHw93Ek2WYYWyueIA
-	 LAvEPWfMdCKz4pzApevwnetE8p8uGckBLKb1pIem7x8m3zqblj8WJ04ihFZV5wsZK4
-	 f0jLgHo4sCBrFSdhlh2XXI8jnnmFwz+fm1sJQX8EpW91ymXrfhcBJy7ljwq+1VkHBA
-	 5abGh30V0vlWIl6cKsTIJcRy2OLSanHU6fC7wskfOj9oZ7pZGCML3BObo+UdQvqd0S
-	 DE4QwR9zxOME0pbL/eQ7c0IIGZAZtpTUi4Kqxl5FhrgoW7In94OiCP2HrcgT+kIzPt
-	 6Gq87HesvybXw==
-Date: Mon, 6 Apr 2026 14:13:49 +0100
+	s=k20201202; t=1775481244;
+	bh=7rwIDcE/MwQeP/3oqDtBB1UXn5AoF+DlFSR0bs/+wjQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lq2ZNOpuQNbjYXyetyBASX8jPnlBanB6BTFOpWdr6VnFASgbRkv6I1EtqFtaQrP3f
+	 nUJqh48TCCdAtlVbLRA/mHUWVWgg449KTtCeNk5UAuJDK0jDLsldPoSQ2X7Xm5jGfq
+	 Z6rqGIlBemC+4+fCco4E8IGw/dvJ1uYB5DhTl8kvMXAScRV9+14lrnpxpNXKAx5YRI
+	 jrYwNDRLTz7Ofkpx3js38pPUf2m+bDtG9FeR2T1vjlN0SQyBXnOYkqOMFVzWki7CgQ
+	 MDyy8CovD015MBzKDlnGKkUbyFoHl3kvhfZMGhxgMo0c5RywKvuQU/PTWNvx4kDdfz
+	 5yLH4wqBY3KjQ==
+Date: Mon, 6 Apr 2026 14:14:00 +0100
 From: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the fs-next tree with the
- mm-nonmm-unstable tree
-Message-ID: <adOxjbi2byrIet3y@sirena.org.uk>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Manuel Ebner <manuelebner@mailbox.org>,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: linux-next: manual merge of the jc_docs tree with the rust tree
+Message-ID: <adOxmJeAu9XZWpUn@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,33 +42,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mKUiEgPqunmcio3S"
+	protocol="application/pgp-signature"; boundary="Milx+RS6bQy9G67v"
 Content-Disposition: inline
 
 
---mKUiEgPqunmcio3S
+--Milx+RS6bQy9G67v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the fs-next tree got a conflict in:
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-  fs/ocfs2/dir.c
+  Documentation/process/changes.rst
 
 between commits:
 
-  bdff37e327275 ("ocfs2: validate dx_root extent list fields during block r=
-ead")
-  28c33de101792 ("ocfs2: remove empty extent list check in ocfs2_dx_dir_loo=
-kup_rec()")
+  254c422f2f1e0 ("rust: bump Rust minimum supported version to 1.85.0 (Debi=
+an Trixie)")
+  a032c07f00fc4 ("rust: bump `bindgen` minimum supported version to 0.71.1 =
+(Debian Trixie)")
 
-=66rom the mm-nonmm-unstable tree and commit:
+=66rom the rust tree and commit:
 
-  0b2600f81cefc ("treewide: change inode->i_ino from unsigned long to u64")
+  ece7e57afd51e ("docs: changes.rst and ver_linux: sort the lists")
 
-=66rom the fs-next tree.
+=66rom the jc_docs tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -79,122 +77,107 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined fs/ocfs2/dir.c
-index d94595a499231,b82fe4431eb1f..0000000000000
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@@ -593,7 -593,7 +593,7 @@@ static int ocfs2_validate_dx_root(struc
-  		mlog(ML_ERROR,
-  		     "Checksum failed for dir index root block %llu\n",
-  		     (unsigned long long)bh->b_blocknr);
- -		return ret;
- +		goto bail;
-  	}
+diff --cc Documentation/process/changes.rst
+index 84156d0313659,adbd52869458d..0000000000000
+--- a/Documentation/process/changes.rst
++++ b/Documentation/process/changes.rst
+@@@ -29,40 -30,41 +30,41 @@@ you probably do not need to concern you
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+          Program        Minimal version       Command to check the version
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+- GNU C                  8.1              gcc --version
+- Clang/LLVM (optional)  15.0.0           clang --version
+- Rust (optional)        1.85.0           rustc --version
+- bindgen (optional)     0.71.1           bindgen --version
+- GNU make               4.0              make --version
+  bash                   4.2              bash --version
+- binutils               2.30             ld -v
+- flex                   2.5.35           flex --version
+- bison                  2.0              bison --version
+- pahole                 1.22             pahole --version
+- util-linux             2.10o            mount --version
+- kmod                   13               depmod -V
+- e2fsprogs              1.41.4           e2fsck -V
+- jfsutils               1.1.3            fsck.jfs -V
+- xfsprogs               2.6.0            xfs_db -V
+- squashfs-tools         4.0              mksquashfs -version
+- btrfs-progs            0.18             btrfs --version
+- pcmciautils            004              pccardctl -V
+- quota-tools            3.09             quota -V
+- PPP                    2.4.0            pppd --version
+- nfs-utils              1.0.5            showmount --version
+- procps                 3.2.0            ps --version
+- udev                   081              udevd --version
+- grub                   0.93             grub --version || grub-install --=
+version
+- mcelog                 0.6              mcelog --version
+- iptables               1.4.2            iptables -V
+- openssl & libcrypto    1.0.0            openssl version
+  bc                     1.06.95          bc --version
+- Sphinx\ [#f1]_         3.4.3            sphinx-build --version
+ -bindgen (optional)     0.65.1           bindgen --version
+++bindgen (optional)     0.71.1           bindgen --version
++ binutils               2.30             ld -v
++ bison                  2.0              bison --version
++ btrfs-progs            0.18             btrfs --version
++ Clang/LLVM (optional)  15.0.0           clang --version
++ e2fsprogs              1.41.4           e2fsck -V
++ flex                   2.5.35           flex --version
++ gdb                    7.2              gdb --version
++ GNU awk (optional)     5.1.0            gawk --version
++ GNU C                  8.1              gcc --version
++ GNU make               4.0              make --version
+  GNU tar                1.28             tar --version
++ GRUB                   0.93             grub --version || grub-install --=
+version
+  gtags (optional)       6.6.5            gtags --version
++ iptables               1.4.2            iptables -V
++ jfsutils               1.1.3            fsck.jfs -V
++ kmod                   13               kmod -V
++ mcelog                 0.6              mcelog --version
+  mkimage (optional)     2017.01          mkimage --version
++ nfs-utils              1.0.5            showmount --version
++ openssl & libcrypto    1.0.0            openssl version
++ pahole                 1.22             pahole --version
++ pcmciautils            004              pccardctl -V
++ PPP                    2.4.0            pppd --version
++ procps                 3.2.0            ps --version
+  Python                 3.9.x            python3 --version
+- GNU AWK (optional)     5.1.0            gawk --version
++ quota-tools            3.09             quota -V
+ -Rust (optional)        1.78.0           rustc --version
+++Rust (optional)        1.85.0           rustc --version
++ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
++ squashfs-tools         4.0              mksquashfs -version
++ udev                   081              udevadm --version
++ util-linux             2.10o            mount --version
++ xfsprogs               2.6.0            xfs_db -V
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
  =20
-  	if (!OCFS2_IS_VALID_DX_ROOT(dx_root)) {
-@@@ -601,32 -601,8 +601,32 @@@
-  				  "Dir Index Root # %llu has bad signature %.*s\n",
-  				  (unsigned long long)le64_to_cpu(dx_root->dr_blkno),
-  				  7, dx_root->dr_signature);
- +		goto bail;
-  	}
- =20
- +	if (!(dx_root->dr_flags & OCFS2_DX_FLAG_INLINE)) {
- +		struct ocfs2_extent_list *el =3D &dx_root->dr_list;
- +
- +		if (le16_to_cpu(el->l_count) !=3D ocfs2_extent_recs_per_dx_root(sb)) {
- +			ret =3D ocfs2_error(sb,
- +					  "Dir Index Root # %llu has invalid l_count %u (expected %u)\n",
- +					  (unsigned long long)le64_to_cpu(dx_root->dr_blkno),
- +					  le16_to_cpu(el->l_count),
- +					  ocfs2_extent_recs_per_dx_root(sb));
- +			goto bail;
- +		}
- +
- +		if (le16_to_cpu(el->l_next_free_rec) > le16_to_cpu(el->l_count)) {
- +			ret =3D ocfs2_error(sb,
- +					  "Dir Index Root # %llu has invalid l_next_free_rec %u (l_count %u)=
-\n",
- +					  (unsigned long long)le64_to_cpu(dx_root->dr_blkno),
- +					  le16_to_cpu(el->l_next_free_rec),
- +					  le16_to_cpu(el->l_count));
- +			goto bail;
- +		}
- +	}
- +
- +bail:
-  	return ret;
-  }
- =20
-@@@ -815,6 -791,14 +815,6 @@@ static int ocfs2_dx_dir_lookup_rec(stru
-  	struct ocfs2_extent_block *eb;
-  	struct ocfs2_extent_rec *rec =3D NULL;
- =20
- -	if (le16_to_cpu(el->l_count) !=3D
- -	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
- -		ret =3D ocfs2_error(inode->i_sb,
- -				  "Inode %llu has invalid extent list length %u\n",
- -				  inode->i_ino, le16_to_cpu(el->l_count));
- -		goto out;
- -	}
- -
-  	if (el->l_tree_depth) {
-  		ret =3D ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
-  				      &eb_bh);
-@@@ -828,13 -812,21 +828,13 @@@
- =20
-  		if (el->l_tree_depth) {
-  			ret =3D ocfs2_error(inode->i_sb,
-- 					  "Inode %lu has non zero tree depth in btree tree block %llu\n",
-+ 					  "Inode %llu has non zero tree depth in btree tree block %llu\n",
-  					  inode->i_ino,
-  					  (unsigned long long)eb_bh->b_blocknr);
-  			goto out;
-  		}
-  	}
- =20
- -	if (le16_to_cpu(el->l_next_free_rec) =3D=3D 0) {
- -		ret =3D ocfs2_error(inode->i_sb,
- -				  "Inode %llu has empty extent list at depth %u\n",
- -				  inode->i_ino,
- -				  le16_to_cpu(el->l_tree_depth));
- -		goto out;
- -	}
- -
-  	found =3D 0;
-  	for (i =3D le16_to_cpu(el->l_next_free_rec) - 1; i >=3D 0; i--) {
-  		rec =3D &el->l_recs[i];
-@@@ -847,9 -839,10 +847,9 @@@
- =20
-  	if (!found) {
-  		ret =3D ocfs2_error(inode->i_sb,
-- 				  "Inode %lu has no extent record for hash %u in btree (next_free_rec=
- %u)\n",
- -				  "Inode %llu has bad extent record (%u, %u, 0) in btree\n",
- -				  inode->i_ino,
- -				  le32_to_cpu(rec->e_cpos),
- -				  ocfs2_rec_clusters(el, rec));
-++				  "Inode %llu has no extent record for hash %u in btree (next_free_re=
-c %u)\n",
- +				  inode->i_ino, major_hash,
- +				  le16_to_cpu(el->l_next_free_rec));
-  		goto out;
-  	}
- =20
+  .. [#f1] Sphinx is needed only to build the Kernel documentation
 
---mKUiEgPqunmcio3S
+--Milx+RS6bQy9G67v
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnTsY0ACgkQJNaLcl1U
-h9A4QAf/fWDp5RXWs4Cub3xKrgWlOW7Ef9FRbW5WO3jd2rhJlXIoB9396QMl3kGF
-aHb+PHEDv7OZyx9g1XeZeWDnaFItWbbopFOr5nNUdWSqUyi3v/6JWifRIEjK/aOh
-Z283diO/F+BhzmMn3qnfIBXBJNb35FLLvX60sVbCweoPf1qxjIXFO6UvbsjK8rxd
-wd8icqLRs9YnSZek6b1ohiGMSlg9b1mUgOibRaRBTIdS5Q8/j5qVtqHSCb4N/zdm
-GgSXefBug33ibuVjadbZBmSHPt8Rzb3QPAcfIHS0qnpXmWfoN+tRZnkpYrsWpVXs
-A6OjD3Q+K5x96iGOqm3uO0ydCOa7PQ==
-=CSfK
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnTsZcACgkQJNaLcl1U
+h9CpKggAg1Zc6lpXVKWrE6ECghcjjZxigGzQY0gd0+sB1Mg90eGmVCAl3mQj9KFI
+Pl4TqoyKAVvsbT/HWJH+sr3miaeZQJQioZ8/RJd4EAGGJH9aoayQfLOkmfG+z55E
+g8G8J+B9hI2+vur93x9r3JS/uKPWXp9VmZ2BICSAfOA/XO/VCsyj7VkqVijx37VJ
+QquqvXFwcHtp8EnjsBT/OJH1hUjBWr9kRL67vpfSzuv3H71D3Wfn022dDcgh0Idr
+RFmUy0qGJYvbz7ZTb/AEqiCEgWsXwOUu9xi5ZV18aIZf+imAX+ds5MAftB+8ivCB
+Yr3GY0plb8qu2ZIbqKrS3maogz2NcA==
+=Wqzy
 -----END PGP SIGNATURE-----
 
---mKUiEgPqunmcio3S--
+--Milx+RS6bQy9G67v--
