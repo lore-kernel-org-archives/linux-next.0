@@ -1,86 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9B02F28E3;
-	Mon,  6 Apr 2026 16:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2AD175A9E;
+	Mon,  6 Apr 2026 16:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775492930; cv=none; b=U442M/zVOtS8PM+S1rkQiSCNOvf31QFcwJLWz8vgDZfiIPqM+rJ6pwZRkrN/Adqd5LL1x0gGtgJYOmHWblnH1Zz9dLKN+fRzwM8DPrWoapdgA4/ycY1t6Q8yfSYRuCaNf94FStUmsa4DuCSGEsPB8aut9AXyTm1a0A/1VSlTSqg=
+	t=1775493497; cv=none; b=Eko74YLgOZsWYqI4jjEw55K3wMYM2D+7e2uV5ATVVktoeiWIzr2/IUjh1JdOpAbibrcT0rQcIGwKdZJwf/zLRezOqdF9J03fO00HJMm4lRdGtgVV3k33lmcGzAOsmYSlDB37P4chVHT2cBFkiOnauvO9vo33Ii8QRaKO9s/b5tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775492930; c=relaxed/simple;
-	bh=ugWQaBlvTl2V5vUc52zZKDlcyUIKylJOWFHImVKQ42E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KH8HS8wywVLUH+z1a6REBHULCyKexajQudXCxRCUiswhO7pybbOUlWoj69mZR/305OKjBc/K9UqovzU0vxM4MZcacl2pFhOXVwWS0kDc1OyxIuL7gk2R8pf9sdmLt/PAOfZ7McoBaoSAOwopcLV6qLkTu5F7O61eCmkGmgoO83M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=We2bmYBu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775493497; c=relaxed/simple;
+	bh=zMouZCiKC8cmLmJ6pk+vFsfeOoCgTOe3l/dHYCZSg70=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tMecMTzfgx8tQ3BvRI6jq1iu7fsnW3YZeGceSvfJCjjIrTGHEf33UE4Zaw/ECpJOlOBTM0izR4PsJnX7jCHBa5zdNF2d58MFU8GZSEY5TpE29HgxmT46xmbH50NhKxJMaDlgOHcbFZ7G5N5iHQPldwSU49MUJwoAs8Y/brPPOfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKPB7Kny; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="We2bmYBu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254F4C4CEF7;
-	Mon,  6 Apr 2026 16:28:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKPB7Kny"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32347C19421;
+	Mon,  6 Apr 2026 16:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775492930;
-	bh=ugWQaBlvTl2V5vUc52zZKDlcyUIKylJOWFHImVKQ42E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=We2bmYBuCOh9kpNLabhg0ZURj9IBfVMWtNcTmTt90J7SrpxbmhZC7GnxK7iNF8n2M
-	 GRoNOwfq8vVI0vm83SpQMg4Utng/SAKwMIIBN7PbpA3IV6oZlW2o3GcRZqEU9K6rfB
-	 A2Tvnit193bREbJ8hE2SMc2RjLl4YuwCR2ogqLcgkBAZWlXWp9q2/ADCiY8h4fmaMJ
-	 Nv+RjVHYwicRrQKQJMmHFeGFgJpIgBalD/JPLukmrP/VNwhhoXmQHG4WIJGfddJl/a
-	 66QPA2bjX2tbTs2pyIXHWb/Z2mMrLqQ4h60HpQstSlG/6t4fokszQrz+9J8XzaN5DB
-	 3VTx+nFUCwzpA==
-Date: Mon, 6 Apr 2026 17:28:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the rpmsg tree
-Message-ID: <d6fd197f-cdab-4ded-87f2-754c501c2c02@sirena.org.uk>
-References: <aarBm-e3NUl9XnY8@sirena.org.uk>
- <aee116cb-6335-47e0-8634-2ad208f4fcd5@sirena.org.uk>
+	s=k20201202; t=1775493497;
+	bh=zMouZCiKC8cmLmJ6pk+vFsfeOoCgTOe3l/dHYCZSg70=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=DKPB7KnypFUOTVgy2RwSzaNrVXJjAiPwECeACaTAnePf99aUxHGUsX+O2wYDdFY9q
+	 mR7y+WeyeUW4FrxdzR2NVLTC901rYMhUZsfU8WbFql1TYVdz7WB/Z11P4y2JDQDPiH
+	 +4TSBk1vF4+6BuKck7j5pxmqtj8mXncsdURsXKguw25G0E/6KJ6hrlzQ7aST5ZiZwD
+	 QP+qsb7PYtE+oFMHDBAx/XZIjw941tkeV271jS/TMqkbj6X0iUqjP3KODPr5Qyp3Lu
+	 u9RVfN+ccerimrmCDcK2Bco2E8lymZPrjVxg5hj9fBCxy1SEFG2kZnLTW1xUxGNJvl
+	 gsnlEAUZwrJwA==
+Date: Mon, 6 Apr 2026 18:38:14 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
+    linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the hid tree
+In-Reply-To: <782cb718-33dd-47c3-b5a4-d95440c2d09b@sirena.org.uk>
+Message-ID: <61868409-rs8p-rq71-q852-5296pnp42srs@xreary.bet>
+References: <ab096wLbcpu0M-GF@sirena.org.uk> <fa4b8b25-8b34-4314-a7f3-ea7143ed9247@sirena.org.uk> <782cb718-33dd-47c3-b5a4-d95440c2d09b@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b5QyMY+FUbc0MRRK"
-Content-Disposition: inline
-In-Reply-To: <aee116cb-6335-47e0-8634-2ad208f4fcd5@sirena.org.uk>
-X-Cookie: One FISHWICH coming up!!
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 6 Apr 2026, Mark Brown wrote:
 
---b5QyMY+FUbc0MRRK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > >   142068281f513 ("HID: input: use __free(kfree) to clean up temporary buffers")
+> > > 
+> > > is missing a Signed-off-by from its committer
+> > 
+> > This issue is still present today.
+> 
+> And today.
 
-On Mon, Mar 30, 2026 at 11:11:41PM +0100, Mark Brown wrote:
-> On Fri, Mar 06, 2026 at 11:59:23AM +0000, Mark Brown wrote:
-> > Commits
-> >=20
-> >   390045a24591a ("dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapa=
-li CDSP")
-> >   0af8802175d2d ("dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapa=
-li ADSP")
-> >=20
-> > are missing a Signed-off-by from their committers
+Yeah, this happened because Benjamin rebased a tree with commit a that I 
+originally comitted and SOBed (the tree has a shared maintainership).
 
-> This issue is still present today.
+If you strongly believe that this is worth another rebase, I can happily 
+do that, but given the fact that it contains signoff of one of the 
+co-maintainers, I wouldn't lose sleep over it (but I can be probably 
+easily convinced otherwise).
 
-And today.
+Thanks,
 
---b5QyMY+FUbc0MRRK
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Jiri Kosina
+SUSE Labs
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnT3z0ACgkQJNaLcl1U
-h9DMVgf6An5lQfzf/7riZccbAc1EmcIqMXZAj/htaCzDgPRMCjdIXdGwdUyvrvZD
-TXMDwwExHNFzNgfFMcTvahO//iLg0poeYN7I2lVcpWgdiXtFgQaOjAJX2eZposG3
-mevZj2aLgWpCThSRZi2RV8LzR0yN4RI+WW/G4cDo1p+pHlb2mEIcXPOeo4SWH5fE
-EB2RWfWEGdG2aBzulwHexRQx7c1VSX7T6yWQ2DqiSnCGuxPFgPOWbQquEAxI8VGO
-Q+xLo6x7vID5DVzDLlqIC3KTXHmn5tvNWBbJeuRJ1GeusnvmGk7oUzCBhjAujodh
-Qbjgt+lbevDtVK6jhYMj3KBHOI/p5w==
-=gpv3
------END PGP SIGNATURE-----
-
---b5QyMY+FUbc0MRRK--
