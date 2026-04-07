@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6063A3AE6F7;
-	Tue,  7 Apr 2026 11:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2663AF648;
+	Tue,  7 Apr 2026 11:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775562429; cv=none; b=G/eqSpzaJy8VJgDm2pfewhK8d3hHnzSkIgpyQhIQ2648GzKAfTxtJOclkQe3BITCmzaVnV8FMXCbedKUQnB+uH8ahbfLSF01h++9ye98mFqwxaMOrE0PziE8AyncQREP1jdR0yjF25jdxcOoZbXS3E44bnLRWNDv5o413NprWHQ=
+	t=1775562440; cv=none; b=SP7JhYvTICPnIQePay26nFmZAvUAhoM11Q27c9nvNOtpYUqbsMVv8X8SKjj7vVc71oBMrv1ewak4Qjy5OV50EhpzdM+nLl+QQGcm0Qb7QtCE/Z9xZifoWzQPKTvtwGLcxGRnS500I1p7UbivwRHLL5WpRnQxjqUG/y8XL9VtN1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775562429; c=relaxed/simple;
-	bh=7gK7KFzTNvneiU5D+1UacaahsV0j/bx+RgHNDl4SKRE=;
+	s=arc-20240116; t=1775562440; c=relaxed/simple;
+	bh=EgCXBrPqjBiI89C6QGU3OoQPuorVvrMHeKjNYLoDcqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ByEE13dVqcCf5Z/fYUpcJJGtmbnW7Yiix0VggSLvb6u2cUkiIQjOlEzNrggbaRz27HyLUr0n6rSYMym9las2CtXi1Ux4WNKE6w2OaBUtz9mbSMX0LYcniDyb7UFTC7ZYJ7tbblXEoXEGgomVffb5a66Wc0oKSPyRqLB4cuQ2IUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFMxPzM/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=srKWXe/AUj6nUq4/RqwsbOTcJQzEEM+bxmFx+qkJjduL/AN0GIZeyToQ9dvbLLP7LmaqGHD/KO8kuOEhcqdcn1Go3GrSGD11QnTaTFqktajr34dPcMb4dozB6TkLiY9d4/CfkQUEvEGGicc0TOIMlr03CoiWzLDdNDn6EHuNSV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTfL3phJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFMxPzM/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27469C116C6;
-	Tue,  7 Apr 2026 11:47:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTfL3phJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FC7C116C6;
+	Tue,  7 Apr 2026 11:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775562429;
-	bh=7gK7KFzTNvneiU5D+1UacaahsV0j/bx+RgHNDl4SKRE=;
+	s=k20201202; t=1775562440;
+	bh=EgCXBrPqjBiI89C6QGU3OoQPuorVvrMHeKjNYLoDcqE=;
 	h=Date:From:To:Cc:Subject:From;
-	b=WFMxPzM/9qOqJ5n3rFybeetbIZVCdJi9FeLs5Ehe1PsFobf3tkS9iKk2OcS4hqI5V
-	 D1MgdMwhsDnRtfrPeJaAzHwdS63MjLTsLC4UQ24gLYtGeMM0JGu7JgAXX0kSw7NEfc
-	 j4nXjmjFpisJDLaWo7KpFI0KXlBCKRqMu49daY6i29YVW1XGc9Uf5zeviBA6DjGKXW
-	 dLs4Bvm0gykPMzENRmD3Fcg68pRS2ZeT13d0iIuYSbvM2rH3GG04PyWdhelkzzVPXe
-	 vGpWUbZxujj0dgDig/T3Dac8qkWaaD2gZBeoq0S5Mp5lH54DYpSZBEHoQpmaTT6ssR
-	 P8QxpXKN0RBCA==
-Date: Tue, 7 Apr 2026 12:47:05 +0100
+	b=jTfL3phJxTSrLngEbn/llP+s94wThOymPaaTslOPidqagz+CgouCcXTo1Ynb4dN5P
+	 3GuLLWAZNh1/VlI9UisLhwsIqr9UeGiS9D/UzrCDe/+2YFan5/uyz8N2oWkahfOu/i
+	 ExzMqxo1RKp7fJl/hoiQHyIAYeWSRk2WzFUeRO3CvR/1+JhYXJG7j7kVRk332VT5Fw
+	 3PlFXfhtTm7nurCN1Xm5U72uriRjvcS62QqHUYVXEbB2BwDdx7QBYmeJgNheZjPeQ5
+	 dGEf5MtBR8wPC+vSPq8YEMaXQE93Lo0OE2YEbgsIj0JhMDqCF6TPBNfUxrik2G5mvt
+	 4xX4wtShryrdg==
+Date: Tue, 7 Apr 2026 12:47:17 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mike Marshall <hubcap@omnibond.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the orangefs tree
-Message-ID: <adTuuT0AkOUwxC6H@sirena.org.uk>
+Subject: Fixes tags need work in the bluetooth tree
+Message-ID: <adTuxQhCHp3BnwM6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,33 +40,41 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y3QrnpskPRA6nOPD"
+	protocol="application/pgp-signature"; boundary="2pWdUI+0b/Y2uoa9"
 Content-Disposition: inline
 
 
---y3QrnpskPRA6nOPD
+--2pWdUI+0b/Y2uoa9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+In commit
 
-  43bf488aba642 ("orangefs: validate getxattr response length")
+  ff4aaa2d1db81 ("Bluetooth: l2cap: Add missing chan lock in l2cap_ecred_reconf_rsp")
 
-is missing a Signed-off-by from its committer
+Fixes tag
 
---y3QrnpskPRA6nOPD
+  Fixes: 15f02b910562 ("Bluetooth: L2CAP: Add L2CAP_ECRED_RECONF support")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
+
+--2pWdUI+0b/Y2uoa9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnU7rgACgkQJNaLcl1U
-h9AvwAf9Gp17WdUz3xxy9sYQ/34vndCvvmn8LXddIopN45w9yyvVfz+xOcFUAaxB
-q4XoB2R5nHiTUz3hZkv/vaASsClvdnai8kpeaXMHvnz3v+Vz4zB1EY8pmpak+wms
-nCj17+ysv080KxfYxn8pcDMVJ+Y7X31DwdbkyCJCRBBv+sUbbk9NelJRYIEJUgmT
-7vG6ewvjJWBXBrW8TiteIrWwYLF/4SpTKNJkqOyJoMssmQpicTX8vg5mfsiJdC9F
-fyEk3fQTZEIe77nZWNPO4u6b+kc9r7b2mqtWVD68yxjdg1udTLTz+S19OA/7w6rS
-uCcjiIFR2aDFx+Hbpt6XVv+brSwroA==
-=rX7F
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnU7sQACgkQJNaLcl1U
+h9A5/Af9FVyzssF9Ea6CQwO9meZeNwNaM93h9VtQUudjEN8SVA8wsqULJPionijf
+k85yCnhdJgsuNKykMsSuI4VaqLnoHQgOInEgd/Kjq8JN62QrF1ebodtVMb8WPJ1B
+Ykr4pAl+jIXyxIDGIIIqDIJsX2TBImwBOik33yY0AP0ucnxSthn/v+1j8qER8g+6
+G+TfLiM+LfQfp3Va0895/wLBer+9d8jdp+8TSdKL75JaciHGecvs8YQ3vltKVU5U
+IMm9eUe9J1t9JRYUnUnFg9QNA1RyqE+IHyzmRn4C58SYMGl7hmdqsLbQar8P0P53
+sg1x4Wal7LbLO84uRG8KWXDc/pCcTA==
+=dT58
 -----END PGP SIGNATURE-----
 
---y3QrnpskPRA6nOPD--
+--2pWdUI+0b/Y2uoa9--
