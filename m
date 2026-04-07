@@ -1,38 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2663AF648;
-	Tue,  7 Apr 2026 11:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49983B389F;
+	Tue,  7 Apr 2026 11:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775562440; cv=none; b=SP7JhYvTICPnIQePay26nFmZAvUAhoM11Q27c9nvNOtpYUqbsMVv8X8SKjj7vVc71oBMrv1ewak4Qjy5OV50EhpzdM+nLl+QQGcm0Qb7QtCE/Z9xZifoWzQPKTvtwGLcxGRnS500I1p7UbivwRHLL5WpRnQxjqUG/y8XL9VtN1I=
+	t=1775563019; cv=none; b=CX3ei+t/KiNr5FOiA20SJGroXUHt3TUXWQJv6Fe2BziKSkpeXZ86apqRgRuT1DjbX4PTKtQWIhYKgFVETUnkFvsvh6UJUz6jSJ2nk+AtqE0KDgXZBKVVP3fztA2wrDMKOqdTyfBCyDFjKCb0C8umZtUgErHT4EeGH5GeXSS0HvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775562440; c=relaxed/simple;
-	bh=EgCXBrPqjBiI89C6QGU3OoQPuorVvrMHeKjNYLoDcqE=;
+	s=arc-20240116; t=1775563019; c=relaxed/simple;
+	bh=DjpTMGM5uO8hDs4UwV0YSkNNsFqc8N3+IFh3c+GCsA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=srKWXe/AUj6nUq4/RqwsbOTcJQzEEM+bxmFx+qkJjduL/AN0GIZeyToQ9dvbLLP7LmaqGHD/KO8kuOEhcqdcn1Go3GrSGD11QnTaTFqktajr34dPcMb4dozB6TkLiY9d4/CfkQUEvEGGicc0TOIMlr03CoiWzLDdNDn6EHuNSV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTfL3phJ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=qeW3cufQx+wVpdKhRugEF5Gxvscn5KAZiCpnMNcEQw7FrT1PfetR3UVBirP6o7YMKmFWrCXU0c082vsOFcsAw0uI6cpL9Y+izknvn0wr84IQoZPSciG2aawgreOzR1Bun1JyWer7BQA8ATdyRiJNzVqBGFQyfhFPdXcl2YMPPHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwMX75Ei; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTfL3phJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FC7C116C6;
-	Tue,  7 Apr 2026 11:47:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwMX75Ei"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5F8DC116C6;
+	Tue,  7 Apr 2026 11:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775562440;
-	bh=EgCXBrPqjBiI89C6QGU3OoQPuorVvrMHeKjNYLoDcqE=;
+	s=k20201202; t=1775563019;
+	bh=DjpTMGM5uO8hDs4UwV0YSkNNsFqc8N3+IFh3c+GCsA8=;
 	h=Date:From:To:Cc:Subject:From;
-	b=jTfL3phJxTSrLngEbn/llP+s94wThOymPaaTslOPidqagz+CgouCcXTo1Ynb4dN5P
-	 3GuLLWAZNh1/VlI9UisLhwsIqr9UeGiS9D/UzrCDe/+2YFan5/uyz8N2oWkahfOu/i
-	 ExzMqxo1RKp7fJl/hoiQHyIAYeWSRk2WzFUeRO3CvR/1+JhYXJG7j7kVRk332VT5Fw
-	 3PlFXfhtTm7nurCN1Xm5U72uriRjvcS62QqHUYVXEbB2BwDdx7QBYmeJgNheZjPeQ5
-	 dGEf5MtBR8wPC+vSPq8YEMaXQE93Lo0OE2YEbgsIj0JhMDqCF6TPBNfUxrik2G5mvt
-	 4xX4wtShryrdg==
-Date: Tue, 7 Apr 2026 12:47:17 +0100
+	b=VwMX75EiQ8VP5x37sBDKUNK96v7LxQx89pf2ccNmoz6iIXkFNgFoHPkn9ydVWnSXw
+	 LUxb71StkEF+Tts8qdTddBI08PsiSFP1VLHDRRES2/2kVdFTrt1Fmel7rga7aS75pR
+	 ZMaEFHKOcZiBRgM8pAH8mpDHtPYkLjokbEfDsAic2o9kxNYLtutq+7xyLYZQlaZXSl
+	 bAS2RjoKh3HNaZOZJRNAVjnykEcVGMD/LWy9o3mhJPfpaDwo533UbaSY1y9Euj4BX9
+	 3HEdzqjlveQI8txJ1Q144fGfHqwrMphjnyG4utHSnapuqnWu8fh0gwUT/AIF/ORnhq
+	 3KvVSVYZRs0WQ==
+Date: Tue, 7 Apr 2026 12:56:55 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the bluetooth tree
-Message-ID: <adTuxQhCHp3BnwM6@sirena.org.uk>
+To: Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>
+Cc: Abhishek Dubey <adubey@linux.ibm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: linux-next: manual merge of the bpf-next tree with the powerpc tree
+Message-ID: <adTxB7PjvXi5N4EB@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,41 +45,67 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2pWdUI+0b/Y2uoa9"
+	protocol="application/pgp-signature"; boundary="SbOp3luEpbBMMsdp"
 Content-Disposition: inline
 
 
---2pWdUI+0b/Y2uoa9
+--SbOp3luEpbBMMsdp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In commit
+Hi all,
 
-  ff4aaa2d1db81 ("Bluetooth: l2cap: Add missing chan lock in l2cap_ecred_reconf_rsp")
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-Fixes tag
+  tools/testing/selftests/bpf/prog_tests/bpf_insn_array.c
 
-  Fixes: 15f02b910562 ("Bluetooth: L2CAP: Add L2CAP_ECRED_RECONF support")
+between commit:
 
-has these problem(s):
+  66cad93ad325b ("selftest/bpf: Enable instruction array test for powerpc")
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
+=66rom the powerpc tree and commit:
 
---2pWdUI+0b/Y2uoa9
+  99726ece0c8ad ("selftests/bpf: Enable test for instruction array on arm64=
+")
+
+=66rom the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc tools/testing/selftests/bpf/prog_tests/bpf_insn_array.c
+index 482d38b9c29e1,93166c2da8e7b..0000000000000
+--- a/tools/testing/selftests/bpf/prog_tests/bpf_insn_array.c
++++ b/tools/testing/selftests/bpf/prog_tests/bpf_insn_array.c
+@@@ -3,7 -3,7 +3,7 @@@
+  #include <bpf/bpf.h>
+  #include <test_progs.h>
+ =20
+- #if defined(__x86_64__) || defined(__powerpc__)
+ -#if defined(__x86_64__) || defined(__aarch64__)
+++#if defined(__x86_64__) || defined(__powerpc__) || defined(__aarch64__)
+  static int map_create(__u32 map_type, __u32 max_entries)
+  {
+  	const char *map_name =3D "insn_array";
+
+--SbOp3luEpbBMMsdp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnU7sQACgkQJNaLcl1U
-h9A5/Af9FVyzssF9Ea6CQwO9meZeNwNaM93h9VtQUudjEN8SVA8wsqULJPionijf
-k85yCnhdJgsuNKykMsSuI4VaqLnoHQgOInEgd/Kjq8JN62QrF1ebodtVMb8WPJ1B
-Ykr4pAl+jIXyxIDGIIIqDIJsX2TBImwBOik33yY0AP0ucnxSthn/v+1j8qER8g+6
-G+TfLiM+LfQfp3Va0895/wLBer+9d8jdp+8TSdKL75JaciHGecvs8YQ3vltKVU5U
-IMm9eUe9J1t9JRYUnUnFg9QNA1RyqE+IHyzmRn4C58SYMGl7hmdqsLbQar8P0P53
-sg1x4Wal7LbLO84uRG8KWXDc/pCcTA==
-=dT58
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnU8QYACgkQJNaLcl1U
+h9AFcgf/U/ypvZWPUaE38iCgcOr9D2sft431E5zVpFC9wMXs668d9GJOmE/1VuwO
+XL253BucFVhgYDo82OVwDzdRqeRcuTF68dvwkZKT8VrAaqrZPv/yEAsY13rHOnnB
+grhCgSmPIauCen0an6CPj9CS5s6+JMAOhMCvozwK/6HyAvHUffRnhteWW5LWkrlz
+QdfxbvkiBOykKudK+mAPKkscBo3HIQJh94tYYdaU8B1BkmT1QwhZGzHUzBR4NM6F
+naYv3V0cCgIRNJGzecDtAk1EiBZ9OQb+/C2rIAoefZBpnPC22Ri27E3rODwELTx1
+sqG8OGsPFLCfMNteGrk49svTpH//OA==
+=ELIP
 -----END PGP SIGNATURE-----
 
---2pWdUI+0b/Y2uoa9--
+--SbOp3luEpbBMMsdp--
