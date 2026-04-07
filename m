@@ -1,45 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD443AB27D;
-	Tue,  7 Apr 2026 10:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6063A3AE6F7;
+	Tue,  7 Apr 2026 11:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775559248; cv=none; b=rOspQoev+L8VQVbn800a5sN3Lk/UU8GSBZx8v9h3uG43qbIbTk/vLqFsGepq3NH0Mia3U2GBWqIeVZ0X8wtSjyLH2G2vTUcNCqCpBQUiejXjOw/tRhmtRa9RCAAOrA9Komv9T3yC1jVf4F2HKQ4+fwbRntroJDzDTM6LA0GcQWI=
+	t=1775562429; cv=none; b=G/eqSpzaJy8VJgDm2pfewhK8d3hHnzSkIgpyQhIQ2648GzKAfTxtJOclkQe3BITCmzaVnV8FMXCbedKUQnB+uH8ahbfLSF01h++9ye98mFqwxaMOrE0PziE8AyncQREP1jdR0yjF25jdxcOoZbXS3E44bnLRWNDv5o413NprWHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775559248; c=relaxed/simple;
-	bh=UFqm9nCu8QZGdNa01y5fxO8OeFnClMun2Kb4QEBQWvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MW3exX2Dq6+z6nZxSwo+5dIDX+UNQTXOHPN+jgyjxrit9ZnQsNpsglX+otaI8035mzU+4IdwQSfi1T4K36Us/YDTnd/78/YHw/Qq6S/IkpehSoppb5BB9PJ+PprpC3zmOQc+53WseG29kKe6xpj8R6WHZYP7NVyfUEMTSjDtMls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b82Vmt6e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775562429; c=relaxed/simple;
+	bh=7gK7KFzTNvneiU5D+1UacaahsV0j/bx+RgHNDl4SKRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ByEE13dVqcCf5Z/fYUpcJJGtmbnW7Yiix0VggSLvb6u2cUkiIQjOlEzNrggbaRz27HyLUr0n6rSYMym9las2CtXi1Ux4WNKE6w2OaBUtz9mbSMX0LYcniDyb7UFTC7ZYJ7tbblXEoXEGgomVffb5a66Wc0oKSPyRqLB4cuQ2IUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFMxPzM/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b82Vmt6e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48FCC2BCAF;
-	Tue,  7 Apr 2026 10:54:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFMxPzM/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27469C116C6;
+	Tue,  7 Apr 2026 11:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775559248;
-	bh=UFqm9nCu8QZGdNa01y5fxO8OeFnClMun2Kb4QEBQWvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b82Vmt6eslxjr/zYHImtuLoJwTBTZygjCfUfLBFORykmk6MBicJ1qiYZTveC787aa
-	 lKXTVHfiSVNQBk8TOV7EijGb7Uo3qdXQwbSRuWjljB+w947zB4GGPlydWhSFs2YjCK
-	 1sinY9/078eFVh2bwhX7X1nPtw+4DY7DkUSHUiHK+hg/8CAfZqNTQFHIkOKxnnKIzd
-	 PFVoNXJJTCPgaDn2G4vdbcfGR365M+GFOyuwG0opIGc9C5rUr8lTZ64kF16a82n2dv
-	 P1st4cXBqSSAsk1Lb2zoCruxlqfKRoxuWoQbAuP6xQp/tlJ0vAmXacXfdvObzqXwdk
-	 Fs+nZ7MkxNewg==
-Date: Tue, 7 Apr 2026 11:54:04 +0100
+	s=k20201202; t=1775562429;
+	bh=7gK7KFzTNvneiU5D+1UacaahsV0j/bx+RgHNDl4SKRE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WFMxPzM/9qOqJ5n3rFybeetbIZVCdJi9FeLs5Ehe1PsFobf3tkS9iKk2OcS4hqI5V
+	 D1MgdMwhsDnRtfrPeJaAzHwdS63MjLTsLC4UQ24gLYtGeMM0JGu7JgAXX0kSw7NEfc
+	 j4nXjmjFpisJDLaWo7KpFI0KXlBCKRqMu49daY6i29YVW1XGc9Uf5zeviBA6DjGKXW
+	 dLs4Bvm0gykPMzENRmD3Fcg68pRS2ZeT13d0iIuYSbvM2rH3GG04PyWdhelkzzVPXe
+	 vGpWUbZxujj0dgDig/T3Dac8qkWaaD2gZBeoq0S5Mp5lH54DYpSZBEHoQpmaTT6ssR
+	 P8QxpXKN0RBCA==
+Date: Tue, 7 Apr 2026 12:47:05 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the fs-next tree with the
- mm-nonmm-unstable tree
-Message-ID: <63bc0d9b-c2e5-49e5-940d-53b3260fbed3@sirena.org.uk>
-References: <adOxjbi2byrIet3y@sirena.org.uk>
- <20260406092553.8737d1e3834fe6fdeeaaa8fb@linux-foundation.org>
- <b96ce2ef-cf9c-4f21-9058-d1791305d5b5@linux.alibaba.com>
+To: Mike Marshall <hubcap@omnibond.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the orangefs tree
+Message-ID: <adTuuT0AkOUwxC6H@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,42 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EGWj7lQjr2V8bweh"
+	protocol="application/pgp-signature"; boundary="y3QrnpskPRA6nOPD"
 Content-Disposition: inline
-In-Reply-To: <b96ce2ef-cf9c-4f21-9058-d1791305d5b5@linux.alibaba.com>
-X-Cookie: Now, let's SEND OUT for QUICHE!!
 
 
---EGWj7lQjr2V8bweh
+--y3QrnpskPRA6nOPD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Apr 07, 2026 at 10:19:59AM +0800, Joseph Qi wrote:
-> On 4/7/26 12:25 AM, Andrew Morton wrote:
+Commit
 
-> > Thanks.  That's a nasty-looking conflict due to the applying order.  The
-> > 0b2600f81cefc change is actually small, below.
+  43bf488aba642 ("orangefs: validate getxattr response length")
 
-> > Hopefully Linus can figure it out ;)
+is missing a Signed-off-by from its committer
 
-> Should I resend the series base on the latest linux-next?
-
-Definitely don't do that, things sent to Linus should be based on his
-tree only - basing on -next will pull in far too much stuff.
-
---EGWj7lQjr2V8bweh
+--y3QrnpskPRA6nOPD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnU4ksACgkQJNaLcl1U
-h9BFEAf/eOad0IQb7xT+OLnRR4SlCuvL2AXAs2RSTlmgdR0BXVd7qgm9iSH0jA4X
-M3xFDZ8TysMWmVqHxvqB6polXvHIXKwq3ABJ5PezmUvBbo6L4jzfIXErwencIA3q
-9VyaQ9/dGdOYQEdDE+c+9zJDIh3ig557ajUM+y2C/JdmGCSySaX6IHjV9bB1fLOp
-AtqijGunY6U2rRdZryvSVVJcGKKDnVmWjH+c6YSRC3YXt24UD52R7xeuV8y/YIYI
-AqARKDh823YSAHFiBjqGF192b992M42uEIZAV1JW3uQOaafV8wM6g5Z3YZun6teB
-kzDsLEmHul+1Hg3W5QuAqhAQJ0aEFA==
-=sy2e
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnU7rgACgkQJNaLcl1U
+h9AvwAf9Gp17WdUz3xxy9sYQ/34vndCvvmn8LXddIopN45w9yyvVfz+xOcFUAaxB
+q4XoB2R5nHiTUz3hZkv/vaASsClvdnai8kpeaXMHvnz3v+Vz4zB1EY8pmpak+wms
+nCj17+ysv080KxfYxn8pcDMVJ+Y7X31DwdbkyCJCRBBv+sUbbk9NelJRYIEJUgmT
+7vG6ewvjJWBXBrW8TiteIrWwYLF/4SpTKNJkqOyJoMssmQpicTX8vg5mfsiJdC9F
+fyEk3fQTZEIe77nZWNPO4u6b+kc9r7b2mqtWVD68yxjdg1udTLTz+S19OA/7w6rS
+uCcjiIFR2aDFx+Hbpt6XVv+brSwroA==
+=rX7F
 -----END PGP SIGNATURE-----
 
---EGWj7lQjr2V8bweh--
+--y3QrnpskPRA6nOPD--
