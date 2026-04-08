@@ -1,39 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAA229BDB4;
-	Wed,  8 Apr 2026 17:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8B7351C04;
+	Wed,  8 Apr 2026 17:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775668530; cv=none; b=Yr/7macrfOoDd25UZbPwDg2HF5eAWh8D6ho2DLHd/l3eB6mQsVOOM+10/efm40DW6tIxi5cIsGylXXa2fDg/zZSn6Fl+OlqlBRdokXZVQYrVMCdNX/kOA2v+AomTNo7Elqrl94A8MMtx+QxcANjb4ixmVy1CMdVeD3s9bbOcuOI=
+	t=1775669169; cv=none; b=ciVd8VtzRtdnSOEGNcDVj12TzK8V9WkouP2C0uPPFSMWv6cFwlPnbZojM/UKUfjSywMt5BXad3LGQLI4gPTI1APKv12B1/O7ek/+s7l+vlu8YiYwSobsv/Mi+l1VTV9tRhIDRpdiQ3TJWaCo5a2b0iS0ze4z7KKRtpbNnAnsd/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775668530; c=relaxed/simple;
-	bh=Ea8kuzJDBy+2PpeYJETg1n/P0QgRtuMEkZSbPxG9h7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S+z8bOK3WxHu9GlPrZdN/0dIJ0/pgmdg39yEnFuPW1Ot9EzEyKU5b1BSfU+0moo2ahKvCNu/+aVfC56PQgR5ysUZFaTWAy5G33RLEVWBzZX7/Qa2Ah9QoYmnaSdde3UrdfWogIgQJE3VcG/xBKSaBAyBgeVh5YYl6tw0IXQDp88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1K5KfvY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775669169; c=relaxed/simple;
+	bh=9uE9HoVnp7JPCgpbGLmdshO3VOOSJvutMUsufBuWIAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJlSICgIl5qpqVzTUr74veFoBv7+57kgQoG/Hs7Ddm6AzIA3YHBkt0O0WFqiCU+g0OH8T2zoODZGSVwhnbxqmWXmIqEEn9f6LoNUc8e1/Md+pJ3JN5AhU6w8ezUbGdlIg9nOw6XCNQWRtawsjhRKYSW7FA6Dem5TYnID3f5ZbzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoE7Q98k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1K5KfvY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD486C19421;
-	Wed,  8 Apr 2026 17:15:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoE7Q98k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4CAC19421;
+	Wed,  8 Apr 2026 17:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775668530;
-	bh=Ea8kuzJDBy+2PpeYJETg1n/P0QgRtuMEkZSbPxG9h7I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=r1K5KfvYTEFH0URBfsswpv3hc9T5utpFzHN6WNi2VeSIld92hH5X9tN5LihfuXEeK
-	 +NO6wJytMZDmXqD/MQlsV++h4lN66hK3kv0dot6XDt/ohtOVIZjL2ErLx2yPlhNLNE
-	 Dj5k2OXqJcM16jV2seku1FQatO+gxNyh7tYg0G5QdeG0EvRn34BH/OBaOEPASUrhcN
-	 /sk58Gu7Jt7R3u7bKOpbLQ1P1Av8WdpaIrEaUAqIZwhAgH1+PjTyodvaGfD4oiJkpe
-	 93XJumrAUoajWOgbnnv+NY5ytXPLaSmSB2CeObnKYISTVFcG2UnPmFrf9tsGRnsSR1
-	 yU2PyuQ6b2HHA==
-Date: Wed, 8 Apr 2026 18:15:27 +0100
+	s=k20201202; t=1775669168;
+	bh=9uE9HoVnp7JPCgpbGLmdshO3VOOSJvutMUsufBuWIAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aoE7Q98kw7DjSv5SYx/PLWyb6TT0oSh1ghhcqb4tJaqcg/sGmOosuc6vi3CEPHfwo
+	 1XIqNSj9Moa6vJOVg+BAVOu9D1MC+EV1R/ZdtNxonT6LRIxFp5MHJeJd7G3seoNT/l
+	 pfDsmpfLMwr+6Gz0wkZpaVLFNMucxkgAW08pkFtpdje8F/RY+Jcu9Mw0MzY7MDjKxm
+	 coOSjVOu4OxXzZm6Fw39VnyEQrRcPFrg/efdq6AgeldOekHj+i4oAiu3GesgA9E26P
+	 0kBL/CnTSw6YuI+O3Fg3qUc2a08lxiKppLtS8jYCUBIQThFs32eLo9fxl3Zk4pfwzF
+	 7BTydDsgC4WXg==
+Date: Wed, 8 Apr 2026 18:26:04 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: htmldocs failure in the drm-xe tree
-Message-ID: <adaNL_cT7wtfn7FK@sirena.org.uk>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: linux-next: manual merge of the drm tree with the drm-misc-fixes
+ tree
+Message-ID: <efa647ef-17e8-432e-9560-a1f0435c0975@sirena.org.uk>
+References: <ab1XClKfaCMYzg5-@sirena.org.uk>
+ <20260320163902.24571f5d@fedora>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,33 +46,50 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CIsY5O2H6CB3aCUS"
+	protocol="application/pgp-signature"; boundary="WQm+T1p8jBQqMjN4"
 Content-Disposition: inline
+In-Reply-To: <20260320163902.24571f5d@fedora>
+X-Cookie: Often things ARE as bad as they seem!
 
 
---CIsY5O2H6CB3aCUS
+--WQm+T1p8jBQqMjN4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi all,
+On Fri, Mar 20, 2026 at 04:39:02PM +0100, Boris Brezillon wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-In today's linux-next I'm seeing a htmldocs error in the drm-xe tree:
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
 
-/tmp/next/build/Documentation/gpu/xe/xe_mm:22: ./drivers/gpu/drm/xe/xe_ggtt.c:124: ERROR: Unexpected indentation. [docutils]
+> I have a slightly different conflict resolution (it's the one we currently
+> have in drm-tip[1]).
 
---CIsY5O2H6CB3aCUS
+> [1]https://gitlab.freedesktop.org/drm/tip
+
+Sorry, this got buried and won't be relevant any more - for future
+reference if you could send an incremental patch on top of the merge
+that was there that is much easier for me to ingest.  Merges are
+remembered with git rerere and then fixed up with patches on top of that
+if needed.
+
+--WQm+T1p8jBQqMjN4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWjS4ACgkQJNaLcl1U
-h9AK3Af+I+eQPIbd4tGR7zxI44sxa1o7YknQfdDrYglBGDE2UGhl54+876S0TAoT
-3PpbjP5lngZ7MF0+Qz5AEQ2fYg0ahcfIRV2sbJashkytYa8NzxhkeVuTISNbw99c
-3uD/+RwJY+y7FoRZnlop759PxAuIEnrXO3YsDRCEAxxwsp0s3vyImje2conpX/t+
-t6T9UEYrFWY3bj407+Hm8OIFwOlNekdqVrF4zreLrKYp7frdD+b6O0ahLlXX216k
-riENzBjVyPWne08X+mLMiI32v4KcO6A83p1S+KRR1vz/rq/66Em5PDKgK5lanfKQ
-yAg86cZavR7PLXHPqiIG5bAZfTsGuQ==
-=UlYs
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWj6sACgkQJNaLcl1U
+h9B8Ugf/W/NswsqRYP/fIpPyS0ZHEnIyiBZeuqT/CPQ2wdGeRmHYlNQZyTFhIt5U
+1VDOlPt9HiU7YKOd2zYHn/98sVctneh35/UOBS9csLxWZc8W5v7/yMuSoVXlYMuC
+i1zZPC/BsfFIELwCMbEZ/CE/sJsfOkQknYmKmF9B7xdDv1mbMgvzrjlbr4tdvNSF
+yMWlv4WmiF+honLQ37uNsEpYbYZ7mVAqgJwTtjP5/RO6RtQPBlEc1x2qrE0f4zWV
+k6GuPEAWI5DRRVBcO/k6seEJrzB/WO8aqA23SkbcFEj1Q2zR7NLkBueRJwqPw9uy
+nX1yxlCYcTrQtKIE084kPldmYpBWiQ==
+=TMGS
 -----END PGP SIGNATURE-----
 
---CIsY5O2H6CB3aCUS--
+--WQm+T1p8jBQqMjN4--
