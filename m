@@ -1,93 +1,214 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F212BF00A;
-	Wed,  8 Apr 2026 15:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446DD3BAD8F;
+	Wed,  8 Apr 2026 16:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775663113; cv=none; b=jzyfn27vdSiFKZvBh/RH9TvYjsgzjlFq645VokTIXkafTzgGDvMmmFv3XceSejulv1k4QAHvVip3H6LM3qFsvHqeliV73AnjjDG93yUQl8WIFa/R+Cfju+Rz1hWxPyjjv6A1h1Z1vXSyH8rGycBBfs6jFt0zvFIAjGwAGnlqAnI=
+	t=1775666622; cv=none; b=CRx4uIdebpY06TX12TdTS7TsJw/WWbCsOcM/Vj0rbB44CMg9J/JUsKf8pwwauPF+nGUIkEJjYz/L8VdQDq5qcBKR6caPSd4vk4Q4xP/HP13ZO7a6GCO4ERKsJdCHG+QW1P3Je8nG4BLFJ/Z/QVltv3ev1iOJak0UUBOh0DemGwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775663113; c=relaxed/simple;
-	bh=5zgkXCADh8GS7ioX3vDgl3SOshD5pNkgKWFJrutI9tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7c5o1Luvjfr23qq3k7qCMSV+ywi+REZ6ehKA5M1Fl+j9sp3+nidGbqEEVi98pJGGnSgMtoEi0aQw5nLdag0AR0j77n85wlB9SUM+T44OFZ/fKlTEzFHQ1EwnWx5+hJI/IC0/HHKnw5jpfp1T5S/yRDrnR9opomklzz2f2hHuK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qL2R0i91; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775666622; c=relaxed/simple;
+	bh=eNSN/V9iAtKNk8c2W5CzcVUiXUpEq+bFtvJet1Q0okg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ga0W1lRe6Il6d9BlkjxElIJFvx9Y7ASjMEIKg9J7dRdOjYMNVGfU8BrvkYc8oYQiusYcqnKLD7RqkASQfOnZVrZhupclIWmzrTr7aJlgOfAg4C1cb8poJhlIs8hvFFFAPL8c0OTaGPhRO6khmnKqsh3ArAxIwCoGfX6yqB2YV3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fi6Y+dCZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qL2R0i91"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF47DC2BCB6;
-	Wed,  8 Apr 2026 15:45:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fi6Y+dCZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9739C2BC87;
+	Wed,  8 Apr 2026 16:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775663113;
-	bh=5zgkXCADh8GS7ioX3vDgl3SOshD5pNkgKWFJrutI9tc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qL2R0i91lKY79RU2rRr1nJ9DRPiKweb9V+5JKVi0SY8ud2BC82EMJPQjNeiCghNsh
-	 sjklwaGIIrt0HxUC+GIZBhJT0qL9M0oBomriQhE67mPl1hVTBNCeygzZyH161o+V3M
-	 pXGX/XZx3mEzjZEcYSDDVvKbAaOdy34N8WrJ3F50eFq5FhVWjb0QmkbnLmKcUlRwZE
-	 BTMUmJMgykgjE5PUN2wFKH6ERFMvCe6iv80qc6z9Aochlajgrfpjk8tIXzolWOo9oS
-	 Sfhi0ZaRDWoCH2t86BudRyohCM9+in3SB+R3ipYX/IETV7OHKw0G+ZKmREGBXJ2uFo
-	 uQI67mmy4VABQ==
-Date: Wed, 8 Apr 2026 16:45:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Josh Snyder <josh@code406.com>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip-fixes tree
-Message-ID: <8930589b-51f1-460d-b0f4-391d84e322be@sirena.org.uk>
-References: <adZNmIpSOkd6P5c7@sirena.org.uk>
- <87wlyh32bq.ffs@tglx>
+	s=k20201202; t=1775666621;
+	bh=eNSN/V9iAtKNk8c2W5CzcVUiXUpEq+bFtvJet1Q0okg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fi6Y+dCZw7beSP7hoLO4/f+j/kmY2B4HKmpTOIl1qVd4Yo4Unft05aUKJ8RZCIp3X
+	 TUcgAb7xY9k1kHb6BdsLemkvVAUgFWhTFl1NWNq43Gmot65D8TCAlJNX8f3V5+RDWQ
+	 vdGwODiPd0ZVHZTvDKdyJeGUntz1d9MzNqwb8lfsigtyODnJ8Z28f6tDkpBsf5ZXlF
+	 7KBz72qbQs7VGhqheouTTo0xL3MD61EPDCJlNZq2hAxglULRUhhWRnBTcaktmj+hri
+	 rQCovgqsoZuPtPRHZ1E6Y0yBVF/H9Ke68tflwCP2F4XVXNZ/wOaxTAbe70G8Vqdrxp
+	 zSrWtriiEh5Dg==
+Message-ID: <8d216893-1e0b-4e3c-8609-eb3de5da02cf@kernel.org>
+Date: Wed, 8 Apr 2026 18:43:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PH21Aae4kb61GQqI"
-Content-Disposition: inline
-In-Reply-To: <87wlyh32bq.ffs@tglx>
-X-Cookie: Often things ARE as bad as they seem!
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: linux-next: manual merge of the net-next tree with the netfilter
+ tree
+Content-Language: fr
+To: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Networking <netdev@vger.kernel.org>
+Cc: Andrea Mayer <andrea.mayer@uniroma2.it>,
+ Justin Iurman <justin.iurman@6wind.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <adZhwtOYfo-0ImSa@sirena.org.uk>
+ <729b748b-e00b-475e-81e0-a666eab24fc6@sirena.org.uk>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
+ YBNdx5Xl74NLSgx6y/1NiMQGuKeu+2BmtnkiGxBNanfXcnl4L4Lzz+iXBvvbtCbynnnqDDqU
+ c7SPFMpMesgpcu1xFt0F6bcxE+0ojRtSCZ5HDElKlHJNYtD1uwY4UYVGWUGCF/+cY1YLmtfb
+ WdNb/SFo+Mp0HItfBC12qtDIXYvbfNUGVnA5jXeWMEyYhSNktLnpDL2gBUCsdbkov5VjiOX7
+ CRTkX0UgNWRjyFZwThaZADEvAOo12M5uSBk7h07yJ97gqvBtcx45IsJwfUJE4hy8qZqsA62A
+ nTRflBvp647IXAiCcwWsEgE5AXKwA3aL6dcpVR17JXJ6nwHHnslVi8WesiqzUI9sbO/hXeXw
+ TDSB+YhErbNOxvHqCzZEnGAAFf6ges26fRVyuU119AzO40sjdLV0l6LE7GshddyazWZf0iac
+ nEhX9NKxGnuhMu5SXmo2poIQttJuYAvTVUNwQVEx/0yY5xmiuyqvXa+XT7NKJkOZSiAPlNt6
+ VffjgOP62S7M9wDShUghN3F7CPOrrRsOHWO/l6I/qJdUMW+MHSFYPfYiFXoLUZyPvNVCYSgs
+ 3oQaFhHapq1f345XBtfG3fOYp1K2wTXd4ThFraTLl8PHxCn4ywARAQABzSRNYXR0aGlldSBC
+ YWVydHMgPG1hdHR0YmVAa2VybmVsLm9yZz7CwZEEEwEIADsCGwMFCwkIBwIGFQoJCAsCBBYC
+ AwECHgECF4AWIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZUDpDAIZAQAKCRD2t4JPQmmgcz33
+ EACjROM3nj9FGclR5AlyPUbAq/txEX7E0EFQCDtdLPrjBcLAoaYJIQUV8IDCcPjZMJy2ADp7
+ /zSwYba2rE2C9vRgjXZJNt21mySvKnnkPbNQGkNRl3TZAinO1Ddq3fp2c/GmYaW1NWFSfOmw
+ MvB5CJaN0UK5l0/drnaA6Hxsu62V5UnpvxWgexqDuo0wfpEeP1PEqMNzyiVPvJ8bJxgM8qoC
+ cpXLp1Rq/jq7pbUycY8GeYw2j+FVZJHlhL0w0Zm9CFHThHxRAm1tsIPc+oTorx7haXP+nN0J
+ iqBXVAxLK2KxrHtMygim50xk2QpUotWYfZpRRv8dMygEPIB3f1Vi5JMwP4M47NZNdpqVkHrm
+ jvcNuLfDgf/vqUvuXs2eA2/BkIHcOuAAbsvreX1WX1rTHmx5ud3OhsWQQRVL2rt+0p1DpROI
+ 3Ob8F78W5rKr4HYvjX2Inpy3WahAm7FzUY184OyfPO/2zadKCqg8n01mWA9PXxs84bFEV2mP
+ VzC5j6K8U3RNA6cb9bpE5bzXut6T2gxj6j+7TsgMQFhbyH/tZgpDjWvAiPZHb3sV29t8XaOF
+ BwzqiI2AEkiWMySiHwCCMsIH9WUH7r7vpwROko89Tk+InpEbiphPjd7qAkyJ+tNIEWd1+MlX
+ ZPtOaFLVHhLQ3PLFLkrU3+Yi3tXqpvLE3gO3LM7BTQRV4/npARAA5+u/Sx1n9anIqcgHpA7l
+ 5SUCP1e/qF7n5DK8LiM10gYglgY0XHOBi0S7vHppH8hrtpizx+7t5DBdPJgVtR6SilyK0/mp
+ 9nWHDhc9rwU3KmHYgFFsnX58eEmZxz2qsIY8juFor5r7kpcM5dRR9aB+HjlOOJJgyDxcJTwM
+ 1ey4L/79P72wuXRhMibN14SX6TZzf+/XIOrM6TsULVJEIv1+NdczQbs6pBTpEK/G2apME7vf
+ mjTsZU26Ezn+LDMX16lHTmIJi7Hlh7eifCGGM+g/AlDV6aWKFS+sBbwy+YoS0Zc3Yz8zrdbi
+ Kzn3kbKd+99//mysSVsHaekQYyVvO0KD2KPKBs1S/ImrBb6XecqxGy/y/3HWHdngGEY2v2IP
+ Qox7mAPznyKyXEfG+0rrVseZSEssKmY01IsgwwbmN9ZcqUKYNhjv67WMX7tNwiVbSrGLZoqf
+ Xlgw4aAdnIMQyTW8nE6hH/Iwqay4S2str4HZtWwyWLitk7N+e+vxuK5qto4AxtB7VdimvKUs
+ x6kQO5F3YWcC3vCXCgPwyV8133+fIR2L81R1L1q3swaEuh95vWj6iskxeNWSTyFAVKYYVskG
+ V+OTtB71P1XCnb6AJCW9cKpC25+zxQqD2Zy0dK3u2RuKErajKBa/YWzuSaKAOkneFxG3LJIv
+ Hl7iqPF+JDCjB5sAEQEAAcLBXwQYAQIACQUCVeP56QIbDAAKCRD2t4JPQmmgc5VnD/9YgbCr
+ HR1FbMbm7td54UrYvZV/i7m3dIQNXK2e+Cbv5PXf19ce3XluaE+wA8D+vnIW5mbAAiojt3Mb
+ 6p0WJS3QzbObzHNgAp3zy/L4lXwc6WW5vnpWAzqXFHP8D9PTpqvBALbXqL06smP47JqbyQxj
+ Xf7D2rrPeIqbYmVY9da1KzMOVf3gReazYa89zZSdVkMojfWsbq05zwYU+SCWS3NiyF6QghbW
+ voxbFwX1i/0xRwJiX9NNbRj1huVKQuS4W7rbWA87TrVQPXUAdkyd7FRYICNW+0gddysIwPoa
+ KrLfx3Ba6Rpx0JznbrVOtXlihjl4KV8mtOPjYDY9u+8x412xXnlGl6AC4HLu2F3ECkamY4G6
+ UxejX+E6vW6Xe4n7H+rEX5UFgPRdYkS1TA/X3nMen9bouxNsvIJv7C6adZmMHqu/2azX7S7I
+ vrxxySzOw9GxjoVTuzWMKWpDGP8n71IFeOot8JuPZtJ8omz+DZel+WCNZMVdVNLPOd5frqOv
+ mpz0VhFAlNTjU1Vy0CnuxX3AM51J8dpdNyG0S8rADh6C8AKCDOfUstpq28/6oTaQv7QZdge0
+ JY6dglzGKnCi/zsmp2+1w559frz4+IC7j/igvJGX4KDDKUs0mlld8J2u2sBXv7CGxdzQoHaz
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <729b748b-e00b-475e-81e0-a666eab24fc6@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hello,
 
---PH21Aae4kb61GQqI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/04/2026 17:08, Mark Brown wrote:
+> On Wed, Apr 08, 2026 at 03:10:10PM +0100, Mark Brown wrote:
+>> Hi all,
+>>
+>> Today's linux-next merge of the net-next tree got a conflict in:
+>>
+>>   net/ipv6/seg6_iptunnel.c
+>>
+>> between commit:
+>>
+>>   c3812651b522f ("seg6: separate dst_cache for input and output paths in seg6 lwtunnel")
+>>
+>> from the netfilter tree and commit:
+>>
+>>   78723a62b969a ("seg6: add per-route tunnel source address")
+>>
+>> from the net-next tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
 
-On Wed, Apr 08, 2026 at 05:21:29PM +0200, Thomas Gleixner wrote:
-> On Wed, Apr 08 2026 at 13:44, Mark Brown wrote:
->=20
-> It's a boot not a build fail, right?
+Thank you for having fixed the conflict on linux-next!
 
-Yes, sorry - the -next tooling understands running kunit as a build
-command and I need to remember to edit that bit of the message.
+>> diff --cc net/ipv6/seg6_iptunnel.c
+>> index d6a0f7df90807,e76cc0cc481ec..0000000000000
+>> --- a/net/ipv6/seg6_iptunnel.c
+>> +++ b/net/ipv6/seg6_iptunnel.c
+>> @@@ -48,8 -48,8 +48,9 @@@ static size_t seg6_lwt_headroom(struct 
+>>   }
+>>   
+>>   struct seg6_lwt {
+>>  -	struct dst_cache cache;
+>>  +	struct dst_cache cache_input;
+>>  +	struct dst_cache cache_output;
+>> + 	struct in6_addr tunsrc;
+>>   	struct seg6_iptunnel_encap tuninfo[];
+>>   };
+>>   
+> 
+> This also needs a fixup for a new jump to the error handling paths that
+> was added in seg6_build_state().
 
-> >   105c42566a55 ("ata: ahci: force 32-bit DMA for JMicron JMB582/JMB585")
+I also had this other conflict there, and I did this when resolving it
+in MPTCP tree:
 
-> Found it with qemu and pushed out an updated version. Delta patch
-> below. It restores the behaviour for !force and delta <=3D 0 which is
-> required under certain circumstances to get through the tick_periodic()
-> boot stage.
+--------------------- 8< ---------------------
+diff --cc net/ipv6/seg6_iptunnel.c
+index e76cc0cc481e,d6a0f7df9080..97b50d9b1365
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@@ -48,8 -48,8 +48,9 @@@ static size_t seg6_lwt_headroom(struct 
+  }
+  
+  struct seg6_lwt {
+- 	struct dst_cache cache;
++ 	struct dst_cache cache_input;
++ 	struct dst_cache cache_output;
+ +	struct in6_addr tunsrc;
+  	struct seg6_iptunnel_encap tuninfo[];
+  };
+  
+@@@ -726,18 -712,6 +731,18 @@@ static int seg6_build_state(struct net 
+  
+  	memcpy(&slwt->tuninfo, tuninfo, tuninfo_len);
+  
+ +	if (tb[SEG6_IPTUNNEL_SRC]) {
+ +		slwt->tunsrc = nla_get_in6_addr(tb[SEG6_IPTUNNEL_SRC]);
+ +
+ +		if (ipv6_addr_any(&slwt->tunsrc) ||
+ +		    ipv6_addr_is_multicast(&slwt->tunsrc) ||
+ +		    ipv6_addr_loopback(&slwt->tunsrc)) {
+ +			NL_SET_ERR_MSG(extack, "invalid tunsrc address");
+ +			err = -EINVAL;
+- 			goto free_dst_cache;
+++			goto err_destroy_output;
+ +		}
+ +	}
+ +
+  	newts->type = LWTUNNEL_ENCAP_SEG6;
+  	newts->flags |= LWTUNNEL_STATE_INPUT_REDIRECT;
+  
+@@@ -750,9 -724,9 +755,11 @@@
+  
+  	return 0;
+  
+- free_dst_cache:
+- 	dst_cache_destroy(&slwt->cache);
+- free_lwt_state:
+++err_destroy_output:
+++	dst_cache_destroy(&slwt->cache_output);
++ err_destroy_input:
++ 	dst_cache_destroy(&slwt->cache_input);
++ err_free_newts:
+  	kfree(newts);
+  	return err;
+  }
+--------------------- 8< ---------------------
 
-Thanks, hopefully everything will go through smoothly tomorrow.  As
-mentioned on IRC I'm also holding tip at yesterday's version since it's
-also affected.
+I took the liberty to add the err_destroy_output label, similar to the
+new err_destroy_input one.
 
---PH21Aae4kb61GQqI
-Content-Type: application/pgp-signature; name="signature.asc"
+Just in case, rerere cache file is available there:
 
------BEGIN PGP SIGNATURE-----
+ https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/dbb6675
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWeAQACgkQJNaLcl1U
-h9Bmcwf/XIP4XvLLIc832cjT8g8MQZ6cAkkeleyFIwEzTjxV2OavWb0ATV/4iiHv
-AdhD8AacBy+ZlCVNSZnu89aRbY8ALJ1/NgU270d6Xe9lWklQF7kPaantyd6u09sI
-z+7V7A2c/xcwhRxOyAto7yulCLR+QTwezNVs+nR9nJSDfQUIwn0G//iBGS9TZLQV
-0JFIvVpPhu9jA2nD0YCSo1TUQRKIdwXCADpaAl6i0eB+m+nRO+8+mjH6GAq+ICaf
-mbTTzU1bUrOve6NQOmKpIMWasG6Ap/VEkUva2VFOW6IFRtq25hGkL3o32a4i+aNz
-DIUl2BgyglEfApRxpSMy3GaRPFoFug==
-=BRq2
------END PGP SIGNATURE-----
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
---PH21Aae4kb61GQqI--
