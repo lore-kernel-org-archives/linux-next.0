@@ -1,119 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CA63D5256;
-	Wed,  8 Apr 2026 15:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE37637D138;
+	Wed,  8 Apr 2026 15:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775660895; cv=none; b=VLnSEdx0N/WCUk651Qx+fwsmpzNNqQUsQ/zT3dJbH9r8FyANud9moIHWzRf2EmGlD7GJme/SxM+6CKNIBpQvXGJfr/cREzcT+GQN6Yn3lXYZd6WnMJ4yC/Ykg7qmscpnPuTkeHxEyc0hjuegggZqgIzfxsyB95p+VOlbnL4Eu1g=
+	t=1775661693; cv=none; b=SaY+ulVr8w6qg0xRMKOpWhajrxG/ivjevL14KT2Werjoc2Iu6VUbHas/CQ3r0xjb27UABZWuqAW6+z5sJkNsGLSjG65mHmShHXlRyJ0W7MP3le0BrvWoq1NcK1bQAm0B8SmMOIXpZ9Djks5y7EoAhhRcL4m8HxAibyeV3uKk7go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775660895; c=relaxed/simple;
-	bh=WLRyeGFRl1sYe2uY24D7mS37xW1BGvN6DhhWt4TBh8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cBu5yRH7DmAeRpwAn1vrPHSdGMM7VqUIrQ6uGK6WziijgHayU57l+XnibM/6l5VKEMoEjeKzpcKEhIkoQhJlzwFfrBKdCc44tjvdYhkgjqpj+zP0t41RqtnD9t9JTKjtIWQ6eA308bf0sglSTTFizDeuU5TMWev0FTDjVNBLJnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dX12tYbm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775661693; c=relaxed/simple;
+	bh=bj+845SGtTH4MYB1zWWDHYnD71eUCEaVnXSuSenddGY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hVuCwZ4tVSP6zfzGWIzCxkj04Csq1hzzdLjUQArcWCOSNSAZWrZSa4ljeuAjxbAwAneyT5ShoCJEqhynZtlsmwTrGSDZkMfidi7hEOiys0e6KSFLkPcxm811lLZ3+8ezodtv2PAOkhZGWxUV2BX0k430i4qy79t0tHTJZ8mEgcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHUCsO8l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dX12tYbm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF76FC19424;
-	Wed,  8 Apr 2026 15:08:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHUCsO8l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFC0C19421;
+	Wed,  8 Apr 2026 15:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775660894;
-	bh=WLRyeGFRl1sYe2uY24D7mS37xW1BGvN6DhhWt4TBh8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dX12tYbmV7ekivo5RlT9KYS+rAuiZW8dAGfsObS6IeGaV4sBM/nlSrqfQY0Vzq7ZO
-	 j2QoKDPhwWV/NoJS1wUHC5wd4ZX70Ych6/rkVITnkkZeuNA37+ObuI9c2mMEvQzZox
-	 Bu2vV1Fhwh5gzyQDeTpyw6ateYRSrQbiMNXvjgR2QDJIheJx35ImNu/HIfQxSgxClO
-	 FzyzH8XGcGQlcT3ewBEMOb4JkoFRyq9ocffWSz3uXNVqKPyHEMvhDYXGnT52oXL8cu
-	 wIl+LxFI7Xgi6xS0jFUoT7DXzqbjdq/J4GVwWBFwQN36PA/ytM7cHfBlJgHVTvU5Uv
-	 /ALrZRycMPvcw==
-Date: Wed, 8 Apr 2026 16:08:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Andrea Mayer <andrea.mayer@uniroma2.it>,
-	Justin Iurman <justin.iurman@6wind.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the net-next tree with the netfilter
- tree
-Message-ID: <729b748b-e00b-475e-81e0-a666eab24fc6@sirena.org.uk>
-References: <adZhwtOYfo-0ImSa@sirena.org.uk>
+	s=k20201202; t=1775661693;
+	bh=bj+845SGtTH4MYB1zWWDHYnD71eUCEaVnXSuSenddGY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=sHUCsO8l06Yvobn01iwDq4C8qlxFpyRfktu0KrfM0FFT0PdkMjWe4ItPJfI10P7AT
+	 jiB52XTsI0Y13pcFpHbbWtFEJokpFB7JiTL3cMH2QVuLQjIkox0cmEnzOZVWAuyA2v
+	 17d4Kmu7LWKwxhkFvR5cpaIf2r70xqElP9dGPHNV3wKkaE5FQ/0zlPfCw95ZQZvaew
+	 VOXSj76j6FKsl5+uapJ49dSUhfaFKuhva/bv908w+2I0L/HqIx5tfyqb2cDFpbS/93
+	 unhUi8r1har0elfQ7k/8HEYoTD6krC1sVa98F1n+Yx1xFcWOnOAW4pp/E96iymWmzr
+	 pXdxLymfewF6A==
+From: Thomas Gleixner <tglx@kernel.org>
+To: Mark Brown <broonie@kernel.org>, Ingo Molnar <mingo@kernel.org>, "H.
+ Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josh Snyder
+ <josh@code406.com>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip-fixes tree
+In-Reply-To: <adZNmIpSOkd6P5c7@sirena.org.uk>
+References: <adZNmIpSOkd6P5c7@sirena.org.uk>
+Date: Wed, 08 Apr 2026 17:21:29 +0200
+Message-ID: <87wlyh32bq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CQZ+yexN+gkqWo8x"
-Content-Disposition: inline
-In-Reply-To: <adZhwtOYfo-0ImSa@sirena.org.uk>
-X-Cookie: I demand IMPUNITY!
+Content-Type: text/plain
 
+On Wed, Apr 08 2026 at 13:44, Mark Brown wrote:
 
---CQZ+yexN+gkqWo8x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's a boot not a build fail, right?
 
-On Wed, Apr 08, 2026 at 03:10:10PM +0100, Mark Brown wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   net/ipv6/seg6_iptunnel.c
->=20
-> between commit:
->=20
->   c3812651b522f ("seg6: separate dst_cache for input and output paths in =
-seg6 lwtunnel")
->=20
-> from the netfilter tree and commit:
->=20
->   78723a62b969a ("seg6: add per-route tunnel source address")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc net/ipv6/seg6_iptunnel.c
-> index d6a0f7df90807,e76cc0cc481ec..0000000000000
-> --- a/net/ipv6/seg6_iptunnel.c
-> +++ b/net/ipv6/seg6_iptunnel.c
-> @@@ -48,8 -48,8 +48,9 @@@ static size_t seg6_lwt_headroom(struct=20
->   }
->  =20
->   struct seg6_lwt {
->  -	struct dst_cache cache;
->  +	struct dst_cache cache_input;
->  +	struct dst_cache cache_output;
-> + 	struct in6_addr tunsrc;
->   	struct seg6_iptunnel_encap tuninfo[];
->   };
->  =20
+> After merging the tip-fixes tree, today's linux-next build (arm64 kunit)
+> failed like this:
+> which isn't super helpful.  I haven't isolated which commit but it'll be
+> one of the three:
+>
+>   b81207470caf ("clockevents: Prevent timer interrupt starvation")
+>   82b915051d32 ("tick/nohz: Fix inverted return value in check_tick_dependency() fast path")
+>   105c42566a55 ("ata: ahci: force 32-bit DMA for JMicron JMB582/JMB585")
 
-This also needs a fixup for a new jump to the error handling paths that
-was added in seg6_build_state().
+Found it with qemu and pushed out an updated version. Delta patch
+below. It restores the behaviour for !force and delta <= 0 which is
+required under certain circumstances to get through the tick_periodic()
+boot stage.
 
---CQZ+yexN+gkqWo8x
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWb1gACgkQJNaLcl1U
-h9Balgf9HV1pIV/UTkHubWSfOV6RsiL/bwFGXH4ChoymuGcK0A7StIVJy/nK4BtC
-O2mHixWYu/uWCNdpq65+9JdJPZOSv8O4ootMqi4uDLdjjdKC63+mEHF40r7eyN4p
-nbZJOxS7FjL63wjNfv2hsEDA4WFACbd5+blNEVmTlLbVzIU6U3DVG/nchE7dmvYk
-ocQkmFDhFx/DTBzQeiCMTnZiW8EOscWesvmBUMiuusfXITrnLUhwkzM90GjWCd8K
-s4uoHM1d6Ulrq2aUV6cl9E07FYKpS4QIkIA20uGsSU8mEEc+dnFzanos1DZN8CG4
-6QKRO8+/12D4RiN04e+Ufa3zeE9gIw==
-=Y477
------END PGP SIGNATURE-----
-
---CQZ+yexN+gkqWo8x--
+        tglx
+---
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -324,6 +324,8 @@ int clockevents_program_event(struct clo
+ 		return dev->set_next_ktime(expires, dev);
+ 
+ 	delta = ktime_to_ns(ktime_sub(expires, ktime_get()));
++	if (delta <= 0 && !force)
++		return -ETIME;
+ 
+ 	if (delta > (int64_t)dev->min_delta_ns) {
+ 		delta = min(delta, (int64_t) dev->max_delta_ns);
