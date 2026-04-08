@@ -1,123 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E6A1F4CA9;
-	Wed,  8 Apr 2026 12:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF4717A309;
+	Wed,  8 Apr 2026 12:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775652235; cv=none; b=tAi9SeGK94rT5oUj9kj0QjEXo2BCUeXc3/DSP3kKRxwaLoUeLc8aKyJVGz4TurDMQMhjtgu9c6aUyK0dERskmrP538HHakBc6vQfqkYKJA1E1yv/u3w+IXzv5Awu5TB382TvAAPVSpyAOkMlz0S78eQSQnHCc0wLnR8WUbrNhsE=
+	t=1775652252; cv=none; b=nI51VmSihS1aPL/prjgyovsYhrlTcLizbV70NTeupv33ZRZ+RGaPBkloSn5inw2WL5Acnw8h1Y3GBGBZjWXQbzd5NAgc6lFUHdeioKIOkBvgbRvIUaUYjwhwU8ZQBj3Q6xTksv+fQ8WQqBdisDu8zm9etkaEkqtFYUZ39CE5PR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775652235; c=relaxed/simple;
-	bh=w3xf3iPKJAxjMj5nsVmQUtTk8tbOzY9FvYrXxVPDEtk=;
+	s=arc-20240116; t=1775652252; c=relaxed/simple;
+	bh=W+bPQ1fOW1BZYQjo1d9QwGMjjDXUEhRCd0p7liJhJzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PfgdSajaJzqLNmhu0Du+Qn4nFd+y0ttBNtHmLSTBkc3ng3DA+0Zaf7Xn6nXX8w/UqrLW7VUH4zUS1g7c6W28GVeEQmBxGOpe/C+P3/JIyxN1K8u1CXRGCGFa+hADtXPyi70JXpbdqJEK3IRLiFY11hlzBAj3C1xfd0R9przT8FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XswC1vGS; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=h0aXLVgi4gplfb/3zIsjswHfhpf/njIc+k2qqlDo2hQzxoHzRmgcFS1b1QcUjWtUA5lJTckXFo9NB3dVpcrke6USoSjXJl+pEx5kxAt7Xvyn92yaxruqtLPW1zfqkCHbxPMC1oFg4yMC9aI1Nf+ljsAilV9LzCYPxhOK2wCvhGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKjInora; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XswC1vGS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4EFDC19421;
-	Wed,  8 Apr 2026 12:43:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKjInora"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC5AAC19424;
+	Wed,  8 Apr 2026 12:44:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775652234;
-	bh=w3xf3iPKJAxjMj5nsVmQUtTk8tbOzY9FvYrXxVPDEtk=;
+	s=k20201202; t=1775652252;
+	bh=W+bPQ1fOW1BZYQjo1d9QwGMjjDXUEhRCd0p7liJhJzI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=XswC1vGSOuIAHRtWf4+Q4mEayysAM+1Eo1mgRc804o+3qMO8nL/VO2eyPJ5pB4A+b
-	 blII7uwiOREKURwjvKfdPx1sQpDl/VJeR2YIh7F4DcsO6LsHZfJhygRM1US4IQ51i0
-	 4cxJLFThbEvNvtCJWqHyzK6gx/Tn3PVssv72O2LgkRr2jyKeQHt+HoH7nltK0qP6/K
-	 fv7vlfmogCpLIWU4Bvxsqge+HA5SUpsNo7YcJ7sOaQq2bu4jBPvMQf0c3GdCH3nAZr
-	 CXI2wtVxmj53jxFuMbCpWgSjAe9c07PohuvXoWuXQca6pGQN3aWnCs1Qan0Qd+APxH
-	 dlK1EfoRxs11Q==
-Date: Wed, 8 Apr 2026 13:43:50 +0100
+	b=nKjInorafHzl6FbLde5BYjqF4DUepFhpkCsyDCNHkRHVR66jB7T7VpT/bh77OK3EZ
+	 OTbptEz55buxECTvadWVypyhUFRBbCUn1sPFL0DmZZVV4GVbZCZn/bje4uSyXHMcN8
+	 4cmKAiEmyqP97+b4FDbMEYalzpt18Al1lbHQWrSO4NifOu/MtFUiTarKWvmjQ2jY2f
+	 gHHw+f6K2D/8e8PJ6lU1d1GEptiqNnz7ITJhuvIz6lIbV2IsjCOgcZPP450z6EU4uy
+	 0Isfu239fP0IjvryaOVd4KlWKQZ1KKDFrK3g/30u/ErNEUMBh1NZRtFvzaqF6/Hxd3
+	 R7PfkgUeRXncw==
+Date: Wed, 8 Apr 2026 13:44:08 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	NeilBrown <neil@brown.name>
-Subject: linux-next: manual merge of the vfs tree with the vfs-brauner tree
-Message-ID: <adZNhv68QCxJt00c@sirena.org.uk>
+To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Josh Snyder <josh@code406.com>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip-fixes tree
+Message-ID: <adZNmIpSOkd6P5c7@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+Hc1/d+PoIPbkiyg"
-Content-Disposition: inline
-
-
---+Hc1/d+PoIPbkiyg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+After merging the tip-fixes tree, today's linux-next build (arm64 kunit)
+failed like this:
 
-  Documentation/filesystems/porting.rst
+[12:34:18] Configuring KUnit Kernel ...
+[12:34:18] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=arm64 O=/tmp/next/arm64_kunit olddefconfig CROSS_COMPILE=aarch64-linux-gnu-
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=arm64 O=/tmp/next/arm64_kunit --jobs=192 CROSS_COMPILE=aarch64-linux-gnu-
+[12:34:34] Starting KUnit Kernel (1/1)...
+Running tests with:
+$ qemu-system-aarch64 -nodefaults -m 1024 -kernel /tmp/next/arm64_kunit/arch/arm64/boot/Image.gz -append 'kunit.enable=1 console=ttyAMA0 kunit_shutdown=reboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -serial stdio -machine virt -cpu max
+Command '['qemu-system-aarch64', '-nodefaults', '-m', '1024', '-kernel', '/tmp/next/arm64_kunit/arch/arm64/boot/Image.gz', '-append', 'kunit.enable=1 console=ttyAMA0 kunit_shutdown=reboot', '-no-reboot', '-nographic', '-accel', 'kvm', '-accel', 'hvf', '-accel', 'tcg', '-serial', 'stdio', '-machine', 'virt', '-cpu', 'max']' timed out after 300 seconds
+[12:39:34] [FAILED] <missing>
+[12:39:34] Testing complete. Ran 0 tests: errors: 1
+[12:39:34] Test results stored in /tmp/next/arm64_kunit.json
+[12:39:34] Elapsed time: 316.083s total, 0.002s configuring, 16.074s building, 300.006s running
 
-between commits:
+which isn't super helpful.  I haven't isolated which commit but it'll be
+one of the three:
 
-  336faf5d9115c ("VFS: make lookup_one_qstr_excl() static.")
-  4d94ce88c77e7 ("VFS: unexport lock_rename(), lock_rename_child(), unlock_=
-rename()")
+  b81207470caf ("clockevents: Prevent timer interrupt starvation")
+  82b915051d32 ("tick/nohz: Fix inverted return value in check_tick_dependency() fast path")
+  105c42566a55 ("ata: ahci: force 32-bit DMA for JMicron JMB582/JMB585")
 
-=66rom the vfs-brauner tree and commit:
-
-  408d8af01f3a4 ("for_each_alias(): helper macro for iterating through dent=
-ries of given inode")
-
-=66rom the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/filesystems/porting.rst
-index d02aa57e44775,9a9babd9ec486..0000000000000
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@@ -1364,14 -1364,10 +1364,22 @@@ lifetime, consider using inode_set_cach
- =20
-  ---
- =20
- +**mandatory**
- +
- +lookup_one_qstr_excl() is no longer exported - use start_creating() or
- +similar.
- +---
- +
- +** mandatory**
- +
- +lock_rename(), lock_rename_child(), unlock_rename() are no
- +longer available.  Use start_renaming() or similar.
-++---
- +
-+ **recommended**
-+=20
-+ If you really need to iterate through dentries for given inode, use
-+ for_each_alias(dentry, inode) instead of hlist_for_each_entry; better
-+ yet, see if any of the exported primitives could be used instead of
-+ the entire loop.  You still need to hold ->i_lock of the inode over
-+ either form of manual loop.
-
---+Hc1/d+PoIPbkiyg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWTYUACgkQJNaLcl1U
-h9D/mwf9GN/MwCWBR9+3dVbP8cHxUXkzuicQXsAgGPjIiMZXSmdH50ZfL+N4Jzqw
-hupdcaeG06vvExIA7NIMazDrk1uKGByIevRraLR/5mc+3Myi4iqW5dFPxZYo271s
-kWU7Pl9VfxhFpIRTeqNZA3oN7FwKz7fyp/tgzzD70rp6sbDWv5jBchdyFxTR1R7p
-84TKTJKA9UqfAnwst1SR1gp/wX5duukQvZUW760qljrvVh5SO38GB0R+r/Sia5+a
-D72N4QgGBbpzeKR6TIHC/8u5/zIELXxekgY1sriCMo6fmVR9gkb3zTQBag4Sjvxn
-dJck+GsPUM0um2cdCfXKIycgqTODbg==
-=IW7G
------END PGP SIGNATURE-----
-
---+Hc1/d+PoIPbkiyg--
+which are new since yesterday, I'm guessing not the latter.  I have used
+the tree from next-20260407 instead.
