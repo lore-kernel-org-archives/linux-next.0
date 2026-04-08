@@ -1,96 +1,74 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D86346FB0;
-	Wed,  8 Apr 2026 17:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AD233260D;
+	Wed,  8 Apr 2026 17:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775668378; cv=none; b=L+kBY7wzEYk6w+BE3RpGG1fIGupAqlEb505jBiY/7paLWpv34gAYSGaizyOWz3R7UNq61NhlGQ1qNxDJIKjHUcBPgIffkUGb9DSkx56brFmeMMSzpjJVyrF6yE4yf8JymGav5xV7cniVbe8xy/KGnIoIltibyora5VzVnSDj2x0=
+	t=1775668523; cv=none; b=fxNszeKtzg7kx6+pG7iokmzpXy3RBxR4hkIFkMuGkP+8r8WRkC6Hndq3Lk92ZqQNa/QRmjQgDag44BJ3+4g7LdJnkBxeMFVc48eVgrY4/DU5uATZat47+OIXr4Q2VHhBVPzrW4JRnn1ljD8sULwEuW52jjliSt7xwTddeaXaTKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775668378; c=relaxed/simple;
-	bh=8VqS+vQAwbWwcwSw4iDd6KYyKYX0LPORQ3zWm01cHx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSO/CNa9S8yxREfTkKrqQ1NS2eWyB+v1ZUTb2rHkQFAZiADvlYdniPC/p7XgYbQOaCAdn9HUDeCTegW2lI1HLjJIJubq/Ayt9h8UbhdQvKEyk13LkGJOJymOY2hVpFw2gekfMxJ1YxZjBWbLHncQnDL6jb4J+52rkLaW55U5aQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XMR1fRmV; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1775668523; c=relaxed/simple;
+	bh=KEe3mC0Yxg+aB6F/bPhoWYt4FNbjdiakpwCAfAQK8uU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OQvAh5tqFs1YTNeO8QmkpZwdkIOr5NYBbukTSDzJYgbNY/ZNJ4skPNlTispChQHOZIieOC07E7WgcaxQ2l18qtO5fNajlUVI/xh6C6JmyFqLdANdYrY3zUZiumneKvZ+MVNeZnbXqSZGD5/jGsZIcbZpqturTEyQJOUmH79TC8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJQ8FmzB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XMR1fRmV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f7CdK3HPiaXgFwJoUZjAyDMQKLdRFu3oQUyrzloXJqA=; b=XMR1fRmVpO4z/Kv4vgSd/Mp3Gn
-	2jcC8Tz9vonNDCcGKj+3vWOH1rbRQ/JN8w7XPvFvg7MBKjEAIfbLESNbZG6bc0tOIK0PzyZtweBB2
-	dm89dsZwJ+tarSaIRRKtzykk/XTHLwj7fdv+HafvqHB/sLfVQaA9ehPZQ2mWPRmLkx9sYfo2fR/ew
-	OCZ0VSamSP1cu/94jYKAKJqZNlQhyMy1Zxm4y0ts+bXNV1FR4Ee0PWNlUIzvuxq1fl0yIsjQrq8iV
-	nsE5ydSTE1c04wGXX8uiH4Zir0nj66ntli9PU9L2EIsWwyoh0ADxQvn202653UnvqqDxuLq7CQW4R
-	oMltreWg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wAWW7-00000000FYe-30he;
-	Wed, 08 Apr 2026 17:16:40 +0000
-Date: Wed, 8 Apr 2026 18:16:39 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	NeilBrown <neil@brown.name>
-Subject: Re: linux-next: manual merge of the vfs tree with the vfs-brauner
- tree
-Message-ID: <20260408171639.GG3836593@ZenIV>
-References: <adZNhv68QCxJt00c@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJQ8FmzB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3A59C19425;
+	Wed,  8 Apr 2026 17:15:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775668520;
+	bh=KEe3mC0Yxg+aB6F/bPhoWYt4FNbjdiakpwCAfAQK8uU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TJQ8FmzBmvhFc2MaBo6REKjfGMsOaTzRqXWGbPWIO/6fC+ULHDfKefj7uEuqx0ZF2
+	 HrxEd8Azm36f6RMlJggeeFgaR+DI0rScGRELk7pRebGAwZjSN2gCZdCbj6usp9Lq9F
+	 wr9d46uURHK9mmDk9rtwPH1FxanHcMO7GJOefWzeneCBI7wspl2y2XDBGUKb/x0zuR
+	 GJXrwJ5SxBfuJN306cDCHzNq+DsKwjICx1MKFR605UoI+mUM+Ixa3dW0GWxvZ6wSMK
+	 /O1ZaNo8X21D4pzqaz+6oC/HR6AUqS1wwroMbvBAB6N9i8q0lHXBeEXyK4t97ZIzMx
+	 zItLdv7weolxg==
+Date: Wed, 8 Apr 2026 18:15:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: htmldocs failure in the dma-buf tre
+Message-ID: <adaNJaF58PZlvs6K@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6hG/XMKdY0E/izzZ"
+Content-Disposition: inline
+
+
+--6hG/XMKdY0E/izzZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <adZNhv68QCxJt00c@sirena.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Apr 08, 2026 at 01:43:50PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the vfs tree got a conflict in:
-> 
->   Documentation/filesystems/porting.rst
-> 
-> between commits:
-> 
->   336faf5d9115c ("VFS: make lookup_one_qstr_excl() static.")
->   4d94ce88c77e7 ("VFS: unexport lock_rename(), lock_rename_child(), unlock_rename()")
-> 
-> from the vfs-brauner tree and commit:
-> 
->   408d8af01f3a4 ("for_each_alias(): helper macro for iterating through dentries of given inode")
-> 
-> from the vfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi all,
 
-FWIW, I suspect that it might be a good policy to put notes on likely
--next conflicts and their suggested resolution in the head commits of
-#for-next branches.  What I'd done yesterday was
-commit e82ff9b6cb767fc823d5e461034f32388c4092a2 (vfs/for-next, for-next)
-Merge: e252ed898857 14a51045e10d
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Wed Apr 8 03:17:38 2026 -0400
- 
-    Merge branches 'work.coda' and 'work.dcache-busy-wait' into for-next
- 
-    -next: trivial conflict in Documentation/filesystems/porting.rst (several
-    branches append to the end of that file, order of entries is irrelevant)
- 
-    -next: hopefully no cifs conflict anymore, but if they still use the
-    variant with ->d_u.d_alias in cifs_d_mark_tmpfile(), just replace the
-    line in question with
-            BUG_ON(d_really_is_positive(dentry));
-    as in fs/dcache.c:d_mark_tmpfile().
+In today's linux-next I see an error building the dma-buf API
+documentation:
+
+/tmp/next/build/Documentation/driver-api/dma-buf:142: ./drivers/dma-buf/dma-buf.c:1355: ERROR: Unexpected indentation. [docutils]
+
+--6hG/XMKdY0E/izzZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWjSQACgkQJNaLcl1U
+h9B+PAf/Vk0TNmoRdO6piWxlWY+boN/yCLZZe9Hv8AG3EvuUit/j5N55pwvZqQhA
+Nfx5wNgF67WPZ+/YQrrva7iFxLiA2/ReNTCCn9d7eVxSzIyGUF1y6siF9HqM5KIl
+bqNHiMndPAGrM/mNsZoCcW4LmjqH59m8zUvRFYnoKEV/ewgOTuB3I1sU8e68NpWP
+pavZgmcEqiSHqLRCfrnn//y/CSg12XVjgguzw2I3VdoyBHyZwKWWif8eYdN0OM8x
+zko8nXaPN6nZeSzSr5XjSGcf7mHSQe3FpuxB6AjTjTZ++OA9JINsx99GsppjZ9Xi
+RBuzYGLfoBZHH1FgrPkeg+CzYGHLUA==
+=7pMy
+-----END PGP SIGNATURE-----
+
+--6hG/XMKdY0E/izzZ--
