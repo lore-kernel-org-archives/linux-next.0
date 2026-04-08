@@ -1,74 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1093C9440;
-	Wed,  8 Apr 2026 14:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1468D3C9440;
+	Wed,  8 Apr 2026 14:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775657415; cv=none; b=ZIDRmF/ltPfBqGc2GOTiRh+7So+9A5f94XfoDPrIvy2x6HiHPQH8WwzwUwV74isQIhsNNSeXH1SJf/lF3gKCWPb4mu83m7vxrqP4uI1rtVTAHiUFBCdZAt17d7RjlLi5dMmn9BnhZnRtlKxpCsQrO9Stl2jed07QzuZko9mMxkM=
+	t=1775657427; cv=none; b=Pzwa6ct5clDRnr9BmgSVfXnPacUMyrUs/UE7M6UWI+9Ll3xEQ3V8JVcmjRB/CtKvJ/7XhgPAQJLlEb9TkRj9VJ1pD7gXgfxgzlrJvGApsDyIV/5BfOVEHwqdCgir8LqH5eEGebvt/degiHKN2ElBiCsN+ZahhNMEL+OiTt35YUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775657415; c=relaxed/simple;
-	bh=dAXEW/i+Kbo6bb/B2w8p6zRHdD8CxxYy/Gv2arj5Tjk=;
+	s=arc-20240116; t=1775657427; c=relaxed/simple;
+	bh=7mobTWvqP8lwlg0dJRWwGCMEAcHlqyzmooECA6LLTII=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=K/FRblWpZP3OVgBSMoS/M0NTAkme3vK3Hu9E2j+iGdToRGtOV35MFZdnWTOmYvj01XcOzyf1rF2zIozDT7ygfFvOuDlsBSCbzZtQgFWAPdPrvtIJCwqN5xrMV9olAGvKJnwtegQXxvCpUJmO3sd0i7pVq/Gy0JodrDL3b9G6b+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOnEJHP+; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=Gy/3568KZukaNuDMdUCHV5TR8gDc58tpw5msEBAerOdr/vAX9QyHnL59C435NyofAALjtGz4P+mmzgHgBRLdv0ky0CzR112I3EkqkRJjmBT19DtRDob8tP9Q1u17cEltn4DS/PB0ZE+FGYp1lbpAXIs0I5RXtSy1Op+IQ/xcHco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJkj7JIX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOnEJHP+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80892C2BCB0;
-	Wed,  8 Apr 2026 14:10:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJkj7JIX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F499C19424;
+	Wed,  8 Apr 2026 14:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775657415;
-	bh=dAXEW/i+Kbo6bb/B2w8p6zRHdD8CxxYy/Gv2arj5Tjk=;
+	s=k20201202; t=1775657426;
+	bh=7mobTWvqP8lwlg0dJRWwGCMEAcHlqyzmooECA6LLTII=;
 	h=Date:From:To:Cc:Subject:From;
-	b=gOnEJHP+goliqm7m06a2WYC6bXyZtt23KGsuvEGCAYDCs/pSoRytHybmQ3piO3/MT
-	 CX8NyGMx3yeZxWONKS/YsOjM71paJH0RVJmSArrwc4eCuQzd5MIfEvQsVhDHOg9blH
-	 /41sePEdfJLmYUM4UPVC6CsDFgLJNB4r+cmK95230dWygG0Wh45GIp440M2+bQjKbR
-	 P/azZbeuhUMeYOePvEqivrs2AolI9k+PQ2bBpWMEPIbci8LgoK0YHIKB6qPdGyG0x5
-	 YtoTHVoer7r+p9Bx/vU9OwBGTyJfEyqpLngyoi+lP3AqmIaObb4MP/1TSua9xN3QDr
-	 id9iKNulZ+aUw==
-Date: Wed, 8 Apr 2026 15:10:10 +0100
+	b=VJkj7JIXy7o2L6LPWNxptzHRc07FQHJ14eTeYI9cAtKEDX+xajUAzmKjRTPFSTyIP
+	 v+N8qRzNfoXSCzTYHL5GJKf7ongKVDO6y4lY3n9ubKm3s0bhtR450m+c+pvDCVQzxN
+	 sG7cMv3fFTezB3br7yyjWKZxeUnuQauDkqpJoc3JAPfix5jSskyYxmBf2z+rRYq+JY
+	 WtScNE8n2761FNdnhSxkst94sW0tTMtS08X6ZwZ1PiOPtzTM8/dzENcYgCNT6haMf9
+	 PWCKL0919xtfLXZ5y3ZOMSwZ6HOZyyKqNz8FCvZ4c6/VR2vyQj2GR1ZO4F/XJUXZHy
+	 4NYvWowikYrVg==
+Date: Wed, 8 Apr 2026 15:10:22 +0100
 From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Andrea Mayer <andrea.mayer@uniroma2.it>,
-	Justin Iurman <justin.iurman@6wind.com>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Danilo Krummrich <dakr@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the netfilter tree
-Message-ID: <adZhwtOYfo-0ImSa@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: linux-next: manual merge of the drm tree with the rust tree
+Message-ID: <adZhzvTbFS_usXsX@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u4w8RTArVaw04ONj"
-Content-Disposition: inline
-
-
---u4w8RTArVaw04ONj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drm tree got conflicts in:
 
-  net/ipv6/seg6_iptunnel.c
+  rust/kernel/lib.rs
+  scripts/Makefile.build
 
 between commit:
 
-  c3812651b522f ("seg6: separate dst_cache for input and output paths in se=
-g6 lwtunnel")
+  d1aa40daa777c ("rust: kbuild: remove `feature(...)`s that are now stable")
 
-=66rom the netfilter tree and commit:
+from the rust tree and commits:
 
-  78723a62b969a ("seg6: add per-route tunnel source address")
+  80df573af9ef3 ("rust: drm: gem: shmem: Add DRM shmem helper abstraction")
+  3cc319d5f433a ("rust: enable the `generic_arg_infer` feature")
 
-=66rom the net-next tree.
+from the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,35 +71,77 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc net/ipv6/seg6_iptunnel.c
-index d6a0f7df90807,e76cc0cc481ec..0000000000000
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@@ -48,8 -48,8 +48,9 @@@ static size_t seg6_lwt_headroom(struct=20
-  }
- =20
-  struct seg6_lwt {
- -	struct dst_cache cache;
- +	struct dst_cache cache_input;
- +	struct dst_cache cache_output;
-+ 	struct in6_addr tunsrc;
-  	struct seg6_iptunnel_encap tuninfo[];
-  };
- =20
-
---u4w8RTArVaw04ONj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWYcIACgkQJNaLcl1U
-h9B8dQf/f6aVI2wZkWNTd95iVGzaYY4dAIwcCgFdyJPBUneYdP7PJOZyZAGc8IIH
-5JyMCKHMVFqokIMWuLlcsOVCzthuHHNWB2Hwa89c76KF87cgXz3Gs5d98K1doPP8
-VoMcm3YGNQ1qARbCscf2HPOKiyKrU3mb90ncbMYti6w4D0E62K+5YZdQIRSNkgBE
-lIL/2Dl6pekFRXJVTPxWmQ1IyDHi9DngDuGZXX+toSbe2opsrozA2lFsBxjDzrJC
-FE6HLJhkyl4cGc/aPXnRa+XrBRKEHqnQQ9xUpUZlR1fFcGGWNRvxyrkdeVn388vr
-kluJ9ODserSet2bCmR3FDSQfEWEMRQ==
-=4Ego
------END PGP SIGNATURE-----
-
---u4w8RTArVaw04ONj--
+diff --cc drivers/gpu/drm/tyr/driver.rs
+index e833e9f537b02,6114346415805..0000000000000
+--- a/drivers/gpu/drm/tyr/driver.rs
++++ b/drivers/gpu/drm/tyr/driver.rs
+diff --cc rust/kernel/lib.rs
+index 0fa9d820fe7c8,40de00ce4f971..0000000000000
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@@ -16,9 -16,38 +16,12 @@@
+  // Please see https://github.com/Rust-for-Linux/linux/issues/2 for details on
+  // the unstable features in use.
+  //
+ -// Stable since Rust 1.79.0.
+ -#![feature(generic_nonzero)]
+ -#![feature(inline_const)]
+ -#![feature(pointer_is_aligned)]
+ -#![feature(slice_ptr_len)]
+ -//
+ -// Stable since Rust 1.80.0.
+ -#![feature(slice_flatten)]
+ -//
+ -// Stable since Rust 1.81.0.
+ -#![feature(lint_reasons)]
+ -//
+ -// Stable since Rust 1.82.0.
+ -#![feature(offset_of_nested)]
+ -#![feature(raw_ref_op)]
+ -//
+ -// Stable since Rust 1.83.0.
+ -#![feature(const_maybe_uninit_as_mut_ptr)]
+ -#![feature(const_mut_refs)]
+ -#![feature(const_option)]
+ -#![feature(const_ptr_write)]
+ -#![feature(const_refs_to_cell)]
+ -#![feature(const_refs_to_static)]
+ -//
+ -// Stable since Rust 1.84.0.
+ -#![feature(strict_provenance)]
+ -//
++ // Stable since Rust 1.89.0.
++ #![feature(generic_arg_infer)]
++ //
+  // Expected to become stable.
+  #![feature(arbitrary_self_types)]
+ +#![feature(derive_coerce_pointee)]
+  //
+  // To be determined.
+  #![feature(used_with_arg)]
+diff --cc scripts/Makefile.build
+index 57cff77c28973,010d08472fb2b..0000000000000
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@@ -310,13 -310,19 +310,14 @@@ $(obj)/%.lst: $(obj)/%.c FORC
+  
+  # The features in this list are the ones allowed for non-`rust/` code.
+  #
+ -#   - Stable since Rust 1.79.0: `feature(slice_ptr_len)`.
+ -#   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
+ -#   - Stable since Rust 1.82.0: `feature(asm_const)`,
+ -#     `feature(offset_of_nested)`, `feature(raw_ref_op)`.
+ -#   - Stable since Rust 1.84.0: `feature(strict_provenance)`.
+  #   - Stable since Rust 1.87.0: `feature(asm_goto)`.
++ #   - Stable since Rust 1.89.0: `feature(generic_arg_infer)`.
+  #   - Expected to become stable: `feature(arbitrary_self_types)`.
+  #   - To be determined: `feature(used_with_arg)`.
+  #
+  # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details on
+  # the unstable features in use.
+- rust_allowed_features := arbitrary_self_types,asm_goto,used_with_arg
+ -rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,generic_arg_infer,lint_reasons,offset_of_nested,raw_ref_op,slice_ptr_len,strict_provenance,used_with_arg
+++rust_allowed_features := arbitrary_self_types,asm_goto,generic_arg_infer,used_with_arg
+  
+  # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+  # current working directory, which may be not accessible in the out-of-tree
