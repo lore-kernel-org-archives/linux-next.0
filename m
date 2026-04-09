@@ -1,110 +1,111 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652D52D97BA
-	for <linux-next@vger.kernel.org>; Thu,  9 Apr 2026 14:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775745954; cv=pass; b=M0EmDFAI4x2dDypUthsbQfXNDp5rRwwIZhfTyKn5mC3RURqtjW+Jh3+s6ndwwxj7mWHmN6i9gggtn183uo7985F5LldCVO8oD0SUQFzkUrMdL1fUXMmrHhlZDtXbd2zzHuJIsg0dvDtY53MJfU3QbqCuJNifYFjaM+TY1A24Brk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775745954; c=relaxed/simple;
-	bh=t7XouriFlewdWHb8XNALnZoudmvyhpFqhWQI0PO2T0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0NtG+1Q6S+HGY89nzaR8KJj3+t/eT0V+G08JtixCp4oVJipnXAxwatMoE9fJNORWc322XzcRWnVA3X162xTLQo/Zv/08YaCF2FS3neinBGlRCXcZnfvl3bjPI7i6O4jHiIa3qYxaVjPdRy5X+ZJT9E9T47pg/2o8TofSwyf1/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQv92mCP; arc=pass smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F34F2E0925;
+	Thu,  9 Apr 2026 15:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775747462; cv=none; b=hhcykcLAr6uqnHYXT/7gKYUaUTv9x2s1Q4DHkoYktzYQz7yPivHslNjJyHNV1+BnLvraCs4Wnl39uS0YejnS75iAlxocRMVCR+vA3wBQvbhXYOf1bMKl3ZEaAgOFMbjmWzyXZ4LOBk5li/kDH7PapwKkWYbiPFaGVhsAasFxs8E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775747462; c=relaxed/simple;
+	bh=ogPzhiYnpF8NcR8G92uiCpGbycLuy9tJQG0UBgKCC/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Rk2rvialhIJSbGq8L5ZZezs7oxhZcptowuHif0dkwoycMO64f1lNTy/uEWaYwN7RFcRKuJeL05Dv4iFl4MEFuU+S1aROT50mcgqSSGFhzoYXHJL+meG8vbryZ08Af+sUu9Jw9JxPuHKVAS95SJ07+tDlSZl7cORmbEjYMud5v9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWo0OLLZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQv92mCP"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-66d24c6963bso1749335a12.1
-        for <linux-next@vger.kernel.org>; Thu, 09 Apr 2026 07:45:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775745941; cv=none;
-        d=google.com; s=arc-20240605;
-        b=eMnaJQssPP1PMiqL25FcfR9+L34ZIxNfyZIYFo9aZs3KEXfXOQOCMd1hR0wYYK7NqG
-         xfXnt7O1ZbbawvorrEcjKYogp+YC6hhaTRU1zuvhfcCbnm6GO3qA2C8b/aYV2F6vK1+v
-         PEsThdouSDnkkJDOZIvfAI4hFxZ79F1JjB9TYiZEHE4zrlIdn2jVtUURSf8VHwyVGKzU
-         leUwt2qRyN+WELgw4Zz3bml1dh9dCWVrtEkA+csl9vkFlZrcXKZyDXhLkRbHLFDHcDND
-         pzpayc3sClHd6KaA7ffPXVXd9+cSiTE83+ceKYTE2bFO4zcHy/ngBlvPikpzmwkZ8IL/
-         Zs7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=t7XouriFlewdWHb8XNALnZoudmvyhpFqhWQI0PO2T0k=;
-        fh=YNT5OhMhYlDr0LlxHgzP14z0kprF3mzTbQGXGkiDJpw=;
-        b=KsBxSYFJ8Cpcnj0UHi7hNtwtEaNQ3+aqkUXHU2tu+CMyVLqSsUtN8TnMbqCDW6Vfhb
-         dXUCQb0NevabFOUVjxWMsLQ9uZDDnGT7+K5VnmIiJEYLhGnhYVl9LjN9VHi8cVBzdVve
-         AoJwFYIIuZKs7+hnIbHzjLfY3ALe6B9KgTrc+BGKzaMqKDfYCjmhXfKaFXJkDR7y6IG1
-         rT78FrQVqO+Rj+eDeXrWVBLqOCHapsrfzko2ADmWJtFewo/OC9JKrzFDcQNAW0R4ibWa
-         3rp7W4xQ6TctCzLrcXeyT99INEw/5jXfcfxd3964uhRs25y0kROl+7O3Hj+NYsqrZKtS
-         EsmA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775745941; x=1776350741; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t7XouriFlewdWHb8XNALnZoudmvyhpFqhWQI0PO2T0k=;
-        b=GQv92mCPKh5+pkKzLFu9q5L08omIgezQwvs4Oi8mozVYWeEK1tzRWsCl30C8Vp3W1Z
-         zCImjbzJY/xaKj+NnJcdlDCkvaTEJshninq90QeBMeJLIPXQk7umdWLVZRSGny5vNs4I
-         fDeX5fGxOyuinLMrWpn08K33SY7uiFKyYsPVmNXNvMiTCfiPvnqmfk8HuME4UagnU+Us
-         NLzY177RYYXoStHso06IS5tUhrMkpS7qYbAMkxZIE4KBIPnB2GAbZufeMtUynj0fw+RB
-         BjpJBxTpyAzZL6JzlVeP9TSnOHGjBeZYUaVlgqMr7BTpcDfUhpRqe0KIzrDDFvz35esy
-         4/Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775745941; x=1776350741;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7XouriFlewdWHb8XNALnZoudmvyhpFqhWQI0PO2T0k=;
-        b=R6pUNu3d2ZsVZxsiBaZMq9EIJDXf6pJuUF+GWC/K0W9JCQgIeRcb2SEU413Zm226BR
-         gBTOnROIJr5cMwgqKXVS60SsbC41z5ePG0Ju8UVgN6XYP/k9vhPbwjK5AvaG8BC/NW4J
-         Y5m2zHikIlJAyPrpphI4UbP80fgUhsxMTAahe+ASpBQRqYX3zOlzfNtyTxOkaeK3MaNM
-         yoEQRlZbrHKI7fpgXEtDNT5PEk2lNqHe3lLGk8+H6DN+Si/Ezs4hnt8KHeZkb7iphyXk
-         T0fbyCJHZay4dfV9ZzE2m6/TmgyfnTinsUMCVt21UQDXwIc3+1OeJvHooG2Hwc5Q11TJ
-         S37A==
-X-Forwarded-Encrypted: i=1; AJvYcCULOc942celm5f0alAKQ7R8Vbg/JYZTfwlR7tS17mV0NTbtOri2meLWmPjVJVZ3Q0EZ/60F92416Lap@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO531Amz7/i0sNygy0+Y32Q3mXH2vkPSljycHd90CsISdKrXkd
-	8+rEwBYQvUBT52Vf29VWodzhG8Y1MQEdb23CTy+j07n3vtqIIT521Ak9t/wTroVwD+9geBf4+0+
-	MwxnL4cymrvBpyKJbEFaf/BLLgVVEf4WB8fyiS99Jk/TOaAyK3ib8
-X-Gm-Gg: AeBDietcqajCoPgf0gsk63P3ryddBwCT5NpCfOxaU4l4CJN04WvTBcweV+1vZwMqFj6
-	jwXy1SJIaWiZwFbSbEmGrfixN9XHGK1kcFS7KfjAmnh+NhRG9qYZykK8kkzC07hyjjzQKgWWzWX
-	hsnqN0f8/891u5q6YpOk96Sj3ZSHGk2HsUEHIGXvXJVECZZlXrc+gRlGSSTsstDE5S0S0hy9mpR
-	lrQpx2P0fVvxm0VLbLBsCMbGW9PqenQmBXsSCTxbOkJdIs7oEheTCfM/xjFS0ajr8YW/FwNkfn5
-	9WCddxR/j8ZtVd8knkRTIFdnvvfUrr/2GwJOJNQ=
-X-Received: by 2002:a17:907:d1c:b0:b9c:b376:8986 with SMTP id
- a640c23a62f3a-b9d4726f60dmr246040066b.12.1775745941340; Thu, 09 Apr 2026
- 07:45:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWo0OLLZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4B3C4CEF7;
+	Thu,  9 Apr 2026 15:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775747461;
+	bh=ogPzhiYnpF8NcR8G92uiCpGbycLuy9tJQG0UBgKCC/U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QWo0OLLZQrpfdepiTkSvtk2DD0qtVu0exQzWq/KMCy+kVDiurMpntKQBf3ew3w18R
+	 VOxz90PFiSznGplobAGUB8Wm2ug0A1ja1HDKkQfhEUviHliFdJxrAuWojnUwOIeGxr
+	 bu/X3qJ1B5Dgqs+pgP4oXGlXYYYXBwq+7B5h8EloOS8lsyeBI7447hwBYZ7/ay2LNk
+	 dBjCMkrZ+7M0iPLLb0xfv3nS3GeJ1DdVod0HZYGgI41PkxBqSUqJptFESze5JeUKBB
+	 rWauNwSn/zLq5DIwIG3El4vXyeODxkCq4B8hgvw0wlykj8iSNd6Z9ZeKz2FY9PTKzS
+	 MbVrox2Gjef8w==
+Date: Thu, 9 Apr 2026 16:10:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Song Gao <gaosong@loongson.cn>
+Subject: linux-next: manual merge of the kvm-arm tree with the loongarch tree
+Message-ID: <adfBgEpq8xjeCz5v@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <adaNJaF58PZlvs6K@sirena.org.uk>
-In-Reply-To: <adaNJaF58PZlvs6K@sirena.org.uk>
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Date: Thu, 9 Apr 2026 20:15:29 +0530
-X-Gm-Features: AQROBzCIbmfedIz7RL6rl2rW-KwVKP2KCBjZ6eUenc_oBdYzkGKkd-uKZP9EveQ
-Message-ID: <CAO_48GH3=g3ncBeWrcno7Z8ynYGWn1MS612djQHgfSQJ4-bkDw@mail.gmail.com>
-Subject: Re: linux-next: htmldocs failure in the dma-buf tre
-To: Mark Brown <broonie@kernel.org>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vgdIqCjVHPGtXZF4"
+Content-Disposition: inline
 
-Hello Mark,
 
-On Wed, 8 Apr 2026 at 22:45, Mark Brown <broonie@kernel.org> wrote:
->
-> Hi all,
->
-> In today's linux-next I see an error building the dma-buf API
-> documentation:
->
-> /tmp/next/build/Documentation/driver-api/dma-buf:142: ./drivers/dma-buf/dma-buf.c:1355: ERROR: Unexpected indentation. [docutils]
+--vgdIqCjVHPGtXZF4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for catching and reporting this. I'll work on the fix.
+Hi all,
 
-Best,
-Sumit.
+Today's linux-next merge of the kvm-arm tree got a conflict in:
+
+  include/uapi/linux/kvm.h
+
+between commit:
+
+  229132c309d66 ("LoongArch: KVM: Add DMSINTC device support")
+
+=66rom the loongarch tree and commit:
+
+  c547c51ff4d44 ("KVM: arm64: gic-v5: Add ARM_VGIC_V5 device to KVM headers=
+")
+
+=66rom the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc include/uapi/linux/kvm.h
+index 9e7887230bddc,ae659566e44f4..0000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -1224,8 -1229,8 +1229,10 @@@ enum kvm_device_type=20
+  #define KVM_DEV_TYPE_LOONGARCH_EIOINTC	KVM_DEV_TYPE_LOONGARCH_EIOINTC
+  	KVM_DEV_TYPE_LOONGARCH_PCHPIC,
+  #define KVM_DEV_TYPE_LOONGARCH_PCHPIC	KVM_DEV_TYPE_LOONGARCH_PCHPIC
+ +	KVM_DEV_TYPE_LOONGARCH_DMSINTC,
+ +#define KVM_DEV_TYPE_LOONGARCH_DMSINTC	KVM_DEV_TYPE_LOONGARCH_DMSINTC
++ 	KVM_DEV_TYPE_ARM_VGIC_V5,
++ #define KVM_DEV_TYPE_ARM_VGIC_V5	KVM_DEV_TYPE_ARM_VGIC_V5
+ =20
+  	KVM_DEV_TYPE_MAX,
+ =20
+
+--vgdIqCjVHPGtXZF4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnXwYAACgkQJNaLcl1U
+h9Cbdwf+JDOyERGdz3/ebFOGVmqNcStuQOlAqcBtc/NQXWX93nkhOQSS1H/OOL+R
+tFPGIPcSTRaMoF33uEnI7Pvu9eMY0bDoi8pgl5OWSr9VXqdZ/oMZgf2Zcgivg338
+GrFZGR6v3XigxFcQGhcojPZdDeMgxiELVxnrRzQ52rznYhfVpv8B/jXQ1PyX13aT
+fmXd87X8yPlWXPJkyTti2MSSElohB8vTAEVMBpFq8TBDHAOR/HRdtg2FN52Lvgl4
+tXRn1wE6CmLLowOPpWqYVzsLQwGa9E7GWQ6FQWjbMPO5ifVTdMZJXap70wKj0sff
+9v4OHaK5w5M7mPyco4Fx+Se5n7uf9g==
+=UVLa
+-----END PGP SIGNATURE-----
+
+--vgdIqCjVHPGtXZF4--
