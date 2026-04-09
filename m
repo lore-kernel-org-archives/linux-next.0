@@ -1,91 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.uniroma2.it (smtp.uniroma2.it [160.80.4.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF9134F48C;
-	Wed,  8 Apr 2026 17:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1010C244684;
+	Thu,  9 Apr 2026 01:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.80.4.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775669526; cv=none; b=sMXqCRN+AtuA9vqD4xp+tCJOyjjDEgLSxzIL6Irzcnih4aRLu7Z2M21GuZmSx34HPhBEaJYKbm/OTyZA37cSTzEx/uhS9kKSjM5+vgBwXwVnMRzTj36p05D0ew80OK+5V8f/B4eQiTeCQyo1NZJGEQOMq9W3p/9xqCQCygfLDXA=
+	t=1775696733; cv=none; b=mdqlb4XNhIZUCa9AAaDT/uOeNE/178z4v+VqnOF5FP7eh9RTYVPsSlhKDk6bYstd2HDnsDnpKEcBVFg1gzYz1u7vYX9YLySR21FDfrT1oxWePagN0Yx72gcK3HCKmeV/YH/MWtp7bJZm87i+5wYv5kHrwslgU0IxzpHQE6/AUZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775669526; c=relaxed/simple;
-	bh=bJnqq8/P6c8peo4N33OynGnzIxELHSWY95kxtsV6V+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eW1UwV40l57t6BHIJrhcw2RjskEFU5eEqRXkwrFxJ1bZiLa+P+ZWaPXG2uCwzY5jfq6M+IM9WyD7kr7b1uWc78SffD40Xy/Ri4+ZwtEL/m47R+J2sA8m9uQOFjPXMmbwrT+MLhKaWmFdsWqGHXV4tcaNdX7WcG5fvmVa0w5g4n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuQy+GJe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775696733; c=relaxed/simple;
+	bh=k1e80WLEIMZeQALBTIpzpMPH/HfGFZJ7DL8pjX+ONdE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XGcygNBuWSoXOVweToqpHOw55NGV82pQP/E1QH/Rn9lJkFgXsB8NLgOHolKHw8vCPFFb7kym8XUZVwf8IMT/iA8TrVo82Ad3xdUXN14hXP2ESo3UFcv6aJbOxP/rXh7fljGD40Wi/UFTNrXjs9/vzba6H1PCYYY5NK173BAy5lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniroma2.it; spf=pass smtp.mailfrom=uniroma2.it; dkim=permerror (0-bit key) header.d=uniroma2.it header.i=@uniroma2.it header.b=vDhhOoRJ; dkim=pass (2048-bit key) header.d=uniroma2.it header.i=@uniroma2.it header.b=SvlkauuV; arc=none smtp.client-ip=160.80.4.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniroma2.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniroma2.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuQy+GJe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4DBEC19421;
-	Wed,  8 Apr 2026 17:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775669526;
-	bh=bJnqq8/P6c8peo4N33OynGnzIxELHSWY95kxtsV6V+o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FuQy+GJekedTuugJiXg6opBLBYKHwRZV9PpP0/3c8p28/mdHClbuVWgO2pI1biSPv
-	 Szaz7Tqi/4Spe6dSk2x24fsBT14wuXIiZCTyjAOnqAPeHwP2AcE2yHvOdGhXVbvKB3
-	 i36BubHMRiPcQTvctpbncccW19QiGLnUA1H/8E1wZT1naAwG5jeN/VfYoE92yafwEg
-	 IrmJWp2jJz7PCTNtSCyuF7Y8glGNlSs2cPkYPbbE3OJBb/Xq54nh9zDYdJylBlaxcZ
-	 zCMfsbWg06UTiycJyRV8CBUt1WuDJ9Y5F2YO2y2oSPuRi8cvMM0nbq0PZd/3W4hdCM
-	 cl8BxHSW6RpbA==
-Date: Wed, 8 Apr 2026 18:32:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	NeilBrown <neil@brown.name>
-Subject: Re: linux-next: manual merge of the vfs tree with the vfs-brauner
- tree
-Message-ID: <11fe041c-da92-4e23-8a75-f69d443c945d@sirena.org.uk>
-References: <adZNhv68QCxJt00c@sirena.org.uk>
- <20260408171639.GG3836593@ZenIV>
+	dkim=permerror (0-bit key) header.d=uniroma2.it header.i=@uniroma2.it header.b="vDhhOoRJ";
+	dkim=pass (2048-bit key) header.d=uniroma2.it header.i=@uniroma2.it header.b="SvlkauuV"
+Received: from smtpauth-2019-1.uniroma2.it (smtpauth-2019-1.uniroma2.it [160.80.5.46])
+	by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 6391534o028424;
+	Thu, 9 Apr 2026 03:05:09 +0200
+Received: from lubuntu-18.04 (unknown [160.80.103.126])
+	by smtpauth-2019-1.uniroma2.it (Postfix) with ESMTPSA id 639121228CC;
+	Thu,  9 Apr 2026 03:04:58 +0200 (CEST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=uniroma2.it;
+	s=ed201904; t=1775696699; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QmHCsqc7WegKUOgUHHPM9TqWAh8MTHZ2YLN5cXh+lwE=;
+	b=vDhhOoRJZn9dDUj8GdadWCYlz8rNbR376DyrWnbM6iW8S8/s2HA8xDhPBauChAwjpMzoja
+	Fn8gyRecwZu+6hBA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniroma2.it; s=rsa201904;
+	t=1775696699; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QmHCsqc7WegKUOgUHHPM9TqWAh8MTHZ2YLN5cXh+lwE=;
+	b=SvlkauuVYE//Yd/gAp51jA+lQpN9S6h+0Sst0z4fvvM5SXhJ2AHmYICMQ3SvCsGVWWiLch
+	2hfAcXZW88ccaJYTkQTuNgppJ9gKdJZpVnu8Eh7KZkS8F98YLnhYXDcpx6FgXYl3rt5d3V
+	MAGZI1cSK1owbx4bfGEQPXC39vWpKjhPfqqQLndNX/XeS3DUYhNEMlqRxhXb8v35C34Ib7
+	rbBp4CQ2oZ3i5RRC8ZxFUYZ/P6FE1gh0oTojFWLC8HmDtLpMkQ0bWQPXvL1mk8GWyaT2Kx
+	+PyqxQ/CyAgtpDoAymlmD7pLps4cY3xxdlZCq1B+oTqsrR9fsusUmdQ8f9daFQ==
+Date: Thu, 9 Apr 2026 03:04:57 +0200
+From: Andrea Mayer <andrea.mayer@uniroma2.it>
+To: Mark Brown <broonie@kernel.org>, Matthieu Baerts <matttbe@kernel.org>
+Cc: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>,
+        Justin Iurman <justin.iurman@6wind.com>,
+        Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List
+ <linux-next@vger.kernel.org>,
+        Andrea Mayer <andrea.mayer@uniroma2.it>
+Subject: Re: linux-next: manual merge of the net-next tree with the
+ netfilter tree
+Message-Id: <20260409030457.a37c01254eb615b9b410e183@uniroma2.it>
+In-Reply-To: <d9d4e328-6668-4c24-bace-77a0f93bbed6@sirena.org.uk>
+References: <adZhwtOYfo-0ImSa@sirena.org.uk>
+	<729b748b-e00b-475e-81e0-a666eab24fc6@sirena.org.uk>
+	<8d216893-1e0b-4e3c-8609-eb3de5da02cf@kernel.org>
+	<d9d4e328-6668-4c24-bace-77a0f93bbed6@sirena.org.uk>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+r+opk39RNtacs2v"
-Content-Disposition: inline
-In-Reply-To: <20260408171639.GG3836593@ZenIV>
-X-Cookie: Often things ARE as bad as they seem!
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 
+On Wed, 8 Apr 2026 18:00:50 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
---+r+opk39RNtacs2v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Wed, Apr 08, 2026 at 06:43:36PM +0200, Matthieu Baerts wrote:
+> > On 08/04/2026 17:08, Mark Brown wrote:
+> 
+> > > This also needs a fixup for a new jump to the error handling paths that
+> > > was added in seg6_build_state().
+> 
+> > I also had this other conflict there, and I did this when resolving it
+> > in MPTCP tree:
+> 
+> >  +	if (tb[SEG6_IPTUNNEL_SRC]) {
+> >  +		slwt->tunsrc = nla_get_in6_addr(tb[SEG6_IPTUNNEL_SRC]);
+> >  +
+> >  +		if (ipv6_addr_any(&slwt->tunsrc) ||
+> >  +		    ipv6_addr_is_multicast(&slwt->tunsrc) ||
+> >  +		    ipv6_addr_loopback(&slwt->tunsrc)) {
+> >  +			NL_SET_ERR_MSG(extack, "invalid tunsrc address");
+> >  +			err = -EINVAL;
+> > - 			goto free_dst_cache;
+> > ++			goto err_destroy_output;
+> >  +		}
+> >  +	}
+> >  +
+> 
+> Yes, that's the additional fixup I mentioned above - it didn't conflict
+> for me (well, the exit path did).
 
-On Wed, Apr 08, 2026 at 06:16:39PM +0100, Al Viro wrote:
-> On Wed, Apr 08, 2026 at 01:43:50PM +0100, Mark Brown wrote:
+Thanks Mark and Matthieu for taking care of this.
 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+I went through both commits and the rerere.
+The resolution looks correct from the seg6 side. Build-tested.
 
-> FWIW, I suspect that it might be a good policy to put notes on likely
-> -next conflicts and their suggested resolution in the head commits of
-> #for-next branches.  What I'd done yesterday was
+Happy to help if anything else comes up.
 
-Ah, I'll try to remember to look for those, thanks!  It's helpful to
-have some ideas for what to do.  People often drop me emails about this
-stuff as well if that's easier for people.
-
---+r+opk39RNtacs2v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWkREACgkQJNaLcl1U
-h9BM5gf/b9mmCyRo4/WUG5XWKUVICen9GCKZBBMrx3Z/0Ow3fM+ItR1e+vwVWTrj
-oevoOUazYuD0yFU9IX+UA6Iz335cQamWRevCb5tQr3BuN54B6dzf+hz7847rfUL4
-PMA3ppBCiN2BNzgE95QnIeLVd5QJsjeNkH0XFiBOxD2prPANoENwX3jRLEy/eDpW
-o/YuuhfjXNXntvTTidj2qwqfaqSsClvujKeHFeANqCeK7sQM2N63SG7ZchoSs02X
-wLaCFYJDtn/GTryBKc5fdwSKDHyfgKiyZqd2UJeNzZ80Xf+ehmgulJ4VN9RS0vYR
-l9x9t5BHhW+9nylFagjV8/E6RnJXcA==
-=FHYk
------END PGP SIGNATURE-----
-
---+r+opk39RNtacs2v--
+Cheers,
+Andrea
