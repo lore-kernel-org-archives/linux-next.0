@@ -1,79 +1,71 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14ED63DF015
-	for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 18:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6166B1A239A
+	for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 23:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775844717; cv=none; b=gM101lnXdv70NGWPqMJUTcrILIkqipSiEC8zXTOatBbbTb/LredshIvsonQ9MpnM4Ruq6EZraLWGv5Mw6yKKD7P316fguoMp8AzCdA/axSLTN/uApCZoVFiZ8WhYuagIrTFV4hN/SChGY5GG+tX7Zrltxr3i87np2i/ckxCxVi4=
+	t=1775863934; cv=none; b=DCXw13Iqa3a1Eq8z3gEyLLqaQpkLa5STYU8g9XCkPgNqxtP7StR7T5YPT+7r79NaGGr3mZk5cqYF3BJlFd6janw9glGNSVHR/PTR2HirrhkvpTUlAWiciLzJRmViaMU1MHQf+aKERNfraEFtxNl/HeuLlbrwMsZh2YDu95gmWDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775844717; c=relaxed/simple;
-	bh=F5aoPhGlIl3zAvdKTI5BJ3PDwA5OP678GzsszRrGWuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0AYyBj9LrugMDoQf+/y2QGv06yhSeRI8cqV3zX9KwSvlRDFpmlqmS6cdyOlEheXeRvFLQLDZteA95cbEHPYFyv4b62rZrWTZgZWrKdSneDI7T860bJjIOZYGy60vjtrMjjBRgjoYcF/CjypvD4lAGXVYx3TuxJvSgGaQhzFwvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRMQTWog; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775863934; c=relaxed/simple;
+	bh=0qivxTH8RMSB1p7NMGBCwGkg5LqiDEtrfcw/mHf9o7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IhYKUPANAcCxmsz8kOyZvFt/hVb2M6EIdP/zIlU/ZbXX3ADNwnAP8m2mEp41gKHLKVQVkxDAHSCt/ZxWSbcYuODg6VoDfsGMNIcv++Mtdi9x7QVtfP+k3jnC2S24wA1P9nZ0zMAJzIcAtz2oaySukgc+5b2ZpMIjbUXBxKfxh4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bzJ7J24g; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRMQTWog"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F126EC2BCAF
-	for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 18:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775844717;
-	bh=F5aoPhGlIl3zAvdKTI5BJ3PDwA5OP678GzsszRrGWuk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cRMQTWogWNYK8QsEVWrgZYyTCsONlwdcgFg+lKjkKyp31na14Uy47CjKLD17/wlnR
-	 iXKVsi7OEOZ7cUX/6yWA3S0hhMVJRHXgRSL5g1CJtoqokEthJ67cLLaUJ40ppfa8wS
-	 B7C7lKIvyXqsBF4KsTVTWk1bbGt7bvz6Ly46XNGq6tG+2AD3vsON5JPTQLpLCiDr1y
-	 aUZfD8J33mIkXmVnjUSSOlYsD91GvTtC3N5qmamkMlGq/zpmZJ54hou1dNA/FOlztd
-	 jMfq2k4YKvZiX9RsSDQiNJCSZ4iaKVmPlB1u16q1VMwJRHDcPWE9iN3Z9OyA+ssD67
-	 8L+AZL9SDDvZw==
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6501e465a8eso2591388d50.1
-        for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 11:11:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXl99jCanvyT+L8N/g+ghJJpJzAjcKPE9KfMEBMAKUxvveFAYi1IadT4pvOG7StZCOADLvByDdDSak1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSzXGTltVx4v/D6yk+bsFXW4ZgkZ6DAnM61hVIzIBaa4LfAorb
-	Bfber7dXluDEmE3OOYjMxeWhMC8K3o8Gf3PhufZx3fLco1Zy7OSfHKzjwfASn6Ju5Ob4kAHVexC
-	u7HfCdn+FL1xWtceeXocG7P+eBCK9iWg=
-X-Received: by 2002:a05:690e:1488:b0:64f:443:8f8c with SMTP id
- 956f58d0204a3-65187278f83mr7093628d50.45.1775844716367; Fri, 10 Apr 2026
- 11:11:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bzJ7J24g"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=TSFKfWnr5pkL9nCQG2CIBQ8MRLbSJqYdPr0AgoMU7zA=; b=bzJ7J24gYpAjkoq/2P11q3weSl
+	y6G+0LWhStkE1BpgtjMuLZIjvdr2qL/4Pmq8sJXvbcEyK9YIZFpLeYDcHyocVnz5SvWbOFZ+qSFMX
+	d5MXcimDt3cKBADrgPwYm+DKRTg+gjy/ibmFSR8GqGTQ8YxtulqrSUKDCgO7wMoc5CmiDZz7Lfev5
+	UaLCAIFDuKOcic2zSe7cNys60sI4oo25rI9h6V2cw7q6jJjk8xQglTKUH3R/P9QlmxdpLNwNUnPqU
+	WUdeOg1kL9XHzhExNDO5E8+xFHe3JE1GhxQbNBiSNrN9WB5MYjeRb07+wv60bgZQzlsuAHntj4HK7
+	U7MGRLtQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1wBLKa-0000000Cvn0-3SSM;
+	Fri, 10 Apr 2026 23:32:08 +0000
+Message-ID: <e1a1c2bb-cb1d-4647-8639-8ee86b218509@infradead.org>
+Date: Fri, 10 Apr 2026 16:32:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <adj99f9oz7Oon5nl@sirena.co.uk>
-In-Reply-To: <adj99f9oz7Oon5nl@sirena.co.uk>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 10 Apr 2026 20:11:45 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkMArkh9AjhZj6h3Yebx1fLMjon7N=n9Pec9dsg2rqnBA@mail.gmail.com>
-X-Gm-Features: AQROBzDWLiftkfFdtu_xCqOoNOoHhNsQVR146Q7iEPX6H8dTGoI9GQJ4aEYlu2w
-Message-ID: <CAD++jLkMArkh9AjhZj6h3Yebx1fLMjon7N=n9Pec9dsg2rqnBA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the pinctrl tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Apr 10
+To: Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+References: <adkN9ZX6xjhARbbh@sirena.co.uk>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <adkN9ZX6xjhARbbh@sirena.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 10, 2026 at 3:41=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
 
-> After merging the pincrl, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: modpost: "pinctrl_generic_to_map" [drivers/pinctrl/pinctrl-generic=
--mux.ko] undefined!
->
-> Caused by commit
->
->    62f97854fd4bf5 (pinctrl: add generic board-level pinctrl driver using =
-mux framework)
->
-> I have used the tree from next-20260409 instead.
 
-I had this merged from a separate branch so I've just backed
-all of this out.
+On 4/10/26 7:49 AM, Mark Brown wrote:
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" and checkout or reset to the new
+> master.
 
-Yours,
-Linus Walleij
+I don't see today's linux-next patch(es) at
+kernel.org/pub/linux/kernel/next/.
+
+Are they delayed or something else?
+
+-- 
+~Randy
+
