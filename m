@@ -1,125 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B1038F658;
-	Fri, 10 Apr 2026 12:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64761188713
+	for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 12:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775823704; cv=none; b=OiA2kkNHKxDEynTWD/J9M9MBJTKMZCUhLfvWpHX2PN4MVpt3KEYMe1w01fuDTGyKhHAPU83VtLUvug41ffCQwHNvMGrp13lNEL3hVyDdtxj7YqueNVMiiqLl7KprEotXS/mACPRgoFBW2l2cxA1vN8hmYCammyBP7X0ysPFzoB0=
+	t=1775824638; cv=none; b=mERTvUDwrW6CRw04mrCGONWBnIP1fayCZxMttx0PVLeJTypapSNrcyvkYxAZuIkcY27UXDsyVofRn68RunZxjWPwxUqpD1x2NGzLATU8O9MgxM7rrS3bs/oddcmgIM4Y8oa9t5R5n2DCK3PBfHr5ig1USuFmxDf6YQWtaE2Lfq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775823704; c=relaxed/simple;
-	bh=Xd1HFyjA1HFTkCeNPhG8WYVIqMjZB+SZd/jotYdislU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VrWg0IPNeKxtYoYSG2r1uLjgxGNc3LXLOYDpeBOdrF/zsSoxSZPUZXW6FtHC0240RUdhs2B6Hde3s36gcc9euNR4ETD1cFkggp4kA0tTg/Pu9j7zyYP9buUVWdRuDf1vXbhFeuNUdVfmCDmidsqreusJUyHKnj6G3ifg5XjFXZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L63Ui2K0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775824638; c=relaxed/simple;
+	bh=B1v2q1OG8R3QC/7LCYsgcYJHY7L4xRv3rkstdtYf6uA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sy/U/A8BymKiYA3eo84E7ztAgD07dekgED3+DXvuPHQyixeVThpc4A2SZuImKTaNIbDqTUnmftzWUim0uR+Bz0OhOzBrGh39lmm0XX4A8AG/qwUYaeljsTqmYjU9vlNLcAUjBh81/uJu/drpg7k4kOSlIUUzuWfHRWAJVpHy7V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sT8NQUh1; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L63Ui2K0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C47C19421;
-	Fri, 10 Apr 2026 12:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775823703;
-	bh=Xd1HFyjA1HFTkCeNPhG8WYVIqMjZB+SZd/jotYdislU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=L63Ui2K0Uy853ErqlMY+4MTa5qcOk7uQi1TWXS3XouxeVRlCi5i7zxtXY+0zbQbuc
-	 LeGWkh/CHkHe+C1qu0QAH2HkpYxHyiSGM0usucGsmmvblJPxvic/6i1G74a6ChoX8C
-	 3yPX/9aTP5YeIM4bBDHpcM0hmenjNiztwvE0hNJzzZgr3SsoGw0RJFqDx+ldvBn7Ze
-	 Lh1x32nROND7kgK8ws6uDBqDsCddq0NmrmLhNh+SWDFzA3ufcTZwzQ897ivipxxeV4
-	 WUXREZmtqGzc3IXM/T300bDfVzzfxB5mR/zHy1bfKKzE/8f5sRbwpGjwu77PhvfhQS
-	 Z0T1UzGQR4uCw==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 1D60E1AC58B5; Fri, 10 Apr 2026 13:21:41 +0100 (BST)
-Date: Fri, 10 Apr 2026 13:21:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the block tree
-Message-ID: <adjrVagmLJaozz5o@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sT8NQUh1"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-35d8e548a05so1985014a91.1
+        for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 05:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775824637; x=1776429437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ObSlHorYoFId3LOZrgQbV492ce1VusgbgOP1QwTrQ4w=;
+        b=sT8NQUh1u0rS4lSEnoGk6/8ZlwOVjctywzEen+gCbie7hKrIiBzFFL0cGZyvukFPmT
+         8eiPkAjXWkRmPZnQs7b30nj+TPZylBoBH5Or1TS7NVG8V+wS8XE1e/4zeZGUkwP2nEZG
+         Hqet4qpA2QCxgAsH0nK2ItEFup15ucxtozqFE14BX6aWcfCsTVK4KbMfwgW8ujbqlDld
+         j2pSO6G7cIX3KIdIk5qUOMTHhzgmL2T3W7er5CEzDC4ABDo4C0zCkj4WVqqPl1KbFFFA
+         mVF7F0nrGKqlFDBBHGr3VK1XBl8LT58HsyP3DE2SOEe37NljVAbYvT4gqWYYRLN/T3SI
+         bE9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775824637; x=1776429437;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ObSlHorYoFId3LOZrgQbV492ce1VusgbgOP1QwTrQ4w=;
+        b=DqO4fzOeLEHcE/yBCMs/cfH4OOUoo70/5LEfa1pYcs6fIwYXZxZBxQsbiMy3+TnYc4
+         DazjPEX/Jl4no7xknk8Ha3yhWgi1HM52IUwCeSyI3hIKnTMBrj6zzaPrpju+QTOR18DN
+         ZrGEO69DTzSZd30L72K50sW2oFufm5ChYpE0SdKXiXFx1ED8rIM7cCWEnlY47N3CVs6J
+         TCB1BxqX/KaNNZVIXFSp7HTBqiy592UtAnqzkJKfB226Fv5Z15lJVPMBbQhEVWaMQj0p
+         uWzd8J2TG4ezsBKV8U7Mu4nacs1FfQCvkgoWAucnWdmS+4OUbL9zdBETJtY4L8lWucuD
+         yQdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXb3l4OcGtKTV+pvyoVwfgSvDKYYQQ1pZwsqiVNyFBGxOzYpmjRawQRbHNVzfENNA/O8EbiYjsru8RL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlAkGArlKIcbyKm1vDlc1uzNprsESbyLG38jEgGegTCfGnHnuh
+	Vsbw+VCH2ysUzqIxBqzCNpuFuHZee118v0WO7KYcerI5qogWyyi0QQ/zY+5lnXKdsLA=
+X-Gm-Gg: AeBDievIkd9hqnlaT0KfED7+3f97IGXXplLtkBVnKKRFhsuTCf7IEgyf9fy/qyHLp/e
+	E3rVYP3809UNSpCogZNxUVfzeWibXZClbrze4r9wD+7o95A1K5ccIMJ7OOjDDRPf0+waeFaMhDk
+	hRpa+gl+zEuFJVg7K4voSLdHurRYCiCGrbj+hYfnGXksZElnYP2JqYeIFmn/OCy6bjyvkSokK0P
+	iciutTDS0iXNlgMui2v+3ZoBjeTFLH2sIol+cWl7tNyp2YXYA5s0sxUcicGBgeSHUwIHBguQgZc
+	nSy/vq3pjMJw4ETyj/iqt6tOJRKcuftpPCtW/n/tga/Kw3eGK18FS5c3J9l7EeMcGZh3Ej+8eFO
+	Knz+cXIxgCXiZT+MDpZ89mjfrsHQK3tgNFIoMWprQAWHy1O6evpLfa/eR0jQYuuFk/EVgYM0hZe
+	nDD5w5Ukzh4quotDoP1Wpny0rT0nQ9jCa2+hcnjt7hFDmw
+X-Received: by 2002:a17:90b:2ccb:b0:35d:a9bb:1e33 with SMTP id 98e67ed59e1d1-35e427afe02mr3338087a91.11.1775824636700;
+        Fri, 10 Apr 2026 05:37:16 -0700 (PDT)
+Received: from nagraj.tail8a2ac.ts.net ([2406:7400:98:af5f:a6a2:e126:5ae3:4132])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35e35155829sm6780138a91.13.2026.04.10.05.37.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2026 05:37:16 -0700 (PDT)
+From: Sumit Semwal <sumit.semwal@linaro.org>
+To: christian.koenig@amd.com
+Cc: leon@kernel.org,
+	broonie@kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	Sumit Semwal <sumit.semwal@linaro.org>
+Subject: [PATCH] dma-buf: fix htmldocs error for dma_buf_attach_revocable
+Date: Fri, 10 Apr 2026 18:07:03 +0530
+Message-ID: <20260410123703.937822-1-sumit.semwal@linaro.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xYILvh1IlfvuN+zD"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+linux-next testing showed this htmldoc error due to a missing extra
+line in the comments; add it.
 
---xYILvh1IlfvuN+zD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-After merging the block tree, today's linux-next build (arm64 defconfig)
-failed like this:
-
-/tmp/next/build/io_uring/zcrx.c: In function 'zcrx_register_netdev':
-/tmp/next/build/io_uring/zcrx.c:816:15: error: implicit
-declaration of function '__net_mp_open_rxq'; did you mean
-'netif_mp_open_rxq'? [-Wimplicit-function-declaration]
-  816 |         ret =3D __net_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, N=
-ULL);
-      |               ^~~~~~~~~~~~~~~~~ netif_mp_open_rxq
-
-Caused by commit
-
-   1e91c98bc9a8ef (net: Slightly simplify net_mp_{open,close}_rxq)
-
-interacting with block tree changes.  I have fixed this up as per below
-and can carry as needed
-
-=46rom d5971ccec3525c71d28cb40bc4a6c9596f354b48 Mon Sep 17 00:00:00 2001
-=46rom: Mark Brown <broonie@kernel.org>
-Date: Fri, 10 Apr 2026 13:14:23 +0100
-Subject: [PATCH] io_uring: Fix up build for "net: Slightly simplify
- net_mp_{open,close}_rxq"
-
-/tmp/next/build/io_uring/zcrx.c: In function 'zcrx_register_netdev':
-/tmp/next/build/io_uring/zcrx.c:816:15: error: implicit
-declaration of function '__net_mp_open_rxq'; did you mean
-'netif_mp_open_rxq'? [-Wimplicit-function-declaration]
-  816 |         ret =3D __net_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, N=
-ULL);
-      |               ^~~~~~~~~~~~~~~~~ netif_mp_open_rxq
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: be6d4c9e9d714 ("dma-buf: Add dma_buf_attach_revocable()")
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
 ---
- io_uring/zcrx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma-buf/dma-buf.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 593b1d39a5eb44..f2e08c19e74cef 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -813,7 +813,7 @@ static int zcrx_register_netdev(struct io_zcrx_ifq *ifq,
- 		mp_param.rx_page_size =3D 1U << ifq->niov_shift;
- 	mp_param.mp_ops =3D &io_uring_pp_zc_ops;
- 	mp_param.mp_priv =3D ifq;
--	ret =3D __net_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, NULL);
-+	ret =3D netif_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, NULL);
- 	if (ret)
- 		goto netdev_put_unlock;
-=20
---=20
-2.47.3
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index a202a308c079..532c3f14bf9d 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -1353,6 +1353,7 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_attach_revocable, "DMA_BUF");
+  * Upon return importers may continue to access the DMA-buf memory. The caller
+  * must do two additional waits to ensure that the memory is no longer being
+  * accessed:
++ *
+  *  1) Until dma_resv_wait_timeout() retires fences the importer is allowed to
+  *     fully access the memory.
+  *  2) Until the importer calls unmap it is allowed to speculatively
+-- 
+2.51.1
 
-
---xYILvh1IlfvuN+zD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnY61QACgkQJNaLcl1U
-h9ARyAf9F9R9SCxpKhvaVajV4jQ+fPTyiwbSfiHZaC27A11Y2hcL5AOw/fCiSW6l
-qgS7VyLTUHGn56Gns0E/7q/dMnYymyMxZH7AN+7A3jmkNMEGc/tMH0HJj3/aF5Ny
-5YHI+VDNwFeJZM78aj8uZIoLctFUC/dJWgMyt+mijkac8iZzz3p+p73Tjvu91b2Y
-2D3oPG4ZgUk1Ieu0+N7dPeI8iPLoQ8ir9PairjinGewF07XGbOdZ0jeHXPQadKU2
-r7IDW+SiTft1cawTBnlvUtB/CJw2fKOgfLcpA4ic/brfXriCzLkTMF7n5+ZScGy0
-/vqZjboAUKMz3N/oRnT3QfWqFLs1kQ==
-=IKxi
------END PGP SIGNATURE-----
-
---xYILvh1IlfvuN+zD--
