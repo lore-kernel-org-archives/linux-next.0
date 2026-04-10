@@ -1,118 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684BE3D8102;
-	Fri, 10 Apr 2026 14:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF637E2FC;
+	Fri, 10 Apr 2026 15:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775832568; cv=none; b=uYrICkGhrFUTx4nv9w6dxQiuZhUYSSiPLiS/slPYid6LlxmJtraKNny9jaSW633c8Ro8P7nknmEV++1vvgd6eN8kGdO2nqAgxHQrtfNQB/oCn43m2A6e+wYIoRNfQX40VGKTb9w+DPiCfquHyIuD7U8/vpNSmQwzX48cPaedpq8=
+	t=1775833463; cv=none; b=CNLdumcoNxT2+kBonib85c8smHmTY5IHVqjoP1fTpgGwLLweprSCJzilRBz0NPmsHuqXFbXJR3SV448K7l4mTkfHE2UNszZ+4cwO5LapbIjCskfGX4z/g/jtXknPxTwxmhRmGW18NKkoLcUE7NjnhLfpwMlsP0h1Mbbd89nFIOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775832568; c=relaxed/simple;
-	bh=7zmDm5kdc+yS4Nvaaklq4/Vy9u4CDanK1y+qSSnWpdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jBLTKnihUwK2IVl/+3I9FKJugEtL4nGPzsTEczUoU3zfUTkkFnZ8hP4vaLVmxl4IbkQwvIkffTKhw40VZc9MWt2Hj7//97J4h0/Emwm+KNIYU1hjPVXGEFMR1bjLKAWZCWCcM8jVPAiRyPhZ7l3lUZ+8cel1m88Cyi0ian7KfjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GcEth4vB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775833463; c=relaxed/simple;
+	bh=J/S4mg7JzVVwRGvWYR6ZpzPYxEol30c6kRVjxlHGKZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UuOK2kvEKzYV0q7cHMekdrRAcuvTWzgAB6kN0AuNZ9u6cy2Hdr4hmXN+dqE0/0LGjLKGrc+WSWdpn4kX076W3VNpIDx3HT9elo5XIuNaMNmkiswRENHJnl2tzt7f86hijbDlK1K1CgAbs+eGwWY8qQsPVwit3k+IvZilwvWBd/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NfNZuotE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcEth4vB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC06C19421;
-	Fri, 10 Apr 2026 14:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775832568;
-	bh=7zmDm5kdc+yS4Nvaaklq4/Vy9u4CDanK1y+qSSnWpdw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GcEth4vBM4iBp4olyej31HGOxSVmov32k3Ozp8aOf+fIfxhHrlfw+NRzU735I75oS
-	 bRjMnXX36IyV8g1aqxzejBnQnN3+ApAVuuK5/1NMAlXJAohIYs3/Z8GwSirooMuHSO
-	 8OikL5udMULcG/Nyjxcbd6kj06H635gjPORCmX0b7D1jwW/cKmx/p75rqaT9+FBkJq
-	 Mm/XJ1ALKOD4t0z5KG8uRe+ZnuiPxW2nr0zIKuT6aa1PlZWRAV3nLr0Pz+9DkMJ/Sf
-	 0EtHOCpRza3KRo0dV13DVM+52HuPtY9nQ1EvDtOZkp3qJu6JWrWxiDuHrewJRNsegS
-	 //KsgNVATDODA==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 6C5E71AC58B7; Fri, 10 Apr 2026 15:49:25 +0100 (BST)
-Date: Fri, 10 Apr 2026 15:49:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Apr 10
-Message-ID: <adkN9ZX6xjhARbbh@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NfNZuotE"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63AC6wJr2213384;
+	Fri, 10 Apr 2026 15:03:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=GrUN8fL93Y7h7936is0ZlEFRFZNBWptAHMgvgxMol
+	/k=; b=NfNZuotEQ4t/4TPYNmwqdJUSAmk9sXe4eOy4OrMP1foMJGmK5LtA8gZzf
+	vU7SqqQ3FFVEmNam1yDEuC0TJlAwkW9+XBHbol2WHOAJt1tJmh+omi/4BjfOfamT
+	bGSuXC1Y+ROD1jlyQhSPac1Hfblq1wPm9kcC6hXRi2IYW9kW3Q/bk0d9UsGmIiLV
+	nY9VS78oqkuyGCw7//NB9PeG5GufCIU1SsJ5TAcEkwOjZcg6/kTM1/jK8Dih5VIm
+	yzB6xzhWRunnJD+1ZDc5k37oZ5Q7FCIi731khP9eRgNFEochv8Rz0TySE/0xySdd
+	LTl8mkAjJUs3LvNQzPMMgTksEftRw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dcn2hsdb6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 Apr 2026 15:03:33 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63ACp7Ql026714;
+	Fri, 10 Apr 2026 15:03:32 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dcmg88fpm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 Apr 2026 15:03:32 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63AF3Set53543416
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 Apr 2026 15:03:28 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A667B20043;
+	Fri, 10 Apr 2026 15:03:28 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12CBB2004B;
+	Fri, 10 Apr 2026 15:03:24 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.61.247.193])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 10 Apr 2026 15:03:23 +0000 (GMT)
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+To: sfrench@samba.org, pc@manguebit.org
+Cc: skb99@linux.ibm.com, maddy@linux.ibm.com, chenxiaosong@chenxiaosong.com,
+        linux-cifs@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: [PATCH v3] smb: client: add missing MODULE_DESCRIPTION() to smb1maperror_test
+Date: Fri, 10 Apr 2026 20:32:48 +0530
+Message-ID: <20260410150247.93178-2-venkat88@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EzXwT+QPb2W0EP5X"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDEwMDEzOSBTYWx0ZWRfX2BpZOIkFtY30
+ WFclJ4jGmHrIHI+8HxEnIivkt1D19GGareuzKwjFDBAW1YYJT5U2vdmR0re8X62VUQV9AHPcqrA
+ oWpdYMtkmbrDNXwqo2kvMnUV8lFP9HCzgz4/dDqyxysAboJ6lt/xJxwnrf+6P1LL47rbZ4n70SS
+ 3lBRbeeSXJfFnJM0tGhIDigTaT1SaFbuQ90Mlw/LpfqSfFCs5CjTdnMncNd2dC9RvwMBrkIkfYd
+ 8WUjS2qFB3BOtz9L9TCidUEKYtPDToj3DWaA9XItue58EKp/DqMxnNRWFYP2z6TSdO4bHS9q5wm
+ Enk8+9781CYSSnr054hNZ+NBVaRHGhd+HF2vdjYPTCOUpqD7KFVCtj35ZQIwx7KzkFO+IlCCr0d
+ d6w5j0bcNmp/XcRsIrPGAlySmRjR24zSKKph171mcKuf1Rp9Qa/jmAc3fFKbyKxczX+3Mducmv7
+ 6d7Lg/0T0qchxyV49Ag==
+X-Proofpoint-GUID: 8Rr-8p9OxDbnoKuCv-eB3t7Ga3OJef9s
+X-Authority-Analysis: v=2.4 cv=a/wAM0SF c=1 sm=1 tr=0 ts=69d91145 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=V8glGbnc2Ofi9Qvn3v5h:22 a=VnNF1IyMAAAA:8 a=Q8Al3GYf2AzKIbZmJxYA:9
+X-Proofpoint-ORIG-GUID: 8Rr-8p9OxDbnoKuCv-eB3t7Ga3OJef9s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-10_04,2026-04-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1011 spamscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604100139
 
+On the latest linux-next following modpost warning is reported:
 
---EzXwT+QPb2W0EP5X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  WARNING: modpost: missing MODULE_DESCRIPTION() in
+  fs/smb/client/smb1maperror_test.o
 
-Hi all,
+Add MODULE_DESCRIPTION() to the test module to fix the warning.
 
-Changes since 20260409:
+Signed-off-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+---
+Changes in v3:
+- Update MODULE_DESCRIPTION as suggested in review
 
-The dma-mapping tree lost it's build failure.
+ fs/smb/client/smb1maperror_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The pci tree lost it's build failure.
+diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
+index 820c0dd3bcce..2caaf11228ef 100644
+--- a/fs/smb/client/smb1maperror_test.c
++++ b/fs/smb/client/smb1maperror_test.c
+@@ -74,3 +74,4 @@ static struct kunit_suite maperror_suite = {
+ kunit_test_suite(maperror_suite);
+ 
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("KUnit tests of SMB1 maperror");
+-- 
+2.45.2
 
-The input tree acquired a conflict with the pci tree.
-
-The block tree acquired textual and semantic conflicts with the net-next
-tree, I applied a fixup for the semantic conflict.
-
-The pinctrl tree acquired a large and concerning conflict with the mmc
-tree and also a build failure, I have used the version from
-next-20260409 instead.
-
-Non-merge commits (relative to Linus' tree): 12130
- 11200 files changed, 657730 insertions(+), 220521 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 414 trees (counting Linus' and 125 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---EzXwT+QPb2W0EP5X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnZDfQACgkQJNaLcl1U
-h9DXoQf/UdJWCnrecrbRlk19RJyuqpbcYtKrywbAT1qGo7AQVQksQSEcYez2qDhs
-cXPMJ7dM1U6d2NeODRsT39etPcTULADQshFYsr+AzhNopvZ3jJPJB8466ZOn549g
-qWFvx0IsATPfiJrsadR0duXMOq/tAJXfDvIjV4xK1X3BqIKvIYeeoIvnqqqG/vRS
-wx9xXyiK0e3tLkOUaRGNwIVYEmk9lk3Wd2vtMfk7M4BUm29sDtaAoay5Iqs841nk
-jGX05JEY5ubPpRnNAENcBv4cw8g1v4/lRgCBw1kin4W1OZ/wTXpqo4xXuILwH4Iy
-nuhPZVGksgNNr488fVCMJkz/9YYQtQ==
-=MU3r
------END PGP SIGNATURE-----
-
---EzXwT+QPb2W0EP5X--
