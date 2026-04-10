@@ -1,192 +1,117 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013057.outbound.protection.outlook.com [40.107.201.57])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3792641CA;
-	Thu,  9 Apr 2026 19:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775762299; cv=fail; b=K46l1CKclj+eJaNn0xGqF6ZODybSImkvO7avadConGlL2ljjBTDcHFIuBkZ42bZXftTA7a7tFf+Sfz8OqJISv0nXF1HSxFyokcaAQLtwBa1A3B1y4TZtmloMeqBAocVpfclbvwaqIyjHnkLXJdiabxdE0xoHhpj8Ck5m4OnXs9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775762299; c=relaxed/simple;
-	bh=f3GbJ2ORhxKmb55/Tk28XZGepRfEU/gdz+VNJEgwhcg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SQIFywkNBuJqlvw368CCL02nflT4JAFTvX1bz3gJKVhhd8drO58So76B86DrARWOiAxluDfjr43Vx+lUitiiyAGg9XorzHgFytYVdl432ZFMAHQaJfPTAEzRXO68gt3EmJWIBmb990JZRfwkjwb2aijsUcGm41Zx/10FS+2QGlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JTD8q3Oq; arc=fail smtp.client-ip=40.107.201.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9A021CC5A;
+	Fri, 10 Apr 2026 06:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775800966; cv=none; b=Yjiw8fBLXxbwkULZ37DvmB7BJI9snUmAc5bQ+ot58ymw8quFBXjesNunkd0FR/ZjX/W5CcueiNNuuB5nY+VDMwPF8Y07gXpX32vuq+pOAZ6iDqrsHY65/bOhp4rFLBZtMSyufu4OKpS2+2o2k9aVjHC+XpJg+fw2fijD+huy7L8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775800966; c=relaxed/simple;
+	bh=2C1QmRHjAPidmr5LPOXxgo1KvdANmLrqZbokm2zqR8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dBzZVI3wQ6zN5Jzn7Xp9mSXsLh/g1Pa6/4bcIP6BRrcXASei8KkEsKNulQaSzLAuPnW1gJf+AsxgNrHjIqdBOxjnbkiKD3Z/mDJGQKQJchL7WzmOEGTFfzsKvfRqn59ZweKdmzG21Enom+mZn3jIgIaNMhq0RIQsGEBYgU2FHD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rRUV7S+k; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JTD8q3Oq"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hu97yGfts9YKcKgcgx90kPkMRFL5C5lQ0ZsrbhFpssLpARxcgR4nrfWmGFH3AEaR4BEFngOMkhHvEV7WCZR8lQzGKLpJcKMa/k4UI4GswDoDlYJk5t8SQMyRUSxQwBRGvqXvqsT4AIpeZNPI1d+CJcEJVbiu+f8osq6g+xY4DUct6oJ3jW8A0DUIxkF/K3Iqw2tCm2AniOc+hATKXtd2fKoq1wDpyw1VPVXj89UdFIqtQCdvwiMcNatK09aG8IbLxpufxgEvMk+vLtIu7RFeVHAtlL8VX7TsgzYofXKKfFu/nvx3GVqUfpw7stRYL2Wj7IVlZg42tLgDlgVmCv1aHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f3GbJ2ORhxKmb55/Tk28XZGepRfEU/gdz+VNJEgwhcg=;
- b=rZkLBGMUpj04RryYUkhs4sF2W2p5j4XI+7sV03wCQmUOoD04tHw8E1HIhPxnTEbVAAiP4FtHyC9kdFlCYO3WVIYGDp/XY/E0YPI5GwvoCrrSr3qjS0d1D51gL8hmTbmcqaX/eTfWPJnNSdxkR/fm2WPjC9ABlh6OZQyFE6Wnw4sVUMAbG0UAT+r7RFHPA2F78QSNjDB1YE0hvRyWo0Uunbe6yMF8wODARR5ZFM4l+FPKuUv/qrR4my5ZialBSLbt5pWqCkGSjklo/gDsKMriDdFqubRG0rY00A1jTD3bix0GaegJ7MczhMGW/psIxC0bfRlVOCp7zCIQJ8oqCdM+JA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f3GbJ2ORhxKmb55/Tk28XZGepRfEU/gdz+VNJEgwhcg=;
- b=JTD8q3Oq6YGaOiTU7nsOdQBmxQUaMlFRlPPFemN9XaQCdAx5XcHdfb45W+6KvLCWhoaSoYxi7qdWp9Gn1KTWnO6cdN3aJdN7TN3pKJ0T0mZuRnYfb9trDNUaJCT2vmsozzdGQs6FWoVGzC/aMpHjz3UDWfvoXneBgUPxiYSSH/s=
-Received: from IA1PR12MB6307.namprd12.prod.outlook.com (2603:10b6:208:3e5::22)
- by BN3PR12MB9571.namprd12.prod.outlook.com (2603:10b6:408:2ca::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 9 Apr
- 2026 19:18:15 +0000
-Received: from IA1PR12MB6307.namprd12.prod.outlook.com
- ([fe80::4739:b181:8a2b:89b2]) by IA1PR12MB6307.namprd12.prod.outlook.com
- ([fe80::4739:b181:8a2b:89b2%3]) with mapi id 15.20.9769.018; Thu, 9 Apr 2026
- 19:18:15 +0000
-From: "Ostrowski, Rafal" <Rafal.Ostrowski@amd.com>
-To: Bert Karwatzki <spasswolf@web.de>
-CC: "Varone, Dillon" <Dillon.Varone@amd.com>, "Hung, Alex"
-	<Alex.Hung@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org"
-	<linux-next@vger.kernel.org>, "linux-rt-devel@lists.linux.dev"
-	<linux-rt-devel@lists.linux.dev>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>
-Subject: Re: kernel panic when resuming from hibernate in next-20260406 with
- PREEMPT_RT
-Thread-Topic: kernel panic when resuming from hibernate in next-20260406 with
- PREEMPT_RT
-Thread-Index: AQHcyCLT+fim4XOC0kmlAbF0I1GUirXWuPGTgAAB0YCAAF84wA==
-Date: Thu, 9 Apr 2026 19:18:15 +0000
-Message-ID:
- <IA1PR12MB6307AC51F4C6E4A77BCB5EDDF8582@IA1PR12MB6307.namprd12.prod.outlook.com>
-References: <20260409131411.10598-1-spasswolf@web.de>
-	 <IA1PR12MB6307858BAECC7CC3AE8AA958F8582@IA1PR12MB6307.namprd12.prod.outlook.com>
- <a67b9159f69e8788a598fb459d8e6d99d1776f2f.camel@web.de>
-In-Reply-To: <a67b9159f69e8788a598fb459d8e6d99d1776f2f.camel@web.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2026-04-09T19:18:14.701Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=1;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB6307:EE_|BN3PR12MB9571:EE_
-x-ms-office365-filtering-correlation-id: e244ec53-9023-4e73-b0f8-08de966cbfc2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|22082099003|18002099003|56012099003|38070700021;
-x-microsoft-antispam-message-info:
- SRCM1hVovrvkJHnG4Qdv0+982QAnAQEc8d97HXTunY8pCG8H1ikVj1t4B03TJ6c2Sr1FyM6t8l5zfXqcbwGKvbM+xY6iyA+7vMU7cCDMs0AY5EnRWDr99okeWaQFU2tWXq+P8G369rLK3+/4D7xptbs75IhQhxmMekM0TRdm7qXgWcIvVaPbiidNrcXGw0mrRuNvw0xGHYd2amXMVIQXOuyUa9ZUPNTDVsqCeDVE13dQBzACB2Bf+a9I5JVC01OI7xa/Qzc+nUp/sWTp9e2+/ve0YOXuCsC3yb/qKlfGVlFGTv7IBu2kD90Wi9H/icCSx5CzcX3RrXLrbk2YBgDniRLfQt0EJ54r1j6x+ZYp481+GYoUqcg13ixwULBacQ4bYpFRLu3GZFvXAHL5DUV3jLycSTqcRzr4VeUFz8LABujpebHFqWszMCjJVMYQ1TlNgl9GYG9XHHKg6ZV7siR+ZkGfk/tenmHK6cxBOr0vjYjOrxMQk/jTzWICWVA1HCkK4HjOAQmlZid1t0n72xKfzFkcdydiERTK8jrIC+VZ8SkKwfEPhunQGwg0x6kW6dJC1RaTxIz/SOHYD5q6Nqv2owwHKTK4CWlBLXqz18k1BJ91X9NZuvODhGVTmtFFIDQ5sP1K8GNCQabP8NnLM1XGU/Xs3AeXyzvdGgzYOMSk5sDTsKKLIGsm2uo3MQR+hV8NJexbV3IU7akTIRKwLXNmhCkNMRNqrvgXzJjOA0QmBfBa84LNu5QyPPFmdoRVYcn2ZT+Twf/xBgdRWE9iTtdbNDhQXvd7WNM/ZN7can739k4=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6307.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(22082099003)(18002099003)(56012099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?ZTugNW+nAF5zgDwZVTlr4YZV2Eyq7+8aCLHOX/Y+yXIo6hvoBDv9dX9ZkQ?=
- =?iso-8859-1?Q?ufGm5YLiYYz9zREgUlqZbEraOUXDyoif+Nu47dGL9yXZl0NbH64vfItHiQ?=
- =?iso-8859-1?Q?+YEetVi7xOwqWcyQI28H5oGmMg53wp8yBqRihHNdEdi6Y+Oc/Ywce4EHEe?=
- =?iso-8859-1?Q?O8QFtPkFz0r1YUIn53ImbcAzUtatNoc1fKqC9NZbtbK+/MBv+CGX7rJeP/?=
- =?iso-8859-1?Q?DKZVBxjEkEATrgLrnCQyqkuvp6E2KYX4d6M8mmxnZ0lTn/ek9yiVXrfvb0?=
- =?iso-8859-1?Q?sUCi94lITS/dJ6JyBhc63J/Tif/3QtC+8SaXEtGhDfbX7OY6m3QpEheDmz?=
- =?iso-8859-1?Q?ERRpxmea3/NAu6/xG+08hm9faI7x0GmD5FgQVuvYN9WpsyrZx5A+fJwOYk?=
- =?iso-8859-1?Q?PZSkOxYwIGwHCOQWf+XHRQ9OQlFb0uTB+8fEnHOOr5c+xtrOQijiCPdvWX?=
- =?iso-8859-1?Q?DTpvrBIdirVVxWVhTmG7N/UUKevzIP22sbTjMdNcVgZg7wnlg8rB9Gj3Ka?=
- =?iso-8859-1?Q?K8rYYAr7Ym/R+BATs1C0BfOie7Dz4Y8unKEi4w7TRZZ7AZFtDsT03Vfrpw?=
- =?iso-8859-1?Q?wapC0kdQ3rUGhdF8Vo58rgY4jrwtPOGtRcmaGxpxBQ8AR1UnDOtP1dumm+?=
- =?iso-8859-1?Q?zKootLCaQbWBwyOkg5nDTjZKpqENWXz5ej3kI0KrsnYfsyxEM5N+4D/UK2?=
- =?iso-8859-1?Q?bNmFlcec5NScR5UK5Szo8ShiPSSbF8f5SjgyC3wj6Fy5vhlTeZuoX7lZ7/?=
- =?iso-8859-1?Q?VSz1HinxDFGb3iU7Qvy1wh8G1jtWISoSbV+qsO5KtEoGUANOzy//o4f4Vs?=
- =?iso-8859-1?Q?erq/z8QdwkssUaZWJlc7OlqFiVtY9UhOHnC1UKiS+7dRQeRuxEgBT4vgbh?=
- =?iso-8859-1?Q?QpnPd1+J3u4xqgZeLmsLAz5mXRhvIJYlwA9MYN4x91l5Ud0OpgrxqjXMTq?=
- =?iso-8859-1?Q?MLMtQhUsvPiOO9ivNCFFASj6Z5cugnJKiAHXoLQI9mzd9DAbBGvOm7R5Ii?=
- =?iso-8859-1?Q?SC7/TMaYJWrz8rHVQQxp6MWIyo9TBQkenphZLy0OmtLaxe1nBuPwK43A7l?=
- =?iso-8859-1?Q?XJAehc4GZo8FI7XEJ1RHkjTNpO7O5Pc1G/0T+Y1p4xQ7x6PHWIztMNXvBZ?=
- =?iso-8859-1?Q?gl88EosvKDa/rjRlXTLHguBG8qICz0HxCY3+82ex6oVgZBIbvI4YJJGzGk?=
- =?iso-8859-1?Q?Dj9pwfTx9QOw2weVKugEdEsXLqpukCY51NC6521j61IL0Fkd2ZkLvnJCYX?=
- =?iso-8859-1?Q?9Wh6tBmoHvZ3fsV5P4i7AgZSP6mEXPCt35D/1504/LOoMD0MXNGeXhn4uk?=
- =?iso-8859-1?Q?ZDAbRN9dT+swLTqyAakRwXB6v4YRt8VjN1Ba86x4QLXF2IW+KY6A3eF5nr?=
- =?iso-8859-1?Q?jsQwOPAuPIkmiixJ3YLxPKPwlcXI+p1WFMxU6ifkhTxz4OPNRS6pVQ32cW?=
- =?iso-8859-1?Q?xxgDIiVxI1tnAdOVQEtbfdUM/tN4ksaxrBcEMEm2tKPWGv+Tq0iEFbsumL?=
- =?iso-8859-1?Q?q57xWNwt/OYtROq4apGY7Q1bxwTGW6aK/4Y+ZIgZN4GzepyRRJqc9j2vvF?=
- =?iso-8859-1?Q?A7ohz8WBPmULf4+ph23gjZaKrVX6Em6JtlqMYUALG+5ZZLsl3/BILQVNNV?=
- =?iso-8859-1?Q?kFx4zyO8V/qHubC7RQTpCS/LXi4XwmsBmMFWBKauraysFbkr/vFwYNpM4a?=
- =?iso-8859-1?Q?+9KCOs1F9X3CsrQaydPYPFzekkc/tZ2vehe+fL+y3CgRIZhz+rVdIGw8OW?=
- =?iso-8859-1?Q?nvHMndpK3zR5VngxjujWd7fQq6gndBGgsK4rXOTe4fFFEa?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rRUV7S+k"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 639LKZtP2302702;
+	Fri, 10 Apr 2026 06:02:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=6pepys90R88tiggDD22B9pLFDfMvkbVT6D79aK6uq
+	KU=; b=rRUV7S+kfG76K+ykT0ChJ9ar+EdFtrhw1+7bDc2NYh58Xk4tn+Ju6s5yQ
+	TrqZ4QfI/M3bEzPOMwYcladnVQxKgCbEKO6S7wWsCLWUNOevxpNXujl95SAHHbhh
+	mcCt9g++r9mMrMvf6qJD/+A6v+rcbmxefKVnpbghsnKMO/il6ilB06aD1Qum8nnf
+	sh3Hg17pJYZL/drXOOGT50PEoqtvDAAswmSVIcSDCvR/jFX8NErBEKlSBfSU7lPr
+	x2kxZItcVwHgKTLoppZCWIWGHhdG3Zq/szvLIh6R818tJDrsW2CcPcU1E05h4ESF
+	9bk6nlhlBOknCQWGO8qiWHZHfIFGw==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dcn2frhbf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 Apr 2026 06:02:28 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63A2Yi8q029863;
+	Fri, 10 Apr 2026 06:02:27 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dcme7prcc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 Apr 2026 06:02:27 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63A62NYE52887910
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 Apr 2026 06:02:23 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 964F620043;
+	Fri, 10 Apr 2026 06:02:23 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 91BC320040;
+	Fri, 10 Apr 2026 06:02:18 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.61.241.130])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 10 Apr 2026 06:02:18 +0000 (GMT)
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+To: sfrench@samba.org, pc@manguebit.org
+Cc: skb99@linux.ibm.com, maddy@linux.ibm.com, linux-cifs@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: [PATCH] smb: client: add missing MODULE_DESCRIPTION() to smb1maperror_test
+Date: Fri, 10 Apr 2026 11:32:11 +0530
+Message-ID: <20260410060211.88944-1-venkat88@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6307.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e244ec53-9023-4e73-b0f8-08de966cbfc2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2026 19:18:15.0926
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rinBcc5jaLldt69klgQWioCnEZSHDUPXtXZI/mWqpv+X02+kIh6RbufcrqjCdQXh+Zim63bv970pLQVOY3mAAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR12MB9571
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDEwMDA1MSBTYWx0ZWRfX+jsqm+3+W918
+ PsPfLRJciTyeMAieDwxGfrX+7cWT/JG0EkVSlALxubbGH93suReXnEl7ovPonGfoztUgpFYmInK
+ R7hQCtq6Ms7oiWpCZvoSMnO4kW2sxBE4UhJKpTqwb4MhSnPWICFdkXFi2B0j698Ey83c9EmIRIo
+ cSQec3sSxP8kqrD9m/md6jhEHBh9GOSx0nyBmOl28aQYLhdge6zeF8NnAOjxKbXQil7NQ0QMRx7
+ iIZVhneiXjI3ueUKzBMYzRswCFKpn8k4EfBJA0ON4USFydT/umjVCRc6llpbfpAEoF7wD+Ad5ha
+ ptseJerncFf7A1Mm4N4PD2dn6RykeT+aIsxFUGb9D9fz1SuslttoNitJFc/SG5NKgQoypvMwd4I
+ FAmhefgzM6/i7axcs1TiV5Rdos5Fmrvxnm3gTnX4QAPpzCIEUCaj5DS057tyXYtfjKlGPgydcSg
+ oslLIbm5E6RaqIbNXKQ==
+X-Authority-Analysis: v=2.4 cv=FsY1OWrq c=1 sm=1 tr=0 ts=69d89274 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=U7nrCbtTmkRpXpFmAIza:22 a=VnNF1IyMAAAA:8 a=kNQELbV3vDtd0-r0qvwA:9
+X-Proofpoint-ORIG-GUID: FQceTmxicb1Jjq5BIXN8ttNQQ-msRDZt
+X-Proofpoint-GUID: FQceTmxicb1Jjq5BIXN8ttNQQ-msRDZt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-10_01,2026-04-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1011 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604100051
 
-I was able to reproduce problem locally on Ubuntu 6.19.0+ #64 SMP PREEMPT_R=
-T=0A=
-=0A=
-Tomorrow I will do my best to fix it. I will let you know by the end of day=
- tomorrow about my progress.=0A=
-=0A=
-Kind Regards,=0A=
-Rafal Ostrowski=0A=
-________________________________________=0A=
-From: Bert Karwatzki <spasswolf@web.de>=0A=
-Sent: Thursday, April 9, 2026 3:33 PM=0A=
-To: Ostrowski, Rafal <Rafal.Ostrowski@amd.com>=0A=
-Cc: Varone, Dillon <Dillon.Varone@amd.com>; spasswolf@web.de <spasswolf@web=
-.de>; Hung, Alex <Alex.Hung@amd.com>; Deucher, Alexander <Alexander.Deucher=
-@amd.com>; Sebastian Andrzej Siewior <bigeasy@linutronix.de>; Thomas Gleixn=
-er <tglx@linutronix.de>; linux-kernel@vger.kernel.org <linux-kernel@vger.ke=
-rnel.org>; linux-next@vger.kernel.org <linux-next@vger.kernel.org>; linux-r=
-t-devel@lists.linux.dev <linux-rt-devel@lists.linux.dev>; amd-gfx@lists.fre=
-edesktop.org <amd-gfx@lists.freedesktop.org>=0A=
-Subject: Re: kernel panic when resuming from hibernate in next-20260406 wit=
-h PREEMPT_RT=0A=
-=0A=
-=0A=
-[You don't often get email from spasswolf@web.de. Learn why this is importa=
-nt at https://aka.ms/LearnAboutSenderIdentification ]=0A=
-=0A=
-Am Donnerstag, dem 09.04.2026 um 13:30 +0000 schrieb Ostrowski, Rafal:=0A=
->=0A=
->=0A=
->=0A=
-> [AMD Official Use Only - AMD Internal Distribution Only]=0A=
->=0A=
-> Hi Bert,=0A=
->=0A=
->=0A=
-> Sorry that you experience this issue.=0A=
->=0A=
->=0A=
-> Do you have all these 3 patches?:=0A=
-> "drm/amd/display: Move FPU Guards From DML To DC - Part 1"=0A=
-> "drm/amd/display: Move FPU Guards From DML To DC - Part 2"=0A=
-> "drm/amd/display: Move FPU Guards From DML To DC - Part 3"=0A=
->=0A=
->=0A=
-> These are highly dependent on each other.=0A=
->=0A=
->=0A=
-> Kind Regards,=0A=
-> Rafal=0A=
->=0A=
-=0A=
-The crashes also occur when all three patches are applied.=0A=
-=0A=
-Bert Karwatzki=0A=
-=0A=
-=0A=
+On the latest linux-next following modpost warning is reported:
+
+  WARNING: modpost: missing MODULE_DESCRIPTION() in
+  fs/smb/client/smb1maperror_test.o
+
+Add MODULE_DESCRIPTION() to the test module to fix the warning.
+
+Signed-off-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+---
+ fs/smb/client/smb1maperror_test.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
+index 820c0dd3bcce..0a816aea4fd6 100644
+--- a/fs/smb/client/smb1maperror_test.c
++++ b/fs/smb/client/smb1maperror_test.c
+@@ -74,3 +74,4 @@ static struct kunit_suite maperror_suite = {
+ kunit_test_suite(maperror_suite);
+ 
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("MB1 error mapping selftest module");
+-- 
+2.45.2
+
