@@ -1,71 +1,81 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6166B1A239A
-	for <linux-next@vger.kernel.org>; Fri, 10 Apr 2026 23:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF322FE05C
+	for <linux-next@vger.kernel.org>; Sat, 11 Apr 2026 10:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775863934; cv=none; b=DCXw13Iqa3a1Eq8z3gEyLLqaQpkLa5STYU8g9XCkPgNqxtP7StR7T5YPT+7r79NaGGr3mZk5cqYF3BJlFd6janw9glGNSVHR/PTR2HirrhkvpTUlAWiciLzJRmViaMU1MHQf+aKERNfraEFtxNl/HeuLlbrwMsZh2YDu95gmWDc=
+	t=1775902970; cv=none; b=CjPPcsiNq8uyP3MPb885qoe71Gk2XfLQ+WOmcH6ebJrbBQ0swFZ7kkyKxuklyadWkEGzbiXVAkimL5W4NWRsg3xVueytQz8Fucu8fY6x9K0wrlUzwnXnUyBNIv8ZQCHpFZC0CHR8MxPpBQQyBKbkXhE+g+m2RWcsj8AxpgSCijY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775863934; c=relaxed/simple;
-	bh=0qivxTH8RMSB1p7NMGBCwGkg5LqiDEtrfcw/mHf9o7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IhYKUPANAcCxmsz8kOyZvFt/hVb2M6EIdP/zIlU/ZbXX3ADNwnAP8m2mEp41gKHLKVQVkxDAHSCt/ZxWSbcYuODg6VoDfsGMNIcv++Mtdi9x7QVtfP+k3jnC2S24wA1P9nZ0zMAJzIcAtz2oaySukgc+5b2ZpMIjbUXBxKfxh4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bzJ7J24g; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1775902970; c=relaxed/simple;
+	bh=iD3hDAw9eMzBWcJH6RRw311g8o/SYKByF+pTTAx9ZTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTu5ITOmdJqmrIaw1+F7N51REJoz5zw2bw78SxS/8o8AhvWN0fyhaiRzcbGI3aIcZ/B9r1tuNc7ZEfYEEZ8DPrMnv8OMPbMtcV/wOFrGazvh09Qsz+KSIyeeykbTa5n0uNDkyazVww1alN714LtEYR+9M9u5Q0tLwSKwKeECrR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gtx/BS4R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bzJ7J24g"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=TSFKfWnr5pkL9nCQG2CIBQ8MRLbSJqYdPr0AgoMU7zA=; b=bzJ7J24gYpAjkoq/2P11q3weSl
-	y6G+0LWhStkE1BpgtjMuLZIjvdr2qL/4Pmq8sJXvbcEyK9YIZFpLeYDcHyocVnz5SvWbOFZ+qSFMX
-	d5MXcimDt3cKBADrgPwYm+DKRTg+gjy/ibmFSR8GqGTQ8YxtulqrSUKDCgO7wMoc5CmiDZz7Lfev5
-	UaLCAIFDuKOcic2zSe7cNys60sI4oo25rI9h6V2cw7q6jJjk8xQglTKUH3R/P9QlmxdpLNwNUnPqU
-	WUdeOg1kL9XHzhExNDO5E8+xFHe3JE1GhxQbNBiSNrN9WB5MYjeRb07+wv60bgZQzlsuAHntj4HK7
-	U7MGRLtQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wBLKa-0000000Cvn0-3SSM;
-	Fri, 10 Apr 2026 23:32:08 +0000
-Message-ID: <e1a1c2bb-cb1d-4647-8639-8ee86b218509@infradead.org>
-Date: Fri, 10 Apr 2026 16:32:07 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gtx/BS4R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1091C4CEF7;
+	Sat, 11 Apr 2026 10:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775902970;
+	bh=iD3hDAw9eMzBWcJH6RRw311g8o/SYKByF+pTTAx9ZTs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gtx/BS4RkmfvhMvWCa2xqidaWbYoPrbv/RCcHPJxGdRsKWTxf/AnQmcF2wNfLc2H1
+	 8enDPyewVNbbtirMj45PJq2aZZrc4nYC81E000GhGFjOmtm9+tMwQGggETz52L+vkO
+	 +kAtvrFZjYMbgO1KoZX2jeVRevKcV2i9dHuxztbANnXhcbghxaTOU5Z1tSOYYfWXck
+	 V3aKudFqb72Jgcc8XK4YHatBY3Ri6mTm4oJaEW6rRErR772VCGprGtsrLJh3rYbuqm
+	 yt5aSapQU3iFCyfIV4kM53gXYdDERP6qcjhRq9ltSZSoI3KIlZmuVoCKIjGNi1qWzY
+	 IMrkckvQlo00Q==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 826A91AC58BA; Sat, 11 Apr 2026 11:22:47 +0100 (BST)
+Date: Sat, 11 Apr 2026 11:22:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: Re: linux-next: Tree for Apr 10
+Message-ID: <adog99ZrlIi-cWnF@sirena.co.uk>
+References: <adkN9ZX6xjhARbbh@sirena.co.uk>
+ <e1a1c2bb-cb1d-4647-8639-8ee86b218509@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Apr 10
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-References: <adkN9ZX6xjhARbbh@sirena.co.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <adkN9ZX6xjhARbbh@sirena.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IAy2j/G3wlRT/FHf"
+Content-Disposition: inline
+In-Reply-To: <e1a1c2bb-cb1d-4647-8639-8ee86b218509@infradead.org>
+X-Cookie: You will be divorced within a year.
 
 
+--IAy2j/G3wlRT/FHf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4/10/26 7:49 AM, Mark Brown wrote:
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
+On Fri, Apr 10, 2026 at 04:32:07PM -0700, Randy Dunlap wrote:
 
-I don't see today's linux-next patch(es) at
-kernel.org/pub/linux/kernel/next/.
+> I don't see today's linux-next patch(es) at
+> kernel.org/pub/linux/kernel/next/.
 
-Are they delayed or something else?
+> Are they delayed or something else?
 
--- 
-~Randy
+I have no idea, the script ran.
 
+--IAy2j/G3wlRT/FHf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnaIPMACgkQJNaLcl1U
+h9BCCAf+OgnkGmzo303gMiMUWEIAQcAQ8EbSD/YhcGhDr598WrYjjrpEIYVODswu
+UE4Et4yrxEOUlVd5guydzbv/whtwoQw9DG/H9dYoIFRQVgwyCUj6E2FvxlvIhfI/
+zbPLmnzkonV32P6/P2ExYHmUEYKK8ss/RYgeQqVONHJrYmgEeXFqcRXMNFhZ0YMT
+ZQWz9BVr3cIYF1TsCjTF84yjcXnqZXMFZCvNfj2C0P17SIY+bKsUkr0+SC123vr9
+B+PA+ZAHbPWw1k7fepsdsNGBwad6kHxVssZqivXnt6i4DTdppuwCCZA8cArQvqzo
+LfVlP0jRfjt2kMKxM9zvKSHPONBiwA==
+=Cgx7
+-----END PGP SIGNATURE-----
+
+--IAy2j/G3wlRT/FHf--
