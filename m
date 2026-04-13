@@ -1,42 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF322FE05C
-	for <linux-next@vger.kernel.org>; Sat, 11 Apr 2026 10:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893A0360745;
+	Mon, 13 Apr 2026 10:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775902970; cv=none; b=CjPPcsiNq8uyP3MPb885qoe71Gk2XfLQ+WOmcH6ebJrbBQ0swFZ7kkyKxuklyadWkEGzbiXVAkimL5W4NWRsg3xVueytQz8Fucu8fY6x9K0wrlUzwnXnUyBNIv8ZQCHpFZC0CHR8MxPpBQQyBKbkXhE+g+m2RWcsj8AxpgSCijY=
+	t=1776076876; cv=none; b=g6uYvWQgpEQ8wNmZXh5h6ks0djD+KsLc8xtPIp0QzMiUifI/tqhAP6EbsekqXccbuSwSmvXELxoLJtmJEM8LMOXGufZRdJEjXEwPtSek4qDyOkOhN/NxfC8QSWL6+LLw7Ts5Bziuf5qsSX/mlGBHZeaAlALeJMGL//V8QPtrRIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775902970; c=relaxed/simple;
-	bh=iD3hDAw9eMzBWcJH6RRw311g8o/SYKByF+pTTAx9ZTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTu5ITOmdJqmrIaw1+F7N51REJoz5zw2bw78SxS/8o8AhvWN0fyhaiRzcbGI3aIcZ/B9r1tuNc7ZEfYEEZ8DPrMnv8OMPbMtcV/wOFrGazvh09Qsz+KSIyeeykbTa5n0uNDkyazVww1alN714LtEYR+9M9u5Q0tLwSKwKeECrR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gtx/BS4R; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776076876; c=relaxed/simple;
+	bh=uDmsqn363lB7t12/HLot1J3NJh6Tu3MAjxATgBmtL/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tztiePw9oFxpBxhjTrKqFI71TihWwznHi5Etm96LsQS4q0UbXzhQFy5IviMp5iVSYjyWMFWrHQWjSRMIv6TeVxulKw8FRmSUBsrQyvGtu+liMEJwXULfMPHcgGASnZExZsoUa2n2l9tfpu8ENghGke5grdt7G7PJlN0zNxVDLcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tz3IwjPS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gtx/BS4R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1091C4CEF7;
-	Sat, 11 Apr 2026 10:22:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tz3IwjPS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70165C116C6;
+	Mon, 13 Apr 2026 10:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775902970;
-	bh=iD3hDAw9eMzBWcJH6RRw311g8o/SYKByF+pTTAx9ZTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gtx/BS4RkmfvhMvWCa2xqidaWbYoPrbv/RCcHPJxGdRsKWTxf/AnQmcF2wNfLc2H1
-	 8enDPyewVNbbtirMj45PJq2aZZrc4nYC81E000GhGFjOmtm9+tMwQGggETz52L+vkO
-	 +kAtvrFZjYMbgO1KoZX2jeVRevKcV2i9dHuxztbANnXhcbghxaTOU5Z1tSOYYfWXck
-	 V3aKudFqb72Jgcc8XK4YHatBY3Ri6mTm4oJaEW6rRErR772VCGprGtsrLJh3rYbuqm
-	 yt5aSapQU3iFCyfIV4kM53gXYdDERP6qcjhRq9ltSZSoI3KIlZmuVoCKIjGNi1qWzY
-	 IMrkckvQlo00Q==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 826A91AC58BA; Sat, 11 Apr 2026 11:22:47 +0100 (BST)
-Date: Sat, 11 Apr 2026 11:22:47 +0100
+	s=k20201202; t=1776076876;
+	bh=uDmsqn363lB7t12/HLot1J3NJh6Tu3MAjxATgBmtL/g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Tz3IwjPSoC7BRr8s2HhMEl/+WapHLvesVIx0kmuCOe8x+rhqNlqtJAjfjqstMDZPS
+	 4B+/KEwo2cLsJDtXf5TAuDW2jcZm6umBXtV25IqvAZn8mQwHf1cMw7mQkghoKCBFd6
+	 KiOkjGFVwq1SLV5CHvI3sC4FvQt+loB8TeK1D2A/hJrlKAqX8+dJam5ENS1ox+/8IL
+	 q9Ci2UXjYvur3+Q/iJhwFM2lI8WAoSWGf+gbuvTfWi5J1/tSpT5fws6gDDvIa3k0st
+	 dhIe/KskSyDWVkhCoIhNzLsaYwSjYbwmYP95HTXZti5Aijg1r2v45KwNvw4qFXaaR6
+	 pFkKRrG8mE7BA==
+Date: Mon, 13 Apr 2026 11:41:12 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Subject: Re: linux-next: Tree for Apr 10
-Message-ID: <adog99ZrlIi-cWnF@sirena.co.uk>
-References: <adkN9ZX6xjhARbbh@sirena.co.uk>
- <e1a1c2bb-cb1d-4647-8639-8ee86b218509@infradead.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the clk tree
+Message-ID: <adzISAzZe9EuM-2U@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,38 +40,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IAy2j/G3wlRT/FHf"
+	protocol="application/pgp-signature"; boundary="z7WvH1WM1DchKRj3"
 Content-Disposition: inline
-In-Reply-To: <e1a1c2bb-cb1d-4647-8639-8ee86b218509@infradead.org>
-X-Cookie: You will be divorced within a year.
 
 
---IAy2j/G3wlRT/FHf
+--z7WvH1WM1DchKRj3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Apr 10, 2026 at 04:32:07PM -0700, Randy Dunlap wrote:
+Commit
 
-> I don't see today's linux-next patch(es) at
-> kernel.org/pub/linux/kernel/next/.
+  cf6e6ac63c62c ("clk: qcom: rpmh: Add support for Nord rpmh clocks")
 
-> Are they delayed or something else?
+is missing a Signed-off-by from its author
 
-I have no idea, the script ran.
-
---IAy2j/G3wlRT/FHf
+--z7WvH1WM1DchKRj3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnaIPMACgkQJNaLcl1U
-h9BCCAf+OgnkGmzo303gMiMUWEIAQcAQ8EbSD/YhcGhDr598WrYjjrpEIYVODswu
-UE4Et4yrxEOUlVd5guydzbv/whtwoQw9DG/H9dYoIFRQVgwyCUj6E2FvxlvIhfI/
-zbPLmnzkonV32P6/P2ExYHmUEYKK8ss/RYgeQqVONHJrYmgEeXFqcRXMNFhZ0YMT
-ZQWz9BVr3cIYF1TsCjTF84yjcXnqZXMFZCvNfj2C0P17SIY+bKsUkr0+SC123vr9
-B+PA+ZAHbPWw1k7fepsdsNGBwad6kHxVssZqivXnt6i4DTdppuwCCZA8cArQvqzo
-LfVlP0jRfjt2kMKxM9zvKSHPONBiwA==
-=Cgx7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmncyEcACgkQJNaLcl1U
+h9BZuQf+OjBY8ljtMKRq4qpY+MpkWZ/hXVSnhC7BimyOwnfYgT0AyosqgaCMTJxb
+IdL6HF1uiQ9+yr3zPbvn5+siY+tdJMxTYV2JRDsso9FTcYDp8TRPePd+CHUXnU13
+mNCf8EbzQ+V1a6hbe1Bc4itNAquD89stTl0WqRJad780gwdECPal+mcpf9MaLlfr
+1C/lDxLG5HrGXBT4L7T6oWiQZ/OOWNsJmfyQbUN/kn1MjObjqle2r5wZN4TaYCWn
+aWDhEmWIOc904087ToT2TlhyOhPAg1wEC7ngO/L0UtQU88WwhjEXYWNd273HFxU/
+h13cS7Cfk8HJ85Jxe0E0ScIF+9E55g==
+=Y7lM
 -----END PGP SIGNATURE-----
 
---IAy2j/G3wlRT/FHf--
+--z7WvH1WM1DchKRj3--
