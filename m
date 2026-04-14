@@ -1,44 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FEC35B633;
-	Tue, 14 Apr 2026 12:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DF126B0A9;
+	Tue, 14 Apr 2026 13:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776169097; cv=none; b=Sbd0gDDIHOfI4UpKCSIfml+759tTdPL4T8XI863aeJFATSJa8hU0uDICPG7to+/9XZZO45GY73Dtu4s2BjhFX9tl5nNdGK1ErFj3bGIHnHW5k1UjZMvNpkmLfSu9wXG9WHZMYc9Bp3LZ+VTibVhASh/rraY6LiRg5SptbPt0S48=
+	t=1776172098; cv=none; b=lajMNgE/LD8ioVcS6T8/lwkGai99wiR4qbXYKz0zE8gcSz4Y88j8NMdcpOFcF4Cj4HDs+RhfgKL6F/s/gpVucFN4GuTxyksutua9fa0q1AO8yeugk6P+cPDedi9KIWFKIHIK/JV1xITuRrOjktnFPl2tNkLXZeq66AgLUhCukqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776169097; c=relaxed/simple;
-	bh=4gn9oT3Io797IMn6UnyTmbEEIEuxg+1BvCtywthXl40=;
+	s=arc-20240116; t=1776172098; c=relaxed/simple;
+	bh=EOs4cs74puDHNuXxnDv3cVw0QztmTfh44+ns5SWv/ic=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AnKw0WQD4e0kego428fbjdwAv6rKjk/I+jZLd2E64s5fhhqlh/dqS7RvQesNvErflAtzA2yDaO/hZuW5tmv3yJbrIlsEe/wsbM7/2YMCkTbz4SASvlBiq5K1fnMe65pfTaj/KeynyZWAjlQr8Xxym6YkYoFlPWu+KS6p1BnB9ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acvcYm0Q; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=X4l4YRnIE77v54cLLDb0lJy0jWGZ8JsM1aHtVcXaXlgcRR8hk1lK5YcS1jHyBkgLFAe+EXpNeTX/Bj2WBvXpVyppAn8mQ8GCJQYE8wMvS8iPfMEy+QFLe9V4Kg5oNwEBaMp24w8M5oCSKcK5D4YVWCsBoDWQ21cURQv80v2zj/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4kXfcBM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acvcYm0Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18826C19425;
-	Tue, 14 Apr 2026 12:18:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4kXfcBM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06153C19425;
+	Tue, 14 Apr 2026 13:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776169097;
-	bh=4gn9oT3Io797IMn6UnyTmbEEIEuxg+1BvCtywthXl40=;
+	s=k20201202; t=1776172097;
+	bh=EOs4cs74puDHNuXxnDv3cVw0QztmTfh44+ns5SWv/ic=;
 	h=Date:From:To:Cc:Subject:From;
-	b=acvcYm0QPOU+ysbDfBpUPQ1wr/Fn+6i1NhhNlu6a2KzKH3yN0mrfTMLQyj5pzr/Vc
-	 0MYQ1xA+WyoQULBEuwLd0BjQfec/sy5RAfqSw5FMGf2fV/tjbsWR7pJ5HxjBCXRcK/
-	 rZciD0mgiwLVGbPKaVvwZH2sDro/rKZJfcKCbMns8hKiH1+4uqc2sPhK+2umhzoMdu
-	 HlDaKc4us9fxGuTecpRQF00XDZwm/cKgBy7SblfcpaPkGXvoIizdz8MXpozyRy/eja
-	 BCwN91FgZ1olRla/Dv1nTIRZqF/FY+FkBLLTXY+KjE89aMfqB1X5mVYOD/uK8A6G23
-	 vyErC0xDRqr0Q==
-Date: Tue, 14 Apr 2026 13:18:12 +0100
+	b=D4kXfcBMvRdL998cWd1sQHemp49ysJ85XZdTQjdqz2z3PCSYBlMSHl7ADutQzsXxj
+	 71rou/X8joJ/29r0q+DQ9opI6AfW5Q+l2OmBAbXW5Hr+wtJTd13KsXKaSXB9Up69vl
+	 moTdw59ddBq+bce5vfxlzrAfsQvp6qCh3hcECiBbqWOQFh35wFGOidyzx1tup5G2dD
+	 YCpQmdJr0s2M/IpNw+v4NcVtc7htaH3VaYAnN8DheXoWD5nI1BrOwBLyDw/oSsZooR
+	 rWyt3hIVHEHnyw43H9P/yzPKSeyytTYKPmBMbUGAFF7sFtXfpau2gYUtM1XwEImG2x
+	 R7fF4oTqncbJg==
+Date: Tue, 14 Apr 2026 14:08:13 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Asahi Lina <lina+kernel@asahilina.net>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: linux-next: manual merge of the bpf-next tree with the origin tree
-Message-ID: <ad4whCJuB-viVAae@sirena.org.uk>
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: linux-next: manual merge of the drm tree with the origin tree
+Message-ID: <ad48Pf2DA23y3c4W@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,31 +44,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ssHmiU8O+IQxzZ3+"
+	protocol="application/pgp-signature"; boundary="dTA+dSWhulpEZdll"
 Content-Disposition: inline
 
 
---ssHmiU8O+IQxzZ3+
+--dTA+dSWhulpEZdll
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  include/linux/rcupdate.h
+  rust/kernel/lib.rs
 
 between commit:
 
-  ad6ef775cbeff ("rcu-tasks: Document that RCU Tasks Trace grace periods no=
-w imply RCU grace periods")
+  d1aa40daa777c ("rust: kbuild: remove `feature(...)`s that are now stable")
 
-=66rom the origin tree and commit:
+=66rom the origin tree and commits:
 
-  57b23c0f612dc ("bpf: Retire rcu_trace_implies_rcu_gp()")
+  f9f0b4a1f35d3 ("rust: interop: Add list module for C linked list interfac=
+e")
+  80df573af9ef3 ("rust: drm: gem: shmem: Add DRM shmem helper abstraction")
 
-=66rom the bpf-next tree.
+=66rom the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -79,41 +78,119 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined include/linux/rcupdate.h
-index 18a85c30fd4f3,bfa765132de85..0000000000000
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@@ -205,15 -205,6 +205,6 @@@ static inline void exit_tasks_rcu_start
-  static inline void exit_tasks_rcu_finish(void) { }
-  #endif /* #else #ifdef CONFIG_TASKS_RCU_GENERIC */
+diff --combined rust/kernel/lib.rs
+index 5d22892447bdd,40de00ce4f971..0000000000000
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@@ -16,17 -16,50 +16,17 @@@
+  // Please see https://github.com/Rust-for-Linux/linux/issues/2 for detail=
+s on
+  // the unstable features in use.
+  //
+ -// Stable since Rust 1.79.0.
+ -#![feature(generic_nonzero)]
+ -#![feature(inline_const)]
+ -#![feature(pointer_is_aligned)]
+ -#![feature(slice_ptr_len)]
+ -//
+ -// Stable since Rust 1.80.0.
+ -#![feature(slice_flatten)]
+ -//
+ -// Stable since Rust 1.81.0.
+ -#![feature(lint_reasons)]
+ -//
+ -// Stable since Rust 1.82.0.
+ -#![feature(offset_of_nested)]
+ -#![feature(raw_ref_op)]
+ -//
+ -// Stable since Rust 1.83.0.
+ -#![feature(const_maybe_uninit_as_mut_ptr)]
+ -#![feature(const_mut_refs)]
+ -#![feature(const_option)]
+ -#![feature(const_ptr_write)]
+ -#![feature(const_refs_to_cell)]
+ -#![feature(const_refs_to_static)]
+ -//
+ -// Stable since Rust 1.84.0.
+ -#![feature(strict_provenance)]
+ -//
+  // Stable since Rust 1.89.0.
+  #![feature(generic_arg_infer)]
+  //
+  // Expected to become stable.
+  #![feature(arbitrary_self_types)]
+ +#![feature(derive_coerce_pointee)]
+  //
+  // To be determined.
+  #![feature(used_with_arg)]
+  //
+ -// `feature(derive_coerce_pointee)` is expected to become stable. Before =
+Rust
+ -// 1.84.0, it did not exist, so enable the predecessor features.
+ -#![cfg_attr(CONFIG_RUSTC_HAS_COERCE_POINTEE, feature(derive_coerce_pointe=
+e))]
+ -#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized)=
+)]
+ -#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_from_d=
+yn))]
+ -#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
+ -//
+ -// `feature(file_with_nul)` is expected to become stable. Before Rust 1.8=
+9.0, it did not exist, so
+ +// `feature(file_with_nul)` is stable since Rust 1.92.0. Before Rust 1.89=
+=2E0, it did not exist, so
+  // enable it conditionally.
+  #![cfg_attr(CONFIG_RUSTC_HAS_FILE_WITH_NUL, feature(file_with_nul))]
  =20
-- /**
--  * rcu_trace_implies_rcu_gp - does an RCU Tasks Trace grace period imply =
-an RCU grace period?
--  *
--  * Now that RCU Tasks Trace is implemented in terms of SRCU-fast, a
--  * call to synchronize_rcu_tasks_trace() is guaranteed to imply at least
--  * one call to synchronize_rcu().
--  */
-- static inline bool rcu_trace_implies_rcu_gp(void) { return true; }
--=20
-  /**
-   * cond_resched_tasks_rcu_qs - Report potential quiescent states to RCU
-   *
+@@@ -49,6 -82,7 +49,6 @@@ pub mod bits
+  #[cfg(CONFIG_BLOCK)]
+  pub mod block;
+  pub mod bug;
+ -#[doc(hidden)]
+  pub mod build_assert;
+  pub mod clk;
+  #[cfg(CONFIG_CONFIGFS_FS)]
+@@@ -72,12 -106,15 +72,15 @@@ pub mod faux
+  pub mod firmware;
+  pub mod fmt;
+  pub mod fs;
++ #[cfg(CONFIG_GPU_BUDDY =3D "y")]
++ pub mod gpu;
+  #[cfg(CONFIG_I2C =3D "y")]
+  pub mod i2c;
+  pub mod id_pool;
+  #[doc(hidden)]
+  pub mod impl_flags;
+  pub mod init;
++ pub mod interop;
+  pub mod io;
+  pub mod ioctl;
+  pub mod iommu;
+@@@ -116,8 -153,10 +119,8 @@@ pub mod scatterlist
+  pub mod security;
+  pub mod seq_file;
+  pub mod sizes;
+ -pub mod slice;
+  #[cfg(CONFIG_SOC_BUS)]
+  pub mod soc;
+ -mod static_assert;
+  #[doc(hidden)]
+  pub mod std_vendor;
+  pub mod str;
 
---ssHmiU8O+IQxzZ3+
+--dTA+dSWhulpEZdll
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmneMIMACgkQJNaLcl1U
-h9Bpuwf/QKDAkJrSAPQ80+ExxzxCI8BNzZdRC05PUG52TynImnik0wsGYuaECe6t
-teQPkUVhzEa+TsIIYhNOtHy25LV7yNmnWrlxY2x14cp+5sLeePqkgkiQVqhcOYyZ
-rZru/5i4M0vqgnaHOG9iC5AaFmOan8BIwkL+LF1p+6bmgzasqHuK8Wjm2s5aTfsk
-H5+mv+1Rm5RxACcX7bup/ak7QquTJPSKqpBNuXjiJRJ+ccK1kN8vgRN6sXzakRx7
-8iLsOmZQ1VRpy1JjyIP1QQMmH2SyaFGrcY3piHV4YHWRGQYExwoSmpWCppxhzlkE
-MZk4/NOcZBJoYFgmS1+qk7Snc4NZFg==
-=rWQ8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnePDwACgkQJNaLcl1U
+h9BUZAf/a+e7e56ZI9OKk6GMJAGzwkfrb0Qak+Dnc4NO68r31UDBuM2z3UAnlDSb
+rIFjBrgZ9R3q1Ne/n38VKUhJcq0BfPqd+O0wo/NbCBYUua7T+0hEhn+u4rlTn/m9
+xImCXArMSv4qXMI83/ybj3gmYVX3G/fsob0tQuhlYu54eerK2oZIKPADgI3dDwUh
+SuW1lgf1l8FojP8EgGBnSpGSQdxcCZTqQ3NjOMthQpiYg45DK/hc3QPu+h7Ifu/z
+a0jNk4b0enFWEY1cXQabyMG52B+8NJB2pvHCd1uCRnbK6SDMs6axdNso+ViCDZJN
+tVslE7rQYFGKm9gIsjRJ0xqhsH5ioA==
+=E2eG
 -----END PGP SIGNATURE-----
 
---ssHmiU8O+IQxzZ3+--
+--dTA+dSWhulpEZdll--
