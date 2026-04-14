@@ -1,48 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648FD27470;
-	Tue, 14 Apr 2026 14:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB09F3ECBD4;
+	Tue, 14 Apr 2026 16:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776177527; cv=none; b=nWhKO/5CI0mrn2sGJvbSsPwCqb/e4YRFGLfP8VgnMD/tcQeGJSs62es36WY4lbJ1Esn8pQOQPKilw6P/BpWvfzkH3PIk79Cfympn/b3t3uEnt2ylkj9A97nXGo7lPVfFGRjgg3riyCPO2moH2cLCPEzrJjTpXikrE6eCg8es8yg=
+	t=1776184108; cv=none; b=q5HH4ILVqv59Y8GsM+8MyZqCCwrFG+Y+BNO1A4F4lLhNBKgX5aEP84KK5Fe1MixSL3K9VTutOwOTaprOjOIAPfxz+T/SEqaGpXOAlPrO/+VPpHjfmWOEvgzlw2++6JrDV7mTgh1VGq/9ImFrwC3k1jJrEZTgzuEsKYN077MADYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776177527; c=relaxed/simple;
-	bh=SaKNOQNfKw/kzQKlH3xQLY1T00fTHDQzv6EOXYfqc4Q=;
+	s=arc-20240116; t=1776184108; c=relaxed/simple;
+	bh=YiTPhlPIUYGQJGJyKYl7ezRR9Glb3xw6iYq848nT3Bw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlDEdQ2j/Vvpc3k/igG6VC7uaJhzz9zctzaIlh7T0zKqTuqn0BGMK/6ihMvgzZy5KMJIuo1D8/toFLk9/Hxb+WZVvzWAZlDf1939T5Vs7x1di+stGEMVde6Dz24RRUpigkTtCfSoHbljMtFxHAR7JkOcmAaQaWtDegY7ZzqnJ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7xi0g79; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=HaQ+G/3afkIX+FPyRVM8iwNFWp2nT5+1/UsGpduMxWqVIyEvvGidOjwzgLNhlypZM65Lj6TmINyf+x7YbHLYEioCO/prz0D5yUgLE9IC3cRy6u89U3P3LRHwsFkRSOwuruDh+3Tg8vl7OSW82NNIgZbIf1vNQ5G/Z1fjPWBsk9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLz+nSkq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7xi0g79"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF20C19425;
-	Tue, 14 Apr 2026 14:38:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLz+nSkq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5869FC2BCB6;
+	Tue, 14 Apr 2026 16:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776177527;
-	bh=SaKNOQNfKw/kzQKlH3xQLY1T00fTHDQzv6EOXYfqc4Q=;
+	s=k20201202; t=1776184108;
+	bh=YiTPhlPIUYGQJGJyKYl7ezRR9Glb3xw6iYq848nT3Bw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R7xi0g79ycoWhkT3WE0m80xpgZOvBxxKj/DFuI5g4ONtIZXLUigqmplQZa1Gxt1UE
-	 bgh395D/HCIHk9BFFcBVe6JMZ5fW+fRgNmDnqJWoRlttm6hW73pSNj5nYuJxqgX6EX
-	 zdtOHTnQYQy34DikVPuGZqEx/NvMbIp1/WGFY+AZEQrS5ZLSC3E081MDRWqbpQ5ti/
-	 GomAnBCWAAyfJU6j5bKpp+pX0sDKpY2FOxDGKS8kt6h0ObI2puZPGYDDhY3CpHXagX
-	 2uktJudn1CLy0cTQGtYZcl658cwk0bfV4v3ncoTHkQBQUpFqiX/+KL83Nhhk/DceDm
-	 Y7sk+tIVw+DHg==
-Date: Tue, 14 Apr 2026 15:38:42 +0100
+	b=qLz+nSkq2tFTbgR1DaANkbKZbbXJW5EuOXuvTtrk15fRuD8jLM01FKSQ5JWSvoxrR
+	 GOGFx9por2/n2Cs8HX5Me2CF1192AHjVqe4QL3sN0JhF9Zsf40iZuIkStqd0MKIpsI
+	 nA6jKXwGBJS8I/C15JcV+fkYuVF8QBP9b62ki/oEcQBC61OI2qrD+L8m+r2DnAaKzR
+	 iMDb9YpS0NljSd6y46/Ug15sNO/M0B9gqb9pVLXabJ6puqworHOcCQVBbjXCs5+pWb
+	 rHnGCjINOcoId8AWtFjWuyXY5QYpoKXxVULwjeA1mugDqlx5OQqTKIBpbabVq9c16e
+	 4qhO8reDFmPwQ==
+Date: Tue, 14 Apr 2026 17:28:24 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the origin
- tree
-Message-ID: <a2749894-503f-41a4-98c9-2442ad22ff9e@sirena.org.uk>
-References: <ad4whCJuB-viVAae@sirena.org.uk>
- <CAADnVQLz6-LK4+qad_XqEZXrspttpe4b49jRZ6wUCgEhJeTvgw@mail.gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the rpmsg tree
+Message-ID: <b9305a33-cbe0-4904-a797-2e11ff8d3b3d@sirena.org.uk>
+References: <aarBm-e3NUl9XnY8@sirena.org.uk>
+ <ad5CXXdkBnr1etqT@baldur>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -50,47 +42,40 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r+G3QLXOXTpIj1Yj"
+	protocol="application/pgp-signature"; boundary="KymhOsmhXDUoX4bK"
 Content-Disposition: inline
-In-Reply-To: <CAADnVQLz6-LK4+qad_XqEZXrspttpe4b49jRZ6wUCgEhJeTvgw@mail.gmail.com>
+In-Reply-To: <ad5CXXdkBnr1etqT@baldur>
 X-Cookie: Academicians care, that's who.
 
 
---r+G3QLXOXTpIj1Yj
+--KymhOsmhXDUoX4bK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Apr 14, 2026 at 07:09:44AM -0700, Alexei Starovoitov wrote:
+On Tue, Apr 14, 2026 at 08:41:24AM -0500, Bjorn Andersson wrote:
 
-> But how come you're saying it was discovered "today" ?
+> It looks like Mathieu rebased across the two commits and hence ended up
+> as committer. Fixing it would imply rebasing a bunch of commits, in
+> which I would have to add my s-o-b to patches applied by Mathieu.
 
-> Paul's commit ad6ef775cbeff was committed to rcu tree on Mar 30,
-> while Kumar's 57b23c0f612dc was committed to bpf-next on Apr 7.
+> I'd suggest that we ignore the issue this time. Let me know if you think
+> otherwise.
 
-> "today" is April 14.
+That's a question for Linus not me.
 
-> My only explanation is that rcu tree was not in linux-next until today?!
-
-We're in the merge window, this means things get sent to Linus and end
-up in his tree.  This in turn means that they are seen in different
-orders, and sometimes depending on context in different forms.  -next
-is merged sequentially, it's not an octopus merge of all the trees at
-once.  Some variation of this will likely have been seen before, but not
-this exact combination.
-
---r+G3QLXOXTpIj1Yj
+--KymhOsmhXDUoX4bK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmneUXEACgkQJNaLcl1U
-h9CTlwf/V5apJckYAKX8vqhAGBW1VKms7zFRTDVsiDnVZX3+uA0WBLw51iyXSIlB
-Y59qk/2neBd3KbzoqqM2fBI8+x4+XYvkM/J82+xBuWm39brlQ0JT2OrI4/ZUb4W3
-zC73vs5Bf+NEzkPcmH883gCa9KcC+5bp49vMOrOn0mTwITsgqQCsdUZ+R+8fW9sx
-5YteqtdXh8EHKrCF+yqo/mqWVVjCeBqNWg2bLjl/R3KmicP//WrMsJ5Ix4BwmnD8
-/nMGTLbSSQSdtUfRoUfFu28a3Kt6lYCHRIahkovNfQcliR54pTjct5oOjrpMqbLN
-3sIc1nQkmtuVhgxU1eYwJbZPQro06Q==
-=enOS
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmneaygACgkQJNaLcl1U
+h9A4dwf9EEHD/ZeBrROdRhlVcR7Hqbj3knS6o1YyDhp6V8ihM1qnruj9VFy0Wri+
+SCcJk9xSMy2VFQCMls/9ZzULTL5w8trg9qefA7iuW6oyf/ILJBq4uyjWAXcrYkkl
+6Lwa6HcJPV9H74N4wCII0M+ba8Red8gQSZgKkCDz4PxG9DDBCJrTuSVpgY8Phblf
+EKDnzG3SgTP68vbxRcnZkJRdzRaaOsQPArrdH1Q3HIQ216tKom7JlUzsj+2U99QR
+1f/PiGqcrCguvG5lkVvbFuoIAc65giK4fefDO/145VVOnvcS1QrzYUQz8/VyTqcC
+xOSUt1t5xwGfeLzsWgLriD71PapBNg==
+=K0bi
 -----END PGP SIGNATURE-----
 
---r+G3QLXOXTpIj1Yj--
+--KymhOsmhXDUoX4bK--
