@@ -1,153 +1,139 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f78.google.com (mail-oo1-f78.google.com [209.85.161.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E3830C631;
-	Wed, 15 Apr 2026 14:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B753E317B
+	for <linux-next@vger.kernel.org>; Wed, 15 Apr 2026 15:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776263174; cv=none; b=WZt2b5t86a29mIi66/JGeZNSyyM6+Krx0N2vdXBHRYtrSeJPnlvTZqu9+KsT6aI0eHd0NXBuo+QCSR6Edr0x9/RplrXFKG8D/fcVX2SxUjPK9YoNdychFE6tP/7iKoBiHWWivvR9Z/MjuRaE0/EUKz+9JaC6YOCu4lmnUCV4dbs=
+	t=1776268180; cv=none; b=dfLXffFaIuKHvUsq7HPKuaWtYJrm1+nYKc0ztI3OpMMy0pDL/iAA7lum2atW/YFZLKCmkKb1q31nMmNnNiMZO29FlxS91nPcYR40xK8gvrGgmlTu78RxAdWnkBwLjy3LzLHVJn6WHT0duq5tF5gyCQXPo6VLX36x8l+dWWAaR48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776263174; c=relaxed/simple;
-	bh=RSueRU8EklLeI/w5J8cftxdUjuHFxU1yWrCgyi1xq4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PqwTrAew09InQTKtAz6RSPCZuno9R4SMDbvnVf9AC+GbzexCPhN+h7JKFfXkYpwhwLH1y5FUty/OjNiDurzh5613/FwyYsVg3ChjVG6NQbDV0Al/Ybs892LE7b8eMtxWt4r4R1IGxYchePSnjkkQvqQE+RRZprDcaKdyFnjiEkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f95s+nPC; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f95s+nPC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1776263173; x=1807799173;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RSueRU8EklLeI/w5J8cftxdUjuHFxU1yWrCgyi1xq4k=;
-  b=f95s+nPC0Q66dT0yP8FbOOpFXZBJe0EwHvbX4rQsGsBab08eUGzqhkEO
-   E32HsapGGl4clwjxE2QYprFYmNwhZlKGDfTuBY2ltUIMfy42fWUz5MaBm
-   lF/dYnvAkBy4e9V/16X4Mzm/tXu9Xvn9dnu5gX65cl2NpK0SsKGj92f4P
-   T7/V6mvOUgvolSvya46GEYTUtjBQqhunHRSa7iiayO2wFwsKLVXmPRtHv
-   WUkgiHf7VVyZieVrE54RTw79NEQwFVHrkwmAInFek9tEenfv7WaHIErVk
-   pEFgaHtuhxM+hNztWrdjPP/VD0ib60t6IAaP3uJoFQkHl5qwbbxSR9v+c
-   g==;
-X-CSE-ConnectionGUID: BJ0FXlAQTLaJQ286TCMkdw==
-X-CSE-MsgGUID: sRZJr9nkRfyhpLVWHdURxQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11760"; a="77423473"
-X-IronPort-AV: E=Sophos;i="6.23,179,1770624000"; 
-   d="scan'208";a="77423473"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2026 07:26:13 -0700
-X-CSE-ConnectionGUID: YqUucAghRXSP92Rqxdd/dQ==
-X-CSE-MsgGUID: HdXzh76ES3ujmcVn1KfxVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,179,1770624000"; 
-   d="scan'208";a="234466918"
-Received: from lkp-server01.sh.intel.com (HELO 7f3b36e5d6a5) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 15 Apr 2026 07:26:11 -0700
-Received: from kbuild by 7f3b36e5d6a5 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wD1Bw-000000000Zd-2oop;
-	Wed, 15 Apr 2026 14:26:08 +0000
-Date: Wed, 15 Apr 2026 22:25:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mark Brown <broonie@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the block tree
-Message-ID: <202604152229.1a2cJtU9-lkp@intel.com>
-References: <adjrVagmLJaozz5o@sirena.co.uk>
+	s=arc-20240116; t=1776268180; c=relaxed/simple;
+	bh=+g6XMLTylpWWr7PaGvjg6GlRUR0gsvXb29tdvldILwo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KyEdpH6/SgetC03K31pfZk+z64kPhYiWmr2bqXCYlLIkcbati6DkXhC8XEojqQ1SE2zT7M8cokKo807KX4beCMcWv38G+Ajrc2DEi3JVJZx8Lipd9I8xDoj/PtV74Qd0P1TGd83fv7z4SgB3690zT0dpdsJWFfCqtL3MMBX4d/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f78.google.com with SMTP id 006d021491bc7-69271008251so3788167eaf.2
+        for <linux-next@vger.kernel.org>; Wed, 15 Apr 2026 08:49:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776268173; x=1776872973;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=99hNkWY0Q+eVdLpDuachQrZ2MvVNwXoikg3P0685CEU=;
+        b=cUtqD2YJ2r28MfRny0lo1CkK4E4/RmI6FtdCO/hwRR/oj5bwrORtPdugowCsWCfa46
+         DX2ZxeSXZ1EWciUyuj8ZBnb9eYn583l7bC5iWivXBP4RJt9q26y8Jd84Eh7kCz4fyn1o
+         i60kBBBK3YjqgCrXxBcAl5z4n1sOr0KKbdCRihlYd+IlnhIMDVbihPuKWdcSV6KnbhuT
+         tDSWBK7FgF4W6eaG9Q83xfobX/7YRhpqgb7YWEBFnUSHNuwlVEu2yhoccswiwZNRUP/r
+         mxP9c6OvBdu/dV/W5TyyoKzIDqOi/iGppHHclTwQqukxfrxDjwozRwBuUnA0ofLqn5MM
+         h77A==
+X-Forwarded-Encrypted: i=1; AFNElJ8zZB+JV6PQPcMy85xvLNnaA0JNOE6VJ2w6KHi+8JKubzxgRHzwpR6A6daUXG+WrH1l8k13bWQFLOeY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyosRz7vd9lBzrFz4d83W+Gdu9737NunUreEZ5WhLgN07IANDgT
+	we0gSsTPZX9ZMC4Q9LvWJ6AMzX+zuIrLOYNY5BPjoXb98hKSIox7Go2xVyhdZ2EKq6M8ShU99Qj
+	1SEr4S8wmBWPcHL1B6gAqqO2H2+EQuvwnwPPoohnIwcSwjiYYXj/8NeM1tBY=
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adjrVagmLJaozz5o@sirena.co.uk>
+X-Received: by 2002:a05:6820:62a:b0:67e:313e:22c4 with SMTP id
+ 006d021491bc7-68be85d32e6mr12168340eaf.47.1776268173581; Wed, 15 Apr 2026
+ 08:49:33 -0700 (PDT)
+Date: Wed, 15 Apr 2026 08:49:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69dfb38d.a00a0220.8f24c.016f.GAE@google.com>
+Subject: [syzbot] [fuse?] linux-next test error: WARNING in fuse_dev_install_with_pq
+From: syzbot <syzbot+a761f017e231803b82cd@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-next@vger.kernel.org, miklos@szeredi.hu, sfr@canb.auug.org.au, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mark,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on axboe/for-next]
-[also build test ERROR on isilence/zcrx/for-next]
-[cannot apply to linus/master v7.0 next-20260414]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    936c21068d7a Add linux-next specific files for 20260415
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14940702580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20564048a4030a77
+dashboard link: https://syzkaller.appspot.com/bug?extid=a761f017e231803b82cd
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mark-Brown/linux-next-build-failure-after-merge-of-the-block-tree/20260415-013341
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
-patch link:    https://lore.kernel.org/r/adjrVagmLJaozz5o%40sirena.co.uk
-patch subject: linux-next: build failure after merge of the block tree
-config: loongarch-randconfig-001-20260415 (https://download.01.org/0day-ci/archive/20260415/202604152229.1a2cJtU9-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260415/202604152229.1a2cJtU9-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/65e69b0763ee/disk-936c2106.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eec951f96cd3/vmlinux-936c2106.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d1e1822e93a4/bzImage-936c2106.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202604152229.1a2cJtU9-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a761f017e231803b82cd@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>):
+------------[ cut here ]------------
+fud->pq.processing
+WARNING: fs/fuse/dev.c:482 at fuse_dev_install_with_pq+0x23b/0x270 fs/fuse/dev.c:482, CPU#1: syz.4.290/6132
+Modules linked in:
+CPU: 1 UID: 0 PID: 6132 Comm: syz.4.290 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
+RIP: 0010:fuse_dev_install_with_pq+0x23b/0x270 fs/fuse/dev.c:482
+Code: 85 6d fe ff ff e8 55 84 84 fe 4d 85 ed 0f 94 c0 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc e8 36 84 84 fe 90 <0f> 0b 90 41 80 3c 2e 00 0f 85 8a fe ff ff e9 8d fe ff ff 44 89 f1
+RSP: 0018:ffffc90005357660 EFLAGS: 00010293
+RAX: ffffffff83401a0a RBX: ffff88802cb4b000 RCX: ffff88802d041ec0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffff88802804d50f R09: 1ffff11005009aa1
+R10: dffffc0000000000 R11: ffffed1005009aa2 R12: ffff88802d2a2000
+R13: ffff88802804d598 R14: 1ffff11005009ab3 R15: ffff88802804d500
+FS:  0000555556ded500(0000) GS:ffff888125fbc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f58e1e0ba40 CR3: 000000003e02c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ fuse_dev_install fs/fuse/dev.c:496 [inline]
+ fuse_dev_alloc_install+0x61/0x80 fs/fuse/dev.c:508
+ cuse_channel_open+0x124/0x7b0 fs/fuse/cuse.c:524
+ misc_open+0x2de/0x350 drivers/char/misc.c:163
+ chrdev_open+0x4d0/0x5f0 fs/char_dev.c:411
+ do_dentry_open+0x83d/0x13e0 fs/open.c:947
+ vfs_open+0x3b/0x350 fs/open.c:1079
+ do_open fs/namei.c:4699 [inline]
+ path_openat+0x2e43/0x38a0 fs/namei.c:4858
+ do_file_open+0x23e/0x4a0 fs/namei.c:4887
+ do_sys_openat2+0x113/0x200 fs/open.c:1364
+ do_sys_open fs/open.c:1370 [inline]
+ __do_sys_openat fs/open.c:1386 [inline]
+ __se_sys_openat fs/open.c:1381 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1381
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f58e1e7c819
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb95bfa38 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f58e20f5fa0 RCX: 00007f58e1e7c819
+RDX: 0000000000000002 RSI: 0000200000000040 RDI: ffffffffffffff9c
+RBP: 00007f58e1f12c91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f58e20f5fac R14: 00007f58e20f5fa0 R15: 00007f58e20f5fa0
+ </TASK>
 
->> io_uring/zcrx.c:812:8: error: call to undeclared function 'netif_mp_open_rxq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     812 |         ret = netif_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, NULL);
-         |               ^
-   io_uring/zcrx.c:812:8: note: did you mean 'net_mp_open_rxq'?
-   include/net/page_pool/memory_provider.h:26:5: note: 'net_mp_open_rxq' declared here
-      26 | int net_mp_open_rxq(struct net_device *dev, unsigned ifq_idx,
-         |     ^
-   1 error generated.
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-vim +/netif_mp_open_rxq +812 io_uring/zcrx.c
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-   781	
-   782	static int zcrx_register_netdev(struct io_zcrx_ifq *ifq,
-   783					struct io_uring_zcrx_ifq_reg *reg,
-   784					struct io_uring_zcrx_area_reg *area)
-   785	{
-   786		struct pp_memory_provider_params mp_param = {};
-   787		unsigned if_rxq = reg->if_rxq;
-   788		int ret;
-   789	
-   790		ifq->netdev = netdev_get_by_index_lock(current->nsproxy->net_ns,
-   791							reg->if_idx);
-   792		if (!ifq->netdev)
-   793			return -ENODEV;
-   794	
-   795		netdev_hold(ifq->netdev, &ifq->netdev_tracker, GFP_KERNEL);
-   796	
-   797		ifq->dev = netdev_queue_get_dma_dev(ifq->netdev, if_rxq);
-   798		if (!ifq->dev) {
-   799			ret = -EOPNOTSUPP;
-   800			goto netdev_put_unlock;
-   801		}
-   802		get_device(ifq->dev);
-   803	
-   804		ret = io_zcrx_create_area(ifq, area, reg);
-   805		if (ret)
-   806			goto netdev_put_unlock;
-   807	
-   808		if (reg->rx_buf_len)
-   809			mp_param.rx_page_size = 1U << ifq->niov_shift;
-   810		mp_param.mp_ops = &io_uring_pp_zc_ops;
-   811		mp_param.mp_priv = ifq;
- > 812		ret = netif_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, NULL);
-   813		if (ret)
-   814			goto netdev_put_unlock;
-   815	
-   816		ifq->if_rxq = if_rxq;
-   817		ret = 0;
-   818	netdev_put_unlock:
-   819		netdev_unlock(ifq->netdev);
-   820		return ret;
-   821	}
-   822	
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
