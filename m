@@ -1,86 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A08D335072;
-	Wed, 15 Apr 2026 10:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE57A336895;
+	Wed, 15 Apr 2026 11:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776249826; cv=none; b=dB3uM90VQhqaUVbf0YXBOYPVYuMLJv6DulOWE3yn7Ki+ZnpVeMh0nlTgX9zbeTFv97NzGBq65QJiyRA3gpIvez3YI8uT671Ym3fsgp8SEOecpI2YRY2yX3za6ELDLA+cTxfTkPiY+GIC6RDXAg17JMegcAALUKUtG+lcIYE/ONY=
+	t=1776252722; cv=none; b=bvDJqD9c1djeudQ630QntgpyRGqylNiizKj2jqKEAufhK6g66Z/S746rLVs/gVvc8lQg6lfOcLZHPXF3heUM5qCcjX8/bDtWct1qKAOm5v2bg8dUeDsq9oS2azE6GsHJj3Sny3i5FYmud5akHkKeQ3vXk3Pn9Brn8ShtA8JFPyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776249826; c=relaxed/simple;
-	bh=Sx9PCLygQY86lCuAtZCgpuiP224THQSkn/oeVKEBiPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eAc4PCWXfAmU64V27pa7vop+j+OIRIKwV6rF3kzyHBsbJxO8bHBwYgCQpC7JtTNZGqTmVoYZqjAQXHFl0cMojOHfs5TtRvwRsG/MHlroa7Zb1K4PubtOoVRj3Ez5B/fKFFYoDzFs4kVvRuzVDJZDHGrcLifaVWYxEskFnFMRU1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnyJKIQE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776252722; c=relaxed/simple;
+	bh=b8Aw/7fg+0u6Dp1TPRNyvG4hmUQiFunmewx4V1vTlrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TES/lbOTiKgxDCBmfM9uZIzqKB7ZuBzW8fXiVNkvX0kD9wp02wJ2pfxIuN/5XFzk9Z4iBX2Q/BnnyA4+SA7w5F6nnrIdbcD8G01FDsqqGmaELC6xSliOTiqlDWzXuk0DaNVYXtw/2ilqg24Hs/Kv30NPlxDqEdfu/bhpyCtwUHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fUvUvaBZ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnyJKIQE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED729C19424;
-	Wed, 15 Apr 2026 10:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776249825;
-	bh=Sx9PCLygQY86lCuAtZCgpuiP224THQSkn/oeVKEBiPs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VnyJKIQE5vQapRfleyPoA/W0IiMVQF8m/aQZKvkv4fE7hcIcMNroJYxbwqGI0GRRQ
-	 2I07nNTPliiqKBnfBeWwE7CbmntGQiD2qetKrgPftcvV484T6q4baMqlWk6LjU9z+C
-	 LntPXfrLgQSlfVZoE4sIIRu6zF+THRbQpGi9C4inK+Yg/wFxo+tEVaF2SmCUdpXXg8
-	 zDOd43Jxr7xtPqYdC4DjLjLHFwKpJ4LVHLx+svVi3RemZEQj887o4lIXsPcGeuzCmI
-	 jeWbSIZ2AHy/5hAQ710fyCtzEudE4J4ivML6NyM7ZqAjl6q7NbKTIZKku8/47fdE4c
-	 9fCqeNnB1cSDA==
-Date: Wed, 15 Apr 2026 11:43:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fUvUvaBZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1776252721; x=1807788721;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b8Aw/7fg+0u6Dp1TPRNyvG4hmUQiFunmewx4V1vTlrM=;
+  b=fUvUvaBZSaYQiJ4pxwkf0m077CKwi8qqIRlvUWkcKJNJVhXAu2URvq0c
+   R60l85KYj/yWjmjPoFY4WpiEMpH0DajGxM46hLTQyIxDadu2o/cG8RUug
+   bjp5VTVNYcqjXErw7TGKtRqzGPeOU4ViG6SBa1EMlfohOq9AAX4ZfK+P1
+   5LQwJTNpIw0jWeO4eu4P2EkAMZyz9a4qHnYjOnx6fKUlPVzbSna3HOhwa
+   n2NKLRTJMTch6YpkFqrmAEkKw57cxA4v/RZWg2+tgxnYShw44N9eYk9em
+   MOvjzY/b0pMBoTf3BLHpfKPh1CeM1RuR8vR7o+xwkXU87lRgwQeZVRfMu
+   w==;
+X-CSE-ConnectionGUID: uWOu0icpRrW5uZl56tGMCQ==
+X-CSE-MsgGUID: fm7kOO70SBOjfXg4yL+hIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11759"; a="99867489"
+X-IronPort-AV: E=Sophos;i="6.23,179,1770624000"; 
+   d="scan'208";a="99867489"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2026 04:32:00 -0700
+X-CSE-ConnectionGUID: fAb+rIAnSHKVuXFK92Yccw==
+X-CSE-MsgGUID: hs+metJkTLWqtrWCrpD9lA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,179,1770624000"; 
+   d="scan'208";a="227214118"
+Received: from lkp-server01.sh.intel.com (HELO 7f3b36e5d6a5) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 15 Apr 2026 04:31:59 -0700
+Received: from kbuild by 7f3b36e5d6a5 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wCyTM-000000000RV-3t9W;
+	Wed, 15 Apr 2026 11:31:56 +0000
+Date: Wed, 15 Apr 2026 19:31:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mark Brown <broonie@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the cifs tree
-Message-ID: <ad9r3jEtJJNv0IiA@sirena.org.uk>
+Subject: Re: linux-next: build failure after merge of the block tree
+Message-ID: <202604151948.oJFK3dlv-lkp@intel.com>
+References: <adjrVagmLJaozz5o@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VFqcEjmKTI05v9Uw"
-Content-Disposition: inline
-
-
---VFqcEjmKTI05v9Uw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <adjrVagmLJaozz5o@sirena.co.uk>
 
-Hi all,
+Hi Mark,
 
-After merging the cifs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+kernel test robot noticed the following build errors:
 
-/tmp/next/build/fs/smb/client/smb2ops.c: In function
-'smb2_query_dir_first': /tmp/next/build/fs/smb/client/smb2ops.c:2655:70: error: 'CIFS_DYNAMIC_BUFFER' undeclared (first use in this function); did you mean 'CIFS_NO_BUFFER'?
- 2655 |                 rc = smb2_parse_query_directory(tcon, &combined_iov, CIFS_DYNAMIC_BUFFER,
-      |                                                                      ^~~~~~~~~~~~~~~~~~~
-      |                                                                      CIFS_NO_BUFFER
+[auto build test ERROR on axboe/for-next]
+[also build test ERROR on isilence/zcrx/for-next]
+[cannot apply to linus/master v7.0 next-20260414]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Caused by commit
+url:    https://github.com/intel-lab-lkp/linux/commits/Mark-Brown/linux-next-build-failure-after-merge-of-the-block-tree/20260415-013341
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
+patch link:    https://lore.kernel.org/r/adjrVagmLJaozz5o%40sirena.co.uk
+patch subject: linux-next: build failure after merge of the block tree
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20260415/202604151948.oJFK3dlv-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260415/202604151948.oJFK3dlv-lkp@intel.com/reproduce)
 
-  3777ce7e53f80 (cifs: optimize readdir for small directories)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202604151948.oJFK3dlv-lkp@intel.com/
 
-which really doesn't look like it's a fix - please note that we're in
-the merge window and only fixes should be being added at this point.
+All errors (new ones prefixed by >>):
 
-I have used the tree from next-20260414 instead.
+   io_uring/zcrx.c: In function 'zcrx_register_netdev':
+>> io_uring/zcrx.c:812:15: error: implicit declaration of function 'netif_mp_open_rxq'; did you mean 'net_mp_open_rxq'? [-Wimplicit-function-declaration]
+     812 |         ret = netif_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, NULL);
+         |               ^~~~~~~~~~~~~~~~~
+         |               net_mp_open_rxq
 
---VFqcEjmKTI05v9Uw
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+vim +812 io_uring/zcrx.c
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnfa90ACgkQJNaLcl1U
-h9Cdwwf/S9KkEBlV6I1v71C0jXc/PmAsZlF7XUy4Z8sdT0q6dV+s+6Ejv7rfIuFH
-EBRyLjm8AvewiQG79oGcZZdQ+FljMOM1W7hqPPlM+BJuOImyfTyTT7yHR0F3qucH
-tSew/H/M1Yq4M7RtV3JQrTWObotKiVoDdC9BOg0TGBw2eFIhDfvb6qidu4+eX6Hz
-9iD7Sr81GuwynY93Xn6uayflz/+yZ/ZWqXT0s6di1ZA2Jgt4Z/TeS4QCEWVGQx9n
-C67uKBuV3MyvgleUEqz7xtCwVxveAzaC9Re4MkGEo4nxlMd+hhlak2swOHY2suF4
-dAe6y1XGQDgrCAe1QEzpzJpqyHjH2g==
-=mbBz
------END PGP SIGNATURE-----
+   781	
+   782	static int zcrx_register_netdev(struct io_zcrx_ifq *ifq,
+   783					struct io_uring_zcrx_ifq_reg *reg,
+   784					struct io_uring_zcrx_area_reg *area)
+   785	{
+   786		struct pp_memory_provider_params mp_param = {};
+   787		unsigned if_rxq = reg->if_rxq;
+   788		int ret;
+   789	
+   790		ifq->netdev = netdev_get_by_index_lock(current->nsproxy->net_ns,
+   791							reg->if_idx);
+   792		if (!ifq->netdev)
+   793			return -ENODEV;
+   794	
+   795		netdev_hold(ifq->netdev, &ifq->netdev_tracker, GFP_KERNEL);
+   796	
+   797		ifq->dev = netdev_queue_get_dma_dev(ifq->netdev, if_rxq);
+   798		if (!ifq->dev) {
+   799			ret = -EOPNOTSUPP;
+   800			goto netdev_put_unlock;
+   801		}
+   802		get_device(ifq->dev);
+   803	
+   804		ret = io_zcrx_create_area(ifq, area, reg);
+   805		if (ret)
+   806			goto netdev_put_unlock;
+   807	
+   808		if (reg->rx_buf_len)
+   809			mp_param.rx_page_size = 1U << ifq->niov_shift;
+   810		mp_param.mp_ops = &io_uring_pp_zc_ops;
+   811		mp_param.mp_priv = ifq;
+ > 812		ret = netif_mp_open_rxq(ifq->netdev, if_rxq, &mp_param, NULL);
+   813		if (ret)
+   814			goto netdev_put_unlock;
+   815	
+   816		ifq->if_rxq = if_rxq;
+   817		ret = 0;
+   818	netdev_put_unlock:
+   819		netdev_unlock(ifq->netdev);
+   820		return ret;
+   821	}
+   822	
 
---VFqcEjmKTI05v9Uw--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
