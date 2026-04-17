@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1230830FC1F
-	for <linux-next@vger.kernel.org>; Fri, 17 Apr 2026 11:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9A13A1E66;
+	Fri, 17 Apr 2026 13:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776424795; cv=none; b=gF3d4s688OflZAgnaFavOlHCP7PQ/wdMNS7h8V2kjE7wAo+aLduJPvqIb5IOIGMvAbP2ZOedQ8TCXC32grE34oI67dixxKVicKULnMaQ1KH/Mrt7nQu9YMmO2flyXBAfpzTrdPovL9HEh/U/lz7Y4AqxBZ4jUbY4Nb59Gh0savQ=
+	t=1776433299; cv=none; b=VctpeYPAV/dQDX13F2itX+ubYYfHRzy7gasdkNijcQOwv+zPnh6mo0xTEofi65CmEm6UK2ODzzz9zzf89ROJf7CH1rZDrYWDjrtyQLtr3LJqTxOpxDFOA4XU1tC/jk10CCf++uNCM0GZFWEcqa9TDAaUdYfgbPmgCBY5FQg3O3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776424795; c=relaxed/simple;
-	bh=8yg97ndsfTjcKRi0VXU/DVki/iULSyHOfii7SMdhVNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGnbtS1ufRFkKjYhsT2LGIeOSPQ3OLb6g8naaKx0iFtNagDpOVBMqAAPn2VXDQm52bCvb4xmbfRTH9opDfLIJTQpkHcjbefc0aQ0MQHbqNPCUUsdDtzA8LZReB91f7u002aYRWhx9eHzg4Cg+V5zDFhEgK0J8Whkg48Bco0quhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIVa8iFS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776433299; c=relaxed/simple;
+	bh=moq7qX5nU8b/I7j0I+iRZ/+11yNcSglNPh/iq5Cmz7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aL7kLNIspmY8JvP0/yPzW3tdPxgZViUpcP98ou/Ecwh/O9sh0oGWNk3+wttnYKZPY0kWGj5zLAm04Uov3aZCIuSa+PqBSUoO5ctmhjrbXE0qggzcvn5Kme6f1sNh320zWuA3PYiNDE2zDP2Goc2+SJH73LeKJbPd4UQS5gsdJPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Td23RMO/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIVa8iFS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04488C19425;
-	Fri, 17 Apr 2026 11:19:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Td23RMO/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA2CC2BCB0;
+	Fri, 17 Apr 2026 13:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776424794;
-	bh=8yg97ndsfTjcKRi0VXU/DVki/iULSyHOfii7SMdhVNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MIVa8iFSsRWYF+5k9SwfXvzWkBj0NKOuFcf+vH6VKe8qL4WGkXOUSJ2o7/pB628dt
-	 4qP/Orc2XZgTEI4uKLLi2Hiscac8GxpHhv1T9gJeSIeyuEHqnyWQZiUVcz1/Q+olLG
-	 DKsbqWDQ+m7NpMlrxAGfhPvY4ROT1Jb3j4//mT6KkGKu5NEizKn85bKsMZ71FQLYHR
-	 /0DT3mkUQ0pje/HR53VElG1wMbjaXeyPb8Yvyqh5ZxCEzhwzndllR9SxgCDlWCDnPk
-	 40N2TZqUUDMobxydxib/x1zCIBKhkzsd5tr5iOnXUga1hoxQbJdzXLq2wur6WXVr1Y
-	 M/3ZpbsDqT6uA==
-Date: Fri, 17 Apr 2026 12:19:51 +0100
+	s=k20201202; t=1776433299;
+	bh=moq7qX5nU8b/I7j0I+iRZ/+11yNcSglNPh/iq5Cmz7g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Td23RMO/tdX5t8v3exXVzsgRHVJv43fum9s42fkkC0wCMsUjb9Id+xmnT9iWydKu4
+	 Yph25IJc5ihQNWwDM7xoUbJ/zLYBEIdGQtABZFRhTOe+eYj0l7CahS8IhVORhm1gwn
+	 Jth6uL/uGtRTk2iILQi+QnTqtjZGJ8MLZMSRUyYpvWmRI5k9rwgH9gILDiF82rUBbd
+	 R91n6dUWrV9AXgNICModWKTesIswdtxODDJYXR0NV+5doeV0kZjNQ3VuAcDCC+We21
+	 Y5YHwPbAZK/Oga9RroHU0unqAH4QPCdlYr6nCbGoxheGE/8TZU5Grt4uAld4c0BHI6
+	 EQfbqHi9fYv1A==
+Date: Fri, 17 Apr 2026 14:41:35 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-next@vger.kernel.org
-Subject: Re: Adding clang-fixes tree to -next
-Message-ID: <e243a21a-8507-4bb5-b236-e2dd326672b4@sirena.org.uk>
-References: <20260416232211.GA97229@ax162>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Apr 17
+Message-ID: <aeI4j3unk5o59PKu@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,63 +39,70 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p+zekC2zYvbFlVxj"
+	protocol="application/pgp-signature"; boundary="9dKVCZ+CNohX8Zbf"
 Content-Disposition: inline
-In-Reply-To: <20260416232211.GA97229@ax162>
-X-Cookie: Uh-oh!!  I'm having TOO MUCH FUN!!
 
 
---p+zekC2zYvbFlVxj
+--9dKVCZ+CNohX8Zbf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Apr 16, 2026 at 04:22:11PM -0700, Nathan Chancellor wrote:
+Hi all,
 
-> Could you please add
+The merge window is open, so please to not addd any v7.1) material
+to your linux-next included branches until after the merge window closes.
 
->   https://git.kernel.org/pub/scm/linux/kernel/git/nathan/linux.git clang-fixes-for-next
+Changes since 20260416:
 
-> to -next? It will typically include build fixes for clang targeting the
-> current development cycle but may occasionally include things for the
-> next merge window, depending on size and timing.
+The clang-fixes tree was added.
 
-> If there are any issues or questions, please let me know.
+Non-merge commits (relative to Linus' tree): 3716
+ 3543 files changed, 180497 insertions(+), 57690 deletions(-)
 
-I've added this from today.  Given pending-fixes it might make sense to
-have two branches, one for the current merge window and one for the next
-merge window.  An additional branch costs basically nothing if it's
-empty.
+----------------------------------------------------------------------------
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and
-     * destined for the current or next Linux merge window.
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+Below is a summary of the state of the merge.
 
---p+zekC2zYvbFlVxj
+I am currently merging 419 trees (counting Linus' and 128 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--9dKVCZ+CNohX8Zbf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmniF1YACgkQJNaLcl1U
-h9AV0Af9HqmP5IVY90I1VnlBEcKP+uvSib4Rnthyg/oUIEbuilqBg8NhLLIgEAy0
-NzUAVec1p++3A3ilVL43cSOxsIxnLFWnNK3Qb9H5zDlaS8bIf9s6rrREI/Y1CMSW
-eGSdUvcvHIbx1clryk4J9Mcs1d1g75NyjkDdMrgJctkmsBCxWNLiaktbLaRpttfG
-zwxiLNMtdMBAzNTvkwFLWF5wo+qwZUeTcA1SKSrcInSADXxS1NtRO+hIP32ROi0t
-7wq5YADLPMxin/IJjMgva1av8Tvp96xe+HWvoCZv5L7CMSohLeTv723Zl21M3T+j
-MclljRr3po6Q+kZxEwcYk6b+sufpEQ==
-=jlKm
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmniOI4ACgkQJNaLcl1U
+h9C2EQf+M9g4vQsu20/ytLy9NHhoRncLfrTf8/39WrCNsDXIXYtE5mLUV19ig7Nt
+XjdRyX6Vctn1cDpmRUYEiF3/eZ6Lq4YGKhuJL3mD5hjo2LiY5C0mQO+Wlex1jdjL
+VxSRkrGjELUqapx8WXj4iR9kp6eRq6HC8N0vSs8gy595++GJYUfQ/5wCNZ01QiE8
+pqMr5DI7Iq3Z/vbdkwQjLL0EZpkq7mI7EhlrBhuBIGnnEYPf20YoG2dTOg/VW+b5
+QeyULuMQfVJMMZfZkn51vWIUXO7zJKSNQVsk97ZPf2o0gwKagi4k+e4xaGC2ya0L
+KXEDZprYIOKpVT1thlPqVnc0vwiYJQ==
+=CQcJ
 -----END PGP SIGNATURE-----
 
---p+zekC2zYvbFlVxj--
+--9dKVCZ+CNohX8Zbf--
