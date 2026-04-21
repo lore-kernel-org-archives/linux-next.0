@@ -1,124 +1,119 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C761F151C;
-	Tue, 21 Apr 2026 14:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D1C2609C5;
+	Tue, 21 Apr 2026 14:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776782399; cv=none; b=I3l0UGx7bh9xxFX15cGynB7QefKnAP6umAEX9spAszt4lS9H/VarvYW/EGET/g6TV8nmixWA/jWqwiudho+0P9XUJqiqFjzxHlxC0o7FOytmVX1xuGfyjsNCBBibNvBaUPBzpxuHdb6H2C5NHoajfmjHgwmGu2V7Dwm9fxPBkPc=
+	t=1776782878; cv=none; b=DgyLEe14WpZ89ki6NfB0fqR2HqHvxm6mCkULWaLw89bmyAgeKjF6vx8obFkrf6Fh2izoJlvrtnrJK4VTyHWOP0L6ghhFbuaYugEFMbvGxh5KJjDz3+ty905Uc/oGSyCm1ED0TFPV6dF+EOe1P/DlM4GtejpQqnblBR18Z+fg+JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776782399; c=relaxed/simple;
-	bh=uXb81lRSAjnqX5HATPqXYS7CXLr0avwqNFistyLkx2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ubt0oRwQiliSj2PByeAXLVOFzvIZ9+tLnS52HPODfzwzxZweUaHFFXpzR5UuPR91wG1eWbe+pMdG2yuUqUcg1MoN4hjrpr0D8r2ealVBBp8Vq4HdJzv6XAmt9CsTD/E2I/2tJWd/ODolAwo3FCc8d1BjB/Ppar2UUNWVkD4jW5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jE8LDa5h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776782878; c=relaxed/simple;
+	bh=PHVDKFOSheMKw9fPQmk8n1NOLtBT8myXhQuMzEcaylc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=u+Eyt2ZQrj4ZQPQ6lYnknLpmAt3knyeHu9YTy6cJQUunSy5XWioAhi9hMg1gL9IvjLE5C1LN8+9sF4smzA59Sk61ok4nfSJTtETUjs6rncc1zlYUrZ+anhrXw9uz1180cAYqI2YYkxzvnhbsVqko/Y3p/cbxqRGiak4XxFC4YKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGBLj2vo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE8LDa5h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6687C2BCB0;
-	Tue, 21 Apr 2026 14:39:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGBLj2vo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA09DC2BCB0;
+	Tue, 21 Apr 2026 14:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776782399;
-	bh=uXb81lRSAjnqX5HATPqXYS7CXLr0avwqNFistyLkx2M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jE8LDa5htT7Gx/C9nO1vNWHhnelbO6EmyIlGn4xva1UqaRqzwzQ35gcG/Znn0MdpX
-	 jJXbwOXUtyIrD2P3SOabQGX0k5BUoLbtmYLo7URNmP1YuNEj43FGQ5Y62exD8zicGN
-	 jCg+oXDYqpK/blJCRk2y4aJ3Z2entdGEGtcC7DByjQCbVHE8mhMLJXcFcm3RvHVAGv
-	 pZUdSSqPuntQbYTnp7Vl+CSm1zKerqMDG5iPuVkasQ99FqI4UdrJE3e9uWBKjzvHTB
-	 XIY8AXvmV6G4EtzgVOxfOh0UEHHcFKzP/sBLH9FMhvnGW2n0w9uB3D8UgYVqCd+XcH
-	 OoDcDIAfZeRgQ==
-Message-ID: <83f9e305-fd27-47fe-9ce1-afaabcd3476b@kernel.org>
-Date: Tue, 21 Apr 2026 16:39:54 +0200
+	s=k20201202; t=1776782878;
+	bh=PHVDKFOSheMKw9fPQmk8n1NOLtBT8myXhQuMzEcaylc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WGBLj2voKUPQWLHgZV+6ils9DgExmOQM+WK02Hjlsin39Z0ias/Bo3npvFuJgc/jL
+	 t3sns1bL2QHRYUyHv/0ldVU4eQm3/U346+7odaTPKbAwUXnAESrSMujuQJOC8HmhYI
+	 sIG4kW/7y8uI/QGoNe25utLJeZqFAT8kH5HCx98CaaJsXom9gl+rWBCIBd2zTpdYyX
+	 mcNhJnY2Uhtn0HRuXWxF1w0VHBNy/HsZR2C8uiIRRvUF5GwmBE3m/ltYsVdpHYXgtr
+	 jF1iy5zekv9fOLMyoLBtc4KsZkEQstv72xIiQ01v1Q0iVDtZwwOTnXbZXc9S/qpoLp
+	 RvRylb9kwHoiA==
+Date: Tue, 21 Apr 2026 15:47:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Apr 21
+Message-ID: <aeeOG1nbNZnx3as-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the mm-hotfixes tree
-To: Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Will Deacon <will@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <aed0zrXLgMtO33NQ@sirena.org.uk>
- <c64e4cf2-ccef-4041-9511-a2dcddbc73c8@kernel.org>
- <955d11fa-a9a1-4956-8d2f-269ccc3f2911@sirena.org.uk>
- <2efaf5cb-abe1-4eaf-b269-bf303b7b8372@sirena.org.uk>
- <a3b85bc7-d9b1-444b-8474-91d0e7f2a41d@kernel.org>
- <20260421071701.641a4cd1f8984c6acb53a790@linux-foundation.org>
- <404f951e-41b1-4bef-90ca-e3a89a25c9b5@sirena.org.uk>
-From: "David Hildenbrand (Arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzS5EYXZpZCBIaWxk
- ZW5icmFuZCAoQ3VycmVudCkgPGRhdmlkQGtlcm5lbC5vcmc+wsGQBBMBCAA6AhsDBQkmWAik
- AgsJBBUKCQgCFgICHgUCF4AWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaYJt/AIZAQAKCRBN
- 3hD3AP+DWriiD/9BLGEKG+N8L2AXhikJg6YmXom9ytRwPqDgpHpVg2xdhopoWdMRXjzOrIKD
- g4LSnFaKneQD0hZhoArEeamG5tyo32xoRsPwkbpIzL0OKSZ8G6mVbFGpjmyDLQCAxteXCLXz
- ZI0VbsuJKelYnKcXWOIndOrNRvE5eoOfTt2XfBnAapxMYY2IsV+qaUXlO63GgfIOg8RBaj7x
- 3NxkI3rV0SHhI4GU9K6jCvGghxeS1QX6L/XI9mfAYaIwGy5B68kF26piAVYv/QZDEVIpo3t7
- /fjSpxKT8plJH6rhhR0epy8dWRHk3qT5tk2P85twasdloWtkMZ7FsCJRKWscm1BLpsDn6EQ4
- jeMHECiY9kGKKi8dQpv3FRyo2QApZ49NNDbwcR0ZndK0XFo15iH708H5Qja/8TuXCwnPWAcJ
- DQoNIDFyaxe26Rx3ZwUkRALa3iPcVjE0//TrQ4KnFf+lMBSrS33xDDBfevW9+Dk6IISmDH1R
- HFq2jpkN+FX/PE8eVhV68B2DsAPZ5rUwyCKUXPTJ/irrCCmAAb5Jpv11S7hUSpqtM/6oVESC
- 3z/7CzrVtRODzLtNgV4r5EI+wAv/3PgJLlMwgJM90Fb3CB2IgbxhjvmB1WNdvXACVydx55V7
- LPPKodSTF29rlnQAf9HLgCphuuSrrPn5VQDaYZl4N/7zc2wcWM7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <404f951e-41b1-4bef-90ca-e3a89a25c9b5@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qA5kG9uLm71TFPB/"
+Content-Disposition: inline
 
-On 4/21/26 16:28, Mark Brown wrote:
-> On Tue, Apr 21, 2026 at 07:17:01AM -0700, Andrew Morton wrote:
->> On Tue, 21 Apr 2026 15:42:29 +0200 "David Hildenbrand (Arm)" <david@kernel.org> wrote:
-> 
-> 
->>> I think Andrew uses the hotfixes tree as the base for the -unstable
->>> trees. So anything that ends up in there gets fast-tracked into -next.
->>> Not good :(
-> 
->> Always been this way.  The expectation is that a hotfix is small,
->> time-sensitive and fixes something which is broken in linux-next.  It's
->> exceedingly rare for a hotfix to break the build!
-> 
->> I'll drop this patch.
-> 
-> Thanks.  David, to be clear none of this is much more than a minor
-> annoyance
 
-Right, and I want you to have as little such annoyances as possible :)
+--qA5kG9uLm71TFPB/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Cheers,
+Hi all,
 
-David
+The merge window is open, so please to not addd any v7.1) material
+to your linux-next included branches until after the merge window closes.
+
+I will be on holiday from 25th April to 15th May, Thierry Reding has
+generously volunteered to provide some cover in that period.
+
+Changes since 20260420:
+
+The mm-hotfixes tree acquired a build failure, I used the version
+=66rom next-20260420 instead.
+
+The mm-unstable tree acquired a build failure, I used the version from
+next-20260420 instead.
+
+The mm-nonmm-unstable tree acquired a build failure, I used the version
+=66rom next-20260420 instead.
+
+Non-merge commits (relative to Linus' tree): 1792
+ 2001 files changed, 64261 insertions(+), 29119 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 419 trees (counting Linus' and 128 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--qA5kG9uLm71TFPB/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnnjhoACgkQJNaLcl1U
+h9CtDAf/YTyb9KOFH78DSnZ8VdmLXJbgP81zIpy4kWmj7JsGHlNWpZv8mzltjhK5
+lqLgB4T1c1TheCnK16kU4Sbcu83BcUQELVHaJwyD4zghJ0U4wFIk09kmTYxTNrM5
+4Jno8NQ16Q8+Muo9e852/VL8BYKXW8UnG/g4yzuNcP6fGu2Oa0xLT72JfB97whpE
+oHcPK0qFgqQmqKFLTejhU4r4FSRBBb2d/Bx0+M8r6YaqLE+rOqj1YTs9EuNehtPz
+JyelpXmNhdsJXndikCmM37Zgf5BYe5wwAMO4bytYHlBNi4dij7NqdaIndQRNAvfT
+ZHxkmSEszDb5l9BTE1eXlqVpfDDLcQ==
+=3b5l
+-----END PGP SIGNATURE-----
+
+--qA5kG9uLm71TFPB/--
