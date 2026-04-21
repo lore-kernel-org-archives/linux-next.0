@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CF63D9022;
-	Tue, 21 Apr 2026 14:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C761F151C;
+	Tue, 21 Apr 2026 14:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776782153; cv=none; b=SE5jny15Rwl4URWoLqYsyJv/kTlJd5qrNxT+AqJJfipyplkLS76NqELYXkcjtBEMvJ9phzDsz2xQfy+yZZOveH5AhU+AhIzkPhyOJak+P+a1Eu8xI0sSwSRmsOP+TovUuEWWQTrwSO0mZZpqZZ5HDMKVX0B5dAGibcPGkjnrSfk=
+	t=1776782399; cv=none; b=I3l0UGx7bh9xxFX15cGynB7QefKnAP6umAEX9spAszt4lS9H/VarvYW/EGET/g6TV8nmixWA/jWqwiudho+0P9XUJqiqFjzxHlxC0o7FOytmVX1xuGfyjsNCBBibNvBaUPBzpxuHdb6H2C5NHoajfmjHgwmGu2V7Dwm9fxPBkPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776782153; c=relaxed/simple;
-	bh=Ft8xTFilgb8ybRNQyAGMUE0e8hb+C4yY8TXAVgPkyvc=;
+	s=arc-20240116; t=1776782399; c=relaxed/simple;
+	bh=uXb81lRSAjnqX5HATPqXYS7CXLr0avwqNFistyLkx2M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KKsL8Oxtj9Ipw2WHtE4DWPBzSXZ/MnXS7OvkLs7C+nvaIbDJXeAvhrzPYGS9XuhXsDpleBqxtXRjknXfBkkZtHAgre3w9oFSlb7VAn82vu7OBM+sYMQJUAFGlbeZsDQdXn0IuRGTRdA3aWPpD1R/pvSUIiViP7Jsw+IIWnPXCNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFPPNHyw; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ubt0oRwQiliSj2PByeAXLVOFzvIZ9+tLnS52HPODfzwzxZweUaHFFXpzR5UuPR91wG1eWbe+pMdG2yuUqUcg1MoN4hjrpr0D8r2ealVBBp8Vq4HdJzv6XAmt9CsTD/E2I/2tJWd/ODolAwo3FCc8d1BjB/Ppar2UUNWVkD4jW5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jE8LDa5h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFPPNHyw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A22C2BCB8;
-	Tue, 21 Apr 2026 14:35:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE8LDa5h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6687C2BCB0;
+	Tue, 21 Apr 2026 14:39:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776782152;
-	bh=Ft8xTFilgb8ybRNQyAGMUE0e8hb+C4yY8TXAVgPkyvc=;
+	s=k20201202; t=1776782399;
+	bh=uXb81lRSAjnqX5HATPqXYS7CXLr0avwqNFistyLkx2M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GFPPNHywNu/K/tQO+ioNERjeIKjKHVN9nSfqsEkbjObEER17yEatDIRIbrIItDLI6
-	 xEpW41p/G3p1iDEpNS9yZkUxHbyXXbWgfd/dUxFn2JXtYySKSSUs4UmM9OkQwfGpmF
-	 XsqdM+fE7jrvwCEIKSI4d1A54LELVYNFubq3LVBCg+4Vc2z1/Xxf4BtzDRzLUwAgpc
-	 KNq2OZ01yNAyBIiTZzGez/8Il1N7evbFfwFNYk7gZxH+D02kJBR6BF4YTNPwF03KCN
-	 yxh8i0+IHPSiDz5vmY4RBopR0GvonCAlCXAHDNR0kY+sG1BZaT1W5+Ut1mgO2/DT5s
-	 Pp0ZbCEeM9Wvw==
-Message-ID: <32f90970-51bd-41c6-b80f-71a8c91ec97d@kernel.org>
-Date: Tue, 21 Apr 2026 16:35:48 +0200
+	b=jE8LDa5htT7Gx/C9nO1vNWHhnelbO6EmyIlGn4xva1UqaRqzwzQ35gcG/Znn0MdpX
+	 jJXbwOXUtyIrD2P3SOabQGX0k5BUoLbtmYLo7URNmP1YuNEj43FGQ5Y62exD8zicGN
+	 jCg+oXDYqpK/blJCRk2y4aJ3Z2entdGEGtcC7DByjQCbVHE8mhMLJXcFcm3RvHVAGv
+	 pZUdSSqPuntQbYTnp7Vl+CSm1zKerqMDG5iPuVkasQ99FqI4UdrJE3e9uWBKjzvHTB
+	 XIY8AXvmV6G4EtzgVOxfOh0UEHHcFKzP/sBLH9FMhvnGW2n0w9uB3D8UgYVqCd+XcH
+	 OoDcDIAfZeRgQ==
+Message-ID: <83f9e305-fd27-47fe-9ce1-afaabcd3476b@kernel.org>
+Date: Tue, 21 Apr 2026 16:39:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -36,10 +36,9 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: linux-next: build failure after merge of the mm-hotfixes tree
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Will Deacon <will@kernel.org>,
+To: Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Will Deacon <will@kernel.org>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Linux Next Mailing List <linux-next@vger.kernel.org>
 References: <aed0zrXLgMtO33NQ@sirena.org.uk>
@@ -48,8 +47,7 @@ References: <aed0zrXLgMtO33NQ@sirena.org.uk>
  <2efaf5cb-abe1-4eaf-b269-bf303b7b8372@sirena.org.uk>
  <a3b85bc7-d9b1-444b-8474-91d0e7f2a41d@kernel.org>
  <20260421071701.641a4cd1f8984c6acb53a790@linux-foundation.org>
- <26b33b43-da9a-4587-b331-801c19b07676@kernel.org>
- <20260421072819.b1ab891aef59c45226f25247@linux-foundation.org>
+ <404f951e-41b1-4bef-90ca-e3a89a25c9b5@sirena.org.uk>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -96,81 +94,29 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20260421072819.b1ab891aef59c45226f25247@linux-foundation.org>
+In-Reply-To: <404f951e-41b1-4bef-90ca-e3a89a25c9b5@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
->>> I'll drop this patch.
->>
->> I'll resend v2 later. Maybe we can let that rest in mm-new for 2 days to
->> get some build coverage.
+On 4/21/26 16:28, Mark Brown wrote:
+> On Tue, Apr 21, 2026 at 07:17:01AM -0700, Andrew Morton wrote:
+>> On Tue, 21 Apr 2026 15:42:29 +0200 "David Hildenbrand (Arm)" <david@kernel.org> wrote:
 > 
-> OK.
 > 
-> I *could* start giving hotfixes a run in mm-new first, although
+>>> I think Andrew uses the hotfixes tree as the base for the -unstable
+>>> trees. So anything that ends up in there gets fast-tracked into -next.
+>>> Not good :(
 > 
-> - it'll add a few days additional latency (which people sometimes get
->   upset about)
-
-Yes, for some more urgent stuff we don't want that. 1 day is
-probably okay, until we know the bots went crazy on it.
-
+>> Always been this way.  The expectation is that a hotfix is small,
+>> time-sensitive and fixes something which is broken in linux-next.  It's
+>> exceedingly rare for a hotfix to break the build!
 > 
-> - haven't really seen a need for this before
+>> I'll drop this patch.
 > 
+> Thanks.  David, to be clear none of this is much more than a minor
+> annoyance
 
-It happens rarely indeed.
-
-> - coverage is mm-new is poor - for example, this error probably
->   wouldn't have been found until Mark grabbed the patch via mm-hotfixes.
-
-I get daily build reports against mm-new, for example, mail from this night
-
-
-"
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-new
-branch HEAD: f4279f87cd6c82ebdaccdc56f38e7b80ca7fcc03  mm/vmstat: spread vmstat_update requeue across the stat interval
-
-elapsed time: 1161m
-
-configs tested: 157
-configs skipped: 6
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-15.2.0
-alpha                            allyesconfig    gcc-15.2.0
-alpha                               defconfig    gcc-15.2.0
-arc                              allmodconfig    gcc-15.2.0
-arc                               allnoconfig    gcc-15.2.0
-arc                              allyesconfig    gcc-15.2.0
-arc                                 defconfig    gcc-15.2.0
-arc                   randconfig-001-20260419    gcc-12.5.0
-arc                   randconfig-002-20260419    gcc-12.5.0
-arm                               allnoconfig    clang-23
-arm                              allyesconfig    gcc-15.2.0
-arm                                 defconfig    clang-23
-arm                          gemini_defconfig    clang-20
-arm                   randconfig-001-20260419    gcc-8.5.0
-arm                   randconfig-002-20260419    gcc-11.5.0
-arm                   randconfig-003-20260419    clang-23
-arm                   randconfig-004-20260419    clang-23
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.2.0
-arm64                               defconfig    gcc-15.2.0
-arm64                 randconfig-001-20260419    clang-16
-arm64                 randconfig-002-20260419    clang-23
-arm64                 randconfig-003-20260419    clang-23
-arm64                 randconfig-004-20260419    gcc-8.5.0
-...
-"
-
-I suppose that was before you pushed the change? Because
-I'd assume allnoconfig would have found it.
-
-But maybe there is some more secret sauce to reproduce it.
+Right, and I want you to have as little such annoyances as possible :)
 
 -- 
 Cheers,
