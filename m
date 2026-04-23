@@ -1,226 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D71A3029;
-	Thu, 23 Apr 2026 11:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6859D2DC77F;
+	Thu, 23 Apr 2026 14:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776945157; cv=none; b=EJmGzBmbrDX6VginiCsphdoz29sWJmvEvZFFHvLLyabSbGSZn2zvr4daHMeZ3BqaTW3By3Tdg4GCVpvx8ltFqxDQS0VY3oUxSpRbNuyEbRKrAB4f0mf312gEushc2jEtJa3vuy+TbY9vwY9VpDLLbYEt++c/vBnGCCwgKBFN7Cw=
+	t=1776953858; cv=none; b=GN0CqZ5wJi5RRX+XTYBBqODf0+2amzBg18fKGDHWLvTtyK6rfqQk8M/DKtauTNynkjFtC+/Dt/etYysgG9QQzjca626wpEKJlTwaOFm1EBQABKx2Jhpd9mPiu97LUweZA5/Xto22bIJe7F5+GKiQFVBVggt5IbXifkch1beEU78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776945157; c=relaxed/simple;
-	bh=prD59CCWBtGY8jlWFKg1ncmGsWR9DYqXgzz0eJJGVVU=;
+	s=arc-20240116; t=1776953858; c=relaxed/simple;
+	bh=VETspyH98064NNYkXWMMd4D5+ynedMe0AN4U3TeIW40=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D+2R5DwgTQmJfwuNRALbI3E31TuH/njk/vgDXWQNVR/34z80MBgIdEvlojhOqebxyM3KuEHXWO1SFdZMV0jsrQJbkuBPAKfG7s9dVTRN7X5tupKREUVAgC/9TNvkzV1eZH6rRo9aDKYEY4cpSxJvWL4a7SOH9Nf/BwwDx3rOsP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6BZ1pz1; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=ZsbJeAu+KRdJpdHr23oXbq3p2p2QHgMerqs/1Uwkb1QyE6a80JdNno44cVA23P5y1pR3nT0tEYhJUzuPsePHeSiw2WtcyyToqzbldisV/tdgag1Zzveo8w/x17pVa9X6SLCyTvZ4VWivwdFJkhl5H17AJwr+AEBJapCObfXhhXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWWwm9HS; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6BZ1pz1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 792FCC2BCAF;
-	Thu, 23 Apr 2026 11:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776945157;
-	bh=prD59CCWBtGY8jlWFKg1ncmGsWR9DYqXgzz0eJJGVVU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=L6BZ1pz1mdHrExgKVGxqK6UFtLQ4Gpv/fPjUBILhOFRzmrF8G5Yee44zrH7DWFw+V
-	 Q8bWZlLpOAKn/HJfMp2rwMRizqJBgeNE/Px74xn0drbt1C+AszSfnD4g53Jt08OV5o
-	 cMkYo32Uhv1NXwnlyBqLRkg/zdXzP3Rk6M/fl2kxq0qOkXP3expCoE5CVql6NZFxzO
-	 QuvTouiLlL/7en6y6NlfsNxlkCrKjRd+REINKiXgn/z541cqpdB1SiCaowtvxiMKCK
-	 Q4L+RUp6ajtObzn0H6uPn9HqLxJYEY1DHRo2lIltlfEw7MBY+1/fbRdZk7IjPslfrj
-	 zziEfd4aJ6FrQ==
-Date: Thu, 23 Apr 2026 12:52:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWWwm9HS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1776953856; x=1808489856;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=VETspyH98064NNYkXWMMd4D5+ynedMe0AN4U3TeIW40=;
+  b=EWWwm9HSNnVmvvxOQMwyQaNW0jZP3OR8WybgqqVA3P/3f52YPAd8AaNo
+   75iK5ZirhcoFzd/5dOphatA4qocY3iXdH8p3A5B/aZzrWyN6I8XAYU/CH
+   ZD4DzqHlIIU1yOkuMyAxjNh4g5P/EIkXM4OR/lB3IuESHLZUsMo5oCas/
+   Zyvo1n/Ka+c3309CypRzZUM+ubp/t6g4D/fvwr3frOIsjX2HbO7e83xU7
+   Kg0+jy8z+r6xpXqG92lQGwpqtsVpTtCPsafhYcV8uVnpYBmG2+TsKISlD
+   0laGryPHacgh1+LKjf9A8tAUIxQlSnXLkcfwNwUE9f3zO3JDhb0veGcC1
+   A==;
+X-CSE-ConnectionGUID: FnmfllMsTA6Su+2vnHoWiA==
+X-CSE-MsgGUID: hHqC6bnOQqqjWEu7BBv1GQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11765"; a="88533657"
+X-IronPort-AV: E=Sophos;i="6.23,194,1770624000"; 
+   d="scan'208";a="88533657"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2026 07:17:34 -0700
+X-CSE-ConnectionGUID: 1uXB3uhYT8e8RQqNsGl4Sg==
+X-CSE-MsgGUID: srVysri8Qza8LI2KYs73zQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,194,1770624000"; 
+   d="scan'208";a="232509039"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.163])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2026 07:17:33 -0700
+Date: Thu, 23 Apr 2026 17:17:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mark Brown <broonie@kernel.org>, sakari.ailus@linux.intel.com,
+	hansg@kernel.org
+Cc: linux-media@vger.kernel.org, mchehab@kernel.org,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner-fixes tree
-Message-ID: <aeoIAXzqh0n54mxl@sirena.org.uk>
+Subject: AtomISP tree for Linux Next
+Message-ID: <aeop-rkoHOgF2OgQ@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7x7X9Ka/G+Kp+HPM"
-Content-Disposition: inline
-
-
---7x7X9Ka/G+Kp+HPM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi all,
+Hi, Mark!
 
-After merging the vfs-brauner-fixes tree, today's linux-next build
-(arm_multi_v7 defconfig) failed like this:
+I think I will express the thought hanging in the air that AtomISP driver needs
+to be exposed in Linux Next tree. Currently it's being stored on linuxtv.org
+servers [1] which I think is not often appear in the Linux Next. So, for now
+can you add that tree to Linux next
 
-In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/include/linux/fscache-cache.h:17,
-                 from /tmp/next/build/lib/debug_info.c:13:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-In file included from
-/tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/client.c:48:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-In file included
-=66rom /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/super.c:70:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/super.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/file.c:41:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/file.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/read.c:28:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/read.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/direct.c:63:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/direct.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/pagelist.c:29:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289:
-fs/nfs/pagelist.o] Error 1 In file included from
-/tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/nfs4file.c:17:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289:
-fs/nfs/nfs4file.o] Error 1 In file included from
-/tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/write.c:37:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/write.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/inode.c:50:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/inode.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/dir.c:46:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:289: fs/nfs/dir.o]
-Error 1 In file included from /tmp/next/build/include/linux/fscache.h:18,
-                 from /tmp/next/build/fs/nfs/fscache.h:15,
-                 from /tmp/next/build/fs/nfs/nfs4proc.c:69:
-/tmp/next/build/include/linux/netfs.h: In function 'netfs_read_sizes':
-/tmp/next/build/include/linux/netfs.h:672:16: error: 'return' with a
-value, in function returning void [-Wreturn-mismatch]
-  672 |         return zero_point;
-      |                ^~~~~~~~~~
-/tmp/next/build/include/linux/netfs.h:659:20: note: declared here
-  659 | static inline void netfs_read_sizes(const struct netfs_inode *ictx,
-      |                    ^~~~~~~~~~~~~~~~
+Also note, that one of the reasons behind this is a flow of patches against
+the driver that basically repeat each other or unapplicable due to newcomers
+have a hard time to realise that they need to be based on a niche tree.
 
-Caused by commit
+[1]: https://git.linuxtv.org/sailus/media_tree.git/log/?h=atomisp
 
-  756f72b6d8db9 ("netfs: Fix potential for tearing in ->remote_i_size and -=
->zero_point")
+Tree: git://linuxtv.org/sailus/media_tree.git
+      https://git.linuxtv.org/sailus/media_tree.git
+Branch: atomisp
 
-I have used the tree from next-20260422 instead.
+-- 
+With Best Regards,
+Andy Shevchenko
 
---7x7X9Ka/G+Kp+HPM
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnqCAEACgkQJNaLcl1U
-h9A9xwf+OXrrVls2/QLS8VrbB0fagPeoPyoEW/v4pi2j7HPWeMzqa+NQuxVG2hw+
-wE0q9Ub6XoMkXqaKPlV+quhr2vxJF39tQPBnevI4CWRDzuG1XdMbkuBVpDXZtAhq
-8zg8OzNh/5Hn1irGbJGjI7eqzEWfKCDfqAnDk+6G+Iwv02Xa1gMbbgLr6dDs7k9R
-8OvnUpEliJaX42LimGR2u4BCjPNL/hDgH4dEtG5/NPko+5JxJjME9zWqFbr+bQwd
-xT1AZvCiLE7jSNedtLQpV6sjtcCw/b58OuWKIxXwtQgW+STJQ4xCWojWZY3nquUa
-0aS0Av1i+jyNRxqVYVBZGcPk4zH8Zw==
-=MsPi
------END PGP SIGNATURE-----
-
---7x7X9Ka/G+Kp+HPM--
