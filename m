@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D6D3BED11;
-	Fri, 24 Apr 2026 14:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A63E3D88E1;
+	Fri, 24 Apr 2026 14:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777040614; cv=none; b=avfJQW2ryb45Ida7MH1ecZeHnmOb7aZZd2e6+8VOiIUbH6yl5tcX4LIclMV561cdCFpXjNm0CHNIZ/w3ezL+EDImJbJLQOtAhSwzVkN4jhVj+i1IrEs2HpaoBqPVZaUe/j6uCtnS3KKrrCnYBbdB0KJftrGS1BB3DrYmJ4f7xCY=
+	t=1777040625; cv=none; b=V0esJuolYK1a8kkddgveEPzm2VWJA0XVO3I7v41e//AzYpmC7aVIi/dR113dZg8/d0jQeS6EEMNVmC7Kj9DDGxvSAZzkzBxHT5Zg5AUaQYElnPH65kengywhx5wdJc6JbgyvOF4w7n0chSjtSt5dRrGFclMOd9qWS84JnGBJZz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777040614; c=relaxed/simple;
-	bh=3JRHnOuK0kq0gVDvnQwTmpKIDMzfSp762nwBOg2b5UE=;
+	s=arc-20240116; t=1777040625; c=relaxed/simple;
+	bh=xK8BFdFQD7hTLBAXydwqk81aAW6j4HEFoPrmOo23III=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kO+qaPWkAGNeShusz3DW9WW2K1rZZeIssPItLhFIb+XASO8HDoVeTEnPSoNrdnt1q+dZdoRrbxWe4dwtrFR2LQBgv963i3RfCgg/U08qu7BxOb7Sxq3sAIKNuebR1Lobxexw/se3WcNTa+AEANyv5XhvEVC2T9LssFHTXlWf+Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CB9xqi/j; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=huaVqboH7TbioXpCjEtz2Jj5TnYI13VnD31OYl6Xwue1xRQATODZPkmH9O0jLwAMXCMSnTcTRawVDdvvyJsfGqef60gsnzsj9kJ4O/eyKrI7luALWSecWgomW1A5kTghC+ZxOZSEbAZT1V1tR8WXPhGViDhUqRU8hM0M/Y1l+GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9lUgx9I; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CB9xqi/j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C11DC19425;
-	Fri, 24 Apr 2026 14:23:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9lUgx9I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0E2C19425;
+	Fri, 24 Apr 2026 14:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777040613;
-	bh=3JRHnOuK0kq0gVDvnQwTmpKIDMzfSp762nwBOg2b5UE=;
+	s=k20201202; t=1777040624;
+	bh=xK8BFdFQD7hTLBAXydwqk81aAW6j4HEFoPrmOo23III=;
 	h=Date:From:To:Cc:Subject:From;
-	b=CB9xqi/js39eeXqcCVRtgUwio3japK4o1Y1Pfc90I7rfiCx3+OR6m6unilADy6H87
-	 JBDiMHKUbmW0ejzhOg0ABPwHwb0UzGHvcmpV898BZ/N/aIln5pJPFcLJGMBZe2CnZL
-	 g6S8c9CTQId/6qpe9edlKEp70cclgOYN9M9/gAubdfUUll+0QH0kgUD0Go/SRzPLk3
-	 dCyCDq9Xz4JoBLylchXaDfSZ53KhB2HlcPg+2ntcbmbHWUSPtamzarDldgDscfnEPn
-	 dTksoXcWsdFAKtqIEuGqhRndnzIiveqPxGTo837uGQRwD++/tigOKkdDN/jnJiMdC/
-	 feG7Rz7S8XGUw==
-Date: Fri, 24 Apr 2026 15:23:30 +0100
+	b=E9lUgx9I8lVDy81lcPJe9aXqcqgNAxAoLyCwSAKEggD4zQC9qc2RdNrl+QMhU79yX
+	 H93KnTculexIaVsQzp7jGxw5VqIztOGPKc8NpV1gFEn+aILgcKHJ2jGX2/qQhlpPR2
+	 Fg8Higmzsmp2X0OdW9Ri2mxIQGaJyNUqFoc+cPdEWUyRcz4k7MyEM6WtWkzuXfuruJ
+	 kxlRWmW6zWe0kkbCfJOAgaTbe3QTX5CiNrFiFQeXekZLmQu6owjeQNFicMa2PsaoHh
+	 FDuLSqpSKta+BWCHoJmiNJpVPhvubuxg3UmuFnGVQOFEtY0DlDNyrJm2uh/JR7U6n/
+	 nfbAGjONlFAMg==
+Date: Fri, 24 Apr 2026 15:23:41 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Linux Next Mailing List <linux-next@vger.kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Apr 23
-Message-ID: <aet84gzuY2IooNKX@sirena.org.uk>
+Subject: linux-next: Tree for Apr 24
+Message-ID: <aet87SLq-7KZzkqw@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,11 +39,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="huSZ/Orvc8zMYTbd"
+	protocol="application/pgp-signature"; boundary="JgQ6aHkn0+YsirwR"
 Content-Disposition: inline
 
 
---huSZ/Orvc8zMYTbd
+--JgQ6aHkn0+YsirwR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -55,13 +55,12 @@ to your linux-next included branches until after the merge window closes.
 I will be on holiday from 25th April to 15th May, Thierry Reding has
 generously volunteered to provide some cover from 25th April to 8th May.
 
-Changes since 20260422:
+Changes since 20260423:
 
-The vfs-brauner-fixes acquired a build failure, I used the version from
-next-20260422 instead.
+The vfs-brauner-fixes tree lost it's build failure.
 
-Non-merge commits (relative to Linus' tree): 1676
- 1974 files changed, 50400 insertions(+), 24637 deletions(-)
+Non-merge commits (relative to Linus' tree): 1389
+ 1617 files changed, 44629 insertions(+), 15876 deletions(-)
 
 ----------------------------------------------------------------------------
 
@@ -94,19 +93,19 @@ http://neuling.org/linux-next-size.html .
 
 Thanks to Paul Gortmaker for triage and bug fixes.
 
---huSZ/Orvc8zMYTbd
+--JgQ6aHkn0+YsirwR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnrfOEACgkQJNaLcl1U
-h9CZWgf/aiKxtXoz9nLyOnRLaeZju7hXYwbqWmo9dpI24u7WE87AWam3vzAamkpl
-DxqTtopNPhbl7y5gHss3IKoiQQ76ENi3wks40dtu6coMLDjFSd7nDIUlUDXWPuno
-1EQPq2pybp7xE8wsj/63iJeAY2tKPIfIzDKlT6dZr/o68s9YKjuv8AVf2NuFKkUC
-NEKuJ8dNIr6Fb7Ei1nCmM4h05qn3ywBo5J/FMHYGbaZBE8Ra7vZGTiQXKXjSVzw6
-oRdOxb3ytt2EeEbv/52WLxf2lS3amzH7UAwH42brxB7hnbw6LN8zvec4O257JFlV
-Bj5GtltIFqulAQ4EzcdRVI9EA3q1IQ==
-=OPWb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnrfOwACgkQJNaLcl1U
+h9AK8gf/XQ4FkS3xVDdZKzMKXO3zazKjZJrS78ShQQ/D9q0mohXZu9tsFqrZu8cJ
+tLwfIDObp48BOpFU2+mm9F17zJi+8Fuu3MdOZD/WfxsOz11SeFvy7RdIzIZ3NLhd
+7atrgXg6U/Bs9Mt6S7lieRQ85yxLCjU4Q30lCs43i5SpZIktfYtKJUsNhJcpbOos
++cM245pVakdYSHmiL0pxNESXnjxNXy1kIfmgYRJ5cFD3p1lcytBkMkO0OVh3fMd0
+8a5IJ8wF+buhT6gGdHNF9oSnAFyFC4/Uzu834QNhPBTE06a8QyrcpFEFI5FOwqCI
+xcuI4wKC/jAIVjsXOMlYaJdX0uM6SA==
+=PEr/
 -----END PGP SIGNATURE-----
 
---huSZ/Orvc8zMYTbd--
+--JgQ6aHkn0+YsirwR--
