@@ -1,96 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9E5244687;
-	Fri, 24 Apr 2026 08:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D6D3BED11;
+	Fri, 24 Apr 2026 14:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777018131; cv=none; b=HPg9fnIKyxGI6JcyeAoEfcqEmIuygOkirl4l1BpRZF3siSVFDbGIcLNbKrkDv+ECiO95JuhWIXeP2LP0TAzvwGPQ4IQFkfMSEhtvpGPWWIuLfTXDgkrNovdpTkMiYX2KGnr5mG+SHPqwaRztgA0MVa+QttSl1f94S98h0F+q/zc=
+	t=1777040614; cv=none; b=avfJQW2ryb45Ida7MH1ecZeHnmOb7aZZd2e6+8VOiIUbH6yl5tcX4LIclMV561cdCFpXjNm0CHNIZ/w3ezL+EDImJbJLQOtAhSwzVkN4jhVj+i1IrEs2HpaoBqPVZaUe/j6uCtnS3KKrrCnYBbdB0KJftrGS1BB3DrYmJ4f7xCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777018131; c=relaxed/simple;
-	bh=el6eAALVXVx8JxatyilzXF+lnYX3GZ0QJibHKHB+uhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTnU349rHTgM5K86g5nocpp2BUgtuq8IEikMIx8eG9k7lUblwzBfavtubL0Fr3vCiimXNqBZP6Q3C1AAFJVSi56n6mwbF9JNeSUpOGqU4XNdYQ5x/z4jjqDT+cv2ZFCoJqDRknzcudzMJZukzGem9Jg7Uw+5Px774o2FtPo4EL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y16naCEe; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1777040614; c=relaxed/simple;
+	bh=3JRHnOuK0kq0gVDvnQwTmpKIDMzfSp762nwBOg2b5UE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kO+qaPWkAGNeShusz3DW9WW2K1rZZeIssPItLhFIb+XASO8HDoVeTEnPSoNrdnt1q+dZdoRrbxWe4dwtrFR2LQBgv963i3RfCgg/U08qu7BxOb7Sxq3sAIKNuebR1Lobxexw/se3WcNTa+AEANyv5XhvEVC2T9LssFHTXlWf+Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CB9xqi/j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y16naCEe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1777018130; x=1808554130;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=el6eAALVXVx8JxatyilzXF+lnYX3GZ0QJibHKHB+uhY=;
-  b=Y16naCEeRThmnicSuDOJEwa55NdoP5mquC+sFBNvlTEfDZza57d6Ui2t
-   jSg0iqZj/3HNs7OYTYbKm226FHlVsCdMYun72yD0/fEJ7tufrQtehAQ/8
-   Dv0w3kngGYXlsyQJ9H+QCRLMHrWoAODlDTLtYC5AmOiV14uslKe+6iSos
-   OWQXAYVKF+gspx0q/SXGug+2pBH8NLGQxXNiNpXpQQv1drre8s0MTLZ0f
-   djtV0YcB5ms6bqyndRmC6UNF547Mcx6t+vaL/wSy/zyh4MAQjG3egLkwv
-   /xAJithOXs4d5jszMDyjBQbbyOToHJWHfcTkKW1PqWqsjPv1KIVDS854h
-   A==;
-X-CSE-ConnectionGUID: dWLf9g35Qo61V5Ltsw7fDA==
-X-CSE-MsgGUID: Rc9bSL2QRcKBzF9zEpxQFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11765"; a="80579870"
-X-IronPort-AV: E=Sophos;i="6.23,196,1770624000"; 
-   d="scan'208";a="80579870"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2026 01:08:49 -0700
-X-CSE-ConnectionGUID: VhiwT5QPRqmTmIfM6AQQaw==
-X-CSE-MsgGUID: KaLtWwHHQpucdZbsZz+EVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,196,1770624000"; 
-   d="scan'208";a="232799104"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.71])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2026 01:07:35 -0700
-Date: Fri, 24 Apr 2026 11:07:32 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: sakari.ailus@linux.intel.com, hansg@kernel.org,
-	linux-media@vger.kernel.org, mchehab@kernel.org,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: AtomISP tree for Linux Next
-Message-ID: <aeskxK7GODqMUNsH@ashevche-desk.local>
-References: <aeop-rkoHOgF2OgQ@ashevche-desk.local>
- <132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CB9xqi/j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C11DC19425;
+	Fri, 24 Apr 2026 14:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777040613;
+	bh=3JRHnOuK0kq0gVDvnQwTmpKIDMzfSp762nwBOg2b5UE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CB9xqi/js39eeXqcCVRtgUwio3japK4o1Y1Pfc90I7rfiCx3+OR6m6unilADy6H87
+	 JBDiMHKUbmW0ejzhOg0ABPwHwb0UzGHvcmpV898BZ/N/aIln5pJPFcLJGMBZe2CnZL
+	 g6S8c9CTQId/6qpe9edlKEp70cclgOYN9M9/gAubdfUUll+0QH0kgUD0Go/SRzPLk3
+	 dCyCDq9Xz4JoBLylchXaDfSZ53KhB2HlcPg+2ntcbmbHWUSPtamzarDldgDscfnEPn
+	 dTksoXcWsdFAKtqIEuGqhRndnzIiveqPxGTo837uGQRwD++/tigOKkdDN/jnJiMdC/
+	 feG7Rz7S8XGUw==
+Date: Fri, 24 Apr 2026 15:23:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Apr 23
+Message-ID: <aet84gzuY2IooNKX@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="huSZ/Orvc8zMYTbd"
+Content-Disposition: inline
+
+
+--huSZ/Orvc8zMYTbd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Apr 23, 2026 at 03:40:36PM +0100, Mark Brown wrote:
-> On Thu, Apr 23, 2026 at 05:17:30PM +0300, Andy Shevchenko wrote:
-> 
-> > I think I will express the thought hanging in the air that AtomISP driver needs
-> > to be exposed in Linux Next tree. Currently it's being stored on linuxtv.org
-> > servers [1] which I think is not often appear in the Linux Next. So, for now
-> > can you add that tree to Linux next
-> 
-> > Also note, that one of the reasons behind this is a flow of patches against
-> > the driver that basically repeat each other or unapplicable due to newcomers
-> > have a hard time to realise that they need to be based on a niche tree.
-> 
-> > [1]: https://git.linuxtv.org/sailus/media_tree.git/log/?h=atomisp
-> 
-> > Tree: git://linuxtv.org/sailus/media_tree.git
-> >       https://git.linuxtv.org/sailus/media_tree.git
-> > Branch: atomisp
-> 
-> That'd be totally fine of course if the people working on the tree are
-> happy with that - it looks like it's Sakari?
+Hi all,
 
-He is the maintainer, I'm a reviewer. Sakari, can you confirm the inclusion of
-the tree into Linux Next daily integration/builds?
+The merge window is open, so please to not addd any v7.1 material
+to your linux-next included branches until after the merge window closes.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I will be on holiday from 25th April to 15th May, Thierry Reding has
+generously volunteered to provide some cover from 25th April to 8th May.
 
+Changes since 20260422:
 
+The vfs-brauner-fixes acquired a build failure, I used the version from
+next-20260422 instead.
+
+Non-merge commits (relative to Linus' tree): 1676
+ 1974 files changed, 50400 insertions(+), 24637 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 420 trees (counting Linus' and 128 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--huSZ/Orvc8zMYTbd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnrfOEACgkQJNaLcl1U
+h9CZWgf/aiKxtXoz9nLyOnRLaeZju7hXYwbqWmo9dpI24u7WE87AWam3vzAamkpl
+DxqTtopNPhbl7y5gHss3IKoiQQ76ENi3wks40dtu6coMLDjFSd7nDIUlUDXWPuno
+1EQPq2pybp7xE8wsj/63iJeAY2tKPIfIzDKlT6dZr/o68s9YKjuv8AVf2NuFKkUC
+NEKuJ8dNIr6Fb7Ei1nCmM4h05qn3ywBo5J/FMHYGbaZBE8Ra7vZGTiQXKXjSVzw6
+oRdOxb3ytt2EeEbv/52WLxf2lS3amzH7UAwH42brxB7hnbw6LN8zvec4O257JFlV
+Bj5GtltIFqulAQ4EzcdRVI9EA3q1IQ==
+=OPWb
+-----END PGP SIGNATURE-----
+
+--huSZ/Orvc8zMYTbd--
