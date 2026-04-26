@@ -1,232 +1,172 @@
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B18B2459E1
-	for <linux-next@vger.kernel.org>; Sat, 25 Apr 2026 02:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A1B31E820;
+	Sun, 26 Apr 2026 08:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777084239; cv=none; b=UL5mGFUXRyY+VDlBZWEKZXTPsRkGhfV5EcHZnDddRNhZtQmiHkYEF4GniLYH7CgVXxuW30EKiwhMz75cWoF+6HpH2VwI10BRK5G5WVkx5KWEGb6iXcLUyZBMAzqyCx90/jRJIS7xOIMLpi0wkjUKlXw1Pr4+c/UCnixr94d8tiA=
+	t=1777192163; cv=none; b=PlR7iF3nQtkukoUuDJwgebYIAxUbcex/1uSX5qvT2MrhF2UBfJ6FxvlrGxz3Lxs/Ab54xh0OzYjZvz21OPbuyvk31WksYTyWq9xK9X2EIfqShOgLkG+BNrQQEVUoEgdYeJb3CJ95wBAE6jay/mxbtXaYXx2PzKYzT0uC41AeL1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777084239; c=relaxed/simple;
-	bh=xmuU9h0YWfLu4r9mefx23BWjnnM/PohyvUPk3mUN5Yk=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=rTU4jsuVBuT7ifvbKB5ESGlrC3asf7on+Zfx2BP3i+BQHyv4dVdZ8W0cncdr7h7McrHuM3GigxSP93UZ8+KpBxJlypZuq6QnNAvWd480zJco/FST3PhUntrbFCk/lqpH3jqz7LVshKp2aT3enAEZOrVKNH7/YcvxJUzMf2yey9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=FnCmKO68; arc=none smtp.client-ip=74.125.82.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1777192163; c=relaxed/simple;
+	bh=HKdkkZxhzWhSZNCuALP3j01kwxKX3ukZguHj7H7aQXg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XlwwxDZxlgqTqZ4BSzDWrBFDdS/6ewppX/HOrdfSW42/Pj07ui+xSYPRKIEY1Gg37o+jAN45CPMXsGatwsaMZvKjTaRtzuPlkhp/PNGqj1IqY9SRBkF/avBjTj1R0WPrKolngDdocoPjT4yXI7WRFmWxlFO/W1rFhFBi92NwSAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=TfN6uxfS; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="FnCmKO68"
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-2d96243c91fso13377651eec.1
-        for <linux-next@vger.kernel.org>; Fri, 24 Apr 2026 19:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1777084236; x=1777689036; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sSs48/W8GYUSmfTi3kUCM43LMO3zAiI0P8hwjnBAFlk=;
-        b=FnCmKO68DXaf+uyfLfziEox/93bd7wtLCQOBglZjlt88um1TrOSk7AnJyiDz5narwD
-         svbyA1Df33tSkS3sO/PVP0csNqxDEhZaitTI2mFpeDk+G2mRaDlQAnkhlcTmJIA+Del+
-         3tTjx2XXEi1KpEWh0mCGyWNDe8jtv39SxALivTNIY0USGU7mJVSIL6CcnZYdqa+XTL+y
-         oazY14fGnl8eSQQQy8AC6D1W2GANsF40zFfuTIvs8HHX3J82qy6MRm3yIFiXgWPYw39b
-         GoEbk+gDY9DLCzsZoO42M8SHl4VM868orq7e/A8NSv+meWBGpAgSA+80Qe8huCrWrWZ9
-         Ia7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777084236; x=1777689036;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sSs48/W8GYUSmfTi3kUCM43LMO3zAiI0P8hwjnBAFlk=;
-        b=TAvC5sSSWJfF/fHR3o2p10MmNFyJdYfDtabBvXHvXtRYVTc22nHDASzV8tmDQ5IZ3f
-         HJj0T9j3MaT5yPSJIWRwBnA0z0LhmqMvYFmJED57/sPt/zvKsC1MyLCbSeXVGezDTxp3
-         9EJRCjZIkw8UiIucrmBNuz+z8/vNYIgVqSw7/v46TqIH1TtzJ/RwY/WpQ0S5bYjrKctE
-         fZfHXN6tMJZntBCzCUOFzd+9Pr04EoSuytbkvf+VA4mZaBGM3GBE0uh/DfEL4V4qHLwc
-         4UQevU2DOHwDnXy4pLTQV979DzFekE2JH0hM/GKQwQaYzI2XR9nb6h5Wh3XKKZTZ3oQ0
-         KK2A==
-X-Gm-Message-State: AOJu0YwZLwz0A3lfzc46CPu80iKWF5pRhrOVUdT/SkftpzyJc/4qAelE
-	Rr2Vp40mPCpAaEFUyuAv3dLFH1tQqdpQc6xbVp0FV2+FC4FA+L2vUhD19LYZDCBj0ts=
-X-Gm-Gg: AeBDietaBNZFrqIAMiWUv73c3fYRoQCYfo7wuefG20fnvNFqBrvyjCIhCej4/pjNYpA
-	L5Y7W6/6/r26TCqtJ6l+LDEKjejcPBoOxxf1O4tTVcPbeks+FXAsIFThkKLjd0GDPOBRz6oHl/G
-	MxaYUNIS5ipKUfumTk+QLEP2wOCPwgldVAsZ+4JpnoUEUWXS0Ixs/xmL/3zi0vFnNxVj3GZDUu9
-	dWPf6ENHKpp5hJJul3fTerKtK6vDDDG12GhEc4hXEp2QEGAcXqdfKbTtdeq5sLviijMAfEKKoy8
-	NyPGWvC6Whe++sB5GIGm8RIPXFxnAF3JlI3syGYkG5VlZkB97jIPzp4/V0Ht9mK6YiiyteezZcU
-	RhOyy4Y3twqPyFCHrQre5lOZBL7IJbHlJ1HRJMqvEAkafVPQe8MEsczg4TNG/qH9Mrq49bBul5f
-	j2cAq5Krm3NrIHcWWPBEDqNUgbako=
-X-Received: by 2002:a05:7300:ca4:b0:2d9:6373:ad10 with SMTP id 5a478bee46e88-2e473cb4f9bmr16588444eec.7.1777084235911;
-        Fri, 24 Apr 2026 19:30:35 -0700 (PDT)
-Received: from 7f5f57871823 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2e539fa6134sm35937197eec.3.2026.04.24.19.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 19:30:35 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="TfN6uxfS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1777192138; x=1777796938; i=spasswolf@web.de;
+	bh=HKdkkZxhzWhSZNCuALP3j01kwxKX3ukZguHj7H7aQXg=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TfN6uxfSmmjhNJXh7/eXC+oz+wKaHgCBA7rlSWm90bEI8zaEzmkMrhz5hce35fbj
+	 cusl0gdZm2IET4lVoDZuJOfn+Q7ypf73EQIo9PUdI6pecQRUZHQzzudbP3FLlSCpT
+	 JfQlTs6uZ3t22jTMVO3WM4mzfTZgYnnZSyjKI+HXrQfOf8fZbGMFTE3JPmxmDC3Uz
+	 Bvzt2cKLUmqImCrpoHpcy7ofmH8eOfJ/6R8+AddNGR+A8DQeBd8wyyg0gH/rMunhq
+	 JWm9tKxtsM3BCpJizYeMG8VQijQQfJ3KPZ+Anb/JSmVKDkDRCl4gCztSMs7Lh5Dmd
+	 UCLFgEL9C9BkQld8FA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVrg7-1vp6a70IL7-00OI9q; Sun, 26
+ Apr 2026 10:28:58 +0200
+Message-ID: <a1c86a3b83e26d86f95068e8005ce4b2efdca23a.camel@web.de>
+Subject: Re: kernel panic when resuming from hibernate in next-20260406 with
+ PREEMPT_RT
+From: Bert Karwatzki <spasswolf@web.de>
+To: "Ostrowski, Rafal" <Rafal.Ostrowski@amd.com>
+Cc: "Varone, Dillon" <Dillon.Varone@amd.com>, spasswolf@web.de, "Hung, Alex"
+	 <Alex.Hung@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, 
+ Sebastian Andrzej Siewior
+	 <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
+ "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org"
+	 <linux-next@vger.kernel.org>, "linux-rt-devel@lists.linux.dev"
+	 <linux-rt-devel@lists.linux.dev>, "amd-gfx@lists.freedesktop.org"
+	 <amd-gfx@lists.freedesktop.org>
+Date: Sun, 26 Apr 2026 10:28:57 +0200
+In-Reply-To: <IA1PR12MB630789B32C2104D1FAC2B761F8592@IA1PR12MB6307.namprd12.prod.outlook.com>
+References: <20260409131411.10598-1-spasswolf@web.de>
+		 <IA1PR12MB6307858BAECC7CC3AE8AA958F8582@IA1PR12MB6307.namprd12.prod.outlook.com>
+	 <a67b9159f69e8788a598fb459d8e6d99d1776f2f.camel@web.de>
+	 <IA1PR12MB6307AC51F4C6E4A77BCB5EDDF8582@IA1PR12MB6307.namprd12.prod.outlook.com>
+	 <IA1PR12MB630789B32C2104D1FAC2B761F8592@IA1PR12MB6307.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 7080e32d3f09d8688c4a87d81bdcc71f7f606b16
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 25 Apr 2026 02:30:35 -0000
-Message-ID: <177708423483.194.5129245249506067805@7f5f57871823>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kQcTY/3PUzonPXpbQyWw2UThw3wqIb8voXSQJLLomU3am6FJDtR
+ jZEP7YjWtr84o9Yl8q0+X5GrTyAG3qmGq3XCH8ntrf/Qermk+r/+kQwmlbZGZFG0LpAlsqq
+ DzTZ25+xm1GEcinLjcrK0xqw5JmKojq2GYVPKBIIGO0j0rYGcTJfg7GeJ4+i9FqQ+btJE8m
+ NFSIttFCnUI4EoF1sh+9g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Lpp+GaLmvWI=;l3yAI0QohbTvDX/7fIsIXyLxIoI
+ 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
 
+Am Freitag, dem 10.04.2026 um 13:20 +0000 schrieb Ostrowski, Rafal:
+> Hi Bert,
+>=20
+> I identified root cause of problem. I had to do modifications to mention=
+ed patches to work well with PREEMPT_RT enabled. I tested it on my local m=
+achine and it seems to fix the problem. Now it has to go through internal =
+processes. I will let you know if I know when fix will be available to you=
+.
+>=20
+> Kind Regards,
+> Rafal Ostrowski
 
+So it seems that commit
+8bf0cb97edb6 ("drm/amd/display: Move dml2_destroy to non-FPU compilation u=
+nit")
+is the commit that fixes the issue, but is missing the appropriate tags:
 
+Reported-By: Bert Karwatzki <spasswolf@web.de>
+Fixes: 3539437f354b ("drm/amd/display: Move FPU Guards From DML To DC - Pa=
+rt 3")
 
+Please fix this.
 
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/7080e32d3f09d8688c4a87d81bdcc71f7f606b16/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 7080e32d3f09d8688c4a87d81bdcc71f7f606b16
-origin: maestro
-test start time: 2026-04-24 14:17:38.922000+00:00
-
-Builds:	   57 ✅    0 ❌    0 ⚠️
-Boots: 	  173 ✅    9 ❌    0 ⚠️
-Tests: 	10944 ✅ 4223 ❌ 4070 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: qcs615-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.proc.proc_read
-      last run: https://d.kernelci.org/test/maestro:69eb8eaf9b5a968309001cb1
-      history:  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.arm64.arm64_hwcap_sigbus_LSE2
-      last run: https://d.kernelci.org/test/maestro:69eb8ff59b5a9683090048a6
-      history:  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.coredump
-      last run: https://d.kernelci.org/test/maestro:69eb86899b5a968309ffa64c
-      history:  > ✅  > ❌  
-            
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.gpio
-      last run: https://d.kernelci.org/test/maestro:69eb89fa9b5a968309fff1c4
-      history:  > ✅  > ❌  > ❌  
-            
-Hardware: qcs9100-ride
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ring-buffer
-      last run: https://d.kernelci.org/test/maestro:69eb9a819b5a96830900d614
-      history:  > ✅  > ❌  > ❌  
-            
-Hardware: cd8180-orion-o6
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:69eb8f489b5a9683090020c0
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-
-  No fixed regressions observed.
-
-
-### UNSTABLE TESTS
-    
-Hardware: k3-am625-verdin-wifi-mallow
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt
-      last run: https://d.kernelci.org/test/maestro:69eb87119b5a968309ffaada
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: monaco-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.proc.proc_read
-      last run: https://d.kernelci.org/test/maestro:69eba3649b5a96830900f52e
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:69eba5749b5a96830900fb0e
-      history:  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_spi_11010000_can_0
-      last run: https://d.kernelci.org/test/maestro:69eb87a19b5a968309ffbc62
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: sun50i-h5-libretech-all-h3-cc
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.uevent
-      last run: https://d.kernelci.org/test/maestro:69eb8a499b5a968309fff658
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.uevent.uevent_uevent_filtering
-      last run: https://d.kernelci.org/test/maestro:69eb8fe79b5a9683090047d0
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.uevent.uevent_uevent_filtering_global_uevent_filtering
-      last run: https://d.kernelci.org/test/maestro:69eb8fe79b5a9683090047d1
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-Hardware: lenovo-hr330a-7x33cto1ww-emag
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.pi-params
-      last run: https://d.kernelci.org/test/maestro:69eba4f29b5a96830900f8c1
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a968309009565
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a968309009559
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a96830900953d
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a96830900953c
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a96830900953b
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a968309009530
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
-      last run: https://d.kernelci.org/test/maestro:69eb93c69b5a96830900952f
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Bert Karwatzki
