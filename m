@@ -1,86 +1,114 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C63603EF;
-	Mon, 27 Apr 2026 10:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6D33B961E;
+	Mon, 27 Apr 2026 13:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777284865; cv=none; b=ftb3Ds9xE3W9L8Zx8Dh0xxUSK6UH4sQNfKcK/uJVuo+0I1s2VoR9TX+wlJjiME4EmLWRw0fUnR2y2HBSqCv4jfDzmQYgxo8YSpj0/f0tXG3gYLUKZDXfzRu0bXrobIh+zfq4U5WtlyeXp1o0h8V5Gr42dJlpxWS5w2p+inyTmYI=
+	t=1777296371; cv=none; b=Qk4oin3PGMmdA+ZKV++BgpSZcjXShfUYEw0qcDzjQqMcQuyHu9YL6sKSYf0j2vX7OY5RVwVvUBiQw1O8DG1RVHSJRc/7d13Ll6qXTija3wK0Oct9XoIbBxXCRQWCQx/M5lNFG/ahEQUBcOwWbpz9CCPDKAD9CFcAHdH82fRhf2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777284865; c=relaxed/simple;
-	bh=NwvNzA77cTupsEIv6dal9H7A7nSRcWczX8S6oci8yxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gom8mxZ/0w4kbCC5xeutU4PlkG7U0wYFjn0YeaJ4eYxjbM3MoV0CWixo93it7P5yx3/oEkbZVTy0MPTGpg3xRrZtxrzeLmeMnD6ass8R5I0wcnCODcmJGFHvTYxgwnd7JJGffzG6jwC+OjVy2+S6SM84ESsqVO6WmjKKFMFh22k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iYyaOGDh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fo3QIksx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1777296371; c=relaxed/simple;
+	bh=PNFp6YrNI1bQfBLs81TTKtIKSQgAWu5W7GiOidP85qw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rd2yiKmv0xAvEBU+rWlGeqet2dReI6tcoK4oPKAwHovbtx1fRJ6H/lSod/i8hqBEGgLnp1wCP5TW+0SejlyEakG2W8fJZ8lULHGBuiqipk80IWmOVM9IFmKDj3G6QJgiDd2rsOpEipdf4NuS4qwpCwRnB+qntze9DzEEgc50lac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rez/yuzY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iYyaOGDh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fo3QIksx"
-Date: Mon, 27 Apr 2026 12:14:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1777284862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NwvNzA77cTupsEIv6dal9H7A7nSRcWczX8S6oci8yxk=;
-	b=iYyaOGDhytUqJvSrIxSK+nkq/ZSyMs2/DpwRlCS0wldcYHIn7O2NrESm62Qe2jamiaGE/w
-	H0KS+3L0Bdf0tTBWc53JFEHN2yZVjLLhn2GAzlZ5m8Y/BvZxG8NBs7AIYmrxtz2SHop5VU
-	VHN/wEzsUGeD4gIzz5vcTfE6q94OWGTC3nnoK6QkStrKJ3tRmftEM+piRSMypzAmOU7/Jc
-	+TMHy0x8TQdjGLz+RCKZ2l/TKBnWb7sSarQTLuYMxNwmAn9VfpWG/+gO57wYRFgxAWY6Xx
-	oia3mHBV3TIHiJ3rfQqbrLEC9d3Cm925+zLjDp4yekxxNvhIYl+9c9GatjrVoA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1777284862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NwvNzA77cTupsEIv6dal9H7A7nSRcWczX8S6oci8yxk=;
-	b=fo3QIksxWzVdamRewmKjdxtyjLbotkLf90WEvnAeL5AaBHDvw2IBCUHnAy5M2zOQgtw4aL
-	NuKtOe7cqy2nJNAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Ostrowski, Rafal" <Rafal.Ostrowski@amd.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	"Varone, Dillon" <Dillon.Varone@amd.com>,
-	"Hung, Alex" <Alex.Hung@amd.com>,
-	"Deucher, Alexander" <Alexander.Deucher@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>,
-	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-Subject: Re: kernel panic when resuming from hibernate in next-20260406 with
- PREEMPT_RT
-Message-ID: <20260427101421.7N9_OOk5@linutronix.de>
-References: <20260409131411.10598-1-spasswolf@web.de>
- <IA1PR12MB6307858BAECC7CC3AE8AA958F8582@IA1PR12MB6307.namprd12.prod.outlook.com>
- <a67b9159f69e8788a598fb459d8e6d99d1776f2f.camel@web.de>
- <IA1PR12MB6307AC51F4C6E4A77BCB5EDDF8582@IA1PR12MB6307.namprd12.prod.outlook.com>
- <IA1PR12MB630789B32C2104D1FAC2B761F8592@IA1PR12MB6307.namprd12.prod.outlook.com>
- <a1c86a3b83e26d86f95068e8005ce4b2efdca23a.camel@web.de>
- <IA1PR12MB630726FFADF30847A8496012F8362@IA1PR12MB6307.namprd12.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rez/yuzY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0845C19425;
+	Mon, 27 Apr 2026 13:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777296371;
+	bh=PNFp6YrNI1bQfBLs81TTKtIKSQgAWu5W7GiOidP85qw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rez/yuzYCaamcFyGsmogoa6J95EmfW2+T55Lxy3vwhxg7KD9z3YBmdeYFh08gdvFR
+	 nTjenbwfV4Bclg7mo3VnEqsgTHxMotx8m18EoWkiFoEjPzoUMgvXg9frwzVqw/UnJX
+	 Rvhsx83tx9mItHft7vbRGymyQb2eOnuwQyRfyQe9SzIupqQ+i80iTQvcwNrk7IOvXS
+	 YBnZO61GoUvh0gr6NRLhg4JSmshAHRXw+J9xOkovTzeNcAKOjcR8WnL/BuotwgKB9F
+	 aXQamG7tBWBmipZEvzeQ94nYd7D8lgo9VeoGEEqsFjo0BQNXrovI9NWoqaBEjqbxkd
+	 XjkpbvrI7cq1w==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: linux-next: build failure after merge of the bpf-next tree
+Date: Mon, 27 Apr 2026 15:26:01 +0200
+Message-ID: <20260427132604.3754048-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <IA1PR12MB630726FFADF30847A8496012F8362@IA1PR12MB6307.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2026-04-27 09:23:32 [+0000], Ostrowski, Rafal wrote:
-> Hi Bert,
+Hi all,
 
-Hi Rafal,
+After merging the bpf-next tree, today's linux-next build (x86_64_perf)
+failed like this:
 
-> I am glad to hear that mentioned patch fixed your issue.
-> Small clarification - amdgpu is not designed to support
-> PREEMPT_RT flag, but it was still worth to fix as obvious regression.
+      CC      builtin-trace.o
+    builtin-trace.c: In function ‘syscall_arg__strtoul_btf_enum’:
+    builtin-trace.c:972:27: error: comparison of integer expressions of different signedness: ‘int’ and ‘__u32’ {aka ‘unsigned int’} [-Werror=sign-compare]
+      972 |         for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
+          |                           ^
+      CC      util/btf.o
+    util/btf.c: In function ‘__btf_type__find_member_by_name’:
+    util/btf.c:19:43: error: comparison of integer expressions of different signedness: ‘int’ and ‘__u32’ {aka ‘unsigned int’} [-Werror=sign-compare]
+       19 |         for (i = 0, m = btf_members(t); i < btf_vlen(t); i++, m++) {
+          |                                           ^
 
-What does this mean? It is not a flag but a preemption model. It is part
-of the official kernel.
+Caused by commit
 
-> Kind Regards,
-> Rafal Ostrowski
+    f7a6b9eaff3e ("bpf: Extend BTF UAPI vlen, kinds to use unused bits")
 
-Sebastian
+I've fixed it up like below, but please fix this in your tree as well.
+
+Thanks,
+Thierry
+
+--- >8 ---
+From 4689669414ed7de19a69803714bc04e96fd82618 Mon Sep 17 00:00:00 2001
+From: Thierry Reding <treding@nvidia.com>
+Date: Mon, 27 Apr 2026 12:32:06 +0200
+Subject: [PATCH] perf: Fixup for btf_vlan() API change
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ tools/perf/builtin-trace.c | 2 +-
+ tools/perf/util/btf.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index e58c49d047a2..d22e20a57b70 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -969,7 +969,7 @@ static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_
+ 	struct btf *btf = arg->trace->btf;
+ 	struct btf_enum *be = btf_enum(bt);
+ 
+-	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
++	for (u32 i = 0; i < btf_vlen(bt); ++i, ++be) {
+ 		const char *name = btf__name_by_offset(btf, be->name_off);
+ 		int max_len = max(size, strlen(name));
+ 
+diff --git a/tools/perf/util/btf.c b/tools/perf/util/btf.c
+index bb163fe87767..50d98f3e83bf 100644
+--- a/tools/perf/util/btf.c
++++ b/tools/perf/util/btf.c
+@@ -14,7 +14,7 @@ const struct btf_member *__btf_type__find_member_by_name(struct btf *btf,
+ {
+ 	const struct btf_type *t = btf__type_by_id(btf, type_id);
+ 	const struct btf_member *m;
+-	int i;
++	u32 i;
+ 
+ 	for (i = 0, m = btf_members(t); i < btf_vlen(t); i++, m++) {
+ 		const char *current_member_name = btf__name_by_offset(btf, m->name_off);
+-- 
+2.52.0
+--- >8 ---
