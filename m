@@ -1,42 +1,36 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F552EBBA4;
-	Tue, 28 Apr 2026 11:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F156542EECB;
+	Tue, 28 Apr 2026 12:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777376182; cv=none; b=FxNeTqShsaVekM7p+mayMcljnOGQQuBVgq2KfSmrKUVd+Lqk5OyTWrolI78sS05MHr51tVifeVC/CfCVX32/8STjSoZpjsjy30NCna6CQFoZJQCL7/Zsp5QaC38/piioBaIEm1Ahl1dxFjrVfhMN8Lg1k42Mn44vJ4UHc+p2iOY=
+	t=1777380510; cv=none; b=j5S+NOMOJCMXpJP6+KSkmdbi9VqcnJgKYqfZAmXEvPPoOic1aK5/F7eDg7HW3DgsuRVaGQiKkjRZIDwIATFwqyuGhfuKS+0KV3ZZRtDkIDJbu+w1C/enzM5DVeawh8JTXbBfY4+3YUp6umEyB8ryA4ZB57Y3DA35JiyAjUQlxU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777376182; c=relaxed/simple;
-	bh=EjuVpeXvk+QMO3YZj7e27menUivVdWrZAaKc/D2Uxb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hEYKgMXKTeB1CFRylao7lLKtRRSR1WWGAvtpF5sPFEErznXZW8eiTeDY/3/OKyIptLvK9J/z9C5m0TcoN/QDwyzG9fk9FNPdc2LjibKFn7WnFetK5Cjq/BrDDN8EJLlH6NnD3CMO6sygu0Rt38GFB3iaVYjDPRetABG+nv/Ie9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bvv2T7tO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777380510; c=relaxed/simple;
+	bh=PI8Ts0ZQtGkrONsGhkEbOUrYbXQ5IJvC8kVsBkj/Fgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V5U7nboqMPRygnskEMQC/w2Vyvt27j4hOYIqrXv8c+1Xi2IzifDv2E1vORGupZLuaKBJ4kzvMON65RqHQ9ogi1rS5dE9/u/cOxv/kkzjrgf8LnT7DWALkvxOwQ2/jYXPYQav4U7ssdcju58MRyZF/GPtPHvMLc74By+vxxcv8+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgWoiTg9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bvv2T7tO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160C9C2BCAF;
-	Tue, 28 Apr 2026 11:36:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgWoiTg9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B607C2BCB5;
+	Tue, 28 Apr 2026 12:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777376182;
-	bh=EjuVpeXvk+QMO3YZj7e27menUivVdWrZAaKc/D2Uxb0=;
+	s=k20201202; t=1777380509;
+	bh=PI8Ts0ZQtGkrONsGhkEbOUrYbXQ5IJvC8kVsBkj/Fgo=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Bvv2T7tOfw+gh4Gtgn7oVzjhdZ0DzOfbHUpkTuYZEaPb6yvJBK/AwB1u/b3oO2inr
-	 3lSXaRZSSRLWDmDlpFQU+3RwKCbMNZcshbatV3o/0/iUvT+9JC3Dx2lnaYgBWO44UO
-	 RdEQQWAPqDKC5LZKPwFVjMIaKJAZeLInmSUXY56QM5/4AImV9tL4Gzp4nARJZYd8zZ
-	 P3GVxTV8EcCUXzPFDo1Eu1A9C4jaIcIU/NQxV5DXnRdZDIyke4hLgahmZTaltPNrMx
-	 jhD2sXKWmhsnvHsiFFUswMxOBT5kyJ+678U7wIP5CbwQTPyN0E0AT89u0jh8ZES4tZ
-	 bZ79QEglbDGvw==
+	b=QgWoiTg9FnQ6nc00ElU1q4ZOt2vMYabb5mPX9cmhe/RRcm7GpTWcfnHaKVZX8TjXH
+	 Wywf1t2hc+42I9Dq5xiGyXHBMRMFo+6REPevmhmQjyJcwdMofvs7Xx6gT278APAOdB
+	 D2v3Il7Nr2X++l32Ng2zDEolwkTKaES+RWsMsZgCAdsix5Kkg+liLZHvVNYzvUuDox
+	 MywB9DgVkuTm4IaDMayF8bLMf5S0T4Z2WxK/B7RAcbQaybnNz/BOjGitS2ojI52UH8
+	 sOFwl5qZENgZSTBncj54McKbEkyVfRO74yGPVobT07qR/m57/49qnCj/LfnBTnwh9z
+	 JjYiqfqpPOdyA==
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Tue, 28 Apr 2026 13:36:14 +0200
-Message-ID: <20260428113616.3896930-1-thierry.reding@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Apr 28
+Date: Tue, 28 Apr 2026 14:48:20 +0200
+Message-ID: <20260428124827.3910282-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -48,24 +42,46 @@ Content-Transfer-Encoding: 8bit
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+Changes since 20260427:
 
-    drivers/gpu/drm/i915/display/skl_watermark.c
+The bpf-next build failure was partially resolved, but linux-next is
+still carrying a patch to fix up another issue.
 
-between commit:
+The efi-fixes tree added a few commits that caused build failures. I
+reported them and added fixes for them in linux-next in the meantime.
 
-    a97c88a176b6 ("drm/i915/wm: Verify the correct plane DDB entry")
+The arm64 allyesconfig build failure for drm/amd/amdgpu still exists.
 
-from Linus' tree and commits (possibly others, too):
+Non-merge commits (relative to Linus' tree): 1466
+ 1808 files changed, 120786 insertions(+), 21960 deletions(-)
 
-    4268d1397d94 ("drm/i915/wm: Extract skl_ddb_entry_verify()")
-    fd52fb0d6cc2 ("drm/i915/wm: Verify 'ddb_y' as well as 'ddb'")
+----------------------------------------------------------------------------
 
-from the drm-intel tree.
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-I fixed it up manually, but it looks like I could've simply used the
-version from the drm-intel tree. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 420 trees (counting Linus' and 128 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
