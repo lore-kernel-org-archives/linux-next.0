@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83703C555B;
-	Wed, 29 Apr 2026 10:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7038528488D;
+	Wed, 29 Apr 2026 10:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777457243; cv=none; b=p3LaspFXm38x4OH9lAmAQgfu3bAVRhcBEDS899tEQyiGN6wWWI2yq7DwyveMYUS9UGcf+Wr9NAO0w7NbTThJxOTYhj2Fja9GaTeYvXRL+U0fiT16D5LO8v/2Tj7KrAXUFrmR/4zQhYJ2ztbey2WW4TVdQgwX2lhCTPwd1X+rFNk=
+	t=1777457275; cv=none; b=E64MFz8vcwZN4baadfWDz3g/a2w2jWqsDTkayee1YAqxLzonw2ZW2lSa6byr7HVOBRfrLiiUKpjybyesTNuuMxZWkRt4+gL/lGdVoruPbg77WP/8Hbha4sGYudybquYj/O51A85OPhh96Br82Jgjox9z404gGitaF2mbi8yEnrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777457243; c=relaxed/simple;
-	bh=KXZBTjgngdiEGzi/w/5uqf3VrhAOOzgVdez/vlbX4wM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRlITJHMLY13kKDr6N0lRqIW+g+KnImaZZvmGIuatMsn005Wsn12qdF19n3v6s25VJlFIxYCX8VQoMiGabMz5yPwPCQcnFH09HQf/k/ToPOvXckc3nB7S+D/0iXeMsIbHrS2AlIdXFw3gz4+DxEJjZ5RzxSqM23Ktc1nzTQ8Yxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9mtRXb9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777457275; c=relaxed/simple;
+	bh=S5NRR+AmibLdJOKVACKCU15+MWwxfya2IXCa1LOoJQ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=haxiLLy2qSvnvj4NtfMG1QRzpTmvWsHNbLC0Tq4AlFwVYUM10BbEdlC8fzRcHJDNbzGBfmlHGazxBFza3pPXqLYkm37V5iIw+W3bJ42n0agi3XqMRdtIEZGck5F+888Kuqx6ULmBJjVo7SEVc3FEaUrnj9XboqYed+xjXRafc4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZwc1fnt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9mtRXb9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A26C19425;
-	Wed, 29 Apr 2026 10:07:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZwc1fnt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA659C19425;
+	Wed, 29 Apr 2026 10:07:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777457243;
-	bh=KXZBTjgngdiEGzi/w/5uqf3VrhAOOzgVdez/vlbX4wM=;
+	s=k20201202; t=1777457275;
+	bh=S5NRR+AmibLdJOKVACKCU15+MWwxfya2IXCa1LOoJQ8=;
 	h=From:To:Cc:Subject:Date:From;
-	b=b9mtRXb92LZWlHPw7q/JMw0Z0IScflgFOKV8GkWXAb8qoazJxT9w3Q+krNCz4PsMw
-	 dejbWcyP7EcVCnLO66jxeSDIp984ZubkDG7tKmVTpd7waL7LvHv8kRD+OxoIy/OUSr
-	 j1SzCWxgD9BonngaYFx0FsE4/ircE6AmenbbQFWd6qAxUTYlnsgq5h2Hp0TcXxILOC
-	 OSzElgSb1s979rm1k0sbwXHxmqi9g4Xu5PSHOMPvFMhWVVmbpFEYRNNMj0wekRNGVh
-	 3iHqYMYdw0nwvYO4amJ62gRcA6PgwKh+XfM8pIkXVzJEa7eSLUBflcS+IhAP6NJ0iX
-	 HggNhuVHCCJRA==
+	b=mZwc1fntDRo+4WlCspw7GGdUuV8PYMrCP1uYdRuUzSnRZrP2EbdDGBJL1LItNW+0+
+	 WSJ1uGl9VWeua2w6I/WM6WwNrqfcppQxUy1Hs8u9YQ7/j7vswqlI1qwB94Wf2bFohN
+	 mWfgYHBHNUnJuNehj8XQzmNjj4gpUU6ezXr44+c1353tlqYh9SXk0uB7IFhjzng4Zs
+	 mxzvq/M/iCCOXoAfOljN/+wXL3LA/swSkbURpEioh/lNRhj5OTD570fhvYIzNPQbhm
+	 9qH/upvUDp450vWJFbEkyWJwCiKiaShmjll+Y66761ADEzCQncd1KAksceGuXhxgnt
+	 kd6qMfYEQ8Ipg==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Boris Brezillon <boris.brezillon@collabora.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the nand tree with the mtd-fixes/mtd/fixes tree
-Date: Wed, 29 Apr 2026 12:07:16 +0200
-Message-ID: <20260429100717.3982889-1-thierry.reding@kernel.org>
+Subject: linux-next: build failure after merge of the nand tree
+Date: Wed, 29 Apr 2026 12:07:50 +0200
+Message-ID: <20260429100752.3983097-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -44,117 +44,34 @@ Content-Transfer-Encoding: 8bit
 
 Hi all,
 
-Today's linux-next merge of the nand tree got a conflict in:
+After merging the nand tree, today's linux-next build (all of them)
+failed like this:
 
-  drivers/mtd/nand/spi/winbond.c
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c: In function 'airoha_snand_dirmap_create':
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c:549:50: error: passing argument 2 of 'airoha_snand_supports_op' from incompatible pointer type [-Wincompatible-pointer-types]
+      549 |         if (!airoha_snand_supports_op(desc->mem, &desc->info.op_tmpl))
+          |                                                  ^~~~~~~~~~~~~~~~~~~
+          |                                                  |
+          |                                                  struct spi_mem_op **
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c:519:63: note: expected 'const struct spi_mem_op *' but argument is of type 'struct spi_mem_op **'
+      519 |                                      const struct spi_mem_op *op)
+          |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~^~
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c: In function 'airoha_snand_dirmap_read':
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c:575:36: error: 'desc->info.op_tmpl' is a pointer; did you mean to use '->'?
+      575 |         opcode = desc->info.op_tmpl.cmd.opcode;
+          |                                    ^
+          |                                    ->
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c: In function 'airoha_snand_dirmap_write':
+    /srv/kbuild/next/linux.git/drivers/spi/spi-airoha-snfi.c:764:36: error: 'desc->info.op_tmpl' is a pointer; did you mean to use '->'?
+      764 |         opcode = desc->info.op_tmpl.cmd.opcode;
+          |                                    ^
+          |                                    ->
 
-between commit:
+Caused by commit
 
-  8d655748aba1 ("mtd: spinand: winbond: Set the packed page read flag to W35N02/04JW")
+    56b2c0848273 ("spi: spi-mem: Transform the read operation template")
 
-from the mtd-fixes/mtd/fixes tree and commits:
+I'm going to roll this back and revert to yesterday's tree.
 
-  9980ff0d528f ("mtd: spinand: winbond: Add support for continuous reads on W35NxxJW")
-  a211bd1ecc0b ("mtd: spinand: winbond: Ensure chips are ordered by density")
-
-from the nand tree.
-
-I don't know if I fixed it up correctly (see below) and can carry the fix
-as necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer when
-your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-diff --cc drivers/mtd/nand/spi/winbond.c
-index 7cc0f0091430,578f702528ee..9ae397f17730
---- a/drivers/mtd/nand/spi/winbond.c
-+++ b/drivers/mtd/nand/spi/winbond.c
-@@@ -504,35 -685,15 +685,14 @@@ static const struct spinand_info winbon
-  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdc, 0x21),
-  		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 1, 1),
-  		     NAND_ECCREQ(1, 512),
-- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
-- 					      &write_cache_octal_variants,
-- 					      &update_cache_octal_variants),
-- 		     0,
-- 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
-- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
-- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
-- 	SPINAND_INFO("W35N02JW", /* 1.8V */
-- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x22),
-- 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 2, 1),
-- 		     NAND_ECCREQ(1, 512),
-- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
-- 					      &write_cache_octal_variants,
-- 					      &update_cache_octal_variants),
-+ 		     SPINAND_INFO_OP_VARIANTS_WITH_CONT(&read_cache_octal_variants,
-+ 							&write_cache_octal_variants,
-+ 							&update_cache_octal_variants,
-+ 							&cont_read_cache_octal_variants),
- -		     0,
- +		     SPINAND_ODTR_PACKED_PAGE_READ,
-  		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
-- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
-- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
-- 	SPINAND_INFO("W35N04JW", /* 1.8V */
-- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x23),
-- 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 4, 1),
-- 		     NAND_ECCREQ(1, 512),
-- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
-- 					      &write_cache_octal_variants,
-- 					      &update_cache_octal_variants),
-- 		     SPINAND_ODTR_PACKED_PAGE_READ,
-- 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
-- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
-+ 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, w25w35nxxjw_ecc_get_status),
- -		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg),
- -		     SPINAND_CONT_READ(w35n0xjw_set_cont_read)),
- +		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
-  	/* 2G-bit densities */
-  	SPINAND_INFO("W25M02GV", /* 2x1G-bit 3.3V */
-  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xab, 0x21),
-@@@ -573,6 -736,19 +735,18 @@@
-  					      &update_cache_variants),
-  		     0,
-  		     SPINAND_ECCINFO(&w25n02kv_ooblayout, w25n02kv_ecc_get_status)),
-+ 	SPINAND_INFO("W35N02JW", /* 1.8V */
-+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x22),
-+ 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 2, 1),
-+ 		     NAND_ECCREQ(1, 512),
-+ 		     SPINAND_INFO_OP_VARIANTS_WITH_CONT(&read_cache_octal_variants,
-+ 							&write_cache_octal_variants,
-+ 							&update_cache_octal_variants,
-+ 							&cont_read_cache_octal_variants),
- -		     0,
-++		     SPINAND_ODTR_PACKED_PAGE_READ,
-+ 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
-+ 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, w25w35nxxjw_ecc_get_status),
- -		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg),
- -		     SPINAND_CONT_READ(w35n0xjw_set_cont_read)),
-++		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
-  	/* 4G-bit densities */
-  	SPINAND_INFO("W25N04KV", /* 3.3V */
-  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xaa, 0x23),
-@@@ -592,6 -768,19 +766,18 @@@
-  					      &update_cache_variants),
-  		     0,
-  		     SPINAND_ECCINFO(&w25n02kv_ooblayout, w25n02kv_ecc_get_status)),
-+ 	SPINAND_INFO("W35N04JW", /* 1.8V */
-+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x23),
-+ 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 4, 1),
-+ 		     NAND_ECCREQ(1, 512),
-+ 		     SPINAND_INFO_OP_VARIANTS_WITH_CONT(&read_cache_octal_variants,
-+ 							&write_cache_octal_variants,
-+ 							&update_cache_octal_variants,
-+ 							&cont_read_cache_octal_variants),
- -		     0,
-++		     SPINAND_ODTR_PACKED_PAGE_READ,
-+ 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
-+ 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, w25w35nxxjw_ecc_get_status),
- -		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg),
- -		     SPINAND_CONT_READ(w35n0xjw_set_cont_read)),
-++		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
-  };
-  
-  static int winbond_spinand_init(struct spinand_device *spinand)
+Thanks,
+Thierry
