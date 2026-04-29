@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ABC3BADB5;
-	Wed, 29 Apr 2026 09:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83703C555B;
+	Wed, 29 Apr 2026 10:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777453824; cv=none; b=gYuXuwjpJdzbnNnRAHGo/dRisYqLdpo1fk/7cQpcH0PILSB09c78txDHsxWohzGjgML1fhHKDgiUcycDCQDUf5yGObQXJ46Qr9VC5UTEJA6CKFOYzCMdULMQiStda94V77wgqQkXnwa4JIS9FmxJvHCx6tBNq2YbYFhcljFg/V4=
+	t=1777457243; cv=none; b=p3LaspFXm38x4OH9lAmAQgfu3bAVRhcBEDS899tEQyiGN6wWWI2yq7DwyveMYUS9UGcf+Wr9NAO0w7NbTThJxOTYhj2Fja9GaTeYvXRL+U0fiT16D5LO8v/2Tj7KrAXUFrmR/4zQhYJ2ztbey2WW4TVdQgwX2lhCTPwd1X+rFNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777453824; c=relaxed/simple;
-	bh=jSBBEiViULb3UU9dZ6BYCzqUgDa5grdPDSs329n6OPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qcId9GPP8C9HUM7bdgqD5W/nuirPguVGYsvr5wCme+7G04/VT9cU90H9rU+dO29UZf41M+eC3NBc3BIwJnfcVbkWslOnxMb6dNPVpHX184loO+sTfpDJcTNFml6i0tbOLx/Ol1PAc0NGpL4g5fp1sE1RM36R2P3GPxK7d/VCGTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTvY8EKz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777457243; c=relaxed/simple;
+	bh=KXZBTjgngdiEGzi/w/5uqf3VrhAOOzgVdez/vlbX4wM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRlITJHMLY13kKDr6N0lRqIW+g+KnImaZZvmGIuatMsn005Wsn12qdF19n3v6s25VJlFIxYCX8VQoMiGabMz5yPwPCQcnFH09HQf/k/ToPOvXckc3nB7S+D/0iXeMsIbHrS2AlIdXFw3gz4+DxEJjZ5RzxSqM23Ktc1nzTQ8Yxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9mtRXb9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTvY8EKz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E318C19425;
-	Wed, 29 Apr 2026 09:10:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9mtRXb9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A26C19425;
+	Wed, 29 Apr 2026 10:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777453824;
-	bh=jSBBEiViULb3UU9dZ6BYCzqUgDa5grdPDSs329n6OPk=;
+	s=k20201202; t=1777457243;
+	bh=KXZBTjgngdiEGzi/w/5uqf3VrhAOOzgVdez/vlbX4wM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=HTvY8EKzlMx5vWgCremY+Cd+kNz3Z3Oh6XNQjXZ/McEsABBPaGBN+9VppoTzmbTZf
-	 kbgjEVovlni2IUmc5G9QF3g5lXRb2mSjR+WNjZi36AD/0gI70mCffY0hG1XGW2jsBg
-	 hIIwv2eTy53ab3UFgwHxLD1mT0ZJQzXE5Sc3fiuKK6zoFUd5NrDhV1LCfigN0ztC1w
-	 OqeEpJ/fRizRq8JT7+WRWQMV8Ve5xhf06RJU7i6UKdFL6GZkZz4m1194raKcIEzoIC
-	 mXTRSg1et0JmqBDHG0oy7STtQSjjJsXTXxQ0YmerAqWUDom4oVdLfSZp/Z9FAQF6k5
-	 HWbWe+qjcaUqA==
+	b=b9mtRXb92LZWlHPw7q/JMw0Z0IScflgFOKV8GkWXAb8qoazJxT9w3Q+krNCz4PsMw
+	 dejbWcyP7EcVCnLO66jxeSDIp984ZubkDG7tKmVTpd7waL7LvHv8kRD+OxoIy/OUSr
+	 j1SzCWxgD9BonngaYFx0FsE4/ircE6AmenbbQFWd6qAxUTYlnsgq5h2Hp0TcXxILOC
+	 OSzElgSb1s979rm1k0sbwXHxmqi9g4Xu5PSHOMPvFMhWVVmbpFEYRNNMj0wekRNGVh
+	 3iHqYMYdw0nwvYO4amJ62gRcA6PgwKh+XfM8pIkXVzJEa7eSLUBflcS+IhAP6NJ0iX
+	 HggNhuVHCCJRA==
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm-nonmm-unstable tree
-Date: Wed, 29 Apr 2026 11:10:18 +0200
-Message-ID: <20260429091019.3967613-1-thierry.reding@kernel.org>
+Subject: linux-next: manual merge of the nand tree with the mtd-fixes/mtd/fixes tree
+Date: Wed, 29 Apr 2026 12:07:16 +0200
+Message-ID: <20260429100717.3982889-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -43,46 +44,117 @@ Content-Transfer-Encoding: 8bit
 
 Hi all,
 
-After merging the mm-nonmm-unstable tree, today's linux-next build
-(arm64 defconfig) failed like this:
+Today's linux-next merge of the nand tree got a conflict in:
 
-    In file included from /srv/kbuild/next/linux.git/arch/arm64/include/asm/fixmap.h:118,
-                     from /srv/kbuild/next/linux.git/arch/arm64/include/asm/pgtable.h:36,
-                     from /srv/kbuild/next/linux.git/include/linux/pgtable.h:6,
-                     from /srv/kbuild/next/linux.git/arch/arm64/include/asm/io.h:12,
-                     from /srv/kbuild/next/linux.git/include/linux/io.h:12,
-                     from /srv/kbuild/next/linux.git/include/acpi/acpi_io.h:5,
-                     from /srv/kbuild/next/linux.git/include/linux/acpi.h:40,
-                     from /srv/kbuild/next/linux.git/include/acpi/apei.h:9,
-                     from /srv/kbuild/next/linux.git/include/acpi/ghes.h:5,
-                     from /srv/kbuild/next/linux.git/include/linux/arm_sdei.h:8,
-                     from /srv/kbuild/next/linux.git/arch/arm64/kernel/asm-offsets.c:11:
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h: In function 'set_fixmap_nocache':
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h:54:29: error: 'PAGE_KERNEL_NOCACHE' undeclared (first use in this function); did you mean 'PAGE_KERNEL_ROX'?
-       54 | #define FIXMAP_PAGE_NOCACHE PAGE_KERNEL_NOCACHE
-          |                             ^~~~~~~~~~~~~~~~~~~
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h:93:33: note: in expansion of macro 'FIXMAP_PAGE_NOCACHE'
-       93 |         __set_fixmap(idx, phys, FIXMAP_PAGE_NOCACHE);
-          |                                 ^~~~~~~~~~~~~~~~~~~
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h:54:29: note: each undeclared identifier is reported only once for each function it appears in
-       54 | #define FIXMAP_PAGE_NOCACHE PAGE_KERNEL_NOCACHE
-          |                             ^~~~~~~~~~~~~~~~~~~
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h:93:33: note: in expansion of macro 'FIXMAP_PAGE_NOCACHE'
-       93 |         __set_fixmap(idx, phys, FIXMAP_PAGE_NOCACHE);
-          |                                 ^~~~~~~~~~~~~~~~~~~
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h: In function 'set_fixmap_offset_nocache':
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h:54:29: error: 'PAGE_KERNEL_NOCACHE' undeclared (first use in this function); did you mean 'PAGE_KERNEL_ROX'?
-       54 | #define FIXMAP_PAGE_NOCACHE PAGE_KERNEL_NOCACHE
-          |                             ^~~~~~~~~~~~~~~~~~~
-    /srv/kbuild/next/linux.git/include/asm-generic/fixmap.h:99:40: note: in expansion of macro 'FIXMAP_PAGE_NOCACHE'
-       99 |         __set_fixmap_offset(idx, phys, FIXMAP_PAGE_NOCACHE);
-          |                                        ^~~~~~~~~~~~~~~~~~~
+  drivers/mtd/nand/spi/winbond.c
 
-Caused by commit
+between commit:
 
-    dd4bbc6d8e3a ("include/asm-generic/fixmap.h: reimplement nasty macros in C")
+  8d655748aba1 ("mtd: spinand: winbond: Set the packed page read flag to W35N02/04JW")
 
-I've reverted this patch in linux-next for now.
+from the mtd-fixes/mtd/fixes tree and commits:
 
-Thanks,
-Thierry
+  9980ff0d528f ("mtd: spinand: winbond: Add support for continuous reads on W35NxxJW")
+  a211bd1ecc0b ("mtd: spinand: winbond: Ensure chips are ordered by density")
+
+from the nand tree.
+
+I don't know if I fixed it up correctly (see below) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer when
+your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+diff --cc drivers/mtd/nand/spi/winbond.c
+index 7cc0f0091430,578f702528ee..9ae397f17730
+--- a/drivers/mtd/nand/spi/winbond.c
++++ b/drivers/mtd/nand/spi/winbond.c
+@@@ -504,35 -685,15 +685,14 @@@ static const struct spinand_info winbon
+  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdc, 0x21),
+  		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 1, 1),
+  		     NAND_ECCREQ(1, 512),
+- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
+- 					      &write_cache_octal_variants,
+- 					      &update_cache_octal_variants),
+- 		     0,
+- 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
+- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
+- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
+- 	SPINAND_INFO("W35N02JW", /* 1.8V */
+- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x22),
+- 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 2, 1),
+- 		     NAND_ECCREQ(1, 512),
+- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
+- 					      &write_cache_octal_variants,
+- 					      &update_cache_octal_variants),
++ 		     SPINAND_INFO_OP_VARIANTS_WITH_CONT(&read_cache_octal_variants,
++ 							&write_cache_octal_variants,
++ 							&update_cache_octal_variants,
++ 							&cont_read_cache_octal_variants),
+ -		     0,
+ +		     SPINAND_ODTR_PACKED_PAGE_READ,
+  		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
+- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
+- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
+- 	SPINAND_INFO("W35N04JW", /* 1.8V */
+- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x23),
+- 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 4, 1),
+- 		     NAND_ECCREQ(1, 512),
+- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
+- 					      &write_cache_octal_variants,
+- 					      &update_cache_octal_variants),
+- 		     SPINAND_ODTR_PACKED_PAGE_READ,
+- 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
+- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
++ 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, w25w35nxxjw_ecc_get_status),
+ -		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg),
+ -		     SPINAND_CONT_READ(w35n0xjw_set_cont_read)),
+ +		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
+  	/* 2G-bit densities */
+  	SPINAND_INFO("W25M02GV", /* 2x1G-bit 3.3V */
+  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xab, 0x21),
+@@@ -573,6 -736,19 +735,18 @@@
+  					      &update_cache_variants),
+  		     0,
+  		     SPINAND_ECCINFO(&w25n02kv_ooblayout, w25n02kv_ecc_get_status)),
++ 	SPINAND_INFO("W35N02JW", /* 1.8V */
++ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x22),
++ 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 2, 1),
++ 		     NAND_ECCREQ(1, 512),
++ 		     SPINAND_INFO_OP_VARIANTS_WITH_CONT(&read_cache_octal_variants,
++ 							&write_cache_octal_variants,
++ 							&update_cache_octal_variants,
++ 							&cont_read_cache_octal_variants),
+ -		     0,
+++		     SPINAND_ODTR_PACKED_PAGE_READ,
++ 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
++ 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, w25w35nxxjw_ecc_get_status),
+ -		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg),
+ -		     SPINAND_CONT_READ(w35n0xjw_set_cont_read)),
+++		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
+  	/* 4G-bit densities */
+  	SPINAND_INFO("W25N04KV", /* 3.3V */
+  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xaa, 0x23),
+@@@ -592,6 -768,19 +766,18 @@@
+  					      &update_cache_variants),
+  		     0,
+  		     SPINAND_ECCINFO(&w25n02kv_ooblayout, w25n02kv_ecc_get_status)),
++ 	SPINAND_INFO("W35N04JW", /* 1.8V */
++ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdf, 0x23),
++ 		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 4, 1),
++ 		     NAND_ECCREQ(1, 512),
++ 		     SPINAND_INFO_OP_VARIANTS_WITH_CONT(&read_cache_octal_variants,
++ 							&write_cache_octal_variants,
++ 							&update_cache_octal_variants,
++ 							&cont_read_cache_octal_variants),
+ -		     0,
+++		     SPINAND_ODTR_PACKED_PAGE_READ,
++ 		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
++ 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, w25w35nxxjw_ecc_get_status),
+ -		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg),
+ -		     SPINAND_CONT_READ(w35n0xjw_set_cont_read)),
+++		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
+  };
+  
+  static int winbond_spinand_init(struct spinand_device *spinand)
