@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FD5397E8B;
-	Thu, 30 Apr 2026 07:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7963C377EC6;
+	Thu, 30 Apr 2026 09:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777532611; cv=none; b=HxwnNHO8l5zuLe9XAPEHNX4tPayrKLeVUH7qCQoRN19eqyaMq/H178Ebs7e0hoEFcnS4n4NNOe5t10XpDieV0KbbfSndAoKPxI6kd5KsN0Xfi8PViQROvBeYCtL74bDm6SjlECMeVyIpoK/5vNCydPAb7WHCevLcbozRFtfifMw=
+	t=1777540279; cv=none; b=q+jrlhAprpJTdH80eog2k+UGBfIW7c0ZpbhsvuRnp22PYnTUn6lqh4c7+PrGAOaC9JkjGHRO7gMledeMJLyNiwYoMLmxqmDwWy6w2VdS3zDWAJVtM4UrS1VyMHCl++/SEsDfKUSamwWUxo7cRIZy97LdHHWbQ/LTrMsriJgGfhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777532611; c=relaxed/simple;
-	bh=4x26zqPFROKd80i41WKByphGpOW9i+xjT6ZR9GRccHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ly4N11Obup0CNMtTt85HuYuhyR0ud9xldb53o8SSMqYIjm/Hzh1OVy9SqzGPU7ezHBTssbch1chvmqIH5Roqan1bYx2YZvibqXqY4YYxHTjCqi+uwEkPBcnIRP2Wso7GWXteHLLqYGI5tNK1fEvh73VwU70fG3/Cx8e9JTRnN2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GoQQSj6p; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777540279; c=relaxed/simple;
+	bh=TAGRs2kk2CQruB1hI4fg4hgyhLCGP5Z6WYmhzyL2Jss=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fyGL+FBduR0FVcrJdM4thsGDfEDoLyJfvuN1sPRcAWXxD1C8d1n5wnCdlvEOjUrA46yKU15GilWuxJhnGkcvWqSiu5hM7SAaCnJXbd0Pz04Lkul3yVeaNzgwZqd9zGiQc7JpwhUbTo+VZwCF/N5UQbKfDPvqaSnGr1HPus7JmPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CI5z7aI/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GoQQSj6p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC4D6C2BCF4;
-	Thu, 30 Apr 2026 07:03:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CI5z7aI/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3748C2BCB3;
+	Thu, 30 Apr 2026 09:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777532611;
-	bh=4x26zqPFROKd80i41WKByphGpOW9i+xjT6ZR9GRccHk=;
+	s=k20201202; t=1777540279;
+	bh=TAGRs2kk2CQruB1hI4fg4hgyhLCGP5Z6WYmhzyL2Jss=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GoQQSj6pC/T+ANRjBrw4yUKtU8P1gomz6qlZ4Duy2VxHpwa+548C+aP7z2e+NGDfA
-	 K48MzAVym0CyAi7oSrgyZZ0jK2P05fceCWQsel/7g1T48rERPuE6qGW5VrDtGeUIzk
-	 joioO7xGKPUtRhSBfBzTPS6EI14WEYjtW1fiP4lXFe9lw7JPMAHuVdPJPH5SY4YSkq
-	 XaQeoud/Oty5E+3En/Lpe1bX1pHmi1YyPqppKGakyUtEoegxH4O2x4vzUwb67qWvQx
-	 wux6NAnJ8H3y162JYawaSUo2BkEgS9qwHHqMEIaxS0EqshoDf6Cc0qKnfV4ozIB11l
-	 pX5mnEVW0XLYA==
+	b=CI5z7aI/PRtvscMW4i+FmyBcl6hSOgyW6jO0VTUCZ0gPhQCxQW3tqoGuFDodh0pBd
+	 cWODTp6d2GR/Xrdoj/TkqEvem4tSMbOhc3Ou57sFC97RUabLw7mT+gEKHS11cN4bBY
+	 rI5nDBO1jZAmdA3VnsI9tUq00rbvuzY2iMnwFYqpskpvq/pU2pFy23WF91ORLMqtHn
+	 UMJ8Jy1nDnTRVThZd1v9W9iEMJ5BLyebdnLPI3C18qHFdM05vVr9VCCMdAxF3FPhaW
+	 HaFMOMuj97qLhf/8jgLr1198abNo9mhE7M8AQtSMWBpN1JiQRb876ODgHyneRSSYLh
+	 LxKSPyBrQIQSA==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Missing signoff in the bitmap tree
-Date: Thu, 30 Apr 2026 09:03:27 +0200
-Message-ID: <20260430070328.4041988-1-thierry.reding@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bitmap tree
+Date: Thu, 30 Apr 2026 11:11:12 +0200
+Message-ID: <20260430091113.4086100-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -41,9 +41,31 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commits
+Hi all,
 
-  aa92c8e0486b ("MAINTAINERS: BITOPS: include bitrev.[ch]")
-  3f50d37ae736 ("lib: compile generic bitrev.c conditionally on the proper option")
+After merging the bitmap tree, today's linux-next build (x86_64
+allnoconfig) failed like this:
 
-are missing a Signed-off-by from their committers
+    ld: arch/x86/events/intel/core.o: in function `intel_hybrid_get_attr_cpus':
+    core.c:(.text+0x944): undefined reference to `cpumap_print_to_pagebuf'
+    ld: kernel/events/core.o: in function `cpumask_show':
+    core.c:(.text+0xcb8): undefined reference to `cpumap_print_to_pagebuf'
+    ld: drivers/base/cpu.o: in function `show_cpus_attr':
+    cpu.c:(.text+0x280): undefined reference to `cpumap_print_to_pagebuf'
+
+Caused by commit
+
+    6d3a0b07f271 ("cpumask: switch cpumap_print_to_pagebuf() to using scnprintf()")
+
+This seems to be caused by the new function not being available for
+!CONFIG_SMP configurations, whereas previously it was a static inline
+function and hence present irrespective of configuration.
+
+I've fixed this up for today by reverting the following patches:
+
+    af327141d0dd ("bitmap: drop bitmap_print_to_pagebuf()")
+    6d3a0b07f271 ("cpumask: switch cpumap_print_to_pagebuf() to using scnprintf()")
+
+Please fix this properly in the bitmap tree.
+
+Thierry
