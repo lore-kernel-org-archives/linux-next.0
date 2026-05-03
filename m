@@ -1,37 +1,37 @@
-Received: from ixit.cz (ixit.cz [185.100.197.86])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEA21C5D44
-	for <linux-next@vger.kernel.org>; Sun,  3 May 2026 10:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE693D092D
+	for <linux-next@vger.kernel.org>; Sun,  3 May 2026 18:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777805273; cv=none; b=bsCWj8lqgjrIpPlI8yzpR8rez3q6/ZvSEskWTz+rsVodeFNmIUQhcJYWhUfuXqOhTdfLnUDv1+EEkpJC6+x7Hcvub13UQv5ITyHj5HAI39qBFX4Dxyj7JfiTTfP1POSLMRuFqqhL4IlXif7V9+w4UwTWfWK35b1R40CRdhYeBZ4=
+	t=1777832379; cv=none; b=MRyCI+bNzabE7CKjEMSLk5mHsqPStDetB600DX+RbK/NmggBD4x/0wS2OokDnLikermFAwyWM6Ab3x+U76rIMv4XGMO6cdxAqSg0JWI0zX+J5JJlKQYHRgGxrH9awp/CNg5l69ObqO4Hq0oHO80IjEvA0DhdA5qMmA63LCpnK5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777805273; c=relaxed/simple;
-	bh=u8qxB7Dy4zMFy9gIdLaxK0aMFJheW/S9TTpCPvaUfXM=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=NGx1tRAfSCwh3YE/LvZV0tP0m/9ucRBsZnouAGm4HyiQGiTk5yVESvdc/J4fPvR6Ee+pUzopsjxYHZGacM1xcb/qdA29/Hb+HMVo4KsnIhLbU1/gHjMhkqT4WD7THp8lq17PODWlesNUyZumQ9aHs8B44MRH+nkTgruh2rWGXl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=j4S4ZlCA; arc=none smtp.client-ip=185.100.197.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	s=arc-20240116; t=1777832379; c=relaxed/simple;
+	bh=HWbscyG1wAp1OGWy0QrW7y1ttH5ix2T0qkNJInQv1B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=a7BudOo/npRJWXaZhj0RZafUhPiRZ7uuMXY0wTWt6JF07vhAaoj1IT+2awIxwxKlEzNgTDFEnexTDTD4uyHlZoMO1uAu1NHz9O+Z/CN8tizhWmzP7xkRa/2No9Vgo25bvEe0eZmf+n+oU3c/bLRM/9OXzi/Jc39nXvxEHul5iEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wGpFpQzt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="j4S4ZlCA"
-Received: from [10.0.0.200] (unknown [10.88.125.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 64FC4534106A
-	for <linux-next@vger.kernel.org>; Sun, 03 May 2026 12:47:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1777805262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=R3GgpIQXZUtRFWHrBXLUcjzAA2PWXxkDhvJ13ZCAPFk=;
-	b=j4S4ZlCAeuApMb2ggW75Zuvvzzc+/ud4Vqjl6EVSNUghLG2fsyBVplk2eHSlw+tmGfriCU
-	nljQ8ib4FjiCX0lgzvEmSRohSgkaMXSKsbn9PHxFEUmYKR/c7S5SPpFtaO0wgla6f4mHw2
-	eN/dq5/x9KY2pEd45OVnVXaTk45cZ2I=
-Message-ID: <f50c0c1e-ad33-46d9-a9b5-ab56c82a17d6@ixit.cz>
-Date: Sun, 3 May 2026 12:47:42 +0200
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wGpFpQzt"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:Cc:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=vviURueO8tItMI1FgpmTPEGZJ7+7wpZpZnS3fZFx/+Y=; b=wGpFpQztzaPQNPusx8Up30QY0k
+	NNSdwK67HNQGUvxX73DBHuqsTPJqFK/wufjKaD5yF3R8ojxwT1qT6Csnp03YexgEu5rfXe2t8KgsR
+	y5douebRREtMtSrIShLgiuiOTo9oE8qJ997Tt9PlWY9gn5xRs1mZ/KBXc/36GCNyqeU1NS1V2J4R+
+	+4dqKtr2xtmsEn+QmMUzLXYpRlwHAgaCcO5QP1j4W1rN0us6ugKJod4dtSby2D7EFV6g91bLnWlja
+	ot9t5Qt5aPO6Shy+gRMyDqQPIziCKm5MW/7Brm/KZvdbJMPI+WL+z4pivf+Tqr3rT/ib8NH1WQV+L
+	oXV/jjSA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1wJbPj-0000000BUiC-0ceW;
+	Sun, 03 May 2026 18:19:35 +0000
+Message-ID: <5abcb5ba-6fda-4b47-ad8c-4b6161226fe3@infradead.org>
+Date: Sun, 3 May 2026 11:19:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,73 +39,37 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: Adding NFC tree to -next
+To: David Heidelberg <david@ixit.cz>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <f50c0c1e-ad33-46d9-a9b5-ab56c82a17d6@ixit.cz>
 Content-Language: en-US
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-From: David Heidelberg <david@ixit.cz>
-Subject: Adding NFC tree to -next
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: Thierry Reding <thierry.reding@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <f50c0c1e-ad33-46d9-a9b5-ab56c82a17d6@ixit.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Mark,
+[+ Thierry]
 
-Could you please add
-
-   https://codeberg.org/linux-nfc/linux.git for-linus
-   https://codeberg.org/linux-nfc/linux.git for-next
-
-to -next?
-   for-linus will typically include fixes for NFC targeting the current 
-development cycle.
-   for-next include things for the next merge window.
-
-If there are any issues or questions, please let me know.
-
-Cheers,
-David
+On 5/3/26 3:47 AM, David Heidelberg wrote:
+> Hi Mark,
+> 
+> Could you please add
+> 
+>   https://codeberg.org/linux-nfc/linux.git for-linus
+>   https://codeberg.org/linux-nfc/linux.git for-next
+> 
+> to -next?
+>   for-linus will typically include fixes for NFC targeting the current development cycle.
+>   for-next include things for the next merge window.
+> 
+> If there are any issues or questions, please let me know.
+> 
+> Cheers,
+> David
+> 
 
 -- 
-David Heidelberg
+~Randy
 
