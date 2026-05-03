@@ -1,149 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DE53A542A;
-	Fri,  1 May 2026 12:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF31611E
+	for <linux-next@vger.kernel.org>; Sun,  3 May 2026 00:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777639463; cv=none; b=j3GNJ+mx7Vc20G1arhDuK7f4gf1+XZ80zv3Q7Z5QjdntLJZhdACPJPdhhMWxUFCD4WBhSgZDZErTBW7XAjGTnZgo1SRHSKnior3fbLbhAUgo6iXCSnG5zCzBkwB52Vm+xOMYYCvu7nFIe0ieg/tfPl3o6IizBhnUvhFlNY3Ea9k=
+	t=1777766614; cv=none; b=ZDjhJ5UVZdiDBftcw2BHYyClZydvAgX9A2fGHbE2FCpLUdi6cJzfi6aDspt8UpdClRQDyH5ZWHvvU6AV1xzzGk2N5bz9WeArLF2FFMcjFlBWuNSpQYJ2mzirOcMu86YPc8Blcl7B8XmYMgsJold0nB7jKvWnONu3dfHC31bbLg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777639463; c=relaxed/simple;
-	bh=tOQURC2lOBxx2B37R+W14tFAK4b6ua+v1BIBDO25iGY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MDdpwZB1z8PCIow5afXAss73f+SusOdJfJ7HJNXTS3oTUulZC2BS+W/+OEB76a9bE1qhNuUX0AOlyW1e/Ug+RLsHzNyDN0oCRygwyMFFJhFGX5oaHvgOeLei92nfTb/Mllnf2qMOTuS1pMtXkJ5TH3Z5h/SqL9sNcajaEHoiQ8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBPygiff; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777766614; c=relaxed/simple;
+	bh=bnA4uMJDXlFsfzQtlnjrNGaXzWhvMjlcYtxuRR/p6m0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=O9G9TW5Lk2KXeP3C2Tjv6LDjnnsD5oEl7gbR147ZFprROw5cIn4q0zrOe5ta582kZENIAh7ugBnGLL6SkU10cbXDK2KBO+sN4QC+De6Pyf+f8OezvLG7S56RFSbMc8Rta9bS8OwnUHNyx9QA5pwV5b0oubQa+TPMi5Hj8o3Knnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nvlRp8j+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBPygiff"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F400C2BCB7;
-	Fri,  1 May 2026 12:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777639463;
-	bh=tOQURC2lOBxx2B37R+W14tFAK4b6ua+v1BIBDO25iGY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=LBPygiffx0JtHpCrM7wj7xR3bXkb7oJzWnSiONJHFvDtsXFeuKu6AeJtS6/bAsxFl
-	 Ijx465GWMs8sVlmOVatb++6ZEpw3R8RKPpTAhSCsm608dnf+dLm+P6bu+44LmRifBj
-	 qSs6vUAC991+/ilaCCgEZRFfgUemE70qsiRgsuSh91z85yXBS7Klz5YEDMwutgNGZ6
-	 Urn2uDW/X6v/x3VkcjYO4xfGmKmOd23ladCqxES8o8Xtk3NgcuqSYzuwhPLjbi9L1s
-	 kFgfyDvVj0YGbigk8RUf9WXeDNo0wKdhwJB/GcEBeZZf3y3FfIIV2Muipl87r1g73Y
-	 DRSKBEZKIVjpA==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 262F8F4006D;
-	Fri,  1 May 2026 08:44:22 -0400 (EDT)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Fri, 01 May 2026 08:44:22 -0400
-X-ME-Sender: <xms:JqD0af-dsW1UXIKGFbOiCBlshGCGBxMKKb8ZI1eFeMCLu8-KIhW2mA>
-    <xme:JqD0aWgzNu3SCDqvf3k8TeYQ0VFCxA_vAaYloCaVB9vT4R_v6GpW0O3MgV0xQd1OG
-    hyMiZim3ssy4qSwox82eF9xw3VNMB-CqtH7cZNOkRcAYxb3mz4q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdeltddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdevhhhutghk
-    ucfnvghvvghrfdcuoegtvghlsehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnh
-    epgeehudeiieevveehleehleeugefhhfdttdehlefhuddttdehieelteekleevtdejnecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegthhhutghklhgvvhgvrhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqudeifeegleelleehledqfedvleekgeegvdefqdgtvghlpe
-    epkhgvrhhnvghlrdhorhhgsehfrghsthhmrghilhdrtghomhdpnhgspghrtghpthhtohep
-    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhishgrnhhjuhhmsehlihhnuhigrdhisghmrdgtohhm
-    pdhrtghpthhtohepvhgvnhhkrghtkeeksehlihhnuhigrdhisghmrdgtohhmpdhrtghpth
-    htoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgt
-    phhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:JqD0aZ-eFMMT6v1KtExUvT6w0MVa-AGRyUautOMYlbZSFZ0vq-U--Q>
-    <xmx:JqD0aaRKqirODqnZgL7zXQSn6YLEL_7TT0RNqFCBqv0tkomx4eub6g>
-    <xmx:JqD0abdYZ6RoWS_8dTiAOa_bbY3m5TEekj0vAk_5nCGaxIaN29ghQg>
-    <xmx:JqD0aUQx3oRrUvGvAwS3Q2FbkCtlv152yBi0Idd0V3HWPH92UpL-LQ>
-    <xmx:JqD0afLpq_HMJjX5wXeWl1zdOxy6ewWTpmc6m8NihfDAjXM2FdbzBk2u>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F3F34780070; Fri,  1 May 2026 08:44:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nvlRp8j+"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=KgWnLf/mFwD1Hh3sBaH+YGaBoHD9/6I/6KRlAUewflQ=; b=nvlRp8j+/HTCnnNTy6Xe57wsOY
+	Gt/09apg7UK5cV5SMjE3M51EklDvplc8gJ7qcDBz4Xa9n9fGauknLzlq6cnG9fLjMkCtQ//riiUpU
+	9S+ho6d5iuD7orwVyImufSv6/btUuJOXg4wYqHrjzDJPr2/ysZRj8oF+pqjCfUW+uungX8jvuYmkJ
+	WCxZNZlEjeQL5R3VxAZbI2ykZrRsyAmkuC8O+6KHiKE8VQfvHLjxQCB0k7Gl4qNjrJoy/UiRLnfbW
+	VNUTl329wyVZnLBBeAqDCxt+bFD29C5EgVO3RCTGd3IhpZJx3YZlIyjiSuJ6bwB05mE5ZafbO7R/v
+	bikF3WRw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1wJKIu-00000009wgg-3Hut;
+	Sun, 03 May 2026 00:03:24 +0000
+Message-ID: <c36e7dfb-cf62-4d21-a3b1-f54cb43e0832@infradead.org>
+Date: Sat, 2 May 2026 17:03:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 01 May 2026 08:44:01 -0400
-From: "Chuck Lever" <cel@kernel.org>
-To: "Jeff Layton" <jlayton@kernel.org>,
- "Misbah Anjum N" <misanjum@linux.ibm.com>,
- "Linux Kernel" <linux-kernel@vger.kernel.org>,
- "Linux Nfs" <linux-nfs@vger.kernel.org>
-Cc: "Linuxppc Dev" <linuxppc-dev@lists.ozlabs.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, venkat88@linux.ibm.com,
- "Linux Next" <linux-next@vger.kernel.org>
-Message-Id: <8e8847fb-0eff-46b0-97dc-fe683c706db3@app.fastmail.com>
-In-Reply-To: <d6701b40b8b7c143f87ecec0afb08af8a2867358.camel@kernel.org>
-References: <dcd371d3a95815a84ba7de52cef447b8@linux.ibm.com>
- <8cf80f450085ac17164e8fa1391e9635@linux.ibm.com>
- <d6701b40b8b7c143f87ecec0afb08af8a2867358.camel@kernel.org>
-Subject: Re: [BUG] [powerpc] [next-20260216/17] nfsd: use-after-free in
- cache_check_rcu() triggered by sosreport on ppc64le
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: does DRM_GPUSVM require hugepages?
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>
+Content-Language: en-US
+Cc: linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
+In linux-next-20260430, I'm seeing build errors on some ARCHes when
+DRM_XE=m (probably just "is set") but HAVE_ARCH_TRANSPARENT_HUGEPAGE
+is not set (not selected) by the ARCH.
 
-On Fri, May 1, 2026, at 3:06 AM, Jeff Layton wrote:
-> On Fri, 2026-05-01 at 02:15 +0530, Misbah Anjum N wrote:
->> Hi,
->>=20
->> Following up on my bug report, I have completed a git bisect and have=20
->> critical new findings to report.
->> Ref:=20
->> https://lore.kernel.org/linux-next/dcd371d3a95815a84ba7de52cef447b8@l=
-inux.ibm.com/T/#u
->>=20
->> Current Status: Bug Has Propagated from linux-next to Mainline.
->> First Bad commit identified: da6b5aae84beb0917ecb0c9fbc71169d145397ff
->>=20
->> The use-after-free bug in cache_check_rcu() that I originally reporte=
-d=20
->> in linux-next (6.19.0-next-20260216/17) has now propagated into mainl=
-ine=20
->> and is confirmed present in:
->> - mainline (Tested on Latest kernel as of 2026-04-30 - commit=20
->> 08d0d3466664)
->> - linux-next (Tested on Latest kernel as of 2026-04-30)
->>=20
->> This bug is causing failures on ppc64le systems:
->> 1. Kernel panics: 100% reproducible crashes when sosreport runs
->> 2. CI/Testing failures: All automated Avocado-vt KVM testing on ppc64=
-le=20
->> is failing
->> 3. Use-after-free corruption: Memory corruption with corrupted pointe=
-rs=20
->> containing
->>     ASCII strings ("libz.so.", "export_cap") or poison patterns=20
->> (0xcccccccccccccccc)
->>=20
->
-> Thanks for the bug report. I must have missed your earlier email.
+Does drm_gpusvm.c require hugepages?
+Or possibly DRM_XE needs some kind of restriction?
 
-You didn=E2=80=99t miss it. We responded to that report in February with
-a fix that you and Neil both reviewed and it is in v7.0 now.
+I see build failures on ARCH=alpha, ARCH=openrisc, ARCH=mips (32-bit
+or 64-bit), and ARCH=arm (without ARM_LPAE set).
 
-That fix addressed one instance of this problem; there are actually
-several more, all in the same UAF class. I have a patch series nearly
-complete to address these issues.
+Example:
+../drivers/gpu/drm/drm_gpusvm.c: In function 'drm_gpusvm_get_pages':
+./../include/linux/compiler_types.h:699:45: error: call to '__compiletime_assert_361' declared with attribute error: BUILD_BUG failed
+  699 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+./../include/linux/compiler_types.h:680:25: note: in definition of macro '__compiletime_assert'
+  680 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+./../include/linux/compiler_types.h:699:9: note: in expansion of macro '_compiletime_assert'
+  699 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+../include/linux/build_bug.h:40:37: note: in expansion of macro 'compiletime_assert'
+   40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+../include/linux/build_bug.h:60:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+   60 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+      |                     ^~~~~~~~~~~~~~~~
+../include/linux/huge_mm.h:113:28: note: in expansion of macro 'BUILD_BUG'
+  113 | #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+      |                            ^~~~~~~~~
+../include/linux/huge_mm.h:120:35: note: in expansion of macro 'HPAGE_PMD_SHIFT'
+  120 | #define HPAGE_PMD_SIZE  ((1UL) << HPAGE_PMD_SHIFT)
+      |                                   ^~~~~~~~~~~~~~~
+../drivers/gpu/drm/drm_gpusvm.c:1560:52: note: in expansion of macro 'HPAGE_PMD_SIZE'
+ 1560 |                                                    HPAGE_PMD_SIZE ?
+      |                                                    ^~~~~~~~~~~~~~
+make[6]: *** [../scripts/Makefile.build:289: drivers/gpu/drm/drm_gpusvm.o] Error 1
 
-The issue Misbah reports here is not the same as the February issue,
-though it is very similar.
+where include/linux/huge_mm.h:113: says:
 
+#ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
+#define HPAGE_PMD_SHIFT PMD_SHIFT
+#define HPAGE_PUD_SHIFT PUD_SHIFT
+#else
+#define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; }) <<<<<<<<<<<<<<<<<< line 113
+#define HPAGE_PUD_SHIFT ({ BUILD_BUG(); 0; })
+#endif
 
-> The commit you landed on is a merge commit and is not likely to be the
-> cause, particularly since that merge was for x86 drivers and you're
-> seeing this on PPC. Is this reproducible on other architectures?
+-- 
+~Randy
 
-We have an internal bug reporting the same stack trace on ARM64. Now
-that we have both a reproducer and a platform that is easily accessible
-it will be straightforward to confirm these issues are fully addressed
-before we merge the new fixes.
-
-
---=20
-Chuck Lever
