@@ -1,37 +1,36 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4747831DDBB;
-	Mon,  4 May 2026 20:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2FB370D63;
+	Mon,  4 May 2026 21:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777927813; cv=none; b=itmMH5V0Zg8KsoeyV4ETQPbjjA+zqXuaatyxvDgDNxE8mpcXYMnw64CP5FqSyk/sGQep1pqKebbatU/+ahnrZsSehU87U7UFpX2zk864a0uosCDkU4wBWYb9JqJVqrOOT3V5Xf6Oi8jPYnJXswqkhY3GvUveJWbMbE1zAr0rYWo=
+	t=1777931936; cv=none; b=bh+VGqpAPZtOf+GtMhc75yLLD6Hu3/qcpqctqRlPn5S4/Duqa4SFBssEc5KIwUvcZh22gyabXNYe83gPacrI7h+Rhc42PAI4smXXWGvunxx6wDX9jBTiJx4ZKNojm2dIAU2T0zWhFBmRAgLwlVdP9aNwloJESMUW19szfGNQ7xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777927813; c=relaxed/simple;
-	bh=hsT0ZiIj/UeCWn58hvdMl4o3Yr2UizS/krTtsAN0w4E=;
-	h=From:Date:Message-ID:To:Cc:Cc:Subject; b=EzJ+oZwe953T5EjctuYq/HLf1Dg+TLHpYxdoxoeAjKFtFcTv0nJJIrFfFLgZnusumDQ9mD+PqiJ5zeDSLDq1b3vC1aIKYjVJiu4zYRxf0TIjudggYChLPPiy6h2GLOI4rBAek0wqEE7SQRWueIUqgwBaBWB+dE+o3zdeHi9ZvYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svuKpTkd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777931936; c=relaxed/simple;
+	bh=HNil5T8Vmd0o6OmiEhxdXzbCmc9B0g36HvkcQ3S2z7M=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=N/GViDhD1NtOniZFpJOPRA+kauo+/LS5BlCaBSN1RHQ7M1V08BSWvsWiiXHkqMoooPE9l4kzuFWjlgJ6YhAY0KWOlIT4ZUaOF8GjrNJrKL+G6D/HZX7JR/bX8DBp51BvYHorq1yIy/uY4tTEUdKOOMR/H+Ahy+tHVldSyMbHfmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+9/bW5f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svuKpTkd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958C5C2BCB8;
-	Mon,  4 May 2026 20:50:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+9/bW5f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8FAC2BCB8;
+	Mon,  4 May 2026 21:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777927813;
-	bh=hsT0ZiIj/UeCWn58hvdMl4o3Yr2UizS/krTtsAN0w4E=;
-	h=From:Date:To:Cc:Cc:Subject:From;
-	b=svuKpTkdWlft7aQ2sG0wqIt65R6Kc24yFPXx9LF8Q4OuU8TILqH9rp30BVM0ATkYs
-	 /WSz9xzweNpRRzTIjydplNUAbsboENIYdv2KZ1iLrAL9bOU6x9raYqFWIJ72ooERYU
-	 WEndprxa9tAPJu48jgl+uZegjhUOchucwfHewGNi1eWvdCB/Adqjh7+BMATHOFkiLF
-	 RBQHif0WUhaBZf/07UrMpjEVsdIaDl8KFXXNM6QT5bnNE3sk1+Mzw0/sl8DhpptB9b
-	 4oM9jm8gUjsunIfB952cE1j1/AkpLbnkx62jIQ30L28ZU0IaPzMhDs9UMZUU00WFXf
-	 i/MJaJCrQjXkA==
+	s=k20201202; t=1777931935;
+	bh=HNil5T8Vmd0o6OmiEhxdXzbCmc9B0g36HvkcQ3S2z7M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=C+9/bW5fWMh49tKxSp6Yhk/06pfLIalujvYuH88Oc/xjv8hITzqIT4dT95XSzlwwy
+	 rVauyjl4sFMKnaZrjEEkdvJbn0ccXDGBCl/WIYhmCf0L55BGYiIfp9/l24n51HH0mG
+	 cucRJHDJqSsL3F9IKDBKZ8PGdvXWW6oTihUAeO12W5yCHbkB7Bya2P/WBuXaVxG6aD
+	 etLz/g1x3aIDDD2mn7w2SEJ0+EzyFHHwftmUNkGiRYZlmsADRPQXXLAQfjrf0Jx5+U
+	 oSJMQY5nOPKVPLFT8Gj5xLd9oQIpNT92x3X82aGL7KEAIS8whHX66dyp2cgV8uizDy
+	 JSb4cN8lEK5MA==
+Date: Mon, 04 May 2026 23:58:53 +0200
+Message-ID: <6627b1dbdd5f13f17f994405018aae3e@kernel.org>>
 From: Thierry Reding <thierry.reding@kernel.org>
-Date: Mon, 04 May 2026 22:50:10 +0200
-Message-ID: <e06a424df9659ec00dc929be6f50ac51@kernel.org>>
-To: David Heidelberg <david@ixit.cz>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: omission of the nfc tree
+Subject: linux-next: Tree for May 4
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,17 +39,42 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 
 Hi all,
 
-Today's linux-next merge of the nfc tree got a conflict in a bunch of
-files. It looks like you based this tree on next-20260430 and this
-causes a bunch of old trees being pulled into today's linux next and
-that results in a lot of conflicts.
+Changes since 20260430:
 
-Your for-next branch should always be based on -rc1 or some later -rc
-if there's a need. It should *never* be based on a previous linux-next
-build.
+The nfc-fixes and nfc trees were added. The nfc tree was based on an old
+linux-next release and caused a number of conflicts so was skipped for
+today.
 
-I'm omitting the nfc tree today. Please fix this so that the tree can
-be included in linux-next.
+Non-merge commits (relative to Linus' tree): 2371
+ 2675 files changed, 146116 insertions(+), 39197 deletions(-)
 
-Thanks,
-Thierry
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 422 trees (counting Linus' and 129 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
