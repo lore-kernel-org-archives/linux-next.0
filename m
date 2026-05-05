@@ -1,129 +1,120 @@
-Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFE43FB7EB
-	for <linux-next@vger.kernel.org>; Mon,  4 May 2026 23:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A551B17A300;
+	Tue,  5 May 2026 00:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777939149; cv=none; b=Phb4FPWQxNVM645RcSQfttI11cCgCJ0565oEib5k9aZQJKOAFLHe/QWYjKL3SryXCQw/beYKS1QKoWM5cH0B0LwX5VdNYzHi5xeNc6vshivkFgFAdAoxLZWeou5wK9pDBRXEf1j4ju2Z2L1e78aTTXdNy71Iiq88bak7CzQGMP4=
+	t=1777940328; cv=none; b=MasgmRMBmcziB47N8dQaXInvJFI4TU/BbOIf1zulcyO6M4yMFKGudWK7QffdnywuYbPghUxp3ikiKYqzDD9lkJ5n+14+IGwH09A8iRRuvz/cevuGtr1ePd7zbCHGE7VtvFrliqnXl5s9+fcCsicLheVvcym6tN2ZGZfWVJ+WxOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777939149; c=relaxed/simple;
-	bh=DbvdLckbFzcsiT1D2JTJ2ybEF2rDyQCoOBQFHWIKGCE=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=OqlFArrmjHXuJIYfrEvXcEygXAy2LH21odj5gd7gLL+6zVNNoged+/AEG7cyVDvScowXv7TSvCE5eIRlZHXtf4HjPXahOE2sx6mtgxuXOBq28s9vxkptSjJGMGYEO968stQzvY0UG6BwBnxg+tFkwfc3SE3iZug0XciNxUXLWj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Z+xIN7Wz; arc=none smtp.client-ip=74.125.82.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1777940328; c=relaxed/simple;
+	bh=hs17YSO5zdLa9CQfIIBW0p/kb4VlFchE5/CMRTDODlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rnw4HnB2smHRPq+bfU5/YgfTRY+zQuSSO7NzwKC7eqGZ86avV+EROcK0g5r3U/3ITwmqgysjy1vdhT2csjjaaWVtFP/qTjir8YqiE55AoDbxO2L6EBFwKCB/RiH5r8xCDo5n7VSyGuF5ZePKFVYOiUWffgkjAEXMjl2D6hLJAk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n1/tnQkD; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Z+xIN7Wz"
-Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-12c8ccc7755so6662858c88.0
-        for <linux-next@vger.kernel.org>; Mon, 04 May 2026 16:59:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1777939146; x=1778543946; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmAPxWSHCPF3ZnyTDeZaZ3lyy+dDfvSwYuSiCdmys+Q=;
-        b=Z+xIN7Wz3sE+VyK4nMb8BwnhVr4urPWTwBOqJ2NG3g6H3T1kP2fxU2y4RUbyoNbq+h
-         8WGBpLvY5MvieTrWOe0GsdhRBAsQr7D2z0/bCRuQMNhir1gaRrDSJBTLcmGpB0Tw+yKr
-         xIEtG4ff/gp2y7erEXYrSv6+ZvT2/W3/lVLkAvn/bUMOjLjlfRd0sW7nmckqxwhZtHpL
-         5eieI0vPg8JwShGo8uIe+JdWJAIFfnVPun0+CVfdP/+wLa0au3RDnAcJWctjpbdGJCb3
-         9SmsIJRSkTtpZ6+zh5+bL1L8XJlvTTboTgRZElWjEdqjWGZPJgdn/uUcrB/+OlKArgR8
-         uKfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777939146; x=1778543946;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jmAPxWSHCPF3ZnyTDeZaZ3lyy+dDfvSwYuSiCdmys+Q=;
-        b=kno33D+aXlADomLNEXdDdJ6xkkySJvp77s+czcvPJejAYQqiDW3WbVj2wyuSmcZYCm
-         VRYY+JMmJnqHTD2vMGnkvk6lMJH2XWknM6KxSi1wdfaO00Tj8IKo3vJ7O/w5eNdY4elv
-         Pb5up6PzW9MUiqPESp4ZlO7YVGw/KCcDxtZmMap+YADkz9693ZhFtbbyUuXpBQ4BiqZQ
-         pBFGX0gkInJDdb3Ket8ECAfPUM2SoYRcVnPqdmZ++mQLRyGeQWhkFVyY63tznByl0WSE
-         L4It32QdZvqFQKvnuLAEaGVJGqiVcMcKkBIOkeDFgIi+/yvBu1PkHIlOo3K1IPb9J+bF
-         xf4g==
-X-Forwarded-Encrypted: i=1; AFNElJ8B7L5z76rUregUD7hDFcKJFMWw7MEjRmcPvCyew4kIOBuwhsmdVyFzm51pQXTd3c6nunXCxeENTOgC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcbNW+wT7v5SpRt45a+TwkpPlqtM5TeOOSfanFJdJv2tET8M7F
-	+tyTD/qXfGEIdpr8pZPWSwfldv2W2uc0D8wqo+OhI2RJBPmT+1pLAVHOJG8MOWA7IZ8lndDyymv
-	5cQp8
-X-Gm-Gg: AeBDieuK+gago3jGyy5EyjqK8OX6ndPd6Pjw94SoGXXJEpwbvRNN2aHEYdp6Ky//bv1
-	sYp5f0KaY5iB5j+pskUETQuGB7akXqzIT6DycZZsXeKsFQ8Zj+XPNkoYn49lZbI7Qcqhgzlah8H
-	60ukv8WdTaOt0Xvc2KaROpKVjb+X8DLJFBlj52ePLIA1Qem+LoiWSV4HkZScb5BWp+ap7fVpqeu
-	A9aUKFp/0fT9EQskNhR9DszOnJUXl02SU7hz0JtUsNSMWlWInjkUXceg8rLLhmX20z6DU5V74By
-	+OMvKe9YM8CmF6bRxQWCdjdW5EOYGTPsx2bQENozUed6kUMS4n/y6zrZlZA7BBeJrPvaA/CmYAz
-	2y2Oz5OACIqHB+VSAWppG3pHWJKgAxJhFT5Jq6MaTZPFRklPIkGOEFoDgLcKUjqEhMbJCtt1rE8
-	U2Z96SGjJ6r16aspAdI6vwMRGlHk4=
-X-Received: by 2002:a05:701b:2412:b0:12f:1f67:e744 with SMTP id a92af1059eb24-12f1f67e7f4mr1967760c88.44.1777939145815;
-        Mon, 04 May 2026 16:59:05 -0700 (PDT)
-Received: from 997d03828cfd ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12df8431037sm18354239c88.12.2026.05.04.16.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 May 2026 16:59:05 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n1/tnQkD"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=YsvbD8znTiKAHU1uxCkygMz8F00bLo5nvIAxppBphy4=; b=n1/tnQkDTT3SyWoayvb6b8WCJM
+	pYFGm8r6u/ZsI/NEXYYYzgxdfW7PphQqoHsaO5k52dVQ92izE5GY5swfKerqGzKG4y/F6fj3hKcfn
+	f9QQJUYcOZ0Edpbr+qgFAQcM1vJS/UaaZNwrZ96eIri4clr+mrfvmPXcVmfB/FurCq8X3e0p/3rvk
+	Hzs1eHCQPCawmb5pJTylw6cp+UW1qtnLGPcdEJkPi4RbXTTtblWm0Q4G4ehM2/phIo0e8sCMbbj15
+	p9/ZZonicJCAWDh35y2mY4lxScgLiPkk75GKS7UlifQIELoi+MHVLI8qYBcY0P6Kb4k/cTH7XGckK
+	NI0Ik5WA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1wK3Un-0000000EhRx-1BtI;
+	Tue, 05 May 2026 00:18:41 +0000
+Message-ID: <0a8be4da-73f4-42cc-b026-c3ac031f3268@infradead.org>
+Date: Mon, 4 May 2026 17:18:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: [REGRESSION] next/master: (build) variable 'num_ports' is
- uninitialized when
- used here [-Werror,-Wun...
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] next/master: (build) variable 'num_ports' is
+ uninitialized when used here [-Werror,-Wun...
+To: kernelci@lists.linux.dev, kernelci-results@groups.io,
+ Rosen Penev <rosenp@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Mon, 04 May 2026 23:59:04 -0000
-Message-ID: <177793914437.2560.9287713196857718000@997d03828cfd>
+References: <177793914437.2560.9287713196857718000@997d03828cfd>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <177793914437.2560.9287713196857718000@997d03828cfd>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+[add more people/list]
+
+commit 8bdb0b3830ea
+Author: Rosen Penev <rosenp@gmail.com>
+Date:   Fri Apr 24 18:42:01 2026 -0700
+    usb: typec: intel_pmc_mux: combine kzalloc + kcalloc
 
 
+On 5/4/26 4:59 PM, KernelCI bot wrote:
+> 
+> 
+> 
+> 
+> Hello,
+> 
+> New build issue found on next/master:
+> 
+> ---
+>  variable 'num_ports' is uninitialized when used here [-Werror,-Wuninitialized] in drivers/usb/typec/mux/intel_pmc_mux.o (drivers/usb/typec/mux/intel_pmc_mux.c) [logspec:kbuild,kbuild.compiler.error]
+> ---
+> 
+> - dashboard: https://d.kernelci.org/i/maestro:4c562376c15477320ad9a138b83a5256431b57cb
+> - giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> - commit HEAD:  9d0d467c3572e93c5faa2e5906a8bbcd70b24efd
+> - tags: next-20260504
+> 
+> Please include the KernelCI tag when submitting a fix:
+> 
+> Reported-by: kernelci.org bot <bot@kernelci.org>
+> 
+> 
+> Log excerpt:
+> =====================================================
+> /tmp/kci/linux/drivers/usb/typec/mux/intel_pmc_mux.c:740:3: error: variable 'num_ports' is uninitialized when used here [-Werror,-Wuninitialized]
+>   740 |                 num_ports++;
+>       |                 ^~~~~~~~~
+> /tmp/kci/linux/drivers/usb/typec/mux/intel_pmc_mux.c:735:14: note: initialize the variable 'num_ports' to silence this warning
+>   735 |         u8 num_ports;
+>       |                     ^
+>       |                      = '\0'
+> 1 error generated.
+> 
+> =====================================================
+> 
+> 
+> # Builds where the incident occurred:
+> 
+> ## x86_64_defconfig+kselftest+x86-board on (x86_64):
+> - compiler: clang-21
+> - config: None
+> - dashboard: https://d.kernelci.org/build/maestro:69f922810e4ee292cbd1a001
+> 
+> 
+> #kernelci issue maestro:4c562376c15477320ad9a138b83a5256431b57cb
+> 
+> --
+> This is an experimental report format. Please send feedback in!
+> Talk to us at kernelci@lists.linux.dev
+> 
+> Made with love by the KernelCI team - https://kernelci.org
+> 
 
+-- 
+~Randy
 
-
-Hello,
-
-New build issue found on next/master:
-
----
- variable 'num_ports' is uninitialized when used here [-Werror,-Wuninitialized] in drivers/usb/typec/mux/intel_pmc_mux.o (drivers/usb/typec/mux/intel_pmc_mux.c) [logspec:kbuild,kbuild.compiler.error]
----
-
-- dashboard: https://d.kernelci.org/i/maestro:4c562376c15477320ad9a138b83a5256431b57cb
-- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-- commit HEAD:  9d0d467c3572e93c5faa2e5906a8bbcd70b24efd
-- tags: next-20260504
-
-Please include the KernelCI tag when submitting a fix:
-
-Reported-by: kernelci.org bot <bot@kernelci.org>
-
-
-Log excerpt:
-=====================================================
-/tmp/kci/linux/drivers/usb/typec/mux/intel_pmc_mux.c:740:3: error: variable 'num_ports' is uninitialized when used here [-Werror,-Wuninitialized]
-  740 |                 num_ports++;
-      |                 ^~~~~~~~~
-/tmp/kci/linux/drivers/usb/typec/mux/intel_pmc_mux.c:735:14: note: initialize the variable 'num_ports' to silence this warning
-  735 |         u8 num_ports;
-      |                     ^
-      |                      = '\0'
-1 error generated.
-
-=====================================================
-
-
-# Builds where the incident occurred:
-
-## x86_64_defconfig+kselftest+x86-board on (x86_64):
-- compiler: clang-21
-- config: None
-- dashboard: https://d.kernelci.org/build/maestro:69f922810e4ee292cbd1a001
-
-
-#kernelci issue maestro:4c562376c15477320ad9a138b83a5256431b57cb
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
