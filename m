@@ -1,98 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C4B24C06A;
-	Tue,  5 May 2026 13:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C510A43C06A
+	for <linux-next@vger.kernel.org>; Tue,  5 May 2026 14:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777989452; cv=none; b=nlWioCYiMyQze/nLrlbL6PxoUHYUYo1eJGKZ7Mvcw66Vstsy/8JgC4QWjLsEFpa4fIDrJpA+/yEK51DT6x5yVx1rtOaF3YRhQQ56c1HZe5QkDt0Q3h5r7Zf40orFX6ssNi6jq+lmq2Pbxbse7Zccr6ub+B3L/mA0U8wXYS2MigU=
+	t=1777993148; cv=none; b=erlj2WRSe7cD8z3aYn2R6Peu13GWnhdzl+0uRy0EyLFK81w7idhY5mQKoFKuJr4MmcPiClM4uRl3LvcHSxZWdHadR70ju8ReKrlzf2ucJ2ximhDI7i6bCqwznrWTinInqzA89rgYbSxLRLjlaslw803+IhYSxs6DefM9FG1LTko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777989452; c=relaxed/simple;
-	bh=8dywiaSKmoezUvoX5saN4XMix7oUF8wWRzfdNwWsav0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJLLVkS724EgP5Kzzylu+7GU9XETbUEUqOVgMIRjAuEZuNba+4yZa1aoZKcHyRq+uzCz15SKZUUe0Tr2PhZ7MG9fFxXDDZ+1ux3A1kDd+8npQAIu1Dg6PByySSgsJZcZtJosCoz/sA6MvEA1aDZkto63eLvga1l2V3/BLcI35yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3q27XzX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777993148; c=relaxed/simple;
+	bh=3ko3A4kimfuWBvgGqRXOJUht8CCrfn4FYAasG+Lug2c=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=deNdteiWcOlRyI8qMhOhuRTtjpJ/+K1eVSU48+OWa86SWOuP098IW21WrYNWErXA7a3Lw/yadjVE4rcRFYVvx4YbkTyBZqp/HmtQ18GyVXzUi6w1VcES/dEPmmzrwFXelIvE7KZbb3+xbz8kR4Dc0OHGGkY6ywjuTE4KQHmd1BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=PRxEUGp4; arc=none smtp.client-ip=74.125.82.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3q27XzX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40674C2BCB4;
-	Tue,  5 May 2026 13:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777989451;
-	bh=8dywiaSKmoezUvoX5saN4XMix7oUF8wWRzfdNwWsav0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a3q27XzXN09F/lpGJYGUXqNzHgCwvt6bvRaReW/o9+kaILL1XHAaULYRxT9UaIooM
-	 g9fTcz7rYELYZiQPBDVxOfLv9TxNbRvSnkg4fP7fMo0j3/fr6lSIlgkIOb7B3PJxXh
-	 S68+VP1KgmCVxOJ1V0C5DFBQyu42QMIfPP6ADDJiAGkMtCvHR8dqXKpM9PE5oiSLh2
-	 wSgGVAZGbQmtpwi4tRIa2KcQS+bP90jxmC3yP/W6pRBRfC8G4r+5Xtf8Owkh1TbC+2
-	 JumS6jMPA7oST5INBdg5JSnJvDqdYe2OR1S66jweoARBzFUx01mU3+NMFBFgJIq3EL
-	 WThDdoMYumtUw==
-Date: Tue, 5 May 2026 15:57:29 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: omission of the nfc tree
-Message-ID: <afnugiRnPPMCIxO6@arch.a226c7d-lcedt>
-References: <e06a424df9659ec00dc929be6f50ac51@kernel.org>
- <6d26fbb6-3885-47b5-bfba-6c84bcc42f89@ixit.cz>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="PRxEUGp4"
+Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-130a4aae5ccso3771362c88.1
+        for <linux-next@vger.kernel.org>; Tue, 05 May 2026 07:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1777993146; x=1778597946; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V+JNAHsC4qi6OiUkol5+kLRuL2+NBa4HUfFXhnGmjXY=;
+        b=PRxEUGp4mg87VzpG1C2axyXAOQYpuJR8OMsB48tvjmYTWPcTG9A9sgeRALJqQBYF0u
+         qEyRURO5ypVyy9JFQ3DIHEPjBXU6Weoe4bvEn0bZdoE1nWoQMOoFIyNqX329+M9+OfTl
+         fPlpLQ5Fu4vCQpmNFH8ryUB2Qj1AlQ76oSk5+PrS0qQVdii7XUpQh6rUi7SkwOgygopq
+         mTKrvvqq5H+MHLgh9DcHrVyRH+axVnCTIFJGIIagUQntRsAlpBwLQf/wmHpM7Xl4bQV5
+         N6ZLgAPTKamgyCKiw+Gzg0kXDHkz4xsNjSyCqHFkahmA+wEvS0rJnLeNaRr9ElQgpJsQ
+         nkeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777993146; x=1778597946;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V+JNAHsC4qi6OiUkol5+kLRuL2+NBa4HUfFXhnGmjXY=;
+        b=tNedEWhaQV3D/n37prajb8NRDYWTXDBnqxVWv6gkBh2o0q5IC7suk5jn8W8C5x/tCI
+         MPecUGaTm+ExJcGF2meXroFUst/+BBl/12Qt7LyhbNdZiazgiS7NIbBcdrkFKSeOuA4g
+         DomaV4LM1pdXHJ7RWQvhodlyZNqRB26mmY/XoewFSCQz7M9IfDxWZWqrtNGOcWM1hcwK
+         Rh32QPRNtHMynX3zsSxCOaFyS9yDxbZByCFO5eF54JoovZgmtdwpPli1gR+af1nHFl6j
+         MTw3xOyHd9Wlg3BQfTxz81+XvcnvsSv6l9+Git9WTiZKKxWQuBvRVbfFiooyM11QVYP7
+         Mnwg==
+X-Forwarded-Encrypted: i=1; AFNElJ/RPUqK86PzlpA45uHvwfxDTwksNg0b1+dQXiS2yWSzVImaRRz2SO+9xFqUCmMKFeTHZSgtaZMy3EIp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDL2ahN7SqkUVwEE/gRQFYLvH336QK75KEWxIKSjaHOU1GnRvm
+	WAQqBme5GwHlBFqorc3WxQQ/UJqGQp58nTjqdSzneMyMl/60DypOoUUJmzWmARBMGZ0=
+X-Gm-Gg: AeBDievSQlTXFf6zNzHasSEVhpKK8jlLCiAF4YiJG7f33WNYREbmalnJQY2BR+gaABx
+	P5j2U+EGFsqVyvrHzE9Hansr8UTddWs0UIWUiKRHPfo+Oe+hslzkl8J65R8sW91/ogCNP90rDUh
+	xToJzeK1SujI7ofWof7jA1vIInYJEpqXZhrWSNM10HzZ6s7pZpF3UvYH40oI+NByBh3VoKeWx5w
+	RAnMfjykwk3NS1eJ3U07dezUveVABaqj6njwVepeN6yN33sxZAn+BtiWIrc9HXlE6/e8mp3Rwzt
+	bKlF5J8K74gCRIXNbifQuUuQvivrGovT2QOKYj/frLcDMOGlL067zji4bBVGjtlTKimsaAA5srW
+	4v4WkYtG4/MDBEgDmTCchhRQ4Y3TCaejy3CgXSYQheaAtIhw7AV6921nFfgUSYjxvy3btRFfvm4
+	SEryEJvI4mg1TxTg42SKzKSa7Fpes=
+X-Received: by 2002:a05:7022:523:b0:12d:ca31:f1b5 with SMTP id a92af1059eb24-12dfd81a74cmr7152860c88.26.1777993145586;
+        Tue, 05 May 2026 07:59:05 -0700 (PDT)
+Received: from 997d03828cfd ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12df8278e7dsm19358808c88.2.2026.05.05.07.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2026 07:59:05 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ncmniyjvbnmgdidi"
-Content-Disposition: inline
-In-Reply-To: <6d26fbb6-3885-47b5-bfba-6c84bcc42f89@ixit.cz>
+Content-Transfer-Encoding: 7bit
+Subject: [REGRESSION] next/master: (build) variable 'jack_state' is
+ uninitialized when
+ used here [-Werror,-Wu...
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 05 May 2026 14:59:04 -0000
+Message-ID: <177799314451.2848.13872601558442495235@997d03828cfd>
 
 
---ncmniyjvbnmgdidi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: omission of the nfc tree
-MIME-Version: 1.0
 
-On Tue, May 05, 2026 at 11:47:10AM +0200, David Heidelberg wrote:
-> Hello Thierry,
->=20
-> sorry about that, should be fixed (rebased against -rc2 now).
->=20
-> Is there strong insensitive to use -rc1? In case it causing additional wo=
-rk,
-> I can stick with rc1.
 
--rc2 is fine, too. Anything from Linus' tree should be fine, really,
-since Linus' tree is the base for linux-next.
 
-The idea is that you should pull in only as much as necessary to reduce
-dependencies and complexity. If you need to pull in some other tree (to
-satisfy a dependency, for example, always make sure to work with the
-corresponding maintainer to ensure they keep the branch that you pull in
-stable (i.e. don't rebase it), otherwise things will get ugly and we
-start pulling multiple versions of the same commits, etc.
+Hello,
 
-Thierry
+New build issue found on next/master:
 
---ncmniyjvbnmgdidi
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+ variable 'jack_state' is uninitialized when used here [-Werror,-Wuninitialized] in sound/soc/sdca/sdca_jack.o (sound/soc/sdca/sdca_jack.c) [logspec:kbuild,kbuild.compiler.error]
+---
 
------BEGIN PGP SIGNATURE-----
+- dashboard: https://d.kernelci.org/i/maestro:ed6f3327055b3d832c87e92ead3d68396560c4f5
+- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+- commit HEAD:  4cd074ae20bbcc293bbbce9163abe99d68ae6ae0
+- tags: next-20260505
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmn590UACgkQ3SOs138+
-s6Fh7Q/+ItePsp50jDWMcAR9DSAUFtzsIB9t3nGWf/KQ/fxjmMXF0+iLRGGWDpcP
-IjXpgdB1R3Wb0lKZXu4Z0fCg/i9UK1og+cskh6bNGdoMmR2iJwa2W8LzG9oKiiTG
-ZEiqme86LQuwq/+89jZsQ8oXjjs/IPls3AOGv3LKZnhp6q/c5nqRQfb8HAyd4QwP
-UeL/9VC5yLRYMnwdY6cUJ+ey7uEWl3s56fOmlHJU3S0uQBwpsHCfiEMvl+4sz0Lo
-EFrpZ+Pi/hcU6p/A24i0uSR6srLrYmANNyJUFFJBqx1mqJxwziC5gTJ5nzc2E4n3
-fsRDE59Z9ZIe9YJUFsl9robO6T74S859tOJW/iC7+/AnJ69oq+PXs3+u/8SVcaaY
-Lvzcl1MbueQgvpU+QmWVyo2Vr5NTd+4NxYOtmUoMbbYsUhwjGSN4fUEYloZDG7TF
-QGdJADbiDXnfnu0X5aNXpbKLmqX9G7MrgddtacD7i0WvyEICib/3ysMRga+F6yka
-c76Iewge38yieWIFdpuWG71dn4WcuQqKXPcUUnsGLwEiEJhCcKoFtboLVfuUDoRD
-VNGEcNewf2VsRl8iB4bKKOXnxbEG/g8fEzTUYgYbZii3PfiOPSLNynnoFNjMnP4W
-01p7npSC3Ys5FC53w3X4sedVVKoGxYG9bdjboQX9FxTj/Ts6pzI=
-=zGP/
------END PGP SIGNATURE-----
+Please include the KernelCI tag when submitting a fix:
 
---ncmniyjvbnmgdidi--
+Reported-by: kernelci.org bot <bot@kernelci.org>
+
+
+Log excerpt:
+=====================================================
+/tmp/kci/linux/sound/soc/sdca/sdca_jack.c:211:5: error: variable 'jack_state' is uninitialized when used here [-Werror,-Wuninitialized]
+  211 |                                 jack_state->mask |= type_get_mask(type);
+      |                                 ^~~~~~~~~~
+/tmp/kci/linux/sound/soc/sdca/sdca_jack.c:193:32: note: initialize the variable 'jack_state' to silence this warning
+  193 |                 struct jack_state *jack_state;
+      |                                              ^
+      |                                               = NULL
+1 error generated.
+
+=====================================================
+
+
+# Builds where the incident occurred:
+
+## x86_64_defconfig+kselftest+x86-board on (x86_64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:69f9efc40e4ee292cbd73c6a
+
+
+#kernelci issue maestro:ed6f3327055b3d832c87e92ead3d68396560c4f5
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
