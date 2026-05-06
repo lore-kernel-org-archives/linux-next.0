@@ -1,42 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05635C190;
-	Wed,  6 May 2026 10:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698F93FE353
+	for <linux-next@vger.kernel.org>; Wed,  6 May 2026 13:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778062863; cv=none; b=iVqOCA3IIHTck8ZGwMHKxpjmYMUU4GJ6D1mSS+k3Gp4wPsqMiUhN0ctiXL0n9iWR15sI1jttZjcTTSarteAONLXUOhKxdV7ZNiUK9I77Iiins+gyFwVaaGNnNj+dths9yke80XEiBwz3FuCkjcScah+zyFrcimhJ0bLrw7uoYWo=
+	t=1778075473; cv=none; b=s9pStni13PZj3rNH64w/nmLiQOEe+VvNfh/+CJknZjT0B35l9hcUJRce9tnTxNI0vX5/SjCeUFdHv7DNXaINi4DhFNphxEU2XFaCiM0tUerZngZatqEnNIV3eFsA+RfkusLVumyKMOJNtkUoNU0WwaIdE3grQ4Ve2sN7tM8NNd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778062863; c=relaxed/simple;
-	bh=szIDYl4YMrMkVQH7M+qw2XA/7pZzhI4gxs1VPVTCWp0=;
+	s=arc-20240116; t=1778075473; c=relaxed/simple;
+	bh=C2B3QxEKafzgtpLGs/t4iNXlXg9I1G2zhFlwP1kffJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u4ICtU+32xvqeX42MTWSHMwOXlDlFknovR4xy0fLJg2PMwiX4qoNSOu9U9xEcMqHw3ZezyCfI0JYRxvmP7N1Vb9uGtxsAslrW3uY+whgXmg+SagNeRopjhK4hIxfzGw7aU2AHTtEaDPS3ledEkuW5Fsy0+qzCTDismIJL0APfU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO1IG3mJ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=eP/4aO94oyCGP0pBgxXVE7kEYEGDhhUgi788aHYDJYALEPpqE00T4T/OCnEni6YiqjGGKqAg4MEu8H3MhzRWptePNyaG7GwcBwXVDVkEfDiTzB1xe2vQoH1m9fZFnrr0rIntAXJbPjX3pBXTBvqROMP9vkX91nUOfXIS6zHz+wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwVf7rJ2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO1IG3mJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145DCC2BCB8;
-	Wed,  6 May 2026 10:21:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778062863;
-	bh=szIDYl4YMrMkVQH7M+qw2XA/7pZzhI4gxs1VPVTCWp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DO1IG3mJMsD6ygKDeJPTFgM4/USdlBncDfZHf9v86wI2u06ZlJdxtCHUqDOzw4kff
-	 9uFu4pP7GpMbuVVwTBAOiRjMK+qGZ2Kta9IkMt/EDoAUyhoYK8ha/cTW/5R5ekkZD2
-	 WYYd3MDuZr0tSsbLco3i7QZmk7Ve3/6TELLRXXOp6vb1ND7xP+Ohmu+2zs7tRgQ61O
-	 s17tPn71JoEG/PQlzinjycacN0J2GGuLpqUgji4c7sIcabTeW0KJwq9shOLT4h/BFl
-	 2fQFkUWFVezo0leFoZSXc+rU2fb/YKLbTlQLCRuPcdmJJX1ChNPM0ThhV0lb704RmM
-	 ka5Tkxk/yv/6A==
-Date: Wed, 6 May 2026 12:20:59 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Chenyu Chen <chen-yu.chen@amd.com>, Dave Airlie <airlied@redhat.com>, Leo Li <sunpeng.li@amd.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, Ray Wu <ray.wu@amd.com>
-Subject: Re: linux-next: manual merge of the amdgpu tree with the drm-next
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwVf7rJ2"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-488a9033b2cso57695215e9.2
+        for <linux-next@vger.kernel.org>; Wed, 06 May 2026 06:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778075471; x=1778680271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Romqkwo6S2kZ4wlk8RoVw4poKmRE86I0F/vnPSwbKgQ=;
+        b=dwVf7rJ20zbhIaUHSbAWZpvUqSFUPvS9MreEZS45mn9S4pAs6s0oiaUIOlGhYkezEE
+         qUgJmCKHuGYgI8cHr2TARqWX4Rae7eidw0cFCmmSP89YahTY0P7PTeBZzLFAxG8pcJFi
+         BD/nLLA0EX541OfuKOYvBGaeaw7u0mU5jwx7c/m5sDEhq3eqyrZhXf5r2D3LZodon2FY
+         HnUjvr4a07X+d3n9HbMnoJ0mvcAEI3X017Sns51mOo1EHiRpadPhI/zWvuK1J8b/xYma
+         J/3zCe5Rw7cLFiFfAbURudJd5iyjLAYtzh8rbqHL01GNugCwbZbSUMAqu2ABk+a4fjwf
+         iY1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778075471; x=1778680271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Romqkwo6S2kZ4wlk8RoVw4poKmRE86I0F/vnPSwbKgQ=;
+        b=PrZcaJz6+T4Znc1/vzByDWvYC5yMzf+DR9UEskXx980avPNo/tPLevbxZhaGDsPLST
+         Zm8tWPUhkFx5i0I8ULpUv8xps8kV4czNQywIy0T8oRWzMGEajxY5Iah0YKc/KCUzmuXC
+         eQGBbDA6abzL4XJZiA4W7L4hAS0fGhLxMk03MJhYUidrVvHoGojpe4COvNrRwNWr5ZGI
+         vXXwQFhZq2LW/t/QgkxfJxhXFi7DQDRfiooDGEK8L0HTrqSi+RF6VTfLXC1M8tgnD/i/
+         Ro8m+rL7tSKrD7Mm97KE5Kq99hfgkz6mQEQPplNl/M+Rs/wUReHf1PkPG+X9HcyQiJ/X
+         gFTQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9pr+NBA99VLXdwnUfNlanTaCKtdO9sojwd4p9wNjslnz0q8W2Ardf6WiMElGv94fvd2CsmLQyqyIo8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQezqsJRHBe2Rxk9V7EQDM5BmDGnVyrIeH2nsJbFgT/muc1Pgr
+	ax8xdQnC+5vWFPM1VpAOAL+t2AcYBv+1+9g11h7Reuy746DfiEUyh5dhdUYA2Q==
+X-Gm-Gg: AeBDiesCdjQYzC23zwFWbLwq95fTSLCkvFPF1N6bTs4JGySUZd5aLQX+zxy5Pw9X4Nr
+	sBm0XMXcuS/QA6Do+0HPawnPHAIUEO0rnhxWFWQnH62mqX6Fz1m3QAmcbXYJqejOUIpjIcyTxJV
+	bLRfECeNb3PYdvUUbPGQZvG99DoWfyI/7zBrZAR9KbbBj8BSg59BpNyUo7z08fcavfaUuNgiefg
+	EL//LnG/rEmdOeNUljx7zMIG4ErWKuDmrHPH5EM3+7HgJnqWq0yXArA13ju7GJuv5bDy93bEYEC
+	bvxvuxwEGvrXtYHz9eV5c3T6Nz6lkMoBWk8l0f2F3A5TZXA2421hpH7KPssROlpd43zaJLGFwM5
+	W5m7IKYwCvXRu+RrV7IsrGPXZDX+Np5GV4R/CcC3G3zKzzeclTgymjy+Uqq7kXMJQH/7jObHqF2
+	k4sWvgt8w2XHfL4J8/v8M0DKbrYgYU2G8Q5X+WXfShe161vFzF786cH09VSu4/eKU9+LoonsIod
+	our3HpKo4RL6AEqfQ4nFFKO
+X-Received: by 2002:a05:600c:608f:b0:489:1ba8:5be9 with SMTP id 5b1f17b1804b1-48e51f4b0e1mr62560885e9.29.1778075470546;
+        Wed, 06 May 2026 06:51:10 -0700 (PDT)
+Received: from orome (p200300e41f1c9800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:9800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e52f5d299sm27927105e9.0.2026.05.06.06.51.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2026 06:51:07 -0700 (PDT)
+Date: Wed, 6 May 2026 15:51:06 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Peter Chen <peter.chen@cixtech.com>
+Subject: Re: linux-next: manual merge of the pinctrl tree with the pinctrl
  tree
-Message-ID: <afsVtJvNqkCaGyov@orome>
-References: <f8ede562c8335f22073b4cc5535001d4@kernel.org>
+Message-ID: <aftHEpJMopvbeFKu@orome>
+References: <bdb98d48984f53087669d761f771f72e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,68 +75,60 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jzii5tzomh7zsty3"
+	protocol="application/pgp-signature"; boundary="k65yh3sxj2pgdnvr"
 Content-Disposition: inline
-In-Reply-To: <f8ede562c8335f22073b4cc5535001d4@kernel.org>
+In-Reply-To: <bdb98d48984f53087669d761f771f72e@kernel.org>
 
 
---jzii5tzomh7zsty3
+--k65yh3sxj2pgdnvr
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: manual merge of the amdgpu tree with the drm-next
+Subject: Re: linux-next: manual merge of the pinctrl tree with the pinctrl
  tree
 MIME-Version: 1.0
 
-On Wed, May 06, 2026 at 11:55:55AM +0200, Thierry Reding wrote:
+On Wed, May 06, 2026 at 12:02:09PM +0200, Thierry Reding wrote:
 > Hi all,
 >=20
-> Today's linux-next merge of the amdgpu tree got a conflict in:
+> Today's linux-next merge of the pinctrl tree got a conflict in:
 >=20
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>   arch/arm64/configs/defconfig
 >=20
 > between commit:
 >=20
->   5164f7e7ff8e ("drm: Rename struct drm_atomic_state to drm_atomic_commit=
-")
+>   2fd3902c91c8 ("pinctrl: qcom: Make important drivers default")
 >=20
-> from the drm-next tree and commit:
+> from the pinctrl tree and commit:
 >=20
->   3c108046e1d6 ("drm/amd/display: Add power module on Linux")
+>   517d8fc52f3c ("arm64: defconfig: Enable CIX Sky1 pinctrl, PCIe host, an=
+d Cadence GPIO")
 >=20
-> from the amdgpu tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. It looks
-> like this is pretty much what's in the amdgpu tree, modulo some
-> whitespace changes. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
+> from the pinctrl tree.
 
-Looks like I forgot to adjust the new functions for the renaming change
-of drm_atomic_commit, so I've added a merge fix for this today.
+Sorry, looks like I messed up the invocation here. The conflict is
+between the pinctrl and the cix tree, obviously.
 
 Thierry
 
---jzii5tzomh7zsty3
+--k65yh3sxj2pgdnvr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmn7FgcACgkQ3SOs138+
-s6En2RAAowkufmYuy+CE9sbC40DhEiBCLnl84s89faPJ4AFzX0NStRTvwzMh/wC2
-5xerC53Iu2qnYq4B61EU16AA8k+L5G1DD4wkhxletvdCRuQRtf3HRFol/Px2/bGG
-WPM4coPAGGaVULEor7BJ7wFPT3dlbhqBU1dLijptaP596eb6lAhc3xaVjG8Ahpiu
-i2gvxBaznvh1g5IQ7woDsvA6hp17ssylP9tKQ2NyWCau01tn7+VSzAfoBukLJdsC
-+tMBxXNmAD57b05lAi/nIyk+76yZExIshXLT1PRTF5F3Ig7/P+54n4A7VLl2AqSw
-vQTPqai9Pr4Lip5BDCMqx8vjbHjvehF1hktHB+JFGKxgIw9tVsm5LqKttKZ/ttsg
-23h+Tyg0Vsisz2gaW4+UW6nj1CkafWRLo3bGjNw9PSTTZVZv9V6RGilUF/qc1ojq
-aGz6hPe82mwbYSrxGSPJvqMNQTE/aUzchN2zP28CXi3ps8EM4tQ+Ib3IfFRjoaXd
-uFzeJ6Syjj1qANyTFuTqg4sZlykcsi9zBkWg8HGrPKsgqkf9OIJlPZQ/Xc0QleIk
-9asDMnX4yDJ5MP/1d8jGN2ya2Z2gdzWz7AEeSOLl2zIu+DMz+jfvHu34iPJ6KmV+
-8BkC+jJny/ku5TSOoalnG3TIILSF3AogdCn/rnDNhErckr9SIRs=
-=o90Q
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmn7R0kACgkQ3SOs138+
+s6HK+A//ePgSo1BMgl+EOK9wVSj+y5z6jXa6eIShTLILJIKIPqfaNF5ccp53jAX4
+9SAec/LrbQuKweDxHxXtZdg9ztaF2BdHyePSIVLjJurFanbqtLSnAQvTjBJeL1t6
+GsjVqShazDm9viDGaRtGNf9/9wY72eodWDDO5Z4EqB6KCAD+EFj4yebRIGuvCOW6
+FKxeulzaCMyUXSmxcLxTCu5/yHmSk20Mgx2qmzxXRuVSP2PSH5+1fnVTknbh1xlB
+5LhMatY/NH67M6WcNmp8aTJpdJvWz7cTCMPdO88sa1OYeArEgD4yu5y0HtaLHW18
+m9me9AkbVarQO7c/O7nNTWboUj4wL6TPhd0D/uhIBbdsd7Dz0kRBCaxjQ9E4sR9d
+KKKwhhPIkB7NS26CZvG6f4XBQNZ1FFN9Wtmm7SowdOiuxUpeAA1Bij28o+GXoMiI
+EevYSAT8M+E0awMVRXG9hL9rWbvqvPq6hcCpFhslQkUHItj5mu2MlvGPJJatZjc6
+cZ5tG9Kyln4KuL3eXfovFATeI/6Y+4ilqkA9vp+4CFiPB9f+C/yuWGUHFBnC/r9P
+l0eIuIwAODTMGLVINfSshnTPEqFUHBvQlIXVhWXnG9vXie9qwEEODIr9YBPpmS68
+gx2CerZ9AradZ2slj5o/mo7als7PZhvmzz0pkS5LNDppCk9xLYQ=
+=drQ8
 -----END PGP SIGNATURE-----
 
---jzii5tzomh7zsty3--
+--k65yh3sxj2pgdnvr--
