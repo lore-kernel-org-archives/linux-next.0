@@ -1,43 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28350287503;
-	Wed,  6 May 2026 09:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F87344D92;
+	Wed,  6 May 2026 10:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778061359; cv=none; b=MXBkRgEIufXl52daI5rBmC3Y0HNWg4Mb3JqBau7+CJcYxXhGSkesXp1qFWmojFldpqx8uc3jBVraNYRAK2qYRhYRd27/NIUdSTK/51mHPfXHxtkgFmuzNPW4YHy+9aONNoHW4xlqJenr2uACg7kEoKBBCuc4tE0JSDVR2Ml4Hqk=
+	t=1778061732; cv=none; b=egfquzGkXjvv2rFA7j1cw7D+ouEDtP5x9KwgRl9DYrHbalhR645MWwVFMcjNLeFMsKkioQYt0O/N2BhdWoBbeUf8KssF+PVBwyg7cax3mrobbWDMH+tma6VNZHkXT1ZMeeIZh6ALEXccgrgwGYr5tqxYjapkEJuiH4zywn1XNsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778061359; c=relaxed/simple;
-	bh=KAK+Auw1mnvENRE8ConO2NgBLnORMQs1A4PSyHUOOf0=;
-	h=Date:Message-ID:From:To:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject; b=XgU1zJJNNEE9l97g7jEyH3IYfjVrcn+vjDBGRpg8L/KNVBMlqzaFc0eKEkNCqgw1bQDfXTrfKt6LZu5eDJjLiAHMjWRuKGy7oj9QZfXylZ2bVZShRsr3OIn4Ktrt9DSIua1avO+mI72fP6VFzlpyT5K7zrcd3h6y53VbNHAKLZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfWmPyN5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778061732; c=relaxed/simple;
+	bh=KAyEgJ9AXVLnPGkYdJzheSNXoOS+fcIUcUxl/TD8dbo=;
+	h=Date:Message-ID:From:To:Cc:Cc:Cc:Cc:Subject; b=XaCUsh/mlcONjydhnz6iTeDtlQ8GlKB73UpFdr45gxbx5bVQEj/FyvhWpIGupuTLpmA12ZqTsot6gMjl21nJv2llp98UNsoYkb04B/1vYcMCEHOmW89U+8mN1+O56spNsknU16GwU0qtcvNKffU1M7cq3dFgeGxlFiyJrIiqRPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jawmULiR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfWmPyN5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BA3C2BCB8;
-	Wed,  6 May 2026 09:55:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jawmULiR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B0E7C2BCB8;
+	Wed,  6 May 2026 10:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778061357;
-	bh=KAK+Auw1mnvENRE8ConO2NgBLnORMQs1A4PSyHUOOf0=;
-	h=Date:From:To:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:From;
-	b=FfWmPyN5l8cKWOp/xCFoWjHRXMVE8tUspwxfus9o7tESTkpdOig5g5IAcrPGOkE+7
-	 iqRWDhTouxc5OVQAoRpw0Id93sjznVTrhIg+9swFd9DCtVFzfBCJsxmbsdqaiK1U3V
-	 IT73KmXBcDIG7jz9Es2+X0JOPL5V6geGhjwPoOaRNlOKRtJws9R9csl2dwBEBdS5JF
-	 GdLl4Y9ertXqHKlu0yQTZauLCXk/5JOYRzz+5sm20KcVICKzXBWQjC/9Nv7ACXjqeO
-	 U99fDo7xazZncxr6SVfkewSuLJEN3cYxjAz/+f+JiC0QF6LgdNd5hztnYp0elmqAnO
-	 JnUZo3GwmPrVQ==
-Date: Wed, 06 May 2026 11:55:55 +0200
-Message-ID: <f8ede562c8335f22073b4cc5535001d4@kernel.org>
+	s=k20201202; t=1778061731;
+	bh=KAyEgJ9AXVLnPGkYdJzheSNXoOS+fcIUcUxl/TD8dbo=;
+	h=Date:From:To:Cc:Cc:Cc:Cc:Subject:From;
+	b=jawmULiR7F+vg+6R5xj4ThMkE9j5E8FXthqexrirrBOzmCEFZoWrDbnkgcp+t3lZ5
+	 o6N6n6Mb/psyUTOC1NEb9KQbLYh2PlyN1LAEmRSoTy/rrzLp6PZvfdqowHE1uR1bJz
+	 posR2/xBc4DVN/TK8FQauEklgLz/cfWopAeZULVv7KAmk4HiBh7X3c7AZUR39Sduki
+	 JKPmoCGj6p+L+naspTaJyJxiX8movlk/VRkM0NlN0bwGb7lOdDHEMnlHw58TQCzpSS
+	 d911JlfwHYck7RPbrRYq83UAwNQh4HajGY07DhtPT1ZkP8YfGyhT2G8y+y24AcEifM
+	 TusbG6HLtwuHw==
+Date: Wed, 06 May 2026 12:02:09 +0200
+Message-ID: <bdb98d48984f53087669d761f771f72e@kernel.org>
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Chenyu Chen <chen-yu.chen@amd.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Leo Li <sunpeng.li@amd.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Ray Wu <ray.wu@amd.com>
-Subject: linux-next: manual merge of the amdgpu tree with the drm-next tree
+Cc: Peter Chen <peter.chen@cixtech.com>
+Subject: linux-next: manual merge of the pinctrl tree with the pinctrl tree
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,137 +42,83 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 
 Hi all,
 
-Today's linux-next merge of the amdgpu tree got a conflict in:
+Today's linux-next merge of the pinctrl tree got a conflict in:
 
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+  arch/arm64/configs/defconfig
 
 between commit:
 
-  5164f7e7ff8e ("drm: Rename struct drm_atomic_state to drm_atomic_commit")
+  2fd3902c91c8 ("pinctrl: qcom: Make important drivers default")
 
-from the drm-next tree and commit:
+from the pinctrl tree and commit:
 
-  3c108046e1d6 ("drm/amd/display: Add power module on Linux")
+  517d8fc52f3c ("arm64: defconfig: Enable CIX Sky1 pinctrl, PCIe host, and Cadence GPIO")
 
-from the amdgpu tree.
+from the pinctrl tree.
 
-I fixed it up (see below) and can carry the fix as necessary. It looks
-like this is pretty much what's in the amdgpu tree, modulo some
-whitespace changes. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index cbfdcc65bf5d,246ee40e202a..ad56a409a88e
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@@ -10479,8 -10582,104 +10582,104 @@@ static void dm_clear_writeback(struct a
-  	dc_stream_remove_writeback(dm->dc, crtc_state->stream, 0);
-  }
-  
-+ /**
-+  * amdgpu_dm_mod_power_update_streams - update mod_power stream state on modeset
-+  * @state: the drm atomic state
-+  * @dm: the display manager to update mod_power on
-+  *
-+  * Notify mod_power of stream changes on modeset events, and disable PSR/Replay
-+  * in preparation for hardware programming. See also
-+  * amdgpu_dm_mod_power_setup_streams() for post-modeset mod_power setup.
-+  */
-+ static void amdgpu_dm_mod_power_update_streams(struct drm_atomic_state *state,
-+ 					       struct amdgpu_display_manager *dm)
-+ {
-+ 	struct dm_crtc_state *dm_old_crtc_state, *dm_new_crtc_state;
-+ 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
-+ 	struct amdgpu_dm_connector *aconnector;
-+ 	struct drm_crtc *crtc;
-+ 	int i = 0;
-+ 
-+ 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
-+ 		dm_old_crtc_state = to_dm_crtc_state(old_crtc_state);
-+ 		dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
-+ 
-+ 		if (!drm_atomic_crtc_needs_modeset(new_crtc_state))
-+ 			continue;
-+ 
-+ 		/*
-+ 		 * Update mod_power on modeset event in preparation for hw
-+ 		 * programming. Always use the old stream, since it would have
-+ 		 * been previously added to mod_power. If old stream is null (on
-+ 		 * crtc enable, for example), mod_power will no-op, which is the
-+ 		 * desried behavior.
-+ 		 */
-+ 		if (old_crtc_state->active) {
-+ 			scoped_guard(mutex, &dm->dc_lock) {
-+ 				amdgpu_dm_psr_set_event(dm, dm_old_crtc_state->stream, true,
-+ 					psr_event_hw_programming, true);
-+ 				amdgpu_dm_replay_set_event(dm, dm_old_crtc_state->stream, true,
-+ 					replay_event_hw_programming, true);
-+ 			}
-+ 		}
-+ 
-+ 		if (new_crtc_state->active) {
-+ 			aconnector = (struct amdgpu_dm_connector *)
-+ 				dm_new_crtc_state->stream->dm_stream_context;
-+ 			if (old_crtc_state->active) {
-+ 				mod_power_replace_stream(dm->power_module,
-+ 					dm_old_crtc_state->stream,
-+ 					dm_new_crtc_state->stream,
-+ 					&aconnector->psr_caps);
-+ 			} else {
-+ 				mod_power_add_stream(dm->power_module,
-+ 					dm_new_crtc_state->stream,
-+ 					&aconnector->psr_caps);
-+ 			}
-+ 		} else if (old_crtc_state->active) {
-+ 			mod_power_remove_stream(dm->power_module,
-+ 				dm_old_crtc_state->stream);
-+ 		}
-+ 	}
-+ }
-+ 
-+ /**
-+  * amdgpu_dm_mod_power_setup_streams - setup mod_power stream state post modeset
-+  * @state: the drm atomic state
-+  * @dm: the display manager to update mod_power on
-+  *
-+  * Notify mod_power of mode_change. This needs to be done after dc_stream
-+  * updates have been committed, and VRR parameters have been updated.
-+  */
-+ static void amdgpu_dm_mod_power_setup_streams(struct drm_atomic_state *state,
-+ 					      struct amdgpu_display_manager *dm)
-+ {
-+ 	struct dm_crtc_state *dm_new_crtc_state;
-+ 	struct drm_crtc_state *new_crtc_state;
-+ 	struct amdgpu_crtc *acrtc;
-+ 	struct drm_crtc *crtc;
-+ 	int i = 0;
-+ 
-+ 	for_each_new_crtc_in_state(state, crtc, new_crtc_state, i) {
-+ 		dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
-+ 		acrtc = to_amdgpu_crtc(crtc);
-+ 
-+ 		if (!drm_atomic_crtc_needs_modeset(new_crtc_state))
-+ 			continue;
-+ 
-+ 		if (new_crtc_state->active) {
-+ 			amdgpu_dm_link_setup_replay(dm_new_crtc_state->stream,
-+ 					&acrtc->dm_irq_params.vrr_params);
-+ 			mod_power_notify_mode_change(dm->power_module,
-+ 						dm_new_crtc_state->stream,
-+ 						false);
-+ 		}
-+ 	}
-+ 
-+ }
-+ 
- -static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- -					struct dc_state *dc_state)
- +static void amdgpu_dm_commit_streams(struct drm_atomic_commit *state,
-- 					struct dc_state *dc_state)
-++				     struct dc_state *dc_state)
-  {
-  	struct drm_device *dev = state->dev;
-  	struct amdgpu_device *adev = drm_to_adev(dev);
+diff --cc arch/arm64/configs/defconfig
+index dd1ac01ee29b,dde8b61338e3..f4dfd0cc853c
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -652,54 -651,7 +652,8 @@@ CONFIG_PINCTRL_IMX8ULP=
+  CONFIG_PINCTRL_IMX91=y
+  CONFIG_PINCTRL_IMX93=y
+  CONFIG_PINCTRL_IMX_SCMI=y
+- CONFIG_PINCTRL_MSM=y
+- CONFIG_PINCTRL_ELIZA=y
+- CONFIG_PINCTRL_GLYMUR=y
+- CONFIG_PINCTRL_IPQ5018=y
+- CONFIG_PINCTRL_IPQ5210=y
+- CONFIG_PINCTRL_IPQ5332=y
+- CONFIG_PINCTRL_IPQ5424=y
+- CONFIG_PINCTRL_IPQ8074=y
+- CONFIG_PINCTRL_IPQ6018=y
+- CONFIG_PINCTRL_IPQ9574=y
+- CONFIG_PINCTRL_KAANAPALI=y
+- CONFIG_PINCTRL_MSM8916=y
+- CONFIG_PINCTRL_MSM8953=y
+- CONFIG_PINCTRL_MSM8976=y
+- CONFIG_PINCTRL_MSM8994=y
+- CONFIG_PINCTRL_MSM8996=y
+- CONFIG_PINCTRL_MSM8998=y
+- CONFIG_PINCTRL_QCM2290=y
+- CONFIG_PINCTRL_QCS404=y
+- CONFIG_PINCTRL_QCS615=y
+- CONFIG_PINCTRL_QCS8300=y
+- CONFIG_PINCTRL_QDF2XXX=y
+- CONFIG_PINCTRL_QDU1000=y
+  CONFIG_PINCTRL_RP1=m
+- CONFIG_PINCTRL_SA8775P=y
+- CONFIG_PINCTRL_SC7180=y
+- CONFIG_PINCTRL_SC7280=y
+- CONFIG_PINCTRL_SC8180X=y
+- CONFIG_PINCTRL_SC8280XP=y
+- CONFIG_PINCTRL_SDM660=y
+- CONFIG_PINCTRL_SDM670=y
+- CONFIG_PINCTRL_SDM845=y
+- CONFIG_PINCTRL_SDX75=y
+ +CONFIG_PINCTRL_SKY1=y
+- CONFIG_PINCTRL_SM4450=y
+- CONFIG_PINCTRL_SM6115=y
+- CONFIG_PINCTRL_SM6125=y
+- CONFIG_PINCTRL_SM6350=y
+- CONFIG_PINCTRL_SM6375=y
+- CONFIG_PINCTRL_MILOS=y
+- CONFIG_PINCTRL_SM8150=y
+- CONFIG_PINCTRL_SM8250=y
+- CONFIG_PINCTRL_SM8350=y
+- CONFIG_PINCTRL_SM8450=y
+- CONFIG_PINCTRL_SM8550=y
+- CONFIG_PINCTRL_SM8650=y
+- CONFIG_PINCTRL_SM8750=y
+- CONFIG_PINCTRL_X1E80100=y
+  CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
+  CONFIG_PINCTRL_LPASS_LPI=m
+  CONFIG_PINCTRL_MILOS_LPASS_LPI=m
