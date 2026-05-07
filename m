@@ -1,123 +1,84 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F1B31AA8F
-	for <linux-next@vger.kernel.org>; Thu,  7 May 2026 12:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118792C859;
+	Thu,  7 May 2026 12:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778156145; cv=none; b=F8D02PwleME/T85s/Y8R05iLN8jG+tF8TtCXSwIx9QomEsurLZfQ4HAXoVbLQ47ynC/4jGszIGgr34LKkkEzdOSf8uYxw/RtWtsnbMKbAON7XsDUXJ+ncWYVlKQa7FBqAcQg0KPBoIVXAtv+61BXU9cZf7Heegbh9yzpDX85cUE=
+	t=1778156480; cv=none; b=LW8b5g7EvLDC68bePEwhTofNHa1s6yywxzryEmyboWAq7Oqg5fP7DjouIS8Ei7Omf7yhxmXj8proV1U4iN8Dt9bVOQY3hhcAR3YvDUODHEabNJuxHQnPeEpFwINuhh712G+cZ+oBuFnC6V9LJw5at20EadTwdwU6S7UOktgMKns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778156145; c=relaxed/simple;
-	bh=c0hToDKSMnxbi/5ufvYd8KJ5BjxBoSfijUk4UFSKZpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWikGktSVJivPwqoL0HvdWZg+dNzd/xhehPxEIggybkrbQJWmHNpucNaARrVslO6hMG+rhmhXyvo66TQ0B4yNx2BYYSGuB/GXY/jHha2T5JbpGtIFil+7bLHc0VyDHPpCkFzhJmGgBag14lkTwW8p8fbznQuVayRIj4deDZFQOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlGsLoRS; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778156480; c=relaxed/simple;
+	bh=BuvkohwHxw7F9nOFrSoQFns451PdTrZHPzG0z6C+1Xs=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=LqGKFaRDvauXL93Y1JNT/MQT86fqtfmDsU9IACeOcImZXekyinrBJQBo/zjlK91zqFvcA+sKERLFxOCAX4oJWs247qT/qX/wWx3ifzwQ9+7rW3I8wbAOSE3tb0Z12I1P0685+uSnqgnxFG6vh+gZQEKTv7ibT0AtKW77ndls9f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JO8W14XT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlGsLoRS"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-48896199cbaso6746675e9.1
-        for <linux-next@vger.kernel.org>; Thu, 07 May 2026 05:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778156141; x=1778760941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c0hToDKSMnxbi/5ufvYd8KJ5BjxBoSfijUk4UFSKZpU=;
-        b=YlGsLoRSt9kRedE0p2MaH9KnwpBaKFg2WlSI4uXQy1ECtdGR76/fK8lyWOaHHOYnO5
-         DepzLwt2iAZNmAI525ATcaXzhBwW7oCYQv5RB4DSIAANV9ED91WJ644YY81M/vvwD4Ke
-         iPHKb44yD+qxFCzNuCqhI/pPzwCwaCcxQkJ/WzoxvsCR2VbUa/7bKfBuri//RcjxRC0W
-         y3y4Um+f0ffzrs5bcbOU97MdUaMrsQqrlF+DpW5z1Dn6bRUPxPoN4odlFxnt0W0pMIdo
-         Crcmia8m+6yzMgEgczp60U2b0tlzo32rTmBTROj57dS2daDbq/UuwxYk7if8uX1HodfJ
-         8HSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778156141; x=1778760941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c0hToDKSMnxbi/5ufvYd8KJ5BjxBoSfijUk4UFSKZpU=;
-        b=gkQ2gQYZLAzH/r5ngzwvVXPrKIjWpM9tcuNNvL8kATOsJA3FEo1dtfRYS1s8UPepy+
-         y+5M2Cn940YCgGZi4dnAVdiCsoI87aQktd7Wc5V8V2ew4/DSd/lVYNzrdcloDnmqYX0w
-         aW7DtIvsr5Qy7/0KZTeEaJ0sLp0YcuSsLrvFfl9fLN7wfl0nN4LeN3bcTsbw3TjIbHwM
-         92cFWIQhxAbsJm+RVj4b6JDeOkXezhk5VzepDPy/jp2zIo9ozCXnG9C2FjMVeIIO4Qea
-         bxNqo7JhNer6nddaCwVcDzbOH0/JZKPiEioCsmQZezq+AbRYZpY/XnaORfT9N55tD3x4
-         FSyA==
-X-Forwarded-Encrypted: i=1; AFNElJ9kGoD0/Lemt53ekMd3F4lzTUreGX8uVNG6UPNBtzBXn4Tueh6qjlUBL3Yf8/WxR2Weblg/fa7n3asI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyciwt8PnsXdxJpjptS/LES36qjIdsVTXHJQVVtg3L6xoDUPcvU
-	WyyT2vVArIzHo6o9vdyX+JhZIIcQUawmHnhPwt1u5wIhtxgbTMXPUB8W
-X-Gm-Gg: AeBDiev9RFY1TwXK5KrmdJlncXo1OkZV1A7aTTlLhsuRZ46mC4hc6QW5TmqUPH3HgbB
-	zoN4UfQq/LhJO3f8AKTjxrwCxnvfGulPlnniO1Wxp9zBHLSO+eDhh+tarmobrbnK6Nc3FcxU0fi
-	iN1Bm3BKG9Y2EXpqTCOpwD+NAvH4DZfSv7bMBIjDQQfdKCRKScXRU1ZVJgIp/0RsgWzHOOsEx8f
-	Fig3Pf3TRL2Si1ISEoDGBNhOdK4cXfsT5I8gG/Sh1hF2Drfq+GiM8sosoDRp9XTy+aFdR2hqNpi
-	aBGqh8L5pNWkPS1bN4rgyaZiWQDgUIznFmsY148Rmodm+gHG8yRVT0IczDRlNejKdvCkOHVHsud
-	TZmhWvFwajtnE1M2PRJT7eQP4Othj9/cZFKCBXjdFyFEt3Ha7+d9x2adJqV6/r32SxuQGJq62kq
-	cThVQEunrFYcbDsaFFjN+X7chae1NNjsXf/964OKMsnIfOtF8rGbAgtEEGjAgLfyt7tVKzWESAQ
-	qHfB38FDxy97R2ImpHuTlAp
-X-Received: by 2002:a05:600c:871b:b0:48a:592c:e655 with SMTP id 5b1f17b1804b1-48e51f45eddmr121794395e9.17.1778156140136;
-        Thu, 07 May 2026 05:15:40 -0700 (PDT)
-Received: from orome (p200300e41f1c9800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:9800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e530b212esm52203795e9.1.2026.05.07.05.15.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 05:15:38 -0700 (PDT)
-Date: Thu, 7 May 2026 14:15:36 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, 
-	DRI <dri-devel@lists.freedesktop.org>, Intel Graphics <intel-gfx@lists.freedesktop.org>, 
-	Dharma Balasubiramani <dharma.b@microchip.com>, Maxime Ripard <mripard@kernel.org>, 
-	Manikandan Muralidharan <manikandan.m@microchip.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the pinctrl-intel tree
-Message-ID: <afyCC_FE9QL5VBBm@orome>
-References: <3b729608ad4bc3bb161c3779a9768b12@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JO8W14XT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE2EC2BCB2;
+	Thu,  7 May 2026 12:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778156479;
+	bh=BuvkohwHxw7F9nOFrSoQFns451PdTrZHPzG0z6C+1Xs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JO8W14XTVqDXV4oMqWud6On2aE7jCUmhjg57y32u92ZBfmAArVOKPstGD/qD43PfB
+	 5o8AW9mr6hhBhVDQy/pCgbiCGJwH30otGLfVXvOpERW2fasMFN8hQIjRnCtt4jp/09
+	 UW8MUagwXr6zcnPEMKsOFbkh4yET93QNnEeDQ459cauxDq1p3CQsr1qrDTbUOobifm
+	 zhkqb9ftVRJy/YJhsTM7B+Zop42GTHZRQlSOsC94BzIW9bGmSz7glmM1cPUxFjhhOi
+	 aVDDX4HqYVm+w7/DJKB9TSVK+oCY/W4no8UwPs3A3lOAT54QOg1UCQpZvE5UuM/MNJ
+	 l3a9DHDJ+nf7g==
+Date: Thu, 07 May 2026 14:21:17 +0200
+Message-ID: <6739cf6c29943f4d5e5a80d5feb6a3f9@kernel.org>
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for May 7
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zxepztxp53sv2ewk"
-Content-Disposition: inline
-In-Reply-To: <3b729608ad4bc3bb161c3779a9768b12@kernel.org>
 
+Hi all,
 
---zxepztxp53sv2ewk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: build failure after merge of the pinctrl-intel tree
-MIME-Version: 1.0
+Changes since 20260506:
 
-On Thu, May 07, 2026 at 12:47:48PM +0200, Thierry Reding wrote:
-> Hi all,
->=20
-> After merging the drm-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+  The iio tree acquired a conflict with the iio-fixes tree but it is
+  barely worth mentioning since the iio tree already contains the
+  resolution.
 
-Sorry about the misleading subject. This was indeed introduced after
-merging the drm-misc tree, not pinctrl-intel. I need to look closer at
-the templates that are generated.
+  The drm-misc tree causes a build failure due to some bad interaction
+  with the drm tree. I've fixed it up in today's linux-next but it needs
+  to ultimately be fixed in the drm-misc tree.
 
-Thierry
+Non-merge commits (relative to Linus' tree): 3539
+ 4166 files changed, 233720 insertions(+), 70116 deletions(-)
 
---zxepztxp53sv2ewk
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------------------
 
------BEGIN PGP SIGNATURE-----
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmn8gmUACgkQ3SOs138+
-s6HcUA//TIusmk3FnAe7we2CgaOJ+sqg8vpo8WhTR3tp61urf1xbiecKbG0xC7ou
-QJykdzlYPfSJYlEnJrSEakUAfpohy/38qKYtmguUVBfCH2YA3tuCFVy+9ElidkpF
-QWbUwHQ5NjJnr5rMIVnZDzcOM52NWfozCF+nXS4JRwA9krPK7FQI+yftv/ystF+c
-o8ur3EofGq6BQg885XNFd2FRGlsJsYBA9v6OWwKx4M83tKvlA2u65+vUPsNbo9So
-X+7fBWqK3P9jf/r0gBxImInqgkPcNwggNMG++u+Ngj9dxaNa5UDRAC+DgqJPAMef
-8C/2nofhRjWRSHxlWSgoWc2wmjUOFv85G3rQDr5cipG0b9Ws2b0dJFPCJf3wIaUU
-bYRGl3OoEMI6TP5vdNnST0P/Z/9NFxRWpBEA5tVogpEbVw29mfTeLzlQzNorjppq
-ldulosvdNBuRNUhMelHYX6DQ47WmDSdCJBfLtsSvXiiEhtYGHmgg1Z0GtusVAE9j
-yEWdNbQi6hJnj69wraT96UeW5YjTQkRqWlAcAYiIkQ/eUWlv85ComEu/IQZNsS4r
-qYw4RSmVUbhAcPT1LBNPjYqQDc2kEESrZRnYWFXv4EwXvcDFgSpXIQO3YhHRXASd
-GTByz1YcHtIBEjIRkVUGiICQb8ox/Fq3/wdK/F9NTLKnA5wzHcE=
-=NXs4
------END PGP SIGNATURE-----
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
---zxepztxp53sv2ewk--
+Below is a summary of the state of the merge.
+
+I am currently merging 422 trees (counting Linus' and 129 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
