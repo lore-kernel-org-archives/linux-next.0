@@ -1,38 +1,36 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB613264D2;
-	Fri,  8 May 2026 11:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1C23E0252;
+	Fri,  8 May 2026 13:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778238798; cv=none; b=Cng12Jk7DsRmSu4kawR9LLj7Js5WVAvrtYAqDKXgtvaS7Rnle9PaWO770XUwTQ2rsyGmogu2sTvPCicySWynw1stbvpB3pst5cW1B5Bf4eK90dMbuLSuswg9oOf9iyu3Eq4Z+nHUJi5TuIPsSLpADDbUrwlxNlttBDAsjfyvyOg=
+	t=1778247023; cv=none; b=CfXZLmSWiqQBT3CNr/kAIDTjK3dMmwHdh+ZrsJsnRf7SUf9khF11e9kWpp53Rzlt1BV68xxOaNa+jKdyEZLoavhc9aYRXyf+p6a06nuUL8IFLbrxyK0hDQp6qKLgurTF0T3hJclL7deOQyPcIzdcqO4qG6UlLir8o6lAc8tl70U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778238798; c=relaxed/simple;
-	bh=8y/KQMHL0YMTEB5StGQLZ3JDHLJM7PITkIqyLyzaCuI=;
-	h=Date:Message-ID:From:To:Cc:Cc:Cc:Subject; b=N4XAXyemhNkS71uNYiYAoHTvOwCnEgKZ8aTAeBC+YgN0GR7x/o3KGmwJ/GuhWumeLkuxx6fy7qXv+W5RCD6si6yExx/bHEosG+Uw5BHbbyOLzbIXJYpwCKie8SU0UHnH4Z+EwVyyui7gxN9a5Wiq88C8lolgLh5AsLzcDiJWzkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tp1HisO1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778247023; c=relaxed/simple;
+	bh=t0c1yWFdY3un9bC5oRjHRN0CM653skc24dZ4lJH1oeQ=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=gR2gbFZOpmcV3DH8/s8Dgi86ULuLsBZMmgcZM0TSs2iJ5pEPC8UdHgRsueR5iSG100d3pUiG0xhL114OUxOz9ytsEU2LRzzpkn4kQBZQ3LY7vYglAnR2yNMLLZaH7fJHVbwfVN7Cibw/u5yeAwhiF0KckPcTS8sTQBvbwMrG79g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehfsXsnh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tp1HisO1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72BEDC2BCB0;
-	Fri,  8 May 2026 11:13:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehfsXsnh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D575C2BCB8;
+	Fri,  8 May 2026 13:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778238797;
-	bh=8y/KQMHL0YMTEB5StGQLZ3JDHLJM7PITkIqyLyzaCuI=;
-	h=Date:From:To:Cc:Cc:Cc:Subject:From;
-	b=tp1HisO1NcOGn2C7i0wny0xe55mroxm9tvnf9a/Fx8zWeiTGw+/j/S17yMre0tLhI
-	 /yshApyarbQ48qAJYRfceBNdjha0IWMM1BaZPhBZMGT6dECOl5n4T5WUUmgAobHIfx
-	 LbXTkVLY2Suxrbz34qtrxoYf9vN21IPQ0eqjv5osr5JsesVK0l/A28kSglDPqDHQZ3
-	 HU3nvWnNVpmXmJyHfKC4tkexCHsZcoeqJo6jDo0iMRahV1VfebBWmtLtJ6ludw75ZE
-	 CzI9W6rFu2xO8QnOBZ2IaGD1q9YYMTNlHDByGc1xumoUZ5GT4snWjfJVmJC+uR/2wM
-	 BggkIC3gKPiLw==
-Date: Fri, 08 May 2026 13:13:15 +0200
-Message-ID: <58cff33edfe41dacd9eb7a10519f6be3@kernel.org>
+	s=k20201202; t=1778247022;
+	bh=t0c1yWFdY3un9bC5oRjHRN0CM653skc24dZ4lJH1oeQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ehfsXsnhAf7GC9K0Sw4qfdEYODn2TyeZfagJeY5BY1RlSRSVMcGg+1EOpjtrGBbI1
+	 kvCl+FMKD74+wnRuwKSvhGuJ1WPT1O0C3YusU115UB1tOYDcK5Z76Hu2I9MaZGU0XF
+	 imx9Cbnlvj6BZt/u6yKxH6A82QYG1ZiZoZ20npQiVnvhDotBCT4UJpCbeJKm0a9oHh
+	 K/yAzBQJJhXzucWir2ykWbHEFmxwx1xgNQlXYfDQqwQbvzXA1Ipz2x/PMyUggM49TB
+	 QNCbxd8apkG4FkFsMLP9LR+3oYVv48QB/my6WIFNxILDOh74/sMJu69FlNbg3kfaL+
+	 AvlOfqQ8crpCQ==
+Date: Fri, 08 May 2026 15:30:20 +0200
+Message-ID: <17844ed25938ca416f1d8c88a4aa7441@kernel.org>
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Markus Stockhausen <markus.stockhausen@gmx.de>
-Subject: linux-next: manual merge of the hwmon-staging tree with the hwmon-fixes tree
+Subject: linux-next: Tree for May 8
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,23 +39,47 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 
 Hi all,
 
-Today's linux-next merge of the hwmon-staging tree got a conflict in:
+I will be on holiday for a week starting Monday, and I don't plan on
+creating a linux-next tree during that time.
 
-  drivers/hwmon/lm75.c
+Changes since 20260507:
 
-between commit:
+  The cix tree acquired a conflict with the arm-soc tree.
 
-  3607422cdeeb ("hwmon: (lm75) Fix AS6200 and TMP112 setup and alarm handling")
+  The stm32 tree acquired a conflict with the arm-soc tree.
 
-from the hwmon-fixes tree and commit:
+  The hwmon-staging tree acquired a conflict with the hwmon-fixes tree.
 
-  4ab59263fd78 ("hwmon: (lm75) Fix AS6200 setup and alarm handling")
+Non-merge commits (relative to Linus' tree): 3529
+ 4221 files changed, 239791 insertions(+), 83377 deletions(-)
 
-from the hwmon-staging tree.
+----------------------------------------------------------------------------
 
-I fixed it up by using the version from hwmon-staging. There's a 50%
-chance that I got it right. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 422 trees (counting Linus' and 129 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
