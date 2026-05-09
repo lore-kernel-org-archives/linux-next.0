@@ -1,138 +1,187 @@
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023136.outbound.protection.outlook.com [40.107.44.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964D4288D0;
-	Sat,  9 May 2026 01:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778289380; cv=fail; b=cUsrCvmh7E0MPGq7CDCRO78iYepg0rIrS7f6lZzcESgBu34LCpoyiXmQWk3n6J1GvEKsA+ZKrwrCbNPqicSQ8s1IF/w0fP3Nze+lQFUXsgL5deNq8jeQKNcVXaGYD399u7776kObqUqfjUwlKZZbo5d4h3LpVhawbqSqAjm0s6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778289380; c=relaxed/simple;
-	bh=Rm0LlE2V1xS3h2CzRblpRFYpOCBQrjnHyodKKoLEa5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=admzAhy6XbosJstWXShnosAytgb/rDYQ49w15K/uFeqNX/K0esvtW2wc3BXlFkdn+gF1xkYYsf4lcb7CZ4nPNQzUMVo83YZd1tlZVbgZcfXqJ8FhCefG4IIdRcVdA0xVbIwzZPIBY5p0v58DWTEeCf7+/lKzTrKHGlFnnVjKTjo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ci70RXI0l8+bmUnl7YjdlNSl/2PtRovKw2C7An4c60chojNkL+MLYMJvXTm6vKXmn60o7HZgEoMG2uJ5xvyT4us/qbI/c0AWfgP4ZT9CECG7kjvY1YXAiQxlqazG+md4en55QsG5PeqaZbZNqgC4TxAxrViw23rwsOvE19hSCao4OvXYR4N0K7fxWg6UyemcOvQ4PCz/WLQm3EukIVK9DOvWAfh1cMMHaCFSoo+8xTIoNCOQ0x/Y8+5tBSDDhgcpDr68mdlYqHcamUtNgvNXYuj+x65VbNKVicZpVRsaLOZf4ZaKKKq5QpzPa2LZbRggrfG+rQfUno7JJwcAxCG/fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ozQdK9vVIWkTZbc1DjZPnCPP4nm6s/dh7F76c1HMc4c=;
- b=FI1Gs1IST36D2q7i3+P04jUGKGaP5GxMId8RCSWJado0AKlAs64WjIVxT0lW+P+IPPZiDACIaGYkcrc0L1Sny5XjS1TmC+J6ZE1j4+2+yU7+diS07o1Y10jgzvP3zuHb5oKyUJVyGCvEQEpZeh3A0wrmvoo9pgsdxsfTp/JvjjQJUOzK2HimpeN1xGkc5ZI6VHMny1ZMlvOEygUZoRlkJIhkWIwr/flQVChMLdVTKp5zo2sGhbMX9aVKU3HXPC/z8M7maADlsy0fFidHERTiTKLtDTn8O0uuSHVjOii3E3JiWkYxwy8qYcwM1BBaPlbayKhz8Zo+kwZHHdG2BQR0UA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arndb.de smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SI2PR04CA0010.apcprd04.prod.outlook.com (2603:1096:4:197::11)
- by KUXPR06MB8293.apcprd06.prod.outlook.com (2603:1096:d10:5f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.19; Sat, 9 May
- 2026 01:16:14 +0000
-Received: from SG2PEPF000B66CA.apcprd03.prod.outlook.com
- (2603:1096:4:197:cafe::b8) by SI2PR04CA0010.outlook.office365.com
- (2603:1096:4:197::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.20 via Frontend Transport; Sat,
- 9 May 2026 01:16:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66CA.mail.protection.outlook.com (10.167.240.22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9913.8 via Frontend Transport; Sat, 9 May 2026 01:16:13 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id D626940A5A01;
-	Sat,  9 May 2026 09:16:12 +0800 (CST)
-Date: Sat, 9 May 2026 09:16:11 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	soc@lists.linux.dev,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-next <linux-next@vger.kernel.org>
-Subject: Re: manual merge of the cix tree with the arm-soc tree
-Message-ID: <af6K2w5uxcrbs3dR@nchen-desktop>
-References: <eed505a9bd38a5fd015e2d18a57fdeb0@kernel.org>
- <af3AVz3CsHJM7jTf@nchen-desktop>
- <a6925bf5-2ffe-45de-9ea8-90240a2abfa3@app.fastmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E0A2F8E9C
+	for <linux-next@vger.kernel.org>; Sat,  9 May 2026 02:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778293835; cv=none; b=KrbOUI63SPFr+EdtdFJiE39PGwUvE+njf+iL7d1z+AR5yUSNqHFkpzORk3dcyTTFJp8ifG3z2LP3Vu3FIoXLMz3ivC5qcnMGPdONSWMERns+GtpdTIAE5t9/bagSCWYhJnrM0KH2nSbCsko0UMMp6Uxzq0gUHPdDZ5qQUY2Rm4s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778293835; c=relaxed/simple;
+	bh=H0aT8+8+p/9iJpwOVUWKNmPA+HV4XIgATYV0i8fw8N8=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=eRxLMmASCuMxf7F1pFbepxxEjh/GpQLKAYWwTh7LRHsYb7C66L9aHFkaTLQY+Aq2xQ3936na4gN6mRV/TA0rXEh1Nw+M1PzKdeCcRjs11Y0j+8wJKkGEu+N76NNvpRwNy3DK2GyV9r909xw+blHx/lAzBayxXLJehe21jCBm0zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=KeHRr8qE; arc=none smtp.client-ip=74.125.82.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="KeHRr8qE"
+Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-12713e56abdso1776465c88.1
+        for <linux-next@vger.kernel.org>; Fri, 08 May 2026 19:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1778293834; x=1778898634; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Yhn60J8PXjG/m1VxbhWK2G55QwUcYe3YRywlY4h4pA=;
+        b=KeHRr8qEN7Hf+l47Y8IeUqYLB3kaZYyZ65R9FgX+bBswLeEA/kuDAcNMNCXILen5tW
+         qmlsF4XhjRUK/QKiZzirM5bAKOWRe64gID5ZVBoKOQt0gAGAsccV/fZj1MvAtoySnxBN
+         JR47iSuks617lVb1BpswzaVnMVqNj9N6sw/BZbzsfqrKFWFZ5rlLtGMOhKsWOH41LI8W
+         4GsjJwXyo13QhBnojTwfCCFYp4/djxssE343VBH0xQpj1Rw8mKouGM/8NTgaZq8zwRlC
+         wQ42kObxbEcc7g94KZLgB6KrhK9HHE6XzEhdDmusLj8MwulkR/o5JeNt7iJkjS7YKtDs
+         EZ6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778293834; x=1778898634;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Yhn60J8PXjG/m1VxbhWK2G55QwUcYe3YRywlY4h4pA=;
+        b=LP1AWJFD6MJsHD7humv7OszylZTDVide9iJPjIKkzWmFhD/bvne+MDTp37b6asq3Jv
+         un1T8f6kWI920u41XZkoxSX0SuiPuD00RZO8MweDIFwAHb/XhkUuM9X4/Aaztq/J24JG
+         kWs1dCOThrvJco8QJ6/cupQfTJzYAnS8LD6VpU5IK6W3xpTecbYqnKVlWgPDLjVgBnrN
+         VyiOIRa+DZLTtewaUJYzouHTTUADyiB17XuKQ+aIIuXFc+6MvJ2qHt5SOelaeQjDRngK
+         4pKXFjXl+Ye/pYjIOUociqxSGTkNXzck69pC3IfIlvt7NRnj6tLVMTGMjkkvshhB/m5w
+         hcQw==
+X-Gm-Message-State: AOJu0Yx3dDmxah2Od0MkrScuS+31VQRed2R8OxBwLGsqnLeN1s3HZrlS
+	82/Q8zQmJZuA51I027X2A8L6Dy7RKaQEfylaK99IT3IKSo0U+3TMdhhq6BLKtszAlOZM017sdz0
+	K7qyH
+X-Gm-Gg: AeBDietq1NEaPh2pJb1dt40e+GUkLbIezMLrLXz0gCqM1/dePi52KdM5qh3xX7HUDvb
+	LohmmUAC6wRTNLUgLj6ScoiLIUXsPVVcTnRxSzPov3s6L9C5fNFnnjkYXraHzf65Y0UEt9XkMbW
+	4sUlhYetGJXKsfVTUjAUV/ZJqGmmdZrCobmglw4nyUd+x7iTFbOTt0s4WsRszNheohqwStbYcI3
+	8IclyJbrtaUx4vIoNNcS/bBfgacCt5cVDO20BsgfETPEA8hqthAerYehQdhWu3+YLz6dbXNKQPc
+	swWbfQEIblcFGxrWR2eUr8CbEi9WuOP8RVEJKOKEUtYbEh9vxJ7+SJ4Zn6aBE/UVfFmrh09/OA5
+	tdAwo3rDg/97n4LjlFnFPMSiy6eZ8aUEwu+z1N4OCl/bVvsDLVSChsHUrT/RGytXScGFq6Zxd3g
+	zG9hqrA2zIBfxRo7HR
+X-Received: by 2002:a05:7022:250b:b0:123:3c24:b15 with SMTP id a92af1059eb24-1323b0aebefmr4166873c88.19.1778293833341;
+        Fri, 08 May 2026 19:30:33 -0700 (PDT)
+Received: from 997d03828cfd ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2f8860c7accsm4801555eec.8.2026.05.08.19.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2026 19:30:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a6925bf5-2ffe-45de-9ea8-90240a2abfa3@app.fastmail.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CA:EE_|KUXPR06MB8293:EE_
-X-MS-Office365-Filtering-Correlation-Id: f92dd10a-5c87-430b-4092-08dead688fee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700016|376014|82310400026|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	4PJqzsCvXe2UWwKTgUJ613fDltnz8ZqIN/iqJdt96zmmEUXA4sCoUz0gAagJrcXkLilbxCmAy+BNWbH2YxoNnYvVcJNN8Nys2bRRK6VGmCTHwi3BCd/xnxx/PZNrm0lHxAy2Is2jdY6MON1XT+V2pRbsn+GEHPNTxPPAdVBYP62gRVoAsqTV39q0y2WciK5z+g9PT2+PAlCFaWuBD4PP08f3aSfKR3kTMcfA0debB3k+wVcOAxgsH2xG6gsVj2rWNbVcewv2LTR41I9WLY3wOUWlPqu81KcJU8E3v9SiqYGp3CRjDUjiEQmvL5rKVW/7anN4OHVBUJjTypx42HvhF3yALfIHMf7ac0+HBwNuAB929owo+lGMwJg0C4Gta/hDLtg07XZJ54BI3Chv0rJZLJ5+h6q+DyP1+waUn2fqwPSChqLGjgcAd0GQJ3BuqFHUE/ch03CUQOzcecYW6h8/w0HJm3owLKN0FQnWDgj9D/sGL1a/10Fmj5lsDR2juyjwB9diOpvobNXXsNuREJ1Elhtzvalmm+St6THQ0YUxXXyfCItlnqFm2b6Lx1o2rpv1kAwy+GsAapuFo46EGMe6bobKFhOB2EBPvfgU7kzkAp2/xB/OBpr+/COKmgyj6xkodixwLYRIbMw2z1Qs042jjcOV5c1uPF7J74z4PPhpxHr7BkHrbper+kDjobKyS0xkt4KGlO5ohPuTHpZKTgzQ0fl1bkhSbTZ2ruK+8P55iDM=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(376014)(82310400026)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	dLr9ooJxzYEv8NLDANbr3HkHX8KkkPU1fP0rs6L5RCXj3zO/lEK+mFQ1a0MbZVik3lVyemaouRBf5+zzZbWoAtqsM7C8xnqEBCILzgQxC3VxWL9yOC2s8bMifFBErij3G+vh+FZZcKBH/l/EGt3WB/hLFVK2r1uo/yyoqnB2fBAPLu+AsAeRcx0okMopKW2dS4pTS7faqJeWDkxtAEzD4fzNpw4RiGNFvJirgxR6h9SYi41oyEx26d6S/X5AWuCdcgw0xB4V+dbNuz/ak/p1VZ0TaqbVJz2q3O3FPr5WiWvcW49qWMTPluERN0Kp/RGhobSPVBUOkLmXXnz2ST7Nv1bLvKYUcfCu/KRtko0upepjfUAaQHH3r0bGRkL0YFoRqNut9zWcCsdzh4/hUcMiRE7q9NsbmdAwgBPadXS6AWp2Xuh9BlNUsrEnSMdAi+dj
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2026 01:16:13.4416
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f92dd10a-5c87-430b-4092-08dead688fee
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CA.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUXPR06MB8293
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - e98d21c170b01ddef366f023bbfcf6b31509fa83
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Sat, 09 May 2026 02:30:32 -0000
+Message-ID: <177829383231.4454.17589395895259115750@997d03828cfd>
 
-On 26-05-08 13:06:02, Arnd Bergmann wrote:
-> 
-> Hi Peter,
-> 
-> this is not a problem you caused, just something to be aware of
-> when you send the pull request, and to check that Thierry made
-> the right choice in resolving it.
-> 
-> > Arnd, I deleted this patch at CIX next-tree. Would you please help queue it
-> > in your soc/defconfig:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/cix.git/
-> > branch: cix/defconfig
-> 
-> Please send it as a normal pull request or patch to soc@lists.linux.dev
-> so your change gets mered using the patchwork process.
-> 
-> If you send it as a standalone patch, please make sure it applies
-> on top of the soc/defconfig branch. A pull request is also fine,
-> and that would normally be based on -rc1. Obviously this causes
-> a merge conflict, which we will resolve during the merge.
-> 
 
-Hi Arnd,
 
-Thanks for explaining it. So, for linux-next merge confliction patch,
-how to handle it better?
-Option 1:
-Send pull-request to SoC maintainer once linux-next merge conflict happens, and
-depends on SoC maintainer's tree at linux-next for testing
-Option 2:
-Rebase on SoC maintainer's tree, and still keep patches on SoC submaintainer's tree
-at linux-next for testing
-Other options?
 
--- 
 
-Best regards,
-Peter
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/e98d21c170b01ddef366f023bbfcf6b31509fa83/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: e98d21c170b01ddef366f023bbfcf6b31509fa83
+origin: maestro
+test start time: 2026-05-08 13:45:44.448000+00:00
+
+Builds:	   58 ✅    1 ❌    0 ⚠️
+Boots: 	   85 ✅   26 ❌    0 ⚠️
+Tests: 	20275 ✅ 3916 ❌ 3720 ⚠️
+
+### POSSIBLE REGRESSIONS
+
+  No possible regressions observed.
+
+
+### FIXED REGRESSIONS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.kvm_steal_time
+      last run: https://d.kernelci.org/test/maestro:69fe7a6c0e4ee292cbf54bde
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: dell-latitude-3445-7520c-skyrim
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - kselftest.cpufreq.suspend
+      last run: https://d.kernelci.org/test/maestro:69fe0a940e4ee292cbf10449
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+      - kselftest.cpufreq.suspend.cpufreq_main_sh
+      last run: https://d.kernelci.org/test/maestro:69fe0be10e4ee292cbf12051
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.kvm_steal_time
+      last run: https://d.kernelci.org/test/maestro:69fe24220e4ee292cbf1acdc
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: imx8mp-verdin-nonwifi-dahlia
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.kvm_steal_time
+      last run: https://d.kernelci.org/test/maestro:69fdfb560e4ee292cbf07b28
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.kvm_steal_time
+      last run: https://d.kernelci.org/test/maestro:69fdfeff0e4ee292cbf0c43a
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: sun50i-a64-pine64-plus
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.kvm_steal_time
+      last run: https://d.kernelci.org/test/maestro:69fe17c60e4ee292cbf17f6a
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa
+      last run: https://d.kernelci.org/test/maestro:69fdf0680e4ee292cbefb4ff
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: mt8390-genio-700-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:69fdf0940e4ee292cbefb5e3
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: mt8395-genio-1200-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:69fdf0950e4ee292cbefb5e6
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
