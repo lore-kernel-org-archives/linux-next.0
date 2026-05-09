@@ -1,187 +1,156 @@
-Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E0A2F8E9C
-	for <linux-next@vger.kernel.org>; Sat,  9 May 2026 02:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70D41E1A33;
+	Sat,  9 May 2026 08:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778293835; cv=none; b=KrbOUI63SPFr+EdtdFJiE39PGwUvE+njf+iL7d1z+AR5yUSNqHFkpzORk3dcyTTFJp8ifG3z2LP3Vu3FIoXLMz3ivC5qcnMGPdONSWMERns+GtpdTIAE5t9/bagSCWYhJnrM0KH2nSbCsko0UMMp6Uxzq0gUHPdDZ5qQUY2Rm4s=
+	t=1778313783; cv=none; b=OtHaAJ+V1yQfz39zyFOI97rNQccb1ubUfqQSLJosZmKU711lXTpILSP1438iVW0TQgW8T61LVTzJmFGF/QOw2yeWBKB2TOCElJ8sCkNZtkJE7C7JyO9HGPkgcCCvoS/2AjBzje3aqiG/RSCqGAz4Nws8OC86ZAkmFNIMjk4GCOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778293835; c=relaxed/simple;
-	bh=H0aT8+8+p/9iJpwOVUWKNmPA+HV4XIgATYV0i8fw8N8=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=eRxLMmASCuMxf7F1pFbepxxEjh/GpQLKAYWwTh7LRHsYb7C66L9aHFkaTLQY+Aq2xQ3936na4gN6mRV/TA0rXEh1Nw+M1PzKdeCcRjs11Y0j+8wJKkGEu+N76NNvpRwNy3DK2GyV9r909xw+blHx/lAzBayxXLJehe21jCBm0zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=KeHRr8qE; arc=none smtp.client-ip=74.125.82.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1778313783; c=relaxed/simple;
+	bh=/lf17yyEUTPDP+OC+lCNeYI7IPCLRn/v5FCHJOEhxPA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=j1PgYKKGZgBHeIqAc90dkAt3RkB3nErPh7cvAQNoMf0A7htSwXBcsu13eOh4BI0pZHcltvL3Lkk98QD6hwlEPrfQmFKHG5oVCjfYIiH8xNheqxfzFKJub5mqDUpVy7ORoAcF68xWsLpHWaSEDCFXK+4BD9WYtNRowyzQCNYIqg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BDVlyFgz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uWfTRfme; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="KeHRr8qE"
-Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-12713e56abdso1776465c88.1
-        for <linux-next@vger.kernel.org>; Fri, 08 May 2026 19:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1778293834; x=1778898634; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Yhn60J8PXjG/m1VxbhWK2G55QwUcYe3YRywlY4h4pA=;
-        b=KeHRr8qEN7Hf+l47Y8IeUqYLB3kaZYyZ65R9FgX+bBswLeEA/kuDAcNMNCXILen5tW
-         qmlsF4XhjRUK/QKiZzirM5bAKOWRe64gID5ZVBoKOQt0gAGAsccV/fZj1MvAtoySnxBN
-         JR47iSuks617lVb1BpswzaVnMVqNj9N6sw/BZbzsfqrKFWFZ5rlLtGMOhKsWOH41LI8W
-         4GsjJwXyo13QhBnojTwfCCFYp4/djxssE343VBH0xQpj1Rw8mKouGM/8NTgaZq8zwRlC
-         wQ42kObxbEcc7g94KZLgB6KrhK9HHE6XzEhdDmusLj8MwulkR/o5JeNt7iJkjS7YKtDs
-         EZ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778293834; x=1778898634;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+Yhn60J8PXjG/m1VxbhWK2G55QwUcYe3YRywlY4h4pA=;
-        b=LP1AWJFD6MJsHD7humv7OszylZTDVide9iJPjIKkzWmFhD/bvne+MDTp37b6asq3Jv
-         un1T8f6kWI920u41XZkoxSX0SuiPuD00RZO8MweDIFwAHb/XhkUuM9X4/Aaztq/J24JG
-         kWs1dCOThrvJco8QJ6/cupQfTJzYAnS8LD6VpU5IK6W3xpTecbYqnKVlWgPDLjVgBnrN
-         VyiOIRa+DZLTtewaUJYzouHTTUADyiB17XuKQ+aIIuXFc+6MvJ2qHt5SOelaeQjDRngK
-         4pKXFjXl+Ye/pYjIOUociqxSGTkNXzck69pC3IfIlvt7NRnj6tLVMTGMjkkvshhB/m5w
-         hcQw==
-X-Gm-Message-State: AOJu0Yx3dDmxah2Od0MkrScuS+31VQRed2R8OxBwLGsqnLeN1s3HZrlS
-	82/Q8zQmJZuA51I027X2A8L6Dy7RKaQEfylaK99IT3IKSo0U+3TMdhhq6BLKtszAlOZM017sdz0
-	K7qyH
-X-Gm-Gg: AeBDietq1NEaPh2pJb1dt40e+GUkLbIezMLrLXz0gCqM1/dePi52KdM5qh3xX7HUDvb
-	LohmmUAC6wRTNLUgLj6ScoiLIUXsPVVcTnRxSzPov3s6L9C5fNFnnjkYXraHzf65Y0UEt9XkMbW
-	4sUlhYetGJXKsfVTUjAUV/ZJqGmmdZrCobmglw4nyUd+x7iTFbOTt0s4WsRszNheohqwStbYcI3
-	8IclyJbrtaUx4vIoNNcS/bBfgacCt5cVDO20BsgfETPEA8hqthAerYehQdhWu3+YLz6dbXNKQPc
-	swWbfQEIblcFGxrWR2eUr8CbEi9WuOP8RVEJKOKEUtYbEh9vxJ7+SJ4Zn6aBE/UVfFmrh09/OA5
-	tdAwo3rDg/97n4LjlFnFPMSiy6eZ8aUEwu+z1N4OCl/bVvsDLVSChsHUrT/RGytXScGFq6Zxd3g
-	zG9hqrA2zIBfxRo7HR
-X-Received: by 2002:a05:7022:250b:b0:123:3c24:b15 with SMTP id a92af1059eb24-1323b0aebefmr4166873c88.19.1778293833341;
-        Fri, 08 May 2026 19:30:33 -0700 (PDT)
-Received: from 997d03828cfd ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2f8860c7accsm4801555eec.8.2026.05.08.19.30.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2026 19:30:32 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BDVlyFgz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uWfTRfme"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id A4CAE1D000EE;
+	Sat,  9 May 2026 04:02:58 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-04.internal (MEProxy); Sat, 09 May 2026 04:02:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1778313778;
+	 x=1778400178; bh=yrfntWl4W5HJS2l2YpyONwp5nB8SHlEe8JED50fKuY4=; b=
+	BDVlyFgzMa2dpVBWpDD1wy1TJbmNXWc9lW1GNL7Z/bCX72zdKOlpRffs6jlM2H+B
+	DLc4d/tsAAtRy4BMUUUvgIt5CZnI6rN4GWkK1dil0fmRbzIseZ8u+klncNBQbQmg
+	BP7uDslB0YlgKx3V9CqOj8zlVyvKIdvIbNCeU29GZZFNVlwtU8TKIFQN0pJTKgy/
+	vUEc/K0WWtVCGg6Yq4CSUy6ZyiWawChUHThWKaCII2RZHY37XN6ZEEIKEIy0ICE3
+	NrP87tB3aB8+5dnbZ+I4iiXAmTEg5wp/3JO2odPHVGxTQ0EWLQqlnah8vvWlwd6L
+	sAnK6bxk3NlB0hHKlHXF8g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778313778; x=
+	1778400178; bh=yrfntWl4W5HJS2l2YpyONwp5nB8SHlEe8JED50fKuY4=; b=u
+	WfTRfmeeyBAwt5qHL1yynyQqkX6l4/N6wmUyD/E9LC8Vpy89n+UD4VrXtX30VOTT
+	GwByB+NZoGJA/IIa+9NmjoiHXrz8k/nLC0MSLlcMC9NV1HajMtKzUXCAtenxFESm
+	xtPp5S03spmEgws9bgM1nIHaZFCbFZqQXyna1qRHklsUtS/8B4UqyktRUZ2k+DEb
+	Rw8WXcJgAEXsXMgmCepASuwUkbZGnQHF1F8Il+ejGu6nrhjHMAdbLuNoLGGxnXjc
+	lOZTtZdFOS++85TrgS+VBW7slwMQJegiO3pAbZebNV2Ah8Y6N68pRKyWH0eCSF0P
+	07//aFy8VBx+hbIu07h5w==
+X-ME-Sender: <xms:Mer-ac6SG6gRNUKwLr2Av6hWgCCwIJ9NOFmq7vr9wlpmM3PzZgPMzg>
+    <xme:Mer-aYtpGS-g7uccyvuq3DOnvBu_vtW_phzUKncCPn1a2Gdx5-9rrjVGdzU1tQ02f
+    24RDb7h6XsFCRrutTDi4AIWrqB_lWGIRSHSMVM7GmIhra_-QRih5n0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduuddvjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffhiefh
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
+    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpvghtvghrrdgthh
+    gvnhestghigihtvggthhdrtghomhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhn
+    gheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhotgeslhhishhtshdrlhhinhhugi
+    druggvvhdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskhhisehoshhs
+    rdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhg
+    vghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Mer-aaxbsKHJwdNdeTsSojz2gzxntrYzY2ZqfTkrDer0MZ58clT5Zg>
+    <xmx:Mer-aW_-soMd6-qNgtYeWY50_weMb_DD9VrX_NDzeeEIbcSndOTiYQ>
+    <xmx:Mer-aajj1vsi_xtqM0EGt8_NEf6LqySxi42gVRJVgnQmibkYyi15mw>
+    <xmx:Mer-aVE-NSzSvL9XyILhuSkfw8wtrttFwh2M-x1VCkIDHToQaGqDOA>
+    <xmx:Mur-aWO2G92Pr_CgyeHrmfWGKNM6gbAgcKFIM6JT13WI8IJHqBNlgr93>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C0DC11060065; Sat,  9 May 2026 04:02:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - e98d21c170b01ddef366f023bbfcf6b31509fa83
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 09 May 2026 02:30:32 -0000
-Message-ID: <177829383231.4454.17589395895259115750@997d03828cfd>
+X-ThreadId: AVNaXOa3_wlF
+Date: Sat, 09 May 2026 10:02:37 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Chen" <peter.chen@cixtech.com>
+Cc: "Thierry Reding" <thierry.reding@kernel.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
+ soc@lists.linux.dev,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-next <linux-next@vger.kernel.org>
+Message-Id: <183e763c-980c-4ca4-acdf-331351409f14@app.fastmail.com>
+In-Reply-To: <af6K2w5uxcrbs3dR@nchen-desktop>
+References: <eed505a9bd38a5fd015e2d18a57fdeb0@kernel.org>
+ <af3AVz3CsHJM7jTf@nchen-desktop>
+ <a6925bf5-2ffe-45de-9ea8-90240a2abfa3@app.fastmail.com>
+ <af6K2w5uxcrbs3dR@nchen-desktop>
+Subject: Re: manual merge of the cix tree with the arm-soc tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Sat, May 9, 2026, at 03:16, Peter Chen wrote:
+> On 26-05-08 13:06:02, Arnd Bergmann wrote:
+>> this is not a problem you caused, just something to be aware of
+>> when you send the pull request, and to check that Thierry made
+>> the right choice in resolving it.
+>> 
+>> > Arnd, I deleted this patch at CIX next-tree. Would you please help queue it
+>> > in your soc/defconfig:
+>> >
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/cix.git/
+>> > branch: cix/defconfig
+>> 
+>> Please send it as a normal pull request or patch to soc@lists.linux.dev
+>> so your change gets mered using the patchwork process.
+>> 
+>> If you send it as a standalone patch, please make sure it applies
+>> on top of the soc/defconfig branch. A pull request is also fine,
+>> and that would normally be based on -rc1. Obviously this causes
+>> a merge conflict, which we will resolve during the merge.
+>
+> Thanks for explaining it. So, for linux-next merge confliction patch,
+> how to handle it better?
 
+You have to look at each case separately. My comment above was about
+the defconfig conflict, which will be resolved as soon as the
+conflicting patches are both on the soc/defconfig branch.
 
+> Option 1:
+> Send pull-request to SoC maintainer once linux-next merge conflict 
+> happens, and
+> depends on SoC maintainer's tree at linux-next for testing
+> Option 2:
+> Rebase on SoC maintainer's tree, and still keep patches on SoC 
+> submaintainer's tree
+> at linux-next for testing
+> Other options?
 
+Neither of those really.
 
-Hello,
+You should send the pull requests for the SoC tree as soon
+as it makes sense for the contents to be merged. If you know that
+there is a conflict (because you got a message about it
+for linux-next), put that information into the pull request
+text so we know about it.
 
-Status summary for next/master
+If the conflict is against a change in some other tree,
+we still need to know about it, in order to plan the upstream
+submission.
 
-Dashboard:
-https://d.kernelci.org/c/next/master/e98d21c170b01ddef366f023bbfcf6b31509fa83/
+Most conflicts are entirely trivial to resolve, so
+upstream maintainers are usually ok with them. If you
+encounter something that does not look trivial, that usually
+means we need to talk about it and come up with a solution
+for that specific case.
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: e98d21c170b01ddef366f023bbfcf6b31509fa83
-origin: maestro
-test start time: 2026-05-08 13:45:44.448000+00:00
-
-Builds:	   58 ✅    1 ❌    0 ⚠️
-Boots: 	   85 ✅   26 ❌    0 ⚠️
-Tests: 	20275 ✅ 3916 ❌ 3720 ⚠️
-
-### POSSIBLE REGRESSIONS
-
-  No possible regressions observed.
-
-
-### FIXED REGRESSIONS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_steal_time
-      last run: https://d.kernelci.org/test/maestro:69fe7a6c0e4ee292cbf54bde
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: dell-latitude-3445-7520c-skyrim
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.cpufreq.suspend
-      last run: https://d.kernelci.org/test/maestro:69fe0a940e4ee292cbf10449
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.cpufreq.suspend.cpufreq_main_sh
-      last run: https://d.kernelci.org/test/maestro:69fe0be10e4ee292cbf12051
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_steal_time
-      last run: https://d.kernelci.org/test/maestro:69fe24220e4ee292cbf1acdc
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: imx8mp-verdin-nonwifi-dahlia
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_steal_time
-      last run: https://d.kernelci.org/test/maestro:69fdfb560e4ee292cbf07b28
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: k3-am625-verdin-wifi-mallow
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_steal_time
-      last run: https://d.kernelci.org/test/maestro:69fdfeff0e4ee292cbf0c43a
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: sun50i-a64-pine64-plus
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_steal_time
-      last run: https://d.kernelci.org/test/maestro:69fe17c60e4ee292cbf17f6a
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa
-      last run: https://d.kernelci.org/test/maestro:69fdf0680e4ee292cbefb4ff
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-Hardware: mt8390-genio-700-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:69fdf0940e4ee292cbefb5e3
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:69fdf0950e4ee292cbefb5e6
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+     Arnd
