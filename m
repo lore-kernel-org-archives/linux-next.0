@@ -1,156 +1,79 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70D41E1A33;
-	Sat,  9 May 2026 08:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603C32E401;
+	Sun, 10 May 2026 01:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778313783; cv=none; b=OtHaAJ+V1yQfz39zyFOI97rNQccb1ubUfqQSLJosZmKU711lXTpILSP1438iVW0TQgW8T61LVTzJmFGF/QOw2yeWBKB2TOCElJ8sCkNZtkJE7C7JyO9HGPkgcCCvoS/2AjBzje3aqiG/RSCqGAz4Nws8OC86ZAkmFNIMjk4GCOg=
+	t=1778376650; cv=none; b=EnXAYIZ9nDzG7G4jahizkWxfRUMGUqjDTYt6AwNmtGLi6iC5DGJQUzyWv07NAZaPxF2ApRzK2ttBOfuCm5IXHRaR0JZ861F2Oc/F2ExcZ665PGJECuWu2OzEPS5fttOagrT8tRMRdvIlTG4TjTKlMeuReufac+/nD8Ho+aqlKBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778313783; c=relaxed/simple;
-	bh=/lf17yyEUTPDP+OC+lCNeYI7IPCLRn/v5FCHJOEhxPA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=j1PgYKKGZgBHeIqAc90dkAt3RkB3nErPh7cvAQNoMf0A7htSwXBcsu13eOh4BI0pZHcltvL3Lkk98QD6hwlEPrfQmFKHG5oVCjfYIiH8xNheqxfzFKJub5mqDUpVy7ORoAcF68xWsLpHWaSEDCFXK+4BD9WYtNRowyzQCNYIqg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BDVlyFgz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uWfTRfme; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1778376650; c=relaxed/simple;
+	bh=6tOVxF34enneckuxQ6cvr4zEeMO3MfeWToP2DWTY0Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYQsMeo1b1DX2zHPN88cp0hJhBC1sKv1QZCf+X5S1jRb/LWPT3i7M82vPbbiuIzwZlBuGJGAXzbtOIrHu34x+lQJ1u3rXs2j1GBzQG0MQGQ8wGTdOUqSdi/JWy9TAZir78Gejp+QvwbMBYYmlLofzevp9jZXogze7vu1AOKHU/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmyjWGA2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BDVlyFgz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uWfTRfme"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id A4CAE1D000EE;
-	Sat,  9 May 2026 04:02:58 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-04.internal (MEProxy); Sat, 09 May 2026 04:02:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1778313778;
-	 x=1778400178; bh=yrfntWl4W5HJS2l2YpyONwp5nB8SHlEe8JED50fKuY4=; b=
-	BDVlyFgzMa2dpVBWpDD1wy1TJbmNXWc9lW1GNL7Z/bCX72zdKOlpRffs6jlM2H+B
-	DLc4d/tsAAtRy4BMUUUvgIt5CZnI6rN4GWkK1dil0fmRbzIseZ8u+klncNBQbQmg
-	BP7uDslB0YlgKx3V9CqOj8zlVyvKIdvIbNCeU29GZZFNVlwtU8TKIFQN0pJTKgy/
-	vUEc/K0WWtVCGg6Yq4CSUy6ZyiWawChUHThWKaCII2RZHY37XN6ZEEIKEIy0ICE3
-	NrP87tB3aB8+5dnbZ+I4iiXAmTEg5wp/3JO2odPHVGxTQ0EWLQqlnah8vvWlwd6L
-	sAnK6bxk3NlB0hHKlHXF8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778313778; x=
-	1778400178; bh=yrfntWl4W5HJS2l2YpyONwp5nB8SHlEe8JED50fKuY4=; b=u
-	WfTRfmeeyBAwt5qHL1yynyQqkX6l4/N6wmUyD/E9LC8Vpy89n+UD4VrXtX30VOTT
-	GwByB+NZoGJA/IIa+9NmjoiHXrz8k/nLC0MSLlcMC9NV1HajMtKzUXCAtenxFESm
-	xtPp5S03spmEgws9bgM1nIHaZFCbFZqQXyna1qRHklsUtS/8B4UqyktRUZ2k+DEb
-	Rw8WXcJgAEXsXMgmCepASuwUkbZGnQHF1F8Il+ejGu6nrhjHMAdbLuNoLGGxnXjc
-	lOZTtZdFOS++85TrgS+VBW7slwMQJegiO3pAbZebNV2Ah8Y6N68pRKyWH0eCSF0P
-	07//aFy8VBx+hbIu07h5w==
-X-ME-Sender: <xms:Mer-ac6SG6gRNUKwLr2Av6hWgCCwIJ9NOFmq7vr9wlpmM3PzZgPMzg>
-    <xme:Mer-aYtpGS-g7uccyvuq3DOnvBu_vtW_phzUKncCPn1a2Gdx5-9rrjVGdzU1tQ02f
-    24RDb7h6XsFCRrutTDi4AIWrqB_lWGIRSHSMVM7GmIhra_-QRih5n0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduuddvjedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffhiefh
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
-    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpvghtvghrrdgthh
-    gvnhestghigihtvggthhdrtghomhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhn
-    gheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhotgeslhhishhtshdrlhhinhhugi
-    druggvvhdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskhhisehoshhs
-    rdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhg
-    vghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Mer-aaxbsKHJwdNdeTsSojz2gzxntrYzY2ZqfTkrDer0MZ58clT5Zg>
-    <xmx:Mer-aW_-soMd6-qNgtYeWY50_weMb_DD9VrX_NDzeeEIbcSndOTiYQ>
-    <xmx:Mer-aajj1vsi_xtqM0EGt8_NEf6LqySxi42gVRJVgnQmibkYyi15mw>
-    <xmx:Mer-aVE-NSzSvL9XyILhuSkfw8wtrttFwh2M-x1VCkIDHToQaGqDOA>
-    <xmx:Mur-aWO2G92Pr_CgyeHrmfWGKNM6gbAgcKFIM6JT13WI8IJHqBNlgr93>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C0DC11060065; Sat,  9 May 2026 04:02:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmyjWGA2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA77C2BCB2;
+	Sun, 10 May 2026 01:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778376649;
+	bh=6tOVxF34enneckuxQ6cvr4zEeMO3MfeWToP2DWTY0Rs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PmyjWGA2rP9FUUIvOt4k6G+idYKnWKrImWNc3QaDQd01KQ6n08PDBKaKxSsjswhPO
+	 HlbhHyWAPzw85FRvZQ84KArTe48n8YjydYt9sl2lIyFtcD8WXHRsW8vgM7aIXlUsX9
+	 dpuyF+lUVgbbLI0My+g9GyShzMjSw1sVRdXsuWm6tNj/Y95BwAIvjN5wwFBlww2jak
+	 QY2NBSzQPy55fhM4AnwQVh6zgV59imlcEBQ8ScKm/MVZqCjgpWBGC5xqbnwtcqNeBl
+	 VpRq9c0NHEJX8w4TW83w2BtTSU6I5YWw2d1hFNdQVIYthKcsyVplA+E5ZAb4R80AdV
+	 +khvbWDM6qOTg==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 17C191AC5897; Sun, 10 May 2026 02:30:47 +0100 (BST)
+Date: Sun, 10 May 2026 10:30:47 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for May 8
+Message-ID: <af_fx3k2MTVFG5L6@sirena.co.uk>
+References: <17844ed25938ca416f1d8c88a4aa7441@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AVNaXOa3_wlF
-Date: Sat, 09 May 2026 10:02:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peter Chen" <peter.chen@cixtech.com>
-Cc: "Thierry Reding" <thierry.reding@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
- soc@lists.linux.dev,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-Message-Id: <183e763c-980c-4ca4-acdf-331351409f14@app.fastmail.com>
-In-Reply-To: <af6K2w5uxcrbs3dR@nchen-desktop>
-References: <eed505a9bd38a5fd015e2d18a57fdeb0@kernel.org>
- <af3AVz3CsHJM7jTf@nchen-desktop>
- <a6925bf5-2ffe-45de-9ea8-90240a2abfa3@app.fastmail.com>
- <af6K2w5uxcrbs3dR@nchen-desktop>
-Subject: Re: manual merge of the cix tree with the arm-soc tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TB7FxALfEHLhsQJe"
+Content-Disposition: inline
+In-Reply-To: <17844ed25938ca416f1d8c88a4aa7441@kernel.org>
+X-Cookie: Truckers welcome.
 
-On Sat, May 9, 2026, at 03:16, Peter Chen wrote:
-> On 26-05-08 13:06:02, Arnd Bergmann wrote:
->> this is not a problem you caused, just something to be aware of
->> when you send the pull request, and to check that Thierry made
->> the right choice in resolving it.
->> 
->> > Arnd, I deleted this patch at CIX next-tree. Would you please help queue it
->> > in your soc/defconfig:
->> >
->> > https://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/cix.git/
->> > branch: cix/defconfig
->> 
->> Please send it as a normal pull request or patch to soc@lists.linux.dev
->> so your change gets mered using the patchwork process.
->> 
->> If you send it as a standalone patch, please make sure it applies
->> on top of the soc/defconfig branch. A pull request is also fine,
->> and that would normally be based on -rc1. Obviously this causes
->> a merge conflict, which we will resolve during the merge.
->
-> Thanks for explaining it. So, for linux-next merge confliction patch,
-> how to handle it better?
 
-You have to look at each case separately. My comment above was about
-the defconfig conflict, which will be resolved as soon as the
-conflicting patches are both on the soc/defconfig branch.
+--TB7FxALfEHLhsQJe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Option 1:
-> Send pull-request to SoC maintainer once linux-next merge conflict 
-> happens, and
-> depends on SoC maintainer's tree at linux-next for testing
-> Option 2:
-> Rebase on SoC maintainer's tree, and still keep patches on SoC 
-> submaintainer's tree
-> at linux-next for testing
-> Other options?
+On Fri, May 08, 2026 at 03:30:20PM +0200, Thierry Reding wrote:
 
-Neither of those really.
+> I will be on holiday for a week starting Monday, and I don't plan on
+> creating a linux-next tree during that time.
 
-You should send the pull requests for the SoC tree as soon
-as it makes sense for the contents to be merged. If you know that
-there is a conflict (because you got a message about it
-for linux-next), put that information into the pull request
-text so we know about it.
+Thanks for stepping up here!  I will also continue to be on holiday next
+week so it is unlikely there will be any -next releases until 18th May.
 
-If the conflict is against a change in some other tree,
-we still need to know about it, in order to plan the upstream
-submission.
+--TB7FxALfEHLhsQJe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Most conflicts are entirely trivial to resolve, so
-upstream maintainers are usually ok with them. If you
-encounter something that does not look trivial, that usually
-means we need to talk about it and come up with a solution
-for that specific case.
+-----BEGIN PGP SIGNATURE-----
 
-     Arnd
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmn/38YACgkQJNaLcl1U
+h9B6hAgAhUopTOVmg+3Z/m/ocCmx2r0oswkZatKZ3yBR6stWqZr8FMsf7Favyepq
+Yp37GQgj45NhPtqq1Pff5NEieDe843XE/02ZOpQy84IscI5lk1/qsPL5/7gtZ3Db
+3o//odBeLl+AP1rp9dkYqEFioTkMS5uibavqI4VWYTW+858hHJFOMMS8utKMmtOT
+sfSvkhmdOAHFrq++lsx+beroE2vxH13tXJ5wknEzxywaonaXEmDQNTZkdQs31GZW
+SjdOg7i6UlAe5W7PypkdOgBey6GAal2pWWmpatO3fJl4SRXKR3fA+NOlg4XQQd/y
+Z94iqsqluoDvPG3Q8/BLUBW7pHZKmw==
+=vl7U
+-----END PGP SIGNATURE-----
+
+--TB7FxALfEHLhsQJe--
