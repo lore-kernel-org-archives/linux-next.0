@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC03D3E0724;
-	Mon, 18 May 2026 08:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42D93E51E9;
+	Mon, 18 May 2026 08:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779091882; cv=none; b=Fbfe2fH/Gymt5leiyhkkACA2h+1tHd1Wh2ZZFinuCGwSpmb0n5dk1f38IUSk6WxYHB9GZXMvUToRgJdx35zD/LZmcyk1cQMxG8IasdaEwOSjT9/SC+yQl7ZYmzeQD45C9CWphYTCpy3hfA1OEcZaxRCg3Z46u/rAmN+WcpAgpo0=
+	t=1779092625; cv=none; b=FdUVGNOyjZt8v35iRipEDJ6WeO/WpReA4uTeKLXfkG8E0thkkbLOLdIha1BTqGqiO4KUK6XTNxwrgrSooZd3oSQNqdq6q9j5aaHodUt/eIrXrXOiMX+F95sFrm1CM6KDw/tmiHnxA6W4G7G3d2h4VrAkSjXnt1cuNwL2daMj/ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779091882; c=relaxed/simple;
-	bh=4U3h6b4jlZdsyRMqNardZKbXQxYoapgmoL7LRi/ZABc=;
+	s=arc-20240116; t=1779092625; c=relaxed/simple;
+	bh=gWCza02ml5fsmMMsXhOJdi7FQMe9guVgkQwttWdyBrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YBdJPPaabeSM7gMeDyyetzVV9HpTPRxFwtDyW7yGGqN4N4NlTB840M+amCApZZrv77+eeXnA2Oi2HsZ+XSSRZwmEG0msADkWaqVOKATM8UvWKfewjkQB57KLszXynUu+XhcugqSqxgrre5gGXbw7w+kLOHjTtokbv4AuY52QsyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltvsMXw3; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=ptpS2KlYMDMYUuhzEkZVJ1zgy1NkrAk9DXrzrGq/XbPEcqRloZx++kp+9hjywS8F+qLLCKlFY19/A0kvjfaEKSmVX3/ejbQX6kEKVumXbYGnQ+hnRCma17y7UDNn475maUezGkqBFo8lzQJzzNJaymcZ8udKB/vD6vI04S3hHk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlxEvfFT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltvsMXw3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9657BC2BCB7;
-	Mon, 18 May 2026 08:11:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlxEvfFT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49530C2BCF5;
+	Mon, 18 May 2026 08:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779091882;
-	bh=4U3h6b4jlZdsyRMqNardZKbXQxYoapgmoL7LRi/ZABc=;
+	s=k20201202; t=1779092625;
+	bh=gWCza02ml5fsmMMsXhOJdi7FQMe9guVgkQwttWdyBrY=;
 	h=Date:From:To:Cc:Subject:From;
-	b=ltvsMXw31EJCLLw71EIVyhmf4IJhcEpPsED/2PP27EarYkgw5Rg2jHNDvjWcteLQ6
-	 JM0iCLIZZhlhQgn/7OIuCPGmnoQ91A0pMrtvh2PxTn8pK66DaB9kh+ZcSiB34Ry+PN
-	 m58QwtUTOfVq43pEsnsBVi0cNctognpGDoXa5Or+/Er/zo54vd03wn1uDxQMx3UTGL
-	 CImXV24YWfZjbhbZAxxfEUEpdr3fpzxrrOsyrg+ShgZfzJSzT16mJPgQzUlD1fGbTS
-	 hED0Rx+LcN7jiyICDaoqd9XLUESlbDxewcm6du/KeddL52J1cpVHfJn3CEhXVh7NLW
-	 2N1atsmoVHAZw==
-Date: Mon, 18 May 2026 09:11:18 +0100
+	b=LlxEvfFTL5NuxVKEdaZ6RBl/K7jYFRtakuzb5PQrgO0+BHlQ26nBXjxa9B7SOj3YN
+	 pItOWjYpPojoBGkmCiDYGYux2gi9e0TifHyEtSQO32cGa7q7ctxaTlMcCDumCOSVnx
+	 NcUUhMeHz8vHQFM6gFrSMY692CZ5pXJUEPu5hJVVDp6v9sPGfPZ97HOcjvz/1RkSUm
+	 r+ThG7PiWQe5CqJwdMwDfIln5zeb6TT9H+KnIKzZz67Di9qdBIlMndbK9Azh0BhsUR
+	 SZEavsxBIY8mn2Amgv1nWX81rI4RUoDdzt1COT/C/3Vd4OVSY2E982qhpVbPRTHTA+
+	 NKCWaIkZhVLBg==
+Date: Mon, 18 May 2026 09:23:41 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the vfs-brauner tree
-Message-ID: <agrJpsmor9usxRd5@sirena.org.uk>
+Subject: Missing signoff in the rdma tree
+Message-ID: <agrMjVEsjWmsCsdx@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,33 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ksqx3ibt8xdqIP3r"
+	protocol="application/pgp-signature"; boundary="HkOq8gpjbmvczQPZ"
 Content-Disposition: inline
 
 
---Ksqx3ibt8xdqIP3r
+--HkOq8gpjbmvczQPZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Commit
 
-  f478134e08cc9 ("dcache: fix typos in comments in dcache.h")
+  531553a3929fe ("IB/mlx5: Fix transport-domain rollback and initialize lb mutex earlier")
 
-is missing a Signed-off-by from its author
+is missing a Signed-off-by from its committer
 
---Ksqx3ibt8xdqIP3r
+--HkOq8gpjbmvczQPZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoKyaYACgkQJNaLcl1U
-h9C3lgf/YY32Rby87fDNfU1vfD+NissHmyUs1YjDpVCMcShaLpq2AE9VMYvAuoSH
-q8ofmcpAvciQB4hl0ID9g5L+jUlF64uq7mdB/iQg2nJpoByrJivK1jReceq9YB9/
-I5DWzPVtQECq2eBnCmOj9KD+lKNvRwZpoX3WMvOwwhP7dAavPwLNDuQSU3P6v/6x
-pBk2WssDTR0Fgt4EdMpTGtrh4SsTRRdtA7HWH1TCnI/uspPiBqqgjr/KyME8qyEs
-ZeGKhZBU4w+y8WNGSrkK/eRtY5iXyAm+4WSKE0p7iqhGd99k+6SpIwrZONFb2TPr
-pP1Ul1SQisCoXGCQAbpTEI4Zv5o+dw==
-=QlLJ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoKzIwACgkQJNaLcl1U
+h9BU2Qf/Sp0aLsiNzvqJtSB0tUKTgSd5P9lhqCTdADoEpJDu1dfc1YsNp72EVp6Y
+svVH9xqqLmVJjsLJTON2Fl278CfqgmbJPDRG/mn5iHZYXrNy+a30Gm3LECXwlLi+
+1OWJMo35dErsKF0TM11TLjjv6dxGJP+BCNApDAFIjC7WxGC6HEiozx7xZ8kDFkFH
+OyrMN9GUhKE0Ag+dPbhLNpe0i20MMTbzyuhqYJHF0kLWe4x4TiPD42VWpoOZ7zve
+ykkO6DVFT9RjbRxmVmEEJkPHR4lYLubZKdSozn9DPcMSGUtJUBPPCG7AYDBsZFC3
+nw4WaiKAp3creJRLuNvn3R2qvAh/cA==
+=tJac
 -----END PGP SIGNATURE-----
 
---Ksqx3ibt8xdqIP3r--
+--HkOq8gpjbmvczQPZ--
