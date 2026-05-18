@@ -1,43 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221CE382296;
-	Mon, 18 May 2026 19:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9D62EA48F;
+	Mon, 18 May 2026 20:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779134122; cv=none; b=dF5L9T6bMYeAXcbSv6M9+d62eqM+ohUn7OGBdPa6F0HTbuP+QwqoQEgg/N1R8uQkJUVq84WMv9p3YQtHvANgkOHL19r/8E4ltjTLS570SA3dVrNFrctuH5OWxYBGlTtYqEBfCJCvwwSruLTJatP9XF2VD1MdB2NtJGGOFU9/1vQ=
+	t=1779134485; cv=none; b=NHYUzIkbr9b9RbkmckTlvr5v6UzkbXOmJgkvXzNjpuAYRwf6K+AHDFLoylGxF1kYTyjK19sxwGxjB8JD1aloJQqtFfmgUpqkgFNvHLJsyFJJekwS+vnHVlvwhDSI81dqTxXTZQTQMeJtdInZO74dMY+3db0VmWJes9f4MmBeT6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779134122; c=relaxed/simple;
-	bh=+aWPUKcjSC8AMAwae4jIR05PzMIops+d3yj+IRkcHVg=;
+	s=arc-20240116; t=1779134485; c=relaxed/simple;
+	bh=bL2I5/fLOIRjDiRTHtKr+h7PqSag6Z5pjak0eRP8RqE=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=T8ur0FoINHA1fZZso8dZ3Y7mJi1qfieMCjIn1fJHqVpBBvt/fWhIfyOoJV+8iPO+4DWVvLvUcvAP/IOD5U0LLQltK40zx/Kikhg+w8239xdk2ifR3myzzczohKklAv3ETj7KnmrF7zIuGZUFHuK7RPNn7WpV9acbcz8WmtBt9IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=noAnUnlJ; arc=none smtp.client-ip=10.30.226.201
+	 Mime-Version:Content-Type; b=maqpuSsP5E9rKTmEuhxM5SAINyhIzZ2MpvKVfptS/eHhJPj45pX6ytUBwVfpjnaswNj00XOr2JsA4VFEPAQwMpZABY1xJuPgKKbEs74/Bxx9ha8pi3ymieWQjogWKu+wQ5WLJbgnY4nltP+XxwJUt3BaRVp/3FO/jTutDyfeB/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gy4MLloB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="noAnUnlJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 864B9C2BCB7;
-	Mon, 18 May 2026 19:55:21 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gy4MLloB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15029C2BCC6;
+	Mon, 18 May 2026 20:01:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1779134121;
-	bh=+aWPUKcjSC8AMAwae4jIR05PzMIops+d3yj+IRkcHVg=;
+	s=korg; t=1779134485;
+	bh=bL2I5/fLOIRjDiRTHtKr+h7PqSag6Z5pjak0eRP8RqE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=noAnUnlJF1Tm95DxtEnvjV7eQopY+bpcHnb7NFtG1jhOZqB45ejGAgSzg8ax1VX5r
-	 1wArHtCnSRv87p2kKPFa1XFi/PdKDRRzrfqWoKwbe9kT3H0YRZqcjcuxlcSHyWnC9k
-	 76qS+LyzJNhMmixsxGcTTmYwEWyhce/Uh0UDb2CE=
-Date: Mon, 18 May 2026 12:55:20 -0700
+	b=gy4MLloBFT9bOou8SrrhcnlwGvSvOH2IdQ56CITJsatsibjNunqw7efaBCANH3Xg8
+	 0EeWeK/KdKFnjd0w0k6aWBvozL6b/LIo1Lv2p2flZNmLzBBi4pskgo92S0CPX4l2Kz
+	 BykrsS6Qw6lbWLvs53VLk6WJO45KsNIFHLtIg6lg=
+Date: Mon, 18 May 2026 13:01:24 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Nicolas Schier <nsc@kernel.org>, KBuild
- Mailing List <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sasha Levin
- <sashal@kernel.org>
-Subject: Re: linux-next: manual merge of the kbuild tree with the origin
- tree
-Message-Id: <20260518125520.04a0f320f91588ee0af9e940@linux-foundation.org>
-In-Reply-To: <20260518192808.GA2884150@ax162>
-References: <ags6FtowWAeGPoEN@sirena.org.uk>
-	<20260518191337.GB2318678@ax162>
-	<20260518192808.GA2884150@ax162>
+To: Mark Brown <broonie@kernel.org>
+Cc: Lorenzo Stoakes <ljs@kernel.org>, David Hildenbrand <david@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure in final buil
+Message-Id: <20260518130124.1da1d87bed04e422b585447b@linux-foundation.org>
+In-Reply-To: <ags6IM0qGAkndEV5@sirena.org.uk>
+References: <ags6IM0qGAkndEV5@sirena.org.uk>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -48,30 +43,25 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 18 May 2026 12:28:08 -0700 Nathan Chancellor <nathan@kernel.org> wrote:
+On Mon, 18 May 2026 17:11:12 +0100 Mark Brown <broonie@kernel.org> wrote:
 
-> > Thanks for the heads up! The resolution looks correct to me but
-> > dc1f85a9637cc does not appear to be in Linus's tree? I would have
-> > expected the Kbuild tree to have it if so since it is based on 7.1-rc1.
-> > 
-> >   $ git describe --contains dc1f85a9637ccd3d171fb5262fd38919dfe632bb
-> >   Could not get object for dc1f85a9637ccd3d171fb5262fd38919dfe632bb. Skipping.
-> > 
-> > It looks like it is in one of Andrew's trees? I just want to make sure
-> > for my notes to Linus.
+> During the final builds today's linux-next build (powerpc
+> pseries_le_defconfig) failed like this:
 > 
-> Hmmm, it looks like Andrew actually dropped this series a few weeks ago,
-> as Sasha sent a new version:
+> /tmp/next/build/mm/hugetlb.c: In function 'hugetlb_unshare_pmds':
+> /tmp/next/build/mm/hugetlb.c:7282:17: error: implicit declaration of function '__huge_pmd_unshare'; did you mean 'huge_pmd_unshare'? [-Wimplicit-function-declaration]
+>  7282 |                 __huge_pmd_unshare(&tlb, vma, address, ptep, take_locks);
+>       |                 ^~~~~~~~~~~~~~~~~~
+>       |                 huge_pmd_unshare
+> make[4]: *** [/tmp/next/build/scripts/Makefile.build:289
 > 
->   https://lore.kernel.org/20260427171749.9068CC2BCB4@smtp.kernel.org/
->   https://lore.kernel.org/20260504153401.2416391-3-sashal@kernel.org/
+> Caused by commit
 > 
-> Is this because you used an old version of the mm tree?
+>   2bb8fe16f7bf4 (mm/hugetlb: avoid false positive lockdep assertion)
 > 
->   https://lore.kernel.org/fabba1ab-ceff-429c-af55-92844b179890@sirena.org.uk/
-> 
-> Not that the conflict won't come back with the new version, I just want
-> to make sure I have my ducks in a row.
+> I have reverted this commit for today.
 
-Sasha's kallsyms work is a thing-in-progress.  I don't expect to be
-re-adding it for 7.1.
+I removed this from mm.git on May 15, but I cannot find the email which
+prompted me to do that :(
+
+Oh well, I assume Lorenzo will send a new version, thanks.
