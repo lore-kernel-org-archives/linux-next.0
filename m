@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A8823BD1B;
-	Mon, 18 May 2026 16:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06BC286415;
+	Mon, 18 May 2026 16:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779120641; cv=none; b=qTkn4gdXZ0oIwKS8dCTsnALrGI0bhaWWY+rAoDev2GUFLvczQEtmqQO/416EEDJOmYsJ4Lr/V+uoojJoNRTOWK4zeBHDPCs4WGEoB0KRXz/h291p6d3/LfNQNV9E+Dx+Vl+sWv2ZeQkYfwte9I/WPOtSXamSGko2aPHGtFO/0rs=
+	t=1779120650; cv=none; b=J54YHRdb4Y8JyAr6hCyAZlri4GJqmSyQo0QXNiOv+7lATrgt9Xi8MyouxC5ggsH9wIG6NIgKFFCE7WUpT6qDtwRr5FGpyG8TqrKZBDX8lI1bmZhBDM9v2v8NSwl+ixDiKE3gl5equn1+5b2KXtO58Fy6IdnQ6yhVLesin+el17Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779120641; c=relaxed/simple;
-	bh=HIaE0GK3QIh2mZITmeWpGkxId+tCg5/O7Cu5trXdDzQ=;
+	s=arc-20240116; t=1779120650; c=relaxed/simple;
+	bh=d9LkEFdjY7OVQ3zZuAJKHFVL9PALvmQDpHCz7p3F4B8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jhEOBEuDwbeHky0mDxHzwfJiPXpMSgxoBA+b0urvybJsFgc+IYT4we3pFixRQyiAE+d0RrqgBa3NFtrH5yji6fvXUS7h4U4nDpjXzro+Rx8J+hp5SRmFwc+dZCe95234r56XdCCBwJyB6UqKatxRMLxa3YO0Xxko+rCMIC3akRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7/VKOtu; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=KUGiYdAkKXxek1BdNW4L6y5MXKgLINIPv2kj8jJ+36sZ/sL12gxjxalY9GFD3lgWacge5Udtxu2KHiFw2k2HUyjTOWlNMJ7po/hDSgHV3C2yV5KRWnsax9cfzL9Szl3p53a7riVQ2eyc+2/ozawJ9J9o+gKMqDLjCXXG/rS3OO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujTw9Fs9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7/VKOtu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117BFC2BCB7;
-	Mon, 18 May 2026 16:10:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujTw9Fs9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A092C2BCC6;
+	Mon, 18 May 2026 16:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779120640;
-	bh=HIaE0GK3QIh2mZITmeWpGkxId+tCg5/O7Cu5trXdDzQ=;
+	s=k20201202; t=1779120649;
+	bh=d9LkEFdjY7OVQ3zZuAJKHFVL9PALvmQDpHCz7p3F4B8=;
 	h=Date:From:To:Cc:Subject:From;
-	b=D7/VKOtugh7/fP46X8USjq9ZI9GqlugV+tvsHhPIEyDPGxNYc5eTzofYe9+KUYxvY
-	 PMbIWjniWZmrOjEzHobxuhxEWL+8iBVRafl+34sp9vQFDgfn+y0ZVe5NT7WlbPzh8W
-	 Dapw1CKX+0d/XTF1K4bFqObo09TmqIHf34Zv5CozmfenUi4EAZs9Uz+r5ueoIFwk5X
-	 7fWP608GA4GEruCGg0PzdG5YOvaGWRn73B7rWNMFGwaCnvCJP5CDJoLf0MjBbQ1y8b
-	 WQBxZNZcOSa1H7MpKqZx8ZxoglpOYLP79YsyeMZ9UR2iUwXFpZeyo96ObhFSjwQZJi
-	 xIN/JGNX/jhOA==
-Date: Mon, 18 May 2026 17:10:36 +0100
+	b=ujTw9Fs9lWsoZMfcClwmYQpIbBeECvY7JBU/8SoeMN4Y+RQsmi3zRqIkmtb7ZNUC/
+	 z3KkJ0FyDIiAOSDzEgnsjw8WtNhe4enHj2ycrjryEIeDdfkZOY0CgLUuEr0xgTCb48
+	 E0XJH7Apz3EDO8r+9X8u0we38w6tr7Z3nxhIwDCWUnfkPTAE9U/A6r/sGZtf0GmD2Z
+	 bPuU15gjbdEjgYHVx5OVO9cMgl41C+w2NzwojlLU5s8wEwU6Hsimahgw05tcKF11WU
+	 LKy81LqFoqehDTpVSE99YiopL8gpAN8hXiuWnxYo3YGxMjJq3Y9sHVBeNSP+tLoDCp
+	 LvdPNDv1KOiPA==
+Date: Mon, 18 May 2026 17:10:45 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+To: Tejun Heo <tj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hongfu Li <lihongfu@kylinos.cn>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>
-Subject: linux-next: manual merge of the kvm-x86 tree with the tip tree
-Message-ID: <ags5_LIZq2DlzmAN@sirena.org.uk>
+	Li Wang <li.wang@linux.dev>, Waiman Long <longman@redhat.com>
+Subject: linux-next: manual merge of the cgroup tree with the mm-unstable tree
+Message-ID: <ags6BawOir3IQHIZ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,31 +43,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uChC8WON4p+j53ct"
+	protocol="application/pgp-signature"; boundary="NwPUZx66+LoZE+kO"
 Content-Disposition: inline
 
 
---uChC8WON4p+j53ct
+--NwPUZx66+LoZE+kO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+Today's linux-next merge of the cgroup tree got a conflict in:
 
-  arch/x86/include/asm/tdx.h
+  tools/testing/selftests/cgroup/test_memcontrol.c
 
 between commit:
 
-  b7d2173946efa ("x86/virt/tdx: Add SEAMCALL wrapper for TDH.SYS.DISABLE")
+  186fdfd222a15 ("selftests/cgroup: rename PAGE_SIZE to BUF_SIZE in cgroup_=
+util")
 
-=66rom the tip tree and commit:
+=66rom the mm-unstable tree and commit:
 
-  4487492b92a4f ("x86/tdx: Use pg_level in TDX APIs, not the TDX-Module's 0=
--based level")
+  2a7d34eba5f5a ("selftests/cgroup: check malloc return value in alloc_anon=
+ functions")
 
-=66rom the kvm-x86 tree.
+=66rom the cgroup tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -76,40 +77,52 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc arch/x86/include/asm/tdx.h
-index 15eac89b0afbe,c140ddde59ffe..0000000000000
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@@ -187,14 -187,6 +187,8 @@@ static inline u64 mk_keyed_paddr(u16 hk
-  	return ret;
-  }
+diff --cc tools/testing/selftests/cgroup/test_memcontrol.c
+index 44338dbaee819,21aedb35cc122..0000000000000
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@@ -61,10 -60,26 +61,26 @@@ static char *alloc_and_populate_anon(si
+  	char *buf, *ptr;
  =20
-- static inline int pg_level_to_tdx_sept_level(enum pg_level level)
-- {
--         WARN_ON_ONCE(level =3D=3D PG_LEVEL_NONE);
--         return level - 1;
-- }
--=20
- +void tdx_sys_disable(void);
- +
-  u64 tdh_vp_enter(struct tdx_vp *vp, struct tdx_module_args *args);
-  u64 tdh_mng_addcx(struct tdx_td *td, struct page *tdcs_page);
-  u64 tdh_mem_page_add(struct tdx_td *td, u64 gpa, struct page *page, struc=
-t page *source, u64 *ext_err1, u64 *ext_err2);
+  	buf =3D malloc(size);
++ 	if (buf =3D=3D NULL) {
++ 		fprintf(stderr, "malloc() failed\n");
++ 		return NULL;
++ 	}
++=20
+ -	for (ptr =3D buf; ptr < buf + size; ptr +=3D PAGE_SIZE)
+ +	for (ptr =3D buf; ptr < buf + size; ptr +=3D page_size)
+  		*ptr =3D 0;
+ =20
++ 	return buf;
++ }
++=20
++ int alloc_anon(const char *cgroup, void *arg)
++ {
++ 	size_t size =3D (unsigned long)arg;
++ 	char *buf;
++=20
++ 	buf =3D alloc_and_populate_anon(size);
++ 	if (!buf)
++ 		return -1;
++=20
+  	free(buf);
+  	return 0;
+  }
 
---uChC8WON4p+j53ct
+--NwPUZx66+LoZE+kO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoLOfsACgkQJNaLcl1U
-h9BbJwf/Quqxx+0KlKSmagiuGHBcig+vdn41MgkTGWa2VVVhHVLjnQIyxk1dndP/
-bBr4HeIywtIBckAwSnTDXEoO2jZBKqtVJr6dbvVYH2EaocPe7JCI0fiWt1G4VAQ2
-DzvQIr0d59b/z2kCkhEf6tN2QlkQfjOCLIjU69khqVkCoZl4v/lN2iLFMbQJ4d76
-wDPdVNtofuy//XOrLXntS7O0Duih/uOkbT3ne775q6wooY62Hc6uNvrAMMOd2NvC
-F5HXtqHdf0Tb+uhcNGSGky1A1ZVC0bhkZWZJoxN7Vh8oTb0caTS/fjpIW0Cyboa5
-wjsemvBzvGfcMDQIYRJwnbKQUrXLfg==
-=J1pG
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoLOgQACgkQJNaLcl1U
+h9AJ9gf/S7ezpguIHwAIAW+MvK24zU72/0WWxE4P/uZfRh1LHbD7HnrW0Hy0c0o2
+MJgRbkc3oFjEAM2UxTuay3/shO625SIr6r/pMDDtc6SzAf5LRcMI2OEus7zjBG9q
+Zpw+/yOEjVpdDi/vrujY/ZZL9DoX2XpGoVssceXmMmQyOeDkU2MzfYLIcoGEhwFn
+kXJiZPILbnur7eYjDGnVjYiKEyle0anf6r/UjzvnktuI0vHvYvyFY4kDTjIhXYz8
+wkwfJo1+3ZlC1ydADJ1yRCXHw6Oi+vh6gGnMYY6fwpA0wenU6ZEqBmXQpkBBhkTj
+vbJOa4kG+maKdmN8+QoZjF51hsbGiw==
+=jvVM
 -----END PGP SIGNATURE-----
 
---uChC8WON4p+j53ct--
+--NwPUZx66+LoZE+kO--
