@@ -1,67 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9D62EA48F;
-	Mon, 18 May 2026 20:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E43914E5
+	for <linux-next@vger.kernel.org>; Mon, 18 May 2026 20:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779134485; cv=none; b=NHYUzIkbr9b9RbkmckTlvr5v6UzkbXOmJgkvXzNjpuAYRwf6K+AHDFLoylGxF1kYTyjK19sxwGxjB8JD1aloJQqtFfmgUpqkgFNvHLJsyFJJekwS+vnHVlvwhDSI81dqTxXTZQTQMeJtdInZO74dMY+3db0VmWJes9f4MmBeT6c=
+	t=1779134786; cv=none; b=YsdFsBUQ6+ynXWdPqDAJIThe2SQ/IxQoOvRd7+PW5s6m8Y+XhyVevyPBgGXHP+q+T+DHks3ikDXyia3xVxWqba/Mr/Yzl+TZBug2fEu2BAvoXO2hr7Z5mLrSgpYzrGo9za3i4h/mg8K1M5/jCTjpw2knVmc0W+Znb5aX2IQ7kdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779134485; c=relaxed/simple;
-	bh=bL2I5/fLOIRjDiRTHtKr+h7PqSag6Z5pjak0eRP8RqE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=maqpuSsP5E9rKTmEuhxM5SAINyhIzZ2MpvKVfptS/eHhJPj45pX6ytUBwVfpjnaswNj00XOr2JsA4VFEPAQwMpZABY1xJuPgKKbEs74/Bxx9ha8pi3ymieWQjogWKu+wQ5WLJbgnY4nltP+XxwJUt3BaRVp/3FO/jTutDyfeB/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gy4MLloB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779134786; c=relaxed/simple;
+	bh=xpL0mHYiqbzxrpdnPUSu6eGtIyaaWFU/WkpGz8xgy1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LmqR4ttSayxzdsQL3zUJKL3U9rscT0AwyIQGWyzeNm4/UyKMiKkGVq1wtT7laKST9+XOjDuSXqdrR/TY4rjTmTNfmsI2tHm1GTO96zbzdZxg1MkFhekYquT/uzF+nIxb/mUxJue6RawKmWE0TPBlnnvu1+HLkRBI3L814Q9rR5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V463OjVv; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gy4MLloB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15029C2BCC6;
-	Mon, 18 May 2026 20:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1779134485;
-	bh=bL2I5/fLOIRjDiRTHtKr+h7PqSag6Z5pjak0eRP8RqE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gy4MLloBFT9bOou8SrrhcnlwGvSvOH2IdQ56CITJsatsibjNunqw7efaBCANH3Xg8
-	 0EeWeK/KdKFnjd0w0k6aWBvozL6b/LIo1Lv2p2flZNmLzBBi4pskgo92S0CPX4l2Kz
-	 BykrsS6Qw6lbWLvs53VLk6WJO45KsNIFHLtIg6lg=
-Date: Mon, 18 May 2026 13:01:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Lorenzo Stoakes <ljs@kernel.org>, David Hildenbrand <david@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in final buil
-Message-Id: <20260518130124.1da1d87bed04e422b585447b@linux-foundation.org>
-In-Reply-To: <ags6IM0qGAkndEV5@sirena.org.uk>
-References: <ags6IM0qGAkndEV5@sirena.org.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V463OjVv"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6746d0b2b4aso4766158a12.3
+        for <linux-next@vger.kernel.org>; Mon, 18 May 2026 13:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1779134783; x=1779739583; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T+Iag8WXKpIwL8mTbl0N8p2f+FBzjv5jGFSgcF9g6/s=;
+        b=V463OjVv4eLbrSHlYP4yr6wfii9S5WI4nr0gaOeCMkwG3OIMLCy5xl555glFBzCvFG
+         C1uZuA0JugA/Z/5w3rm+30VsJpMzcGLmc+C5hhc1jDvQLWr/SR4FwVXjlOabFNMFiEgV
+         sIUQDMYQsJJiAqwBQ2o7d9ohkIvx1Y0VF25JM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779134783; x=1779739583;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T+Iag8WXKpIwL8mTbl0N8p2f+FBzjv5jGFSgcF9g6/s=;
+        b=Fo+7UsOhf8Qjk6ED424Db4jjYEvV/kh4c1dmPxBvtqRnzG/pBgeb/P8TNPquY776rh
+         0c+mhymkvF7PaVIZ99tOt25i0rQ2NLRYOP7IYdlBbaqoxgaAAdiedtTFUFwxsT9G+ip4
+         nwf3BMIqL5l1N/y6+ZqrlOzxdEBv+wUiOUpJvLfeT0B5ppPNAuBSxiXCzqppOCXdTHNu
+         NPmkZGoHtE29TinIMo4pCIRin3DK6FmZaE+u6Oo5uAVGbGKGHTE3KZP6PykRoRJUL7TW
+         1nhegZgsgCMP1H9WFxGWiUmdAw7asoP3y+skmnj46UMgESvQ6zoc3wtP8NmJbxL5rNIx
+         llTg==
+X-Forwarded-Encrypted: i=1; AFNElJ/utS98GwXTBHih6z+I1+6mwOCdeQSi5N/P74370ZsbSUz4H6iTqW5oJ2D9DiXBw/Flgk/9DGeAV/0p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2oqngZQWgOyxyt3RNQB3IOV+etmgc7fAZOC4Fjy4A1lO+a9QI
+	wJUDUB7z3fYaWfOgMkv7FYre8HeI5+dkSquQnvgodQJ5aDf9q3enkWeY1G0xcWh27tB4EG58G2O
+	EfhHwhrw=
+X-Gm-Gg: Acq92OFL2cTnAK2ig12DuK+99Dy03OyQ6lbiJ+EfaYiZQmHweuCs++EYUU29TTLkMU3
+	/r/4vrVYrdrtOq6IU8/Vf0io09o35xufXyizOCxvHGSh9OI2kWkloBy6f/cX0CVLDJRXFIoWYvq
+	PANk+LT3BrqcR1vwUPnjCElLKzarHQcflxOQahQdCxihdNx8ix2xSRYIFGyo1VlcJXXZKqWwMbf
+	Ys/eIHskFR2aCFME2kYEmEN8fWF/sYgHMtSoKwiD9g4dpTiPGFE/oQQKfwVEYSFubiXVyaTXm/F
+	6fn32Brt7zseiWz2LsXdirPt00qs4DjerQim8OqmahlccvsyzFWY4Gv0vsJVi0QDORQrOJxCbBw
+	NnBKVCvOHp228ZszozTPV7GQAY2yUGAkhT16cf5IeXuXR4w/K+Qdg5r56jk11fHcizrFHgk/kVi
+	Qp6d97YV0KTYger//jYrrZ5WaeJa4vrDM85QgEmJKqi3I/NfohroWQPepw28rfVAdpg1088yF1
+X-Received: by 2002:a17:907:6d04:b0:ba7:fbfb:4caf with SMTP id a640c23a62f3a-bd517aba010mr886256966b.43.1779134783299;
+        Mon, 18 May 2026 13:06:23 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bd4f4dec855sm610121766b.37.2026.05.18.13.06.22
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 May 2026 13:06:22 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6746d0b2b4aso4766120a12.3
+        for <linux-next@vger.kernel.org>; Mon, 18 May 2026 13:06:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9fpZpQMl3ZSMU5t9Ws6KrPzvT6qtEalVJcbCgPrmNugWG+2eDAGhDiBpmQf1PIvkGSWb5F6Mogl8+H@vger.kernel.org
+X-Received: by 2002:a05:6402:46d6:b0:676:988e:8eb6 with SMTP id
+ 4fb4d7f45d1cf-683bd488f28mr7867497a12.26.1779134781995; Mon, 18 May 2026
+ 13:06:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <ags8osqoMATFBslZ@sirena.org.uk> <20260518192408.GA2744985@ax162>
+In-Reply-To: <20260518192408.GA2744985@ax162>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 18 May 2026 13:06:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whVZ7Wv2UNZyAQbVHQ-yz5_-_9dOa8Pxt3nLRhoMPyOuQ@mail.gmail.com>
+X-Gm-Features: AVHnY4K7sKlyJQZ4fie3dgg_T-2p15OxiIVPvaNIZ2oWiO9BQsSfLKMRKNNo8b4
+Message-ID: <CAHk-=whVZ7Wv2UNZyAQbVHQ-yz5_-_9dOa8Pxt3nLRhoMPyOuQ@mail.gmail.com>
+Subject: Re: linux-next: build failure in final build
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Kosina <jkosina@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 18 May 2026 17:11:12 +0100 Mark Brown <broonie@kernel.org> wrote:
+On Mon, 18 May 2026 at 12:24, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> I submitted
+>
+>   https://lore.kernel.org/20260517-hid-core-fix-size_t-specifier-v1-1-bfdd959ec383@kernel.org/
+>
+> for this, which you could apply instead of the revert. Given how simple
+> it is, maybe Linus could just apply it directly to unbreak both trees?
 
-> During the final builds today's linux-next build (powerpc
-> pseries_le_defconfig) failed like this:
-> 
-> /tmp/next/build/mm/hugetlb.c: In function 'hugetlb_unshare_pmds':
-> /tmp/next/build/mm/hugetlb.c:7282:17: error: implicit declaration of function '__huge_pmd_unshare'; did you mean 'huge_pmd_unshare'? [-Wimplicit-function-declaration]
->  7282 |                 __huge_pmd_unshare(&tlb, vma, address, ptep, take_locks);
->       |                 ^~~~~~~~~~~~~~~~~~
->       |                 huge_pmd_unshare
-> make[4]: *** [/tmp/next/build/scripts/Makefile.build:289
-> 
-> Caused by commit
-> 
->   2bb8fe16f7bf4 (mm/hugetlb: avoid false positive lockdep assertion)
-> 
-> I have reverted this commit for today.
+Done.
 
-I removed this from mm.git on May 15, but I cannot find the email which
-prompted me to do that :(
-
-Oh well, I assume Lorenzo will send a new version, thanks.
+                Linus
