@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8DB3EFFAC;
-	Mon, 18 May 2026 10:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0F03F9F25;
+	Mon, 18 May 2026 12:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779101249; cv=none; b=QYIQt9Np/k6yCyJxWDFChVUv/uqodMa9+dSluV+LudCpYnC+Pekg139AbGImPG5jKz2skTcQ1pZ6LcOSEU+JRaVbJruKiWAru2LiWrvlP2BBqHUrbTL1R/0pfMc9MYsEuvVYsXP0Aj6h3BWGgUN9rA2WX6I2CtDbn+B4mSQ0Z7I=
+	t=1779105613; cv=none; b=BPJ1HtNsPJvwJq6wkZwag+FMfSs3vncPHnc95y7dnafDpDcWEiW2pp6699JPB1gCX0AP3giQl0Y9bxvmGe1h7P1rO1U/D8tPrghrOMJ10yFIxfAiP9SKPcKx7l+RfBcD/RddQ/mQUpqtRAwhZnFBUGI2TrS0vuYA1UMkMfyanDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779101249; c=relaxed/simple;
-	bh=VM6GZ94JFxymF0pqihho5JwgmCeo53bKLEHJSM2z8eU=;
+	s=arc-20240116; t=1779105613; c=relaxed/simple;
+	bh=M9qh8Hq0ywCAzQg3x8UF/15ocbErSER4fSC/q1fi8X0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=thOFtr14DP9t/P8WPUuJZqubrPChGplkdxuVdewMJr3bTZr4O2TlQD5uow4D+nGiQlLEXsnIWCSLeOsD6NsRkRRApuAXLTMPSuY8+SA8NJa1Pcsx+HMY4vszWHxhOa0RrEjeLFRX2Y/tmxmvVdqmaZSxY3Wu6EEKWmXiqM/Cx9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvMcLlqa; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=B5JUps4jS8+1h5XFw5jkfa2LqVHJPAJNBTikGQ58MjTPLcoWrwWeD3auwBfb/KdYiAxzRMOkxrb3mfzcjFY7l+x1qI6f136az4Sm9eZHMIwMiEs5MIj8EnJDY2rJquDIbOfeE85C4ZIlg11GOk59JFE8B98zn8o0jSax/9/1Esc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNLODZQy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvMcLlqa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFEB5C2BCB7;
-	Mon, 18 May 2026 10:47:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNLODZQy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC5EC2BCF6;
+	Mon, 18 May 2026 12:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779101248;
-	bh=VM6GZ94JFxymF0pqihho5JwgmCeo53bKLEHJSM2z8eU=;
+	s=k20201202; t=1779105611;
+	bh=M9qh8Hq0ywCAzQg3x8UF/15ocbErSER4fSC/q1fi8X0=;
 	h=Date:From:To:Cc:Subject:From;
-	b=BvMcLlqatRZu7W3nmsPYMe/9qu+BOGapGMnHLbKcqDOztU9jIND7DXfoIXAsKRtnK
-	 XKxa7x+nrMKZwWG5LEYhxr6b5CwnD+8QlHDCAuIEI4Jbb9ML1BFFwb9NY+LO37C5JZ
-	 hXbmitgTKS+rW9+dXSSFb+R8YKGhPmvLfNJxBrT8Wf0zfXp52NyxVNJWYAwjAby3EO
-	 tfx6+PGR2xtqwfdoYnfdvYF29ASQhPcjgYyuayCZX+TyGLUTexvLCThFMm5tixuvNw
-	 5xGb/6HT50rllLJs6JIqy8U9KgLZ4lSeJKZPfT4vQ/rIeUjbVS2Joh6DBJg27hVJa0
-	 rScEslnnp+EYw==
-Date: Mon, 18 May 2026 11:47:24 +0100
+	b=gNLODZQyc2NZaeReag6BjI5UUgM5eiJIPUhWiiyrRG0TYHp7+MTd4psRHH3bf7Ode
+	 G0HqN49HvytsxWCT56OboF7JuMH0B+fspF5NSfXPzSBPZpIt/QoLMXRTO+pWHPHOLd
+	 973rftYHSGTu/z6RqpeiIjCHfnb+wsyqqQAVF9W+BsSA4e5lWytm5Uf0QRusVA1VAA
+	 K2OnlvGnD2pyJpxvj//0iP7WjC0pHHMBm3KSDff8MqUxQ3eNAWSUtV1dJqqVD/JcEE
+	 tUMUDvnFh4uj6hKv4B4AB0uUqZsrburzYMbRofPL4TkBH5hk306BLerYekyH1R8KYO
+	 de1FMJ5Ol3Cig==
+Date: Mon, 18 May 2026 13:00:07 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	Dorjoy Chowdhury <dorjoychy111@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Aleksa Sarai <aleksa@amutable.com>,
-	Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <agruPPybCx8q2XcJ@sirena.org.uk>
+Subject: linux-next: test failure after merge of the mm-nonmm-unstable tree
+Message-ID: <agr_RxvNtfASfevg@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,131 +43,65 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sCJL3HbMx3ORKsMb"
+	protocol="application/pgp-signature"; boundary="gt8IbS5oetCd5j/5"
 Content-Disposition: inline
 
 
---sCJL3HbMx3ORKsMb
+--gt8IbS5oetCd5j/5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the vfs-brauner tree, today's linux-next build (arm64
-allnoconfig) failed like this:
+After merging the mm-nonmm-unstable tree, today's linux-next testing
+(arm64 kunit) failed like this:
 
-In file included from <command-line>:
-/tmp/next/build/fs/fcntl.c: In function 'fcntl_init':
-/tmp/next/build/include/linux/compiler_types.h:699:45: error: call to
-'__compiletime_assert_614' declared with attribute error: BUILD_BUG_ON
-failed: 21 - 1 !=3D HWEIGHT32( (VALID_OPENAT2_FLAGS & ~(O_NONBLOCK |
-O_NDELAY)) | __FMODE_EXEC)
-  699 |         _compiletime_assert(condition, msg, __compiletime_assert_, =
-__COUNTER__)
-      |                                             ^
-/tmp/next/build/include/linux/compiler_types.h:680:25: note: in definition
-of macro '__compiletime_assert'
-  680 |                         prefix ## suffix();                        =
-     \
-      |                         ^~~~~~
-/tmp/next/build/include/linux/compiler_types.h:699:9: note: in expansion
-of macro '_compiletime_assert'
-  699 |         _compiletime_assert(condition, msg, __compiletime_assert_, =
-__COUNTER__)
-      |         ^~~~~~~~~~~~~~~~~~~
-/tmp/next/build/include/linux/build_bug.h:40:37: note: in expansion of
-macro 'compiletime_assert'
-   40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ^~~~~~~~~~~~~~~~~~
-/tmp/next/build/include/linux/build_bug.h:51:9: note: in expansion of
-macro 'BUILD_BUG_ON_MSG'
-   51 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condit=
-ion)
-      |         ^~~~~~~~~~~~~~~~
-/tmp/next/build/fs/fcntl.c:1172:9: note: in expansion of macro
-'BUILD_BUG_ON'
- 1172 |         BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
-      |         ^~~~~~~~~~~~
+$ qemu-system-aarch64 -nodefaults -m 1024 -kernel /tmp/next/arm64_kunit/arch/arm64/boot/Image.gz -append 'kunit.enable=1 console=ttyAMA0 kunit_shutdown=reboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -serial stdio -machine virt -cpu max
+[11:39:24] ============================================================
+[11:39:24] ======== smp-cond-load-relaxed-timeout (3 subtests) ========
+[11:39:24] # smp_cond_relaxed_timeout_succeeds: EXPECTATION FAILED at lib/tests/barrier-timeout-test.c:69
+[11:39:24] Expected runtime <= timeout_ns == succeeds, but
+[11:39:24]     runtime <= timeout_ns == 0 (0x0)
+[11:39:24]     succeeds == 1 (0x1)
+[11:39:24] [FAILED] smp_cond_relaxed_timeout_succeeds
+[11:39:24]     # module: barrier_timeout_test
+[11:39:24] # smp-cond-load-relaxed-timeout: pass:2 fail:1 skip:0 total:3
+[11:39:24] # Totals: pass:2 fail:1 skip:0 total:3
+[11:39:24] ========== [FAILED] smp-cond-load-relaxed-timeout ==========
+[11:39:24] ============================================================
+[11:39:24] Testing complete. Ran 9436 tests: passed: 9315, failed: 1, skipped: 120
+[11:39:24] Failures: smp-cond-load-relaxed-timeout.smp_cond_relaxed_timeout_succeeds
+[11:39:24] Test results stored in /tmp/next/arm64_kunit.json
+[11:39:24] Elapsed time: 121.367s total, 0.002s configuring, 63.737s building, 57.613s running
 
-Caused by commits
+Note that we are running on an arm64 host with access to KVM so the
+above should be running with KVM rather than being emulated.
 
-  3adfed795a99d (openat2: new OPENAT2_REGULAR flag support)
-  6703991ad3a35 (vfs: add O_EMPTYPATH to openat(2)/openat2(2))
+Caused by commit
 
-interacting with each other.  Due to complex conflcits with netfs on the
-old vfs-brauner tree I have applied the following fixup but since both
-commits are coming from the vfs-brauner tree it's really not a merge
-fixup:
+   0403c34571d1d (kunit: add tests for smp_cond_load_relaxed_timeout())
 
-=46rom db4170bfa75dbd45e3f2e1a03f98c512fb2409b7 Mon Sep 17 00:00:00 2001
-=46rom: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 May 2026 11:26:07 +0100
-Subject: [PATCH] openat: Fix collision between OPENAT2_REGULAR and O_EMPTYP=
-ATH
+in that it's adding the new test which fails, I didn't investigate the
+quality of the test.  I do note that there's some related functional
+work also from Ankur that's also added by the mm-nonmm-unstable tree but
+didn't investigate that either.
 
-The commits
+I have used the version from next-20260506 instead, the code was in
+next-20260508 but I belive Thierry was emulating.
 
-  3adfed795a99d (openat2: new OPENAT2_REGULAR flag support)
-  6703991ad3a35 (vfs: add O_EMPTYPATH to openat(2)/openat2(2))
-
-both defined new flags for openat2() but used the same numeric value for
-them, with the second commit also using a different style for
-specifying the flag (shifting rather than using an absolute value),
-triggering build failures.  Deduplicate the defintions.
-
-Fixes: 6703991ad3a35 ("vfs: add O_EMPTYPATH to openat(2)/openat2(2)")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- fs/fcntl.c                       | 2 +-
- include/uapi/asm-generic/fcntl.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 240bb511557a1..7e953d4a807de 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1169,7 +1169,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=3D
- 		HWEIGHT32(
- 			(VALID_OPENAT2_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC));
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fc=
-ntl.h
-index 3c6062007b26f..c4b0e7153fa87 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -93,7 +93,7 @@
- #endif
-=20
- #ifndef O_EMPTYPATH
--#define O_EMPTYPATH	(1 << 26)	/* allow empty path */
-+#define O_EMPTYPATH	0100000000	/* allow empty path */
- #endif
-=20
- /* a horrid kludge trying to make sure that this will fail on old kernels =
-*/
---=20
-2.47.3
-
-
---sCJL3HbMx3ORKsMb
+--gt8IbS5oetCd5j/5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoK7jsACgkQJNaLcl1U
-h9A+Cwf/Z4nxNRpCw9feVqbuk2dIZBKSnF1I5SEkBeY8oYU+ftdKlB0iTeh0AUNc
-x6ZyeYg7P3UoptZjHSCJokkF9P8DCsFbljcACXK68mo6/tbl/mfu+o8FlmtSQS+d
-2sx91zmcynPaOETeNZJd9Lda19e/gSsZ0ZGAx/7BGhQmIqUF5VidFSvVe7wjUhYG
-OiIvLd3dD7zSK3cyipTt8SApE2cZsrbLobch3IOgWdT3LMe0x6CBOaK783dm+bZB
-KwcmvGtyJmCxKqWK2Tyv963JQoe+UYMeqtJrID+F9R8W7BficpPirTIVewI41Olt
-Czio7U7neCi7H0uRuf5wEOr5I4dH1Q==
-=Al3a
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoK/0YACgkQJNaLcl1U
+h9DmlAf/SKNxtkLulpQJ5XY1mNUnaDzh+X1pfzpFu/3hG5IagEIH+LtmWQ5IP7qi
+fzKB5poR00vMXLN1B/MFhwscfv5RHdKQPL7Q1EYhzXhBogqw/doSUtIgYzjifYD5
+FVlMeiGkvCjQz2KEAG4D1v5BvC1ZOoi5Em5V2LGsRsO/J1XqX1S7rIWeaAMHmu/Q
++r19NEOnLu/Y+aeza4LZCvFtS50AsffEAu2lrTVe0XjltvNf7FxorPuHAK267oyB
+HlnI7rsC7qLUgcMDckj/Y9LQUSGG4uG8Q9QbvGraxdp/5+cgyVJrtZQIzoryO2g/
+caWNiR7kmm0+y2oaLMeX5KGedDGNBQ==
+=3eHb
 -----END PGP SIGNATURE-----
 
---sCJL3HbMx3ORKsMb--
+--gt8IbS5oetCd5j/5--
