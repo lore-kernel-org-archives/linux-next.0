@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06BC286415;
-	Mon, 18 May 2026 16:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE7A3F9F58;
+	Mon, 18 May 2026 16:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779120650; cv=none; b=J54YHRdb4Y8JyAr6hCyAZlri4GJqmSyQo0QXNiOv+7lATrgt9Xi8MyouxC5ggsH9wIG6NIgKFFCE7WUpT6qDtwRr5FGpyG8TqrKZBDX8lI1bmZhBDM9v2v8NSwl+ixDiKE3gl5equn1+5b2KXtO58Fy6IdnQ6yhVLesin+el17Q=
+	t=1779120668; cv=none; b=FoYiyx3MuJTw+x6Fy5m0WSZSlgazF6A95pCCtTUl9mJGEuK1LBwGnknuTTqTx/bf71jfldmnCkvneMTAiPpKve/yK/bjTb6yQI6uS6LxFxMFqeS/J9siZcqppEqO827vptcApttfMYInsURmPgivQkXFXDUA6+Ju89tl6My+0Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779120650; c=relaxed/simple;
-	bh=d9LkEFdjY7OVQ3zZuAJKHFVL9PALvmQDpHCz7p3F4B8=;
+	s=arc-20240116; t=1779120668; c=relaxed/simple;
+	bh=WdWOMa8kUavgAfkD9iUmwcHvoFMafQT5ULptg68l7Xc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KUGiYdAkKXxek1BdNW4L6y5MXKgLINIPv2kj8jJ+36sZ/sL12gxjxalY9GFD3lgWacge5Udtxu2KHiFw2k2HUyjTOWlNMJ7po/hDSgHV3C2yV5KRWnsax9cfzL9Szl3p53a7riVQ2eyc+2/ozawJ9J9o+gKMqDLjCXXG/rS3OO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujTw9Fs9; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=toFOo+Kd5LJ5zpFmkagTxrUIvWGjQhQpLpD0+4WX0/CIubbefUtaRpgk5bOC18sp0EMMbZNfht+dDvIMsAJYqN5/THiqGv2u8YKXUzFssWnTWSVn+pibGikUDQg4smVJsO5Y0xvP/4JkhZ6AFWe67WrYd3YUq9OxKXH1mZeG7pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5hgS7T4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujTw9Fs9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A092C2BCC6;
-	Mon, 18 May 2026 16:10:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5hgS7T4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A8CC2BCB8;
+	Mon, 18 May 2026 16:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779120649;
-	bh=d9LkEFdjY7OVQ3zZuAJKHFVL9PALvmQDpHCz7p3F4B8=;
+	s=k20201202; t=1779120666;
+	bh=WdWOMa8kUavgAfkD9iUmwcHvoFMafQT5ULptg68l7Xc=;
 	h=Date:From:To:Cc:Subject:From;
-	b=ujTw9Fs9lWsoZMfcClwmYQpIbBeECvY7JBU/8SoeMN4Y+RQsmi3zRqIkmtb7ZNUC/
-	 z3KkJ0FyDIiAOSDzEgnsjw8WtNhe4enHj2ycrjryEIeDdfkZOY0CgLUuEr0xgTCb48
-	 E0XJH7Apz3EDO8r+9X8u0we38w6tr7Z3nxhIwDCWUnfkPTAE9U/A6r/sGZtf0GmD2Z
-	 bPuU15gjbdEjgYHVx5OVO9cMgl41C+w2NzwojlLU5s8wEwU6Hsimahgw05tcKF11WU
-	 LKy81LqFoqehDTpVSE99YiopL8gpAN8hXiuWnxYo3YGxMjJq3Y9sHVBeNSP+tLoDCp
-	 LvdPNDv1KOiPA==
-Date: Mon, 18 May 2026 17:10:45 +0100
+	b=t5hgS7T4mBGhvLLVzpKHw6PNipnfXcRFJDqtUTPJ10xjWQr6vaWQsGvFYzq0hMKxn
+	 DgEdgbqvID7uy33KFJwEob+brHxpepVBosW4vjAX/CX48wgDE0On8oJR4mjeDCWu9E
+	 Bt2DT05df4+iKFsyj5ktsvnihMAw6/h1a8jNjLPx37+umwcJI40pGdriwu9fUHYQxU
+	 JzjcZOEXX6GXHWniDgP4PNjWDyppVRhDVXoh5u7iQnavuUASRd4gUPkmAGkb5ZyMm7
+	 PA9htgjYtApru5yxuNHIkkeV3uZIcAcfGMYtZck6n+gBzLf40WqhyA9KFaMNlJ5GUP
+	 9PyBtJv7S9d0w==
+Date: Mon, 18 May 2026 17:11:02 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Tejun Heo <tj@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Hongfu Li <lihongfu@kylinos.cn>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Li Wang <li.wang@linux.dev>, Waiman Long <longman@redhat.com>
-Subject: linux-next: manual merge of the cgroup tree with the mm-unstable tree
-Message-ID: <ags6BawOir3IQHIZ@sirena.org.uk>
+	Petr Pavlu <petr.pavlu@suse.com>, Sasha Levin <sashal@kernel.org>
+Subject: linux-next: manual merge of the kbuild tree with the origin tree
+Message-ID: <ags6FtowWAeGPoEN@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,32 +43,30 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NwPUZx66+LoZE+kO"
+	protocol="application/pgp-signature"; boundary="dvmBoIotjlIpEIuE"
 Content-Disposition: inline
 
 
---NwPUZx66+LoZE+kO
+--dvmBoIotjlIpEIuE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the cgroup tree got a conflict in:
+Today's linux-next merge of the kbuild tree got a conflict in:
 
-  tools/testing/selftests/cgroup/test_memcontrol.c
+  scripts/Makefile.modfinal
 
 between commit:
 
-  186fdfd222a15 ("selftests/cgroup: rename PAGE_SIZE to BUF_SIZE in cgroup_=
-util")
+  dc1f85a9637cc ("kallsyms: extend lineinfo to loadable modules")
 
-=66rom the mm-unstable tree and commit:
+=66rom the origin tree and commit:
 
-  2a7d34eba5f5a ("selftests/cgroup: check malloc return value in alloc_anon=
- functions")
+  7abef41afad05 ("kbuild/btf: Remove broken module relinking exclusion")
 
-=66rom the cgroup tree.
+=66rom the kbuild tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,52 +75,56 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc tools/testing/selftests/cgroup/test_memcontrol.c
-index 44338dbaee819,21aedb35cc122..0000000000000
---- a/tools/testing/selftests/cgroup/test_memcontrol.c
-+++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-@@@ -61,10 -60,26 +61,26 @@@ static char *alloc_and_populate_anon(si
-  	char *buf, *ptr;
+diff --cc scripts/Makefile.modfinal
+index 3941cf624526b,01a37ec872b90..0000000000000
+--- a/scripts/Makefile.modfinal
++++ b/scripts/Makefile.modfinal
+@@@ -46,25 -46,11 +46,17 @@@ quiet_cmd_btf_ko =3D BTF [M] $
+  		$(CONFIG_SHELL) $(srctree)/scripts/gen-btf.sh --btf_base $(objtree)/vml=
+inux $@; \
+  	fi;
  =20
-  	buf =3D malloc(size);
-+ 	if (buf =3D=3D NULL) {
-+ 		fprintf(stderr, "malloc() failed\n");
-+ 		return NULL;
-+ 	}
-+=20
- -	for (ptr =3D buf; ptr < buf + size; ptr +=3D PAGE_SIZE)
- +	for (ptr =3D buf; ptr < buf + size; ptr +=3D page_size)
-  		*ptr =3D 0;
+ +quiet_cmd_lineinfo_ko =3D LINEINFO [M] $@
+ +      cmd_lineinfo_ko =3D $(CONFIG_SHELL) $(srctree)/scripts/gen-mod-line=
+info.sh $@
+ +
+- # Same as newer-prereqs, but allows to exclude specified extra dependenci=
+es
+- newer_prereqs_except =3D $(filter-out $(PHONY) $(1),$?)
+-=20
+- # Same as if_changed, but allows to exclude specified extra dependencies
+- if_changed_except =3D $(if $(call newer_prereqs_except,$(2))$(cmd-check),=
+      \
+- 	$(cmd);                                                              \
+- 	printf '%s\n' 'savedcmd_$@ :=3D $(make-cmd)' > $(dot-target).cmd, @:)
+-=20
+  # Re-generate module BTFs if either module's .ko or vmlinux changed
+  %.ko: %.o %.mod.o .module-common.o $(objtree)/scripts/module.lds $(and $(=
+CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),$(objtree)/vmlinux) FORCE
+- 	+$(call if_changed_except,ld_ko_o,$(objtree)/vmlinux)
++ 	+$(call if_changed,ld_ko_o)
+  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
+  	+$(if $(newer-prereqs),$(call cmd,btf_ko))
+ +endif
+ +ifdef CONFIG_KALLSYMS_LINEINFO_MODULES
+ +	+$(if $(newer-prereqs),$(call cmd,lineinfo_ko))
+  endif
+  	+$(call cmd,check_tracepoint)
  =20
-+ 	return buf;
-+ }
-+=20
-+ int alloc_anon(const char *cgroup, void *arg)
-+ {
-+ 	size_t size =3D (unsigned long)arg;
-+ 	char *buf;
-+=20
-+ 	buf =3D alloc_and_populate_anon(size);
-+ 	if (!buf)
-+ 		return -1;
-+=20
-  	free(buf);
-  	return 0;
-  }
 
---NwPUZx66+LoZE+kO
+--dvmBoIotjlIpEIuE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoLOgQACgkQJNaLcl1U
-h9AJ9gf/S7ezpguIHwAIAW+MvK24zU72/0WWxE4P/uZfRh1LHbD7HnrW0Hy0c0o2
-MJgRbkc3oFjEAM2UxTuay3/shO625SIr6r/pMDDtc6SzAf5LRcMI2OEus7zjBG9q
-Zpw+/yOEjVpdDi/vrujY/ZZL9DoX2XpGoVssceXmMmQyOeDkU2MzfYLIcoGEhwFn
-kXJiZPILbnur7eYjDGnVjYiKEyle0anf6r/UjzvnktuI0vHvYvyFY4kDTjIhXYz8
-wkwfJo1+3ZlC1ydADJ1yRCXHw6Oi+vh6gGnMYY6fwpA0wenU6ZEqBmXQpkBBhkTj
-vbJOa4kG+maKdmN8+QoZjF51hsbGiw==
-=jvVM
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoLOhUACgkQJNaLcl1U
+h9D7DggAha1muqnMsFC82bYSqTsCHelpd1X6cazeN/9/EfM52+OUylmj/hBIyV/+
+a/f0YXfWviIDOOccxLa2GY2PbLf9t34oDgAYzGcsBrrMWsc0P13rTLS/WHPV8slY
+doGNIxvGetMeJevxEMWkg5z3AN+acNZ3pF9Et0iWq7RIgOLVnk1dxGQV6Ot6lJP/
+/eRMVQEl0PHz6xBLaerQxxbRjzKD6kjbyObM7/e/ZtJ5Pb48bKAxJhVYtFkTWTq+
+B/K+Rtb2kJs9umnEFlv2AuqCra5LjBUH/8z5ui3xlMcUiZdindpstyIdBfHR7GVZ
+Qa07lioziTV2pDG4JlxSJpogUQl/cQ==
+=5LsX
 -----END PGP SIGNATURE-----
 
---NwPUZx66+LoZE+kO--
+--dvmBoIotjlIpEIuE--
