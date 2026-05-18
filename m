@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F06480954;
-	Mon, 18 May 2026 13:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4DF23C4F3;
+	Mon, 18 May 2026 13:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779109586; cv=none; b=CHZ5fIw1kfh/bEZYyibXXJlq1yycZuhB9hMEyZR5x3GoS3xMBPZMER+0UJTj+Q9hEb0IoLsI0N2uYjZyYIA3YbOzsCBxahdKYXOOuP1lcFPnjCP6WlrRPT+bu/2hcFqNkxf9arvwo8F+nJqqmBj/B0MBuYknKLQ/9vgCbALsu4M=
+	t=1779112194; cv=none; b=gwHxO3qnxiedlOQKBlTHhKZHnYUCpQwm0Hv4/iddi4uIL3L2835vuLTvEloAu/TFvJTN1GN73Be9epEHWtrmy+ZPR8LvygzdSmMsTml0vql//ofXH49UhlQyioLQRSWz2DgwKOZmtF5O6hTU/Zop/5vISixFk77jBACiccZ4XWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779109586; c=relaxed/simple;
-	bh=Gqnubf+DmyZ9CZM57OASE8VBPLtadn3ZAoNtTndT/N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TQzXzTzCuN7+ptm7OrM1womEEu4/vYpUGnwPYyDDflLxM9wMIT0yGxSTbF2ZTvwzzUgoIhfC3rmeopYBmwB/bMO4snKEOWqtk1MwDbmXoltIYchWYpvipifw4ubnGqob9dqybQXVcMVHitcnahZln61xSziHh/48gog7eY14fhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MK1ch8uN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779112194; c=relaxed/simple;
+	bh=X6GLqLrY021dWhefDafrHaSpklU44Ax+GgvJKLoLftI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eY0FvMVhEyUr1M10meuryO28YtaAg210dtUsoFXmuAij7htO0339ZV1JRcIQIo41aEkmL5W0cueeBfEdwtIW7CH7qKdfyQPvX96uFPgQ3O8W4g6osRn/nyrQ8jk4gaqofmxZvpWhhcB54E/QcnoQTIeNFkcVs36B26Icx2tZXGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juiFI72t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MK1ch8uN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763C9C2BCB8;
-	Mon, 18 May 2026 13:06:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juiFI72t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DF8C2BCB7;
+	Mon, 18 May 2026 13:49:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779109586;
-	bh=Gqnubf+DmyZ9CZM57OASE8VBPLtadn3ZAoNtTndT/N0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MK1ch8uNyVzML/rtq0+o4vgcKRyT2xLII3Uqp7LmSjRyph9pisDhdSdGqw3J3F77O
-	 AvKnZBF9EAVmC09Cr2gE9WO5NaPs4B2VXOp5sqGrSKX7RLnPVhFWXdg35Yp6lMfoNM
-	 9fAuNUHmJs3RqyHaJXvIxwcbiz7IIxtDtFdgAJsdB4xCgv9DfpgETzpiaQJjamGOLQ
-	 X+KByksKrAyCRMWCjWtHgBBbDUSpby5MLy6WE7EO/ykJfZSR+3Ywt6PnEVmNzVb+ex
-	 PG3bALZt1uf5uluDSC4d+FiglVJ7eJzIskZI+NEQO80CK2n/xlWiW9ZzUCvSoeXKIp
-	 WcRjH0yyeBwbg==
-Date: Mon, 18 May 2026 14:06:21 +0100
+	s=k20201202; t=1779112194;
+	bh=X6GLqLrY021dWhefDafrHaSpklU44Ax+GgvJKLoLftI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=juiFI72tFUwKain2MA/cec8ULUvdu4hu4iiMEsfXS9tzZXb5QYbaZNM/53/2p+73v
+	 WocRCUKSiH1eNh9u/aIhsJONhF6cKZ69AhdTx91S9SCdjhpsXMecpfK9NaOjJdf4x6
+	 /NMa/oRSZJMwDEdPUCMEL+PWCvnUzud/Zq9rsqz7Lh8VGXoDhqR2yrOPbpLohytw6L
+	 EZlQJhKcs0CEjzwAIiEqL9tiDE/FYUJohayINQLz9i3kSsh1V0+zUo4fmxYiWA0n9S
+	 3Gva9MKdPBAGOB4CkRxYRrSFOlByfetG/Uuv8u1/wS6sf88JhIuZy3Y6IPlYCjGH/J
+	 3c7LEdwtHErAg==
+Date: Mon, 18 May 2026 14:49:50 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Joerg Roedel <joerg.roedel@amd.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the iommu tree with the arm-soc tree
-Message-ID: <agsOzbfiOszzuUvk@sirena.org.uk>
+Subject: Re: linux-next: test failure after merge of the mm-nonmm-unstable
+ tree
+Message-ID: <fabba1ab-ceff-429c-af55-92844b179890@sirena.org.uk>
+References: <agr_RxvNtfASfevg@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,86 +45,56 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ywywoAFiPisJuGgC"
+	protocol="application/pgp-signature"; boundary="eew2VM0xP8Pfc8kD"
 Content-Disposition: inline
+In-Reply-To: <agr_RxvNtfASfevg@sirena.org.uk>
+X-Cookie: Brain fried -- Core dumped
 
 
---ywywoAFiPisJuGgC
+--eew2VM0xP8Pfc8kD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, May 18, 2026 at 01:00:07PM +0100, Mark Brown wrote:
 
-Today's linux-next merge of the iommu tree got a conflict in:
+> After merging the mm-nonmm-unstable tree, today's linux-next testing
+> (arm64 kunit) failed like this:
 
-  arch/arm64/configs/defconfig
+> [11:39:24] Failures: smp-cond-load-relaxed-timeout.smp_cond_relaxed_timeout_succeeds
 
-between commit:
+> Note that we are running on an arm64 host with access to KVM so the
+> above should be running with KVM rather than being emulated.
 
-  f54f7979ff88d ("arm64: defconfig: Move entries to match savedefconfig")
+> Caused by commit
 
-=66rom the arm-soc tree and commit:
+>    0403c34571d1d (kunit: add tests for smp_cond_load_relaxed_timeout())
 
-  187029b922d0e ("arm64: defconfig: enable Verisilicon IOMMU for Rockchip R=
-K3588")
+> in that it's adding the new test which fails, I didn't investigate the
+> quality of the test.  I do note that there's some related functional
+> work also from Ankur that's also added by the mm-nonmm-unstable tree but
+> didn't investigate that either.
 
-=66rom the iommu tree.
+> I have used the version from next-20260506 instead, the code was in
+> next-20260508 but I belive Thierry was emulating.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Actually these patches were introduced in next-20260427 so I'll need to
+go back to next-20260424 instead, sorry (got confused by the tree
+rebasing).  It looks like something in the more recent versions made the
+issue more promienent.
 
-diff --cc arch/arm64/configs/defconfig
-index 9f00e2823ccb6,2755960fce06a..0000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -1587,22 -1608,23 +1587,23 @@@ CONFIG_RENESAS_OSTM=3D
-  CONFIG_ARM_MHU=3Dy
-  CONFIG_EXYNOS_MBOX=3Dm
-  CONFIG_IMX_MBOX=3Dy
- -CONFIG_OMAP2PLUS_MBOX=3Dm
-  CONFIG_PLATFORM_MHU=3Dy
- +CONFIG_OMAP2PLUS_MBOX=3Dm
-  CONFIG_BCM2835_MBOX=3Dy
-  CONFIG_QCOM_APCS_IPC=3Dy
- +CONFIG_TEGRA_HSP_MBOX=3Dy
-  CONFIG_MTK_ADSP_MBOX=3Dm
-  CONFIG_QCOM_CPUCP_MBOX=3Dm
- -CONFIG_TEGRA_HSP_MBOX=3Dy
-  CONFIG_QCOM_IPCC=3Dy
-  CONFIG_CIX_MBOX=3Dy
- -CONFIG_ROCKCHIP_IOMMU=3Dy
- -CONFIG_TEGRA_IOMMU_SMMU=3Dy
-  CONFIG_ARM_SMMU=3Dy
-  CONFIG_ARM_SMMU_V3=3Dy
- -CONFIG_MTK_IOMMU=3Dy
-  CONFIG_QCOM_IOMMU=3Dy
- +CONFIG_ROCKCHIP_IOMMU=3Dy
- +CONFIG_TEGRA_IOMMU_SMMU=3Dy
-  CONFIG_APPLE_DART=3Dm
- +CONFIG_MTK_IOMMU=3Dy
-+ CONFIG_VSI_IOMMU=3Dm
-  CONFIG_REMOTEPROC=3Dy
-  CONFIG_IMX_REMOTEPROC=3Dy
-  CONFIG_MTK_SCP=3Dm
-
---ywywoAFiPisJuGgC
+--eew2VM0xP8Pfc8kD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoLDs0ACgkQJNaLcl1U
-h9D0vwf/bAkSmJVbQtEygQkiaDUN6+pj/9Y9DuLNd+brAOqCHAPILdi5tV7ra8UK
-YNDKsNLx7x+bYVdYxcJ7ueJwgwTdyqBRUvzcUCTiNf/2YjRt44foxH7iremeIvFn
-jSuKPJwvzRzEaxAZm93nxjsd/hTLrcpFZkavCQEQRZfKM9B1uKmxwmy++DLgFLhp
-6Bt9yNXA1Q2Dm7Xn7SpKsumxkiOHiW3gw55aDCa5RPCOuQo2C8IT6fchBAcaf5bs
-UuAxtUUOzC9eP43EvXqSY+7wcXhVRAeoZncBKCh6QljJY4Xk0ad0qu4aGHY5Sdia
-zzzxVueZZj1UxQKL6ZLojI1F8Yh0qg==
-=UyQD
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoLGP0ACgkQJNaLcl1U
+h9Bczwf+Nlb0jzm1GDe5GqUUVltRt8c8Rzetu2heLScR4Q7ZGmB3FX3r2WR7AbAx
++FHf6pHn9R3YqdguUb0Bj0D+4o9yXn/Q5hACp8SHnAmUGu7t5uDXeeYkrjPho0B/
+/Igh3NNrj+jdfSJ5V8oOlu02T8GAM8HeFBx8XUhSuX/k5UDj/pmequb40LcthrOT
+I5x28HlK1Nwgn4AkCJUFkpetJ/RQlyNkmAgYNt9Pucsc2Ue1nsdWtn4wLWg+iZhY
+TwcA0NXaXrRRdA+WSl0fa41yJFJ65jKOKa2uyD+U7yR/dRDifzOayk8uGU6JGT7A
+J0i7D/ioHwGQhxiIo20fbxxsuxGbpg==
+=ek1X
 -----END PGP SIGNATURE-----
 
---ywywoAFiPisJuGgC--
+--eew2VM0xP8Pfc8kD--
