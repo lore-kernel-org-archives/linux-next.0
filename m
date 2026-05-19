@@ -1,97 +1,149 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E43914E5
-	for <linux-next@vger.kernel.org>; Mon, 18 May 2026 20:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B511EEA49
+	for <linux-next@vger.kernel.org>; Tue, 19 May 2026 02:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779134786; cv=none; b=YsdFsBUQ6+ynXWdPqDAJIThe2SQ/IxQoOvRd7+PW5s6m8Y+XhyVevyPBgGXHP+q+T+DHks3ikDXyia3xVxWqba/Mr/Yzl+TZBug2fEu2BAvoXO2hr7Z5mLrSgpYzrGo9za3i4h/mg8K1M5/jCTjpw2knVmc0W+Znb5aX2IQ7kdU=
+	t=1779157823; cv=none; b=W+yPjX3cNzrWH+MLmNzsjkqxeoxF0HK96mVU1Yl73F5k+QPcb4+CV185yWn6YCl+dEtJQc2ZvP1VK/7qAv6dVmzLkgIpxOXfYVjn8D5rOeUIQkHWzEOTJw3vndAQUb1pZILxMIdwxorU3XPrV5b6LFZMY9HWX9xYLRF/OldDO8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779134786; c=relaxed/simple;
-	bh=xpL0mHYiqbzxrpdnPUSu6eGtIyaaWFU/WkpGz8xgy1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LmqR4ttSayxzdsQL3zUJKL3U9rscT0AwyIQGWyzeNm4/UyKMiKkGVq1wtT7laKST9+XOjDuSXqdrR/TY4rjTmTNfmsI2tHm1GTO96zbzdZxg1MkFhekYquT/uzF+nIxb/mUxJue6RawKmWE0TPBlnnvu1+HLkRBI3L814Q9rR5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V463OjVv; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1779157823; c=relaxed/simple;
+	bh=6KydcwqCM/taaHtrVyGRo4YDzTh1/ekTTvuaHrlhAts=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=VLlrNBgjjWs6DReusvzkYcZwD7+fYSdBEbWfHxVcW34UUgKZHM2lFbBbUBR2je3fgJ9UuJ2lrhA4NsT1++Foo+cSnqr3u0+PnJiWK2iukZU5oEAbB1HnxoSjBjQIusy1+du8pKZmkSyet36jtYece8GPycLvg9ihNvujm/rhCYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=IK7r4TFf; arc=none smtp.client-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V463OjVv"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6746d0b2b4aso4766158a12.3
-        for <linux-next@vger.kernel.org>; Mon, 18 May 2026 13:06:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="IK7r4TFf"
+Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-3025d725a05so8554509eec.1
+        for <linux-next@vger.kernel.org>; Mon, 18 May 2026 19:30:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1779134783; x=1779739583; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+Iag8WXKpIwL8mTbl0N8p2f+FBzjv5jGFSgcF9g6/s=;
-        b=V463OjVv4eLbrSHlYP4yr6wfii9S5WI4nr0gaOeCMkwG3OIMLCy5xl555glFBzCvFG
-         C1uZuA0JugA/Z/5w3rm+30VsJpMzcGLmc+C5hhc1jDvQLWr/SR4FwVXjlOabFNMFiEgV
-         sIUQDMYQsJJiAqwBQ2o7d9ohkIvx1Y0VF25JM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779134783; x=1779739583;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=kernelci.org; s=google; t=1779157820; x=1779762620; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T+Iag8WXKpIwL8mTbl0N8p2f+FBzjv5jGFSgcF9g6/s=;
-        b=Fo+7UsOhf8Qjk6ED424Db4jjYEvV/kh4c1dmPxBvtqRnzG/pBgeb/P8TNPquY776rh
-         0c+mhymkvF7PaVIZ99tOt25i0rQ2NLRYOP7IYdlBbaqoxgaAAdiedtTFUFwxsT9G+ip4
-         nwf3BMIqL5l1N/y6+ZqrlOzxdEBv+wUiOUpJvLfeT0B5ppPNAuBSxiXCzqppOCXdTHNu
-         NPmkZGoHtE29TinIMo4pCIRin3DK6FmZaE+u6Oo5uAVGbGKGHTE3KZP6PykRoRJUL7TW
-         1nhegZgsgCMP1H9WFxGWiUmdAw7asoP3y+skmnj46UMgESvQ6zoc3wtP8NmJbxL5rNIx
-         llTg==
-X-Forwarded-Encrypted: i=1; AFNElJ/utS98GwXTBHih6z+I1+6mwOCdeQSi5N/P74370ZsbSUz4H6iTqW5oJ2D9DiXBw/Flgk/9DGeAV/0p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2oqngZQWgOyxyt3RNQB3IOV+etmgc7fAZOC4Fjy4A1lO+a9QI
-	wJUDUB7z3fYaWfOgMkv7FYre8HeI5+dkSquQnvgodQJ5aDf9q3enkWeY1G0xcWh27tB4EG58G2O
-	EfhHwhrw=
-X-Gm-Gg: Acq92OFL2cTnAK2ig12DuK+99Dy03OyQ6lbiJ+EfaYiZQmHweuCs++EYUU29TTLkMU3
-	/r/4vrVYrdrtOq6IU8/Vf0io09o35xufXyizOCxvHGSh9OI2kWkloBy6f/cX0CVLDJRXFIoWYvq
-	PANk+LT3BrqcR1vwUPnjCElLKzarHQcflxOQahQdCxihdNx8ix2xSRYIFGyo1VlcJXXZKqWwMbf
-	Ys/eIHskFR2aCFME2kYEmEN8fWF/sYgHMtSoKwiD9g4dpTiPGFE/oQQKfwVEYSFubiXVyaTXm/F
-	6fn32Brt7zseiWz2LsXdirPt00qs4DjerQim8OqmahlccvsyzFWY4Gv0vsJVi0QDORQrOJxCbBw
-	NnBKVCvOHp228ZszozTPV7GQAY2yUGAkhT16cf5IeXuXR4w/K+Qdg5r56jk11fHcizrFHgk/kVi
-	Qp6d97YV0KTYger//jYrrZ5WaeJa4vrDM85QgEmJKqi3I/NfohroWQPepw28rfVAdpg1088yF1
-X-Received: by 2002:a17:907:6d04:b0:ba7:fbfb:4caf with SMTP id a640c23a62f3a-bd517aba010mr886256966b.43.1779134783299;
-        Mon, 18 May 2026 13:06:23 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bd4f4dec855sm610121766b.37.2026.05.18.13.06.22
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 May 2026 13:06:22 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6746d0b2b4aso4766120a12.3
-        for <linux-next@vger.kernel.org>; Mon, 18 May 2026 13:06:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9fpZpQMl3ZSMU5t9Ws6KrPzvT6qtEalVJcbCgPrmNugWG+2eDAGhDiBpmQf1PIvkGSWb5F6Mogl8+H@vger.kernel.org
-X-Received: by 2002:a05:6402:46d6:b0:676:988e:8eb6 with SMTP id
- 4fb4d7f45d1cf-683bd488f28mr7867497a12.26.1779134781995; Mon, 18 May 2026
- 13:06:21 -0700 (PDT)
+        bh=/ZjWjWXRBq3gDbfCBpENsVYiXfI3KtaUT9toOvTI98U=;
+        b=IK7r4TFfJ1RW9UH70+AEOvjNprDQQumEjx+BYC+WT8C1AomTFQfqjFuOOPvClcdjun
+         5sYi4LwNuQkCtS1TwCl5W0EhN6H/yDfdNJAmhOL7MQxXd7mdRftzW79K+Y10Yh+lNYXW
+         quhyofzwHdqDAwV/mGRTZJ7gJzEyrh3EDGvQuXK/nc8THZ1w79EqO+13vrbbBSooQ1UO
+         1zoYDOhNzwVzqHJLz+adnja3rlMm5k04zb8NO5i6x9CyOyktTdXpBcyJDz16bfThwR8C
+         fTZLAsmxF5ccaD/gPQkYg4CktO+kOfxDyN6Wrxh4Uo4HX1jWyAW5BAqh1CY9r1OJGjh1
+         iMIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779157820; x=1779762620;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZjWjWXRBq3gDbfCBpENsVYiXfI3KtaUT9toOvTI98U=;
+        b=idQ+S8IVcYNkAGQgMqFFI+zk7kdJmC68bQn3BTVgfwKE/eXRZwykndDNs+8hguoyR1
+         YtOyKvGHCZcy4uaiFJLOA6gOVcO6AGvyiL8tT0X/jerfcsVUnADMYulUgJmBj8VyRWj8
+         xl/RQmaOJWIqU9n6z0X/GtrWfH8+NA9u7r0sRoGk8SBqIZdQ58cmThILTS8Ao78Ff+iT
+         U30EoVQTWqAQxMAMIfZzRdUJWII43a2d49vjdHssVhoizLloMy/fOXDvGebqzsjsqVVr
+         GFf2WVLqzXaW08NB4+k0vAofdbWtAHhyAwM1PJyt60juNYI943u8/XyDiORBCUiWKkYk
+         Phww==
+X-Gm-Message-State: AOJu0Yw2Es5IoNpL06+d+9Pmxx4Z1XHfQVKMi38+m2l4QFMunLr7dVOe
+	C7gKEU+6o3VQudETbA/Xrx5gVESb/VoCgZpUJZTukkAjyoDW6X7wY7Scdips9+/MWCRrLWa4fsX
+	oBtyD
+X-Gm-Gg: Acq92OH99SZyNjbRd0/hMPlDF6e7xQdFB3kI2KeOuNHG+HVFc4XsBS7NehLkzqzQF7D
+	LL/3X+Q2pveQMDUjL1gffZ92w2ftqJzX0ZRQM+4a7WRWU1qaHCFUL27o4HvlRxtX52qpBe3e+c8
+	o2EioNBBMHesnIDrwtYjdd5HDKsw40J2+p6/xvTCW3pY16r6ehFHLG4bAYxKyxR9HfY8/gEyEgm
+	wZ7SQjUzKfqm23yu6lPRXeqy0OhHhgD4Zib9SGwQl9gT+XZoV6665AxhX0i//SoH0NsKZjSbOZZ
+	vlNAXgP3RWhhTTsGdGXEtuW939duW8vDy6O4aSTHb/75R1Mw7yex1dk1FrMGsDOKyKY5Vxh6FrZ
+	r1XgZfBdmPdNhhU2UEbXS7qd+7UQnNYdZ9hNA+CP9jc6voHClo9UCIDGwGN1RblOedJNmse++ld
+	MoNFGpVRJkWh+0XDSx
+X-Received: by 2002:a05:7301:2a0f:b0:2d9:6373:ad10 with SMTP id 5a478bee46e88-3039812a653mr7343647eec.7.1779157820453;
+        Mon, 18 May 2026 19:30:20 -0700 (PDT)
+Received: from 330cfa3079ca ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30294500726sm14354948eec.10.2026.05.18.19.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2026 19:30:20 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ags8osqoMATFBslZ@sirena.org.uk> <20260518192408.GA2744985@ax162>
-In-Reply-To: <20260518192408.GA2744985@ax162>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 18 May 2026 13:06:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whVZ7Wv2UNZyAQbVHQ-yz5_-_9dOa8Pxt3nLRhoMPyOuQ@mail.gmail.com>
-X-Gm-Features: AVHnY4K7sKlyJQZ4fie3dgg_T-2p15OxiIVPvaNIZ2oWiO9BQsSfLKMRKNNo8b4
-Message-ID: <CAHk-=whVZ7Wv2UNZyAQbVHQ-yz5_-_9dOa8Pxt3nLRhoMPyOuQ@mail.gmail.com>
-Subject: Re: linux-next: build failure in final build
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Kosina <jkosina@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 80dd246accce631c328ea43294e53b2b2dd2aa32
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 19 May 2026 02:30:19 -0000
+Message-ID: <177915781955.2611.9418192194275218797@330cfa3079ca>
 
-On Mon, 18 May 2026 at 12:24, Nathan Chancellor <nathan@kernel.org> wrote:
->
-> I submitted
->
->   https://lore.kernel.org/20260517-hid-core-fix-size_t-specifier-v1-1-bfdd959ec383@kernel.org/
->
-> for this, which you could apply instead of the revert. Given how simple
-> it is, maybe Linus could just apply it directly to unbreak both trees?
 
-Done.
 
-                Linus
+
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/80dd246accce631c328ea43294e53b2b2dd2aa32/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 80dd246accce631c328ea43294e53b2b2dd2aa32
+origin: maestro
+test start time: 2026-05-18 16:56:08.713000+00:00
+
+Builds:	   58 ✅    1 ❌    0 ⚠️
+Boots: 	  130 ✅   52 ❌    7 ⚠️
+Tests: 	20715 ✅ 4160 ❌ 4876 ⚠️
+
+### POSSIBLE REGRESSIONS
+
+  No possible regressions observed.
+
+
+### FIXED REGRESSIONS
+
+  No fixed regressions observed.
+
+
+### UNSTABLE TESTS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a0b71cb744d1c1da01a32aa
+      history:  > ⚠️  > ✅  > ✅  
+            
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a0b52b1744d1c1da01985fb
+      history:  > ✅  > ⚠️  > ✅  
+            
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a0b52b2744d1c1da01985fe
+      history:  > ⚠️  > ✅  
+            
+Hardware: qemu-x86_64
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a0b5534744d1c1da0198b6e
+      history:  > ✅  > ⚠️  > ✅  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
