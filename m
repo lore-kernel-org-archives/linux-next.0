@@ -1,94 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5C8409608;
-	Tue, 19 May 2026 16:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215AA33A9E8;
+	Tue, 19 May 2026 18:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779207888; cv=none; b=AsUorT+mGByQ2xQX8WXWzJJoLsNz6nXD+px23x4OrOnb2EuofYt6OAghDu6T1l6aIl6d8paQ62DurdO6XMhv5Btt2yRa5LL/lLTcnocN+gHpWrz7TvKLBQnqqyOx+LeiVnT0xxnaVFqilGHsUme4/jm3ATYKt0CBHjUhAqIw37o=
+	t=1779215144; cv=none; b=YhzTKZAXLwcbtWowcIsZlTgf9wQFdOj5IIbNOrBp4o5jdSf7xkRirOMmhi0mVUmwm6DPg2yEGZtDu1pgbCzFSIzbwwqpP+VmgMMrCcqxripCyT0aT2qz9S9d2shfG4qG95LWvxLOsXJFCwSZcOk+zKeZldBDuEL1xg3QvLrl3s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779207888; c=relaxed/simple;
-	bh=VGrGJXezDKoNsH2G+4i4JdIokjMi+z4YLA/sSJ15mJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETgvWT6agQNAAfzp4Dk2+j74YtYIgfoV3I85qiZQH4U9PMCPkSh6DSgH4R5RjjLqXYLS9GfQJtmIAuTBlYBEf3grI3OhsZRkCgVlZVueos+cdqp9IoN3s7WwJ6Y82jy0elmad4sP4rKavUgv+dkveR823rxzUBd90qkD+C8kB7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RDUR47pn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779215144; c=relaxed/simple;
+	bh=1YhLNqTUtq1iNk3/BBoawa9GvYcohDP5Enh2C4f4jgE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nsZiLr4ycuW+SnGVrOipdO1mkTxCB+E8qvl6EooBcGddQC1FBmJF4DCAgsL//rKlbwZeutzktHfBqt2raOZHHb4DDiA2dyp9CBFdTuNGKQb/AXK3sGG5wBPdn3rU0AKqm5+5+XzYC/oAObOFm+olOK9NiQfV+zMafHMd42MQA3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iZUFHybZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RDUR47pn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932E3C2BCB3;
-	Tue, 19 May 2026 16:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779207888;
-	bh=VGrGJXezDKoNsH2G+4i4JdIokjMi+z4YLA/sSJ15mJ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RDUR47pni1bugdVCjss+0eCBQJNDSFsVzN2MThvqiKsSH2ldp9yNqhO6pRDvTfA2P
-	 33d7Mt7/Fl1/fFj0yo0ZWEBGtCbtE7mqJNZLlGh0f+GBWPHsrENTdCXb9QzBCOJ45U
-	 pYQtUcrVXV5BTELvOA5rWeTJMsvBrW2Ml9AAwQ0PdkwtfQqmDtOQMMopZCSOZnfL1Y
-	 DUwb8Fw35Vrd21+0VpD233Emkjrn25noaPTU6RK/FCMD5y0uHSMzgwNH9Dk6fRRfPA
-	 Bd6BDSPIhXZQ9KZyURCrfnrRRtSqPIQmcfP71BSSdXkncCHSkAc0A159uoKaClLYT+
-	 CdvxyRK6z2k3A==
-Date: Tue, 19 May 2026 17:24:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Dorjoy Chowdhury <dorjoychy111@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Aleksa Sarai <aleksa@amutable.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <4bd253fa-c363-43cb-adaa-0248ac707a0d@sirena.org.uk>
-References: <agruPPybCx8q2XcJ@sirena.org.uk>
- <c34d1f0e-0707-40cc-b0c7-7b2648ec1863@sirena.org.uk>
- <CAFfO_h5QdRG2ptyuGRQtqxrpndwan98aOsX92bvN4hyvpgLPMA@mail.gmail.com>
- <e221b631-00bf-44b5-865b-ac970e6cb11f@sirena.org.uk>
- <1286370201.1726989.1779131564699@kpc.webmail.kpnmail.nl>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iZUFHybZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4ADC2BCB8;
+	Tue, 19 May 2026 18:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1779215143;
+	bh=1YhLNqTUtq1iNk3/BBoawa9GvYcohDP5Enh2C4f4jgE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iZUFHybZBhPIz2QgR58RPdqT5cR+hyJKvzFXwpTrCFPuBJh/ECUiRK/ixX2xjoL+l
+	 3Ly/ISNBHQFLuL2dKe4Hq7GixxZc/1GgVGUsIsU3NSA5fcHb+CsGSzxng/u/xojU3R
+	 n/ZRIN6mhVEOL08JKwjODxQXzBUXTNZHYMCbjsYA=
+Date: Tue, 19 May 2026 11:25:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Sang-Heon Jeon
+ <ekffu200098@gmail.com>
+Subject: Re: linux-next: manual merge of the mm-nonmm-unstable tree with the
+ origin tree
+Message-Id: <20260519112543.bcb64b65bd264dc0eebac362@linux-foundation.org>
+In-Reply-To: <agwuKp3CtmlA8t4n@sirena.org.uk>
+References: <agwuKp3CtmlA8t4n@sirena.org.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="L5Ti2qdlEtv5fGeK"
-Content-Disposition: inline
-In-Reply-To: <1286370201.1726989.1779131564699@kpc.webmail.kpnmail.nl>
-X-Cookie: Huh?
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 19 May 2026 10:32:26 +0100 Mark Brown <broonie@kernel.org> wrote:
 
---L5Ti2qdlEtv5fGeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi all,
+> 
+> Today's linux-next merge of the mm-nonmm-unstable tree got a conflict in:
+> 
+>   mm/hugetlb_cma.c
+> 
+> between commits:
+> 
+>   8f5ce56b76303 ("mm/hugetlb_cma: round up per_node before logging it")
+>   4d33b7a0c04bf ("mm/hugetlb_cma: restrict hugetlb_cma parameter to gigantic-page alignment")
+> 
+> from the origin tree
 
-On Mon, May 18, 2026 at 09:12:44PM +0200, Jori Koolstra wrote:
-> > Op 18-05-2026 19:13 CEST schreef Mark Brown <broonie@kernel.org>:
+Actually these are in mm.git.
 
-> > Figured it'd be an arch specific version of a similar thing - I didn't
-> > audit them as you can see.
+The first was in mm-hotfixes-stable and is now in mainline.
 
-> These confusions with octal numbers in lists that aren't even ordered is
-> why I would prefer to use shifted values instead. I don't see any reason
-> actually why we should not just convert them all, apart from churning and
-> perhaps not doing it correctly (which would be bad). My rationale for mixing
-> was to use 1 << n at least for the remaining bits. If I remember correctly,
-> this is also what Aleksa preferred.
+The second remains in mm-unstable.
 
-Yeah, shifted values do make sense to me as well - other than the
-inconsistent style the only issue I saw was that it's a bit less obvious
-that the values collide.
+> and commit:
+> 
+>   2638c879e1082 ("mm/hugetlb_cma: round up per_node before logging it")
+> 
+> from the mm-nonmm-unstable tree.
 
---L5Ti2qdlEtv5fGeK
-Content-Type: application/pgp-signature; name="signature.asc"
+This duplicate was in mm-hotfixes-stable, now upstream;
 
------BEGIN PGP SIGNATURE-----
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoMjssACgkQJNaLcl1U
-h9AEtAf+JtRW8gRKqAZeS3BhGmfjWJMbI2nwTqSBuNkko/LBUfioRoPzOsptGkn0
-MnWDEHgKGbac5/c17MbL94Pi4Rvmejetlsm0hheNy7LLiT7Nyd9bmhkLWuvJPVIb
-IjwQZFrRt9NWqgezFiTAUBXv4l5DZiBxXl29AD/8Xze8add3FBbJhZn6uDiJ47/4
-8+HONbRX5UGsMUlHYEai8J1i6Yd/gSPUiQoJdZaGSEmd6LJKaGLgnszCg0LbvPOO
-jlbZx8Ro8OuLCXq7GDpg22orkPeau+Gx/gNzBYs5KnFyy6T6btsNK83viN7emBAE
-F7VuKCyrI2yGqgCHqNfEEIuuez9Jgg==
-=cRF+
------END PGP SIGNATURE-----
+Or something like that ;)  I guess there's a timing issue here, it should all
+come good soon.
 
---L5Ti2qdlEtv5fGeK--
