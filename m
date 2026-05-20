@@ -1,109 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045153939DB;
-	Wed, 20 May 2026 12:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E387D200C2
+	for <linux-next@vger.kernel.org>; Wed, 20 May 2026 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779279526; cv=none; b=tybryOECTXs85Fp2/tRepU8wVrbjJWaXUGj8nyPErfCjLwuAazbGuGPxlAOpGoWGQFcojxLYhQGHzsMJOw6wduW34uyUx/HSASoTlO7Sna1q44mPVhtk90RYuXbNDVZ/BhpmOsX4jN7RaKEEvC1NZDiCfBqxWMJYLkOiQnBRDAc=
+	t=1779281948; cv=none; b=H5KCWyb3FfwGhx1tZmzYV3g/R7ev6qDKP7fNXciTAis/YDDx+CWqztkuNFeVIFOdePPHVo/xF1+OlHos2f5ENiwxbHaBDUYdThgrH+dWPRvZmJDrWB66Sv9x5skZtX6IHYsPbCGZcUo6IIYpbWvTTvkzgIiWmZMawP7MuSRCOsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779279526; c=relaxed/simple;
-	bh=+TvEfK2/ok4eKmf5tE9PJD2eOiTiWczdVW0ABQ3ofqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=no6J8InTQT6fCSWeJhNnvJwrzR+V6FxOJjkp9SKMUjTlcNgBc4Od7d3PFwjsUqxTWJv8lGRiciWU5gboSyo70nNAETXqX346Bjklg6BfG7D7b/Wsfnq3RpfNKBJlxXCwjH2mSnDyYuLD2cJzL/BfqfKKjvmoydHbMzwGf5Bx8zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owHf9gwV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779281948; c=relaxed/simple;
+	bh=65RCTQjSqiH9OvgLpUr6Nvm6TMbutL/FAxsgSqjiKxE=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=MFwVdfL3u8Q4PcI5XuQU4YHxzy3GeP6/MM11e7zQd1qNlFYUXUI7p8wxpRVz9+QOntvupm/e3PVB5AzBfcTcJADU411IxmZK85jnAb2HJ9FDGiKqq0sTZj3n8NL4dLW4HwdMjRwX2rQdHpc/kE2NOkkwfxSC+Brj3wnq3vS3D7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Vz63bGcC; arc=none smtp.client-ip=74.125.82.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owHf9gwV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 484371F000E9;
-	Wed, 20 May 2026 12:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779279524;
-	bh=zoN//gAQbZwgt7XzUzwf+SlhyhQXRAAhwy8u+Pnqk+k=;
-	h=Date:From:To:Cc:Subject;
-	b=owHf9gwVUQeWMFkTM2S5JDxVmJeoWOpVPQimqJA0O5kB4bv8PuOrUXIahfg1wdIyu
-	 99o4U2wcn9gwKA5D3640k5TSN14yqjYhr5ixf3O7CKDNiyfddemRIFQQOMAF+5PDdV
-	 Ovrbopf2zcjOZS+KaGV8kdctbfimQ9U5q5B3te/LOjP5ZiF8Y51OSAP/sQ6Oe0Zuv7
-	 LPBQfmzwcG+OMIk49Ga5E+OMNEcCEpEBvNr2QzORjuM/9YQ8yarNHbXRr3TtzbXoIN
-	 ao6JXGwfOQFT5zooDTTjPFwejclPvwxSVBuROSf+ZpbF24BW4cX7HgRvIS8jI3NJgL
-	 VUlYJ9QUKuSJg==
-Date: Wed, 20 May 2026 13:18:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for May 20
-Message-ID: <ag2moaJsFXvM4nDy@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Vz63bGcC"
+Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-13621cca8f5so187242c88.0
+        for <linux-next@vger.kernel.org>; Wed, 20 May 2026 05:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1779281946; x=1779886746; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgr1ZYz07Uly84CvVDogKTgiacxKhqua82HkZPCO/LI=;
+        b=Vz63bGcCLNgdHIWtDJE3w2HROO7cDTjfsUCjHqLQT/82Janx0oT96ngejgKhR33hpj
+         /a0UDXfKZIhnBpfhHzsU78pK376vnCAA4tknPlCGcnG/C3DKtEtu1GZf7odxkIPBK7o9
+         Vs1TCLftsqJItqMHGKtAFddSWoqQMYHPAUUw7us/G3rBRMXarzz3iVw39XvliMA2hif2
+         AmF/YeKvn73EsHx0TxlUq0f+gqSY3h1st8eawlbbW7ipoKUcncff33xoGbzgHV/bPGdf
+         1TC+j0oEIL+S+fEAYa2DF0Wf9QOPZV4cUiI+8So3VntzNXqo+2yml7EgMgXSrIKa3eTY
+         DvNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779281946; x=1779886746;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qgr1ZYz07Uly84CvVDogKTgiacxKhqua82HkZPCO/LI=;
+        b=QGmz3lL2XWP425bdgIeM2t7aqNpTvLOtgc7aalgz7EljAHH0A8p1v6ku9mwOB3anWb
+         dmQ+zW6dEtx47lQXZZcGqFf6641FMVMNiKAOW/7fBKyQdl4h0yRoDYgcsva1TXmySPKV
+         PO0na8aiwpYyANV63n0f9MVFAsQrxNwVI00zDade1eJGymdEnps0/5V499mclr4w3bl3
+         QpItDXAwKFP/r8Pv+bx8gQcHkGdf2uzU0S6kWdrabxp2I11fCiZ+eCV7Ccp7kczRz5bt
+         XCPJAGpHz60z+Gvvw3lpmnNVMRAehWHGR8NDwcCNpK8jm52K2zIajrK5y/QEs8ZjTCT5
+         hvLA==
+X-Forwarded-Encrypted: i=1; AFNElJ+v0NSgNVwXJJHI+P+hdGOjZc4hhxXflNNbR2FtKNupZMCkKYrhCVqc2nGYAy7ksGmcNwKzxQknh5pZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8UUBOv7kX1CivtO5PiE5wYlg03hDXD9QyppbBX6fOebvToYu3
+	u0B5ubYI5BVTIaNGLrgUmKO8I/krmy/uA7rSEL5Dyf2/SwVG25i1qvTeEz5LOcby/ta2Su+GuBr
+	ICWfc
+X-Gm-Gg: Acq92OH2u2YSH2R9PPH16hPKoSCFvoiay2WsfEeMIrJjQ7TnTFM7nglXdWk/JyEqixu
+	Zwek1QjTcmiihIVMBgpYc+OWkWAeqKHrPZ+SR8wiz6cduV3f7wF8SLy5XpDSXSNIlm98ehmAG0K
+	rBj0QN/gFxmoAkAszjlfua60bkO/Ytjq8PJl7XXpDLyseahI7IMJEc82llcvEMi8G7+3Jp7ObiB
+	TVtbl4etzo6tWGFe8sIxhgpGkutC1XgOJOQrcrIna9WnKLvpbFoGrH8pkz95GryKVLX6MJpfWf5
+	7tEcmHiOXAsDUp2vOcnJfxaF72qCofQynDfBHlv6y4Qnv1/tvSmY8Vv2ZAPpC/RRFvSf6buH96y
+	PMZZoklQaSuAGMxYBDtsYaMLOSTWFv+7ViUFmMSZzWg3it744Exbd7CW1EjJRzosUEiQqxqW8Yx
+	nvIGfIU4KqwnS4FCRv/G3G3A/sIsw=
+X-Received: by 2002:a05:7022:6993:b0:134:df7f:910d with SMTP id a92af1059eb24-1350451e077mr9875479c88.7.1779281945853;
+        Wed, 20 May 2026 05:59:05 -0700 (PDT)
+Received: from 330cfa3079ca ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbdce9fasm21886223c88.4.2026.05.20.05.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2026 05:59:04 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KJ6IxbSWnyJiBgCU"
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Subject: [REGRESSION] next/master: (build) stack frame size (2104) exceeds
+ limit (2048)
+ in 'dml31_ModeSupport...
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Wed, 20 May 2026 12:59:04 -0000
+Message-ID: <177928194404.3268.18401290607331979680@330cfa3079ca>
 
 
---KJ6IxbSWnyJiBgCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi all,
 
-Changes since 20260519:
 
-The mm-nonmm-unstable tree lost it's build failure.
+Hello,
 
-The amdgpu tree lost it's build failure.
+New build issue found on next/master:
 
-The thunderbolt tree acquired a conflict with the thunderbolt-fixes tree.
+---
+ stack frame size (2104) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than] in drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.o (drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c) [logspec:kbuild,kbuild.compiler.error]
+---
 
-Non-merge commits (relative to Linus' tree): 6144
- 7173 files changed, 389799 insertions(+), 143206 deletions(-)
+- dashboard: https://d.kernelci.org/i/maestro:504ac30a3bdad797a2185cd52e1b61acb0439072
+- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+- commit HEAD:  687da68900cd1a46549f7d9430c7d40346cb86a0
+- tags: next-20260520
 
-----------------------------------------------------------------------------
+Please include the KernelCI tag when submitting a fix:
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+Reported-by: kernelci.org bot <bot@kernelci.org>
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
 
-Below is a summary of the state of the merge.
+Log excerpt:
+=====================================================
+/tmp/kci/linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c:3800:6: error: stack frame size (2104) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
+ 3800 | void dml31_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
+      |      ^
+1 error generated.
 
-I am currently merging 423 trees (counting Linus' and 130 trees of bug
-fix patches pending for the current release).
+=====================================================
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
 
-Thanks to Paul Gortmaker for triage and bug fixes.
+# Builds where the incident occurred:
 
---KJ6IxbSWnyJiBgCU
-Content-Type: application/pgp-signature; name="signature.asc"
+## x86_64_defconfig+kselftest+x86-board on (x86_64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a0daa38744d1c1da0287568
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoNpqEACgkQJNaLcl1U
-h9BUjAf/Zo/P1DbFTK5UDat/6D7HqL1tD7ECHKtJu47696UAQHrsdccwLwjZcc8H
-o5es/zDZNbGszpO18zBIBEygfnatk68IC3o9Io6jFJmpjS0F6kID4rHYcK6bbVSt
-uMdrY5GwpIeSdiN0/SYVLsC7jDCCxZLSy2lGcX0nIehCQomusbhA00zmOzaF1xAw
-c3ZdRukSJkCMsVtG+OaKvBnMf/7Vf5Usw0iAxcT6KI5ImZHijwrR2VPcd3hxsfh8
-1/lJNNhQagVjrG+mpFxHTYkStes1sfq0twxJqppYDTHyav1d2zv2bbOYHvS9QZ/a
-oshx84D7hFuq2SEaTkmvnN8ft3HCrg==
-=hyqu
------END PGP SIGNATURE-----
+#kernelci issue maestro:504ac30a3bdad797a2185cd52e1b61acb0439072
 
---KJ6IxbSWnyJiBgCU--
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
