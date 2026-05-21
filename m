@@ -1,40 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C13CCFD0;
-	Thu, 21 May 2026 12:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EE23CBE97;
+	Thu, 21 May 2026 12:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779365286; cv=none; b=qFQNc1XGobL/t/i0bG6aESHkMqBTr6DZGGm4XoN6pTx6K+WW7Nt+fDwKWYyQj+CWJeQOaNqf2rw2k0qebQkXgIDSE7NHDb4kjPpv/EXFoTOItregEi57IL+aZgvAo+XsJEL0K7Y+i20j56aD3dsBuE0+59XO7gnTcqbJ4cKXA7I=
+	t=1779365290; cv=none; b=Z4YmKwTc480RIdbwPLlKY8p5wQnvUukUt8032Ufc05XB6E4KmDXIVpuJX6saEjxuX0aUewVH9pnniPUNWWw1ScnK7kVQNuIKPbRUFWbay71shD0Gz9kZCzOOJIpyj5csOoeCdU5U/GnsJ6Y5/s38P9WM5aA2sHlzAc08uH01Vlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779365286; c=relaxed/simple;
-	bh=3FRZXYgJ+G5toHjk3WlFk8JZFDuPj8A+fMAuXS2AcxU=;
+	s=arc-20240116; t=1779365290; c=relaxed/simple;
+	bh=8BfGpKeVbPSPORuybBOA1cOv6eQ0i7XsRQhM1trXiYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uy0tg6EeX2C+xBjKvLAqRgwX6TZEmgIGv3TZqxe2eUXn/BoYMCIDPMXA3vXT8cYAaIAnUmvA+peqsB+jSDHl5x3L+R3fxBJZvrEucJ8Z6LMStNQNLoeYvYw+1KFmdnmGpn+yk+in+Kdwao44KQH0VOw4vdwqbDua2GCXrQWTkt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVh4sLFF; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=fa6DTdnkfIqvIKvdf/svR0u24HT4ZRePfc1lvQJz9jGSYW3VOHY5+f9PCAFbTVGk7dvMhzQ4fI8jRLXolZZHW5b7E6Gxj7KyQBrcXeou3cIAgZovtjtWYpwE+uxr4fDS9Ftv7EpL5spcTa8MEyArNmpte9xTNz+YDjBYF3Koqlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVwlTM4j; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVh4sLFF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DAEC1F00A3B;
-	Thu, 21 May 2026 12:07:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVwlTM4j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C981F000E9;
+	Thu, 21 May 2026 12:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779365278;
-	bh=z6hxapG4IBgb/6c2gkQvopiSA4A1Y/JUUI/UPZbrU7s=;
+	s=k20260515; t=1779365285;
+	bh=P6akEJ5C/g47NUS1vF5IthCE9KtYXzq7t0y1kEyf9uU=;
 	h=Date:From:To:Cc:Subject;
-	b=ZVh4sLFF2N+RyeFd6J25X0Q/NC96pl8oHgWlKa425/ZK9UVr63uGvitYup1qKLLuu
-	 vanz9C1FADyExqRbqQ/gO6du5ZFQJ+VWIaodrGcMikDjlf2iXFExlsS69+w5nBTvSq
-	 vXRtwlsgyfH4iHW7lZmrzMUzFZWrox+C0Zua6a1k+l5L+bKJauppmSPA9jQPMkCNBi
-	 2/EYIqaHnrYI0dC8qCW66/lK51OcDpBe7mVATVL9ZJXjbp7z2xHhcO0QndfMty58yL
-	 +XeBdzYSaCW6ueL6Gdvcp/7Y8QJUTNptWS4RarheAbFk+QqOgeLWx7ctZt9KrgnrDn
-	 VG/JMo1ti3ztA==
-Date: Thu, 21 May 2026 13:07:54 +0100
+	b=mVwlTM4jDpfflXU7lKnYShHpS2SIhbjL93XKMOhzpk8mSiZs857w7PzJrZ5SvWOwK
+	 oAPCagz2uJE3Mvs3raalIs+JkysDYujyJ2OJuC8THtKW64BDC32NlzbprCZc6a7mGN
+	 RcADt3V4SID+1iQlkJGU3LRhF6U3ohC7XHkuF55PvpF9FcMn8+B2YD0F/JuzJHKU6j
+	 Hcj1l+0kL0xLZ8XGGOM8qT96ViYSNp0hUGPJKVPAZHpP6DLlgbVB4rutWUDzMaygpV
+	 u7yJq7IF7HZsKRn/NHQWLY0njO1k6w50FMV5iRoJhW4N3EENgJga0WdY2EgrB3wU8G
+	 jivL/lBq2RMMA==
+Date: Thu, 21 May 2026 13:08:02 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the driver-core tree with the rust-alloc
- tree
-Message-ID: <ag71mqpl_sgr_hsk@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for May 21
+Message-ID: <ag71otdA0u32WGg3@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,200 +39,69 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GjtcP2E0siw9KCdC"
+	protocol="application/pgp-signature"; boundary="zRm/SlICZlBZtuDe"
 Content-Disposition: inline
 
 
---GjtcP2E0siw9KCdC
+--zRm/SlICZlBZtuDe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the driver-core tree got a conflict in:
+Changes since 20260520:
 
-  rust/kernel/alloc/kbox.rs
+The perf tree acquired a complex conflict with the origin tree.
 
-between commit:
+The driver-core tree acquired a conflict with the rust-alloc tree.
 
-  9b25d4111e913 ("rust: alloc: cleanup imports and use "kernel vertical" st=
-yle")
+Non-merge commits (relative to Linus' tree): 6706
+ 7616 files changed, 404561 insertions(+), 150576 deletions(-)
 
-=66rom the rust-alloc tree and commit:
+----------------------------------------------------------------------------
 
-  abb21500e7e5d ("rust: alloc: add Box::zeroed()")
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-=66rom the driver-core tree.
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Below is a summary of the state of the merge.
 
-diff --combined rust/kernel/alloc/kbox.rs
-index 31b2588ed5bf9,c824ed6e15233..0000000000000
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@@ -3,47 -3,25 +3,47 @@@
-  //! Implementation of [`Box`].
- =20
-  #[allow(unused_imports)] // Used in doc comments.
- -use super::allocator::{KVmalloc, Kmalloc, Vmalloc, VmallocPageIter};
- -use super::{AllocError, Allocator, Flags, NumaNode};
- -use core::alloc::Layout;
- -use core::borrow::{Borrow, BorrowMut};
- -use core::marker::PhantomData;
- -use core::mem::ManuallyDrop;
- -use core::mem::MaybeUninit;
- -use core::ops::{Deref, DerefMut};
- -use core::pin::Pin;
- -use core::ptr::NonNull;
- -use core::result::Result;
- +use super::allocator::{
- +    KVmalloc,
- +    Kmalloc,
- +    Vmalloc,
- +    VmallocPageIter, //
- +};
- =20
- -use crate::ffi::c_void;
- -use crate::fmt;
- -use crate::init::InPlaceInit;
- -use crate::page::AsPageIter;
- -use crate::prelude::*;
- -use crate::types::ForeignOwnable;
- -use pin_init::{InPlaceWrite, Init, PinInit, ZeroableOption};
- +use super::{
- +    AllocError,
- +    Allocator,
- +    Flags,
- +    NumaNode, //
- +};
- +
- +use crate::{
- +    fmt,
- +    page::AsPageIter,
- +    prelude::*,
- +    types::ForeignOwnable, //
- +};
- +
- +use core::{
- +    alloc::Layout,
- +    borrow::{
- +        Borrow,
- +        BorrowMut, //
- +    },
- +    marker::PhantomData,
- +    mem::{
- +        ManuallyDrop,
- +        MaybeUninit, //
- +    },
- +    ops::{
- +        Deref,
- +        DerefMut, //
- +    },
- +    ptr::NonNull,
- +    result::Result, //
- +};
- +
- +use pin_init::ZeroableOption;
- =20
-  /// The kernel's [`Box`] type -- a heap allocation for a single value of =
-type `T`.
-  ///
-@@@ -279,6 -257,27 +279,27 @@@ wher
-          Ok(Box(ptr.cast(), PhantomData))
-      }
- =20
-+     /// Creates a new zero-initialized `Box<T, A>`.
-+     ///
-+     /// New memory is allocated with `A` and the [`__GFP_ZERO`] flag. The=
- allocation may fail, in
-+     /// which case an error is returned. For ZSTs no memory is allocated.
-+     ///
-+     /// # Examples
-+     ///
-+     /// ```
-+     /// let b =3D KBox::<[u8; 128]>::zeroed(GFP_KERNEL)?;
-+     /// assert_eq!(*b, [0; 128]);
-+     /// # Ok::<(), Error>(())
-+     /// ```
-+     pub fn zeroed(flags: Flags) -> Result<Self, AllocError>
-+     where
-+         T: Zeroable,
-+     {
-+         // SAFETY: `__GFP_ZERO` guarantees the memory is zeroed; `T: Zero=
-able` guarantees that
-+         // all-zeroes is a valid bit pattern for `T`.
-+         Ok(unsafe { Self::new_uninit(flags | __GFP_ZERO)?.assume_init() })
-+     }
-+=20
-      /// Constructs a new `Pin<Box<T, A>>`. If `T` does not implement [`Un=
-pin`], then `x` will be
-      /// pinned in memory and can't be moved.
-      #[inline]
-@@@ -297,10 -296,7 +318,10 @@@
-      /// # Examples
-      ///
-      /// ```
- -    /// use kernel::sync::{new_spinlock, SpinLock};
- +    /// use kernel::sync::{
- +    ///     new_spinlock,
- +    ///     SpinLock, //
- +    /// };
-      ///
-      /// struct Inner {
-      ///     a: u32,
-@@@ -593,6 -589,7 +614,6 @@@ wher
-  ///
-  /// ```
-  /// # use core::borrow::Borrow;
- -/// # use kernel::alloc::KBox;
-  /// struct Foo<B: Borrow<u32>>(B);
-  ///
-  /// // Owned instance.
-@@@ -620,6 -617,7 +641,6 @@@ wher
-  ///
-  /// ```
-  /// # use core::borrow::BorrowMut;
- -/// # use kernel::alloc::KBox;
-  /// struct Foo<B: BorrowMut<u32>>(B);
-  ///
-  /// // Owned instance.
-@@@ -684,13 -682,9 +705,13 @@@ wher
-  /// # Examples
-  ///
-  /// ```
- -/// # use kernel::prelude::*;
- -/// use kernel::alloc::allocator::VmallocPageIter;
- -/// use kernel::page::{AsPageIter, PAGE_SIZE};
- +/// use kernel::{
- +///     alloc::allocator::VmallocPageIter,
- +///     page::{
- +///         AsPageIter,
- +///         PAGE_SIZE, //
- +///     }, //
- +/// };
-  ///
-  /// let mut vbox =3D VBox::new((), GFP_KERNEL)?;
-  ///
+I am currently merging 423 trees (counting Linus' and 130 trees of bug
+fix patches pending for the current release).
 
---GjtcP2E0siw9KCdC
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--zRm/SlICZlBZtuDe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoO9ZkACgkQJNaLcl1U
-h9AI3Af/cLpbrBnq7zJ1lLGimKLSZCD9DlwvhB06gTdmAfNYWBEwJ3hHYgCmVR/g
-7IhZ9fNI5hg1weqCRgW6J0Nf/HizneEKJeD4EoVn4sBLg+uea87q80DsW8EYBlZC
-6im1Ks78Fmf2eHUCagHbsyq9MRwq8OBVkzhHcxs1leNXUsFbxTJgzkx8CH+3Fih5
-tkQyHYal82nYA+okDXfYr+k0vg2GvIr8MDKbNbkVRy2P0rKU3pSG7YeO7RyPzRhE
-zU8L9HreW1l3htHDYnEoKVGg4/Yxr+B6XBq8yWATyit2OgTDPUAWhWaszusslzhV
-H40k5MyLXIBeepRy8u8BJdGrqYmzmw==
-=nLpg
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoO9aEACgkQJNaLcl1U
+h9DShwf/akiiA+H8D6oXzPYHLPJbuezSMGqp/krFSBHrxxwry6oF7peJPlMr1mO2
+pcCw9v/4ZzcRc9PMqBNTx7SI5xh0RYsJA/czUY/CR+0WV4s3cMaWFNaCPWPVTleH
+aWoeTBf1pzz5i591r8EDmM/W5blZoumaCDEBLPgc5pju6hjBz42Loq8UCaWCy7nW
+yfWqacr6L4dVXUFh8m3whRm92z6BU5NQQejidzYMpulSzLAi/16HKxbuXz7PqydM
+/kwk/LNMBQYQsG3/e3fGxO0ZT1vUnVZEiGvw2zFzGBaCqo865UbIJeVG4V3DylR3
+Raa94hxJSUnt1g0/cTLFhOZbVkLoHA==
+=79Hw
 -----END PGP SIGNATURE-----
 
---GjtcP2E0siw9KCdC--
+--zRm/SlICZlBZtuDe--
