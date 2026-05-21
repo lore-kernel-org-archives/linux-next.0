@@ -1,377 +1,308 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4333A1A41;
-	Thu, 21 May 2026 10:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C058D395DAA;
+	Thu, 21 May 2026 10:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779358748; cv=none; b=YeMKz3biCopVmY25LZewJoj3QIyMBFmHrHYK+gNxSNeI8xlO0a5vbdXKRcIghA5Ge+DgBdywbiprkMI+6Qw1Z2ulTehxrVsI92gLMGgN4XQ5TByIw4aF+2H1OUYFgEHcS6k/c0+OtzrRj6SgyYbKGnELsj5DVZtsSSGtdopSDgw=
+	t=1779358930; cv=none; b=jWa8AbREWjX8gUzq/AWCxwM/7+T+oWFqEwglQkAQoUAiw7YlQykbOv4jMSAhafh4MHVVPO6RjLMXkvduvVbZYYhp21Fmu9XN45D83wqMWbLXXetIQz/3+b6y2T60PeHjAlFLJPKIr6mVThnRhvhdg6xZJmsFm+MQI64reDvpeFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779358748; c=relaxed/simple;
-	bh=nJRZgWyg1LJeyLDvbQhH9zcAdpnva1/TzavEBYbC5Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jeciqw500/h9w/0wTg04dgoI70aZE39v27oAAY799ZDM179p0C7M63qbgso2hYjqCG2yFvmmXi4hUwJDlPwSqrMqvL8iA9ZS3HOQPB+uwu9NLZTGKIol1stt745PIadOw9prHVhSiOns2G4qXmG0Yry2JnkdezVVNpVmj/GfBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRL1CF47; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779358930; c=relaxed/simple;
+	bh=wLBV9dHx2IIFJVLTTy6QNLmeWEIdf3Qkdd4z4qJrUtI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NakvmOGnFjMKtLz88FiDlvBLPbd4OB8BKOjfRXc21N4lZe1brjVH/4LXMBA8d+rPn4wlLTIxYwwdsRjoDQMBEZPeX42ae2ljOTy8tmXtJHaTLFv49iA8IZcugfzL/kkFDPb/fCg1RMpaELpWwCY8spzKRYgTLF/Q73ONd0ZT/qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=ONZ5zvJv; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRL1CF47"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 885EF1F000E9;
-	Thu, 21 May 2026 10:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779358746;
-	bh=orBQdBpmChGAmt/tDT+WkqP7UYQ2wbg5SOPNbJu4wuU=;
-	h=Date:From:To:Cc:Subject;
-	b=QRL1CF47RpLOqO82gQ0VPkMq/Qt9jSxwPdL/mVxsO0XQcc0IjjswQTwswJfDVG6MC
-	 4Zt82sNIDiALNOHssxQ8eiP7e5BJUKRxviylMcG1vxYaBQWhXK0kG/lDSRVC+xVNHN
-	 ODcSWlDsrsJv83sdMSI68A0B+13Lg+BVjBx7kLmLDvuiKjRccfCN2ERjHNX9ihBcT3
-	 nsEHYqWRoNHTDZr5wc3eXXpfgLeRleVjIsT6NAsYKqK55HO+NuVZag9RFTdlVEw2sr
-	 QdDHm3r2CkhUlbJlKt9IGsWJzPZXGWUGeGjyfuew6Y/CW4nejWMFMsB/yfQfj0jkVO
-	 xjBS10p1HQVaQ==
-Date: Thu, 21 May 2026 11:19:03 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the perf tree with the origin tree
-Message-ID: <ag7cF9XqINQyrq6f@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="ONZ5zvJv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1779358914; x=1779963714; i=spasswolf@web.de;
+	bh=4FoIHMcOrI635YiW+HyzjAWHWLQFgvtUGIwIwRoN2Fk=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ONZ5zvJvim4JAr5zCS15qVg/vuq1/VN5O2/tDzF/N2BD7hFBmskdumdE+bygOhMB
+	 Xbzy1x31ZhXkNkeuM4SXfhlJAY7BaRskuqtD7TWdTJXBpOHjKr2x40mrE0eF3J8PC
+	 urM1MecCv2ou8R9QD+hnGcvXMJpuSVGth3Eeor/KMKo+nUUaL4vZuBtKNTmRVk7S4
+	 xg3D/2Ovhb3GAP1972smk8dpY8rpDVqWjKRa7F6TI+nOurxJw+BI/Te8q0eyLOKfc
+	 MKLcPyqqZUWC/WrUBGS5IpUsCE+CZh0IlHi4h1KlHWwRVCNpTs2taP+lvIFUFUPCf
+	 XhA9TvUtqpYuwDKFoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MA4bO-1wW5M00zc2-002ew9; Thu, 21
+ May 2026 12:21:54 +0200
+Message-ID: <50e5e76bc13256e3f5b3301e92f159957c3d6762.camel@web.de>
+Subject: Re: context switch within RCU read-side critical section in
+ next-20260518+ with PREEMPT_RT
+From: Bert Karwatzki <spasswolf@web.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Mateusz Guzik <mjguzik@gmail.com>,
+  Christian Brauner	 <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-rt-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	adobriyan@gmail.com, jack@suse.cz, viro@zeniv.linux.org.uk, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, spasswolf@web.de, Alex Deucher
+ <alexander.deucher@amd.com>, 	amd-gfx@lists.freedesktop.org
+Date: Thu, 21 May 2026 12:21:52 +0200
+In-Reply-To: <878q9dvzh0.ffs@tglx>
+References: <20260520225245.2962-1-spasswolf@web.de>
+	 <fnrz73n5jojl2wlbgrsjdtu5zuwykwbcjzznaijbquuovpoand@i6ihdqn7a6zv>
+	 <s7cu3dpioidx6mepmai6eyj2pxjs4skbw7v534zbzs6g2fwcis@cvokidcxy3xa>
+	 <4f548d61b2dd12e01f401ce4b8c865f238f7b23c.camel@web.de>
+	 <878q9dvzh0.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4wa2f8IEWXy0xJQ+"
-Content-Disposition: inline
-
-
---4wa2f8IEWXy0xJQ+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4iP9zOnKni3WV6YMmhQUFkbEWic3hGUhYQhXDwRDRWq2hYiJY0W
+ eFPLypcpDfmDZuyJA+BbYai2x0AK8VP0xiYEfA5/+D70TIcVJUeh9AhafsOVb3FgUFxudsz
+ 4p9x2Ai8OVNMdG+3AJdfltptywJGyyun1KT2d1e1zUkHbE3KjNkB5uOAwPv3/QNg1l/wYVN
+ 6S6GhXbshw4V8jbL+vjLA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/dO5PnXFxJ8=;m8CgoCPxMhMrm26C+D+/GoAngAS
+ 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
 
-Hi all,
+Am Donnerstag, dem 21.05.2026 um 12:17 +0200 schrieb Thomas Gleixner:
+> On Thu, May 21 2026 at 11:20, Bert Karwatzki wrote:
+> > Am Donnerstag, dem 21.05.2026 um 11:09 +0200 schrieb Mateusz Guzik:
+> >=20
+> > with next-20260519 (no RT, no LOCKDEP) and got no crash so far (4 boot=
+s only though (next-20260619
+> > crashed in 2 out of 3 boots without RT)) but I get this warning on eve=
+ry boot:
+> >=20
+> > [    2.793416] [    T331] ------------[ cut here ]------------
+> > [    2.793433] [    T331] DEBUG_LOCKS_WARN_ON(lock->magic !=3D lock)
+> > [    2.793434] [    T331] WARNING: kernel/locking/mutex.c:625 at __mut=
+ex_lock+0x586/0x10c0, CPU#17: (udev-worker)/331
+>=20
+> So either the mutex is corrupted or was never initialized.
+>=20
+> > [    2.793463] [    T331] Modules linked in: amdgpu(+) hid_generic usb=
+hid drm_client_lib i2c_algo_bit drm_buddy hid drm_ttm_helper ttm drm_exec
+> > drm_suballoc_helper mfd_core drm_panel_backlight_quirks gpu_sched amdx=
+cp drm_display_helper drm_kms_helper ahci libahci xhci_pci libata xhci_hcd=
+ drm nvme
+> > scsi_mod igc usbcore nvme_core scsi_common video nvme_keyring i2c_piix=
+4 cec nvme_auth usb_common crc16 i2c_smbus wmi gpio_amdpt gpio_generic
+> > [    2.793518] [    T331] CPU: 17 UID: 0 PID: 331 Comm: (udev-worker) =
+Not tainted 7.1.0-rc4-next-20260519-rcunortlockdep-dirty #465 PREEMPT=20
+> > [    2.793534] [    T331] Hardware name: ASUS System Product Name/ROG =
+STRIX B850-F GAMING WIFI, BIOS 1627 02/05/2026
+> > [    2.793547] [    T331] RIP: 0010:__mutex_lock+0x58d/0x10c0
+> > [    2.793555] [    T331] Code: 4c 8b 4d 88 85 c0 0f 84 f8 fa ff ff 44=
+ 8b 15 ca 9b 81 00 45 85 d2 0f 85 e8 fa ff ff 48 8d 3d 1a 57 82 00 48 c7 c=
+6 a6 51 9e 83
+> > <67> 48 0f b9 3a 4c 8b 4d 88 e9 cc fa ff ff 48 8b bd 78 ff ff ff e8
+> > [    2.793579] [    T331] RSP: 0018:ffffa497016c3510 EFLAGS: 00010246
+> > [    2.793588] [    T331] RAX: 0000000000000001 RBX: ffff88c33a4c2ad8 =
+RCX: 0000000000000000
+> > [    2.793598] [    T331] RDX: 0000000000000001 RSI: ffffffff839e51a6 =
+RDI: ffffffff83de3c00
+> > [    2.793609] [    T331] RBP: ffffa497016c35c0 R08: ffffffffc0a55d92 =
+R09: 0000000000000000
+> > [    2.793619] [    T331] R10: 0000000000000000 R11: 0000000000000000 =
+R12: 0000000000000000
+> > [    2.793629] [    T331] R13: 0000000000000002 R14: ffffa497016c3550 =
+R15: 0000000000268000
+> > [    2.793641] [    T331] FS:  00007f1f32e5b9c0(0000) GS:ffff88d23b2ca=
+000(0000) knlGS:0000000000000000
+> > [    2.793653] [    T331] CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800=
+50033
+> > [    2.793662] [    T331] CR2: 000055cdfa28f588 CR3: 0000000112e73000 =
+CR4: 0000000000f50ef0
+> > [    2.793673] [    T331] PKRU: 55555554
+> > [    2.793678] [    T331] Call Trace:
+> > [    2.793683] [    T331]  <TASK>
+> > [    2.793687] [    T331]  ? lock_acquire+0xbe/0x2d0
+> > [    2.793696] [    T331]  ? init_mqd+0x122/0x190 [amdgpu]
+> > [    2.793809] [    T331]  ? lock_release+0xc6/0x2a0
+> > [    2.793816] [    T331]  ? init_mqd+0x122/0x190 [amdgpu]
+> > [    2.793902] [    T331]  init_mqd+0x122/0x190 [amdgpu]
+> > [    2.793961] [    T331]  init_mqd_hiq+0xd/0x20 [amdgpu]
+> > [    2.794015] [    T331]  kq_initialize.constprop.0+0x2b8/0x370 [amdg=
+pu]
+> > [    2.794071] [    T331]  kernel_queue_init+0x3f/0x60 [amdgpu]
+> > [    2.794125] [    T331]  pm_init+0x6b/0x100 [amdgpu]
+> > [    2.794178] [    T331]  start_cpsch+0x1d6/0x270 [amdgpu]
+> > [    2.794234] [    T331]  kgd2kfd_device_init.cold+0x7b9/0xa1a [amdgp=
+u]
+> > [    2.794365] [    T331]  amdgpu_amdkfd_device_init+0x190/0x260 [amdg=
+pu]
+>=20
+> amdgpu_amdkfd_device_init()
+>   kgd2kfd_device_init() {
+>       ....
+>         init_mqd()
+>           mutex_lock(... profiler_lock); <- FAIL
+>=20
+>       mutex_init(...profiler_lock);
+>   }
+>=20
+> Seems the famous graphics CI failed to catch this...
+>=20
+> Thanks,
+>=20
+>         tglx
+> ---
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+> @@ -744,6 +744,9 @@ bool kgd2kfd_device_init(struct kfd_dev
+>  			KGD_ENGINE_SDMA1);
+>  	kfd->shared_resources =3D *gpu_resources;
+> =20
+> +	kfd->profiler_process =3D NULL;
+> +	mutex_init(&kfd->profiler_lock);
+> +
+>  	kfd->num_nodes =3D amdgpu_xcp_get_num_xcp(kfd->adev->xcp_mgr);
+> =20
+>  	if (kfd->num_nodes =3D=3D 0) {
+> @@ -936,9 +939,6 @@ bool kgd2kfd_device_init(struct kfd_dev
+> =20
+>  	svm_range_set_max_pages(kfd->adev);
+> =20
+> -	kfd->profiler_process =3D NULL;
+> -	mutex_init(&kfd->profiler_lock);
+> -
+>  	kfd->init_complete =3D true;
+>  	dev_info(kfd_device, "added device %x:%x\n", kfd->adev->pdev->vendor,
+>  		 kfd->adev->pdev->device);
 
-Today's linux-next merge of the perf tree got a conflict in:
+Actually, when I test next-20260519 with the improved fix, I do not see
+the warning from amdgpu.
 
-  tools/perf/Makefile.perf
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 771fc31a69b8..712316a1e3e0 100644
+=2D-- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -269,7 +269,7 @@ static __cold noinline int regen_filesystems_string(vo=
+id)
+ 	hlist_for_each_entry_rcu(p, &file_systems, list) {
+ 		if (!(p->fs_flags & FS_REQUIRES_DEV))
+ 			newlen +=3D strlen("nodev");
+-		newlen +=3D strlen("\t") + strlen(p->name) +  strlen("\n");
++		newlen +=3D strlen("\t") + strlen(p->name) + strlen("\n");
+ 	}
+ 	spin_unlock(&file_systems_lock);
+=20
+@@ -289,6 +289,7 @@ static __cold noinline int regen_filesystems_string(vo=
+id)
+ 	 * Did someone beat us to it?
+ 	 */
+ 	if (old && old->gen =3D=3D file_systems_gen) {
++		spin_unlock(&file_systems_lock);
+ 		kfree(new);
+ 		return 0;
+ 	}
+@@ -297,6 +298,7 @@ static __cold noinline int regen_filesystems_string(vo=
+id)
+ 	 * Did the list change in the meantime?
+ 	 */
+ 	if (gen !=3D file_systems_gen) {
++		spin_unlock(&file_systems_lock);
+ 		kfree(new);
+ 		goto retry;
+ 	}
+@@ -321,13 +323,12 @@ static __cold noinline int regen_filesystems_string(=
+void)
+ 		 * generation above and messes it up.
+ 		 */
+ 		spin_unlock(&file_systems_lock);
+-		if (old)
+-			kfree_rcu(old, rcu);
++		kfree(new);
+ 		return -EINVAL;
+ 	}
+=20
+ 	/*
+-	 * Paired with consume fence in READ_ONCE() in filesystems_proc_show()
++	 * Paired with consume fence in rcu_dereference() in filesystems_proc_sh=
+ow()
+ 	 */
+ 	smp_store_release(&file_systems_string, new);
+ 	spin_unlock(&file_systems_lock);
 
-between commit:
-
-  552636b9317c8 ("perf trace: Add beautifier script for fsmount flags")
-
-=66rom the origin tree and commits:
-
-  32969ef6e3e19 ("perf build: Pre-generate BPF skeleton tooling during umbr=
-ella prepare phase")
-  537609924c437 ("perf trace beauty: Make beauty generated C code standalon=
-e .o files")
-
-=66rom the perf tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc tools/perf/Makefile.perf
-index 76b35ac19acbf,fc92d6ceac5b0..0000000000000
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@@ -508,232 -509,7 +508,6 @@@ arm64-sysreg-defs-clean
-  	$(Q)$(MAKE) -C $(arm64_gen_sysreg_dir) O=3D$(arm64_gen_sysreg_outdir) \
-  		prefix=3D subdir=3D clean > /dev/null
- =20
-- beauty_linux_dir :=3D $(srctree)/tools/perf/trace/beauty/include/linux/
-- beauty_uapi_linux_dir :=3D $(srctree)/tools/perf/trace/beauty/include/uap=
-i/linux/
-- beauty_uapi_sound_dir :=3D $(srctree)/tools/perf/trace/beauty/include/uap=
-i/sound/
-- beauty_arch_asm_dir :=3D $(srctree)/tools/perf/trace/beauty/arch/x86/incl=
-ude/asm/
-- beauty_x86_arch_asm_uapi_dir :=3D $(srctree)/tools/perf/trace/beauty/arch=
-/x86/include/uapi/asm/
--=20
-- linux_uapi_dir :=3D $(srctree)/tools/include/uapi/linux
-- asm_generic_uapi_dir :=3D $(srctree)/tools/include/uapi/asm-generic
-- arch_asm_uapi_dir :=3D $(srctree)/tools/arch/$(SRCARCH)/include/uapi/asm/
-- x86_arch_asm_dir :=3D $(srctree)/tools/arch/x86/include/asm/
--=20
-- beauty_outdir :=3D $(OUTPUT)trace/beauty/generated
-- beauty_ioctl_outdir :=3D $(beauty_outdir)/ioctl
--=20
-- # Create output directory if not already present
-- $(shell [ -d '$(beauty_ioctl_outdir)' ] || mkdir -p '$(beauty_ioctl_outdi=
-r)')
--=20
-- syscall_array :=3D $(beauty_outdir)/syscalltbl.c
-- syscall_tbl :=3D $(srctree)/tools/perf/trace/beauty/syscalltbl.sh
-- syscall_tbl_data :=3D $(srctree)/tools/scripts/syscall.tbl \
-- 	$(wildcard $(srctree)/tools/perf/arch/*/entry/syscalls/syscall*.tbl)
--=20
-- $(syscall_array): $(syscall_tbl) $(syscall_tbl_data)
-- 	$(Q)$(SHELL) '$(syscall_tbl)' $(srctree)/tools $@
--=20
-- fs_at_flags_array :=3D $(beauty_outdir)/fs_at_flags_array.c
-- fs_at_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/fs_at_flags.sh
--=20
-- $(fs_at_flags_array): $(beauty_uapi_linux_dir)/fcntl.h $(fs_at_flags_tbl)
-- 	$(Q)$(SHELL) '$(fs_at_flags_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- clone_flags_array :=3D $(beauty_outdir)/clone_flags_array.c
-- clone_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/clone.sh
--=20
-- $(clone_flags_array): $(beauty_uapi_linux_dir)/sched.h $(clone_flags_tbl)
-- 	$(Q)$(SHELL) '$(clone_flags_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- drm_ioctl_array :=3D $(beauty_ioctl_outdir)/drm_ioctl_array.c
-- drm_hdr_dir :=3D $(srctree)/tools/perf/trace/beauty/include/uapi/drm
-- drm_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/drm_ioctl.sh
--=20
-- $(drm_ioctl_array): $(drm_hdr_dir)/drm.h $(drm_hdr_dir)/i915_drm.h $(drm_=
-ioctl_tbl)
-- 	$(Q)$(SHELL) '$(drm_ioctl_tbl)' $(drm_hdr_dir) > $@
--=20
-- fadvise_advice_array :=3D $(beauty_outdir)/fadvise_advice_array.c
-- fadvise_advice_tbl :=3D $(srctree)/tools/perf/trace/beauty/fadvise.sh
--=20
-- $(fadvise_advice_array): $(beauty_uapi_linux_dir)/fadvise.h $(fadvise_adv=
-ice_tbl)
-- 	$(Q)$(SHELL) '$(fadvise_advice_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- fsmount_arrays :=3D $(beauty_outdir)/fsmount_arrays.c
-- fsmount_tbls :=3D $(srctree)/tools/perf/trace/beauty/fsmount.sh
--=20
-- $(fsmount_arrays): $(beauty_uapi_linux_dir)/mount.h $(fsmount_tbls)
-- 	$(Q)$(SHELL) '$(fsmount_tbls)' $(beauty_uapi_linux_dir) > $@
--=20
-- fsmount_attr_arrays :=3D $(beauty_outdir)/fsmount_attr_arrays.c
-- fsmount_attr_tbls :=3D $(srctree)/tools/perf/trace/beauty/fsmount_attr.sh
--=20
-- $(fsmount_attr_arrays): $(beauty_uapi_linux_dir)/mount.h $(fsmount_attr_t=
-bls)
-- 	$(Q)$(SHELL) '$(fsmount_attr_tbls)' $(beauty_uapi_linux_dir) > $@
--=20
-- fspick_arrays :=3D $(beauty_outdir)/fspick_arrays.c
-- fspick_tbls :=3D $(srctree)/tools/perf/trace/beauty/fspick.sh
--=20
-- $(fspick_arrays): $(beauty_uapi_linux_dir)/mount.h $(fspick_tbls)
-- 	$(Q)$(SHELL) '$(fspick_tbls)' $(beauty_uapi_linux_dir) > $@
--=20
-- fsconfig_arrays :=3D $(beauty_outdir)/fsconfig_arrays.c
-- fsconfig_tbls :=3D $(srctree)/tools/perf/trace/beauty/fsconfig.sh
--=20
-- $(fsconfig_arrays): $(beauty_uapi_linux_dir)/mount.h $(fsconfig_tbls)
-- 	$(Q)$(SHELL) '$(fsconfig_tbls)' $(beauty_uapi_linux_dir) > $@
--=20
-- pkey_alloc_access_rights_array :=3D $(beauty_outdir)/pkey_alloc_access_ri=
-ghts_array.c
-- asm_generic_hdr_dir :=3D $(srctree)/tools/include/uapi/asm-generic/
-- pkey_alloc_access_rights_tbl :=3D $(srctree)/tools/perf/trace/beauty/pkey=
-_alloc_access_rights.sh
--=20
-- $(pkey_alloc_access_rights_array): $(asm_generic_hdr_dir)/mman-common.h $=
-(pkey_alloc_access_rights_tbl)
-- 	$(Q)$(SHELL) '$(pkey_alloc_access_rights_tbl)' $(asm_generic_hdr_dir) > =
-$@
--=20
-- sndrv_ctl_ioctl_array :=3D $(beauty_ioctl_outdir)/sndrv_ctl_ioctl_array.c
-- sndrv_ctl_hdr_dir :=3D $(srctree)/tools/include/uapi/sound
-- sndrv_ctl_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/sndrv_ctl_ioc=
-tl.sh
--=20
-- $(sndrv_ctl_ioctl_array): $(beauty_uapi_sound_dir)/asound.h $(sndrv_ctl_i=
-octl_tbl)
-- 	$(Q)$(SHELL) '$(sndrv_ctl_ioctl_tbl)' $(beauty_uapi_sound_dir) > $@
--=20
-- sndrv_pcm_ioctl_array :=3D $(beauty_ioctl_outdir)/sndrv_pcm_ioctl_array.c
-- sndrv_pcm_hdr_dir :=3D $(srctree)/tools/include/uapi/sound
-- sndrv_pcm_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/sndrv_pcm_ioc=
-tl.sh
--=20
-- $(sndrv_pcm_ioctl_array): $(beauty_uapi_sound_dir)/asound.h $(sndrv_pcm_i=
-octl_tbl)
-- 	$(Q)$(SHELL) '$(sndrv_pcm_ioctl_tbl)' $(beauty_uapi_sound_dir) > $@
--=20
-- kcmp_type_array :=3D $(beauty_outdir)/kcmp_type_array.c
-- kcmp_hdr_dir :=3D $(srctree)/tools/include/uapi/linux/
-- kcmp_type_tbl :=3D $(srctree)/tools/perf/trace/beauty/kcmp_type.sh
--=20
-- $(kcmp_type_array): $(kcmp_hdr_dir)/kcmp.h $(kcmp_type_tbl)
-- 	$(Q)$(SHELL) '$(kcmp_type_tbl)' $(kcmp_hdr_dir) > $@
--=20
-- kvm_ioctl_array :=3D $(beauty_ioctl_outdir)/kvm_ioctl_array.c
-- kvm_hdr_dir :=3D $(srctree)/tools/include/uapi/linux
-- kvm_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/kvm_ioctl.sh
--=20
-- $(kvm_ioctl_array): $(kvm_hdr_dir)/kvm.h $(kvm_ioctl_tbl)
-- 	$(Q)$(SHELL) '$(kvm_ioctl_tbl)' $(kvm_hdr_dir) > $@
--=20
-- socket_arrays :=3D $(beauty_outdir)/socket.c
-- socket_tbl :=3D $(srctree)/tools/perf/trace/beauty/socket.sh
--=20
-- $(socket_arrays): $(linux_uapi_dir)/in.h $(beauty_linux_dir)/socket.h $(s=
-ocket_tbl)
-- 	$(Q)$(SHELL) '$(socket_tbl)' $(linux_uapi_dir) $(beauty_linux_dir) > $@
--=20
-- sockaddr_arrays :=3D $(beauty_outdir)/sockaddr.c
-- sockaddr_tbl :=3D $(srctree)/tools/perf/trace/beauty/sockaddr.sh
--=20
-- $(sockaddr_arrays): $(beauty_linux_dir)/socket.h $(sockaddr_tbl)
-- 	$(Q)$(SHELL) '$(sockaddr_tbl)' $(beauty_linux_dir) > $@
--=20
-- vhost_virtio_ioctl_array :=3D $(beauty_ioctl_outdir)/vhost_virtio_ioctl_a=
-rray.c
-- vhost_virtio_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/vhost_virt=
-io_ioctl.sh
--=20
-- $(vhost_virtio_ioctl_array): $(beauty_uapi_linux_dir)/vhost.h $(vhost_vir=
-tio_ioctl_tbl)
-- 	$(Q)$(SHELL) '$(vhost_virtio_ioctl_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- perf_ioctl_array :=3D $(beauty_ioctl_outdir)/perf_ioctl_array.c
-- perf_hdr_dir :=3D $(srctree)/tools/include/uapi/linux
-- perf_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/perf_ioctl.sh
--=20
-- $(perf_ioctl_array): $(perf_hdr_dir)/perf_event.h $(perf_ioctl_tbl)
-- 	$(Q)$(SHELL) '$(perf_ioctl_tbl)' $(perf_hdr_dir) > $@
--=20
-- madvise_behavior_array :=3D $(beauty_outdir)/madvise_behavior_array.c
-- madvise_hdr_dir :=3D $(srctree)/tools/include/uapi/asm-generic/
-- madvise_behavior_tbl :=3D $(srctree)/tools/perf/trace/beauty/madvise_beha=
-vior.sh
--=20
-- $(madvise_behavior_array): $(madvise_hdr_dir)/mman-common.h $(madvise_beh=
-avior_tbl)
-- 	$(Q)$(SHELL) '$(madvise_behavior_tbl)' $(madvise_hdr_dir) > $@
--=20
-- mmap_flags_array :=3D $(beauty_outdir)/mmap_flags_array.c
-- mmap_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/mmap_flags.sh
--=20
-- $(mmap_flags_array): $(linux_uapi_dir)/mman.h $(asm_generic_uapi_dir)/mma=
-n.h $(asm_generic_uapi_dir)/mman-common.h $(mmap_flags_tbl)
-- 	$(Q)$(SHELL) '$(mmap_flags_tbl)' $(linux_uapi_dir) $(asm_generic_uapi_di=
-r) $(arch_asm_uapi_dir) > $@
--=20
-- mremap_flags_array :=3D $(beauty_outdir)/mremap_flags_array.c
-- mremap_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/mremap_flags.sh
--=20
-- $(mremap_flags_array): $(linux_uapi_dir)/mman.h $(mremap_flags_tbl)
-- 	$(Q)$(SHELL) '$(mremap_flags_tbl)' $(linux_uapi_dir) > $@
--=20
-- mount_flags_array :=3D $(beauty_outdir)/mount_flags_array.c
-- mount_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/mount_flags.sh
--=20
-- $(mount_flags_array): $(beauty_uapi_linux_dir)/mount.h $(mount_flags_tbl)
-- 	$(Q)$(SHELL) '$(mount_flags_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- move_mount_flags_array :=3D $(beauty_outdir)/move_mount_flags_array.c
-- move_mount_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/move_mount_f=
-lags.sh
--=20
-- $(move_mount_flags_array): $(beauty_uapi_linux_dir)/mount.h $(move_mount_=
-flags_tbl)
-- 	$(Q)$(SHELL) '$(move_mount_flags_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- mmap_prot_array :=3D $(beauty_outdir)/mmap_prot_array.c
-- mmap_prot_tbl :=3D $(srctree)/tools/perf/trace/beauty/mmap_prot.sh
--=20
-- $(mmap_prot_array): $(asm_generic_uapi_dir)/mman.h $(asm_generic_uapi_dir=
-)/mman-common.h $(mmap_prot_tbl)
-- 	$(Q)$(SHELL) '$(mmap_prot_tbl)' $(asm_generic_uapi_dir) $(arch_asm_uapi_=
-dir) > $@
--=20
-- prctl_option_array :=3D $(beauty_outdir)/prctl_option_array.c
-- prctl_option_tbl :=3D $(srctree)/tools/perf/trace/beauty/prctl_option.sh
--=20
-- $(prctl_option_array): $(beauty_uapi_linux_dir)/prctl.h $(prctl_option_tb=
-l)
-- 	$(Q)$(SHELL) '$(prctl_option_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- usbdevfs_ioctl_array :=3D $(beauty_ioctl_outdir)/usbdevfs_ioctl_array.c
-- usbdevfs_ioctl_tbl :=3D $(srctree)/tools/perf/trace/beauty/usbdevfs_ioctl=
-=2Esh
--=20
-- $(usbdevfs_ioctl_array): $(beauty_uapi_linux_dir)/usbdevice_fs.h $(usbdev=
-fs_ioctl_tbl)
-- 	$(Q)$(SHELL) '$(usbdevfs_ioctl_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- x86_arch_prctl_code_array :=3D $(beauty_outdir)/x86_arch_prctl_code_array=
-=2Ec
-- x86_arch_prctl_code_tbl :=3D $(srctree)/tools/perf/trace/beauty/x86_arch_=
-prctl.sh
--=20
-- $(x86_arch_prctl_code_array): $(beauty_x86_arch_asm_uapi_dir)/prctl.h $(x=
-86_arch_prctl_code_tbl)
-- 	$(Q)$(SHELL) '$(x86_arch_prctl_code_tbl)' $(beauty_x86_arch_asm_uapi_dir=
-) > $@
--=20
-- x86_arch_irq_vectors_array :=3D $(beauty_outdir)/x86_arch_irq_vectors_arr=
-ay.c
-- x86_arch_irq_vectors_tbl :=3D $(srctree)/tools/perf/trace/beauty/tracepoi=
-nts/x86_irq_vectors.sh
--=20
-- $(x86_arch_irq_vectors_array): $(beauty_arch_asm_dir)/irq_vectors.h $(x86=
-_arch_irq_vectors_tbl)
-- 	$(Q)$(SHELL) '$(x86_arch_irq_vectors_tbl)' $(beauty_arch_asm_dir) > $@
--=20
-- x86_arch_MSRs_array :=3D $(beauty_outdir)/x86_arch_MSRs_array.c
-- x86_arch_MSRs_tbl :=3D $(srctree)/tools/perf/trace/beauty/tracepoints/x86=
-_msr.sh
--=20
-- $(x86_arch_MSRs_array): $(x86_arch_asm_dir)/msr-index.h $(x86_arch_MSRs_t=
-bl)
-- 	$(Q)$(SHELL) '$(x86_arch_MSRs_tbl)' $(x86_arch_asm_dir) > $@
--=20
-- rename_flags_array :=3D $(beauty_outdir)/rename_flags_array.c
-- rename_flags_tbl :=3D $(srctree)/tools/perf/trace/beauty/rename_flags.sh
--=20
-- $(rename_flags_array): $(beauty_uapi_linux_dir)/fs.h $(rename_flags_tbl)
-- 	$(Q)$(SHELL) '$(rename_flags_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- arch_errno_name_array :=3D $(beauty_outdir)/arch_errno_name_array.c
-- arch_errno_hdr_dir :=3D $(srctree)/tools
-- arch_errno_tbl :=3D $(srctree)/tools/perf/trace/beauty/arch_errno_names.sh
--=20
-- $(arch_errno_name_array): $(arch_errno_tbl)
-- 	$(Q)$(SHELL) '$(arch_errno_tbl)' '$(patsubst -%,,$(CC))' $(arch_errno_hd=
-r_dir) > $@
--=20
-- statx_mask_array :=3D $(beauty_outdir)/statx_mask_array.c
-- statx_mask_tbl :=3D $(srctree)/tools/perf/trace/beauty/statx_mask.sh
--=20
-- $(statx_mask_array): $(beauty_uapi_linux_dir)/stat.h $(statx_mask_tbl)
-- 	$(Q)$(SHELL) '$(statx_mask_tbl)' $(beauty_uapi_linux_dir) > $@
--=20
-- sync_file_range_arrays :=3D $(beauty_outdir)/sync_file_range_arrays.c
-- sync_file_range_tbls :=3D $(srctree)/tools/perf/trace/beauty/sync_file_ra=
-nge.sh
--=20
-- $(sync_file_range_arrays): $(beauty_uapi_linux_dir)/fs.h $(sync_file_rang=
-e_tbls)
-- 	$(Q)$(SHELL) '$(sync_file_range_tbls)' $(beauty_uapi_linux_dir) > $@
---
-  TESTS_CORESIGHT_DIR :=3D $(srctree)/tools/perf/tests/shell/coresight
- =20
-  tests-coresight-targets: FORCE
-
---4wa2f8IEWXy0xJQ+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoO3BYACgkQJNaLcl1U
-h9DLxAf/WM1bwMNTCADEC474FfWCrJMPo+64NdUY5Ihp6RjqF8GG3RF4w0WaYOXS
-oYIJPAAn8dKhsf0FZ727Jq2CTpLolV428OnMKeC27eZBa9Olg9uxGJoDH2OXvJeA
-FnxUnBR9Ks7Zl32/mo1Q4CkUmqJ3dhE11W+i6VkYQQCBtDJQccJlIOcZUK8CDSq4
-i0g2JuhgsUYQiUgvs9r2u6UCNk+/NykndWv4SNy7JDOg13Z0mvi/VPlEReyPVl1u
-UeQk6Ex7i8QM/lnLt4EgyN1GI+khMzhKnFd1bfuopEBT8VKr2CT4ImH+GnUYPfJ7
-8Cwux0h7yoePaPdzLLW3jJ2E/F2FlQ==
-=g1vR
------END PGP SIGNATURE-----
-
---4wa2f8IEWXy0xJQ+--
+Bert Karwatzki
