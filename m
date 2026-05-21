@@ -1,67 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9102D33554F;
-	Thu, 21 May 2026 12:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1D52DE6E3
+	for <linux-next@vger.kernel.org>; Thu, 21 May 2026 13:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779365446; cv=none; b=cnmD/5TTSt4GKjRtftCuMtiqWe0Jj3MK4szeGMib4OsohPMnLKzQ6BuJZVenkt6EFpVu2J7vBtLbkkj03nDQ4CXjqdegaAbkGlOncU4c58PCqlI5hSJiqzijWYbSPqY9yH6nD1mc5Kv9YRTC9lhsHGLcbLNQNJWaS0LMSaCM9O8=
+	t=1779371888; cv=none; b=ta8li0HhQWri4O+dvtInfLK8pYo56IkxszIV0GXROf2+E9GIEuo6qDrcKyiqgvzt/5UOVcvtC/XaMKd3Mx8FdcJU5kwSzejGNFyo9dSLxTQ5w6P4NVdsjjAqDfmNl1U845x9gn0BEBCUnAXEjeBW65tdZ9FCCuXwORiSlkVVWwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779365446; c=relaxed/simple;
-	bh=9WoLRAuiWyh2C9IZeKDu5XI2y15Mt/ufoEdDAGDjwpo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Hx6ydr0bepyv8yN1ikCZnNGtdbstqQ46vQQ26OyqldPgTihjugnhGW/yeSKwsICbxGymbP1qiyOiCJsVdCcSUkdNNQlUX1RVd0OVxKngulOaJ84mPZL6YxJdhe3mskno3/QPEaB4lweWj/IKIRkKN+KbWSCc2SwAducSBD/c9E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcMnWiq5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779371888; c=relaxed/simple;
+	bh=hO72YV0VNE8gvnRBKGt741B/UG83HuEK25KL+4h+QJQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=mc9HlrZgGb+xkGuvOMvVfk5DtgjRswca0BYqwNhXkxQQe4180CTMrdI0TQHQ63JbZl/kMcrSef2LBuxErLCQ+LtMztJ5+30nktNd6i3UAcbiRO0VK3rEfP7e3LW8FGqTsVR+48yFtGGOeMqIomjoSgyIQNXyV3WPHti7LPvXRt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=QzKO51yJ; arc=none smtp.client-ip=195.121.94.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcMnWiq5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8C51F000E9;
-	Thu, 21 May 2026 12:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779365445;
-	bh=s+Gqd/KSuOugXjkbTEP2DPfwBBtlSquT9M+G21JCokg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To;
-	b=RcMnWiq5CHW4mEcr0ux7G/QpuM0rZ9cRC5CJ7B0k8sDFPTUkW/u/FfS3gdZQWW9Vx
-	 pbzgSuI1G2j4LstHKlA5A8NU8ochfbhqv4BAeubtOOMO6BAT+oYo4yf8zJPiWX294T
-	 uDKSER/z54fmlg0gTJxbYkho92wSdhJ0JPALiVg8qPYwH9BfGK9aJ5+WEfVGU5ujL8
-	 NtjcLr+cUY6himbAD878bJ2klKiCmo0caybFo587Cxg8IrjuVOfpwU8b6cORDE/eEm
-	 EjYKbn6S9FVBY41zKcnZCWccfMrRYUN3ERdQNkqYJXrHsk6l7rBs2aX2uoAd76MYSg
-	 mWLjgN8jDDhIw==
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="QzKO51yJ"
+X-KPN-MessageId: 1707d14c-551d-11f1-bea8-005056992ed3
+Received: from mta.kpnmail.nl (unknown [10.31.161.191])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 1707d14c-551d-11f1-bea8-005056992ed3;
+	Thu, 21 May 2026 15:58:05 +0200 (CEST)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 170675de-551d-11f1-83d9-00505699891e;
+	Thu, 21 May 2026 15:58:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=rt/+pazRkp9cgn9OOJy0OdEhNxBfkh0UOfm+VW1aUoI=;
+	b=QzKO51yJ//38R3jnblcMXQ6x3UeMtWS2m52A4Cq0fFxOS0QYCqv/o8F8cRY6uRMhUY6xLxjuueF9l
+	 n/PtSSsJaEVJlGilwlMqjIQccCy4HEF8nU3Ppkr9qpVuIL+l7vdPUPpw92e4m+B+kWLByF4ZgFcmTr
+	 9xtR7a1loRY+2lw9vvJNF0Lica18IH8sBiDX8nuwU5uibe5is99xmbtQzxvrGHMgz+iFK173wBAbjw
+	 eLVHwlkRicgGRnsc4jJZZj+xhhAnRuahG1CheWjYA4ZB3mZw85RooSrzERaHo9ZyRtsZH+Lrq/dxL+
+	 GwfwLil1UWcdNOICaJBHkcT6ZDCbAJA==
+X-KPN-MID: 33|N5DBCoXt0IafZ9nOP7k/KaJsS6rt82WMamDiH1eoCCi6x8Q2FlwWCQ5ZqU77kmt
+ gMO9lABwoHi8Io8d7k6TnIwgPmTBNDbS7uAP1ALNRL4U=
+X-CMASSUN: 33|VP35nPIIzk7IiwuYN3ZQxGp6urWcNppG1hqbT6tDJO1LFwkNzobU1UVKVQlH9pi
+ w6bsnYQj2B4i+7Nysqf1rtA==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh02 (cpxoxapps-mh02.personalcloud.so.kpn.org [10.128.135.208])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 16f69902-551d-11f1-b8d7-005056995d6c;
+	Thu, 21 May 2026 15:58:05 +0200 (CEST)
+Date: Thu, 21 May 2026 15:58:05 +0200 (CEST)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dorjoy Chowdhury <dorjoychy111@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>, Aleksa Sarai <aleksa@amutable.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Message-ID: <12198575.2129298.1779371885282@kpc.webmail.kpnmail.nl>
+In-Reply-To: <4bd253fa-c363-43cb-adaa-0248ac707a0d@sirena.org.uk>
+References: <agruPPybCx8q2XcJ@sirena.org.uk>
+ <c34d1f0e-0707-40cc-b0c7-7b2648ec1863@sirena.org.uk>
+ <CAFfO_h5QdRG2ptyuGRQtqxrpndwan98aOsX92bvN4hyvpgLPMA@mail.gmail.com>
+ <e221b631-00bf-44b5-865b-ac970e6cb11f@sirena.org.uk>
+ <1286370201.1726989.1779131564699@kpc.webmail.kpnmail.nl>
+ <4bd253fa-c363-43cb-adaa-0248ac707a0d@sirena.org.uk>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 21 May 2026 14:10:42 +0200
-Message-Id: <DIOCENK4QFRB.2G7UT0CQLRZMC@kernel.org>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- rust-alloc tree
-Cc: "Greg KH" <greg@kroah.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-To: "Mark Brown" <broonie@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <ag71mqpl_sgr_hsk@sirena.org.uk>
-In-Reply-To: <ag71mqpl_sgr_hsk@sirena.org.uk>
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
-On Thu May 21, 2026 at 2:07 PM CEST, Mark Brown wrote:
-> Hi all,
->
-> Today's linux-next merge of the driver-core tree got a conflict in:
->
->   rust/kernel/alloc/kbox.rs
->
-> between commit:
->
->   9b25d4111e913 ("rust: alloc: cleanup imports and use "kernel vertical" =
-style")
->
-> from the rust-alloc tree and commit:
->
->   abb21500e7e5d ("rust: alloc: add Box::zeroed()")
->
-> from the driver-core tree.
 
-Looks good, thanks!
+> Op 19-05-2026 18:24 CEST schreef Mark Brown <broonie@kernel.org>:
+> 
+>  
+> On Mon, May 18, 2026 at 09:12:44PM +0200, Jori Koolstra wrote:
+> > > Op 18-05-2026 19:13 CEST schreef Mark Brown <broonie@kernel.org>:
+> 
+> > > Figured it'd be an arch specific version of a similar thing - I didn't
+> > > audit them as you can see.
+> 
+> > These confusions with octal numbers in lists that aren't even ordered is
+> > why I would prefer to use shifted values instead. I don't see any reason
+> > actually why we should not just convert them all, apart from churning and
+> > perhaps not doing it correctly (which would be bad). My rationale for mixing
+> > was to use 1 << n at least for the remaining bits. If I remember correctly,
+> > this is also what Aleksa preferred.
+> 
+> Yeah, shifted values do make sense to me as well - other than the
+> inconsistent style the only issue I saw was that it's a bit less obvious
+> that the values collide.
+
+Yeah, that's unfortunate.
+
+@Christian, can we get rid of these octal values? Or is that too much churn?
