@@ -1,111 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161273CC338;
-	Fri, 22 May 2026 13:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F32737106A;
+	Fri, 22 May 2026 18:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779456886; cv=none; b=n2FBWx/4wAnFEjb7DYRRQ2dcKH8J5pb+sKvt0PBfyqeVY9rdQMoAob/ffK2XdUil9PctbPtNhNtrXCvpxCtyzzjVMXs96FU77FUwIZEceMY6Tnj1jxDCecs43+JK1p5K+SRso1Y3omtqs+DRA/zajnulLIfJGKdh9FwVXzAln48=
+	t=1779474222; cv=none; b=QzKG1s9T0vVhVGAvxjqP80NyHMIXWC3gVZjMjrKAQKStvuV6iDUJXa8+bq1MAfIXtANN8PQ1Squ3eeiqYZ6+vMfd0rx3jIbuKomZZvhLGTdSqZLHNJDUtEsGjlQ/eZOxz9S/TWMXDGQImKLgAnrcyfO6j4vpMBcvA3A/WJ/9fRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779456886; c=relaxed/simple;
-	bh=wrDElyznecD1WQvJCSPy3pjdqqDuOMLv/ES32JjIVL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WUnv0E3BJ75xy4cdKgw8s+T+wFYhDxa2ynjOJr8zmEXo0aI+lDAkM29XYYvC9ttX6AVVubLibxsVz2aP/GSa9W7iVDjGteh4e/s9CQ2KqvwNgMhwkSMBULSoaRyL4ETA2r5H8m4dKggSc1ip00fodjQlE0rjWj04i4DKURt+YYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQOPnK0p; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779474222; c=relaxed/simple;
+	bh=x5K1ZgA9TFn4twCK4fNkAG2xUy4S3ECxclUvXL6nQJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CfvNMiqJ0Gjy/wA+xylxYZQADzhD01+Wlve3d4F8Kq3zd3/HOeFqa34WkXwqrCzw0Z1V/Rrb3o5hwQ/wl+1zaHJKRBylHG+BE+IiV+L6tSqOjx+fay5ojx7LQB+kT0hz3tp4P0rz+uWC72Xyav+Gwxx7RLpJhUGRYhx4h0qDb9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EITn78Md; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQOPnK0p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E6F1F000E9;
-	Fri, 22 May 2026 13:34:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EITn78Md"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44CF11F000E9;
+	Fri, 22 May 2026 18:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779456883;
-	bh=1QqCE4zlzz2p807o5XSgqGgV8aVFD7utReEfeOJJnro=;
-	h=Date:From:To:Cc:Subject;
-	b=oQOPnK0pdLZxZov5kF7LG/VcvymKqqw1cPyBoGlVYKpIsvLgn5zkVD1weGjC60R2u
-	 n50NV12rRay9rvd2Cd9RLvOOMFOXVbxZPLCdQp5rhjiaNVZV+uqcqGG4rkAC3pAO08
-	 FBKCzWNo4eI3rsggUszjSVKU3Jnpy34on+j1SBtZwop0EEq5aTJqTTKsuKDfvWHzzL
-	 3/EuH9TLcUOaLvjGa7CZPF01l1HDwg66UvZo05wQ/yWSdX3u6GHz0OadovnGKspZ4H
-	 ylH0mvbKd9EzOcckkT8SGm0lA2Ah0xbnkapDFj0OHYiHMve6XMfQjxgQd6eiYGKUyz
-	 emgDr9mG8oHDw==
-Date: Fri, 22 May 2026 14:34:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for May 22
-Message-ID: <ahBbcIsbkIaWHDGX@sirena.org.uk>
+	s=k20260515; t=1779474220;
+	bh=kG8vAWSrDwkpNVpMVBPe4p6aRZZUD0U0KgX3vvXQM1s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=EITn78MdI7Ep5DjkQF6FEoDdPf8vs90xfPf1xjwkMpome9Kg3lJeI9Tl05aWSbjZM
+	 z6uQwHR+wW7pauvJ6hdpkydyrVXvXu51vyTvJbjHhKYxQ3p7XNFdkZP3XJ7yPfZwFY
+	 uiHHeQJqJJOSuTEM+1ZnoJi99UUZxOnPCWSo6SKgvr6zNzIawxRhjt8VhoQJaxjIFb
+	 zBfJYvukMvr/zoFBu+tjUoX72ji/qHjyFPWslCZq8N+++U1pCGpjA8pEKX4/ACpSBC
+	 FGFJm6k1yAOJugx5nXBdQQ46kT8e8GH92cX3kwJSpHGE9gTfj9u3O6cUcXQnFc6yQc
+	 UQ6e10B1StQ6g==
+Date: Fri, 22 May 2026 20:23:36 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko
+ <andriy.shevchenko@intel.com>, hansg@kernel.org,
+ linux-media@vger.kernel.org, mchehab@kernel.org, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: AtomISP tree for Linux Next
+Message-ID: <20260522202336.216559c0@foz.lan>
+In-Reply-To: <62b17869-008e-431b-a450-1b2e95111734@sirena.org.uk>
+References: <aeop-rkoHOgF2OgQ@ashevche-desk.local>
+	<132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
+	<aeskxK7GODqMUNsH@ashevche-desk.local>
+	<ag_-6fqLzpvqNKw7@kekkonen.localdomain>
+	<62b17869-008e-431b-a450-1b2e95111734@sirena.org.uk>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PVKPmwb02D84ES7Z"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 22 May 2026 13:10:00 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
---PVKPmwb02D84ES7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri, May 22, 2026 at 09:59:53AM +0300, Sakari Ailus wrote:
+> 
+> > I guess I could push patches to the atomisp branch after running them
+> > through Media CI. But I'm not sure it's really worth it: the long backlog
+> > of patches is now largely gone and the same fixes or cleanups can be only
+> > merged once anyway. So would you expect the flow to still continue at a
+> > similar level? There's a limit to which degree this driver can be improved
+> > with such cleanups.  
+> 
+> FWIW so long as they don't cause conflicts all the time the marginal
+> cost of including a tree is effectively nothing.
 
-Hi all,
+Sakari,
 
-Changes since 20260521:
+Patches committed at media-committers will appear at -next once they
+reach media-pending (which, except if there are any sync issues, it
+happens in a question of minutes). Just remind that we don't merge
+patches for -next after -rc6 (except fixes, in which case you need
+to warn me about that). 
 
-The vfs-brauner tree lost it's build failure.
+If nothing have changed, linux-next also has a similar policy of not
+wanting patches that won't be merged for the next Kernel cycle,
+which means that media patches after -rc6 would also wait for the
+next -rc1 to be merged on a branch that goes to linux-next.
 
-The fuse tree acquired a conflict with the vfs-brauner-fixes tree.
+So, personally, I don't see any value on linux-next picking directly
+from your atomisp tree, but that's up to you to decide.
 
-The loongson tree acquired a conflict with the mm-unstable tree.
-
-The ipvs-next tree acquired a conflict with the origin tree.
-
-Non-merge commits (relative to Linus' tree): 7032
- 8042 files changed, 425274 insertions(+), 156184 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 423 trees (counting Linus' and 130 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---PVKPmwb02D84ES7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoQW28ACgkQJNaLcl1U
-h9AVugf/dAVyOMztgx67WOLqqrpG8xaTGZHEzir6lg/a/HTCr61Yke2vxolr9I65
-LATgwfuESjoWGqQ6LXy5cqSOAHKLYTBrULpnZzC0xrcb7+24N6U8A7MElHHC6V3B
-Xe0S4B/v8p6Ia4ETlLz1E3m3Qhn1JdD92EwLhnueySbhaOchrT8sTC9sG+RkfWTP
-EITs3GU65f1svtHSSocGvmYkevCC4tiXLMUWUD4T9CzK3tkOYmk4Ndyo35weolRY
-6jequKM9zrm+lUDmYRLR/V7Dx1VkSZd7SBkUqjTrozvxG9o1ohj11CBhfMEgy+hJ
-RVFj8KfkfRTFSW8nvEtsRIq9lgGy6A==
-=7pRg
------END PGP SIGNATURE-----
-
---PVKPmwb02D84ES7Z--
+Thanks,
+Mauro
