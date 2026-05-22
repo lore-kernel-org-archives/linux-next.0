@@ -1,108 +1,71 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B1728F948;
-	Fri, 22 May 2026 06:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D20B3CC338;
+	Fri, 22 May 2026 10:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779433201; cv=none; b=spuiIffAnQ7s5pWeqR+YAZwgZq6GxK5WQy38Ri9MdlPjdx+XPPd5qoq/UnGBNlwafps71GLud5Hu4SEIy7fVFNXD4j/xTtcrE04tYLInzbYk3d6XtvR5cgeWtaFrdZfoq7edwmBZbZdnu9e1wyG4XQTAK0Lk3Zeo4fndqcuK5hw=
+	t=1779445424; cv=none; b=P899QDkbuDQhMIeeN+6bujuasEkVF63f0QmpWZhIf9NBiyptMbl7gYG8jtY0LbNpKM/dWiKJVrh1OWrLNkaoDBCCuZakV350ZJeGCgD3aXZVdXLLjIAJixShq6yCzdNrtKbRS33lWJF/nqAX+XPuPkImcYozxafby/5sx4Gx+I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779433201; c=relaxed/simple;
-	bh=ZFAxxQ5YnXKHQSrmFD0uijQGPXvj16bXWBqa5LluKCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKPj3BePF6r7wf42u13T/Ul11aWdAHs05vml0s70XHcHrn7HLDWeFog2wPKtI1ah26lv8nZk1FhvC5zVtb0NVn30bTE1bn0Yey3bZqHW8hOYlgTpPXGeK/YjymAiwBzk/MUXH9IjW9oBE75TwIPuGrVkU6VXphOxtz8R1+xWzf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G/aMHvQ+; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1779445424; c=relaxed/simple;
+	bh=d5v1RjrqrZ1v1kttuGNA0ebLtcHhC7AsS8aRKjN7E3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XtZLR4MjEDlh8G2zlH8rzgTg0pbQmiv8p5cgGZLlFDDcRtih1CcLJTY0xWQSQ0ym3JHWltiORe+cFyPP6duAoeWz8IDje5c7GhVHowJ7jadm2mdRvUyckM2/2Ndg4+fV6XNXTK77+J1+0l/EidK68NfCUzue8m3beSjI3MCqVSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDYV3wzV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G/aMHvQ+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1779433199; x=1810969199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZFAxxQ5YnXKHQSrmFD0uijQGPXvj16bXWBqa5LluKCc=;
-  b=G/aMHvQ+ZcERLzPoXfORAqYJv8Yu9JFpxafTsnYXkbp/AQ0U3cZsthYs
-   G+kq5UdSjBSHDpqtV6DP4RdqcrtjVVBgXTJeZLGFg4SvG4K6PVuhf5uUY
-   qBfgoy2tm40Va6VZt6cbQh5oHZKHD9ZBSPZpyNmO+/M9ot22u5M58prA2
-   lMtxIpB64B7BOFPYRkmMlfk2U3sm0Ryv5GEkEQxBuxRhfNCqwwRyjcIoQ
-   eiOAvQlJhSDeCiybmKBN7IDA13uhI3XtSCybYHg/patVFF1Md+KQtwATv
-   FwRrlUZXf/T+5ydB7yOyp4HqlMdNx7CynpvB2pEkEh0nZIvfrNFSQKpBY
-   Q==;
-X-CSE-ConnectionGUID: e1BNO1tJSfKKnwd0EojMkA==
-X-CSE-MsgGUID: pdnoHSlwTrCRaNo5Vpx2+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11793"; a="80342513"
-X-IronPort-AV: E=Sophos;i="6.24,161,1774335600"; 
-   d="scan'208";a="80342513"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2026 23:59:58 -0700
-X-CSE-ConnectionGUID: wSg9hgQBRmSDN050CcU7cA==
-X-CSE-MsgGUID: DVxaD8fhRSKmOwQdEXis+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,161,1774335600"; 
-   d="scan'208";a="240709138"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.224])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2026 23:59:57 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1695D11F851;
-	Fri, 22 May 2026 09:59:53 +0300 (EEST)
-Date: Fri, 22 May 2026 09:59:53 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, hansg@kernel.org,
-	linux-media@vger.kernel.org, mchehab@kernel.org,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: AtomISP tree for Linux Next
-Message-ID: <ag_-6fqLzpvqNKw7@kekkonen.localdomain>
-References: <aeop-rkoHOgF2OgQ@ashevche-desk.local>
- <132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
- <aeskxK7GODqMUNsH@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDYV3wzV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EFE21F000E9;
+	Fri, 22 May 2026 10:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779445423;
+	bh=FYXvbHJKzBZfZxtHoh0emFHINyjj3pgoyZsTwpFKZTQ=;
+	h=Date:From:To:Cc:Subject;
+	b=HDYV3wzV8lK/H1FSDkfrhYxrcnc/RF0UlW4+UKCwG/ObvX96Uwi9xR+Z5fDzu7u8S
+	 WTQRmjW7m4dOEB1IQYBtyU1Oy1J76lIR7WED8bmeSLVqq7vwwH3ICXSBxz8Ysj7tZh
+	 irZfBCz3hsA88loN4kRc2BpzNnA2R0s75Xyo/W5vVyEoBscVd7MAgUczuN9EoSlR9m
+	 /7Zyle1dHv4NYgkH0KHnu3nR8K9AwI6CeYqBhbn4wgUlWYeF5qTpw5b0rdU+rXwtou
+	 6eyrvo1KCmK2PoCqBpvGzup/6rNUy7iigRECsRhQUfVJAa3Tz9G0P5aG0j7zGyP3Qq
+	 B5bHV5UhmrWQw==
+Date: Fri, 22 May 2026 11:23:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the vfs-brauner-fixes tree
+Message-ID: <ahAurCylIIAP4vf6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pgVxO0bun8YI+rmq"
+Content-Disposition: inline
+
+
+--pgVxO0bun8YI+rmq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aeskxK7GODqMUNsH@ashevche-desk.local>
 
-Hi Andy, Mark,
+Commit
 
-On Fri, Apr 24, 2026 at 11:07:32AM +0300, Andy Shevchenko wrote:
-> On Thu, Apr 23, 2026 at 03:40:36PM +0100, Mark Brown wrote:
-> > On Thu, Apr 23, 2026 at 05:17:30PM +0300, Andy Shevchenko wrote:
-> > 
-> > > I think I will express the thought hanging in the air that AtomISP driver needs
-> > > to be exposed in Linux Next tree. Currently it's being stored on linuxtv.org
-> > > servers [1] which I think is not often appear in the Linux Next. So, for now
-> > > can you add that tree to Linux next
-> > 
-> > > Also note, that one of the reasons behind this is a flow of patches against
-> > > the driver that basically repeat each other or unapplicable due to newcomers
-> > > have a hard time to realise that they need to be based on a niche tree.
-> > 
-> > > [1]: https://git.linuxtv.org/sailus/media_tree.git/log/?h=atomisp
-> > 
-> > > Tree: git://linuxtv.org/sailus/media_tree.git
-> > >       https://git.linuxtv.org/sailus/media_tree.git
-> > > Branch: atomisp
-> > 
-> > That'd be totally fine of course if the people working on the tree are
-> > happy with that - it looks like it's Sakari?
-> 
-> He is the maintainer, I'm a reviewer. Sakari, can you confirm the inclusion of
-> the tree into Linux Next daily integration/builds?
+  71556f3d55ee3 ("signal: clear JOBCTL_PENDING_MASK for caller in zap_other_threads()")
 
-I guess I could push patches to the atomisp branch after running them
-through Media CI. But I'm not sure it's really worth it: the long backlog
-of patches is now largely gone and the same fixes or cleanups can be only
-merged once anyway. So would you expect the flow to still continue at a
-similar level? There's a limit to which degree this driver can be improved
-with such cleanups.
+is missing a Signed-off-by from its author
 
--- 
-Regards,
+--pgVxO0bun8YI+rmq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sakari Ailus
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoQLqsACgkQJNaLcl1U
+h9CE8gf+JZ6rnnqnyVZVAVwNArwjLqNJrajRx83Hfmrx75BePBzrbEMdNe/PEB7T
+29RmFA0DIqgYlqpxWSZ1sWGxOO7NH2ZFx+M8vRBGInr7DMtnJe7wRMHHzsSgi/uH
+b0AbYcZ5W3MUyFNmAQ7iG1zCWfIs2/bzS7ztQSriiVFPUbC5aA8quLm6KBM0Z87g
+mR4EerUMVKKGYATr7dnZo3jx/RdpwAMRGz1nnvpavg3rOfZVs4d5T4+IWPkAMcsp
+LNjC4KhhXMN4qxhsqtW1IEV20sUwI4tu4O13cbJaQJe8QTrKOnkufBsZ9RGEwn01
+3s2ReamG69sRyDWkhdPQAoPszNOTdg==
+=Rrih
+-----END PGP SIGNATURE-----
+
+--pgVxO0bun8YI+rmq--
