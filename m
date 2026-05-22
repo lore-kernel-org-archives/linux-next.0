@@ -1,86 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F32737106A;
-	Fri, 22 May 2026 18:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B45A349CE0;
+	Fri, 22 May 2026 23:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779474222; cv=none; b=QzKG1s9T0vVhVGAvxjqP80NyHMIXWC3gVZjMjrKAQKStvuV6iDUJXa8+bq1MAfIXtANN8PQ1Squ3eeiqYZ6+vMfd0rx3jIbuKomZZvhLGTdSqZLHNJDUtEsGjlQ/eZOxz9S/TWMXDGQImKLgAnrcyfO6j4vpMBcvA3A/WJ/9fRo=
+	t=1779491788; cv=none; b=dauSDv88cA5BV5z9uS9wtwJU/3O3prThKt2D7BUJcTi0od4SwNxWftz/sjI/tSfCVmSEvA+vl4GF4XiH1IZUAXtN+StlJmOWqVcdY7YgeaIUJajmxe81fDj51gFNOucyEdbz0QRJIvtOMBehP6sR3eVlLZLHym/HnR1ROOLSNVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779474222; c=relaxed/simple;
-	bh=x5K1ZgA9TFn4twCK4fNkAG2xUy4S3ECxclUvXL6nQJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CfvNMiqJ0Gjy/wA+xylxYZQADzhD01+Wlve3d4F8Kq3zd3/HOeFqa34WkXwqrCzw0Z1V/Rrb3o5hwQ/wl+1zaHJKRBylHG+BE+IiV+L6tSqOjx+fay5ojx7LQB+kT0hz3tp4P0rz+uWC72Xyav+Gwxx7RLpJhUGRYhx4h0qDb9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EITn78Md; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779491788; c=relaxed/simple;
+	bh=4YPCWcxAu0iOF8i7h04XZSQDVUC22NXQoLRVN0uSfYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsQzjU4EBehXAzvbv1J5iR7IxnAtCrdZUsuGJFgv3DXUfBTjsn6c5137Qs6a/T/lVTv5FGUlLpO3aWlKFO70Y8XE5yr/tRpaLPV5pKuS3TkBvjjIfy+BngmKie/OIHV+GE8Nlr17mXseUHZFtrJI9XlerN/IyuYO/XUUKrsbVH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiOGX3se; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EITn78Md"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44CF11F000E9;
-	Fri, 22 May 2026 18:23:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiOGX3se"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5641F000E9;
+	Fri, 22 May 2026 23:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779474220;
-	bh=kG8vAWSrDwkpNVpMVBPe4p6aRZZUD0U0KgX3vvXQM1s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=EITn78MdI7Ep5DjkQF6FEoDdPf8vs90xfPf1xjwkMpome9Kg3lJeI9Tl05aWSbjZM
-	 z6uQwHR+wW7pauvJ6hdpkydyrVXvXu51vyTvJbjHhKYxQ3p7XNFdkZP3XJ7yPfZwFY
-	 uiHHeQJqJJOSuTEM+1ZnoJi99UUZxOnPCWSo6SKgvr6zNzIawxRhjt8VhoQJaxjIFb
-	 zBfJYvukMvr/zoFBu+tjUoX72ji/qHjyFPWslCZq8N+++U1pCGpjA8pEKX4/ACpSBC
-	 FGFJm6k1yAOJugx5nXBdQQ46kT8e8GH92cX3kwJSpHGE9gTfj9u3O6cUcXQnFc6yQc
-	 UQ6e10B1StQ6g==
-Date: Fri, 22 May 2026 20:23:36 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@intel.com>, hansg@kernel.org,
- linux-media@vger.kernel.org, mchehab@kernel.org, Linux Next Mailing List
- <linux-next@vger.kernel.org>
+	s=k20260515; t=1779491786;
+	bh=4YPCWcxAu0iOF8i7h04XZSQDVUC22NXQoLRVN0uSfYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RiOGX3seS6q1O/Nql+cOa1oyVDOPF1FjX+PmoEcGaIvcQueRbAbv/K/ayBB+QIEeS
+	 eBkP3ZEYcCBGmJb8tk/meb+ptgEhqxwQWQGzOUpoDqGUvmowc/zdUBd8OJAK7FiWMn
+	 evn6A1z35Xatn31mEshfG/1OnnZpjUu2LTFe+DX2UhvRQstl0rvhPC/g7cxzWUucdm
+	 Tn8O+QNTZm3SyrhQXY5x3+xe1Nb3RIVfsHklJ6DvtnIN1yH+XTkB3qUR6oMM4NiaBO
+	 j/xGFZTTxxN5nBq22o32XWypmAa6uZmC12AcpsVVOKmEKLqZpIHMSM2NUPEYG64QMb
+	 TkHqcBtjs9qBA==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 833452492F1; Sat, 23 May 2026 00:16:24 +0100 (BST)
+Date: Sat, 23 May 2026 00:16:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>, hansg@kernel.org,
+	linux-media@vger.kernel.org, mchehab@kernel.org,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: AtomISP tree for Linux Next
-Message-ID: <20260522202336.216559c0@foz.lan>
-In-Reply-To: <62b17869-008e-431b-a450-1b2e95111734@sirena.org.uk>
+Message-ID: <ahDh37ErjwILeswF@traversing.sirena.org.uk>
 References: <aeop-rkoHOgF2OgQ@ashevche-desk.local>
-	<132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
-	<aeskxK7GODqMUNsH@ashevche-desk.local>
-	<ag_-6fqLzpvqNKw7@kekkonen.localdomain>
-	<62b17869-008e-431b-a450-1b2e95111734@sirena.org.uk>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+ <132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
+ <aeskxK7GODqMUNsH@ashevche-desk.local>
+ <ag_-6fqLzpvqNKw7@kekkonen.localdomain>
+ <62b17869-008e-431b-a450-1b2e95111734@sirena.org.uk>
+ <20260522202336.216559c0@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kCHBICCpzkwx1trR"
+Content-Disposition: inline
+In-Reply-To: <20260522202336.216559c0@foz.lan>
 
-On Fri, 22 May 2026 13:10:00 +0100
-Mark Brown <broonie@kernel.org> wrote:
 
-> On Fri, May 22, 2026 at 09:59:53AM +0300, Sakari Ailus wrote:
-> 
-> > I guess I could push patches to the atomisp branch after running them
-> > through Media CI. But I'm not sure it's really worth it: the long backlog
-> > of patches is now largely gone and the same fixes or cleanups can be only
-> > merged once anyway. So would you expect the flow to still continue at a
-> > similar level? There's a limit to which degree this driver can be improved
-> > with such cleanups.  
-> 
-> FWIW so long as they don't cause conflicts all the time the marginal
-> cost of including a tree is effectively nothing.
+--kCHBICCpzkwx1trR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sakari,
+On Fri, May 22, 2026 at 08:23:36PM +0200, Mauro Carvalho Chehab wrote:
 
-Patches committed at media-committers will appear at -next once they
-reach media-pending (which, except if there are any sync issues, it
-happens in a question of minutes). Just remind that we don't merge
-patches for -next after -rc6 (except fixes, in which case you need
-to warn me about that). 
+> If nothing have changed, linux-next also has a similar policy of not
+> wanting patches that won't be merged for the next Kernel cycle,
+> which means that media patches after -rc6 would also wait for the
+> next -rc1 to be merged on a branch that goes to linux-next.
 
-If nothing have changed, linux-next also has a similar policy of not
-wanting patches that won't be merged for the next Kernel cycle,
-which means that media patches after -rc6 would also wait for the
-next -rc1 to be merged on a branch that goes to linux-next.
+That's correct, yes.
 
-So, personally, I don't see any value on linux-next picking directly
-from your atomisp tree, but that's up to you to decide.
+--kCHBICCpzkwx1trR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Mauro
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoQ48cACgkQJNaLcl1U
+h9Bhvwf9Hlshf4PnNA1UZ9EezbVHZYikmk8zOvU6x5Nr61ckDhuhgR5bbwJC16wW
+DWIMCb8FnLEOeRNz5B2bomepUK8DOJJswJD77rfQrFw3dbZnS7OML5/cB13x/3Zq
+ipkiH9vvGkVYhjNItvXb7ipvJMEJkkz8TLTgVdDyFXk0vTt84cbzruxyx9rEzBiQ
+WaUVi6pWgnlLLxWy8Gp2b592OuwzqTFAnV3P0hrp4Hkqh42RZ9IEFtAzqAB6aZCa
+uzk83htneiiVhBxLs50oEr8ofdOqQYViZqKZ2/JAiPf0LTCYrnlDD2bD4rtVacXV
+qKIU7wubf+RdYdSBJM0QskcUg/feEw==
+=xeRx
+-----END PGP SIGNATURE-----
+
+--kCHBICCpzkwx1trR--
