@@ -1,85 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327632FE057;
-	Fri, 22 May 2026 12:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3980737AA63
+	for <linux-next@vger.kernel.org>; Fri, 22 May 2026 12:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779451805; cv=none; b=ut4qniWRoBufrG6/2jtDz/rAEWbXrku5EPmxrqiKNiM9GB9FREnnbJBjPoCXZYTM0oQSWDoB7OFzkkwqYg/bPg2GCnKGvEMXcHFoYC7sTrivUEn9WwsBd4eZMSR55rssw3ejkvXtCauZipoYHL1LTFWWVTbP4UoxmQ+RQreDywg=
+	t=1779452445; cv=none; b=kjYloWDQ1E6E7wI22XuLBo3ZEmzRN/WhmXIbEMlHnA8T1e6QJ95BRPzZsGI6pKPN5yNA0t2xpxbTZzasbUeQLBNcoaq2KNUdllw62Y6hNCioiBM4jOE3cQ3X2yDH24kLUlFUS7foQZ4volpR7511Y0pA16/nhNfU0cWuDQx72F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779451805; c=relaxed/simple;
-	bh=3Rmn/kzBs9r48TbqNB3vKX5ssEhg8rzMgCYbvtVU/hA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+pntEDsj1XvFjoq9BeWkIoZPxEN0uF6xTn/0Su//ou/akNd3XMe1COHAP7aw+KrLBdNjZCWIwG9O0EpA/FYPn7kTOubBA7KnWotlTgtwOvH8x1BI++0xIh/mO9XBG+m1WwIch48XyOH22dPM/s9bxTdc0EMCmOm+Uby7Mp4pBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLvoq88t; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779452445; c=relaxed/simple;
+	bh=iHkJ9PQlBGoIXtfH9T56aBR13P87Sgf0SQkeWgXDiy4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jo7ZpYVY7SAwRzVySRAQM+mfLQtoVjLPXD3/4F3pZf2mFLvyXawsh7EX0RBCAXxtW7SwwvVuO8naKjVJZ/ejQQeKbwwuTWPGXZRtgFX3HfH+hmFAGHNy1i8jAsuMKXP23LUChhAsrCSp9Lbsu9+8Lp4eVaLgyNAGncwTFKA6tX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JjI+2cO0; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLvoq88t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0401F000E9;
-	Fri, 22 May 2026 12:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779451803;
-	bh=3Rmn/kzBs9r48TbqNB3vKX5ssEhg8rzMgCYbvtVU/hA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YLvoq88t6VB69PloPhfyZliK0nxYZQ8P14870FxG22NzsHhdoxvf1COISYePIDWfv
-	 su8m4IepueRymWfWZeDPlLrHhHSrJu7N/TTfLq5VGAgQS9qW8xXik+NjOW6YiYaHWl
-	 /VjAjeJQVVtqZJJ+GzbhoHVs9/ukaCtqu8muWZ5zp26TjpAQcbQVJaJierMNbvAA67
-	 wYz7Ma3XYyloWdkMiuaqfy0SmUZtwBtWL6CCMF9dP5xBKDPok3ObvSYZpm0T9VYC2D
-	 gilfi2aIdkFjrJgnmwoaI1SlKVy+UCKzNwDsNdr+VeRA3VJT6QgPrkJT6C21m9llr6
-	 RxmDwVl99EjsQ==
-Date: Fri, 22 May 2026 13:10:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, hansg@kernel.org,
-	linux-media@vger.kernel.org, mchehab@kernel.org,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: AtomISP tree for Linux Next
-Message-ID: <62b17869-008e-431b-a450-1b2e95111734@sirena.org.uk>
-References: <aeop-rkoHOgF2OgQ@ashevche-desk.local>
- <132d71a4-25d7-48b5-9705-0e7d7dfeef20@sirena.org.uk>
- <aeskxK7GODqMUNsH@ashevche-desk.local>
- <ag_-6fqLzpvqNKw7@kekkonen.localdomain>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JjI+2cO0"
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1779452442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9M9N9EF8wzj/vRvOKQmxhRdiY2hw17EkK0FGpxSyMM=;
+	b=JjI+2cO0oBjnd0IsXcMjbkFC4B8HPmTi1CdOk2CX82w+6PTkPIvCX6F69u1jJdJZxIOMgH
+	2mRijA+p0/FnYNQMAls1kfLyO009otONragC6fMG7eD0uUOhiqnHJD5MqVG/SwVtzl5pLP
+	3PAQxaJJSkK/JrlSb0fgxcX+PBm85uo=
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cAWGZQbomoLVB9wr"
-Content-Disposition: inline
-In-Reply-To: <ag_-6fqLzpvqNKw7@kekkonen.localdomain>
-X-Cookie: Celebrity voices impersonated.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.600.51.1.1\))
+Subject: Re: linux-next: manual merge of the loongarch tree with the
+ mm-unstable tree
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <ahBDDF2noinoSIg5@sirena.org.uk>
+Date: Fri, 22 May 2026 20:20:01 +0800
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Muchun Song <songmuchun@bytedance.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <512D3F9B-2C2C-404E-A777-2C9245876F8C@linux.dev>
+References: <ahBDDF2noinoSIg5@sirena.org.uk>
+To: Mark Brown <broonie@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
 
---cAWGZQbomoLVB9wr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, May 22, 2026 at 09:59:53AM +0300, Sakari Ailus wrote:
+> On May 22, 2026, at 19:50, Mark Brown <broonie@kernel.org> wrote:
+>=20
+> Hi all,
+>=20
+> Today's linux-next merge of the loongarch tree got a conflict in:
+>=20
+>  arch/loongarch/mm/init.c
+>=20
+> between commit:
+>=20
+>  c0defeccc630f ("mm/sparse-vmemmap: pass @pgmap argument to memory =
+deactivation paths")
+>=20
+> from the mm-unstable tree and commit:
+>=20
+>  0ccc9d47cf020 ("LoongArch: Remove unused code to avoid build =
+warning")
+>=20
+> from the loongarch tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your =
+tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any =
+particularly
+> complex conflicts.
+>=20
+> diff --cc arch/loongarch/mm/init.c
+> index 055ecd2c8fd94,031b39eb081c5..0000000000000
+> --- a/arch/loongarch/mm/init.c
+> +++ b/arch/loongarch/mm/init.c
+> @@@ -124,12 -123,8 +124,8 @@@ void arch_remove_memory(u64 start, u64=20=
 
-> I guess I could push patches to the atomisp branch after running them
-> through Media CI. But I'm not sure it's really worth it: the long backlog
-> of patches is now largely gone and the same fixes or cleanups can be only
-> merged once anyway. So would you expect the flow to still continue at a
-> similar level? There's a limit to which degree this driver can be improved
-> with such cleanups.
+>  {
+>   	unsigned long start_pfn =3D start >> PAGE_SHIFT;
+>   	unsigned long nr_pages =3D size >> PAGE_SHIFT;
+> - 	struct page *page =3D pfn_to_page(start_pfn);
+>=20
+> - 	/* With altmap the first mapped page is offset from @start */
+> - 	if (altmap)
+> - 		page +=3D vmem_altmap_offset(altmap);
+> -	 __remove_pages(start_pfn, nr_pages, altmap);
+> +	 __remove_pages(start_pfn, nr_pages, altmap, pgmap);
+>  }
+>  #endif
 
-FWIW so long as they don't cause conflicts all the time the marginal
-cost of including a tree is effectively nothing.
+I think your fix is right.
 
---cAWGZQbomoLVB9wr
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Muchun
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoQR5cACgkQJNaLcl1U
-h9DvEgf+K3D509s9GnyhgwKNzFOLaN0VIRDMxx3nILrR1cvvafnTqBOzvCFnzBxg
-kS6Nmm9m2IbQeUaPydPo5sAPRxnaBoU7YbBTarT4HP/vmU6MoX+uYiOl+kRbcx4K
-e9cGmysFUzPoGBwDxq4W8MMfFMspzd8ihdWh6thcP7Sh5vMvZ1v70Ng9g9P8tLzM
-mzMl0IgIltoiB95pDA2n0m77if619NOoIrNsVsdWbnpkz15C2/X7MsJUEQcR5AAz
-hhF+YF1QtsukMHcXM3MVhRBA3nHEBToQahqS9YyHY04aCMoFpyl925V7QY7rKiUB
-nvb+VqkIhXilHyjcAFI8v16saXLh/w==
-=O2lQ
------END PGP SIGNATURE-----
-
---cAWGZQbomoLVB9wr--
