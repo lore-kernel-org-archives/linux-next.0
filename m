@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DC633BBD9;
-	Mon, 25 May 2026 11:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DE034DCF3;
+	Mon, 25 May 2026 12:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779708340; cv=none; b=ewztBY35VR1Fg/835dEmqC13Lxj5XCHXR9om5TgTLheYDm13vf1aBcohLq1IkWMxTW5V6UoKnRgGUAQNfEe4d2018VI4Gvy7mk4Fm/maQOcr411+fQBFS/bNeJC91UTMJUlr2VXghETC4W4Rc93+8IYvXQ8EeNbCCvRmosMXb+c=
+	t=1779713871; cv=none; b=bRGK9oU8NZlk+ZpEa6VkgDmOnirAgkguxQkHNk3fYScanN6iWXSkdq2Vj5WBDaBsbHMM0ukfxOUX9Ck09aMw6WPFDhX3+QQ/PLo+Q84rzTzg+5ukSww9pqnwakAwKJ7id+ZTI/NhdJV8nKc/Odr7PYiyxP+qvFNxZTNvGoofSrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779708340; c=relaxed/simple;
-	bh=1q3e8siAjf5v5Zepn1GdTAoUXp1WjaFMO9OqBSrRHKs=;
+	s=arc-20240116; t=1779713871; c=relaxed/simple;
+	bh=+xXxVyzgkAz+9xZE3yBoAzvHrYtroVldeUN0S6tydb8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p2F2FG2Eb5ST4/hbGxX9rRv+GqBCkCq16jWNqIWASS3EKx6zvegnqv/AltL52QnBez9laA+gGUd8yG4oQpgjxwrTUpGnAhr4FP+KfQ8Yg/CYKBp9bcJC6hnCDgD0phxYSxBgcK3RG3NEe5ogiFiKKnnQgaXeNlpZV1Oy6fXUAbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awBcfeJL; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=RyvdqPyKzkZdVVZevQa+++KAw+lS7ZlefFI6XOfoBupTBJul1dT4MT8zqeat4rVwN9jK7bK5Tif3x9HBxdqJfbdaQ1kYI26ftCBILe51B7RBvK83FrmEUtSQB6iJh1KofSPMreaT31eGFHM3IMqRphst1Im/gjUTWCdI9tn0zT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCIroOxr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awBcfeJL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BD61F000E9;
-	Mon, 25 May 2026 11:25:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCIroOxr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BD521F000E9;
+	Mon, 25 May 2026 12:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779708339;
-	bh=653ZjnAd+9MO9OM0jibcxdWxna7jJxARe0awg8SzVZI=;
+	s=k20260515; t=1779713870;
+	bh=KBKtnQLouRvRyrEUdzdWfqEmANcEFzKhpzmwRUz0m+c=;
 	h=Date:From:To:Cc:Subject;
-	b=awBcfeJLlSImNqgt6o1ouSPiYIuz4PoWavkfA7csip6hmO6LFKDOZTElUAbRoIC3k
-	 Tx2yO0q5wl0f75kgTzNkHJZlKN6oVB/9vtE6GtUaEB2JJPK/xW0aTBuM2zQAPEE3o5
-	 G7NKfwpVIHyEHrmoL0Ta2BJiQos+HpoF1/gGi0TFVC7nxMWFm573qOaXpah4mylTSO
-	 LvOg+G4zXOGjkI88uNP2aGCUn0DIXDdAVgkbkiJyHauCdjm/oXuSSfQkBUuIkadlly
-	 WuMz/nM4j9alO1t0dsRWegvqVeCpsQUnPAEXGTpmHtbpPM/WKN2uHmc1kqCEjmZdX8
-	 pviN9o/jLmbUQ==
-Date: Mon, 25 May 2026 12:25:35 +0100
+	b=dCIroOxrFWxfCm8svb/GDnWlOCYBdxWCzuXq+j2d3CZNBqyhzPHpLrzQ2OKebg+58
+	 74LENKYYWpfQ4qlsHiWQHK2Xa9JF1N0urfDsOKaKjT8Mgds3xixBfTY8L0kHTtaq5Q
+	 HorsCYCokd4CphETaEBb29lTmPmnetZ34u3WGyCeZ8LCSzdqcl6awYT5bZgbNxSY1j
+	 zBVAcxZoMvA4L2fLu+kc4CbLD/E92QmOPiRv3I6UGEPZ7SGmhTHtsmrQhBHlmwRL8f
+	 cb16w/PJS1s4Fe07Ar80KHwh4TlN1SsnV8VIOZqQsZi1xgyGgxZdSNWzDcRyG3iejx
+	 wwcd+vmd8zlYA==
+Date: Mon, 25 May 2026 13:57:46 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: linux-next: manual merge of the nfsd tree with the exfat tree
-Message-ID: <ahQxr8IxGHct59V4@sirena.org.uk>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the nfsd tree
+Message-ID: <ahRHShZFjI8AsT8G@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,65 +42,52 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2RIdPozaPQ33ryc1"
+	protocol="application/pgp-signature"; boundary="GeDQLoFAPeaL9Mi4"
 Content-Disposition: inline
 
 
---2RIdPozaPQ33ryc1
+--GeDQLoFAPeaL9Mi4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the nfsd tree got a conflict in:
+After merging the nfsd tree, today's linux-next build (arm64 allnoconfig)
+failed like this:
 
-  fs/exfat/file.c
+ld: Unexpected GOT/PLT entries detected!
+ld: Unexpected run-time procedure linkages detected!
+ld: fs/xattr.o: in function `simple_xattr_obj_hashfn':
+xattr.c:(.text+0x2f0): undefined reference to `xxh32'
+ld: xattr.c:(.text+0x300): undefined reference to `xxh32'
+ld: fs/xattr.o: in function `simple_xattr_hashfn':
+xattr.c:(.text+0x340): undefined reference to `xxh32'
+ld: xattr.c:(.text+0x350): undefined reference to `xxh32'
+ld: fs/xattr.o: in function `simple_xattr_get':
+xattr.c:(.text+0x2374): undefined reference to `xxh32'
+ld: fs/xattr.o:xattr.c:(.text+0x2384): more undefined references to `xxh32' follow
 
-between commit:
+I didn't figure out exactly which commit did this but I'm guessing it's
+one of these from the vfs-brauner tree that you've pulled in:
 
-  614f71ca1bdfa ("exfat: add iomap buffered I/O support")
+  1cd9d2387c05a (simple_xattr: change interface to pass struct simple_xattrs **)
+  12e9e3cd03b5a (simpe_xattr: use per-sb cache)
 
-=66rom the exfat tree and commit:
+I have used the version from next-20260522 instead.
 
-  27e0b573dd4aa ("exfat: Implement fileattr_get for case sensitivity")
-
-=66rom the nfsd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/exfat/file.c
-index e6e58584f567a,91e5511945d11..0000000000000
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@@ -14,7 -14,7 +14,8 @@@
-  #include <linux/writeback.h>
-  #include <linux/filelock.h>
-  #include <linux/falloc.h>
- +#include <linux/iomap.h>
-+ #include <linux/fileattr.h>
- =20
-  #include "exfat_raw.h"
-  #include "exfat_fs.h"
-
---2RIdPozaPQ33ryc1
+--GeDQLoFAPeaL9Mi4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoUMa4ACgkQJNaLcl1U
-h9Bc8Qf8ChP/Mjnx+AP0L7/YJoczXY/Tt3eMVZogUu68yN+44VOjh+xyh6JENnST
-Nyg7K5EHbH/5wQS2CqcNwhjchicFvdUY558dNQFt6jwpT3m7338RFl5neYL9q3X7
-sWjXwirGZbvKCgDJt3Lu6l1ZPSneYdyBPIV1izeuXXMWzrlM/rLoc0PA9dPrI0hY
-4qgMCZIxVCqJDwmytMIN21O6HdKackvHW3z1R+LRDd53POiIh/aX/6/U+pLxhkYO
-jOi5g4uoBTh+5HqwtOEX1XJE23JVAXE3hwYzNN0olwYPpJPDmuRwC7DRAn51MJ8i
-UGrAa+yCWsaMlZVEUuNWud47Qe6/6Q==
-=Lwxp
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoUR0kACgkQJNaLcl1U
+h9BZ0gf/Xjfa01OGeLADxRE3s3Mq8X9WJx3x6nzjVD+qz6UNajRPWAD/BPE8CpST
+K85HXusQuAePcrNIH8c0qT1R9QgXPAolOEGJyk74hnjsj1l3RM9TU6FXu819tGUv
+R1aggg2DeuGnsrWyaMwcBnH9743DTrTK84YFGceHfQXi9NreLbY2gTKav8j5C/WY
+aPvyAbbVOSpZ2dN9rLLgf5+Cz0N8XcjpEOcfA2pvOeXG3fm5vLVdBQmX5waxsIk0
+YV9dxZkMPcJZ8aLuxxb9pahZd+UkvPNzLUNDVSIK1jZEKYJ0S23grwgHrODN6gI4
+7gf4+u9rMu7PsLG8AC3p0NeT/gt3qw==
+=2cfx
 -----END PGP SIGNATURE-----
 
---2RIdPozaPQ33ryc1--
+--GeDQLoFAPeaL9Mi4--
