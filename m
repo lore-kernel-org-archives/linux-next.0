@@ -1,43 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EC43B775B;
-	Mon, 25 May 2026 14:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA1F2773D3;
+	Mon, 25 May 2026 15:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779718608; cv=none; b=MeGDKRMg+jwLi103uEjbs490PzFOuR1C47eLp+sO+TtClYqOEE/K2u+jLq//nWYQTGLTd2u0pIWS72yZpf3fN8i2xTZ5y2IdSjOEBcwBu0ix+5nphfR0jioGhq4gqb0Wdzz4+npUQZhZflHIRBhlnp/xcVh0lUTQ5jQRVGQgN/M=
+	t=1779721363; cv=none; b=jfpJTWBrUtMagt2vtC5Ewt9sVKHb8kEIaWQRNvaWEYjEZHxW3jxES8Ve7i+Z7mLzFDrWIPUkA/AuV3mR7stqNjGly5idtXVtISAKMe57Qz7Kg59yHhTD5UfVSPJqF1iSJih+unU/LnVKfraJKDBYylrSxzZeO7FgUuEELOCDIbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779718608; c=relaxed/simple;
-	bh=CTMZs/pdDKxTC84tM/d1YCwzj25as4lS7m7xkIFk/wo=;
+	s=arc-20240116; t=1779721363; c=relaxed/simple;
+	bh=tm6oaghaR0QCop1wa4OBNCwlwdxkxbKFn+CH+PpdQOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BcDZXAGm7Cq2NnWkcOMWtJCUabD9OzgXJm7sPBuoX+l3RZru3pIEoDBf5SCv63GtseR5tHYNxxAf8W4+QIBsA0xtC+QpUXgRlkYi/fkUT5xgPNAtZ9J21RcterCC68CsXD9bOm27szKd10f3Zb4atAZRWGng4tF0a0S2hz9z6CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2u6Jne3; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Cr3Wc7/975crRipU/QP7iSSpmicphNhSLcKt7SJ5OeNAC95W8s5JJYIayBOEVZL8O4J/M9vS4GUVnfbwEN5gQW4W98j/3ihKvJ586jmHXO1G6cGtz1fKR8Buq/r5j8DY1rv5s87EIDul+MFGlg9gJ+2yrvmhx6pOuOr/V8pfX6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abQDFWZo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2u6Jne3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DE21F000E9;
-	Mon, 25 May 2026 14:16:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abQDFWZo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B3711F000E9;
+	Mon, 25 May 2026 15:02:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779718607;
-	bh=QdxFI6GSnn/2/Ve4CpnpfIdomKR51g2OKaWeVy8S7yU=;
+	s=k20260515; t=1779721362;
+	bh=oE/uAUi1ZJ8Z07LJo3PiENxZ5di8rJGAwdTc2Ip5hJM=;
 	h=Date:From:To:Cc:Subject;
-	b=i2u6Jne3l6KYji1y5qUO8z3Jou5zTe6uFPdzlOn7AwYkd70wwV197LrwsAWseXvFX
-	 wRSA4V7/o6PLeM+weItWwVhmEDvAXeu5B1ySMHyGjZD6PDfDp4oMmj34w+GBZc2166
-	 WmRZb5CV37IovxZ9lwUUclAbzWYHojpIC2Ueg9niHF9yHFmYieXQTqbtlvNFhWtMFw
-	 Qc3WT+wA0DdRvK/7gxGbMgHN48Ez/SSsAqDCekGJgxG+cyVaFneE08lUy+ZCaZpqUk
-	 gkX4tLtWywH430muUFwtu4CxuKMKCw5jD7MbM1jTALtLBozlRLh4gj36grNa5behrc
-	 Fd3ZzWM52HXYA==
-Date: Mon, 25 May 2026 15:16:43 +0100
+	b=abQDFWZoeoIySS5uM50oNQAhEjFEVdVhPVHyVFnb4M3QzXnsXKnjMt0FinMac5pWX
+	 OjO7kExt7XscZ3Kvd5x77xeMvRUYkV5eH1ALelDj3wJaSovdgCXh155PFpm53LUPNe
+	 nYkMYpYhoDn77oPoKMZsbEGSBIIJOqWZmyvdsuHDkGG3Xdm/9IimafUBUJW4z/k3SZ
+	 NxrOyUeiujK/5hl+P8aOeVKMbqrDFcUC9SDVEEjD4D2R63Sw/t76Og7BAKWJSYkGVp
+	 p/QIre4pVFgcM+LjoxRieN7stJ1lR+QuXj4p6b1mhqq7NzyeXejHvsUITNnd2cQ1dJ
+	 ahEkFWGsGtkfQ==
+Date: Mon, 25 May 2026 16:02:37 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Julian Braha <julianbraha@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sean Young <sean@mess.org>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <ahRZy0wqaUFv6xO9@sirena.org.uk>
+To: Maxime Ripard <mripard@kernel.org>, Dave Airlie <airlied@redhat.com>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <ahRkjeEjdeF_icWN@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,113 +46,200 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fq11XRe15w8CpfqQ"
+	protocol="application/pgp-signature"; boundary="GroEncpA0Meuaket"
 Content-Disposition: inline
 
 
---fq11XRe15w8CpfqQ
+--GroEncpA0Meuaket
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got conflicts in:
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/cpufreq/Kconfig.x86
-  drivers/cpufreq/Makefile
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:43:48:
+error: 'struct drm_atomic_state' declared inside parameter list will
+not be visible outside of this definition or declaration [-Werror]
+   43 |                                         struct drm_atomic_state *state)
+      |                                                ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+In function 'vs_cursor_plane_atomic_check':
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:45:82:
+error: passing argument 1 of 'drm_atomic_get_new_plane_state' from
+incompatible pointer type [-Wincompatible-pointer-types]
+   45 |         struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state,
+      |                                                                                  ^~~~~
+      |                                                                                  |
+      |                                                                                  struct
+      |                                                                                  drm_atomic_state
+      |                                                                                  *
+In file included from
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:12:
+/tmp/next/build/include/drm/drm_atomic.h:824:64: note: expected
+'const struct drm_atomic_commit *' but argument is of type 'struct
+drm_atomic_state *'
+  824 | drm_atomic_get_new_plane_state(const struct drm_atomic_commit *state,
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:55:60:
+error: passing argument 1 of 'drm_atomic_get_new_crtc_state' from
+incompatible pointer type [-Wincompatible-pointer-types]
+   55 |                 crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
+      |                                                            ^~~~~
+      |                                                            | struct
+      |                                                            drm_atomic_state
+      |                                                            *
+/tmp/next/build/include/drm/drm_atomic.h:794:63: note: expected
+'const struct drm_atomic_commit *' but argument is of type 'struct
+drm_atomic_state *'
+  794 | drm_atomic_get_new_crtc_state(const struct drm_atomic_commit *state,
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+At top level:
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:101:51:
+error: 'struct drm_atomic_state' declared inside parameter list will
+not be visible outside of this definition or declaration [-Werror]
+  101 |                                            struct drm_atomic_state *atomic_state)
+      |                                                   ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+In function 'vs_cursor_plane_atomic_enable':
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:103:72:
+error: passing argument 1 of 'drm_atomic_get_new_plane_state' from
+incompatible pointer type [-Wincompatible-pointer-types]
+  103 |         struct drm_plane_state *state = drm_atomic_get_new_plane_state(atomic_state,
+      |                                                                        ^~~~~~~~~~~~
+      |                                                                        |
+      |                                                                        struct
+      |                                                                        drm_atomic_state
+      |                                                                        *
+/tmp/next/build/include/drm/drm_atomic.h:824:64: note: expected
+'const struct drm_atomic_commit *' but argument is of type 'struct
+drm_atomic_state *'
+  824 | drm_atomic_get_new_plane_state(const struct drm_atomic_commit *state,
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+At top level:
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:118:52:
+error: 'struct drm_atomic_state' declared inside parameter list will
+not be visible outside of this definition or declaration [-Werror]
+  118 |                                             struct drm_atomic_state *atomic_state)
+      |                                                    ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+In function 'vs_cursor_plane_atomic_disable':
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:120:72:
+error: passing argument 1 of 'drm_atomic_get_old_plane_state' from
+incompatible pointer type [-Wincompatible-pointer-types]
+  120 |         struct drm_plane_state *state = drm_atomic_get_old_plane_state(atomic_state,
+      |                                                                        ^~~~~~~~~~~~
+      |                                                                        |
+      |                                                                        struct
+      |                                                                        drm_atomic_state
+      |                                                                        *
+/tmp/next/build/include/drm/drm_atomic.h:809:64: note: expected
+'const struct drm_atomic_commit *' but argument is of type 'struct
+drm_atomic_state *'
+  809 | drm_atomic_get_old_plane_state(const struct drm_atomic_commit *state,
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+At top level:
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:135:51:
+error: 'struct drm_atomic_state' declared inside parameter list will
+not be visible outside of this definition or declaration [-Werror]
+  135 |                                            struct drm_atomic_state *atomic_state)
+      |                                                   ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+In function 'vs_cursor_plane_atomic_update':
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:137:72:
+error: passing argument 1 of 'drm_atomic_get_new_plane_state' from
+incompatible pointer type [-Wincompatible-pointer-types]
+  137 |         struct drm_plane_state *state = drm_atomic_get_new_plane_state(atomic_state,
+      |                                                                        ^~~~~~~~~~~~
+      |                                                                        |
+      |                                                                        struct
+      |                                                                        drm_atomic_state
+      |                                                                        *
+/tmp/next/build/include/drm/drm_atomic.h:824:64: note: expected
+'const struct drm_atomic_commit *' but argument is of type 'struct
+drm_atomic_state *'
+  824 | drm_atomic_get_new_plane_state(const struct drm_atomic_commit *state,
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:147:55:
+error: passing argument 2 of 'vs_cursor_plane_atomic_disable' from
+incompatible pointer type [-Wincompatible-pointer-types]
+  147 |                 vs_cursor_plane_atomic_disable(plane, atomic_state);
+      |                                                       ^~~~~~~~~~~~
+      |                                                       | struct
+      |                                                       drm_atomic_state
+      |                                                       *
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:118:70:
+note: expected 'struct drm_atomic_state *' but argument is of type
+'struct drm_atomic_state *'
+  118 |                                             struct drm_atomic_state *atomic_state)
+      |                                             ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:
+At top level:
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:225:27:
+error: initialization of 'int (*)(struct drm_plane *, struct
+drm_atomic_commit *)' from incompatible pointer type 'int (*)(struct
+drm_plane *, struct drm_atomic_state *)' [-Wincompatible-pointer-types]
+  225 |         .atomic_check   = vs_cursor_plane_atomic_check,
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:225:27:
+note: (near initialization for
+'vs_cursor_plane_helper_funcs.atomic_check')
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:226:27:
+error: initialization of 'void (*)(struct drm_plane *, struct
+drm_atomic_commit *)' from incompatible pointer type 'void (*)(struct
+drm_plane *, struct drm_atomic_state *)' [-Wincompatible-pointer-types]
+  226 |         .atomic_update  = vs_cursor_plane_atomic_update,
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:226:27:
+note: (near initialization for
+'vs_cursor_plane_helper_funcs.atomic_update')
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:227:27:
+error: initialization of 'void (*)(struct drm_plane *, struct
+drm_atomic_commit *)' from incompatible pointer type 'void (*)(struct
+drm_plane *, struct drm_atomic_state *)' [-Wincompatible-pointer-types]
+  227 |         .atomic_enable  = vs_cursor_plane_atomic_enable,
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:227:27:
+note: (near initialization for
+'vs_cursor_plane_helper_funcs.atomic_enable')
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:228:27:
+error: initialization of 'void (*)(struct drm_plane *, struct
+drm_atomic_commit *)' from incompatible pointer type 'void (*)(struct
+drm_plane *, struct drm_atomic_state *)' [-Wincompatible-pointer-types]
+  228 |         .atomic_disable = vs_cursor_plane_atomic_disable,
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/gpu/drm/verisilicon/vs_cursor_plane.c:228:27:
+note: (near initialization for
+'vs_cursor_plane_helper_funcs.atomic_disable')
 
-between commits:
+Caused by commit
 
-  6fb302d2109c8 ("cpufreq: elanfreq: Drop support for AMD Elan SC4*")
+  8c4ae21891255 (drm: verisilicon: add support for cursor planes)
 
-=66rom the pm tree and commit:
+interacting with
 
-  435ef16e69b9d ("x86/cpu, cpufreq: Remove AMD ELAN support")
+  5164f7e7ff8ec (drm: Rename struct drm_atomic_state to drm_atomic_commit)
 
-=66rom the tip tree.
+which appears to be an ancestor of the verisilicon commit.  I have used
+the version from next-20260522 instead.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined drivers/cpufreq/Kconfig.x86
-index 46b9742a16882,53025a063d2f4..0000000000000
---- a/drivers/cpufreq/Kconfig.x86
-+++ b/drivers/cpufreq/Kconfig.x86
-@@@ -5,6 -5,7 +5,6 @@@
- =20
-  config X86_INTEL_PSTATE
-  	bool "Intel P state control"
- -	depends on X86
-  	select ACPI_PROCESSOR if ACPI
-  	select ACPI_CPPC_LIB if X86_64 && ACPI && SCHED_MC_PRIO
-  	select CPU_FREQ_GOV_PERFORMANCE
-@@@ -35,7 -36,7 +35,7 @@@ config X86_PCC_CPUFRE
- =20
-  config X86_AMD_PSTATE
-  	bool "AMD Processor P-State driver"
- -	depends on X86 && ACPI
- +	depends on ACPI
-  	select ACPI_PROCESSOR
-  	select ACPI_CPPC_LIB if X86_64
-  	select CPU_FREQ_GOV_SCHEDUTIL if SMP
-@@@ -71,7 -72,7 +71,7 @@@ config X86_AMD_PSTATE_DEFAULT_MOD
- =20
-  config X86_AMD_PSTATE_UT
-  	tristate "selftest for AMD Processor P-State driver"
- -	depends on X86 && ACPI_PROCESSOR
- +	depends on ACPI_PROCESSOR
-  	depends on X86_AMD_PSTATE
-  	default n
-  	help
-@@@ -113,17 -114,6 +113,6 @@@ config X86_ACPI_CPUFREQ_CP
-  	  By enabling this option the acpi_cpufreq driver provides the old
-  	  entry in addition to the new boost ones, for compatibility reasons.
- =20
-- config SC520_CPUFREQ
-- 	tristate "AMD Elan SC520"
-- 	depends on MELAN
-- 	help
-- 	  This adds the CPUFreq driver for AMD Elan SC520 processor.
--=20
-- 	  For details, take a look at <file:Documentation/cpu-freq/>.
--=20
-- 	  If in doubt, say N.
--=20
--=20
-  config X86_POWERNOW_K6
-  	tristate "AMD Mobile K6-2/K6-3 PowerNow!"
-  	depends on X86_32
-diff --combined drivers/cpufreq/Makefile
-index 8056b8f2200bd,6c7a39b7f8d26..0000000000000
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@@ -40,7 -40,6 +40,6 @@@ obj-$(CONFIG_X86_POWERNOW_K6)		+=3D power
-  obj-$(CONFIG_X86_POWERNOW_K7)		+=3D powernow-k7.o
-  obj-$(CONFIG_X86_LONGHAUL)		+=3D longhaul.o
-  obj-$(CONFIG_X86_E_POWERSAVER)		+=3D e_powersaver.o
-- obj-$(CONFIG_SC520_CPUFREQ)		+=3D sc520_freq.o
-  obj-$(CONFIG_X86_LONGRUN)		+=3D longrun.o
-  obj-$(CONFIG_X86_GX_SUSPMOD)		+=3D gx-suspmod.o
-  obj-$(CONFIG_X86_SPEEDSTEP_ICH)		+=3D speedstep-ich.o
-
---fq11XRe15w8CpfqQ
+--GroEncpA0Meuaket
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoUWcoACgkQJNaLcl1U
-h9CweQf/YC/uX1Xlq55vocWmoJb6cgA4NsKR70aemWTZ31BgSN5aO3mWoukIZfL1
-K4y9XWpgmPWX3zNPqTFfFSiLUCCcZNl2AWCqPm0Lh7BIVCW9S2QvaMtGfHhzeM3K
-9Ho4q1W2dX1jP6dUpjOoB11J0mshUTHyO7gvaZDMa6AdMxm09rMAf1WQj3TxAWiY
-ipi4IJlAYxncctBCqwLPkNkakpTxXD1pOjsNm0wnDabGFQjNcT/5AmNB5IOZ5MYY
-aiaZuU1KBL6cGpaf/sTp8+2dOfF0DFfWJ0QI4uGfaVV2UEBjjgTqAfKha2wtpeqP
-7m4Q2warUGQ/3dYcXwP/KwWpsje6gA==
-=En2k
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoUZIwACgkQJNaLcl1U
+h9DN8Qf/XuhsmNTm6pM5E0zNbbxWHWulWwJR/Ew5fOfYo7OrEPRrSuPtdQAtut5S
+hEBMfjyeSf4zBnDpN/k6Q4Qgzt7xkXaD1okSbNf/445x10ZnejyNR/uVkcJga89Y
+4GXCtPZtY6VQq6sIvgkUz4wWuFHhh4nUkhLuI+EEkS3aagdGcF/aa9THi8CFnUQ/
+5xXN5VmNXybd0axsMDPsyH8PQyZhL3yIK24Sf4B7hsJWV8naQVWwN+TUNxLTT0qJ
+Vx0G/8dzXjBj7as37v/7ifRZqqsjYtswtWdGCE4oMfnUXH8BMUO+HMY/4uCXWymB
+T7xr3DtMEHxQTpuEuThcIHWHqdUchg==
+=5+80
 -----END PGP SIGNATURE-----
 
---fq11XRe15w8CpfqQ--
+--GroEncpA0Meuaket--
