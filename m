@@ -1,41 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE63230C17D;
-	Mon, 25 May 2026 13:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EC43B775B;
+	Mon, 25 May 2026 14:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779717358; cv=none; b=GEZW2OIacZFUxGssrUoJGswDxy62p/Zo0aSoA9R5xhrC3sB8KlnnPfcdw1wRZOazFAWvrcPNkAj72fmvSHunFS7wSktLB/6vyvqyM+ZLO2/ZIpxbEJ+dAiWCGtPZkUu69w1Dr4ucaLqvCLK1OA247Dvk20gY47tlGyIhHGBXwwE=
+	t=1779718608; cv=none; b=MeGDKRMg+jwLi103uEjbs490PzFOuR1C47eLp+sO+TtClYqOEE/K2u+jLq//nWYQTGLTd2u0pIWS72yZpf3fN8i2xTZ5y2IdSjOEBcwBu0ix+5nphfR0jioGhq4gqb0Wdzz4+npUQZhZflHIRBhlnp/xcVh0lUTQ5jQRVGQgN/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779717358; c=relaxed/simple;
-	bh=cj8X2c8uf7UPQkRuy+rUitDgceUEdzQ3aLIVMYVH1a0=;
-	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jEEwuDH4f/hkLcFy3Awk7xPCOB/MYr9KPmby3CzF/XF09ZsphHTbWDT0rfaQvbalb/iQ3U06ADypd9mQzVHdOv4JaT6NZ8ytQbR+CeIodQHsNJuJbKuA/3lACX8tvdJoVruUjO02EXggMeptFgS8C6BwMV0CE6gWjctzLN4YocU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfTtYL8I; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779718608; c=relaxed/simple;
+	bh=CTMZs/pdDKxTC84tM/d1YCwzj25as4lS7m7xkIFk/wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BcDZXAGm7Cq2NnWkcOMWtJCUabD9OzgXJm7sPBuoX+l3RZru3pIEoDBf5SCv63GtseR5tHYNxxAf8W4+QIBsA0xtC+QpUXgRlkYi/fkUT5xgPNAtZ9J21RcterCC68CsXD9bOm27szKd10f3Zb4atAZRWGng4tF0a0S2hz9z6CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2u6Jne3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfTtYL8I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B23C1F000E9;
-	Mon, 25 May 2026 13:55:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2u6Jne3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DE21F000E9;
+	Mon, 25 May 2026 14:16:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779717357;
-	bh=h9VvuRpALuo2tNFgUsNAGC86Bppc8zOBgCCI2WihUlE=;
-	h=Date:From:Cc:Subject;
-	b=kfTtYL8IOjeOMJLM/eUyCZfx63DKtWD2qKXQPGrywaz4LF8VGrZPp20X+xOf/eZce
-	 wPN2Bz7hfe45P+agZTTWDEfqz6+c3/HvY68YuxGPz7OKDcKsnzxMkYlyPNJ7jEw51B
-	 XxPa9nq71VwXjSRimtTybX0RZ1LXVuJHNLLPSlm9ZxFSb3WJaa6ukrXV7z3yg2ylo5
-	 60FnIBpW0sfEYsRv6aBYnPLNnMrFJUyVsyGXqmXh6iaXsRiUReWNLAOa8zs2D7lVS0
-	 CswwEY9kjb+mEB1/jLN/M2BtJA6c6rtH6516rTNVJoKbFnlUU+FqYnHL/rGgv+x2rr
-	 0JhmvYLdfBHdQ==
-Date: Mon, 25 May 2026 14:55:53 +0100
+	s=k20260515; t=1779718607;
+	bh=QdxFI6GSnn/2/Ve4CpnpfIdomKR51g2OKaWeVy8S7yU=;
+	h=Date:From:To:Cc:Subject;
+	b=i2u6Jne3l6KYji1y5qUO8z3Jou5zTe6uFPdzlOn7AwYkd70wwV197LrwsAWseXvFX
+	 wRSA4V7/o6PLeM+weItWwVhmEDvAXeu5B1ySMHyGjZD6PDfDp4oMmj34w+GBZc2166
+	 WmRZb5CV37IovxZ9lwUUclAbzWYHojpIC2Ueg9niHF9yHFmYieXQTqbtlvNFhWtMFw
+	 Qc3WT+wA0DdRvK/7gxGbMgHN48Ez/SSsAqDCekGJgxG+cyVaFneE08lUy+ZCaZpqUk
+	 gkX4tLtWywH430muUFwtu4CxuKMKCw5jD7MbM1jTALtLBozlRLh4gj36grNa5behrc
+	 Fd3ZzWM52HXYA==
+Date: Mon, 25 May 2026 15:16:43 +0100
 From: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Sterba <dsterba@suse.com>,
+To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Julian Braha <julianbraha@gmail.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Qu Wenruo <wqu@suse.com>, Zi Yan <ziy@nvidia.com>
-Subject: linux-next: manual merge of the fs-next tree with the mm-unstable
- tree
-Message-ID: <ahRU4OQiGMaLf2Y-@sirena.org.uk>
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sean Young <sean@mess.org>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Message-ID: <ahRZy0wqaUFv6xO9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,32 +45,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c0108f4Uq5VmD3dS"
+	protocol="application/pgp-signature"; boundary="fq11XRe15w8CpfqQ"
 Content-Disposition: inline
 
 
---c0108f4Uq5VmD3dS
+--fq11XRe15w8CpfqQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the fs-next tree got a conflict in:
+Today's linux-next merge of the tip tree got conflicts in:
 
-  fs/btrfs/defrag.c
+  drivers/cpufreq/Kconfig.x86
+  drivers/cpufreq/Makefile
 
-between commit:
+between commits:
 
-  5573c81882722 ("fs/btrfs: remove a comment referring to READ_ONLY_THP_FOR=
-_FS")
+  6fb302d2109c8 ("cpufreq: elanfreq: Drop support for AMD Elan SC4*")
 
-=66rom the mm-unstable tree and commit:
+=66rom the pm tree and commit:
 
-  871bf8cef0139 ("btrfs: move large data folios out of experimental feature=
-s")
+  435ef16e69b9d ("x86/cpu, cpufreq: Remove AMD ELAN support")
 
-=66rom the fs-next tree.
+=66rom the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,53 +78,80 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined fs/btrfs/defrag.c
-index a8d49d9ca981c,f0c6758b7055d..0000000000000
---- a/fs/btrfs/defrag.c
-+++ b/fs/btrfs/defrag.c
-@@@ -859,20 -859,6 +859,6 @@@ again
-  	if (IS_ERR(folio))
-  		return folio;
+diff --combined drivers/cpufreq/Kconfig.x86
+index 46b9742a16882,53025a063d2f4..0000000000000
+--- a/drivers/cpufreq/Kconfig.x86
++++ b/drivers/cpufreq/Kconfig.x86
+@@@ -5,6 -5,7 +5,6 @@@
  =20
-- 	/*
-- 	 * The IO for such large folios is not fully tested, thus return
-- 	 * an error to reject such folios unless it's an experimental build.
-- 	 *
-- 	 * Filesystem transparent huge pages are typically only used for
-- 	 * executables that explicitly enable them, so this isn't very
-- 	 * restrictive.
-- 	 */
-- 	if (!IS_ENABLED(CONFIG_BTRFS_EXPERIMENTAL) && folio_test_large(folio)) {
-- 		folio_unlock(folio);
-- 		folio_put(folio);
-- 		return ERR_PTR(-ETXTBSY);
-- 	}
+  config X86_INTEL_PSTATE
+  	bool "Intel P state control"
+ -	depends on X86
+  	select ACPI_PROCESSOR if ACPI
+  	select ACPI_CPPC_LIB if X86_64 && ACPI && SCHED_MC_PRIO
+  	select CPU_FREQ_GOV_PERFORMANCE
+@@@ -35,7 -36,7 +35,7 @@@ config X86_PCC_CPUFRE
+ =20
+  config X86_AMD_PSTATE
+  	bool "AMD Processor P-State driver"
+ -	depends on X86 && ACPI
+ +	depends on ACPI
+  	select ACPI_PROCESSOR
+  	select ACPI_CPPC_LIB if X86_64
+  	select CPU_FREQ_GOV_SCHEDUTIL if SMP
+@@@ -71,7 -72,7 +71,7 @@@ config X86_AMD_PSTATE_DEFAULT_MOD
+ =20
+  config X86_AMD_PSTATE_UT
+  	tristate "selftest for AMD Processor P-State driver"
+ -	depends on X86 && ACPI_PROCESSOR
+ +	depends on ACPI_PROCESSOR
+  	depends on X86_AMD_PSTATE
+  	default n
+  	help
+@@@ -113,17 -114,6 +113,6 @@@ config X86_ACPI_CPUFREQ_CP
+  	  By enabling this option the acpi_cpufreq driver provides the old
+  	  entry in addition to the new boost ones, for compatibility reasons.
+ =20
+- config SC520_CPUFREQ
+- 	tristate "AMD Elan SC520"
+- 	depends on MELAN
+- 	help
+- 	  This adds the CPUFreq driver for AMD Elan SC520 processor.
 -=20
-  	ret =3D set_folio_extent_mapped(folio);
-  	if (ret < 0) {
-  		folio_unlock(folio);
-@@@ -1176,7 -1162,6 +1162,6 @@@ static int defrag_one_locked_target(str
-  		if (start >=3D folio_next_pos(folio) ||
-  		    start + len <=3D folio_pos(folio))
-  			continue;
-- 		btrfs_folio_clamp_clear_checked(fs_info, folio, start, len);
-  		btrfs_folio_clamp_set_dirty(fs_info, folio, start, len);
-  	}
-  	btrfs_delalloc_release_extents(inode, len);
+- 	  For details, take a look at <file:Documentation/cpu-freq/>.
+-=20
+- 	  If in doubt, say N.
+-=20
+-=20
+  config X86_POWERNOW_K6
+  	tristate "AMD Mobile K6-2/K6-3 PowerNow!"
+  	depends on X86_32
+diff --combined drivers/cpufreq/Makefile
+index 8056b8f2200bd,6c7a39b7f8d26..0000000000000
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@@ -40,7 -40,6 +40,6 @@@ obj-$(CONFIG_X86_POWERNOW_K6)		+=3D power
+  obj-$(CONFIG_X86_POWERNOW_K7)		+=3D powernow-k7.o
+  obj-$(CONFIG_X86_LONGHAUL)		+=3D longhaul.o
+  obj-$(CONFIG_X86_E_POWERSAVER)		+=3D e_powersaver.o
+- obj-$(CONFIG_SC520_CPUFREQ)		+=3D sc520_freq.o
+  obj-$(CONFIG_X86_LONGRUN)		+=3D longrun.o
+  obj-$(CONFIG_X86_GX_SUSPMOD)		+=3D gx-suspmod.o
+  obj-$(CONFIG_X86_SPEEDSTEP_ICH)		+=3D speedstep-ich.o
 
---c0108f4Uq5VmD3dS
+--fq11XRe15w8CpfqQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoUVOgACgkQJNaLcl1U
-h9C4Gwf+M5JFLmfpa3ottJiqOax5jzRXAk6iFjlo58u9Hm9Tbwu48B41tgL2MyiY
-UKtiLogEKGSeMN/TQ/OfkGie66V37NiqIkN3+EPxYYS3/P5GNFKFaOKGoXRo+Oyp
-IELW9dKYT6KDnN38CC8zRCKdDYP0ZuawaZDxFak6WULYugE5CooKWJaXBhA3fOVF
-OJUHks23XvnLmoqvJpToPbmi+k4bUc6iD4EI39gIjUqb+lAAaA1bA8rq99REPPl4
-42yPuDokxElHCL5slQLphsSVpVVwknaJCUIgT+SF+Pab5gmtEHqlHca6lAwiTtZw
-adq/wABT4N35iKLnZpd56TpXChp0+g==
-=hm4L
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoUWcoACgkQJNaLcl1U
+h9CweQf/YC/uX1Xlq55vocWmoJb6cgA4NsKR70aemWTZ31BgSN5aO3mWoukIZfL1
+K4y9XWpgmPWX3zNPqTFfFSiLUCCcZNl2AWCqPm0Lh7BIVCW9S2QvaMtGfHhzeM3K
+9Ho4q1W2dX1jP6dUpjOoB11J0mshUTHyO7gvaZDMa6AdMxm09rMAf1WQj3TxAWiY
+ipi4IJlAYxncctBCqwLPkNkakpTxXD1pOjsNm0wnDabGFQjNcT/5AmNB5IOZ5MYY
+aiaZuU1KBL6cGpaf/sTp8+2dOfF0DFfWJ0QI4uGfaVV2UEBjjgTqAfKha2wtpeqP
+7m4Q2warUGQ/3dYcXwP/KwWpsje6gA==
+=En2k
 -----END PGP SIGNATURE-----
 
---c0108f4Uq5VmD3dS--
+--fq11XRe15w8CpfqQ--
