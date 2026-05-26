@@ -1,43 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5913DE452;
-	Tue, 26 May 2026 12:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC483FD970;
+	Tue, 26 May 2026 13:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779797594; cv=none; b=CyRAzO1KbtS+pTgamjZpOPNV2sAX+iOhiZbAV8nNpfxtoVysKdoxnLQRSPswh6fpLwVx3KbEtBddCjprAZBp2x6S+If823v4z49WLyRQYJ6N5OmPdyp3mWLyvEI4sGroK71jDdaX4qkSY5a8DTqhUXrK4GehLycHblni8kGHWmI=
+	t=1779803494; cv=none; b=uMlNGYeVcq/volytsCUqduTdmvmGhgylpc1vyLBzNLXhGUlRoBm/LyLtvBz8qMEPQY5UyVID8tjmjWA+oQzbW9WuP0h0CaSQN/Fr0Mwk8OKJXVxPGfV0xUNi9yFOysFfzsc54J5QrVkKWc1hqQLAQDDX7H8RoLhmsCCrClhoP3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779797594; c=relaxed/simple;
-	bh=xdZ95vC7Fq+5QOpWFwACtL945TcKENWkRlGQAi3Pqxw=;
+	s=arc-20240116; t=1779803494; c=relaxed/simple;
+	bh=i2XsSmSAvgUmsQRc6EwbTlKw9IG2PfUW2b9LR/REPEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c07BkhLhVjplTx60So/KqxmqU+7ptx5D645viAf06q9mQPC0YQi/jTG2ra5AiboIjmfdMmPpA+lDvTqMYaX7gE0IFyKiudGVmI69lKL6e4snrGjv0LPjT5r+DKdvh9rUDgC80U9kN8UatFZiGHBwYuNfPQ4zNe17Hw7v/cOmcxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBN1jLKQ; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=FqZl536k6W0acehHICYEjaia2pn/Q8LtQ76H8Itrv1QIaCEtTQ0XlnWfabeIh1RzTUnq0/wRyZWdXfsg8kFcZEuEbu8ksuRKakV2EEhBRZXCRzGccXbsOgpfLNd7t2WuYuRRwm/+OTeOoXwguK8JMSvie6cXZ1YIE3+rAl0OpWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJ0oh8ZH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBN1jLKQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 027D71F000E9;
-	Tue, 26 May 2026 12:13:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJ0oh8ZH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55B11F000E9;
+	Tue, 26 May 2026 13:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779797592;
-	bh=/PlMCsG58Og/BWJOZjzosw89h+7oCgPRyFVhhD89mOI=;
+	s=k20260515; t=1779803493;
+	bh=/grPN6/j2qzIjfeFXlN5choKsmPqw/56/R8d7xlJ9+c=;
 	h=Date:From:To:Cc:Subject;
-	b=MBN1jLKQCBE6osvlhdtm2gMvYGTR31Mgw0Yp7GGqU+Zs/I1YW0R+dAl3oP1a2XowY
-	 fSPytVz0WjsDArx/y0bM6y+Jqv4gYgpAy6kShRwXt8E9xsXGUieeyPdYgDmN/sJBWb
-	 ioGcCp+AsU0gCgxHUg2ZgYLe0ZjiCJlRa/OtnCxjeDpqFWsAF8f4+tYMnKYEOW5ngi
-	 RjkEt4srnx4jzatcU6VXLp+HQxB51mhwcO8jmVsF0AseQt980u3nOiciAtlfnsl8J9
-	 gGQhG+K57EFQUMeCM2Bn35K95HQsB9RghNlKXTNKNgtxyAAhbgQGvsG7l5/Au8OqA4
-	 GJG4D6RswMEiQ==
-Date: Tue, 26 May 2026 13:13:08 +0100
+	b=mJ0oh8ZHeksDZlTPIDKUco8OVJ1m+Y5eYZCYcM0PoKo4GaBOtYgLJ4Rx81PODIVmk
+	 mpBg/o+SbUBMqTkPytW6OOPQYx15KpvdSwjS88wtSDetTpYHs7yKW1zMaqbUHyiIsU
+	 sVf4nnIW0ILQ32pnHhRFI/2+vKDkGpsoBhkx8//7vxUe72VaOgE6SsfXIKfpO0STl7
+	 P0A8wDfwNKcWNfAeNAKWqhBbfWTZU+ARxzcr8hf4KXI1Oh0DFTCQNkg16gDg5o61/m
+	 wkgBXEPbwK7eJXNjO4uFW6KjN6m3K8knPvu/JncjyEV9/hC9FdNYCzjMANKCg5669o
+	 2qyfaWKEiEkUA==
+Date: Tue, 26 May 2026 14:51:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>
+To: Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <ahWOVFZZScPjm2Ow@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luca Boccassi <luca.boccassi@gmail.com>
+Subject: linux-next: manual merge of the liveupdate tree with the
+ liveupdate-fixes tree
+Message-ID: <ahWlYXNjGUbkKoHy@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,52 +45,111 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9IyIlIE3sgCOvARk"
+	protocol="application/pgp-signature"; boundary="HWjSFyAGBNNxnCFe"
 Content-Disposition: inline
 
 
---9IyIlIE3sgCOvARk
+--HWjSFyAGBNNxnCFe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the bpf-next tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the liveupdate tree got a conflict in:
 
-/tmp/next/build/kernel/bpf/core.c:3379:13: error: redefinition of
-'bpf_arena_handle_page_fault'
- 3379 | __weak bool bpf_arena_handle_page_fault(unsigned long addr, bool is_write,
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from /tmp/next/build/include/linux/bpf.h:9,
-                 from /tmp/next/build/include/linux/filter.h:9,
-                 from /tmp/next/build/kernel/bpf/core.c:21:
-/tmp/next/build/include/linux/bpf_defs.h:12:20: note: previous definition
-of 'bpf_arena_handle_page_fault' with type 'bool(long unsigned int,
-bool, long unsigned int)' {aka '_Bool(long unsigned int, _Bool, long
-unsigned int)'}
-   12 | static inline bool bpf_arena_handle_page_fault(unsigned long addr, bool is_write,
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  kernel/liveupdate/luo_session.c
 
-Caused by commit
+between commit:
 
-  dc11a4dba2464 (bpf: Recover arena kernel faults with scratch page)
+  da7f658ccc8da ("liveupdate: validate session type before performing opera=
+tion")
 
-I have used the version from next-20260525 instead.
+=66rom the liveupdate-fixes tree and commit:
 
---9IyIlIE3sgCOvARk
+  d6b3d47bdaf89 ("liveupdate: add LIVEUPDATE_SESSION_GET_NAME ioctl")
+
+=66rom the liveupdate tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc kernel/liveupdate/luo_session.c
+index 74c39d93d45a1,1caaa7886ec6d..0000000000000
+--- a/kernel/liveupdate/luo_session.c
++++ b/kernel/liveupdate/luo_session.c
+@@@ -293,15 -306,9 +306,16 @@@ union ucmd_buffer=20
+  	struct liveupdate_session_finish finish;
+  	struct liveupdate_session_preserve_fd preserve;
+  	struct liveupdate_session_retrieve_fd retrieve;
++ 	struct liveupdate_session_get_name get_name;
+  };
+ =20
+ +/* Type of sessions the ioctl applies to. */
+ +enum luo_ioctl_type {
+ +	LUO_IOCTL_INCOMING,
+ +	LUO_IOCTL_OUTGOING,
+ +	LUO_IOCTL_ALL,
+ +};
+ +
+  struct luo_ioctl_op {
+  	unsigned int size;
+  	unsigned int min_size;
+@@@ -323,30 -328,15 +337,32 @@@
+ =20
+  static const struct luo_ioctl_op luo_session_ioctl_ops[] =3D {
+  	IOCTL_OP(LIVEUPDATE_SESSION_FINISH, luo_session_finish,
+ -		 struct liveupdate_session_finish, reserved),
+ +		 struct liveupdate_session_finish, reserved, LUO_IOCTL_INCOMING),
+  	IOCTL_OP(LIVEUPDATE_SESSION_PRESERVE_FD, luo_session_preserve_fd,
+ -		 struct liveupdate_session_preserve_fd, token),
+ +		 struct liveupdate_session_preserve_fd, token, LUO_IOCTL_OUTGOING),
+  	IOCTL_OP(LIVEUPDATE_SESSION_RETRIEVE_FD, luo_session_retrieve_fd,
+ -		 struct liveupdate_session_retrieve_fd, token),
+ +		 struct liveupdate_session_retrieve_fd, token, LUO_IOCTL_INCOMING),
++ 	IOCTL_OP(LIVEUPDATE_SESSION_GET_NAME, luo_session_get_name,
+ -		 struct liveupdate_session_get_name, name),
+++		 struct liveupdate_session_get_name, name, LUO_IOCTL_OUTGOING),
+  };
+ =20
+ +static bool luo_ioctl_type_valid(struct luo_session *session,
+ +				 const struct luo_ioctl_op *op)
+ +{
+ +	switch (op->type) {
+ +	case LUO_IOCTL_INCOMING:
+ +		/* Retrieved is only set on incoming sessions */
+ +		return session->retrieved;
+ +	case LUO_IOCTL_OUTGOING:
+ +		return !session->retrieved;
+ +	case LUO_IOCTL_ALL:
+ +		return true;
+ +	}
+ +
+ +	/* Catch-all. */
+ +	return false;
+ +}
+ +
+  static long luo_session_ioctl(struct file *filep, unsigned int cmd,
+  			      unsigned long arg)
+  {
+
+--HWjSFyAGBNNxnCFe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoVjlMACgkQJNaLcl1U
-h9DQlgf/Qig5mKcOhHHXLfl4Pmy3pnzesly2426k2yGQRac+Onu751S42w8jdSYd
-dx4sT0+FWhIxFt8sHJILnqOxyfgZDT3RTJmOYahCRU8Gbns5sycCl77uAE6EWhUP
-Kw3QFrNORAuMfqkrYy7JrblJwK2MDL1X9yzMXmUMaWUFWCclf7UqeWk5PL5c608N
-wrV1wvEyaLVf+bJx0PS+gHj4rsxc77bXjJT2D5+AxnadOK17ZE0OdpW2zOkMw9v+
-6xXd0ADyikNOuwhst/kQsmbSMrsS8Vd6fYSk9CaGfvZ6Py4OB/wRnK3jdE9FHKe+
-I+9uonfnxb+PEv6fKWEl3DCGae+aOw==
-=QxUj
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoVpWAACgkQJNaLcl1U
+h9CIZAf+OsjMUqLf3e9r4xE01oLmyPh8JnUujS9WMSTADb4RcrBuI7WRJfdVtxCk
+jW/N+zwmwUbhSpGa/iUTDGTevcSYhmSVtfqxE4AqjjlKJwZdHVcAFHgdY6fSfKV3
+hDHHRpn8Mq5nTGnUqUNwYlCw1VUBM+VPQYaRyPVr0D77nXHFTvtprdoONPgPlUiZ
+spxypEtag/EP289ZIOAGQxXr6U0bYCq3nupXY/30sx28zpqJlDbO+aX+IW+jejMm
+yLi76Oe/t+CWzbuxPrNHYuSYw3A0KksmCO3H6SzPemTRNKxyTxQPSOj264JoFw0F
+VKfvP7ztlAaLCLpyN7nr9qzFfyBvMA==
+=N9yi
 -----END PGP SIGNATURE-----
 
---9IyIlIE3sgCOvARk--
+--HWjSFyAGBNNxnCFe--
