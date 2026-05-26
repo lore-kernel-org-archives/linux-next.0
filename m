@@ -1,111 +1,147 @@
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4FD3B6C15
-	for <linux-next@vger.kernel.org>; Tue, 26 May 2026 08:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5F63E835F
+	for <linux-next@vger.kernel.org>; Tue, 26 May 2026 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779783061; cv=none; b=GTFt1Ko+Nh+uqQlJWsLTYIrFM4C/uUoHefoemRjnapwQj/KXmG6ddHohNbshsz78631itdO55i2emuf8Wj04Ak7jB/aMCu4222ZkW011EJY9uul8Pg56hJBLG6QkePlmq7PzFbA6P0pEoBVgKhzpWRA1SlbqmB8q+U5eAGPVoNM=
+	t=1779796832; cv=none; b=eN1fzzWNOmiVg9ULiE2rKAjnglqTB3HoBPD0hv9iM6ghBp1JseVdhcH97+I+/eGiNnf0coBYJxaadznrirINdLeXrkvGBiJzOqk3+ImV9hNsyO8WwrH5IbHT5/lz6W5cYks+DJ9LXgxSN1+CKIvEvOc+Dz+YXBUhN5y9pq+KlAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779783061; c=relaxed/simple;
-	bh=Zd/9bfUr3ic5TIlTExBVFIonTb2VjXWM9A9PrgdqiDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PjH/8QfH8x/F8+DuC7d+GHR0a7QcL6e6VBipvtyMIrAcfDep5M8L5pMP5q32dsoQOWOQQHgulVCTsUEvFJ6vcHcKjmxSz4QjuUp7MlxNFFSNrwnMIzLJguPqYS9WKqLI1e56AFlp/hZrlJoKWqnTAGInEOLwPFt8YFFKmVXh7V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-56f6afbd205so6287581e0c.0
-        for <linux-next@vger.kernel.org>; Tue, 26 May 2026 01:10:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779783059; x=1780387859;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9lTP6MMwy4pS6KbZKn87ULNoqoY47p/A1CVPh7q8jp4=;
-        b=V74CDYK7BbMbeTl93fooDaPPYKjcBs1njzetEzQlhxZ5wqtxmmTrWcMOFSbKDJYIbG
-         Hgg2CTkExG5TemcXdoooKqDC0mC897ZxD9xIXwr971nW99O+p22uXxhbe/FjPHb0G6R4
-         9RyubEadJr74MR9rr22DSUQ3wG91/M/oZnkq4OzoHtGVHJHpJAah9AYzS27shh/x91JT
-         HzQnLUNjDIybcTg6lKqeob2N5NTPt1DEw8pOcJGOigPtTOfLU9CCUsscXYGFHNprXZAd
-         36ZiHzWnePPOw5h97tLr7MgfY5Vid0eiDSmv638HzPCybUpSSeQvmZjgcbKbLYpt7CTR
-         w4bw==
-X-Forwarded-Encrypted: i=1; AFNElJ9Rk69S8e3sjc8R1gqUy5lUxN79TkVrNSdH4zvcrm+qJ++aW4oi2D6j0D5b5pLltFSmvg3wzim6PPMW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/Ubo0AjbYJWq1OVeK4kbjS2YoOOJFmY9SisTI/KE+iSDySvE
-	AMqFuOlI+d8J1ZdrwtzrWvgsbbRdvMHio91P5WCuYfAmlWiEm7N2gXasvM0eHvJc
-X-Gm-Gg: Acq92OFfBTlNRjUdVEzUquQPl/VydbSEHCgPi/FsZKN29e1l0yrP12UTq8pyf769GQS
-	YrD3r1QpKYZyjsKWIwkIGHrIyVOZhbuvmLCvA/A5DIK2xAPku1k2KGRZci2DSC/NGI4ju8qK0K0
-	OnufQ6P5wWpgrtuZ2hgRHXWhiFGiApTXyb+3HHPDcaHXGLi9O9yFL3lDv4KROApetqLbyqxtfLU
-	0CESLN0HMeAG5ExjNKw/2CrG4z7rm2fGgJ9yVN2LqN7qOHvUyD652mHaIX24YdAHVXFJ7mTcEdC
-	aC9pdodv9qm2ZqGH0c6S7uZwiPG/AMJBWoH7O1MG1/pK9CacldKCVYS2CCz2dV6q7+BanNNLzT8
-	9Il2JufZnNptSqRshtU4yLezgr250KMpTW0HvskZqt5CuYXZMCKsKIfbLxWLMx45G+FmjsHyEP5
-	CW6sxTHj59wIQ8a5DAEDk6IkGKbF+1mYuBf4uztDSPDqgPBMaRdm4o+KFDFQq/
-X-Received: by 2002:a05:6122:1796:b0:575:9cb5:a87d with SMTP id 71dfb90a1353d-5840da90c61mr3408023e0c.2.1779783058678;
-        Tue, 26 May 2026 01:10:58 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-586f791fa49sm15671159e0c.12.2026.05.26.01.10.56
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2026 01:10:57 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-95f2b0bd920so7720771241.0
-        for <linux-next@vger.kernel.org>; Tue, 26 May 2026 01:10:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+E8ShZoEAp0aJvQIhrdYS2OhKE0ldnMAqxAHC2SPykAqOJ8p0PkfsUiide5p1XRMOEz5PA9uupV1Kx@vger.kernel.org
-X-Received: by 2002:a05:6102:2a4c:b0:631:44d9:2ca9 with SMTP id
- ada2fe7eead31-673cbd0a917mr6568746137.13.1779783056566; Tue, 26 May 2026
- 01:10:56 -0700 (PDT)
+	s=arc-20240116; t=1779796832; c=relaxed/simple;
+	bh=2UDTdK0W43D7kNgydiYJHP+ygtizoZJBGc4OQTtpRGg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EoM2shJKuYvOStm4NqOMmZWdT2FgYXDOT+dyR4PHC/sN1ireuHXGnWG6C5k4KQJh+KKqtTTaBweYP4tgW11osg+wPk8AMHWICeeDq22vCdUOjMh5dQZkSs0VcoeTbQCDGSwXxh/CIQAo963KbOiVVosZD2o+yd99xePEYAhR2m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 64QBxrd0003769;
+	Tue, 26 May 2026 20:59:53 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.5] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 64QBxksh003734
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 26 May 2026 20:59:52 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b312f723-1dff-4507-9889-0687b75b55fe@I-love.SAKURA.ne.jp>
+Date: Tue, 26 May 2026 20:59:45 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260503040331.71875-1-julianbraha@gmail.com> <fd28add8-fa62-4655-a630-0293473fc758@kernel.org>
-In-Reply-To: <fd28add8-fa62-4655-a630-0293473fc758@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 26 May 2026 10:10:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVNBdYJfxdaUOEmuZUvDMGRxD-7uRRVhW7CZqK_UNpvgQ@mail.gmail.com>
-X-Gm-Features: AVHnY4IxCBQRQwRrHoNhM4qpyFTjlN9TBUyPFpLI1x90SI005W0IVz0VySyc8-g
-Message-ID: <CAMuHMdVNBdYJfxdaUOEmuZUvDMGRxD-7uRRVhW7CZqK_UNpvgQ@mail.gmail.com>
-Subject: Re: [PATCH] riscv: replace select with dependency for visible RELOCATABLE
-To: Paul Walmsley <pjw@kernel.org>
-Cc: Julian Braha <julianbraha@gmail.com>, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Linux-Next <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [kernel?] linux-next test error: WARNING in
+ class_for_each_device
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Zhang Yuwei <zhangyuwei20@huawei.com>, gregkh@linuxfoundation.org,
+        Mark Brown <broonie@kernel.org>
+Cc: syzbot <syzbot+50b5f81fff158669504a@syzkaller.appspotmail.com>,
+        dakr@kernel.org, driver-core@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        rafael@kernel.org, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com
+References: <6a1535d6.820a0220.e7972.0008.GAE@google.com>
+ <8e1f611d-e048-446b-a325-aa81c64f837c@I-love.SAKURA.ne.jp>
+ <a3ca7056-b215-4632-b86a-c722d82c35e6@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <a3ca7056-b215-4632-b86a-c722d82c35e6@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Hi Paul,
+On 2026/05/26 16:19, Tetsuo Handa wrote:
+> On 2026/05/26 15:08, Tetsuo Handa wrote:
+>> On 2026/05/26 14:55, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    d387b06f7c15 Add linux-next specific files for 20260525
+>>> git tree:       linux-next
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=15eb7796580000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=8dd72cf810e753a6
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=50b5f81fff158669504a
+>>> compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+>>>
+>>> Downloadable assets:
+>>> disk image: https://storage.googleapis.com/syzbot-assets/39490dfbc250/disk-d387b06f.raw.xz
+>>> vmlinux: https://storage.googleapis.com/syzbot-assets/0789ac7ac5fc/vmlinux-d387b06f.xz
+>>> kernel image: https://storage.googleapis.com/syzbot-assets/4464df9f5ccf/bzImage-d387b06f.xz
+>>>
+>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>> Reported-by: syzbot+50b5f81fff158669504a@syzkaller.appspotmail.com
+>>>
+>>> ------------[ cut here ]------------
+>>> class_for_each_device called for class 'devlink' before it was registered
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/base?id=1137838865bfc9a7cd5869c1dc5c22aa45ec12c8
+>>
+>> Why "driver_deferred_probe_timeout * HZ" => "driver_deferred_probe_timeout" ?
+>>
+> 
+> Here is an analysis from Google AI mode regarding this problem: https://share.google/aimode/UO1WnoKPDSbyjY5Qj
+> 
+> Greg, can you immediately drop commit 1137838865bf ("driver core: Use mod_delayed_work to prevent
+> lost deferred probe work") so that syzbot can resume testing linux-next tree as soon as possible?
+> 
 
-On Sat, 23 May 2026 at 01:48, Paul Walmsley <pjw@kernel.org> wrote:
-> On Sun, 3 May 2026, Julian Braha wrote:
-> > RANDOMIZE_BASE currently selects RELOCATABLE even though RELOCATABLE
-> > is visible to users. Some other architectures, like x86, use 'depends on'
-> > for RELOCATABLE in their definition of RANDOMIZE_BASE, so let's do the same
-> > here.
-> >
-> > This select-visible Kconfig misusage was detected by Kconfirm, a static
-> > analysis tool for Kconfig.
-> >
-> > Signed-off-by: Julian Braha <julianbraha@gmail.com>
->
-> Thanks, queued for v7.2.
+Below diff was generated via conversation with AI Mode in Google Search, and
+I agree that this diff should fix the problem. I'm waiting for Greg's response
+on how to proceed. Mark, can you carry below diff as a hotfix for linux-next tree?
 
-This was applied twice to riscv/for-next, in commits 7bce18b7c0835686
-and a74483879d1d4769 ("riscv: replace select with dependency for
-visible RELOCATABLE").  Apparently, the second commit is empty.
+---
+ drivers/base/dd.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-I noticed because it broke my workflow: I use "git cherry -v
-linux-next/master master" to check which of my patches were accepted
-in linux-next.  Thanks to your empty commit, all my empty separator
-commits are now flagged as present in linux-next...
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 172a02a438a2..265717a19b08 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -298,10 +298,14 @@ int driver_deferred_probe_check_state(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(driver_deferred_probe_check_state);
+ 
++static int deferred_probe_timeout_triggered __data_racy;
+ static void deferred_probe_timeout_work_func(struct work_struct *work)
+ {
+ 	struct device_private *p;
+ 
++	if (cmpxchg(&deferred_probe_timeout_triggered, 0, 1))
++		return;
++
+ 	fw_devlink_drivers_done();
+ 
+ 	driver_deferred_probe_timeout = 0;
+@@ -323,8 +327,9 @@ void deferred_probe_extend_timeout(void)
+ 	 * If the work hasn't been queued yet or if the work expired, don't
+ 	 * start a new one.
+ 	 */
+-	if (mod_delayed_work(system_wq, &deferred_probe_timeout_work,
+-						 driver_deferred_probe_timeout))
++	if (!deferred_probe_timeout_triggered &&
++	    mod_delayed_work(system_wq, &deferred_probe_timeout_work,
++					driver_deferred_probe_timeout * HZ))
+ 		pr_debug("Extended deferred probe timeout by %d secs\n",
+ 					driver_deferred_probe_timeout);
+ }
+@@ -357,10 +362,11 @@ static int deferred_probe_initcall(void)
+ 	driver_deferred_probe_trigger();
+ 	flush_work(&deferred_probe_work);
+ 
+-	if (driver_deferred_probe_timeout > 0) {
++	if (driver_deferred_probe_timeout > 0)
+ 		schedule_delayed_work(&deferred_probe_timeout_work,
+ 			driver_deferred_probe_timeout * HZ);
+-	}
++	else
++		deferred_probe_timeout_triggered = 1;
+ 
+ 	if (!IS_ENABLED(CONFIG_MODULES))
+ 		fw_devlink_probing_done();
+-- 
+2.54.0
 
-Thanks for fixing! ;-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
