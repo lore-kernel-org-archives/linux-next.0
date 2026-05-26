@@ -1,201 +1,142 @@
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
+Received: from mail-ot1-f77.google.com (mail-ot1-f77.google.com [209.85.210.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34751A2C0B
-	for <linux-next@vger.kernel.org>; Tue, 26 May 2026 02:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0154730AAA6
+	for <linux-next@vger.kernel.org>; Tue, 26 May 2026 05:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779762619; cv=none; b=XkTFXmGvoNxxBryCdb7ICbvYGwAeIpvHWXkT2ZaDwscnXch9KA9ph1qMB9ZWeLfelueRGPYsf22yymkTAxpjkHHj/3JF8s9exF3HhPr9aQoJnM3lEZYK7pmVTfYrYsxqzFjiOOvoVmbpNQC4jH445382XtMaNVnRdcoqmbxTnLA=
+	t=1779774937; cv=none; b=Bu7lCB+4Ce19e52N4PL/oYrxOQbTRzOTWaYMUvOJXnHZ36bzZu7Zm1VWc4WpOG41D8g7huZJIrpnAYJdh82UW4fO8+WlkciBER21WE9C7uIDHm/AvKZG1x7C+N0lFGXuhZ1AvRn/BNX4/8W2g1Xtd9BQ0796imU1WfN1122atMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779762619; c=relaxed/simple;
-	bh=pIG3K26mNiQVUUQxdeRiLD3osxr8767uBD1zQqNogCc=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=kGVTUN7OfmP7Wbl04pwFkAbST+XRpH8nL6IVwfhlaEmKV6zdPe2SOF8Xj6HBvjYSb+Fs0HN7y/tnXr+uNWmrAFdS17P++Xk0bfl/4ykR7orKD9mCCwhoaGiMdfNxlX1SUzJ71oe0Fh+n1xqllUIlwwJ4ajPDFquwyj0CAmMfH0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=C6DpagVo; arc=none smtp.client-ip=74.125.82.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="C6DpagVo"
-Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-30455f77e0eso6615561eec.0
-        for <linux-next@vger.kernel.org>; Mon, 25 May 2026 19:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1779762617; x=1780367417; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UXNccu4RaH9r0MBBT5pwfHMhk5Jy0IquBVRxyQ/AI7g=;
-        b=C6DpagVoaFB1JOo/p5gp8xQT+vK8lcVCefrqp7Siupw5D8mW+DKgQMITIP/P7cgwg6
-         ww3f14Je48HyCNoWiF0nYhEIN/571c73T9H0KhYgFTovCVD7DVLRdFdcEPwiFRYwn1/Z
-         OVi4FCyvA1+7k7ytf5Rrc+pegMJFWP/LfKjbIqDDoDcfRT4KNiLR6WJO6qQCPw8guWI5
-         zyJhL4HfHH/NnGLJd+fp/K0dC3a9sS8wWbSJojdHOC5v3F6yPp2htnMUt5oWNPf5MXCw
-         t2DO58mm1Ro0mjw3KnU5JMuFbb74R7DVmAwqpcIbYCmQ1k84zgXx23XmxQcXHyH7nwic
-         7FTw==
+	s=arc-20240116; t=1779774937; c=relaxed/simple;
+	bh=lMCSEFV8+pa3wLR02ydXBcrxsbQfQFc6e2X+5TSNbUw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Aux/TefaQ5Kj2rxTNutbVXv+rzoGE7RSx6SZLIcLa6z6/aZgFT1YiBSyHGPJe3iXnfSz0sRv/cRBIvUZrbKgFt6M+RnX/hoPmKBHx991bENMovSodje6PzrLFyXkxCW2Z+1sm8+vqeEyDVciOEpF2P8VVo7Rc5gFCSN0mPPi1cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f77.google.com with SMTP id 46e09a7af769-7de44ba64e7so16750955a34.1
+        for <linux-next@vger.kernel.org>; Mon, 25 May 2026 22:55:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779762617; x=1780367417;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+        d=1e100.net; s=20251104; t=1779774935; x=1780379735;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UXNccu4RaH9r0MBBT5pwfHMhk5Jy0IquBVRxyQ/AI7g=;
-        b=csIqVgSGs0lDDE734NGPetNfYmKW3D4w6Jbfd+mZXqavs8VhQydUVvgCByMb2nwVV2
-         fY5zhJjvu/S6b/o9siY4cinYEMLB3Xgp4bO3/N7iJjm/yTkbE9M1mML+IWkqWAiZ7b+T
-         rr4WjpI/cybT4yXPrixQ16B5lr5r0Leh9Wx/Q3zws5DL2VrmoKSHlL+B5M16PCfM9gIE
-         54DdNJ2pJUilfizmPIbH7wj/F+h01wX2/4E5jjxmWaXPIe1Q53+vM/OehEOVifHt+Yz9
-         Cg+NUdJ2CzT7b88Kb6OPjLQu77P4VJ2dfzMapWhDOWECbtyxK98YdvEozCge3AA0TWp7
-         UA6Q==
-X-Gm-Message-State: AOJu0YzfuIB/Eeh0Nc+IFeAbCViqI3p2Z2Gccdb0UmzDxdv2eDBUqrhC
-	n26OmhXsktrhyiD9Q1BLVjCPIGhvPabwbUZ2kxfWThDT2bspYpwY7GG6JheN4UHIOwU=
-X-Gm-Gg: Acq92OGxEJqUqYCjtsL0k+wtjA1tTgPgqBCcFikbkORdhBIzhTOTlFhgb8cqYfzcMWI
-	bXSpBnt3vmpDzmyhGTtHReTkDQIw6gIh0vGRKjx+I7Mn5i78yBHRFPK1Y1WqUtNSbq3j51ey019
-	fgNBPOYlPwlMDJhcuJUJl+oi6AiWwKst+N4q5ZNuQg+gZDcunHjDy9E9qrJdQharoGmGaFIyiKO
-	avGM80X7MzfbXYDD/UdsdxP08Qryqyf/Tv11VmmUdavzIuOwVzXn3uEQOoKAhnL61B8a/J2bwiF
-	I/ITGOAFbqJ3qdf2WR+lEX98fHr7SPMcpvV5B1xlE9f1HRcAn2IJmDSwasbIIck5gbjSGo9qhKE
-	sNhn2Jngluf8zcs1QSkwl2498u4GtZbtXwh3UG1rQRlg/VH5OWxaDYgsBPdlw+oAeUFyhc7FVgL
-	OZxkFjud+hCahFZEiftGZLvEqOwgc=
-X-Received: by 2002:a05:7300:bc97:b0:2dd:6937:79bc with SMTP id 5a478bee46e88-3044901ffb6mr6968888eec.6.1779762616794;
-        Mon, 25 May 2026 19:30:16 -0700 (PDT)
-Received: from 330cfa3079ca ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30452255234sm11675232eec.20.2026.05.25.19.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2026 19:30:16 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        bh=IW+p/sMFy0G3Hc6tzw3Lf+oD5Ghr4Guq54Wea1fhZq4=;
+        b=CO6MyIsRiLHNaXknK2xeKoBLChl4ZVAIcbFE8k2K2O8baxqroKYNUXYDBLwzel5ZfV
+         22Psz2skT5BiY/YtlhGUuCa1dNPAuyh9db/GgbIWqV/K+1ne2EpZmp8+h7Z+XwVdjBRm
+         GOQ1AJ6jaTg0HyTjstEJKlR1mf5omWgopIfzltwde4x7wqTLZuumzn45e2S/9IBee2lB
+         0jxTfK3n+XZvoA4QV5BTKG5J32EKP+tr9kSQhFaFz6PeNyR9Y/bsR9p2m/FpeKA01ROj
+         pQBOlrFzENeiJTl9Daz4v/C9OAzj0d6Dm1bHmeoVlP/mLmpcUEsiwlzWSYc0gZNBi0b1
+         BBJw==
+X-Forwarded-Encrypted: i=1; AFNElJ9ga1JB8Segg7jmNu+dLKCJuRHDzCYOPA8/HLZovn+IQAp+5auuxt+i6lmIdjMrqmWAd6CSzWvMFMaI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMgO6QfHYD11ChNKDAS4ToyWq6dG4UpFoNtZYCs27qhwCfzaEH
+	ZGRbP89f8MbJupFFileWpuNsBtJ/xGsn51JXrPritDGc8yJoVKjyqmq+PTVHeIX3HXURg9q/jTk
+	owY66P35s5OJ+lZKcqPjOF4+ZuXJ+CkgVuQlz/8ZTvf5+92kmbtZRgtDgX3I=
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - d387b06f7c15b4639244ad66b4b0900c6a02b430
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 26 May 2026 02:30:16 -0000
-Message-ID: <177976261587.5826.13662140795547368606@330cfa3079ca>
-
-
-
-
+X-Received: by 2002:a05:6820:458d:b0:69d:7bdb:adf7 with SMTP id
+ 006d021491bc7-69d7ec67604mr7183412eaf.38.1779774935007; Mon, 25 May 2026
+ 22:55:35 -0700 (PDT)
+Date: Mon, 25 May 2026 22:55:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a1535d6.820a0220.e7972.0008.GAE@google.com>
+Subject: [syzbot] [kernel?] linux-next test error: WARNING in class_for_each_device
+From: syzbot <syzbot+50b5f81fff158669504a@syzkaller.appspotmail.com>
+To: dakr@kernel.org, driver-core@lists.linux.dev, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, rafael@kernel.org, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-Status summary for next/master
+syzbot found the following issue on:
 
-Dashboard:
-https://d.kernelci.org/c/next/master/d387b06f7c15b4639244ad66b4b0900c6a02b430/
+HEAD commit:    d387b06f7c15 Add linux-next specific files for 20260525
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15eb7796580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8dd72cf810e753a6
+dashboard link: https://syzkaller.appspot.com/bug?extid=50b5f81fff158669504a
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: d387b06f7c15b4639244ad66b4b0900c6a02b430
-origin: maestro
-test start time: 2026-05-25 16:25:53.287000+00:00
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/39490dfbc250/disk-d387b06f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0789ac7ac5fc/vmlinux-d387b06f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4464df9f5ccf/bzImage-d387b06f.xz
 
-Builds:	   58 ✅    1 ❌    0 ⚠️
-Boots: 	  118 ✅   51 ❌    6 ⚠️
-Tests: 	15240 ✅ 2798 ❌ 1759 ⚠️
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+50b5f81fff158669504a@syzkaller.appspotmail.com
 
-### POSSIBLE REGRESSIONS
-
-  No possible regressions observed.
-
-
-### FIXED REGRESSIONS
-
-  No fixed regressions observed.
-
-
-### UNSTABLE TESTS
-    
-Hardware: aws-ec2-arm64
-  > Config: defconfig+aws-ec2
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a148a81ee38c2a863d3b180
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: aws-ec2-x86_64
-  > Config: x86_64_defconfig+aws-ec2
-    - Architecture/compiler: x86_64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a148240ee38c2a863d39aca
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a148c76ee38c2a863d3b722
-      history:  > ✅  > ⚠️  > ✅  > ✅  > ✅  
-            
-Hardware: bcm2837-rpi-3-b-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6a148c9dee38c2a863d3b82b
-      history:  > ❌  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
-      last run: https://d.kernelci.org/test/maestro:6a149869ee38c2a863d3fa4f
-      history:  > ❌  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a14857eee38c2a863d3a6e1
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ✅  
-            
-Hardware: cd8180-orion-o6
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a148c5bee38c2a863d3b66a
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a149692ee38c2a863d3ce36
-      history:  > ❌  > ⚠️  > ⚠️  > ⚠️  > ❌  
-            
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a14857fee38c2a863d3a6e4
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa
-      last run: https://d.kernelci.org/test/maestro:6a148c7cee38c2a863d3b74e
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_pcm-test
-      last run: https://d.kernelci.org/test/maestro:6a148fd7ee38c2a863d3bbd8
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
-      last run: https://d.kernelci.org/test/maestro:6a1499edee38c2a863d3fc6e
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: qemu-x86_64
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a147df1ee38c2a863d34439
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
-            
+------------[ cut here ]------------
+class_for_each_device called for class 'devlink' before it was registered
+WARNING: drivers/base/class.c:416 at class_for_each_device+0x2d8/0x390 drivers/base/class.c:415, CPU#1: kworker/1:1/37
+Modules linked in:
+CPU: 1 UID: 0 PID: 37 Comm: kworker/1:1 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/18/2026
+Workqueue: events deferred_probe_timeout_work_func
+RIP: 0010:class_for_each_device+0x2fc/0x390 drivers/base/class.c:415
+Code: 8d 1d 38 5c 0e 0a 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8 62 fc a5 fc 49 8b 55 00 48 89 df 48 c7 c6 f1 46 5d 8d <67> 48 0f b9 3a b8 ea ff ff ff eb 1b e8 93 79 3b fc 49 81 c6 90 00
+RSP: 0000:ffffc90000ac7a20 EFLAGS: 00010246
+RAX: 1ffffffff17865d4 RBX: ffffffff8f984790 RCX: ffff88801e2e9f00
+RDX: ffffffff8bc34360 RSI: ffffffff8d5d46f1 RDI: ffffffff8f984790
+RBP: ffffc90000ac7af8 R08: ffffc90000ac7a7f R09: 0000000000000000
+R10: ffffc90000ac7a60 R11: fffff52000158f50 R12: ffffc90000ac7a60
+R13: ffffffff8bc32ea0 R14: 1ffff92000158f48 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff888125fdb000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000000ddb8000 CR4: 00000000003506f0
+Call Trace:
+ <TASK>
+ fw_devlink_drivers_done+0x35/0x50 drivers/base/core.c:1837
+ deferred_probe_timeout_work_func+0x21/0x220 drivers/base/dd.c:305
+ process_one_work+0x98b/0x1630 kernel/workqueue.c:3318
+ process_scheduled_works kernel/workqueue.c:3401 [inline]
+ worker_thread+0xb49/0x1140 kernel/workqueue.c:3482
+ kthread+0x388/0x470 kernel/kthread.c:436
+ ret_from_fork+0x514/0xb70 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	8d 1d 38 5c 0e 0a    	lea    0xa0e5c38(%rip),%ebx        # 0xa0e5c3e
+   6:	4c 89 e8             	mov    %r13,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+  12:	74 08                	je     0x1c
+  14:	4c 89 ef             	mov    %r13,%rdi
+  17:	e8 62 fc a5 fc       	call   0xfca5fc7e
+  1c:	49 8b 55 00          	mov    0x0(%r13),%rdx
+  20:	48 89 df             	mov    %rbx,%rdi
+  23:	48 c7 c6 f1 46 5d 8d 	mov    $0xffffffff8d5d46f1,%rsi
+* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
+  2f:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+  34:	eb 1b                	jmp    0x51
+  36:	e8 93 79 3b fc       	call   0xfc3b79ce
+  3b:	49                   	rex.WB
+  3c:	81                   	.byte 0x81
+  3d:	c6                   	(bad)
+  3e:	90                   	nop
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This branch has 1 pre-existing build issues. See details in the dashboard.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Made with love by the KernelCI team - https://kernelci.org
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
