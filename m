@@ -1,73 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from courrier.aliel.fr (courrier.aliel.fr [65.21.61.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB304376A04;
-	Wed, 27 May 2026 19:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4743B19DB;
+	Wed, 27 May 2026 19:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.61.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779910060; cv=none; b=qjkZ3FsXIAR9la/lmF808czBaDeZqYdGMZeyDTeCHZ6+I9890pUfwbdZ2PkncHkrV7mO+nTvXfPGEcLVwO0USTAn/6OjrUmpD6IPW3ps0Tu3CZOTJzgkDLcP0yI6ou/w3GrtNdEdgS0RsQmYrykbfYPcRJYygm9rdGKoLxirdEM=
+	t=1779911905; cv=none; b=KjchU86OFLLWAEu54mRIptagdNj0evmJp5JL0w1WwGfrZpSpcwCFjiQXQBJIYHNZU4/CXk+ZK/TuTTK+3xEhKxtD2X+KHRnwLECc6U/YX/TqQE7/QL+5/GN5PuIvp9wQxWAfgqsR7yEaDoLb32+ByTT4i1wy3tEXLB5NHWWkiUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779910060; c=relaxed/simple;
-	bh=I6rXmqj1/09InO5E55qZiYaeL3imTctwylNQj0iuz7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bSlxI1tP2+KpDqYyZ+zV+9NHNqBrPIPMhdf4xlbSuFmANk9BOR/o0p3HmANnU93jU/UPo2GhhpkiXIUYy3tvBH/wuWaIJp5tYbtP7FZmUjQEiZhR6tc/+/WWQYy629Y7yQkUy3pKA6thnWAlTrHGS3oA7gwq75XqvP4VlbCuuZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MpkBKtz8; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779911905; c=relaxed/simple;
+	bh=HC5gT9EIYoGwzW37HjmodDW9AwH5uI5qxc9Cxqota1o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VaRgTgKRNqRDOYEneEJDlxWwcb6lXw1SJIs3ReQrrd7fCkCacHlBcUlXYFD6gGsA5HagWyqADiuHJyvYOB2EiPjRdr7MR7euncaYCqvP8UdP6UT3ZgG2WltZNqFdRaYFjlcbyc6+nRtcP5RCC9PQTH0z7KOZ1pICQ7+DhicwCGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliel.fr; spf=pass smtp.mailfrom=aliel.fr; dkim=pass (1024-bit key) header.d=aliel.fr header.i=@aliel.fr header.b=AOibaHqp; arc=none smtp.client-ip=65.21.61.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliel.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliel.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpkBKtz8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A1B61F000E9;
-	Wed, 27 May 2026 19:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779910058;
-	bh=SklbkO+cYcSUJ+xy8Q2xa2q3pd9qKXRXxja0KGBXedM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MpkBKtz8W06VXzx0kzrk+OMYxdxCgEkAd980ksbz+soshD76ZTpt16qqhyDxtb8uZ
-	 j6KP7y25kHD9om1THmqjwAvrv3m11ItirD9HNWbxgEY/TnlG+tAcUTMERS31s/dQEJ
-	 C6qDSyGTa4uBrQ3Qtg4rd33LBuUpurT9vnOCeAgJwfq1PdtLcZc83rULO+YEszghM4
-	 +Ftc/tzNqri7H9tgYQ2pWiN55x5p+DcfwLlmH/mStaqW+nLUMfJ04EynRK3yFEZmj1
-	 FzGeXwwrC1h9PIK0wA+vCuTFLGEBHjg7pkkVEqJgYMciaoUOe6ioP2dZq0SJ33jo2R
-	 5+eEqopkrj4yA==
-Date: Wed, 27 May 2026 09:27:37 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <ahdFqYqzxRoGFuU_@slm.duckdns.org>
-References: <ahWOVFZZScPjm2Ow@sirena.org.uk>
- <CAADnVQ+yjm0SJ0UQMeuS82MLDeo1bvZKSMMDh-K8D9-PNu=p8w@mail.gmail.com>
- <23a429b4-bdf1-4f96-b3af-7ab3186e99d3@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=aliel.fr header.i=@aliel.fr header.b="AOibaHqp"
+Message-ID: <91ccd18f-e941-490f-8e71-62cc50baf1b7@aliel.fr>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aliel.fr;
+	s=courrier-s1; t=1779911443;
+	bh=HC5gT9EIYoGwzW37HjmodDW9AwH5uI5qxc9Cxqota1o=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=AOibaHqpwSRqvuBi0WYTs/S1qId4v7y9bvSItoifdijsVjeJIflWtGCNgW0M38wOR
+	 /4je42yw8WR0/aZORE+d92o2PeUGKkvxAXSRPRZKssOQUzi7opyrP9us7Vp9GV/IWG
+	 ETDs/67ckL04vhNyOzNmTRz4oxQvcujJ/k73/ssA=
+Date: Wed, 27 May 2026 21:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23a429b4-bdf1-4f96-b3af-7ab3186e99d3@sirena.org.uk>
+User-Agent: Mozilla Thunderbird Beta
+From: Ronald Claveau <linux-kernel-dev@aliel.fr>
+Subject: Re: linux-next: build failure after merge of the thermal tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <ahbqBvZF_zZGJyrF@sirena.org.uk>
+Content-Language: en-US
+In-Reply-To: <ahbqBvZF_zZGJyrF@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 27, 2026 at 02:24:49PM +0100, Mark Brown wrote:
-> On Tue, May 26, 2026 at 03:08:06PM -0700, Alexei Starovoitov wrote:
+On 5/27/26 2:56 PM, Mark Brown wrote:
+> Hi all,
 > 
-> > thoughts on the best way to fix it ?
-> > Pls send it to bpf-next. I think it's fine for it to be in one tree only.
+> After merging the thermal tree, today's linux-next build (arm_multi_v7
+> defconfig) failed like this:
 > 
-> That's fine from a -next point of view since bpf gets merged first,
-> you'll also need to ensure that the sched_ext stuff doesn't get sent to
-> Linus until the bpf changes have landed or flag the dependency up to
-> him.
+> arm-linux-gnueabihf-ld: drivers/thermal/amlogic_thermal.o: in function `amlogic_thermal_probe_sm':
+> /tmp/next/build/drivers/thermal/amlogic_thermal.c:196:(.text+0x2f4): undefined reference to `meson_sm_get'
+> arm-linux-gnueabihf-ld: /tmp/next/build/drivers/thermal/amlogic_thermal.c:205:(.text+0x320): undefined reference to `meson_sm_get_thermal_calib'
+> 
+> Caused by commit
+> 
+>   b21d88de69184 (thermal/drivers/amlogic: Add support for secure monitor calibration readout)
+> 
+> I have used the tree from next-20260526 instead.
 
-Just sent the fix patch for bpf-next. And, yeah, flagging the merge order is
-what I usually do.
+Hi Mark,
 
-Thanks.
+Sorry for the noise on this one.
+I can reproduce it on this commit, it seems it would need to add a
+`#ifdef CONFIG_MESON_SM` and a else stub for those references.
+
+What is the path to solve this issue ?
 
 -- 
-tejun
+Best regards,
+Ronald
