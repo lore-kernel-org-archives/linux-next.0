@@ -1,39 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730F319852;
-	Wed, 27 May 2026 14:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3F53451B3;
+	Wed, 27 May 2026 14:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779891408; cv=none; b=WR0rrOcHKzLBv1hFzY9mm7vTZ90Rt4KCDOA2VCRbtvnzghOHCohh7aDGWxF2godp6mmcLqSwvevi6H20+wNLEuaxSjVrhcb4BL7QhHa4s5RRdb3OEvZPmgfOXsxC+CatYsBa6BgsiVlBoPoHcOe9lgcDPkTGCLyABu2ugYu34ps=
+	t=1779891779; cv=none; b=V3xZpuQqMAWaToyc8hF0wlHnTuLaPfdpBuhPxfppAX0e0izWOHtgPWmE5S6bYcK/Y+Qi7VkXbplMkoIs7Fls/XlrCJqgPFwwB2ZRw9my5liWN9xAw41I2er2R6tKo41/sQ3e1d+UHoUhlfmc/KDBsbunPPnkHW0HJmDt2E+ZnZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779891408; c=relaxed/simple;
-	bh=rBJ7OEcpzX0ty1W1oU0GkLNAo4q6tJy5chLR4emqiXU=;
+	s=arc-20240116; t=1779891779; c=relaxed/simple;
+	bh=pr2XFmE66m7JtFA//DdPkw5VUhssVcJPCpbTLHJB+cc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=biCKfi4p37tXCKZMh3kRi02c6ivzxsxwK2Ghma4mz4ZU7902KnXVvb70Tx/brpBCTZ0ediOsllCFz0DbXW0OyicAQErVXnyv7jycLEIRnfToh9QjWc4JRgMeMxpnYayDYj0XQh6TmsNN+SqGEfJE318AA0uyW+t+rSo5oTuZ1ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evtNM+7V; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Q1Ywnv0HhmYvc4aSX+In1mxiOs6p9E+DJI3AkRKuFNypN65H9ViD2fm6yZly6z7B9ho1sU3FxacKt7EkFrWWgTZ4QYRcKC3Tt1KI83mAGDutX/bAdMuPZIORjdWMf6ALDP410GMU5W6a/G2ozr+BIu79U1f6vMgCaGJB9jKoZj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFAWsnxY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evtNM+7V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F641F000E9;
-	Wed, 27 May 2026 14:16:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFAWsnxY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DC91F00A3F;
+	Wed, 27 May 2026 14:22:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779891407;
-	bh=jmeYr36B3ddjtnomFK/HAMLXKdAGWqgpOPH1Z2Q/8Bw=;
+	s=k20260515; t=1779891777;
+	bh=YNExk73VztDYn6co2AUObJ3GUK9qqB5SSKbjrnI6JWg=;
 	h=Date:From:To:Cc:Subject;
-	b=evtNM+7VtCoJcH8yEKBJtykbWrpLfUEInXViAK+f+EHEFIeKIjhuZXjrT6k+oTkrz
-	 gxSBauAmb1rbqrcDET0y5/tbaGM7iJrE0cUft36DSSBrSy77zmk62SqUIdh7XKXyUU
-	 KN0MD5d1Xl+Oe7TinL0HHDowZ3ORxg9eAPFqRi9tN1H61XLaxICd3qw06GlJZbU4UU
-	 mgT6gDbYHgFHqzSdTfFnQgAc4WaApdSd6mnuve3Umd0jOcjd+3KCnGgvO3uUtbohiP
-	 k3iWOSq//22i2U6x8To/7Ni/4MpBri76+BqFuYfrq7O1YhW1m4BS++Vd5PkKXcGK9p
-	 SAFmrUVW6uSKQ==
-Date: Wed, 27 May 2026 15:16:43 +0100
+	b=YFAWsnxYA3v28700Us0ToyXfFBIIJsg9+1rM4v4o5r5abn3gCScVd94hhlPHpA8Te
+	 3CJ2V71h2AA/a2QlZCClh7ANrKqCHpP/UxO71K9d1PdOOvucj7PEf77R8r1ZU5xt1c
+	 Xa/N4GlRO5GiwzSiVFLsm2O2UU6s8G++k/SgRQY3RT6H1yZAS0AzDjDXQzrTYIKiGB
+	 D+WUoJUoSDbMqUlNqH5jkNWP8uAa1IAkj580ZbmSdzTz3RumFKMVS6k2zSyAzFMGQx
+	 csLEgiRyXzuL3iAmjHmw69AEP6cZgo80yG6ewOFzsGDqcbDBgLxwA6942QKw6gWgp1
+	 JTvWcEJdNXw3g==
+Date: Wed, 27 May 2026 15:22:53 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>,
-	Mateusz Nowicki <mateusz.nowicki@posteo.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the block tree
-Message-ID: <ahb8y-KE12lOUIVz@sirena.org.uk>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: linux-next: manual merge of the kvm-x86 tree with the tip tree
+Message-ID: <ahb-PZwR5mEd8A9W@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,73 +44,106 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TZhMIX8GS/PUZHHd"
+	protocol="application/pgp-signature"; boundary="oJJbkxoBRlp7+aMD"
 Content-Disposition: inline
 
 
---TZhMIX8GS/PUZHHd
+--oJJbkxoBRlp7+aMD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the block tree, today's linux-next build (arm64 kunit)
-failed like this:
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-ERROR:root:error[E0308]: mismatched types
-   --> /tmp/next/build/rust/kernel/block/mq/operations.rs:274:28
-    |
-274 | init_request: Some(Self::init_request_callback),
-    |                       ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn
-    |                       pointer, found fn item | arguments to this
-    |                       enum variant are incorrect
-    |
-    = note: expected fn pointer `unsafe extern "C" fn(_, _, _, i32) -> _`
-                  found fn item `unsafe extern "C" fn(_, _, _, u32) -> _ {OperationsVTable::<T>::init_request_callback}`
-help: the type constructed contains `unsafe extern "C"
-fn(*mut blk_mq_tag_set, *mut bindings::request, u32, u32) -> i32
-{OperationsVTable::<T>::init_request_callback}` due to the type of the
-argument passed
-   --> /tmp/next/build/rust/kernel/block/mq/operations.rs:274:23
-    |
-274 | init_request: Some(Self::init_request_callback),
-    |                       ^^^^^---------------------------^
-    |                            | this argument influences the type of
-    |                            `Some`
-note: tuple variant defined here
-   --> /usr/lib/rustlib/src/rust/library/core/src/option.rs:580:5
-    |
-580 | Some(#[stable(feature = "rust1", since = "1.0.0")] T),
-    |     ^^^^
+  arch/x86/include/asm/tdx.h
 
-error: aborting due to 1 previous error
+between commit:
 
-For more information about this error, try `rustc --explain E0308`.
+  b7d2173946efa ("x86/virt/tdx: Add SEAMCALL wrapper for TDH.SYS.DISABLE")
 
-We build with --kconfig_add CONFIG_KASAN=y --kconfig_add CONFIG_RUST=y
-(and would also do an allmodconfig which picks up CONFIG_RUST=y in any
-case since there's a usable rustc installed).
+=66rom the tip tree and commits:
 
-Caused by commit
+  4487492b92a4f ("x86/tdx: Use pg_level in TDX APIs, not the TDX-Module's 0=
+-based level")
+  3f330fbb918fb ("x86/virt/tdx: Move mk_keyed_paddr() to tdx.c due to no ex=
+ternal users")
 
-  b040a1a4523d9 (block: switch numa_node to int in blk_mq_hw_ctx and init_request)
+=66rom the kvm-x86 tree.
 
-possibly interacting with some rust change but I'm not sure.  I have
-used the tree from next-20260526 instead.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
---TZhMIX8GS/PUZHHd
+diff --cc arch/x86/include/asm/tdx.h
+index e5a9cf656c072,32fbdf8f55aef..0000000000000
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@@ -145,32 -177,15 +146,17 @@@ struct tdx_vp=20
+  	struct page **tdcx_pages;
+  };
+ =20
+- static inline u64 mk_keyed_paddr(u16 hkid, struct page *page)
+- {
+- 	u64 ret;
+-=20
+- 	ret =3D page_to_phys(page);
+- 	/* KeyID bits are just above the physical address bits: */
+- 	ret |=3D (u64)hkid << boot_cpu_data.x86_phys_bits;
+-=20
+- 	return ret;
+- }
+-=20
+- static inline int pg_level_to_tdx_sept_level(enum pg_level level)
+- {
+-         WARN_ON_ONCE(level =3D=3D PG_LEVEL_NONE);
+-         return level - 1;
+- }
+-=20
+ +void tdx_sys_disable(void);
+ +
+  u64 tdh_vp_enter(struct tdx_vp *vp, struct tdx_module_args *args);
+  u64 tdh_mng_addcx(struct tdx_td *td, struct page *tdcs_page);
+- u64 tdh_mem_page_add(struct tdx_td *td, u64 gpa, struct page *page, struc=
+t page *source, u64 *ext_err1, u64 *ext_err2);
+- u64 tdh_mem_sept_add(struct tdx_td *td, u64 gpa, int level, struct page *=
+page, u64 *ext_err1, u64 *ext_err2);
++ u64 tdh_mem_page_add(struct tdx_td *td, u64 gpa, kvm_pfn_t pfn, struct pa=
+ge *source,
++ 		     u64 *ext_err1, u64 *ext_err2);
++ u64 tdh_mem_sept_add(struct tdx_td *td, u64 gpa, enum pg_level level, str=
+uct page *page, u64 *ext_err1, u64 *ext_err2);
+  u64 tdh_vp_addcx(struct tdx_vp *vp, struct page *tdcx_page);
+- u64 tdh_mem_page_aug(struct tdx_td *td, u64 gpa, int level, struct page *=
+page, u64 *ext_err1, u64 *ext_err2);
+- u64 tdh_mem_range_block(struct tdx_td *td, u64 gpa, int level, u64 *ext_e=
+rr1, u64 *ext_err2);
++ u64 tdh_mem_page_aug(struct tdx_td *td, u64 gpa, enum pg_level level, kvm=
+_pfn_t pfn,
++ 		     u64 *ext_err1, u64 *ext_err2);
++ u64 tdh_mem_range_block(struct tdx_td *td, u64 gpa, enum pg_level level, =
+u64 *ext_err1, u64 *ext_err2);
+  u64 tdh_mng_key_config(struct tdx_td *td);
+  u64 tdh_mng_create(struct tdx_td *td, u16 hkid);
+  u64 tdh_vp_create(struct tdx_td *td, struct tdx_vp *vp);
+
+--oJJbkxoBRlp7+aMD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoW/MoACgkQJNaLcl1U
-h9CUTAf+I+SYj2SrIEDUI/inkUzCf+JGF5tloCVY1WXDBp8+7CJs8DHL/yQ/Df1n
-0PrzgMnMD0n6hIfDwE8jXqwH6/rMZLn4h41i4WJOsEF1axkEAFh5kTC/4KRNPfAh
-SF7c5tC0lOMTAHTn4n3jCLd8juIbjMwrivkhjyVNscm5ll4wnX0gBx5WEP3KmhHn
-BafhQYOLxOV63rre+xJYbb6JbCAuEN9jtY/M0OCw12InhXaw3zcmnjKc7vWNUkZ/
-LKJLImRnL4PCVOZHPMgDXoRfIwKzOlPFxTVvABHkgDKNsiJ5NtvtvrTvBi8vchuz
-SwY1BplMqaoOWNFUGUkTl4gdUPT4fw==
-=kykK
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoW/jwACgkQJNaLcl1U
+h9CprQf9GVX3rKVD/iy2CGviivjQmO77aHKsC5Vyl+r6F85Bvll05g2CQVBU3KMP
+vyHyVOdjYHqvp5ITXrPOsLJ84QmpWpWb+nDTiRDPNGN1R/a3biu/Pt/gS83XOVJL
+6I7RSWbhlpMxHeOtaQ9LWRWWog9r/D4LqrrTS31AGz1iKHakntOlcJeAPanR1aLZ
+FGJBmDuJZIFo113LtskHpDaIrpZY0OLGinhxdvclGnmnfWDfRmBs9KUfQlVfdP9F
+M4lTTxA4uS/jzw+TOeAN2cLMO/P3wJEBX48KpvxSU4mYQBwxtwOJvYnyD3HRqSOf
+dePjnB8rWHajeXIA5rUlb6dBXqZiHA==
+=d4Rh
 -----END PGP SIGNATURE-----
 
---TZhMIX8GS/PUZHHd--
+--oJJbkxoBRlp7+aMD--
