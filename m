@@ -1,133 +1,194 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BC73B6BF1
-	for <linux-next@vger.kernel.org>; Tue, 26 May 2026 22:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779833300; cv=pass; b=RIVgtfv/dsQ5TpZ+LH9ju/ZPI+ewpV2bwU1UoxWPhIhAhNeMMPRMEV/X/2UWdIlhp/6KHMQVENcUrTwKLOaZDvV3i4483sPdPgXMagukcYrZHe3z7MD4b26hrqZinDQ1Ei9NgAo2iT/OSdMZTpjgexZfsJdSZecrt7/csH5o56E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779833300; c=relaxed/simple;
-	bh=E5eVcu06k2o3PY8A09XNvdjNWnpe+Yc96+AlUiI1rCE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k4s5x08hEn3RFsmrC/FbUQPl93uas3SwnRTTO6qqCRDg31+GRpDSDrcAzk5gYZa9mRGDFrEtc/uK+46znR2Qm3RRA6I+6JR8/8aUvdPbREdsyLns5nw/F/uR5x/sEdaXuqJh6dCC9aJuL8dGXk1H7sghTkbxAIiLpijQohecNu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3OH9WlQ; arc=pass smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFCE2FF657
+	for <linux-next@vger.kernel.org>; Wed, 27 May 2026 02:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779849042; cv=none; b=C8HYXc6gwqxsRRBROGXz947aZkFPJ8ddgFlgy4ajVJ+nIcaES6Qt2LY5cQ/hlY4D4hRWp9MKs5+/bKrIE4qVDWF1Q4BhmY+mN0rAkMMgKIv0Ge7u2cZ6Sixr2Nt/WTBrsyBlXg0STK4SnnUinpaEKU/NXJLNrfi8+iGU3rNRx28=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779849042; c=relaxed/simple;
+	bh=CxHU/6V8TwjCb3Pixut/uM962o0UMZcw7VUTb4fadY4=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=pJDOU7+o0WjSMsngbpP6xrtS3MNcxWJ0wUPKDApGKqX8Nuz2oHv6PhpqajO7QIVwQD2X3nS7/HwRaAoWubd2rZweq3PClhYREx/FbiW9lLF6Sjg5zqnQTlM3+R0/7ROG0Bgu4iNYDvi/Q/laf41PM9hH+itwTbPx4TBzArXhJpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=NDaAf6CT; arc=none smtp.client-ip=74.125.82.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3OH9WlQ"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4904fd4f6aeso34202455e9.2
-        for <linux-next@vger.kernel.org>; Tue, 26 May 2026 15:08:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779833297; cv=none;
-        d=google.com; s=arc-20240605;
-        b=awR+fiKoDcUChc2k/D48K4XP8NYtqormCnE8u9HvP5Ar02z7Cu/HuyyHcFGuW7ZK8H
-         BVph3xIBEOKhzq/is/9ePE5wZl18MXtNrftFyq3BQ+xUG2GAqkCx4FT2sU+FHxvPSpUR
-         HFw0nllIO07M8h6dIlGGWyaY6QH6nK84+4rkKqv8GPjP9N2PraNh9HD/U+B32grCARjI
-         o93iGFjSI+twxlJ545bIKNp5TUyZW/oFvTUJra/34wydXx52KLDdckeDBA54eMd5Gxgt
-         oaT9nMnvWZnuotWuEQy2e6ZoU4om2CahC9PtfJAdGXoSYyXBUNOQzdvBfEvB4cfRIzYn
-         vuoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=3RWZTrTlmetuoLNV2ZDm5Lkp+qABxyw2h/aIwZbrBFY=;
-        fh=6ccQgVKBppmTQjiRwdQN4Il3BuDdwQdeL2fXYBPdnnk=;
-        b=UiFt4Cka+wfZQOJ1Cwx9xl0Y2sBeXHoGbIegS5we/C1sGkzBJOr29OkIOi/RxCaUsk
-         UO7n2YZYuqifv5AJLncUGSEAETb/xmlTWpnE7ppuUXEvLyuicGl0Ymxp27KnXl8q8Ryx
-         Z88FxnQRCn6Bz6vg8PkBuWVAWLvp5wRbWBTw/Mg6Wnf/3tS4fz1UMA0913CC8upjfof1
-         8BN4wVrJ1SPcc0joG5wDr6l4Xgd3wihkSHStNwY9qxG09CHrm0XOoPSe/b10qKufY+Wq
-         a82ESkFoCR9VEoQ+/giCPug5h3VClXKa1Xkx8iPd/gJqiizsquk+IJ5CIKBvcRKgSarc
-         uL5g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="NDaAf6CT"
+Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-2bdcf5970cdso7947859eec.0
+        for <linux-next@vger.kernel.org>; Tue, 26 May 2026 19:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779833297; x=1780438097; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernelci.org; s=google; t=1779849040; x=1780453840; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3RWZTrTlmetuoLNV2ZDm5Lkp+qABxyw2h/aIwZbrBFY=;
-        b=j3OH9WlQ1ts8QFarLZzl677pF+Cb0EcpAd6njbMGwZCn1CKHhxh7onbuZy02ufV6y4
-         lsX+w4BSZmX0EtZHHMMuZeDbR0hSbcuxMCXOO42JnRG4+S9lMaitqHOph0X8eqXyu/67
-         RrahF/8WjjO1RilA/zmXhL0JAF8Nij8KB/JUh2QI4PfJ4EWei76Mk4CjgNMVNgBelP+7
-         qMtBG7ZH+xex97BI4YfEZSRTrDUhO810DOq/tQ3WFeNnOY+ANI0dT3afO00pzs+Wcm6R
-         kj1dTTUqV55QRo+IgFgiMbhqgrvS6eqBwA/GNQSUDeEMA0828F9BHvtQkdpFOmZfo8tt
-         C+pg==
+        bh=o5n7JwyWwPueBX2w5p98MeZsVLaRe/FbQXgmnj/nN+Y=;
+        b=NDaAf6CT9yKCzQFijmRZDSJPOjuxKAsEu7nVh2yUEG43G0t5tXnSHay/zeMpxhqWNS
+         YjxaZ1XPGKq3+SRyObhQjbVLBX5l+8yOQQZBoZpZ1XA+EddQdBmYpnuana5681cJtqIp
+         dA8Hw1Jk5+he7hcDaB5GtuqABNzYFK7mSrGxJF8wWkVly3g0rSe5PTOs+JQ1E8SFbvZ3
+         2OvP/CumLwSbWF5h0yeHcphH0dXSdhUaoTJKksDSY7wrL+uAPx8Fpp7XloGr4u8NbyVQ
+         +zA62yptoYHSjUihbMQLbarACtxMrefWmy7zYwLfNQZKJuYEpEsMNvSv2P4MedESjuAn
+         ujxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779833297; x=1780438097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3RWZTrTlmetuoLNV2ZDm5Lkp+qABxyw2h/aIwZbrBFY=;
-        b=PNrpZmkBOWk/Cym5Es3cM8lfkEsIYM6D4phgVFancZm66OiX70BMex9/WGkhl4ofZ9
-         weCDQ/1c3CcdKYupzd8/Lk/j5U3iBg1NMCKFl5IGhrPE1A6++ZNcs2DQdiXnWoOAHLwS
-         TEh0Tc1M4CM4iyvYOFMT/JdBbW9zR076Wg6EnWXitQLHV2qmMPkHwSvfLu29/KVBaCsg
-         jvp2iQbSKxHSyHK0Mqfv6wrl1ZBckgZ7FpZ526TKmtZOoLA7CGPnIL7LWK/HdFogzx3k
-         OOna2HrwXtpKSMJ9pBs6plesgkDPvBjthtFnCmwuozKrvnOVwG+/ENkguCx1R/pVZGqY
-         ejhw==
-X-Forwarded-Encrypted: i=1; AFNElJ/LPl6HSasvnR03OyinyAUNjYRRCTs9Wd/UDqgiBkv30+v7dSGhe1Ma0iSlfGRHr/6MsH2X27rcE40c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzt2gLhge2iqYOgXhWkUx3yWFU64kxx3rr/YfWdqN919lZ2nFH
-	a5SICtDyN0dmuFgSjL++KZVaOFE7ZTdF75+IAqqk75v/SlYG/11w+S2o1fisQY6/B5M7Bb42nse
-	EI1hn60797eyj7ITsxrWbUUp2y6fKMdw=
-X-Gm-Gg: Acq92OGgRPP2ZrV/W3NGOHFJP6iNY/U3v0S/6/CpfqrLkccB0Tbx+8JpKDMd33IdWv2
-	uzpwI2RCkZ0rqFkXxqEer8iBe9oXLTgGSiXjyICv5l2eUggWTTLJ4HDPYZmQZMXlCjnNp5wm3sO
-	gyj9P/Hd1n3MWa51qu3N0/svvDo85uz++iQX1E3tUwSWi7P4NlGXWXtbmAoW3MADalaPRK+8D6a
-	QuUFjJLFJGSgxgZDHWaYKNro1r8f8dCovSgh78MQG7E1s0lcN2Sg2dehcRBWUe/kBn1S4MHTIw9
-	yuDuisMbznU5/2rae3EawzJLy6ySxkT88MI2LWS3oL0L20cTNpMdPdm6I7eMcXk0LZu/R+3C+xd
-	CyoSva+izYHyB0ZIU2ByhATSj0YRI0kUx0/y7
-X-Received: by 2002:a05:600c:4510:b0:48f:d5a0:284e with SMTP id
- 5b1f17b1804b1-490428e03b8mr327634565e9.28.1779833297389; Tue, 26 May 2026
- 15:08:17 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779849040; x=1780453840;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o5n7JwyWwPueBX2w5p98MeZsVLaRe/FbQXgmnj/nN+Y=;
+        b=hsaC+tKl0Uz/hGVwJPCW+s4di1PkK32bDNtXtYdALXq30uD05p7Tnndk8GQOb1/3eG
+         gdUuTNjHOkuUMtpJHV8vpaYY0RxgXlawXml6TSatHZQBZU3DjNUIv2h3AoKVQ1zVQu1c
+         4cobtckJcPaHsOWGuW3vdxCP2fYbWKuW517uOvQ2Lb6gSgqO338Y9PlFDcd38yqEXyWT
+         8kSvG5WdtquAx1WYgLXTgWJ7UjBnGHx39p02oWelq5X56iBLD6cbjq8cltd0V69lf7lr
+         nXg30ZYCm1o/ryUhCm2pBBH7k/GSwavcHOPdn46nfagZ4vC7htxKFa9SHquccg5FEPIH
+         n7Vg==
+X-Gm-Message-State: AOJu0YxS3zMUv/7248uZcrtZ1GMrHuCgaSaHAp94SthqEf2W+wzvuKOb
+	nP6AA+UYZ8+CmM35O8rymEZs08bdv9J9iWfpNzoBzZKYwtkf7MG/JKU9xaYxGQI6eKUloRYrcl0
+	3ghFg
+X-Gm-Gg: Acq92OGrUAjU95uGQdbS1POoyv+7xT+w9gkaLQP1kO/xJ3w1b4uP0pUJsHr/Kp0mbVB
+	SbxdHRwQOhT/JEBu5JgsPDmQ/n0gN8tIhDj4CZ/yDnMNZBpmXpZj6s6cOx9vYorjhohjU3Oh3RL
+	NEEUtnAM8xvN73q7kSwWmrZfjSvo4uCYqqU5TCb9YFzJbrQo9goVuPoXQGpapesaQvK8MEOcaqB
+	KQ4aYOhqsG8tdoLQakYa1qD5doQVcJb8oJHSUGIqeUdL+7QAkaJpcCYe3D80nHd3gEPD570rWsX
+	WA/cwG5abvhqlA7fJWeat6FDn8Qhx+Ofe39+M00yd/5VG/O8PjN0uexPJJul09pvBHrCE1srQVJ
+	nEyDivATzFH1obmBIEdflhle14K+rdODS5/DooCj99zGmRk1l6d9bj2nIX9ju4WsWmxVmPjatfa
+	141Vx8bmrIjIurJNQI
+X-Received: by 2002:a05:7300:ad30:b0:304:70d0:4f03 with SMTP id 5a478bee46e88-30470d05bc7mr5302101eec.6.1779849039887;
+        Tue, 26 May 2026 19:30:39 -0700 (PDT)
+Received: from 330cfa3079ca ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3045223103bsm11609492eec.16.2026.05.26.19.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2026 19:30:39 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ahWOVFZZScPjm2Ow@sirena.org.uk>
-In-Reply-To: <ahWOVFZZScPjm2Ow@sirena.org.uk>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 26 May 2026 15:08:06 -0700
-X-Gm-Features: AVHnY4L80QQm6oMmZo64_ik7eu9jKD9D8sG_L1XILYcew8M4vDIlUwIvnSeQ_D0
-Message-ID: <CAADnVQ+yjm0SJ0UQMeuS82MLDeo1bvZKSMMDh-K8D9-PNu=p8w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>, 
-	Emil Tsalapatis <emil@etsalapatis.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - e7e28506af98ce4e1059e5ec59334b335c00a246
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Wed, 27 May 2026 02:30:39 -0000
+Message-ID: <177984903885.6285.14412528575583560576@330cfa3079ca>
 
-On Tue, May 26, 2026 at 5:13=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> Hi all,
->
-> After merging the bpf-next tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> /tmp/next/build/kernel/bpf/core.c:3379:13: error: redefinition of
-> 'bpf_arena_handle_page_fault'
->  3379 | __weak bool bpf_arena_handle_page_fault(unsigned long addr, bool =
-is_write,
->       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from /tmp/next/build/include/linux/bpf.h:9,
->                  from /tmp/next/build/include/linux/filter.h:9,
->                  from /tmp/next/build/kernel/bpf/core.c:21:
-> /tmp/next/build/include/linux/bpf_defs.h:12:20: note: previous definition
-> of 'bpf_arena_handle_page_fault' with type 'bool(long unsigned int,
-> bool, long unsigned int)' {aka '_Bool(long unsigned int, _Bool, long
-> unsigned int)'}
->    12 | static inline bool bpf_arena_handle_page_fault(unsigned long addr=
-, bool is_write,
->       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   dc11a4dba2464 (bpf: Recover arena kernel faults with scratch page)
 
-Tejun,
 
-thoughts on the best way to fix it ?
-Pls send it to bpf-next. I think it's fine for it to be in one tree only.
+
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/e7e28506af98ce4e1059e5ec59334b335c00a246/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: e7e28506af98ce4e1059e5ec59334b335c00a246
+origin: maestro
+test start time: 2026-05-26 15:05:43.140000+00:00
+
+Builds:	   58 ✅    1 ❌    0 ⚠️
+Boots: 	   78 ✅   49 ❌    6 ⚠️
+Tests: 	14890 ✅ 2770 ❌ 2085 ⚠️
+
+### POSSIBLE REGRESSIONS
+
+  No possible regressions observed.
+
+
+### FIXED REGRESSIONS
+
+  No fixed regressions observed.
+
+
+### UNSTABLE TESTS
+    
+Hardware: aws-ec2-arm64
+  > Config: defconfig+aws-ec2
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15c4ccee38c2a863d75103
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  > ✅  
+            
+Hardware: aws-ec2-x86_64
+  > Config: x86_64_defconfig+aws-ec2
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15bc2eee38c2a863d6b9cd
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  > ⚠️  
+            
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15bf92ee38c2a863d71134
+      history:  > ✅  > ✅  > ⚠️  > ✅  > ✅  
+            
+Hardware: bcm2837-rpi-3-b-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6a15bfeaee38c2a863d71322
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
+      last run: https://d.kernelci.org/test/maestro:6a15c581ee38c2a863d7528f
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15c2d0ee38c2a863d743ec
+      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
+            
+Hardware: cd8180-orion-o6
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15bf95ee38c2a863d71146
+      history:  > ⚠️  > ⚠️  > ✅  > ✅  > ✅  
+            
+  > Config: defconfig+netdev+nfs-root-boot+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6a15e11cee38c2a863d89a4c
+      history:  > ⚠️  > ⚠️  > ⚠️  > ❌  > ✅  
+            
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15c2d2ee38c2a863d743ef
+      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ✅  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
+      last run: https://d.kernelci.org/test/maestro:6a15fc39ee38c2a863d96280
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: qemu-x86_64
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a15bc27ee38c2a863d6b9b8
+      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
