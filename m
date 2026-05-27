@@ -1,81 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC283F166A;
-	Wed, 27 May 2026 12:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F1F41323A;
+	Wed, 27 May 2026 12:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779884515; cv=none; b=d4g0ipLiGQ4XxyXTnCB4gETqvbWHOoT9tDyqeT4vz3QbYZbJKVkl6iAoeP9TyAWzqavwTgqlX5l+yM+FULJY4Fx/066al3pbXQ2Bpx7q6+oLYIWxFEfU3LDTU4QDSVD4Dm8xVALU3ZCXHW350Ev2epJcB59Gl+qVab//5gBVN6Y=
+	t=1779886604; cv=none; b=TXAD21g0iQuZizooHlnET+OzLo0Y91uO89mszZiE8DITAuPLXGDRaKeygnP1Pt9ZKRXRRDKaXW+QJRjtEhhnoUBrjDzbC/WSS6APwJreyyQuTJAaBdJ+Ll6i/VTi1rLm5kso/cICWdg5rwnLwSu/ls1yPu9djEXCkDt8RoBjOAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779884515; c=relaxed/simple;
-	bh=+ock5BjmwIc4mIc7jvSCt0nuLwfaywRtFxLwOz7V/Nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLE2GdEJNNtb6Sd8O9vr584sR/CAqvNTH62kiRxhoob8tXyz0y2CsjHlgFC97G+NRLQUDLOlq8wDkoC2THvix/VmXchT+tGwjEGlEt+d9ZO1Vq742IGOQ7DdvHfqMipqCoJxKeg/+NKHqnN833MFTMKAjvw7iAvNh/IlejvMs3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4h+W9e9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779886604; c=relaxed/simple;
+	bh=4rLxwUUobtxLi2aYb10parAuE8GlcyZjcJhD/XhGRwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AitQCfRWGkwpfKyE/FF1e2M5lGm2XOjMW4n6W8WWDagoz49Xsm7PJTzI7pQK+TZQ1SwhIZttuh0G/H+dPsMWcrfvCASLvs3N/hjwzISq/uXCbcX9GSisn4WNZR91glND+rXoDIigqu6kV2VmrEBkHn0TEmKAZvjRvbmDqXY7Fnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEZSUQui; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4h+W9e9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE9061F00A3A;
-	Wed, 27 May 2026 12:21:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEZSUQui"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79541F000E9;
+	Wed, 27 May 2026 12:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779884513;
-	bh=dh+fq42X8hy2doN6uVl/5NOyT+rMEbtomgNRKD7VrAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=W4h+W9e9bsnypnBKYUYut8kGsIYQ38xzHwZyAdCaZ1TOK53QJ+5s+okmdE7HT1Ptx
-	 M/rR3qiC0VNQh44kf+LSqD8EraRf4ZKekT+VT/G6AQ4aD3DNFWbStbhsJMSroWpBz+
-	 JHd1SbiVK6kA9SxrqmEdvnEJ9tdzWc6pf0FHP3BYFJCwtVpWRyJxRwVFTSEaR+LyR+
-	 U29ZmqgKnSb/mU+rK5tqZMcUmE/pOqX7gAgv4sJkeFAymCApwf1R/0B6TsLSGx6yha
-	 QbvwHfyqMHGu3/ULGImjHzBRZmCWt8xwyfcX/2KnPG+sLLztUsIoOAgxEOXL7cQBqi
-	 xVNVnpar81OSg==
-Date: Wed, 27 May 2026 14:21:49 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Dorjoy Chowdhury <dorjoychy111@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	Aleksa Sarai <aleksa@amutable.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	s=k20260515; t=1779886602;
+	bh=Iz6ILHYps36z57Fi0IYa4Ox1s2BzxTLYqpFQAL/+8Ak=;
+	h=Date:From:To:Cc:Subject;
+	b=EEZSUQuiZNfCfNpnbnB2yNdfAznULlOnX2K9Nc9sdDoyo4AjM+xNyhsw/dxxYhh80
+	 h2CayGXNdNry/x0EqU8vjuSJAhvl8xCdoNkdDlcqAOrj8Miyn1ZhFz4MiQ+uodlWTs
+	 KANa6AlQcS/8japbShQhxKcvGomo2MxW2Q1Mhs91qwRGQcl1Ab/zEzhfxmmjJizvhu
+	 KsbQIL0HSIYmJ6B3e81gtGS8Nev9UTIHbju7lRiJUN2/b9uFKtlcPrCkKHsYBy5v78
+	 RcXJI19FoEzdU2GoP9kWkzwAvbKbrZhyVQN55fH/FfIGVWpwmWQI5ThTF4uKkN0OzA
+	 MqhpdjxKP9ZoQ==
+Date: Wed, 27 May 2026 13:56:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Ronald Claveau <linux-kernel-dev@aliel.fr>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20260527-bordstein-reizt-gemindert-a76319be86a1@brauner>
-References: <agruPPybCx8q2XcJ@sirena.org.uk>
- <c34d1f0e-0707-40cc-b0c7-7b2648ec1863@sirena.org.uk>
- <CAFfO_h5QdRG2ptyuGRQtqxrpndwan98aOsX92bvN4hyvpgLPMA@mail.gmail.com>
- <e221b631-00bf-44b5-865b-ac970e6cb11f@sirena.org.uk>
- <1286370201.1726989.1779131564699@kpc.webmail.kpnmail.nl>
- <4bd253fa-c363-43cb-adaa-0248ac707a0d@sirena.org.uk>
- <12198575.2129298.1779371885282@kpc.webmail.kpnmail.nl>
+Subject: linux-next: build failure after merge of the thermal tree
+Message-ID: <ahbqBvZF_zZGJyrF@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3bEBuBnZo4k/NNOs"
 Content-Disposition: inline
-In-Reply-To: <12198575.2129298.1779371885282@kpc.webmail.kpnmail.nl>
 
-On Thu, May 21, 2026 at 03:58:05PM +0200, Jori Koolstra wrote:
-> 
-> > Op 19-05-2026 18:24 CEST schreef Mark Brown <broonie@kernel.org>:
-> > 
-> >  
-> > On Mon, May 18, 2026 at 09:12:44PM +0200, Jori Koolstra wrote:
-> > > > Op 18-05-2026 19:13 CEST schreef Mark Brown <broonie@kernel.org>:
-> > 
-> > > > Figured it'd be an arch specific version of a similar thing - I didn't
-> > > > audit them as you can see.
-> > 
-> > > These confusions with octal numbers in lists that aren't even ordered is
-> > > why I would prefer to use shifted values instead. I don't see any reason
-> > > actually why we should not just convert them all, apart from churning and
-> > > perhaps not doing it correctly (which would be bad). My rationale for mixing
-> > > was to use 1 << n at least for the remaining bits. If I remember correctly,
-> > > this is also what Aleksa preferred.
-> > 
-> > Yeah, shifted values do make sense to me as well - other than the
-> > inconsistent style the only issue I saw was that it's a bit less obvious
-> > that the values collide.
-> 
-> Yeah, that's unfortunate.
-> 
-> @Christian, can we get rid of these octal values? Or is that too much churn?
 
-Do it.
+--3bEBuBnZo4k/NNOs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi all,
+
+After merging the thermal tree, today's linux-next build (arm_multi_v7
+defconfig) failed like this:
+
+arm-linux-gnueabihf-ld: drivers/thermal/amlogic_thermal.o: in function `amlogic_thermal_probe_sm':
+/tmp/next/build/drivers/thermal/amlogic_thermal.c:196:(.text+0x2f4): undefined reference to `meson_sm_get'
+arm-linux-gnueabihf-ld: /tmp/next/build/drivers/thermal/amlogic_thermal.c:205:(.text+0x320): undefined reference to `meson_sm_get_thermal_calib'
+
+Caused by commit
+
+  b21d88de69184 (thermal/drivers/amlogic: Add support for secure monitor calibration readout)
+
+I have used the tree from next-20260526 instead.
+
+--3bEBuBnZo4k/NNOs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoW6gUACgkQJNaLcl1U
+h9Dlsgf+KCtrY/byJHomeAuC7dz1xT10elaQ22mgtkO4olrqs8KCS+zUi68a2Dvy
+w6J36R3TUVM77rIQUx2SLwVmH5YSpIZ1rXTmHvgu3bMy40JzhEFhF5x8kGdkoZJy
+I1lGvXfrnybZLOBZ/teTcr8lB2jknstpwk2GiD2rjmalgUTJ+3hsP1H8NquNOEYc
+yRQ6CEjnCBoMCLL6w3+C2NhEWM2qTHgg1D/jZ8zHFYjR8uNaTCMyYFgPj6fyXrXh
+mGWRtamp4+Zvgktkz4Tfoga1SJ6I5gqLKtTmYCbKnlRsT1crxA1NAgb2543og7R6
+IYikVFA2rkh3Kaj11Ed4UnKYEoGvqQ==
+=+II9
+-----END PGP SIGNATURE-----
+
+--3bEBuBnZo4k/NNOs--
