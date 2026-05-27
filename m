@@ -1,46 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9BB2E7F25;
-	Wed, 27 May 2026 13:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730F319852;
+	Wed, 27 May 2026 14:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779888295; cv=none; b=IyjykZrcz4VEcjoVP+hvfPE1XSS2hRT+fFX7d58zKnpMYj94gGA4TyIMtFWvc/95bRQ8nJxiY4BLx07V9TEiKzx3iFaNfcVwxzgX4+6ZBUtwOtCKojmyox7V2ujUovn0p5X2si4u0uBXkS6Skc09/7fx2iRFLXJTICTM5kiQqlw=
+	t=1779891408; cv=none; b=WR0rrOcHKzLBv1hFzY9mm7vTZ90Rt4KCDOA2VCRbtvnzghOHCohh7aDGWxF2godp6mmcLqSwvevi6H20+wNLEuaxSjVrhcb4BL7QhHa4s5RRdb3OEvZPmgfOXsxC+CatYsBa6BgsiVlBoPoHcOe9lgcDPkTGCLyABu2ugYu34ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779888295; c=relaxed/simple;
-	bh=0HGClSyXBXxyXG26RzRZS7w3G2ipIvuqzIRh1ydQ3W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IB2uMv2gsvjtkn1aivfrYhvRBQZ0+LTHHpYNSKF26vPiyBGaWlEvpEuUx9caWiKuJaXNC0aGhwoNuiReHlhoX+ya5sjBdQIV+6ncpKF8MeWIrdmaMZkkNGBMqQhErj42UCG3PDY90FFcWrzKgORo53+xn06G3T9sB7mKid4X9pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FumuuEQW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779891408; c=relaxed/simple;
+	bh=rBJ7OEcpzX0ty1W1oU0GkLNAo4q6tJy5chLR4emqiXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=biCKfi4p37tXCKZMh3kRi02c6ivzxsxwK2Ghma4mz4ZU7902KnXVvb70Tx/brpBCTZ0ediOsllCFz0DbXW0OyicAQErVXnyv7jycLEIRnfToh9QjWc4JRgMeMxpnYayDYj0XQh6TmsNN+SqGEfJE318AA0uyW+t+rSo5oTuZ1ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evtNM+7V; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FumuuEQW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412E91F000E9;
-	Wed, 27 May 2026 13:24:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evtNM+7V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F641F000E9;
+	Wed, 27 May 2026 14:16:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779888294;
-	bh=0HGClSyXBXxyXG26RzRZS7w3G2ipIvuqzIRh1ydQ3W4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FumuuEQWtmuF/BJmD55PoeOE/v92cl36iWgBylm0ngcfZoD5L83yq4/kULhaU0p23
-	 u0pQrFsLbF/Qo3blkzBhKeYDfpqLO+j+HnohfXhchKZmk9G2+7zwY07glrG74TllxR
-	 K7+W8KtC6tlm0ZfvXD0s7pFosIfdud18beEfJ1uwj2z4jQrmAYTO84FJxrv2gJMCHC
-	 8eDlQAR8n6LhGolaf4aM8yVD8GXt41OKRHN6XWZyO2EBsJL6cie5HtUKWGhf8YAILm
-	 FvtynKWoSEsAAsI5/00B67ltc/IgmGDRbHFDp47JG/xQZpZ5StB50qGuQ2oNbn/tyN
-	 8EBowBhM5Traw==
-Date: Wed, 27 May 2026 14:24:49 +0100
+	s=k20260515; t=1779891407;
+	bh=jmeYr36B3ddjtnomFK/HAMLXKdAGWqgpOPH1Z2Q/8Bw=;
+	h=Date:From:To:Cc:Subject;
+	b=evtNM+7VtCoJcH8yEKBJtykbWrpLfUEInXViAK+f+EHEFIeKIjhuZXjrT6k+oTkrz
+	 gxSBauAmb1rbqrcDET0y5/tbaGM7iJrE0cUft36DSSBrSy77zmk62SqUIdh7XKXyUU
+	 KN0MD5d1Xl+Oe7TinL0HHDowZ3ORxg9eAPFqRi9tN1H61XLaxICd3qw06GlJZbU4UU
+	 mgT6gDbYHgFHqzSdTfFnQgAc4WaApdSd6mnuve3Umd0jOcjd+3KCnGgvO3uUtbohiP
+	 k3iWOSq//22i2U6x8To/7Ni/4MpBri76+BqFuYfrq7O1YhW1m4BS++Vd5PkKXcGK9p
+	 SAFmrUVW6uSKQ==
+Date: Wed, 27 May 2026 15:16:43 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>,
+	Mateusz Nowicki <mateusz.nowicki@posteo.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <23a429b4-bdf1-4f96-b3af-7ab3186e99d3@sirena.org.uk>
-References: <ahWOVFZZScPjm2Ow@sirena.org.uk>
- <CAADnVQ+yjm0SJ0UQMeuS82MLDeo1bvZKSMMDh-K8D9-PNu=p8w@mail.gmail.com>
+Subject: linux-next: build failure after merge of the block tree
+Message-ID: <ahb8y-KE12lOUIVz@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,39 +41,73 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yBgt/TPiuRRzj/+6"
+	protocol="application/pgp-signature"; boundary="TZhMIX8GS/PUZHHd"
 Content-Disposition: inline
-In-Reply-To: <CAADnVQ+yjm0SJ0UQMeuS82MLDeo1bvZKSMMDh-K8D9-PNu=p8w@mail.gmail.com>
-X-Cookie: No alcohol, dogs or horses.
 
 
---yBgt/TPiuRRzj/+6
+--TZhMIX8GS/PUZHHd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, May 26, 2026 at 03:08:06PM -0700, Alexei Starovoitov wrote:
+Hi all,
 
-> thoughts on the best way to fix it ?
-> Pls send it to bpf-next. I think it's fine for it to be in one tree only.
+After merging the block tree, today's linux-next build (arm64 kunit)
+failed like this:
 
-That's fine from a -next point of view since bpf gets merged first,
-you'll also need to ensure that the sched_ext stuff doesn't get sent to
-Linus until the bpf changes have landed or flag the dependency up to
-him.
+ERROR:root:error[E0308]: mismatched types
+   --> /tmp/next/build/rust/kernel/block/mq/operations.rs:274:28
+    |
+274 | init_request: Some(Self::init_request_callback),
+    |                       ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn
+    |                       pointer, found fn item | arguments to this
+    |                       enum variant are incorrect
+    |
+    = note: expected fn pointer `unsafe extern "C" fn(_, _, _, i32) -> _`
+                  found fn item `unsafe extern "C" fn(_, _, _, u32) -> _ {OperationsVTable::<T>::init_request_callback}`
+help: the type constructed contains `unsafe extern "C"
+fn(*mut blk_mq_tag_set, *mut bindings::request, u32, u32) -> i32
+{OperationsVTable::<T>::init_request_callback}` due to the type of the
+argument passed
+   --> /tmp/next/build/rust/kernel/block/mq/operations.rs:274:23
+    |
+274 | init_request: Some(Self::init_request_callback),
+    |                       ^^^^^---------------------------^
+    |                            | this argument influences the type of
+    |                            `Some`
+note: tuple variant defined here
+   --> /usr/lib/rustlib/src/rust/library/core/src/option.rs:580:5
+    |
+580 | Some(#[stable(feature = "rust1", since = "1.0.0")] T),
+    |     ^^^^
 
---yBgt/TPiuRRzj/+6
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0308`.
+
+We build with --kconfig_add CONFIG_KASAN=y --kconfig_add CONFIG_RUST=y
+(and would also do an allmodconfig which picks up CONFIG_RUST=y in any
+case since there's a usable rustc installed).
+
+Caused by commit
+
+  b040a1a4523d9 (block: switch numa_node to int in blk_mq_hw_ctx and init_request)
+
+possibly interacting with some rust change but I'm not sure.  I have
+used the tree from next-20260526 instead.
+
+--TZhMIX8GS/PUZHHd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoW8KAACgkQJNaLcl1U
-h9Ax+Af9FshkywdeD8aHR6Ecrc7ZYwpMdLWtt7h+Pz6LHttcHF+i8KOxs0akomXc
-meW86c2er19FNqtrRzSe0+OlQc2fmjWlWN0Ybh1TSvt6n/99pf4JtdT96bp6/zri
-ckZHaTx4R/WSENn+uS5TRrxfWvBFhOrDmtc9QjQtMwRPdgS4Jj6xyBAjekn7k5G3
-RZWFpbz/dP6Ka2Zsq4ZLdMmHlbhm3lY9UcYRWuVHqk+2D+VGZf/WBqEQxWkzlAdj
-MH1Z9KJaQJAga+bVoTA1i34S9FuySv9HjKj7cdGYrT9wqgpqZWUqCQJ5UKAAJ+bd
-5Ot3/uZVMG116Joev//DMYUMLCbSig==
-=gKeV
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoW/MoACgkQJNaLcl1U
+h9CUTAf+I+SYj2SrIEDUI/inkUzCf+JGF5tloCVY1WXDBp8+7CJs8DHL/yQ/Df1n
+0PrzgMnMD0n6hIfDwE8jXqwH6/rMZLn4h41i4WJOsEF1axkEAFh5kTC/4KRNPfAh
+SF7c5tC0lOMTAHTn4n3jCLd8juIbjMwrivkhjyVNscm5ll4wnX0gBx5WEP3KmhHn
+BafhQYOLxOV63rre+xJYbb6JbCAuEN9jtY/M0OCw12InhXaw3zcmnjKc7vWNUkZ/
+LKJLImRnL4PCVOZHPMgDXoRfIwKzOlPFxTVvABHkgDKNsiJ5NtvtvrTvBi8vchuz
+SwY1BplMqaoOWNFUGUkTl4gdUPT4fw==
+=kykK
 -----END PGP SIGNATURE-----
 
---yBgt/TPiuRRzj/+6--
+--TZhMIX8GS/PUZHHd--
