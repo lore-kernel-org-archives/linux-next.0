@@ -1,95 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C33339866;
-	Thu, 28 May 2026 20:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC3A32B130;
+	Thu, 28 May 2026 20:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779998679; cv=none; b=Oafhe4Ep1P83uZ3Lgvvxi+aPtZ0vg4y+mFuHch1tTXp4TdzvfmBehL5lvEHQc/8q2eBkEzXxNSuXfmz9+VpppclkWsRSSyaJgeMZBTm3KL3j6SipCQ++ac8VDQFbeHkCJB1lozQVniDRAV/LcrQOm45Syxtqppf8Wxc9p1LhsaQ=
+	t=1780001808; cv=none; b=t6iOczZq/FyP5zMLMcDCFAk4/biM23GX3Q6kOoosWqqCcd5M1AUsWIs0ZQDZK1TAMPFZ+sfucAYA+GACQkPzGUv7tcKWDW9wCOtuelZXf4/1mhHCE/del8BAY9mgFXmEoBd97mDgeHGAuOEvSWJxiJfN6Zj0O5i3JAp0FMeIUzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779998679; c=relaxed/simple;
-	bh=wvzVzBiNNc7pSSiktZyRp3DeDJsrIozwR7fOSJytmMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s5WwBQtTPbDlX63vwePExr5z1NjdbdvzrwLwAF7aMHbYQuytIjFfCFHJ785sOv1ISDS0x0frr4wi1t927oqA1OUisJtqdOQ8iCDs9c9O98RbSIpI4m+AWg92AYaYIsAtCSVD+KYv7BoWg9n0nBUDRTmv2btAX7jXYkPNtLvjg94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxqrKBO3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780001808; c=relaxed/simple;
+	bh=ZGbzaMKq6c8BjQti8/Jyf1GklIhPWDvOyEjfhWC25ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4rI1IP1nuQ/qHEv7Mpdzyn0rworotHKtxIMWw0tA/DzTgFciwOethlcHuJhzzIAgdu8nyOzWPuDuBwtd71PuyFnzD01xjf2F4f0O5buO92/7aHb3AZY9FU8DFVuk6JGP+TMIZBdI8Yf90iU1Ij1uueO+zXxRJO8SIhCIAfXN9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzBGY0We; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxqrKBO3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9321F00A3A;
-	Thu, 28 May 2026 20:04:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzBGY0We"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512D01F000E9;
+	Thu, 28 May 2026 20:56:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779998677;
-	bh=WVjZ77WKanlIoER/YuUvLPXIh6A2toQ/kFAdLdwWH6g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=QxqrKBO33zRwgngfe8npfS0gioZ/JnMOqrQXJ9uTbSeOiWR0B7dfSKyNf6utog185
-	 U+a4fjR18dzGBLffCbtljBwGoaM4XPEI2rb8r16jyV39pNEC9aVSBkiTePpo8bcJWt
-	 CAoVXWuNiSNo3ayxqYFIjs5T5uAlz5WU+ovW4pY7XRr0rXWkeSpAIcEtsTs6lMt/Iz
-	 2iOYSWlyLEQNscHrctet8rTA7Xd4K9cBACAbXNGkpl9K/Kj/qeMlED2tzOanbcGzL9
-	 XCzXRiOp2/OKqYsAwksQx8c258b8CXvGHCdxVmMHpEuvC1jvBJZ4xe7ZtUN0pDcGMC
-	 Wyiv24TDeqW3g==
-Date: Thu, 28 May 2026 13:04:36 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, Lucien Jheng
- <lucienzx159@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>,
- Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
+	s=k20260515; t=1780001807;
+	bh=ZGbzaMKq6c8BjQti8/Jyf1GklIhPWDvOyEjfhWC25ck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NzBGY0WezaY9xGwigzFYwidD4CYk6jqU+Ec+naYgoeI0UKmjq2oei0dUcvWNeedIt
+	 rvguyOnYxlaLtgcnKvsg68LYU36YalypvDroXN9821mBDJY6Y+y1Xu3tJiryxA2Ydu
+	 QbhoHgF/YcNgqJs6ISuYBpEfW0/GXr99/Zp+KoLpQhi+wk8j7Nmh5BffDh4KHDqfzr
+	 ZEEnGgmZLkHmeeLPIPt9ANP2fRQ4JpFfrSq9lUnA7V4tChV4VcJxcV2KufOxqwNvWa
+	 doPDfSBb0zcVbjqgUF85ZX4zeckIV4Uyk+kL2Zo8z3JmsDC/27O4g14D19na2nG6d6
+	 a/kmdXkZjAc4w==
+Date: Thu, 28 May 2026 21:56:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	Lucien Jheng <lucienzx159@gmail.com>,
+	David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20260528130436.450720f9@kernel.org>
-In-Reply-To: <ahhlcK0ufJn0VEzM@sirena.org.uk>
+Message-ID: <c584c7ba-f0dc-4c5b-9c44-5559dca552f0@sirena.org.uk>
 References: <ahhlcK0ufJn0VEzM@sirena.org.uk>
+ <20260528130436.450720f9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UySIyz8JMMbo2jjs"
+Content-Disposition: inline
+In-Reply-To: <20260528130436.450720f9@kernel.org>
+X-Cookie: Someone is speaking well of you.
 
-On Thu, 28 May 2026 16:55:28 +0100 Mark Brown wrote:
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc drivers/net/phy/air_en8811h.c
-> index a86129ce693c2,a42898ae41358..0000000000000
-> --- a/drivers/net/phy/air_en8811h.c
-> +++ b/drivers/net/phy/air_en8811h.c
-> @@@ -260,218 -229,6 +245,31 @@@ static const unsigned long en8811h_led_
->   					      BIT(TRIGGER_NETDEV_RX)          |
->   					      BIT(TRIGGER_NETDEV_TX);
->   
-> - static int air_phy_read_page(struct phy_device *phydev)
-> - {
-> - 	return __phy_read(phydev, AIR_EXT_PAGE_ACCESS);
-> - }
-> - 
-> - static int air_phy_write_page(struct phy_device *phydev, int page)
-> - {
-> - 	return __phy_write(phydev, AIR_EXT_PAGE_ACCESS, page);
-> - }
-> - 
->  +static int __air_pbus_reg_write(struct mdio_device *mdiodev,
->  +				u32 pbus_reg, u32 pbus_data)
->  +{
->  +	int ret;
->  +
->  +	ret = __mdiobus_write(mdiodev->bus, mdiodev->addr, AIR_EXT_PAGE_ACCESS,
->  +			      upper_16_bits(pbus_reg));
->  +	if (ret < 0)
->  +		return ret;
 
-Unclear to me why this is using __mdiobus_write() instead of __phy_write
-when the callers have access to the phydev..
+--UySIyz8JMMbo2jjs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Our PR to Linus is now out, hopefully he pulls soon.
-The AIR_EXT_PAGE_ACCESS define is no longer visible in air_en8811h.c
+On Thu, May 28, 2026 at 01:04:36PM -0700, Jakub Kicinski wrote:
 
-Louis, I'm going to move the define to the header to keep the merge
-simple. Could you follow up with a cleanup once Linus pulls and I push
-out the merge? Or if you prefer another resolution just show me a diff.
-If I get it before Linus pulls I'll use it.
+> The AIR_EXT_PAGE_ACCESS define is no longer visible in air_en8811h.c
+
+I did see that and fix it up for the final tree.
+
+--UySIyz8JMMbo2jjs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoYrAoACgkQJNaLcl1U
+h9BVmAf+M3D9jVypiIvcCUahQ8U4S9y3nNZ/3hssDpTzcn2B6TxNSTULdQOlTt3j
+5fblQWPvyOFUR42xY0tjPOVs3/euAH03fHCDpWpeMweuiQ6rQdK2BTcLrj52KJd/
+KhMzIFkBT3zHrJmnTcjP3hvEG5AhzXdX6awTP3FRK9eDb9BAZJ82hXQDsBEM6uAF
+ykbZjIPk4whMBTBDdLsJzpluWhy1TnFTRbfyKYF8/8MMphLD9eUJF0NvcsqX9IGk
+jdqz2ItZSnPmv9d16m99HaNw+Xpb+MoAluN2A9XMwDuZzdtEvepYYpyAR0ECs/Zb
+UzZKEPGRhNwOKb4ySKGQNKsSE+PuRg==
+=I60q
+-----END PGP SIGNATURE-----
+
+--UySIyz8JMMbo2jjs--
