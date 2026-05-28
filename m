@@ -1,38 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13660388E50;
-	Thu, 28 May 2026 12:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6313EFD31;
+	Thu, 28 May 2026 12:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779969791; cv=none; b=P2XuFTvUsBGrLkQWQ/DLZMp2MOwpBVQjO9JOrC+YJz2EcOLoOrRUg17o/FCvxuDIuPh0wAYUG7e4hDvQOlyxiGCOSGNytFL0b1KvssAKKiTIzphhdY4mc4H1fjAYm3daTqxmYMx23fTUwYXjF2JBGjbE2WLU0zU/xNa5XdEvo0k=
+	t=1779972193; cv=none; b=MNpEszdANpTRtCN8TnLXJT2iwn81d2hyNUMp/nZbike5deZPoLt4p32ngh6GpnLZ944HwcDnX8EkmZGa6a1k1Lq/JMVvG4g//M6t83e3nI8h0KqMiChLn/IqSBJ7pCkn5yM9VDRZ6yzzWa7bFDQ8M0CcFMzMulILKwD8J1clxAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779969791; c=relaxed/simple;
-	bh=rypZ/036NlIQyd7dDs827no89HyZfGFCMbubbDh4+p8=;
+	s=arc-20240116; t=1779972193; c=relaxed/simple;
+	bh=chrA3v/82e2i7BfwElV1n0hz5k1nsISPx2rSyhFWkZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZjzbzNcRl4RmayFEFfhmT8ac78sZXZ/TW4WWhO6Y2QZ3L3QpMlEdZJ3lxV4u8uSZF+fKUYXd4Yz496l+g4/5UuYyQpXNkVLIzU3a+kHY5pEroSCQHyKWifwdz7t8KLxCyuHermgP/BGeFdL6yZwAbmpA7HXeht/veGgm8+AtWe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+If+fXY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=EaQiBNx2ZtTcap88Kfh3he0t6pCcZ4bGehkqNoB943lDq4K8AJ+xDpQTwPSVxgkH6UzgcrirpCsup+MkmEHdqGHLiRdESFZ/NyKVDYmAb20XDkQsh2YoxzUoOElcyZTJK3w/vxh1yFuX4U96bItDyydJVOLpJx759wfbqy3SGnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNzKNuEM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+If+fXY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C7C1F000E9;
-	Thu, 28 May 2026 12:03:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNzKNuEM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA031F00A3D;
+	Thu, 28 May 2026 12:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779969789;
-	bh=rdL69rQoKKgCBnJQlZU/abJccCNpA4jfGFYXRMQ0nPc=;
+	s=k20260515; t=1779972192;
+	bh=sUEHSHU6GNcjur5oL6xkKo3jQy0XAgXzKrk2zyFjYoQ=;
 	h=Date:From:To:Cc:Subject;
-	b=a+If+fXYh2bmD8L7oKpR8wQbX/2PwgL3HeNpDDsaDfg7maqMfRCHHB4bEVamiSc5T
-	 8Nknkfr/hhoPtSdFmN9qSL2JzISqDKLLmfPGJnNy0Q8/Y4+DzdzcAbA7aiai+oIcUY
-	 QBz0p+0GrcyCk7eWtV/vqe1l3ElEavccyN9Ofy9XVHE7r2W0WRGMOMRiHwSldMog8z
-	 iqPqagmd+Bq3d16wyReETlxHFPN0QpW1rTSeZ4z0YqVvtN/2PRMbz4fSru3O2dPKEa
-	 Rx/lAne6S8Z8JuO2QgD6FBNccdJeVI1rX0kBHNiUDX1GDrtTXgnQHpNW8UNygNXbnj
-	 FcV5hMhXyTmLw==
-Date: Thu, 28 May 2026 13:03:06 +0100
+	b=UNzKNuEMMyHDUpYZSWrqs7ysSmItBbk3oMOjbJl2TIGFW2mWnMfDebwrSKBZB4wmI
+	 WPSeqogh6fIQwZEl+sNPTzy9cT1oRUEwkMNZpKlaIb3z/VqGuHFWaWQ0ToSjUUgjwQ
+	 nNX3MuVZ9m0fZbiE1wV+Clxcq4dT0wqTorsb4+xpqtgCtnXofsGr+Br5QCeMSxWbT8
+	 Cd8DTYTDWw2RzDCGbeDyFg34Lt42GhryDsXBO80FCnCu0pyoDMlqmZ8t58zSD3ae2C
+	 H5pxZlDCO8/7zgy1LSJQPQsgUVzQJWx4H4QzB+HC4NHdizgkl/fmOwIIwZ1GcmoNXq
+	 IKjnUCsKoM9bA==
+Date: Thu, 28 May 2026 13:43:08 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the bluetooth tree
-Message-ID: <ahgu-mbRz65nDwb3@sirena.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the origin tree
+Message-ID: <ahg4XDoVOR7LD63p@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,33 +41,46 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4mOxl58Z/cTa0cch"
+	protocol="application/pgp-signature"; boundary="0x5QxqZJ/p7mLIIo"
 Content-Disposition: inline
 
 
---4mOxl58Z/cTa0cch
+--0x5QxqZJ/p7mLIIo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commit
+Hi all,
 
-  4fe5ea11ac728 ("Bluetooth: l2cap: clear chan->ident on ECRED reconfiguration success")
+Trying to build Linus' tree, today's linux-next build (arm64 kunit)
+failed like this:
 
-is missing a Signed-off-by from its committer
+ERROR:root:Inconsistent kallsyms data=20
+Try "make KALLSYMS_EXTRA_PASS=3D1" as a workaround
 
---4mOxl58Z/cTa0cch
+I didn't diagnose which commit started triggering this, it's a known
+kallsyms random error AIUI.  I'm running the build with:
+
+=2E/tools/testing/kunit/kunit.py run --make_options LLVM=3D1 --failed --all=
+tests --kconfig_add CONFIG_KASAN=3Dy --kconfig_add CONFIG_RUST=3Dy --build_=
+dir ../arm64_kunit --arch arm64
+
+Dropping Rust and LLVM (LLVM is needed for rust+KASAN) avoids the issue
+so I'm doing that.
+
+--0x5QxqZJ/p7mLIIo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoYLvkACgkQJNaLcl1U
-h9DLaQf9G2eJ1qpxgnkW0orjk/kZBhDbq7VycLq8e0LUjz2nbmB0wAV1p9TABzA/
-y2yT0a22BtQ2OvRZfhxN3bSKIZX/HzYbkKq8qlRoCuSGpgvTpCixpcyRsUHTpHMt
-A8cBUmwG7mtzvEN0obPtjDFdt1xXx9G08MlCfzs5ZWdsxagOlxZrXy6LNbXHnkWq
-vA+9qjKCR82Yd9AJsQeyKNa47jTDrDMPh8x/urxYlNegEnvqmUJKoUT1SurRWY77
-syqFabQ/bxdAvcOVEsXrLf09DSsmJnOYlkW6OCbvKwWF00CBkjeXuPqBuHT4Qiho
-RCnh3Ev7AwJdDUSmZoRyh0Kep69hHA==
-=P938
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoYOFsACgkQJNaLcl1U
+h9DO0Qf+P+mHE7ZsR7N4KudhO3aUZ1E0msXH0cfAkjLDleI1CcPUkEi+f8f0ze0O
+CjL/TTki3IvVBfLSP1cxLPxoeecOS7JAWUcEkaR9RbpsxRhjMUas+tW8xRmlt1Pz
+RfbvWl/JSO04JkQfJTsmWK9O2y6lzqTPen3f91LqweROmTxFsrny9V6ziGvnH6bz
+izm/oKiCv4TeHFJXAotXqRTQ983kcecim5/rgPkPwN0DpF/miScD1GB3Y7bJ/Sw3
+G6owigh7bX0IUodL4O+jboXPJP1LpYEpul0M7+kVUZw6egWVZ+xK1Iq9V5WGze6p
+MBSXYs9T6zbbNlZ3/gSOROGj4a375w==
+=BuYX
 -----END PGP SIGNATURE-----
 
---4mOxl58Z/cTa0cch--
+--0x5QxqZJ/p7mLIIo--
