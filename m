@@ -1,267 +1,160 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1082F6900
-	for <linux-next@vger.kernel.org>; Thu, 28 May 2026 02:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DBD2F1FEF;
+	Thu, 28 May 2026 08:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779935421; cv=none; b=fwykSeR5hcMfu6a/HbQJlXOoefTVzETP3zaDBKzOkSf5Xy8xIefcoymEL9f4h+fW49Ibqx9nxqmt0GAgUhtcJi7UWrjgyJZkemTprQ8UugP7XY3p3uQs5rnYqPDuGs/999AGveO7O2f9TuxFoUNaGh+a18CiCEfraOafgqRF9XA=
+	t=1779957014; cv=none; b=ZpXrQDmZ9qNHiW0gyRHJFdE+WM2XaY0LkEcyEU17pDBmjRAHvpZotCoq0xIFykUJWf2yZwqzff3NQ7CfLtJJQJRlG4Vv1U/Zz7XQg+zYf+lrpb9iMFuMU37V6+ZQaaYIHJmpHE/tXppqTn8RRf6h1iJ+oNwJhiOnsWeDxKnRydg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779935421; c=relaxed/simple;
-	bh=pD+bsI8LLgaMIdRL14crBUU8n8MdgTlJJq7Dzbe9wXw=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=mjQ5x9gPW73Hofo/aGb1b5I2dEfRF0pdWseDsdj94EmyniN4LNUjf9BfdcGZV4DN6oM8vY11MusDpU76umvj7GzLVDgfeABO+3QLPmtmCJwuAGrxEeMVpWNrYHcEX8MnIryQ8/WoHgFSowVm7j6Xan1rv8XwTTQfq/ouowje5I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=HsireS0K; arc=none smtp.client-ip=74.125.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1779957014; c=relaxed/simple;
+	bh=JbdGvoem1i/pYxbWZNTqGm8BeehwwrHwsOPWkwoq3BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFmQeUemIEIA6+9N03gE2IXFyi3cPE0Gn7EZ0uqthlTTHW+CA1t7MNIDN/kusozkywX3r9DMxgk96b+G1Sy6SUaakgeFKnee8gnNlJrTNrrsvzUE6y4DhqLVB1AQ7kQyMy3BBuhInD9Zp8mNExRYfgKvVOM8IEKERXcaiFAGuZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmgIUIVL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="HsireS0K"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2bdcf5970cdso8682379eec.0
-        for <linux-next@vger.kernel.org>; Wed, 27 May 2026 19:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1779935418; x=1780540218; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1vfweQYXmNmYMJciF/evfBGAPYBDJK5VzznTw/tzzW4=;
-        b=HsireS0KgEjSltkWDqpCjxEigkRK0hFOoTwtFELWhkRRtmvEc9DsSwkO/DpIE5ILZm
-         VJTcbhrVamKba61SiMqdZgnvrK51ycBQ5dNQtc8cba641UJkFa1erXb/eV+vfBHOHeg1
-         nQ7u/hSMI0fxox9v6CFGEFgGwgJZLIkTC6+r+WHf076+MfWt3RecY9mmeY8USHteMrWj
-         nDI1H4VCK7gX6Nb+kMDQ0gtfVfyer8NpzJFAb42WKBWAEEPahXiu2/gEOWrvRPHFkxTJ
-         DjkRLjqPHdfvckx+Mb5b2WXSLdIXoPJ/RZOputh5cDaAjt9DKnQMS95QKah4QkE5bhHI
-         I16w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779935418; x=1780540218;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1vfweQYXmNmYMJciF/evfBGAPYBDJK5VzznTw/tzzW4=;
-        b=hyL2TrJNyOIGj8S+Mke8qOwUeXDYVWznCoO7IT+TZQZ6pqwxxTVmI+6ZAqpDyQ646p
-         vp3rbTAJDiDtElRYRvtd8/tOp8dhC701nhUIrqSoj9n61IJmPnNmL1OkIKgOp529N9v7
-         TdCXskIubpiQN6YX5QpXKiHHCKOy+NCfjkE3IRC/OmMsAFWKM2iMO4KQK1TiWIhm6Iki
-         hCJgu7MtZLb7R4nevrgXTVpEyTfdB+f1Apg5ymSLoqh8cGOIqZOqiUprgtHS+aKpGBk6
-         flFMzFbDJjloMxTZPTG8ZFFbVXoGgAvxNB6Sr0CSIS/JM4t4YifSFb0Ec17cCGBMO8Ag
-         YRuw==
-X-Gm-Message-State: AOJu0YwTUSMHXNWVCkQO9AG8vLozf6IfOda44s5wWh4r3rwL2dkeIQi5
-	XO7vamEMmobR3tTLZDJwx5GAMw62+dIwTi8IeJIo1wHysDGt72sEVhDeLW0b9jrcefXwSlVPz4U
-	w+L31
-X-Gm-Gg: Acq92OEwnbLUj2Aq4mSNVqsMAcxBs7jawNiD03g0qn/qoDZ6L494QZ1oJEdTW+e1QTt
-	qC+Aa1Xu3kKHwBKWZpZJ+4UzSqNJ/Rn/dgpOGR5GTK1Uif+GHKi5o/9bNyag55JrcKe2769fnL0
-	AJNcdaeCblC8LK6zXXgK3umSCc0YJSfySUMUKKtvT1Efx53hB86zHpRimooOQHJyi5+ulHbruGh
-	YAmdc/zw2yh5hEddRk2vZqrCFvCNU5t09oneOBjT6acrLIojFuFmgjatmJ4XgoLhDLfZSu2CYj7
-	5tNgY8J+ocwQQyol1RUzJPaz20pXreRA9mMdkiWERcWsBj78CrB23LcT5BIJV6OOUJxN3VF8w3N
-	G5zWw0EMJp9pft8Qm9LkLaKcByvMFfSuZf20GIEs+34HNcSLbmIU4e6nvmdtZcOsy6tiwslREmI
-	85mEdzMRzRt2vg4KHj/TBfMfKUBZY=
-X-Received: by 2002:a05:7300:478d:b0:2be:17b1:e49f with SMTP id 5a478bee46e88-304304f77d6mr12881976eec.4.1779935418140;
-        Wed, 27 May 2026 19:30:18 -0700 (PDT)
-Received: from 330cfa3079ca ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30452461cb5sm20938606eec.31.2026.05.27.19.30.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2026 19:30:17 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmgIUIVL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1311F000E9;
+	Thu, 28 May 2026 08:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779957011;
+	bh=pnD684ZDM8lQMbk/SW1TAYLA7kWUJbCHKY+wEC5FHac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cmgIUIVL3+xC4VkjZS7lWzwwYVMShV1iAlVvCLi9BZ4wFXq9sBnYeBpOsJCZf7z+/
+	 DlqsbNyGpqSd+QFjk5zbTfruEMHKv5KOolfz632CRc+dwrlOCcK8jnZzRDV4A5quML
+	 CMBEWJFcfX0cL24MT+M4SHWWE+ht9EHw8zeNsKPaAQQVLh+5j4ba6yqDx8S+NTeKbX
+	 x+LYx9cKRAbgGHRdHDyX+kkwFV1LSO23/ktICHcj1P940ISFzhIPoQrtIvot+8nLav
+	 3TmK1Jxnjv+HbaPSqyIG5kVC44Bsr+ZYCVY0akpcpnL/uE7TGaBVCQ0CiTaziL2yXp
+	 dEXDQDOx/TWfw==
+Date: Thu, 28 May 2026 10:30:07 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Message-ID: <20260528-schalldicht-krampf-gefesselt-1be0e54eaa10@brauner>
+References: <ahRHShZFjI8AsT8G@sirena.org.uk>
+ <894b9eb2-e054-40e4-a423-1ee5412a5e91@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - e7d700e14934e68f86338c5610cf2ae76798b663
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 28 May 2026 02:30:17 -0000
-Message-ID: <177993541715.6744.6709103087670836424@330cfa3079ca>
+Content-Type: multipart/mixed; boundary="53uwv4bsz3i44rlq"
+Content-Disposition: inline
+In-Reply-To: <894b9eb2-e054-40e4-a423-1ee5412a5e91@sirena.org.uk>
 
 
+--53uwv4bsz3i44rlq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+On Mon, May 25, 2026 at 02:08:44PM +0100, Mark Brown wrote:
+> On Mon, May 25, 2026 at 01:57:46PM +0100, Mark Brown wrote:
+> 
+> > After merging the nfsd tree, today's linux-next build (arm64 allnoconfig)
+> > failed like this:
+> 
+> > ld: Unexpected GOT/PLT entries detected!
+> > ld: Unexpected run-time procedure linkages detected!
+> 
+> > I didn't figure out exactly which commit did this but I'm guessing it's
+> > one of these from the vfs-brauner tree that you've pulled in:
+> 
+> >   1cd9d2387c05a (simple_xattr: change interface to pass struct simple_xattrs **)
+> >   12e9e3cd03b5a (simpe_xattr: use per-sb cache)
+> 
+> > I have used the version from next-20260522 instead.
+> 
+> Unsurprisingly the vfs-brauner tree also acquired the same build failure
+> so I also held it back at next-20260522.
+
+@Miklos, I'm switching this back to jhash() otherwise we have to
+default-select xxhash. See appended patch.
+
+--53uwv4bsz3i44rlq
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-fs-xattr-use-jhash-for-simple_xattr-hashing.patch"
+
+From 9393223b7e9fec1a73ebb5b572f6843d29d86456 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Thu, 28 May 2026 10:23:26 +0200
+Subject: [PATCH] fs/xattr: use jhash for simple_xattr hashing
+
+After commit c81b88b8932b ("simpe_xattr: use per-sb cache") switched
+sx_hashfn() from jhash() to xxh32(), arm64 allnoconfig fails to link:
+
+  ld: fs/xattr.o: in function `simple_xattr_obj_hashfn':
+  xattr.c:(.text+0x2f0): undefined reference to `xxh32'
+  ld: fs/xattr.o: in function `simple_xattr_hashfn':
+  xattr.c:(.text+0x340): undefined reference to `xxh32'
+  ld: fs/xattr.o: in function `simple_xattr_get':
+  xattr.c:(.text+0x2374): undefined reference to `xxh32'
+
+xxh32() lives in lib/xxhash.c, which is only built when CONFIG_XXHASH
+is selected.  fs/xattr.o is built unconditionally via fs/Makefile's
+obj-y, so a caller from fs/xattr.c needs XXHASH wired in too.
+
+The obvious fix is to add a hidden always-y config in fs/Kconfig that
+selects XXHASH.  But that is the wrong fix for this code: xxh32()
+does not actually buy simple_xattr anything over jhash() at these
+key sizes.
+
+xxh32's throughput advantage comes from a four-lane multiply-add main
+loop that processes 16 bytes per iteration, designed for the
+checksum- and compression-sized payloads xxhash was written for (lz4,
+zstd, btrfs csum, ksm page dedup).  The fixed setup cost of priming
+those four lanes only amortizes once the input is well past one
+iteration.  The keys hashed in sx_hashfn() are tiny - 8 bytes for the
+parent list_head pointer and ~10-30 bytes for typical xattr names
+like "user.foo" or "security.evm" - exactly the size regime where
+jhash equals or beats xxh32.  Both pass SMHasher and have equivalent
+avalanche properties, so the rhashtable's collision rate is
+unchanged.
+
+Switch sx_hashfn() back to jhash().  It is header-inline, has the
+same distribution quality on these inputs, matches the hash used by
+the original rhashtable-based infrastructure in commit b32c4a213698
+("xattr: add rhashtable-based simple_xattr infrastructure"), and
+avoids dragging lib/xxhash.o into every kernel build for a two-call
+hash composer that does not benefit from xxh32's bulk-hashing
+strengths.
+
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/all/ahRHShZFjI8AsT8G@sirena.org.uk
+Fixes: c81b88b8932b ("simpe_xattr: use per-sb cache")
+Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+---
+ fs/xattr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 31cae48e11a4..4416033af881 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -23,7 +23,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/rhashtable.h>
+-#include <linux/xxhash.h>
++#include <linux/jhash.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -1277,7 +1277,7 @@ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
+ 
+ static u32 sx_hashfn(const char *name, const struct list_head *parent, u32 seed)
+ {
+-	return xxh32(name, strlen(name), xxh32(&parent, sizeof(parent), seed));
++	return jhash(name, strlen(name), jhash(&parent, sizeof(parent), seed));
+ }
+ 
+ static u32 simple_xattr_hashfn(const void *data, u32 len, u32 seed)
+-- 
+2.47.3
 
 
-
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/e7d700e14934e68f86338c5610cf2ae76798b663/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: e7d700e14934e68f86338c5610cf2ae76798b663
-origin: maestro
-test start time: 2026-05-27 16:02:54.975000+00:00
-
-Builds:	   58 ✅    1 ❌    0 ⚠️
-Boots: 	  132 ✅   47 ❌    6 ⚠️
-Tests: 	20284 ✅ 4178 ❌ 4870 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_backlight_lcd0
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de53d3
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_vcodec_17020000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5339
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_16020000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5338
-      history:  > ✅  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: bcm2837-rpi-3-b-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6a172ab2ee38c2a863de5ba4
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
-      last run: https://d.kernelci.org/test/maestro:6a172e8dee38c2a863de8b48
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: aws-ec2-arm64
-  > Config: defconfig+aws-ec2
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a172bd6ee38c2a863de672e
-      history:  > ⚠️  > ⚠️  > ✅  > ✅  > ⚠️  
-            
-Hardware: aws-ec2-x86_64
-  > Config: x86_64_defconfig+aws-ec2
-    - Architecture/compiler: x86_64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a171a82ee38c2a863ddb335
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a172a8fee38c2a863de5ab0
-      history:  > ✅  > ⚠️  > ✅  > ✅  > ✅  
-            
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.mm.mm_ksft_memory_failure_sh
-      last run: https://d.kernelci.org/test/maestro:6a1724e5ee38c2a863de4400
-      history:  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.mm.mm_ksft_userfaultfd_sh_uffd-wp-mremap
-      last run: https://d.kernelci.org/test/maestro:6a1724e5ee38c2a863de42c7
-      history:  > ✅  > ✅  > ⚠️  
-            
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a1720dbee38c2a863de095e
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
-            
-Hardware: cd8180-orion-o6
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a172a4eee38c2a863de5696
-      history:  > ⚠️  > ✅  > ✅  > ✅  > ✅  
-            
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a1733c7ee38c2a863dea27a
-      history:  > ⚠️  > ⚠️  > ❌  > ✅  > ✅  
-            
-Hardware: exynos850-e850-96
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a172a4eee38c2a863de5699
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a1720ddee38c2a863de0961
-      history:  > ✅  > ⚠️  > ✅  > ⚠️  > ✅  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa
-      last run: https://d.kernelci.org/test/maestro:6a172a95ee38c2a863de5ad1
-      history:  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_pcm-test
-      last run: https://d.kernelci.org/test/maestro:6a17350fee38c2a863dea50b
-      history:  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
-      last run: https://d.kernelci.org/test/maestro:6a173985ee38c2a863ded6df
-      history:  > ❌  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: qemu-x86_64
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a171bc3ee38c2a863ddb487
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de539a
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de538e
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_17030000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5383
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5372
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5371
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5370
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5365
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
-      last run: https://d.kernelci.org/test/maestro:6a17293aee38c2a863de5364
-      history:  > ❌  > ✅  > ❌  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--53uwv4bsz3i44rlq--
