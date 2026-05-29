@@ -1,40 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EE82DCF67;
-	Fri, 29 May 2026 21:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5FA3382C9;
+	Fri, 29 May 2026 21:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780091205; cv=none; b=MS+4ZLC8bCKdf28ibQGznc5oSSKox6kiya7qFtJ5XMewuiHhdMfh/612JGOWNkXjn8AmyTGQDWMpYcjsNEDHMi7Sg0VHC6hf5x7ulK9PHw/BITPPx3vVYd65o+sZ5NyvV1RJjyiX2vEXbiDLNBjd4S174LHG6jx13nPY3jPT1IU=
+	t=1780091864; cv=none; b=e2pO607pCTVyNRjYx4ZoHXIGIrKQdhHfsjrpO3zJkRz79I49xh0GUNbFfJGXTpaoR+/C8RjVR19J2LW5E+tBGx8ki0nzaDQQjruMu5CyxUxlr6e8/mNCoqTY0WSJseSHa/wryZZ6qZwAkC7Soqz/CYppg1Phw/+hPp+a1qpIdn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780091205; c=relaxed/simple;
-	bh=llJhnEjYFhcJbaeIA2WBTm1mJrOPZsUbs3BewGkRr7U=;
+	s=arc-20240116; t=1780091864; c=relaxed/simple;
+	bh=0ncUy0bjjw3uh033Vo4jcVt8nw+84Nck7W6Ulty6pUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GDThwkxl12YxcXReOGEdZm35pI5FCQZzZDxioPsmKmEYd+uihGsrUyhdrepL9PjTY0LdO6IacziN5wS97BwDgHfxwh4tvufAtz9XzjLAab/TQ3Xel4xC2DxZnNUE83A3qZhgXx9IBnt50khZ1Sjfl6jFDp1sVo7L1+NMlMS+joM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWtQxroI; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=hVOw9xcPGKSlDlRKvT5+NK9iJB7VuxyPRWlR2BoD3BePGzLiMmDFtuZ5ics+Idbf9J8U7UwVE3at2meTQLC5B05xGIHWR18cXo8mVKCXpOunu66dSVYHPsxupFqJnYBfKaYCJm2TT0GlNAe+/0ziPfIAE1Znx10om7cnCqdVxkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1OohYwJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWtQxroI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16D51F00893;
-	Fri, 29 May 2026 21:46:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1OohYwJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F98F1F00893;
+	Fri, 29 May 2026 21:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780091204;
-	bh=p2od5GIEDDc0oOcJJrIsB0EhyZ5uWclu8MLthdBU8nI=;
+	s=k20260515; t=1780091862;
+	bh=DeauKNNMEvurI1Up8wBYkLDFHWoJ8F2968rqmwPuOCs=;
 	h=Date:From:To:Cc:Subject;
-	b=hWtQxroIs1JrkSa1tH8Qnb43CYNCFoOI1dGZgLpnlvjp3/w7PAzZprFHkhsR3hu5q
-	 wYGaq16QTD/eycyO5IqIXDFH/JiKuUyhrRZtexBfqvI3QhDg4ImEkDW2pVbyyha0/M
-	 GDx6s9rc16i6xsfoOlhjYfdSu3Mn1E128lcBHtkOsWnXxKN3+caBfpB+Hb9Zqe6p9n
-	 zYIWN4BFn9rhSsnN1XM95NRJg5qYKVKm/dWUuedepVY08+7LsoVu5/OKOHrFpOiwR6
-	 SW93DrWUiHP8mI44C3WctdoXyQfE9D6fDNsKHTL98mRDf0egwzxJ0ixvcFXTqUt3hk
-	 064mm/tYeIyhA==
-Date: Fri, 29 May 2026 22:46:40 +0100
+	b=V1OohYwJHjVEC3Mf5JU3sbm4lrziARqiiUcSwi1ZdU/eIji99w6HsYY3+eC+PKNwx
+	 rCkpmTX1vSXDGxpC35drDBRL5neV1oqzzNlSNgy0WGGI8crr1FjfwAe1yIgoIRKDxF
+	 S7cQ9SNHBI7IA9dJVdhv5X449Pw9MmlNB5k80zvLw4fqsEBSPd7Dj8hM/QQTi0obZ2
+	 ABTfeBpJckrgeXlaAl99wChS1WXnaLCNDILUzFTNCWjeu1dBpfkGA6hy8qvsIpzIGJ
+	 hMbeTb3kIAJmwqips7Nus8ezAwmnprbQ1jjGfGI++29n1gZB2OtCV+8QaN23aA6oIx
+	 Q4s/Xg83EDsVQ==
+Date: Fri, 29 May 2026 22:57:39 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Thomas Lin <thomas_lin@lecomputing.com>
-Subject: linux-next: manual merge of the spi tree with the i2c-host tree
-Message-ID: <ahoJQKqhYl8yHLiJ@sirena.org.uk>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the net tree
+Message-ID: <ahoL09FuRZexeALj@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,82 +41,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NJeFhlifbBCCf8GB"
+	protocol="application/pgp-signature"; boundary="U+qvTH49UpCKk9Jo"
 Content-Disposition: inline
 
 
---NJeFhlifbBCCf8GB
+--U+qvTH49UpCKk9Jo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Commit
 
-Today's linux-next merge of the spi tree got a conflict in:
+  2982e599fff6f ("esp: fix page frag reference leak on skb_to_sgvec failure")
 
-  drivers/acpi/acpi_apd.c
+is missing a Signed-off-by from its author
 
-between commit:
-
-  fae5e96bb646e ("i2c: designware: Add ACPI ID LECA0003 for LECARC SoCs")
-
-=66rom the i2c-host tree and commit:
-
-  019947c495850 ("spi: dw-mmio: Add ACPI ID LECA0002 for LECARC SoCs")
-
-=66rom the spi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/acpi/acpi_apd.c
-index 86678ee22a041,4d5a51d30adcd..0000000000000
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@@ -182,11 -182,11 +182,16 @@@ static const struct apd_device_desc hip
-  	.fixed_clk_rate =3D 250000000,
-  };
- =20
- +static const struct apd_device_desc leca_i2c_desc =3D {
- +	.setup =3D acpi_apd_setup,
- +	.fixed_clk_rate =3D 250000000,
- +};
- +
-+ static const struct apd_device_desc leca_spi_desc =3D {
-+ 	.setup =3D acpi_apd_setup,
-+ 	.fixed_clk_rate =3D 400000000,
-+ };
-+=20
-  #endif /* CONFIG_ARM64 */
- =20
-  #endif
-@@@ -257,7 -257,7 +262,8 @@@ static const struct acpi_device_id acpi
-  	{ "HISI02A2", APD_ADDR(hip08_i2c_desc) },
-  	{ "HISI02A3", APD_ADDR(hip08_lite_i2c_desc) },
-  	{ "HISI0173", APD_ADDR(hip08_spi_desc) },
-+ 	{ "LECA0002", APD_ADDR(leca_spi_desc) },
- +	{ "LECA0003", APD_ADDR(leca_i2c_desc) },
-  	{ "NXP0001", APD_ADDR(nxp_i2c_desc) },
-  #endif
-  	{ }
-
---NJeFhlifbBCCf8GB
+--U+qvTH49UpCKk9Jo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoaCT8ACgkQJNaLcl1U
-h9DXlggAhhpuvBAWJj8hDNDKegeSew1+TaXiZEggpPtQD+/TEMm1zNK87mFnHpQC
-4v89638c0Ewg+MhkJ0B22pJWqgqrhtn3K2G0iZ8uMgH9ZJqS+1G8AOEBSs5t+ASK
-X6cjH2lW3oRah5aIQQY/SHrgUcSs00yeDiV9fdZSyCsBnQLxHC/UPXt4WyS7Ymzt
-d1aVIA50x5MDT46I+3Z1imUD1/UP3/vvwit1Mu/JOoOfjWzGW0EGhNv/MMnMiVIh
-mhaO9Y0Bkyt1XAXSgxl0cnmxxjaQogwTVsHaxqs4F2q5gPPkZrFIDk1twQdn5O9Y
-tf6TIvKsSFfrehB+9zy62YsDsQuOLQ==
-=nr6X
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoaC9IACgkQJNaLcl1U
+h9ApSAf+K5+/kkLZtQIMOCXJFJaXt+Talcd7u+CV6Y4XWUxTjh9TdhA7T7UWlH+A
+toDcMdbLA+TSYzOSVpqR0ImVC3Ps/nKfni7RCkoG+BNpKYCpBSupFwnTJM6iCJKV
+xpdLc5gwhHuzK9m1yf2vi6ye/a2HGwZI+wTGh5fY9e1jy9T3D8ByBBmPVG73jOlb
+cPNH4+z13vlQ/E0Nfxw4kFRXQZrA3SngqsdOiDizzI4L2zyRNMedMKOguROy78G2
+voMhXEXBVtQ9ksWGtLmuE92/LdTJ+j7CWlpZ1HLm5Rk7vzkzF/4JMxQ1HdvConjj
+pLCmNqtNedhWUf9lMrGNVi1z8q6Xrw==
+=g0Vn
 -----END PGP SIGNATURE-----
 
---NJeFhlifbBCCf8GB--
+--U+qvTH49UpCKk9Jo--
