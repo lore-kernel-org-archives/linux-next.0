@@ -1,120 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCD63403E4;
-	Fri, 29 May 2026 23:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D1B395AEE
+	for <linux-next@vger.kernel.org>; Sat, 30 May 2026 08:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780098153; cv=none; b=DMQI4r8sWhbn195CuFjWb8k55mazzhGvALeOPWaC7YDKWdzRXJamICo3+peebf03hoNxt7o11zKDZMH7H6GbhfJgk+7Yf/Hg5uxICdlOkZ2EwWMrMTfo1bde0S0kICT0y0Fv+k1aOH6xggvk+dBCvblvdxdOitZ7mahQSH/Q3nA=
+	t=1780128394; cv=none; b=n9qO5ugUY+Dp0t9KJkGuaz67w8OuO48W3u6rmrv6PNNmRCb9sKcFxAaWxiOTp9Oi+fCWR+eCE+87AeiuaoKXJDm/9L/UCOZ/DrJcA3X2TaIcMVbiHeJ5YdzFSZl/x9mVWy35MZgHA7cG3goutz9RB+eqwqKElmhUyXQRbe5feJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780098153; c=relaxed/simple;
-	bh=ZlYd++42RxNYQBFfAKXqIM/60lPbWIWJzx2rGxstTVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kHJbAk4SHcrkPHj8aVpzoEGwH3VixE5pLKbkFw2A5la+vuwcsxsS8yvL44z1dBNqQ+RfexhbxgdOoWClUpoq5ODBt9D7VgK/qLunhQdqEGFhuq1O5B3px4XkUOobULWz9hAvUf8C3mq3IZ3DR0cOyhJPmji5899C17DG6k3TOFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhCWl1v1; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhCWl1v1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C04A1F00893;
-	Fri, 29 May 2026 23:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780098151;
-	bh=gpnFR09LpNXUmdPm920HvlKMuc59zmHN1ANepVfJvVA=;
-	h=Date:From:To:Cc:Subject;
-	b=YhCWl1v1tMbacm4NXAlnzxysD+Ew1wQSiqggHBfkvfoAR+wSFH4xSO7dKTi9ya4Xi
-	 146iImEkhEkWCHLA3Fmcb8GzCl/69WUg02H3WJ2g9K3sXkh+At9aGpLBkvKuBMRIF/
-	 MZZpKx08Z9uM3uYcapJCuWf+/hQ9UIQXb5g/Mpf33jxNQGkzDrKFJkdLdthdefSH62
-	 KXLtLG4E3LxffyN5nqPlTVornDJFsU/Z6Fqae0zwiCEdO66sAlbKHRIKutzUMPX86+
-	 UemKRr+re+ucksMD1zPkuBtQi6Mv78rHf8ubrN+enGuqrSWOjPTPYhcMKC+kZPKp3c
-	 NJr/fQRnQ6IrA==
-Date: Sat, 30 May 2026 00:42:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for May 29
-Message-ID: <ahokZCYcsMTSzvLG@sirena.org.uk>
+	s=arc-20240116; t=1780128394; c=relaxed/simple;
+	bh=R79hZBZzT9pPTTFaL6vaFzu0Rh3MbRBJ5OBbFKKsJW8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jP0PqTAYKlkiUvkp9hP5XFZzeTNEtjCPgldvbKmB8CW/B5qVNNGpTJnH5s8ADO0DWTZ4FGirotXEnImYhKL8PcCYz/8StnN9wcsuNR+1ydoVEPzv/lkC+K5m+lgNJGmzMJMjn+7pgjbI8aN5QqFfzxgXPEx7CxHRSdTMcHnQj10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-69d9ceb179fso8333945eaf.0
+        for <linux-next@vger.kernel.org>; Sat, 30 May 2026 01:06:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780128390; x=1780733190;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=km0xy1eoEMaUqT/HfnmIYnwJDsT/FIV7KLh005ZV6YU=;
+        b=lm896T8DHNSpt2dhZdHDtYVNacEqg6PSTNL+U/GxPw4F5sNDehJWEyww3fDkxdllTQ
+         VXQayrU79M7Q2dMEHDUIDSPijnMQF8C2v/M6A7pvj+PnI+sz1HZ/OOtj1OMlMu7A/KH4
+         igTGlUQqkPWIE61GYngBHrcHo1Dl4FjMyjtIa463BEHOOHKFtM9SFZxZZUG4AYHthjUF
+         dfO5j8jSN1jZ8P9TwkGdZVOjqjkDgeo7b2dGeloGIheNToSvpuLVkdzt1yy7OqO9kkoS
+         gIZ2JKsV/QYvnL25b8ufQhgCirpWWduVThHsMy+vyR/ipvvcvc8P1IyzYapsVK1OAX84
+         RHCg==
+X-Forwarded-Encrypted: i=1; AFNElJ/nzAr3IZCJ2LYowdk8cpEp/uyyudBZG+b87wDXZh7S3CBCb0QlqUURSxj7VNt1rhn7RYnUS9uZCdfJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGse3qz5hQEmafsdz5Y8FaIcFVi5aDogRIBsuflgE8WQmaz44e
+	xhe45/PnPq729UQBHIxamd0CO6rmuM6L/qUA8pDuAAg5AcLkXinRMSBIAClYQsgvMXTimiJnZy0
+	x8IRe77rOECladg6OTTv9Rlp1eQdW+WcT1KsTUri6jZEHaeaEZ6kbxFREfpU=
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j0K8j/3cT5NQucVM"
-Content-Disposition: inline
+X-Received: by 2002:a05:6820:4d0a:b0:696:8cb7:3167 with SMTP id
+ 006d021491bc7-69e042c1b8cmr2543839eaf.14.1780128390195; Sat, 30 May 2026
+ 01:06:30 -0700 (PDT)
+Date: Sat, 30 May 2026 01:06:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a1a9a86.323e8352.141b09.0001.GAE@google.com>
+Subject: [syzbot] [nvme?] linux-next test error: WARNING in __alloc_workqueue
+From: syzbot <syzbot+d078cba4418e65f61984@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, sfr@canb.auug.org.au, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    7da7f0711261 Add linux-next specific files for 20260529
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1083d67e580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a40d26c705073da7
+dashboard link: https://syzkaller.appspot.com/bug?extid=d078cba4418e65f61984
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c8bdcda3b30c/disk-7da7f071.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c571d67d2763/vmlinux-7da7f071.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6bdf4a6a4922/bzImage-7da7f071.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d078cba4418e65f61984@syzkaller.appspotmail.com
+
+ACPI: button: Power Button [PWRF]
+input: Sleep Button as /devices/platform/LNXSLPBN:00/input/input1
+ACPI: button: Sleep Button [SLPF]
+ioatdma: Intel(R) QuickData Technology Driver 5.00
+ACPI: \_SB_.LNKC: Enabled at IRQ 11
+virtio-pci 0000:00:03.0: virtio_pci: leaving for legacy driver
+ACPI: \_SB_.LNKD: Enabled at IRQ 10
+virtio-pci 0000:00:04.0: virtio_pci: leaving for legacy driver
+ACPI: \_SB_.LNKB: Enabled at IRQ 10
+virtio-pci 0000:00:06.0: virtio_pci: leaving for legacy driver
+virtio-pci 0000:00:07.0: virtio_pci: leaving for legacy driver
+N_HDLC line discipline registered with maxframe=4096
+Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+00:03: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
+00:04: ttyS2 at I/O 0x3e8 (irq = 6, base_baud = 115200) is a 16550A
+00:05: ttyS3 at I/O 0x2e8 (irq = 7, base_baud = 115200) is a 16550A
+Non-volatile memory driver v1.3
+usbcore: registered new interface driver xillyusb
+ACPI: bus type drm_connector registered
+[drm] Initialized vgem 1.0.0 for vgem on minor 0
+[drm] Initialized vkms 1.0.0 for vkms on minor 1
+Console: switching to colour frame buffer device 128x48
+faux_driver vkms: [drm] fb0: vkmsdrmfb frame buffer device
+usbcore: registered new interface driver udl
+usbcore: registered new interface driver gm12u320
+usbcore: registered new interface driver gud
+brd: module loaded
+loop: module loaded
+zram: Added device: zram0
+null_blk: disk nullb0 created
+null_blk: module loaded
+rnull_mod: Rust null_blk loaded
+Guest personality initialized and is inactive
+VMCI host device registered (name=vmci, major=10, minor=267)
+Initialized host personality
+usbcore: registered new interface driver rtsx_usb
+usbcore: registered new interface driver viperboard
+usbcore: registered new interface driver dln2
+usbcore: registered new interface driver pn533_usb
+nfcsim 0.2 initialized
+usbcore: registered new interface driver port100
+usbcore: registered new interface driver nfcmrvl
+Loading iSCSI transport class v2.0-870.
+virtio_scsi virtio0: 1/0/0 default/read/poll queues
+scsi host0: Virtio SCSI HBA
+blk-mq: reduced tag depth to 10240
+st: Version 20160209, fixed bufsize 32768, s/g segs 256
+------------[ cut here ]------------
+workqueue: nvme_tcp_wq is using neither WQ_PERCPU or WQ_UNBOUND. Setting WQ_PERCPU.
+WARNING: kernel/workqueue.c:5856 at __alloc_workqueue+0x1d02/0x2070 kernel/workqueue.c:5855, CPU#0: swapper/0/1
+Modules linked in:
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/09/2026
+RIP: 0010:__alloc_workqueue+0x1d07/0x2070 kernel/workqueue.c:5855
+Code: e9 36 f9 ff ff e8 29 8a 37 00 e9 05 fb ff ff e8 1f 8a 37 00 e9 92 fb ff ff e8 15 8a 37 00 48 8d 3d ce a7 23 0e 48 8b 74 24 20 <67> 48 0f b9 3a 81 cd 00 01 00 00 e9 88 e5 ff ff e8 f4 89 37 00 48
+RSP: 0000:ffffc900000677a8 EFLAGS: 00010293
+RAX: ffffffff818e0c1b RBX: 0000000000000000 RCX: ffff88801d68dd00
+RDX: 0000000000000000 RSI: ffff888027f28168 RDI: ffffffff8fb1b3f0
+RBP: 0000000000000058 R08: ffff88801d68dd00 R09: 0000000000000002
+R10: 0000000000000100 R11: 0000000000000102 R12: dffffc0000000000
+R13: ffff888027f28000 R14: ffffc900000678c0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888125c7e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88823ffff000 CR3: 000000000dfb8000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ alloc_workqueue_va kernel/workqueue.c:5950 [inline]
+ alloc_workqueue_noprof+0xe3/0x210 kernel/workqueue.c:5966
+ nvme_tcp_init_module+0x27/0x100 drivers/nvme/host/tcp.c:3050
+ do_one_initcall+0x250/0x870 init/main.c:1347
+ do_initcall_level+0x104/0x190 init/main.c:1409
+ do_initcalls+0x59/0xa0 init/main.c:1425
+ kernel_init_freeable+0x2a6/0x3e0 init/main.c:1658
+ kernel_init+0x1d/0x1d0 init/main.c:1548
+ ret_from_fork+0x514/0xb70 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	e9 36 f9 ff ff       	jmp    0xfffff93b
+   5:	e8 29 8a 37 00       	call   0x378a33
+   a:	e9 05 fb ff ff       	jmp    0xfffffb14
+   f:	e8 1f 8a 37 00       	call   0x378a33
+  14:	e9 92 fb ff ff       	jmp    0xfffffbab
+  19:	e8 15 8a 37 00       	call   0x378a33
+  1e:	48 8d 3d ce a7 23 0e 	lea    0xe23a7ce(%rip),%rdi        # 0xe23a7f3
+  25:	48 8b 74 24 20       	mov    0x20(%rsp),%rsi
+* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
+  2f:	81 cd 00 01 00 00    	or     $0x100,%ebp
+  35:	e9 88 e5 ff ff       	jmp    0xffffe5c2
+  3a:	e8 f4 89 37 00       	call   0x378a33
+  3f:	48                   	rex.W
 
 
---j0K8j/3cT5NQucVM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi all,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Changes since 20260528:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-The ext4 tree acquired a build failure, I used the version from
-next-20260528 instead.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-The nfsd tree lost it's build failure.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-The ntfs3 tree acquired a conflict with the nfsd and vfs-brauner trees.
-
-The net-next tree acquired a conflict with the net tree.
-
-The bpf-next tree lost it's build failure.
-
-The amdgpu tree acquired a conflict with the drm-fixes tree.
-
-The spi tree acquired a conflict with the i2c-host tree.
-
-The slab tree acquired a conflict with the drm-misc tree.
-
-Non-merge commits (relative to Linus' tree): 8784
- 9753 files changed, 500607 insertions(+), 193090 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 423 trees (counting Linus' and 130 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---j0K8j/3cT5NQucVM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoaJGMACgkQJNaLcl1U
-h9BxxAf+OaaSnPLY3jdOi9iXMEyGGpR5KQI+Too2VBq1ZltVu/p7c2EwynPLGzqj
-n6B7gddZB6D9WwNqmaZiuidOA0A1wWqlheE81p6lvRWZQUQBzE/LzAga82Qpjqln
-CMiIgu3n2TamZq+n3hp8CXsPF+R56T7x7N/lRkFg1CLYsncuFmrLIiwKzUQzUzAe
-NFO0aEjVXyx3l6JcZDFxNNt22UNX+n1j2P2Ngn0uNkg6cNwrkEf6ZPT0y5jahrza
-85oscPhLGUuwsn1+WXmrxCCboCLQMb3U2agHv53XZEWZAPDPVvffYBv5FwluGBC2
-lbZ0C26B2F9E8VLvqmnQ8ETFRnGwmw==
-=pFxh
------END PGP SIGNATURE-----
-
---j0K8j/3cT5NQucVM--
+If you want to undo deduplication, reply with:
+#syz undup
