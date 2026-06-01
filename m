@@ -1,138 +1,306 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410E537FF71
-	for <linux-next@vger.kernel.org>; Mon,  1 Jun 2026 13:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780318868; cv=pass; b=nKBF+S7Le4nQ20VNolk+xBMmhs08dbA9QJEGOoWBUplEw4/DPhGJLgQn2B2RZhFBECZdxM7h78/g7pYsPnDgeEqjIMm2SMHi7Djkv/0YL6lWQtBfRy3oDH8M21I/1BfqGDy6rNZ8bEdiOEqrIpkVN+3gtFXnHnH61V6kpa9ZwQ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780318868; c=relaxed/simple;
-	bh=5mcGgw8CcJORG6b5kEmmuwkbo/zBoXy7kT2w5zhSs2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S+JThW+kDBILoHobX7GDosNCKtpkPzzEt0PKzB8nxQu73KpykFOmW8hnVAI6DFe7tU/OjVNjOwMWy1EUPznhwB67YZEfFQ84YeC3Pe7QB9UxTXAxeaJkePU0g7w/msU7UQMNNHl94USZmHy9owJmSCN9mtztkN8kgkc/47LWs5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UyxFqchH; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DTgKdtx+; arc=pass smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2B43C1989;
+	Mon,  1 Jun 2026 14:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780325251; cv=none; b=Uw6g1u66hlDYXI7kO1tDVC1eBn1IEqJuXsoPySexWNjEwARx6hdeL6UbyGY/KmsGaeCjn8Dwmh3Xwqvmw2HlOuW8g/fw20wZdyZOh58hEozrCaYJFincZGuT2R0g+VCldl5c0Ce6GVnchfpiuoeMgo8rrAS54YzSx//H9BgE0No=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780325251; c=relaxed/simple;
+	bh=BhH6W7G4s3U/K7UzE3foH4hk/qhVH4QAfv9g/nI3Pjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z+z78vZ4vE+dn/n6ZH5BsCe+JOaqbAd5xbUJnqf403RNrmlw6bEx6+zikNvJkCrWDCNUGjB74SB9/iHj0qpn5KA+CGBcQJAcV1PezuVsE4/rjhh63+ak7eBo29PAZonbenpyuXfiu0e5QMshnCBXeREi85YBQJQ5Tt+p0A2hdmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rz3kjOZL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UyxFqchH";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DTgKdtx+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1780318866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5mcGgw8CcJORG6b5kEmmuwkbo/zBoXy7kT2w5zhSs2s=;
-	b=UyxFqchHpTW8WGlBvJWHcG8M8M0INLWMoI0Ndw8XfG8mc0QDQg2C78wfxGV0Km3EB2WLXz
-	zCW4RXCHJh4G+z15xf4lij3ozpp5VLtgwgrX/1N5fW6QKglBtMT8IFwwiNrjaS9oUzu7B8
-	Ppo8ThCLQjLxPXBOpVYUHDPH0rZVQNE=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-78-BJbJqaOPNi-8Eq-jwGIvZg-1; Mon, 01 Jun 2026 09:01:00 -0400
-X-MC-Unique: BJbJqaOPNi-8Eq-jwGIvZg-1
-X-Mimecast-MFC-AGG-ID: BJbJqaOPNi-8Eq-jwGIvZg_1780318859
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-7e08bf5123cso32388057b3.3
-        for <linux-next@vger.kernel.org>; Mon, 01 Jun 2026 06:01:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780318859; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kbdTHcXGFh/y2QYrwYepcd47kOul4vPh1ZF3TMNxto5DYzbjA2rY7n3gOcQwZNiUE0
-         W6GwBL34jsFdV8u04b3f3P6QHwgAuskht+xhVjayWhBAhWVvWHYqmsVa/m3HVAPAxVn2
-         WuDV2J8Xad6QqSnLCXFGi1Z3ZELFpdts/uoyUTH4y/XlbaZFMcgz0HInyN4FVIakFcM8
-         rKkVpOwGLU/aqvjn9reuQ96symR4Chwcq67nbSBJjRraOVu/ZRyn03irHmDANazXcONF
-         1WPkWvNGZRR/6n4Y6tL0wyG4wdiJtoSB3NZ6o9K2eRUZnpj2158MSFcsusLp7d2Kz/V8
-         i96g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5mcGgw8CcJORG6b5kEmmuwkbo/zBoXy7kT2w5zhSs2s=;
-        fh=1VTaJEO9e5urbNU/iyfnM3sHk/Mza53SJTOSAYcGnIM=;
-        b=EpedSiTzQtP+fTqhQC4yImsMHgLDFCSbbhsnKF7/lqpWcHii/c+NAla2QujQ17/FEY
-         nIhWM/5FTEZqUscjqQx4chV68IDrbzYqUzaeE0rsnb+JYAdW7CGZQPDgzhq2j3Uj/BEt
-         jt6FahGauuxgpjwjWt42ieIELN/7Xg9cwv/E7LloW0bybM63cOscmIixX/GSZO2b2p2m
-         8s8bqi8r1JkNgmWlw5sxAwBzFD377WSmmtjjf6smQALF88sGd9PGOwelOMnKoMzV1yMm
-         AeFDL9Ju3hrC5LEYuj1tNC587JLCaIg9q0Fj+ST0nY7itUmLMPEBk7vlSWSJ9QJx6JSB
-         AYcA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1780318859; x=1780923659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5mcGgw8CcJORG6b5kEmmuwkbo/zBoXy7kT2w5zhSs2s=;
-        b=DTgKdtx+AdsjERGub0pSWkEfnwjodG0+t19s/hPFA0oDHrB/bOd/57aRCA7Np4VCGL
-         eJe+eTPgmd6Ibne50+BU6NJBMRIS/xdwY4cDz1aS2M4mjM9WwDlCiHTapCozUxuT7Yxv
-         eusIvUIvyEbeoY6Cway7CtvoZRhEE0k/k9kgFW57YCPkNLdwBauzbNz98ZC/vk8vIYj5
-         4FGDDf4dO57cnBz9QUDozC3ZyE7n7kj77gLYV7g1HXE9NVWqkuoHWx0BomWfoHejj3VB
-         wkvhDIsPURROiH463DeVcLyk/UFfvhgHEIcWPA06VUy8gh+P0sgUPkCaY3lw/SV4bEht
-         sNvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780318859; x=1780923659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5mcGgw8CcJORG6b5kEmmuwkbo/zBoXy7kT2w5zhSs2s=;
-        b=Zl/ZVmeKG2O4LEiM7y4gUwRdssnElKD9QkVa6h+HrGQHm31GB/6FslIY9sn/0HUhmX
-         qH3MxGwyyEB4ql4GhVDz7oS2j2fGMeVSyp1C/FegSfB9ciQGQk2vIzTOjGmJPDyRmlbs
-         K0XwrvTaFWDyIhIAWXK10chhkXMnvwBPjWNLaZLmoTlm9FktK163YuQbU/R0TW4qzWUj
-         nZiyga9qOdaDHRt8aGRVs0lfYpldIpwsMjy+trXsqj7klRhpiqoOOETR1tsEocm9Clnl
-         l47ivvj7nJy4xtFBz3LIe1E4qQ4vyHWsRFdEAzbmAg3iHlId/aD//c8vV9xY4Tb29pxK
-         JadA==
-X-Forwarded-Encrypted: i=1; AFNElJ+p0AmiuMNb3A/TdaqBG8RUaBd7iTyrjv4i/QvOuI+rWTSeYx1Najcx+M3MQn6w9a5UtBa2twnG1eQA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzexbaQR+U/NWNwEYtfFNMapqy+y0iphC9NBOi2aE9YRpz9cawa
-	idUPHVBFdpmsFi0H6XcdtM/QhTeYpTzZcfyyMzW51ax8v+tuq33SXTDbdqAPrbesSS4QTe0PsJW
-	k3bwIMauuzaGTc99FRz1gE51HvQwbIU6qyYqe0TiL0WAPxeEoRUQv1IoZ6MbEkLMoP9LPLifv2G
-	BWlkXjgCI7FbJ0VMBt2KFqmqz0+qBQXo8sdr6Klw==
-X-Gm-Gg: Acq92OGXw+iw9F0KCgDCp7Jo8DE8P0P/tM88JXWprtdjzTWurFO2uJNGZyxMLQELrsB
-	eIQJ7ZwB8zaxGJYlyU9i/204oyKfi/KT43f6oXgfSQMc6CpAulLEZgfoGRt/NGNpYNJbWo6uGDl
-	37L3sOKoxg7sv7+DNnOmufRaEsneP6A9xb6TLwMxcLtosEIsb8Voh46VKm7s742n9n2oVPVzaz0
-	5ezgdYwLJImW6/3
-X-Received: by 2002:a05:690c:6b07:b0:7d1:fb8f:da6 with SMTP id 00721157ae682-7e05d8d092cmr98162337b3.26.1780318859259;
-        Mon, 01 Jun 2026 06:00:59 -0700 (PDT)
-X-Received: by 2002:a05:690c:6b07:b0:7d1:fb8f:da6 with SMTP id
- 00721157ae682-7e05d8d092cmr98161037b3.26.1780318858426; Mon, 01 Jun 2026
- 06:00:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rz3kjOZL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492151F00893;
+	Mon,  1 Jun 2026 14:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780325250;
+	bh=dqZOaUgYfpWNGg/s/JHgNBr+k+vfbZbFcHGUEX8leko=;
+	h=Date:From:To:Cc:Subject;
+	b=Rz3kjOZLOXD6XUW877Hon+qkThBU2n9065zQ9dSm1sPzwwzo8CGlQEGOUyj77yMtM
+	 jPE1fCQO1BYAp7nPLoVuNqRrdN5EEy8vSyN+2EASyWqYpuAXDIIHwSsgdrSha29Nwb
+	 8Puwn0DFBmyLaG/29Zc3DKtGRbAKfRwsMLQ/Tr/zekspGIz87S0ZcD2aMUQavGxq6N
+	 NJ3TEW+cGbKzc9F7W0QGKdUz+p5ntchw5iAWEwJw9+lPpxwi/ksTPdd7G2Q6NPHCy3
+	 gHZkMZxalG8qgl5ygwcCUwO5/2bzGuNA/JEogePKBrRFBivzNrRq35sYhq/l9cH/6U
+	 tZtIN7fIpaf8A==
+Date: Mon, 1 Jun 2026 15:47:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Aaron Katzin <aaron.katzin@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>
+Subject: linux-next: manual merge of the net-next tree with the iwlwifi tree
+Message-ID: <ah2bfedhV45ZxMO8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ahRHShZFjI8AsT8G@sirena.org.uk> <894b9eb2-e054-40e4-a423-1ee5412a5e91@sirena.org.uk>
- <20260528-schalldicht-krampf-gefesselt-1be0e54eaa10@brauner> <7abb1dba-d4b4-4779-b9b1-01ec312aaa84@sirena.org.uk>
-In-Reply-To: <7abb1dba-d4b4-4779-b9b1-01ec312aaa84@sirena.org.uk>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Mon, 1 Jun 2026 15:00:47 +0200
-X-Gm-Features: AVHnY4Ls3iAgJrM06MYFVnqCsGAAHp2DLQtr8OXYcLjaWIJ-SGMhqVhfeEfVtG4
-Message-ID: <CAOssrKeMe=67MLfrp+nVgY97EsSeTfmbqnTTon=AGAS6-oLjxg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1D4eVuRo4sJCH0bO"
+Content-Disposition: inline
+
+
+--1D4eVuRo4sJCH0bO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 1, 2026 at 2:53=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> On Thu, May 28, 2026 at 10:30:07AM +0200, Christian Brauner wrote:
-> > On Mon, May 25, 2026 at 02:08:44PM +0100, Mark Brown wrote:
->
-> > > Unsurprisingly the vfs-brauner tree also acquired the same build fail=
-ure
-> > > so I also held it back at next-20260522.
->
-> > @Miklos, I'm switching this back to jhash() otherwise we have to
-> > default-select xxhash. See appended patch.
->
-> This issue is still present today.
+Hi all,
 
-I'm going to resend the series today with various fixes, including this one=
-.
+Today's linux-next merge of the net-next tree got conflicts in:
 
-Thanks,
-Miklos
+  drivers/net/wireless/intel/iwlwifi/mld/ap.c
+  drivers/net/wireless/intel/iwlwifi/pcie/drv.c
 
+between commits:
+
+  9bf1b409afc7c ("wifi: iwlwifi: mld: send tx power constraints before link=
+ activation")
+  093305d801fae ("wifi: iwlwifi: pcie: simplify the resume flow if fast res=
+ume is not used")
+
+=66rom the iwlwifi tree and commits:
+
+  a342c99cb70dd ("wifi: iwlwifi: mld: honor BSS_CHANGED_BEACON_ENABLED")
+  e2323929a68af ("wifi: iwlwifi: pcie: add debug print for resume flow if p=
+owered off")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/net/wireless/intel/iwlwifi/mld/ap.c
+index 6598d93333330,bc426b911ce5c..0000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/mld/ap.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/ap.c
+@@@ -1,6 -1,6 +1,6 @@@
+  // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+  /*
+-  * Copyright (C) 2024 Intel Corporation
++  * Copyright (C) 2024, 2026 Intel Corporation
+   */
+  #include <linux/crc32.h>
+ =20
+@@@ -9,6 -9,7 +9,6 @@@
+  #include "ap.h"
+  #include "hcmd.h"
+  #include "tx.h"
+ -#include "power.h"
+  #include "key.h"
+  #include "phy.h"
+  #include "iwl-utils.h"
+@@@ -238,6 -239,58 +238,58 @@@ int iwl_mld_store_ap_early_key(struct i
+  	return -ENOSPC;
+  }
+ =20
++ static void iwl_mld_stop_beacon(struct iwl_mld *mld, struct ieee80211_vif=
+ *vif,
++ 				struct ieee80211_bss_conf *link)
++ {
++ 	struct iwl_mld_link *mld_link =3D iwl_mld_link_from_mac80211(link);
++ 	struct iwl_mac_beacon_cmd cmd =3D {};
++ 	int cmd_ver =3D iwl_fw_lookup_cmd_ver(mld->fw, BEACON_TEMPLATE_CMD, 14);
++=20
++ 	if (WARN_ON(!mld_link))
++ 		return;
++=20
++ 	if (cmd_ver < 15)
++ 		return;
++=20
++ 	/* leave byte_cnt 0 */
++ 	cmd.link_id =3D cpu_to_le32(mld_link->fw_id);
++=20
++ 	iwl_mld_send_cmd_pdu(mld, BEACON_TEMPLATE_CMD, &cmd);
++ }
++=20
++ void
++ iwl_mld_link_info_changed_ap_ibss(struct iwl_mld *mld,
++ 				  struct ieee80211_vif *vif,
++ 				  struct ieee80211_bss_conf *link,
++ 				  u64 changes)
++ {
++ 	u32 link_changes =3D 0;
++=20
++ 	if (changes & BSS_CHANGED_ERP_SLOT)
++ 		link_changes |=3D LINK_CONTEXT_MODIFY_RATES_INFO;
++=20
++ 	if (changes & (BSS_CHANGED_ERP_CTS_PROT | BSS_CHANGED_HT))
++ 		link_changes |=3D LINK_CONTEXT_MODIFY_PROTECT_FLAGS;
++=20
++ 	if (changes & (BSS_CHANGED_QOS | BSS_CHANGED_BANDWIDTH))
++ 		link_changes |=3D LINK_CONTEXT_MODIFY_QOS_PARAMS;
++=20
++ 	if (changes & BSS_CHANGED_HE_BSS_COLOR)
++ 		link_changes |=3D LINK_CONTEXT_MODIFY_HE_PARAMS;
++=20
++ 	if (link_changes)
++ 		iwl_mld_change_link_in_fw(mld, link, link_changes);
++=20
++ 	if (changes & BSS_CHANGED_BEACON) {
++ 		WARN_ON(!link->enable_beacon);
++ 		iwl_mld_update_beacon_template(mld, vif, link);
++ 	}
++=20
++ 	/* Enabling beacons was already covered above */
++ 	if ((changes & BSS_CHANGED_BEACON_ENABLED) && !link->enable_beacon)
++ 		iwl_mld_stop_beacon(mld, vif, link);
++ }
++=20
+  static int iwl_mld_send_ap_early_keys(struct iwl_mld *mld,
+  				      struct ieee80211_vif *vif,
+  				      struct ieee80211_bss_conf *link)
+@@@ -272,10 -325,9 +324,6 @@@ int iwl_mld_start_ap_ibss(struct ieee80
+  	struct ieee80211_chanctx_conf *ctx;
+  	int ret;
+ =20
+- 	ret =3D iwl_mld_update_beacon_template(mld, vif, link);
+- 	if (ret)
+- 		return ret;
+ -	if (vif->type =3D=3D NL80211_IFTYPE_AP)
+ -		iwl_mld_send_ap_tx_power_constraint_cmd(mld, vif, link);
+--
+  	/* the link should be already activated when assigning chan context,
+  	 * and LINK_CONTEXT_MODIFY_EHT_PARAMS is deprecated
+  	 */
+diff --combined drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+index eb3c5a6dd0884,608100bc6b119..0000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+@@@ -537,6 -537,8 +537,8 @@@ VISIBLE_IF_IWLWIFI_KUNIT const struct p
+  	{IWL_PCI_DEVICE(0xA840, 0x4314, iwl_bz_mac_cfg)},
+  	{IWL_PCI_DEVICE(0xA840, 0x1775, iwl_bz_mac_cfg)},
+  	{IWL_PCI_DEVICE(0xA840, 0x1776, iwl_bz_mac_cfg)},
++ 	{IWL_PCI_DEVICE(0xA840, 0x1735, iwl_bz_mac_cfg)},
++ 	{IWL_PCI_DEVICE(0xA840, 0x1736, iwl_bz_mac_cfg)},
+  	{IWL_PCI_DEVICE(0x7740, PCI_ANY_ID, iwl_bz_mac_cfg)},
+  	{IWL_PCI_DEVICE(0x4D40, PCI_ANY_ID, iwl_bz_mac_cfg)},
+ =20
+@@@ -1052,6 -1054,8 +1054,8 @@@ VISIBLE_IF_IWLWIFI_KUNIT const struct i
+  	IWL_DEV_INFO(iwl_rf_fm, iwl_killer_be1750i_name, SUBDEV(0x1772)),
+  	IWL_DEV_INFO(iwl_rf_fm, iwl_killer_be1790s_name, SUBDEV(0x1791)),
+  	IWL_DEV_INFO(iwl_rf_fm, iwl_killer_be1790i_name, SUBDEV(0x1792)),
++ 	IWL_DEV_INFO(iwl_rf_fm_160mhz, iwl_killer_be1730x_name, SUBDEV(0x1730)),
++ 	IWL_DEV_INFO(iwl_rf_fm_160mhz, iwl_killer_be1730x_name, SUBDEV(0x1731)),
+ =20
+  /* Killer discrete */
+  	IWL_DEV_INFO(iwl_rf_fm, iwl_killer_be1750w_name,
+@@@ -1069,7 -1073,7 +1073,7 @@@
+ =20
+  /* PE RF */
+  	IWL_DEV_INFO(iwl_rf_pe, iwl_bn201_name, RF_TYPE(PE)),
+- 	IWL_DEV_INFO(iwl_rf_pe, iwl_be223_name, RF_TYPE(PE),
++ 	IWL_DEV_INFO(iwl_rf_pe_no_uhr, iwl_be223_name, RF_TYPE(PE),
+  		     SUBDEV_MASKED(0x0524, 0xFFF)),
+  	IWL_DEV_INFO(iwl_rf_pe, iwl_bn203_name, RF_TYPE(PE),
+  		     SUBDEV_MASKED(0x0324, 0xFFF)),
+@@@ -1077,6 -1081,8 +1081,8 @@@
+  /* Killer */
+  	IWL_DEV_INFO(iwl_rf_wh, iwl_killer_be1775s_name, SUBDEV(0x1776)),
+  	IWL_DEV_INFO(iwl_rf_wh, iwl_killer_be1775i_name, SUBDEV(0x1775)),
++ 	IWL_DEV_INFO(iwl_rf_wh_160mhz, iwl_killer_be1735x_name, SUBDEV(0x1735)),
++ 	IWL_DEV_INFO(iwl_rf_wh_160mhz, iwl_killer_be1735x_name, SUBDEV(0x1736)),
+ =20
+  	IWL_DEV_INFO(iwl_rf_pe, iwl_killer_bn1850w2_name, SUBDEV(0x1851)),
+  	IWL_DEV_INFO(iwl_rf_pe, iwl_killer_bn1850i_name, SUBDEV(0x1852)),
+@@@ -1225,41 -1231,37 +1231,41 @@@ static int _iwl_pci_resume(struct devic
+  	if (!trans->op_mode)
+  		return 0;
+ =20
+ -	/*
+ -	 * Scratch value was altered, this means the device was powered off, we
+ -	 * need to reset it completely.
+ -	 * Note: MAC (bits 0:7) will be cleared upon suspend even with wowlan,
+ -	 * but not bits [15:8]. So if we have bits set in lower word, assume
+ -	 * the device is alive.
+ -	 * Alternatively, if the scratch value is 0xFFFFFFFF, then we no longer
+ -	 * have access to the device and consider it powered off.
+ -	 * For older devices, just try silently to grab the NIC.
+ -	 */
+ -	if (trans->mac_cfg->device_family >=3D IWL_DEVICE_FAMILY_BZ) {
+ -		u32 scratch =3D iwl_read32(trans, CSR_FUNC_SCRATCH);
+ -
+ -		if (!(scratch & CSR_FUNC_SCRATCH_POWER_OFF_MASK) ||
+ -		    scratch =3D=3D ~0U) {
+ -			device_was_powered_off =3D true;
+ -			IWL_DEBUG_WOWLAN(trans,
+ -					 "Scratch 0x%08x indicates device was powered off\n",
+ -					 scratch);
+ -		}
+ -	} else {
+ +	if (test_bit(STATUS_DEVICE_ENABLED, &trans->status)) {
+  		/*
+ -		 * bh are re-enabled by iwl_trans_pcie_release_nic_access,
+ -		 * so re-enable them if _iwl_trans_pcie_grab_nic_access fails.
+ +		 * Scratch value was altered, this means the device was powered
+ +		 * off, we need to reset it completely.
+ +		 * Note: MAC (bits 0:7) will be cleared upon suspend even with
+ +		 * wowlan, but not bits [15:8]. So if we have bits set in lower
+ +		 * word, assume the device is alive.
+ +		 * Alternatively, if the scratch value is 0xFFFFFFFF, then we
+ +		 * no longer have access to the device and consider it powered
+ +		 * off.
+ +		 * For older devices, just try silently to grab the NIC.
+  		 */
+ -		local_bh_disable();
+ -		if (_iwl_trans_pcie_grab_nic_access(trans, true)) {
+ -			iwl_trans_pcie_release_nic_access(trans);
+ +		if (trans->mac_cfg->device_family >=3D IWL_DEVICE_FAMILY_BZ) {
+ +			u32 scratch =3D iwl_read32(trans, CSR_FUNC_SCRATCH);
+ +
+ +			if (!(scratch & CSR_FUNC_SCRATCH_POWER_OFF_MASK) ||
+ +			    scratch =3D=3D ~0U) {
+ +				IWL_DEBUG_WOWLAN(trans,
+ +						 "Scratch 0x%08x indicates device was powered off\n",
+ +						 scratch);
+ +				device_was_powered_off =3D true;
+ +			}
+  		} else {
+ -			device_was_powered_off =3D true;
+ -			local_bh_enable();
+ +			/*
+ +			 * bh are re-enabled by iwl_trans_pcie_release_nic_access,
+ +			 * so re-enable them if _iwl_trans_pcie_grab_nic_access
+ +			 * fails.
+ +			 */
+ +			local_bh_disable();
+ +			if (_iwl_trans_pcie_grab_nic_access(trans, true)) {
+ +				iwl_trans_pcie_release_nic_access(trans);
+ +			} else {
+ +				device_was_powered_off =3D true;
+ +				local_bh_enable();
+ +			}
+  		}
+  	}
+ =20
+
+--1D4eVuRo4sJCH0bO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmodm3wACgkQJNaLcl1U
+h9DHiQf7BiC+WEgVa06zZQqZBMlBOT/6QyFRNxRYJ3kxroNNyFbaVwTHaJgd5NyV
+kWXB9z85mkpPwZdPnu9omhazkbbzS+byi43AJ1V8aHVdn+kpmLy9EL1zilzxtrba
+aEPb7Eco8TWono3DS2qkdYCVGUJYGuA8JTnNsUYVO0hEkkng4qsvWxlDrBldP8Yp
+ce4ZwzyrZbTZzvKI23aGHi8yjvibgauY679jagCoB4sS7XEJE8k6OxO6TZ9JYTD5
+0yJQyFUS52Mlj82lPV2Nyynzrhq3mvAnnmUhcPAQUnWDR0qWXUYD6z+GkHOfbURX
+iM1lHi11hgfJiG+WpCWXUOYQH46PfQ==
+=ut/T
+-----END PGP SIGNATURE-----
+
+--1D4eVuRo4sJCH0bO--
