@@ -1,146 +1,123 @@
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7195725B0B1;
-	Tue,  2 Jun 2026 20:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780430567; cv=none; b=Xc6cXNOmM1By7oN+bQt4UNUwkMsvRibsep9945JiyUcCHlwQLM7ZAwc6OJGEXLdsWc2v/4vRmWcTQsNssPdOAhxqLv8XH+E6+dBAsLAU1xUexbuOnZfK/s+2h6TJLYw0SP5NwlESAoTZacYfWoWKoEB5+w2bBiv72pfgOoj5u8I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780430567; c=relaxed/simple;
-	bh=F8RBkv8p1F/4hZuCeom0oGENQ2u52mJt+yTGcxkps/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8ZY1JOJISH3gx9q38U0ll2L1kfCpEiMumgd50qVCKX1TQm0hyMaraHbA1qBBWrCpimlR7NZdSkNNAnQk3imM0dpSHhSaaw3mvytCGklJMVr1A7Oyzu+YYCzAYqxOHcTsGBTEgk21njHXXrR3R4ZadtDHwtG4a5Ca+lIDWTE2tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=EDNpgrVV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QoZYslas; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F4133D6D5
+	for <linux-next@vger.kernel.org>; Tue,  2 Jun 2026 20:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.179
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780431214; cv=pass; b=XH/G2elNeHW3EDlah/bi+eNu99qOVb+8O6nm4jK5SnY8Bdf4FA77lLy6OFfAzrfqrCDhJABcHzlfA9+Hiv8X0sOAWF7Er1oUlrjk62vuiLi/xisEtuj6QGj/Hg2kykNjTrlg95j2YwkpKya0LHRDTDHkc/B0TM/I2o7JdwE+CnE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780431214; c=relaxed/simple;
+	bh=pseZnC1BAHbaZcHMzdNx6tAqrCQgXMmpIht/MOPt0gA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bOxXYqhH5ReF6daFZbbNSmCz/LiWBOMN7MiQ4P/qRiUyefd32MG0NS53F4/CXL8FgOMXvF8MIycXRa5Xg69wzkNBXYSthuSNvlct9ToRj6zB5Wn+Nct2c8vVSBaG4GsFOsIgrDKbW9ns9sLPkW8N7kLclsScz3wZw+RxGKM04B4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fl3ZVujb; arc=pass smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="EDNpgrVV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QoZYslas"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id A8546EC021C;
-	Tue,  2 Jun 2026 16:02:45 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 02 Jun 2026 16:02:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1780430565; x=1780516965; bh=dwj2wJKeee
-	EuYMweA7oBfPjFAN2l0A6uC+ypFhhHD2M=; b=EDNpgrVVIS9Z096uDsWRclk2Jt
-	1agR84FsnhnPnZQ1dCEpofwM5NzhuSkwWKmlNeFl7Tnlv3dPN+CW8syrBqB5ZIDr
-	+z/lW2tqnErNsNIGL3vndOL43PHd6H5KN3wgPS3twNX9VsLx6LI88TLC61EA9Wvk
-	KKl0qpLQX8320hT24ZCerqPfyMhsUdbMozjaeOGcr3jC4StcYnWnLEHbXCWafkN9
-	WfICyqcXs9A/K53eO7I9PEFt9Il4S8SNfricKEakZG4i4uSEQUoJDvz5ZehDZVLx
-	eAYjq9vIhpTai4QGztOiUifINdT3Qsfrxxa8ZYTCZPU0jAW1eYoWkCrnf3Mg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1780430565; x=1780516965; bh=dwj2wJKeeeEuYMweA7oBfPjFAN2l0A6uC+y
-	pFhhHD2M=; b=QoZYslas9labOH0ziKnxP3IfXzmoCkjB0QkfRzhZ8X9bS0G5pN3
-	fgBYZ8kEeF2tK97F1MsOGkd457OSSmFZluYXg2JXeGVI2hkgQdbes7E21RYhsF+4
-	8/1wQWsUOFK49dH/4qwL5tUfFOel3FLrPjIj49CmET5mdfeOq4zxPJfmPbwXmByl
-	oulJLp8jDvQwDSiBmU//ctEx7thOCkwuHmPDbljg7hRxTcsz44y6VY+7HS/Mcmaa
-	uI9EhPpPEhWrEV2lu6LRN5ylQkhj4yonNZywDC0ZoFjIjsugf1KFuysoC2f9ZlNR
-	8IVAHEDMh5PyMcVardkklaEM+zDDRY+Ejug==
-X-ME-Sender: <xms:5TYfakNAFDjjoKxhwlSUOoh_bFOyW8XFfdVXMlpPLEQexBrqaB6mRQ>
-    <xme:5TYfav5DrHeJoPTFoS6D4kb3WMf-rJSNqKc7MGR9NAp_nu5WnBp5ZVE5WtiDoSxJz
-    NQiTsdNd7wHj6AVwXVQXYVJBpDSXxhly5BpAn-4vJTHk5RMckS4Lko>
-X-ME-Received: <xmr:5TYfavhWFy21PyQ1YZLuAYARKIBxvqCOK1kQ0EgljOFpv3NbcOtgJ4yv7OUEie7Vgcx_Ln8uACzG3EQW7-Kfe33yeEFZWUX1yrEbgYFGUg>
-X-ME-Proxy-Cause: dmFkZTEUjOB+inYcjxT40RcVtOwQHzRo/DFPmHmN8SBql/gT0yPSYHNfbsczygF64G9AaP
-    lT0azfudHAOyAtCsw1dA4YAfcKMvIUXqWsC2/Wy+vVfc3XqDh7AG/GXK2wROaiOmC8wdzA
-    Z8QY/v0QIkTdQdDSrf6+inW4dNqGlXqjFBbMCGUQfayvhc5hUJMLMT28VOurbMP0IdJweX
-    VBfSfqu+YrAS9HVFpJPl8WK6XOoECAKOoqHL1+oy5qyMvsb8VgLOz0bo6zVwRrlUPbpvhF
-    B8sLIJSD5cOywERrMjkNm6raDuFvBukgfgVTCZ1UFBSZJ9vHhZ/utEk3THX/FDVtBJ+oes
-    vdVucHbuM5UwxcddfPpw+EsJtsVNNX+l/AALOiLCFlW6gKPsQGAiNk4OKiLU23fVnC5RKh
-    2Q2CKTBoMl/DNy2a5XeXnUazPVrjDlP6ssE8jAPyK8OFZ9IzhaEafeo4QsX1jOU/RZf53z
-    QSzAvqlLrKREXJbzFQIWvWrM8Segx2K4Pc3C3B8xIR3srGqGkmI044jIOrzWzUB6IFEu6U
-    Xh4M1LX/BPW+ojnVmoyALKfPDfz5VkGt4qxBhw9641aNa0MbBF9oFny/kbEgT7bRjRCnFz
-    mE3MsSxapQumJqSwq7RR93wVRZhMypkuDENvpPSuHuCC5/csdnRPvs1hS2BA
-X-ME-Proxy: <xmx:5TYfaseNVHk16fWW8XVye-AG5ei7gdRbay2s4dTeGC36Yl8X8krDlw>
-    <xmx:5TYfavwj3K4iW4CTYOhH5uh2J32LTIx5DgAxXwgBDkgduNv__nIV4w>
-    <xmx:5TYfaj2hK2j6huNb2wxU-aDj3oXcej1izemfrdzCmaMiJUGopbJQ3A>
-    <xmx:5TYfatytUoutgXomjbDo4ulMALe5fLIquv8ph2ks7iY3w7z8sCtH_Q>
-    <xmx:5TYfapludGxeF9yC7Mr9wgc8QA3lo6OdwNPelQ91JO71XCwnYGrQaQ39>
-Feedback-ID: i7ace4b6e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Jun 2026 16:02:44 -0400 (EDT)
-Date: Tue, 2 Jun 2026 15:02:43 -0500
-From: Ira Weiny <iweiny@fastmail.com>
-To: Ira Weiny <iweiny@fastmail.com>, Mark Brown <broonie@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Ira Weiny <iweiny@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the cxl tree with the nvdimm tree
-Message-ID: <6a1f36e3c234b_5020c1007d@xwing.notmuch>
-References: <ah8GDU5JoXYr1J0x@sirena.org.uk>
- <6a1f36341a07b_4fbf910098@xwing.notmuch>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fl3ZVujb"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2bf30d530bdso44642775ad.3
+        for <linux-next@vger.kernel.org>; Tue, 02 Jun 2026 13:13:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780431212; cv=none;
+        d=google.com; s=arc-20240605;
+        b=lBRxPBuTYyhdHy7Pxa5NG79ULsWp03WLM6qeAxE265PKhk+thecBaJfG+CQQj6QOql
+         2iweZv3X2YBsMy0hGC1UqW7ogHoN25fYWc6EPp7OIt7XHgCR8EfV1xRJIyMeFD+nZgjG
+         YKz0gGj9lueLaoo1/qoMm8yYKob/+ShnFnUr9JNJF4sXdQggdLFpa2250WnnznKw780w
+         Xv/KeDHCURMxPxRvalpxG2Oa1R7sqgC8sVfxSSJH+ugXcQjjgahzilu9U5D/7Wwp0tNk
+         d2yzLFb3Q1CsYUWczBAO621GeDemidn0az7HTDQ4c0CCviiVEtsiIQqgE9jOIYsMd/55
+         AMpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pseZnC1BAHbaZcHMzdNx6tAqrCQgXMmpIht/MOPt0gA=;
+        fh=pItr+XvQLUHhLGSEqC+VQ6j4rYnQGckc8U+WYFfwP+Y=;
+        b=U9HEvF+ADvYATX/wxAEk0nqlDsVIZv6O8BD8fpFug35KrCLFsG3aMdOAzsNqWTDwnA
+         rQeJE4iLyaiCZ2sr+cuS3GkZithXYP1bYi7txWY8+w/5zifkoYTp/Kwgwq5LnSb8IXxZ
+         LPDxSnT5DlBDg8FrVjpi5GZ/Bpd1aAhjPTiZ4gTKQePBMSlTtB1AvTwG7bn/aCN2I20U
+         WgCXoKFSLJFTpnkVLvyjqCMN5qyB1FHGYaWuWGVGmUf5fHnP7XpCJxiNWA0jWRRxIDAV
+         Y6X6+v7vfaL+Z20UoePHQeZQu/UyE7HXi1QRg3i56bSxZY1ia8zqAx+0oGRndHBVzS54
+         xa4w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1780431212; x=1781036012; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pseZnC1BAHbaZcHMzdNx6tAqrCQgXMmpIht/MOPt0gA=;
+        b=fl3ZVujb9HyNyZlscbOzAqgPIDbe03L42xZxJRK4g828hjkxr6tG40favXwn3F95yH
+         NroOjT4q8bioNJtcxiOP4kBFdwhRy87YJmLQVpRCdGVpgd7LTOnXhkmhSBg4u823+ybQ
+         erw/ABULTQ5kHSyjlCk+sT0GZw7iz67BFYr7h8N2/+NZiTa0k5yossWAMdPwLnl42HA2
+         dj2SK9IxQRsOmjadDicnPx7uGyqz/F3i91dLmvguWULWXxkatm8B7kxrmL2C3DbLPG8Z
+         7j0HY56CFEfD3Wq+ITZvnWFrmzQOtUo9PSHbiboAcM89pdcG6XSOLbYSZzm05/DW07VY
+         BNWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780431212; x=1781036012;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pseZnC1BAHbaZcHMzdNx6tAqrCQgXMmpIht/MOPt0gA=;
+        b=iy9y9PjFXNeKS2UCp4e04hsbyX5Amse7s9ADzT3VEBv6zIWj39tcD86PBy+n3DT75Z
+         60qHbc2tSyWAB/v4KDZdpKB0N7Bi///hrZyZlowLl/yOA//GZWiehll4XV2c8VI6Ny3a
+         F3Hs2UERlC4iEg6bwwxqvIDPul7tKEO2BwTKbrt7x+Yy53xA4tYnJsI7QdLCFxEWh17T
+         8f+294j9+n7g5oqGaRvi9shXH20yeuO6TwVo/9w+zIiMRQDjXixlARzlt3C5UkUkJnN7
+         YrSm9HPCCz14xtH7ECrIcRmZINfz5cIz+GRllyJzlRIoEIwVa8wfbbf7GqTXbCcIwyvE
+         LrLg==
+X-Forwarded-Encrypted: i=1; AFNElJ8etekv4eVDImwUzxTbONcEsdcjR8HV3CCtxl+y1kfB59dKCJSzOxthNMUsJfnHKueQdnB4akKjehk0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzL7xL+zPulvwsrMIeRJqZaKYjv7jy8Jn8PTRT9II2/U/Tj4cO
+	+KHab9+K9C6x/l0QbIMZOvp/CaHihb0gUAYH7/Y6A1kjDliDNnYKj/KyQelHpSAhZEugu7rerWH
+	x3zD1y+7hIbt5ONpWlzSKwayNIic9Cb1rTYZKu9hh
+X-Gm-Gg: Acq92OGyueqbRff76v3sPBppZLnWe8aj1TSDQjce4gTLwlz7uamhQDqrSAvpUUOPWaG
+	gUjWg5D3PIDLzLJt3U5rUdgP9i4OkLpSCBxRDZZk1W7YGMNhjRmebG5PozcRNBleqmCXbl8znIK
+	u2jOfPkgHNtF+KpmAjIu95H8HQ50kvVbc2tcH+b6/gxtnQ7KXuJfOlHe/ILi4GqtGnnUR7loO5w
+	M4g7sU/7UgBSFeqBEkjfJqlu9anRvbIOVeeNdC8Uhm92S9fZbxwPVTySepfNc3YthXhpMtWfBaT
+	4ef4CBFHD60EZquzXQ==
+X-Received: by 2002:a17:902:f60b:b0:2bf:160f:7043 with SMTP id
+ d9443c01a7336-2c1644b2994mr2445575ad.34.1780431212343; Tue, 02 Jun 2026
+ 13:13:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a1f36341a07b_4fbf910098@xwing.notmuch>
+References: <ah8BzqSmZO40xYhS@sirena.org.uk> <CAHC9VhRR4mmkOdWwUCLswmA+_KEjB8RCBBTJ2W4JGiLUWKzxyQ@mail.gmail.com>
+ <CAHC9VhRPbkVYAMec0KG55er6GOPdKqMXKdpC8rrHgiAodSv-sw@mail.gmail.com> <9d34218f-abbf-4a23-8b35-b305873ffae3@sirena.org.uk>
+In-Reply-To: <9d34218f-abbf-4a23-8b35-b305873ffae3@sirena.org.uk>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 2 Jun 2026 16:13:16 -0400
+X-Gm-Features: AVHnY4KpKpO9DYaOTu4rfr4g8D4KZLclWt7FiawOozC45PMKWNUodtnlnRl25IU
+Message-ID: <CAHC9VhRxeTVxCW+=1DR5qzopGyHBMOJuWmtBqT_T4r1LC1jfBA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the security tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ira Weiny wrote:
-> Mark Brown wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the cxl tree got a conflict in:
-> > 
-> >   MAINTAINERS
-> > 
-> > between commit:
-> > 
-> >   a6e0072cfa82f ("MAINTAINERS: Update address for Ira Weiny")
-> > 
-> > from the nvdimm tree and commit:
-> > 
-> >   43ad501987391 ("MAINTAINERS: Add CXL reviewer")
-> > 
-> > from the cxl tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary.
-> 
-> LGTM:
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+On Tue, Jun 2, 2026 at 3:16=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+> On Tue, Jun 02, 2026 at 02:40:12PM -0400, Paul Moore wrote:
+> > On Tue, Jun 2, 2026 at 12:31=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+>
+> > > Thanks Mark, we're taking a look at it now and should have a
+> > > fix/answer later today.
+>
+> > Proposed update to Hornet, assuming this looks okay to Blaise I'll
+> > merge it into the LSM tree (and either pull in Daniel's patch or base
+> > off bpf-next so everything builds correctly).
+>
+> > https://lore.kernel.org/linux-security-module/20260602183658.161744-2-p=
+aul@paul-moore.com/
+>
+> Can you ping me when that goes in (or things are otherwise resolved)
+> please so I know to drop the revert from -next?
 
-oops...  Best to match the email with the one I'm replying too.  Old
-habits...
+Of course, no problem.
 
-Reviewed-by: Ira Weiny <iweiny@kernel.org>
-
-> 
-> >
-> > This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > diff --cc MAINTAINERS
-> > index ff2abbdaed574,158dc82dd3076..0000000000000
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@@ -6505,8 -6431,9 +6505,9 @@@ M:	Jonathan Cameron <jic23@kernel.org
-> >   M:	Dave Jiang <dave.jiang@intel.com>
-> >   M:	Alison Schofield <alison.schofield@intel.com>
-> >   M:	Vishal Verma <vishal.l.verma@intel.com>
-> >  -M:	Ira Weiny <ira.weiny@intel.com>
-> >   M:	Dan Williams <djbw@kernel.org>
-> >  +R:	Ira Weiny <iweiny@kernel.org>
-> > + R:	Li Ming <ming.li@zohomail.com>
-> >   L:	linux-cxl@vger.kernel.org
-> >   S:	Maintained
-> >   F:	Documentation/driver-api/cxl
-> 
-> 
+--=20
+paul-moore.com
