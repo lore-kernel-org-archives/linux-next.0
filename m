@@ -1,44 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E6131F986;
-	Wed,  3 Jun 2026 19:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5401C27E1A1;
+	Wed,  3 Jun 2026 19:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780513347; cv=none; b=GL0uGWDsNVUtMmVWigL/QRA1ls2rcmRQZJDphmkb8nVV4wgqi14tz+t4aIykkSVvMYNQ7m/zEBmEerJnxeTwnzvZghDTec/r3HN3faWMQ1AWrUshxggsmKRHs1ixIw2C87cYW8Pfx9xL6ub/mf0Hs8KYJd6tMshso/aY3X3Q7f0=
+	t=1780514168; cv=none; b=NHzDRKaTBXRsrdoZcul+tJULVlTlCIe9hQSQFHkDM48PMpC9KYaPiuZeLBfLP07jvirEXWXYnJL6YcBJjKJ0l4NgPs2wsutyutukoaVO9MjpxGpn5HUFzUpHbZbLgUxAsL1BeVrcItdoRVBvbcIJ1fWzwWfFY7X+OmagZ0Kcf0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780513347; c=relaxed/simple;
-	bh=1NLteCByV70T52z29D8fjc/KHpD3C1BzAXLciM66kXs=;
+	s=arc-20240116; t=1780514168; c=relaxed/simple;
+	bh=dexnL7eQC0fA1sJbKVWifOEhhvh5jEKu44UJ06oxGcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gUi4zOFAefni2hvy9kWzPtYZutQ9zK7a8aHKq8SEZndVWniaV/5LrqdN57TMLSq0NQk68KB15eKkbBkuLFBMYsl3wwPlTKbKo+gjsRWFI+mZJqZoX/EKLPsTBGSfKn7aMiyUbLGlqYOztm4zoeBiVRBATuYZ49jrSMACUcxhaV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtbdm0rR; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=oTM1DeyXCgw71/YKTSiHdUfmRT8GWlcRoBqHvhxCa3bf+tDXKXYOiW/ZhxVHbAQ5vOT59KkxltmTtotdJsQUTItS9Z47RmfFPTblo4iLGGp4dHoXssorfYSOkOhTOKg8KNvABdXrOhBzA4Ead+pVyPCiZ0SQ55VfNJVcZvjRgpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0KFLTpF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtbdm0rR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9DD1F00893;
-	Wed,  3 Jun 2026 19:02:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0KFLTpF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8431F00893;
+	Wed,  3 Jun 2026 19:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780513346;
-	bh=vIEl+LQGKaksPQtk6Vl+xd82kwa4xpIIRmSo1FcZatQ=;
+	s=k20260515; t=1780514166;
+	bh=ksMoa0F73pdNImxKyG0LG7l6wtV5gvTMGbr826jyjH0=;
 	h=Date:From:To:Cc:Subject;
-	b=jtbdm0rRPXsQkmKgybW5dQzpvKrtPetDDfygsS0z9RLIgd4s9JmWIftk0FUsyLSfE
-	 45FRyXClEvCrQXgb8iubOi3IU/1JefhE4dpTXIUf+4kaBoHnXxlkFpW2N7EaDlz86S
-	 NQrm8O+VCqcSYCWQirpKqnMxYites+QeOdUOo8Cn6CiOP5j8Jmn6aatB0K2adpVJ4e
-	 rafv/I+L5aFtjavxZePI4x6j4EjqOiCav4kFQwMHJv53jE5Gh0cgFovwldD6n/Fdg9
-	 qi2iy06WDUtBTrdsX/zDqU3ZVlpDcL7cyICdtPEAg17t3GNrE9HsLG9Ilhlo7s3A0r
-	 tvNomX2W+XKtw==
-Date: Wed, 3 Jun 2026 20:02:22 +0100
+	b=f0KFLTpF9cwcJOP4IAPVvUXyDZNCYhcGupDse1SKsoWuVg5eo7Q9fmin18j5cgtFc
+	 1Hs1HIANTxmCN+knOsSQk8/9icKyP2l8LTNWSwn04H9giO/T3RZb+/dWWp2WoSiZ+A
+	 79x1lJQES/pCv0m3zHFYIX9YUpvbyz8ux66m48FtL02JRE9xCF7udQ1rbf+VCsDrk4
+	 vPGw3xZ+Cw0yMKofB805kE5Lz3pKDGW3ydZbQwuECPqmkv8T/845hAJYLysdBhW/XA
+	 DeeMJeDBZUfSWUKyc4Y8azHjVP/B/7a/EtyU24XluSwUOwlLbEI66QYdoYdmClrHbL
+	 kYbs21+xC18gQ==
+Date: Wed, 3 Jun 2026 20:16:03 +0100
 From: Mark Brown <broonie@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Simon Schippers <simon.schippers@tu-dortmund.de>,
-	Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: linux-next: manual merge of the vhost tree with the mm-unstable tree
-Message-ID: <aiB6PlZxn19NobF0@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 3
+Message-ID: <aiB9cxB2w3-6pAMz@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,208 +39,89 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DxwRXdyVuBs9VTNA"
+	protocol="application/pgp-signature"; boundary="v7TIOeDE9WiVOzSV"
 Content-Disposition: inline
 
 
---DxwRXdyVuBs9VTNA
+--v7TIOeDE9WiVOzSV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vhost tree got conflicts in:
+Changes since 20260602:
 
-  include/linux/mm.h
-  include/linux/ptr_ring.h
-  mm/memory.c
-  mm/page_alloc.c
+The nfsd tree acquired a build failure due to an interaction with the
+cifs tree for which I applied a revert.
 
-between at least commits:
+The mm-unstable tree acquired a build failure for which I applied a
+fixup.
 
-  c0ea52c18c78c ("mm/huge_memory: simplify vma_is_specal_huge()")
-  fba362c17d9d9 ("ptr_ring: move free-space check into separate helper")
-  aa812f234b6c8 ("mm: memory: flatten alloc_anon_folio() retry loop")
+The arm64 tree acquired a KUnit failure, I used the version from
+next-20260602 instead.
 
-=66rom the mm-unstable tree and commits:
+The imx-mxs tree lost it's build failure.
 
-  dd3984b3bce9d ("ptr_ring: disable KCSAN warnings")
-  fba362c17d9d9 ("ptr_ring: move free-space check into separate helper")
-  f7a2566ae0c03 ("mm: move user page zeroing into the allocator")
+The v4l-dvb tree acquired a conflict with the origin tree.
 
-=66rom the vhost tree.  I note that the vhost tree does not appear to have
-anything from Linus' tree beyond v7.0-rc2, are you sure this is
-sensible?
+The net-next tree acquired a conflict with the wireless tree.
 
-I am really not convinced about my fixups below.
+The tip tree acquired a conflict with the pm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+hornet is now marked as BROKEN.
 
-diff --cc include/linux/mm.h
-index 485df9c2dbddb,f600c0428aad9..0000000000000
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@@ -5088,6 -4714,25 +5100,9 @@@ long copy_folio_from_user(struct folio=20
-  			   const void __user *usr_src,
-  			   bool allow_pagefault);
- =20
- -/**
- - * vma_is_special_huge - Are transhuge page-table entries considered spec=
-ial?
- - * @vma: Pointer to the struct vm_area_struct to consider
- - *
- - * Whether transhuge page-table entries are considered "special" following
- - * the definition in vm_normal_page().
- - *
- - * Return: true if transhuge page-table entries should be considered spec=
-ial,
- - * false otherwise.
- - */
- -static inline bool vma_is_special_huge(const struct vm_area_struct *vma)
- -{
- -	return vma_is_dax(vma) || (vma->vm_file &&
- -				   (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP)));
- -}
- -
-+ #else /* !CONFIG_TRANSPARENT_HUGEPAGE && !CONFIG_HUGETLBFS */
-+ #define folio_zero_user(folio, addr_hint) \
-+ 	clear_user_highpages(&(folio)->page, (addr_hint), folio_nr_pages(folio))
-  #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
- =20
-  #if MAX_NUMNODES > 1
-diff --cc include/linux/ptr_ring.h
-index c95e891903f05,d2c3629bbe451..0000000000000
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-diff --cc mm/memory.c
-index 56be920c56d74,beb6ce312dec6..0000000000000
---- a/mm/memory.c
-+++ b/mm/memory.c
-diff --cc mm/page_alloc.c
-index 81a9d4d1e6c0a,cb72dd6e0efb3..0000000000000
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@@ -90,8 -90,12 +90,14 @@@ typedef int __bitwise fpi_t
-  /* Free the page without taking locks. Rely on trylock only. */
-  #define FPI_TRYLOCK		((__force fpi_t)BIT(2))
- =20
- +/* free_pages_prepare() has already been called for page(s) being freed. =
-*/
- +#define FPI_PREPARED		((__force fpi_t)BIT(3))
-+ /*
-+  * The page contents are known to be zero (e.g., the host zeroed them
-+  * during balloon deflate).  Set PagePrezeroed after free so the next
-+  * allocation can skip redundant zeroing.
-+  */
- -#define FPI_PREZEROED		((__force fpi_t)BIT(3))
-++#define FPI_PREZEROED		((__force fpi_t)BIT(4))
- =20
-  /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields =
-*/
-  static DEFINE_MUTEX(pcp_batch_high_lock);
-@@@ -1806,15 -1881,25 +1850,25 @@@ static inline bool should_skip_init(gfp
-  	return (flags & __GFP_SKIP_ZERO);
-  }
- =20
-+=20
-  inline void post_alloc_hook(struct page *page, unsigned int order,
-- 				gfp_t gfp_flags)
-+ 				gfp_t gfp_flags, bool prezeroed,
-+ 				unsigned long user_addr)
-  {
- +	const bool zero_tags =3D gfp_flags & __GFP_ZEROTAGS;
-  	bool init =3D !want_init_on_free() && want_init_on_alloc(gfp_flags) &&
-  			!should_skip_init(gfp_flags);
- -	bool zero_tags =3D init && (gfp_flags & __GFP_ZEROTAGS);
-  	int i;
- =20
-- 	set_page_private(page, 0);
-+ 	__ClearPagePrezeroed(page);
-+=20
-+ 	/*
-+ 	 * If the page is pre-zeroed, skip memory initialization.
-+ 	 * We still need to handle tag zeroing separately since the host
-+ 	 * does not know about memory tags.
-+ 	 */
-+ 	if (prezeroed && init && !zero_tags)
-+ 		init =3D false;
- =20
-  	arch_alloc_page(page, order);
-  	debug_pagealloc_map_pages(page, 1 << order);
-@@@ -3244,15 -3347,9 +3309,16 @@@ struct page *rmqueue_buddy(struct zone=20
-  			}
-  		}
-  		spin_unlock_irqrestore(&zone->lock, flags);
-+ 		*prezeroed =3D __page_test_clear_prezeroed(page);
-  	} while (check_new_pages(page, order));
- =20
- +	/*
- +	 * If this is a high-order atomic allocation then check
- +	 * if the pageblock should be reserved for the future
- +	 */
- +	if (unlikely(alloc_flags & ALLOC_HIGHATOMIC))
- +		reserve_highatomic_pageblock(page, order, zone);
- +
-  	__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
-  	zone_statistics(preferred_zone, zone, 1);
- =20
-@@@ -3376,8 -3461,9 +3443,8 @@@ static struct page *rmqueue_pcplist(str
-  	 */
-  	pcp->free_count >>=3D 1;
-  	list =3D &pcp->lists[order_to_pindex(migratetype, order)];
-- 	page =3D __rmqueue_pcplist(zone, order, migratetype, alloc_flags, pcp, l=
-ist);
- -	page =3D __rmqueue_pcplist(zone, order, migratetype, alloc_flags,
- -				 pcp, list, prezeroed);
- -	pcp_spin_unlock(pcp, UP_flags);
-++	page =3D __rmqueue_pcplist(zone, order, migratetype, alloc_flags, pcp, l=
-ist, prezeroed);
- +	pcp_spin_unlock(pcp);
-  	if (page) {
-  		__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
-  		zone_statistics(preferred_zone, zone, 1);
-@@@ -3941,10 -4035,19 +4009,12 @@@ check_alloc_wmark
- =20
-  try_this_zone:
-  		page =3D rmqueue(zonelist_zone(ac->preferred_zoneref), zone, order,
-- 				gfp_mask, alloc_flags, ac->migratetype);
-+ 					gfp_mask, alloc_flags, ac->migratetype,
-+ 					&prezeroed);
-  		if (page) {
-- 			prep_new_page(page, order, gfp_mask, alloc_flags);
-+ 			prep_new_page(page, order, gfp_mask, alloc_flags,
-+ 				      prezeroed, ac->user_addr);
- =20
- -			/*
- -			 * If this is a high-order atomic allocation then check
- -			 * if the pageblock should be reserved for the future
- -			 */
- -			if (unlikely(alloc_flags & ALLOC_HIGHATOMIC))
- -				reserve_highatomic_pageblock(page, order, zone);
- -
-  			return page;
-  		} else {
-  			if (cond_accept_memory(zone, order, alloc_flags))
+The drm-xe tree acquired a build failure, I used the version from
+next-20260602 instead.
 
---DxwRXdyVuBs9VTNA
+The vhost tree acquired extensive conflicts with the mm-unstable tree.
+
+Non-merge commits (relative to Linus' tree): 9652
+ 10621 files changed, 561035 insertions(+), 206347 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 423 trees (counting Linus' and 130 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--v7TIOeDE9WiVOzSV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogej0ACgkQJNaLcl1U
-h9Cldgf/T3vhesejnkbyBao3XqNjQUs0sjJ014LkjuuPxkOTaFCQj7eNWWuN3WKg
-+Zb8x4jzUbqqz88C4LRrb4nA8Z9zZYoNJINgSbA4VZ/YS9osU+RU32EeOkx9XpLk
-ZMGN2OHYW44++aAi1w9+seJfZCn+7H7EbyFNrrWSMq/Hv655zTyjNRxEr8HbMLQt
-ZkNHHbFq1UmgF4I/WlGH7kT8dNDRf0bETZhsspnXtCC4VorkAkUya19S4HXmeTZt
-Gci2NE8ec5L11RN0EeEbALOslfiOVJZLWkm3mjEJIlvqg6ElpDqJNTC5140P9HVY
-DYRrU6XmQ3wsZMmw+0dKhr/OJwV4Ug==
-=8kEt
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogfXIACgkQJNaLcl1U
+h9CDxAf/fqK45QnBmjxPBARXpsKlXkBVzD+yY/Wdlzaf/VCuu3pj7qb+WbPj4pMv
+AclIc33kjqTmBiTJi/8uKcN+wTEdmUv0YpJ/9x/4BRvaC5/n8m2A9NoxjgX8jdIv
+EcaV9gohjbtI6WzT5EEEFpgX9KMW5b223SxJ/1SY1myZjPxN0QzYkzGt8vxQWLFb
+D5S2/rYvFBdlRDy66effrO+WHq9zrVy75/rysNucWpdiMbJi33KLZlKPE0+f85EC
+AcPv3nD0BS8DC9fx8dtOnur4U5kwBKvsoieJ4br4mQepNCoMlxN9cYnkDaHuvsez
+j4tgMF3lU7pq5QOk5gXbBRxKn6dA9w==
+=YsYY
 -----END PGP SIGNATURE-----
 
---DxwRXdyVuBs9VTNA--
+--v7TIOeDE9WiVOzSV--
