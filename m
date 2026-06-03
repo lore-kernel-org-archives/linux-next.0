@@ -1,123 +1,106 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0763A4F5E
-	for <linux-next@vger.kernel.org>; Tue,  2 Jun 2026 21:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780436717; cv=pass; b=QXhEBrnX6CVyj/vscnK1TYfaB3BvSsFO/jPr4yQw1IzB6vSXUNLsvupeUEIqAWSOfzLhoKQnmtrtBeHMdSSyc9N2pbZPXm+LsFEJcwD6vV+KgXvkeVEz3e2NPiL29J4dz++5UGM6vo2UioSTtut4NKem28IyHGdr2tb4kyCBwUE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780436717; c=relaxed/simple;
-	bh=KOQdHlqbjdmDreblqF6LDye84bMbw/y63M7JSnQjQwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pdVuif+qqL1GCRlXYTginD+g/+I2iMS5oOObZ1qaninLF1VGdtteTLSNlzuwlJWpPfXyYJrUeLDj/9x5cJ4InCTKONe7TQEmliiboPbidfAKSpMKKmq/xUt93DXEWuTfwfYq6D0cXW+tDVAeQqEbxKuU4lq3UqUhTTpLfth0lpI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GVaOxf6I; arc=pass smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5173A2B9A4;
+	Wed,  3 Jun 2026 01:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780449395; cv=none; b=tRa2cOhyurvRRR6sxq7MGxT7XyLgKpkioQonqbUSNFa/A9nub/RHsJCBMsT2bXAYhTKFNS1hebQnK3Kbf5fqZ7gIELxJp155/gIt3SaXZEPw+Ye/qLKHjpJbkwDg8W1uzXIPOcinh3Zukf1p5Dsxqm0WH8zfPkkjF8mgoI8T1ZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780449395; c=relaxed/simple;
+	bh=aSxhV7Dzuxt+88a2tyUyNJwTZ/2Z2mfgZ9AhdPFwnAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ssFMl8m0785Oc+Y294/KD7Udv9GYFgLcFWdpg07oX47byOKKE1sVXxGM9F8yAFfgnUtT6ZE6Wjgl8HPXVhjSqysr+xZbY39Z7c4e83pWKvpJ9UDxaCxhMcSvOZqn2WykCvu+Q0KyvW51OvcZTB8PFHGZewsJnWaci88uHSc6fPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuJa5eYa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GVaOxf6I"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2bf18c30bb2so38904645ad.0
-        for <linux-next@vger.kernel.org>; Tue, 02 Jun 2026 14:45:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780436716; cv=none;
-        d=google.com; s=arc-20240605;
-        b=GlPsTNJCe7UPVv2A4z2hpj069x8XkZLs2J7dErpGjRZF5w0f4Wvw/MkMipC+sT+tKk
-         UUxLU9aVfXUdy/DMOdpDjD5R/wcuXQrLjO0QThFOsMuYTN/zYe7PvQiXslN1All9KW83
-         kI5DKgSt4EOabySvcxSJVc6XxaXRdGMe840rSsFoe0uNNEYs3hM7f4M+B2LwfHE4EPBA
-         0HEdapnES/60ibs4vKM34lutaWDkUw5SvXZyBHvd9+Xv3uPhYmSYrpibYlMxGpmHQSDJ
-         VR++zosavUvZPr9PVDDdfz+ZMp2OSbSjIwQ9CWJJfxstVtIpzGRmrlbsg6UjMhVIYS9H
-         qXQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=KOQdHlqbjdmDreblqF6LDye84bMbw/y63M7JSnQjQwY=;
-        fh=l6WcWug8ecIHgnm4T+YgNBX8l28pOTvcPRmucGHBLj4=;
-        b=kbu/uwgtqZGgJbM5XblFXMiDu/naYyB9ntOOJzsFWDFkPtFnmg5QC6OqgTLSuZedL5
-         iaXClKjzQL/w1P5eMLpQPwkeVUCRHVlQhlqFJOATyZCCitcTjX5d2wlMg3g8YZivFDdQ
-         c7uiDcaZk+eBVIhSexRZQcgu5WCchGbBX8g7ZFrnnnnjm9mO4sY0UH4hJzWWmEIMKaUD
-         5z+RguxGMqECf+zYIsGbv495+yx6OLnk3BiYHM+9UWMdIbr+S49DsEu2pPpnex9ujAON
-         Zl4wfa0Ia/Grh3/wjscUF8RMs8/I7mmPMIKqiPMJVzwUuqdPz3JVBExJFtkpAA/dBhhh
-         6fJg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780436716; x=1781041516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KOQdHlqbjdmDreblqF6LDye84bMbw/y63M7JSnQjQwY=;
-        b=GVaOxf6IskshIWFXpyp00GpLCHlAzB56Wpwkv38VLkYLIxUN1669g/OKkBmG6Vt5je
-         XOj71bi9TwMdNZw8tKxI1zvySYg+1HEj1Pobk9BlpGQu2dgBTRnzNMiYUk//SIb1n6rN
-         viH9YJmI+utKN/8HMdNs6uZaqBrlDCrrMwQXwjDmGIZAZ4op+lGXdUH6amVXBRCT0A/D
-         ufidmD3M+YZT147mJvpNI11PYvaCW4vLUZ4VJBGtIfkczCaytcgaimZs2Ph0EuaEStng
-         EarIi/p6I3/hU8rgykTOwtkD2BSGLjDlRYn2apKdjgAaX9g+ML+kUD50pmPZDx/8gGZl
-         7bQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780436716; x=1781041516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KOQdHlqbjdmDreblqF6LDye84bMbw/y63M7JSnQjQwY=;
-        b=H1aya2pSfg28UWPzkogIjmlGHwknIZMRBcv1hprRmNE1GNi12QKoLWMmSGdDTUOdbC
-         Le/VuatQpR3E6VPy/KfGdAAtqFrXFhtRxcehp2J6/4lUNESL7eNL3yy38uMKLRd+emYc
-         tblhnk5WXB09G1et8z5gLgF+J3aoGbLCnrx01/cP/kxFBnkp/5WPI5CwrO9Pjg7dmAi5
-         FQYJdfWVu5ytyc00JYUnbjkil8XdBrLmqmJDpQ3Vqp0i6gNjMBfDvDdEQ8CmDzRoJi5D
-         u9J2MSRdDXA6spUiDi4PdaWdFADSsX46dNhq1uLospN99gTusoFPOLZJ8mADZ8MVJdaj
-         LRyQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/7FxzarL6RBSYOGGmYEOXPCBZ7lW32TVhQasYiXlbTt2UxBtnPZBlhaA7kRLXlclnHkL96xww2Y1VD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6b1YCoM4EW5lOfgecO5rCtSqapx4ssG1xV8vEtwlffGSyFLHJ
-	N15/bTPIQL8BGiqYmDjHE+rRSQbk+Bg73UEgRCfkmm5nlO7r+YYKwRSgmvfgLoju46VNVlQrXbQ
-	l5RK7GZ+A6OwMg42x+/msTz/NAb6xzW7fTgJpMtuN
-X-Gm-Gg: Acq92OFlurU1p2NqbvNp0aPaPKAYm4ijthZIqyM4ieCNlrnC4aev3NZI+CtoXTO7YoC
-	GoZakaAVLF3G9ZUScXMn+s7mXymFtfkinDA8PS7xj7Nx4jxPw+rrE50OwjOiK0Y/FIn/JzXR4qr
-	1T8wGV1OJWJnD5smqyrqOTjkp8nzGVByIKl+C/zbrgoZRK2jTkMRjYBKChHgzW540D6c5MEGHtp
-	whIVDOaKa7pyt51oGziJQhB02c9KGiJTPEv6ghonv3ECPsMnt/ZA8ExuZtGQTTFZ4Iv5Pgt9fRk
-	Gt6nCD1HIbSvPDHnZg==
-X-Received: by 2002:a17:903:3903:b0:2c0:fa4e:91ed with SMTP id
- d9443c01a7336-2c163a59a86mr5095515ad.18.1780436715739; Tue, 02 Jun 2026
- 14:45:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuJa5eYa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5272D1F00893;
+	Wed,  3 Jun 2026 01:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780449393;
+	bh=0fBTevK6gNCF+y1Qpad9tw8VN5c/evrMNB7AyYy+84U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YuJa5eYan0ZRGi8oX/AjTIbHCBHT/Ab4ivKUR1dGtqh+w5Iy7fwxqMBm9qeKbgS3l
+	 S+bjWNgN/1rVyijVXS/p1B0ca+/H05ffed0UBnCw7LKt1vAtdUnTbWIo4OQ9OL7CRD
+	 dqhFRBD0dEzSgbkK11hU2HeV/VxwTKv9JX7ihC1rhS6UdVYRColXC7TQ82YqWLmvAg
+	 rzXhbHBuveKfmU9l8fRbEE9wldOn2+GxvLg8EtXAxEaYcCDOlxq4weQWzulUH50t45
+	 hWaE2YdgG4oc7Dlj5e7J5FmoHcpttn4uoQxSd3kTYaG8a34b7qqXSNL5J/RUG8BHl+
+	 cdEOmgC6zhWBw==
+Date: Tue, 2 Jun 2026 18:16:29 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the kbuild tree with the clang-fixes
+ tree
+Message-ID: <20260603011629.GA1940387@ax162>
+References: <ah7geBSoDn696L9S@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ah8BzqSmZO40xYhS@sirena.org.uk> <CAHC9VhRR4mmkOdWwUCLswmA+_KEjB8RCBBTJ2W4JGiLUWKzxyQ@mail.gmail.com>
- <CAHC9VhRPbkVYAMec0KG55er6GOPdKqMXKdpC8rrHgiAodSv-sw@mail.gmail.com> <9d34218f-abbf-4a23-8b35-b305873ffae3@sirena.org.uk>
-In-Reply-To: <9d34218f-abbf-4a23-8b35-b305873ffae3@sirena.org.uk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 2 Jun 2026 17:45:04 -0400
-X-Gm-Features: AVHnY4K_GfYnJi1Ham2KVsQorfmtW0kY909SMhxY_6Zb2qHORdTKGwtbORTWZjc
-Message-ID: <CAHC9VhQnBi55hjwTATA_tgKNZ=StFYTKu2Av5R8N4yDJwsFswQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the security tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ah7geBSoDn696L9S@sirena.org.uk>
 
-On Tue, Jun 2, 2026 at 3:16=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
-> On Tue, Jun 02, 2026 at 02:40:12PM -0400, Paul Moore wrote:
-> > On Tue, Jun 2, 2026 at 12:31=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
->
-> > > Thanks Mark, we're taking a look at it now and should have a
-> > > fix/answer later today.
->
-> > Proposed update to Hornet, assuming this looks okay to Blaise I'll
-> > merge it into the LSM tree (and either pull in Daniel's patch or base
-> > off bpf-next so everything builds correctly).
->
-> > https://lore.kernel.org/linux-security-module/20260602183658.161744-2-p=
-aul@paul-moore.com/
->
-> Can you ping me when that goes in (or things are otherwise resolved)
-> please so I know to drop the revert from -next?
+On Tue, Jun 02, 2026 at 02:54:00PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kbuild tree got a conflict in:
+> 
+>   include/linux/compiler-clang.h
+> 
+> between commit:
+> 
+>   175db11786bde ("Disable -Wattribute-alias for clang-23 and newer")
+> 
+> from the clang-fixes tree and commit:
 
-You shouldn't see a conflict with lsm/next now, but if you do let me know.
+Technically now Linus's tree after he merged clang-fixes in
 
---=20
-paul-moore.com
+  77590cacabb3 ("Merge tag 'clang-fixes-7.1-2' of git://git.kernel.org/pub/scm/linux/kernel/git/nathan/linux")
+
+>   c919893eabb43 ("compiler-clang.h: Drop explicit version number from "all" diagnostic macro")
+> 
+> from the kbuild tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc include/linux/compiler-clang.h
+> index 527e4e1360205,a105e2e8016c2..0000000000000
+> --- a/include/linux/compiler-clang.h
+> +++ b/include/linux/compiler-clang.h
+> @@@ -131,16 -122,10 +122,16 @@@
+>   #define __diag_str(s)		__diag_str1(s)
+>   #define __diag(s)		_Pragma(__diag_str(clang diagnostic s))
+>   
+>  +#if CONFIG_CLANG_VERSION >= 230000
+>  +#define __diag_clang_23(s)	__diag(s)
+>  +#else
+>  +#define __diag_clang_23(s)
+>  +#endif
+>  +
+> - #define __diag_clang_13(s)	__diag(s)
+> + #define __diag_clang_all(s)	__diag(s)
+>   
+>   #define __diag_ignore_all(option, comment) \
+> - 	__diag_clang(13, ignore, option)
+> + 	__diag_clang(all, ignore, option)
+>   
+>   /*
+>    * clang has horrible behavior with "g" or "rm" constraints for asm
+
+Thanks a lot, looks good to me and noted for my 7.2 Kbuild pull request.
+
+-- 
+Cheers,
+Nathan
