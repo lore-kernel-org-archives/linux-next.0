@@ -1,37 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ADE39DBF2;
-	Wed,  3 Jun 2026 07:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D1039BFE5;
+	Wed,  3 Jun 2026 07:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780471013; cv=none; b=QVQEk1TFNPN9GhwSItZiGTet0Kd7WouHkd8F0fQhMXIMLU3Z+TwN8YLQ91f558IWT36+aLlzQMQSLMKFJBWDAzd9PnRFWZ8/EYdsZoh27Ru/QrEvbN30StmOldvBzNtaXqlgMpec7NupfncmjP0UcKYGiC4e1Q1dZf/V1Ow6cVY=
+	t=1780471023; cv=none; b=Wn1uWHMK5JzB/1+VH2GIbox2sx8wTWxKpxUQBuzwh1PqHDfZLNgSVVq3XDfgUGw+1fJopYk9GLfkSVKWR2/4BLbjFWoUHx+taiUF9rSLiDa04P95xyNCJottKVZ6JkstYrDisMHexJU/1P8R24+jHp4Lvw+xLgywqTh/xd7RkRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780471013; c=relaxed/simple;
-	bh=va7jFxgh53mLi5iVKXyoNKn7WZMEv+pD8Pfn77xABuY=;
+	s=arc-20240116; t=1780471023; c=relaxed/simple;
+	bh=Tv6HCRIHKg3T+9QBcnUv7zYmy7M3lPX5MIXOUnJE+yU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=azTSputyOdFGi3jOg9sJGpBU+k3uwK6TYjurp71wsgtCtk7IKS6Jd2YQBf7zIVSHIbTjTevRdemQnLb8nop9Rwt+vfXHr+Z/ocGcHJbX96G0goXBlWYR2K7ASii6c6qvMSF6AHEs4LewqJqP6wCNiaO+Qa3TZNyvsPx0LaSroKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Blki+9jC; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=hNRT5hyIT1Zjz8ZUlmcW1esrutMeKxAyaGcgm/0rDlmn4+4XarFtA7W7LxSoiZWX1R2/8osSCHmGTEMc0lFwMS99QMwH0fzqXtxszRJ1eO0udR4nSysXranGFXWxGglqqAhdeEjid9yVHFEy7ort3xTb/Wrk39GNigEijnnixTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jN/ry5oC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Blki+9jC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 864DF1F00893;
-	Wed,  3 Jun 2026 07:16:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jN/ry5oC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBBD1F00893;
+	Wed,  3 Jun 2026 07:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780471012;
-	bh=KOWmdQmCEeacOb+7NmkpgZeavTkPFAopdryRqiqLsfY=;
+	s=k20260515; t=1780471022;
+	bh=+nWUDLiP30W/RSvphRKxxD5tUXTNQPMjw7/UNGHo4UY=;
 	h=Date:From:To:Cc:Subject;
-	b=Blki+9jCavhpksuxjRIVQpq2XlAzcF9LeSSwMr7zz5AfQMF+T3+srgtM68pCDmQr6
-	 HylPH8ROsz4ggpuBIPIPMMQdLDY6klVUqtpS2dH1Xz18D/VhGj6QjHyWeZnZO1rRqK
-	 YCDNNphjL7aIaDfKDvFNLw8e4PtVSGx2jFUtRjgiZkp8m+mf9QIfJAPZPKOghyjF74
-	 a1WYl0l0HcU566OAO+v4i3JN9KC6KVuLQ3EuE+Th6qzSo/Td/NfagPq7zIGlL1jWvP
-	 qQlRwIAJCEOFx3WvlCyZcmmvJ60hUAXY77Dmx2SAfaamla1OMvUUvKJz1qUUHuFsuT
-	 B3dvJIqVtVpNA==
-Date: Wed, 3 Jun 2026 08:16:48 +0100
+	b=jN/ry5oC4t3CThAXvX5NISEhf5lE0BlIlfC9mer8doqd3j3YryrMRXBVrDRbnCfzI
+	 vCi1GQW7s5T+/37zceHZfWUpkY2kZimlqzU8nbQjDNqHCDSxGoioHq/DxKgXa2G1vG
+	 tGiQ0/kmRRNn1wSL9jjPWdaM1JJZyJi2RQADFvFXTxW63+weuFdAwEKM6TpQkBI5wh
+	 7zYAV625y/9uBg0xaOxTYhHTUYRB1p+AqaigPMFzqwllzI+ah8QeIeBH4f/eXbpVtO
+	 eRkold+rb0vXr2tzDLG6eKrJcDmGGzuZToLLnUFZcZPtTPnraSinK6l6c51BN7tKFJ
+	 u/f24y3qHKcaw==
+Date: Wed, 3 Jun 2026 08:16:59 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the ntfs3 tree
-Message-ID: <ah_U4Bjkpnue-YZH@sirena.org.uk>
+Subject: Missing signoff in the wireless tree
+Message-ID: <ah_U6xEhq5GSebBc@sirena.org.uk>
+Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,42 +43,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IsLByaav9w/W6OW9"
+	protocol="application/pgp-signature"; boundary="UDz1/u8MxfU41vlN"
 Content-Disposition: inline
 
 
---IsLByaav9w/W6OW9
+--UDz1/u8MxfU41vlN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-In commit
+Commit
 
-  236c81b8fc4cd ("fs/ntfs3: bound DeleteIndexEntryAllocation memmove length")
+  1b659e979685b ("wifi: mac80211: fix NULL dereference of eht_oper in ieee80211_start_ap()")
 
-Fixes tag
+is missing a Signed-off-by from its author
 
-  Fixes: b46acd6 ("fs/ntfs3: Add NTFS journal")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    This can be fixed for the future by setting core.abbrev to 12 (or
-    more) or (for git v2.11 or later) just making sure it is not set
-    (or set to "auto").
-
---IsLByaav9w/W6OW9
+--UDz1/u8MxfU41vlN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmof1OAACgkQJNaLcl1U
-h9B/+Af9GDi5oLIwTm2OLrWBaj7ECt0ZvFvjYDZ4mgscl+QMArWUMIf2HpGvmVBC
-BUG6PHr9NFs0+/RVxFJ8pUylldH6imh3zfxZ2l4pRaww4IMUla9rad96SOfQk3oR
-qzg+7kQ2MCcAE0HtYIwtNjRqeP6W1roDd9STE8e+PQNLohFJTfnJ6CU6PdQw1y5I
-gw9WxaaUaKlUJCCGnEy2dtz4NiKvNxG8pbReDE4yBIiZkqi8lc64pn53dWBEC3F0
-JhPkWYwAEVFzidhCLgkWCiDRnBTdH/6sSd00DJ/lCuhtt/kxi/dP24WrKQMnTR0O
-U3iGjq/3N7s2GNg+ymQRVK/UmoOROQ==
-=C3oV
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmof1OoACgkQJNaLcl1U
+h9B6QAf/RubJMbmTNInUgIsCqZKNhdqvAW5vTyqejhp5W1aVyZ0dRAwYooAcDR1y
+XWHdKHa4YxAzgIOjWVlxRBFVwjfoKCdXQPynQDqrfi4Nyy1o4oLRU9Njw4lAny4a
+w1B941m4eTwxBa8JnWjFqaahL8aMfi2CPAXM5wS4kcKfHv3XZM6UUT6MQuGYgzyn
+UA04krFqvNzQMykM03cyajLZ+5Gtvb8mwNFpfimAVBB1+h61yacU/LY8wnNbid9r
+nU20jEVTcTeZKlsxfqPK47dBq4Eh+VpF9oed5NA+WjNVEU1oUHKrc2gTg5pnvMGu
+3GbIShD+KqGau+KFzYFURRIs3OaiPA==
+=qxje
 -----END PGP SIGNATURE-----
 
---IsLByaav9w/W6OW9--
+--UDz1/u8MxfU41vlN--
