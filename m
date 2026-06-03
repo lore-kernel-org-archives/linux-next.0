@@ -1,84 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A413451BA;
-	Wed,  3 Jun 2026 14:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F0735AC03
+	for <linux-next@vger.kernel.org>; Wed,  3 Jun 2026 14:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780495335; cv=none; b=dOopzYAvYpL2LTtT7I0vaVd5Xk5GW2ZzCBxDiNK1U+drXb8GAjnArPZdqnleyKfpzriES76lKetwOnD9WZg8gf9kzyBh89/++csVuXUbWDbGwmNVatSg0SpRXOzwR3yc5EF1XmWJNzXo6anxkLK7IyPbVAQK1FFmLdwQO0YNJ2A=
+	t=1780495571; cv=none; b=J2Iv5WMhU5ETSbKvaLAC6sD4b5D1g7U1Ql8WQ523dPiMOJgqyJZo+NGpREpzWTWVXMmVOgKCNHvmEF/s5oZKIRrqSZ8/1vy/lsG19480gZlfGNjJjDKdTiwemqFC/n/gVQQVBzkA93QRBAkyz76dOrhBMltJ9HHqWtK/HXc+dGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780495335; c=relaxed/simple;
-	bh=5UtyuFb1un7nLqFGRsm5/vcbHmVlrm3aTo2EKGu7HAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fm47nTfJ4ylNTJnV5natm7+TEUEErmf63+rrANGPMHykKnrt3QAWKmAIMnH0p3YYIHC22PIyoi9a8NTOnStPqNAFuysuxBzlbzrEZUm3u1qdZXSdigNITTAVjn94kEEyTV0MWwi9FZlRfoSo/2edKVZW+rdjyTS8LOoIKQWvcvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1femxNC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780495571; c=relaxed/simple;
+	bh=HjO7vddhYsPwChXKFBl3Y+JiBam2ih96zMTlfY++8f4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=XURfXZ8wHH8PkoA0ieB/vvOb60rBITsCJRrFuXKJKufUzcgqWAhUT6EIWnU9poE+BwtveKQmp53eJ0vm/S9JyKZf09IBtiLMIFRlOaw2itXnEYaOjpB0r/tPepzu96tA8NPPMHCgV6lx96+2agQCIsZ0BfWfCj9nab6rW4T5xac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=FNRf1YjM; arc=none smtp.client-ip=195.121.94.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1femxNC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4027C1F00893;
-	Wed,  3 Jun 2026 14:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780495332;
-	bh=NLqQEYnsOy1KTZkdSHxa76IzyFDIn4JMbrFbDWuxQ1w=;
-	h=Date:From:To:Cc:Subject;
-	b=n1femxNCN+p2DxVWHE1foDRO8lGad8Dr3dN8KjYQomZu0oCjZtNeXcTcvRt0hY3vv
-	 KdqQOHKCjaj7IO3RdEnAOwrDmRI3MtG5b+x1YpvojUakG601guB119JH/sIA6DGIvy
-	 wH0Pr7WJhTt4kbgUBJKTNhye5FvNzPkdwaYHjwH9j5eOQDnQ1TC3BKNemsHibVx/Tm
-	 DMSpyxLbAzoOH3kfQsEYHyTaYYnil/RackKnoiqC8vWEsCix8+YtUf7rKO/enij++K
-	 4xrUBZKj87/cRuX04n1AQsgKgxKX2DF+RoAEhA9RtKg4aGu1vmwlplLAxNSxH1TqLs
-	 ycqw4TJfs4aaQ==
-Date: Wed, 3 Jun 2026 15:02:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>,
-	Gustavo Sousa <gustavo.sousa@intel.com>,
-	Violet Monti <violet.monti@intel.com>,
-	Matt Roper <matthew.d.roper@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-xe tree
-Message-ID: <aiAz4DmtngY0r6Cx@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="FNRf1YjM"
+X-KPN-MessageId: 5ab893e2-5f55-11f1-beaa-005056992ed3
+Received: from mta.kpnmail.nl (unknown [10.31.161.189])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 5ab893e2-5f55-11f1-beaa-005056992ed3;
+	Wed, 03 Jun 2026 16:06:02 +0200 (CEST)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 5ab3b462-5f55-11f1-b5d4-0050569981f5;
+	Wed, 03 Jun 2026 16:06:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=Ysd3Tr7sviCXhmLJMfXd0EITmdZ6zduNobhslfZZGwc=;
+	b=FNRf1YjMbp7phTpZkc5jHi9Noz+R57Uz3f5BwvS9iGXd2JD6xbbn/hdYr91r+1htHJDc29nIruh0A
+	 X6eBy2TeGCVwBJQnD/hc69pQqaHAWD3aUPe5CTN7gO07HsyNw7C33deTAxszaO83+jaDoGcJflij44
+	 VQMDc2wckyclyxWkbOmNPSZ0+SUtGc9uKPM/1EVFMBbb90ERGddtvnqJM5MH3V+OYNuvnIv8H966yR
+	 G6SR/+yxZm2L2VVhbFHLokAmESAqRcehQ0oHPiYqtgVW6AzjKZRVuxjj+OZvbmC7fbb4tiCkJeKgBD
+	 u9UQqJzV9e50YcWkpXG1AOvXimoBaKA==
+X-KPN-MID: 33|JyizkOMBhMDVskPHSlPsez2WkY84fL9+zIAaL6yaI4eUtnRB2Pd6B/TYJx+7Kt4
+ krFLyXm8zdcmO6nOYHKrg7HE3U5LAzjpfhBuEh7MDB7M=
+X-CMASSUN: 33|Qt6kn3OahuelUnGwYtgz6mhUKAqPvBSR7CQbMaXkG4XmXVLVoMFYMW9z30UVtsq
+ XDiDkxC3xy2rZSS8cJu1/tw==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh07 (cpxoxapps-mh07.personalcloud.so.kpn.org [10.128.135.213])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 5aaa5059-5f55-11f1-b8d7-005056995d6c;
+	Wed, 03 Jun 2026 16:06:02 +0200 (CEST)
+Date: Wed, 3 Jun 2026 16:06:02 +0200 (CEST)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Aleksa Sarai <aleksa@amutable.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Dorjoy Chowdhury <dorjoychy111@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Christian Brauner <brauner@kernel.org>
+Message-ID: <1252517387.391165.1780495562312@kpc.webmail.kpnmail.nl>
+In-Reply-To: <2026-05-27-yapping-angled-spoof-tunic-AYfaAV@amutable.com>
+References: <agruPPybCx8q2XcJ@sirena.org.uk>
+ <c34d1f0e-0707-40cc-b0c7-7b2648ec1863@sirena.org.uk>
+ <CAFfO_h5QdRG2ptyuGRQtqxrpndwan98aOsX92bvN4hyvpgLPMA@mail.gmail.com>
+ <e221b631-00bf-44b5-865b-ac970e6cb11f@sirena.org.uk>
+ <1286370201.1726989.1779131564699@kpc.webmail.kpnmail.nl>
+ <4bd253fa-c363-43cb-adaa-0248ac707a0d@sirena.org.uk>
+ <12198575.2129298.1779371885282@kpc.webmail.kpnmail.nl>
+ <20260527-bordstein-reizt-gemindert-a76319be86a1@brauner>
+ <2026-05-27-yapping-angled-spoof-tunic-AYfaAV@amutable.com>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="X0VTc4FdUhzyzYWn"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
 
---X0VTc4FdUhzyzYWn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Op 27-05-2026 15:09 CEST schreef Aleksa Sarai <aleksa@amutable.com>:
+> 
+> If we could also get some comments in asm-generic that tell you which
+> flag bits are "cursed", that would also be quite great. My impression is
+> a fair number of people forget to check the arch-specific headers, so
+> having a note in the generic one would let us avoid this issue in future
+> (and IMHO will be more effective than just switching from octal).
+> 
 
-Hi all,
+Just to be sure, what do you mean by cursed here? Maybe just a reminder that
+there are arch-specific O_ flags? A list of all of them that may have an
+arch specific redefinition is basically all of them...
 
-After merging the drm-xe tree, today's linux-next build (x86_64
-allmodconfig) failed.  Unfortunately I fat fingered things and deleted
-the logs, assuming the issue remains I'll report proprely tomorrow.  I'm
-fairly sure the issue was due to:
-
-  5ff004fdc7377 (drm/xe/rtp: Add struct types for RTP tables)
-
-with some of the fields in rtp_to_sr_cases[] haiving non-const values.
-Sorry about the lack of clarity here.
-
-I have merged the version from next-20260602 instead.
-
---X0VTc4FdUhzyzYWn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogM98ACgkQJNaLcl1U
-h9Dhjgf8Df7AekcOql2wtT1oSszq+Sjcrb6PDIy1uaIrvRt2FG0wbWiWh9gfwpXA
-8MVnoc8+/Yh+PFtos9w2HQkm7MvK/pDHGuqle1g2OvwXpBfDrtKJdZsoIedpn1KP
-bvMLTHkePq3kKeXOichARvn+EACMdIczLWRzRUv5xCh6hh9VcBy1I5jHwW8kscB3
-sdxZqASDZWnEKZ5lmY5WaSB91wASZSB7YkDUlOJ1TojfQ79DWrKa5L5e2Cc/4BFa
-8zJgwrxS+m5JHRbqN7tpG3RnQtv+QLOvQf/hScumLqZlcvtV9VR1zJr6cW5NoVzw
-gf3uOtqkZTIagid0/8DEw3Z3VfFSZQ==
-=t84i
------END PGP SIGNATURE-----
-
---X0VTc4FdUhzyzYWn--
+Best,
+Jori.
