@@ -1,40 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11CE3002DD;
-	Wed,  3 Jun 2026 11:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E115F2D0625;
+	Wed,  3 Jun 2026 12:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780485881; cv=none; b=my2UsPs0C3DFjFdmMqlnIFivwsVb4FbEXUjxVWHf5YNsaC96Xbcu/V7HN7gUvqj59FzrH0ryguJn78O/Gd3ilsS6Tz2hM03dxsJMZgN9fniE6ISD3tck7qsq8xWSN2eY5W4UwKT0UEdG7Yv7flaPLYAGLiXCEDSI9KN7f36UO1I=
+	t=1780490561; cv=none; b=iHq1TAVvTztI4C1BGf74LmXepCaBnPFvOSjUWXXn4ym3GD8ss3DdkL9isnlZ0vINWUg4o0AccmJHa0C+q04UVcKmd8GIQvayLM2ExmP1PKzy7aVhNzwUBuhADhfpdPqYHXujqr8nR3NA8GogA38DtdG7nCTDNNZLw4ctsD9O2W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780485881; c=relaxed/simple;
-	bh=h0sNI7Xe2n3bOIApf+7LfLcjTwEz0gkQzn6Q+1XBqmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cKLB2jIS4IAGindJEfDxmZqp+f4KqP3f1dmtsfBlYIxxEA7e68ddfs0dB+/d5watgDJuMH4Hw1m/hMd0zzoxc9yhdySNcVrzm7jNpc3DzUuCaa4wzv+xq+zj/FfkdcJtQ3yjtVjyXDqxWMS+7jjtcWYkZ+J8aTUh01JzxtuG8As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqNyRO1N; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780490561; c=relaxed/simple;
+	bh=BqqbVz39eZcGieDH4S9GcWuFlvyiwFN5lfWUHYEmdEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bsLKqUCcVWXbPwqDPJokszFdVeHfPHoQEon82SzEf8D6PT43ObwE/RtFr9EYma/q9pwUrQNqTGOC/4ETQXrDyz3jBIKwOvHhxTJGw8AK37DLh1BI60NR11zGIAjXNjmRPwZwFlnxU3weZvLazNsF53f2c+/zCRjbzWwPZj5i5rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEBwaoEZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqNyRO1N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA471F00893;
-	Wed,  3 Jun 2026 11:24:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEBwaoEZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45451F00893;
+	Wed,  3 Jun 2026 12:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780485880;
-	bh=7lZf+z6Q1BjcdEDKBmDl3Q5cInQCvnta+6rre9sYAFk=;
-	h=Date:From:To:Cc:Subject;
-	b=VqNyRO1NtTZ+LWZLMytVeBM4p22kyrXGsqZGppmHnogDzW1eobS/jLENIk4tVcuJ8
-	 1JAqTPqxk+5QTBnYQHx2fycZI/gvvkG1yqOe0apF+bYPH7nC+mAQ9TVtMQeBMWQTsH
-	 HzldLHJ5rVOQgOd70NsS4OopLKPNE2Ti1+9guzhz4XhgKb1hPG9I6ZF23wp8XxB9kL
-	 cZPUNxEIxo5uRQsobu3E6JCBdlw0pMbuDNhKZ1TzzekgCbh/5twmK6xLq5nIVBafYi
-	 egne/cjaSWLQMcnWipKQa5lJpeVo0hOULQ+IaF/do3WxlyldJ2K7Jo7JH8oem19Okk
-	 rYc7zpnzcE02A==
-Date: Wed, 3 Jun 2026 12:24:36 +0100
+	s=k20260515; t=1780490560;
+	bh=BqqbVz39eZcGieDH4S9GcWuFlvyiwFN5lfWUHYEmdEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AEBwaoEZsTb5MZH1vuW+kAdocIAVYIjbNZgcutswOTN4EcvEClG214+XjFo0q3wa9
+	 WIv4DqL+k/7EmI4Ff5jmIscIFWfCWxKhEImcvlCzdDIJKRwbhMsee9As7truZAqmLg
+	 Qag8mHYP6UCWuwAtoJdTPyZI4UJGPvwP2Eq7w35dx8SKgjQG4zBw1D+BY3tBonzs8w
+	 zzpMTJuC2lY/Tdj5s3Rfr6YFUJtEDBdlnsQPhgwpFZEYyhKTgmrZ/dM58MIhDEzFoa
+	 cm/hookOcu5EH1WuQLIQt98sH91Wv9WHwfCEyR2o7WAPMp9kbl+XxDWmx/iVaIf+jy
+	 AtHAtaLt6yoeg==
+Date: Wed, 3 Jun 2026 13:42:34 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Paul Moore <paul@paul-moore.com>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: test failure after merge of the arm64 tree
-Message-ID: <aiAO9KcQ8Irve7od@sirena.org.uk>
+Subject: Re: linux-next: build failure after merge of the security tree
+Message-ID: <6565c4a4-3102-4521-9c84-48c7c7f0117f@sirena.org.uk>
+References: <ah8BzqSmZO40xYhS@sirena.org.uk>
+ <CAHC9VhRR4mmkOdWwUCLswmA+_KEjB8RCBBTJ2W4JGiLUWKzxyQ@mail.gmail.com>
+ <CAHC9VhRPbkVYAMec0KG55er6GOPdKqMXKdpC8rrHgiAodSv-sw@mail.gmail.com>
+ <9d34218f-abbf-4a23-8b35-b305873ffae3@sirena.org.uk>
+ <CAHC9VhQnBi55hjwTATA_tgKNZ=StFYTKu2Av5R8N4yDJwsFswQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,69 +50,42 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lGs/qYdg/9kUVfR4"
+	protocol="application/pgp-signature"; boundary="nGNcFUm9tdwcZ7nJ"
 Content-Disposition: inline
+In-Reply-To: <CAHC9VhQnBi55hjwTATA_tgKNZ=StFYTKu2Av5R8N4yDJwsFswQ@mail.gmail.com>
+X-Cookie: micro:
 
 
---lGs/qYdg/9kUVfR4
-Content-Type: text/plain; charset=us-ascii
+--nGNcFUm9tdwcZ7nJ
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Jun 02, 2026 at 05:45:04PM -0400, Paul Moore wrote:
+> On Tue, Jun 2, 2026 at 3:16=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
+ote:
 
-After merging the arm64 tree, today's linux-next (arm64 kunit) failed
-like this:
+> > Can you ping me when that goes in (or things are otherwise resolved)
+> > please so I know to drop the revert from -next?
 
-[11:04:45] Configuring KUnit Kernel ...
-[11:04:45] Building KUnit Kernel ...
-Populating config with:
-$ make ARCH=3Darm64 O=3D/tmp/next/arm64_kunit olddefconfig CROSS_COMPILE=3D=
-aarch64-linux-gnu-
-Building with:
-$ make all compile_commands.json scripts_gdb ARCH=3Darm64 O=3D/tmp/next/arm=
-64_kunit --jobs=3D192 CROSS_COMPILE=3Daarch64-linux-gnu-
-[11:05:11] Starting KUnit Kernel (1/1)...
-Running tests with:
-$ qemu-system-aarch64 -nodefaults -m 1024 -kernel /tmp/next/arm64_kunit/arc=
-h/arm64/boot/Image.gz -append 'kunit.enable=3D1 console=3DttyAMA0 kunit_shu=
-tdown=3Dreboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -ser=
-ial stdio -machine virt -cpu max
-Command '['qemu-system-aarch64', '-nodefaults', '-m', '1024', '-kernel', '/=
-tmp/next/arm64_kunit/arch/arm64/boot/Image.gz', '-append', 'kunit.enable=3D=
-1 console=3DttyAMA0 kunit_shutdown=3Dreboot', '-no-reboot', '-nographic', '=
--accel', 'kvm', '-accel', 'hvf', '-accel', 'tcg', '-serial', 'stdio', '-mac=
-hine', 'virt', '-cpu', 'max']' timed out after 300 seconds
-[11:10:11] [FAILED] <missing>
-[11:10:11] Testing complete. Ran 0 tests: errors: 1
-[11:10:11] Test results stored in /tmp/next/arm64_kunit.json
-[11:10:11] Elapsed time: 325.499s total, 0.002s configuring, 25.490s buildi=
-ng, 300.006s running
+> You shouldn't see a conflict with lsm/next now, but if you do let me know.
 
-which is not hugely informative.  Looking at what's new in the arm64
-tree from yesterday I'd be astonished if this were anything other than
-Ard's linear map series. =20
+It's still there today, but seeing Linus' comment about not merging
+hornet I marked it as BROKEN instead.
 
-This is running on a Graviton 4 system, the kunit command line is:
-
-=2E/tools/testing/kunit/kunit.py run --failed --alltests --kconfig_add CONF=
-IG_KASAN=3Dy --arch arm64 --cross_compile=3Daarch64-linux-gnu-
-
-I have used the version from next-20260602 instead.
-
---lGs/qYdg/9kUVfR4
+--nGNcFUm9tdwcZ7nJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogDvMACgkQJNaLcl1U
-h9C2nwf/Ws7S5HV5bWNeSk79Axw92SHD9ndwaIA3ioRNojVCX3xeDE6apTqRdEyM
-ShOgs0dnY6KzBNMj52/jHrDeUr3bABg8G79V/VAywmeJuuV8B5QdlcC8V6NH6gqg
-31ISYNSWc8+CUR+2op+okLBUT60scoHLlv598cNfsCgtyxbJXFp7zsxz0EcXbpPX
-YPv8Cy5o0e4gWpY8ShcDbhrZmwF6PhnPCfpIqTZCE3CD/EHc3db04IuTb1i4VwA3
-PBKPFQl6ts/WQDCQstE1F06CWn06nJfUDhaqxcXo+waZJ5oAbHuZB4bgkmXJSFzC
-iLQxxom69eKcTGU0G+rEPeOGge3nCA==
-=G0B1
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogITkACgkQJNaLcl1U
+h9DVGwf+NVc0XMabqCVzDIqGd1+DP3DzTxEm+ofenacTy8/+If3rEcR2qZtfmzWW
+rcTGpT61iaArHexoWu0FmI9qJ6ValIZwwC9ZCGQJg4VtwKnwSqHejO2zFQbkXR4C
+dRX2j1opZD6otwv5LT6t1ePqr9c+/wXW2U/5DjuQKZyKNG8wfUBIO0zkzTRFbNwp
+vvMCeF7GinBvONyTuqPNun4N1czjHY3n8q4vGvfeA7BR7D5uqRjO9n86aS96Tkb5
+i9olAglQdKrGVOUUc82ibYxYOs2xSP2f2nZR3i7X2ccuf6hmp80Gyd9VYKKlqOao
+LvXaqDQ4Rx2ujXnE8bnyohG8zk8UJQ==
+=AYFE
 -----END PGP SIGNATURE-----
 
---lGs/qYdg/9kUVfR4--
+--nGNcFUm9tdwcZ7nJ--
