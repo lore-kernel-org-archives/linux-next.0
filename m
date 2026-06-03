@@ -1,43 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFF4175A7E;
-	Wed,  3 Jun 2026 13:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9943830214B;
+	Wed,  3 Jun 2026 13:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780493589; cv=none; b=j9oTNWGy072pX9wWT9rPkBCpHYRTF5OvF++bHe9yYjzrqJQ5eRwISWqCEEhqmtgnZlHw3QHIU3wGnE5BCYHv6K4+r0wmly6Gtt5rBuNy2v8Ge5nyHjvRRm1EQiBHsE7IlDDzgwiwTivtkUa12wwOQDWqPP+vNU75YvUmujQ3RKI=
+	t=1780493598; cv=none; b=pPXBCc3w/sHdj26rLnZDbPcXD88NN523953fGVZlvKi9X37OT7rIFHPygbwl9KuckqfBg4ycCl+lKMxXw4JsJw/j1SgcHEtZ1f8x+YFEr06HvsztQHnrsXiR2jQPhK6xSCiCy3Oaf1R1zJYz3pPvILkpBc6wPPNC4YAoh2ofYks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780493589; c=relaxed/simple;
-	bh=WQZJvqDFtMvi/jB3ZMFbBXnEnqmNb0J3SGgmvKbfzQo=;
+	s=arc-20240116; t=1780493598; c=relaxed/simple;
+	bh=b1ysU1fZLrXgVSKfS6bFj4dIWC9zwX/2EijZbkCBY20=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Lzb4ssmhyXdBJlPSgnoVBAn1MQtNxNuIsxWvN6Fl/0tXgkQTmHgpSFIAh18T2s/L5M+HuvYeAdG2BFsTXwbe8QkXYo0EilrRV8sOXyKKsJa2j+N5/oWK+VHOF4NKc+PdExT7mx4ajs7G4SxOtcVKUPTGGdcynB8QiLhhq2i0elQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PylJeV8t; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=PPsCTAI41cBQXDBEnwyyBop+zu8vuBIbmNu67tidoekgx3I/ky4zaIS2SETcgv5JWQcaAu5RsURg4ZbbeKMfFgCed+Lv8nyzmzmXdCRud4OSFCIEYKjgqpfK44rf+kgbZ4Eo+Huptid+LKe6BFU6v4+Gy3jrzliMU5PFALZNwS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dou+n3Ak; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PylJeV8t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62C321F00893;
-	Wed,  3 Jun 2026 13:33:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dou+n3Ak"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC291F00893;
+	Wed,  3 Jun 2026 13:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780493588;
-	bh=9m/PxBT8ItTlK48ZaUPhgFlywGV7QNkVec05UZeCdmc=;
+	s=k20260515; t=1780493597;
+	bh=0Dp5fnxIZ7VliKPMhZv2nE5QC5nqckspwFL9kx66s3w=;
 	h=Date:From:To:Cc:Subject;
-	b=PylJeV8tPl9j5NFvx5dFTFKWB6P2KrrEmFDxi93GGqx7p01KOTE8UzSwn0zhKFAjx
-	 qynUnTb8DlyiVrLIroWz6Dp27X1OVBnLCmHddMWnqP7GKo9LEztglHyhYpXy0aocqD
-	 49cpup+0RLwkJsUkJhz6tX2G02mFXwam0CvO5MYAFL+7rcsuoaVls51dGLmqWATNRn
-	 Of4qyy4sTqDuBU9yVAJ6r6bRiCNbs+FV8IqEWBZLVdkj+BCHnS8TgxsxV8EDJ5WPeP
-	 J5ldKqNg4lNqjzYzIDcanCe4QiIA9e8yng1dDo7NzwQMDNNm2nAAhn9Nrvso4afBFK
-	 AiF69CyWqMU0A==
-Date: Wed, 3 Jun 2026 14:33:03 +0100
+	b=dou+n3AkisddKVYKT+rWgyjIXMb0KZ8XjQe34zjM+enZnmRoq0fMIQyZnN6JTYXzP
+	 5EW3Pk3l904lMMBBKmvAX0kcI8aKOJdcKbB7EMCmidpRRBhnUnWHcv4LEUj8lsRjdj
+	 aeoYv5l7kn9XlpV86fCk8auoX6amFySIhkXzgRB8gBO2ek+xy4K6iMxGGCyku/qbti
+	 4YLk4AJkD61+IpIwiomwVCJyTNu5WgWo38SsCccC2jIZjPuHS9JVoqxAEKZEL3yXFF
+	 OGoLD2h9Wje4d5pcf1KmHVAm6I1W9ekra1e7VwtUdWsLmtVajGNZnvJJI4Ojxkh7Wl
+	 mnYxjAgbfXc/A==
+Date: Wed, 3 Jun 2026 14:33:13 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Bryan O'Donoghue <bod@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Johannes Berg <johannes.berg@intel.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
-Subject: linux-next: manual merge of the v4l-dvb tree with the origin tree
-Message-ID: <aiAtD90wYV8-pibf@sirena.org.uk>
+	Weiming Shi <bestswngs@gmail.com>, Weiming Yang <weiming3@asu.edu>
+Subject: linux-next: manual merge of the net-next tree with the wireless tree
+Message-ID: <aiAtGZWYjAIM_kta@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,33 +44,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="skC+jn6T6rHLmYa4"
+	protocol="application/pgp-signature"; boundary="ykvzMlw6+mJHw3h/"
 Content-Disposition: inline
 
 
---skC+jn6T6rHLmYa4
+--ykvzMlw6+mJHw3h/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/media/platform/qcom/iris/iris_vdec.c
+  net/mac80211/cfg.c
 
 between commit:
 
-  3d9593ad1a58c ("media: iris: fix use-after-free of fmt_src during MBPF ch=
-eck")
+  1b659e979685b ("wifi: mac80211: fix NULL dereference of eht_oper in ieee8=
+0211_start_ap()")
 
-=66rom the origin tree and commits:
+=66rom the wireless tree and commit:
 
-  65c06d2edded3 ("media: qcom: iris: vdec: allow GEN2 decoding into 10bit f=
-ormat")
-  56f93da11a7c3 ("media: iris: drop struct iris_fmt")
+  a384ae9699025 ("wifi: cfg80211: move AP HT/VHT/... operation to beacon in=
+fo")
 
-=66rom the v4l-dvb tree.
+=66rom the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -80,63 +78,39 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/media/platform/qcom/iris/iris_vdec.c
-index 99d544e2af4f9,a8d6354bee28f..0000000000000
---- a/drivers/media/platform/qcom/iris/iris_vdec.c
-+++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-@@@ -61,23 -62,24 +62,18 @@@ int iris_vdec_inst_init(struct iris_ins
-  	return iris_ctrls_init(inst);
-  }
- =20
-- static const struct iris_fmt iris_vdec_formats_cap[] =3D {
-- 	[IRIS_FMT_NV12] =3D {
-- 		.pixfmt =3D V4L2_PIX_FMT_NV12,
-- 		.type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
-- 	},
-- 	[IRIS_FMT_QC08C] =3D {
-- 		.pixfmt =3D V4L2_PIX_FMT_QC08C,
-- 		.type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
-- 	},
- -void iris_vdec_inst_deinit(struct iris_inst *inst)
- -{
- -	kfree(inst->fmt_dst);
- -	kfree(inst->fmt_src);
- -}
- -
-+ static const u32 iris_vdec_formats_cap[] =3D {
-+ 	[IRIS_FMT_NV12] =3D V4L2_PIX_FMT_NV12,
-+ 	[IRIS_FMT_QC08C] =3D V4L2_PIX_FMT_QC08C,
-+ 	[IRIS_FMT_TP10] =3D  V4L2_PIX_FMT_P010,
-+ 	[IRIS_FMT_QC10C] =3D  V4L2_PIX_FMT_QC10C,
-  };
- =20
-- static const struct iris_fmt *
-- find_format(struct iris_inst *inst, u32 pixfmt, u32 type)
-+ static bool check_format(struct iris_inst *inst, u32 pixfmt, u32 type)
-  {
-- 	const struct iris_fmt *fmt =3D NULL;
-- 	unsigned int size =3D 0;
-- 	unsigned int i;
-+ 	unsigned int size, i;
-+ 	const u32 *fmt;
-+=20
-  	switch (type) {
-  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
-  		fmt =3D inst->core->iris_platform_data->inst_iris_fmts;
+diff --cc net/mac80211/cfg.c
+index 32c3ada18665b,fb4c1c2981596..0000000000000
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@@ -1595,10 -1715,9 +1715,10 @@@ static int ieee80211_start_ap(struct wi
+  				(IEEE80211_EHT_PHY_CAP7_NON_OFDMA_UL_MU_MIMO_80MHZ |
+  				 IEEE80211_EHT_PHY_CAP7_NON_OFDMA_UL_MU_MIMO_160MHZ |
+  				 IEEE80211_EHT_PHY_CAP7_NON_OFDMA_UL_MU_MIMO_320MHZ);
+ -		link_conf->eht_disable_mcs15 =3D
+ -			u8_get_bits(params->beacon.eht_oper->params,
+ -				    IEEE80211_EHT_OPER_MCS15_DISABLE);
+++		if (params->.beacon.eht_oper)
+ +			link_conf->eht_disable_mcs15 =3D
+- 				u8_get_bits(params->eht_oper->params,
+++				u8_get_bits(params->beacon.eht_oper->params,
+ +					    IEEE80211_EHT_OPER_MCS15_DISABLE);
+  	} else {
+  		link_conf->eht_su_beamformer =3D false;
+  		link_conf->eht_su_beamformee =3D false;
 
---skC+jn6T6rHLmYa4
+--ykvzMlw6+mJHw3h/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogLQ8ACgkQJNaLcl1U
-h9AbJgf7BNfuOHMs6V2xfqXxma4NB0JUy0uGLza8FyCKOY5aVWBC+U0eRQ1/qJ8j
-HBhRCp3/NZvRKTQCRA0KyzwLEmmMPHt5bZ3L/kZbvBi1iLim6xjhkcBGQ2xQMvxK
-F8wcKVOsi4nXRG2J5sIcT6siyfjaSJ2ATiAJcAtGPOpDmK3OBlAWe7TeSwAWElGO
-cipQe+yHObZSOAqVFhuI1+j4EvwVhVZ4BSmu4hAmBdZ8KHyeebTInR7e5dEq0o1d
-IZOX8wEuhODPNakoQcWMGkf/CjuqhPOzd+YPY3Bh5yyfLZXh+gxysnUFXq31lIGR
-FWGBQeqf0qnHf0xfRKE0rLO8Nl16bg==
-=gIgB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogLRgACgkQJNaLcl1U
+h9AZtgf/fY5yNN8nkwWljWkObqf1kwJlbUxI/8914p3Me7BrkNcxt469l3krYBG5
+CoXZ77OYlZLqYHdPyEHk1GqUG6W5MWyZJLkjcJtp66exuJMw4q8KJYyCb7Y5rqXD
+eWjJHPiaHQJxK+aFw3/ByoJ1XY7E9gzl/4oJuzDSLAUmUEAnFq8s7I5pQYXAgPuX
+7HBN2Oqtga03h2f2kFxTbyc0nCtm1zGJ87x9bIvDWEfQ+SlUWEuTxqST83wUXV/m
+7D9xYObCHR0ITtppQiTo0c9z2SQ4DpNPHHNEJXL8kY8w4KvxGWbiFV8OhxnbSCRn
+3pBPJryjwMC8uDspv7h8pvm8N15eqw==
+=Uo18
 -----END PGP SIGNATURE-----
 
---skC+jn6T6rHLmYa4--
+--ykvzMlw6+mJHw3h/--
