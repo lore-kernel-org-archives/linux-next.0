@@ -1,122 +1,167 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C2C2B9A4
-	for <linux-next@vger.kernel.org>; Wed,  3 Jun 2026 14:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780497855; cv=pass; b=UhVGlapemopbUi/I3u1PRWQHMCls4V0iI6fbpfFjocaXuRk8sCJS3vQ44wi90mmKBMhsOQfHwHHn/kN37xD8HK+IqkhA9hyNCJmjWf3b8CGFUdpFSGAsY2ah4/ECWw7bAY6WkCff/ztpK3ex25oafiTed92iER5XU6XEYP9OgX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780497855; c=relaxed/simple;
-	bh=2OkasJ0ndKZfg6cpcJo7yWgVLndNvCdeEQG7xxbqLK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SXaF3Ct4y7plxr0Q1a59sXALXNnJHj6vu94X+EcAWWvklYPVqsUYXDXAoiw15h5G+4eXh6mD3fwHesj2zyS9zZ8fAPbKGs70xk9HFtbOuVe7KtgWgEhEaa0p853BFT2bI9VkCHwqqqOZ0Sd7i82Ytq0GZKCiXNNXOwHOqC5e4XU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=K7D5f+wx; arc=pass smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B070319852;
+	Wed,  3 Jun 2026 14:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780498538; cv=none; b=t+0Qi6xbT82NFgZvRhpXyM1eOsxdhtm+RR35+HH9i/a9syb9doy8xv2mXFuMXn59NQW7bM9Frjzep5TfzJD1px8ZawZF85dnf0QIMDxKbnnk1t4wbr3PyFkg1uIhr8zgRNbttnw/jjhaAU6V2kYgyaAgWra72QMkkPEwGKlHjvQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780498538; c=relaxed/simple;
+	bh=lRt2iMXAw234wnDE6xtp/gTEMsqzlaYg5O87p2Nn+Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9XGoX/0URfCc7LHYspyRWr9Q+6I10nLVJnFxT2ulpwifQucyYcmKhgL06keWZvdjqUKNsIp6eQ7L9YqEwmKyWUMKvfZg6S/urLTU6phiN+5+9X5pJjmFfvlk2M0MrVCa7diTc/j9RFJy/8cXCzXM/EvGNAea1wHh2eZNy2lt9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=0OFDxP4o; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="K7D5f+wx"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-36d98b9aa9aso3475991a91.3
-        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 07:44:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780497853; cv=none;
-        d=google.com; s=arc-20240605;
-        b=FTwFSjFCUP+GJ6046QsVHAFukJOo6785mHbfWQAVWxLb2yiBQqjC7+s50nNQy45lXm
-         1M7uKMmwdZGZuGCK+b0vu3iKqsOOIrUDPEE/bmShn54uU/NjS6CUAtkkXsrgHwroajOf
-         V/GpNMEhciOfYjy0F5p3Uqv9I8uTwu3BLv+y1pjxcM2XLKHsleIn+bVqCgqcPS+DEhdZ
-         Vom3nEUjjXzx+kJPpo3N4IIQdvPhWsl9aV/JtxpmBailytA9xmVHxtteDSwTlngGwn4r
-         ax//rlFqh6PT2+GrLxGBj0hSWaG3aBtAxtbpu//jQc5ZmGywrRw3/czj7h1lPW37x6XY
-         67SA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Y5JjMZYEtQz+6ik+uw6aiCOF6sKgKEkR5ogTnZvnVt0=;
-        fh=qBQRK3OCzPT2nds5tUPq2EWimpTNvJZkPe8lh4DJmyA=;
-        b=jdXJ6v/wh3T96aeCbAiYa5g+xniuFQyvTOL5C+HzNKhxqOCFZFSKEZLITuVP/GQOsH
-         Hu9LBq1zeFm+ypAw2iF1okjVR8o+rRWmcLd7BSKXQq3LxPF1txyN2Cq4+xFHGbspURjJ
-         JcEJEGXjzNISZfB6up4TVffm8bS4nzqOKti/Bqv8y+uEqgt/PZUma/X3n8t1b2ipPBMM
-         brn4ZMevKkGCih7Om8z3pkhKdx11zzb7UjljI7WafFLkofH5l8SdaDxtdfjlDJ+ZDf1S
-         D2Xg/gqybxZfkl+j3WPrUqIikhphcnKEcMcMO8RrECTMVR3F/IeR2fvlsp1HjGr05pSL
-         19iw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780497853; x=1781102653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y5JjMZYEtQz+6ik+uw6aiCOF6sKgKEkR5ogTnZvnVt0=;
-        b=K7D5f+wxF8jERGEb36Ms0OO4m+9Fq0hFqokg0cc/mIe6f0adFu2IYc5qQhRMZtXZbo
-         pYvyvR/AEHzCCdFP2qNPsBqN8HHt0YKQzvy5TLrFSuokRHsD6sYOc8KrthK3gVHRHmLG
-         aJfQ7VIK3oh18o8tj3DvLr9YXhwnBfS+6F/l33cKn7Ux0qcvgzzYqCqEAxEhIG4iX/No
-         66kkJd70ctGAG0yysuDInWJWr7gBdbAJ5QaM5ZPB1rCQz6WWysVhBAWyFeV+VVKr9R9b
-         OECQC8asSoRgfC9w8GuRmhULjIm+omSKKVfyFaM2/3yu3fnr5++/8/i9nD+k+dmevIFs
-         u51w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780497853; x=1781102653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Y5JjMZYEtQz+6ik+uw6aiCOF6sKgKEkR5ogTnZvnVt0=;
-        b=Evsi1oHNoEdgMzHV6nNT3rV6liMf8spZ9Ot9nxUvJztH1DOoBeouvn0G7LHgSH+4zI
-         NIQ/K/Uuht7eOmKsji57SGx3pGN4xFvm/FfTm5JuYtTSSiqXLaNMiZG+kqR/SDKmG2N9
-         N6ethmgfy+ExzCrssEpX7zBPe9AdsgcYztEz1h15Kw/Y0eIqmVRXkReZVk2vBvFC9Kbx
-         LI0qeZJSd+xkRFIkP9Br0kAH4UKg/Uq+JUgJi85V9MLHdrBegVQaGDntA8z/XqLtwAJy
-         zGguhimc8DFEVCsUT3N/X20GHAWaqaB1JD2er34aonrQKpa4nvYfPubfVg5q25ErlJpr
-         77FQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9USjtMHPutoCTHYSuCCaTztwPcdiGNM4D8Ov4p31M4eEjPkx+Lw6HSjC4grQJY/DQx2r6gCAInqQwN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxii4QP1mbBb/IRRrvTmzWc5pSvw+LZ/nLEoLoP9TVOkxEiZ2N8
-	mn4mdU/xmPtOQ/+r7Zx1i9ZS5fZUq1rjeBGJy3dWBZSxdK7V7owAwBdcybNb6ZOUo9z7hiEv5nh
-	QhVMfZhv0ox3F3oHeuhlBP5O5+x//XZV2OGvUS3rBQEPsOdd+ERJ2gA==
-X-Gm-Gg: Acq92OEz+C6cEtQia7hLBahEVHX6ElGwXBRq8dIrWX7WLa7aP2mCs9BDR6CXR/JxysL
-	m1uZbkhbjl9K77G+8IYagV08wzX/xE8nqY3ryeHTCTWXVfEdJJeBY7ocEt4tC5C2T6er2HLrrwm
-	IermBohfrOfvqgrQ0BbY68w9AfyyaeSKZHKOkXfY+PwXoXQ1WZSRXzWXaEUca5Gy8MtZsc+z1oI
-	QdRooRtavGWkGi3Wy18WEAVALJS+ecmgaYBcl1tiL+PDau19yzEN8pkA9uQnbO20vxdBLE5i8xx
-	b567yp+ULhMyHh8wQg==
-X-Received: by 2002:a05:6a20:d4b:b0:3b4:895f:6ac7 with SMTP id
- adf61e73a8af0-3b4978a23d7mr4133938637.22.1780497853207; Wed, 03 Jun 2026
- 07:44:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="0OFDxP4o"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4gVrNG1Zqsz9v0g;
+	Wed,  3 Jun 2026 16:55:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1780498526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w9byIzDuJCUt6io4onNyza1YyMqteOinzLhDFdFw5yE=;
+	b=0OFDxP4or/36avJMxMUvi9mXEtheMGvLe4lSiGAAolmMtmS6ChmXh7Edxc8GDpyZ09b8ak
+	1z5JodoMg9dRDxS9xuPXxRXDyrwMYOBNdi8B5Evxbjo0hnftlwnLKi+eC3ct+/pFLVlWBq
+	5KzSng/X4/RR+lAAmh0Zs0E6EJa/4SwLPxyXjUJl20nymyz8PhtNONAv8B4gD+ocSiyUUH
+	iv59sVi1MaRaFchYYsebVPc1b9MOFjFXZeDepjmg1Y9D5SeB7pfwZWsA6TKkXua2T4Sv+F
+	cuWE13B+sHV2Wt2mn+geejQRjW68SZ/h1AYOGXb8N4JzXbyArzxayzhLmjgZqA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 4 Jun 2026 00:55:14 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Jori Koolstra <jkoolstra@xs4all.nl>
+Cc: Aleksa Sarai <aleksa@amutable.com>, Mark Brown <broonie@kernel.org>, 
+	Dorjoy Chowdhury <dorjoychy111@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <2026-06-03-static-roomy-ports-pigs-9IRSWx@cyphar.com>
+References: <CAFfO_h5QdRG2ptyuGRQtqxrpndwan98aOsX92bvN4hyvpgLPMA@mail.gmail.com>
+ <e221b631-00bf-44b5-865b-ac970e6cb11f@sirena.org.uk>
+ <1286370201.1726989.1779131564699@kpc.webmail.kpnmail.nl>
+ <4bd253fa-c363-43cb-adaa-0248ac707a0d@sirena.org.uk>
+ <12198575.2129298.1779371885282@kpc.webmail.kpnmail.nl>
+ <20260527-bordstein-reizt-gemindert-a76319be86a1@brauner>
+ <2026-05-27-yapping-angled-spoof-tunic-AYfaAV@amutable.com>
+ <1252517387.391165.1780495562312@kpc.webmail.kpnmail.nl>
+ <2026-06-03-passive-wicked-stones-player-ciGFgM@cyphar.com>
+ <1923539284.396325.1780497055216@kpc.webmail.kpnmail.nl>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ah8BzqSmZO40xYhS@sirena.org.uk> <CAHC9VhRR4mmkOdWwUCLswmA+_KEjB8RCBBTJ2W4JGiLUWKzxyQ@mail.gmail.com>
- <CAHC9VhRPbkVYAMec0KG55er6GOPdKqMXKdpC8rrHgiAodSv-sw@mail.gmail.com>
- <9d34218f-abbf-4a23-8b35-b305873ffae3@sirena.org.uk> <CAHC9VhQnBi55hjwTATA_tgKNZ=StFYTKu2Av5R8N4yDJwsFswQ@mail.gmail.com>
- <6565c4a4-3102-4521-9c84-48c7c7f0117f@sirena.org.uk>
-In-Reply-To: <6565c4a4-3102-4521-9c84-48c7c7f0117f@sirena.org.uk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Jun 2026 10:43:59 -0400
-X-Gm-Features: AVHnY4JIW8gQBYMOr8fggrJDG2mD4293Ofq_rtsFtHA031eqjcjZT-6N6e7Vah8
-Message-ID: <CAHC9VhR9R-wBAj64aO60pSUb7f5Tmfj6gprrHQB3g+=WYF14mA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the security tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ss4fqu5kemgollsu"
+Content-Disposition: inline
+In-Reply-To: <1923539284.396325.1780497055216@kpc.webmail.kpnmail.nl>
+X-Rspamd-Queue-Id: 4gVrNG1Zqsz9v0g
+
+
+--ss4fqu5kemgollsu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+MIME-Version: 1.0
 
-On Wed, Jun 3, 2026 at 8:42=E2=80=AFAM Mark Brown <broonie@kernel.org> wrot=
-e:
-> On Tue, Jun 02, 2026 at 05:45:04PM -0400, Paul Moore wrote:
-> > On Tue, Jun 2, 2026 at 3:16=E2=80=AFPM Mark Brown <broonie@kernel.org> =
-wrote:
->
-> > > Can you ping me when that goes in (or things are otherwise resolved)
-> > > please so I know to drop the revert from -next?
->
-> > You shouldn't see a conflict with lsm/next now, but if you do let me kn=
-ow.
->
-> It's still there today, but seeing Linus' comment about not merging
-> hornet I marked it as BROKEN instead.
+On 2026-06-03, Jori Koolstra <jkoolstra@xs4all.nl> wrote:
+>=20
+> > Op 03-06-2026 16:13 CEST schreef Aleksa Sarai <cyphar@cyphar.com>:
+> >=20
+> > =20
+> > On 2026-06-03, Jori Koolstra <jkoolstra@xs4all.nl> wrote:
+> > >=20
+> > > > Op 27-05-2026 15:09 CEST schreef Aleksa Sarai <aleksa@amutable.com>:
+> > > >=20
+> > > > If we could also get some comments in asm-generic that tell you whi=
+ch
+> > > > flag bits are "cursed", that would also be quite great. My impressi=
+on is
+> > > > a fair number of people forget to check the arch-specific headers, =
+so
+> > > > having a note in the generic one would let us avoid this issue in f=
+uture
+> > > > (and IMHO will be more effective than just switching from octal).
+> > > >=20
+> > >=20
+> > > Just to be sure, what do you mean by cursed here? Maybe just a remind=
+er that
+> > > there are arch-specific O_ flags? A list of all of them that may have=
+ an
+> > > arch specific redefinition is basically all of them...
+> >=20
+> > I was mainly thinking of the ones that appear free but actually aren't
+> > -- so these are the ones where there are only arch-specific flags that
+> > take them.
+> >=20
+> > Basically, I would prefer the list in the asm-generic header be
+> > something like:
+> >=20
+> >  #define O_FOO 0x001
+> >  #define O_BAR 0x002
+> >  /* 0x004 must not be used -- it conflicts with flags on alpha and s390=
+=2E */
+> >  #define O_BAZ 0x010
+> >  /* 0x020 must not be used -- it conflicts with flags on parisc. */
+> >=20
+> > The fact that some flags have their order mixed up on different
+> > architectures is funny trivia but when allocating a new flag, the thing
+> > that trips most people up is that it looks like a flag is free in
+> > asm-generic but some architecture is using that flag and you'll only
+> > find out when someone compile-tests for that other architecture.
+> >=20
+> > Depending on how many O_* flag bits we have, this might even allow us to
+> > enforce non-arch-specific O_* flags (like we did for syscall numbers a
+> > few years ago).
+> >=20
+>=20
+> Okay, that makes sense. But you can reuse those bits in asm-generic if yo=
+u just
+> redefine the new O_ flag in the conflicting arch-specific fcntls, right? =
+Maybe
+> we don't want that, but that leaves fewer bits in the O_ space.
 
-My apologies, I forgot to push my local tree to kernel.org.  It should
-be all set now.
+Actually the number of usable bits we have today is the same, regardless
+of whether we choose to skip the "cursed" bits today or we keep filling
+holes until we cannot express a bit on every architecture -- either way
+you will eventually be unable to allocate a bit on every architecture
+after the same number of steps.
+
+But there is a usability difference -- if we use the same bits
+everywhere for future O_* flags they are less painful to manually define
+for userspace and less likely to lead to bugs (which was the same
+argument used for uniform syscall numbers).
+
+(Not to mention that we have the high-32-bit OPENAT2_* flag space now,
+and I expect we will see very few new O_* flags because they are very
+hard to add safely due to the -EINVAL problem we've discussed before.)
 
 --=20
-paul-moore.com
+Aleksa Sarai
+Founding Engineer at Amutable
+https://www.cyphar.com/
+
+--ss4fqu5kemgollsu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaiBAURsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMiwyLDIACgkQKJf60rfpRG/n4wEA2fhsR4TtBD+6yn/z+ukJ
+Gbx/4doPvB6e9RZsYIdHYX0A/R+2sOBJ22J+huekVBBLTwf81iFdHoMzUE8BV7XO
+7AUM
+=mt4i
+-----END PGP SIGNATURE-----
+
+--ss4fqu5kemgollsu--
