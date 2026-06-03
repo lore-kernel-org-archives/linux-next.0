@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9943830214B;
-	Wed,  3 Jun 2026 13:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A413451BA;
+	Wed,  3 Jun 2026 14:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780493598; cv=none; b=pPXBCc3w/sHdj26rLnZDbPcXD88NN523953fGVZlvKi9X37OT7rIFHPygbwl9KuckqfBg4ycCl+lKMxXw4JsJw/j1SgcHEtZ1f8x+YFEr06HvsztQHnrsXiR2jQPhK6xSCiCy3Oaf1R1zJYz3pPvILkpBc6wPPNC4YAoh2ofYks=
+	t=1780495335; cv=none; b=dOopzYAvYpL2LTtT7I0vaVd5Xk5GW2ZzCBxDiNK1U+drXb8GAjnArPZdqnleyKfpzriES76lKetwOnD9WZg8gf9kzyBh89/++csVuXUbWDbGwmNVatSg0SpRXOzwR3yc5EF1XmWJNzXo6anxkLK7IyPbVAQK1FFmLdwQO0YNJ2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780493598; c=relaxed/simple;
-	bh=b1ysU1fZLrXgVSKfS6bFj4dIWC9zwX/2EijZbkCBY20=;
+	s=arc-20240116; t=1780495335; c=relaxed/simple;
+	bh=5UtyuFb1un7nLqFGRsm5/vcbHmVlrm3aTo2EKGu7HAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PPsCTAI41cBQXDBEnwyyBop+zu8vuBIbmNu67tidoekgx3I/ky4zaIS2SETcgv5JWQcaAu5RsURg4ZbbeKMfFgCed+Lv8nyzmzmXdCRud4OSFCIEYKjgqpfK44rf+kgbZ4Eo+Huptid+LKe6BFU6v4+Gy3jrzliMU5PFALZNwS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dou+n3Ak; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=fm47nTfJ4ylNTJnV5natm7+TEUEErmf63+rrANGPMHykKnrt3QAWKmAIMnH0p3YYIHC22PIyoi9a8NTOnStPqNAFuysuxBzlbzrEZUm3u1qdZXSdigNITTAVjn94kEEyTV0MWwi9FZlRfoSo/2edKVZW+rdjyTS8LOoIKQWvcvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1femxNC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dou+n3Ak"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC291F00893;
-	Wed,  3 Jun 2026 13:33:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1femxNC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4027C1F00893;
+	Wed,  3 Jun 2026 14:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780493597;
-	bh=0Dp5fnxIZ7VliKPMhZv2nE5QC5nqckspwFL9kx66s3w=;
+	s=k20260515; t=1780495332;
+	bh=NLqQEYnsOy1KTZkdSHxa76IzyFDIn4JMbrFbDWuxQ1w=;
 	h=Date:From:To:Cc:Subject;
-	b=dou+n3AkisddKVYKT+rWgyjIXMb0KZ8XjQe34zjM+enZnmRoq0fMIQyZnN6JTYXzP
-	 5EW3Pk3l904lMMBBKmvAX0kcI8aKOJdcKbB7EMCmidpRRBhnUnWHcv4LEUj8lsRjdj
-	 aeoYv5l7kn9XlpV86fCk8auoX6amFySIhkXzgRB8gBO2ek+xy4K6iMxGGCyku/qbti
-	 4YLk4AJkD61+IpIwiomwVCJyTNu5WgWo38SsCccC2jIZjPuHS9JVoqxAEKZEL3yXFF
-	 OGoLD2h9Wje4d5pcf1KmHVAm6I1W9ekra1e7VwtUdWsLmtVajGNZnvJJI4Ojxkh7Wl
-	 mnYxjAgbfXc/A==
-Date: Wed, 3 Jun 2026 14:33:13 +0100
+	b=n1femxNCN+p2DxVWHE1foDRO8lGad8Dr3dN8KjYQomZu0oCjZtNeXcTcvRt0hY3vv
+	 KdqQOHKCjaj7IO3RdEnAOwrDmRI3MtG5b+x1YpvojUakG601guB119JH/sIA6DGIvy
+	 wH0Pr7WJhTt4kbgUBJKTNhye5FvNzPkdwaYHjwH9j5eOQDnQ1TC3BKNemsHibVx/Tm
+	 DMSpyxLbAzoOH3kfQsEYHyTaYYnil/RackKnoiqC8vWEsCix8+YtUf7rKO/enij++K
+	 4xrUBZKj87/cRuX04n1AQsgKgxKX2DF+RoAEhA9RtKg4aGu1vmwlplLAxNSxH1TqLs
+	 ycqw4TJfs4aaQ==
+Date: Wed, 3 Jun 2026 15:02:08 +0100
 From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Weiming Shi <bestswngs@gmail.com>, Weiming Yang <weiming3@asu.edu>
-Subject: linux-next: manual merge of the net-next tree with the wireless tree
-Message-ID: <aiAtGZWYjAIM_kta@sirena.org.uk>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>,
+	Gustavo Sousa <gustavo.sousa@intel.com>,
+	Violet Monti <violet.monti@intel.com>,
+	Matt Roper <matthew.d.roper@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-xe tree
+Message-ID: <aiAz4DmtngY0r6Cx@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,73 +44,41 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ykvzMlw6+mJHw3h/"
+	protocol="application/pgp-signature"; boundary="X0VTc4FdUhzyzYWn"
 Content-Disposition: inline
 
 
---ykvzMlw6+mJHw3h/
+--X0VTc4FdUhzyzYWn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the drm-xe tree, today's linux-next build (x86_64
+allmodconfig) failed.  Unfortunately I fat fingered things and deleted
+the logs, assuming the issue remains I'll report proprely tomorrow.  I'm
+fairly sure the issue was due to:
 
-  net/mac80211/cfg.c
+  5ff004fdc7377 (drm/xe/rtp: Add struct types for RTP tables)
 
-between commit:
+with some of the fields in rtp_to_sr_cases[] haiving non-const values.
+Sorry about the lack of clarity here.
 
-  1b659e979685b ("wifi: mac80211: fix NULL dereference of eht_oper in ieee8=
-0211_start_ap()")
+I have merged the version from next-20260602 instead.
 
-=66rom the wireless tree and commit:
-
-  a384ae9699025 ("wifi: cfg80211: move AP HT/VHT/... operation to beacon in=
-fo")
-
-=66rom the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc net/mac80211/cfg.c
-index 32c3ada18665b,fb4c1c2981596..0000000000000
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@@ -1595,10 -1715,9 +1715,10 @@@ static int ieee80211_start_ap(struct wi
-  				(IEEE80211_EHT_PHY_CAP7_NON_OFDMA_UL_MU_MIMO_80MHZ |
-  				 IEEE80211_EHT_PHY_CAP7_NON_OFDMA_UL_MU_MIMO_160MHZ |
-  				 IEEE80211_EHT_PHY_CAP7_NON_OFDMA_UL_MU_MIMO_320MHZ);
- -		link_conf->eht_disable_mcs15 =3D
- -			u8_get_bits(params->beacon.eht_oper->params,
- -				    IEEE80211_EHT_OPER_MCS15_DISABLE);
-++		if (params->.beacon.eht_oper)
- +			link_conf->eht_disable_mcs15 =3D
-- 				u8_get_bits(params->eht_oper->params,
-++				u8_get_bits(params->beacon.eht_oper->params,
- +					    IEEE80211_EHT_OPER_MCS15_DISABLE);
-  	} else {
-  		link_conf->eht_su_beamformer =3D false;
-  		link_conf->eht_su_beamformee =3D false;
-
---ykvzMlw6+mJHw3h/
+--X0VTc4FdUhzyzYWn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogLRgACgkQJNaLcl1U
-h9AZtgf/fY5yNN8nkwWljWkObqf1kwJlbUxI/8914p3Me7BrkNcxt469l3krYBG5
-CoXZ77OYlZLqYHdPyEHk1GqUG6W5MWyZJLkjcJtp66exuJMw4q8KJYyCb7Y5rqXD
-eWjJHPiaHQJxK+aFw3/ByoJ1XY7E9gzl/4oJuzDSLAUmUEAnFq8s7I5pQYXAgPuX
-7HBN2Oqtga03h2f2kFxTbyc0nCtm1zGJ87x9bIvDWEfQ+SlUWEuTxqST83wUXV/m
-7D9xYObCHR0ITtppQiTo0c9z2SQ4DpNPHHNEJXL8kY8w4KvxGWbiFV8OhxnbSCRn
-3pBPJryjwMC8uDspv7h8pvm8N15eqw==
-=Uo18
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmogM98ACgkQJNaLcl1U
+h9Dhjgf8Df7AekcOql2wtT1oSszq+Sjcrb6PDIy1uaIrvRt2FG0wbWiWh9gfwpXA
+8MVnoc8+/Yh+PFtos9w2HQkm7MvK/pDHGuqle1g2OvwXpBfDrtKJdZsoIedpn1KP
+bvMLTHkePq3kKeXOichARvn+EACMdIczLWRzRUv5xCh6hh9VcBy1I5jHwW8kscB3
+sdxZqASDZWnEKZ5lmY5WaSB91wASZSB7YkDUlOJ1TojfQ79DWrKa5L5e2Cc/4BFa
+8zJgwrxS+m5JHRbqN7tpG3RnQtv+QLOvQf/hScumLqZlcvtV9VR1zJr6cW5NoVzw
+gf3uOtqkZTIagid0/8DEw3Z3VfFSZQ==
+=t84i
 -----END PGP SIGNATURE-----
 
---ykvzMlw6+mJHw3h/--
+--X0VTc4FdUhzyzYWn--
