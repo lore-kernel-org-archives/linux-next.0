@@ -1,105 +1,124 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB2F35DA75;
-	Thu,  4 Jun 2026 17:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC2F4502F
+	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 17:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780593828; cv=none; b=W8v+4k3vImzxDFH9DPAir2M50kBx9PwrDZ3VN0a51eEnduuAVF+p0RzfIBThxLR3M56De6mOsoZOI6tgztHdBV1dhgYAylAokshV187j0qxfmy52+b2bXMqQW9gQdJq3+krdK17NG5FczBCmuPhvFXMZ/jb/vlvcb4tASzbGi6w=
+	t=1780595947; cv=none; b=POnBQADAoskZUF99noAln/OhfsYp9JC2v6cDO7YApz/R9WGUJqunE4oc04JjQsLIUVBOfec2839RRE52HdpvKxyPnMSQQjcXNGbxMI7lhCbERmpyuWN/vgqsd9gjpxG3ehGe9nhyqtk+8s9Eo06HazdtGOgQ2b65pf6MnHvD7Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780593828; c=relaxed/simple;
-	bh=l5asS8SpSkQYf+YuhGCpSbcTaEHoBBdWcBH67W6W3fo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ohCi7EpYHeC3UW0sfFcKHIukBj8RQO8jtdHC6Y2DYnoOdIhkrugbi1rb2V83/TqU+ad7SLSafZKQjMLXmTx7wrBsyZ4lOqx4hg9UUfgN59aWl86yenHd7pXoHKdF5/ijsGWt2qv3MDkM2c756dP+OMczQuLGyFL/qsldthIYmFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E6HzlUIu; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1780595947; c=relaxed/simple;
+	bh=nfK8RylvLKuEzFpYXFoSYWUzV/VO6lZO9BXznBVS5HE=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=WkXihYb36aYhGue4CiEj3jIF0w7vSlDHvcnlyna+j6k6UMk8abMLxGbVKrpg6hrE4K4wT7+R5oDPwmbVzpT79mZ3AxlosU/IfWAt7VjelMiBrUZ7eWfdlSJUtvop9NO+2Z/4SJCsZqCjdqLeCp0LSkWsvh1IonVlgZa9l1gZebA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Q1yKZMW6; arc=none smtp.client-ip=74.125.82.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E6HzlUIu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780593826; x=1812129826;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=l5asS8SpSkQYf+YuhGCpSbcTaEHoBBdWcBH67W6W3fo=;
-  b=E6HzlUIukPTvUO439/HDGnH+9UrQKBMgHiD9/8sJXv7x2E+ENAUyY0we
-   sA53S881scPZJ7Z4KpuOAembYDB029LvkCa37atBg3SjEdevx6XahTBei
-   aw2BDVcokCuq7qdGJvCCWRsVvqiASQGPeWSzuDnQLJGTCTMd0eeq8ifUs
-   I2TCbE1q+2izkTET1M6VsIpX0SWMyNkk2WH/fWkTvXnrWMAoTSGgBqqUG
-   Gd6GYjg0s37nljo4QJhy29WjYn9BPUVM/dgFjCR1FFvGDu3TemuIw8at0
-   /K1EnKv0/4QNVtgVNMVsUQBLR/Byltr19WrAobnJvscHIqthA9prgt90B
-   w==;
-X-CSE-ConnectionGUID: je7xebcHQpSd1Xza3v9iYQ==
-X-CSE-MsgGUID: a+qVCKZ7S+y7DMxZnowTEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="81333640"
-X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
-   d="scan'208";a="81333640"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 10:23:45 -0700
-X-CSE-ConnectionGUID: YW23+NPcTWm68cvRSmpMzg==
-X-CSE-MsgGUID: nRc+5WOVQ86wCWJBmU+OIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
-   d="scan'208";a="242114187"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO [10.245.245.65]) ([10.245.245.65])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 10:23:43 -0700
-Message-ID: <8c4d38f10b1941687314bc43cc4de40097b84b78.camel@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the drm-xe tree
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: DRM XE List <intel-xe@lists.freedesktop.org>, Gustavo Sousa	
- <gustavo.sousa@intel.com>, Violet Monti <violet.monti@intel.com>, Matt
- Roper	 <matthew.d.roper@intel.com>, Linux Kernel Mailing List	
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List	
- <linux-next@vger.kernel.org>
-Date: Thu, 04 Jun 2026 19:23:40 +0200
-In-Reply-To: <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
-References: <aiAz4DmtngY0r6Cx@sirena.org.uk>
-	 <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
-	 <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
-	 <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Q1yKZMW6"
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-137bd9ed2b1so2320302c88.1
+        for <linux-next@vger.kernel.org>; Thu, 04 Jun 2026 10:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1780595945; x=1781200745; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SyEsaSsaYhlOCnUozjrxNOzw6jzmnNaVQY0+GszbH9k=;
+        b=Q1yKZMW60x/9dWy4C7Tch5KuMuDloEp0OqQzKl5x6qsv+KRVuUp/HlYyXXmveLINmO
+         3hPSvgeJGjxkA/c2+TUi4xAgcdSKBZnZsRn/Tor5IcbujLs+VSDDgGH4lYd++Vc/920U
+         en7eiFVA5ro+cp9k+NqG53UdBOx5UhwtDVWh2lmMoGJ6oYcuUPwgo0B3VPkPTQlu4X0C
+         Rhs+4gPr3pgmsVn1jpOQMZ+ByJJLlEaPH5z+Bul1gEuonNJkrqpTlP5DKxBQ5pXNwcER
+         WQq+C6Cd5nLEARkebZfVaqAU+AeBG7dsV5z6sf3RXyUhw1UhY/rKfNpnvkh6gRpy4MSO
+         pFrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780595945; x=1781200745;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SyEsaSsaYhlOCnUozjrxNOzw6jzmnNaVQY0+GszbH9k=;
+        b=GAk/itTawzXeHyuxPja9AOMPlACHf1BPzlmYyCYmpFwN8GIqEe8gWfbEO4gggdswAq
+         lAxAgLGWtxDkkN97Nch8qcAMz3+ZOxPAqY24kVsMG5YFxs4k1fsep8MxM1YJVbgrDish
+         IX4tl9cLX97vblbIPKyL078gQ/D44W+NP5WpYb+xhxpL01SN2XJvAfbtJDRjnbPIy8BR
+         Cy5OsR7LKZnYvaZtrWruYk96hRy+LZGSxPgkWgOs7L70pKhsuij+RfOsrLYtZlBdEDwb
+         XBDekTv8Iq3tzaNxpoO/cjFlE1bnTFmPVVfJCSzTgl+7guK0bAQW6xi8NxFomGHio0DW
+         3Tcg==
+X-Forwarded-Encrypted: i=1; AFNElJ+14KaTXjwwia1pd+W3qAx1WnObU+1sYUIz90AWvILqhwOVSsJa8UUujtERiIlP7JHAOwdIm9NO8ofo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE6hOiSA79scluf0vz+AVtxOxyh0zwZUI1GIpOVzIFJVqXUCJx
+	RZlX260H9R0h0Hozy4WAtWGRsvlIYF9SaADTPxTCyYz43RUmCZLCMf9Qdbx8GiSsFPU=
+X-Gm-Gg: Acq92OGmSc+quWMIYD9Mf6rAoYAphVFLQlhorpEoF43tXWPp3LppoO2jtpmeUtqFG0h
+	1rPtwytCUajscujeyHLPOZeISsq5Y2lvTA4mJuxCk73iMHTPld562BmvVXUE7CO1Dt/2r6OfaIy
+	P0Z6HVFO3Lplu27b431hD0pRZCPOFNu+YC2h0Nn14nvVKPwyVaMLV6/+bJhoTVeSHHEVq/lOSjF
+	kQKJhc2tvF0xtAolVDjBUyF6JtM0UY3sd9UILOOrUfk7K9jajv5HOcKrWuTxcl0+O0ohgaHhktX
+	kRh8f1QnB665VQmYa+6xfAcXW4BziBiAsvEqdzO40GDLtn43JFdv5CWLpC7FYVq0dGr9+EgIe/g
+	r+ize47fKuUyoVs+lLKDEk4anz/MK5zmsyoQwe8vlCMBs2mCPN3tf/5bRwwwvu6X2g2tkAqAt8m
+	X0SGui9Ya/sV64tyE+kjh/qtoAQ7w=
+X-Received: by 2002:a05:7022:62a3:b0:138:36f:4288 with SMTP id a92af1059eb24-138066d54e0mr72818c88.15.1780595944696;
+        Thu, 04 Jun 2026 10:59:04 -0700 (PDT)
+Received: from 330cfa3079ca ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-137f5539035sm4387471c88.11.2026.06.04.10.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2026 10:59:04 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: [REGRESSION] next/master: (build) stack frame size (2088) exceeds
+ limit (2048)
+ in 'dml31_ModeSupport...
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 04 Jun 2026 17:59:04 -0000
+Message-ID: <178059594388.10259.8984887956034576074@330cfa3079ca>
 
-On Thu, 2026-06-04 at 15:50 +0100, Mark Brown wrote:
-> On Thu, Jun 04, 2026 at 04:43:17PM +0200, Thomas Hellstr=C3=B6m wrote:
-> > On Thu, 2026-06-04 at 15:35 +0100, Mark Brown wrote:
->=20
-> > > /tmp/next/build/include/linux/compiler.h:200:84: note: expanded
-> > > from
-> > > macro '__BUILD_BUG_ON_ZERO_MSG'
-> > > =C2=A0 200 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...)
-> > > ((int)sizeof(struct {_Static_assert(!(e), msg);}))
->=20
-> > Funny, I see no build errors with drm-xe-next allmodconfig. What
-> > compiler is being used? Any sha1 of the drm-xe-next top commit
-> > you're
-> > testing?
->=20
-> This is after merging the tree into -next, that'd be on top of
-> 09b893db4d9e68c2679e76624d420f438f8d3e98 for today (not published
-> yet).
-> It's possible it's some interaction with other trees (like the main
-> drm
-> tree) and works as a standalone thing, it wasn't obviously that from
-> a
-> quick investigation.=C2=A0 The toolchain is gcc from Debian stable.
 
-So I merged drm-xe-next into next-20260603, and no build errors neither
-with gcc nor clang.
 
-AI says it's confident that the error report is from clang, based on
--fmacro-backtrace-limit suggestion and the "2 errors generated."
-summary, and suggests this might be an older clang version limitation?
 
-Thanks,
-Thomas
 
+Hello,
+
+New build issue found on next/master:
+
+---
+ stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than] in drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.o (drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c) [logspec:kbuild,kbuild.compiler.error]
+---
+
+- dashboard: https://d.kernelci.org/i/maestro:96417cd30041ab8f3153128d0120c6cd70782d99
+- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+- commit HEAD:  b99ae45861eccff1e1d8c7b05a13650be805d437
+- tags: next-20260604
+
+Please include the KernelCI tag when submitting a fix:
+
+Reported-by: kernelci.org bot <bot@kernelci.org>
+
+
+Log excerpt:
+=====================================================
+/tmp/kci/linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c:3872:6: error: stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
+ 3872 | void dml31_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
+      |      ^
+1 error generated.
+
+=====================================================
+
+
+# Builds where the incident occurred:
+
+## x86_64_defconfig+kselftest+x86-board on (x86_64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a21abf22cc72b6e94bf3c60
+
+
+#kernelci issue maestro:96417cd30041ab8f3153128d0120c6cd70782d99
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
