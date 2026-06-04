@@ -1,118 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDF43F44EF;
-	Thu,  4 Jun 2026 16:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB2F35DA75;
+	Thu,  4 Jun 2026 17:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780590105; cv=none; b=XfN0eDm842fRHZ03GT/2MpeLim9Aav8xqF+rziuNxKzgnUeioL9X3eBnhniHUSN/lSnT1u72ubMqX+k9fxJS9LFcmqCaqo72pXWibOorRBy7+jwdmAPDR/3uw2al15BRaxj6TiLeh+fprPaPoP7uuTAMaIFxjixxyWnrX5pmx1Y=
+	t=1780593828; cv=none; b=W8v+4k3vImzxDFH9DPAir2M50kBx9PwrDZ3VN0a51eEnduuAVF+p0RzfIBThxLR3M56De6mOsoZOI6tgztHdBV1dhgYAylAokshV187j0qxfmy52+b2bXMqQW9gQdJq3+krdK17NG5FczBCmuPhvFXMZ/jb/vlvcb4tASzbGi6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780590105; c=relaxed/simple;
-	bh=4SZMZUBqlOo/o+ITciW10bMTm0nbJ6IH1F+tdrb88uE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ag1kaUOvK2S4h6RGLqlZsu/rfnWFiXjPl/7RRL6Hvn13LT4mf3DAL0NwLwZggKUi/pnqIzkn9ozwUHisbTQ1bcJhzDVAUuXzM539L5k+NSnGbDyJ3j8qltmK33eP4WU8FpAdDsEo+BA6ZkzaY5cm80sQy6gWJsGW9p3gEvOK+xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ol+YL4Hb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780593828; c=relaxed/simple;
+	bh=l5asS8SpSkQYf+YuhGCpSbcTaEHoBBdWcBH67W6W3fo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ohCi7EpYHeC3UW0sfFcKHIukBj8RQO8jtdHC6Y2DYnoOdIhkrugbi1rb2V83/TqU+ad7SLSafZKQjMLXmTx7wrBsyZ4lOqx4hg9UUfgN59aWl86yenHd7pXoHKdF5/ijsGWt2qv3MDkM2c756dP+OMczQuLGyFL/qsldthIYmFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E6HzlUIu; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ol+YL4Hb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DB241F00893;
-	Thu,  4 Jun 2026 16:21:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780590104;
-	bh=nIcYlwzMKvB+SvxKmXFAZ/k8HAH0szd3ICx/kz/5jBI=;
-	h=Date:From:To:Cc:Subject;
-	b=Ol+YL4Hb9/Mi1I2Pmk+UwycyGds42LLG3lgZJQVt5AIasNEDOAUn688XWD1zzyEZy
-	 VyCylTPihT/RRQLOfOaadaF6SVCNOfwb1JQY5KGif6OAVTmxbqH+eLbYtxEKYUAaFB
-	 wrt2Gyzm66e8dZYIGlTWeohsFTyCJMs9D7a+wHNkaVe85F65FKLzNIwdZfpRJG0y8t
-	 Qbyt4iJOO46aMttv3517iHuhHol7kuZsH1F1aZ7+AY2a3Y63xUtHEh1imf0Tpm0i5d
-	 kmrETaFZbpVj2SIfxe6ADajhEphqHgU6huW47LG3nha1cXsEUV2WT1u6OQ3U4pDtIK
-	 6lI7barCLFNmA==
-Date: Thu, 4 Jun 2026 17:21:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 4
-Message-ID: <aiGmE0u8l-TYUbDt@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E6HzlUIu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780593826; x=1812129826;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=l5asS8SpSkQYf+YuhGCpSbcTaEHoBBdWcBH67W6W3fo=;
+  b=E6HzlUIukPTvUO439/HDGnH+9UrQKBMgHiD9/8sJXv7x2E+ENAUyY0we
+   sA53S881scPZJ7Z4KpuOAembYDB029LvkCa37atBg3SjEdevx6XahTBei
+   aw2BDVcokCuq7qdGJvCCWRsVvqiASQGPeWSzuDnQLJGTCTMd0eeq8ifUs
+   I2TCbE1q+2izkTET1M6VsIpX0SWMyNkk2WH/fWkTvXnrWMAoTSGgBqqUG
+   Gd6GYjg0s37nljo4QJhy29WjYn9BPUVM/dgFjCR1FFvGDu3TemuIw8at0
+   /K1EnKv0/4QNVtgVNMVsUQBLR/Byltr19WrAobnJvscHIqthA9prgt90B
+   w==;
+X-CSE-ConnectionGUID: je7xebcHQpSd1Xza3v9iYQ==
+X-CSE-MsgGUID: a+qVCKZ7S+y7DMxZnowTEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="81333640"
+X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
+   d="scan'208";a="81333640"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 10:23:45 -0700
+X-CSE-ConnectionGUID: YW23+NPcTWm68cvRSmpMzg==
+X-CSE-MsgGUID: nRc+5WOVQ86wCWJBmU+OIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
+   d="scan'208";a="242114187"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO [10.245.245.65]) ([10.245.245.65])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 10:23:43 -0700
+Message-ID: <8c4d38f10b1941687314bc43cc4de40097b84b78.camel@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the drm-xe tree
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: DRM XE List <intel-xe@lists.freedesktop.org>, Gustavo Sousa	
+ <gustavo.sousa@intel.com>, Violet Monti <violet.monti@intel.com>, Matt
+ Roper	 <matthew.d.roper@intel.com>, Linux Kernel Mailing List	
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List	
+ <linux-next@vger.kernel.org>
+Date: Thu, 04 Jun 2026 19:23:40 +0200
+In-Reply-To: <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
+References: <aiAz4DmtngY0r6Cx@sirena.org.uk>
+	 <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
+	 <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
+	 <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Yelpy4K9uLWVfAPj"
-Content-Disposition: inline
 
+On Thu, 2026-06-04 at 15:50 +0100, Mark Brown wrote:
+> On Thu, Jun 04, 2026 at 04:43:17PM +0200, Thomas Hellstr=C3=B6m wrote:
+> > On Thu, 2026-06-04 at 15:35 +0100, Mark Brown wrote:
+>=20
+> > > /tmp/next/build/include/linux/compiler.h:200:84: note: expanded
+> > > from
+> > > macro '__BUILD_BUG_ON_ZERO_MSG'
+> > > =C2=A0 200 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...)
+> > > ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+>=20
+> > Funny, I see no build errors with drm-xe-next allmodconfig. What
+> > compiler is being used? Any sha1 of the drm-xe-next top commit
+> > you're
+> > testing?
+>=20
+> This is after merging the tree into -next, that'd be on top of
+> 09b893db4d9e68c2679e76624d420f438f8d3e98 for today (not published
+> yet).
+> It's possible it's some interaction with other trees (like the main
+> drm
+> tree) and works as a standalone thing, it wasn't obviously that from
+> a
+> quick investigation.=C2=A0 The toolchain is gcc from Debian stable.
 
---Yelpy4K9uLWVfAPj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So I merged drm-xe-next into next-20260603, and no build errors neither
+with gcc nor clang.
 
-Hi all,
+AI says it's confident that the error report is from clang, based on
+-fmacro-backtrace-limit suggestion and the "2 errors generated."
+summary, and suggests this might be an older clang version limitation?
 
-Changes since 20260603:
+Thanks,
+Thomas
 
-The mm-unstable tree lost it's build failure.
-
-The arm64 tree acquired a conflict with the origin tree.
-
-The arm64 tree lost it's KUnit failure.
-
-The bpf-next tree acquired a conflict with the vfs-brauner tree.
-
-The bluetooth tree acquired a conflict with the net tree.
-
-The drm tree acquired a conflict with the origin tree.
-
-The sound tree acquired a build failure, I used the version from
-next-20260603 instead.
-
-Non-merge commits (relative to Linus' tree): 10326
- 11145 files changed, 680782 insertions(+), 212804 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 423 trees (counting Linus' and 130 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---Yelpy4K9uLWVfAPj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmohphIACgkQJNaLcl1U
-h9DAmgf8CR2fuCMe/B7/u3u+HgLIBzztdlW4EATM36GjE0vhspJ7/aCXaAd+ZbPp
-AALcqp1Ot05yH11dXYW53cJ9d28qmQxx6gPLtFj0Jg4vNxFhtGxRqe1hK1LM8iVB
-qJUeJz6lHpmDPnA1F4wijWTSa6dwV20mLiXpVOGM3clIUoc7kfUvdTboY7x2FpKg
-/q9wjzW1tnd1EcK4KaK/T5a7uGBnEaiJszab4zmCPFwfN7CBZtr2hcK/Ctgxdob0
-3xssrwZdZ+a0X2z5h0ha6lTN9fxinaVn/SEBDoEk1N0V02O0+XQ4yU6kcLWZFc10
-Tc8cJ+cE/7dTC7vlp8YLIqorNkCDzw==
-=1A7W
------END PGP SIGNATURE-----
-
---Yelpy4K9uLWVfAPj--
