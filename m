@@ -1,217 +1,142 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FA8C8EB
-	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 00:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780531495; cv=pass; b=GdQrpXvqanoyGHtLO11O1FyImnqbLcAJC+JcoCJl2Ed7mm6mqCmz0jAxFgap4tyCgjv6ML9zLEqvmyIPhUw5Wv//lnCc9CsWiYEVCbdfwN9skjMAsXxA3Os0jdvFiQ7sGYQ3a5sQ4bzhlZ5CUsp4+37hFHC0pUiOEymAUjIE4dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780531495; c=relaxed/simple;
-	bh=8gLkhsCYt/EbyDOL8oOaoehbmrqMGROQA7+3J8nc+jY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0977199D8
+	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 00:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780533127; cv=none; b=QIYFS5ycWmm70635H3K8Y+Qpn0tcAWqHHRlWOdVQEd/SwCq2Xbk9zSx/BYIHmhoRrRGZIb8foi5VeUym53OFOhtgS4vBl7765zQWdOJDqBNO+53TJ0OmpJsP7X/JEMnwNY5vLw12LVEqI4JS04cnk1cfSn34VxgQMI7BG5sgD5M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780533127; c=relaxed/simple;
+	bh=jZoIBQxjQ7P3tlUSk0EEmDO+cPHIkeVPtdsxpvA+jEM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZL4H8c/TymXr9gpzFLc+on9e1r1guS7PBr+zLgXAL8IKmbQlK/UqeKSImHzA4v/KlCF3Hqc+iNV8X4J8YsXH9LXy1741HRP8KWVMCeGF5UAFkwyiqtLH9ojEIqEQZsfF5bjTwu50VM2wvLqvdMMNZpbyiTOOaLY+BRqEtGa5wwg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DBzyQEnP; arc=pass smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=DEFAdpcrTs507uVDbqGC40RUwjno1O8v2tOtrsC1DNEKlEW18P97cTfLpMP99nZ+1xPkKRfD+tovSkK4xGO3F9ByEKV4LTQ1FEuFjo+8aJihMTyM8NtbQB/FOBHD5/EkMZCEabrBy71e8LtxabH4UnbbDhcPeEBpa2by1pfSLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NguiVgiX; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DBzyQEnP"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-8422524cb38so25533b3a.0
-        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 17:04:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780531493; cv=none;
-        d=google.com; s=arc-20240605;
-        b=aD/iiKP1/LT+ESW2RsihY7G5OyPVr6nGNhCOR7JyfcewBb4Nvu13HVzMIbJUPAsDma
-         6S511jKwyZUJfy7VuxQy2AgplpXdl/x+ilY77+ZdAq7kpvjOPfCbnbiUeRWANwOeT1By
-         QGcUh5r3fe7gWiK9JjJD93NcTy9fVPPTmII/Ybjzl3aNwlHA85/yZ/3vs2umSshqur3c
-         nUKtkQv29LsE3kws8ga+d0wDr/rhBm7+3QMXp0vnW82lJDTTUelABr3OO9vGX8TqRUzJ
-         Q+gBnjAAz8Hxy6BO2oRbhScnEOEnU0iOsZfZFpiPcsAMvyevh790yTizNjGisMkEkll9
-         qBJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
-        fh=mxJUdiZr5I+sELMUrK6jKf2pQF51JVZgVZfnOkfXVZc=;
-        b=eYYppJjBnXCJFwpdkAlgz6eUnvYlaqImbSTi0XCze83YUb0zUYeH39sJPK7n1dWDkd
-         8+r3bpZ/dvFx91369jDXpPXyPGKeAhpUVCocn4usK/j3rgUkUmYFlzleupDjGyzi0bXx
-         t/+fz4OVPYYIEWVEZhMTapjP4BXkjxWJ973XPSPj9zx2fyWVnFh/P465WPcZxdd5ExNO
-         Gj2eaVY2rWbMQxaJNm/AoDTKgHHPxToBw1keqkTaDgFksg7DGqmgEAYh8bqjxdn2+sMx
-         1bOasUKdX86XBET4yLwodWrfptYjgo7lKmr3bgv+C2OOqweoUFmAAr/NsMj3ehnvyVIz
-         d5vg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NguiVgiX"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2bf22d29dabso841605ad.2
+        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 17:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780531493; x=1781136293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
-        b=DBzyQEnPbqMER4P8taw7BIErjwO43/oQVlQjII2JQmeeAAwKZSla5VEB+bHZYSw6Pv
-         Cp+tFLhbyWfEuGrmYflTqA6LNz+Cty/jkPy+7+Svnd8KKyaznRhxD8PK0QzG7TfWTW7m
-         Zlm1FAYY7WmKbN7f65ZsK4SFhSw+/gz+fk8PIogfPJn0iYYSi3gg7Gu3sNoVchf4Xv2d
-         OJ5x3ufTyrescPH1oASv6ja+c/czGMKwUEWCagbv+hiA3cdiQ6YU0Fx7b6/wIfN3YYLT
-         w8u2hhWRqlWHJsWAGT/0jm3VEdRvzSSXR7bIAJeBadG7rxcQHuS7JHpA2sfTgt7HyY/h
-         YiaA==
+        d=linux-foundation.org; s=google; t=1780533125; x=1781137925; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oKGAYmkPB1Hr3YB+iaIUqqiRIAjAPxQPvI1HFGUlMt0=;
+        b=NguiVgiXmRyttKiiYfJ4KugCmIXvrh5mhlV/6TVijBT/B05/KbU2qgpZyClNMGVJFi
+         R1zQP7T9O0xuOiGsWsVL3wXs49viFcSNNvLh+ceVngdeW+eEQOLP6s0SMzhb0ezdAx7v
+         QXlWkEdVpzyhwQtlqhFhG2+YsXY/DB6IqE0/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780531493; x=1781136293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
-        b=mtZmPN4OKyixD+vkMBDCZSTFj0mXS4D5Z9e9WmiKbMTWMBwfYo5gIsW5cdzoejOk8I
-         Ps7fT9PurO6bG/WMxfqaO4LSNrHUuduWsjtLK7artYQXFfWhhREDDPSv1xlQjIevtrcP
-         DIxMRo3nnOADyc+XCA9Ztt1wFzQw7w2rA92jyIn3rEaszOd8njwoWnCMYcAr8sp+lpDc
-         kLVzgqYlbHASvaeczXcmmrRIqnet1hVrTF3PxNaQVwCx8wvMNhI22KufUy2i/NPpkp0O
-         s2kNqrOd7QmK+U7cH69V0QjqlewV239bRVio468in23YbN1dvsJQOSi/2kbPDUGkuTJI
-         /IDA==
-X-Forwarded-Encrypted: i=1; AFNElJ9ezyawdwlZsHZGrr7fStCwXYd9M7z67mFlhj3AiGNEwnGDqO23LWVYeN/speAWa/q+jxTNVrxn/+0u@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ+fz3N9e0L0OhBofw59UC7izy5Pct8WV5OHB+L6ZMeZf8yUbr
-	TXtItVgGnBTIuSr+TdTe3rHdx+qFFGGcYEPv7jnytw1ea0DaRp81q5E55rADegwHWmaDoDtJeyg
-	BmVhUkNWBTM5d4H6AVRG5UhzAqwxita9VVqK29T48BjVn8mTpG8uiS3mh
-X-Gm-Gg: Acq92OGibIfH59XTLfVEn25vfF7NxerJo6aSjwNhflPVCAuiwvOSK+PFnrowjQYXute
-	OVsXhykgleibntg6Ak93rkHge966YgTxy4lJFUC2Y7XKs66VX5C4581c9xw0/Kd9PQTdroOQoV2
-	0JpqHQhQp0CmEWD05kpnKiqFylVgfLbP7qG6F8gUQL8a+iOFRzQCn79DZ0nlmdRJUjxxk7r49tp
-	zzs4grLVjzOJdchazHdM9kqLHeLFEB2bdTOvBXOyww/5mUap3GNTvhwvWuydDGMbs9JH+2KIS/G
-	bxIZNViA9Ze8+aPRuQ==
-X-Received: by 2002:a05:6a00:2d20:b0:842:7476:236e with SMTP id
- d2e1a72fcca58-84284f4c05fmr5480130b3a.41.1780531493481; Wed, 03 Jun 2026
- 17:04:53 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1780533125; x=1781137925;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKGAYmkPB1Hr3YB+iaIUqqiRIAjAPxQPvI1HFGUlMt0=;
+        b=aSz0MJOuZF3E7Z7BAJcbO+FmVSZTi2i6wgk35jUPHihvt4ttAg9nC5eNdCvdFe87Um
+         cZwQr0oOGABMwc+7Rdh4zKmY3Ca06X8tfftdT69gr57ySqBuiahtQYw6Xn9NJgn3H4Q6
+         5whNTSPmqn/8shb4jgV/GAh25YOUlx7lPFoWXNWVbVAnJO5mS222wZN/RqpjK6umB2Fb
+         5XuhatypwxY0q12NLgV0IbQwa6oWd+2MfCL/zmtrEaGueB1xGeAq24vATXPKFdccWygI
+         ENlbNYNoMle96A/HOjpMMsrZhakp55EcSP8BUio2K33zo1gE4QWFlVy7wbnM2vTNTTO3
+         bNBg==
+X-Forwarded-Encrypted: i=1; AFNElJ/7X3e5IPLn3jHqum7jFvgUUrkAd7BEHuy51pcmNPlgDv6xS2aMODAwMK0sOcNnjS8m3fo2+webYk38@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBKc+Rm9h76WKqu+ik3YfSAgMhpQ23z2GTgH/B+d5Gh+ktfTR/
+	noH+S8sosISClyLd0gYb+QiSdQ6HoxtFKM5+EX0VZE9P8CqVOE66eDlk5vh3idfxN1DpVUZUkn0
+	G96aeMi3aRA==
+X-Gm-Gg: Acq92OFaztrvZjWeryQ67nDPiyEAtxyPEkGR8E3nBnSZJDXJTGxh93fmhToSY/o0qhn
+	6R7MgOQ6A9Mqda4zyjeR4Ch7QqRBaAgtSFMJbWS0NGxn6v7+KA+POlgxQnmdfptqP0FWNrEGgHa
+	8NBMeB1Xpw1Lqm6h1NJiZczdqQEdkVIOIRqWfC1Gis9L1bNp5CdVs7FzG8Fb1OciL8EwmkMghPO
+	PtiYDHT/2VYLRkBfJzp/skHHP4Lej+xbYPX2Mkg6lXGJgayB4DAPlJ8Yt22RYIAj7eMxCIQz65K
+	M/obIqBHByTznqO6kJe7Iqx0smFu+LoiUVn8pkPslLRehrUHBA8apCpIjDszEcivKI5FKmPk6F+
+	kXQKwkWKOV4CIXTrmJbSg6jdVaUU68NKZUKPcWQ7/zWrao7gO717aCPzGlrAKhtX5DP9ObcorRy
+	TYaTFI2bFEu/Yt59TtO05+vSeKEEkApA6Is23n/eaP4Hcb7y8Hwv+tGGEIbKW0NgG3s6Ammf+o3
+	0IAvTTLZME55gps5Iho3ibqPA==
+X-Received: by 2002:a17:902:f60e:b0:2c0:c2c7:58ad with SMTP id d9443c01a7336-2c163a59938mr60340015ad.13.1780533124884;
+        Wed, 03 Jun 2026 17:32:04 -0700 (PDT)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com. [209.85.215.180])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c16609ed97sm37068425ad.41.2026.06.03.17.32.04
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jun 2026 17:32:04 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c859a374903so37611a12.3
+        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 17:32:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ96F5nPjFw2M41XDEKcQxshm3N9PNAVpCHWSALshzY/ytLWIWXqOsYrdQIgXyKTNuDC+0LQL5v0lRCW@vger.kernel.org
+X-Received: by 2002:a05:6a21:3989:b0:3b4:8ba9:4d8e with SMTP id
+ adf61e73a8af0-3b4979a4e44mr6703825637.23.1780533123566; Wed, 03 Jun 2026
+ 17:32:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk> <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Jun 2026 20:04:41 -0400
-X-Gm-Features: AVHnY4KaJ8WCn01L0UzL3_uET6QLUt3oIjUBay34hOt2VgXCAmRWl97braE7GJw
-Message-ID: <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+ <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com> <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jun 2026 17:31:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+X-Gm-Features: AVHnY4LFh1aPXsQ6zdDL4_HlTChSE-hAiyStcDf8UlBB35Dp83kOTZRnA_qQqTs
+Message-ID: <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
 Subject: Re: -next status as at v7.1-rc6
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Paul Moore <paul@paul-moore.com>
 Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
 	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
 	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 2, 2026 at 4:20=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, 3 Jun 2026 at 17:04, Paul Moore <paul@paul-moore.com> wrote:
 >
-> On Mon, 1 Jun 2026 at 11:22, Mark Brown <broonie@kernel.org> wrote:
-> >
-> > We're reaching the peak of conflicts for this release cycle but
-> > fundamentally everything is pretty quiet at the minute.
->
-> So the "Hornet" LSM thing needs to bve removed from linux-next.
->
-> I'm not ever going to pull it - it has been NAK'ed by the developers
-> of the actual BPF code, and now it apparently causes merge problems
-> too.
+> It's worth mentioning that resolving the merge issue was relatively
+> straightforward and we had a tested patch ready in a few hours
 
-It's worth mentioning that resolving the merge issue was relatively
-straightforward and we had a tested patch ready in a few hours; I was
-in the process of merging it when your mail hit my inbox.  We see
-cross-subsystem issues like this every couple of months. The good news
-is that the linux-next process works well and we are usually able to
-resolve the problems quickly.
+This is not the reason I'm not going to pull it - the merge issue was
+just the reminder I got about an earlier email that I had dropped on
+the floor.
 
-I'll touch on the NACK below.
+No, the reason I won't pull it is that the main developer I pull bpf
+code NAK'ed it.
 
-> The LSM people need to realize that they cannot override the people
-> who actually write the real code.
->
-> The security layer is not boss in the relationship. It's the
-> subservient party. Security is important, but LSM's are not.
+Now, I will cdertainly sometimes override maintainers, so it's not
+like a NAK is always some final thing.
 
-[NOTE: adding the LSM list to the CC line since I just realized you
-didn't include it]
+I don't _like_ overriding developers, but I'll do it when I feel it is
+necessary to make forward progress.
 
-At this point I believe we are all aware of your dislike of LSMs, but
-I once again feel compelled to speak out against the disrespect you
-have shown towards the LSM developers and users.  Most (all?) of the
-major Linux distributions rely on at least one LSM to meet the needs
-of their users.  We've seen the importance of LSMs to Android, and the
-real impact they have had on defending against vulnerabilities.  We
-also know, oddly enough in this particular case, the importance of the
-LSM framework to the BPF ecosystem; the BPF LSM attach points are
-critical for many BPF use cases.
+But I also have to  feel people have been unnecessarily difficult, and
+I have been extensively informed about the decision and I feel like I
+can make a reasonable judgement on it.
 
-LSMs may not be important to you, but they are very important for a
-very large number of Linux users.
+So it happens, but it happens with my explicit understanding.
 
-> When the maintainer of a codebase NAK's a security model, and explains
-> that the code has different needs and different security models, the
-> LSM people don't just ignore that and go do their thing despite the
-> NAK.
+My tree is *not* some kind of "we are bypassing developers by sending
+a pull request directly to Linus" tree.
 
-I think there may be some confusion about how Hornet works and
-interacts with the existing BPF subsystem.  Hornet does not touch any
-code inside the BPF subsystem, and outside of some minor PKCS7 patches
-to enable some things from the PKCS specs, it doesn't touch any code
-outside of security/.  Hornet's design criteria required it to work
-within the existing LSM hooks and remain compatible with the existing
-BPF signature verification code.  Hornet follows the traditional LSM
-design pattern: it works within the LSM framework, building upon the
-security functionality in other subsystems to satisfy user security
-needs that have otherwise been ignored.
+NEVER is that the way things get done.
 
-A BPF light skeleton signed with the Hornet tools passes both the
-existing BPF signature verification code and Hornet's verification.
-Hornet allows signature verification using arbitrary keys/keyrings,
-just like the existing BPF signature code, enabling support for
-dynamically generated/signed BPF programs.  In mixed environments,
-Hornet can verify the loader portion of BPF light skeletons signed
-with the existing BPF signing tools, distinguishing between existing
-Alexei/KP signatures and a full Hornet signature.  Hornet also
-supports unsigned BPF programs when needed.
+[ Yes, that too has happened, and I have done that unwittingly because
+I didn't realize what was going on ]
 
-As an LSM, Hornet can be enabled/disabled at build time, kernel boot,
-and at runtime (subject to the LSM providing enforcement).  If a user
-is required to run a specific kernel build, e.g. an "enterprise" Linux
-distro support situation, the admin has multiple ways to disable
-Hornet if it is not desired.  Any Hornet signed BPF light skeletons
-will load without issue on a system without Hornet and Hornet's
-presence does not block the existing BPF signature verification
-mechanisms.
+So I will not pull this tree. End of story.
 
-The BPF developers will quickly point out, if they haven't mentioned
-it to you already, that Hornet calls into a 'bpf_map_ops' function.
-This is true, Hornet calls the map_get_hash() method to get the hash
-of a BPF map so it can be verified.  The BPF devs will argue this
-presents a layering violation, but I would counter that several users
-in the networking stack go much further than Hornet in their use of
-'bpf_map_ops'; I find it difficult to see 'bpf_map_ops' as a private
-API at this point.  It is also important to mention that Hornet does
-not manipulate or modify the BPF program or map state in any way
-beyond storing some state in a Hornet specific LSM blob, similar to
-what other LSMs have done.
+The way to get me to override developers is to make me aware of the
+conflict and convince me that yes, something needs overriding - but it
+is typically not very easy to do with active developers.
 
-We've done this work, and tried collaborating with the BPF devs for
-over a year, because we believe the kernel should verify the integrity
-of both the BPF light skeleton loader and the associated maps.  While
-the existing BPF signature verification scheme verifies the light
-skeleton loader, it requires the loader to self-verify its associated
-maps.  Relying on the loader to self-verify maps is problematic
-because it adds an additional burden on system builders and admins who
-must now also manage and verify the signature verification in every
-BPF light skeleton loader on the system (how does one know if a
-specific light skeleton loader suffers from a verification bug? what
-additional steps need to be added to the deployment of third-party,
-binary only BPF light skeletons?).  At the very least Hornet can
-ensure the integrity of both the BPF light skeleton loader and the
-signed maps without requiring prior analysis of the light skeleton
-loader.  That is a big win for admins who care about what code is
-loaded into their kernel.
+And honestly, I also have two+ decades of history of "LSM people
+cannot agree on a single thing".
 
-Hornet lives entirely within the LSM framework, adds no additional LSM
-hooks, remains compatible with the existing BPF signature verification
-code, can be disabled in multiple ways if required, provides the
-verification flexibility needed to support the existing BPF ecosystem,
-and helps satisfy the needs of real users.  Why can't we support
-Hornet alongside the existing BPF signature verification code and let
-the users employ the mechanism that works best for them?
+That is _literally_ why the LSM layer exists in the first place.
 
---
-paul-moore.com
+So when LSM people then disagree with _other_ developers, quite
+frankly my immediate and visceral reaction then is "oh, these people
+who have decades of history of not being able to even agree amongst
+themselves are now disagreeing with outsiders too".
+
+Put another way: LSM people have a  higher barrier to convince me that
+I should take their disagreements seriously.
+
+And no, I'm afraid that may not be entirely fair.  But "history of
+being disagreeable" is a thing.
+
+              Linus
