@@ -1,196 +1,217 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5928539937C;
-	Wed,  3 Jun 2026 22:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780526860; cv=none; b=XvmwS5qGj8W5Cr2tCxAwkNvmqVUMXAeCiSRGEF/pxIEXkE6c5n/c4q1GKtmj3GVVdAEqHs1Fhs5d/UDEEUxKBn50JAukXQddVS6GDNcNQAkuVh3AcFjcie5WWYxkwFEzJvKjQC2/EH8CRT4wbBaJGWaGkyT/W3rIEtpi2Ji0kRM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780526860; c=relaxed/simple;
-	bh=ZV+Xpf9PyZcS+HBhg5FGmb1f2Ta9ZZK3p9sL9wGC+yE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NaWdbZklZ5PoTdjfqRoJBcwuQoAvpHCjakP6rT4KBTx7ZqFO6FCHjEGNTAQKwETtTewtS/4+CXRf+A8tzFNGCdjB76KJ7WOo3rXXy+EW8JmzAzuvIdhSpvQw3zn7ltL1gcshzaclqNmErFWDOebZYz8ZDeiUph69Kcx1RMqhfn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bbQqIZXO; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FA8C8EB
+	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 00:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780531495; cv=pass; b=GdQrpXvqanoyGHtLO11O1FyImnqbLcAJC+JcoCJl2Ed7mm6mqCmz0jAxFgap4tyCgjv6ML9zLEqvmyIPhUw5Wv//lnCc9CsWiYEVCbdfwN9skjMAsXxA3Os0jdvFiQ7sGYQ3a5sQ4bzhlZ5CUsp4+37hFHC0pUiOEymAUjIE4dw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780531495; c=relaxed/simple;
+	bh=8gLkhsCYt/EbyDOL8oOaoehbmrqMGROQA7+3J8nc+jY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZL4H8c/TymXr9gpzFLc+on9e1r1guS7PBr+zLgXAL8IKmbQlK/UqeKSImHzA4v/KlCF3Hqc+iNV8X4J8YsXH9LXy1741HRP8KWVMCeGF5UAFkwyiqtLH9ojEIqEQZsfF5bjTwu50VM2wvLqvdMMNZpbyiTOOaLY+BRqEtGa5wwg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DBzyQEnP; arc=pass smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bbQqIZXO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691F51F00893;
-	Wed,  3 Jun 2026 22:47:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DBzyQEnP"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-8422524cb38so25533b3a.0
+        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 17:04:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780531493; cv=none;
+        d=google.com; s=arc-20240605;
+        b=aD/iiKP1/LT+ESW2RsihY7G5OyPVr6nGNhCOR7JyfcewBb4Nvu13HVzMIbJUPAsDma
+         6S511jKwyZUJfy7VuxQy2AgplpXdl/x+ilY77+ZdAq7kpvjOPfCbnbiUeRWANwOeT1By
+         QGcUh5r3fe7gWiK9JjJD93NcTy9fVPPTmII/Ybjzl3aNwlHA85/yZ/3vs2umSshqur3c
+         nUKtkQv29LsE3kws8ga+d0wDr/rhBm7+3QMXp0vnW82lJDTTUelABr3OO9vGX8TqRUzJ
+         Q+gBnjAAz8Hxy6BO2oRbhScnEOEnU0iOsZfZFpiPcsAMvyevh790yTizNjGisMkEkll9
+         qBJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
+        fh=mxJUdiZr5I+sELMUrK6jKf2pQF51JVZgVZfnOkfXVZc=;
+        b=eYYppJjBnXCJFwpdkAlgz6eUnvYlaqImbSTi0XCze83YUb0zUYeH39sJPK7n1dWDkd
+         8+r3bpZ/dvFx91369jDXpPXyPGKeAhpUVCocn4usK/j3rgUkUmYFlzleupDjGyzi0bXx
+         t/+fz4OVPYYIEWVEZhMTapjP4BXkjxWJ973XPSPj9zx2fyWVnFh/P465WPcZxdd5ExNO
+         Gj2eaVY2rWbMQxaJNm/AoDTKgHHPxToBw1keqkTaDgFksg7DGqmgEAYh8bqjxdn2+sMx
+         1bOasUKdX86XBET4yLwodWrfptYjgo7lKmr3bgv+C2OOqweoUFmAAr/NsMj3ehnvyVIz
+         d5vg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux-foundation.org; s=korg; t=1780526858;
-	bh=R7Sz/+Fr0suuQeg6EVNsiUNZZL7j8WmTr/VEGuzHW30=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=bbQqIZXOyyk7fzneEICQY56/lMcWDjClRrPFceC+/rWMhGEB8XAK3dziozHfdH17j
-	 E1rwgyU6ZGwyFv/ZX4LcK+Irri7OE4WdDAFgP11VfB3U0LzlFzuLbUmz9064VNmFbZ
-	 abaVMIlu4z9qNTtnU8HxF3YjN2Pdly1LauygKJdc=
-Date: Wed, 3 Jun 2026 15:47:37 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+8ffca916f3fa5455f9b4@syzkaller.appspotmail.com>
-Cc: apopple@nvidia.com, byungchul@sk.com, david@kernel.org,
- gourry@gourry.net, joshua.hahnjy@gmail.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-next@vger.kernel.org, matthew.brost@intel.com,
- rakie.kim@sk.com, sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
- ying.huang@linux.alibaba.com, ziy@nvidia.com, "Michael S . Tsirkin"
- <mst@redhat.com>
-Subject: Re: [syzbot] [mm?] linux-next test error: kernel BUG in
- post_alloc_hook
-Message-Id: <20260603154737.48dfcc19a51da03241e1af48@linux-foundation.org>
-In-Reply-To: <6a20a309.85ccb786.283107.0005.GAE@google.com>
-References: <6a20a309.85ccb786.283107.0005.GAE@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        d=paul-moore.com; s=google; t=1780531493; x=1781136293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
+        b=DBzyQEnPbqMER4P8taw7BIErjwO43/oQVlQjII2JQmeeAAwKZSla5VEB+bHZYSw6Pv
+         Cp+tFLhbyWfEuGrmYflTqA6LNz+Cty/jkPy+7+Svnd8KKyaznRhxD8PK0QzG7TfWTW7m
+         Zlm1FAYY7WmKbN7f65ZsK4SFhSw+/gz+fk8PIogfPJn0iYYSi3gg7Gu3sNoVchf4Xv2d
+         OJ5x3ufTyrescPH1oASv6ja+c/czGMKwUEWCagbv+hiA3cdiQ6YU0Fx7b6/wIfN3YYLT
+         w8u2hhWRqlWHJsWAGT/0jm3VEdRvzSSXR7bIAJeBadG7rxcQHuS7JHpA2sfTgt7HyY/h
+         YiaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780531493; x=1781136293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
+        b=mtZmPN4OKyixD+vkMBDCZSTFj0mXS4D5Z9e9WmiKbMTWMBwfYo5gIsW5cdzoejOk8I
+         Ps7fT9PurO6bG/WMxfqaO4LSNrHUuduWsjtLK7artYQXFfWhhREDDPSv1xlQjIevtrcP
+         DIxMRo3nnOADyc+XCA9Ztt1wFzQw7w2rA92jyIn3rEaszOd8njwoWnCMYcAr8sp+lpDc
+         kLVzgqYlbHASvaeczXcmmrRIqnet1hVrTF3PxNaQVwCx8wvMNhI22KufUy2i/NPpkp0O
+         s2kNqrOd7QmK+U7cH69V0QjqlewV239bRVio468in23YbN1dvsJQOSi/2kbPDUGkuTJI
+         /IDA==
+X-Forwarded-Encrypted: i=1; AFNElJ9ezyawdwlZsHZGrr7fStCwXYd9M7z67mFlhj3AiGNEwnGDqO23LWVYeN/speAWa/q+jxTNVrxn/+0u@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ+fz3N9e0L0OhBofw59UC7izy5Pct8WV5OHB+L6ZMeZf8yUbr
+	TXtItVgGnBTIuSr+TdTe3rHdx+qFFGGcYEPv7jnytw1ea0DaRp81q5E55rADegwHWmaDoDtJeyg
+	BmVhUkNWBTM5d4H6AVRG5UhzAqwxita9VVqK29T48BjVn8mTpG8uiS3mh
+X-Gm-Gg: Acq92OGibIfH59XTLfVEn25vfF7NxerJo6aSjwNhflPVCAuiwvOSK+PFnrowjQYXute
+	OVsXhykgleibntg6Ak93rkHge966YgTxy4lJFUC2Y7XKs66VX5C4581c9xw0/Kd9PQTdroOQoV2
+	0JpqHQhQp0CmEWD05kpnKiqFylVgfLbP7qG6F8gUQL8a+iOFRzQCn79DZ0nlmdRJUjxxk7r49tp
+	zzs4grLVjzOJdchazHdM9kqLHeLFEB2bdTOvBXOyww/5mUap3GNTvhwvWuydDGMbs9JH+2KIS/G
+	bxIZNViA9Ze8+aPRuQ==
+X-Received: by 2002:a05:6a00:2d20:b0:842:7476:236e with SMTP id
+ d2e1a72fcca58-84284f4c05fmr5480130b3a.41.1780531493481; Wed, 03 Jun 2026
+ 17:04:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk> <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 3 Jun 2026 20:04:41 -0400
+X-Gm-Features: AVHnY4KaJ8WCn01L0UzL3_uET6QLUt3oIjUBay34hOt2VgXCAmRWl97braE7GJw
+Message-ID: <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+Subject: Re: -next status as at v7.1-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(cc Mike Tsirkin)
-
-On Wed, 03 Jun 2026 14:56:25 -0700 syzbot <syzbot+8ffca916f3fa5455f9b4@syzkaller.appspotmail.com> wrote:
-
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a225caacc365 Add linux-next specific files for 20260603
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13b0de66580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=717edf2a5f9fc390
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8ffca916f3fa5455f9b4
-> compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f799d07ea17d/disk-a225caac.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/72d0f0ff94e6/vmlinux-a225caac.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/99d4279e6fec/bzImage-a225caac.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+8ffca916f3fa5455f9b4@syzkaller.appspotmail.com
-> 
-> ...
+On Tue, Jun 2, 2026 at 4:20=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> **********************************************************
-> **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
-> **                                                      **
-> ** This system shows unhashed kernel memory addresses   **
-> ** via the console, logs, and other interfaces. This    **
-> ** might reduce the security of your system.            **
-> **                                                      **
-> ** If you see this message and you are not debugging    **
-> ** the kernel, report this immediately to your system   **
-> ** administrator!                                       **
-> **                                                      **
-> ** Use hash_pointers=always to force this mode off      **
-> **                                                      **
-> **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
-> **********************************************************
+> On Mon, 1 Jun 2026 at 11:22, Mark Brown <broonie@kernel.org> wrote:
+> >
+> > We're reaching the peak of conflicts for this release cycle but
+> > fundamentally everything is pretty quiet at the minute.
+>
+> So the "Hornet" LSM thing needs to bve removed from linux-next.
+>
+> I'm not ever going to pull it - it has been NAK'ed by the developers
+> of the actual BPF code, and now it apparently causes merge problems
+> too.
 
-Geeze, who added that.
+It's worth mentioning that resolving the merge issue was relatively
+straightforward and we had a tested patch ready in a few hours; I was
+in the process of merging it when your mail hit my inbox.  We see
+cross-subsystem issues like this every couple of months. The good news
+is that the linux-next process works well and we are usually able to
+resolve the problems quickly.
 
-> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x13fe38
-> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> flags: 0x100000000000040(head|node=0|zone=2)
-> raw: 0100000000000040 dead000000000100 dead000000000122 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> head: 0100000000000040 dead000000000100 dead000000000122 0000000000000000
-> head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> head: 0100000000000002 ffffffffffffff01 00000000ffffffff 00000000ffffffff
-> head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000004
-> page dumped because: VM_BUG_ON_PAGE(1 && PageCompound(page))
-> ------------[ cut here ]------------
-> kernel BUG at ./include/linux/page-flags.h:682!
-> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-> CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted syzkaller #0 PREEMPT_{RT,(undef)} 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/09/2026
-> RIP: 0010:__ClearPagePrezeroed include/linux/page-flags.h:682 [inline]
-> RIP: 0010:post_alloc_hook+0x287/0x310 mm/page_alloc.c:1863
+I'll touch on the NACK below.
 
-That's the __ClearPagePrezeroed(page) added by 504f40f6bda6 ("mm:
-page_reporting: skip redundant zeroing of host-zeroed reported pages").
+> The LSM people need to realize that they cannot override the people
+> who actually write the real code.
+>
+> The security layer is not boss in the relationship. It's the
+> subservient party. Security is important, but LSM's are not.
 
-Was it intended that this series
-(https://lore.kernel.org/cover.1779315441.git.mst@redhat.com) be
-included in -next?  It's huge, it's late, review is minor.
+[NOTE: adding the LSM list to the CC line since I just realized you
+didn't include it]
 
-<remainder of report is below>
+At this point I believe we are all aware of your dislike of LSMs, but
+I once again feel compelled to speak out against the disrespect you
+have shown towards the LSM developers and users.  Most (all?) of the
+major Linux distributions rely on at least one LSM to meet the needs
+of their users.  We've seen the importance of LSMs to Android, and the
+real impact they have had on defending against vulnerabilities.  We
+also know, oddly enough in this particular case, the importance of the
+LSM framework to the BPF ecosystem; the BPF LSM attach points are
+critical for many BPF use cases.
 
-> Code: ff ff 89 da be 01 00 00 00 48 c7 c7 40 50 4f 8e e8 ce 4b d4 02 e9 c5 fe ff ff 4c 89 ef 48 c7 c6 40 ef 7a 8b e8 2a c6 05 ff 90 <0f> 0b 31 ed f7 44 24 04 00 01 00 00 0f 84 8e fd ff ff e9 86 fd ff
-> RSP: 0000:ffffffff8e0078e0 EFLAGS: 00010046
-> RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffffffff8e0fef40
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: ffffed10170c4903 R12: dffffc0000000000
-> R13: ffffea0004ff8e00 R14: 1ffffd40009ff1c0 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff88823ffff000 CR3: 000000000e1b8000 CR4: 00000000000100b0
-> Call Trace:
->  <TASK>
->  prep_new_page mm/page_alloc.c:1925 [inline]
->  get_page_from_freelist+0x3081/0x3320 mm/page_alloc.c:4015
->  __alloc_frozen_pages_noprof+0x194/0x380 mm/page_alloc.c:5376
->  __alloc_pages_mpol+0xe0/0x390 mm/mempolicy.c:2495
->  alloc_slab_page mm/slub.c:3287 [inline]
->  allocate_slab+0x83/0x5e0 mm/slub.c:3404
->  new_slab mm/slub.c:3447 [inline]
->  ___slab_alloc+0x160/0x930 mm/slub.c:4485
->  __slab_alloc_node mm/slub.c:4549 [inline]
->  slab_alloc_node mm/slub.c:4925 [inline]
->  __do_kmalloc_node mm/slub.c:5331 [inline]
->  __kmalloc_noprof+0x140/0x7b0 mm/slub.c:5345
->  _kmalloc_noprof include/linux/slab.h:973 [inline]
->  _kzalloc_noprof include/linux/slab.h:1286 [inline]
->  __alloc_empty_sheaf mm/slub.c:2774 [inline]
->  alloc_empty_sheaf mm/slub.c:2794 [inline]
->  init_percpu_sheaves mm/slub.c:7555 [inline]
->  do_kmem_cache_create+0x8ae/0x9a0 mm/slub.c:8595
->  create_boot_cache+0xbf/0x120 mm/slab_common.c:717
->  create_kmalloc_cache+0x41/0xb0 mm/slab_common.c:735
->  new_kmalloc_cache+0xd4/0x180 mm/slab_common.c:982
->  create_kmalloc_caches+0x14/0x50 mm/slab_common.c:1005
->  kmem_cache_init+0x14a/0x1e0 mm/slub.c:8496
->  mm_core_init+0x7e/0xb0 mm/mm_init.c:2728
->  start_kernel+0x162/0x3e0 init/main.c:1034
->  x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:310
->  x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:291
->  common_startup_64+0x13e/0x157
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__ClearPagePrezeroed include/linux/page-flags.h:682 [inline]
-> RIP: 0010:post_alloc_hook+0x287/0x310 mm/page_alloc.c:1863
-> Code: ff ff 89 da be 01 00 00 00 48 c7 c7 40 50 4f 8e e8 ce 4b d4 02 e9 c5 fe ff ff 4c 89 ef 48 c7 c6 40 ef 7a 8b e8 2a c6 05 ff 90 <0f> 0b 31 ed f7 44 24 04 00 01 00 00 0f 84 8e fd ff ff e9 86 fd ff
-> RSP: 0000:ffffffff8e0078e0 EFLAGS: 00010046
-> RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffffffff8e0fef40
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: ffffed10170c4903 R12: dffffc0000000000
-> R13: ffffea0004ff8e00 R14: 1ffffd40009ff1c0 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff88823ffff000 CR3: 000000000e1b8000 CR4: 00000000000100b0
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+LSMs may not be important to you, but they are very important for a
+very large number of Linux users.
+
+> When the maintainer of a codebase NAK's a security model, and explains
+> that the code has different needs and different security models, the
+> LSM people don't just ignore that and go do their thing despite the
+> NAK.
+
+I think there may be some confusion about how Hornet works and
+interacts with the existing BPF subsystem.  Hornet does not touch any
+code inside the BPF subsystem, and outside of some minor PKCS7 patches
+to enable some things from the PKCS specs, it doesn't touch any code
+outside of security/.  Hornet's design criteria required it to work
+within the existing LSM hooks and remain compatible with the existing
+BPF signature verification code.  Hornet follows the traditional LSM
+design pattern: it works within the LSM framework, building upon the
+security functionality in other subsystems to satisfy user security
+needs that have otherwise been ignored.
+
+A BPF light skeleton signed with the Hornet tools passes both the
+existing BPF signature verification code and Hornet's verification.
+Hornet allows signature verification using arbitrary keys/keyrings,
+just like the existing BPF signature code, enabling support for
+dynamically generated/signed BPF programs.  In mixed environments,
+Hornet can verify the loader portion of BPF light skeletons signed
+with the existing BPF signing tools, distinguishing between existing
+Alexei/KP signatures and a full Hornet signature.  Hornet also
+supports unsigned BPF programs when needed.
+
+As an LSM, Hornet can be enabled/disabled at build time, kernel boot,
+and at runtime (subject to the LSM providing enforcement).  If a user
+is required to run a specific kernel build, e.g. an "enterprise" Linux
+distro support situation, the admin has multiple ways to disable
+Hornet if it is not desired.  Any Hornet signed BPF light skeletons
+will load without issue on a system without Hornet and Hornet's
+presence does not block the existing BPF signature verification
+mechanisms.
+
+The BPF developers will quickly point out, if they haven't mentioned
+it to you already, that Hornet calls into a 'bpf_map_ops' function.
+This is true, Hornet calls the map_get_hash() method to get the hash
+of a BPF map so it can be verified.  The BPF devs will argue this
+presents a layering violation, but I would counter that several users
+in the networking stack go much further than Hornet in their use of
+'bpf_map_ops'; I find it difficult to see 'bpf_map_ops' as a private
+API at this point.  It is also important to mention that Hornet does
+not manipulate or modify the BPF program or map state in any way
+beyond storing some state in a Hornet specific LSM blob, similar to
+what other LSMs have done.
+
+We've done this work, and tried collaborating with the BPF devs for
+over a year, because we believe the kernel should verify the integrity
+of both the BPF light skeleton loader and the associated maps.  While
+the existing BPF signature verification scheme verifies the light
+skeleton loader, it requires the loader to self-verify its associated
+maps.  Relying on the loader to self-verify maps is problematic
+because it adds an additional burden on system builders and admins who
+must now also manage and verify the signature verification in every
+BPF light skeleton loader on the system (how does one know if a
+specific light skeleton loader suffers from a verification bug? what
+additional steps need to be added to the deployment of third-party,
+binary only BPF light skeletons?).  At the very least Hornet can
+ensure the integrity of both the BPF light skeleton loader and the
+signed maps without requiring prior analysis of the light skeleton
+loader.  That is a big win for admins who care about what code is
+loaded into their kernel.
+
+Hornet lives entirely within the LSM framework, adds no additional LSM
+hooks, remains compatible with the existing BPF signature verification
+code, can be disabled in multiple ways if required, provides the
+verification flexibility needed to support the existing BPF ecosystem,
+and helps satisfy the needs of real users.  Why can't we support
+Hornet alongside the existing BPF signature verification code and let
+the users employ the mechanism that works best for them?
+
+--
+paul-moore.com
