@@ -1,179 +1,94 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FAB480DDD;
-	Thu,  4 Jun 2026 14:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005742D780E;
+	Thu,  4 Jun 2026 14:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780584205; cv=none; b=JdsPoUM5tinMyhbtKlUhJcbnm0nNNvPnCPZv73bmAp20npqE0tYESiNOTGmJSr6tUJOv8tIkAN1ynkZBERbPHAfpuEVdKGCHMPdiPrgd/gUYRjzKrirRD98+m8IfbbpRNh3wd7IVPhZ14ZGa47NtdCyKzuCa+ZasZHZ0wDQw/uI=
+	t=1780584631; cv=none; b=T3Ww1V8/TeFDaySwqsAenXFj240PNesBTLubMdtXRo9Apdxj21QpEnlhqHiSuOlcOGZ3RkcdY1NqYDamsJrhlzDcNSTea2qOpKmo1KeZS4GrzqeH42RBFtujwoXPA73aJTdF1uHjNRyTsXxku5veixF3/HEjtLAAByUR8ZuWu9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780584205; c=relaxed/simple;
-	bh=ni77K57aPSYtT+LmajHAmlRynHG6pwn0vywTCSiSq2M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Al/7dKwqWklhFylxTa/SF6weQSU7NIbkqXc8XCpFoyw/XomQ/XMMJ6riX790rJYm37NR6G2mpI+5Bn4ZTaBI6PhqwUElAc0AM39JiivkTaB46Mo2anFhbZyfgG4XzXxwUKvYax0DffDIqSPPqxyBCSHDd66rzvnRik/E0qqcIa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IrJXzTao; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1780584631; c=relaxed/simple;
+	bh=/SfqTKiWGbGa7gYoSN32EBZEFUwjF0Ji+fLvu3grvkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gp/r00KldQdFuXenoHt40Fr4khgyf2gyk0a7lrP3Maoj1Cu1ufNItGSKK7hRms/uBUXrsE5L5kWw+bhPfGBn/Wl9BUqiSvcSM9s6VIyc8vavR1q6Djex8WLMzqr1EYnkd17WHhm5kAkIl2DkVOL6B/S74wclpcvg+m4B88AbLa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikUHqzvM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IrJXzTao"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780584204; x=1812120204;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=ni77K57aPSYtT+LmajHAmlRynHG6pwn0vywTCSiSq2M=;
-  b=IrJXzTao0ELyukcYRAkGCOQycQPAXucIGAQuW0YCHqTM3DCXdoE9Mdw2
-   +VPZT6Cof0CZTHg4ucpxOSWC0ICUN2/cWmBi9rKHRk4SIrK+aKTl2ocR5
-   PYs2xf1X5+2ae9Jvl+BYusrByaHah5pha3ISg8LpkqPNRG/TtpNP4MqSH
-   pp+DxBRwT41rr4ctQX8coxceJPekou5QA5yT8gG1SCJ2NPwbcqkMuM7ab
-   cirzXVPtvRpLQCvSuLz7e29fC3CBWmCXg3w/u32GaVTqhRc5KOUN5MNp0
-   uM+eWNeLCWLdUz1E4Tdpted/HyN4emsO7+epKBRoU5YW8nEooEsIwCI6S
-   A==;
-X-CSE-ConnectionGUID: M5V6YJaoQeOJCcindj6piw==
-X-CSE-MsgGUID: jkgNpgidTmaj6oyLWe/ibw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="85300175"
-X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
-   d="scan'208";a="85300175"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 07:43:22 -0700
-X-CSE-ConnectionGUID: JCuYt9XbRMmeaTCq1N7y6g==
-X-CSE-MsgGUID: +rJ75E7hQpOt9s+xqlY46w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
-   d="scan'208";a="244418013"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO [10.245.245.65]) ([10.245.245.65])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 07:43:20 -0700
-Message-ID: <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikUHqzvM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F3E1F00893;
+	Thu,  4 Jun 2026 14:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780584630;
+	bh=1td/sgaYlpj7VVpnPq0zz027w0HQznec8R0iN182gLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ikUHqzvMuAC5yvxsJyOPds7SqVA9zZxcf8/0q5FKcUZ6pXbxIcNwPUxM1N5a2qiYz
+	 t6+y8+kmymMYO4IbI6g+Nvvfr8gU3j5b76cobwPOWcS5ybbLNQBT7z3I8hXfQ0S12B
+	 mHlpzNsXflzJVEfxWlm7t68XZcjUI8l5jw6DVpeSnKh2TLH95NPAnjAIk2+qEP83Le
+	 0rwSqZL+x7l4ylAEX7j/mH57VeT1WnG8NwpvVvgek8X/MmJFDQqrwjRPVaIeWfhoxz
+	 yHT2NCfYcKQ23emRpzYMdP7qKxdn114MzzeCMbW1qtUIBFqok5Ts/eyjCc4cgf07RN
+	 Y+0TUmaD30TsQ==
+Date: Thu, 4 Jun 2026 15:50:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: DRM XE List <intel-xe@lists.freedesktop.org>,
+	Gustavo Sousa <gustavo.sousa@intel.com>,
+	Violet Monti <violet.monti@intel.com>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the drm-xe tree
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>, DRM XE List	
- <intel-xe@lists.freedesktop.org>, Gustavo Sousa <gustavo.sousa@intel.com>, 
- Violet Monti <violet.monti@intel.com>, Matt Roper
- <matthew.d.roper@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Date: Thu, 04 Jun 2026 16:43:17 +0200
-In-Reply-To: <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
+Message-ID: <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
 References: <aiAz4DmtngY0r6Cx@sirena.org.uk>
-	 <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+ <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
+ <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6MiZsoqq4HKfrECh"
+Content-Disposition: inline
+In-Reply-To: <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
+X-Cookie: Q:	Are we not men?
 
-T24gVGh1LCAyMDI2LTA2LTA0IGF0IDE1OjM1ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOgo+IE9u
-IFdlZCwgSnVuIDAzLCAyMDI2IGF0IDAzOjAyOjA4UE0gKzAxMDAsIE1hcmsgQnJvd24gd3JvdGU6
-Cj4gPiBIaSBhbGwsCj4gPiAKPiA+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS14ZSB0cmVlLCB0b2Rh
-eSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NAo+ID4gYWxsbW9kY29uZmlnKSBmYWlsZWQuwqAg
-VW5mb3J0dW5hdGVseSBJIGZhdCBmaW5nZXJlZCB0aGluZ3MgYW5kCj4gPiBkZWxldGVkCj4gPiB0
-aGUgbG9ncywgYXNzdW1pbmcgdGhlIGlzc3VlIHJlbWFpbnMgSSdsbCByZXBvcnQgcHJvcHJlbHkK
-PiA+IHRvbW9ycm93LsKgIEknbQo+ID4gZmFpcmx5IHN1cmUgdGhlIGlzc3VlIHdhcyBkdWUgdG86
-Cj4gPiAKPiA+IMKgIDVmZjAwNGZkYzczNzcgKGRybS94ZS9ydHA6IEFkZCBzdHJ1Y3QgdHlwZXMg
-Zm9yIFJUUCB0YWJsZXMpCj4gPiAKPiA+IHdpdGggc29tZSBvZiB0aGUgZmllbGRzIGluIHJ0cF90
-b19zcl9jYXNlc1tdIGhhaXZpbmcgbm9uLWNvbnN0Cj4gPiB2YWx1ZXMuCj4gPiBTb3JyeSBhYm91
-dCB0aGUgbGFjayBvZiBjbGFyaXR5IGhlcmUuCj4gPiAKPiA+IEkgaGF2ZSBtZXJnZWQgdGhlIHZl
-cnNpb24gZnJvbSBuZXh0LTIwMjYwNjAyIGluc3RlYWQuCj4gCj4gVGhlIGVycm9yIG1lc3NhZ2Ug
-aXM6Cj4gCj4gL3RtcC9uZXh0L2J1aWxkL2RyaXZlcnMvZ3B1L2RybS94ZS94ZV9od19lbmdpbmUu
-YzozNjE6NjogZXJyb3I6Cj4gaW5pdGlhbGl6ZXIgZWxlbWVudCBpcyBub3QgYSBjb21waWxlLXRp
-bWUgY29uc3RhbnQKPiDCoCAzNjEgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBibGl0X2NjdGxfdmFsLAo+IMKgwqDCoMKg
-wqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBefn5+fn5+fn5+fn5+Cj4gL3RtcC9uZXh0L2J1aWxkL2RyaXZlcnMvZ3B1
-L2RybS94ZS94ZV9ydHAuaDo0NjE6NDE6IG5vdGU6IGV4cGFuZGVkCj4gZnJvbSBtYWNybyAnWEVf
-UlRQX0FDVElPTlMnCj4gwqAgNDYxIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBY
-RV9SVFBfUEFTVEVfRk9SRUFDSChBQ1RJT05fLCBDT01NQSwKPiAoX19WQV9BUkdTX18pKcKgwqDC
-oMKgIFwKPiDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAKPiBefn5+fn5+fn5+fgo+IC90bXAvbmV4dC9idWlsZC9kcml2ZXJzL2dw
-dS9kcm0veGUveGVfcnRwX2hlbHBlcnMuaDo1NjoxMDg6IG5vdGU6Cj4gZXhwYW5kZWQgZnJvbSBt
-YWNybyAnWEVfUlRQX1BBU1RFX0ZPUkVBQ0gnCj4gwqDCoCA1NiB8ICNkZWZpbmUgWEVfUlRQX1BB
-U1RFX0ZPUkVBQ0gocHJlZml4Xywgc2VwXywgYXJnc18pCj4gX1hFX1JUUF9DT05DQVQoUEFTVEVf
-LCBDT1VOVF9BUkdTIGFyZ3NfKShwcmVmaXhfLCBzZXBfLCBhcmdzXykKPiDCoMKgwqDCoMKgCj4g
-fMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXn5+fn4KPiAv
-dG1wL25leHQvYnVpbGQvZHJpdmVycy9ncHUvZHJtL3hlL3hlX3J0cF9oZWxwZXJzLmg6NTc6ODA6
-IG5vdGU6Cj4gZXhwYW5kZWQgZnJvbSBtYWNybyAnWEVfUlRQX1BBU1RFXzEnCj4gwqDCoCA1NyB8
-ICNkZWZpbmUgWEVfUlRQX1BBU1RFXzEocHJlZml4Xywgc2VwXywgYXJnc18pCj4gX1hFX1JUUF9D
-T05DQVQocHJlZml4XywgRklSU1RfQVJHIGFyZ3NfKQo+IMKgwqDCoMKgwqAKPiB8wqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXn5+fn4KPiBub3RlOiAoc2tp
-cHBpbmcgMTEgZXhwYW5zaW9ucyBpbiBiYWNrdHJhY2U7IHVzZSAtZm1hY3JvLWJhY2t0cmFjZS0K
-PiBsaW1pdD0wIHRvIHNlZSBhbGwpCj4gL3RtcC9uZXh0L2J1aWxkL2luY2x1ZGUvbGludXgvY29t
-cGlsZXIuaDoyMDQ6Mzk6IG5vdGU6IGV4cGFuZGVkIGZyb20KPiBtYWNybyAnX19pc19hcnJheScK
-PiDCoCAyMDQgfCAjZGVmaW5lIF9faXNfYXJyYXkoYSnCoMKgwqDCoMKgwqDCoMKgwqDCoCAoIV9f
-c2FtZV90eXBlKChhKSwgJihhKVswXSkpCj4gwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBeCj4gL3RtcC9uZXh0L2J1aWxkL2luY2x1ZGUvbGludXgvY29t
-cGlsZXJfdHlwZXMuaDo2MTA6NjM6IG5vdGU6IGV4cGFuZGVkCj4gZnJvbSBtYWNybyAnX19zYW1l
-X3R5cGUnCj4gwqAgNjEwIHwgI2RlZmluZSBfX3NhbWVfdHlwZShhLCBiKQo+IF9fYnVpbHRpbl90
-eXBlc19jb21wYXRpYmxlX3AodHlwZW9mKGEpLCB0eXBlb2YoYikpCj4gwqDCoMKgwqDCoCB8wqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoAo+IF4KPiAvdG1wL25leHQvYnVpbGQvaW5jbHVkZS9saW51eC9jb21waWxlci5oOjIw
-MDo4NDogbm90ZTogZXhwYW5kZWQgZnJvbQo+IG1hY3JvICdfX0JVSUxEX0JVR19PTl9aRVJPX01T
-RycKPiDCoCAyMDAgfCAjZGVmaW5lIF9fQlVJTERfQlVHX09OX1pFUk9fTVNHKGUsIG1zZywgLi4u
-KQo+ICgoaW50KXNpemVvZihzdHJ1Y3Qge19TdGF0aWNfYXNzZXJ0KCEoZSksIG1zZyk7fSkpCj4g
-wqDCoMKgwqDCoAo+IHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIF4KPiAvdG1wL25leHQvYnVpbGQvZHJpdmVycy9ncHUvZHJtL3hlL3hlX2h3
-X2VuZ2luZS5jOjQxNjo5OiBlcnJvcjoKPiBpbml0aWFsaXplciBlbGVtZW50IGlzIG5vdCBhIGNv
-bXBpbGUtdGltZSBjb25zdGFudAo+IMKgIDQxNiB8wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgcmluZ19jbWRfY2N0bF92YWwsCj4gwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgXn5+fn5+fn5+fn5+fn5+fn4KPiAvdG1wL25leHQvYnVpbGQvZHJpdmVycy9ncHUv
-ZHJtL3hlL3hlX3J0cC5oOjQ2MTo0MTogbm90ZTogZXhwYW5kZWQKPiBmcm9tIG1hY3JvICdYRV9S
-VFBfQUNUSU9OUycKPiDCoCA0NjEgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFhF
-X1JUUF9QQVNURV9GT1JFQUNIKEFDVElPTl8sIENPTU1BLAo+IChfX1ZBX0FSR1NfXykpwqDCoMKg
-wqAgXAo+IMKgwqDCoMKgwqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoAo+IF5+fn5+fn5+fn5+Cj4gL3RtcC9uZXh0L2J1aWxkL2RyaXZlcnMvZ3B1
-L2RybS94ZS94ZV9ydHBfaGVscGVycy5oOjU2OjEwODogbm90ZToKPiBleHBhbmRlZCBmcm9tIG1h
-Y3JvICdYRV9SVFBfUEFTVEVfRk9SRUFDSCcKPiDCoMKgIDU2IHwgI2RlZmluZSBYRV9SVFBfUEFT
-VEVfRk9SRUFDSChwcmVmaXhfLCBzZXBfLCBhcmdzXykKPiBfWEVfUlRQX0NPTkNBVChQQVNURV8s
-IENPVU5UX0FSR1MgYXJnc18pKHByZWZpeF8sIHNlcF8sIGFyZ3NfKQo+IMKgwqDCoMKgwqAKPiB8
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBefn5+fgo+IC90
-bXAvbmV4dC9idWlsZC9kcml2ZXJzL2dwdS9kcm0veGUveGVfcnRwX2hlbHBlcnMuaDo1Nzo4MDog
-bm90ZToKPiBleHBhbmRlZCBmcm9tIG1hY3JvICdYRV9SVFBfUEFTVEVfMScKPiDCoMKgIDU3IHwg
-I2RlZmluZSBYRV9SVFBfUEFTVEVfMShwcmVmaXhfLCBzZXBfLCBhcmdzXykKPiBfWEVfUlRQX0NP
-TkNBVChwcmVmaXhfLCBGSVJTVF9BUkcgYXJnc18pCj4gwqDCoMKgwqDCoAo+IHzCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBefn5+fgo+IG5vdGU6IChza2lw
-cGluZyAxMSBleHBhbnNpb25zIGluIGJhY2t0cmFjZTsgdXNlIC1mbWFjcm8tYmFja3RyYWNlLQo+
-IGxpbWl0PTAgdG8gc2VlIGFsbCkKPiAvdG1wL25leHQvYnVpbGQvaW5jbHVkZS9saW51eC9jb21w
-aWxlci5oOjIwNDozOTogbm90ZTogZXhwYW5kZWQgZnJvbQo+IG1hY3JvICdfX2lzX2FycmF5Jwo+
-IMKgIDIwNCB8ICNkZWZpbmUgX19pc19hcnJheShhKcKgwqDCoMKgwqDCoMKgwqDCoMKgICghX19z
-YW1lX3R5cGUoKGEpLCAmKGEpWzBdKSkKPiDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIF4KPiAvdG1wL25leHQvYnVpbGQvaW5jbHVkZS9saW51eC9jb21w
-aWxlcl90eXBlcy5oOjYxMDo2Mzogbm90ZTogZXhwYW5kZWQKPiBmcm9tIG1hY3JvICdfX3NhbWVf
-dHlwZScKPiDCoCA2MTAgfCAjZGVmaW5lIF9fc2FtZV90eXBlKGEsIGIpCj4gX19idWlsdGluX3R5
-cGVzX2NvbXBhdGlibGVfcCh0eXBlb2YoYSksIHR5cGVvZihiKSkKPiDCoMKgwqDCoMKgIHzCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgCj4gXgo+IC90bXAvbmV4dC9idWlsZC9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLmg6MjAw
-Ojg0OiBub3RlOiBleHBhbmRlZCBmcm9tCj4gbWFjcm8gJ19fQlVJTERfQlVHX09OX1pFUk9fTVNH
-Jwo+IMKgIDIwMCB8ICNkZWZpbmUgX19CVUlMRF9CVUdfT05fWkVST19NU0coZSwgbXNnLCAuLi4p
-Cj4gKChpbnQpc2l6ZW9mKHN0cnVjdCB7X1N0YXRpY19hc3NlcnQoIShlKSwgbXNnKTt9KSkKPiDC
-oMKgwqDCoMKgCj4gfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgXgo+IDIgZXJyb3JzIGdlbmVyYXRlZC4KCkZ1bm55LCBJIHNlZSBubyBidWls
-ZCBlcnJvcnMgd2l0aCBkcm0teGUtbmV4dCBhbGxtb2Rjb25maWcuIFdoYXQKY29tcGlsZXIgaXMg
-YmVpbmcgdXNlZD8gQW55IHNoYTEgb2YgdGhlIGRybS14ZS1uZXh0IHRvcCBjb21taXQgeW91J3Jl
-CnRlc3Rpbmc/CgpUaGFua3MsClRob21hcwoK
 
+--6MiZsoqq4HKfrECh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 04, 2026 at 04:43:17PM +0200, Thomas Hellstr=F6m wrote:
+> On Thu, 2026-06-04 at 15:35 +0100, Mark Brown wrote:
+
+> > /tmp/next/build/include/linux/compiler.h:200:84: note: expanded from
+> > macro '__BUILD_BUG_ON_ZERO_MSG'
+> > =A0 200 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...)
+> > ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+
+> Funny, I see no build errors with drm-xe-next allmodconfig. What
+> compiler is being used? Any sha1 of the drm-xe-next top commit you're
+> testing?
+
+This is after merging the tree into -next, that'd be on top of
+09b893db4d9e68c2679e76624d420f438f8d3e98 for today (not published yet).
+It's possible it's some interaction with other trees (like the main drm
+tree) and works as a standalone thing, it wasn't obviously that from a
+quick investigation.  The toolchain is gcc from Debian stable.
+
+--6MiZsoqq4HKfrECh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmohkLAACgkQJNaLcl1U
+h9CQiAf6A5ddfaJ9zDsPntLJpT3kooA5vvLtLjTnRrqBGtzmMDxVIQQoVEtWnpUv
+19zvl3tezsj4yJ0Cnmxd/RLxYCvpS/57KHdw0RW/b5C6MkgFHiSAxUsHzuy6xRTe
+wkxglTifLMFTVT3HDW8EOh3S1yoKAIBLc7j0wnW8r5n1LbpfFMXiYLsn4BMDrf8b
+I8ippFu9MggVdygFvzhdA32lTiDnlMs1xGG9co1iLK8bcyNwwjLq4xPveIUkMhXG
+BDX41cNDPjsNejVLPv3FYBeOECglaM4HyiepHSuZmYr9/aIo2GGNy9FwzyKpgZAm
+O5dWdMyaikt1BLzatWTnMCn9QtYlvw==
+=VG1p
+-----END PGP SIGNATURE-----
+
+--6MiZsoqq4HKfrECh--
