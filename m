@@ -1,96 +1,95 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938BB36F91E
-	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 04:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09BC3BCD15
+	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 05:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780546485; cv=none; b=sW+DiqRET3NtlxNcfe8uNf3+IkeYBPOWz9MzX/Rn+6ALyWOdjvx3j8Fev37lEiGAUyAMoQhW4DnJfYb72ex2Es2MP5907GQj8JD5rN6y6SpF8CkUfNRHTIylh+W9VXUd+zFOafKMCrnP2gP/ItkgdaqNVtbD9I3uoVX/Md315go=
+	t=1780550599; cv=none; b=mUFoZPU8i/5uJRnLtq+jzsY+OzDCTWAd1ehe7F+4snkAWeuTm5p+nMHYiLW+CqMkVjeoRj9r4l/PMRvirg0/nrPDQRNX16CC8hVNhVvqgLgIHt5dMQ9pGS7R94EUOnbg347omTFU8IMr8a8GpxOC94z+7Wdrrncsf9NkDwV5GTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780546485; c=relaxed/simple;
-	bh=cMI7tObmp/O9oWNmsNMV5YqxwqsEM8ca/TCt2rCNqqk=;
+	s=arc-20240116; t=1780550599; c=relaxed/simple;
+	bh=nl46Ar9bhUwnH5fjEtRmAXo8yrkLFQjmrNNNQhBwioY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmMXVaetU3CAZZjcabwmzBFQMNUPmSVPpT35j2HbNgpuWJL96nFCj20YJOn7U2JQDt08CkC0Fon2CcDjXbLfnIsGsREdqyw6KKgcfCYb4u3ZnVPi9ZRvdU6ta9eGZq54mNsdyVGQLOHIsX4UZ1pU6agqsratZnb2EQF68XvqQGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXBof5wv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=H3xG6TIb; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=isvcPrqN62ZND0EthE5SFpgYxuVw67ZQZIubkgTzNL5dXu/EKudLv1I3jAQLSQwExn/UanjlK+vwOgflc1lJJlvXk00TBtsqpyqyMu5RDoowmpES/2iSMfzpoIFK8QZd/WiB/TtfB3Fd04cPLODIf0syc1gUW03cX+/pqvBi2oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TFoC3uG/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RVXhOdAL; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXBof5wv";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3xG6TIb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TFoC3uG/";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RVXhOdAL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1780546482;
+	s=mimecast20190719; t=1780550596;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AWytyULl7iE6NmIMXNglghTQUX52gHdAhp4TQhKDY+Y=;
-	b=eXBof5wvrA0qu04fD+/G2ZjndrYdhjPKOPr6wimppmamyAEkKCIsmbF48g5JMEPiUF4JWi
-	ZeE9cc5eCldGjGeXjeuSTMumiu4Q0PxL0EG6rU62DF3qUWt5b4GJ5OXJDP5kfnGsAQpuZq
-	+ow+F4y5vUMozVqWAR5aBxGxqL2KKr8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=eEwXEslPaqIe4nLA6/yUFLJfeGLG+7//kLoNGv1IS5Q=;
+	b=TFoC3uG/1l+jSy4qctWESY+PtZqMUxdQhIEiv9moF5E9GWoY0n/ru5U3pGQZmfeUMatlGv
+	m1AZY9j93msM3IEOlF04aihKXYiK3ObQpE2D0M9lLPXaVPbF4X7t5TP4J2IqvIiEnkBfZx
+	7pzCrIc5Jcd8b/L7XXxzp6iH02utDdI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-247-g3uw1H4uOm2njkfjrPkJXQ-1; Thu, 04 Jun 2026 00:14:41 -0400
-X-MC-Unique: g3uw1H4uOm2njkfjrPkJXQ-1
-X-Mimecast-MFC-AGG-ID: g3uw1H4uOm2njkfjrPkJXQ_1780546480
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-45eebc943bfso654009f8f.0
-        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 21:14:41 -0700 (PDT)
+ us-mta-8-MzzRrm3QPWqqLHRGzwLMkw-1; Thu, 04 Jun 2026 01:23:15 -0400
+X-MC-Unique: MzzRrm3QPWqqLHRGzwLMkw-1
+X-Mimecast-MFC-AGG-ID: MzzRrm3QPWqqLHRGzwLMkw_1780550594
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-45ef616db45so171448f8f.2
+        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2026 22:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1780546480; x=1781151280; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1780550594; x=1781155394; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AWytyULl7iE6NmIMXNglghTQUX52gHdAhp4TQhKDY+Y=;
-        b=H3xG6TIb20YGOJXP3J9FqFFCht6n+238NofzS7KaNZm3gURy0Ms0x9lLsa1XIRWZ3t
-         sTrXfclpucfeALHhTpMHLLhByJyPYkh6j4Xuh1Qf1Jam1fhDmWDwZ5QEcT3HGFBEOM4f
-         BN4xPhVH0y6Bo2pPIow9ITsoYASRnjL2ePjygKsUJ/Htq2m1Nzx26cuWJATpMH4cEVKr
-         ySTVkFJOWKd+ecisZ18O7XxRXocANm5VEAvUT0l+SRi3Qcl/EFRWMV6+2/IgmQRgT8tI
-         dSo4RqNmezPCEGyPFp197+gWOG8KB+8MK2o2/Su6T67axo//RyWVwHHcrgB2ST76CMEz
-         LUfA==
+        bh=eEwXEslPaqIe4nLA6/yUFLJfeGLG+7//kLoNGv1IS5Q=;
+        b=RVXhOdALsHnHD5UNb8F2M0PFvSq37jxAbhjYH26/cs5Vrwr07qYpQI5Efee1QXUAHa
+         4+LJl8u9GUnawSMciQF6bOSCA1LSR+mDyvT9IjKDF9MPlC5mTuXbAp4DsJFR723VJwJA
+         uI94WRb1xVIaveruMzaX4NAVijIL5xXOFhjtyp0xcfoOYa/lMCKs+62WiSPRMvN2K0Mx
+         St1NaJEtZEvEemw/wSlwtSAH9T3kAvhz4yYhoXAIBrNHeHTmql+Y+FYrYoBw56jcNPUh
+         /V0KCK7S7aFH3nra5y8QdIqeIKOYQu93ZTCJw5NQ86yYg2xSGtqKjy4y9Uj15VpoZin3
+         2ftA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780546480; x=1781151280;
+        d=1e100.net; s=20251104; t=1780550594; x=1781155394;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AWytyULl7iE6NmIMXNglghTQUX52gHdAhp4TQhKDY+Y=;
-        b=WrEAx00GsIhASqT5nt22pkZj0dqX8OJ65Q7kchie0aPRQ9Bmy6rnLqXTItFkLtDtnY
-         doqeWxuK/w06w7aNKppLo1LLD8fTlDERPu+HApF9xmz59T92ovNXf7BqC6Wkreps4SY/
-         w6r5wVJZvQdHdsEe7gNBOv7DyUm4FwplTuhOd36y5+ErY5l7lERla6/RoJ0Lo6In4NQu
-         G8NxbTjIEIP/dxArzxpoJDWIXKgAMymvJT1khn/Pb4Yhk+G3YfW3tu3eYK1v4z4D6p1m
-         mRTpsGmSPnU5/A2UwpHQ2kOGMGghPHYhFO7mTmIGUO1l06hqoJrQ5RLplJYXFnjKJ7J+
-         Ardg==
-X-Forwarded-Encrypted: i=1; AFNElJ88wwyg7EIbVu/2A/TRYVqFZvXaTQ01pavAuF6D2fCssm1iWyZtK8Af8sF3679/9epFm9IpnnMrwuZS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxlHXnZlCx/szaNI+0HVWtAdFc8OIL0YIiyyr9OXZgz6TA0pbl
-	DK1jobdn5r36JWJlo8r+5W+KpfsuIbWUCLQFE9BdHw5N78Uh1cqDnxuVPVYrh9iIsq5YJc15QpS
-	1++rb2m8txIH/AC88ifmApEdhBcwlIUkmDrwe6PS1WQroJBOzRadifDRb4o9GfWc=
-X-Gm-Gg: Acq92OHS3ZR5o9KuvTgxn+Ej5vhSG9C9GnD0hriadjAZ3hNKOvYh/Y+UwaWVJHh1PzM
-	q+63uIfsnHftk4PYYI3Bg1Um1sjCzpUMEL44r57dIxS4Og/WqLjqNr7eMTKMT7XKNbaAz5oSQja
-	bCrnHjZqC0ghsLEilu2Xz7zcjjhabgCGiyn0VjwWS6hxCaN5z0ctr5tShV4xUw2YEFq1boLDO/Y
-	TYZXc/+FZMxCooUN2iEQCOmiTBc63v8566hJSXwVT/HGKz+062T0mY806hLFTTnfgsvB9ykT+wx
-	7299VWTz6KLuR+5Krw2XVroUwUuTUuS6itmYAo1R07CaK7EEJIyJiOu4GQUAFLI1+1N1WBwZLhZ
-	hWOEzh937ZSBrLvSkjPMUQhmX/6csX12A8uMbS3RP78R3QFuO5H/Ojw==
-X-Received: by 2002:a05:600c:6095:b0:490:bb60:68ca with SMTP id 5b1f17b1804b1-490bc4b54b4mr24735725e9.3.1780546480155;
-        Wed, 03 Jun 2026 21:14:40 -0700 (PDT)
-X-Received: by 2002:a05:600c:6095:b0:490:bb60:68ca with SMTP id 5b1f17b1804b1-490bc4b54b4mr24735325e9.3.1780546479626;
-        Wed, 03 Jun 2026 21:14:39 -0700 (PDT)
+        bh=eEwXEslPaqIe4nLA6/yUFLJfeGLG+7//kLoNGv1IS5Q=;
+        b=rztbMRVUTDvBK5SlsLMoDTXeKBrnDHhJwm+wkQ24EKMR6DOKQZIXkxi5hZSdpFvY6z
+         W2kwShJDtiov06f3pz60ospCAEMtqkgxOzu0HWvqsGtvtq0BhrX7VUdBbmdfLYusUR4d
+         KSFBfWI9+Hrn8CuDQaJyS8XMAqyeZgZkOTwuiDO2Nd61kdax55/IH4wX06cYN/9KmD3z
+         m1CLwt2EPEk7M2IplmcY3HlmmWByHxl5U4mrZvMcFnJ45pxRrbNLKgOoht7pcv0Dj3o6
+         N4jpLIZqeTYnpQa6kcL+I6Zmf66C7FpAH1QDnBzp0TNcAptHVti8rTPSTBct9MfacW1p
+         AmzA==
+X-Forwarded-Encrypted: i=1; AFNElJ/bF/5OKESbyq8udTMpVBx94ZZ4iXH+wBz+ON8oUQs5QmKSCOEywIYUH0lr+rsRVYOzutKwZZHQ8FkO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW3YTuSC09d9s/5S6aY3C7PGGSEXCbB53pfCiNR+T9AkF+ekn7
+	SXyBAUVl+qCp0mtC1G/MNld/OA1E+0RuAgkxkSrVcwcWCEOgnvB02s5sLin9GYcfP1UitNmyQ97
+	B1cR4Bhz2qdBgXou3//MgFEJEP3u95Rabsa08ChcTiCPmoy/hUufKgEtinFPGXqc=
+X-Gm-Gg: Acq92OG18PO5Twk61JN7dKPDuOIWCG5GNy+7H9lithk5NdWn/jI9MjGJ60twnn+zVWa
+	ZSuucDGAUPmZyJ6ktp5MZSN8bJa/J0/quk1ogW4qh9UKCLWMhLT+QV+5cIdE6n3qNJb7ZZ6hd4t
+	sI8l5zLtsor35Uujxx4GQnOjf86IUGzlzMTgbeSY+E0zFtly6dLmT1KdkZAy5nb1oTbPNyiUuuj
+	bpib1Kkv2iH+jtWOTZxNY/kUhu2awAJ0YbFsAsDx6Cb2DQGxoaVdwPHdhCMwneceM9KXs1mq2nE
+	jpKOAgq95u39XpGrBgraw9psoO0DIZZ1ltPlG0kYHj47o8LwtehJKzg8JqtqdnWaQ4BPm2sRvD6
+	znYvImzL6awCmf2kvjpucA6T/Y/IQ2ih38GFteSdTeXEiiaVpEgDURg==
+X-Received: by 2002:a05:600c:4e87:b0:490:51e9:deba with SMTP id 5b1f17b1804b1-490b60e2309mr98333605e9.27.1780550594033;
+        Wed, 03 Jun 2026 22:23:14 -0700 (PDT)
+X-Received: by 2002:a05:600c:4e87:b0:490:51e9:deba with SMTP id 5b1f17b1804b1-490b60e2309mr98333035e9.27.1780550593489;
+        Wed, 03 Jun 2026 22:23:13 -0700 (PDT)
 Received: from redhat.com (IGLD-80-230-25-45.inter.net.il. [80.230.25.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc23394asm39489705e9.0.2026.06.03.21.14.37
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3d66c8sm38953695e9.10.2026.06.03.22.23.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2026 21:14:39 -0700 (PDT)
-Date: Thu, 4 Jun 2026 00:14:35 -0400
+        Wed, 03 Jun 2026 22:23:12 -0700 (PDT)
+Date: Thu, 4 Jun 2026 01:23:10 -0400
 From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: syzbot <syzbot+8ffca916f3fa5455f9b4@syzkaller.appspotmail.com>,
-	apopple@nvidia.com, byungchul@sk.com, david@kernel.org,
-	gourry@gourry.net, joshua.hahnjy@gmail.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-next@vger.kernel.org, matthew.brost@intel.com,
-	rakie.kim@sk.com, sfr@canb.auug.org.au,
-	syzkaller-bugs@googlegroups.com, ying.huang@linux.alibaba.com,
-	ziy@nvidia.com
-Subject: Re: [syzbot] [mm?] linux-next test error: kernel BUG in
- post_alloc_hook
-Message-ID: <20260604001334-mutt-send-email-mst@kernel.org>
-References: <6a20a309.85ccb786.283107.0005.GAE@google.com>
- <20260603154737.48dfcc19a51da03241e1af48@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	Simon Schippers <simon.schippers@tu-dortmund.de>,
+	Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Subject: Re: linux-next: manual merge of the vhost tree with the mm-unstable
+ tree
+Message-ID: <20260604012124-mutt-send-email-mst@kernel.org>
+References: <aiB6PlZxn19NobF0@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -99,159 +98,186 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260603154737.48dfcc19a51da03241e1af48@linux-foundation.org>
+In-Reply-To: <aiB6PlZxn19NobF0@sirena.org.uk>
 
-On Wed, Jun 03, 2026 at 03:47:37PM -0700, Andrew Morton wrote:
-> (cc Mike Tsirkin)
+On Wed, Jun 03, 2026 at 08:02:22PM +0100, Mark Brown wrote:
+> Hi all,
 > 
-> On Wed, 03 Jun 2026 14:56:25 -0700 syzbot <syzbot+8ffca916f3fa5455f9b4@syzkaller.appspotmail.com> wrote:
+> Today's linux-next merge of the vhost tree got conflicts in:
 > 
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    a225caacc365 Add linux-next specific files for 20260603
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13b0de66580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=717edf2a5f9fc390
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=8ffca916f3fa5455f9b4
-> > compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/f799d07ea17d/disk-a225caac.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/72d0f0ff94e6/vmlinux-a225caac.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/99d4279e6fec/bzImage-a225caac.xz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+8ffca916f3fa5455f9b4@syzkaller.appspotmail.com
-> > 
-> > ...
-> >
-> > **********************************************************
-> > **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
-> > **                                                      **
-> > ** This system shows unhashed kernel memory addresses   **
-> > ** via the console, logs, and other interfaces. This    **
-> > ** might reduce the security of your system.            **
-> > **                                                      **
-> > ** If you see this message and you are not debugging    **
-> > ** the kernel, report this immediately to your system   **
-> > ** administrator!                                       **
-> > **                                                      **
-> > ** Use hash_pointers=always to force this mode off      **
-> > **                                                      **
-> > **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
-> > **********************************************************
+>   include/linux/mm.h
+>   include/linux/ptr_ring.h
+>   mm/memory.c
+>   mm/page_alloc.c
 > 
-> Geeze, who added that.
+> between at least commits:
 > 
-> > page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x13fe38
-> > head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> > flags: 0x100000000000040(head|node=0|zone=2)
-> > raw: 0100000000000040 dead000000000100 dead000000000122 0000000000000000
-> > raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> > head: 0100000000000040 dead000000000100 dead000000000122 0000000000000000
-> > head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> > head: 0100000000000002 ffffffffffffff01 00000000ffffffff 00000000ffffffff
-> > head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000004
-> > page dumped because: VM_BUG_ON_PAGE(1 && PageCompound(page))
-> > ------------[ cut here ]------------
-> > kernel BUG at ./include/linux/page-flags.h:682!
-> > Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted syzkaller #0 PREEMPT_{RT,(undef)} 
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/09/2026
-> > RIP: 0010:__ClearPagePrezeroed include/linux/page-flags.h:682 [inline]
-> > RIP: 0010:post_alloc_hook+0x287/0x310 mm/page_alloc.c:1863
+>   c0ea52c18c78c ("mm/huge_memory: simplify vma_is_specal_huge()")
+>   fba362c17d9d9 ("ptr_ring: move free-space check into separate helper")
+>   aa812f234b6c8 ("mm: memory: flatten alloc_anon_folio() retry loop")
 > 
-> That's the __ClearPagePrezeroed(page) added by 504f40f6bda6 ("mm:
-> page_reporting: skip redundant zeroing of host-zeroed reported pages").
+> from the mm-unstable tree and commits:
 > 
-> Was it intended that this series
-> (https://lore.kernel.org/cover.1779315441.git.mst@redhat.com) be
-> included in -next?  It's huge, it's late, review is minor.
-
-Of course not (
-I've no idea how that happened.
-Should not push to next late at night.
+>   dd3984b3bce9d ("ptr_ring: disable KCSAN warnings")
+>   fba362c17d9d9 ("ptr_ring: move free-space check into separate helper")
+>   f7a2566ae0c03 ("mm: move user page zeroing into the allocator")
+> 
+> from the vhost tree.  I note that the vhost tree does not appear to have
+> anything from Linus' tree beyond v7.0-rc2, are you sure this is
+> sensible?
 
 
-> <remainder of report is below>
+Not at all, somehow I pushed a wrong hash I was experimenting with (
+It was never intended for next.
+
+
+> I am really not convinced about my fixups below.
 > 
-> > Code: ff ff 89 da be 01 00 00 00 48 c7 c7 40 50 4f 8e e8 ce 4b d4 02 e9 c5 fe ff ff 4c 89 ef 48 c7 c6 40 ef 7a 8b e8 2a c6 05 ff 90 <0f> 0b 31 ed f7 44 24 04 00 01 00 00 0f 84 8e fd ff ff e9 86 fd ff
-> > RSP: 0000:ffffffff8e0078e0 EFLAGS: 00010046
-> > RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffffffff8e0fef40
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> > RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-> > R10: dffffc0000000000 R11: ffffed10170c4903 R12: dffffc0000000000
-> > R13: ffffea0004ff8e00 R14: 1ffffd40009ff1c0 R15: 0000000000000000
-> > FS:  0000000000000000(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: ffff88823ffff000 CR3: 000000000e1b8000 CR4: 00000000000100b0
-> > Call Trace:
-> >  <TASK>
-> >  prep_new_page mm/page_alloc.c:1925 [inline]
-> >  get_page_from_freelist+0x3081/0x3320 mm/page_alloc.c:4015
-> >  __alloc_frozen_pages_noprof+0x194/0x380 mm/page_alloc.c:5376
-> >  __alloc_pages_mpol+0xe0/0x390 mm/mempolicy.c:2495
-> >  alloc_slab_page mm/slub.c:3287 [inline]
-> >  allocate_slab+0x83/0x5e0 mm/slub.c:3404
-> >  new_slab mm/slub.c:3447 [inline]
-> >  ___slab_alloc+0x160/0x930 mm/slub.c:4485
-> >  __slab_alloc_node mm/slub.c:4549 [inline]
-> >  slab_alloc_node mm/slub.c:4925 [inline]
-> >  __do_kmalloc_node mm/slub.c:5331 [inline]
-> >  __kmalloc_noprof+0x140/0x7b0 mm/slub.c:5345
-> >  _kmalloc_noprof include/linux/slab.h:973 [inline]
-> >  _kzalloc_noprof include/linux/slab.h:1286 [inline]
-> >  __alloc_empty_sheaf mm/slub.c:2774 [inline]
-> >  alloc_empty_sheaf mm/slub.c:2794 [inline]
-> >  init_percpu_sheaves mm/slub.c:7555 [inline]
-> >  do_kmem_cache_create+0x8ae/0x9a0 mm/slub.c:8595
-> >  create_boot_cache+0xbf/0x120 mm/slab_common.c:717
-> >  create_kmalloc_cache+0x41/0xb0 mm/slab_common.c:735
-> >  new_kmalloc_cache+0xd4/0x180 mm/slab_common.c:982
-> >  create_kmalloc_caches+0x14/0x50 mm/slab_common.c:1005
-> >  kmem_cache_init+0x14a/0x1e0 mm/slub.c:8496
-> >  mm_core_init+0x7e/0xb0 mm/mm_init.c:2728
-> >  start_kernel+0x162/0x3e0 init/main.c:1034
-> >  x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:310
-> >  x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:291
-> >  common_startup_64+0x13e/0x157
-> >  </TASK>
-> > Modules linked in:
-> > ---[ end trace 0000000000000000 ]---
-> > RIP: 0010:__ClearPagePrezeroed include/linux/page-flags.h:682 [inline]
-> > RIP: 0010:post_alloc_hook+0x287/0x310 mm/page_alloc.c:1863
-> > Code: ff ff 89 da be 01 00 00 00 48 c7 c7 40 50 4f 8e e8 ce 4b d4 02 e9 c5 fe ff ff 4c 89 ef 48 c7 c6 40 ef 7a 8b e8 2a c6 05 ff 90 <0f> 0b 31 ed f7 44 24 04 00 01 00 00 0f 84 8e fd ff ff e9 86 fd ff
-> > RSP: 0000:ffffffff8e0078e0 EFLAGS: 00010046
-> > RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffffffff8e0fef40
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> > RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-> > R10: dffffc0000000000 R11: ffffed10170c4903 R12: dffffc0000000000
-> > R13: ffffea0004ff8e00 R14: 1ffffd40009ff1c0 R15: 0000000000000000
-> > FS:  0000000000000000(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: ffff88823ffff000 CR3: 000000000e1b8000 CR4: 00000000000100b0
-> > 
-> > 
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > 
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> > 
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> > 
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> > 
-> > If you want to undo deduplication, reply with:
-> > #syz undup
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc include/linux/mm.h
+> index 485df9c2dbddb,f600c0428aad9..0000000000000
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@@ -5088,6 -4714,25 +5100,9 @@@ long copy_folio_from_user(struct folio 
+>   			   const void __user *usr_src,
+>   			   bool allow_pagefault);
+>   
+>  -/**
+>  - * vma_is_special_huge - Are transhuge page-table entries considered special?
+>  - * @vma: Pointer to the struct vm_area_struct to consider
+>  - *
+>  - * Whether transhuge page-table entries are considered "special" following
+>  - * the definition in vm_normal_page().
+>  - *
+>  - * Return: true if transhuge page-table entries should be considered special,
+>  - * false otherwise.
+>  - */
+>  -static inline bool vma_is_special_huge(const struct vm_area_struct *vma)
+>  -{
+>  -	return vma_is_dax(vma) || (vma->vm_file &&
+>  -				   (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP)));
+>  -}
+>  -
+> + #else /* !CONFIG_TRANSPARENT_HUGEPAGE && !CONFIG_HUGETLBFS */
+> + #define folio_zero_user(folio, addr_hint) \
+> + 	clear_user_highpages(&(folio)->page, (addr_hint), folio_nr_pages(folio))
+>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
+>   
+>   #if MAX_NUMNODES > 1
+> diff --cc include/linux/ptr_ring.h
+> index c95e891903f05,d2c3629bbe451..0000000000000
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> diff --cc mm/memory.c
+> index 56be920c56d74,beb6ce312dec6..0000000000000
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> diff --cc mm/page_alloc.c
+> index 81a9d4d1e6c0a,cb72dd6e0efb3..0000000000000
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@@ -90,8 -90,12 +90,14 @@@ typedef int __bitwise fpi_t
+>   /* Free the page without taking locks. Rely on trylock only. */
+>   #define FPI_TRYLOCK		((__force fpi_t)BIT(2))
+>   
+>  +/* free_pages_prepare() has already been called for page(s) being freed. */
+>  +#define FPI_PREPARED		((__force fpi_t)BIT(3))
+> + /*
+> +  * The page contents are known to be zero (e.g., the host zeroed them
+> +  * during balloon deflate).  Set PagePrezeroed after free so the next
+> +  * allocation can skip redundant zeroing.
+> +  */
+>  -#define FPI_PREZEROED		((__force fpi_t)BIT(3))
+> ++#define FPI_PREZEROED		((__force fpi_t)BIT(4))
+>   
+>   /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
+>   static DEFINE_MUTEX(pcp_batch_high_lock);
+> @@@ -1806,15 -1881,25 +1850,25 @@@ static inline bool should_skip_init(gfp
+>   	return (flags & __GFP_SKIP_ZERO);
+>   }
+>   
+> + 
+>   inline void post_alloc_hook(struct page *page, unsigned int order,
+> - 				gfp_t gfp_flags)
+> + 				gfp_t gfp_flags, bool prezeroed,
+> + 				unsigned long user_addr)
+>   {
+>  +	const bool zero_tags = gfp_flags & __GFP_ZEROTAGS;
+>   	bool init = !want_init_on_free() && want_init_on_alloc(gfp_flags) &&
+>   			!should_skip_init(gfp_flags);
+>  -	bool zero_tags = init && (gfp_flags & __GFP_ZEROTAGS);
+>   	int i;
+>   
+> - 	set_page_private(page, 0);
+> + 	__ClearPagePrezeroed(page);
+> + 
+> + 	/*
+> + 	 * If the page is pre-zeroed, skip memory initialization.
+> + 	 * We still need to handle tag zeroing separately since the host
+> + 	 * does not know about memory tags.
+> + 	 */
+> + 	if (prezeroed && init && !zero_tags)
+> + 		init = false;
+>   
+>   	arch_alloc_page(page, order);
+>   	debug_pagealloc_map_pages(page, 1 << order);
+> @@@ -3244,15 -3347,9 +3309,16 @@@ struct page *rmqueue_buddy(struct zone 
+>   			}
+>   		}
+>   		spin_unlock_irqrestore(&zone->lock, flags);
+> + 		*prezeroed = __page_test_clear_prezeroed(page);
+>   	} while (check_new_pages(page, order));
+>   
+>  +	/*
+>  +	 * If this is a high-order atomic allocation then check
+>  +	 * if the pageblock should be reserved for the future
+>  +	 */
+>  +	if (unlikely(alloc_flags & ALLOC_HIGHATOMIC))
+>  +		reserve_highatomic_pageblock(page, order, zone);
+>  +
+>   	__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+>   	zone_statistics(preferred_zone, zone, 1);
+>   
+> @@@ -3376,8 -3461,9 +3443,8 @@@ static struct page *rmqueue_pcplist(str
+>   	 */
+>   	pcp->free_count >>= 1;
+>   	list = &pcp->lists[order_to_pindex(migratetype, order)];
+> - 	page = __rmqueue_pcplist(zone, order, migratetype, alloc_flags, pcp, list);
+>  -	page = __rmqueue_pcplist(zone, order, migratetype, alloc_flags,
+>  -				 pcp, list, prezeroed);
+>  -	pcp_spin_unlock(pcp, UP_flags);
+> ++	page = __rmqueue_pcplist(zone, order, migratetype, alloc_flags, pcp, list, prezeroed);
+>  +	pcp_spin_unlock(pcp);
+>   	if (page) {
+>   		__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+>   		zone_statistics(preferred_zone, zone, 1);
+> @@@ -3941,10 -4035,19 +4009,12 @@@ check_alloc_wmark
+>   
+>   try_this_zone:
+>   		page = rmqueue(zonelist_zone(ac->preferred_zoneref), zone, order,
+> - 				gfp_mask, alloc_flags, ac->migratetype);
+> + 					gfp_mask, alloc_flags, ac->migratetype,
+> + 					&prezeroed);
+>   		if (page) {
+> - 			prep_new_page(page, order, gfp_mask, alloc_flags);
+> + 			prep_new_page(page, order, gfp_mask, alloc_flags,
+> + 				      prezeroed, ac->user_addr);
+>   
+>  -			/*
+>  -			 * If this is a high-order atomic allocation then check
+>  -			 * if the pageblock should be reserved for the future
+>  -			 */
+>  -			if (unlikely(alloc_flags & ALLOC_HIGHATOMIC))
+>  -				reserve_highatomic_pageblock(page, order, zone);
+>  -
+>   			return page;
+>   		} else {
+>   			if (cond_accept_memory(zone, order, alloc_flags))
+
 
