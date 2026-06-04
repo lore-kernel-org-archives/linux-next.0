@@ -1,169 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F553E0083;
-	Thu,  4 Jun 2026 14:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FAB480DDD;
+	Thu,  4 Jun 2026 14:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780583731; cv=none; b=Aipj1VZB8zLZNe/WTpLv0+ebYrmlnPNnmDRHkvieJB5RccriPe9dGANlE5MDoWuR/Y55V2bc1H2UUF+FLpJvdizJ4z8+xEy8QbbnI2rlkp2SlKXqr5022+7gsHUKUE2zGrd60txNL6vnAg153dNYIfYKzYm7OXDqnQpUkwkcMpE=
+	t=1780584205; cv=none; b=JdsPoUM5tinMyhbtKlUhJcbnm0nNNvPnCPZv73bmAp20npqE0tYESiNOTGmJSr6tUJOv8tIkAN1ynkZBERbPHAfpuEVdKGCHMPdiPrgd/gUYRjzKrirRD98+m8IfbbpRNh3wd7IVPhZ14ZGa47NtdCyKzuCa+ZasZHZ0wDQw/uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780583731; c=relaxed/simple;
-	bh=QcP9JsDmOYhltMwcexkHi9Yv/3Aq2kN0nIUFXIU9scs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkUkY9KQeagOVPxOiKtYHHC7xiEn7JC827Av+LzuJ+MiQoHPZNNOxHPBzOF1m8vpO5M+by8T6OqqJtbOFLz4c1wKKa1V8jaw4lvYTI3Aw8SsjvoAh4F4bcs5vqulOb2zVbUIgA/5rgGSzXSvovVu2mMKnexFJo3uKWOgguAoEl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXBXZltl; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780584205; c=relaxed/simple;
+	bh=ni77K57aPSYtT+LmajHAmlRynHG6pwn0vywTCSiSq2M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Al/7dKwqWklhFylxTa/SF6weQSU7NIbkqXc8XCpFoyw/XomQ/XMMJ6riX790rJYm37NR6G2mpI+5Bn4ZTaBI6PhqwUElAc0AM39JiivkTaB46Mo2anFhbZyfgG4XzXxwUKvYax0DffDIqSPPqxyBCSHDd66rzvnRik/E0qqcIa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IrJXzTao; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXBXZltl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F175F1F00893;
-	Thu,  4 Jun 2026 14:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780583730;
-	bh=iOa5VnaaFRt7AoRrt2xOQahUhgEKGAe1rmhbwSOZ7gw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hXBXZltltTsYMkxXR526wtCDe1ky7JiHZ6sV/Mo2FNNhDaaRNbLWxLdoZqb9tzavh
-	 kAtJb6XCVjAofStqcXjOQxDnsOIr48pioRTlu5tzBp4qQdFEffASsYWXa/U8hX7Nnv
-	 5cvgMwAASRUYireuvCnGw3zs5ntCpeOZ0i22HIMDIhZh9iivjd/8C+TiW6x5CwaSdp
-	 WmXl3yE6vwSAyLDgoQ/irpg9Y1w96E3qwlCdXXFgJCxamT541Yy9sU/Kz6W3JOvkCi
-	 PMP1bQiYGL2N5JrW2q3Eae9gwY7pNi8rmFMtA49xWhKkkCl45QCImbVmx3GF3tI2zh
-	 I5K0xj+KsWd9g==
-Date: Thu, 4 Jun 2026 15:35:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>,
-	Gustavo Sousa <gustavo.sousa@intel.com>,
-	Violet Monti <violet.monti@intel.com>,
-	Matt Roper <matthew.d.roper@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IrJXzTao"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780584204; x=1812120204;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=ni77K57aPSYtT+LmajHAmlRynHG6pwn0vywTCSiSq2M=;
+  b=IrJXzTao0ELyukcYRAkGCOQycQPAXucIGAQuW0YCHqTM3DCXdoE9Mdw2
+   +VPZT6Cof0CZTHg4ucpxOSWC0ICUN2/cWmBi9rKHRk4SIrK+aKTl2ocR5
+   PYs2xf1X5+2ae9Jvl+BYusrByaHah5pha3ISg8LpkqPNRG/TtpNP4MqSH
+   pp+DxBRwT41rr4ctQX8coxceJPekou5QA5yT8gG1SCJ2NPwbcqkMuM7ab
+   cirzXVPtvRpLQCvSuLz7e29fC3CBWmCXg3w/u32GaVTqhRc5KOUN5MNp0
+   uM+eWNeLCWLdUz1E4Tdpted/HyN4emsO7+epKBRoU5YW8nEooEsIwCI6S
+   A==;
+X-CSE-ConnectionGUID: M5V6YJaoQeOJCcindj6piw==
+X-CSE-MsgGUID: jkgNpgidTmaj6oyLWe/ibw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="85300175"
+X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
+   d="scan'208";a="85300175"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 07:43:22 -0700
+X-CSE-ConnectionGUID: JCuYt9XbRMmeaTCq1N7y6g==
+X-CSE-MsgGUID: +rJ75E7hQpOt9s+xqlY46w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
+   d="scan'208";a="244418013"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO [10.245.245.65]) ([10.245.245.65])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 07:43:20 -0700
+Message-ID: <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
 Subject: Re: linux-next: build failure after merge of the drm-xe tree
-Message-ID: <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>, DRM XE List	
+ <intel-xe@lists.freedesktop.org>, Gustavo Sousa <gustavo.sousa@intel.com>, 
+ Violet Monti <violet.monti@intel.com>, Matt Roper
+ <matthew.d.roper@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Date: Thu, 04 Jun 2026 16:43:17 +0200
+In-Reply-To: <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
 References: <aiAz4DmtngY0r6Cx@sirena.org.uk>
+	 <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="To6FoYMKyK/YpjoU"
-Content-Disposition: inline
-In-Reply-To: <aiAz4DmtngY0r6Cx@sirena.org.uk>
-X-Cookie: Q:	Are we not men?
 
+T24gVGh1LCAyMDI2LTA2LTA0IGF0IDE1OjM1ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOgo+IE9u
+IFdlZCwgSnVuIDAzLCAyMDI2IGF0IDAzOjAyOjA4UE0gKzAxMDAsIE1hcmsgQnJvd24gd3JvdGU6
+Cj4gPiBIaSBhbGwsCj4gPiAKPiA+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS14ZSB0cmVlLCB0b2Rh
+eSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NAo+ID4gYWxsbW9kY29uZmlnKSBmYWlsZWQuwqAg
+VW5mb3J0dW5hdGVseSBJIGZhdCBmaW5nZXJlZCB0aGluZ3MgYW5kCj4gPiBkZWxldGVkCj4gPiB0
+aGUgbG9ncywgYXNzdW1pbmcgdGhlIGlzc3VlIHJlbWFpbnMgSSdsbCByZXBvcnQgcHJvcHJlbHkK
+PiA+IHRvbW9ycm93LsKgIEknbQo+ID4gZmFpcmx5IHN1cmUgdGhlIGlzc3VlIHdhcyBkdWUgdG86
+Cj4gPiAKPiA+IMKgIDVmZjAwNGZkYzczNzcgKGRybS94ZS9ydHA6IEFkZCBzdHJ1Y3QgdHlwZXMg
+Zm9yIFJUUCB0YWJsZXMpCj4gPiAKPiA+IHdpdGggc29tZSBvZiB0aGUgZmllbGRzIGluIHJ0cF90
+b19zcl9jYXNlc1tdIGhhaXZpbmcgbm9uLWNvbnN0Cj4gPiB2YWx1ZXMuCj4gPiBTb3JyeSBhYm91
+dCB0aGUgbGFjayBvZiBjbGFyaXR5IGhlcmUuCj4gPiAKPiA+IEkgaGF2ZSBtZXJnZWQgdGhlIHZl
+cnNpb24gZnJvbSBuZXh0LTIwMjYwNjAyIGluc3RlYWQuCj4gCj4gVGhlIGVycm9yIG1lc3NhZ2Ug
+aXM6Cj4gCj4gL3RtcC9uZXh0L2J1aWxkL2RyaXZlcnMvZ3B1L2RybS94ZS94ZV9od19lbmdpbmUu
+YzozNjE6NjogZXJyb3I6Cj4gaW5pdGlhbGl6ZXIgZWxlbWVudCBpcyBub3QgYSBjb21waWxlLXRp
+bWUgY29uc3RhbnQKPiDCoCAzNjEgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBibGl0X2NjdGxfdmFsLAo+IMKgwqDCoMKg
+wqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBefn5+fn5+fn5+fn5+Cj4gL3RtcC9uZXh0L2J1aWxkL2RyaXZlcnMvZ3B1
+L2RybS94ZS94ZV9ydHAuaDo0NjE6NDE6IG5vdGU6IGV4cGFuZGVkCj4gZnJvbSBtYWNybyAnWEVf
+UlRQX0FDVElPTlMnCj4gwqAgNDYxIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBY
+RV9SVFBfUEFTVEVfRk9SRUFDSChBQ1RJT05fLCBDT01NQSwKPiAoX19WQV9BUkdTX18pKcKgwqDC
+oMKgIFwKPiDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAKPiBefn5+fn5+fn5+fgo+IC90bXAvbmV4dC9idWlsZC9kcml2ZXJzL2dw
+dS9kcm0veGUveGVfcnRwX2hlbHBlcnMuaDo1NjoxMDg6IG5vdGU6Cj4gZXhwYW5kZWQgZnJvbSBt
+YWNybyAnWEVfUlRQX1BBU1RFX0ZPUkVBQ0gnCj4gwqDCoCA1NiB8ICNkZWZpbmUgWEVfUlRQX1BB
+U1RFX0ZPUkVBQ0gocHJlZml4Xywgc2VwXywgYXJnc18pCj4gX1hFX1JUUF9DT05DQVQoUEFTVEVf
+LCBDT1VOVF9BUkdTIGFyZ3NfKShwcmVmaXhfLCBzZXBfLCBhcmdzXykKPiDCoMKgwqDCoMKgCj4g
+fMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXn5+fn4KPiAv
+dG1wL25leHQvYnVpbGQvZHJpdmVycy9ncHUvZHJtL3hlL3hlX3J0cF9oZWxwZXJzLmg6NTc6ODA6
+IG5vdGU6Cj4gZXhwYW5kZWQgZnJvbSBtYWNybyAnWEVfUlRQX1BBU1RFXzEnCj4gwqDCoCA1NyB8
+ICNkZWZpbmUgWEVfUlRQX1BBU1RFXzEocHJlZml4Xywgc2VwXywgYXJnc18pCj4gX1hFX1JUUF9D
+T05DQVQocHJlZml4XywgRklSU1RfQVJHIGFyZ3NfKQo+IMKgwqDCoMKgwqAKPiB8wqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXn5+fn4KPiBub3RlOiAoc2tp
+cHBpbmcgMTEgZXhwYW5zaW9ucyBpbiBiYWNrdHJhY2U7IHVzZSAtZm1hY3JvLWJhY2t0cmFjZS0K
+PiBsaW1pdD0wIHRvIHNlZSBhbGwpCj4gL3RtcC9uZXh0L2J1aWxkL2luY2x1ZGUvbGludXgvY29t
+cGlsZXIuaDoyMDQ6Mzk6IG5vdGU6IGV4cGFuZGVkIGZyb20KPiBtYWNybyAnX19pc19hcnJheScK
+PiDCoCAyMDQgfCAjZGVmaW5lIF9faXNfYXJyYXkoYSnCoMKgwqDCoMKgwqDCoMKgwqDCoCAoIV9f
+c2FtZV90eXBlKChhKSwgJihhKVswXSkpCj4gwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBeCj4gL3RtcC9uZXh0L2J1aWxkL2luY2x1ZGUvbGludXgvY29t
+cGlsZXJfdHlwZXMuaDo2MTA6NjM6IG5vdGU6IGV4cGFuZGVkCj4gZnJvbSBtYWNybyAnX19zYW1l
+X3R5cGUnCj4gwqAgNjEwIHwgI2RlZmluZSBfX3NhbWVfdHlwZShhLCBiKQo+IF9fYnVpbHRpbl90
+eXBlc19jb21wYXRpYmxlX3AodHlwZW9mKGEpLCB0eXBlb2YoYikpCj4gwqDCoMKgwqDCoCB8wqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoAo+IF4KPiAvdG1wL25leHQvYnVpbGQvaW5jbHVkZS9saW51eC9jb21waWxlci5oOjIw
+MDo4NDogbm90ZTogZXhwYW5kZWQgZnJvbQo+IG1hY3JvICdfX0JVSUxEX0JVR19PTl9aRVJPX01T
+RycKPiDCoCAyMDAgfCAjZGVmaW5lIF9fQlVJTERfQlVHX09OX1pFUk9fTVNHKGUsIG1zZywgLi4u
+KQo+ICgoaW50KXNpemVvZihzdHJ1Y3Qge19TdGF0aWNfYXNzZXJ0KCEoZSksIG1zZyk7fSkpCj4g
+wqDCoMKgwqDCoAo+IHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIF4KPiAvdG1wL25leHQvYnVpbGQvZHJpdmVycy9ncHUvZHJtL3hlL3hlX2h3
+X2VuZ2luZS5jOjQxNjo5OiBlcnJvcjoKPiBpbml0aWFsaXplciBlbGVtZW50IGlzIG5vdCBhIGNv
+bXBpbGUtdGltZSBjb25zdGFudAo+IMKgIDQxNiB8wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgcmluZ19jbWRfY2N0bF92YWwsCj4gwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgXn5+fn5+fn5+fn5+fn5+fn4KPiAvdG1wL25leHQvYnVpbGQvZHJpdmVycy9ncHUv
+ZHJtL3hlL3hlX3J0cC5oOjQ2MTo0MTogbm90ZTogZXhwYW5kZWQKPiBmcm9tIG1hY3JvICdYRV9S
+VFBfQUNUSU9OUycKPiDCoCA0NjEgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFhF
+X1JUUF9QQVNURV9GT1JFQUNIKEFDVElPTl8sIENPTU1BLAo+IChfX1ZBX0FSR1NfXykpwqDCoMKg
+wqAgXAo+IMKgwqDCoMKgwqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+IF5+fn5+fn5+fn5+Cj4gL3RtcC9uZXh0L2J1aWxkL2RyaXZlcnMvZ3B1
+L2RybS94ZS94ZV9ydHBfaGVscGVycy5oOjU2OjEwODogbm90ZToKPiBleHBhbmRlZCBmcm9tIG1h
+Y3JvICdYRV9SVFBfUEFTVEVfRk9SRUFDSCcKPiDCoMKgIDU2IHwgI2RlZmluZSBYRV9SVFBfUEFT
+VEVfRk9SRUFDSChwcmVmaXhfLCBzZXBfLCBhcmdzXykKPiBfWEVfUlRQX0NPTkNBVChQQVNURV8s
+IENPVU5UX0FSR1MgYXJnc18pKHByZWZpeF8sIHNlcF8sIGFyZ3NfKQo+IMKgwqDCoMKgwqAKPiB8
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBefn5+fgo+IC90
+bXAvbmV4dC9idWlsZC9kcml2ZXJzL2dwdS9kcm0veGUveGVfcnRwX2hlbHBlcnMuaDo1Nzo4MDog
+bm90ZToKPiBleHBhbmRlZCBmcm9tIG1hY3JvICdYRV9SVFBfUEFTVEVfMScKPiDCoMKgIDU3IHwg
+I2RlZmluZSBYRV9SVFBfUEFTVEVfMShwcmVmaXhfLCBzZXBfLCBhcmdzXykKPiBfWEVfUlRQX0NP
+TkNBVChwcmVmaXhfLCBGSVJTVF9BUkcgYXJnc18pCj4gwqDCoMKgwqDCoAo+IHzCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBefn5+fgo+IG5vdGU6IChza2lw
+cGluZyAxMSBleHBhbnNpb25zIGluIGJhY2t0cmFjZTsgdXNlIC1mbWFjcm8tYmFja3RyYWNlLQo+
+IGxpbWl0PTAgdG8gc2VlIGFsbCkKPiAvdG1wL25leHQvYnVpbGQvaW5jbHVkZS9saW51eC9jb21w
+aWxlci5oOjIwNDozOTogbm90ZTogZXhwYW5kZWQgZnJvbQo+IG1hY3JvICdfX2lzX2FycmF5Jwo+
+IMKgIDIwNCB8ICNkZWZpbmUgX19pc19hcnJheShhKcKgwqDCoMKgwqDCoMKgwqDCoMKgICghX19z
+YW1lX3R5cGUoKGEpLCAmKGEpWzBdKSkKPiDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIF4KPiAvdG1wL25leHQvYnVpbGQvaW5jbHVkZS9saW51eC9jb21w
+aWxlcl90eXBlcy5oOjYxMDo2Mzogbm90ZTogZXhwYW5kZWQKPiBmcm9tIG1hY3JvICdfX3NhbWVf
+dHlwZScKPiDCoCA2MTAgfCAjZGVmaW5lIF9fc2FtZV90eXBlKGEsIGIpCj4gX19idWlsdGluX3R5
+cGVzX2NvbXBhdGlibGVfcCh0eXBlb2YoYSksIHR5cGVvZihiKSkKPiDCoMKgwqDCoMKgIHzCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgCj4gXgo+IC90bXAvbmV4dC9idWlsZC9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLmg6MjAw
+Ojg0OiBub3RlOiBleHBhbmRlZCBmcm9tCj4gbWFjcm8gJ19fQlVJTERfQlVHX09OX1pFUk9fTVNH
+Jwo+IMKgIDIwMCB8ICNkZWZpbmUgX19CVUlMRF9CVUdfT05fWkVST19NU0coZSwgbXNnLCAuLi4p
+Cj4gKChpbnQpc2l6ZW9mKHN0cnVjdCB7X1N0YXRpY19hc3NlcnQoIShlKSwgbXNnKTt9KSkKPiDC
+oMKgwqDCoMKgCj4gfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgXgo+IDIgZXJyb3JzIGdlbmVyYXRlZC4KCkZ1bm55LCBJIHNlZSBubyBidWls
+ZCBlcnJvcnMgd2l0aCBkcm0teGUtbmV4dCBhbGxtb2Rjb25maWcuIFdoYXQKY29tcGlsZXIgaXMg
+YmVpbmcgdXNlZD8gQW55IHNoYTEgb2YgdGhlIGRybS14ZS1uZXh0IHRvcCBjb21taXQgeW91J3Jl
+CnRlc3Rpbmc/CgpUaGFua3MsClRob21hcwoK
 
---To6FoYMKyK/YpjoU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 03, 2026 at 03:02:08PM +0100, Mark Brown wrote:
-> Hi all,
->=20
-> After merging the drm-xe tree, today's linux-next build (x86_64
-> allmodconfig) failed.  Unfortunately I fat fingered things and deleted
-> the logs, assuming the issue remains I'll report proprely tomorrow.  I'm
-> fairly sure the issue was due to:
->=20
->   5ff004fdc7377 (drm/xe/rtp: Add struct types for RTP tables)
->=20
-> with some of the fields in rtp_to_sr_cases[] haiving non-const values.
-> Sorry about the lack of clarity here.
->=20
-> I have merged the version from next-20260602 instead.
-
-The error message is:
-
-/tmp/next/build/drivers/gpu/drm/xe/xe_hw_engine.c:361:6: error: initializer=
- element is not a compile-time constant
-  361 |                                  blit_cctl_val,
-      |                                  ^~~~~~~~~~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_rtp.h:461:41: note: expanded from mac=
-ro 'XE_RTP_ACTIONS'
-  461 |                 XE_RTP_PASTE_FOREACH(ACTION_, COMMA, (__VA_ARGS__))=
-     \
-      |                                                       ^~~~~~~~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_rtp_helpers.h:56:108: note: expanded =
-=66rom macro 'XE_RTP_PASTE_FOREACH'
-   56 | #define XE_RTP_PASTE_FOREACH(prefix_, sep_, args_) _XE_RTP_CONCAT(P=
-ASTE_, COUNT_ARGS args_)(prefix_, sep_, args_)
-      |                                                                    =
-                                        ^~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_rtp_helpers.h:57:80: note: expanded f=
-rom macro 'XE_RTP_PASTE_1'
-   57 | #define XE_RTP_PASTE_1(prefix_, sep_, args_) _XE_RTP_CONCAT(prefix_=
-, FIRST_ARG args_)
-      |                                                                    =
-            ^~~~~
-note: (skipping 11 expansions in backtrace; use -fmacro-backtrace-limit=3D0=
- to see all)
-/tmp/next/build/include/linux/compiler.h:204:39: note: expanded from macro =
-'__is_array'
-  204 | #define __is_array(a)           (!__same_type((a), &(a)[0]))
-      |                                                ^
-/tmp/next/build/include/linux/compiler_types.h:610:63: note: expanded from =
-macro '__same_type'
-  610 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), t=
-ypeof(b))
-      |                                                               ^
-/tmp/next/build/include/linux/compiler.h:200:84: note: expanded from macro =
-'__BUILD_BUG_ON_ZERO_MSG'
-  200 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_=
-Static_assert(!(e), msg);}))
-      |                                                                    =
-                ^
-/tmp/next/build/drivers/gpu/drm/xe/xe_hw_engine.c:416:9: error: initializer=
- element is not a compile-time constant
-  416 |                                            ring_cmd_cctl_val,
-      |                                            ^~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_rtp.h:461:41: note: expanded from mac=
-ro 'XE_RTP_ACTIONS'
-  461 |                 XE_RTP_PASTE_FOREACH(ACTION_, COMMA, (__VA_ARGS__))=
-     \
-      |                                                       ^~~~~~~~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_rtp_helpers.h:56:108: note: expanded =
-=66rom macro 'XE_RTP_PASTE_FOREACH'
-   56 | #define XE_RTP_PASTE_FOREACH(prefix_, sep_, args_) _XE_RTP_CONCAT(P=
-ASTE_, COUNT_ARGS args_)(prefix_, sep_, args_)
-      |                                                                    =
-                                        ^~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_rtp_helpers.h:57:80: note: expanded f=
-rom macro 'XE_RTP_PASTE_1'
-   57 | #define XE_RTP_PASTE_1(prefix_, sep_, args_) _XE_RTP_CONCAT(prefix_=
-, FIRST_ARG args_)
-      |                                                                    =
-            ^~~~~
-note: (skipping 11 expansions in backtrace; use -fmacro-backtrace-limit=3D0=
- to see all)
-/tmp/next/build/include/linux/compiler.h:204:39: note: expanded from macro =
-'__is_array'
-  204 | #define __is_array(a)           (!__same_type((a), &(a)[0]))
-      |                                                ^
-/tmp/next/build/include/linux/compiler_types.h:610:63: note: expanded from =
-macro '__same_type'
-  610 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), t=
-ypeof(b))
-      |                                                               ^
-/tmp/next/build/include/linux/compiler.h:200:84: note: expanded from macro =
-'__BUILD_BUG_ON_ZERO_MSG'
-  200 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_=
-Static_assert(!(e), msg);}))
-      |                                                                    =
-                ^
-2 errors generated.
-
---To6FoYMKyK/YpjoU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmohjS0ACgkQJNaLcl1U
-h9CnWwf+O77M32YVp/dhKinqen1oOsTXuoC05UdKUg/16LQoLJBz5pP2Maonh4Z4
-vAR8GPtm1Pu03jvkDCGrMIO1wMKK1km572VVWrS6hBVIp6Eab1s3a6gA3uLhcWf5
-oQVoImG5yNgN5Mmriuau/hfzdA6o8zN4uj6mp2qJ807QSLcnqUDA2GIofaKYgvGv
-4JcAmx9Rf+C15dCjvIzM7o5dOu72lZhBNV68Jo1TD728XNNbMEgHKEPf2791Vpzl
-DhoNtV8X4HK8nhKpya/S8THUOpakQfqnxgeqEY5BpvlS04AyJ2yiasyE+NqUtsdw
-oj1QN9YYzHh2fZwRIky/+1imYFqMlg==
-=58I0
------END PGP SIGNATURE-----
-
---To6FoYMKyK/YpjoU--
