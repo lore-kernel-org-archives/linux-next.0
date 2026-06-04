@@ -1,124 +1,161 @@
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC2F4502F
-	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 17:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51138382289;
+	Thu,  4 Jun 2026 18:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780595947; cv=none; b=POnBQADAoskZUF99noAln/OhfsYp9JC2v6cDO7YApz/R9WGUJqunE4oc04JjQsLIUVBOfec2839RRE52HdpvKxyPnMSQQjcXNGbxMI7lhCbERmpyuWN/vgqsd9gjpxG3ehGe9nhyqtk+8s9Eo06HazdtGOgQ2b65pf6MnHvD7Q0=
+	t=1780596902; cv=none; b=gff5NCHZYw9qPzL/rZldKt5AkEsU59jEKKMH2s3QoA0LZg1DuUIguGEOQR+r5Y8x0eXn9QuPuaCiUMxWu/pohqmAB5ZISMI2MH/joi4xFdEaZR4teLRa/XrE2EMhj5Co5C9VjtkYoq1X1gsEioPyiIWlym9Ccivg8FaDHTb8RZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780595947; c=relaxed/simple;
-	bh=nfK8RylvLKuEzFpYXFoSYWUzV/VO6lZO9BXznBVS5HE=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=WkXihYb36aYhGue4CiEj3jIF0w7vSlDHvcnlyna+j6k6UMk8abMLxGbVKrpg6hrE4K4wT7+R5oDPwmbVzpT79mZ3AxlosU/IfWAt7VjelMiBrUZ7eWfdlSJUtvop9NO+2Z/4SJCsZqCjdqLeCp0LSkWsvh1IonVlgZa9l1gZebA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Q1yKZMW6; arc=none smtp.client-ip=74.125.82.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1780596902; c=relaxed/simple;
+	bh=fQ02qbFQ6jF3m6jf41PqXmrsESnrzQWFASfzr0ZqhZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N0hVoPOZf2oaIRBP6bSJobGk1RhqCJ7rRmLOU4jVa3MRbGwqmj5WkJATkl6OLQ+WW/Zk/XDWVh6CC17+jfv0NsBhOqpjo/iqwXTbTZAjh9NQeV6fT/nRUnkZvM6t4tAofIMOQTaDvQJuFeNvs5Dp93n1lGbUg6g7ULDaFio+H5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=qgm35ZeC; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Q1yKZMW6"
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-137bd9ed2b1so2320302c88.1
-        for <linux-next@vger.kernel.org>; Thu, 04 Jun 2026 10:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1780595945; x=1781200745; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SyEsaSsaYhlOCnUozjrxNOzw6jzmnNaVQY0+GszbH9k=;
-        b=Q1yKZMW60x/9dWy4C7Tch5KuMuDloEp0OqQzKl5x6qsv+KRVuUp/HlYyXXmveLINmO
-         3hPSvgeJGjxkA/c2+TUi4xAgcdSKBZnZsRn/Tor5IcbujLs+VSDDgGH4lYd++Vc/920U
-         en7eiFVA5ro+cp9k+NqG53UdBOx5UhwtDVWh2lmMoGJ6oYcuUPwgo0B3VPkPTQlu4X0C
-         Rhs+4gPr3pgmsVn1jpOQMZ+ByJJLlEaPH5z+Bul1gEuonNJkrqpTlP5DKxBQ5pXNwcER
-         WQq+C6Cd5nLEARkebZfVaqAU+AeBG7dsV5z6sf3RXyUhw1UhY/rKfNpnvkh6gRpy4MSO
-         pFrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780595945; x=1781200745;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SyEsaSsaYhlOCnUozjrxNOzw6jzmnNaVQY0+GszbH9k=;
-        b=GAk/itTawzXeHyuxPja9AOMPlACHf1BPzlmYyCYmpFwN8GIqEe8gWfbEO4gggdswAq
-         lAxAgLGWtxDkkN97Nch8qcAMz3+ZOxPAqY24kVsMG5YFxs4k1fsep8MxM1YJVbgrDish
-         IX4tl9cLX97vblbIPKyL078gQ/D44W+NP5WpYb+xhxpL01SN2XJvAfbtJDRjnbPIy8BR
-         Cy5OsR7LKZnYvaZtrWruYk96hRy+LZGSxPgkWgOs7L70pKhsuij+RfOsrLYtZlBdEDwb
-         XBDekTv8Iq3tzaNxpoO/cjFlE1bnTFmPVVfJCSzTgl+7guK0bAQW6xi8NxFomGHio0DW
-         3Tcg==
-X-Forwarded-Encrypted: i=1; AFNElJ+14KaTXjwwia1pd+W3qAx1WnObU+1sYUIz90AWvILqhwOVSsJa8UUujtERiIlP7JHAOwdIm9NO8ofo@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE6hOiSA79scluf0vz+AVtxOxyh0zwZUI1GIpOVzIFJVqXUCJx
-	RZlX260H9R0h0Hozy4WAtWGRsvlIYF9SaADTPxTCyYz43RUmCZLCMf9Qdbx8GiSsFPU=
-X-Gm-Gg: Acq92OGmSc+quWMIYD9Mf6rAoYAphVFLQlhorpEoF43tXWPp3LppoO2jtpmeUtqFG0h
-	1rPtwytCUajscujeyHLPOZeISsq5Y2lvTA4mJuxCk73iMHTPld562BmvVXUE7CO1Dt/2r6OfaIy
-	P0Z6HVFO3Lplu27b431hD0pRZCPOFNu+YC2h0Nn14nvVKPwyVaMLV6/+bJhoTVeSHHEVq/lOSjF
-	kQKJhc2tvF0xtAolVDjBUyF6JtM0UY3sd9UILOOrUfk7K9jajv5HOcKrWuTxcl0+O0ohgaHhktX
-	kRh8f1QnB665VQmYa+6xfAcXW4BziBiAsvEqdzO40GDLtn43JFdv5CWLpC7FYVq0dGr9+EgIe/g
-	r+ize47fKuUyoVs+lLKDEk4anz/MK5zmsyoQwe8vlCMBs2mCPN3tf/5bRwwwvu6X2g2tkAqAt8m
-	X0SGui9Ya/sV64tyE+kjh/qtoAQ7w=
-X-Received: by 2002:a05:7022:62a3:b0:138:36f:4288 with SMTP id a92af1059eb24-138066d54e0mr72818c88.15.1780595944696;
-        Thu, 04 Jun 2026 10:59:04 -0700 (PDT)
-Received: from 330cfa3079ca ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-137f5539035sm4387471c88.11.2026.06.04.10.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 10:59:04 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="qgm35ZeC"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=n8sLsNvf78vI5oRsF0KJtmdIMI9Yzc+VHn0Hy7vi+yA=; b=qgm35ZeCTwTfqnbekX0oERJzc+
+	4O7g3Vmtf/ongtN0DRVNpPDlAXQU6U6LJ8u9tWj+Pz/KpfKhS+ePnSIjQkrC8pT616WTudaHhX2vP
+	jde/CagGmvAuz41sVQiGGFBytkLitgm3SbgzYjUK3KBLBPOEu+/UD5qWggQvntkJBJQFSV06/IU8P
+	7FBaTqYuE3vRqqlmr2qXxfp4w8ZS3ssSN6HzknTbucSOHPgbwpHu+Gi23tGCWSEOx1Dz9SgHWvx6D
+	KAEcL5SRMOeHOu0FORKWV3hXUmhIo6gJYvvM31cyvC2g119nlPtP+a1kSj0fyt+MrD3MHLXp/UqzI
+	eOdaheFQ==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1wVCao-000Cdl-0M;
+	Thu, 04 Jun 2026 20:14:58 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1wVCam-000D4K-2x;
+	Thu, 04 Jun 2026 20:14:57 +0200
+Message-ID: <8906796e-0542-46d2-bb92-9e49642d86dc@iogearbox.net>
+Date: Thu, 4 Jun 2026 20:14:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the bpf-next tree with the
+ vfs-brauner tree
+To: Mark Brown <broonie@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+ Networking <netdev@vger.kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Deepanshu Kartikey <kartikey406@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <aiF2rsdpUb5LuhmZ@sirena.org.uk>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <aiF2rsdpUb5LuhmZ@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: [REGRESSION] next/master: (build) stack frame size (2088) exceeds
- limit (2048)
- in 'dml31_ModeSupport...
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 04 Jun 2026 17:59:04 -0000
-Message-ID: <178059594388.10259.8984887956034576074@330cfa3079ca>
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28021/Thu Jun  4 08:24:58 2026)
 
+On 6/4/26 2:59 PM, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+> 
+>    kernel/bpf/inode.c
+> 
+> between commit:
+> 
+>    a146500e11445 ("bpf: Add simple xattr support to bpffs")
+> 
+> from the vfs-brauner tree and commit:
+> 
+>    b93c55b4932dd ("bpf: fix UAF by restoring RCU-delayed inode freeing in bpffs")
+> 
+> from the bpf-next tree.
+> 
+> This merge resolution definitely needs a double check.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc kernel/bpf/inode.c
+> index c3f79b5a2f8c0,188c774a469ca..0000000000000
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@@ -842,9 -768,12 +842,13 @@@ static void bpf_destroy_inode(struct in
+>    
+>    	if (!bpf_inode_type(inode, &type))
+>    		bpf_any_put(inode->i_private, type);
+>   +	simple_xattrs_free(&opts->xa_cache, &bi->xattrs, NULL);
+>    }
+>    
+> + /*
+> +  * Called after RCU grace period - safe to free inode and anything
+> +  *  that might be accessed by RCU pathwalk (inode fields, i_link).
+> +  */
+>    static void bpf_free_inode(struct inode *inode)
+>    {
+>    	if (S_ISLNK(inode->i_mode))
 
+Ack, looks good to me! The extra comment could probably be dropped (in other
+words going with what's in Christian's tree as resolution), but its fine either
+way.
 
-
-
-Hello,
-
-New build issue found on next/master:
-
----
- stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than] in drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.o (drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c) [logspec:kbuild,kbuild.compiler.error]
----
-
-- dashboard: https://d.kernelci.org/i/maestro:96417cd30041ab8f3153128d0120c6cd70782d99
-- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-- commit HEAD:  b99ae45861eccff1e1d8c7b05a13650be805d437
-- tags: next-20260604
-
-Please include the KernelCI tag when submitting a fix:
-
-Reported-by: kernelci.org bot <bot@kernelci.org>
-
-
-Log excerpt:
-=====================================================
-/tmp/kci/linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c:3872:6: error: stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
- 3872 | void dml31_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
-      |      ^
-1 error generated.
-
-=====================================================
-
-
-# Builds where the incident occurred:
-
-## x86_64_defconfig+kselftest+x86-board on (x86_64):
-- compiler: clang-21
-- config: None
-- dashboard: https://d.kernelci.org/build/maestro:6a21abf22cc72b6e94bf3c60
-
-
-#kernelci issue maestro:96417cd30041ab8f3153128d0120c6cd70782d99
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Thanks,
+Daniel
