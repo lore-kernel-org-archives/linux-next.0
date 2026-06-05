@@ -1,144 +1,363 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF64E263F4A
-	for <linux-next@vger.kernel.org>; Thu,  4 Jun 2026 23:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A2A385539
+	for <linux-next@vger.kernel.org>; Fri,  5 Jun 2026 02:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780615149; cv=none; b=aOBBtfFRuJNkrK1PjKl74x1yPQnwHhdGQRD1v0ZjlJq9VFVxmEPOP1YZfYlUzaQ2IKz0dz3/27Jr75E12KBRZXTnHNaRcsnNuvJnB1DZSrgbMFUIi2OyyIpbcP6gvOqPsO8HdL05Bst7PMM83mjm+Y5t5X4eWjRN6Jir+Te4Pro=
+	t=1780626634; cv=none; b=BB8cfTM7RjuUHfWT4LJ9eM175jLyFwOhCUek7GDJj63pQZGx4Mia5f7L5/kg1zgMZvncfpRaz3Qon4VNnU9Ad29XPS/W8pHAuZoHCtq7K10Wm3JkLXerSxOlezMPKaH+kQYQ0xwxYvQqfCvj3VYDCly9BQUcHg2MgjQBgxSnOOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780615149; c=relaxed/simple;
-	bh=e+wiQFodefn4hcPnRr+g1nn8jYvYfVdxnZZL8PqQPNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyY1c7Nb9r8kYXmRosxmSj19JnsylbvnrMQ++ifd8rpiJzAivzvPtn3wvcusnEkmmVmh5Mbxjzk7ZV4CaheqRCnchNQfhHPp7Wji1L09dvLdD3u8oCSk5UdRN7Sb6Y2B+yQtICOnzX1UaNE6Ws7yzoFbtz1svuLLP2AIlSMXJjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ATUITxFo; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1780626634; c=relaxed/simple;
+	bh=zBLQjur140Dg4xKkjG6GhEsZ1b936QN/vHK5WcdRR54=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=NLNk1CwDe5sO7pFQcZzUR58+colLDnenzciWb+FAjZNbfcNTNmeCv/GgxkqO39chCapXrmZBwwUBhfBa3Sttp7qJsWo0CEmOTU3h9vO05zGPIYGCFcKWeMIVNWu0Tfft4JQrtg4A7xXZFMWQ6nIbRAzfkHnGwlCTajNZANirL84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=c9tfS4Gh; arc=none smtp.client-ip=74.125.82.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ATUITxFo"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-68bd9fce347so2278323a12.2
-        for <linux-next@vger.kernel.org>; Thu, 04 Jun 2026 16:19:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="c9tfS4Gh"
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-137dd5161feso2075562c88.1
+        for <linux-next@vger.kernel.org>; Thu, 04 Jun 2026 19:30:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1780615145; x=1781219945; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1t03YMole+ly6+fJzmqkdJokSNqVZigB4RGvlZCSlLc=;
-        b=ATUITxFogD8HCV2O7l4LS+CCO4NC4YeesW/jNwP3qANKIrNJO1Es50W0a+jEuncpNY
-         gVkhQ0oevCrsP+lvVYB75iVEqb5J5Raugr9WHWoQNaRRxgR7bcCNNflWsmapzR6+d05h
-         uvaSAyHq+/80VHG25Kiu4MjEDm+Mbr10hPPT4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780615145; x=1781219945;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=kernelci.org; s=google; t=1780626626; x=1781231426; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1t03YMole+ly6+fJzmqkdJokSNqVZigB4RGvlZCSlLc=;
-        b=i6DxYSTgGOx4LSHlneNnyo8OPSQposZGyqX8aEQJH/dSA2A7dhseD6TnOp1Rffsow+
-         CSFDfXccE8OrChzqxrWN7r4d2YEFJmJP4/tunR8bB0I3rh6H/hJOH706bmBTX75wrhDC
-         VPuCx6DCsLcVmI4xXOHg2MHReZyDr5o9EAPowQ51hT5ZemhztnHqbDW5xnacg/5GZ/0j
-         rj/ZYZXR9NS4YcrOl5at4xa1RmG8sCAotU+MbE5WGB9/L19glb0poVTvaKpi0UtbF8rS
-         si1atYnuP3OUzsA4QCBPWaeRZzVanPpBYm5P9LeL09qieW7O1hs7ZB012htHJi4pgPa3
-         vE0A==
-X-Forwarded-Encrypted: i=1; AFNElJ+nSEfDOMST87KZO95xQxrD36J9H1yiky0D2msRYrUFHr3XFf2s8IfPDfDltF4ItE9JFA0wYuA43GXx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9/myGQejmg+imaeDnzw2u7WZPoIK5dWV0pjjawTAa6XJakze2
-	xMx3J3trwFWl5QDlB6xRsmafMiwKlE5P0uvgMvEQqLTitsfLogCvcXo2ojkHw5BsKmmSY/c9gdi
-	mPZQLhPzDUA==
-X-Gm-Gg: Acq92OEn4Y1IpfqMSltwfV3+oX+gUvfQf/iHXo35XTTTa7md692S0CP6jp+BQPVOnDz
-	rZ+3TAwqY1bmJQjGieDESNWyM4GkeLoBSrhhlNQSPsfG7Cf80zYwaLFvD9wpqiPfZBZdhEypdHV
-	wsuyYA/fkk2B5sGhHQUBdfKs278Ls4faP8bjfjTH23WUSmz84+T+lKF7e0k7JK/hYB/n98tzTat
-	eWegWgWL1gBAFhpvXTJhVYhBagRV3sfZMRiB/3/g4yisPeKgPSwynh13MS5ccg32stfFZMfVFBi
-	FdhlJGhfG4he7svqKnWAAAVAhtoq9hI73QCOLULuRs3thpO3wqjHAoDZKBBzwDGRQV2LBKzUiEO
-	VAMNy4i4L6B2Znjn6Smt6IlKjJnGRo47cQeh5j3pG2W/UKLH+r3PzXjb+ooy7e72HE30atS8E/M
-	Kdj7wY/HbUYZKVTQpcoFEliEV5jWYMKR2EcyjuJNvB1fapS3CSKuJ+r2+2bdJ+GubV2anPfNRfD
-	/Rio57WWvc=
-X-Received: by 2002:a05:6402:3492:b0:687:4f84:1c2b with SMTP id 4fb4d7f45d1cf-68fa503bbf4mr396961a12.12.1780615145163;
-        Thu, 04 Jun 2026 16:19:05 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68e6585185csm3026970a12.16.2026.06.04.16.19.03
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jun 2026 16:19:03 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-68bd9fce347so2278279a12.2
-        for <linux-next@vger.kernel.org>; Thu, 04 Jun 2026 16:19:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8yC4eYADQjEPywW2KaX0mNTFLzerLyHve9HzD1iHl4c61VD6saDK0XFYL7p+5o1/O0VVkPSUQsukxY@vger.kernel.org
-X-Received: by 2002:a05:6402:40d2:b0:68b:5e48:750f with SMTP id
- 4fb4d7f45d1cf-68fa525ad77mr439899a12.25.1780615143537; Thu, 04 Jun 2026
- 16:19:03 -0700 (PDT)
+        bh=IHgQjun8xJDVSfwXUcU1QlQb8DyYgBzQ5TRguokV430=;
+        b=c9tfS4GhCz/fxrcIe5/WytMqJIPnEZHakHZ8bAmr2Ux0nxfHiJxDJx6CC2++MBWp/Z
+         kifhb6PHD4mti04XbD0mRoqJApUZD32/99Q6m/pmT/TzNZ7/vNKUZHAX/KxfVJKjf8Rb
+         uo38Q32iBY8AtWbq5FV3KEiSPrzMB4zAzVKCnnUYXYRIRbQ+4HQ2rIucFtqliQ7VAbwg
+         OsvPCZCchIiURO9gfcgO4hH9hf/jg8kPsuPGK4hHP4TDPY2LzGAaa75inI09kh6c2gpy
+         Jtomtr35WIv1N5WqXasVycJulYizZiQbyM1m0w83NczO3ETzw8C1c7rRK9XxFo1gIfW9
+         qTkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780626626; x=1781231426;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IHgQjun8xJDVSfwXUcU1QlQb8DyYgBzQ5TRguokV430=;
+        b=kZLlBNHcxdzD6n67VHTrsDWB18VfOpDW/mOi6FEiRV76AzOSM4bFXt9A1swa2Klgi9
+         6BDj1jH4FwKl6Ez4+BlC1MhHjvT4M4g64WapV+IG+q+TVN3FcvbWyL9hppKCSL2Th2+7
+         ubAZpm6ZmFunPPjbH1NDIgvSn1aw1El3PQQ6kRl8xY/csN6i192cjH6AvnuHBDkNec3T
+         Xgdi9SRNWMNFB7kihkGVfV38UvpSnvRNS6KP8sXzOLeZ2Vt3hSW78BDnhkSgYcI/En96
+         4qaSSrms6a0T/l6phIjLwecAvXGuU+XN5JCedJ+jYtyS1ni5PfcRVUTXcMxQnQ6hpyUM
+         lN5w==
+X-Gm-Message-State: AOJu0YyZdiCA/dZex1YlyblNFzRVndAWUPkAgjJ4g+JDGrmpAI0DUeDd
+	bpw/pSFl6DtcUBmRAuNxIfcBsvax7Mx80oPekNMizuGZpEIpHbyJHITF7sxuGG04cU5hhq0TwSU
+	bZBZ6
+X-Gm-Gg: Acq92OGBhrtz/36sbE71ZvcoyTbFzKI7TXOrBwu4xTLpsB3AhQcebs1kcFKe9yvodSp
+	W6Dsop8QDAlXq2vuv+lvBXcgqaSM4mPdvwRrkAY4G8ljUUEUjAPBmYSjP8VP+PFr7j54MXUBvet
+	zq1kejRkkXrw87tPV7eK7iR0+uGwxq3Q00qRzLfJMsuKPA036fTM8iGsTohZ37TRkXEn+tSLl1d
+	Zh8Rerqs4oZhDuH0LrAPnAJtX93JUXjMn59yoVXVg0RZjP0qFr8RIKtzfL/njRg1NPoEBFKHM84
+	3/zB7m1/+lZwBUc7DgereWWi0v19U+SjSqE1p/aUamcAMWOSIP405odtn5vdUcYGWB+JqjTwxCY
+	WcqI0YgG2yn8Z8iN/EJp2GcCEO9RO/YCDjyX/moYB9hV8pF7G7RlXQAkF4bWovzFSGiILFXmdkM
+	BhRMf7Ln/FzHzlnf80PCROFVPt9HI=
+X-Received: by 2002:a05:7022:42b:b0:123:34e8:aec2 with SMTP id a92af1059eb24-1380666a2e0mr664948c88.1.1780626626097;
+        Thu, 04 Jun 2026 19:30:26 -0700 (PDT)
+Received: from 330cfa3079ca ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-137f5539432sm6051648c88.9.2026.06.04.19.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2026 19:30:25 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
- <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
- <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
- <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com> <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 4 Jun 2026 16:18:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
-X-Gm-Features: AVVi8CcZbp6oblGDP2dwW15N5QHkOyIDDcZIe3k_o9LsAC_bkAWxdIwmjPOUXmo
-Message-ID: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
-Subject: Re: -next status as at v7.1-rc6
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - b99ae45861eccff1e1d8c7b05a13650be805d437
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Fri, 05 Jun 2026 02:30:25 -0000
+Message-ID: <178062662547.10424.8491579619578114166@330cfa3079ca>
 
-On Thu, 4 Jun 2026 at 15:23, Paul Moore <paul@paul-moore.com> wrote:
->
-> While you didn't reply to any of my comments explaining how Hornet
-> works, specifically how it ties into the kernel, I'm assuming you've
-> read the overview.  Can you help those of us in the LSM space
-> understand why a BPF dev's NACK on code that lives strictly under
-> security/ is sufficient grounds to reject an LSM patch?
 
-Honestly, I'm not competent to make a judgment call between two
-different models for hash chain verification, so I basically *have* to
-go by maintainer opinions.
 
-And the discussions I have been cc'd on have not been what I'd call
-enlightening.
 
-But people have pointed out that the LSM code mucks around with bpf
-internals, and those NAK's have had reasons for them.
 
-And honestly, I don't understand *why* Hornet does what it does - and
-does it in ways that obviously annoy the bpf people. There is no
-*reason* to look at the bpf maps that I can see, and from my
-understanding of Alexei's arguments (which may be lacking), the fact
-that Hornet does that is the main reason for the NAK.
+Hello,
 
-But instead of working with the bpf people on coming up with some
-model that does *not* do that, it all seems to have become a "we'll do
-it anyway, despite maintainer complaints".
+Status summary for next/master
 
-And I *did* see the bpf people pointing to "this would be an
-acceptable alternative" with KP Singh outlining something that *had*
-been discussed.
+Dashboard:
+https://d.kernelci.org/c/next/master/b99ae45861eccff1e1d8c7b05a13650be805d437/
 
-But I never actually saw anybody say "ok, we'll try that instead".
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: b99ae45861eccff1e1d8c7b05a13650be805d437
+origin: maestro
+test start time: 2026-06-04 16:41:30.319000+00:00
 
-Maybe I missed it.
+Builds:	   58 ✅    1 ❌    0 ⚠️
+Boots: 	  157 ✅    9 ❌    4 ⚠️
+Tests: 	18839 ✅ 3204 ❌ 4132 ⚠️
 
-But from what I saw, it really looked like "I see NAK's from three
-different bpf maintainers, with suggested alternate approaches". None
-of which resulted in anything that looked like "ok, we'll try to
-follow your guidance", only more of the same.
+### POSSIBLE REGRESSIONS
+    
+Hardware: bcm2837-rpi-3-b-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.proc
+      last run: https://d.kernelci.org/test/maestro:6a21b4a12cc72b6e94bf5b81
+      history:  > ✅  > ✅  > ❌  > ❌  
+            
+      - kselftest.proc.proc_read
+      last run: https://d.kernelci.org/test/maestro:6a21bb362cc72b6e94bfaff8
+      history:  > ✅  > ✅  > ❌  > ❌  
+            
+Hardware: imx8mp-verdin-nonwifi-dahlia
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_bus_30800000_i2c_30a50000_eeprom_50
+      last run: https://d.kernelci.org/test/maestro:6a21b7c72cc72b6e94bf8a94
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: asus-CX3402CVA-brya
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - kernelci_sleep
+      last run: https://d.kernelci.org/test/maestro:6a21b0e42cc72b6e94bf3f0e
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-1
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f52
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-10
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f49
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-2
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f51
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-3
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f50
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-4
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f4f
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-5
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f4e
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-6
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f4d
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-7
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f4c
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-8
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f4b
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-freeze-9
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f4a
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-1
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f5c
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-10
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f53
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-2
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f5b
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-3
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f5a
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-4
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f59
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-5
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f58
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-6
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f57
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-7
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f56
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-8
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f55
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kernelci_sleep.rtcwake-mem-9
+      last run: https://d.kernelci.org/test/maestro:6a21b14d2cc72b6e94bf3f54
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
 
-Why would *my* input then make any difference?
 
-The bpf people's arguments resonated more with me. For example, the
-whole "we need to know if it passed the bpf signature" seems to be
-complate pointless silliness, and the bpf peoples responses to that
-resonated with me. There's *no* point in any LSM check whether the
-signature passed or not, since if it didn't pass, it's not getting
-loaded.
+### FIXED REGRESSIONS
+    
+Hardware: meson-gxl-s905x-libretech-cc
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.clone3
+      last run: https://d.kernelci.org/test/maestro:6a21b46d2cc72b6e94bf5ad9
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.clone3.clone3_clone3_cap_checkpoint_restore
+      last run: https://d.kernelci.org/test/maestro:6a21bb0e2cc72b6e94bfaf35
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.clone3.clone3_clone3_cap_checkpoint_restore_global_clone3_cap_checkpoint_restore
+      last run: https://d.kernelci.org/test/maestro:6a21bb0e2cc72b6e94bfaf36
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
 
-So that's basically where I stand - I've seen disagreement, and I've
-seen what looks to me like reasonable push-back, and I've not really
-seen the LSM response as taking it into account.
 
-           Linus
+### UNSTABLE TESTS
+    
+Hardware: aws-ec2-arm64
+  > Config: defconfig+aws-ec2
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a21d19b2cc72b6e94c09c7a
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  
+            
+Hardware: aws-ec2-x86_64
+  > Config: x86_64_defconfig+aws-ec2
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a21afa02cc72b6e94bf3db0
+      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
+            
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a21b4042cc72b6e94bf58f6
+      history:  > ✅  > ✅  > ⚠️  > ✅  > ✅  
+            
+Hardware: bcm2837-rpi-3-b-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6a21b4752cc72b6e94bf5af6
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
+      last run: https://d.kernelci.org/test/maestro:6a21b73d2cc72b6e94bf89fe
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a21b29b2cc72b6e94bf512d
+      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
+            
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a21b29d2cc72b6e94bf5130
+      history:  > ✅  > ⚠️  > ✅  > ⚠️  > ✅  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa
+      last run: https://d.kernelci.org/test/maestro:6a21b40c2cc72b6e94bf5933
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.alsa.alsa_pcm-test
+      last run: https://d.kernelci.org/test/maestro:6a21b5292cc72b6e94bf6031
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
+      last run: https://d.kernelci.org/test/maestro:6a21ba762cc72b6e94bf9ff1
+      history:  > ✅  > ❌  > ❌  > ✅  > ❌  
+            
+Hardware: meson-g12b-a311d-khadas-vim3
+  > Config: defconfig+preempt_rt
+    - Architecture/compiler: arm64/gcc-14
+      - rt-tests.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:6a21bbf32cc72b6e94bfb49f
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+      - rt-tests.rt-migrate-test.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:6a21be852cc72b6e94bfec0f
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: qemu-x86_64
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a21b0e02cc72b6e94bf3f01
+      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
+            
+Hardware: mt8395-genio-1200-evk
+  > Config: defconfig+preempt_rt
+    - Architecture/compiler: arm64/gcc-14
+      - rt-tests.rtla-osnoise
+      last run: https://d.kernelci.org/test/maestro:6a21bc0b2cc72b6e94bfb64e
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: mt8183-kukui-jacuzzi-juniper-sku16
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_backlight_lcd0
+      last run: https://d.kernelci.org/test/maestro:6a21bc072cc72b6e94bfb5a2
+      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
+      last run: https://d.kernelci.org/test/maestro:6a21bc072cc72b6e94bfb586
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
+      last run: https://d.kernelci.org/test/maestro:6a21bc062cc72b6e94bfb55d
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
+      last run: https://d.kernelci.org/test/maestro:6a21bc062cc72b6e94bfb541
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
+      last run: https://d.kernelci.org/test/maestro:6a21bc062cc72b6e94bfb540
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
+      last run: https://d.kernelci.org/test/maestro:6a21bc062cc72b6e94bfb53f
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
+      last run: https://d.kernelci.org/test/maestro:6a21bc062cc72b6e94bfb534
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
+      last run: https://d.kernelci.org/test/maestro:6a21bc062cc72b6e94bfb533
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+
+### NEW BUILD ISSUES
+- Issue: maestro:96417cd30041ab8f3153128d0120c6cd70782d99 | version: 1
+  Build: maestro:6a21abf22cc72b6e94bf3c60
+  Comment:  stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than] in drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.o (drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-06-04 17:51:52.028502+00:00
+  Culprit: code
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
