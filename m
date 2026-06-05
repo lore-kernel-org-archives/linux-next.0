@@ -1,103 +1,140 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B5C368D75;
-	Fri,  5 Jun 2026 06:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F5A472782;
+	Fri,  5 Jun 2026 10:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780639394; cv=none; b=mxQwtTyBosinDTKMTidBbKlHVZ8JZxYDC2QQ+AHPqeqigp//HPLNMJStGHnGN46Tphvpi/pbDPoHNc5x9bm0wZquWxxufUMubLQtwgfdGNb6F1Yh+NPh5cOprVx3ci509CYgo2YOYV+4VCM7aesqpYbmSOyd7wABAA5TwJAep8Y=
+	t=1780657023; cv=none; b=m3XpW9lbmKjNqJ2VTozSognyJcD0VJ0KfBDJA9Zy6VuMmj+8Rc39BeZ3v4ap8d6fKhawmz/j36jcOXwI2Vnxa7RW+5ScYiAYdF8bc6d8ydvIJJsPbAsF7korT3ccS02S+oVuJyaXpVKDd4C5BWKtvKwDBwAtuocgcZ8v/xr/V5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780639394; c=relaxed/simple;
-	bh=17yvayCiyKZEl0J527Cq9XmyBEu1Tk3jXoqwO9FiG5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZhfGgokTva5zxg2WrqgeVy7j7oQmVk+KlQWF7IelK1ERCuypn1Y8sYo/foZxI6JfZU3/NALEd8LOwyLBMeDvvMMj5NAUS1zPGxVCgX2AyurQoE82ecetYn2ktuOLjZ3Ge68ss5hyA6gJFJIB+LJzPdNYr1sEnhW5rI7ySbmzII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5uNzCaJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780657023; c=relaxed/simple;
+	bh=U3GIQ4FxykCZ/FnNfoZx3tQYYkVRtQSjs3hSTacmXXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AOeaXcHgcS8gRITC9vJQikp6DpqeJ3+rP7J0RGxSWFwjO1i3AFn/tcOH5Xc/isAvGgoD79q+Lh+2WHRpEvE9dvfRIOnf4j9ZPYDkiQfeBl07CzuRhboF2lGcAZNwWGLaaHKTzWqdn6fMh4cbwx890X0WXoo0dQBwdGGG+ihcgTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABv8dEOD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5uNzCaJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182451F00893;
-	Fri,  5 Jun 2026 06:03:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABv8dEOD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D55F1F00893;
+	Fri,  5 Jun 2026 10:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780639392;
-	bh=BOJ4cyyhHDJVJfq4ruH8NdaGZ6OyMV+PbqSG2RBNB0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Y5uNzCaJ87Pvppb5dI1wW5kymM88zEvjpiHF7aGJkxxfObq4KlwlzXSc960Z5RSWu
-	 LdDWZX3hXp8mR9qRjmwecjNtMbSObuWk6xw4mJbgiscIaKgc3wZWGlr15J4ABi0f/f
-	 Cy7V2hSKxdNdu3EiBOyxcWM8wQs45A66NzuteIfVWgY3470V40Hc4pxgcenC07nmJp
-	 uIE5D3e55oXHd28zCmfJLhgdj8qUNKT1i1B/RKpXXGml7RuEMQAgrZmFd0qq8AuV4j
-	 4tnDt/SwcVq1MmqWQ5AQJDK7ha7nsAS8zaHwyVCw8ONBH+f73UGbyILPH4IUQlfJy3
-	 feYcmzDN4x2CQ==
-Date: Thu, 4 Jun 2026 23:03:08 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	DRM XE List <intel-xe@lists.freedesktop.org>,
-	Gustavo Sousa <gustavo.sousa@intel.com>,
-	Violet Monti <violet.monti@intel.com>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-xe tree
-Message-ID: <20260605060308.GA249502@ax162>
-References: <aiAz4DmtngY0r6Cx@sirena.org.uk>
- <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
- <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
- <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
- <8c4d38f10b1941687314bc43cc4de40097b84b78.camel@linux.intel.com>
+	s=k20260515; t=1780657022;
+	bh=4do/Bla2HIKUt5+QXSzh9AyF+N3/T8ETx/kBWPdiWRk=;
+	h=Date:From:To:Cc:Subject;
+	b=ABv8dEODC5wnWSAI/Y0jixnqVackVEa7pEcjJQwo3jPlXaRe09Pn0j3QyIocbl67s
+	 rAB3oSq01zELiY5z3qnn4hlZtia3Ev+fcHyi1f6TSkgUZ2TZav3oIPX8pbS309SjJt
+	 pssB/pZLxN7jgNgLq5UhDytJJeYyNI6qYe1rgYIs1F979izdSa4JTHYY6GEhISi2rI
+	 5dxv2fwgg28XC+SVoW5n0gVnrVMqB/xYvRgW5Vf3f/j0GbIfB2eB7xKlMx3lb7c2PH
+	 b/BBw6dfkdpAu88qNZSl2hXvSVRK/JZfdIR1CHyhZQTPBwX9TIK4KFdTMKeSylfeWV
+	 v/YgOqBCq1aKw==
+Date: Fri, 5 Jun 2026 11:56:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the extfat tree
+Message-ID: <aiKrepiU3-L6KRqJ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VXpRgygcICu/X7Vi"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c4d38f10b1941687314bc43cc4de40097b84b78.camel@linux.intel.com>
 
-On Thu, Jun 04, 2026 at 07:23:40PM +0200, Thomas Hellström wrote:
-> On Thu, 2026-06-04 at 15:50 +0100, Mark Brown wrote:
-> > On Thu, Jun 04, 2026 at 04:43:17PM +0200, Thomas Hellström wrote:
-> > > On Thu, 2026-06-04 at 15:35 +0100, Mark Brown wrote:
-> > 
-> > > > /tmp/next/build/include/linux/compiler.h:200:84: note: expanded
-> > > > from
-> > > > macro '__BUILD_BUG_ON_ZERO_MSG'
-> > > >   200 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...)
-> > > > ((int)sizeof(struct {_Static_assert(!(e), msg);}))
-> > 
-> > > Funny, I see no build errors with drm-xe-next allmodconfig. What
-> > > compiler is being used? Any sha1 of the drm-xe-next top commit
-> > > you're
-> > > testing?
-> > 
-> > This is after merging the tree into -next, that'd be on top of
-> > 09b893db4d9e68c2679e76624d420f438f8d3e98 for today (not published
-> > yet).
-> > It's possible it's some interaction with other trees (like the main
-> > drm
-> > tree) and works as a standalone thing, it wasn't obviously that from
-> > a
-> > quick investigation.  The toolchain is gcc from Debian stable.
-> 
-> So I merged drm-xe-next into next-20260603, and no build errors neither
-> with gcc nor clang.
-> 
-> AI says it's confident that the error report is from clang, based on
-> -fmacro-backtrace-limit suggestion and the "2 errors generated."
-> summary, and suggests this might be an older clang version limitation?
 
-Yeah, this is certainly clang. The kernel test robot also reported this:
+--VXpRgygcICu/X7Vi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  https://lore.kernel.org/202606041255.dGo9lFkh-lkp@intel.com/
+Hi all,
 
-It looks like this was only fixed in clang-21 with:
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-  https://github.com/llvm/llvm-project/commit/977d8a4bcd83797217433709201922b9deb97ae2
+  include/linux/iomap.h
 
-according to my reverse bisect of clang. I am not really sure how to
-work around this at the moment, trying to read the preprocessed source
-is nearly impossible because of what REG_FIELD_PREP() expands to.
+between commit:
 
--- 
-Cheers,
-Nathan
+  f356603d90ebc ("iomap: introduce IOMAP_F_ZERO_TAIL flag")
+
+=66rom the extfat tree and commit:
+
+  198c3b90e600d ("iomap: introduce IOMAP_F_ZERO_TAIL flag")
+  9f54b6894dec2 ("iomap: introduce IOMAP_F_FSVERITY and teach writeback to =
+handle fsverity")
+
+=66rom the vfs-brauner tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined include/linux/iomap.h
+index cea6bbc97b6ef,3582ed1fe2361..0000000000000
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@@ -91,6 -91,14 +91,14 @@@ struct vm_fault
+  #endif /* CONFIG_BLK_DEV_INTEGRITY */
+  #define IOMAP_F_ZERO_TAIL	(1U << 10)
+ =20
++ /*
++  * Indicates reads and writes of fsverity metadata.
++  *
++  * Fsverity metadata is stored after the regular file data and thus beyond
++  * i_size.
++  */
++ #define IOMAP_F_FSVERITY	(1U << 11)
++=20
+  /*
+   * Flag reserved for file system specific usage
+   */
+@@@ -345,6 -353,9 +353,9 @@@ static inline bool iomap_want_unshare_i
+  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *fr=
+om,
+  		const struct iomap_ops *ops,
+  		const struct iomap_write_ops *write_ops, void *private);
++ int iomap_fsverity_write(struct file *file, loff_t pos, size_t length,
++ 		const void *buf, const struct iomap_ops *ops,
++ 		const struct iomap_write_ops *write_ops);
+  void iomap_read_folio(const struct iomap_ops *ops,
+  		struct iomap_read_folio_ctx *ctx, void *private);
+  void iomap_readahead(const struct iomap_ops *ops,
+@@@ -421,6 -432,7 +432,7 @@@ struct iomap_ioend=20
+  	loff_t			io_offset;	/* offset in the file */
+  	sector_t		io_sector;	/* start sector of ioend */
+  	void			*io_private;	/* file system private data */
++ 	struct fsverity_info	*io_vi;		/* fsverity info */
+  	struct bio		io_bio;		/* MUST BE LAST! */
+  };
+ =20
+@@@ -495,6 -507,7 +507,7 @@@ struct iomap_read_folio_ctx=20
+  	struct readahead_control *rac;
+  	void			*read_ctx;
+  	loff_t			read_ctx_file_offset;
++ 	struct fsverity_info	*vi;
+  };
+ =20
+  struct iomap_read_ops {
+
+--VXpRgygcICu/X7Vi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoiq3kACgkQJNaLcl1U
+h9DL9wf/eP13L3S5MpEASIcs9RMcaszcwVGVP1BhH2QKDTVwK51xlBQxpQ48KMJc
+fw1PLJlQa5UG4neZ7Va7kpDgPq5xekHcvuN4t/lChewk3GZqh/JMXQ2VpqRsgrUz
+ShSFU60lVTuK0AAd26e6F6tP1G7pvCtX0HDdu9mTgJANFoFHNDQzGnwPr+9+7+TP
+/uOLaUBEGELeIzZ+WA+SgUi/v4SxhiPrlIvS3sqmQv9HUcTTXx8V6tuwFFmB1irs
+1ZfUqYWXug4XarPM7WRrS8+J3ReSgsAJZEk1j/PcwrszpmBJjsQabcYwsgaUBlky
+Zdlx6Bx1Z34RrmvEtWu+aFZ49W/vwQ==
+=6ZpS
+-----END PGP SIGNATURE-----
+
+--VXpRgygcICu/X7Vi--
