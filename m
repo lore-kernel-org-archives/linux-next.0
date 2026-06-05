@@ -1,41 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5583F5BC2;
-	Fri,  5 Jun 2026 11:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531F94C77D5;
+	Fri,  5 Jun 2026 11:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780657410; cv=none; b=fpW+ShLOSbFID0+8eESRBFgMw/sxMC9RdHvIbliBBquLLKItNR2CeCN3L6ScsrIFWftCo3Ddj0yIje/adneHznZwIM6TmvMqOyF+dFqjX2p4KH3UFTBznpdWm71IF+HI+bP59RxIY73zj5/fETXLdRI0n/nRSvTcnpyFiFEk6u4=
+	t=1780657745; cv=none; b=OUicBnNZwsmpkO6xdW4eI9lh4EnR/IywJLyCPvFWAxeIlpC79O8gfJSwJI50y5rwypHJ2g5Om+eHVE3kV2Oj9QNT94z+qtNzwEjC4CtWouic38YkzbMrxVL4fPCzg3rFL1JH/AHmoeQsQ+oo/+/YSzrd/WVUpLPTvToDJWc7YH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780657410; c=relaxed/simple;
-	bh=BZY18HxO/dEJtrnA5uq5khUrNrYFp+RjD02YUbnOlIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iIUIYLTM2DI+VmRd6GaZzpxu9IiI6bl7cvC7zydVtM3eVlCu67cNcSugpuUNwKWbYxEf42hJS0Q1EfTX9cH/aI+PmRuNiER5U/+6Q+WlHg5/o91s7B0lHyEygfMLcyzsv+Ae7uBCjr2aT2yef3NY+xgut9bJyvBhcf/s2mVE5+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLAf3rEt; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780657745; c=relaxed/simple;
+	bh=zwBD0rLlxPPR609qpQu70kZoMMGspzW0MPhOKtMg7+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qtq5ykJQxH7z+GrMyViVfPLvlGZd/MP8ctp3p6zEGsKCMQiKv/p7wbl0JtUP/QdQXks9Y058ub+zCHAofgth1BuNKT1FS4i2+IYchu1inKg/0krPKWuHMUkHNILcnM4iuc9iOVZNkUfz+igtJUJAwSlOB2MwqAy2zkMG9nYEj5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjQ536E/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLAf3rEt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CC621F00893;
-	Fri,  5 Jun 2026 11:03:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjQ536E/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D1021F00893;
+	Fri,  5 Jun 2026 11:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780657408;
-	bh=/KUbSan6ddcjd/VlqRgKjqzBit8/8pj2PmLh4tW1azo=;
-	h=Date:From:To:Cc:Subject;
-	b=TLAf3rEtL/N3eIOkdSIpR23FFvEBZtu2cle22N7Ibld1dEVXy/8NdyeNVUkc1VTxl
-	 JIhZZVPGKsdFHuXYNMcNLNgzqHNxhBqikReyyUg0VAr947+gJY7j8O7e+9S8Ee731C
-	 UsEJmnIHyBOW6QC6McoSk+RzUZL24Z9LIWa+tYYrp7rYe4NblAAorbLmOyQCO+iQb4
-	 WQLWZgOEI0ZOXN3Xj9sTW7LufULFp3kLuua9KOJCOsI0B1Qbhhejlwilp0vzH+WnoE
-	 +JTDb1Y4hrK9zBfKFSivVl/tCCMTC81weMad+zamoCateG/Oi7XB2xb8nwfVeZRupa
-	 ITjs73QArLmhA==
-Date: Fri, 5 Jun 2026 12:03:25 +0100
+	s=k20260515; t=1780657743;
+	bh=yGHqOQY5kzrb5h96V7n84BKzpzqo4H15iFYx+IE3vHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cjQ536E/8N9YRquKXOV7QSWij2AKvUejJEgY04brxY1Y7+1sFaYf1Z0Zk0Hu3VAoz
+	 vmw5arHWnVIg+j1xrx3wDI+J9E+zR4lb9OnK0krTUvujRgs2uqTvwh+1R8HvuRq12R
+	 N28IUc4dp+d/TU+i7y2SJ/kR2Eqa2JdiDzxkfFtb7zczK4ULGlb4DKDkaaM3oNa3tW
+	 RFobiAa5/i9zk3LB4xBBysRH71k3APtKnRgxUHkeSe5zLomoRPvVekrwd15B9tzq1n
+	 +QOy3QP3Gv+vg2BXQFKhhuHmoDS2RYYVVv2/kMBHp9tgdT91Cg54wR/bGwg0NPQEDw
+	 G7DxCxuj0d8gg==
+Date: Fri, 5 Jun 2026 12:08:58 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	Andrey Albershteyn <aalbersh@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <aiKs_XGXGTZDKnlh@sirena.org.uk>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: DRM XE List <intel-xe@lists.freedesktop.org>,
+	Gustavo Sousa <gustavo.sousa@intel.com>,
+	Violet Monti <violet.monti@intel.com>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev
+Subject: Re: linux-next: build failure after merge of the drm-xe tree
+Message-ID: <3e15fe90-74e2-4aaa-b280-c486c8773514@sirena.org.uk>
+References: <aiAz4DmtngY0r6Cx@sirena.org.uk>
+ <bfb0dee8-b243-47ba-a89d-71472b0d51c5@sirena.org.uk>
+ <f9094757b2aab617feb8fc3f8a66f46595e0ae27.camel@linux.intel.com>
+ <551d384f-d151-4d1e-bcb8-a1cde0860a30@sirena.org.uk>
+ <8c4d38f10b1941687314bc43cc4de40097b84b78.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,44 +53,45 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wuoM5ug4EZ4LEm9j"
+	protocol="application/pgp-signature"; boundary="47culnYV5tZ3h9bn"
 Content-Disposition: inline
+In-Reply-To: <8c4d38f10b1941687314bc43cc4de40097b84b78.camel@linux.intel.com>
+X-Cookie: Error in operator: add beer
 
 
---wuoM5ug4EZ4LEm9j
-Content-Type: text/plain; charset=us-ascii
+--47culnYV5tZ3h9bn
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Jun 04, 2026 at 07:23:40PM +0200, Thomas Hellstr=F6m wrote:
 
-After merging the vfs-brauner tree, today's linux-next build
-(arm64 allnoconfig) failed like this:
+> So I merged drm-xe-next into next-20260603, and no build errors neither
+> with gcc nor clang.
 
-/tmp/next/build/fs/iomap/buffered-io.c: In function 'iomap_read_folio_iter':
-/tmp/next/build/fs/iomap/buffered-io.c:577:33: error: implicit declaration of function 'fsverity_fill_zerohash'; did you mean 'fsverity_file_open'? [-Wimplicit-function-declaration]
-  577 |                                 fsverity_fill_zerohash(folio, poff, plen,
-      |                                 ^~~~~~~~~~~~~~~~~~~~~~
-      |                                 fsverity_file_open
+> AI says it's confident that the error report is from clang, based on
+> -fmacro-backtrace-limit suggestion and the "2 errors generated."
+> summary, and suggests this might be an older clang version limitation?
 
-Caused by commit
+Bah, sorry - it is actually clang, I changed it to that to avoid some
+issues with Rust getting disable due to interactions with sanitisers
+when building GCC.  Apologies, I should have double checked or just
+remembered.  This is clang 19 from Debian stable, our current minimum
+supported clang is clang 17.  CCing in the clang people.
 
-   014c8fc41d92d (iomap: teach iomap to read files with fsverity)
-
-I have used the version from next-20260604 instead.
-
---wuoM5ug4EZ4LEm9j
+--47culnYV5tZ3h9bn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoirPwACgkQJNaLcl1U
-h9B3KQf+MD7LNRlJE6jCN8Ua6/XwtowzFrlXtLcWtA2ocf5mQlLaqruLeEA14j9q
-sev0WZO0oZ4A4OwC5cZjVKvh/j9oumS6Xi+0uBYJ8/91f7vVTa/ygQ/4tMbJpS39
-a52uog41xurdUrcPX420U02Lc9xUOBrBe8Wq2H/sO1fEI47NwCvSyuoCueW7DOLt
-FJAsxmLSHANumKB6n9DffhP2Y1dk918j23lG+U+Qqvmx+cx/e41mjf+OltGkIaST
-CWz0KOdQ2zL3MW4aBRT1nDqlBuZp6sMuMaasbyDF/VJ6vmtH9D4mLmAiuYop3DHV
-nbW57oeQQLarn+J43Syx0EadQabaKA==
-=4ePn
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoirkoACgkQJNaLcl1U
+h9Auagf7BkNAJSUv367MDlG0YYTXNEyKWQJf8Lp8rX/+R9GM5UP6z2rXbERTHJve
+rWX1oXa11ep9upgnYyERxQB0blhgJp8TSYu+u8UWBA9r+fWfeNovN4tBW7AsV1Ue
+c/cFxN90+8uQ5lXFT3RazHmDmIShjbJihARiertyy2U1l0WlgBManfXMXydwJjSF
+RUaCkmGl3Srx/YE4UbfexvlTn4zCzPj52VB3MM6YcB5wbPeOcWw4beAD1clj5S5l
+0RSH/5Xcd2jv8tGzvSeh9cAHUJoMhRnDXDcZqJtAYkApDpIvRJUOElBJyYeW5uhR
+o5CPSRr+A4l3Asq49JAYfen3VnLZoQ==
+=jOFx
 -----END PGP SIGNATURE-----
 
---wuoM5ug4EZ4LEm9j--
+--47culnYV5tZ3h9bn--
