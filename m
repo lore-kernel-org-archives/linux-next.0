@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D130A3D093B;
-	Mon,  8 Jun 2026 14:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8683F23A2;
+	Mon,  8 Jun 2026 15:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780929124; cv=none; b=UAf4ipSQq5wffOtSVyrvF/NUbghlCwj8+XnWBrZR/O+j/T+zAqrEFwcBwS1LC91uM7DvVDjn0qmsPvfT1GmOnjR6ifMf9uiNTvY74L++xicczG5tZmncsOH87bpRPjosHIIBLmBXGPb9+UHzNzoSf7K2nwotfXY9Tc0LkncR0H8=
+	t=1780931027; cv=none; b=Ey04Q8gtB8/mgt+2OVw/N35Eg/CnIAURlBKnUL+UzONi+CTlU+QfYDbBW8DBd/Qoa60qRs0KtSDAlKr9os8TxgGmzdqlST+gKhdeUg0+/YoQBbcWW9mYTF0i8mSrLeZp+yU0oRAq41Ms5CGyz1DVNMKTL2dByMr5K9SW+b0vglI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780929124; c=relaxed/simple;
-	bh=r0Zw8isqcSxSiqzxWbe0xhoZ5EMHzhbaSZlXzmR6API=;
+	s=arc-20240116; t=1780931027; c=relaxed/simple;
+	bh=ed1jqJ5LohxR4aAjVzfbp3cO7CPpAsm0wXvA8lSmAwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AgVZiNvilxGftrEdsAWhHs/7iO4+vOxN6mp9hC0XjtoTU6pQnDpUWK0AAoPcjoNbTQygHuiH3KI+T0kEsGN193dBvkW5i2DK3hBDzvLBS9rbUYLW6A+UjE5qEVU0h32on0IW0Mkx9ukEe/aLvT11LHVFD/6wXvWziaZrnrYhIpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwJ5u29u; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=saRZkVzmt7EvCAb3a+07iTTOvPOlBywQwAkF1sq99zjhB7X8MKQXG8eVd40mF35r8cl53ufHCtN1fG4gw9TZ1/R6x2HJ8bVD1gsKiG367qMCErB9+oPYGvpezgcuVnLS03KxI1xzyxjmNzoo2Q88LSjHyH5pyO9mKw3Ds84YZqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lh81DtzB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwJ5u29u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA681F00898;
-	Mon,  8 Jun 2026 14:32:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lh81DtzB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE2F61F008A5;
+	Mon,  8 Jun 2026 15:03:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780929123;
-	bh=2+8pc9iAcfQeNVbXGqQfuDZxajEP+9K9NoHJicSqcsY=;
+	s=k20260515; t=1780931023;
+	bh=jyZQQ+LKqZi/XcqaaYDqMGOyUuL9LPhIXWvaf+umohQ=;
 	h=Date:From:To:Cc:Subject;
-	b=nwJ5u29uPQQevt1j1IBzXalOOtHGPmpcb1cxn/NJP/6BHsPPdyCCAEaLy5iTYQs7J
-	 9RJAAB+1Y2j6RUti56fwID1InGbibmgCjiiiMFOuKr7aaDGCx9YFRk7wgiYmToz7KV
-	 xVGKshNbd07TwnUdaDndy6wxIV6u6V4YJ0SI15NI+WTBFAboBL5eIZjfUoDdnTsMoy
-	 EEFSKPz0DIwn5CQETohb918bjYXDlfg8otAFPgpgf7QnH4xNsA5vfPlut8yY0f+mYN
-	 yxdo46QQB6HvTg1IZFtiTLbj5P50q1IkxZWIQaJOeYmU/SzVgR5qG8H8m5hxod8JFS
-	 Hng6yWKk1HI3Q==
-Date: Mon, 8 Jun 2026 15:31:58 +0100
+	b=lh81DtzB5HS5Ye8yCFgZpDkxi2wWSWCSlTd5j4R0knhDrfccfFx+DhbICTWBlSXJM
+	 Hsn688zzYaRHLNUGkpsIt+JDmwym29XQs6djtY6r4cMexk1Bh1N3Qxh+4OgXp7B3bT
+	 kC1hdR0zMpddAGeoiLDx010POh4jPjOmW77X+qmMPoWLV08uERjgBGbQnVipiA20gD
+	 TXWflnVj5HcR9Uqwzmy+5C+/0OP2PQkZ14PLf/rwKSjWN1ebzl4IPdOKPa3BMsn1EW
+	 yP/fVrbsoTaNCpYmXA++L452BUqYx6f8hXBAEx+UwGEn7NWkaYDSXmNETXXHtHnoCp
+	 EGfWDVOrQqw4w==
+Date: Mon, 8 Jun 2026 16:03:39 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Roman Bakshansky <bakshansky.lists@gmail.com>
-Subject: linux-next: manual merge of the tip tree with the hwmon-staging tree
-Message-ID: <aibSXki-s7geOFFn@sirena.org.uk>
+To: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Maya Matuszczyk <maccraft123mc@gmail.com>,
+	Anvesh Jain P <anvesh.p@oss.qualcomm.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Message-ID: <aibZy5rrdX3ltGpr@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,116 +44,112 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AITTWlfKlTjdVQpJ"
+	protocol="application/pgp-signature"; boundary="RYgmSG9BO/4yJA9I"
 Content-Disposition: inline
 
 
---AITTWlfKlTjdVQpJ
+--RYgmSG9BO/4yJA9I
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/hwmon/coretemp.c
+/tmp/next/build/drivers/platform/arm64/qcom-hamoa-ec.c:394:64: error: incom=
+patible pointer to integer conversion passing 'void *' to parameter of type=
+ 'u32' (aka 'unsigned int') [-Wint-conversion]
+  394 |                 ec_cdev->cdev =3D devm_thermal_of_cooling_device_re=
+gister(dev, NULL, name, ec_cdev,
+      |                                                                    =
+          ^~~~
+/tmp/next/build/include/linux/stddef.h:8:14: note: expanded from macro 'NUL=
+L'
+    8 | #define NULL ((void *)0)
+      |              ^~~~~~~~~~~
+/tmp/next/build/include/linux/thermal.h:210:65: note: passing argument to p=
+arameter 'cdev_id' here
+  210 | devm_thermal_of_cooling_device_register(struct device *dev, u32 cde=
+v_id,
+      |                           =20
 
-between commit:
+Caused by commit
 
-  1b16a26e79433 ("hwmon: (coretemp) fix coding style issues")
+   5c44f48e91dee (platform: arm64: Add driver for EC found on Qualcomm refe=
+rence devices)
 
-=66rom the hwmon-staging tree and commit:
+interacting with=20
 
-  91660aae2f864 ("x86/msr: Switch rdmsr_safe_on_cpu() users to rdmsrq_safe_=
-on_cpu()")
+  37324803f049b (thermal/of: Add cooling device ID support)
+  3570cb58e3171 (thermal/of: Pass cdev_id and introduce devm registration h=
+elper)
 
-=66rom the tip tree.
+=66rom the thermal tree.  I have fixed this up as below and can carry
+this, but this will need to be dealt with during the merge window.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+=46rom 7402d20e88c7a0f8a3ce34e660ac40683092b547 Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Mon, 8 Jun 2026 14:51:40 +0100
+Subject: [PATCH] drivers-x86: hamoa: Fix up semantic conflit with thermal t=
+ree
 
-diff --cc drivers/hwmon/coretemp.c
-index 02b4e46d965b9,70711a7cca123..0000000000000
---- a/drivers/hwmon/coretemp.c
-+++ b/drivers/hwmon/coretemp.c
-@@@ -220,13 -220,14 +220,13 @@@ static int adjust_tjmax(struct cpuinfo_
-  		 * http://softwarecommunity.intel.com/Wiki/Mobility/720.htm
-  		 * For Core2 cores, check MSR 0x17, bit 28 1 =3D Mobile CPU
-  		 */
-- 		err =3D rdmsr_safe_on_cpu(id, 0x17, &eax, &edx);
-+ 		err =3D rdmsrq_safe_on_cpu(id, 0x17, &val);
-  		if (err) {
-  			dev_warn(dev,
- -				 "Unable to access MSR 0x17, assuming desktop"
- -				 " CPU\n");
- +				 "Unable to access MSR 0x17, assuming desktop CPU\n");
-  			usemsr_ee =3D 0;
-  		} else if (c->x86_vfm < INTEL_CORE2_PENRYN &&
-- 			   !(eax & 0x10000000)) {
-+ 			   !(val & 0x10000000)) {
-  			/*
-  			 * Trust bit 28 up to Penryn, I could not find any
-  			 * documentation on that; if you happen to know
-@@@ -254,11 -255,12 +254,11 @@@
-  	}
- =20
-  	if (usemsr_ee) {
-- 		err =3D rdmsr_safe_on_cpu(id, 0xee, &eax, &edx);
-+ 		err =3D rdmsrq_safe_on_cpu(id, 0xee, &val);
-  		if (err) {
-  			dev_warn(dev,
- -				 "Unable to access MSR 0xEE, for Tjmax, left"
- -				 " at default\n");
- +				 "Unable to access MSR 0xEE, for Tjmax, left at default\n");
-- 		} else if (eax & 0x40000000) {
-+ 		} else if (val & 0x40000000) {
-  			tjmax =3D tjmax_ee;
-  		}
-  	} else if (tjmax =3D=3D 100000) {
-@@@ -352,9 -354,9 +352,9 @@@ static ssize_t show_label(struct devic
-  }
- =20
-  static ssize_t show_crit_alarm(struct device *dev,
- -				struct device_attribute *devattr, char *buf)
- +			       struct device_attribute *devattr, char *buf)
-  {
-- 	u32 eax, edx;
-+ 	struct msr val;
-  	struct temp_data *tdata =3D container_of(devattr, struct temp_data,
-  						sd_attrs[ATTR_CRIT_ALARM]);
- =20
-@@@ -394,9 -396,9 +394,9 @@@ static ssize_t show_ttarget(struct devi
-  }
- =20
-  static ssize_t show_temp(struct device *dev,
- -			struct device_attribute *devattr, char *buf)
- +			 struct device_attribute *devattr, char *buf)
-  {
-- 	u32 eax, edx;
-+ 	struct msr val;
-  	struct temp_data *tdata =3D container_of(devattr, struct temp_data, sd_a=
-ttrs[ATTR_TEMP]);
-  	int tjmax;
- =20
+/tmp/next/build/drivers/platform/arm64/qcom-hamoa-ec.c:394:64: error: incom=
+patible pointer to integer conversion passing 'void *' to parameter of type=
+ 'u32' (aka 'unsigned int') [-Wint-conversion]
+  394 |                 ec_cdev->cdev =3D devm_thermal_of_cooling_device_re=
+gister(dev, NULL, name, ec_cdev,
+      |                                                                    =
+          ^~~~
+/tmp/next/build/include/linux/stddef.h:8:14: note: expanded from macro 'NUL=
+L'
+    8 | #define NULL ((void *)0)
+      |              ^~~~~~~~~~~
+/tmp/next/build/include/linux/thermal.h:210:65: note: passing argument to p=
+arameter 'cdev_id' here
+  210 | devm_thermal_of_cooling_device_register(struct device *dev, u32 cde=
+v_id,
+      |
 
---AITTWlfKlTjdVQpJ
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/platform/arm64/qcom-hamoa-ec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/platform/arm64/qcom-hamoa-ec.c b/drivers/platform/arm6=
+4/qcom-hamoa-ec.c
+index a018f7bf35d2a..6c1ff6a14b0cf 100644
+--- a/drivers/platform/arm64/qcom-hamoa-ec.c
++++ b/drivers/platform/arm64/qcom-hamoa-ec.c
+@@ -391,7 +391,7 @@ static int qcom_ec_probe(struct i2c_client *client)
+ 		ec_cdev->fan_id =3D i + 1;
+ 		ec_cdev->parent_dev =3D dev;
+=20
+-		ec_cdev->cdev =3D devm_thermal_of_cooling_device_register(dev, NULL, nam=
+e, ec_cdev,
++		ec_cdev->cdev =3D devm_thermal_of_cooling_device_register(dev, 0, NULL, =
+ec_cdev,
+ 									&qcom_ec_thermal_ops);
+ 		if (IS_ERR(ec_cdev->cdev)) {
+ 			return dev_err_probe(dev, PTR_ERR(ec_cdev->cdev),
+--=20
+2.47.3
+
+
+--RYgmSG9BO/4yJA9I
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmom0l0ACgkQJNaLcl1U
-h9AUlQf7BRlJp+F6lkR6FXBfOmf+Tpb1ZMl2eudvJn1iQj01PdZOPPsuUaXgeEHI
-8xrN1h+tenUB81rdaG5aQGF7GQolxD4nHPTOCAsn9Ri3gDpq0hZh6SK1dV24DQG0
-hkqo40dkEJRdIr2Nzajl2Ku5//BLIj+9CxRSrYUooNkwSHEbyPOXL05Hx0h0GvVz
-sS4hBWf5JMXAnZEuF44xcx2qBsoAH2Mqd2gWyX5RZ0VoaDd0MlXkOLzekcBZy4Nn
-2hv0oWbJ29zln6O9JKMyhm0wlIa31Pq4wYUUU/Nt2rCEgr2WR6W4qVkoDpMvhaVj
-iALy4eYfiSlyz2CbfCuRTg3cJeHUtA==
-=vNqy
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmom2coACgkQJNaLcl1U
+h9BysAf9H3iy9PcbW8u6fcPJKWOEzZX/Q8AHUGU5ftjWXUliTjaReSYEeRiGd2QX
+3FxHe3Cmq6k5eObO1XYdnmrrxTNqPpnatHqReF/Lo4EAt/k7lMr3Tv1Jl8Kxw0u+
+io9QGnT4FsFVkFDQfk1RRvy2xFGKodw6l/sMOGEopMlTobicauyLwJpI8NzRS8qj
+4TeUlkBJAI5+eWybsJXApZp6HBD13X8m9eg/rK8KWsDi9exzBcH7xkfpxXXeYRSk
+AgqS8JIWJBg3rOo1q/UhRaTMBTeJZd1U6B+UdpxeWLBpGhBtH5Hdrl9nrhTGpAfG
+p3PG2jar+PxAtug4CjVCfHgHCX/CGA==
+=CQmV
 -----END PGP SIGNATURE-----
 
---AITTWlfKlTjdVQpJ--
+--RYgmSG9BO/4yJA9I--
