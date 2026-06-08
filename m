@@ -1,76 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [46.38.247.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A08933D4F2;
-	Mon,  8 Jun 2026 11:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065EB1A8F97
+	for <linux-next@vger.kernel.org>; Mon,  8 Jun 2026 11:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.247.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780916418; cv=none; b=F6xQ/WI60hFM68Jv+JFO3637EXGPsDl/p4/+uCPiJRv6GOUNHy3p6E3J//NLlzj/Iw+n6J/gybBSgEUqIz/iksrFyl8xbkdkTQhDM541/Q7jDPKZQ2I6puAM0rmiHVjA4WkdmY6IOZGHyL2hbkGaZxKbKEh8PfnTt1RpH97zBPQ=
+	t=1780917886; cv=none; b=Kx6BlHFLTOHg5trwzbPCWYRwcwVYgyIgXGBxNB5yP+s3djTWNY1jTT9hmbYZ+1Ty1fin9cMlfzENlwCUDSHXEHplxat9aphOYcrKgaL6CJaiCtqaDokDr8NR7pmI1HimH5dZbh32aXqdyHXqJmIGM++My3ZP/K7JXRSQB5AOXes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780916418; c=relaxed/simple;
-	bh=XCvplO+hQuSilwTzWVw/X6lj3eFl7kLmSCvYo/ZSCrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D/Uq1u9PSyR6Y/Jv79EU+iczHxuwnAIb5DZNIlxzp17+QnCtD5hrdUreP3iVSNryTqsbTaXt3c68LfPIbMRQBsuoaRfuWPrqstL2Z9Wh8QfZPGNlMgkteDPfAj1mkpl5ibNO8m7/vkNe7gv66do8CKumn75wJM3+g4gv1S5V6oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYmcCzoq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780917886; c=relaxed/simple;
+	bh=2n1StceSz7SbJ7v7AI3zkzVTOe1ZJOJXlWpDij7DfuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JMTBw0MB1+ZYbbeN8DpjD9y7/PWKL/fG+/DImw9ankvQqqGKEucrl2In2O6apevOof31Y4wMqW6iu45RZVM9vSWJfmOR1xcUwN3tZbUpwsfFN9vPYGa4+yNXlwhB5lcx7G9RufTuGKXJpuG82x5VTxbEvA1dViGi4AnMa2n5wJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=RJuIJp+z; arc=none smtp.client-ip=46.38.247.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYmcCzoq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95E11F00893;
-	Mon,  8 Jun 2026 11:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780916416;
-	bh=Ob0My1i0XMzAff9n751W2D+uIEgucXXmPTSQJ44Aqsg=;
-	h=Date:From:To:Cc:Subject;
-	b=WYmcCzoqx5aKTVC6MM2mpCD94mcHS+UlguQAel2LSLifVaJuRORpO9zvY5A4+n9pl
-	 qR8gZQkflwBuclCr4UBUVe0gtmp0otuiVYdlXO38IvgP1CMuuY63827fsNSeVs0OTu
-	 tNysWSEKGcnF3rNNITXfMI4xx9GQV6iezElsKBzMvLnXF56SWS6PNbjdqKcMlsqJic
-	 j2Lo2uDiQ8nFSuafpEuQXu/n0ONDMDiHr1fM3MKcwYJHaEIX6qSnC0N4sdp3k5zwr3
-	 oApD50HkUi9umo8+1m/OfM7Pqi7YBM6jMqWHbhnLzP48HhxSiRicEpF58m9iKKVOiF
-	 mtvMOFv9e9Clw==
-Date: Mon, 8 Jun 2026 12:00:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the risc-v tree
-Message-ID: <aiagvVcftjZXyt40@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="RJuIJp+z"
+Received: from mors-relay-8404.netcup.net (localhost [127.0.0.1])
+	by mors-relay-8404.netcup.net (Postfix) with ESMTPS id 4gYqSf6LfZz891R;
+	Mon,  8 Jun 2026 13:24:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
+	s=key2; t=1780917874;
+	bh=2n1StceSz7SbJ7v7AI3zkzVTOe1ZJOJXlWpDij7DfuI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RJuIJp+z2EP1GbXsL37JmKLLhwPUQLngEnVFxka0FbCo9JwyKfqTaMWkr6PmP5+Tw
+	 4Ad9bisEujyMHOYjf4A8A1nDuIbQwDXswjA7sxeAQ/4B5vrXmaNwDS9XgQziVFvX7X
+	 8yor2c+WfbOPS/LA9K2pCZlVUXP/F/1wOf7LcfP1FD8FLcwh3Bi9VigCEJ2km8hamH
+	 fHYBMg6UeRpKpLX9fw5vK1DJbt21/qZ/vYcUnzV+5DkRVelnRqL3Jx9MEUUNkJqaS1
+	 FGAQLXcuFrIjMEUVtExsKOqERkZ3F1m26uwpkpKMrh6xYX3e73pJ9Wqqv2SsRqQSNU
+	 AsrPX4VcfA/3w==
+Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
+	by mors-relay-8404.netcup.net (Postfix) with ESMTPS id 4gYqSf5fw9z4xHs;
+	Mon,  8 Jun 2026 13:24:34 +0200 (CEST)
+Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4gYqSd6mSVz8sZh;
+	Mon,  8 Jun 2026 13:24:33 +0200 (CEST)
+Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
+	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 2FFD361803;
+	Mon,  8 Jun 2026 13:24:33 +0200 (CEST)
+Authentication-Results: mxe9fb;
+        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
+Received-SPF: pass (mxe9fb: connection is authenticated)
+Message-ID: <5f2d4707-ae11-44f3-ad09-1c0580abde91@leemhuis.info>
+Date: Mon, 8 Jun 2026 13:24:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tVw4tRx6/xXUSrQN"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] next/master: (build) stack frame size (2088) exceeds
+ limit (2048) in 'dml31_ModeSupport...
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: kernelci-results@groups.io, regressions@lists.linux.dev,
+ kernelci@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org,
+ Randy Dunlap <rdunlap@infradead.org>, amd-gfx@lists.freedesktop.org
+References: <178059594388.10259.8984887956034576074@330cfa3079ca>
+ <6bdbbc1b-9934-462c-b9aa-afaf0605c2a0@infradead.org>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: de-DE, en-US
+In-Reply-To: <6bdbbc1b-9934-462c-b9aa-afaf0605c2a0@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <178091787355.3623625.15408127688317230229@mxe9fb.netcup.net>
+X-NC-CID: eXrka6M8jsSTUlfGcSCIeRRgyRl/PFaULbGItnCAWYuDfKM+SFY=
 
+On 6/5/26 06:23, Randy Dunlap wrote:
+> [adding amd-gfx]
 
---tVw4tRx6/xXUSrQN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[+Nathan -- I'm also wondering if we should CC the amdgpu maintainers,
+but lets wait with that for a moment]
 
-Hi all,
+Nathan afaics saw this problem a few weeks ago already and filed and
+issue for tracking: https://github.com/ClangBuiltLinux/linux/issues/2161
 
-The following commits are also in the risc-v-fixes tree as different
-commits (but the same patches):
+To quote from there: ""After LLVM commit 8ac9461e48e0 ("[SLP] Reject
+2-element vectorization when vector inst count exceeds scalar",
+2026-04-11), I am seeing two new -Wframe-larger-than instances from
+drivers/gpu/drm/amd/display […]""
 
-  aad60bdd0b5a6 ("riscv: Fix fast_unaligned_access_speed_key not getting in=
-itialized")
-=20
+Side note: I wonder if that LLVM commit somehow made it to the KernelCI
+env, or if something in the amdgpu code in -next changed and made the
+problem worse.
 
---tVw4tRx6/xXUSrQN
-Content-Type: application/pgp-signature; name="signature.asc"
+Ciao, Thorsten
 
------BEGIN PGP SIGNATURE-----
+> On 6/4/26 10:59 AM, KernelCI bot wrote:
+>> Hello,
+>>
+>> New build issue found on next/master:
+>>
+>> ---
+>>  stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than] in drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.o (drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c) [logspec:kbuild,kbuild.compiler.error]
+>> ---
+>>
+>> - dashboard: https://d.kernelci.org/i/maestro:96417cd30041ab8f3153128d0120c6cd70782d99
+>> - giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>> - commit HEAD:  b99ae45861eccff1e1d8c7b05a13650be805d437
+>> - tags: next-20260604
+>>
+>> Please include the KernelCI tag when submitting a fix:
+>>
+>> Reported-by: kernelci.org bot <bot@kernelci.org>
+>>
+>>
+>> Log excerpt:
+>> =====================================================
+>> /tmp/kci/linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn31/display_mode_vba_31.c:3872:6: error: stack frame size (2088) exceeds limit (2048) in 'dml31_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
+>>  3872 | void dml31_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
+>>       |      ^
+>> 1 error generated.
+>>
+>> =====================================================
+>>
+>>
+>> # Builds where the incident occurred:
+>>
+>> ## x86_64_defconfig+kselftest+x86-board on (x86_64):
+>> - compiler: clang-21
+>> - config: None
+>> - dashboard: https://d.kernelci.org/build/maestro:6a21abf22cc72b6e94bf3c60
+>>
+>>
+>> #kernelci issue maestro:96417cd30041ab8f3153128d0120c6cd70782d99
+>>
+>> --
+>> This is an experimental report format. Please send feedback in!
+>> Talk to us at kernelci@lists.linux.dev
+>>
+>> Made with love by the KernelCI team - https://kernelci.org
+>>
+> 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmomoLwACgkQJNaLcl1U
-h9A4Jwf/e8LjwimJHpfi/CnUe8JT5LZVdDJYMFGmcz9qEXbfp8o1G/7pFJ+z6+7H
-IpMOByqZGnQ5YVnA17jLqXRhsz4hdudAlkdoY7auD380QaD9lxqEmOoCkMPohInK
-xItBS5H/VC1IGoENbT5EtqGP01j19jwqQTPXHbDnosZrot5TLxVs5ZfyXqvu5UL6
-Cd8DmuWMEO0BRqvPg5TomJ95iSpW9i5ICFDX6neGgRtEED28LKhb4OOkaUNv+r22
-pdA6WwHUAqVnZTpUj709tR3pk6GYoT8Fcgw7lABg5drNaZ0yQifvWanm4yN5GmsZ
-eiVMk8eoY/5BHq2VutYgR4d3mK68Og==
-=uozs
------END PGP SIGNATURE-----
-
---tVw4tRx6/xXUSrQN--
