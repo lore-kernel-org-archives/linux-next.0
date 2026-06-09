@@ -1,44 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4063CF205;
-	Tue,  9 Jun 2026 07:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7438AC8E;
+	Tue,  9 Jun 2026 07:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780988813; cv=none; b=kq4kKocU7qNkcooYhmSp+5gd8KqBObbgULcJHxpZf+dpcZfRD4SeR+Bfn6aCI0COEAHQdtNVotV0vlwYDG4mcErdaxYEGuK3+bGoHdU0/GLzfh+1B384Shl8nxwcmj5Y7KXyB1yVPfnm2w9FFJzDktyWWK6i7vrr34VMQEwjxCg=
+	t=1780989711; cv=none; b=RTHg1PVHhwB0KSIqi1rTMB4SZKnkyhax8xXwt0JMVG4QNlj+yKRNANvNsclGr67yy+B2fyJyfoyJkH5pHIuJRBD2JGVB7BX+1c/l2b9VnSkdmTx1fCeQujuQ/dLsS72BMKGZ7kH0zFzoLvENqKRSMGfGyD3e/A0gxwbwnFhNDeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780988813; c=relaxed/simple;
-	bh=CKr1JNRfcJCb/mfIEajfHDyjHj8qNiHBh8gDjDJ1Dc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwIvHZFaP8uKHQW5pEeStlxIWW+6nJdvBl1oRFCCNCaMDccWjXHVsvL4csSd0ST0chFIQrE7K876k/2HHf6GE/AlhBpCHL8+MRNvDWwslT8dYViD7Uw8LPjWgXO7VJDJ1CK6/DLEYDvBrGAGPaSy01tDiH76jfB8YuvZeDzr0Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tlxqa53W; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780989711; c=relaxed/simple;
+	bh=vPRtbvI9UUMBhlEon6EMZ/axGnGv9eAK+KWtoV3h7y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XOehrOa1fvfnTCSmkcH+HWqQ0NxbmeOurTnUTKFe0YTilzQqfQghC4BVKHabyVCXsV+1M74Ll0/w8rQaVTnnSIOMOxsanvjF999bcmmfUamEnQfzbEbfSivlCXAesNPYkbRcarniKbbt5KyYtMvzYmA5JSeY8AqyM3jMmp1X2EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAXUSZU3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tlxqa53W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 210011F00893;
-	Tue,  9 Jun 2026 07:06:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAXUSZU3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09881F00898;
+	Tue,  9 Jun 2026 07:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780988812;
-	bh=JiZdu6Gywd1b+1ao2M8ONFd/0cPqy/H2X9c5B1Ug6rA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Tlxqa53WEFXnsMnWQhtYcTAET6bBX+6/+8tkNaJuW4iJnm6a88jcQbeAGQGRV3GtW
-	 HAjq2I9GDsXFFJLwms2mmL1gNYe8dh6fp8Os/are1eMa9P2rTA1JV/OJFABwCd+Map
-	 PHWjCJ6adAxQMjHP8XAhTD0nrvVbdIL3k0CVs9OBJDWMPVhaEfr0nUWVJ9zUFZEyKn
-	 r8Knab8gzHttjDtoY508bhDlSky9pvv49z623gi70qBJKTZ5TWv/W6Bb2ulFsrr8qt
-	 W1NivwR4nt2VFdmRGonrC1/uoyR/yMumGf+2Tt7pnh23w+I83u5hL/t5JnEy5rn1uS
-	 Kpy79HK8RGWlg==
-Date: Tue, 9 Jun 2026 09:06:46 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thomas Gleixner <tglx@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Roman Bakshansky <bakshansky.lists@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with the hwmon-staging
- tree
-Message-ID: <aie7hggt74Qa8jSg@gmail.com>
-References: <aibSXki-s7geOFFn@sirena.org.uk>
+	s=k20260515; t=1780989710;
+	bh=vPRtbvI9UUMBhlEon6EMZ/axGnGv9eAK+KWtoV3h7y4=;
+	h=Date:From:To:Cc:Subject;
+	b=ZAXUSZU32gDUdU7qIJI8BLPMGvhEDAf6XJfLTAYNLD4UiGTYxg1XDNveKtbL2cNpk
+	 bA6qL9keV5nSecLbg9fW38wi5YFF/7UkymWf6rSoZ5AfJRY8EE5H099wjFSQaM9eH/
+	 2a9tgHSBSGm6AxSqc4AxmIlRy9qiCniFZydl3cGG9FlGgBq8gwALEMPg7xKkajNaoa
+	 0uKnj+u5mJIb/0Kt/tGPlES51AGz+Rut8GgkbuJDfJTMxHU29D5oG10d8+6swvQJEK
+	 qd+X3D4TEFi8kppcukXBQCSNBR5LS5Uq1bUROqsMZxZcZsKfiliXq0PavdjM1UVQjB
+	 L7SJEz15Fxdyg==
+Date: Tue, 9 Jun 2026 00:21:48 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: broonie@kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-riscv@lists.infradead.org
+Subject: Add fustini riscv-config to linux-next
+Message-ID: <aie/DAyvda4bcdLm@x1>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,55 +42,19 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aibSXki-s7geOFFn@sirena.org.uk>
 
+Hi Mark,
 
-* Mark Brown <broonie@kernel.org> wrote:
+I have a new tree where I will apply patches for riscv defconfigs. I
+have trees for dt and clk for two riscv soc vendors in next but
+defconfig patches don't belong in such branches. Conor has in the past
+taken defconfig patches but he is happy for me to send pull requests
+as needed based on my new defconfig branches.
 
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   drivers/hwmon/coretemp.c
-> 
-> between commit:
-> 
->   1b16a26e79433 ("hwmon: (coretemp) fix coding style issues")
-> 
-> from the hwmon-staging tree and commit:
-> 
->   91660aae2f864 ("x86/msr: Switch rdmsr_safe_on_cpu() users to rdmsrq_safe_on_cpu()")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc drivers/hwmon/coretemp.c
-> index 02b4e46d965b9,70711a7cca123..0000000000000
-> --- a/drivers/hwmon/coretemp.c
-> +++ b/drivers/hwmon/coretemp.c
-> @@@ -220,13 -220,14 +220,13 @@@ static int adjust_tjmax(struct cpuinfo_
->   		 * http://softwarecommunity.intel.com/Wiki/Mobility/720.htm
->   		 * For Core2 cores, check MSR 0x17, bit 28 1 = Mobile CPU
->   		 */
-> - 		err = rdmsr_safe_on_cpu(id, 0x17, &eax, &edx);
-> + 		err = rdmsrq_safe_on_cpu(id, 0x17, &val);
+Please add these to linux-next:
 
-> - 		err = rdmsr_safe_on_cpu(id, 0xee, &eax, &edx);
-> + 		err = rdmsrq_safe_on_cpu(id, 0xee, &val);
+riscv-config https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git#riscv-config-for-next
+riscv-config-fixes https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git#riscv-config-fixes
 
-> - 	u32 eax, edx;
-> + 	struct msr val;
-
-> - 	u32 eax, edx;
-> + 	struct msr val;
-
-Looks good, thank you!
-
-	Ingo
-
+Thanks,
+Drew
