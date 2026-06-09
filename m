@@ -1,60 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7438AC8E;
-	Tue,  9 Jun 2026 07:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DB39B4A5;
+	Tue,  9 Jun 2026 11:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780989711; cv=none; b=RTHg1PVHhwB0KSIqi1rTMB4SZKnkyhax8xXwt0JMVG4QNlj+yKRNANvNsclGr67yy+B2fyJyfoyJkH5pHIuJRBD2JGVB7BX+1c/l2b9VnSkdmTx1fCeQujuQ/dLsS72BMKGZ7kH0zFzoLvENqKRSMGfGyD3e/A0gxwbwnFhNDeI=
+	t=1781003404; cv=none; b=ihOl8kgyT6cJ4xECNaDuhIXREFnPAyaubPgUgztqyJ0vklK6+nRK9yyxWJMLq5UEGub732gumTRoWz2yGSXAP7//bWtGigUl1RmwJi/NqiOqSGZ18HXjeohrlaub8YFSRFWbB6CJA7TwaX7X9WBOQkOMaAO78h+i1dOZWsSOq1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780989711; c=relaxed/simple;
-	bh=vPRtbvI9UUMBhlEon6EMZ/axGnGv9eAK+KWtoV3h7y4=;
+	s=arc-20240116; t=1781003404; c=relaxed/simple;
+	bh=CXiJ0rC6Y/c2P2I06hrY9+dpu1rQGYM6u9LuSP/RJG8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XOehrOa1fvfnTCSmkcH+HWqQ0NxbmeOurTnUTKFe0YTilzQqfQghC4BVKHabyVCXsV+1M74Ll0/w8rQaVTnnSIOMOxsanvjF999bcmmfUamEnQfzbEbfSivlCXAesNPYkbRcarniKbbt5KyYtMvzYmA5JSeY8AqyM3jMmp1X2EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAXUSZU3; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=pEwE3zX7N9AC1OpioqskMk3KqeYQWRlwvYbxmLJtURvrTi+n1yFQq5n6WYkyWLPONOdfyA0+J61MjhnqPHMGN7SC5J9KVOoPpdu6vnX54msOwFREj7wwEjFvktgQPPDu/9Z6YLRehsznbF8q1k9Xz/ExMrZw0SUE1632rAxxEEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZZBO5e0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAXUSZU3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09881F00898;
-	Tue,  9 Jun 2026 07:21:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZZBO5e0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B371F00893;
+	Tue,  9 Jun 2026 11:10:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780989710;
-	bh=vPRtbvI9UUMBhlEon6EMZ/axGnGv9eAK+KWtoV3h7y4=;
+	s=k20260515; t=1781003403;
+	bh=yoHweLsEMsoA0bJ6SSLbHhKWCh4ujSg0YsvsF/byyIs=;
 	h=Date:From:To:Cc:Subject;
-	b=ZAXUSZU32gDUdU7qIJI8BLPMGvhEDAf6XJfLTAYNLD4UiGTYxg1XDNveKtbL2cNpk
-	 bA6qL9keV5nSecLbg9fW38wi5YFF/7UkymWf6rSoZ5AfJRY8EE5H099wjFSQaM9eH/
-	 2a9tgHSBSGm6AxSqc4AxmIlRy9qiCniFZydl3cGG9FlGgBq8gwALEMPg7xKkajNaoa
-	 0uKnj+u5mJIb/0Kt/tGPlES51AGz+Rut8GgkbuJDfJTMxHU29D5oG10d8+6swvQJEK
-	 qd+X3D4TEFi8kppcukXBQCSNBR5LS5Uq1bUROqsMZxZcZsKfiliXq0PavdjM1UVQjB
-	 L7SJEz15Fxdyg==
-Date: Tue, 9 Jun 2026 00:21:48 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: broonie@kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-riscv@lists.infradead.org
-Subject: Add fustini riscv-config to linux-next
-Message-ID: <aie/DAyvda4bcdLm@x1>
+	b=aZZBO5e08jujkzGKK2qTGZJJN3mJ8FehFujttpZuQBNE9rz08ulpQO9jTO35W0X1c
+	 1kJ1xnurx7HbE99cCjDmaQ/Fu2B2J/0iJnjlxRtAxazac4wAIBKSdzJtjT8m7AcXFf
+	 VrLiXspZucols9NwvwWMIgtZEzXeaLA1lKFJNln8/RrAtzyJj1b8GsnkuJt8slV9V5
+	 rEpnn8Z/vW1BHO4rCAt4jIZPNV09A/K1KUMfaH+SBhR9Pie1chUeYEZQy5mIOp7nZF
+	 /RjPyqo1mKs/UuFrQttej7QsmqDHHZmdu7ES7PA1U9eIn07x3pUaW/QduWvt4AITo8
+	 tSQs3IvVRuLyw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id A3C021AC56AD; Tue, 09 Jun 2026 12:10:00 +0100 (BST)
+Date: Tue, 9 Jun 2026 12:10:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the hwmon-staging tree
+Message-ID: <aif0iKdxxNWxgoSK@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jRa67y14eamgWUiG"
+Content-Disposition: inline
+
+
+--jRa67y14eamgWUiG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Mark,
+Commit
 
-I have a new tree where I will apply patches for riscv defconfigs. I
-have trees for dt and clk for two riscv soc vendors in next but
-defconfig patches don't belong in such branches. Conor has in the past
-taken defconfig patches but he is happy for me to send pull requests
-as needed based on my new defconfig branches.
+  beb0e2d1add1e2 ("hwmon: (gpd-fan): drop global driver data and use per-device allocation")
 
-Please add these to linux-next:
+is missing a Signed-off-by from its author
 
-riscv-config https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git#riscv-config-for-next
-riscv-config-fixes https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git#riscv-config-fixes
+--jRa67y14eamgWUiG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Drew
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmon9IcACgkQJNaLcl1U
+h9DHfQf+IrwNU1yORGPfEhukwrnJQ0ck1Ob0UnEWM+4Ziv4PePGY9IIEKYGdFf1T
+jSE3OZwHyopHcGG2/wMqwcwnD7UuqxG4II8JxY5xG8hJ5Hi4bETbLTLiUWFywfFH
+OQyFb4HdJQUGvYskWnfKCCBOQ9KgiZ3Al/ygCLJytcP2PMd4ux6H12mh3YhRWNHz
+wqdEbXEPfTFZyld54SsCOErh/sG7KMOtY+JUzLx351QAyqIunOMy95hEgXzX6ahk
+6nP9tTbUN/SkofZUhDNslYpV0RtKITBc92N4BuyOSFGjFScASZ3mrGbBawrKk4uI
+ohLp25NplWe9XucSn0cqUdPBczEGOg==
+=v6FT
+-----END PGP SIGNATURE-----
+
+--jRa67y14eamgWUiG--
