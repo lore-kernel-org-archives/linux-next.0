@@ -1,95 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9FA349B0D;
-	Wed, 10 Jun 2026 17:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E2240D592
+	for <linux-next@vger.kernel.org>; Wed, 10 Jun 2026 22:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781112510; cv=none; b=lAHOlUOcAjcjrLzIFMESYmu2Y2QjUVMLV45tXL83AkX3hK41uUeiV/Udh4WHFoPdoknMhL1SOIA+mTdcY3RxZbUSZlU5VbxFhFdmeKpibcM4BfySB+naeSFChzknFPRLWfB2ias3Gcog4dAdASLNEAb8FBpkk1uUxvWCTqPSRUk=
+	t=1781132275; cv=none; b=YcSVPnVJ/ou8+v2ZynkFdZWEQ1gUKQEa7PWmUkGdMlZXu30D87ib103iyvMMLRlTAk8Plg9tfAZvYUDuup9LFDQQvqxZY0rmS5mEZ+ZKsjNwWS69nVGxUYg2omRsd/pinwpjU5o0OzYbP+R+dFNWOYBSR/qWxRNxu6Ge5nX559M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781112510; c=relaxed/simple;
-	bh=UbWH7xtEPka23YPaTjlNHgBVDQwrXRiTG8u7Y709vU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=saFp1vIcQZjz+M9QPycsBFgcCtr2m9GSr9oNMFld8L2EAnpadGsrVfMp9gtQ+RKJzR1fE1iF29/ynoe3s3MJtsp6JxpFJS2wGsALNSHrwlAn3HU3N47r32qRoIZfTRDHubSZC7b5eIUzE6bQqeNeAs/GcjAQBIZ+q42Q6/cCAyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFeAxy/d; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781132275; c=relaxed/simple;
+	bh=Y6EtvNYqDrwmtVy+rjc6BHFg2tMQZeGh6M4lioZSb+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uotmrD8xf8XhbN5b/jNeAoCKjIa7yr4Yg9opcHjbc9psD3ejWw3I42VdzDich/Brk+ahQcl3+Zo5QR+ToiLdkC2I8Se/vEmsHqbZ6lqyO0Rd1pbPLw0rJObI+RF3O3BiHmVSSTSGSzUOJC4c9CgXsTXNigQjQtbDj9Id0TkLUko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HinXilvn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFeAxy/d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925361F00893;
-	Wed, 10 Jun 2026 17:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781112509;
-	bh=Wn7QKzDlovPappiGR/eZxVd8+we6CMmMI8bC/x2N+A0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FFeAxy/du8R4OtAwKhk3TYcXSrbwbhFiU3JqIuSFuBh4ld/9Is8iIMPtGPCyJJotj
-	 pD78DGqdB5+0c49HMBBHJ7J1qVwEjmcPTz3NSnEsrDyX4wi88ClKjgXBVrbkB84Qiz
-	 Tk9CavS6xwjWNfA+OZ+s3Izd85Ypr2SSi8nYKAVoEOUgtNr4lI4SkPujYNVWT8U0n0
-	 xh2mHYMYvwR5J/X9JHXk+XKeK5Vx/Zsvs1vHodRQCXPrInsq9Wa6/mTNde1qBMwBl1
-	 Zuujrp0Dh+qk6pRDM7NL2/1rHtDIZSOhT2nX46EdObxfeDOh2ws8xs+498tr65BsYk
-	 VWskdLPB+dGUA==
-Date: Wed, 10 Jun 2026 10:28:23 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Tejun Heo <tj@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linux-Next Mailing List <linux-next@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Breno Leitao <leitao@debian.org>
-Subject: Re: [PATCH v4 0/2] workqueue: Add warnings and check WQ flags usage
-Message-ID: <20260610172823.GA804799@ax162>
-References: <20260529130640.220328-1-marco.crivellari@suse.com>
- <bdce3ef27e358b704541d403d28206fd@kernel.org>
- <a808c387-1087-4826-80de-16252ae315b2@I-love.SAKURA.ne.jp>
- <a85feb7a94ee487fb5b236d86b674c58@kernel.org>
- <5b2dea50-2850-4876-b6e8-ba94b9a85034@I-love.SAKURA.ne.jp>
- <ah2bd_V2QHQftm2o@slm.duckdns.org>
- <4d47c6aa-8ba5-4e17-87e5-bf1e5ecfbddf@I-love.SAKURA.ne.jp>
- <bbca08c9-c6bc-4109-b734-14aedc10c93b@I-love.SAKURA.ne.jp>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HinXilvn"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=tLFRG+G6Kev6HzYOH+EN+dR2016+TeY9zjqlZrRQvRU=; b=HinXilvnQ3XFEYhDB1240OWaoJ
+	+wk5i3WJMWBBCYv/zOoa246ungyLY+OLTs4RkDqRudLyA3IQezeBCuNIaQF7oeW/gVLc5joq+quY7
+	tfoPochyrvxZQFvZv/3d3Jb3wDZa30uAZblBr/GYxYO024dZ3039BMJTqpa5FoOmRw1e84Avyz8KQ
+	F49Yd+VsCyvxdMDdkP1wtDN0HK9Wm30tI/sYcV94Cm+4hOS0q+oPUSB8uRGplgy82paZ32FbOYKSP
+	X5as4721Jv+rsPpXTzDSCeWeE7s4O/o7HfzatdTNjYkcPHaofB1t/OrRWIk6rb63EU8bHMhCNjeH3
+	msbPbgTg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wXRrs-00000008Qsw-3JQs;
+	Wed, 10 Jun 2026 22:57:52 +0000
+Message-ID: <608ff135-c113-4bda-9812-26ee8f8cdf7f@infradead.org>
+Date: Wed, 10 Jun 2026 15:57:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbca08c9-c6bc-4109-b734-14aedc10c93b@I-love.SAKURA.ne.jp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Jun 10
+To: Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+References: <aimIc7ciEUrhXV23@sirena.co.uk>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <aimIc7ciEUrhXV23@sirena.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 10, 2026 at 09:48:05PM +0900, Tetsuo Handa wrote:
-> After 10 days of untestable period, the third breakage report came from btrfs
-> caused by commit 69635d7f4b34 ("fs: WQ_PERCPU added to alloc_workqueue users").
-> That commit added WQ_PERCPU to fs/btrfs/disk-io.c despite the "ordered_flags" is
-> passed to alloc_ordered_workqueue() which implicitly applies WQ_UNBOUND.
-> 
-> That commit says
-> 
->   Both flags coexist for one release cycle to allow callers to transition
->   their calls.
-> 
->   Once migration is complete, WQ_UNBOUND can be removed and unbound will
->   become the implicit default.
-> 
-> and you definitely started emitting WARNING: messages before allowing callers
-> to transition their calls. I consider that commit 21c05ca88a54 ("workqueue: Add
-> warnings and ensure one among WQ_PERCPU or WQ_UNBOUND is present") should be
-> excluded from the linux-next and the upcoming merge window. The next one or two
-> cycles for transition should be printk() without WARNING: string.
 
-FWIW, I sent a patch for the btrfs issue:
 
-  https://lore.kernel.org/20260601-btrfs-fix-wq-warning-qgroup-rescan-v1-1-aff9a1128f27@kernel.org/
+On 6/10/26 8:53 AM, Mark Brown wrote:
+> Hi all,
+> 
+> Changes since 20260609:
 
-With that applied to next-20260610, I don't see any other instances of
-this workqueue warning on any of my test machines. I do agree that
-enabling warnings prematurely is disruptive for testing and should be
-avoided but it seems like this one is close? That change should be
-applicable to the workqueue tree, it just needs to be taken at this
-point.
+> ----------------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+
+linux-next-202606{09,10} are *not* available at www.kernel.org/pub/linux/kernel/next/.
+The last one there is linux-next-20260608.
+
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" and checkout or reset to the new
+> master.
+
 
 -- 
-Cheers,
-Nathan
+~Randy
+
