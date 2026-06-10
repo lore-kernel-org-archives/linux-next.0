@@ -1,113 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5C936C9D0;
-	Tue,  9 Jun 2026 18:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48C122FE0E
+	for <linux-next@vger.kernel.org>; Wed, 10 Jun 2026 02:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781029354; cv=none; b=NVdkVqstpoUyid6gfO/1G3mZmCzfFBYUOowEqQ1qjEu6A5kBX3XYqSakPDKXyg8cSO8asHwGKlMmFi6mV//cpsa0xtToGDXkuRKcGBofhTJcJdlkmxe2MqJPIH6hDuGMJp2KSCubYLekrVytSMXsZ4txosIeG0ZtmM47gnCYfNw=
+	t=1781058613; cv=none; b=YVkvhOAsENDpmaT4CV3MWi3EEOGUOXgCE8JBJdqnC7cahmBKnME88XpWiclAEyJziPw3eA6SL05/BUpMd87RMbgM3h7fyxPxnFrDP1WhkMISoj9X0PAi7uwQhV1D3gZ0VBWC3Uie1T44DtvkZDESymAEIvFPCdK6gfcj0vu5Rt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781029354; c=relaxed/simple;
-	bh=QGTFSlS5uXRQhzg9ry2G6fWURvIZJ8eD7ulk63LAFYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=M2gIwr1BzfMyWI1wT3meRNo2P/2Q2WiUlejRMY6saQK7VUwXolCLnHe4wISYvzOX+iW77M0vK209wWUlBY53hOB3mTKcwnPhYtCN/8y4z0YVbSaWzJ2jFlRmIBHn/1CqPqQS7yNTxzK8VzW15Nf4HHZYkd9c/00UtafGxoPRqMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrLhsrfC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781058613; c=relaxed/simple;
+	bh=7E+96kbkpbnd9p9+r4BhevPhKYL1x+4cAwsUI4UJSKM=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=FR8Px+P1bh5eFlvCmHjzlIauz1785BDhJbgBvBPZpIDthpjbOyazm7dNnAHZhWUrJugnEdvcxlaKRXE7fOhz39oJ74+cbo/n/QaJTf6Fct3ZnfX+qWYIp/6W7ea3tMqYmOXlkIP/2lfiC2gyUrS4Dl2VcOIHPnKXprgg2gGq1C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=UFfOYviJ; arc=none smtp.client-ip=74.125.82.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrLhsrfC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6111F00893;
-	Tue,  9 Jun 2026 18:22:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781029353;
-	bh=TWEe5IMO1MOd/sPS0JKiBorVst5iLFH/pF5e1ulu1yE=;
-	h=Date:From:To:Cc:Subject;
-	b=KrLhsrfCB8ruMrObdEp8Jjj703gBCxAIi0YcXff3mxJUp7I+43ewvq0Ghb+irZ8/S
-	 CPK6X8JlNj1+I3sYAqRiGwjx8pjEj13GZJNWI9fQKgEo7VzE/3NJJEHJUf4p4FCxcb
-	 0GCODtMVPhT3Qlh7mND/J5kBkFq688u8nDOc0drsIzkfuoPCsEStbVeH7MbHMpKv+Y
-	 kAJfaJFenfK+GQbPIh+tb5MVKsWvFfYgTnqf9liXSjixfTK/7lUlShNGGcN3MdXT+D
-	 ssmQ1nQlA2y37GE6G/WkW29zn2VmBBnpI2Zp0JNs3OWemVIKD+mRrGPuRcQnlEXtR1
-	 wizFJ48QL8mIg==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 108441AC56B8; Tue, 09 Jun 2026 19:22:31 +0100 (BST)
-Date: Tue, 9 Jun 2026 19:22:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 9
-Message-ID: <aihZ51Nt2sh_1Je-@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="UFfOYviJ"
+Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-304cf518c9dso7732369eec.1
+        for <linux-next@vger.kernel.org>; Tue, 09 Jun 2026 19:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1781058611; x=1781663411; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QporlrzfN09BDXcthlpIa9546DmgHywrCyqiRRUTkHY=;
+        b=UFfOYviJisOYzccqIAqhtfYQ4jwFkLXB9fsJz31bWFnlBrUdkNfCrJleVo78YRwWlO
+         bm7xr65DANKiLuPsnSfOUzVajMd7aRPdNDHrydEofXdzwFDswDxCsTFnOX/yn7gfQnb9
+         53dZdeGfjJRM5yAjBDgMF2Smo/9yjK04aQJ021Wx2K2jLZth1ScAb6ygAMblwSjkVe3x
+         6VgxGigvmmVF3YL9gJLv8p70ksUffo9UecaoHfAZNRJ0YdAQfBtZdl2kaZvj5NJT7Ya2
+         gkiRBATAdro6/9qbXWMVaiZhbI/WAMULSVpBcwmCc7WJTH1u4FlvvkS7LXE0kQgoYhxt
+         ZPRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781058611; x=1781663411;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QporlrzfN09BDXcthlpIa9546DmgHywrCyqiRRUTkHY=;
+        b=R0ylOSBDeqj2MV3/ks1ljB7+nf1Kyk56fGo2zFGjVnVDWHI06bz9c+7MacpOcWRtA/
+         eGLVr3Ckxxdks4ds1jgFZ0aTiah0XhUPrkbpIUVoIOYrLIS98Vm9x26ZjQb6b9EbXxR9
+         vtyQiwXJkd85uVXJswLfPEoL87rQUC9PLplXxRp99SNsOvMb6aPrw7v2qPO5sZNl+DRR
+         j7HGuviYaf+ZFgMGtGJ/PzJIPcvjm6fgzhlWpxqTC99nXUcid0NKEmwD5WdMqf04oWhl
+         OeNp9q8EEMY8MAvd7ZwsS0OTSOZHJJzOPYEKWjU4V/8wQWELDFfsJeXU15cSmFN4rLlS
+         NKgA==
+X-Gm-Message-State: AOJu0YyRVm3Dz4xgYToqviKrHpToRfZzzPkhVVIxtea/r+xwo3q+uMlf
+	rjIKLaOS/EB3J53/1dWhr0fPZfXdcZODLJAWNCicrCKwqu5Qv6ZPb8ibrq7KKjdJo+E=
+X-Gm-Gg: Acq92OFpsU8Sx/MeAQ+SKiMcPG3ko5ZjmGoQti/b8NO+9rzv9E1EqPUJhDk5XwmT7xZ
+	UavHYXtP8PIV449itrsJg95NwvtqZg7kKgnQe74ClADvRQLlRKvOxg/dMfIHnbN0H+bUlVOPTJO
+	gofePAQkDM5Mr5Sn6qGmT9zMX3HtIGDymWiFl8skb9Axg5JQZmpOySZKK/i3IsfcgQvvhDU66dh
+	i+Jc1XFCrFvlMe/HuG9SL1zrjkZTlDzaRdYY91JRBcqup0SL2Bix/z/9GYpP6hpGLHbcQTmKMo1
+	BqhgA672XBPfJOrz/nx449RUa/rbuyDzuEBipa4IPhBP35KeCMXi0EiQmaEc9W31wZ8HK+zRX4x
+	Bu6/A72rV8bHQM39DFIV1rw2SzaSl0vv30dop2yAd+SsMV61e8pQFspWhNAUB3qWWxxTRFsf9PW
+	vtKvmC7k+ih9ycBl7N9yLZyW0ltXE=
+X-Received: by 2002:a05:7300:5710:b0:307:34f9:cc9 with SMTP id 5a478bee46e88-3077ae88144mr12917788eec.2.1781058608166;
+        Tue, 09 Jun 2026 19:30:08 -0700 (PDT)
+Received: from 330cfa3079ca ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3074dea89easm25115495eec.14.2026.06.09.19.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 19:30:07 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WkEF2bPdseJUeCjO"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 49e02880ec0a8c378e811bc9d85da188d7c6204c
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Wed, 10 Jun 2026 02:30:07 -0000
+Message-ID: <178105860735.12723.2697253482636314772@330cfa3079ca>
 
 
---WkEF2bPdseJUeCjO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi all,
 
-Changes since 20260608:
 
-The vfs-brauner tree acquired a conflict with the xfs tree.
+Hello,
 
-The i2c tree acquired a conflict with the i2c-host-fixes tree.
+Status summary for next/master
 
-The drm tree acquired a conflict with the origin tree.
+Dashboard:
+https://d.kernelci.org/c/next/master/49e02880ec0a8c378e811bc9d85da188d7c6204c/
 
-The drm-xe tree lost it's build failure.
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 49e02880ec0a8c378e811bc9d85da188d7c6204c
+origin: maestro
+test start time: 2026-06-09 18:48:49.703000+00:00
 
-Non-merge commits (relative to Linus' tree): 11532
- 12449 files changed, 774310 insertions(+), 232823 deletions(-)
+Builds:	   58 ✅    1 ❌    0 ⚠️
+Boots: 	   72 ✅   73 ❌    5 ⚠️
+Tests: 	12711 ✅ 3067 ❌  556 ⚠️
 
-----------------------------------------------------------------------------
+### POSSIBLE REGRESSIONS
 
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+  No possible regressions observed.
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
 
-Below is a summary of the state of the merge.
+### FIXED REGRESSIONS
+    
+Hardware: cd8180-orion-o6
+  > Config: defconfig+netdev+nfs-root-boot+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a288224dabb8c619d3f0810
+      history:  > ❌  > ✅  
+            
 
-I am currently merging 425 trees (counting Linus' and 131 trees of bug
-fix patches pending for the current release).
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
+### UNSTABLE TESTS
+    
+Hardware: aws-ec2-arm64
+  > Config: defconfig+aws-ec2
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a28690fdabb8c619d3e6aba
+      history:  > ⚠️  > ✅  > ✅  > ✅  
+            
+Hardware: aws-ec2-x86_64
+  > Config: x86_64_defconfig+aws-ec2
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a2864c3dabb8c619d3e3efe
+      history:  > ⚠️  > ✅  > ✅  > ✅  
+            
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a286ed8dabb8c619d3ebf77
+      history:  > ✅  > ⚠️  > ✅  > ✅  > ⚠️  
+            
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a286e7adabb8c619d3ebb39
+      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
+            
+Hardware: exynos850-e850-96
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a286ed8dabb8c619d3ebf7e
+      history:  > ✅  > ✅  > ⚠️  > ⚠️  
+            
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a286e7bdabb8c619d3ebb3c
+      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
+            
+Hardware: qemu-x86_64
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-14
+      - boot
+      last run: https://d.kernelci.org/test/maestro:6a2865c0dabb8c619d3e44df
+      history:  > ✅  > ⚠️  > ✅  > ⚠️  > ✅  
+            
 
-Thanks to Paul Gortmaker for triage and bug fixes.
 
---WkEF2bPdseJUeCjO
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+This branch has 1 pre-existing build issues. See details in the dashboard.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmooWeYACgkQJNaLcl1U
-h9AaLAf+IJLuPRREAHzcK4vKOpfutHIEDTP06kB3qGs+/W/KNZlwrIjJMFY2M8iC
-uzGrA7psCCgk+2k8z/GSR0plMu26scXlCFrWZy9KFdrlGw+RnrMO6P8Z+08GYk5b
-77wwD5DeCg5RAR5mxtKRnR1zszZOzwi88/nt6Bvou83eQ/9DuT40UEt/RkGWUs8B
-98iZwowZHdBZtVxRCbblzTkuTbrIiPaT7EyI8bRem3I0yvMDx8m6xqbfXwA0P8ea
-Oa2kRO6Gej23YmwaZOXLTzLBuUCt3nLIZaOX19t2RMa28yBO3xAm4kHW/Xe3OPyF
-pEV+PJVOh36Q1VSIUlzyMsiqUBH7ng==
-=8wJD
------END PGP SIGNATURE-----
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
 
---WkEF2bPdseJUeCjO--
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
