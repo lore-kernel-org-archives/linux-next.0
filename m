@@ -1,224 +1,152 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5B6374A0A;
-	Wed, 10 Jun 2026 12:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931D335E950
+	for <linux-next@vger.kernel.org>; Wed, 10 Jun 2026 12:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781095731; cv=none; b=WoiL46aGSfgxKOE5hcdf3tKYK8fwPrLfpmMMUkB+pJC2VWLpqRSMmgOjb5amu9Yv+0YuS6py6inQ0coBmoZGPbgwQWOfeS5fDSM1nkfktcrjnvCq3PaNCAdf8cOIYWnm5pUzaPDXtv5O3mnsuD9lrXF1hiz5krJuuNPUz3qH2g0=
+	t=1781096309; cv=none; b=pABesdGl6wJanZ7oBzZX/D2+S7d3zFSkP8tfWevegm/Qj1HhvgpOLdPIOvtHz/LOtqtyIaNy0ExYQfbYvB0NMBbOENu4c0rDAWKcJxh8Hu9FiiKXw3d+/gKit7CKLBG+R3CIzSemcPV7VWqGosZ8mUUZbk0qN0oZlynxEqAbq0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781095731; c=relaxed/simple;
-	bh=/V9xKQTRSzBiLWjpdX7EIZ0QQnnt5ENDyk/ptFHwkkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FbndJWteov3YVgDGHp/82nMo73t4zJDWGm778gtko/Uf4spomTwasrNd/spJyvHhqA6JDa879REhKhZgVNe/iflw4I0mEsugUaxqpyzK/zRukSB7kqW/QFShyu9eZd1h8PAgh8Iz9FSWOyBVH1ePNB6s/96dMn5ymkq9kRNKoyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AFYhbNki; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1781096309; c=relaxed/simple;
+	bh=Nfz2yj3MSm3buLcptZAFjVGuJmga0zSh5Po+PBh0HIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CRli2aU+bmo7J3GCTX/wv1Uv1JzS3yA6v8bSdsdRwb3MdK3oh0HIXUCXL6ZOpxOCzYIeDrcwKYYv7z6M21XxfPmvSQ69Tb/8KicrbmANMw43KArH7t6F6DJLVG7F486qHy5dDrU+M+btz9VuSY0OblwVMi/7E2yh6A5FaVQq/1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFxrBN88; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AFYhbNki"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65AA6dSD3945916;
-	Wed, 10 Jun 2026 12:48:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=Ian2Q0Qeno/9qnfuBIjfz8+lE/cOshQQPX9TQEbKfV4=; b=AFYhbNki
-	M2QqhIuY8etzddfd2uUER9HG42TghTQu15TkkV8mAFUo2DY0GjgI5Yx0VBAmpxy1
-	7/OifXwZkWhkIYdt0e7JmCrlrHp98Q0GPuG01ljA1epgSLnI/ysXKosdVH1ad/4F
-	rUGp5Qr0abO7R3OGGBZPpjLup4EVp5Pkwtd+VeJR0X58wbKm8dAw2Cc7dwIO66xb
-	l5/SoS9XH7MCOna8PGAd9dh6jMY0nwm7LcDlAigf9fDijPiDdVb/8wq62gdsPdio
-	4na7WbP2LEXwQzGLxPpYYB3sOh3WoVcRvOOCxs1EASo/FrimVnIcMx0WmYLayP3m
-	0pt5yRXauDjeDw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4emb6t0msw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jun 2026 12:48:00 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 65ACYr3L027746;
-	Wed, 10 Jun 2026 12:48:00 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4emych6j5r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jun 2026 12:48:00 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 65AClui114746094
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Jun 2026 12:47:56 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 490B92004E;
-	Wed, 10 Jun 2026 12:47:56 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 01F3620043;
-	Wed, 10 Jun 2026 12:47:56 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.224.92.206])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 10 Jun 2026 12:47:55 +0000 (GMT)
-Date: Wed, 10 Jun 2026 14:47:54 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        K Prateek Nayak <kprateek.nayak@amd.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        John Stultz <jstultz@google.com>,
-        Vineeth Pillai <vineethrp@google.com>,
-        Joel Fernandes <joelagnelf@nvidia.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org
-Subject: linux-next crashes in scheduler on s390
-Message-ID: <17e75ff4-cf90-4772-9965-92a7235ca806-agordeev@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFxrBN88"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-8422a92b6d6so3546345b3a.1
+        for <linux-next@vger.kernel.org>; Wed, 10 Jun 2026 05:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781096308; x=1781701108; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=vRH1y6KyvJbGmzlZx8by88ize35seT2DmaAeYYj5V80=;
+        b=UFxrBN88taC7zsUFLwBTDZX9Slk3Mul5VGw/j8wrELO2B9y863F2b3+KtE7GJmJ9Kk
+         xWmMskIMMz96/OAhLUT4Cyc2ErHC7y0xigu9EqaA63Mo85DOpGChAFa/QyhVcp7HcafI
+         gEgqRSQA5rtuyl8zcbFJQr4QwV+M9Dgthh4mUoSxNh0zIw7pt3osTswRgL3eGzGXhR4/
+         +4FiOae/76kZSCp7i7X/aLFy/htoEEtL9yPg5tuKIs5TF8MMFmPN9exc/sFgI/+fc2Vy
+         vdVpey1RlIr9vtKMOzIgKdpFJ+SZMVFXK+0WBFTMFZt7VTB2prBvjTyNN1p5ycNzRJJX
+         s98g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781096308; x=1781701108;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vRH1y6KyvJbGmzlZx8by88ize35seT2DmaAeYYj5V80=;
+        b=Pqjf3qq/QguIPZZEzJv+Sz7VIgBC4X+iG3CqC2wNsUELNLicE4DpUqmpJOCGzy9y6I
+         lV9aS5cAE+YZGAUB0+lJjIsENVnUHm5jSzkiKFW6henEH6bHSM3CQI9DGylwV+vLS33o
+         ZdIQKZwKcxA9V4iRThZmGmEElsHryI6eKbLwXHt1Fhvb9NQAt33RKjFXMIRJzLGi+4AI
+         4cDIq35GnEaQLzuKY3CHqNCioVxV8V9iw8Mn6Jg5ZBHpQ58KISi9VRgj95//9bU9RngO
+         vMq+I3gu/MfBTsBGXXfVx/nQAEWIZlGUjHogv9zP3PYK3nqgi4jK6UQkauOs6pa3WjxI
+         zkqg==
+X-Forwarded-Encrypted: i=1; AFNElJ8Kg789Vj6dv/qdeCV+//kNKJfF1P0jwGXua+vkVu0hy2zavPCqEaiZFWNB7XXISgRzBm0C9eSaUsqZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwatfX4pIZVrmVzvABilmnD8WCztnijKDNcEwvUEK7n7wC2NW2g
+	fnLmuA7MIORTQdjcv9+d2sCUH6KBJI3M8Qtet4aEkduo6Pr+fUXp8CtAJYSjom+d
+X-Gm-Gg: Acq92OHkPJRKsRPsomd6HAcHjhN1jfhR30POqdTsN0v7EIHKvXbNfNC0ih9O2k3Cx8q
+	ovOn6PuTCIb0zZJ41Up0SEN758VomU1eeWUMV59h7NTM1ZDDbYMtjSr9FgtgptVpdDkDAcXbi4m
+	Qh87pHI9gJmTiyx+PKkaoRQFQ1x/4IAIqVzHWAf1UXi4caGSRi/2TYfsJWhgJu/Cv+aZIXLKk/h
+	c0jXO+ddI9KDJ155fR7LExLygEv0hlfx+zFd2m+iIpSKCeP1EV1xFg81OW9VvgOv2rGyfkMZxoU
+	ew9VZRfMOl2/qY6kIM4TqHfqhNDvf8qEi8nIxTYbnb6wRh7fqV1xEqaiMffSDw+zZUn0x6wuOk3
+	XSdWeMmWatBR2CBIJgDgU4QuttdLGWNbwu/y/jepZelNv+RFIDfDT4tHTqkJjfdVtw1kK2PFHQ6
+	kCtC3/4XGvmQdQpWBaTjBFRN8KF5+ItyA0Z3DfQXPhu/no1q7m99DVM25cmIvJH8DEdYTdkDmwB
+	GbFePXF/ET/HuAZDppt1Q==
+X-Received: by 2002:a05:6a00:3ccd:b0:829:b08f:7353 with SMTP id d2e1a72fcca58-842b66a21ecmr19172859b3a.7.1781096307795;
+        Wed, 10 Jun 2026 05:58:27 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8428221c3e4sm25512542b3a.5.2026.06.10.05.58.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jun 2026 05:58:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <0ac3d760-4b39-490d-b8aa-42fcc7b747a4@roeck-us.net>
+Date: Wed, 10 Jun 2026 05:58:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-ORIG-GUID: fmp0kQuc78SGuh2jQkNieesPO5Q9B8N0
-X-Proofpoint-GUID: DYDLtftXSp_VpIfu4fVDVqed5lkAw0vA
-X-Authority-Analysis: v=2.4 cv=ZbEt8MVA c=1 sm=1 tr=0 ts=6a295d01 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=7taQQwSReRbAgFppUDUA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEwMDEyMSBTYWx0ZWRfX/PKVE87W84S6
- FoxNhd5jHTObGTwXu+JAkJWmYbyTXjKGbHqnbGEgmXDrbl5RslWysAWreOE8Qy5Cz4dt6DHKI/Z
- G1S88txn+7UDDmPCbszQZIGSHehdEMSIkqDhPgUs+q3i1/ZIyqt+DjIAGvSmUPqrqbhG/fM87bf
- fQr8rPZhCqfPZVF0WaxigSrlsa/Wrce+aBM9h/528UUzUDwdvdJjhzSia7vzwl6FBkyODP7SezD
- F5qsSYRXlKTJL5nOltxhqFuJeDXgQUuT5BTcy+JtdiNQyi4Rkhfcx2vnLpeGJxhvmxHaLhcwWVz
- JwEVjqst1sIjuanLztY0UgpkVdtOWFbCWhtk+bVw8Uzx/1ni365vQmloqZejrk/jvioEwkQTnA7
- dwlP8jcvV+4mZ4p5PdJDEYMIsFe0+CKNV6iauscqyKIOJYYatstkVq8327R8HYkqNSskkFSgzuq
- COcT1MoznzT06uaWbCg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-10_03,2026-06-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
- clxscore=1011 adultscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
- definitions=main-2606100121
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the hwmon-staging tree
+To: Mark Brown <broonie@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <ailOQWxDxXkd1dKK@sirena.co.uk>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <ailOQWxDxXkd1dKK@sirena.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi All,
+On 6/10/26 04:45, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the hwmon-staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> /tmp/next/build/drivers/hwmon/cros_ec_hwmon.c:173:13: error: unused function 'cros_ec_hwmon_millicelsius_to_kelvin' [-Werror,-Wunused-function]
+>    173 | static long cros_ec_hwmon_millicelsius_to_kelvin(long t)
+>        |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>     4a1140942f92a3 (hwmon: (cros_ec) Implement custom kelvin to celsius conversions)
+> 
+> I have used the tree from next-2060609 instead.
 
-Since about June 1st we're getting strace test suite (make -j$(nproc) check)
-crashes on s390 in linux-next. Those are pretty easy to reproduce, but I
-have not been able to nail it down to the particular commit/merge.
+Thomas,
 
-I am going to bisect it, but since we are approaching v7.1 release, any
-hint would be greatly appreciated!
+All patches of a series need to be compileable. Only introduce new static
+functions where actually used.
 
-[ 2425.124912] ------------[ cut here ]------------
-[ 2425.124926] WARNING: kernel/sched/sched.h:1792 at set_next_task_idle+0xd2/0x150, CPU#7: strace/893382
-[ 2425.124937] Modules linked in: mptcp_diag xfrm_user xfrm_algo crypto_user tcp_diag inet_diag netlink_diag tls quota_v2 quota_tree tun overlay nls_iso8859_1 nls_cp437 exfat vfat fat loop sctp udp_tunnel ip6_udp_tunnel nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_rej
-ect nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables s390_trng eadm_sch vfio_ccw mdev vfio_iommu_type1 vfio sch_fq_codel drm i2c_core drm_panel_orientation_quirks dm_service_time diag288_wdt prng aes_s390 dm_mirror dm_region_hash dm_log zfcp scsi_transport_fc pkey_cca pkey_ep11 zcrypt pa
-es_s390 phmac_s390 rng_core pkey_pckmo pkey scsi_dh_rdac crypto_engine scsi_dh_alua scsi_dh_emc dm_multipath autofs4 ecdsa_generic ecc sha512
-[ 2425.125058] CPU: 7 UID: 1001 PID: 893382 Comm: strace Tainted: G        W           7.1.0-20260607.rc6.git0.6e845bcb78c9.300.fc44.s390x+next #1 PREEMPTLAZY
-[ 2425.125065] Tainted: [W]=WARN
-[ 2425.125068] Hardware name: IBM 3906 M03 703 (LPAR)
-[ 2425.125071] Krnl PSW : 0404d00180000000 000003bf4c78da26 (set_next_task_idle+0xd6/0x150)
-[ 2425.125080]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
-[ 2425.125085] Krnl GPRS: 0000000000000000 0000000000000154 0000000000000154 000003bf4e7baba8
-[ 2425.125090]            0000000000000000 0000000000000154 000003bf00000000 000003bf4e2d9038
-[ 2425.125093]            0000000081778000 000003bf4e7a5a00 0000000081778000 00000003ac6dba00
-[ 2425.125097]            0000000000000000 0000000000000000 000003bf4c78d980 0000033f5137bac0
-[ 2425.125108] Krnl Code: 000003bf4c78da18: e55dbf200001        clfhsi  3872(%r11),1
-[ 2425.125108]            000003bf4c78da1e: a724ffb9            brc     2,000003bf4c78d990
-[ 2425.125108]           *000003bf4c78da22: af000000            mc      0,0
-[ 2425.125108]           >000003bf4c78da26: a7f4ffb5            brc     15,000003bf4c78d990
-[ 2425.126081]  [<000003bf4c764f16>] prepare_task_switch+0x216/0x230
-[ 2425.126087]  [<000003bf4d61b9b4>] __schedule+0x254/0x8d0
-[ 2425.126091]  [<000003bf4d61c06c>] schedule+0x3c/0xc0
-[ 2425.126095]  [<000003bf4c72b40c>] do_wait+0x6c/0x190
-[ 2425.126100]  [<000003bf4c72b9da>] kernel_wait4+0xaa/0x150
-[ 2425.126105]  [<000003bf4c72bafe>] __do_sys_wait4+0x7e/0x90
-[ 2425.126110]  [<000003bf4d6173d0>] __do_syscall+0x150/0x590
-[ 2425.126114]  [<000003bf4d6264b2>] system_call+0x72/0x90
-[ 2425.126119] Last Breaking-Event-Address:
-[ 2425.126121]  [<000003bf4c764d36>] prepare_task_switch+0x36/0x230
-[ 2425.126127] ---[ end trace 0000000000000000 ]---
+I had to drop the series.
 
-[ 1569.523962] ------------[ cut here ]------------
-[ 1569.523974] WARNING: kernel/sched/core.c:6388 at pick_next_task+0xb82/0xbf0, CPU#7: swapper/7/0
-[ 1569.523986] Modules linked in: mptcp_diag xfrm_user xfrm_algo tcp_diag crypto_user inet_diag netlink_diag nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ip
-f_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables s390_trng vfio_ccw mdev ea
-dm_sch vfio_iommu_type1 vfio sch_fq_codel drm i2c_core drm_panel_orientation_quirks dm_service_time uvdevice diag288_wdt prng aes_s390 dm_mirror dm_region_hash dm_log zfcp scsi_transpo
-c pkey_cca pkey_ep11 zcrypt paes_s390 phmac_s390 rng_core pkey_pckmo scsi_dh_alua pkey scsi_dh_emc crypto_engine scsi_dh_rdac dm_mul
-tipath autofs4 ecdsa_generic ecc sha512
-[ 1569.524037] CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Tainted: G        W           7.1.0-20260607.rc6.git0.6e845bcb78c9.300.fc44.s390x+next #1 PREEMPTLAZY
-[ 1569.524042] Tainted: [W]=WARN
-[ 1569.524043] Hardware name: IBM 3931 A01 701 (LPAR)
-[ 1569.524045] Krnl PSW : 0404c00180000000 0000027673df72a6 (pick_next_task+0xb86/0xbf0)
-[ 1569.524050]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
-[ 1569.524053] Krnl GPRS: 00000000000002ed 0000027600000190 0000000000000190 0000027675e4abb0
-[ 1569.524056]            0000000000000000 00000004e04c1a00 0000027600000002 00000004e04c1a00
-[ 1569.524058]            0000000000000000 00000004e04e3a00 00000004e04e3a00 0000000000000190
-[ 1569.524060]            0000000000000000 00000004000002ed 0000027673df6cd2 000001f673cc3c98
-[ 1569.524069] Krnl Code: 0000027673df7298: ec56fcb6ff7e        cij     %r5,-1,6,0000027673df6c04
-[ 1569.524069]            0000027673df729e: a7f4ff84            brc     15,0000027673df71a6
-[ 1569.524069]           *0000027673df72a2: af000000            mc      0,0
-[ 1569.524069]           >0000027673df72a6: a7f4fdef            brc     15,0000027673df6e84
-[ 1569.524069]            0000027673df72aa: b9040087            lgr     %r8,%r7
-[ 1569.524069]            0000027673df72ae: a7f4fb3c            brc     15,0000027673df6926
-[ 1569.524069]            0000027673df72b2: af000000            mc      0,0
-[ 1569.524069]            0000027673df72b6: a7f4ff2c            brc     15,0000027673df710e
-[ 1569.524200] Call Trace:
-[ 1569.524202]  [<0000027673df72a6>] pick_next_task+0xb86/0xbf0
-[ 1569.524206] ([<0000027673df6b5e>] pick_next_task+0x43e/0xbf0)
-[ 1569.524210]  [<0000027674cab926>] __schedule+0x1c6/0x8d0
-[ 1569.524214]  [<0000027674cac1a6>] schedule_idle+0x36/0x60
-[ 1569.524216]  [<0000027673e22f04>] do_idle+0x124/0x1a0
-[ 1569.524221]  [<0000027673e23170>] cpu_startup_entry+0x40/0x50
-[ 1569.524225]  [<0000027673d76994>] smp_start_secondary+0x144/0x160
-[ 1569.524230]  [<0000027674cb688a>] restart_int_handler+0x72/0x88
-[ 1569.524235] Last Breaking-Event-Address:
-[ 1569.524236]  [<0000027673df6e80>] pick_next_task+0x760/0xbf0
-[ 1569.524240] ---[ end trace 0000000000000000 ]---
+Guenter
 
-[ 3533.502832] ------------[ cut here ]------------
-[ 3533.502837] WARNING: kernel/sched/fair.c:7656 at hrtick_start_fair+0x6e/0x80, CPU#20: strace/2964820
-[ 3533.502847] Modules linked in: mptcp_diag xfrm_user xfrm_algo tcp_diag crypto_user inet_diag netlink_diag tls quota_v2 quota_tree tun overlay nls_iso8859_1 nls_cp437 exfat vfat fat
- sctp udp_tunnel ip6_udp_tunnel algif_hash af_alg smc_diag smc nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_
-nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 mlx5_ib ib_uverbs_support ib_core mlx5_vdpa vdpa vringh vhost_iotlb nf_tables mlx5_core s390_trng vfio_ccw mdev vfio_iommu_type1 eadm_
-vfio sch_fq_codel drm i2c_core drm_panel_orientation_quirks dm_service_time uvdevice diag288_wdt hmac_s390 prng aes_s390 dm_mirror dm_region_hash dm_log zfcp scsi_transport_fc pkey_cca
-y_ep11 zcrypt paes_s390 phmac_s390 rng_core pkey_pckmo pkey scsi_dh_alua scsi_dh_rdac scsi_dh_emc crypto_engine dm_multipath autofs4 ecdsa_generic ecc sha512 [last unloaded: trace_prin
-
-[ 3533.502908] CPU: 20 UID: 1001 PID: 2964820 Comm: strace Tainted: G        W           7.1.0-20260607.rc6.git0.6e845bcb78c9.300.fc44.s390x+next #1 PREEMPTLAZY
-[ 3533.502912] Tainted: [W]=WARN
-[ 3533.502914] Hardware name: IBM 9175 ME1 701 (LPAR)
-[ 3533.502915] Krnl PSW : 0404e00180000000 0000033a5a572be2 (hrtick_start_fair+0x72/0x80)
-[ 3533.502921]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-[ 3533.502924] Krnl GPRS: 00000000000000ff 00000003e4c9fa00 00000003e4c7da00 000000012cb72400
-[ 3533.502926]            00000000000000a8 0000033a5c0d5038 00000003e4c7e9b0 00000003e4c7da00
-[ 3533.502928]            000000012cb72400 0000033a5c0d6090 0000000300000014 000000012cb72548
-[ 3533.502930]            0000000000000000 00000c0700000001 0000033a5a57f640 000002ba61a33a98
-[ 3533.502938] Krnl Code: 0000033a5a572bd4: 47000700                bc      0,1792
-                          0000033a5a572bd8: c0f4ffff7c64    brcl    15,0000033a5a5624a0
-                         *0000033a5a572bde: af000000                mc      0,0
-                         >0000033a5a572be2: a7f4ffdc                brc     15,0000033a5a572b9a
-                          0000033a5a572be6: 0707            bcr     0,%r7
-                          0000033a5a572be8: 0707            bcr     0,%r7
-                          0000033a5a572bea: 0707            bcr     0,%r7
-                          0000033a5a572bec: 0707            bcr     0,%r7
-[ 3533.502985] Call Trace:
-[ 3533.502988]  [<0000033a5a572be2>] hrtick_start_fair+0x72/0x80
-[ 3533.502991] ([<0000033a5a57f4ae>] set_next_task_fair+0x12e/0x5d0)
-[ 3533.502995]  [<0000033a5a56284c>] pick_next_task+0x12c/0xbf0
-[ 3533.503001]  [<0000033a5b417926>] __schedule+0x1c6/0x8d0
-[ 3533.503004]  [<0000033a5b41806c>] schedule+0x3c/0xc0
-[ 3533.503006]  [<0000033a5a52740c>] do_wait+0x6c/0x190
-[ 3533.503012]  [<0000033a5a5279da>] kernel_wait4+0xaa/0x150
-[ 3533.503014]  [<0000033a5a527afe>] __do_sys_wait4+0x7e/0x90
-[ 3533.503017]  [<0000033a5b4133cc>] __do_syscall+0x14c/0x590
-[ 3533.503022]  [<0000033a5b4224b2>] system_call+0x72/0x90
-[ 3533.503025] Last Breaking-Event-Address:
-[ 3533.503026]  [<0000033a5a572b94>] hrtick_start_fair+0x24/0x80
-[ 3533.503030] ---[ end trace 0000000000000000 ]---
-
-Thanks!
