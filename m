@@ -1,84 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7B63FE671;
-	Wed, 10 Jun 2026 11:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4451408603
+	for <linux-next@vger.kernel.org>; Wed, 10 Jun 2026 12:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781091913; cv=none; b=pvMy1VfmXLH+9pyHWEro7wDTiLSj/XVIrc8JBs/GWx91lVH0aZYoWxX9vIn9q5Gqi4rYEqQLAhkilwaxK798KGgRmpvCvj0jBsCs1J/XNDjM3Zo/rZ5gVpHyjXn/RIEE4nkTTp201rfj2h3IA/tvFsGIMC6D/tVkSm0OyRx+bHE=
+	t=1781095688; cv=none; b=cIXt5S2OKG4apw+WhsmD85E8esXtl3MtJlp9THzRRpg4FZiXDY+4pOP7CD0W3D4CPnD6XqmU3ENdfQz32VWYxRpQWSWx0ESQXk0Q+VijO7MqCvXZrxjXFu5crLfMKjmMbirlMka/Lf7gKy0tgzL6ckm5sHgKUceIWSFdNSlTpGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781091913; c=relaxed/simple;
-	bh=VXoDuaXwvU1/oAgvIftIX0rItukVuo6SEtd1audJt98=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I+CSb6bVjI+qlakk6IBfTWLe0LoAFLnzMngCvEwUGfisvVY4UP0yUINLE63C6FMAK6W59zvgh0zHUGKd+QYIj5QADgq5HsRXAvqhW6cb5ZIZYZw+SWMa88Lbp0gnhk6pzx7eH3azk4ptlAInqPYpCAhPG1uI85Bx5bm93Ff+t0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4bELK0A; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4bELK0A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 576EA1F00893;
-	Wed, 10 Jun 2026 11:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781091908;
-	bh=aXhUdGt8lY3nvrUks4d6bqcK2JgSJ0q72dhtWp22fB4=;
-	h=Date:From:To:Cc:Subject;
-	b=E4bELK0ArAp5sSnM1nMc0CbO2AO2//dkDQ654tKpl9OydVPBX1CysIAwRr041c+lp
-	 41ei6K0PfNjtOg3xgy96ZxgvYMad3ooFR0C32NFqp9WFcRpfh9Nl/dZ8PvgJRUCB5q
-	 Yv48UAot4VYQ8g+N+TGiDLLSYxSeGfOpuh2Q5RM3tYzaMI/eD4sMvovEs+nZ83QYuj
-	 BXTIHOpXHExgcraRer3YbzkK1XDi7NiE/KG09Gz8Eb9sYphkF24ZDg1ZKfI89mAj8m
-	 xEK4zPeEAIHZrjsn+u3kznfJSf7xLT8kvQ8TtF4UjB2OeQECEmqYV6rjzD8mPm+KG9
-	 LpBPEo82+wY4w==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 0B71D1AC56C5; Wed, 10 Jun 2026 12:45:05 +0100 (BST)
-Date: Wed, 10 Jun 2026 12:45:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the hwmon-staging tree
-Message-ID: <ailOQWxDxXkd1dKK@sirena.co.uk>
+	s=arc-20240116; t=1781095688; c=relaxed/simple;
+	bh=j0LRrWmB4OwPCuCS0PuGtUsqm+5NY2QkZOXpz88AzBo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OgCB/kboi9IwGOuSu6NfPwC2VLQ6TzyuzQ5MHzFma7WJ07IdyJawDkO670AGE+AG1FYn2aOSAPktN+hltxgqBXvNMdEb3BT7rWFhAECKxhk15TN5da4xgGKAzy2R2Hv6NcZjCF+6k4SgJ2Wf8hUzPbj9H1fgHd6Hrkrxtz/gSbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 65ACm51o047404;
+	Wed, 10 Jun 2026 21:48:05 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.5] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 65ACm4Bh047391
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 10 Jun 2026 21:48:04 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <bbca08c9-c6bc-4109-b734-14aedc10c93b@I-love.SAKURA.ne.jp>
+Date: Wed, 10 Jun 2026 21:48:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SKpdQEfg7AXoVKZB"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] workqueue: Add warnings and check WQ flags usage
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>, Breno Leitao <leitao@debian.org>
+References: <20260529130640.220328-1-marco.crivellari@suse.com>
+ <bdce3ef27e358b704541d403d28206fd@kernel.org>
+ <a808c387-1087-4826-80de-16252ae315b2@I-love.SAKURA.ne.jp>
+ <a85feb7a94ee487fb5b236d86b674c58@kernel.org>
+ <5b2dea50-2850-4876-b6e8-ba94b9a85034@I-love.SAKURA.ne.jp>
+ <ah2bd_V2QHQftm2o@slm.duckdns.org>
+ <4d47c6aa-8ba5-4e17-87e5-bf1e5ecfbddf@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <4d47c6aa-8ba5-4e17-87e5-bf1e5ecfbddf@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
 
+On 2026/06/02 2:51, Tetsuo Handa wrote:
+> On 2026/06/01 23:47, Tejun Heo wrote:
+>> On Mon, Jun 01, 2026 at 07:12:28AM +0900, Tetsuo Handa wrote:
+>>> I've spent more than one year for updating all in-tree users who are
+>>> flushing kernel global workqueues. Please see a message from Linus at
+>>> https://lkml.kernel.org/r/CAHk-=whWreGjEQ6yasspzBrNnS7EQiL+SknToWt=SzUh4XomyQ@mail.gmail.com .
+>>>
+>>> Please never try to emit WARNING: or BUG: message just for letting developers
+>>> update their code. If you can't use panic() instead of WARN*() or BUG*(), you
+>>> should not use WARN*() or BUG*(). The patch author who changes the behavior of
+>>> in-tree code is responsible for updating all in-tree code.
+>>
+>> I don't think a statement this blanket makes sense. I scanned the existing
+>> linux-next tree and there were a handful that were missed (I didn't find out
+>> whether they are new ones in linux-next or ones that were misseds from
+>> mainline tho). Let's just apply the nvme-tcp patch and move on.
+> 
+> Not all users are quickly accepting patches. Please apply all fixes *before* you start
+> emitting WARNING: message. You are currently making linux-next tree untestable by syzbot.
+> 
+>>
+>> Thanks.
+>>
+> 
+> Mark Brown, please skip WQ changes from linux-next until all fixes are applied.
+> 
+> Linus, please be sure to skip WQ changes in the upcoming merge window if some fix
+> does not get applied in time for the merge window. (Of course, applying all fixes
+> before we start emitting WARNING: message is desirable for bisectability, even if
+> all fixes are get applied in time for the merge window...)
+> 
 
---SKpdQEfg7AXoVKZB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+After 10 days of untestable period, the third breakage report came from btrfs
+caused by commit 69635d7f4b34 ("fs: WQ_PERCPU added to alloc_workqueue users").
+That commit added WQ_PERCPU to fs/btrfs/disk-io.c despite the "ordered_flags" is
+passed to alloc_ordered_workqueue() which implicitly applies WQ_UNBOUND.
 
-Hi all,
+That commit says
 
-After merging the hwmon-staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+  Both flags coexist for one release cycle to allow callers to transition
+  their calls.
 
-/tmp/next/build/drivers/hwmon/cros_ec_hwmon.c:173:13: error: unused function 'cros_ec_hwmon_millicelsius_to_kelvin' [-Werror,-Wunused-function]
-  173 | static long cros_ec_hwmon_millicelsius_to_kelvin(long t)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Once migration is complete, WQ_UNBOUND can be removed and unbound will
+  become the implicit default.
 
-Caused by commit
+and you definitely started emitting WARNING: messages before allowing callers
+to transition their calls. I consider that commit 21c05ca88a54 ("workqueue: Add
+warnings and ensure one among WQ_PERCPU or WQ_UNBOUND is present") should be
+excluded from the linux-next and the upcoming merge window. The next one or two
+cycles for transition should be printk() without WARNING: string.
 
-   4a1140942f92a3 (hwmon: (cros_ec) Implement custom kelvin to celsius conversions)
-
-I have used the tree from next-2060609 instead.
-
---SKpdQEfg7AXoVKZB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmopTkAACgkQJNaLcl1U
-h9CQOwf/Ts3/nH/bkmh+3Rli4H3LLf7e8tcWkDohZLeUn9SN5caPPq5mhYPceWAD
-RYAlq1v6oCM9SMivPLqyXOKyQ9eWOg+tbOuuZZP38ZKUWVhQu/6xebKW9V/jSRDJ
-ZYi76h/INxfuEQ0ygIcVD/ashIVmt4905nGhw/BclDbjseZ2IAIXpAbv6SGwi0gS
-yfDD3im+ogCMVVcAumKJhbfLxJpRjym7HMZJkAj3BUb5TQX6QsEcoOVvhbXZcB+U
-piRXDSajBY7WV8qmi97YQQtBiDALHBPDQmFB7QXdrjcu2I+Dt0bttUl8qS1oOtoc
-IunaUqAE24BTZlLJeByHGvPeJiIj6Q==
-=9Jxa
------END PGP SIGNATURE-----
-
---SKpdQEfg7AXoVKZB--
