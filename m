@@ -1,99 +1,218 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220F22DC767;
-	Thu, 11 Jun 2026 11:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726033F8ED8;
+	Thu, 11 Jun 2026 12:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781176109; cv=none; b=P9PxeUKdvT4sxpRl+L9/Ij/AWue5Ycdo+NztkP3DhhcPkwpPKgfgG0DwElzysijO5yfKJoKtS0Vkq42hCiLcMB9SEk51cUr7Gdc9dEAnDu/2p3zv99XrfZS3nvjg1uySHtwOnHgha/9H9JlwXfheOBtR3KCpScbf9x/XCBR5Usw=
+	t=1781182368; cv=none; b=CSngW5QoszXNP5luQAhKk7DPCZSCMNBAHvQV3YeNdh0mQqnDzfzQmMjp/OUj29xZa3NNaSBjL6QOhjqMEPEbVL00ZXkoVr8ZqRT8AO0rTCqpCPS3Z8Uve+KSrMv+6gtoATV4UtHbDID9LkPhnaiXQEZ8zvuqF/0v81TnxHgBF4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781176109; c=relaxed/simple;
-	bh=wQ3WHe+W2v0d92Kplq8+Hn6T8icPXVzVqEyoe1yv1fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIvlWHCpxY4dYSAnJESb3g7+yytB6JZDk4KCfsK1XvvegFP9TUfjlmcN645QK1ZIQfyhiS9ahhzvu7xHxrN4iqqVy1xvovOeTswi3OXjsEYdLK65sHimaGXeI0l4rPgdjKfboPmtO08PEeuqxGhBun6UA5N1zenGfzskp+o9aTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rmSxXHVh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1781182368; c=relaxed/simple;
+	bh=wJgxboTU2zn26QBilNRHyO0OyIuVUSc8LHWxGLP19yQ=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=I8ZTHeYspjrl6tCQvbbCkNwmPKHUppfrEw7warPZtlw8L3AdWqVMVG9UfmpbjjV42tBL2JNd3guDYtS14AWapL+gOri+UGyHrnwKHErPgOuoLTDSzytb3II5w/WQ4R69ZbdcVwnTEV9dCcU2sFZvD1GMjz8e4HBDNS2wYqXrSxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B85w8jOr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rmSxXHVh"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Be5rEciqOgJ7a/QFo0//CIZoBQIfhUkSPXRNBFzrHCc=; b=rmSxXHVhxwjZG6eIJJik0ch6ti
-	5Hi6iyJuoT91JesXShCkA+1JQpjZV8FqbTODL8bD798uiBrUiHP6+OvPjUFtbrwhkDSt1xe6TMkX/
-	+ZZNJxZaCvZiltASsZUnftEE3I7VEPE07tGQslh/9ZmHlsrc3JY33YNPavi5tUMZZH068JdtX/pNq
-	hb0Z97N+MR5hvFTHdhsesPCu1s9Q6G9wDbTjACHPsKUHThqUDTX83U6agSE/Abs23vanIRg9G+GZQ
-	XAFtWRJJ65zV6H7jasCZrC+WVPZUCBuF7xlRzDvYmvRRPZzGk2gCy2o9oOfjx880JgdyTfi0mskBV
-	4W+jIVJQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wXdGc-00000001mBP-2jhl;
-	Thu, 11 Jun 2026 11:08:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C2490301A42; Thu, 11 Jun 2026 13:08:09 +0200 (CEST)
-Date: Thu, 11 Jun 2026 13:08:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	John Stultz <jstultz@google.com>,
-	Vineeth Pillai <vineethrp@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	Aaron Lu <ziqianlu@bytedance.com>
-Subject: Re: linux-next crashes in scheduler on s390
-Message-ID: <20260611110809.GF187714@noisy.programming.kicks-ass.net>
-References: <17e75ff4-cf90-4772-9965-92a7235ca806-agordeev@linux.ibm.com>
- <yt9dmrx2wns1.fsf@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B85w8jOr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEB11F00893;
+	Thu, 11 Jun 2026 12:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781182367;
+	bh=MhJ79RE83SlPlL09hjhdQ09VcDME15ymYeAZgh8podg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=B85w8jOrzbsnuSUc0wtTUgt3jvNR2QIpKZnVHFWzwokn2Xv+TZpQ2+L0gZ0GVf1af
+	 U5CHcyJh5xr/QQQy8kRKgFV7SX7qvYgKgZJ8gy4wO+Jd5y/7f9zL8CfKyHm+E8vPxI
+	 HA7QufWhaJWLPAOV8zE9jnozmj3+lKT94bmhb5vPYeDfXV6r6vFpNX/h5RzwfhKRbG
+	 6SO1dz7PsfIXzBRfWEyujzkEV7o9kXqX5V82tv3BjwKJ3Qs2JfG8GT0lQ/GRWA7o02
+	 yTutHfrNBwZP8vuUfvbhRDik5lDOK/9vly3d5Z0hsV75ynQ1Gr3Gkh+1UZ3ji7iS5o
+	 cqK5w5JOohyfQ==
+Content-Type: multipart/mixed; boundary="------------x0ULY3W347LQLodgOx5sQKT9"
+Message-ID: <2e1b0534-a1a0-4eb1-a5e2-d42fcf991188@kernel.org>
+Date: Thu, 11 Jun 2026 14:52:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yt9dmrx2wns1.fsf@linux.ibm.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next v3 2/2] rds: convert to getsockopt_iter: manual
+ merge
+Content-Language: fr
+To: Breno Leitao <leitao@debian.org>, Allison Henderson <achender@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+ linux-kselftest@vger.kernel.org, kernel-team@meta.com,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Andy Grover <andy.grover@oracle.com>, Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20260608-getsock_more-v3-0-706ecf2ea332@debian.org>
+ <20260608-getsock_more-v3-2-706ecf2ea332@debian.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
+ YBNdx5Xl74NLSgx6y/1NiMQGuKeu+2BmtnkiGxBNanfXcnl4L4Lzz+iXBvvbtCbynnnqDDqU
+ c7SPFMpMesgpcu1xFt0F6bcxE+0ojRtSCZ5HDElKlHJNYtD1uwY4UYVGWUGCF/+cY1YLmtfb
+ WdNb/SFo+Mp0HItfBC12qtDIXYvbfNUGVnA5jXeWMEyYhSNktLnpDL2gBUCsdbkov5VjiOX7
+ CRTkX0UgNWRjyFZwThaZADEvAOo12M5uSBk7h07yJ97gqvBtcx45IsJwfUJE4hy8qZqsA62A
+ nTRflBvp647IXAiCcwWsEgE5AXKwA3aL6dcpVR17JXJ6nwHHnslVi8WesiqzUI9sbO/hXeXw
+ TDSB+YhErbNOxvHqCzZEnGAAFf6ges26fRVyuU119AzO40sjdLV0l6LE7GshddyazWZf0iac
+ nEhX9NKxGnuhMu5SXmo2poIQttJuYAvTVUNwQVEx/0yY5xmiuyqvXa+XT7NKJkOZSiAPlNt6
+ VffjgOP62S7M9wDShUghN3F7CPOrrRsOHWO/l6I/qJdUMW+MHSFYPfYiFXoLUZyPvNVCYSgs
+ 3oQaFhHapq1f345XBtfG3fOYp1K2wTXd4ThFraTLl8PHxCn4ywARAQABzSRNYXR0aGlldSBC
+ YWVydHMgPG1hdHR0YmVAa2VybmVsLm9yZz7CwZEEEwEIADsCGwMFCwkIBwIGFQoJCAsCBBYC
+ AwECHgECF4AWIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZUDpDAIZAQAKCRD2t4JPQmmgcz33
+ EACjROM3nj9FGclR5AlyPUbAq/txEX7E0EFQCDtdLPrjBcLAoaYJIQUV8IDCcPjZMJy2ADp7
+ /zSwYba2rE2C9vRgjXZJNt21mySvKnnkPbNQGkNRl3TZAinO1Ddq3fp2c/GmYaW1NWFSfOmw
+ MvB5CJaN0UK5l0/drnaA6Hxsu62V5UnpvxWgexqDuo0wfpEeP1PEqMNzyiVPvJ8bJxgM8qoC
+ cpXLp1Rq/jq7pbUycY8GeYw2j+FVZJHlhL0w0Zm9CFHThHxRAm1tsIPc+oTorx7haXP+nN0J
+ iqBXVAxLK2KxrHtMygim50xk2QpUotWYfZpRRv8dMygEPIB3f1Vi5JMwP4M47NZNdpqVkHrm
+ jvcNuLfDgf/vqUvuXs2eA2/BkIHcOuAAbsvreX1WX1rTHmx5ud3OhsWQQRVL2rt+0p1DpROI
+ 3Ob8F78W5rKr4HYvjX2Inpy3WahAm7FzUY184OyfPO/2zadKCqg8n01mWA9PXxs84bFEV2mP
+ VzC5j6K8U3RNA6cb9bpE5bzXut6T2gxj6j+7TsgMQFhbyH/tZgpDjWvAiPZHb3sV29t8XaOF
+ BwzqiI2AEkiWMySiHwCCMsIH9WUH7r7vpwROko89Tk+InpEbiphPjd7qAkyJ+tNIEWd1+MlX
+ ZPtOaFLVHhLQ3PLFLkrU3+Yi3tXqpvLE3gO3LM7BTQRV4/npARAA5+u/Sx1n9anIqcgHpA7l
+ 5SUCP1e/qF7n5DK8LiM10gYglgY0XHOBi0S7vHppH8hrtpizx+7t5DBdPJgVtR6SilyK0/mp
+ 9nWHDhc9rwU3KmHYgFFsnX58eEmZxz2qsIY8juFor5r7kpcM5dRR9aB+HjlOOJJgyDxcJTwM
+ 1ey4L/79P72wuXRhMibN14SX6TZzf+/XIOrM6TsULVJEIv1+NdczQbs6pBTpEK/G2apME7vf
+ mjTsZU26Ezn+LDMX16lHTmIJi7Hlh7eifCGGM+g/AlDV6aWKFS+sBbwy+YoS0Zc3Yz8zrdbi
+ Kzn3kbKd+99//mysSVsHaekQYyVvO0KD2KPKBs1S/ImrBb6XecqxGy/y/3HWHdngGEY2v2IP
+ Qox7mAPznyKyXEfG+0rrVseZSEssKmY01IsgwwbmN9ZcqUKYNhjv67WMX7tNwiVbSrGLZoqf
+ Xlgw4aAdnIMQyTW8nE6hH/Iwqay4S2str4HZtWwyWLitk7N+e+vxuK5qto4AxtB7VdimvKUs
+ x6kQO5F3YWcC3vCXCgPwyV8133+fIR2L81R1L1q3swaEuh95vWj6iskxeNWSTyFAVKYYVskG
+ V+OTtB71P1XCnb6AJCW9cKpC25+zxQqD2Zy0dK3u2RuKErajKBa/YWzuSaKAOkneFxG3LJIv
+ Hl7iqPF+JDCjB5sAEQEAAcLBXwQYAQIACQUCVeP56QIbDAAKCRD2t4JPQmmgc5VnD/9YgbCr
+ HR1FbMbm7td54UrYvZV/i7m3dIQNXK2e+Cbv5PXf19ce3XluaE+wA8D+vnIW5mbAAiojt3Mb
+ 6p0WJS3QzbObzHNgAp3zy/L4lXwc6WW5vnpWAzqXFHP8D9PTpqvBALbXqL06smP47JqbyQxj
+ Xf7D2rrPeIqbYmVY9da1KzMOVf3gReazYa89zZSdVkMojfWsbq05zwYU+SCWS3NiyF6QghbW
+ voxbFwX1i/0xRwJiX9NNbRj1huVKQuS4W7rbWA87TrVQPXUAdkyd7FRYICNW+0gddysIwPoa
+ KrLfx3Ba6Rpx0JznbrVOtXlihjl4KV8mtOPjYDY9u+8x412xXnlGl6AC4HLu2F3ECkamY4G6
+ UxejX+E6vW6Xe4n7H+rEX5UFgPRdYkS1TA/X3nMen9bouxNsvIJv7C6adZmMHqu/2azX7S7I
+ vrxxySzOw9GxjoVTuzWMKWpDGP8n71IFeOot8JuPZtJ8omz+DZel+WCNZMVdVNLPOd5frqOv
+ mpz0VhFAlNTjU1Vy0CnuxX3AM51J8dpdNyG0S8rADh6C8AKCDOfUstpq28/6oTaQv7QZdge0
+ JY6dglzGKnCi/zsmp2+1w559frz4+IC7j/igvJGX4KDDKUs0mlld8J2u2sBXv7CGxdzQoHaz
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20260608-getsock_more-v3-2-706ecf2ea332@debian.org>
 
-On Wed, Jun 10, 2026 at 03:03:26PM +0200, Sven Schnelle wrote:
-> Alexander Gordeev <agordeev@linux.ibm.com> writes:
-> 
-> > Hi All,
-> >
-> > Since about June 1st we're getting strace test suite (make -j$(nproc) check)
-> > crashes on s390 in linux-next. Those are pretty easy to reproduce, but I
-> > have not been able to nail it down to the particular commit/merge.
-> >
-> > I am going to bisect it, but since we are approaching v7.1 release, any
-> > hint would be greatly appreciated!
-> > [..]
-> 
-> I bisected it to
-> https://lore.kernel.org/all/20260511120627.944705718@infradead.org/
-> ("[PATCH v2 08/10] sched/fair: Add newidle balance to pick_task_fair()")
-> 
-> Adding the patch proposed in
-> https://lore.kernel.org/all/20260603095108.GA1684319@bytedance.com/
-> fixes the issue for me.
-> 
-> To reproduce, running the strace test suite seems enough. If required, I
-> can try to figure out the exact test that crashes the kernel.
+This is a multi-part message in MIME format.
+--------------x0ULY3W347LQLodgOx5sQKT9
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Oh sorry for the borkage and thanks for the pointer -- I clearly missed
-that :-(.
+Hi Breno, Allison,
 
-I've just been staring at all this and while I think I prefer a slightly
-different solution, I think I'm going to just apply that patch since its
-fairly trivial and you've confirmed it works. And then I can go do the
-alternative for the next cycle -- and hopefully not wreck it again :-).
+On 08/06/2026 11:44, Breno Leitao wrote:
+> Convert RDS socket's getsockopt implementation to use the new
+> getsockopt_iter callback with sockopt_t.
+> 
+> Key changes:
+> - Replace (char __user *optval, int __user *optlen) with sockopt_t *opt
+> - Use opt->optlen for buffer length (input) and returned size (output)
+> - Use copy_to_iter() instead of put_user()/copy_to_user()
+> 
+> The RDS_INFO_* snapshot path in rds_info_getsockopt() used to pin the
+> userspace buffer with pin_user_pages_fast() on the raw optval address;
+> the info producers then memcpy into those pages under a spinlock via
+> kmap_atomic() and so must not fault. Obtain the same page array and
+> starting offset from opt->iter_out with iov_iter_extract_pages(), which
+> pins for write because iter_out is ITER_DEST.
+> 
+> The page array is preallocated here (sized with iov_iter_npages()) and
+> passed in, so iov_iter_extract_pages() fills it in place rather than
+> allocating one for us; RDS therefore keeps ownership of the array on
+> every return path and frees it itself. The rds_info_iterator /
+> rds_info_copy machinery and all producer callbacks are unchanged.
+> 
+> Kernel buffers (ITER_KVEC) are not page-backed in a way the info
+> producers can use, so the RDS_INFO path returns -EOPNOTSUPP for them;
+> this matches the previous behaviour, where a kernel-buffer getsockopt
+> hit the WARN_ONCE() path in do_sock_getsockopt() and returned
+> -EOPNOTSUPP. The simple RDS_RECVERR and SO_RDS_TRANSPORT options keep
+> working for kernel buffers via copy_to_iter().
 
+(...)
+
+> diff --git a/net/rds/info.c b/net/rds/info.c
+> index f1b29994934a..499b3774860e 100644
+> --- a/net/rds/info.c
+> +++ b/net/rds/info.c
+
+(...)
+
+> @@ -230,13 +239,16 @@ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
+>  		ret = lens.each;
+>  	}
+>  
+> -	if (put_user(len, optlen))
+> -		ret = -EFAULT;
+> +	opt->optlen = len;
+>  
+>  out:
+> -	if (pages)
+> +	/*
+> +	 * iov_iter_extract_pages() pins only user-backed (ubuf) iters;
+> +	 * iov_iter_extract_will_pin() reports whether an unpin is owed here.
+> +	 */
+> +	if (pages && iov_iter_extract_will_pin(&opt->iter_out))
+>  		unpin_user_pages(pages, nr_pages);
+
+FYI, we got a small conflict when merging 'net' in 'net-next' in the
+MPTCP tree due to this patch applied in 'net':
+
+  f512db8267b73 ("rds: mark snapshot pages dirty in rds_info_getsockopt()")
+
+and this one from 'net-next':
+
+  6e94eeb2a2a6 ("rds: convert to getsockopt_iter")
+
+----- Generic Message -----
+The best is to avoid conflicts between 'net' and 'net-next' trees but if
+they cannot be avoided when preparing patches, a note about how to fix
+them is much appreciated.
+
+The conflict has been resolved on our side [1] and the resolution we
+suggest is attached to this email. Please report any issues linked to
+this conflict resolution as it might be used by others. If you worked on
+the mentioned patches, don't hesitate to ACK this conflict resolution.
+---------------------------
+
+Regarding this conflict, I took the modification from net-next, but
+using unpin_user_pages_dirty_lock() from net.
+
+Rerere cache is available in [2].
+
+Cheers,
+Matt
+
+1: https://github.com/multipath-tcp/mptcp_net-next/commit/a8d41e018cc6
+2: https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/88eeb
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
+--------------x0ULY3W347LQLodgOx5sQKT9
+Content-Type: text/x-patch; charset=UTF-8;
+ name="a8d41e018cc69a6546ef6acc4a97bcbeb3e75d43.patch"
+Content-Disposition: attachment;
+ filename="a8d41e018cc69a6546ef6acc4a97bcbeb3e75d43.patch"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWNjIG5ldC9yZHMvaW5mby5jCmluZGV4IDQ5OWIzNzc0ODYwZSwxNzA2MWY2ZmY3
+NGUuLjIxYjMyZWIxNjU1OQotLS0gYS9uZXQvcmRzL2luZm8uYworKysgYi9uZXQvcmRzL2lu
+Zm8uYwpAQEAgLTIzOSwxNiAtMjMwLDEzICsyMzksMTYgQEBAIGNhbGxfZnVuYwogIAkJcmV0
+ID0gbGVucy5lYWNoOwogIAl9CiAgCiAtCWlmIChwdXRfdXNlcihsZW4sIG9wdGxlbikpCiAt
+CQlyZXQgPSAtRUZBVUxUOwogKwlvcHQtPm9wdGxlbiA9IGxlbjsKICAKICBvdXQ6CiAtCWlm
+IChwYWdlcykKICsJLyoKICsJICogaW92X2l0ZXJfZXh0cmFjdF9wYWdlcygpIHBpbnMgb25s
+eSB1c2VyLWJhY2tlZCAodWJ1ZikgaXRlcnM7CiArCSAqIGlvdl9pdGVyX2V4dHJhY3Rfd2ls
+bF9waW4oKSByZXBvcnRzIHdoZXRoZXIgYW4gdW5waW4gaXMgb3dlZCBoZXJlLgogKwkgKi8K
+ICsJaWYgKHBhZ2VzICYmIGlvdl9pdGVyX2V4dHJhY3Rfd2lsbF9waW4oJm9wdC0+aXRlcl9v
+dXQpKQotIAkJdW5waW5fdXNlcl9wYWdlcyhwYWdlcywgbnJfcGFnZXMpOworIAkJdW5waW5f
+dXNlcl9wYWdlc19kaXJ0eV9sb2NrKHBhZ2VzLCBucl9wYWdlcywgdHJ1ZSk7CiAtCWtmcmVl
+KHBhZ2VzKTsKICsJa3ZmcmVlKHBhZ2VzKTsKICAKICAJcmV0dXJuIHJldDsKICB9Cg==
+
+--------------x0ULY3W347LQLodgOx5sQKT9--
