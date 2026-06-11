@@ -1,70 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1BD48B37F
-	for <linux-next@vger.kernel.org>; Thu, 11 Jun 2026 18:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E744921B1
+	for <linux-next@vger.kernel.org>; Thu, 11 Jun 2026 18:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781203163; cv=none; b=i+uxSCtwbk1N7QDICpOcy1a304nlg15ci2gKdjpRK1fktTH0ytxi/SoX4t3lwk2Z9u7CLPBIMC6B+xDejbMLwyygWSsdo+TD7f+k9GGE5pkL7GVquyPNQcwHKE45qMG0bN3Tpd7CJkUKEPtZ8RckCuNzZ7PkOzME76RiQX+zyio=
+	t=1781204305; cv=none; b=l2vY4VyXYbe2JNMifz9qBkZ2V569B26fwtEvlUwMDyT8hUDtr+Z7W5kjWLQx1K8pxQ3G2ATnURaHsr8zfiivpC9ShiX5UKn81KzmUtw9RypkiUNIs2JWJ1X9JMSpPY73C6ZFpkrcJTmfJSYYlSdc4jvWarrn/zx1zmUOf9CZpa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781203163; c=relaxed/simple;
-	bh=SEblk0WX3ZYBWDX3iyLgIGZysHoKHDvlBsL4Agbkq0w=;
+	s=arc-20240116; t=1781204305; c=relaxed/simple;
+	bh=AbeDg5fkw0NK9xDqSfHURkXFb/3aAsFrhxDngrdvNiA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=esw6RRAI8jG26H9XgvcuA7hntidfahZD271exIEXXUs/Q8uf+9Ef1+AqeQBicI4yQbNZ4KxI3DHXVXYARPQcJQxINRHo/NrYixIuR04eqkcBYTF7Q+6uAiar+1NNZyMbcOX0o2iZPO0bcbfZMRkwZ8OcQpJt+HGWNjRYtLzondA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q/sSu8tK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=go3n1WRdrQEhKLV2y+mNL4f2flYy1RnBwFv0qlu06ykIXTL4dH+Y04PzKH047fyx3C2qDe8K/MdurgNmpEV/SBT2pz7bx59seCVgTzsBHseJGf9lrFYYSbW5SWh+R40hc/V84nnLhNYxAgmwH3EQFk1UhpkwIutqgXcYYfL35t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1mQNe+q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q/sSu8tK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA211F000E9;
-	Thu, 11 Jun 2026 18:39:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1781203161;
-	bh=kuvl22ccDDR3WLwN8wS5yLNk/u4YNQlgwdYa0KjatvI=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1mQNe+q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D59971F00A3A;
+	Thu, 11 Jun 2026 18:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781204304;
+	bh=yikRSLavvKVSQ+d5xDSak8Z6QcKthDmovp2A2ybuNZ0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Q/sSu8tKyUx1U1OBXiV+c2mkX2c0YdnvuxL/mXo7cw0lX/G18IDTUNIQcZsONH0hD
-	 3q/k0dCKerZelVpa32ITEolMVKdVop5Y+0J7o7+h2HdDqG7UTlguSZWcLunent9QjS
-	 8Jn+UAEPXPc6GKMHK8YPu6CFZHPJ3ZSBod7kwUYM=
-Date: Thu, 11 Jun 2026 14:39:19 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, helpdesk@kernel.org
+	b=e1mQNe+q2KcaqYpYenl2t2p3Ll1bZe6rdjXjBQewbtOJpbQu+8gjAU5aWq8YF+P4L
+	 2oihEMKWFQh1VHoaazHiJz7SGQqUScODXsyxijZX+PGtgyN046tdxWetFPoZT+KBEF
+	 QTVUxt4a2YxT57mN909t/DohIgAPRKVVQTyqWCTwYJbr3sH4QFZZePXM2f2SxnOKyw
+	 PR4TUMayZFJe7PVNasYsJg6gschCU7AzVvBg86rhU4uHDk/pXRxC11HP1yYpQWiyg5
+	 TLxHByVodbGgDIJ9eJf/i62ryTB6XJ4T+PBoT9pDQTuZPJoVvk4lMiStwgWdRdWQ7u
+	 Efj2CLrLZk7yw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 39F4B1AC56C9; Thu, 11 Jun 2026 19:47:46 +0100 (BST)
+Date: Thu, 11 Jun 2026 19:47:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	helpdesk@kernel.org
 Subject: Re: linux-next: Tree for Jun 10
-Message-ID: <20260611-invincible-whale-of-progress-69ffd1@meerkat>
+Message-ID: <aisC0nU0ZnN7wv6e@sirena.co.uk>
 References: <aimIc7ciEUrhXV23@sirena.co.uk>
  <608ff135-c113-4bda-9812-26ee8f8cdf7f@infradead.org>
  <ac803cb5-37c8-4e41-af3b-1c15955cb219@infradead.org>
+ <20260611-invincible-whale-of-progress-69ffd1@meerkat>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pyx9863uBv0Z5gQx"
 Content-Disposition: inline
-In-Reply-To: <ac803cb5-37c8-4e41-af3b-1c15955cb219@infradead.org>
+In-Reply-To: <20260611-invincible-whale-of-progress-69ffd1@meerkat>
+X-Cookie: Leave no stone unturned.
 
-On Thu, Jun 11, 2026 at 11:24:50AM -0700, Randy Dunlap wrote:
-> >> Changes since 20260609:
-> > 
-> >> ----------------------------------------------------------------------------
-> >>
-> >> I have created today's linux-next tree at
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> >> (patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> > 
-> > linux-next-202606{09,10} are *not* available at www.kernel.org/pub/linux/kernel/next/.
-> > The last one there is linux-next-20260608.
-> 
-> linux-next-20260611 is also not present.
-> 
 
-Not anything on our end, afaict -- the latest upload I see is from 20260608:
+--pyx9863uBv0Z5gQx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-2026-06-01.17:27:56	3037912		write_allowed,/pub/linux/kernel/next/patch-v7.1-rc6-next-20260601.gz
-2026-06-02.16:57:34	4107511		write_allowed,/pub/linux/kernel/next/patch-v7.1-rc6-next-20260602.gz
-2026-06-03.19:14:59	1096610		write_allowed,/pub/linux/kernel/next/patch-v7.1-rc6-next-20260603.gz
-2026-06-04.16:19:49	2121815		write_allowed,/pub/linux/kernel/next/patch-v7.1-rc6-next-20260604.gz
-2026-06-05.13:36:22	3088815		write_allowed,/pub/linux/kernel/next/patch-v7.1-rc6-next-20260605.gz
-2026-06-08.14:34:58	2243345		write_allowed,/pub/linux/kernel/next/patch-v7.1-rc7-next-20260608.gz
+On Thu, Jun 11, 2026 at 02:39:19PM -0400, Konstantin Ryabitsev wrote:
+> On Thu, Jun 11, 2026 at 11:24:50AM -0700, Randy Dunlap wrote:
 
--K
+> > linux-next-20260611 is also not present.
+
+> Not anything on our end, afaict -- the latest upload I see is from 20260608:
+
+I see kup running and didn't notice any errors, the output is lost to
+scrollback now.  I'm on my laptop rather than my desktop, presumably
+there's something different though not knowingly.  I'm not sure it
+matters, I don't know that anyone but Randy even looks at the patch
+files.
+
+--pyx9863uBv0Z5gQx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmorAtEACgkQJNaLcl1U
+h9Bzywf+PrhGkkxhZC5BWER0WuQa0Qxz+DDY+K2dtQydmBKAnxE9HXXaH7HVzfT0
+ISoadOjQKjOEOE9y6eWFtgHJMSNYQTsUO3jelCKYZ9X0S4exfpQgjSo643pc4vKX
+HIVInksmM7F6U703kKNxFm7N4KhwPkk11x92myxK2SvHjBRClAYnyx67cEjHjgX/
+odkSZEVGZWEqi966lilprcQG/0s71q8Em/n6mu2+pjGgXIjTt12+a2cimonuKa5Y
+c3kqu1n6ulk8ghMtGmNlRvJOz1z/VKxm76fQBCoKHYdmppQwEwQv5MSzRs7avyPn
+GIIvcpwQjnWigEw7hHMWdOdlgd1xkQ==
+=Fv3G
+-----END PGP SIGNATURE-----
+
+--pyx9863uBv0Z5gQx--
