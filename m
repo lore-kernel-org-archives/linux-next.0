@@ -1,73 +1,115 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEE03EAC9B;
-	Thu, 11 Jun 2026 14:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D9A1DDC2B;
+	Thu, 11 Jun 2026 14:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781186845; cv=none; b=EUbON9x5/aW0H6VSHkiaro4YTHBOVcRNG4uogvOBBA0zBJrSW12acZkJjNkZ0bBegVjTmqfVGKH4YVS+Vh92pXPax6qAJuzMErxvcrU92r3GSQC9sIoOR0FkaPvzqiFegw2CjzUSjwDZh8mcOMWlDIQSEe9ghOZnfBwR5Ycw0Ss=
+	t=1781188397; cv=none; b=b2/qEoEDV87M6bcPZ9aYatG0jxW9CEa2uzCP7/JwTVEtoinHxWIfENd0D6WUozVQgWiprxYQiSIIFDhl/NSnCaRj7qt2mkFP3ACHeJWU47iPNYJHplrMZ5eV/rzsgR6PbxQrqxrHsZ8pbJo8hZjLJk0P19Wr6mWlCTQ+RCRwUUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781186845; c=relaxed/simple;
-	bh=0AwffcFEZkhWZr6KHua91LwWKthAkEgTrFmJ31sqCKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGsxtRopWqB9ulLObe+xS2bt0VB+NZkpkd7bNpJctqDxDMRfTGj4YGZ3zRWGBbmRGDCw1aaVMwOB/fzGDWnwInSfI7oVt2x37jrZ//3wpUymq00rJNt7EtKen6E0uedrJVtPCM/iXs6MsJOtJKa0aIk3NGWDRTf9BgfdE85af84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FVj3MeDU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1781188397; c=relaxed/simple;
+	bh=cauElteqHWydy8YXldOF4Kc1Tvdl3hSzNgimD+PkpiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=laRv2v8XqLLEsYu923VWFVQWfkgeC6R0pDa3IoFFC1CpQ+AfvSO2UzFBoM3FtCbuJ5B9kKlYsWKF1U5nARhEYASLeu185Hps5an+t/gq+ijdDm3lelvzI1Wj3CpyxlY6nMtC+M0M3qmXgEmtdrRPTsSLFXB5b4GorEGOzrA/St0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3b0vInC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FVj3MeDU"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EjIOcA2M5wsDkb4nNI8T4wAfYZXLKy9y2jheua42cSU=; b=FVj3MeDUuvWsFfVeLQbGgy2KZV
-	Mmlej14Pxf0QZPPdci0TF+3sne5zWMAHIqI5YdmslJriDWZ2WP8InwvtpID0hpRO0rZArrrnkjd5m
-	gBQh/NGwZGi2Gkc7VLbOvVKIYmKDCp9LkDZoSZGUxM/DeeY5O0f1nQElZcohh/ydqWre9UdVVVUvC
-	BjBjBkk+6eoVKyS+VWdRaO9zZsIv122wuW4xIsaZdIB6ZMvoXO2je0cOA0lYOkk7EhD7UixJrYfm5
-	6lInhyTK6n7Lnb1wb0DakGVNEJFgNgx3fovr2HmkY3qZkbtZvftQ82RSElCd4vVSgq03Hxog7IdOd
-	l0ZMYDSQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wXg42-000000020UW-2BIx;
-	Thu, 11 Jun 2026 14:07:22 +0000
-Date: Thu, 11 Jun 2026 15:07:22 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mike Rapoport <rppt@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the ext4
- tree
-Message-ID: <airBGjtjTf3Yuy0X@casper.infradead.org>
-References: <aiq8CByJNMlXo6Be@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3b0vInC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6171F1F00893;
+	Thu, 11 Jun 2026 14:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781188395;
+	bh=rU6qahIQRnBTn8CB7Ay/SA7zoQ6eLSFrWxTr59GJm0o=;
+	h=Date:From:To:Cc:Subject;
+	b=S3b0vInCS90YyFB+s5Nyftjev4GmGz9FQYzsKEm0vNpyqxm5nbzIF6Jqm7mMPnPwN
+	 /wIbCt4lVCF5O/IdBFVLhZPUPT6MFDaPGfEUr76Wy31BfqZzwD++H1h/GzKWA/oljK
+	 QNvU41lMbzLsALQ1+NtkZoFcxKenXHczojofhfjlFODAy2OvOFlM0xJpX/DaSt7l32
+	 8s6E25UqVh07UTHq6UjxMElJtwCk7RH7pIv5ujzco98V6zCTCAYSy9mVUNt0NnQZoK
+	 oGy9WrqxD1aeJkp3wR04w9HSt66Unyuzxa3OQAsSwehZtEueBizgVBdTPZ2020yKM0
+	 5dOzs9z8HSIzA==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id BF17A1AC56C6; Thu, 11 Jun 2026 15:33:12 +0100 (BST)
+Date: Thu, 11 Jun 2026 15:33:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 11
+Message-ID: <airHKHVILKSiKTVM@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qSJcFoiOFujaL8PW"
+Content-Disposition: inline
+
+
+--qSJcFoiOFujaL8PW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aiq8CByJNMlXo6Be@sirena.co.uk>
 
-On Thu, Jun 11, 2026 at 02:45:44PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the vfs-brauner tree got a conflict in:
-> 
->   fs/jbd2/journal.c
-> 
-> between commit:
-> 
->   bbe9015f23432b ("jbd2: remove special jbd2 slabs")
-> 
-> from the ext4 tree and commit:
-> 
->   2f6702dc6fdcf0 ("jbd2: replace __get_free_pages() with kmalloc()")
-> 
-> from the vfs-brauner tree.
+Hi all,
 
-2f6702dc6fdcf0 is a subset of bbe9015f23432b and should be dropped from
-vfs-brauner.
+Changes since 20260610:
 
+The vfs-brauner tree acquired a conflict with the ext4 tree.
 
+The hwmon-staging tree lost it's build failure.
+
+The net-next tree acquired a conflict with the net tree.
+
+The ipvs-next tree acquired a conflict with the origin tree.
+
+The drm tree acquired a conflict with the drm-misc-fixes tree.
+
+Non-merge commits (relative to Linus' tree): 12101
+ 13030 files changed, 799506 insertions(+), 243839 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 425 trees (counting Linus' and 131 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--qSJcFoiOFujaL8PW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqxycACgkQJNaLcl1U
+h9BwZQf8DukO393OSYIlWQN2l4HpDmLJjhvhMlXNcKDIZt4UXBcWSrXAr3B4R7xa
+1UKujc2+BXwNeUi0LxVgv1bKEITVKgBXQm8G7FkgNd8GAJq/PnbhIEuNnDK8kqhl
+2Xqw4+FKOpmqaL46clTAg+JB53HP8N0E3HhQMIYVoliD+nbbniOo4IjNsW7/igPB
+DGvyDIoAONz2Hr45kE8Bk2KLXC1L89GjbNQSiP1mnQlEEcFAS2ugwE0UfDrd2cxg
+qVDeDcAZDmWO6YUIEbR1GWteFKjiyjQo51R7otEtQ9riHbd5a8vezm5zhXIYCdKC
+iKgguUHqxJt7nJHfCPE2UiaPy95eHQ==
+=GadJ
+-----END PGP SIGNATURE-----
+
+--qSJcFoiOFujaL8PW--
