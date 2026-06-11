@@ -1,162 +1,88 @@
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C61F191F91
-	for <linux-next@vger.kernel.org>; Thu, 11 Jun 2026 02:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C283CE080;
+	Thu, 11 Jun 2026 10:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781145035; cv=none; b=thYiu3Q2rh2lju8ksgAT9Yot15B8hxtTRs1O+C/n7q7/37MSAak8dmVHd4JXgL5Vc++sczjPdCen94uC0zr1T+5Z2N0dEEogdzIxbt6phrM/Y1iywZfMRS7BV+puCRHdbxhtKRYugwKAhigeoXIYFnPZF4oQ8vFzgOhuQQbTQqc=
+	t=1781173737; cv=none; b=itbjlGlkb0jbE+wOeE13fWfxVMnnkAwcfAlLPXWs8NGNzwnTiL3uvh1h+oH7+xQYg7LskAirfUftQXXWLmIlKiGGHewlEXHU9cr9eMyL99+bG1V9Rnr+MZebRneunHrAu2qpPBoe2XSXYunFt1Q7ilK2VVsCUAMP53jIrPm1pss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781145035; c=relaxed/simple;
-	bh=Nd7h1cGVs3wFvoJFj8fHu3erwIUuQ27mEFZ9U3iCuOA=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=NcO4jb7g09E4x7N0eQDIEhOKTbca3O0gDxVWiBKCNOjJqepZd281vYo8lkrSLLd5hFcL9CmdIUiqJ2IEH9JjSo4zqjj+ykmjDHoP71NOtZuvIOj+HThVE9SJlht4uUomlaNoI5sPpLva0XfmIlV3ZIHgvvLL4ODZHiFkB9SHPhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=HlGd4eC8; arc=none smtp.client-ip=74.125.82.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="HlGd4eC8"
-Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-1382c509485so3275502c88.1
-        for <linux-next@vger.kernel.org>; Wed, 10 Jun 2026 19:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1781145031; x=1781749831; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNofggOC+TvGFu6o5AdSZ9vEkPPtPEYG1vNdLPF4pms=;
-        b=HlGd4eC817F9VSo5yUl5F7fVCJqOTzFhQh0vvfu4yKF/xos4eHPIiYDgkLhDr9KHlb
-         Ker2UEVZ2r1MhN+/i+etu6KvW/pgAudnHW1Vk395FYtrRLu0Gk6QQz1BH1USxmGByAnR
-         nvYdyIDiiKGYN15Gx3jUQw0T/PWYPaa0ScUoEqrIR5e0/tk/NKrgvdf8o2UZ+pIg864F
-         M5uRpf4d5IG5PbmianSt6prAnrKRQlmA2w5V//URy3reXg9SlgtFnPvKmnLCriQ+u67D
-         VyIwjbonnS5f67PlKrUzZJSYmPSn725YLkWcvS7WakvtMjC7diC1073LFSxeM1eyCQMk
-         DdSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781145031; x=1781749831;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UNofggOC+TvGFu6o5AdSZ9vEkPPtPEYG1vNdLPF4pms=;
-        b=BJFcPX17y+fazzmTDuMOj6jXxa09Pl1f5RZyu9L1h2B1gceVqx7IFqVI6PaSyP1ojF
-         6RTUN+Mv+UZMluzLsJb9cS9kuahAdvH335eSUClJlFCDce6yHJcrnUKd81JkApgZO/CA
-         h9Z1bHnneoQrtori20cSQ775IXVllXEgKfRxhjTH4iXF5Yf57Y29FSo381+M5la3AebO
-         RvMqn6yPjd4C3RpmIfpTQN5MfohOnrG6bMxBKdAG83bZi163iJdEb57qAS9ldXVTWaBw
-         bKjOMsrkY/DffYNdjnIUyZRybWUSlz8lqDnH5Oab4lDeL9LOkd7esza8Em0bFhNt4cMe
-         0v1Q==
-X-Gm-Message-State: AOJu0YyNdlwjG1ZnS7EhLw5nC++bAVLr4uJqyVIZt7HGGGw1YZyWLRyd
-	nyyW2x817pPJ98zSWr7f+H5nYksyHb6vQ5vZLkQliv4/laKmJ2QZ5anHud9/3LnE6DkAJ8epG3T
-	KNAQD
-X-Gm-Gg: Acq92OFsTnB4zOUgG6s0Apvkcxwh46iM+msMsR16Jtav1oUQXZcVuPfzUCeM5WyRyyF
-	p3EXZqGhHU2Xu57jVgPUBrGp2zNG4tHwOplVyg63i7LLP2Sg6iN/+luX6/LnGdRPnoqgN1B1lXX
-	Caq/Q1IqHN32edfciCfmZttGQp8m3uembfsCv8QIB39XlZLHeNYxkHfnLJXDYpFDkffPV870mVq
-	zvKCAvKaXmEn9aWzkHIuVUL2QatJv2iREvk97yxicD1ANiCWO1lX9XuO3JaWYkQKQ2YJ2fycMFF
-	tlTy4PYoc+uP0wT9k01PZXJQbDYlGmdDiM2Rw6WWTZvtB84NBBVOCSoG50ULvUgzu0HbLvFs2k8
-	LH00xDppaq1Q29g30af1i1yMEZW/KknAIaoLuPikEPKVQFdLGdqV+StKUi4+wOdYrmstLhvB+RW
-	BPZ424q3YtO8KBkSDkwOvvpu3ZqL8=
-X-Received: by 2002:a05:7022:ff49:b0:138:104:439b with SMTP id a92af1059eb24-138422e437emr517329c88.19.1781145031012;
-        Wed, 10 Jun 2026 19:30:31 -0700 (PDT)
-Received: from 330cfa3079ca ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13842fa5f9asm446358c88.8.2026.06.10.19.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 19:30:30 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1781173737; c=relaxed/simple;
+	bh=bDLvt6M2VgHEh83JN3R8MvQC1jQVGFKjX//YTOhn3U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUw4cfMNsEqh8l5SzVzQLiGXD3p4l9KQwDgTcp0AJfTMw08m2FAZWhrMTNGIVteoshJKF0d4+ulkqtdyMthXfga2B7ZF1XcSzZkUANvG0BOHdPyTCY+HzGuBtFLkuwzAfuLw/65TtRWGWTG+7Ih3u2SLO59qb7mcxHkrWlkchiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CFDA1F00893;
+	Thu, 11 Jun 2026 10:28:55 +0000 (UTC)
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id A887E1AC56C6; Thu, 11 Jun 2026 11:28:52 +0100 (BST)
+Date: Thu, 11 Jun 2026 11:28:52 +0100
+From: Mark Brown <broonie@debian.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Tejun Heo <tj@kernel.org>,
+	Linux-Next Mailing List <linux-next@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	linux-kernel@vger.kernel.org,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>, Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH v4 0/2] workqueue: Add warnings and check WQ flags usage
+Message-ID: <aiqN5JEmwQeHqwa-@sirena.co.uk>
+References: <20260529130640.220328-1-marco.crivellari@suse.com>
+ <bdce3ef27e358b704541d403d28206fd@kernel.org>
+ <a808c387-1087-4826-80de-16252ae315b2@I-love.SAKURA.ne.jp>
+ <a85feb7a94ee487fb5b236d86b674c58@kernel.org>
+ <5b2dea50-2850-4876-b6e8-ba94b9a85034@I-love.SAKURA.ne.jp>
+ <ah2bd_V2QHQftm2o@slm.duckdns.org>
+ <4d47c6aa-8ba5-4e17-87e5-bf1e5ecfbddf@I-love.SAKURA.ne.jp>
+ <bbca08c9-c6bc-4109-b734-14aedc10c93b@I-love.SAKURA.ne.jp>
+ <20260610172823.GA804799@ax162>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - abe651837cb394f76d738a7a747322fca3bf17ba
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 11 Jun 2026 02:30:30 -0000
-Message-ID: <178114503032.13182.13179112581580839874@330cfa3079ca>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9TwgEG5/oJYBxMnF"
+Content-Disposition: inline
+In-Reply-To: <20260610172823.GA804799@ax162>
+X-Cookie: Leave no stone unturned.
 
 
+--9TwgEG5/oJYBxMnF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Wed, Jun 10, 2026 at 10:28:23AM -0700, Nathan Chancellor wrote:
 
+> With that applied to next-20260610, I don't see any other instances of
+> this workqueue warning on any of my test machines. I do agree that
+> enabling warnings prematurely is disruptive for testing and should be
+> avoided but it seems like this one is close? That change should be
+> applicable to the workqueue tree, it just needs to be taken at this
+> point.
 
-Hello,
+Yeah, if things are directly applicable to the workqueue tree they
+should just go there - I was assuming the fixes that were causing issues
+were ones that were for things newly added in -next.
 
-Status summary for next/master
+--9TwgEG5/oJYBxMnF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Dashboard:
-https://d.kernelci.org/c/next/master/abe651837cb394f76d738a7a747322fca3bf17ba/
+-----BEGIN PGP SIGNATURE-----
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: abe651837cb394f76d738a7a747322fca3bf17ba
-origin: maestro
-test start time: 2026-06-10 16:28:53.305000+00:00
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqjeMACgkQJNaLcl1U
+h9AlTQf/Z/1pnqw3VIkn6eQ4B3MF4jxgnEOO6q0SjQp14/Kj5zZluBPko1k8MLLK
+/HiOfqIQNHSrLBnTEdlOLAKiOJe9l+KjQ/60LjLTDA5hQ7w4fEBzQhWNOY6xJBUi
+IJZDSds3CwOQ9wEIkYbK/taJHa2o6hBmV9S+YVj3PGo3lFRxZ6fJUtoZyn9R0rDv
+EYiQq/E/itrP1Zq3eNyS1mCLznXyMP1lOibDKCOlimH5slZK0/AFkjou/qSrrLg1
+aDO659TfDPubMqyBlRt7B7fFvXqF0fFy/aCX0j5UuYbF6QTqYGEBeib7e1pdzV01
+b/w/OZKHVQ1SUCieu2mIvcBBEhcF4A==
+=Kc3O
+-----END PGP SIGNATURE-----
 
-Builds:	   58 ✅    1 ❌    0 ⚠️
-Boots: 	   78 ✅   74 ❌    5 ⚠️
-Tests: 	12558 ✅ 2822 ❌  548 ⚠️
-
-### POSSIBLE REGRESSIONS
-
-  No possible regressions observed.
-
-
-### FIXED REGRESSIONS
-    
-Hardware: cd8180-orion-o6
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6a29a374dabb8c619d45376e
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a299f5ddabb8c619d451f46
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ⚠️  
-            
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a299e95dabb8c619d45136c
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
-            
-Hardware: exynos850-e850-96
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a299f5edabb8c619d451f4c
-      history:  > ✅  > ⚠️  > ⚠️  > ⚠️  
-            
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a299e97dabb8c619d45136f
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ✅  
-            
-Hardware: qemu-x86_64
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a299929dabb8c619d44db06
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--9TwgEG5/oJYBxMnF--
