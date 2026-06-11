@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D345E1A9B46;
-	Thu, 11 Jun 2026 13:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95B520DD51;
+	Thu, 11 Jun 2026 13:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781185514; cv=none; b=OWxYJzgsHRtx8adma0iMt4Z3XE1WXgldMDu1GSa7+glbw0auGlGxQaUj32heZ70JNnBnM+NZBGgtpAJ7R8BFoKwU1qPzLCJjvTwriRtETcQuy0D1qKpogMTXzwqj/8bqMJTxCra8JwkyCBAVp7g4Kw/pgjs7zhU5W3QwpIImvL0=
+	t=1781185540; cv=none; b=TF8qAxjAA0fBmOQaVWqtqFyrK1afu8kKC+RfOhaoUHl53j+QzlaQXDPfnLsRpIXrsDjn0ElUvMhRy2HeblEY55LtcGCCZzro5gZXsvA8Hvq3Q1CIjqQeLaOpVoSQHs1XtGewXW+kwr1iDxv33qTLjajCMACEThXIcashVPvLLYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781185514; c=relaxed/simple;
-	bh=+2+ajvymUJ5N4QqN5W22MevGbqmTZxwTxGsxCQ0BNsw=;
+	s=arc-20240116; t=1781185540; c=relaxed/simple;
+	bh=qudR4YOBjm4BjqJXpfuUPuDMGJQMgBi1fMXDfAiSiMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TVa1mWxrG0CIG67vzoA8EZXPPgVsYdpyWw8C6FZ4YbLqvi1s4ibzbSm35uoduQAKuX8JXxLp2C9Qpu5BJEMqa/IzI7SsFb5bUFHYerLoAwXAtpGZwrk2Y8E13CTfdabIysb/ff3Y9aTcRoUvWnGWMCkIghLxZMI9QhZPmU8x5GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3BnX5W7; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=joegxpgYYmQh5wOVakTs3R5/DSBDsmAc1kt1xtxERcQhpMgrudHS1xD+OuNvGj5XAptkhf9GcrA0lA+og5Ve8XIOo5M1RxhjtDsqwci7A7QKa2L9KFNcbTwrLSYlqOBRjJg7mWLZUS2j8mWEbdQSiIYBh6oRwKvDjJJt4XOS13U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oo2h4jTa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3BnX5W7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 231011F00893;
-	Thu, 11 Jun 2026 13:45:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oo2h4jTa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B5A1F00898;
+	Thu, 11 Jun 2026 13:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781185512;
-	bh=K31aCyJrJDXjyC8XgrkX7UMg362FqfHqOndUZrr46Fg=;
+	s=k20260515; t=1781185539;
+	bh=BWFiD8Jh2uypsKglnxEKkvz9+2QdqGDxExTLoDKZmv0=;
 	h=Date:From:To:Cc:Subject;
-	b=H3BnX5W7+ivjMiHYrhCWf8/a6wRh8KRnKrFw4jb1ygjFyEMTF3vmF1kgxf+pfcuuS
-	 U/nVC50PSpgGo2e69yeOnhgHVsngpeI1SJhIJJecPggiQxXT5AVD6MigUIHe1zpeEn
-	 6dgakUvgOVrpNXN4OVflf1AU9J/giYd92paygbXtHnyoNDHyQd1kZRAas+6ONCjoUY
-	 hBcHXnu0QFBV6P2NszNqKU0dG3DmNGE5Yh2z1H3EvdE5ef7IF5k6fxYAP3OvDQ8GsE
-	 1qk5r2phiYv3EoGTxI31KrHh1HJxyVbDoR1SJUaCHEpl8Cpe0dTnlz8L13efm9lQuV
-	 s2nnhrbCho/eQ==
+	b=oo2h4jTa3cQgJUjJa/E+d/IY646O4T/wfsttMjPOCDfOvOTrRFsOBEgC0S6aSLKQ6
+	 fm6rCOfaZvU/Rj6ExLoWNE9RQ0XGKMjYFCaxDnNAw2wg2JeRC1LWETXoItVK+5PkKm
+	 +dPQcBBq48FHhkJ+z/jTfHx8TZIxaE91qHZNu60K6OXu8UBwg48mHFQBtgfCsmvZUD
+	 WwzfHkcxA5daXolVB6uedJqWZx5Slt8qkiRRjBYDclgnStaG/Buhws6zzc1SuRzhZ+
+	 8HC5gWHYsfTaK5WF5I9HZKj9DGNh0hJkebs0xt47SmJn7hqLVbR+WK+mgoSQEwGDbb
+	 YYNgKPfKmha0w==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 624FA1AC56C6; Thu, 11 Jun 2026 14:45:09 +0100 (BST)
-Date: Thu, 11 Jun 2026 14:45:09 +0100
+	id CA6361AC56C6; Thu, 11 Jun 2026 14:45:36 +0100 (BST)
+Date: Thu, 11 Jun 2026 14:45:36 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Marco Elver <elver@google.com>, Siwei Zhang <oss@fourdim.xyz>
-Subject: linux-next: manual merge of the ipvs-next tree with the origin tree
-Message-ID: <aiq75YYylC-GAy79@sirena.co.uk>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aiq8AHf4_SythYxR@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,32 +45,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k7nmJwZiENRHEtlY"
+	protocol="application/pgp-signature"; boundary="CjMwuXzXB/ALh7bF"
 Content-Disposition: inline
 
 
---k7nmJwZiENRHEtlY
+--CjMwuXzXB/ALh7bF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the ipvs-next tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  net/bluetooth/l2cap_core.c
+  drivers/net/ethernet/wangxun/txgbe/txgbe_aml.c
 
 between commit:
 
-  9dbd84990394c5 ("Bluetooth: L2CAP: fix chan ref leak in l2cap_chan_timeou=
-t() on !conn")
+  f2df54ddbfb04a ("net: txgbe: distinguish module types by checking identif=
+ier")
 
-=66rom the origin tree and commit:
+=66rom the net tree and commit:
 
-  06528e2f5fc933 ("Bluetooth: L2CAP: Fix UAF in channel timeout by holding =
-conn ref")
+  f67aead16e85f7 ("net: txgbe: rework service event handling")
 
-=66rom the ipvs-next tree.
+=66rom the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -78,183 +78,106 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined net/bluetooth/l2cap_core.c
-index c4ccfbda9d7890,62133eef9d2fea..00000000000000
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@@ -1,3 -1,4 +1,4 @@@
-+ // SPDX-License-Identifier: GPL-2.0
-  /*
-     BlueZ - Bluetooth protocol stack for Linux
-     Copyright (C) 2000-2001 Qualcomm Incorporated
-@@@ -8,10 -9,6 +9,6 @@@
- =20
-     Written 2000,2001 by Maxim Krasnyansky <maxk@qualcomm.com>
- =20
--    This program is free software; you can redistribute it and/or modify
--    it under the terms of the GNU General Public License version 2 as
--    published by the Free Software Foundation;
--=20
-     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABI=
-LITY,
-     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RI=
-GHTS.
-@@@ -411,7 -408,7 +408,7 @@@ static void l2cap_chan_timeout(struct w
- =20
-  	BT_DBG("chan %p state %s", chan, state_to_string(chan->state));
- =20
-- 	if (!conn) {
-+ 	if (test_bit(FLAG_DEL, &chan->flags)) {
-  		l2cap_chan_put(chan);
-  		return;
-  	}
-@@@ -422,6 -419,9 +419,9 @@@
-  	 */
-  	l2cap_chan_lock(chan);
- =20
-+ 	if (test_bit(FLAG_DEL, &chan->flags))
-+ 		goto unlock;
-+=20
-  	if (chan->state =3D=3D BT_CONNECTED || chan->state =3D=3D BT_CONFIG)
-  		reason =3D ECONNREFUSED;
-  	else if (chan->state =3D=3D BT_CONNECT &&
-@@@ -434,10 -434,10 +434,10 @@@
- =20
-  	chan->ops->close(chan);
- =20
-+ unlock:
-  	l2cap_chan_unlock(chan);
-- 	l2cap_chan_put(chan);
--=20
-  	mutex_unlock(&conn->lock);
-+ 	l2cap_chan_put(chan);
+diff --combined drivers/net/ethernet/wangxun/txgbe/txgbe_aml.c
+index 8fc32df8e49a44,72712cee1ab834..00000000000000
+--- a/drivers/net/ethernet/wangxun/txgbe/txgbe_aml.c
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_aml.c
+@@@ -186,25 -186,21 +186,21 @@@ static void txgbe_get_mac_link(struct w
+  		*speed =3D SPEED_UNKNOWN;
   }
  =20
-  struct l2cap_chan *l2cap_chan_create(void)
-@@@ -490,6 -490,9 +490,9 @@@ static void l2cap_chan_destroy(struct k
-  	list_del(&chan->global_l);
-  	write_unlock(&chan_list_lock);
- =20
-+ 	if (chan->conn)
-+ 		l2cap_conn_put(chan->conn);
-+=20
-  	kfree(chan);
-  }
- =20
-@@@ -593,7 -596,7 +596,7 @@@ void __l2cap_chan_add(struct l2cap_con
- =20
-  	conn->disc_reason =3D HCI_ERROR_REMOTE_USER_TERM;
- =20
-- 	chan->conn =3D conn;
-+ 	chan->conn =3D l2cap_conn_get(conn);
- =20
-  	switch (chan->chan_type) {
-  	case L2CAP_CHAN_CONN_ORIENTED:
-@@@ -648,30 -651,26 +651,26 @@@ void l2cap_chan_add(struct l2cap_conn *
- =20
-  void l2cap_chan_del(struct l2cap_chan *chan, int err)
+- int txgbe_set_phy_link(struct wx *wx)
++ void txgbe_set_phy_link(struct wx *wx)
   {
-- 	struct l2cap_conn *conn =3D chan->conn;
+  	int speed, autoneg, duplex, err;
+ =20
+  	txgbe_get_link_capabilities(wx, &speed, &autoneg, &duplex);
+ =20
+  	err =3D txgbe_set_phy_link_hostif(wx, speed, autoneg, duplex);
+- 	if (err) {
++ 	if (err)
+  		wx_err(wx, "Failed to setup link\n");
+- 		return err;
+- 	}
 -=20
-  	__clear_chan_timer(chan);
+- 	return 0;
+  }
  =20
-- 	BT_DBG("chan %p, conn %p, err %d, state %s", chan, conn, err,
-+ 	BT_DBG("chan %p, err %d, state %s", chan, err,
-  	       state_to_string(chan->state));
+  static int txgbe_sfp_to_linkmodes(struct wx *wx, struct txgbe_sff_id *id)
+  {
+  	__ETHTOOL_DECLARE_LINK_MODE_MASK(modes) =3D { 0, };
+ -	DECLARE_PHY_INTERFACE_MASK(interfaces);
+ +	DECLARE_PHY_INTERFACE_MASK_ZERO(interfaces);
+  	struct txgbe *txgbe =3D wx->priv;
  =20
-  	chan->ops->teardown(chan, err);
+  	if (id->cable_tech & TXGBE_SFF_DA_PASSIVE_CABLE) {
+@@@ -271,7 -267,7 +267,7 @@@
+  static int txgbe_qsfp_to_linkmodes(struct wx *wx, struct txgbe_sff_id *id)
+  {
+  	__ETHTOOL_DECLARE_LINK_MODE_MASK(modes) =3D { 0, };
+ -	DECLARE_PHY_INTERFACE_MASK(interfaces);
+ +	DECLARE_PHY_INTERFACE_MASK_ZERO(interfaces);
+  	struct txgbe *txgbe =3D wx->priv;
  =20
-- 	if (conn) {
-+ 	if (!test_and_set_bit(FLAG_DEL, &chan->flags)) {
-  		/* Delete from channel list */
-  		list_del(&chan->list);
+  	if (id->transceiver_type & TXGBE_SFF_ETHERNET_40G_CR4) {
+@@@ -335,7 -331,7 +331,7 @@@
  =20
-  		l2cap_chan_put(chan);
- =20
-- 		chan->conn =3D NULL;
--=20
-  		/* Reference was only held for non-fixed channels or
-  		 * fixed channels that explicitly requested it using the
-  		 * FLAG_HOLD_HCI_CONN flag.
-  		 */
-  		if (chan->chan_type !=3D L2CAP_CHAN_FIXED ||
-  		    test_bit(FLAG_HOLD_HCI_CONN, &chan->flags))
-- 			hci_conn_drop(conn->hcon);
-+ 			hci_conn_drop(chan->conn->hcon);
+  int txgbe_identify_module(struct wx *wx)
+  {
+ -	struct txgbe_hic_get_module_info buffer;
+ +	struct txgbe_hic_get_module_info buffer =3D { 0 };
+  	struct txgbe_sff_id *id;
+  	int err =3D 0;
+  	u32 mod_abs;
+@@@ -357,16 -353,18 +353,16 @@@
   	}
  =20
-  	if (test_bit(CONF_NOT_COMPLETE, &chan->conf_state))
-@@@ -1903,7 -1902,7 +1902,7 @@@ static void l2cap_monitor_timeout(struc
+  	id =3D &buffer.id;
+ -	if (id->identifier !=3D TXGBE_SFF_IDENTIFIER_SFP &&
+ -	    id->identifier !=3D TXGBE_SFF_IDENTIFIER_QSFP &&
+ -	    id->identifier !=3D TXGBE_SFF_IDENTIFIER_QSFP_PLUS &&
+ -	    id->identifier !=3D TXGBE_SFF_IDENTIFIER_QSFP28) {
+ -		wx_err(wx, "Invalid module\n");
+ -		return -EINVAL;
+ -	}
+ -
+ -	if (id->transceiver_type =3D=3D 0xFF)
+ +	if (id->identifier =3D=3D TXGBE_SFF_IDENTIFIER_SFP)
+  		return txgbe_sfp_to_linkmodes(wx, id);
  =20
-  	l2cap_chan_lock(chan);
- =20
-- 	if (!chan->conn) {
-+ 	if (test_bit(FLAG_DEL, &chan->flags)) {
-  		l2cap_chan_unlock(chan);
-  		l2cap_chan_put(chan);
-  		return;
-@@@ -1924,7 -1923,7 +1923,7 @@@ static void l2cap_retrans_timeout(struc
- =20
-  	l2cap_chan_lock(chan);
- =20
-- 	if (!chan->conn) {
-+ 	if (test_bit(FLAG_DEL, &chan->flags)) {
-  		l2cap_chan_unlock(chan);
-  		l2cap_chan_put(chan);
-  		return;
-@@@ -2565,7 -2564,7 +2564,7 @@@ int l2cap_chan_send(struct l2cap_chan *
-  	int err;
-  	struct sk_buff_head seg_queue;
- =20
-- 	if (!chan->conn)
-+ 	if (test_bit(FLAG_DEL, &chan->flags))
-  		return -ENOTCONN;
- =20
-  	/* Connectionless channel */
-@@@ -3160,12 -3159,16 +3159,16 @@@ static void l2cap_ack_timeout(struct wo
- =20
-  	l2cap_chan_lock(chan);
- =20
-+ 	if (test_bit(FLAG_DEL, &chan->flags))
-+ 		goto unlock;
-+=20
-  	frames_to_ack =3D __seq_offset(chan, chan->buffer_seq,
-  				     chan->last_acked_seq);
- =20
-  	if (frames_to_ack)
-  		l2cap_send_rr_or_rnr(chan, 0);
- =20
-+ unlock:
-  	l2cap_chan_unlock(chan);
-  	l2cap_chan_put(chan);
+ -	return txgbe_qsfp_to_linkmodes(wx, id);
+ +	if (id->identifier =3D=3D TXGBE_SFF_IDENTIFIER_QSFP ||
+ +	    id->identifier =3D=3D TXGBE_SFF_IDENTIFIER_QSFP_PLUS ||
+ +	    id->identifier =3D=3D TXGBE_SFF_IDENTIFIER_QSFP28)
+ +		return txgbe_qsfp_to_linkmodes(wx, id);
+ +
+ +	wx_err(wx, "Invalid module\n");
+ +	return -EINVAL;
   }
-@@@ -7026,6 -7029,11 +7029,11 @@@ static void l2cap_recv_frame(struct l2c
-  		break;
  =20
-  	case L2CAP_CID_CONN_LESS:
-+ 		if (skb->len < L2CAP_PSMLEN_SIZE) {
-+ 			kfree_skb(skb);
-+ 			break;
-+ 		}
-+=20
-  		psm =3D get_unaligned((__le16 *) skb->data);
-  		skb_pull(skb, L2CAP_PSMLEN_SIZE);
-  		l2cap_conless_channel(conn, psm, skb);
+  void txgbe_setup_link(struct wx *wx)
+@@@ -519,6 -517,7 +515,7 @@@ int txgbe_phylink_init_aml(struct txgb
+  	err =3D phylink_set_fixed_link(phylink, &state);
+  	if (err) {
+  		wx_err(wx, "Failed to set fixed link\n");
++ 		phylink_destroy(phylink);
+  		return err;
+  	}
+ =20
 
---k7nmJwZiENRHEtlY
+--CjMwuXzXB/ALh7bF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqu+QACgkQJNaLcl1U
-h9AWXAf/XsbnFTJCW1fVSYDsBveZPqyQTZ7kM7JSRoiuEBkmEGfAuCq9sWM7nCC2
-zsiVVSK1Ln0yfY6Rri1VIwwiIRYXzugHny+XHqbqiflkzJOoP1IBIQ08oM502wOi
-vVpsYUXZt7DjkwQyqawbEnhAiaQ5wWXIvnwnVP2+VYtURJynWA9HCF5BcIiot+rS
-gZCWE8irY2iCMa5+OrSC/5KewPbRemqtM/kD4aAtReYNVqslDaYUGb0BPrM5cTaW
-758r0Zk9Ln/bUPx6dHVDpprgiXuftBUj71JlYPSsTscSRBMJfd8j0KNR7Kq6XXEO
-F/vPWQ536caAbiKiYrY8NcKlqXGXbw==
-=aKO0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqvAAACgkQJNaLcl1U
+h9Catwf/WNKXkugbbavvlvBd5Ln993Appm77Ur2DmtvQLVxj8zVGNQwF8JD3P2RU
+tlNvLVfywV8gbCsyhVprYoNDQcB/zI1iUL1nUo3fBwdV0Ycnb77XvFgNVvy+KwBu
+qnQxHoxp2Z34iWa0qPs1zjc+XCUm6QM8kHwfZNBod6U/mTO3yzD+z7NxLQRYCnQC
+b4y3UCekkYPmnKwq8vU6uWmQaj3n4Qy5NS1N76OebffkpvG6Hrp6QlVFCF2QHS91
+RzHFPTJ4IiimznNIj+R/z7AfuQ6ePRp57737I2sN9ezkiDpqGZM6YKqLSunvXev/
+wncQVWVuGbY5ac8YDIKjg1DeKZVI7g==
+=dgus
 -----END PGP SIGNATURE-----
 
---k7nmJwZiENRHEtlY--
+--CjMwuXzXB/ALh7bF--
