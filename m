@@ -1,218 +1,260 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726033F8ED8;
-	Thu, 11 Jun 2026 12:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D345E1A9B46;
+	Thu, 11 Jun 2026 13:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781182368; cv=none; b=CSngW5QoszXNP5luQAhKk7DPCZSCMNBAHvQV3YeNdh0mQqnDzfzQmMjp/OUj29xZa3NNaSBjL6QOhjqMEPEbVL00ZXkoVr8ZqRT8AO0rTCqpCPS3Z8Uve+KSrMv+6gtoATV4UtHbDID9LkPhnaiXQEZ8zvuqF/0v81TnxHgBF4Q=
+	t=1781185514; cv=none; b=OWxYJzgsHRtx8adma0iMt4Z3XE1WXgldMDu1GSa7+glbw0auGlGxQaUj32heZ70JNnBnM+NZBGgtpAJ7R8BFoKwU1qPzLCJjvTwriRtETcQuy0D1qKpogMTXzwqj/8bqMJTxCra8JwkyCBAVp7g4Kw/pgjs7zhU5W3QwpIImvL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781182368; c=relaxed/simple;
-	bh=wJgxboTU2zn26QBilNRHyO0OyIuVUSc8LHWxGLP19yQ=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=I8ZTHeYspjrl6tCQvbbCkNwmPKHUppfrEw7warPZtlw8L3AdWqVMVG9UfmpbjjV42tBL2JNd3guDYtS14AWapL+gOri+UGyHrnwKHErPgOuoLTDSzytb3II5w/WQ4R69ZbdcVwnTEV9dCcU2sFZvD1GMjz8e4HBDNS2wYqXrSxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B85w8jOr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781185514; c=relaxed/simple;
+	bh=+2+ajvymUJ5N4QqN5W22MevGbqmTZxwTxGsxCQ0BNsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TVa1mWxrG0CIG67vzoA8EZXPPgVsYdpyWw8C6FZ4YbLqvi1s4ibzbSm35uoduQAKuX8JXxLp2C9Qpu5BJEMqa/IzI7SsFb5bUFHYerLoAwXAtpGZwrk2Y8E13CTfdabIysb/ff3Y9aTcRoUvWnGWMCkIghLxZMI9QhZPmU8x5GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3BnX5W7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B85w8jOr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEB11F00893;
-	Thu, 11 Jun 2026 12:52:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3BnX5W7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 231011F00893;
+	Thu, 11 Jun 2026 13:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781182367;
-	bh=MhJ79RE83SlPlL09hjhdQ09VcDME15ymYeAZgh8podg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=B85w8jOrzbsnuSUc0wtTUgt3jvNR2QIpKZnVHFWzwokn2Xv+TZpQ2+L0gZ0GVf1af
-	 U5CHcyJh5xr/QQQy8kRKgFV7SX7qvYgKgZJ8gy4wO+Jd5y/7f9zL8CfKyHm+E8vPxI
-	 HA7QufWhaJWLPAOV8zE9jnozmj3+lKT94bmhb5vPYeDfXV6r6vFpNX/h5RzwfhKRbG
-	 6SO1dz7PsfIXzBRfWEyujzkEV7o9kXqX5V82tv3BjwKJ3Qs2JfG8GT0lQ/GRWA7o02
-	 yTutHfrNBwZP8vuUfvbhRDik5lDOK/9vly3d5Z0hsV75ynQ1Gr3Gkh+1UZ3ji7iS5o
-	 cqK5w5JOohyfQ==
-Content-Type: multipart/mixed; boundary="------------x0ULY3W347LQLodgOx5sQKT9"
-Message-ID: <2e1b0534-a1a0-4eb1-a5e2-d42fcf991188@kernel.org>
-Date: Thu, 11 Jun 2026 14:52:36 +0200
+	s=k20260515; t=1781185512;
+	bh=K31aCyJrJDXjyC8XgrkX7UMg362FqfHqOndUZrr46Fg=;
+	h=Date:From:To:Cc:Subject;
+	b=H3BnX5W7+ivjMiHYrhCWf8/a6wRh8KRnKrFw4jb1ygjFyEMTF3vmF1kgxf+pfcuuS
+	 U/nVC50PSpgGo2e69yeOnhgHVsngpeI1SJhIJJecPggiQxXT5AVD6MigUIHe1zpeEn
+	 6dgakUvgOVrpNXN4OVflf1AU9J/giYd92paygbXtHnyoNDHyQd1kZRAas+6ONCjoUY
+	 hBcHXnu0QFBV6P2NszNqKU0dG3DmNGE5Yh2z1H3EvdE5ef7IF5k6fxYAP3OvDQ8GsE
+	 1qk5r2phiYv3EoGTxI31KrHh1HJxyVbDoR1SJUaCHEpl8Cpe0dTnlz8L13efm9lQuV
+	 s2nnhrbCho/eQ==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 624FA1AC56C6; Thu, 11 Jun 2026 14:45:09 +0100 (BST)
+Date: Thu, 11 Jun 2026 14:45:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Marco Elver <elver@google.com>, Siwei Zhang <oss@fourdim.xyz>
+Subject: linux-next: manual merge of the ipvs-next tree with the origin tree
+Message-ID: <aiq75YYylC-GAy79@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v3 2/2] rds: convert to getsockopt_iter: manual
- merge
-Content-Language: fr
-To: Breno Leitao <leitao@debian.org>, Allison Henderson <achender@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
- linux-kselftest@vger.kernel.org, kernel-team@meta.com,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Andy Grover <andy.grover@oracle.com>, Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20260608-getsock_more-v3-0-706ecf2ea332@debian.org>
- <20260608-getsock_more-v3-2-706ecf2ea332@debian.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20260608-getsock_more-v3-2-706ecf2ea332@debian.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k7nmJwZiENRHEtlY"
+Content-Disposition: inline
 
-This is a multi-part message in MIME format.
---------------x0ULY3W347LQLodgOx5sQKT9
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Breno, Allison,
+--k7nmJwZiENRHEtlY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 08/06/2026 11:44, Breno Leitao wrote:
-> Convert RDS socket's getsockopt implementation to use the new
-> getsockopt_iter callback with sockopt_t.
-> 
-> Key changes:
-> - Replace (char __user *optval, int __user *optlen) with sockopt_t *opt
-> - Use opt->optlen for buffer length (input) and returned size (output)
-> - Use copy_to_iter() instead of put_user()/copy_to_user()
-> 
-> The RDS_INFO_* snapshot path in rds_info_getsockopt() used to pin the
-> userspace buffer with pin_user_pages_fast() on the raw optval address;
-> the info producers then memcpy into those pages under a spinlock via
-> kmap_atomic() and so must not fault. Obtain the same page array and
-> starting offset from opt->iter_out with iov_iter_extract_pages(), which
-> pins for write because iter_out is ITER_DEST.
-> 
-> The page array is preallocated here (sized with iov_iter_npages()) and
-> passed in, so iov_iter_extract_pages() fills it in place rather than
-> allocating one for us; RDS therefore keeps ownership of the array on
-> every return path and frees it itself. The rds_info_iterator /
-> rds_info_copy machinery and all producer callbacks are unchanged.
-> 
-> Kernel buffers (ITER_KVEC) are not page-backed in a way the info
-> producers can use, so the RDS_INFO path returns -EOPNOTSUPP for them;
-> this matches the previous behaviour, where a kernel-buffer getsockopt
-> hit the WARN_ONCE() path in do_sock_getsockopt() and returned
-> -EOPNOTSUPP. The simple RDS_RECVERR and SO_RDS_TRANSPORT options keep
-> working for kernel buffers via copy_to_iter().
+Hi all,
 
-(...)
+Today's linux-next merge of the ipvs-next tree got a conflict in:
 
-> diff --git a/net/rds/info.c b/net/rds/info.c
-> index f1b29994934a..499b3774860e 100644
-> --- a/net/rds/info.c
-> +++ b/net/rds/info.c
+  net/bluetooth/l2cap_core.c
 
-(...)
+between commit:
 
-> @@ -230,13 +239,16 @@ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
->  		ret = lens.each;
->  	}
->  
-> -	if (put_user(len, optlen))
-> -		ret = -EFAULT;
-> +	opt->optlen = len;
->  
->  out:
-> -	if (pages)
-> +	/*
-> +	 * iov_iter_extract_pages() pins only user-backed (ubuf) iters;
-> +	 * iov_iter_extract_will_pin() reports whether an unpin is owed here.
-> +	 */
-> +	if (pages && iov_iter_extract_will_pin(&opt->iter_out))
->  		unpin_user_pages(pages, nr_pages);
+  9dbd84990394c5 ("Bluetooth: L2CAP: fix chan ref leak in l2cap_chan_timeou=
+t() on !conn")
 
-FYI, we got a small conflict when merging 'net' in 'net-next' in the
-MPTCP tree due to this patch applied in 'net':
+=66rom the origin tree and commit:
 
-  f512db8267b73 ("rds: mark snapshot pages dirty in rds_info_getsockopt()")
+  06528e2f5fc933 ("Bluetooth: L2CAP: Fix UAF in channel timeout by holding =
+conn ref")
 
-and this one from 'net-next':
+=66rom the ipvs-next tree.
 
-  6e94eeb2a2a6 ("rds: convert to getsockopt_iter")
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
------ Generic Message -----
-The best is to avoid conflicts between 'net' and 'net-next' trees but if
-they cannot be avoided when preparing patches, a note about how to fix
-them is much appreciated.
+diff --combined net/bluetooth/l2cap_core.c
+index c4ccfbda9d7890,62133eef9d2fea..00000000000000
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@@ -1,3 -1,4 +1,4 @@@
++ // SPDX-License-Identifier: GPL-2.0
+  /*
+     BlueZ - Bluetooth protocol stack for Linux
+     Copyright (C) 2000-2001 Qualcomm Incorporated
+@@@ -8,10 -9,6 +9,6 @@@
+ =20
+     Written 2000,2001 by Maxim Krasnyansky <maxk@qualcomm.com>
+ =20
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License version 2 as
+-    published by the Free Software Foundation;
+-=20
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABI=
+LITY,
+     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RI=
+GHTS.
+@@@ -411,7 -408,7 +408,7 @@@ static void l2cap_chan_timeout(struct w
+ =20
+  	BT_DBG("chan %p state %s", chan, state_to_string(chan->state));
+ =20
+- 	if (!conn) {
++ 	if (test_bit(FLAG_DEL, &chan->flags)) {
+  		l2cap_chan_put(chan);
+  		return;
+  	}
+@@@ -422,6 -419,9 +419,9 @@@
+  	 */
+  	l2cap_chan_lock(chan);
+ =20
++ 	if (test_bit(FLAG_DEL, &chan->flags))
++ 		goto unlock;
++=20
+  	if (chan->state =3D=3D BT_CONNECTED || chan->state =3D=3D BT_CONFIG)
+  		reason =3D ECONNREFUSED;
+  	else if (chan->state =3D=3D BT_CONNECT &&
+@@@ -434,10 -434,10 +434,10 @@@
+ =20
+  	chan->ops->close(chan);
+ =20
++ unlock:
+  	l2cap_chan_unlock(chan);
+- 	l2cap_chan_put(chan);
+-=20
+  	mutex_unlock(&conn->lock);
++ 	l2cap_chan_put(chan);
+  }
+ =20
+  struct l2cap_chan *l2cap_chan_create(void)
+@@@ -490,6 -490,9 +490,9 @@@ static void l2cap_chan_destroy(struct k
+  	list_del(&chan->global_l);
+  	write_unlock(&chan_list_lock);
+ =20
++ 	if (chan->conn)
++ 		l2cap_conn_put(chan->conn);
++=20
+  	kfree(chan);
+  }
+ =20
+@@@ -593,7 -596,7 +596,7 @@@ void __l2cap_chan_add(struct l2cap_con
+ =20
+  	conn->disc_reason =3D HCI_ERROR_REMOTE_USER_TERM;
+ =20
+- 	chan->conn =3D conn;
++ 	chan->conn =3D l2cap_conn_get(conn);
+ =20
+  	switch (chan->chan_type) {
+  	case L2CAP_CHAN_CONN_ORIENTED:
+@@@ -648,30 -651,26 +651,26 @@@ void l2cap_chan_add(struct l2cap_conn *
+ =20
+  void l2cap_chan_del(struct l2cap_chan *chan, int err)
+  {
+- 	struct l2cap_conn *conn =3D chan->conn;
+-=20
+  	__clear_chan_timer(chan);
+ =20
+- 	BT_DBG("chan %p, conn %p, err %d, state %s", chan, conn, err,
++ 	BT_DBG("chan %p, err %d, state %s", chan, err,
+  	       state_to_string(chan->state));
+ =20
+  	chan->ops->teardown(chan, err);
+ =20
+- 	if (conn) {
++ 	if (!test_and_set_bit(FLAG_DEL, &chan->flags)) {
+  		/* Delete from channel list */
+  		list_del(&chan->list);
+ =20
+  		l2cap_chan_put(chan);
+ =20
+- 		chan->conn =3D NULL;
+-=20
+  		/* Reference was only held for non-fixed channels or
+  		 * fixed channels that explicitly requested it using the
+  		 * FLAG_HOLD_HCI_CONN flag.
+  		 */
+  		if (chan->chan_type !=3D L2CAP_CHAN_FIXED ||
+  		    test_bit(FLAG_HOLD_HCI_CONN, &chan->flags))
+- 			hci_conn_drop(conn->hcon);
++ 			hci_conn_drop(chan->conn->hcon);
+  	}
+ =20
+  	if (test_bit(CONF_NOT_COMPLETE, &chan->conf_state))
+@@@ -1903,7 -1902,7 +1902,7 @@@ static void l2cap_monitor_timeout(struc
+ =20
+  	l2cap_chan_lock(chan);
+ =20
+- 	if (!chan->conn) {
++ 	if (test_bit(FLAG_DEL, &chan->flags)) {
+  		l2cap_chan_unlock(chan);
+  		l2cap_chan_put(chan);
+  		return;
+@@@ -1924,7 -1923,7 +1923,7 @@@ static void l2cap_retrans_timeout(struc
+ =20
+  	l2cap_chan_lock(chan);
+ =20
+- 	if (!chan->conn) {
++ 	if (test_bit(FLAG_DEL, &chan->flags)) {
+  		l2cap_chan_unlock(chan);
+  		l2cap_chan_put(chan);
+  		return;
+@@@ -2565,7 -2564,7 +2564,7 @@@ int l2cap_chan_send(struct l2cap_chan *
+  	int err;
+  	struct sk_buff_head seg_queue;
+ =20
+- 	if (!chan->conn)
++ 	if (test_bit(FLAG_DEL, &chan->flags))
+  		return -ENOTCONN;
+ =20
+  	/* Connectionless channel */
+@@@ -3160,12 -3159,16 +3159,16 @@@ static void l2cap_ack_timeout(struct wo
+ =20
+  	l2cap_chan_lock(chan);
+ =20
++ 	if (test_bit(FLAG_DEL, &chan->flags))
++ 		goto unlock;
++=20
+  	frames_to_ack =3D __seq_offset(chan, chan->buffer_seq,
+  				     chan->last_acked_seq);
+ =20
+  	if (frames_to_ack)
+  		l2cap_send_rr_or_rnr(chan, 0);
+ =20
++ unlock:
+  	l2cap_chan_unlock(chan);
+  	l2cap_chan_put(chan);
+  }
+@@@ -7026,6 -7029,11 +7029,11 @@@ static void l2cap_recv_frame(struct l2c
+  		break;
+ =20
+  	case L2CAP_CID_CONN_LESS:
++ 		if (skb->len < L2CAP_PSMLEN_SIZE) {
++ 			kfree_skb(skb);
++ 			break;
++ 		}
++=20
+  		psm =3D get_unaligned((__le16 *) skb->data);
+  		skb_pull(skb, L2CAP_PSMLEN_SIZE);
+  		l2cap_conless_channel(conn, psm, skb);
 
-The conflict has been resolved on our side [1] and the resolution we
-suggest is attached to this email. Please report any issues linked to
-this conflict resolution as it might be used by others. If you worked on
-the mentioned patches, don't hesitate to ACK this conflict resolution.
----------------------------
+--k7nmJwZiENRHEtlY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regarding this conflict, I took the modification from net-next, but
-using unpin_user_pages_dirty_lock() from net.
+-----BEGIN PGP SIGNATURE-----
 
-Rerere cache is available in [2].
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqu+QACgkQJNaLcl1U
+h9AWXAf/XsbnFTJCW1fVSYDsBveZPqyQTZ7kM7JSRoiuEBkmEGfAuCq9sWM7nCC2
+zsiVVSK1Ln0yfY6Rri1VIwwiIRYXzugHny+XHqbqiflkzJOoP1IBIQ08oM502wOi
+vVpsYUXZt7DjkwQyqawbEnhAiaQ5wWXIvnwnVP2+VYtURJynWA9HCF5BcIiot+rS
+gZCWE8irY2iCMa5+OrSC/5KewPbRemqtM/kD4aAtReYNVqslDaYUGb0BPrM5cTaW
+758r0Zk9Ln/bUPx6dHVDpprgiXuftBUj71JlYPSsTscSRBMJfd8j0KNR7Kq6XXEO
+F/vPWQ536caAbiKiYrY8NcKlqXGXbw==
+=aKO0
+-----END PGP SIGNATURE-----
 
-Cheers,
-Matt
-
-1: https://github.com/multipath-tcp/mptcp_net-next/commit/a8d41e018cc6
-2: https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/88eeb
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
---------------x0ULY3W347LQLodgOx5sQKT9
-Content-Type: text/x-patch; charset=UTF-8;
- name="a8d41e018cc69a6546ef6acc4a97bcbeb3e75d43.patch"
-Content-Disposition: attachment;
- filename="a8d41e018cc69a6546ef6acc4a97bcbeb3e75d43.patch"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWNjIG5ldC9yZHMvaW5mby5jCmluZGV4IDQ5OWIzNzc0ODYwZSwxNzA2MWY2ZmY3
-NGUuLjIxYjMyZWIxNjU1OQotLS0gYS9uZXQvcmRzL2luZm8uYworKysgYi9uZXQvcmRzL2lu
-Zm8uYwpAQEAgLTIzOSwxNiAtMjMwLDEzICsyMzksMTYgQEBAIGNhbGxfZnVuYwogIAkJcmV0
-ID0gbGVucy5lYWNoOwogIAl9CiAgCiAtCWlmIChwdXRfdXNlcihsZW4sIG9wdGxlbikpCiAt
-CQlyZXQgPSAtRUZBVUxUOwogKwlvcHQtPm9wdGxlbiA9IGxlbjsKICAKICBvdXQ6CiAtCWlm
-IChwYWdlcykKICsJLyoKICsJICogaW92X2l0ZXJfZXh0cmFjdF9wYWdlcygpIHBpbnMgb25s
-eSB1c2VyLWJhY2tlZCAodWJ1ZikgaXRlcnM7CiArCSAqIGlvdl9pdGVyX2V4dHJhY3Rfd2ls
-bF9waW4oKSByZXBvcnRzIHdoZXRoZXIgYW4gdW5waW4gaXMgb3dlZCBoZXJlLgogKwkgKi8K
-ICsJaWYgKHBhZ2VzICYmIGlvdl9pdGVyX2V4dHJhY3Rfd2lsbF9waW4oJm9wdC0+aXRlcl9v
-dXQpKQotIAkJdW5waW5fdXNlcl9wYWdlcyhwYWdlcywgbnJfcGFnZXMpOworIAkJdW5waW5f
-dXNlcl9wYWdlc19kaXJ0eV9sb2NrKHBhZ2VzLCBucl9wYWdlcywgdHJ1ZSk7CiAtCWtmcmVl
-KHBhZ2VzKTsKICsJa3ZmcmVlKHBhZ2VzKTsKICAKICAJcmV0dXJuIHJldDsKICB9Cg==
-
---------------x0ULY3W347LQLodgOx5sQKT9--
+--k7nmJwZiENRHEtlY--
