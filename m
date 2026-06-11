@@ -1,99 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BA933E37C;
-	Thu, 11 Jun 2026 13:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEE03EAC9B;
+	Thu, 11 Jun 2026 14:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781186078; cv=none; b=dlrjVRWJ3qTlpvPYp+CxrWPaapLtPHqEy6s0ERiLs1z+UWyNx6/ozzy/OwC8toLq2uvCORyncZQMc8CubokChEuznpoppHkIfOxBnfpm2SrKDk/kO/HH24JbXfqQjyEhW1yGwSpbBaH17hdf583yTPyhBi4sBE6ckiQCz1Kp7HE=
+	t=1781186845; cv=none; b=EUbON9x5/aW0H6VSHkiaro4YTHBOVcRNG4uogvOBBA0zBJrSW12acZkJjNkZ0bBegVjTmqfVGKH4YVS+Vh92pXPax6qAJuzMErxvcrU92r3GSQC9sIoOR0FkaPvzqiFegw2CjzUSjwDZh8mcOMWlDIQSEe9ghOZnfBwR5Ycw0Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781186078; c=relaxed/simple;
-	bh=aXTeckSFs5qm76doBH0C4ZEQh9YkdOTrNpXJhKrXEbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mv93xU7VRtVLqThgQB7E7FzVv2nvxMM0g+57c7EiRoNI51UhVuaaDEu5BmHVWJeS8rNRvSKz6zQMpeiXvddZIZIADqCuKek85SlHiUL/uDDNRYJYONnZiJvfSfhk//YkGKM0JLadk/K7s9bn0gD4NUOoKlWY+i/q6KMsui/lXPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHm2Fyv3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781186845; c=relaxed/simple;
+	bh=0AwffcFEZkhWZr6KHua91LwWKthAkEgTrFmJ31sqCKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGsxtRopWqB9ulLObe+xS2bt0VB+NZkpkd7bNpJctqDxDMRfTGj4YGZ3zRWGBbmRGDCw1aaVMwOB/fzGDWnwInSfI7oVt2x37jrZ//3wpUymq00rJNt7EtKen6E0uedrJVtPCM/iXs6MsJOtJKa0aIk3NGWDRTf9BgfdE85af84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FVj3MeDU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHm2Fyv3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75661F0089C;
-	Thu, 11 Jun 2026 13:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781186076;
-	bh=lUhjcWa4cl33papuj0akhgtxsIcEGGqf770vd/unceU=;
-	h=Date:From:To:Cc:Subject;
-	b=iHm2Fyv3PZEc0uUDNpNb79PpdUG6MGGO+oB0YHO+DKkyVKNukr+tBbb1VR83X2IN3
-	 9tuND0blqWacf2gXPLhJF0gJ+0KtpQJSihhSSdtbS2qcfXBC9dFLEDcaeE+iliInri
-	 PRf5Oxm74USA5kOCfuI3uVBiKHAWK2jxaugRx0vos9M+zc/BEHc/Z7OHPA7u3i88OT
-	 ZUOpJ/wPsy1lT4xZwbkkvjN8yLkMVn6XhiVO5qYiUwnwvDQlb2LGRzlHjU01lxT53/
-	 dpMjMUuQUXFNTKo55ND/ym1TcmhvaV+e0krgDLSH0TTABq/VZSUsOYCg9pbMMp/F/i
-	 pcgA/sGgh5HJA==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 707C51AC56C6; Thu, 11 Jun 2026 14:54:33 +0100 (BST)
-Date: Thu, 11 Jun 2026 14:54:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Jani Nikula <jani.nikula@intel.com>,
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FVj3MeDU"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EjIOcA2M5wsDkb4nNI8T4wAfYZXLKy9y2jheua42cSU=; b=FVj3MeDUuvWsFfVeLQbGgy2KZV
+	Mmlej14Pxf0QZPPdci0TF+3sne5zWMAHIqI5YdmslJriDWZ2WP8InwvtpID0hpRO0rZArrrnkjd5m
+	gBQh/NGwZGi2Gkc7VLbOvVKIYmKDCp9LkDZoSZGUxM/DeeY5O0f1nQElZcohh/ydqWre9UdVVVUvC
+	BjBjBkk+6eoVKyS+VWdRaO9zZsIv122wuW4xIsaZdIB6ZMvoXO2je0cOA0lYOkk7EhD7UixJrYfm5
+	6lInhyTK6n7Lnb1wb0DakGVNEJFgNgx3fovr2HmkY3qZkbtZvftQ82RSElCd4vVSgq03Hxog7IdOd
+	l0ZMYDSQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wXg42-000000020UW-2BIx;
+	Thu, 11 Jun 2026 14:07:22 +0000
+Date: Thu, 11 Jun 2026 15:07:22 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Melissa Wen <melissa.srw@gmail.com>, Melissa Wen <mwen@igalia.com>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes tree
-Message-ID: <aiq-GWegHjzdYJ2S@sirena.co.uk>
+	Mike Rapoport <rppt@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the ext4
+ tree
+Message-ID: <airBGjtjTf3Yuy0X@casper.infradead.org>
+References: <aiq8CByJNMlXo6Be@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sj32bbAeCvMOuiop"
-Content-Disposition: inline
-
-
---sj32bbAeCvMOuiop
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aiq8CByJNMlXo6Be@sirena.co.uk>
 
-Hi all,
+On Thu, Jun 11, 2026 at 02:45:44PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+> 
+>   fs/jbd2/journal.c
+> 
+> between commit:
+> 
+>   bbe9015f23432b ("jbd2: remove special jbd2 slabs")
+> 
+> from the ext4 tree and commit:
+> 
+>   2f6702dc6fdcf0 ("jbd2: replace __get_free_pages() with kmalloc()")
+> 
+> from the vfs-brauner tree.
 
-Today's linux-next merge of the drm tree got a conflict in:
+2f6702dc6fdcf0 is a subset of bbe9015f23432b and should be dropped from
+vfs-brauner.
 
-  drivers/gpu/drm/drm_atomic.c
-  include/drm/drm_colorop.h
 
-between commit:
-
-  94ff735296d371 ("drm/colorop: make lut(1/3)d_interpolation props correctl=
-y behave as mutable")
-
-=66rom the drm-misc-fixes tree and commits:
-
-  5164f7e7ff8ec7 ("drm: Rename struct drm_atomic_state to drm_atomic_commit=
-")
-  0c44d8dc6df988 ("drm/atomic: prefer drm_printf_indent() over inline \t")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---sj32bbAeCvMOuiop
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqvhgACgkQJNaLcl1U
-h9DSCAf/YK/ukTzY2rdOQgIVUPLApQZh0WOvb48HcTQOlnrXxHzin29XyBgideml
-NWbUu9sBXLXXKNmogX6aTKWq8nQkkHMVWVeV0NZKAJiJGiYtutP8PbuR18XWj6eo
-2tmsJpViu1hQ6Y0TPhOfxHKymeQCBkkXzNZNNlQIkkhPqh4IzSOZlfZaONIBvKZy
-lFrezVP5wz2m2lXba+p2XIX0K+aW8OcC12VMDkduE6DWItuQXZPHg/wpWMAhl4q+
-7QtR/Fc4AzxGaBV+AWA9T5/KRUJax3uIPTxPqm1xYoAu7DgTMx+fhu6GEv8/GtMJ
-9DxO6SNyPROW9XqgNE1uz7i78M7xUA==
-=PvUH
------END PGP SIGNATURE-----
-
---sj32bbAeCvMOuiop--
