@@ -1,81 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DCF368296;
-	Fri, 12 Jun 2026 13:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541732D0C84
+	for <linux-next@vger.kernel.org>; Fri, 12 Jun 2026 14:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781271592; cv=none; b=obG02zh3VCvffXLbQLWTnoG3zM4kvoNx/ea10lteX9pM6jNGzTFUWVOxl8+JP//lD219U+xXREwF510XKoct0BYrN9ZzTOmL4d8OrWDBfQFLDXNt4RTomSf87scVPG5lpt5+HI9JpW1uR6iKzTTErBi6tI09wcbuGlOWTJ1R8VQ=
+	t=1781273100; cv=none; b=osz5HnsslK/V6fybYlZP+Hm7PQ9KQwr+vFWZQuwh/Dcv06MLHZRYo6NaiUlqSi39yZEMZQa7P6gz/PnGbv9PglNPCHCIM8D8ayprMXBTYMEqtmUwfjBxxEdVODy9heeaw2HIo9NYVhDkiUtkioPhXhI2yYtJMnr5SeT9HH+I4zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781271592; c=relaxed/simple;
-	bh=887efUGdHvmg/Z/kqvJC3mFGFOeQbbn/5Uiie7Mci2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XBMdny6qu32E6LbKrWm4VtPztX9bQUEVyw0bkR32jFlMGdyroDfvx1UKp9rc2HCpAfo5WPKj8U7Lhbemu72iQZ5YsDCJnoS1W7xXe7Lnm179YHzsC9avinxKhtrLhS/NMcAXIt9mfj+pBClB+1bPkNwdh5UWUuY597Xh5Y6Ec9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNNSYKDC; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNNSYKDC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14DA1F000E9;
-	Fri, 12 Jun 2026 13:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781271591;
-	bh=/o39XUO7NI2UC1nn73/PtLoAd49HZGxYYsKMJ108y7A=;
-	h=Date:From:To:Cc:Subject;
-	b=YNNSYKDCScpSEgvLNFw0VqewHLHFNT0wBHJLnkNeoMd5CzLY7Nr8lV37HGSi4gfAa
-	 wm3tANCA4ThPI+4NC6DT26X27pvnixCBn/Uyw9CKRdJpOLlorafZzsVuYugtdteK5h
-	 YEYfCa3bpRrt1AmhdLv8OiFQqygFtco2Y1HNyLWfe+SehAYefq2RtJYAhoYAJJRadc
-	 4o6h7kmW9ukToC0sQ1UZylEKl9diH5l1+i7QesprGJnAWiUTLRBj1Cb/eUtoAw4d+O
-	 VmToLkC8CNOCxVsbj3Y7lKnbLjsSntjLtpzoVyRqrb6PtDwz7E9SOLFKc0FwLS7+SF
-	 X7LztKsA5QBug==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 28B921AC58C5; Fri, 12 Jun 2026 14:39:46 +0100 (BST)
-Date: Fri, 12 Jun 2026 14:39:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the pmdomain tree
-Message-ID: <aiwMIgx5k5ackX33@sirena.co.uk>
+	s=arc-20240116; t=1781273100; c=relaxed/simple;
+	bh=ynV7GyGHyDQ4hputPznhU81tfF4qp+DzLu4DZ3F+Q1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s2JHjmw3cK7VWlZBD7779u/5UjxbcUTG+JMCRYQ2b+IaLlVFzH2wmJjLlHo6IMkoRPJl4T4xUXy7n8nAftX0U+Bhh+YMXzVN5cYaiLPVsUxGBNDix6jPhG1Vj0oyCD0r6vjTvF/E5CzwI7YO4Z7s5R+JEmyB474QpErY9VvGIlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 65CDChZs010569;
+	Fri, 12 Jun 2026 22:12:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.5] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 65CDCQom010500
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 12 Jun 2026 22:12:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b9771d94-15e2-43ad-9326-81c20c75dfc5@I-love.SAKURA.ne.jp>
+Date: Fri, 12 Jun 2026 22:12:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HNuk5Of9ayQ3UUUx"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] workqueue: Add warnings and check WQ flags usage
+To: Nathan Chancellor <nathan@kernel.org>, Tejun Heo <tj@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Crivellari <marco.crivellari@suse.com>,
+        linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>, Breno Leitao <leitao@debian.org>
+References: <20260529130640.220328-1-marco.crivellari@suse.com>
+ <bdce3ef27e358b704541d403d28206fd@kernel.org>
+ <a808c387-1087-4826-80de-16252ae315b2@I-love.SAKURA.ne.jp>
+ <a85feb7a94ee487fb5b236d86b674c58@kernel.org>
+ <5b2dea50-2850-4876-b6e8-ba94b9a85034@I-love.SAKURA.ne.jp>
+ <ah2bd_V2QHQftm2o@slm.duckdns.org>
+ <4d47c6aa-8ba5-4e17-87e5-bf1e5ecfbddf@I-love.SAKURA.ne.jp>
+ <bbca08c9-c6bc-4109-b734-14aedc10c93b@I-love.SAKURA.ne.jp>
+ <20260610172823.GA804799@ax162>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20260610172823.GA804799@ax162>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+X-Virus-Status: clean
 
+On 2026/06/11 2:28, Nathan Chancellor wrote:
+> FWIW, I sent a patch for the btrfs issue:
+> 
+>   https://lore.kernel.org/20260601-btrfs-fix-wq-warning-qgroup-rescan-v1-1-aff9a1128f27@kernel.org/
 
---HNuk5Of9ayQ3UUUx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Then, please immediately add that patch and
+https://lkml.kernel.org/r/20260611015545.111157-1-wuyankun@uniontech.com
+to the wq tree.
 
-In commit
+> 
+> With that applied to next-20260610, I don't see any other instances of
+> this workqueue warning on any of my test machines. I do agree that
+> enabling warnings prematurely is disruptive for testing and should be
+> avoided but it seems like this one is close? That change should be
+> applicable to the workqueue tree, it just needs to be taken at this
+> point.
+> 
 
-  7dbcc2b682501a ("pmdomains: core: fix unused variable warning with !PM_GENERIC_DOMAINS_OF")
-
-Fixes tag
-
-  Fixes: 92b69eff8012 ("pmdomain: fix early domain registration")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
-
---HNuk5Of9ayQ3UUUx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmosDB4ACgkQJNaLcl1U
-h9AgZAf+NyT37Fk2bKrqu++EdAF3qAZyI7vuiSHee+g6BMeU8eA3z9rU9/Vf/uRa
-z66caZuMCYjal04f+EH9qbSTJ3wjKGjui4RIADxzRpxmF7sg/OC/rclk6QRGplkB
-++ZxLFTsALwoUbK4FT1fqnAfNHzx3jaQcA/2dCrSyw0frQcNu6Oc3V4qso3Migp2
-IkWhMIbI5RBduyqkcGawVGHPhopzxeHkkXI085Ibqjc9v/NilEfp9m0padttKgae
-43DHW311SuCYsSmfkRMI73zQUkREuAa9debYsjW3Ug2Z7bm635c4ty8OxGHulpSL
-+2tydpdfZfHU3+lP3a1tpdB40/qDkg==
-=++Om
------END PGP SIGNATURE-----
-
---HNuk5Of9ayQ3UUUx--
