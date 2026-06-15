@@ -1,37 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B843F23A4;
-	Mon, 15 Jun 2026 13:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D124E3FC5A2;
+	Mon, 15 Jun 2026 14:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781528485; cv=none; b=CV23Z2RcOo+J48UURrD0LV8YN590IteNXs1yMNMGSfjZfDLNy4fTy9azU0dMm5JpWGMkps9gJafvxc44IzMu8aQM3pMQH/rWABDHidiYTyUr2NIg1PYniET0mWErdp51v+5VdOLVbFTN5n+K6FPqJfGGrkEp8XnsehLul69ndBo=
+	t=1781534563; cv=none; b=C+ihAR3GLihJYJozdHsY/fB7Eu47vZUEh/v64dhsag5DendVBpXilSAglRSI+BLoUwbbXHKOLtaC746T8/C2HXCt+ZbyiGn/DCD77rLU0GAC/lQovFNHySu/or9GnpNd1IFTeH2btsUcykSE2IAaTTcHv2Ro/1KDBQVmVgW/9Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781528485; c=relaxed/simple;
-	bh=PsjgkhEbwH8s8x+dxlAg290hV5eSfuei5Zg2HWDKKnI=;
+	s=arc-20240116; t=1781534563; c=relaxed/simple;
+	bh=lyz0o5bIqrQU6GZA9FlIrh0SIJtPiDxC//iPq+MIZlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=thadkqN4NWK6+B9YbX1SCFBawtKqkaqLGkgDjGZedp8HrO4opVV97OeXXRilFpfI9lkjwiw4QoHYbnE66k3r5tB1A4QeJyXRuPVCtbeMAjtLjBWhhXtl1LHCOX/S3x5c0czjXImyhCHVq0+NS2rM7xcxqxKt8E6RKk14ejPgtV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYauqTvt; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=PAVkgnGZVkrm58rNXK7T34pSYSBILrhiGyeiW45GcUZVQV5iIcD6n32xFdrNqFVWCeHbfMBj0uxWkGSuQjCyNa3ql8jEkTOCG70XMFPnN5iv6HzuUrQV83vcZBAzYSrJSD5FgX6hnHbJniZ5M6YNb7AHi8gG32Z20LRDcLC2KIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYeejUh5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYauqTvt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F3C1F000E9;
-	Mon, 15 Jun 2026 13:01:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYeejUh5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E8821F000E9;
+	Mon, 15 Jun 2026 14:42:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781528484;
-	bh=qRK7lr/z2XuH3O9go6suItwuVed2uUQT7vhtzURFva8=;
+	s=k20260515; t=1781534562;
+	bh=0rbF5ZboVW29ctA9StQPDra1Vwsw3zYmxUpbz90V8XU=;
 	h=Date:From:To:Cc:Subject;
-	b=MYauqTvtyRNaUxwhe0i1InTIvcODRGvCG7z3AHxHCI/iK7TGHhl2PYHS1NLa9ZqBF
-	 9vjqtgECggbs4yo0UIcyYteLllpje1BimeAj1+3+yUk1c0/T4DXI1BaUBLCYrTuhPL
-	 VEkzE4kOTBKBQtf4xO0JvJwf5UnHoA0xJ+BEcw2U28gXIVBJIXaeCdbvVL3dNERfEG
-	 t20GtAsSABKax/wPQXKWE/ThroXb+UgS6ddDUE4yyNhvlcmV+hR6nLqbgRziHKRlmd
-	 3nJQtEZQL+yaDWtOQ9rz2J/3D4W8US7vziHbsG2JnJO4lziVQ4jAh4bX40GjL5Icte
-	 DCNI+23UxpksA==
-Date: Mon, 15 Jun 2026 14:01:21 +0100
+	b=mYeejUh5X3i6i8Wi9z4oe4NYq+nCAjPsHkFic3fW1a2OeoPogHrwKgnNz15EH/Dmr
+	 +igNibVsxxGQ49+XNLe0a4Ermo5Nvj6gB0m5Nagk/gia/Ah+90ku+Jfx/VtcsbC9m3
+	 GG9dYt30y9/fuUeUI7XnBzerccGlI1/i8Jc7BgTA4+2YHwojkTQDB7G+5txsa/nqu+
+	 ryUlv+6QKejrjvHIH6/pXXUew7ORNSJvhrjnnwYB8c8KqQxIHWbAldzJVgNvqspyRw
+	 jHRX8qcnHUxi6urq4V7zL2t5IFpnkIZLKYUrXqkvJ8J9HHZFRG4MdAsoLYubVzjpIf
+	 ncAlflSB/xCGw==
+Date: Mon, 15 Jun 2026 15:42:38 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 12
-Message-ID: <ai_3ofnX09hrMV5F@sirena.org.uk>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Aditya Garg <gargaditya@linux.microsoft.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <ajAPXu-C_PuTgV-a@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,68 +43,81 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7Xx7O1rFcOarY+DQ"
+	protocol="application/pgp-signature"; boundary="/QBcvnCH+4/MDw3o"
 Content-Disposition: inline
 
 
---7Xx7O1rFcOarY+DQ
+--/QBcvnCH+4/MDw3o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Changes since 20260611:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-The vfs-brauner tree acquired a build failure due to semantic conflict
-with the ksmbd tree which I fixed up.
+  drivers/net/ethernet/microsoft/mana/mana_en.c
 
-Non-merge commits (relative to Linus' tree): 12373
- 13276 files changed, 815598 insertions(+), 248546 deletions(-)
+between commit:
 
-----------------------------------------------------------------------------
+  f8fd56977eeea ("net: mana: guard TX wq object destroy with INVALID_MANA_H=
+ANDLE check")
 
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+=66rom the net tree and commit:
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
+  d07efe5a6e641 ("net: mana: Use per-queue allocation for tx_qp to reduce a=
+llocation size")
 
-Below is a summary of the state of the merge.
+=66rom the net-next tree.
 
-I am currently merging 425 trees (counting Linus' and 131 trees of bug
-fix patches pending for the current release).
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
+diff --cc drivers/net/ethernet/microsoft/mana/mana_en.c
+index d7de4c4d25bbe,26aef21c6c2c8..0000000000000
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@@ -2332,14 -2399,15 +2399,16 @@@ static void mana_destroy_txq(struct man
+  			napi_synchronize(napi);
+  			napi_disable_locked(napi);
+  			netif_napi_del_locked(napi);
+- 			apc->tx_qp[i].txq.napi_initialized =3D false;
++ 			apc->tx_qp[i]->txq.napi_initialized =3D false;
+  		}
+ -		mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i]->tx_object);
+ -		if (apc->tx_qp[i].tx_object !=3D INVALID_MANA_HANDLE)
+++		if (apc->tx_qp[i]->tx_object !=3D INVALID_MANA_HANDLE)
+- 			mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i].tx_object);
+++			mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i]->tx_object);
+ =20
+- 		mana_deinit_cq(apc, &apc->tx_qp[i].tx_cq);
++ 		mana_deinit_cq(apc, &apc->tx_qp[i]->tx_cq);
+ =20
+- 		mana_deinit_txq(apc, &apc->tx_qp[i].txq);
++ 		mana_deinit_txq(apc, &apc->tx_qp[i]->txq);
++=20
++ 		kvfree(apc->tx_qp[i]);
+  	}
+ =20
+  	kfree(apc->tx_qp);
 
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---7Xx7O1rFcOarY+DQ
+--/QBcvnCH+4/MDw3o
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmov96AACgkQJNaLcl1U
-h9B4TggAhQdNaGmqVEAmIIhu28AWKvlG8LLTEa1kpDR6dKLgDZ9j23LiNbBFuZKZ
-lXz5MlZ59KOr6sQpe90kkNc+XQJ8I3TKyAnKlFcElyeOskB6Kof5MUtJTSsZq4ES
-Pw8hEi/oKDlGyEvZCLA5vlM0sUey8bBXa6kR2Mt9Lz508erdpgY2hS+ETdvJF0aP
-LuzeBNtkdNWcD1fB5a3T23AFmMzBRc97ZIuGbwbcCMH9PkXK6BRD8ITu41t8jm5/
-PdyHw8GtN+lgjzO5Tzis3tfBJbgl8bhru1HQ2FsgpfvJoFWxEB15ANjyZt63CL5n
-HncJDTLH7hqC/1xbDHqZqFA65V5O/A==
-=4YkO
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmowD10ACgkQJNaLcl1U
+h9DlZAf/SF3nOP+uAj/jqoZYtu4Umt3BpN94o0KIp53+bE0f/nqY3knknrrC+5pd
+vCx5Kdy+5+JSELyE6MESO0fx8Pl+MwM7IHWwV7l/2gF6NXEx/I6ltkRIKf4nxyQL
+Gi3EA4N4vv2TLN5kP50BzjL7XjCRkV/rlutl8E7ikkc0B5wSVVIyFqyTExD0IPm1
+KrBIeOf6r7GmIw2/ENaznOaDMazrGIZ90jit1mHyAfcJQl0x9Hhm0PL6WYZdNVe8
+NPM9R6+8kUGLgjxCwGLRXZk6jsYKrJdy9tkKlMy+uEtszzXujCHG3fLUYkbiPR/z
+PWlGqYUH3Zm2Fh9Wo1dSA/t6kQlCiA==
+=mvno
 -----END PGP SIGNATURE-----
 
---7Xx7O1rFcOarY+DQ--
+--/QBcvnCH+4/MDw3o--
