@@ -1,62 +1,62 @@
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055D74071D9
-	for <linux-next@vger.kernel.org>; Mon, 15 Jun 2026 15:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43E3407564
+	for <linux-next@vger.kernel.org>; Mon, 15 Jun 2026 15:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781539147; cv=none; b=bNJgBBi4Q3RlgLAORBDM2a+WZrDIVR42gQp0nJMuB7nTHCDS/wTEvdz6JXROMnwsgjwo5kQV7EehIyCDh6NQFpdZlGMY13Bv9IDpwQGe3dMqX2Uqfzj3uHxx8rAOOBEdVq2Ip3U0GWUTLTK7MwpH7pQNvJzL9wIM8Ivk61UTZW8=
+	t=1781539148; cv=none; b=H16BM+C2tQF9CfLrTqEzOhsyeiEKmVYiXfkxpj/7eXtFVmA1CFdLWQ2x29WtvVUFnnyviNV0Pn7lbG9Nbb2tAItJsEUv+iTh1KVYQpghguJiA6tGqYgo4tmuREp+gD+XiAmi+XrjQ14o2T/rSuqujRyKmS4dAbyaITyWQRyg2o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781539147; c=relaxed/simple;
-	bh=h9WtLBt7aXoEerx3JYYDClbxGXJc5p9lpfgPJl3St0s=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=U/6dF2GeDgJE4puIIjFs4rLAfLiptvIcmX+bK60lVMUSur8oFX5VNdbzFtuJFlndWbjt4Lb267WC14C1oBp+N0Tzp5tzD2M+ANb8QE0F9u+TyRLHpJ0igAAiUmeHB2xph30JEyaHlEQ4PJdoOjnORHw0ks7ZWUToQMzLXA8FX9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=FmBFf9fB; arc=none smtp.client-ip=74.125.82.42
+	s=arc-20240116; t=1781539148; c=relaxed/simple;
+	bh=02456t33kCanPwRPAPtTVAeMZgD9cqQ/ckBYvAOaCUs=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=fEqz4JFMEHRZdFuuI3duc5rVp9HR3zDxC/y5e5ItJ2DQMY22GRo3ErnpEZTLG0udawYI6VCrZctp7Glf2XZsw7nb7XsPgf3rgBq3vWPNE6rT4+zKez0O6dw6o0xlgI30dxwprzLQoYnLCRFaWuDxqL2/BbV+4Ofzlzy5ggHciKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=C00iUJmV; arc=none smtp.client-ip=74.125.82.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="FmBFf9fB"
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-1384ebe7a10so5110595c88.1
-        for <linux-next@vger.kernel.org>; Mon, 15 Jun 2026 08:59:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="C00iUJmV"
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-137ec563a95so3692788c88.0
+        for <linux-next@vger.kernel.org>; Mon, 15 Jun 2026 08:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1781539145; x=1782143945; darn=vger.kernel.org;
+        d=kernelci.org; s=google; t=1781539146; x=1782143946; darn=vger.kernel.org;
         h=message-id:date:reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MhvhhvBBu9uGx40m6SrfaOHHRfJTVRO4+8KVZRHE9cs=;
-        b=FmBFf9fB9Cv5Sun9d7i7v4I64taemp8aHq5OHkLsVPnouQFUj2WjXPH6QKu6N+NTMx
-         FVGIdE8+vQQCe/TygH+HtKrv2WB0IFzyqLMvqNHEPsz7L1B2dMIkXxAHQvaHVeS2E2YL
-         xlKuxwzHdNHQE2d691QliiNFcJ/3MO5D6tnsa9Q/JGTOew1lgkDhlXUA5AjzEDwjhW1b
-         2TExCF+f+0AGKV0fhdU1VnNBR5RJZdW/tq20r8Lq1BzRfNqIgEcq1jv91zLyOTRj5BYT
-         8jwNYJeqKJnULYkkephKBKWqEKpcqvdfcdikGBiQOChaD44pPR8BqvBrbIqhwpVqFV6m
-         avOQ==
+        bh=NCT8etNXvK/IxtxeQpIRLNLGiEVJ24UbzqSH8HPG4oA=;
+        b=C00iUJmVf8LnI7VJ2N0r+AiWBD2X1JSN6FaMvJdDRSAIWSg32IORvW5pVF7N/3lYKc
+         FMSZ9GvHw0G9QpjbQRPzJWGQJSMesvF4yuD4rZFlhbRQ36tnRLU6mtfOOtD+8jrpFNWb
+         4O+SoapHwX/PgERaLIPHYyUwQz9GqCuplAP/dzJ5o3m+YgT7StvERt6P2gIspEilsdDA
+         7zJzTcvuFWtXIVwIs07ncjGC2HEHV4d3JFVRAcV0jAHqdNwodT5KWDRViLJBkAG4REmP
+         XnZlw917zZQAkWr5C9OlsZA8w2VQK8EtVgs1kdl1r7PUqylIVhhwCJ+9GwrMlJ0LiB/D
+         /h7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781539145; x=1782143945;
+        d=1e100.net; s=20251104; t=1781539146; x=1782143946;
         h=message-id:date:reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MhvhhvBBu9uGx40m6SrfaOHHRfJTVRO4+8KVZRHE9cs=;
-        b=G/ElEjCAy5B1w30BoutpTtUAvdMChXLJ4KqIbCZ8ftJ7r3R1ZFX38QUqCi4X85JCP/
-         33ozCNOZS7kn7NniBj41MYFmIRj8fJeU/v0GNdRq1unLAILZrPzjoix+bTUjoTOvbHcr
-         GxiFMdgz1aHMNMxZHucxHMBIBPBb50e8ad0du8RiOjq/PjqMO/44zk+uCSaHPELxk6eH
-         nSqceFGCUOSNiGPMNRG8HG8l2/9OJsxh7uQRD+j0zoC7hmmSfMKOn5zQtcE7bQKgFHUM
-         lk26wKEcgmGKGalvY3oRHtXx9vfDRXJLLFTsALWvlpHres88qxN/8w4152F2d5G4RJfJ
-         Oc6A==
-X-Forwarded-Encrypted: i=1; AFNElJ/Rj7sXg0q6Yzfxo/tQYDfHo0NtTGnXyHgsTtulM/eQ9aLBySE1W0ULteUrfNHYIDpH9EpWLoq2rCkN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyViDIHdmD7/fc7M+aHD9+TnZ3jBf3gn4x7pj4se67pubnmvhWf
-	kKKY05vftEniElnoUhYMm2/J8aTwaFbAOgxxkrm0zeVY5Ps4WCU0Fx5oAI8lnLwwDQ4=
-X-Gm-Gg: Acq92OHFHVk7sjJjl0sSd9oi2doQvGi/N0v1U78u0Oi2qXm1n5QHwEFq0ls4McLT7rz
-	SIE6OB/JU+AnekzIhkCw656TufsnRcthOR/+aWNyJYSMknGa+h+jGpn+358aDN8Fm6ZqgXrfMAD
-	X6ySDq6PqZo7AXuyRCzQxuicIUndpzBB57JP7ymgvAD0bnYdzFy719IWKuQRMAJj46QQj9n7iPd
-	ozXYDa1apql7JVihbxzGtiZn/Y5FGKB1wFKkgORqk0q8t0/0mzDO7q2g2mn2NX9cTdU3fOPFN1P
-	CLVRnWBob2kyJCZpulCdqr9mn4aYjl3TiNtMGu29MAHL7uehYCKKx39zAmaYGjp/ytMNMMzdb3y
-	1QY5r5w05hoDwD1HyLkeeHj1Eqlz4/EB45mK/GS0zl8XQHQbP+u2bIEZSCMYnyZvG1pCGQjtm6d
-	gPbYQECDYy349jzbql
-X-Received: by 2002:a05:7022:6087:b0:12d:b7e5:a67b with SMTP id a92af1059eb24-1384bb361b9mr7540341c88.14.1781539144964;
-        Mon, 15 Jun 2026 08:59:04 -0700 (PDT)
+        bh=NCT8etNXvK/IxtxeQpIRLNLGiEVJ24UbzqSH8HPG4oA=;
+        b=CGCxwFQE8SmLOHcpCsQ/dLHfaRG6+mM0OlOJyPBQ/utJ6D/OV2kKcaMzMjsBTI7Hqj
+         R4GXyqreWBsijd3zX6etBDtqKpG6FZrufE4s30AuzwoFsVb/UI59MF0lZEJP6WfYv7Tu
+         4trKQctjB2y57XLGqGE8MrU6CvCBmVD/woDFyi+EaRZbCe3m1OUNH1IvU2gpGxlfx0N2
+         TTFvH6YmqpjCFQvK1r4to8hUinjTi/ypOSHwIKQqXp392XjHNHdDQZOKTPbQwECwd5I2
+         ZdTVG6pFxNQVIiy4WBOO5vz0HltnZOqGj9ilN0xz/dqSsC8DIPHzpo8yotmqA6f0OyWa
+         dtsA==
+X-Forwarded-Encrypted: i=1; AFNElJ+r4HZJghj76u/TX2UcyjIA1Nrjdk1JhMxAM9oR29SAPi/YbRPVFp4MF8NHn9O9LghxWm1B4ztYJVLX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI2gTC45h9gMsuNNPxDXlNc3EBTEy8VuY1U2AXvHB91DJZ3xa/
+	ADG6/QYsn8s8DwXvFFxWjJ/9p4yCZiYk+rAaxXuZgrRRm4MP8cLlibGygsba7wrf3YM=
+X-Gm-Gg: Acq92OHFcyNwc3r4O9hv+q95lJgUZd6KsiStTiT3XFxh2KLoR7n227NaH5z7Dx2pkCY
+	Se6KPckmVDzqWQWefSGoKDFh9k1GfZJNtEWJleczLYqzxUY+GN27F0vry4Xvh5RASLOKkWSFBQq
+	oL8tK28JQ4lDgMbhbPpRAAUaMdiThAcaSD5s1qCHwFMXlCBMV6VEQwxw+HHWUCSikMReekAvgEE
+	PxB0U51Rk1kGyn1V36N5eUhZuLRHy3CvFeXDhAQyZEY+F/r0Pduv7Sube+DVOYLcmHYq5znZHYa
+	uvUJ9u4FK7Jhbz5rXoJ7mO+nEJOceaKnyEwFe93c2USTthzK/DvszKjF/B5v73k7UO359A9KYrT
+	z/tg3twEIE0t1FQHXuth2v+Reqmzyn5MG6mAU4mOLTrnJeDrQLULR7inpFpVhIimlVdntKqGvz4
+	n3sDsQPxUtPkluK11o
+X-Received: by 2002:a05:7022:2396:b0:137:ea7d:a5e1 with SMTP id a92af1059eb24-13878e2d130mr5218409c88.30.1781539146009;
+        Mon, 15 Jun 2026 08:59:06 -0700 (PDT)
 Received: from 330cfa3079ca ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1384b964862sm10902662c88.10.2026.06.15.08.59.04
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1384b91a4c7sm10606835c88.8.2026.06.15.08.59.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 08:59:04 -0700 (PDT)
+        Mon, 15 Jun 2026 08:59:05 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
@@ -65,15 +65,15 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: [REGRESSION] next/master: (build) passing argument 1 of
- '__do_kmalloc_node'
- makes pointer from integ...
+Subject: [REGRESSION] next/master: (build) too many arguments to function
+ call,
+ expected 5, have 6 in mm/slub...
 From: KernelCI bot <bot@kernelci.org>
 To: kernelci-results@groups.io
 Cc: regressions@lists.linux.dev, gus@collabora.com, linux-next@vger.kernel.org
 Reply-To: kernelci@lists.linux.dev
-Date: Mon, 15 Jun 2026 15:59:04 -0000
-Message-ID: <178153914414.15282.5994241043459847090@330cfa3079ca>
+Date: Mon, 15 Jun 2026 15:59:05 -0000
+Message-ID: <178153914528.15282.16770125845520023465@330cfa3079ca>
 
 
 
@@ -84,10 +84,10 @@ Hello,
 New build issue found on next/master:
 
 ---
- passing argument 1 of '__do_kmalloc_node' makes pointer from integer without a cast [-Wint-conversion] in mm/slub.o (mm/slub.c) [logspec:kbuild,kbuild.compiler.warning]
+ too many arguments to function call, expected 5, have 6 in mm/slub.o (mm/slub.c) [logspec:kbuild,kbuild.compiler.error]
 ---
 
-- dashboard: https://d.kernelci.org/i/maestro:88b7de4573d3ff7942d5e1c391739d0d3854fe51
+- dashboard: https://d.kernelci.org/i/maestro:0c4655a413ae8e279f9ba1fcb2fc80a3953d4dd4
 - giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 - commit HEAD:  700f8f17ac2c84f94b7cf4420f306a23a5ddfd24
 
@@ -99,82 +99,55 @@ Reported-by: kernelci.org bot <bot@kernelci.org>
 
 Log excerpt:
 =====================================================
-mm/slub.c:5552:42: warning: passing argument 1 of '__do_kmalloc_node' makes pointer from integer without a cast [-Wint-conversion]
+/tmp/kci/linux/mm/slub.c:5553:30: error: too many arguments to function call, expected 5, have 6
  5552 |                 return __do_kmalloc_node(size, NULL, flags, node,
-      |                                          ^~~~
-      |                                          |
-      |                                          size_t {aka unsigned int}
-mm/slub.c:5340:39: note: expected 'struct kmem_cache * (*)[15]' but argument is of type 'size_t' {aka 'unsigned int'}
- 5340 | void *__do_kmalloc_node(kmem_buckets *b, gfp_t flags, int node,
-      |                         ~~~~~~~~~~~~~~^
-In file included from ./include/uapi/linux/posix_types.h:5,
-                 from ./include/uapi/linux/types.h:14,
-                 from ./include/linux/types.h:5,
-                 from ./include/linux/kasan-checks.h:5,
-                 from ./include/asm-generic/rwonce.h:26,
-                 from ./arch/arc/include/generated/asm/rwonce.h:1,
-                 from ./include/linux/compiler.h:369,
-                 from ./arch/arc/include/asm/ptrace.h:11,
-                 from ./arch/arc/include/asm/bug.h:11,
-                 from ./include/linux/bug.h:5,
-                 from ./include/linux/mmdebug.h:5,
-                 from ./include/linux/mm.h:7,
-                 from mm/slub.c:15:
-./include/linux/stddef.h:8:14: warning: passing argument 2 of '__do_kmalloc_node' makes integer from pointer without a cast [-Wint-conversion]
-    8 | #define NULL ((void *)0)
-      |              ^~~~~~~~~~~
-      |              |
-      |              void *
-mm/slub.c:5552:48: note: in expansion of macro 'NULL'
- 5552 |                 return __do_kmalloc_node(size, NULL, flags, node,
-      |                                                ^~~~
-mm/slub.c:5340:48: note: expected 'gfp_t' {aka 'unsigned int'} but argument is of type 'void *'
- 5340 | void *__do_kmalloc_node(kmem_buckets *b, gfp_t flags, int node,
-      |                                          ~~~~~~^~~~~
-mm/slub.c:5552:61: error: incompatible type for argument 4 of '__do_kmalloc_node'
- 5552 |                 return __do_kmalloc_node(size, NULL, flags, node,
-      |                                                             ^~~~
-      |                                                             |
-      |                                                             int
-mm/slub.c:5341:41: note: expected 'kmalloc_token_t' but argument is of type 'int'
- 5341 |                         kmalloc_token_t token, struct slab_alloc_context *ac)
-      |                         ~~~~~~~~~~~~~~~~^~~~~
-In file included from ./include/linux/mm.h:34:
-./include/linux/slab.h:520:41: error: incompatible type for argument 5 of '__do_kmalloc_node'
-  520 | #define PASS_TOKEN_PARAM(_token)        ((kmalloc_token_t){})
-      |                                         ^~~~~~~~~~~~~~~~~~~~~
-      |                                         |
-      |                                         kmalloc_token_t
-mm/slub.c:5553:33: note: in expansion of macro 'PASS_TOKEN_PARAM'
+      |                        ~~~~~~~~~~~~~~~~~
  5553 |                                 PASS_TOKEN_PARAM(token), &ac);
-      |                                 ^~~~~~~~~~~~~~~~
-mm/slub.c:5341:75: note: expected 'struct slab_alloc_context *' but argument is of type 'kmalloc_token_t'
- 5341 |                         kmalloc_token_t token, struct slab_alloc_context *ac)
-      |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
-mm/slub.c:5552:24: error: too many arguments to function '__do_kmalloc_node'
- 5552 |                 return __do_kmalloc_node(size, NULL, flags, node,
-      |                        ^~~~~~~~~~~~~~~~~
-mm/slub.c:5340:7: note: declared here
+      |                                                          ^~~
+/tmp/kci/linux/mm/slub.c:5340:7: note: '__do_kmalloc_node' declared here
  5340 | void *__do_kmalloc_node(kmem_buckets *b, gfp_t flags, int node,
-      |       ^~~~~~~~~~~~~~~~~
-  CC      lib/zlib_inflate/inflate_syms.o
-mm/slub.c:5558:1: error: control reaches end of non-void function [-Werror=return-type]
- 5558 | }
-      | ^
-cc1: some warnings being treated as errors
+      |       ^                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 5341 |                         kmalloc_token_t token, struct slab_alloc_context *ac)
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
 
 =====================================================
 
 
 # Builds where the incident occurred:
 
-## haps_hs_smp_defconfig on (arc):
-- compiler: gcc-14
-- config: https://files.kernelci.org/kbuild-gcc-14-arc-haps_hs_smp_defconfig-6a301b2ca1ade4ad5d108e15/.config
-- dashboard: https://d.kernelci.org/build/maestro:6a301b2ca1ade4ad5d108e15
+## aspeed_g5_defconfig on (arm):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a301b0ea1ade4ad5d108dc5
+
+## defconfig+allnoconfig on (riscv):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a301b13a1ade4ad5d108dd5
+
+## i386_defconfig+allnoconfig on (i386):
+- compiler: clang-21
+- config: https://files.kernelci.org/kbuild-clang-21-i386-allnoconfig-6a301b13a1ade4ad5d108dd2/.config
+- dashboard: https://d.kernelci.org/build/maestro:6a301b13a1ade4ad5d108dd2
+
+## multi_v7_defconfig+allnoconfig on (arm):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a301b0ba1ade4ad5d108dc2
+
+## x86_64_defconfig on (x86_64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a301b17a1ade4ad5d108de4
+
+## x86_64_defconfig+allnoconfig on (x86_64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6a301b1ba1ade4ad5d108df3
 
 
-#kernelci issue maestro:88b7de4573d3ff7942d5e1c391739d0d3854fe51
+#kernelci issue maestro:0c4655a413ae8e279f9ba1fcb2fc80a3953d4dd4
 
 --
 This is an experimental report format. Please send feedback in!
