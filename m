@@ -1,92 +1,74 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEE12472A2;
-	Sun, 14 Jun 2026 19:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B066F3F1AD3;
+	Mon, 15 Jun 2026 13:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781463809; cv=none; b=LHdo1VgWT885vLsNS8HEk0mNZ7udBI4CvCLN7VR+PNpGinPy5iVtjy6aqvLUu7G8slo2JzxErNhTMSy4tv9mA3YufOZ85wlAeWMaC2JWDrq8wl1ywRD2DkbJErtQFOe0TBNpWoGqc3nSt/U7+4x9ImM6MgnDeLEYM+X9n1J+tLI=
+	t=1781528405; cv=none; b=MMaFQRuGs7yixxhPMugs9+wxkCsxPp6PQ2z3A/ldaU98xGmfdNpBEHUxLuNao6DECRb4y4x+5x29NALeLOZuu/myuw3I8MSJQUjE7XMS/TCRLlBPO1WhCnp69t4OCt6xh01SDPPVhBP1h+JXWqUVXJNuOO05ds1NG8ILnmWuXyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781463809; c=relaxed/simple;
-	bh=VzcB63AsSNF7wmll/zmjtwwlGjqerrbUFdIv1sQDCaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BN68ZZQAUsrRgebrBSVXV85lsetrXDnvWG++wBVNtABlTEvlUIh6+IVoCPuHeb12EYNbjHADg2RyDsXpV/K4mhh5SXFkv1WJbiOpg7EAEJXVlDX4OPbZy0KNhUcsVNZJrdi8SiUyVM0V5hDr9s3pqPFdxrdMKtgZ3TkUZWLN59g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=z5ujfX3x; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1781528405; c=relaxed/simple;
+	bh=7znUddP/raoyhald5lpbAam4OksvkZIO41kxHM8QMtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sMGHJtkB5XpRKg3Z6AxqOi/zO8cNkzyOYvJ+TVlnpzEILzREAgqno/Ioxd1qzDrY+1RjO/jyI51Pw8wqS0qN6Gpv+0bUUIeQNdpHePFRMUEwX/49hEYHrgDjZZd/ZGprhsMQQgmMkCZyaQOsDZgLcZMel26fYNX5NXfRzFPv3CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGTmf7+v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z5ujfX3x"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=PiLz037c9nzz/qf1xpC6xtNQEmyk3VTIoDteshTl2pc=; b=z5ujfX3xsDZM98LknmDlWovFa4
-	ajtINxr9poE3cPXQamjpV/NKJ4sfB4lAVoOyehqEvCMHezwGD/Q/6Mxi0ka5psM2caBGYtXoPJBi+
-	lifs80vBP5Z61KX39tPSxhZhzDv+DLzZlJ/JujBeQWWObuT1Abb4jDkluDIoa2uCsfjMbhdvfKTq2
-	4dbuO34dtjlCyf/tt8sP23K9uN9/+ZF6tDidpLUQfgrHnGpGX34UmyRp9YrENys9V2g37RsxEFKD+
-	E90iVTf/Z6kBi7ncFIUvEeTYm1Mu23a5SdJ4V8oVq10kL/7ygSOWWFyVsm4c99CmugzSscqZ6DpS0
-	eP+vuNSA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wYq7A-0000000DFWE-1KEn;
-	Sun, 14 Jun 2026 19:03:24 +0000
-Message-ID: <13b452d2-d81c-4686-a94f-3789e92b4a47@infradead.org>
-Date: Sun, 14 Jun 2026 12:03:23 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGTmf7+v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5751E1F000E9;
+	Mon, 15 Jun 2026 13:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781528404;
+	bh=vPaxvR5J7A5GaBjCu0/NpgUO+xiUoX4Lj8xll6AFIMw=;
+	h=Date:From:To:Cc:Subject;
+	b=HGTmf7+vaVtyKSM5a3BVKS7hX+ZzK+tqpmJE8eY7Z84pk1W1ijs/GALgMEa/aU770
+	 DEPIb/MHi18pobHQCU2pkIszRgr9LtkwyqlWSMTVL0EKDmYvQbDIxTNB4hS7doDwDU
+	 Ls/nmmOr5QLkAYwmJ0RjHVD6YK7KsPmlnzcO9x57moE3+hvOO2nk8U3KusGvmQNkHD
+	 E0EhXDjpW2m+qfkcn8gySs7G52R2TVZCMwmtJmGzZ+UaDMXXg+t2XUQy5QonLU8gec
+	 xQel2NnMZMHW5LCGNmxja2MGAROHAXrvyNHTRm+t7s/n0J2CVDr5A4gDFJyzqO/9pL
+	 5dm9/Yb/+oAQA==
+Date: Mon, 15 Jun 2026 14:00:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the sparc tree
+Message-ID: <ai_3UFF9HfEyRW0C@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jun 11 (damon)
-To: SeongJae Park <sj@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Jiayuan Chen <jiayuan.chen@shopee.com>, damon@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20260614184235.101552-1-sj@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260614184235.101552-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rDseeG23+mjne6ka"
+Content-Disposition: inline
 
 
+--rDseeG23+mjne6ka
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/14/26 11:42 AM, SeongJae Park wrote:
-> Hello Randy,
-> 
-> On Sun, 14 Jun 2026 10:41:05 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> Hi,
->>
->> On 6/11/26 7:33 AM, Mark Brown wrote:
->>> Hi all,
->>>
->>> Changes since 20260610:
->>>
->>
->> Please add missing kernel-doc comments:
->>
->> WARNING: ../include/linux/damon.h:909 struct member 'probes' not described in 'damon_ctx'
->> WARNING: ../include/linux/damon.h:909 struct member 'rnd_state' not described in 'damon_ctx'
-> 
-> Thank you for notifying this!
-> 
-> The fixes should be trivial.  I made those and queued [1,2] on damon/next tree.
-> DAMON patches are merged into next tree via mm.git.  And mm.git is currently
-> closed for non-urgent issues to focus on making things for next merge window
-> stabilized.  I will therefore post the fixes after the next merge window is
-> closed (7.2-rc1 release).
-> 
-> Please let me know if I'm missing something or you have any different opinion.
-> 
-> [1] https://git.kernel.org/sj/c/892a69e2774fcface1202dbdc2ff62e433f487fa
-> [2] https://git.kernel.org/sj/c/b205766e8d676b9c9e3af828e736215bc54f4690
+Hi all,
 
-LGTM. Thanks.
+The following commit is also in Andrew Mortons' tree as a different commit
+(but the same patch):
 
--- 
-~Randy
+   1919c0e50000e (sparc: add _mcount() prototype)
 
+--rDseeG23+mjne6ka
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmov908ACgkQJNaLcl1U
+h9Ah+ggAgCklPzoDmAxtnLc09NMXlOKW8j8QPcGbhVfzrWXFhTNK999SSouv/q4o
+zPpyNLmNI1+r2Xpgd9kd3r3qMTnb2sS/nyZUMdIlTL57pZQB0578cpzwy5e2omlV
+jAOZ/d0p+BxXXn0ZVD06/3Vrat6H7JfUzrKgqRzmAVyFB5GB/zk+FgMX0tNpZ188
+zihzPB77zaSbYIC5Cltna7/5G4fSnNtyRiwA6PSQ74HMXN/8iXWXhdxnEsI5J2Sw
+jblwWsG+iakxOTvMkvgvV2T+ExPLR+jCGPrsA8gTGG8qMIMOPfi+ijjqPKOvjfGA
++z2yrze3VZXelpGGcxu6o0C74y/JsA==
+=S4T6
+-----END PGP SIGNATURE-----
+
+--rDseeG23+mjne6ka--
