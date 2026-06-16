@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAB51DB551;
-	Tue, 16 Jun 2026 14:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFABC351C17
+	for <linux-next@vger.kernel.org>; Tue, 16 Jun 2026 14:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781618470; cv=none; b=S9O3N368NaORa/9lW3bC/YCvIIw9wbaDlx5P7U4iSFphN5ZlawD4uqnITSpPzOtSZhU0IgTGJu9zQVkVVy3wuI8KOmtRQFKekGE9wlnhsQmvrDWnsZUo5GQInFxPWuW0+dCIns+1DZzZzWgtNTAODpuKY975fldqLT3kajIe5KU=
+	t=1781618696; cv=none; b=AJeI8kSeakviFv21XK5w4sfZlB9um5ctPkC5z9MM2hMjgidxpjHvAqV7M0feI2K8VAKb756z92jkGo+Ynrw4iojee+4pIQrDU7Tb06IxYzMTGzRwz6j2PJmHWn1pd0G0DJf5eNX3vooxS/WeR27nE6C/lf1oxoxGr2QgzvL4eLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781618470; c=relaxed/simple;
-	bh=jwx+Kmi1XkRBAwNb1CxSJvpJZDy/GvLCwrZg9PMh+lA=;
+	s=arc-20240116; t=1781618696; c=relaxed/simple;
+	bh=378kAbgeCnIbzZ/wqhDIqSSmOdHgI2On5iClxbt7uIc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I0CIJgrHfWtdOIpp2h8GvUu1W2DZTeA8xJB0CScyH1pxOhC4p+kSn20ANSccmHft9aiU/r7mQOqvuMGFOU7kVwB7QQsCWJ2SOD0tdmCSbW8gwcp766y8txYTiMbHff/fqfCfopIdTzpvtpUNObNDmIFqUQ/pAf/gZi1162utj6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxloronq; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=kBYCqqgBqbMltsrGkiMi9CfAZxF6O+CDDChxoHA7ayzOELKTNT36Kwoyq6/9lphHscLBgvVkljwjvJqQFxOlznzo2G9SDPR9pjkZkPeWY67tAzseppVOntwBx1gPxfElnXRr5rdcoutZxuifozNTUOYdjCXbnXdyw7/dHusPvNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=o0/DnJFO; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxloronq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5094B1F000E9;
-	Tue, 16 Jun 2026 14:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781618469;
-	bh=KFQknz3tFr1WEkukr5Gu3HZetcXLfJGHQ3VjUUoFDY0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=jxloronqDVtw93IKdhU+pyV1BgegpalXKOpRJjT+7jFz0y1coIELcUXjqUP581tr3
-	 OwhayYh4OSHn4cSwRTreh97Bsk0pl9Tl7fO7rt44ADudoFLAWOynwbfSYvK05/bITX
-	 aobNGPZ68CMQMzyA6GLj+gr32PVpjq08nya0Im8v6rcgprnC6/QZHIcPD1k1amhRAv
-	 /2Xui+xA3WWJrTYal01iMaeZ93eFBqcV9qI+k9yyIRktGM/gcm1o0UF6dmPlA6anzb
-	 wPxm3EdgggvemK1/ih8fVAKyBN8vOWtOPZY6A2TBib1T5ofQeGK2e58/WuXkLnjmOv
-	 XFM/33EVi0V1Q==
-Message-ID: <7e0b3775-3e22-4c43-828d-6bde2fd165d5@kernel.org>
-Date: Tue, 16 Jun 2026 16:01:06 +0200
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="o0/DnJFO"
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-43cce7db292so3404928fac.2
+        for <linux-next@vger.kernel.org>; Tue, 16 Jun 2026 07:04:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781618692; x=1782223492; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/ewgAz/3P5lAWARWYdlL7x3t/u9xX4eostMbpnjsAEo=;
+        b=o0/DnJFOwoiaBPb0gruQVfztmbYJ2sGWbY/MkX9TieS08sWx/L/FZNZT6ycEo2MrF4
+         AbtlTsAuIEf/Dgox+MLwvGM45pLXQrznkbqLYQScBx5xEuWOKfuLw3ae7hJIAAczGSGM
+         vPckSzXmRPFbw4pkJaPaSCqcTdfAXUyFPDZLkyWAXMTzzpsfi2/Jb8Hurid00gEADDdn
+         MDrJXoI9WmadPDRWs8Dgr6mO2UTfXJ0agbsTd+y0I00tDUOnRe7v8PtR4KzRgyGSgo9g
+         09lgH5yaMH5Lt9K2JtJB58KchvwuJCCn3xzDCsY+3AIcmai0pcQ3k26N50Eaa9Jw6RBV
+         4c5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781618692; x=1782223492;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ewgAz/3P5lAWARWYdlL7x3t/u9xX4eostMbpnjsAEo=;
+        b=IbegcXBkZLHpBqa5BTmv7fYTdLitqu7IfrMzcvOiX46eEQ9tD2gLHXx72SDOPOph4p
+         VQqqsN92YL+RyoqlOCnEyeddCg8SkUMwuSaYZby2GqXkYY6J6S/93edKUiuftPNwU/ko
+         OFzVT51Fbh1qGKsVxhzg13++2ZUIUDXhJH08+lTVQcOp6rvHvV6cIGYDitIs8v+ua3cw
+         vUE/ShHMvJjcfZ5b04GDFUxAtnBfjlkpsdG1aIgs5DynU7Tmj1DQJwTVWKnKFBNiCChd
+         PRnqbuquk88pNtntPpT+SEQwoODXR+FXClDDo8Co0Cljwq9bZ/PEgHJwFFyiRag5rSaL
+         iPEQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+zuhv8+P9VkEz7L9bzJA3WqhLzrYQ4+nSe8JQTiVHu3eY21CZqrrfPZ5XSGh4LywNrA/13vp2RT3az@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP46VDJgCaj8XNICOrS8D9GMD8lM71NPXCw0xggdiSBdrs9LCP
+	hxn/tBP/cJKHelf+oPNy+NFsLylXBAtLpyOx9HCxf2qxKi8frgVqZe33TKevSZpCfZ8=
+X-Gm-Gg: Acq92OHPTOfhKeBId5k8J8mXujgy3r7HVbQHyAlR0rMi7W+rWAJr7iLsMJbkQ8tc/sx
+	y1Gp7TwAd60UdxqRm8f8qfZ2mQ4qEHsQmdizlYDj0G0FB5LraBJy68wA3HufAEfiDeaNwPpnfGE
+	0lgFf+vZF9wogX2FVpiforlnY6kShIHpNw8uJjnep+zyb8JzEkIbqQKoiwT48gFtQ7K8h2L8b+t
+	zJ/8e0R5JvZweO+JBE2aSyocBp4uakk3TpDGWvbr3ruwVKkLPB1pEh9pTO6wB1QKyn2Wgdev5iB
+	8+o1ZcT9t+lyxk/OIalfTyPU5esRxBUyHA8hJ9mcWTJEBaE4R2qoNfX5ixGb58eTLK6gscIzaYw
+	SYt4DUj4FmSdu0oj7IVTC15tm+MvpTgzwOt1GpqS8wRI6T3ME4SNa0ngj7L0xIs8+H7twHbpbd3
+	tty1I9BDqkgktocOx+DbPUK4LyBfzOEOZtxPR7YcH2464lzQTZZVgT7CQQ+UJ7stngIxESR2oBp
+	AXcNMScwen5UmDA2KAK
+X-Received: by 2002:a05:6871:7c05:b0:442:ae3f:f22 with SMTP id 586e51a60fabf-4430b67f960mr2983986fac.23.1781618692574;
+        Tue, 16 Jun 2026 07:04:52 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-44308fd68d9sm2272443fac.14.2026.06.16.07.04.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jun 2026 07:04:51 -0700 (PDT)
+Message-ID: <d968a9de-df62-4120-bc95-21483a15785a@kernel.dk>
+Date: Tue, 16 Jun 2026 08:04:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -35,93 +69,45 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the drm tree
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>, Dave Airlie <airlied@redhat.com>,
- DRI <dri-devel@lists.freedesktop.org>, Christoph Hellwig <hch@lst.de>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Subject: Re: linux-next: manual merge of the block tree with the origin tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <ajFMJzsbcZ1m_vr3@sirena.org.uk>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Autocrypt: addr=vbabka@kernel.org; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSNWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBrZXJuZWwub3JnPsLBsAQTAQoAWhYhBKlA1DSZLC6OmRA9UCJPp+fM
- gqZkBQJqFFy6GxSAAAAAAAQADm1hbnUyLDIuNSsxLjEyLDIsMgIbAwUJGtCBUAULCQgHAwUV
- CgkICwUWAgMBAAIeBQIXgAAKCRAiT6fnzIKmZJIUEADFx/tREzUImHrEwVHeSvDFmA7tJysI
- UVrlvrM09E7GIuzphzv7jYmo8n3ANpCczLEVr4G0syYQdTigaZgv3+FQDIIzhKih1IHhu1Ei
- XHlywNWKnQxxQEUNi5Mwx43wQz5XVw9F1A7gtKBKNtfogO511hAbrzagrYajyQacEJ/+sfhZ
- 9Da8ltHIXD8pcYaHUfQgEusCgmEd9+KrUwrTbckFKmYq5chuE6yJ4J0EmWknL096jIE6CnzF
- FRslQ3B1UKDjxVsm1ZHfir5NeWszLkTvGFsddFaWTgh8UycESG6VQzKXjjewXu2pG7YQYRpj
- QKm1W5X2TkwWkXRBZTmfmbhxIUMh3+zf5wQ463rSmDN/8v81tdqBtAW6rH/kzg1GvkaTHXn0
- 507yEHFzBksk2viAuIxxr7km8+/KARYLIdGtx30EG8cKzAUZOK6WqxtNCsXUJNrVE8CWrCaD
- icoNu7Fs1c5hmPHdSTnU48ce67449DdnO4neLSNhRiGlMHJgfJUmgrxu/hcYeOZ3haWmEQ2w
- uW1Mh01OHi8QZHCEyAbABrPs9GUgccc/4eYXX9hIgxfSkYzn8f+8NuIFPWl/0uTvjgqU29FQ
- SbzOLxHq9439Ox40G5mS5eZXRGxITYR+6TXvRGI6P/264jvflnr/pDGUttaikU+0W+1uxgKH
- cmYbEc7ATQRbGTU1AQgAn0H6UrFiWcovkh6EXVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQ
- La1PQDUi6j00ChlcR66g9/V0sPIcSutacPKfdKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMh
- FmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCTsTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sf
- bAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZOrIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq
- +aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahKtQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4n
- jQARAQABwsF8BBgBCgAmAhsMFiEEqUDUNJksLo6ZED1QIk+n58yCpmQFAmfIHFQFCRYU6J8A
- CgkQIk+n58yCpmS2PA//bqN1LfcotmArgElsa+0EGZSQlYgK48pm8WAeTXTngudP9IJ4SuKY
- HR5RNjHcBeqN+Me0zxRqYzRb8nGanHEkDyf4Im8DQM8d6vbyU+FcPmG4skud4kgS1zMHnlVd
- SXfSIwKC/hKgdHG8aBV7545Lz9X6Iohea+94wneD0aw/hqF+QWewGZhWJriWAZtvEkzNjQOi
- 4U9F/trLten/x7bpphDSnDMKJtITbtzATT1Dq7o7VpIUK1nCTQALMuMjKCdi8OdU/+V+R3O4
- 0PXWvX8qrvqYapVbZ+9KqT74FsuB0Ya9uXwgBF2Q6cRuETZk5vqaqKxzqoQZCO8AOz/58j6O
- 2RHNy/mZEN+7tJ5Tsq42zVJ4jxsT8b9YplavCMsnBgDeRWhcbYhCyttoL7nYISyWg4kQYZ/P
- wIV3OuNv2f8iKYsxNsRuClOAF82+gvqOy1/1pprFjy8uo2pkoOrb63aOP3vO5VHnRKgra6dq
- NcaZ+c6J4H+nEJGi2SkHAUJz5oBzuThvPudLvPA/SK8sKoM01IRxSihev/S/5WLazXB1PGem
- OCbvzC1IjWJJraxiDJ5IygokapUa2RP7+WBR22skQ3SSl6G107QgWKSyTOGWEaRmV53vxQLV
- jXuCmzSSasTL60zq5yGrT4/DYQVSNEUiUbG4pYekxJujNeEDkUlky0Y=
-In-Reply-To: <ajFMJzsbcZ1m_vr3@sirena.org.uk>
+References: <ajFXBeLQC96YuC0p@sirena.org.uk>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ajFXBeLQC96YuC0p@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/16/26 15:14, Mark Brown wrote:
+On 6/16/26 8:00 AM, Mark Brown wrote:
 > Hi all,
 > 
-> After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> Today's linux-next merge of the block tree got a conflict in:
 > 
-> /tmp/next/build/drivers/gpu/drm/panthor/panthor_mmu.c:1251:6: error: unused variable 'ret' [-Werror,-Wunused-variable]
->  1251 |         int ret;
->       |             ^~~
+>   io_uring/net.c
 > 
-> Caused by commit
+> between commit:
 > 
->   6bb0009862c5f (mm/slab: improve kmem_cache_alloc_bulk)
+>   9b40ba14edcdf ("Merge tag 'for-7.2/io_uring-20260615' of git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux")
 > 
-> interacting with changes in the drm tree.  I have applied the fixup
-> below and can carry as needed.
+> from the origin tree and commit:
+> 
+>   c59e546eda5aa ("Merge branch 'for-7.2/io_uring' into for-next")
+> 
+> from the block tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Initially there was a conflict between drm and slab and your resolution
-removed that line:
-https://lore.kernel.org/all/ahoZ7OCzxTAbGMtO@sirena.org.uk/
+I updated my for-next a few hours ago, I think you're using an older
+one. Regardless, it's fine.
 
-I think nothing has changed except that the slab part was merged to mainline
-since. Maybe that changed the ordering of the two trees and you had to redo
-the conflict resolution?
-
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index 3151de6aa1bae..10e32fe26f7e4 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -1248,7 +1248,6 @@ static int panthor_vm_op_ctx_prealloc_pts(struct panthor_vm_op_ctx *op_ctx)
->  {
->  	u64 size = op_ctx->va.range;
->  	u64 va = op_ctx->va.addr;
-> -	int ret;
->  
->  	/* L1, L2 and L3 page tables.
->  	 * We could optimize L3 allocation by iterating over the sgt and merging
+-- 
+Jens Axboe
 
