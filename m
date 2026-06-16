@@ -1,110 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2375F2E7367;
-	Tue, 16 Jun 2026 14:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C33D669D
+	for <linux-next@vger.kernel.org>; Tue, 16 Jun 2026 18:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781620266; cv=none; b=k4fu75lOplPJUzEZFFE20nTy9RdoIh4orSiy/HXWMkPOfTDpTWJHb1aauuqZ3I+d3AYWTSWhKju79cZsgu2LSyB3L4Mjzd2TdcLbRm4Kv3HRP9q7nF7I67rXvIZPr6DxKPm/p0EcUUeXcvKi2UzUFcL+wccfoKoPhIviq3/Q1rY=
+	t=1781634671; cv=none; b=LWJKOOJK7fbOWS2KCi6uL9I+D00rGbS8WG715y0UaTthi9CWirvXeXIL4x7G3mpE82J0pmDgs1h3iwFjT6kJ2R9IpNS8dbZqWtj2EE3oV/k7SvmkPPm/YctUOg4qcOpcg+zyk1c35VtJHMtvcVdSTZdSy3VG8n0bSjIVQstKk0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781620266; c=relaxed/simple;
-	bh=BsD5ypbt7JGDWD22xwFhhS/kMy8x+2PKOxN5d47Drsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Es8Lg1MT3uGe4hAAYrSdcP5KXCflaoA8ZWWnxXi/GaJsQS500PKhQ9u9DyYOkXt5U5ZGi2T3rRUVsqczWZem3dlf4lkJ35JCXcGBVIWieKwXYY7uCoJwqVk5xO9afWYXrUFE9j/Pju40zR7j6AdllSy0x1hvz1/lMOgC7LFLj70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKkZchAs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781634671; c=relaxed/simple;
+	bh=UogYtRqBiVjHWJC7z8/Zh+EB+hJzxz738BDN0Q4YOLI=;
+	h=Content-Type:From:To:Subject:Message-ID:Date:MIME-Version; b=Ylwk/N1J7EdUyIXMZWyr62FpJcHrx7K9LJyd2E2CwRn5HH0LwmuGOzNdST5V+l0efi9qLxWyZud0MlHI7ioJVcnn1LBG2EOEnmrX8Ed2/WyeiH6PGEFDEcjix0JkaaH+mXaVaDzptHo4t5mbtbwdR4QIDoF64gk1YHfQYMP6un0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oAlKbaWK; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKkZchAs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB3D1F000E9;
-	Tue, 16 Jun 2026 14:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781620264;
-	bh=OumxzQs3amNu6OnWqPOjmAzKKAfu8I3j2y+6dVo7+fo=;
-	h=Date:From:To:Cc:Subject;
-	b=GKkZchAsjH4hE70tE5JPeaOuRuEhTruA4E2jignd7vJrp9PwWnYMNx/2XdyGUlWaD
-	 QunUdEwOddKdaPzxFR+BPAZ6MvQQQyeG0Ccz8tsLcPdHbXZDy6iLs6bIkfzCqakM0s
-	 clqGwZLWi1wj0NtbdizYXFmSmLCJ+s3QBxLvPeB4+2YUTgNMCvgZdxR9qsRE3pdA1s
-	 T+uD231y8Uc5YiCCd37HYioFC1e/xHvk29qLPZm9UregaMg3Dv3uW7I+9gPKKw8LLw
-	 nMJdw0OH9vkccKpix0NUxBdyYbJ263P6Tg6RoYsHNNersEw+EB9PkpqwsK5fhtC6dT
-	 9J1uwXmfwBhaA==
-Date: Tue, 16 Jun 2026 15:30:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 16
-Message-ID: <ajFeHU7nyGOwKOUr@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oAlKbaWK"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-45ef5146b56so99859f8f.0
+        for <linux-next@vger.kernel.org>; Tue, 16 Jun 2026 11:31:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781634659; x=1782239459; darn=vger.kernel.org;
+        h=mime-version:date:content-transfer-encoding:message-id:subject
+         :reply-to:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UogYtRqBiVjHWJC7z8/Zh+EB+hJzxz738BDN0Q4YOLI=;
+        b=oAlKbaWKUc2nSytXGspev4Z5GUxkv7rWgKhmiI5gys6otbeoLcLKZAl8M9foNQ6k8K
+         8z9bVcH135/l96hKKVXVrQndElHB9i4QSVIzzJbX14GbMQRKpteHjo87XCR9U0QYxfTM
+         0IomoQxbyerNsV0HKAbZFEIQmsHL5mv5kfNPCGOkaAaoXpbJN5LdTERX6lHh4bjsaeaY
+         Q4ZiTD6esVONpJI95dvfQqK9+ZDT2b0YFne2EKP4ffBMzHF3oMupAbghcG+AokwoKk0F
+         sVTkQKq+RIi3OGHlf4LoL1Trk1663AM/AuymuFku6RllRa2Dpeul5fqceukEjT+Pf3MR
+         QqEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781634659; x=1782239459;
+        h=mime-version:date:content-transfer-encoding:message-id:subject
+         :reply-to:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UogYtRqBiVjHWJC7z8/Zh+EB+hJzxz738BDN0Q4YOLI=;
+        b=iqsGv9CYUIJpUcTL0W7YMkrNK+I4YGFxvuQHYQFqEmtEvAxwvSCHclLf5pTq7AHamf
+         3PT5kf3uqYtUqSPzxp5YPBqv3Oco92TRTc+/SCo8uGMEx5EAA3OIHODzHOxpKWkabrh+
+         ZYYXKFgisiJYop+1NWpUqzJ+koVY87tDzdYybJGJjUAG6fczH1x1ObuhuCN9EvJhBXgN
+         7Eh9DLcdwt/sAPeBmSeGQzYfJw7betOIkM6Cm8r0upV8t81tzC2ERZ+NEZfgTEuOIrKP
+         U5ACtl6D1xqhRqc8N4giA9AKztSyWqHhjSqhvlAF8+IxKUoXvSuZDNzagLH6VV/I1LWU
+         T+ig==
+X-Gm-Message-State: AOJu0YzG0LTHsuz+8zQVtCf9beTi1by07BWZrSP+FsZwKX9ijjaWgRTP
+	sk/92vWQeW3uEdygjNFNmiJJ1sC3R3Dl+40wz0rLcC/H3RjinUN0XzC5/MXih/FxICY=
+X-Gm-Gg: Acq92OEU3JMS4epBRqafikYxkuO8xDNowlhn86zaGq/PaPnl/4wON0+MtFt89/2zDN2
+	Cosf697JLuY03YsPzMeeO5s73Kdk6YnZYK2+o3U1hf3b50yghPP4nL0DjOkuGqrEeTqK81ThL1Y
+	gxUw8F+bTFp62bQW7cCJMDG3mp6F//5e7Va+0B6Fpx1st7Y2h9QMXp89FRh0v3WmpbwWWpkvnOX
+	eDCmQ+rMT6ylwOqKhj5VNgFtSQcH6dsgmuJR+mdxysBuEZkM0YZYviSDtfjjEZp7UuEku6XMpVw
+	6bE4RIkdR1HZuXtQFHOo8xO8dLGfGBfqnShCMEz8k7nUEF4qwNnbulECMYbR4RViaaitDYsOr9G
+	YBTc4rH02mwnh2GI4W2Fz7JszH5TFvsItDscmRWlO5f6cYjb6muql542aH84d5bw7xgbECg07Dc
+	YzVw57VUe1tblDIAziEQFh+yIrxVRn+Z9+LAmfFg==
+X-Received: by 2002:a5d:6f08:0:b0:45e:73a1:8d04 with SMTP id ffacd0b85a97d-4622a7dad40mr1512385f8f.1.1781634658819;
+        Tue, 16 Jun 2026 11:30:58 -0700 (PDT)
+Received: from [127.0.0.1] ([154.80.21.188])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4619fb12edbsm9303602f8f.17.2026.06.16.11.30.57
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jun 2026 11:30:58 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+From: Donald Marvin <kodraroland601@gmail.com>
+To: linux-next@vger.kernel.org
+Reply-To: donaldmarvin.pe@gmail.com
+Subject: Project Takeoffs
+Message-ID: <a5c6f32b-2132-d4a7-7dda-5ce9193ac95f@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 16 Jun 2026 18:30:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WA9vzeW9MpvNuzCG"
-Content-Disposition: inline
 
+Hi,
 
---WA9vzeW9MpvNuzCG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It comes from City Estimating, LLC
 
-Hi all,
+We specialize in full cost =
+estimates and all related bidding services for all construction projects in=
+ all 50 states. We provide our services to both general and subcontractors,=
+ as well as owners/developers, architects and engineers.
 
-Changes since 20260615:
+Feel free to contact me if you have any question or want to see our sample =
+work.
 
-The drm tree acquired a semantic conflict with the slab tree for which I
-applied a fixup.
-
-The block tree acquired a conflict with the origin tree.
-
-The slab tree lost it's build failure.
-
-Non-merge commits (relative to Linus' tree): 10529
- 10805 files changed, 726221 insertions(+), 208651 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 425 trees (counting Linus' and 131 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---WA9vzeW9MpvNuzCG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoxXhwACgkQJNaLcl1U
-h9BnJAf8CkWy81xWqPxvFsKiMOrx+8aI3VV1g5r488F31BMXV/53Wc3Yky6em4Rr
-8NcDxzpr0g9Mocs1hREYwSq0c3msgjSgqw2cWXhJSCvSwqBFjwsyBor6oOf0F7A+
-fjcl3Ii/AmgDDPhQzQ7meGo+kpy1dZthOrRE7bX0lbElLZSoeq7ivNTeq0AE41LB
-9biTH+7XroTWDxt77WbBpbOUCTLoISmTL4RveAGV7rYhSTZphYwswFrvQmFpOag/
-gNSwLru61cPbOyg7aa1EgF9vfBxSlY7FL6gI6CjHG2R/fZgdP3zPuOH8AWh/CiXc
-dGE2e6GCOoFk/Ly3i971X3THrHiBBw==
-=vJZe
------END PGP SIGNATURE-----
-
---WA9vzeW9MpvNuzCG--
+Regards,
+Donald Marvin
+Marketing Executive
+City Estimating, LLC
