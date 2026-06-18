@@ -1,40 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DB93DB960;
-	Thu, 18 Jun 2026 11:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C11DF980;
+	Thu, 18 Jun 2026 13:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781781511; cv=none; b=R9oIuUteJJuNjC38JENeURGnDcvNfTtmrAnmUZVuusIIqcxGGqgbjuHV9BacMtCADolFvpyKI8fMM5WPJSwyLQwwwK9bSfsjD0V216/fYQgBie9XagYf3CuXCJ5lV29BY0rncbvBQKubKKKDf1szch+oBoHLEVuGN4/lZ+MxYLI=
+	t=1781791152; cv=none; b=FrxjFdWg/cIoyFkVOht7qRHitLSG+SAwCUFw9TxFfU3UYS4AUn5V90jdPSxnCXGux2died9VhQEz7YcLZTOaeKgDUZ7ehF5XQtL52XZr2DJEynxUQVDL1q+xJlc4jviZubgOXrr8arrzL0IGkqkOHiNWj5Q4eE6oUEyVwQ9Rz6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781781511; c=relaxed/simple;
-	bh=vmPrGpKyX+Zbr8HNr4ElGjFmeXh2OkuSCC5kHBLRRxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmTQ+uFcGUogKmqOKCLRzN1BiRNtsbBGMSk0BPBJldmxOsAZ0R90AT3GDZC2hky+KB2TrQtZ85U2Z4J4f3b7WUL2ZvtJyOhzk39BCpTDl5nbrZFYML4tvKDzLef50ft8X7gRiDEJX1Umm2uG0P6s4UxqZv5oXV9GWGktFJrRa48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awrdtvKy; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781791152; c=relaxed/simple;
+	bh=SXgYZiKdnwt6yk2lAnNrO8m9LtzhgJ65YldQyriIbBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hkKFy5ZFuIFVPfXX9Zhamor4z/gdaCDRmgBsMLdW+LHVWFpGqPJQZBsGmpFJ2l+y64JZzw/j2qZfVEtowcEbMLcqgkCDz5UL6KpLhcfZGA8Jg2PNEdv+kspqdpveX92NsAazbGo52CEgM4Kto2/mcx2mZGAuS21sZDCbdhuYZbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOl1lGF5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awrdtvKy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4CE51F000E9;
-	Thu, 18 Jun 2026 11:18:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOl1lGF5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D5B1F000E9;
+	Thu, 18 Jun 2026 13:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781781509;
-	bh=vmPrGpKyX+Zbr8HNr4ElGjFmeXh2OkuSCC5kHBLRRxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=awrdtvKyHqUMzHKnsXwP4HNGjSfGLV4tJmhVmnP/WygZPSdh5nVY5kzCzZcahE/7h
-	 rtQB//gwwUz3mar3j+1LPc/pOII22NhPcLTNNe0WAPrARmev/WOdXmnvHXJRDAiaDD
-	 b+6fYXD0isJlxIpzOHIrVzZVm02qisD3lPyNCq2QX44vCd5HeDaApiKK95gSm3ptUM
-	 WrvjjdHWyyKC3vF5CwC1+YVWEk2sc7xrGXY2ano8aBUsfqImXDAoULjncYMCdjmeAB
-	 tEPmx+GjEJnoGniVO0Rf4gdTsuZHOZ9BzXgts1UHSGlnUj+LBe7L7QhO98/zzNDbDI
-	 nXcWlb+eFX93Q==
-Date: Thu, 18 Jun 2026 12:18:26 +0100
+	s=k20260515; t=1781791149;
+	bh=qMsiDkM2s3I5QzMlD8iaB0w+3pEWh0rcP+VeSUJ5h7A=;
+	h=Date:From:To:Cc:Subject;
+	b=fOl1lGF5GysjY/9Al9UcXS4/0ZAHHwHPnNBitGOeA+BM/UxsvTPqRVR5QJLFUT14o
+	 v8RkXWOfw9hXSWm1Ts3tSfSGA+Kp8fiTE4BcolbgYt9M1+kOfbhP9k3/XSY6sTn689
+	 +UwO3W5/pmVWSqCSZbomnV3RX/9NZyDRcxieBLI7rs/3Pe3vOlm6MbrsJVKUOpo15c
+	 ivJTZZprmIiHhrG1mTHDuxUf//GrcJhI87baJ8mLha+djk1+Up+WBoKx+qvLg0KbbJ
+	 B58MjbFqLlxwNZ4HMFJChwJPTsE2KIWU719X+czEScrQ4rbkAVGcDeFty9wh8Zt8os
+	 x6MAyczxM6yvQ==
+Date: Thu, 18 Jun 2026 14:59:06 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Jun 17
-Message-ID: <3097be0b-de19-48d2-a648-f1b2550d8933@sirena.org.uk>
-References: <ajK3HJdAhHJ85wYq@sirena.org.uk>
- <20260618051211.11310Bd9-hca@linux.ibm.com>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 18
+Message-ID: <ajP5qoR97cg0iIUk@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,37 +39,70 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rhjmqAKVr8pQXPbq"
+	protocol="application/pgp-signature"; boundary="kbTT7slXYlHr0nIg"
 Content-Disposition: inline
-In-Reply-To: <20260618051211.11310Bd9-hca@linux.ibm.com>
-X-Cookie: This unit... must... survive.
 
 
---rhjmqAKVr8pQXPbq
+--kbTT7slXYlHr0nIg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Jun 18, 2026 at 07:12:11AM +0200, Heiko Carstens wrote:
+Hi all,
 
-> Any chance you forgot to push next-20260617 to git.kernel.org?
-> At least I can see only next-20260616, including the corresponding
-> master branch.
+The merge window is open, so please to not addd any v7.2 material
+to your linux-next included branches until after the merge window closes.
 
-Yes, it wasn't pushed - it's there now.
+Changes since 20260617:
 
---rhjmqAKVr8pQXPbq
+None.
+
+Non-merge commits (relative to Linus' tree): 5214
+ 5042 files changed, 257308 insertions(+), 111742 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have really created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 425 trees (counting Linus' and 131 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--kbTT7slXYlHr0nIg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoz1AEACgkQJNaLcl1U
-h9CHzwf8DBIsZ2XejDHDFRglqXQuLFFyRRM3j254aTjzvnpJmtwWIFYJsY9nbcDv
-Pfm2CJJnKaDi0m9QJ1itBcHyO9wkc/xgmj9BHiLWu7YXnHlpxOX7SqzW7cEr+Ni2
-btHAbx1SeDwER7c7BwnETlF3RSj3dSiI9s5syAdjYVK7Jlr2sJrQHwqVipG9ycM+
-eXSPyhI8t/IjJyHJxklD4IRs6kgC8/tNH6cS+Q7Mkqe52tQ9TWgF/pdRRc/Bq9Mh
-thIj/Pr3CyCOSoP6+grS0NU5xP5gEaq80jWRc8tA+W/VTy7MfHpVPq6HvNgOE6Cu
-12xfcewTdKLGG42eB5JJI1AE7Q4vKQ==
-=hmn3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoz+akACgkQJNaLcl1U
+h9AikAf/fLi7axTsISuRGxWa8hvEGPPU9cuH655y5EoOqbMkBAQ+J7zRcg0Aw6vN
+1Re+nHPfR6yohpqLVI2dGqdk2v0S/EiiroTZRNK/Lsl5wpAaoPUXBGWYqc4oJbt4
+wa1AT3vt6NCB/hOSkNHin6v0dwuj8f68fnwEZNF+DlIOzYVEBGr49ErCqsm+pCYr
+sCFIXBJc833ws3b6rCE/kGyVsxFiy+f2PnxVjOt4H/oE/Zudgkeyg9SdSs5vZeyo
+n9F7L9zjBSWpNp0W9fC43XE0w7vUFldJ76gfb8tcD9BruMapkq7Gl7sqrL04Yj/a
+x21pKA0mU0HPSTelKrPtlpVSOY8FYQ==
+=gOMl
 -----END PGP SIGNATURE-----
 
---rhjmqAKVr8pQXPbq--
+--kbTT7slXYlHr0nIg--
