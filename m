@@ -1,38 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A4A36654F;
-	Mon, 22 Jun 2026 10:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF5A29DB9A;
+	Mon, 22 Jun 2026 10:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782125111; cv=none; b=HVF/9T/WtrIJ84oCKl8EpD3PBc/rkddfbNfAZL4/VkV62kNxO1+mO9wcQlLnOoeLhknXBFA3ArwiGRwaNR0DxkjcbMazCIWEsXfhA+wzgoDO6THh8JfSDcHzwK4lIchgAqKWtdQWi/JyP1SHDTjgPsngjVh6abomO8A4/Amh6GM=
+	t=1782125120; cv=none; b=N0AiXViLQvm8q9voAFNnItIqeL/TLwmG2TpZxW3bYP5zSU/Af7Bj3oa5dieqW2x3C/bzUBYoNNmnckf4+wyoeYzbLqdXsvqp1OnVeZyYe67bPikHofsO4xaiAnnByeO7pc62Zp+TEkvM1hvhmXsdzAl/TUmY38e9jF11/r3dJPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782125111; c=relaxed/simple;
-	bh=TM6VK0JC59arjHPTmnfcPl0BJD7bGuQvkF/hkKvPt+U=;
+	s=arc-20240116; t=1782125120; c=relaxed/simple;
+	bh=8ORAToMRvxRUl7ZO+XoD1ol4Afh+rRDy3vLYek2AZMg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fOo1AJxYKzGiTk+lb7mF0lP49ebxm8RcftvluXYWy+slLL6wyZISBdb0nTtpBMIXxu/MfadZsfaEknHXituJrcitTlLV6YbqG592EfEwHA4o5M0jJ9MfWSUf7BL/mjlvsasfL1cdb13IOcB1BzNlOqgUSLDj3Ryk5+SPX7D9Iug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1NtF5gY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=A6JDoYDGpqJ9BoaFcv0FKKDpBAtNk1I6vQh5YMzO4ZLOSx3JmvX2povLdAIxDyG+uF6qqa0A1SGWwiGtt5gkz3p/jOYdqiFdd1n8B5q1g07J7XdxsLwbpxJ61zHw5M8eeh7LvxXB1BQGPaap59wjO8kjq9Yor/3LVdVV6k60Y+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mt2LQOIA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1NtF5gY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B775E1F000E9;
-	Mon, 22 Jun 2026 10:45:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mt2LQOIA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A791F000E9;
+	Mon, 22 Jun 2026 10:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782125110;
-	bh=rEsNl6rBqt+G/Ruk8hnxlHD76PhOxanvqCNc3IyKEgA=;
+	s=k20260515; t=1782125119;
+	bh=Qzd3PXS3/fdY2eOfY4OqU9CZlDOmAqCe8JZkAZo2JQM=;
 	h=Date:From:To:Cc:Subject;
-	b=D1NtF5gYYspzSt6ApA2JxBxmz1iNKATkJTvQysqwux/2lWK328j4ToNL0SfnhWWH1
-	 5+q5uxj1W1cikUvH8Sn7RqVANAsiRjHVZE6qWo7ASbFyf30jPwZ0R5ggv1KGAfeNP+
-	 PWwK72HgEInQlB1iSb1we4W7CNpTw0NLiduBM5dZ4nRCm5otkqsTdC6rb4UVPClX6U
-	 ZF66DgjEqGMYOvKxF4I0EpuXw7qMYDfTsocOSATHl2slSj2PahjS+xy587yUXHAg3n
-	 y/oIOOmJTOLP82n++k+ydXGENpdrHYijH6vBWPVEeaTI33Zr19u41533E4kQ7MeCG4
-	 vApAHYAoYosyA==
-Date: Mon, 22 Jun 2026 11:45:07 +0100
+	b=mt2LQOIAz4rtEv68lotvGk7krOVssNlRIxOGotSuMrSqBKGPgO87kwdpdTxZk97D9
+	 xGBXgnCEJF9yYKsAZPTSbIdylNE6PwC06urOf/kKvAU5MbFM7rbteuDHJ0KUZsWagG
+	 RQJCbhwh8Gmihb9U5zNVEdo5aXscI3zEkvEmGn046kxgyR1ZzGNLVZIdeuNrcxRpqD
+	 ltXGLBcOeF6NC5f+8+uQy2v5IRebBW2L4mukBfL4NxGY0PibPgOChSg5qv69fYjWZ7
+	 CxrT+4u3AbUocweX+pZ9LS4ZdKvLqnkgH6ASTUSKd1R2KChBcgsyXhHv9xgxDUaYmE
+	 GvM8vkt10X/rA==
+Date: Mon, 22 Jun 2026 11:45:15 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>, Dave Airlie <airlied@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the amdgpu tree
-Message-ID: <ajkSM2E3NMSYNc9M@sirena.org.uk>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Subject: linux-next: manual merge of the amdgpu tree with the drm tree
+Message-ID: <ajkSO-8T0Rqc5CZn@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,39 +43,85 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uNc33Gpi+EuMbLUH"
+	protocol="application/pgp-signature"; boundary="2QucsCwWAf/E3sZ6"
 Content-Disposition: inline
 
 
---uNc33Gpi+EuMbLUH
+--2QucsCwWAf/E3sZ6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-The following commit is also in the drm tree as a different commit
-(but the same patch):
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-  1b5e413713c0a ("drm/amdgpu: Fix context pstate override handling")
+  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
 
-Please note that it is the merge window and you should not be adding any
-commits not intended to be merged into Linus' tree during this merge
-window.  Both copies of this commit were added on the same day, during
-the merge window.
+between commit:
 
---uNc33Gpi+EuMbLUH
+  a2b270c0ecf6d ("drm/amdgpu: initialize irq.lock spinlock earlier")
+
+=66rom the drm tree and commits:
+
+  7dba3e10ecdee ("drm/amdgpu: initialize irq.lock spinlock earlier")
+  6eadd448d7e7d ("drm/amdgpu: Choose SOC15 RLC register read write function=
+s at init time")
+
+=66rom the amdgpu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 211d30f03d25f,c66d3a24f54e8..0000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@@ -3677,6 -3677,10 +3677,10 @@@ static void amdgpu_device_sys_interface
+  		amdgpu_pm_sysfs_fini(adev);
+  	if (adev->ucode_sysfs_en)
+  		amdgpu_ucode_sysfs_fini(adev);
++=20
++ 	amdgpu_discovery_sysfs_fini(adev);
++ 	amdgpu_preempt_mgr_sysfs_fini(adev);
++=20
+  	amdgpu_device_attr_sysfs_fini(adev);
+  	amdgpu_fru_sysfs_fini(adev);
+ =20
+@@@ -3773,6 -3777,7 +3777,7 @@@ int amdgpu_device_init(struct amdgpu_de
+ =20
+  	spin_lock_init(&adev->irq.lock);
+ =20
++ 	amdgpu_early_init_rlc_reg_funcs(adev);
+  	amdgpu_device_init_apu_flags(adev);
+ =20
+  	r =3D amdgpu_device_check_arguments(adev);
+@@@ -4210,6 -4215,7 +4215,7 @@@ void amdgpu_device_fini_hw(struct amdgp
+ =20
+  	if (adev->mman.initialized)
+  		drain_workqueue(adev->mman.bdev.wq);
++=20
+  	adev->shutdown =3D true;
+ =20
+  	unregister_pm_notifier(&adev->pm_nb);
+
+--2QucsCwWAf/E3sZ6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmo5EjIACgkQJNaLcl1U
-h9CF2wf/TZ5s91euwTAnI0Im2xnFBzqAjPDntj/VWW9WWmnPdV/j8uNuTsRd1UfB
-dzjWLB0mAvExWKo30rubOSzK7Xi4nYixrC2KiBMdQi74ywr5ywpRWNm1T/FAUPqJ
-w/u4Fo8knBOfwal+sbxLgu89/hgcAySR/5niJcWQxrNFSOr1XdLksvFjnUGqHREK
-jC8IuF9lcT/HtOn/tygFiaAdfce0bGYKiSN4flAqKU7tCkTaPBfhH+bpS8E+vMkX
-nia7EE6ebNDRcjS4EFpNDgTECCQzXfFZ9fw2AJbxhxiE800a0t9Hl11ZlDoltcpF
-nbWsPNNPKuGCoFRnhyvWiLGtz4QBfw==
-=Rfd4
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmo5EjoACgkQJNaLcl1U
+h9C3TAf+LrI1F60CtaDTUUkwLhTD8W5Kf25nrX3UzvdrpYITYTAsSaBQM4pZUcA0
+6395DbMAZZGcWRTFK/saj7LyMbQlw/faJi2mivbed+71q0XpYxNesVXYWZOjahKP
+hcqF9oPVYSQn+rUmfZIuFT4P90Xoehz5FEZhZF4kvc6xjh/wYLJmaqPZkNyFBqnY
+zSRNvOrsWI3bd5Uzf9MMLD3N6p8nClXRg04BaBUWN5HBbNIehR5/2KN2FkUMCG60
+F/J1qkNAbhPNebbMSxrUf16HCGFkTH25YVmjxcMfk+ZZEM+rjOKX3J4lIpe/MOvg
+1+u6b6k8b23ctOxtlGn/tzNOFJFDbw==
+=KKFx
 -----END PGP SIGNATURE-----
 
---uNc33Gpi+EuMbLUH--
+--2QucsCwWAf/E3sZ6--
