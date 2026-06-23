@@ -1,282 +1,139 @@
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF8D3FBA7
-	for <linux-next@vger.kernel.org>; Tue, 23 Jun 2026 02:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1AE331EB5
+	for <linux-next@vger.kernel.org>; Tue, 23 Jun 2026 06:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782181842; cv=none; b=BHnk02O87B8kuIM9iey0MGI9BbFJl9zdASCUEbgl72+k5XT1bTbYlGIkeGSjvzLFlUJuhH/R9hxiHoBHrl+a8sWzuCu8RxbpV03CVyw3S4fAHM1sH+ntBxXk5ATxH/Wk9hkxGcAboRjLCYdbzdY045COaMK0qnWndSqlmYZBK/8=
+	t=1782196837; cv=none; b=Y8QoToY/9KdY+AI5P4JhyaLR38LNKBLr8yYd/J+O5OTRx/SIoKZPJe/ckrnhv4PGfUfGzoDNCMCNsKsRWI/Ir/LKpC0mIS05it9qKDpZDrJ9vd8Apt2OGftzKhzbhdJGBU83kLbgDzGMRTqSrJHl9gc+ae/9P3eBQJhW5pjT5lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782181842; c=relaxed/simple;
-	bh=tyykbUevt1LKVvRDla/brJU5FTVjeJfYyBi+d3/CS1k=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=mtGeR99DOzOZH/8dXl4446xK5fbWIRQVC+RaAVGyCMwYkfB7+WGTi5PduKQuspwv/pr+FWZStE2tMZiDldKexM+J3fkUYuHI2C59XMuuZoL6PZKhhU03rWM+l3yNs8T/ijNoWaXI6zc+2m4xeQkoj78REVMCciPBaypRAFePcTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=UI0VkUTR; arc=none smtp.client-ip=74.125.82.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1782196837; c=relaxed/simple;
+	bh=D5HeiqLycznqcXIGJoYjmRBUsCggGGxe9tPSOJAjzq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umILy/KqgidlTUXjBanMw+r9ATGAbObxG5ToeUIFAoVfKEe3U8PK2gh53m3YWy2CotlSZ7Y2qgH7FPMx+uiHMoIRr5j+2OEdwWE6Xe65QSA1ifPcfNY+fDea1gJIlN6ub6Cwof8R62usuaRnliMTGQruS4pHyPm+VUXZ82w0tSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=ZB9u3/Qm; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="UI0VkUTR"
-Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-13981833e13so5599840c88.1
-        for <linux-next@vger.kernel.org>; Mon, 22 Jun 2026 19:30:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="ZB9u3/Qm"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-490bc6a7958so4237495e9.1
+        for <linux-next@vger.kernel.org>; Mon, 22 Jun 2026 23:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1782181839; x=1782786639; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oroZH6dje1krTBNYzajZy5EAG1V8mBh9N6rz1We7ZuI=;
-        b=UI0VkUTRTV8hY7ztVuFUHgtQfDezbvuhcBLjQW4Ab8ZElz1QzyvuMM7K2KbHmmWgAc
-         3ul4uT/6SpS5K8ls/vF0i3SuMDRnQSnkWIbgp2KZjtL/8UiKib4U4ATsw37Rf6NLzwhf
-         n63eqPBjWGvGWT4lK/6TGf0+aCPz5Jv22piPTlwXsti4u0/wdoe1VyL5wHNqi01EUOI3
-         VjeTOtRLUMtVKLpav6KazuhTdL1ltFbxMaXleXrMca4VXLhxhFEkd9gF+t45oK7P0GDM
-         +XmEJnA4H3eydsNcQIQC95jTcnYYch88PhBEg51U/31Taws1IQ8eiZVYz0OFkncgajfh
-         811A==
+        d=baylibre.com; s=google; t=1782196834; x=1782801634; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ahh58Mj3c1V1PexaMFq0PuRXZOj9dAbGaY4LqFsFXQ0=;
+        b=ZB9u3/QmdgNWoIyuYfT7UxfgSuNQOyZPOiAWsDQuSfEBEQwKtLfMzVG240h35qHyTp
+         4TlPsvIXUocx/x73FVZURgPAjafNgxkeLlYBMp+sKQIA0S+lJxNiE38EC2E7kGjBucWM
+         9r4PLiSVeTZiI8ynm/5tkI0HUUKxs6zAQ0WiE6A0r7Kujw3Ly2N+T6DyeamYpQMKZu9k
+         iZTxGnlQuQ4F/75hzWKVs/g2DXFcROo+qPdrUVK7pRMOd/krRy9bh/Lvk7KTPkczmQX3
+         xSV44qPJYEE7sRSqxsdCje6raQt6Q7o6VlFSCE6Yeh1u7KeJP1Y6yNEV8CidU4jIZYr3
+         4nOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782181839; x=1782786639;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oroZH6dje1krTBNYzajZy5EAG1V8mBh9N6rz1We7ZuI=;
-        b=iuIx6vtMudBnZ2RmmM0nMS0bu0WvjFYG7BPd3x21Y0JmSLRIonT36Ala/OcbAVCIqi
-         VHLpx6hvSQsaJ2fW83NoREhF/6cWS6IzvuiscPonoS0KSct2TW8G8/6Qlh0+cb59kXGw
-         kArXvgFAd6yYrDIJ6XPwnwY18DSrwBOjktCWRi1UmKn3E8PbYLJGHqk8ORQeaOoOzVyG
-         2ltMCup4DRBcXEK5nyM+avjXwwHaY7sMmJYqZ6962pg9KwLBx3eg8CskztSUn9OZ8aXn
-         MN9CWel4BWmo3myLiRSz4cA2dM5o0SL03K1mUTMxZ9jn9KZFyqegU6BGji3pdZlUnUa9
-         utiA==
-X-Gm-Message-State: AOJu0YxJBF3fN/tKXAVjLf41fKYKJYRRuVgp/HPYN1eQsQBVViNDd1hh
-	kByRaJOhw86xMVLP2MB7SWWjL2Ek5j1Hl1jxVl7JelGtgQlJRGRcgrv105UFU+D79lP2by2wGIs
-	Gm4nT
-X-Gm-Gg: AfdE7clBTgSxsTUKBkWRa/YxGcQtTzZwDPpjpARvELze6S3Vkx2iFCoeH36XOn3SRiO
-	tBdi2Jy2NdV9VHVC8lx2/mnFUhWMOSAeiZMU/h/SYtY4+29BlYqb/D+3Eehw5MQjoKeB7dseWnz
-	tuv611iOwMxtpPv66g2EKqjkMctvWGhZJjMIhrGvEsnGpGBlep5pbsH/BfXS1T70ld0w0mkdL6j
-	6sLUBMuXrL/PrO8nKxSc+MqV2uFfHd2iEh547cMemeHILqHOe8eKXv5G45396rHXvFzYuIYcaq7
-	rqiBJlJtp6ZCQ8BAQMyH0FoCA4xoHqvUF5OAEHMGjHwZV6+sIQ6i4D5fmy63u3tuvQXc2JX94e6
-	tLHqp34dnZmVV/V1PhhxDheyOP3Gd0dm7dJ4rxzc3PETfCAoUzmwxvC78kZO6axIrNWf2s42xEr
-	v0WnaSHw==
-X-Received: by 2002:a05:7022:6614:b0:138:407c:1d0f with SMTP id a92af1059eb24-139c5cd8826mr639651c88.1.1782181839435;
-        Mon, 22 Jun 2026 19:30:39 -0700 (PDT)
-Received: from 330cfa3079ca ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30c1ba1c32csm14105308eec.6.2026.06.22.19.30.38
+        d=1e100.net; s=20251104; t=1782196834; x=1782801634;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ahh58Mj3c1V1PexaMFq0PuRXZOj9dAbGaY4LqFsFXQ0=;
+        b=o8hJhT1AXkhrT5/ArEnpMpmwNbIQ+UsMr6zVyUiDYjwJnNGAKHAI84ZDlLiYoqo5/V
+         yUo6IMtW3enPQQPomCgTuUYQ5v1Azbeg//kVg7QRtpAelXihbpl6GTkYkrPDhFK54Vtw
+         oaynOujAvAFHJiGSK4jX1848JHzoPC+jGBX97vQScUGOVAcwpva+VOUxVdoRmoa23+5L
+         FMOpciiUm8aS3OjScBI3kr9TgY1rKimQ8lQcb0lE8553McxqGEJtBx9BtObH+J6QQh79
+         ABFs6XZwe7uqq8Db4xMCD4KLIWNhLZg3NLp89Ks1jJAtBiQQ84xZkJ9amO+lfQpWRYVk
+         G9dA==
+X-Forwarded-Encrypted: i=1; AFNElJ+SiGG9cI3iNQnKvczBJKch4FnQkHzGMnfnb1KFVwHfnU3UzN6QGZR19iFhg4nI9F/CGYarRnlwkvep@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkzr+NLybPGu0u5INiyYE9ri+8lKzmA/9T7nDGBMnMFD+jtyUi
+	ZuLxnblZD8j/pdQ2UENVcfNR30CYFPai8dpkHDCEjBMq/4qPOQlmMliG1vl7SGWt0zo=
+X-Gm-Gg: AfdE7clafR82FMlCjNpk9xTOVi7SFQhTKfiTVoMpbFB1c4odHSKtDeO1bi2fFZKW2gE
+	yQYmC8jUr3W5VOJlkJWULxMiZiiJyuj3CMKKB207ypASzdqUPO5gpRgxFyndxyQ6pvYcOj7pYze
+	EEXZjqlD65bbq7Qq4i43fCMuWpxiVEnWDlQzYVB+wu/6KQByi7KdXHnKipSn9rOWSuK1JZanBe9
+	CGZCz3FfHvqJUwSfVQY8xM/o3jEAHkav7dc/4Yn7kPhiOJ8UMGc8wdrigaPZtF7QOujQUolbjLQ
+	47Tt1jeXsVYNQ4m+A4HwignvyX/EIk5aq/7PNo8AWcoJbBr7bIcydmlyRF46WBy1ViO1cCcS4w5
+	4/PuBi/vjO6rMeuF8OE/tibU8EuwSuw/+dqEbj7d5eqk7v6A5X1lhR6vNrP+1gMLA4DetLCQtnG
+	Ha1Epaw1u6ByhjWaJj9g==
+X-Received: by 2002:a05:600c:8012:b0:490:e180:2e0 with SMTP id 5b1f17b1804b1-4925a09d73cmr33447785e9.3.1782196833640;
+        Mon, 22 Jun 2026 23:40:33 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:559d:eec2:887f:c200])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-46666c57b95sm29709565f8f.30.2026.06.22.23.40.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2026 19:30:38 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 22 Jun 2026 23:40:32 -0700 (PDT)
+Date: Tue, 23 Jun 2026 08:40:30 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	linux-next@vger.kernel.org
+Subject: for next: ukleinek/linux.git:device-id-rework [Was: Re: [PATCH]
+ mod_devicetable.h: Split into per subsystem headers]
+Message-ID: <ajondrElYavnW6Am@monoceros>
+References: <20260622210733.1743063-2-u.kleine-koenig@baylibre.com>
+ <CAHk-=wgYL0xJ=RaT+t1FR6Cw8E+VZkRKZjhw5h7m3FAqqNU8Hg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 948efecf22e49aa4bf55bb73ec79a0ddcfd38571
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 23 Jun 2026 02:30:38 -0000
-Message-ID: <178218183851.18703.6433712299160269455@330cfa3079ca>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dtxfsntetu4kmycj"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgYL0xJ=RaT+t1FR6Cw8E+VZkRKZjhw5h7m3FAqqNU8Hg@mail.gmail.com>
 
 
+--dtxfsntetu4kmycj
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: for next: ukleinek/linux.git:device-id-rework [Was: Re: [PATCH]
+ mod_devicetable.h: Split into per subsystem headers]
+MIME-Version: 1.0
 
+Hello Mark,
 
+On Mon, Jun 22, 2026 at 02:49:01PM -0700, Linus Torvalds wrote:
+> On Mon, 22 Jun 2026 at 14:07, Uwe Kleine-K=F6nig (The Capable Hub)
+> <u.kleine-koenig@baylibre.com> wrote:
+> >
+> > If there is a general agreement that this patch implements a good idea,
+>=20
+> Ack. This seems a good direction to me. Not only because of the whole
+> "don't recompile unnecessarily" build optimization (eventually - when
+> drivers start using the split-up headers), but simply as a "we
+> shouldn't have mixed up different and unrelated drivers in the same
+> header".
 
-Hello,
+I applied this patch on top of Linus's tree and pushed it to
 
-Status summary for next/master
+	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git device-=
+id-rework
 
-Dashboard:
-https://d.kernelci.org/c/next/master/948efecf22e49aa4bf55bb73ec79a0ddcfd38571/
+=2E It's on top of a "random" development state, but the next older tagged
+tree (i.e. 7.1) doesn't contain 39d260d6bc7a ("firewire: Simplify
+storing pointers in device id struct") which modifies mod_devicetable.h.
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 948efecf22e49aa4bf55bb73ec79a0ddcfd38571
-origin: maestro
-test start time: 2026-06-22 12:19:43.770000+00:00
+Mark, can you please add the above branch to next, to give it some
+exposure to build bots? I don't know the timing yet, but I'd like to get
+this in before the next merge window, ideally around 7.2-rc1, depending
+on how complicated and intrusive the follow up reworks are.
 
-Builds:	   66 ✅    2 ❌    0 ⚠️
-Boots: 	  170 ✅    4 ❌    5 ⚠️
-Tests: 	30591 ✅ 5153 ❌ 6594 ⚠️
+Thanks
+Uwe
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6a3936ec9ab0e7cb7598d65a
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6a3941e39ab0e7cb75993be2
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: imx8mp-verdin-nonwifi-dahlia
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm
-      last run: https://d.kernelci.org/test/maestro:6a3930df9ab0e7cb75986967
-      history:  > ✅  > ❌  > ❌  
-            
+--dtxfsntetu4kmycj
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-### FIXED REGRESSIONS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.capabilities
-      last run: https://d.kernelci.org/test/maestro:6a3936b79ab0e7cb7598d3e7
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa
-      last run: https://d.kernelci.org/test/maestro:6a3936eb9ab0e7cb7598d653
-      history:  > ❌  > ✅  
-            
-Hardware: imx8mp-verdin-nonwifi-dahlia
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_bus_30800000_i2c_30a50000_eeprom_50
-      last run: https://d.kernelci.org/test/maestro:6a393a949ab0e7cb75990fe5
-      history:  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989f12
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dsi_14014000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989f0f
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989f07
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989f06
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989eea
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989ee9
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989ee8
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989edd
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
-      last run: https://d.kernelci.org/test/maestro:6a39325d9ab0e7cb75989edc
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmo6KlwACgkQj4D7WH0S
+/k7IlQgArSh1ediCZdj83D5gFxdIE6LTGeqNyxi7Jd8t/neflpfxIKPUxS0OpKSY
+xTo6u4exN7KJIPyzMTA+Z3YDS6V1QpyUfo8+dkQjyBTdvpqdNXNeD1cFejU/ykQ+
+xsBxuWck+FxTA1wX+hkj78al0zcCbafU/h6Fy4Cu7yR9n1hQnAwywiCkyUstH41G
+/VLlQEq4O+Xu/vF9X4H8EvDViX3C5tqDNmDjMDYYLxuttmWoY6F9zfcfGf8X23jJ
+lPjlWe/2j3MHOpYZHArLGH47YGH/KKaYedoNX1U/BIjgVSyWbsz3Vh+q3Z+SeLqv
+W7YcxZ1y69GLGsFRkV0bh4awUXj+SQ==
+=FnKl
+-----END PGP SIGNATURE-----
 
-
-### UNSTABLE TESTS
-    
-Hardware: kaanapali-mtp
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.efivars
-      last run: https://d.kernelci.org/test/maestro:6a3930709ab0e7cb75986520
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.clone3
-      last run: https://d.kernelci.org/test/maestro:6a3936c29ab0e7cb7598d471
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a3936c39ab0e7cb7598d474
-      history:  > ✅  > ⚠️  > ⚠️  > ✅  > ✅  
-            
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a392f409ab0e7cb75985cbe
-      history:  > ⚠️  > ✅  > ⚠️  > ✅  > ⚠️  
-            
-Hardware: cd8180-orion-o6
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a3936969ab0e7cb7598d21c
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6a39336d9ab0e7cb7598b785
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a39336d9ab0e7cb7598b77c
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-Hardware: exynos850-e850-96
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a3936979ab0e7cb7598d21f
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6a3936989ab0e7cb7598d274
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6a3936989ab0e7cb7598d278
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a3936989ab0e7cb7598d271
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: imx6dl-riotboard
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a392f5a9ab0e7cb75985e5a
-      history:  > ⚠️  > ⚠️  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a392f4a9ab0e7cb75985d13
-      history:  > ✅  > ⚠️  > ✅  > ⚠️  > ✅  
-            
-Hardware: qemu-x86_64
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a3930769ab0e7cb7598654a
-      history:  > ⚠️  > ✅  > ✅  > ⚠️  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--dtxfsntetu4kmycj--
