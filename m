@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53EE3CA486;
-	Wed, 24 Jun 2026 14:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B508427707;
+	Thu, 25 Jun 2026 16:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782312148; cv=none; b=UvvxTb38+IcPTsxH7Ze4m6PH2aI0P5U+WK4BcEXVkNrVrNY8JTX6hpWU8Q6epz6HUEZkQfea1UZOjWAtMlFMFIsMH7j90VUIx1lny6AOTLsBFk+X3Ob6aplZJFYgWy4pNU+FFo7EiVMCMOa5e9ydFOGuL9HpYuEFlaNkPfCOTMY=
+	t=1782406366; cv=none; b=SSAZ769/JsH9N7iHN+S3eiURppoL9ki0u8aYJaGTvPwElWf8WbRTOflxO7c1igLx9IElU0F3rcaIyEjAjWCzy/V2VeNjtK1E3S9mR4WfTD9BkSKYc5C00NbdTnJpTdw2IMoQRGjlZZcsSFxiSbQUjP+OsaNrStrwlLA1PULs0PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782312148; c=relaxed/simple;
-	bh=cFDwFOBxkDv0DvWCsvG1QaGT/s8vJSuwXtNw/4+t+Zg=;
+	s=arc-20240116; t=1782406366; c=relaxed/simple;
+	bh=WyqdeK1/Mn+lV7sz2hBjtlgZwiy5XlqBEob4QDRGuMo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GY0JV7jRs3Ep+KLnUhmYASo1Q+PO2k4UYZIDF4BJqIrWZzGs6B+JFXx24qDgYUgiN9WQIM8Vp/ledTXsP3NE3ZrsXr+0O2gxMlSUXtB9RCTACLHPU2en2Vb0erKNbDsY7V6gJ88th1h+4z180OA//PVdceqiKWH6j9N4Z8Wd9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAIktrjC; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=NY281sGuSW2NXc+vVFqDC2FjgPyYTbRasgXhdpz8IesGPp5K13HdMiOJbf+NKcN5BGCjqo2BpKOAqrY/NhDwE/vy01D3oA5zcfoVQK8AgR1levhAzUujeojHngdj7C1YfYoGO6/6uwCIKN5k7NAq5nF+/w4UtF/K8jau0pMt6HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FM2WgSTv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAIktrjC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 939351F00A3A;
-	Wed, 24 Jun 2026 14:42:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FM2WgSTv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE6041F000E9;
+	Thu, 25 Jun 2026 16:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782312147;
-	bh=lqI6cUxmmk+Q3gbqs2fgyBeAhQ9V1xMVl7cvfG46284=;
+	s=k20260515; t=1782406365;
+	bh=PGBmwvZf9HozCnGMKuaGxR7ic/f+AWbW2ot/Jq9wwus=;
 	h=Date:From:To:Cc:Subject;
-	b=dAIktrjCPlL/m/qHA3gL2AojAYBuPniQN92T+gDk1g06xpo7D9J+QvhRwNqmlfZ7Q
-	 QDIjvaz3B3njAbZ5fzcklHw/OxJnFqBW8f4jVdje1vLaFA+U2XaRBWcjrMrNl4avkj
-	 NagJ4aLdgNim1bAtmcXZ+zL/rSxsY4GMWsc4cg+liRbMSawFFhhSb+4sFUmTqWK2CS
-	 BVfqfOAzH15pq79H3dSifGZV2QZ3lqFuYB4JBuWn0BZhqzFERvPf83lJsKb1NWoeKB
-	 /E5udv4tooA0czlzKS4p/xRTZMSrOUAf7+286zBdvdeI6ILvu2xqd41ZtQUbrndgjr
-	 oMpuHJJ/JBPtw==
-Date: Wed, 24 Jun 2026 15:42:24 +0100
+	b=FM2WgSTvxThe9YW9a9lRrd3U4DTtwWrJxuqRYzEFIBubA9F6n3Qxm4D9xYFeUIOMD
+	 /Q+pYFUS6JFxv3oHwrp6OBp21+nABwp9/phJm9mz0jkKkS8Q4zy4lRBiPv8shm4o6N
+	 AqOMTiUWcoRiDvCaDXwCAZJFIq/THhGnp5sfCWmXMnqVJWFbBXOKD0HrWSx+93F6GM
+	 aikhSkNNU0OCMRshlD2Qtx9VoKuSSlEXvrvFYvJ5scsDvdm5UM7684yZ69eNwrq0Wl
+	 lNq8Cuirj/jSXGFan+ZijdaGzf+Y1SpOgcCvS4pU1ZcjbZjS6bwF6T8i/3SAugie4B
+	 xtG6dk88P5p2g==
+Date: Thu, 25 Jun 2026 17:52:42 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Linux Next Mailing List <linux-next@vger.kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 24
-Message-ID: <ajvs0PhDpBvu_2I5@sirena.org.uk>
+Subject: linux-next: Tree for Jun 25
+Message-ID: <aj1c2izvSFufG1F9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,11 +39,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0NUjHghUKNJvOzf2"
+	protocol="application/pgp-signature"; boundary="ZQCRjU4CCDRLqao7"
 Content-Disposition: inline
 
 
---0NUjHghUKNJvOzf2
+--ZQCRjU4CCDRLqao7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -52,13 +52,12 @@ Hi all,
 The merge window is open, so please to not addd any v7.2 material
 to your linux-next included branches until after the merge window closes.
 
-Changes since 20260622:
+Changes since 20260624:
 
-The arm64 tree acquired a build failure, I used the version from
-next-20260623 instead.
+The arm64 tree lost it's build failure.
 
-Non-merge commits (relative to Linus' tree): 1592
- 1507 files changed, 65562 insertions(+), 21462 deletions(-)
+Non-merge commits (relative to Linus' tree): 1449
+ 1463 files changed, 67636 insertions(+), 24716 deletions(-)
 
 ----------------------------------------------------------------------------
 
@@ -91,19 +90,19 @@ http://neuling.org/linux-next-size.html .
 
 Thanks to Paul Gortmaker for triage and bug fixes.
 
---0NUjHghUKNJvOzf2
+--ZQCRjU4CCDRLqao7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmo77M8ACgkQJNaLcl1U
-h9APBgf/fwKccWSHWe8Lrxr0PMz7UCVzGkssm4KoHvij0xUOjFQ+2I9omGUh3lFG
-cT+CMKbBBe/8B/5EW+lVqXR3UAFSyIHD4G7dRHnb3EdDtuCjCfFZ91NI5HjOGAwp
-zM/sIY1k/u/nrgIeh3Ovo/40HSnFY+c7U0PIiYfvfW6YeA5s1I1vH3vmDR/G2NIi
-ebva6BK/0n8CdsJso3oeTQ9yRkefTB32C1gMzn6c/q3BJkTpV7W+LFzDWvjWqP7h
-1GyrmWgxG0dxraosNiSn7tCOKNE6gGKrg59/OR0L6eyLQzR4V9HPqS/61haULBFM
-GP6CZb1cUy21aBBP7SnWnQgzEjS5Aw==
-=xwKH
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmo9XNkACgkQJNaLcl1U
+h9DFyAf+MQzLM7ayDvUlFgc4p5l1llCCJ/S/rDPZseWMnVNnz4PjodjVf3i/wHBZ
+2Nh+GpQYty//5gBieXvX02YkhhR8Ily1BS0pQz4ZRbLB6MLkrEX6oWMi6c95L8iV
+rRCyTu/QpAa4yRTDcRK2qAyIrTplrj3A9Ke1onfkK06b52tsuSl7+1gOBxc70lSP
+p/moSGNcpIgFCZ/B3mcTHUcomOaV9+83knamWyUJTHHj9grJHKAfSpqwhE5oI9Um
+jSFPF+C2VhxvkZ1qlbA1t9s9QS2lL/mJ7UvNqoSR3vXdbgqGzMP6/WHr/3AxFVxb
+mhKERu/uErpj3d6RC/dTSTbSa8QIzg==
+=OYc2
 -----END PGP SIGNATURE-----
 
---0NUjHghUKNJvOzf2--
+--ZQCRjU4CCDRLqao7--
