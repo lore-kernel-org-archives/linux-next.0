@@ -1,357 +1,123 @@
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ixit.cz (ixit.cz [185.100.197.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442D278F39
-	for <linux-next@vger.kernel.org>; Sat, 27 Jun 2026 02:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81183750BD;
+	Sat, 27 Jun 2026 10:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782527450; cv=none; b=O7hYK1m69eEaroK7EHPZvM0hdTlB3AfzHpOJ0PmCZZ2H3jC03Hx5HbUlhLirbqw2ovhA6SL3CuddqgT2uFQmsadnJOCdZiuuNHAQcZ3rky1TZUn3wgCKhBMOd5azDL1mwQ0JtpdRxWxxGEbHpBOuZZ7dH7PQ+73u0TBL9X8o+38=
+	t=1782554794; cv=none; b=DWX5o/PRmARGLMx/XBurzcRvS17R00ztVUEZ1540A8+R7jIt2L9uz8dANvrFLVqiRYq2926t7SMEeWde0f9C3HzDD/u5ZXcdMAgkRe56ihzIn5kFLyKx1pOt+Wg0ePfK/7ZA3lpWRz3rzhOYjEOW/HE2KGM9EVLNZLrlLlbofM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782527450; c=relaxed/simple;
-	bh=9Jl1u0rQaRbeKj+aE0sRNMxEe/ehbY5V4tDkqVVsh94=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=iEZwpQ7ZPJ3tYeT5RoshkixcQYHZBIPAcBL0bE7FSzJ30hKf7n4MEC4MZzjblVBy6dPUzrq6l/OSVrr87PVd0s/P4Qnlqjb/z09apKL/KlPPTdFWueUvruSjjhXi09ZyBHFQSD73n2HGb5R+xPxU6paxyJq3vdIBWyeZR3Hn3co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=iqzeqjo5; arc=none smtp.client-ip=74.125.82.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1782554794; c=relaxed/simple;
+	bh=8kp2Fswpyy9kmvL7L4gZktY/TVVpTg093e6Z8b/REb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PEu6sSEdhQOG31GymH+uJTDIMuGawzB3gTiddukxdEYVBRG4CQCgVoceD3BfylbwvR1uyZwFZeagk5z051gEeBmHwqfghpuyW0UBsAkhY1XSOHrhJfg9OVjSIFVSxTczMItBbEolbKSatJwBb4yfpZ4rbv3fPhQ+J5tktnbvPlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=WprFQLyM; arc=none smtp.client-ip=185.100.197.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="iqzeqjo5"
-Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-13986d61b4fso2231689c88.0
-        for <linux-next@vger.kernel.org>; Fri, 26 Jun 2026 19:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1782527447; x=1783132247; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZRtlgzid8yjbQ0vmwhQhYCHbkryAtypjwHSbZru5JE=;
-        b=iqzeqjo5AhtvFqam7MSGgiMJoXEi0b2PYFB1h+IJUzpuzORl35Oxi4qcrKnPOX/zaF
-         OExoOavGehe9XjejJstje29McmSqgVSjElIY39A4/gkt5FQ4sofXPNwI023WU0+cKwAW
-         9dcaO+YHyh1B19tSawAp9iC+bY4My42Pls3bM27iEqqC2qPyjYFfYBuzDsF1mbimRmPN
-         Wgvv2JgyAf6Vu08C4lo5mRyGWe7BXrckJmweJJD2rIoQHNYNYHyPzO6RLC3isW1XQ9Yc
-         2YMVYeOEHqwpZZmZ6qdaiQfZiDi8ptosU95rRqI3xMaE/mkM8jIoQu4SgDbrZMquHZDR
-         EwvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782527447; x=1783132247;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oZRtlgzid8yjbQ0vmwhQhYCHbkryAtypjwHSbZru5JE=;
-        b=jH17nXwNOF0P++JjFFsQS3ouaaYrTCi0cZXI36MQGMk2ZlKgteFafFLhWnjh2BC/5c
-         v6Bx/iZRuaWgE5hDuTjjutkz8BTy8Dt3V7Kpl4EJvOCffD/5sNp9/+gBv/D5SRbGaIJj
-         aWqat9qCJ5YSZIWCk3VIZaHjcQDGNtAasoVFFjLcy+hG1uI2AEoYn7lUbQwuv2xBUYXx
-         XCnnOVmWGCGEpW7LS3fmm2ngD8VzleTUeZyi//gn/WhCRApmbZz3gEX3wQaeHAINuzp4
-         ds+MWgmy1TyFLdTHYeHr4zkQf/A1ZyY1gTQdhenL9irerXNf/0BWqgFDOjUYOU5DSG2V
-         P3Uw==
-X-Gm-Message-State: AOJu0YwA5mpSZ2FQWATRzUf/7BzoX5ym7vwnQfG12GeSGB8s8sgoZM/g
-	SBzDj2i03lVx1WTocSOIRAl8hpH9K86od154I4bA8Ak9mjY+Urc3fkiM5FYMyZ6dj7E=
-X-Gm-Gg: AfdE7cn3mwmSXyGRXgIteoLsTVOVrwlJt4W+qTrXnjVFSuJesCAnJlbGwramQWbgeaf
-	TTe2YWrLcw6Mzxuft14Sp/fw5lc4Hq96gDTH7k2RKzqgic13LsYFJySP8GB7JyAuNMPpBKx//pp
-	cPvQvgegh4oFChn2RPKYydSBmIacCD4uYxWxtG0nCqPDMLz95P+py6+9hEFmLc617+PmgHbiCuG
-	5jYwrgcJRosA7SpolB6TSKYJVefaP1HLKS9JSaTwMCGi47wuuN0Tws715jjABZ/71ZsPdM97hVW
-	561hsrUVhICaxDXgFoWXupf8CMaX1dOrprApVu77QgS9rHLOyHmVPqwA7mkGM8YG3PvWq8Z92jo
-	sZTsidcGGsYhdQxP4Ui4Wj6Jl9hzDJ57piuBmjnetwxZr8sr5c/6SYffCEIiBMXi/bZ/QtJ+dVT
-	rPiYPymg==
-X-Received: by 2002:a05:7300:ad06:b0:30b:f3b8:3e7f with SMTP id 5a478bee46e88-30c84b7069fmr8427251eec.1.1782527447122;
-        Fri, 26 Jun 2026 19:30:47 -0700 (PDT)
-Received: from 963b246bc1b3 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30c7ca438ddsm22024246eec.23.2026.06.26.19.30.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2026 19:30:46 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="WprFQLyM"
+Received: from [10.0.0.200] (unknown [10.88.125.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id C51EB5341135;
+	Sat, 27 Jun 2026 12:06:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1782554789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RT/f8ktc8F47I0k+fkYjLc0IQUMtZ5wNlNAiYHb5hW8=;
+	b=WprFQLyMmxQLwdXmAU7Iuvn1gvvKb+RvA5g0gUf0YItOkh+mOHJZJfO4xhigTRTsPbWSJU
+	wur+RJN1NclMB+LzMPOfewypCUECCVFmqhbLiDwVT+OYf1XA/1sphD21t+m7Ywt6KAaZEQ
+	6FlyF/sOq0XcS1vSm2mCvfKpaXDvh/Q=
+Message-ID: <916192e4-7d2c-4463-8576-3cfe9e36faa2@ixit.cz>
+Date: Sat, 27 Jun 2026 12:06:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 3d5670d672ae08b8c534b7beed6f57c8b44e7b43
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 27 Jun 2026 02:30:46 -0000
-Message-ID: <178252744610.390.1425086204998726279@963b246bc1b3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] synaptics-rmi4: Failed to read the Control Register
+ Descriptor: EIO
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <de6d34b7-619c-46bd-a6e3-a3917b318571@ixit.cz>
+ <aj7saJXgFX--gP_8@google.com>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <aj7saJXgFX--gP_8@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 26/06/2026 23:18, Dmitry Torokhov wrote:
+> Hi David,
+> 
+> On Fri, Jun 26, 2026 at 11:09:54PM +0200, David Heidelberg wrote:
+>> With next-20260626 without any additional patches, the synaptics fails on
+>> OnePlus 6T with:
+>>
+>> ```
+>> [   16.620292] rmi4_i2c 12-0020: registering I2C-connected sensor
+>> [   16.857617] rmi4_f01 rmi4-00.fn01: found RMI device, manufacturer:
+>> Synaptics, product: S3706B, fw id: 2852315
+>> [   16.867324] rmi4_f12 rmi4-00.fn12: Failed to read the Control Register
+>> Descriptor: -5
+>> [   16.867338] rmi4_f12 rmi4-00.fn12: probe with driver rmi4_f12 failed with
+>> error -5
+>> ```
+> 
+> Yes, at least a98518e72439 "Input: rmi4 - fix register descriptor address
+> calculation" is wrong and needs to be reverted.
 
+That did it for me, now the TS works again.
 
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/3d5670d672ae08b8c534b7beed6f57c8b44e7b43/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 3d5670d672ae08b8c534b7beed6f57c8b44e7b43
-origin: maestro
-test start time: 2026-06-26 14:47:34.599000+00:00
-
-Builds:	   66 ✅    2 ❌    0 ⚠️
-Boots: 	  169 ✅    4 ❌    0 ⚠️
-Tests: 	31254 ✅ 5370 ❌ 7026 ⚠️
-
-### POSSIBLE REGRESSIONS
-
-  No possible regressions observed.
-
-
-### FIXED REGRESSIONS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt
-      last run: https://d.kernelci.org/test/maestro:6a3e9bd36de4dcc0f449375e
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh
-      last run: https://d.kernelci.org/test/maestro:6a3e9c646de4dcc0f4493ae1
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_gpu
-      last run: https://d.kernelci.org/test/maestro:6a3e9c646de4dcc0f4493b18
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: bcm2837-rpi-3-b-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6a3e9bb96de4dcc0f4493679
-      history:  > ❌  > ✅  
-            
-      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
-      last run: https://d.kernelci.org/test/maestro:6a3e9e316de4dcc0f44987c8
-      history:  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_gpu
-      last run: https://d.kernelci.org/test/maestro:6a3e9fb06de4dcc0f4499b55
-      history:  > ❌  > ✅  
-            
-Hardware: mt8195-cherry-tomato-r2
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_mt8195-sound
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f449056d
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c104000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f4490502
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c105000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f4490501
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c106000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f4490500
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c107000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904ff
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c108000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904fe
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c109000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904fd
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c10a000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904fc
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller_1c10b000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904fb
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dp-intf_1c015000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904fa
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dp-intf_1c113000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904f9
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_hdr-engine_1c114000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904f0
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904df
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000_jpgdec_0_0
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904de
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000_jpgdec_0_10000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904dd
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-decoder_1a040000_jpgdec_1_0
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904dc
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_1a030000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904db
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_1a030000_jpgenc_0_0
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904da
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_jpeg-encoder_1a030000_jpgenc_1_0
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904d9
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1c000000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904b0
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1c002000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f44904a5
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f4490471
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000_video-codec_10000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f4490470
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000_video-codec_2000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f449046f
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_18000000_video-codec_25000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f449046e
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_video-codec_1a020000
-      last run: https://d.kernelci.org/test/maestro:6a3e9a866de4dcc0f449046d
-      history:  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: glymur-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pci_1c00000
-      last run: https://d.kernelci.org/test/maestro:6a3ea83f6de4dcc0f44a2d19
-      history:  > ✅  > ❌  > ✅  
-            
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6a3e9b646de4dcc0f449322b
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.coredump
-      last run: https://d.kernelci.org/test/maestro:6a3e9b8b6de4dcc0f44933c2
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_ethernet_23040000_mdio_phy_8
-      last run: https://d.kernelci.org/test/maestro:6a3ea4dd6de4dcc0f449e516
-      history:  > ✅  > ⚠️  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pci_1c00000_pcie_0_wifi_0
-      last run: https://d.kernelci.org/test/maestro:6a3ea4dd6de4dcc0f449e4db
-      history:  > ✅  > ❌  > ✅  
-            
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6a3e9bc66de4dcc0f44936ea
-      history:  > ❌  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6a3eaaa36de4dcc0f44a4951
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.gpio
-      last run: https://d.kernelci.org/test/maestro:6a3ebae86de4dcc0f44ab455
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: cd8180-orion-o6
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6a3e9d296de4dcc0f4495d9e
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a3e9d296de4dcc0f4495d95
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: dell-latitude-3445-7520c-skyrim
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.cpufreq.suspend
-      last run: https://d.kernelci.org/test/maestro:6a3e971f6de4dcc0f448cfb5
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.cpufreq.suspend.cpufreq_main_sh
-      last run: https://d.kernelci.org/test/maestro:6a3e98b06de4dcc0f448e99a
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - boot
-      last run: https://d.kernelci.org/test/maestro:6a3e9e406de4dcc0f44989e8
-      history:  > ⚠️  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
-      last run: https://d.kernelci.org/test/maestro:6a3e9de86de4dcc0f4497ddc
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
-      last run: https://d.kernelci.org/test/maestro:6a3e9de86de4dcc0f4497dd0
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
-      last run: https://d.kernelci.org/test/maestro:6a3e9de76de4dcc0f4497db4
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
-      last run: https://d.kernelci.org/test/maestro:6a3e9de76de4dcc0f4497db3
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
-      last run: https://d.kernelci.org/test/maestro:6a3e9de76de4dcc0f4497db2
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
-      last run: https://d.kernelci.org/test/maestro:6a3e9de76de4dcc0f4497da7
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
-      last run: https://d.kernelci.org/test/maestro:6a3e9de76de4dcc0f4497da6
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Thank you
+David
