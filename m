@@ -1,118 +1,3209 @@
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15993EDE40
-	for <linux-next@vger.kernel.org>; Tue, 30 Jun 2026 10:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FA23F39E3;
+	Tue, 30 Jun 2026 11:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782815006; cv=none; b=AMQE7KnBvLHbEnAs/Ax1vLEkBYWkvTmyvDJNUVZgGT6GEn+TZqzAwV43hrEw7HUZCZkpV1dng0Hld4H7W9nA55iG2iX1V2VZCvhBdgqreNoBnbtbrRki1DnrrUu+R629SG1EB0NWPgeIPHocS1mUNVbhNOtigMRFN+e3wKe/kN4=
+	t=1782819704; cv=none; b=o50trbg2z3HNOWDCIHx43g4MtX0Q4e9UAIb8Edzq5UQlAUW/CW5BYv+1grZTRSgk6KXMMk4pqlX2vsHKy9y5fzz3/jjpTWmWDkEdZxq14JJcKXfccgx0S6MyUXl3MA7CmgRLIrsvArHadXUWWz7D7TT1//D3jZifguqy4cHhTeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782815006; c=relaxed/simple;
-	bh=ookSO9NLyxStg2XjpiwLYO2/4VPcyJ2pz5cz790SDPE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=lQkiJkaxXuCbPGKtL2i/mt49UPiH/TqOZ2TErfM2Og+whYGqaSzdRLSgCNHHjv/xd1NaBN4F6camISNrtziGCkJYuV2irs2XwYeA2uvq7wTIbtghoNQqjgm/kGa0cx4Iak0gMHn6b69fYDnDpSw7aLjXCZ3xaBVzz3NOwFZkanc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JchU8k/5; arc=none smtp.client-ip=74.125.82.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782819704; c=relaxed/simple;
+	bh=1hvLiWTYW+QvC50xi0D0AH6SKDHRnncNq5yAiKWiP7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RHXjwG7UMlnKniXU3Gfz5k69Xfh+pFJtZuqtQatrwnGApmP001733Vx2Cm3Uy3D1SicQb3XH1PJV4j2nqeu4Es0CeL8kF6yvfVD4a1pqsLKf+5TKKl6sdAZGnmmwfjTkdgvAmmjunDiJlIMLOpfY2Qvs/lEpOIb2m1db+Parz/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRVT3lzS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JchU8k/5"
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-13b2b92b0bfso1168627c88.1
-        for <linux-next@vger.kernel.org>; Tue, 30 Jun 2026 03:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782815005; x=1783419805; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=64br/RkmOmhx13/ESRZScVcvPiQV91aMcBObjJGHD+E=;
-        b=JchU8k/5+0huPNv+m2QJmsuCQFHUesT3JTAcV8C6JKZ3lK8o6vqNVLuwqX2aK5Qhxo
-         EaA9CuLPKr4V2p22CFJ64UzhFOyZLC1D6UPFJCtnCkWQytnYFTYmjwNTToOxC3drckru
-         eMbJNmcR4a8xiey/nXrW3qpTW0l3JVdfR4rByOOc9eXeYrwJiK3ZhxzMbMKCEGuWmCTc
-         cxEBLM00Ip2tph2qfWC3n9/DYqScTAuk94bT1lhX8Hk5sOT/O6ZTx1d+ygYWXplWAhRD
-         uSDMjwtNM8Fq9UbBAMRX9IdbHc/pG/6JU9wfM0OBKhBLhCk+eQ6oMskNlI7gLxcKWXXw
-         C3vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782815005; x=1783419805;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=64br/RkmOmhx13/ESRZScVcvPiQV91aMcBObjJGHD+E=;
-        b=jZavsE+8LO/FK+iU3JHXo6L9WvALTAPJwI6uP3VLZbIkIz2t/DfQnyY7DzGYFcW7Wk
-         PGTIoerA7V3pLImffZE/p0dnCnkBGM+/hZh77q1RBeo/WK7Esg52TXDK5tAZ+8RzbWic
-         S6N4f2Cs5q+OQsmt6At/deFO16tPI6RCi0Esu4qSHl+w55TbKEp4YSNZcE+XRQHP0b6L
-         QdkfYNmTcG0LbRq8tJuWv90Qwli+4sI75fe6xrsO6Wr2+gQQf1337xcYodvVaMVzTFfw
-         Xg4yFPXr4o9zy7WCrRqNIao/qnhK692fZtXT+gjDaWd8VSiaJuw90oX9bgyFkcezx3Qf
-         EJmQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp5ImCmwtqd9cTBOQq+zy8+hGAy61CCvvw28pQiuDLRdHys+PDL+km+pyUKumrOTlaHWN4dxbXFAQyD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTBGP8LIAylZMhk5XHtlvbjj5GnIt0HPNnkT2dGUdt6ZizRCZZ
-	g8/4yUW9iHskg0EeipH9rdgG7NlYe1XBfz5arNAcYEpHoZM8XHX61ivp
-X-Gm-Gg: AfdE7ck9yq78QSVvwpflUmn1abTfvkBV+QveCPS8Wbo6MI3lwEQWqGxS+o/KmiAEw6i
-	w2yPzPVz9Ok3FfCrQcfpuJSlNPNDhKed8VA0Y+TpEUBlCu2SKJW+jOzntpzrUTZEmyKLZ8oYFyC
-	uHExqHsXnj3DIee4ombEXIOzQk2PPKN0rJPWHzPYDCNlSO4F+H0W9DS0skxhPYXBgmiEZnzCquF
-	umagJnc6VW+hjuvh9R/WuXSlce/BQfyFTpU7a8sR1fRta/JD1tQ9gRnBvYwDSKzYKwPmSvmdgG7
-	Bqz4hHHG+ZhcNTynSqnDuJleEjsjB+WBrqi4uzXBiFjQyHyEqM2kL1RXLP6IoV+5GH/+bumclFU
-	uXhoG1VVp1T4bf/j7V+BqPPd9Tbe4BxjgibHUJDxHNPGiiNa3MP5kUfi4JpJirobH5poEOEuKHs
-	s3MaWNOxiSlHyXylNtLGhSiucErdWDGw==
-X-Received: by 2002:a05:7300:fd14:b0:30b:f888:7821 with SMTP id 5a478bee46e88-30ee144e2e6mr2130764eec.28.1782815004526;
-        Tue, 30 Jun 2026 03:23:24 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([2804:2bf0:60e7:ae00:bbd8:81fa:3317:1f51])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30ee2fbe011sm6728875eec.9.2026.06.30.03.23.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jun 2026 03:23:23 -0700 (PDT)
-Date: Tue, 30 Jun 2026 07:23:20 -0300
-From: Arnaldo Melo <arnaldo.melo@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Namhyung Kim <namhyung@kernel.org>
-CC: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the perf tree
-User-Agent: Thunderbird for Android
-In-Reply-To: <akOX2cfUOK1rRbu0@sirena.org.uk>
-References: <akOX2cfUOK1rRbu0@sirena.org.uk>
-Message-ID: <A5DDF2CD-1DF0-43BE-8FA2-E2FABE176B27@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRVT3lzS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A37771F000E9;
+	Tue, 30 Jun 2026 11:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782819696;
+	bh=jdgA3WBhyc9pIV6QlYApQXymaFQtp62zBrZHlxa7l8w=;
+	h=Date:From:To:Cc:Subject;
+	b=hRVT3lzS/7sjI8KhTbazgpt2eM3QcO7OLp/av+kaGEYOasxblzmhvj0t18fREcMLK
+	 xDuDPaB55n2tEHmH7KQMX+4ZKSIf9EAUqRNjVzfO6PMdUYppNVGIv0cIKYuqcXo9/v
+	 6C4pItlhHMrcjwV3jOqxx2H+qBxI9SYRL3cSfL/+1XcmuHOy2oPlOIULepnJNU8iA3
+	 O9Y6sdvOiFlG0F5oIzP2zSzJHCL6xRTQ5U5JDFvQyU+TfUqbB/t5oF7n3jlppViFjB
+	 pQwoz7U7eZ2nVNMO9SntMdIR6CshhIFLnqqlwA9J5mz43ZSbN4zZY1dKu9PSQa/70p
+	 ljJF4+fUePcOw==
+Date: Tue, 30 Jun 2026 12:41:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: KUnit failure after merge of the vfs-brauner tree
+Message-ID: <akOrbOsKUqgZarGw@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hWVN3R61K5WHc1B1"
+Content-Disposition: inline
 
 
+--hWVN3R61K5WHc1B1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On June 30, 2026 7:18:01 AM GMT-03:00, Mark Brown <broonie@kernel=2Eorg> w=
-rote:
->Commits
->
->  535c327f22a28 ("perf python: Add LiveSession helper")
->  4f093d248b148 ("perf python: Add perf=2Epyi stubs file")
->  145f6bea48134 ("perf python: Add type checking for parse_events/parse_m=
-etrics")
->  1bb0a1721f3f1 ("perf python: Handle Py_None for thread and cpu maps")
->  226e60c35ac93 ("perf python: Add config file access")
->  2b8aad745c248 ("perf python: Add syscall name/id to convert syscall num=
-ber and name")
->  6efb7ef71b226 ("perf python: Expose brstack in sample event")
->  1b3460930fcda ("perf python: Extend API for stat events in python=2Ec")
->  4d97f00572c6f ("perf python: Add callchain support")
->  0dd3f949cfb58 ("perf python: Add mmap2 event")
->  b81c05a559ee7 ("perf python: Refactor and add accessors to sample event=
-")
->  beed2f88c2d7b ("perf python: Add python session abstraction wrapping pe=
-rf's session")
->  f46938e02fa6c ("perf python: Add wrapper for perf_data file abstraction=
-")
->  d8da1ea834a88 ("perf python: Use evsel in sample in pyrf_event")
->  3e153b92b6e88 ("perf evlist: Add reference count checking")
->  4d7018b55734f ("perf evsel: Add reference count")
->  7e7110bdf0e37 ("perf evlist: Add reference count")
->  ca42447bde058 ("perf data: Add open flag")
->  3d295e4e6974a ("perf evsel/evlist: Avoid unnecessary #includes")
->  6a7ac633a3e8c ("perf python: Add missed explicit dependencies")
->  bdd53407c817d ("perf util: Sort includes and add missed explicit depend=
-encies")
->
->are missing a Signed-off-by from their committers=2E
+Hi all,
 
-Thanks for reporting, I'll fix and force push,
+After merging the vfs-brauner tree, today's linux-next KUnit testing
+(arm64 kunit) failed like this:
 
-- Arnaldo 
+[11:23:24] Configuring KUnit Kernel ...
+[11:23:24] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=arm64 O=/tmp/next/arm64_kunit olddefconfig CROSS_COMPILE=aarch64-linux-gnu-
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=arm64 O=/tmp/next/arm64_kunit --jobs=192 CROSS_COMPILE=aarch64-linux-gnu-
+[11:23:55] Starting KUnit Kernel (1/1)...
+Running tests with:
+$ qemu-system-aarch64 -nodefaults -m 1024 -kernel /tmp/next/arm64_kunit/arch/arm64/boot/Image.gz -append 'kunit.enable=1 console=ttyAMA0 kunit_shutdown=reboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -serial stdio -machine virt -cpu max
+[11:25:01] ============================================================
+[11:25:01] ================ miscdev_init (7 subtests) =================
+[11:25:01] ================ miscdev_test_static_basic  ================
+[11:25:01] [FAILED] lower static range, top
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] upper static range, bottom
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] lower static range, bottom
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] upper static range, top
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_static_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_static_basic: pass:0 fail:4 skip:0 total:4
+[11:25:01] ============ [FAILED] miscdev_test_static_basic ============
+[11:25:01]     # miscdev_test_dynamic_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_basic: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] miscdev_test_dynamic_basic
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_dynamic_only_range: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] miscdev_test_dynamic_only_range
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] miscdev_test_collision
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_collision_reverse: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] miscdev_test_collision_reverse
+[11:25:01] Invalid fixed minor 257 for miscdevice 'miscstat'
+[11:25:01]     # miscdev_test_conflict: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:166
+[11:25:01] failed to create node
+[11:25:01]     # miscdev_test_conflict: EXPECTATION FAILED at drivers/char/misc_minor_kunit.c:170
+[11:25:01] failed to open misc device: -2
+[11:25:01] [FAILED] miscdev_test_conflict
+[11:25:01]     # miscdev_init: found misc device minor 15 available
+[11:25:01]     # miscdev_init: found misc device minor 128 available
+[11:25:01]     # miscdev_init: found misc device minor 0 available
+[11:25:01]     # miscdev_init: found misc device minor 254 available
+[11:25:01]     # module: misc_minor_kunit
+[11:25:01]     # is_init: true
+[11:25:01] # miscdev_init: pass:1 fail:6 skip:0 total:7
+[11:25:01] # Totals: pass:1 fail:9 skip:0 total:10
+[11:25:01] ================== [FAILED] miscdev_init ===================
+[11:25:01] ============================================================
+[11:25:01] Testing complete. Ran 9206 tests: passed: 9077, failed: 9, skipped: 120
+[11:25:01] Failures: miscdev_init.miscdev_test_static_basic, miscdev_init.miscdev_test_dynamic_basic, miscdev_init.miscdev_test_dynamic_only_range, miscdev_init.miscdev_test_collision, miscdev_init.miscdev_test_collision_reverse, miscdev_init.miscdev_test_conflict
+[11:25:01] Test results stored in /tmp/next/arm64_kunit.json
+[11:25:01] Elapsed time: 96.725s total, 0.002s configuring, 30.930s building, 65.792s running
+
+I didn't specifically identify the commit causing this.  I have used
+the tree from next-20260629 instead.
+
+--hWVN3R61K5WHc1B1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpDq2sACgkQJNaLcl1U
+h9Dzrwf+J1/WDYZ33TvjKf2jgX/mis3VthNDzMTuIuTtvlpw88RERsIECkIFLHJb
+xniVyXsmeew8IvkPXa3C4qhD6YHzadBYpvk3Z0ftUyJU0uTdEK3bH0fLxJ8HAkkk
+Wcqt3uLZgUuF/eIyGW/AUArEmaHK2dW87t2Sf6aRrtVvZ3K51rtqUmjQKPSZ/yK1
+xY31338Qwz7sMu/fJIQLz7R8dAybeGC18dA+SocWL7YI9yBXgXp5WB7bsEuws7jy
+kzmkhUUp/vfDAXY3rC4vpl3knGVzfw9Cn7ReDacZlOkvwgOzVQ+YhpXOZOFof58S
+dlztlQ01Z0CSEWerSoPG2TXN7FeR+g==
+=HZUg
+-----END PGP SIGNATURE-----
+
+--hWVN3R61K5WHc1B1--
