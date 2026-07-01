@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99633B3894
-	for <linux-next@vger.kernel.org>; Wed,  1 Jul 2026 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06793603D3;
+	Wed,  1 Jul 2026 15:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782920671; cv=none; b=oumqzZ5U9F1BG9PSplBJLOfpZIJIyQE8xYQO4MLma10P4qfpoA7wa+vDZ3tBzbb9CvV2kYZFC3nO5ZsQNGflhQOYCMxz34o28wdpqtpq2bl55m5iL1XUuJ9Sn1Q2pc5ZNvTpbzjtdaAM+wi85ufWIz4uv7ELGzS4B8Xpgdoqxn0=
+	t=1782920846; cv=none; b=sxO6ac8G1mhqdygb2DeezB3L0aKE+5t/iF9jdfWdrZg6aI9F0xBltgZo9IUeSeWVdYNuPSGmoQaPoYO/a7/DcsI/4lN3fb1pWoMi16VErxnNkoOHIJ8SIGNVVBaDlRBx6sOl8wjQAgLOXPBFkNtPz4g19/ol/jgT0aYwfYcL1lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782920671; c=relaxed/simple;
-	bh=qhXKHc1CTaMtunarsS4iR449ovkIy4TcbptBkPWqy8s=;
+	s=arc-20240116; t=1782920846; c=relaxed/simple;
+	bh=NcgWAkkpvQ6GIyO0lNfvcz5hShiLJ0aGbZIzu82PdNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKIr++KLqWlrKAmNeAZgFrNCTgNFLjY4MP/9jZNehrmvS9RmNi+58DxXkJeeSXAFYBSd8xRLlB9kgkldmLkQN96kTYthWyGRA254j5KPy+SYdFAd/osHiSNWagZLHqceRmlVIKEJ8QQ7V5vnr8t5Zn5dOS2lV8vlVBsGOpPgAM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvqZVbOi; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=twGk6ixbCytxEo7T2UEysZTjWjC7ZYRIUfn6bnyJHaSj5bOH5S+4BDTzJoPXuaY/db6+6cJ5dq7VHx/Jtfaql/03KUH9xZUQXr1l8Z67bSaHYMWK30Vl4ZJOx6947LDKL7Idu7RWmXhe9zo2m0iMiJ/dWtQJlM70cxSZjrnZBBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IflC72ft; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvqZVbOi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25AA1F000E9;
-	Wed,  1 Jul 2026 15:44:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IflC72ft"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6090B1F000E9;
+	Wed,  1 Jul 2026 15:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782920670;
-	bh=CfdmeZdyzNT54Shq4TQkEueGrF1Dd68oktRm+erJNy8=;
+	s=k20260515; t=1782920845;
+	bh=F1d53/TBKMgbtfDcw1+aV1I5xnxDEUc79F11nQ0A4cU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WvqZVbOiNAiGxQeWDfZMUkNyOWrv9l04PPDlWQjEFCtgNcbSTMpfCUH84rj2onKnj
-	 FhxcqAzbURluPX/4NGAnjvg3pobqPaf4R3IWtyoB8chz5myXkIr6jjj1zeG3KlJJzP
-	 glPegEsyCVTLhpIy07NM6gTQ2E9ZSAUM8R3nLexEarh8xlx41V/uaNGWt2WMkmKFuH
-	 K7Zti2cu7ImqmP5IHwjZO8Jg5bhBc+kDVj5bpsOn0c2yWKH9i2oaBnnSU/ikid+tnA
-	 oO05+250fTtxzYkFB9qh/I57sy7B8gk4QfXbvVeN9S2LPy8zbnsIY54Jtc11Z2PTs7
-	 V3kFqLkybvbIw==
-Date: Wed, 1 Jul 2026 16:44:27 +0100
+	b=IflC72ftbroGcxiInCSEuqCl31BxPbBA3SEZdpE+F01220IMOaDKLlwUBPvSaWztX
+	 s6hp+2f2KfRXr7jP7W6CaZAqstAke0DMIwhPVZ6icN61fHoGz39YFsgwX5H8gGZS0r
+	 nKsW58hEPcG6FFkhTfqXVd+DPYrOLZUY92DSUxNE7F5esGosa3cdfecoW68g6KgsZJ
+	 XRsxQoSEcTqH/ctXo5isbcshBNLD7aSBoooN9NYnXW7C4SmOXdT8YBs5hdFaf/tUzG
+	 f8Q464Fw6wfHw2MS8o6QGik1WH98FAQNPU3C/AqgBMeJBgK3Pmv7v/c2E35AEVZefu
+	 nki6I5cEQZkQw==
+Date: Wed, 1 Jul 2026 16:47:21 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-next <linux-next@vger.kernel.org>
-Subject: Re: Update i2c branches
-Message-ID: <117e594d-28b0-4bac-b245-66cf2ac6c0f7@sirena.org.uk>
-References: <akTXuDVi8jBVAwWu@zenone.zhora.eu>
+To: Yixun Lan <dlan@kernel.org>
+Cc: linux-next@vger.kernel.org, soc@kernel.org, spacemit@lists.linux.dev
+Subject: Re: Include in next: Switch SpacemiT SoC tree's repo
+Message-ID: <5a6b7770-948f-41ac-9956-e0646228ed5e@sirena.org.uk>
+References: <20260701001506-GKA20854@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,49 +40,45 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A1z8HSNq1Ua9fosX"
+	protocol="application/pgp-signature"; boundary="HIzxHE8oQ4+E41L0"
 Content-Disposition: inline
-In-Reply-To: <akTXuDVi8jBVAwWu@zenone.zhora.eu>
+In-Reply-To: <20260701001506-GKA20854@kernel.org>
 X-Cookie: Do unto others before they undo you.
 
 
---A1z8HSNq1Ua9fosX
+--HIzxHE8oQ4+E41L0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 01, 2026 at 11:08:57AM +0200, Andi Shyti wrote:
+On Wed, Jul 01, 2026 at 12:15:06AM +0000, Yixun Lan wrote:
 
-> Please include:
+>   Previously, the SpacemiT SoC tree was hosted in github.com[1],
+> while now we've created a new kernel tree at kernel.org[2],
+> so please help to update the repo url for linux-next tree to the
+> new one, and the other info should being unchanged, that's:
+>   branch for master: for-next
+>   branch for pending-fixes: fixes
+> =20
+>   I will also switch to new repo for sending next Pull-Request to
+> SoC tree maintainer.
 
-> i2c/i2c
-> i2c/i2c-fixes
-> i2c/i2c-next
+I've updated the -next configuration, the new locations will be used
+=66rom tomorrow.
 
-> The latter is normally a merge of the first two so that it
-> doesn't create any conflict, but very often it contains more
-> patches needing some special dependencies.
-
-I'm not sure it is sensible for me to merge all three, if I pull both
-i2c and i2c-next then I'll end up having to redo all the conflict
-resolutions you've done in i2c-next.  Potentially I'll get conflicts due
-to doing something slightly differently, or the additional stuff in
-i2c-next only overlapping with conflict resolutions.  If i2c-next
-contains i2c it seems more sensible to get i2c via that instead and
-avoid the hassle?
-
---A1z8HSNq1Ua9fosX
+--HIzxHE8oQ4+E41L0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpFNdoACgkQJNaLcl1U
-h9CdMwf+L+DD5ma4pnyKDXjliJjY7LzF0BvrU+9eSqbxIQe42O6zOr14JgvT3SyI
-ikxcmWmi8DRdkF/mu+1ya/7F36Hf+H4tc7u64uWtLJM2JvqTEXgBXDPJAU5F3xtC
-Xi/EgSmaRZWlQF5s4g17Aj3x3OSq7W6B7Kh57RfBXYN6Kby7UUvHO6GCoQTbRVWo
-hiAZWSlodGehTUI94n/BOki46kMaDmimkHM6I56LVgzxubenXc8dcNilNVNoFYWX
-BOgUfiNUjNsxJEZgFU8D42kVkL55CUpGu0ugegU3GWKbLcuwvRd6WGIJNX/wL/7h
-lz9G/QRNcdfLokkdD4acrO5OjNMRWw==
-=ACe/
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpFNokACgkQJNaLcl1U
+h9CwYwf8DmpHFH8encN3APwISqw4XWsjz1H2GlfBxN43/vu3YcAPfSHbd7EDeD7v
+DbaZ44PJSuoKKrSNl6eYmHH3xr19aO/smoBilNTG8kDE8V+O8xOu+/tycJnFFu0V
+vRtt3WuN5Gwmr9AOQXNT2gGLJo+dyAyJBg0rlWmUYHC6Hy0n7DYBVOUyBVuoi+Rv
+ciA/0YW3wJzN63YJSo5wjRt4e8HT4OrWARGUAvDk7kn6JzMOuHIyrX/REBStbSlm
+Dl8oiJbnZHtuiIf2+l3rBLcYlqGZs1AM845maODE6tWLCwNWp7Gq2ylhYoJs8s7R
+YoV8uUFNpPJYh797AnHblGLsf8kvhg==
+=lCDk
 -----END PGP SIGNATURE-----
 
---A1z8HSNq1Ua9fosX--
+--HIzxHE8oQ4+E41L0--
