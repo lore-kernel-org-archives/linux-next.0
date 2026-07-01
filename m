@@ -1,63 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F055013959D;
-	Wed,  1 Jul 2026 00:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072173F44C4
+	for <linux-next@vger.kernel.org>; Wed,  1 Jul 2026 09:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782864909; cv=none; b=grAn6Wj1GI7M7qT3jGNYU4D9ehY1vuYT9+q+13k/Efn7ycZjkQB1hJT6SzomQzWtvDxPYRw4+HXNIYP6XL19utQXYV2mtkcC3ITtE8zpQ/lFKI+GhDyIZYsk+2EhVCq+xxwi641ba/Vyj5GNjjbnmygFQrU88cntGA7atST4H3U=
+	t=1782896944; cv=none; b=bHlSNZEmH+V4M0JcpacYGymAYlKbWACvAfwbcWuAeKZ7qZ+lpEU/4xpiux37qD8nQm7OCMM2I29foXpZNedmHr55z84oRm6MZRipO2sAWTBKrEcDj0s2znkBc5X+y7JUqqC8yjxuRQCL2iKDjAiOYhYFwQYLMSSNNpPe8WxPxkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782864909; c=relaxed/simple;
-	bh=fUcNDgaltXOzL/x86jKEg0jBQVyzR3xS+vpiKAG37fs=;
+	s=arc-20240116; t=1782896944; c=relaxed/simple;
+	bh=72Wfl0hlpUQCDV3I5ytRUTBmXd1e7UZRSnISwseAtBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C7IzVbgIQxUPX7CCKmyTii7EmwRZJOwIA+l9lvIFhwYGIFyGRqNq9CesQiJLY7mf+6fLHw0mBeXLaTdEDpj+9B6VfP33GR+yIwDxe3aYDGnnO1Vnhh++/EJREy1iLe5UuKc6hZlcf8L2MuAisZ2mA4qjbNm5aE8MyWTdLXqkA4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddrOKvFJ; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=IchNSWsKBl2PlrWdcO1ClI1jq1SCc/gzsKF4PrC6eqPARp41vGpwItOFJttD32idpKCU8US9xEh5FD44EgCMWNajl8LBtQxQ0YtgBQoloAzIUvDLbNTjTvDQfHu2Xci5zyqyE3sd5htGj8w058UwT3sTFAN4OVWT+awC+98ZShs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/sZMYO9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddrOKvFJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E1DF1F000E9;
-	Wed,  1 Jul 2026 00:15:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/sZMYO9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 583AD1F000E9;
+	Wed,  1 Jul 2026 09:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782864908;
-	bh=Tpbz57NKNTsydLxlNb8KBsQaA4f/n2UQCvIOTkKm2Ts=;
+	s=k20260515; t=1782896942;
+	bh=72Wfl0hlpUQCDV3I5ytRUTBmXd1e7UZRSnISwseAtBc=;
 	h=Date:From:To:Cc:Subject;
-	b=ddrOKvFJmMD+KnDy4pgter1ApsScuWzoJ1OhQYYeSPGGOtn3QVA2o/bjwlTLB7Coj
-	 Ieo/mTrhXIrfIP+9/RlDat3d0fF+fqg8kXt6YfjJj56t3qf/44CXJlhS2WsTEPDQps
-	 b/474mCheQ4DxqzlGx23nJepC1JrZ0wPhs7Cup/zNbE8YLg4apDOoiYJLT380KIS5o
-	 8luz3nQp6C+UdiIwqnDlne/LL17975rsGvRobJsCvKRtiFGa8BeWpmu8blqVcFmRYQ
-	 02GlZouJULUpqk8HFLNmPcWZ9NdPJ4WOvxnO8J3pcIyP0HTI6ht7OhOeKwOJ6e6G8A
-	 JdCYhsLrkU68w==
-Date: Wed, 1 Jul 2026 00:15:06 +0000
-From: Yixun Lan <dlan@kernel.org>
-To: linux-next@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, soc@kernel.org,
-	spacemit@lists.linux.dev
-Subject: Include in next: Switch SpacemiT SoC tree's repo
-Message-ID: <20260701001506-GKA20854@kernel.org>
+	b=Q/sZMYO91t1PxAg4Rsv1UzuYLJD2MY+pav1X1WYh4SluPNSc1TtV9cEybqTbgbZMD
+	 2vVkixGWY2soy0rGxr34bsdIQ+8ANf/MEhC2hunGt6pMVxrMTSAT5fuu8hy3U+dmZx
+	 j/V1WYQapdDbi2rU/1KIf5+R1chG3wdwU1Qj4hhEc5KOuLPRZw+3wx6ESUTGC/wEDX
+	 YE2JbxAArIbpSyWfcFrL56ZVPIRYgkBTNWSdZ1xQrZi3BUwde9L92I/P7+aMeDwp3R
+	 nT9AtQdiI1qfsLwiKFhG2doxG5eMnzUbBXBK1P+e8nQZzqfrzPh5mE2+vSbFpkbjkW
+	 gMlftfuvW26zQ==
+Date: Wed, 1 Jul 2026 11:08:57 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next <linux-next@vger.kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Update i2c branches
+Message-ID: <akTXuDVi8jBVAwWu@zenone.zhora.eu>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Linux-Next Maintainer,
+Hi Mark,
 
-  Previously, the SpacemiT SoC tree was hosted in github.com[1],
-while now we've created a new kernel tree at kernel.org[2],
-so please help to update the repo url for linux-next tree to the
-new one, and the other info should being unchanged, that's:
-  branch for master: for-next
-  branch for pending-fixes: fixes
- 
-  I will also switch to new repo for sending next Pull-Request to
-SoC tree maintainer.
+can you please update my branch setup in the -next repositories?
 
-  Thank you
+Please remove the exisitng i2c/i2c-host* branches and from my
+repository:
 
-[1] https://github.com/spacemit-com/linux
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/spacemit/linux.git/
+git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
 
--- 
-Yixun Lan (dlan)
+Please include:
+
+i2c/i2c
+i2c/i2c-fixes
+i2c/i2c-next
+
+The latter is normally a merge of the first two so that it
+doesn't create any conflict, but very often it contains more
+patches needing some special dependencies.
+
+Thanks,
+Andi
