@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06793603D3;
-	Wed,  1 Jul 2026 15:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EA9360EFF
+	for <linux-next@vger.kernel.org>; Wed,  1 Jul 2026 15:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782920846; cv=none; b=sxO6ac8G1mhqdygb2DeezB3L0aKE+5t/iF9jdfWdrZg6aI9F0xBltgZo9IUeSeWVdYNuPSGmoQaPoYO/a7/DcsI/4lN3fb1pWoMi16VErxnNkoOHIJ8SIGNVVBaDlRBx6sOl8wjQAgLOXPBFkNtPz4g19/ol/jgT0aYwfYcL1lQ=
+	t=1782921019; cv=none; b=s6Z8TkMdXG3vXksVud8h2HBWkegcWcv2glxxOWdcpXFkw59+2HMV32pGojm6UZzAyZInKeePoLns/9bJpaxVnyQnBqsAY9l64IXSduXBKFuugWMLvlZhwoBLJ2uqJIPWgBEG+N8awpyuZjqQbMAgKuvFITeHX8GtdUGRL2Gsb5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782920846; c=relaxed/simple;
-	bh=NcgWAkkpvQ6GIyO0lNfvcz5hShiLJ0aGbZIzu82PdNk=;
+	s=arc-20240116; t=1782921019; c=relaxed/simple;
+	bh=FnKnSSQ1y2H/JwPm5L+Pm2EZ0l2gh6AOBD1Sq3jZk8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twGk6ixbCytxEo7T2UEysZTjWjC7ZYRIUfn6bnyJHaSj5bOH5S+4BDTzJoPXuaY/db6+6cJ5dq7VHx/Jtfaql/03KUH9xZUQXr1l8Z67bSaHYMWK30Vl4ZJOx6947LDKL7Idu7RWmXhe9zo2m0iMiJ/dWtQJlM70cxSZjrnZBBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IflC72ft; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=fu+tmIMItf85oTHaE9DEzJyV+9f6290jKCTwawvUzT8fQM0lPS7bzOwsSj0kX/TAM56Q2BqXTlbBenGJcqPks3tqE3mvSBL/4UD+hej9yorch0gXaW9ZeaQdX5hUId2DE11S2D6++Om4U41MReGIY97FelNIU037jl/SYEbWXu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9rv+shM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IflC72ft"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6090B1F000E9;
-	Wed,  1 Jul 2026 15:47:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9rv+shM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 118971F000E9;
+	Wed,  1 Jul 2026 15:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782920845;
-	bh=F1d53/TBKMgbtfDcw1+aV1I5xnxDEUc79F11nQ0A4cU=;
+	s=k20260515; t=1782921018;
+	bh=FnKnSSQ1y2H/JwPm5L+Pm2EZ0l2gh6AOBD1Sq3jZk8M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IflC72ftbroGcxiInCSEuqCl31BxPbBA3SEZdpE+F01220IMOaDKLlwUBPvSaWztX
-	 s6hp+2f2KfRXr7jP7W6CaZAqstAke0DMIwhPVZ6icN61fHoGz39YFsgwX5H8gGZS0r
-	 nKsW58hEPcG6FFkhTfqXVd+DPYrOLZUY92DSUxNE7F5esGosa3cdfecoW68g6KgsZJ
-	 XRsxQoSEcTqH/ctXo5isbcshBNLD7aSBoooN9NYnXW7C4SmOXdT8YBs5hdFaf/tUzG
-	 f8Q464Fw6wfHw2MS8o6QGik1WH98FAQNPU3C/AqgBMeJBgK3Pmv7v/c2E35AEVZefu
-	 nki6I5cEQZkQw==
-Date: Wed, 1 Jul 2026 16:47:21 +0100
+	b=M9rv+shM0HSTIW+PYJqOkhE3WuJELZTjDc+qzz+vwo9pm4eI0P8b8xLzLWKqh5fvx
+	 X4saK+G77WzSs7GeB9LY8PQ7kinlKWGAHpzS4L9v6VTra21TriOqnHvBuKQCj8bt2n
+	 Z+d2117oVt6PmQDNV3wv9FnbKEcv3HFjETcVwqJIS2xNDHQh7curZfL/EPG1twS659
+	 lgrXhlNtrB1hXTs4LPyKv3ajh1h/1/LOV38TjxNWlUv3My1UdUcJ+Y4dO+s9Cu4/Gu
+	 lBVEItC4PxEuk80uOdMJhFpE0nptiX2MmZ0/7XeulBOjyn3merPhIrLpd9fX+hdShL
+	 1ECYkBSoGJWNw==
+Date: Wed, 1 Jul 2026 16:50:15 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Yixun Lan <dlan@kernel.org>
-Cc: linux-next@vger.kernel.org, soc@kernel.org, spacemit@lists.linux.dev
-Subject: Re: Include in next: Switch SpacemiT SoC tree's repo
-Message-ID: <5a6b7770-948f-41ac-9956-e0646228ed5e@sirena.org.uk>
-References: <20260701001506-GKA20854@kernel.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-next <linux-next@vger.kernel.org>
+Subject: Re: Update i2c branches
+Message-ID: <c4c49e08-262a-4dc3-8a63-b0c68a4f98f1@sirena.org.uk>
+References: <akTXuDVi8jBVAwWu@zenone.zhora.eu>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,45 +40,39 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HIzxHE8oQ4+E41L0"
+	protocol="application/pgp-signature"; boundary="vrZXyfx8VjDWBuUV"
 Content-Disposition: inline
-In-Reply-To: <20260701001506-GKA20854@kernel.org>
+In-Reply-To: <akTXuDVi8jBVAwWu@zenone.zhora.eu>
 X-Cookie: Do unto others before they undo you.
 
 
---HIzxHE8oQ4+E41L0
+--vrZXyfx8VjDWBuUV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 01, 2026 at 12:15:06AM +0000, Yixun Lan wrote:
+On Wed, Jul 01, 2026 at 11:08:57AM +0200, Andi Shyti wrote:
 
->   Previously, the SpacemiT SoC tree was hosted in github.com[1],
-> while now we've created a new kernel tree at kernel.org[2],
-> so please help to update the repo url for linux-next tree to the
-> new one, and the other info should being unchanged, that's:
->   branch for master: for-next
->   branch for pending-fixes: fixes
-> =20
->   I will also switch to new repo for sending next Pull-Request to
-> SoC tree maintainer.
+> i2c/i2c
+> i2c/i2c-fixes
+> i2c/i2c-next
 
-I've updated the -next configuration, the new locations will be used
+I've updated the configuration for the fixes branch, that'll be used
 =66rom tomorrow.
 
---HIzxHE8oQ4+E41L0
+--vrZXyfx8VjDWBuUV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpFNokACgkQJNaLcl1U
-h9CwYwf8DmpHFH8encN3APwISqw4XWsjz1H2GlfBxN43/vu3YcAPfSHbd7EDeD7v
-DbaZ44PJSuoKKrSNl6eYmHH3xr19aO/smoBilNTG8kDE8V+O8xOu+/tycJnFFu0V
-vRtt3WuN5Gwmr9AOQXNT2gGLJo+dyAyJBg0rlWmUYHC6Hy0n7DYBVOUyBVuoi+Rv
-ciA/0YW3wJzN63YJSo5wjRt4e8HT4OrWARGUAvDk7kn6JzMOuHIyrX/REBStbSlm
-Dl8oiJbnZHtuiIf2+l3rBLcYlqGZs1AM845maODE6tWLCwNWp7Gq2ylhYoJs8s7R
-YoV8uUFNpPJYh797AnHblGLsf8kvhg==
-=lCDk
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpFNzYACgkQJNaLcl1U
+h9D3mgf/SRCQ1KYjVZMM3ReluU+T3vXldVBO6qvJuMCS3nhw3vNhX7P4J7yHT8pu
+ey52B2efLoaEGMRFK93ZXFsnPQWmXU26W6EfeBjgYAwx6Tq6TB+f+7ZRblEioACW
+gYgMIlB47r+WknfnWOg/5jkdaKxfE5BDKtZDcuZqdTGXmshydEgn3giM84/A0ojT
+WZvgdG8ho8cITgTyGnmkDOCP1xh6tL5cq2w4pFVbZNSC3shI2DiV0GMMsW/XeQUX
+4iYfKvMJLMMzSUHjcn9hlKr1zqx26VyUrRWRwHYhob/QIdGi2bS5lO3b7Bh/xIcn
+gXh3lCIVhBJijDJ+gCPVeoNjt2V/KQ==
+=dG8K
 -----END PGP SIGNATURE-----
 
---HIzxHE8oQ4+E41L0--
+--vrZXyfx8VjDWBuUV--
