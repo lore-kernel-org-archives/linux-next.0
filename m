@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5A24C040A;
-	Thu,  2 Jul 2026 14:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E04BCAD7;
+	Thu,  2 Jul 2026 14:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783001053; cv=none; b=Wpo70qLSey88UBiQhw86yJsZH/srMM15p6spd5d23FZ1mRMLp32LcvR2SHY9/Omm/uVSLL+HwTa0NDUknv2utK7t41pgz+tNGUBxOsGbBjjRKLGmSBlAubZTsV01xM39ohIOsAEw9Ro6MENFnUjqOHznSpIoi2pSwt5Q5nSyuLk=
+	t=1783001064; cv=none; b=nozyh0/2BMmMG1z/xy2MEIfinC9OmsQhTUkcPMQ1764nY9ffUQDqHNkiznC1Twz8Muysvk1G96JhhrXdbX1rMJ7Y7t01VSLGVPTvJqExs/qosFPxkzUkFZOm3Kpphzp7SsXvI8tWCFHWfttRkIYWUbQ0cuybOrdY4dEYR6N2vXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783001053; c=relaxed/simple;
-	bh=IiGRFO47BZ58C8RVLgkt0eMysc6SVLn2/G2QaYP9YHs=;
+	s=arc-20240116; t=1783001064; c=relaxed/simple;
+	bh=nnW/vUYqREzvAO9XESZGw3kB6P13HupWKslgg+BRuuU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pdje7rGOV+xKGvuhAW+VWQ91XNk+BYpGuPy6Q4Ykw46qwVYdj8wCN6Bua9dCLLaYoNYS64augMEJZ0ryBJcDhvLXPIZOi+gjJDgW+EyU7vX9rHuY3JkYoLsWHnpXkftNEq3FFx8d0eCUD5J89rRg4DO7DfthX0aKnzcxDsOI4Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iW46M2Vg; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=qXz6KS0TiS7D2lf5EdabiswFqkRKX/bPBeB2lTw9bKLbT5VOui0JwM7XJKA0ZP2YpZur1Zk35CzIfo3F7/bgrw+W88c+V5G01yq8m4fTExjKhGMQDs702empjpOdXwvJZTvVtCYCgISIz4W3T9bAjAji3yUI9hUMKqyc5pu2jnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5cxrwwz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iW46M2Vg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2401F00A3A;
-	Thu,  2 Jul 2026 14:04:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5cxrwwz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A031F000E9;
+	Thu,  2 Jul 2026 14:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783001052;
-	bh=UW/PRL2p706z6WOa/CakRKZ7iDUrXkN5GtTA9j4dcCs=;
+	s=k20260515; t=1783001063;
+	bh=0pf0gqJzSvL/OFzLnb/O5BfHoBUxNPyT4YJyDFQAep0=;
 	h=Date:From:To:Cc:Subject;
-	b=iW46M2VgP9itNrkT68S6FWsCZb9uF+QFZlPXPq5cRSky7Xee1Oaq/TgNsHjAmMUVt
-	 XK/7t2e5rMtp/6vZ1eh6j2b54Z3Olpq/qIko2Kxf6yTvPsv7/82oITiTSzYPQvv7cx
-	 7eMTk1sNIwIJJy8om/LFd7goiJyUyAg3YVm7Ug74mEBmxukJgjVMLcqpW9RCU4UGgp
-	 YF5QBUrqnhzO5vzaE8ebFEbszJh6ck6Yg3xxJcqal4NwQbWanc7IxcSms0aO02CqvM
-	 AUSkcWPxe9BCKGxo8OaLHiHUNP3v7vt7fMHD01MubgKfE1bIqpN7XSeSxxJSudz9v7
-	 E7P7DA1Jylupg==
-Date: Thu, 2 Jul 2026 15:04:08 +0100
+	b=i5cxrwwz4L0A18P189lYt39fLPyz6y/GjpXY5mX8zXV6R0VkMlo44BQfSqxuXfkLl
+	 cG+JerhzVGYI3YpRpVgNdenQ9pyzql/utzyzoG0P+fdN6OMDRbKF/MXl4eM3QtzKb0
+	 cgZzWHTsCcchvKaKpv7BHSvVCm71pOcUSF7K1Uc9jizbfQqOXGoDRER5/WajDHLQav
+	 r09sN/UxyTYZun2jch/tTCk7h7/IcrnrWaAULCqH6wx9qWrvTVVRi5SmMoG7csksPR
+	 CN30zL0gaBI03AmLxY8tkS9Tne1HQbU4SbKYsMELytYwg1qfa57EvmUlgCBZj4+ULf
+	 +znv7FIoFF2Iw==
+Date: Thu, 2 Jul 2026 15:04:20 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
+To: Alex Deucher <alexdeucher@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the selinux tree
-Message-ID: <akZv2JkwJhqantRf@sirena.org.uk>
+Subject: Fixes tags need work in the amdgpu tree
+Message-ID: <akZv5PQS_yeeZ2mS@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,33 +39,41 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EboOY+j4QI/qOvy5"
+	protocol="application/pgp-signature"; boundary="Em8T0tc6Ig0QWXeP"
 Content-Disposition: inline
 
 
---EboOY+j4QI/qOvy5
+--Em8T0tc6Ig0QWXeP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+In commit
 
-  99ecde22ef1c9 ("selinux: drop unnecessary goto and label from avc_alloc_node()")
+  3b1f4d5e47b36 ("drm/amd/display: Fix dangling pointer in connector reset function")
 
-is missing a Signed-off-by from its committer
+Fixes tag
 
---EboOY+j4QI/qOvy5
+  Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and dm_crtc_state")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
+
+--Em8T0tc6Ig0QWXeP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGb9gACgkQJNaLcl1U
-h9Dchwf/Y4ZPnWAER7fRyoLQDOOXmR/x0TH8YZ5KKzByLxJPVKZt8VgbYhCqmZ95
-eBe2kgVv8+xcPiDuVavEmAfatKhs5NUd2VDwO/xItnBzsjecf6FgK7TjzV8nTucO
-I3ThBVEh1bR+MauWhCk3V9shuhWPO0de3ESZRnGZi0nJwoUCtb1tGwUcJq7JhzBX
-U2P6YHW+kPQsRiKW5flZF8tR1ZPgzu7uUd+5NTgq/WWGzEobPXqT9SD3lwVRaimp
-ky1hLmeRJZYfXfwdZE083oPSokg7VfTLdDnDobs7VyzGG84teZdJSbUlE/BtpbLd
-Y4/Czhkrw3nm3B1/cMwUrOe+LCfILA==
-=BrR7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGb+MACgkQJNaLcl1U
+h9DsZAf+NnZaWjMNAqSmyM9EVb6tPJxBpGGlsc80fuDGptKe+ja805ZDZMB29v39
+xg0ITjKTtgfElqPPUyRukkUG7sQY8ArlHlQf39r73pI+6YDVMGmgD0iNe0H+XjJB
+xCNwZ60awdIFfhEH3Nb/ml6g10uECa2+qbdLGIg4STj7OwmRF+W8a2sB7yJh0Wq+
+TXrza7ToPjNA6RGuY8dqvqliuS/msVpOgNOSbSv04GDQPAXVJkJFQg1ujeMjD7X2
+TOT22E/f9G8l76KEyOPefSJu+JRm2OBjiO2gYHLYaU41KdcQ4D9wbSziCvjAd7r7
+2iSsy2h/TrO56xXQXLiqZXCDkxT5Aw==
+=Tkd7
 -----END PGP SIGNATURE-----
 
---EboOY+j4QI/qOvy5--
+--Em8T0tc6Ig0QWXeP--
