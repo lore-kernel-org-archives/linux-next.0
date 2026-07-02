@@ -1,44 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40144353A63;
-	Thu,  2 Jul 2026 15:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477F630C172;
+	Thu,  2 Jul 2026 16:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783006439; cv=none; b=HtMNBBoPYWEJa5s17E0QrvbhpPIhqmbO0Nej75kbpO9ZZL10ffNSH0z0AJw0QHqBuqchdy+VjQ8wQFUdwUTfeBfwE/NxWlZHVD6UBDPzVmC/qiq/+INCD05rNxQzlxZORcB2ZsvYFzwguKjQ8B96GbZwkJdjmFcNE2QHkMV/Ee8=
+	t=1783008104; cv=none; b=WMTFLDhxVjdXw331G2t3+2F6H2n9cWcmczRAccK/uUfpZxyrubyS1bGDupPfRX/xmslxA0axASWLPC8dlzGmaEu1FlbIEpshkocIaPGzXFJGal/HlOVxdIykty0R4KASkxmA+O+ttL6feDuUO3FSOAJ6K2z7NxSCa3kRmkwdYC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783006439; c=relaxed/simple;
-	bh=8J7w6KtvUb8J1E7AFJuEuF9F19XQEBruHwij1pMuyQA=;
+	s=arc-20240116; t=1783008104; c=relaxed/simple;
+	bh=SwF+QgB2zko+ZuR1xnQO6qvKyfLAuwNLq88x5fqCXw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AXmlVpxyvx0ip8f3ulfvpOpMd0nU6DdGoKR3+WpjNPBq2hIqlU5dPa0+gRL2pJ99Ed6p72IFPJVzNbvHh7yPrtXv7CD7kbh3Ahe8RTNvfr0ysNjJb8FCa2rqS3F/HfdJJYdwkZCXmKJxDBXr5KraRSdLb/R3DVGaQiKiC1SP9aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtkK/2ff; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=J97SqpeZlvPzX7vmAk3KJxg0zhepARms1iAThxR8RLAfSbL+vOO+UJJtMNt8EWbIFKsLOfbnmhDr3v8egupfKr13L7AU8Wdz7G6ASTfU5ECqI8UK5xR/iGNwBZzsYKjJjaNpd/iSfJc/pThyDD179MlVKN/aEaftfM02RNsFdrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2GVVpPW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtkK/2ff"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62C41F000E9;
-	Thu,  2 Jul 2026 15:33:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2GVVpPW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815681F000E9;
+	Thu,  2 Jul 2026 16:01:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783006437;
-	bh=51rouF56EmU1j9L8gb1If6ofMiucZZpjzo+NCXwNTJw=;
+	s=k20260515; t=1783008102;
+	bh=qprPArQvhcsrrimFC5afcaSvLUNDggX2Hfj04sqAiH8=;
 	h=Date:From:To:Cc:Subject;
-	b=QtkK/2ffNtrEZJFd/RL+k7BkglsnSrZMu4Ab9zAfyDzxoRt9EYyKBUpc0Mz1+Q5v3
-	 Ng/ApS9bP44iUSP4e/Ty+xu5pEGJ+SV6mgbly9LA8Qk01uIA3RceGiLSMRAjEYM5c4
-	 vuJWX0j0pCMAED4QXGE30pd/Bx4D09/3y+QqfX32wYV0nhFansq8QojwPJ2Pcbs69V
-	 9wkSJ2vK/9L+IaXrmcGGU43oT58PuUik1F04lb+l3nUHa1INZhF1G0t7urSypJ2Q0R
-	 32xWBXHgkWvAkY3eYI8r3zBSKscG4nOsxmhpbPBQqgUZe7yNrP/aCn8+vAj6gPs9as
-	 5nEjUkZKSXHgQ==
-Date: Thu, 2 Jul 2026 16:33:53 +0100
+	b=C2GVVpPWPdI8ZOu1H5PX6qpw0aWzjUkID/8euZHn5HSrn5c/pzTzrrmdlFcX6DHCW
+	 +3aSXriHogHLY5ynXrfVVviP8g3L8ebcdgyHJOyaHqP1XV9Ps6PT22jOO/b76F9pjk
+	 vOAJKOz7VGxJBLrHdvZ3RrGDOtsJsf0SuthCrF9DA88+iNSrIURQykL6ayfOij/8dw
+	 /r26T+6NTkGRijvePthpE1KCMXzoUWja3NQ82qwbaxmfIQDz6ry1dBvBL1y1dgKink
+	 rLqaeykC/qCvf0who1caJmnV5sBermDUASuvD4QDc+XyNPdsHTfkkVBfEID25wdr5I
+	 o7+MzjZLBnl+w==
+Date: Thu, 2 Jul 2026 17:01:38 +0100
 From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	David Christensen <drc@linux.ibm.com>,
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Andrew Martin <andrew.martin@amd.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: linux-next: manual merge of the net-next tree with the vfs-brauner
- tree
-Message-ID: <akaE4dbtwZthgqJc@sirena.org.uk>
+	William Palacek <William.Palacek@amd.com>
+Subject: linux-next: manual merge of the amdgpu tree with the origin tree
+Message-ID: <akaLYjLTCemL7-uA@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,30 +43,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ifnVYB9nS3UqU3Vx"
+	protocol="application/pgp-signature"; boundary="hBw13HHDahkRY0Uz"
 Content-Disposition: inline
 
 
---ifnVYB9nS3UqU3Vx
+--hBw13HHDahkRY0Uz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-  MAINTAINERS
+  drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
 
 between commit:
 
-  969076f31bf63 ("efs: Remove EFS")
+  1142738572ef3 ("drm/amdkfd: Fix SMI event PID reporting for containers")
 
-=66rom the vfs-brauner tree and commit:
+=66rom the origin tree and commits:
 
-  eb56577ae9a5a ("ehea: remove the ehea driver")
+  60271ec06e04b ("drm/amdkfd: Fix SMI event PID reporting for containers")
+  9ba9a1486312d ("drm/amdkfd: use scnprintf/vscnprintf in kfd_smi_event_add=
+")
 
-=66rom the net-next tree.
+=66rom the amdgpu tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -78,39 +77,24 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc MAINTAINERS
-index 801a4809b918a,ee4ee7b8e9470..0000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -9495,11 -9493,11 +9495,6 @@@ L:	linux-fbdev@vger.kernel.or
-  S:	Maintained
-  F:	drivers/video/fbdev/efifb.c
- =20
-- EHEA (IBM pSeries eHEA 10Gb ethernet adapter) DRIVER
-- L:	netdev@vger.kernel.org
- -EFS FILESYSTEM
---S:	Orphan
-- F:	drivers/net/ethernet/ibm/ehea/
- -W:	http://aeschi.ch.eu.org/efs/
- -F:	fs/efs/
---
-  ELM327 CAN NETWORK DRIVER
-  M:	Max Staudt <max@enpas.org>
-  L:	linux-can@vger.kernel.org
+diff --cc drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
+index e659cd50eb0bd,6a7b4d959541b..0000000000000
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
 
---ifnVYB9nS3UqU3Vx
+--hBw13HHDahkRY0Uz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGhOAACgkQJNaLcl1U
-h9AwDAgAhD92WOcGeyi+KeFhancmA8auGHar+qpwCDfZkJFTgIuggEKbGA0jkcum
-4YrhDI1QqySzpxs58wiutqF/mU4BUl8pjcQfXQzuKcgqHWH+lG4LCe3uVjQ34L+4
-dqjKb6kGtt8ZnltOVuWQHcUfZWYmyK5fa2Q/IZuMyzgiJRAPKNK3gu7QTMVz7drl
-YS526zmQjWB+L4XAH51aQiiGHHp9arvmtvtpGYTSNhu3Wsj/3lwUgiFmABBs2Oi2
-NXghZO3+HIOIw3+BmiF0cED927o+y2sEudnjY6XxT01vVxJNEUC7vIY+2EIYoN3y
-D2HB8pgPxWHe//VY7htjlJ8ILrETAQ==
-=UVzZ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGi2EACgkQJNaLcl1U
+h9BInwf/ZTi6gFKg70mfb74WOhnhkx5honXU6Oih+drixSVGoUgXOigIVZX1CaUK
+Lk68Td18am1+CWdnsKmX6gknki+WLlJRbMYabJ1oguViXDlHh9USw+HeDTtLjRvr
+oSygcVDX4fve7WeDxJRWt9rWeCf/JhfaaSf4D1BHD/ms9qIOEpf1a2ZRx4J/IF3r
+QwCg5C2D1k2s3QUEy+m8KFy1a8I2Fw0YLT5Zp2INIJdce2GpdErUy/4+DB6LCHUk
+s0x/2I3ebnmYzpohQJXlXtAHtXmbqz8G6xX6XaGkKO8iIEmkk4AN08KGrD0EL1L1
+vzCn4SSv90Q3TqJkVtf9osJ9hEluzw==
+=rSYt
 -----END PGP SIGNATURE-----
 
---ifnVYB9nS3UqU3Vx--
+--hBw13HHDahkRY0Uz--
