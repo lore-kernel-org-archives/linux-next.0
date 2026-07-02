@@ -1,40 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC7C3546C2
-	for <linux-next@vger.kernel.org>; Thu,  2 Jul 2026 18:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C613A71AD;
+	Thu,  2 Jul 2026 18:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783015894; cv=none; b=bID6We88zvT1CU0jFCFXKYOBmwMxC+RLIGQGBPirt9C6i4ud3DyuhJZ3CGpAjzibUdRLB4ZQZewdqGq5hO/lNNfr4FJ8LG+LQNi1c22Hm2eYHBLFL2HAzIzo+YSb4EAGADfOzN4chU2mwP+WBJkej/ilqm9oVS47HViqwFrGHwA=
+	t=1783016801; cv=none; b=sB0eH3H3L9gSm6lezpflL5c+emrNJU6kItkTyD9skTUC75SAbPb7UjICV9kqUSqGh0Lkb9yymcbTIsovRDspL+JiFeq3lCx+dKu7luNwT0jR9ogJoOJqZQAQw/oVS5u+gcCtmLA22Y3u8r8oC/bzITRjWU1fw07m3uoSCARlz/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783015894; c=relaxed/simple;
-	bh=AFQLFJn1e2NqQwmFiv2Cmh9x3gVKhEtm9mkje4P57OA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNG9BZsdKGzU7GJ248i8mY7POdSrWt5zcdAMg/c9w9RXNuUtB8hkQYZQ9mI9wlL/iIqyGzzssBKIf7DWutWq+FISzE6j8v4WaLctw45qAeO2GlDml+Ya4yqfslQbkkwWnUvdkHq3+CsCjPihUP33wPSMPGX8p7F79/gTviMAYT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwRfP/Ci; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783016801; c=relaxed/simple;
+	bh=XyLQzu0gNQ1kgQHSBRQWzEcRg7kvwC4rRZavsCp04Dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AqcIkAGJ1iH1CgFAeE94wcOTKFeW2TLoiOvGQ0P54o1EBlvU1l9/L4fgd6CI4YZ6xvR68q1vxcY5jhmv7u+DniWqazFoClKNH40eIxl3h7P2rm30RbkUizvzXbqKZFkrejaDxpq13A3d4b8uhoDx8wfb5p4tJkpDgeNbhsShIgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQ9yrwc3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwRfP/Ci"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A5751F000E9;
-	Thu,  2 Jul 2026 18:11:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQ9yrwc3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 647EE1F000E9;
+	Thu,  2 Jul 2026 18:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783015893;
-	bh=lSfdqHAuDNr7cwVHn+Aaj9NeK/zJMgmpqShENtiI7cg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mwRfP/Ci2Um82mXSO4gBO/5imkcLvSgmDyLcN3v0NAUBzmhkOYX7sPMce+/RJBUfX
-	 RjsZCfNeaI3O/27YQMa2NmW3Axn6gRfgDTPTtLu7JWQ2vALqqlxC/0GUp9IRm5of3C
-	 UHe4iCH2sLpv3uUrJuGOuKM9jrrEw+Vi1LckCUkENAqBvQPEFVZe1+yj2263ySGNeO
-	 bYajxSr4bYbvsMqXOJK2et41NjYYIaPEl89FASNtB2TEXd2JoyKlxwi/R4zxb8cHCO
-	 68mLfplhlIAjaYPbDnIwbBE5tYCOx+91nRjzdfOy96DiHyrd1LVxg+/0xVxkZNNkh1
-	 JFugdz07YP6bw==
-Date: Thu, 2 Jul 2026 19:11:29 +0100
+	s=k20260515; t=1783016800;
+	bh=7oLh7t+Nm4BUtxTbDXxaPfkRgIpubd5gkSGHylj6s7k=;
+	h=Date:From:To:Cc:Subject;
+	b=gQ9yrwc3br6eSFZAXc3gsPnFG0wGXtTlovj6JFX3ZcKFihzlOwPSHLmFZXkDXX2gD
+	 FNa2NAyQk8oZ1pLGZP+X9Qo2sZap03CtwgVi+O12XKMGidofSKjK1S5uvN0nCG4zKb
+	 O3Yvn3f1bd3nsy4FzLCPDJR2Agn78DlqB3acXAMvHKnekhkLBVe3N/uWJ+g449UHY0
+	 o7drF7h8sZxs4OwU/xjC29xPNJwFTgsYpSFkAxUurvJ0f+rpIsmdVl2XuJV+MCHGUM
+	 y5NkKib/LnsnFVhzeppQjwZyHNXUYi6dad/YCqmfXrA5bYtoNDwuNgdb1qX/wBpoEw
+	 dWIKPtZVkdaEQ==
+Date: Thu, 2 Jul 2026 19:26:35 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-next <linux-next@vger.kernel.org>
-Subject: Re: Update i2c branches
-Message-ID: <f18391a8-dd61-4e3a-85f7-14b3ca2b399c@sirena.org.uk>
-References: <akTXuDVi8jBVAwWu@zenone.zhora.eu>
- <117e594d-28b0-4bac-b245-66cf2ac6c0f7@sirena.org.uk>
- <akaWcTjDlww10fsR@zenone.zhora.eu>
+To: Kir Chou <note351@hotmail.com>, David Gow <davidgow@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure in final build
+Message-ID: <akatWxAOMy_S1G2Y@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,43 +45,53 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SxyzogDLq5r8TfT3"
+	protocol="application/pgp-signature"; boundary="F2SQt6OPIMXeVyJg"
 Content-Disposition: inline
-In-Reply-To: <akaWcTjDlww10fsR@zenone.zhora.eu>
-X-Cookie: Reactor error - core dumped!
 
 
---SxyzogDLq5r8TfT3
+--F2SQt6OPIMXeVyJg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Jul 02, 2026 at 06:50:42PM +0200, Andi Shyti wrote:
+Hi all,
 
-> > I'm not sure it is sensible for me to merge all three, if I pull both
-> > i2c and i2c-next then I'll end up having to redo all the conflict
-> > resolutions you've done in i2c-next.  Potentially I'll get conflicts due
-> > to doing something slightly differently, or the additional stuff in
-> > i2c-next only overlapping with conflict resolutions.  If i2c-next
-> > contains i2c it seems more sensible to get i2c via that instead and
-> > avoid the hassle?
+After merging the kthread tree, today's linux-next build
+(powerpc pseries_le_defconfig) failed like this:
 
-> OK, sure, you can also only include i2c-next.
+ERROR: modpost: module random32_kunit uses symbol prandom_warmup from namespace EXPORTED_FOR_KUNIT_TESTING, but does not import it.
+make[3]: *** [/tmp/next/build/scripts/Makefile.modpost:147: Module.symvers] Error 1
+make[2]: *** [/tmp/next/build/Makefile:2134: modpost] Error 2
+make[1]: *** [/tmp/next/build/Makefile:248: __sub-make] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-Great, I've updated to replace i2c-host with your i2c-next branch instead.
+Caused by commit
 
---SxyzogDLq5r8TfT3
+  2ee1282ed36ff (lib/random32: convert selftest to KUnit)
+
+This appears to be showing up in this specific PowerPC configuration
+because ppc64_defconfig turns on
+
+  CONFIG_KUNIT=m
+  CONFIG_KUNIT_ALL_TESTS=m
+
+which is an unusual choice, normally defconfigs don't turn on KUnit and
+when KUnit is enabled it is built in.
+
+I have ignored this for today.
+
+--F2SQt6OPIMXeVyJg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGqdEACgkQJNaLcl1U
-h9BOjgf/a65pBZKME5u8ySYH36EY9sP+WpvV4E78mobKcICMPd8ELauOBa81VTgi
-EN67LAw0h/1tqfoRNTjfWcPTBnA/xdhKvmUcNa3nG877aQ9uRdKxZ2/4Y/R1rbe3
-8LADnz+Tzb/tcFAtVLUgFTDojtuhBYbm/wbip+KFQAzrnBAmcg0iPmIlz+/Lfv8l
-MCXMmMd5zq85GZsddiLWBtEFfYWj67ybVQ3EOB9wMlf3vmHmtdt9NLAdVITBSRYL
-UBhjsgOcGQ73WKDamzC2wnIkGh3NV/Ce9DQ627NAJ2Yj4BTwdzEvn/2rlR2uOAo9
-r22LnHatOmNw+mtMD2JlacRFPzqGjA==
-=pv6p
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGrVoACgkQJNaLcl1U
+h9Dxrwf+PHHy25G2b/QrPvsZKRKxI9aqDuQOprlpbqHf/m1XtyJgumkD11jQnG9b
+gKBCYqWisc7r+pEDGky43ytroHGyoA3MwOhbU5HeWcX/gPeR23hhmgMNEhPmPBE3
+bbDFFkn0+JJYMwv9XhdbHOiou5KQLr+JP+J/7yYhh3dMB78p8OH8nHyY9Gux9/n5
+MOTdDXMG3lxytmHY+K+YaZ58irVhY3TkbJLjuJwC/RD8vwpZMr3j/6h3oSNK4vur
+sz2+HhWO5Lcprm8mCJjX1Y3gJr0ewJqV71DwHYbuIq0d1pQ/E94MCwjW2cJhONYX
+dN5lFcoulSj0LnmxG1zOpy6E9EpguA==
+=jOZJ
 -----END PGP SIGNATURE-----
 
---SxyzogDLq5r8TfT3--
+--F2SQt6OPIMXeVyJg--
