@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF764BCAC5;
-	Thu,  2 Jul 2026 14:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5A24C040A;
+	Thu,  2 Jul 2026 14:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783001034; cv=none; b=CPf4FoDhllaz6GRspMBsQ7VFozfnP8Ydb4v/531aJBwLHIj4BIo+xNgkufObZDAEwiHgZ63O8Kvh/pe9O7HGVUkslydjayFqmWQki6G+NEQAu2pjzwSRE5CdRL7SPGt/H2vNDZmS5dYqeWm/aQL97RpFcjTEtovPGwtjJ1hqw0I=
+	t=1783001053; cv=none; b=Wpo70qLSey88UBiQhw86yJsZH/srMM15p6spd5d23FZ1mRMLp32LcvR2SHY9/Omm/uVSLL+HwTa0NDUknv2utK7t41pgz+tNGUBxOsGbBjjRKLGmSBlAubZTsV01xM39ohIOsAEw9Ro6MENFnUjqOHznSpIoi2pSwt5Q5nSyuLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783001034; c=relaxed/simple;
-	bh=TC/5Zgm6qsXWWzW7VsR53XZG3oBRX+95eWx112Z+d8U=;
+	s=arc-20240116; t=1783001053; c=relaxed/simple;
+	bh=IiGRFO47BZ58C8RVLgkt0eMysc6SVLn2/G2QaYP9YHs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P+p7itE0QluCAjvNLbClnTomok9QZOJE63w0/I4izZUba+4dP4JSdr8Y/jNNnDlz8nNhJomjb8/ZK4tnI+U9pd+eT+MxyYBtuziSKOwwMmMBJmjPBL+XfmMbunoDaPP6HUa60ACaU7EN0f8jPnoB5qIcPdiR7CsW6aEalOB7EoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7hiU2Du; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=pdje7rGOV+xKGvuhAW+VWQ91XNk+BYpGuPy6Q4Ykw46qwVYdj8wCN6Bua9dCLLaYoNYS64augMEJZ0ryBJcDhvLXPIZOi+gjJDgW+EyU7vX9rHuY3JkYoLsWHnpXkftNEq3FFx8d0eCUD5J89rRg4DO7DfthX0aKnzcxDsOI4Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iW46M2Vg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7hiU2Du"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487DD1F000E9;
-	Thu,  2 Jul 2026 14:03:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iW46M2Vg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2401F00A3A;
+	Thu,  2 Jul 2026 14:04:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783001033;
-	bh=qYJ+UTncw0Vt7Vx9EsjinfZsN4+L+gCymCSDDGInHCM=;
+	s=k20260515; t=1783001052;
+	bh=UW/PRL2p706z6WOa/CakRKZ7iDUrXkN5GtTA9j4dcCs=;
 	h=Date:From:To:Cc:Subject;
-	b=T7hiU2DuiOr9rjeYwD9qAP7yXgEgs/h8vpY9v1OUFdAASTpO0W/+DHPekwAsAHRvp
-	 q2YLvM6fnoDu50BdXr29EIo2mx11Ppah/d0bbyOtHcy2eqWIYIkDT+TVC3pQm2G+hV
-	 wpGriqu+HTaaDVyffPHmc0d0denNnaHrz5wgcdKV7Pl3DZc8AzlYsK03HMpXv0Nb+s
-	 AufTYisvGEs5GZfGB+jXS/2t/NYlonpZ02mW4KEEDDeLxOScsXIjF/VDS3rnkBj5bV
-	 iU6Sb8WinLbqSDckftspP72meFxLf3evNfxjza5oFjWFfhPQpd+PuQUHUHpuCG+POn
-	 nzWiIOuJdMwlw==
-Date: Thu, 2 Jul 2026 15:03:49 +0100
+	b=iW46M2VgP9itNrkT68S6FWsCZb9uF+QFZlPXPq5cRSky7Xee1Oaq/TgNsHjAmMUVt
+	 XK/7t2e5rMtp/6vZ1eh6j2b54Z3Olpq/qIko2Kxf6yTvPsv7/82oITiTSzYPQvv7cx
+	 7eMTk1sNIwIJJy8om/LFd7goiJyUyAg3YVm7Ug74mEBmxukJgjVMLcqpW9RCU4UGgp
+	 YF5QBUrqnhzO5vzaE8ebFEbszJh6ck6Yg3xxJcqal4NwQbWanc7IxcSms0aO02CqvM
+	 AUSkcWPxe9BCKGxo8OaLHiHUNP3v7vt7fMHD01MubgKfE1bIqpN7XSeSxxJSudz9v7
+	 E7P7DA1Jylupg==
+Date: Thu, 2 Jul 2026 15:04:08 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the ntfs tree
-Message-ID: <akZvxeIEgr8bYu8o@sirena.org.uk>
+Subject: Missing signoff in the selinux tree
+Message-ID: <akZv2JkwJhqantRf@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,41 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ni62y1zwpyQudZR4"
+	protocol="application/pgp-signature"; boundary="EboOY+j4QI/qOvy5"
 Content-Disposition: inline
 
 
---ni62y1zwpyQudZR4
+--EboOY+j4QI/qOvy5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-In commit
+Commit
 
-  ec050fc4cf17d ("ntfs: validate error codes from untrusted disk data")
+  99ecde22ef1c9 ("selinux: drop unnecessary goto and label from avc_alloc_node()")
 
-Fixes tag
+is missing a Signed-off-by from its committer
 
-  Fixes: 1e9ea7e04472d ("Revert \"fs: Remove NTFS classic\"")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
-
---ni62y1zwpyQudZR4
+--EboOY+j4QI/qOvy5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGb8QACgkQJNaLcl1U
-h9AvPwf/cKSsn9OUUXPEjy3mtQ05hUXbDnwLYExoQ97olPUJRHKLbQXz6cjIceRf
-Ry5QSWLlCxavKMst+WAROZ7vTNJdW0+psnicNbYBYAw1ZNkt/QoUcoQiOTQ5FmXm
-e+yRogA2hfNYk86xiFfJ1IZzwyn5rT7rEv+WkC4t37iqmcWgUHeghvvzZ4xGI/7L
-w9WzJfFb/UPd6GOcvavGmcxayUBCWOylU6h14nIsUFSMtHD/8OgXPbuEqEFc2avx
-YiKYb868uG6MIlj4sp3o9wqpEfX51yd2mYXPUSMFjkPsVXy6B5+U49M7SlhJ4S9O
-2yNBXWRhmyzBZfUTzA7LRFbIIvn0ew==
-=2sZW
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpGb9gACgkQJNaLcl1U
+h9Dchwf/Y4ZPnWAER7fRyoLQDOOXmR/x0TH8YZ5KKzByLxJPVKZt8VgbYhCqmZ95
+eBe2kgVv8+xcPiDuVavEmAfatKhs5NUd2VDwO/xItnBzsjecf6FgK7TjzV8nTucO
+I3ThBVEh1bR+MauWhCk3V9shuhWPO0de3ESZRnGZi0nJwoUCtb1tGwUcJq7JhzBX
+U2P6YHW+kPQsRiKW5flZF8tR1ZPgzu7uUd+5NTgq/WWGzEobPXqT9SD3lwVRaimp
+ky1hLmeRJZYfXfwdZE083oPSokg7VfTLdDnDobs7VyzGG84teZdJSbUlE/BtpbLd
+Y4/Czhkrw3nm3B1/cMwUrOe+LCfILA==
+=BrR7
 -----END PGP SIGNATURE-----
 
---ni62y1zwpyQudZR4--
+--EboOY+j4QI/qOvy5--
