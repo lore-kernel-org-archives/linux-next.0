@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAC13B8920;
-	Fri,  3 Jul 2026 15:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D0C2C11FE;
+	Fri,  3 Jul 2026 16:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783093468; cv=none; b=br6iydcUFNCBUmoDWBEU6aboTsl26M0lN8WgH5Nbia1sCitU5Y1FYqV+cAFBy4+1XKEzJh8+yt3Qb4868+sNdBsDGL8iu6ezmMFbH708b31agLVSTBbnshjicVQ220PviSlpH2zEuZ8GxJ0Iws+ldDqmhyRN9KF/ATNRK5+pRoo=
+	t=1783095627; cv=none; b=FYbIQmaIYB+NVyt962CfKCT7cxKE3ZTqlQNcPV2ETHRW0YitTEmlStJ89y90sirvCxlD2R7kj/SYO0navsFwSUc4qLseRgpzt/vyQRzSsGeJwwzOE/+pp3lhmY7w1KkhYGc8Fr3XXZUSHVcyU796LR+2BlWNcvU+blKlpkGY9mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783093468; c=relaxed/simple;
-	bh=DCvymhih8ye60twl1zzy/gbhv3MYS44xCmLE3Jp2CC8=;
+	s=arc-20240116; t=1783095627; c=relaxed/simple;
+	bh=L4B7vg/V7cyDRETxYXMM3cb9gxhmp9XpFIAb0xk8ME4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VYDA1jOPM+oAnv81ULioelI9Id+mDMj2KOopmzK3aKqePA+fQ9vzj/gOdYkfCgnontwEVDX4HH3NeNAvL4mtn1nxqNlReNlCUC6UukUMUDP64dADG9cWG0rG+Bb3Iba/WpNQeNjF7JNH32M/m6c7iJ5zfNN5+JjvNUauN1PmDnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGt3SH6+; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Camp1c8R7tUHZgFGeHxOARDKNtiSoYsgdIqQHKAWy7PO2DLi00XuTX1dqIJgQZYpxyVnB2JsN7JnB2fh4qS+DrVgN/UK974UBNp+R4pHfBG6/lQD8AHe5oVjYnFXIHzV2qVMRjuBMqRIBElyzOhMNC6Uk7ZUV4kJ0p50EekItko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuyFT1vC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGt3SH6+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326E71F000E9;
-	Fri,  3 Jul 2026 15:44:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuyFT1vC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517EC1F000E9;
+	Fri,  3 Jul 2026 16:20:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783093467;
-	bh=KjeXheL0Yxw0NammbJBbx74Ze3TdrnBR0YRwD+xO4dw=;
+	s=k20260515; t=1783095625;
+	bh=tYe2vcNc9zjCVZORiBcZ/Xy0DnzmgnoWMrPruVXwotk=;
 	h=Date:From:To:Cc:Subject;
-	b=QGt3SH6+ZgsC3+eO8a11BKtLmdKD47IusZn7ulS5y8CQCY+t4QA7+iczjIwNS4jFi
-	 H0RA7dsWOpwMa+SPSsJjHt+RyKxwrXGyAQvPPtDqMIIo3X2g9lRTQqZd0HDpUxXaIE
-	 n4TjMKigosvdw6Tzav2uf+va8MN070dqMQw5fX1L1owGRc27NMGZpEIb8k79Rr045M
-	 tJ1yKkoZ0hEsCk1PTXfCWV3OgQhwdwfFU9eQrFeiFlvM/UCM82qjLUh7mW/1sSQ7D8
-	 xT5L+V/8Jmm971+C7/Ic/4BA7Sku387JdzN/4wi1sPYldssJ5RbUQHpf8LwRh1nyyn
-	 UTp5ZGQXOvRtQ==
-Date: Fri, 3 Jul 2026 16:44:23 +0100
+	b=TuyFT1vCyWKfONVc6oYQlpQjP3s3vpCcT8Qbfaa7xCWnS3ln3juKFoxyFWr/c3j/8
+	 c/W2dEg/IosB7I2ItH4FhthIWoQ8bT3kWwRpE5VKQ12biWDP37w547SZjv5F5Yl9aA
+	 /R+gq4Iu/BNKtbyoLpl+oum2l0wgdUuI1nN9uBB1Uz+/0KMDPwzCAYR4aTmVuGoVY7
+	 e1dVIsHgierQTSKCzv+uyXvmexIRZ1FHO+mjcJhoycHAohymrK2IrsEy/rg5QN+o2k
+	 JojS6GbvlB4FIEeI8JS/ZYSFrblKn/cApIIGTMmi2LmH7OKe8oxe0aLnr6t0BDbQes
+	 i0pFcEJVvNZnQ==
+Date: Fri, 3 Jul 2026 17:20:21 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
 	DRM XE List <intel-xe@lists.freedesktop.org>
@@ -36,7 +36,7 @@ Cc: Gustavo Sousa <gustavo.sousa@intel.com>,
 	Matt Roper <matthew.d.roper@intel.com>,
 	Violet Monti <violet.monti@intel.com>
 Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
-Message-ID: <akfY11JiVCUS-gMM@sirena.org.uk>
+Message-ID: <akfhRWRrbOXxMKd0@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,11 +44,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7oZ2AZx8v1eFDAXR"
+	protocol="application/pgp-signature"; boundary="tYyKyYj4ZgZXN21v"
 Content-Disposition: inline
 
 
---7oZ2AZx8v1eFDAXR
+--tYyKyYj4ZgZXN21v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -57,7 +57,7 @@ Hi all,
 
 Today's linux-next merge of the drm-xe tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_tuning.c
+  drivers/gpu/drm/xe/xe_wa.c
 
 between commit:
 
@@ -68,6 +68,11 @@ between commit:
   5ff004fdc7377 ("drm/xe/rtp: Add struct types for RTP tables")
   e9845449e37f5 ("drm/xe/rtp: Ensure gt_was doesn't evaluate rules with eng=
 ine types")
+  e2cfc5bc0c3ff ("drm/xe/rtp: Ensure oob_was does not evaluate engine type =
+rules")
+  94e15e89f491e ("drm/xe/rtp: Ensure device_oob_was only evaluates correct =
+rules")
+  02b41333f4874 ("drm/xe/xe3p_lpg: Add missing references to workarounds")
 
 =66rom the drm-xe tree.
 
@@ -78,42 +83,94 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/gpu/drm/xe/xe_tuning.c
-index bf3fad9cdbef4,bcec40ca2d35f..0000000000000
---- a/drivers/gpu/drm/xe/xe_tuning.c
-+++ b/drivers/gpu/drm/xe/xe_tuning.c
-@@@ -20,7 -20,7 +20,7 @@@
-  #undef XE_REG_MCR
-  #define XE_REG_MCR(...)     XE_REG(__VA_ARGS__, .mcr =3D 1)
+diff --combined drivers/gpu/drm/xe/xe_wa.c
+index b9d9fe0801aad,139434946f8f8..0000000000000
+--- a/drivers/gpu/drm/xe/xe_wa.c
++++ b/drivers/gpu/drm/xe/xe_wa.c
+@@@ -130,7 -130,7 +130,7 @@@
+  __diag_push();
+  __diag_ignore_all("-Woverride-init", "Allow field overrides in table");
  =20
-- static const struct xe_rtp_table_sr gt_tunings =3D XE_RTP_TABLE_SR(
-+ VISIBLE_IF_KUNIT const struct xe_rtp_table_sr gt_tunings =3D XE_RTP_TABLE=
-_SR(
-  	{ XE_RTP_NAME("Tuning: Blend Fill Caching Optimization Disable"),
-  	  XE_RTP_RULES(PLATFORM(DG2)),
-  	  XE_RTP_ACTIONS(SET(XEHP_L3SCQREG7, BLEND_FILL_CACHING_OPT_DIS))
-@@@ -101,6 -101,7 +101,7 @@@
-  				   BANK_HASH_4KB_MODE))
+- static const struct xe_rtp_table_sr gt_was =3D XE_RTP_TABLE_SR(
++ VISIBLE_IF_KUNIT const struct xe_rtp_table_sr gt_was =3D XE_RTP_TABLE_SR(
+  	/* Workarounds applying over a range of IPs */
+ =20
+  	{ XE_RTP_NAME("14011060649"),
+@@@ -293,7 -293,7 +293,7 @@@
+  	  XE_RTP_ACTIONS(SET(MMIOATSREQLIMIT_GAM_WALK_3D,
+  			     DIS_ATS_WRONLY_PG))
+  	},
+- 	{ XE_RTP_NAME("14026144927, 16029437861"),
++ 	{ XE_RTP_NAME("14026144927, 16029437861, 14026127056"),
+  	  XE_RTP_RULES(GRAPHICS_VERSION(3510), GRAPHICS_STEP(A0, B0)),
+  	  XE_RTP_ACTIONS(SET(L3SQCREG2, L3_SQ_DISABLE_COAMA_2WAY_COH |
+  			     L3_SQ_DISABLE_COAMA))
+@@@ -307,6 -307,7 +307,7 @@@
+  	  XE_RTP_ACTIONS(SET(GUC_INTR_CHICKEN, DISABLE_SIGNALING_ENGINES))
   	},
   );
-+ EXPORT_SYMBOL_IF_KUNIT(gt_tunings);
++ EXPORT_SYMBOL_IF_KUNIT(gt_was);
  =20
-  static const struct xe_rtp_table_sr engine_tunings =3D XE_RTP_TABLE_SR(
-  	{ XE_RTP_NAME("Tuning: L3 Hashing Mask"),
+  static const struct xe_rtp_table_sr engine_was =3D XE_RTP_TABLE_SR(
+  	/* Workarounds applying over a range of IPs */
+@@@ -586,12 -587,12 +587,12 @@@
+ =20
+  	/* Xe3p_LPG*/
+ =20
+- 	{ XE_RTP_NAME("22021149932"),
++ 	{ XE_RTP_NAME("22021149932, 14026290593"),
+  	  XE_RTP_RULES(GRAPHICS_VERSION(3510), GRAPHICS_STEP(A0, B0),
+  		       FUNC(xe_rtp_match_first_render_or_compute)),
+  	  XE_RTP_ACTIONS(SET(LSC_CHICKEN_BIT_0_UDW, SAMPLER_LD_LSC_DISABLE))
+  	},
+- 	{ XE_RTP_NAME("14025676848"),
++ 	{ XE_RTP_NAME("14025676848, 14026270459"),
+  	  XE_RTP_RULES(GRAPHICS_VERSION(3510), GRAPHICS_STEP(A0, B0),
+  		       FUNC(xe_rtp_match_first_render_or_compute)),
+  	  XE_RTP_ACTIONS(SET(LSC_CHICKEN_BIT_0_UDW, LSCFE_SAME_ADDRESS_ATOMICS_C=
+OALESCING_DISABLE))
+@@@ -802,10 -803,11 +803,11 @@@ static const struct xe_rtp_entry oob_wa
+ =20
+  static_assert(ARRAY_SIZE(oob_was_entries)  =3D=3D _XE_WA_OOB_COUNT);
+ =20
+- static __maybe_unused const struct xe_rtp_table oob_was =3D {
++ VISIBLE_IF_KUNIT __maybe_unused const struct xe_rtp_table oob_was =3D {
+  	.entries =3D oob_was_entries,
+  	.n_entries =3D ARRAY_SIZE(oob_was_entries),
+  };
++ EXPORT_SYMBOL_IF_KUNIT(oob_was);
+ =20
+  static const struct xe_rtp_entry device_oob_was_entries[] =3D {
+  #include <generated/xe_device_wa_oob.c>
+@@@ -813,10 -815,11 +815,11 @@@
+ =20
+  static_assert(ARRAY_SIZE(device_oob_was_entries) =3D=3D _XE_DEVICE_WA_OOB=
+_COUNT);
+ =20
+- static __maybe_unused const struct xe_rtp_table device_oob_was =3D {
++ VISIBLE_IF_KUNIT __maybe_unused const struct xe_rtp_table device_oob_was =
+=3D {
+  	.entries =3D device_oob_was_entries,
+  	.n_entries =3D ARRAY_SIZE(device_oob_was_entries),
+  };
++ EXPORT_SYMBOL_IF_KUNIT(device_oob_was);
+ =20
+  __diag_pop();
+ =20
 
---7oZ2AZx8v1eFDAXR
+--tYyKyYj4ZgZXN21v
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpH2NYACgkQJNaLcl1U
-h9BOaQf/UU1N7XXRhDcU0SckYD7P38s8JQYt8mnj7IqCPX+SC2/1Ut/jbqVxBHFr
-us53llVyzpmj7stz8BZ63c8VrCg0hQ/GQPWYwmjgDzP6KgfbUhyjWmLnluS3GnVF
-Heo2vLtlQ7KvoKeSLUtbDCd6QdCQLLJ5f40koLi4xN+zlgRk42EKIFODqr+Mkg9u
-Zejmi245pFLwov3hMDqeHtm94CC6STkxHjyjaDXYv7i+9IAAvkhQhJzV8EoV5Hco
-V1MgWxWhddrjmW2caTp8vfVXUwSx7vo/mAmHWzkeERgugsrwBTjg56yipqK9DYfP
-MuCcRM1arjzZ8DaSV15QRM8bAxVh+g==
-=Q4zt
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpH4UQACgkQJNaLcl1U
+h9DiGgf+MnGs4imANWfQxL5Uh352QrVy+Z1xlylAQ193+fjHgs3iUkwxpgaooWhc
+1ayxH437REu3CAIxhj7lhOACxzs7ldpEWeay8NNwrTKAi+BccAlzmeVg06i7r/FJ
+E6iV8yOqYgo1wij0OiboYPEeCkmqBkvBWC1riZDysazXADTTKakNZ3grLPgYxspl
+hBbmyslbkAm7KPP+vAidPQoA0cnmXGJHJlw0Q2bLmO0QmiOy17NGiwkAk0vkH0mn
+efIFDtsezBhgTnpEdSJHi53O5hfVmkzjDDG23eoNZkhVBvE5q6ilJec9aTbOwQCw
+N8R5t0Ift4wpAXlHXHK+Zc9rgkn3fQ==
+=48tb
 -----END PGP SIGNATURE-----
 
---7oZ2AZx8v1eFDAXR--
+--tYyKyYj4ZgZXN21v--
