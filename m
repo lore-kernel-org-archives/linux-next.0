@@ -1,42 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D0C2C11FE;
-	Fri,  3 Jul 2026 16:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDCD2C11FE;
+	Fri,  3 Jul 2026 16:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783095627; cv=none; b=FYbIQmaIYB+NVyt962CfKCT7cxKE3ZTqlQNcPV2ETHRW0YitTEmlStJ89y90sirvCxlD2R7kj/SYO0navsFwSUc4qLseRgpzt/vyQRzSsGeJwwzOE/+pp3lhmY7w1KkhYGc8Fr3XXZUSHVcyU796LR+2BlWNcvU+blKlpkGY9mo=
+	t=1783095644; cv=none; b=opf4fifDAwn/ivt8fxVD443Q5d5qKcaCSF9NGho0EdfiOjHkNDqgjaLAq6SXnscBI8HADEvKy7XdG9V5Ers2WugGnmfVqUxzkPv0RibVrzLm/+1+dn/R3Pn33e7RiB9WHp8NVVAXiCnf3ve37jeBiW73xKJFQAKKcPrWq/qO7ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783095627; c=relaxed/simple;
-	bh=L4B7vg/V7cyDRETxYXMM3cb9gxhmp9XpFIAb0xk8ME4=;
+	s=arc-20240116; t=1783095644; c=relaxed/simple;
+	bh=YHk5pRX10gcwXeOfceh5E4Xw9SzLvZZKpbjOkWI257g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Camp1c8R7tUHZgFGeHxOARDKNtiSoYsgdIqQHKAWy7PO2DLi00XuTX1dqIJgQZYpxyVnB2JsN7JnB2fh4qS+DrVgN/UK974UBNp+R4pHfBG6/lQD8AHe5oVjYnFXIHzV2qVMRjuBMqRIBElyzOhMNC6Uk7ZUV4kJ0p50EekItko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuyFT1vC; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=G3bOA4HPnjSq3Zp/AovIn/zKBM3+bcAGN0z7QT01QvoFeAZUkfneazEdTw816G7neDBI4fRI/XI4xpicwpdFad1yK+5YUh8FwffJnnYq2+Y6Ft2r4/YqA0y+4Q1eiqnsJTOVkqRpSXf1Iiie2G0AfnUAOGyQZJrsIDPf6ayJp64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMBNQRVW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuyFT1vC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517EC1F000E9;
-	Fri,  3 Jul 2026 16:20:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMBNQRVW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2491F000E9;
+	Fri,  3 Jul 2026 16:20:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783095625;
-	bh=tYe2vcNc9zjCVZORiBcZ/Xy0DnzmgnoWMrPruVXwotk=;
+	s=k20260515; t=1783095643;
+	bh=itz8Nb5zpeopoHorFdGxn4I43vfsP8yp0aRsSKaG9+4=;
 	h=Date:From:To:Cc:Subject;
-	b=TuyFT1vCyWKfONVc6oYQlpQjP3s3vpCcT8Qbfaa7xCWnS3ln3juKFoxyFWr/c3j/8
-	 c/W2dEg/IosB7I2ItH4FhthIWoQ8bT3kWwRpE5VKQ12biWDP37w547SZjv5F5Yl9aA
-	 /R+gq4Iu/BNKtbyoLpl+oum2l0wgdUuI1nN9uBB1Uz+/0KMDPwzCAYR4aTmVuGoVY7
-	 e1dVIsHgierQTSKCzv+uyXvmexIRZ1FHO+mjcJhoycHAohymrK2IrsEy/rg5QN+o2k
-	 JojS6GbvlB4FIEeI8JS/ZYSFrblKn/cApIIGTMmi2LmH7OKe8oxe0aLnr6t0BDbQes
-	 i0pFcEJVvNZnQ==
-Date: Fri, 3 Jul 2026 17:20:21 +0100
+	b=MMBNQRVWwyUK4hXgXuTZDXy/98LKll12l58vMec6hMT+MlvsUFJzGFzHt7EyUJ0vG
+	 gjjWZQiYphAv90eZ2ctBL21KQ7V991x3+jWLq3u3Wfn1wLt56jWLQLszz4OuIqFZMM
+	 hiEb1RT3jCRgpmHx/7yw3CLTn8iSgheLPSbCjpEfKJAosrXKDau0ZuUBPvIiGDbxFH
+	 KnnczurJb1x45tuTm8Dly1tBe6TVAtBwkVpahO5ZrDThLlhXX6gQsXcvaWSgnWCFz2
+	 fXQ0pDNDfpfOylMX2fgyzbi9noq5fvqbRqqa4nZJNsm4A5tRM31aZpltfI9ad10CAS
+	 Wgj7sZ7He/8xA==
+Date: Fri, 3 Jul 2026 17:20:40 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: Gustavo Sousa <gustavo.sousa@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Violet Monti <violet.monti@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
-Message-ID: <akfhRWRrbOXxMKd0@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jul 3
+Message-ID: <akfhWKMP7CecwEIq@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,133 +39,71 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tYyKyYj4ZgZXN21v"
+	protocol="application/pgp-signature"; boundary="4PAHKv6OI2cC+6F6"
 Content-Disposition: inline
 
 
---tYyKyYj4ZgZXN21v
+--4PAHKv6OI2cC+6F6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-xe tree got a conflict in:
+Changes since 20260702:
 
-  drivers/gpu/drm/xe/xe_wa.c
+The mm-nonmm-unstable tree acquired a KUnit failure, I used the version
+=66rom next-20260602 instead.
 
-between commit:
+The drm-intel tree acquired multiple conflicts with the drm-fixes tree.
 
-  e23fafb8594ea ("drm/xe/rtp: Add struct types for RTP tables")
+Non-merge commits (relative to Linus' tree): 3187
+ 3175 files changed, 116065 insertions(+), 62025 deletions(-)
 
-=66rom the drm-fixes tree and commits:
+----------------------------------------------------------------------------
 
-  5ff004fdc7377 ("drm/xe/rtp: Add struct types for RTP tables")
-  e9845449e37f5 ("drm/xe/rtp: Ensure gt_was doesn't evaluate rules with eng=
-ine types")
-  e2cfc5bc0c3ff ("drm/xe/rtp: Ensure oob_was does not evaluate engine type =
-rules")
-  94e15e89f491e ("drm/xe/rtp: Ensure device_oob_was only evaluates correct =
-rules")
-  02b41333f4874 ("drm/xe/xe3p_lpg: Add missing references to workarounds")
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-=66rom the drm-xe tree.
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Below is a summary of the state of the merge.
 
-diff --combined drivers/gpu/drm/xe/xe_wa.c
-index b9d9fe0801aad,139434946f8f8..0000000000000
---- a/drivers/gpu/drm/xe/xe_wa.c
-+++ b/drivers/gpu/drm/xe/xe_wa.c
-@@@ -130,7 -130,7 +130,7 @@@
-  __diag_push();
-  __diag_ignore_all("-Woverride-init", "Allow field overrides in table");
- =20
-- static const struct xe_rtp_table_sr gt_was =3D XE_RTP_TABLE_SR(
-+ VISIBLE_IF_KUNIT const struct xe_rtp_table_sr gt_was =3D XE_RTP_TABLE_SR(
-  	/* Workarounds applying over a range of IPs */
- =20
-  	{ XE_RTP_NAME("14011060649"),
-@@@ -293,7 -293,7 +293,7 @@@
-  	  XE_RTP_ACTIONS(SET(MMIOATSREQLIMIT_GAM_WALK_3D,
-  			     DIS_ATS_WRONLY_PG))
-  	},
-- 	{ XE_RTP_NAME("14026144927, 16029437861"),
-+ 	{ XE_RTP_NAME("14026144927, 16029437861, 14026127056"),
-  	  XE_RTP_RULES(GRAPHICS_VERSION(3510), GRAPHICS_STEP(A0, B0)),
-  	  XE_RTP_ACTIONS(SET(L3SQCREG2, L3_SQ_DISABLE_COAMA_2WAY_COH |
-  			     L3_SQ_DISABLE_COAMA))
-@@@ -307,6 -307,7 +307,7 @@@
-  	  XE_RTP_ACTIONS(SET(GUC_INTR_CHICKEN, DISABLE_SIGNALING_ENGINES))
-  	},
-  );
-+ EXPORT_SYMBOL_IF_KUNIT(gt_was);
- =20
-  static const struct xe_rtp_table_sr engine_was =3D XE_RTP_TABLE_SR(
-  	/* Workarounds applying over a range of IPs */
-@@@ -586,12 -587,12 +587,12 @@@
- =20
-  	/* Xe3p_LPG*/
- =20
-- 	{ XE_RTP_NAME("22021149932"),
-+ 	{ XE_RTP_NAME("22021149932, 14026290593"),
-  	  XE_RTP_RULES(GRAPHICS_VERSION(3510), GRAPHICS_STEP(A0, B0),
-  		       FUNC(xe_rtp_match_first_render_or_compute)),
-  	  XE_RTP_ACTIONS(SET(LSC_CHICKEN_BIT_0_UDW, SAMPLER_LD_LSC_DISABLE))
-  	},
-- 	{ XE_RTP_NAME("14025676848"),
-+ 	{ XE_RTP_NAME("14025676848, 14026270459"),
-  	  XE_RTP_RULES(GRAPHICS_VERSION(3510), GRAPHICS_STEP(A0, B0),
-  		       FUNC(xe_rtp_match_first_render_or_compute)),
-  	  XE_RTP_ACTIONS(SET(LSC_CHICKEN_BIT_0_UDW, LSCFE_SAME_ADDRESS_ATOMICS_C=
-OALESCING_DISABLE))
-@@@ -802,10 -803,11 +803,11 @@@ static const struct xe_rtp_entry oob_wa
- =20
-  static_assert(ARRAY_SIZE(oob_was_entries)  =3D=3D _XE_WA_OOB_COUNT);
- =20
-- static __maybe_unused const struct xe_rtp_table oob_was =3D {
-+ VISIBLE_IF_KUNIT __maybe_unused const struct xe_rtp_table oob_was =3D {
-  	.entries =3D oob_was_entries,
-  	.n_entries =3D ARRAY_SIZE(oob_was_entries),
-  };
-+ EXPORT_SYMBOL_IF_KUNIT(oob_was);
- =20
-  static const struct xe_rtp_entry device_oob_was_entries[] =3D {
-  #include <generated/xe_device_wa_oob.c>
-@@@ -813,10 -815,11 +815,11 @@@
- =20
-  static_assert(ARRAY_SIZE(device_oob_was_entries) =3D=3D _XE_DEVICE_WA_OOB=
-_COUNT);
- =20
-- static __maybe_unused const struct xe_rtp_table device_oob_was =3D {
-+ VISIBLE_IF_KUNIT __maybe_unused const struct xe_rtp_table device_oob_was =
-=3D {
-  	.entries =3D device_oob_was_entries,
-  	.n_entries =3D ARRAY_SIZE(device_oob_was_entries),
-  };
-+ EXPORT_SYMBOL_IF_KUNIT(device_oob_was);
- =20
-  __diag_pop();
- =20
+I am currently merging 427 trees (counting Linus' and 132 trees of bug
+fix patches pending for the current release).
 
---tYyKyYj4ZgZXN21v
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--4PAHKv6OI2cC+6F6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpH4UQACgkQJNaLcl1U
-h9DiGgf+MnGs4imANWfQxL5Uh352QrVy+Z1xlylAQ193+fjHgs3iUkwxpgaooWhc
-1ayxH437REu3CAIxhj7lhOACxzs7ldpEWeay8NNwrTKAi+BccAlzmeVg06i7r/FJ
-E6iV8yOqYgo1wij0OiboYPEeCkmqBkvBWC1riZDysazXADTTKakNZ3grLPgYxspl
-hBbmyslbkAm7KPP+vAidPQoA0cnmXGJHJlw0Q2bLmO0QmiOy17NGiwkAk0vkH0mn
-efIFDtsezBhgTnpEdSJHi53O5hfVmkzjDDG23eoNZkhVBvE5q6ilJec9aTbOwQCw
-N8R5t0Ift4wpAXlHXHK+Zc9rgkn3fQ==
-=48tb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpH4VcACgkQJNaLcl1U
+h9CtQAf+NXQSqy+arfulVbWzXHXy7XT/7ju6jfmImuKvNAW8E7AkVx/8rXTCz9xv
+XmPAIezonuXTdxAk4YrNmRNX/0HiCJdsVgdIW54zKqEvoxZd85ucofDTI5j4tMcV
+txAcoN6IOtmuxEJoM1zpdYgKzbR2ElIx1EFMjBFbYwH3VHCEoUGw++pvIjdJzQSt
+HwqQRaGq12NUzQ2kTrqrLSgbyxpiLnQQcJxxwUq2dqwY4857h/hK2zDsw+MbjPcB
+2NhXfEc5TLVVeIM4lSm7X2caa4PA3caMOEJ+9GKHc9hRZThKT69ElXklIRTxTJA6
+NYjzsma+ZlXzwiu+OOT/05TTfEr1rA==
+=l1IB
 -----END PGP SIGNATURE-----
 
---tYyKyYj4ZgZXN21v--
+--4PAHKv6OI2cC+6F6--
