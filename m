@@ -1,131 +1,129 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3A337268D
-	for <linux-next@vger.kernel.org>; Sat,  4 Jul 2026 02:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58BC33B975
+	for <linux-next@vger.kernel.org>; Sat,  4 Jul 2026 04:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783132211; cv=none; b=Jrd2FL1lKVZAwWuOEmJREJEIvCMOLdM0UpcufXK8FZvlg4w1iuJgPuWvaeNEXgQ/pgWiZAK5NbVhOIiFJ+hEjJOJ/cwugPc+m6lfqWB8Gcvsi01a1LemHZqjlJxlSGJ8DlL5BIVpHv9w8jEm2sFr+OIV2d5tCMyIMW8o25HlDaY=
+	t=1783140753; cv=none; b=osq7s8+JUakTlKI4TxwBKwJMc6wI9B1VR7i/SJaqInuPZLj/y2qbFi/mNcIXIAHgPe/1chrzmqvIeY5lOB08VassLc5tNeodPg02FV1dPZKj/phdC2mhwJDWN998VZtdXJgER9pLM8lpk+9oeI6PHQNMnpN54KNY3ciCS0ZUvf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783132211; c=relaxed/simple;
-	bh=vTJb6My3/kjBfxvD4yjCzfmujZAV3YCwgpB1S0Oxbj4=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=KmDwPG07ks5/qMmg1yww+UOVQ5gxs5c+kB7YoDGOo8dw85djjKxJORCkEgYo4HyTOaKmInGZBWdjlQjDtMOa5wgQ82sddk7o8Pdw7yio0aJpb/b90GivuqxABGR1F62mavTpBr+4l60e+qgQpg14g5qNPrVeTp6KoTrIG810rSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=JxBUtTAk; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1783140753; c=relaxed/simple;
+	bh=sqfHb9uUIdd4axPbZVGAm3wY2YRGgsL3vSdDIoP0Zq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VE5MuuJ/P71WXCAIRIslLJnsopFAyT50Ni7a/W0nBMfYCekur0b7WsEFPTbAshdm01i1zOZ2wPAWhG/GzR4mnmYbb6Bztcu+85YbpUvDtd54t38/dkZGFlAJOwelS+eu2TSobnQQnNO2eFjDV5MixlftAchRm1OBN6w8AA3s9+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oI8wmXBx; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="JxBUtTAk"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-845537740ddso671200b3a.0
-        for <linux-next@vger.kernel.org>; Fri, 03 Jul 2026 19:30:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oI8wmXBx"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493bf73ec2aso6740615e9.2
+        for <linux-next@vger.kernel.org>; Fri, 03 Jul 2026 21:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1783132208; x=1783737008; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=LLRLdp5IuMG2XKDEP8rcr7twCW0rTuaOB3/t+zeTGHc=;
-        b=JxBUtTAkFKYcUbGMb5ozn+h+XFhfvvLK8nMz6/uODAzp0zkuRbtszsWCaTtzvDrk3y
-         /7pBIS4Zg5dzuN7uqn+SFl6AmBJbPy6VOXc5ovlPBoB0KVWEHPKYdG7O9vjdUrSd9L4j
-         r70MpcfirhIp4QKEY/m0elU2zElB3F61ct0+VyOk6hWvP74GHmxEMPpGH/HJIgXWX+2F
-         OWOuNwVZpyvUuONfxFjJHhQu9GoWY9ZaKDknQClEiisXVDv+lZPYrLKUEb+nK5E58eaM
-         EqvbudL//lB1eqqUcxy0pZtWCjhkuFVYuLqEQUHLgI/kzNsOSk5kDc8jRbkInwO/an2m
-         hqtw==
+        d=gmail.com; s=20251104; t=1783140750; x=1783745550; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUxXXUuyWOByYqLo0qCy6mlleHVbTr47A7oPEj/z7yI=;
+        b=oI8wmXBxm+xC+fsmxqmokOpUXKFrZuvlsfxSeXX/dVVl3CufiTzS3h8hpIH7T6/N2K
+         sOrE+OdwvfYvwJcinGsxWNw/LIpKcKeDfqqLcxMt6xwRydS8s7TXl08X+Z2InAejEAQ3
+         65m3wHQvcT7ICIYRqbAcYmNJkiQTu7t0ZpV4GgrQXucCsUYBOpCJUw0NMf50NeANnKHy
+         I6DiTLzEJhe2fGYgwqD1Fc4oZJqsAUFpZczYyqwTqwYCTydmb1CQTAzF2PzdmngSws8U
+         +3/IBN0t1MTKroU7Nf65DcZDAvfy8QRF0REyeQLvr5GSU4h2EdnY0vbLdL8l9btTFjxT
+         R36Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783132208; x=1783737008;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LLRLdp5IuMG2XKDEP8rcr7twCW0rTuaOB3/t+zeTGHc=;
-        b=a5TjtzHkRvv+eQjn4wqlaKeDGZMMmmFpuNAr2S938FA3Bonop7vcwiCdXTppgng9i7
-         7JarBEHnBeBiPODw/SxmWalcsXCqThn/OzIMAg+o1jTXSD4CTcVkTAOHeRqFH0GmFMXy
-         yoAWYIC2iwLJ9d5/JsHBwsJy4lW6O4TF+UzCbCtm1sUqY0CBrhDcyArluJN6DaibXaot
-         vWBy5Lg00k6Dz91zWLhaleUc8UGSvrrQeUxPATSA4lXLq/+DXqdd9BKWkYDIUvZHJEJL
-         1Wq/7QHgx3zLKEqMpxdcyYRrJzGwQE2Oskbzoh4Pi1csYxhU2iZZqS/hKLP3fnqqA551
-         zTZg==
-X-Gm-Message-State: AOJu0Yw8lJogyXLfJVQTpDKiC5GN8+EbdpzNcctmMBMcAShBtPJLptSF
-	dehTNRucX2Sk3TaPUSe/GVM27gLRMKAmovBhYyvN2G0V/OU8QhgMsV0nUZn+YchajoLVzcHdqDx
-	rhtXV
-X-Gm-Gg: AfdE7cmkBhEUv5VmD3KDGv++mccQCNh+Keg8DuFQvS/A3lyaG7WPoUvjy3iis2K+03u
-	yEDr/HrnTGYp1HHdal4d56GecuFDvMDA/bQKRxNoEZWxtI9sx0mKpZ7fQJZJkW2yY02/Iv2507W
-	SPMbg5YmNVQcGCfyH/5XuYLmf334Xg0C+hW1yaSHxbc8c9bEJ6iwWT359lC1x+RERX9xFjQrCTA
-	/xXqQE0E8KtK5ZvVJw9l+E68fi/y8ZqONkYeRwecqolQoswrKPhWoNZ4H5kd84pdyPWcudAldkH
-	RyohCYYbQNGqqIc2EUDDinMyM/mwlHNk0rQomuDmQK5F9gVbo9feUqDddv8RvgiCcK7VYLrQH2K
-	A/+N7d/kLxtCXOWEE6OpFTORMF4pDYi7yhQPUG8iLybiQwONXy8ig81BruJBGNyyYjM+b3FSe79
-	gKujyCfWr9yZH/Yi8C
-X-Received: by 2002:a05:6a20:d70f:b0:3bf:9a30:3a20 with SMTP id adf61e73a8af0-3c03e270986mr1882400637.16.1783132208376;
-        Fri, 03 Jul 2026 19:30:08 -0700 (PDT)
-Received: from 963b246bc1b3 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f0bc27ae7sm24376490eec.26.2026.07.03.19.30.07
+        d=1e100.net; s=20251104; t=1783140750; x=1783745550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZUxXXUuyWOByYqLo0qCy6mlleHVbTr47A7oPEj/z7yI=;
+        b=M3MMQFbDBI4fb9LttYne08CCApnvHLDzAr1GubooKnJ5URn0UKonrEXF51i9WvjfFA
+         n9QVOuxvEnl8frNt2vOflN2KsX2lYB9pS3kR2l+XEvatHJ/nNNGe+mBTfvRvvYgF8Mwe
+         u2b/3M1j2ShSKP+98yOHLQthr8/URKP+5rZtcwxlC3lJBcAetAhDcU/f5fvBdfcY+TYK
+         6D/b3J5VKlrV7Jc3w6lNiZ8DBOzHFacp1HPfAh4mac34nsgJM0HpM9chuE4/OPJz+8nu
+         QeLb5YNULy/6tjnqwJVqgoqxBw35YFs25aLgcokHzMAzB9jDGx4PbESJQwu2HEWXYHka
+         cklg==
+X-Forwarded-Encrypted: i=1; AFNElJ8DjTP2E7+WmdIb1sKc17IIWbGTDsYVGTomX8hcfcC2lWI0fHA57+S7bFtFLo22B/D4tldVYJvoLma6@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdcym+ISwoUHPKP1NTDn5pIagDj76aIXEgE6F5bV7jIB83pb0z
+	Fvw3wFlUcJ8tDC4Rq38ON6ADXI3Aqzf8P3UlgDLydvOHGdVfNHm/6aI=
+X-Gm-Gg: AfdE7cmN0x5hOMnGMFNktU/OUcdu2C+p8iNlXmpTlKzZ+xR9BHZFSSkRmPlQ5IqHMPJ
+	pkgRrfPwk38xKdoBc3BPwQnOhJVjy3DbYrG3QTbLBzAD3MHO3caXkOSk+VoiGni4o1+vwDHlItK
+	IYM1uve0U2FBS+77IVeB9pYqg8nhIibfL5wCcFVDFJTbD3rnBA7q4RbiQxrcJAROpK1RV1jJHly
+	FxXEd1EUtE8d7QJv6NkALFAAYeyXcEAPbeB4yT0kBcZ3TGdOtATSbqsdTkMCeC4llU9lQiZRDgS
+	deR8UPnvA0fOaiwPO0bEWT4W38+BNHIUYHlRtPdJ8toVjlOBJlh6WAY08Wjm2QOiu1ea96zyB4N
+	N+wthp2U9S0VrTqjzhWQgoZMI9SHcarfMBXEAiBPkHMPYQJy6yA5ArYpvaUWCim3JyvkG2T1uCR
+	t+
+X-Received: by 2002:a05:600c:1907:b0:493:c3c9:218c with SMTP id 5b1f17b1804b1-493d3139fe7mr3348955e9.30.1783140750262;
+        Fri, 03 Jul 2026 21:52:30 -0700 (PDT)
+Received: from p183 ([178.172.147.87])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47a9e4d780csm4777786f8f.11.2026.07.03.21.52.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 19:30:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 03 Jul 2026 21:52:29 -0700 (PDT)
+Date: Sat, 4 Jul 2026 07:55:40 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: KUnit failure after merge of the mm-nonmm-unstable
+ tree
+Message-ID: <afc8f908-4add-4da8-816c-9a6c06619b18@p183>
+References: <akfKl6lJlGL6fPG3@sirena.org.uk>
+ <992f91e5-a6cc-4b16-8026-74c9d32bc08d@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 2b763db0c2763d6bf73d7d3e69665222d1f377cf
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 04 Jul 2026 02:30:07 -0000
-Message-ID: <178313220705.4773.17982428008746375252@963b246bc1b3>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <992f91e5-a6cc-4b16-8026-74c9d32bc08d@sirena.org.uk>
 
+On Fri, Jul 03, 2026 at 05:39:59PM +0100, Mark Brown wrote:
+> On Fri, Jul 03, 2026 at 03:43:35PM +0100, Mark Brown wrote:
+> > Hi all,
+> > 
+> > After merging the mm-nonmm-unstable tree, today's linux-next failed
+> > KUnit testing like this:
+> > 
+> > [14:20:52] Configuring KUnit Kernel ...
+> > [14:20:52] Building KUnit Kernel ...
+> > Populating config with:
+> > $ make ARCH=arm64 O=/tmp/next/arm64_kunit olddefconfig CROSS_COMPILE=aarch64-linux-gnu-
+> > Building with:
+> > $ make all compile_commands.json scripts_gdb ARCH=arm64 O=/tmp/next/arm64_kunit --jobs=192 CROSS_COMPILE=aarch64-linux-gnu-
+> > [14:21:06] Starting KUnit Kernel (1/1)...
+> > Running tests with:
+> > $ qemu-system-aarch64 -nodefaults -m 1024 -kernel /tmp/next/arm64_kunit/arch/arm64/boot/Image.gz -append 'kunit.enable=1 console=ttyAMA0 kunit_shutdown=reboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -serial stdio -machine virt -cpu max
+> > [14:22:11] ============================================================
+> > [14:22:11] =================== cmdline (8 subtests) ===================
+> > [14:22:11] # cmdline_test_memparse: EXPECTATION FAILED at lib/tests/cmdline_kunit.c:249
+> > [14:22:11] Expected ret == e->result, but
+> > [14:22:11]     ret == -16 (0xfffffffffffffff0)
+> > [14:22:11]     e->result == -1 (0xffffffffffffffff)
+> > [14:22:11] when parsing '0xffffffffffffffff0'
+> > [14:22:11] [FAILED] cmdline_test_memparse
+> > [14:22:11]     # module: cmdline_kunit
+> > [14:22:11] # cmdline: pass:7 fail:1 skip:0 total:8
+> > [14:22:11] # Totals: pass:7 fail:1 skip:0 total:8
+> > [14:22:11] ===================== [FAILED] cmdline =====================
+> > [14:22:11] ============================================================
+> > [14:22:11] Testing complete. Ran 9225 tests: passed: 9104, failed: 1, skipped: 120
+> > [14:22:11] Failures: cmdline.cmdline_test_memparse
+> > [14:22:11] Test results stored in /tmp/next/arm64_kunit.json
+> > [14:22:11] Elapsed time: 79.318s total, 0.002s configuring, 14.632s building, 64.682s running
+> > 
+> > I honestly have no idea what's triggering this, nothing jumps out from
+> > the commits introduced in the merge of the branch.  If I have time later
+> > I'll try to bisect the issue.  I have used the tree from next-20260602
+> > instead.
+> 
+> bisect tells me it's due to:
+> 
+>   e595545005616 (Revert "lib: fix _parse_integer_limit() to handle overflow")
 
+No, it is due to
 
-Hello,
+	commit 9a4580db6e9f83428813f671a79486469684069f
+	lib: fix memparse() to handle overflow
 
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/2b763db0c2763d6bf73d7d3e69665222d1f377cf/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 2b763db0c2763d6bf73d7d3e69665222d1f377cf
-origin: maestro
-test start time: 2026-07-03 16:48:48.516000+00:00
-
-Builds:	   64 ✅    4 ❌    0 ⚠️
-Boots: 	   87 ✅    2 ❌    0 ⚠️
-Tests: 	21422 ✅ 4801 ❌  550 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: cd8180-orion-o6
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6a47f5cebb83f6a3e889f046
-      history:  > ✅  > ✅  > ❌  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a47f5b7bb83f6a3e889f039
-      history:  > ✅  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-
-  No fixed regressions observed.
-
-
-### UNSTABLE TESTS
-
-  No unstable tests observed.
-
-
-
-This branch has 3 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+memparse should be rewritten with _parse_integer().
