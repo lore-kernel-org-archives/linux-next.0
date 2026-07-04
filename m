@@ -1,156 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090D127732;
-	Fri,  3 Jul 2026 16:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3A337268D
+	for <linux-next@vger.kernel.org>; Sat,  4 Jul 2026 02:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783096804; cv=none; b=mBv+/JFvROwLmluJ0e8E8rAVgtls/PCIxj7m+nmLcGD+qmQV2RmhZu5qSB0sOW5hIiwqwZBvldL6cqaO39OpdbaMhLVzXmSLdNwIE/34QyIPLMqzNYgJlRfu4NvVmhjVF+gCK2/NFuiC6SsL8h4y0ijzWCG3xuH0IDGrtdHeHQI=
+	t=1783132211; cv=none; b=Jrd2FL1lKVZAwWuOEmJREJEIvCMOLdM0UpcufXK8FZvlg4w1iuJgPuWvaeNEXgQ/pgWiZAK5NbVhOIiFJ+hEjJOJ/cwugPc+m6lfqWB8Gcvsi01a1LemHZqjlJxlSGJ8DlL5BIVpHv9w8jEm2sFr+OIV2d5tCMyIMW8o25HlDaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783096804; c=relaxed/simple;
-	bh=q6QcOIHXqSZZOAtoVtsIxV7TxbSLyFi9SXUHKzdIzcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7RNYWaWq1mpuC3b5wpHpHOxSvSh76MuVJy/Q+nkfjRe25uHPRJE0KegzZl2yd6+8exDGa/PCag+m5xYN8sUFyQLp4y9eOtKpGlQIOZJ22GNwx52cujOzwgQyxmoyghGVAkeX7eUCeyKsKqji18crYAiNanR3zsHlFwDKqXUvfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gw8BpK0C; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783132211; c=relaxed/simple;
+	bh=vTJb6My3/kjBfxvD4yjCzfmujZAV3YCwgpB1S0Oxbj4=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=KmDwPG07ks5/qMmg1yww+UOVQ5gxs5c+kB7YoDGOo8dw85djjKxJORCkEgYo4HyTOaKmInGZBWdjlQjDtMOa5wgQ82sddk7o8Pdw7yio0aJpb/b90GivuqxABGR1F62mavTpBr+4l60e+qgQpg14g5qNPrVeTp6KoTrIG810rSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=JxBUtTAk; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gw8BpK0C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62131F000E9;
-	Fri,  3 Jul 2026 16:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783096802;
-	bh=BPD47xblYCzo01iYTlll00e1TIFof5y5JQ+GS45F1KU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gw8BpK0CDrXlVXcQIswXNRPZzf5xkce3QfmSeTgh6uro569uS9dpFVrIG1LbBwuez
-	 BuBJj/zVaLz2ew02Y7F2amw9PFI2mZe7kZsxFACOwj5nGsvs4IoFPHU8lvb6N7v6Ki
-	 sI3hg/NdkuZgQFkKOrOXgItRpBGMKysOh3HRSReCdUoeoY1gJIGRa+GlMd/SPD9WY9
-	 QkRH6ZQfS5osBcMKEp7Avjjrr9uX7EjsY5ArncEWyWyUSudRxJEfLFQ0auCvRTBR0D
-	 5N0w0NVseW0Yiw8DJDAYPa5Zb9V0OBcmFPEs7BSRcpR/N/zdygQ1OFG+pxEYMzlP4h
-	 976kX/+DMgIBw==
-Date: Fri, 3 Jul 2026 17:39:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: KUnit failure after merge of the mm-nonmm-unstable
- tree
-Message-ID: <992f91e5-a6cc-4b16-8026-74c9d32bc08d@sirena.org.uk>
-References: <akfKl6lJlGL6fPG3@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="JxBUtTAk"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-845537740ddso671200b3a.0
+        for <linux-next@vger.kernel.org>; Fri, 03 Jul 2026 19:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1783132208; x=1783737008; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=LLRLdp5IuMG2XKDEP8rcr7twCW0rTuaOB3/t+zeTGHc=;
+        b=JxBUtTAkFKYcUbGMb5ozn+h+XFhfvvLK8nMz6/uODAzp0zkuRbtszsWCaTtzvDrk3y
+         /7pBIS4Zg5dzuN7uqn+SFl6AmBJbPy6VOXc5ovlPBoB0KVWEHPKYdG7O9vjdUrSd9L4j
+         r70MpcfirhIp4QKEY/m0elU2zElB3F61ct0+VyOk6hWvP74GHmxEMPpGH/HJIgXWX+2F
+         OWOuNwVZpyvUuONfxFjJHhQu9GoWY9ZaKDknQClEiisXVDv+lZPYrLKUEb+nK5E58eaM
+         EqvbudL//lB1eqqUcxy0pZtWCjhkuFVYuLqEQUHLgI/kzNsOSk5kDc8jRbkInwO/an2m
+         hqtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783132208; x=1783737008;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=LLRLdp5IuMG2XKDEP8rcr7twCW0rTuaOB3/t+zeTGHc=;
+        b=a5TjtzHkRvv+eQjn4wqlaKeDGZMMmmFpuNAr2S938FA3Bonop7vcwiCdXTppgng9i7
+         7JarBEHnBeBiPODw/SxmWalcsXCqThn/OzIMAg+o1jTXSD4CTcVkTAOHeRqFH0GmFMXy
+         yoAWYIC2iwLJ9d5/JsHBwsJy4lW6O4TF+UzCbCtm1sUqY0CBrhDcyArluJN6DaibXaot
+         vWBy5Lg00k6Dz91zWLhaleUc8UGSvrrQeUxPATSA4lXLq/+DXqdd9BKWkYDIUvZHJEJL
+         1Wq/7QHgx3zLKEqMpxdcyYRrJzGwQE2Oskbzoh4Pi1csYxhU2iZZqS/hKLP3fnqqA551
+         zTZg==
+X-Gm-Message-State: AOJu0Yw8lJogyXLfJVQTpDKiC5GN8+EbdpzNcctmMBMcAShBtPJLptSF
+	dehTNRucX2Sk3TaPUSe/GVM27gLRMKAmovBhYyvN2G0V/OU8QhgMsV0nUZn+YchajoLVzcHdqDx
+	rhtXV
+X-Gm-Gg: AfdE7cmkBhEUv5VmD3KDGv++mccQCNh+Keg8DuFQvS/A3lyaG7WPoUvjy3iis2K+03u
+	yEDr/HrnTGYp1HHdal4d56GecuFDvMDA/bQKRxNoEZWxtI9sx0mKpZ7fQJZJkW2yY02/Iv2507W
+	SPMbg5YmNVQcGCfyH/5XuYLmf334Xg0C+hW1yaSHxbc8c9bEJ6iwWT359lC1x+RERX9xFjQrCTA
+	/xXqQE0E8KtK5ZvVJw9l+E68fi/y8ZqONkYeRwecqolQoswrKPhWoNZ4H5kd84pdyPWcudAldkH
+	RyohCYYbQNGqqIc2EUDDinMyM/mwlHNk0rQomuDmQK5F9gVbo9feUqDddv8RvgiCcK7VYLrQH2K
+	A/+N7d/kLxtCXOWEE6OpFTORMF4pDYi7yhQPUG8iLybiQwONXy8ig81BruJBGNyyYjM+b3FSe79
+	gKujyCfWr9yZH/Yi8C
+X-Received: by 2002:a05:6a20:d70f:b0:3bf:9a30:3a20 with SMTP id adf61e73a8af0-3c03e270986mr1882400637.16.1783132208376;
+        Fri, 03 Jul 2026 19:30:08 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f0bc27ae7sm24376490eec.26.2026.07.03.19.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jul 2026 19:30:07 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Sr+OKjuYy6/b9oqS"
-Content-Disposition: inline
-In-Reply-To: <akfKl6lJlGL6fPG3@sirena.org.uk>
-X-Cookie: Another megabytes the dust.
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 2b763db0c2763d6bf73d7d3e69665222d1f377cf
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Sat, 04 Jul 2026 02:30:07 -0000
+Message-ID: <178313220705.4773.17982428008746375252@963b246bc1b3>
 
 
---Sr+OKjuYy6/b9oqS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 03, 2026 at 03:43:35PM +0100, Mark Brown wrote:
-> Hi all,
->=20
-> After merging the mm-nonmm-unstable tree, today's linux-next failed
-> KUnit testing like this:
->=20
-> [14:20:52] Configuring KUnit Kernel ...
-> [14:20:52] Building KUnit Kernel ...
-> Populating config with:
-> $ make ARCH=3Darm64 O=3D/tmp/next/arm64_kunit olddefconfig CROSS_COMPILE=
-=3Daarch64-linux-gnu-
-> Building with:
-> $ make all compile_commands.json scripts_gdb ARCH=3Darm64 O=3D/tmp/next/a=
-rm64_kunit --jobs=3D192 CROSS_COMPILE=3Daarch64-linux-gnu-
-> [14:21:06] Starting KUnit Kernel (1/1)...
-> Running tests with:
-> $ qemu-system-aarch64 -nodefaults -m 1024 -kernel /tmp/next/arm64_kunit/a=
-rch/arm64/boot/Image.gz -append 'kunit.enable=3D1 console=3DttyAMA0 kunit_s=
-hutdown=3Dreboot' -no-reboot -nographic -accel kvm -accel hvf -accel tcg -s=
-erial stdio -machine virt -cpu max
-> [14:22:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [14:22:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D cmdl=
-ine (8 subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [14:22:11] # cmdline_test_memparse: EXPECTATION FAILED at lib/tests/cmdli=
-ne_kunit.c:249
-> [14:22:11] Expected ret =3D=3D e->result, but
-> [14:22:11]     ret =3D=3D -16 (0xfffffffffffffff0)
-> [14:22:11]     e->result =3D=3D -1 (0xffffffffffffffff)
-> [14:22:11] when parsing '0xffffffffffffffff0'
-> [14:22:11] [FAILED] cmdline_test_memparse
-> [14:22:11]     # module: cmdline_kunit
-> [14:22:11] # cmdline: pass:7 fail:1 skip:0 total:8
-> [14:22:11] # Totals: pass:7 fail:1 skip:0 total:8
-> [14:22:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D [FAILED] cmdline =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> [14:22:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [14:22:11] Testing complete. Ran 9225 tests: passed: 9104, failed: 1, ski=
-pped: 120
-> [14:22:11] Failures: cmdline.cmdline_test_memparse
-> [14:22:11] Test results stored in /tmp/next/arm64_kunit.json
-> [14:22:11] Elapsed time: 79.318s total, 0.002s configuring, 14.632s build=
-ing, 64.682s running
->=20
-> I honestly have no idea what's triggering this, nothing jumps out from
-> the commits introduced in the merge of the branch.  If I have time later
-> I'll try to bisect the issue.  I have used the tree from next-20260602
-> instead.
+Hello,
 
-bisect tells me it's due to:
+Status summary for next/master
 
-  e595545005616 (Revert "lib: fix _parse_integer_limit() to handle overflow=
-")
+Dashboard:
+https://d.kernelci.org/c/next/master/2b763db0c2763d6bf73d7d3e69665222d1f377cf/
 
-log:
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 2b763db0c2763d6bf73d7d3e69665222d1f377cf
+origin: maestro
+test start time: 2026-07-03 16:48:48.516000+00:00
 
-git bisect start
-# status: waiting for both good and bad commits
-# bad: [604ad02caddab12905643d5191b4a301d87033ef] ocfs2: fix hung task in o=
-rphan recovery
-git bisect bad 604ad02caddab12905643d5191b4a301d87033ef
-# status: waiting for good commit(s), bad commit known
-# good: [f548f2851b9323e7d0834d0c655a46644beeda64] MAINTAINERS: add Usama a=
-s a THP reviewer
-git bisect good f548f2851b9323e7d0834d0c655a46644beeda64
-# good: [1c5b1ee7d53126e8b0f027a7e7277a77900bb29f] signal: change sys_kill(=
-) to use SEND_SIG_NOINFO
-git bisect good 1c5b1ee7d53126e8b0f027a7e7277a77900bb29f
-# good: [a4db696aedb5f7ce197978df4a3c9e60c5c132cc] riscv: mm: fix concurren=
-cy in mark_new_valid_map()
-git bisect good a4db696aedb5f7ce197978df4a3c9e60c5c132cc
-# bad: [e595545005616ea8664184a6c81413fa52d46a49] Revert "lib: fix _parse_i=
-nteger_limit() to handle overflow"
-git bisect bad e595545005616ea8664184a6c81413fa52d46a49
-# good: [8264c1b8de74dd1215ac2e35166db29562f16e23] tools/compiler: match gl=
-ibc 2.42 definition of __attribute_const__
-git bisect good 8264c1b8de74dd1215ac2e35166db29562f16e23
-# first bad commit: [e595545005616ea8664184a6c81413fa52d46a49] Revert "lib:=
- fix _parse_integer_limit() to handle overflow"
+Builds:	   64 ✅    4 ❌    0 ⚠️
+Boots: 	   87 ✅    2 ❌    0 ⚠️
+Tests: 	21422 ✅ 4801 ❌  550 ⚠️
 
---Sr+OKjuYy6/b9oqS
-Content-Type: application/pgp-signature; name="signature.asc"
+### POSSIBLE REGRESSIONS
+    
+Hardware: cd8180-orion-o6
+  > Config: defconfig+netdev+nfs-root-boot+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a47f5cebb83f6a3e889f046
+      history:  > ✅  > ✅  > ❌  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6a47f5b7bb83f6a3e889f039
+      history:  > ✅  > ✅  > ❌  
+            
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpH5d4ACgkQJNaLcl1U
-h9AczQf/fy4jrkEpRr7KsEwi9yIAtQXykFJQBL8gvLIxvkdnxAkAg4izvRIOEBUB
-i45rrTRM9MoQizDfhPFSUfI0fsgC3Hwr4x1UEifFHolU3jS8w6g8W/RR8mlk6kpw
-sNxvpcFaXpBcRw9mXH9ieiDUUV3o+kkj/G/OOaRc6/H/r0UfvPuXvx2mULOyGrf2
-xkGZ9Hs7jwKCjv2Y7bzT9GzmqleDZnzIysss8h2IEJyL0jyKrDwJnmYiHNKpVBtl
-FQxHY20+T3NrP6FfNQPxS45hNBQsIPnHht4bgi+XP6IwfjiWcMsbYUo7M/w33CQa
-c9QQtW/frTlA8YlosmX3FXFWSH53IQ==
-=gHVO
------END PGP SIGNATURE-----
+### FIXED REGRESSIONS
 
---Sr+OKjuYy6/b9oqS--
+  No fixed regressions observed.
+
+
+### UNSTABLE TESTS
+
+  No unstable tests observed.
+
+
+
+This branch has 3 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
