@@ -1,82 +1,82 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509E7346E55
-	for <linux-next@vger.kernel.org>; Sun,  5 Jul 2026 12:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371D1347C5
+	for <linux-next@vger.kernel.org>; Sun,  5 Jul 2026 12:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.177
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783252946; cv=pass; b=oPjbEUnMHmg8LJCkGhBmFLQvGa6ALZynIG8b8LYD71tv4C/PvN7Eo9lwJpq2xop6518/ivcdCG8A3T0S4IOVrK25asYDoXQ0iciGMDnpNtuUeTyon+aS14/APkNRys3vdCeCcGgyIk1IaDnggtm+nigW5QF/b+zThFIjSmmR+hU=
+	t=1783253190; cv=pass; b=qpE453+QIAWldhIC278UCsHCFX/QYF0Om3Euu73R7lmm9Whp+92W8zQC8YiCHnNx5NCkPBCDegNftmY73YwKp874buxeWy50nztVNKr7rDDXdddFKqlakgm2GtpKYfHNQRTGH8yupke+7BstJPIktqj86aCsZozfv2IP1uZPvl8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783252946; c=relaxed/simple;
-	bh=K5a0McIhIuUNT79JaNpSRGf0YZUHjODLAB+1/m1dAtE=;
+	s=arc-20240116; t=1783253190; c=relaxed/simple;
+	bh=cDktNqZ7Y8L2DLcqn3jCHWr50MUHEnzrNHkSF/XhY5s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tVqRyojtBm7LhD3Z1uvoSX13OUWPr6I9KODGoIqe0gJbzW1RcvkqlcGsBpp3oaqcRt7QRGAzdMxWbjpJh3uu2w6d27p919jR3LF9TYqMZKyqE05zXURgQLh91vPvJ6EbGV+6wNlaHTRxRuS9gGo8Fu1wPfgyAjJ2SsFJ5w/pdoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0Reveqw; arc=pass smtp.client-ip=209.85.214.182
+	 To:Cc:Content-Type; b=bNTwsDt5nHpgtbIp5/siCk1m0+lcgNpJ4CuhZ6lAQzDJuGl/cg8Qc8TXqrerON2r5br2dlYwAhQs95ur60z0ZfJt27m909Ssl/NsMqXBL2gcDCqzuGLImXn0rqtOae104GHapfOcepFyUke3S7jYfGtRKU39yNdIEdPmYSfKvXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxtZn8kN; arc=pass smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0Reveqw"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2ca7605ce4bso3982765ad.1
-        for <linux-next@vger.kernel.org>; Sun, 05 Jul 2026 05:02:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783252945; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxtZn8kN"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-84787ee07f2so748759b3a.3
+        for <linux-next@vger.kernel.org>; Sun, 05 Jul 2026 05:06:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783253188; cv=none;
         d=google.com; s=arc-20260327;
-        b=JiC38rZMwrFBZJMkRDLJzs92NQg37/QfMOyA+Ni/ldnJ7i6BsQVFRd9X8noUVMBRrp
-         NmqVS1fOrXtDYyZWc3MctJzSOmk1jjCsFNx4wXHswbflOkG+UnCV4TINW7FyhLjWI+KE
-         cAUF8P7RLoyLcGNOcIwLAGIoIy4gysKnE0Q9Ty4cx6gc6w91DYXyJyt6o76LaZiIYekn
-         L3jAqM2AN8L0lugfmvfeHZ84RI/EZ2IPAh5zEr4gKI0+I7VA5xESgiBs8/xnPelc2/3Q
-         ILynhzEGRByua3qeF+caTbXWn9Bu8mTFlr5+Vmg+eP6yYCIZIXhgSjX7XOL0VC7KbKgJ
-         B7vg==
+        b=GN4WaZlRd16Fs1zBwb/zwGheNdwhToutU5gGYiRxaOkKNHCm2At4mH9oefGFhMKIUy
+         /9+PdnrM70x/XiOcF95NOAiJmAtnljfdUlEBGzr+NlGhoRU5D8ILixPLCnX9earmNOBG
+         VZaNGhRWhBQ4V06GTA4wbKsoXippbMSwVYxEUo6R/UryjnXDB0RbICmnOn+aj9GfaMgV
+         aHWT8LbHg6DqgOahxTAEOWk4i9bYIOZjeCcxjpqL4ieChhNNSkVGBqzBO9oy4qzAPuNb
+         ds/mvcd+IK6S6PzfdkjJdXnpUtRS5DpHQDemWOghHBTDrkBo/xBaxNusQFrDom5jM0wm
+         Xk9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=K5a0McIhIuUNT79JaNpSRGf0YZUHjODLAB+1/m1dAtE=;
-        fh=CW7Qzm1q36oyuqY1OKdb9eTvk3ONesYadvTG9kqELpg=;
-        b=qAnyAMeduIlc/Vv2fB9B/m/EC+TOx27OI8nYlGpA5WpGdAgid1B7KA6U/O+t3ownU2
-         tvA+qrRwuYhvzv0crRYG63fVqjo0RqQUunPsE2fhQR6mBFlC1aIA/HyACrlDbzJlfA4I
-         K4PdhmYWGY+vW0Wyn8ukpv2dXMmbwlGPlaIz2Cr+UUzbt8ChuRsmpE0rhxuDz+Rh8ahz
-         IrfMLjsyZSekMupuJhZytY5xGQS3iZTR/D/KrzwAaoNLLqc9jEKFfjkO9csdVMFsfAV5
-         wE58h6XdnjwK/UJtUWFVkQ8VFGaSqH9RaIWw4t4oFMNAMCcc6U51mn044y/dJJjgVXSA
-         rmXw==;
+        bh=cDktNqZ7Y8L2DLcqn3jCHWr50MUHEnzrNHkSF/XhY5s=;
+        fh=/Sb25Uy2sr6OLE7EZc+F8x0Ic2UHfopODXFqZsZisrY=;
+        b=cYjdSu7OvZt5no3U9lHCcLWL+nF/RIV4HdV5S/Kx0TbtHyEWZ+3jzYPsNINjkyjDQA
+         I7ntOQtDuRXFghYOt/ZyerEvoo9/cw89a4leUa1GrBx8ffDmLYtTbaRegyJSioMPBLsK
+         +vRfTi+PAsFRDUZ/zbVCpXDxjS+9rejMOC/GwAyOAdb6V/Bv+2qi3Vwx/wQ4Qk2Yw4LE
+         GN5oQ9A04AIN1NjVuqm5PJPalv+LrDmbZ+mPWgKK8s9K6XRl0key937XRmWi0SgZ2Hes
+         GTdIsTqFY9PIfKnQhgINypd5CKP3+A3kN5jOQB7GiZUsGpfyipjIS+cs0jr7+JzLKJw8
+         PBjA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783252945; x=1783857745; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783253188; x=1783857988; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=K5a0McIhIuUNT79JaNpSRGf0YZUHjODLAB+1/m1dAtE=;
-        b=A0Reveqw9cpd4GM2AHSwLegKI7pRvb/tIldUUffURyvsqg3b2Y9j2cIe2mKwH/dOfd
-         l/o2ByRgpmXlOCAcpWl1/IFNe10FxFzfhO7VjxP0w9CVa5ZtwyBR5jW5jL/EfxUmajkI
-         fTuwzHqw2EwhJFltslutF3h1J7xwFvsPrDjvIDmP+2qFL0Y6CAGKAV/cVBDNbxMi10yJ
-         VFbto9+/woVLkNtc5Le7xBWQhrpQhVzUz3tmgDvm0ODCHmhxOb+90YE/XO3XiQKLhU88
-         K5NDY2iRLvIfflZHM1mbYqykBkP33LBaGNDlf+PtERHSkjjFxZLQMOm/CkW7WMOH/McU
-         h4eQ==
+        bh=cDktNqZ7Y8L2DLcqn3jCHWr50MUHEnzrNHkSF/XhY5s=;
+        b=HxtZn8kNenVeGKkzkpGUGLnbUfsEjNmmnb+95256MiOXmFJINChzwZrE8yc8cAqn1A
+         oqUFkn5CsQvDSxkxqTS+H8zJocbNKZ1G03qnOjRC4FW27MzCe3FVFwCnD5Y/nnQlIyXK
+         SmywcjAE7ZImygUnGXHkU45mVxlwdhHOaFLTk983RZ3TrIewWQFzkhfcK6qEE1zhvGuH
+         SIFEMQqqw7NFM0sk8w1PMTwVsMzT4cFDdOGLBigWNVVTM7z7XhLexql/7pzaZKuT6Uhl
+         qNMA3D6dkyUgO4LrqJaOUJwISMgI3vn30EmiwldQDn1PlOsMQnKUqvAp0jxfYJCZXXWJ
+         8LEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783252945; x=1783857745;
+        d=1e100.net; s=20251104; t=1783253188; x=1783857988;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=K5a0McIhIuUNT79JaNpSRGf0YZUHjODLAB+1/m1dAtE=;
-        b=C+eNZTuIDjojI0jE6Vs1HTuv4u+P/SHInGUSggBM2RZz56eVNeIWh3zXqDtz2KdMHc
-         bYofNp5QU9Ncuu6mO6EusiR+PacxU/TM7MvzqiZQ21Joxpt+u6zK3myfJACjQoT8ffkR
-         qtuW4TIwrxzhfWIdL35uBZcqb0RNtxyVsFy5R6aE/PlRJzznlZsChMakXrCM3pPeCL1v
-         pB3eZt3ljU9/YCWN9/Ebq5RTh/GN2F8247bbsOehaVkE6q1lhMzgUOBcAxn3oIdpKkYW
-         eWgZHmogllSlSSabRSQHxjqbUrxNoGrmN0PE893pK0JJP6jB1uQXYW89F+y6rG7wo77G
-         WAUg==
-X-Forwarded-Encrypted: i=1; AHgh+Rry3tY6DlW4TmqzUB6F3h5nqsedXOfAMdN3aYfytSn5Z3mxs6ZBh7yAV3z6iUcggnrURZK7b/Yb4N6M@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxNdjfNKAiiWWtRzWiGUPNkEhM7JTGLp+MtiiO2IQ0chjGe881
-	+L8MkHRIGdZiu5Z0cyDKNK/n4gJCkNPhtgu51cAyVu/jtlqj2xne4UVF7ArKljldXZhlFcNYNSM
-	puOkQE6m2QvmtagPKvSRxwL6mi36GkUo=
-X-Gm-Gg: AfdE7clm23r8PPKYRPUzPBGmEyKlE88nfCPli8UwqN/ku9N+bEvvIVIiox/hVbl/KkP
-	7x9phqxNbQBkb1pLKsf1YfH8WqQk5RqzzMo6/I7bRoUZEG59fMSVFP+VeU0xz1seul0RJy+tA+v
-	dLvgGr8nyjmlDhStWM8bnBG1ToKeraIFT2EhnkX3jG6bPDk3wpEmBBUdorqNQhxY/2C77J4iR4v
-	SUzWEotQ/Z/2QctbwVW2/GEIceB3/0fPjED8m+b7omz6z2M5r4oqrekRRBecGnzsHFFbxY1gmyy
-	mzYPb5wBZreU+7CjOFx2VV0jaFcxU1qZ7Y1i0gTTonYMQq88ViKRzu/jTkDZemaYI/ILz+t7aZ0
-	WnSOBMQSEmMhl
-X-Received: by 2002:a17:90a:d406:b0:37f:ea8e:ab79 with SMTP id
- 98e67ed59e1d1-382802bea9emr3784565a91.2.1783252944589; Sun, 05 Jul 2026
- 05:02:24 -0700 (PDT)
+        bh=cDktNqZ7Y8L2DLcqn3jCHWr50MUHEnzrNHkSF/XhY5s=;
+        b=tCI8wmk7ETJ8uH0WKsnfmiELGEis64cqxEbvBvVb+ovgsx7BTKLjHEIXFX79TOX8cL
+         mmrmfLFBhakwDdrtB4pg6HyUgs/Ralbh1gvTjhiuPNcP0O2yWwsVFFUaZXPQrfAoFN3p
+         v4xytmlEFwSf70EO4EoxaSpAMjGV6VxcvxJVQBepZIhmU9UMlKfmPgff5ohvzbeSIX6t
+         NgbWnsfSI4I/HVC3ML0M7+GWVR3LSnY2YmCMhkd983i5fto4LYbAOmwt5ONAfrg04wDv
+         Rp0WCJ+f5W4/wLhw0iDLo7CtzyTRX5TWXYH78ASbjVv7XkNkMOy7eB2XKp/YUwH3LMPm
+         7bHA==
+X-Forwarded-Encrypted: i=1; AHgh+RqobQnXsdwQLKnfaZ7N2xjzXUkmBBwiORZt4BhCkk2xPSaDJsRiQc4tnYC/w+oJNJaGV14XYuqNABEy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgLdl8uNUYzfCFZBJ5glHa7TzxoiBJfVfD9+JAlNWW7hFz2QNU
+	6J1UXBHNKMkw8huNTcsra/qoNtDheBuCkHCvl62sRZhvBvXAUY0phqh5/yF3VpLTjmrBa1piIgU
+	okeKLe5SrTjcj1qNQggon/l5/GzQ2YD8=
+X-Gm-Gg: AfdE7cmlWK/rAHk0DH4I40dNzdnI3wfQFNS9kPH7F8OHDYS3iHO/yYBnIhpjLXeHl1C
+	6/uqCpaTi9HSVm4Xks/emE0eDFKmfvsS5c2A1ZeGH0m+LzoIr9jVPqnnb2qrRBF5aDuF+Zms56s
+	sa00JtoDw6b1VUQ9DVNEfNydue+Tikt+yqkblplGsfgEy8xlp4Ob4h3tMXIGStCnnXPfkNnmxKi
+	zbtOAP4VExtcUIF1F4uMNwacsa6AUNvT/6RXpxdJa04QQ6AcEkZbqIjWFPnHEgX7gw0zAneaQTv
+	bRgTu6xtMqVB5D6AlzBdT+YkQzaTe7BTrwbqr1U6N29Rjg6FXbSZqzffyBHP/7nEPHxO0SHx7s+
+	FwkvHwNuQwKcp
+X-Received: by 2002:a17:90b:4cc2:b0:381:77cd:38ca with SMTP id
+ 98e67ed59e1d1-3829eefea08mr3983489a91.4.1783253188056; Sun, 05 Jul 2026
+ 05:06:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -87,11 +87,12 @@ References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net> <69f2f52c-a13a-4f9d-ab57-78
  <akZxfzEtam8yPXEh@MacBook-0RXW5> <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
  <CANiq72=hLXip=gQS1tnLQxe6Kpwq03Bd8F1z_xLrdoCtvSAkfg@mail.gmail.com>
  <akkGwsQg1k5ZfGwa@mit.edu> <dc3c0e2a-a3fb-496a-ac82-fff849b8ba78@I-love.SAKURA.ne.jp>
-In-Reply-To: <dc3c0e2a-a3fb-496a-ac82-fff849b8ba78@I-love.SAKURA.ne.jp>
+ <CANiq72nNz6Xo8yu0nyC3OLAJiAA9A86a7Ku59YX0GD-cVwJnGA@mail.gmail.com>
+In-Reply-To: <CANiq72nNz6Xo8yu0nyC3OLAJiAA9A86a7Ku59YX0GD-cVwJnGA@mail.gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 5 Jul 2026 14:02:11 +0200
-X-Gm-Features: AVVi8Cdo6tGDxPxw1qffyi6BRv19yR153BRJW14OayP3M-7ntM-PwZMHIsGcHTs
-Message-ID: <CANiq72nNz6Xo8yu0nyC3OLAJiAA9A86a7Ku59YX0GD-cVwJnGA@mail.gmail.com>
+Date: Sun, 5 Jul 2026 14:06:14 +0200
+X-Gm-Features: AVVi8CeFASiYom3OLJnmAXQqP_soqXX7jAViDXi37UrXwfPqnHfS9UCST0g3HNU
+Message-ID: <CANiq72=igqmSzOBQYO4RqeF6yFD0B0V39Y8S4reJBFyYbrJw6A@mail.gmail.com>
 Subject: Re: Policy regarding linux-next only changes
 To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc: Theodore Tso <tytso@mit.edu>, Alexander Potapenko <glider@google.com>, Boqun Feng <boqun@kernel.org>, 
@@ -102,60 +103,12 @@ Cc: Theodore Tso <tytso@mit.edu>, Alexander Potapenko <glider@google.com>, Boqun
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 5, 2026 at 1:36=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
+On Sun, Jul 5, 2026 at 2:02=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> My response on that proposal is
-> https://groups.google.com/g/syzkaller/c/4Y3zvo_t_lI/m/jqRBCN5bBQAJ .
+> is about the worst time to do so, and which did break rust-next).
 
-I am aware -- I read the thread before I replied. I was asking what
-happened after the thread, i.e. what was the outcome, if some more
-discussion took place elsewhere, etc.
-
-> In short, if trees with custom patches were tested with as much resources
-> and many patterns/testcases as trees without custom patches, I won't need
-> to carry custom patches in linux-next. But I think that we can't afford
-> allocating so much resources for trees with custom patches.
-
-Why? Just to avoid confusing myself: are you part of the team that
-decides that allocation? Or are you saying that they ended up saying
-it isn't possible to do so?
-
-If these patches are so important, then the question is why those
-resources cannot be committed, or why cannot linux-next testing be
-reduced temporarily when there are such special runs going on.
-
-> I have carried custom patches in linux-next and it resulted in 10 patches
-> for https://syzkaller.appspot.com/bug?extid=3D881d65229ca4f9ae8c84 where
-> "#syz test:" did not work. Since remaining bugs are no longer easily
-> reproducible in linux-next, I want to carry custom patches in the network=
-ing
-> trees. But in general, git trees are not supposed to make "git reset --ha=
-rd"
-> changes.
-
-I don't follow. If it were to be agreed that linux-next is the right
-place for those tests, then those patches could simply be extra
-branches that Mark could merge at the end -- no need to `git reset`
-the "normal" subsystem branches.
-
-In other words, just like you are doing with your branch, essentially.
-But it is something that needs to be agreed upon first.
-
-> Therefore, I am using my git tree as if "quilt" for making "git reset --h=
-ard"
-> changes in linux-next tree. If a kernel config option which is used for f=
-uzz
-> testing were available in upstream, it will make easier to manage custom =
-patches
-> for temporary debugging and pinpoint-blocking stupid operations (like Sys=
-Rq-b).
-
-The kernel config option is orthogonal, in my view. That is, even if
-the option were to be added, you would still need agreement to add
-random patches for testing (including discussing when in the cycle is
-best to do so, e.g. last time you added patches just before -rc7 which
-is about the worst time to do so, and which did break rust-next).
+s/rust-next/the `rustdoc` and Clippy clean builds in linux-next/
 
 Cheers,
 Miguel
