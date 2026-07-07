@@ -1,100 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740A9423773;
-	Mon,  6 Jul 2026 18:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5339730DEB2
+	for <linux-next@vger.kernel.org>; Tue,  7 Jul 2026 02:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783363201; cv=none; b=D1u9eSeK4tIXbgYqwg32gwdx4PoQP3+PGnvCotx5Lg+hl7OL/hMCR02KL26pHb5seiY6FYeTVZH5xe3ebsdIYvUrAkplsJJzXgDZyW8Agzwiz/x1NJPrzsSLJErdZ513g0xlB7gLVyfh5Gr+4EI0X1TSqJxtYllm1LuQwqFkEAM=
+	t=1783391433; cv=none; b=p2t8WYH7aCkdtao3PoAyBtwgA7/vbZU1kwQEGCCOn4zIyXebMOHX9xxLKBGowe41w/RvH284pKEsnlPOF4bPxFM/qXG/oTOlCLqbvRY1HcVzUcR+bswVYnXKdYv9FVsLVlJzG4viuv6hJsmNrWVjDGSjMbsdDXAa9MmIW0Y9vJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783363201; c=relaxed/simple;
-	bh=orMM4fiGtREf68K8nzFB+xuzUYlxVMZdsXGzyRp6CGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jl+Aezk+1lO41JRyZfozzxyRIykuXVBypITAVfnuvP/tNm2dSuGszFreCI1Fn0jWtXlgWg0MPyhGXre5AoxiF538h/7mZtqgp0YSxjflXyL/pCjt6mceVE0zef9RQUo8Ku2JIb5A/mQcOQYt5s9vy8Hw/IcRXmEmSDUlDzOJt0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rg3fm30C; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783391433; c=relaxed/simple;
+	bh=1lw2kk86uHvg/cEHmop2dpLJ6C5X5qA3/aC20ELoYns=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=tAptwgYgexZsg+ai5iCbkpWqVXEo36czwQ5XL82VUeIqlbDqn1FZSixHWZ8kdAHfJv/P8BrJjc5HTgn76EUsqesg8GYR0mTOYb1jnaUvc49Y9dAxtmQiBWTxnBaz61JVlBDUT0A4e+4WFpI1p/aThOT1OSHJ3IOyJEFMVUc4bXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=dBFJjEqd; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rg3fm30C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80461F000E9;
-	Mon,  6 Jul 2026 18:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783363200;
-	bh=B47Qi9HuWOeCnfWo/xMNvBoW5CQ+tgPS33f6gimT9eg=;
-	h=Date:From:To:Cc:Subject;
-	b=Rg3fm30CEciOtwYiF0FLzoOo8m0O6rRj1ZViXG/57tKoKapIBqC0tZakOk7HipAwv
-	 G6v5Y8ZysKI7H1AXLfW9ByXMcAzajkXC63ktHFR9TdBveRJzQTnwtZeqbOsUyvhkKd
-	 h9YFlBTdNs4URJcjXjqiyuEMrKE4e4GPAV6jzhMkh2dYOgfIPaLZxSZTAgW+ZNE+Ai
-	 XglmGX61TwgJRon4TisjVvQ39y+jutmMHCrNvVsSp8QTcZF576TkCDTfNvm2Y6GYQu
-	 k1nmuhutUUzj7RufTHRJMwvfndHS87tS/G1vvuryKoW8skHqjsdumh3IgwGzNoDZUw
-	 Wayfgj0vjsJag==
-Date: Mon, 6 Jul 2026 19:39:56 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: -next status as at v7.2-rc2
-Message-ID: <e3559368-a76e-4bdf-940b-b07b393eba62@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="dBFJjEqd"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c9e607d81fcso2012301a12.2
+        for <linux-next@vger.kernel.org>; Mon, 06 Jul 2026 19:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1783391428; x=1783996228; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=4WFz6hyYusmvJzXT8BUTUCeB0tYf4Xx9XljIrGu7P4M=;
+        b=dBFJjEqd0W6N5fFgW6fZGrRqYMbvwNBEGlRd9t57ijquf/Rny5VkIqIgEX+bxXVGsh
+         IokwVcD5tZDLRww4Z+gA/h/fseFi7AoFMpZKdUyDTJ91Z3CZvwxMy/zlMGNvWYw0wuTV
+         nQav2fKpZjgNan3iXcvtDYQGBikoCCZ5vRjWc7JZ/iSyM0p8PUjjYiM4Ifltv7VyhLmc
+         DcaNsloACg+NzlhaY3nkJ4ByQRyn4razW0QPl8C1Jy4JtIJoCus5YEClA77f8xSzK/nO
+         ZznL0KbkGvslv3zq5wWl2Bin08WgItEbe5K9xnk0La6mgF4PJZLvp4AQA//VE7nUMLIu
+         pDZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783391428; x=1783996228;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4WFz6hyYusmvJzXT8BUTUCeB0tYf4Xx9XljIrGu7P4M=;
+        b=F1v5iVYiK7ZfO1psz61uEKtaQfSHFP6SMh1PnG5WlQ658GbOwnP6izSdxGpJhCF2aX
+         UI0fbrDRAjzP6n0xDo5PxRf5QcC9hIDIevxOFNFdS70OVuahIy/2GnQ0ibCb3MV3ruIo
+         YNlpLhxINFNgNr2AQJFia2ea4a1NpKUSJR3n1zk8ZlOIwQ66rcNRSvyXMxxtAaGf/2Sk
+         3vkGt0Pc1xCPxVzNjbjBdphR+vnPU8mINlnFb2JrRcIk+jBTZ1N7xHeUF5dWt4fldrfQ
+         TRCmUpPC74tOcwJiaKZQk+6ZVSpuerDjwbvQx68m6KYFKVTiyGPmE0XMCHbnWV0khwYn
+         vmZQ==
+X-Gm-Message-State: AOJu0YzMboBr6PrnRxmcQbuhhnpsgk8xkFI3VoSxxJCAJkW92IuRHb7G
+	zS+VnZXxGIk2yuN5/ANkDIPKXxersxQwuZm3h8rxLZ4gmd+DTafrSukX300sZIcWp/U=
+X-Gm-Gg: AfdE7cld5upzuncKi+H8MQ98bxkvkEoJe/ruLlbkSqEOvYJe9UcorhNJRuGfodXmAS7
+	lS0xgrT6sRkkAcEiX69A3F0NKBYBCJcMBKRhe/74nHOq2KwpOJkngdFuTIAXFWEeBDLmaYYXyGB
+	1ffb+Nm5RdkxCxkM6Z/ORwKpDwF6OCCkUXFG2Wtp1wZd7vwXFx36Rlz54Kp2njdMouwDNNGckoF
+	IjIj1rR9VDcJM3JyE5EnPBT1W1NVlestM5uQCrv0rO2VFZ3YKtLjoBXNVzr6Kfrmy2a8TVSXpSu
+	fUIeIn1fK9wMVsBaorFeiEi1ku6n9Bx+74VUuitWbX2+iF8AOTUEtaGkwyYGt/MRBq45hDquWQy
+	QR1n4X4JiqiqmOhP/38rA0fNYgLMaKohulMzWRiCDKb/AQX3qQTndslxx88uXXxJsWHN6YYYP3a
+	PqhOCSs//KPvBJza1f
+X-Received: by 2002:a05:6a21:689:b0:39c:235:c5ec with SMTP id adf61e73a8af0-3c08ee78247mr3636896637.34.1783391427977;
+        Mon, 06 Jul 2026 19:30:27 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31174a5b26csm2308159eec.15.2026.07.06.19.30.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jul 2026 19:30:27 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KFm25D3wAu2gm66g"
-Content-Disposition: inline
-X-Cookie: Did I do an INCORRECT THING??
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 8e9685d3c41c35dd1b37df70d854137abcb2fbac
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 07 Jul 2026 02:30:27 -0000
+Message-ID: <178339142715.6448.17223763182328318008@963b246bc1b3>
 
 
---KFm25D3wAu2gm66g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Linus,
+Hello,
 
-Things are still fairly quiet, we've had a bit of instability as new
-things start to flow into -next but nothing too remarkable and other
-than the usual DRM cherry picking not much time to start having
-conflicts.
+Status summary for next/master
 
-Trees being held at old versions:
+Dashboard:
+https://d.kernelci.org/c/next/master/8e9685d3c41c35dd1b37df70d854137abcb2fbac/
 
-  ext3           	next-20260703
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 8e9685d3c41c35dd1b37df70d854137abcb2fbac
+origin: maestro
+test start time: 2026-07-06 16:10:48.456000+00:00
 
-Trees with signoff problems:
+Builds:	   66 ✅    2 ❌    0 ⚠️
+Boots: 	  107 ✅    3 ❌    0 ⚠️
+Tests: 	22586 ✅ 1379 ❌ 2817 ⚠️
 
-  wireless		(missing committer, new today)
+### POSSIBLE REGRESSIONS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
+      last run: https://d.kernelci.org/test/maestro:6a4c06e106fecb7f4743b179
+      history:  > ✅  > ❌  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest-device-error-logs-ramdisk
+      last run: https://d.kernelci.org/test/maestro:6a4c0a6d06fecb7f474434a0
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4c032506fecb7f47439772
+      history:  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_owner_futex_requeue_pi
+      last run: https://d.kernelci.org/test/maestro:6a4c0c2f06fecb7f47443be5
+      history:  > ✅  > ❌  
+            
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6a4c034306fecb7f474397e1
+      history:  > ✅  > ❌  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6a4c107f06fecb7f474446a7
+      history:  > ✅  > ❌  
+            
 
-Non-merge commits relative to Linus' tree: 3372
- 3537 files changed, 159837 insertions(+), 65637 deletions(-)
 
-Top trees adding commits to -next:
+### FIXED REGRESSIONS
+    
+Hardware: x1e80100
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6a4c034b06fecb7f474397fc
+      history:  > ❌  > ✅  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6a4c0fea06fecb7f47444506
+      history:  > ❌  > ✅  
+            
 
-  437	amdgpu
-  302	drm-misc
-  222	mm-unstable
-  196	drm-intel
-  112	vfs-brauner
-  95	nfsd
-  95	drm-xe
-  93	net-next
-  90	sound-asoc
-  87	tip
 
-Thanks,
-Mark
+### UNSTABLE TESTS
 
---KFm25D3wAu2gm66g
-Content-Type: application/pgp-signature; name="signature.asc"
+  No unstable tests observed.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpL9nsACgkQJNaLcl1U
-h9CTKAf7B5QdB6L4vg0myIZFDbKgqlfg6ZBztezpxi+lrQgF2e3rg4c+Vkk3ABns
-MDnrS7hxeVmeSyxufFZXKpXSiHnSgCPLXV6GXuV2eu4uCZ2ou2yh48SXMI3R1zFh
-LTCdlhEI/kvDWOdNRTzLLRc3pMQylNcagJ+NSXsvWr0ZBilsdA75TNGR8/vT3GoD
-4p+R5FEEtECe3g5K707IFD7EgRaJ4WDP4QA0QAzLGbNYZpJ5OLqTt1rrQ12M/ESv
-KiW3/29UcEsqiXygNtn6LDTa86pppbWvy4NItLij+LZg6IPXh/KhbUeApPYsZiCl
-9xLYI4MNwWVNNz4uz5uKiFNHl26xXw==
-=6wtI
------END PGP SIGNATURE-----
 
---KFm25D3wAu2gm66g--
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
