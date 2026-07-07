@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D864315F;
-	Tue,  7 Jul 2026 11:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160EF36492C;
+	Tue,  7 Jul 2026 11:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783425173; cv=none; b=V9Zu1RXutBcN6teSw/ZF3ruWNi5G4E6UmDxLF1xIQ71K3UVwraKIpuVxJXAcWaf8fsziA9/6zr6HPKbeeBwtKAqZdbwemdWO2kKwpXV6nfoZpSJdmpFa/Y2Rx/juSL96b7DbTB4Ytxk7zPGBarBlBFhPZzLP8SLEttNkk0B8GsY=
+	t=1783425196; cv=none; b=IGuaG+6LNyk7Fyin2IpIC9NgDi2OHXtLowLpLv9TevuXqfs/RQhNBUdyOPK6Q7ktIlPBvTR8X93Dj5MNXmwl1DjVg2Byqu6jfrIio02S7asP2ATOemey2S3oMqYIf6A1m1iKfdOYvYY+rZNVCayKP3SN+e9nax+jAXz0qPpXTRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783425173; c=relaxed/simple;
-	bh=mKLhYxJZwGdlJPW/jXIv828cZLXcQMhygtcjlbCkLAU=;
+	s=arc-20240116; t=1783425196; c=relaxed/simple;
+	bh=zravjI5TNTrhm5rIiFDV3Hh/IuQOYOJiUUXB0KF8MeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ay/XAwRGnXjw5GQenIUb/ogJ9Rm5dLzxWp5HnENhxYKISsr5BH99kAsY7UfT09FgClADhF/9mUnHIorCx1SHE18hIOLBYQJ/f4hMlPU/Kcg+3C97BjCdoiHyFAXP9sSxSlM2bb5uRfyXZWdjpAC+PiwxIq+4uUpvGr2EozpIzAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnH5gXOZ; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=WB2/tbRL/t0+9ilPAOi/3D23s6o8sxE6/LN2lycVYPGwP6JYZjrKBo5nNh0O89PrDwV2tlJc9tx4uqrm4UlbhIBsFpceZfSCqWIlzBRMccFfvaJgH/RklNTCmL/rebhD8jq+SciMMkL/pH1M8WXtSJHgDhDDYEUjCndTPyqW2ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edf/xvcN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnH5gXOZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C1E1F000E9;
-	Tue,  7 Jul 2026 11:52:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edf/xvcN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66BE71F000E9;
+	Tue,  7 Jul 2026 11:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783425171;
-	bh=stP6f/4kuRNi9NzfK+cYLF9hGdhU4QwZi3GgzpKITT4=;
+	s=k20260515; t=1783425194;
+	bh=yLcmIYemCf1cRnUBNk4D8OZmmCanpB2R86aKBoTFfVc=;
 	h=Date:From:To:Cc:Subject;
-	b=LnH5gXOZ6YcHO0g0mcFpwGIve2InqcdpwB43WmoOgSurXFZp4agiY9eefM/UGMDf5
-	 iPQQZboa1vpIQoK2ZdQy08BO1uDbEdI9PWurerdXzHbaWQRPTZoBUb0blk6MpiyQVT
-	 kCPC9w2g9mPR7z1jWwTOnCGZkbZMcqoRCf0VdyJnSyIZQ/OSuuXocry6UGVildsCNg
-	 +4RI9FtAPhK1TyqOH2fE7HI9LHBjteGeoJ6QYNe5Q/DMKQUFYAZsdLgnG3g9/CVjnC
-	 p5oCX9YIxeYhAx5g9gvt8r3x2R6UHlGgfcRajWrYEPPfJhC6DDj6FPrYBV+C0PIaFC
-	 IDKkTu+WNHHiw==
-Date: Tue, 7 Jul 2026 12:52:48 +0100
+	b=edf/xvcNnTHb3/588lLCmKDUNmaz69s8rR8MswY/ZbH4zrMT4p76t+XKe3oIMfkVt
+	 i0EVXnxf4o6cnIzjU/qKRboXCwP9Rr6YYYyoPY3N1epzxT2QMP80258lPIRwkGB4PJ
+	 TqbSqxHCQ6cakjf3Ol5dxUG5Zvtw2D0hCM+1hFbrXCrUKMiJY6mYw/+cVDXZ3+9Lqj
+	 r6nK0GpyBVvcglB/BDNPLX/m1OSrQwK4gpzm3Sg1wldNKTcFMiF74Zmfy7cHmXsKia
+	 060boH46dLb2q/ZMSZLs7Ht2V4jP7zDm6DU/8ACbtom2CChisSvZ2J5/vhsNkXPmEb
+	 9voMoTGrsPH5w==
+Date: Tue, 7 Jul 2026 12:53:10 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Fixes tags need work in the drm tree
-Message-ID: <akzokN7rHrYSZ_A7@sirena.org.uk>
+Message-ID: <akzopmDBFY9Epm0V@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,17 +39,17 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fMfP6VrfMp13jt4S"
+	protocol="application/pgp-signature"; boundary="L5m3sJ6SNK/ieKlv"
 Content-Disposition: inline
 
 
---fMfP6VrfMp13jt4S
+--L5m3sJ6SNK/ieKlv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 In commit
 
-  3b1f4d5e47b36 ("drm/amd/display: Fix dangling pointer in connector reset function")
+  0aeed866cb938 ("drm/amd/display: Fix dangling pointer in CRTC reset function")
 
 Fixes tag
 
@@ -61,19 +61,19 @@ has these problem(s):
     Just use
 	git log -1 --format='Fixes: %h ("%s")'
 
---fMfP6VrfMp13jt4S
+--L5m3sJ6SNK/ieKlv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM6I8ACgkQJNaLcl1U
-h9Ct2Qf+JVp9vWrtUsjH9h9ccl3UbPPOMq/NNFCn0CUnQ9qVGGtRskw6hfRm+xt0
-fIwwCgk6fQmDvHMyFzteNHdGBrPyHIIbKv+ZyM84i/4CqvfC49EsHbu64pkp4rkr
-u68vnTRqG258yJ8KsxXgKLGt8Y2xv4pmZgbABPiT/eMKfq0Xlt6iO1eUzkWSc9Tt
-FEKj3i38Jvx8jctjTBBivlQ5x5tgpJPzAi4N9JNJf7rxvtVjNJlZ/ucogF4nYRk0
-xXktZwO6eA63CVZyIn4qKOI0ELe1+wu5VuP3ZyfbseBVLnKpumouSrKgEGW2gOml
-7yNrAHJDe16wJfoRCl+ymo3+WCW0+Q==
-=xjip
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM6KYACgkQJNaLcl1U
+h9DhxQf/S9yn4pNhWSzSiGlV4R4L+5muw88eeqdSCVppC9tPpdeLq+b7T8oqhvc+
+q9etySMgOAqStNrieQ1l+5yxydgExvv0+CqePT7i4zUm3QZwCTy6fj7fe3V4ruTX
+9QXmZsgINPRQkOSj8HXB0n2/d+SOup8wFjsq/NSQ6BDbHptYJjcwVzQHbabbChEH
+KFue+GEWzOOxj7gbF/EKOQtPH6x27L9wuyEZym5mPluC1yn8sZJcvPnp1Fc19tVi
+5zDDhnTVSs3IP85iriu3qqWNiLjxTgiVzkd7h1UqJv8EEr9Vv0zT9BwToh4FRQSF
+vE2BJJD6UCLZGKs8BY9UFtFZvSRYTg==
+=KiEM
 -----END PGP SIGNATURE-----
 
---fMfP6VrfMp13jt4S--
+--L5m3sJ6SNK/ieKlv--
