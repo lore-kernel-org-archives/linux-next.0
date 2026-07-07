@@ -1,39 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D74410D20;
-	Tue,  7 Jul 2026 12:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CC240A92C;
+	Tue,  7 Jul 2026 13:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783429118; cv=none; b=odAQn7a5bJquO4zBCQSKKilNPARXkTeV5b8g8Z5MtiQDU0SUq1jNhFb1RWAiW03fquAP7BBLQzEoAsGms81/LUwa5AMyvQnRzKx4M6EpYR+f/uQkV+zBhPny5spjlyCECUVE91rwujeyr4I1zDmbxXgt7f2khYPTSbQfGpboXFM=
+	t=1783429269; cv=none; b=T5OiCUPZis2p8bf+yw2Yaq+niNb6lCPA6BckQHCa6M+POEKR6BRG2dx59thZfzIMW7DCYvemTQ+/pe5T8jiIhRPq7Huf0tNJCEM1qWHDZItRG7XlHKscsNyfl8/UiLU6GT9vuCw2Rkxg3D6nPqwMkiZOJSNZEIcidT/7lzdOPtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783429118; c=relaxed/simple;
-	bh=Mt0IsgqNK+fRBvrqiWJ/Fktvx+Bh4Um90VSdMqhLHFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJorQVJHwaGJBc9YOaM6cbF24GOWM8JmMDfYQAskYlKW9lYjCNPfufmzwmpTuEtTAzMyfAmMAdBZ5f2NLx7rytys3HGly0+fptrTrQeiVP9ySRX0hmnMbgB4Y49k763kp3ZXjnFBD3b/YxYwHo45r77zCWF4qfxRdl4i8Kfz0C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQu0NQcv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783429269; c=relaxed/simple;
+	bh=IKo8yWpLIBOWVn10Lrh8JWyduqo/8kSF4QYt168Kvj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eknwUHodGjlaqT5r8a6Etu/Da8WEW7aWmFyGXIyGBGQnfk3yA9D83Noc36edtV+gJb9GuehQVFORziL82GC5drwYwUMfIoib/ga6fChlutT+OEDWHH3kvA48sBmR+3zrFeWyXr60TQtW1buv1WNSPQHdMK+2p7xb5AarQ8dM2Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/nRfiUx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQu0NQcv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973DF1F000E9;
-	Tue,  7 Jul 2026 12:58:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/nRfiUx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2479D1F00A3F;
+	Tue,  7 Jul 2026 13:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783429117;
-	bh=rgSqYybarv/bgpc3er8FQrtWGNeqhwsmW7C4wBzrItw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dQu0NQcvJ/nH97SzV0FghNwZ4h36X1o8DmR+3gb7pnmK65iX6fFb4aSUVv9k5wdnB
-	 J4Pgt0u27EWky1i2vhKWpOqd59bxmO8Qr9SyegKuxYxKxFsSl0pNAUoHdAVrnpc6Ci
-	 yo4IVK9z5sKAVrSabBAsH2zwIjfnRB63yTQesyIMeasJy2caF8ONqf36XJ8OKPy5zq
-	 IKUMs+Hhm060E3yivtlYc8VdJTlzYie/tZR+DzCfSCcSuRwE1aQEY/sEOKSCUmaJEK
-	 aVIBJIuo82PD2dyvhAYiThwsZXRvMhnX6VCXMd0hgWbsndABPre82lp9uGC/fU2Wuv
-	 M/LV6FiSt55Fw==
-Date: Tue, 7 Jul 2026 13:58:33 +0100
+	s=k20260515; t=1783429267;
+	bh=Cht8wjKKjdOPllLidnwAoAIG5NxYdDcVq3OxDQryxoQ=;
+	h=Date:From:To:Cc:Subject;
+	b=Y/nRfiUxAVgnqzLubH1l4hNXo+uhdg5lkDcTKy5KKuJ8xD1l0B1oQihoEJATDRlU4
+	 BWrer+NHEz+x/LteVv0pj+SARIrEmKTQJqniKZ0IfeKWdzH5Mr/8JLBaxVev5/OYeK
+	 9RloRe5Gc9tG8pdpwV2Q/bJIH/1tSG79viGSxg+A0jShXrvnVCy3KDbpB0NPQM7jGU
+	 lHV9kuyb2mTt90Buo5l4L2OzZ9IOM4hzJh/Z/vgrCi2aAjaVzTII5b2qOaQQyDYZnB
+	 e6FslxrtRZVptOYq8Hb7Cn6isbo4MrvOQzo6Ef6fYl+gCvoVIPnsdocN7/jJsW/rBn
+	 4djutCZTrY5BQ==
+Date: Tue, 7 Jul 2026 14:01:04 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Build failure in the final build
-Message-ID: <00d8bde5-d05a-4295-909d-21d73973015a@sirena.org.uk>
-References: <akztC7H2IsEKaq4i@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jul 7
+Message-ID: <akz4kAO7vxiZI9v4@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,75 +39,69 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zdqeeX5lXEnUCXjX"
+	protocol="application/pgp-signature"; boundary="e8cD3NllUa+k5Wwe"
 Content-Disposition: inline
-In-Reply-To: <akztC7H2IsEKaq4i@sirena.org.uk>
-X-Cookie: Walk softly and carry a megawatt laser.
 
 
---zdqeeX5lXEnUCXjX
+--e8cD3NllUa+k5Wwe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 07, 2026 at 01:11:55PM +0100, Mark Brown wrote:
+Hi all,
 
-> After merging the kvm-arm-fixes tree, today's linux-next build
-> (arm64 defconfig) started generating warnings:
+Changes since 20260706:
 
-> In file included from /tmp/next/build/include/linux/limits.h:7,
->                  from /tmp/next/build/include/linux/overflow.h:6,
->                  from /tmp/next/build/include/linux/bits.h:32,
->                  from /tmp/next/build/arch/arm64/include/asm/kvm_pgtable.h:10,
->                  from /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c:11:
-> /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c: In function 'kvm_pgtable_stage2_relax_perms':
-> /tmp/next/build/include/vdso/limits.h:8:25: warning: overflow in conversion from 'int' to 's8' {aka 'signed char'} changes value from '2147483647' to '-1' [-Woverflow]
->     8 | #define INT_MAX         ((int)(~0U >> 1))
->       |                         ^
-> /tmp/next/build/arch/arm64/include/asm/tlbflush.h:131:33: note: in expansion of macro 'INT_MAX'
->   131 | #define TLBI_TTL_UNKNOWN        INT_MAX
->       |                                 ^~~~~~~
-> /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c:1361:20: note: in expansion of macro 'TLBI_TTL_UNKNOWN'
->  1361 |         s8 level = TLBI_TTL_UNKNOWN;
->       |                    ^~~~~~~~~~~~~~~~
-> In file included from /tmp/next/build/include/linux/limits.h:7,
->                  from /tmp/next/build/include/linux/overflow.h:6,
->                  from /tmp/next/build/include/linux/bits.h:32,
->                  from /tmp/next/build/arch/arm64/include/asm/kvm_pgtable.h:10,
->                  from /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c:11:
-> /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c: In function 'kvm_pgtable_stage2_relax_perms':
-> /tmp/next/build/include/vdso/limits.h:8:25: warning: overflow in conversion from 'int' to 's8' {aka 'signed char'} changes value from '2147483647' to '-1' [-Woverflow]
->     8 | #define INT_MAX         ((int)(~0U >> 1))
->       |                         ^
-> /tmp/next/build/arch/arm64/include/asm/tlbflush.h:131:33: note: in expansion of macro 'INT_MAX'
->   131 | #define TLBI_TTL_UNKNOWN        INT_MAX
->       |                                 ^~~~~~~
-> /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c:1361:20: note: in expansion of macro 'TLBI_TTL_UNKNOWN'
->  1361 |         s8 level = TLBI_TTL_UNKNOWN;
->       |                    ^~~~~~~~~~~~~~~~
+The risc-v tree acquired a conflict with the mm-unstable tree.
 
-> Caused by commit
+The kvm-arm-fixes tree acquired a build failure in the final build.
 
->    100baf0184896 (KVM: arm64: Ensure level is always initialized when relaxing perms)
+Non-merge commits (relative to Linus' tree): 3756
+ 3863 files changed, 138425 insertions(+), 72637 deletions(-)
 
-> I imagine this will cause an allyesconfig build failure when I get to
-> that due to -Werror.
+----------------------------------------------------------------------------
 
-Confirmed, nothing later in the merge fixed the warning so -Werror
-triggered breaking arm64 allyesconfig.
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
---zdqeeX5lXEnUCXjX
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 427 trees (counting Linus' and 132 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--e8cD3NllUa+k5Wwe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM9/kACgkQJNaLcl1U
-h9A9aAgAgVA4maPqnpzpACb1cLYd69k8UIH7ElGOZLjrItzTWpAvQsVU6NCDaso5
-N+XKYuidnvkApaPY3JqF/8nuXssHodRdIcLOZP63jCpXvdMzEAWpsujfxTj8TQrM
-HRAEn3hO+1Wyryx313LhhrLzPtHYbhQ7g4/a6rpgbg08U4QtRvykuoN8IDPHq9M5
-8I+IAGBObW9EpPJoOJHU3RWFmkmXKwwwrzTgJq+xLGaiVat12iygZ1LdqsYDfRmd
-TnNsvdWxr53RPrMPb5w5PFlMAGMay1Pk/WN9udxqHrDMfdga9RPs8bVzlDq6l+3T
-8ZmXVm8UGM9c180oOphXFXSZR+faUA==
-=aW1j
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM+I8ACgkQJNaLcl1U
+h9AKSwf+JCHXFQx15aUkdEmcUrihUmeGqQFYYqWUdzcTMfqmVrIbDAi0dxaOQiVw
+jdgYvgMpHveTBf/PC2n11vCcoj3uOGzVrCc9W07bidTAURJ1+iedb7oPsxeSivze
+pFzVWNrGHwOiXKieH3BwXRCJDCbfOVFgy25IIQVb/LSRHCABOBZRopzVgE+eU8JI
+wKzuBZFpA1920wW8UDWMSL9iDtD1G/XsTbtYnpVMdOjAyR228f3xIms4oDqpYvIO
+ESuclqnO3jK9bLIKtYpC0xwFgfUZryP63+B9tTbLEe6K8IRJJoi7R8GCoV7j8OVr
+I2YG0E6EWIrw0i0tXroxkk8ETd2Erw==
+=FqcY
 -----END PGP SIGNATURE-----
 
---zdqeeX5lXEnUCXjX--
+--e8cD3NllUa+k5Wwe--
