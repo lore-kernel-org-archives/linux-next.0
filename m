@@ -1,162 +1,282 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5339730DEB2
-	for <linux-next@vger.kernel.org>; Tue,  7 Jul 2026 02:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531383B6C05;
+	Tue,  7 Jul 2026 07:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783391433; cv=none; b=p2t8WYH7aCkdtao3PoAyBtwgA7/vbZU1kwQEGCCOn4zIyXebMOHX9xxLKBGowe41w/RvH284pKEsnlPOF4bPxFM/qXG/oTOlCLqbvRY1HcVzUcR+bswVYnXKdYv9FVsLVlJzG4viuv6hJsmNrWVjDGSjMbsdDXAa9MmIW0Y9vJk=
+	t=1783408821; cv=none; b=Tzg2MJQlGZsUFRGXzC+/eYI3mUnTBUr7X1TO4xXcG6WLuQVmBv9ArcZ1gfZlK8aCK42edL/yKMfc3OnyLkPNOTfhTwMhY3V+Q+133FqcNr0JahajOXphU9frTsZSk9CDqTQr/oSzH2AdVc3M+hxm5ObLvpDARMTF+jZzQOzez9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783391433; c=relaxed/simple;
-	bh=1lw2kk86uHvg/cEHmop2dpLJ6C5X5qA3/aC20ELoYns=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=tAptwgYgexZsg+ai5iCbkpWqVXEo36czwQ5XL82VUeIqlbDqn1FZSixHWZ8kdAHfJv/P8BrJjc5HTgn76EUsqesg8GYR0mTOYb1jnaUvc49Y9dAxtmQiBWTxnBaz61JVlBDUT0A4e+4WFpI1p/aThOT1OSHJ3IOyJEFMVUc4bXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=dBFJjEqd; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1783408821; c=relaxed/simple;
+	bh=4MdES63+guZkzHGqeL5ivXmKeg78abWkwtGrzbBkvIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RsajWlja13Q2lignj/pwKgx3JV3UqhvfF6uGluPMPrFXh4CmPUOOQJ6P2Ejy5JZ7OkiCVwXj+LYtVfHM5om/C8JSShCQ03RWp2eNm2d2D00Mq/xB9bLkU8XhuGMr0b6KK4uZFNj/u1H5c5KnhOid7eBJnzFJuPtXJdfwUxpEBhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KaYa+zcA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="dBFJjEqd"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c9e607d81fcso2012301a12.2
-        for <linux-next@vger.kernel.org>; Mon, 06 Jul 2026 19:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1783391428; x=1783996228; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=4WFz6hyYusmvJzXT8BUTUCeB0tYf4Xx9XljIrGu7P4M=;
-        b=dBFJjEqd0W6N5fFgW6fZGrRqYMbvwNBEGlRd9t57ijquf/Rny5VkIqIgEX+bxXVGsh
-         IokwVcD5tZDLRww4Z+gA/h/fseFi7AoFMpZKdUyDTJ91Z3CZvwxMy/zlMGNvWYw0wuTV
-         nQav2fKpZjgNan3iXcvtDYQGBikoCCZ5vRjWc7JZ/iSyM0p8PUjjYiM4Ifltv7VyhLmc
-         DcaNsloACg+NzlhaY3nkJ4ByQRyn4razW0QPl8C1Jy4JtIJoCus5YEClA77f8xSzK/nO
-         ZznL0KbkGvslv3zq5wWl2Bin08WgItEbe5K9xnk0La6mgF4PJZLvp4AQA//VE7nUMLIu
-         pDZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783391428; x=1783996228;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4WFz6hyYusmvJzXT8BUTUCeB0tYf4Xx9XljIrGu7P4M=;
-        b=F1v5iVYiK7ZfO1psz61uEKtaQfSHFP6SMh1PnG5WlQ658GbOwnP6izSdxGpJhCF2aX
-         UI0fbrDRAjzP6n0xDo5PxRf5QcC9hIDIevxOFNFdS70OVuahIy/2GnQ0ibCb3MV3ruIo
-         YNlpLhxINFNgNr2AQJFia2ea4a1NpKUSJR3n1zk8ZlOIwQ66rcNRSvyXMxxtAaGf/2Sk
-         3vkGt0Pc1xCPxVzNjbjBdphR+vnPU8mINlnFb2JrRcIk+jBTZ1N7xHeUF5dWt4fldrfQ
-         TRCmUpPC74tOcwJiaKZQk+6ZVSpuerDjwbvQx68m6KYFKVTiyGPmE0XMCHbnWV0khwYn
-         vmZQ==
-X-Gm-Message-State: AOJu0YzMboBr6PrnRxmcQbuhhnpsgk8xkFI3VoSxxJCAJkW92IuRHb7G
-	zS+VnZXxGIk2yuN5/ANkDIPKXxersxQwuZm3h8rxLZ4gmd+DTafrSukX300sZIcWp/U=
-X-Gm-Gg: AfdE7cld5upzuncKi+H8MQ98bxkvkEoJe/ruLlbkSqEOvYJe9UcorhNJRuGfodXmAS7
-	lS0xgrT6sRkkAcEiX69A3F0NKBYBCJcMBKRhe/74nHOq2KwpOJkngdFuTIAXFWEeBDLmaYYXyGB
-	1ffb+Nm5RdkxCxkM6Z/ORwKpDwF6OCCkUXFG2Wtp1wZd7vwXFx36Rlz54Kp2njdMouwDNNGckoF
-	IjIj1rR9VDcJM3JyE5EnPBT1W1NVlestM5uQCrv0rO2VFZ3YKtLjoBXNVzr6Kfrmy2a8TVSXpSu
-	fUIeIn1fK9wMVsBaorFeiEi1ku6n9Bx+74VUuitWbX2+iF8AOTUEtaGkwyYGt/MRBq45hDquWQy
-	QR1n4X4JiqiqmOhP/38rA0fNYgLMaKohulMzWRiCDKb/AQX3qQTndslxx88uXXxJsWHN6YYYP3a
-	PqhOCSs//KPvBJza1f
-X-Received: by 2002:a05:6a21:689:b0:39c:235:c5ec with SMTP id adf61e73a8af0-3c08ee78247mr3636896637.34.1783391427977;
-        Mon, 06 Jul 2026 19:30:27 -0700 (PDT)
-Received: from 963b246bc1b3 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31174a5b26csm2308159eec.15.2026.07.06.19.30.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 19:30:27 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KaYa+zcA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC42B1F000E9;
+	Tue,  7 Jul 2026 07:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783408812;
+	bh=wY02ZOOqtNUYu5fUXhQWrnqI9bOepK4rWFAgqLIkiFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=KaYa+zcA1PR4dZQUZEz1SlvQ0HV8phLp284n/QGB68SqDnTE+TSk8113ki4/k39Cl
+	 fRfoAqpMrfqbhnAo0FT2q20/dFSPGCZLS5XAdCXESEdeYP6jgfykOvOl62a3ZKywGV
+	 htuZdzoI9CCFsOPVDmxvBArUeJe5h/i/023VS7Ps5iuzRR3AW0MH3qQaYjUsieTHZ/
+	 V4scWSI/uggAaSeQq0Y0emi2O098Fa1aW0id0ChN9tPNYTbrOjunGO72H/tR9mUR6E
+	 ZXTDxgtfl4MRhiLTrDURnQ9mrkc92Kf03g4QbgtTIjHb6faYsemOQfV+u8YvorVV/j
+	 ZMMKO0b23g7WA==
+Date: Tue, 7 Jul 2026 09:20:05 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+	Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	peterz@infradead.org, will@kernel.org, longman@redhat.com,
+	gregkh@linuxfoundation.org, syzkaller <syzkaller@googlegroups.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH -v2] lockdep: Enable the printing of held locks of remote
+ running tasks and print task CPU
+Message-ID: <akyopXs1SeH6rXu4@gmail.com>
+References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net>
+ <69f2f52c-a13a-4f9d-ab57-789eb4fdc335@I-love.SAKURA.ne.jp>
+ <akZxfzEtam8yPXEh@MacBook-0RXW5>
+ <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
+ <akoeSIQGwqd9cZwd@gmail.com>
+ <2f7513c6-42e1-413b-8bd5-fa5abefe4b99@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 8e9685d3c41c35dd1b37df70d854137abcb2fbac
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 07 Jul 2026 02:30:27 -0000
-Message-ID: <178339142715.6448.17223763182328318008@963b246bc1b3>
+In-Reply-To: <2f7513c6-42e1-413b-8bd5-fa5abefe4b99@I-love.SAKURA.ne.jp>
 
 
+* Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 
-Hello,
+> On 2026/07/05 18:05, Ingo Molnar wrote:
+> > TL;DR: it should be fine to print the held locks of running
+> > tasks too, as long as we print out a warning when we print
+> > such a task, so that users are aware of any racy output.
+> > 
+> > The (lightly tested) patch below implements this.
+> > 
+> > Note that this way there's no need to gate this on the Syzkaller
+> > config option, and you wouldn't have to carry it in -next either,
+> > it's a useful mainline kernel debuggability enhancement in its
+> > own right.
+> > 
+> > Would this work for you?
+> 
+> Yes, this will be a helpful change. Thank you very much.
+> I can drop "locking/lockdep: make lockdep_print_held_locks() always print
+> if CONFIG_DEBUG_AID_FOR_SYZBOT=y" change from linux-next tree.
+> 
+> Please avoid emitting "BUG:" or "WARNING:", for syzkaller stops upon
+> encountering these strings. Also, since printk() is a slow operation,
+> please reduce number of characters to print where reasonable.
+> 
+> -		msg_running = " (WARNING: task running)";
+> +		msg_running = " (running)";
+> 
+> If we can safely calculate on which CPU that thread is running (or waiting
+> to run), printing CPU number might be also helpful.
+> 
+> 	char msg_running[14] = "";
+> 
+> 	if (task_is_running(p)) {
+> 		int cpu_id = which_cpu_task_is_on(p); // If possible...
+> 
+> 		if (cpu_id >= 0)
 
-Status summary for next/master
+[ Side note: task_cpu() is never negative and can always be relied on
+  for valid tasks to be an int in the possible-CPUs numeric range. ]
 
-Dashboard:
-https://d.kernelci.org/c/next/master/8e9685d3c41c35dd1b37df70d854137abcb2fbac/
+> 			scnprintf(msg_running, sizeof(msg_running), "(C%u)", cpu_id);
+> 		else
+> 			scnprintf(msg_running, sizeof(msg_running), "(running)");
+> 	}
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 8e9685d3c41c35dd1b37df70d854137abcb2fbac
-origin: maestro
-test start time: 2026-07-06 16:10:48.456000+00:00
+Sure, we can print the CPU ID too, in fact we can do something even
+better: for locking races it's useful information on which CPU
+a task last ran on, right? So I think we should just print the CPU ID
+of tasks unconditionally.
 
-Builds:	   66 ✅    2 ❌    0 ⚠️
-Boots: 	  107 ✅    3 ❌    0 ⚠️
-Tests: 	22586 ✅ 1379 ❌ 2817 ⚠️
+The patch below does this, and also streamlines the printout a bit,
+into a single statement. The new message variants are:
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
-      last run: https://d.kernelci.org/test/maestro:6a4c06e106fecb7f4743b179
-      history:  > ✅  > ❌  
-            
-Hardware: qcs9100-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest-device-error-logs-ramdisk
-      last run: https://d.kernelci.org/test/maestro:6a4c0a6d06fecb7f474434a0
-      history:  > ✅  > ❌  > ❌  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a4c032506fecb7f47439772
-      history:  > ✅  > ❌  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6a4c0c2f06fecb7f47443be5
-      history:  > ✅  > ❌  
-            
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6a4c034306fecb7f474397e1
-      history:  > ✅  > ❌  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6a4c107f06fecb7f474446a7
-      history:  > ✅  > ❌  
-            
+  [   37.078569] locks held by sleep/7991: 1, on CPU#2:
+  [   37.083565] locks held by sleep/7995: 1, on CPU#3:
+  [   37.086346] locks held by sleep/7997: 5, last CPU#2:
+  [   37.096518] locks held by sleep/8001: 6, last CPU#0
+  [   37.056812] locks held by bash/414: 0, last CPU#0
 
+See the patch description and the extended comment in the code
+about the details.
 
-### FIXED REGRESSIONS
-    
-Hardware: x1e80100
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6a4c034b06fecb7f474397fc
-      history:  > ❌  > ✅  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6a4c0fea06fecb7f47444506
-      history:  > ❌  > ✅  
-            
+I've applied this patch to tip:locking/debug, so it should
+show up in -next tomorrow, but it can be iterated some more.
 
+Thanks,
 
-### UNSTABLE TESTS
+	Ingo
 
-  No unstable tests observed.
+================================>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Sun, 5 Jul 2026 11:05:17 +0200
+Subject: [PATCH] lockdep: Enable the printing of held locks of remote running tasks and print task CPU
 
+Background:
+==========
 
+Currently lockdep does not print out the held locks of non-current
+tasks that are running on some other CPU, due to the fact that
+the held locks array is in flux and may be unreliable to print.
 
-This branch has 1 pre-existing build issues. See details in the dashboard.
+Syzkaller on the other hand found it that the analysis of locking
+bugs is easier if we print this information too, because the
+more locking information the merrier. In particular races are
+bound to have multiple tasks running on different CPUs, and
+the exclusion of their held locks information is unnecessarily
+limiting.
 
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+So while it's still true that printing out their held locks
+array is racy, it's not as bad as it seems.
 
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
+There's 16 internal callers to lockdep_print_held_locks():
 
-Made with love by the KernelCI team - https://kernelci.org
+ - 14 callers call it with the current task, which should be
+   safe out of box.
+
+ - 1 caller, debug_show_all_locks(), calls it with RCU held,
+   which should guarantee that 'p' cannot go away under us.
+
+ - 1 caller, debug_show_held_locks(), exposes the internal API
+   with the constraint that it should only be called by drivers
+   or platform code if the task isn't actively running - we can
+   assume that if it nevertheless does, it will be Their Problem™.
+
+As for held locks being changed from under debug_show_held_locks(),
+while the task cannot go away, so the held-locks array itself is
+safe (although potentially non-stable), AFAICS the worst-case race
+can be garbage printed out by print_lock(), not any actual crashes.
+
+In particular:
+
+        unsigned int class_idx = hlock->class_idx;
+
+may be stale (belong to a lock that already got released on another
+CPU), but it should still be a valid class index bound by
+MAX_LOCKDEP_KEYS, and thus the lock_classes_in_use bitmap use
+should be safe.
+
+The other two accesses are ::acquire_ip and ::instance:
+
+       printk(KERN_CONT "%px", hlock->instance);
+       print_lock_name(hlock, lock);
+       printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
+
+But both are printed out as pointers, so no risk of dereference
+of a dangling pointer. We may print a garbage pointer.
+
+Also note that the check itself doesn't protect debug_show_held_locks()
+from printing garbage, as there's nothing that keeps a task from
+becoming runnable a nanosecond after we've run the task_is_running()
+check. In fact I'd argue that it's better to make this function
+*more* racy, for the simple robustness reason that we absolutely
+do not want it to crash even in the racy case.
+
+TL;DR: it should be fine to print the held locks of running
+tasks too, as long as we print out a warning when we print
+such a task, so that users are aware of any racy output.
+
+Implementation:
+==============
+
+Implement that change.
+
+Also re-flow the function and streamline the printout into
+a single statement for all cases, which changes
+the 'no locks held by' / '%d lock[s] held by' phrasing that had a
+dependency on English spelling of plurals, to a uniform:
+
+	locks held by bash/1234: %d
+
+Which spells correctly for 0, 1 and higher values, and should also
+be easier to parse both for humans and for scripts.
+
+Finally, print out the last CPU a task has ran on. This is very
+useful information for races and for locking bugs in particular.
+This basically extends the 'on CPU#%d' message we print for
+running tasks to all tasks we print.
+
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Suggested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Boqun Feng <boqun@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Theodore Tso <tytso@mit.edu>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Waiman Long <longman@redhat.com>
+Link: https://patch.msgid.link/akoeSIQGwqd9cZwd@gmail.com
+---
+ kernel/locking/lockdep.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 2d4c5bab5af8..ff4bbf14665e 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -787,17 +787,33 @@ static void lockdep_print_held_locks(struct task_struct *p)
+ {
+ 	int i, depth = READ_ONCE(p->lockdep_depth);
+ 
+-	if (!depth)
+-		printk("no locks held by %s/%d.\n", p->comm, task_pid_nr(p));
+-	else
+-		printk("%d lock%s held by %s/%d:\n", depth,
+-		       str_plural(depth), p->comm, task_pid_nr(p));
+ 	/*
+-	 * It's not reliable to print a task's held locks if it's not sleeping
+-	 * and it's not the current task.
++	 * Note that it's always somewhat unreliable to print held locks
++	 * of a task that is running on another CPU, but we cannot guarantee
++	 * the stability of ->held_locks without actually stopping all active
++	 * remote CPUs, which we absolutely do not want to do because it's
++	 * very intrusive and thus slow.
++	 *
++	 * So we do the next best thing here: we print out the held lock
++	 * array on a best-effort basis, without crashing even if the
++	 * fields are being modified on another CPU. Note the careful
++	 * construction of print_lock() so that it never crashes.
++	 *
++	 * We also print out the CPU the task is or was last running on, with
++	 * the message saying 'on CPU...' if the task is running, and
++	 * 'last CPU' if it's not.
++	 *
++	 * Also note that the task_is_running(p) information is fundamentally
++	 * racy: even if the message says the task is 'on CPU', the task may
++	 * have scheduled out already, or if it says 'last CPU', it may just
++	 * have scheduled in on another CPU. But even with these limitations
++	 * it's still useful debuggining information.
+ 	 */
+-	if (p != current && task_is_running(p))
+-		return;
++	printk("locks held by %s/%d: %d, %s CPU#%d%s\n",
++		p->comm, task_pid_nr(p), depth,
++		task_is_running(p) ? "last" : "on", task_cpu(p),
++		depth > 0 ? ":" : "");
++
+ 	for (i = 0; i < depth; i++) {
+ 		printk(" #%d: ", i);
+ 		print_lock(p->held_locks + i);
