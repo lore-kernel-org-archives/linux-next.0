@@ -1,37 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160EF36492C;
-	Tue,  7 Jul 2026 11:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B845536492C;
+	Tue,  7 Jul 2026 11:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783425196; cv=none; b=IGuaG+6LNyk7Fyin2IpIC9NgDi2OHXtLowLpLv9TevuXqfs/RQhNBUdyOPK6Q7ktIlPBvTR8X93Dj5MNXmwl1DjVg2Byqu6jfrIio02S7asP2ATOemey2S3oMqYIf6A1m1iKfdOYvYY+rZNVCayKP3SN+e9nax+jAXz0qPpXTRY=
+	t=1783425245; cv=none; b=SxPTKmsOjJ48aN6XR2aBtEG+vEctCYL0rtnBDRzxhUr/S69ogRovKyxGdUH+EB9sjSUtHu/j+dhA0V8mT3+xmK07FqW2bjolqZc2VZboVbiTDckThqvAVYNvO2ID/hiT0MSShzejZ20orYN3DN4o7N50Gb2A6xQmtypxW7yC7gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783425196; c=relaxed/simple;
-	bh=zravjI5TNTrhm5rIiFDV3Hh/IuQOYOJiUUXB0KF8MeE=;
+	s=arc-20240116; t=1783425245; c=relaxed/simple;
+	bh=SVeA3S7LOP3yqJTDXdFdpcOnRMnoawGoGIWd2R+6qdQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WB2/tbRL/t0+9ilPAOi/3D23s6o8sxE6/LN2lycVYPGwP6JYZjrKBo5nNh0O89PrDwV2tlJc9tx4uqrm4UlbhIBsFpceZfSCqWIlzBRMccFfvaJgH/RklNTCmL/rebhD8jq+SciMMkL/pH1M8WXtSJHgDhDDYEUjCndTPyqW2ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edf/xvcN; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=O/abaFl1VWbBKLxY43N8dQ9FCg4XiUoYuboEiwMOXTziJ+Q2v9SgirfrxWnKcToLJ5yhqsi46YVucl6SWIoVKIRmfIAWiRAaPnYFoonJhc0+3YlQOxh/X3M5wfEyw2j65HjRnbS8lGT3+8vLRFUQYStmNJF8S6W6AWr0In/XCrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qpm5SDQo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edf/xvcN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66BE71F000E9;
-	Tue,  7 Jul 2026 11:53:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qpm5SDQo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00E391F000E9;
+	Tue,  7 Jul 2026 11:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783425194;
-	bh=yLcmIYemCf1cRnUBNk4D8OZmmCanpB2R86aKBoTFfVc=;
+	s=k20260515; t=1783425244;
+	bh=xOpwCwm/S6jiQOiDDhUCnH2AIRpmFUk6xDHEPzrA1F0=;
 	h=Date:From:To:Cc:Subject;
-	b=edf/xvcNnTHb3/588lLCmKDUNmaz69s8rR8MswY/ZbH4zrMT4p76t+XKe3oIMfkVt
-	 i0EVXnxf4o6cnIzjU/qKRboXCwP9Rr6YYYyoPY3N1epzxT2QMP80258lPIRwkGB4PJ
-	 TqbSqxHCQ6cakjf3Ol5dxUG5Zvtw2D0hCM+1hFbrXCrUKMiJY6mYw/+cVDXZ3+9Lqj
-	 r6nK0GpyBVvcglB/BDNPLX/m1OSrQwK4gpzm3Sg1wldNKTcFMiF74Zmfy7cHmXsKia
-	 060boH46dLb2q/ZMSZLs7Ht2V4jP7zDm6DU/8ACbtom2CChisSvZ2J5/vhsNkXPmEb
-	 9voMoTGrsPH5w==
-Date: Tue, 7 Jul 2026 12:53:10 +0100
+	b=Qpm5SDQo/ZPrx5yg5OymeVxZ35XTp41ut3VZBxr6iYWrrKmx637005HLqY9K0qJtm
+	 xbejry0DyqtNgY4GkPkSTm3AUpNnjxl7f0VmQV5xs+JalNTox+gS+u1fKvzfLuuVwP
+	 SafsPjlRF/GiQYwHawoadTWO84DGm6IJKKfxkEcsbjNatf+DJUSX2PbEU29pS8HRRd
+	 xjNazSfF/JGPyPbOY2TF5SbPfnRuqYhifF9BqS0RcRtsjeKZtqHnuKpatRKSsOEBLW
+	 0P2RhkrbZMQnBPkbQBUQrfGhbjM28vvizFmCj+GIPm3svGAEwMsI7qqrlxeJIbZ3pz
+	 wx4H6eht96zKw==
+Date: Tue, 7 Jul 2026 12:54:00 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the drm tree
-Message-ID: <akzopmDBFY9Epm0V@sirena.org.uk>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Paul Walmsley <pjw@kernel.org>, Usama Arif <usama.arif@linux.dev>,
+	Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: linux-next: manual merge of the risc-v tree with the mm-unstable tree
+Message-ID: <akzo2N-H1mm4U7kw@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,41 +43,67 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="L5m3sJ6SNK/ieKlv"
+	protocol="application/pgp-signature"; boundary="J0Dw0P72lXm5IOSb"
 Content-Disposition: inline
 
 
---L5m3sJ6SNK/ieKlv
+--J0Dw0P72lXm5IOSb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In commit
+Hi all,
 
-  0aeed866cb938 ("drm/amd/display: Fix dangling pointer in CRTC reset function")
+Today's linux-next merge of the risc-v tree got a conflict in:
 
-Fixes tag
+  arch/riscv/Kconfig
 
-  Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and dm_crtc_state")
+between commit:
 
-has these problem(s):
+  4cc0dab993a81 ("mm: rename ARCH_ENABLE_THP_MIGRATION to ARCH_HAS_PMD_SOFT=
+LEAVES")
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
+=66rom the mm-unstable tree and commit:
 
---L5m3sJ6SNK/ieKlv
+  798246e5edfb3 ("riscv: acpi: Enable ARCH_HAS_ACPI_TABLE_UPGRADE")
+
+=66rom the risc-v tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/riscv/Kconfig
+index 2b7b69e383835,cb3d85abf595a..0000000000000
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@@ -22,7 -22,8 +22,8 @@@ config RISC
+  	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
+  	select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM_VMEMMAP
+  	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+ -	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
+ +	select ARCH_HAS_PMD_SOFTLEAVES if TRANSPARENT_HUGEPAGE
++ 	select ARCH_HAS_ACPI_TABLE_UPGRADE if ACPI
+  	select ARCH_HAS_BINFMT_FLAT
+  	select ARCH_HAS_CC_CAN_LINK
+  	select ARCH_HAS_CURRENT_STACK_POINTER
+
+--J0Dw0P72lXm5IOSb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM6KYACgkQJNaLcl1U
-h9DhxQf/S9yn4pNhWSzSiGlV4R4L+5muw88eeqdSCVppC9tPpdeLq+b7T8oqhvc+
-q9etySMgOAqStNrieQ1l+5yxydgExvv0+CqePT7i4zUm3QZwCTy6fj7fe3V4ruTX
-9QXmZsgINPRQkOSj8HXB0n2/d+SOup8wFjsq/NSQ6BDbHptYJjcwVzQHbabbChEH
-KFue+GEWzOOxj7gbF/EKOQtPH6x27L9wuyEZym5mPluC1yn8sZJcvPnp1Fc19tVi
-5zDDhnTVSs3IP85iriu3qqWNiLjxTgiVzkd7h1UqJv8EEr9Vv0zT9BwToh4FRQSF
-vE2BJJD6UCLZGKs8BY9UFtFZvSRYTg==
-=KiEM
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM6NcACgkQJNaLcl1U
+h9BNywf/eGrn+JIqXcVKpYBcFYWzshKIbRkduxquSdacLXdX8NOUbc2bpp/B3o1r
+ETo/zT1OrlD6tciXKUxl3FxpzDOyo/Urb5qbg03A/DhzD9E4BMSppE195mkiq7EP
+CA0NW7oNzRKtFlWRhEcsBO4xXF5sVsgZZFVJU2oDczqktizUqxd7xEKT3OOQQLER
+/u50XlCsrSO6J7MAkxiQE5lJXrQmd+dP8M4URLdZMQxJl8f6EsV9sW4/955reUg8
+gbXDVrRLvrqI0DVuUDo9qxvk6yrKZPvsNHoA4mR48VKQjDdwkQ76wOBSkoQcBrSH
+PRPtEDZMhXZrXjA0LJpZoND/YwiNgg==
+=x3Uw
 -----END PGP SIGNATURE-----
 
---L5m3sJ6SNK/ieKlv--
+--J0Dw0P72lXm5IOSb--
