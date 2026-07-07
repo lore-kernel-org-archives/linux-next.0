@@ -1,107 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CC240A92C;
-	Tue,  7 Jul 2026 13:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1A41B354
+	for <linux-next@vger.kernel.org>; Tue,  7 Jul 2026 13:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783429269; cv=none; b=T5OiCUPZis2p8bf+yw2Yaq+niNb6lCPA6BckQHCa6M+POEKR6BRG2dx59thZfzIMW7DCYvemTQ+/pe5T8jiIhRPq7Huf0tNJCEM1qWHDZItRG7XlHKscsNyfl8/UiLU6GT9vuCw2Rkxg3D6nPqwMkiZOJSNZEIcidT/7lzdOPtY=
+	t=1783429880; cv=none; b=siWpfaVqOjX3Hs+Nf1zRsTZhf0dEUQTRl+R7qlIO+3ryJcdG9JO9t9rzktv0ptx1olSEan+GhptsMGPaBvahhsIrGzeWLgrxzSsZdEdHqZ5da09iseIsFHZJf95TSdofte6dzDd7LIPbHrMijW9ZTWzTZYrGT/yQcp/ioxt2bs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783429269; c=relaxed/simple;
-	bh=IKo8yWpLIBOWVn10Lrh8JWyduqo/8kSF4QYt168Kvj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eknwUHodGjlaqT5r8a6Etu/Da8WEW7aWmFyGXIyGBGQnfk3yA9D83Noc36edtV+gJb9GuehQVFORziL82GC5drwYwUMfIoib/ga6fChlutT+OEDWHH3kvA48sBmR+3zrFeWyXr60TQtW1buv1WNSPQHdMK+2p7xb5AarQ8dM2Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/nRfiUx; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/nRfiUx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2479D1F00A3F;
-	Tue,  7 Jul 2026 13:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783429267;
-	bh=Cht8wjKKjdOPllLidnwAoAIG5NxYdDcVq3OxDQryxoQ=;
-	h=Date:From:To:Cc:Subject;
-	b=Y/nRfiUxAVgnqzLubH1l4hNXo+uhdg5lkDcTKy5KKuJ8xD1l0B1oQihoEJATDRlU4
-	 BWrer+NHEz+x/LteVv0pj+SARIrEmKTQJqniKZ0IfeKWdzH5Mr/8JLBaxVev5/OYeK
-	 9RloRe5Gc9tG8pdpwV2Q/bJIH/1tSG79viGSxg+A0jShXrvnVCy3KDbpB0NPQM7jGU
-	 lHV9kuyb2mTt90Buo5l4L2OzZ9IOM4hzJh/Z/vgrCi2aAjaVzTII5b2qOaQQyDYZnB
-	 e6FslxrtRZVptOYq8Hb7Cn6isbo4MrvOQzo6Ef6fYl+gCvoVIPnsdocN7/jJsW/rBn
-	 4djutCZTrY5BQ==
-Date: Tue, 7 Jul 2026 14:01:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 7
-Message-ID: <akz4kAO7vxiZI9v4@sirena.org.uk>
+	s=arc-20240116; t=1783429880; c=relaxed/simple;
+	bh=q7FlM0oPhhDAQiaAYVZZXJOVZFSheHmkVV6ZaXSCRsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K2xba+1D74afe7ijRHJSIDYm5bpwvdwEZhJbzRnsK0fIVgMFWeWnFX/Exn4OQRPN9lYS6nFa1uoNEdY6xDfoEVBGCtgY9kltewOvd10SEgUKqWaX7Vq8TxxOkcAVTu7ARGq/7rrl5ylDnInOgnMa3IdtllL+ZFAsZ7WlnKobzxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 667DBAHb008417;
+	Tue, 7 Jul 2026 22:11:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 667DB2RR008389
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 7 Jul 2026 22:11:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <90133e2c-60aa-456f-b2a8-d0af19b02395@I-love.SAKURA.ne.jp>
+Date: Tue, 7 Jul 2026 22:10:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="e8cD3NllUa+k5Wwe"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v2] lockdep: Enable the printing of held locks of remote
+ running tasks and print task CPU
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+        Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
+        will@kernel.org, longman@redhat.com, gregkh@linuxfoundation.org,
+        syzkaller <syzkaller@googlegroups.com>, Theodore Tso <tytso@mit.edu>
+References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net>
+ <69f2f52c-a13a-4f9d-ab57-789eb4fdc335@I-love.SAKURA.ne.jp>
+ <akZxfzEtam8yPXEh@MacBook-0RXW5>
+ <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
+ <akoeSIQGwqd9cZwd@gmail.com>
+ <2f7513c6-42e1-413b-8bd5-fa5abefe4b99@I-love.SAKURA.ne.jp>
+ <akyopXs1SeH6rXu4@gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <akyopXs1SeH6rXu4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
 
+On 2026/07/07 16:20, Ingo Molnar wrote:
+> TL;DR: it should be fine to print the held locks of running
+> tasks too, as long as we print out a warning when we print
+> such a task, so that users are aware of any racy output.
 
---e8cD3NllUa+k5Wwe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Is there a warning we print out?
+We dropped WARNING: in this version, didn't we?
 
-Hi all,
+> 
+> Implementation:
+> ==============
+> 
+> Implement that change.
+> 
+> Also re-flow the function and streamline the printout into
+> a single statement for all cases, which changes
+> the 'no locks held by' / '%d lock[s] held by' phrasing that had a
+> dependency on English spelling of plurals, to a uniform:
+> 
+> 	locks held by bash/1234: %d
+> 
+> Which spells correctly for 0, 1 and higher values, and should also
+> be easier to parse both for humans and for scripts.
+> 
+> Finally, print out the last CPU a task has ran on. This is very
+> useful information for races and for locking bugs in particular.
+> This basically extends the 'on CPU#%d' message we print for
+> running tasks to all tasks we print.
 
-Changes since 20260706:
+I like this change. Thank you. ;-)
 
-The risc-v tree acquired a conflict with the mm-unstable tree.
+# echo t > /proc/sysrq-trigger; sleep 3; dmesg -c | cut -b 15-
 
-The kvm-arm-fixes tree acquired a build failure in the final build.
+Before:
 
-Non-merge commits (relative to Linus' tree): 3756
- 3863 files changed, 138425 insertions(+), 72637 deletions(-)
+ Showing all locks held in the system:
+ 4 locks held by pr/legacy/16:
+ 1 lock held by rcub/1/18:
+  #0: ffffffff92ba36c8 (rcu_state){+.+.}-{0:0}, at: rcu_boost_kthread+0x15c/0x5d0
+ 3 locks held by bash/1221:
+  #0: ffff8cd5dd8df500 (sb_writers#3){.+.+}-{0:0}, at: ksys_write+0x9a/0x150
+  #1: ffffffff92b9e080 (rcu_read_lock){....}-{1:3}, at: __handle_sysrq+0x56/0x140
+  #2: ffffffff92b9e080 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x3d/0x184
 
-----------------------------------------------------------------------------
+After:
 
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+ Showing all locks held in the system:
+ locks held by pr/legacy/16: 4, last CPU#0:
+  #0: ffffffffaaf9a4a0 (console_lock){+.+.}-{0:0}, at: legacy_kthread_func+0x85/0x190
+  #1: ffffffffaaf9a4f8 (console_srcu){....}-{0:0}, at: console_flush_one_record+0x92/0x710
+  #2: ffffffffab1fb818 (printing_lock){+.+.}-{3:3}, at: vt_console_print+0x74/0x640
+  #3: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x61/0x140
+ locks held by rcub/1/18: 1, on CPU#0:
+  #0: ffffffffaafa36c8 (rcu_state){+.+.}-{0:0}, at: rcu_boost_kthread+0x15c/0x5d0
+ locks held by bash/1206: 3, last CPU#0:
+  #0: ffff8c62894da500 (sb_writers#3){.+.+}-{0:0}, at: ksys_write+0x9a/0x150
+  #1: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: __handle_sysrq+0x56/0x140
+  #2: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x3d/0x184
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 427 trees (counting Linus' and 132 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---e8cD3NllUa+k5Wwe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpM+I8ACgkQJNaLcl1U
-h9AKSwf+JCHXFQx15aUkdEmcUrihUmeGqQFYYqWUdzcTMfqmVrIbDAi0dxaOQiVw
-jdgYvgMpHveTBf/PC2n11vCcoj3uOGzVrCc9W07bidTAURJ1+iedb7oPsxeSivze
-pFzVWNrGHwOiXKieH3BwXRCJDCbfOVFgy25IIQVb/LSRHCABOBZRopzVgE+eU8JI
-wKzuBZFpA1920wW8UDWMSL9iDtD1G/XsTbtYnpVMdOjAyR228f3xIms4oDqpYvIO
-ESuclqnO3jK9bLIKtYpC0xwFgfUZryP63+B9tTbLEe6K8IRJJoi7R8GCoV7j8OVr
-I2YG0E6EWIrw0i0tXroxkk8ETd2Erw==
-=FqcY
------END PGP SIGNATURE-----
-
---e8cD3NllUa+k5Wwe--
