@@ -1,118 +1,149 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1A41B354
-	for <linux-next@vger.kernel.org>; Tue,  7 Jul 2026 13:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA142F7EE4;
+	Tue,  7 Jul 2026 13:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783429880; cv=none; b=siWpfaVqOjX3Hs+Nf1zRsTZhf0dEUQTRl+R7qlIO+3ryJcdG9JO9t9rzktv0ptx1olSEan+GhptsMGPaBvahhsIrGzeWLgrxzSsZdEdHqZ5da09iseIsFHZJf95TSdofte6dzDd7LIPbHrMijW9ZTWzTZYrGT/yQcp/ioxt2bs4=
+	t=1783430244; cv=none; b=s3ra1zRxxBSYvHxBDU8xt+8TLwuJiq3R5KAp401Vxm3HlUqcDPGNS3+OolOTLNvoza821WWx6NXsXIByHa6SSwfrB/ZyAVtwLAwrMbRTt9ubA1VhhPoWxCRwsYsdQDZ6Cwb0wy7DzORNRx1YoLKEMrF/MLzqiqL0X1eMLjS8tQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783429880; c=relaxed/simple;
-	bh=q7FlM0oPhhDAQiaAYVZZXJOVZFSheHmkVV6ZaXSCRsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K2xba+1D74afe7ijRHJSIDYm5bpwvdwEZhJbzRnsK0fIVgMFWeWnFX/Exn4OQRPN9lYS6nFa1uoNEdY6xDfoEVBGCtgY9kltewOvd10SEgUKqWaX7Vq8TxxOkcAVTu7ARGq/7rrl5ylDnInOgnMa3IdtllL+ZFAsZ7WlnKobzxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 667DBAHb008417;
-	Tue, 7 Jul 2026 22:11:10 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 667DB2RR008389
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 7 Jul 2026 22:11:10 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <90133e2c-60aa-456f-b2a8-d0af19b02395@I-love.SAKURA.ne.jp>
-Date: Tue, 7 Jul 2026 22:10:58 +0900
+	s=arc-20240116; t=1783430244; c=relaxed/simple;
+	bh=iehbrl14TRc+Kjff+9ROhsGaGq3QFxCCMoT3iCo/cMI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IU3q2Q9MklS16gNddEk6g3yw5MPg3r6ymy/wzMO710retsUZuf/otdMXbCf1KtJ1y3UT3arI8Zpc+kD13FjlnIFrz/KSshu+mu7eI/9O/rS1sEDt8gMcFPItCZUrmwcI4pD3MRrlbOPJ1hm4G89wB7C2AsJBg4GfJ6A1xouOEqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8Q6XN0c; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8Q6XN0c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A271F00A3A;
+	Tue,  7 Jul 2026 13:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783430243;
+	bh=Ut7j8uUsiPWCH4ATjtSnzZb1UmcGuUchxTeDr5VJ4gs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=W8Q6XN0cKrAgfZuLhyOvpzIHKgENKKr+2kXw6lqG3JNpD5tM53hAz3e6rQK+MWQPw
+	 8T5kRwlvFrAwT3PhPHOJRkmo4c9yMF7/YI+wL54ggPUSnHM2o3SQcpGDGP8s/48vn0
+	 LACoI0J+H7BqcQwapvpjkecCksES1R+rEEKk8k6vkSnfgQEffGT4mNTNco/RA03Bx9
+	 fsFQOYGxeXmQr+TY8AEzmT07Z7qqH865amzXK6wvAssD97T5K119VeNw6PBwFkm8s0
+	 f5LFSg72RWqPOOUfyYi4w5+76nPm8H+f4ZbTjsbgTSZcd6X6t+E9z2GaFB22E9jvBr
+	 1EVYUntbm/e6A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wh5ft-00000002Q5g-1JPG;
+	Tue, 07 Jul 2026 13:17:21 +0000
+Date: Tue, 07 Jul 2026 14:17:20 +0100
+Message-ID: <867bn7os67.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oupton@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the kvm-arm-fixes tree
+In-Reply-To: <akztC7H2IsEKaq4i@sirena.org.uk>
+References: <akztC7H2IsEKaq4i@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v2] lockdep: Enable the printing of held locks of remote
- running tasks and print task CPU
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
-        Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
-        will@kernel.org, longman@redhat.com, gregkh@linuxfoundation.org,
-        syzkaller <syzkaller@googlegroups.com>, Theodore Tso <tytso@mit.edu>
-References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net>
- <69f2f52c-a13a-4f9d-ab57-789eb4fdc335@I-love.SAKURA.ne.jp>
- <akZxfzEtam8yPXEh@MacBook-0RXW5>
- <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
- <akoeSIQGwqd9cZwd@gmail.com>
- <2f7513c6-42e1-413b-8bd5-fa5abefe4b99@I-love.SAKURA.ne.jp>
- <akyopXs1SeH6rXu4@gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <akyopXs1SeH6rXu4@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oupton@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2026/07/07 16:20, Ingo Molnar wrote:
-> TL;DR: it should be fine to print the held locks of running
-> tasks too, as long as we print out a warning when we print
-> such a task, so that users are aware of any racy output.
-
-Is there a warning we print out?
-We dropped WARNING: in this version, didn't we?
-
+On Tue, 07 Jul 2026 13:11:55 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Implementation:
-> ==============
+> Hi all,
 > 
-> Implement that change.
+> After merging the kvm-arm-fixes tree, today's linux-next build
+> (arm64 defconfig) started generating warnings:
 > 
-> Also re-flow the function and streamline the printout into
-> a single statement for all cases, which changes
-> the 'no locks held by' / '%d lock[s] held by' phrasing that had a
-> dependency on English spelling of plurals, to a uniform:
+> In file included from /tmp/next/build/include/linux/limits.h:7,
+>                  from /tmp/next/build/include/linux/overflow.h:6,
+>                  from /tmp/next/build/include/linux/bits.h:32,
+>                  from /tmp/next/build/arch/arm64/include/asm/kvm_pgtable.h:10,
+>                  from /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c:11:
+> /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c: In function 'kvm_pgtable_stage2_relax_perms':
+> /tmp/next/build/include/vdso/limits.h:8:25: warning: overflow in conversion from 'int' to 's8' {aka 'signed char'} changes value from '2147483647' to '-1' [-Woverflow]
+>     8 | #define INT_MAX         ((int)(~0U >> 1))
+>       |                         ^
+> /tmp/next/build/arch/arm64/include/asm/tlbflush.h:131:33: note: in expansion of macro 'INT_MAX'
+>   131 | #define TLBI_TTL_UNKNOWN        INT_MAX
+>       |                                 ^~~~~~~
+> /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c:1361:20: note: in expansion of macro 'TLBI_TTL_UNKNOWN'
+>  1361 |         s8 level = TLBI_TTL_UNKNOWN;
+>       |                    ^~~~~~~~~~~~~~~~
+> In file included from /tmp/next/build/include/linux/limits.h:7,
+>                  from /tmp/next/build/include/linux/overflow.h:6,
+>                  from /tmp/next/build/include/linux/bits.h:32,
+>                  from /tmp/next/build/arch/arm64/include/asm/kvm_pgtable.h:10,
+>                  from /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c:11:
+> /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c: In function 'kvm_pgtable_stage2_relax_perms':
+> /tmp/next/build/include/vdso/limits.h:8:25: warning: overflow in conversion from 'int' to 's8' {aka 'signed char'} changes value from '2147483647' to '-1' [-Woverflow]
+>     8 | #define INT_MAX         ((int)(~0U >> 1))
+>       |                         ^
+> /tmp/next/build/arch/arm64/include/asm/tlbflush.h:131:33: note: in expansion of macro 'INT_MAX'
+>   131 | #define TLBI_TTL_UNKNOWN        INT_MAX
+>       |                                 ^~~~~~~
+> /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c:1361:20: note: in expansion of macro 'TLBI_TTL_UNKNOWN'
+>  1361 |         s8 level = TLBI_TTL_UNKNOWN;
+>       |                    ^~~~~~~~~~~~~~~~
 > 
-> 	locks held by bash/1234: %d
 > 
-> Which spells correctly for 0, 1 and higher values, and should also
-> be easier to parse both for humans and for scripts.
+> Caused by commit
 > 
-> Finally, print out the last CPU a task has ran on. This is very
-> useful information for races and for locking bugs in particular.
-> This basically extends the 'on CPU#%d' message we print for
-> running tasks to all tasks we print.
+>    100baf0184896 (KVM: arm64: Ensure level is always initialized when relaxing perms)
+> 
+> I imagine this will cause an allyesconfig build failure when I get to
+> that due to -Werror.
 
-I like this change. Thank you. ;-)
+Crap, I don't know how I missed that one! And the whole thing is
+pretty dodgy anyway:
 
-# echo t > /proc/sysrq-trigger; sleep 3; dmesg -c | cut -b 15-
+- level starts as s8
+- passed to __kvm_tlb_flush_vmid_ipa_nsh() as int
+- passed to __tlbi_level() as u32
+- compared to the value 3
 
-Before:
+The problem is that we are conflating the level of a descriptor and
+the TTL, which may or may not be related.
 
- Showing all locks held in the system:
- 4 locks held by pr/legacy/16:
- 1 lock held by rcub/1/18:
-  #0: ffffffff92ba36c8 (rcu_state){+.+.}-{0:0}, at: rcu_boost_kthread+0x15c/0x5d0
- 3 locks held by bash/1221:
-  #0: ffff8cd5dd8df500 (sb_writers#3){.+.+}-{0:0}, at: ksys_write+0x9a/0x150
-  #1: ffffffff92b9e080 (rcu_read_lock){....}-{1:3}, at: __handle_sysrq+0x56/0x140
-  #2: ffffffff92b9e080 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x3d/0x184
+I'm minded to queue something like this on top. Oliver?
 
-After:
+Thanks for the heads up,
 
- Showing all locks held in the system:
- locks held by pr/legacy/16: 4, last CPU#0:
-  #0: ffffffffaaf9a4a0 (console_lock){+.+.}-{0:0}, at: legacy_kthread_func+0x85/0x190
-  #1: ffffffffaaf9a4f8 (console_srcu){....}-{0:0}, at: console_flush_one_record+0x92/0x710
-  #2: ffffffffab1fb818 (printing_lock){+.+.}-{3:3}, at: vt_console_print+0x74/0x640
-  #3: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x61/0x140
- locks held by rcub/1/18: 1, on CPU#0:
-  #0: ffffffffaafa36c8 (rcu_state){+.+.}-{0:0}, at: rcu_boost_kthread+0x15c/0x5d0
- locks held by bash/1206: 3, last CPU#0:
-  #0: ffff8c62894da500 (sb_writers#3){.+.+}-{0:0}, at: ksys_write+0x9a/0x150
-  #1: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: __handle_sysrq+0x56/0x140
-  #2: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x3d/0x184
+	M.
 
+diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+index 8754c99c22f2f..70dceb20dfada 100644
+--- a/arch/arm64/kvm/hyp/pgtable.c
++++ b/arch/arm64/kvm/hyp/pgtable.c
+@@ -1356,7 +1356,7 @@ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
+ 				   enum kvm_pgtable_prot prot, enum kvm_pgtable_walk_flags flags)
+ {
+ 	kvm_pte_t xn = 0, set = 0, clr = 0;
+-	s8 level = TLBI_TTL_UNKNOWN;
++	s8 level;
+ 	int ret;
+ 
+ 	if (prot & KVM_PTE_LEAF_ATTR_HI_SW)
+@@ -1379,7 +1379,8 @@ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
+ 
+ 	ret = stage2_update_leaf_attrs(pgt, addr, 1, set, clr, NULL, &level, flags);
+ 	if (!ret || ret == -EAGAIN)
+-		kvm_call_hyp(__kvm_tlb_flush_vmid_ipa_nsh, pgt->mmu, addr, level);
++		kvm_call_hyp(__kvm_tlb_flush_vmid_ipa_nsh, pgt->mmu, addr,
++			     (ret == -EAGAIN) ? TLBI_TTL_UNKNOWN : level);
+ 	return ret;
+ }
+ 
+
+-- 
+Without deviation from the norm, progress is not possible.
