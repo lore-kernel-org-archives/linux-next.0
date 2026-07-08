@@ -1,136 +1,116 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B4D1E51E0;
-	Wed,  8 Jul 2026 05:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F1F4028E8;
+	Wed,  8 Jul 2026 08:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783487126; cv=none; b=TDyp+qF6yU90NHqtAILhYuvBSAbOwwmOlpDIQ11aieEUSBsRf9Df/i8WxPvG170209AIcONaGaBb0lnRy3/yTAVLicKxP6Re1UAlyRymg+287catfx/scbw8MTb1YhxVG9Bc1C4OSd6oQdyCmTJi3tZrllrwG02hmqXWNiFhp20=
+	t=1783499871; cv=none; b=ALBz0UcnraS/st+6srSozwjq5eSi7StpcLrpZqGRSI37cWJqHO/KSj0Rt+BA2rTDDdFuRV2q9T2k9Q5yHAuPQaZkYzg0XE9hT59sSzoqPhUwReBfJX+QaUlXoTrvEmtRNAj4VeVAoEMUZP+ZNtuhuWpm1f55VRwATJac6ZPVy8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783487126; c=relaxed/simple;
-	bh=MhldLM9QD9GuE5p3/DJ9u6OdZWb/6XIIA3VNSVKn6sU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=XU5BNh83t9rv3HJ9xrsrl03Vxx9VccOiJhD45xAIDmDVtigIYAS6LZsfcBxzYJPiMLo46T3BDpkz3Y65CyxqH5F2Zu8PQ8w48AoiAdxJhjLaoqdk0FOXwAI6yKMm+XoxzixgzlqSVnwHTvn2AoXBul/z6QEKP/iQe4s4dhyId+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rUy27V8D; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1783499871; c=relaxed/simple;
+	bh=CW8crfyqzTnCIIq9fuLDHl5nGF0x9M1weQN8ZLhVfsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SnWSY8KAzXw4icnXYjuo44GwzCz62fjnbSu8U9sa7sR/3s/LQ49XDKiujw9ClQDpwJblhOaEWHrHbDabjQzoFeCqyWKD0JX3T1TP6x1CaEDnMc2PDNGD7MYl43zCYwfx/efzSQmGaVEubek5IGwCiaDmW2xwreIMf0uCCeuXOhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O22WL1U5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rUy27V8D"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 667Mn2SQ1238976;
-	Wed, 8 Jul 2026 05:05:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=MhldLM9QD9GuE5p3/DJ9u6OdZWb/
-	6XIIA3VNSVKn6sU=; b=rUy27V8DZ6AzXiG0CnEiKb1CPLWgpxXQhAx0Q/zTKn3F
-	G6R0liofXi9do9o6LXs2gZ0t/+2YvoDiu2u5uwxSQawsYrzMVTkX2zL+mtZXg3hN
-	wqlGgv+q3AuCs25KD/qa1Bo2DJbG9cj2p4DM70xruoJ68K0oqbrz/TZUq+QIOJp4
-	6FK/Lgkoib+h0YOgP5xOUpfUEmB4NgjTDo+SITUKqF3hzYS2zM7pV5hGUfyBFuaJ
-	yUQ0ijPSdkRHrtOAaI92a7f/8biMqUjyxtAm8PqeT8gl/2BRdlABQS+avQDW0YHm
-	75/r3qRW5uRbilEQ5SqmFYDe+Dru/+V+nx3b6OWarw==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4f6suqtde4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jul 2026 05:05:21 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 66854exs023111;
-	Wed, 8 Jul 2026 05:05:20 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4f7dgk61ny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jul 2026 05:05:20 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66855KL921693032
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Jul 2026 05:05:20 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 299E058058;
-	Wed,  8 Jul 2026 05:05:20 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EC33758059;
-	Wed,  8 Jul 2026 05:05:15 +0000 (GMT)
-Received: from [9.123.5.126] (unknown [9.123.5.126])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  8 Jul 2026 05:05:15 +0000 (GMT)
-Message-ID: <fde3656e-9e22-4e4c-937f-7e8cb918da6b@linux.ibm.com>
-Date: Wed, 8 Jul 2026 10:35:14 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O22WL1U5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 047051F000E9;
+	Wed,  8 Jul 2026 08:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783499869;
+	bh=pbmA6WVk8ye5KSefVwqmo3q4Pjoaf+um+5lJFzkYcvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=O22WL1U50eyq2j9axLSAWIZva/P5VHs/+2DrOB3S22qZ/ZCW64yu+hq23OoMhWv23
+	 H8cgHkECLyh5Y7x+jTCbrEMg1QYavFDx8Ta9rXJGig0a9scR+ImYBOU9sshOyhhYd6
+	 /VprWs7+wPC4ndlsV7wH2MFk41ABY2wvZsFJnCbJDT2hh5QBaP11BoNwenzDMHzJ+o
+	 g6+rd/qstn4CiaB5gIOTgNyUNWVTkdOw3bjzK16GQItHswhYpmnyistssBS2BgtQEc
+	 Ssy8J3xx13y5+t1a+MsOYa0V1bUdYUnwmPEgr+0HnX8mCWUfM2/jVNsZbzGUBMPDsP
+	 Q8TuvIzVmuesA==
+Date: Wed, 8 Jul 2026 10:37:43 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+	Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	peterz@infradead.org, will@kernel.org, longman@redhat.com,
+	gregkh@linuxfoundation.org, syzkaller <syzkaller@googlegroups.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: Re: [PATCH -v2] lockdep: Enable the printing of held locks of remote
+ running tasks and print task CPU
+Message-ID: <ak4MV48dg-OePgG2@gmail.com>
+References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net>
+ <69f2f52c-a13a-4f9d-ab57-789eb4fdc335@I-love.SAKURA.ne.jp>
+ <akZxfzEtam8yPXEh@MacBook-0RXW5>
+ <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
+ <akoeSIQGwqd9cZwd@gmail.com>
+ <2f7513c6-42e1-413b-8bd5-fa5abefe4b99@I-love.SAKURA.ne.jp>
+ <akyopXs1SeH6rXu4@gmail.com>
+ <90133e2c-60aa-456f-b2a8-d0af19b02395@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [REGRESSION] drm/amd/display: amdgpu_dm_plane_test.ko fails to build
- due to modpost "too long symbol"
-To: amd-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, alexander.deucher@amd.com,
-        george.zhang@amd.com, bhawanpreet.lakha@amd.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>, christian.koenig@amd.com,
-        harry.wentland@amd.com, sunpeng.li@amd.com, broonie@kernel.org,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDA0MyBTYWx0ZWRfXx0A8A3/+wMdh
- IGdNB9frgkFd3+ogfITlwXCSCg8smE9KU0aP9Mcz8FYKF5xPV4lXqZZyMP7IXCNQYONZ/FABaxf
- 1nxq3j13A8aSGRweRtRFj5gIoTdkFcU=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDA0MyBTYWx0ZWRfXyCO6cjikT03N
- dlETvzl2Esw47FNH6CR8c8CBUNjhM9SvQWqcjy4+e41kug+OFrfYRooP4PnhQwGtFKYoIeMygcK
- bOi3mk3wmrRoKgwKHJGrG2BoQLOf5L5NdKU8Oiy7XNvaCCZtTuUXbYqC6ETvD0XpdtgjtEgKXnE
- DHakvO+emWk6lIpJqwN6zqcxISltPUCuxnDPe9O3uqAOtqzKKTzaf820kGIxAp8qIbuhDdI1E9a
- HpIkqPA4ddiMSvh4peKwzlpJXAJmA7ypMX4pOsZBPkfONaBDjqwn2vXHq4X9MdE19vkGLVmLBYx
- hr5gj6/wHb9Zdl0izx40S5dslC+WRNlPbcbf/+I+tTUACJCuh4nQmCVgGsBdRuLqcmNSQNsIa0T
- YWxRmKo1Mr8s/ISkQ1Ym5kK+rb6rdDkQbfE9mfzwzcxbYe3rsLTck/ESuO2twrwCcqsL4g/cc2y
- EpQ6MlJA6/rlXcFD2iw==
-X-Proofpoint-GUID: ECAVD29mq7Ou5idDAiIdvd5zYB28nI21
-X-Authority-Analysis: v=2.4 cv=Oot/DS/t c=1 sm=1 tr=0 ts=6a4dda91 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VnNF1IyMAAAA:8
- a=vszvPysokf05iRVejT4A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: ECAVD29mq7Ou5idDAiIdvd5zYB28nI21
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-07_06,2026-07-06_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 lowpriorityscore=0 clxscore=1011 impostorscore=0 phishscore=0
- malwarescore=0 suspectscore=0 spamscore=0 adultscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607080043
-
-Greetings!!!
-
-linux-next is failing to build for me with:
-
-ERROR: modpost: too long symbol
-"amdgpu_dm_plane_fill_gfx9_plane_attributes_from_modifiers"
-[drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/tests/amdgpu_dm_plane_test.ko]
-
-make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
-make[1]: *** [Makefile:2165: modpost] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-The failure occurs during modpost while building:
-
-drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.ko
-
-This appears to be a regression in the AMD display KUnit test code.
-
-Could someone please take a look?
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90133e2c-60aa-456f-b2a8-d0af19b02395@I-love.SAKURA.ne.jp>
 
 
-If you happen to fix this, please add below tag.
+* Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> On 2026/07/07 16:20, Ingo Molnar wrote:
+> > TL;DR: it should be fine to print the held locks of running
+> > tasks too, as long as we print out a warning when we print
+> > such a task, so that users are aware of any racy output.
+> 
+> Is there a warning we print out?
+> We dropped WARNING: in this version, didn't we?
 
+Indeed - I fixed the changelog.
 
+> > Finally, print out the last CPU a task has ran on. This is very
+> > useful information for races and for locking bugs in particular.
+> > This basically extends the 'on CPU#%d' message we print for
+> > running tasks to all tasks we print.
+> 
+> I like this change. Thank you. ;-)
+> 
+> # echo t > /proc/sysrq-trigger; sleep 3; dmesg -c | cut -b 15-
+> 
+> Before:
+> 
+>  Showing all locks held in the system:
+>  4 locks held by pr/legacy/16:
+>  1 lock held by rcub/1/18:
+>   #0: ffffffff92ba36c8 (rcu_state){+.+.}-{0:0}, at: rcu_boost_kthread+0x15c/0x5d0
+>  3 locks held by bash/1221:
+>   #0: ffff8cd5dd8df500 (sb_writers#3){.+.+}-{0:0}, at: ksys_write+0x9a/0x150
+>   #1: ffffffff92b9e080 (rcu_read_lock){....}-{1:3}, at: __handle_sysrq+0x56/0x140
+>   #2: ffffffff92b9e080 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x3d/0x184
+> 
+> After:
+> 
+>  Showing all locks held in the system:
+>  locks held by pr/legacy/16: 4, last CPU#0:
+>   #0: ffffffffaaf9a4a0 (console_lock){+.+.}-{0:0}, at: legacy_kthread_func+0x85/0x190
+>   #1: ffffffffaaf9a4f8 (console_srcu){....}-{0:0}, at: console_flush_one_record+0x92/0x710
+>   #2: ffffffffab1fb818 (printing_lock){+.+.}-{3:3}, at: vt_console_print+0x74/0x640
+>   #3: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x61/0x140
+>  locks held by rcub/1/18: 1, on CPU#0:
+>   #0: ffffffffaafa36c8 (rcu_state){+.+.}-{0:0}, at: rcu_boost_kthread+0x15c/0x5d0
+>  locks held by bash/1206: 3, last CPU#0:
+>   #0: ffff8c62894da500 (sb_writers#3){.+.+}-{0:0}, at: ksys_write+0x9a/0x150
+>   #1: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: __handle_sysrq+0x56/0x140
+>   #2: ffffffffaaf9e080 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x3d/0x184
 
-Regards,
+Great, and you are welcome.
 
-Venkat.
+I've added your Tested-by tag as well, and graduated the updated
+commit to tip:locking/core, to be merged into v7.3 if everything
+goes fine.
 
+Thanks,
 
+	Ingo
