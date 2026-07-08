@@ -1,140 +1,284 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD5D42F6F2;
-	Tue,  7 Jul 2026 15:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6AF3B3BEB
+	for <linux-next@vger.kernel.org>; Wed,  8 Jul 2026 02:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783439055; cv=none; b=fJEpND/nmLgOBQFGzOnZMoH+boSVHybP1O1BI0UEsTWyQQxDXkCk1K5iAy9bVDKLo/zs0pytvZZo7QhlkLu/x5msuL3FfJJIND+zuKxP0J2Uv8MVGzge+v10NLIWNtF7eqxKUbpCEuIkxHI0GEz6LOMx72wkxPHhyvY1KnxMS7Y=
+	t=1783477829; cv=none; b=RTYEbGyYpLQmAvzSHfignaVTqX9zxRmBRoXiS0vymii9HzlINTQCe9wrRmiztcNI5xsKdhhGROENpVejJsy7mAObbtdjJ9m9y9jYcxkYsYzgMSLBwW5H9N7fp1mBXpwxsEGzWBr8BIdFFsJhGTDpGsWt6vD0u/P9l+SmQPVnyO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783439055; c=relaxed/simple;
-	bh=ceHC6xpMcueJENkYJKMUqp/5HPdDZGNBF/VjznBEfYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5AhYKATwtQj30NyQly3m2SWLElK1CgfJm+AL9T5r6N2y777vEKsr5/DLnbhelVL63YmN3vOB/tK+ZQRAYbLNztlhyWTCEqZPzljl0UJgYVhYXpdD/gUiHcWIlQ3K3/w55IXR4nV24ltQzFmYotOaoNdT3k9SUXJyyh9c+SbBUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNP9A3hd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783477829; c=relaxed/simple;
+	bh=j8WqNtA7yo9EAWSnByA3sAsqi+O0qrNqNRDSMecJ4d8=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=RLXmnm4AgKJYz9pXJDy/YdiMOc1BcjNmku7csqSz+xBAFxa3k+WPzpn7GAktVPCIQQnC/SXN6ApjA41QF7w7OKWLkfux6ywYj0f2ZmMH8wcPiRHs1KUw6KxTkUNZDkgVWfJSByL+VNlSOj1CVM/N93QpN8lIc2uOv/tpY1jxZQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=hzRihUwZ; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNP9A3hd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81BD21F000E9;
-	Tue,  7 Jul 2026 15:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783439053;
-	bh=MAaqNf6hA5DEMBlSEZP+445t5kHw2ZCJpl0WjuWSSXY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TNP9A3hdPzM8tQnhEeBro9Hqghsi7b4LCrb2mfNqCEL25/z//srOj5jxHOhE4O7MR
-	 xY8heLLdEMTtCoTCR1RUbOfoztwOgk3Q3399TZQtdBqqbZexWgAIz32VrKJtlfBocj
-	 T00mUSQJYh4UYbgR2IJkLeeZcIqMEUHucm753dLM2NqhKXvm4hqSrTKClHFgAAlaAv
-	 wmR5vx7EqeQBBcWnCRt4b2BRUqCeu5SFASMmAy8cYb05ZE/xPTQbyHr7zJVamk2jLS
-	 PRNrBUHaductu8yfVx3aF2GdxpIAVv4tTm5N3VXT9ZESyZxsYnt+DzkXen1MqyBSgy
-	 AgfqHcevGRGpw==
-Date: Tue, 7 Jul 2026 08:44:12 -0700
-From: Oliver Upton <oupton@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warnings after merge of the kvm-arm-fixes tree
-Message-ID: <ak0ezKOs62KN-9FA@kernel.org>
-References: <akztC7H2IsEKaq4i@sirena.org.uk>
- <867bn7os67.wl-maz@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="hzRihUwZ"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c96c92c0980so74502a12.3
+        for <linux-next@vger.kernel.org>; Tue, 07 Jul 2026 19:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1783477827; x=1784082627; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=g2IsUlWb18moAP9STT/h/dmdDwsd/TFToKXp2f3ehJA=;
+        b=hzRihUwZf8acofIMt2MdUKdRcmjCA5UW2MRnfTHC3Z3rgcTlUBwLf3Qa7zC+Gi0Vr0
+         z2BoLp0M9jtGNFAQgYtzsbV/4uK+a//dvHx0ey356dx7jWYYojePMB18Gb2GoqJjK6AO
+         pS6gMMRMKUxjV56ZqqHTaG8h9bvC5lQvcciQfo5CHnP8R7wNC1CZmRmdnx20k1wvXyTM
+         tsfMZ062nCVH6J4ovVB7UU+mjNwSLxAjCW0OKm+hiR3oqnFcT8OAEljlkNBBYKM6vpD8
+         Um5YJaBuSTXRmMnX6lcVL3mNAtrjVmyAKKuIVUnN6owNAiR6jlVLJ6qoIGkUWt7VgqQR
+         6JCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783477827; x=1784082627;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=g2IsUlWb18moAP9STT/h/dmdDwsd/TFToKXp2f3ehJA=;
+        b=QwlA6cgNo5688cLwelKLcZdRFit1PEaGr6Lht16M1Rc8C689v4d8olBefnwO01SP1D
+         TnQDocKtjeY661dYEd3jlQ27oW1jjJPDFzhD+Tiarjic+WX9/byrd4puZtv1vcsP70Ay
+         TMyTMe142T5dyEUAhpxTcPFvza0rMOoz/l0Dfd99I/WurCGsN/HIjKptaPxtgDmRb70U
+         KMwSzElyki86fNHHWH3EYlCjfKq/Nq4AUdFYR3REQS504pbhEUpX7ZezOguwLdCk3jRu
+         P579qexiop62qrJl1si6o2vhASn0i+KlsOoSf6yD5/4drjtL5ijBF5IYARH4kDjeN1eE
+         Wkbg==
+X-Gm-Message-State: AOJu0YxOYZvBuYa38Ffcl0RaSe3I9504XcjHHkiazu8Z2KBWZvM/5vG7
+	ryuHv2rBVNDJCpE2HPXEEUIoEWmZo7tSU2ubWjQxczYkfrfO+XiR8WhnduDzGZZvkr1wh+Gpfv/
+	GjwCB
+X-Gm-Gg: AfdE7cmuNzdkGUXTx/qdf9z4gkZqHJd06GNxMiVJ89Du0Olgt8TuHjEyLKg7kGPVjyq
+	I1D4D2Az24NhgQuUzjpncHh3RMcp7X8sb6Kq2P+kcvxbUIQN9i+gBqgAE0nCKpVZmpb8Iwva37/
+	3bL3gF8vsefFd/gDWkMU75msxGLwkoLlcFQ5pjch8KPi8qEfFWhh/IkSYmcknafE0Q/Lf9YubRD
+	//dOoXV8vpT81yNjDrW5GVly7EHb6S/C+otUB7KvZ24kzzRsnY+NFH/+kzxfZKUNvwIHFDtrdmk
+	BFSw145udwhduIuYRQzcE8YkbBtVufYaKKjC4GPM9YhWi048baA4adu+x00lZqPrZbKTdZDQsbA
+	f2ZI8ubjVX5mjMxPwa5VpIepEG4Q+qa/pAS0jwlVKUT6EpYn2/h84h1gEQX7FCsmNkwcOIWckV5
+	HEqBfDWQ==
+X-Received: by 2002:a05:6a21:670b:b0:3c0:9c19:b279 with SMTP id adf61e73a8af0-3c0bccacfa4mr418101637.71.1783477826933;
+        Tue, 07 Jul 2026 19:30:26 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311747f5975sm13037744eec.4.2026.07.07.19.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2026 19:30:26 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <867bn7os67.wl-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 5c73cd9f0819c1c44e373e3dabb68318b1de1a12
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Wed, 08 Jul 2026 02:30:26 -0000
+Message-ID: <178347782612.6931.18199072918824921548@963b246bc1b3>
 
-On Tue, Jul 07, 2026 at 02:17:20PM +0100, Marc Zyngier wrote:
-> On Tue, 07 Jul 2026 13:11:55 +0100,
-> Mark Brown <broonie@kernel.org> wrote:
-> > 
-> > Hi all,
-> > 
-> > After merging the kvm-arm-fixes tree, today's linux-next build
-> > (arm64 defconfig) started generating warnings:
-> > 
-> > In file included from /tmp/next/build/include/linux/limits.h:7,
-> >                  from /tmp/next/build/include/linux/overflow.h:6,
-> >                  from /tmp/next/build/include/linux/bits.h:32,
-> >                  from /tmp/next/build/arch/arm64/include/asm/kvm_pgtable.h:10,
-> >                  from /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c:11:
-> > /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c: In function 'kvm_pgtable_stage2_relax_perms':
-> > /tmp/next/build/include/vdso/limits.h:8:25: warning: overflow in conversion from 'int' to 's8' {aka 'signed char'} changes value from '2147483647' to '-1' [-Woverflow]
-> >     8 | #define INT_MAX         ((int)(~0U >> 1))
-> >       |                         ^
-> > /tmp/next/build/arch/arm64/include/asm/tlbflush.h:131:33: note: in expansion of macro 'INT_MAX'
-> >   131 | #define TLBI_TTL_UNKNOWN        INT_MAX
-> >       |                                 ^~~~~~~
-> > /tmp/next/build/arch/arm64/kvm/hyp/pgtable.c:1361:20: note: in expansion of macro 'TLBI_TTL_UNKNOWN'
-> >  1361 |         s8 level = TLBI_TTL_UNKNOWN;
-> >       |                    ^~~~~~~~~~~~~~~~
-> > In file included from /tmp/next/build/include/linux/limits.h:7,
-> >                  from /tmp/next/build/include/linux/overflow.h:6,
-> >                  from /tmp/next/build/include/linux/bits.h:32,
-> >                  from /tmp/next/build/arch/arm64/include/asm/kvm_pgtable.h:10,
-> >                  from /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c:11:
-> > /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c: In function 'kvm_pgtable_stage2_relax_perms':
-> > /tmp/next/build/include/vdso/limits.h:8:25: warning: overflow in conversion from 'int' to 's8' {aka 'signed char'} changes value from '2147483647' to '-1' [-Woverflow]
-> >     8 | #define INT_MAX         ((int)(~0U >> 1))
-> >       |                         ^
-> > /tmp/next/build/arch/arm64/include/asm/tlbflush.h:131:33: note: in expansion of macro 'INT_MAX'
-> >   131 | #define TLBI_TTL_UNKNOWN        INT_MAX
-> >       |                                 ^~~~~~~
-> > /tmp/next/build/arch/arm64/kvm/hyp/nvhe/../pgtable.c:1361:20: note: in expansion of macro 'TLBI_TTL_UNKNOWN'
-> >  1361 |         s8 level = TLBI_TTL_UNKNOWN;
-> >       |                    ^~~~~~~~~~~~~~~~
-> > 
-> > 
-> > Caused by commit
-> > 
-> >    100baf0184896 (KVM: arm64: Ensure level is always initialized when relaxing perms)
-> > 
-> > I imagine this will cause an allyesconfig build failure when I get to
-> > that due to -Werror.
-> 
-> Crap, I don't know how I missed that one! And the whole thing is
-> pretty dodgy anyway:
-> 
-> - level starts as s8
-> - passed to __kvm_tlb_flush_vmid_ipa_nsh() as int
-> - passed to __tlbi_level() as u32
-> - compared to the value 3
-> 
-> The problem is that we are conflating the level of a descriptor and
-> the TTL, which may or may not be related.
-> 
-> I'm minded to queue something like this on top. Oliver?
-> 
-> Thanks for the heads up,
-> 
-> 	M.
-> 
-> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> index 8754c99c22f2f..70dceb20dfada 100644
-> --- a/arch/arm64/kvm/hyp/pgtable.c
-> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> @@ -1356,7 +1356,7 @@ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
->  				   enum kvm_pgtable_prot prot, enum kvm_pgtable_walk_flags flags)
->  {
->  	kvm_pte_t xn = 0, set = 0, clr = 0;
-> -	s8 level = TLBI_TTL_UNKNOWN;
-> +	s8 level;
->  	int ret;
->  
->  	if (prot & KVM_PTE_LEAF_ATTR_HI_SW)
-> @@ -1379,7 +1379,8 @@ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
->  
->  	ret = stage2_update_leaf_attrs(pgt, addr, 1, set, clr, NULL, &level, flags);
->  	if (!ret || ret == -EAGAIN)
-> -		kvm_call_hyp(__kvm_tlb_flush_vmid_ipa_nsh, pgt->mmu, addr, level);
-> +		kvm_call_hyp(__kvm_tlb_flush_vmid_ipa_nsh, pgt->mmu, addr,
-> +			     (ret == -EAGAIN) ? TLBI_TTL_UNKNOWN : level);
 
-Looks good, sorry for the mess.
 
-Reviewed-by: Oliver Upton <oupton@kernel.org>
+Hello,
 
-Thanks,
-Oliver
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/5c73cd9f0819c1c44e373e3dabb68318b1de1a12/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 5c73cd9f0819c1c44e373e3dabb68318b1de1a12
+origin: maestro
+test start time: 2026-07-07 13:29:20.780000+00:00
+
+Builds:	   66 ✅    2 ❌    0 ⚠️
+Boots: 	  107 ✅    2 ❌    0 ⚠️
+Tests: 	22321 ✅ 1396 ❌ 3272 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: hamoa-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4d094b06fecb7f47490dc4
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4d34e906fecb7f4749e7f9
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4d34e906fecb7f4749e7fa
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.timers.timers_set-timer-lat
+      last run: https://d.kernelci.org/test/maestro:6a4d39cb06fecb7f4749eb45
+      history:  > ✅  > ❌  
+            
+Hardware: kaanapali-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4d096306fecb7f47490e34
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4d13fe06fecb7f47496736
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4d13fe06fecb7f4749670e
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
+      last run: https://d.kernelci.org/test/maestro:6a4d14de06fecb7f47496af5
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4d095406fecb7f47490dd3
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4d14fc06fecb7f47496b97
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4d14fc06fecb7f47496b98
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest-device-error-logs-ramdisk
+      last run: https://d.kernelci.org/test/maestro:6a4d091f06fecb7f47490d01
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4d095b06fecb7f47490dd9
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4d2f7f06fecb7f4749ddbe
+      history:  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4d2f7f06fecb7f4749dde4
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: sm8750-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4d095f06fecb7f47490e31
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4d157706fecb7f474973ae
+      history:  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4d157706fecb7f474973af
+      history:  > ✅  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4d095806fecb7f47490dd6
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4d1de806fecb7f4749b426
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4d1de806fecb7f4749b427
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6a4d09b206fecb7f47490f56
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6a4d225806fecb7f4749c371
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: glymur-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_ac0000_i2c_a80000_touchscreen_38
+      last run: https://d.kernelci.org/test/maestro:6a4d214d06fecb7f4749c085
+      history:  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a4d0f0406fecb7f474955f2
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.ring-buffer
+      last run: https://d.kernelci.org/test/maestro:6a4d0f2206fecb7f474956cf
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a4d08c806fecb7f4748e392
+      history:  > ❌  > ✅  
+            
+      - kselftest.arm64.arm64_hwcap_sigbus_LSE2
+      last run: https://d.kernelci.org/test/maestro:6a4d156006fecb7f47497166
+      history:  > ❌  > ✅  
+            
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a4d0f0506fecb7f474955f5
+      history:  > ❌  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: x1e80100
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6a4d09ca06fecb7f47490fba
+      history:  > ❌  > ✅  > ❌  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6a4d29a406fecb7f4749d2e5
+      history:  > ❌  > ✅  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_owner_futex_requeue_pi
+      last run: https://d.kernelci.org/test/maestro:6a4d1de806fecb7f4749b443
+      history:  > ✅  > ❌  > ✅  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
