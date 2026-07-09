@@ -1,143 +1,81 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26D83382E1
-	for <linux-next@vger.kernel.org>; Thu,  9 Jul 2026 02:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A504229C9;
+	Thu,  9 Jul 2026 12:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783564210; cv=none; b=ohkmvfm9AH+/ttM06GxSM5Zt6iYwIosMdrb5kEr91G4LGkkxUXlgFkueIq81/HTPuXCypghHMaNrZx/hxyf9HcqDM3Kwxq6++gs7p/uui+yETFOodf1ueGFlySn5Gr78+lwjjW1MnJkYpIQruuu1ak3HyQa7IeGHZg6vVaoiNcs=
+	t=1783600431; cv=none; b=gxur1IYTVPT9nsdxdl8CXRbqiKSJGQ3+cmefTxYnc+m/RVo7HoiC9WojlcOx/M7/f+4SHRu4IYmqje3L27R97gAZ4JZl77wd/TL2HT0ZtMOBCQHp7j9FqIfPMiOQMfiGto1/hFML3VF+oiaKxPA5lljmGnte2MbHYz9783NdHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783564210; c=relaxed/simple;
-	bh=sv3oKW73dYhKm4OlU1smUOO5/h3HUW/2fhXRMpcdnrc=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=bozYPOHQDd51VcTUrPsLw8adegty3WXeFIKPq8VwEKkogYeBnWiH19AN7vCpCsYsSTW8epzTvWOhARYxKTjDOp7TUcZW4/d+3nmVd7vln2uIAFy8KLGJH8k0JZGf4bNRVJopX/XARB9pqUm9Hn5akkm3JhwF0t3SzVnfgZnBSkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=PnjhK2Tn; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1783600431; c=relaxed/simple;
+	bh=lpe5Y1gfhYhcyzoAW0A3UZ3YbuMS35t0jeG+RQ0Lacw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qf9+G7pyrbWmLY8BhSQcEya+DUuIwefjSaht0Ab0GSOgRvM83WkQTGNv5blj6VlbrbiQ35/jNw89fHhXJ1QYLtzPBPjPlKkgu3DVjfL41pluwWbdrW0W6KxHuMOw0iCBXPW+mdgL4C/ONcHnJQuqjSBPXJ2J/IsTzlifu7ajgo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wyb6fr+0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="PnjhK2Tn"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c88973b6965so322359a12.1
-        for <linux-next@vger.kernel.org>; Wed, 08 Jul 2026 19:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1783564208; x=1784169008; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=nCGE/gXWzJDCsk9LfB1qTCInggsBaR6WkEpluLvXoFM=;
-        b=PnjhK2TntyCNmUUJEk6WIKRiT9rv+iJ11TfboXdmD7bEMrDLub63G7XLYXObU66aaA
-         lC3aygWzW97HlHkMSz4Uj6OnSc2RPlqx87sOdlNrljUJFtagfdgAxzbCnA/1kxhk0POy
-         054R9v+0aUEbF4ScegHLrd783awsBom22Ft69dL9uDz6f9MoslndbGRUVjVNsv9fSgOU
-         kmrjw7AJw+wTTP7HqrvR0D6+gvFqfSVgrnAJa9s4vkEHdBAeY9jnTqMOnNWa1QCgqiXx
-         xya6Ux96A6W1Zj6C1l5Wi3S4BqNLS9souguwfYMphwxbTaSdX0qnHgG2ga9Nkly2mQBQ
-         c0Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783564208; x=1784169008;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nCGE/gXWzJDCsk9LfB1qTCInggsBaR6WkEpluLvXoFM=;
-        b=Dho1IfiGmcQhxHbK5Iz4hyhmLPlBeuXQn0+EflzUtez/kKc/4wleElxMiJwupXR2Dy
-         JcPj51WqbunlAQvLrWrtzqFxmGSc1CV7Sk8ASK1g/1fvFzApxfCoCpYZJjAGOJrD0Ozw
-         vz11929q4Yv9bw0e/DqflPrL9Wx3ZKksczIMobXXCwxuRRrNC+wZ3qfplbYUPVQAcOh5
-         UPm5i6puHWLVwHYdWoqBE0mvZuXYV2GECZdxNN29jykCGgJX/jY7TBRaqqZfeJpveJBN
-         6Ag7JCcalGWFeBHNVmFtWhHp3Fnup6rN7yeLLTAF1Wt+re3YEkJPFTYt5/fn87h7KEuJ
-         Icxw==
-X-Gm-Message-State: AOJu0YyjGzsPorOQ64Ns7Sx2tdH2gifYTE/Phv3TB/leoaE8WWCYV6Aa
-	qeS1GYk9VQtarhdNiKSiMnJvHlUQ6yQHTnCrZGodb+c26LGmmL1Xbu0Zdru9PvUdV9w=
-X-Gm-Gg: AfdE7ckotQQEDB7tw855mXIy6r0/kmNjkDnm7xmLcV8KiD4L0GEWeEEudAzxbVQBds2
-	iZzi685uXBubrvG4bcXI58cQWO1eG3cIN5TFCW37hAg1xGeA0KjiojliySfxaradJH9uRSh0LIm
-	D9/VAjPrAq/Xq9YKrilbhDtVTEmmB0Iwi/cx672jvZR1nK54RlzoQnII/B5XorDku7XAF6kyaVB
-	YU5Ul+Js+3sQ6sGuIi3ZABzTvG56PB5SUP9UAxyUShmhO2vzfB6hTIwERHLPmyqrPbH4d6UNvTG
-	oXmaDPfl1sv6OKtEeNWq4MQH6iT0jKxg/Jaq3/92DYPxYfwUmV7WZh3whTcM994AtFrbyrijQBx
-	GZStGK7AIun1g31cTLks6BGVVjZnwfihAijGKGIPeCIB2QDBR13oAo/7j7po1VRNJTwVaEdvPkr
-	9An8ncLg==
-X-Received: by 2002:a05:6a21:6490:b0:3bf:9e85:b423 with SMTP id adf61e73a8af0-3c0d6c14ebamr1234953637.34.1783564207868;
-        Wed, 08 Jul 2026 19:30:07 -0700 (PDT)
-Received: from 963b246bc1b3 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311747f5982sm27134689eec.5.2026.07.08.19.30.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 19:30:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wyb6fr+0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852A81F000E9;
+	Thu,  9 Jul 2026 12:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783600429;
+	bh=VxCyzKYt+2p3S+jwZw/Xoev9w+MftLxRp12EmyoN6qg=;
+	h=Date:From:To:Cc:Subject;
+	b=Wyb6fr+0pCxMUPXahLueym4g6s3cML7pvQLcuhdpnJKxBrORwnE2Vp1Z7fL4swA3V
+	 ASEoocmKX2BCUatvHAGHq1begAG8KDEY1lXuiFCChp07RPuN9qqSAjK4PNi6GfnC8+
+	 z67n2bevu+XyqfUdfIhTgRjHZhadPGSKDl/hH37hHRlQQHOgqlaIC9fHnyEG+UMK+B
+	 vJT+kceqvc7xToyrUGhBkdGic7Ce32BrsNvJKJxoY4f7DqJy2v3z/XSfzoNbZlHPZL
+	 mOsMhnNQIz5ICWTO8xYziHTYykdhBFqtM+kGWpwbQ4+/i6IRXjsCk8k6Xb1+jiihEf
+	 M9mf7ILVhKgdw==
+Date: Thu, 9 Jul 2026 13:33:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Fixes tags need work in the drm-misc tree
+Message-ID: <ak-VKufd0zg0F8AD@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - b9810cd75b9fb56a3425d391cba3f608502bd474
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 09 Jul 2026 02:30:07 -0000
-Message-ID: <178356420682.7806.8693853589903017162@963b246bc1b3>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bH6rGYeBd6bmCszn"
+Content-Disposition: inline
 
 
+--bH6rGYeBd6bmCszn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+In commit
 
-Status summary for next/master
+  3b1f4d5e47b36 ("drm/amd/display: Fix dangling pointer in connector reset function")
 
-Dashboard:
-https://d.kernelci.org/c/next/master/b9810cd75b9fb56a3425d391cba3f608502bd474/
+Fixes tag
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: b9810cd75b9fb56a3425d391cba3f608502bd474
-origin: maestro
-test start time: 2026-07-08 14:17:25.846000+00:00
+  Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and dm_crtc_state")
 
-Builds:	   65 ✅    1 ❌    0 ⚠️
-Boots: 	   67 ✅    3 ❌    0 ⚠️
-Tests: 	15820 ✅  943 ❌  122 ⚠️
+has these problem(s):
 
-### POSSIBLE REGRESSIONS
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
 
-  No possible regressions observed.
+--bH6rGYeBd6bmCszn
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-### FIXED REGRESSIONS
-    
-Hardware: qcs8300-ride
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.efivars
-      last run: https://d.kernelci.org/test/maestro:6a4e752306fecb7f474e57d7
-      history:  > ❌  > ✅  
-            
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpPlSkACgkQJNaLcl1U
+h9AKgwf/RNYiEzszQGfZYdb3GELo4yuwD1Al49eAnwIfZAipRVTgJ/1jqVvHJ+WL
+IGvU7NFMNysq4atFQBJLm0O/CIb0uIOXwYpm0Xxe9t3C0/jTgCYPsvZm8Xdd3+Bl
+2YzytulHikVL1rZzufMIALPRSpjWBQor7w07hPRGvFC99kZ3LB0USzcw6BWNfYjU
+p5sFxU7osiPF8YESyt2W6sl6zfh+FcHx61PeuQZ4AlKu41Lu2+eBjFToVIXHAVoQ
++zN6+3hWXnnoaQAoc/1sLNrfoTyXwpoFdjuHsJt3lczZNbRfN5ZJMl3WlSzhoA5T
+dRiuFf1W05o9v/LJRhoLBOd0IAr/Lw==
+=wWw7
+-----END PGP SIGNATURE-----
 
-
-### UNSTABLE TESTS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.gpio
-      last run: https://d.kernelci.org/test/maestro:6a4e756406fecb7f474e589b
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.gpio
-      last run: https://d.kernelci.org/test/maestro:6a4e756606fecb7f474e589e
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-Hardware: qcs9100-ride
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ring-buffer
-      last run: https://d.kernelci.org/test/maestro:6a4e758906fecb7f474e77c7
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--bH6rGYeBd6bmCszn--
