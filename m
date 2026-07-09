@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48CF4219F6;
-	Thu,  9 Jul 2026 12:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97456423147;
+	Thu,  9 Jul 2026 12:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783600453; cv=none; b=IUiEMbOPHWxwGv4dDju2PPHJTKdrN4pE1p+9ebIKDJzXkKDwiy9EtKTO/186IZmGDEpGylHrhO1vGy7/NAxW3MGTJY8sSD4DfFqqr+8OZSt/sNRFXPSJceYbbwH0LUYdY08zql7SvAooU3Nbcg1HjQVQ4TAFzp+qK+e795fm3Qk=
+	t=1783600507; cv=none; b=UBJZZpL0f3BjHGFoEBC/0Y+ozzLTIq6VAyHxytehzvNVfyNLImcR9m7c7vdhOio1L0MG2KGS7bOdJDpip7/eaYRdDGMOXMO23pto3rJZK5rGUy9bKAmb140My+KJrn1VVdkZLJM3e+jq3jP7raJmDHvWvwFtbtMp+ICF3TpGg+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783600453; c=relaxed/simple;
-	bh=h2Y7F2WDMXhDYHXwcO6lBhqvLgadaHeohSNlu2EKBb4=;
+	s=arc-20240116; t=1783600507; c=relaxed/simple;
+	bh=sDKsUvUIPXAGTBMa5igEjqebu8ajD/Jdgghqy/kgmzU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=loZiUoVfb1kU2Ezz4CcZ2A+LyWYyt+eE6hlCtPFJLp/ua5YtR9B2QXv8SI0R1e3ZcDnqp4nDoEQYogeOJDa0fmYwCa3VwJ2BHTrnQjwopikQzQ/+56v/KG7ZkMTe5I15EHdPUa9aaOydzxmuw8l6kq8LDOGEe/hCi0KKBHVaugA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bseccNL5; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=b5J0XnQmxVzOXhwFyztzsVKR57nR0s5J9pE1pw/rWU6PgloppEM2l1C3GP31Ul2RyXfNJGaOILfDgix4cCjhO795qnBHWpUV2aDzPfpkS2sBQOG8lUhTgXSV6S9wsuXc8xJVVA0ZqqedYP/1p4frxAt7KbohW9It4s9JPoubRgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe5n3JPW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bseccNL5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416DC1F000E9;
-	Thu,  9 Jul 2026 12:34:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe5n3JPW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6681F00A3A;
+	Thu,  9 Jul 2026 12:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783600452;
-	bh=PLcyfyRLh9N274iEIAU0fg4hnH+FVhFMtjqvfI8OHEc=;
+	s=k20260515; t=1783600506;
+	bh=fKaMNVIiJ+fcKBPW5gCCemKgW5j/bqj5fL8eoqzY9F8=;
 	h=Date:From:To:Cc:Subject;
-	b=bseccNL5IajMpaKml0Cf6JglRnD3jC+Q1AWQzLot0EA7gD7jKDk4l0haAHXGRfCIN
-	 BPPzP1WU4g7bjFNFd848ZgxKYl5C0c5zlvr++A6DIgcZCy+vBIaHBLHISEmr66opq6
-	 S8HfDiTkqzBXDer+bZWSySMNoSqFHy3lO1p4lmZ6f/yq+8OBqENDk4DvkCqQguS/zw
-	 EYNbQmr4+PCSEbcZl1/QKnNWnJDMrNDLQMrf7FYp3pVCu2+36cHodmVg0Ss9w9mDIJ
-	 O/XdRwlPHKSOQ8Xun6gbsx8Ot9dNBYtMWOy99Dj1J2xaADQoKhsnfmbc5DD40p84pU
-	 nrmmctDpz6aAA==
-Date: Thu, 9 Jul 2026 13:34:08 +0100
+	b=Pe5n3JPWeNaFRMmXm8FnzP2jAf19HM2bl6q+GeN9JD1ZlGBEgkbHQchPqgu5avQRB
+	 FICMZuIS+QQOcU2WTibzhPsmMaVuQIYyzyCYrVW77PFH2BaCLHHCxCSso0t5TtAydu
+	 TUiU1f60PS+Iggz1dPPq+6CyDunuvL0SEiKf8h79soy6ptL3pol6BwHUe9l5/9MkXI
+	 6sn4enX5yW4Hzxh7cNDGGh4MlBpcpoSTzXwGZ2W49BaB+pndu/4WuYsExFShNtLFPn
+	 glOYdraGAuA3DzFnhlbzlTWuYkZS1okmJmioEHLpl2NiY2wyRVJFykXJ7Fba/kMrNZ
+	 Lu/gYfbYAf5QA==
+Date: Thu, 9 Jul 2026 13:35:02 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the drm-misc tree
-Message-ID: <ak-VQChNqm9ymtS6@sirena.org.uk>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Subject: linux-next: manual merge of the drivers-memory tree with the origin
+ tree
+Message-ID: <ak-VdgGMc6xFyDjw@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,41 +43,72 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ySfZFTdHsc5H/OLM"
+	protocol="application/pgp-signature"; boundary="ZylUbrKH0DCnjSKs"
 Content-Disposition: inline
 
 
---ySfZFTdHsc5H/OLM
+--ZylUbrKH0DCnjSKs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In commit
+Hi all,
 
-  0aeed866cb938 ("drm/amd/display: Fix dangling pointer in CRTC reset function")
+Today's linux-next merge of the drivers-memory tree got a conflict in:
 
-Fixes tag
+  drivers/memory/tegra/tegra186-emc.c
 
-  Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and dm_crtc_state")
+between commit:
 
-has these problem(s):
+  995832b2cebe6 ("Replace <linux/mod_devicetable.h> by more specific <linux=
+/device-id/*.h> (c files)")
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
+=66rom the origin tree and commit:
 
---ySfZFTdHsc5H/OLM
+  5239692170f18 ("memory: tegra: add multi-socket support to the memory int=
+erconnect")
+
+=66rom the drivers-memory tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/memory/tegra/tegra186-emc.c
+index 2a4cb64c4c4c5,e25f485e136e3..0000000000000
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@@ -3,9 -3,13 +3,12 @@@
+   * Copyright (C) 2019-2025 NVIDIA CORPORATION.  All rights reserved.
+   */
+ =20
++ #include <linux/cleanup.h>
+  #include <linux/clk.h>
+  #include <linux/debugfs.h>
++ #include <linux/fs.h>
+  #include <linux/module.h>
+ -#include <linux/mod_devicetable.h>
++ #include <linux/mutex.h>
+  #include <linux/of_platform.h>
+  #include <linux/platform_device.h>
+ =20
+
+--ZylUbrKH0DCnjSKs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpPlUAACgkQJNaLcl1U
-h9DuLwf/S7lHF1Sp6r6EGwnAz5Xpnr4wcgRT3e76kWqVLOglVplCjZsJPkBhbb4R
-dEbXZM6pYa1ygK6Yefqr3W0sbTppN6l9e5q/a4fA+6PJoN5mFDHdXjyKCbBeZSsR
-cyLjnZCT160raWAVLiSZpG6ETvdusRJehu0e4PEQ/qgORPLMRdZTUr2fkaGOz7xJ
-WxxL7JX9El47q/uz88bvXzAD3iXJTbca+IpZ9COCyhe0cN2V6ojo90jyL/4xuwET
-BEhlsCgKe4316jOWXAfaOjIFgXU9ns53YDdwPtrU/3vqmZghMT4M2LcbWJGeTPVS
-KnADsQX5IgmW1NIINRqWZDuCIFN3og==
-=glOm
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpPlXUACgkQJNaLcl1U
+h9Dt3gf8C8eGpt5YbTNy6bXQqO4omca4zQyYHybJzhhBhOiw0md+hQ8CtRwSkQU9
++I4BhiJ7Td28LxgyBayalhR/HbsOJOcJRgwAnta2z5WaUnHtGxo3ze2qnrv1CGaR
+6TFEshB6GeL928FWgjUnG0FHF1jjn2lVnRBuYhdt8XziM8In1E4JxJl3NkMk1ujZ
+e0yUgGPQ4V+E+k6CApofWgsqtgDUoXt4PANP2Oh5F1K2VPQ1szlKx2L7cizm8MsH
+o6TFPazr3ayE7VncLhGooNgC7oUh+zZ5gjJ5ZZgGaYG0Wd0wSLbm3yTyYVf7/NJT
+pkkzAZCgk7TOze/i1AUo8fcOohFROw==
+=8/e6
 -----END PGP SIGNATURE-----
 
---ySfZFTdHsc5H/OLM--
+--ZylUbrKH0DCnjSKs--
