@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9018423147;
-	Thu,  9 Jul 2026 12:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847811BBBFC;
+	Thu,  9 Jul 2026 14:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783600518; cv=none; b=u+9VDQhMfSn2VakJrfcs7sne4cZiKXemShCXEMuMwR53VGWZX3/P/8Pf7M8996Ce7oSBnK5toyfNcLNXe457FVQMHUYLZcMdcOnL6ELLG4aPtc53vTZzM5Ki9pRjdIc6fXB80ZjJUErfiuiXI7V7ZaizVqfTHVDD1EA+Ze2ffCk=
+	t=1783606870; cv=none; b=DRlhjx0GShIKwSn+ZoFtzouKIV2h2ba7EZgA1MFNaQpEE3b0appIp+DxxAbGyT2RGkFrd/7sP4pjhIFQvHgB68vcdC7aaJeyy/Xyu/8lv5Z7J0IfwlvvP5Mp6JCuWsJnZcagfe/PrIZTpfCE24VJ3qM5RbEDFaFiNQvJCXYpnww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783600518; c=relaxed/simple;
-	bh=zG1D9M3DWqG/7OKAFw2sKcBHv9C8rrGlL6dxlVF9DT0=;
+	s=arc-20240116; t=1783606870; c=relaxed/simple;
+	bh=maBpEX7dS8A1KwIm7N50lfYDOSTQ0iDGp2BmwKtZpH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kI064cnK1hcL6fXjIW9vGTcRssgSw2692u+yuulWRwpMFfeM/H2UwRvtIn/vMbVCMpvyDGFdnF7qi0PI6QxT0xaB1Tof209j+H88h0vYCWfs8aFjaW5hrpI549h4dPZ3QeDrFHCOoZ3Tq+FTZDu90zdN0qlSu51olIhnqVPcX+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHz420pM; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=OfpMaaAmjQrrknxO3s9wDzsDT95HM04juMmOfBx5M66iD7Q5tdaP8W3yLkU60EMNk56wyAtRjvBvMTweQefrIlQuoEhTVvWfqF7BP4unBhhaZToC0X1McbrXAoC/oGMKuVU8X284HgzGOZvpCYPxZLV9f9Tx1kwt+dt6sfEydMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bb04UVlf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHz420pM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 730781F000E9;
-	Thu,  9 Jul 2026 12:35:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bb04UVlf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F421F00A3A;
+	Thu,  9 Jul 2026 14:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783600517;
-	bh=6vkhZRyJnmecWOkqUinDqWKhpkBTVYUsyjyw5pXuYMs=;
+	s=k20260515; t=1783606869;
+	bh=a4uw/oPQVjYW4hT48dT95iyUf/kiOSVu4A7dwiQO81I=;
 	h=Date:From:To:Cc:Subject;
-	b=GHz420pMVq9mvbvZns9DCqWxxOdU7NzwFUs8iQPUbXpKJ9sAD3vno8A/oWREGeqmD
-	 5aVWxjdrWRrph3JrXdVdESR7KvdGH0rHPGOjPDYge2bZI0ukryWY5gYmh0oq3cana/
-	 igozkopdveN2nw2a2l0mMzb4B5q9kmndRFcYLu66QYTABSlkH+zQZeWDPl0+5cXxZm
-	 D+yc7GIXUKsPpT62T4Sv6qKa9YYJIzUK4T3jKSv6N4x9MQGnPl2uEiFYeZU8spTtlO
-	 WUG6Lu2Q0fsLGOxO00Ocf4DrGlPcCyJU9Z+jQhuFjXEWjTZZz8DT6xLhfL+XBgSF0l
-	 Gf01aysZtLjuQ==
-Date: Thu, 9 Jul 2026 13:35:14 +0100
+	b=Bb04UVlfkD4wAIclCBE5mRzSytJda3GAEEbXLw50KDSJZv+tlWsMCTANdssKbvjOl
+	 Gw9IqyTjWP9NT6MSIW6rXXLX3XVvY8Pw0NZCcTm9I4+/R0We99dXsBJ462tawvPAi2
+	 ocv3SWJY0mbKlNlpI1d91EvIx5tYQWoc7gUXMgzHz51AI1fT6anOb+0CMzUT5zFjgF
+	 jp28MnPwwDDOBkttIMIFQCE/4rvwy86uGYPractOYh/fOG3HSA8290oOQVVgeOo/yu
+	 uAjZk2HNMWgvo3CiuOl2ulFVs6g/srlG5oExIDWqhFhbV+rKVA7pkD6uOMmbY7mj0c
+	 uKj34putVG9XQ==
+Date: Thu, 9 Jul 2026 15:21:05 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the tip tree
-Message-ID: <ak-Vgm_iasKzmDee@sirena.org.uk>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the bluetooth tree
+Message-ID: <ak-uUU4g795lDXuP@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,33 +41,34 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Hd56VdYor891GXjY"
+	protocol="application/pgp-signature"; boundary="kTm7eJgG0/13GEff"
 Content-Disposition: inline
 
 
---Hd56VdYor891GXjY
+--kTm7eJgG0/13GEff
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+Hi all,
 
-  b80ddec4ca74f ("irqchip/qcom-pdc: Fix kernel doc for qcom_pdc_gic_secondary_set_type()")
+The following commit is also in the net tree as a different commit
+(but the same patch):
 
-is missing a Signed-off-by from its committer
+  603b91aeb20a2 (Bluetooth: btintel_pcie: Refactor FLR to use device_reprobe())
 
---Hd56VdYor891GXjY
+--kTm7eJgG0/13GEff
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpPlYEACgkQJNaLcl1U
-h9D4Awf7B+hmt0g5L9Djm6hNoWja89pO5D4ndGUp/crhm12+k5V4q4/9KNfOudKA
-RaWlLsTCxu5jZv/VdnqpSaInezVmBNheodfl6znEhSWOzBMVAdvgRtGMR34v1zZI
-BITErP/Ktc0cw6xYtqEAX0F9y0z+Shf5mI9I+Wp0fKMv52NSrfmADY+A1KUnXR39
-Ei5SOw7wO+1pSkLayIGoY5+VFz7rx2NKKqjcdM6tC4aPOjMwxuHNfoLLyN+I7Tjq
-+a3ByAoHvMEDaczMbB6LYQCbLT7cM67urml+yDx/z3uLMVeoDbCUSP0A8Oek+nZv
-JzoKcqv8WQNqQ28DMvjey/CKbW0+Bg==
-=dXlr
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpPrlAACgkQJNaLcl1U
+h9CiUgf5ASKWgd/+P574QMW1Dm/oz9IsmfgwRAqktYLs4i1SsyDSeZLLZ4C1OESC
+w7phJULKF5JYLwKinB3haQPkkcXgdnj9oVb8SKOvR8DRf8ebcYSE60OKSNPTYutM
+qno6XXQKpTul/5IJ02+nPbqdZbRzc9sZ0skmnGAZdysOBgwpi6uR4GVgpGdjVSyD
+38kzJyNasvo49scz4o7+5sBLi7Frrql3g7WkZPPFK8HzHg2u6ITCK7nzuE0DZN+Z
+eMBx5MUHbIkVueMRok+VpKHEVr2M+xJKS9JZUdgyB6aAttEvJHg766QsUwKeYwhb
+Bl+pNnyg6mkBHus576hCN/QlEmVkHQ==
+=DyzL
 -----END PGP SIGNATURE-----
 
---Hd56VdYor891GXjY--
+--kTm7eJgG0/13GEff--
