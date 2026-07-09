@@ -1,94 +1,143 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8333355F25;
-	Wed,  8 Jul 2026 17:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26D83382E1
+	for <linux-next@vger.kernel.org>; Thu,  9 Jul 2026 02:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783531899; cv=none; b=Z6fRcNpvUBOIv2NGbZ8DuiUlkw9OTE3Bq+ptN5bEI9jJ1UlMTtSwePKpZCtCVXSwMfqNFgFW5fZs9A+Z/zbJJXP5zkATodobtvdYd+BiND7ZvFZcMfvg8L80kDZOhApA4yVhc2Ddqbdbs4waU2Fnk0f9iAvA53I1vc+ql5izcTI=
+	t=1783564210; cv=none; b=ohkmvfm9AH+/ttM06GxSM5Zt6iYwIosMdrb5kEr91G4LGkkxUXlgFkueIq81/HTPuXCypghHMaNrZx/hxyf9HcqDM3Kwxq6++gs7p/uui+yETFOodf1ueGFlySn5Gr78+lwjjW1MnJkYpIQruuu1ak3HyQa7IeGHZg6vVaoiNcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783531899; c=relaxed/simple;
-	bh=Isy1ilaG6+XIPZAP9Co9UDCXL4BnV1UwhsTaSF3s21U=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KCkBPVdCJiqca+GsnX9EjXX1qxnpFf1DnASysBhsicXWIsaSLXraFNPQt8miPu+Zv8a+PEbdeROp3YvUBIEkEK9iMRji9jJIdpgcwglcRt32b0AF+IqkFkIh//x6NdMq/QK9Qk5Dzd7zmB+6PsEiv9fAIyayi4SM+M12cxFzW5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pb8lU7ub; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1783564210; c=relaxed/simple;
+	bh=sv3oKW73dYhKm4OlU1smUOO5/h3HUW/2fhXRMpcdnrc=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=bozYPOHQDd51VcTUrPsLw8adegty3WXeFIKPq8VwEKkogYeBnWiH19AN7vCpCsYsSTW8epzTvWOhARYxKTjDOp7TUcZW4/d+3nmVd7vln2uIAFy8KLGJH8k0JZGf4bNRVJopX/XARB9pqUm9Hn5akkm3JhwF0t3SzVnfgZnBSkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=PnjhK2Tn; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pb8lU7ub"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D4DC40E0031;
-	Wed,  8 Jul 2026 17:31:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WwUl9Cw5m7mo; Wed,  8 Jul 2026 17:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1783531885; bh=pBjUkSBAhsOo8m31s6U+CiM8Fkr7Q7ACXfdV2SEADcI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Pb8lU7ubVVzLNCvyJrGh4LJdjmTCDSYrufIPEXb0FQB8Z94XXc6/ZWMlanjAyF9nr
-	 yg+d04Lb0z064bhM5SMIZi5Qy3kS/6XI4CyI66FCF9OiNW9OlWOY+DXgJ+0tZgdKXV
-	 AkCw+W02N7MsffV1alI5okFU9OoUzwGE274VwZww//bSrH5fN6vUWFfRyaDooAsRe6
-	 lmc4h2u33fxDhlXRdbAjnw7FnqxAOi4PHm3gqvzcuYFtO3HgJ4IDZijuc0PzFNBKSh
-	 5o+0N5UStoTdpw5JZhHvur/bvm4QbQoMlSqfHLskhhbgWDMFpSoV6Gwy3sexeXQSv2
-	 AwdSvdfc+6ewYZ/qaF4PFVCeVqv9C44QOEgFge2MFJL4S9EJGKkyJoQdWTJHuKKmDL
-	 WXxdWXYUGXmrohcm6ag9nMeNmMUNQaBlbQUEIgwH27kYuDlkFYKmMfMjknOjyxYTzu
-	 r8NMptPHLNEo8Y0/RFnzOby8V3qUtCqGDeR5Zgm7FHTDqPrYDNoI8jrBI9+odOGuOx
-	 kpctXsYPYSj/pkozTwrxMJH0lLDQY6f4so8BSgKnVEFMKMN5SGDdN+uXeP90PRUI9e
-	 37qEsN0hB5gSr2hr8342xLFvQ1m+fCGTYbA3Xi+xAX6UEwIePAztt5N4DFoKMIAN5S
-	 pLzYpm/kryvvEYCJ56sGeV8M=
-Received: from ehlo.thunderbird.net (mobile-166-170-42-114.mycingular.net [166.170.42.114])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6895C40E02B1;
-	Wed,  8 Jul 2026 17:31:18 +0000 (UTC)
-Date: Wed, 08 Jul 2026 17:31:14 +0000
-From: Borislav Petkov <bp@alien8.de>
-To: Mark Brown <broonie@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- KVM <kvm@vger.kernel.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Sean Christopherson <seanjc@google.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ak5lu6XQP6PPtQ6u@sirena.org.uk>
-References: <ak5lu6XQP6PPtQ6u@sirena.org.uk>
-Message-ID: <10427F2C-C53A-4F88-B8B4-6048D6061A03@alien8.de>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="PnjhK2Tn"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c88973b6965so322359a12.1
+        for <linux-next@vger.kernel.org>; Wed, 08 Jul 2026 19:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1783564208; x=1784169008; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=nCGE/gXWzJDCsk9LfB1qTCInggsBaR6WkEpluLvXoFM=;
+        b=PnjhK2TntyCNmUUJEk6WIKRiT9rv+iJ11TfboXdmD7bEMrDLub63G7XLYXObU66aaA
+         lC3aygWzW97HlHkMSz4Uj6OnSc2RPlqx87sOdlNrljUJFtagfdgAxzbCnA/1kxhk0POy
+         054R9v+0aUEbF4ScegHLrd783awsBom22Ft69dL9uDz6f9MoslndbGRUVjVNsv9fSgOU
+         kmrjw7AJw+wTTP7HqrvR0D6+gvFqfSVgrnAJa9s4vkEHdBAeY9jnTqMOnNWa1QCgqiXx
+         xya6Ux96A6W1Zj6C1l5Wi3S4BqNLS9souguwfYMphwxbTaSdX0qnHgG2ga9Nkly2mQBQ
+         c0Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783564208; x=1784169008;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=nCGE/gXWzJDCsk9LfB1qTCInggsBaR6WkEpluLvXoFM=;
+        b=Dho1IfiGmcQhxHbK5Iz4hyhmLPlBeuXQn0+EflzUtez/kKc/4wleElxMiJwupXR2Dy
+         JcPj51WqbunlAQvLrWrtzqFxmGSc1CV7Sk8ASK1g/1fvFzApxfCoCpYZJjAGOJrD0Ozw
+         vz11929q4Yv9bw0e/DqflPrL9Wx3ZKksczIMobXXCwxuRRrNC+wZ3qfplbYUPVQAcOh5
+         UPm5i6puHWLVwHYdWoqBE0mvZuXYV2GECZdxNN29jykCGgJX/jY7TBRaqqZfeJpveJBN
+         6Ag7JCcalGWFeBHNVmFtWhHp3Fnup6rN7yeLLTAF1Wt+re3YEkJPFTYt5/fn87h7KEuJ
+         Icxw==
+X-Gm-Message-State: AOJu0YyjGzsPorOQ64Ns7Sx2tdH2gifYTE/Phv3TB/leoaE8WWCYV6Aa
+	qeS1GYk9VQtarhdNiKSiMnJvHlUQ6yQHTnCrZGodb+c26LGmmL1Xbu0Zdru9PvUdV9w=
+X-Gm-Gg: AfdE7ckotQQEDB7tw855mXIy6r0/kmNjkDnm7xmLcV8KiD4L0GEWeEEudAzxbVQBds2
+	iZzi685uXBubrvG4bcXI58cQWO1eG3cIN5TFCW37hAg1xGeA0KjiojliySfxaradJH9uRSh0LIm
+	D9/VAjPrAq/Xq9YKrilbhDtVTEmmB0Iwi/cx672jvZR1nK54RlzoQnII/B5XorDku7XAF6kyaVB
+	YU5Ul+Js+3sQ6sGuIi3ZABzTvG56PB5SUP9UAxyUShmhO2vzfB6hTIwERHLPmyqrPbH4d6UNvTG
+	oXmaDPfl1sv6OKtEeNWq4MQH6iT0jKxg/Jaq3/92DYPxYfwUmV7WZh3whTcM994AtFrbyrijQBx
+	GZStGK7AIun1g31cTLks6BGVVjZnwfihAijGKGIPeCIB2QDBR13oAo/7j7po1VRNJTwVaEdvPkr
+	9An8ncLg==
+X-Received: by 2002:a05:6a21:6490:b0:3bf:9e85:b423 with SMTP id adf61e73a8af0-3c0d6c14ebamr1234953637.34.1783564207868;
+        Wed, 08 Jul 2026 19:30:07 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311747f5982sm27134689eec.5.2026.07.08.19.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2026 19:30:07 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - b9810cd75b9fb56a3425d391cba3f608502bd474
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 09 Jul 2026 02:30:07 -0000
+Message-ID: <178356420682.7806.8693853589903017162@963b246bc1b3>
 
-On July 8, 2026 2:59:07 PM UTC, Mark Brown <broonie@kernel=2Eorg> wrote:
->diff --cc arch/x86/kvm/x86=2Ec
->index 63daa4dfa23ad,0626e835e9eb7=2E=2E0000000000000
->--- a/arch/x86/kvm/x86=2Ec
->+++ b/arch/x86/kvm/x86=2Ec
->diff --git a/arch/x86/kvm/msrs=2Ec b/arch/x86/kvm/msrs=2Ec
->index c230b18d87e38=2E=2E861d04bfa63dd 100644
->--- a/arch/x86/kvm/msrs=2Ec
->+++ b/arch/x86/kvm/msrs=2Ec
->@@ -651,7 +651,7 @@ static int set_efer(struct kvm_vcpu *vcpu, struct msr=
-_data *msr_info)
-> 	if ((efer ^ old_efer) & KVM_MMU_EFER_ROLE_BITS)
-> 		kvm_mmu_reset_context(vcpu);
->=20
->-	if (!static_cpu_has(X86_FEATURE_XSAVES) &&
->+	if (!cpu_feature_enabled(X86_FEATURE_XSAVES) &&
-> 	    (efer & EFER_SVME))
-> 		kvm_hv_xsaves_xsavec_maybe_warn(vcpu);
 
-Yap, LGTM=2E
 
-Thx=2E
+Hello,
 
---=20
-Small device=2E Typos and formatting crap
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/b9810cd75b9fb56a3425d391cba3f608502bd474/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: b9810cd75b9fb56a3425d391cba3f608502bd474
+origin: maestro
+test start time: 2026-07-08 14:17:25.846000+00:00
+
+Builds:	   65 ✅    1 ❌    0 ⚠️
+Boots: 	   67 ✅    3 ❌    0 ⚠️
+Tests: 	15820 ✅  943 ❌  122 ⚠️
+
+### POSSIBLE REGRESSIONS
+
+  No possible regressions observed.
+
+
+### FIXED REGRESSIONS
+    
+Hardware: qcs8300-ride
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.efivars
+      last run: https://d.kernelci.org/test/maestro:6a4e752306fecb7f474e57d7
+      history:  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a4e756406fecb7f474e589b
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a4e756606fecb7f474e589e
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.ring-buffer
+      last run: https://d.kernelci.org/test/maestro:6a4e758906fecb7f474e77c7
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
