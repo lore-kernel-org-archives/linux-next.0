@@ -1,38 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A63E3C9892;
-	Fri, 10 Jul 2026 12:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215533783D8;
+	Fri, 10 Jul 2026 12:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783685313; cv=none; b=bGuWP+Cl8GohIEIas1tgLqjHdOpMTtUabp4FIEypja/jl5Dgi5M1eKD4JRwG16xZJpSUJ6NTy2F6afvxsjcJ5BXu+/wD+GXgO1ze+LqUhzSFDvEwKkIlj+kIoBlvKFALzCaZJ+9f+GtFnsWKd7pOM4hXXxP7WLiXB1MS/wEmgzw=
+	t=1783685502; cv=none; b=krvcpSJK56OZIFp7xWKl+i5K7WjMgpeLOhxHV7BVCS2YSM54wP9Cpl8qTuxmRvOPxZXUtiyKdQvVoiWBiT6/D2PPBu2tcHKiXODqlyQ2JA4JsJUkeikXMd0UaCM4bFiXcnlfJv1KxR9ZVOKNOXfrPBNL/7m5PXE5BxM9EMJy3G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783685313; c=relaxed/simple;
-	bh=Wd/wtcm3mHZvGo/y2qXhyRQVZH80tg9uGdFHU1lgsEU=;
+	s=arc-20240116; t=1783685502; c=relaxed/simple;
+	bh=98nspmCdco4KEj+9xi6ZhVwcI8w6pUAh2dTxQn49r6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GizRGZ2WgUBcv8NZjdsk+4qco9LDNWowMPx38k5ka1CF/tN1ewImL/cnZI3l52tos0wau5L3v3Qqemh4Tczcz6lqyQcNPZtbIqjEwcI569FFqpIUmTh4uuRTY+c837o0tv1r3Z9PUY1wHR7u0InNbWR9mGOREod01CkyjKdAYWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBF9VG/c; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=cSU7QxKD9gC5Etx27XQcsMrVE/FIs4FmKfbYcnuJmIWI4Amiu5F9qgVZ+yIrJtxor+2ZZSIyoLAnTsRgL5Z51f/jiBYR9152DKDRxaWiNdC1D4XOAWgZntvAcaMNIB1iiWCtOjIL0GAD2sRyMn2FN6UjtqD5bPQXwl/PAGYfN50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBXrAoJO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBF9VG/c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E74071F000E9;
-	Fri, 10 Jul 2026 12:08:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBXrAoJO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E881F000E9;
+	Fri, 10 Jul 2026 12:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783685311;
-	bh=iErwGfhtTfBr7jGxbosyYw/TXCmRVB1dKcyNEk+KM5w=;
+	s=k20260515; t=1783685500;
+	bh=kn7H4g2tNaZPLX6ioKkOx4AtSf9ua3uqUStd5IiHdqI=;
 	h=Date:From:To:Cc:Subject;
-	b=IBF9VG/cCGbceOBI2VGlXNcgi1ljsJe4IpfvbhayG6o9Is18Og5NUKrCmdHH29xj1
-	 EWGVIMJxhSCdqVjnqYPjhsOrMWQhmi/H+KeYTJUixPS7LMKjWIjUyvmvTeZYGCRasm
-	 O6qsqlban59AWk5K8ZrVxMRIl3VuFyEzHyJa8pLIggyFfy5oftlFPAjfbjg0AkRaSl
-	 0K7ZqTzBTujlig+c1ydQMPpElfVJw4sj8TtyFYYTx9DWEgg8NzQvrqIdFF332VJVHk
-	 lP49CB495ljzXnpfKtBxmdmicLCgn/M6c0oI9ciYPTEhXBvvXIZfHAJ+jat2k/JTTN
-	 16bepsaxU5u5A==
-Date: Fri, 10 Jul 2026 13:08:28 +0100
+	b=iBXrAoJOOyVOOkNI7RJizrdbvlQ4ciEDv+ozGhKCwnYd6eBB2T7vTZDu3K5nabJzi
+	 mpK7XHwJnWq5w0EiCnsGwvWm9tGZCCGJoIFwnlC3K8e68FJXmdC2jvgPfqWtce7ZRz
+	 cH5W7C+3IO2neTfRpWH8T8PMi1GgIPrbHApnBmYR0UR8IMI5RU8pdWdoUpPKw+TKss
+	 SqbyY3vSpwqsgdQnzsbLhf8yUuQF0c9Md2V0Zz8TSb7LX731pXW2u1xofKElSA1Cc6
+	 6IKkVZiCKNsQyYd+oCitlkD4iLvbmSCNR1Bk6pXJargsQVQ0CCS5KVIsvxwPz9QDFa
+	 /0mMunMOeEfZg==
+Date: Fri, 10 Jul 2026 13:11:36 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christophe Leroy <chleroy@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	David Francis <David.Francis@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the fsl tree
-Message-ID: <alDgvHf9mKOJI1cc@sirena.org.uk>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <alDheI4V_zDaAUL-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,155 +42,86 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3vMy0JNzTDwQ2SYI"
+	protocol="application/pgp-signature"; boundary="sEC/SRmYGkpXiaIW"
 Content-Disposition: inline
 
 
---3vMy0JNzTDwQ2SYI
+--sEC/SRmYGkpXiaIW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the fsl tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the drm tree got conflicts in:
 
-/tmp/next/build/drivers/usb/host/fhci-hcd.c:32:10: fatal error: 'asm/fsl_gtm.h' file not found
-   32 | #include <asm/fsl_gtm.h>
-      |          ^~~~~~~~~~~~~~~
-1 error generated.
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/usb/host/fhci-hcd.o] Error 1
-make[6]: *** Waiting for unfinished jobs....
-In file included from /tmp/next/build/drivers/usb/host/fhci-q.c:22:
-/tmp/next/build/drivers/usb/host/fhci.h:449:9: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  449 |         return in_be16(&fhci->pram->frame_num) & 0x07ff;
-      |                ^
-1 error generated.
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/usb/host/fhci-q.o] Error 1
-In file included from /tmp/next/build/drivers/usb/host/fhci-hub.c:24:
-/tmp/next/build/drivers/usb/host/fhci.h:449:9: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  449 |         return in_be16(&fhci->pram->frame_num) & 0x07ff;
-      |                ^
-/tmp/next/build/drivers/usb/host/fhci-hub.c:95:2: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   95 |         out_be16(&usb->fhci->regs->usb_usbmr, usb->saved_msk);
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-hub.c:156:9: error: call to undeclared function 'in_8'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  156 |         mode = in_8(&fhci->regs->usb_usmod);
-      |                ^
-/tmp/next/build/drivers/usb/host/fhci-hub.c:157:2: error: call to undeclared function 'out_8'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  157 |         out_8(&fhci->regs->usb_usmod, mode & (~USB_MODE_EN));
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-hub.c:160:9: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  160 |         mask = in_be16(&fhci->regs->usb_usbmr);
-      |                ^
-/tmp/next/build/drivers/usb/host/fhci-hub.c:161:2: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  161 |         out_be16(&fhci->regs->usb_usbmr, mask & (~USB_E_IDLE_MASK));
-      |         ^
-6 errors generated.
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/usb/host/fhci-hub.o] Error 1
-In file included from /tmp/next/build/drivers/usb/host/fhci-mem.c:21:
-/tmp/next/build/drivers/usb/host/fhci.h:449:9: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  449 |         return in_be16(&fhci->pram->frame_num) & 0x07ff;
-      |                ^
-1 error generated.
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/usb/host/fhci-mem.o] Error 1
-/tmp/next/build/drivers/usb/host/fhci-sched.c:25:10: fatal error: 'asm/fsl_gtm.h' file not found
-   25 | #include <asm/fsl_gtm.h>
-      |          ^~~~~~~~~~~~~~~
-1 error generated.
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/usb/host/fhci-sched.o] Error 1
-In file included from /tmp/next/build/drivers/usb/host/fhci-tds.c:22:
-/tmp/next/build/drivers/usb/host/fhci.h:449:9: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  449 |         return in_be16(&fhci->pram->frame_num) & 0x07ff;
-      |                ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:85:19: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   85 |                 u16 td_status = in_be16(&ep->empty_td->status);
-      |                                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:87:3: error: call to undeclared function 'out_be32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   87 |                 out_be32(&ep->empty_td->buf_ptr, DUMMY_BD_BUFFER);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:213:3: error: call to undeclared function 'out_be32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  213 |                 out_be32(&td->buf_ptr, 0);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:214:3: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  214 |                 out_be16(&td->status, 0);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:220:2: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  220 |         out_be16(&td->status, TD_W); /* for last TD set Wrap bit */
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:248:2: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  248 |         out_be16(&usb->fhci->regs->usb_usep[0],
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:258:2: error: call to undeclared function 'out_8'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  258 |         out_8(&ep->ep_pram_ptr->rx_func_code, rt);
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:265:2: error: call to undeclared function 'out_be32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  265 |         out_be32(&ep->ep_pram_ptr->tx_state, 0);
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:294:15: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  294 |                 td_status = in_be16(&td->status);
-      |                             ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:296:9: error: call to undeclared function 'in_be32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  296 |                 buf = in_be32(&td->buf_ptr);
-      |                       ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:307:3: error: call to undeclared function 'clrbits16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  307 |                 clrbits16(&td->status, ~TD_W);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:308:3: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  308 |                 out_be16(&td->length, 0);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:309:3: error: call to undeclared function 'out_be32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  309 |                 out_be32(&td->buf_ptr, 0);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:393:14: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  393 |         td_status = in_be16(&td->status);
-      |                     ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:405:2: error: call to undeclared function 'out_be32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  405 |         out_be32(&td->buf_ptr, virt_to_phys(pkt->data));
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:421:2: error: call to undeclared function 'out_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  421 |         out_be16(&td->extra, extra_data);
-      |         ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:462:3: error: call to undeclared function 'out_8'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  462 |                 out_8(&usb->fhci->regs->usb_uscom, USB_CMD_STR_FIFO);
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-tds.c:476:15: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  476 |                 td_status = in_be16(&td->status);
-      |                             ^
-fatal error: too many errors emitted, stopping now [-ferror-limit=]
-20 errors generated.
-make[6]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/usb/host/fhci-tds.o] Error 1
-In file included from /tmp/next/build/drivers/usb/host/fhci-dbg.c:20:
-/tmp/next/build/drivers/usb/host/fhci.h:449:9: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  449 |         return in_be16(&fhci->pram->frame_num) & 0x07ff;
-      |                ^
-/tmp/next/build/drivers/usb/host/fhci-dbg.c:49:3: error: call to undeclared function 'in_8'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   49 |                 in_8(&regs->usb_usmod), in_8(&regs->usb_usadr),
-      |                 ^
-/tmp/next/build/drivers/usb/host/fhci-dbg.c:50:27: error: call to undeclared function 'in_be16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   50 |                 in_8(&regs->usb_uscom), in_be16(&regs->usb_usep[0]),
-      |                                         ^
-3 errors generated.
+  drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+  drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
 
-Caused by commit
+between commits:
 
-  4b265b93b4e0e (powerpc: Move CONFIG_QE_GPIO to SoC)
+  8a93f77aec655 ("drm/amdkfd: Don't acquire buffers during CRIU queue resto=
+re.")
+  47ea05f246beb ("drm/amdkfd: Check bounds on CRIU restore queue type and m=
+qd size")
 
-I have used the tree from next-20260709 instead.
+=66rom the drm-fixes tree and commits:
 
---3vMy0JNzTDwQ2SYI
+  f19d8086f6644 ("drm/amdkfd: Check bounds on CRIU restore queue type and m=
+qd size")
+  1cafa8b29e029 ("drm/amdkfd: Don't acquire buffers during CRIU queue resto=
+re.")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+index 641b8ada82a03,c9f9f7a871117..0000000000000
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+@@@ -333,6 -333,8 +333,8 @@@ int debug_refresh_runlist(struct device
+  bool kfd_dqm_is_queue_in_process(struct device_queue_manager *dqm,
+  				 struct qcm_process_device *qpd,
+  				 int doorbell_off, u32 *queue_format);
++ int kfd_reset_queue_mes(struct device_queue_manager *dqm, int queue_type,
++ 			int pipe, int queue, unsigned int db);
+  size_t mqd_size_from_queue_type(struct device_queue_manager *dqm,
+  				enum kfd_queue_type type);
+ =20
+diff --combined drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+index 9ccbc6e5b27b3,97e77a5a35e51..0000000000000
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+@@@ -1055,7 -1055,7 +1055,7 @@@ int kfd_criu_restore_queue(struct kfd_p
+  	ctl_stack =3D mqd + q_data->mqd_size;
+ =20
+  	memset(&qp, 0, sizeof(qp));
+- 	set_queue_properties_from_criu(&qp, q_data, NUM_XCC(pdd->dev->adev->gfx.=
+xcc_mask));
++ 	set_queue_properties_from_criu(&qp, q_data, NUM_XCC(pdd->dev->xcc_mask));
+ =20
+  	print_queue_properties(&qp);
+ =20
+
+--sEC/SRmYGkpXiaIW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpQ4LsACgkQJNaLcl1U
-h9Cmhgf/UrAsyAz145cxerixvGl731xqrkNqPAotIl19tVJfacsf9e+6uUhh4d1O
-XNxzaZoLIQWIUemUiW6e4/XTBLwfglraMDc0vxdO5/4//+MNif3QLrlCDhm/rl0y
-5eXJdwYb9IUfSUwJ2VswqM7cady+EB+Hj9+/P/Tso8y6N8s8+P9+2nJmiW+D6LS3
-+mh9nx6InUB9643W/m8VvzTLREEYQOsvQN2q0lgruV+U5nuAe0fyoPZtqKcocAAl
-schUAD7eX6TK3bUcFWJLnNwO9415RrrfjA2yxeIiLkYWPQ/WX8P559VVGce0W/7I
-yKIQ6fzRV1mVvFO9osYXIfwPp+e8Jw==
-=IuN5
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpQ4XgACgkQJNaLcl1U
+h9B+egf9F4F3DwZeCRXjIMuhEIldDjN2qYdWEWL3Ho7h4ChbYKg1/KCfcyLMYAvB
+G5Q5IxVESdIUjMQS9xKNmAo/Jaq9k2cfWdT4ohz7tyanTtfmU7vehJ/qluy95pjG
+Ws9p7FCrY1sbtowqVBtiOMEOdwvF/dC0pr6vDcWl5QndXPpIsekGKRCkAu38Zu02
+b6Dy88abhTEXY4+i5Q6n4guRSUUATlb0ZQJ/HhcQ8Qn1RZ4VdlpYUSOD3twboLJy
+QLOAX28CDhGWH11qtCA40/dgCXzAIESW4PQTMUxXxYMgIKdp4m+rDtThG7TQbC8H
+keTti2P9Yuw/O3vu6kqbT1VwQYFqlg==
+=qNJp
 -----END PGP SIGNATURE-----
 
---3vMy0JNzTDwQ2SYI--
+--sEC/SRmYGkpXiaIW--
