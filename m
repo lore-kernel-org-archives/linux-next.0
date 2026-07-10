@@ -1,96 +1,246 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8888A3876B3;
-	Thu,  9 Jul 2026 18:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2212D1F44
+	for <linux-next@vger.kernel.org>; Fri, 10 Jul 2026 02:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783621436; cv=none; b=CXYtZkqA9RBmg71IXYdUgBaGRuYh/qd81CeUaVUsyXJgPmY9UGST/ZZ++p6dzyUITmGGq8O8jwCgQBTGOfjMY4EIEMkIV/lBMQUWSgHygkKiTHsm1rTzIepMDT0a/mS9/8NaADKZjom5iDt4IAOdARw2z/vq/Zf50h6qM7oGPfU=
+	t=1783650645; cv=none; b=bauGkyw6RsAe8EVawfh4uQBtFIQUiYVA6BFE1/jZQTzyK8iWb1iAWoEVwZzv5EGTjjV5ZKMClNo4Uqx22Sxtm2oBB3mB4VCB+QqhxCwIQPdQSRRCbBbHAo55nxLRHD9xTxJ9nb6LzLInNTKFIMT2P8+eIQbydlKAQmBDcA6bskg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783621436; c=relaxed/simple;
-	bh=ooB6utJroZD4KfFF3raO19EwKd9l1L+wfGYjc3Q0OWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q8nRtPssHTtdjL7VQsKEKy1lHFsVpq904AQpVztydgm0fjeyZ7k16tx6+rhLN0pk7tHkGUlkC6X3V1TRNhUoWGJwj6el9EFt9xCfkQq8m3tbHXxYduulgwiUh4GEiWaTMqoINANGHQtVG885kwF4MMKTOQI3ikBYRJ31gt0iZw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDNHPzPk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1783650645; c=relaxed/simple;
+	bh=VuqzzpefeMfUY53eeqnVgk6mkPHTQwQDpL/9kLPAj+s=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=uJp2uSPK46XUabSwLEmpq7zN+F94OSjbWp2tr1X6AL4RW3HebhJD39d5hQh14WgEehAXfSZxr4UqzRnZU6/K2xLFS2UtOIVLAH5+sxHTVnoU6nY2URWhQOj+quBBFWpK7ytpRNKleg/TqcywoGTcw6MXmzB0bHzj/+pgA5ErIog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Bxzl/BvU; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDNHPzPk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=YnqarTgy0D0htDBKBMRAk90GEEctz896WdQ3FnbljDo=; b=HDNHPzPkoyRv41XVzG+0pPFbJr
-	0vgwd4aQfN1IkANAY/KCtBQwgjDUr1ERCm7TLpNk1FUBxMuRHTORGi3waQsLFsTl6sVvUKR4aAGeb
-	XroE4oYVnzSaFG1C8nqKAIJZ7UrzsFyo3i63OpIanzwHD2bndkOjmbhLzIeog10vtT7jOGFH1n/3R
-	JnRFVjofwFHzSxlDNAj7Tn/WRUUWH/JLECjHrzsoKjmdeX1rih1oFxwUWruGAAZQmJag5W8PRej7s
-	4BSUXz8CRe4IR8ChGLaXKc047t14odzEvoOtA2K6haWpOPnpshdoV77yqdGFCpXTTsNkd83s/I73N
-	LLikkWXg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1whtPc-00000003DZO-3G8l;
-	Thu, 09 Jul 2026 18:23:52 +0000
-Message-ID: <54f6efe8-cab8-4fc8-bf00-f012b3224e54@infradead.org>
-Date: Thu, 9 Jul 2026 11:23:51 -0700
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Bxzl/BvU"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-c9e7391839cso395454a12.0
+        for <linux-next@vger.kernel.org>; Thu, 09 Jul 2026 19:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1783650643; x=1784255443; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=BvSWXKu1k585IeHZnxABb/WezrAUaUbuqluIwbr+ceY=;
+        b=Bxzl/BvUeyulM7WqzjarJrC7yz7XptoNAviXXqrB+kWkKcRJnqBwqwdFVpus/6tSez
+         Rc/7u19zoZf80V4inANVRtUdm/vO7V3naij/AvQ/dnJFo8XwlTydP87/wY+m1mDlQRPm
+         nlLaAXZxQYvHfwAgA8ram+7XZ9gJz7BUB+nv8mRRoQlrNtacfvsxmi0XlBvWUaasQh0I
+         s8owUNeIsXE1yTJx/TLj6A1/FX4U2SPxNpbf87fGdnXC2mvIagvW2td4DcBRjND89YtJ
+         ijq00V066bF4z7PrRlljC93f/YiXiTGYiho9iiIy4rnQs8TQp6nZ9eCKe5CMJfcUtBNx
+         zSrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783650643; x=1784255443;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=BvSWXKu1k585IeHZnxABb/WezrAUaUbuqluIwbr+ceY=;
+        b=J7CplsytIxeL2t9f/8SfSAZbK4R/wWspVP35myXEYBnLA8BxDlnpSBhHlFoLXv8tXb
+         6eIl6vfjkbtOx2l052rP7LO13wbUlVM4PF58mha8iZDUFbZrcDg34Kl+VIYVZLlX6us6
+         WU8la6NcK2awg/5q4+cUZ3d6EXfIiKb3g3Bpyn76bnaUOgiKQEzPfi5+51DLS3B3wYDZ
+         RzWOhrdDi0Y8bkna33o9Jxh9mAc6je6gQGy3SMhNj+88DzODBiGrcrIAoCypcf1nNPwr
+         0NCMRJJK+Y3KlwPasuhbPGP262RI8SZ5EZAcllM2k/T2gyxVovB9nIvf/VTBXAYhXji/
+         ydpg==
+X-Gm-Message-State: AOJu0Yx4fmgvD7y6SsQma9TbJipLGGPM5m6w64uIk7j7+bmvPq/VaOE2
+	2U9hiw8GGLvRtKEmmzMuy9tPnT1o6hR3CFaUoieAozJ3jVDQr8wAU2xB3+r/IYl26s4=
+X-Gm-Gg: AfdE7clQZAFmtBv94QtE/mhI1/o1k3p5nPIHjd1CEMJGLYDzHkcSF7cWkYDwB4s31La
+	Z+gfJNc5ZKyVDH8CpPUmSaQ6piEuaki7NGaBTQRg78Hfz7nx3/D0YiLMPrLS/wOOMD+3wgmqWDv
+	FarII4dVseQawP3xQFiFy5TK9AjqcHxyaDOtUY3/DPQbb8zaDT8FT/j0RcBBAQa35v4ZE8j1RyL
+	9GsIkBQ5rxfkBsn4zLomhQhMr/i4t6WQ/DftNK6mHhfEYGYYHrtmGGVLg8qtEi9gTyt3GrUczsb
+	eL3/yAX0ds9kBuwjmXc4Bd+bqdyqAdtI4QpzTzYL856OwNqf6JkqKz8C7indNAsc2HGtnFHpXTK
+	Ed/TMyA05InXgv4ND23DbzaAsyUop5t00AyNjdkgVuXpZPueh2r3Xo/yC6wr3M1/BVAPRpRjwHw
+	i8imojeg==
+X-Received: by 2002:a05:6a20:144f:b0:3bf:97e8:a044 with SMTP id adf61e73a8af0-3c0bcf162c4mr12336694637.13.1783650643098;
+        Thu, 09 Jul 2026 19:30:43 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b6593c9a1sm41992642c88.2.2026.07.09.19.30.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jul 2026 19:30:42 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] drm/amd/display: amdgpu_dm_plane_test.ko fails to
- build due to modpost "too long symbol"
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- amd-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, alexander.deucher@amd.com,
- george.zhang@amd.com, bhawanpreet.lakha@amd.com,
- LKML <linux-kernel@vger.kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, christian.koenig@amd.com,
- harry.wentland@amd.com, sunpeng.li@amd.com, broonie@kernel.org,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <fde3656e-9e22-4e4c-937f-7e8cb918da6b@linux.ibm.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <fde3656e-9e22-4e4c-937f-7e8cb918da6b@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 34cf6dafc47441dfb6b356a095b89c3585a93714
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Fri, 10 Jul 2026 02:30:42 -0000
+Message-ID: <178365064225.8286.10257080886093719041@963b246bc1b3>
 
 
 
-On 7/7/26 10:05 PM, Venkat Rao Bagalkote wrote:
-> Greetings!!!
-> 
-> linux-next is failing to build for me with:
-> 
-> ERROR: modpost: too long symbol
-> "amdgpu_dm_plane_fill_gfx9_plane_attributes_from_modifiers"
-> [drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/tests/amdgpu_dm_plane_test.ko]
-> 
-> make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
-> make[1]: *** [Makefile:2165: modpost] Error 2
-> make: *** [Makefile:248: __sub-make] Error 2
-> 
-> The failure occurs during modpost while building:
-> 
-> drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.ko
-> 
-> This appears to be a regression in the AMD display KUnit test code.
-> 
-> Could someone please take a look?
-> 
-> 
-> If you happen to fix this, please add below tag.
-> 
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Hello,
 
-Hi,
-I cannot reproduce this when using gcc v15.3.0.
+Status summary for next/master
 
-Which compiler & version are you using?
+Dashboard:
+https://d.kernelci.org/c/next/master/34cf6dafc47441dfb6b356a095b89c3585a93714/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 34cf6dafc47441dfb6b356a095b89c3585a93714
+origin: maestro
+test start time: 2026-07-09 16:34:16.974000+00:00
+
+Builds:	   72 ✅    2 ❌    0 ⚠️
+Boots: 	  163 ✅    2 ❌    0 ⚠️
+Tests: 	30687 ✅ 5343 ❌ 5401 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: kaanapali-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4fe7aec17cca020551bd90
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4fec1bc17cca020552065f
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4fec1bc17cca0205520660
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: sm8750-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4fe7acc17cca020551bd89
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4fec3ec17cca020552077d
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4fec3ec17cca020552077e
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: x1e80100
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4fe7b2c17cca020551bda5
+      history:  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4ff5e9c17cca0205523c17
+      history:  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4ff5e9c17cca0205523c18
+      history:  > ✅  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a4ff515c17cca0205523907
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4ff515c17cca0205523908
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a4fe7abc17cca020551bd84
+      history:  > ✅  > ❌  > ❌  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a4ffa86c17cca0205524b70
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: glymur-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pci_1bf0000
+      last run: https://d.kernelci.org/test/maestro:6a4ff6dec17cca0205523f41
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pci_1bf0000_pcie_0_wifi_0
+      last run: https://d.kernelci.org/test/maestro:6a4ff6dec17cca0205523f3f
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pci_1c00000
+      last run: https://d.kernelci.org/test/maestro:6a4ff6dec17cca0205523f3e
+      history:  > ✅  > ❌  
+            
 
 
--- 
-~Randy
+### FIXED REGRESSIONS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6a4fe750c17cca020551ba07
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
+      last run: https://d.kernelci.org/test/maestro:6a4feed9c17cca0205520eba
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest-devices-probe-ramdisk
+      last run: https://d.kernelci.org/test/maestro:6a4fe803c17cca020551c5af
+      history:  > ❌  > ✅  
+            
+      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_owner_futex_requeue_pi
+      last run: https://d.kernelci.org/test/maestro:6a4ff515c17cca0205523920
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest-devices-probe-ramdisk
+      last run: https://d.kernelci.org/test/maestro:6a4fe804c17cca020551c5b8
+      history:  > ❌  > ❌  > ✅  
+            
 
+
+### UNSTABLE TESTS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a4fdbe9c17cca020550e575
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: x1e80100
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6a4fe7cfc17cca020551bed1
+      history:  > ✅  > ❌  > ✅  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6a4ff916c17cca02055242d3
+      history:  > ✅  > ❌  > ✅  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
