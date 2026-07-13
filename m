@@ -1,73 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B40A44999B;
-	Sat, 11 Jul 2026 07:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9033B970;
+	Mon, 13 Jul 2026 13:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783755940; cv=none; b=GP5Cq4ylRAsxg2p0sK7fWldYc/CcsfE4Eaohlh8xO4qTrhvbQrhIjgT/u/hs6Rbbd6EKvSKUrx29QDmKIRkSkbYSYTeCG94+nfjp25McWeOxfo5sZLyFxsFVMTef9bw91E2bZU/6RkTLlPLqxJnLQ/zjd9h4PcvrVB7WRUs5SeM=
+	t=1783949473; cv=none; b=JQy1QAQgxRKL/hTMo6tY8sRGadnevMCPu0RVJXPLVM4NGKpumkXkF6bO7joXLs773C3ogifESukIDvfh9/etki5fzKykSHVpeBl1NRumKrFP8qX/wbEft7XJMaujjT3CV9ytN4g2eRAKy1fTjHg6wmeUURK2PXIWbtf8Kt32FtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783755940; c=relaxed/simple;
-	bh=E1NK4KTZm30Mlxz0AW2N5aX3muTvtvJV/M5ny+RKYXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZJbdDtJJlUA+aFvL15crWqZHNP/IG5M2kX/2HQm2/SCoRqm9VmKBsuVuz6IeA2aGez0hiImOp6diXK3qrlasjeA/V3FGy00vyrufKpnb1sTyJbvqFitXXIsiBYp+WgwxsH0VSOX/OONmZ2hffkWm5fQ37MOWKCbr5zUAGZCb7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XuSJzrJT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783949473; c=relaxed/simple;
+	bh=kTDs8WYzXwSWzlf+2nIWqUjl4hw5W1tCSPzBl5Gzgmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Hm3mzeYFinsGA5VeQCkQ57nSBArpJVwm3Eg2v+51h+6pvCqskqEjyGliJXG2YJVyhIY++wF0V7caaUuKL4ZYHoYt3BFy0szmFY43bP1W0LYVtyb248IVcaFbJeWY4dF9SSlj2ejy5LAnR2Zv856UJikE/KhMY5sLb+lSf0b97Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWDiXeib; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuSJzrJT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E66BF1F000E9;
-	Sat, 11 Jul 2026 07:45:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWDiXeib"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C0C1F00A3A;
+	Mon, 13 Jul 2026 13:31:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783755938;
-	bh=yBGwZ+GPUe6dh5NHNBPgtKNBf2oTk7FAdgY2nP33C5w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=XuSJzrJTLDdxITkgJBOraiHJ4OZOEwqn1Vawt3QghgNlvejF1uYQ8gRf7N+xHkLA+
-	 YUpJ6N3ZVeop70lGnLht1IHz62fgQrOQR482qSbLKoG7VM7dxX6VDuA7+DKCXoplxJ
-	 E+rwGLayqXeGBA9pudDqwd2BrrqIH1NmuUGgeu1zEqiDjyHLHzZ6OaDfIsADzL1Pde
-	 nCtII4PAjYsR3eM3eWagsqkpLktYGELQ/WLesVmpXjNAnEhNf7qyuYuLbyo0nqzfRD
-	 yitvyP3VjIw0DfOV2rWXxO6x42Q8taz2moxNWuFZJyh6R8QkLbCY+8dvbsxTNke+CA
-	 dBXJwyv7qv+rA==
-Message-ID: <e05a4ef1-af8f-4525-9747-08531948ea36@kernel.org>
-Date: Sat, 11 Jul 2026 09:45:35 +0200
+	s=k20260515; t=1783949472;
+	bh=XmdfXt6/LQL/1urrjIUugrHXGUcg9sAxCHKXwCoDvZI=;
+	h=Date:From:To:Cc:Subject;
+	b=AWDiXeibV65Wxd3l9ayeU6ecrgOV5JWa5S9PIr53V3sHLroliJDQSZH+HIW9boGzp
+	 Uh4qF6ciEZMWVwSZR13lUXT30rSLLLljT+MQHeKTHy7BY0U0XSD6sYDZOZqzFED1Pi
+	 woLoor5w56U/2CZMyKqfrAWPkwQtwtYXKN9tCL0nyyykxkJCg/UJnpsP8Xu5F7vZJf
+	 Fy8pzlldALjq8RBIGNdrOunWqFCyzH4JnHBmXmesRsfSI8TUfaL+BZecEgolBDfq4V
+	 5fdf1iPEs7ZfoZ6uAWdx4yfSV8ohwwy09FUPuTnaMgGy8SjHQl1tfMcgWsmf6hhn1E
+	 jJXplwlVG64UA==
+Date: Mon, 13 Jul 2026 14:31:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Fixes tags need work in the rpmsg tree
+Message-ID: <alTonG3dKz2B0weI@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the fsl tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <alDgvHf9mKOJI1cc@sirena.org.uk>
-Content-Language: fr-FR
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-In-Reply-To: <alDgvHf9mKOJI1cc@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J4irUM0YhKdwIQyF"
+Content-Disposition: inline
 
 
+--J4irUM0YhKdwIQyF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Le 10/07/2026 à 14:08, Mark Brown a écrit :
-> Hi all,
-> 
-> After merging the fsl tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
+In commit
 
-...
+  3dbc90b9c22ea ("remoteproc: qcom_wcnss: Fix handling the lack of PD regulators in v3")
 
-> 
-> Caused by commit
-> 
->    4b265b93b4e0e (powerpc: Move CONFIG_QE_GPIO to SoC)
-> 
-> I have used the tree from next-20260709 instead.
+Fixes tag
 
-Thanks for letting me know. I have dropped this patch for now.
+  Fixes: 65991ea8a6d1 ("remoteproc: qcom_wcnss: Handle platforms with only  single power domain")
 
-CONFIG_USB_FHCI_HCD depends on CONFIG_QE_GPIO but uses in_be16() etc ... 
-helpers which are powerpc specific, so dependency to PPC needs to be 
-kept for now.
+has these problem(s):
 
-Christophe
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
+
+--J4irUM0YhKdwIQyF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpU6JwACgkQJNaLcl1U
+h9AuVQf/dUjTG2RgXS5F9yeWMSv+EfDPbm6c7gES9c94FDDz7zDeEdLIdXGz6JK9
+1WG0Oa9HU4+c/M+kTA+vKvVFJpbQh17UNQdmepsdkIkmfTEl0Te7f9VsgddEvkec
+MG/+wzkZ0Op4IJ1DO4TLZRSno8Q8/JPGiPavw9HEJLTUe3ddEKuKMdmSPY+rMKvM
+m4UvDnBR5kg/hIxPpwNXA005paNebW4DZ9azHsF2Jx57kUHM1lmXNmu/eHaSrrED
+4Usu8P18KiUzKMC7K+X8+yYPRQDZ2JWsLBn8lQ1nC/Z72/Z3X/JNX5bpkjFUmtg1
+5l+NaANsCRk6ql/Zx9gVNJbeu4EipA==
+=iRQC
+-----END PGP SIGNATURE-----
+
+--J4irUM0YhKdwIQyF--
