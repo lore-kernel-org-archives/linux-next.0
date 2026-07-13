@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C851E5714;
-	Mon, 13 Jul 2026 17:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D2233927;
+	Mon, 13 Jul 2026 17:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783964302; cv=none; b=pNpqymiyO+R2+XVlIG30+lDRiIXuVuAqcxnmKTW+jhbezUHOB4bsM+oHvtkSrzykKYjPIbXBaiCX1JIvM8riaVpeqKsb85QDEI8gspLGr45F0nMN6J2dIKWCeaTQnUtHnRf77BkmmjzT8GFewJ0y97pGoWWaz6D18xHQlKoufoQ=
+	t=1783964918; cv=none; b=aw103HD18fOEllyC5O8Ponrv1vgkxg0MCPq66eK+6iZNjQiDZZM3eSlUen2cvdKWaPqR/cGBHVzq9QKB6j6G1mfZA2e9zhFgkkrJQ3nm6/eRde8pUGTCukdZbxw5jhoLrNcMXbSIwFUDsQLov2kwhCQQa+TnOcWYFarhQ7ZyjMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783964302; c=relaxed/simple;
-	bh=01INAX2Y8DPYfSQsrUjrGASKwAv52d8zIuZVY59AdPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwWAPna9OY659OtCu8goaY/FQS/NRy1ZL06DFKfXSgYjaK867bpMR0F1Xk+mDbElvsxEXXECL8mYMs9o82kWsnpMl4vePZMxky0lz+PUpziloWqxmnsAiuTcfiKBKwPDkV5nEAAAUZG/WkoqGoREapIlVrgPayWHhGLbP9AjLXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eiyb9NvN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783964918; c=relaxed/simple;
+	bh=3QPIuUInfY/d/Prhg4EcXBK9czSVJwNskRsmn//elB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EoqZBK2rSbtvHfhbTpJjxTaT1qxYULLH+j2hnmlBzCWCi+j3rdICDBPncTDdF8Ikw+B4k5cr6RlSD6ZB3bDTWzo63fd/et+50SrRlk0/MDwMHqGn11hiHy/ydQHjk7Y3R48v+Ltc1TD10Aa+rPrKTn9FvBPW43dVfoRXZYD7lKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyKUmCoH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eiyb9NvN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D55521F000E9;
-	Mon, 13 Jul 2026 17:38:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyKUmCoH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2124C1F00A3A;
+	Mon, 13 Jul 2026 17:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783964300;
-	bh=4lH49CaaJIbmJWvZ5DF9ibb3dGDWGmyp0/L1ll6qpWg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Eiyb9NvNxspY4/y1hPnPptNkdLBNqwUr0+23op2aHLRbkbACU3eJLfQJJzt61u/+5
-	 CfCzQiihniRnGScFL+Pxtn/xGHn33Z41D4Z/JAGUn6NucOsnUcZfkcYamnws2cfWKc
-	 YTsX/3FzTOKQJv/35WIErtumsxLJzTcoT9g1IfEBJ+cmUMMGxAb++uoguJvQoSf4Q8
-	 AHqeev0VPOiRhwi2GBhML+Kbv1zQHzJ+tVHcgQ7ltFfecb1t19L0FuXZ0Y0cwpBdPW
-	 NxZhlCyYl6BXuSTeiFKMNfQ+JNitplsa2HdGLiZlWJm4U9jjHB7S5KPNoPRJbI6KY3
-	 wHHm5xwfFQYLQ==
-Date: Mon, 13 Jul 2026 18:38:17 +0100
+	s=k20260515; t=1783964916;
+	bh=Jk1a7tl0upPDlDo+2eAg4Ep5cOLoYzgg3ARLAnQf5zQ=;
+	h=Date:From:To:Cc:Subject;
+	b=CyKUmCoHe+F0RmSxIVfnov5M3fsWfRr+DECBTyBDKDYYY1J6aipNtRIg4rVhHNuTO
+	 IQ6ifKKn6c9OgRQGW/YziIs/gg9OJB22ulMPYaHQFJNbtW5ZgeYHc3LLJHwn+aVYkp
+	 j56257PKhLMst8YXcWCxrVuNR+mtS6NGGeSk54hWdx8qdCdbur1nLlioktCOihLs03
+	 W2CJl+8Eaj/76WPRYfYHbvp3eI8PZYJeRUNcyMn30OynaU6BzJPFCeZno1PpXBmUxL
+	 VMjywM8tCVEnp4s3MW310y8QQyFKFkgowoEQdsA2nqbOonjrrEIQnbgF3k7mgClhn7
+	 yFJJw70DtRjEw==
+Date: Mon, 13 Jul 2026 18:48:32 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the arm-soc tree
-Message-ID: <eeef7a7e-22a6-4b88-b23c-cade1b62edb2@sirena.org.uk>
-References: <alUh--gXbJNcbmuV@sirena.org.uk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure in the final build
+Message-ID: <alUk8OTfE-f9oQo8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,41 +40,115 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ycI2eDvzFSQ1zZKD"
+	protocol="application/pgp-signature"; boundary="EQSMrb3Bv6iMuyJ1"
 Content-Disposition: inline
-In-Reply-To: <alUh--gXbJNcbmuV@sirena.org.uk>
-X-Cookie: Courage is grace under pressure.
 
 
---ycI2eDvzFSQ1zZKD
+--EQSMrb3Bv6iMuyJ1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 13, 2026 at 06:35:55PM +0100, Mark Brown wrote:
-> Commits
->=20
->   923588dd861ba ("ARM: mark mv78xx0 support as deprecated")
+Hi all,
 
-> are missing a Signed-off-by from their committers
+In the final builds, today's linux-next build (arm64 allyesconfig)
+failed like this:
 
-Alexandre, you did a rebase which makes you the committer of all the
-commits you rebased - you need to add a signoff (git rebase --signoff
-might help).
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:105:5: error: no previous
+prototype for 'write_ulpi' [-Werror=missing-prototypes]
+  105 | int write_ulpi(u8 addr, u8 data)
+      |     ^~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:118:6: error: no previous
+prototype for 'fsl_otg_chrg_vbus' [-Werror=missing-prototypes]
+  118 | void fsl_otg_chrg_vbus(struct otg_fsm *fsm, int on)
+      |      ^~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:136:6: error: no previous
+prototype for 'fsl_otg_dischrg_vbus' [-Werror=missing-prototypes]
+  136 | void fsl_otg_dischrg_vbus(int on)
+      |      ^~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:154:6: error: no previous
+prototype for 'fsl_otg_drv_vbus' [-Werror=missing-prototypes]
+  154 | void fsl_otg_drv_vbus(struct otg_fsm *fsm, int on)
+      |      ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:172:6: error: no previous
+prototype for 'fsl_otg_loc_conn' [-Werror=missing-prototypes]
+  172 | void fsl_otg_loc_conn(struct otg_fsm *fsm, int on)
+      |      ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:191:6: error: no previous
+prototype for 'fsl_otg_loc_sof' [-Werror=missing-prototypes]
+  191 | void fsl_otg_loc_sof(struct otg_fsm *fsm, int on)
+      |      ^~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:206:6: error: no previous
+prototype for 'fsl_otg_start_pulse' [-Werror=missing-prototypes]
+  206 | void fsl_otg_start_pulse(struct otg_fsm *fsm)
+      |      ^~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:222:6: error: no previous
+prototype for 'b_data_pulse_end' [-Werror=missing-prototypes]
+  222 | void b_data_pulse_end(unsigned long foo)
+      |      ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:241:6: error: no previous
+prototype for 'b_vbus_pulse_end' [-Werror=missing-prototypes]
+  241 | void b_vbus_pulse_end(unsigned long foo)
+      |      ^~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:254:6: error: no previous
+prototype for 'b_srp_end' [-Werror=missing-prototypes]
+  254 | void b_srp_end(unsigned long foo)
+      |      ^~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:269:6: error: no previous
+prototype for 'a_wait_enum' [-Werror=missing-prototypes]
+  269 | void a_wait_enum(unsigned long foo)
+      |      ^~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:279:6: error: no previous
+prototype for 'set_tmout' [-Werror=missing-prototypes]
+  279 | void set_tmout(unsigned long indicator)
+      |      ^~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:285:5: error: no previous
+prototype for 'fsl_otg_init_timers' [-Werror=missing-prototypes]
+  285 | int fsl_otg_init_timers(struct otg_fsm *fsm)
+      |     ^~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:342:6: error: no previous
+prototype for 'fsl_otg_uninit_timers' [-Werror=missing-prototypes]
+  342 | void fsl_otg_uninit_timers(void)
+      |      ^~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:446:6: error: no previous
+prototype for 'otg_reset_controller' [-Werror=missing-prototypes]
+  446 | void otg_reset_controller(void)
+      |      ^~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:458:5: error: no previous
+prototype for 'fsl_otg_start_host' [-Werror=missing-prototypes]
+  458 | int fsl_otg_start_host(struct otg_fsm *fsm, int on)
+      |     ^~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:525:5: error: no previous
+prototype for 'fsl_otg_start_gadget' [-Werror=missing-prototypes]
+  525 | int fsl_otg_start_gadget(struct otg_fsm *fsm, int on)
+      |     ^~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:707:13: error: no previous
+prototype for 'fsl_otg_isr' [-Werror=missing-prototypes]
+  707 | irqreturn_t fsl_otg_isr(int irq, void *dev_id)
+      |             ^~~~~~~~~~~
+/tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:833:5: error: no previous
+prototype for 'usb_otg_start' [-Werror=missing-prototypes]
+  833 | int usb_otg_start(struct platform_device *pdev)
+      |     ^~~~~~~~~~~~~
+cc1: all warnings being treated as errors make[6]:
 
---ycI2eDvzFSQ1zZKD
+It looks like this is a change in dependencies which has allowed this to
+be built from today, I didn't isolate exactly what - it looks like the
+issue is missing statics on all these function definitions, making them
+global.  I have ignored this for today.
+
+--EQSMrb3Bv6iMuyJ1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpVIogACgkQJNaLcl1U
-h9CwAwf/UHpOCjYOHOsLDEabf6IdBbOr+unKZMH5G5z0oE2RcLbD8wr8O7x4t1ud
-UZ2+cLNrASL8qvUZXUIqzpVnvTXyQNZefWJUw1fAcS6/pCl7NFuAEDZ/Oq7hCpbQ
-pAi+cD+Fj0rTmCTHNzKTMw/ciMTk15yOcBr0QFtgH5OaOTBBDRtdNdh4o91IIPbe
-mFzwOCGe87GTMzSjpU9Ar+IAIYSEK3BB1vZ7FAQfYHi8i2ak68CfjhTRwCm/5xvC
-Pwb67MjJFVZumKtpjtjNVC4gn/Z4xMMBJN5utbq4Ea9BACOsNEQex1lmEuYX2Vpg
-FVANJIE4X0CFbNOzOtF+pthL7DUpyQ==
-=pPTE
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpVJPAACgkQJNaLcl1U
+h9A+Ngf/eax7xQgatwmAzQApIWFTXl6URn2s07lja6OFHBi86d1xEqDN3N88YNlK
+IdMge+b/w41B3x60A0huPg6ImBPBWmLbpSzP5NJoOcEMmhEySz/sb4+MRHhkBuzb
+1lxI0M4f8kA+Hh31kRQ8tG8ecMkWQRpPI9FyNfmscPpTlcESdQ1cYaRAOF6RInG9
+e93+qmZe3Rrro//FEPPKDcXbnnIlpxYU4HPxhCedY4U4Krf5WWGP80iOzAKXskiJ
+CZY8OBLy7stavZ2nQvlvk18tDNlvO+YeseWpyOlkCyustGOyb3LPhfTx3UgzpIwU
+Z9a4Edsuz1krkpT5hNH5f44E7r8awA==
+=OTq4
 -----END PGP SIGNATURE-----
 
---ycI2eDvzFSQ1zZKD--
+--EQSMrb3Bv6iMuyJ1--
