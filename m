@@ -1,42 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C52F362133;
-	Mon, 13 Jul 2026 15:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725A0372EEE;
+	Mon, 13 Jul 2026 15:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783955602; cv=none; b=YWtuzuHh63DjGPfnUqrkM/Ok2l2A2pZNUiV7Bwm9YvSKeZgcvtz2oKthrKf3m2ZvcQnBqVXSSrKyUNFbqUU05F//oJu2bCGU1krScD8P/iaBbgJdUBFnnM6kLydTfVUiLK54reP5KgduQBf4fT2PyMaKOtu4mAvzlg8K9OsIVYE=
+	t=1783955609; cv=none; b=cSSfXy44DVKYOyWRPQXFpy3Eint5b1S/8bRS/UuV3vFRuo9gU/GIyCaL9mIPDbJUziDSMo11CvvV6jdGYGKVz4IpwZQi09jDlwBJXeMY3zwIq5CAupHcFVIhzEAYSSUvcdqZEzWsyUUWLDDAaAAHVRWS7RI0Ot+lzmBTpWeWbPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783955602; c=relaxed/simple;
-	bh=zIcLlVaFGpV7U1LfhJ+m4bYWBIDasiimu5OKV6tx85o=;
+	s=arc-20240116; t=1783955609; c=relaxed/simple;
+	bh=QSdxH+JShDA0AXw/SQVSGaGMn1uKaWk1nx6V2YDidck=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AgiWBnLN6WMAtKgBKI5gIzDl9swKdzZYw3zy6NRdICFosLx0CcbzRVXVn7xflS9VFJbfzr6Jtcs0pAC8+OgEVy/yxIWHY0sIZ4LYjxlB1YQgfXrxcAs2tKvmbGt2+AGPovsGTaaA0SYpOh+nAnRoQhMj2d9D8/mG7lrkNW1XVmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWkfly36; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=GSXtkma2yuxOB/fGwn2EEB1exg3PZ8ymcYf1SQmqsI/w+F2liOCeHOJP2D54712wOiNdajQSveh97N6bZFt30W61l8fRSuIVlicSbtiKweulsYOVErLXL/P1UKcv7XHu4WAbqRjLP1raJgEsd24s0UJJscDiJOFMJQ/ho5Ztf8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTHyHpU5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWkfly36"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 301681F000E9;
-	Mon, 13 Jul 2026 15:13:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTHyHpU5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C4A1F000E9;
+	Mon, 13 Jul 2026 15:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783955599;
-	bh=lJQzGfxVgJiuUpbBkdrrUOFr+kax5/ewvEEoAXXj9+s=;
+	s=k20260515; t=1783955608;
+	bh=W7i1SCp2qfIwTwaLQo6nkooaZSMyIJXb2uvisaNXFtw=;
 	h=Date:From:To:Cc:Subject;
-	b=SWkfly36FKlVceZtIiWN/L+5V8Lp92CspRoKQOGQsnkMePrkNd7tQaJA/icWD3Zs3
-	 2r/xVNy6UdpHenCXQieMwLcPzIZX2NHMhnjpG5AwYlNQ4xwv5ICFryzx8mS9ufAKHU
-	 ZFDWBXj56avWY1BIFr2dUHQNl5YPNCVl1iKN2cFG4b4wawBFXcW0Zp2ofseO8J9Bo0
-	 5U7OtfVgY6aqbNaZdBBF2W5jRciZZxiqIk9k6xRQvEZNtKjfdo7xgOXb8d2POmZxS2
-	 +uhc4ThsOgzk+O6WxtGU7ujyu5HCPSXnj4AQ8NiUwwkwu6Tp9/RvD2pc0mSuKWe4xS
-	 37hBrTzccj9kg==
-Date: Mon, 13 Jul 2026 16:13:15 +0100
+	b=DTHyHpU5XnJljfbRO0uBSsvhjlVc4zmUpd/X/JF/kxgIeqR7CQDqPSR30ecHQRfz9
+	 p2zuom46oFFabEyqExGMJYMZsZCOjoMTPZmSQ1zHlynb+idUk8POKKmUrkHPFAXZG0
+	 QioNf20MEGDcyaHlcJO0X3RgidsfXaCwRW6yNgz7K4BQ4koQ9o1Rr43sMYihlA4Ul+
+	 ktnW4ZqR6CkG8IwaADDkh63M9QsjgY9FvxGEPieayPDBiy4eXTWGntCdyOQ6TRq9xy
+	 XAQDGC35VR8mjJ0vHvim5zQd6hnfyapRsW9XIHCmEhcLiR9jHuH8xHn8kuAyRx0MIM
+	 p0fxM++/UQU3w==
+Date: Mon, 13 Jul 2026 16:13:24 +0100
 From: Mark Brown <broonie@kernel.org>
 To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Brian Bunker <brian@purestorage.com>,
-	Catalin Iacob <iacobcatalin@gmail.com>,
-	Krishna Kant <krishna.kant@purestorage.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the scsi-mkp tree with the scsi-fixes
- tree
-Message-ID: <alUAiyS3tTHDcbPc@sirena.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Subject: linux-next: manual merge of the scsi-mkp tree with the origin tree
+Message-ID: <alUAlBfA42zAOZ3c@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,11 +41,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bdH5gmxkBOW4pJEv"
+	protocol="application/pgp-signature"; boundary="iuFh3rKrXU+zeSqb"
 Content-Disposition: inline
 
 
---bdH5gmxkBOW4pJEv
+--iuFh3rKrXU+zeSqb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -57,16 +54,16 @@ Hi all,
 
 Today's linux-next merge of the scsi-mkp tree got a conflict in:
 
-  include/scsi/scsi_device.h
+  include/linux/mod_devicetable.h
 
 between commit:
 
-  e81f1079f9000 ("scsi: core: Remove export for scsi_device_from_queue()")
+  ad428f5811bd7 ("mod_devicetable.h: Split into per subsystem headers")
 
-=66rom the scsi-fixes tree and commit:
+=66rom the origin tree and commit:
 
-  ddd0eb9bcebeb ("scsi: core: Add scsi_update_inquiry_data() for updating I=
-NQUIRY data")
+  e73ba3d6ed03b ("scsi: zorro: Simplify storing pointers in device id struc=
+t")
 
 =66rom the scsi-mkp tree.
 
@@ -77,48 +74,42 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc include/scsi/scsi_device.h
-index 8694eeadd753e,7c8c06e60a911..0000000000000
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@@ -408,6 -408,20 +408,19 @@@ void scsi_attach_vpd(struct scsi_devic
-  void scsi_cdl_check(struct scsi_device *sdev);
-  int scsi_cdl_enable(struct scsi_device *sdev, bool enable);
- =20
-+ /**
-+  * enum scsi_inq_update_result - Return values for scsi_update_inquiry_da=
-ta()
-+  * @SCSI_INQ_UNCHANGED: INQUIRY data updated, no reprobe needed
-+  * @SCSI_INQ_REPROBE_NEEDED: INQUIRY data updated, standard INQUIRY data =
-changed
-+  */
-+ enum scsi_inq_update_result {
-+ 	SCSI_INQ_UNCHANGED =3D 0,
-+ 	SCSI_INQ_REPROBE_NEEDED =3D 1,
-+ };
-+=20
-+ int scsi_update_inquiry_data(struct scsi_device *sdev,
-+ 			     unsigned char *inq_result, size_t inq_len);
-+=20
- -extern struct scsi_device *scsi_device_from_queue(struct request_queue *q=
-);
-  extern int __must_check scsi_device_get(struct scsi_device *);
-  extern void scsi_device_put(struct scsi_device *);
-  extern struct scsi_device *scsi_device_lookup(struct Scsi_Host *,
+diff --cc include/linux/mod_devicetable.h
+index a397213bedace,2673a1bd82c45..0000000000000
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+diff --git a/include/linux/device-id/zorro.h b/include/linux/device-id/zorr=
+o.h
+index 5fdac81689839..26827b9b90b67 100644
+--- a/include/linux/device-id/zorro.h
++++ b/include/linux/device-id/zorro.h
+@@ -13,7 +13,11 @@ typedef unsigned long kernel_ulong_t;
+=20
+ struct zorro_device_id {
+ 	__u32 id;			/* Device ID or ZORRO_WILDCARD */
+-	kernel_ulong_t driver_data;	/* Data private to the driver */
++	union {
++		/* Data private to the driver */
++		kernel_ulong_t driver_data;
++		const void *driver_data_ptr;
++	};
+ };
+=20
+ #endif /* ifndef LINUX_DEVICE_ID_ZORRO_H */
 
---bdH5gmxkBOW4pJEv
+--iuFh3rKrXU+zeSqb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpVAIoACgkQJNaLcl1U
-h9CPFwf/ZKpM0yd2o8U9Dvkc0+NgXmBXxdxNvrs5fpCbfeTQdRbwdEhZU/V4KgRn
-/HSv2nsb0e9b4/ZE7Y2xGzjr0iE6j9+L2/TTjc3iKVe804EOblZ3epWDCDlJ2mHi
-7kn0KYwW+YhKMQ53xI3zGVfDZR6ZNTSvWa2qcf/T4B/VDP2L4Y1ZRwuXO9jC+koa
-hL71X/ovZ+pf/9iA0xrBeEHVwvc2hIlV9vBjRn4f7G+Lgxzx+O/VBHTav7TTHaJK
-JOtDLM4D0EgJfdxj9Wci/NVX/weKO+RnrwzbC2ZxG+Nq5iwIg0ew1whK//fWV/G+
-5gh+uk3HNtMSo4sFY8W3KC5L5fJKJA==
-=XrOx
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpVAJMACgkQJNaLcl1U
+h9DGHAf/RQox4Co5bbw3jgN9wJ9n3G9WeuEyPBf50ezo4ISbZiid1foLmD5EoPqx
+BeAKPGtflfT4S+9WBsSwQybYofXrpnTvbq1/SbrR0F49lFRbV1Dfx7DPsMEVZntx
+vwZhJDQmc79oaRQUHDTvBjvLI5y+w7ndcxY9qXYW67l63cz3EOc6HppoUTu2R+2O
+fw4RqY9WLAZuXXSlaxanR2p9PyRw+PucABoWdeqLKjv5+RUF6IYT8m+5pyX6KZon
+PSs5ULqHJfLajy/ApdbBtm/6cUspa8gGcPt+x8+HR8ZnDtgmUDDYCPHKXowVcoSG
+zISq1vGjPf5iA3rIU6npYCd5f+MiqA==
+=eNmf
 -----END PGP SIGNATURE-----
 
---bdH5gmxkBOW4pJEv--
+--iuFh3rKrXU+zeSqb--
