@@ -1,127 +1,238 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79157346A14;
-	Mon, 13 Jul 2026 18:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1612929408
+	for <linux-next@vger.kernel.org>; Tue, 14 Jul 2026 02:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783968385; cv=none; b=jIyng179x1a0rDFqBk84oAL3thtbnAVb2E+eqXf64xCaYYl/rTfcFCb/DjyWfr8FVYxd0Mq4we2ICIVznS8TpXmEe0HJhAehR+VTWXqHLD+S26Sahsj597UBGlRXTkEZBNzJLtGwTrM8Kfv8DX0jiq1gqsn8AORSumSfl3yyLMc=
+	t=1783996247; cv=none; b=myJr9m4oLl0aopORxip/PJciPR9pkJHpvykHEB7xKw0eUjAEiicATCzRHN8ZcAIyiHqT0wwkPr0eSaJR4vL6oGursMo13iDht/w+lH1XKCxNxcxyxo7NwNRbhcxbjsw54I2Vg+Ob4bVqjSbh5E6vqghYN6SxXjd6pMesrpiOT4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783968385; c=relaxed/simple;
-	bh=wuB97KRRoYgexJsUnIwI4no3SS0yys0Ni7i2F95Wp4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ql1QpTF33QJtybxlFLU/vjHaRXlw7Wn2cgFYaJ3h9WRPM5/+u0kxe6X8lUW3aRLKNQuMb2G95hPR2rf1Qns0XK/reXsWtRmFIOR3YLlwjZMr+cIbVgAYDPX3SHn4KRqT6KOjsQahHqqnNpI2dUAyeT8l0RiyT6qWXZ1H9+U5l2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iXtPC9qc; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1783996247; c=relaxed/simple;
+	bh=XvpgjMy8M5419c/j+ejVNu9BSC5gsGYzmTiAm/Z2djY=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=DetCLOVPLldS/c0dyeOCZFg1/NsOCnT3MCzGVfyMzL0gNXRha874a625x1ZMyl+QjBBygkED0ZYEJSphTwtyg4CM4HwLwehuBez1CUq11vNtbSdkR3p5PrzPt3zdLCWHJpJv60hoONT7jsj/ZUm70UuD9J0GfdMBV+hqh70PVQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Rq74PRNm; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iXtPC9qc"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66DFEO5V2835979;
-	Mon, 13 Jul 2026 18:46:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Utw+P8
-	3V0gV9KYP+hrt6/cHVkber39CUhZYlxlF5I+A=; b=iXtPC9qc1iJ8i5TXRN55fw
-	r5/CVUmemyEMHnBCO+Q5Ju/eKX1CL5NPHA8hYrm8LVr2CzoKXwFrGy+QRl1yfl/d
-	rYVpJbju/sdisXtUkVBHY+Urm6/8LyXE0Feg2E1LB9gFVNbzup8U649qQeaKW0vY
-	ImFDbpSQ63GQx2I6OUkxjiQsWXtDBaivdIPEwK2+GbUDRvwmz/77u1KlZH7XNgN0
-	V7MYlRlM9BLfNzOWiEfNIQFGEW9M9lB+0S3ACgiIhRxuRgOC2KNT7HI7jjgBEQm0
-	JDtIyvi+MaQwrnU3T0P3kV5ZWl8yJHAvZdLvmbiNRIvft26NpCZgE9/ibVH2nmdA
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fbepxa97v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Jul 2026 18:46:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 66DIYcux029861;
-	Mon, 13 Jul 2026 18:46:20 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4fc05pyb86-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Jul 2026 18:46:20 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66DIkJaV29295210
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Jul 2026 18:46:19 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6CB7E58052;
-	Mon, 13 Jul 2026 18:46:19 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1873758056;
-	Mon, 13 Jul 2026 18:46:19 +0000 (GMT)
-Received: from [9.61.45.33] (unknown [9.61.45.33])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 13 Jul 2026 18:46:18 +0000 (GMT)
-Message-ID: <ae09fc06-ce41-424f-9643-5051f6256fdb@linux.ibm.com>
-Date: Mon, 13 Jul 2026 11:46:18 -0700
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Rq74PRNm"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-ca97d139d5fso2722103a12.0
+        for <linux-next@vger.kernel.org>; Mon, 13 Jul 2026 19:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1783996244; x=1784601044; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=55alBzJoNn0B51AUbv3yjRHue+7Y9L5pf/3jgjl6nWY=;
+        b=Rq74PRNm4oq63tynZWQ+1MrLuB+jdlF9wkGzsHkDlEYeweXGah71lxCyoeFh72UuWe
+         5+Guev/Qm4MFhRHukLL7DHM6yj59QRjeCUjXKpNxG4GZf+vk4yLWUsHTdYxRIxnoby3U
+         Qr39If5YjP8k+XQEdEayDvbOvsJQne64f7W/cLk82pEXEqH89iPDpSX7uIJC+fBN10Tv
+         87CsTzqdmbW2zm1BSSxqV1dTDjNtQpNbDQuFetF3nfltPVuA2phKYFihNDStGht5SdSF
+         h8bnRlVUUhunC5rR5QgCQf/jZyPPZ7Logw1qFeheylRciSYmAb4bosVq0iyJKjp2nVdd
+         i96g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783996244; x=1784601044;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=55alBzJoNn0B51AUbv3yjRHue+7Y9L5pf/3jgjl6nWY=;
+        b=eZqHQFqG+t3qjC3mbIHEv4RbKp8UAA+JdU+ofWD5q6mHoj95EAodbV+ktJGIGydrYb
+         rxQJPTBtODWNMdzND3BzfhvM/LZdpwdnz/g491iYyEkMlxCiPXftMi1DYzI5V87nV+UQ
+         /upsi8C3lk0ZatA1UstzFyuXi50xEhU35qvxQa/b2t6QcfNIJcj6blFhwXgJrGiPc3Wn
+         O0JOaMBm6eYXCwhc/1gKzdCifCiOd3giviTMe9n6WF5ufTDusvAVb13HrUB99pi7Z7BD
+         3LV06WkIK9LHabog9c4BgW+udRYF+IPLXosDngIbuvE983XQ5v5Nl2fBuE9GomX0OgB/
+         7alw==
+X-Gm-Message-State: AOJu0YyTYmKphvfDDW8IWGmqLWl050oScTCtr6ioQg52MLYuoAOIxeqQ
+	XlwYV652l4NENAxecuiC6BJ7T02kZodfLO0nMaIZJ7k+3Ghg2uPpBHurhtjCXTR1qvU=
+X-Gm-Gg: AfdE7cmEQ3DDBkWgFVKI4umxoXzfe2zwLYm/Kj6qszLTWt1jEvIoIPl3ID5cYEfLxF/
+	aOTHl3tnyDjzF011txTd2U1I3GDqNndopn5yikZFxnLnt4cdmVxAUmkhFA4pcT4iyBDhGaphJt8
+	pkmA8a7DcmLiM2tsh9UI75mxBgF6LOmdzrHJC94vtfpSrl4IiAyfjRfqDL1mIWEjIaA84fps0/z
+	fnPqxnkgX3TMe8a8mYgZb4plih0xgCj0tF1ZVpMybsh5GnA3wZbRS+gOUrTMjkTMwfABOQpLdNh
+	VX0I4VAWAbsG+iJ0dcOAbtGOx7Y7S6c2M7cKU2dcCglsKYb5JwpnEaMh/JunG2QKmSZb9YX6vCZ
+	CYPMpi2F9Zm5ir52yJbe3sKpmXVSHcAEm1142Xgg6NHvQVTwTvltcvAmmE//OVade9pbIo0ZqwZ
+	ZWcuLDLg==
+X-Received: by 2002:a05:6a21:1b81:b0:3bd:394d:addd with SMTP id adf61e73a8af0-3c35741cee1mr423044637.33.1783996244421;
+        Mon, 13 Jul 2026 19:30:44 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31189cd8234sm67499132eec.9.2026.07.13.19.30.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2026 19:30:43 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure in final build
-To: Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <alUWw0b334Y1AiRa@sirena.org.uk>
-Content-Language: en-US
-From: Tyrel Datwyler <tyreld@linux.ibm.com>
-In-Reply-To: <alUWw0b334Y1AiRa@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pCYod_wa8MgGb0JbKnsslOZHSYbZP8An
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDE5NCBTYWx0ZWRfX1XHEv5cmYcev
- S0sgmoMRxCa9EHUl5QVjrQpKCqd5P/88Rq5QFBBAI8gJ4qhhcKFVv7EABh4/CLlZ8a8RtImH7HI
- 9CAm8hHR13k/dTpotDceGHTgsEKff48=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDE5NCBTYWx0ZWRfXyvHTadJC1ljm
- IOd5TGf7LAIJkKPkSef6/7lLH1twlb7JZCIWstvacFxGKVd0rLvBg0+4PUIQmKaBJCyzO2IWtmX
- ujR6czvCA1/G3sfthRXyMDQ9f/SsLLwnDvuSy2fyVWLjc6ZPjh4ErxjF+p0/YZzfPd04eOSLJO7
- 1Ha1Y9k1JuRHvFn7g57GyA2HbSVdpYnS792Dn89zGJm3MDqN04+y4GLDbMiCrL/5PChkGDRb0hM
- Y4ZTWwCVXzhrKpvT7bg2VZFWOgxKJwJXu/zWWKinJIOwqE4NPuyvZBvBDwhNuLzCnifPRi/Z0H+
- NnyEmeCHwT1zCDLqEuOSKb7OOIOLoPxb5/qnbWPxpNUXkFUiEeHiv/OGpMsjQFMSgIhvkZRE//f
- nolpqtNIQQNwFEyuYPlcJhsDM9Qx4TGV4q8FoYSvV5Xc4XzDbSyPXbyN/yYOXM17FSTyzahSASK
- m2UAUhxBRWmzdSFNdlQ==
-X-Authority-Analysis: v=2.4 cv=XbS5Co55 c=1 sm=1 tr=0 ts=6a55327d cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=bWSV3VBeTOtE9Txica0A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: pCYod_wa8MgGb0JbKnsslOZHSYbZP8An
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-13_04,2026-07-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607130194
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 49362394dad7df66c274c867a271394c10ca2bb8
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 14 Jul 2026 02:30:43 -0000
+Message-ID: <178399624334.10257.9435479886359813117@963b246bc1b3>
 
-On 7/13/26 9:48 AM, Mark Brown wrote:
-> Hi all,
-> 
-> After merging the kthread tree, today's linux-next build
-> (powerpc pseries_le_defconfig) failed like this:
-> 
-> ERROR: modpost: "nvme_fc_rescan_remoteport" [drivers/scsi/ibmvscsi/ibmvfc.ko] undefined!
-> ERROR: modpost: "nvme_fc_unregister_remoteport" [drivers/scsi/ibmvscsi/ibmvfc.ko] undefined!
-> ERROR: modpost: "nvme_fc_unregister_localport" [drivers/scsi/ibmvscsi/ibmvfc.ko] undefined!
-> ERROR: modpost: "nvme_fc_register_remoteport" [drivers/scsi/ibmvscsi/ibmvfc.ko] undefined!
-> ERROR: modpost: "nvme_fc_register_localport" [drivers/scsi/ibmvscsi/ibmvfc.ko] undefined!
-> 
-> Caused by commit
-> 
->    ddbcf78e8d230 (scsi: ibmvfc: Process NVMe/FC rports in work thread)
-> 
-> I have used the version from next-20260710 instead (equivalent to
-> dropping the tree since everything seems to be new today).
 
-This is from the NVMf ibmvfc patch series. I've asked Martin to drop it from
-scsi-staging as I already had a respin in process to send out, plus I clearly
-forgot to gate the NVMf functionality on NVMf support being configured.
 
--Tyrel
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/49362394dad7df66c274c867a271394c10ca2bb8/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 49362394dad7df66c274c867a271394c10ca2bb8
+origin: maestro
+test start time: 2026-07-13 18:04:34.745000+00:00
+
+Builds:	   72 ✅    2 ❌    0 ⚠️
+Boots: 	  109 ✅    1 ❌    0 ⚠️
+Tests: 	29725 ✅ 5410 ❌ 6310 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a553b4a18a4add1353b3469
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.shardfile-kvm
+      last run: https://d.kernelci.org/test/maestro:6a556a0d18a4add1353d0133
+      history:  > ✅  > ❌  
+            
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.shardfile-kvm
+      last run: https://d.kernelci.org/test/maestro:6a5550e618a4add1353c5af8
+      history:  > ✅  > ❌  
+            
+Hardware: sun50i-a64-pine64-plus
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.kvm.shardfile-kvm
+      last run: https://d.kernelci.org/test/maestro:6a55459918a4add1353c0c88
+      history:  > ✅  > ❌  
+            
+Hardware: mt8183-kukui-jacuzzi-juniper-sku16
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
+      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d0d
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dsi_14014000
+      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d09
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58
+      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d01
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
+      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d00
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
+      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2ce4
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
+      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2ce3
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
+      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2ce2
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
+      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2cd7
+      history:  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
+      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d57
+      history:  > ✅  > ❌  
+            
+Hardware: sc7180-trogdor-kingoftown
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_remoteproc_4080000
+      last run: https://d.kernelci.org/test/maestro:6a5536de18a4add1353afbd3
+      history:  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
+      last run: https://d.kernelci.org/test/maestro:6a55465518a4add1353c15ef
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: bcm2837-rpi-3-b-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6a55370e18a4add1353b0ad5
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
+      last run: https://d.kernelci.org/test/maestro:6a5546d218a4add1353c1791
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_69
+      last run: https://d.kernelci.org/test/maestro:6a55464c18a4add1353c11e7
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_71
+      last run: https://d.kernelci.org/test/maestro:6a55464c18a4add1353c11f5
+      history:  > ❌  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6a5536e018a4add1353afec9
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa.alsa_pcm-test
+      last run: https://d.kernelci.org/test/maestro:6a55464c18a4add1353c0f8d
+      history:  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
+      last run: https://d.kernelci.org/test/maestro:6a5549c818a4add1353c4b81
+      history:  > ✅  > ❌  > ✅  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
