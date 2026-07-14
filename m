@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148EE38C43A;
-	Tue, 14 Jul 2026 11:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6129B3A7F75;
+	Tue, 14 Jul 2026 11:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784029625; cv=none; b=XptmY6CNgjIl5Bq3e4oAVHGeLSpK7BtbSTbrbA31FYHbKfaq1DP9+oeWp1iv9WPFjRvJQpFNUSsCe/VZKVp5BQeyYfGMmV/8AE9MCBI3YCMyHyWZU86iFE3aQFSgR8Le8NL2xwie19Ckn1tx0wwSNmdeMsOjKyqtPuHgiZgiCrc=
+	t=1784029634; cv=none; b=f00GLc17H/19iiiPiLy+pwLuoTAiJDewThzNwdA/byFclJmXf/yxlpI6P2cs2kQIzuLwFLsQO1WLfxL8Qaxb8yEi3hwQkHT7eMBLn7OuhZEDWeBSrTjnPL+3IfpTjIctfXsLVJ0joqrXkiQPkuVuT+eG+XZsNJnEixcAtYtCYtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784029625; c=relaxed/simple;
-	bh=D9uEF9oubVuW4g8SpoJmMl9sEXKldnKc/L4T7LK1lmg=;
+	s=arc-20240116; t=1784029634; c=relaxed/simple;
+	bh=4FT1KZdG9+8vQdwZzBBlR+UDAbcQpDfbkN+jHl1FLNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dk/0/mBWI3ie4BY0dtgWHfLVgYEdC/bUquci5TB7c5I9hSALcBiF4VHfRa2DWgwlfa1ig+AN8ALNd/n1ns4ghVgFi4TKwxAtfO3ykG4M8Sz/2HJBpHJcQ1tCwh58bJzOdvGKD01j1ECO5qQFsM+/QodBm/HwL2D47lewiG6g9mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHwyXQWm; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=E08Wi1GJUtt5GFz+En6YsBUMpQetYB8BUmnE0jzE3xe5O9j1v34yIRPffEdV/oqvN6uidKvA6ViFs/HIWL+Cj2RLLSdXD+HMvqyrOS6qtfgMSu3ik4erFYKDi7RCVqqoBoHaRDkIBew8+9sRCsor06Lxvl/a+Xfbay/d6y1mDVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6EYWe5y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHwyXQWm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BEC1F000E9;
-	Tue, 14 Jul 2026 11:47:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6EYWe5y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5FAA1F00A3F;
+	Tue, 14 Jul 2026 11:47:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784029623;
-	bh=ln5WPGLe19x+VbgszBcOfv2DZljhtOY4/AgqGzCy/ug=;
+	s=k20260515; t=1784029633;
+	bh=ByEV+HIxTEtSqq52HAcTq1JU/EJC2+REptmFl6VOKbU=;
 	h=Date:From:To:Cc:Subject;
-	b=aHwyXQWmLc0hD7H5DumvbW5KHtZUBYzhXhsf2A1fzbKkrVEUj/f5tUExJ4QKCobmS
-	 BhuM4uT4rFNkKY3JDWKp0rvpqSB0Iz5b63n4vD5LjwcX70bH6N2WhaNlIP2Ttnix/Z
-	 uftaYvG9YdRIiXHkrukBPOosV3F8zTJzRKYsTpU5z83DeNBihEJxi4ntjHGcCJTEMk
-	 uhhHnrLlVq054f4qGbhOrOZJBgT6AmvY+MqpouHCa6f9Imfv4f58RV9zwYLsFXWyGx
-	 CKT6C6Wr0ORWiK0aiYTfHLF7SRfeeU4XJ8jLJCX5Es9nAnXF5QE6MEAuuRxO8RRtLH
-	 KMk6Bx93ox1nQ==
-Date: Tue, 14 Jul 2026 12:46:59 +0100
+	b=M6EYWe5ySbRMAVurYw7UsndsVxY4TP+fuxTFQMUUSPsS7RzTijCCzfXY7Ri3Nt7JC
+	 SXx9Cam2/8dtk5T34OOMAUNBYjso8fMR+9YZ08w5CgbV0GkB8XK23QFNuAkSFL48+S
+	 /lNtiGZ20H77s6BLzIFtzqh4JyScjHmn0wiFIcoidZxrudInBCtcyFGakyllGMAGVx
+	 1TSEvTKvZ+PJh/AIdovCfJRBcW1JUPZDQEJFNWy3FXn0eKLVMuQ0hdxLgUmnjurAvq
+	 oh/yWNpsfgVsacZ3bcEGkoSNJrQHK4Flr95SPLZy1uU2sQEFclpaXeGj7TPcJVo0Jc
+	 SctgObvgvDmoQ==
+Date: Tue, 14 Jul 2026 12:47:09 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Madhavan Srinivasan <maddy@linux.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>,
 	PowerPC <linuxppc-dev@lists.ozlabs.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Fixes tags need work in the powerpc-fixes tree
-Message-ID: <alYhs4-Le_VfbGcj@sirena.org.uk>
+Message-ID: <alYhvRRKogDZck-B@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,21 +41,21 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="v+x80NNBOQoEIGSN"
+	protocol="application/pgp-signature"; boundary="FWaWqzd1XdKSlclC"
 Content-Disposition: inline
 
 
---v+x80NNBOQoEIGSN
+--FWaWqzd1XdKSlclC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 In commit
 
-  19dbc55d400b8 ("powerpc/vtime: Initialize starttime at boot for native accounting")
+  1034785975914 ("powerpc/85xx: Add fsl,ifc to common device ids")
 
 Fixes tag
 
-  Fixes: cf9efce0ce31 ("powerpc: Account time using timebase rather  than PURR")
+  Fixes: 0bf51cc9e9e5 ("powerpc: dts: mpc85xx: remove simple-bus compatible from ifc node")
 
 has these problem(s):
 
@@ -63,19 +63,19 @@ has these problem(s):
     Just use
 	git log -1 --format='Fixes: %h ("%s")'
 
---v+x80NNBOQoEIGSN
+--FWaWqzd1XdKSlclC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpWIbMACgkQJNaLcl1U
-h9CnIQf/WWOUcGUdGt+9biaLiSDpgrYpE06a2eRIbddH85VhG60XHUUD2PUMJawI
-7balj/6wkowUUTuqyCSzN920l1FVyGp1dXiFiQGau54VodsJGEvyd1Q+BBpGZbwM
-map2b9LmsSYIR5zvKb4XGaNXAgBoDIPXh/hCgVzzWN1u1Ht5TQsnlVt6F7ou7gC+
-nojkaJ36pTjxqJSYUMlBiEKvL3so4Y1k6iIRcx11Ur3XrIauwRiDjhJrNk3Tme7B
-wJesfUNPWRC/dFtrf8BCyLmpRM2ki6c8p6Opt9sFLBS184DCDESfPp4XQvfkCzQR
-pNvwsOHTzl/JU3P4JFz/j5EDKm8nlw==
-=G4nd
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpWIbwACgkQJNaLcl1U
+h9Bhbgf/ZiWdWeHMXR9cCy08E0L+AwUXSUWRZWMHCmKTkZGto7JS61ffW6mDLdBx
+F0S82nbcL/qPoKTakzDeu+OM1Hz7V31Jd4FcTt2QJqOWMh8mHElRvCY7Z7+I04XG
+VgJFfnUocDrbi0XGnJ8OILbzKG0DmwgNMrXMpeV2H/LZGO9a7ABQJm7NcbcFcauE
+ArWNBium0Ccy4gJPfjjn2ax9cU3SoRRDkhs39g624xIa6KuL2LST5RCNttdnurVO
+P2rUSV98u27WvoHQ7D7kE5v9s09EPOi6yq4HXZkyS/NpTqU0A/IpeDkPsNHWZ7Ir
+9F4nijDE1EqlvzvQGlF+DUlnzfrb9g==
+=aQUO
 -----END PGP SIGNATURE-----
 
---v+x80NNBOQoEIGSN--
+--FWaWqzd1XdKSlclC--
