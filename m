@@ -1,41 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7FA372B58;
-	Tue, 14 Jul 2026 11:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8D3448D16;
+	Tue, 14 Jul 2026 12:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784029683; cv=none; b=fEPf3XoCoIMvPu/3dkdyCRbfkCDMegjiXABjQscfaGsDe6y6SBLhry3eK7xcpHmV7/tIE9Oo8iLhTsguw2pHcHsFYK8RWtu152wJhc3xDbcaC+sNH40NDkJcIl0V5ChQWjqX93XZKYeYD0nwOSz9yFXpJvPFgh1UGrdjBDNPxh4=
+	t=1784031950; cv=none; b=hl0wG93ANoBwUPtBhun7H85RYIsqwLWQhyTuLKJs50FkM9IgjDCxGxvFfuKxlFa5BwRfVNJ/7eh6BR1kKh/9BS7TXCnRKNr3Ykzz3I9H0lqZXeMTVr4UVRTZjZffSPtkPFw/bWJNBHSya8mSOpkY5YsrDgP1obu3syjXD2C684g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784029683; c=relaxed/simple;
-	bh=xn+R/y0JmOpVNPxP0obPii1IZhdEr6e41ZuJZGBYluA=;
+	s=arc-20240116; t=1784031950; c=relaxed/simple;
+	bh=zdwxn1OgC68gPyyXu82EKLBXD7w00hnR8CogNUE/TlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oGV3VYEt+7Gfz2QysGaRqzxy46CvzTRuuGThC/4OqrOWVbvFDPNDJ9HyyVjAcS0H3mKJPBEXXzw9C6786gjloSY7zUOZSth7VMhCxbrPEhQKrJdyrpUsJJQWhwu1q6Ocgbi5Vsr3uVoMWD4VLF6p+Si9K50+LCEfoHeHx8msE2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTHlu++D; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=GQJSbF5Xv7s8BZ22lcRd3aGkYFMbcG3CJRuzw0IyU1oa5jeDIEhyRTIchhjpPPoBCPT0zrMPdoh082wXOQHPEK993jv/xuKrveT9oviS/hInDVrYs4v1V+NFIY9YtWx817vkk03DZMKhQLtHVNwQnI2d9F7HW5KqMzlXelnz268=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0Csi+pS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTHlu++D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B01B61F00A3A;
-	Tue, 14 Jul 2026 11:48:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0Csi+pS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866F11F00A3F;
+	Tue, 14 Jul 2026 12:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784029682;
-	bh=JZfo8kOksv91lCAwDmR1gBlLsnLzRquGI6I0g3rccSQ=;
+	s=k20260515; t=1784031933;
+	bh=p3O2g8rNPiKCTu9f6lO6PguzXO0QGJLLc5o+kf/J1ac=;
 	h=Date:From:To:Cc:Subject;
-	b=OTHlu++Dg19xPrdryD/Qg5h6KDiiOuCAsogAK6offoQqCdGZLd9Jc3Pu5WSrrGmyy
-	 tFuYIrKwHuvO39gRvJfPPMRfcb6bGxFJWTL5cAmKGUPRVme+bGUXxy9Scw0BMLiWBa
-	 nSJX4b1c+97yqGISritccuD4OFx4wAnn39Y95wwWvYDhDI7wJeGGsQgN4DQMaIkxVV
-	 5EQd36Gx/Ng1k2ywckslxWcahhcUJkdb+HB8SOjbtUbctF+A3HgJANlln0PrJUNVRt
-	 SC6Qm57Dei6n3ViqxjMchFSc1b1mHaLp/0sHm6zpZTUXxZ/7N4pc5skQn7V9dCJ388
-	 RHPU8zNPuXO1A==
-Date: Tue, 14 Jul 2026 12:47:57 +0100
+	b=d0Csi+pSUOuVjqsRY77dvDfJdLpjDmpyrg5keD0e+x5zerNz+KmD83BZ62BfZFk7n
+	 paLk3m1fWvnAX+FjClaJTcZlHn/YUDON1PJqblPGgOyYOFtjoExtKzVBh7eX/tga/t
+	 ZXTup6OXl4w9Ig6Ul2ZJaQ2k8YYOW5w8jrq2/QyIYAnn4ZyPvuxfan9MZ3ymwZJfX5
+	 fGvhx9QcFc1TIbfCnWqhEyRiwDPqMP4sR1+AJNmo1y7yhGJljBPWHHLeIJB9MkacLQ
+	 7P+V1yNZhYcUIkTzeOkYsRUcqCZZgvmpMFh9XUpHaLsxRYYWfKB/6BqF/F4d/14UD0
+	 //3M+hOwtJwbA==
+Date: Tue, 14 Jul 2026 13:25:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Vivian Wang <wangruikang@iscas.ac.cn>
-Subject: linux-next: manual merge of the mm-nonmm-unstable tree with the
- risc-v-fixes tree
-Message-ID: <alYh7S9n9qE8-Hc_@sirena.org.uk>
+	Manuel Ebner <manuelebner@mailbox.org>,
+	Stanislav Kinsburskii <skinsburskii@gmail.com>
+Subject: linux-next: manual merge of the jc_docs tree with the mm-unstable
+ tree
+Message-ID: <alYquUnNKl6FPKfJ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,35 +44,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dCdGraLgyJjaZZVp"
+	protocol="application/pgp-signature"; boundary="cN4kvZv3zm10DpEB"
 Content-Disposition: inline
 
 
---dCdGraLgyJjaZZVp
+--cN4kvZv3zm10DpEB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mm-nonmm-unstable tree got a conflict in:
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-  mm/sparse-vmemmap.c
+  Documentation/mm/hmm.rst
 
 between commit:
 
-  4edd70ee6a7d0 ("mm/sparse-vmemmap: flush_cache_vmap() after hotplugging v=
-memmap")
+  d68817e9c3198 ("mm/hmm: add hmm_range_fault_unlocked_timeout() for mmap l=
+ock-drop support")
 
-=66rom the risc-v-fixes tree and commit:
+=66rom the mm-unstable tree and commit:
 
-  7605044cea4d2 ("riscv: mm: avoid spurious fault after hotplugging vmemmap=
-")
+  e834ee8e571d5 ("docs/mm: Fix braces")
 
-=66rom the mm-nonmm-unstable tree.  These appear to be two versions of the
-same fix, it looks like one needs to be chosen - I did the conflict
-resolution picking based on taste but left the non-conflicting bits of
-both changes.
+=66rom the jc_docs tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -80,111 +77,189 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined mm/sparse-vmemmap.c
-index 5a2469fb1838c,290cafcfd7230..0000000000000
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@@ -41,8 -41,6 +41,8 @@@
-  #define VMEMMAP_POPULATE_PAGEREF	0x0001
+diff --combined Documentation/mm/hmm.rst
+index 4e5a750748ae5,54c461e7a143f..0000000000000
+--- a/Documentation/mm/hmm.rst
++++ b/Documentation/mm/hmm.rst
+@@@ -156,57 -156,42 +156,57 @@@ During the ops->invalidate() callback t
+  update action to the range (mark range read only, or fully unmap, etc.). =
+The
+  device must complete the update before the driver callback returns.
  =20
-  #include "internal.h"
- +#include "mm_init.h"
- +#include "sparse.h"
+ -When the device driver wants to populate a range of virtual addresses, it=
+ can
+ -use::
+ +When the device driver wants to populate a range of virtual addresses, the
+ +normal interface is::
  =20
-  /*
-   * Allocate a block of memory to be used to back the virtual memory map
-@@@ -344,8 -342,8 +344,8 @@@ static __meminit struct page *vmemmap_g
-  	 *
-  	 * Any initialization done here will be overwritten by memmap_init().
-  	 *
- -	 * hugetlb_vmemmap_init() will take care of initialization after
- -	 * memmap_init().
- +	 * hugetlb_bootmem_struct_page_init() will take care of initialization
- +	 * after memmap_init().
-  	 */
+ -  int hmm_range_fault(struct hmm_range *range);
+ +  int hmm_range_fault_unlocked_timeout(struct hmm_range *range,
+ +                                       unsigned long timeout);
  =20
-  	p =3D vmemmap_alloc_block_zero(PAGE_SIZE, node);
-@@@ -546,6 -544,12 +546,12 @@@ static int __meminit vmemmap_populate_c
- =20
-  #endif
- =20
-+ #ifndef vmemmap_populate_finalize
-+ static void __meminit vmemmap_populate_finalize(void)
-+ {
-+ }
-+ #endif
-+=20
-  struct page * __meminit __populate_section_memmap(unsigned long pfn,
-  		unsigned long nr_pages, int nid, struct vmem_altmap *altmap,
-  		struct dev_pagemap *pgmap)
-@@@ -566,7 -570,7 +572,7 @@@
-  	if (r < 0)
-  		return NULL;
- =20
-- 	flush_cache_vmap(start, end);
-+ 	vmemmap_populate_finalize();
- =20
-  	return pfn_to_page(pfn);
-  }
-@@@ -583,6 -587,17 +589,6 @@@ void __init sparse_vmemmap_init_nid_ear
-  {
-  	hugetlb_vmemmap_init_early(nid);
-  }
- -
- -/*
- - * This is called just before the initialization of page structures
- - * through memmap_init. Zones are now initialized, so any work that
- - * needs to be done that needs zone information can be done from
- - * here.
- - */
- -void __init sparse_vmemmap_init_nid_late(int nid)
- -{
- -	hugetlb_vmemmap_init_late(nid);
- -}
-  #endif
- =20
-  static void subsection_mask_set(unsigned long *map, unsigned long pfn,
-@@@ -594,7 -609,7 +600,7 @@@
-  	bitmap_set(map, idx, end - idx + 1);
-  }
- =20
- -void __init sparse_init_subsection_map(unsigned long pfn, unsigned long n=
-r_pages)
- +static void __init sparse_init_subsection_map_range(unsigned long pfn, un=
-signed long nr_pages)
-  {
-  	int end_sec_nr =3D pfn_to_section_nr(pfn + nr_pages - 1);
-  	unsigned long nr, start_sec_nr =3D pfn_to_section_nr(pfn);
-@@@ -617,15 -632,6 +623,15 @@@
-  	}
-  }
- =20
- +void __init sparse_init_subsection_map(void)
- +{
- +	int i, nid;
- +	unsigned long start, end;
+  It will trigger a page fault on missing or read-only entries if write acc=
+ess is
+  requested (see below). Page faults use the generic mm page fault code pat=
+h just
+ -like a CPU page fault. The usage pattern is::
+ +like a CPU page fault.
  +
- +	for_each_mem_pfn_range(i, MAX_NUMNODES, &start, &end, &nid)
- +		sparse_init_subsection_map_range(start, end - start);
- +}
+ +The caller must not hold ``mmap_read_lock`` before the call.
+ +``hmm_range_fault_unlocked_timeout()`` takes the mmap read lock internall=
+y and
+ +allows ``handle_mm_fault()`` to drop it during fault handling. This is re=
+quired
+ +for VMAs whose fault handlers may release the mmap lock, for example regi=
+ons
+ +managed by ``userfaultfd``.
  +
-  #ifdef CONFIG_MEMORY_HOTPLUG
+ +If the mmap lock is dropped or the range is invalidated, the function ref=
+reshes
+ +``range->notifier_seq`` and restarts the walk internally. ``-EINTR`` is r=
+eturned
+ +if mmap lock acquisition is interrupted or a fatal signal is pending duri=
+ng
+ +retry handling.
+ +
+ +The timeout is specified in jiffies; passing ``0`` means retry indefinite=
+ly. The
+ +timeout exists to preserve caller policy for repeated mmu-notifier invali=
+dation
+ +and is checked between retry attempts. HMM does not interrupt page fault
+ +handling when the timeout expires, but returns ``-EBUSY`` if the retry bu=
+dget is
+ +exhausted before a stable range is obtained.
+ +
+ +The usage pattern is::
  =20
-  /* Mark all memory sections within the pfn range as online */
+   int driver_populate_range(...)
+   {
+        struct hmm_range range;
+ +      unsigned long timeout;
+        ...
+ =20
+ +      timeout =3D msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
+        range.notifier =3D &interval_sub;
+        range.start =3D ...;
+        range.end =3D ...;
+        range.hmm_pfns =3D ...;
+ =20
+ -      if (!mmget_not_zero(interval_sub->notifier.mm))
+ +      if (!mmget_not_zero(interval_sub.mm))
+            return -EFAULT;
+ =20
+   again:
+ -      range.notifier_seq =3D mmu_interval_read_begin(&interval_sub);
+ -      mmap_read_lock(mm);
+ -      ret =3D hmm_range_fault(&range);
+ -      if (ret) {
+ -          mmap_read_unlock(mm);
+ -          if (ret =3D=3D -EBUSY)
+ -                 goto again;
+ -          return ret;
+ -      }
+ -      mmap_read_unlock(mm);
+ +      ret =3D hmm_range_fault_unlocked_timeout(&range, timeout);
+ +      if (ret)
+ +          goto out_put;
+ =20
+        take_lock(driver->update);
+ -      if (mmu_interval_read_retry(&ni, range.notifier_seq)) {
+ +      if (mmu_interval_read_retry(&interval_sub, range.notifier_seq)) {
+            release_lock(driver->update);
+            goto again;
+        }
+@@@ -215,11 -200,7 +215,11 @@@
+         * under the update lock */
+ =20
+        release_lock(driver->update);
+ -      return 0;
+ +      ret =3D 0;
+ +
+ + out_put:
+ +      mmput(interval_sub.mm);
+ +      return ret;
+   }
+ =20
+  The driver->update lock is the same lock that the driver takes inside its
+@@@ -227,19 -208,6 +227,19 @@@ invalidate() callback. That lock must b
+  mmu_interval_read_retry() to avoid any race with a concurrent CPU page ta=
+ble
+  update.
+ =20
+ +Holding the mmap lock across HMM faults
+ +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ +
+ +Most callers should use ``hmm_range_fault_unlocked_timeout()``. If a driv=
+er
+ +really needs to hold the mmap lock across work outside HMM, it can use::
+ +
+ +  int hmm_range_fault(struct hmm_range *range);
+ +
+ +The mmap lock must be held by the caller and will remain held on return. =
+This
+ +interface cannot support VMAs whose fault handlers need to drop the mmap =
+lock.
+ +New callers should prefer ``hmm_range_fault_unlocked_timeout()`` unless t=
+hey
+ +have a specific requirement to keep the mmap lock held across the call.
+ +
+  Leverage default_flags and pfn_flags_mask
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ =20
+@@@ -253,8 -221,8 +253,8 @@@ permission, it sets:
+      range->default_flags =3D HMM_PFN_REQ_FAULT;
+      range->pfn_flags_mask =3D 0;
+ =20
+ -and calls hmm_range_fault() as described above. This will fill fault all =
+pages
+ -in the range with at least read permission.
+ +and calls the HMM range fault helper as described above. This will fault
+ +all pages in the range with at least read permission.
+ =20
+  Now let's say the driver wants to do the same except for one page in the =
+range for
+  which it wants to have write permission. Now driver set::
+@@@ -268,9 -236,9 +268,9 @@@ address =3D=3D range->start + (index_of_wri
+  write permission i.e., if the CPU pte does not have write permission set =
+then HMM
+  will call handle_mm_fault().
+ =20
+ -After hmm_range_fault completes the flag bits are set to the current stat=
+e of
+ -the page tables, ie HMM_PFN_VALID | HMM_PFN_WRITE will be set if the page=
+ is
+ -writable.
+ +After the HMM range fault helper completes the flag bits are set to the
+ +current state of the page tables, ie HMM_PFN_VALID | HMM_PFN_WRITE will be
+ +set if the page is writable.
+ =20
+ =20
+  Represent and manage device memory from core kernel point of view
+@@@ -348,7 -316,7 +348,7 @@@ between device driver specific code an
+     system memory and device private memory.
+ =20
+     One of the first steps migrate_vma_setup() does is to invalidate other
+-    device's MMUs with the ``mmu_notifier_invalidate_range_start(()`` and
++    device's MMUs with the ``mmu_notifier_invalidate_range_start()`` and
+     ``mmu_notifier_invalidate_range_end()`` calls around the page table
+     walks to fill in the ``args->src`` array with PFNs to be migrated.
+     The ``invalidate_range_start()`` callback is passed a
 
---dCdGraLgyJjaZZVp
+--cN4kvZv3zm10DpEB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpWIe0ACgkQJNaLcl1U
-h9DhJAf/QCz+KicFiZpDpx2sxmh0uGutpwzQ2T75q1O7HrL7rejmpOfRTdX5OlUE
-WmU5UJJjyp5IMWcRF++O6Q3v1aN/0Y85yNF8XFpSmmBm0f5Q9MRkGgiGwnKsFOho
-Xk0VLFiknBwdwplySv/tcMve4v/1o8fAaQtYZWAnWs6jVS4g+RhbXlEyfift1tkn
-cuKUgVIGi6TYKbBkXSLKSQ5eRu6fzPqnkQ038iTamxoCwsTgFypSJIaqZ42IASNl
-cfEPcpNjZ1+BWjeWbJhkZuw/Ra/GW9Y3Y6ZSKCdoiMw9EAzpLqoUfOFvhddTjUD2
-VWy1tVFz62X+nkRwm18Ozg+eB0gr5A==
-=lDx2
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpWKrgACgkQJNaLcl1U
+h9AK5wf/TeewFx2NXP+G5vmuIcuZQKtvkYzFfkI35tUm7w0y9D1B4yOC5CuSeBOM
+Lwi4YV9RN+mvrdynIzcqpQBsOh7lA/NGiovgMl9lkDIj5K7zrQdcgAXvgUOblCcV
++4Mv8PvOwqJEHrOataJur0z1TSpwY2ZrPkTVQWgl1WuuJd161Sm6fLxek54z/Wfg
+/fd28TN+LWTNLbFYePaewjCpFyPB05lUJL3rtP/kWZwWAyG6vZyJkI5g2ShZRuQP
+cIEzraOVwvPMVNI3iPeMVQpG4cYrPfP80RLnNtSsJo/5Qbqf6KvwO5hnPoAT5IgO
+0e0mToWH+wlInVe9rRB/Ei9oU/fW2A==
+=n47G
 -----END PGP SIGNATURE-----
 
---dCdGraLgyJjaZZVp--
+--cN4kvZv3zm10DpEB--
