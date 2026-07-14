@@ -1,238 +1,215 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1612929408
-	for <linux-next@vger.kernel.org>; Tue, 14 Jul 2026 02:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BD63BD651
+	for <linux-next@vger.kernel.org>; Tue, 14 Jul 2026 06:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783996247; cv=none; b=myJr9m4oLl0aopORxip/PJciPR9pkJHpvykHEB7xKw0eUjAEiicATCzRHN8ZcAIyiHqT0wwkPr0eSaJR4vL6oGursMo13iDht/w+lH1XKCxNxcxyxo7NwNRbhcxbjsw54I2Vg+Ob4bVqjSbh5E6vqghYN6SxXjd6pMesrpiOT4s=
+	t=1784009213; cv=none; b=QlcyaQbc2YUlFZJRT7VpNOSEi8QrzWl8iWp/TmQk95JlIFkyT/DsWdjpkiJokTB3+3rbMOLQbUFbDJnytzWMZtQhsVex1aCNMClJkR2XlumnxBYea09nm8I6CpxSlPkIm0lW/E+oCJf0+chJcMw4YZyehDYnD6aAIhhqQpRPtNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783996247; c=relaxed/simple;
-	bh=XvpgjMy8M5419c/j+ejVNu9BSC5gsGYzmTiAm/Z2djY=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=DetCLOVPLldS/c0dyeOCZFg1/NsOCnT3MCzGVfyMzL0gNXRha874a625x1ZMyl+QjBBygkED0ZYEJSphTwtyg4CM4HwLwehuBez1CUq11vNtbSdkR3p5PrzPt3zdLCWHJpJv60hoONT7jsj/ZUm70UuD9J0GfdMBV+hqh70PVQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Rq74PRNm; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1784009213; c=relaxed/simple;
+	bh=O+0nv2SNB3i82TNVTY7zAME2W7vaTAnKUolRVo6bfis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LU7JLJtRK9+uNWX3uvyeAH64jL2ieKXpkrWPmI6HrXX4KnCaf/WCTfDiiutzCvd1gGP6Y1dhS8+JopofwqJrXPuSBS5vd+IqGulbCRlnCOPrUieN+ZWUiwlf6jVylaiHeQlCy1S4VWC2ilVp8deZ5XvcncQdK++OK2yMWWOoL38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FEySbt5o; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=N6xzBoWF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Rq74PRNm"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-ca97d139d5fso2722103a12.0
-        for <linux-next@vger.kernel.org>; Mon, 13 Jul 2026 19:30:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FEySbt5o";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="N6xzBoWF"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66E38Wmw3417742
+	for <linux-next@vger.kernel.org>; Tue, 14 Jul 2026 06:06:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IwYCUxVhmQoaUyTBUlvmESwl0MfXao1gk2tbc9LWRaQ=; b=FEySbt5orRmW/5+M
+	zv11LrOb2l3AgNMVhv23ZB7i+fUCt7NMnlnwQKukUSsPhv/LJm1EuiyecvpM2ChR
+	v6eyLRsQlbAgyi9tNsODuaC+EoH/jJOMkE6TbmnXmAf+z3KW1d5ClrHSvirD55UO
+	XAACl6kUk0pS2D5nSAZQ2oRGQhiLxVHf0aX3V+Hpx3ekeNW8hzmWbp7PwpWpNjeL
+	ngQ1YHIoRyJFzPq+L67POeMy3fNuKH3gmgplE6WQTMa+tz7X00MwEvoI3wuPVg9v
+	0l9uNxxXpGkIC9UXvEbulUBG1eW0TKiLmrCIufuzRsq3p2ByBymKzasqYOjGnWnf
+	lm47Ew==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fd44j28he-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-next@vger.kernel.org>; Tue, 14 Jul 2026 06:06:50 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c8894570b58so543666a12.3
+        for <linux-next@vger.kernel.org>; Mon, 13 Jul 2026 23:06:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1783996244; x=1784601044; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=55alBzJoNn0B51AUbv3yjRHue+7Y9L5pf/3jgjl6nWY=;
-        b=Rq74PRNm4oq63tynZWQ+1MrLuB+jdlF9wkGzsHkDlEYeweXGah71lxCyoeFh72UuWe
-         5+Guev/Qm4MFhRHukLL7DHM6yj59QRjeCUjXKpNxG4GZf+vk4yLWUsHTdYxRIxnoby3U
-         Qr39If5YjP8k+XQEdEayDvbOvsJQne64f7W/cLk82pEXEqH89iPDpSX7uIJC+fBN10Tv
-         87CsTzqdmbW2zm1BSSxqV1dTDjNtQpNbDQuFetF3nfltPVuA2phKYFihNDStGht5SdSF
-         h8bnRlVUUhunC5rR5QgCQf/jZyPPZ7Logw1qFeheylRciSYmAb4bosVq0iyJKjp2nVdd
-         i96g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783996244; x=1784601044;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1784009210; x=1784614010; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=55alBzJoNn0B51AUbv3yjRHue+7Y9L5pf/3jgjl6nWY=;
-        b=eZqHQFqG+t3qjC3mbIHEv4RbKp8UAA+JdU+ofWD5q6mHoj95EAodbV+ktJGIGydrYb
-         rxQJPTBtODWNMdzND3BzfhvM/LZdpwdnz/g491iYyEkMlxCiPXftMi1DYzI5V87nV+UQ
-         /upsi8C3lk0ZatA1UstzFyuXi50xEhU35qvxQa/b2t6QcfNIJcj6blFhwXgJrGiPc3Wn
-         O0JOaMBm6eYXCwhc/1gKzdCifCiOd3giviTMe9n6WF5ufTDusvAVb13HrUB99pi7Z7BD
-         3LV06WkIK9LHabog9c4BgW+udRYF+IPLXosDngIbuvE983XQ5v5Nl2fBuE9GomX0OgB/
-         7alw==
-X-Gm-Message-State: AOJu0YyTYmKphvfDDW8IWGmqLWl050oScTCtr6ioQg52MLYuoAOIxeqQ
-	XlwYV652l4NENAxecuiC6BJ7T02kZodfLO0nMaIZJ7k+3Ghg2uPpBHurhtjCXTR1qvU=
-X-Gm-Gg: AfdE7cmEQ3DDBkWgFVKI4umxoXzfe2zwLYm/Kj6qszLTWt1jEvIoIPl3ID5cYEfLxF/
-	aOTHl3tnyDjzF011txTd2U1I3GDqNndopn5yikZFxnLnt4cdmVxAUmkhFA4pcT4iyBDhGaphJt8
-	pkmA8a7DcmLiM2tsh9UI75mxBgF6LOmdzrHJC94vtfpSrl4IiAyfjRfqDL1mIWEjIaA84fps0/z
-	fnPqxnkgX3TMe8a8mYgZb4plih0xgCj0tF1ZVpMybsh5GnA3wZbRS+gOUrTMjkTMwfABOQpLdNh
-	VX0I4VAWAbsG+iJ0dcOAbtGOx7Y7S6c2M7cKU2dcCglsKYb5JwpnEaMh/JunG2QKmSZb9YX6vCZ
-	CYPMpi2F9Zm5ir52yJbe3sKpmXVSHcAEm1142Xgg6NHvQVTwTvltcvAmmE//OVade9pbIo0ZqwZ
-	ZWcuLDLg==
-X-Received: by 2002:a05:6a21:1b81:b0:3bd:394d:addd with SMTP id adf61e73a8af0-3c35741cee1mr423044637.33.1783996244421;
-        Mon, 13 Jul 2026 19:30:44 -0700 (PDT)
-Received: from 963b246bc1b3 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31189cd8234sm67499132eec.9.2026.07.13.19.30.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 19:30:43 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        bh=IwYCUxVhmQoaUyTBUlvmESwl0MfXao1gk2tbc9LWRaQ=;
+        b=N6xzBoWFzXTXkgpCz4bLLLn9c2K1d492xK68QqPpLoiI+6F6+oZj/ygCN0aXY/9BMg
+         9234qG6ZcU6/O419t/+EmhpdiunJuhTeHDKpcEAywO3QaVTHMH8dOqjTndhCuBDXt76I
+         MDxbdJ01FQ/Pl09kAgZ0EMbu4UcSOvDrV2cPd+9+3jBAhBWt9YdxQUJ9MpIRJsI/1fqg
+         O9UCAEG17oLhXPrnxRANwHyhLXX8rceqIYFEZrPXzriVMvvEm1pL66SnmAjfxfb6cYGR
+         byE/1oGl7NxP6vI9MOp9wbhqDs+rocSUaICf+WKoJ/QYKy6TKI2ty3PnWsz64LlGKk7b
+         EKWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784009210; x=1784614010;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=IwYCUxVhmQoaUyTBUlvmESwl0MfXao1gk2tbc9LWRaQ=;
+        b=mLBaYeu3Bm+EC7vvWj7hnjdZ9ZaqbOHMZO+Sh2B3D1UiWO+hX/vJtpZfakL1ZeKes5
+         v37OxFqQxv3Wflh06T7zYm7dnlJzynn5yLWZk00Na2JZCd/jQmmsH3BOU/nBWNB+WEEM
+         DvLpAd2Cg+MGS0pN7ebV2mwnP3N9R9CqMg2ug7U1PYy6WOAux0qMri8jNtgiATTXwPKM
+         pbNTZUZW8nPhL0CkAVoLG8b07OC6t5UnvcNaV0y7TMo26GINfyN3DhrlKAySlwNbtA07
+         +/1/1k4K3L6OAkOhsv2B94TQN12XN7kG42PQJlapH17H9xcdmRJ3invywwvExI1sDfvJ
+         SMjw==
+X-Forwarded-Encrypted: i=1; AHgh+Rq1LSmy210pZs6bDqKQLqq9mi7WlupIPbg6H6Bl6mtJUs5lUdjtGdJD62dBAB27k7+5xaqt8HUffGJP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/qVGKqsewlQ1zXp1M5VThojgJzztrrRLGa0lMdk5z7WtSmQzM
+	Ygy+Tr2XMFYwQBUcH2/OkvOiQqW1hprR/TYUK6WtcbDYO5cbTrAVmKTt/aV+cnKPJqLQ9z//l3+
+	hoAOar0VVTsGhvlfEn4E+U4b4g6R3O3D2Fdb2opLgcetXgx4y7AZnxcQ3uuNpRT/4GiCepLL3
+X-Gm-Gg: AfdE7cmbnqvGoGi+9Nmn9m3/rTHthYq7iT0PpQhUTF0gGPsBWpGJUeTEqNZDUoWSPx5
+	s+D+Vx2C1gWH458wpyfw0h54bKQKOVb2hQL65JJ8OjBl93mD4wgV91np2CoffA7D3GNs9aESVsW
+	jA436DPNfuw7pRtTjGvaIX4FP3zUy5b9SvRESOs40hV4wkX4fdXcob8U8/ZRsLlwIi29zqMAD7z
+	BaqOwlepg7atKHY3orsR/ryUyJ1YBQHQErujZpNQveBPqqvuizvGIqkdEP9CT8ComN4EOEoO6ow
+	3YfDFzoqAEEi9MYZjoVCKGMXCj0sbtJL3ydBS0ucm+AFy6vy/rbqWtpOqtnO7zTbXQLE9QyMb58
+	PAX8hfkbSIcxn1qqDTj9c+1dj/ZWm/2ipx8EgVXxftA==
+X-Received: by 2002:a17:902:d98b:b0:2c8:f34c:82c0 with SMTP id d9443c01a7336-2ce9e5a55c5mr115466935ad.2.1784009210002;
+        Mon, 13 Jul 2026 23:06:50 -0700 (PDT)
+X-Received: by 2002:a17:902:d98b:b0:2c8:f34c:82c0 with SMTP id d9443c01a7336-2ce9e5a55c5mr115466535ad.2.1784009209304;
+        Mon, 13 Jul 2026 23:06:49 -0700 (PDT)
+Received: from [10.218.14.97] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ce95e001b1sm54110715ad.66.2026.07.13.23.06.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2026 23:06:48 -0700 (PDT)
+Message-ID: <12e1f767-d126-4f36-ab95-caf3252a5728@oss.qualcomm.com>
+Date: Tue, 14 Jul 2026 11:36:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 49362394dad7df66c274c867a271394c10ca2bb8
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 14 Jul 2026 02:30:43 -0000
-Message-ID: <178399624334.10257.9435479886359813117@963b246bc1b3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the tty tree
+To: Mark Brown <broonie@kernel.org>, Greg KH <greg@kroah.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <alT5UdRqcfFmadZT@sirena.org.uk>
+Content-Language: en-US
+From: Praveen Talari <praveen.talari@oss.qualcomm.com>
+In-Reply-To: <alT5UdRqcfFmadZT@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE0MDA2MSBTYWx0ZWRfX6TWpz44RGMj8
+ iZmX0J8ghauKchpZhMcdgD7nMUuOXrxaVMPKHlGWkhVgSU4Pbi/+dEDRARPTAqGidD6WUnGQ8tt
+ Z6kjzC5hzojmQ6GkpgMY6VNyOWBi8rg=
+X-Authority-Analysis: v=2.4 cv=N4UZ0W9B c=1 sm=1 tr=0 ts=6a55d1fa cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=0hzE1TLS3jpHLTwOLyEA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: pf7i7o65fPS-JI9dngDUk_7WgsyqmQpF
+X-Proofpoint-ORIG-GUID: pf7i7o65fPS-JI9dngDUk_7WgsyqmQpF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE0MDA2MSBTYWx0ZWRfXwLw4bWr5qgmg
+ JvdxeR/jgyMMpZ7xiOQQqzScoJJL2tBynK78TMaFhkLn7hR/X8UiVbJeIvwa2s83PONyD6CNqi4
+ 3GuO/I67+/nnIWZADHRiNZFdQhEgyIPzOJvVIEoHcurN3Dc945wSNlYu40fDWX8S/v1nHW8eHce
+ Qze71BAnbUSdFHS1laSLVhs0HeF0rBEe2rHzNNlBNNgYmK9pQLrHMmD/g8WeTuzHxvN7t16j+Ea
+ B9uhxsqeo9QEK+9CO1KrFOKsHjcn3d72cK1bKT4ltiY7JKgDOR0QFy1R5Er0p8l9qvCOMT9BSfZ
+ FK/1U55KeIAOK19v/i/eGcJc7N2Q5ubnaipiLFLKYjoEqsE8B0dAqay6/v+6RuMN/UyIBogcOWb
+ 8mcwzVmRv7UmgNm6DwclW63GWuy9uuymPft9dClXv+ck3UP5/UIGGqNgtGvwBp25qY4ROYaULio
+ +uuO8Hjx6wWuBKlnQVw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-14_01,2026-07-10_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607140061
 
+Hi Mark,
 
+On 13-07-2026 20:12, Mark Brown wrote:
+> Hi all,
+>
+> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1925:4: error:
+> cannot jump from this goto statement to its label
+>   1925 |                         goto error;
+>        |                         ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1916:3: error:
+> cannot jump from this goto statement to its label
+>   1916 |                 goto error;
+>        |                 ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1911:3: error:
+> cannot jump from this goto statement to its label
+>   1911 |                 goto error;
+>        |                 ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1887:3: error:
+> cannot jump from this goto statement to its label
+>   1887 |                 goto error;
+>        |                 ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1881:3: error:
+> cannot jump from this goto statement to its label
+>   1881 |                 goto error;
+>        |                 ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1872:4: error:
+> cannot jump from this goto statement to its label
+>   1872 |                         goto error;
+>        |                         ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1864:4: error:
+> cannot jump from this goto statement to its label
+>   1864 |                         goto error;
+>        |                         ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1848:3: error:
+> cannot jump from this goto statement to its label
+>   1848 |                 goto error;
+>        |                 ^
+> /tmp/next/build/drivers/tty/serial/qcom_geni_serial.c:1931:44: note:
+> jump bypasses initialization of variable with __attribute__((cleanup))
+>   1931 |         PM_RUNTIME_ACQUIRE_IF_ENABLED(uport->dev, pm);
+>        |                                                   ^
+> 8 errors generated.
 
-Hello,
+I don't see these errors in my local build. Is there any specific way to 
+build to see these errors?
 
-Status summary for next/master
+Thanks,
 
-Dashboard:
-https://d.kernelci.org/c/next/master/49362394dad7df66c274c867a271394c10ca2bb8/
+Praveen Talari
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 49362394dad7df66c274c867a271394c10ca2bb8
-origin: maestro
-test start time: 2026-07-13 18:04:34.745000+00:00
-
-Builds:	   72 ✅    2 ❌    0 ⚠️
-Boots: 	  109 ✅    1 ❌    0 ⚠️
-Tests: 	29725 ✅ 5410 ❌ 6310 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.gpio
-      last run: https://d.kernelci.org/test/maestro:6a553b4a18a4add1353b3469
-      history:  > ✅  > ❌  > ❌  > ❌  
-            
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.shardfile-kvm
-      last run: https://d.kernelci.org/test/maestro:6a556a0d18a4add1353d0133
-      history:  > ✅  > ❌  
-            
-Hardware: k3-am625-verdin-wifi-mallow
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.shardfile-kvm
-      last run: https://d.kernelci.org/test/maestro:6a5550e618a4add1353c5af8
-      history:  > ✅  > ❌  
-            
-Hardware: sun50i-a64-pine64-plus
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.shardfile-kvm
-      last run: https://d.kernelci.org/test/maestro:6a55459918a4add1353c0c88
-      history:  > ✅  > ❌  
-            
-Hardware: mt8183-kukui-jacuzzi-juniper-sku16
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
-      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d0d
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dsi_14014000
-      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d09
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58
-      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d01
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
-      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d00
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
-      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2ce4
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
-      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2ce3
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
-      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2ce2
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
-      last run: https://d.kernelci.org/test/maestro:6a553a6718a4add1353b2cd7
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
-      last run: https://d.kernelci.org/test/maestro:6a553a6818a4add1353b2d57
-      history:  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_remoteproc_4080000
-      last run: https://d.kernelci.org/test/maestro:6a5536de18a4add1353afbd3
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
-      last run: https://d.kernelci.org/test/maestro:6a55465518a4add1353c15ef
-      history:  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: bcm2837-rpi-3-b-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6a55370e18a4add1353b0ad5
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
-      last run: https://d.kernelci.org/test/maestro:6a5546d218a4add1353c1791
-      history:  > ❌  > ✅  > ✅  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_69
-      last run: https://d.kernelci.org/test/maestro:6a55464c18a4add1353c11e7
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_71
-      last run: https://d.kernelci.org/test/maestro:6a55464c18a4add1353c11f5
-      history:  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6a5536e018a4add1353afec9
-      history:  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_pcm-test
-      last run: https://d.kernelci.org/test/maestro:6a55464c18a4add1353c0f8d
-      history:  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
-      last run: https://d.kernelci.org/test/maestro:6a5549c818a4add1353c4b81
-      history:  > ✅  > ❌  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+>
+> Caused by commit
+>
+>    3d71f8d7eeb37 (serial: qcom-geni: remove .pm callback, use runtime PM in startup/shutdown)
+>
+> I have used the tree from next-20260710 instead.
