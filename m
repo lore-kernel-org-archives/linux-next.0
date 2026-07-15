@@ -1,88 +1,72 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480A73C3BEE;
-	Wed, 15 Jul 2026 11:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB73353A7F
+	for <linux-next@vger.kernel.org>; Wed, 15 Jul 2026 11:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784114653; cv=none; b=hApomy1zPaaIQZXX/vLd4REouuFmkCuIHLBwHt7lIkpYsEwPc/2F2y1/avl64hbObIJABFV7ocFnG9Gabu02pMX7YmVQwH1yxWGQq2+LxpDJ8MkdaNTZ5PXFLJie1/lw0tmNHI+1Zs99CJxjRdyfL+KJExo3p6kp5nD1SoB/S5Y=
+	t=1784115587; cv=none; b=i2hsUxP7pjy+VdH93zq8KarVA7JSkwPBTsGbPGxhnaPJIPG48oer5SAPGNNSCbOeaNPjcKZbkxQhcWf5gBNd3kXfBO3fWh8WqWCNOu9P8OS6BAUSqN6Ythc69gVGEOFMC5rHvxrgvUt+g3qHIL56jsDVk4m/YDmKuoqVQm9GiGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784114653; c=relaxed/simple;
-	bh=rNJoJRHuCJsSKh01J+7U4FAtfd8OXRl6CUyW9/RG1Ls=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fQe6nY0MIuGOu0GWPOcn0qj/66O0kl4jxer9/SUqjnFZeJHpEHe0xsfGt3GnpYU3VwQjep2gERt/hEqBjcR84OBG+afWmBAXpsT5Hf58H4dIw45Fr26yiJXK7N9IkIGSFqP1Tn88o6I7VIdHNtxX9igs50YlubdV2o7+DIzegJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d9YF1M7f; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1784115587; c=relaxed/simple;
+	bh=lnjkdTJTwtRH/C7ThPHAmOEOL55oX+hMszv4tacb2SU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTIlS+Pw2rjHcv+usatVxQ+aKiwi5QrVRIwqFSDAG7nxILrz1GvOyc5T0Dadp3o/5r0Y1GSrpR5O2BBOtsBM/w5fVhGdYwtt3ZMq7GxZFkuaBKjbne3vWB4idPb3UKbIOA3ltBBGh9BNuOunXjGIyc2mDu+eXZG9wZjnXFDypJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0OLiaGL/; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d9YF1M7f"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784114651; x=1815650651;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=rNJoJRHuCJsSKh01J+7U4FAtfd8OXRl6CUyW9/RG1Ls=;
-  b=d9YF1M7fZ9IoxVQtH7bILqdJJT3n8mApoakq8yaEsgHdxn8q3O9MsTK8
-   L9DKUREQAwfM14kYFGzs8+iNbWtsfC8cSGGJye75z38hNotpbjCx2GP2e
-   bIXtyXEzt6NsCWmimZ5XDekzsookE3/DG4s1hRTchhRFBiJNWLKDlPets
-   sOmUvf7aizdgsKb8s1gGZVTh4qnQcMasbISS3ZMozvKapisA+pHEs1DXD
-   dPbz51ZKck/3hULRETOIyXNUbCHBTzxcyK1WlxHbuMGs59EbQCzHL7bwv
-   TSpGKwesRrxas1CtUoBI/2y6fIed5Aa3c09mjbT6dWHZwBnwhuSag+jOt
-   w==;
-X-CSE-ConnectionGUID: vhe+ft3MRtSjTT/LH6L9nA==
-X-CSE-MsgGUID: YzVRMXYrTkOSEKV1VhURMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11847"; a="84602701"
-X-IronPort-AV: E=Sophos;i="6.25,165,1779174000"; 
-   d="scan'208";a="84602701"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 04:24:11 -0700
-X-CSE-ConnectionGUID: ozUKoBqgQGigHt9xKHhD8w==
-X-CSE-MsgGUID: oJJkCey7QtubiDaZnrBPVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,165,1779174000"; 
-   d="scan'208";a="261062420"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO [10.245.244.145]) ([10.245.244.145])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 04:24:09 -0700
-Message-ID: <55bb83d586d6f009b734e13c7b1ed95325129e5b.camel@linux.intel.com>
-Subject: Re: Fixes tags need work in the drm-xe tree
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>, DRM XE List
-	 <intel-xe@lists.freedesktop.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Date: Wed, 15 Jul 2026 13:24:07 +0200
-In-Reply-To: <aldq1bH-I9hhdc7q@sirena.org.uk>
-References: <aldq1bH-I9hhdc7q@sirena.org.uk>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0OLiaGL/"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 0D0BD1A0FFC;
+	Wed, 15 Jul 2026 11:39:44 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C42BC6035C;
+	Wed, 15 Jul 2026 11:39:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AEDD711BD22AD;
+	Wed, 15 Jul 2026 13:39:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1784115582; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=lPsy/55HzbP7oOFeS2o/TT2hWMyjeQtCOJUveb6kuEA=;
+	b=0OLiaGL/z8I67XYz79/ZDTZNHClzirXde2miOkggH4EYIeto1iUTE6BFBdlOPg3+5+ZU03
+	6qO07o+9EMAdJmWj2yB6TkWFSGFj8MVrIF8JZn5kcTjbQF9AkDBgi7Pm8yNPt73HvupXVg
+	CEcwADte451q1rMVOCCwCHNownYHKuLYJJ9OV7tOK4eHhaMsJxI7v7QfUFe6ypYL4NGw3P
+	+22avDbk6QVIiZH6bkVkM8gvqoeejXM/qTDxOl1BSJZ9lKnK3ZybSuR2Srpj3EjMe01YJu
+	t7TssZnSqv0Dhx09lI3zyyfOFyUfzVwDMkYcQ+3iOYCvjLgYLUOOt8TcD3ENAA==
+Date: Wed, 15 Jul 2026 13:39:41 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the arm-soc tree
+Message-ID: <202607151139419b82ddbf@mail.local>
+References: <alUh--gXbJNcbmuV@sirena.org.uk>
+ <eeef7a7e-22a6-4b88-b23c-cade1b62edb2@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eeef7a7e-22a6-4b88-b23c-cade1b62edb2@sirena.org.uk>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 2026-07-15 at 12:11 +0100, Mark Brown wrote:
-> In commit
->=20
-> =C2=A0 0aeed866cb938 ("drm/amd/display: Fix dangling pointer in CRTC rese=
-t
-> function")
->=20
-> Fixes tag
->=20
-> =C2=A0 Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and
-> dm_crtc_state")
->=20
-> has these problem(s):
->=20
-> =C2=A0 - Subject does not match target commit subject
-> =C2=A0=C2=A0=C2=A0 Just use
-> 	git log -1 --format=3D'Fixes: %h ("%s")'
+On 13/07/2026 18:38:17+0100, Mark Brown wrote:
+> On Mon, Jul 13, 2026 at 06:35:55PM +0100, Mark Brown wrote:
+> > Commits
+> > 
+> >   923588dd861ba ("ARM: mark mv78xx0 support as deprecated")
+> 
+> > are missing a Signed-off-by from their committers
+> 
+> Alexandre, you did a rebase which makes you the committer of all the
+> commits you rebased - you need to add a signoff (git rebase --signoff
+> might help).
 
-Same with this one. It's an amd commit and only appears in drm-xe-next
-after a backmerge.
+Yeah, let me fix my mess.
 
-Thanks,
-Thomas
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
