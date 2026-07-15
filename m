@@ -1,92 +1,102 @@
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418103191D0
-	for <linux-next@vger.kernel.org>; Wed, 15 Jul 2026 09:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5109436BF0
+	for <linux-next@vger.kernel.org>; Wed, 15 Jul 2026 10:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784106214; cv=none; b=pp0GgMtBDSvsc19Eil6527vStmNuFl+UVxd8Cm1G2MHbB/1IVkl09x/Hqjkjr2vj4UNYnEhutA+viNMJi53FMyNiijeGixRNGZyfn78Mhd5i750lSm7YQ5T25YvUoD6VGWTkdwuEGgBVy76JUIZwRit9BBqnioBLg1lvtDbdLDs=
+	t=1784112095; cv=none; b=bb2BJJWNbOYZ8N9peP7stMfOu0ap1pGrOSb+9RWFyK+SvQWy8MQ4ZnCaK+j64L6r4i59CboAyu483DzPoq1FWHMHphrV0JqCCIAF2cc7XBvUPR6sZ/rPBJOvM2Bvgn4TKv6MoW0mqYVLpyRuwzGTzspQ8Nu/sXwpitboVTH5+cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784106214; c=relaxed/simple;
-	bh=zyu4X+ZSb20XpydVeQY+2MEoeQTwEL8zMGDk30C55tQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bTHYcehWj0XNQajXNfRp5a9w0mwdz7yyMxaijXoZHG5gnyqNa4aC+CLqktqTAVyCT+xTUz+abb1QMybR4GvtA7XftrhYNQhZEgkZVTks8N+3MSkr9E3U+yosq5hk58Dq5RNRh9zuA9+EZG4maogiNzrtE2hLUvkc3IljY17l7pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kT22nQy5; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1784112095; c=relaxed/simple;
+	bh=Nk50t00fdU+NAHzNnSRauQFZKo8ODExfD3jNSeIw0UY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMYgHWPDs3+LPymJS0YFWc6DsdzU4dHsQUBJM454dHkUz80WyAuMLyI7rVp9AWhzdYGmh+XNxa/IXo24SgSdRHFCQxboUcSYW6o77nBfTiMdmQmPqGqOzfa7bXvf/IkF9skJugRkeKHepuVfHzPMlcxOQYAruE9+BYe3xQy2m2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pb1SVBvQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kT22nQy5"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-493ce4b7777so38227185e9.3
-        for <linux-next@vger.kernel.org>; Wed, 15 Jul 2026 02:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1784106211; x=1784711011; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ejS3rIcK2thH0Gu4iY01K7ZjGg6/nfVWDg1a3wJWEiM=;
-        b=kT22nQy5kSjFT6JwMVXrgl+gBxVZ/cLvggnN5cEv46mKwk1D5yXR8tBjnYXQHiloon
-         +czDZu7GqSwo3Bs7YqQjyOaBTzha5+oDAEuCcHDxHKMxOBzDf+1fiBGhg8nrczRabOon
-         DSoAs/NEH/RK7guzD6ZguFI/5QohFdc1FQRM4Pmq/Vkxh6dBeVKMWCzCVIwHyZ1n8wxL
-         ZEx94DUCdnsUFlUCzt8sD578ognN0j2SQsHw5lYEZ3cG3NMGuhi2B+FAYtKKS4U1g7Mb
-         52wh7jmuPvUFt0s2fWwXJ+w/d82dMkpLIjLyYg119xpCPrnjdV5J5rfRft4uAnbohQUb
-         3DYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784106211; x=1784711011;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ejS3rIcK2thH0Gu4iY01K7ZjGg6/nfVWDg1a3wJWEiM=;
-        b=MNlIdxcPd9XxOizgCYn2YvpueEB2bPyuTP2UhrwdFPm//g6fm74eaTR38uGwzX3zTn
-         uoYrxDwAfhVor1FHkRYJI7t7TWvYcXv+Maor8M3brPGCy2kn04V7U5NAcfCsubuBHOR9
-         Cdd8R0MZPFvEwu2rmnDph8A+F6p+0n9REpzIlF9Cu0V/Vpl5GaVRRfcvdVWq2ZBxT2K/
-         GJ8P7OoIh/DUk3kUBPqzxTFLB0ZoAeKR3bzdDHZ4ZYbRIPBwqchGGZcmpy3bZKgbgGJ9
-         hr+qZ6GE7Mo386NiVlrQCSYEFbEpU6+VfbjgZPqQbWvjHrRmnr8dpnmbBo3eo8+Oi73s
-         nzqw==
-X-Forwarded-Encrypted: i=1; AHgh+Rro0kDylLP/GfTCNJJFG8ZEA0j1ZL5z/JOY9xzpf8ppPGgl/uUpK0liuvYC8JdpbbzE6sRsL9uWl4of@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr0HXBijr9gzh24xKAnr4vUIWwDXx1WudXe0bvCtw4SWMYS9ag
-	OmjhWq5HToQoTn5Wrq6DyTtVdIboy5IADk9eqRIsp/sklhj9nSTrvYDisYH5EslM6sflncQhtKM
-	dGOEqmyDDp0A6xeebWg==
-X-Received: from wmbg24.prod.google.com ([2002:a05:600c:a418:b0:494:491:fb92])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:32a9:b0:493:bcef:5646 with SMTP id 5b1f17b1804b1-4953c15615dmr14772195e9.12.1784106211029;
- Wed, 15 Jul 2026 02:03:31 -0700 (PDT)
-Date: Wed, 15 Jul 2026 09:03:30 +0000
-In-Reply-To: <2026071408-colt-vaseline-3250@gregkh>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pb1SVBvQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 257531F000E9;
+	Wed, 15 Jul 2026 10:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784112094;
+	bh=UWMOa8RmO9jpoN2Ud/1SRKZL8yZlX2jyFLFqSrdjzG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Pb1SVBvQEnQdCnEA4d1ZJbdJtVz9dqsYwMn0rYprhqu25XojSgUHMqOvvRnCh6v71
+	 8YzM5r8VwzFZ+TSozHwfJ74ny/7EbeDG4PrSR3U5hglezbjHkGp2Yg7YdGyYqQcSLN
+	 U+THj5ZpLIYWQ4PO4lWn1buLFLoUsM7+jSvmUDR19PVSbLiHxanYv8Za+Dg19N2I6Z
+	 nolYM0tr8gAPhT7nhn6zF0Mc4wm2xWMbMawYMoivaCDPrImpWc+kvbQfV+W+eAH5SV
+	 KHxYJM3R9Kii9uJH1ION6Yi7O4EZPxAhMkz1/j/nR5cNONttYwOPiyocjg8lOGTCYp
+	 G2xOzpfRMWauw==
+Date: Wed, 15 Jul 2026 11:41:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Yu-Chun Lin =?utf-8?B?W+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"afaerber@suse.com" <afaerber@suse.com>,
+	James Tai =?utf-8?B?W+aItOW/l+WzsF0=?= <james.tai@realtek.com>,
+	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>,
+	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>
+Subject: Re: Add the Realtek SoC tree to linux-next
+Message-ID: <b1536553-af32-4a33-9fda-3880ac029bf4@sirena.org.uk>
+References: <555485abc39a4ad1b252b4fd7c5bf706@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <alTxRkflyqvAaGc-@sirena.org.uk> <alYvsW4eRWsA46YU@google.com>
- <2026071439-magnify-submersed-b5c0@gregkh> <cc5e4243-d179-4224-a196-7337d1ac51f8@sirena.org.uk>
- <2026071423-joyride-gainfully-f851@gregkh> <b8939935-19dd-425f-aae0-8879fe3fa68b@sirena.org.uk>
- <2026071408-colt-vaseline-3250@gregkh>
-Message-ID: <aldMwQAUndxKqWEB@google.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the origin tree
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg KH <greg@kroah.com>
-Cc: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Keshav Verma <iganschel@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GhOrWfz6I3jQbq3f"
+Content-Disposition: inline
+In-Reply-To: <555485abc39a4ad1b252b4fd7c5bf706@realtek.com>
+X-Cookie: "Speed is subsittute fo accurancy."
 
-On Tue, Jul 14, 2026 at 05:14:25PM +0200, Greg KH wrote:
-> On Tue, Jul 14, 2026 at 04:06:00PM +0100, Mark Brown wrote:
-> > On Tue, Jul 14, 2026 at 04:22:30PM +0200, Greg KH wrote:
-> > > On Tue, Jul 14, 2026 at 03:19:41PM +0100, Mark Brown wrote:
-> > 
-> > > > The resolution in -next today (when it's published, hopefully not too
-> > > > long) should have integrated Alice's patch.
-> > 
-> > > Cool, I'll copy that, thanks!
-> > 
-> > Just pushed it out.
-> 
-> Great, I've taken your resolution.  Alice, if I messed anything up,
-> please let me know.
 
-The resolution looks good, thanks.
+--GhOrWfz6I3jQbq3f
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Alice
+On Wed, Jul 15, 2026 at 06:25:14AM +0000, Yu-Chun Lin [=E6=9E=97=E7=A5=90=
+=E5=90=9B] wrote:
+
+> Could you please add the following to linux-next?
+
+> - Git repository URL: https://git.kernel.org/pub/scm/linux/kernel/git/yu_=
+chun/linux.git
+> - Branch: for-next & fixes
+
+fixes was already there, I've added for-next from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--GhOrWfz6I3jQbq3f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpXY9kACgkQJNaLcl1U
+h9ChMAf+LZ1wlVvoNZcbfgsS8CU85tTESQV3LyeKXRqPajv/BazYrgnAxfZu8tvb
+Y0ykGu1hhAufpN25FfU5Us8ZOj1hYQM/L8ueeV+8wDSn89lalQ9vjwww8BrvPL4V
+/PJ1NpNr6BV1DZPhUvacwJdDas+68mmetTV2Q6LqVxrWcJbXj+VACYWDe5C+rLgs
+CjGLfrcx9bC9rnjLyOps5Eg/C5+8M0sojyNXhMzVr2wyDwr2KZYed5XLhzGL1BfG
+kb/VLJRcBeXTPcgsufetODA+Ggw8c5//pY5UtFGxGLB6V/AIS7Ys0AIIopk1bSBN
+i6F/ckkAbI76e18KHom21B/8aIkmRw==
+=j/6K
+-----END PGP SIGNATURE-----
+
+--GhOrWfz6I3jQbq3f--
