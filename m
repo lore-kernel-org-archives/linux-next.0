@@ -1,42 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F75E48A2A3;
-	Wed, 15 Jul 2026 15:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518213EDAB3;
+	Wed, 15 Jul 2026 15:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784130024; cv=none; b=UZiuvCcRTb0NsEwq1KZ6KaXQQhyH0ECYmjOFZOW720PDnMj3CCipVmVkETnqqrmu5tcyQXhX1Lhd3/1Uzdct6mqKXlMzR7l1eZWwg/KO1hs8ZNDM3BU88K2bg+B4a6n2OBwyjJO4CMBB7iSwmRQc+P6lEs0vOYI3aD4lwOpgX8U=
+	t=1784130058; cv=none; b=nYHvjBi8jRMeCcGxUIRiQ1ShC/WAiIdYBuA9LYHvPEZh6oJnjNdZ4EJp2HPgBby6hu7Ymv9zrE321scRYbmyF8wLH/08dvyEFrO3oiSG41I3ShvWejrwooRf2UgAna3GBi3syu7P+ZL7mtjHXzyA4hxTJfMtX7p6Gs8GBw9otbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784130024; c=relaxed/simple;
-	bh=SHVBiGTaM1++kAMcDdTYW6d7EbFA5z+U1ADVX1RpCc0=;
+	s=arc-20240116; t=1784130058; c=relaxed/simple;
+	bh=MogxiycHjHqGgmDWTFqJsh0Xg6LaGHBE4Ko9Z21bbes=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HC0UE/IR9E3V5JGryYzQpvR60c+m8xiwb7wsXMVC3jNFasNvMDu3YsR7uApFtcMYrNH9yha8VoEYV5v4UsgZ0HxOmHtm7Zf8PMsbPPH6xJUjF3PLtQhOEHY8h9DrPeI+3rv0vimSjCFvo7q88+iJiv/UTSWFx13fkiq8VNgUVRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFzabm2h; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=r0YPuZsS0xKJ2rn5g1WTlybe8MkgSSKPwgOlnPCwNRcJWSVqtkMBBsEGMz20lhQnY3fZaUEtU6UKsbBA+oAxTS2fZTwhKnDqATeX00sr6+5exwQKnmD8gYEZTnKZTHYq12tDfJowu3WWmfRfyMNHjXBcwl1GackoGgsMgDIqH4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EV+hEWcX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFzabm2h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC2621F000E9;
-	Wed, 15 Jul 2026 15:40:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EV+hEWcX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C4D1F000E9;
+	Wed, 15 Jul 2026 15:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784130023;
-	bh=JP4LjW6euZSZAcJrb71mP3FQkVtfB6MbMHCOPkAMMVI=;
+	s=k20260515; t=1784130056;
+	bh=WTI4Kjcq6F/lEQCrVjz5o/t9QBrXaY1MfL1rBVRXZMQ=;
 	h=Date:From:To:Cc:Subject;
-	b=KFzabm2hyPkhE9j254lNcbgyW1JnwJNmdZOT7q6CgWnXlY4Kb5VDbsOYeip4dP1Qh
-	 zoVL+HOZ9RdqGyw0yVhA6APxxb9OwhmGTmiOU5mt6873MdQ+qymoB+sa9gxiBppe8k
-	 OthWYv9kq6j8IEuM0zcdxoDOzaBoX3jaGbVyhwLpJtIcChcmoXxI4WPZhloPkdjOxi
-	 MZs2sxgZVoLRN2xsygkanep47l4QiZv7gmVBNGvCIWOstWWLDugApI3wCsznJYmJUy
-	 FHo1GVYoHh3B+Avj2u/wNJrW13Sjq8q0qR4coeFLFkKmRic9Hkmp5rEn4pCD+diyw5
-	 FFrnQ9dnjhoKA==
-Date: Wed, 15 Jul 2026 16:40:19 +0100
+	b=EV+hEWcXVxng279+jUvbv3p+ZjMiosgpN4OvOl3AoBPOYjEt8zhhDAjn70wBjHQo7
+	 xDA5vAPQxlLEQnyg5j4uP3RYPWqlbU0nEMu3c+pxKXTkxXIlm0iA6O9jC94BID+VDF
+	 HucH8Ev/PVgoVh1RDPLKlLCbMhZOOwaZZO/eqNtQ5mccXJFkkijz4BRZGYbcgvGCnN
+	 KZv/TW4pQ/GXR+bE1aTOAzNuYJXOkyWtU4vB3/EQel1E8WvF6caP5riqjIUOjpRh1u
+	 5u5x96OUg7fe0bgnq9gUW6DzWJ33iKGmuRTW9gaWOmw2cmw5rLhUVqu1IJ1Lt5zckn
+	 BHcr3YmV6TrCA==
+Date: Wed, 15 Jul 2026 16:40:53 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Manuel Ebner <manuelebner@mailbox.org>,
-	Stanislav Kinsburskii <skinsburskii@gmail.com>
-Subject: linux-next: manual merge of the jc_docs tree with the mm-unstable
- tree
-Message-ID: <alep4zhJYFTXqBe9@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jul 15
+Message-ID: <aleqBbqu71TFQoPr@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,54 +39,69 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HGWSj8scJF/8B0w/"
+	protocol="application/pgp-signature"; boundary="3TMX7tlRtunvQx8j"
 Content-Disposition: inline
 
 
---HGWSj8scJF/8B0w/
+--3TMX7tlRtunvQx8j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+Changes since 20260714:
 
-  Documentation/mm/hmm.rst
+The realtek tree was added.
 
-between commits:
+The jc_docs tree acquired a conflict with the mm-unstable tree.
 
-  3862d3b51eb1f ("mm/hmm: add hmm_range_fault_unlocked_timeout() for mmap l=
-ock-drop support")
-  94e4afa33bac3 ("mm-hmm-add-hmm_range_fault_unlocked_timeout-for-mmap-lock=
--drop-support-fix")
+Non-merge commits (relative to Linus' tree): 6058
+ 5833 files changed, 245746 insertions(+), 96566 deletions(-)
 
-=66rom the mm-unstable tree and commit:
+----------------------------------------------------------------------------
 
-  e834ee8e571d5 ("docs/mm: Fix braces")
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-=66rom the jc_docs tree.
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Below is a summary of the state of the merge.
 
---HGWSj8scJF/8B0w/
+I am currently merging 429 trees (counting Linus' and 133 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--3TMX7tlRtunvQx8j
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpXqeIACgkQJNaLcl1U
-h9B53wf/R4ykY+EQNCLBjg6Z2VRiKHWr5/wsjteT+tZIzq4CsnmVbnJzTsgXLnbM
-XxAOOCtHbrrLGnAaBnoKZMH89XJ0Qk7ZzquprY28h0xWJZTYd8gmk0Uc6xvKtKy/
-c/5U3RBuiYUNgQ3KKzXKgiAGMlicfXze2JGm7FA9q1ZOSA1VH2BGl0PzoL4wWWbA
-T1J0XvDYuUsZNRlt0QlNnkfNOtw5wk0cVjiDAQM82tmAmONQnHT2iqLxIoGm7tAq
-tKCE+k2yn6mBYIlI0+1cDYt3Ki+q2aF5Rl7yVcBIoyEI/eQBF329lVf8xuciVqf7
-/+RUa0az3R/GUTbVKm3tQxfMCnvHtw==
-=66Rb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpXqgUACgkQJNaLcl1U
+h9DaVQf/dNHJr2CduRF6gK3vqrgWEN+oztgOUa6LNzT2rfQa74ob2qWIBJ5sPQJD
+47V401BgWci4WWWXNppPq3qVesRGkpsH+40z/Ex8+51hOxV9mH8kOF7WKxBALXbj
+BHt0qZ5g1qJOEaLy2m0y/q1cedyFyGOOI3iJf9q3OaTWwmNA5yxdP3dr5o1NfmZp
+wU4bezOrzKXnBVApQMIK+9mCRVazmZatN+ClJEFfFo86WXT16BssfZCEHLXOHvZP
+8poZ+pmL8n21D6q75/t8PRjoc0/4abplDKDaI7i0t7JeLhxoUSpDD9Cn/3zGswHz
+0Rw2USGbRpEPqfqexintHVNxIEGH2A==
+=74Ao
 -----END PGP SIGNATURE-----
 
---HGWSj8scJF/8B0w/--
+--3TMX7tlRtunvQx8j--
