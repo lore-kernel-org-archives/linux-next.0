@@ -1,46 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AF2382F0A;
-	Wed, 15 Jul 2026 14:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17817481FD8;
+	Wed, 15 Jul 2026 15:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784127443; cv=none; b=nUKZYVd/DtM+gi7bw8qJikDAuTCVNA6pL/HeOCJdB/ldiAX6x7b1aUM8HWoKXom9I+ME4o4siYEHHL5u7wOdszSQ+ENLWfhfcR0nIgl6BStgjSaWa4yCyPGVa9xouawVgajBb6172Tl3m55rx8CfgdyV8JQP18NUYaUCEcRgXeo=
+	t=1784129850; cv=none; b=Pt3sh2ogrAFumcTJbadhnmnqCEUEUOcVkPY4SeoFvYN3nKSXdfQr3Q8MqmQ4E+ChOpNLh8C2CO+FAuzW6kCfexR+o5G2IkzkNEm78nADlMhcwwNGQUnAnhSzlkDpOCtAB2z71jiqrfrd2M0fMqiQB/iL4Ium76v8q11khno+aGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784127443; c=relaxed/simple;
-	bh=fpVVhx81h2s1UsSJjEZoWFDD1JRSSMRf6Nk7om4/zg0=;
+	s=arc-20240116; t=1784129850; c=relaxed/simple;
+	bh=8iD2RbmucAvDO/he4I3TULjFMPlp3h823LjA4PUEqC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNBFWhxNQis83b6mv2mdYtDnxnNnhqHDFkoH6MM9W577LBfjYK9WY06WAe63IghXAgTjfsTvDxtwuaeqwin2FUFcExkH+wp4wXKsIjBsFPDlh00PONsITykz7j53hbGfu7eNyyiLG4VYbw36drqM4NVwDoV/OHqa+eW6MivCu8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPgqgGCU; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0QAFyQhMnEE5CUZwvptoEUvpkKZhjg/DWNOG7nDfC6FnmUwu1MXEUUG2O9JxsX8hjZwogwlPs3sZMOR3Q4Lzfp3WBEBp9taMIO5q9akRi13KsWfs4pAxJiOX0scqlLjKmVg4F7opk91J2fojGRedoH8IcXrFXlKIbfmj7pLvTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jk3ugkRQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPgqgGCU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E4D11F000E9;
-	Wed, 15 Jul 2026 14:57:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jk3ugkRQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC1AD1F000E9;
+	Wed, 15 Jul 2026 15:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784127442;
-	bh=1c5AJLtYF5/SQbYMe4Pa2IF7AV/XUJDgnKq06BMYfaw=;
+	s=k20260515; t=1784129848;
+	bh=E91WlkmxyBCa/BCn7Et7Cn3czzZjBm3ELtqoA4JVFMY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WPgqgGCUbAB0T/mYHUupdaUXguob44eHXjELbICZieOzH1eE8ht0kqJPpLtkxbOCo
-	 oMd4dlL+tshEyEbm5qed6a7NmsqtzXQR1SskxrtnUgPrmYqflNsH2yY4DAjcNEn5b1
-	 KHbK44EfYGAXwYzKj/JMSXf6PRgb3MeVZK4iGlxN+B83gRyR2AJGm1uljhRK9Y5/L2
-	 tjTPhZBnOMYGYXz1AtC740X4vnWZweof5+wN0krPMVfSwljf8HI3X93qAGxFxYMsFs
-	 nFmiJXxEIp78DRelbCF7yuBMvdisVA7bEOLf3oRD85Uhx0vt3d39Pvz6c7q3+bA9GO
-	 I/6Cgpeesntkw==
-Date: Wed, 15 Jul 2026 15:57:17 +0100
+	b=jk3ugkRQYX8oX3+aefOuwh9c6QzedmtH0muJg3IUftHDiohTR+S9XWHBGhnoCeRUC
+	 qyjqop+DQr9DzN7/Zgu1V68QOaxcogsjW+V3vF+8ADj1JiW0LHQZokHkwdSqY/R3i/
+	 pot3amOnNg/51gWGAYtgoswBKIhD5ZX4NkqRt3jIOMpSzNqQyeser78u3/vvfm/kSM
+	 4lhaHZHScQIei82Wb+GnAVXEe9DhGMShERR0LXLOI2A2ZgfYZQnqpZ9X5/aO2VXjBM
+	 uY+V5RjvUtEa4uS+KClXEVFyfxQV3olTztKYzQd7vq9VdudGCgjzIv3lgQGvdlbOM4
+	 8eQnzIXrgfHOA==
+Date: Wed, 15 Jul 2026 16:37:25 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org,
-	axboe@kernel.dk, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [linux-next:master] [loop]  d908729e74:
- stress-ng.umount.ops_per_sec 100.0% regression
-Message-ID: <c625eb50-e474-4966-bf3b-e83d7e7d1750@sirena.org.uk>
-References: <202607151655.9d74999d-lkp@intel.com>
- <aleZammRRSVN4dl0@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johan Hovold <johan@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure in the final build
+Message-ID: <4f9f5ff9-8eaa-4bd5-9331-37119f78e13f@sirena.org.uk>
+References: <alUk8OTfE-f9oQo8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,63 +42,126 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1AbFq2Rycslg0bHG"
+	protocol="application/pgp-signature"; boundary="Fu0Wn9d4q/B4YP6F"
 Content-Disposition: inline
-In-Reply-To: <aleZammRRSVN4dl0@infradead.org>
+In-Reply-To: <alUk8OTfE-f9oQo8@sirena.org.uk>
 X-Cookie: "Speed is subsittute fo accurancy."
 
 
---1AbFq2Rycslg0bHG
+--Fu0Wn9d4q/B4YP6F
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 15, 2026 at 07:30:02AM -0700, Christoph Hellwig wrote:
+On Mon, Jul 13, 2026 at 06:48:32PM +0100, Mark Brown wrote:
+> Hi all,
+>=20
+> In the final builds, today's linux-next build (arm64 allyesconfig)
+> failed like this:
 
-[Adding security maintainers for visibility.]
+This error is due to a71f5aef1be98 (USB: gadget: fsl-udc: enable compile
+testing) from the usb tree, a dependency change as expected.  I'll do
+something about this tomorrow.
 
-> It's also a patch that has never been added to the maintainer
-> tree for goot reson. Tetsuo keeps doing this, so can we please
-> stop including their trees in linux-next as there seems to be
-> no other way to stop this?
+>=20
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:105:5: error: no previous
+> prototype for 'write_ulpi' [-Werror=3Dmissing-prototypes]
+>   105 | int write_ulpi(u8 addr, u8 data)
+>       |     ^~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:118:6: error: no previous
+> prototype for 'fsl_otg_chrg_vbus' [-Werror=3Dmissing-prototypes]
+>   118 | void fsl_otg_chrg_vbus(struct otg_fsm *fsm, int on)
+>       |      ^~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:136:6: error: no previous
+> prototype for 'fsl_otg_dischrg_vbus' [-Werror=3Dmissing-prototypes]
+>   136 | void fsl_otg_dischrg_vbus(int on)
+>       |      ^~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:154:6: error: no previous
+> prototype for 'fsl_otg_drv_vbus' [-Werror=3Dmissing-prototypes]
+>   154 | void fsl_otg_drv_vbus(struct otg_fsm *fsm, int on)
+>       |      ^~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:172:6: error: no previous
+> prototype for 'fsl_otg_loc_conn' [-Werror=3Dmissing-prototypes]
+>   172 | void fsl_otg_loc_conn(struct otg_fsm *fsm, int on)
+>       |      ^~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:191:6: error: no previous
+> prototype for 'fsl_otg_loc_sof' [-Werror=3Dmissing-prototypes]
+>   191 | void fsl_otg_loc_sof(struct otg_fsm *fsm, int on)
+>       |      ^~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:206:6: error: no previous
+> prototype for 'fsl_otg_start_pulse' [-Werror=3Dmissing-prototypes]
+>   206 | void fsl_otg_start_pulse(struct otg_fsm *fsm)
+>       |      ^~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:222:6: error: no previous
+> prototype for 'b_data_pulse_end' [-Werror=3Dmissing-prototypes]
+>   222 | void b_data_pulse_end(unsigned long foo)
+>       |      ^~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:241:6: error: no previous
+> prototype for 'b_vbus_pulse_end' [-Werror=3Dmissing-prototypes]
+>   241 | void b_vbus_pulse_end(unsigned long foo)
+>       |      ^~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:254:6: error: no previous
+> prototype for 'b_srp_end' [-Werror=3Dmissing-prototypes]
+>   254 | void b_srp_end(unsigned long foo)
+>       |      ^~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:269:6: error: no previous
+> prototype for 'a_wait_enum' [-Werror=3Dmissing-prototypes]
+>   269 | void a_wait_enum(unsigned long foo)
+>       |      ^~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:279:6: error: no previous
+> prototype for 'set_tmout' [-Werror=3Dmissing-prototypes]
+>   279 | void set_tmout(unsigned long indicator)
+>       |      ^~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:285:5: error: no previous
+> prototype for 'fsl_otg_init_timers' [-Werror=3Dmissing-prototypes]
+>   285 | int fsl_otg_init_timers(struct otg_fsm *fsm)
+>       |     ^~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:342:6: error: no previous
+> prototype for 'fsl_otg_uninit_timers' [-Werror=3Dmissing-prototypes]
+>   342 | void fsl_otg_uninit_timers(void)
+>       |      ^~~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:446:6: error: no previous
+> prototype for 'otg_reset_controller' [-Werror=3Dmissing-prototypes]
+>   446 | void otg_reset_controller(void)
+>       |      ^~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:458:5: error: no previous
+> prototype for 'fsl_otg_start_host' [-Werror=3Dmissing-prototypes]
+>   458 | int fsl_otg_start_host(struct otg_fsm *fsm, int on)
+>       |     ^~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:525:5: error: no previous
+> prototype for 'fsl_otg_start_gadget' [-Werror=3Dmissing-prototypes]
+>   525 | int fsl_otg_start_gadget(struct otg_fsm *fsm, int on)
+>       |     ^~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:707:13: error: no previous
+> prototype for 'fsl_otg_isr' [-Werror=3Dmissing-prototypes]
+>   707 | irqreturn_t fsl_otg_isr(int irq, void *dev_id)
+>       |             ^~~~~~~~~~~
+> /tmp/next/build/drivers/usb/phy/phy-fsl-usb.c:833:5: error: no previous
+> prototype for 'usb_otg_start' [-Werror=3Dmissing-prototypes]
+>   833 | int usb_otg_start(struct platform_device *pdev)
+>       |     ^~~~~~~~~~~~~
+> cc1: all warnings being treated as errors make[6]:
+>=20
+> It looks like this is a change in dependencies which has allowed this to
+> be built from today, I didn't isolate exactly what - it looks like the
+> issue is missing statics on all these function definitions, making them
+> global.  I have ignored this for today.
 
-Tetsuo, there was a discusion about this in the past month which seemed
-to result in an agreement that you'd stop doing this and work more
-closely with maintainers.  What's the story here?  It is getting to the
-point where I think I have to do as Christoph suggests.  Looking at the
-current contents of the tomoyo tree all I see is:
 
-Tetsuo Handa (6):
-      lib/Kconfig.debug: add CONFIG_DEBUG_AID_FOR_SYZBOT option
-      net: update dev_put()/dev_hold() debugging
-      net: add "struct dst_entry" debugging
-      loop: Fix NULL pointer dereference in lo_rw_aio()
-      kcov: fix data corruption and race conditions on PREEMPT_RT by moving saved remote state to task_struct
-      apparmor: temporarily disable in syzbot kernels.
 
-Absolutely none of which are obviously on topic for the tomoyo tree and
-some of which are patches that people have previously raised concerns
-with.  This is very disappointing to see.  I will check the status again
-tomorrow but as things stand I think I need to drop the tomoyo
-tree from -next.
-
-To repeat the conclusion of the previous discussion you need to be
-coordinating with the maintainers of other trees when adding changes for
-their trees, and nobody should be adding changes not inteded for the
-next merge window during the normal course of affairs.
-
---1AbFq2Rycslg0bHG
+--Fu0Wn9d4q/B4YP6F
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpXn8wACgkQJNaLcl1U
-h9Al7gf9FtU0x/iJcY9NLYNqWXEAr+VUCoFI2q8hM4aOJBEOxbN8/SsSAe4x5Ihv
-AQ4yiVyPTtlYp3ZRqPxWURMbv6Y8oX+KXP0bmMJ55frIGHhZMWDIKsGdc9NAUXLW
-6gCIIaXjg3MnBlnpNJs+w5O9yVfS4x4D3zJUsZ+48XO4KHqS7a+Fdwn4NjKgwp0o
-pzjQq/L+R83+qrFRu54qilL9944nR+BnXu+CZtw0cjABe8bi+TpE9c8s4hxKtJdu
-t09w4U/mMe2cuDpiACgFVFLIysTdE6iyo4jodQ6UAcdTGXVU9ctf72srJtnlbQyv
-rNq20dGyIIVj49izqtjhEqecXZMoNw==
-=9lZA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpXqTQACgkQJNaLcl1U
+h9Al8gf+MOOSFZdSL3b0LcVl180zi/Mp8BpEGrLcW5lw+tDdpkx2UOgXqP1Otuon
+9G7fZqKrXWGaBrwvpGEnJDKveUDD8m758wk76IR+NWuMb5mE0aeL0sPo+yf2xWyP
+Hk+11VnBI/kVguIUxvyuq3YugLyWiYSG9fCBZ6RcyeJy+dr+wQCfdcTjmbaZyD+h
+BgvMSwNF8hvrDXnihXBDZgQYdjz3P2F/E6ZZeO2PzBFIufDjkJGT15WfSXOGEF1/
+iF5UJbhalN6OzNE6fyZPYjX9oZIT6p2Xo5uWZovvxXtSXHF+qmA7Je/789T6PRYB
+E/eUDiAuxmxSajWgwkVOjURYLn6ViA==
+=2A+X
 -----END PGP SIGNATURE-----
 
---1AbFq2Rycslg0bHG--
+--Fu0Wn9d4q/B4YP6F--
