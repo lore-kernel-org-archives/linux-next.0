@@ -1,90 +1,75 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB38C3AEF55;
-	Wed, 15 Jul 2026 16:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAAD3090C4;
+	Wed, 15 Jul 2026 16:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784134399; cv=none; b=pxgww2lSeJhVrkTi6l/kKKo7P5DCuPXEDzjuRPfDV+oHuzWwcgY0ohYcusT6Km/Lz1TklXfoZSejHtzWA7rD+awBlkhS+PIb7lpI5uUQxuEA1bBYiEockGbiB+gaPfeCnZKi0NHPJGSPAN3ToPne9IDXUVA87hVssoeXMs8SkHQ=
+	t=1784134478; cv=none; b=EDHWO6E7gvYOvqP/AHsPs9Hhr3whwxUQG23RncvHfzP/JsHJ07reFUrz5t5DNzHSbOc4JHao70iAmGI3R//wADTcMDOEjKYlEeHjG8HfI/eAH1+LCxtIib6d8IRwp8KCuZmAE2tLMb4X/vYTNJBA/IJS3zUb8XaK5En+Tt8S+Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784134399; c=relaxed/simple;
-	bh=VMETLwNv9+hj47xAJUpEkRMBPkkHW9FTCNFPZI6cCiw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CYMJri3D1735j1IlFSirq7Cz7Avai8JKoLmSWNwybi5WM2ODvrAoyhT2DhwPm0orJ9vuPVenpoiP3pVfHXY1CXmlzYnRFJ2U07Ev0Gn9PzHsUWWznXbI1lM21sQQKh7NBn/8mZd8A0Lg0diy/fhgGn8/XcpRiNEtqFq0L8oIaeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=X9szkK4d; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1784134478; c=relaxed/simple;
+	bh=IAPFaCspD3KhGU7bjvzPhAgeASEF4aDRDE/sE2RiFkg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pRf1pa1g68ATaSgqijTKviiV8SWeYufZf/qgZpVz17XObroeVLZ9V+LSZ1Zco/AsSBAMHtFZfXvxqwqqfWGcHHwknGknQtFwFpnyu8XJeGCKFy6fhRKmQqV1zNDV2QC5NOiBtVDltFUcCjcvXy4OOFv0o/f9EXBozT0dDMihvuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=uxSUgXf2; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="X9szkK4d"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5CB1C40E57
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1784134391; bh=W7b06Px5QXKLqiJ+DQLj8qSMrCOwCoqReCVC8FtvKAo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=X9szkK4dPgw/VrVsRowgxGcRAw0hv17Lim0FewmyZThf601lEgq5iwHebU8KUFG7s
-	 8DBOfrA5vMUjeLYNVGmmvLtOnPJxtfN+oU7yCRRcmsQ50ebs6VgCbF6pC+nxDURCoG
-	 J7wodiV5QIt5XNvrNX5jyayd5IsvzhFOBYNfOl9i08ylefV4xgtqV9S0k4+SVXxD1O
-	 LD4c+4yLdjU0eHjOdBBJxrkQoBXxaDTkx2LpG7ph7EFEbkGqXZtVP9tGCkvAUjZft2
-	 azzm57UByllonitHcRpITHzCekPH6gZdnghHiXRS+9ylEPmljMB+mJgV/2z3nx1nGe
-	 HJaJC57TPiqAQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:27b::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 5CB1C40E57;
-	Wed, 15 Jul 2026 16:53:11 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Manuel Ebner
- <manuelebner@mailbox.org>, Stanislav Kinsburskii <skinsburskii@gmail.com>
-Subject: Re: linux-next: manual merge of the jc_docs tree with the
- mm-unstable tree
-In-Reply-To: <20260715092029.18a9334f73e3b1517f3d47b3@linux-foundation.org>
-References: <alep4zhJYFTXqBe9@sirena.org.uk>
- <20260715092029.18a9334f73e3b1517f3d47b3@linux-foundation.org>
-Date: Wed, 15 Jul 2026 10:53:10 -0600
-Message-ID: <87ik6gb3ex.fsf@trenco.lwn.net>
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="uxSUgXf2"
+Received: from relayfre-01.paragon-software.com (relayfre-01.paragon-software.com [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 189563AC;
+	Wed, 15 Jul 2026 16:54:40 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=uxSUgXf2;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 6EF3F1D36;
+	Wed, 15 Jul 2026 16:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1784134463;
+	bh=/A7Bo5nhOBgufvH29OpUKJ0dEw8/1FtKpIOjUPGgOcM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=uxSUgXf2DOAHZF2CgvXdvJXcJDxyfDfOs5WYd7CuWCI0nUp+8CoPgMWMJgFF8I847
+	 GzVNd0UB5WfqNwpbA16pO1V3z+nZd4uuFi4/Bma8HGdBnboTjWBm0+5N1ZLOVXBqd9
+	 KBBCL1canVQ66Nuqvh8IG2kyB6K9KVtZBYV/aXZg=
+Received: from [192.168.95.128] (172.30.20.151) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Wed, 15 Jul 2026 19:54:22 +0300
+Message-ID: <50304fd4-d8af-424c-ae8d-efe31e77c76b@paragon-software.com>
+Date: Wed, 15 Jul 2026 18:54:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: Missing signoff in the ntfs3 tree
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>
+References: <aldqIGRdMoJgNkER@sirena.org.uk>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <aldqIGRdMoJgNkER@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+On 7/15/26 13:08, Mark Brown wrote:
 
-> On Wed, 15 Jul 2026 16:40:19 +0100 Mark Brown <broonie@kernel.org> wrote:
+> Commit
 >
->> Hi all,
->> 
->> Today's linux-next merge of the jc_docs tree got a conflict in:
->> 
->>   Documentation/mm/hmm.rst
->> 
->> between commits:
->> 
->>   3862d3b51eb1f ("mm/hmm: add hmm_range_fault_unlocked_timeout() for mmap lock-drop support")
->>   94e4afa33bac3 ("mm-hmm-add-hmm_range_fault_unlocked_timeout-for-mmap-lock-drop-support-fix")
->> 
->> from the mm-unstable tree and commit:
->> 
->>   e834ee8e571d5 ("docs/mm: Fix braces")
->> 
->> from the jc_docs tree.
->> 
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
+>    f023839df8010 ("fs/ntfs3: fix out-of-bounds read of INDEX_ROOT in reparse/objid init")
 >
-> There was no "see below".
->
-> Jon, that little patch is being a problem.  Maybe drop it and I can fix
-> it up and carry it in mm.git?
+> is missing a Signed-off-by from its author
 
-OK, I've dropped it, it's all yours.
+What do you mean by "missing a Signed-off-by from its author"?
 
-jon
+It's signed off here - "Signed-off-by: Weiming Shi <bestswngs@gmail.com>".
+Or did I not include another author of the patch?
+
+Regards,
+Konstantin
+
