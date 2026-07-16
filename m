@@ -1,86 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA99423794;
-	Thu, 16 Jul 2026 13:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805063FD14D;
+	Thu, 16 Jul 2026 15:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784208053; cv=none; b=dyau7+758b/VI059P7dk6lejjG6MEC/piFSlHoBkeLg2LXTszf/8K6cJpUOsTzNQBb1GHEV1L2eQqrn06OuiK9h6LiCNCDQOEq6SwPAKUfiGOQ0SD3ygtiiAtBgoTWbrrxbzdwEkFMkz8mSEBYzznehu0bGUQcp77dUqKfShIsY=
+	t=1784215779; cv=none; b=cgOfxTwe3K74NCRxhCc92hkhveIEy6gk1GlZtc3B9j6YLNue1IrH9qwZsNJG7GF7mGLzaD8S3QL//fKlCNKLgJsNFbS/rX1NeLvyKkeHsoxFVrAjQtmEOQ3DTk8r9TRB14uFYE82RfX4HZqwfq/ZI+D5yLb/A8zL/tz9T7U8n08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784208053; c=relaxed/simple;
-	bh=8/T05Ai8QlCQi76UixBrC4mv4BdrvNjM5HS2NWmJHy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqZjQiIF+r1HcUJ02pyXeaGQybjHoKzeYyEPUlbu1k+DAcLo1cMSeYODLcP1QBTMiVG1OQdxATjU4mVozkD5SxEwAgQR+xHVXtOIjXeDiTdIXokAulAwO1M/G4vSc0r0/vHXU4YILBjAyqaQ6kVDnDfXcu+4vemXsdFARj/OqfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILR0y0xd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784215779; c=relaxed/simple;
+	bh=beN9gQMyIBs2ej33yHvXehg8gYmix7d6bC2KyQTQj1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VE+UX9lOtnJXlDINEwdHIeWiyldDuJkrL+cXgZT0K5hPDps3/R4HFX2PDdD6kpgTu+LrVVD9445hPVP1w4gYCBHkbdgp51Ml+Y6J8bJMGPPFMckbwNDkEonPZyZWi588xhLvwyeX8e9lejjroy9DeGYziR3SLqFb/0qogK4ykRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=cFW2i29Z; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILR0y0xd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865F01F000E9;
-	Thu, 16 Jul 2026 13:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784208050;
-	bh=Ke4+yKuHFzx0C9zTD4gAvTcva6BFehzFRzCFbB9L61o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ILR0y0xdbMmHQ95IPwpyOzi4pn7O8X35vsUlt59sgFP6/c15MQqF/nsx+yvF8/4rA
-	 oSIGsd25UjTxpNox0enIFbYnrxrosYpDx3MdrQ7pBgWNAHWyzWPiwhckIJNa8rKmhz
-	 qHv6bfssDRSet8yxIGlCIGrNVaLPlO2gyRGB5vzK0EGzerqgeK/PfAh3GRsiKxj3fu
-	 Kp1P1EYcD3qz2FG+6TRXlEDLWHooWlIrbVX98FQnXtXkH+wbd2sfUaMkrxlXINFyJ+
-	 PrBN+1+oTbNQOnchl9gcSpLhFje/cV5pmglFhoQslO2SAPlAqqkybs89ahUkrxP6RL
-	 ZK06l181GHKWQ==
-Date: Thu, 16 Jul 2026 14:20:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the origin
- tree
-Message-ID: <d44f2a18-9ed4-434a-9013-1cb2d7d84add@sirena.org.uk>
-References: <alUAlBfA42zAOZ3c@sirena.org.uk>
- <alirExca4fzB-fr8@monoceros>
- <c3a949bf-4d78-402b-b474-db92f0613c6f@sirena.org.uk>
- <yq15x2f84ki.fsf@ca-mkp.ca.oracle.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="cFW2i29Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1784215775; x=1784820575; i=spasswolf@web.de;
+	bh=1rrZbpfSwCPI7v7lO6BE14DEuFmvQoXffFaZKGt5Yfw=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=cFW2i29ZSsLYbmt6q0fVbj5uplXb4LWrXiQ3ADgRm6lOaGvy2k9ev9DiypJcJqsX
+	 VJTEGSkKhGZBpqQB/APnkp4C2F/T7C1k93V1e9g3P6/Yqc7hM9T4xUnF9kSLvUcSL
+	 UlWMLS5WS+OUHHR5jFPy5hRjLV5mH4ZJLZIBsdUHNnt2c1NqvgdFl7BwP0ZN0t51x
+	 fy/gbo+0I2cLQCA6xgPTNmItyRlWYc0NXRdD+hP/MgFY073ZG3XOVr6u4r6Tp6HNP
+	 z9pRpetzu+2fmGoBi6EloohX6k+nn5J6Yv69e6Z3vLL1frkAjSbxSu6hlxNty9W2u
+	 sMzS5h2/QeeVPDRx+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSIJ0-1wZH8R0caO-00ILCm; Thu, 16
+ Jul 2026 17:29:35 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	Leandro Ribeiro <leandro.ribeiro@collabora.com>,
+	linux-kernel@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-next@vger.kernel.org,
+	Jesse Zhang <jesse.zhang@amd.com>,
+	Amber Lin <Amber.Lin@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: warnings from validate_blend_mode_for_alpha_formats() in next-20260715
+Date: Thu, 16 Jul 2026 17:29:32 +0200
+Message-ID: <20260716152933.6744-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="udP/t7NWrbR3Z3ei"
-Content-Disposition: inline
-In-Reply-To: <yq15x2f84ki.fsf@ca-mkp.ca.oracle.com>
-X-Cookie: The more the merrier.
-
-
---udP/t7NWrbR3Z3ei
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LmItngSJEVU6JglhCCMAXmHoFf5ask6YwQHW8TbS9FjzMq1VMMm
+ TK+cf+z2WQvRSU/Sd5r0py/649qXlLTBj7sAILW0bXIxrVYbYjUkllLfNoXusg+p+L/R0jF
+ 0ma3FjE8Y7FQYK7ak7t/HrHL12IRg0KA2vkOAqcu4OgwBzDQ61nzHP0NRlhp4UIdTw8UqoX
+ 2N4VtpVjC4g/6DKF5ysug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lCpfGVqZKjk=;mQvtPOvowaFmWjHv+uUKDcghszF
+ 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
 
-On Thu, Jul 16, 2026 at 09:09:14AM -0400, Martin K. Petersen wrote:
+commit 860e748bddcc ("drm: ensure blend mode supported if pixel format wit=
+h alpha exposed")
+introduces validate_blend_mode_for_alpha_formats() which prints warnings f=
+or amdpgu as=20
+amdgpu only set blend_mode_property for planes of type DRM_PLANE_TYPE_OVER=
+LAY. I tried to fix
+this by removing he (plane->type =3D=3D DRM_PLANE_TYPE_OVERLAY) check in a=
+mdgpu_dm_plane_init():
 
-> > It's also got an arm64 allyesconfig build failure which is what's
-> > keeping it out of -next, the submitter of the offending patch asked for
-> > their patches to be dropped but I've seen no response from Martin.
+	printk(KERN_INFO "%s: plane=3D%px plane->type=3D0x%x plane_cap=3D%px\n", =
+__func__, plane, plane->type, plane_cap);
+	if (plane_cap)
+		printk(KERN_INFO "%s: per_pixel_alpha =3D%u\n", __func__, plane_cap->per=
+_pixel_alpha);
+	if (plane_cap && plane_cap->per_pixel_alpha) {
+		unsigned int blend_caps =3D BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+					  BIT(DRM_MODE_BLEND_PREMULTI) |
+					  BIT(DRM_MODE_BLEND_COVERAGE);
 
-> I've been traveling for a couple of days. Will resolve this later today.
+		printk(KERN_INFO "%s: creating alpha and blend mode properties for plane=
+ %px\n", __func__, plane);
+		drm_plane_create_alpha_property(plane);
+		drm_plane_create_blend_mode_property(plane, blend_caps);
+	}
 
-Ah, excellent - thanks!  That will also resolve the issue with the fixup
-=66rom Uwe so we should be good.
+But this does not completely silence the warnings becuase for planes of ty=
+pe DRM_PLANE_TYPE_CURSOR plane_cap is NULL.
+Is this a problem that should be fixed in amdgpu or is should validate_ble=
+nd_mode_for_alpha_formats() only be called
+for planes of certain types?
 
---udP/t7NWrbR3Z3ei
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpY2q4ACgkQJNaLcl1U
-h9DqPAf/SMwUSP/Pz0Qjc2vFyejlX3GkGkoa14ds8n45RWR6DQ50ftIy4/lfZqlI
-vjlE3N6RP2T+81Ier3GJ1dwCEAT7NPecjlG3Uwd/fkHJSxkO2Ob19O3xILyQ/3V5
-r3MgwSHXbNaS5Pm+j3DuJNpCQVRcrCVSEfFs72eMxLCROinfSe+b9loF7iZ63jzz
-Hx3FODTa63VXqBewGDj7Fkg3MpfK+uWY5uUF/dlyw1670oiP9ITq20gx1vACZvRW
-NFzHUI6JQHkceFn6gKx4b2triIEjylp1P2SJ/5fka8PCDKuAc6zVPQtu577qGhn7
-+z1qxTvEZrJd7BWJDdvWcAjVXxMNcA==
-=+9Y1
------END PGP SIGNATURE-----
-
---udP/t7NWrbR3Z3ei--
+Bert Karwatzki
+  =20
