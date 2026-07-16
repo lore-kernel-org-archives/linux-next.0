@@ -1,47 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C0041DDFF;
-	Thu, 16 Jul 2026 12:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF24A422E1C;
+	Thu, 16 Jul 2026 13:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784204205; cv=none; b=d+sVFun6zQrPSp9hfUwipLn+T+PvnwskLqp225CJSqbD1Rx6OU6uRJJIyrum2ZSf4q0crKRG6Bn7Fv9tCTgD7Dw/kX2STRLmYPvIAPgtaCAbx4RqHDuJ9nVJrYHnGdrcxYTvGAeEVnL/c9x+N2ZL7sf9Udpbq20K+9gC+/YmIQg=
+	t=1784207033; cv=none; b=CuzjdpXvU8UYRCqFQNDHthQeuWMGkCbNU2VYcyt/LOVe46yua6WxhuBk9m737GOkKe8Ew5wd4t+jaSL9yT8tyPR2z2I//ZXIruh2/Ukya5ceeeOTZiYay1NTBglwADI/xB6MYzR4DJA5SuDGanqycOGS0A8Yk22Gl8KM2Zp/iVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784204205; c=relaxed/simple;
-	bh=RHnoUoVVBRHznZDjfg7p1zoSY/QFz6KSM7e+8oRx5t4=;
+	s=arc-20240116; t=1784207033; c=relaxed/simple;
+	bh=wIq1B69s9t+ykERRfXGHYSkcDk2XUsW+vjz9isEOQ9o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+h6qKBQhqG5/BSeEV/kS/bHC8nWGE6D/B8UUCMxsXb+XcjSImJrTklLmCyK6MtvgXrMJRDGXn2X1NoGWQunGFEb/X0FQS1gxcS8HIq8X/Y3EU2Qy/UDeXlfTCHP/1X31ZV/RAlBKKdZ3JaKT4THvvic/v2MaYa5gavRS+SdNl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7b+FEw5; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3q8XfT4xOvOY+Mg/aJ4TT2I4RMp9TIZbmSyEg7nO8kDpZ3PJ6nUtbshrXcWCF3wEeLB4UfKKR7I1lKEcM1Cybi/H4jvSNbvppEfE0t153wf4qG483cRna2rgmpjT+CDVBPJ24ZWMZ4N3EWLwDo8JaQOGxAB6MFkLQRaceuz1IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLaUXiaz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7b+FEw5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76C0B1F000E9;
-	Thu, 16 Jul 2026 12:16:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLaUXiaz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A922F1F00A3A;
+	Thu, 16 Jul 2026 13:03:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784204185;
-	bh=OeY/RrnCDHeRA7waqEnCw2zQoIH3AdOyPp5nJdiYRUI=;
+	s=k20260515; t=1784207032;
+	bh=DC5B3Uyi5MUpFz+7Zbij5XCEQEbOJF8hS2wD1PV9i7o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=C7b+FEw5oW4E/09NAyQh5OGXjrU634n8rTS8NN5msWGpky97UJYzngQcko/OfNo9H
-	 7MZyCCbaIAEGufoCKyGKIjODfzlMsW6yt1g2rulcjLtl/rlVAWIZvwKTeNC+JssUnT
-	 h0sqMU+7U4g/0sB2w7zjoXg/pFB/PDoIK9T1YUmtoKmfe7eqCmB8I3S+/aPXATfKeG
-	 Q0NNVAWvcK4Qb3QqYudhggsIgxEsf4dd96OQMfBo4oGCVxr7U+aCYGKtWv4gAU0MoG
-	 vCJ3RW6mMd6zZyJ8g79AMwBGhcKW6h/QF6tRBGeSR4F59aqJEEUZzRmlPWM1cCLhEL
-	 D+Z/FYd0Zuvbg==
-Date: Thu, 16 Jul 2026 13:16:19 +0100
+	b=fLaUXiazvolMTIaItgib3JVoULKZoO+WRl2lwKhvkoecwpnTXfHi8DgdJ14oTjaPG
+	 10iQp3LFk91z2qNXZIIwkztuMoZ9VpQOjUqC3LHTsO1Qb5H4gRAAoJmC4O7QrpvpgY
+	 +FfZUuKSzag1c6dqzB6NhJTF4roJFKxk18ICoeHr/rZu/R9g4RRpPxB7ULmJgr0NsQ
+	 x650infG/eI2f03K3CLdP+VdZi3PFHyAe9tyPoT7TIAlg4vOP06kFvyHkFrxxgDQYQ
+	 95r2MJNlqduLTLUYe8UPBRKi+g6nmz47DLk65qZV2coIRtNCM3alzg7p+HPzcWoT1a
+	 9z+yYkIk7P28w==
+Date: Thu, 16 Jul 2026 14:03:49 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org,
-	axboe@kernel.dk, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [linux-next:master] [loop]  d908729e74:
- stress-ng.umount.ops_per_sec 100.0% regression
-Message-ID: <e75c9a7c-77dd-47aa-949f-27a937a64760@sirena.org.uk>
-References: <202607151655.9d74999d-lkp@intel.com>
- <aleZammRRSVN4dl0@infradead.org>
- <c625eb50-e474-4966-bf3b-e83d7e7d1750@sirena.org.uk>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the origin
+ tree
+Message-ID: <c3a949bf-4d78-402b-b474-db92f0613c6f@sirena.org.uk>
+References: <alUAlBfA42zAOZ3c@sirena.org.uk>
+ <alirExca4fzB-fr8@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -49,52 +44,61 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="61mQimz+8MzkIz9g"
+	protocol="application/pgp-signature"; boundary="NGCtaSzg0xytAqbK"
 Content-Disposition: inline
-In-Reply-To: <c625eb50-e474-4966-bf3b-e83d7e7d1750@sirena.org.uk>
-X-Cookie: Celebrity voices impersonated.
+In-Reply-To: <alirExca4fzB-fr8@monoceros>
+X-Cookie: The more the merrier.
 
 
---61mQimz+8MzkIz9g
-Content-Type: text/plain; charset=us-ascii
+--NGCtaSzg0xytAqbK
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 15, 2026 at 03:57:22PM +0100, Mark Brown wrote:
-> On Wed, Jul 15, 2026 at 07:30:02AM -0700, Christoph Hellwig wrote:
+On Thu, Jul 16, 2026 at 12:13:59PM +0200, Uwe Kleine-K=F6nig wrote:
 
-> point where I think I have to do as Christoph suggests.  Looking at the
-> current contents of the tomoyo tree all I see is:
+> So the fixup is applied to the merge of the scsi tree and not the
+> scsi-mkp tree. The latter wasn't pulled into next-20260715 at all. Given
+> that e73ba3d6ed03b isn't in next, the fixup shouldn't be there either.
 
-> Tetsuo Handa (6):
->       lib/Kconfig.debug: add CONFIG_DEBUG_AID_FOR_SYZBOT option
->       net: update dev_put()/dev_hold() debugging
->       net: add "struct dst_entry" debugging
->       loop: Fix NULL pointer dereference in lo_rw_aio()
->       kcov: fix data corruption and race conditions on PREEMPT_RT by moving saved remote state to task_struct
->       apparmor: temporarily disable in syzbot kernels.
+> Looking at merge.log I see merging scsi-mkp is tried, the fixup is
+> applied, yielding 0fd66dadace89 and then `git reset --hard HEAD^`
+> follows throwing away that commit to replace it by
+> next-20260714/scsi-mkp which is already included and thus the
+> patches/device-id-zorro fixup is applied to the wrong commit.
 
-> Absolutely none of which are obviously on topic for the tomoyo tree and
-> some of which are patches that people have previously raised concerns
-> with.  This is very disappointing to see.  I will check the status again
-> tomorrow but as things stand I think I need to drop the tomoyo
-> tree from -next.
+Right, the fixups don't differentiate between versions of the tree and
+the fact that scsi-mkp is broken and never had a version that was merged
+this cycle means that the tooling gets confused about the fixup.  We
+need the fixup to try the build on the off chance that there's a fix,
+but then it's not needed if the fix failed and since it's not dependent
+on any context added by the merge it doesn't get skipped.
 
-Looking today I see that all these patches were dropped from the tree so
-I've left tomoyo in place, thanks for taking care of this Tetsuo.
+> Having said that e73ba3d6ed03b is still in
+> https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
+> without the patch preparing drivers/ata/pata_buddha.c for that change
+> and thus resulting in a build failure on m68k.
 
---61mQimz+8MzkIz9g
+It's also got an arm64 allyesconfig build failure which is what's
+keeping it out of -next, the submitter of the offending patch asked for
+their patches to be dropped but I've seen no response from Martin.
+
+Hopefully at some point the various build failures will be addressed and
+this will all get sorted.
+
+--NGCtaSzg0xytAqbK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpYy5IACgkQJNaLcl1U
-h9AWbwf+LalYQS/hl3QxwcQit0fMn8PF/NHQ2mK5pM/8LWvNLQG5laomGTUjblwJ
-CrmU/rP6ODlTiWwPTv5M3t+9lJXtjjrd0d2tOD6IKPZsUmqJzriYVDUpbZW9M/aW
-QD9EkvubuFJW0chc/XHOoK9ciQJSH1kZnThLARHVmqn0A+bBbsw4el4Q1ZNjZ+f9
-Gkrlg66MqX56yPsCkTsX5xjCWwQEqpyM3z1y11H0ZRd5hIFbZohHw5FuQSl3BD2H
-fpuicDvOkg3m1R35bDOuJzoXC/7aB//qf+TL3OsB+o0glhrTD8+BOEdZvwJhNzSK
-wJUkwaQ+vjLP0iumFcjOzHRtsr5DFw==
-=DFfZ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpY1rQACgkQJNaLcl1U
+h9DM2Af/Q0jMVXf1l7U4arfX3Q7/sIPeMU3C6COFcRFuBC/T6RkOsCqEoCIJMo9Z
+F0+iTTKvJr9KnTSewb1Mf4X4cUMpAwSlyRv5C7uzUJL6Dl8kJNoPKPLLP+UlrjFU
+bLsoNvsa5JxNlz/xTxNOfPJE5JXZHDzQOthwzq/xfIOr5nEMfVmqYM7fHgDVQ18X
+QY9JSjCJHrW8kb7JbD0Q7Wym/huRRfkMnrBQoECbn+KiQx7nYCY6pBdkI3aD8TFP
+Ow1i+ZLoY6htadpE5vy3Krshq0ptmE3JfEgFlzjGTJtADJjSokKCRu+bhDJZ6/mY
+d2e6UUVOcj2N5G2MDNvgngJqREdxxQ==
+=6h6w
 -----END PGP SIGNATURE-----
 
---61mQimz+8MzkIz9g--
+--NGCtaSzg0xytAqbK--
