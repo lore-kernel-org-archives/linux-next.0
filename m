@@ -1,112 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FB33845AC;
-	Fri, 17 Jul 2026 16:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784304724; cv=none; b=dFnhvSYuHLjCqKSYRon05941xShbBUnoR1zKYRivDgt3RtRdXP3uBXXTkEAU/jpByfUo/iKSlfwfi6S7irZCMpsrmKDdCTv9kkdcwrJDdvRCiDLLt7CMQr5/2Wv3jQ4DMsRImyws9MCENC5644guIKy0MUBdOC4miFa7oC7iX2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784304724; c=relaxed/simple;
-	bh=SEN/YeVMsxQtS7bmwpsfCTPZCAfGz7/VhnW49BhQgAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IrHSjCqU62PxtHXtSZLuU6UAv7JT0mQqCfQlXc1p16X7CvFfRztFZuUfh07zPRQsMUIwtF84Zss6ol39Jx7z4qe4gDH8czm1omKxIuJlKFKgQTlCIB4IhFBheX8EDdwZPAxsef7s8fqIHf0a7/VdmcEbZOyCLDIxg3yhvOMZKSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKwmtxA6; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78EC3A6B6F;
+	Fri, 17 Jul 2026 22:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784328913; cv=pass; b=prGr93ZoFRSY3+/4+p+ELwGfktGDjEoTjI7e6ah8L0zT6C+NQKRDieqUFtpwzp85iU+0e91+eZQH6/HRhqw2bJmg0CPMqlMYHv8G7LTCe/SIKaGbXw1OrvJhcKgTVDZLCO07XcGhPZj02tygxR5hi0BP7vPSfFHDaPdjJNoHLEY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784328913; c=relaxed/simple;
+	bh=uMPkgSCDynBaQW/Pksj135TvSAFtABpB4a0gf+crsFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DYdmeEJpnQCDf1QCTGQKWTf2ROaORvSAYMverorslNngoSd11PpWH6OOfPHYeKChDY25KPNDg4bSYpT8838tmgMzszBETw861I9HhCgI5NDAUi3o2ZrK/1wdmI0KcDIhE931QDYNa7mk1WhDqMBmfVkBwZxKVLYdWUNRFqeuWyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=leandro.ribeiro@collabora.com header.b=cYhZyK8C; arc=pass smtp.client-ip=136.143.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKwmtxA6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294A91F000E9;
-	Fri, 17 Jul 2026 16:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784304722;
-	bh=UBD5yB8QIwgb8/LoWSnAjYgoqm58BFAYbzBEn94/G1g=;
-	h=Date:From:To:Cc:Subject;
-	b=BKwmtxA6ztStMVuuuKwFvbwirs9pW653fLedz1zHe9O5GMLyb7wR5nh42tHsp6ZyH
-	 kOvIejH73TOVCN+unPwa0o9/DbVzUDhrIzA+y0I/yaHlI6YOQI7YJY7MG8VwclxWFD
-	 R1DuTDnFsQ61RUGtoxZSBGV0isQ38xY150qv41CemchOYq91k78X75XHI+NTbI1siK
-	 7T6zl0PFMmydZCQPIORtFvryD9XIuD40Yj5vh4CoSF4kByv63WZxCw9yWuO6s8wQnY
-	 c3Y+VTm/GKSk+Boev/+djX70c+psFmrVrlZvEWtGYzopTu8o8XUIHhxsSxA4U7wQ43
-	 HOo5HgyV1hOBg==
-Date: Fri, 17 Jul 2026 17:11:58 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sean Christopherson <seanjc@google.com>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Message-ID: <alpUTu5ttdBcjZCP@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=leandro.ribeiro@collabora.com header.b="cYhZyK8C"
+ARC-Seal: i=1; a=rsa-sha256; t=1784328895; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=B8dVvF5W0UK/Id6aeqAllIzfgB45tjDS92iLw7PgEIj/CT+xlprVTjsTkNWafNB6jwRxmkQ95l6NwmOU1Q7rE/QqHuwQN3R4/KWLjyY7XjTAHpIqIN5jJds+7YTp+0Z4y+oLaevczKypr6cuknxMmGdbhl1s09VLtr0Ir2uDTUA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1784328895; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1axtl3tCNHAHjeKjFPctqjuywHMJ27BqGaKLqopjT9M=; 
+	b=WZx9E92q8lDw/4eYdfdAlQYyKq08YMZDymo9j/7+mX+59/Nnvm4Sm6/U3/teIqWJXzP1F5GTUrmvx2I/nnCaLG1cqHM2zyDqAhcjq0NWduQEcnLm2yUWKSM5uMbB9HW+zV6ClsjyVUnm72TkrwF7HUvGCHYxR0BSBOv+955wdQ0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=leandro.ribeiro@collabora.com;
+	dmarc=pass header.from=<leandro.ribeiro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1784328895;
+	s=zohomail; d=collabora.com; i=leandro.ribeiro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=1axtl3tCNHAHjeKjFPctqjuywHMJ27BqGaKLqopjT9M=;
+	b=cYhZyK8CvmXiVJgEqkdt6fW86GT9T0XNoUrYVEw5w9UEymh/tsb90HocTEMiKA/b
+	7IgmNR/eZLuX1TogU8MMq2ydks1mWA0fSS1blIJ38YyVf39rd4L98HGXEhm8oGcGpiC
+	rTCesg8Hyax6T6aG6Upv/max6wjf3JnrN8YDeQFs=
+Received: by mx.zohomail.com with SMTPS id 1784328892532746.7691096186728;
+	Fri, 17 Jul 2026 15:54:52 -0700 (PDT)
+Message-ID: <45d341e6-d438-4e34-bba2-f6d23dbcf7fb@collabora.com>
+Date: Fri, 17 Jul 2026 19:54:45 -0300
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yEMEG4PtvOkWsDVy"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: warnings from validate_blend_mode_for_alpha_formats() in
+ next-20260715
+To: Alex Deucher <alexdeucher@gmail.com>, Bert Karwatzki <spasswolf@web.de>,
+ "Wentland, Harry" <Harry.Wentland@amd.com>,
+ "Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>, Alex Hung <alex.hung@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-next@vger.kernel.org,
+ Jesse Zhang <jesse.zhang@amd.com>, Amber Lin <Amber.Lin@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20260716152933.6744-1-spasswolf@web.de>
+ <CADnq5_PEN=iuspWbQ9C3gJZ5qJVOLmJ5hrsi6FH0Dg2Y_u2mZQ@mail.gmail.com>
+Content-Language: en-US
+From: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+In-Reply-To: <CADnq5_PEN=iuspWbQ9C3gJZ5qJVOLmJ5hrsi6FH0Dg2Y_u2mZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
 
---yEMEG4PtvOkWsDVy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 7/17/26 11:55 AM, Alex Deucher wrote:
+> + Some display folks
+> 
+> On Fri, Jul 17, 2026 at 9:04 AM Bert Karwatzki <spasswolf@web.de> wrote:
+>>
+>> commit 860e748bddcc ("drm: ensure blend mode supported if pixel format with alpha exposed")
+>> introduces validate_blend_mode_for_alpha_formats() which prints warnings for amdpgu as
+>> amdgpu only set blend_mode_property for planes of type DRM_PLANE_TYPE_OVERLAY. I tried to fix
+>> this by removing he (plane->type == DRM_PLANE_TYPE_OVERLAY) check in amdgpu_dm_plane_init():
+>>
+>>         printk(KERN_INFO "%s: plane=%px plane->type=0x%x plane_cap=%px\n", __func__, plane, plane->type, plane_cap);
+>>         if (plane_cap)
+>>                 printk(KERN_INFO "%s: per_pixel_alpha =%u\n", __func__, plane_cap->per_pixel_alpha);
+>>         if (plane_cap && plane_cap->per_pixel_alpha) {
+>>                 unsigned int blend_caps = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+>>                                           BIT(DRM_MODE_BLEND_PREMULTI) |
+>>                                           BIT(DRM_MODE_BLEND_COVERAGE);
+>>
+>>                 printk(KERN_INFO "%s: creating alpha and blend mode properties for plane %px\n", __func__, plane);
+>>                 drm_plane_create_alpha_property(plane);
+>>                 drm_plane_create_blend_mode_property(plane, blend_caps);
+>>         }
+>>
+>> But this does not completely silence the warnings becuase for planes of type DRM_PLANE_TYPE_CURSOR plane_cap is NULL.
+>> Is this a problem that should be fixed in amdgpu or is should validate_blend_mode_for_alpha_formats() only be called
+>> for planes of certain types?
 
-Today's linux-next merge of the kvm tree got a conflict in:
+IMO validate_blend_mode_for_alpha_formats() should be called for all
+types of planes. I can't think of anything special about a cursor plane
+that would justify it being allowed to expose formats with alpha but not
+the blend mode property.
 
-  arch/x86/kvm/x86.c
+I'm not familiar with the AMD codebase to suggest the best fix, but the
+driver would need some way to know whether cursor planes are exposing
+formats with alpha.
 
-between commits:
+>>
+>> Bert Karwatzki
+>>
 
-  3eaa50e1e255e ("x86/cpu: Hide and rename static_cpu_has()")
-  1620ddc0dcefc ("KVM/x86: Stop using 32-bit MSR interfaces")
+-- 
+Leandro Ribeiro
 
-=66rom the tip tree and commit:
-
-  7a26830801584 ("KVM: x86: Move the bulk of MSR specific code from x86.c t=
-o msrs.{c,h}")
-
-=66rom the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --git a/arch/x86/kvm/msrs.c b/arch/x86/kvm/msrs.c
-index c230b18d87e38..764cda8045a17 100644
---- a/arch/x86/kvm/msrs.c
-+++ b/arch/x86/kvm/msrs.c
-@@ -2579,9 +2579,9 @@ static void kvm_probe_feature_msr(u32 msr_index)
-=20
- static void kvm_probe_msr_to_save(u32 msr_index)
- {
--	u32 dummy[2];
-+	u64 dummy;
-=20
--	if (rdmsr_safe(msr_index, &dummy[0], &dummy[1]))
-+	if (rdmsrq_safe(msr_index, &dummy))
- 		return;
-=20
- 	/*
-
---yEMEG4PtvOkWsDVy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpaVE0ACgkQJNaLcl1U
-h9AaDAf/Umw/i22hIiN+2r6CNNZMbdXh5JMfavq0YXwFZ1TtREWHTXgl6RE7IYyH
-pLr6fuPGlbvjZH5oOZ6lflQFuUwqW+mKiaWGQIXX8XRYJff16rdnsws5lhGizXDP
-qSUY5rPjwex/OiNhjk37luLSxnMtevHGoncmLxn0xwzCe5a6CPWSUdstttBot7lt
-g7NeIHwVicZX3oEcIWpgJ0nwWipieNMRipBxOyqFI8T1v/Poj91B2SqUlpx2CUug
-HJDZfRC6CUHnSPwYdMaD+na9bLAKSmIbP82kIU1hNvVzVjqG+BcsofqEfaFtKdJG
-M8OOqCPMduKgiVjft71IooluV4/p2w==
-=dgoq
------END PGP SIGNATURE-----
-
---yEMEG4PtvOkWsDVy--
