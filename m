@@ -1,41 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17A242A15A;
-	Fri, 17 Jul 2026 14:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091B83B813D;
+	Fri, 17 Jul 2026 14:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784299055; cv=none; b=eCLBpsOTws+CU5LOL/FpudmlhirXmUYJjSBwGU0hZeS2DB+29fVjjDpzEkSkNHArToTfN/4Qx8suXfOTtIp5TMVgX7jx74vPFmHBKTUOfZcwa/MwfUnNlahZXxuV825jsbSrg2xbmrNiwFAFQFRyM9i7JJvosL8gVPCd2RUjFCU=
+	t=1784299214; cv=none; b=POHPiHansSjnODycdywnyjg6ES22jfHGRIgnTDhjPCtIweorFVbKsmYANC/V2XWaG1mfB8BqEeGKtnAXyg/wOX/2fh1QfWfP+rZ4xxWmSToHi3kdhjXeZ5OX6ACXL7+QYYSCEkcbPm9mQBZXBFDqgg5qjH6FN9VPRlKMIU8z32U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784299055; c=relaxed/simple;
-	bh=0mAgII1pBWs64bQMdJewPkI+gmuifxcGNNAfjwMEXUo=;
+	s=arc-20240116; t=1784299214; c=relaxed/simple;
+	bh=DqKb6oMoY60VaZXm+9ZtVJSlvmsCXERbXuMpzGVRd1E=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tzcyhQWqUF00H0WLWl5ufxb3011MTG1F5UxDn4/Jp0X1u24E4UP63RfoGdjRoAPOQqLIMJ0juq9XnlB6pzPntQODdx55HvnXwafEoWH+ozWVU+jMXusbLMbBL9qgKl5J8EI2Tzlgj4nfcHDUBom6i2aH4GbZj/bDMEp7SHH6TQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBEsNk2o; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=FWToL8DZqNtr/UaWlNMR/c7DSWc+yJUviqq3dckn02beV5Isld6AK/ACan9yKf9D1+Yc/4a4gj5XTuj2gGAGHKNjB/ddzBXYYwGpD5LPlTUi86p8bRvO5VMrx7YKIXNu2oC+uo5PU0ZhNZ8O+OvXvv0FJcDdlWS2qZmQhJY+AII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brh0cHYR; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBEsNk2o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0F31F000E9;
-	Fri, 17 Jul 2026 14:37:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brh0cHYR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9E01F000E9;
+	Fri, 17 Jul 2026 14:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784299053;
-	bh=Ji2ATxuj8q8jgZCb9I8JQClljgwqwAd9NslIIGKBE7I=;
+	s=k20260515; t=1784299212;
+	bh=yuQHt4vM4oxzyIT7gGQbZcveylM2LK1m0oDVVsHVNn0=;
 	h=Date:From:To:Cc:Subject;
-	b=BBEsNk2o+Jz5TQjUJauFNt8N4mJHsRtdbYOs++ixBqKbU5MvGJ9lguad29dUUGe6s
-	 inQKZ2S4XSH4jC1hmGJIgAPyeaXMdFEqmqGGv51OQ//yNqcNcxoSUqqbzMET4P/A4R
-	 FPoAPJYMgNozE2jQT7EKmjPdEGGpPt6zGPMA9C3nsUBDgBFmqrvNxbAKhziNJ4jRGf
-	 /Zuz35mfdfR0XNuF0BWZ8pI7XvVZHoTWL7fGvbh7FeKB8heS8130ze/MROkJsM3lEi
-	 NGO/wJV3Y7AGDt6EH54bwFmt+Zwg9ZTHUDY3ggM7Ihi8MfaHvdOAzA/9887ACusJAi
-	 ousQYZatpENRg==
-Date: Fri, 17 Jul 2026 15:37:29 +0100
+	b=brh0cHYRUYcSWqtSQKAi1bBfIcYHt1ja5/GmB2boKe+VonMCKi5Qu3WooUpOUn+mR
+	 9CRJKMLEcCOxeognYp8B3JL5bVDNIs0KPOoE8PYAG7yxN1Hlyt/PeveEyxAt3XPi1t
+	 zfTpI1+1hV31K2/XZQMC2lPeSNe0R/FwfvfD6hzyKezJCemAIrhXp8Xe0niHqG+tUv
+	 4fxBIzcKB/guUAyR/Qp/gpnAT8xIjKTVgq31jloKmvfUkxkfErSPvosudz6MjmdrTE
+	 tBGiZMURW9wodSfwBQlZwvntRbN2n/o2d9934IJUHJXcdXOruGvwqGDTIVcurjjkGP
+	 OBW9Xu9L/jfBQ==
+Date: Fri, 17 Jul 2026 15:40:07 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Kiran K <kiran.k@intel.com>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Chenyu Chen <chen-yu.chen@amd.com>,
+	Dmytro Laktyushkin <dmytro.laktyushkin@amd.com>,
+	Gabe Teeger <gabe.teeger@amd.com>,
+	George Zhang <george.zhang@amd.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Subject: linux-next: manual merge of the bluetooth tree with the origin tree
-Message-ID: <alo-KZ1Sk8BxsLkG@sirena.org.uk>
+	Matthew Stewart <matthew.stewart2@amd.com>,
+	Peichen Huang <PeiChen.Huang@amd.com>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <alo-x_TORE2vBFlX@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,34 +48,46 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LcNeeMLPcRa06oZ0"
+	protocol="application/pgp-signature"; boundary="ZZLZ1kTB3QU/qgb3"
 Content-Disposition: inline
 
 
---LcNeeMLPcRa06oZ0
+--ZZLZ1kTB3QU/qgb3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bluetooth tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/bluetooth/btintel_pcie.c
+  drivers/gpu/drm/amd/display/dc/resource/dcn42b/dcn42b_resource.c
 
-between commit:
+between commits:
 
-  9c36951474d8e ("Bluetooth: btintel_pcie: Refactor FLR to use device_repro=
-be()")
+  6351003b1f4ec ("drm/amd/display: wire DCN42B mcache programming callback")
+  57cf172be2827 ("drm/amd/display: fix dcn42b det allocation order")
+  c4bc7ffb91586 ("drm/amd/display: Fix DCN42B null registers & register mas=
+ks")
 
-=66rom the origin tree and commit:
+=66rom the drm-fixes tree and commits:
 
-  603b91aeb20a2 ("Bluetooth: btintel_pcie: Refactor FLR to use device_repro=
-be()")
-  ca75417ab1793 ("Bluetooth: btintel_pcie: split coredump worker into per-t=
-rigger works")
+  85453fb4ff726 ("drm/amd/display: wire DCN42B mcache programming callback")
+  183bbded999a7 ("drm/amd/display: fix dcn42b det allocation order")
+  fd651b9a3be9e ("drm/amd/display: Add DCN42B VID_CRC_CONTROL and HBLANK_CO=
+NTROL registers")
+  219fb1f4c5b91 ("drm/amd/display: Enable zstate support and fix seamless b=
+oot")
+  b7d69145907cd ("drm/amd/display: Fix DCN42B null registers & register mas=
+ks")
+  6cefc59d36667 ("drm/amd/display: Enable IPS support for DCN4 Variant")
+  329baa1c5f62b ("drm/amd/display: Enable PSR and Replay on DCN4 variant [P=
+art 2]")
+  e14fcf9e5d2b5 ("drm/amd/display: correct encoder minimal creation")
+  d2184b1ba1be2 ("drm/amd/display: Enable pstate for DCN4 non-emulation bui=
+lds")
 
-=66rom the bluetooth tree.
+=66rom the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -79,467 +96,156 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/bluetooth/btintel_pcie.c
-index 2b7231be5973d,2e28847263ab0..0000000000000
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@@ -1446,72 -1446,134 +1446,134 @@@ exit_on_error
-  	return err;
-  }
+diff --combined drivers/gpu/drm/amd/display/dc/resource/dcn42b/dcn42b_resou=
+rce.c
+index 94e166c0a9b0b,2334bc5b75b8f..0000000000000
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn42b/dcn42b_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn42b/dcn42b_resource.c
+@@@ -134,6 -134,19 +134,6 @@@
+  #define regHUBP3_HUBPREQ_DEBUG                0x088d
+  #define regHUBP3_HUBPREQ_DEBUG_BASE_IDX       2
  =20
-+ /* Queue a coredump dump_traces() pass.
-+  *
-+  * Returns true if a new coredump was queued, false if one was already
-+  * in-flight (the BTINTEL_PCIE_COREDUMP_INPROGRESS bit serves as the
-+  * single-writer guard for the @coredump_work item) or the workqueue is
-+  * disabled (reset / remove in progress).
-+  *
-+  * Always queue this AFTER any companion event-reader work (hwexp /
-+  * fwtrigger) so that, on the ordered @dump_workqueue, the event reader
-+  * runs first and populates dmp_hdr.event_type / event_id before
-+  * dump_traces consumes them.
-+  */
-+ static bool btintel_pcie_queue_coredump(struct btintel_pcie_data *data,
-+ 					u16 trigger_reason)
-+ {
-+ 	if (test_and_set_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags))
-+ 		return false;
-+=20
-+ 	data->dmp_hdr.trigger_reason =3D trigger_reason;
-+=20
-+ 	if (queue_work(data->dump_workqueue, &data->coredump_work))
-+ 		return true;
-+=20
-+ 	/* Workqueue is disabled (reset/remove drained it). Release the
-+ 	 * guard so a later trigger, after re-probe, can succeed.
-+ 	 */
-+ 	clear_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags);
-+ 	return false;
-+ }
-+=20
-  static void btintel_pcie_msix_fw_trigger_handler(struct btintel_pcie_data=
- *data)
+ -#define regDP_SYM32_ENC0_DP_SYM32_ENC_VID_CRC_CONTROL                    =
+                               0x3687
+ -#define regDP_SYM32_ENC0_DP_SYM32_ENC_VID_CRC_CONTROL_BASE_IDX           =
+                               2
+ -#define regDP_SYM32_ENC1_DP_SYM32_ENC_VID_CRC_CONTROL                    =
+                               0x375b
+ -#define regDP_SYM32_ENC1_DP_SYM32_ENC_VID_CRC_CONTROL_BASE_IDX           =
+                               2
+ -#define regDP_SYM32_ENC2_DP_SYM32_ENC_VID_CRC_CONTROL                    =
+                               0x382f
+ -#define regDP_SYM32_ENC2_DP_SYM32_ENC_VID_CRC_CONTROL_BASE_IDX           =
+                               2
+ -#define regDP_SYM32_ENC0_DP_SYM32_ENC_HBLANK_CONTROL                     =
+                               0x366b
+ -#define regDP_SYM32_ENC0_DP_SYM32_ENC_HBLANK_CONTROL_BASE_IDX            =
+                               2
+ -#define regDP_SYM32_ENC1_DP_SYM32_ENC_HBLANK_CONTROL                     =
+                               0x373f
+ -#define regDP_SYM32_ENC1_DP_SYM32_ENC_HBLANK_CONTROL_BASE_IDX            =
+                               2
+ -#define regDP_SYM32_ENC2_DP_SYM32_ENC_HBLANK_CONTROL                     =
+                               0x3813
+ -#define regDP_SYM32_ENC2_DP_SYM32_ENC_HBLANK_CONTROL_BASE_IDX            =
+                               2
+ -
+  enum dcn401_clk_src_array_id {
+  	DCN401_CLK_SRC_PLL0,
+  	DCN401_CLK_SRC_PLL1,
+@@@ -253,10 -266,10 +253,10 @@@ static struct bios_registers bios_regs
+  static struct dce110_clk_src_regs clk_src_regs[5];
+ =20
+  static const struct dce110_clk_src_shift cs_shift =3D {
+- 	CS_COMMON_MASK_SH_LIST_DCN3_2(__SHIFT)
++ 	CS_COMMON_MASK_SH_LIST_DCN4_0_1(__SHIFT)
+  };
+  static const struct dce110_clk_src_mask cs_mask =3D {
+- 	CS_COMMON_MASK_SH_LIST_DCN3_2(_MASK)
++ 	CS_COMMON_MASK_SH_LIST_DCN4_0_1(_MASK)
+  };
+  #define abm_regs_init(id) \
+  	ABM_DCN42B_REG_LIST_RI(id)
+@@@ -351,7 -364,7 +351,7 @@@ static const struct dcn10_link_enc_mas
+  	LINK_ENCODER_MASK_SH_LIST_DCN42B(_MASK)};
+ =20
+  #define hpo_dp_stream_encoder_reg_init(id) \
+- 	DCN42B_HPO_DP_STREAM_ENC_REG_LIST_RI(id)
++ 	DCN42_HPO_DP_STREAM_ENC_REG_LIST_RI(id)
+ =20
+  static struct dcn31_hpo_dp_stream_encoder_registers hpo_dp_stream_enc_reg=
+s[4];
+ =20
+@@@ -775,7 -788,7 +775,7 @@@ static const struct dc_debug_options de
+  	.underflow_assert_delay_us =3D 0xFFFFFFFF,
+  	.dwb_fi_phase =3D -1, // -1 =3D disable,
+  	.dmub_command_table =3D true,
+- 	.pstate_enabled =3D false,
++ 	.pstate_enabled =3D true,
+  	.enable_mem_low_power =3D {
+  		.bits =3D {
+  			.vga =3D false,
+@@@ -801,7 -814,7 +801,7 @@@
+  		}
+  	},
+  	.seamless_boot_odm_combine =3D DML_FAIL_SOURCE_PIXEL_FORMAT,
+- 	.enable_z9_disable_interface =3D false, /* Allow support for the PMFW in=
+terface for disable Z9*/
++ 	.enable_z9_disable_interface =3D true, /* Allow support for the PMFW int=
+erface for disable Z9*/
+  	.minimum_z8_residency_time =3D 1, /* Always allow when other conditions =
+are met */
+  	.support_eDP1_5 =3D true,
+  	.use_max_lb =3D true,
+@@@ -823,7 -836,7 +823,7 @@@
+  	.disable_timeout =3D true,
+  	.min_disp_clk_khz =3D 50000,
+  	.static_screen_wait_frames =3D 2,
+- 	.disable_z10 =3D true,
++ 	.disable_z10 =3D false,
+  	.ignore_pg =3D true,
+  	.disable_stutter_for_wm_program =3D true,
+  	.min_deep_sleep_dcfclk_khz =3D 8000,
+@@@ -1034,9 -1047,9 +1034,9 @@@ static struct hubp *dcn42b_hubp_create
+  }
+  static const struct dc_panel_config dcn42b_panel_config_defaults =3D {
+  	.psr =3D {
+- 		.disable_psr =3D true,
++ 		.disable_psr =3D false,
+  		.disallow_psrsu =3D true,
+- 		.disallow_replay =3D true,
++ 		.disallow_replay =3D false,
+  	},
+  	.ilr =3D {
+  		.optimize_edp_link_rate =3D true,
+@@@ -1842,7 -1855,7 +1842,7 @@@ static struct link_encoder *dcn42b_link
   {
-  	bt_dev_dbg(data->hdev, "Received firmware smart trigger cause");
+  	struct dcn20_link_encoder *enc20;
  =20
-- 	if (test_and_set_bit(BTINTEL_PCIE_FWTRIGGER_DUMP_INPROGRESS, &data->flag=
-s))
-+ 	/* Per-work guard: deduplicate concurrent FW-trigger interrupts.
-+ 	 * Cleared at the tail of btintel_pcie_fwtrigger_worker().
-+ 	 */
-+ 	if (test_and_set_bit(BTINTEL_PCIE_FWTRIGGER_DUMP_INPROGRESS,
-+ 			     &data->flags))
-  		return;
+- 	if ((unsigned int)(eng_id - ENGINE_ID_DIGA) > ctx->dc->res_pool->res_cap=
+->num_dig_link_enc)
++ 	if ((unsigned int)(eng_id - ENGINE_ID_DIGA) >=3D ctx->dc->res_pool->res_=
+cap->num_dig_link_enc)
+  		return NULL;
  =20
-- 	/* Trigger device core dump when there is FW assert */
-- 	if (!test_and_set_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags))
-- 		data->dmp_hdr.trigger_reason =3D BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT;
-+ 	if (!queue_work(data->dump_workqueue, &data->fwtrigger_work)) {
-+ 		clear_bit(BTINTEL_PCIE_FWTRIGGER_DUMP_INPROGRESS, &data->flags);
-+ 		return;
-+ 	}
+  	enc20 =3D kzalloc(sizeof(struct dcn20_link_encoder), GFP_KERNEL);
+@@@ -1854,6 -1867,8 +1854,8 @@@
+  			ctx,
+  			&link_enc_feature,
+  			&link_enc_regs[eng_id - ENGINE_ID_DIGA],
++ 			&le_shift,
++ 			&le_mask,
+  			eng_id);
  =20
-- 	queue_work(data->coredump_workqueue, &data->coredump_work);
-+ 	/* Queue coredump after the fwtrigger event reader so dmp_hdr.event_*
-+ 	 * is populated before dump_traces consumes it.
-+ 	 */
-+ 	btintel_pcie_queue_coredump(data, BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT);
-  }
+  	return &enc20->enc10.base;
+@@@ -2002,11 -2017,10 +2004,10 @@@ static bool dcn42b_resource_construct
+  	dc->caps.dmcub_support =3D true;
+  	dc->caps.is_apu =3D true;
+  	dc->caps.seamless_odm =3D true;
+- 	dc->caps.zstate_support =3D false;
+- 	dc->caps.ips_support =3D false;
++ 	dc->caps.zstate_support =3D true;
++ 	dc->caps.ips_support =3D true;
+  	dc->caps.max_v_total =3D (1 << 15) - 1;
+  	dc->caps.vtotal_limited_by_fp2 =3D true;
+- 	dc->config.disable_ips =3D DMUB_IPS_DISABLE_ALL;
  =20
-  static void btintel_pcie_msix_hw_exp_handler(struct btintel_pcie_data *da=
-ta)
-  {
-  	bt_dev_err(data->hdev, "Received hw exception interrupt");
- =20
-+ 	/* CORE_HALTED is the single-writer guard for this handler. It is
-+ 	 * set once on first HW exception and cleared only by re-probe
-+ 	 * (data is reallocated), so it also serializes hwexp_work
-+ 	 * scheduling without needing a separate bit.
-+ 	 */
-  	if (test_and_set_bit(BTINTEL_PCIE_CORE_HALTED, &data->flags))
-  		return;
- =20
-- 	if (test_and_set_bit(BTINTEL_PCIE_HWEXP_INPROGRESS, &data->flags))
-- 		return;
-+ 	/* Queue companion coredump first so it is appended after hwexp_work
-+ 	 * on the ordered @dump_workqueue (preserves the original
-+ 	 * coredump-then-hwexp ordering).
-+ 	 */
-+ 	btintel_pcie_queue_coredump(data, BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT);
- =20
-- 	/* Trigger device core dump when there is HW  exception */
-- 	if (!test_and_set_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags))
-- 		data->dmp_hdr.trigger_reason =3D BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT;
--=20
-- 	queue_work(data->coredump_workqueue, &data->coredump_work);
-+ 	queue_work(data->dump_workqueue, &data->hwexp_work);
-  }
- =20
-  static void btintel_pcie_coredump_worker(struct work_struct *work)
-  {
-  	struct btintel_pcie_data *data =3D container_of(work,
-  					struct btintel_pcie_data, coredump_work);
-- 	int err;
- =20
-  	/* hdev is NULL until setup_hdev() succeeds, and is cleared on
-  	 * teardown after disable_work_sync() drains us; bail in that case.
-  	 */
-+ 	if (!data->hdev)
-+ 		goto out;
-+=20
-+ 	btintel_pcie_dump_traces(data->hdev);
-+ out:
-+ 	/* Release guard last so a new trigger can run only after this
-+ 	 * pass has fully completed (including dev_coredumpv()).
-+ 	 */
-+ 	clear_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags);
-+ }
-+=20
-+ static void btintel_pcie_hwexp_worker(struct work_struct *work)
-+ {
-+ 	struct btintel_pcie_data *data =3D container_of(work,
-+ 					struct btintel_pcie_data, hwexp_work);
-+=20
-  	if (!data->hdev)
-  		return;
- =20
-- 	if (test_bit(BTINTEL_PCIE_FWTRIGGER_DUMP_INPROGRESS, &data->flags)) {
-- 		err =3D btintel_pcie_dump_fwtrigger_event(data);
-- 		if (err)
-- 			bt_dev_warn(data->hdev, "failed to log fwtrigger event");
-- 		clear_bit(BTINTEL_PCIE_FWTRIGGER_DUMP_INPROGRESS, &data->flags);
-- 	}
-+ 	/* Unlike usb products, controller will not send hardware exception
-+ 	 * event on exception. Instead controller writes the hardware event
-+ 	 * to device memory along with optional debug events, raises MSIX
-+ 	 * and halts. Driver shall read the exception event from device
-+ 	 * memory and passes it to the stack for further processing.
-+ 	 *
-+ 	 * Re-entry is gated by BTINTEL_PCIE_CORE_HALTED in the IRQ
-+ 	 * handler, which is only cleared by re-probe; no per-work bit
-+ 	 * is needed here.
-+ 	 */
-+ 	btintel_pcie_read_hwexp(data);
-+ }
- =20
-- 	if (test_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags)) {
-- 		btintel_pcie_dump_traces(data->hdev);
-- 		clear_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags);
-- 	}
-+ static void btintel_pcie_fwtrigger_worker(struct work_struct *work)
-+ {
-+ 	struct btintel_pcie_data *data =3D container_of(work,
-+ 					struct btintel_pcie_data, fwtrigger_work);
-+ 	int err;
- =20
-- 	if (test_bit(BTINTEL_PCIE_HWEXP_INPROGRESS, &data->flags)) {
-- 		/* Unlike usb products, controller will not send hardware
-- 		 * exception event on exception. Instead controller writes the
-- 		 * hardware event to device memory along with optional debug
-- 		 * events, raises MSIX and halts. Driver shall read the
-- 		 * exception event from device memory and passes it stack for
-- 		 * further processing.
-- 		 */
-- 		btintel_pcie_read_hwexp(data);
-- 		clear_bit(BTINTEL_PCIE_HWEXP_INPROGRESS, &data->flags);
-- 	}
-+ 	if (!data->hdev)
-+ 		goto out;
-+=20
-+ 	err =3D btintel_pcie_dump_fwtrigger_event(data);
-+ 	if (err)
-+ 		bt_dev_warn(data->hdev, "failed to log fwtrigger event");
-+ out:
-+ 	/* Release guard last; matches set in fw_trigger handler. */
-+ 	clear_bit(BTINTEL_PCIE_FWTRIGGER_DUMP_INPROGRESS, &data->flags);
-  }
- =20
-  static void btintel_pcie_rx_work(struct work_struct *work)
-@@@ -2488,8 -2550,6 +2550,6 @@@ static void btintel_pcie_inc_recovery_c
-  	}
-  }
- =20
-- static void btintel_pcie_reset(struct hci_dev *hdev);
--=20
-  static int btintel_pcie_acpi_reset_method(struct btintel_pcie_data *data)
-  {
-  	union acpi_object *obj, argv4;
-@@@ -2650,20 -2710,22 +2710,22 @@@ static void btintel_pcie_reset_work(str
-  	btintel_pcie_synchronize_irqs(data);
- =20
-  	flush_work(&data->rx_work);
-- 	/* Drain any in-flight coredump and block new ones across reset.
-- 	 * Safe from self-deadlock: coredump_work runs on a separate wq.
-+ 	/* Drain any in-flight dump workers and block new ones across reset.
-+ 	 * Safe from self-deadlock: they all run on a separate wq.
-  	 */
-  	disable_work_sync(&data->coredump_work);
-+ 	disable_work_sync(&data->hwexp_work);
-+ 	disable_work_sync(&data->fwtrigger_work);
- =20
-  	bt_dev_dbg(data->hdev, "Release bluetooth interface");
- =20
-  	/* Both reset paths follow the same contract: on success they
-  	 * destroy 'data' via device_reprobe() (a fresh probe re-INIT_WORKs
-- 	 * the coredump_work with disable count 0), so enable_work() must
-+ 	 * the dump workers with disable count 0), so enable_work() must
-  	 * NOT be called on the success path. Only the FLR path can fail
-  	 * with 'data' still alive, in which case we balance the
-- 	 * disable_work_sync() above so a later successful reset is not
-- 	 * permanently blocked.
-+ 	 * disable_work_sync() calls above so a later successful reset is
-+ 	 * not permanently blocked.
-  	 *
-  	 * pci_lock_rescan_remove() (held above) serializes against PCI
-  	 * device addition/removal (hotplug), so no device can be added to
-@@@ -2674,64 -2736,97 +2736,97 @@@
-  		goto out;
-  	}
- =20
-- 	if (btintel_pcie_perform_flr(data))
-+ 	if (btintel_pcie_perform_flr(data)) {
-  		enable_work(&data->coredump_work);
-+ 		enable_work(&data->hwexp_work);
-+ 		enable_work(&data->fwtrigger_work);
-+ 	}
- =20
-  out:
-  	pci_dev_put(pdev);
-  	pci_unlock_rescan_remove();
-  }
- =20
-- static void btintel_pcie_reset(struct hci_dev *hdev)
-+ /* Schedule a device reset of the requested type.
-+  *
-+  * BTINTEL_PCIE_RECOVERY_IN_PROGRESS serializes all reset requesters
-+  * (sysfs reset attribute, hci_cmd_timeout(), hw_error, resume error
-+  * path, etc.) so that:
-+  *
-+  *   - dev_data->reset_type is written by exactly one caller (the
-+  *     thread that wins test_and_set_bit), eliminating the race where
-+  *     a second hw_error could clobber an already-scheduled reset's
-+  *     type;
-+  *   - the write happens AFTER the bit is set, so reset_work observes
-+  *     it through schedule_work()'s memory ordering;
-+  *   - losers return without touching reset_type or scheduling the
-+  *     work, so concurrent triggers are silently coalesced into the
-+  *     in-flight one (whose recovery will reinitialize the device
-+  *     regardless of the dropped trigger's variant).
-+  *
-+  * The bit is cleared only by .remove() / re-probe via fresh devm
-+  * allocation, which is the intended one-shot semantics: a reset
-+  * tears down and re-probes 'data', so there is no "in-flight"
-+  * reset to follow up after device_reprobe() succeeds.
-+  */
-+ static void btintel_pcie_request_reset(struct btintel_pcie_data *data,
-+ 				       enum btintel_pcie_reset_type type)
-  {
-- 	struct btintel_pcie_data *data;
--=20
-- 	data =3D hci_get_drvdata(hdev);
--=20
-  	if (!test_bit(BTINTEL_PCIE_SETUP_DONE, &data->flags))
-  		return;
- =20
-  	if (test_and_set_bit(BTINTEL_PCIE_RECOVERY_IN_PROGRESS, &data->flags))
-  		return;
- =20
-+ 	data->reset_type =3D type;
-+=20
-  	pci_dev_get(data->pdev);
-  	schedule_work(&data->reset_work);
-  }
- =20
-+ static void btintel_pcie_hci_reset(struct hci_dev *hdev)
-+ {
-+ 	struct btintel_pcie_data *data =3D hci_get_drvdata(hdev);
-+=20
-+ 	btintel_pcie_request_reset(data, BTINTEL_PCIE_IOSF_PRR_FLR);
-+ }
-+=20
-  static void btintel_pcie_hw_error(struct hci_dev *hdev, u8 code)
-  {
-- 	struct btintel_pcie_dev_recovery *data;
-+ 	struct btintel_pcie_dev_recovery *rec;
-  	struct btintel_pcie_data *dev_data =3D hci_get_drvdata(hdev);
-  	struct pci_dev *pdev =3D dev_data->pdev;
-+ 	enum btintel_pcie_reset_type type;
-  	time64_t retry_window;
- =20
-+ 	if (test_bit(BTINTEL_PCIE_RECOVERY_IN_PROGRESS, &dev_data->flags))
-+ 		return;
-+=20
-  	btintel_pcie_dump_debug_registers(hdev);
- =20
-- 	data =3D btintel_pcie_get_recovery(pdev, &hdev->dev);
-- 	if (!data)
-+ 	rec =3D btintel_pcie_get_recovery(pdev, &hdev->dev);
-+ 	if (!rec)
-  		return;
- =20
-- 	if (code =3D=3D 0x13)
-- 		dev_data->reset_type =3D BTINTEL_PCIE_IOSF_PRR_PLDR;
-- 	else
-- 		dev_data->reset_type =3D BTINTEL_PCIE_IOSF_PRR_FLR;
-+ 	type =3D (code =3D=3D 0x13) ? BTINTEL_PCIE_IOSF_PRR_PLDR
-+ 			      : BTINTEL_PCIE_IOSF_PRR_FLR;
- =20
-  	bt_dev_err(hdev, "Encountered exception err:0x%x triggering: %s", code,
-- 		   dev_data->reset_type =3D=3D BTINTEL_PCIE_IOSF_PRR_PLDR ? "PLDR" : "F=
-LR");
-- 	retry_window =3D ktime_get_boottime_seconds() - data->last_error;
-+ 		   type =3D=3D BTINTEL_PCIE_IOSF_PRR_PLDR ? "PLDR" : "FLR");
-+ 	retry_window =3D ktime_get_boottime_seconds() - rec->last_error;
- =20
-  	if (retry_window < BTINTEL_PCIE_RESET_WINDOW_SECS &&
-- 	    data->count >=3D BTINTEL_PCIE_FLR_MAX_RETRY) {
-+ 	    rec->count >=3D BTINTEL_PCIE_FLR_MAX_RETRY) {
-  		bt_dev_err(hdev, "Exhausted maximum: %d recovery attempts: %d",
-- 			   BTINTEL_PCIE_FLR_MAX_RETRY, data->count);
-+ 			   BTINTEL_PCIE_FLR_MAX_RETRY, rec->count);
-  		bt_dev_dbg(hdev, "Boot time: %lld seconds",
-  			   ktime_get_boottime_seconds());
-  		bt_dev_dbg(hdev, "last error at: %lld seconds",
-- 			   data->last_error);
-+ 			   rec->last_error);
-  		return;
-  	}
-  	btintel_pcie_inc_recovery_count(pdev, &hdev->dev);
-- 	btintel_pcie_reset(hdev);
-+ 	btintel_pcie_request_reset(dev_data, type);
-  }
- =20
-  static bool btintel_pcie_wakeup(struct hci_dev *hdev)
-@@@ -2821,7 -2916,7 +2916,7 @@@ static int btintel_pcie_setup_hdev(stru
-  	hdev->hw_error =3D btintel_pcie_hw_error;
-  	hdev->set_diag =3D btintel_set_diag;
-  	hdev->set_bdaddr =3D btintel_set_bdaddr;
-- 	hdev->reset =3D btintel_pcie_reset;
-+ 	hdev->reset =3D btintel_pcie_hci_reset;
-  	hdev->wakeup =3D btintel_pcie_wakeup;
-  	hdev->hci_drv =3D &btintel_pcie_hci_drv;
- =20
-@@@ -2869,8 -2964,8 +2964,8 @@@ static int btintel_pcie_probe(struct pc
-  	if (!data->workqueue)
-  		return -ENOMEM;
- =20
-- 	data->coredump_workqueue =3D alloc_ordered_workqueue(KBUILD_MODNAME "_cd=
-", 0);
-- 	if (!data->coredump_workqueue) {
-+ 	data->dump_workqueue =3D alloc_ordered_workqueue(KBUILD_MODNAME "_cd", 0=
-);
-+ 	if (!data->dump_workqueue) {
-  		destroy_workqueue(data->workqueue);
-  		return -ENOMEM;
-  	}
-@@@ -2879,6 -2974,8 +2974,8 @@@
-  	INIT_WORK(&data->rx_work, btintel_pcie_rx_work);
-  	INIT_WORK(&data->reset_work, btintel_pcie_reset_work);
-  	INIT_WORK(&data->coredump_work, btintel_pcie_coredump_worker);
-+ 	INIT_WORK(&data->hwexp_work, btintel_pcie_hwexp_worker);
-+ 	INIT_WORK(&data->fwtrigger_work, btintel_pcie_fwtrigger_worker);
- =20
-  	data->boot_stage_cache =3D 0x00;
-  	data->img_resp_cache =3D 0x00;
-@@@ -2921,7 -3018,7 +3018,7 @@@ exit_error
-  	/* reset device before exit */
-  	btintel_pcie_reset_bt(data);
- =20
-- 	destroy_workqueue(data->coredump_workqueue);
-+ 	destroy_workqueue(data->dump_workqueue);
- =20
-  	pci_clear_master(pdev);
- =20
-@@@ -2940,12 -3037,14 +3037,14 @@@ static void btintel_pcie_remove(struct=
-=20
-  		return;
-  	}
- =20
-- 	/* Permanently block coredump triggers and drain the worker before
-- 	 * tearing down. Must run before cancel_work_sync(&reset_work) so
-- 	 * the disable counter stays >=3D 1 even after reset_work()'s
-+ 	/* Permanently block all dump triggers and drain the workers before
-+ 	 * tearing down. Must run before disable_work_sync(&reset_work) so
-+ 	 * the disable counters stay >=3D 1 even after reset_work()'s
-  	 * balanced enable_work() (counter 2 -> 1, never reaching 0).
-  	 */
-  	disable_work_sync(&data->coredump_work);
-+ 	disable_work_sync(&data->hwexp_work);
-+ 	disable_work_sync(&data->fwtrigger_work);
- =20
-  	/* Cancel pending reset work. Skip only when remove() is called from
-  	 * within the reset work itself (PLDR device_reprobe path) to avoid
-@@@ -2973,7 -3072,7 +3072,7 @@@
- =20
-  	btintel_pcie_release_hdev(data);
- =20
-- 	destroy_workqueue(data->coredump_workqueue);
-+ 	destroy_workqueue(data->dump_workqueue);
-  	destroy_workqueue(data->workqueue);
- =20
-  	btintel_pcie_free(data);
-@@@ -2992,16 -3091,8 +3091,8 @@@ static void btintel_pcie_coredump(struc
-  	if (!data)
-  		return;
- =20
-- 	if (test_and_set_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags))
-- 		return;
--=20
-- 	data->dmp_hdr.trigger_reason  =3D BTINTEL_PCIE_TRIGGER_REASON_USER_TRIGG=
-ER;
-- 	/* queue_work() returns false if the work is disabled (reset or
-- 	 * remove in progress); clear the in-progress bit so a later
-- 	 * trigger can succeed once the work is re-enabled.
-- 	 */
-- 	if (!queue_work(data->coredump_workqueue, &data->coredump_work))
-- 		clear_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS, &data->flags);
-+ 	btintel_pcie_queue_coredump(data,
-+ 				    BTINTEL_PCIE_TRIGGER_REASON_USER_TRIGGER);
-  }
-  #endif
- =20
-@@@ -3113,8 -3204,7 +3204,7 @@@ static int btintel_pcie_resume(struct d
-  	if (data->pm_sx_event =3D=3D PM_EVENT_FREEZE ||
-  	    data->pm_sx_event =3D=3D PM_EVENT_HIBERNATE) {
-  		set_bit(BTINTEL_PCIE_CORE_HALTED, &data->flags);
-- 		data->reset_type =3D BTINTEL_PCIE_IOSF_PRR_FLR;
-- 		btintel_pcie_reset(data->hdev);
-+ 		btintel_pcie_request_reset(data, BTINTEL_PCIE_IOSF_PRR_FLR);
-  		return 0;
-  	}
- =20
-@@@ -3138,14 -3228,10 +3228,10 @@@
-  	if (btintel_pcie_in_error(data) ||
-  			btintel_pcie_in_device_halt(data)) {
-  		bt_dev_err(data->hdev, "Controller in error state for D0 entry");
-- 		if (!test_and_set_bit(BTINTEL_PCIE_COREDUMP_INPROGRESS,
-- 				      &data->flags)) {
-- 			data->dmp_hdr.trigger_reason =3D
-- 				BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT;
-- 			queue_work(data->coredump_workqueue, &data->coredump_work);
-- 		}
-+ 		btintel_pcie_queue_coredump(data,
-+ 					    BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT);
-  		set_bit(BTINTEL_PCIE_CORE_HALTED, &data->flags);
-- 		btintel_pcie_reset(data->hdev);
-+ 		btintel_pcie_request_reset(data, BTINTEL_PCIE_IOSF_PRR_FLR);
-  	}
-  	return err;
-  }
+  	/* Color pipeline capabilities */
+  	dc->caps.color.dpp.dcn_arch =3D 1;
 
---LcNeeMLPcRa06oZ0
+--ZZLZ1kTB3QU/qgb3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpaPigACgkQJNaLcl1U
-h9AL7ggAgYX0MueH9MSISxgU47yFIdUwaeTaUAGSTyxRNBTywjh0ywcenLjv9Pac
-ssLJak0q1cW95YKTs+FnCWl25WshlIHjQ1Pzgl+chF8SkThxulbUpz1iLMDsZYDs
-ZGr3ZietBzoaheKc/RWByFhXa8fEppCP51NBRfbtxBxPFCccLdVULi01R8bc22h0
-8hj2w33+E9ky3T96iqzvx798OaOZ/x1cG/HCGqKWoC7m8LFPWnVmilea37GxRoYk
-WfbMIEn+W66mHf1cIxZ0w3/O4U8FaNOFnOjIv8/nObwcptgIutuTAuLtEmd6ep0k
-W42iE5CBhI85a9aSvghZtThBA731+w==
-=8ROa
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpaPsYACgkQJNaLcl1U
+h9ArGAf/dlUzmiBaiMxRIJeqDXrNp5EwMGCaq/ZZyCBc7TCM9SGl+OGqRjQ2QzsF
+Hqrw9ZuKi5ZAzVNOSMzjkIxvXTdWxMOXMV479LhADLHH5CxRuM7/RAeY2mp0fVoQ
+nFb4HCbA6KQf8V7Ug6br1qxH4L4gbw+fhOC4xGE+w07Twyhsgx+9qiyclkjp5L0r
+6EtFnyPpZ/sd2E4ZvLIZ8P5cA/IvN9DpLb4f2MEBu0bmhrSJHiQBfyd+PuBm+iDC
+Eha0ZMUzl6+X7mwlr+CCkgQwuttrMABQaYXh8mtNr8f+i2KzLUL5HxWEHBadYP+8
+uBCfOH0fX7pFmFS+oQCJKTyu4xWvWQ==
+=E5qr
 -----END PGP SIGNATURE-----
 
---LcNeeMLPcRa06oZ0--
+--ZZLZ1kTB3QU/qgb3--
