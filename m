@@ -1,50 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A633DDB04;
-	Fri, 17 Jul 2026 15:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFFD42D747;
+	Fri, 17 Jul 2026 15:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784300807; cv=none; b=OdB+RwMG/6ybxTjEuQmqJtk/y4DhxkLlxf1/mwD+2a8GKHFNr2FEjbwjZYWCt8CoGeAPcg8nq/t+kgwNQ2RP//3h2liGWXVUJzYmNt6XXv9xJSKCtOzN8133rLugruS1CgBzlZsKTbjXVtNoW4esNxd7TRSnHAkb4NjVPXKw0oo=
+	t=1784301132; cv=none; b=I5siT1fyxCBtJYVJTrw5dsyfFxFOyU/o/9xBmu8ARp/3vk6FMN2Mi1DI08XYlMZAXxJ/eHgM2D6r2RviSb7nouKcJhR8Hr1rO1BiPDJ/ZPD9TkSXkl+jh/Sk+u3Uzdm9Hem+zwq2vXNBt5dyRx07TxWdPVMwC0nr08XA18OSM7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784300807; c=relaxed/simple;
-	bh=u43OrpAdzjx8i5nr5EfDqm/Zy3FttA5vjjC+HkzhrUY=;
+	s=arc-20240116; t=1784301132; c=relaxed/simple;
+	bh=mOd4yKvktln/6IylrIrgKQ0KscVsfQqutsYaHzvFD+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nq0pKIQIbNQFaixbPaLwgY98EO79oD6LNe0fP27qA1ODB3Z+QjQsrlO45XuKCG9V3nVXmupLKtwBVCLqIS5JNF8+8/nXaUZTO1O3qE+IFXFDNXcjG8KKDnKJR669YYyTataSbHS6EHb/4lcLU27cVnjnlsBQfCsWkmm/brh9xuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvh/1ZYx; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fby31jdGHlaCyjSxGwBSTRIwZpSYmrPFQ9zPTsrDmvIrfeg6TToZZQe0c6/gSB2/najWYd2ud4pKBbP8PKsfVrjVNXPIimyctxhp0/+0Mj2MD8WchuBYy1KNbysPMfSR9OaSfYEX9HwMpZO+7bHfhd9IvW4huE9jlYrHjhgGmIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zi0Qlyig; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvh/1ZYx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6CFB1F00A3A;
-	Fri, 17 Jul 2026 15:06:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zi0Qlyig"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF2D1F000E9;
+	Fri, 17 Jul 2026 15:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784300804;
-	bh=SGo9Ahhy5DeRhGd46FR4yFwXuPOcj4LGAxdldDN4Uj4=;
+	s=k20260515; t=1784301130;
+	bh=F/QA0Yq5ZBmneMvPVvb9OjyEuQx6hTVgoJ+uI8nUFgY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fvh/1ZYxmL7mHLmaTF5kKIrRzQs/ape/y0fxft588IV8ez/lYSqCPLyJW4KXJLuyy
-	 heWuDriG8NRmJMJMo+3AibZiUQATsRvv+u+upOOCZ/msz+g1gWanGBFUZdShwepPxG
-	 WEW/pJrOSFKHQ1qMBz59rKW5olnk9deAgeVSHoIhmFvg5rqheA4DXmHi5r0F8eLiuq
-	 CJ1Z4g14sNyK5eIk1gOYkPUla8fBS/p63Xf8zIZn/BaOGdjztFnrHkijDo8qSV4O/d
-	 RNz7byr/krMXw/lp9Lw4jJmrDY7k5u4jvOzq7ssPaDUcdcg534PFaz/SaYS75PCOU8
-	 OvEbvCnrQ1Y8w==
-Received: from johan by xi.lan with local (Exim 4.99.4)
-	(envelope-from <johan@kernel.org>)
-	id 1wkk9C-00000007cxk-3WsE;
-	Fri, 17 Jul 2026 17:06:42 +0200
-Date: Fri, 17 Jul 2026 17:06:42 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Manuel Ebner <manuelebner@mailbox.org>,
+	b=Zi0QlyigCjCBkQ61CkWLH6nobkhhotWMWi6l+RMiPUJawOkn2m5MCord8UQZF7pKS
+	 B4cPvhpDeEpIk5hzD6QUb2sJlVut8GL1kZQaoiENH6LCou1RMqwF1CbhzGJnxCBVN9
+	 2rwDF4ID7+7m8VYv7gN+RLaPEIwOm3XTtnZT86OqsqPss5WlX+K0QoXK/7alVySnV7
+	 0VIGgMu5y5Vfc0+TelWMwNycdJq6HPgRP39q+T4bkD2z0YO1kDWnBwhoIVyftQrLMW
+	 7H84S12BqDDoNE0VHQjk+Z91LbFPdqUlw0fgvegQ8tJVeHwg6QfxfccY0hYxTzlI7k
+	 eGvJN59Q19W1A==
+Date: Fri, 17 Jul 2026 16:12:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Chenyu Chen <chen-yu.chen@amd.com>,
+	Dmytro Laktyushkin <dmytro.laktyushkin@amd.com>,
+	Gabe Teeger <gabe.teeger@amd.com>,
+	George Zhang <george.zhang@amd.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in the final build
-Message-ID: <alpFAvt1AExGKx5f@hovoldconsulting.com>
-References: <alUk8OTfE-f9oQo8@sirena.org.uk>
- <4f9f5ff9-8eaa-4bd5-9331-37119f78e13f@sirena.org.uk>
- <c2fe4a81c639cddb65116d9b3526e82206927c0d.camel@mailbox.org>
- <2026071734-papyrus-unmovable-5826@gregkh>
- <alo-5gLdvyqY-TwB@hovoldconsulting.com>
- <99d6a70c-3986-4267-9934-e8d8b293cb47@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matthew Stewart <matthew.stewart2@amd.com>,
+	Peichen Huang <PeiChen.Huang@amd.com>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>
+Subject: Re: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <9c1d382f-1a2d-4b3b-a8ac-435e7818c64e@sirena.org.uk>
+References: <alo-x_TORE2vBFlX@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -52,49 +49,54 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j9jgMfF74rMkmYQ2"
+	protocol="application/pgp-signature"; boundary="p1BCFUjbatynoVHo"
 Content-Disposition: inline
-In-Reply-To: <99d6a70c-3986-4267-9934-e8d8b293cb47@sirena.org.uk>
+In-Reply-To: <alo-x_TORE2vBFlX@sirena.org.uk>
+X-Cookie: Enjoy yourself while you're still old.
 
 
---j9jgMfF74rMkmYQ2
+--p1BCFUjbatynoVHo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 17, 2026 at 03:54:05PM +0100, Mark Brown wrote:
-> On Fri, Jul 17, 2026 at 04:40:38PM +0200, Johan Hovold wrote:
->=20
-> > I was also waiting on Mark to follow up on this, otherwise I can take
-> > closer look at it.
->=20
-> > Based on a quick look it seemed like Mark was right about missing static
-> > keywords in a driver indirectly enabled by the "offending" commit.
->=20
-> IIRC I replied to the patch for the offending commit the other day.  At
-> some point I will get fed up and just revert the usb tree back to one
-> that works, it's a real pain doing that for issues in the final build.
->=20
-> This seems like it really ought to be straightforward to reproduce
-> localy...
+On Fri, Jul 17, 2026 at 03:40:07PM +0100, Mark Brown wrote:
 
-Oh, sorry. I misunderstood your comment about doing "something about
-this tomorrow" to mean that you intended to send a fix yourself.
+> Today's linux-next merge of the drm tree got a conflict in:
+>=20
+>   drivers/gpu/drm/amd/display/dc/resource/dcn42b/dcn42b_resource.c
+>=20
+> between commits:
+>=20
+>   6351003b1f4ec ("drm/amd/display: wire DCN42B mcache programming callbac=
+k")
+>   57cf172be2827 ("drm/amd/display: fix dcn42b det allocation order")
+>   c4bc7ffb91586 ("drm/amd/display: Fix DCN42B null registers & register m=
+asks")
+>=20
+> from the drm-fixes tree and commits:
+>=20
+>   85453fb4ff726 ("drm/amd/display: wire DCN42B mcache programming callbac=
+k")
 
-I'll send a fix in a bit.
+Actually the merge here doesn't build.  I'll try to fix it up but
+*please* try not to do this constant, routine cherry picking.  Sometimes
+it's the sensible thing to do but most of the time I'd expect to see the
+fixes go up onto the -next branch with a merge. =20
 
-Johan
-
---j9jgMfF74rMkmYQ2
-Content-Type: application/pgp-signature; name=signature.asc
+--p1BCFUjbatynoVHo
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJEEABYKADkWIQQHbPq+cpGvN/peuzMLxc3C7H1lCAUCalpE/xsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMiwyLDIACgkQC8XNwux9ZQiEBgD/XP3jM122CkaZ+n1tfNoR
-F4Xn6MlzXiO2gV4pyDuHm0QBANJFvUhThXL4mGvq3nE+AgxzJQ0JUYATyKWo44kw
-+YEA
-=Ca63
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpaRkUACgkQJNaLcl1U
+h9Bxwgf/ZIcw84xQ3n6v5ISb84CqD1cZBkp8MCB5bvDcPMataYds8o0vLlWqGtJj
+mBcEDvhwgz8c+O62Ih7pQBslKJn3nMK+ais/lhhLSmXyg/kXCJY6DEm/DUHZ8dG1
+zlz2TWA+fLZI9JXnR8vFoflGCf4DYaNkxnDwEEoz/WNvHlwchbzLf9yg2/cI6ElF
+RaMN9fhju3QDcd130o/SqCc8+BxZAfhhPa4YyYyO6425OMQcoJ5e9WSWJCHk7gtq
+viUBU8I52727Ux+LVXdhZ8cBfUknJeWYFfdJYh+tLh8PLKINJhBS7ZasFvz2Q4pa
+9IHfryXRmassAfdCM09NZjdhXy8Ysw==
+=1876
 -----END PGP SIGNATURE-----
 
---j9jgMfF74rMkmYQ2--
+--p1BCFUjbatynoVHo--
