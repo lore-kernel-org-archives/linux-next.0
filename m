@@ -1,42 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7605E429CDB;
-	Fri, 17 Jul 2026 14:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DF03FE35C;
+	Fri, 17 Jul 2026 14:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784299266; cv=none; b=B4uYlU6DjolYajmVPLxzHQoozz4uhUM95sj7DZWkGUrHqczjIz6ZiHgAqwjgfOcMIh8LWGh4AOhWk0BxuXPUKy6rw5ySEyZseGoThPslntgfyj52+zHG9mjYFreRWGN7UUoXXpQNl+uxF80C+JUT+ca/OTnlRLqoEYquwddnz3w=
+	t=1784300051; cv=none; b=URLlOaGjGQ2mkksaKdIzkuMdn7Cm5Gj43B309//g0u3hNDuHpOnK6pUsLyRz/O/03cQ08R7wXyIt/S4m10v7RgDddl5ac3FPi0+g4nJv4w9AClbhN/ndhawmBy21yS0QSxHNrhS+G1IWZ5x4M6IbiunCycQhthBf3ouKyqeYtt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784299266; c=relaxed/simple;
-	bh=BMp5GzTLz06im3eMG+KF8SF/rOQHGx3L5GOlKNyi5bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Yxpi5aSfa7H31iAlhCbuUtwtZfGdgPnGhWeq7vOr5A8WYb5pnhcvZ3H0ZNslYNdefDsIkLmWl1n8j1vG8hG/PEK/2B0DOzZkR12cAJWqqIZQ6oS3OWfzLT6dMWmBchQvyVumdSWV3+v+tmxFiQ9NmkwpdDSoyh02Xi9baEcWlnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSWz+Qlv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784300051; c=relaxed/simple;
+	bh=gpsZ1YJUL1mjG37o9UguCzLLQVSUhmq68ti2x/84wa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vf88jyu2jOmUrrwt49x5NgOWsEr64TNSWwNhh/TxzzOak4/cEX6EfMl/3JiRgaFHLA8rkv9xYKUpkTms3MZj2sNQZMeIj8iMqt/cqBmlaTr6SMUhgyvbVfQFz5I+jlcfiFQ8cdx7mOJY9e6vEG22dq7peKB5P6oeJn2KqkZIiso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PNhTyTHB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSWz+Qlv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 538B71F000E9;
-	Fri, 17 Jul 2026 14:41:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNhTyTHB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F4D1F000E9;
+	Fri, 17 Jul 2026 14:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784299265;
-	bh=K/BRkWxDJI8Kh5sczuL4DQbT4oWat23rlDExPcifJzo=;
-	h=Date:From:To:Cc:Subject;
-	b=BSWz+QlvL9gsyu8eTwHPW+wi2x08zt6EIfvXw6CRUCjS2Gtr2BUhLYZvuvXIBbWkz
-	 We3k5E58iZd6QqQ4SWYd96nP33WZQUgkg60D1P1Xg7//7Fbx3y4H2QXvpN2FLfMQ0F
-	 ZOJZQJA8hvf4SlpnEe8KWF+XF2tZk6apOVkxniJF2o2tjKpw2P90DUNgYTrrFEtzSU
-	 ypdHIR8irnY/tb/BwV1BBYTV8iHT7HcaN82/1EWBFHDYf8bGFnfHa5uivuXszOt9Bx
-	 WtqGB/k6ONUhR99Zf93tiSDBWHLDIJOYTu6tmlHYa1AZhRtrnrspuz68/e44WMrZcm
-	 RiomJ3VHLE0+w==
-Date: Fri, 17 Jul 2026 15:41:00 +0100
+	s=k20260515; t=1784300049;
+	bh=RAAwJds3NooiG0bv41e2iKuvnElfbxCqAQdmnGXpXU4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PNhTyTHB4nt/TbsdJ+bM4tg23v3uGS3l1pfV+N7A+itf5HQUvfqj5zj0uFNE3T5df
+	 a5Ir2C0SFt0UVBYqCwWEcP8qz0NJXt8ifW53jP7uW+C/8CWGFb21J6oJRqol0QNNzV
+	 2HwDhYoSsQK4NgVKaUxZkcLrZcLRgE42zmv0gASHXFedsNP8GC7UXxWcth2hCD+WL3
+	 +beQvhYW1hHHO7Uu3Xc+n0wIKWrqW5P+q/y7yxbFz0xbtXXZfz/GXgC6OdwWeg+6oS
+	 S3mIa9MhCIaWpW7sWA45Neb0UkErxqrwmyRsCFC14VF1a9ntVb9WBAsPDZjXFGVcAQ
+	 e8h7AlR11eXjQ==
+Date: Fri, 17 Jul 2026 15:54:05 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Ce Sun <cesun102@amd.com>,
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Manuel Ebner <manuelebner@mailbox.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Yang Wang <kevinyang.wang@amd.com>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <alo-_M1a8v-NN3CM@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure in the final build
+Message-ID: <99d6a70c-3986-4267-9934-e8d8b293cb47@sirena.org.uk>
+References: <alUk8OTfE-f9oQo8@sirena.org.uk>
+ <4f9f5ff9-8eaa-4bd5-9331-37119f78e13f@sirena.org.uk>
+ <c2fe4a81c639cddb65116d9b3526e82206927c0d.camel@mailbox.org>
+ <2026071734-papyrus-unmovable-5826@gregkh>
+ <alo-5gLdvyqY-TwB@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,155 +47,44 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uzW1W57Wu56gyMt/"
+	protocol="application/pgp-signature"; boundary="EhgvDWzKul/Ed+LT"
 Content-Disposition: inline
+In-Reply-To: <alo-5gLdvyqY-TwB@hovoldconsulting.com>
+X-Cookie: Enjoy yourself while you're still old.
 
 
---uzW1W57Wu56gyMt/
+--EhgvDWzKul/Ed+LT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jul 17, 2026 at 04:40:38PM +0200, Johan Hovold wrote:
 
-Today's linux-next merge of the drm tree got a conflict in:
+> I was also waiting on Mark to follow up on this, otherwise I can take
+> closer look at it.
 
-  drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
+> Based on a quick look it seemed like Mark was right about missing static
+> keywords in a driver indirectly enabled by the "offending" commit.
 
-between commit:
+IIRC I replied to the patch for the offending commit the other day.  At
+some point I will get fed up and just revert the usb tree back to one
+that works, it's a real pain doing that for issues in the final build.
 
-  6e4bc34568e38 ("drm/amd: Create a device link between APU display and XHC=
-I devices")
+This seems like it really ought to be straightforward to reproduce
+localy...
 
-=66rom the drm-fixes tree and commits:
-
-  07c93d7eeb0d9 ("drm/amd: Create a device link between APU display and XHC=
-I devices")
-  958430a1f068f ("drm/amd/pm: retire legacy smu ras driver framework")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
-index e3a89e9a9df41,7ea7c4a5279be..0000000000000
---- a/drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
-+++ b/drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
-@@@ -852,8 -852,6 +852,6 @@@ struct pptable_funcs=20
-  	 */
-  	int (*set_default_dpm_table)(struct smu_context *smu);
- =20
-- 	int (*set_power_state)(struct smu_context *smu);
--=20
-  	/**
-  	 * @populate_umd_state_clk: Populate the UMD power state table with
-  	 *                          defaults.
-@@@ -906,16 -904,6 +904,6 @@@
-  					      struct
-  					      pp_clock_levels_with_latency
-  					      *clocks);
-- 	/**
-- 	 * @get_clock_by_type_with_voltage: Get the speed and voltage of a clock
-- 	 *                                  domain.
-- 	 */
-- 	int (*get_clock_by_type_with_voltage)(struct smu_context *smu,
-- 					      enum amd_pp_clock_type type,
-- 					      struct
-- 					      pp_clock_levels_with_voltage
-- 					      *clocks);
--=20
-  	/**
-  	 * @get_power_profile_mode: Print all power profile modes to
-  	 *                          buffer. Star current mode.
-@@@ -1357,11 -1345,6 +1345,6 @@@
-  	 */
-  	int (*register_irq_handler)(struct smu_context *smu);
- =20
-- 	/**
-- 	 * @set_azalia_d3_pme: Wake the audio decode engine from d3 sleep.
-- 	 */
-- 	int (*set_azalia_d3_pme)(struct smu_context *smu);
--=20
-  	/**
-  	 * @get_max_sustainable_clocks_by_dc: Get a copy of the max sustainable
-  	 *                                    clock speeds table.
-@@@ -1378,18 -1361,6 +1361,6 @@@
-  	 */
-  	int (*get_bamaco_support)(struct smu_context *smu);
- =20
-- 	/**
-- 	 * @baco_get_state: Get the current BACO state.
-- 	 *
-- 	 * Return: Current BACO state.
-- 	 */
-- 	enum smu_baco_state (*baco_get_state)(struct smu_context *smu);
--=20
-- 	/**
-- 	 * @baco_set_state: Enter/exit BACO.
-- 	 */
-- 	int (*baco_set_state)(struct smu_context *smu, enum smu_baco_state state=
-);
--=20
-  	/**
-  	 * @baco_enter: Enter BACO.
-  	 */
-@@@ -1651,12 -1622,6 +1622,6 @@@
-  	int (*ras_send_msg)(struct smu_context *smu,
-  			    enum smu_message_type msg, uint32_t param, uint32_t *read_arg);
- =20
-- 	/**
-- 	 * @get_ras_smu_drv: Get RAS smu driver interface
-- 	 * Return: ras_smu_drv *
-- 	 */
-- 	int (*get_ras_smu_drv)(struct smu_context *smu, const struct ras_smu_drv=
- **ras_smu_drv);
--=20
-  	/**
-  	 * @set_power_dep: Create or destroy a power dependency link
-  	 * from an integrated xHCI controller to the GPU so that the GPU is
-@@@ -1962,7 -1927,13 +1927,13 @@@ int smu_link_reset(struct smu_context *
- =20
-  extern const struct amd_ip_funcs smu_ip_funcs;
- =20
-- bool is_support_sw_smu(struct amdgpu_device *adev);
-+ void amdgpu_smu_early_init(struct amdgpu_device *adev);
-+=20
-+ static inline bool is_support_sw_smu(struct amdgpu_device *adev)
-+ {
-+ 	return adev->is_sw_smu;
-+ }
-+=20
-  bool is_support_cclk_dpm(struct amdgpu_device *adev);
-  int smu_write_watermarks_table(struct smu_context *smu);
- =20
-@@@ -2005,7 -1976,6 +1976,6 @@@ int smu_set_pm_policy(struct smu_contex
-  		      int level);
-  ssize_t smu_get_pm_policy_info(struct smu_context *smu,
-  			       enum pp_pm_policy p_type, char *sysbuf);
-- const struct ras_smu_drv *smu_get_ras_smu_driver(void *handle);
- =20
-  int amdgpu_smu_ras_send_msg(struct amdgpu_device *adev, enum smu_message_=
-type msg,
-  			    uint32_t param, uint32_t *readarg);
-
---uzW1W57Wu56gyMt/
+--EhgvDWzKul/Ed+LT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpaPvwACgkQJNaLcl1U
-h9A2igf+OztYrmUSNtXsytXTnqLezPi68dmq8SMC+mUDrONs+/u8Ul1+j96oIHPb
-q7Q9YplF/4rs7pRRrtjbq6bX+j00NC55+zTJ0vbNKq8EhFv+QLxiZlBUUrw/xrwt
-PMbkLsRZmCHMfj5eYOlwrcitmmeJZc9C1YgFTYgwIE6ME3FxUnQrOBCLPoehwfHw
-hvDlgGSIc49MfO0H3rsjoUXNvSySWmzQXzKRpw4NKX2azU24Qz7Wk7ahjSmSlVqq
-YKoTW1wUkGjeLH/Jl2X1EamWuDZVufJrkXShQaUtqkqbdrQDIQ1vyKhBZAmClMxI
-/EitAo9apNm/pqfLQZClmHZPiSiglA==
-=0oW6
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpaQg0ACgkQJNaLcl1U
+h9Citgf+Klb+9bPn6b99mknoWyNFd9dpq8U/0KmjHr5l2gj+VIfH7dTzFJBisnYm
+E49CjQisM7r1/2YqScFzXWHpe2a+GOOGwyOVyml2JAPFpigGiDU7lNYWK935VICN
+cT36cvjZ2s5rdTtr9GiKTl1/rzHOfbUDNqMrX+NtQd4mKS/V+K/vqjkIm/2wCDBy
+xJSc1GwYjjI0rZ4b5E7HZy1ZBrYaW6EwChIBIb1yCYdTKhXuEAl3Q03/r5Reb3Qy
++0zVNicfyUaCJPR5gYpz9w8MVi8TM4iA88KYOwMEb5iXN/VctWjUL2/UNop9KA28
+rDvmNN+35kOAkWqjIA0VM/ZkIYfeZg==
+=j5XV
 -----END PGP SIGNATURE-----
 
---uzW1W57Wu56gyMt/--
+--EhgvDWzKul/Ed+LT--
