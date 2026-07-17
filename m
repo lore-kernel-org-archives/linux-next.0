@@ -1,174 +1,230 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805063FD14D;
-	Thu, 16 Jul 2026 15:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066E319E96D
+	for <linux-next@vger.kernel.org>; Fri, 17 Jul 2026 02:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784215779; cv=none; b=cgOfxTwe3K74NCRxhCc92hkhveIEy6gk1GlZtc3B9j6YLNue1IrH9qwZsNJG7GF7mGLzaD8S3QL//fKlCNKLgJsNFbS/rX1NeLvyKkeHsoxFVrAjQtmEOQ3DTk8r9TRB14uFYE82RfX4HZqwfq/ZI+D5yLb/A8zL/tz9T7U8n08=
+	t=1784255416; cv=none; b=SX9b/oRpUyt3AnaHYwC9joJM2L6RGT9RIg7i4QKlY5n4JzJq8IZyjsp3/hR4EoRJKPeNBzQjhHdGjrZwtKNjR/ZCtb2nQE5ZL/1cXuzldoGxo3rO79IAtZ4vxX8oqcODh2aA4wHGnxLzYEqBn4/ihh5o6fIq/30lzPiaqa3+8O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784215779; c=relaxed/simple;
-	bh=beN9gQMyIBs2ej33yHvXehg8gYmix7d6bC2KyQTQj1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VE+UX9lOtnJXlDINEwdHIeWiyldDuJkrL+cXgZT0K5hPDps3/R4HFX2PDdD6kpgTu+LrVVD9445hPVP1w4gYCBHkbdgp51Ml+Y6J8bJMGPPFMckbwNDkEonPZyZWi588xhLvwyeX8e9lejjroy9DeGYziR3SLqFb/0qogK4ykRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=cFW2i29Z; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1784255416; c=relaxed/simple;
+	bh=954xsjVdI9y9AuRQGQ4P+43Pc+9jd7EDmshSwF7Ml7s=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=kSjbGhDm01b905NcJSHs4VbRfQ2f5dzJ539k4VXYyOPZzGFhDlZe0AJAnAcCDJhpCzDeACsy6smsAckG0RuutOm8E/kBIYXZopj2kySu9ufJAI4CRABkj1NCzuecW+7WoxBa4EYRhbnqYptTr894p5sn4RJuWjyAAlB8oD/HwgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=ZZG/Nluj; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="cFW2i29Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1784215775; x=1784820575; i=spasswolf@web.de;
-	bh=1rrZbpfSwCPI7v7lO6BE14DEuFmvQoXffFaZKGt5Yfw=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=cFW2i29ZSsLYbmt6q0fVbj5uplXb4LWrXiQ3ADgRm6lOaGvy2k9ev9DiypJcJqsX
-	 VJTEGSkKhGZBpqQB/APnkp4C2F/T7C1k93V1e9g3P6/Yqc7hM9T4xUnF9kSLvUcSL
-	 UlWMLS5WS+OUHHR5jFPy5hRjLV5mH4ZJLZIBsdUHNnt2c1NqvgdFl7BwP0ZN0t51x
-	 fy/gbo+0I2cLQCA6xgPTNmItyRlWYc0NXRdD+hP/MgFY073ZG3XOVr6u4r6Tp6HNP
-	 z9pRpetzu+2fmGoBi6EloohX6k+nn5J6Yv69e6Z3vLL1frkAjSbxSu6hlxNty9W2u
-	 sMzS5h2/QeeVPDRx+A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSIJ0-1wZH8R0caO-00ILCm; Thu, 16
- Jul 2026 17:29:35 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Leandro Ribeiro <leandro.ribeiro@collabora.com>,
-	linux-kernel@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-next@vger.kernel.org,
-	Jesse Zhang <jesse.zhang@amd.com>,
-	Amber Lin <Amber.Lin@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: warnings from validate_blend_mode_for_alpha_formats() in next-20260715
-Date: Thu, 16 Jul 2026 17:29:32 +0200
-Message-ID: <20260716152933.6744-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="ZZG/Nluj"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-383cb94f742so6936157a91.3
+        for <linux-next@vger.kernel.org>; Thu, 16 Jul 2026 19:30:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1784255413; x=1784860213; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=bWYLBB5tACP196qTjAL7di0p2jCa5nZt4LwUGKvXjy8=;
+        b=ZZG/NlujUuscH4dbaIZJnAGeIf/TVQdfYfdlHNkQe2BNUT7Z1/50HT4o+t5fmwcDqA
+         sCpVpmBk7xLhkOvdiFImBTS0s+I7iMAbvazcbJ92PrxmhLecEGUfP3q3jBsVymYeSK9J
+         AJgHHEXfovDDwrPdtU2l34mceQiAI8OcEy6eNmGQ8I2nVDHHu9RyUuQlz2PcpHQrv/oZ
+         PyexhCRX9IWLmu5DqIROfzCooIk5vUd+dXEMbOyJ+9mbeIxh603xLK98Gxyquq2Fpnbz
+         UVczwMDT6aYBCeM/2v3SUUYLK6/qeMp5svFQPQhkQ9fDeDPqFwdyNLcZ8RRKOkkREWa2
+         k/kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784255413; x=1784860213;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=bWYLBB5tACP196qTjAL7di0p2jCa5nZt4LwUGKvXjy8=;
+        b=L02BpCGpxxOTy169rjSEK+DyajPwlLzfF0o02w/Ja8YjXzZ9g2crW8dIvZs4fSzn6A
+         N6L85inuG7pEm0UfRcEoe9d7o4LrBrGfusUQGgvQqJL/GGr40Q2L05b3la41gtrsGeuv
+         1HlFu8GScO/Yjj0ODWUBBo/wrAPRzCEfem+MY6po711AY1Oi+qJWxuqmxNTPo3C5P+hN
+         mwyFp2gEjg+lTR5dney40aWBaCfIHilYtaIiLKI3byc/whlp1KyGQ2Xox8thgeP4ZONR
+         reCNQY6LrymAq0whDVa3r1VP5DlHaBvyYhKcusTEzdLnkp/4aQnJjeQVwWtg8HVKPTNf
+         lKhA==
+X-Gm-Message-State: AOJu0Yzo+KCrbPFc/qQmbbfeDN/70dZz4DfhmCl/Kdx0ywskUjHGIFB6
+	yqbF/jwOSqWiYrkGhwQN/ee+MPF4LDerGIq1LFucllVs0c/8SVWpUpbWKTyqdnz4iL0n8vx8YzR
+	gDUHc
+X-Gm-Gg: AfdE7cmGREReycnz+oggl9XKTIr9Qmys4QzodX7jkmEVpAYSfXN2zIZrb7BF6gfdceK
+	pspQEvkNuzmq4x51fdubXczoO9/e7supsbIGJDg8BjebOMFoqSxoREYXxp6LSqLd5J3wk6St7/3
+	VGaiUkfBbs4XxTzRVaA9OQ/wxewi4ZuwtTfzS8vjKKrJEuNbOfounNqKH6A5qF4XW+gf8tMnoiZ
+	mlS9BuAUnqwyYDY4pruIEmm/lpl/6joARTIH85fVKLGC+R3QEUcRRHRpryjJJIi+KkY99tlhONE
+	vnElwuvb2xhZYrOZBuT9QGqTIBMnJX3fRq/OZKhSs401e+LusTPxmeHnjCKDk+pWPu0ZQGOKekH
+	wf4vHfRw+DNBDRVolOrKbfHKjta0GnrF5cbaBh9c0gpoBH+eJPo9/+/tmcGEi77ptgLKa6RA=
+X-Received: by 2002:a05:6a21:7111:b0:3c3:90e6:48b9 with SMTP id adf61e73a8af0-3c3ada516e8mr634852637.66.1784255413153;
+        Thu, 16 Jul 2026 19:30:13 -0700 (PDT)
+Received: from 963b246bc1b3 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13ce2cbb6e8sm244562c88.9.2026.07.16.19.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2026 19:30:12 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LmItngSJEVU6JglhCCMAXmHoFf5ask6YwQHW8TbS9FjzMq1VMMm
- TK+cf+z2WQvRSU/Sd5r0py/649qXlLTBj7sAILW0bXIxrVYbYjUkllLfNoXusg+p+L/R0jF
- 0ma3FjE8Y7FQYK7ak7t/HrHL12IRg0KA2vkOAqcu4OgwBzDQ61nzHP0NRlhp4UIdTw8UqoX
- 2N4VtpVjC4g/6DKF5ysug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lCpfGVqZKjk=;mQvtPOvowaFmWjHv+uUKDcghszF
- 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
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 1a1757b76427f6201bfe0bf1bea9f7574f332a93
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Fri, 17 Jul 2026 02:30:12 -0000
+Message-ID: <178425541168.11791.12744157396998971322@963b246bc1b3>
 
-commit 860e748bddcc ("drm: ensure blend mode supported if pixel format wit=
-h alpha exposed")
-introduces validate_blend_mode_for_alpha_formats() which prints warnings f=
-or amdpgu as=20
-amdgpu only set blend_mode_property for planes of type DRM_PLANE_TYPE_OVER=
-LAY. I tried to fix
-this by removing he (plane->type =3D=3D DRM_PLANE_TYPE_OVERLAY) check in a=
-mdgpu_dm_plane_init():
 
-	printk(KERN_INFO "%s: plane=3D%px plane->type=3D0x%x plane_cap=3D%px\n", =
-__func__, plane, plane->type, plane_cap);
-	if (plane_cap)
-		printk(KERN_INFO "%s: per_pixel_alpha =3D%u\n", __func__, plane_cap->per=
-_pixel_alpha);
-	if (plane_cap && plane_cap->per_pixel_alpha) {
-		unsigned int blend_caps =3D BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-					  BIT(DRM_MODE_BLEND_PREMULTI) |
-					  BIT(DRM_MODE_BLEND_COVERAGE);
 
-		printk(KERN_INFO "%s: creating alpha and blend mode properties for plane=
- %px\n", __func__, plane);
-		drm_plane_create_alpha_property(plane);
-		drm_plane_create_blend_mode_property(plane, blend_caps);
-	}
+Hello,
 
-But this does not completely silence the warnings becuase for planes of ty=
-pe DRM_PLANE_TYPE_CURSOR plane_cap is NULL.
-Is this a problem that should be fixed in amdgpu or is should validate_ble=
-nd_mode_for_alpha_formats() only be called
-for planes of certain types?
+Status summary for next/master
 
-Bert Karwatzki
-  =20
+Dashboard:
+https://d.kernelci.org/c/next/master/1a1757b76427f6201bfe0bf1bea9f7574f332a93/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 1a1757b76427f6201bfe0bf1bea9f7574f332a93
+origin: maestro
+test start time: 2026-07-16 16:02:07.983000+00:00
+
+Builds:	   72 ✅    2 ❌    0 ⚠️
+Boots: 	  169 ✅    3 ❌    0 ⚠️
+Tests: 	30584 ✅ 5581 ❌ 5627 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: imx8mp-verdin-nonwifi-dahlia
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_bus_30800000_i2c_30a50000_eeprom_50
+      last run: https://d.kernelci.org/test/maestro:6a59531f3427a5b0fbe97cb3
+      history:  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a591f2d3427a5b0fbe5d0e2
+      history:  > ✅  > ❌  
+            
+      - kselftest.arm64.arm64_hwcap_sigbus_LSE2
+      last run: https://d.kernelci.org/test/maestro:6a592bc23427a5b0fbe6947e
+      history:  > ✅  > ❌  
+            
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.efivars
+      last run: https://d.kernelci.org/test/maestro:6a5912dc3427a5b0fbe54308
+      history:  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6a591f3b3427a5b0fbe5d24f
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: cd8180-orion-o6
+  > Config: defconfig+netdev+nfs-root-boot+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a5909fa3427a5b0fbe4fc71
+      history:  > ❌  > ✅  > ✅  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6a5909fa3427a5b0fbe4fc68
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa
+      last run: https://d.kernelci.org/test/maestro:6a591f693427a5b0fbe5fb2e
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.alsa.alsa_pcm-test
+      last run: https://d.kernelci.org/test/maestro:6a597d803427a5b0fbeabdc5
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a5912fa3427a5b0fbe5448d
+      history:  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_usb_a800000_hub_2
+      last run: https://d.kernelci.org/test/maestro:6a5985173427a5b0fbeb7c67
+      history:  > ⚠️  > ⚠️  > ✅  
+            
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_sound-wm8960
+      last run: https://d.kernelci.org/test/maestro:6a5980ff3427a5b0fbeb32ab
+      history:  > ❌  > ✅  > ✅  > ❌  > ✅  
+            
+Hardware: mt8183-kukui-jacuzzi-juniper-sku16
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dma-controller0_14001000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec31
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_dsi_14014000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec2d
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec25
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_i2c_11008000_anx7625_58_aux-bus_panel
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec24
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14008000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec08
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_14009000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec07
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_ovl_1400a000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ec06
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400b000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ebfb
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_rdma_1400c000
+      last run: https://d.kernelci.org/test/maestro:6a5909a73427a5b0fbe4ebfa
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
