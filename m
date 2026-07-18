@@ -1,246 +1,97 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995F113D53C
-	for <linux-next@vger.kernel.org>; Sat, 18 Jul 2026 09:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9EE35972;
+	Sat, 18 Jul 2026 11:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784367253; cv=none; b=dgbIoAxyBRSIJPP54mkR50GrAi/73dp314+c9Rf9zjXpgJnBS6WdAm75BNJP3h8aAYn/SlCIZp65d6u8QdHkB3/aAJcYuZCJrS++TdOmF9joz//Cem2S79fipKrAoXivEUvIr8Vx/zWOT8oDR0hXdYD46VA5y2/Gn0qgNByvG5Q=
+	t=1784374223; cv=none; b=RWVplLxeX2QyHlMH2RKeOWO1YazX29mU2VUXN7F23yQfsg9L2IM7hRmUzpUekppjzp8Wd5ssHgOHLjCezZ3ANCbIyrjT+yDJz5gLu1uoYBY8kEkyT2PN6TklJEyMkodRmwWB/LpIa1w3rNO4U5/U1CpE2GkHQrTfg9ImOrHpUD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784367253; c=relaxed/simple;
-	bh=2zh1HbefftEkKA3n3kmImS/gbP58lnTC+DchP3dZYpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GLOkibYQQyjDBXiF0dkafeqjGpIovMBu+99poDkevoTl+omX4ni71upK7BIEGIEaYxP3aszyzKuHARvMjdBraKV+HpbNzsT/H3U11G/f9Kig4k0L3edENWC3+S3GKPzAZO5Etv3VIwmVndhXlPFSp4H1WqyBo+pHmq+69uJtAYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RFqYCE8K; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1784374223; c=relaxed/simple;
+	bh=boFit2Hy/EG+JX1++7ZX5P/mBiURjKww6YJUqa1i2Kg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Dvs1avSN8P65kAe+ObROMP2AO2Iwotrqw4qClRnPF2ySI1TFrddoZ5KlkZU/i5RLjRU1wdCMrv/Q9iRycDGLQXFDimH/mLTesZgjDv7m2JQABCeAvb+ZY3GOEuqgFc5qqRtpDeHYz6W8LAM6a3ui7Nl6D0JJIq4A53L1/QwAYMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=V5YQC7Ue; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RFqYCE8K"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c15d111ca99so877497366b.0
-        for <linux-next@vger.kernel.org>; Sat, 18 Jul 2026 02:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1784367250; x=1784972050; darn=vger.kernel.org;
-        h=content-type:in-reply-to:autocrypt:from:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=2zh1HbefftEkKA3n3kmImS/gbP58lnTC+DchP3dZYpY=;
-        b=RFqYCE8Ko+EPeplfFP9o3PZ7522ijX+cO8dJNFETmFcPVnXEwkBnPDX4h/zOaMMn56
-         6OwhCgGVcpZBDbxDirQ583KxDpbXLQUpMO176sg/4c2g+KIwiHU1/R++Wz6aHTbI/8pT
-         gHMye+41U2ab/4dK48vxgb+xh9B/PdVqRe0baEPi6/CxX9KZNBWun4adcZTkR3RkQrDI
-         E8a4FWKlqAfYmpBtR82kWcJIRvI83dmKKei1EAjoZQKNGsrW8dfMcaEkvVKL71DsRlXy
-         7hGpwH7rUd6H2Z383dZhXFxhYtibrKrjzG0dNW75OrfoqAJneHDYjt5QoNt1lAhyqT+j
-         kKVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784367250; x=1784972050;
-        h=content-type:in-reply-to:autocrypt:from:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=2zh1HbefftEkKA3n3kmImS/gbP58lnTC+DchP3dZYpY=;
-        b=kgU5zFoiq0j1TGBeDSPmawtOYMOdAQZHzTaBZn1ypB68UrU2KtWl3L9/BSGM4LnNBj
-         ij4a6WuPzjnKFmYQEocf6YUUbcHlQQ4uSHuvH/QBhjiXGyVo5KEykQPmUcI77v7aQkjB
-         SPBgsvR1E17z8PWaY7iHOX1kSDFFgVVQz9mSK8MHVzgYz7CvmWBH/2VdhfJPjxrQytbu
-         lbsuku+jQx1Jm8vZFe0YDjVwy4/0jBPiUsSYUdlJQ5YjjIiX5Cm1+ktKdEJadbLQgbd7
-         cbF8fcSfFrkHAtqXX3gwvyPuhAlL7RjCpoYRFKa/W+WUr70BWPKZp/Mi8+2YsN00zrTF
-         hAig==
-X-Forwarded-Encrypted: i=1; AHgh+RoFUBVs6CfUZOjvuakR98CmLofuZ9+f1zZsrkqNfmSHm+H6GmFCnYkqn/8PfSrIV+h5kEbAa164Hs1S@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpDYrRrkRtv59+5IOqqYzcCIWP5Rka/UtPAZbMmzMIyVdXfEBM
-	+cqEZqdRBEZlqBcoiNJ9kvtidAWxhdEdRMbFURQ3zntdznYRyMcuSnCkSaa7mJluXUs=
-X-Gm-Gg: AfdE7ckOpKa1eooidoy9eFy5vPSvdNZaiv4Uz+SQB0q4sGoI7JeMUlJAGLPaPUdZHoa
-	E/NiyA2C5xwObBFq644w5mUj5YCJmqLcTMug/t79nOKbdBAfB2DNzLmY3FQCTVpLFYbafZ3/QZL
-	e0zeXcVIRqUEoXA70N5UqC4ohouzAXb8E8+Zzt/EqZa2UJo1dTCiKhgYb+KwFV/QXIoQZbUwu0m
-	EBHY89T8xP2nz8OTKVLYbzGc+0eeg2CM5QdaC1GxNYc53ose6yKLEbnRH9T63Zg88zvq25Yb1Vw
-	52fLYipiWdzks8z0d35bFdJlFmg7yN4CLbG6yKW51plyFqcFPp15mNprWLNDtvMPUyXq6Qg6eN0
-	YLyeResG0veU65/Q/vRqWLerTm/n1Cc4x9isiXQx8PdKCZhf6VuwC+O8BITGzrNzr7v3Y6WoIYm
-	fT4SXzWbmPNrmMPvf+p0tn/tQ2G2bHyNjHaQfDL23m6AHNy8fY9QRoRO94UvMrIQFgjR/loAz/2
-	N1JboAHUOYyj/PaMsE98ajfTYK80FAU
-X-Received: by 2002:a17:907:c012:b0:c11:ff2c:4f33 with SMTP id a640c23a62f3a-c16b47c7127mr234618866b.45.1784367249941;
-        Sat, 18 Jul 2026 02:34:09 -0700 (PDT)
-Received: from ?IPV6:2a00:12d0:af5d:ad01:5d3f:14e6:9bcb:5112? (2a00-12d0-af5d-ad01-5d3f-14e6-9bcb-5112.ip.tng.de. [2a00:12d0:af5d:ad01:5d3f:14e6:9bcb:5112])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1724f50bf7sm190595066b.49.2026.07.18.02.34.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jul 2026 02:34:09 -0700 (PDT)
-Message-ID: <cea69d2b-32ac-4e92-b1d3-ba184787bc2b@suse.com>
-Date: Sat, 18 Jul 2026 11:34:08 +0200
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="V5YQC7Ue"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4h2Phm5HFbzKnR5;
+	Sat, 18 Jul 2026 13:30:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1784374216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=impHDjenMIJErEGwDatH0w1SiMFR8u879Cjzsuf2iok=;
+	b=V5YQC7UeDTEjbe402VoyHW+O4eByuzyQMKs562aNH1f1PTDQgWRyRhLG7k+62kPRjDGM4b
+	HhtZReOzxd2itJtWIzsgc0sQoYwII8y83BsFEa0yQwL2dILam3EikOXSc6HU/5RHFcBZqe
+	WcGgYa99X4UMr2OQqqLAccP3BS6Ajl3NHG70Nnm9IT/HazIaCA5AKhl7Q/rhBMJ9Q04yxE
+	85kU88G6Svq95H+ISh4b/KSgjTLCR4ObGddNhGGJDOL99f08U+XtEQQ3hcddoMQfpyljbO
+	5L/8bUmlTUdqGUYRPUyjH3pmg3CaWpquyzsYU16qvcrkigaa0PTs+iWMeFIesw==
+Message-ID: <49ad090f48d0ad38a46642c2ddd019ae3cfebc82.camel@mailbox.org>
+Subject: Re: [PATCH] USB: phy: fsl-usb: fix missing static keywords
+From: Manuel Ebner <manuelebner@mailbox.org>
+To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>
+Cc: linux-next@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Date: Sat, 18 Jul 2026 13:30:11 +0200
+In-Reply-To: <20260717154957.1853976-1-johan@kernel.org>
+References: <20260717154957.1853976-1-johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-To: Mark Brown <broonie@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- KVM <kvm@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Sean Christopherson <seanjc@google.com>
-References: <alpUTu5ttdBcjZCP@sirena.org.uk>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <alpUTu5ttdBcjZCP@sirena.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------1ok0Xx2rzejEh7UGMI00qkE0"
+X-MBO-RS-ID: defd08d209d5d9186f3
+X-MBO-RS-META: qb4kafrytksnh784kfinnqhmnj564f6y
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------1ok0Xx2rzejEh7UGMI00qkE0
-Content-Type: multipart/mixed; boundary="------------f0us4B6aufJYhK30GUqjvTW0";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Mark Brown <broonie@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- KVM <kvm@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Sean Christopherson <seanjc@google.com>
-Message-ID: <cea69d2b-32ac-4e92-b1d3-ba184787bc2b@suse.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-References: <alpUTu5ttdBcjZCP@sirena.org.uk>
-In-Reply-To: <alpUTu5ttdBcjZCP@sirena.org.uk>
+On Fri, 2026-07-17 at 17:49 +0200, Johan Hovold wrote:
+> A recent change enabling compile testing of a Freescale dual-role
+> controller indirectly enabled a USB PHY driver to be built. That driver
+> in turn is missing a bunch of static keywords which results in warnings
+> like:
+>=20
+> drivers/usb/phy/phy-fsl-usb.c:105:5: error: no previous prototype for 'wr=
+ite_ulpi' [-
+> Werror=3Dmissing-prototypes]
+> =C2=A0 105 | int write_ulpi(u8 addr, u8 data)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~=
+~~~~~~
+>=20
+> which consequently breaks -Werror builds.
+>=20
+> Add the missing static keywords.
+>=20
+> Fixes: 0807c500a1a6 ("USB: add Freescale USB OTG Transceiver driver")
+> Cc: stable@vger.kernel.org	# 3.0
 
---------------f0us4B6aufJYhK30GUqjvTW0
-Content-Type: multipart/mixed; boundary="------------mBa2eQI93JwYNemACO1F0L3e"
+Add linux-next@vger.kernel.org
 
---------------mBa2eQI93JwYNemACO1F0L3e
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Link: https://lore.kernel.org/r/4f9f5ff9-8eaa-4bd5-9331-37119f78e13f@sire=
+na.org.uk
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-T24gMTcuMDcuMjYgMTg6MTEsIE1hcmsgQnJvd24gd3JvdGU6DQo+IEhpIGFsbCwNCj4gDQo+
-IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUga3ZtIHRyZWUgZ290IGEgY29uZmxp
-Y3QgaW46DQo+IA0KPiAgICBhcmNoL3g4Ni9rdm0veDg2LmMNCj4gDQo+IGJldHdlZW4gY29t
-bWl0czoNCj4gDQo+ICAgIDNlYWE1MGUxZTI1NWUgKCJ4ODYvY3B1OiBIaWRlIGFuZCByZW5h
-bWUgc3RhdGljX2NwdV9oYXMoKSIpDQo+ICAgIDE2MjBkZGMwZGNlZmMgKCJLVk0veDg2OiBT
-dG9wIHVzaW5nIDMyLWJpdCBNU1IgaW50ZXJmYWNlcyIpDQo+IA0KPiBmcm9tIHRoZSB0aXAg
-dHJlZSBhbmQgY29tbWl0Og0KPiANCj4gICAgN2EyNjgzMDgwMTU4NCAoIktWTTogeDg2OiBN
-b3ZlIHRoZSBidWxrIG9mIE1TUiBzcGVjaWZpYyBjb2RlIGZyb20geDg2LmMgdG8gbXNycy57
-YyxofSIpDQo+IA0KPiBmcm9tIHRoZSBrdm0gdHJlZS4NCj4gDQo+IEkgZml4ZWQgaXQgdXAg
-KHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcw0K
-PiBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQg
-YW55IG5vbiB0cml2aWFsDQo+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlv
-dXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVuIHlvdXIgdHJlZQ0KPiBpcyBzdWJtaXR0ZWQg
-Zm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGlu
-Zw0KPiB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGluZyB0cmVlIHRvIG1p
-bmltaXNlIGFueSBwYXJ0aWN1bGFybHkNCj4gY29tcGxleCBjb25mbGljdHMuDQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL21zcnMuYyBiL2FyY2gveDg2L2t2bS9tc3JzLmMN
-Cj4gaW5kZXggYzIzMGIxOGQ4N2UzOC4uNzY0Y2RhODA0NWExNyAxMDA2NDQNCj4gLS0tIGEv
-YXJjaC94ODYva3ZtL21zcnMuYw0KPiArKysgYi9hcmNoL3g4Ni9rdm0vbXNycy5jDQo+IEBA
-IC0yNTc5LDkgKzI1NzksOSBAQCBzdGF0aWMgdm9pZCBrdm1fcHJvYmVfZmVhdHVyZV9tc3Io
-dTMyIG1zcl9pbmRleCkNCj4gICANCj4gICBzdGF0aWMgdm9pZCBrdm1fcHJvYmVfbXNyX3Rv
-X3NhdmUodTMyIG1zcl9pbmRleCkNCj4gICB7DQo+IC0JdTMyIGR1bW15WzJdOw0KPiArCXU2
-NCBkdW1teTsNCj4gICANCj4gLQlpZiAocmRtc3Jfc2FmZShtc3JfaW5kZXgsICZkdW1teVsw
-XSwgJmR1bW15WzFdKSkNCj4gKwlpZiAocmRtc3JxX3NhZmUobXNyX2luZGV4LCAmZHVtbXkp
-KQ0KPiAgIAkJcmV0dXJuOw0KPiAgIA0KPiAgIAkvKg0KDQpUaGUgZml4IGxvb2tzIGZpbmUu
-DQoNCg0KSnVlcmdlbg0K
---------------mBa2eQI93JwYNemACO1F0L3e
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Manuel Ebner <manuelebner@mailbox.org>
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Thanks
+ Manuel
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
-
---------------mBa2eQI93JwYNemACO1F0L3e--
-
---------------f0us4B6aufJYhK30GUqjvTW0--
-
---------------1ok0Xx2rzejEh7UGMI00qkE0
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmpbSJAFAwAAAAAACgkQsN6d1ii/Ey/o
-VQf/X5pfJkZX8w3BFmNhO2Uy4oHFVtQ92tpZnIrK8acTsvXeHMzW4RDKzvCEsgXttf86lsVaZ22I
-N4aUZqpqKO4chQfMSzH9zrci168JQT46+H7dGfRax5ZZYqWhHO8dOIkhNUxe/2BXTmZO40v0nLfN
-NNpioCxbHGm9VYSegd8rHgCb2vkX2P9eoKq9MOZ9t2l+QDJTDV8JCq7U2f4Ojn8fKPQnHdnH89EK
-68GK7ps29ldMP9RrBzHPsKmRnMG3ev2PtLYyg3GSUck/iBezv6xUCK0dFNyt0WpoonXLVQSug5Fr
-klVxzkNaFGY4D7etuvp+6W7BP1Zsm1OvQbJUt3gsuQ==
-=Otao
------END PGP SIGNATURE-----
-
---------------1ok0Xx2rzejEh7UGMI00qkE0--
+> ---
+> =C2=A0drivers/usb/phy/phy-fsl-usb.c | 52 +++++++++++++++++---------------=
+---
+> =C2=A0drivers/usb/phy/phy-fsl-usb.h |=C2=A0 6 ++--
+> =C2=A02 files changed, 29 insertions(+), 29 deletions(-)
+>=20
+> [...]
