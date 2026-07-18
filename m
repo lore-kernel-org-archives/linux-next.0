@@ -1,259 +1,246 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5203D1F1304;
-	Sat, 18 Jul 2026 09:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995F113D53C
+	for <linux-next@vger.kernel.org>; Sat, 18 Jul 2026 09:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784366483; cv=none; b=cepu7v2YY9Ar8WKnMi1F+iO6RJpyluwjl17vsnZPyqA2XAS5gqJlJ2CKnm0eBQ7D5fbAcnRFE0oKTAgHOy5xq0D4JAxqRxpK6jT582yQkKxCtG0PMHKXbu1RT6NQpN3FstW9mY7y0TeGPIN3gePI22NIDH1A0H/6oTpXUT59Bgo=
+	t=1784367253; cv=none; b=dgbIoAxyBRSIJPP54mkR50GrAi/73dp314+c9Rf9zjXpgJnBS6WdAm75BNJP3h8aAYn/SlCIZp65d6u8QdHkB3/aAJcYuZCJrS++TdOmF9joz//Cem2S79fipKrAoXivEUvIr8Vx/zWOT8oDR0hXdYD46VA5y2/Gn0qgNByvG5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784366483; c=relaxed/simple;
-	bh=t0EUQ9Al5N5wc8x9D6FEpm7dCTB09CNqNPCeu/77gAU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kZUxz+sVBNyFkuatrryBci4742/TMRBVd7MCFK9EtOwC+nbWdgn6paEw7bTiQrwAl9J5q5xplzA5x0jeBLBkuPJU16JtNr+kfzTYBY8/EkMeYGCDcAU9JCmedfXMviv3XHaqbhd0FHmRKUwgWaFO+WOxIo91Gb1WHLe/d58+M2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Tg4ArzJL; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1784367253; c=relaxed/simple;
+	bh=2zh1HbefftEkKA3n3kmImS/gbP58lnTC+DchP3dZYpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLOkibYQQyjDBXiF0dkafeqjGpIovMBu+99poDkevoTl+omX4ni71upK7BIEGIEaYxP3aszyzKuHARvMjdBraKV+HpbNzsT/H3U11G/f9Kig4k0L3edENWC3+S3GKPzAZO5Etv3VIwmVndhXlPFSp4H1WqyBo+pHmq+69uJtAYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RFqYCE8K; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Tg4ArzJL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1784366479; x=1784971279; i=spasswolf@web.de;
-	bh=Txcj6lg11fs/bItCCmYN6HDREpRxvcKAtvpvqm9w3yU=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Tg4ArzJLmqT4zHpyix6iJ1OAjv1Gib9EZ0Wkp9vr/ejYduFpXrpybzg6To6iyw/U
-	 e+rFiTvrBk4F8YMw1Z8y/YB/PiNHhAxYlrpgaDZMf+J0VK3MXgqLX5UqZBTMACpaA
-	 G8zcGao2RHUcByrFfwNtpfn5pKfJ03JM/N1/Vo9WuAqD04a5lxfETVZLExGs+hRua
-	 oKGc3l9wd+++F50wBXkG+BcRQmnDWeuVPCPULzwzIFVKdVTkQBiu8pbRY2gWwc71O
-	 AQEKbUMppVGgH1J+8FL5PUosRIkR61b0gqkBQHv1Kzr3hoSpXCSabrCzISH+I+dCy
-	 j6qLlUnqopFWqi/azg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m9J-1wkC9V47Ot-00BBjJ; Sat, 18
- Jul 2026 11:21:19 +0200
-Message-ID: <cd96faf15c338157e49a858f9e4f94acba4c28ab.camel@web.de>
-Subject: Re: warnings from validate_blend_mode_for_alpha_formats() in
- next-20260715
-From: Bert Karwatzki <spasswolf@web.de>
-To: Leandro Ribeiro <leandro.ribeiro@collabora.com>, Alex Deucher
-	 <alexdeucher@gmail.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, "Leo
- (Sunpeng) Li" <Sunpeng.Li@amd.com>, Alex Hung <alex.hung@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, linux-next@vger.kernel.org, Jesse Zhang
-	 <jesse.zhang@amd.com>, Amber Lin <Amber.Lin@amd.com>, Mario Limonciello
-	 <mario.limonciello@amd.com>, spasswolf@web.de
-Date: Sat, 18 Jul 2026 11:21:17 +0200
-In-Reply-To: <45d341e6-d438-4e34-bba2-f6d23dbcf7fb@collabora.com>
-References: <20260716152933.6744-1-spasswolf@web.de>
-		 <CADnq5_PEN=iuspWbQ9C3gJZ5qJVOLmJ5hrsi6FH0Dg2Y_u2mZQ@mail.gmail.com>
-		 <45d341e6-d438-4e34-bba2-f6d23dbcf7fb@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.2-10 
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RFqYCE8K"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c15d111ca99so877497366b.0
+        for <linux-next@vger.kernel.org>; Sat, 18 Jul 2026 02:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1784367250; x=1784972050; darn=vger.kernel.org;
+        h=content-type:in-reply-to:autocrypt:from:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=2zh1HbefftEkKA3n3kmImS/gbP58lnTC+DchP3dZYpY=;
+        b=RFqYCE8Ko+EPeplfFP9o3PZ7522ijX+cO8dJNFETmFcPVnXEwkBnPDX4h/zOaMMn56
+         6OwhCgGVcpZBDbxDirQ583KxDpbXLQUpMO176sg/4c2g+KIwiHU1/R++Wz6aHTbI/8pT
+         gHMye+41U2ab/4dK48vxgb+xh9B/PdVqRe0baEPi6/CxX9KZNBWun4adcZTkR3RkQrDI
+         E8a4FWKlqAfYmpBtR82kWcJIRvI83dmKKei1EAjoZQKNGsrW8dfMcaEkvVKL71DsRlXy
+         7hGpwH7rUd6H2Z383dZhXFxhYtibrKrjzG0dNW75OrfoqAJneHDYjt5QoNt1lAhyqT+j
+         kKVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784367250; x=1784972050;
+        h=content-type:in-reply-to:autocrypt:from:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=2zh1HbefftEkKA3n3kmImS/gbP58lnTC+DchP3dZYpY=;
+        b=kgU5zFoiq0j1TGBeDSPmawtOYMOdAQZHzTaBZn1ypB68UrU2KtWl3L9/BSGM4LnNBj
+         ij4a6WuPzjnKFmYQEocf6YUUbcHlQQ4uSHuvH/QBhjiXGyVo5KEykQPmUcI77v7aQkjB
+         SPBgsvR1E17z8PWaY7iHOX1kSDFFgVVQz9mSK8MHVzgYz7CvmWBH/2VdhfJPjxrQytbu
+         lbsuku+jQx1Jm8vZFe0YDjVwy4/0jBPiUsSYUdlJQ5YjjIiX5Cm1+ktKdEJadbLQgbd7
+         cbF8fcSfFrkHAtqXX3gwvyPuhAlL7RjCpoYRFKa/W+WUr70BWPKZp/Mi8+2YsN00zrTF
+         hAig==
+X-Forwarded-Encrypted: i=1; AHgh+RoFUBVs6CfUZOjvuakR98CmLofuZ9+f1zZsrkqNfmSHm+H6GmFCnYkqn/8PfSrIV+h5kEbAa164Hs1S@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpDYrRrkRtv59+5IOqqYzcCIWP5Rka/UtPAZbMmzMIyVdXfEBM
+	+cqEZqdRBEZlqBcoiNJ9kvtidAWxhdEdRMbFURQ3zntdznYRyMcuSnCkSaa7mJluXUs=
+X-Gm-Gg: AfdE7ckOpKa1eooidoy9eFy5vPSvdNZaiv4Uz+SQB0q4sGoI7JeMUlJAGLPaPUdZHoa
+	E/NiyA2C5xwObBFq644w5mUj5YCJmqLcTMug/t79nOKbdBAfB2DNzLmY3FQCTVpLFYbafZ3/QZL
+	e0zeXcVIRqUEoXA70N5UqC4ohouzAXb8E8+Zzt/EqZa2UJo1dTCiKhgYb+KwFV/QXIoQZbUwu0m
+	EBHY89T8xP2nz8OTKVLYbzGc+0eeg2CM5QdaC1GxNYc53ose6yKLEbnRH9T63Zg88zvq25Yb1Vw
+	52fLYipiWdzks8z0d35bFdJlFmg7yN4CLbG6yKW51plyFqcFPp15mNprWLNDtvMPUyXq6Qg6eN0
+	YLyeResG0veU65/Q/vRqWLerTm/n1Cc4x9isiXQx8PdKCZhf6VuwC+O8BITGzrNzr7v3Y6WoIYm
+	fT4SXzWbmPNrmMPvf+p0tn/tQ2G2bHyNjHaQfDL23m6AHNy8fY9QRoRO94UvMrIQFgjR/loAz/2
+	N1JboAHUOYyj/PaMsE98ajfTYK80FAU
+X-Received: by 2002:a17:907:c012:b0:c11:ff2c:4f33 with SMTP id a640c23a62f3a-c16b47c7127mr234618866b.45.1784367249941;
+        Sat, 18 Jul 2026 02:34:09 -0700 (PDT)
+Received: from ?IPV6:2a00:12d0:af5d:ad01:5d3f:14e6:9bcb:5112? (2a00-12d0-af5d-ad01-5d3f-14e6-9bcb-5112.ip.tng.de. [2a00:12d0:af5d:ad01:5d3f:14e6:9bcb:5112])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1724f50bf7sm190595066b.49.2026.07.18.02.34.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jul 2026 02:34:09 -0700 (PDT)
+Message-ID: <cea69d2b-32ac-4e92-b1d3-ba184787bc2b@suse.com>
+Date: Sat, 18 Jul 2026 11:34:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
+To: Mark Brown <broonie@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ KVM <kvm@vger.kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Sean Christopherson <seanjc@google.com>
+References: <alpUTu5ttdBcjZCP@sirena.org.uk>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <alpUTu5ttdBcjZCP@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------1ok0Xx2rzejEh7UGMI00qkE0"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------1ok0Xx2rzejEh7UGMI00qkE0
+Content-Type: multipart/mixed; boundary="------------f0us4B6aufJYhK30GUqjvTW0";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Mark Brown <broonie@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ KVM <kvm@vger.kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Sean Christopherson <seanjc@google.com>
+Message-ID: <cea69d2b-32ac-4e92-b1d3-ba184787bc2b@suse.com>
+Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
+References: <alpUTu5ttdBcjZCP@sirena.org.uk>
+In-Reply-To: <alpUTu5ttdBcjZCP@sirena.org.uk>
+
+--------------f0us4B6aufJYhK30GUqjvTW0
+Content-Type: multipart/mixed; boundary="------------mBa2eQI93JwYNemACO1F0L3e"
+
+--------------mBa2eQI93JwYNemACO1F0L3e
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+T24gMTcuMDcuMjYgMTg6MTEsIE1hcmsgQnJvd24gd3JvdGU6DQo+IEhpIGFsbCwNCj4gDQo+
+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUga3ZtIHRyZWUgZ290IGEgY29uZmxp
+Y3QgaW46DQo+IA0KPiAgICBhcmNoL3g4Ni9rdm0veDg2LmMNCj4gDQo+IGJldHdlZW4gY29t
+bWl0czoNCj4gDQo+ICAgIDNlYWE1MGUxZTI1NWUgKCJ4ODYvY3B1OiBIaWRlIGFuZCByZW5h
+bWUgc3RhdGljX2NwdV9oYXMoKSIpDQo+ICAgIDE2MjBkZGMwZGNlZmMgKCJLVk0veDg2OiBT
+dG9wIHVzaW5nIDMyLWJpdCBNU1IgaW50ZXJmYWNlcyIpDQo+IA0KPiBmcm9tIHRoZSB0aXAg
+dHJlZSBhbmQgY29tbWl0Og0KPiANCj4gICAgN2EyNjgzMDgwMTU4NCAoIktWTTogeDg2OiBN
+b3ZlIHRoZSBidWxrIG9mIE1TUiBzcGVjaWZpYyBjb2RlIGZyb20geDg2LmMgdG8gbXNycy57
+YyxofSIpDQo+IA0KPiBmcm9tIHRoZSBrdm0gdHJlZS4NCj4gDQo+IEkgZml4ZWQgaXQgdXAg
+KHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcw0K
+PiBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQg
+YW55IG5vbiB0cml2aWFsDQo+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlv
+dXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVuIHlvdXIgdHJlZQ0KPiBpcyBzdWJtaXR0ZWQg
+Zm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGlu
+Zw0KPiB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGluZyB0cmVlIHRvIG1p
+bmltaXNlIGFueSBwYXJ0aWN1bGFybHkNCj4gY29tcGxleCBjb25mbGljdHMuDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL21zcnMuYyBiL2FyY2gveDg2L2t2bS9tc3JzLmMN
+Cj4gaW5kZXggYzIzMGIxOGQ4N2UzOC4uNzY0Y2RhODA0NWExNyAxMDA2NDQNCj4gLS0tIGEv
+YXJjaC94ODYva3ZtL21zcnMuYw0KPiArKysgYi9hcmNoL3g4Ni9rdm0vbXNycy5jDQo+IEBA
+IC0yNTc5LDkgKzI1NzksOSBAQCBzdGF0aWMgdm9pZCBrdm1fcHJvYmVfZmVhdHVyZV9tc3Io
+dTMyIG1zcl9pbmRleCkNCj4gICANCj4gICBzdGF0aWMgdm9pZCBrdm1fcHJvYmVfbXNyX3Rv
+X3NhdmUodTMyIG1zcl9pbmRleCkNCj4gICB7DQo+IC0JdTMyIGR1bW15WzJdOw0KPiArCXU2
+NCBkdW1teTsNCj4gICANCj4gLQlpZiAocmRtc3Jfc2FmZShtc3JfaW5kZXgsICZkdW1teVsw
+XSwgJmR1bW15WzFdKSkNCj4gKwlpZiAocmRtc3JxX3NhZmUobXNyX2luZGV4LCAmZHVtbXkp
+KQ0KPiAgIAkJcmV0dXJuOw0KPiAgIA0KPiAgIAkvKg0KDQpUaGUgZml4IGxvb2tzIGZpbmUu
+DQoNCg0KSnVlcmdlbg0K
+--------------mBa2eQI93JwYNemACO1F0L3e
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:L2mAw1aAzvAI8hU9onNPPOqvecXR1Pvp8SNqERZ4jIsar0WPWhN
- IKi5BzFShA6JClwJ/XzqUJJIKvqPdgtZuSeN1HtLmrk8rZahw0EKkaxnvabnF/Vr32bBsuB
- l3MYEjr13cKT5DX69mneIfWR8RBdb0wvwpUoG8N2Q53TBDC6poj24Hqdeub9LR89qjYsZzr
- eRnloXCgz605cfIBXU6WQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fSM4Pr9mJC8=;jr+pwVnjWFEukfrvAAaOvLZtqId
- 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
- 5bCjJ19T3y4BwrE/lDOMO
 
-Am Freitag, dem 17.07.2026 um 19:54 -0300 schrieb Leandro Ribeiro:
->=20
-> On 7/17/26 11:55 AM, Alex Deucher wrote:
-> > + Some display folks
-> >=20
-> > On Fri, Jul 17, 2026 at 9:04=E2=80=AFAM Bert Karwatzki <spasswolf@web.=
-de> wrote:
-> > >=20
-> > > commit 860e748bddcc ("drm: ensure blend mode supported if pixel form=
-at with alpha exposed")
-> > > introduces validate_blend_mode_for_alpha_formats() which prints warn=
-ings for amdpgu as
-> > > amdgpu only set blend_mode_property for planes of type DRM_PLANE_TYP=
-E_OVERLAY. I tried to fix
-> > > this by removing he (plane->type =3D=3D DRM_PLANE_TYPE_OVERLAY) chec=
-k in amdgpu_dm_plane_init():
-> > >=20
-> > >         printk(KERN_INFO "%s: plane=3D%px plane->type=3D0x%x plane_c=
-ap=3D%px\n", __func__, plane, plane->type, plane_cap);
-> > >         if (plane_cap)
-> > >                 printk(KERN_INFO "%s: per_pixel_alpha =3D%u\n", __fu=
-nc__, plane_cap->per_pixel_alpha);
-> > >         if (plane_cap && plane_cap->per_pixel_alpha) {
-> > >                 unsigned int blend_caps =3D BIT(DRM_MODE_BLEND_PIXEL=
-_NONE) |
-> > >                                           BIT(DRM_MODE_BLEND_PREMULT=
-I) |
-> > >                                           BIT(DRM_MODE_BLEND_COVERAG=
-E);
-> > >=20
-> > >                 printk(KERN_INFO "%s: creating alpha and blend mode =
-properties for plane %px\n", __func__, plane);
-> > >                 drm_plane_create_alpha_property(plane);
-> > >                 drm_plane_create_blend_mode_property(plane, blend_ca=
-ps);
-> > >         }
-> > >=20
-> > > But this does not completely silence the warnings becuase for planes=
- of type DRM_PLANE_TYPE_CURSOR plane_cap is NULL.
-> > > Is this a problem that should be fixed in amdgpu or is should valida=
-te_blend_mode_for_alpha_formats() only be called
-> > > for planes of certain types?
->=20
-> IMO validate_blend_mode_for_alpha_formats() should be called for all
-> types of planes. I can't think of anything special about a cursor plane
-> that would justify it being allowed to expose formats with alpha but not
-> the blend mode property.
->=20
-> I'm not familiar with the AMD codebase to suggest the best fix, but the
-> driver would need some way to know whether cursor planes are exposing
-> formats with alpha.
->=20
-> > >=20
-> > > Bert Karwatzki
-> > >=20
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-So I looked through the code and found that the cursor planes are initiall=
-ized by=C2=A0
-amdgpu_dm_crtc_init() which calls amdgpu_dm_plane_init() with plane_cap =
-=3D NULL.
-So I was able to silence the warning by introducing a dummy_plane_cap in a=
-mdgpu_dm_crtc_init()
-and dropping the plane->type check in amdgpu_dm_plane_init().
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c b/driv=
-ers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-index d63688b9d93d..7fb118444d14 100644
-=2D-- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-@@ -731,13 +731,17 @@ int amdgpu_dm_crtc_init(struct amdgpu_display_manage=
-r *dm,
-        struct drm_plane *cursor_plane;
-        bool has_degamma;
-        int res =3D -ENOMEM;
-+       struct dc_plane_cap dummy_cap =3D {
-+               .type =3D DC_PLANE_TYPE_DCE_RGB,
-+               .per_pixel_alpha =3D 1,
-+       };
-=20
-        cursor_plane =3D kzalloc_obj(*cursor_plane);
-        if (!cursor_plane)
-                goto fail;
-=20
-        cursor_plane->type =3D DRM_PLANE_TYPE_CURSOR;
--       res =3D amdgpu_dm_plane_init(dm, cursor_plane, 0, NULL);
-+       res =3D amdgpu_dm_plane_init(dm, cursor_plane, 0, &dummy_cap);
-=20
-        acrtc =3D kzalloc_obj(struct amdgpu_crtc);
-        if (!acrtc)
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/dri=
-vers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-index 26f35434a92f..20785fb451dd 100644
-=2D-- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-@@ -1932,8 +1932,7 @@ int amdgpu_dm_plane_init(struct amdgpu_display_manag=
-er *dm,
-        if (res)
-                return res;
-=20
--       if (plane->type =3D=3D DRM_PLANE_TYPE_OVERLAY &&
--           plane_cap && plane_cap->per_pixel_alpha) {
-+       if (plane_cap && plane_cap->per_pixel_alpha) {
-                unsigned int blend_caps =3D BIT(DRM_MODE_BLEND_PIXEL_NONE)=
- |
-                                          BIT(DRM_MODE_BLEND_PREMULTI) |
-                                          BIT(DRM_MODE_BLEND_COVERAGE);
+--------------mBa2eQI93JwYNemACO1F0L3e--
 
-One can probably also omit the .type field in the dummy_cap struct and
-also does not have to check if plance_cap is NULL anymore.
+--------------f0us4B6aufJYhK30GUqjvTW0--
 
-Bert Karwatzki
+--------------1ok0Xx2rzejEh7UGMI00qkE0
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmpbSJAFAwAAAAAACgkQsN6d1ii/Ey/o
+VQf/X5pfJkZX8w3BFmNhO2Uy4oHFVtQ92tpZnIrK8acTsvXeHMzW4RDKzvCEsgXttf86lsVaZ22I
+N4aUZqpqKO4chQfMSzH9zrci168JQT46+H7dGfRax5ZZYqWhHO8dOIkhNUxe/2BXTmZO40v0nLfN
+NNpioCxbHGm9VYSegd8rHgCb2vkX2P9eoKq9MOZ9t2l+QDJTDV8JCq7U2f4Ojn8fKPQnHdnH89EK
+68GK7ps29ldMP9RrBzHPsKmRnMG3ev2PtLYyg3GSUck/iBezv6xUCK0dFNyt0WpoonXLVQSug5Fr
+klVxzkNaFGY4D7etuvp+6W7BP1Zsm1OvQbJUt3gsuQ==
+=Otao
+-----END PGP SIGNATURE-----
+
+--------------1ok0Xx2rzejEh7UGMI00qkE0--
