@@ -1,115 +1,364 @@
-Received: from ixit.cz (ixit.cz [185.100.197.86])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F1442A80;
-	Mon, 20 Jul 2026 21:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784581305; cv=none; b=C7yj/aUnA1Ey/WnP2PwsBQhGuGcwv9+vXmSSzZ6BD5ibtDkm47s7o4R6nKGOgwWSXFoBXcGehXXlMze2Aim97mwLvLm1vs4i64i5Y4Hea/Qp2UEcJxDtZcln865mOfdkrX60zUZnXOw3Cxh17mnwb9FhsmhsH6nrJHtNpKd8c90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784581305; c=relaxed/simple;
-	bh=dFOFvM6aRR1aTaZkLgdWBGCgEqIUKO425ORowSY22W8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=fMo7Y9J7UeZQ7Nr2TVTnPcVr+ndeoc5hL9vwgplPTGYddcjtTQx8qqTCN1YnrAN5wUOmcFIOh/G0vMeOfKygk+sHCFQcl0L+0r/qmtFA0jyB2K5aOpYC32ZFTbQtNp55h/FQoXwilM7KlXDhMa4RCC9wdVCpSx1Ys6mwmcveJqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=X4ZzQWU6; arc=none smtp.client-ip=185.100.197.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEF4449B06;
+	Mon, 20 Jul 2026 21:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784584729; cv=fail; b=D40MXyBY1rV3gVgA0yihBNr+FEhx2QVXJTKV8rKEb/hsAhSApOzaNYtNH5AwYsFvuXe3jE2diFkNOTJLps2nzKbO1BZTZ01nvQHZNs8Xb/f1mUgBh+6CmWXdDD4Fv4SCPDPBhNuSPkOAdT6gHQpGZ1UFr0+KbNXkZKb+BkcgBR0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784584729; c=relaxed/simple;
+	bh=BMERtOHxs4n+1uX5kyt1mB7o9X5p08QoPt7Uv7v5eW4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rlDDZ25VzCq7kueHBIQvyhU6FkJyPjinAte/j+YeVRjOYYXm9Cxg0umoB/C4WpUufyTrJF9v+a2wIwUWagXs7th+FvtM7NHfIr4ifJGL/DqPayTHFxTZU/T6tadeueQR3sEHIR4EU5vrvJ5MqWA5Tp3vIQkPC5KAF/ljqWQgfTQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VY+oaAK3; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="X4ZzQWU6"
-Received: from [192.168.1.182] (ip-62-24-73-79.bb.vodafone.cz [62.24.73.79])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 37DB35340307;
-	Mon, 20 Jul 2026 23:01:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1784581299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qOGUp3K0KdWETfa2q4xaayR/DWhCOLxAHeH1i4FCLBQ=;
-	b=X4ZzQWU6QoVvy2hCKQy6PbKyKnhp286yz13hl3saysW5XgmIIc9ou9Ou6B6MknrDr7d4v3
-	d64PM/Bw5lKSGegwlMLlwZwkGS4K6WanYHxmdV/xoqPbX8xWIgSW2iqI/SovGwWcTNSwO9
-	mfKj3wN52p1ETuIZxELr4FudshNDEps=
-Message-ID: <9124231d-879f-45b5-b3c7-ab0247799085@ixit.cz>
-Date: Mon, 20 Jul 2026 23:01:37 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VY+oaAK3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784584727; x=1816120727;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=BMERtOHxs4n+1uX5kyt1mB7o9X5p08QoPt7Uv7v5eW4=;
+  b=VY+oaAK3C+RH+RqSeA6rRdefj/gvWB2NNUSf6LewMrn03q1bEVRPIseU
+   sPTX5JjNeHXaI/6cIV/3YmeO8eVf6ci/hIDJaoZyhH14LBENo/hF7GGJi
+   DVWoaE4s1FnI0O9OIEVuvSMMM72FdAYYrW+Jkz7jp/Xk3vnAzy0PRIWkN
+   M72K7SEHUjvh7FfnhrSZ1hJq1pbcZWBgbUPc7/WoAhqzKsL6tGTbPhhH2
+   S1Tq1bro/sbgCLX9+ohh3b8up2NUQ4gp1bkZYqv0e0RfP3UMtFXNFMUfd
+   TtD9e0QqZ/8lzbZq8QNhcRXUn0+9HFzqgNE00RBYrI1SjiGGOgHGVDzfq
+   g==;
+X-CSE-ConnectionGUID: dL6OsasIRECO59K/JutiSg==
+X-CSE-MsgGUID: xjfrkyt1TRu4f08RLqsbcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="72711397"
+X-IronPort-AV: E=Sophos;i="6.25,175,1779174000"; 
+   d="scan'208";a="72711397"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2026 14:58:47 -0700
+X-CSE-ConnectionGUID: tBOiHuHEQfqyo8T6x5VvLA==
+X-CSE-MsgGUID: HVOLiDf6TvCanD0/Jvz+ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,175,1779174000"; 
+   d="scan'208";a="257627567"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2026 14:58:47 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Mon, 20 Jul 2026 14:58:46 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Mon, 20 Jul 2026 14:58:46 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.31) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Mon, 20 Jul 2026 14:58:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ntJbmzS+vNeVZESiQL02rz9UbUhNi5qSEyJqOMYjhcIlquDq993qvV/qXHP+vIj2DSJ0Aw33Ke2m08QPGyfbbjawHy1xRUGZDotV40ZGAhY/w9PyexjcOOXM44WupAwiUUI8BaDRAtNUE2iMl8jM7yKqRptRWCv3vkjOUD+2K+VKLmxapBnGaMW+hg9MkmQamctymx+7LCWV758p1i6acTQrnftyxnzuX2ZIZ3fRgqF/9HE/nbL4MJeIsWrlNV1abwrQGtNOVe/tNuiW47ETsuSL5mNlNB4Pap71UXmyREFgBbkFvD+Ydh8AsNe8PzoEMAr9mVPZYgTnA/V7IkfBeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kcybMXwKlnxAnDP0zZx4Y3rgM2lg7dnGIdT/lSeqogE=;
+ b=ekEQ10o7kwRKdXZ3pbvUgJKLJtjSEVJhIqhSGX32FxOboYGfgzru9uheKAlu7uDuHc+cZnrPZk535mi1GIsD9AqTMIlApAf9BlmGvW33tqysHjUyi6Zq0RmRsyJorl+NkVQjdQ8FpY1pC4JG5tkeEOf9H4ryyKgLnUhaIaMMhBAgX4eiGfwZQGC1Atceiw692q1JoqWi2J/fGa54QRPEMmCjZ+ik6yc+AwD3KV3FDh+lJPlXt8Tcbdxm36OWgKG8eyYsyRzJOItarKI03W5riwh5XfLhQgUrophOqnqBi21kHnwqtIL4un9Ywb5AQ6F+C1ILFfD8/1BdhDAfO6QMuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by MN6PR11MB8169.namprd11.prod.outlook.com (2603:10b6:208:47d::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Mon, 20 Jul
+ 2026 21:58:37 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::e0c5:6cd8:6e67:dc0c]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::e0c5:6cd8:6e67:dc0c%4]) with mapi id 15.21.0223.017; Mon, 20 Jul 2026
+ 21:58:37 +0000
+Date: Mon, 20 Jul 2026 14:58:34 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: Christoph Hellwig <hch@lst.de>
+CC: Mark Brown <broonie@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>, Hugh Dickins <hughd@google.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, <linux-mm@kvack.org>
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ drm-misc-fixes tree
+Message-ID: <al6aCizqqilqQGZ4@gsse-cloud1.jf.intel.com>
+References: <al4jGBGNG_QACaNL@sirena.org.uk>
+ <20260720144141.GA16699@lst.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260720144141.GA16699@lst.de>
+X-ClientProxiedBy: MW4PR04CA0260.namprd04.prod.outlook.com
+ (2603:10b6:303:88::25) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [next-20260717] ufshcd issues on Pixel 3
-From: David Heidelberg <david@ixit.cz>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org
-References: <fb3bf040-7049-40be-a7e0-54fa624f134d@ixit.cz>
-Content-Language: en-US
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <fb3bf040-7049-40be-a7e0-54fa624f134d@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|MN6PR11MB8169:EE_
+X-MS-Office365-Filtering-Correlation-Id: f97dfc72-5f4c-4081-e599-08dee6aa0d41
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|3023799007|10067099003|5023799004|56012099006|4143699003|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: F7i+v1nK2Gt/hRNdGYXOc+0UpCcfri5aKeLVIAXBBb513RVOvda4ZhvTxDHUR6lCuTOFUkcuP3OJqEUqm1SPNJtv36L123H/iH/ERC0Rbz6l3hIxoZopV5OzOeazACjH+hgsCrU8j39jDmTmneXg8rwP3lbWaZy/yEmzRkIWA+Lwr6oFeysQBzrxx62FTz0lKqbTS2vr0lJV9IsKVzWHKXstdzf2FFZQsrbqLG/eBpLUXVpUSCsq/arMGFQJf6ynjH8HZCjuNY7EOdmqAIHneBBnh7Tpz2ibKUfWUahydOPZBIvk3m5RoynSkQOBvidRyhAfnZCFHlOc+Cl3yQAvoojiauk4rSCetwJEK1+Yp8U8F9DxN8ZCYwudhKhsmbRO5X4DUNH0qr9zw7w2kK7ompEILivea55llKgBxVaEotr42czGQeUuUzAJXyPrFFANAFO9R/beO1IUt3eM5JS9UgotTv5eGyQ/KVxkrM8P0rDTB+6SNB4De78C4GH0En5qbRYKAtDlmpZ6JAoinqQr4UO40LcUNK6QiCA+SmfoIFVN9ulimW3OYyeSBNOhDiWDBeYgc17q0jPdTQOY2X0MJudYBWiaPYZivl3ZAI15ato3FV73O/ZTRzE29zI1+pbgA3lBVmaAhXLVdcsxG/h2+Dw/Lyoy3/lTdrWTYWklFJI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(3023799007)(10067099003)(5023799004)(56012099006)(4143699003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?z0F/iwzmiKvK9X2pjPp29l37FU3Wppoz8AhslEkRO8DWnGrzuMDJY5rIjOE2?=
+ =?us-ascii?Q?0nBJliGhQ9XRhmvBHCchbvbfFSqfttnBAKK6Y+DoJnqTcQlpq45SMzW2lMNz?=
+ =?us-ascii?Q?g2v6mbMZFvyuaGM56H2aAxmECPKgYjgizW6U8ldFs++Vs6a09LCIcoDI2HEI?=
+ =?us-ascii?Q?PiWm9tu6Rhg+dB/1u+g/fM6oS2MHcWFIXpG8PqsM5s9a0ghf0oYLVLv9PUp0?=
+ =?us-ascii?Q?qKgOoyrQL+CfZvJZpTkyH6G2MtvxfhxQ4JU3o6Rgc7CuHJ5TJn7sA4bzXusD?=
+ =?us-ascii?Q?ZfqtjUfx35vlfx2Ao1Fa3KlIkXtEjaDBJsC3bQA9RerPjFxWCydK3mJEcJPR?=
+ =?us-ascii?Q?hUQytCr3iS9Xj4o3JBwjgnUVljwxh/Wf+YNMF+qpunvPjlvdRSwRTf3WvCcB?=
+ =?us-ascii?Q?kwpX6cbAufl0sqny8MVLbmltr4jxjcjVUBg5OLaIQHOOjLuqQrRB0/fS0Y0Y?=
+ =?us-ascii?Q?cHpqDOj99shMWQhHNPc9JXNedkCBcq03NEPP8ujnD4LqYaTzY6rgMOnK5Nm+?=
+ =?us-ascii?Q?hKCFHF1P3ayjRdZ2qqZ6lt41xQDt8KdA+nbQlLRaZRzKZDzTTl5/v22QDDvd?=
+ =?us-ascii?Q?vx60oST+lMbiqTTrEkBAFhci13EovitFaS8HRgk2IhKM0OHk/L5WeOVJla+w?=
+ =?us-ascii?Q?54cGvjPNW2PBmW1jSZ4R+yyQ8iIeJpMkAHni8FdYj78fYY7iJ3H84W7MivfN?=
+ =?us-ascii?Q?1PKiLnB7VJQd+/adGb6KLaxzcZDPABVuRzBqvKJ0698Rp39eRbNUMLmPf+De?=
+ =?us-ascii?Q?xtPW69qp2/4/PUuqrHEe3nUtJqYaYvWoEti/osFeYT3id2KSql0BgEEo4Vs0?=
+ =?us-ascii?Q?i8qoGc/UsQjO9oDBHjvh0+R2eg0b9kVFomIpAq3Yd56ADIbaUfoLJGpUG8Mt?=
+ =?us-ascii?Q?WxyhnMY2QHOUq0MfEVFWat640/U14ty+1BXtXyupCU/+U8D/mQGRFhj6EhAV?=
+ =?us-ascii?Q?cDYvnzQV/vMTuikivrWToHl+LkqRBgrXxImTfFaNH1rguaJoHHicFwk0lvFy?=
+ =?us-ascii?Q?lMxOzw8OKoMzDM2wQ7x/W1WrR9mBSfWRx3Ib1FFqBcsz9tHiRHpjj44/Lmvy?=
+ =?us-ascii?Q?hjziFY9A17An6HSgyPgBKNsgBuO5DLLI2BQslj5Uxy66x9/H1NuJ3Rh6tMDz?=
+ =?us-ascii?Q?BDH+b+WRyaUbP1pSDHzHNMPiwmopCNZdHRA6BPIZvvrC5LmWY7TTYZm65Ew1?=
+ =?us-ascii?Q?5R2Ba7NkdGys5viPTVybirlLNohlZIp27hZYi2/65Z9/7ANo7urkhMr1Y6Yc?=
+ =?us-ascii?Q?ktNfbh3deHFksTld6MGBAhOa8HUFI9kSaMwzkZ6h9CRiTc4h53DAIMDqjkpk?=
+ =?us-ascii?Q?CDg/GqcjCZIkVReV1gwdCHedtZeqrcUHQzTldvUPV3jwk/S//T3AvPdnfbVY?=
+ =?us-ascii?Q?YvrZQHDYBsmR6y2g+Gl4/lRP6eJLi5yLWDygeff5YQ7cGzBJLnInZof5+k42?=
+ =?us-ascii?Q?qTZYByfrq8Kc6lyz/LRoJvRTxeGZVVXw5MJ1Qcj1I2NG2CFUUyeZyf76pbNS?=
+ =?us-ascii?Q?rMa5rSp51EHEXb6LlAqa0UmZgp3HC8bChXgV4Wbv0QMcgGCe5detnqFJaHOb?=
+ =?us-ascii?Q?n0G+kivfQ0vWgpQSgPmAxAsxYoPHoorJGo40/qsdQQMsAY1mCboBWzg0VhkV?=
+ =?us-ascii?Q?PCQjCcw6IsBezxL9Jqcnw1Td2yLjgO9CnnPEmwi91BgdtOi0T7fhPIT1eptQ?=
+ =?us-ascii?Q?gQIhBQc/sJFeYuB+lv3FJvKkbpmkdwf9cm7HqRKDDqZbDoJ9db+D5alfBieI?=
+ =?us-ascii?Q?mtFpJQP2SrZe4wtReZdtY8RaGmipODE=3D?=
+X-Exchange-RoutingPolicyChecked: gVVr2ZVmeUNjUu8K/VJM3/1GRSaXAUGMppV84zrq8V9Ed2WUidKTrXumO2GqTEwjQcTpNeE8pyejc+JQ8YD6Lag11BWMCysHKFmDTatD+EN+DhEXwUgOhipdFRQYvTIj+tHKiaaaSOQabHdWASLmE+R5KVpiEqz66GHT1py+MdPM1yK149j2WP0FkancA3UxNXTx+Cv5yuC79y2f4EE/4BcKEnL219MHIBn9PmehktS648MmXuA9g+zk2DHdQ10/u8XdGrySaafAIqdsHNT6Zqbbxwxgx1WY1T74q5k82ILokVgng0D+cN6BxggPrZ0Gn1NhZA7mG8BuEXNdJHZIUg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: f97dfc72-5f4c-4081-e599-08dee6aa0d41
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2026 21:58:37.5819
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QrigBZSSnQaWzjNTipFy5Ex5xve9CHqJQ0ZzN1MvcWNtxQ+qH2b25DJ4/rdCCCtkzEiOwkyA6RO9y145jUZKsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8169
+X-OriginatorOrg: intel.com
 
-On 19/07/2026 20:14, David Heidelberg wrote:
-> Hello!
+On Mon, Jul 20, 2026 at 04:41:41PM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 20, 2026 at 02:31:04PM +0100, Mark Brown wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the mm-unstable tree got a conflict in:
+> > 
+> >   drivers/gpu/drm/ttm/ttm_backup.c
+> > 
+> > between commit:
+> > 
+> >   a3fdf74ffa596 ("drm/ttm/pool: back up at native page order")
+> > 
+> > from the drm-misc-fixes tree and commit:
+> > 
+> >   c6bfdcf16f131 ("shmem: provide a shmem_write_folio wrapper")
+> > 
+> > from the mm-unstable tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
 > 
-> With next-20260717 I'm receiving these errors on Pixel 3. Previous kernel was 
-> running there just fine (I think around next-20260703).
+> Much of the code here really should sit in shmem.c instead of having
+> random drivers/subsystems poke into the internals of shmem mappings
+> and folios.  But I feel like a broken record for saying that again
+> and again without any action :(
+> 
 
-I can confirm also with Xiaomi Mi 8 (dipper) so I assume these issues are at 
-least sdm845-wide.
+Do you have a suggestion of what parts to move over to shmem.c?
 
+Pretty much all of this? I can take a look at this in a follow up?
+
+Matt
+
+> > 
+> > diff --combined drivers/gpu/drm/ttm/ttm_backup.c
+> > index 3c067aadc52de,c5b813a563e7f..0000000000000
+> > --- a/drivers/gpu/drm/ttm/ttm_backup.c
+> > +++ b/drivers/gpu/drm/ttm/ttm_backup.c
+> > @@@ -6,10 -6,9 +6,10 @@@
+> >   #include <drm/ttm/ttm_backup.h>
+> >   
+> >   #include <linux/export.h>
+> >  -#include <linux/page-flags.h>
+> >   #include <linux/swap.h>
+> >   
+> >  +#include "ttm_pool_internal.h"
+> >  +
+> >   /*
+> >    * Need to map shmem indices to handle since a handle value
+> >    * of 0 means error, following the swp_entry_t convention.
+> > @@@ -69,23 -68,17 +69,23 @@@ int ttm_backup_copy_page(struct file *b
+> >   }
+> >   
+> >   /**
+> >  - * ttm_backup_backup_page() - Backup a page
+> >  + * ttm_backup_backup_folio() - Backup a folio
+> >    * @backup: The struct backup pointer to use.
+> >  - * @page: The page to back up.
+> >  - * @writeback: Whether to perform immediate writeback of the page.
+> >  + * @folio: The folio to back up.
+> >  + * @order: The allocation order of @folio.  Since TTM allocates higher-order
+> >  + *         pages without __GFP_COMP, folio_nr_pages(@folio) would always
+> >  + *         return 1; the caller must pass the true order explicitly.
+> >  + * @writeback: Whether to perform immediate writeback of the folio's pages.
+> >    * This may have performance implications.
+> >  - * @idx: A unique integer for each page and each struct backup.
+> >  + * @idx: A unique integer for the first page of the folio and each struct backup.
+> >    * This allows the backup implementation to avoid managing
+> >    * its address space separately.
+> >  - * @page_gfp: The gfp value used when the page was allocated.
+> >  - * This is used for accounting purposes.
+> >  + * @folio_gfp: The gfp value used when the folio was allocated.
+> >  + * Currently unused.
+> >    * @alloc_gfp: The gfp to be used when allocating memory.
+> >  + * @nr_pages_backed: Output. On a successful return, set to the number of
+> >  + * pages actually backed up, which may be less than (1 << @order)
+> >  + * if an -ENOMEM was encountered mid-folio.
+> >    *
+> >    * Context: If called from reclaim context, the caller needs to
+> >    * assert that the shrinker gfp has __GFP_FS set, to avoid
+> > @@@ -94,87 -87,53 +94,87 @@@
+> >    * that the shrinker gfp has __GFP_IO set, since without it,
+> >    * we're not allowed to start backup IO.
+> >    *
+> >  - * Return: A handle on success. Negative error code on failure.
+> >  - *
+> >  - * Note: This function could be extended to back up a folio and
+> >  - * implementations would then split the folio internally if needed.
+> >  - * Drawback is that the caller would then have to keep track of
+> >  - * the folio size- and usage.
+> >  + * Return: A handle for the first backed-up page on success (handles for
+> >  + * subsequent pages follow sequentially). -ENOMEM if no pages could be backed
+> >  + * up. Any other negative error code if a non-ENOMEM failure occurred; in that
+> >  + * case any pages backed up so far are truncated before returning.
+> >    */
+> >   s64
+> >  -ttm_backup_backup_page(struct file *backup, struct page *page,
+> >  -		       bool writeback, pgoff_t idx, gfp_t page_gfp,
+> >  -		       gfp_t alloc_gfp)
+> >  +ttm_backup_backup_folio(struct file *backup, struct folio *folio,
+> >  +			unsigned int order, bool writeback, pgoff_t idx,
+> >  +			gfp_t folio_gfp, gfp_t alloc_gfp,
+> >  +			pgoff_t *nr_pages_backed)
+> >   {
+> >   	struct address_space *mapping = backup->f_mapping;
+> >  -	unsigned long handle = 0;
+> >  +	int nr_pages = 1 << order;
+> >   	struct folio *to_folio;
+> >  -	int ret;
+> >  +	int ret, i;
+> >   
+> >  -	to_folio = shmem_read_folio_gfp(mapping, idx, alloc_gfp);
+> >  -	if (IS_ERR(to_folio))
+> >  -		return PTR_ERR(to_folio);
+> >  +	*nr_pages_backed = 0;
+> >   
+> >  -	folio_mark_accessed(to_folio);
+> >  -	folio_lock(to_folio);
+> >  -	folio_mark_dirty(to_folio);
+> >  -	copy_highpage(folio_file_page(to_folio, idx), page);
+> >  -	handle = ttm_backup_shmem_idx_to_handle(idx);
+> >  +	for (i = 0; i < nr_pages; ) {
+> >  +		int to_nr, j;
+> >   
+> >  -	if (writeback && !folio_mapped(to_folio) &&
+> >  -	    folio_clear_dirty_for_io(to_folio)) {
+> >  -		folio_set_reclaim(to_folio);
+> >  -		ret = shmem_write_folio(to_folio);
+> >  -		if (!folio_test_writeback(to_folio))
+> >  -			folio_clear_reclaim(to_folio);
+> >   		/*
+> >  -		 * If writeout succeeds, it unlocks the folio.	errors
+> >  -		 * are otherwise dropped, since writeout is only best
+> >  -		 * effort here.
+> >  +		 * Only inject past the first subpage so *nr_pages_backed is
+> >  +		 * always > 0 here, matching a genuine mid-compound -ENOMEM
+> >  +		 * and driving the caller's reactive split fallback instead
+> >  +		 * of an early, no-progress failure.
+> >   		 */
+> >  -		if (ret)
+> >  +		if (IS_ENABLED(CONFIG_FAULT_INJECTION) && i &&
+> >  +		    ttm_backup_fault_inject_folio())
+> >  +			to_folio = ERR_PTR(-ENOMEM);
+> >  +		else
+> >  +			to_folio = shmem_read_folio_gfp(mapping, idx + i, alloc_gfp);
+> >  +		if (IS_ERR(to_folio)) {
+> >  +			int err = PTR_ERR(to_folio);
+> >  +
+> >  +			if (err == -ENOMEM && *nr_pages_backed)
+> >  +				return ttm_backup_shmem_idx_to_handle(idx);
+> >  +
+> >  +			if (*nr_pages_backed) {
+> >  +				shmem_truncate_range(file_inode(backup),
+> >  +						     (loff_t)idx << PAGE_SHIFT,
+> >  +						     ((loff_t)(idx + i) << PAGE_SHIFT) - 1);
+> >  +				/*
+> >  +				 * The pages just truncated are no longer
+> >  +				 * backed up; don't let the caller mistake
+> >  +				 * them for valid handles.
+> >  +				 */
+> >  +				*nr_pages_backed = 0;
+> >  +			}
+> >  +			return err;
+> >  +		}
+> >  +
+> >  +		to_nr = min_t(int, nr_pages - i,
+> >  +			      folio_next_index(to_folio) - (idx + i));
+> >  +
+> >  +		folio_mark_accessed(to_folio);
+> >  +		folio_lock(to_folio);
+> >  +		folio_mark_dirty(to_folio);
+> >  +
+> >  +		for (j = 0; j < to_nr; j++)
+> >  +			copy_highpage(folio_file_page(to_folio, idx + i + j),
+> >  +				      folio_page(folio, i + j));
+> >  +
+> >  +		if (writeback && !folio_mapped(to_folio) &&
+> >  +		    folio_clear_dirty_for_io(to_folio)) {
+> >  +			folio_set_reclaim(to_folio);
+> > ++			ret = shmem_write_folio(to_folio);
+> >  +			if (!folio_test_writeback(to_folio))
+> >  +				folio_clear_reclaim(to_folio);
+> >  +			if (ret == AOP_WRITEPAGE_ACTIVATE)
+> >  +				folio_unlock(to_folio);
+> >  +		} else {
+> >   			folio_unlock(to_folio);
+> >  -	} else {
+> >  -		folio_unlock(to_folio);
+> >  +		}
+> >  +
+> >  +		folio_put(to_folio);
+> >  +		i += to_nr;
+> >  +		*nr_pages_backed = i;
+> >   	}
+> >   
+> >  -	folio_put(to_folio);
+> >  -
+> >  -	return handle;
+> >  +	return ttm_backup_shmem_idx_to_handle(idx);
+> >   }
+> >   
+> >   /**
 > 
-> Dropping the log here, in case someone encounter similar issue.
 > 
-> David
-> ---
-> 
-> [   38.963072] ufshcd-qcom 1d84000.ufshc: ufshcd_abort: Device abort task at tag 13
-> [   38.974926] sd 0:0:0:0: [sda] tag#13 CDB: opcode=0x28 28 00 00 24 bd 2c 00 00 
-> 4d 00
-[...]
+> ---end quoted text---
