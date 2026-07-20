@@ -1,151 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3924307BC;
-	Mon, 20 Jul 2026 14:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5B3B38BE;
+	Mon, 20 Jul 2026 14:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784558688; cv=none; b=Lgcqkkvt4f/GniVijPNNfyf05qMzN8eViHqhIaUYuXQoE6gdLmiAGMHpGZYgZY67vHB5dKpRtZgbLLhP/2ahgRQmG7b6ABezS9D/O+5x0rh5Qx5MlLkEjzXsX82DUKej6Hbf1b7WS6Skn00tgvb1v6Z9VjHa+bOrtlyY+aeWFOU=
+	t=1784558768; cv=none; b=TuzQSkyejmKEL7YVRrzsnw7AQuwFGx1tZR6Np9xl83AwZZENf2B8oaIP5NQ1R6ukYHQJx87Dvs2LvC6ymh3VwHxymBy1fgEID0T6lwWm87wFMWec1r0TnbMVp0Xkl1cCWc95Lk2u1i3rhG4JEeSu3FzWNWEldNXUc0eITGfQfZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784558688; c=relaxed/simple;
-	bh=tQQaBG2iu3wPfWvKXdYYtZJsgpcpp0FNKFaOJAN/eHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dxPka07nng1s+i9nDXmfvybDHcbMvw9GvClz5DEMsg4TienZFaiJ69AmsuuDhER15v5TLbxm6uoecX8RGN2sJRaXavpGoeHnQnL1ZVeDPjkii9FW6XCXd8CXIUm5j1HxEV3Od5oYpAIzTSAqkN/cR/+qb4LtWAOcu3AkmzsDrQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SziOxgDL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784558768; c=relaxed/simple;
+	bh=cJPu87nvYn3Xixn1rwDNcQAJzUhbR08LjTyaw+GT+QI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6ic3hgXdDb8D9JTAja4iWRtb1eFltJ+iMbUhWaJTewfZMVhFIARke+FwazKCuJFNLJnMjpgtzzbRUc5Q6O4ek+0fK+LyvLW9XH0F1FfGd9trszafMz6CV4nufUIGZCVjMWxjBl5K2jT5i2Wowz2nQcQO9NEVfGqJw5UJKKEit4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q4gTrKD/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SziOxgDL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC6F1F000E9;
-	Mon, 20 Jul 2026 14:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784558686;
-	bh=SWfPLaIV2JEtoBCMYloeN8U1PNGpW4U1pVWinBHVaDM=;
-	h=Date:From:To:Cc:Subject;
-	b=SziOxgDLHG1/BsMnNJPVWkdKYwb5HyjH4/af1yuPFgZXqWoN8ZKxAfAgHm/SyMbFK
-	 OUxTO4a62pKALJ91oNOZ1YxICnFSlSTBicqJwuACQecT9177oB/O1woZFLtrMhynSJ
-	 cjKOeYPP/+/vG647AELJCeWSeV8BJtzM4moE0pg9meqmyTA8MTpiqLtb2oR6V//JRa
-	 eA0quqtA/FdJjZtgNKAl9ww6ZC7EvcVjS7pVa993K8//8ahBZlTklvXFNJFvOgt2vZ
-	 3+dQXwvXPvW421pihL4RU9qp/9NXZrE+97AUiK2Zs+cbKbA5QQFQdqCajcnn0PyxLH
-	 t1MhqcDUYv+ew==
-Date: Mon, 20 Jul 2026 15:44:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jahnavi MN <jahnavimn@google.com>,
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q4gTrKD/"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PfRAFhBZQchppXOO+Jgr0cSkDMbt1DF4C/TUagsgCiA=; b=q4gTrKD/JHkF9rdgVeJRopM9/L
+	urB9FO9pjuI91E3n7c9jeYmhfBQk91aQcrjjO1TtyyNPydmLVGxvVs8GYqpkhU6xWo+Hks5uvS6sB
+	lbHDdqdJUCjuYiG8mU+GU49oC7mnX3Kj2F6mfBWxhopOLY7hye2br5fU7IrywpKGXRzGUth0DCKqO
+	83YobtUbSGP3EUD1DQkEyI0UuUvTT/LFgFWKV0uhYRaMArtJ9d8bjgZRIC4ZiJqYnK1EvgzzFLcab
+	03iYunE5zqja9kzp9HTj1eUqgezn+yrRqb7Fy3L6X8ZPqqAF9rs3rAq2uuSLtzcM6NlT1/E509PwL
+	LAH7i8BA==;
+Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wlpFo-0000000B90V-2Ozj;
+	Mon, 20 Jul 2026 14:46:00 +0000
+Date: Mon, 20 Jul 2026 15:46:00 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Mark Brown <broonie@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the char-misc tree with the
- char-misc.current tree
-Message-ID: <al40WiyRukYGQ68S@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>, dri-devel@lists.freedesktop.org
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ drm-misc-fixes tree
+Message-ID: <al40qCMTxhEP3Kx8@casper.infradead.org>
+References: <al4jGBGNG_QACaNL@sirena.org.uk>
+ <20260720144141.GA16699@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UEes+c8ww1MHHZ5x"
-Content-Disposition: inline
-
-
---UEes+c8ww1MHHZ5x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260720144141.GA16699@lst.de>
 
-Hi all,
+On Mon, Jul 20, 2026 at 04:41:41PM +0200, Christoph Hellwig wrote:
+> >   /**
+> >  - * ttm_backup_backup_page() - Backup a page
+> >  + * ttm_backup_backup_folio() - Backup a folio
+> >    * @backup: The struct backup pointer to use.
+> >  - * @page: The page to back up.
+> >  - * @writeback: Whether to perform immediate writeback of the page.
+> >  + * @folio: The folio to back up.
+> >  + * @order: The allocation order of @folio.  Since TTM allocates higher-order
+> >  + *         pages without __GFP_COMP, folio_nr_pages(@folio) would always
+> >  + *         return 1; the caller must pass the true order explicitly.
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+Wait, what?  This is just broken.  TTM should change to allocate using
+GFP_COMP.  Why can't graphics people ask questions before writing stupid
+patches?
 
-  drivers/android/binder/thread.rs
-
-between commit:
-
-  bb66b1a345253 ("rust_binder: only print failure if error has source")
-
-=66rom the char-misc.current tree and commit:
-
-  c61f3ad2213cf ("rust_binder: Implement BINDER_DEBUG_FAILED_TRANSACTION")
-
-=66rom the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/android/binder/thread.rs
-index bc0ef8927905c,a51821dde0adf..0000000000000
---- a/drivers/android/binder/thread.rs
-+++ b/drivers/android/binder/thread.rs
-@@@ -1273,14 -1295,25 +1295,24 @@@ impl Thread=20
-                          inner.extended_error =3D
-                              ExtendedError::new(info.debug_id as u32, err.=
-reply, source.to_errno());
-                      }
- -                }
- =20
--                     pr_warn!(
--                         "{}:{} transaction to {} failed: {err:?}",
--                         info.from_pid,
--                         info.from_tid,
--                         info.to_pid
- -                binder_debug!(
- -                    FailedTransaction,
- -                    "transaction {} to {}:{} failed {:?}, code {} size {}=
--{}",
- -                    if info.is_reply {
- -                        "reply"
- -                    } else if info.is_oneway() {
- -                        "async"
- -                    } else {
- -                        "call"
- -                    },
- -                    info.to_pid,
- -                    info.to_tid,
- -                    err,
- -                    info.code,
- -                    info.data_size,
- -                    info.offsets_size
- -                );
-++                    binder_debug!(
-++                        FailedTransaction,
-++                        "transaction {} to {}:{} failed {:?}, code {} siz=
-e {}-{}",
-++                        if info.is_reply {
-++                            "reply"
-++                        } else if info.is_oneway() {
-++                            "async"
-++                        } else {
-++                            "call"
-++                        },
-++                        info.to_pid,
-++                        info.to_tid,
-++                        err,
-++                        info.code,
-++                        info.data_size,
-++                        info.offsets_size
- +                    );
--                 }
-              }
-          }
- =20
-
---UEes+c8ww1MHHZ5x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpeNFkACgkQJNaLcl1U
-h9AhHAf/RV3SUHI8+kp663sPUOJzSyuxxe2jKL3R+SoLZnFmkVs5UY7oVd8QDLRL
-B8pL8+O7I96k8ihBP2UUtP7xX6DXYvSQDyDZZpel3/xS0Pxja1PArDQhlZEWMjxd
-6UejfuuQhaL0u3O9IJ4s/KP4NefNjMbfnakuxoVoH2ffe5vvyzzoFyWd8FKoDHuq
-0D57cy3eotrUdsSQLYhygdQbkD4GHk+YwwdoK0DiE3mVj+dGENxfxsmZ/Z6dFL95
-KdGLnamEuUTbdggR4NzEeb+RY4J0TBtWdfE+GnzMIUkleXfGvF1tNvGRWakRYL4P
-qG3S7nBMt5twq+pJ6B+EnOyu9vu2nA==
-=odnh
------END PGP SIGNATURE-----
-
---UEes+c8ww1MHHZ5x--
