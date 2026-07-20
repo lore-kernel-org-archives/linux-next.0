@@ -1,74 +1,127 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5B3B38BE;
-	Mon, 20 Jul 2026 14:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCC3381AE1;
+	Mon, 20 Jul 2026 14:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784558768; cv=none; b=TuzQSkyejmKEL7YVRrzsnw7AQuwFGx1tZR6Np9xl83AwZZENf2B8oaIP5NQ1R6ukYHQJx87Dvs2LvC6ymh3VwHxymBy1fgEID0T6lwWm87wFMWec1r0TnbMVp0Xkl1cCWc95Lk2u1i3rhG4JEeSu3FzWNWEldNXUc0eITGfQfZs=
+	t=1784558793; cv=none; b=uXZgYy1hQX4D8NAm6+XMuYunYZYfWUGglDI9Zp85/LAm7SOaoZRA6A42HtSof6SZKUg1jYn+X/S7bMQefvPuzRW0O0cLO3jE0UtZQVdL8brxYy29n4YH3Arl9ucDAGpMqhS7KwaPwRXVS3iAxbOmyyk/rrDSJdhcg/s2zK2wBVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784558768; c=relaxed/simple;
-	bh=cJPu87nvYn3Xixn1rwDNcQAJzUhbR08LjTyaw+GT+QI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6ic3hgXdDb8D9JTAja4iWRtb1eFltJ+iMbUhWaJTewfZMVhFIARke+FwazKCuJFNLJnMjpgtzzbRUc5Q6O4ek+0fK+LyvLW9XH0F1FfGd9trszafMz6CV4nufUIGZCVjMWxjBl5K2jT5i2Wowz2nQcQO9NEVfGqJw5UJKKEit4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q4gTrKD/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1784558793; c=relaxed/simple;
+	bh=BSOdPFF3nX3MlgCA+rJrncausTq+eiMbAA80wTI82D0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MfR3Wd549roOGglYcaOkwoJYG9570HnUNFdXYW4bhYmOUoYOCLQc0HhapUSvisBcI7hylumVQZ9UU0IADJLshyFZXm5ajCf1Vj7cPFsRNLZHHQkspEcBLg6iox7lKKeT0G200SnxL8688UY8hfuAOsn7AfUyV4GSJ6jM7xh+yeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBuHXJh/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q4gTrKD/"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PfRAFhBZQchppXOO+Jgr0cSkDMbt1DF4C/TUagsgCiA=; b=q4gTrKD/JHkF9rdgVeJRopM9/L
-	urB9FO9pjuI91E3n7c9jeYmhfBQk91aQcrjjO1TtyyNPydmLVGxvVs8GYqpkhU6xWo+Hks5uvS6sB
-	lbHDdqdJUCjuYiG8mU+GU49oC7mnX3Kj2F6mfBWxhopOLY7hye2br5fU7IrywpKGXRzGUth0DCKqO
-	83YobtUbSGP3EUD1DQkEyI0UuUvTT/LFgFWKV0uhYRaMArtJ9d8bjgZRIC4ZiJqYnK1EvgzzFLcab
-	03iYunE5zqja9kzp9HTj1eUqgezn+yrRqb7Fy3L6X8ZPqqAF9rs3rAq2uuSLtzcM6NlT1/E509PwL
-	LAH7i8BA==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wlpFo-0000000B90V-2Ozj;
-	Mon, 20 Jul 2026 14:46:00 +0000
-Date: Mon, 20 Jul 2026 15:46:00 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Mark Brown <broonie@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBuHXJh/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61391F000E9;
+	Mon, 20 Jul 2026 14:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784558792;
+	bh=qMAfpjZDUOtY2bM2iAzJDSfR38kWRfzhnXZq3s6GdPQ=;
+	h=Date:From:To:Cc:Subject;
+	b=OBuHXJh/1Hk1F2+7IdEw3zffPT53VezT9QgZ3xKgcER6jzQHQCt0KibVimQcFJSJI
+	 eozXVAo/i3vq4o/oVt/mKzG6KwiMtixqlDsk/rRaVHXv8uEW9wktoiIvylf9Frp+y6
+	 RxbEFMcrnQo2ADmqF+0n4utvOcHpJokHw5y1qazIquBrd7LWQ7rsdWEWj+MTEzeS+G
+	 pnxnbOv5GzYoobiKgSki/+kd2ioPuK7EbwlHOESLXR0OP8eUSW31ZVby2Ggb2NGU1t
+	 YlkubTS0okVYokZptzeiZwDkaeQ0T4sG30yVNddWQoAsel5bI3MK/iOtX+uuHwoxve
+	 diD+Zav6j25aw==
+Date: Mon, 20 Jul 2026 15:46:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, dri-devel@lists.freedesktop.org
-Subject: Re: linux-next: manual merge of the mm-unstable tree with the
- drm-misc-fixes tree
-Message-ID: <al40qCMTxhEP3Kx8@casper.infradead.org>
-References: <al4jGBGNG_QACaNL@sirena.org.uk>
- <20260720144141.GA16699@lst.de>
+	Runyu Xiao <runyu.xiao@seu.edu.cn>,
+	Vu Nguyen Anh Khoa <khoavna.tin.2225@gmail.com>
+Subject: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Message-ID: <al40xMdxeEHvedyh@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="v1+Iy6d2Uj9A9sbL"
+Content-Disposition: inline
+
+
+--v1+Iy6d2Uj9A9sbL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260720144141.GA16699@lst.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 20, 2026 at 04:41:41PM +0200, Christoph Hellwig wrote:
-> >   /**
-> >  - * ttm_backup_backup_page() - Backup a page
-> >  + * ttm_backup_backup_folio() - Backup a folio
-> >    * @backup: The struct backup pointer to use.
-> >  - * @page: The page to back up.
-> >  - * @writeback: Whether to perform immediate writeback of the page.
-> >  + * @folio: The folio to back up.
-> >  + * @order: The allocation order of @folio.  Since TTM allocates higher-order
-> >  + *         pages without __GFP_COMP, folio_nr_pages(@folio) would always
-> >  + *         return 1; the caller must pass the true order explicitly.
+Hi all,
 
-Wait, what?  This is just broken.  TTM should change to allocate using
-GFP_COMP.  Why can't graphics people ask questions before writing stupid
-patches?
+Today's linux-next merge of the char-misc tree got a conflict in:
 
+  drivers/misc/nsm.c
+
+between commit:
+
+  ce1fed11d18e1 ("misc: nsm: only unlock nsm_dev on post-lock error paths")
+
+=66rom the char-misc.current tree and commit:
+
+  937cd823bb2c9 ("misc: nsm: do not unlock mutex before locking it")
+
+=66rom the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/misc/nsm.c
+index 3960506eb7ab3,bb254ee65b840..0000000000000
+--- a/drivers/misc/nsm.c
++++ b/drivers/misc/nsm.c
+@@@ -243,7 -243,7 +243,7 @@@ static int nsm_sendrecv_msg_locked(stru
+  		goto cleanup;
+  	}
+ =20
+- 	msg->resp.len =3D len;
++ 	msg->resp.len =3D min_t(unsigned int, len, sizeof(msg->resp.data));
+ =20
+  	rc =3D 0;
+ =20
+@@@ -365,9 -365,8 +365,8 @@@ static long nsm_dev_ioctl(struct file *
+  		return -EINVAL;
+ =20
+  	/* Copy user argument struct to kernel argument struct */
+- 	r =3D -EFAULT;
+  	if (copy_from_user(&raw, argp, _IOC_SIZE(cmd)))
+- 		return r;
++ 		return -EFAULT;
+ =20
+  	mutex_lock(&nsm->lock);
+ =20
+@@@ -413,7 -412,6 +412,7 @@@ static int nsm_device_init_vq(struct vi
+  }
+ =20
+  static const struct file_operations nsm_dev_fops =3D {
+ +	.owner =3D THIS_MODULE,
+  	.unlocked_ioctl =3D nsm_dev_ioctl,
+  	.compat_ioctl =3D compat_ptr_ioctl,
+  };
+
+--v1+Iy6d2Uj9A9sbL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpeNMMACgkQJNaLcl1U
+h9D7IQf/ZZjZk6DQV0GM1eLCZGrW6IarVqgkF6JFiLt0LAzSL5HK4GFrjQEPHhgL
+WhXnWBmk6Bx1soEbaGhYVnsclFOAXG4jo5hgn9fwaAoT9yBbqtLppkQqXTN83ZCK
+Q7Ffb5HaFa955M7TovqMxOAHNjIuQPLtcQqRo6Vz9JNLEBUvPZoCxP2fdUCW2BxT
+Ksb48Hpc2j2unGC9koXlAnQiXvm7XQx+96oykplagNL6BL77CYJBaCGxR8GWpkDD
+8u1bz7kGKxmZ/c/nG7TZHDmeYpQKHhtw7Jts0VpbrDK/hRFcsPOrHn1QQU/0GGJg
+tOjOSpWwBDs1dNpo5dNGhLJEzW6mmQ==
+=OlU9
+-----END PGP SIGNATURE-----
+
+--v1+Iy6d2Uj9A9sbL--
