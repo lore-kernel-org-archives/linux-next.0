@@ -1,50 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C9D46D55F;
-	Tue, 21 Jul 2026 15:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E5F3E49E3;
+	Tue, 21 Jul 2026 16:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784648746; cv=none; b=iVJOPVycc7ASSwB908Z2uSTTAO4R7g85L5pSojo20P0HGl/WqwMATmR5LPwUpjAzK2+HDPcHoQBPUeACe5pgpsk8HaxmmcomsJUD5jGvpJBGwYJAPpnGXbs3fFqED9DaIRHL2TBAhiWZHsbFGq/culDeVVYzCYgF4V6xIZ46SBU=
+	t=1784650471; cv=none; b=bZosst4aaLblQQJg5izqsCZrmFozvVBcxXAwHB00hwzBHtRAGjRp5/WvPyIfy3yXvsYs08MWHr3Ofr6SZGkhxHqh5MBWDvjYRV0SLDy25Jt/oZk/f+MTTyL7hg/0l/1jBIVHFia4MyTggumwMD+Ao7Mqj6+nLKzmjxecaR4sCVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784648746; c=relaxed/simple;
-	bh=mxAMh/FFHyFSd4cM68J78Viti8kVq3lqTWH9Rmc0uuU=;
+	s=arc-20240116; t=1784650471; c=relaxed/simple;
+	bh=qBPicWkm9ciSlnVFWaNogtwHZDACK/Pi+LZOYIsUL5s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FayAVyqL48K8KyobOWVELpt34+G0Nba49OX3Y25VLtuMTr2AIpk5tHljVVHpHDqzf4fxAAvq56ZM8a93H3D9X1DFYbzzNqvek/4wX/cgeBkT6XU1I0avNCNiDmBnyikUYEglt85N+oOAig0Ee8RhiscvlvSNhhtWTOnFJ53Zfik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2Esy/jz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=A06QcqE1D4xbRApw7wg6YfRvrx/uOlpm6S3UJ15jzVMKjfeCIyo2YyN7yD8gSQKGt3+6gp5RRCSzKmPiEST5Kykjq/rWHleGplk+7c2/P6G7a+d4k07piE20ywO1f7hFO4lddU2JMbSvIg1bijLYE310cKdVAR5d7xXm4OHeGjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjbbNMHu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2Esy/jz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B18F1F00A3D;
-	Tue, 21 Jul 2026 15:45:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjbbNMHu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8851F000E9;
+	Tue, 21 Jul 2026 16:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784648745;
-	bh=yyWruNCx2Q2vR1ya32pgSJPslYg9u0BpPqmkeLwZZOw=;
+	s=k20260515; t=1784650469;
+	bh=7T/PFZhJx8XwrdQBVEHyD0U+DCVUyZe9gZIsFGUdZKw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=L2Esy/jz1FDaRWWyZ6MCAfBuoVHbNudmjo5Ws9jL9jaCM8JyNADfPrYsbVf/CnKUA
-	 40YJPNa+Bae/YpJ7q7z646RMV5KXzm9EWndrF0bhtRAxxt4j5iEdZp0VpJCUZqogkf
-	 cocCX3C0AO+gV3hTtlOwNP8TB3L+XC5lFkiaMdeNoUJXfelmnC99VkqnWxf4aA3LXn
-	 w8H9CeA1B95Oj8s0svqxUJhYifyq4wvZIm15pYMleFttDhb1O2vOWObq03hvrk6AyS
-	 MA2PitE/95I0UiOVYXhhUwdugBS9hngoQBVly4OY+RR+Haazxuar/r6hZqBzN6mcEd
-	 VfqosUvBYlbLw==
-Date: Tue, 21 Jul 2026 16:45:26 +0100
+	b=TjbbNMHuNs66MMLI+aL7nCwsbklZqMnRHO72a+1FDzvoAMnnzEstKaqwNcQPPquqa
+	 q1BfERYQDKZsuBcpHmN7knNzdcJHGQfBK+sZTqNxXaDxXvOcI9wqZobwlt3Kevgc4o
+	 79wMtg0uYyYczWPo+X2P5J2hjoAv+9LIcx9GxHOiqaPJS/Ft/UpHpTRJVGFfRhN4QS
+	 HTQ4q4TAX7SqDRCayLPmO+RaBcdYS+4NZ8DpTCqZcKKxK8x2huLDRaEegAHqG/kT2S
+	 d8d/fufSe1StnCcdM79oG71e4J8+3GfowCYXvbS2g0Axdf1fwwknUaJhBBBqSN1O9g
+	 Cj4gkOsRHr+5w==
+Date: Tue, 21 Jul 2026 17:14:13 +0100
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mike Rapoport <rppt@kernel.org>, 
-	syzbot <syzbot+ee7ecfcd0e3f185e835a@syzkaller.appspotmail.com>, "Denis V. Lunev" <den@openvz.org>, 
-	Vishal Moola <vishal.moola@gmail.com>, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
-	peterz@infradead.org, sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, 
-	tglx@kernel.org, x86@kernel.org
-Subject: Re: [syzbot] [kernel?] linux-next test error: WARNING: locking bug
- in change_page_attr_set_clr
-Message-ID: <al-QA7L9qFcDr-TR@lucifer>
-References: <6a5e53ed.f1649fcc.2a4208.0574.GAE@google.com>
- <20260721022448.GDal7YcN_64rndpnHI@fat_crate.local>
- <al9LYQPufAfqvMYT@kernel.org>
- <al9jHTONTrsImlVV@lucifer>
- <20260721135323.GAal9504VvxYHpcPtd@fat_crate.local>
- <al97bRuyGo2UpCv3@lucifer>
- <20260721150547.GCal-Ky_X99ULTLK2Q@fat_crate.local>
+To: Mark Brown <broonie@kernel.org>
+Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Mike Rapoport <rppt@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the
+ mm-hotfixes-unstable tree
+Message-ID: <al-Z08lGBdqUiTo2@lucifer>
+References: <al94LynD19vVIqw6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -53,29 +46,96 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260721150547.GCal-Ky_X99ULTLK2Q@fat_crate.local>
+In-Reply-To: <al94LynD19vVIqw6@sirena.org.uk>
 
-On Tue, Jul 21, 2026 at 08:05:47AM -0700, Borislav Petkov wrote:
-> On Tue, Jul 21, 2026 at 03:03:41PM +0100, Lorenzo Stoakes (ARM) wrote:
-> > You mean the series that changes core mm and has strict dependencies on core mm
-> > changes and solves issues elsewhere than x86 CPA, that one should have gone
-> > through the x86 tree?
+On Tue, Jul 21, 2026 at 02:46:23PM +0100, Mark Brown wrote:
+> Hi all,
 >
-> We do immutable branches for things like that. For example.
-
-Coming soon to mm :)
-
+> Today's linux-next merge of the tip tree got a conflict in:
 >
-> Bottom line is, there needs to be synchronization across trees when they touch
-> the same file.
-
-Yeah completely agreed as discussed off list :) comms is key.
-
+>   arch/x86/mm/pat/set_memory.c
 >
-> --
-> Regards/Gruss,
->     Boris.
+> between commit:
 >
-> https://people.kernel.org/tglx/notes-about-netiquette
+>   b8228ddfd0586 ("x86/mm/pat: allocate split page tables as kernel page tables")
+>
+> from the mm-hotfixes-unstable tree and commit:
+>
+>   5fce67641a3ed ("x86/mm/pat: Don't gate cpa_lock on debug_pagealloc_enabled()")
+>
+> from the tip tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Thanks, the resolution looks correct! :)
+
+There's some discussion on the patches themselves but that's by-the-by.
 
 Cheers, Lorenzo
+
+>
+> diff --cc arch/x86/mm/pat/set_memory.c
+> index a67ca33b9dd12,1f2a2ba9ce57d..0000000000000
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@@ -439,26 -441,12 +442,28 @@@ static void __cpa_collapse_large_pages(
+>
+>   	list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
+>   		list_del(&ptdesc->pt_list);
+>  -		pagetable_free(ptdesc);
+>  +
+>  +		if (folio_test_pgtable(ptdesc_folio(ptdesc)))
+>  +			pagetable_dtor_free(ptdesc);
+>  +		else
+>  +			pagetable_free(ptdesc);
+>   	}
+> +
+> + 	spin_unlock(&cpa_lock);
+>   }
+>
+>  +static void cpa_collapse_large_pages(struct cpa_data *cpa)
+>  +{
+>  +	/*
+>  +	 * Take the mmap write lock on init_mm to:
+>  +	 * - Avoid a use-after-free if raced by ptdump (which takes its own
+>  +	 *   write lock on init_mm).
+>  +	 * - Serialise concurrent CPA walkers.
+>  +	 */
+>  +	scoped_guard(mmap_write_lock, &init_mm)
+>  +		__cpa_collapse_large_pages(cpa);
+>  +}
+>  +
+>   static void cpa_flush(struct cpa_data *cpa, int cache)
+>   {
+>   	unsigned int i;
+> @@@ -1249,18 -1237,16 +1253,16 @@@ __split_large_page(struct cpa_data *cpa
+>   static int split_large_page(struct cpa_data *cpa, pte_t *kpte,
+>   			    unsigned long address)
+>   {
+>  -	struct ptdesc *ptdesc;
+>  +	pte_t *pte;
+>
+> - 	if (!debug_pagealloc_enabled())
+> - 		spin_unlock(&cpa_lock);
+> + 	spin_unlock(&cpa_lock);
+>  -	ptdesc = pagetable_alloc(GFP_KERNEL, 0);
+>  +	pte = pte_alloc_one_kernel(&init_mm);
+> - 	if (!debug_pagealloc_enabled())
+> - 		spin_lock(&cpa_lock);
+> + 	spin_lock(&cpa_lock);
+>  -	if (!ptdesc)
+>  +	if (!pte)
+>   		return -ENOMEM;
+>
+>  -	if (__split_large_page(cpa, kpte, address, ptdesc))
+>  -		pagetable_free(ptdesc);
+>  +	if (__split_large_page(cpa, kpte, address, pte))
+>  +		pte_free_kernel(&init_mm, pte);
+>
+>   	return 0;
+>   }
