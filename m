@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B045423B62B;
-	Mon, 20 Jul 2026 23:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12710F1;
+	Tue, 21 Jul 2026 00:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784591744; cv=none; b=XHH7eYKjGIeFPUxQJh++3qgXxOLlWtL86TX7qoCx/9ubdBX3gknzfiYiTNelb23TzlPZryN+YBKiwju8nSHlA65NL89goZx1dcKR4drn1F+dKVTFh+1QaTf8LqZ+BhrCQ+xPuBNW5Wxmn3feyJIMOYYbsegICGrHqC/TBEsdIZo=
+	t=1784592514; cv=none; b=ffKgfYGTusktmEuLCHUzq9yXuIj8fhcxjXsb0JWq9UCvBCNJz8WcDa32RFGjzDCGE/QNEsUSCILiaqNuTvDP+hBRQlZC8MnSJhSApX6WZRnB4LeJQLgsOYzP/bahlYD0ZUnO59PMEoEN4q8PIhrz6WR4cUCXpMxGY6orlBjW32s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784591744; c=relaxed/simple;
-	bh=kU39otQbs6m2SQJ6AN3g6sCTs8b/07ZC1PlBvSzNkJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MNej0ZHGgVoaBzUG1RGfDDWph2iMuCbG+psl+Ey0xDhKpEOrNlrBJu1UegNyj+PqvKu0zXugOCjmAhLGbIwHbc4Xt/NArUpKLey3xttX9BPwrPviEm2sP/Uj45ufdQaR+MAZN4RVPT5nPy6h0FZhtalmiLv/sOR+P56X5xagEn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMFpX+VX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784592514; c=relaxed/simple;
+	bh=r0O6jNYVr/c+bE2xFvMSaWqplom+8UvXYKSm6czy5HA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s68t0zuiMV4ZMLzn9BSbDk+mawIAVQNQbS0vD+WWr05HZ/987wjnNERJwhmK7LLsiChjMC9DW0SAVArvyHPtULK7Ogj2jRof1DX1AHr9UEBPvJG0JtwQhLWn3mDhPoXX2mVgN6ftD+OJQXuYeZI8O+5xPrHLTrKjkvlso8Rk8/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NaOVWh3J; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMFpX+VX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C741F000E9;
-	Mon, 20 Jul 2026 23:55:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaOVWh3J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D20A1F000E9;
+	Tue, 21 Jul 2026 00:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784591743;
-	bh=IdyX2jkscW9GQgzeUxmzbl/wo9IV493YfeJcVRDzQts=;
-	h=Date:From:To:Cc:Subject;
-	b=nMFpX+VXD9juADKO3U3fWy2/KkLUPfzM/w6+ocyDRNt8r8GkKBVkksL0SQ8e5o/bJ
-	 GS4gwiEBb0m2g99mqQREWaNzI3jSNazVxkRo1NuP+dvMHC7qBbLCC49OxKpsQApR1t
-	 6a1Ihm55I1+Q0tpb+Xm1dW9nOh9mBqI/LrNc2S3mCzf+80WO3r8WezuTNiZsZRnw8Z
-	 zuwADkoh0BRa7qFjOV3keXIeJ4TVRn9ACvnzKkj2aWXyjx1JuulD12ENPHn3HAMS1m
-	 kleDV7w72OXGMg1DsczqTqKwmd2QnR0QJTn43Xum9sPSFh/WQHEnpPsWaGzS2m2IQK
-	 6usxAsxVmBmJg==
-Date: Tue, 21 Jul 2026 00:55:39 +0100
+	s=k20260515; t=1784592513;
+	bh=DctBsks0MJrg2KuQheiuuLxOBhUFVBZt5CMalwGdLTU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NaOVWh3J5ZkK68bLPRjjTkRLAWGdQ0L5fQ1WidP8KQqnRLek6EHlCPd1rWyrWCCfS
+	 tG03sQjNeKSou+KuUEaYi7ey8pg9GsF1HoTNalwrQ8GTRTPN3j/QW//BYfeo0BZVn0
+	 xuxwrBGPNjuMM8eOghnl66Xba9Xp05NQQUjqYSrLNXfSMC/cfjpd5eSFy7kg1wJ4/o
+	 YLW9XE+RHRV8LnNHpVlVzKffzfbGpaIzSTyDmwe1HKWIlCfCiT6K8o0Bi1ePmQwzLv
+	 VAzEsfMsHRGAIoEhtq+Yl7BItmfzpHm27NlYoTpXgOw3x5qD06TcRJZuNhVrhibBiE
+	 7JKfZQwviRp3g==
+Date: Tue, 21 Jul 2026 01:08:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 20
-Message-ID: <al61e_I2kCF7cYdj@sirena.org.uk>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the ntfs3 tree
+Message-ID: <6bfccbc7-2b99-47ce-bc50-9cbb95b8969c@sirena.org.uk>
+References: <aldqIGRdMoJgNkER@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,81 +40,40 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p6FQToafTZXJhv3E"
+	protocol="application/pgp-signature"; boundary="sNZhLhfBaWh3ro8+"
 Content-Disposition: inline
+In-Reply-To: <aldqIGRdMoJgNkER@sirena.org.uk>
+X-Cookie: To love is good, love being difficult.
 
 
---p6FQToafTZXJhv3E
+--sNZhLhfBaWh3ro8+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Jul 15, 2026 at 12:08:16PM +0100, Mark Brown wrote:
+> Commit
+>=20
+>   f023839df8010 ("fs/ntfs3: fix out-of-bounds read of INDEX_ROOT in repar=
+se/objid init")
+>=20
+> is missing a Signed-off-by from its author
 
-Changes since 20260717:
+This issue is still present today.
 
-The mm-unstable tree acquired a conflict with the drm-misc-fixes tree.
-
-The qcom tree lost it's build failure.
-
-The rdma tree acquired a conflict with the origin tree.
-
-The drm tree acquired multiple conflicts with the origin tree.
-
-The drm-xe tree acquired a conflict with the origin tree.
-
-The char-misc tree acquired multiple conflicts with the char-misc.current tree.
-
-The char-misc tree acquired a conflict with the security tree.
-
-The nvmem tree acquired a conflict with the char-misc tree.
-
-Non-merge commits (relative to Linus' tree): 7105
- 6767 files changed, 287833 insertions(+), 107538 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---p6FQToafTZXJhv3E
+--sNZhLhfBaWh3ro8+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpetXoACgkQJNaLcl1U
-h9DH/wf/Y6OBZlUpqsshCz4jroZLvTqMfLwIXFkPPgF5syS9ZQNtVAvdOotrtrSK
-NN8hYPl391q8ELd0F4kIRrwsHM4PzYKV/EaWrETOHDbgmIBwQzGQml3EA6YmxUk0
-ZxZVAQ9zctx691vvV12ufxEb4vzMCmC/rBDSD826zjP7oaTZVMssi7mJPv4Uv6ig
-FlrXnPktmrbipdUx1SkSHrRUEwKKuuDjGFrLg501KT3pco7Oj1DlKmezU4FZHvFB
-Ea049vYfbSTRd1KG69GLHmIHCZT7KemQ/rEogMxu9Gf3H6Z7vXVr6cRqoO6RSso0
-Cb/CMftYR2KX93wBNB7IHwM8woLHHg==
-=a0RD
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpeuH0ACgkQJNaLcl1U
+h9Czpwf+N3bpruabpx7LiOvUw8XoNepoRWaztiFjCC3hBFC5E9hqa72x+vuU9D62
+xDNZlR6Uww80Sm1gaF+GGPMOLeaVXqI6hDXsdQwWMNO8AbxXJ45AUJdQZxun/0rg
+jcP+3SCLY682VZvZJ/XowMSxWJQ6vuK8tXtsa7hhKUq1DfvAigy9wRAsgk9rvl5e
+b2FwWCguBLBv5Mp1CWHf8ZDPtEpXTb8iPy0MvUDDWaJaSEj4/T5G+CDjt2UCdZ/s
+RAlcwOl/qMnizwnSX+ymskyO+m0jOPo5zKurTvnYAitJLVte6ztBfqt7vDShXTUk
+J3QV0B4jfRLiTDi91zr1+EJ7b5qPkA==
+=vK7c
 -----END PGP SIGNATURE-----
 
---p6FQToafTZXJhv3E--
+--sNZhLhfBaWh3ro8+--
