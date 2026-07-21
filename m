@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2052F2248B3;
-	Tue, 21 Jul 2026 11:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B182248B3;
+	Tue, 21 Jul 2026 11:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784634365; cv=none; b=RrZi2Lgoy4cwjsquXZOp/JHoV6UxuK9RPSUMMYfp2n6RiKMLNVqMHW7JSeXPO4dwbJm+M6Kmg4j4NTbNDbzs4frnY/DnZ4ayLqmig+VcYPnru1iB9g23CEZ/CVpaoY5zxaCQg4oyj/a1+XbTCQyDfEcqO43SaH0VrwUJL6LSoyA=
+	t=1784634376; cv=none; b=uGsH/lmgu7kmkZ2oS4rLsmuGLarVoBigeOJaRh2prgMgAEggQzuL7PzZ4ZaF2eCGLTVM6U6oAXtxCgqVUKajVB1IJ9zLl0JYWrlq+RuS39NALrpDL4lZw9SiMEJQDrl0887sSONuN+J5MIq61xKwyHP/EVAuInP0FO1IklVmrXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784634365; c=relaxed/simple;
-	bh=kk50cYQMGHuZuokC69SeuiVqoxNAG9nTUtnxJcrBT9I=;
+	s=arc-20240116; t=1784634376; c=relaxed/simple;
+	bh=l+QUG35roDTyrxfeMEQ1wg9iDumCS+yKF7RYbN4pGtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rI+FhWz32vEM2FbfTa/20oXOczAYqdKyKnOSXBi96ePVcDP9+OQPSs2YTZzeM0vXE3s/THIw6/XECHJ68sFeostGEJcRNN6qx3Db2Rmt3WVBSnqEF+amgmFmWqp4xL19mzzvaot1y9PRkmi1mMbVc2X9A+IU4NU7pH/uf8YbpgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxwTNXqc; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=JozQixkHReDQKVdQj0NISIW+f7/24RC3NWxWUPGoxjAKcb2zlu4q7iXXrUSxpAL24Vf2DnqedPa/wdOX7KLkRLcACSwwbHoUu7DgW4jyP/Zw31fMI4lJWp12UK3a12/3dagPCJcBPlb4KaYCqmsJ8oDkT0dAhmU+CQP3nrHMD0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es0fllKt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxwTNXqc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B58FC1F000E9;
-	Tue, 21 Jul 2026 11:46:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es0fllKt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B5CD1F000E9;
+	Tue, 21 Jul 2026 11:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784634363;
-	bh=O6mBwqOwFtIEb9qVMfY1j8PTUc+zdIeCyy/gQ7tKJ+8=;
+	s=k20260515; t=1784634375;
+	bh=mtZuWSHWLl24wNIoYqvwya9rqxP0WdFl9OcAoayOREc=;
 	h=Date:From:To:Cc:Subject;
-	b=BxwTNXqcgLGfiLAqSKQpUdRlGt1f+0Hu/EgYIyG+qZ74q0G6UL63Hh04sx1A7r2Jh
-	 X/c7djasY/MiPNreQDoQ8an8GwIkLjN/gQRXLGpwyWPEel0R3kN3yyEjHOCioXQvqT
-	 Gdd1yOLMm01ygZfmml6KQJhwc/Hf8mwV2Bh6XCV/ryIoP8EPELPv8GyKCi3BtsBoyG
-	 eqGlMTT3T9k5s8Lk+38PwV46udTfT++ILUwMi4aDCKOYR2Dtktsa5beCjRuRPZ3odd
-	 gFMsdzICV3KmnwLIHoSdP88j8nbbW3PGo07XgARpCN/Oe6IPF/eq1oMNSfKJpJ2rJs
-	 kN2y4ldTntI8Q==
-Date: Tue, 21 Jul 2026 12:46:00 +0100
+	b=Es0fllKtNZ733PzaCe3+DmQnD1Fc6O3EkXs2siEkrwyE9IfCPGOM4KMZCQCDZFIUz
+	 voBr+c1NW+HVnm1ftjneA2UPB1Dq2SbZb3u8kCSKX18yB2vRw6mUCA1TB0zweOjCr9
+	 mEaeHBDedYmpliv08Gwu/w4fhn7DDj6NHNipkvRJBKuCQGpCwXtzzzOKxGy4EGTTTZ
+	 pVxjajF/lesLn2WRi06YWEYaqu6+4QTIirYVotj3ITlY0s6inyrv99EAoi4qUkHCAr
+	 dVDb4y+410g6qg9eBAPlzeO4fVuPP0lxd1YUQHsjLm7G4t7zNtq1QhCwIqcQgJ1O5a
+	 DS8bWXKkZ8XpA==
+Date: Tue, 21 Jul 2026 12:46:11 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the kvm-fixes tree
-Message-ID: <al9b-DMWxL1_OHEr@sirena.org.uk>
+Subject: Missing signoff in the kvm-arm-fixes tree
+Message-ID: <al9cA4bfywF11OmQ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,42 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Pn5Kv96b5aQuqzak"
+	protocol="application/pgp-signature"; boundary="68XSFUe7W5mt6UVZ"
 Content-Disposition: inline
 
 
---Pn5Kv96b5aQuqzak
+--68XSFUe7W5mt6UVZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-In commit
+Commit
 
-  e800decd9c0ac ("KVM: x86: Only reset TSC Deadline Timer in apic_timer_expired on KVM_RUN")
+  6c13643a6f392 ("KVM: arm64: Fix hyp_trace clock disabling")
 
-Fixes tag
+is missing a Signed-off-by from its committer
 
-  Fixes: ae95f566b3d2 ("KVM: X86: TSCDEADLINE MSR emulation fastpath", 2020-05-15)
-
-has these problem(s):
-
-  - Subject has leading but no trailing quotes
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
-
---Pn5Kv96b5aQuqzak
+--68XSFUe7W5mt6UVZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpfW/cACgkQJNaLcl1U
-h9CXewf/Tw7YqqAGuCl6H9A5UZg0T8Ue/tWXpMEW8yulAkbvAuaOMAQCxBimBKxh
-7/59lS4+8TD+oavDp2OKurntbXknXkq48aDmprfAzsdKlwKEncnP60ZWFwJybVeO
-j+ozEPoUU5ZOfy3DyDKcJL6XrG42VT1Z42Q52dv9JZ8ZwLdTjkfyN0Wior68xuEG
-1hgKR+NZuyVHFAzENS6ptChlEGkEER9tTzXJK9Dg3qYKzPNrtEyTB67ZAHPp72yw
-xuZDfiXteOM65FEAd1ZNJDSsDN86dY4eOx5twJxgajxMvDaROozqJ55AiIk1hcD1
-eZflF/jUDkogvJto9IUxNdcDTfo9fg==
-=bjdL
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpfXAMACgkQJNaLcl1U
+h9DHEwf+NZe55NnL80fV3/VlJau4vFqW2sLT1hfwgpBw0HFy2OJNc5ydA5Xa39po
+q8lDddqes/Wyb6Y7dZYsPidGTWdN5j852q9gqEkY4I+pBE//7/qtkI8qdBI9VYJ2
+D6Bnpx9dZ3ojWPd2OtInEoHI+eJYNohBegv+GK+C3jFUosMchTGfF+VBLIvHZKRB
+yhjafIVQIHTWYZZ69IGzKzqbiEMLw+pYLvHR1BG3WfRhCazzZEo7CUQIALXRctpC
+xL3rSAFxI1Baqunjn5TcSiv6j16oMpHzHO+RC59tJ2WnzOLKYkRj4q3YUvBUAydR
+2SgC9w4zx6Lg0MEZXJWB2TtmXh/rEA==
+=y8CP
 -----END PGP SIGNATURE-----
 
---Pn5Kv96b5aQuqzak--
+--68XSFUe7W5mt6UVZ--
