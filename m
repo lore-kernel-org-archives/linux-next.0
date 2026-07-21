@@ -1,82 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEE83749E5;
-	Tue, 21 Jul 2026 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0D437BE74;
+	Tue, 21 Jul 2026 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784642641; cv=none; b=IkDUMvDCIi9i0lJWlTvWuimqub0vM63ywyYkfa1zg1AIAys6Z9X0OmTI9M4FhI7KsnoPXXKRnK/Dl8yQIR6zMSZJGpJ7ICjFVOaMqaklL/pTK97kPUOENTChev03LLbdmkIF8VLFse+qvY7HMHSQaBMq2YEVkSMsPsQEjgrKlG4=
+	t=1784642703; cv=none; b=UqF/EUvsUOtappuud/yeC4eLAMRECeRcbASZFEKG2LW9usLLVhluTy2IDEqCxa/JDEoS4phRTNl53gqTclql0t1lLrIWwho32v5XPHYdfVO6s2GsT17oL9Y3xuVOzcMECtRa/YcIrUBx02BGhlabHudd8fQVycKIHRryHP3a6Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784642641; c=relaxed/simple;
-	bh=6nZsczli4p7abvIoJRfHqGza9jvFGRUey0MKu3w09fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CE8Hfrda8a+Pq3e85tRZqlBO2xEhxwriWv+5FwncUVtNzit2enG3j++B49brrDKpwiTPwAV4xVguThwzVoqn1JiDG87p+0BeQKJH9VXE9ZcwEtBM/LwxRZUkcpUPMfrTiq1BLbTnWmi8V3z5tnmcY5/PxV1GBXopezKws3t3V50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rz5npCop; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784642703; c=relaxed/simple;
+	bh=iTGQlpROFM58K1W4mcG7Ob3VZ/8zxPSnjSzoQqud8GA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kUAU4KuLnFBLwG3LPNANsQpaEz47JfcX3kWk6pc/V89VQVST0SAeIOq7KNuTIzJ2a0lDfBYAnQs+Hca//J68sRaYPnrtaA5cK5Ws5ZdqPz9ka0lnulGrPJ+HxxgOXi/OO3xLuYk0jw1lNn6rZaMjwdOX4kkiUFJc0pf6C1g33Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqhcquEW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rz5npCop"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E451F00A3A;
-	Tue, 21 Jul 2026 14:03:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqhcquEW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207011F000E9;
+	Tue, 21 Jul 2026 14:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784642639;
-	bh=76v2widEs4BgjKivyhUtC90KrnKgRTssA2kps1ekDLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Rz5npCoppyyM90Wciu+ATlgKhsGgI4dr48/aL4O7viDIdpeYaE6ZysIpxu7XbYRHw
-	 OistUPRbqoF/+O1Ype3J5XexA2DFfKbXunLZozojrKa3ZzA+MfK3KYlCSmibpbXj7o
-	 tbAWwsedXaUbVYxL7ansToqCuTL4ZBLSzu5VwiVarwTl+IiP1qxTbw2gOpqTg2302V
-	 MMpr8DpoDhriki1zfoMN5IkaXb4YG0fBJ2bYCfmkVYotOFDqZO0HBY3N3Ftfm4CpEH
-	 gYGrmI5s5VIyWrakm3jSmTLBGqs2+RxdcqLF0WYDB0wLfwj6g+FNvPTAeRsJNdXNdR
-	 t1Ry8V3VfXgXg==
-Date: Tue, 21 Jul 2026 15:03:41 +0100
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mike Rapoport <rppt@kernel.org>, 
-	syzbot <syzbot+ee7ecfcd0e3f185e835a@syzkaller.appspotmail.com>, "Denis V. Lunev" <den@openvz.org>, 
-	Vishal Moola <vishal.moola@gmail.com>, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
-	peterz@infradead.org, sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, 
-	tglx@kernel.org, x86@kernel.org
-Subject: Re: [syzbot] [kernel?] linux-next test error: WARNING: locking bug
- in change_page_attr_set_clr
-Message-ID: <al97bRuyGo2UpCv3@lucifer>
-References: <6a5e53ed.f1649fcc.2a4208.0574.GAE@google.com>
- <20260721022448.GDal7YcN_64rndpnHI@fat_crate.local>
- <al9LYQPufAfqvMYT@kernel.org>
- <al9jHTONTrsImlVV@lucifer>
- <20260721135323.GAal9504VvxYHpcPtd@fat_crate.local>
+	s=k20260515; t=1784642702;
+	bh=6qyExIs7H/LC4APBRcaf/XIK+n+eSDligv8STwQ1w04=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=DqhcquEWIYws8EP08WRmTP/o8q4HhrJ2vdVf4n6JisZFKLRPEBpKNQq+GNNB9SYcP
+	 c5zcgmQAshtzb9ajP1LiHGXNVuNLa5J3WVZnaPPpuPQWGL1A0rH+hj3s/m+zXcWiqq
+	 poVErS+By2o3ir2L+lZiN6J2txX6fNkV12hA2rys+/6h8Gy4lN+wDQNVryDr1jWYJ3
+	 uO0m1MAfpeNbgtrgDrMhWfHO1hS6ApZFFpc43Doi9ONI1nEh3ikeBqSB3W+C7vA9Kq
+	 XpTnynxaJ+Mwzn1fWSsOqnt+8ujJHQuKJoJREGJnS696IWhUmck0reNtoUuhaKmdlL
+	 6GsI179al8taQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wmB5g-00000007FKH-13nt;
+	Tue, 21 Jul 2026 14:05:00 +0000
+Date: Tue, 21 Jul 2026 15:04:59 +0100
+Message-ID: <86tspse8vo.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the kvm-arm-fixes tree
+In-Reply-To: <0604b71d-5a05-47f6-949c-26e0ceaf1b78@sirena.org.uk>
+References: <al9cA4bfywF11OmQ@sirena.org.uk>
+	<86wluoeek4.wl-maz@kernel.org>
+	<0604b71d-5a05-47f6-949c-26e0ceaf1b78@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260721135323.GAal9504VvxYHpcPtd@fat_crate.local>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jul 21, 2026 at 06:53:23AM -0700, Borislav Petkov wrote:
-> On Tue, Jul 21, 2026 at 01:39:45PM +0100, Lorenzo Stoakes (ARM) wrote:
-> > OK so this is a screw up with merging.
-> >
-> > Two fixes are applied at once here and they are NOT compatible :)
-> >
-> > Denis's ([0]) holds a spin lock over the operation during which an older
-> > revision of mine ([1] - current, probable next revision [2]) tries to take a
-> > sleeping mmap lock, hence the report.
->
-> Lemme guess: if those were merged by the same tree - tip - where arch/x86/
-> changes belong, we would've caught it, right?
->
-> Pff.
+On Tue, 21 Jul 2026 14:37:15 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> [1  <text/plain; us-ascii (7bit)>]
+> On Tue, Jul 21, 2026 at 01:02:19PM +0100, Marc Zyngier wrote:
+> 
+> > BTW, could you please Cc the actual maintainers of KVM/arm64?
+> > Christoffer has been out of that look for over 7 years now...
+> 
+> Of course, I did think that - just to confirm, that's you and Oliver
+> (with oupton@kernel.org as his address) since AIUI it's you two that
+> manage the git tree?  Usually it's the people with write access in the
+> contacts list, but I can add whoever you like pretty much.
 
-You mean the series that changes core mm and has strict dependencies on core mm
-changes and solves issues elsewhere than x86 CPA, that one should have gone
-through the x86 tree?
+Oliver Upton <oupton@kernel.org> and Marc Zyngier <maz@kernel.org> are
+the current tree maintainers.
 
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
 
-Thanks, Lorenzo
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
