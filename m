@@ -1,113 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207BC381AF1;
-	Tue, 21 Jul 2026 16:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784652904; cv=none; b=DK7zLuJ8bTcnoNeCKy4kcd4yhHpoVXg5rar17q/1lfn3SJA+3DzGndfD04bPr5dr/5Kt8fMkyMM2AdMgxam3ea12ourXnFX+Vv+EfqUL6hLKLrB+HbO6P8DndcaPIGFB9/OlzUl9OYAoQ/XtVwjLgMKzT0VqU96uqS1/tfU2RR8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784652904; c=relaxed/simple;
-	bh=n20/m09OkkSreU+A1rMSuX8rvXN5c2OTGTdBqkjs8Cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RHFwEzT/6jYZHL1NhCqGWdDx90aEoBEikOmnGzJbmzFaaCrbsfEaUYVLTU6cLr6jPhvynfrQ6ykQ3p3fSg4nU+8+aghHmhoRfqPx2lJOVLY5uZl8FbJ+JXflQcuUYeFD1+mVvSjYZZSyEUvsl8DqLKkljRMIUsk9LtlwOwg0xn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdhxB8cr; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F565C613;
+	Tue, 21 Jul 2026 16:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784652951; cv=fail; b=EgtLYzaZNPRpmwzwHTh1HLAjVMRFadHaxKdxsfCVfPBdZHvgPbOeP3dhGz457vDS2fmXfr+N7SrY8sAyUJRDlD6C3KaSXYnpYrL444fOaIFFyZ+yrSCVIdnkb+wkixk8O0tvyTSWqn9+8UYm1KoIb6/8hUIGkMm9Xvt29FbkIuI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784652951; c=relaxed/simple;
+	bh=+rvC2naf5M79oDxaHvy7VB0+U2f7vgQRHR2dQJJgg2I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=C7+jcUkG/MitIzK5m2w9RCr9yzJma63dyvtz24OAe6//yv5y9Jei+FB/cQ9/bKtu6e9b4MktzVklyvhGlXeE8T5fyN/4HmV76AWdHls1Hj2gxyHJw6hAsBJ+NNDvNAQ9TtNTqSMAeeNInwYCshQs2TqpFOqZz8pScow2RVr2UJY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X2AvAKaf; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdhxB8cr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1971C1F000E9;
-	Tue, 21 Jul 2026 16:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784652902;
-	bh=RqdEbytaUFEmcrSRViCNbUPtv2/Pa5duj6cIgi+giN4=;
-	h=Date:From:To:Cc:Subject;
-	b=VdhxB8crkV/oLqqX9ulRZO5fdOLns+pCjNBO7OIVzilleyy5SF0478hFr8mdJtNBV
-	 0lF2TV10pT7TZ0f7yrOFFrO2tRCG4NDAoZGCX2338gPDDI8ZdtnCC9UOUxWEWJWqbf
-	 5o4kPeefOaqWUjRRZuuy1P5q9jULsdQclmRO68E36CTT3rUblITwtc0GQMqqJWkUc0
-	 s0P8wFA6A14/b4Ls3Xvdur9YywCbaQkwaGSECsEPJmGTndA1/qyzVab3RaKLuOp2CU
-	 FCE/E2mtydTd2RMVF9P+VtQvltvEdpRdVFRzcSu06XZAXg/ckzWiRgL9t2XSyub80e
-	 vJcP/RyJ7eqUQ==
-Date: Tue, 21 Jul 2026 17:54:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 21
-Message-ID: <al-kY9adEZUip4an@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X2AvAKaf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784652951; x=1816188951;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=+rvC2naf5M79oDxaHvy7VB0+U2f7vgQRHR2dQJJgg2I=;
+  b=X2AvAKafxpxCQSoxh6jSTTHVdEBnYss3ZQ2SIErqMxtI7urrc8kIA+gF
+   BoELZpiZ1TKytlepuNz1bSbawD5SLJcYnODi2ZM8hx1b79BNkRNnHAmzY
+   tkszXwm9tBZcsSl0CfuVxvlfyUWGfDZgQIwIPk5z+7Djz63cJ8tSH2lUS
+   KnZ6j4ujAQ84VLb9KEeO2ARfnC+sP82zYD06Tw6bigdZ+38LwkukYw3mn
+   OtWZTQ2jQxVHKqlugYJFG7Iy2nT8Z9R7Z7oRCzU5vxnH1TbV+dBtUOic5
+   VFvExdewFjmbyvIIEs15mCn2L74mFD0qeXX5IVATp2MnYSaDNDXFHzfwp
+   Q==;
+X-CSE-ConnectionGUID: QjhkFEcKSSKSYTEEQ4jEkQ==
+X-CSE-MsgGUID: 6LjSQSPzQfKqNs/Ht9tGvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11853"; a="88940607"
+X-IronPort-AV: E=Sophos;i="6.25,177,1779174000"; 
+   d="scan'208";a="88940607"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2026 09:55:50 -0700
+X-CSE-ConnectionGUID: oWO4B3kNTTK/inrKqVLDhQ==
+X-CSE-MsgGUID: 4EPphMXJRmmwdqYpKYxMKA==
+X-ExtLoop1: 1
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2026 09:55:50 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Tue, 21 Jul 2026 09:55:49 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Tue, 21 Jul 2026 09:55:49 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.4) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Tue, 21 Jul 2026 09:55:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T3uZQenkfsYUweEzN3ubPYaWdyNitS5maIjDIVyJ70Oq4Ibv4G7FbiJOEw3jUqmTai676QNtLctZnYesk4lVJCWln8mOpcW8xv8ET3SMDih3trlYWdp4lX1OXS/+qTNMHJ9JjkspxO+uB00+WHpHvooDdfHlRomXTBLs3DIkvYaXrtz47ZIqH+f7Tk+ALShJkzW/CXIlft5kugfgjI0DJVrxHHWkyU6dB+qKrK9kbpW8Izq3LE8VN3gMtwqoYBUvMqOGt/g+WkLIKI/uS9th27QvYE5CSHyI3B+mpWZFmVPJbotcJ+ucgXZoC8q7kIf+Xbu+7BLZBiCrtvxkA+I3jQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5mrQ/MICeZnpZ7A5pgB4oaFRP/282t/NBSgkNHCC9eU=;
+ b=NmRhfvFCfPRyDC/pRyQISpsFdTl9XfZf5zHoU3etu3+gggrBuIBrcp95zNzl3BIcbKACR3iq/s58DWmPfrVXBM+HMxro+0avcqEEnwgs2sLxr0wz3DOnzupyjk1SYlz9Aq0W+1EqR++F/8E6C8AQlLXJFPyJGedWTvjY9icW/D9aT/bk0xOW3OhNcBRCojJYez4+I3LwvAGbDh5y3028RYTfTd6Qy1g6lt74M7Oa+1ismCL1uRCbI11Np5f01Js/c0LIpyCZGQP5anb6GOgeIEEt/ugnzWDL/1VlCc+Typ31Liz7kgH9Kdgpecs0Z71SAioD9N+iL9/Bjrd+oOvi8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by CY8PR11MB7797.namprd11.prod.outlook.com (2603:10b6:930:76::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Tue, 21 Jul
+ 2026 16:55:44 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::e0c5:6cd8:6e67:dc0c]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::e0c5:6cd8:6e67:dc0c%4]) with mapi id 15.21.0245.009; Tue, 21 Jul 2026
+ 16:55:42 +0000
+Date: Tue, 21 Jul 2026 09:55:39 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+CC: Christoph Hellwig <hch@lst.de>, Mark Brown <broonie@kernel.org>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>, Hugh Dickins <hughd@google.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, <linux-mm@kvack.org>, Christian Koenig
+	<christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>,
+	<dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ drm-misc-fixes tree
+Message-ID: <al+kiyFVgrulSneA@gsse-cloud1.jf.intel.com>
+References: <al4jGBGNG_QACaNL@sirena.org.uk>
+ <20260720144141.GA16699@lst.de>
+ <al40qCMTxhEP3Kx8@casper.infradead.org>
+ <al6cVnNv2TuhuiV3@gsse-cloud1.jf.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <al6cVnNv2TuhuiV3@gsse-cloud1.jf.intel.com>
+X-ClientProxiedBy: MW4PR04CA0326.namprd04.prod.outlook.com
+ (2603:10b6:303:82::31) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tUDGJmIzhp/w4TyG"
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|CY8PR11MB7797:EE_
+X-MS-Office365-Filtering-Correlation-Id: a735d633-65ff-4105-3558-08dee748e680
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|7416014|18002099003|22082099003|4143699003|10067099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info: m2SvUCk+/qEYsstHHpmUg5arsHwFT3pl7pW4d8JBOtBRf/e/rm8e/r/R7GPFdI5YWpdU2lMKSV/z81CcNYlInbnxX0ObAnNWbJaiEr11Lg7Uzu+dNr7lKdFpg64nLfXeu9xJJGs0Ad+48bM1UJkRTfEkaKYWAkweGU4PA7mOvVbq8AK+HceTM9J40EK5p5xoZvFV6KMAv8+XyOqbBT2hFWxZ+pJboLK8935kTt9B+LdH4XExCA2cd5QwBLhC5gZDbtMe3HyyqfbrQSATI85taqiLmcZpmQ67Lllv5+yNTJcKdXGQO3+v9IT4TkSNh1eQBgvhrzCloPCpd/xwRLsaYG3jgwyR9PSkksyJ88evWaOeI9aozdelPJi89fy+rq6oQAHN/SxmkokxD/jDBhSge2/BVvmtCC7pfxMFpCKt+ymjcpSC5OvIBbKtFAKqcIVAWByVWFPGDT7WKx0df9Kk9IxNwJVJvDZAVul0IzQJqbHlX7J5fHKTkvnbLIlh94ZLDqNzUKyFr/05zFImA6z7KZCbZftuKF8kMbteGvWIkkp0hXXKgYsnQeqS1HuPfMMbu4bHlBC1c8RvvYHtEe2Q0je1LpKZW75oTUPRls8ofOJur3dNSOOXShRFscaXlgXqFauOReqiYjIYrhEMKdCLvWxVjIy1zBD53vhoIm8mjuI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(7416014)(18002099003)(22082099003)(4143699003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kxWsYiXTj7xo4tp2fuyO1VEmCUFsan8rUeBDHt2K/5AgEwfcgvZYu/Dha5qI?=
+ =?us-ascii?Q?OqEmFQVjfLMDXK0ZeBrtqHyEWwS/kN2VOY5GqgyPX0EmUX1JhPbLCfhX06Yu?=
+ =?us-ascii?Q?PXROggQ88LiIOIwCvbnJFjUFqhxXJShtPL1CH/AyJYSQufRD+bBCTnkXKDps?=
+ =?us-ascii?Q?IdZLBecnFlvscq94ZZ82NdXIP2OR+ZwxVpMrdlqHHLKzeIGPCmwrdUCgslfJ?=
+ =?us-ascii?Q?9aaHS4ZzDKkXLWw5f2/7eFVYmDxpChbRzsemnU/ciFEKNyrKpCjgc/kBlKPF?=
+ =?us-ascii?Q?pVKFu/aRuO4xMtpA453Xsa4ywY7KDJgZa98Cu18Jk8Po4W65t/aFhlpLUv/e?=
+ =?us-ascii?Q?z66ikBiOIvwFEzM/3iBrqwVnR2BzjZTYIge2YYz9GsAZdcyExW+YHEdAg0VE?=
+ =?us-ascii?Q?kaVEBJp2oYuJfZ0RE2lAvDVV+uE9h6YAvgX25t2lC/MvZ5PH4DjkDhxufH2q?=
+ =?us-ascii?Q?mvVeZEu3UWItvW2cvg1wI7X+WzlWRc3EN5D98L+daIuUz5++MyhAuX079ENO?=
+ =?us-ascii?Q?ISjgKq8cS6oac+FLHKIB7vEtxOxS9MUFNyvPRy+u18cJOfRIt6SyPnhYQOsY?=
+ =?us-ascii?Q?04mHCnhCi43Vx/OeuJaqo/JXDqIgN3jqrgJrypQOARIXcNOHw2iRzDlUa5LW?=
+ =?us-ascii?Q?+ySZcgtLHxAfAgw5QAQB9i0dbBOMVldRgZP/2TlOw7fHrePUHVmsJXdxC65Q?=
+ =?us-ascii?Q?NqgBzoLxzZOzu+Am4HiZS5978CKORSEPHNkySv9VQMZMebYQwWBrJgqQ3NOA?=
+ =?us-ascii?Q?zVCZ0iXj/SRDWAsGFhM44kxuSBfv0RzAYFjZzvECumnE9O0hoWXh9SyX63Bg?=
+ =?us-ascii?Q?PCZg+Xj3qfyl11gKnOdZT2EpeM44xTN4HJGBlFZ4h+rPjtK7DcMCklOBEQlX?=
+ =?us-ascii?Q?RQfzoU3v0ldibK7ceRSYjTLas1Z71/v9a/6jShfz8+Y4WP9tXjNDVlGS4M7h?=
+ =?us-ascii?Q?D+HwcecZZ2LYYZ9BUmyycgeE/9YJuWOLku4zv3L3IAGcfFwwxF8Fai+7XFoG?=
+ =?us-ascii?Q?z+JEFRti5WXsA72SVdPgJhzMFL69P18cqr0HUN3/MODZSzZA/AkYWSxwyocu?=
+ =?us-ascii?Q?/3ktLShYCM1fiGpwTaVV6mzZrwDTzHPi5D+UNWuulFkv5c1eL3fhZeTNocil?=
+ =?us-ascii?Q?px8jbgE/Rj5Tcgk3Ot9PrTOBiSP8BOm2tW6FFijd+hnnEz4pOj2UW7azPcva?=
+ =?us-ascii?Q?kE008VooE3w5s63+TobyBmnr5vHB52WHq/PjyNvX7eG0b/hwZ3Qy9lH2LCij?=
+ =?us-ascii?Q?YjhFmpWQMA0r/Wjqy8xnMMQ6hTRsyjGrBoGd5Qd5/cUMOZx+o1oGpWX1EGFd?=
+ =?us-ascii?Q?5Q6GiqkzAwexO5HkLoRm0dvdipWLMmQjUJPbBEjJd23aEmWzrwykLNaT2TAh?=
+ =?us-ascii?Q?t8q6WOvC5lt62Lo+xI2tZjtFrRZl1kp5f8dn0vfGK8xR/Z1R2nsWFiYfYf6P?=
+ =?us-ascii?Q?CflQFUbxgEtA6jAo9mvNciaeUdcQZ7Zo/exP7U4hYbRhRHMv7d2N7eG4apLg?=
+ =?us-ascii?Q?XllVXZIndHvTVLVObeFk8bD9SOFMuQSLd3eYLi9w6XbuTOqrs27OMYkDuoJQ?=
+ =?us-ascii?Q?X/FSQ0+0blb/0VzFt7lurPqSsSKHfCdOY11LHxmsWZyMgHLa5HdxvqcHGXFc?=
+ =?us-ascii?Q?987Eus5xLjT1xGZ7Hig05hp6JA6a/3xOmL4SPdrz7nkbKOPepPbFmiGwgmr5?=
+ =?us-ascii?Q?uZF5Q3fcm6z4m3IAaxFheJcL58P5XIMVRQ8FWfUDnNhe34CMHcjE+RGzRUpf?=
+ =?us-ascii?Q?yNpzxjX/VgnTxt0NjidMASg3C6TJPzE=3D?=
+X-Exchange-RoutingPolicyChecked: Imrq3jreoSNfswwPEAgNgHtrHBCuukrrx05qbfe1OPsamA1+VETRI7a39T43mvL4ARGvvkQD4WFRaUVrMMx7QnSWIcBOJgdtfNwqQfx9ZxZfHkUeVy9mcmSTEJxoP6zQ2Qs+aSzIAP2vZKQqkBWCl6c1KoSaRNG0GBWi8Y1D49b2dus5U3Oa3IAkGFSL6XhWU7P9mhxRDOhfGH+q5oHs+8kmwjSVYNQRSEKDajp4ILZgau+PfXQctvCULWzjnhlftsyYqjUMyKA9kCpCWuoM7OD/NjOS1N1KdYlK1HX2nTsxw5JPrp4wKjSO6tTFFLBUnOFLQ6fCCHy6tp3j7OMzlQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: a735d633-65ff-4105-3558-08dee748e680
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 16:55:42.7114
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qd3scA089vB3rWKQLwseKVqrvfZ9zgLBie/IPIDMJDj1ud/SztIxlR2zhM85T674kWCDsGCNghwGwbeSTvH8NA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7797
+X-OriginatorOrg: intel.com
 
+On Mon, Jul 20, 2026 at 03:08:22PM -0700, Matthew Brost wrote:
+> On Mon, Jul 20, 2026 at 03:46:00PM +0100, Matthew Wilcox wrote:
+> > On Mon, Jul 20, 2026 at 04:41:41PM +0200, Christoph Hellwig wrote:
+> > > >   /**
+> > > >  - * ttm_backup_backup_page() - Backup a page
+> > > >  + * ttm_backup_backup_folio() - Backup a folio
+> > > >    * @backup: The struct backup pointer to use.
+> > > >  - * @page: The page to back up.
+> > > >  - * @writeback: Whether to perform immediate writeback of the page.
+> > > >  + * @folio: The folio to back up.
+> > > >  + * @order: The allocation order of @folio.  Since TTM allocates higher-order
+> > > >  + *         pages without __GFP_COMP, folio_nr_pages(@folio) would always
+> > > >  + *         return 1; the caller must pass the true order explicitly.
+> > 
+> > Wait, what?  This is just broken.  TTM should change to allocate using
+> > GFP_COMP.  Why can't graphics people ask questions before writing stupid
+> > patches?
+> > 
+> 
+> To be honest, I have no idea why TTM doesn't set GFP_COMP. This
+> predates my work in graphics by nearly a decade.
+> 
+> I found the following comment in TTM, which was added in this patch:
+> `git format-patch -1 bf9eee249ac20`
+> 
+> As far as I can tell, setting GFP_COMP would make things a lot easier in
+> a number of places.
+> 
+> Christian, who maintains TTM, is out for a couple of weeks, but this is
+> something we should probably take a closer look at.
+> 
 
---tUDGJmIzhp/w4TyG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have looked into this a bit, changing TTM over to allocations with
+GFP_COMP seems pretty straight forward. I have local patches that are
+working with my driver (Xe), will post something shortly.
 
-Hi all,
+Matt
 
-Changes since 20260720:
-
-The bpf-next tree acquired a conflict with the net tree.
-
-The drm-misc tree acquired a build failure, I have used the version from
-next-20260720 instead.
-
-The battery tree acquired a build failure, I have used the version from
-next-20260720 instead.
-
-The tip tree acquired a conflict with the mm-hotfixes-unstable tree.
-
-Non-merge commits (relative to Linus' tree): 7469
- 7082 files changed, 302697 insertions(+), 111532 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---tUDGJmIzhp/w4TyG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpfpGIACgkQJNaLcl1U
-h9APBwf/VhkSOvVHUDF5bfkDY3IizW57z93I+Pe5aShEPpvfObjgZ6ak3WpZe1jB
-FWKRjLs/SqvqfT8iIppgqMCrjrGu6/HYtqJ2O9Dh62y7qN9tbe70P5/Un/mJRF3f
-V3oqMdt/OophL5jhj25zp2QiG3Tlo2H2eeHXXGyxhTDu3a0nfODGNliVCznX5wNw
-k3U57q1l5SnpQ8JHfCQk6BGHzztrFykoLYHiuS4EGabHUr62xsp58yyDu++ScZ5H
-bme3UR4iZVvldoASl3n2pjWundwLRZm09EYwoN5uYnQyqr+bv1lgZu1pG4L1DH2z
-NI5cK3qA99kTeE79WRT1w4T4AeWMQQ==
-=I7pp
------END PGP SIGNATURE-----
-
---tUDGJmIzhp/w4TyG--
+> Sorry for sending a stupid patch.
+> 
+> Matt
