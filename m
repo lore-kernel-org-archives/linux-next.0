@@ -1,83 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0D437BE74;
-	Tue, 21 Jul 2026 14:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926EC3815F7;
+	Tue, 21 Jul 2026 14:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784642703; cv=none; b=UqF/EUvsUOtappuud/yeC4eLAMRECeRcbASZFEKG2LW9usLLVhluTy2IDEqCxa/JDEoS4phRTNl53gqTclql0t1lLrIWwho32v5XPHYdfVO6s2GsT17oL9Y3xuVOzcMECtRa/YcIrUBx02BGhlabHudd8fQVycKIHRryHP3a6Nk=
+	t=1784642805; cv=none; b=WA2WWP1UwgVvFmgj6KJaSxO3vnU5+7SWcdObSYQHBzgj6W2+FelHtakexBnUM6QxYlyBGnLydYWuTXiuQfa5XJqfM9MpziMf5xssFzyXWF8xBjW2lu50RoBzfPaDfAE5WxAdu77/mOuMkJGcJuO/BcTX2JlST7uFOTee1tax1XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784642703; c=relaxed/simple;
-	bh=iTGQlpROFM58K1W4mcG7Ob3VZ/8zxPSnjSzoQqud8GA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kUAU4KuLnFBLwG3LPNANsQpaEz47JfcX3kWk6pc/V89VQVST0SAeIOq7KNuTIzJ2a0lDfBYAnQs+Hca//J68sRaYPnrtaA5cK5Ws5ZdqPz9ka0lnulGrPJ+HxxgOXi/OO3xLuYk0jw1lNn6rZaMjwdOX4kkiUFJc0pf6C1g33Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqhcquEW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784642805; c=relaxed/simple;
+	bh=lTC8nUAU0tkILkHptFrqITlm45JonbtVJNnbUGtqCk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KP7op+BKaVK3K7O9wqteco6lgUGicIQCNn6pvUNvjHENu8kl5Ccy1lB0+6QoGVz1UIQAlkFoEE74F2yf38fTCII6OR21hsJnF1I9jAzRrfdOzalqi/gVYM1jzIbTvB7wz+SlNFPmBWjjm2G5ydov/ugeSfqi5Fd3qDDGISwEZyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1Eq2Afq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqhcquEW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207011F000E9;
-	Tue, 21 Jul 2026 14:05:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1Eq2Afq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A6391F000E9;
+	Tue, 21 Jul 2026 14:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784642702;
-	bh=6qyExIs7H/LC4APBRcaf/XIK+n+eSDligv8STwQ1w04=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=DqhcquEWIYws8EP08WRmTP/o8q4HhrJ2vdVf4n6JisZFKLRPEBpKNQq+GNNB9SYcP
-	 c5zcgmQAshtzb9ajP1LiHGXNVuNLa5J3WVZnaPPpuPQWGL1A0rH+hj3s/m+zXcWiqq
-	 poVErS+By2o3ir2L+lZiN6J2txX6fNkV12hA2rys+/6h8Gy4lN+wDQNVryDr1jWYJ3
-	 uO0m1MAfpeNbgtrgDrMhWfHO1hS6ApZFFpc43Doi9ONI1nEh3ikeBqSB3W+C7vA9Kq
-	 XpTnynxaJ+Mwzn1fWSsOqnt+8ujJHQuKJoJREGJnS696IWhUmck0reNtoUuhaKmdlL
-	 6GsI179al8taQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1wmB5g-00000007FKH-13nt;
-	Tue, 21 Jul 2026 14:05:00 +0000
-Date: Tue, 21 Jul 2026 15:04:59 +0100
-Message-ID: <86tspse8vo.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the kvm-arm-fixes tree
-In-Reply-To: <0604b71d-5a05-47f6-949c-26e0ceaf1b78@sirena.org.uk>
-References: <al9cA4bfywF11OmQ@sirena.org.uk>
-	<86wluoeek4.wl-maz@kernel.org>
-	<0604b71d-5a05-47f6-949c-26e0ceaf1b78@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20260515; t=1784642802;
+	bh=Idt5G772KwxjQM6Cd/5RAUT8Wlfvka+iIYZrY3DWysw=;
+	h=Date:From:To:Cc:Subject;
+	b=D1Eq2Afq1MgQOx80XBoKQWiQfGWEs1oObt39VxNpJud6DFNnh36vAyqeJQI2DUktl
+	 wG6KVlkAyvJRjsBFe8DHFsXpcmsviBfE86ddnOAB3B754MHrXJSbT4le8ti9ew0HYq
+	 8bW6P5mv49FC9e/ElzVK9/DCNGvtJKHAxRkGwCdU9IIHkDCXrzSoBXYdT1Ko/+LovF
+	 0imp05Lfo0KYnGjp/AvBBiblHeTg4w39zMsMp14QTjY+wQXtedpCHfQbU7gYhIgHZl
+	 viUMEerKDaxBSSb85LrsZLqmlGSLHK/0+l8ca3rK+Ho5M7iUHBPvDhl3Nq//rKsv1T
+	 3J0ncQy2ImgLw==
+Date: Tue, 21 Jul 2026 15:06:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Albert Esteve <aesteve@redhat.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <al987knJq4h66FcJ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KVSqdCw1em5yhpkZ"
+Content-Disposition: inline
 
-On Tue, 21 Jul 2026 14:37:15 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> [1  <text/plain; us-ascii (7bit)>]
-> On Tue, Jul 21, 2026 at 01:02:19PM +0100, Marc Zyngier wrote:
-> 
-> > BTW, could you please Cc the actual maintainers of KVM/arm64?
-> > Christoffer has been out of that look for over 7 years now...
-> 
-> Of course, I did think that - just to confirm, that's you and Oliver
-> (with oupton@kernel.org as his address) since AIUI it's you two that
-> manage the git tree?  Usually it's the people with write access in the
-> contacts list, but I can add whoever you like pretty much.
 
-Oliver Upton <oupton@kernel.org> and Marc Zyngier <maz@kernel.org> are
-the current tree maintainers.
+--KVSqdCw1em5yhpkZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+Hi all,
 
-	M.
+After merging the drm-misc tree, today's linux-next build
+(arm64 defconfig) failed like this:
 
--- 
-Without deviation from the norm, progress is not possible.
+/tmp/next/build/drivers/gpu/drm/imx/dcss/dcss-kms.c: In function 'dcss_kms_=
+bridge_connector_init':
+/tmp/next/build/drivers/gpu/drm/imx/dcss/dcss-kms.c:81:17: error: implicit =
+declaration of function 'drm_panel_put'; did you mean 'drm_dev_put'? [-Wimp=
+licit-function-declaration]
+   81 |                 drm_panel_put(panel);
+      |                 ^~~~~~~~~~~~~
+      |                 drm_dev_put
+make[8]: *** [/tmp/next/build/scripts/Makefile.build:289: drivers/gpu/drm/i=
+mx/dcss/dcss-kms.o] Error 1
+make[7]: *** [/tmp/next/build/scripts/Makefile.build:549: drivers/gpu/drm/i=
+mx/dcss] Error 2
+make[6]: *** [/tmp/next/build/scripts/Makefile.build:549: drivers/gpu/drm/i=
+mx] Error 2
+make[6]: *** Waiting for unfinished jobs....
+/tmp/next/build/drivers/gpu/drm/mxsfb/mxsfb_drv.c: In function 'mxsfb_attac=
+h_bridge':
+/tmp/next/build/drivers/gpu/drm/mxsfb/mxsfb_drv.c:130:17: error: implicit d=
+eclaration of function 'drm_panel_put'; did you mean 'drm_dev_put'? [-Wimpl=
+icit-function-declaration]
+  130 |                 drm_panel_put(panel);
+      |                 ^~~~~~~~~~~~~
+      |                 drm_dev_put
+
+Caused by commit
+
+   b71a623598d31 (drm/panel: of_drm_find_panel() return a counted reference)
+  =20
+I have used the version from next-20260720 instead.
+
+--KVSqdCw1em5yhpkZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpffO0ACgkQJNaLcl1U
+h9ATzgf5Adwr9uCkP59givHL6GPZ5+UsW8JMEQnGh8XV745k1dzIUTyUtzoTjH4s
+W6JFzvEr9doz8Z2Roj6QB8bApC3ogiS2ADhtXRcamNL/3S+lIY9GS/aAVFfUlqzs
+JKxE6ZE9QFNlrwywGcY95q2WyGb70DfLZ15HDyHDi3rZAiYNi38R/BZ7xmlYfuJT
+6uvOvp7litUarT5b/cxKlMbnfyGioIOMdqaBQc9PshwafVOmOJxQErgKgLDMuRfh
+2FzU6QDaNHNF4fdBDuvU1c+lASaSTiQanASPjR/lPACrFIgydh82UFCnMF1+lv+A
+xtOcoGdmZgOkhs/D3h78zOM1H2JQUg==
+=HczC
+-----END PGP SIGNATURE-----
+
+--KVSqdCw1em5yhpkZ--
