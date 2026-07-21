@@ -1,92 +1,127 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EE9374186
-	for <linux-next@vger.kernel.org>; Tue, 21 Jul 2026 11:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE0448B388;
+	Tue, 21 Jul 2026 12:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784634548; cv=none; b=P5GizBeVIivBT50iwdThRme4cvv2BozVvtjkRMjdNhFEj1zwDkGhVkeW5WctpzERCN8NxpskXCgDGfQe1lv74bY5FLtmmszzeJ0B5Ap1fdTbQRPVcpJ+zj0s89BBOC4PxbCI5vPfQwOMzFN1Ovmt1GyLFefS8sulRzBfiPmzx8E=
+	t=1784635343; cv=none; b=hNRKHySeYuSwV1gRlyseMNFRV1GcI4FMMlWwjc9O/aTA5pbB14s3fXklwmYaWgCvhsjNjBNJpwkTeSIZc6OWUYIsDePxEyNXTVmMqlUs7auVgj7NaZG6Z6/I7WdyKTZKVu2++CB/kZGIw5/f3NF3mG22dsNYa7rCe70OkYkcNo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784634548; c=relaxed/simple;
-	bh=A2z++gxupEIbeOSE4vildMcYhSVjHi+aD0FEEGg5SOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NwX5dLX8xNi6xxDdqqa/1obB3m1JrfVBPhSX0tvCWto5SW8XCuqb6ktda38LeLwIeIlJvjUbfYBUJiBH0tTutdDBBIb5xnbh/1BctPz6m0+N1R+FSsr8WW4kV++SP0tsDDZ8n9rVk+jVQeGoq24k9hsRfxmBOQ8kUPULdqPdKTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 66LBmvb7064678;
-	Tue, 21 Jul 2026 20:48:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 66LBmvhi064675
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 21 Jul 2026 20:48:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <c0bd6bc6-17de-468d-850d-df9955e2c142@I-love.SAKURA.ne.jp>
-Date: Tue, 21 Jul 2026 20:48:56 +0900
+	s=arc-20240116; t=1784635343; c=relaxed/simple;
+	bh=ahhNa2hgFUqWeneUNfr/nu3bT2cYyRbL+HkoSzZuq0c=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RLyOt9BLuRzicvLN2xlc1sLIUcd+fyte4WTLKyPiGqlCeMpvpv0LJF9JwTUbsnyfeEXpC/jK1V53Bv1kGt54DYLPdi9XbWiVIBD40a8Rd/a5Iaow3PjMcnqu4ATJxBlIWhpxF4bR6Rt0Kv1wrqhzqGIDRRRAR9NvgjvCn6dHfhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKp3baMs; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKp3baMs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F7F1F000E9;
+	Tue, 21 Jul 2026 12:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784635341;
+	bh=CpHVcr0p6Tqcqk4We8OUVL6IpOZGJeDTD7aqHe+WeuI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=VKp3baMswJj0cEWLrhFqBBAfHVwAN4QjWa9j0mxNThq+0dGDzCBYAVrVe5MxvE+r0
+	 FyDrphEBFVmFJErjQxWQy81QITCnccC6fpL9NOe4Gsz9f/3bKykGUuczM4onUX+Eo0
+	 0x1ZtHeUh8S/arz02PLQJEbvKkUcOFklUgdTGvXFZMntbHnBxbRellLfM9iZP7+nyi
+	 W6wjrQdHBeHdptzFE+CGZjj18P0xj/FErBQzEWm+FYpZObe+eK0w0kSeZJdQnXU3Xn
+	 XuypqHnBGsa/2S1QvHJ9Xy/Y8lYbeGJkS9jYswwZOtrlxi5cVDWTJ+5ZJGCsSwbRkJ
+	 l0HoDPS7i+T/w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wm9Ax-00000007CuB-4AGM;
+	Tue, 21 Jul 2026 12:02:20 +0000
+Date: Tue, 21 Jul 2026 13:02:19 +0100
+Message-ID: <86wluoeek4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: 	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the kvm-arm-fixes tree
+In-Reply-To: <al9cA4bfywF11OmQ@sirena.org.uk>
+References: <al9cA4bfywF11OmQ@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Policy regarding linux-next only changes
-To: Alexander Potapenko <glider@google.com>,
-        Aleksandr Nogikh <nogikh@google.com>
-Cc: Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
-        Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
-        will@kernel.org, longman@redhat.com, mingo@kernel.org,
-        gregkh@linuxfoundation.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net>
- <69f2f52c-a13a-4f9d-ab57-789eb4fdc335@I-love.SAKURA.ne.jp>
- <akZxfzEtam8yPXEh@MacBook-0RXW5>
- <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
- <CANiq72=hLXip=gQS1tnLQxe6Kpwq03Bd8F1z_xLrdoCtvSAkfg@mail.gmail.com>
- <2d0d3f6b-4392-4081-9390-9b588e38de7a@I-love.SAKURA.ne.jp>
- <CAG_fn=Vf==zhGjSNPcFC0=n9cw+NrBp+AqXgcmcV0uQBAcL9TA@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAG_fn=Vf==zhGjSNPcFC0=n9cw+NrBp+AqXgcmcV0uQBAcL9TA@mail.gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav204.rs.sakura.ne.jp
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2026/07/21 18:38, Alexander Potapenko wrote:
-> Hi Tetsuo,
-> 
-> You can send patches to syzbot@lists.linux.dev.
-> 
-> E.g. I ran
-> 
-> $ git send-email  --suppress-cc=all --to=syzbot@lists.linux.dev
-> patches/kcov-tetsuo-v7/0001-kcov-fix-data-corruption-and-race-conditions-on-PREE.patch
-> 
-> to test your latest kcov patch and got the results here:
-> https://ci.syzbot.org/series/33930a89-bb2a-4c5a-b6c5-d45829d5c94c
-> 
-> The fuzzing ran on 8 VMs for 3 hours, and there were no new reports.
-> 
-> Please let us know what you think of this workflow.
+On Tue, 21 Jul 2026 12:46:11 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+>=20
+> [1  <text/plain; us-ascii (7bit)>]
+> Commit
+>=20
+>   6c13643a6f392 ("KVM: arm64: Fix hyp_trace clock disabling")
+>=20
+> is missing a Signed-off-by from its committer
 
-Unfortunately, 8 VMs for 3 hours would be too little to stop my linux-next only patches.
+Amusing:
 
-syzbot took more than one month in linux-next until I was able to report
-https://lkml.kernel.org/r/73ed3aa5-f6e1-47b6-9e5d-428ac1f4cbf3@I-love.SAKURA.ne.jp .
-I could have reported within 24 hours if all VMs (I don't know how many VMs are assigned)
-for networking trees were tested with my linux-next only patch.
+maz@valley-girl:~/hot-poop/arm-platforms$ b4 am -lsto - 20260715105100.3178=
+255-1-vdonnefort@google.com | git am
+Grabbing thread from lore.kernel.org/all/20260715105100.3178255-1-vdonnefor=
+t@google.com/t.mbox.gz
+Analyzing 4 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+Analyzing 0 code-review messages
+Checking attestation on all messages, may take a moment...
+---
+  =E2=9C=93 [PATCH v2] KVM: arm64: Fix hyp_trace clock disabling
+    + Reviewed-by: Fuad Tabba <fuad.tabba@linux.dev> (=E2=9C=93 DKIM/linux.=
+dev)
+    + Link: https://patch.msgid.link/20260715105100.3178255-1-vdonnefort@go=
+ogle.com
+    + Signed-off-by: Marc Zyngier <maz@kernel.org>
+  ---
+  =E2=9C=93 Signed: DKIM/google.com
+---
+Total patches: 1
+---
+ Link: https://patch.msgid.link/20260715105100.3178255-1-vdonnefort@google.=
+com
+ Base: using specified base-commit a13c140cc289c0b7b3770bce5b3ad42ab35074aa
+       git checkout -b v2_20260715_vdonnefort_google_com a13c140cc289c0b7b3=
+770bce5b3ad42ab35074aa
+Applying: KVM: arm64: Fix hyp_trace clock disabling
+maz@valley-girl:~/hot-poop/arm-platforms$ git show
+commit ffb57162cb4e20971ea41320f8dd9fad7d141e9f (HEAD)
+Author: Vincent Donnefort <vdonnefort@google.com>
+Date:   Wed Jul 15 11:51:00 2026 +0100
 
-syzbot was not able to trigger
-"BUG: %s/%u is doing I/O request on loop%d in Lo_rundown state.\n" message
-using https://lkml.kernel.org/r/30ccdd3c-6353-4a0f-bdc7-230ec3bf4765@I-love.SAKURA.ne.jp
-in linux-next tree. syzbot could have triggered this message within 24 hours if all VMs
-for upstream trees were tested with my linux-next only patch.
+    KVM: arm64: Fix hyp_trace clock disabling
+   =20
+    Fix the disable path in hyp_trace_clock_enable(), which fell through to
+    re-initialize and reschedule the clock after cancelling the work. Return
+    early instead.
+   =20
+    While at it, cleanup hyp_trace_clock::lock which is unused and
+    hyp_trace_clock::running which is redundant: the trace_remote framework
+    already serializes calls to the callback enable_tracing.
+   =20
+    Fixes: b22888917fa4 ("KVM: arm64: Sync boot clock with the nVHE/pKVM hy=
+p")
+    Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 
-What I want is a workflow that can test with patches for many days and many VMs.
+No RB, no SoB, no Link. Guess b4 is busted in some way...
 
+BTW, could you please Cc the actual maintainers of KVM/arm64?
+Christoffer has been out of that look for over 7 years now...
+
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
