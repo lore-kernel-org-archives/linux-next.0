@@ -1,89 +1,79 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A67A374183
-	for <linux-next@vger.kernel.org>; Wed, 22 Jul 2026 15:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0924749CA;
+	Wed, 22 Jul 2026 15:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784732878; cv=none; b=rB0ZLn8XPiuLbPyjSWziXL7l5UlmwD+oU72USEwctkk9ipOcDEr+dBe/Uk0CZlzoaDdOqPs8fQQbrxo1UYFDy9GuVY5zc5VeoSAodVjrNSrItx8wzIiLTOdk0q9t0NQ0vDyTV63WTO+7xq+iu6M+eB9q2qPTbS4IZEpJ3c5lRdM=
+	t=1784735849; cv=none; b=BjLnb5hWBBqDZA9dF3HszJE+0nGZhVc1GU/1cCaqQgCYLEiSewnK6HV9BhDPZ4q3LT9iN4kTnZ8VdvtTS1HOZ/22GLu/4QN5e6w/JHgY2OfNWk/GJjFPB/j/wa3R0Jypd7Jlnjnii6KDIq8TOydfJP87dR/u/+yrqX3SONvOcoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784732878; c=relaxed/simple;
-	bh=yiqkXYOzna117Aq9VwGx152ABG4qNJTBh6HI+2qIeTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jvmvhE0Fz/KndhBqQv7ueDuqsOrOp7nWfoe9uQ7Z6WOAGHGWHejm1of5pY37VeLtmGgT3QSL8o8edx7y0ic0vFiC2h2yV13teMQEbdIkG0osHQQpog/5VmdwrdAsk0VcZ5Q+WxAMCg4CpVgCI88DeBpWq6BWCMMW7XrQAEo4vUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 66MF7iGJ057995;
-	Thu, 23 Jul 2026 00:07:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 66MF7hO1057992
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 23 Jul 2026 00:07:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <bc3703bd-65ee-4182-a742-56603d9b9bac@I-love.SAKURA.ne.jp>
-Date: Thu, 23 Jul 2026 00:07:44 +0900
+	s=arc-20240116; t=1784735849; c=relaxed/simple;
+	bh=6tZOhKD81OvJnitsWWVg5oEt6qx8fvrOcqnsiNyCu2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bY32btO3aETvbgyO7CZGo2VtM7S1LfBXlLY/RrvyaFvjmHMfkqae/LHubwM2MGUZMxxkttaca0MIUOOj+ZQzjIQL2LPs/sfdbbBRVdAMb277madRnX3aERFtthuP1zOMKbFv2c5pvNFLCyi9U+S+7OB8UAaZ1gLB30mak3jOxJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ee1kDiOz; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ee1kDiOz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C351F000E9;
+	Wed, 22 Jul 2026 15:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784735847;
+	bh=dVibXLOI70MuFj61hE/Eu1lqp9BV8uenrgKm5u+oorM=;
+	h=Date:From:To:Cc:Subject;
+	b=ee1kDiOz7EDLiGRP1dzaRm0xH6fi1NOMJ9Duv2Bb2zuWK6U5IYaH2INOPBOysFtDl
+	 HaIVThhXCo8Z9op8rSQHWR/sbC0QRRu0zpF5rBzrRq1S1AZ6YRUJ8QWUgyRZkMIuU7
+	 Z/dccgNygbmbeovNgJ44CBuwkaBAT88nKSFY6Mh/TAtokhJEA4r8aIzXHWMi/RMjF7
+	 AbO53EkC/bxUktpDM8ltpkRDDMfoY0B/qI3En/A0yI0Dn4McuCyU3kSorNdrSi444+
+	 Y2vve4D0Ihx+mV3WX9zDIE9PP5Cf2YrBG4kXijk+DWdoHXWHmP2d0OwfWIXnz7xAdg
+	 asFVTYGDs7aqA==
+Date: Wed, 22 Jul 2026 16:57:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Fixes tags need work in the drm-msm tree
+Message-ID: <amDoY5NoAOzrxMFL@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Policy regarding linux-next only changes
-To: Alexander Potapenko <glider@google.com>, Mark Brown <broonie@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc: Aleksandr Nogikh <nogikh@google.com>, Boqun Feng <boqun@kernel.org>,
-        Gary Guo <gary@garyguo.net>, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
-        will@kernel.org, longman@redhat.com, mingo@kernel.org,
-        gregkh@linuxfoundation.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-References: <DJO29EZB2BIT.2AQMSG44P9M46@garyguo.net>
- <69f2f52c-a13a-4f9d-ab57-789eb4fdc335@I-love.SAKURA.ne.jp>
- <akZxfzEtam8yPXEh@MacBook-0RXW5>
- <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
- <CANiq72=hLXip=gQS1tnLQxe6Kpwq03Bd8F1z_xLrdoCtvSAkfg@mail.gmail.com>
- <2d0d3f6b-4392-4081-9390-9b588e38de7a@I-love.SAKURA.ne.jp>
- <CAG_fn=Vf==zhGjSNPcFC0=n9cw+NrBp+AqXgcmcV0uQBAcL9TA@mail.gmail.com>
- <c0bd6bc6-17de-468d-850d-df9955e2c142@I-love.SAKURA.ne.jp>
- <CAG_fn=UEo8PNvjAcTTqmskfPrJNSjshhuXsR_PaH0-YLWwMTRw@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAG_fn=UEo8PNvjAcTTqmskfPrJNSjshhuXsR_PaH0-YLWwMTRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XIXbcC45zXOc/RDM"
+Content-Disposition: inline
 
-On 2026/07/22 23:19, Alexander Potapenko wrote:
-> During that time, we would stop fuzzing the main net/net-next
-> repositories.
 
-I don't want to stop the main repositories. 
+--XIXbcC45zXOc/RDM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> I am afraid the only way to achieve that is to ensure the patch
-> reaches upstream.
+In commit
 
-Yes, I know. I think there are two problems (technical one and procedural one).
+  3b1f4d5e47b36 ("drm/amd/display: Fix dangling pointer in connector reset function")
 
-The technical problem is that adding debug patches can impact performance
-(especially when printk() is called frequently). We have CONFIG_KCOV in the
-upstream kernels but we don't have something like CONFIG_DEBUG_AID_FOR_SYZBOT
-in the upstream kernels. If we can assume that kernels built with CONFIG_KCOV=y
-are not subjected to performance regression tests, I can try to minimize impact
-by guarding with CONFIG_KCOV=y. But if we can't assume, I want a switch like
-CONFIG_DEBUG_AID_FOR_SYZBOT.
+Fixes tag
 
-The procedural problem is that developers / maintainers are too busy to respond
-to my debug patches. Since I am debugging difficult bugs where nobody else are
-willing to spend resources, this is an expected result. I am OK to post my debug
-patches to ML. But without responses / interests from developers / maintainers,
-this problem won't be able to make progress.
+  Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and dm_crtc_state")
 
-Just saying "Not my business." is not helpful.
+has these problem(s):
 
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
+
+--XIXbcC45zXOc/RDM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpg6GIACgkQJNaLcl1U
+h9Cm+Af/Uq3IFdOa4NBS9B3BtyJZPtnu2yoozjykypvMliECm3g1OubGxXl7L7e2
+CzXTJubWuQ3HIodg3kSJ65JhAPns0d/SquQ3nETDFwFHymJz/3854PXsMSharMRb
+qZ+G/R65fdJiVcpigg2YbZlSpNNJvQkRFMaV5e0EF6gWSGvUXgEUhaF9jQ8kLy6z
+7EGVJfNBWp4nbee3dY4fcRY/kfCfx98j4+Wmx6lF/n88YTi6idNFiJeGWSwFOxvC
+q7/xQLG4+/xyEGbPEv4bh2c/M9wPDJQfETkxaSjQvxJtcH5HWUiOfAbF7QAjL72A
+WSiYJlk5jwsQc0VbkJH5NOSl/79Dbg==
+=Zj1C
+-----END PGP SIGNATURE-----
+
+--XIXbcC45zXOc/RDM--
