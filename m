@@ -1,112 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D84749F6;
-	Wed, 22 Jul 2026 15:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906D135837C;
+	Wed, 22 Jul 2026 16:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784735975; cv=none; b=mugenUkp50PJnQbUGLX/3ys0JGs00CliChZtkF3yoqEHuCuw1PsL/JIAtV0kTbQ4oSJRIayHTqSrw6kyGSwBbpuPIp+R63QLT7knwTIQ58Jo91WuBbj+QNkpqL6xzT1TMFACXEOuiMY/8J249YzBZwh43nTUO51/suQuY2YAJqg=
+	t=1784736631; cv=none; b=eULvHrUpFEqX+oqQMGCTwkqFH0SpO36i45y4srA5J4sJWfRIIfpyYbBMwTmjUgRJDR1yFl9Zrm5pjSCMakIEhPrtWdQT8jo7YNbXuK2L0f9cv7OzrEKjrhYg8iAh6gGzjQ3l7eWf5pLdvyin4hC9kG4guFe9Wz9UeFl6FzJCzOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784735975; c=relaxed/simple;
-	bh=s6OHar9BygFw8/6EoaPner6oWB3bIH9zBdZFe4bzt/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ReAvuGaSfNLGtVHXHEkkTr8elyw0nGEhrlFB1Z+h0R0o+5z2XWguZ8p0en/UI68Ncf19+eCXPbFZRf/OoOBMeCUFV4ieZjsWuREOpOX/BA9TR9z46ScqE1o0WyupwVFlZYC/+sLFQlux8BeOcC2sN+XO1X7X4eN3N+RCUrzCOk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvHL3tFu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784736631; c=relaxed/simple;
+	bh=hInNvtYOxXbvZY5RtIMOlajXh/hrzHIgSD5gdBoS228=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RuoaIHWRoBbHuyGMHPDcroCAPXGSXVDUVQKMR1AZo7W+LupQYt12DgXWkDGiOBbF23JEwUw3CwP+Bb0FrirYLw4NMFtiF2rKMBvufzUu+UkHqa4z+WRewP0pWsWlGYpa8qMGC92bM0dOjYwy+NxXTbQGh3ZhewczQ7rWca0x3Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net; spf=none smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=vmhDEV4h; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvHL3tFu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 178C31F000E9;
-	Wed, 22 Jul 2026 15:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784735972;
-	bh=mg/H6XrXcjjae19KI9SYNsQAVPqkUvCpSg+dfPzmgg0=;
-	h=Date:From:To:Cc:Subject;
-	b=HvHL3tFu2Xa5Z3hQcidZSQCegOemX8UaxXh56NLAJSt+OTbIJsaFRvKRJpmp8wRaP
-	 L5DGjDwdUSLTlgQJpupxv3OCevptfD+NvwT3c9c79MJZyGM13qsEq5lLcVpgsbC1Ee
-	 5b6wZESyD9IDuLBInq2vql5n8dBP4N3QHjm+wSxLvSl/K7AYyohIISAwFPbzOL4J+W
-	 IxNkNm9zRum3hU0Xh9NlMrbxjo88tWMCUo9syqbv7u9E8cyWq+zuS+ujv/dyCxZSp8
-	 O9KgI4qj0PK3RdD2kIpr6jsGGsEe2TYmq228fkyO7YRXy68A8OFfR5QNGD1Po/yrGk
-	 OjFGC5FltN+Tg==
-Date: Wed, 22 Jul 2026 16:59:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 22
-Message-ID: <amDo4dYWLIlKVIfr@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="vmhDEV4h"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=DT+FlYy//5gpti70bZ8f+/+m91rbc7vGMuCSLrCtIGE=;
+	t=1784736629; x=1785946229; b=vmhDEV4hEEhTv2bjnhLcDy1JQ0lnhR+rEMK5q4etBMBGp/Z
+	jHWGo92G/5+4gMf7P2Uc9XmkTlwHWBBVcXqJoIi5cRnQDp8sn2aH2bTLnHWVRsLr5zQaQ6MS5WQcz
+	ywewqH9ouRNNJB23qxHLasvhNXLdex0oC0ghR41rGJHWoXTu0qH81r6LEGGIJa7Mey66rPzL6sjf4
+	pxJVOWiS78LHssjnHgqpkywDJqPJpVd2bWRWD9T1idsS4xBv99LXPWyAmiFtrt+TEKy36RzWHOPtc
+	783rz4mYpB9X9FueZRQAMUN3i1dfjhvHmYC/HM89hgHuLmyUoliFwYZ9bxmzDywg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__ECDSA_SECP256R1_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1wmZWc-00000004sHg-3i2s;
+	Wed, 22 Jul 2026 18:10:27 +0200
+Message-ID: <4418b4f5cd308d18babf6481826a3d9358a8541b.camel@sipsolutions.net>
+Subject: Re: linux-next: build failure after merge of the wireless-next tree
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	 <linux-next@vger.kernel.org>
+Date: Wed, 22 Jul 2026 18:10:25 +0200
+In-Reply-To: <amDos20YUxH9DFgJ@sirena.org.uk>
+References: <amDos20YUxH9DFgJ@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="edGRXu07NtJ7bFEx"
-Content-Disposition: inline
+X-malware-bazaar: not-scanned
 
+Hi,
 
---edGRXu07NtJ7bFEx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the heads-up!
 
-Hi all,
+> /tmp/next/build/net/mac80211/mlme.c:
+> In function 'ieee80211_rx_mgmt_assoc_resp':
+> /tmp/next/build/net/mac80211/mlme.c:7279:17: error: label 'abandon_assoc'
+> used but not defined
+>  7279 |                 goto abandon_assoc;
+>       |                 ^~~~
+>=20
+> Caused by a semantic conflict (probably the same two patches as the
+> merge I posted a minute ago).
 
-Changes since 20260721:
+Yeah. I was _just_ going to reply to that email asking if it actually
+built! :-)
 
-The wireless-next tree acquired a conflict with the origin tree, and
-also a semantic conflict for which I applied a fix.
+> I have applied the patch below and can
+> carry as needed:
+>=20
+> diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+> index 60fc407bb1ebb..5a1c022282202 100644
+> --- a/net/mac80211/mlme.c
+> +++ b/net/mac80211/mlme.c
+> @@ -7276,7 +7276,7 @@ static void ieee80211_rx_mgmt_assoc_resp(struct iee=
+e80211_sub_if_data *sdata,
+>  	else if (!assoc_data->s1g)
+>  		aid =3D le16_to_cpu(mgmt->u.assoc_resp.aid);
+>  	else if (status_code =3D=3D WLAN_STATUS_SUCCESS)
+> -		goto abandon_assoc;
+> +		goto notify_driver;
 
-The drm-misc tree lost it's build failure.
+I think it needs to be "goto destroy_assoc_data" instead for
+correctness, but that's just based on what Jeff told me last night.
 
-The drm-xe tree acquired a conflict with the origin tree.
+Sorry for the mess! I didn't realize this was going to happen :(
 
-The battery tree lost it's build failure.
+Anyway, the plan is for me to do a (hopefully correct) merge after
+wireless will is merged into net etc., test it, and then provide that
+with the pull request of wireless-next into net-next. I think it'll take
+a few days though, more likely early next week than late this week.
 
-Non-merge commits (relative to Linus' tree): 7761
- 7440 files changed, 361298 insertions(+), 115875 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---edGRXu07NtJ7bFEx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpg6OAACgkQJNaLcl1U
-h9D8aAf+K+7INdc3Ug20CE6hY0hCT/neRSxABSlGW0vWMobXCa04poqELdZF43K3
-oezoWeux1+GhiIOysO/CB3PoUgvGejia+xtiRFUh/He2X7wV5jobLF/7hdLBW9S9
-Q/X9AsQ7mDX6B+V6BII7cgrI17aeFhEDe41hApaGbJ6GNT6joNKWj+IYHx+Muk6F
-8mBwGueZgO7Wd64m6PplevZ0JjjlzZnTSJu57aEXnpSXxEo4fG1MYD+GchBr5qEg
-9ZK+qYfMwIKOQyyaspoUTz7RVHMVBqTf3QCvz9HsgUK6gJGlWYaBpAAKHWnipVZA
-n8wSpZX5Uk8RpotpG3xQEcsBOI23qQ==
-=d/VC
------END PGP SIGNATURE-----
-
---edGRXu07NtJ7bFEx--
+johannes
