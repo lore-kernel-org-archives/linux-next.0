@@ -1,37 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0924749CA;
-	Wed, 22 Jul 2026 15:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA28E3AEF3B;
+	Wed, 22 Jul 2026 15:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784735849; cv=none; b=BjLnb5hWBBqDZA9dF3HszJE+0nGZhVc1GU/1cCaqQgCYLEiSewnK6HV9BhDPZ4q3LT9iN4kTnZ8VdvtTS1HOZ/22GLu/4QN5e6w/JHgY2OfNWk/GJjFPB/j/wa3R0Jypd7Jlnjnii6KDIq8TOydfJP87dR/u/+yrqX3SONvOcoI=
+	t=1784735891; cv=none; b=GQBVDnseJZsZ2lIFeMlIGpl8AGR1S3ub++Kq76NDOIixwp07vBScjaCiBFlb9MO8+HehT6JQwxlvN3vYW9hryMgVFRTn24GWtZa4SUKDWiK4lYoDeN9SWo86mnj+DOImsPRwtUT4sOeAe5BS6B5g1v/Ye9qcnXA6zWjB1K0vrQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784735849; c=relaxed/simple;
-	bh=6tZOhKD81OvJnitsWWVg5oEt6qx8fvrOcqnsiNyCu2w=;
+	s=arc-20240116; t=1784735891; c=relaxed/simple;
+	bh=XtqOb18ujcQhs5WCGIvIEcZmPrwDkMeVG/Q8w7wc7zQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bY32btO3aETvbgyO7CZGo2VtM7S1LfBXlLY/RrvyaFvjmHMfkqae/LHubwM2MGUZMxxkttaca0MIUOOj+ZQzjIQL2LPs/sfdbbBRVdAMb277madRnX3aERFtthuP1zOMKbFv2c5pvNFLCyi9U+S+7OB8UAaZ1gLB30mak3jOxJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ee1kDiOz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=qVqv3bx8mKFZdWBQHzjYo8EQqcmp5RFkqwnZeW4JKyuwt30SBKFKiYSNGYWsZ3JBh+8xXHcrm77ey/MJloq2BLsrC9XyHUp2DywvQH0/NlGE5gDTpuq0VjRXr3hw0DW+gYuuPCavxVAY8HtqdBPhdRPGMYvsfTtNPg5F7AlpND0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghMn7zoO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ee1kDiOz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C351F000E9;
-	Wed, 22 Jul 2026 15:57:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghMn7zoO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F21D1F000E9;
+	Wed, 22 Jul 2026 15:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784735847;
-	bh=dVibXLOI70MuFj61hE/Eu1lqp9BV8uenrgKm5u+oorM=;
+	s=k20260515; t=1784735884;
+	bh=SoqYc3ae4Ska67lz+wQjVLjyPWDV5tL/2vyVAiuSM+0=;
 	h=Date:From:To:Cc:Subject;
-	b=ee1kDiOz7EDLiGRP1dzaRm0xH6fi1NOMJ9Duv2Bb2zuWK6U5IYaH2INOPBOysFtDl
-	 HaIVThhXCo8Z9op8rSQHWR/sbC0QRRu0zpF5rBzrRq1S1AZ6YRUJ8QWUgyRZkMIuU7
-	 Z/dccgNygbmbeovNgJ44CBuwkaBAT88nKSFY6Mh/TAtokhJEA4r8aIzXHWMi/RMjF7
-	 AbO53EkC/bxUktpDM8ltpkRDDMfoY0B/qI3En/A0yI0Dn4McuCyU3kSorNdrSi444+
-	 Y2vve4D0Ihx+mV3WX9zDIE9PP5Cf2YrBG4kXijk+DWdoHXWHmP2d0OwfWIXnz7xAdg
-	 asFVTYGDs7aqA==
-Date: Wed, 22 Jul 2026 16:57:23 +0100
+	b=ghMn7zoOJGnRIbgZeuaEEimjJxQaETATQXTNC9Pwecy7/XSf0B7R8ypcwTy8FXoqQ
+	 h/F1Pd3RBXxd61AHlAGa99RMsUaBK6wv4RZM5KQxjXgyXRNpnCV1iIdLekPoXbEJFw
+	 FFHOLojPcvzrzihLhekEwr2Xo4/msVdVTQnn3Mh+V36mFccy7ssCwuGDqSHscoe8I6
+	 aCKpO6RgGVO0la3Ld4SJdaNsNcg2+k3zvK1/bLuPG727lGXYW9bzR7UrXLUJ+O11e4
+	 ZdXy8BdgkUTk9bGUigztwCkKfSq5Z/n+m23dVOkAx7XqGgS7DdgKl1bw01Rp7Nrm2t
+	 IMPh3VKYmpZRg==
+Date: Wed, 22 Jul 2026 16:57:59 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the drm-msm tree
-Message-ID: <amDoY5NoAOzrxMFL@sirena.org.uk>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Zhao Li <enderaoelyther@gmail.com>
+Subject: linux-next: manual merge of the wireless-next tree with the origin
+ tree
+Message-ID: <amDoh8ypkkAY-vvc@sirena.org.uk>
+Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Zhao Li <enderaoelyther@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,41 +54,67 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XIXbcC45zXOc/RDM"
+	protocol="application/pgp-signature"; boundary="3gq1KFqTCxYraVbh"
 Content-Disposition: inline
 
 
---XIXbcC45zXOc/RDM
+--3gq1KFqTCxYraVbh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In commit
+Hi all,
 
-  3b1f4d5e47b36 ("drm/amd/display: Fix dangling pointer in connector reset function")
+Today's linux-next merge of the wireless-next tree got a conflict in:
 
-Fixes tag
+  net/mac80211/mlme.c
 
-  Fixes: e7b07ceef2a6 ("drm/amd/display: Merge amdgpu_dm_crtc and dm_crtc_state")
+between commit:
 
-has these problem(s):
+  035ed430ce6a2 ("wifi: mac80211: avoid non-S1G AID fallback for S1G assoc")
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
+=66rom the origin tree and commit:
 
---XIXbcC45zXOc/RDM
+  f13e573ab3f12 ("wifi: mac80211: notify driver before destroying assoc lin=
+k")
+
+=66rom the wireless-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc net/mac80211/mlme.c
+index fa773f3b0541a,d577252dbb9f1..0000000000000
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@@ -7140,7 -7191,8 +7193,8 @@@ static void ieee80211_rx_mgmt_assoc_res
+  {
+  	struct ieee80211_if_managed *ifmgd =3D &sdata->u.mgd;
+  	struct ieee80211_mgd_assoc_data *assoc_data =3D ifmgd->assoc_data;
++ 	enum assoc_status assoc_status =3D ASSOC_ABANDON;
+ -	u16 capab_info, status_code, aid;
+ +	u16 capab_info, status_code, aid =3D 0;
+  	struct ieee80211_elems_parse_params parse_params =3D {
+  		.bss =3D NULL,
+  		.link_id =3D -1,
+
+--3gq1KFqTCxYraVbh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpg6GIACgkQJNaLcl1U
-h9Cm+Af/Uq3IFdOa4NBS9B3BtyJZPtnu2yoozjykypvMliECm3g1OubGxXl7L7e2
-CzXTJubWuQ3HIodg3kSJ65JhAPns0d/SquQ3nETDFwFHymJz/3854PXsMSharMRb
-qZ+G/R65fdJiVcpigg2YbZlSpNNJvQkRFMaV5e0EF6gWSGvUXgEUhaF9jQ8kLy6z
-7EGVJfNBWp4nbee3dY4fcRY/kfCfx98j4+Wmx6lF/n88YTi6idNFiJeGWSwFOxvC
-q7/xQLG4+/xyEGbPEv4bh2c/M9wPDJQfETkxaSjQvxJtcH5HWUiOfAbF7QAjL72A
-WSiYJlk5jwsQc0VbkJH5NOSl/79Dbg==
-=Zj1C
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpg6IcACgkQJNaLcl1U
+h9BmFQf+Kx7jn0D2C1F2qq9ktv2J685UdVaprs5jvgM4nHjXrAi2ZqMT4Jz5EhtB
+d6Bm9xUAAGE2prMA/5PHz8b/MH5f4e5wP+yeUEm7TlLBcVNWOkNPjnHIXjUwUKp8
+zj0f3FASYTBmRmDHSGpvGArk8uDf3Jb8BYvJJNfGfd4wEVnxo4+2UUv42FLr4kHE
+WpwCrJtef/S/9sGqnqitE8NdwaW9Xbb3HkScI71Dmk3Y8NoZuIWQmoDX5UZ1XeWM
+c6e5/3lEXtv5gSKj6aXxIhvuM9g58Bdp2i9657W2IzVjL3iDaSdWgkSpr5Kc8xwo
+CG2AVySRsEZyKLG6DF/yg1cWw0NSzA==
+=PIOS
 -----END PGP SIGNATURE-----
 
---XIXbcC45zXOc/RDM--
+--3gq1KFqTCxYraVbh--
