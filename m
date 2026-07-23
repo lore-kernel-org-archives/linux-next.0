@@ -1,140 +1,132 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321363D967F
-	for <linux-next@vger.kernel.org>; Thu, 23 Jul 2026 20:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4533F6C33
+	for <linux-next@vger.kernel.org>; Thu, 23 Jul 2026 21:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784838126; cv=none; b=DK3Ii3FPSJt+RmLSJwIXTIHuQGH9b43A6xkJPnUoJ5Ot8FsVji6bUdYzGXumZ5eBKnDq6OaU25DSMsSmbIay0cGPhkRkiK2CiI43a6rrlIHFLh0H9ahkyIPC7KGEZfKCMWCbSyrldf7O3M7mBywaTSkePXtAC0jJ1SLrU6xBgHU=
+	t=1784842050; cv=none; b=icZcfrXKbLxZQQszoEdF6YZISSx6nyEp64id24xB+vNKSr9o575Z/gqfgH24/TsbnBY0GV1Gs9+C8kPy+SYa3zaBE07LMIwHOFiWDcJ37yuxWaf1Nrv9GVe7ziZB6KvpVW3QphQmwARTar0KNZeLeIuDHfm7WUQSUQb3rBOYNDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784838126; c=relaxed/simple;
-	bh=UvNFjVJt3A7v6MKSV0fCcl/Kvk133EkSapsUZJ16PEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E0C/UF+nmQyaanXP4TyHhBt490/gb4+nuxOvXEW//20Exy/MYCD2AFJQNDHPOAqBQFOIhEVYn5h3C4wXKAX4QldKmvO6EB6oQ5PL1ttBiNcgvvon5jptcetErQFzSFlbg2etHKtonqVU8XtrYMNTA2ZHGrQth31RYQQaIMuzvhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZNEcbvT; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784842050; c=relaxed/simple;
+	bh=fDAVypStLtgTURyoI9cb2UdC0pejK1ODSnOpC1siBk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjUFdaH+m7+JitTsaHtlyKOuwoWwRBC/k++Hu+gPYsRbaGIy0I2iMXQfTXTCPn/QDUL4a489eH5z/ak7rG1BwRUtBhV+fKDOwHH/2Go8WsYg2Fd9PGXzFj3xvEN/kV23/sD5FX8shMU1V0jH8bSa02i0KksrCk2aKdpIUfSoQ1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ay2F9Grl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZNEcbvT"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-84874b52eabso1447498b3a.0
-        for <linux-next@vger.kernel.org>; Thu, 23 Jul 2026 13:22:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784838124; x=1785442924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Ivr3zf0J1qyWYjxVIvGBofjs0Q7zbDQA3/AdjyP35eM=;
-        b=cZNEcbvTiD4aovB5VIqSTKHHIx7tU1nu++hX7evMp6p725WB/zi+Fl71gh9iTzIYl2
-         vFnXpSXFZxXcZuoqQxiJPOgL62U7cGz3u6QevfoP29dEuuQLiCrnhxHaTFq/w4OQW94U
-         m0V5Xoi1p7rwIa7xmHIZaWmNmUVHmFl3ZQQPL4Xa7nGf+1IpEOn50BkgMprwpY2OTYib
-         jVBA+Upy1CqT8HLJlfKEE2Os6W6F3AIXC3k0kRqIgB3X8LjS0b0fHjcRxVx8Urb3XEGR
-         z75qrRj4hmjkYjndtOmZtezzT6LHYu3XwWvLFlJY2tjKdJFULCAIz1QUG0vh+U+jV5ik
-         sq0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784838124; x=1785442924;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Ivr3zf0J1qyWYjxVIvGBofjs0Q7zbDQA3/AdjyP35eM=;
-        b=GLFrDdK6j3r2REhBWpWHuLOx+rnugs7QHiR6y2XcmwUGAdPZUmtQ0pRgNQQwOoDCsC
-         r5cXHcKz7yVFqAmBvC1nOB5+QDT+lQ4LRJMdrebCS4LKO3cY3g1rXAqwbazNm5M4e2KU
-         0dtCF/V8GakKOFbWmB7HvR/vwxh1rqcSxK86lpU4JlLey7Pm2cPaKhIlanYDD/ts9sGJ
-         XNiNLIobEzw6/IDcR/RszxdEhZs6dC58DmrphHRXHcIP3LmduObWj5ltFvwbUJWeCWNt
-         231VhBgItGJQouIpyVgaANpOOnzL+ZoP+v+YQzWX8qFIwxiSO0p2H5tm8DUElpRiRQ8H
-         m0Lw==
-X-Forwarded-Encrypted: i=1; AHgh+RpPdkuwKNXDTAtIRB3oCoqvGwaaDgtYQGO+vJmqocBFXfrnhx0P20/2TUwMyZMf7N9OsoMaNN+C5lk8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaUJZ2EzbXH4hvWdiFGNbIuBN9gHMFnlldqILzQyK+aXkZjrGZ
-	H2+jxP5YtuJiUJ+6/zLhVhgUEEDP1hYlAme9cFr7kKeROVcf8lhDqwFx
-X-Gm-Gg: AR+sD12R2A9zwzfB/M/Zh9hEN0UkA/p7Uha7mmRFsHFK3y1orZUecQ2T4J9O4X8G7vQ
-	birHGmEjXropRmj3WqETI6ut6qHcRUtqHLv34QE/Xl+61AMKJ41tCy1KiyuOsj+mkBju598GomN
-	AY8IlPVztmgOxMc71lC5KZzIzo0yhG1gBJbb5zlVyMF/VaJdU1LjmJ2sSbr1Z0SQuLlDwDUNVT8
-	gQyM6uvmbfnX1JiJLvNFzICZVKO3X4ECnj4NpZEH0Cvq6Geam2TSmqT9bKCHPDj8AOVUFgFaRPK
-	bs7JtbMh560JefIiBkMtgZv/y3u+WjJMBDKupt1RBTzrENEi6Fke7DRX+shoVLC1WJhCPVX0p8u
-	//CbxBac75mLOuCQLDS0V0dVExtRx12sFMcROCeYQSWZ8DHKj1lv8NizbdU+ezDAPMsFwuV2O/t
-	8HyDo5CW+tRCIFFJybwUGRj9w1F7oq2/dxZ9sDLmY0ZlKPWhtde+I=
-X-Received: by 2002:a05:6a00:bb84:b0:848:4faa:480b with SMTP id d2e1a72fcca58-84e2bbed051mr5675121b3a.12.1784838124207;
-        Thu, 23 Jul 2026 13:22:04 -0700 (PDT)
-Received: from KRHW1CJW23.bytedance.net ([61.141.241.115])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e17604a46sm3670338b3a.60.2026.07.23.13.21.59
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 23 Jul 2026 13:22:03 -0700 (PDT)
-From: Zhao Li <enderaoelyther@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	linux-wireless@vger.kernel.org,
-	Johannes Berg <johannes.berg@intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the origin tree
-Date: Fri, 24 Jul 2026 04:21:53 +0800
-Message-ID: <20260723202153.97352-1-enderaoelyther@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <ac48f782-3fbd-4c61-89d0-4dd032ca81b9@sirena.org.uk>
-References: <ac48f782-3fbd-4c61-89d0-4dd032ca81b9@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ay2F9Grl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007D81F000E9;
+	Thu, 23 Jul 2026 21:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784842049;
+	bh=AUfWlxIB863kcySC1ByZPwzpGUvhrXH4mfz+j0Cwkso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ay2F9Grle9jiAXSao0E8ftufzBgOuPw8cg9e8lbBkO8ZBND6rbnOhAAX5l3rxCzGC
+	 nYGG6CUjZiQYh53aIKBeemLraVF3FjL7nLenA6LE+mMG8L9NX6sWIGFrvHimjfE6yK
+	 gnQ2jd9vD5mpOyWrMZDGAH4ZnqESrGdn+l5hkbAFmwZ2TM3Aa0I2Y0ks/vVYbaGbCl
+	 A7wEmMFEnjhCjo6PP6roVGsf0nfS10QW7L9dP9Xdei5T9AWZqfSJMm+jGikpDFdPHH
+	 NXOGldMWZJv77IR/7hCGfcN7Y97nSqXojDl99vPKmQhAKH38jAf6aVSw1zxFavSLM4
+	 GprCvkcgiItWQ==
+Date: Thu, 23 Jul 2026 14:27:24 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Usama Arif <usama.arif@linux.dev>, linux-mm@kvack.org,
+	dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
+Subject: Re: Semantic conflict between 04b177544a04 in drm-misc-fixes and
+ 0b6b1bb28482 in -mm
+Message-ID: <20260723212724.GA999236@ax162>
+References: <20260722225605.GA1910198@ax162>
+ <amFPJc1NQbuYWlSp@gsse-cloud1.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <amFPJc1NQbuYWlSp@gsse-cloud1.jf.intel.com>
 
-On Thu, Jul 23, 2026 at 7:51 PM Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Jul 22, 2026 at 03:53:59PM -0500, Enderaoe Lyther wrote:
->
-> > I noticed one semantic conflict later in ieee80211_rx_mgmt_assoc_resp().
->
-> I can't tell which bit of code you are talking about here.  I see there
-> is a block at line 7274 of -next:
->
->         if (elems->aid_resp)
->                 aid = le16_to_cpu(elems->aid_resp->aid);
->         else if (!assoc_data->s1g)
->                 aid = le16_to_cpu(mgmt->u.assoc_resp.aid);
->         else if (status_code == WLAN_STATUS_SUCCESS)
->                 goto notify_driver;
+On Wed, Jul 22, 2026 at 04:15:49PM -0700, Matthew Brost wrote:
+> On Wed, Jul 22, 2026 at 03:56:05PM -0700, Nathan Chancellor wrote:
+> > Hi Mark and drm and mm folks,
+> > 
+> 
+> Typically to get drm_pagemap.c to compile on various configs this is
+> what is needed:
+> 
+> 109 #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
+> 110 #define HPAGE_PMD_SHIFT PMD_SHIFT
+> 111 #define HPAGE_PUD_SHIFT PUD_SHIFT
+> 112 #else
+> 113 #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+> 114 #define HPAGE_PUD_SHIFT ({ BUILD_BUG(); 0; })
+> 115 #endif
+> 
+> So the drm_pagemap.c code could be:
+> 
+> -#if IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> +#if IS_ENABLED(CONFIG_PGTABLE_HAS_HUGE_LEAVES)
+> #define DRM_PAGEMAP_PMD_ORDER        HPAGE_PMD_ORDER
+> #else
+> #define DRM_PAGEMAP_PMD_ORDER        (-1)
 
-Sorry about the formatting in my earlier message. I should have quoted the
-code inline instead of top-posting.
+Ah yeah, I probably should have looked at the bigger picture there.
 
-That last branch was introduced by 035ed430ce6a ("wifi: mac80211: avoid
-non-S1G AID fallback for S1G assoc") as:
+> This Kconfig has been around since 2024:
+> git format-patch -1 b979db1611a63
+> 
+> Would it be better for everyone for me to change this in the DRM branches?
 
-	else if (status_code == WLAN_STATUS_SUCCESS)
-		goto abandon_assoc;
+I believe that would render this conflict moot and seems like the
+correct thing to do anyways but you could wait for input from the mm
+folks.
 
-f13e573ab3f12 ("wifi: mac80211: notify driver before destroying assoc
-link") consolidated terminal association cleanup at destroy_assoc_data
-and removed abandon_assoc. The conflict resolution retargeted this branch
-to notify_driver, but notify_driver only calls drv_mgd_complete_tx()
-without destroying the association data.
+> > There is a semantic conflict between commit 04b177544a04 ("drm/pagemap:
+> > Guard HPAGE_PMD_ORDER use with CONFIG_ARCH_ENABLE_THP_MIGRATION") in the
+> > drm-misc-fixes tree and commit 0b6b1bb28482 ("mm: rename
+> > ARCH_ENABLE_THP_MIGRATION to ARCH_HAS_PMD_SOFTLEAVES"), resulting in a
+> > lone instance of CONFIG_ARCH_ENABLE_THP_MIGRATION with no way to define
+> > it.
+> > 
+> >   $ git grep ARCH_ENABLE_THP_MIGRATION
+> >   Next/merge.log:Merging drm-misc-fixes/for-linux-next-fixes (04b177544a040 drm/pagemap: Guard HPAGE_PMD_ORDER use with CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> >   drivers/gpu/drm/drm_pagemap.c:#if IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> > 
+> > This results in an objtool warning (or error with CONFIG_OBJTOOL_WERROR)
+> > when building with clang because NR_PAGES(order) results in 1U << -1,
+> > which causes clang to stop generating code for
+> > drm_pagemap_migrate_to_devmem() when encountering unconditional
+> > undefined behavior.
+> > 
+> >   drivers/gpu/drm/drm_gpusvm_helper.o: error: objtool: drm_pagemap_migrate_to_devmem() falls through to next function drm_pagemap_zdd_alloc()
+> > 
+> > Mark, could please apply the following diff to the -mm merge to avoid
+> > this? Obviously, there will need to be further coordination for
+> > resolving this upstream when the time comes but it is only an issue in
+> > -next currently.
+> > 
+> > diff --git a/drivers/gpu/drm/drm_pagemap.c b/drivers/gpu/drm/drm_pagemap.c
+> > index 4a794544b7dc..f00c27edbfb9 100644
+> > --- a/drivers/gpu/drm/drm_pagemap.c
+> > +++ b/drivers/gpu/drm/drm_pagemap.c
+> > @@ -12,7 +12,7 @@
+> >  #include <drm/drm_pagemap_util.h>
+> >  #include <drm/drm_print.h>
+> >  
+> > -#if IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> > +#if IS_ENABLED(CONFIG_ARCH_HAS_PMD_SOFTLEAVES)
+> >  #define DRM_PAGEMAP_PMD_ORDER	HPAGE_PMD_ORDER
+> >  #else
+> >  #define DRM_PAGEMAP_PMD_ORDER	(-1)
+> > -- 
+> > Cheers,
+> > Nathan
 
-Since assoc_status is initialized to ASSOC_ABANDON at function entry, the
-equivalent target is destroy_assoc_data. A successful S1G association
-response with no AID Response element otherwise leaves assoc_data live
-instead of abandoning it.
-
-> but that is immediately after another goto notify_driver, there's
-> further notify_driver error handling afterwards and all the earlier
-> error handling is return statements so it looks at least unclear what's
-> supposed to be going on.
-
-Other goto notify_driver targets are intentional:
-
-  - "if (!elems) goto notify_driver" is a pre-existing allocation failure
-    bail-out; so association timeout handles cleanup.
-
-  - The comeback path WLAN_STATUS_ASSOC_REJECTED_TEMPORARILY keeps
-    assoc_data live deliberately for retry.
-
-A successful S1G response without an AID Response element is terminal.
-It needs to abandon association immediately, so the target should be
-destroy_assoc_data rather than notify_driver.
-
-> Please don't top post, reply in line with needed context.
-
-Understood. Sorry for the unclear top-posted reply.
-
-Zhao
+-- 
+Cheers,
+Nathan
