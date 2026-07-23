@@ -1,225 +1,480 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0CF339365
-	for <linux-next@vger.kernel.org>; Wed, 22 Jul 2026 23:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784762157; cv=fail; b=RiSlf+Io8GcoQznXdQpyce3PI4Szy7dZoAEvobxRLITW/to7cvRfBsowBG0W5o9RG7P3bUB/4aSTVZGYsugmNystpLr2MhmhapFnoJJKSnahZVLf1pRAxAM60Z0I8khzBgUMhL7CyBQ3NdX0ypMMmhucd+MaU6ZVZRGGVypjs4k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784762157; c=relaxed/simple;
-	bh=NAMW9FNXT4yajWjMqDqEk5gQxXnsGCaL6fQb4vFTfH8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YORqKzJd7CY2eV/ZCUsXoqid9z/OQy8zkwu/JvpZ1PjrZ4mBL8R7daskiNwXFW7MkVOkVbk3qNJgewEy1DN5FbtT9Ufsjhyd3LIeTV8ncBzq0f4wMkj9gCs7Kbx51oLTjOyHCopJrW/sYN4Zmg1nkT6nMRtD4xkRlUq7kSgQgEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJNL2mBT; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E21A35CB8C
+	for <linux-next@vger.kernel.org>; Thu, 23 Jul 2026 02:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784773853; cv=none; b=kdThuXcvQRS3kRsq2DranzgAR4ED6djYswdxP9Z71iff92KB6FTG7eIK0/gqElfTzUpMkjdWSwcnRzWkAMPkAa3lPY46Bo0+FICD/Fe8Ut51eqmX2IvCLJ2uqVhJcbP8kUj/Dpp3MmymR6r8p0P3oKRAW2cRkSrgH16gcNUR5js=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784773853; c=relaxed/simple;
+	bh=dVjsu8GMgpHGElc6em5uxl+zJwuacKyiYeWpmdYCz5s=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=rWJSe8zYTZ0CdZ1ZSDL97BpbmzCm7Z8EXqP3mrTHXMkUD/nZxjZMZ7JV4mutlnTJVnuOFYAGt5/7dgu7VF/6QmGsbnjpKa31npHijNacy1R3ZvUxkDOVr0PPMWn9bo0pNLYOBpkMWwrtXEJbYztX7iEtx/HjFs1HdEuIKoNo+no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=M8ZKuqpf; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJNL2mBT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784762156; x=1816298156;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=NAMW9FNXT4yajWjMqDqEk5gQxXnsGCaL6fQb4vFTfH8=;
-  b=ZJNL2mBTCBBNIBZGnpMx/vxG7qjMB+5cnwRwOG3nfOAbsOrsQ+LtpyYj
-   heGuf3Ehk10PS2tQghcKcFrUACDmmSrVHF+OliF2P/RJW64jtfBjnGB1X
-   XzpgS054hBFbNkveuzxlD5/e+Hrsptna+iK5jjsOe+8Ck9+ARVDAwMqmh
-   CE1+WSG21qjLeENtKfGGtxN9lxGWLB/UIeNSuMUb3QViJo2M+bp00o2XW
-   gAkhJfHM5XExb1PplwqQw59jVXK8UL+ba+W6YD+gsSsh9uWFw7aa9ECE6
-   E991wpHWHGNK4+vPNhUYG5Sw9X0qeb269IKWW5piNmbKh4CfLQJ10R7ST
-   g==;
-X-CSE-ConnectionGUID: MIK3LmcmRpKJT1zRCC3jiQ==
-X-CSE-MsgGUID: gHuuVzh2SH+w5LakoAkJwg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11854"; a="85604060"
-X-IronPort-AV: E=Sophos;i="6.25,179,1779174000"; 
-   d="scan'208";a="85604060"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2026 16:15:55 -0700
-X-CSE-ConnectionGUID: s3GHVW1qTmuZ3eUNk5yGqg==
-X-CSE-MsgGUID: oQVJ9/0dS/meMqs8sU9xZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,179,1779174000"; 
-   d="scan'208";a="256438542"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2026 16:15:54 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 22 Jul 2026 16:15:53 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Wed, 22 Jul 2026 16:15:53 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.67) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 22 Jul 2026 16:15:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pwZ9B8+WHHZPZI/9Q3XlmIJR93aJ58tS0W94Hn8XvpAZX1TXKBw3VAauDeoGcQR6zwxjDaJmxbuJKC7Yc22wAoz2CPRArq3UyCjHtia2c6IKPtHQLgwQ8v8AuVhgtx25D40W3t4oa0jznYBaI31UZiKr9M8Gl5Q3rqsGEVm3J09hUwSDZSFUT7Zsgg/yd2cH7IYmco5yLle7D14GaeKoWXCEmhMYZLBAqgMeviLv1HwVc9YUPJOPLpEfakSTLHs942VuP7iYBi53M0KQxL2Z4jzHq8fZKjgBChc4PzFa2WiMJrQ37k1pOKRnM0C3AeEXFdvHJihA3tgiu3iA3rbamg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zb4eqmgUED98p3Gp4i7Y3GQiv/6hiOpM/zYckDqgfJE=;
- b=QQGQuKAlV1sdtso5hr+ojBMkRpOW2FDeXBTCHi3bP5NEanntWfQDTabvUvOzvT0uJkkCDaghU4NMD0N8sR1Kn4exneujvNSOwTCtcX1ZiuFiz8ZyNyL6M78c6O4VgkqNyQiZHBR4d3PdJlCBUo3W6qNklzG+NEoMM/t7i74tlIcwZqE9u4O+GgDttlpUPrVjxFK48xcd2xAWwg3KPms/RPKqPv5rXxgNBPxhFsElXGcrXkw4BGg19IN/V8+3nVL7PJy07sBhQ0JU209SrHhRUIZPavbgsCLSI3glBjtTIAZqt8A37DWJud4xjjTRwOLekBlwJOWb+k5YEq5W+ZMrYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by SA2PR11MB5083.namprd11.prod.outlook.com (2603:10b6:806:11b::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Wed, 22 Jul
- 2026 23:15:51 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::e0c5:6cd8:6e67:dc0c]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::e0c5:6cd8:6e67:dc0c%4]) with mapi id 15.21.0245.009; Wed, 22 Jul 2026
- 23:15:51 +0000
-Date: Wed, 22 Jul 2026 16:15:49 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Andrew Morton
-	<akpm@linux-foundation.org>, Usama Arif <usama.arif@linux.dev>,
-	<linux-mm@kvack.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-next@vger.kernel.org>
-Subject: Re: Semantic conflict between 04b177544a04 in drm-misc-fixes and
- 0b6b1bb28482 in -mm
-Message-ID: <amFPJc1NQbuYWlSp@gsse-cloud1.jf.intel.com>
-References: <20260722225605.GA1910198@ax162>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260722225605.GA1910198@ax162>
-X-ClientProxiedBy: MW4PR03CA0078.namprd03.prod.outlook.com
- (2603:10b6:303:b6::23) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="M8ZKuqpf"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-38101f85591so87655a91.1
+        for <linux-next@vger.kernel.org>; Wed, 22 Jul 2026 19:30:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1784773847; x=1785378647; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cO0jJA2Z7DzPwyOvlgnvMfMw2XnlgC0yqw+XSKNAF10=;
+        b=M8ZKuqpfJfdoImPuxv7EkXPuzXaZ0j3AzpuVxikNSKGepYg2HFtCdRCWSQEGNXrauq
+         ld9U8oIxY/ZqBV7Rhz55plsplsuwvm9p4UYCbNtwPz7rxuwnxt0kAUf7L4NxlBle/MzT
+         ruWOl5KtiOOmPMdOrANF2Tf2A4DQ4QaZqe0agcZd9lwgj15aZFFR5BJP6HJxmhOyVovS
+         XGwKIAAS+TUPx4oVX8ZPax9+cff0u2AAaThVeBB2VcnUcWxyHWEZhlVDcTnfO/cNhB1z
+         zG01c5zlzyu2S09tc1I65z1/VHwMvK2iOO+MrwqNQHf8/sQKvdhJMwuVPQAWzrDVkwOD
+         DmDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784773847; x=1785378647;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cO0jJA2Z7DzPwyOvlgnvMfMw2XnlgC0yqw+XSKNAF10=;
+        b=aOD0OnERnRI7m2gDgnbv/myHwuhF1sOn3mHaEDCCRGaHGM38C8N5heVkP7SzjZ5hl8
+         teMu+rvlgOsotw7IVkPweeB8JWlJrk7AfxZxYvaVknPKzNi2du3JwZ8RQS0S2PI+tokL
+         iNW/n3khKcVN8UPaHX+lGQRTSgVt5jkzr7SKBO+CA0ozgXBMrDbXLfZj7AJF/a/rn2te
+         NhXEhYMDhbn4JH9KaahP6BIcNPIVWjDAmsFVNgvN1oKA8Jaa+JDmks0aI+awnqf/FU4V
+         xVOc7dpnIoWkjD3lPIxybhlGDAKnOFpJl9S7Bd2cKkjB0q/WtZsKxcFXmcadjaDj1Kg0
+         dOLg==
+X-Gm-Message-State: AOJu0Yy4C+jxViFZTFuf0k/foet262JLJ+quGM8PnXr6/1rBpRLIEVEZ
+	zAbBwsSVLzbwHAVjAwkqJ4jZezhp5mN3FMD7smVCQUkhalxualuRarxS3EYVr+g8znU=
+X-Gm-Gg: AR+sD116a47QhplLBGcWehKdt0ar6C3KPU3lOrvIIVzrOMJ1EejUvCPXz29Au9d7hta
+	BdBtE774neNdP0GH+jRGFn0jQP3NyKqPkOWjEwgwOTl9JJ5DmkfjLaTArf9eJkF1F93vPQqVb0K
+	fBmnaKswOMg6SSiZhj/+/+2PPsJLE9hYgI7yJDWzZG7K6aMkbSp3yezE6yJ04hxgRsxSB/GKu6u
+	99HH6R5ry//RJw4/c59TWTsc7ZggGl2UaImDXVHVIm+wb7C9NGZvrLF+pWP4cC08H92e2NuFKJJ
+	GXOEx9rDUFdV181nCADsoS/3r1t9NK5EC3GCE3QZxSuG4WknYtkibNKOqMKcWgbPmSNr4WKHSMx
+	zVt9VmNhPg8WQMfWuRmFzN6lTAia+BUxC/dkzSe60vIlvYqDo5XAVxW/NOXncqzGF30xHqQ4=
+X-Received: by 2002:a17:90b:35d0:b0:37f:a913:1554 with SMTP id 98e67ed59e1d1-38ec856d559mr830506a91.16.1784773847367;
+        Wed, 22 Jul 2026 19:30:47 -0700 (PDT)
+Received: from 4104846f2ebf ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d13003f12sm17707283c88.2.2026.07.22.19.30.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2026 19:30:46 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SA2PR11MB5083:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fc940dc-36e7-4599-657f-08dee8472c43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|7416014|1800799024|366016|376014|22082099003|18002099003|11063799006|10067099003|56012099006;
-X-Microsoft-Antispam-Message-Info: +sn1+uANq62z5eyt1jZXY8vF2TCfP2JbSuC7H3Sx8WLgwdBCN6k5rzynpVlLsiTQfO1nh6AAmaNC8awPqEN5WIdowbMgg66vCExmphRpsZTTcS0ct5OzfDBJKWX2M4+rKZy/FIiCDbotSMWox19WRgBDMOyOwnYeJEwAuQgcNXkL4YBzRlnT0eK3XFndiKNRRwDIuG7Y1ypBDI/zjXfpNVvw5uy4/PO+WgP8ScWzR7ZMmbGEw7n0U2RAVbq4wRG41LdQTUxij8k6ynT1mGKednyUArWwK3uugXeK6k9mIscUWILQa/6BFEzll6hZDQSb5LBdhtwhtkMipJGANrDOhH5qjgyy6GoYZ0h91N4OtWw/8bFIWoR/Lx9UPV+5Tuz4W6igWPBl4mstr6W6EYJFcfZaH3Sk7o87I3/y+fJBEX2GTyn7QUw85g02aIX1CnJjoVGfwJ1feaVNEjVpqzTmiq0ULi9jxrDbbE+doKXwBJWW587jLdU1aUa5pV8KQcW1jGcYccI5xfQ2FO5Rxxnu0uTQ4tkE6n4q+irU7kNGkuuatp6q+3Bcu0UFB5GnkCRWG53k+bsCtIGI2JqKLguu849EI8Aye0jCnGcPsyuqmiebETeav6mpRe4Tc5RThM1Z0y4wPvFq7UBeY66PAsyPIdbs7I2ekheFHdUKqEUk/xU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(1800799024)(366016)(376014)(22082099003)(18002099003)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+w1XOYMqCJ/19SHNFF//uBHGEppDS3U5FnuNRFTIwC+JOQ8kH8h/moBmM4dF?=
- =?us-ascii?Q?eNGTXa2wajNethnLmsyGuKXOOM5NC89xTxnX+NlRpU8mOTO0cOxEq8SLUqZV?=
- =?us-ascii?Q?yMQ18Q8u1u9n9K4GK1LVCCiS7cIC8FXtQOsb8nFASCzuTvF579pWwITfnnxZ?=
- =?us-ascii?Q?c2A97Q/Ttm75ECW2Mds1oXubZ1FuLdAvvH4qkbLb2xCrVvOcMPC8Bsa9ahFX?=
- =?us-ascii?Q?HGVo43t4LQ6fRwoZXs+PHL4FKR5n5rTd7NvRMOis2gtFkgT/XSUv7VzYCKlH?=
- =?us-ascii?Q?DGYF909NOckgflRlWmAkjHScYGnyB3KJWgwzLMHPdBgOzoP+04eUTQk4ocTH?=
- =?us-ascii?Q?sFNG2WhfC86STYaG3ctJk17FSGyAMT1xeXVZQuRvGVcjitcQa7ie2/vXAn8o?=
- =?us-ascii?Q?23guvaSQkwjrnnL7aLX0pYhhlNZpJO9qZiNj8JXwAkIOqRm2/3e9wtLHbpm4?=
- =?us-ascii?Q?IKghTztpcze7i5G5scQOjh/oHnR/PMSG/noKJZmbZi8ddwTlhWkiM2h4/WnC?=
- =?us-ascii?Q?yilOWCR1y0o9WWJgM82FS4yFEFVomXnUfpyI/j4aX1am98Gw11sUvcszfL+M?=
- =?us-ascii?Q?hJ/Q7VRpbQco93G/z85sP/2eRFG0Y+6VoCAlab6iqHcCNsdiWhKetWmWA54k?=
- =?us-ascii?Q?kJP2DTKGvpWGAzvKjHTETbAPK6Pp3BVOHBuz9kKdmJhl76Zmb0OhLUEbdlB8?=
- =?us-ascii?Q?CJSXaTXihlmgCy7tvjHWLJ9oRKnU+5qhrdde/DsDMQ/9XoB2EhELwN9RhDK0?=
- =?us-ascii?Q?Hwxr3TRBjMgaiG7/H8kG2fRG0kYzEO4V6BA1kCON4EQHKWKc67eVEO095kbE?=
- =?us-ascii?Q?Uoup8KsGYlDAiRRMNMylSjgiNt+9HfeK3mWRp2rSWzeeYGBaVLdPFkwEGRGF?=
- =?us-ascii?Q?aSTiYj9tc/yZg1/91iKZ9dm7c2ILvOU5bG37UIR3oMWyCbFTsDt0daKKGYZL?=
- =?us-ascii?Q?naLAh/K6hczSm9TlSwbFOiTIBFGhVFa02vdT1+zNJ8+6Uuf9uMY1IE7kHKKq?=
- =?us-ascii?Q?fToN1pnaiWXCKQGFntQaQzE4RoXKeK6y6jItAhq8S/pL+1/Ppc6o4nhlhlfh?=
- =?us-ascii?Q?OI++MhUgrLu89+P/FRTd0YOjRwT03volEcIDmq3R3l4hpQr2tfurlybKtUoP?=
- =?us-ascii?Q?qGtXgGKHPNrisDCrP5Gk75kkchw8h3x6C+u3r+/fK4ZrxswnDiPELk4bOKw0?=
- =?us-ascii?Q?GwvVSxnANATbz7RfIJNtpfGhNuORvPyzGvVJhfC6sc4XTTDVwDxwXkjy5tNK?=
- =?us-ascii?Q?7xtJGbflIiLHWZ3SWJVbvw2CG7R8bt97yW7bCLhFIJujQD5UqKill9sAdEYw?=
- =?us-ascii?Q?UGsC7L4pjMju90TkK7e9ilDS+elDhhR6bTRZdtdCMPytUQzPERSWDGZ0fkZ4?=
- =?us-ascii?Q?EvkB3CfRVUtP899OA6xOTBVJ+/fvqRPoLZ3ltH0U47hXk5X3pdN1QdtVyriT?=
- =?us-ascii?Q?xRgGP02M82WrYmW6gwoFkpzE89y33H0Vm1fuibOGPVJmjUtClo8Xzd6dAulO?=
- =?us-ascii?Q?RmI5m5gdbYW0Xuhnvnx5uxW/MFPYjb+iI8xhzkMB5aAUFvB1zoKpNB8evgDU?=
- =?us-ascii?Q?N1qSa3jqLksf8UK6K5l74NMTiHLnW3zZiRVgV3ti2ZxQCK/uU0ltcq9If5fM?=
- =?us-ascii?Q?RsmMRJ4IVLt7CY/gtNfEY08N3sifpY23kec4rBSx51ShWWfDNZysdUbjF3+O?=
- =?us-ascii?Q?KfO7HbghMVuAuC9IMWNPf8qHD2KEMYrxZKf+rAPPrmUan8mI6SgaThapvAV7?=
- =?us-ascii?Q?Q1t+LR4aIQ=3D=3D?=
-X-Exchange-RoutingPolicyChecked: TLUNGmtw5ks9nMu3DDpZXpWoFpzaMdJYkGy6Dk6qT4NT77RsN6/xAVOmZm1GAiiW3zZR+QcuoXzSd7Wak0/0Vz/N4YfF6Nx9ZNI/XZzhwZRDducHRj2y36DnKJgFafv3v1a7RkT93EVcuxeD3ojX84kdGZZHjBNEN3dafeW2Dwakc86LXEXctI6OfRNXQCyAThKVjlWkPDNh1d5fMdwdMcB1eejddi+bKntUuFBPXElNX5woEt8e2jh0nIxgGFR3TwZf4nLJEnIjIdk+qAyd1SrdStghgzhzclxpL3La+ybzE19/p58DDiuCwCmuk+6+l0GvNMVkq9CkHFOkyChP/w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fc940dc-36e7-4599-657f-08dee8472c43
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2026 23:15:51.7785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8d6KPowc4zsSjxmK0+SQfMTD9Y078oUIGwPMpOA2fQWRe+VV/qSi98S4zh6wYVExyYxGWIyDZtpTMxLUR5UDHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5083
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - b4515cf4156356e8f4fe6e0fdc17f59adab9772f
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 23 Jul 2026 02:30:46 -0000
+Message-ID: <178477384597.2070.12005916370926456193@4104846f2ebf>
 
-On Wed, Jul 22, 2026 at 03:56:05PM -0700, Nathan Chancellor wrote:
-> Hi Mark and drm and mm folks,
-> 
 
-Typically to get drm_pagemap.c to compile on various configs this is
-what is needed:
 
-109 #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
-110 #define HPAGE_PMD_SHIFT PMD_SHIFT
-111 #define HPAGE_PUD_SHIFT PUD_SHIFT
-112 #else
-113 #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-114 #define HPAGE_PUD_SHIFT ({ BUILD_BUG(); 0; })
-115 #endif
+Hello,
 
-So the drm_pagemap.c code could be:
+Status summary for next/master
 
--#if IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION)
-+#if IS_ENABLED(CONFIG_PGTABLE_HAS_HUGE_LEAVES)
-#define DRM_PAGEMAP_PMD_ORDER        HPAGE_PMD_ORDER
-#else
-#define DRM_PAGEMAP_PMD_ORDER        (-1)
+Dashboard:
+https://d.kernelci.org/c/next/master/b4515cf4156356e8f4fe6e0fdc17f59adab9772f/
 
-This Kconfig has been around since 2024:
-git format-patch -1 b979db1611a63
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: b4515cf4156356e8f4fe6e0fdc17f59adab9772f
+origin: maestro
+test start time: 2026-07-22 15:59:17.810000+00:00
 
-Would it be better for everyone for me to change this in the DRM branches?
+Builds:	   68 ✅    4 ❌    0 ⚠️
+Boots: 	  148 ✅    4 ❌    0 ⚠️
+Tests: 	24904 ✅ 2220 ❌ 4126 ⚠️
 
-Matt
+### POSSIBLE REGRESSIONS
+    
+Hardware: imx8mp-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa
+      last run: https://d.kernelci.org/test/maestro:6a60f39a75cb84fb217c5bef
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: kaanapali-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
+      last run: https://d.kernelci.org/test/maestro:6a60f98b75cb84fb217cb052
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6a60f37075cb84fb217c5a45
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_reboot-mode
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2b5f
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2b46
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_edp_aea0000
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2b39
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_aec2a00
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2b36
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_9c0000_serial_99c000_bluetooth
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2b18
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_phy_88e8000
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2afa
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_adc_3100
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ac5
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_adc-tm_3400
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ac6
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_7000
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ac3
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_7100
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ac2
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_7400
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ac1
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_7c00
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ac0
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_7d00
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2abf
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_8400
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2abe
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_8500
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2abd
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_8600
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2abc
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_9800
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2abb
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_nvram_9d00
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2aba
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_pon_1300
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ab9
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_pon_1300_pwrkey
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ab8
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_pon_1300_resin
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ab7
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_0_rtc_6100
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ab6
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_1_temp-alarm_a00
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ab3
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_2_pwm
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2ab0
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_2_temp-alarm_a00
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2aaf
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_8_adc_3100
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2aad
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_spmi_c440000_pmic_8_temp-alarm_2400
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2aab
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_usb_a600000
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2a8a
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_video-codec_aa00000
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2a89
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_wcn6750-pmu
+      last run: https://d.kernelci.org/test/maestro:6a6108b575cb84fb217d2a84
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device-error-logs
+      last run: https://d.kernelci.org/test/maestro:6a60f3ad75cb84fb217c5ce8
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: sm8750-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
+      last run: https://d.kernelci.org/test/maestro:6a60fbac75cb84fb217cc04c
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a60f4d575cb84fb217c6ba4
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
 
-> There is a semantic conflict between commit 04b177544a04 ("drm/pagemap:
-> Guard HPAGE_PMD_ORDER use with CONFIG_ARCH_ENABLE_THP_MIGRATION") in the
-> drm-misc-fixes tree and commit 0b6b1bb28482 ("mm: rename
-> ARCH_ENABLE_THP_MIGRATION to ARCH_HAS_PMD_SOFTLEAVES"), resulting in a
-> lone instance of CONFIG_ARCH_ENABLE_THP_MIGRATION with no way to define
-> it.
-> 
->   $ git grep ARCH_ENABLE_THP_MIGRATION
->   Next/merge.log:Merging drm-misc-fixes/for-linux-next-fixes (04b177544a040 drm/pagemap: Guard HPAGE_PMD_ORDER use with CONFIG_ARCH_ENABLE_THP_MIGRATION)
->   drivers/gpu/drm/drm_pagemap.c:#if IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION)
-> 
-> This results in an objtool warning (or error with CONFIG_OBJTOOL_WERROR)
-> when building with clang because NR_PAGES(order) results in 1U << -1,
-> which causes clang to stop generating code for
-> drm_pagemap_migrate_to_devmem() when encountering unconditional
-> undefined behavior.
-> 
->   drivers/gpu/drm/drm_gpusvm_helper.o: error: objtool: drm_pagemap_migrate_to_devmem() falls through to next function drm_pagemap_zdd_alloc()
-> 
-> Mark, could please apply the following diff to the -mm merge to avoid
-> this? Obviously, there will need to be further coordination for
-> resolving this upstream when the time comes but it is only an issue in
-> -next currently.
-> 
-> diff --git a/drivers/gpu/drm/drm_pagemap.c b/drivers/gpu/drm/drm_pagemap.c
-> index 4a794544b7dc..f00c27edbfb9 100644
-> --- a/drivers/gpu/drm/drm_pagemap.c
-> +++ b/drivers/gpu/drm/drm_pagemap.c
-> @@ -12,7 +12,7 @@
->  #include <drm/drm_pagemap_util.h>
->  #include <drm/drm_print.h>
->  
-> -#if IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION)
-> +#if IS_ENABLED(CONFIG_ARCH_HAS_PMD_SOFTLEAVES)
->  #define DRM_PAGEMAP_PMD_ORDER	HPAGE_PMD_ORDER
->  #else
->  #define DRM_PAGEMAP_PMD_ORDER	(-1)
-> -- 
-> Cheers,
-> Nathan
+
+### FIXED REGRESSIONS
+    
+Hardware: kaanapali-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a60f3d375cb84fb217c5de1
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a60f9f375cb84fb217cb29b
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a60f9f375cb84fb217cb29c
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: meson-gxl-s905x-libretech-cc
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a60f3e675cb84fb217c5f27
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a6175cf75cb84fb2182ffb2
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a6175cf75cb84fb2182ffb3
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:6a60f39e75cb84fb217c5c05
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.device-error-logs
+      last run: https://d.kernelci.org/test/maestro:6a60f3b175cb84fb217c5cfa
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a60f3ce75cb84fb217c5da5
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a6108f875cb84fb217d2d4b
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a6108f875cb84fb217d2d4c
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a61080475cb84fb217d26b6
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: sm8750-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a60f3d275cb84fb217c5dc2
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a60fad375cb84fb217cb748
+      history:  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a60fad375cb84fb217cb749
+      history:  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6a60f3cf75cb84fb217c5db0
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_multiple
+      last run: https://d.kernelci.org/test/maestro:6a60fdc075cb84fb217cc82c
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.futex.futex_run_sh_global_requeue_single
+      last run: https://d.kernelci.org/test/maestro:6a60fdc075cb84fb217cc82d
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: bcm2837-rpi-3-b-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.device_error_logs
+      last run: https://d.kernelci.org/test/maestro:6a60f3c275cb84fb217c5d65
+      history:  > ✅  > ✅  > ❌  > ✅  
+            
+      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
+      last run: https://d.kernelci.org/test/maestro:6a61598675cb84fb21817430
+      history:  > ✅  > ✅  > ❌  > ✅  
+            
+Hardware: k3-am625-verdin-wifi-mallow
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt
+      last run: https://d.kernelci.org/test/maestro:6a60f3da75cb84fb217c5e07
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+Hardware: kaanapali-mtp
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a60f36575cb84fb217c5a0a
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.arm64.arm64_fp-stress
+      last run: https://d.kernelci.org/test/maestro:6a60f47f75cb84fb217c647a
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_9800000_dsi_9ac0000_panel_0
+      last run: https://d.kernelci.org/test/maestro:6a60f98b75cb84fb217cb04c
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: meson-g12b-a311d-khadas-vim3
+  > Config: defconfig+preempt_rt
+    - Architecture/compiler: arm64/gcc-14
+      - rt-tests.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:6a60f58475cb84fb217c700e
+      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
+            
+      - rt-tests.rt-migrate-test.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:6a60f8b075cb84fb217c8567
+      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
+            
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6a60f36175cb84fb217c59f0
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.arm64.arm64_fp-stress
+      last run: https://d.kernelci.org/test/maestro:6a61064375cb84fb217d1ecb
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
+      last run: https://d.kernelci.org/test/maestro:6a6108b675cb84fb217d2b06
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.gpio
+      last run: https://d.kernelci.org/test/maestro:6a60f4d475cb84fb217c6ba1
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+Hardware: mt8395-genio-1200-evk
+  > Config: defconfig+preempt_rt
+    - Architecture/compiler: arm64/gcc-14
+      - rt-tests.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:6a60f58775cb84fb217c7016
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+      - rt-tests.rt-migrate-test.rt-migrate-test
+      last run: https://d.kernelci.org/test/maestro:6a60fada75cb84fb217cb7a1
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.devices-probe
+      last run: https://d.kernelci.org/test/maestro:6a60f42775cb84fb217c6038
+      history:  > ❌  > ✅  > ❌  
+            
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6a60f3f275cb84fb217c5f74
+      history:  > ✅  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.timers.timers_posix_timers
+      last run: https://d.kernelci.org/test/maestro:6a610b4075cb84fb217d484e
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: qcs8300-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:6a60f39f75cb84fb217c5c1d
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+      - kselftest.device-error-logs
+      last run: https://d.kernelci.org/test/maestro:6a60f3b375cb84fb217c5cfd
+      history:  > ❌  > ✅  > ❌  
+            
+      - kselftest.devices-exist
+      last run: https://d.kernelci.org/test/maestro:6a60f41e75cb84fb217c601d
+      history:  > ✅  > ❌  > ✅  
+            
+  > Config: defconfig+arm64-chromebook+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.efivars
+      last run: https://d.kernelci.org/test/maestro:6a60f4b675cb84fb217c6b3b
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+
+
+
+This branch has 3 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
