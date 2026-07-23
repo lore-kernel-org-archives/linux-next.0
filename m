@@ -1,33 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3865941D210;
-	Thu, 23 Jul 2026 13:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7F041D235;
+	Thu, 23 Jul 2026 13:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784814113; cv=none; b=gEWRpSJIrP/bzcgWTZljNOddnEEPFI4v4xZyY1lwYqcOjWwrZLbQWECYZ1hgjmEgAO1IryvcoeiXoFY/nflCDS6TIhQLFmn176eOHidVwaZLKk59Nw+Cvihs2fxM5dsAh1dmZgJj+Xv8CgpPw+3+gY/gANFqOMu3MKPsE7pluQo=
+	t=1784814123; cv=none; b=bNR5Y/35FOGQkrO4vkknjOQI33VOEnHLUc9QAmfmpiwqbwGMQSnaYdOv+5F7D+cOkF04ULBI3HRlNVGLCfOGwjYzLi0s4Qao+ZDfxHGm6XUK94uRC63y8dHlJLQ99pt7iD/YZm+5BRilWsGQ1fLc1hkD9POLG+GKX3PdAcHPEHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784814113; c=relaxed/simple;
-	bh=sctifJ8yhQy9na7Pc1nL7On+udtabXDAx9nhFwcKqaw=;
+	s=arc-20240116; t=1784814123; c=relaxed/simple;
+	bh=D1zNXuVKFoStwMsgX3CzaYPxEnN5E/Bnhfh21ctJvqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UviWc5qbMCbnCBH9Vd0N+8JsRNXOUd8No1nfxpuXOlNnCeOyHH6z9fMvATkhFJA9/Kt0MF2z6U4RPWf7cJbjF+CDAhfXLYV+DCd4lczBB26eheYpoLpQgOHwgryha17cOVa+Bf9CyK/SrH5fKDVbCSqXnG+/QuCFAbBmserxBPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94401F000E9;
-	Thu, 23 Jul 2026 13:41:49 +0000 (UTC)
-Date: Thu, 23 Jul 2026 14:41:45 +0100
+	 Content-Disposition; b=H5km2XlplMbtlHP8bJW4N7NoLixXPTNaw+299kOT3DhnHL4fmGM+aVeppGztp6C6Senj+h8M4xkdf/dRS74F1AP5bQqS/rQ6xrvoQv/SU1YocWlw+r9F1+cZZmgT3JAIed79Yg9WGECdSYG3Xp+i2ckdFzJZ05wyjkDISYkaTys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=br23MCtP; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="br23MCtP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD651F000E9;
+	Thu, 23 Jul 2026 13:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784814122;
+	bh=wvEfXSI+WIjqZ4jD9cQjj73lJhIlrS7EEJRNb4YI9kc=;
+	h=Date:From:To:Cc:Subject;
+	b=br23MCtPw8anKE1Ls919L1Yq2+jrsYAq/4W9nNofKg13fkWEJ7yHaLVqEqP+1HOiP
+	 mc3i23VFLBOHc/XEvUKSytwbfyAWtUN8Hw1mH1AihgVZ4v1GFK5zn4RuQAEX8ZaoQh
+	 ZaG8uqlfREayb9/3yWPPdvwXGiQQqE/g4nCnIhkE9y9jX8G04jSC6WOPdhLdBpLMF4
+	 qY89spjA4ucLWwXgjAGiHV0t5WyPHMvfAhBigcZy/p5hsw3/bo5svoKuI7gdT+Xq9K
+	 E4GLGccQj8fHiYS7xDqUOdoXPe7C/fD0i9K1QNBDAnOOd6WoZ9mfDsR/UdtDb6MyX/
+	 OYGXQV+wmYYdQ==
+Date: Thu, 23 Jul 2026 14:41:58 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Will Deacon <will@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: linux-next: manual merge of the pci tree with the arm64 tree
-Message-ID: <amIaGSRmZNeusA21@sirena.org.uk>
+	Michael Bommarito <michael.bommarito@gmail.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <amIaJr3aOQNS_Fvl@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -35,32 +44,30 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1kkDofxQrthj+vZb"
+	protocol="application/pgp-signature"; boundary="5aTCXO4+mubg62Eq"
 Content-Disposition: inline
 
 
---1kkDofxQrthj+vZb
+--5aTCXO4+mubg62Eq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the pci tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  arch/arm64/Kconfig
+  drivers/net/amt.c
 
 between commit:
 
-  12aab25ca56ee ("arm64: errata: work around NVIDIA Olympus device store/lo=
-ad ordering")
+  3656a79f94c47 ("amt: re-read skb header pointers after every pull")
 
-=66rom the arm64 tree and commit:
+=66rom the net tree and commit:
 
-  a8818827486cd ("irqchip/gic-v3: Add Renesas R-Car Gen4 erratum workaround=
-")
+  586c4dcf28eb6 ("amt: no longer rely on RTNL in amt_fill_info()")
 
-=66rom the pci tree.
+=66rom the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -69,64 +76,66 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc arch/arm64/Kconfig
-index fe807d72a3e7b,b9e17ce475e61..0000000000000
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@@ -1405,28 -1382,15 +1405,37 @@@ config NVIDIA_CARMEL_CNP_ERRATU
+diff --cc drivers/net/amt.c
+index b733309b866ff,f8169c5512a59..0000000000000
+--- a/drivers/net/amt.c
++++ b/drivers/net/amt.c
+@@@ -2811,7 -2775,8 +2814,8 @@@ drop
+  static int amt_rcv(struct sock *sk, struct sk_buff *skb)
+  {
+  	struct amt_dev *amt;
+ -	struct iphdr *iph;
+ +	__be32 saddr;
++ 	__be32 remote_ip;
+  	int type;
+  	bool err;
  =20
-  	  If unsure, say Y.
+@@@ -2822,9 -2787,10 +2826,10 @@@
+  		kfree_skb(skb);
+  		goto out;
+  	}
++ 	remote_ip =3D READ_ONCE(amt->remote_ip);
  =20
- +config NVIDIA_OLYMPUS_1027_ERRATUM
- +	bool "NVIDIA Olympus: device store/load ordering erratum"
- +	default y
- +	help
- +	  This option adds an alternative code sequence to work around an
- +	  NVIDIA Olympus core erratum where a Device-nGnR* store can be
- +	  observed by a peripheral after a younger Device-nGnR* load to the
- +	  same peripheral. This breaks the program order that drivers rely
- +	  on for MMIO and can leave a device in an incorrect state.
- +
- +	  The workaround inserts a DMB OSH immediately before raw MMIO loads.
- +	  The erratum cannot occur when a DMB that orders loads appears
- +	  between the store and load, preventing the younger load from being
- +	  observed before the older store.
- +
- +	  The alternatives framework patches in DMB OSH only when an affected
- +	  CPU is detected. Other CPUs execute a NOP in its place. Disabling
- +	  this option leaves the original MMIO read instruction stream
- +	  unchanged.
- +
- +	  If unsure, say Y.
- +
-+ config RENESAS_ERRATUM_GEN4GICITS1
-+ 	bool "Renesas R-Car Gen4: GIC600 can not access physical addresses above=
- 4 GiB"
-+ 	default y
-+ 	help
-+ 	  The Renesas R-Car Gen4 S4/V4H/V4M GIC600 SoC integrations have AXI
-+ 	  addressing limited to the first 32-bit of physical address space.
-+=20
-+ 	  If unsure, say Y.
-+=20
-  config ROCKCHIP_ERRATUM_3568002
-  	bool "Rockchip 3568002: GIC600 can not access physical addresses higher =
-than 4GB"
-  	default y
+  	skb->dev =3D amt->dev;
+ -	iph =3D ip_hdr(skb);
+ +	saddr =3D ip_hdr(skb)->saddr;
+  	type =3D amt_parse_type(skb);
+  	if (type =3D=3D -1) {
+  		err =3D true;
+@@@ -2846,7 -2812,7 +2851,7 @@@
+  			}
+  			goto out;
+  		case AMT_MSG_MULTICAST_DATA:
+- 			if (saddr !=3D amt->remote_ip) {
+ -			if (iph->saddr !=3D remote_ip) {
+++			if (saddr !=3D remote_ip) {
+  				netdev_dbg(amt->dev, "Invalid Relay IP\n");
+  				err =3D true;
+  				goto drop;
+@@@ -2857,7 -2823,7 +2862,7 @@@
+  			else
+  				goto out;
+  		case AMT_MSG_MEMBERSHIP_QUERY:
+- 			if (saddr !=3D amt->remote_ip) {
+ -			if (iph->saddr !=3D remote_ip) {
+++			if (saddr !=3D remote_ip) {
+  				netdev_dbg(amt->dev, "Invalid Relay IP\n");
+  				err =3D true;
+  				goto drop;
 
---1kkDofxQrthj+vZb
+--5aTCXO4+mubg62Eq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpiGhkACgkQJNaLcl1U
-h9B1Ggf/R5EvWiar7MCi3TsYSzokt5J59wzPFEjjPb6+B3cURF/lkhHblmm5Os88
-BoaJqx4bJKnLgRurEtdbM4ux3f+XAZHTU7mqXFtPnvc+VGiGeKZA4jPuWlHbsDXT
-9qom+EFKU4DNDw8+kIJNKAl/+gcBam+TtqeTau+lIp20egZLuDOnMcqUWry1EV07
-pm48Q2gEDM8zV5APs0RzNdFtGidIRarJST73e7EInUEMj10BIr6PF3z0dVTTfL/3
-DWCww48Mk9RP+AA8FDFlsmC6//RZWB7nFGbPXxUKBAw9LhdXqm3YD++3ozS0XKXt
-Q2LK/dv1J2BbRVBK/C5E7TGxMHVhcw==
-=xo8I
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpiGiUACgkQJNaLcl1U
+h9BLbAf/SqHisUAIA7qIJ3EZiVr419If5j1WGDnJBt9WXnNJRFKgvL1DBJ9ocpeo
+Xc3Kh7BI1IdgqNxXW2sjZVnGobReu8qVMAdlgiipQ1QYKJ2eRozJW3/POgZAGTo+
+8tnAtendPaYQMU2MFf/DzDz58hIbOvxcjSNFIxwai/xR6bVg6GzsflilLeWcUuDi
+ZNAIvMhv9WW8Xo6UZcl2Ja4hQwgEfdHBEX5vniUgZ+MIV8+ag78TZPueTztlf6yy
+SMAPJw6imZXxhDDa0qKhCIlFdbGR+bfYP523SwRAJdv0Pn4QyJXPnehOguJqeEiR
+T3wvDGqbdOYb18S/Os2yOCwc4txpRw==
+=yTQ5
 -----END PGP SIGNATURE-----
 
---1kkDofxQrthj+vZb--
+--5aTCXO4+mubg62Eq--
