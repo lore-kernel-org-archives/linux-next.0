@@ -1,108 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8106130148A;
-	Thu, 23 Jul 2026 14:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0672636402D;
+	Thu, 23 Jul 2026 14:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784817588; cv=none; b=eSziq3c6/6vbE9V0kRSAchz5ZK3S+hz+3TcocCUuAnp+tuBSmz+ef9jRae8bkQJFNak4gCsZN5KgU5byf6mCnLANmC8ucnZOdldL5zFmIoDqXl/OAHMtIyvFeMZBdAqepGRonELHDmGRymvAFj9KKOkvFIqW+Xy7FGQxYTccIqY=
+	t=1784818598; cv=none; b=ejKpBowRsdEgtEwaNVOrw4i3k8NmolWtlCcvRPjPJUda+5O4GV4RhoghbZxgSIM7lA0/HB6BLx/CBw4XbCUOGInbt3vY0/mZRQiymXyloX2NNtLfDeV6d2lqLzRZ9/oCcmX0wTwOO8ywOSlhyzpFX2SHAVHMRb75Lfe0gMz70w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784817588; c=relaxed/simple;
-	bh=Z1BWbc1LSslz7t3Ypibg1HJCSmXFUKnPtCAQmpyrhic=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kiSVHyaP3ylXT9ZrNkCTztTCC715uc70dersvAA5hZrWMC78Uwxnti1BdMjckSMr5g12dPsxqYLnvdl2Tct8jnXx9g7dBeE+RQPx+sI1SE1eWNfZkpvdesOXSfJk5VKHM3EE3YLUhYPuWq8fyVEbkc0FpNqaU1rFF14m7IjVQkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3kXmJVI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784818598; c=relaxed/simple;
+	bh=wZhUPShmrlPjQKZfdrFYE7oAbTuo2b11nH/LPi6LR/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lRYpRx2G/wla713oOJM1gBCmYhB5Ophsf16VUgDgeN3bVR6Y2OrttiEcvAV9L5g3wuhMxDs5s/TuuRNa1bQ5N/y1/XsTqxlU5iCNsgvWrxnrczsWNrQ+jIvTADDJo2dH/l2D01jmd0LJrnI4EMlT4mXTVXWRKNDcRhN3oq2zgAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=CwheoAf9; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3kXmJVI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800491F000E9;
-	Thu, 23 Jul 2026 14:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784817576;
-	bh=ch1D3/ruDz+G0GLxxJxNS77UDfE/kq4W6Uqt3cMXeaY=;
-	h=Date:From:To:Cc:Subject;
-	b=e3kXmJVI4wFSJ+xomURFBSUj6PrR7Uc0Ock0+Uuf6g4+ZX0gH8cGMEqPHl5MhT7JN
-	 P9h5O3DIOHLzPgLw8BX1Xa5PYsfzLRKVIU/MtGrOmuDyHzYZ+353bhKr4WHQrI6BhM
-	 50sNhSfto2aG0s4SHHcur/GWkWjS9dU+C4aOSVI9/tRCNAWDF4RuPLilLujmReXQsX
-	 NQxd3CoyQf+lY23+9kkYnMahR0ZnA7lunxKc4vxJAe/D7aUKmmiiabRJh2CG/3bkTE
-	 ptbzqhN6DKBMREk6txN1J4SEkck3wqOBpqDlxuDsPGzAs0unPwtM2+mScc3BxzxGEF
-	 O3TYM6DvRV7uw==
-Date: Thu, 23 Jul 2026 15:39:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Will Deacon <will@kernel.org>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <amInpMqQpk_tw1I1@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="CwheoAf9"
+Received: from relayfre-01.paragon-software.com (relayfre-01.paragon-software.com [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id C27471D3A;
+	Thu, 23 Jul 2026 14:56:52 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=CwheoAf9;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 3C02B21DA;
+	Thu, 23 Jul 2026 14:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1784818593;
+	bh=Ii4RXDlJVppVSCaH16Av67eOYHii1gDfVL7Atyux6K4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=CwheoAf9/z61n9ENI4YxqbrgXP5sUsRHQKv49a0Iocru8z00KRZtmebircNCxELcz
+	 b43oS/fU9Du3o6Edrdgx74fZnEs/I0NTX2aqQEkX/LI9MmPwuEhcNiqtTZWaunGllX
+	 IU866SZ+0d2TfLvWtIM+qULbf/z4lv/9MA9zPcgY=
+Received: from [192.168.95.128] (172.30.20.158) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 23 Jul 2026 17:56:32 +0300
+Message-ID: <3b593ff9-02ab-4ff2-abff-d689e28e59c2@paragon-software.com>
+Date: Thu, 23 Jul 2026 16:56:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="91wDdtS0DoaDiDIf"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Missing signoff in the ntfs3 tree
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>
+References: <aldqIGRdMoJgNkER@sirena.org.uk>
+ <6bfccbc7-2b99-47ce-bc50-9cbb95b8969c@sirena.org.uk>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <6bfccbc7-2b99-47ce-bc50-9cbb95b8969c@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
+On 7/21/26 02:08, Mark Brown wrote:
 
---91wDdtS0DoaDiDIf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Wed, Jul 15, 2026 at 12:08:16PM +0100, Mark Brown wrote:
+>> Commit
+>>
+>>    f023839df8010 ("fs/ntfs3: fix out-of-bounds read of INDEX_ROOT in reparse/objid init")
+>>
+>> is missing a Signed-off-by from its author
+> This issue is still present today.
 
-Hi all,
+I see. I'll fix it, thanks.
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Regards,
+Konstantin
 
-  arch/arm64/tools/cpucaps
-
-between commit:
-
-  12aab25ca56ee ("arm64: errata: work around NVIDIA Olympus device store/lo=
-ad ordering")
-
-=66rom the arm64 tree and commit:
-
-  27a263e1a0fa2 ("KVM: arm64: Move GICv3 broken SEIS implementation detecti=
-on to a CPU errrata")
-
-=66rom the kvm-arm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/arm64/tools/cpucaps
-index e43c9095424bf,50373264ecde8..0000000000000
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@@ -121,7 -121,7 +121,8 @@@ WORKAROUND_CAVIUM_TX2_219_TV
-  WORKAROUND_CLEAN_CACHE
-  WORKAROUND_DEVICE_LOAD_ACQUIRE
-  WORKAROUND_DISABLE_CNP
-+ WORKAROUND_GICv3_BROKEN_SEIS
- +WORKAROUND_NVIDIA_OLYMPUS_1027
-  WORKAROUND_PMUV3_IMPDEF_TRAPS
-  WORKAROUND_QCOM_FALKOR_E1003
-  WORKAROUND_QCOM_ORYON_CNTVOFF
-
---91wDdtS0DoaDiDIf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpiJ6MACgkQJNaLcl1U
-h9D5CAf+KHhjB5Xtwf3Y+UFuLkfMzDxWlxKuK4qdLujPjae9IsIeW/uUHhv5e3Gb
-NSP12UBF9GBbznGqMi8DWnbibtybQnQDNXpWebhKVtVDrIW6iW5wHhMsMYA2QiPN
-4LmTSbquN5TdIlPx4dX5h8d/PuMHPmOMS64YolOrdElk3MoHf8act93TeXWalzYg
-++qxvGI9rGkNOF/M4SxqbnWI2pfxirCKJ47KLXBLiZxERZon2pminsles9YGvwMA
-WyLYjaypvtwmvqNkr75Yvc4RjZqDda91o3fzPjLeybx/qF26GwYi0kVcczqh0HuO
-xhqWnyNgAomIUxfmY7xlGj8pPcoDpQ==
-=A9ig
------END PGP SIGNATURE-----
-
---91wDdtS0DoaDiDIf--
