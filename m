@@ -1,38 +1,62 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46273515C3;
-	Fri, 24 Jul 2026 12:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5496433E61
+	for <linux-next@vger.kernel.org>; Fri, 24 Jul 2026 13:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784896889; cv=none; b=DYSq/izO9CY9zLezh0V8Iuz0mYJq+aJh6SGB0MQW8wOTQ/8n0CjB31EPSih/s4J0nCx8ml7gd6lqqHjA4YOd+jE/d0asEJIBw35CnUuwVmWro0Ham0ay9imO2X88bbhK/4q1P5+Ikpb6vfMs2olkm0PqLzn21hMUlh87iddPDkg=
+	t=1784901114; cv=none; b=EWqvxBi/7ZkvacNyAb35Y7gw9dbEXMAVyCdsMoFcBNhw/7X9IAgcSlU2A+1qqeKRJUA4WxQgBkPfctR1LHjgFUqk8uGAiNs0tuD1wiGiei3wWwYadDEmaCZxdLHZcdr7h4yoDfI6x8+8fl35FLKQ1f9vjCJFOFzmlw4o7kZBCG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784896889; c=relaxed/simple;
-	bh=R5Aa5CkC608U2V2bl0Un9EDJGJadW68nM0d3pi3YdzI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pNCQt+cHcf+INeZKYz3oaa560klgOFcbPqYwajYI/e7M/Xp0sfdRknNaH2NHMzabNv0QmztLfwcJZeqi2A9Jum8AvM8BQNXC1CQDOb1tN6xSmTrvQKFuxvBaB1a0NcPRXZPNn/TceJ7PUyD5+WFwDOGGOLqnkXDX5weLh287Nlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0xCaRqK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784901114; c=relaxed/simple;
+	bh=JmHb9oZYao7Yc5niZHc9V54/PpLCBKu57iqtsPvR7IQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGJR8tFZ3pxIL1cqFy6f25AzPl3mMbpHC7n734zqXsoNrGeuiw/2x4CNgT4sVQN54LBn5t8sQLzQuk2JespHj2fFAq4xLTBiHhQCxoqgHNqjZMrB31W/QtGNxme/LSkLVmbhNYBJWFmxc35E2SYedE72322RmkMVLCrpd2mMi0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=fail smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=BIBKW6xH; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mit.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0xCaRqK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE5B1F000E9;
-	Fri, 24 Jul 2026 12:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784896888;
-	bh=jGhfvO0/lzM4to1rG4crHayo+987re7cR5n3KyooGSU=;
-	h=Date:From:To:Subject;
-	b=X0xCaRqKoMtU73Lukw5y6IkXfvW3ZY3ELEOyzrIO46pOWUzUGK9pUWU0WFf/q6qrf
-	 oVRn0O7xXGmV/kkjMqpo7mhAfRpW2pu7JR2sJ4FFlhvLFlwkzYe585f+V4ZsvlKzv6
-	 iVmI/wgwm3SSoGJTa2CKtu9d8Z9WpR9wyJiJ0hr/jamAEeQMvtFgLdG0ShSGhD2V9I
-	 s/B8P5uwmmyAcxt1opt5Q72L04nIUTpvkJpY/QSRiazL2PN9Q65jWbHHUtUZxuzZtf
-	 SDxIzlQZ2n2ztzaOwHTysJSldtjyO1uGCwxoha7Xp6tmBMur4c/2HRo55Ql8QXRb9E
-	 CZ3XbHTDPpGCg==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id F0BF21AC5AC8; Fri, 24 Jul 2026 13:40:44 +0100 (BST)
-Date: Fri, 24 Jul 2026 13:40:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: No tree for 24th July
-Message-ID: <amNdTLyopiNzTE77@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="BIBKW6xH"
+Received: from macsyma.thunk.org (pool-108-49-209-71.bstnma.fios.verizon.net [108.49.209.71])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 66ODpAIb005143
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Jul 2026 09:51:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1784901076; bh=TgUdH/ng+MV5RB9DjuusSmVUHKEP9FsusF84biSM+Ac=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=BIBKW6xHUP2hrm2RbX5uBpnvLMzAyMo7vVe/RwOqQvFBahDRBiHQmmox1IHOuogO6
+	 s6LpTWiUb0wATLVyi8Szsx2B0KTgdvyuzdn7Mtjq8ano8YibRmKXKGU+UQBsDkoBb+
+	 0Dtv8WgBK5joPNUAK7/Spd0ikcW9qnAU19WkCsEjG+c6QmlozjxOfXFN8qGzEBOpfK
+	 TvleRMEvHjenR+JSpOxKx68aoEpTJJ1aHE1lZBZOQQrEiamddn52CX1FOooQKUPqyW
+	 r+Bx7o0HlP53KY3D/MeMRL90I0TVeTG/9IGm8EFEDl1La5WR9Z1lx4XacqVRoshG+1
+	 G/mGGqGCDrlaQ==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id E9017BE892F; Fri, 24 Jul 2026 09:50:09 -0400 (EDT)
+Date: Fri, 24 Jul 2026 09:50:09 -0400
+From: "Theodore Tso" <tytso@mit.edu>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Alexander Potapenko <glider@google.com>, Mark Brown <broonie@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Aleksandr Nogikh <nogikh@google.com>, Boqun Feng <boqun@kernel.org>,
+        Gary Guo <gary@garyguo.net>, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
+        will@kernel.org, longman@redhat.com, mingo@kernel.org,
+        gregkh@linuxfoundation.org,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: Re: Policy regarding linux-next only changes
+Message-ID: <amNsDFyTbsyAASjt@mit.edu>
+References: <akZxfzEtam8yPXEh@MacBook-0RXW5>
+ <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
+ <CANiq72=hLXip=gQS1tnLQxe6Kpwq03Bd8F1z_xLrdoCtvSAkfg@mail.gmail.com>
+ <2d0d3f6b-4392-4081-9390-9b588e38de7a@I-love.SAKURA.ne.jp>
+ <CAG_fn=Vf==zhGjSNPcFC0=n9cw+NrBp+AqXgcmcV0uQBAcL9TA@mail.gmail.com>
+ <c0bd6bc6-17de-468d-850d-df9955e2c142@I-love.SAKURA.ne.jp>
+ <CAG_fn=UEo8PNvjAcTTqmskfPrJNSjshhuXsR_PaH0-YLWwMTRw@mail.gmail.com>
+ <bc3703bd-65ee-4182-a742-56603d9b9bac@I-love.SAKURA.ne.jp>
+ <amEAzMTbA9R9HgN7@mit.edu>
+ <2c903636-532f-47b5-9894-00470f235682@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,12 +65,38 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Cookie: Take an astronaut to launch.
+In-Reply-To: <2c903636-532f-47b5-9894-00470f235682@I-love.SAKURA.ne.jp>
 
-Hi,
+On Fri, Jul 24, 2026 at 09:11:27PM -0500, Tetsuo Handa wrote:
+> 
+> What is happening is that I am using tomoyo git tree as a hook for
+> executing debug printk() (using linux-next git tree) in order to debug
+> problems which syzbot has found but nobody can afford looking into.
+> 
+> Individual git tree is not served as a hook for applying debug patches
+> like "quilt push"; one of reasons is that "git" (compared to "quilt") is
+> not intended for removing a patch when that patch became no longer
+> necessary (due to problem being fixed).
 
-Due to a mess up on my part there will be no -next release today, I will
-do one on the 26th instead.  Apologies for the disruption.
+Ah.  In that case, what if you simply have a separate tree which just
+has these debugging patches, and then either Mark Brown or the Syzbot
+team could create a new git tree / branch which takes linux-next and
+then merges this debug tree on top of the latest linux-net?
 
-Thanks,
-Mark
+The advantages of this is that the patches never hit linux-next, but
+this new tree, call it linux-next-syz-debug.  And since it is a new
+tree, you wouldn't need a new magic KConfig CONFIG #ifdef, so no code
+changes would be needed in syzbot.
+
+The only question then is how much does the Syzbot team is willing pay
+to help provide the resources you need to resolve those syzbot issues.
+I will say that *my* particular management chain at $WORK has
+authorized ignoring a whole class of syzbot bugs because they are
+utterly irrelevant for our production environment, and so it's not so
+much a "can't afford", but "has insufficient business value relative
+to our budget / head count authorization".  (And personally, I refuse
+to work on those bugs after midnight or on weekends; I have higher
+priority personal priorities.)  But perhaps the Syzbot team has a
+different set of priorities....
+
+					- Ted
