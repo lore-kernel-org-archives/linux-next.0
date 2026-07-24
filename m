@@ -1,55 +1,56 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC5943CE5A;
-	Fri, 24 Jul 2026 15:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D580244163D;
+	Fri, 24 Jul 2026 15:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784905772; cv=none; b=r4jhH0ix+UyB7ALaE+j4jaMKu1vYaOmtSSYQsxOIL7vCTkqJr3NyT0mV0AGePliSMz0ujpL5WoJdjkCJOwfzQ2Mh2s1kpkHQSA9XzvXwd5aJuG96DvO8Z8RfCvxWzc2re2XYmoSdPYyckpR6Rg4hI2+l6ukMPp7zxRaEHyonbVc=
+	t=1784906089; cv=none; b=lmQL2s/KhVFdPo0AxUP9zLTpbh5sgqbTjCDKTRjfQiCyQAdxa9xPvTmjwY+MpI/6+dcvxfs0XFJZP1M/okPaqCQ1PJpynxH3xUcrAS09oa7wSNVFFVkkA2cCMMH7QkvMi0+BDPms/E5XIy+VqS2QjKmBtxZ5G/iMQtcwAUp4rWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784905772; c=relaxed/simple;
-	bh=xkYMIEhnTGxtu2XDSdkqj5VTpYSN6KJjm2oBoYQO3lc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U9RA/fH2fH5Uyjq48BoXIeflySgda98EsKm0RD9mlKGzq2rV3OZ4nwS9sqH10o3atqdGzG7t9O1gTIY2iQrTZWm8ePrn2Jc9dS+wHvfjrZeDUH+O19tetEGwYGtHagyQb1ZHpDPzesXNKE2hxdK7lW0Xtgd8ZwgFjBv61NYJ2x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=m4siRHce; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1784906089; c=relaxed/simple;
+	bh=JdSyClpuJ8Rch/NR8MGVNW7c/VIqy3seqViQ9BpFdfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TEj2eV42JIEkBbbjCjw+2j/mid2w1uAW6zEC2+05rQ4B3JEEx+hMFSKVUbQ64KOmvSxifuH0NOZDFHb+duPOJoY9/rn9tg3yuEnVJpghIWOS+CVfa4Xg5t3eqiYVxy9nj37vYy1PeabpIDMtzwHXj2/emdUhro8V/j/bo7/K8ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=JZKtIBid; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="m4siRHce"
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="JZKtIBid"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1784905730; x=1785510530; i=spasswolf@web.de;
-	bh=KTPitRg5OqG7DFkkf9hLzROQQQ+Xa9l+VnBOYd+3eIg=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	s=s29768273; t=1784906061; x=1785510861; i=spasswolf@web.de;
+	bh=m8CpHjTwlWzbdvJf4ktY9WwzJkRyzi7WFbcKxGcO7XI=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=m4siRHcejuOtKXjMJo9T9hD2iMJyAXri7Lbb63WRD3w+lR+b0EekwCnFmptvsZmG
-	 f1EmJCEyIUUiyzUfVyMHqThvE9sDvf9srLc3W1qi3uW8hRKLxhahfPt340BA+rWLf
-	 HqCRn06LlgW/FWtVRvogxbE1eSuNMJQGXfT9gvFQ8CT9/uJPlCuNPTRrSIQeQIwgI
-	 LXzNBZHfSGE0CMbns/fAspEAnDOjjQT5dlG02CrJjRML1IWVkvDI3XdFmC75pTOkV
-	 Hvf7vWeQODgToz/sbemXzv3dEyGl00mB/6KSfiKh070gLIcycjtOh7kOGNeKnEvQ7
-	 vPTR9qQkyWff49bv9A==
+	b=JZKtIBidvzT3MGUfrPGiOF6RFeDUmqJOmFraw2CG8INY4gr/ipWhyJKZ/fk4m321
+	 Ku372TncQbf5dyepkt1IzXMQdpqSIn0evBOyvKArL2E+zBYUqLlCrPeC8UXe3XXQg
+	 ZFdqi4upkkJFDEZZ8VNSUIVHlu61fz98jQu/gs2UyirZvPspG1K+j7jBrCFEd68gY
+	 XThq4XXKm6PUHHHt54ptoHR0rC3bEv0Y0fWv9Zvha5qp1uId2G9WBPONNW4FWdxyV
+	 f5F9DkJ4Q5rAbluR422QmVEDF73FFR9H8sgRjfAY7qOA3gDpKifZYJwrAu4LuB5gk
+	 aqlnYvtYLK4Wq6J2dw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTOli-1wQId41zpc-00JRWG; Fri, 24
- Jul 2026 17:08:50 +0200
-Message-ID: <3c1be47abfcc907e7c1f9696cb25a24c93415a28.camel@web.de>
-Subject: Re: [Re] kernel panic during shutdown in  next-20260722
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M8Bw1-1wqsNK1lxL-00Ft7E; Fri, 24
+ Jul 2026 17:14:21 +0200
 From: Bert Karwatzki <spasswolf@web.de>
-To: linux-kernel@vger.kernel.org, Rafal Ostrowski <rafal.ostrowski@amd.com>
-Cc: linux-next@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Thomas Gleixner	 <tglx@linutronix.de>,
- spasswolf@web.de
-Date: Fri, 24 Jul 2026 17:08:49 +0200
-In-Reply-To: <4d7c2dd588cd77d1d112da473f2a262d22051d57.camel@web.de>
-References: <20260723131001.11565-1-spasswolf@web.de>
-				 <d24a136539c5931984f4855ad6596ca7aee8ebe2.camel@web.de>
-		 <1a0800888c2fcd42f1fcd661d8f6f50580ac2fd4.camel@web.de>
-	 <4d7c2dd588cd77d1d112da473f2a262d22051d57.camel@web.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.2-10 
+To: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	Felix Fietkau <nbd@nbd.name>,
+	ryder.lee@mediatek.com,
+	lorenzo@kernel.org,
+	legale.legale@gmail.com,
+	sean.wang@mediatek.com,
+	shayne.chen@mediatek.com
+Subject: hang during shutdown in next-20260722+ with MT7925
+Date: Fri, 24 Jul 2026 17:14:17 +0200
+Message-ID: <20260724151419.26014-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260708144615.24092-1-nicolas.cavallari@green-communications.fr>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -57,186 +58,240 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:32dZAA2tRTANj96ZVzU2y0p/gW0M6MfUirGiLeepCc9u6MCYYWH
- QpFHY6MIbNPb8MlbrIN/Stggmw4gCBkiWdOGQafpwNEZtleOX3reClBvKGmYLxRVEMEB1An
- f+1MUXgI013ioKWqaBz1nwmT6q9ehrIrpXk5RINA/w1ULnXnSQWsCI4APUmaU4lSP3xyzMb
- hI0HMgnWJkXUZ8kPWFTvg==
+X-Provags-ID: V03:K1:L0o6vs2M3X+OfLlySQDCjUl8hA/JMhBiDPdXPHWIdNQY9PJ6g7N
+ k2Y4JPIcnqvB1GN9nfHYKQxyYe1SSPaos8h/H/Xa9bkGjyj2HEsKhjQbkQz8sWKB/+Qw3p8
+ ucW0OYcoN31GsgTJImNRyHOXU8wOJygTUVAZ2GcFmsZ0RarMLi9O1m3w/uMnRxXLbpnWpG8
+ 7ACj+xStBVwGSj9Hymb2Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rNImO22Yll8=;XFazeNhHg60WIPC8J/r6pH+WFkv
- 65sPEBfk/StKV4qKZHt0s6BCEzrkjAqbNX/B2hFOPa7RXOLUO0U9e/cvd1oyiIk27h50rTu5m
- Usa+9ZoNQ12e/N6RKmddICPDPiflx6rFkEaAmP7ek8OO0YoiX6PtJ2bE/n/dltkMyyjjF3UtS
- PcmDuJd17vwGDMRBHPfpnZFuUnuURVPgFiuFRmZ5HCcWYIieYqSwM/SwGyBf7deBPlZ8x0BAX
- 4wIMvncbwJAqLquTzXRJQKYuhh5VZNooka1G/NLuGCeNeZhKIKv26qB1+w1WdQDrDym7wUhEM
- 7Fd0/RGElhYddpIwZwRmJLj2I9Nln3UWF+mLDddSC2shSWIQWsXLrVOdveeVQghy33+CsiqJJ
- Ks/4Bp0FCFfxYskJ3AbcSsUUdpuxDOGWkv2BUkFIjwAXFL+q2W+GvvI+1aIfrVaHqYHgAnMCh
- JQGMJUJINqeXEz3B+aHc/PPv+yvukzGneI5bFPHE1mD/a8mA/gGeyOKpQ4K/ST3w33/azNtEc
- idLmAVzVoXgfLxG1sm2y+gEJ4Zk1hBnT+L+ZVcKa1LEe3ycmab7O4NKlF5yVG3+XzZn9MBETz
- NYZdjLRXsXIBdwg2vCvmwRPD9WaYKyGpqZ8io5jiYFHjyW6UbHzsTs4v5kchqpUfVYrsg0YrA
- CfKu1VsUH+zGIvVZ7V+z+F4sMcuoDnVXqSNXkzmFn20Iqlz8cakpotN4TYPM24rojp6e8qnMN
- i1rmJlR3Yq3Bih8t3VaKfFRwz/rywmMKhc3oWDc7yYmxvvZbMU7+WG9JTE3KpNSrNdF9guLrl
- eUDVmIxc9tbUtMeodLpSYpLGbQwwW6LV5A/HoIWEiQQrpoTvvqvsi3X4DSRVEf2i9kRScx32j
- jj6qxArdkE9JpfWP/ZRXLvh62n9vCXPr7FQBlX/CFmQr6gA3fBUwZVa6UamE9GFRj92i3yvu4
- udcx2hEv2zNABqVD74yrjv06j0rR9NoqAINJ3LOWNi8KhO34TRDzWP4Ko6cHqqmmAgBPlkRyw
- Ivgw9jHU1SVzzoxSwDAZNjfaeYvaI2+C9MSVJJFscPJfd2YtyRB0HgKy5asIVtf1UqyALlYvY
- iH1so0cIijD4EJohLKGimFwHWZQRlXDRlNRaFLbwsMrOhMebhtZBMhlsQBDLXBVQzanFYe2DI
- OUnazVbsQAbo7XlwKB/hm19ayoffeYomSgd2DsCcFhpfRQBRvH99TZ3eHNIBFbdW7Ov8Xgeyu
- tY67WWHcNZcO4Yma9KMf2R5su4S8CoxNSi8FDGQwNZYMJetJT12FRkc680Qf6EKnjz1mFOzSj
- Cy2i+AaZHuexFipUAqjsQj8jBJZv89laSqi0k+KEWEm1h0L22LrYZPU9OkTDLnHZMsxlgTDd4
- msmSuHW6C0caJiMyl+uEa88xCVfXFtiXERqeLhsEeivnPh6Oe6n4L/0P+s/lE3CCaeEhGf9ol
- ZGtWp83oYOqDnpLsjbk+k5DU1WrGRnLMqJUuC6ku1PGTMBx2WIadZahTuVCxqFxv54fi6psMf
- 1X+B8p0ijldOL0DqOWbZ1aS5R0oxneScTG0GClAhmGGRcyCeImrUOi17pLlq5Ati5qxeZZv8N
- RpgZXgdJLO2pX2fEosNN6mxiTNZwPOmirh1c5iY9R51FhGDnjIqLp9wQcSB3ReRh/q3dIqQWF
- SaqHhdYO8sf0hvZseUO07koPlsF8gmmz0cpj5Z38q0JdNFodEkfJjpqkd4lnU6uJ32/4BPmUT
- J0Q6fwrMxFIc8Vwwe8ChNOT44Kh0vRpY80Zlu49+GmsYHLyAM5ZSaZXi6BTPqVuW8rGKNAnig
- 76XBVL3Bv++Lilz9WV6eJIP0zrmV2UZE+blexHXjqo4cLVnAvqVVRelxSuB+xV/75mTduhEnX
- 5n5tiL+5ErDOeknSrVDv0BtBE39QUwphiRmzgC3RpzVQiF8UdiokGF3m+HnU+bpm4HfZnNHRh
- FzFLk4TAccxwyh5XJVjswmX6a+r5QbHygvssxdV1ZQIlJaYz0WyE+a5UPbJOQGoJufAOa4Tk3
- pa78lNwHieF0WcOFyyQtBB3PMpxgkBW+1MZbS7TBG8WxqkIAoTCMi1TxjdLsAGTSfhoy7ne9g
- 9HzDtne/lXZQeBfo+ex6qbA2InuOKX3BE1otR14X4W7mbBtswTGHnRqZaIARGiKYUBRAFKWbR
- lc0YuBZsa5E14h+DaxW2LJTOIvX7dVwAs0NRHxs9GLzWXqVxjwVSUy+KD28PGRZ7lMIJ8ZT/u
- SOfB9EErQOhtnyiVKeMGUW70KIfjclg19n8ZwXwrdtJLkRAdt4wyqXJFFVkd1qAPwPbhGs5ya
- NxOFrpnrD7k0Qbp7JQUf0JQCS1wBAAXqazCwpJxisGZDwcnkeMAHgHiLB6ikws9aZt7Oi5CNr
- X6Xe6oNpSeqdNoh5vpS8yTc5Zv19VR6BKD9lL6ZppUeBH3NA6SBX6A+3M21WkmeZ673KM0eIU
- +c21pjp42wm0YpS0E+BzCwuB7t5H0OYBYAbNye8zI0f8xkVg9BBr5nJ1dntnxQre2X4DdFJvi
- AKDoIRJzcoGFJsYDm52gDf2D83EQlZ1+I/e/MSYYF8I72nZYgx/JhS1GBJ2NpjM9BI47jbnrF
- KH94CbV5lV4/+KP/7828Kj0dZE/iUGsFW8N1dYysfEEvQE5cGIbNCqlV6uHzrNykPeAjkYj6T
- ze4ogbbK99bfH3ouTXRmV8UuaBNOj947OATNihZ/IqTsrbVeGxMhsHMiyhkF8b25BY3VZQZVi
- uUh0Z4r8sfHJZJc5fEa0DPjJ8F+Ija8MYP2iQMQLoI9CV1B24bCqp7C1AYLJ8nG/0x0vjKM9s
- FIf/GAW+eJlcUwts+h8WwyDmxhI8BQ3E6QG6LOe/HuvdxN/XKE8oDzJpoFor/doRvkkbEv48z
- lK9k6b+csSGPa1pl1fZhpBMEVhxbhLIV5ZuKckybP56mXHOO/rBmezwns8/Zu1/ZQYgIvMihy
- T69i6hddEYCWw5USPaNrsyY4+u3QSC7Vl2xmBqWZhdKrhKNxEf9tXw2D9kXoZiWrtTWzzftI5
- P/xRB3SoUB833duox8ymm62XA9jbGI3F9gHxXgQ3NzKCJxgrezR8gxnOh1mnLKRW0Xjj3ZXBf
- N3bluoBgavWxlLs/jLcdKPVgYVG74XR8mIxYCqQMx5Onh77EPZUfqGQBOshtJl8j3qKEtXC6N
- VrW+ND1SdU51YOM3g3FiIMnNvyWqj8ztnOx53X+/HJ+VKhW58D3SBOfnGDGEWJY9spv5PFRek
- uKkhcoe3UH6CCTw/XGuP/x2RQDZivSTheYYo/JOC8XOfW6cP+xNiNaPM6YwRn00YFXTGI0jrO
- ehoeaw+ZH4NaT+J0cFj1wxavoUSaoP5mGVl2jIKfqqg75Zr5BPZ/Drai+3wkVns4X6qX7JNiy
- nuKNz2SKgGTsVHPQUoyZod+0jB9V5xdIPZW9ei8LLDfZ/KuSi+iyqzFzw1P/30KBo8DPyU17J
- c6Xrv46TQKpd/obhhnL7X3PUUXqGQWVfSp/0De0Oyuza4jTQ6tkX/XZFZ2Wx+Anx265I/ZHRp
- Y6OrOKumMeMjncQTtkh4H5FZe/TZluTZFPSRgBfkHWm9pWi8GfGKMIIX688INut5S+TKs9WSv
- Uin5AzjGyzaycusuRDjw2JQEOvF/tWvxpbPXrqW+Z6DmIRqnwxnx2EBzmemWxmHaxZoUXMiEc
- bf4Hf6MOdxEnb2k3NzywT/uuKnk7rdcvmAj50NZvqpAR6HRYJwUkyWIIsZsJo+MUH0HM8sCwU
- z4YwbD3eu1P2AcL3klRnisrx+JrU2fUBGe9amQMIpRRuwqsu3gSr0beqFOXKNSPshOhbrLfm3
- 1E3gKqBtw0gos2zZ5Zwz5L7izOFkvcB8WtKIF3oXTZKyBzOlsYK3Omc0K1i9d0zTVDhaHQVq/
- vclKFVGKkcvsPMuWEatd8oHpDy4BFz5geTRl6DnSS4ubKU0sSZIRwzb8NfHVDFqiiP+Y1rsys
- pRV2KGjKV7nT+F/6N0RJBJpXzBDq2AiJHtGB20NZssfolO7k6Vb/wMZr83IRa6G5DHiERi3Pe
- tCZ4e6cpjCcbes6o21mJGYsWBcfwyqWfGN98y0TWlEhRDkns+vKroWyr6jm7h/0YYx0v5Ot8p
- /ahwhRqHmMuiz10613DCtS1FoJliP5C+pJz4WLTVDI5LqD8u76TXjsdteUCIqtMEHp4gdsifF
- /w7Rdg9Sx3rKdCTRbheC3ZENXytghV+Gar7I61bZZx1U69hE7y2fuJuI4ddcjs8Av7e1LLgM+
- EYb/yvurgIrNMbpfulo6M6c6jfpg3/VQde+rpCdEhRHO1KPVOaKKIz7edLBaKcQlB5Q7N4+a0
- 35z5fm4dLhm+VGjixzDmfVdFwn7Xmw2EGldRzvGIXb2Ivg2f3VXXStB5TOw7AYoODclYUoYjm
- HhWkNh08e9hkeSO+UYNYOphZEELWQp4DJCIlR+wQ1iF/zw3RQXD/k3MIjzZEooK2zT39IHKiU
- cnFEdnLzezsFBjOtGP3yJA4yW/F/fumHPPC46IBKvJ5c2mx8vuisX6PEWaxCtXzAMnJu8dvqR
- ff34RlHUCdRknBDpR1rvKirac9xDY90F4ZuGexW2FQVG798Pe1gvhkJssJm1FbKHW5660s0N0
- OQHPA5tSWz9GRkU2/N/8igGDlun3TCjHwhhZ+WIRw4cxuelnBEEprZYcAKcQMjcLoxjYfvr3E
- j+U9IVJk16NtIgcUHFNJwYT+DKcMSvZLAEzbyZyM6Y2VOgXKTpTAjweEA6XHXxa7BQPN12mMi
- cbBfNgNjVH3B9J8cT8a0j+M8zeKGovTnLeoHX3fhKugnC+rQ2RxZPwcM832koyIxzdx2AP5co
- hz9iWBgYKjVa/BQ6VfWj7a86hKeKkprH7zYUCJXm58eqUcv0Hs9HEYBUg/KtzI0qvNCqcS85B
- aXCh891qetA/rfWLWvWI6qBfCq+eJdKfGik0Jer/mSZ1+kzpxJ+UZcb+autVGBdbU8u5t1scy
- 4/Bh1Sq6pq46mUoZpc9jAZXmazM4GTTqjT++5IM7uLDcZapg0IbR1yW9Ow4vVxPGx+bKLY+wy
- r/XOz62ZsvyzD/JgMCyjTuWH6OqfYaHz1TnlAtd7MIPf9n9S44DOe/HOq3aAxzGJJjbI8/AMf
- 6zILgLmhJtO57ur2k1rht6YaY1G8q8USQL9rJijpYXy95jAVbB3kR2aT7RRr2NfA5sBosBg9J
- XLPFaE8773njs6wzK7/WGaukuoMx2A8XzFWDGC5zMmTS3zYZb1FtN5+LSMmElcSxujLhRF9Os
- oWrAcwzo5L2EPrvPrnR8hiTGbyhtzVdnsFHeJToQWWG8uxxTbzTQjR5X1+R2+pDTpROBJDb1y
- d/5DLLC0RCzVEm0FMzG1I0vyQ+UMFm3JLVg3sjsmxLiRJM1JaSkZjffximbaULHa/qWCu1GLi
- rt6CJCr8BN3qUPfbWBQp9gUwjGt+W1Wnthq7+pFuY0CQdQj88oPsnFk6ch0Iz5oF6nrHFB0gW
- JQ31GHzvJBGUSI2BQjcHwUvzigYvi/aErMmCvFGKnAJtW+zwYpzL8hDQd6oX2fw7WdUEptLAx
- GLNRQenB/37KrYT4TtWsrm8TAdbpnGKIoNZ+KmIZd3uFFhYSoFFmj6Q8jTGPCOzSLUpEoqen0
- 9/ga66Pfe1NTRlYaZ2mbhsNl0iodWueHlAwbaOQh0PL/pTLm2geah6hwUD1KmuVVovXwMbvJm
- 6bwAtig7zuv5qfNa1z4FA0FHphW6AWcVo/ClEGPb0hImL6upwxJEz4emrd1L1UQxXy5aVEz/q
- 3DMJylcgUVR3Xsu6rbN6dTg0M0Vfn0W0LNpMpqy251Q==
+UI-OutboundReport: notjunk:1;M01:P0:jwnulZxzJ48=;zn2kulkkuNngZQfPZt3beLnaYzW
+ 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
+ jhTE3LUv0=
 
-Am Freitag, dem 24.07.2026 um 00:51 +0200 schrieb Bert Karwatzki:
-> Am Donnerstag, dem 23.07.2026 um 18:17 +0200 schrieb Bert Karwatzki:
-> > Am Donnerstag, dem 23.07.2026 um 15:23 +0200 schrieb Bert Karwatzki:
-> > > Am Donnerstag, dem 23.07.2026 um 15:10 +0200 schrieb Bert Karwatzki:
-> > > > I was able to gather the panic error message from a failed shutdow=
-n via netconsole,
-> > > > this time the kernel used was v7.2-rc3:
-> > > > #
-> > > > Bert Karwatzki
-> > >=20
-> > > Unfortunatetly I can now reproduce these kernel panics in v7.1:
-> > >=20
-> > >=20
-> > > So now I'm going to use memtest86+ on my machine and then look at th=
-e changes I had in
-> > > my userspace as the first error occured on 22.7.2026. Let's hope thi=
-s does not escalate ...
-> > >=20
-> > > Bert Karwatzki
-> >=20
-> >=20
-> > But I found out an exciting thing:
-> > I can only reproduce the crashes in v7.2-rc4 when watching the reboot =
-via netconsole,
-> > without netconsole no crash occurs!(This also explains why I had not s=
-een this crashes before ...)=C2=A0
-> >=20
-> Actually this is not cause by netconsole, but by rebooting right after a=
- crash. Some
-> broken state seems to be preserved across reboots. Switching off the pow=
-er supply after
-> a crash or even a ~30s wait after switching off the crashed machine seem=
-s to be enough
-> to get around this.
->  Also the hang when rebooting next-20260722 also occurs when compiling w=
-ithout PREEMPT_RT.
->=20
-> Bert Karwatzki
+Since next-20260722 my debian sid system hangs when shutting down or
+rebooting (No error message when monitoring the shutdown process via
+netconsole). I bisected the error to commit
+13b7e6a96a00 ("wifi: mt76: Disable napi when removing device")
+and reverting this commit in next-20260723 makes shutting down or
+rebooting work normally again.
 
-There are actually several errors here:
-1) The shutdown hang wich occurs in next-20260722+ (PREMPT_RT or not)
-This error is caused by (I'll open a separate thread for this):
+Wifi device:
+09:00.0 Network controller [0280]: MEDIATEK Corp. MT7925 802.11be 160MHz 2x=
+2 PCIe Wireless Network Adapter [Filogic 360] [14c3:7925]
 
-commit 13b7e6a96a005c656d38f3da51581deaf9866375
-Author: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
-Date:   Wed Jul 8 16:43:47 2026 +0200
+Cpu:
+$ cat /proc/cpuinfo
+processor	: 0
+vendor_id	: AuthenticAMD
+cpu family	: 26
+model		: 68
+model name	: AMD Ryzen 9 9950X 16-Core Processor
+stepping	: 0
+microcode	: 0xb404035
+cpu MHz		: 624.194
+cache size	: 1024 KB
+physical id	: 0
+siblings	: 32
+core id		: 0
+cpu cores	: 16
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 16
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat =
+pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtsc=
+p lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd=
+_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 =
+movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_l=
+egacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext p=
+erfctr_core perfctr_nb bpext perfctr_llc mwaitx cpuid_fault cpb cat_l3 cdp_=
+l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgs=
+base tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq=
+ rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512=
+vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_m=
+bm_local user_shstk avx_vnni avx512_bf16 clzero irperf xsaveerptr rdpru wbn=
+oinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasi=
+d decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_=
+spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq =
+avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid bus_lock_detect movdiri mo=
+vdir64b overflow_recov succor smca fsrm avx512_vp2intersect flush_l1d amd_l=
+br_pmc_freeze
+bugs		: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass srso spectr=
+e_v2_user vmscape
+bogomips	: 8599.52
+TLB size	: 192 4K pages
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 48 bits physical, 48 bits virtual
+power management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]
 
-    wifi: mt76: Disable napi when removing device
-   =20
-    Unloading the mt7915e module with a MT7916 triggers multiples WARN in
-    __netif_napi_del_locked() and in page_pool_disable_direct_recycling()
-    because the driver does not disable the napi before destroying it.
-   =20
-    This is troublesome since on MT7916 it is required to unload the modul=
-e
-    and reinsert it with a different enable_6ghz parameter to change the
-    frequency.  The system generally becomes unstable after reinserting th=
-e
-    module.
-   =20
-    Fix it by disabling napi before deleting it.  Also, do not delete napi
-    on WED queues since napi is neither used nor initialized on them.
-   =20
-    Fixes: 17f1de56df05 ("mt76: add common code shared between multiple ch=
-ipsets")
-    Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communicatio=
-ns.fr>
-    Link: https://patch.msgid.link/20260708144615.24092-1-nicolas.cavallar=
-i@green-communications.fr
-    Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Other pci hardware:
+$ lspci
+00:00.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Root Complex
+00:00.2 IOMMU: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridge IOM=
+MU
+00:01.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Dummy Host Bridge
+00:01.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridg=
+e GPP Bridge
+00:01.2 PCI bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridg=
+e GPP Bridge
+00:02.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Dummy Host Bridge
+00:02.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridg=
+e GPP Bridge
+00:03.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Dummy Host Bridge
+00:04.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Dummy Host Bridge
+00:08.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Dummy Host Bridge
+00:08.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridg=
+e Internal GPP Bridge to Bus [C:A]
+00:08.3 PCI bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridg=
+e Internal GPP Bridge to Bus [C:A]
+00:14.0 SMBus: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller (rev=
+ 71)
+00:14.3 ISA bridge: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge (rev =
+51)
+00:18.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 0
+00:18.1 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 1
+00:18.2 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 2
+00:18.3 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 3
+00:18.4 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 4
+00:18.5 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 5
+00:18.6 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 6
+00:18.7 Host bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Rid=
+ge Data Fabric; Function 7
+01:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Upstr=
+eam Port of PCI Express Switch (rev 25)
+02:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Downs=
+tream Port of PCI Express Switch (rev 25)
+03:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] N=
+avi 44 [Radeon RX 9060 XT] (rev c0)
+03:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Navi 48 HDMI/D=
+P Audio Controller
+04:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD=
+ 9100 PRO [PM9E1]
+05:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Upstream Port (rev 01)
+06:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Downstream Port (rev 01)
+06:06.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Downstream Port (rev 01)
+06:07.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Downstream Port (rev 01)
+06:08.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Downstream Port (rev 01)
+06:0c.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Downstream Port (rev 01)
+06:0d.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series Chipset P=
+CIe Switch Downstream Port (rev 01)
+08:00.0 Ethernet controller: Intel Corporation Ethernet Controller I226-V (=
+rev 06)
+09:00.0 Network controller: MEDIATEK Corp. MT7925 802.11be 160MHz 2x2 PCIe =
+Wireless Network Adapter [Filogic 360]
+0b:00.0 USB controller: Advanced Micro Devices, Inc. [AMD] 800 Series Chips=
+et USB 3.x XHCI Controller (rev 01)
+0c:00.0 SATA controller: Advanced Micro Devices, Inc. [AMD] 600 Series Chip=
+set SATA Controller (rev 01)
+0d:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. =
+[AMD] Raphael/Granite Ridge PCIe Dummy Function (rev c1)
+0d:00.2 Encryption controller: Advanced Micro Devices, Inc. [AMD] Family 19=
+h PSP/CCP
+0d:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raphael/Granite =
+Ridge USB 3.1 xHCI
+0d:00.4 USB controller: Advanced Micro Devices, Inc. [AMD] Raphael/Granite =
+Ridge USB 3.1 xHCI
+0e:00.0 USB controller: Advanced Micro Devices, Inc. [AMD] Raphael/Granite =
+Ridge USB 2.0 xHCI
 
-diff --git a/drivers/net/wireless/mediatek/mt76/dma.c b/drivers/net/wirele=
-ss/mediatek/mt76/dma.c
-index f8c2fe5f2f58..322041859217 100644
-=2D-- a/drivers/net/wireless/mediatek/mt76/dma.c
-+++ b/drivers/net/wireless/mediatek/mt76/dma.c
-@@ -1189,7 +1189,10 @@ void mt76_dma_cleanup(struct mt76_dev *dev)
-        mt76_for_each_q_rx(dev, i) {
-                struct mt76_queue *q =3D &dev->q_rx[i];
-=20
--               netif_napi_del(&dev->napi[i]);
-+               if (!mt76_queue_is_wed_rro(q)) {
-+                       napi_disable(&dev->napi[i]);
-+                       netif_napi_del(&dev->napi[i]);
-+               }
-                mt76_dma_rx_cleanup(dev, q);
-=20
-                page_pool_destroy(q->page_pool);
-
-
-2) The "scheduling while atomic" errors which occur in v7.2-rc4 and earlie=
-r, once I figure out
-these I'll contiue here (v6.19 is free from these errors)
 
 Bert Karwatzki
