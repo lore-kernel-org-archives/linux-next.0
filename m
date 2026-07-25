@@ -1,148 +1,137 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FA9389111
-	for <linux-next@vger.kernel.org>; Sat, 25 Jul 2026 05:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784956833; cv=none; b=FgLNhfQREuCb/hqE0iQZnnq/hcc5/I/txaZnTxZT7siLCqewFsfI1zrUGooY4VS9thix+gq4fqUXxLh8TjY/hiVumXW40DcdHsuK3qw2R85FFyIcd7zxjYwf2dQ3i2aHYIVcywqXr8DkCTb2qSEvqNOxDRlewgTq7ktVEVOJO2U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784956833; c=relaxed/simple;
-	bh=AMU7Ri4ZT0+oQAVip7d44Mlpao+8ycC8iU24Ai7oiXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fsyejFh40j8xecEQi9MNZTBLL1Pp2U55PQbuAXDZWRDCIWLXNHHeLwayDtq3K8WBsGijGif9HKvTKnPsRArEmwhJ42B1mvz0MUu1nA3cXKIKqjg0zq8mI2AouLcYlttn0kB0aL7zHZUjbisiyMf3ZNYKbmc9KnLSuhXRivyMEcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 66P5KT0l043815;
-	Sat, 25 Jul 2026 14:20:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 66P5KShZ043812
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 25 Jul 2026 14:20:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <c0272e64-a849-4fe0-8131-ecf6c724f558@I-love.SAKURA.ne.jp>
-Date: Sat, 25 Jul 2026 14:20:29 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FD63806AD
+	for <linux-next@vger.kernel.org>; Sat, 25 Jul 2026 09:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784972337; cv=pass; b=K4bq8UUwVZLf+tNgqs43oz5BGg3Xmm/3h2hrr8jV/xXlIXReeOI5xTyVyUGfJFq3jp/QQF1F8lQibIUqUiI7BOEEIr9Bztx1MXgpohJSvTSGG74mBRy6FSZDs07trwxvXR7JJiigyrq6crcVI5IEcobF8A3asCkOGtmZafFkVCs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784972337; c=relaxed/simple;
+	bh=L8iZ38Li4PIrl0dsK30qPrGcLt9oxQxRBY6dx+SBomM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b95QNuuhSaWbA4Eye+ue8Qr2nrPxTqS0xBLL7v2nddAdgk+IQ1tsCR+VpsngTjNjikoVcGWq2deJTJBksKzut2eGequeCFkm01hoOVCrKKf2C2KU011Q2BrO5tuhVRiIICUTbsp4AjjkIADQtu5Ch3ndL8hQXjIC0zhjaQiv1Hg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kg4paheQ; arc=pass smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kg4paheQ"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2cc7a269ca1so2586365ad.3
+        for <linux-next@vger.kernel.org>; Sat, 25 Jul 2026 02:38:55 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784972334; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VoBVNgYgMnh7Ze5VwWWK6v0/ZHWol77hNuxm1m/dViMUiNekubybBLQQrt+n8h0YBH
+         ppUrGMX8el+pfPg+pzOYsnAb1RlWhzKRkB5x2zjXay4iRw1TTv9tYr2/YiijZ5/lgsGR
+         G1cl35QRwifxsPTjQh9OoGzIsB0A4Exxxvo+QGBO3CLKu+RUhsMLka9NKZULXkLmfoW4
+         M9n7HT2DBzm8iN2VdA67JoEDEnb2FgJjBjj6hc7kn4nlOgNkf1fWRKgfDZ0SZZzJ2LBc
+         gTNca8nbYs38Wu3mY2xRFmSaneUknttT3jJNBrbAgo/1ZUtokCFW09R3PCK8FLhZvivx
+         TIvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=qzHUYCyb+2Nl9ORS3n0AtzpAIgRCAzd6AE2/52CumuQ=;
+        fh=dRWJRqJzd4y78jo4DYbcQ/5YdDepr+DPGgReg3D0/c0=;
+        b=k3OLOj7OruROmZTnZY8p/B/DpcTwj3KOYtuL5IEDDjPWgtUvc6EdElDnYDVIJt/3Vj
+         ONYKPuzk0U/s4SCtKJtw0XYLd3gg6wHCPmpzOIaSOqcYWUY7IepCgYEj0myfldRodr3r
+         BlbXkXFy/6F7WGKr0mBzYr0hu9ps9vKVLo76BYauG+pyRsf4ZN6AwZCRklChO4ddchfj
+         GdcLIlJRppYUDKYcdqyzXHf6Vf55c1FLoukUcKHSs8z4i9Q076Eh3qEP9+06FBR69m1E
+         u+6CK+j/Zr5ZXYpk3+spBiUOHntcOLzdnH2EyAkuF09F5+fPx9O5PbgxkLR5vr94ZnLK
+         QfCQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784972334; x=1785577134; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=qzHUYCyb+2Nl9ORS3n0AtzpAIgRCAzd6AE2/52CumuQ=;
+        b=kg4paheQ0nawSVZ/13yVuRTgrGEL0yTrai8xTjxx8w5Z0sdNrOxe9wxI7pDaPUxeXt
+         8zy419cLuhs6ZL5kbrqJ/a6HpmiCI4gmGSNCyIYhPtd+P/wrTdSAVQOzSjt5trkoa/GX
+         87p/uy/5ReBbP6R1tvSJwB8rH60o4i8HRtKkNsXYob3sNtel4betJ+YzOMIztmipmqfn
+         3U8nIcj+zKmQUHOU0az4MVCvkj94xOOXP+Gv07UMiM5CafD759sfbCbnby6iKCDcolXG
+         419Cq2i9vsIuRgMZ5mD9V/2gZrO8epKaqOBoYhWOrkWjat4c85fRVzPU4Lp2UZyNzwAl
+         vc/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784972334; x=1785577134;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qzHUYCyb+2Nl9ORS3n0AtzpAIgRCAzd6AE2/52CumuQ=;
+        b=aM5yIzuWAH2MBvHCK9sEXjWItzvMJqh+fT3qxf3Dch8y+QoT4rL2JHFe7uqBtbRGMD
+         AunmF+EBqUjxgOeq4ZtAj4bDwapXKL6gidb/ntwBMiLIzPjKWNaMay6fQFSGKxuJ7bgL
+         tI1p1e78HrMrpjfpuWa7f1zEL8u+rgAQwIw6DzR0V5xEKPSKpS1RiZ4kxOQQa0Dvk3nb
+         FL7B0b4KPhirbYz4d9IQQuyQcHmV+cEpkDJi8FZoQBUZgihUZm0nCeXg3vqXXDPIuN7v
+         pw8NXH5sUKYu+ipyVf98/HW1fiYMgD5Q4li/wSvmCtA5nhpbrsbFZcV3IeajTjvA5uVe
+         xTfA==
+X-Forwarded-Encrypted: i=1; AHgh+RqaS6qF+qtwZXqNPIReWc5vIzrpRFjAHv0yCJngd9KNUwt7maw0SixxVjNdCVN28bSGaD96NVJyiRFt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4aJ6bZj3Q3B3ceEDxv+iGQ1nHBAyB/q1sjCDWGzKdJ99go9Hh
+	RHO/WgIbBhsjKy4e+RouKGihWi+M/OdqY2KU4iQHaOvZ+4nfWMZWUSChAr3uN1w9rEHqRu8edTh
+	h8YpqjDPabqzF7spAR9pgvqNYa1Nd8rE=
+X-Gm-Gg: AR+sD12EsKpcyGgBQwL/MfgvYkfL8uomsiZv0C5x7nGd2XEhzQfLC9qPsCKOUP4FZLF
+	yxLXuhK2W6NtFN7vzjZI7dHy61v4h/o+Wu5TV6MsxYcOnNr64c5A7iFpIWjjxYa1M8JEO/3WWZs
+	NiQkbtSykb5npxtBnoSoMLITOO7U/DOpfcfHhzX0+hggOT5kfRKQrDnEdU5eK14IELNo4Co/q9P
+	J4jo6cG2m1wuzF5cYuCl7MjlSs0ioG7BSIBMWHA/DwbsNRHV2BBH3vNn2VXkFnxAQPnP4dRaPud
+	hPqkoLlz7waSSH72xChRe1+TJ/r5nPX6P4WGqPc5LFfoKckwn/RsS+MUHz3hF29+AeP2qrooln7
+	cQg==
+X-Received: by 2002:a17:903:2f84:b0:2ca:d803:5c8f with SMTP id
+ d9443c01a7336-2cfde689443mr14383995ad.1.1784972334529; Sat, 25 Jul 2026
+ 02:38:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Policy regarding linux-next only changes
-To: Theodore Tso <tytso@mit.edu>
-Cc: Alexander Potapenko <glider@google.com>, Mark Brown <broonie@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Aleksandr Nogikh <nogikh@google.com>, Boqun Feng <boqun@kernel.org>,
-        Gary Guo <gary@garyguo.net>, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
-        will@kernel.org, longman@redhat.com, mingo@kernel.org,
-        gregkh@linuxfoundation.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-References: <CAG_fn=Vf==zhGjSNPcFC0=n9cw+NrBp+AqXgcmcV0uQBAcL9TA@mail.gmail.com>
+References: <akZxfzEtam8yPXEh@MacBook-0RXW5> <7f1b93a9-f756-4bfc-81d7-1350ac1d50ac@I-love.SAKURA.ne.jp>
+ <CANiq72=hLXip=gQS1tnLQxe6Kpwq03Bd8F1z_xLrdoCtvSAkfg@mail.gmail.com>
+ <2d0d3f6b-4392-4081-9390-9b588e38de7a@I-love.SAKURA.ne.jp>
+ <CAG_fn=Vf==zhGjSNPcFC0=n9cw+NrBp+AqXgcmcV0uQBAcL9TA@mail.gmail.com>
  <c0bd6bc6-17de-468d-850d-df9955e2c142@I-love.SAKURA.ne.jp>
  <CAG_fn=UEo8PNvjAcTTqmskfPrJNSjshhuXsR_PaH0-YLWwMTRw@mail.gmail.com>
  <bc3703bd-65ee-4182-a742-56603d9b9bac@I-love.SAKURA.ne.jp>
- <amEAzMTbA9R9HgN7@mit.edu>
- <2c903636-532f-47b5-9894-00470f235682@I-love.SAKURA.ne.jp>
- <amNsDFyTbsyAASjt@mit.edu>
- <58689827-9211-4f26-9777-51c0b5e1eebb@I-love.SAKURA.ne.jp>
- <amN5Gu2J5mILKs_j@mit.edu>
- <7250a5ad-ec2d-4852-af56-9c1c653d24c7@I-love.SAKURA.ne.jp>
- <amPGflb7w6RcOO1M@mit.edu>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <amPGflb7w6RcOO1M@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
+ <amEAzMTbA9R9HgN7@mit.edu> <2c903636-532f-47b5-9894-00470f235682@I-love.SAKURA.ne.jp>
+ <amNsDFyTbsyAASjt@mit.edu> <58689827-9211-4f26-9777-51c0b5e1eebb@I-love.SAKURA.ne.jp>
+ <CANiq72nXO0noq7qqLqvQuuAGjP1DE+k8=C6sZ7DZ2xYFCTSPPA@mail.gmail.com> <8c3d90d5-747e-451b-bdcb-1cfe1d5fce53@I-love.SAKURA.ne.jp>
+In-Reply-To: <8c3d90d5-747e-451b-bdcb-1cfe1d5fce53@I-love.SAKURA.ne.jp>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 25 Jul 2026 11:38:42 +0200
+X-Gm-Features: AUfX_my10vRNgqwL7v7DI0htjKfUDET6zA8FPnfOmyYHpCR6siwhAfoagAf2MCg
+Message-ID: <CANiq72=QFc1amaeoX3aceuQQCYbpkj_qb7bQgfGj1CRa=+NcOg@mail.gmail.com>
+Subject: Re: Policy regarding linux-next only changes
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Theodore Tso <tytso@mit.edu>, Alexander Potapenko <glider@google.com>, Mark Brown <broonie@kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, Aleksandr Nogikh <nogikh@google.com>, Boqun Feng <boqun@kernel.org>, 
+	Gary Guo <gary@garyguo.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org, 
+	will@kernel.org, longman@redhat.com, mingo@kernel.org, 
+	gregkh@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2026/07/25 6:05, Theodore Tso wrote:
-> On Sat, Jul 25, 2026 at 12:29:27AM -0500, Tetsuo Handa wrote:
->> The problem is that a maintainer who has the permission to
->> accept/reject patches tends to become defunctional when syzbot is
->> involved. What actions can the Linux kernel community take in order
->> to address this problem (instead of just ignoring developers who are
->> trying to fix bugs)?
-> 
-> Fundamentally, not all bugs are worth fixing.  And if you believe that
-> all bugs are worth fixing, you need to convince companies to **fund**
-> that work, and not leave it as unfunded mandate.  If you give me some
-> minions who can be dedicated to help fix bugs, I'm certainly willing
-> to provide technical direction.  But there's no such thing as a free
-> lunch --- and the business case is not as clear cut as you seem to be
-> assuming.
+On Sat, Jul 25, 2026 at 5:44=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Excuse me, but what does "successfully unit tested" mean? Broken patches
+> that do not build, or trigger oops by just "/bin/cat" _are_ arriving at
+> linux-next tree, which in turn preventing continuous testing by syzbot.
 
-Have you ever seen https://syzkaller.appspot.com/upstream/syz-dungeon which
-ranks contributors (kernel developers) based on their achievements in fixing
-bugs found by Syzkaller? You can find that I am the second top contributor.
+Yes, there are mistakes in linux-next all the time, and those mistakes
+take time away from maintainers. Which is why adding more unexpected
+patches makes it worse.
 
-Also, my activity for fixing bugs found by syzbot is not my $WORK. I am working
-on those bugs using my private time. I am neither working at Google-related
-companies nor a member of syzbot team (who can change kernel config for syzbot
-kernels in order to help syzbot continue testing).
+But, really, that is not the question at hand -- you say:
 
-> 
-> In essence, this is a cost allocation problem.  When you ask for help
-> from other maintainers to fix something that you care about, if it's
-> not important to them or their company / management chain, you are
-> dumping costs from you to them.  This can work if you can also help
-> them in turn in other areas.  This happens all the time, actually, and
-> it's what makes Open Source work.
+  "my debug patches won't be able to find a route to linux-next, which
+   in turn prevents us from debugging."
 
-That is wrong. I make not only debug printk() patches but also bug-fix patches.
-I am asking for approval from maintainers to fix bugs that syzbot found.
-It is really annoying that maintainers keep silence for unknown reason
-(maybe they are thinking that "I don't care about this bug"). I can't make
-forward progress if maintainers keep silence. What are the maintainers for?
+No, what prevents you from debugging is that, from what you say,
+nobody is giving enough compute resources for your task.
 
-At the panel discussion in LinuxCon Europe 2011, Linus Torvalds has said
-"the average age at the summit has risen by one year every year"
-( https://lwn.net/Articles/464530/ ). If maintainers are there to let
-developer's effort be sent to /dev/null, trying to contribute is waste of time
-and new developers won't grow up.
+linux-next is just a way to access some resources. Which may be OK or
+not to do so, but clearly it was not in agreement by everyone nor in
+alignment with what linux-next is supposed to be so far, and that is
+what I pointed out, nothing else.
 
-> 
-> So I think the way we solve this problem is by finding ways to
-> allocate the costs to those companies or organizations that think it
-> is a good fit for their business, and to reduce the burden on those
-> whose company (or management chain) doesn't think the business case is
-> sufficiently compelling.
-
-Not all developers have enough money to pay to companies/organizations.
-Some developers (including me) are contributing by spending their time
-instead of paying money.
-
-Your statements sound like "Poor men/women cannot participate into the Linux
-kernel development." Please don't assume that everything is controlled by
-"who pays the money?".
-
-> 
-> Other solutions might include finding some AI solution which can
-> filter the low-priority quality Syzbot reports from the high-quality
-> ones.  If some companies or some departments may have different
-> priorities, perhaps they can use different filuters, so they can work
-> on those bugs that they think are important.
-
-syzbot already has a priority filter. But trying to make patches based on
-that filter will result in a waste of time if maintainers are not responding.
-
-Please respond to syzbot-related patches. For example, if you are not
-interested in a bug syzbot has reported, respond to that report like
-
-  "I do not think that this bug is important enough to fix. Therefore,
-   I won't give you Reveiwed-by: nor Acked-by: even if you propose a patch."
-
-. Then, the developers can consider what to do. For example, use a different ML
-which handles unloved patches, and make it possible to send the proposed patches
-to linux-next and linux without Reveiwed-by: or Acked-by: from maintainers,
-unless Sashiko finds a new problem introduced by the proposed patches.
-
-Current situation (no response from developers / maintainers) is a deadlock.
-
+Cheers,
+Miguel
