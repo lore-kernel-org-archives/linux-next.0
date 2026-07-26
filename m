@@ -1,75 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892C92BEC52;
-	Sun, 26 Jul 2026 22:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4785337BE78;
+	Sun, 26 Jul 2026 22:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785105209; cv=none; b=BbAKS4i7aeRgejh9GQeeT09sEyW//csC+J9KhHAuLfHdC24qrapBhR/jeAjRatZ+SW94K86fwrcokKFMubZXkJlqSaFXWWkiNBNIc9za9DorRN18MV8uAEql542fJNmw78sYLbLLVjxEXNB75WCkhf0CgYA0o3jKVbNdKtTu6Gw=
+	t=1785105765; cv=none; b=RhU5bshc+5AAsu6dbz77w/bQeqT8rvRKLWj02NnwrdlUot/XBx+SxDq+YNlL/29vacdyyS+L1urtyH0MBO3muKiUGAucM4yQ6KASYdhRzTPUSc8vugrDWDg/9m7c83jZQDiQuqEqsIe7nxPKH7eh6Xl8vR+q6yadjumAijcdDI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785105209; c=relaxed/simple;
-	bh=jciCzbwPgez1GuYNGYW6mfsyUyEeBNJnp496YuAG82s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=mcCAPpPn78QONX5aHIMdVN3NpLpo6tHXbQuvnh2cE33GcG6mwSuao4vJFT0BsMFD3QqYj9CwzTKYCxIF1Gv4gSeqbfE7nIxo7kTRk51c2pV1eZ1lhRFSdmpkywrS0RkF308hW2+HR9c3dZDh0G8kTZnukwOlpo1mBwIn2boK+xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kwa/cG5V; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785105765; c=relaxed/simple;
+	bh=8O+XO97p4Bw1TKEn6kvcf4prWXisXvlEZQn/lBS4OUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MM6sf40ui16yYcfPE2B8VOofJ7ku8AqFxDMSwoalO86jqTEFYTv5HzgDI0sf6a/VsVeAOTIGoBGaCdD7EVFxYzQrq0jsVAexgCt2DfRaKXYabog6Zrt6U3DwSiNRLJZoNgytDkCF/fHqP2ih00aDliUdaS7iqnOw3adYAwzfEQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vcc4NAwX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kwa/cG5V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2101D1F000E9;
-	Sun, 26 Jul 2026 22:33:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vcc4NAwX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E07851F000E9;
+	Sun, 26 Jul 2026 22:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785105208;
-	bh=wTRoLpuNE2cO7c7GbmgfuEVGAfBlyUo4rm2RPBn4UI4=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To;
-	b=Kwa/cG5VqRNNsDq0RqJzNUOyAerAKaI46zaX0m8GwG6n8ZI6FZiraFxCzdW2Gb845
-	 HExQE024FowM4IMftj2zH7d5ZmhG7yng3zQ/Zys2wc1dGETrV+zS9m51eGe0j5fvgW
-	 ZUc6foK9fYgmGcfdlObcC6OJnS82daum0Ug12Jkc124bwxjVyU8UAPutCFXtoLVA+H
-	 JfdOYTafZLXLu4Lfz5oORCW8wjEX+kOCxjCsK0ZNFEiwPncLdW8/eB6ZBHRLvTCD3m
-	 ciQe/DixulVU9DjlB3IVyDe4fw3giWzZ+8X+D4oR2XeoBjCLpRqtgQ8w5PHohPb9Re
-	 NNLFxUItFVBlA==
+	s=k20260515; t=1785105763;
+	bh=talowVEQBqThp+BUVw//lS6JE+ef2XwcS7But1pFWb4=;
+	h=Date:From:To:Cc:Subject;
+	b=Vcc4NAwX32vEceWlldGZ2kC+zmuIld0qO0YVIoImIavXz49A1x280qFnmQM4UV3MR
+	 OqGE++xLrIu70FapDnh8wnvaLoukaGG7pQoqsSfWjf36guwr/vHRaRJaMXmB3M6NBA
+	 SgKiDt49Yp/DHrB2/agWEBF2qmgIV+7DKgCG5bTQugu8A17GejhNFSPBREmrHHklb9
+	 mgKVv9moXZ76Xp9JXFtEPzubxYfVswjuJKdY27v4ppTX1rT1uPNxib02RTu6PVlNiK
+	 gsrkGASNYWQIVY9Ae4bUItvsOzvItfrap9e0jMOj3b7oEZH2FNwPUn+MmTCtZtrdP0
+	 g3strH34svOoA==
+Date: Sun, 26 Jul 2026 23:42:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the fastrpc tree
+Message-ID: <amaNYEchEvJAcnQT@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Jul 2026 00:33:24 +0200
-Message-Id: <DK8UZDXP0J4J.1ZGL24V7GBCO7@kernel.org>
-Cc: "Greg KH" <greg@kroah.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>, "Matt Roper" <matthew.d.roper@intel.com>,
- "Michal Wajdeczko" <michal.wajdeczko@intel.com>, "Raag Jadav"
- <raag.jadav@intel.com>, =?utf-8?q?Thomas_Hellstr=C3=B6m?=
- <thomas.hellstrom@linux.intel.com>
-To: "Mark Brown" <broonie@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- drm-xe tree
-References: <amaCqZUpvgKLe9gC@sirena.org.uk>
-In-Reply-To: <amaCqZUpvgKLe9gC@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xdUtbq+1zlL79nUH"
+Content-Disposition: inline
 
-On Sun Jul 26, 2026 at 11:56 PM CEST, Mark Brown wrote:
-> Hi all,
->
-> Today's linux-next merge of the driver-core tree got a conflict in:
->
->   drivers/gpu/drm/xe/xe_i2c.c
->
-> between commits:
->
->   5d8ed6b64220a ("drm/xe/i2c: Allow per domain unique id")
->   9420abf8dbc2e ("drm/xe/i2c: Drop manual VF check")
->
-> from the drm-xe tree and commits:
->
->   e766abbc5191b ("drm/xe/i2c: use platform_device_set_fwnode()")
->   0f485f88656af ("drm/xe/i2c: use device_create_managed_software_node()")
->
-> from the driver-core tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
 
-LGTM, thanks!
+--xdUtbq+1zlL79nUH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi all,
+
+After merging the fastrpc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+/tmp/next/build/drivers/misc/fastrpc.c:599:29: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  599 |         idr_remove(&cctx->ctx_idr, FIELD_GET(FASTRPC_CTXID_MASK, ctx->ctxid));
+      |                                    ^
+/tmp/next/build/drivers/misc/fastrpc.c:737:15: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  737 |         ctx->ctxid = FIELD_PREP(FASTRPC_CTXID_MASK, ret) |
+      |                      ^
+/tmp/next/build/drivers/misc/fastrpc.c:2711:10: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+ 2711 |         ctxid = FIELD_GET(FASTRPC_CTXID_MASK, rsp->ctx);
+      |                 ^
+/tmp/next/build/drivers/misc/fastrpc.c:2735:4: error: format specifies type 'unsigned long long' but the argument has type 'int' [-Werror,-Wformat]
+ 2733 |                         "Stale glink response ctx 0x%llx (expected seq 0x%llx), dropping\n",
+      |                                                                          ~~~~
+      |                                                                          %x
+ 2734 |                         rsp->ctx,
+ 2735 |                         FIELD_GET(FASTRPC_CTXID_SEQ_MASK, ctx->ctxid));
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/dev_printk.h:165:39: note: expanded from macro 'dev_dbg'
+  165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+      |                                      ~~~     ^~~~~~~~~~~
+/tmp/next/build/include/linux/dynamic_debug.h:285:19: note: expanded from macro 'dynamic_dev_dbg'
+  285 |                            dev, fmt, ##__VA_ARGS__)
+      |                                 ~~~    ^~~~~~~~~~~
+/tmp/next/build/include/linux/dynamic_debug.h:261:59: note: expanded from macro '_dynamic_func_call'
+  261 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+      |                                                                  ^~~~~~~~~~~
+/tmp/next/build/include/linux/dynamic_debug.h:259:65: note: expanded from macro '_dynamic_func_call_cls'
+  259 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+      |                                                                        ^~~~~~~~~~~
+/tmp/next/build/include/linux/dynamic_debug.h:231:15: note: expanded from macro '__dynamic_func_call_cls'
+  231 |                 func(&id, ##__VA_ARGS__);                       \
+      |                             ^~~~~~~~~~~
+4 errors generated.
+
+
+Caused by commit
+
+  10555ba6126ed (misc: fastrpc: Replace hardcoded ctxid mask with GENMASK)
+
+(and one of the subsequent ones that also uses those macros).  I have
+use the tree from next-20260723 instead.
+
+--xdUtbq+1zlL79nUH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpmjV8ACgkQJNaLcl1U
+h9BdhQgAhenC/0MtU9yPOCuGcIy/sr8ebJ59z+GTrtpU5p5aGXDnzLZaHKQDuGPd
+x23yf3tKwbRgPOe60amQywolf+zQqUcBAHF6ychyghY41gBN1XbXkZzsXVVhqDcl
+uD0Xtbmwamei2wkOR+PFl39vwzkeyzZ1AJNG3bvRZtzAYyPlUeRHXRXhVKTepd/o
+H2rfekQNnqFCKdCurWS+OrJYrVANo9iMq8680XLwRosmnc6PxXjQgKrmQ/tqXCJ6
+bvdLeVj3P6cH3aOztmT2af0tRz6uXOc9UPMHW6kk2Ixub/9GOpdyEZmEsTEyR9ep
+0ln1PqAGEk5bMhoo2hUCxQNnHaXeLA==
+=fWOZ
+-----END PGP SIGNATURE-----
+
+--xdUtbq+1zlL79nUH--
