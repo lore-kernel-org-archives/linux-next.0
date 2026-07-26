@@ -1,187 +1,82 @@
-Received: from ixit.cz (ixit.cz [185.100.197.86])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0EF377EA7;
-	Sun, 26 Jul 2026 19:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29BE17A303;
+	Sun, 26 Jul 2026 20:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785095415; cv=none; b=pW+H/8ZVgxkfOMaRsMj/GVwVqcxXP8stxuQhmi0oN5UiebjPRnReZtipqPlkyU9a5ls1wgei+P9xhWITXAZ4H5pVc6uxLJcMlMQVtnpYvV41HmgCa28Mgue8acvJl5LaPcwj18JMKE7sk2ubi79A96A7qKV3V2Y4KTj/u3n9ioo=
+	t=1785096998; cv=none; b=t+lJTH5LRa+2UDMEvizp7N7uopkQ3Ad8eBovkOts81vNjo91atEUPBABiDgujrXXFi4yayjmXxtPwi6MSZasx92enijTeSVrm6Nw8LXVNCoLMXSk3kDOg3TmS30Q6wzVLqV4pp0Q7zs0C3Ho2/iSVqDUnnzuHuLCkBB7+5vBoV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785095415; c=relaxed/simple;
-	bh=6HvaklxiMfreANtArYNk+G2NXPpc6kcHHmzpx9jWRnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ffQ5XgAUv5udktU+TELbF4qwGZG6X6OOfSyGmxwIfDvUT66lC5yyNvdr8t8DPiTc3QsR0eYCKvmM5r+fMhdLPtIKcBIgmRUHof/HdnIa796RR4+DL4lEaoc9Z9KkQgqOokArmfTz9DNmT1GREGQ1383PHlu44SHnTEHB6t13qbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=tvX5c7U6; arc=none smtp.client-ip=185.100.197.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	s=arc-20240116; t=1785096998; c=relaxed/simple;
+	bh=tb2w96rL36J6JF8+SQGqnl937k9oRLpQbNymP1Edz1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cc7DZPwiv8CXFRPpiCQwiuUkxkzjBdcCpcsraK6yYzqUm3nTfbaDP974hC2N71XOxaIyLMXg2nB5D0/TQ9oKkme6tlJspH4xIqPuXtF/yNb+pvKS/6C7cKlHFl0vefhOyDtr+hbYvg7nI27OdJ1icDyhnatJWLStrAccPE5Yl/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lr7TOjVp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="tvX5c7U6"
-Received: from [192.168.1.182] (ip-62-24-73-79.bb.vodafone.cz [62.24.73.79])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 9434E53402E0;
-	Sun, 26 Jul 2026 21:50:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1785095405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3wTQi0hkhy+hU0kxk/8nTkuLD3zn77+IwUXs7kVo3lw=;
-	b=tvX5c7U64ZTyV2Ri3L+7nK7eqNPF3avj3Kl13C4w2w1MeeAlO6Xa2Y25LIdPjwuB56PQoF
-	V/llEjJU9MHDtPhJ6VCuz9aasYJl1+uB+7io52MeHyO76/4DJBAG2BBW4vF7iuqWWe8Ma4
-	8Tmp0akK+F6ZLcT+SWYMdTvn0iTrq3U=
-Message-ID: <cceed3a5-c896-4f99-b64f-017f0e641dfa@ixit.cz>
-Date: Sun, 26 Jul 2026 21:50:04 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lr7TOjVp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A636D1F000E9;
+	Sun, 26 Jul 2026 20:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785096997;
+	bh=nrzb6AaKAcQo+7poo9kzODvZ6K2c3M3KSsBcsd3ses8=;
+	h=Date:From:To:Cc:Subject;
+	b=Lr7TOjVpfac2AOx9xqTJ2wvNKq2AMKn6E2v35WQI+o8gj27AwmD35TveBLjEI3fwT
+	 JxvrQm896howHA0uXQSK+vhINFWCk7EKv+fTr3kpcI3UtpMbG9aQzRyIuUm2E79JCn
+	 da4FI+t9kD7ZYT7Kzi9oUhghPd+WXLTYPaVJ1WWNnmGHeLiZe4F/JloNnrRvoLOBJi
+	 BtAlKpSMgDRYl3SFEb/E9rOGJEOgGpUx+ujCwkmGkZsPAAszeTwA62jtit0xzkoC6c
+	 TS/LfWKS1PjHikdqoyXR8Q/flsNTiWxYKAzgeHUgjqlu9BMo4b0jU6Z9k0fj91+gQ8
+	 DKtBrUpNsFuhw==
+Date: Sun, 26 Jul 2026 21:16:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <amZrITMIlBrnI47Q@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the nfc tree with the nfc-fixes tree
-To: "Zhou, Yun" <yun.zhou@windriver.com>, Samuel Page <sam@bynar.io>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Samuel Page <sam@bynar.io>, horms@kernel.org, Mark Brown <broonie@kernel.org>
-References: <akJv3Ajqh0ALyEk4@sirena.org.uk>
- <22a9e54e-936d-45b8-9083-441c29d43621@windriver.com>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <22a9e54e-936d-45b8-9083-441c29d43621@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VaRGOxspEO0MwK6+"
+Content-Disposition: inline
 
-On 24/07/2026 05:18, Zhou, Yun wrote:
-> Hi Mark, David,
-> 
-> My patch (1d5fcb66b07a3) [1] was applied to the nfc tree on Jun 2, nearly a 
-> month before Samuel's (075f88b7d3b5c, Jun 24) [2] . They fix the same bug.
-> 
 
-Hello Yun,
+--VaRGOxspEO0MwK6+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-thank you for noticing me.
+Hi all,
 
-> But Samuel's v2 still has issues that I addressed during my v1 [3] --> v3 
-> iteration:
-> 1. Error response handling: his patch requires sizeof(*rsp_1) before
-> reading the status field. A valid NCI error response may only contain
-> a 1-byte status — his code returns SYNTAX_ERROR instead of propagating
-> the device's actual error code. I fixed this in v2 [4] by checking 1 byte first, 
-> then requiring the full header only after status == OK.
-> 
-> 2. ndev state corruption: Simon flagged that if the length check fails
-> after ndev fields are partially updated, it leaves ndev in an
-> inconsistent state. My v3 defers all ndev updates until after
-> validation passes.
+After merging the vfs-brauner tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Yes, now I see. I somehow must missed the part completely, maybe I looked at 
-older revision when comparing these two patches approaches.
+/tmp/next/build/fs/bfs/inode.c:180:43: error: no member named 'ino' in 'struct inode'
+  180 |         di = find_inode(inode->i_sb, (u16)inode->ino, &bh);
+      |                                           ~~~~~  ^
+1 error generated.
 
-Conclusion: I'm re-picking the original patch in v3, and will drop the
+Caused by commit
 
-nfc: nci: fix uninit-value in nci_core_init_rsp_packet()
+  763d78b5dbba6 (bfs: Fix data integrity writeout issues)
 
-Thank you both for the contribution and sorry for the complications!
-David
+I have used the tree from next-20260723 instead.
 
-> 
-> [1] https://lore.kernel.org/all/20260527052625.3309581-1-yun.zhou@windriver.com/T/
-> [2] https://lore.kernel.org/all/20260624224455.999374-1-sam@bynar.io/
-> [3] https://lore.kernel.org/all/20260519013042.3459906-1-yun.zhou@windriver.com/T/
-> [4] https://lore.kernel.org/all/20260522021326.1164807-1-yun.zhou@windriver.com/T/
-> 
-> Was there something wrong with my version, or was it just a mechanical conflict 
-> resolution?
-> 
-> Thanks,
-> Yun
-> 
-> On 6/29/2026 9:15 PM, Mark Brown wrote:
->> Hi all,
->>
->> Today's linux-next merge of the nfc tree got a conflict in:
->>
->>    net/nfc/nci/rsp.c
->>
->> between commit:
->>
->>    075f88b7d3b5c ("nfc: nci: fix uninit-value in nci_core_init_rsp_packet()")
->>
->> from the nfc-fixes tree and commit:
->>
->>    1d5fcb66b07a3 ("nfc: nci: fix use of uninitialized memory in CORE_INIT_RSP 
->> parsing")
->>
->> from the nfc tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->>
->> diff --cc net/nfc/nci/rsp.c
->> index 6b2fa6bdbd14b,85c3ff2b78cd9..0000000000000
->> --- a/net/nfc/nci/rsp.c
->> +++ b/net/nfc/nci/rsp.c
->> @@@ -50,7 -50,8 +50,8 @@@ static u8 nci_core_init_rsp_packet_v1(s
->>        const struct nci_core_init_rsp_1 *rsp_1 = (void *)skb->data;
->>        const struct nci_core_init_rsp_2 *rsp_2;
->> +     /* Ensure that the status field can be accessed. */
->>   -    if (skb_headlen(skb) < 1)
->>   +    if (skb->len < sizeof(*rsp_1))
->>            return NCI_STATUS_SYNTAX_ERROR;
->>        pr_debug("status 0x%x\n", rsp_1->status);
-> 
+--VaRGOxspEO0MwK6+
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-David Heidelberg
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpmayAACgkQJNaLcl1U
+h9Ayqwf/cAhvAiGZ7cWOU+mgA3joTxn1aeE763LmrJ0gywSxiDiT/F1dv9LMQ31b
+n0ozwcu+QXG6a04fELjRTBYdbGsmbI/ddA8pSeqyJgjIsKb+2ickhMd03ltFr9DA
+YwZcMOoa6rxcZtfxcHaVj0KmrPnIduCkrL9VCFRvwj73dTflVbycdWyAYZtuiv24
+3MYdRTnHlTqumGk9seIDU1h8ZpL1ov9vx/P99lD+kD3MNFz50UUPEXoDVrWA9RBj
+Y/oyyc7aws+Zrxh0TwCuyymiqpgLXrEFFqIb/lrLHLK9bi1VHfEgxwV0t4eKfLY4
+E20qeMse9odLvD8XeKbSHmZUk563eQ==
+=DRCu
+-----END PGP SIGNATURE-----
+
+--VaRGOxspEO0MwK6+--
