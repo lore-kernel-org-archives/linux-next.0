@@ -1,75 +1,84 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CB9BE63;
-	Sun, 26 Jul 2026 17:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6D314A4F0;
+	Sun, 26 Jul 2026 17:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785085330; cv=none; b=Tu/FKOBMTn44d4uFmdNBtP5Koh01lyTtZWwnEzOTlLtFYU9TNpyoIfCAuPpvnJo0FpbPbpPLQsjmRcYBLVUYTqpdRjv8993JQc7EOM6fFnWTI1UkZrl0Ie5am/Z7ck0rDfbu0tXnbAvX39DeI8Kel351Zm/Bx+M4ZQfWIoeAtGs=
+	t=1785087296; cv=none; b=ntofmbKPgxDwGPFm0UJGk4Lcma97Nx/QQCNeqaAW5VvKdrh4sdAPYKcg6v79DEWJGei1NaM6icXNB7lhV7SIUoGJGf1az1f12jUN6p4IqPav0fEsG2P7Kzuku1TSdKeyMP9hO6WMWyh+r13pV99Yobv6yEgWCcNtLfQObGzGv1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785085330; c=relaxed/simple;
-	bh=H5ahAGUABcTvY/yUtF+jhkvA3wyRVDcr2FDZ0Ll09BM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UYdWtTjufVVfKsHVdDWXpvlTgi+hLp7XDOrUNK6pLMxyueKR0APkbjjBXdpez4KJfWo0aEhrIkHdCVhRclf/WJcSWTg+f6UGiMldKMr3IMx4+1u8DCsRIgOTblzfBaKtdhV9k9VpMDyxm9dpXNajDg7JmRLrHaAx3qZxWJUS6wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=oD0wFeqB; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1785087296; c=relaxed/simple;
+	bh=RFnSYcWMKLeB+MzHLKLi47xb/nMZNHBxvoznpBhhDfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VXTgq+6mtQYMeJ1PwMAN+ktErS5xs/ffg58Dd+XjDgXW2QsfmNcKvQkM8dc40h360cDKVmtutELVEdjm6pknoTcb/ONYNSjrbsnIT5nozsBd8yuj9LPFoCi4bTsfpFuwtJMginql5KCt/sZjDvy7yO3bcwhu05pwGxMhTQrvl08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYshM3l8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="oD0wFeqB"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=H5ahAGUABcTvY/yUtF+jhkvA3wyRVDcr2FDZ0Ll09BM=;
-	t=1785085328; x=1786294928; b=oD0wFeqB/VA5A2ImN/HdPSaEbSdSnciN6L+0tQndMs1dWNf
-	FudQGkpSssst7vdN5fm65+H/d9kG517/MQ9qTELZ0pnPWRPVousqDQov/6kOYUmQnM1Z3FR1rveBy
-	aYTqtXhz7D/JW8+cTUA/6G917sIHBmBvB76rx+8GXqlzyPJGalSmeAvKhTJHCU2Ju08WwUh5uWR57
-	wV/yvBty43H0Mzfyos9keyphC2pawZZDW1b5n4R+M2ZSyeQ9gN96pXedb/9U4GodEmzhXJ1HJK4A/
-	ujHok3dgMOymTkyIG+MzN7HKzTzfUt/fn+OaC55hINTtKvT2Ua7pmPTvFayXNr9Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__ECDSA_SECP256R1_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1wo2El-0000000Fk94-45cl;
-	Sun, 26 Jul 2026 19:02:04 +0200
-Message-ID: <56333069155a692ac1a363e84814494684e0c01d.camel@sipsolutions.net>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- origin tree
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Zhao Li <enderaoelyther@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Miri Korenblit
-	 <miriam.rachel.korenblit@intel.com>, Pagadala Yesu Anjaneyulu
-	 <pagadala.yesu.anjaneyulu@intel.com>
-Date: Sun, 26 Jul 2026 19:02:02 +0200
-In-Reply-To: <20260726164156.71624-1-enderaoelyther@gmail.com> (sfid-20260726_184208_981630_F422AA81)
-References: 
-	<b99e4a1428546030b61883063b9542dd953a69f2.camel@sipsolutions.net>
-	 <20260726164156.71624-1-enderaoelyther@gmail.com>
-	 (sfid-20260726_184208_981630_F422AA81)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 (3.60.2-1.fc44) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYshM3l8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24641F000E9;
+	Sun, 26 Jul 2026 17:34:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785087295;
+	bh=jEU1NacOxO2W7FgRGd27sl8SGdgN3JN5eqmHpu1Jzr8=;
+	h=Date:From:To:Cc:Subject;
+	b=hYshM3l8dRUdTYbYrlx5DNzedZARDFEF77/oplafmK8B90ob++DQ3v9DMGejF2u/L
+	 F6/kvMefjm7E8625ghd5OH+/DASK71TjXJn+L4L9k1TjxyAcRIMGuKmdEo9L/UcuH3
+	 eQdbknPRhhQ52QvfXuEZoSIo1L2oF87lwyKCOG54z6j1JBtGOdUYucqJdJBAMhO4d0
+	 Z3RbOFVdNkL6JekhQVFTzTN2QD4rFtOWhU9uG+yoRwqq1j4IJCDjQlxAzohc2u+sBW
+	 O4X4CiHvTlzOt6418jKUxLDPdEmJTuxMGd6VIPtIG4CZc30t+2SUVwvtNyYqf6sQLh
+	 sQbEwxnHaoFaQ==
+Date: Sun, 26 Jul 2026 18:34:51 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the driver-core tree
+Message-ID: <amZFO8eUhS9xhfCs@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="luvkLv54j6pJ/nYG"
+Content-Disposition: inline
 
-On Mon, 2026-07-27 at 00:41 +0800, Zhao Li wrote:
->=20
-> For the record, destroy_assoc_data already does both. Since f13e573ab3f12
-> moved drv_mgd_complete_tx() into ieee80211_destroy_assoc_data(), that lab=
-el
-> notifies the driver before the link is torn down, then abandons. No
-> additional path would be needed. The impact is negligible either way, so =
-I
-> agree it is not worth touching now.
 
-D'oh. Now I even remember I asked Anji to do that... Oops.
+--luvkLv54j6pJ/nYG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Well, it's not merged yet, so I guess I can update my suggested merge
-resolution and send a message...
+Commits
 
-johannes
+  4e63c0582e2ae ("base: Remove unused DMA_FENCE_TRACE Kconfig symbol")
+  45dfa004893df ("driver core: soc: Unregister bus on early device registration failure")
+  ba3dedcf3bd47 ("software node: Fix software_node_get_reference_args() with index -1")
+  c3a280ff728a9 ("debugfs: warn if file creation failed due to uninitialized debugfs")
+  06553566a841c ("kernfs: Replace strcpy(s, "../") with memcpy(s, "../", 4)")
+  d996995a0ffb8 ("kernfs: simplify kernfs_name_hash()")
+  32e21e9509915 ("docs: ABI: sysfs-uevent: add missing bracket")
+  38f5745f49e44 ("arch_numa: remove redundant nodemask clears in numa_init()")
+  8cfe7ad274bb4 ("driver core: attribute_container: Unwind device_add() on attr failure")
+  6e328b4a208f7 ("drivers: base: Remove statistics group if encryption group not created")
+  c37ab60d55e34 ("device property: Refactor to use RAII approach")
+  1900692555826 ("device property: fix infinite loop in fwnode_for_each_child_node()")
+  10864921212fc ("driver core: avoid repeatedly printing the same 'Fixed dependency' log")
+
+are missing a Signed-off-by from their committers
+
+--luvkLv54j6pJ/nYG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpmRToACgkQJNaLcl1U
+h9ClxAf+Jpsc2NS/hyZHb0a390uJR9FEqXWwil98mHG2RQjX2UFnS7qCpAjCpWM0
+F0lVUFoFIzSbV4nto9FZWdx5Vw267iQlS6q8D67Md3pFsT5pv+IQLTwGAv3H6ZUx
+gXiUxirQYPEehsbgL+0VwZ2SwynEpyFq2UFFBEkKMkwkrY5MJNOcd9jfj0rTCh61
+BpLzgxqBy8RzBDaA0u643jHg+iAFJZG7gaxUplNieKpKtxOldbDtEtK5vkfAFcyQ
+GIJE5vNq62Z6NprBxTsc0xcGwPRWbxMBvbaO+UqgeaQq2m7wLmb5Xk1EEFgibL/O
+Uuxd36iezQuPNEs0M20lBv5cbXTGAA==
+=HiaC
+-----END PGP SIGNATURE-----
+
+--luvkLv54j6pJ/nYG--
