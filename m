@@ -1,43 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF9D231832;
-	Sun, 26 Jul 2026 21:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3556189F43;
+	Sun, 26 Jul 2026 21:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785101658; cv=none; b=YTI+rFdG+WU4FS79zZHKoUc9PwkdRsqRL2uTKyLfrrqq9gR6MFZTU1xJrAiN6VhSPEh6BJ9W7ByWHyX+c/peR3X8Bj4/X3TGjGaX7+d2dXKd/mLfANeS3fF0YgmvVfBEudsrQEQutyy1NTjUOgoMeblUNMT85DKItp395SzhGs4=
+	t=1785103023; cv=none; b=dBGKClMs7V2MR7mq85DUd4UTtuCZNX8VMk/VjhJON+5p0pIZ3ORAzv/qRbTWyQF8O8MsDalyjBMnqZ7G5USYnnoDnF+j56KrvcIIvFHOeEi5+zzpnJd6WlxsAeRldrKIbw82GxvzQeG7UR/od/XwXEDp0Swr9FO7jtvmnwqovDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785101658; c=relaxed/simple;
-	bh=u4ZjOOV5CbRCEpoOQ3TfC5Bl6HgGIXTjIHhDGdvO4y8=;
+	s=arc-20240116; t=1785103023; c=relaxed/simple;
+	bh=ew8hxf1ryECbzlUnwwJWuANFCPRrpjO6ZKp+ItSM0GE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kO/Z37xP1eL/covAu+Sdc2mWT9yC3O4nB6CX12BTHwQrWsQpcAviB5QxytuBA4iQZmCdh3K1XoSMvpapJRDEp8tQVkiMwBbgrBPhfjFrRgmcYxWpJyt5zIlpD1rJDkfvezbwrA7wBAiQJlPGJaE4HJUkDROH9us8p6wOf/oEekw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EedqMFG+; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=tcJq4n9DbhYzyDiSnde7d48eJwk9DTtuVo8CP1lp/MEX29uiEPa4qR0FScxAPnjdl7fUp6L4170R5KZbzEc6XUIfF78en1Rk7LCIad645Ri5rOJ6YeKgqpKqUK7o83xpfj6MvsGzDcAyF28iPvn9iAwbcxj4V0DILj9GWSpZ8lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFsV9pp4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EedqMFG+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC9B91F000E9;
-	Sun, 26 Jul 2026 21:34:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFsV9pp4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54D711F000E9;
+	Sun, 26 Jul 2026 21:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785101657;
-	bh=VDNsDisEpPZ51Bnzggu4tSDj7bHKPLqheNNdgZVfMsw=;
+	s=k20260515; t=1785103022;
+	bh=dOvjsh1gzkjEjNRgyoHCy5+8RtI/nCp3HxRC5VV1+AQ=;
 	h=Date:From:To:Cc:Subject;
-	b=EedqMFG+5whcDA90MmJys8yfyjweR5AH3usECzPcl2V6Tb0vYzt/lSrOA2VQV3uOU
-	 6d4Xxz1lgQdlTVxlqwbX5Ji6oyOlGvxU0ve3i2KE7PH8mmqUV0zeFbEdrTZ4Au3nP7
-	 DyB/kwlFmfSZXOY3m1fmBdOI6Wa1DvnLhnk2dzbltGl84Ufoe6l/pQA+leumn2ZljX
-	 2+gPEGa9q2zL1+Wb4bv6zir2JjLpy8MN6JF3DAAZVIp08k5HjW0JQl+JRo+SlmexD+
-	 EKD76tskrm0aNkzxKaHP+LjSK8s0w/N8Nl7vpiFHtxz4Nbd2yGXgJ78VYduinmSrxG
-	 4TxXp8Pg5Q10A==
-Date: Sun, 26 Jul 2026 22:34:13 +0100
+	b=iFsV9pp47HP7vQwmzv+j+NJDTF00NMvzI3kKocYarrlHWNyIsMJO7G90KNk/Qm79b
+	 PeUsRjT6x/yWe9zB4IMorO4fSQiZlrg3VpK1gcFkJIGVucTe9Gm3neQ5L80b3IcvgE
+	 OZ9tvwW857ozxv8+j+8/rAhPsF22WDD/nR+Vw4uld0/2F203/t1GTqmiFDPEYofd64
+	 3do4Jn0Am+hPzd4NuhcsGQWxvMFlr0O3XCvqkv4XWwfEkVdoYPls/LYgaVRKlCE4tB
+	 8/Jb2XC0CXS9y+4vKJ+4nqxWL008jgcCAlQr1mv2pENOjkCfSGsHzX8hI1grilFD8p
+	 f/HWbMQQhTN3w==
+Date: Sun, 26 Jul 2026 22:56:57 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>
-Cc: David Matlack <dmatlack@google.com>,
+To: Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the liveupdate tree with the
- liveupdate-fixes tree
-Message-ID: <amZ9VX7-88zU7E6-@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Raag Jadav <raag.jadav@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Subject: linux-next: manual merge of the driver-core tree with the drm-xe tree
+Message-ID: <amaCqZUpvgKLe9gC@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,30 +47,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CgQKESAoJv8Q0reV"
+	protocol="application/pgp-signature"; boundary="rwmnMha3dOiUJ1ZJ"
 Content-Disposition: inline
 
 
---CgQKESAoJv8Q0reV
+--rwmnMha3dOiUJ1ZJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the liveupdate tree got a conflict in:
+Today's linux-next merge of the driver-core tree got a conflict in:
 
-  include/linux/liveupdate.h
+  drivers/gpu/drm/xe/xe_i2c.c
 
-between commit:
+between commits:
 
-  459873adf5e90 ("liveupdate: Reference count outgoing FLB data")
+  5d8ed6b64220a ("drm/xe/i2c: Allow per domain unique id")
+  9420abf8dbc2e ("drm/xe/i2c: Drop manual VF check")
 
-=66rom the liveupdate-fixes tree and commit:
+=66rom the drm-xe tree and commits:
 
-  36882f3392395 ("liveupdate: Reference count outgoing FLB data")
+  e766abbc5191b ("drm/xe/i2c: use platform_device_set_fwnode()")
+  0f485f88656af ("drm/xe/i2c: use device_create_managed_software_node()")
 
-=66rom the liveupdate tree.
+=66rom the driver-core tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,78 +81,61 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined include/linux/liveupdate.h
-index 63ea5417de849,6051abc0612ce..0000000000000
---- a/include/linux/liveupdate.h
-+++ b/include/linux/liveupdate.h
-@@@ -25,6 -25,7 +25,7 @@@ struct file
-  /**
-   * struct liveupdate_file_op_args - Arguments for file operation callback=
-s.
-   * @handler:          The file handler being called.
-+  * @session:          The session this file belongs to.
-   * @retrieve_status:  The retrieve status for the 'can_finish / finish'
-   *                    operation. A value of 0 means the retrieve has not =
-been
-   *                    attempted, a positive value means the retrieve was
-@@@ -45,6 -46,7 +46,7 @@@
-   */
-  struct liveupdate_file_op_args {
-  	struct liveupdate_file_handler *handler;
-+ 	struct liveupdate_session *session;
-  	int retrieve_status;
-  	struct file *file;
-  	u64 serialized_data;
-@@@ -247,6 -249,14 +249,14 @@@ void liveupdate_flb_put_incoming(struc
-  int liveupdate_flb_get_outgoing(struct liveupdate_flb *flb, void **objp);
-  void liveupdate_flb_put_outgoing(struct liveupdate_flb *flb);
- =20
-+ /* kernel can internally retrieve files */
-+ int liveupdate_get_file_incoming(struct liveupdate_session *s, u64 token,
-+ 				 struct file **filep);
-+=20
-+ /* Get a token for an outgoing file, or -ENOENT if file is not preserved =
-*/
-+ int liveupdate_get_token_outgoing(struct liveupdate_session *s,
-+ 				  struct file *file, u64 *tokenp);
-+=20
-  #else /* CONFIG_LIVEUPDATE */
- =20
-  static inline bool liveupdate_enabled(void)
-@@@ -299,5 -309,17 +309,17 @@@ static inline void liveupdate_flb_put_o
+diff --cc drivers/gpu/drm/xe/xe_i2c.c
+index a26c38bb17a15,5b0026bdb1c60..0000000000000
+--- a/drivers/gpu/drm/xe/xe_i2c.c
++++ b/drivers/gpu/drm/xe/xe_i2c.c
+@@@ -93,15 -93,7 +93,10 @@@ static int xe_i2c_register_adapter(stru
   {
-  }
+  	struct pci_dev *pci =3D to_pci_dev(i2c->drm_dev);
+  	struct platform_device *pdev;
+- 	struct fwnode_handle *fwnode;
+  	int ret;
+ +	u32 id;
+ +
+- 	fwnode =3D fwnode_create_software_node(xe_i2c_adapter_properties, NULL);
+- 	if (IS_ERR(fwnode))
+- 		return PTR_ERR(fwnode);
+-=20
+ +	id =3D (pci_domain_nr(pci->bus) << 16) | pci_dev_id(pci);
  =20
-+ static inline int liveupdate_get_file_incoming(struct liveupdate_session =
-*s,
-+ 					       u64 token, struct file **filep)
-+ {
-+ 	return -EOPNOTSUPP;
-+ }
+  	/*
+  	 * Not using platform_device_register_full() here because we don't have
+@@@ -109,11 -101,15 +104,15 @@@
+  	 * uses that handle, but it may be called before
+  	 * platform_device_register_full() is done.
+  	 */
+ -	pdev =3D platform_device_alloc(adapter_name, pci_dev_id(pci));
+ +	pdev =3D platform_device_alloc(adapter_name, id);
+- 	if (!pdev) {
+- 		ret =3D -ENOMEM;
+- 		goto err_fwnode_remove;
+- 	}
++ 	if (!pdev)
++ 		return -ENOMEM;
 +=20
-+ static inline int liveupdate_get_token_outgoing(struct liveupdate_session=
- *s,
-+ 						struct file *file, u64 *tokenp)
-+ {
-+ 	return -EOPNOTSUPP;
-+ }
-+=20
-  #endif /* CONFIG_LIVEUPDATE */
-  #endif /* _LINUX_LIVEUPDATE_H */
++ 	ret =3D device_create_managed_software_node(&pdev->dev,
++ 						  xe_i2c_adapter_properties,
++ 						  NULL);
++ 	if (ret)
++ 		goto err_pdev_put;
+ =20
+  	if (i2c->adapter_irq) {
+  		struct resource res;
 
---CgQKESAoJv8Q0reV
+--rwmnMha3dOiUJ1ZJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpmfVQACgkQJNaLcl1U
-h9C8FQf/ZfUOircLIjFF1GDpuBypaIoJpu7ZKjh+pQkHFW3NTPMhwYOu+hqbmQgS
-599E5C6RNiRwgNVAOHxf2Gq5BD6Y0WfhxRNjXmcGk2wNHYcZIYJUp4X1aopcrdVA
-4Dpvyb/g367zvkvBaaa7RACKyuRRXo9di9cOlcH/Wy3wtRRoXhX47A+kCeLeILFG
-W5dbeR9kiPdQ9J5gkqU/1+SJkBLyr2CujTIypM9F4y5r7wDaFkmpE7UWkZtarHL1
-egvoTOnNwtvU1P5hVEaRQo9iqnvf2n9sjA477DD6oLhlWSyR+jPKjiva7+hn2J78
-7wpI54pMTozujHkJURIBmem0KCU55Q==
-=tx8U
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpmgqgACgkQJNaLcl1U
+h9CuZAf/V+TMKTxsxBu/1gQjqIN/cqeNIvnEjKaB05svSoZtt98IwOIU3wP+dD+Z
+yTBE8E+BnpNI8MWKiziy2MYWdv0GQo+6LmuFWeVaBN0abPqRGZfZHuRoAqhL/uy4
+HaJVQb9Cn02ZYjBnG5GikTExXqLikkSj8I9YBi+3tcoXGZAWB0mRIOylZMqbkC2R
+7FQZ5jo0YMaIfjhOP9W4rX86rqiAzg5O03wOobw0haOZwYiTswZrqoonsHpLhIqZ
+8hX4e06Y60tT+Th3fO4bYBKtTgYD6EvRP9+EOKeGnX+0EFK8pBGMd46CGi5LBqMH
+A22LLDxNl0PgVzEqvurB5Si9XVgxQQ==
+=SjWj
 -----END PGP SIGNATURE-----
 
---CgQKESAoJv8Q0reV--
+--rwmnMha3dOiUJ1ZJ--
