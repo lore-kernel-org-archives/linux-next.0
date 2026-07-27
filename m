@@ -1,83 +1,83 @@
 Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4750F1B87C9;
-	Mon, 27 Jul 2026 12:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8A1379989;
+	Mon, 27 Jul 2026 12:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785154710; cv=none; b=tr9rljpeSPz1hLv6icnrfVf7JqoWLMxMQdCXF0c1LXKzFc7LdcotM/GP1PGlRFAqjVpquyO0WKgYM/70Z/N2WFB2UrRnRfrd8zkLc70RXNFCfC2JH+OWT7qQMAAq99HtvyetTLdh4gnoUBTwRyf5EXNfqxQ5T4V68diIow1ot3c=
+	t=1785154734; cv=none; b=cVsdl/7uRkCO2GGLblx0PJdmKz3GBXCkBrPRAwi4oaRchZPZaIToZ/utne9w45Xo4B4gPjKuJr8GTgFAFz4FBpn7os5QVzx7coNFitB0u97+BGEms28guDZfa8eSv84wJAJa38rKZjzTfxUG+jd4+TjvpURNznWdrw4pngYce0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785154710; c=relaxed/simple;
-	bh=5kG9hGDNeDvcS8ocbKNSzgQDn73+1zpx1C6Lb7TogHg=;
+	s=arc-20240116; t=1785154734; c=relaxed/simple;
+	bh=JqE12VZcVG7EmAR7AdgpEe7RIshunbo0FP+7Oo/A9u8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5J/UDNspbi4uxOk93re1SX3Wt8xWPdW6e7C7nJ6xr87rrzrBzosMyHQt27jePB2sy31F8Tzi+noDigpVLAbV48Y5YxqAqlTRPJQS7mt2Lfot8wbPXIPCZFSBmdEmDLM4qdtoBINu3njzSBZrLRCtr2/yWVdb7cXkvxOGSbI8jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=RKGhPL2r; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dJOmKrBl; arc=none smtp.client-ip=103.168.172.147
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSv/PDqFACN2Rl/x3Vsibqm0tFv4W97/Fhlaex0feZS8//iooHm1ZMk3msfEESfY/uvPpELCEZbty7YDHG9HS+GpoWDljuhhWgiW50MC7lAfNjUQA9HZhBgHkUs8WwEP+ZWmhvRI9XeuMQ6GreCwGM2N74T49KBPTkKoL2DgqMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=gPcO6kp4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=a0hwNv5X; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="RKGhPL2r";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dJOmKrBl"
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 56A71EC016E;
-	Mon, 27 Jul 2026 08:18:27 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Mon, 27 Jul 2026 08:18:27 -0400
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="gPcO6kp4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a0hwNv5X"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5DD2AEC016E;
+	Mon, 27 Jul 2026 08:18:52 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Mon, 27 Jul 2026 08:18:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
 	:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1785154707; x=1785241107; bh=051J8KYpi2
-	Hjleq048xfHL9y92bEPlSlCIpqHl0BUl0=; b=RKGhPL2rPd0a+IZMVul4XJwuce
-	n7zn3x1ARh5xUvKhEPR2mcB2mBOhy3F0bs9UidtHE2NHaX1cQM0/utLnUMqk5Cxz
-	20Ft89w7CybNDQ6mLlU+JghNZl+C1lqjAD2FHf0Ro1463ibLbaKreCGchxvbQ4pr
-	tN84i1FLC1OJyfbxYKmInR6s9GTfeZmbz1BMNpfrgdAlM6wnSGN7FVEn9F0Ay8nr
-	ocvztalytuuZfFwGjXW0kxqRHyVF31yBhyt51WX2xeIvVz3LwCi7ULew6kwyV8aV
-	GmhIWauEmqyjMKaFt4UYGTrPcne4zkExDoJcH9yN0c5Yn4O1+I077h0AsKaQ==
+	:subject:to:to; s=fm2; t=1785154732; x=1785241132; bh=03vrwcQBrO
+	xUcuulhRU14I4Z24psTXnB9z9t6AvSCLc=; b=gPcO6kp4ZqqS8cSmidJ2o8Zt72
+	cEx9qVvjG2Nft+pCYQ/BqznlHT1mv1/j9+Y+e30MIvIfex69pUFa8HiEAUsbsfhx
+	xNPlY7+VX7oZKWA6/wqxudhTkXgvUhBZpIOWdaCa3S/mYAMouvAevxCoJWPQym1Z
+	TihOsv2nZifIzyH1lB/VxHC+zDqQvgTqR+KF4hL95CA8MzcJlh+0Lgnxcj4pdRIt
+	JwTUvjgxzH8VnnwoWI5NoS9ck60NF8NUhSoD1dZzZCSjCorLGDSCqdGxMwWfWwo4
+	QJPLxp+iCBTBfvrAS8aiQl9cJOM/L0VEJoMd94UChHNlC0ZN1wAXjwtYsoQg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1785154707; x=1785241107; bh=051J8KYpi2Hjleq048xfHL9y92bEPlSlCIp
-	qHl0BUl0=; b=dJOmKrBlwXDmRIgTOGh8FqZp5YsQErBeAsTZFjiNwoH/zl/kx8C
-	/Bf7CIjNRW4+4ZDerzv5OjUiewyHqyKEie2CFX/FxkbCEnYw23BX+dcIk3oydiM3
-	BkJ1VUEmuWejaB/m595K4FbfQvtRtWSsY7TJAJH0Xz0IgT0yP6/zbndFiCDpxqwC
-	YBw+/sqlOc6m+v1OxtBMkTICqi+Xoir75DzrqSF6tIdWjSvq6c2EvD+thrM9tcy8
-	iV0I00mmBbORuc0JrUvvySS5uX+arYV7vY0RUc2ezpXt5C8qlivnY5nJTUcn6lNv
-	ai0L7L6cb5elFne21hZzPkExePND6PP7YSQ==
-X-ME-Sender: <xms:kkxnanplXX9__qgn7N0ilPjHyHuCjKeoIvyNWkl-GwHSCIc0T7KYqQ>
-    <xme:kkxnaoBP0s6F2NfCDmSI3zJ_vg4jvXR21Zin9punTeoYIDs8kJH7qKMAzO1E19i1s
-    tNuWI_Wh_Eg-WHaU95hd3gsbWJDPtByhZEeZjgGlSBtkYgWUg>
-X-ME-Received: <xmr:kkxnagf76MmMcMW1KPlEkeaVcRiLxcMd4nn-fgoFACOI3K4hWNBgMKlRpiBZmK5rZN-AZNlPMRs9PJwYE8oq8xv_Mw>
+	1785154732; x=1785241132; bh=03vrwcQBrOxUcuulhRU14I4Z24psTXnB9z9
+	t6AvSCLc=; b=a0hwNv5Xoim5u0uA36mM3ldnzNnz7fHl3JAqSd5XGpYzpxU0cn9
+	cWtyBLIg3QK6btyoM9sDsbe7C8ZhhgjaICZLCpsGLdSG7NC8OQHpLk6UOIaEHoTP
+	zdtT0g6wXILt1pgyw8njPZSeN6DacDdwX7/xwC92I6bGh5XTyoHJSEwNsRqB3X89
+	0ekOu9evHXP/5yJ6dD74FeydGjANTxem117tnyB8uJ/s+pAVMLTZG40PPkUqv0Kt
+	POy7Vgg6pLsz6vhOAoAqyq/ZnGMJZ2LM52PqhfKX5azFV0bs292Ver/Put6ddpQ6
+	tobSnIqidSBrsgFEylpwAT96Vp40cI8M3PA==
+X-ME-Sender: <xms:q0xnakPTrrb8AFHbPuz2bs501Oibk0BDp3NQFGOke5ulPZVo8Ruxfg>
+    <xme:q0xnanpxrMMSPBgAHZf9dkecIZ2HhBnOJ9MfeEWYMPL2Vd43fBxKraKuCvfoJ57kw
+    rNs42EBw4BV-_MjSyz58ITZBln59dFO1JjzyqdiGU8CFnF8>
+X-ME-Received: <xmr:q0xnavLPxSD31zeE1udY-o_JSPwyqg1qj_OnHleNSLWRFGxnbZZufpn3u92fdU3GXv0dNJzO2HgGo5od7Tji3xQnNQ>
 X-ME-Proxy-Cause: dmFkZTEscXvekO+kWICadqRkLQdOcuIB4jah5CLAFrrcY8eyJc/38qzmYQPIkHKO5UmTUY
     ZD0X+Bz79fVHbVyZj2SUmf1JgstDhg8kD2/9e8FmwkDjY+l0A71jrBwpubAbIUXS5QnNkj
     ygA98nJumeTv6pUfWjwyi/oGbJILfFJGRgS6QtnhXBQl9Wc3BKwbBl7nISQ4ifpKcRFdb+
     nEFet/JXT8579DqwGibCj84vd2RYj5ff/ukieVdWbErn46DV3Idf1+r6wNSZd6TRfuvOLo
-    iEierFIVz2lzsSu2MbCwhZwEEjRmFR1noRmyh6xo74KzGVXL013l6aIjc35P56Vft/mUJw
-    hyTAUZL91J3eUNYUKonnN+1Va9LEsY2cPOiR32ZHddoqAEeaoxmwp8w0+LZCIVdFcRIKI3
-    UAxsFfioWDlD9zP2XAAX18cJt8Q+4egb2mh32NCMiTofq/zK5ObU3VEIhFl5ltEH9FQVYH
-    QRDviZe9ftMXdkqoZ/keMB8Z3s7TMabAP4Xno8dY5lOIMkcp9/ApHtughQussPRvOztrRI
-    g006SFmfGcxCKPx9VGKh+J1Oguy3B2Cu+FRKXkwBwMCmDI4MICpwkSJocSAQoU9uohbsnD
-    KUOcQreJHMRHOFKzAC8QtMQhVu54pGMguSKdRbO7WU3b6ADvtdb0R1gmlCXg
-X-ME-Proxy: <xmx:kkxnaovLnCsFcACZxqigMUjl2kk0D0uksr6_-nAskzlJXYC6iKKvIw>
-    <xmx:k0xnaviWrzd-kKXnQK6cpGrYUqW-r_2Zowir9Nv6kSGXldfeUTKPMQ>
-    <xmx:k0xnaotjsMG8n1GWS5_5o4t1qzeM966FuZCjOGAmtIyyt2476Sc-CA>
-    <xmx:k0xnai8nm7m2CuXcjeDUT_7V6IaeMo-kugPwwowIziHwzymh11ObcA>
-    <xmx:k0xnasL-ggjAwMqDejVXedToM8qJ19QwaWJqOpbl0d4T_Kb_uPwXJpp1>
+    iEierFIVz2lzsSu2MbCwhZwEEjRmFR1noRmyh6xo74KzGVXL013l6aIjc35P56Vft/mUII
+    VTaDb4W7Dc/cAy4GNTajtIXT8ay7Rrxo7F1cIvOnATMw2tYyO80PdFGaVe1755BZATAEqj
+    h6gZUQnTXdrPAXFmBYRMD7KXW6hWewZ+KoCbZUHeBVYl58+0WQ5HqIkLt2pof5hCHT5J5K
+    gjnePcVu3BvP/PFhnZhJMtEzdT2fWLgjmpm2scfptZ0do4a6P03oox8VAIAiIGFKA54zjO
+    OJOmIUHTxB9aicoTQ5m23cjobAMOk5zDj7jzSG8IMPgWpfm6OlAUrYH8uIufayzk3bQR46
+    MIfZbt3Mw9FSlPYdDqUZhpO+lcNoR3s4FcMe7C8XiG5vEEZd7aNDe014eFHw
+X-ME-Proxy: <xmx:q0xnam3p6tlCFTzpRSLb5kOowe1dOqZfQjewnIkx1kwryQb2q1oQ5A>
+    <xmx:q0xnagWfsFTaDB5u_Cl77WBwAJ1LmO2dANKY7gJgVI0J-MaztFg8Ew>
+    <xmx:q0xnapx6Lt0ivZaqiSb-3X2TZgtB2nCtCdlodx8xNS5Ubq0xl4fGpw>
+    <xmx:q0xnanzkLF7VhwB3CGUhxWtVjKoayQxtWln2RMu2qa8jiBGVRdqSTw>
+    <xmx:rExnaul3jneFOnlCHcARKQ3N5tFVUw3LHrg6l9MnTBFoezcfeMWwub_0>
 Feedback-ID: i787e41f1:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Jul 2026 08:18:26 -0400 (EDT)
-Date: Mon, 27 Jul 2026 14:18:15 +0200
+ 27 Jul 2026 08:18:51 -0400 (EDT)
+Date: Mon, 27 Jul 2026 14:18:40 +0200
 From: Greg KH <greg@kroah.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jahnavi MN <jahnavimn@google.com>,
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Runyu Xiao <runyu.xiao@seu.edu.cn>,
+	Vu Nguyen Anh Khoa <khoavna.tin.2225@gmail.com>
 Subject: Re: linux-next: manual merge of the char-misc tree with the
  char-misc.current tree
-Message-ID: <2026072736-handclasp-bubbly-c879@gregkh>
-References: <al40WiyRukYGQ68S@sirena.org.uk>
- <al8tlTE4KgeZ92PQ@google.com>
+Message-ID: <2026072730-vitamins-humorless-95e0@gregkh>
+References: <al40xMdxeEHvedyh@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -86,111 +86,65 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <al8tlTE4KgeZ92PQ@google.com>
+In-Reply-To: <al40xMdxeEHvedyh@sirena.org.uk>
 
-On Tue, Jul 21, 2026 at 08:28:05AM +0000, Alice Ryhl wrote:
-> On Mon, Jul 20, 2026 at 03:44:42PM +0100, Mark Brown wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the char-misc tree got a conflict in:
-> >
-> >   drivers/android/binder/thread.rs
-> >
-> > between commit:
-> >
-> >   bb66b1a345253 ("rust_binder: only print failure if error has source")
-> >
-> > from the char-misc.current tree and commit:
-> >
-> >   c61f3ad2213cf ("rust_binder: Implement BINDER_DEBUG_FAILED_TRANSACTION")
-> >
-> > from the char-misc tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
-> > diff --cc drivers/android/binder/thread.rs
-> > index bc0ef8927905c,a51821dde0adf..0000000000000
-> > --- a/drivers/android/binder/thread.rs
-> > +++ b/drivers/android/binder/thread.rs
-> > @@@ -1273,14 -1295,25 +1295,24 @@@ impl Thread
-> >                           inner.extended_error =
-> >                               ExtendedError::new(info.debug_id as u32, err.reply, source.to_errno());
-> >                       }
-> >  -                }
-> >
-> > -                     pr_warn!(
-> > -                         "{}:{} transaction to {} failed: {err:?}",
-> > -                         info.from_pid,
-> > -                         info.from_tid,
-> > -                         info.to_pid
-> >  -                binder_debug!(
-> >  -                    FailedTransaction,
-> >  -                    "transaction {} to {}:{} failed {:?}, code {} size {}-{}",
-> >  -                    if info.is_reply {
-> >  -                        "reply"
-> >  -                    } else if info.is_oneway() {
-> >  -                        "async"
-> >  -                    } else {
-> >  -                        "call"
-> >  -                    },
-> >  -                    info.to_pid,
-> >  -                    info.to_tid,
-> >  -                    err,
-> >  -                    info.code,
-> >  -                    info.data_size,
-> >  -                    info.offsets_size
-> >  -                );
-> > ++                    binder_debug!(
-> > ++                        FailedTransaction,
-> > ++                        "transaction {} to {}:{} failed {:?}, code {} size {}-{}",
-> > ++                        if info.is_reply {
-> > ++                            "reply"
-> > ++                        } else if info.is_oneway() {
-> > ++                            "async"
-> > ++                        } else {
-> > ++                            "call"
-> > ++                        },
-> > ++                        info.to_pid,
-> > ++                        info.to_tid,
-> > ++                        err,
-> > ++                        info.code,
-> > ++                        info.data_size,
-> > ++                        info.offsets_size
-> >  +                    );
-> > -                 }
-> >               }
-> >           }
+On Mon, Jul 20, 2026 at 03:46:28PM +0100, Mark Brown wrote:
+> Hi all,
 > 
-> I think you're missing a closing } after the binder_debug! call.
-> Otherwise LGTM.
+> Today's linux-next merge of the char-misc tree got a conflict in:
 > 
-> error: this file contains an unclosed delimiter
->     --> drivers/android/binder/thread.rs:1743:3
->      |
-> 453  | impl Thread {
->      |             - unclosed delimiter
-> ...
-> 1290 |                 if let Some(source) = &err.source {
->      |                                                   - this delimiter might not be properly closed...
-> ...
-> 1316 |             }
->      |             - ...as it matches this but it has different indentation
-> ...
-> 1743 | }
->      |  ^
+>   drivers/misc/nsm.c
 > 
-> error: aborting due to 1 previous error
+> between commit:
+> 
+>   ce1fed11d18e1 ("misc: nsm: only unlock nsm_dev on post-lock error paths")
+> 
+> from the char-misc.current tree and commit:
+> 
+>   937cd823bb2c9 ("misc: nsm: do not unlock mutex before locking it")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --combined drivers/misc/nsm.c
+> index 3960506eb7ab3,bb254ee65b840..0000000000000
+> --- a/drivers/misc/nsm.c
+> +++ b/drivers/misc/nsm.c
+> @@@ -243,7 -243,7 +243,7 @@@ static int nsm_sendrecv_msg_locked(stru
+>   		goto cleanup;
+>   	}
+>   
+> - 	msg->resp.len = len;
+> + 	msg->resp.len = min_t(unsigned int, len, sizeof(msg->resp.data));
+>   
+>   	rc = 0;
+>   
+> @@@ -365,9 -365,8 +365,8 @@@ static long nsm_dev_ioctl(struct file *
+>   		return -EINVAL;
+>   
+>   	/* Copy user argument struct to kernel argument struct */
+> - 	r = -EFAULT;
+>   	if (copy_from_user(&raw, argp, _IOC_SIZE(cmd)))
+> - 		return r;
+> + 		return -EFAULT;
+>   
+>   	mutex_lock(&nsm->lock);
+>   
+> @@@ -413,7 -412,6 +412,7 @@@ static int nsm_device_init_vq(struct vi
+>   }
+>   
+>   static const struct file_operations nsm_dev_fops = {
+>  +	.owner = THIS_MODULE,
+>   	.unlocked_ioctl = nsm_dev_ioctl,
+>   	.compat_ioctl = compat_ptr_ioctl,
+>   };
 
-That trailing ) on the same indent line just looks odd to me, which is
-why I can see it's going to be easy to make this type of merge
-mistake...
-
-I've done this now in my tree so all should be good going forward,
-thanks!
+Thanks, looks good, this is now done in my tree too.
 
 greg k-h
