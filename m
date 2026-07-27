@@ -1,119 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A3B32C937;
-	Sun, 26 Jul 2026 23:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FA73E314A
+	for <linux-next@vger.kernel.org>; Mon, 27 Jul 2026 03:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785107953; cv=none; b=aSiLMMDW7+nhWshfSkwUPFyXLoNOwzkmhcs7Fccy4C/a2eRGeLiIyoMp+o+Sv4aWZSvADBQS6ha6wF+hVeLJ/WdWIq9kPV5mladKQd1ESgU6gT6LlR0J8FchEsGjX5GD65h4EoCOCvDfpaxdODEMRf7n/LvemFq11xjcCtE2AW0=
+	t=1785124709; cv=none; b=HDL4I0KYm03zAuqX5DQDN/hbjOVUp/roE6man1NJcscZCMpgNYPTV+c4FR9WSi2vEwQbzVyBRTfQchxD4I5WDrGHgmTCJw0Lpo4DsjGAY56zpj9xWAnwQc739YfjotgZDlvcBphgQSPuUCgHJywJAo8v/kjSuKNY8BQB/C2SvGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785107953; c=relaxed/simple;
-	bh=MrPU/iIDH3sOxb6lhnklaffWJH7zzpekEDsh+x1c6Pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PnumIeHp9d8Zj0X4lV9FEbpIgzNdi8ei1rKcp1SSNIqzt4ZfNCumMDo8hGMlxxTb9Am40Qf//3FyvMpCZnK7auAPsGZ43NxTWZ+PCR3cvVjA1/Ax8zNSsvSXzsG3albjrIrdVNxIbfqJTvF9yulMmooqPWt6RTqEB1b/RkApofE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNxydnHh; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785124709; c=relaxed/simple;
+	bh=LiuX1Dq1gmcfl2Zu2NUOfS34txZxB3lXhumGD5CDYhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A5xLXX7XXuXsYMQQ7omBwEoB8mGS2RF2sH0D/G/U3bI0VvaTiByDXz1kbwN/0pu0GfXC4UHXvzhGJBqq33PX7hsFrScrDpAhzj2z+ZQ2J1oIVaPSBcKuPAefzmsVBTjl9pxJ1ndOGLM+496LkBHzexFNEKrM7arVCTWIJqfZPaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=fail smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Zh+3hBg/; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mit.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNxydnHh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 929B21F000E9;
-	Sun, 26 Jul 2026 23:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785107951;
-	bh=AcURE4n1rPCwAdnsjIkUCphG43sYr+aPoFPBc9e19HU=;
-	h=Date:From:To:Cc:Subject;
-	b=CNxydnHhYTxODbxnQL6/c6cNP1OUWz9GOMXUFs049OzfyFXkWnvMisGDYkCrq5yWM
-	 QHApwqVJwnRFfPLavxb/HNP+7K03PvtLOUXc6lWR+jy5js/fdbO9ilpXTOEIEv66J+
-	 LP99xyyHW1AVzvI1/mSRoIQNRZbvYOblFDIqAHad7IxJKI8ZElU6m5Sjhydmy0vsSJ
-	 E/tInkR0y2P6WmMXkKa0b9zOwjpGGir/JMoNK7RFx608Opbo0j3BKbwzSxKAus6iNV
-	 u51Bi7L+2+CIJ2dw2X+FrB12lEcwOsM91gfZWL4qLuZfI7RtHXIfknVRkeC/KhMBD1
-	 LG2dZ+NaoVG5g==
-Date: Mon, 27 Jul 2026 00:19:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 26
-Message-ID: <amaV66xRPLA_k8-H@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Zh+3hBg/"
+Received: from macsyma.thunk.org (pool-173-48-129-101.bstnma.fios.verizon.net [173.48.129.101])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 66R3vS9n006831
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 Jul 2026 23:57:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1785124653; bh=ItgPvuvyqAAGBJx+2HAp9XvX82ec8ui7c3ZW93EpwMk=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Zh+3hBg/fnZZ1R7UCfO+Af9Vx7+QMrN+gAfRBo30zc0rQbSiG/VoVGS/eVxagpm5C
+	 ZB72rYqg2g7WRNqH/dHGumlPSUXQZzJE/Ws32zCs7CgScMjNGQ+pugy4sLLverRYtV
+	 WaMyWwgQFPHaiUYm/R/qoUqN2ntZ8yeXc3PFeEFivjgVZLp4uMq1oITbp+ndna6Zpo
+	 2LC3aFRGXLDk3UmJNPjBuS4xiYfXgltroyPynZyMmCVh10ToOoWq76r9LQQ+somZzW
+	 OkGvaJjMZb7PMrNAt0wjHjp+7K+RKYyjeyU8NC0sC9Wiz7Tiujeq+MMlEDPmhEIowv
+	 0EbruKzkPfgHg==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 5C1C3C25AE3; Sun, 26 Jul 2026 23:56:28 -0400 (EDT)
+Date: Sun, 26 Jul 2026 23:56:28 -0400
+From: "Theodore Tso" <tytso@mit.edu>
+To: Mark Brown <broonie@kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Aleksandr Nogikh <nogikh@google.com>, Boqun Feng <boqun@kernel.org>,
+        Gary Guo <gary@garyguo.net>, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
+        will@kernel.org, longman@redhat.com, mingo@kernel.org,
+        gregkh@linuxfoundation.org
+Subject: Re: Policy regarding linux-next only changes
+Message-ID: <ambVmT31R5e8c5g4@mit.edu>
+References: <c0bd6bc6-17de-468d-850d-df9955e2c142@I-love.SAKURA.ne.jp>
+ <CAG_fn=UEo8PNvjAcTTqmskfPrJNSjshhuXsR_PaH0-YLWwMTRw@mail.gmail.com>
+ <bc3703bd-65ee-4182-a742-56603d9b9bac@I-love.SAKURA.ne.jp>
+ <amEAzMTbA9R9HgN7@mit.edu>
+ <2c903636-532f-47b5-9894-00470f235682@I-love.SAKURA.ne.jp>
+ <amNsDFyTbsyAASjt@mit.edu>
+ <58689827-9211-4f26-9777-51c0b5e1eebb@I-love.SAKURA.ne.jp>
+ <CANiq72nXO0noq7qqLqvQuuAGjP1DE+k8=C6sZ7DZ2xYFCTSPPA@mail.gmail.com>
+ <8c3d90d5-747e-451b-bdcb-1cfe1d5fce53@I-love.SAKURA.ne.jp>
+ <0e5ea495-07a2-4f83-8fd7-c90563bc12c4@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fVZoSJTCTChf/yav"
-Content-Disposition: inline
-
-
---fVZoSJTCTChf/yav
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <0e5ea495-07a2-4f83-8fd7-c90563bc12c4@sirena.org.uk>
 
-Hi all,
+On Sun, Jul 26, 2026 at 06:49:44PM -0500, Mark Brown wrote:
+> The other side of this is that the reason people are noticing that you
+> have added these patches is that you are causing breakage and disruption
+> for them that catches them by surprise, a lot of what's coming through
+> here is that you need to work actively with other people.
 
-Changes since 20260723:
+I will note that the last person who attempted to push changes to
+other subsystems via their own tree was Kent Overstreet.  That was
+considered **extremely** anti-social, and after people complained
+Linus agreed to reject any pull request that had changes outside of
+bcachefs.
 
-The vfs-brauner tree acquired a build failure, I used the version from
-next-20260723 instead.
+This is slightly different, in that it is pushing broken patches into
+linux-next, instead of Linus's tree, but I think there is a similar
+precedent.  If someone is doing something abusive, it doesn't matter
+whether it's because they think they are doing something where the
+means justify the ends (whether it's "I fix syzbot bugs" or "I make a
+file system which doesn't eat your data").  If you do things in an
+antisocial way, Maintainers are *not* obligated to work with you, and
+while you can appeal to Linus, you might not like the resolution....
 
-The amdgpu tree acquired a conflict with the drm-fixes tree.
+      	      	     	       	   	 - Ted
 
-The tip tree acquired a conflict with the mm-hotfixes-unstable tree.
-
-The liveupdate tree acquired a conflict with the liveupdate-fixes tree.
-
-The char-misc tree acquired a conflict with the drm-xe tree.
-
-The char-misc tree acquired a conflict with the drm-rust tree.
-
-The fastrpc tree acquired a build failure, I used the version from
-next-20260723 instead.
-
-Non-merge commits (relative to Linus' tree): 8374
- 7774 files changed, 386851 insertions(+), 121366 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---fVZoSJTCTChf/yav
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpmlesACgkQJNaLcl1U
-h9ABuAf9FU9C0iS0m9gVEb9xxsrZS7wlDzegBnvVv9cxLD5rCvILDbKhR7J2FwnT
-X4QCDXywq7DTWuUkC8/5Unf8OgLIsYiNQ3bUJfb2tuepAp/VP+uDe/Tq0uYt/aSj
-+bnN1lRBhfW7QY6Um0t4sCV/5rEJbAzOQoWBPCszdR4j8Jn88PpuYa49ymkXzqFK
-fA7EB/5A3lt40oBviT5H1A8jD9RBrGeYf33vfMR5JfG3uVr3rvnVXqZelFNnp3VY
-j/1JzhSTCOET/3U11ZOPmKWYRYLnJ4VaqAskGFr0hOBCasflP5aCLXJzt0TyPR0s
-yRsUQdYhpuw3U8R5F7PtJLjgQCG+ZQ==
-=PhfF
------END PGP SIGNATURE-----
-
---fVZoSJTCTChf/yav--
