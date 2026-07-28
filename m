@@ -1,118 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF5846EC9C;
-	Tue, 28 Jul 2026 18:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EE346F4B8;
+	Tue, 28 Jul 2026 20:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785264505; cv=none; b=SsiQg3TQHCzONwkOw+idXQ2ixlF07MG6Zkj4V6aJPARl2eHF5e+alFQLIjp3tPJt4SPhsbe9uOgAlSae05fFxjmcoJ56XiRQ5Na+Y5tktLg5BH6rtU86QXSnn1ps2LBTS5tjojlhwvcIWiQzoiDcyUew4gD8El5LoEehYmUjy1M=
+	t=1785271415; cv=none; b=TG5Nej/JA899G+g6BIud6Yncp0wKH1VlQvA0aBAQyrR/ok798hysFSkmqvECuHScm1E9NSjpGeABlQS/24/Sj/AlIfX2RKDEUfHCOsTuree8HRErwX00j48k+LFnvOW0LYQbiYivG0a+pI5a44Kv8gBehkMiuiWhGcmnMdg3ASc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785264505; c=relaxed/simple;
-	bh=/6fSyHEOCicH44w/Kr8EJ/PaUm9LcpN2WXVS5B1rT/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d8nYQRbctHHp7pixm90mZ9/ASJc3SGsQYeK65m9g6Yn8XQpJHBxH2d7aXzuW4kYoxLgcm6YgsEvUUaIRwwN4EILHF+u//soMpE8q232i5gXT7YBKWf0iTYvlhStBMYlhXuw/gdte0DyOeehakJkcG0hsDQPsHkbirDjJbjBbzAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8btqEuI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785271415; c=relaxed/simple;
+	bh=q/SqOhxC0tModFZVSnVokzdWDjgfsZ2xXaCfy+/dL/Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NCw7sc27xmCKa1aSZ2sNUe6LeNvlTy1r/qLrOuz774SeIjy4oZaTNYKL/vL8JDmnveMuIUCmhkY4wG1bC9KMweGlGa95osnIbyYqpqw+zQQvhkpNHg6vATy1qViqOisgy016QkR4MbEW9lk76A8o99mVxZj2UjrLZhvpOGvGJNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VYTz7A7N; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8btqEuI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C361F00A3F;
-	Tue, 28 Jul 2026 18:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785264504;
-	bh=OxVVNk2NvBblSqGKzmyc8JdW+x+MwYzX2/66uaKdovA=;
-	h=Date:From:To:Cc:Subject;
-	b=l8btqEuIb4K/8C6IlzWtb7nCDa749FOe5SDnsumNxuEk3H/Fh5Glx1glCrJSUODzi
-	 ZwwPU0VQ3TJN59nDOo24FX8JTLZN+ax3GlPb8fbpYrViO5ahhQ1woP7Q2NUGviLvVs
-	 4a820yQN6g15AMyiNP+7J5zx7CXJtfHAue/IOWceRNjB+7MYYO2IZh21L+WxMq+CuO
-	 +dlTgTtIby9vsY5DpRhK9ZFGYpr/v5f4Nnoqg5AnHwArrUYPaJrOWqHGZ8F9KrWDa5
-	 mMkotbCiV+eS94EmytreHVcKZeljMBn7EO0tHvdi5SMj8r5U7j+bGmr76XuucI9l7X
-	 5B6mimeGyyyuA==
-Date: Tue, 28 Jul 2026 19:48:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 28
-Message-ID: <amj5dNpe1F0EESq1@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VYTz7A7N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E531F000E9;
+	Tue, 28 Jul 2026 20:43:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1785271413;
+	bh=ksr5HsUXADRxIcnz11RmRWZkKaHakhgIuZ4IlUV5D1g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=VYTz7A7Ntsmh9LrL3Ntl+pmPX+lEvDH16eNaeI8swq6mTZM35i2uqOsnp6rjvcSct
+	 a3Msc4kEBtb4XTB9rmHbj0WmF9fa+t0gms5MXjg7PaVsrPUKspwoteRyJ+uO/kv3VP
+	 bLQstN6JQ4JFTHzq1zTrTXGp3xWOCN9wGlhWsZ+A=
+Date: Tue, 28 Jul 2026 13:43:33 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Muchun Song <muchun.song@linux.dev>, Muchun
+ Song <songmuchun@bytedance.com>
+Subject: Re: linux-next: manual merge of the liveupdate tree with the
+ mm-unstable tree
+Message-Id: <20260728134333.906cb26da4b6dec083b21344@linux-foundation.org>
+In-Reply-To: <amjpLoJbHsqIAqJO@kernel.org>
+References: <amjYWetl6_WVyumg@sirena.org.uk>
+	<amjpLoJbHsqIAqJO@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cqSCdNA+JGBafz1m"
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 28 Jul 2026 20:38:54 +0300 Mike Rapoport <rppt@kernel.org> wrote:
 
---cqSCdNA+JGBafz1m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> I've got this for merging mm-unstable into liveupdate/next:
+> 
+> diff --cc mm/hugetlb.c
+> index ab4afc818e8cb,a77c3c1cb8943..0000000000000
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
 
-Hi all,
-
-Changes since 20260727:
-
-The vfs-brauner tree lost it's build failure but acquired a new one so I
-continued to use the tree from next-20260723.
-
-The bluetooth tree acquired a conflict with the origin tree.
-
-The liveupdate tree acquired a conflict with the mm-unstable tree, due
-to the complexity of the conflict I merged the liveupate tree from
-next-20260727 instead and will review tomorrow.
-
-The thunderbolt tree lost it's build failure.
-
-The staging tree acquired a conflict with the staging.current tree.
-
-The sysctl tree acquired a conflict with the mm-nonmm-unstable tree.
-
-Non-merge commits (relative to Linus' tree): 8877
- 8224 files changed, 400410 insertions(+), 126960 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---cqSCdNA+JGBafz1m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpo+XMACgkQJNaLcl1U
-h9BFrgf/TKK6TlgZVAyJQVRtckxzRc9j7BDRsHUdNRYv9tJWsBkoKAFqrXx/GGSA
-VsgXdbCZwhe6vLKJ4HScrjjIPZQhVgiXzqKc5spvfM0/7mYwRjAjAKe4rDBO0R+8
-f/EPbbkiBO/doxr38qjT1M/RGSeXauj3DFEb1SY1P9FAGAtz5OzDv+tWnlAv4gUO
-ktqPWgdhtRDaKYftkjcR7FZVbKWs3RVq3WQYKKCCa7hthGeYGGm4fH3fal5E1qoW
-94ky/QTyA5mg/0nTLffhVLoLP1RBwvZQw6sIqgzfC0UR6EMrMlEGKAK+/oRk6DkM
-UprOfJVtn2ij66bIA+DF179HJyh4rQ==
-=MAaJ
------END PGP SIGNATURE-----
-
---cqSCdNA+JGBafz1m--
+Well that's a pain.  I'll get the series "mm: Refactor bootmem gigantic
+hugepage allocation" into mm-stable in the next couple of days.  Can we
+then make this issue go away?
