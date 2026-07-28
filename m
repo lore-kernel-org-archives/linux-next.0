@@ -1,76 +1,77 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992A617A2E8
-	for <linux-next@vger.kernel.org>; Tue, 28 Jul 2026 00:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE38135A53
+	for <linux-next@vger.kernel.org>; Tue, 28 Jul 2026 00:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785198742; cv=none; b=YN27+bfMoLr8rl8yXrrSkl9FloJHzsXFs/deFlGYyqqiegqF0V2wYx55bfTgbogJVqVEsEuE9P9MtTpkkFGLV97FqlxDl5OI0hyaJNv9JT5wFfNbsDHT8ANu+2Z7g2B2TzkdEG+r2T0GZjpPnXJhVLujnFw7x24W4u729pNBwVo=
+	t=1785199920; cv=none; b=Fe5xBwsoOkK9pOWhmsKoFQ4NWs1wcvhrPh3M2nHF4eOTzhl/b4zjK0+/h5PvPcRFSn3v80eb1EdrvCfLR2tdSPzDxeP5ED/fgM6W6YwCOphFLigoxSypxbIJGk9Zmuzrc1+sstTAikwTZZA16dIvJb0BtyH9vtNPH5gxu7PqBos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785198742; c=relaxed/simple;
-	bh=Py3NE2dBA9D+wuyEQlhRPEbWAPlOdv9QpTay3xdbJqU=;
+	s=arc-20240116; t=1785199920; c=relaxed/simple;
+	bh=Z5GRTOSO0S9G9u7VZF3YwLNRY4a8OnVa7f57JM8Jl3E=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bWbgJXD2uu3zBCpQwJwIDFJnljY5XziHdRfsYlqHWW1l/y8Dtdlfrvr8VM/P7sjsBGBC0LBQsXKt4l6mANh6i3o1y3hz1EqbCm2CDvEx5QtTUosghO8MSJFmkbGJt+DT8CswTm8vR4uxh5IdK2FFaSfCss5WllIE7IAk+TaFzdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ng+LyGdv; arc=none smtp.client-ip=209.85.208.175
+	 Content-Type:MIME-Version; b=sNS721alkqul+aqU4u1YnrvXQwafwigqj/mZS8nmd7yGJ7b9+NEWkVtlPekHSmrHmn/3nTPzRKiqyo7i0BKh58VyQ+qp5u8//E4yVx45OFIxYxJQxMqCsNmHwrHy0zksm7AlEWblRZWm4Vz1JSvCNDjxciYmNw6pSGrYQQ4WdIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izMqkOr5; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ng+LyGdv"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39c7fd45465so28767721fa.1
-        for <linux-next@vger.kernel.org>; Mon, 27 Jul 2026 17:32:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izMqkOr5"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39c8dbf4f38so29067261fa.3
+        for <linux-next@vger.kernel.org>; Mon, 27 Jul 2026 17:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785198739; x=1785803539; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785199917; x=1785804717; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=sBKaaxjnGO8fOejWs/6cfNqroT5nasVGxgPviHoLMXs=;
-        b=Ng+LyGdv2HmLFIykz9nZrOLMmc9/mS0k+vAAA5vCrkqIQ31QUcJZB8Ol1ZNH4Jf8EO
-         nYVky4kT7WwQYlbTQhPBCZvxXrYrCfolRJiFnywlgeeZXTNcMJwOXrVfDX+whfsHtUsS
-         yue7Gs28C6ywZGOJFTtrUOfbL4rG0SrGYA1dHBGFh28MLWlm2WD+gQRe8u3x++H7Bs88
-         B6PC+0wf1jg1UjlRzv8WCsTOYihcHdi284I7nE+FsjoK3LCtidRzgjK5sMX/7vvi/5Kx
-         Jk2agsxro6toVzN7Zmk9kx4gLMRpbrdGs4sKy9R5a2YnO8XciNjahYkdlFHqtBE+ODif
-         +whQ==
+        bh=YyiWxM0l+pV+N+P60T/IcxD0yZfdk4dsxpPoSCJ6HvA=;
+        b=izMqkOr5JFmy/U1v9D9OCEyK+91238U8oTepcOD0103u9VQqrDl4zdDFZCbDKsu5of
+         a4M0bNkVRNws/F3rVejHqxHHvwtox4fcxDMOd9LZzUMtIv8JpxkZ44vY253xIeHqO+yY
+         ovxH4lgLNPX+GqVu1y0pH0orLx9A/Li9PdJElxUm2ryWLVgrB+xXtEZyqrGLs0QW53Kt
+         C+OzDFUm+KgVqhTlSkc/0y/W/6iUkQFA+Haeb6UjoUk1WkZs9oXrtvUBQfxPRRh7Vk08
+         JoRGPyM1XEfrEoS43COSVUtuDGwR8bEQDDnEwnvBsc58pDzh1wBKH3YtLy8YnVKrDPyh
+         srUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785198739; x=1785803539;
+        d=1e100.net; s=20251104; t=1785199917; x=1785804717;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=sBKaaxjnGO8fOejWs/6cfNqroT5nasVGxgPviHoLMXs=;
-        b=kLkO+R166DDPlJ50We2FkUfNn4vL+c9Wn8NMsAzis1rGTJ9mKNnSH8yT/o51XC4bEt
-         LRyxrec3AlaUNMu+LzaX9dL+Ho+G9+B/rrDZmKuTxd+hQ5+ieei1JjBlig0fJYvn0QBJ
-         TW7Nari3DE0V592jCKIqEXc5qUm9CvnKG24rD+XngVqILEDYK+6glPpQaEhIMrmba3Wf
-         hwjzEFomEuozAaiBc9KmU78h0gRYlLgblm1JBwAbpcmt8sfvj39WYD+BSv6WuAC18cXn
-         zJiP10J2etl37zZbqO4DzDWlnMhvJqIQuGdXzLh8iXU9Yy8WWwYeIiZAO/nqibRP3PlK
-         u4tQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rrkqi303ZmLd+OhSK4ge+I+kW+/eysq7k8Rx8yufTZdcqPfHOdoLWENOqfPmZqvnb27EBrbKxJ33O2F@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnWDY818hMBXW4BM5LvPpBt7dh6d9by5+qC8gxKCLbqB15mqT+
-	ZvU9Yo9j6LUAU/Hd3eCVbwjtb9CVTWBhg0ZiYrPS4LpN9nUeGgp5GWnc
-X-Gm-Gg: AR+sD13K5LeQqSJ7d2DE/9VEH5fUN8ogu2P77L5HYg/sAOT5L4E7dPgsKvHEzHGUs7i
-	PBl9KeMSn8JuIvr+ydnshswz0U8w4jxoeiKII5ewt76VZyGhJhSam4HHyDWwrNoQoRz0YAViMUV
-	uPwwAV0Dg2yHdaznCZk/t3IpMFxH4sFJto9KQ58owmLtqS8QfG4+amgjqhzJ6Y7g0WbnDt4NJ/e
-	DMapmZoW2ZpAPNlDm//lXoRQSJcuaGQruH8hsceqLnRGHJ7SKZyvaUzGP/anW3/NIWz9ZhZ93MK
-	7EytBrNJdKgVz8XVFL2HQSGNyWw8jJGC/ZktiaD/1Kga2uBREbaNOtO3Nf8qPgrzgmCAKhFhAVB
-	SNlEE0aBN5ozwJm/4wjoyUtR7WiidF7LrU3TT/2trVAlHmqG+dRbyZCUFFt+S6ml/54NM3zjHZu
-	ki5ZdKSQDD+hX3y/PBOGyg
-X-Received: by 2002:a2e:be88:0:b0:39d:b717:622 with SMTP id 38308e7fff4ca-39f51d08b09mr197501fa.12.1785198738328;
-        Mon, 27 Jul 2026 17:32:18 -0700 (PDT)
+        bh=YyiWxM0l+pV+N+P60T/IcxD0yZfdk4dsxpPoSCJ6HvA=;
+        b=a+eKi30B1ZNfECNKnjFzoUPlFINE863Tnu/fr+EldvuY0VfdhywtwoHFh9JiGgsgnS
+         jBsUF8GjpZIJbq+iVwIkzBne/8xB4Li4NJU0brWUEayGsFQdk505Hzqn71/kThitzBMb
+         zsgXsndsTJa2cvGXkxOCCxKAIMGHUKoqn4ofdf6IRROey+mZxI5L67IgEbIKwUxNEWo5
+         opDdPQIwl1UuAqY0UlcAZZ6Z11Ff4p+hU7i9P8q7iM750OkmlmsLrpvAhXC996ZG7y+m
+         iz/kQfj7ywBX1U70RD1Qe6O2LiaVCOxuX+KGDiUbIbyGsdu4qtPV8mosmt8/cN1myETW
+         vDIQ==
+X-Gm-Message-State: AOJu0YxftsgKc33SNSVBa5GQRlxe4cVy2BwdHUGdSN7riskV+UszC4K6
+	SIiaxwJwDp5o1/0e6b+YtPE8bt9Lib3PJBZKlyciKYBn+EPYhpkJI1in
+X-Gm-Gg: AR+sD12dAHlya3JLNFjiT6BwxlGmUe1DMcX/Y/YzZ+qOhDA3Z/mnMMBuC85v/OLR8/4
+	C7qqknH3bHNBifpTDu0wN9/XpDfYYdi9MlbFlEe2ETpnvscNLmWULhdQJU4hTgp1UU5Eyk6uA09
+	IvDCKKIW1WIJJwwryqETbYV34e8VjGqC/RkiZOLXPS0WVpWtGIlmzf/ov5t8XBsp6UtVspz3qPw
+	Iv7dGDhbu6n9ajYqeyg/l+h5BLu+9AC5fiDTfnhxA6RWHmvPhHOyyUp1humj9nmbJbn5rxxrzRZ
+	eJ+mzioeV57POxLwPhyHLxtB9Wx9fET4I59VxwH5YPSHPLIk2Aw664oj+2fzxYMSn0ZVD3Urd8h
+	MrTcgV0qKNCxO48eWQJXnGZLf17QOKzc53JLb02/2h/1q+8J/SK/xw4rPF2RdDPkvf8ffSRvo9/
+	dxFdmDj75a8w+IMeaxitij
+X-Received: by 2002:a05:6512:3407:b0:5b0:197b:9811 with SMTP id 2adb3069b0e04-5b2d023bef9mr31905e87.53.1785199916589;
+        Mon, 27 Jul 2026 17:51:56 -0700 (PDT)
 Received: from primary-ws.local ([188.234.148.119])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-39f22173117sm15700311fa.4.2026.07.27.17.32.15
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b2be077c14sm1758822e87.1.2026.07.27.17.51.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 17:32:16 -0700 (PDT)
-Message-ID: <e62097844d50d8392c44e8f3dc5aed73a64051c6.camel@gmail.com>
-Subject: Re: hang during shutdown in next-20260722+ with MT7925
+        Mon, 27 Jul 2026 17:51:55 -0700 (PDT)
+Message-ID: <ef1bc3d070c4156f1811c0c4a567ec98ac8fadaf.camel@gmail.com>
+Subject: Re: [PATCH] drm/amd/display: fix usage of DC_FPU_{BEGIN,END} with
+ PREEMPT_RT
 From: "mikhail.v.gavrilov@gmail.com" <mikhail.v.gavrilov@gmail.com>
-To: Bert Karwatzki <spasswolf@web.de>, Nicolas Cavallari
-	 <nicolas.cavallari@green-communications.fr>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, Felix Fietkau <nbd@nbd.name>, 
-	ryder.lee@mediatek.com, lorenzo@kernel.org, legale.legale@gmail.com, 
-	sean.wang@mediatek.com, shayne.chen@mediatek.com
-Date: Tue, 28 Jul 2026 05:32:14 +0500
-In-Reply-To: <20260724151419.26014-1-spasswolf@web.de>
-References: <20260724151419.26014-1-spasswolf@web.de>
+To: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	amd-gfx@lists.freedesktop.org, "# = v7 . 1" <stable@vger.kernel.org>, Alex
+ Deucher <alexander.deucher@amd.com>, Rafal Ostrowski
+ <rafal.ostrowski@amd.com>, Mario Limonciello	 <mario.limonciello@amd.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,  Thomas Gleixner
+ <tglx@linutronix.de>
+Date: Tue, 28 Jul 2026 05:51:53 +0500
+In-Reply-To: <20260727105059.75716-1-spasswolf@web.de>
+References: <20260727105059.75716-1-spasswolf@web.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.61.1 (3.61.1-3.fc45) 
@@ -81,191 +82,105 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2026-07-24 at 17:14 +0200, Bert Karwatzki wrote:
-> Since next-20260722 my debian sid system hangs when shutting down or
-> rebooting (No error message when monitoring the shutdown process via
-> netconsole). I bisected the error to commit
-> 13b7e6a96a00 ("wifi: mt76: Disable napi when removing device")
-> and reverting this commit in next-20260723 makes shutting down or
-> rebooting work normally again.
+On Mon, 2026-07-27 at 12:50 +0200, Bert Karwatzki wrote:
+> On PREEMPT_RT kernels kvzalloc_obj() can sleep because spin_lock is
+> converted to rt_mutex. dc_create_plane_state() can be called while
+> inside an FPU-guarded region, resuling in "scheduling while atomic"
+> errors on PREEMPT_RT kernels.
+> =C2=A0Fix this by calling kvzalloc_obj() with
+> DC_RUN_WITH_PREEMPTION_ENABLED().
+> Also fix the error path in dc_create_stream_for_sink().
 >=20
-> Wifi device:
-> 09:00.0 Network controller [0280]: MEDIATEK Corp. MT7925 802.11be
-> 160MHz 2x2 PCIe Wireless Network Adapter [Filogic 360] [14c3:7925]
+> Fixes: 3539437f354b ("drm/amd/display: Move FPU Guards From DML To DC
+> - Part 1")
+> Link:
+> https://lore.kernel.org/lkml/20260723123449.6494-1-spasswolf@web.de/
 >=20
-> Cpu:
-> $ cat /proc/cpuinfo
-> processor	: 0
-> vendor_id	: AuthenticAMD
-> cpu family	: 26
-> model		: 68
-> model name	: AMD Ryzen 9 9950X 16-Core Processor
-> stepping	: 0
-> microcode	: 0xb404035
-> cpu MHz		: 624.194
-> cache size	: 1024 KB
-> physical id	: 0
-> siblings	: 32
-> core id		: 0
-> cpu cores	: 16
-> apicid		: 0
-> initial apicid	: 0
-> fpu		: yes
-> fpu_exception	: yes
-> cpuid level	: 16
-> wp		: yes
-> flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr
-> pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext
-> fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl
-> xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq
-> monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c
-> rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a
-> misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext
-> perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpuid_fault cpb
-> cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp
-> ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms
-> invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma
-> clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec
-> xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local
-> user_shstk avx_vnni avx512_bf16 clzero irperf xsaveerptr rdpru
-> wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean
-> flushbyasid decodeassists pausefilter pfthreshold avic
-> v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku
-> ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg
-> avx512_vpopcntdq rdpid bus_lock_detect movdiri movdir64b
-> overflow_recov succor smca fsrm avx512_vp2intersect flush_l1d
-> amd_lbr_pmc_freeze
-> bugs		: sysret_ss_attrs spectre_v1 spectre_v2
-> spec_store_bypass srso spectre_v2_user vmscape
-> bogomips	: 8599.52
-> TLB size	: 192 4K pages
-> clflush size	: 64
-> cache_alignment	: 64
-> address sizes	: 48 bits physical, 48 bits virtual
-> power management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]
+> Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+> ---
+> =C2=A0drivers/gpu/drm/amd/display/dc/core/dc_stream.c=C2=A0 | 5 +++--
+> =C2=A0drivers/gpu/drm/amd/display/dc/core/dc_surface.c | 4 ++--
+> =C2=A02 files changed, 5 insertions(+), 4 deletions(-)
 >=20
-> Other pci hardware:
-> $ lspci
-> 00:00.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Root Complex
-> 00:00.2 IOMMU: Advanced Micro Devices, Inc. [AMD] Raphael/Granite
-> Ridge IOMMU
-> 00:01.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Dummy Host Bridge
-> 00:01.1 PCI bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge GPP Bridge
-> 00:01.2 PCI bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge GPP Bridge
-> 00:02.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Dummy Host Bridge
-> 00:02.1 PCI bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge GPP Bridge
-> 00:03.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Dummy Host Bridge
-> 00:04.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Dummy Host Bridge
-> 00:08.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Dummy Host Bridge
-> 00:08.1 PCI bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Internal GPP Bridge to Bus [C:A]
-> 00:08.3 PCI bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Internal GPP Bridge to Bus [C:A]
-> 00:14.0 SMBus: Advanced Micro Devices, Inc. [AMD] FCH SMBus
-> Controller (rev 71)
-> 00:14.3 ISA bridge: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge
-> (rev 51)
-> 00:18.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 0
-> 00:18.1 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 1
-> 00:18.2 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 2
-> 00:18.3 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 3
-> 00:18.4 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 4
-> 00:18.5 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 5
-> 00:18.6 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 6
-> 00:18.7 Host bridge: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge Data Fabric; Function 7
-> 01:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL
-> Upstream Port of PCI Express Switch (rev 25)
-> 02:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL
-> Downstream Port of PCI Express Switch (rev 25)
-> 03:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
-> [AMD/ATI] Navi 44 [Radeon RX 9060 XT] (rev c0)
-> 03:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Navi 48
-> HDMI/DP Audio Controller
-> 04:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd
-> NVMe SSD 9100 PRO [PM9E1]
-> 05:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Upstream Port (rev 01)
-> 06:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Downstream Port (rev 01)
-> 06:06.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Downstream Port (rev 01)
-> 06:07.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Downstream Port (rev 01)
-> 06:08.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Downstream Port (rev 01)
-> 06:0c.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Downstream Port (rev 01)
-> 06:0d.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
-> Chipset PCIe Switch Downstream Port (rev 01)
-> 08:00.0 Ethernet controller: Intel Corporation Ethernet Controller
-> I226-V (rev 06)
-> 09:00.0 Network controller: MEDIATEK Corp. MT7925 802.11be 160MHz 2x2
-> PCIe Wireless Network Adapter [Filogic 360]
-> 0b:00.0 USB controller: Advanced Micro Devices, Inc. [AMD] 800 Series
-> Chipset USB 3.x XHCI Controller (rev 01)
-> 0c:00.0 SATA controller: Advanced Micro Devices, Inc. [AMD] 600
-> Series Chipset SATA Controller (rev 01)
-> 0d:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices,
-> Inc. [AMD] Raphael/Granite Ridge PCIe Dummy Function (rev c1)
-> 0d:00.2 Encryption controller: Advanced Micro Devices, Inc. [AMD]
-> Family 19h PSP/CCP
-> 0d:00.3 USB controller: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge USB 3.1 xHCI
-> 0d:00.4 USB controller: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge USB 3.1 xHCI
-> 0e:00.0 USB controller: Advanced Micro Devices, Inc. [AMD]
-> Raphael/Granite Ridge USB 2.0 xHCI
->=20
->=20
-> Bert Karwatzki
-
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+> b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+> index dbc12640b01c..4ac835777b58 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+> @@ -233,8 +233,9 @@ struct dc_stream_state
+> *dc_create_stream_for_sink(
+> =C2=A0
+> =C2=A0fail:
+> =C2=A0	if (stream) {
+> -		kfree(stream->update_scratch);
+> -		kfree(stream);
+> +		if (stream->update_scratch)
+> +			DC_RUN_WITH_PREEMPTION_ENABLED(kfree(stream-
+> >update_scratch));
+> +		DC_RUN_WITH_PREEMPTION_ENABLED(kfree(stream));
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	return NULL;
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
+> b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
+> index 88e825a6582c..d5c6427796b6 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
+> @@ -85,8 +85,8 @@ uint8_t=C2=A0 dc_plane_get_pipe_mask(struct dc_state
+> *dc_state, const struct dc_plane
+> =C2=A0
+> *********************************************************************
+> *********/
+> =C2=A0struct dc_plane_state *dc_create_plane_state(const struct dc *dc)
+> =C2=A0{
+> -	struct dc_plane_state *plane_state =3D
+> kvzalloc_obj(*plane_state,
+> -							=C2=A0
+> GFP_ATOMIC);
+> +	struct dc_plane_state *plane_state;
+> +	DC_RUN_WITH_PREEMPTION_ENABLED(plane_state =3D
+> kvzalloc_obj(*plane_state, GFP_ATOMIC));
+> =C2=A0
+> =C2=A0	if (NULL =3D=3D plane_state)
+> =C2=A0		return NULL;
 
 Hi Bert,
 
-I hit the same hang on an MT7922 (mt7921e) and bisected it to the same
-commit, so it is not MT7925 specific.
+You may not be aware that the same allocation is already wrapped once,
+at the dcn32 call site:
 
-The cause is a double napi_disable().  mt7921e_unregister_device() and
-mt7925e_unregister_device() already disable all RX NAPI instances, and
-since 13b7e6a96a00 mt76_dma_cleanup() disables them a second time.
-napi_disable() is not idempotent - it leaves NAPIF_STATE_SCHED set on
-return, so the second call spins in usleep_range() forever.  Since
-mt7921_pci_shutdown() and mt7925_pci_shutdown() reuse the remove path,
-this is hit on every reboot and poweroff.  It is silent because the
-stuck task keeps sleeping and rescheduling, so neither the hung task
-detector nor the lockup detectors fire; sysrq-w during the hang shows
-the task parked in napi_disable() under mt76_dma_cleanup().
+  183182235f6d ("drm/amd/display: Wrap DCN32 phantom-plane allocation
+in DC_RUN_WITH_PREEMPTION_ENABLED")
 
-I have posted a fix, which is Nicolas' suggestion extended to mt7921e
-and with the then unused 'int i' removed:
+That one only covers the dcn32 DML1 path, while your trace goes through
+dcn401_validate_bandwidth() and dml21 - so wrapping the call site could
+never have caught your case.  Which is a good argument for guarding the
+allocation in the callee, as you do: dc_create_plane_state() is reached
+from every DCN and both DML generations.
 
-=20
-https://lore.kernel.org/all/20260728002048.19351-1-mikhail.v.gavrilov@gmail=
-.com/
+On dcn32 the two wraps now nest.  That is harmless, because
+DC_RUN_WITH_PREEMPTION_ENABLED() is conditional on dc_is_fp_enabled():
+once the outer instance has left the FPU region, the inner one expands
+to a plain call.  But it does make the dcn32 wrap redundant, and I
+think it should be dropped in a follow-up now that the allocation is
+guarded in the callee.
 
-I sent it as a separate thread so that patchwork registers it as a
-patch instead of a comment on the already applied commit.
+One thing that may be worth adjusting in the commit message: this is
+not only a PREEMPT_RT problem.  183182235f6d was needed on a plain non-
+RT x86 kernel. There DC_FP_START() takes fpregs_lock(), which disables
+local softirqs, and dc_plane_state is around 335 KiB, so kvzalloc_obj()
+falls through to the vmalloc path and hits BUG_ON(in_interrupt()).  So
+on RT any allocation inside the FPU region is illegal, while on non-RT
+it is specifically the large ones - two failure modes, one root cause.
 
-Here on MT7922 it is tested with KASAN and lockdep enabled: module
-unload and reload, reboot and poweroff all work again.  If you can
-confirm it on your MT7925, a Tested-by would be welcome.
+About the FPU register question raised by the review bot: as far as I
+can see it applies to every existing user of
+DC_RUN_WITH_PREEMPTION_ENABLED(), 183182235f6d included, so it looks
+like a property of the macro rather than something your patch
+introduces.  An answer from AMD on that would be useful either way.
+
+I have dcn32 hardware here (RX 7900 XTX) and can test the patch on
+non-RT if that helps.
 
 --=20
 Thanks,
