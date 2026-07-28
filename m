@@ -1,204 +1,272 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBBF43030E;
-	Mon, 27 Jul 2026 18:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992A617A2E8
+	for <linux-next@vger.kernel.org>; Tue, 28 Jul 2026 00:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785176158; cv=none; b=RiqSvIzfA2vphvDVUBlM1NPvcOr5DpMWJzrotx0gpESXl/2MuNmIH/JIv+ZKr0z6nVeA0gl684BMhzEtZNUBN23f7oHEL8rJ38J6XtBYe3jy6YMz+4TbdZK03n6rWxTEWIUcr/tPHEPmIk4fOHjcqlsnA6nKKRopIrsUZWRGBpE=
+	t=1785198742; cv=none; b=YN27+bfMoLr8rl8yXrrSkl9FloJHzsXFs/deFlGYyqqiegqF0V2wYx55bfTgbogJVqVEsEuE9P9MtTpkkFGLV97FqlxDl5OI0hyaJNv9JT5wFfNbsDHT8ANu+2Z7g2B2TzkdEG+r2T0GZjpPnXJhVLujnFw7x24W4u729pNBwVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785176158; c=relaxed/simple;
-	bh=VUkchxhs4LdpbHQbvsb0MdypzMMWiTI0a42GKFRT3mQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5poFwqYekPAuQa4h5sisG+9pkp+v15tpkKWLnHnOfQapaOaK1EA6qgQ89Sgh881qr9R54KWOd0oYuN9W+v6nWz3fHzNeQo3px3J2FHFHGR67uLNQ0sPb8UWc8hIyXk7sVVctVrQGEw9UIah53N9i7lDYt9nC3l8i4jTrRwL92A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKE+f14U; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785198742; c=relaxed/simple;
+	bh=Py3NE2dBA9D+wuyEQlhRPEbWAPlOdv9QpTay3xdbJqU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bWbgJXD2uu3zBCpQwJwIDFJnljY5XziHdRfsYlqHWW1l/y8Dtdlfrvr8VM/P7sjsBGBC0LBQsXKt4l6mANh6i3o1y3hz1EqbCm2CDvEx5QtTUosghO8MSJFmkbGJt+DT8CswTm8vR4uxh5IdK2FFaSfCss5WllIE7IAk+TaFzdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ng+LyGdv; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKE+f14U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA6E1F000E9;
-	Mon, 27 Jul 2026 18:15:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785176143;
-	bh=GSocQ8G10f6Jn//V+EamgxezvkvB7RwBTlKmhf4eFds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GKE+f14Uf/yTBCoGdGVB5PbsO3Eush5oVNa0iCyBFsK0+8mzxb4Hr8+gtE7/uK1Gj
-	 91tMWckMwapSXEkv8k3F6wU10D9HzzMBkK4aYbOUOy4GdD1lGPUExvmK/JfR55ZgD/
-	 EOOXqGxvC4i58oDBVEbavcPCAQ5V3RciZVmRJjICOqw9y1qhnqsSRKNbHF1QCYjHxJ
-	 4hkXU8PaUwvBn0AM1YPp5CKpU6pGR/pNtLvgjiqb68oyYfn0+WlGg677bas60bPNpt
-	 RNaP90Ge2cI4Sk577yCLhYQYzcIirCmNv6waITeI7nJN2hJ2d9XAk8DfiNPCFlIyE6
-	 JvScT/rLievTQ==
-Date: Mon, 27 Jul 2026 19:15:27 +0100
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the
- mm-hotfixes-unstable tree
-Message-ID: <amefSeVgVA1pTRdm@lucifer>
-References: <amZ9QR_9NYqq6JMy@sirena.org.uk>
- <ambxL-NxiYZ3vmpu@kernel.org>
- <amdA05gNFyzg4Uwc@lucifer>
- <amdXKvl8NMM9S6bB@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ng+LyGdv"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39c7fd45465so28767721fa.1
+        for <linux-next@vger.kernel.org>; Mon, 27 Jul 2026 17:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785198739; x=1785803539; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:content-type
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=sBKaaxjnGO8fOejWs/6cfNqroT5nasVGxgPviHoLMXs=;
+        b=Ng+LyGdv2HmLFIykz9nZrOLMmc9/mS0k+vAAA5vCrkqIQ31QUcJZB8Ol1ZNH4Jf8EO
+         nYVky4kT7WwQYlbTQhPBCZvxXrYrCfolRJiFnywlgeeZXTNcMJwOXrVfDX+whfsHtUsS
+         yue7Gs28C6ywZGOJFTtrUOfbL4rG0SrGYA1dHBGFh28MLWlm2WD+gQRe8u3x++H7Bs88
+         B6PC+0wf1jg1UjlRzv8WCsTOYihcHdi284I7nE+FsjoK3LCtidRzgjK5sMX/7vvi/5Kx
+         Jk2agsxro6toVzN7Zmk9kx4gLMRpbrdGs4sKy9R5a2YnO8XciNjahYkdlFHqtBE+ODif
+         +whQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785198739; x=1785803539;
+        h=mime-version:user-agent:content-transfer-encoding:content-type
+         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=sBKaaxjnGO8fOejWs/6cfNqroT5nasVGxgPviHoLMXs=;
+        b=kLkO+R166DDPlJ50We2FkUfNn4vL+c9Wn8NMsAzis1rGTJ9mKNnSH8yT/o51XC4bEt
+         LRyxrec3AlaUNMu+LzaX9dL+Ho+G9+B/rrDZmKuTxd+hQ5+ieei1JjBlig0fJYvn0QBJ
+         TW7Nari3DE0V592jCKIqEXc5qUm9CvnKG24rD+XngVqILEDYK+6glPpQaEhIMrmba3Wf
+         hwjzEFomEuozAaiBc9KmU78h0gRYlLgblm1JBwAbpcmt8sfvj39WYD+BSv6WuAC18cXn
+         zJiP10J2etl37zZbqO4DzDWlnMhvJqIQuGdXzLh8iXU9Yy8WWwYeIiZAO/nqibRP3PlK
+         u4tQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrkqi303ZmLd+OhSK4ge+I+kW+/eysq7k8Rx8yufTZdcqPfHOdoLWENOqfPmZqvnb27EBrbKxJ33O2F@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnWDY818hMBXW4BM5LvPpBt7dh6d9by5+qC8gxKCLbqB15mqT+
+	ZvU9Yo9j6LUAU/Hd3eCVbwjtb9CVTWBhg0ZiYrPS4LpN9nUeGgp5GWnc
+X-Gm-Gg: AR+sD13K5LeQqSJ7d2DE/9VEH5fUN8ogu2P77L5HYg/sAOT5L4E7dPgsKvHEzHGUs7i
+	PBl9KeMSn8JuIvr+ydnshswz0U8w4jxoeiKII5ewt76VZyGhJhSam4HHyDWwrNoQoRz0YAViMUV
+	uPwwAV0Dg2yHdaznCZk/t3IpMFxH4sFJto9KQ58owmLtqS8QfG4+amgjqhzJ6Y7g0WbnDt4NJ/e
+	DMapmZoW2ZpAPNlDm//lXoRQSJcuaGQruH8hsceqLnRGHJ7SKZyvaUzGP/anW3/NIWz9ZhZ93MK
+	7EytBrNJdKgVz8XVFL2HQSGNyWw8jJGC/ZktiaD/1Kga2uBREbaNOtO3Nf8qPgrzgmCAKhFhAVB
+	SNlEE0aBN5ozwJm/4wjoyUtR7WiidF7LrU3TT/2trVAlHmqG+dRbyZCUFFt+S6ml/54NM3zjHZu
+	ki5ZdKSQDD+hX3y/PBOGyg
+X-Received: by 2002:a2e:be88:0:b0:39d:b717:622 with SMTP id 38308e7fff4ca-39f51d08b09mr197501fa.12.1785198738328;
+        Mon, 27 Jul 2026 17:32:18 -0700 (PDT)
+Received: from primary-ws.local ([188.234.148.119])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-39f22173117sm15700311fa.4.2026.07.27.17.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 17:32:16 -0700 (PDT)
+Message-ID: <e62097844d50d8392c44e8f3dc5aed73a64051c6.camel@gmail.com>
+Subject: Re: hang during shutdown in next-20260722+ with MT7925
+From: "mikhail.v.gavrilov@gmail.com" <mikhail.v.gavrilov@gmail.com>
+To: Bert Karwatzki <spasswolf@web.de>, Nicolas Cavallari
+	 <nicolas.cavallari@green-communications.fr>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, Felix Fietkau <nbd@nbd.name>, 
+	ryder.lee@mediatek.com, lorenzo@kernel.org, legale.legale@gmail.com, 
+	sean.wang@mediatek.com, shayne.chen@mediatek.com
+Date: Tue, 28 Jul 2026 05:32:14 +0500
+In-Reply-To: <20260724151419.26014-1-spasswolf@web.de>
+References: <20260724151419.26014-1-spasswolf@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.61.1 (3.61.1-3.fc45) 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <amdXKvl8NMM9S6bB@kernel.org>
 
-On Mon, Jul 27, 2026 at 04:03:38PM +0300, Mike Rapoport wrote:
-> On Mon, Jul 27, 2026 at 12:33:30PM +0100, Lorenzo Stoakes (ARM) wrote:
-> > On Mon, Jul 27, 2026 at 08:48:31AM +0300, Mike Rapoport wrote:
-> > > Hi Mark,
-> > >
-> > > On Sun, Jul 26, 2026 at 10:33:53PM +0100, Mark Brown wrote:
-> > > > Hi all,
-> > > >
-> > > > Today's linux-next merge of the tip tree got a conflict in:
-> > > >
-> > > >   arch/x86/mm/pat/set_memory.c
-> > > >
-> > > > between commits:
-> > > >
-> > > >   7a7c16a2d2b4d ("x86/mm/pat: acquire init_mm read lock on attribute change to avoid UAF")
-> > > >   25a54f65ccbaf ("x86/mm/pat: allocate split page tables as kernel page tables")
-> > > >
-> > > > from the mm-hotfixes-unstable tree and commit:
-> > > >
-> > > >   5fce67641a3ed ("x86/mm/pat: Don't gate cpa_lock on debug_pagealloc_enabled()")
-> > > >
-> > > > from the tip tree.
-> > > >
-> > > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > > is submitted for merging.  You may also want to consider cooperating
-> > > > with the maintainer of the conflicting tree to minimise any particularly
-> > > > complex conflicts.
-> > > >
-> > > > diff --cc arch/x86/mm/pat/set_memory.c
-> > > > index 422ce7fba00c6,1f2a2ba9ce57d..0000000000000
-> > > > --- a/arch/x86/mm/pat/set_memory.c
-> > > > +++ b/arch/x86/mm/pat/set_memory.c
-> > > > @@@ -440,30 -441,12 +443,32 @@@ static void __cpa_collapse_large_pages(
-> > > >
-> > > >   	list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
-> > > >   		list_del(&ptdesc->pt_list);
-> > > >  -		pagetable_free(ptdesc);
-> > > >  +		/*
-> > > >  +		 * Only early alloc'd direct map should not be flagged PG_table
-> > > >  +		 * here and those shouldn't be collapsed. However be abundantly
-> > > >  +		 * cautious and handle the !PG_table case too.
-> > > >  +		 */
-> > > >  +		if (PageTable((ptdesc_page(ptdesc))))
-> > > >  +			pagetable_dtor_free(ptdesc);
-> > > >  +		else
-> > > >  +			pagetable_free(ptdesc);
-> > > >   	}
-> > > > +
-> > > > + 	spin_unlock(&cpa_lock);
-> > > >   }
-> > > >
-> > > >  +static void cpa_collapse_large_pages(struct cpa_data *cpa)
-> > > >  +{
-> > > >  +	/*
-> > > >  +	 * Take the mmap write lock on init_mm to:
-> > > >  +	 * - Avoid a use-after-free if raced by ptdump (which takes its own
-> > > >  +	 *   write lock on init_mm).
-> > > >  +	 * - Serialise concurrent CPA walkers.
-> > > >  +	 */
-> > > >  +	scoped_guard(mmap_write_lock, &init_mm)
-> > > >  +		__cpa_collapse_large_pages(cpa);
-> > > >  +}
-> > > >  +
-> > > >   static void cpa_flush(struct cpa_data *cpa, int cache)
-> > > >   {
-> > > >   	unsigned int i;
-> > > > @@@ -1254,22 -1237,16 +1258,20 @@@ __split_large_page(struct cpa_data *cpa
-> > > >   static int split_large_page(struct cpa_data *cpa, pte_t *kpte,
-> > > >   			    unsigned long address)
-> > > >   {
-> > > >  -	struct ptdesc *ptdesc;
-> > > >  +	pte_t *pte;
-> > > >
-> > > > - 	if (!debug_pagealloc_enabled())
-> > > > - 		spin_unlock(&cpa_lock);
-> > > > + 	spin_unlock(&cpa_lock);
-> > >
-> > > This should be
-> > >
-> > >  	if (!debug_pagealloc_enabled())
-> > >  		spin_unlock(&cpa_lock);
-> > >
-> > > >  -	ptdesc = pagetable_alloc(GFP_KERNEL, 0);
-> > > >  +	if (cpa->init_mm_read_locked)
-> > > >  +		mmap_read_unlock(&init_mm);
-> > > >  +	pte = pte_alloc_one_kernel(&init_mm);
-> > > >  +	if (cpa->init_mm_read_locked)
-> > > >  +		mmap_read_lock(&init_mm);
-> > > > - 	if (!debug_pagealloc_enabled())
-> > > > - 		spin_lock(&cpa_lock);
-> > > > + 	spin_lock(&cpa_lock);
-> > >
-> > > And this
-> > >
-> > > 	if (!debug_pagealloc_enabled())
-> > >  		spin_lock(&cpa_lock);
-> > >
-> > > >  -	if (!ptdesc)
-> > > >  +	if (!pte)
-> > > >   		return -ENOMEM;
-> > > >
-> > > >  -	if (__split_large_page(cpa, kpte, address, ptdesc))
-> > > >  -		pagetable_free(ptdesc);
-> > > >  +	if (__split_large_page(cpa, kpte, address, pte))
-> > > >  +		pte_free_kernel(&init_mm, pte);
-> > > >
-> > > >   	return 0;
-> > > >   }
-> > >
-> > >
-> > >
-> > > --
-> > > Sincerely yours,
-> > > Mike.
-> >
-> > Hmm, what's the status of the x86/mm trees on this though? AFAICT Denis's
-> > patch is still as-is and the spin_lock() vs. spin_[un]lock_irq*() issue
-> > raised in [0] is unaddressed?
->
-> Maybe it's best to take x86 cpa fixes via x86 tree in the end.
->
-> I collected them on top of the current tip/x86/mm:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=cpa-fixes
->
-> Can you please take a look and check I didn't miss anything? I'd like to
-> test it a bit more before sending out.
+On Fri, 2026-07-24 at 17:14 +0200, Bert Karwatzki wrote:
+> Since next-20260722 my debian sid system hangs when shutting down or
+> rebooting (No error message when monitoring the shutdown process via
+> netconsole). I bisected the error to commit
+> 13b7e6a96a00 ("wifi: mt76: Disable napi when removing device")
+> and reverting this commit in next-20260723 makes shutting down or
+> rebooting work normally again.
+>=20
+> Wifi device:
+> 09:00.0 Network controller [0280]: MEDIATEK Corp. MT7925 802.11be
+> 160MHz 2x2 PCIe Wireless Network Adapter [Filogic 360] [14c3:7925]
+>=20
+> Cpu:
+> $ cat /proc/cpuinfo
+> processor	: 0
+> vendor_id	: AuthenticAMD
+> cpu family	: 26
+> model		: 68
+> model name	: AMD Ryzen 9 9950X 16-Core Processor
+> stepping	: 0
+> microcode	: 0xb404035
+> cpu MHz		: 624.194
+> cache size	: 1024 KB
+> physical id	: 0
+> siblings	: 32
+> core id		: 0
+> cpu cores	: 16
+> apicid		: 0
+> initial apicid	: 0
+> fpu		: yes
+> fpu_exception	: yes
+> cpuid level	: 16
+> wp		: yes
+> flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr
+> pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext
+> fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl
+> xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq
+> monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c
+> rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a
+> misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext
+> perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpuid_fault cpb
+> cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp
+> ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms
+> invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma
+> clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec
+> xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local
+> user_shstk avx_vnni avx512_bf16 clzero irperf xsaveerptr rdpru
+> wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean
+> flushbyasid decodeassists pausefilter pfthreshold avic
+> v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku
+> ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg
+> avx512_vpopcntdq rdpid bus_lock_detect movdiri movdir64b
+> overflow_recov succor smca fsrm avx512_vp2intersect flush_l1d
+> amd_lbr_pmc_freeze
+> bugs		: sysret_ss_attrs spectre_v1 spectre_v2
+> spec_store_bypass srso spectre_v2_user vmscape
+> bogomips	: 8599.52
+> TLB size	: 192 4K pages
+> clflush size	: 64
+> cache_alignment	: 64
+> address sizes	: 48 bits physical, 48 bits virtual
+> power management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]
+>=20
+> Other pci hardware:
+> $ lspci
+> 00:00.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Root Complex
+> 00:00.2 IOMMU: Advanced Micro Devices, Inc. [AMD] Raphael/Granite
+> Ridge IOMMU
+> 00:01.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Dummy Host Bridge
+> 00:01.1 PCI bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge GPP Bridge
+> 00:01.2 PCI bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge GPP Bridge
+> 00:02.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Dummy Host Bridge
+> 00:02.1 PCI bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge GPP Bridge
+> 00:03.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Dummy Host Bridge
+> 00:04.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Dummy Host Bridge
+> 00:08.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Dummy Host Bridge
+> 00:08.1 PCI bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Internal GPP Bridge to Bus [C:A]
+> 00:08.3 PCI bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Internal GPP Bridge to Bus [C:A]
+> 00:14.0 SMBus: Advanced Micro Devices, Inc. [AMD] FCH SMBus
+> Controller (rev 71)
+> 00:14.3 ISA bridge: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge
+> (rev 51)
+> 00:18.0 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 0
+> 00:18.1 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 1
+> 00:18.2 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 2
+> 00:18.3 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 3
+> 00:18.4 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 4
+> 00:18.5 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 5
+> 00:18.6 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 6
+> 00:18.7 Host bridge: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge Data Fabric; Function 7
+> 01:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL
+> Upstream Port of PCI Express Switch (rev 25)
+> 02:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL
+> Downstream Port of PCI Express Switch (rev 25)
+> 03:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
+> [AMD/ATI] Navi 44 [Radeon RX 9060 XT] (rev c0)
+> 03:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Navi 48
+> HDMI/DP Audio Controller
+> 04:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd
+> NVMe SSD 9100 PRO [PM9E1]
+> 05:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Upstream Port (rev 01)
+> 06:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Downstream Port (rev 01)
+> 06:06.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Downstream Port (rev 01)
+> 06:07.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Downstream Port (rev 01)
+> 06:08.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Downstream Port (rev 01)
+> 06:0c.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Downstream Port (rev 01)
+> 06:0d.0 PCI bridge: Advanced Micro Devices, Inc. [AMD] 600 Series
+> Chipset PCIe Switch Downstream Port (rev 01)
+> 08:00.0 Ethernet controller: Intel Corporation Ethernet Controller
+> I226-V (rev 06)
+> 09:00.0 Network controller: MEDIATEK Corp. MT7925 802.11be 160MHz 2x2
+> PCIe Wireless Network Adapter [Filogic 360]
+> 0b:00.0 USB controller: Advanced Micro Devices, Inc. [AMD] 800 Series
+> Chipset USB 3.x XHCI Controller (rev 01)
+> 0c:00.0 SATA controller: Advanced Micro Devices, Inc. [AMD] 600
+> Series Chipset SATA Controller (rev 01)
+> 0d:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices,
+> Inc. [AMD] Raphael/Granite Ridge PCIe Dummy Function (rev c1)
+> 0d:00.2 Encryption controller: Advanced Micro Devices, Inc. [AMD]
+> Family 19h PSP/CCP
+> 0d:00.3 USB controller: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge USB 3.1 xHCI
+> 0d:00.4 USB controller: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge USB 3.1 xHCI
+> 0e:00.0 USB controller: Advanced Micro Devices, Inc. [AMD]
+> Raphael/Granite Ridge USB 2.0 xHCI
+>=20
+>=20
+> Bert Karwatzki
 
-Will take a look later to make sure :)
 
->
-> If we route your x86 fixes via x86 tree rather than mm tree there will be a
-> trivial conflict in definition of the new guards for mmap_lock, but other
-> than that they should merge nicely with generic and arm64 part of your UAF
-> set.
+Hi Bert,
 
-In terms of having the x86 fixes there it's fine, as long as the mm fixes land
-and the x86 fixes land, we're all good.
+I hit the same hang on an MT7922 (mt7921e) and bisected it to the same
+commit, so it is not MT7925 specific.
 
->
-> > Thanks, Lorenzo
-> >
-> > [0]:https://lore.kernel.org/all/al-MrKyIafA8QR_8@lucifer/
->
-> --
-> Sincerely yours,
-> Mike.
+The cause is a double napi_disable().  mt7921e_unregister_device() and
+mt7925e_unregister_device() already disable all RX NAPI instances, and
+since 13b7e6a96a00 mt76_dma_cleanup() disables them a second time.
+napi_disable() is not idempotent - it leaves NAPIF_STATE_SCHED set on
+return, so the second call spins in usleep_range() forever.  Since
+mt7921_pci_shutdown() and mt7925_pci_shutdown() reuse the remove path,
+this is hit on every reboot and poweroff.  It is silent because the
+stuck task keeps sleeping and rescheduling, so neither the hung task
+detector nor the lockup detectors fire; sysrq-w during the hang shows
+the task parked in napi_disable() under mt76_dma_cleanup().
 
-Cheers, Lorenzo
+I have posted a fix, which is Nicolas' suggestion extended to mt7921e
+and with the then unused 'int i' removed:
+
+=20
+https://lore.kernel.org/all/20260728002048.19351-1-mikhail.v.gavrilov@gmail=
+.com/
+
+I sent it as a separate thread so that patchwork registers it as a
+patch instead of a comment on the already applied commit.
+
+Here on MT7922 it is tested with KASAN and lockdep enabled: module
+unload and reload, reboot and poweroff all work again.  If you can
+confirm it on your MT7925, a Tested-by would be welcome.
+
+--=20
+Thanks,
+Mikhail
