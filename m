@@ -1,165 +1,119 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4786939021E;
-	Tue, 28 Jul 2026 17:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749E43B9DA6;
+	Tue, 28 Jul 2026 17:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785260342; cv=none; b=TESZHKLJoZMl6GeecNiuFtLrniS/lSXgZdWYy6re4/tX1y4KjBavG3pCKtTBy2+sOTnZzNtbYc4bby78lh4et1rQ7d5Ovtw6CN5WHVEvytqmShvnmlZ+j1VwyQZtFeZNNFBy1EXiAb1G9fqgKs9zqbkvz4BQeoQ8nBqzbqJ7Ll4=
+	t=1785260361; cv=none; b=G+Okb0BQh1t35VL7X7+0cAIOEmOUdP5gRjbuxouJ6qo2JfvW6Nr0Y+OL+C0DFDJM+KLlxNysINcew6uWS9kL20hlMgxc0OMzLg4IIKEletrTh1+dPc/3w8NiH0v9Xp/8Y5/Ma+hjVrNtxYvbayI9am/+IxZ4498JhMVuIoP6bIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785260342; c=relaxed/simple;
-	bh=oFabc/LYcEj0pGNlK8IWB0WE0l4CoDuX+Z5kE5GKpMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6tTE8ml6UZdLSbTEF+dTne/EfP8Ec2/Jf3xnLdWHRK4+tFSChD10tuluzBkkMl037tXUQnfktL5JIpbIIJPM3gvhOcFMjRewIAyhIZ/ti3R5yl8DfmWJoT6poy2xisXU+hhfBovRG1neeGQ8p7+TaXgjdGPTQw2r05L8zKy6wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoiAWTm6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785260361; c=relaxed/simple;
+	bh=uXzZZF8V9Y9FlJIQ2iSRviman/3ulGZieE8GR7asB4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=B6xqy0+zdhealM6SBLEuiVysYuuNxypqvgH+Hds5HXvZqnHNA5cn3ya9lwZVblxnQyZPxCH1P5pFJUykA6mtwv4WqVGjFzhVE99ucqSgkhgiaBaQNQGMRhld1LxrJVEQzfPmStxHZCivv29TtijUpIk0/D2ORWjRUNbHcqfnoig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7GWdlSz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoiAWTm6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54A201F00A3A;
-	Tue, 28 Jul 2026 17:38:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7GWdlSz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC87B1F000E9;
+	Tue, 28 Jul 2026 17:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785260340;
-	bh=2FcXUn1Af3n12QMugKSG/9avzLBWionOZvy+8+Yif6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UoiAWTm6KxT+Yw5DQusMMiwdr03MGIx6eCrh/O1K78tORNU5rR57TvmOHocoBwxZQ
-	 qleaCXPyXJgyFIc1HbLBRg5xaGFaf+p/phPXgqqvV4Vefzs41tAm2tvEqHvwurauu/
-	 /2a2OJcIhozYGPNNcLkJGxQqQf9UktDCG63w77hs3pOYvAEvKC8K3AMCIttukzgfww
-	 E1AN466Gm2AxrBWoIRTUV5ps25iCDhwOLGZuy3CpyKfbjXKh8oh0U8GQVlE/YWTzl3
-	 m4vCj8MIIUsjkmUuHMJ7rIMZdkmpxSBUMrNmYtCU/H+vTTWgMT1NLe29qE+mmpANV9
-	 rltGZxpblOBuQ==
-Date: Tue, 28 Jul 2026 20:38:54 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
+	s=k20260515; t=1785260360;
+	bh=pJz8rb+2OBTQ5IR8dL+EuPqQQcU2Y+y6oI13ES6Myn8=;
+	h=Date:From:To:Cc:Subject;
+	b=I7GWdlSzzQH3LLypPx0D30rDLkM6qlQERj9S+OH7ktCJ7rFa3hfUVgMLU7MVumVj5
+	 mcUK/jJqxi4AjtkLOr41qtsk56lyOjiPR3YMHN71sZKSkwkQTlSXXiqwJ3sPv3B1Nr
+	 JeLuOcwLDHuUEx7xMuM6FkpeXFjubFm+a5h7FcKKm7CZ3NgIim4tr6P49rYOV56zpA
+	 WQkUTb8RibDep49McnB002wBJr4Uyn1I2NHO6BcWu2OthIsi/aAjnkZ6zPflYL36dN
+	 XV0Otf9O6WI0iuC247tmkGLjgPNl4nTc8TTmhGsNHQ+JTKOQevor6Pe+9piSoBFTDE
+	 hnRHxwtC6HwwQ==
+Date: Tue, 28 Jul 2026 18:39:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Eugene Mavick <m@mavick.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Muchun Song <songmuchun@bytedance.com>
-Subject: Re: linux-next: manual merge of the liveupdate tree with the
- mm-unstable tree
-Message-ID: <amjpLoJbHsqIAqJO@kernel.org>
-References: <amjYWetl6_WVyumg@sirena.org.uk>
+	Muhammad Bilal <meatuni001@gmail.com>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Message-ID: <amjpRIA5G0pnhhyr@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="opswjbZ+nXVs9YrU"
+Content-Disposition: inline
+
+
+--opswjbZ+nXVs9YrU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <amjYWetl6_WVyumg@sirena.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 28, 2026 at 05:27:05PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the liveupdate tree got a conflict in:
-> 
->   mm/hugetlb.c
->   mm/mm_init.c
-> 
-> between at least commit:
-> 
->   7b558c2570017 ("mm/hugetlb: refactor early boot gigantic hugepage allocation")
-> 
-> from the mm-unstable tree and commit:
-> 
->   7c967e2d549dc ("memblock: make HugeTLB bootmem allocation work with KHO")
->   f476132a8999e ("mm/mm_init: don't rely on memblock to get KHO scratch migratetype")
-> 
-> from the liveupdate tree.
-> 
-> I stared at the conflict for a bit but with my minimal familiarity with
-> this code I have absolutely no confidence in my ability to do a working
-> resolution for this in a timely fashion so instead I merged the version
-> of liveupdate from next-20260727, I'll have another look tomorrow but
-> would really appreciate it if someone could help out here.
+Hi all,
 
-I've got this for merging mm-unstable into liveupdate/next:
+Today's linux-next merge of the staging tree got a conflict in:
 
-diff --cc mm/hugetlb.c
-index ab4afc818e8cb,a77c3c1cb8943..0000000000000
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@@ -3027,51 -3076,23 +3076,16 @@@ out_end_reservation
-  
-  static __init void *alloc_bootmem(struct hstate *h, int nid, bool node_exact)
-  {
-- 	struct huge_bootmem_page *m;
-- 	int listnode = nid;
-- 
-  	if (hugetlb_early_cma(h))
-- 		m = hugetlb_cma_alloc_bootmem(h, &listnode, node_exact);
-- 	else {
-- 		m = memblock_alloc_hugetlb(huge_page_size(h), nid, node_exact);
-- 		if (m) {
-- 			m->flags = 0;
-- 			m->cma = NULL;
-+ 		return hugetlb_cma_alloc_bootmem(h, nid, node_exact);
-  
-- 			/*
-- 			 * For pre-HVO to work correctly, pages need to be on
-- 			 * the list for the node they were actually allocated
-- 			 * from. That node may be different in the case of
-- 			 * fallback by memblock_alloc_hugetlb_bootmem. So,
-- 			 * extract the actual node first.
-- 			 */
-- 			if (!node_exact)
-- 				listnode = early_pfn_to_nid(PHYS_PFN(__pa(m)));
-- 		}
-- 	}
-- 
-- 	if (m) {
-- 		/*
-- 		 * Use the beginning of the huge page to store the
-- 		 * huge_bootmem_page struct (until gather_bootmem
-- 		 * puts them into the mem_map).
-- 		 *
-- 		 * Put them into a private list first because mem_map
-- 		 * is not up yet.
-- 		 */
-- 		INIT_LIST_HEAD(&m->list);
-- 		list_add(&m->list, &huge_boot_pages[listnode]);
-- 		m->hstate = h;
-- 	}
- -	if (node_exact)
- -		return memblock_alloc_exact_nid_raw(huge_page_size(h),
- -				huge_page_size(h), 0,
- -				MEMBLOCK_ALLOC_ACCESSIBLE, nid);
---
-- 	return m;
- -	return memblock_alloc_try_nid_raw(huge_page_size(h),
- -				huge_page_size(h), 0,
- -				MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-++	return memblock_alloc_hugetlb(huge_page_size(h), nid, node_exact);
-  }
-  
-- int alloc_bootmem_huge_page(struct hstate *h, int nid)
-+ void *__init arch_alloc_bootmem_huge_page(struct hstate *h, int nid)
-  	__attribute__ ((weak, alias("__alloc_bootmem_huge_page")));
-- int __alloc_bootmem_huge_page(struct hstate *h, int nid)
-+ void *__init __alloc_bootmem_huge_page(struct hstate *h, int nid)
-  {
-- 	struct huge_bootmem_page *m = NULL; /* initialize for clang */
-  	int nr_nodes, node = nid;
-  
-  	/* do node specific alloc */
-diff --cc mm/mm_init.c
-index dc20d6814e48b,711f821f7b3c7..0000000000000
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@@ -2683,7 -2683,8 +2682,9 @@@ void __init __weak mem_init(void
-  
-  void __init mm_core_init_early(void)
-  {
- +	kho_memory_init_early();
-+ 	free_area_init();
-+ 
-  	hugetlb_cma_reserve();
-  	hugetlb_bootmem_alloc();
+  drivers/staging/rtl8723bs/core/rtw_wlan_util.c
 
+between commit:
 
+  ae21407350151 ("staging: rtl8723bs: fix OOB read in WMM_param_handler()")
 
--- 
-Sincerely yours,
-Mike.
+=66rom the staging.current tree and commit:
+
+  6e68c64a71f70 ("staging: rtl8723bs: remove unnecessary parentheses")
+
+=66rom the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+index c614c0b4c792d,8b0502a1881b5..0000000000000
+--- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+@@@ -666,13 -665,10 +665,13 @@@ int WMM_param_handler(struct adapter *p
+  		return false;
+  	}
+ =20
+ +	if (pIE->length !=3D WLAN_WMM_LEN)
+ +		return false;
+ +
+- 	if (!memcmp(&(pmlmeinfo->WMM_param), (pIE->data + 6), sizeof(struct WMM_=
+para_element)))
++ 	if (!memcmp(&pmlmeinfo->WMM_param, (pIE->data + 6), sizeof(struct WMM_pa=
+ra_element)))
+  		return false;
+ =20
+- 	memcpy(&(pmlmeinfo->WMM_param), (pIE->data + 6), sizeof(struct WMM_para_=
+element));
++ 	memcpy(&pmlmeinfo->WMM_param, (pIE->data + 6), sizeof(struct WMM_para_el=
+ement));
+ =20
+  	pmlmeinfo->WMM_enable =3D 1;
+  	return true;
+
+--opswjbZ+nXVs9YrU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpo6UMACgkQJNaLcl1U
+h9A6zQf/UG7RwXLJ3Z2JClc3yUQyX6zc6+5fLIJx2CKey+752Smk2Se9EV7Y+IPN
+g9kmGyblNwM8h0UkrMPaZQqxVUpCzWXgk5CnhpXT6XzibKNcsEyNIXE0PpjntHNH
+uhuGpulAN/Gm6oOp18EZcNS9U9HyvEfNoqfPA6KRA5Rv6QjErMnQ9EWQHEdKvY5D
+zEEUdlO7XrJ5kLuFvwi9pI39wofWZ2VB7CuWU1rFsb4tUu4hq1UshBs/GhIPHKdC
+XR3FWhHCClMCXRgIhbtEqkI6GHsR1wP0iH1BxQoWI6v8VrcchOuKeRm79RCr9xz/
+mnS4koRlMabKO0BUjBvOJJPvNkM6ow==
+=yz1T
+-----END PGP SIGNATURE-----
+
+--opswjbZ+nXVs9YrU--
