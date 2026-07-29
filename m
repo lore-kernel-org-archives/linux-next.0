@@ -1,284 +1,128 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6953D4128;
-	Wed, 29 Jul 2026 12:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785328569; cv=none; b=t5Om8IWOiFDCZ9SC8i5ZxaDAIqfX5n4hrB7+glE9dZ4+QwqDUdDBKj5lvfLkpz1Rfcv3T12H2QSU030tOOZvNuVg57kCmkEWo3pU6O/kwLifLbaa+4qbIhr4peSS8S7p7Ipcba4KwWezlZU9qE1qq9EWzMTp4xWMhlm/johMu0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785328569; c=relaxed/simple;
-	bh=SuUSfgaNjoyz2PVdLRahrunDfQf8b7iHya9Riqbdr8c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NccrhXqaaGyd3HcMjE0bMA55DUTJp1R+1qs0uFA/AtJXQu4ZVeeR32+r/+iESB1fWxZHJ5K0doZotFomLoZyH6efzOELqc7rCxArsgPxSSP7txXNUwNG0QTd9UoADvJEY5xa6gr9Lzjj6va5QSlzfo2A5VkZDM3laaKIe18iJmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=RA5OEsBM; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C86480943;
+	Wed, 29 Jul 2026 12:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785329342; cv=pass; b=qeI4kQ9Ol3EYjd7AbcR7NujFhP2u12YD4DHOLe45SNb96XTPVYFERIhDrxbgUIG441laGiVeX/VZcRLQgwPSldsbaoiGVAd5KBugXw6bolRRjyjJ0MvT7cGMLmPfWzv6WiL3r3wIQzC+e0izxHA8WpNWtPh4NI/JSryyhHH75n8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785329342; c=relaxed/simple;
+	bh=K6/3kU8+PyP2xUrEwLEWq6fy9+6Z8w5y2gToAP/crv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=skBitxKb6iRE7cfE78V/UEGHeICAD83bBqKq+hBAhzu0oASPyFTVcqXlArqy7kyn8LTan0mPTMPJUtriZZblVeQ/H9rzkeKwMd0QG/iLRUSeWYnQLGszgv5mzvBaUImFD41LYVZkQSN9KWOMeJeAfaX8pXXsxdd6DcZDWhwS4JY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=leandro.ribeiro@collabora.com header.b=DFnsJ9Uj; arc=pass smtp.client-ip=136.143.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="RA5OEsBM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1785328535; x=1785933335; i=spasswolf@web.de;
-	bh=La3/EjeeiT/yepazPQRXS2mJezdgg47OaAIINry03EI=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=RA5OEsBMjjakoUO2uOurYWER9JhYdmoguDS+MIWC+7penyzYmgGxHYxdUaWforxH
-	 N/xlSAzFyvgQjH4V1yWSchXBbePdlE2QXrDoITq+SUTS1bzgMp8Do5g8eN3RUeh/t
-	 qBgW8O/0mWadg/R6XFVuAUWDuuI+k1EFzfTNcGjugrFe77SqIz0z/3UqOOIgYk+h6
-	 p0SmwgL4Rlt2g5NnxdCWrWPIRdEN6yL7GdbyoYYWTf+J05WL1bg7H7gEKlphoSnvq
-	 cFSdoXInceoihnka9AGJ37ufmH00LxVhrx/G0Dg32aCOWpHALfdG3S4o5rqBPPPr4
-	 9HR2KhiKoicNu35nJw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwsB-1xKUa21Jxd-00aYy9; Wed, 29
- Jul 2026 14:35:35 +0200
-Message-ID: <1ead313022bc62dce1f42af9f855727eb9074443.camel@web.de>
-Subject: Re: [PATCH] drm/amd/display: fix usage of DC_FPU_{BEGIN,END} with
- PREEMPT_RT
-From: Bert Karwatzki <spasswolf@web.de>
-To: "mikhail.v.gavrilov@gmail.com" <mikhail.v.gavrilov@gmail.com>, 
-	linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	amd-gfx@lists.freedesktop.org, "# = v7 . 1" <stable@vger.kernel.org>, Alex
- Deucher <alexander.deucher@amd.com>, Rafal Ostrowski
- <rafal.ostrowski@amd.com>, Mario Limonciello	 <mario.limonciello@amd.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,  Thomas Gleixner
- <tglx@linutronix.de>, spasswolf@web.de
-Date: Wed, 29 Jul 2026 14:35:34 +0200
-In-Reply-To: <ef1bc3d070c4156f1811c0c4a567ec98ac8fadaf.camel@gmail.com>
-References: <20260727105059.75716-1-spasswolf@web.de>
-		 <ef1bc3d070c4156f1811c0c4a567ec98ac8fadaf.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.2-10 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=leandro.ribeiro@collabora.com header.b="DFnsJ9Uj"
+ARC-Seal: i=1; a=rsa-sha256; t=1785329312; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Bujx/lJqLxcSrFvDgB8sLzLAxzVNAYML8stfeYcXTpkJQ7GJ0eF9ZqjK326bN0mvf5lfIcl9Up2E7dedD55pVY2w0g7hKJhWu8g/E64z7/en/9NPIF5dc83fD4qHuXEymZspuqtKvOgGTGACdLMqmG6aKmir1DqCd6qeMmIf1uk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1785329312; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mBlfFTZEC5TmDbfDkYkor8AyQ5BZ1sJ44q+KZ1cZS1A=; 
+	b=hPGekkEgQ/KbZ1oChaMtEt2xSL+7u9I12qK4U6FPJmxD1wU8Q3ujnxgMlDCMEjJd09IL4YUDklt7RenIEje9TKn0vnpRJ3Iy5iTx7iQRwfadmSZgs4VlynK1CJIBNzyea+YzUIcdiu54DKrJ8iNlFu5Jm6ak0W8HDE53W55pFJc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=leandro.ribeiro@collabora.com;
+	dmarc=pass header.from=<leandro.ribeiro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1785329312;
+	s=zohomail; d=collabora.com; i=leandro.ribeiro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=mBlfFTZEC5TmDbfDkYkor8AyQ5BZ1sJ44q+KZ1cZS1A=;
+	b=DFnsJ9UjAdjCMoA+gAC4AR2jbYLCSUuPmAWJXewZ/evi6DjsbF6yz9K+dBwzmbtC
+	zBDiY0766nN736vW2EJT79duVMSBYP/63p3KndyfvcPJOZtJzg7HBtT1DnXbR0tHpwP
+	uTgDcq8VttZiCMkq30jic792e97VOATadAW0fBvc=
+Received: by mx.zohomail.com with SMTPS id 1785329309162762.3161254320859;
+	Wed, 29 Jul 2026 05:48:29 -0700 (PDT)
+Message-ID: <55f614e1-a016-48ef-b4ec-fe472cb6ed69@collabora.com>
+Date: Wed, 29 Jul 2026 09:48:22 -0300
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CKQk8lnl5lxRRlCkQJXPwtG/tj0XCbkh4W2VXTvOn/cPlF9gVNI
- lAZX8fw2b44gQaHg2hWKMa0573QZUIqeJoZ5WBRELIp61AG0OooRCtI8SpcqbIfFiCBM3ad
- jv7OVrcqyNbJQyvOzkjsLunXULmYJMznw5mLA6c+oSDQOGrh2KKDclGmh/2iars8UkGTG/X
- qVa3qSAuv6R7KvoDzZpew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lBrE20jatY4=;mXE3W5iZh1Lpkwr6pi69WNWw6Iq
- 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
-
-Am Dienstag, dem 28.07.2026 um 05:51 +0500 schrieb mikhail.v.gavrilov@gmai=
-l.com:
-> On Mon, 2026-07-27 at 12:50 +0200, Bert Karwatzki wrote:
-> > On PREEMPT_RT kernels kvzalloc_obj() can sleep because spin_lock is
-> > converted to rt_mutex. dc_create_plane_state() can be called while
-> > inside an FPU-guarded region, resuling in "scheduling while atomic"
-> > errors on PREEMPT_RT kernels.
-> > =C2=A0Fix this by calling kvzalloc_obj() with
-> > DC_RUN_WITH_PREEMPTION_ENABLED().
-> > Also fix the error path in dc_create_stream_for_sink().
-> >=20
-> > Fixes: 3539437f354b ("drm/amd/display: Move FPU Guards From DML To DC
-> > - Part 1")
-> > Link:
-> > https://lore.kernel.org/lkml/20260723123449.6494-1-spasswolf@web.de/
-> >=20
-> > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> > ---
-> > =C2=A0drivers/gpu/drm/amd/display/dc/core/dc_stream.c=C2=A0 | 5 +++--
-> > =C2=A0drivers/gpu/drm/amd/display/dc/core/dc_surface.c | 4 ++--
-> > =C2=A02 files changed, 5 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> > b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> > index dbc12640b01c..4ac835777b58 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> > @@ -233,8 +233,9 @@ struct dc_stream_state
-> > *dc_create_stream_for_sink(
-> > =C2=A0
-> > =C2=A0fail:
-> > =C2=A0	if (stream) {
-> > -		kfree(stream->update_scratch);
-> > -		kfree(stream);
-> > +		if (stream->update_scratch)
-> > +			DC_RUN_WITH_PREEMPTION_ENABLED(kfree(stream-
-> > > update_scratch));
-> > +		DC_RUN_WITH_PREEMPTION_ENABLED(kfree(stream));
-> > =C2=A0	}
-> > =C2=A0
-> > =C2=A0	return NULL;
-> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> > b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> > index 88e825a6582c..d5c6427796b6 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> > @@ -85,8 +85,8 @@ uint8_t=C2=A0 dc_plane_get_pipe_mask(struct dc_state
-> > *dc_state, const struct dc_plane
-> > =C2=A0
-> > *********************************************************************
-> > *********/
-> > =C2=A0struct dc_plane_state *dc_create_plane_state(const struct dc *dc=
-)
-> > =C2=A0{
-> > -	struct dc_plane_state *plane_state =3D
-> > kvzalloc_obj(*plane_state,
-> > -							=C2=A0
-> > GFP_ATOMIC);
-> > +	struct dc_plane_state *plane_state;
-> > +	DC_RUN_WITH_PREEMPTION_ENABLED(plane_state =3D
-> > kvzalloc_obj(*plane_state, GFP_ATOMIC));
-> > =C2=A0
-> > =C2=A0	if (NULL =3D=3D plane_state)
-> > =C2=A0		return NULL;
->=20
-> Hi Bert,
->=20
-> You may not be aware that the same allocation is already wrapped once,
-> at the dcn32 call site:
->=20
->   183182235f6d ("drm/amd/display: Wrap DCN32 phantom-plane allocation
-> in DC_RUN_WITH_PREEMPTION_ENABLED")
->=20
-> That one only covers the dcn32 DML1 path, while your trace goes through
-> dcn401_validate_bandwidth() and dml21 - so wrapping the call site could
-> never have caught your case.  Which is a good argument for guarding the
-> allocation in the callee, as you do: dc_create_plane_state() is reached
-> from every DCN and both DML generations.
-
-I did try a different approach, using DC_RUN_WITH_PREEMPTION_ENABLED furth=
-er
-upward in the calltrace (This would have the slight benefit of more code
-running with preemption enabled). This does not work because dml21_utils.c=
- is compiled
-as a _LINUX_FPU_COMPILATION_UNIT, so DC_RUN_WITH_PREEMPTION_ENABLED does n=
-othing.
-(see drivers/gpu/drm/amd/display/amdgpu_dm/dc_fpu.h)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2_0/dml21/dml21_utils.c b/d=
-rivers/gpu/drm/amd/display/dc/dml2_0/dml21/dml21_utils.c
-index 835fece1d46a..8c92deded8cd 100644
-=2D-- a/drivers/gpu/drm/amd/display/dc/dml2_0/dml21/dml21_utils.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2_0/dml21/dml21_utils.c
-@@ -286,7 +286,8 @@ static struct dc_plane_state *dml21_add_phantom_plane(=
-struct dml2_context *dml_c
-        (void)plane_programming;
-        struct dc_plane_state *phantom_plane;
-=20
--       phantom_plane =3D dml_ctx->config.svp_pstate.callbacks.create_phan=
-tom_plane(dc, context, main_plane);
-+       DC_RUN_WITH_PREEMPTION_ENABLED(phantom_plane
-+                       =3D dml_ctx->config.svp_pstate.callbacks.create_ph=
-antom_plane(dc, context, main_plane));
-        if (!phantom_plane)
-                return NULL;
-=20
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2_0/dml2_mall_phantom.c b/d=
-rivers/gpu/drm/amd/display/dc/dml2_0/dml2_mall_phantom.c
-index 4543a60a0683..464bab9fc13b 100644
-=2D-- a/drivers/gpu/drm/amd/display/dc/dml2_0/dml2_mall_phantom.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2_0/dml2_mall_phantom.c
-@@ -769,10 +769,11 @@ static void enable_phantom_plane(struct dml2_context=
- *ctx,
-                if (curr_pipe->top_pipe && curr_pipe->top_pipe->plane_stat=
-e =3D=3D curr_pipe->plane_state) {
-                        phantom_plane =3D prev_phantom_plane;
-                } else {
--                       phantom_plane =3D ctx->config.svp_pstate.callbacks=
-.create_phantom_plane(
-+                       DC_RUN_WITH_PREEMPTION_ENABLED(phantom_plane =3D
-+                                       ctx->config.svp_pstate.callbacks.c=
-reate_phantom_plane(
-                                        ctx->config.svp_pstate.callbacks.d=
-c,
-                                        state,
--                                       curr_pipe->plane_state);
-+                                       curr_pipe->plane_state));
-                        if (!phantom_plane)
-                                return;
-                }
+User-Agent: Mozilla Thunderbird
+Subject: Re: Policy regarding linux-next only changes
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>,
+ Pekka Paalanen <pekka.paalanen@collabora.com>,
+ Daniel Stone <daniels@collabora.com>, Theodore Tso <tytso@mit.edu>,
+ Alexander Potapenko <glider@google.com>,
+ Christoph Hellwig <hch@infradead.org>, Aleksandr Nogikh <nogikh@google.com>,
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+ linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, peterz@infradead.org,
+ will@kernel.org, longman@redhat.com, mingo@kernel.org,
+ gregkh@linuxfoundation.org
+References: <CAG_fn=UEo8PNvjAcTTqmskfPrJNSjshhuXsR_PaH0-YLWwMTRw@mail.gmail.com>
+ <bc3703bd-65ee-4182-a742-56603d9b9bac@I-love.SAKURA.ne.jp>
+ <amEAzMTbA9R9HgN7@mit.edu>
+ <2c903636-532f-47b5-9894-00470f235682@I-love.SAKURA.ne.jp>
+ <amNsDFyTbsyAASjt@mit.edu>
+ <58689827-9211-4f26-9777-51c0b5e1eebb@I-love.SAKURA.ne.jp>
+ <CANiq72nXO0noq7qqLqvQuuAGjP1DE+k8=C6sZ7DZ2xYFCTSPPA@mail.gmail.com>
+ <8c3d90d5-747e-451b-bdcb-1cfe1d5fce53@I-love.SAKURA.ne.jp>
+ <0e5ea495-07a2-4f83-8fd7-c90563bc12c4@sirena.org.uk>
+ <43a46fbd-acea-43f6-99f4-c8b866a5f9f4@I-love.SAKURA.ne.jp>
+ <c7b9cce5-5d69-43db-91c6-10f6bcd07b68@sirena.org.uk>
+ <cba31f88-09f2-443f-ab0f-b2b263750947@I-love.SAKURA.ne.jp>
+ <CANiq72kcrJw4Kt=5zTN9vvnDq33_4NV4AZ3jHTFNBJjVxmU+8Q@mail.gmail.com>
+ <bff95de5-7f0b-4f08-8ceb-58a6e354ebe2@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From: Leandro Ribeiro <leandro.ribeiro@collabora.com>
+In-Reply-To: <bff95de5-7f0b-4f08-8ceb-58a6e354ebe2@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
 
 
+On 7/28/26 20:46, Tetsuo Handa wrote:
+> On 2026/07/29 7:11, Miguel Ojeda wrote:
+>> On Tue, Jul 28, 2026 at 4:46 PM Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>
+>>> syzbot stops upon encountering "BUG:" or "WARNING:" within printk() output.
+>>
+>> Out of curiosity, is that a fundamental property or something that
+>> could be optionally be relaxed (for certain linux-next runs only,
+>> perhaps) so that you can continue testing in certain cases where the
+>> "WARNING:" may be harmless (i.e. irrelevant for your particular
+>> fuzzing)?
+>>
+>> i.e. I was wondering whether the system could ignore the "WARNING:"s
+>> (and avoid the kernel panicking on them etc.) until after boot, i.e.
+>> when the fuzzing starts.
+> 
+> syzbot uses kernel.panic_on_warn=1, for most of WARN*() users are reporting
+> problems that should not be ignored. Therefore, WARN*() must not be used for
+> reporting recoverable mistakes like -EINVAL. Abusing WARN*() like
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/kernel/workqueue.c?id=6e845bcb78c95af935094040bd4edc3c2b6dd784#n5855
+> is a fatal barrier for continuous testing systems like syzbot.
+> 
+> Quoting from https://lkml.kernel.org/r/5b2dea50-2850-4876-b6e8-ba94b9a85034@I-love.SAKURA.ne.jp :
+> 
+>   Please never try to emit WARNING: or BUG: message just for letting developers
+>   update their code. If you can't use panic() instead of WARN*() or BUG*(), you
+>   should not use WARN*() or BUG*(). The patch author who changes the behavior of
+>   in-tree code is responsible for updating all in-tree code.
+> 
+> Commit 860e748bddcc ("drm: ensure blend mode supported if pixel format
+> with alpha exposed") must be reverted or updated not to emit "WARNING:" string.
+> Until authors of that commit respond, that commit had better be excluded from
+> the linux-next tree.
+> 
 
-Bert Karwatzki
+Hello,
+
+First of all, sorry for all the trouble with this warning. I'll propose
+a patch replacing the warning with printk() or pr_info(), if that
+doesn't cause similar issues for fuzzers.
+
+Thanks,
+Leandro
