@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74914484229;
-	Wed, 29 Jul 2026 13:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0AA27FD74;
+	Wed, 29 Jul 2026 14:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785331717; cv=none; b=HflE4mUnsNMGIzTVjCiB61XookLYdDyPtaQraT4i2lzOUOvU7LP20znE05S+ktFYnKXmt/ofIODjvjfMOpj1nRT8kakJtM/9ZvCOqhWLugfn2P4/RcE7J0wxps7TlfMOxEfHQBKuBvYDasU8v1KfYmjF2weoGKSVSxhoSkTkoz8=
+	t=1785334715; cv=none; b=tddtqEPcUvbyauMFV4pINxsKVW14LMFRzJ90xOOP/kbdAAlwv1BKLO1ShP9yfF9AHdslkLKWCefvbqTF4SluzFyf6b24ASZe88udBs7RvP3SUPZ07fnbHjsuE1L5cidT/iypF3vI6CihmHMMSmIxeN8cWGX6hIFUwsWOzcO6YA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785331717; c=relaxed/simple;
-	bh=jo8BysWtaIGbJlQa9d/CeYbiB8DxY4EBJdxdwsYxbXY=;
+	s=arc-20240116; t=1785334715; c=relaxed/simple;
+	bh=szSLXp2TkVBRjc9OSM/kiwkJ9B/ZT8MBhb9crdFx4fk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=b86USTZ2Sz4AA2Ynv9PgKq0aJ7hH2qwLfMW8DIg2YFc5XePaZPCypNbjVO8HN4kuw0Jy38WzHGFfmz9U1/7LRKhMVMSGHnVvmUG9b46sDhYITtpRUYhiKqCnzFA1VV7u47tW5I1vCkhsZFezhaLidE17JOZMGQT28a9PjFvsAQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKqgZngd; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=VLkDYqWYtjXZQ16/QYdIrXIRolpMMryLKyvW3RgNt7L0UIcG5Q07TZdjOw6c8gVtgXAD2Oa34eRzvCFID+dCDEO74xAZ8WKOFt9j4ZktyYnvQZ1oRFtphBg7oTQ58445/PMZYJmGEbSgSyQ9NddP3uAMgxXdb/Or0nrbNvJNx+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3hDh/Q5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKqgZngd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F921F000E9;
-	Wed, 29 Jul 2026 13:28:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3hDh/Q5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DCE1F000E9;
+	Wed, 29 Jul 2026 14:18:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785331714;
-	bh=dUx9cMsSvlF6fmlycfgvYcoFki7t9SesH2ySwMva3Zo=;
+	s=k20260515; t=1785334714;
+	bh=XTqZ30rY6SHWEMX9sTd8i3rm7mJOoQyIoibdObDNEOM=;
 	h=Date:From:To:Cc:Subject;
-	b=dKqgZngdn28bFlQZcZtb70oVZNYzpqCI1PNfQnLOxGAJiAWh0aV8KzvwFhsW1YgsW
-	 uyjb9WuoV2hgf53b5I91l/PCwcsJe09JRSo8QwEqFjPK0fgYBMSyc7MAyykWjDr+lQ
-	 hkiOZWmWHGtPMxER0UtkQkjen1dWqIgKv922PvTDHgvNSyI6iCspkIWHjG9Ngvfibg
-	 VLc4Tp9Xu75V24guX0xD1yM4RCmsAXvLUAKnDJq3BNB1he/sLim0Q9ZpvGdpPxgi8f
-	 hPzcS3tATVwMJTHX7I7ru0gEBcyBCnsiyzuiMJRNZ4K8leaRJNzAyO5qFLL9n8HpwO
-	 +re5GWx5qDQww==
-Date: Wed, 29 Jul 2026 14:28:30 +0100
+	b=Y3hDh/Q5GJd3q29fp54knPjx6JQxmUfJH1gnmAE6tnFnhNjdmCE4jmC6ytJecQGZk
+	 rbFzXT4FnDduSWdgphTrJWPTaBKWRdQ4CVthPoI4sW/3YcZuI1u0bL687uXmPoBQtQ
+	 Mly4HxyHETc4qyZOS9ASk/R0hhECmLn4IChLN/lcO4sdS6eiX4ZkYuTW+zJnzmnmaT
+	 FHKCjIkbwz5uk7F+TyAzpAsuWkTM8ZNwpA14/ao+wdHQ1rAL5DM+CgMzGRyPQZkKSS
+	 3Os+5cacKdNuBL5T82jGJdgJwkYhgy72h1hm3HfZqJ8guEDCZo6N4qCN0NNZX46LCg
+	 ogvBL5XcIwXhA==
+Date: Wed, 29 Jul 2026 15:18:30 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Leo Li <sunpeng.li@amd.com>,
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: linux-next: manual merge of the amdgpu tree with the origin tree
-Message-ID: <amn__sSHvuJ0WeVU@sirena.org.uk>
+	Sanath S <Sanath.S@amd.com>
+Subject: linux-next: manual merge of the thunderbolt tree with the
+ thunderbolt-fixes tree
+Message-ID: <amoLtiBHq00XOaCK@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,30 +43,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l1UPJwcmm8PocUO/"
+	protocol="application/pgp-signature"; boundary="EVwFTe4orBr+x9Po"
 Content-Disposition: inline
 
 
---l1UPJwcmm8PocUO/
+--EVwFTe4orBr+x9Po
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the amdgpu tree got a conflict in:
+Today's linux-next merge of the thunderbolt tree got a conflict in:
 
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
+  drivers/thunderbolt/nhi.c
 
 between commit:
 
-  82730dba0cf9d ("drm/amd/display: Fix flip-done timeouts on mode1 reset")
+  c35c173c3daa0 ("thunderbolt: Initialize ->domain_released completion befo=
+re it is being used")
 
-=66rom the origin tree and commit:
+=66rom the thunderbolt-fixes tree and commit:
 
-  7e1b4bdb0e05a ("drm/amd/display: Fix flip-done timeouts on mode1 reset")
+  5f40cba7d4fa3 ("thunderbolt: Assert downstream port reset on shutdown")
 
-=66rom the amdgpu tree.
+=66rom the thunderbolt tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -74,42 +76,35 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-index ff308ee40909e,079d4ccc88da6..0000000000000
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-@@@ -34,7 -34,7 +34,7 @@@
-  #include "amdgpu_dm_plane.h"
-  #include "amdgpu_dm_trace.h"
-  #include "amdgpu_dm_debugfs.h"
-- #include "amdgpu_dm_kunit_helpers.h"
-+ #include "dm_helpers.h"
-  #include "modules/inc/mod_power.h"
+diff --cc drivers/thunderbolt/nhi.c
+index 35e3c119d5ee8,698fb124d5291..0000000000000
+--- a/drivers/thunderbolt/nhi.c
++++ b/drivers/thunderbolt/nhi.c
+@@@ -1235,6 -1233,10 +1235,8 @@@ int nhi_probe(struct tb_nhi *nhi
  =20
-  #define HPD_DETECTION_PERIOD_uS 2000000
-@@@ -287,8 -287,6 +287,6 @@@ static inline int amdgpu_dm_crtc_set_vb
-  	 * is enabled. On DCE, vupdate is only needed in VRR mode.
-  	 */
-  	if (amdgpu_ip_version(adev, DCE_HWIP, 0) !=3D 0) {
-- 		rc =3D amdgpu_dm_crtc_set_vupdate_irq(crtc, enable);
-- 	} else if (dc_supports_vrr(dm->dc->ctx->dce_version)) {
-  		if (enable) {
-  			rc =3D amdgpu_irq_get(adev, &adev->vupdate_irq, irq_type);
-  			drm_dbg_vbl(crtc->dev, "Get vupdate_irq ret=3D%d\n", rc);
+  	dev_dbg(dev, "NHI initialized, starting thunderbolt\n");
+ =20
+ -	init_completion(&nhi->domain_released);
+ -
++ 	nhi->host_reset =3D host_reset;
++=20
+  	res =3D tb_domain_add(tb, host_reset);
+  	if (res) {
+  		/*
 
---l1UPJwcmm8PocUO/
+--EVwFTe4orBr+x9Po
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpp//4ACgkQJNaLcl1U
-h9A1kwf/SdKCo1GjhgNcsyCFEUOCinEwuZL4VrtU+7kc5/B6OH+xSc65aCbux22I
-hVaaprttEFyyCN5BTd9/a1lR7Ygoe2gBVNz3qhSMgPQmh/Vd9Ux8mf2muTTH6xgM
-Dyvw2bHnk3xmpE7uM7juWfx59HzhyOaT0yVRpwfznG9FL0y9i7jf7wCqEbGCCAtY
-tnQSoteAaOJwKKuCk0CDlxfUZs0ANlSVCFPEh/w42RkuxK3qzdVYAexeBIw6Qnfj
-djPWH8myzlKRkNkibqe2C3K0pUnFIUYXgVcUWfMvDWpc0pzgun3fDwz5k4zSpQkL
-On/XN41/YkGZv+z9UrEndJHFX7aKBQ==
-=PZsc
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpqC7UACgkQJNaLcl1U
+h9Ci9Qf/dBuOWUa6tBg6JtvSGjYKp9JdDPd16jBm5RwafQfcjzsABy+tgxAkWVLJ
+Nscg6lI94Xl3cpFpjPKwTpL/F07L3Kt7yxVeKrSUOLCas57yczI8dsywf8EXzlVo
+IjmQPjV91uxrRd9yz2Kl/83XCRLZclK6QoiNkq3KN2dwWEFhimzlDpWWYVL6Cqu9
+RHDZv6m1Z8Bozl6PwMu2fCBbptbFDfjNrKtAM4dn7dszvk9RI1eX/1AGXsMnNmlJ
+4rWXCMOo7UOMzcRUoX3WK8aFjS/O8UIQdpbAHkRWxUj3MUgqmGEp/IBmsUKZt56x
+z0V6TG4k75Vbs8f7iSRfTHcXAqGWhA==
+=+XR5
 -----END PGP SIGNATURE-----
 
---l1UPJwcmm8PocUO/--
+--EVwFTe4orBr+x9Po--
