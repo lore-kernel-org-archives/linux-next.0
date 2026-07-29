@@ -1,104 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0874E3B0ADE;
-	Wed, 29 Jul 2026 06:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EE81DFFD;
+	Wed, 29 Jul 2026 07:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785308121; cv=none; b=D3T/xtOwvC18qrnAaMDY9IODo48vCMmaZgmcoX0vGRrzd3KsNLhIhnPmxI8PTOIgVj2FJ7QzWLXLjksZZDzG6aGD4jYdJp1I0voYExVPR/7Jvisff54a34Ani4RIQxtz+jpyjCWIQgBSMnByeEKRWEceMv3Bx//08XDPp1jqHEY=
+	t=1785309054; cv=none; b=cTJUSVr8IZ/+CPSHiQHve+MU2M1iy5ogOdyV0PhY70T8d7+dzoebCbD3efAI9jZXeNxx0HrbG7wKGr/F3mZ6xacK5xMCyYfiXbE1aeLqrIYadreF3fVkU/h+SKEYYuncLX80AVlaywkgHHd7wByQkPQmMX02rtGyF2aWbpONewc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785308121; c=relaxed/simple;
-	bh=YcSyS5QQRFt3NS9f56u4roOufQMe6RPUIqMxk2ecL5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqTTWDEazZ6y+5+8zqk5LhDeNcQzp776DzZorxdM6dI+oQEQV0tBD2ZHVK4YYyaGwRC/Ddsv+fwvWOCRgbGyACOCjec1ZxnnOGHud4zzLg4+LnSBivRIyMLXnfYwWlAGVOG0vHoYMP36oLg4XQfJ9kzTKN6VZST61e61H6wZKjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aV05luN+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785309054; c=relaxed/simple;
+	bh=qlUWwBLTcNlHuyuwO/dFywVi15nyUQ93IhTQ+cZtNa0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eH7HpvPxwyAjaqA3SkIMv1KcnMXAEhfLA+10laMv55EtjxLJHUt+ryI8sOH/OQRlOZW98mijAbzsYovMOFOSqftDp5q24+ldWcso2K58QRQhgHyaL4K6r4k/EBcudYDLgvOqbuPW6W/qRVxB0d66vfW14GEHor77Tc9+zC9S2/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mbmequY4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aV05luN+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33671F00A3A;
-	Wed, 29 Jul 2026 06:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785308119;
-	bh=wl3whG/7bKwmaoueojp8aj/NMQ6I4fZije6SzWxgaaQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=aV05luN+9OhEw1VE2lcTPZUrpF+fAS1zRT9DEPqOAKT6sUhqesVdWir9hZh0f+lyA
-	 pmV77s6tqEUBuTWTtrrMzQa0GBI5Y3Nf2NNJqPsKOKW6WpxmPn16ckr6cI5iLcIEBv
-	 /jejkbnFvcPB1U8CReLjpYLAoH9yovdFZwXlXHaXGeUjg/89Y65Ow5wttSuJ2CHSI6
-	 SqWxCrqm8VoMoacmyc3qOs8WFvKUaL6bT+jhBlEJAmgmWKmutSNGLrEOXCiXVs41xA
-	 j4WEyTXbgcwa+Kb6pGRMyncdZmA7TjH1lKIyPpSeQPK1XcG8Z+D08ET16gTXIkweXl
-	 uenYy/kXtcQ7Q==
-Message-ID: <22be4c2d-c5ee-4b45-a12b-5c3d538ca5e3@kernel.org>
-Date: Wed, 29 Jul 2026 07:55:16 +0100
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mbmequY4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A96421F000E9;
+	Wed, 29 Jul 2026 07:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1785309052;
+	bh=oj2ejjIZHFy0sv/PNzqy8rMbPjZxTkiuDwKWEZI3QNM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=mbmequY4PpJPc11lTQdu1cwogNoIEC5u15kIDpNadLD8KCDMXO2OBBGEezyD4bJ0R
+	 9hCdeFgroGX2Fb9E3xuC4zrwas6AJVvBP4z8awV1TuL+Xy3ropRHIBBP3rw7hE4LOQ
+	 bjwEfnW/f9VKi7uEPnu5d2qsxSzo9UBXQXt5DY04=
+Date: Wed, 29 Jul 2026 00:10:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Muchun Song <muchun.song@linux.dev>, Muchun
+ Song <songmuchun@bytedance.com>
+Subject: Re: linux-next: manual merge of the liveupdate tree with the
+ mm-unstable tree
+Message-Id: <20260729001052.72027fbb99b50783476fa7c2@linux-foundation.org>
+In-Reply-To: <ammYgVd3Ty8JE0Fd@kernel.org>
+References: <amjYWetl6_WVyumg@sirena.org.uk>
+	<amjpLoJbHsqIAqJO@kernel.org>
+	<20260728134333.906cb26da4b6dec083b21344@linux-foundation.org>
+	<ammYgVd3Ty8JE0Fd@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the fastrpc tree
-To: Mark Brown <broonie@kernel.org>,
- Srini Kandagatla <srinivas.kandagatla@linaro.org>,
- Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <amaNYEchEvJAcnQT@sirena.org.uk>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <amaNYEchEvJAcnQT@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 29 Jul 2026 09:06:57 +0300 Mike Rapoport <rppt@kernel.org> wrote:
 
+> > I'll get the series "mm: Refactor bootmem gigantic
+> > hugepage allocation" into mm-stable in the next couple of days.  Can we
+> > then make this issue go away?
+> 
+> I can base the conflicting KHO work on mm-stable.
 
-On 7/26/26 11:42 PM, Mark Brown wrote:
-> Hi all,
-> 
-> After merging the fastrpc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> /tmp/next/build/drivers/misc/fastrpc.c:599:29: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   599 |         idr_remove(&cctx->ctx_idr, FIELD_GET(FASTRPC_CTXID_MASK, ctx->ctxid));
-This is now fixed in fastrpc tree.
+It's pushed out now.  Basing on 6d098029de09 ("mm/mm_init: fold
+__init_page_from_nid() into __init_deferred_page()") would capture all
+of Muchun's "mm: Refactor bootmem gigantic hugepage allocation".
 
---srini
+> But if mm-stable is rebased we'd be in a bigger trouble.
 
->       |                                    ^
-> /tmp/next/build/drivers/misc/fastrpc.c:737:15: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   737 |         ctx->ctxid = FIELD_PREP(FASTRPC_CTXID_MASK, ret) |
->       |                      ^
-> /tmp/next/build/drivers/misc/fastrpc.c:2711:10: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->  2711 |         ctxid = FIELD_GET(FASTRPC_CTXID_MASK, rsp->ctx);
->       |                 ^
-> /tmp/next/build/drivers/misc/fastrpc.c:2735:4: error: format specifies type 'unsigned long long' but the argument has type 'int' [-Werror,-Wformat]
->  2733 |                         "Stale glink response ctx 0x%llx (expected seq 0x%llx), dropping\n",
->       |                                                                          ~~~~
-
->       |                                                                          %x
->  2734 |                         rsp->ctx,
->  2735 |                         FIELD_GET(FASTRPC_CTXID_SEQ_MASK, ctx->ctxid));
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> /tmp/next/build/include/linux/dev_printk.h:165:39: note: expanded from macro 'dev_dbg'
->   165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
->       |                                      ~~~     ^~~~~~~~~~~
-> /tmp/next/build/include/linux/dynamic_debug.h:285:19: note: expanded from macro 'dynamic_dev_dbg'
->   285 |                            dev, fmt, ##__VA_ARGS__)
->       |                                 ~~~    ^~~~~~~~~~~
-> /tmp/next/build/include/linux/dynamic_debug.h:261:59: note: expanded from macro '_dynamic_func_call'
->   261 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
->       |                                                                  ^~~~~~~~~~~
-> /tmp/next/build/include/linux/dynamic_debug.h:259:65: note: expanded from macro '_dynamic_func_call_cls'
->   259 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
->       |                                                                        ^~~~~~~~~~~
-> /tmp/next/build/include/linux/dynamic_debug.h:231:15: note: expanded from macro '__dynamic_func_call_cls'
->   231 |                 func(&id, ##__VA_ARGS__);                       \
->       |                             ^~~~~~~~~~~
-> 4 errors generated.
-> 
-> 
-> Caused by commit
-> 
->   10555ba6126ed (misc: fastrpc: Replace hardcoded ctxid mask with GENMASK)
-> 
-> (and one of the subsequent ones that also uses those macros).  I have
-> use the tree from next-20260723 instead.
+As mentioned, rare.
 
