@@ -1,134 +1,110 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75DA39A801
-	for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 16:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690153502A5;
+	Thu, 30 Jul 2026 17:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785430747; cv=none; b=gye/c3gl+cNYBjEvJUKhmNEotCh54jdjQFwalDPG4ar+5vnFQqNzPDOn+G9RtLuyPuBJic5hqnm/jo0p2syPml1aupwqNWb8sM4iIQ5KodbFgescO62ovAkeTh4/9ZotzyaZbakDB1a5yt4/MyC/cFIPx76hy+Mp2m2XJM4cfE8=
+	t=1785432715; cv=none; b=kYrRTxxyZ+s+L3ooRbBdQbLNSQ9yuu8BxN6Im3ylV8tZxZVEHLuKf/x01OOKbCSPrwbM2ehB9cTMJC87KovOhgmDkcEYQTyOn6roUbcy2/d+gyP0k9YUxuhjK4AJrIldjbtcVKN0WawqJuinYEPjh37LMqXdBi7aVcCWumEBons=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785430747; c=relaxed/simple;
-	bh=ooF4eUiBpz+BIHrJMRbD+9PANmm/8TOJQiTizeHh2rg=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=CyLUIGEu8sJhzlID0mSCtQxbgYxYy1wYSlNQt2BqHQgM3EYM6q54R6pazFACpAOBjMSMc3r2JCrgVO7mDtf+3S82+FYh/vSPorFPJcX2ysIO7xSDtgDCMj1XpCEgdBPHBjVny6TrJx5pyfIxaOjFL4xaJTHX7gcS8GfKPWK5Cgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=Bp4KQGvq; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1785432715; c=relaxed/simple;
+	bh=tb9gjr4XBR5KRaI5HRzvJHsPGbcmzgomHzuZn+xb6Ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFrKqP8TN2sWE4DPT98n+lc8xDf3fpVFOKP4C7xa1eVehq1jry/eZw2zA696bkfIvZOAZvl4FX/Rc56D3woiTEt2aePlGHpqvosWjqHl3HtKJGIhWVFXOhGwJg2SC4ehWiDsZ8kl8Gf+qdZ1yPFZmbEkdEqCzfpdJ/4/tbu3/vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsLSTGPc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="Bp4KQGvq"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2cc7e86e7aeso26746585ad.2
-        for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 09:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1785430745; x=1786035545; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=7iLJuFUNcjxlK3KijjNsWXvDWo9pbqyC8PngAuIGUPQ=;
-        b=Bp4KQGvqn6sq8hOkqnRlJNiUku6oS98GgrLrg18zHBfjvmIMq58Ryjx2yLESBBaC5D
-         6FqTH07zygyByj8jQd1iqUIEWlixmr2lpkjNJ45XLBRJhBGHyrZx6ir6AlE4R09nsfOF
-         xvNC/fJXYCMXcnLqcMsdHFe5KNMUB6QevnAbOsQFvhUK+tVa2Mi2bG1uDllxBhxzpqSr
-         C/bvydadw5HEYZw6aog9QzQo7OuD5GsQSNXTUxhYLoYV7tEXFPzcf5NuAW7m6NFNcbpe
-         N7nmIodHy1aI79i5SZvoHBJMSfMUPKCVVBQ9wZ3Vj9/Y3Xt5KST96r440nN4bDzPgTFd
-         CTjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785430745; x=1786035545;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7iLJuFUNcjxlK3KijjNsWXvDWo9pbqyC8PngAuIGUPQ=;
-        b=HjbL00HLobwXdbkvRlNqk0gBceBaupkARHEpI9cDXCFSF7y5Cm7xBOq9a0JQAar2E2
-         F2yyeU34XL2LqWIlI4DWsXiFuwCTTp5sfdsqA5WjW79jAoMg2stfkMqiHvA6Jg1oY/Xa
-         FdaIDa3rPRG9P6Na5CaPfmbJsptJjcBXVNtdAcVxZsdJYZJBVAR7IHfFOUN+L2BwBbCF
-         O6AKdZew1uuTVZ14dNrSsRR/MbYd+XmDGiHsG3ZVXhtsfJw7zJKRbjp3Vx711DO4XxNM
-         +ENKwkI05QsKZm6TgyF2yv+LHoeT+/Qo9B0EIeGknNrth4PZJsGU0llFusM0iXLYf2wW
-         9WvA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro99NUIyebUMQZDqw7hsINQrPRMC9AuA8o2XieWGNkNyEhtJTy67dYCMVLGv2j7pUDZmug6vK6Orv/s@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfucM9QfbDNpBC31nqT6ECUZvU7cJo8YF7GJ2whIF9vKaCx8xc
-	5+LgOmGY0ZGpIe7ODxKGHANTjPpxzl6arslGh17eFrb734iRdMvq22r/ouIFcI/LXIEjmGUNtis
-	AMoKj
-X-Gm-Gg: AR+sD13He+rJlCY37/4uQbWBjsO2b/Fv4Una4NfLpTBrac5TxZoNNnDsERZ/4N+yX0D
-	mtIP8MMcsMdvxVR9229hnBwOz9PL3zQPaRlOGOBJrUpvWRC9oMCenq18OkSvZDy13pEWGzGwHJu
-	0Nm40FdcTtmDGx1LBVaydho0ek9zNjDMn+k20pQ+YF7FX4YCio+skoPGSWBZA5V8o1l4H51w4p6
-	CSD0GwgX9Q4Cx3Bb9DVgmpPWmQoZLzu2GuCAWXymnyaeOCv7OEZu+pVaymqQUG8F41REYWX9jxg
-	ODkUEo/NCEv7Slgw9LUenlmHdbHSXrHZ3WXsDHnXeMqDcNNs4kkmHsSyeVYPEp9nrt5PPMJO1Xd
-	X+/IrQmSwepQpZKEITjpVdMwrr5cog6BuDz9WCVYZgGbdEghBO8dsp/5K0GQUSWcQsEBZR1ygTc
-	BLPoJbTVgmBGsw6/eU2TFrOJWLku8PJCFY2zgZf88dmFNFAiBSdy8C7w==
-X-Received: by 2002:a05:6a21:a48:b0:3c3:83e8:c209 with SMTP id adf61e73a8af0-3c900786987mr3222269637.71.1785430745072;
-        Thu, 30 Jul 2026 09:59:05 -0700 (PDT)
-Received: from 92650adf53de ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31504b15f77sm24848611eec.4.2026.07.30.09.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 09:59:04 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsLSTGPc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9970D1F000E9;
+	Thu, 30 Jul 2026 17:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785432713;
+	bh=RFueAi8cbwU0Oem/qoNwoyO1tYJYtk++4AK0AFDrccQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
+	b=JsLSTGPcSX8u8YkY+Of8MLUiCFm4JYy04ysTr1WpUAiSjmBTwh8YlMKFi49FzHY9Y
+	 1dotJqwU3o42oMvxJDdaeQSENfJ3qNY4/1lZjZTF+HUHizvjK/UwakXT4ttdfRLcWV
+	 sC3wcPtFgWSnOofkaOcIrZH7tjTeADIYX3gVZyk1hBq/4nF97xgRJFHGOnPsfgtYSs
+	 2BYYnakC9SxSh17urdyAiuTuSbBtIrNj0zqRQisv8ZLfeXpAKrsgaDNsWiJ1+hKIHg
+	 s6pMwGyBty6Ep4HoPsSsSwtmHSmJQ5EiaB3iozXcORaB+tobttJrNRwB1tI/XwbJqp
+	 sX42E6TL26hwA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 547DACE0B67; Thu, 30 Jul 2026 10:31:53 -0700 (PDT)
+Date: Thu, 30 Jul 2026 10:31:53 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Vlastimil Babka <vbabka@kernel.org>
+Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
+Message-ID: <cdc6cf4f-57b2-475d-b9d3-23c4693ed871@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <amth-CMf3Xz5hR32@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: [REGRESSION] next/master: (build) use of undeclared identifier
- 'check_vector_unaligned_access'; did ...
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 30 Jul 2026 16:59:04 -0000
-Message-ID: <178543074351.4076.15027730787524065993@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <amth-CMf3Xz5hR32@sirena.org.uk>
 
-New build issue found on next/master:
+On Thu, Jul 30, 2026 at 03:38:48PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the slab tree got a conflict in:
+> 
+>   mm/slab_common.c
+> 
+> between commit:
+> 
+>   736084507faa3 ("rcu: Rename struct rcu_gp_oldstate to rcu_gp_seq")
+> 
+> from the rcu tree and commit:
+> 
+>   bdd0cc9f0ffc3 ("mm/slab: introduce struct kvfree_rcu_head for kvfree_rcu batching")
+> 
+> from the slab tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
----
- use of undeclared identifier 'check_vector_unaligned_access'; did you mean 'check_unaligned_access'? in arch/riscv/kernel/unaligned_access_speed.o (arch/riscv/kernel/unaligned_access_speed.c) [logspec:kbuild,kbuild.compiler.error]
----
+This resolution looks good to me, thank you!
 
-Log excerpt:
-=====================================================
-/tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:380:24: error: use of undeclared identifier 'check_vector_unaligned_access'; did you mean 'check_unaligned_access'?
-  380 |                 schedule_on_each_cpu(check_vector_unaligned_access);
-      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                                      check_unaligned_access
-/tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:112:12: note: 'check_unaligned_access' declared here
-  112 | static int check_unaligned_access(struct page *page)
-      |            ^
-/tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:380:24: error: incompatible function pointer types passing 'int (struct page *)' to parameter of type 'work_func_t' (aka 'void (*)(struct work_struct *)') [-Wincompatible-function-pointer-types]
-  380 |                 schedule_on_each_cpu(check_vector_unaligned_access);
-      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/kci/linux/include/linux/workqueue.h:636:45: note: passing argument to parameter 'func' here
-  636 | extern int schedule_on_each_cpu(work_func_t func);
-      |                                             ^
-2 errors generated.
+							Thanx, Paul
 
-=====================================================
+> diff --cc mm/slab_common.c
+> index 657fd75776ea7,b8f21eabcccc2..0000000000000
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@@ -1363,8 -1420,8 +1420,8 @@@ struct kvfree_rcu_bulk_data 
+>   
+>   struct kfree_rcu_cpu_work {
+>   	struct rcu_work rcu_work;
+> - 	struct rcu_head *head_free;
+> + 	struct kvfree_rcu_head *head_free;
+>  -	struct rcu_gp_oldstate head_free_gp_snap;
+>  +	struct rcu_gp_seq head_free_gp_snap;
+>   	struct list_head bulk_head_free[FREE_N_CHANNELS];
+>   	struct kfree_rcu_cpu *krcp;
+>   };
+> @@@ -1569,10 -1626,10 +1626,10 @@@ static void kfree_rcu_work(struct work_
+>   	unsigned long flags;
+>   	struct kvfree_rcu_bulk_data *bnode, *n;
+>   	struct list_head bulk_head[FREE_N_CHANNELS];
+> - 	struct rcu_head *head;
+> + 	struct kvfree_rcu_head *head;
+>   	struct kfree_rcu_cpu *krcp;
+>   	struct kfree_rcu_cpu_work *krwp;
+>  -	struct rcu_gp_oldstate head_gp_snap;
+>  +	struct rcu_gp_seq head_gp_snap;
+>   	int i;
+>   
+>   	krwp = container_of(to_rcu_work(work),
 
-When fixing this issue, please attribute this report according to the
-patch submission rules:
 
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Link: https://lore.kernel.org/all/178543074351.4076.15027730787524065993@kernelci.org/
-
-For complete logs and details about the environment used, see the issue
-on the KernelCI dashboard:
-
-- dashboard: https://d.kernelci.org/i/maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
-- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-- commit HEAD:  95d6a9ccef99117115e41e9adb271243bd5e985b
-- tags: next-20260730
-
-# Builds where the incident occurred:
-
-## defconfig+allnoconfig on (riscv):
-- compiler: clang-21
-- config: None
-- dashboard: https://d.kernelci.org/build/maestro:6a6b7183798ea6c1ef929eaa
-
-#regzbot introduced: 78bc8af4affb9a732504eb22eeac7d1e50883853..95d6a9ccef99117115e41e9adb271243bd5e985b
-#regzbot link: https://d.kernelci.org/i/maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
-
-#kernelci issue maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
