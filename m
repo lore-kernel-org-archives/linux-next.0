@@ -1,200 +1,140 @@
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFF2385D9D
-	for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 12:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E182E6116;
+	Thu, 30 Jul 2026 13:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785415929; cv=none; b=o/9i49TM0lJQasT/6AIRnfAfsti59t3RryPnKCSxAK45LnZ3xhVX/+QlxWM6SHHtp0rXcF+KCdy6MjbQKl4AiayDvB9HU8BkbG4Szlqc7ZC8Cce4UxtKiZUd89AuEoanfuwvEN4qtZZ23hyyLIAN7wCjraCoNWCwR70HaMpAWk8=
+	t=1785417266; cv=none; b=IXDcxn0cNLBOgu+/v5s/MzW24yNy0YheJlWCaScURX2yh042D+3xfUcSYZr9xlA2zZZGWyw+3cr19zWt6UdSsTjO+sEQG6jw1v0wnjckX9gCqxZNaVm5OHXizGPiG9sDzyYCi5XNp872mutjz6OnkEElHIjQ4VWXQC1kL8kLodE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785415929; c=relaxed/simple;
-	bh=knzYAMdZ7Z1L3PWLzhIJWfUXHyu4LtwHAd3NfAWW4z0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tKnTs+w9L44BD+MoRqqWWcNvBI9kcJL+3Lu7bmIpWd1uDtNMUQey2wd8rzKX7Bgvf12ASSDix9Mgppsx9V7Qos+xyGgUBNHZxUYf93e5PHdo3UdTycPhn6B0z8S+ZoztW/Fk/tPEMT+I/IHiu6OLHw0ZQuaGkxQG7HlGIpiO9Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT6hEsuQ; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785417266; c=relaxed/simple;
+	bh=XTwyidK3+9h21bIvjitRJB+bHryghBlexz2QRRE2/lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YW64BTMor+CIKHP31Ig3EB2iNP9+X2rfhyf26861Xhm8qK5ml+vrbUmjiQEfkZFhUrJEX0M/XW2h6JBCxKGqDqIcpAU/fkt93HDKAp9ft2N0bP/krKv25XagchAj9Q/kJGqFDEEQaJH3d3CeV8O0D5N7gRHruPykm0sGPYjVor4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Taz1kpds; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT6hEsuQ"
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7e9f1f24cbcso802508a34.0
-        for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 05:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785415921; x=1786020721; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=aTAGzT0qLIVYgYUYqDiXmvuy+nO45xCdWBehqOh4cHk=;
-        b=cT6hEsuQPrQfQCc+wp3HgUteYEtnvFjZ7IfXuoKA0GbOLmIEd/NR4bRKWyI7s8/5aR
-         U2ZLq6SAVzHRGRCxC2RfJ4ECrJV3+zD2kezjT+LElLXITo2b2UCwG/hGiOCO1MBjQfGI
-         W1RAilNtmiyceGUUXWIxPsnF7BkHAAK85/Q4Dy7IKrSsMOSq5L6zTe33oml5g+yOKuGq
-         75iGfZHz6CuDDNt3yefK9Xbmk43pe/QfqtMDZuJ1PGX+BTtJu1bMyPO5aNKFKF19Vy7D
-         GCFUX8q7YYZRMi0sdgHBPAFVlasxJUiGcaodGeRQHkqUn/CC9foO0DmAlFAHguwT8I38
-         ZpCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785415921; x=1786020721;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=aTAGzT0qLIVYgYUYqDiXmvuy+nO45xCdWBehqOh4cHk=;
-        b=NeB6SFxrd4NIsyhLsUA6n1dvBYfzTN5kXXmXplwISU9yLU3w6jglb/+kjuEnTMgvJu
-         RGXqmFPn7i+F25HSgD/dWdZ+cyxFkm8DvkRWvbylhMCbSniT01aYMub6rib1S/lehmAU
-         fWTZ/FFmbjKr5YJlcQm5NxIy3tfMc8tNtPcbwO9lgKTWDIvbk3JwEATsoxfA6G6mg6as
-         GXz77j0c1tRyz/LKsSq9kQW6t+pZU8P/PKnIz8LfTOTrYamS8vZFCPjDu+qXP+XbbjK2
-         Wq+t+E9flLN4b2ebmQn2mjgtrTJpOvQpfwsz3jgQ3nCDDfYPBKrTRRvb2d2VMnw8XXam
-         di2Q==
-X-Gm-Message-State: AOJu0Yyw5KftZ1uj/NQIucLauhVTLNb5ek++TqM+tguzrnaPeUmVsSJk
-	psIo7Cuc5GEIAuXe/2bNRXtDwXB0RWCIHK9TbF+NXa5kphlnW1VZtemR
-X-Gm-Gg: AR+sD12gdqG5vCJ37aRwDExZDni7s9Bo5+R6576k45adVB5h71ZB594tsHhcGF6oivG
-	cVtwbDuXMjWh5zDTugqv7Cxmca7Px3FYydQvBggMtkvXwJ1iOst5LWbm3+zvqRmCZMSeLEgpDYc
-	PyHx6iHbhDnPqURwPedw6ijAJ1X8z8RrP3eyfgUkOEhCiSwgGcGlMtLyzggJGtww8kgECFeLfZn
-	QLph/HqQx4UX+o8BkAbN8zYEtpEtzbAQ6HRId9A2mepftHQIrvqQGna91lBBktHPh9zVWBuHhg+
-	XSGAEYds1ct9X5iNBD+Yatx7dig4TwQIO5u3bfmn9nVIiPVG7mzz+J2OZF/i48UVWX7vspSd0F2
-	ZRiiF1fbD7zaVC8UshrWGQXGs83JRogSOhhAs2PqmxSyzRSgAIA2qQGlR6QDmyNOtMw2UV/KhSx
-	sh5TFqSCPXbFSL2WErNVzgcE5uPAknJrmKn5gFXPvtFwmsBxgE5VDIIYWerLdwTJJjf6HhxFNQW
-	w==
-X-Received: by 2002:a05:6830:10c5:b0:7e9:d34a:f436 with SMTP id 46e09a7af769-7f039eb533cmr134034a34.17.1785415920735;
-        Thu, 30 Jul 2026 05:52:00 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:75::])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7f00d595384sm4696341a34.4.2026.07.30.05.52.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 05:52:00 -0700 (PDT)
-From: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
-Date: Thu, 30 Jul 2026 05:51:37 -0700
-Subject: [PATCH bpf-next] tracing: Make per-template BTF id lists
- file-local
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Taz1kpds"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F15AA1F000E9;
+	Thu, 30 Jul 2026 13:14:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785417265;
+	bh=vM06txpIAlxq14jpmcKr9pebLGWip6qkw2IPtAPsPdU=;
+	h=Date:From:To:Cc:Subject;
+	b=Taz1kpdsXqVIz61OiuIJtU7kqd1sVibw5kow+4k832dSuqbv+FsJb0teXHQukyby+
+	 3AR6iZY7e2VpTPVucWZ9sALCC6BObypvRGkUPrN5Uavhspcq3aWZTo3bLwnf7QKIsy
+	 ULAW11sInPHwzqnXbz/Ywb96fseoHLcFWMfLdEPaT5MqjRnUgeVO3vc3sYvtiXrJ/6
+	 /KgcN6AoTF1jnHPefmHoo3SFs1EqVPcgnFU2pWqaAcgETeH0r0/kNM+PEGmgsLBXH0
+	 Lu+LFLAe3H35kJkvcJCUxSxasAdh3l242C7+Jft9quJipqeYhkkwGFwEjiJU9eob4q
+	 /sHDOtDVbxuBA==
+Date: Thu, 30 Jul 2026 14:14:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the mediatek tree with the arm-soc tree
+Message-ID: <amtOLXbCzi02cXlu@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260730-b4-fix_btf_tracefs-v1-1-5f10b728f51e@meta.com>
-X-B4-Tracking: v=1; b=H4sIANhIa2oC/x3MQQqDMBAF0KsMf20gtdpCrlKKZMxMO5tUkiAB8
- e4F3wHegSrFpCLQgSK7VftlBLoNhPUb80ecJQTC6MeHf96948mp9YWbLq3EVbQ6TVFTnDXxzBg
- IWxG1fqUv8KYuS294n+cfMdq99W4AAAA=
-X-Change-ID: 20260730-b4-fix_btf_tracefs-fdafda5fdb5b
-To: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
- daniel@iogearbox.net, kafai@meta.com, kernel-team@meta.com, 
- eddyz87@gmail.com, memxor@gmail.com, rostedt@goodmis.org, 
- linux-trace-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, broonie@kernel.org, 
- Mykyta Yatsenko <yatsenko@meta.com>
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785415918; l=4282;
- i=yatsenko@meta.com; s=20260324; h=from:subject:message-id;
- bh=2rsrocGSAaAo8ifRN5ORoIxmWyXs1zf7huFeu2NqhU4=;
- b=MPYunR9XMbmuXVv2nRAa9piCzMCG3TG5A9iSS+drD3mZDyxXQPMxL0gagyzrxuz03b+sKn+L8
- xNNtnXlps6KAVaF9jc/qjzjbqX2eKsBM4/f5heGuTmfAMoww4CbV/FG
-X-Developer-Key: i=yatsenko@meta.com; a=ed25519;
- pk=1zCUBXUa66KmzfjNsG8YNlMj2ckPdqBPvFq2ww3/YaA=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zV1sqQPc72kL+3rO"
+Content-Disposition: inline
 
-From: Mykyta Yatsenko <yatsenko@meta.com>
 
-DECLARE_EVENT_CLASS emitted __bpf_trace_btf_ids_<call> through
-BTF_ID_LIST_GLOBAL, i.e. a global symbol named after the event class.
-The class name is not unique across the kernel, so the symbol
-multiply-defines whenever two translation units instantiate the same
-class.
+--zV1sqQPc72kL+3rO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Switch to the file-local BTF_ID_LIST: the list is reached
-only through the event_class_<call>.btf_ids pointer, initialised in the
-same unit, so tracefs readers never reference the symbol by name and
-resolve_btfids still fills the now-local .BTF_ids entries.
+Hi all,
 
-The handcrafted syscall classes are the one cross-unit consumer: give
-them their own local BTF_ID_LIST rather than importing the generated
-sys_{enter,exit} lists, which are now file-local.
+Today's linux-next merge of the mediatek tree got a conflict in:
 
-Fixes: eadc0725ab8d3 ("tracing: Expose tracepoint BTF ids via tracefs")
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/all/ff58b01c-3f5e-4d55-be82-609d2faaf12e@sirena.org.uk/
-Signed-off-by: Mykyta Yatsenko <yatsenko@meta.com>
----
- include/trace/trace_events.h  |  6 ++++--
- kernel/trace/trace_syscalls.c | 22 ++++++++++++++--------
- 2 files changed, 18 insertions(+), 10 deletions(-)
+  drivers/soc/mediatek/mt8167-mmsys.h
 
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 09ad57ac4b73..45ffbe04b580 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -404,10 +404,12 @@ static inline notrace int trace_event_get_offsets_##call(		\
-  *   [0] FUNC   __bpf_trace_<call>     (the BPF dispatcher)
-  *   [1] STRUCT trace_event_raw_<call> (the ring-buffer record)
-  * Exposed via the events/<sys>/<name>/btf_ids tracefs file.
-+ *
-+ * File-local: the class name is not unique, so a global symbol would
-+ * clash across translation units.
-  */
- #define _TRACE_BTF_IDS_DECLARE(call)					\
--	extern u32 __bpf_trace_btf_ids_##call[];			\
--	BTF_ID_LIST_GLOBAL(__bpf_trace_btf_ids_##call, 2)		\
-+	BTF_ID_LIST(__bpf_trace_btf_ids_##call)				\
- 	BTF_ID(func,   __bpf_trace_##call)				\
- 	BTF_ID(struct, trace_event_raw_##call)
- 
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 48ef1a93e576..9b5931f2f280 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -9,6 +9,7 @@
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
- #include <linux/xarray.h>
-+#include <linux/btf_ids.h>
- #include <asm/syscall.h>
- 
- #include "trace_output.h"
-@@ -1305,13 +1306,18 @@ struct trace_event_functions exit_syscall_print_funcs = {
- 
- #ifdef CONFIG_BPF_EVENTS
- /*
-- * BTF id lists generated by DECLARE_EVENT_CLASS for the sys_enter and
-- * sys_exit tracepoints. The auto-generated event_class_sys_{enter,exit}
-- * is unused (per-syscall events share the handcrafted classes below),
-- * but the id lists themselves are global and reusable.
-+ * BTF id lists for the shared sys_enter/sys_exit dispatcher tracepoints,
-+ * resolved by resolve_btfids. Defined locally rather than importing the
-+ * DECLARE_EVENT_CLASS-generated lists, which are now file-local to the
-+ * translation unit that instantiates the tracepoint.
-  */
--extern u32 __bpf_trace_btf_ids_sys_enter[];
--extern u32 __bpf_trace_btf_ids_sys_exit[];
-+BTF_ID_LIST(syscall_enter_btf_ids)
-+BTF_ID(func,   __bpf_trace_sys_enter)
-+BTF_ID(struct, trace_event_raw_sys_enter)
-+
-+BTF_ID_LIST(syscall_exit_btf_ids)
-+BTF_ID(func,   __bpf_trace_sys_exit)
-+BTF_ID(struct, trace_event_raw_sys_exit)
- #endif
- 
- struct trace_event_class __refdata event_class_syscall_enter = {
-@@ -1321,7 +1327,7 @@ struct trace_event_class __refdata event_class_syscall_enter = {
- 	.get_fields	= syscall_get_enter_fields,
- 	.raw_init	= init_syscall_trace,
- #ifdef CONFIG_BPF_EVENTS
--	.btf_ids	= __bpf_trace_btf_ids_sys_enter,
-+	.btf_ids	= syscall_enter_btf_ids,
- #endif
- };
- 
-@@ -1336,7 +1342,7 @@ struct trace_event_class __refdata event_class_syscall_exit = {
- 	.fields		= LIST_HEAD_INIT(event_class_syscall_exit.fields),
- 	.raw_init	= init_syscall_trace,
- #ifdef CONFIG_BPF_EVENTS
--	.btf_ids	= __bpf_trace_btf_ids_sys_exit,
-+	.btf_ids	= syscall_exit_btf_ids,
- #endif
- };
- 
+between commit:
 
----
-base-commit: eadc0725ab8d38c05148fce49f8d5c6a0e01f062
-change-id: 20260730-b4-fix_btf_tracefs-fdafda5fdb5b
+  2fa28edca0f4f ("soc: mediatek: mtk-mmsys: Rework routes to specify compon=
+ent ID")
 
-Best regards,
---  
-Mykyta Yatsenko <yatsenko@meta.com>
+=66rom the arm-soc tree and commit:
 
+  bd3cbc42aa8cb ("soc: mediatek: mtk-mmsys: Rework routes to specify compon=
+ent ID")
+
+=66rom the mediatek tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+Actuallly instead of this I took the mediatek tree side of things as
+there was a build break resulting.  This all doesn't seem terribly
+joined up...
+
+diff --combined drivers/soc/mediatek/mt8167-mmsys.h
+index 001379373507a,d579feee4212f..0000000000000
+--- a/drivers/soc/mediatek/mt8167-mmsys.h
++++ b/drivers/soc/mediatek/mt8167-mmsys.h
+@@@ -10,29 -10,24 +10,24 @@@
+  #define MT8167_DISP_REG_CONFIG_DISP_RDMA0_SOUT_SEL_IN	0x06c
+ =20
+  #define MT8167_DITHER_MOUT_EN_RDMA0			0x1
+- #define MT8167_DITHER_MOUT_EN_MASK			0x7
+-=20
+  #define MT8167_RDMA0_SOUT_DSI0				0x2
+- #define MT8167_RDMA0_SOUT_MASK				0x3
+-=20
+  #define MT8167_DSI0_SEL_IN_RDMA0			0x1
+- #define MT8167_DSI0_SEL_IN_MASK				0x3
+ =20
+  static const struct mtk_mmsys_routes mt8167_mmsys_routing_table[] =3D {
+  	MMSYS_ROUTE(OVL, 0, COLOR, 0,
+  		    MT8167_DISP_REG_CONFIG_DISP_OVL0_MOUT_EN, OVL0_MOUT_EN_COLOR0,
+  		    OVL0_MOUT_EN_COLOR0),
+  	MMSYS_ROUTE(DITHER, 0, RDMA, 0,
+ -		    MT8167_DISP_REG_CONFIG_DISP_DITHER_MOUT_EN, MT8167_DITHER_MOUT_EN_R=
+DMA0,
+ +		    MT8167_DISP_REG_CONFIG_DISP_DITHER_MOUT_EN, MT8167_DITHER_MOUT_EN_M=
+ASK,
+  		    MT8167_DITHER_MOUT_EN_RDMA0),
+  	MMSYS_ROUTE(OVL, 0, COLOR, 0,
+  		    MT8167_DISP_REG_CONFIG_DISP_COLOR0_SEL_IN, COLOR0_SEL_IN_OVL0,
+  		    COLOR0_SEL_IN_OVL0),
+  	MMSYS_ROUTE(RDMA, 0, DSI, 0,
+ -		    MT8167_DISP_REG_CONFIG_DISP_DSI0_SEL_IN, MT8167_DSI0_SEL_IN_RDMA0,
+ +		    MT8167_DISP_REG_CONFIG_DISP_DSI0_SEL_IN, MT8167_DSI0_SEL_IN_MASK,
+  		    MT8167_DSI0_SEL_IN_RDMA0),
+  	MMSYS_ROUTE(RDMA, 0, DSI, 0,
+ -		    MT8167_DISP_REG_CONFIG_DISP_RDMA0_SOUT_SEL_IN, MT8167_RDMA0_SOUT_DS=
+I0,
+ +		    MT8167_DISP_REG_CONFIG_DISP_RDMA0_SOUT_SEL_IN, MT8167_RDMA0_SOUT_MA=
+SK,
+  		    MT8167_RDMA0_SOUT_DSI0),
+  };
+ =20
+
+--zV1sqQPc72kL+3rO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmprTiwACgkQJNaLcl1U
+h9Dzjgf+PpwVzOv9ni/IcZrrWb4GtBE2/A/7IVg43P4RH2okXABiW0lTyewmxNid
+SpfoarpfdSN6jXeBs9CEK0dJt18dpxRvtRCxRfhgOUko+7dkRNsQdnAEQv0amFm2
+gg60vvylezqmygREaK3tOCVLq5b3DBi1pEwHv8D9JoLfQC4oTCBsQTB7ViKxQlv1
+QafHFo3BmzO+3R+DvqFx9mRa5/cF3ipVbsFdjaiY/vxJoiQaZuvx5oE9XZiafiao
+Oovt+N5XVKi1okn9Djld/VpsN2gvTS1J6AUP3V5dI0T6V8eQZjSHrWvYLby+wSJi
+um2iidh9Oug3kWoHr9n/o1o9FuXMPw==
+=5hRZ
+-----END PGP SIGNATURE-----
+
+--zV1sqQPc72kL+3rO--
