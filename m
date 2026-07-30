@@ -1,110 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690153502A5;
-	Thu, 30 Jul 2026 17:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86B526056C;
+	Thu, 30 Jul 2026 21:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785432715; cv=none; b=kYrRTxxyZ+s+L3ooRbBdQbLNSQ9yuu8BxN6Im3ylV8tZxZVEHLuKf/x01OOKbCSPrwbM2ehB9cTMJC87KovOhgmDkcEYQTyOn6roUbcy2/d+gyP0k9YUxuhjK4AJrIldjbtcVKN0WawqJuinYEPjh37LMqXdBi7aVcCWumEBons=
+	t=1785447622; cv=none; b=YJGWQ7gASFbs3F7wZo3RzgsMwRMxUiVVF62B8azE/Dg8F0DsoiOiZk80VZfwic2paoioRlrk3HBbAMg+g8LYliL2tCfkeMuXsBYgtXw/PvzKQMYwf6g60oidI0RPpjv7LlQsYw4pBDVaB9NCcZ/B0REr8QLkvngwN1nKW8QweS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785432715; c=relaxed/simple;
-	bh=tb9gjr4XBR5KRaI5HRzvJHsPGbcmzgomHzuZn+xb6Ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFrKqP8TN2sWE4DPT98n+lc8xDf3fpVFOKP4C7xa1eVehq1jry/eZw2zA696bkfIvZOAZvl4FX/Rc56D3woiTEt2aePlGHpqvosWjqHl3HtKJGIhWVFXOhGwJg2SC4ehWiDsZ8kl8Gf+qdZ1yPFZmbEkdEqCzfpdJ/4/tbu3/vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsLSTGPc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785447622; c=relaxed/simple;
+	bh=4RkAgyxytOqI1hxNSSQn+lStglJaJ3UPpomIaRFygw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nwQzt7sClYSXkMqGPMXSAgOc74JoIeVS8tCotwfjAcAp/+DCpmhH/+aqzKly+uKfqhFTHOQrgyzY+rWu10YICBJm+LiwXzM9zt1BktqzJ6LM2CzfyHcMenpO6IZqaMKMkga/LWaG105GowJqEqnEQUDR2S0pWPUBv5IeCTRcsxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PjNSME4i; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsLSTGPc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9970D1F000E9;
-	Thu, 30 Jul 2026 17:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785432713;
-	bh=RFueAi8cbwU0Oem/qoNwoyO1tYJYtk++4AK0AFDrccQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
-	b=JsLSTGPcSX8u8YkY+Of8MLUiCFm4JYy04ysTr1WpUAiSjmBTwh8YlMKFi49FzHY9Y
-	 1dotJqwU3o42oMvxJDdaeQSENfJ3qNY4/1lZjZTF+HUHizvjK/UwakXT4ttdfRLcWV
-	 sC3wcPtFgWSnOofkaOcIrZH7tjTeADIYX3gVZyk1hBq/4nF97xgRJFHGOnPsfgtYSs
-	 2BYYnakC9SxSh17urdyAiuTuSbBtIrNj0zqRQisv8ZLfeXpAKrsgaDNsWiJ1+hKIHg
-	 s6pMwGyBty6Ep4HoPsSsSwtmHSmJQ5EiaB3iozXcORaB+tobttJrNRwB1tI/XwbJqp
-	 sX42E6TL26hwA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 547DACE0B67; Thu, 30 Jul 2026 10:31:53 -0700 (PDT)
-Date: Thu, 30 Jul 2026 10:31:53 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Vlastimil Babka <vbabka@kernel.org>
-Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
-Message-ID: <cdc6cf4f-57b2-475d-b9d3-23c4693ed871@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <amth-CMf3Xz5hR32@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PjNSME4i"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=2N0jFtLuU9Ioc8kchzs+cXudHwRGezPIm42RHKzrbGY=; b=PjNSME4ifRVNNL+BlX+/GZXy62
+	t4eAlLUuZwcR3gCYSqWbmufzfxgnFML3l4UyLGm28R9kGzLz1Ax6pZjEWWAGgwO4hG9pFOwvWe6Zc
+	cYpRwmoCo4mvO1Eb71YzbMCIIw0UfMO7HYqLGG9OAf9kjGwVi4FubpRfbgNJXmJtDw0fWnrDDf4Ds
+	NYYlWbXzHq/v8RkvV2lRgmmDZkiidNlSf7mmX67f2zT2XEFTrEeBCmOHFoH4csjWr07hEkpV7dGNp
+	13KPSD4azNvLeRHoKCYe9WROlJbPr13dAoFkUzND/k58Wrj5vw+map2tg9n+IOYr/MhLiZpkm9ROI
+	6KIIbjGA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wpYUC-0000000BOqb-2LFY;
+	Thu, 30 Jul 2026 21:40:17 +0000
+Message-ID: <ae2d6aa5-1093-4ec1-ab29-ac9af791fb5d@infradead.org>
+Date: Thu, 30 Jul 2026 14:40:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <amth-CMf3Xz5hR32@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Jul 30 (sound/soc/sdca/)
+To: Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Maciej Strozek <mstrozek@opensource.cirrus.com>
+References: <amtnlbQl2KLongvo@sirena.org.uk>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <amtnlbQl2KLongvo@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 30, 2026 at 03:38:48PM +0100, Mark Brown wrote:
+
+
+On 7/30/26 8:02 AM, Mark Brown wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the slab tree got a conflict in:
+> Changes since 20260729:
 > 
->   mm/slab_common.c
-> 
-> between commit:
-> 
->   736084507faa3 ("rcu: Rename struct rcu_gp_oldstate to rcu_gp_seq")
-> 
-> from the rcu tree and commit:
-> 
->   bdd0cc9f0ffc3 ("mm/slab: introduce struct kvfree_rcu_head for kvfree_rcu batching")
-> 
-> from the slab tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
 
-This resolution looks good to me, thank you!
+When # CONFIG_SND_SOC_SDCA_FDL is not set:
 
-							Thanx, Paul
+../sound/soc/sdca/sdca_interrupts.c: In function ‘sdca_irq_populate_early’:
+../sound/soc/sdca/sdca_interrupts.c:471:56: error: ‘sdca_fdl_free_state’ undeclared (first use in this function); did you mean ‘sdca_jack_free_state’?
+  471 |                                 interrupt->free_priv = sdca_fdl_free_state;
+      |                                                        ^~~~~~~~~~~~~~~~~~~
+      |                                                        sdca_jack_free_state
 
-> diff --cc mm/slab_common.c
-> index 657fd75776ea7,b8f21eabcccc2..0000000000000
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@@ -1363,8 -1420,8 +1420,8 @@@ struct kvfree_rcu_bulk_data 
->   
->   struct kfree_rcu_cpu_work {
->   	struct rcu_work rcu_work;
-> - 	struct rcu_head *head_free;
-> + 	struct kvfree_rcu_head *head_free;
->  -	struct rcu_gp_oldstate head_free_gp_snap;
->  +	struct rcu_gp_seq head_free_gp_snap;
->   	struct list_head bulk_head_free[FREE_N_CHANNELS];
->   	struct kfree_rcu_cpu *krcp;
->   };
-> @@@ -1569,10 -1626,10 +1626,10 @@@ static void kfree_rcu_work(struct work_
->   	unsigned long flags;
->   	struct kvfree_rcu_bulk_data *bnode, *n;
->   	struct list_head bulk_head[FREE_N_CHANNELS];
-> - 	struct rcu_head *head;
-> + 	struct kvfree_rcu_head *head;
->   	struct kfree_rcu_cpu *krcp;
->   	struct kfree_rcu_cpu_work *krwp;
->  -	struct rcu_gp_oldstate head_gp_snap;
->  +	struct rcu_gp_seq head_gp_snap;
->   	int i;
->   
->   	krwp = container_of(to_rcu_work(work),
 
+
+-- 
+~Randy
 
