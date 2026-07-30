@@ -1,125 +1,200 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9751E3ACF0E;
-	Thu, 30 Jul 2026 12:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFF2385D9D
+	for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 12:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785412912; cv=none; b=eB9gxM1UQcRmHFUD8mrqq1AKQcwSfJSJux20ddtgDUAQMeujN79+V2VjMAckhV7LsgMIkS0rrAaf0lNJWq/t2jF2qdoHSoMj61qGDCpsnvIoheKWvl69ygPSHdnJYH7HPs4b1iTHxJs1lmi3o6xJNrm2EAu0/rCCYYW19riEdlA=
+	t=1785415929; cv=none; b=o/9i49TM0lJQasT/6AIRnfAfsti59t3RryPnKCSxAK45LnZ3xhVX/+QlxWM6SHHtp0rXcF+KCdy6MjbQKl4AiayDvB9HU8BkbG4Szlqc7ZC8Cce4UxtKiZUd89AuEoanfuwvEN4qtZZ23hyyLIAN7wCjraCoNWCwR70HaMpAWk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785412912; c=relaxed/simple;
-	bh=VSI+DPLAXXbWvxKel3pMlwtGMbyX6R6dpFjCkWZHyyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Qm+o3XeyOyqePHoG18rlQhodAnhT1qSpnUop24Rbd6Ps/6iKTtF2mhvoZe2uiG2jHvR3qw/51KSFvJCr2b/hl1LYTQisS1yVW+Ym86bGB7FwWGlIu2EWi+CfwnGiYp6h3KUiWzs7L3lG9jqs3RxsU1k0Q+Iqfh670tMctEhiheg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYRrJxDU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785415929; c=relaxed/simple;
+	bh=knzYAMdZ7Z1L3PWLzhIJWfUXHyu4LtwHAd3NfAWW4z0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tKnTs+w9L44BD+MoRqqWWcNvBI9kcJL+3Lu7bmIpWd1uDtNMUQey2wd8rzKX7Bgvf12ASSDix9Mgppsx9V7Qos+xyGgUBNHZxUYf93e5PHdo3UdTycPhn6B0z8S+ZoztW/Fk/tPEMT+I/IHiu6OLHw0ZQuaGkxQG7HlGIpiO9Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT6hEsuQ; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYRrJxDU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DCE1F000E9;
-	Thu, 30 Jul 2026 12:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785412911;
-	bh=vZxr0hlMhB93W+15vqgU/DoNCMHjZ80TBNJeUgAuWic=;
-	h=Date:From:To:Cc:Subject;
-	b=YYRrJxDUaikL//9qKeCBkeefHvP/esWyv8AWaK1uj8dbyZJa5ab3k/EZRlUmRzDDT
-	 GV7rX6zAwMBsslngUAhV0OgO82XYippGw+MZn95BuuHJGpAM/UvmiyHX7QLsi2XQPg
-	 4Z/QFhGY6HAWE9P34J6bY7OC5tuylQwW+z+c+C2KWuUGXlPSN9s/TZCGY2ei1Ndya1
-	 /3UeUUl1iyA6CC4I5XNvP1P07GyHmVg+IY1V7o0ZCfKRl97jwieRkgiK7TjddXIHa2
-	 5UkuWeUGVIMKo9wGZh67q3fk18WK28G78dlcQKfzO8i2JTB2T7Ign1y7bmgVXz2RX7
-	 QK5QOivY0q/Vg==
-Date: Thu, 30 Jul 2026 13:01:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs-brauner tree with the ext3 tree
-Message-ID: <ams9K7q5NMj9ifmm@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT6hEsuQ"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7e9f1f24cbcso802508a34.0
+        for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 05:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785415921; x=1786020721; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=aTAGzT0qLIVYgYUYqDiXmvuy+nO45xCdWBehqOh4cHk=;
+        b=cT6hEsuQPrQfQCc+wp3HgUteYEtnvFjZ7IfXuoKA0GbOLmIEd/NR4bRKWyI7s8/5aR
+         U2ZLq6SAVzHRGRCxC2RfJ4ECrJV3+zD2kezjT+LElLXITo2b2UCwG/hGiOCO1MBjQfGI
+         W1RAilNtmiyceGUUXWIxPsnF7BkHAAK85/Q4Dy7IKrSsMOSq5L6zTe33oml5g+yOKuGq
+         75iGfZHz6CuDDNt3yefK9Xbmk43pe/QfqtMDZuJ1PGX+BTtJu1bMyPO5aNKFKF19Vy7D
+         GCFUX8q7YYZRMi0sdgHBPAFVlasxJUiGcaodGeRQHkqUn/CC9foO0DmAlFAHguwT8I38
+         ZpCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785415921; x=1786020721;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=aTAGzT0qLIVYgYUYqDiXmvuy+nO45xCdWBehqOh4cHk=;
+        b=NeB6SFxrd4NIsyhLsUA6n1dvBYfzTN5kXXmXplwISU9yLU3w6jglb/+kjuEnTMgvJu
+         RGXqmFPn7i+F25HSgD/dWdZ+cyxFkm8DvkRWvbylhMCbSniT01aYMub6rib1S/lehmAU
+         fWTZ/FFmbjKr5YJlcQm5NxIy3tfMc8tNtPcbwO9lgKTWDIvbk3JwEATsoxfA6G6mg6as
+         GXz77j0c1tRyz/LKsSq9kQW6t+pZU8P/PKnIz8LfTOTrYamS8vZFCPjDu+qXP+XbbjK2
+         Wq+t+E9flLN4b2ebmQn2mjgtrTJpOvQpfwsz3jgQ3nCDDfYPBKrTRRvb2d2VMnw8XXam
+         di2Q==
+X-Gm-Message-State: AOJu0Yyw5KftZ1uj/NQIucLauhVTLNb5ek++TqM+tguzrnaPeUmVsSJk
+	psIo7Cuc5GEIAuXe/2bNRXtDwXB0RWCIHK9TbF+NXa5kphlnW1VZtemR
+X-Gm-Gg: AR+sD12gdqG5vCJ37aRwDExZDni7s9Bo5+R6576k45adVB5h71ZB594tsHhcGF6oivG
+	cVtwbDuXMjWh5zDTugqv7Cxmca7Px3FYydQvBggMtkvXwJ1iOst5LWbm3+zvqRmCZMSeLEgpDYc
+	PyHx6iHbhDnPqURwPedw6ijAJ1X8z8RrP3eyfgUkOEhCiSwgGcGlMtLyzggJGtww8kgECFeLfZn
+	QLph/HqQx4UX+o8BkAbN8zYEtpEtzbAQ6HRId9A2mepftHQIrvqQGna91lBBktHPh9zVWBuHhg+
+	XSGAEYds1ct9X5iNBD+Yatx7dig4TwQIO5u3bfmn9nVIiPVG7mzz+J2OZF/i48UVWX7vspSd0F2
+	ZRiiF1fbD7zaVC8UshrWGQXGs83JRogSOhhAs2PqmxSyzRSgAIA2qQGlR6QDmyNOtMw2UV/KhSx
+	sh5TFqSCPXbFSL2WErNVzgcE5uPAknJrmKn5gFXPvtFwmsBxgE5VDIIYWerLdwTJJjf6HhxFNQW
+	w==
+X-Received: by 2002:a05:6830:10c5:b0:7e9:d34a:f436 with SMTP id 46e09a7af769-7f039eb533cmr134034a34.17.1785415920735;
+        Thu, 30 Jul 2026 05:52:00 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:75::])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7f00d595384sm4696341a34.4.2026.07.30.05.52.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jul 2026 05:52:00 -0700 (PDT)
+From: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
+Date: Thu, 30 Jul 2026 05:51:37 -0700
+Subject: [PATCH bpf-next] tracing: Make per-template BTF id lists
+ file-local
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IvZiZ9avHEAmPWU8"
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260730-b4-fix_btf_tracefs-v1-1-5f10b728f51e@meta.com>
+X-B4-Tracking: v=1; b=H4sIANhIa2oC/x3MQQqDMBAF0KsMf20gtdpCrlKKZMxMO5tUkiAB8
+ e4F3wHegSrFpCLQgSK7VftlBLoNhPUb80ecJQTC6MeHf96948mp9YWbLq3EVbQ6TVFTnDXxzBg
+ IWxG1fqUv8KYuS294n+cfMdq99W4AAAA=
+X-Change-ID: 20260730-b4-fix_btf_tracefs-fdafda5fdb5b
+To: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
+ daniel@iogearbox.net, kafai@meta.com, kernel-team@meta.com, 
+ eddyz87@gmail.com, memxor@gmail.com, rostedt@goodmis.org, 
+ linux-trace-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, broonie@kernel.org, 
+ Mykyta Yatsenko <yatsenko@meta.com>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785415918; l=4282;
+ i=yatsenko@meta.com; s=20260324; h=from:subject:message-id;
+ bh=2rsrocGSAaAo8ifRN5ORoIxmWyXs1zf7huFeu2NqhU4=;
+ b=MPYunR9XMbmuXVv2nRAa9piCzMCG3TG5A9iSS+drD3mZDyxXQPMxL0gagyzrxuz03b+sKn+L8
+ xNNtnXlps6KAVaF9jc/qjzjbqX2eKsBM4/f5heGuTmfAMoww4CbV/FG
+X-Developer-Key: i=yatsenko@meta.com; a=ed25519;
+ pk=1zCUBXUa66KmzfjNsG8YNlMj2ckPdqBPvFq2ww3/YaA=
 
+From: Mykyta Yatsenko <yatsenko@meta.com>
 
---IvZiZ9avHEAmPWU8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+DECLARE_EVENT_CLASS emitted __bpf_trace_btf_ids_<call> through
+BTF_ID_LIST_GLOBAL, i.e. a global symbol named after the event class.
+The class name is not unique across the kernel, so the symbol
+multiply-defines whenever two translation units instantiate the same
+class.
 
-Hi all,
+Switch to the file-local BTF_ID_LIST: the list is reached
+only through the event_class_<call>.btf_ids pointer, initialised in the
+same unit, so tracefs readers never reference the symbol by name and
+resolve_btfids still fills the now-local .BTF_ids entries.
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+The handcrafted syscall classes are the one cross-unit consumer: give
+them their own local BTF_ID_LIST rather than importing the generated
+sys_{enter,exit} lists, which are now file-local.
 
-  fs/ext2/xattr.c
+Fixes: eadc0725ab8d3 ("tracing: Expose tracepoint BTF ids via tracefs")
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/all/ff58b01c-3f5e-4d55-be82-609d2faaf12e@sirena.org.uk/
+Signed-off-by: Mykyta Yatsenko <yatsenko@meta.com>
+---
+ include/trace/trace_events.h  |  6 ++++--
+ kernel/trace/trace_syscalls.c | 22 ++++++++++++++--------
+ 2 files changed, 18 insertions(+), 10 deletions(-)
 
-between commit:
+diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+index 09ad57ac4b73..45ffbe04b580 100644
+--- a/include/trace/trace_events.h
++++ b/include/trace/trace_events.h
+@@ -404,10 +404,12 @@ static inline notrace int trace_event_get_offsets_##call(		\
+  *   [0] FUNC   __bpf_trace_<call>     (the BPF dispatcher)
+  *   [1] STRUCT trace_event_raw_<call> (the ring-buffer record)
+  * Exposed via the events/<sys>/<name>/btf_ids tracefs file.
++ *
++ * File-local: the class name is not unique, so a global symbol would
++ * clash across translation units.
+  */
+ #define _TRACE_BTF_IDS_DECLARE(call)					\
+-	extern u32 __bpf_trace_btf_ids_##call[];			\
+-	BTF_ID_LIST_GLOBAL(__bpf_trace_btf_ids_##call, 2)		\
++	BTF_ID_LIST(__bpf_trace_btf_ids_##call)				\
+ 	BTF_ID(func,   __bpf_trace_##call)				\
+ 	BTF_ID(struct, trace_event_raw_##call)
+ 
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 48ef1a93e576..9b5931f2f280 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -9,6 +9,7 @@
+ #include <linux/ftrace.h>
+ #include <linux/perf_event.h>
+ #include <linux/xarray.h>
++#include <linux/btf_ids.h>
+ #include <asm/syscall.h>
+ 
+ #include "trace_output.h"
+@@ -1305,13 +1306,18 @@ struct trace_event_functions exit_syscall_print_funcs = {
+ 
+ #ifdef CONFIG_BPF_EVENTS
+ /*
+- * BTF id lists generated by DECLARE_EVENT_CLASS for the sys_enter and
+- * sys_exit tracepoints. The auto-generated event_class_sys_{enter,exit}
+- * is unused (per-syscall events share the handcrafted classes below),
+- * but the id lists themselves are global and reusable.
++ * BTF id lists for the shared sys_enter/sys_exit dispatcher tracepoints,
++ * resolved by resolve_btfids. Defined locally rather than importing the
++ * DECLARE_EVENT_CLASS-generated lists, which are now file-local to the
++ * translation unit that instantiates the tracepoint.
+  */
+-extern u32 __bpf_trace_btf_ids_sys_enter[];
+-extern u32 __bpf_trace_btf_ids_sys_exit[];
++BTF_ID_LIST(syscall_enter_btf_ids)
++BTF_ID(func,   __bpf_trace_sys_enter)
++BTF_ID(struct, trace_event_raw_sys_enter)
++
++BTF_ID_LIST(syscall_exit_btf_ids)
++BTF_ID(func,   __bpf_trace_sys_exit)
++BTF_ID(struct, trace_event_raw_sys_exit)
+ #endif
+ 
+ struct trace_event_class __refdata event_class_syscall_enter = {
+@@ -1321,7 +1327,7 @@ struct trace_event_class __refdata event_class_syscall_enter = {
+ 	.get_fields	= syscall_get_enter_fields,
+ 	.raw_init	= init_syscall_trace,
+ #ifdef CONFIG_BPF_EVENTS
+-	.btf_ids	= __bpf_trace_btf_ids_sys_enter,
++	.btf_ids	= syscall_enter_btf_ids,
+ #endif
+ };
+ 
+@@ -1336,7 +1342,7 @@ struct trace_event_class __refdata event_class_syscall_exit = {
+ 	.fields		= LIST_HEAD_INIT(event_class_syscall_exit.fields),
+ 	.raw_init	= init_syscall_trace,
+ #ifdef CONFIG_BPF_EVENTS
+-	.btf_ids	= __bpf_trace_btf_ids_sys_exit,
++	.btf_ids	= syscall_exit_btf_ids,
+ #endif
+ };
+ 
 
-  6abf69e2e7f91 ("ext2: Simplify error handling of IO error when adding xat=
-tr")
+---
+base-commit: eadc0725ab8d38c05148fce49f8d5c6a0e01f062
+change-id: 20260730-b4-fix_btf_tracefs-fdafda5fdb5b
 
-=66rom the ext3 tree and commit:
+Best regards,
+--  
+Mykyta Yatsenko <yatsenko@meta.com>
 
-  356984d1a5c32 ("ext2: Fix lost inode updates for IS_SYNC inodes")
-
-=66rom the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/ext2/xattr.c
-index 5f49ec4afc36f,be63f89402a38..0000000000000
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@@ -777,16 -777,20 +777,16 @@@ ext2_xattr_set2(struct inode *inode, st
-  	/* Update the inode. */
-  	EXT2_I(inode)->i_file_acl =3D new_bh ? new_bh->b_blocknr : 0;
-  	inode_set_ctime_current(inode);
-+ 	mark_inode_dirty(inode);
-  	if (IS_SYNC(inode)) {
-  		error =3D sync_inode_metadata(inode, 1);
- -		/* In case sync failed due to ENOSPC the inode was actually
- -		 * written (only some dirty data were not) so we just proceed
- -		 * as if nothing happened and cleanup the unused block */
- -		if (error && error !=3D -ENOSPC) {
- -			if (new_bh && new_bh !=3D old_bh) {
- -				dquot_free_block_nodirty(inode, 1);
- -				mark_inode_dirty(inode);
- -			}
- +		/*
- +		 * Inode writeout failed. Backing everything out is complex so
- +		 * let's just leave it for e2fsck to cleanup the mess.
- +		 */
- +		if (error)
-  			goto cleanup;
-- 	} else
-- 		mark_inode_dirty(inode);
- -		}
-+ 	}
- =20
-  	error =3D 0;
-  	if (old_bh && old_bh !=3D new_bh) {
-
---IvZiZ9avHEAmPWU8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmprPSoACgkQJNaLcl1U
-h9D28gf+O8g908WmOC+2vMvufXOWdcH7koTA4cTCNpiUpZOS0zrkHAezCAunytEg
-BI8+z9jcEX6jbTyKbnWlEfQrhG5LKXQOd3Vl1ikn3+x/Nb1KBSw9JKGf1PBMKBf1
-ZglomQaGUp+lnBsj6d+OI/viLLEvVCY50UDnaJWUkX6pz2rw4H9rIDTdsEubpXsK
-ZxiTz+pJlQkZN18qDnLrbgwBTa5/O5r3mXYtOCfvTdT5sH1PMhkM5LPDv0sJ0c+f
-o5W/yMurK+yR7ReAPLQMNqginTW1PYYU7lqiDr7CeOmsVz2+pUNat8Zoxx1tPmii
-hSk676lVFdXXUPvHT3OSvrDN+UV/eQ==
-=PEgK
------END PGP SIGNATURE-----
-
---IvZiZ9avHEAmPWU8--
