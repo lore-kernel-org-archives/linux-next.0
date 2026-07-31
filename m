@@ -1,170 +1,144 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.61.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA0935C698;
-	Fri, 31 Jul 2026 08:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785486746; cv=fail; b=TADSDNpYRnWCB5vm5LkDDV/5n+KLg4RXgrDHvKaj0cYZR38Oyi9VOhP08/wdOPRb8ZSGvv7HILwnCw1fyJdFoNU2e2Gs6P0sGQvyAkQy8std+xLpkB338bHrLhiMTQzvJ95b4LLkO3ZHXnJGxBJey83eMEsmKSvfBNrSyRFw8/U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785486746; c=relaxed/simple;
-	bh=+bAVUPbq8I+hjohB/iR21njOeA+aomWyXo84pd63pxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOIcrxiBzAj8QHPxydDzQUlzI26GG4OscpznyWCNBiEHSbfqfYyOJ0933If0RD8naLhYfJe0tyfVETtvbrfAmL/GkqSK5H1dpbtkg5R2yTjDWev66eKeVsi4YE4k1R7p7+/AdkHzeKOk+DowdEGF4yg33OVR39RbWnRBTcwms4s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=PpXNOVAe; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=WYK5CWp2; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C93F3BCD27
+	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 09:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.61.103
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785491048; cv=none; b=oLevQ+C5lTrW2Qvw63iQHXUZvucVzb9heC40VtcYL7UsE0RsczzCA5RnkYm9xWT9CnkqEj063Yq1KyOj4N09kP0Jg1G88i2T3LpzZ/Dwzu5+RrGguBOJkGaIXrm88sIv1CwrBdY2mwVANsJ5YLksqlf1mlNm+aLM70vLl3YcYh0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785491048; c=relaxed/simple;
+	bh=lWYtvxlBjTE7A8Hl1l0i8BOB/MvCVJriXHIj5eWFBYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jPYGyESojS64OpSQ6VslMjFZNEhBM4mfo//3q9U8AhXwIzHqSd7XmyxTrwxooy+HfRmLL0S3pHAiT9nDDWbM6lxZa7or/547jA9OwrL7rGss+L+15Ut0ftQwk++E4Rf62Mh4IwFEFJeWM7TW1uqEVw8QmuF8teK3Z0+OYkr6+Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ltcKrTpb; arc=none smtp.client-ip=188.68.61.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="PpXNOVAe";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="WYK5CWp2"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66V85u3m421333;
-	Fri, 31 Jul 2026 03:32:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=ZVwK2N7yNhVOXzsBTgKGTM/VyUUbnO3ePQdE/1RVw4U=; b=
-	PpXNOVAefqQWO2K6DZ+6/DfVKdc7F3HimG+pHgRxZV9wFP6M8g4v4dB0jcSCzBKL
-	0Pp1+CRMV5QabopV9EAGPcfCcjN3Y2pwOBblEoTf1x7dzmZqn7OrpBpY2y2Le1V+
-	BBxGk/aN5fYE0WGktQeqw3/PYv+7WFPD00aZZdE4dVtJYmsrp4M3McmAn/MPxDjy
-	AepmbZSSXzm0vu0Emxn90ZXnPnu2qvRr8IXYOa7McWbHI6xGcCdkW1utk4rHIQwK
-	QaBEnBar9rdO9ks3CeLK5zLKpOXoiEfX9i6SuOIQQr8dUwyj15YkUIiXGNApeLSv
-	QbxvVbX83M4SaZ93aH9coA==
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11020075.outbound.protection.outlook.com [52.101.193.75])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 4frqvur0sg-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 31 Jul 2026 03:32:12 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j7M2JFuGUJTSHFGdZx8iVwSv350xT34ozqEr2xOncbSWhMenq4RBk7h5Pqi6OYhtP5dnpXutZZBpduYp9FHmNzANL/Xi26HYUE3S1a/iMxqbdD8igPEmYWIY6XyHgBr7mc6jo7i8NfRMo1hXQUBQWAhOMLhuXhNTaqrl10VV++7FXBybLLApoKxwYChodPxJj/JNbl+FS6bsG/qqsEz7MBQ7T1FPMVKr9vL/xVK9LcFCVdHK2w20Djw79IC6yO39DLvsudJ8B/LI4Pvf3cuVbXzrVLw3i4gNqPOeaSXVwdzjvwlEyvZzgTgjAM+foPQ197DszUHD+s2m/N2V5HHBTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZVwK2N7yNhVOXzsBTgKGTM/VyUUbnO3ePQdE/1RVw4U=;
- b=COM2xOBjfJjQt7BuQwGVIxZVYGLd+jRYeOYpRbMArmmpyyaGiSVicLzRyrIXhO2JyRj/e7ynnGZRzO/JTNcj0l1+VY2Wez2eDfeHVtVIYM7Uqeb46oadJDFQpduJm1jNqwJ4Gtw0ZPOhdwyjMxUzmKT7vB8hvClY1riN8D9TlHzczsNDrkxYEl9pVZWcYB8Zfli14YSunqWYa/arhyv6LZ7LFecsDWy4AH65x78yajrOPgc9OZR1aeemcVDqy78wAIlh019IMHWkYNP7/Ogv2KJLpe+/adlzn/rrIlpPWulbCNqLwwNyF/WKRLN9ksmE6RKXkDGrl6iAR2OFaknkmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZVwK2N7yNhVOXzsBTgKGTM/VyUUbnO3ePQdE/1RVw4U=;
- b=WYK5CWp2j4+Y9uibYXPrxPU/VRlf9U1xv9ocqwn7Gjo4eQFwhCG84QSiNPxJ90lkP5VAiwhLaGqWUnF/K6nOInYlzXapUd8UHRFvV0Pye1eN+Lf1ij78TuSd2dK3gLgPnm2t99p9UUduWCjFGS2T1IlrTGTeOp7+p9OMpzv4rGs=
-Received: from BN1PR13CA0014.namprd13.prod.outlook.com (2603:10b6:408:e2::19)
- by CH3PR19MB8326.namprd19.prod.outlook.com (2603:10b6:610:1cb::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.16; Fri, 31 Jul
- 2026 08:32:06 +0000
-Received: from BN1PEPF00004681.namprd03.prod.outlook.com
- (2603:10b6:408:e2:cafe::7f) by BN1PR13CA0014.outlook.office365.com
- (2603:10b6:408:e2::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.292.10 via Frontend Transport; Fri,
- 31 Jul 2026 08:32:05 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- opensource.cirrus.com discourages use of 84.19.233.75 as permitted sender)
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- BN1PEPF00004681.mail.protection.outlook.com (10.167.243.87) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.292.8
- via Frontend Transport; Fri, 31 Jul 2026 08:32:05 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id E7662406541;
-	Fri, 31 Jul 2026 08:32:03 +0000 (UTC)
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id DA8BE82025A;
-	Fri, 31 Jul 2026 08:32:03 +0000 (UTC)
-Date: Fri, 31 Jul 2026 09:32:02 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-        Maciej Strozek <mstrozek@opensource.cirrus.com>
-Subject: Re: linux-next: Tree for Jul 30 (sound/soc/sdca/)
-Message-ID: <amxdgg7mKgy8/uwg@opensource.cirrus.com>
-References: <amtnlbQl2KLongvo@sirena.org.uk>
- <ae2d6aa5-1093-4ec1-ab29-ac9af791fb5d@infradead.org>
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ltcKrTpb"
+Received: from mors-relay-8403.netcup.net (localhost [127.0.0.1])
+	by mors-relay-8403.netcup.net (Postfix) with ESMTPS id 4hBLk51LZmz88tf;
+	Fri, 31 Jul 2026 11:43:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
+	s=key2; t=1785491037;
+	bh=lWYtvxlBjTE7A8Hl1l0i8BOB/MvCVJriXHIj5eWFBYE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ltcKrTpbFP+YTCK6FwA44EWJKPdZbGFrRIpUCTstsMAVyXKywwDkgY5Koloi48Lv0
+	 8QciPK1x8GQAzxOkqPpKzh+cJQwE8VYg3VVSDxtlPgxp8wQJISknbvvzF2boyXFjyl
+	 yD7Kti1BfLQBCv0zeMBnzlceis/ny0uvtCGh2SwkzHmzC1638vkrtI7tJkEtxnTVdJ
+	 4vVpJ1Qac52tJ2MvwAx4RD8TwOF8m17HokA0FGY/9jpE1V2azSFgJZVEia2Yt81fYz
+	 wldVrwm+aOwg8z/v5EKILhrs1UsROYiFowhB6J0upIZhqF5Y5G+AFayWr8XjXh6fSy
+	 HfgdgKA6YI/LQ==
+Received: from policy01-mors.netcup.net (unknown [46.38.225.35])
+	by mors-relay-8403.netcup.net (Postfix) with ESMTPS id 4hBLk50dlTz87Mc;
+	Fri, 31 Jul 2026 11:43:57 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at policy01-mors.netcup.net
+X-Spam-Flag: NO
+X-Spam-Score: -2.897
+X-Spam-Level: 
+Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy01-mors.netcup.net (Postfix) with ESMTPS id 4hBLk252H6z8tbq;
+	Fri, 31 Jul 2026 11:43:54 +0200 (CEST)
+Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
+	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 9EBF15F9AF;
+	Fri, 31 Jul 2026 11:43:49 +0200 (CEST)
+Authentication-Results: mxe9fb;
+        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
+Received-SPF: pass (mxe9fb: connection is authenticated)
+Message-ID: <9d66c14c-5ef8-4e2e-aa1a-ece90901518c@leemhuis.info>
+Date: Fri, 31 Jul 2026 11:43:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae2d6aa5-1093-4ec1-ab29-ac9af791fb5d@infradead.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004681:EE_|CH3PR19MB8326:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a6789f7-fe0e-4a5a-9f49-08deeede33e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|82310400026|61400799027|23010399003|13003099007|56012099006|11063799006|4143699003|10067099003|16102099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	atW+hcohkPyaO+FvkK3XKTPhIiqIZk9VAMoPFZYkVii+PEpqVVKHJsMYth+Pjq10JsIb1Eo53okQbcar0poRiL8ZhWfEnTCg8QRn/SbyK1VWF1se2DjpU38IETUVvN8abQUVnoasGfu44MUkF1hIX+ANgwYR7sbBQk23EyvOzWcS4STG17+3xdthSXsrawe93HF+hbX+6W8iMqEf9Yhks+04F25ypHYN2whwfzXn6b+U9ynSvzwSb7EQcQ9KztoJkG93UiECGaKfX2ezmGXv3vrH06OWyauu5oUnInwJwmjB71CVBQ43bAIx/1jjJRooDga8SbVxXT/BFBD3xKeIahZc8USZV2SAYWfVHlarBFI8SDsOZhNPNKeOGzgFABh1b1gphAzXr9MVT92NTDF9hzCBkZBgg0SzqZdz0xwvGk3ouDmU+3XdelotHQt7Kg5q/AmB9HUAqvVH3XiLQzs5R75+cGZuKgWB/I0fTX0l98a3M+NRk0pQUYijibURuhfNnfoH2x9uWHYFm1mSaeBTbWs3fy6NPKHfEyWpauCzdq4RIgYlEibthL09rhdHXtRldH+edLpdIe4w6EvZ7mzGtv07tgH6mnHa2ez7LSSObNYErgS5V0bhO9XOn7H37onXVN1GwmkN64qoCvFWhMC5ZYyaaxV60rgEYI6QWM1QWMANxMgZI8Q9Mj+hWU5h5reJNtqCuif+Pu4/29aZraCIAQ==
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(82310400026)(61400799027)(23010399003)(13003099007)(56012099006)(11063799006)(4143699003)(10067099003)(16102099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	L6AJOVd8731hQwYPqZVsLUMdORRUbohCWY/xECprCcoFTXnLnBmgOIK1D9muH6oZ/rBMBwTpY65IeK8mmKLxJLEYBnFxni00pf4yXZdfZBj+AcCjFsVgY4fG3kAvzSb6MhV/VsVqV8/zTIU276HTxh845I5hIZzDOSKUj19hJ5iQ0RxwyjdRfl5kj0qf2c788WL7FvtiB3GLIKxNm1xQ9/U9tJlfgMm3PJcOou6ASKzMwIVqbIqhklGjEewFQK/S56Dld5u/iwOR1InHju3uTc65rs1ftkschqMHF52VAyBedgMTu2l0cV7sHRiCYvszpSWBOzXbIVjgPlBqfhRawQ6GVBLP/i9xIjOPRuNnmAaVczGahB6oOUl1RhnA0lRvRp1ajLM5ITGAOmADMf1sT5M/WUs1DNd+dBp1VTPVU7FERsHH6Mrd7pGWng1UhfIi
-X-Exchange-RoutingPolicyChecked:
-	WfOaXr1SprKRGEbOUenxnUTpgu/20sj/3YgPU83bOjNKwZDINmjVtMHOQz7e7bMKM7Yo/caNqLt7Y95LcoisVbIjWf53+BhWjnfPtgp5Hp4JRbGMsP/8rvYwldts94oCx4ixqTKH937aY8XSPycTHoftYp2TjtXfnzvkr8Usz33JqK54j1fzu34HTKOsrM1mxlJMmaj1WfEg+n2o8K9TQdDUS37DVuaQJQH2nnbSOM5WIWRNtdYBRfqLkS5cbKk/ff0bJeUYMVEwUVmAMV+yEowtYxiW23zPtpJqqJr+ZGlWL4P/6RyuNvIOPilddoQ/kk/cNtj+30ip+10LBgq88g==
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2026 08:32:05.1894
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a6789f7-fe0e-4a5a-9f49-08deeede33e5
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN1PEPF00004681.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR19MB8326
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMxMDA2MSBTYWx0ZWRfXw7Vw648dbK4k
- 38pUbgyY1vJdkW6Gsc9aXReO8TSE3aVUAM4UNK38Qy5kDBxVWPdnrsHt/+GCXg0o7GuaQBmC4uP
- p0VRqmUQUdC4wqU6Clcp/u40J37wA76DCEZLTGOavaz7tPDmZjFVOCFfVlSricohFUjYCjZtEGD
- DhEZoQRkHQcgRjRJwc3w3c243Oq0bWNwQFhfwbertKMHavNbD5LqXuhooy/NcdRLyqjyo1RQvbH
- 2qCtX8ZHGa+YPo/EUaMSX7TowJJMc7YFEMn0O0W10u1ENAw55PJbBaFar85YpTDCuos2zFUaGH4
- ysgr53mPEwnxC1Vix93W2/VTw44S/DCSM9GlkTVWAoxoOHXyvIetvu+sG/WvKZybClB41ceFCJU
- BDsVTemacvD4CBQMFJfy+awX/P4BthlMO4lkzKhSHPzGY/YCLfCmAgaULskbFUlVjfV1IAQnQEQ
- V39YEhLD+OgiCtJakgw==
-X-Authority-Analysis: v=2.4 cv=NcTWEWD4 c=1 sm=1 tr=0 ts=6a6c5d8c cx=c_pps
- a=dTGz0tuhMYfsSU3NwIzouA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=iX4cTi3TZMoOKdANLEfx:22 a=Dj2-6B8FqX4mGL0U3gbX:22
- a=VwQbUJbxAAAA:8 a=w1d2syhTAAAA:8 a=PuMvXuilpeCuq_aAP20A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: mlPL6BpGiJwR7YoiD2LYevrQiuCDpJHy
-X-Proofpoint-GUID: mlPL6BpGiJwR7YoiD2LYevrQiuCDpJHy
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMxMDA2MSBTYWx0ZWRfX9RxmesUADmGZ
- Un/qo944PzxXKOlT44P5wtAcT23AMeiy+h9Dnepo5e3f9WYVYGrjvz5M3ckR1j1hMVNVdUKaM2D
- ykKFA1WTFPWnGkOusYrT60XoGlWx3WQ=
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] next/master: (build) use of undeclared identifier
+ 'check_vector_unaligned_access'; did ...
+To: kernelci@lists.linux.dev, kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
+References: <178543074351.4076.15027730787524065993@kernelci.org>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: de-DE, en-US
+In-Reply-To: <178543074351.4076.15027730787524065993@kernelci.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: 
+ <178549102999.2787815.11569596905747714009@mxe9fb.netcup.net>
+X-Rspamd-Server: rspamd-worker-8404
+X-Rspamd-Queue-Id: 9EBF15F9AF
+X-NC-CID: MzF+rWNqCmMdAJeUfv9DwzzdeU1SvwicliHVlLB4L9AXVjL3yl4=
 
-On Thu, Jul 30, 2026 at 02:40:14PM -0700, Randy Dunlap wrote:
-> On 7/30/26 8:02 AM, Mark Brown wrote:
-> > Hi all,
-> > 
-> > Changes since 20260729:
-> > 
+On 7/30/26 18:59, KernelCI bot wrote:
+> New build issue found on next/master:
+
+Also reported by the "kernel test robot":
+https://lore.kernel.org/oe-kbuild-all/202607301618.yrE3EKfS-lkp@intel.com/
+
+Fix is under review:
+
+#regzbot introduced: f54d193db5da
+#regzbot fix: riscv: unaligned: Fix check_vector_unaligned_access() stub
+name
+#regzbot monitor:
+https://lore.kernel.org/all/20260730131931.2066821-1-namcao@linutronix.de/
+> ---
+>  use of undeclared identifier 'check_vector_unaligned_access'; did you mean 'check_unaligned_access'? in arch/riscv/kernel/unaligned_access_speed.o (arch/riscv/kernel/unaligned_access_speed.c) [logspec:kbuild,kbuild.compiler.error]
+> ---
 > 
-> When # CONFIG_SND_SOC_SDCA_FDL is not set:
+> Log excerpt:
+> =====================================================
+> /tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:380:24: error: use of undeclared identifier 'check_vector_unaligned_access'; did you mean 'check_unaligned_access'?
+>   380 |                 schedule_on_each_cpu(check_vector_unaligned_access);
+>       |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>       |                                      check_unaligned_access
+> /tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:112:12: note: 'check_unaligned_access' declared here
+>   112 | static int check_unaligned_access(struct page *page)
+>       |            ^
+> /tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:380:24: error: incompatible function pointer types passing 'int (struct page *)' to parameter of type 'work_func_t' (aka 'void (*)(struct work_struct *)') [-Wincompatible-function-pointer-types]
+>   380 |                 schedule_on_each_cpu(check_vector_unaligned_access);
+>       |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> /tmp/kci/linux/include/linux/workqueue.h:636:45: note: passing argument to parameter 'func' here
+>   636 | extern int schedule_on_each_cpu(work_func_t func);
+>       |                                             ^
+> 2 errors generated.
 > 
-> ../sound/soc/sdca/sdca_interrupts.c: In function ‘sdca_irq_populate_early’:
-> ../sound/soc/sdca/sdca_interrupts.c:471:56: error: ‘sdca_fdl_free_state’ undeclared (first use in this function); did you mean ‘sdca_jack_free_state’?
->   471 |                                 interrupt->free_priv = sdca_fdl_free_state;
->       |                                                        ^~~~~~~~~~~~~~~~~~~
->       |                                                        sdca_jack_free_state
+> =====================================================
+> 
+> When fixing this issue, please attribute this report according to the
+> patch submission rules:
+> 
+> Reported-by: kernelci.org bot <bot@kernelci.org>
+> Link: https://lore.kernel.org/all/178543074351.4076.15027730787524065993@kernelci.org/
+> 
+> For complete logs and details about the environment used, see the issue
+> on the KernelCI dashboard:
+> 
+> - dashboard: https://d.kernelci.org/i/maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
+> - giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> - commit HEAD:  95d6a9ccef99117115e41e9adb271243bd5e985b
+> - tags: next-20260730
+> 
+> # Builds where the incident occurred:
+> 
+> ## defconfig+allnoconfig on (riscv):
+> - compiler: clang-21
+> - config: None
+> - dashboard: https://d.kernelci.org/build/maestro:6a6b7183798ea6c1ef929eaa
+> 
+> #regzbot introduced: 78bc8af4affb9a732504eb22eeac7d1e50883853..95d6a9ccef99117115e41e9adb271243bd5e985b
+> #regzbot link: https://d.kernelci.org/i/maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
+> 
+> #kernelci issue maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
+> 
+> --
+> This is an experimental report format. Please send feedback in!
+> Talk to us at kernelci@lists.linux.dev
+> 
+> Made with love by the KernelCI team - https://kernelci.org
+> 
 
-Yeah apologies about that, all my bad. A fix is available here:
-
-https://lore.kernel.org/linux-sound/20260730130602.3747053-1-ckeepax@opensource.cirrus.com/T/#u
-
-Thanks,
-Charles
