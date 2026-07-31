@@ -1,41 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79D32DA76A;
-	Fri, 31 Jul 2026 14:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F1540242B;
+	Fri, 31 Jul 2026 14:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785508410; cv=none; b=j9alYUdG9rALA5DpKDsSEw6IF/ca1LC9nFpw3L9mg0pcd/ESwLVlW0mfQt/2XoK96OEFapiWTyPQ4SQ0A8u4BXSYDjQ2BwU80sYOZY81aunRfP+B6dID9E2B3THLh06DvhgwOL3D3n53e0ywxWxukQla3BnoCMkwL8cTobQ7fVU=
+	t=1785509383; cv=none; b=n53NN17BKspPOZZgz9vOwGusNeHJbR0yb81URFk9BD3j0GIVDNTN9I1fXbot1Hj946KbQLBBi+C3DQOxG0mvLX6ZtW9LiXivhqByeEg/MhvkQyD2tRZo4K7eloKZklLI46DUWK8zyNu/n3o/Pldac+/iZ2DBSM2/ahyPBMnezPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785508410; c=relaxed/simple;
-	bh=2FU0jx+XR8bbqUiSaDb9efCB0uAZ1eM2bIRttFMTnQI=;
+	s=arc-20240116; t=1785509383; c=relaxed/simple;
+	bh=JNMnH6IHZ1+BzkWo5cxCAMRy4qzh1BqUlJDzLZ/SnEg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GOaGKKpMejH7l32RUxw6oUoEEd3xM1OUD6e0RJiqNZd7PxAQUrveBuuTh6KvREhhB2pUscqxH8up8gTLT8ghYT0p34xNMSv4503C47AiG6LhhcpYp+NNo1m2wUVtf0qGiaiubc1T9xDYrQeHqt3C36TtQ4AT8yYyhC2vowefAVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX+fD/9s; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=kTqCKPmpxWtDlE/TNlXojWV6+Cikm3iRErjnyaNcz+0gSBWNYM+ro8Uc5G0DT7J02oEvCkZRD+IduWVy0HljOx72OHUhktMZltEtp1qAaaldd8chpVNiGgEWj+gIUs9CFR7iWsQOW1Td60AGinmJLj4mV/OlQUpkWD4iqJVvVoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7virkJz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX+fD/9s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8DC21F000E9;
-	Fri, 31 Jul 2026 14:33:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7virkJz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 577221F000E9;
+	Fri, 31 Jul 2026 14:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785508408;
-	bh=CtjtRF9Tkl8Fgd23W4w7Sdfm2KIhWvg0Hv4W5MGL260=;
+	s=k20260515; t=1785509382;
+	bh=InbkeZAjxWvu3ho1SpjIxrdr4cqmGolT6YTKoHhzXzo=;
 	h=Date:From:To:Cc:Subject;
-	b=OX+fD/9sXcpnfAlQY3920IhPSsPplay5nOklEE0kQoSindZmbfZHFPq8Q+Nm29/1Y
-	 yoOl6pQ3qvciO7HtVP2FTizYkgsbGQGnxnQi+dVyg2IF9g1ym01W2E8quUlc4C9bsv
-	 YDz3OYeaMgGskAtnv9E0F+vMzWQoWry94I2H6lDuleBKJgu2r80mt7Zkfti/RIYSXr
-	 9sZZa2lbXq4JPciacO0bAfo/ed3F/+5gfB2sM5k8dUdpIyBxhcDRmkDmEZ4PUyedju
-	 qKVlobmI3uYItioW9utk0S8+Z6pvNA9TocG+UAAxlAbRClj3DQc/MvLCWy8mvx5Kqx
-	 +GTWp4rM8rUiw==
-Date: Fri, 31 Jul 2026 15:33:24 +0100
+	b=N7virkJzfrAJ149OHoRyOs4GAs8OH4z0SALTQChY/VaNSljAfR5tN7uPiidWDPG5C
+	 HChqWrQIOy56Iui1rlMNeRLG+00zQrKzMVNNx4OCZG2vkvexZ3Q3ZkUOlebeDuwM8/
+	 /nWtTCb2VvBUxtsg+jRmLlMcZccRJn7vQi8zCum0FHLmt955htftvsOnyXt3ePU+r+
+	 fzmx1bPLef6JkJpZFVEHbdRUMs9DO1ONPBLhLatvAYZs5Ni8R3ecJda+7kMxCMvZif
+	 sLZuFS4YtsDab/RolvuzwVajS4yM8sPCCHy/bmjY2C6Bm35KJnKvsZl9Z+/VlxBHJL
+	 lISXrOXKaXttA==
+Date: Fri, 31 Jul 2026 15:49:38 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Praveen Talari <praveen.talari@oss.qualcomm.com>,
-	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Subject: linux-next: manual merge of the spi tree with the qcom tree
-Message-ID: <amyyNARbOkvSTh-j@sirena.org.uk>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the paulmck tree
+Message-ID: <amy2ApH8MZnll3Ff@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,102 +40,115 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cMDge7clruHt2Gqv"
+	protocol="application/pgp-signature"; boundary="MxKYV32C4D1bdBJb"
 Content-Disposition: inline
 
 
---cMDge7clruHt2Gqv
+--MxKYV32C4D1bdBJb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the spi tree got a conflict in:
+After merging the paulmck tree, today's linux-next build
+(arm64 allnoconfig) failed like this:
 
-  include/linux/soc/qcom/geni-se.h
+In file included from /tmp/next/build/arch/arm64/include/asm/rwonce.h:81,
+                 from /tmp/next/build/include/linux/compiler.h:369,
+                 from /tmp/next/build/include/linux/proc_fs.h:8,
+                 from /tmp/next/build/kernel/time/timer_list.c:8:
+/tmp/next/build/kernel/time/timer_list.c: In function 'print_base':
+/tmp/next/build/include/asm-generic/rwonce.h:44:71: error: lvalue required as unary '&' operand
+   44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
+      |                                                                       ^
+/tmp/next/build/include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
+   50 |         __READ_ONCE(x);                                                 \
+      |         ^~~~~~~~~~~
+/tmp/next/build/kernel/time/timer_list.c:102:52: note: in expansion of macro 'READ_ONCE'
+  102 |         SEQ_printf(m, "  .resolution: %u nsecs\n", READ_ONCE(hrtimer_resolution));
+      |                                                    ^~~~~~~~~
+make[5]: *** [/tmp/next/build/scripts/Makefile.build:290: kernel/time/timer_list.o] Error 1
+make[5]: *** Waiting for unfinished jobs....
+In file included from /tmp/next/build/arch/arm64/include/asm/rwonce.h:81,
+                 from /tmp/next/build/include/linux/compiler.h:369,
+                 from /tmp/next/build/include/linux/build_bug.h:5,
+                 from /tmp/next/build/include/linux/bits.h:30,
+                 from /tmp/next/build/include/linux/bitops.h:6,
+                 from /tmp/next/build/arch/arm64/include/asm/cache.h:40,
+                 from /tmp/next/build/include/vdso/cache.h:5,
+                 from /tmp/next/build/include/linux/cache.h:6,
+                 from /tmp/next/build/include/linux/time.h:5,
+                 from /tmp/next/build/kernel/time/alarmtimer.c:15:
+/tmp/next/build/kernel/time/alarmtimer.c: In function 'alarm_clock_getres':
+/tmp/next/build/include/asm-generic/rwonce.h:44:71: error: lvalue required as unary '&' operand
+   44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
+      |                                                                       ^
+/tmp/next/build/include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
+   50 |         __READ_ONCE(x);                                                 \
+      |         ^~~~~~~~~~~
+/tmp/next/build/kernel/time/alarmtimer.c:606:23: note: in expansion of macro 'READ_ONCE'
+  606 |         tp->tv_nsec = READ_ONCE(hrtimer_resolution);
+      |                       ^~~~~~~~~
+make[5]: *** [/tmp/next/build/scripts/Makefile.build:290: kernel/time/alarmtimer.o] Error 1
+In file included from /tmp/next/build/arch/arm64/include/asm/rwonce.h:81,
+                 from /tmp/next/build/include/linux/compiler.h:369,
+                 from /tmp/next/build/include/linux/dev_printk.h:14,
+                 from /tmp/next/build/include/linux/device.h:15,
+                 from /tmp/next/build/include/linux/node.h:18,
+                 from /tmp/next/build/include/linux/cpu.h:17,
+                 from /tmp/next/build/kernel/time/hrtimer.c:25:
+/tmp/next/build/kernel/time/hrtimer.c: In function 'hrtimer_forward':
+/tmp/next/build/include/asm-generic/rwonce.h:44:71: error: lvalue required as unary '&' operand
+   44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
+      |                                                                       ^
+/tmp/next/build/include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
+   50 |         __READ_ONCE(x);                                                 \
+      |         ^~~~~~~~~~~
+/tmp/next/build/kernel/time/hrtimer.c:1100:15: note: in expansion of macro 'READ_ONCE'
+ 1100 |         res = READ_ONCE(hrtimer_resolution);
+      |               ^~~~~~~~~
+make[5]: *** [/tmp/next/build/scripts/Makefile.build:290: kernel/time/hrtimer.o] Error 1
+In file included from /tmp/next/build/arch/arm64/include/asm/rwonce.h:81,
+                 from /tmp/next/build/include/linux/compiler.h:369,
+                 from /tmp/next/build/include/linux/build_bug.h:5,
+                 from /tmp/next/build/include/linux/bits.h:30,
+                 from /tmp/next/build/include/linux/bitops.h:6,
+                 from /tmp/next/build/arch/arm64/include/asm/cache.h:40,
+                 from /tmp/next/build/include/vdso/cache.h:5,
+                 from /tmp/next/build/include/linux/cache.h:6,
+                 from /tmp/next/build/include/linux/time.h:5,
+                 from /tmp/next/build/include/linux/compat.h:10,
+                 from /tmp/next/build/kernel/time/posix-timers.c:12:
+/tmp/next/build/kernel/time/posix-timers.c: In function 'posix_get_hrtimer_res':
+/tmp/next/build/include/asm-generic/rwonce.h:44:71: error: lvalue required as unary '&' operand
+   44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
+      |                                                                       ^
+/tmp/next/build/include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
+   50 |         __READ_ONCE(x);                                                 \
+      |         ^~~~~~~~~~~
+/tmp/next/build/kernel/time/posix-timers.c:275:23: note: in expansion of macro 'READ_ONCE'
+  275 |         tp->tv_nsec = READ_ONCE(hrtimer_resolution);
+      |                       ^~~~~~~~~
 
-between commit:
+Caused by commit
 
-  522bfb4f33c09 ("soc: qcom: geni-se: Use HW PROG_RAM_DEPTH to validate fir=
-mware size")
+   84f2a4fba1353 (hrtimer: Apply {READ,WRITE}_ONCE() to hrtimer_resolution accesses)
 
-=66rom the qcom tree and commit:
+I used the tree from next-20260730 instead.
 
-  f40e7ab049f4b ("soc: qcom: geni-se: trace: Add trace event support for GE=
-NI SE registers dump")
-
-=66rom the spi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/linux/soc/qcom/geni-se.h
-index 0991ef7ec0928,8c08c19173749..0000000000000
---- a/include/linux/soc/qcom/geni-se.h
-+++ b/include/linux/soc/qcom/geni-se.h
-@@@ -115,16 -120,42 +120,43 @@@ struct geni_se=20
-  #define SE_GENI_IOS			0x908
-  #define SE_GENI_M_GP_LENGTH		0x910
-  #define SE_GENI_S_GP_LENGTH		0x914
-+ /* TX DMA registers */
-+ #define SE_DMA_TX_PTR_L			0xc30
-+ #define SE_DMA_TX_PTR_H			0xc34
-+ #define SE_DMA_TX_ATTR			0xc38
-+ #define SE_DMA_TX_LEN			0xc3c
-  #define SE_DMA_TX_IRQ_STAT		0xc40
-  #define SE_DMA_TX_IRQ_CLR		0xc44
-+ #define SE_DMA_TX_IRQ_EN		0xc48
-+ #define SE_DMA_TX_IRQ_EN_SET		0xc4c
-+ #define SE_DMA_TX_IRQ_EN_CLR		0xc50
-+ #define SE_DMA_TX_LEN_IN		0xc54
-  #define SE_DMA_TX_FSM_RST		0xc58
-+ #define SE_DMA_TX_MAX_BURST		0xc5c
-+ /* RX DMA registers */
-+ #define SE_DMA_RX_PTR_L			0xd30
-+ #define SE_DMA_RX_PTR_H			0xd34
-+ #define SE_DMA_RX_ATTR			0xd38
-+ #define SE_DMA_RX_LEN			0xd3c
-  #define SE_DMA_RX_IRQ_STAT		0xd40
-  #define SE_DMA_RX_IRQ_CLR		0xd44
-+ #define SE_DMA_RX_IRQ_EN		0xd48
-+ #define SE_DMA_RX_IRQ_EN_SET		0xd4c
-+ #define SE_DMA_RX_IRQ_EN_CLR		0xd50
-  #define SE_DMA_RX_LEN_IN		0xd54
-  #define SE_DMA_RX_FSM_RST		0xd58
-+ #define SE_DMA_RX_MAX_BURST		0xd5c
-+ /* DMA general / debug registers */
-+ #define SE_GSI_EVENT_EN			0xe18
-+ #define SE_IRQ_EN			0xe1c
-+ #define DMA_IF_EN_RO			0xe20
-  #define SE_HW_PARAM_0			0xe24
-  #define SE_HW_PARAM_1			0xe28
- +#define SE_HW_PARAM_2			0xe2c
-+ #define DMA_GENERAL_CFG			0xe30
-+ #define SE_DMA_QSB_TRANS_CFG		0xe38
-+ #define SE_DMA_DEBUG_REG0		0xe40
-+ #define SE_DMA_IF_EN			0x2004
- =20
-  /* GENI_FORCE_DEFAULT_REG fields */
-  #define FORCE_DEFAULT	BIT(0)
-
---cMDge7clruHt2Gqv
+--MxKYV32C4D1bdBJb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpssjMACgkQJNaLcl1U
-h9Cy5gf/aBmanaDR4wX5zDO7zfqZTAbGcoZ6xynk8Tc9MHFUv09ruz16OxFvpKLy
-pwkK06AkYoL+TInD+NuVjY1PU7qEijrl8FLU5phDBfuf8zDbho6fDA9ZhrCxQNYy
-E6C3PMdtcUxcp0dMW1325NPTj1WiCwcKa6mhl0MJWalWuKqSvGb9OJNSoD9rQRDk
-RX5AjvxhZ9PwNi2eAVd30Y7kZ3wV2htGi6J59OwMy0srqxYr2lFWXKTFhp/lLIRc
-1h/qLdzarg+gy2IPa2pYWtZAp97iNDUfhlCp1E2j5iILSKiHXzzZHF33POJAmEnE
-0IQ7kbY4Bc4OGFy60aFI2fUoNZ4IAw==
-=1vsX
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpstgIACgkQJNaLcl1U
+h9BaXAf7BxAt+FD8f5yAxcTVfVmq3mmD3uVOEoy8BeqaKwm9gUtDOW6kLOWEuPhM
+3bNgJrBhByI4jW+Q99NBoPZ403ffBIyEIQ/f0pdcv9Z2mw0vF4IEyFNhJkwBJVFL
+o/+b76bB4p45/GIxeibfFBZM/likGu2xblpw6pE4be/ly02I9TyZUGi47IA/6OPe
+0in9hFKZkbwM/2k96k9DbMaAIHAjaIZyvfDp4MdDZtlGmeQAVb2+RcjT5hJhI6tm
+cagujRgUVJoVaBGDCacCQyewqJLnAqr7VwG2W8PGgl0mSMCYdeIWcI018kTL2tTe
+tQkD/tU1h7xJdVV3cw78cbO8AdZJEw==
+=1gat
 -----END PGP SIGNATURE-----
 
---cMDge7clruHt2Gqv--
+--MxKYV32C4D1bdBJb--
