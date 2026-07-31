@@ -1,230 +1,101 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62737192B75
-	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 00:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F87230BD5;
+	Fri, 31 Jul 2026 00:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785457100; cv=none; b=nd+E/Xu963C7aQNCSFZFn/QiwHGDhA5OY33ZYakXKvYJVF6bbal2c/5vxrFBv6o+m52kfhdJJDaUCQy/gvAmzKv8mjX3qa/BjoRyFQF7AluWvysN5J5AdMCIWVZVwa7BmBY5IJzTizgqeZqDUp8Btz+6S23nj4EXLX5Z0BuOV1U=
+	t=1785457665; cv=none; b=GDsXZpwOncYG5a8BOSzOTQkmLqJcWEl1gRYNZ63FkKYcl4nBzu2uMzyVECB0yyo6MsfhbWdCMilsKupt3m1BN885tan82JEwTnAo5yq3YkO0Q81Pgiil7PDT2OklngHYZRNa3DmNG25C+DJs41sQXoEKkJoJt55jXlwLd5h67VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785457100; c=relaxed/simple;
-	bh=d71qq8IeroOX81lWUMlvZ1oPsNcK1R28/HBOYSVyITg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eGDLOAbtYXu4htFWqJAPIOlwne0taDKsXndPY8ilFxdC3+QWUr1IRlLe3rBpbu9bP1s0Z4hyNCJEnhwZ3aSn+bbGS5QEMjgORiH1NGJWUZ1afsui8SBCDkrKGN29Nxxa73XbJ4ye08/C0CbFJ2lSF/0H27iG0DEz9Ngf9wo5Z+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqJ7RSC3; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785457665; c=relaxed/simple;
+	bh=Cmdkxx8Tvqi6AfbXARhoToWzOXGwiRfO0uNLZSJcyY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=kQbb3jrlwQOe4BRwQpkgjuXIYGSgndD8yTLGIYTWLB+BAeZJfh7ajiXlnJjfi01bQmZ0T+uKPQU5XRljdZ9Y0m/4tP0U7XZn9l87MC7GlHcqmuQScWA087rL7RAkSB4RrcgDahFboYZhleocQnW2eJIWQVFUoGMeEMHD4zPG6GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYujkoDI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqJ7RSC3"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6ad02448351so115878eaf.1
-        for <linux-next@vger.kernel.org>; Thu, 30 Jul 2026 17:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785457098; x=1786061898; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=pgfjfo9Gag5kWKb0bLxwyUihgIZfRY7YyhtakKFQe0M=;
-        b=DqJ7RSC3BvBdxHU4KFiOMByCqPOKjRMq5BkFdfihot3h6VILPlLrAAy17Vj9Pzw7tr
-         ML+iSsULjXMuiiphnX1PcQ6xQHuaPeNbRc0rYCe6n20ROZ2Z8iMPnGs7Wt4TQOUkDo+C
-         pMzhbKy4KKxwJ9GAbyW9llkRKg1ogLJoLlc6MOQ8XSgdX2TNFBlcZUPN2TNtJA935CJ6
-         5QrUX63jf6uMJaWzziZeVscD0HKhjVVh3xdM5AkWcK9IsL6ikkjCy+aZzyIySjQTVH72
-         xxFKsJiTpI9NKTRQ5emlyxYpBLbKnq7bPbfYXJxKriWWI746GAn737anMFKTVLn3YdiK
-         PTyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785457098; x=1786061898;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=pgfjfo9Gag5kWKb0bLxwyUihgIZfRY7YyhtakKFQe0M=;
-        b=HoKpxs3BHR9WeEFaUrZxFQEfKLiwVzgPk0F1eP6dSIFkrSBii9cE4F568AhFujlyjw
-         EXsYQzpdR5Y5fml1JRKVSMiuLnW0SLTUJ4bJTNITxFQRPQk6yLbS7RuHGX5lsMrxHGkk
-         2T9caW2xFxuxp/SFJh2OKvvljFB3oTVAOZG0B67CKJsALu4GX/KFE1pEyYCE2lXDM+1k
-         b6LMoygWnijcsconvhvQx9PkhXQZKGCLGq+b8ywBuu2KfBROoJOWSpS35giNDi3CTci3
-         DlLikMdaTBU6KGmalNW7y60P1xcoo+bwgi1bwZcVIybq/Wxk8+Wvad9m5SaN3lYVaQkl
-         DhpQ==
-X-Gm-Message-State: AOJu0Yw+ethTlTkwxPAniEGpLpFddFJAOo6V+cTazU+dfOifadR6ugga
-	4HcHjcJna/qSbS+H1StauvPtV302WcgdMe4TJVtf2VnYC+Ks8+fP48Rp
-X-Gm-Gg: AR+sD13a30CPMkcb9i5H4hs3+af0MeMOC6AERs9B61ZHTGQ4O6NsnKrpcTyMscg1uvM
-	LofRGqYwxn53Y8HnLTovDI5cd5a8zjqAH9mcfy0NNnbRvzKFC2wdyeNsplb8YabxmeYDU+Tcppf
-	8U88JS/PumbqK8B688YDRzJCcArATXUPsw0l17FAcMTHktFeZXBpvgBRY5K+aXYhNqeY4oP9P6I
-	f96hXhdMLd41rKnlhcLYROL8/OgVYKbff8OazOaUQ6fDgbtAZbfyJv62f2zoop+LSj67m7AcivT
-	vTH894A+Kas2yDNnymMIWjvF+TKc5/sw/XgtseIczzeyhFOpCIN4/feeIHSXpooAI4i2Z8+fIWP
-	kyNpUe4gsM8p8CfZ4/+jbIk2+Q8QMWVsKvArsPmFZ+TySU0DmLcANjhmWe8F2XvP7r3KIa4cYfd
-	hgUZ2vgmeHs1+UcyC5GU7adhX6Lm8SJ87HLFJ4kc/u5Jt2XgZlBYE=
-X-Received: by 2002:a05:6820:1523:b0:6aa:e844:fb2c with SMTP id 006d021491bc7-6acbbcfa05bmr3160087eaf.7.1785457097970;
-        Thu, 30 Jul 2026 17:18:17 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:75::])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-458c29d51f9sm3579066fac.16.2026.07.30.17.18.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 17:18:17 -0700 (PDT)
-From: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
-Date: Thu, 30 Jul 2026 17:17:39 -0700
-Subject: [PATCH v2] tracing: Make per-template BTF id lists file-local
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYujkoDI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6457F1F000E9;
+	Fri, 31 Jul 2026 00:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785457663;
+	bh=DjRBdz6eLeyZuRCAsZjy9VjYTZ19f2hOiJFXB10LjwM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To;
+	b=BYujkoDIdrRlWAe1bQ9RVU9Yi7PbSUgnbvbUfBpwafQoJTTmIKbBN2uIhjpm6YDaZ
+	 qJs7J00sz4Be4aHEKAYJnZNlC9AomPPsz3MA8vNViCWteeo+5MJLzg+z2ODZKC0YIc
+	 fifJBDD8f2a1nwzrWfvcTp4pSW3MAvV4LNbsYaPS2pMCaVOJi8vO+CmOEZ3M2JoCtZ
+	 vue9TulMC47Gxw8TMua1IJuS4hF8sUU89URzvgo4mZ1Qw+aZK/e6p0lPnjCkrj83YH
+	 CKKVag5RXvp39diSnHwDaXP9Y6yX2wj3YMIdmfMc/g1eoZ52yqTciHOqqsJsfh68CK
+	 8RwthDm9Pm+OA==
+Date: Thu, 30 Jul 2026 19:27:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-pci@vger.kernel.org, Takuma Fujiwara <t-fujiwara1@ti.com>,
+	Hans Zhang <18255117159@163.com>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Subject: Re: linux-next: Tree for Jul 30 (pci/controller/cadence/)
+Message-ID: <20260731002742.GA1538321@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260730-b4-fix_btf_tracefs-v2-1-6b66da8dc103@meta.com>
-X-B4-Tracking: v=1; b=H4sIAKLpa2oC/33NQQ6DIBBA0auQWUsDtNSGVe/RGAMyU2ehGCDGx
- nj3ph6g2794f4eCmbGAEztkXLlwmsEJ0wgYRj+/UXIEJ8Aoc1ftVclwk8RbHyr1NfsBqUiKnqK
- 3FIMN0AhYMhJvJ/rqGgEjl5ry53ys+lf/cquWWlrSKrTmQVbjc8LqL0OaoDuO4wu4ngrAswAAA
- A==
-X-Change-ID: 20260730-b4-fix_btf_tracefs-fdafda5fdb5b
-To: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
- daniel@iogearbox.net, kafai@meta.com, kernel-team@meta.com, 
- eddyz87@gmail.com, memxor@gmail.com, rostedt@goodmis.org, 
- linux-trace-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, broonie@kernel.org, 
- Mykyta Yatsenko <yatsenko@meta.com>
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785457095; l=5490;
- i=yatsenko@meta.com; s=20260324; h=from:subject:message-id;
- bh=hmaukBcIfLOTdQ4K7uDmftM8WKS7YD5n5UlweCXdDHA=;
- b=fVM3/kxj79XdSqH8qx+eMR/f7HOKUIFDiHVoL+xBuLTybZOgRdF1P2TPVOY1vX7O/gHQfHFUr
- vEcDxPBp1iWD7LLCR9VEiKsuoy75N8lKZUUuYzQztWx6g8gpRSWPu++
-X-Developer-Key: i=yatsenko@meta.com; a=ed25519;
- pk=1zCUBXUa66KmzfjNsG8YNlMj2ckPdqBPvFq2ww3/YaA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <589ea512-93c6-4e1c-83d7-ba45a0b35843@infradead.org>
 
-From: Mykyta Yatsenko <yatsenko@meta.com>
+[+cc authors of everything on pci/controller/cadence; I haven't
+triaged this at all, sorry, and don't have time right now to drop that
+branch from pci/next]
 
-DECLARE_EVENT_CLASS emitted __bpf_trace_btf_ids_<call> through
-BTF_ID_LIST_GLOBAL, i.e. a global symbol named after the event class.
-The class name is not unique across the kernel, so the symbol
-multiply-defines whenever two translation units instantiate the same
-class.
-
-Switch to the file-local BTF_ID_LIST: the list is reached
-only through the event_class_<call>.btf_ids pointer, initialised in the
-same unit, so tracefs readers never reference the symbol by name and
-resolve_btfids still fills the now-local .BTF_ids entries.
-
-The handcrafted syscall classes are the one cross-unit consumer: give
-them their own local BTF_ID_LIST rather than importing the generated
-sys_{enter,exit} lists.
-
-Fixes: eadc0725ab8d3 ("tracing: Expose tracepoint BTF ids via tracefs")
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/all/ff58b01c-3f5e-4d55-be82-609d2faaf12e@sirena.org.uk/
-Signed-off-by: Mykyta Yatsenko <yatsenko@meta.com>
----
-Changes in v2:
-- Emit the per-class BTF id list only under CONFIG_DEBUG_INFO_BTF;
-  without BTF the ids are unresolved and BTF_ID_LIST falls back to a
-  128-entry (512-byte) per-class stub, adding hundreds of KB of BSS
-  across the ~1000 event classes (reported in review of v1).
-- Link to v1: https://patch.msgid.link/20260730-b4-fix_btf_tracefs-v1-1-5f10b728f51e@meta.com
----
-Changes in v2:
-- Emit the per-class BTF id list only under CONFIG_DEBUG_INFO_BTF;
-without BTF the ids are unresolved and BTF_ID_LIST falls back to a
-128-entry stub.
-- Remove verbose comments (Andrii)
-- Link to v1: https://patch.msgid.link/20260730-b4-fix_btf_tracefs-v1-1-5f10b728f51e@meta.com
----
- include/trace/trace_events.h  |  7 +++----
- kernel/trace/trace_syscalls.c | 27 ++++++++++++++-------------
- 2 files changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 09ad57ac4b73..93011f800d0f 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -398,7 +398,7 @@ static inline notrace int trace_event_get_offsets_##call(		\
- #define _TRACE_PERF_INIT(call)
- #endif /* CONFIG_PERF_EVENTS */
- 
--#ifdef CONFIG_BPF_EVENTS
-+#if defined(CONFIG_BPF_EVENTS) && defined(CONFIG_DEBUG_INFO_BTF)
- /*
-  * Per-template BTF id list, populated at link time by resolve_btfids:
-  *   [0] FUNC   __bpf_trace_<call>     (the BPF dispatcher)
-@@ -406,8 +406,7 @@ static inline notrace int trace_event_get_offsets_##call(		\
-  * Exposed via the events/<sys>/<name>/btf_ids tracefs file.
-  */
- #define _TRACE_BTF_IDS_DECLARE(call)					\
--	extern u32 __bpf_trace_btf_ids_##call[];			\
--	BTF_ID_LIST_GLOBAL(__bpf_trace_btf_ids_##call, 2)		\
-+	BTF_ID_LIST(__bpf_trace_btf_ids_##call)				\
- 	BTF_ID(func,   __bpf_trace_##call)				\
- 	BTF_ID(struct, trace_event_raw_##call)
- 
-@@ -417,7 +416,7 @@ static inline notrace int trace_event_get_offsets_##call(		\
- #else
- #define _TRACE_BTF_IDS_DECLARE(call)
- #define _TRACE_BTF_IDS_INIT(call)
--#endif /* CONFIG_BPF_EVENTS */
-+#endif /* CONFIG_BPF_EVENTS && CONFIG_DEBUG_INFO_BTF */
- 
- #include "stages/stage6_event_callback.h"
- 
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 48ef1a93e576..e35744049e3f 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -9,6 +9,7 @@
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
- #include <linux/xarray.h>
-+#include <linux/btf_ids.h>
- #include <asm/syscall.h>
- 
- #include "trace_output.h"
-@@ -1303,15 +1304,15 @@ struct trace_event_functions exit_syscall_print_funcs = {
- 	.trace		= print_syscall_exit,
- };
- 
--#ifdef CONFIG_BPF_EVENTS
--/*
-- * BTF id lists generated by DECLARE_EVENT_CLASS for the sys_enter and
-- * sys_exit tracepoints. The auto-generated event_class_sys_{enter,exit}
-- * is unused (per-syscall events share the handcrafted classes below),
-- * but the id lists themselves are global and reusable.
-- */
--extern u32 __bpf_trace_btf_ids_sys_enter[];
--extern u32 __bpf_trace_btf_ids_sys_exit[];
-+#if defined(CONFIG_BPF_EVENTS) && defined(CONFIG_DEBUG_INFO_BTF)
-+/* BTF id lists for the shared sys_enter/sys_exit dispatcher tracepoints. */
-+BTF_ID_LIST(syscall_enter_btf_ids)
-+BTF_ID(func,   __bpf_trace_sys_enter)
-+BTF_ID(struct, trace_event_raw_sys_enter)
-+
-+BTF_ID_LIST(syscall_exit_btf_ids)
-+BTF_ID(func,   __bpf_trace_sys_exit)
-+BTF_ID(struct, trace_event_raw_sys_exit)
- #endif
- 
- struct trace_event_class __refdata event_class_syscall_enter = {
-@@ -1320,8 +1321,8 @@ struct trace_event_class __refdata event_class_syscall_enter = {
- 	.fields_array	= syscall_enter_fields_array,
- 	.get_fields	= syscall_get_enter_fields,
- 	.raw_init	= init_syscall_trace,
--#ifdef CONFIG_BPF_EVENTS
--	.btf_ids	= __bpf_trace_btf_ids_sys_enter,
-+#if defined(CONFIG_BPF_EVENTS) && defined(CONFIG_DEBUG_INFO_BTF)
-+	.btf_ids	= syscall_enter_btf_ids,
- #endif
- };
- 
-@@ -1335,8 +1336,8 @@ struct trace_event_class __refdata event_class_syscall_exit = {
- 	},
- 	.fields		= LIST_HEAD_INIT(event_class_syscall_exit.fields),
- 	.raw_init	= init_syscall_trace,
--#ifdef CONFIG_BPF_EVENTS
--	.btf_ids	= __bpf_trace_btf_ids_sys_exit,
-+#if defined(CONFIG_BPF_EVENTS) && defined(CONFIG_DEBUG_INFO_BTF)
-+	.btf_ids	= syscall_exit_btf_ids,
- #endif
- };
- 
-
----
-base-commit: eadc0725ab8d38c05148fce49f8d5c6a0e01f062
-change-id: 20260730-b4-fix_btf_tracefs-fdafda5fdb5b
-
-Best regards,
---  
-Mykyta Yatsenko <yatsenko@meta.com>
-
+On Thu, Jul 30, 2026 at 04:06:44PM -0700, Randy Dunlap wrote:
+> 
+> 
+> On 7/30/26 8:02 AM, Mark Brown wrote:
+> > Hi all,
+> > 
+> > Changes since 20260729:
+> > 
+> 
+> (1) /usr/bin/ld.bfd: drivers/pci/controller/cadence/pcie-cadence-plat.o: in function `cdns_plat_pcie_probe':
+> pcie-cadence-plat.c:(.text+0x2f8): undefined reference to `cdns_pcie_ep_setup'
+> 
+> In this case, a builtin driver attempts to call into a loadable module:
+> 
+> #
+> # Cadence-based PCIe controllers
+> #
+> CONFIG_PCIE_CADENCE=y
+> # CONFIG_PCIE_CADENCE_DEBUGFS is not set
+> CONFIG_PCIE_CADENCE_HOST=y
+> CONFIG_PCIE_CADENCE_EP=m
+> CONFIG_PCIE_CADENCE_PLAT=y
+> CONFIG_PCIE_CADENCE_PLAT_HOST=y
+> CONFIG_PCIE_CADENCE_PLAT_EP=m
+> # end of Cadence-based PCIe controllers
+> 
+> (2) /usr/bin/ld.bfd: drivers/pci/controller/cadence/pcie-cadence-plat.o: in function `cdns_plat_pcie_probe':
+> pcie-cadence-plat.c:(.text+0x11f): undefined reference to `cdns_pcie_host_setup'
+> 
+> 
+> This is similar, just a different driver is =m in the failure case.
+> 
+> #
+> # Cadence-based PCIe controllers
+> #
+> CONFIG_PCIE_CADENCE=y
+> CONFIG_PCIE_CADENCE_DEBUGFS=y
+> CONFIG_PCIE_CADENCE_HOST=m
+> CONFIG_PCIE_CADENCE_EP=y
+> CONFIG_PCIE_CADENCE_PLAT=y
+> CONFIG_PCIE_CADENCE_PLAT_HOST=m
+> CONFIG_PCIE_CADENCE_PLAT_EP=y
+> 
+> 
+> -- 
+> ~Randy
+> 
