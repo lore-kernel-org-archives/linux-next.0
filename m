@@ -1,43 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BF936EA99;
-	Fri, 31 Jul 2026 21:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367B1360EC9;
+	Fri, 31 Jul 2026 22:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785534106; cv=none; b=IL3trbBSCEEAQj5S3buVuuFQXrcxTs9vxp918SoAfUghGlVd6vCqEaxdFIKn/dlmqnC8nJxcfnLXZvAhUiV5Ck4WDvTRCpg2XkglXM/8F4QyjIQZ2FetAsbu+h3Uw42D9+eK7elimy+zXafcGrskK+Yd0Ex3BsLDOqxdwmjIeVg=
+	t=1785535303; cv=none; b=rstKVVTCT8Bc6KZ4pAI0j3d278QtAnpPMis4HnT+rhUtch0FhzRNhxdg8cOz6RkBJhOwAPC46buHu732RSquA0Amx5+MdeaJSjMo1RDGG5NyAx4+afAaoNrT4RNV4FgGUKM/m9husuKUmKaYcz5aWTqbtuJ8KJVZCP3I9nqBrlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785534106; c=relaxed/simple;
-	bh=YNgCBdXPlRiNptTjWsEecFhkyztCKu86KWZVRqqypZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=IUehry/yMyYaU6PG/BODrZkTl4GS6UmBQUz11ftV/dONifs51HGiH3NVut9RunNOqA8NIPnEmQpi1HO6HtMHuW0ZVLZVB93UXD6xQBFAl43wORc1H3Yg+297Z+WpxaiRRzcXYcU7lo4xddAs9iTZ0fA09EFqyn/vutv8MLUAssA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bM4FnJGn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785535303; c=relaxed/simple;
+	bh=LhOoqKAPfXPUrAtyH+yAo4At2Fq3oa1ZI8V3lBJQMsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fg37MTLB+W57cRqzXymEAUH0D2kNrLGK0di5GsaBOzQpfjZU8UdOxxS9jGzS49fvdNsCgwqWZ6T38RowBXG8OB3i51zUrXH/w4KNv1KbXqVIcfv9tsi5PQg8zdhGC8A5oLkWvNriuOdAPA3Ppxiey3LClOIvrW7Nd3P87/zsxx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AoiuNgDD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bM4FnJGn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E921F00ACA;
-	Fri, 31 Jul 2026 21:41:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AoiuNgDD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E6091F00AC4;
+	Fri, 31 Jul 2026 22:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785534104;
-	bh=KwhAVEKoQ3+sYU+Q6M3Vy0t6IX91N0gLzTKWuR2dj5E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To;
-	b=bM4FnJGn7DSoMT/C/8IRLDwiyf1GFuyorslBXsyVF/QXh3pd+5KSqveMi1RQTCTBP
-	 gPru0tMGgFfotbus3hwuG18JMR1GUi/62MkyOWR9adHMIdrC86RbAN97pDWkVJYZkO
-	 zkUnXIwe7iFktCR534yYbLfTriNpi6FVcgOdX+nsXqMPSSPI4d+W8CfSYb9eXa4HW2
-	 V6aNwaftyxRiIgd69/CcK/NrigWcqhi6JrX9knk+9dKnjYDisrUre0L68bYeq5JxTg
-	 FJVM3y+Hntq57jgs0W0bED2zAXsptUIDyL4yeD29q0kraP94L4IBDEi6vYq54pwWfS
-	 UOSVvRoE2UV2Q==
-Date: Fri, 31 Jul 2026 16:41:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-pci@vger.kernel.org, Takuma Fujiwara <t-fujiwara1@ti.com>,
-	Hans Zhang <18255117159@163.com>,
-	Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: linux-next: Tree for Jul 30 (pci/controller/cadence/)
-Message-ID: <20260731214143.GA1657481@bhelgaas>
+	s=k20260515; t=1785535302;
+	bh=4o8TxBG5obnChHSkcPaoq8uOJ2IwxWlPUO/u7vUwbas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AoiuNgDDpud/0oYJT2xZ3awbdAun6VW4DcJggStow8xsz0esTw1NdvnUafdkhIqWI
+	 mDzMtbmLIZFqf/WfhbQh9BVJnuFibUqiRKatxf1suQ2GCmwUL+5qPMn9ka03TQeCMn
+	 daD6VsmJ9N8rYQdzQgRy1mmFI5W6NJ5CyfGppfWvghHMoprgCYnajy4/VR1URoxhBu
+	 gkwoiGAGb0Sj4k2YOhgjOHzmQ63ONJRsDtoCPhDN1BNK9UIPpJtDsLVLxBzdiUlrtR
+	 csBFhmpR20shYfkfqvyFZCuHEPxHPC1bqnc/Jatz/5vALEVWEgKm6ZGBKoxz7TwmQJ
+	 7ZqTsFgT1T4qA==
+Date: Fri, 31 Jul 2026 15:01:37 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	broonie@kernel.org, harry@kernel.org, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org, paulmck@kernel.org, puranjay@kernel.org,
+	vbabka@kernel.org, vbabka@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bert Karwatzki <spasswolf@web.de>
+Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
+Message-ID: <20260731220137.GA3307698@ax162>
+References: <amth-CMf3Xz5hR32@sirena.org.uk>
+ <20260731075644.20215-1-ojeda@kernel.org>
+ <am0AjzHc0m03CLVa@tardis.local>
+ <CAH5fLggke1Yvv8btJSMFr5tEquydvKev8_7G4gSO5MvoAJUE3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,69 +49,18 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260731002742.GA1538321@bhelgaas>
+In-Reply-To: <CAH5fLggke1Yvv8btJSMFr5tEquydvKev8_7G4gSO5MvoAJUE3A@mail.gmail.com>
 
-On Thu, Jul 30, 2026 at 07:27:42PM -0500, Bjorn Helgaas wrote:
-> [+cc authors of everything on pci/controller/cadence; I haven't
-> triaged this at all, sorry, and don't have time right now to drop that
-> branch from pci/next]
+On Fri, Jul 31, 2026 at 11:14:42PM +0200, Alice Ryhl wrote:
+> I like Nathan's fix as well.
 > 
-> On Thu, Jul 30, 2026 at 04:06:44PM -0700, Randy Dunlap wrote:
-> > 
-> > 
-> > On 7/30/26 8:02 AM, Mark Brown wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20260729:
-> > > 
-> > 
-> > (1) /usr/bin/ld.bfd: drivers/pci/controller/cadence/pcie-cadence-plat.o: in function `cdns_plat_pcie_probe':
-> > pcie-cadence-plat.c:(.text+0x2f8): undefined reference to `cdns_pcie_ep_setup'
-> > 
-> > In this case, a builtin driver attempts to call into a loadable module:
-> > 
-> > #
-> > # Cadence-based PCIe controllers
-> > #
-> > CONFIG_PCIE_CADENCE=y
-> > # CONFIG_PCIE_CADENCE_DEBUGFS is not set
-> > CONFIG_PCIE_CADENCE_HOST=y
-> > CONFIG_PCIE_CADENCE_EP=m
-> > CONFIG_PCIE_CADENCE_PLAT=y
-> > CONFIG_PCIE_CADENCE_PLAT_HOST=y
-> > CONFIG_PCIE_CADENCE_PLAT_EP=m
-> > # end of Cadence-based PCIe controllers
+> Not sure if it needs to be done in the merge commit, or if we can
+> apply it as a patch to char-misc despite the unknown CFG_*?
 
-I was unable to reproduce this issue, so I didn't do anything.  I
-didn't figure out how to make CONFIG_PCIE_CADENCE_EP=m; the config I
-used was:
+It would need to be applied at the merge of the two trees because
+CONFIG_KVFREE_RCU_BATCHED was introduced back in 6.15 in commit
+c9f8f1242a4c ("slab: don't batch kvfree_rcu() with SLUB_TINY").
 
-  CONFIG_PCIE_CADENCE=y
-  # CONFIG_PCIE_CADENCE_DEBUGFS is not set
-  CONFIG_PCIE_CADENCE_HOST=y
-  CONFIG_PCIE_CADENCE_EP=y
-  CONFIG_PCIE_CADENCE_PLAT=y
-  CONFIG_PCIE_CADENCE_PLAT_HOST=y
-  CONFIG_PCIE_CADENCE_PLAT_EP=m
-
-> > (2) /usr/bin/ld.bfd: drivers/pci/controller/cadence/pcie-cadence-plat.o: in function `cdns_plat_pcie_probe':
-> > pcie-cadence-plat.c:(.text+0x11f): undefined reference to `cdns_pcie_host_setup'
-> > 
-> > 
-> > This is similar, just a different driver is =m in the failure case.
-> > 
-> > #
-> > # Cadence-based PCIe controllers
-> > #
-> > CONFIG_PCIE_CADENCE=y
-> > CONFIG_PCIE_CADENCE_DEBUGFS=y
-> > CONFIG_PCIE_CADENCE_HOST=m
-> > CONFIG_PCIE_CADENCE_EP=y
-> > CONFIG_PCIE_CADENCE_PLAT=y
-> > CONFIG_PCIE_CADENCE_PLAT_HOST=m
-> > CONFIG_PCIE_CADENCE_PLAT_EP=y
-> > 
-> > 
-> > -- 
-> > ~Randy
-> > 
+-- 
+Cheers,
+Nathan
