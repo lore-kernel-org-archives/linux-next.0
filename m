@@ -1,114 +1,273 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A02039183A
-	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 13:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE60306B3B;
+	Fri, 31 Jul 2026 14:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785506276; cv=none; b=uZiXUtN1rU4kuj7WNy9Y+OnNllqIYTDNh4USWCndaeC2VeAuuh+f7UyEI7TChxrHAH03O8CuBJQQZLfRtvHaoadUifs7hMm9YnqfFeDYGIVsMIhxI21IfeVRdOOd3u0V4BEZV77HHxGtpgQBQAisDCkNWuRVgaWrNDR7qxVAHBQ=
+	t=1785506474; cv=none; b=SiOuPqUmna+t6M0yUEaBINowcaa543DWU8HRv3YQxJTdig61kooWPmrmjJjGumzasKewz0UqGeKHsdDihKSClu/9yBacI2OSxC8xnUwNvNsOY51a+Y50KbhHvqLHe9fwBzfGdQmUxWyWfn0B9fBxOBA0Qbu1CXYZp30hNyKMIww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785506276; c=relaxed/simple;
-	bh=IIbXF+fe+rJkd/WYU9t9zd90ofPiE1eIZE1ob4uq2XQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qevpzLnKbot8Poxx2qP7Z5BOhMEC6d5oX2JCqI9rYHhOU5xnH1s07GK7v+k7ASLh9g5WxHio5cSn4SgOhlhkyXBLBh8Ao+oAayx77F0D+7yaoexJWdJec9EmUOc2lDL/8JH6s1GewGZa6bUdvBb3uxiHUcWWfv/Q9cqDetERIE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwz4bAEV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785506474; c=relaxed/simple;
+	bh=hgM9Hz/MTdoeKyVkrcwZNMYTc4OmrqTvnVCEE9J/3qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kmp699lu3Aa7e1yh7+fF+X5Fz57YnbN30V60BK21wxs/HV9EE2XwrQT/LqgpF3XOAkkcpWcMoHWauWhzKPhMnhqsWXirE/te2npTf323p1NuOrEt9NvjBSJkCK6AtXGydLuitWQeUqhoC+YVrXnsMWQ+8QNR7HmtH5rJFZFzyv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhZdMp3H; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwz4bAEV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5074B1F00A3F
-	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 13:57:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhZdMp3H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CABC1F00A3A;
+	Fri, 31 Jul 2026 14:01:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785506274;
-	bh=bd+n/sHW1pir6tw9A/jpUa7jFv33QvYa2WKYMH45838=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=gwz4bAEVmnmeySnrfpHTdBrMIxbisPRUvYS8rWwVEoms/16DRWgxTM6KdnTFyNo5N
-	 dZOu7OJVul3sBExHOSJRhf+gaTTGH52yu3wK+ifKMrZiTruoxCmIV9cmS4H2S29GD9
-	 FzAW/ZpTHw6IYpYv0S28WX5TxTxdarRdnW7hC3dMb4jXpif8w4ughSCrEVqC66wing
-	 80DB12AkKWiAm2uaIVeHHdqnkW0UsvXMPg91F4DjhszNevmPxj7F2sMu0hSMUQmDDa
-	 avXLBgq8H3IOg8FIrETS+CKaioS5gMsqQ6Xly266uOkF+IgfZU9jrgHtBWdY2E3qoe
-	 zp2WLD1+b9WQg==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-698a9f11776so1655332a12.1
-        for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 06:57:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrmgUyyVkr2aSdSVQPg2F8l054nYFT7FaNWeov/azxlgM22RQyq7bu5BdLRkTldJC0sATt8CvR0AVOl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiHEbKhsc+KBsfJht3rKenPjukYl4ixG9mAY+D/Ve6DzYJm8KK
-	UUXCqoma7qG1A4rAjoqVCPHfbvr9iECcRuhapRkktH3DrU1chYvU3LIHCxWneQekXiR3lZObhdo
-	EwXxtWACg4uBJJ1c6pRTuIO67chGZcQM=
-X-Received: by 2002:a17:907:d1a:b0:c16:589d:c969 with SMTP id
- a640c23a62f3a-c1fd28ad134mr133837266b.43.1785506272936; Fri, 31 Jul 2026
- 06:57:52 -0700 (PDT)
+	s=k20260515; t=1785506473;
+	bh=rZSd5pV7B4MK/p367s/WQ9fhJrhOWkviG5zn8fJiikc=;
+	h=Date:From:To:Cc:Subject;
+	b=AhZdMp3HnNYXGU1lsaDa4Bt6OxwbbyujBAlbSd74Nj3ycD9hu8Mx5WjTRf3fC2RPW
+	 l/BgvJuOmODf3dtVt9C6Lq6UmHl6E7uNw/gmy62Lb5kqBf2CBv9t+QuEXRvlSc/GX2
+	 lSeKEWwGXtan3xAc+YCRcjtpZEjAFieBAge4FOGqOnUQc62rEXQ+NgUQQs53JmnQwV
+	 x+paiE1hTYkVRBIgOJC4KAEcPbUa5u2LHOeFf9Ie15Z+GJrBfYCOLid4IBiwKVKQSh
+	 v4N2y4SSOhACkrJsO+o0f2XT69QhQXBSQNQBvNCcdi/Um9V0EM+Z0SvSpmV42kdcx7
+	 vs8A0PRU/clGQ==
+Date: Fri, 31 Jul 2026 15:01:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Shahyan Soltani <shahyan.soltani@amd.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
+Subject: linux-next: manual merge of the drm tree with the origin tree
+Message-ID: <amyqpXv6_drYUPPt@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <amyoFfMXA9fI2hbF@sirena.org.uk>
-In-Reply-To: <amyoFfMXA9fI2hbF@sirena.org.uk>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 31 Jul 2026 22:57:40 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_03azOZwZOBDiQG6nvpZjp98w-jfZXfV7tDUOptsqPxQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxN3judelkfK4YqOIKwotha_QigHLiW5CI0KsaIW_fdCLd6JDo4UUcrKnQ
-Message-ID: <CAKYAXd_03azOZwZOBDiQG6nvpZjp98w-jfZXfV7tDUOptsqPxQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the ntfs tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Hyunchul Lee <hyc.lee@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PZ3a0a1mEzO6pf0R"
+Content-Disposition: inline
+
+
+--PZ3a0a1mEzO6pf0R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 31, 2026 at 10:50=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> Hi all,
-Hi Mark,
->
-> After merging the ntfs tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> /tmp/next/build/fs/ntfs/attrlist.c:183:6: error: variable 'new_al' is use=
-d uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninit=
-ialized]
->   183 |         if (!NInoAttrList(ni) || !ni->attr_list) {
->       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> /tmp/next/build/fs/ntfs/attrlist.c:317:6: note: uninitialized use occurs =
-here
->   317 |         if (new_al)
->       |             ^~~~~~
-> /tmp/next/build/fs/ntfs/attrlist.c:183:2: note: remove the 'if' if its co=
-ndition is always false
->   183 |         if (!NInoAttrList(ni) || !ni->attr_list) {
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   184 |                 err =3D -ENOENT;
->       |                 ~~~~~~~~~~~~~~
->   185 |                 goto err_out;
->       |                 ~~~~~~~~~~~~~
->   186 |         }
->       |         ~
-> /tmp/next/build/fs/ntfs/attrlist.c:183:6: error: variable 'new_al' is use=
-d uninitialized whenever '||' condition is true [-Werror,-Wsometimes-uninit=
-ialized]
->   183 |         if (!NInoAttrList(ni) || !ni->attr_list) {
->       |             ^~~~~~~~~~~~~~~~~
-> /tmp/next/build/fs/ntfs/attrlist.c:317:6: note: uninitialized use occurs =
-here
->   317 |         if (new_al)
->       |             ^~~~~~
-> /tmp/next/build/fs/ntfs/attrlist.c:183:6: note: remove the '||' if its co=
-ndition is always false
->   183 |         if (!NInoAttrList(ni) || !ni->attr_list) {
->       |             ^~~~~~~~~~~~~~~~~~~~
-> /tmp/next/build/fs/ntfs/attrlist.c:149:12: note: initialize the variable =
-'new_al' to silence this warning
->   149 |         u8 *new_al;
->       |                   ^
->       |                    =3D NULL
-> 2 errors generated.
->
-> Caused by commit
->
->   57ad655524e85 (ntfs: protect attribute-list buffer replacement with att=
-r_list_persist_lock)
->
-> I have used the tree from next-20260730 instead.
-Okay, I will fix them.
-Thanks!
+Hi all,
+
+Today's linux-next merge of the drm tree got a conflict in:
+
+  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+
+between commit:
+
+  04cc4aa3617b0 ("drm/amdgpu: fix lifetime issue of amdgpu_vm_get_task_info=
+_pasid()")
+
+=66rom the origin tree and commit:
+
+  b0ae60ea3f3f1 ("drm/amdgpu: Resolve VM through DRM PASID ownership")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index dc6a9d7dd0b28,aac8ace9d7a63..0000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@@ -2506,14 -2506,16 +2506,16 @@@ amdgpu_vm_get_task_info_vm(struct amdgp
+  struct amdgpu_task_info *
+  amdgpu_vm_get_task_info_pasid(struct amdgpu_device *adev, u32 pasid)
+  {
++ 	struct amdgpu_fpriv *fpriv;
+  	struct amdgpu_task_info *ti;
+  	struct amdgpu_vm *vm;
+  	unsigned long flags;
+ =20
+- 	xa_lock_irqsave(&adev->vm_manager.pasids, flags);
+- 	vm =3D xa_load(&adev->vm_manager.pasids, pasid);
++ 	amdgpu_pasid_lock(&flags);
++ 	fpriv =3D amdgpu_pasid_get_fpriv_locked(pasid);
++ 	vm =3D fpriv ? &fpriv->vm : NULL;
+  	ti =3D amdgpu_vm_get_task_info_vm(vm);
+- 	xa_unlock_irqrestore(&adev->vm_manager.pasids, flags);
++ 	amdgpu_pasid_unlock(flags);
+ =20
+  	return ti;
+  }
+@@@ -2554,7 -2556,6 +2556,6 @@@ void amdgpu_vm_set_task_info(struct amd
+   * @adev: amdgpu_device pointer
+   * @vm: requested vm
+   * @xcp_id: GPU partition selection id
+-  * @pasid: the pasid the VM is using on this GPU
+   *
+   * Init @vm fields.
+   *
+@@@ -2562,7 -2563,7 +2563,7 @@@
+   * 0 for success, error for failure.
+   */
+  int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm,
+- 		   int32_t xcp_id, uint32_t pasid)
++ 		   int32_t xcp_id)
+  {
+  	struct amdgpu_bo *root_bo;
+  	struct amdgpu_bo_vm *root;
+@@@ -2637,26 -2638,12 +2638,12 @@@
+  	if (r)
+  		dev_dbg(adev->dev, "Failed to create task info for VM\n");
+ =20
+- 	/* Store new PASID in XArray (if non-zero) */
+- 	if (pasid !=3D 0) {
+- 		r =3D xa_err(xa_store_irq(&adev->vm_manager.pasids, pasid, vm, GFP_KERN=
+EL));
+- 		if (r < 0)
+- 			goto error_free_root;
+-=20
+- 		vm->pasid =3D pasid;
+- 	}
+-=20
+  	amdgpu_bo_unreserve(vm->root.bo);
+  	amdgpu_bo_unref(&root_bo);
+ =20
+  	return 0;
+ =20
+  error_free_root:
+- 	/* If PASID was partially set, erase it from XArray before failing */
+- 	if (vm->pasid !=3D 0) {
+- 		xa_erase_irq(&adev->vm_manager.pasids, vm->pasid);
+- 		vm->pasid =3D 0;
+- 	}
+  	amdgpu_vm_pt_free_root(adev, vm);
+  	amdgpu_bo_unreserve(vm->root.bo);
+  	amdgpu_bo_unref(&root_bo);
+@@@ -2763,11 -2750,6 +2750,6 @@@ void amdgpu_vm_fini(struct amdgpu_devic
+ =20
+  	root =3D amdgpu_bo_ref(vm->root.bo);
+  	amdgpu_bo_reserve(root, true);
+- 	/* Remove PASID mapping before destroying VM */
+- 	if (vm->pasid !=3D 0) {
+- 		xa_erase_irq(&adev->vm_manager.pasids, vm->pasid);
+- 		vm->pasid =3D 0;
+- 	}
+  	dma_fence_wait(vm->last_unlocked, false);
+  	dma_fence_put(vm->last_unlocked);
+  	dma_fence_wait(vm->last_tlb_flush, false);
+@@@ -2863,8 -2845,6 +2845,6 @@@ void amdgpu_vm_manager_init(struct amdg
+  #else
+  	adev->vm_manager.vm_update_mode =3D 0;
+  #endif
+-=20
+- 	xa_init_flags(&adev->vm_manager.pasids, XA_FLAGS_LOCK_IRQ);
+  }
+ =20
+  /**
+@@@ -2876,9 -2856,6 +2856,6 @@@
+   */
+  void amdgpu_vm_manager_fini(struct amdgpu_device *adev)
+  {
+- 	WARN_ON(!xa_empty(&adev->vm_manager.pasids));
+- 	xa_destroy(&adev->vm_manager.pasids);
+-=20
+  	amdgpu_vmid_mgr_fini(adev);
+  	amdgpu_pasid_mgr_cleanup();
+  }
+@@@ -2935,14 -2912,16 +2912,16 @@@ struct amdgpu_vm *amdgpu_vm_lock_by_pas
+  					  u32 pasid, struct drm_exec *exec)
+  {
+  	unsigned long irqflags;
++ 	struct amdgpu_fpriv *fpriv;
+  	struct amdgpu_bo *root;
+  	struct amdgpu_vm *vm;
+  	int r;
+ =20
+- 	xa_lock_irqsave(&adev->vm_manager.pasids, irqflags);
+- 	vm =3D xa_load(&adev->vm_manager.pasids, pasid);
+- 	root =3D vm ? amdgpu_bo_ref(vm->root.bo) : NULL;
+- 	xa_unlock_irqrestore(&adev->vm_manager.pasids, irqflags);
++ 	amdgpu_pasid_lock(&irqflags);
++ 	fpriv =3D amdgpu_pasid_get_fpriv_locked(pasid);
++ 	vm =3D fpriv ? &fpriv->vm : NULL;
++ 	root =3D vm && vm->root.bo ? amdgpu_bo_ref(vm->root.bo) : NULL;
++ 	amdgpu_pasid_unlock(irqflags);
+ =20
+  	if (!root)
+  		return NULL;
+@@@ -2954,11 -2933,17 +2933,17 @@@
+  	}
+ =20
+  	/* Double check that the VM still exists */
+- 	xa_lock_irqsave(&adev->vm_manager.pasids, irqflags);
+- 	vm =3D xa_load(&adev->vm_manager.pasids, pasid);
+- 	if (vm && vm->root.bo !=3D root)
++ 	amdgpu_pasid_lock(&irqflags);
++ 	fpriv =3D amdgpu_pasid_get_fpriv_locked(pasid);
++ 	if (!fpriv) {
+  		vm =3D NULL;
+- 	xa_unlock_irqrestore(&adev->vm_manager.pasids, irqflags);
++ 	} else {
++ 		vm =3D &fpriv->vm;
++ 		if (vm->root.bo !=3D root)
++ 			vm =3D NULL;
++ 	}
++ 	amdgpu_pasid_unlock(irqflags);
++=20
+  	if (!vm) {
+  		drm_exec_unlock_obj(exec, &root->tbo.base);
+  		amdgpu_bo_unref(&root);
+@@@ -3010,8 -2995,6 +2995,8 @@@ bool amdgpu_vm_handle_fault(struct amdg
+  	is_compute_context =3D vm->is_compute_context;
+ =20
+  	if (is_compute_context) {
+ +		__label__ drm_exec_retry;
+ +
+  		/* Release the root PD lock since svm_range_restore_pages
+  		 * might try to take it.
+  		 * TODO: rework svm_range_restore_pages so that this isn't
+@@@ -3157,12 -3140,14 +3142,14 @@@ void amdgpu_vm_update_fault_cache(struc
+  				  uint32_t status,
+  				  unsigned int vmhub)
+  {
++ 	struct amdgpu_fpriv *fpriv;
+  	struct amdgpu_vm *vm;
+  	unsigned long flags;
+ =20
+- 	xa_lock_irqsave(&adev->vm_manager.pasids, flags);
++ 	amdgpu_pasid_lock(&flags);
+ =20
+- 	vm =3D xa_load(&adev->vm_manager.pasids, pasid);
++ 	fpriv =3D amdgpu_pasid_get_fpriv_locked(pasid);
++ 	vm =3D fpriv ? &fpriv->vm : NULL;
+  	/* Don't update the fault cache if status is 0.  In the multiple
+  	 * fault case, subsequent faults will return a 0 status which is
+  	 * useless for userspace and replaces the useful fault status, so
+@@@ -3195,7 -3180,7 +3182,7 @@@
+  			WARN_ONCE(1, "Invalid vmhub %u\n", vmhub);
+  		}
+  	}
+- 	xa_unlock_irqrestore(&adev->vm_manager.pasids, flags);
++ 	amdgpu_pasid_unlock(flags);
+  }
+ =20
+  void amdgpu_vm_print_task_info(struct amdgpu_device *adev,
+
+--PZ3a0a1mEzO6pf0R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpsqqQACgkQJNaLcl1U
+h9DRRAf/Y7niW8oRncQvgyPrV4lSpQ0aXIaTG8u7QvNVf2LGCtnPHVuIFfIZEwK5
+QiJj+UoEmaryQK2YD+QRXRpfK7l2s4FY7UqYPAMj4xDiHEYHBsx8QdynNNJ4EQah
+1RJLH4bpoiqKgUtxLPwis9k+R8EIPlIdtZnYSNPyYsa85lHLXnys1LvGQMmH3BPR
+wEIToagv/faLT+K7rUSymRxgph11u8JwIL78aookX8FGdC108LEPXBdzDzfLNEb6
+3qRfsIL2CyMfyJ4PZT+BfFBqm5caB2ibNU0r8gMfWVX31lOOwVMAYC54Zx3bsG1X
+u40IrPV9WZtaIBN9hiArE+MwcytLJw==
+=f2+1
+-----END PGP SIGNATURE-----
+
+--PZ3a0a1mEzO6pf0R--
