@@ -1,55 +1,33 @@
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.61.103])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C93F3BCD27
-	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 09:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.61.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01E03EA955;
+	Fri, 31 Jul 2026 09:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785491048; cv=none; b=oLevQ+C5lTrW2Qvw63iQHXUZvucVzb9heC40VtcYL7UsE0RsczzCA5RnkYm9xWT9CnkqEj063Yq1KyOj4N09kP0Jg1G88i2T3LpzZ/Dwzu5+RrGguBOJkGaIXrm88sIv1CwrBdY2mwVANsJ5YLksqlf1mlNm+aLM70vLl3YcYh0=
+	t=1785491984; cv=none; b=FkyaaDe5aVxrOJHAH9Fj/pzBx5OR4kl5vqeMGcwiWVJ0Kla2ax5+LSbdSxl/RadYutbovHRIzNg0IuXV5FqgBA5ISXOWzJKw2Ctytu28wAFUD7fJm/Pfk/K15Dpa7HauvmqFzUxXhnqMm9ZeJaSPDCXXmA8k0wEAEBaPSlUeNYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785491048; c=relaxed/simple;
-	bh=lWYtvxlBjTE7A8Hl1l0i8BOB/MvCVJriXHIj5eWFBYE=;
+	s=arc-20240116; t=1785491984; c=relaxed/simple;
+	bh=hthGiY+7admhZU4+cpxFCJAjkXuH723qJFar/UF8Xus=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPYGyESojS64OpSQ6VslMjFZNEhBM4mfo//3q9U8AhXwIzHqSd7XmyxTrwxooy+HfRmLL0S3pHAiT9nDDWbM6lxZa7or/547jA9OwrL7rGss+L+15Ut0ftQwk++E4Rf62Mh4IwFEFJeWM7TW1uqEVw8QmuF8teK3Z0+OYkr6+Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ltcKrTpb; arc=none smtp.client-ip=188.68.61.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	 In-Reply-To:Content-Type; b=kW5JuuhnWj/cyBvvjFI8WBjFQb8yTshBdyXS8FyrR5jhHtDlMLyt5DeEVT6KetkLRFhLXRX/pJGetgJW0DAvpNNr4GMc9tIWyQEvSoNM5zNxt3iZd07tMmBZXg1hz9xUSMGyCEr2L8D40GmRTJZ5am0iz/Ze3x8UGZ1jN2pfknE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=At+MWQWv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ltcKrTpb"
-Received: from mors-relay-8403.netcup.net (localhost [127.0.0.1])
-	by mors-relay-8403.netcup.net (Postfix) with ESMTPS id 4hBLk51LZmz88tf;
-	Fri, 31 Jul 2026 11:43:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
-	s=key2; t=1785491037;
-	bh=lWYtvxlBjTE7A8Hl1l0i8BOB/MvCVJriXHIj5eWFBYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ltcKrTpbFP+YTCK6FwA44EWJKPdZbGFrRIpUCTstsMAVyXKywwDkgY5Koloi48Lv0
-	 8QciPK1x8GQAzxOkqPpKzh+cJQwE8VYg3VVSDxtlPgxp8wQJISknbvvzF2boyXFjyl
-	 yD7Kti1BfLQBCv0zeMBnzlceis/ny0uvtCGh2SwkzHmzC1638vkrtI7tJkEtxnTVdJ
-	 4vVpJ1Qac52tJ2MvwAx4RD8TwOF8m17HokA0FGY/9jpE1V2azSFgJZVEia2Yt81fYz
-	 wldVrwm+aOwg8z/v5EKILhrs1UsROYiFowhB6J0upIZhqF5Y5G+AFayWr8XjXh6fSy
-	 HfgdgKA6YI/LQ==
-Received: from policy01-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay-8403.netcup.net (Postfix) with ESMTPS id 4hBLk50dlTz87Mc;
-	Fri, 31 Jul 2026 11:43:57 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at policy01-mors.netcup.net
-X-Spam-Flag: NO
-X-Spam-Score: -2.897
-X-Spam-Level: 
-Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy01-mors.netcup.net (Postfix) with ESMTPS id 4hBLk252H6z8tbq;
-	Fri, 31 Jul 2026 11:43:54 +0200 (CEST)
-Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
-	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 9EBF15F9AF;
-	Fri, 31 Jul 2026 11:43:49 +0200 (CEST)
-Authentication-Results: mxe9fb;
-        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
-Received-SPF: pass (mxe9fb: connection is authenticated)
-Message-ID: <9d66c14c-5ef8-4e2e-aa1a-ece90901518c@leemhuis.info>
-Date: Fri, 31 Jul 2026 11:43:44 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="At+MWQWv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C5D1F000E9;
+	Fri, 31 Jul 2026 09:59:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785491964;
+	bh=82mwj9SU+w4fu3VrMxGJr7+a7TKKxs+B3JYPMTzeU+0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=At+MWQWvQILPbjYLTjtnGiOOKRm8V3dDPTcrIS6Myhc9RQmVPFoG/Q3W2+YAyNrFH
+	 q2MGjMDIH1y4dUNonjNXJxMQTE8P+/Rb7tf+oZCtyrg5fcu+gsuO41RTvMFoiIB/hM
+	 I3au9IbxV8Ln0p8aFd+00wgkA7zt3ZwaLAcGGvlKRvFVfetpAei8Bv8Jel/DXxHX2U
+	 bwelpRCkMct9VjxNfjXMrAVYtmRZLisLYt+v52/KSrqvUcvwQU9Bs2nvrSTVeEGh4R
+	 YW6QBFDOwN1H8ep/luto9RkjOxOzTRKZGEu/QeuphK3dFOpo6Du8+6sarqVjglTtqE
+	 RkBx0XdLf4hNQ==
+Message-ID: <7abffd3a-cc96-46e9-a85b-7dbc9cadc21e@kernel.org>
+Date: Fri, 31 Jul 2026 11:59:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -57,88 +35,128 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] next/master: (build) use of undeclared identifier
- 'check_vector_unaligned_access'; did ...
-To: kernelci@lists.linux.dev, kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-References: <178543074351.4076.15027730787524065993@kernelci.org>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: de-DE, en-US
-In-Reply-To: <178543074351.4076.15027730787524065993@kernelci.org>
+Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
+Content-Language: en-US
+To: Miguel Ojeda <ojeda@kernel.org>, broonie@kernel.org
+Cc: harry@kernel.org, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org, paulmck@kernel.org, puranjay@kernel.org,
+ Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <amth-CMf3Xz5hR32@sirena.org.uk>
+ <20260731075644.20215-1-ojeda@kernel.org>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Autocrypt: addr=vbabka@kernel.org; keydata=
+ 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
+In-Reply-To: <20260731075644.20215-1-ojeda@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: 
- <178549102999.2787815.11569596905747714009@mxe9fb.netcup.net>
-X-Rspamd-Server: rspamd-worker-8404
-X-Rspamd-Queue-Id: 9EBF15F9AF
-X-NC-CID: MzF+rWNqCmMdAJeUfv9DwzzdeU1SvwicliHVlLB4L9AXVjL3yl4=
 
-On 7/30/26 18:59, KernelCI bot wrote:
-> New build issue found on next/master:
+On 7/31/26 09:56, Miguel Ojeda wrote:
+> On Thu, 30 Jul 2026 15:38:48 +0100 Mark Brown <broonie@kernel.org> wrote:
+>>
+>> Today's linux-next merge of the slab tree got a conflict in:
+>>
+>>   mm/slab_common.c
+>>
+>> between commit:
+>>
+>>   736084507faa3 ("rcu: Rename struct rcu_gp_oldstate to rcu_gp_seq")
+>>
+>> from the rcu tree and commit:
+>>
+>>   bdd0cc9f0ffc3 ("mm/slab: introduce struct kvfree_rcu_head for kvfree_rcu batching")
+>>
+>> from the slab tree.
+> 
+> The slab one semantically conflicts as well with commit:
+> 
+>   e5e86df8b666 ("rust: poll: use kfree_rcu() for PollCondVar")
+> 
+> from the char-misc tree:
+> 
+>     error[E0308]: mismatched types
+>          --> rust/kernel/sync/poll.rs:175:44
+>           |
+>       175 |         unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.cast::<ffi::c_void>()) };
+>           |                  ------------------------- ^^^^^^^^^^^^^^^^ expected `*mut kvfree_rcu_head`, found `*mut callback_head`
+>           |                  |
+>           |                  arguments to this function are incorrect
+>           |
+>           = note: expected raw pointer `*mut bindings::kvfree_rcu_head`
+>                      found raw pointer `*mut bindings::callback_head`
+>     note: function defined here
+>          --> rust/bindings/bindings_generated.rs:90407:12
+>           |
+>     90407 |     pub fn kvfree_call_rcu(head: *mut kvfree_rcu_head, ptr: *mut ffi::c_void);
+>           |            ^^^^^^^^^^^^^^^
+> 
+> The C API was not meant to have a visible effect, but we don't use the
+> `kvfree_rcu()` macro, so we notice the change. We can add a similar cast
+> to the C side:
+> 
+>     diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
+>     index 684dfa242b1a..79d7e08215b0 100644
+>     --- a/rust/kernel/sync/poll.rs
+>     +++ b/rust/kernel/sync/poll.rs
+>     @@ -172,6 +172,6 @@ fn drop(&mut self) {
+>              unsafe { bindings::__wake_up_pollfree((*ptr).inner.inner.wait_queue_head.get()) };
+> 
+>              // SAFETY: This was allocated using `KBox::pin_init`, so it can be freed with `kvfree`.
+>     -        unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.cast::<ffi::c_void>()) };
+>     +        unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get().cast(), ptr.cast::<ffi::c_void>()) };
+>          }
+>      }
+> 
+> Clippy doesn't complain about the "unneeded" `cast()` under
+> `CONFIG_KVFREE_RCU_BATCHED=n`, so it should be fine.
 
-Also reported by the "kernel test robot":
-https://lore.kernel.org/oe-kbuild-all/202607301618.yrE3EKfS-lkp@intel.com/
+Thanks! Should I thus amend bdd0cc9f0ffc3 ("mm/slab: introduce struct
+kvfree_rcu_head for kvfree_rcu batching") with this fixup or you'll do that
+in the char-misc tree?
 
-Fix is under review:
-
-#regzbot introduced: f54d193db5da
-#regzbot fix: riscv: unaligned: Fix check_vector_unaligned_access() stub
-name
-#regzbot monitor:
-https://lore.kernel.org/all/20260730131931.2066821-1-namcao@linutronix.de/
-> ---
->  use of undeclared identifier 'check_vector_unaligned_access'; did you mean 'check_unaligned_access'? in arch/riscv/kernel/unaligned_access_speed.o (arch/riscv/kernel/unaligned_access_speed.c) [logspec:kbuild,kbuild.compiler.error]
-> ---
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: Boqun Feng <boqun@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Harry Yoo (Oracle) <harry@kernel.org>
+> Cc: Vlastimil Babka (SUSE) <vbabka@kernel.org>
 > 
-> Log excerpt:
-> =====================================================
-> /tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:380:24: error: use of undeclared identifier 'check_vector_unaligned_access'; did you mean 'check_unaligned_access'?
->   380 |                 schedule_on_each_cpu(check_vector_unaligned_access);
->       |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                                      check_unaligned_access
-> /tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:112:12: note: 'check_unaligned_access' declared here
->   112 | static int check_unaligned_access(struct page *page)
->       |            ^
-> /tmp/kci/linux/arch/riscv/kernel/unaligned_access_speed.c:380:24: error: incompatible function pointer types passing 'int (struct page *)' to parameter of type 'work_func_t' (aka 'void (*)(struct work_struct *)') [-Wincompatible-function-pointer-types]
->   380 |                 schedule_on_each_cpu(check_vector_unaligned_access);
->       |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> /tmp/kci/linux/include/linux/workqueue.h:636:45: note: passing argument to parameter 'func' here
->   636 | extern int schedule_on_each_cpu(work_func_t func);
->       |                                             ^
-> 2 errors generated.
-> 
-> =====================================================
-> 
-> When fixing this issue, please attribute this report according to the
-> patch submission rules:
-> 
-> Reported-by: kernelci.org bot <bot@kernelci.org>
-> Link: https://lore.kernel.org/all/178543074351.4076.15027730787524065993@kernelci.org/
-> 
-> For complete logs and details about the environment used, see the issue
-> on the KernelCI dashboard:
-> 
-> - dashboard: https://d.kernelci.org/i/maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
-> - giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> - commit HEAD:  95d6a9ccef99117115e41e9adb271243bd5e985b
-> - tags: next-20260730
-> 
-> # Builds where the incident occurred:
-> 
-> ## defconfig+allnoconfig on (riscv):
-> - compiler: clang-21
-> - config: None
-> - dashboard: https://d.kernelci.org/build/maestro:6a6b7183798ea6c1ef929eaa
-> 
-> #regzbot introduced: 78bc8af4affb9a732504eb22eeac7d1e50883853..95d6a9ccef99117115e41e9adb271243bd5e985b
-> #regzbot link: https://d.kernelci.org/i/maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
-> 
-> #kernelci issue maestro:93d4e1ca2f17ba7ce0541f3202fa21a0043a7f2c
-> 
-> --
-> This is an experimental report format. Please send feedback in!
-> Talk to us at kernelci@lists.linux.dev
-> 
-> Made with love by the KernelCI team - https://kernelci.org
-> 
+> Cheers,
+> Miguel
 
