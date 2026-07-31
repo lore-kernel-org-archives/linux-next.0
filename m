@@ -1,82 +1,82 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228C8374A1D
-	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 20:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB02369D74
+	for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 21:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785531103; cv=pass; b=BWGaOpE19wbcqzZaWXgHGKz6nKmHQpz3pa6KHaBI5x6Jh2Qj3eeh2kbQz2b6RebJnJJHshRBl5tiPgCynYzvdvgS4VYN5ofss2so+YRtErD7+gzU9k7dM4PUK7UmsGQzepbP1rABVQGwVQqmwlKFnHKtJNLphMHHYQh6WStXWwo=
+	t=1785532498; cv=pass; b=eBD17hnzTeG8uTidXH2BpkA55iSXF7xVFyxsNCBoovQwT4pdtGn7c66eHpFZHRp7JJO+8ZrWC5bKtTH8xioURp8YX/W1gp4o5WSFtPinbN8JjEksSq43EWKsT1CJeqE6zO6pOnrlKvpf0nVFf+2WK8pajl+9+UQUdo/AYOz8d0I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785531103; c=relaxed/simple;
-	bh=OxbuOqBUDf0zEq2+sdz0xSOwBTc4dGh/77CekjBC2Ac=;
+	s=arc-20240116; t=1785532498; c=relaxed/simple;
+	bh=wLWY+WSdibRtEJbMRhwJ+tmuYCIDNzsW1uBpbWgN6pM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pNWbIC5HR4l8aBoi41iyDO53yCAgF16KQAmusMS7EXaszysvTXwelLJU61A1prI6hjDWaCEMFr1DHFW6A7P4GKEfY6YDbtfOxz6y/pL3xFbd4DXVsNskAgs3reV1N6ZPHXNDaZvTdUwwKEYYJ47R4Wo0Axyf9TRJT2ec9SkhUO8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U4QWfDGK; arc=pass smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=ei1RDTKK1M7XTTDc+7MM/Z4PqljxkQyd4duRU1Jo0xgv7/YVH8rxrW02IQZRQ0Y4k4BUrqox9AhgTE3c1eQr/dh+p+42iUzsEU7ZRoU31cQKMmYlgdoF/BTCNwH6FGEBsBv4bX3z12Nhy1dGJtBJtPIZ4Y0S2Euatcw5aajBnac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kz3gl4DW; arc=pass smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4QWfDGK"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2cc8311c6ddso1058505ad.0
-        for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 13:51:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785531101; cv=none;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kz3gl4DW"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-47f707e5d75so1184668f8f.1
+        for <linux-next@vger.kernel.org>; Fri, 31 Jul 2026 14:14:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785532495; cv=none;
         d=google.com; s=arc-20260327;
-        b=KTlO0uPOi6+P0a42D4Tc+DqeI9Vn+tTpotn8rGQjYn6KQfdBbBr78+JH3fv10zZQCu
-         7Hzdqc59Elje8dvY9SEF3+6UlRyTlxL8jYpo6i7+EgalY+bEaAz77BVtEg0lOgJNWb/X
-         Yx1wcR/skGJkpo9mGfVKYcTWaxehTnEW9zVjf51e7bJMNIFSvdTpgoEQTxu8x5npgoOO
-         Nj7l2i9PVTD0K0Tzv2rJk59ezeaCTMkpTG7E8bSIg9FHkI8Em3JVOJwob4jsY4pmm8A6
-         L+vrYdR2i7mUgvUXOI6oIfP8a8+nONv/IUavvAXFW8M64kYIwVxcSZNbYmhY4ECnp2TI
-         p1Rw==
+        b=ft2ECFybjoMOxzN1+qRCudsU0QVHlRQvYg3D3n47p9gSQ4tHg9/X5v0+mfARjT4tHs
+         +0Jq/y5hTFL+0mK88d7/oQx8cU5PltcXhQLgaCbIsm7poMda+2ZBVuLo4BJHkQM9XVEr
+         P0TsrlcobC3/IYwGiQY060dtsmlbsHwjuZzNe4DSYGPcXpGc022JvpfQNTl3JAuboSl1
+         Jv89VC4zAUyDeVInt5gmo9oC1iULhta0UAnEG4NpqfdX3uzIlRUYNv4Z7hPQ5sQNrIe+
+         8jnMj7ffpmBxBCU32IdvyRhU9s/CH0tkBHKcGV4gWJHgdxVnsAqd/p/0xlB1fBjUUDvG
+         Qitw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=CAHO93+TuSaVjWdABjEBhboCfEUfTIMzn4UFc/rE7b0=;
-        fh=oTQzFHK4fnk4U0g9UUUo7Lu8jQkak6BElY6VmkGouDk=;
-        b=DLH1ghfPVjLhb8rxQaXR950fYj1tDmSpDHCM0dER2hUvW3NV4ywt3VgJW13hsGPK9e
-         lBr4AikFZdBp6uppAbhUZ4yw+Whm+53hlBbrTKk9p4cIPoKOAq2Np6MCSyWdxkX3CIIA
-         RT4ZICrq0TzZ3aspjr/4g8Bk6Tpn08e0Qrh4fEvu9YWPijShWWHS8zx2Cfq5UIIj3Zvx
-         bWucW8Flr3Tbf/AH1HvlHx91V/vF0CKFJxs1UdYDXsed/TIKCqKC6DJKtCuDr3Zwn46y
-         VJrisQUAjwB3rvu6OWHdiMhMaJGFDLy7/7h2aWp9Uk0nyh1ytxloPWlApXnxM94+FARt
-         jhCw==;
+        bh=x/+tAZadlozyO5e/ZDbWwajBHDv37pfPg1IsfIpc6ro=;
+        fh=GOqphqE2tKG8tTKjiUS7p+iBrncjBb82azcUAPswefo=;
+        b=Msj74lUa2dIS1R9RTCgrRKla7VSvfHR0haYIn1d+lOqdfz9ZZx2imtG2Rr129iIHt0
+         75/KbnvC8HBCbE76CDnT/OAOgxOaRfVIOeRqXt2Q9bEpCbQwpJFjOjX41opSPhPapyqC
+         svipl3QsNeJBo8A+u1gn7rHUN9UEzvvfWfdP/EqP6+Cchu5EbhFimUHzOyjB6Rut0fot
+         VKSCNAFKUq6Z4IPTc2b0l8vlvHTUn6MF2mTZCJOSB8SZPkuTdtALd3YmT20MpgJDG8HJ
+         CRIjRYRozPE8zsgzZupDDspxvWjcv0mRcify8KfonM3a3lJAwfhWZqfDd7USemrKW+RH
+         aDYA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785531101; x=1786135901; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1785532495; x=1786137295; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=CAHO93+TuSaVjWdABjEBhboCfEUfTIMzn4UFc/rE7b0=;
-        b=U4QWfDGKChVzbmns0CT5U5xXnukRA9Cg257QlMb/xv3+2fKrtE71WgwN8nQPQAnbJI
-         gpAKOwsuDIQz87xxrBXPg754J6x/8iA7fJst028KcWCZMh7etkqSvQus3lFhkL3cBYxM
-         1UaVBAxICNBHPum3qKWXiCUIVwSBHGNhglvYP61gtKfcGVBbvDV+5rAWhwwamHmVLQ0x
-         VOs8wRqNyWFRBWf7TeU547Y+H2Z9ORrqqs4f6lEDiiQUb9+VbsxUApau+HR391zJFjyg
-         RDqx9ndiA6CErB5dzbvbbVGPabTHPNNqNHvQ/9SwYFOps9JBD1vsn3MNo5tAYdJivr7o
-         Ietw==
+        bh=x/+tAZadlozyO5e/ZDbWwajBHDv37pfPg1IsfIpc6ro=;
+        b=kz3gl4DWkHTx/eprn2edjrHCPrRdwqFKUNBoz1BnXuOcdtpmCapLbDe88eucoV6Snn
+         9BkTNcxR9QMc8jk4vVZ0nysF+tf5Xihuy0YGodCujR3Ah8jLrfHbsU+DsGw73sYbvnVG
+         NPK6zgO4xvxCyu+1YwDkmSMuC4pUZoogRF4YW6/BeUXMracsPc1HIg5yQFyJPntohFn5
+         ZRVUE+51VUX90vr/8T986Yld3mKfGs3GaModYiLyrhf73KxVh2HviwOf9iUjIUsVpBGG
+         3toUSsF8u/5uVhl7GHhTjAnYd0jYIbqr62ckwpjmTUOSEds50JlEl5xEAuNSFKRB5YBF
+         N5+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785531101; x=1786135901;
+        d=1e100.net; s=20251104; t=1785532495; x=1786137295;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=CAHO93+TuSaVjWdABjEBhboCfEUfTIMzn4UFc/rE7b0=;
-        b=H+uS+S2lHNSI9JLk9aNHZuNeTVzNQCj3ioFcGoR+cjvdOYFZkFLlpn5K9QdACbHKuJ
-         ejAkb5Laq1tshKE/fnB13WeCmyKSWs3K9N4xJ0l23aVUCTcW+l4oV2N3GOrcQc9CWZrq
-         XCAshrq0BsbK95RR2d3DuV+kc/AGe9LOST+WniaSLUAnR2azUo5RinT1rgvaouh0DOcr
-         PGIOYm9/eujagAnZqjSeszTN2wFjHtmzSqHMO9/h1aL+me7W4iTLXIlheE3OlpV/nhXJ
-         TGypLITEZzmBCcCnT0Z0qlG0ilirE0m2hUB4lZHpMQS44Y6WmMsKhMNCjDjhzRRlFhG+
-         rc5Q==
-X-Forwarded-Encrypted: i=1; AHgh+RqTeUfjP7YTjnbw3DlOHSCtUOMsiRfdFtWNMfmrkY6EuLLvM8GZtXpXHJ0c7qSP+6Qz770QSF5IwLWT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS9eDs03KqDjHajgdsZeyvVfctIR4Xte5vaQzfHDiXPErlo6Pj
-	fm18UgP+8QwTLC48dvcwAEOcer9tRvkSUp4je3xtD9fjl1M3/4i36a3P+nE8UTPTA7vJz1Qz0y4
-	yChi152YGWgekPxEpO77RO1uJrL+JYYk=
-X-Gm-Gg: AR+sD115gE7C02YKeSyTuqs6T1aGOrtC8JjO17zO7lyBCqy/IaUYhj2o/iSxk0tbUI1
-	nyEPvWyra1z/pYVPYoGs6DY8otYjcyy4gf1MR2uQWBPpnMhHrCUWgNBhjCMNGnDigD7KWxaHOqs
-	FV0p2RFPRucT672I/wy+ex7kMkl4qR7FCWWziCb/ua6pwMp4x/kwdjV2lrcIYW4M/X7qGB7ytRY
-	YNQMcWxa0qIx+05CcLhFLkh8e1SX77uqpIrGrvJm3Bv+hC6uMVV59hp5pykE5CoUYKHHxPqF7q6
-	IaDXIRxlwII6cuphZ1tjIujJMZa8ZvIwf2mMl3aCCdr6UBTPN3BAs1AikNltEiMvaO5DN/KoCOQ
-	+aKRl6eEVqQCTRUCYD3BwXjOzudYRy92H1rEwIt+RbzMZ4Q4uX0dZmQEOsn/WE007W+koPAk=
-X-Received: by 2002:a17:903:1a24:b0:2ca:ecf6:9105 with SMTP id
- d9443c01a7336-2d0521bd8a0mr17962065ad.1.1785531101357; Fri, 31 Jul 2026
- 13:51:41 -0700 (PDT)
+        bh=x/+tAZadlozyO5e/ZDbWwajBHDv37pfPg1IsfIpc6ro=;
+        b=fGxLzXTLtYaeycYNZ4lvmhKQklZz5XY1jnvMRXI0g4VZEzbtFic6f+fzkoi/VhyhWw
+         BSjbqEWYl2D6p2V3MH9OLuL6N7L4RJ0gJfGfMUX3dZ2q5UE7eKonTFT3eDapKc7d4izu
+         eHq2eHfEWWsYXHXsWAysXiLktNT1hEGexL92UQbt9lRstKD14AYXHml48dNfl5pr9kke
+         5P0inEij5Vgnw+Xe0HaVXWJrs8af+8bEUQukVOzM3aJTt+d3zIhmrYb3N788EUs/OGbu
+         E1r8gQJQfFBlbr5JcJqGUX0ntTnqdKWG4y+MrGGu3LEbLzMH/vgBOqgcdqp1X0PxaDv0
+         984w==
+X-Forwarded-Encrypted: i=1; AHgh+Ro6mhT5s6GvfWrWymWBcHgnzqTG9U9XF0vudVTrj46xyLJTBVo5FFyjQJ/QDzHs1cjk/ES0ZEM72OTQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw61KcIskualB5ssP35tJuak5KrTRen0YAcFLBx2bZpgoEgAhOm
+	cfUT+kUi4Ju9PLsLH6gMyAtvAGhKk6Vk0X/hVMr6D28wjrT3QWcZxf2np/CwOoUdzJVoPah9EvH
+	noVuWY8++JDEhleuc4xbgkCiAk6MemOf6MpIML/oU
+X-Gm-Gg: AR+sD12xvyyt/+x/sBzFSZMBoYBrL9ar5ZJWf/pL1WoCP7kiZ5W5i1vhsk7PJav+bwz
+	IFJQ0lPVc55xdfrkjR3+Q/YJCsOI12lfda+9TeyAZhYkugg3U5YeSO7xHbWin2wSC9yvMHpUb6O
+	tcwOQsT5GzxGPPo1a4X8gmgkmIM8adJQYcv2b+ukOpRHo1xBfzhAl+8dkBZuFWaTYkRQhruSgMG
+	mfftLvQ1fk5kKr9j9edRF5WZpmITRU0eByN1vz4DA0PoqeavhzCowu1gj7CZomJLtijky+yKOkg
+	s/7oO849qHGo+E4i3cJjrY1auhhAk/RldQfa/QE+5aYRJvBlujbxjsb9HN2iLULNPdAnYzhxqEM
+	=
+X-Received: by 2002:a05:6000:1a53:b0:47f:8326:454d with SMTP id
+ ffacd0b85a97d-47fd7314abamr1786888f8f.40.1785532494478; Fri, 31 Jul 2026
+ 14:14:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -86,22 +86,99 @@ MIME-Version: 1.0
 References: <amth-CMf3Xz5hR32@sirena.org.uk> <20260731075644.20215-1-ojeda@kernel.org>
  <am0AjzHc0m03CLVa@tardis.local>
 In-Reply-To: <am0AjzHc0m03CLVa@tardis.local>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 31 Jul 2026 22:51:28 +0200
-X-Gm-Features: AUfX_mxl0TkTB6z9m_YRa1AG5A4iTSZPQXDapGjb7m1rxYpxgZ3XxZIp7LqWkOM
-Message-ID: <CANiq72=Lw7kTRuSTs5H+4fshGK74dJvwO1Mof3HCmXsAyEMJ=w@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 31 Jul 2026 23:14:42 +0200
+X-Gm-Features: AUfX_mxN5XKkL8dGR_lzlBjIRZt5cdIKAmvxFfdJcXqxUuUiJUVw41rP5PFIXYc
+Message-ID: <CAH5fLggke1Yvv8btJSMFr5tEquydvKev8_7G4gSO5MvoAJUE3A@mail.gmail.com>
 Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
 To: Boqun Feng <boqun@kernel.org>
 Cc: Miguel Ojeda <ojeda@kernel.org>, broonie@kernel.org, harry@kernel.org, 
 	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulmck@kernel.org, 
 	puranjay@kernel.org, vbabka@kernel.org, vbabka@suse.cz, 
-	Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Bert Karwatzki <spasswolf@web.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Bert Karwatzki <spasswolf@web.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Fri, Jul 31, 2026 at 10:07=E2=80=AFPM Boqun Feng <boqun@kernel.org> wrot=
 e:
+>
+> On Fri, Jul 31, 2026 at 09:56:44AM +0200, Miguel Ojeda wrote:
+> > On Thu, 30 Jul 2026 15:38:48 +0100 Mark Brown <broonie@kernel.org> wrot=
+e:
+> > >
+> > > Today's linux-next merge of the slab tree got a conflict in:
+> > >
+> > >   mm/slab_common.c
+> > >
+> > > between commit:
+> > >
+> > >   736084507faa3 ("rcu: Rename struct rcu_gp_oldstate to rcu_gp_seq")
+> > >
+> > > from the rcu tree and commit:
+> > >
+> > >   bdd0cc9f0ffc3 ("mm/slab: introduce struct kvfree_rcu_head for kvfre=
+e_rcu batching")
+> > >
+> > > from the slab tree.
+> >
+> > The slab one semantically conflicts as well with commit:
+> >
+> >   e5e86df8b666 ("rust: poll: use kfree_rcu() for PollCondVar")
+> >
+> > from the char-misc tree:
+> >
+> >     error[E0308]: mismatched types
+> >          --> rust/kernel/sync/poll.rs:175:44
+> >           |
+> >       175 |         unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get()=
+, ptr.cast::<ffi::c_void>()) };
+> >           |                  ------------------------- ^^^^^^^^^^^^^^^^=
+ expected `*mut kvfree_rcu_head`, found `*mut callback_head`
+> >           |                  |
+> >           |                  arguments to this function are incorrect
+> >           |
+> >           =3D note: expected raw pointer `*mut bindings::kvfree_rcu_hea=
+d`
+> >                      found raw pointer `*mut bindings::callback_head`
+> >     note: function defined here
+> >          --> rust/bindings/bindings_generated.rs:90407:12
+> >           |
+> >     90407 |     pub fn kvfree_call_rcu(head: *mut kvfree_rcu_head, ptr:=
+ *mut ffi::c_void);
+> >           |            ^^^^^^^^^^^^^^^
+> >
+> > The C API was not meant to have a visible effect, but we don't use the
+> > `kvfree_rcu()` macro, so we notice the change. We can add a similar cas=
+t
+> > to the C side:
+> >
+> >     diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
+> >     index 684dfa242b1a..79d7e08215b0 100644
+> >     --- a/rust/kernel/sync/poll.rs
+> >     +++ b/rust/kernel/sync/poll.rs
+> >     @@ -172,6 +172,6 @@ fn drop(&mut self) {
+> >              unsafe { bindings::__wake_up_pollfree((*ptr).inner.inner.w=
+ait_queue_head.get()) };
+> >
+> >              // SAFETY: This was allocated using `KBox::pin_init`, so i=
+t can be freed with `kvfree`.
+> >     -        unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.c=
+ast::<ffi::c_void>()) };
+> >     +        unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get().cast()=
+, ptr.cast::<ffi::c_void>()) };
+> >          }
+> >      }
+> >
+> > Clippy doesn't complain about the "unneeded" `cast()` under
+> > `CONFIG_KVFREE_RCU_BATCHED=3Dn`, so it should be fine.
+> >
+> > Cc: Alice Ryhl <aliceryhl@google.com>
+> > Cc: Boqun Feng <boqun@kernel.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Harry Yoo (Oracle) <harry@kernel.org>
+> > Cc: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+> >
 >
 > Cc Nathan & Bert because of:
 >
@@ -111,14 +188,9 @@ x162/
 > I actually prefer Nathan's fix, since it's more explicit about the
 > kvfree_rcu_head requirement. Alice & Miguel, thoughts?
 
-I like having the right types as a general principle, but I guess it
-depends on whether the maintainers prefer a solution closer in spirit
-to the cast in the C macro and whether the plan is indeed to have
-later more invasive changes / user-visible changes etc.
+I like Nathan's fix as well.
 
-Another solution could be to have C helpers on the more public facing
-API, but I assume there was a reason not to even before this change,
-e.g. expensive.
+Not sure if it needs to be done in the merge commit, or if we can
+apply it as a patch to char-misc despite the unknown CFG_*?
 
-Cheers,
-Miguel
+Alice
