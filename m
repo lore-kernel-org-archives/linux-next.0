@@ -1,121 +1,163 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA141D232;
-	Mon,  3 Aug 2026 14:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D3A368D59;
+	Mon,  3 Aug 2026 14:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785765858; cv=none; b=eqnZ/cjoTj873TCLTPn6CFD/2GGhFzemYtnGoHfjfiiro1kjBtunDG6MgJRrOr/DEKPH3W+RzLmvUPjGGX0qoXgyW1NjPf8XRnYgK3EUyLSYwosg1rU1QtHuSMZ8NahJCkGMAdeUTXqOl6PRlsTqjAn86SyaitrkvzH1jR8NZl0=
+	t=1785767025; cv=none; b=PECqc2HHh+9XBEC3nbtfqINlvac7N8KAcnMjTWEFn1Gy1ZLRTCz72CGUFtJi6iq5cJwgLpbU0zMwG1eADJLuJL59fXsXTyzQa3/fA2FB0gsMDwU72p06ZqTG+prlDaL6GXqTM2H+ceh6XzqJOo7HgKS/z5XgE0RgWFxtL3OBhik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785765858; c=relaxed/simple;
-	bh=moVMPtfnnAD43VhQTEFyf5+tTnZ7ih3vD5goqDQ9m50=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=h/io2gRnA8xAq2TG2H5Of79FBt64piOOUR9ZIlMqd1K/PB/W4gu6FICKgfJgrlYHZPknN8goFC1zRvzmbgpZD9GtS6pKQcZaekCpdz4Jz7HTbQeQssAHuaiTPPbwLyQZc81jCY/0xeitLN/Niqy40kr7iY6KVvRdL+jkFRvqeBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jdl2FPqQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785767025; c=relaxed/simple;
+	bh=fxkQonVO9Rff1Y9V8bg6kixmfUGo70RKbQuuTZH9JTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2KyTiFVk7PmznzlPrsvXqO+N0xSLjIAei2zE9lAQsEbiuSX5mQvWmC9rDb7Ty+/A+FSVnei2Wur9Bs5tfQApOWXUM/mxclsMLo9vSmMTDtR1YbqpCStdWSWqF9wg8kLuuOk+ZxORB6kgmeV9fyWz6fJY3zFpOE56Tv20nvoFp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXwvmP7I; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jdl2FPqQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E981F000E9;
-	Mon,  3 Aug 2026 14:04:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXwvmP7I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5763A1F000E9;
+	Mon,  3 Aug 2026 14:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785765857;
-	bh=wMOv2f0DwATQu8k6kCKqXxS8kQWn1h8HoFnotBLeZqk=;
-	h=Date:From:To:Cc:Subject;
-	b=Jdl2FPqQULEPcZcla1pG9K7/XSdDQiVg+HmG4BX4cg5TN6/Cn+DPnUZDkB6zyta50
-	 0RKI4LZm21kSNt+6qce7GFhihztwrcrT5rJrxFlHDXUxixsVWJQ/lyjPvV41pysqTu
-	 2PEDX6PtGgcVwyyNKDzJbL1uOvJXj5RNzIkfP6GNZaC7g1wqH2dIcRsqvwDhUArYzI
-	 /e8pNQZVDnrZ6HsV7GSh5VJnjWvSX7YA2Xy+V4XYjxGldY2gWX5OK0svAVfGbPFxEi
-	 thrXRmklOXkSs//zNT6Bc06tlrw8eyOKPSuTLJwZm9nwMZApfMjimuPZJsExTilUjR
-	 gPWgo8EFlxYtA==
-Date: Mon, 3 Aug 2026 15:04:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>
-Cc: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ping-Ke Shih <pkshih@realtek.com>, Will Deacon <will@kernel.org>,
-	Yicong Yang <yang.yicong@picoheart.com>
-Subject: linux-next: manual merge of the wireless-next tree with the arm64
- tree
-Message-ID: <anCf3WnRSrf3VD7I@sirena.org.uk>
-Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>,
-	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ping-Ke Shih <pkshih@realtek.com>, Will Deacon <will@kernel.org>,
-	Yicong Yang <yang.yicong@picoheart.com>
+	s=k20260515; t=1785767023;
+	bh=p4M5Ck3vaFA1ijzvvyQQ87ztJ0uCW3dfEB6ZYqWcQsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=oXwvmP7Igqol0GEgRaf62V/g8otyRzOzycLrBFQ8xOcdSvP1zw0feg5M1L6nuGTo6
+	 yfOAwaanUZdi2D84X0ky3bAePlfXNcadVQtV/fidh3qUcSFbxDOTqLcV+1bWZL0Ky6
+	 Fhl666cehngpZw2QBw7RTQVHElQPMGAUrrDrePsCcIQUw1mvOy5GUksw1c+aHsfcEl
+	 C32/cPRWsGQt417sItvP2vrdOp5G7rIlsGS9RuA5YCilxHXHIpV0dt/fjqPsuapkuz
+	 YPhR+3ZssWtFOrD2uZ40sASJ7fCVy0FfGOHS+gpfHLW43Dxk5JCgAjKvhIHJuxeYT9
+	 t7F7p96HCcyRA==
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 8550BF40066;
+	Mon,  3 Aug 2026 10:23:42 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 03 Aug 2026 10:23:42 -0400
+X-ME-Sender: <xms:bqRwajJPdKB0OP6Tx50CdXWJCYDiJ3Tg1g9QdCWNNCLw4M0y-dQPig>
+    <xme:bqRwajB3qSUFLEPZ4KLsrxvBzxtR_E0VtV0HpYeZY1e7sCNpU-MVTOd_k9Oi_gROa
+    -M1nNpKB2l97aaGruI5VCTND8PPFxQIk9c1lyjgHYBM-wP-kqulRXg>
+X-ME-Received: <xmr:bqRwaov6R5rC0zqDIA9eIiWRQAUAfiaUDGMePbZJpDlBBdjdZDBcx3Uhrlhv2zJ_p3FgLQ-OagEajlXzh4OSnJOjYGfjusBS>
+X-ME-Proxy-Cause: dmFkZTFOIMa5HkOlsByHIHFkyZkwbu+g3jJmeZzKNGu7erJa/Zz47nrsFx4C6pdhBM0Nmy
+    b011kwlZIibyywX+jGInz8bZ/f7MNYAqro48Y3VhgcOCinNqgtyyfpAyDRA5HbhX3EYAB5
+    hkq3mdOYiX2UvFKA/dlguC87Upa2avZM7c+i1X9ywYTVLmarsDCvilWY+zh4oqzh/42yh+
+    l2CCaAV8538xlMPvvpMKUC93aagVndBw4eKPxcb401evLHULE10xbPuvVMHrPs7Eun6P1h
+    aovPizZBSLPUtuiI1zVcoY5s8YJB+ttPhAB50O5Nb0P4frF+MIu0qfzmpxXmmNMGFVxJVL
+    f7BHTGsWjoGwe8+eWUnIIl8tGJL3WiAHPVTP9rm5b6402VTrz15PMicq5lqWvL8sDFC57i
+    VErHfCzouq9sPqVA2g2XmUGY9tMuuRunKlnmMgJo2UM0dR65rF1K2H33j9rsrzntMDmaWg
+    r0qYKby0OSRivdjKGAQQZGja8Ip1uogy/PgfAXQLZic1+e/gowENR2g0TAHflMbp6bypJN
+    MZqEJzmMCEHaoxS0iXuedLPTDXwMWllv1Fjnezg60LatgBRRPGWQABQwiv2ZIAtkQqBId9
+    LseXpSc48NKG3cDWsxarsm8h6uQK6O7xBb6JSNhBiY48OZPwkxKwWSPsLW/g
+X-ME-Proxy: <xmx:bqRwahT6E5siaTy85tO19qxdxLDrA-uBiLhixQ7La-g99tsPCYTkrw>
+    <xmx:bqRwavKr8KQXCiKOILFI8AFl_AevIvowh46KyYhbkg3Xk4tEQ4y9tg>
+    <xmx:bqRwakvfugZN04-VRyiHp3DcPsBZ8_q42qAK5g5QcfKECZ4LGRqCOg>
+    <xmx:bqRwam8L3euu2bFtLkxgzWnNcqzoezJYeEnO0t0nYnWnqZh3W5Uf0g>
+    <xmx:bqRwau1ptvy5LmY6n-myP4CajL-ZKsgaVQSS8yaFtEGq1Q1JJO82pGv8>
+Feedback-ID: i8dbe485b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Aug 2026 10:23:42 -0400 (EDT)
+Date: Mon, 3 Aug 2026 07:23:40 -0700
+From: Boqun Feng <boqun@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Bert Karwatzki <spasswolf@web.de>, Harry Yoo <harry@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org
+Subject: Re: rust compile failure in next-20260730
+Message-ID: <anCkbMyUIscmAheK@tardis.local>
+References: <20260731122826.737703-1-spasswolf@web.de>
+ <20260731192522.GA1014697@ax162>
+ <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b0B81MGmHuKCT2kA"
-Content-Disposition: inline
-
-
---b0B81MGmHuKCT2kA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
 
-Hi all,
+On Mon, Aug 03, 2026 at 02:57:49PM +0100, Gary Guo wrote:
+> On Fri Jul 31, 2026 at 8:25 PM BST, Nathan Chancellor wrote:
+> > + folks from e5e86df8b666
+> >
+> > On Fri, Jul 31, 2026 at 02:28:25PM +0200, Bert Karwatzki wrote:
+> >> With next-20260730 building a kernel with CONFIG_RUST=y fails with
+> >> the following error:
+> >> 
+> >>  RUSTC L rust/kernel.o
+> >> error[E0308]: mismatched types
+> >>      --> rust/kernel/sync/poll.rs:175:44
+> >>       |
+> >>   175 |         unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.cast::<ffi::c_void>()) };
+> >>       |                  ------------------------- ^^^^^^^^^^^^^^^^ expected `*mut kvfree_rcu_head`, found `*mut callback_head`
+> >>       |                  |
+> >>       |                  arguments to this function are incorrect
+> >>       |
+> >>       = note: expected raw pointer `*mut bindings::kvfree_rcu_head`
+> >>                  found raw pointer `*mut bindings::callback_head`
+> >> note: function defined here
+> >>      --> /mnt/data/linux-forest/linux-next/rust/bindings/bindings_generated.rs:73708:12
+> >>       |
+> >> 73708 |     pub fn kvfree_call_rcu(head: *mut kvfree_rcu_head, ptr: *mut ffi::c_void);
+> >>       |            ^^^^^^^^^^^^^^^
+> >> 
+> >> error: aborting due to 1 previous error
+> >> 
+> >> For more information about this error, try `rustc --explain E0308`.
+> >> make[5]: *** [rust/Makefile:781: rust/kernel.o] Fehler 1
+> >> make[4]: *** [Makefile:1420: prepare] Fehler 2
+> >> make[3]: *** [debian/rules:80: build-arch] Fehler 2
+> >> 
+> >> Reverting the following commits:
+> >> ef32a74f8f6a ("mm/slab: introduce kfree_rcu_nolock()")
+> >> bdd0cc9f0ffc ("mm/slab: introduce struct kvfree_rcu_head for kvfree_rcu batching")
+> >>     
+> >> make the compilation work again.   
+> >
+> > This is a collision between commit e5e86df8b666 ("rust: poll: use
+> > kfree_rcu() for PollCondVar") in the char-misc tree and the
+> > aforementioned commit bdd0cc9f0ffc ("mm/slab: introduce struct
+> > kvfree_rcu_head for kvfree_rcu batching") in the slab tree.
+> >
+> > Something like this avoids the error for me but I am not sure if it is
+> > a proper fix.
+> >
+> > diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
+> > index 684dfa242b1a..5b12d5d4e9af 100644
+> > --- a/rust/kernel/sync/poll.rs
+> > +++ b/rust/kernel/sync/poll.rs
+> > @@ -124,6 +124,9 @@ pub struct PollCondVarBox {
+> >  struct PollCondVarBoxInner {
+> >      #[pin]
+> >      inner: PollCondVar,
+> > +    #[cfg(CONFIG_KVFREE_RCU_BATCHED)]
+> > +    rcu: Opaque<bindings::kvfree_rcu_head>,
+> > +    #[cfg(not(CONFIG_KVFREE_RCU_BATCHED))]
+> >      rcu: Opaque<bindings::callback_head>,
+> 
+> We could also unconditionally use `kvfree_rcu_head` here, and
+> add
+> 
+>     #[cfg(not(CONFIG_KVFREE_RCU_BATCHED))]
+>     pub type kvfree_rcu_head = callback_head;
+> 
+> to bindings.rs?
+> 
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+This option is currently not maintainable unless it becomes a
+maintainer-aware way to handle things like this.
 
-  include/linux/pci_ids.h
+> (Or even better, changing `#define` to `typedef` so bindgen takes care of
+> everything).
+> 
 
-between commit:
+Yes, this is better IMO, but it's up to slab maintainers. :-)
 
-  cf65b4d765b5f ("perf/dwc_pcie: Add support for Picoheart vendor devices")
+Regards,
+Boqun
 
-=66rom the arm64 tree and commit:
-
-  888b1934642b7 ("PCI: Move Spacemit vendor and device IDs to linux/pci_ids=
-=2Eh")
-
-=66rom the wireless-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/linux/pci_ids.h
-index b0aad3af268b6,d6f26cacc8e35..0000000000000
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@@ -2640,8 -2640,10 +2640,12 @@@
-  #define PCI_VENDOR_ID_SUNIX		0x1fd4
-  #define PCI_DEVICE_ID_SUNIX_1999	0x1999
- =20
-+ #define PCI_VENDOR_ID_SPACEMIT		0x201f
-+ #define PCI_DEVICE_ID_SPACEMIT_K1	0x0001
-+ #define PCI_DEVICE_ID_SPACEMIT_K3	0x0002
-+=20
- +#define PCI_VENDOR_ID_PICOHEART		0x20fa
- +
-  #define PCI_VENDOR_ID_HINT             0x3388
-  #define PCI_DEVICE_ID_HINT_VXPROII_IDE 0x8013
- =20
-
---b0B81MGmHuKCT2kA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpwn9wACgkQJNaLcl1U
-h9B8Qgf/ZDwUwgGzdBs0KcrveicOv7t/7I1hHk7cSuy/LeGMmA8T6SPorVkjS297
-7nxZynMdyIR1UnEFpf4phs1Yrp3mpQCR9KxYZuKEkGKz9s6r4bSgth+SY3xOnbx5
-zacEKAmjLltycy66XP4alJYj41/QI90zyEvIP+LPh8AppDXZWHQrKhDJagO24s9X
-RKg0ClY/Ao4GfTGbVS1bZBNbutKn/1v0JoclJBJmmv8OteuT/hiX7LnzdaPo6kXZ
-vjv2/bpqpEAnKay1NVw+IE+pjCMSl7ZN9otAyeX4ho2gGSiEgAyW4GydieYBBHy2
-c6G6HDl546vpvLlFAGADLQFZveo0Hw==
-=6mLZ
------END PGP SIGNATURE-----
-
---b0B81MGmHuKCT2kA--
+> Best,
+> Gary
+> 
