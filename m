@@ -1,163 +1,261 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D3A368D59;
-	Mon,  3 Aug 2026 14:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4987A41A4FC;
+	Mon,  3 Aug 2026 14:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785767025; cv=none; b=PECqc2HHh+9XBEC3nbtfqINlvac7N8KAcnMjTWEFn1Gy1ZLRTCz72CGUFtJi6iq5cJwgLpbU0zMwG1eADJLuJL59fXsXTyzQa3/fA2FB0gsMDwU72p06ZqTG+prlDaL6GXqTM2H+ceh6XzqJOo7HgKS/z5XgE0RgWFxtL3OBhik=
+	t=1785767482; cv=none; b=YG8GrXVtSdGCNOEAv7qCn7AkOP/ugjlG1CehQnQslcKn71OuuCadwKKf21FsB0JE/D7GYvwgWhCp4by0+Mw3ofdbEWCvkmhCGYvf3uJuOMVa8x0DFDDU8m/9HnOwhUZYrYiZCdHQ+RjWpwwLsB/em4OmDFp3XoqOVnNkBPvNfCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785767025; c=relaxed/simple;
-	bh=fxkQonVO9Rff1Y9V8bg6kixmfUGo70RKbQuuTZH9JTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2KyTiFVk7PmznzlPrsvXqO+N0xSLjIAei2zE9lAQsEbiuSX5mQvWmC9rDb7Ty+/A+FSVnei2Wur9Bs5tfQApOWXUM/mxclsMLo9vSmMTDtR1YbqpCStdWSWqF9wg8kLuuOk+ZxORB6kgmeV9fyWz6fJY3zFpOE56Tv20nvoFp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXwvmP7I; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785767482; c=relaxed/simple;
+	bh=hKODgDX//8SB/UStKqfiKAVfx9htDWxGWVei1rbz0lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HsFWuW5Ry7sAzbmm6MhoRIaC/N4eTv/iNMDBfOb1lY3UWhekGneNQ9ARmcPGtNpWZjc/lWUJDE5aHSH16ySylt3HrLJABlFfn4XGFH1eIPfecw4AymT5hgbkAJv6baDMTpQaI3A8JGXdpg8CmSHp44+XCy+3jUc1JZIhAnjfuIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQmrHyHU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXwvmP7I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5763A1F000E9;
-	Mon,  3 Aug 2026 14:23:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQmrHyHU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D18AA1F00A3D;
+	Mon,  3 Aug 2026 14:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785767023;
-	bh=p4M5Ck3vaFA1ijzvvyQQ87ztJ0uCW3dfEB6ZYqWcQsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=oXwvmP7Igqol0GEgRaf62V/g8otyRzOzycLrBFQ8xOcdSvP1zw0feg5M1L6nuGTo6
-	 yfOAwaanUZdi2D84X0ky3bAePlfXNcadVQtV/fidh3qUcSFbxDOTqLcV+1bWZL0Ky6
-	 Fhl666cehngpZw2QBw7RTQVHElQPMGAUrrDrePsCcIQUw1mvOy5GUksw1c+aHsfcEl
-	 C32/cPRWsGQt417sItvP2vrdOp5G7rIlsGS9RuA5YCilxHXHIpV0dt/fjqPsuapkuz
-	 YPhR+3ZssWtFOrD2uZ40sASJ7fCVy0FfGOHS+gpfHLW43Dxk5JCgAjKvhIHJuxeYT9
-	 t7F7p96HCcyRA==
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8550BF40066;
-	Mon,  3 Aug 2026 10:23:42 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 03 Aug 2026 10:23:42 -0400
-X-ME-Sender: <xms:bqRwajJPdKB0OP6Tx50CdXWJCYDiJ3Tg1g9QdCWNNCLw4M0y-dQPig>
-    <xme:bqRwajB3qSUFLEPZ4KLsrxvBzxtR_E0VtV0HpYeZY1e7sCNpU-MVTOd_k9Oi_gROa
-    -M1nNpKB2l97aaGruI5VCTND8PPFxQIk9c1lyjgHYBM-wP-kqulRXg>
-X-ME-Received: <xmr:bqRwaov6R5rC0zqDIA9eIiWRQAUAfiaUDGMePbZJpDlBBdjdZDBcx3Uhrlhv2zJ_p3FgLQ-OagEajlXzh4OSnJOjYGfjusBS>
-X-ME-Proxy-Cause: dmFkZTFOIMa5HkOlsByHIHFkyZkwbu+g3jJmeZzKNGu7erJa/Zz47nrsFx4C6pdhBM0Nmy
-    b011kwlZIibyywX+jGInz8bZ/f7MNYAqro48Y3VhgcOCinNqgtyyfpAyDRA5HbhX3EYAB5
-    hkq3mdOYiX2UvFKA/dlguC87Upa2avZM7c+i1X9ywYTVLmarsDCvilWY+zh4oqzh/42yh+
-    l2CCaAV8538xlMPvvpMKUC93aagVndBw4eKPxcb401evLHULE10xbPuvVMHrPs7Eun6P1h
-    aovPizZBSLPUtuiI1zVcoY5s8YJB+ttPhAB50O5Nb0P4frF+MIu0qfzmpxXmmNMGFVxJVL
-    f7BHTGsWjoGwe8+eWUnIIl8tGJL3WiAHPVTP9rm5b6402VTrz15PMicq5lqWvL8sDFC57i
-    VErHfCzouq9sPqVA2g2XmUGY9tMuuRunKlnmMgJo2UM0dR65rF1K2H33j9rsrzntMDmaWg
-    r0qYKby0OSRivdjKGAQQZGja8Ip1uogy/PgfAXQLZic1+e/gowENR2g0TAHflMbp6bypJN
-    MZqEJzmMCEHaoxS0iXuedLPTDXwMWllv1Fjnezg60LatgBRRPGWQABQwiv2ZIAtkQqBId9
-    LseXpSc48NKG3cDWsxarsm8h6uQK6O7xBb6JSNhBiY48OZPwkxKwWSPsLW/g
-X-ME-Proxy: <xmx:bqRwahT6E5siaTy85tO19qxdxLDrA-uBiLhixQ7La-g99tsPCYTkrw>
-    <xmx:bqRwavKr8KQXCiKOILFI8AFl_AevIvowh46KyYhbkg3Xk4tEQ4y9tg>
-    <xmx:bqRwakvfugZN04-VRyiHp3DcPsBZ8_q42qAK5g5QcfKECZ4LGRqCOg>
-    <xmx:bqRwam8L3euu2bFtLkxgzWnNcqzoezJYeEnO0t0nYnWnqZh3W5Uf0g>
-    <xmx:bqRwau1ptvy5LmY6n-myP4CajL-ZKsgaVQSS8yaFtEGq1Q1JJO82pGv8>
-Feedback-ID: i8dbe485b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Aug 2026 10:23:42 -0400 (EDT)
-Date: Mon, 3 Aug 2026 07:23:40 -0700
-From: Boqun Feng <boqun@kernel.org>
-To: Gary Guo <gary@garyguo.net>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Bert Karwatzki <spasswolf@web.de>, Harry Yoo <harry@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org
-Subject: Re: rust compile failure in next-20260730
-Message-ID: <anCkbMyUIscmAheK@tardis.local>
-References: <20260731122826.737703-1-spasswolf@web.de>
- <20260731192522.GA1014697@ax162>
- <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
+	s=k20260515; t=1785767480;
+	bh=UrNRsvkq3mRq9rnhVFpNzGn9hA5dWUxfYCBYBKp8OXA=;
+	h=Date:From:To:Cc:Subject;
+	b=LQmrHyHUdiSIxAHst772BpJZkeznqd3RmMzB1aEDDpbmCg+zvpGMpRu1kqNtlp09g
+	 VWjaV2b8GbPXUBkY1cucqSeffCLjwXDayr/wUTkfCGudAR5O1aapz5IffXZaVctMxf
+	 BaM3mu0IkjpLV/8LAA6iOF8wtdSM1mU2eL5QYPYlcCZvjahPBvSlko7T1bjmGLqfya
+	 nF66KJYAH2W9JCa1iqEtPhSU0DCkHgaMYH5r37U+ERVBi+VrGJ4+h8XZZoFWZ8xXBq
+	 mWNzKNSZ6B9VN/N/CMg9p2fhJ9ju7KXLdDmAiHVlQpe4FnT12unOgEO0Xq77mJaPCw
+	 3ML2bysk571XQ==
+Date: Mon, 3 Aug 2026 15:31:15 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Laura Nao <laura.nao@collabora.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Satyanarayana K V P <satyanarayana.k.v.p@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Subject: linux-next: manual merge of the drm tree with the origin tree
+Message-ID: <anCmM4lBkA_d6vcW@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0RQ1E4DKTet8pR8b"
+Content-Disposition: inline
+
+
+--0RQ1E4DKTet8pR8b
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 03, 2026 at 02:57:49PM +0100, Gary Guo wrote:
-> On Fri Jul 31, 2026 at 8:25 PM BST, Nathan Chancellor wrote:
-> > + folks from e5e86df8b666
-> >
-> > On Fri, Jul 31, 2026 at 02:28:25PM +0200, Bert Karwatzki wrote:
-> >> With next-20260730 building a kernel with CONFIG_RUST=y fails with
-> >> the following error:
-> >> 
-> >>  RUSTC L rust/kernel.o
-> >> error[E0308]: mismatched types
-> >>      --> rust/kernel/sync/poll.rs:175:44
-> >>       |
-> >>   175 |         unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.cast::<ffi::c_void>()) };
-> >>       |                  ------------------------- ^^^^^^^^^^^^^^^^ expected `*mut kvfree_rcu_head`, found `*mut callback_head`
-> >>       |                  |
-> >>       |                  arguments to this function are incorrect
-> >>       |
-> >>       = note: expected raw pointer `*mut bindings::kvfree_rcu_head`
-> >>                  found raw pointer `*mut bindings::callback_head`
-> >> note: function defined here
-> >>      --> /mnt/data/linux-forest/linux-next/rust/bindings/bindings_generated.rs:73708:12
-> >>       |
-> >> 73708 |     pub fn kvfree_call_rcu(head: *mut kvfree_rcu_head, ptr: *mut ffi::c_void);
-> >>       |            ^^^^^^^^^^^^^^^
-> >> 
-> >> error: aborting due to 1 previous error
-> >> 
-> >> For more information about this error, try `rustc --explain E0308`.
-> >> make[5]: *** [rust/Makefile:781: rust/kernel.o] Fehler 1
-> >> make[4]: *** [Makefile:1420: prepare] Fehler 2
-> >> make[3]: *** [debian/rules:80: build-arch] Fehler 2
-> >> 
-> >> Reverting the following commits:
-> >> ef32a74f8f6a ("mm/slab: introduce kfree_rcu_nolock()")
-> >> bdd0cc9f0ffc ("mm/slab: introduce struct kvfree_rcu_head for kvfree_rcu batching")
-> >>     
-> >> make the compilation work again.   
-> >
-> > This is a collision between commit e5e86df8b666 ("rust: poll: use
-> > kfree_rcu() for PollCondVar") in the char-misc tree and the
-> > aforementioned commit bdd0cc9f0ffc ("mm/slab: introduce struct
-> > kvfree_rcu_head for kvfree_rcu batching") in the slab tree.
-> >
-> > Something like this avoids the error for me but I am not sure if it is
-> > a proper fix.
-> >
-> > diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
-> > index 684dfa242b1a..5b12d5d4e9af 100644
-> > --- a/rust/kernel/sync/poll.rs
-> > +++ b/rust/kernel/sync/poll.rs
-> > @@ -124,6 +124,9 @@ pub struct PollCondVarBox {
-> >  struct PollCondVarBoxInner {
-> >      #[pin]
-> >      inner: PollCondVar,
-> > +    #[cfg(CONFIG_KVFREE_RCU_BATCHED)]
-> > +    rcu: Opaque<bindings::kvfree_rcu_head>,
-> > +    #[cfg(not(CONFIG_KVFREE_RCU_BATCHED))]
-> >      rcu: Opaque<bindings::callback_head>,
-> 
-> We could also unconditionally use `kvfree_rcu_head` here, and
-> add
-> 
->     #[cfg(not(CONFIG_KVFREE_RCU_BATCHED))]
->     pub type kvfree_rcu_head = callback_head;
-> 
-> to bindings.rs?
-> 
+Hi all,
 
-This option is currently not maintainable unless it becomes a
-maintainer-aware way to handle things like this.
+Today's linux-next merge of the drm tree got a conflict in:
 
-> (Or even better, changing `#define` to `typedef` so bindgen takes care of
-> everything).
-> 
+  drivers/gpu/drm/xe/xe_device.c
 
-Yes, this is better IMO, but it's up to slab maintainers. :-)
+between commit:
 
-Regards,
-Boqun
+  130910bac905a ("drm/xe/pf: Disable display in admin only PF mode")
 
-> Best,
-> Gary
-> 
+=66rom the origin tree and commits:
+
+  7ef55ae582eba ("drm/xe/pf: Disable display in admin only PF mode")
+  21fcb222f0d1e ("drm: Remove DRIVER_GEM_GPUVA feature flag")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+*Please* consider using merges rather than cherry picking.
+
+diff --combined drivers/gpu/drm/xe/xe_device.c
+index 9d119c95a569a,7007b6113760a..0000000000000
+--- a/drivers/gpu/drm/xe/xe_device.c
++++ b/drivers/gpu/drm/xe/xe_device.c
+@@@ -61,6 -61,7 +61,7 @@@
+  #include "xe_psmi.h"
+  #include "xe_pxp.h"
+  #include "xe_query.h"
++ #include "xe_ras.h"
+  #include "xe_shrinker.h"
+  #include "xe_soc_remapper.h"
+  #include "xe_survivability_mode.h"
+@@@ -281,7 -282,7 +282,7 @@@ static vm_fault_t barrier_fault(struct=20
+  	pgprot_t prot;
+  	int idx;
+ =20
+ -	prot =3D vm_get_page_prot(vma->vm_flags);
+ +	prot =3D vma_get_page_prot(vma);
+ =20
+  	if (drm_dev_enter(dev, &idx)) {
+  		unsigned long pfn;
+@@@ -396,7 -397,7 +397,7 @@@ static const struct drm_driver regular_
+  	    XE_DISPLAY_DRIVER_FEATURES |
+  	    DRIVER_GEM |
+  	    DRIVER_RENDER | DRIVER_SYNCOBJ |
+- 	    DRIVER_SYNCOBJ_TIMELINE | DRIVER_GEM_GPUVA,
++ 	    DRIVER_SYNCOBJ_TIMELINE,
+  	.open =3D xe_file_open,
+  	.postclose =3D xe_file_close,
+ =20
+@@@ -426,7 -427,7 +427,7 @@@ static const struct drm_ioctl_desc xe_i
+ =20
+  static const struct drm_driver admin_only_driver =3D {
+  	.driver_features =3D
+- 	    DRIVER_GEM | DRIVER_RENDER | DRIVER_GEM_GPUVA,
++ 	    DRIVER_GEM | DRIVER_RENDER,
+  	.open =3D xe_file_open,
+  	.postclose =3D xe_file_close,
+  	.ioctls =3D xe_ioctls_admin_only,
+@@@ -736,9 -737,11 +737,11 @@@ static void vf_update_device_info(struc
+  	xe->info.probe_display =3D 0;
+  	xe->info.has_heci_cscfi =3D 0;
+  	xe->info.has_heci_gscfi =3D 0;
++ 	xe->info.has_i2c =3D 0;
+  	xe->info.has_late_bind =3D 0;
+  	xe->info.skip_guc_pc =3D 1;
+  	xe->info.skip_pcode =3D 1;
++ 	xe->info.has_drm_ras =3D false;
+  }
+ =20
+  static int xe_device_vram_alloc(struct xe_device *xe)
+@@@ -918,6 -921,27 +921,27 @@@ static void xe_device_wedged_fini(struc
+  		xe_pm_runtime_put(xe);
+  }
+ =20
++ #ifdef CONFIG_DRM_XE_DEBUG_PAGE_SIZE
++ static int xe_debug_page_size_alloc_ctrl_init(struct xe_device *xe)
++ {
++ 	int err;
++=20
++ 	err =3D drmm_mutex_init(&xe->drm, &xe->page_size_alloc_ctrl.lock);
++ 	if (err)
++ 		return err;
++=20
++ 	xe->page_size_alloc_ctrl.mode =3D XE_PAGE_SIZE_ALLOC_CTRL_MODE_NONE;
++ 	xe->page_size_alloc_ctrl.cur_index =3D 0;
++=20
++ 	return 0;
++ }
++ #else
++ static int xe_debug_page_size_alloc_ctrl_init(struct xe_device *xe)
++ {
++ 	return 0;
++ }
++ #endif
++=20
+  int xe_device_probe(struct xe_device *xe)
+  {
+  	struct xe_tile *tile;
+@@@ -947,6 -971,15 +971,15 @@@
+  			return err;
+  	}
+ =20
++ 	/*
++ 	 * Wa_16029380221: The affected GT will always use non-coherent
++ 	 * access to page tables, so we must do uncached writes from the
++ 	 * CPU.
++ 	 */
++ 	for_each_gt(gt, xe, id)
++ 		if (XE_GT_WA(gt, 16029380221))
++ 			xe->info.has_cached_pt =3D false;
++=20
+  	for_each_tile(tile, xe, id) {
+  		err =3D xe_ggtt_init_early(tile->mem.ggtt);
+  		if (err)
+@@@ -987,6 -1020,16 +1020,16 @@@
+  	if (err)
+  		return err;
+ =20
++ 	err =3D xe_soc_remapper_init(xe);
++ 	if (err)
++ 		return err;
++=20
++ 	err =3D xe_sysctrl_init(xe);
++ 	if (err)
++ 		return err;
++=20
++ 	xe_ras_init(xe);
++=20
+  	/*
+  	 * Now that GT is initialized (TTM in particular),
+  	 * we can try to init display, and inherit the initial fb.
+@@@ -1027,10 -1070,6 +1070,6 @@@
+ =20
+  	xe_nvm_init(xe);
+ =20
+- 	err =3D xe_soc_remapper_init(xe);
+- 	if (err)
+- 		return err;
+-=20
+  	err =3D xe_heci_gsc_init(xe);
+  	if (err)
+  		return err;
+@@@ -1055,6 -1094,10 +1094,10 @@@
+  	if (err)
+  		return err;
+ =20
++ 	err =3D xe_debug_page_size_alloc_ctrl_init(xe);
++ 	if (err)
++ 		return err;
++=20
+  	err =3D drm_dev_register(&xe->drm, 0);
+  	if (err)
+  		return err;
+@@@ -1069,10 -1112,6 +1112,6 @@@
+  	if (err)
+  		goto err_unregister_display;
+ =20
+- 	err =3D xe_sysctrl_init(xe);
+- 	if (err)
+- 		goto err_unregister_display;
+-=20
+  	err =3D xe_device_sysfs_init(xe);
+  	if (err)
+  		goto err_unregister_display;
+@@@ -1127,14 -1166,14 +1166,14 @@@ void xe_device_shutdown(struct xe_devic
+ =20
+  	drm_dbg(&xe->drm, "Shutting down device\n");
+ =20
+- 	xe_display_pm_shutdown(xe);
++ 	xe_display_shutdown(xe);
+ =20
+  	xe_irq_suspend(xe);
+ =20
+  	for_each_gt(gt, xe, id)
+  		xe_gt_shutdown(gt);
+ =20
+- 	xe_display_pm_shutdown_late(xe);
++ 	xe_display_shutdown_late(xe);
+ =20
+  	if (!xe_driver_flr_disabled(xe)) {
+  		/* BOOM! */
+
+--0RQ1E4DKTet8pR8b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpwpjMACgkQJNaLcl1U
+h9Aiagf+Od6B4wfFaCmAMwE7fVd4W24Za1tYlkAbmAALmuI7PgdG2UbuQpF3S1Bb
+oN3if3nkbRDIHVD94bGUtbIvu0Wn3WZmya0OwQUCPaaHPF1z5jpFh8chAzZnlMA3
+nIl1/OvDRtCcJzJzY7+3aX6rD+PNq5ansEqyQ6y7neGYeR5GdZBDKEvWYO6FBmWu
+ND/x5++XDXkDzEoCEB1uF6JaHROjr1Rbsm2BVoktH8f/UvhSfoDsNChnJXSBQG8P
+JdEkvIe2bO5zXINpd9Dl/7LhzvnlO0QfvZ2brd5S3P3UiAt9+S3w3aimERm74IiO
+29W+gCMTu0tZPb5x/HnmlTEkV2H8bQ==
+=agZI
+-----END PGP SIGNATURE-----
+
+--0RQ1E4DKTet8pR8b--
