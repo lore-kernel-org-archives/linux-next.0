@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C76383329;
-	Mon,  3 Aug 2026 16:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE36E380FC3;
+	Mon,  3 Aug 2026 16:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785774930; cv=none; b=bNSooEcjTptkVkfdLTIQjH9+TnLZJFaPuOM13DV1fgIiAvckWzsRguKvyaroeSTPCFgL/+hi83uuiQvz8QIG+GWonIfJKYaYCyZM/EEgOxgxh/ivENF3Gj4fid0l/Yovffd3mmnmMZhPl5LDodpKSA4V0xfPdXkibUgJV8+dDis=
+	t=1785775960; cv=none; b=e/fNc+R4auh/PDY3w2++HGf7I2XHf1LvnlU3fl+z4xybyK1fD7YiVyjtIVNnDIFUB1HtkVhKzd3u+Eol65qm73b3vNiexx6SoGI1rmVt8uiXviMtfNWWjN2USQpJD8Dkndq9HwpTAfHltDnuUZyCS3dhfdnfG8LYCO3u69a/gpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785774930; c=relaxed/simple;
-	bh=7R0Ht5zWBho3ambjxTNo8ZdJDpZiQACese40LznCdeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZ/HHqa/yhgpzXARM6mO9RSJRaQB4k1/QbqYLEuAS5sHTuBq2tonCrNmecJ0sA7uCb3j3brsDNYFPVIeYO0cqm9NJ96xTCcNzYkEvzyucEhNsRSMNMItsvJ1ktCFglGIJUtGRfQkvqtp88iRKDhsAjbJ3utwv9ZVENl9jSu3JqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4Ghm795; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785775960; c=relaxed/simple;
+	bh=mlq53Vcohwuk9pCl9GwpOi1M033nYrAv85t91POWQtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f9ZFs8g46c9MxVWglFznkQVCHkqV3Z/tJScT6oWRp7VDGIMK1H4DTMW81mUP9Qijd/RRClQKU5cal+hNRmSuvl82Uz5oAmzqgjGeHQCtIuvlLfe4app8gtJZNd4QuyBPPdQxu/UZkwG24Z+IpS1FhlfBlINk8GFM2xDPGbk9NwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JlPbIVB2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4Ghm795"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC501F000E9;
-	Mon,  3 Aug 2026 16:35:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlPbIVB2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F2F1F000E9;
+	Mon,  3 Aug 2026 16:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785774928;
-	bh=7R0Ht5zWBho3ambjxTNo8ZdJDpZiQACese40LznCdeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Q4Ghm795klv51VNXEahz6md1fCtCWjX+Et24gfDbcDpmQKzfUWuqWuV9gKP/P2/AB
-	 yjAaGrj8nrHFCBEG4iD4I5ybEF3bo0dCodiLEsrCK8btSqc1kMfSeL3RPxJFD8MMhp
-	 0d6LG21SF0/nQjOQRE/pkXie5plGDIsgiS/+OucDaqGU/Icg0+3jGMvoNxoHdapWjM
-	 Z7Yi6pTaStQJ4A5o1JzFjhx+En+tQRzmkrR/lPHjQhePWeeg6P2W1b0fstMO+zDNhb
-	 dCXKnLFt2gU+MJ/G/rpHIYyY3QHlPEcKD/SADKO4ihyikfCI0XOYt7Sexx5KS0N8Yb
-	 Ntd4LJjtrcNnA==
-Date: Mon, 3 Aug 2026 17:35:24 +0100
+	s=k20260515; t=1785775959;
+	bh=LSaH+huDsVLRiUShUsuY95+WDwOxfP/VyQdKj7OQmmk=;
+	h=Date:From:To:Cc:Subject;
+	b=JlPbIVB2JCadIMAfda7K2PWFiIfs9aNpTw14UjA6TnuoOCiLorfwtN3i+fcPOw+i6
+	 FUyVH2h2qu8r8K81jYYUP2lIgfd5/ymZTkaQbJub87ubT2EDd1wUOabKyJWR0RGZyH
+	 Y4bRqzRJaEXFOpZcsIaofZW1Wb8c1tC74ah/WbIU1vBFudXStXbcfOtKADZWQmcn7x
+	 c6oOOvIeYNAYZR2XQDJChb237M93NO4d/wibyp6TTVPHmmjI29+FOd1XCvWK24Qje8
+	 /lNLLOfYXZfINr9Cd2pRE/TWJb/cDfznupjEQvu59rnIXJavACd2aVQIacxms8cdEo
+	 Zg765Gk7XhAcw==
+Date: Mon, 3 Aug 2026 17:52:35 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mykyta Yatsenko <yatsenko@meta.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Fengnan Chang <changfengnan@bytedance.com>
+Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in final build
-Message-ID: <ff3c03f5-fac1-49e2-be18-66f5ff773596@sirena.org.uk>
-References: <ff58b01c-3f5e-4d55-be82-609d2faaf12e@sirena.org.uk>
+Subject: linux-next: build failure after merge of the block tree
+Message-ID: <anDHU9Wc-EGV1KYL@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,45 +43,97 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jrejyUtzGRw/kI87"
+	protocol="application/pgp-signature"; boundary="IF7RZ+LnkIY2MC39"
 Content-Disposition: inline
-In-Reply-To: <ff58b01c-3f5e-4d55-be82-609d2faaf12e@sirena.org.uk>
-X-Cookie: Do not flush.
 
 
---jrejyUtzGRw/kI87
+--IF7RZ+LnkIY2MC39
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 29, 2026 at 04:34:28PM +0100, Mark Brown wrote:
-> Hi all,
->=20
-> After in the final build, today's linux-next build (arm64 allyesconfig)
-> failed like this:
->=20
-> ld: drivers/net/wireless/mediatek/mt76/usb_trace.o:(.bss+0x40): multiple =
-definition of `__bpf_trace_btf_ids_dev_reg_evt'; drivers/net/wireless/media=
-tek/mt76/trace.o:(.bss+0x80): first defined here
-> ld: drivers/media/platform/nvidia/tegra-vde/vde.o:(.bss+0x180): multiple =
-definition of `__bpf_trace_btf_ids_register_access'; drivers/gpu/drm/tegra/=
-trace.o:(.bss+0x0): first defined here
+Hi all,
 
-This issue is still present today.
+After merging the block tree, today's linux-next build
+(arm64 allnoconfig) failed like this:
 
---jrejyUtzGRw/kI87
+/tmp/next/build/fs/iomap/direct-io.c: In function '__iomap_dio_read_simple':
+/tmp/next/build/fs/iomap/direct-io.c:1037:15: error: too few arguments to f=
+unction 'bio_iov_iter_get_pages'
+ 1037 |         ret =3D bio_iov_iter_get_pages(bio, iter, alignment - 1);
+      |               ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/next/build/include/linux/bio-integrity.h:5,
+                 from /tmp/next/build/fs/iomap/direct-io.c:6:
+/tmp/next/build/include/linux/bio.h:524:5: note: declared here
+  524 | int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+
+caused by a sematic conflict between
+
+  14b007e178811 (block: validate user space vectors during extraction)
+
+=66rom the block tree and
+
+  36f199c8d0ee4 (iomap: add simple dio path for small direct I/O)
+
+=66rom the vfs-brauner tree.  I have applied the fixup patch below and can
+carry as needed, you should ensure you flag this to Linus when sending
+PRs:
+
+=46rom 5bf17d9828d05688ad4fd04cc07b64642d4ba295 Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Mon, 3 Aug 2026 15:53:13 +0100
+Subject: [PATCH] fs: Fix up semantic conflict with bio_iov_iter_get_pages
+
+/tmp/next/build/fs/iomap/direct-io.c: In function '__iomap_dio_read_simple':
+/tmp/next/build/fs/iomap/direct-io.c:1037:15: error: too few arguments to f=
+unction 'bio_iov_iter_get_pages'
+ 1037 |         ret =3D bio_iov_iter_get_pages(bio, iter, alignment - 1);
+      |               ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/next/build/include/linux/bio-integrity.h:5,
+                 from /tmp/next/build/fs/iomap/direct-io.c:6:
+/tmp/next/build/include/linux/bio.h:524:5: note: declared here
+  524 | int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ fs/iomap/direct-io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 2b3e916dedc77..2aa71be36c996 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -1034,7 +1034,8 @@ ssize_t __iomap_dio_read_simple(struct kiocb *iocb, s=
+truct iov_iter *iter,
+ 	bio->bi_iter.bi_sector =3D iomap_sector(&iomi->iomap, iomi->pos);
+ 	bio->bi_ioprio =3D iocb->ki_ioprio;
+=20
+-	ret =3D bio_iov_iter_get_pages(bio, iter, alignment - 1);
++	ret =3D bio_iov_iter_get_pages(bio, iter, bdev_dma_alignment(bio->bi_bdev=
+),
++				     alignment - 1);
+ 	if (unlikely(ret))
+ 		goto out_bio_put;
+=20
+--=20
+2.47.3
+
+
+--IF7RZ+LnkIY2MC39
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpww0wACgkQJNaLcl1U
-h9Aw0ggAgxa6W6eH9AfVzwxwr3j6c1upWkCPa5LMZDMVed7EQIhkQxg3kF5lPtRe
-9/BNnfR13p89OGJIOkqv/bQtuuqcdGCHQVCF6usYcnFKpnbVcqZja2Xy7mRtiwyW
-eZj7+bzM3LOQCWCD6psIrPiKrFulfhqRXJqIB4xxmxCIForOLdgCSRkTOnnKgeN9
-03JyRaMJI0OoNPjxIrGNnLIzXsml/S9gmEl9zJS6lsKaSYQORAx9OZqkiymOdwwg
-LZIpeMFL15Y0f8/cvhvOCkVbK3cCGNKVgs0jPWykCAF0Ca62mDjmFWLPiDv3f1cS
-QWOLQ0NneXVeL8lJYAV1g/rLbzzV2g==
-=3Ezg
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpwx1IACgkQJNaLcl1U
+h9CAyQf/RoehCPJtRXzuYLKZv1DM6Mv02x0BM7KtG3uEf8DHfmW0LU020zv6pkFV
+TEHklHPy00Kmy20hPqD30NYvVjzzm9vbap46FnwdbnMQxiT6rpiSRoR3uIlmigy5
+bcn0Nc5cKKKT6jmzJKT3StuEKCmIU+cfkpo3bbg1J3wUFMTOlF++5ORzV5SoEVin
+4cx31963lJz1+SZtmqB1EN4NO90bHna6nlfSN/OcUI+JPbRh9CUYt0O7RysGDG8f
+r1a0QLfrsD2MCu5NN8G8e+Q0NADCd3uSIrha6D2o7bpaVU1MPlx6AGWUFzcttAMC
+ADJHHUAkbque/EkYe91BebK/OJ6n6w==
+=7LD9
 -----END PGP SIGNATURE-----
 
---jrejyUtzGRw/kI87--
+--IF7RZ+LnkIY2MC39--
