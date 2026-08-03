@@ -1,117 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A71B2E88BD;
-	Mon,  3 Aug 2026 17:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CF442FCC9;
+	Mon,  3 Aug 2026 18:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785779287; cv=none; b=N/+pb8ULUZFPkbHGlgDggCdQ5iAyo+cFK/2vgrDKVZ5tfAGYy800yBfZqHumFqhinaxkzLrYBAdSQm/huPM+zypHR75vZOTS/850lP5BrGu3AxdlYV4x/6u3UD9iCOtvhXHZdwcvs2vkzleRa5Q9/TZ1GWZz91wS0G/WWDhW7+E=
+	t=1785781119; cv=none; b=mpqoJwZa/CGygbWAokdzCXpzCo+4c0bcCkN7ld6zNKjti/Nzz9oeBmONpKX7aTq6oMAUqY+2AOcAYvPGSMph50STN59EOj0mFcjJ0U1c14X8AIkgCnf/HVAhU58FOEvcTtEu7/OxI4KbWevbUG8jf8COLaaZ4BOKcAQIV0Pby3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785779287; c=relaxed/simple;
-	bh=MPsFJJcmUggzsjVHs1b1ZGJ0VhaUnmfN2IPAyx6NDbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d4FKtOJ7Oc0xJEwHhO1lSXZI6g8PD7XXVXYZqsp40SVt4wOd/GJPiQSfIS7enfamx7aNq3iP91TZKIwyNu5IA2qBCnU9p63EbwItYyTIzknRZwYenqM31Nd7TYMrn/iu7EDuCjVpqeiitk4SSPJSPDNI4t3MC3YZhKW7oaAkM8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHEkCP7/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785781119; c=relaxed/simple;
+	bh=HFZoqRSm2WCv/HSIWUc7F+scMyKVN7FQHfC1RR8mkrg=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=AzIeYFC+56JKoTngpC1herV9l3wekReMirqkx1+zwVrocZH5/714Y2haPYQifKcgtA9+hQHfUAV1BqpKHtBmYOTKnnDHpNq8AGzcrP2TD60AnqgdCNvdfCbCxiZjklXr7X4ZP/8QrplGRiAM+hYHWnJONh7jY892RuUuTvrgS2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Rm+q3L38; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=LTcjog2d; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHEkCP7/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75151F000E9;
-	Mon,  3 Aug 2026 17:48:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785779285;
-	bh=R9qZ7Rxw9k/NDGcr7pAeJaMWCn9RoH4B372Oy4ZchOA=;
-	h=Date:From:To:Cc:Subject;
-	b=eHEkCP7/Aie04PQhicFaChJM6i7SO1G6fJ+PjowkHGY+rP0aD5YqlCN4HLtYyd3DP
-	 O5+fDNgTjuUbDdmo8FQkSHylzQiSiwGz5lPw0/ShSaOreItFEEvnKQ9aGV6MAsauzJ
-	 z5Y2Mv3qUuzwjE7oSzyAbnMB1heV9QQusEOZF06xpuO2AZr+YcSuIVDS7G/jke7AU+
-	 pJebrR1WK1TggKtSPxPlyZuCtKiW3GtYJ327ime54IcakcCV6Cg3SJEzxGsNlBQBxZ
-	 Du03dfQnA1SsCut17j+michtSrwFH/Q1+gffOu3WWAws0CT68MpcgJHRuUFKL+0Vqm
-	 oyI1bMoson7vA==
-Date: Mon, 3 Aug 2026 18:48:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: -next status as at v7.2-rc6
-Message-ID: <466090d6-bca5-4ff5-a442-c13d16c6e1a1@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Rm+q3L38";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LTcjog2d"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hDPss6bHyzMlDs;
+	Mon, 03 Aug 2026 20:12:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1785780769;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0pg5vdKdmfDtSFhDDoMxYAKscw1ee4hFMSsX7J0wZec=;
+	b=Rm+q3L383W1g9P2AOgzUSwSzxKXWPKfqCXxqEjEr/y2YYkjEk0S0s1IqOBjZ/4R+MEe8w0
+	7zYsU1k9+VtxeohRmKuIhldJ9MhrzntTY5IboEDpK1UX6hQRgv7PkIQxGqK3k5rsnZFDHz
+	K/47sSwQzu9uAPNgOnbJIwv0cHJG1/ltY7AULrUb3LqwxikU8vekL57/1W0y/1cf6ju0ya
+	Dja0iEuVuK+0npJXRU5KjukuZBYrQ0DqWAvetSqkGsc2Kh7r/a5y+DAj8RvQaGPdczyLfU
+	SKQxXkhJ6qoKKz3V9b7gOrn7qmT+4RKRkPWV7U9Acukr/+4u4J7skXp2RUVfMw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=LTcjog2d;
+	spf=pass (outgoing_mbo_mout: domain of manuelebnerli@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=manuelebnerli@mailbox.org
+Message-ID: <27a9ca7bf4d354e97b0865af8222490cf44f27e7.camel@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1785780768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0pg5vdKdmfDtSFhDDoMxYAKscw1ee4hFMSsX7J0wZec=;
+	b=LTcjog2dRCGv8Y6ISOAzFiEmNkpkIT+r51TILfDvsQB8SAxf/k680PC/I3WrmlsvZNK+nl
+	CyesWmw1sNpDrGCB7SAaU5H0oTP6LK7SO2XXoRjxMPqjzGtKy1mHK89nYcTLy5Y5qCCVy1
+	nQEpWImDlr8N5a1wd/RTilUghs/qBCNX20j6Lk7m8/Zkpf3ILhT57mNtTbWVGV3TtSa8DY
+	n4OsNWW6EhAhDjLM49CYYz1WBFfsf3EpbdhofhfUo5+G9DsvwuXvR5o7C7XU75o/sEDjC3
+	po6qjalBsiJh8pqh5HJd4OehK1curlnE9HUC0Aexu6svc6FFowwE95JsM8XIXQ==
+Subject: [Build Errors] kho:
+ =?UTF-8?Q?'=E2=80=98HPAGE=5FPMD=5FORDER=E2=80=99?= undeclared'
+From: Manuel Ebner <manuelebnerli@mailbox.org>
+To: linux-next@vger.kernel.org, Pratyush Yadav <pratyush@kernel.org>, Mike
+ Rapoport <rppt@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Pratyush Yadav	 <pratyush@kernel.org>, Alexander Graf <graf@amazon.com>,
+ Muchun Song	 <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ David Hildenbrand	 <david@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jason Miu	 <jasonmiu@google.com>, Jork Loeser
+ <jloeser@linux.microsoft.com>
+Cc: kexec@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,  Manuel Ebner <manuelebner@mailbox.org>
+Date: Mon, 03 Aug 2026 20:12:40 +0200
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ybxAHsTy9OA7C4KL"
-Content-Disposition: inline
-X-Cookie: Do not flush.
+X-MBO-RS-META: ay6khkkde3zkcycuyhmytefcoxfast4h
+X-MBO-RS-ID: 427c8c8f1f2cc33b5c1
+X-Rspamd-Queue-Id: 4hDPss6bHyzMlDs
+
+Hi,
+
+when building next-20260803 I get build errors, see below.
+I assume it's one of the last 3 commits by Pratyush. Let me know
+if you need more info.
+
+Thanks
+ Manuel
 
 
---ybxAHsTy9OA7C4KL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+$make KCFLAGS=3D-Werror -j8 > make_output.txt
+In file included from ./include/linux/nodemask.h:92,
+                 from ./include/linux/numa.h:6,
+                 from ./include/linux/cpumask.h:15,
+                 from ./arch/x86/include/asm/paravirt.h:19,
+                 from ./arch/x86/include/asm/irqflags.h:100,
+                 from ./include/linux/irqflags.h:18,
+                 from ./arch/x86/include/asm/special_insns.h:10,
+                 from ./arch/x86/include/asm/io.h:45,
+                 from ./include/linux/io.h:12,
+                 from kernel/liveupdate/kho_block.c:23:
+./include/linux/kexec_handover.h: In function =E2=80=98kho_scratch_migratet=
+ype=E2=80=99:
+./include/linux/pageblock-flags.h:66:53: error: =E2=80=98HPAGE_PMD_ORDER=E2=
+=80=99 undeclared (first use in this function)
+   66 | #define pageblock_order         MIN_T(unsigned int, HPAGE_PMD_ORDER=
+, PAGE_BLOCK_MAX_ORDER)
+      |                                                     ^~~~~~~~~~~~~~~
+./include/linux/minmax.h:83:27: note: in definition of macro =E2=80=98__cmp=
+=E2=80=99
+   83 | #define __cmp(op, x, y) ((x) __cmp_op_##op (y) ? (x) : (y))
+      |                           ^
+./include/linux/pageblock-flags.h:66:33: note: in expansion of macro =E2=80=
+=98MIN_T=E2=80=99
+   66 | #define pageblock_order         MIN_T(unsigned int, HPAGE_PMD_ORDER=
+, PAGE_BLOCK_MAX_ORDER)
+      |                                 ^~~~~
 
-Hi Linus,
-
-Pretty much business as usual at the minute, quite a few conflits but
-not a surprising number for this point in the cycle.  I've added a
-report for trees with duplicate commits, not sure how useful that one is
-TBH.
-
-No trees are held at old versions, but I do have one revert for an
-allyesconfig build issue (a fix is on the list for that).
-
-Trees with signoff problems:
-
-  arm-soc	(missing author)
-  arm-soc	(missing committer)
-  driver-core	(missing committer)
-
-The same as last week, both rebases gone wrong (the arm-soc one
-particularly impressively).
-
-Non-merge commits relative to Linus' tree: 11141
- 10005 files changed, 530279 insertions(+), 161609 deletions(-)
-
-Top trees adding commits to -next:
-
-  1722	drm
-  505	net-next
-  484	qcom
-  433	sound-asoc
-  380	mm-unstable
-  377	wireless-next
-  299	tip
-  297	v4l-dvb
-  258	vfs-brauner
-  219	mm-stable
-
-Trees adding duplicate commits to -next (this includes duplicates with
-respect to Linus' tree and with respect to other trees in -next):
-
-  95 drm
-  62 bluetooth
-  17 nfc
-   8 hyperv-fixes
-   5 btrfs
-   3 iommu
-   2 pinctrl
-   2 mediatek
-   2 char-misc
-
-Thanks,
-Mark
-
---ybxAHsTy9OA7C4KL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpw1FEACgkQJNaLcl1U
-h9A7DQf+LH1thQV6yB3Tu5aq404vaggOKN3d3qjFzNhfX5iCO2h7FgjV+PFo7KFD
-QAMKbbrR0WcZg3O4OOs6VsU6lrtuM9+n4SrTj5TFuXakTv/ajVudeS6KG7R0I1XZ
-0C6xPNfQf7pe46aWv4qLIo49bmQ2Pf4Iy7uiSwnWYwsNy3P3T7eIrMNu4OSFb9Cx
-JhKeIT4uaDtp2XpY59ECRbWMwNwp2WabkI8/q50l8TqjdC8v/5kGdZjL5Uch8KQQ
-A5xjmyAfHoa4ocRX/aACD8Sj8ErcA5Hq533Yn6X/vbLQr574tG7wJc07m1FMpQeo
-OHlyF9rexMabUn2RaHsb9rgDr11btA==
-=d2Ni
------END PGP SIGNATURE-----
-
---ybxAHsTy9OA7C4KL--
+And a couple more notes.
