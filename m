@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0669B40DB5A;
-	Mon,  3 Aug 2026 17:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A71B2E88BD;
+	Mon,  3 Aug 2026 17:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785777962; cv=none; b=bmoGO3n80eMnL09pJw6z0jlt70MCxAxekmQenMQJrajxkjT9xFP/qgHB2eKreBARHpvtjIkfxH7MJEnVQycsQXilxIcpDvBrh7hS+pEGuNUuzvUnDzW4dgZP/V37Xdg0gjdvuxAuoCOCnKzGi+YWfNxE8mQST1Eowg5mle2NMYE=
+	t=1785779287; cv=none; b=N/+pb8ULUZFPkbHGlgDggCdQ5iAyo+cFK/2vgrDKVZ5tfAGYy800yBfZqHumFqhinaxkzLrYBAdSQm/huPM+zypHR75vZOTS/850lP5BrGu3AxdlYV4x/6u3UD9iCOtvhXHZdwcvs2vkzleRa5Q9/TZ1GWZz91wS0G/WWDhW7+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785777962; c=relaxed/simple;
-	bh=d2hGcTcHsu+OuR1fDXz1oPiEChcDx832vWiS8P4b7Pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUmbIQX2KLHwZL6gYJTEAYbdAGWO8E9ouUqKgXFdsBoHOeLBOTeozQrZl71ic1klZPQShRD/yNwn7RhEutm/9vDMUJyC/W7kFb350w+Bzt2/f/kgPJdLY2H91eyB2cTZQzZcLElKPmIOhAUxi2mPLGz/4zFQZrCi6EDod93PfYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEnI9HfK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785779287; c=relaxed/simple;
+	bh=MPsFJJcmUggzsjVHs1b1ZGJ0VhaUnmfN2IPAyx6NDbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=d4FKtOJ7Oc0xJEwHhO1lSXZI6g8PD7XXVXYZqsp40SVt4wOd/GJPiQSfIS7enfamx7aNq3iP91TZKIwyNu5IA2qBCnU9p63EbwItYyTIzknRZwYenqM31Nd7TYMrn/iu7EDuCjVpqeiitk4SSPJSPDNI4t3MC3YZhKW7oaAkM8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHEkCP7/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEnI9HfK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B04A01F000E9;
-	Mon,  3 Aug 2026 17:25:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHEkCP7/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75151F000E9;
+	Mon,  3 Aug 2026 17:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785777960;
-	bh=h3SpdjXPKUCNLo24kjga6L/Ssi5ZLwKbFa4rjRscvJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IEnI9HfKkpjRQ7FBonhaeSHLJEYZsajgJz8C1uwVhzD6d0+pEAa7W8E7by5vsffQZ
-	 qi7V19ChFrCm7tXWfBwP1dBvOANwdyVrOmwN7g5p9d8H8FH4ShYvSsH0krFsewPb25
-	 Rj8QCRt3yVf9nRlQ+T9vZazbHxM+jfeFyzAk405rAJJ+X7yH0PeWsdPdSGGmR8zMc0
-	 8yDJPywqui2WXmlpR1DePA2Ax6oVhD5xp9MCZLq6M+fF6fgb11MKhEbefGIAxXFQKt
-	 7C+LUoyQ4vc1TD2NXey7+dm4GnexUwotcutt2orbs5udEIyiT8i9p9svUneCHrJpYN
-	 OV7dw43rc2dAQ==
-Date: Mon, 3 Aug 2026 18:25:57 +0100
+	s=k20260515; t=1785779285;
+	bh=R9qZ7Rxw9k/NDGcr7pAeJaMWCn9RoH4B372Oy4ZchOA=;
+	h=Date:From:To:Cc:Subject;
+	b=eHEkCP7/Aie04PQhicFaChJM6i7SO1G6fJ+PjowkHGY+rP0aD5YqlCN4HLtYyd3DP
+	 O5+fDNgTjuUbDdmo8FQkSHylzQiSiwGz5lPw0/ShSaOreItFEEvnKQ9aGV6MAsauzJ
+	 z5Y2Mv3qUuzwjE7oSzyAbnMB1heV9QQusEOZF06xpuO2AZr+YcSuIVDS7G/jke7AU+
+	 pJebrR1WK1TggKtSPxPlyZuCtKiW3GtYJ327ime54IcakcCV6Cg3SJEzxGsNlBQBxZ
+	 Du03dfQnA1SsCut17j+michtSrwFH/Q1+gffOu3WWAws0CT68MpcgJHRuUFKL+0Vqm
+	 oyI1bMoson7vA==
+Date: Mon, 3 Aug 2026 18:48:02 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the arm-soc tree
-Message-ID: <fd352f58-8100-4b0f-ac8c-25b08d0e2886@sirena.org.uk>
-References: <amY1zEUOGFe4Op6W@sirena.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -next status as at v7.2-rc6
+Message-ID: <466090d6-bca5-4ff5-a442-c13d16c6e1a1@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,40 +39,79 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="a/qBI8WET/XRgLSw"
+	protocol="application/pgp-signature"; boundary="ybxAHsTy9OA7C4KL"
 Content-Disposition: inline
-In-Reply-To: <amY1zEUOGFe4Op6W@sirena.org.uk>
-X-Cookie: We have DIFFERENT amounts of HAIR --
+X-Cookie: Do not flush.
 
 
---a/qBI8WET/XRgLSw
+--ybxAHsTy9OA7C4KL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 26, 2026 at 05:29:00PM +0100, Mark Brown wrote:
-> Commit
->=20
->   3edcea7f0413e ("Merge branch 'arm/fixes' into for-next")
->=20
-> is missing a Signed-off-by from its committer (and also isn't showing up
-> as a merge).
+Hi Linus,
 
-This issue (and the matching author signoff) is still present today.
+Pretty much business as usual at the minute, quite a few conflits but
+not a surprising number for this point in the cycle.  I've added a
+report for trees with duplicate commits, not sure how useful that one is
+TBH.
 
---a/qBI8WET/XRgLSw
+No trees are held at old versions, but I do have one revert for an
+allyesconfig build issue (a fix is on the list for that).
+
+Trees with signoff problems:
+
+  arm-soc	(missing author)
+  arm-soc	(missing committer)
+  driver-core	(missing committer)
+
+The same as last week, both rebases gone wrong (the arm-soc one
+particularly impressively).
+
+Non-merge commits relative to Linus' tree: 11141
+ 10005 files changed, 530279 insertions(+), 161609 deletions(-)
+
+Top trees adding commits to -next:
+
+  1722	drm
+  505	net-next
+  484	qcom
+  433	sound-asoc
+  380	mm-unstable
+  377	wireless-next
+  299	tip
+  297	v4l-dvb
+  258	vfs-brauner
+  219	mm-stable
+
+Trees adding duplicate commits to -next (this includes duplicates with
+respect to Linus' tree and with respect to other trees in -next):
+
+  95 drm
+  62 bluetooth
+  17 nfc
+   8 hyperv-fixes
+   5 btrfs
+   3 iommu
+   2 pinctrl
+   2 mediatek
+   2 char-misc
+
+Thanks,
+Mark
+
+--ybxAHsTy9OA7C4KL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpwzyQACgkQJNaLcl1U
-h9C/NQf+M8AGrbnIjoyWKgUSJoElsJ59EzhP0JeCdjKMzuk2oiDSIy6AuPzPgYmF
-kDUpMexgaDv88CTjfmAsJhOR8J2gJWCyLFE3dHRQD8caSHKq5Q8jSHyh6U9CG8b+
-eWuQ9CizHP7O3Ixr9a32FHYTgZ6i5vr3eXR6MQzf+FnlyKyn2BewsQjs2vVaEjuz
-31MkhwLeNg1FZSVn/gF4QA5cvASyxDMgUCwMLRbJ5sLXLOHg/rdoqOxlH8JSYA7w
-VFXLtwEN1syUiDwGvepsh8E4F2c+DhyBdk7sVCP7cZ3jG429NXATb6YcWzC4GPEw
-bPtPFoarDccExGJa2jf9FamfkQ8tmw==
-=NNSU
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpw1FEACgkQJNaLcl1U
+h9A7DQf+LH1thQV6yB3Tu5aq404vaggOKN3d3qjFzNhfX5iCO2h7FgjV+PFo7KFD
+QAMKbbrR0WcZg3O4OOs6VsU6lrtuM9+n4SrTj5TFuXakTv/ajVudeS6KG7R0I1XZ
+0C6xPNfQf7pe46aWv4qLIo49bmQ2Pf4Iy7uiSwnWYwsNy3P3T7eIrMNu4OSFb9Cx
+JhKeIT4uaDtp2XpY59ECRbWMwNwp2WabkI8/q50l8TqjdC8v/5kGdZjL5Uch8KQQ
+A5xjmyAfHoa4ocRX/aACD8Sj8ErcA5Hq533Yn6X/vbLQr574tG7wJc07m1FMpQeo
+OHlyF9rexMabUn2RaHsb9rgDr11btA==
+=d2Ni
 -----END PGP SIGNATURE-----
 
---a/qBI8WET/XRgLSw--
+--ybxAHsTy9OA7C4KL--
