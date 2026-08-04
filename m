@@ -1,115 +1,62 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C98C3E315F;
-	Tue,  4 Aug 2026 13:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB8244E646;
+	Tue,  4 Aug 2026 13:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785848418; cv=none; b=KUsqo2SUJb4FNiv5EyXOZnfhw//7BQEyiTnxcQXrqcfEwCL4r9N9k45r4fGs14MvvgFi58T0Ol05lJuTtlZDPJSW0gRwInrsulSapjl2vtJeo+HLVe/bkhsxZIvgIQdLv2Amd41LlQtfHJRJ8XWwjzd8EB975iSyxjgytiix+cU=
+	t=1785849783; cv=none; b=PsI4qjv59gWl61Dz3B5kULJcS+jEDvftmAAl49jbWtOAmWT317gyC/EdosazXUxYchN38axVQ5h8jd9lmHQLJCHw8dLEkKzn3wBJvrdiDxf/O80dQhSx6ymfmEb8gOpz2p8POY+QQRJKj85+Vkqb2BB6yukceFMHH7w69eam1oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785848418; c=relaxed/simple;
-	bh=yNwadrWOpsZSKdpEFxj0LWwmWUpBcHymkQBYYkCyIQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KqtN0RziYKiXZ6wxJj3TgVptgSbqPvDBt5HROZz0IFc5dDSBLKZuN1WExV8zYLjcJqYjVrxNHeb0dy139lHGYgDlkBs7XsQF3/XjriCX/uJlf9LRpNSfWee+wYtp7oWzoyl7uUi8nC9oxQfn9e8ALWu+TFHQgx4Hpys3W7n9x9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9NN4n6e; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785849783; c=relaxed/simple;
+	bh=GXTvepMgcDAaRuDoOoiMXW++keJ0aXZmRI22qtwJRVs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AfZ8zAhLp7YbCS+cDTXuxlg3VCTps/cynC2syw3mNGCL1eEFN94l2EPGtxJdVqr91kOZcp9wHYKQm3/GlK0y4XEiADa4HTvfpIjZ4DxwMQYrYUrgx2lT4XCkzW9dmqDqUD4QO2jso52MPoNq0jOFkXOhwk2Cep8SPRuNwKgAOQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hvZECEXW; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9NN4n6e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 204151F000E9;
-	Tue,  4 Aug 2026 13:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785848416;
-	bh=pDlV9Mm+RfTfa4jEK293VMEbRKj7GCrioEMCKSSvAAg=;
-	h=Date:From:To:Cc:Subject;
-	b=V9NN4n6eDoi4ZBkwcCUgKEBdy33FBRqoLgxlh/XRnKEtC3thvcA+W2xa1//8sBdPD
-	 3gNGMuh00qyhszWdKijaoshMBwBZw8seV7+U06wy25bCf7UJuA7UJUnnKlw7lWhX1w
-	 PZFu4jES1jraWiORJLJlOB3AHCPN5Sw/2CYjcmMuFC87hgMXNxa6F14WVnxKEdhtyB
-	 JhZ3Tli84DeITXYtinpTpk0Ub1Mr75+vKKTnG3exxiXQKIX7maNPTFuXofccwE3S06
-	 7OiHEGbHPf/aRh3/j5RkKdljHmK2QWYULik+fTlVsdbLTXYWFPi7s4Y7bJvDx70yA0
-	 8B9f5CbdUcXPg==
-Date: Tue, 4 Aug 2026 14:00:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Aug 3
-Message-ID: <anHiWIA1BZwmHIrF@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hvZECEXW"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7883A408BB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1785849780; bh=EsbRNgza5Qvw2kkJTbs7F3wUNwugXDXiTBaTsrhXJfg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hvZECEXWi6A7jO1W5KLwti6f2ZUy16HOOlW7GQwHpucO7Y7xDL6bvu7AM52O+fE6Q
+	 vz/2zMLya8/05uDYRCo+iW9WBYtL28Rgogyv7jiYFj1uZGYkkF6x7x5VMoENm5odEJ
+	 gTajnpgyvvgwCWVbNiWn4rW3mk2E93qYmIaOLbAKOWREOE3M4oBFJ12zdUXjKfKSVv
+	 9LO33Y563Lb2P9DlOrv6Jusga7dZxirFwE3yaJSJfg/bgkNaA3C9szDqkBP7xxx00q
+	 2j4ruodQQb+6frW3y9tsBrQT7otTit252t8URy0V/GaRlI+Z9zEddZBQP8ExFpYrpH
+	 wX7d0INr0KIzQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:27b::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7883A408BB;
+	Tue,  4 Aug 2026 13:23:00 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the jc_docs tree
+In-Reply-To: <anHgUVqezTD8Usph@sirena.org.uk>
+References: <anHgUVqezTD8Usph@sirena.org.uk>
+Date: Tue, 04 Aug 2026 07:22:59 -0600
+Message-ID: <87v79quij0.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j2vVfW8vh+mUSXHf"
-Content-Disposition: inline
+Content-Type: text/plain
 
+Mark Brown <broonie@kernel.org> writes:
 
---j2vVfW8vh+mUSXHf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Commit
+>
+>   7144308f14eae ("docs: pt_BR: process: Translate CVE documentation")
+>
+> is missing a Signed-off-by from its author
 
-Hi all,
+Sigh...that was my mistake, losing the signoff after thrashing the
+changelog.  I'll put it back, thanks.
 
-Changes since 20260731:
-
-The ntfs tree lost it's build failure.
-
-The wireless-next tree acquired a conflict with the arm64 tree.
-
-The drm tree acquired multiple conflicts with the origin tree.
-
-The paulmck tree lost it's build failure.
-
-The vhost tree lost it's build failure.
-
-The block tree acquired a sematic conflict with the vfs-brauner tree.
-
-Non-merge commits (relative to Linus' tree): 11141
- 10005 files changed, 530279 insertions(+), 161609 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---j2vVfW8vh+mUSXHf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpx4lcACgkQJNaLcl1U
-h9D3KAf9GgfHNm/Lk+nZxL5vQkQI4upxv/89OMidg8e47BPmqJcxfL6ho8knr82j
-rcNLPtZF101rdu6wvkE8DsKkY7qTTw58xtguK7+lr5q9FuQml1pwPRwc6arM66XU
-xxUbBepsiTbti+2p3LMK8nH4q1BUejjzu7zvaa5/9T5/5cbG1jUJF7/AaOuJQUcc
-WtPYrdCRfih48NfdS803dKHMdfCNiDyFhWTwgNW+p3AfT3tWbN5wX/ZTOseIsDJE
-beO+VufplJmY9+ARfFk9H9VZ2hMO0PY+DH7J2uUYpZlgvYRds4VmZm0CgQaoT8Ze
-XqLIkKW59wyjaaNqigtlhu/4NQo7Pg==
-=fsm7
------END PGP SIGNATURE-----
-
---j2vVfW8vh+mUSXHf--
+jon
