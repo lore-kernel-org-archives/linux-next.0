@@ -1,85 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D077459AF1;
-	Tue,  4 Aug 2026 17:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFE8486640;
+	Tue,  4 Aug 2026 18:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785864171; cv=none; b=cYOLS4/esiw8sBIPdX5HCakW5La3/x9fC+KR1NdiQODsWgjL/b4WpUchPYSyliEQdmoiFT+K0iJ91ELWStnx2sBamGZAWS9loh2apjxhdoTN7KO2AepTU3Rtr5js7om4/wxpVRqyq3XITV2OBnkcFVhZoWupMTu/D5m4RQLO9Aw=
+	t=1785866423; cv=none; b=Xh1vBvvOuVSckRCLtAtEP7jVQo/SmvMrM6ASLzx7HaLZsJAUqygPlaAu7A84u2oiBINQugtTXjKGLe6P+GsRvudcEZB3evL1Xs72/eJbpgiaZ5RlJsp8ea09SKvxXYZaXfAUkH+oE8hAoqGP/xlJOMYkR/DpKhECSCofUTunTDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785864171; c=relaxed/simple;
-	bh=Olu2xtPm50JmyOZ4e7XndDQPZROvNXUdhIVe62r25Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=T1I7O+mwHA98V1QQnFatiY/p9KCOXk9DChSemU+YrlfvlCpvCV2sqyTzchjtAsx3uKbUPXAPQJjUIEF/l9DUkwAVhuk9pAmNeNReEE6TeUZl/ishPtzKekyLp7U9LzlUJEsPj5qYalkkRCPZHtXkddMo9OhEhTnmpB6dci3avFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzSdAdOB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785866423; c=relaxed/simple;
+	bh=aDuIHEWA5ocajME/j+9zT79aslc7JCDGGWdSrPdHPjA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Y/7YnHnnX/u6V8AVbqNK+Q/iy5575kvqIbJOtItjn/UiqO4SI9r3p4+g1wAwFQ0myxUPtbVu4ZujhVRJmOprpypugbmLnvoXhy4zbHMu1oj31ZK/SFKxIRZGHlTOytt642E0Q78rXNQl4DOkEgcLBUKWhB1RDHttyH4+7vbXDb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=U8B0xEmo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DUdPhCg0; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzSdAdOB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 306021F000E9;
-	Tue,  4 Aug 2026 17:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785864160;
-	bh=hyFV5mLX7Xm9FyicLXBmxhkXsIzvPFBYrOeUSY3uSN8=;
-	h=Date:From:To:Cc:Subject;
-	b=nzSdAdOBaqepYksjuc53CMsNKX4poqkig8hVaMrn5lNC99U95wgshfRqU2X0MrWZR
-	 /0PBhM/8IlgdPC/oIAiZckSucuz5nsYVqNOvbwwIuHs4BcobQDIs9NVcTFJFx9Dikk
-	 GPPP7GREcFRxNHQDo8H65lfsxH+wNgiOjM+Q37eS0gbYcVZrWHCT48rpX73vKW6Na1
-	 DqjnH5ONdfMHjNWPFeR54aXdyvEAVMhLLYlLodGbcljG5BexxikveJYtYMVuocN6VE
-	 rdYq+p+v8aHlWYY6EKlL5QBysx0pTsrB2iAiWaVpiW2kQcdRT/qBan0uMZZ8+08wCO
-	 rNZNpHSaopWVw==
-Date: Tue, 4 Aug 2026 18:22:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Aug 4
-Message-ID: <anIf3c71MGAcA-0s@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="U8B0xEmo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DUdPhCg0"
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 05140EC0112;
+	Tue,  4 Aug 2026 14:00:21 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 04 Aug 2026 14:00:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1785866421; x=1785952821; bh=LDZ2h2Nlf2
+	cEyscx9QKZZfWGeO9IVpeAJYTIBjmBdSk=; b=U8B0xEmo3WYf0NSC7WpdFA5egr
+	MMRDKsStHQ/i6/6csGQrbcsvIg0k5nXR3j5yKOH94VMhnau75lSx5HwbEMUwY72V
+	CtS/M4su/sX6DFTgwBRLVIGBIHOCm1pvydlRPW7SGM3oKGTeaVi4rYT7nWK1+Ig3
+	G1WofNG8buKgAb640Qn4ALaTRuTAuVJ8REMHaSZDOQfaSH5FagD1PJcXLQ/nNA2V
+	W6jMlgj74SA87tO3AGFZaDiCozR8frj/elKpm93gi21KfL5TmfdPPIZGOwHftqIc
+	uv9e4pRugJeVh4GqCCyyg3BUoV3/4Dz3hUlwSw2UTRdq5kGBtTTbVYqqN0Pg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1785866421; x=
+	1785952821; bh=LDZ2h2Nlf2cEyscx9QKZZfWGeO9IVpeAJYTIBjmBdSk=; b=D
+	UdPhCg0Phe1INlR8RIRVJO+zzXoJhvYpNR1QImC53/SS4hIKbujmXIsDM6cgN9d7
+	R3mxMCqjOZwKvk1cRdpEMHR8ZqzbCd36Qwurv6zodpnqLnDd40oVabPhMCWnYFf+
+	bdBqjEnvbLSr3X8T5z5W3Hd0/Rmybnpd8UvVPbeWoGk5LdAtUao7E9DoV9Q6uuM2
+	dIPX1czvh9pE0iADXbYro5ouJg8od6lXh5uFOP9mHPsmfiqa36h5QpuibgcaXrq0
+	TTIypNDASinvzqOpc+OAXdn9K3f9yJkzw44upRVpF+/cwDD8z0zd4LlO2S3tZFBK
+	5tY4bpwIzsv/OLSikmcog==
+X-ME-Sender: <xms:tChyajvKj3HGorfWZzr7j-uGdm2JK7-2bfjHd3Sacvc0F-NqepT2sA>
+    <xme:tChyagcbBgNBLdTfPChPD8CJiD0woC_A3L7VW-brlSaAGywXhLrWEPGPh9cKvVZAQ
+    1Yrk7GNLwIUoQmyRczDlfhJE6LG7d2l1c8Iqkp7MmSeBJpaF14>
+X-ME-Received: <xmr:tChyao8cGUV_QuEsaP2Gn7cVWNpQVALTBtufgUu1KtMV1MGAh85uDEkWvXMYDdAOy5BiyX98>
+X-ME-Proxy-Cause: dmFkZTEy9dbI7dVgmVyTaT5KMPh+I6ZGxOK3AUQTOQS2bIRY0xfX1eIAwzd/CZk9yFoRlO
+    Cri2v3V/i1GamfTXF4Mv4XHmUAbgnxwc4BXyQwC+UslzHDz4plo3+nm5ZbJWSR77uA6e+x
+    QyOrouw+nm3LsJ+gQ5m2R52NJQCw0vHielvFIhC0lcoQkpiZiVsdAClDG5dL9VTXt+eAQC
+    A4lzSc/D45tR8Y5H4pkl73rK6mn6+0ks95z5yk8ssNzEj5Q9q1VvJ+Qj1rzNmhNgFMWZeA
+    bKBgaopxeX7O0UrCTf+EADrwtUUR9rjHRxyOIxSMNJ3cL4NkVvRtnLa7Mq4BTBQW4oN2eB
+    qqW38IwlcUBx5GF+YZWX1RbS5iQ/h8ZNKLGQb7/vrG07VpH2pTe2xy06c24FxiwGby2sV/
+    xC9w0VW5qbbHSDDbo7bo7YIVWGgAhmKzjF9lD94oHrideo3ETE/xX5Ie9YjeOCcGGpYVHJ
+    c11oUYpOE9nhCh/bt2kEIVcQaSq41dALy0f1JXwxTvChd2DIgCDYNRm0JwkjVzOTYfldG5
+    g1cfdyZWsKiUhgzUM19WGn63AiyfwnckMcz6qx+ujUd2gdEEkV7avQoH+UU5k86T3ZcoNH
+    ufBriIRzVnJoofkGLl0+IqtrjH2vv2Yo9OQj1IviIly5yokoSmGI26w8tZfw
+X-ME-Proxy: <xmx:tChyajSD4YOfMYzHsLsqoGNJb-BFSdZAq68FlItuAFzHNcoB2kbFNA>
+    <xmx:tChyahpq81WSJoXZIZi-geosS_HCbz6MYo_OVGlTDTwJqCbPpygI2g>
+    <xmx:tChyaok-fLPCaNdApUfUWf2WZH_RdLmVzwB_Zn2P7BJ7Sop63_Bxww>
+    <xmx:tChyaifm4QGvUobBK8dFUJsm_HNZBrbfKA_UEvsl6tQ01tmWM9FH-A>
+    <xmx:tShyatOTSDjHa_-fhVEgcKTppK5qb4LXby9zT_TelmPP-VftnGLcRZ28>
+Feedback-ID: i001e48d0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Aug 2026 14:00:19 -0400 (EDT)
+Date: Tue, 04 Aug 2026 15:00:13 -0300
+From: Val Packett <val@invisiblethingslab.com>
+To: Mark Brown <broonie@kernel.org>, Juergen Gross <jgross@suse.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Xen Devel <xen-devel@lists.xenproject.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the xen-tip tree
+User-Agent: Thunderbird for Android
+In-Reply-To: <anITNOG1qicdE-TI@sirena.org.uk>
+References: <anITNOG1qicdE-TI@sirena.org.uk>
+Message-ID: <E5B27F21-9507-4801-8765-0A83FD8A316E@invisiblethingslab.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Changes since 20260803:
 
-The btrfs tree acquired a conflict with the btrfs-fixes tree.
+El 4 de agosto de 2026 1:28:36=E2=80=AFp=2E=C2=A0m=2E ART, Mark Brown <bro=
+onie@kernel=2Eorg> escribi=C3=B3:
+>Hi all,
+>
+>After merging the xen-tip tree, today's linux-next build (x86_64
+>allmodconfig) failed like this:
+>
+>ERROR: modpost: "init_mm" [drivers/xen/xen-privcmd=2Eko] undefined!
+>
+>Caused by commit
+>
+>  64d26fb2ad1f2 (xen: privcmd: fix ioeventfd crash under PV domain)
+>
+>I have used the tree from next-20260803 instead=2E
 
-The xen-tip tree acquired a build failure, I used the version from
-next-20260803 instead.
-
-Non-merge commits (relative to Linus' tree): 11635
- 10401 files changed, 549933 insertions(+), 170284 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
+Sorry for the trouble! Did not expect that to get applied so quickly=2E=2E=
+ I had noticed recently in my own testing that that patch wasn't actually r=
+eady to go in due to the symbol visibility issue, right=2E I'll work on res=
+olving it=2E
+~val
