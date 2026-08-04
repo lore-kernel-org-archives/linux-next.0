@@ -1,134 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD5E42AFB2;
-	Tue,  4 Aug 2026 07:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786103ABD80
+	for <linux-next@vger.kernel.org>; Tue,  4 Aug 2026 08:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785830059; cv=none; b=q4zk8L4cgDVKGSKWg8OnIKjDetsQIQUMk6nBtM8sjZj2KgZGV3ymt0revGkhXFjwirHLGfNawDCqhWkMV+a+1gfDaM3t3HZfDMO3SRKO7vE96fy/b5ajptuY5hKo/1OhwkNDtKFdag0i3l7PTAbhASrXRKZK4ftv8CbvFL3j0kk=
+	t=1785831978; cv=none; b=N3VzusMTWE1KNSZpGKEYeEsL+ZDhmVyO6Ql5JozsWHNNCHsZDu/tO5/hAE3xz8vQBn5Z5X+YEyBJTmHWFvpYtN+nAc34PD4Osi8lDQOOiTPVOtNMpOG7iPM3jrMIe4YvItvMCWN1DRxQ+kF+uwXP7gQ6WWA6Z5Tw+lAxsrS3fdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785830059; c=relaxed/simple;
-	bh=fXKYIxu9fpPFG40i9Z7Q5GCojILroEmR1dCdl8c5WUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZtbehjtMaQXnqJbtTuuMTojHdnp3RMe232n5U/04GAtxIJRX1h2o2kiGaOcs4mbSDSGbhbVZMskJp0R8dpbDFvURgno/xwDZXTG+4zgh+6ha5iE+HawxFdS+61a5mScKIICJRy70d4CzE7cBHLlyigtpSi0XEm9uN734F8ri31Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZiatGVv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785831978; c=relaxed/simple;
+	bh=J9Cht0yRH7rxT5ujSeWuU7p72gCgVFUxHAyVYpYEWw4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Lz1h0x+IrNxvqdrQmCwI7anebTS/Xkrpm72GTzd1eNMftmHDros0viElUyretS/kw3MalZSEoYh2g8BfZcONJ6OcXD+DbgKCDW8Y2hA+tfZQHpRHr0aLbpScgr11xgYRMrxugJIygEebTtEjMnKnR87FSSaHNnkrYY1taLKjXWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P7wZg3R0; arc=none smtp.client-ip=209.85.128.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZiatGVv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 957FC1F000E9;
-	Tue,  4 Aug 2026 07:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785830050;
-	bh=AIcnRWDW6/ZJlDvh5c8MaxaT736mT4eMT2UuJ35krhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BZiatGVv6OxNoIurxAMTShT/S2fI7AkNn/YVQJqgTGWZ5/bbvPtoq0P57JR21wiNL
-	 f68R+5ic5E6GO70HLp9l1RdZysoT9Oew2PFFFGdMFBIUUFEP5rkamjo+2XbY7F/xow
-	 oJ+3pHDYbE93g0RS3QBWCYIcopDa5e4LDGR9N4Fw69KMGBjg8ETjU+nqFCpq9du9kO
-	 eDwMUgjcrxdfuKggbsNwHjGVZd5PBqfEdGilObhLynrEf/J09EncV991YJjz4zJ66k
-	 wjyC3nCOpji4v7ko7VMcXA5O4s2IomAHzor/ntHJGquBoLJ/p/snHN41jDmypqOtvz
-	 NKsmEdvtkAKEA==
-Date: Tue, 4 Aug 2026 09:54:04 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: linux-next: manual merge of the sysctl tree with the
- mm-nonmm-unstable tree
-Message-ID: <ckrmakyl5pqqdileg6cuusekutpeuz5mtcpic64ml3zzgolwvj@2hnt7zcwqpvu>
-References: <amjpZ1aYsps44ExZ@sirena.org.uk>
- <20260728134755.501c6ac650c7a3868ae00614@linux-foundation.org>
- <ntrhorleb6tok47d6nr2k7xrpqwkwwfk5cie4v7pc3feia6tmd@hxxgjkkcc2vu>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P7wZg3R0"
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4957287363bso18685545e9.0
+        for <linux-next@vger.kernel.org>; Tue, 04 Aug 2026 01:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1785831972; x=1786436772; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=lPOuC+cdb9P9bTryHSvHSPjFUa2kyhcweUAMjN3kNPk=;
+        b=P7wZg3R0hy27BlB2rMXuJh4fmHtsiLC0DlwvfI8cAiXgCaFe4MY9vuKzYYVIN0MmIv
+         zB/vYpPBLPIjRvNZOmPDD72BTc3/XywvNP+agwUJsI4yOAh0jg069Nzjx3A/irKAdFls
+         NQRzweKu8qufzLmTX+bjMr1qfzGzd/18xkjWKPpB+tDwkkaNOhigF8VarItp9hlbHEJ7
+         5NnhgQo8G1H0Poid1yoFPGvt4DZMB5NyBoAUIJwdhf3aY5gWgbzlDo3iHD8A4WCzpPDu
+         DIZBumdDOL1UhFMJFBS484PyFLmzaFSBFX9AuiBwtkrjTntUT5Hfj8G/6cQwA43Cdrfk
+         e5iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785831972; x=1786436772;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=lPOuC+cdb9P9bTryHSvHSPjFUa2kyhcweUAMjN3kNPk=;
+        b=QMLYzgZhQRVeTEoVhPVck3zwVRtf7HH1z0h7+z7cSC1XZLSI6a1NmqIE00UGw7hdQU
+         TK8AIJUf7fEHcVQF9OTtHWu3XUaVWdNxxzA97YkCnANIW7IfOUveRCnIPiWbESsOOb3q
+         dtfixWAn2KpE8aeOZONw1/E574A8W86JxgQakFZeMr9AIXNY6DtElNvnTAakoKInakEt
+         qpYyafZh8Fo10o7VOJpJOhI6adDuW0FtvO+imCPNkuAqMwa/Bc+qJSWDSxRro4EaPt9C
+         EI4zDpKjg0iAHrjevUhZYUaTEHkCPWZGBd5gn6Z40Ox52iTpAj2OfIyutHcfJZVAghAB
+         1y7g==
+X-Forwarded-Encrypted: i=1; AHgh+Rr5kxBNG9c0JM6NSz2vue3P9x59u6sZT/n5PumLisiRLT2+pbts85KbCTC5nNSthYkb8+ufcNC5IfXH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsN/nMkP963tutYz05Q9yX+lslrCXwlCWyw0dFRT5XhAQtisss
+	+hNUxV7VM2KRyUWfTieJPe1V87eK3vp+XgRBVvlesNNtF2rCyS0TwUxlLv1Ib3QSWQf/qNpK+j4
+	J88zFYE1vkvtPst/SNA==
+X-Received: from wmbhu8.prod.google.com ([2002:a05:600c:a288:b0:493:d884:f722])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:500d:b0:495:737a:7afe with SMTP id 5b1f17b1804b1-4980c6519d2mr330090645e9.15.1785831971266;
+ Tue, 04 Aug 2026 01:26:11 -0700 (PDT)
+Date: Tue, 4 Aug 2026 08:26:10 +0000
+In-Reply-To: <20260731220137.GA3307698@ax162>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iqsolpvqv3zhyveu"
-Content-Disposition: inline
-In-Reply-To: <ntrhorleb6tok47d6nr2k7xrpqwkwwfk5cie4v7pc3feia6tmd@hxxgjkkcc2vu>
+Mime-Version: 1.0
+References: <amth-CMf3Xz5hR32@sirena.org.uk> <20260731075644.20215-1-ojeda@kernel.org>
+ <am0AjzHc0m03CLVa@tardis.local> <CAH5fLggke1Yvv8btJSMFr5tEquydvKev8_7G4gSO5MvoAJUE3A@mail.gmail.com>
+ <20260731220137.GA3307698@ax162>
+Message-ID: <anGiIkvkDfYogBlu@google.com>
+Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
+From: Alice Ryhl <aliceryhl@google.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Boqun Feng <boqun@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, broonie@kernel.org, 
+	harry@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	paulmck@kernel.org, puranjay@kernel.org, vbabka@kernel.org, vbabka@suse.cz, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bert Karwatzki <spasswolf@web.de>
+Content-Type: text/plain; charset="utf-8"
 
+On Fri, Jul 31, 2026 at 03:01:37PM -0700, Nathan Chancellor wrote:
+> On Fri, Jul 31, 2026 at 11:14:42PM +0200, Alice Ryhl wrote:
+> > I like Nathan's fix as well.
+> > 
+> > Not sure if it needs to be done in the merge commit, or if we can
+> > apply it as a patch to char-misc despite the unknown CFG_*?
+> 
+> It would need to be applied at the merge of the two trees because
+> CONFIG_KVFREE_RCU_BATCHED was introduced back in 6.15 in commit
+> c9f8f1242a4c ("slab: don't batch kvfree_rcu() with SLUB_TINY").
 
---iqsolpvqv3zhyveu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is that required? Yes, the cfg(CONFIG_KVFREE_RCU_BATCHED) will fail in
+Greg's tree because the CFG doesn't exist and is hence not enabled ...
+but the cfg not applying is what we want.
 
-On Tue, Aug 04, 2026 at 09:36:38AM +0200, Joel Granados wrote:
-> On Tue, Jul 28, 2026 at 01:47:55PM -0700, Andrew Morton wrote:
-> > On Tue, 28 Jul 2026 18:39:51 +0100 Mark Brown <broonie@kernel.org> wrot=
-e:
-> >=20
-> > > Today's linux-next merge of the sysctl tree got a conflict in:
-> > >=20
-> > >   kernel/time/jiffies.c
-> > >=20
-> > > between commit:
-> > >=20
-> > >   842912dea6d51 ("sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors =
-CONFIG_SYSCTL")
-> > >=20
-> > > from the mm-nonmm-unstable tree and commit:
-> > >=20
-> > >   a3c70a5a9f944 ("sysctl: Generate do_proc_doulongvec_minmax with do_=
-proc_dotypevec macro")
-> > >=20
-> > > from the sysctl tree.
-> >=20
-> > Luis, can you please grab both
-> I can put these into sysctl next if needed. Do you still need both of
-> them to be there?
->=20
-> >=20
-> > 	sysctl: move the "cad_pid" entry from pid_table[] to kern_reboot_table=
-[]
-> > 	https://lore.kernel.org/al4C572uhLdBvyzH@redhat.com
-> I do **not** see this one in next-20260803. I'll just add this to the
-> sysctl-next.
+The main risk I can think of is a warning about an unknown CFG being
+used. Perhaps we could silence the warning?
 
-This one might cause another conflict in linux next. To solve it just
-replace CONFIG_PROC_SYSCTL with CONFIG_SYSCTL.
+Or I mean, we can also just fix it in the merge commit if that works for
+everyone.
 
->=20
-> >=20
-> > and
-> >=20
-> > 	sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_SYSCTL
-> > 	https://lore.kernel.org/amdveg1m4E4uQlGv@redhat.com
-> I see that this one is already in next-20260803. probably went in
-> through mm tree.
->=20
->   23a24c8a95c5 sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_=
-SYSCTL  [Oleg Nesterov]
-
-To avoid further conflicts in next I can also take this one into
-sysctl-next and handle every thing in my PR to Linus.
-
-Let me know what you decide.
-
-Best
-
---=20
-
-Joel Granados
-
---iqsolpvqv3zhyveu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmpxmpwACgkQupfNUreW
-QU+zVwv+JPXu4te3+470yr1dGjccS+D9sdqsjYSQxRb2SfE8e1TrTpnDQBAGBgHg
-JRrurCBWTWMuOEbwM8lpJP9sf2rNPGGmC3sQDkn9GXLuCj6GfPUrJImhsbPfBIym
-AssumjBOeDw8V3jwEoEEgSaz/YVlvxwZN8seCf7aBtvor8GluurmpQhDbTUf0KQV
-nUqNc4mLYbsLAJQV9zn9+mPf0p/0BMvWAqCK2AH8n4NFB2Ce3EjKM2dmeBrQnspi
-ckwOd8x6UpTdElH7AdQpy576kPvXWfLHq7QBa8dAFy9TLdIi2KS91jmFzWUcLF2e
-/MRzgBrrEr+iP/xcJmePxeVNSEtxWEPnEvlVmDj7G4njjf1FOO0DUAPQ6aeFjyUr
-q5nnLoDQBc+FjtLluJAVRfqwK7MvSoWIZ2lGWp3nu2d6B8aoPgXSIyHWN0kq6a97
-x+Tt1cVjMYqRHYtbhwS0wFrpgN2hQD7zAmlfhJRUMNrOR8UViAfMiCWxT9O9XH5z
-dOPpBxlo
-=8as0
------END PGP SIGNATURE-----
-
---iqsolpvqv3zhyveu--
+Alice
