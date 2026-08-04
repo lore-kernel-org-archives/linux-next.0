@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A664446EA;
-	Tue,  4 Aug 2026 10:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC043B5E01;
+	Tue,  4 Aug 2026 10:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785839748; cv=none; b=MQqHzKlJahpcapTBBrvfImOQSKCn/XiUlLxOLe1Oo0c+N4F0Lk6CGrIPmSswFkCyzKkfqMystmrCZ59dTsuUc2RmDLRsoSWDrmhQwkdR5+ftfE0jIQ20gx6sOQ2Q0DJuRJyK9SQuxbPmpbbzk8YWPZ2l0lcwGnIHw5esrrQp3OU=
+	t=1785839947; cv=none; b=iw48iRp0pQnaQtVrqJt7Z5Dr8cdKq/5kllSLgRP1QGnJQFvhOQc2x74usqRemkQpg1XPinEiNfaTCVeyGOQ0rX9RMBgIfF9SPtZHehEMa2LD1arv6kP4FW12nHQwSxaJ0AHBknkvVuQMf5tIvAIA4EIXabPwqykUPf9hrBOW+Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785839748; c=relaxed/simple;
-	bh=e71vPC77gj6gAv8DhE4ZznJ/hxieNPyUeDo98rW2PZI=;
+	s=arc-20240116; t=1785839947; c=relaxed/simple;
+	bh=0K8ldsuOOmmp4E468z4pchWjxwHx6OM1T7MBD8rtgMc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kzl9sQwMQfj698Oe0g1QwizFmKWeNgOBWTCNpOnNDanay5I3oLjluR1Gzk38upQw/J1A1D+DxydZ0eAFS8a6EvTgz2deGWMxmXHWiXSril6B4R+Yx3VX9QGzpNr70uNoXuMF9vftnc/h2oVXmC3xUtREmZPulrNkMnf2mbDOkHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVWRqRSl; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=HFGnBrMwlZk6reo1nCAiNG2bmUKrn4Dd8C3HIJ+PylDUTtL48VhxPLd8CuzA/iGJHU1sSsDT8rzXPMZi+E2+7+7LGQvXQCSuTzoW9yHzEOPDPodo0aqxM5WlVIsfZKy0TqFw6j48LYazCoO93KG/sW6CjVnDYu8GNyqb+jLrf1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmHy6nA4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVWRqRSl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE311F000E9;
-	Tue,  4 Aug 2026 10:35:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmHy6nA4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC64D1F000E9;
+	Tue,  4 Aug 2026 10:39:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785839746;
-	bh=Fsy6Tb63CU1Ad3Kp3knM6xPa/jSSeaOo1zveF5t3YuM=;
+	s=k20260515; t=1785839945;
+	bh=1EYoIE/Bb2qkYhVVtYA17E42iMUCNLmxdssxEzRcOLw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=lVWRqRSlWbCrpYE1cx/LysJJuWXC3nwwY5FHDuKT6a6lfzdDrwrsB0jjMTMyQcBkC
-	 o70HU6H0nFr5JqmOHvHjdQW42f9OxUrzH/IsB/EyvvazYKoEZ5vwIOTjYADS4fc3yj
-	 lAT9GOEfGi68GVguMRJhSyRZwS3JUVbeAjq2IBQUuKgD1HVKIFVFqHAw1UQ0K8xQev
-	 I6nefBOfohdB8xKrrgTpLY4klyP5G6Ph0IeOQrXh/Ju5t9kC06Pz4KIdjoBn+S2lwA
-	 J0oWjfQUxPfOqPg5NL+Bo9x+biV+0z30e+QRf9OecM2gQ5z6zLcumuc9P+8b5HZoea
-	 35l0BFpklzISw==
-Message-ID: <7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org>
-Date: Tue, 4 Aug 2026 12:35:42 +0200
+	b=EmHy6nA48yNo4kLsbk5LPnsJPH6tzVTzbr9CNqu9ekwGojO/9w/jYes+BygJHNdZU
+	 3Ns/DskY+5dhjPYpgYqj8nRObYEii/nTFF/2xp37vxEh1t7DxVB4uGegcaaUzEvtnc
+	 XO2e3nZ6Qc7xwGIslU0Nvn0fCWh1YMyTqtiPdu3HG8U4sqwOe+em5jUdP5AqnOLZ1k
+	 lkSAvfy+OiVDDIp0ix1AjAhVAMNXYG/ykZvG4MxvIVYZFo4i52KCS5bZ5jZb5txFOO
+	 jOUJtjC23dUC4AqeJa3IBOjaz6S/aP09rNLF1z2nHgmfo0BipSg4AqEgwczfKkeJvf
+	 L29eEMf75VdMA==
+Message-ID: <2a24fa82-ddf5-490f-9451-fe2b35a06861@kernel.org>
+Date: Tue, 4 Aug 2026 12:39:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -35,22 +35,21 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: rust compile failure in next-20260730
+Subject: Re: linux-next: manual merge of the slab tree with the rcu tree
 Content-Language: en-US
-To: Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Bert Karwatzki <spasswolf@web.de>,
- Harry Yoo <harry@kernel.org>, linux-kernel@vger.kernel.org,
- linux-next@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Nathan Chancellor <nathan@kernel.org>,
+ Boqun Feng <boqun@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ broonie@kernel.org, harry@kernel.org, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org, paulmck@kernel.org, puranjay@kernel.org,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Mark Brown <broonie@kernel.org>
-References: <20260731122826.737703-1-spasswolf@web.de>
- <20260731192522.GA1014697@ax162> <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
- <anCkbMyUIscmAheK@tardis.local>
- <7c39e6cb-0ccf-4a50-a853-0f6012b05044@kernel.org>
- <DKFF147BG8PR.I12RKSRFQS1B@garyguo.net>
- <11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.org>
- <DKG2TQ94TGLB.3EO7ZNVKB50KY@garyguo.net>
+ Bert Karwatzki <spasswolf@web.de>, Gary Guo <gary@garyguo.net>
+References: <amth-CMf3Xz5hR32@sirena.org.uk>
+ <20260731075644.20215-1-ojeda@kernel.org> <am0AjzHc0m03CLVa@tardis.local>
+ <CAH5fLggke1Yvv8btJSMFr5tEquydvKev8_7G4gSO5MvoAJUE3A@mail.gmail.com>
+ <20260731220137.GA3307698@ax162> <anGiIkvkDfYogBlu@google.com>
+ <2827aefd-30f6-424d-8bf5-aa46b97ee5eb@kernel.org>
+ <CANiq72nZM6ANY4ThdiRd8hGaXfE2Cd-3MfKcA9RQP39x8mgv5g@mail.gmail.com>
 From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
 Autocrypt: addr=vbabka@kernel.org; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -91,116 +90,45 @@ Autocrypt: addr=vbabka@kernel.org; keydata=
  NcaZ+c6J4H+nEJGi2SkHAUJz5oBzuThvPudLvPA/SK8sKoM01IRxSihev/S/5WLazXB1PGem
  OCbvzC1IjWJJraxiDJ5IygokapUa2RP7+WBR22skQ3SSl6G107QgWKSyTOGWEaRmV53vxQLV
  jXuCmzSSasTL60zq5yGrT4/DYQVSNEUiUbG4pYekxJujNeEDkUlky0Y=
-In-Reply-To: <DKG2TQ94TGLB.3EO7ZNVKB50KY@garyguo.net>
+In-Reply-To: <CANiq72nZM6ANY4ThdiRd8hGaXfE2Cd-3MfKcA9RQP39x8mgv5g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/4/26 12:10, Gary Guo wrote:
-> On Mon Aug 3, 2026 at 10:04 PM BST, Vlastimil Babka (SUSE) wrote:
->> On 8/3/26 17:32, Gary Guo wrote:
->>> On Mon Aug 3, 2026 at 4:10 PM BST, Vlastimil Babka (SUSE) wrote:
->>>> On 8/3/26 16:23, Boqun Feng wrote:
->>>>> On Mon, Aug 03, 2026 at 02:57:49PM +0100, Gary Guo wrote:
->>>>>> 
->>>>>> We could also unconditionally use `kvfree_rcu_head` here, and
->>>>>> add
->>>>>> 
->>>>>>     #[cfg(not(CONFIG_KVFREE_RCU_BATCHED))]
->>>>>>     pub type kvfree_rcu_head = callback_head;
->>>>>> 
->>>>>> to bindings.rs?
->>>>>> 
->>>>> 
->>>>> This option is currently not maintainable unless it becomes a
->>>>> maintainer-aware way to handle things like this.
->>>>> 
->>>>>> (Or even better, changing `#define` to `typedef` so bindgen takes care of
->>>>>> everything).
->>>>>> 
->>>>> 
->>>>> Yes, this is better IMO, but it's up to slab maintainers. :-)
->>>>
->>>> Can you elaborate a bit please, how would that look like?
->>> 
->>> I was thinking of doing `typedef struct rcu_head kvfree_rcu_head;` but of course
->>> that didn't work because you can't use typedef to create `kvfree_rcu_head` :)
->>> 
->>> However, something like this could work?
->>> 
->>>     #ifdef CONFIG_KVFREE_RCU_BATCHED
->>>     ...
->>>     #else
->>>     struct kvfree_rcu_head {
->>>         struct rcu_head head;
->>>     };
->>>     #endif
->>> 
->>> and everywhere add a cast everywhere that expects kvfree_rcu_head == rcu_head.
->>> 
->>> but this would indeed be more complex :(
+On 8/4/26 12:01, Miguel Ojeda wrote:
+> On Tue, Aug 4, 2026 at 10:44 AM Vlastimil Babka (SUSE)
+> <vbabka@kernel.org> wrote:
 >>
->> So you mean like this? Doesn't seem so complex and seems to compile here
->> with CONFIG_KVFREE_RCU_BATCHED both disabled and enabled.
-> 
-> I thought that a lot more places have to be updated, but it looks from your diff
-> below that this is simple enough.
-
-Thanks. The slab/for-next branch now includes the slab changes.
-The merge commit should thus perform the rust/kernel/sync/poll.rs change.
-
-> Best,
-> Gary
-> 
->> I can apply the slab part in slab tree, but AFAICS the poll.rs
->> change still needs to be done in the merge commit. Unless there's
->> some way to make things conditional on whether kvfree_rcu_head exists?
+>> With Gary's suggestion [1] CONFIG_KVFREE_RCU_BATCHED will go out of the
+>> picture completely anyway. What remains is an unconditional change of the
+>> parameter. Can it be "resolved in advance" or only in the merge commit?
 >>
->> diff --git a/include/linux/types.h b/include/linux/types.h
->> index 79bf419c69e4..53e0adca4b9f 100644
->> --- a/include/linux/types.h
->> +++ b/include/linux/types.h
->> @@ -262,7 +262,9 @@ struct kvfree_rcu_head {
->>  	struct kvfree_rcu_head *next;
->>  };
->>  #else
->> -#define kvfree_rcu_head rcu_head
->> +struct kvfree_rcu_head {
->> +	struct rcu_head head;
->> +};
->>  #endif
->>  
->>  typedef void (*rcu_callback_t)(struct rcu_head *head);
->> diff --git a/mm/slab_common.c b/mm/slab_common.c
->> index 64845ac81b79..aecbe9b9df4c 100644
->> --- a/mm/slab_common.c
->> +++ b/mm/slab_common.c
->> @@ -1325,11 +1325,11 @@ EXPORT_SYMBOL_GPL(kfree_call_rcu_nolock);
->>  
->>  #ifndef CONFIG_KVFREE_RCU_BATCHED
->>  
->> -void kvfree_call_rcu(struct rcu_head *head, void *ptr)
->> +void kvfree_call_rcu(struct kvfree_rcu_head *head, void *ptr)
->>  {
->>  	if (head) {
->>  		kasan_record_aux_stack(ptr);
->> -		call_rcu(head, kvfree_rcu_cb);
->> +		call_rcu(&head->head, kvfree_rcu_cb);
->>  		return;
->>  	}
->>  
->> diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
->> index 684dfa242b1a..f3cdf95db12d 100644
->> --- a/rust/kernel/sync/poll.rs
->> +++ b/rust/kernel/sync/poll.rs
->> @@ -124,7 +124,7 @@ pub struct PollCondVarBox {
->>  struct PollCondVarBoxInner {
->>      #[pin]
->>      inner: PollCondVar,
->> -    rcu: Opaque<bindings::callback_head>,
->> +    rcu: Opaque<bindings::kvfree_rcu_head>,
->>  }
->>  
->>  // SAFETY: PollCondVar is Send
+>> https://lore.kernel.org/all/11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.org/
 > 
+> Hmm... I am not sure I follow why we are trying to resolve these
+> things in advance.
 > 
+> Semantic conflicts can be painful because they can be easily forgotten
+> about, but as long as it is warned about when doing the pull (and
+> making sure linux-next has the wanted resolution), it should be fine
+> -- branches can still be independent.
+
+Alright, let's leave it to the merge commit then. The slab side was updated
+to allow the simple merge commit resolution Gary suggested. It's better than
+relying on the #define in any case.
+
+https://lore.kernel.org/all/7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org/
+
+> Now, if for some reason one really wants to solve the conflict on one
+> of the sides, then one can do a merge commit and justify it well. The
+> diffs proposed here seem small, so I am not sure why we would want
+> that. Usually what Linus prefers is to give him that merge in another
+> branch for reference, rather than sending the merge itself.
+> 
+> What I would avoid is adding a workaround that requires knowing about
+> the "future" (like depending on an unknown `cfg`, assuming it was
+> unknown). Sometimes we do that (e.g. when building features), but it
+> isn't really the case here...
+> 
+> Cheers,
+> Miguel
 
