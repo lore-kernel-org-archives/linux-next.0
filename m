@@ -1,78 +1,134 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E76418A2D;
-	Tue,  4 Aug 2026 20:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D06DDA9;
+	Tue,  4 Aug 2026 21:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785874449; cv=none; b=e2gko/icqyoqAClnJ0txB/+aWsoockigo9ydi/9RszH8XUEL9LD4sTgYSdDc03mfbYGUcco1XJJkFCjqMipVRqA5fXq4bkFd9MOl/xF2sBIesnbppPn7pmh4SCe+4EvyX0B7Ms0h+B1MR35Ie0bW7tgUDZ89Vnnoa9Tjfod2utI=
+	t=1785878280; cv=none; b=Mztyvj6e/oWBDBq3M7uxKsebm/nyMAhfaXiEubvSkj5A+29ARHo5+3QqyRAtNROiy3aA5+iREYERGrlum6F0ukwY2vr70CxIxEFx5HKcrIMyDtzmxDQliwbZlYTRIolBFjL1VA2IrHtqaOgKUxeX0YY1xfyL+exXixGuQXayfHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785874449; c=relaxed/simple;
-	bh=Zm8/XK1K9gy8q22zD8Ub5RHzzSlCrMcHacGY6yok8tY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LXxmCyoUU5cpfR/jfDcEd/T/IJm4JJZX6xtday96stXzOokB7x/jkm0X1Hp7KVyc2PKUMWZb4QPltEie44Un4MHYA+px+4oNGN5p0rx/CgAhR9M/LSdfpPKbn1g21DEE6YzTnU9GmfFGYJTA0RplWy/YjY9/F27M7LajJRSvQcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TSt9gWWC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785878280; c=relaxed/simple;
+	bh=+uxQVz9jZ0K4nTxCgsBfvyx21/GHrvr1dCNICfTR52g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QwdgJh5+RoM4tUSfuU/CgJs/hQwahOJPhWiSVw/n60vmp/2FZiJSj6BC1IASE6kIVTl31HjBNRyqDglj2duyzmuDT50oVVQBqSMpJPwHnj66ZLJwhSb6eibjoHj0gD4pPXHAkX0Z6slynS0iV/CvbhL86zBq5yv60yYV9fOHy34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYwAg0te; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TSt9gWWC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356AB1F000E9;
-	Tue,  4 Aug 2026 20:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux-foundation.org; s=korg; t=1785874448;
-	bh=UqVyp9djctzqRCbglXqC+7pZykqhcnfOshqui1v5UOs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=TSt9gWWCGyD4lHD80TB3896b76m9PCmKsEYbAq6+TEAEd5YjA+1dvS0+BeOP1qsHl
-	 Y8lvin54O1wNnwISSrMAWicruGVlqTfWUdFUjBRk0hwlfF0yvOe3vxEWLhNKsHLJx7
-	 dpCSPeguUsKm7+sUkh/hKmyG5U6iHrW0IoJSuW8U=
-Date: Tue, 4 Aug 2026 13:14:07 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: linux-next: manual merge of the sysctl tree with the
- mm-nonmm-unstable tree
-Message-Id: <20260804131407.40a4c72c38c482718894dd9a@linux-foundation.org>
-In-Reply-To: <ckrmakyl5pqqdileg6cuusekutpeuz5mtcpic64ml3zzgolwvj@2hnt7zcwqpvu>
-References: <amjpZ1aYsps44ExZ@sirena.org.uk>
-	<20260728134755.501c6ac650c7a3868ae00614@linux-foundation.org>
-	<ntrhorleb6tok47d6nr2k7xrpqwkwwfk5cie4v7pc3feia6tmd@hxxgjkkcc2vu>
-	<ckrmakyl5pqqdileg6cuusekutpeuz5mtcpic64ml3zzgolwvj@2hnt7zcwqpvu>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYwAg0te"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0CC1F000E9;
+	Tue,  4 Aug 2026 21:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785878278;
+	bh=zInXWsYZop6MOqA1Jea68UbD+uK3ZrLZybcKPUeETww=;
+	h=Date:From:To:Cc:Subject:In-Reply-To;
+	b=dYwAg0teI19butiV68RAAYo4Ver3YCvkTrBL3sdf5qvYBOwbg3GPowTAdUbSOPaez
+	 xN0UPCXQFVW0Nma+CN4PhwCExmof6WpYifltCgCAUHEIv2N0LGdmWwUVkqM11rP37r
+	 Rig6dDxpOQ+IwI4DjSqaIcboifgtNRBmVYEjSfaf/HkNmd7MF6qSCdvOCwi3v8nzwO
+	 Dc4i99vrOm6cRKXqYZcN9+PIONSOswMUuCW8KyJ0cjdD2xnu5jBujJa7Y31UTOOwUk
+	 6jSBYeSFxPqsZ8INlt2DJmdayLNYs3UP179p4oYeKuKwp6GaUJXwm+Gx2gpVWpVfBM
+	 uDyIakPhOlktQ==
+Date: Tue, 4 Aug 2026 16:17:56 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-pci@vger.kernel.org, Takuma Fujiwara <t-fujiwara1@ti.com>,
+	Hans Zhang <18255117159@163.com>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Manivannan Sadhasivam <mani@kernel.org>, Yao Zi <me@ziyao.cc>,
+	Aksh Garg <a-garg7@ti.com>, Felix Gu <ustc.gu@gmail.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Manikandan K Pillai <mpillai@cadence.com>
+Subject: Re: linux-next: Tree for Jul 30 (pci/controller/cadence/)
+Message-ID: <20260804211756.GA1938423@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b99bef0f-7694-4aff-949e-d289d8ddb10e@infradead.org>
 
-On Tue, 4 Aug 2026 09:54:04 +0200 Joel Granados <joel.granados@kernel.org> wrote:
+[+cc recent committers in drivers/pci/controller/cadence/]
 
-> > > 
-> > > and
-> > > 
-> > > 	sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_SYSCTL
-> > > 	https://lore.kernel.org/amdveg1m4E4uQlGv@redhat.com
-> > I see that this one is already in next-20260803. probably went in
-> > through mm tree.
+On Fri, Jul 31, 2026 at 05:12:03PM -0700, Randy Dunlap wrote:
+> On 7/31/26 2:41 PM, Bjorn Helgaas wrote:
+> > On Thu, Jul 30, 2026 at 07:27:42PM -0500, Bjorn Helgaas wrote:
+> >> [+cc authors of everything on pci/controller/cadence; I haven't
+> >> triaged this at all, sorry, and don't have time right now to drop that
+> >> branch from pci/next]
+
+Thanks, Randy, I reproduced this problem on v7.1 in an x86_64 build
+with the config-r1495.gz you posted at
+https://lore.kernel.org/all/b99bef0f-7694-4aff-949e-d289d8ddb10e@infradead.org
+
+Per MAINTAINERS, drivers/pci/controller/cadence/ is orphaned.  If
+anybody cares about this, please take a look and fix this issue.
+
+> >> On Thu, Jul 30, 2026 at 04:06:44PM -0700, Randy Dunlap wrote:
+> >>>
+> >>>
+> >>> On 7/30/26 8:02 AM, Mark Brown wrote:
+> >>>> Hi all,
+> >>>>
+> >>>> Changes since 20260729:
+> >>>>
+> >>>
+> >>> (1) /usr/bin/ld.bfd: drivers/pci/controller/cadence/pcie-cadence-plat.o: in function `cdns_plat_pcie_probe':
+> >>> pcie-cadence-plat.c:(.text+0x2f8): undefined reference to `cdns_pcie_ep_setup'
+> >>>
+> >>> In this case, a builtin driver attempts to call into a loadable module:
+> >>>
+> >>> #
+> >>> # Cadence-based PCIe controllers
+> >>> #
+> >>> CONFIG_PCIE_CADENCE=y
+> >>> # CONFIG_PCIE_CADENCE_DEBUGFS is not set
+> >>> CONFIG_PCIE_CADENCE_HOST=y
+> >>> CONFIG_PCIE_CADENCE_EP=m
+> >>> CONFIG_PCIE_CADENCE_PLAT=y
+> >>> CONFIG_PCIE_CADENCE_PLAT_HOST=y
+> >>> CONFIG_PCIE_CADENCE_PLAT_EP=m
+> >>> # end of Cadence-based PCIe controllers
 > > 
-> >   23a24c8a95c5 sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_SYSCTL  [Oleg Nesterov]
+> > I was unable to reproduce this issue, so I didn't do anything.  I
+> > didn't figure out how to make CONFIG_PCIE_CADENCE_EP=m; the config I
+> > used was:
+> > 
+> >   CONFIG_PCIE_CADENCE=y
+> >   # CONFIG_PCIE_CADENCE_DEBUGFS is not set
+> >   CONFIG_PCIE_CADENCE_HOST=y
+> >   CONFIG_PCIE_CADENCE_EP=y
+> >   CONFIG_PCIE_CADENCE_PLAT=y
+> >   CONFIG_PCIE_CADENCE_PLAT_HOST=y
+> >   CONFIG_PCIE_CADENCE_PLAT_EP=m
+> > 
+> >>> (2) /usr/bin/ld.bfd: drivers/pci/controller/cadence/pcie-cadence-plat.o: in function `cdns_plat_pcie_probe':
+> >>> pcie-cadence-plat.c:(.text+0x11f): undefined reference to `cdns_pcie_host_setup'
+> >>>
+> >>>
+> >>> This is similar, just a different driver is =m in the failure case.
+> >>>
+> >>> #
+> >>> # Cadence-based PCIe controllers
+> >>> #
+> >>> CONFIG_PCIE_CADENCE=y
+> >>> CONFIG_PCIE_CADENCE_DEBUGFS=y
+> >>> CONFIG_PCIE_CADENCE_HOST=m
+> >>> CONFIG_PCIE_CADENCE_EP=y
+> >>> CONFIG_PCIE_CADENCE_PLAT=y
+> >>> CONFIG_PCIE_CADENCE_PLAT_HOST=m
+> >>> CONFIG_PCIE_CADENCE_PLAT_EP=y
 > 
-> To avoid further conflicts in next I can also take this one into
-> sysctl-next and handle every thing in my PR to Linus.
+> I have reproduced it several times in cases that were
+> generated by 'make randconfig'.
+> I am attaching the 2 failing randconfig files (both for x86_64
+> and linux-next).
 > 
-> Let me know what you decide.
+> -- 
+> ~Randy
 
-How about I remove
 
-	sysctl: move the "cad_pid" entry from pid_table[] to kern_reboot_table[]
-	https://lore.kernel.org/al4C572uhLdBvyzH@redhat.com
 
-and
-
-	sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_SYSCTL
-	https://lore.kernel.org/amdveg1m4E4uQlGv@redhat.com
-
-from mm.git then forget all about them ;)
