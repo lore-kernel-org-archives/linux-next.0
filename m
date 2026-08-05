@@ -1,88 +1,156 @@
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.162])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C000E47ECDD
-	for <linux-next@vger.kernel.org>; Wed,  5 Aug 2026 15:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8A392C2C;
+	Wed,  5 Aug 2026 15:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785944721; cv=none; b=g/eax8Zi6VlDEkiKZ+Yhcj80BH1CcUiwrls98ihioYjYZ67zLD+QSeSl7TDvA4JqMx0WdhrYjiW+NU1Tq476+GLutIwQeZhneksLZ+bi50JzeEcRbxS+y3LFzFs5jSo7msePnsXdD+Ax+UfNnq4+ljy3zGjUJ6JY+KOVy3aKGoE=
+	t=1785944725; cv=none; b=s4NthauTzvCxb8ftj1aDZ2E3I9D9gix/2m2aJvPxoEdGETlW6Xlu8YCNPHHjdq6iulQdAK4aVa+hOOFalTMh4pzoiT4PL6r9wgVuJCzX4aiXlwuG8c92fChtdnVWQheMQYoIAYpP9s666RauZvif1RHICGonUUPB91gVvL+WyTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785944721; c=relaxed/simple;
-	bh=e7XxFotGuFOBpsBqjcMVh3JT+Rft7GLqtR4Lq4n24L4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G1B45hfw8vqOVb8UPWE/uMXby1tZoZmQ/FNQlZFVGuPyRoe6aeCZXP26PfG3DGItBCic0y4dGwwXhdnqd/xzFQWjMJbDnjFpwOy/3TvCms7xWSNGw8JDDDBS8zh3DRbnBPzXtF5LLu0pLDq8rIeP3EgCQO1Lb6yPOVjWijGxQIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ley7J1mE; arc=none smtp.client-ip=188.68.63.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1785944725; c=relaxed/simple;
+	bh=pMV5XT2otoDWQnT5bcCxSVYIm9mRrhAOH4QKAXI4iEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WA7oJcylcgrFo+kBy64x27FXbObn5SuXCyxo2ML+pL1ussG7or2bEmgmdKAK9rxXYZ2sjcIze8qYiEtzS4FWH1+9rseMkNyuaEdb/QKUedGUukQFzHpcbGH9+RdQ8UGxooUxKDmL2y0dBRW0fxVgqst3EFsmi73ZPnUwCedQ4vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZE3iwUN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ley7J1mE"
-Received: from mors-relay-8201.netcup.net (localhost [127.0.0.1])
-	by mors-relay-8201.netcup.net (Postfix) with ESMTPS id 4hFZT7698Pz3vqh;
-	Wed,  5 Aug 2026 17:43:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
-	s=key2; t=1785944635;
-	bh=e7XxFotGuFOBpsBqjcMVh3JT+Rft7GLqtR4Lq4n24L4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=ley7J1mEbqA3udJO3cZ8VtvW49dohCWytmxej9S+okpe2us7B7pm171QlnBUx9LxM
-	 q7V1JpVTQonhSvbdFwVtLEbn9vTN1OY/m+WAvKb6dtH52y7C2ulFjMsrwig9nERLgX
-	 SJgtqjOfzM7colZ6S37LkT2KAbm0F+VTXyIIBqquhGhMrq/W0BpykhOuPQJydWrvOn
-	 EAfwYUCfCFLBMFVGz+Thy8luN1gw+q4eh3T9jyfXMempGQWBX8Xt7ToVvdmlQIr28I
-	 4jtKbe/JfTr1Y8lUxkQe1W/V4bGCiStBYkowk1p9+KQ6G57IfQF1EbpyHZyVGXoKk0
-	 d4AVfj+t7i2oQ==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay-8201.netcup.net (Postfix) with ESMTPS id 4hFZSk3xgYz3yKl;
-	Wed,  5 Aug 2026 17:43:34 +0200 (CEST)
-Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4hFZSj3Tt0z8sch;
-	Wed,  5 Aug 2026 17:43:33 +0200 (CEST)
-Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
-	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 78DCC5FC77;
-	Wed,  5 Aug 2026 17:43:28 +0200 (CEST)
-Authentication-Results: mxe9fb;
-        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
-Received-SPF: pass (mxe9fb: connection is authenticated)
-Message-ID: <25428915-b06b-4bdc-bc52-bc7f50e55db9@leemhuis.info>
-Date: Wed, 5 Aug 2026 17:43:27 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZE3iwUN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F0301F00A3A;
+	Wed,  5 Aug 2026 15:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785944723;
+	bh=vycdaxwIUZSSvYWreI+/2Yd5vDnM/8sMnATDeFH85aU=;
+	h=Date:From:To:Cc:Subject;
+	b=eZE3iwUNZ1zyMPvRmni3Lfaza36rfKRwn/wJ8yFwj5vZY8kpHshT+zAN4CwdnyLLs
+	 Syf38nuVyHFksoYvBaqS5tbtEaURuft5wF+0kZNks75vW/aqAdLgzt5XalWDxnDp07
+	 0xtcX6YWySqvrPZKKZVDYS+mnZAr/mQpbWz3YEwxFSqtCjuDibshWBR4lMg/lBkNg/
+	 B8wj487V/OPztoVhXcaM/1Hy9PcoxVwXchvq1gW7iAxNBnmGrigADudDVgC6HYQ6/P
+	 mey2K/tCYgwuMrGqdkq964EGfG92dxD7y7ckLbJ1Nq0ffEPYzy/DvXst+z/spXsX41
+	 3Tl7nqAkEMgvQ==
+Date: Wed, 5 Aug 2026 16:45:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Joel Granados <joel.granados@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: linux-next: manual merge of the sysctl tree with the mm-nonmm-stable
+ tree
+Message-ID: <anNajjU_UzCddnPr@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] next/master: (build) use of undeclared identifier
- 'check_vector_unaligned_access'; did ...
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-To: kernelci@lists.linux.dev, kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-References: <178543074351.4076.15027730787524065993@kernelci.org>
- <9d66c14c-5ef8-4e2e-aa1a-ece90901518c@leemhuis.info>
-Content-Language: de-DE, en-US
-In-Reply-To: <9d66c14c-5ef8-4e2e-aa1a-ece90901518c@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <178594460877.2151836.6710921791439212242@mxe9fb.netcup.net>
-X-Rspamd-Server: rspamd-worker-8404
-X-Rspamd-Queue-Id: 78DCC5FC77
-X-NC-CID: 9/f5E4Dv5k41ddZYOBQ8irrNBARcgK/N5Y76YMWpcM5JQ2FXInI=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6/lgkBHSjOvFHUyy"
+Content-Disposition: inline
 
-On 7/31/26 11:43, Thorsten Leemhuis wrote:
-> On 7/30/26 18:59, KernelCI bot wrote:
->> New build issue found on next/master:
-> 
-> Also reported by the "kernel test robot":
-> https://lore.kernel.org/oe-kbuild-all/202607301618.yrE3EKfS-lkp@intel.com/
-> 
-> Fix is under review:
-For the record, things were fixed differently in the end:
 
-#regzbot resolve: fix was squashed (broke during a conflict resolution)
+--6/lgkBHSjOvFHUyy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Full quote from
-https://lore.kernel.org/all/8d641414-87eb-af9c-5341-07d25efa6cb4@kernel.org/
+Hi all,
 
-""Thanks, looks like I broke this during conflict resolution.  Sorry
-about  that.  I squashed the fix into the original as you suggested.""
+Today's linux-next merge of the sysctl tree got a conflict in:
+
+  kernel/time/jiffies.c
+
+between commit:
+
+  9e10208005eb3 ("sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG=
+_SYSCTL")
+
+=66rom the mm-nonmm-stable tree and commits:
+
+  a3c70a5a9f944 ("sysctl: Generate do_proc_doulongvec_minmax with do_proc_d=
+otypevec macro")
+  38f8bf3859a02 ("sysctl: Rename proc_doulongvec_minmax_conv to proc_doulon=
+gvec_conv")
+  9eea1b9eb9661 ("sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG=
+_SYSCTL")
+
+=66rom the sysctl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined kernel/time/jiffies.c
+index 84c6bd8e742e9,213ae1d6a0147..0000000000000
+--- a/kernel/time/jiffies.c
++++ b/kernel/time/jiffies.c
+@@@ -185,6 -185,23 +185,23 @@@ static int do_proc_int_conv_ms_jiffies_
+  			     sysctl_u2k_int_conv_ms, sysctl_k2u_int_conv_ms);
+  }
+ =20
++ static int sysctl_u2k_ulong_conv_ms(const ulong *u_ptr, ulong *k_ptr)
++ {
++ 	return proc_ulong_u2k_conv_uop(u_ptr, k_ptr, sysctl_msecs_to_jiffies);
++ }
++=20
++ static int sysctl_k2u_ulong_conv_ms(ulong *u_ptr, const ulong *k_ptr)
++ {
++ 	return proc_ulong_k2u_conv_kop(u_ptr, k_ptr, sysctl_jiffies_to_msecs);
++ }
++=20
++ static int do_proc_ulong_conv_ms_jiffies(bool *negp, ulong *u_ptr, ulong =
+*k_ptr,
++ 					 int dir, const struct ctl_table *tbl)
++ {
++ 	return proc_ulong_conv(u_ptr, k_ptr, dir, tbl, false,
++ 			       sysctl_u2k_ulong_conv_ms, sysctl_k2u_ulong_conv_ms);
++ }
++=20
+  #else // CONFIG_SYSCTL
+  static int do_proc_int_conv_jiffies(bool *negp, ulong *u_ptr, int *k_ptr,
+  				    int dir, const struct ctl_table *tbl)
+@@@ -211,6 -228,12 +228,12 @@@ static int do_proc_int_conv_ms_jiffies_
+  {
+  	return -ENOSYS;
+  }
++=20
++ static int do_proc_ulong_conv_ms_jiffies(bool *negp, ulong *u_ptr, ulong =
+*k_ptr,
++ 					 int dir, const struct ctl_table *tbl)
++ {
++ 	return -ENOSYS;
++ }
+  #endif
+ =20
+  /**
+@@@ -309,8 -332,8 +332,8 @@@ int proc_dointvec_ms_jiffies_minmax(con
+  int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table, int =
+dir,
+  				      void *buffer, size_t *lenp, loff_t *ppos)
+  {
+- 	return proc_doulongvec_minmax_conv(table, dir, buffer, lenp, ppos,
+- 					   HZ, 1000l);
++ 	return proc_doulongvec_conv(table, dir, buffer, lenp, ppos,
++ 				    do_proc_ulong_conv_ms_jiffies);
+  }
+  EXPORT_SYMBOL(proc_doulongvec_ms_jiffies_minmax);
+ =20
+
+--6/lgkBHSjOvFHUyy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzWo0ACgkQJNaLcl1U
+h9Bb4Af/WxFzLlpFY9trO9qvD5P79HhjDViczHsTf2DGEc0qGsKayZal4e2QLn6K
+9hQSEprH0mC0e1rTMH3qr3SLFC4kM3oSpZr+W1Cupi5bggYVR9Ax5YFAlPB+4Csh
+tEdj97Cy3NkjtbgmamtPk9vAz0zPn3ay04vVYIx5MQFDXswC/A9hGa8lESTwGPDJ
+beEDAyXe1GEorlkYv30dmV+O6x5QuKzzSes5kpsde+e7RItEIVNVE5yVpahgkD3f
+HXMl7osDU8HKW1XCfv2YCCcog2jCLipKbvhYxqzlcWl422ysEWArAoO+01/u7Pa8
+B4ZVUrdockQfPu8Yl5DdhqXt64ajjg==
+=iFo6
+-----END PGP SIGNATURE-----
+
+--6/lgkBHSjOvFHUyy--
