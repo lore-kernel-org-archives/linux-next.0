@@ -1,101 +1,88 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.162])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB24364EB6
-	for <linux-next@vger.kernel.org>; Wed,  5 Aug 2026 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C000E47ECDD
+	for <linux-next@vger.kernel.org>; Wed,  5 Aug 2026 15:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785944630; cv=none; b=FGL2GdX3SoLggF6ravvVQNyhmqLR3pZfMds74uDnT5yM9u+LPr5UKZjStq4m9T1cV+SyD9Tlp/X14TVrGDNZcI/rWbN+9oRuan555qIAuK2bN6yK5YR0w80d+GTdWxbz1lXmJg/dnd7VRNlLElUmKMmebj/0LLziOcpn29NnEPw=
+	t=1785944721; cv=none; b=g/eax8Zi6VlDEkiKZ+Yhcj80BH1CcUiwrls98ihioYjYZ67zLD+QSeSl7TDvA4JqMx0WdhrYjiW+NU1Tq476+GLutIwQeZhneksLZ+bi50JzeEcRbxS+y3LFzFs5jSo7msePnsXdD+Ax+UfNnq4+ljy3zGjUJ6JY+KOVy3aKGoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785944630; c=relaxed/simple;
-	bh=NtIKYv/gbVBTyTBDVBQKCA7WjdwwTdA+SicJPSMsEZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQ2E8NP4EfIfoj3EUsXGdq/RUHOBwYxqigcytfn+AGQbX0eUKwX1wkOWrzGpAXxgFCLXbp1Nem8CqHk2le1gCMLszvWAhmA63QIIPqTKogjpCWvdoNw/rLFXK9T9THM+KoAOFVc+Nzcv+CTmvNnJAqJ1PXlF0mt7iTHmV9AVWAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jwAb+LjQ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785944721; c=relaxed/simple;
+	bh=e7XxFotGuFOBpsBqjcMVh3JT+Rft7GLqtR4Lq4n24L4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G1B45hfw8vqOVb8UPWE/uMXby1tZoZmQ/FNQlZFVGuPyRoe6aeCZXP26PfG3DGItBCic0y4dGwwXhdnqd/xzFQWjMJbDnjFpwOy/3TvCms7xWSNGw8JDDDBS8zh3DRbnBPzXtF5LLu0pLDq8rIeP3EgCQO1Lb6yPOVjWijGxQIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ley7J1mE; arc=none smtp.client-ip=188.68.63.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwAb+LjQ"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2cc7e86e7aeso12729895ad.2
-        for <linux-next@vger.kernel.org>; Wed, 05 Aug 2026 08:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785944628; x=1786549428; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=m1J7SSBjgEa6FdrQUEoTL9+VAKmrJkzpYBXqLuwulzw=;
-        b=jwAb+LjQpJ9jJ8E7UMhsAOdAndXzfvqTcud9OOgb4it14gj6W0e/VjQv3nZ/o+hblT
-         2S4/wy9fiRqPa+hGYuEIJV+vmwACPz6kDgpXvKzN0DIEHMbnjFOongVhEnhLmVibBsqI
-         oVDahp0rr4er0wlrnMnPtg11iZEGvxcK68eEl3V9bv5amPSIiR0FbbUlrsv6wuAQCv6Z
-         cHyXluScXl91l3//+BkE6CktIjhEVJI6nTuy2AG2gXI7XNIb54zpe/OIQOj6RxlB6jLJ
-         w7zuLUzmsNmuYxp3klWlLAe2knI92wL1Z5hWD2ReGhlqc1elqim9R2eH+wYn0hpnatD0
-         Zebg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785944628; x=1786549428;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=m1J7SSBjgEa6FdrQUEoTL9+VAKmrJkzpYBXqLuwulzw=;
-        b=LVIxBck05NkwmknumfOFL3fQ4J9+FDkfy9QDvxRJc/x81681uNKYGvU1ZxAsveF7Dd
-         KSpOmj0QkM+vWS4lrZbPR9GrctfPvpZzNqbvdV76vHwU/fnaAvULyFGpyiw+KRAVUbEh
-         SLQDWfL/AADtb5pgJqwc+Y99165AZWx5rkHLnQFQcDDDaTQ55KqZ4rL2kcGYQoj/jf5G
-         BhGukgpus/W0hSED4ntQ1jUdz1I3ANg+DHIMa9Ur7iq/9KiF1o/gXfeAM7pkB4s+Ayr7
-         p7owUO/V8f26783Kvzl8u8JyWcX+9W4HktcCBtMFQ0/77CaXDP86r2f6Qh73nNM3lOZO
-         qYEg==
-X-Forwarded-Encrypted: i=1; AHgh+RoMOn/b43httlIk2tt7sou7dhZSY8sEVeYZV0HHAanoKFNcoxO3aN0OBWlkCXSYSqeNxAy30NzCsjNN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp+hDjwW0HuvFrhoy4vFBqPlp2GouZJesOirnEt+9eHI2joVAi
-	u+3PZEj3WUmh54Hyhwp1LzWsovzpsI1kS63YENPx5uULrGzWuBlUSNmj
-X-Gm-Gg: AR+sD12+543USP8cM+t5ryS9Ukc3LvahK8WDRjrlaRB1LwpuY+x6KIux2abHvylkimA
-	S+FiYvAULfnkQlwMeyEPlhOm2OhjvGvJPLehqi+NSyZmkSzkzRoWKH0YUaNXgTv2qt1wjgyjsWD
-	crDw9bOb4J8Klx+0RWNxcOWGJogdMDxaJ8+CZkf59Ir1RyyU+sBNuHLph63KRJAC+wgXOtQrYgy
-	dnwiP9bHNN4wptvOeYilG4nStZxuZ2/Dqz3TMaltk0h7xSuM4ZjFDfLL10ZeJpQ3kUFmlC41mKB
-	gnz+zlFaK1jp/Mhj8+7fglUnNnx2mdabldhvOWTVPAvxPzJxaELkx6lVsfVFN8r7CB8DbkqoGHz
-	CQNJ8yuudHWBcdLciOIyKuSJQ19YAfBF2IMXhqEQLVSmg6QrxJSyhKVzviIcX3Co1dm4kE8zLxz
-	APciBciTIfW5QaMmdztkc+08G6RX7+xem7XPx2VHObPXnd+p8bOLniTTtgxOCq3YnQ3gbGPH9Ty
-	7COFZL7SeJYMK1OINGvvPPP/g+9rw==
-X-Received: by 2002:a17:90a:d2c8:b0:38e:5ab7:ce9b with SMTP id 98e67ed59e1d1-3903c690565mr8536520a91.21.1785944628487;
-        Wed, 05 Aug 2026 08:43:48 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:bf3a:ac93:79c4:84fd])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-315a2e6bdb1sm970893eec.18.2026.08.05.08.43.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2026 08:43:47 -0700 (PDT)
-Date: Wed, 5 Aug 2026 08:43:44 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Fixes tags need work in the input-current tree
-Message-ID: <anNZ64NWtyOmbP3c@google.com>
-References: <anMXcUERgpvSGpVz@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ley7J1mE"
+Received: from mors-relay-8201.netcup.net (localhost [127.0.0.1])
+	by mors-relay-8201.netcup.net (Postfix) with ESMTPS id 4hFZT7698Pz3vqh;
+	Wed,  5 Aug 2026 17:43:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
+	s=key2; t=1785944635;
+	bh=e7XxFotGuFOBpsBqjcMVh3JT+Rft7GLqtR4Lq4n24L4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ley7J1mEbqA3udJO3cZ8VtvW49dohCWytmxej9S+okpe2us7B7pm171QlnBUx9LxM
+	 q7V1JpVTQonhSvbdFwVtLEbn9vTN1OY/m+WAvKb6dtH52y7C2ulFjMsrwig9nERLgX
+	 SJgtqjOfzM7colZ6S37LkT2KAbm0F+VTXyIIBqquhGhMrq/W0BpykhOuPQJydWrvOn
+	 EAfwYUCfCFLBMFVGz+Thy8luN1gw+q4eh3T9jyfXMempGQWBX8Xt7ToVvdmlQIr28I
+	 4jtKbe/JfTr1Y8lUxkQe1W/V4bGCiStBYkowk1p9+KQ6G57IfQF1EbpyHZyVGXoKk0
+	 d4AVfj+t7i2oQ==
+Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
+	by mors-relay-8201.netcup.net (Postfix) with ESMTPS id 4hFZSk3xgYz3yKl;
+	Wed,  5 Aug 2026 17:43:34 +0200 (CEST)
+Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4hFZSj3Tt0z8sch;
+	Wed,  5 Aug 2026 17:43:33 +0200 (CEST)
+Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
+	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 78DCC5FC77;
+	Wed,  5 Aug 2026 17:43:28 +0200 (CEST)
+Authentication-Results: mxe9fb;
+        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
+Received-SPF: pass (mxe9fb: connection is authenticated)
+Message-ID: <25428915-b06b-4bdc-bc52-bc7f50e55db9@leemhuis.info>
+Date: Wed, 5 Aug 2026 17:43:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <anMXcUERgpvSGpVz@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] next/master: (build) use of undeclared identifier
+ 'check_vector_unaligned_access'; did ...
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+To: kernelci@lists.linux.dev, kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
+References: <178543074351.4076.15027730787524065993@kernelci.org>
+ <9d66c14c-5ef8-4e2e-aa1a-ece90901518c@leemhuis.info>
+Content-Language: de-DE, en-US
+In-Reply-To: <9d66c14c-5ef8-4e2e-aa1a-ece90901518c@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: <178594460877.2151836.6710921791439212242@mxe9fb.netcup.net>
+X-Rspamd-Server: rspamd-worker-8404
+X-Rspamd-Queue-Id: 78DCC5FC77
+X-NC-CID: 9/f5E4Dv5k41ddZYOBQ8irrNBARcgK/N5Y76YMWpcM5JQ2FXInI=
 
-On Wed, Aug 05, 2026 at 11:58:57AM +0100, Mark Brown wrote:
-> In commit
+On 7/31/26 11:43, Thorsten Leemhuis wrote:
+> On 7/30/26 18:59, KernelCI bot wrote:
+>> New build issue found on next/master:
 > 
->   08dfae0f8bed3 ("Input: synaptics-rmi4 - propagate F54 worker errors to V4L2 queue")
+> Also reported by the "kernel test robot":
+> https://lore.kernel.org/oe-kbuild-all/202607301618.yrE3EKfS-lkp@intel.com/
 > 
-> Fixes tag
-> 
->   Fixes: 3a762dbd5347 ("Input: synaptics-rmi4 - add support for F54 diagnostics")
-> 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h ("%s")'
+> Fix is under review:
+For the record, things were fixed differently in the end:
 
-Sorry, accidentally dropped "[media]" prefix from the commit subject,
-will fix it up.
+#regzbot resolve: fix was squashed (broke during a conflict resolution)
 
-Thanks.
+Full quote from
+https://lore.kernel.org/all/8d641414-87eb-af9c-5341-07d25efa6cb4@kernel.org/
 
--- 
-Dmitry
+""Thanks, looks like I broke this during conflict resolution.  Sorry
+about  that.  I squashed the fix into the original as you suggested.""
