@@ -1,54 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4A21A682E;
-	Wed,  5 Aug 2026 16:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613B1481640;
+	Wed,  5 Aug 2026 16:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785947489; cv=none; b=S/Q9zK7LIO7Qwuh3q5AJ8KM0ArSxmsmMbOR/poys365dBGTF6KX0lrVKDkmmmWTsjUj0OKbNl5PNdXJRk6oUDYfgwLZVjKyLHFicTgdSPU6daBoeZpbHKlJkL65LrmPL/PKXmWjMcjQp+Swl1nq58gxIO22ERHBY0WNZogrO9Dg=
+	t=1785947965; cv=none; b=FanjxUR357Ax1K9Ehd4zXExdsotXw1A9txC7B8N4kkHqpkwESLFKCHRBXxjC8qbOuyGGanX3znQhAkJSb4RGFzL8kl6ZB2DNySwFNkw0k0pnqlWZiM8aNDndVg24PiCe9jcbc4VH6VhiqFlkjZn5TCwZLcWFURaxrfpICv7GoSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785947489; c=relaxed/simple;
-	bh=Vesky0oOdtDPCS+v2e04uNjqqE2rII1NdQQLWr8z9zM=;
+	s=arc-20240116; t=1785947965; c=relaxed/simple;
+	bh=HWUobJM5/dA4/kCrR1GAnJS1EEWutqbhlfdXr0Te578=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usa5MmU3dlB17q11dx9YF45A+q+YLH9+qyE/Iu49/eUGOPwPKAAEPwryaGxXxENxYGmFBsmTpNSTrpuRv/LRpWJwgraUqdmxPAU2xf0IirnKJtQwqMaKFJLPH3YeUpXcX6q0F+zlN/C/6Z0MBNWuHIi5BrOdftaIDpW2iGLVD+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHDKy3Qx; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxgwYeMVqd45VoH2f4NCn8TVPnuGOyGEfoVdWXUWaX+nvS/9MDpHKrmyqB7w9Bo7xmnZgGZbsteRjv3OHQ+VxZUT0CU7iO75isIEIjbt8ENMcLRu18Vb5YkrR2VuNqy2l7sRlAMoP9xardAfa0sbrh/KiDI6W+MfFXn9ieMp7eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJ2m9vXB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHDKy3Qx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6CA1F000E9;
-	Wed,  5 Aug 2026 16:31:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJ2m9vXB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBB71F000E9;
+	Wed,  5 Aug 2026 16:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785947488;
-	bh=KuRIHYHaygPZ0s9AerYW6Hbt3czgGyABLPBEUL2nTsE=;
+	s=k20260515; t=1785947964;
+	bh=HWUobJM5/dA4/kCrR1GAnJS1EEWutqbhlfdXr0Te578=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OHDKy3QxD1y3LOfOyYzHCbJzA3uiGseSweCYq/24S5qeFi+TzUOHGCUBXmaNeA/my
-	 B42diFqpOv7uCl9qWUTyr5JjTUS/ROXtb311LwHiKO1f0Ap0nDJuNtqlLu3Pbuvtzf
-	 6BpL2LeO66Icy5l1P+F9z2yTpZedF7JDjKZC3sUhoZGRmBLAPCAoVY0/q98D/j17mw
-	 V8H3MJ8HGbiK+csRTfOxWVIy7gy48P14Rky0wFMJq/JQmNa4QqhyAqLe98/DXWbPgQ
-	 RhIzDKcsCOJpIdv1xdeVfZNqOPqB4RguwYGwLHkZrOt/2SCopoyZoWI/gm4zHNaqlS
-	 EorXKd/PPGEvg==
-Date: Wed, 5 Aug 2026 17:31:23 +0100
+	b=HJ2m9vXBV+9vu3MZtTSUvxeJx24qgCTQHG+tPdf9RsYFUpw+k3as79xzQmxlo62aK
+	 Dn8w4/PLdu5KhDusAzy6ClmVJH+9mAVfiNFzHCDKXhEU/OwGi9GFgN8h9tqcAbdo11
+	 tRI+KXy43yoh69SYYZ3ds4yVi2TKE3kz/l95vrmdCFx19Tg9U/GawqtgYdm+Rv84qF
+	 RpaKTgHNr5CsDUOqQJRb+vgPjTH28yU/RQo4ZnjRG1TPdQByHi5Zi5UcHzFdbNOqxB
+	 tFBfspzQT4r1VQ+BdSN/A5mfvttB4gujwTEyJdQhWYtcRfSzwsf6jnLbpp3lY1vk7n
+	 EPHdJQR0g/I/Q==
+Date: Wed, 5 Aug 2026 17:39:16 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
-	Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bert Karwatzki <spasswolf@web.de>, Harry Yoo <harry@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	Alice Ryhl <aliceryhl@google.com>,
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Harry Yoo <harry@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: rust compile failure in next-20260730
-Message-ID: <49305296-b2e5-4e59-befd-50fe85bf59ff@sirena.org.uk>
-References: <20260731122826.737703-1-spasswolf@web.de>
- <20260731192522.GA1014697@ax162>
- <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
- <anCkbMyUIscmAheK@tardis.local>
- <7c39e6cb-0ccf-4a50-a853-0f6012b05044@kernel.org>
- <DKFF147BG8PR.I12RKSRFQS1B@garyguo.net>
- <11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.org>
- <DKG2TQ94TGLB.3EO7ZNVKB50KY@garyguo.net>
- <7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org>
- <CANiq72=Y1eVO5F0j4NXbnUzVvEnDGg0evAkeiE9hd-7hkeVr7A@mail.gmail.com>
+	Hao Li <hao.li@linux.dev>, Nathan Chancellor <nathan@kernel.org>,
+	Bert Karwatzki <spasswolf@web.de>, Lyude Paul <lyude@redhat.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Tamir Duberstein <tamird@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: [PATCH -next] rust: poll: fix compilation error due to
+ kvfree_call_rcu changes
+Message-ID: <f0a3dec2-05bb-4136-9a63-828e02b77101@sirena.org.uk>
+References: <20260805-slab-rust-fix-v1-1-c4d4c1b69de2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -56,48 +57,36 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fi/cLxyyNmzKXZ1g"
+	protocol="application/pgp-signature"; boundary="i8n/Wi0JLixMSCOV"
 Content-Disposition: inline
-In-Reply-To: <CANiq72=Y1eVO5F0j4NXbnUzVvEnDGg0evAkeiE9hd-7hkeVr7A@mail.gmail.com>
+In-Reply-To: <20260805-slab-rust-fix-v1-1-c4d4c1b69de2@kernel.org>
 X-Cookie: Stop ahead.
 
 
---fi/cLxyyNmzKXZ1g
+--i8n/Wi0JLixMSCOV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Aug 05, 2026 at 06:24:03PM +0200, Miguel Ojeda wrote:
+On Wed, Aug 05, 2026 at 06:28:45PM +0200, Vlastimil Babka (SUSE) wrote:
+> kvfree_call_rcu() changed the type of its parameter to kvfree_rcu_head
+> in commit acc6fdade62c ("mm/slab: introduce struct kvfree_rcu_head for
+> kvfree_rcu batching") in the slab tree
 
-> I don't see it in next-20260805 -- Mark, could we please get the last
-> diff hunk from:
+That should be applied tomorrow.
 
->   https://lore.kernel.org/all/11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.org/
-
-> applied tomorrow in the char-misc-next merge? i.e.
-
->     -    rcu: Opaque<bindings::callback_head>,
->     +    rcu: Opaque<bindings::kvfree_rcu_head>,
-
-> in `rust/kernel/sync/poll.rs`.
-
-Could someone please send me the exact merge fixup you want applying as
-a patch, together with a description of which merge you want it applying
-to (or at least a description of the two trees affected so I can work it
-out)?  That's going to be less error prone...
-
---fi/cLxyyNmzKXZ1g
+--i8n/Wi0JLixMSCOV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzZVoACgkQJNaLcl1U
-h9DaoQf/XT+aIlyRi1+qIjYa607JbEn7AXb6+3VbbqRQjdfNsbToDSnA3kal9fkB
-UXhpBoTIWLIW7gfXJ3afsqA1aMQuQJkYyt+mv9a9WyLF0BAqEPx/DEky2A70Q8ly
-Ii6/Ee4hK9wzlr5WMT1O7frcYmA1PTVnrwPl5Hp9kovuTTcDWfIIrNJaIIj00t7D
-gYpr+2bNa3c2IBcyNOJiyeD46JyISgkDAx8SHfEaUElUqmfVvO/F76zbOWPU3iR4
-BV3EKvRcNSIsa3/QmGp2zKxr9x/7SB6KppO0z2eBYgUicaS8MjYwIr7dH9OZ0C2n
-1H6ht/r8jmz4lkBK3Pie/ihPi4klrA==
-=LQf3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzZzQACgkQJNaLcl1U
+h9AOWQf/a1RJT7/LgDrDyXkQJXF+KzjuGk9iJkRbULq6Iky3xjASkQ6j396IkURH
+6cp4UfoPhD9wmTzi69u76+qBa/ViwaNu+EArVO+Hystz7pY6X/BuoihvEXQmq19h
+rR+BRsJgpt/hoFCC2Ki3Eb3zRucaDaB6j7q0PyTQXOjSlNOusXoQSMCSJTok2aKg
+ScZy1L7tKqI/mEs6dHGlb5B+8QxexGciZHpgloQ6xM1/e6QtaurPsIOlg5y9kMEs
+fWGq3sQyfyKn7a7bKIGyLhUpqtEfnFxU8GzKvqSG6kSF3eUtI4UgEx9xFrLi39s2
+Y3RpK4xFI48knItISMitlMAEcYrMrw==
+=AWC7
 -----END PGP SIGNATURE-----
 
---fi/cLxyyNmzKXZ1g--
+--i8n/Wi0JLixMSCOV--
