@@ -1,128 +1,102 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0905C47ECDF
-	for <linux-next@vger.kernel.org>; Wed,  5 Aug 2026 16:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785947058; cv=pass; b=ESOJRRJbq2NwhtoPcSTnQ/XXyAcE7UtOW5jALL+elnxTzIqg2zCtbB+ULaFrvAuMeBD2GDGPzkQpWxMZ/8TBSL1HPQCm/U1fA3RswNbWOcW0zMuJ/vOlKJsnk/j0qQBto6QkD1+8Dz7nqueYpHwOg655KpFG0dXsMSVquu8lxWU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785947058; c=relaxed/simple;
-	bh=rKAZ3Lkdt6WEA5wFMWmLMVDk2hee68HtY6N4UyDz42I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QrBH4C3wSKkvQmwmiZGe1xFa+t/v/EwJ9Xv2DAVIsQeGrY0gvBYU39xZRjQcTJzcZK6L6tJ7zBwyQMhnfnOmbszyQZsdaKWpDb+CsUx0oMAb+KmBnvyDo2oxm+8P3jZZQft+lXB90b2TLu6kBbkBEVj0vjz9//IpBzhFwTibgoI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJA0Bwk2; arc=pass smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB32483824;
+	Wed,  5 Aug 2026 16:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785947348; cv=none; b=SaWLZmamvwhevPgqhJaNW7Ej2mCTKOfVE7tbYhapuwyMBEgY4TdICzIfIsWNiSSEw3RaquZ0kd0KAHDV/Q4XCYvCBwxxKeFFA0+uQarxC0Q9/r5AVpt/FrnMVFcdk0z601VTFHrlKmONFy4bJgWsVKIetApDUqmx5x2BtnUKKLo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785947348; c=relaxed/simple;
+	bh=mPEM91KUXeLIKkK0x44aIiEGCFfBFkkupCERjPTwwrk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DQCOmmQL+yVpzhi3ujSG94IlK6AEjPDQkrhePsQtTH3JDAT9xPweW8QRRq8gSYtpwc8tqtloFm8laFhefBh0TQRXt+eNQMaw5WRPAl1Txf3Y+yvuAMoYOxvPf96RnszPbJH1sLFYxXjY64w2pLFvDD6TGGz0imeEdAZk5T4yOLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAHvYEKK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJA0Bwk2"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2cecdc24b1cso1730605ad.1
-        for <linux-next@vger.kernel.org>; Wed, 05 Aug 2026 09:24:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785947056; cv=none;
-        d=google.com; s=arc-20260327;
-        b=XQZeoGXe073tfBvVlEQT0KLcQBAXQpptK9h3JunVNvlqXvqAb+buP24beiBlOgJpqG
-         r7+btOfI9gks/7Vy/o/Xz1e546xwfqDVIxdgP7+z+z7qTwRABXe7Cnt26zQYUXqkL8hz
-         pnDXGl7VbbXaz+3KRmC45HdXm6K7kHROUO6lYoG4f7qq3mjNtvvOHuZxd6m68lc7BlSE
-         foxROFQih+Ix0WIk9no2OZMcobyYr8TEFAKCWhtUno0GvbYnU+sVbfZ4M13n1ohccUe/
-         dhb6DTcP8Is1NzN/axYnw0wTEn2EBP9aNqlQJZzfn8KeO9vYmqJiH5lHtHIM6po1HCEj
-         eErA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Xh5IJEgMTtV1LRctkdQByNw6TmfCgKyTJ338f2MQFak=;
-        fh=N150sYleP1njONuv/8gYQXNqMLcvrhLfrjL7GiY+gZk=;
-        b=IA5H7oeAM7ZruqJOzMjRQs7I3vLHk9Uh+fOglkXEQk6M/dwOoJKRZE3p8prb3Kpvr4
-         8YukB+3hDLyoTll8dWfHjcN9ElLvqbtT4CodKbjIU6dJZWwESNK44qy5KZWjbCygvhBF
-         dA7vqBsqEe656JZxIrpOkYen7UuppYLRJIbuCMPrF+L+zQWuQr/9UlDT3UiGTVC2HOz6
-         FAtCKK3k5ri7HblHVvVh80plAh7Bw+U/NeaUjb9EGO2SgqeDi6xtR+5jYg+fnBcf8Lv2
-         YyRcH6r85WBgvseJ0fybwQ/XRcrwWfBGqta+VKG/iHLCAdyhIxC7xwzLqC/fy2/ooTM1
-         Cxag==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785947056; x=1786551856; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Xh5IJEgMTtV1LRctkdQByNw6TmfCgKyTJ338f2MQFak=;
-        b=IJA0Bwk2Hl6Zf0FnJMyrHsnXW83KRxgQypgn6wDjH9LVPmEUBcsL359jbmDwvv03jT
-         1Pi9sJqigcuuGcRAIhha12HDTemXi+AKWIPmCV7wRsQGy1xpE2sbw7OA221ibQF+bQiA
-         qZjoeGvWFaAL+GLRhg0lcQFhfqaSVFQdesCMuXMENJW+IfGjHk+NRIF0TTAjTB9FdML+
-         2ITDXAMBaPuMyLfwEz5nJ0Yyco85147N5MjmhzxHkoW+F0fwQatNG76jNPz3nuv/51Dm
-         PKMnMAVvpQH7bKtTQoI3Pi+4zhalsJT/dzksyA7yR676WLFn0XjwAhj22tWLfjbAdvI5
-         bZig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785947056; x=1786551856;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Xh5IJEgMTtV1LRctkdQByNw6TmfCgKyTJ338f2MQFak=;
-        b=VoJpdWnzfpfmXbvZKoqE1b0yc5F8524d3gc4ns1SYgrdjIgxmS4cUUgsOfZb+Hjnhe
-         uaTpnPK79azAfzt5oaRge6x2VW3Ic8uCm7F/hOplZozh/U4fJ9ED1acxz5MZXNLMOZ7d
-         ammy1YI4CNSKjyUiDRTuGivmLvbRRajnLCESWL7qUDSbUusjikL0RZTZ1Vl/yJu9jymW
-         DANsTaRJ/BNBtgut5hsMeLk9EDLdKnkKP2WyswN6pFra7izYfPkRPu0zC4T/F2EvNIxL
-         xrDedJlT+/Rf5yQ2q3e8ju9ufLrnjB+kgQ6LQBlJwGsbbyVRiuuvL9WGi+5DQLOXN+3u
-         IDbQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rr8EWLYF7bYWymX6OxS0GaGNGXHNA/ZHOxnrlElsWkAMX5tkplt+thK68jHU0dyP4pXVq3yP+2qtfO4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMqw4GeN6ZxRKiAgbWN4ma5mYzGVSyETm+CMxHXLgkVVOoZEMp
-	X6KN/gVR3hBMnspDqs8c4BCd3XQogOIZPKZC/vJAZxsYEq2i8Z3vLN2nf/T0ClZzhmYgsUFIIpB
-	u3OdGyhF+fy5Wm6f1dSrWUEEBz2hBLbI=
-X-Gm-Gg: AR+sD11mgvAZTjx378bfRDCjRN50u3U530zNwxx4Dw7kUj6WSlBtiogz5vmBjYx4fkM
-	zB/ktiTgCeFojpLuwlXSXQO6X8/h1pEyODZgCvwmIww0fOI5tK1nz4/ZuJh5l7gGE6RiqO+leoY
-	CiOJDwLWE3AGOs4MSEo019i/HuB9VITjCCICMX4mrjKpmBYL67CgBvEyv2c0zP49T929GAAqziF
-	WnBIZo7c5jIs4Ql1WeKjnICTBWD69BaenSkVb/YP/7/adZUeMfugFZmp23m1++P1OzyqIFtyy/O
-	uVo8TnU+wz2X4k9tFFLjBbXcYfRJffLW93K5emxUdvts3+nuKc2KapIOuFfNeBRWFM1cEGqNnQ9
-	fEFYyrxQM+5WvGXVQd9K3fvXNnoXoxob2jYNBrtEXVAMjXE0+54+HTzXqdtG+fNeuhDbxRCM=
-X-Received: by 2002:a17:903:468b:b0:2c7:ef84:c58e with SMTP id
- d9443c01a7336-2d0ca761dffmr69410425ad.1.1785947056397; Wed, 05 Aug 2026
- 09:24:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAHvYEKK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE9941F000E9;
+	Wed,  5 Aug 2026 16:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785947345;
+	bh=DmP6xQCHOKQgnic6zEyzMlMnp8CXbn9EWT3jAz8M1II=;
+	h=From:Date:Subject:To:Cc;
+	b=kAHvYEKKAk8bpPclqOZhW3gSKsQI6ZS4bDChmvxnlZCp30xFF8Y3+HoYH2VXCwPHq
+	 q9xbv19oRCg2s0ZGlw0wcY4nFxwU1nTwfn0+SDnuxIzBAfe69/y0xW4muoYdRtXN5m
+	 69YuCA8NR8s5ZlH70h0H5x44eHjJELEE9cjWAKGSh3lLB4rysRJor241i44gu1u2fi
+	 jCtD0Rv2+VOtxNEE9L/HbBFZlWA1j1wIG0eJHFfsE7OfVmlV44s2e4amWC1s9wVpXl
+	 5J86IpDI0hEom9Ib6BTbMel2MjGvM9TITaxfgt/uTKeQDEtIxDM4ZN0ClEKGOKku0b
+	 BZ+640mkZIWuA==
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Date: Wed, 05 Aug 2026 18:28:45 +0200
+Subject: [PATCH -next] rust: poll: fix compilation error due to
+ kvfree_call_rcu changes
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260731122826.737703-1-spasswolf@web.de> <20260731192522.GA1014697@ax162>
- <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net> <anCkbMyUIscmAheK@tardis.local>
- <7c39e6cb-0ccf-4a50-a853-0f6012b05044@kernel.org> <DKFF147BG8PR.I12RKSRFQS1B@garyguo.net>
- <11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.org> <DKG2TQ94TGLB.3EO7ZNVKB50KY@garyguo.net>
- <7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org>
-In-Reply-To: <7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 5 Aug 2026 18:24:03 +0200
-X-Gm-Features: AUfX_mygijAuCVxeQaTTUH-pXgVCFiiXo2upSYBRt13e-biayo0C4LzxsKAA0vI
-Message-ID: <CANiq72=Y1eVO5F0j4NXbnUzVvEnDGg0evAkeiE9hd-7hkeVr7A@mail.gmail.com>
-Subject: Re: rust compile failure in next-20260730
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Harry Yoo <harry@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260805-slab-rust-fix-v1-1-c4d4c1b69de2@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALxkc2oC/yWMQQrCMBQFr1Le2g9pihK9irho4lO/SJT8VAqld
+ zfqcgZmFhiL0nDoFhS+1fSZG/SbDuk25itFz43hnd+54LZijzFKmazKRWeJffAhcfB7DmjNq7D
+ p3+8IyZwrTn9tU7wz1e8L6/oBF0MgZngAAAA=
+X-Change-ID: 20260805-slab-rust-fix-b1828ce329e3
+To: Mark Brown <broonie@kernel.org>, Boqun Feng <boqun@kernel.org>, 
+ Gary Guo <gary@garyguo.net>, Alice Ryhl <aliceryhl@google.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Harry Yoo <harry@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hao Li <hao.li@linux.dev>, 
+ Nathan Chancellor <nathan@kernel.org>, Bert Karwatzki <spasswolf@web.de>, 
+ Lyude Paul <lyude@redhat.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, linux-next@vger.kernel.org, 
+ "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+X-Mailer: b4 0.15.2
 
-On Tue, Aug 4, 2026 at 12:35=E2=80=AFPM Vlastimil Babka (SUSE)
-<vbabka@kernel.org> wrote:
->
-> Thanks. The slab/for-next branch now includes the slab changes.
-> The merge commit should thus perform the rust/kernel/sync/poll.rs change.
+kvfree_call_rcu() changed the type of its parameter to kvfree_rcu_head
+in commit acc6fdade62c ("mm/slab: introduce struct kvfree_rcu_head for
+kvfree_rcu batching") in the slab tree
 
-I don't see it in next-20260805 -- Mark, could we please get the last
-diff hunk from:
+Meanwhile rust started relying on the old type in commit e5e86df8b666
+("rust: poll: use kfree_rcu() for PollCondVar") in the char-misc tree.
 
-  https://lore.kernel.org/all/11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.o=
-rg/
+Reconcile the two changes as suggested by Gary [1]. This should be
+applied as the merge commit for either slab tree or char-misc tree,
+whichever is merged to -next later. The code it changes comes from
+char-misc tree.
 
-applied tomorrow in the char-misc-next merge? i.e.
+[1] https://lore.kernel.org/all/DKFF147BG8PR.I12RKSRFQS1B@garyguo.net/
 
-    -    rcu: Opaque<bindings::callback_head>,
-    +    rcu: Opaque<bindings::kvfree_rcu_head>,
+Suggested-by: Gary Guo <gary@garyguo.net>
+Closes: https://lore.kernel.org/all/20260731075644.20215-1-ojeda@kernel.org/
+Closes: https://lore.kernel.org/all/20260731122826.737703-1-spasswolf@web.de/
+Signed-off-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+---
+ rust/kernel/sync/poll.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-in `rust/kernel/sync/poll.rs`.
+diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
+index 684dfa242b1a..f3cdf95db12d 100644
+--- a/rust/kernel/sync/poll.rs
++++ b/rust/kernel/sync/poll.rs
+@@ -124,7 +124,7 @@ pub struct PollCondVarBox {
+ struct PollCondVarBoxInner {
+     #[pin]
+     inner: PollCondVar,
+-    rcu: Opaque<bindings::callback_head>,
++    rcu: Opaque<bindings::kvfree_rcu_head>,
+ }
+ 
+ // SAFETY: PollCondVar is Send
 
-Thanks!
+---
+base-commit: 1701fda2f58e345c050f4309971bdc07cd6146ba
+change-id: 20260805-slab-rust-fix-b1828ce329e3
 
-Cheers,
-Miguel
