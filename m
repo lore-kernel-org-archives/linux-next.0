@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF0E380FFD;
-	Wed,  5 Aug 2026 14:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2AA38DC51;
+	Wed,  5 Aug 2026 14:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785940548; cv=none; b=gFXjSAEy07GFye0g5G3GwhedEK7V9Oz2dnvfGnXuJlr+fTDTGV6XzBuPw4EvGj5+fSKVLVyS7FsPqv+6Wdkisu2zYNb8tj9DBMvUuvggwV/oJFryyl/CctLYqHIW0SON4KecrqUa/+MynEJYzu45VYZ2fEtnurqwHrXexsyC8Ak=
+	t=1785940564; cv=none; b=TFI8UK611anmorO28UUuRACRO3FXkGrk52Y+ffPQ8WpbVISWi79yudAlNXC8m91BnnJ6neE6uYhEM0UloNQ42SBnWdl0A7+Dw7Exz9uyUODtta5HJHUOivmM4xxFZiSLEiPp5xyL0MmqJZp1Weo8NAHTqyzn0fxuMQds9eQ3IO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785940548; c=relaxed/simple;
-	bh=6JvnB4wdxhhLWl3DTPVf1hNl+5GIHCQcDqD2cv6/2Vs=;
+	s=arc-20240116; t=1785940564; c=relaxed/simple;
+	bh=LDRFag0yA5QM1q+M6vQe1UzSjyNkr3HVCs/mri07xQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uuI0PHWCh3vIJxNCNc8YdXND7vVle2/DAgQLVgyosbQyAydEsPB+YloR5OYQoo6wgyf9Rvp6H+YEiLukRj9cyMKB940AOK5AFNQ5tabQygsnGrhiCUEsKZGcKC3XhbMoS/vgxHE/P7yFu0AeZvqdC3yZqQ37v4eboGyF7P4gIKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWvxXlHg; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=TbAEZ6gWZeatnpoBVHg9hmESBWsJR0+DTrEAIn/RqsTufZuV4yUl4W/gm2yiBbNXUCSyUMfGxqpqPFl7kp9ICH+qTrO2/aFqL+ZDif5jgVlwEeLEtN0O9qyxZJtQOSyzAnfI0if4rV9fVKl4tF/rp/QuOnBkYOJDPBQ3uuGGuxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O43T+/2a; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWvxXlHg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDFB1F000E9;
-	Wed,  5 Aug 2026 14:35:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O43T+/2a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 525EB1F000E9;
+	Wed,  5 Aug 2026 14:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785940539;
-	bh=1zVRmnbSrR4jPDAgsKnRh60Fn6Fc5cEDffvP+I4cN+M=;
+	s=k20260515; t=1785940554;
+	bh=YbhdZJZkkmqDvKmYNbSRa6Bq7c7E2kveTX5qUGNGzFk=;
 	h=Date:From:To:Cc:Subject;
-	b=cWvxXlHgxvuVGpFZlQVVjIcp6ar0zgmZtFz2WsngG8OpEFSJEPZPHQvEtI5kiL7ko
-	 Fn5En7FFUYHoKsf+ABTEhe8mV6lYLYYpswuXY2YJwCKNucxWtNvczqv2LLQjhKXXte
-	 PFlNkyAmavUXPpdNCE6hu1sivaMBazs9fu+emy/Su7i8RTwYyCvQyM2sYlKgEJ85Nr
-	 kspXfIfke4+Nu1cpb71Z8G3WM+d0eHHzZWF/gSoqnjHTfRxPEud4fPmSBe+Jr6UCPk
-	 +ok+Lzf3RwlPSJ9QeKpW7EaC18a6VEv23nZ6WY+b9HyHwCBbR6WiC2InWNEygLiSog
-	 z5z/+z2YfAysg==
-Date: Wed, 5 Aug 2026 15:35:35 +0100
+	b=O43T+/2a/wUkLNK/10WccQzC/r53GEJHOCne14OfnFq0Gxb+rTAaGrcMhzbM2oaW7
+	 z5JeRZ1NBlT2Uw1sZ5JUxPVxfxov2EgHE29++TDmRmOrKNlO2AsNwHuSPwegecBgSR
+	 f4H5poby1yQ8Q8wwPw/rEMbVg6bKQuOxjwPFSaH5pYW8eCh1mO4ID4FixhTM1z3kZn
+	 r3cAkiMYRldBsu3o6bz/e+SuHM+aolGON3i/C2/PRV8uHF2URS3qUI9lGHIPKsowCK
+	 uePJwoUmMnpxDP1Sh1AR7qwQjrigIBuE7DaVmGY3LzbNtyWqcuLCIlAQScC5K6nTEa
+	 jUmydbuJ14tJQ==
+Date: Wed, 5 Aug 2026 15:35:50 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Marcel Holtmann <marcel@holtmann.org>,
 	Johan Hedberg <johan.hedberg@gmail.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the bluetooth tree
-Message-ID: <anNKNwkjosR_PMYe@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Pauli Virtanen <pav@iki.fi>
+Subject: linux-next: manual merge of the bluetooth tree with the origin tree
+Message-ID: <anNKRv8inSvCMCRb@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,96 +43,151 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qaUuTvPNdzxsHoAX"
+	protocol="application/pgp-signature"; boundary="MmIzuahFlChF6KDN"
 Content-Disposition: inline
 
 
---qaUuTvPNdzxsHoAX
+--MmIzuahFlChF6KDN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-The following commit is also in Linus Torvalds' tree as a different commit
-(but the same patch):
+Today's linux-next merge of the bluetooth tree got a conflict in:
 
+  include/net/bluetooth/hci_core.h
 
-  018d1e023ea5c ("Bluetooth: SCO: give the socket its own sco_conn reference")
-  0e2c0392b9dc2 ("Bluetooth: L2CAP: Fix use-after-free in l2cap_sock_new_connection_cb()")
-  103ac7b87e1fc ("Bluetooth: ISO: fix malformed ISO_END/CONT handling")
-  126e8f096c10e ("Bluetooth: ISO: validate sockaddr_iso first in iso_sock_rebind_bis()")
-  137501e0242f0 ("Bluetooth: mgmt: hold reference for hci_conn in mgmt_pending_cmds")
-  17f5bfb02164e ("Bluetooth: hci_sync: extend conn_hash lookup critical sections")
-  198bd312df38a ("Bluetooth: qca: fix NVM tag length underflow in TLV parser")
-  25c286d758212 ("Bluetooth: btnxpuart: Fix out-of-bounds firmware read in nxp_recv_fw_req_v3()")
-  278aeca60782d ("Bluetooth: ISO: fix CONNECTED -> CLOSED transition on shutdown/release")
-  2a93966653a9e ("Bluetooth: ISO: fix leaking sk after socket release")
-  2ac5f666025e9 ("Bluetooth: RFCOMM: Fix session UAF in set_termios")
-  300a6fb2d8b79 ("Bluetooth: mgmt: fix UAF in pair command cancellation")
-  3501d7754c854 ("Bluetooth: btmtk: Fix short read errors in btmtk_usb_uhw_reg_read()")
-  3b7686310806b ("Bluetooth: hci_uart: clear HCI_UART_SENDING when write_work is canceled")
-  3bf1394e88680 ("Bluetooth: hci_conn: hold conn reference in abort_conn_sync()")
-  3c5f5c6be8783 ("Bluetooth: hci_sync: hold conn in hci_past_sync() callback")
-  3d9ce6e4639c2 ("Bluetooth: btintel: Validate length before parsing diagnostics TLV")
-  3fbd73d24dcc5 ("Bluetooth: MGMT: revalidate LOAD_CONN_PARAM queued update")
-  423e5fc465eb1 ("Bluetooth: hci_sync: fix hci_conn_del() use in hci_le_create_conn_sync")
-  4b56754e9da3e ("Bluetooth: ISO: fix race of kfree vs kref_get_unless_zero")
-  4c7de7083a9ac ("Bluetooth: RFCOMM: validate skb length in rfcomm_recv_frame")
-  5de0af8b2ace6 ("Bluetooth: L2CAP: fix UAF in l2cap_le_connect_rsp")
-  603b91aeb20a2 ("Bluetooth: btintel_pcie: Refactor FLR to use device_reprobe()")
-  6042a966e047e ("Bluetooth: bpa10x: avoid OOB read of revision string in bpa10x_setup()")
-  64522263b6e36 ("Bluetooth: L2CAP: validate option length before reading conf opt value")
-  678c435909f28 ("Bluetooth: HIDP: reject frames without a transaction header")
-  69a694ebe97f6 ("Bluetooth: hci_sync: hold conn in hci_connect_acl/le_sync() callbacks")
-  6d16b799d7f4a ("Bluetooth: ISO: lock sk in iso_sock_getname")
-  7083dd3316675 ("Bluetooth: MGMT: Fix adv monitor add failure cleanup")
-  73b6871b261f3 ("Bluetooth: hci_sync: remove unnecessary hci_conn_get in create_conn_sync")
-  76c2d047410ba ("Bluetooth: hci_conn: Fix null ptr deref in hci_abort_conn()")
-  7ea67149af719 ("Bluetooth: L2CAP: fix tx ident leak for commands without a response")
-  883532b7d4eb3 ("Bluetooth: HIDP: validate numbered report payloads")
-  891916abe16fc ("Bluetooth: btusb: validate Realtek vendor event length")
-  9348bd469f563 ("Bluetooth: hci_sync: Protect UUID list traversal")
-  9496dfbab73fe ("Bluetooth: ISO: exclude RFU bits from ISO_SDU_Length")
-  a0ac2b200be13 ("Bluetooth: ISO: avoid NULL deref of conn in iso_conn_big_sync()")
-  a3ad01d51d4be ("Bluetooth: hci_sync: Fix advertising data UAFs")
-  a8c481ee38196 ("Bluetooth: fix UAF in bt_accept_dequeue()")
-  a8fb0c8ec7d6e ("Bluetooth: 6lowpan: avoid untracked enable work")
-  abcb881d99adf ("Bluetooth: btmtk: Fix short read errors in btmtk_usb_reg_read()")
-  b1196afe58a92 ("Bluetooth: hci_sync: hold conn in hci_connect_big_sync() callback")
-  b755b4141c64a ("Bluetooth: hci_sync: hold hdev->lock for hci_conn_params lookups")
-  c08593655456f ("Bluetooth: ISO: fix timeout vs sync_timeout typo in check_bcast_qos")
-  c22eb0db0c629 ("Bluetooth: mgmt: fix pending command UAF in EIR updates")
-  cb20f6afc25b2 ("Bluetooth: MGMT: Fix UAF of hci_conn_params in add_device_complete")
-  cddcc54a7afe5 ("Bluetooth: sco: Fix a race condition in sco_sock_timeout()")
-  cddfec3618d00 ("Bluetooth: hci_sync: hold conn in hci_connect_pa_sync() callback")
-  cfa697b22dad9 ("Bluetooth: L2CAP: cancel pending_rx_work before taking conn->lock")
-  d09cff8f7ecfb ("Bluetooth: btrtl: validate firmware patch bounds")
-  d138ff8690c8e ("Bluetooth: 6lowpan: hold L2CAP conn across debugfs control")
-  d35e2950daaf8 ("Bluetooth: 6lowpan: Fix using chan->conn as indication to no remote netdev")
-  d66f0661748ef ("Bluetooth: bnep: pin L2CAP connection during netdev registration")
-  deb1d93a07f08 ("Bluetooth: ISO: hold sk properly in iso_conn_ready")
-  df810355bbe7e ("Bluetooth: ISO: lock sk in iso_connect_ind")
-  e4d507fb7f6e8 ("Bluetooth: ISO: fix refcounting of iso_conn")
-  e824c0bbe0ec9 ("Bluetooth: ISO: clear iso_data always when detaching conn from hcon")
-  eab19cb7618e5 ("Bluetooth: mgmt: Translate HCI reason in Device Disconnected event")
-  f3f75fd597f25 ("Bluetooth: mgmt: fix locking in unpair_device/disconnect_sync")
-  f80c3b2232a25 ("Bluetooth: ISO: ensure no dangling hcon references in iso_conn")
-  f8cb802462f50 ("Bluetooth: ISO: avoid deadlocks in iso_sock_timeout")
-  fd694aebe4148 ("Bluetooth: hci_qca: Clear memdump state on invalid dump size")
+between commit:
 
---qaUuTvPNdzxsHoAX
+  af24e338bf5da ("Bluetooth: ISO: fix race of kfree vs kref_get_unless_zero=
+")
+
+=66rom the origin tree and commit:
+
+  d740cf77461a4 ("Bluetooth: add annotations for l2cap_data locking context=
+")
+
+=66rom the bluetooth tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined include/net/bluetooth/hci_core.h
+index 3df59849dcbea,e07418a5adce7..0000000000000
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@@ -416,6 -416,7 +416,7 @@@ struct hci_dev=20
+  	__u16		le_conn_max_interval;
+  	__u16		le_conn_latency;
+  	__u16		le_supv_timeout;
++ 	__u16		le_min_rate_interval;
+  	__u16		le_def_tx_len;
+  	__u16		le_def_tx_time;
+  	__u16		le_max_tx_len;
+@@@ -645,6 -646,8 +646,8 @@@
+  	int (*setup)(struct hci_dev *hdev);
+  	int (*shutdown)(struct hci_dev *hdev);
+  	int (*send)(struct hci_dev *hdev, struct sk_buff *skb);
++ 	/* Handle HCI_EV_VENDOR; return true if handled, false otherwise */
++ 	bool (*handle_ev_vendor)(struct hci_dev *hdev, struct sk_buff *skb);
+  	void (*notify)(struct hci_dev *hdev, unsigned int evt);
+  	void (*hw_error)(struct hci_dev *hdev, u8 code);
+  	int (*post_init)(struct hci_dev *hdev);
+@@@ -720,6 -723,11 +723,11 @@@ struct hci_conn=20
+  	__u16		le_conn_interval;
+  	__u16		le_conn_latency;
+  	__u16		le_supv_timeout;
++ 	__u16		le_rate_interval;
++ 	__u16		le_subrate;
++ 	__u16		le_rate_latency;
++ 	__u16		le_cont_num;
++ 	__u16		le_rate_supv_timeout;
+  	__u8		le_adv_data[HCI_MAX_EXT_AD_LENGTH];
+  	__u8		le_adv_data_len;
+  	__u8		le_per_adv_data[HCI_MAX_PER_AD_TOT_LEN];
+@@@ -769,7 -777,7 +777,7 @@@
+  	struct hci_dev	*hdev;
+ =20
+  	spinlock_t	proto_lock; /* lock guarding protocol data */
+- 	void		*l2cap_data;
++ 	void		*l2cap_data __guarded_by(&proto_lock, &hdev->lock);
+  	void		*sco_data;
+  	void		*iso_data __guarded_by(&proto_lock);
+ =20
+@@@ -812,6 -820,14 +820,14 @@@ struct hci_conn_params=20
+  	u16 conn_latency;
+  	u16 supervision_timeout;
+ =20
++ 	u16 rate_min_interval;
++ 	u16 rate_max_interval;
++ 	u16 subrate_min;
++ 	u16 subrate_max;
++ 	u16 max_latency;
++ 	u16 cont_num;
++ 	u16 rate_supv_timeout;
++=20
+  	enum {
+  		HCI_AUTO_CONN_DISABLED,
+  		HCI_AUTO_CONN_REPORT,
+@@@ -1771,7 -1787,13 +1787,13 @@@ int hci_register_suspend_notifier(struc
+  int hci_unregister_suspend_notifier(struct hci_dev *hdev);
+  int hci_suspend_dev(struct hci_dev *hdev);
+  int hci_resume_dev(struct hci_dev *hdev);
+- int hci_reset_dev(struct hci_dev *hdev);
++ int __hci_reset_dev(struct hci_dev *hdev, u8 hw_err_code);
++=20
++ static inline int hci_reset_dev(struct hci_dev *hdev)
++ {
++ 	return __hci_reset_dev(hdev, 0);
++ }
++=20
+  int hci_recv_frame(struct hci_dev *hdev, struct sk_buff *skb);
+  int hci_recv_diag(struct hci_dev *hdev, struct sk_buff *skb);
+  __printf(2, 3) void hci_set_hw_info(struct hci_dev *hdev, const char *fmt=
+, ...);
+@@@ -2079,6 -2101,11 +2101,11 @@@ void hci_conn_del_sysfs(struct hci_con
+  #define le_cs_host_capable(dev) \
+  	((dev)->le_features[5] & HCI_LE_CS_HOST)
+ =20
++ #define le_sci_capable(dev) \
++ 	((dev)->le_features[9] & HCI_LE_SCI)
++ #define le_sci_enabled(dev) \
++ 	(le_enabled(dev) && le_sci_capable(dev))
++=20
+  #define mws_transport_config_capable(dev) (((dev)->commands[30] & 0x08) &=
+& \
+  	(!hci_test_quirk((dev), HCI_QUIRK_BROKEN_MWS_TRANSPORT_CONFIG)))
+ =20
+@@@ -2494,6 -2521,8 +2521,8 @@@ void mgmt_advertising_removed(struct so
+  int mgmt_phy_configuration_changed(struct hci_dev *hdev, struct sock *ski=
+p);
+  void mgmt_adv_monitor_device_lost(struct hci_dev *hdev, u16 handle,
+  				  bdaddr_t *bdaddr, u8 addr_type);
++ void mgmt_conn_subrate_notify(struct hci_dev *hdev, struct hci_conn *conn,
++ 			      u8 status);
+ =20
+  int hci_abort_conn(struct hci_conn *conn, u8 reason);
+  void hci_le_conn_update(struct hci_conn *conn, u16 min, u16 max, u16 late=
+ncy,
+
+--MmIzuahFlChF6KDN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzSjYACgkQJNaLcl1U
-h9BZuAf+MntELql93EnTcZVmHFPEcpGIwZTGiJqLfQX9N+N+6tfQV5dhoFNgstln
-tPKqedmoEOEpYubiHwh+xJLK9Ykizd8X2ngPAuNO+25mKy2TaH6xBxCMVWiC9zv3
-xTmQI3WxCduU3F4gm1YrzHZqRMtkjGK9mgm5W11rcmT4HrfZelT8pTch6s5owHNQ
-4ORoeGmTk36xPse7EEXYhUp/yeiBttIAtVyXCW4rHIgG923mkJbtEdPp3FONhB7F
-9GFQxNBJxEJMKInNXsdcIBEli47DpavDDcajGeQwoCJXLUN2gFsSdbjcKOTzOMmM
-BFOhO7/bNM3ECUyBQRHzVvsj/GluJw==
-=zUsm
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzSkYACgkQJNaLcl1U
+h9CT7gf/Vyz5t0/z+2U8FyUHf7CsqDDK+z7ZNYk2wtWG920I2wjW8vXJzpAGPUfq
+gRQbQz7WZhnZC114sBq6HbsLkg3vNXUCVfWkv5agZb/aLnS1NcUb50nSfW6ulrPB
+XeZ9/q97tsDxS3cpkXMF2Ymq2/SIL3YrDNB+l8BHbk7M2oQpepRFFdt0oUYYMjYU
+Idp3JJl6ijgYvxA8RI4k9nxJKhSrLHCVC7rsIj3cR1IRoR8N9ZuyYHjjY+HKuHvT
+7QRlKSMrHHXEKzrZoIwzNU35qw4rO4j1FZVdKCjGKp7vreDneWHf6zEtG/UHVFm6
+WGlmN0k0wzkb0v3ZxUZ2lIQJ6aD3+g==
+=Pgsm
 -----END PGP SIGNATURE-----
 
---qaUuTvPNdzxsHoAX--
+--MmIzuahFlChF6KDN--
