@@ -1,41 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2AA38DC51;
-	Wed,  5 Aug 2026 14:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269A938D3E6;
+	Wed,  5 Aug 2026 14:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785940564; cv=none; b=TFI8UK611anmorO28UUuRACRO3FXkGrk52Y+ffPQ8WpbVISWi79yudAlNXC8m91BnnJ6neE6uYhEM0UloNQ42SBnWdl0A7+Dw7Exz9uyUODtta5HJHUOivmM4xxFZiSLEiPp5xyL0MmqJZp1Weo8NAHTqyzn0fxuMQds9eQ3IO0=
+	t=1785940572; cv=none; b=YHOyaYYcPizQI8GAVlJoQlPXzaNk6ZpfMFYaEO99KTb3gV8dLRA6XLlxA+dY5yGZvWbOHDIA80hPaITqTdj8MCgCZdF6nJ1UOAU2CtksJ56NRYaZTz6wUENrb+xmSsolcMMtIUWok4zZxkiQ9WmRMvgTV5W8s4c2QjrrZpQKpyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785940564; c=relaxed/simple;
-	bh=LDRFag0yA5QM1q+M6vQe1UzSjyNkr3HVCs/mri07xQ0=;
+	s=arc-20240116; t=1785940572; c=relaxed/simple;
+	bh=Pe8r3IFjp70w7luE1DSCFUwMqCvmEyFD3zw6Z9Skl6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TbAEZ6gWZeatnpoBVHg9hmESBWsJR0+DTrEAIn/RqsTufZuV4yUl4W/gm2yiBbNXUCSyUMfGxqpqPFl7kp9ICH+qTrO2/aFqL+ZDif5jgVlwEeLEtN0O9qyxZJtQOSyzAnfI0if4rV9fVKl4tF/rp/QuOnBkYOJDPBQ3uuGGuxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O43T+/2a; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=OBU5KIJhMF7JLrDn32ohY/uQ7oPLAtfX0oM6F1EvBogq/wIWBMPN2eTkTLF17Vk1XGvgBUc7EqTG6HwLB3ch3uysLPsCFGJWCchTnKlI4q6YiZBTpHK6hdCSftQj/8Mf14ru1hdYEMHWMBLD7VMb/RTskxTUEoo3hGurWWQN6Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTXZemVz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O43T+/2a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 525EB1F000E9;
-	Wed,  5 Aug 2026 14:35:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTXZemVz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C6231F00A3D;
+	Wed,  5 Aug 2026 14:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785940554;
-	bh=YbhdZJZkkmqDvKmYNbSRa6Bq7c7E2kveTX5qUGNGzFk=;
+	s=k20260515; t=1785940564;
+	bh=O7hi9ni/YCDPq9EKVl5mlFO/wpk9AXsaavaXh1PW9yo=;
 	h=Date:From:To:Cc:Subject;
-	b=O43T+/2a/wUkLNK/10WccQzC/r53GEJHOCne14OfnFq0Gxb+rTAaGrcMhzbM2oaW7
-	 z5JeRZ1NBlT2Uw1sZ5JUxPVxfxov2EgHE29++TDmRmOrKNlO2AsNwHuSPwegecBgSR
-	 f4H5poby1yQ8Q8wwPw/rEMbVg6bKQuOxjwPFSaH5pYW8eCh1mO4ID4FixhTM1z3kZn
-	 r3cAkiMYRldBsu3o6bz/e+SuHM+aolGON3i/C2/PRV8uHF2URS3qUI9lGHIPKsowCK
-	 uePJwoUmMnpxDP1Sh1AR7qwQjrigIBuE7DaVmGY3LzbNtyWqcuLCIlAQScC5K6nTEa
-	 jUmydbuJ14tJQ==
-Date: Wed, 5 Aug 2026 15:35:50 +0100
+	b=aTXZemVzkpdxSnwCxxz8U7kUYmSvdTeLoI6wzZqwZi4GOET7JTjO6RU/sTIh8aUnM
+	 m8GCFiHY/QxI3CI763a6L2R2O+M4OXQ2JDYF6WM0b9XhJNi4VJJWXMttpOlkSz6/4G
+	 eE/aLfPBiZ3O3XoaN1QKh/DVvtCfxHIaSBNSj7AFSOV/RfMl6SJGGvbEEFgLpULZmr
+	 PMLAZQMW0NuN29wsSNx6s3R/1eiV0iX4z9kFUmabh6wbYbdceVm+Dm8QyMU217cV3m
+	 mxhi9klbt2OhklBN/NWcKGGESYxFfLzvhVSBmvpztZcsAHCUbM2pYpdYqve+0MmIaP
+	 dYeeYE5pG1fQQ==
+Date: Wed, 5 Aug 2026 15:36:00 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Marcel Holtmann <marcel@holtmann.org>,
 	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc: Cen Zhang <zzzccc427@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
 	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
 	Pauli Virtanen <pav@iki.fi>
 Subject: linux-next: manual merge of the bluetooth tree with the origin tree
-Message-ID: <anNKRv8inSvCMCRb@sirena.org.uk>
+Message-ID: <anNKULWanUsTk3xb@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,11 +44,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MmIzuahFlChF6KDN"
+	protocol="application/pgp-signature"; boundary="fMHHB175ZJGFbCzb"
 Content-Disposition: inline
 
 
---MmIzuahFlChF6KDN
+--fMHHB175ZJGFbCzb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -56,17 +57,19 @@ Hi all,
 
 Today's linux-next merge of the bluetooth tree got a conflict in:
 
-  include/net/bluetooth/hci_core.h
+  net/bluetooth/6lowpan.c
 
 between commit:
 
-  af24e338bf5da ("Bluetooth: ISO: fix race of kfree vs kref_get_unless_zero=
-")
+  518aa9505fa10 ("Bluetooth: 6lowpan: hold L2CAP conn across debugfs contro=
+l")
 
-=66rom the origin tree and commit:
+=66rom the origin tree and commits:
 
   d740cf77461a4 ("Bluetooth: add annotations for l2cap_data locking context=
 ")
+  d138ff8690c8e ("Bluetooth: 6lowpan: hold L2CAP conn across debugfs contro=
+l")
 
 =66rom the bluetooth tree.
 
@@ -77,117 +80,33 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined include/net/bluetooth/hci_core.h
-index 3df59849dcbea,e07418a5adce7..0000000000000
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@@ -416,6 -416,7 +416,7 @@@ struct hci_dev=20
-  	__u16		le_conn_max_interval;
-  	__u16		le_conn_latency;
-  	__u16		le_supv_timeout;
-+ 	__u16		le_min_rate_interval;
-  	__u16		le_def_tx_len;
-  	__u16		le_def_tx_time;
-  	__u16		le_max_tx_len;
-@@@ -645,6 -646,8 +646,8 @@@
-  	int (*setup)(struct hci_dev *hdev);
-  	int (*shutdown)(struct hci_dev *hdev);
-  	int (*send)(struct hci_dev *hdev, struct sk_buff *skb);
-+ 	/* Handle HCI_EV_VENDOR; return true if handled, false otherwise */
-+ 	bool (*handle_ev_vendor)(struct hci_dev *hdev, struct sk_buff *skb);
-  	void (*notify)(struct hci_dev *hdev, unsigned int evt);
-  	void (*hw_error)(struct hci_dev *hdev, u8 code);
-  	int (*post_init)(struct hci_dev *hdev);
-@@@ -720,6 -723,11 +723,11 @@@ struct hci_conn=20
-  	__u16		le_conn_interval;
-  	__u16		le_conn_latency;
-  	__u16		le_supv_timeout;
-+ 	__u16		le_rate_interval;
-+ 	__u16		le_subrate;
-+ 	__u16		le_rate_latency;
-+ 	__u16		le_cont_num;
-+ 	__u16		le_rate_supv_timeout;
-  	__u8		le_adv_data[HCI_MAX_EXT_AD_LENGTH];
-  	__u8		le_adv_data_len;
-  	__u8		le_per_adv_data[HCI_MAX_PER_AD_TOT_LEN];
-@@@ -769,7 -777,7 +777,7 @@@
-  	struct hci_dev	*hdev;
+diff --combined net/bluetooth/6lowpan.c
+index d504a363a30f3,30f4afa18bc8f..0000000000000
+--- a/net/bluetooth/6lowpan.c
++++ b/net/bluetooth/6lowpan.c
+@@@ -1007,6 -1007,8 +1007,8 @@@ static int get_l2cap_conn(char *buf, bd
+  		return -ENOENT;
+  	}
  =20
-  	spinlock_t	proto_lock; /* lock guarding protocol data */
-- 	void		*l2cap_data;
-+ 	void		*l2cap_data __guarded_by(&proto_lock, &hdev->lock);
-  	void		*sco_data;
-  	void		*iso_data __guarded_by(&proto_lock);
- =20
-@@@ -812,6 -820,14 +820,14 @@@ struct hci_conn_params=20
-  	u16 conn_latency;
-  	u16 supervision_timeout;
- =20
-+ 	u16 rate_min_interval;
-+ 	u16 rate_max_interval;
-+ 	u16 subrate_min;
-+ 	u16 subrate_max;
-+ 	u16 max_latency;
-+ 	u16 cont_num;
-+ 	u16 rate_supv_timeout;
++ 	lockdep_assert_held(&hcon->hdev->lock);
 +=20
-  	enum {
-  		HCI_AUTO_CONN_DISABLED,
-  		HCI_AUTO_CONN_REPORT,
-@@@ -1771,7 -1787,13 +1787,13 @@@ int hci_register_suspend_notifier(struc
-  int hci_unregister_suspend_notifier(struct hci_dev *hdev);
-  int hci_suspend_dev(struct hci_dev *hdev);
-  int hci_resume_dev(struct hci_dev *hdev);
-- int hci_reset_dev(struct hci_dev *hdev);
-+ int __hci_reset_dev(struct hci_dev *hdev, u8 hw_err_code);
-+=20
-+ static inline int hci_reset_dev(struct hci_dev *hdev)
-+ {
-+ 	return __hci_reset_dev(hdev, 0);
-+ }
-+=20
-  int hci_recv_frame(struct hci_dev *hdev, struct sk_buff *skb);
-  int hci_recv_diag(struct hci_dev *hdev, struct sk_buff *skb);
-  __printf(2, 3) void hci_set_hw_info(struct hci_dev *hdev, const char *fmt=
-, ...);
-@@@ -2079,6 -2101,11 +2101,11 @@@ void hci_conn_del_sysfs(struct hci_con
-  #define le_cs_host_capable(dev) \
-  	((dev)->le_features[5] & HCI_LE_CS_HOST)
+  	*conn =3D l2cap_conn_hold_unless_zero(hcon->l2cap_data);
  =20
-+ #define le_sci_capable(dev) \
-+ 	((dev)->le_features[9] & HCI_LE_SCI)
-+ #define le_sci_enabled(dev) \
-+ 	(le_enabled(dev) && le_sci_capable(dev))
-+=20
-  #define mws_transport_config_capable(dev) (((dev)->commands[30] & 0x08) &=
-& \
-  	(!hci_test_quirk((dev), HCI_QUIRK_BROKEN_MWS_TRANSPORT_CONFIG)))
- =20
-@@@ -2494,6 -2521,8 +2521,8 @@@ void mgmt_advertising_removed(struct so
-  int mgmt_phy_configuration_changed(struct hci_dev *hdev, struct sock *ski=
-p);
-  void mgmt_adv_monitor_device_lost(struct hci_dev *hdev, u16 handle,
-  				  bdaddr_t *bdaddr, u8 addr_type);
-+ void mgmt_conn_subrate_notify(struct hci_dev *hdev, struct hci_conn *conn,
-+ 			      u8 status);
- =20
-  int hci_abort_conn(struct hci_conn *conn, u8 reason);
-  void hci_le_conn_update(struct hci_conn *conn, u16 min, u16 max, u16 late=
-ncy,
+  	BT_DBG("conn %p dst %pMR type %u", *conn, &hcon->dst, hcon->dst_type);
 
---MmIzuahFlChF6KDN
+--fMHHB175ZJGFbCzb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzSkYACgkQJNaLcl1U
-h9CT7gf/Vyz5t0/z+2U8FyUHf7CsqDDK+z7ZNYk2wtWG920I2wjW8vXJzpAGPUfq
-gRQbQz7WZhnZC114sBq6HbsLkg3vNXUCVfWkv5agZb/aLnS1NcUb50nSfW6ulrPB
-XeZ9/q97tsDxS3cpkXMF2Ymq2/SIL3YrDNB+l8BHbk7M2oQpepRFFdt0oUYYMjYU
-Idp3JJl6ijgYvxA8RI4k9nxJKhSrLHCVC7rsIj3cR1IRoR8N9ZuyYHjjY+HKuHvT
-7QRlKSMrHHXEKzrZoIwzNU35qw4rO4j1FZVdKCjGKp7vreDneWHf6zEtG/UHVFm6
-WGlmN0k0wzkb0v3ZxUZ2lIQJ6aD3+g==
-=Pgsm
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzSk8ACgkQJNaLcl1U
+h9BL0gf/QLJncCmSz+n5SisG29xzP99OVhTMrlAeo4zHuxHDOBN2CrfMSTAUMG3E
+lLnOC5AFnpTsSntI4S7CGD85MJdG23mEVu8YO1y9snuTVd0Xpg2pmqZZDVZjBYDF
+WXbEgfT6a5wBb2pPkYgo3FWKSs66YURkhz7I/8I2vh/xyH64Swz2xp0I+vKrFu9Y
+eFXesgZRk7gvhzFnHDcUOwp7Zld2PZfvZCVZImJOcBFUBxcEZIvpW3FtgTJZzhS4
+4BYWxMuECARS+qBpAEtaif+osziHyZnvrALERHh6RZOpdSyvf7bmJXloume9xbdT
+rn0VwvoFi6D4LybvwKXKpJy3r3bBrQ==
+=Kthg
 -----END PGP SIGNATURE-----
 
---MmIzuahFlChF6KDN--
+--fMHHB175ZJGFbCzb--
