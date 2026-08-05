@@ -1,112 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269A938D3E6;
-	Wed,  5 Aug 2026 14:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB24364EB6
+	for <linux-next@vger.kernel.org>; Wed,  5 Aug 2026 15:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785940572; cv=none; b=YHOyaYYcPizQI8GAVlJoQlPXzaNk6ZpfMFYaEO99KTb3gV8dLRA6XLlxA+dY5yGZvWbOHDIA80hPaITqTdj8MCgCZdF6nJ1UOAU2CtksJ56NRYaZTz6wUENrb+xmSsolcMMtIUWok4zZxkiQ9WmRMvgTV5W8s4c2QjrrZpQKpyE=
+	t=1785944630; cv=none; b=FGL2GdX3SoLggF6ravvVQNyhmqLR3pZfMds74uDnT5yM9u+LPr5UKZjStq4m9T1cV+SyD9Tlp/X14TVrGDNZcI/rWbN+9oRuan555qIAuK2bN6yK5YR0w80d+GTdWxbz1lXmJg/dnd7VRNlLElUmKMmebj/0LLziOcpn29NnEPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785940572; c=relaxed/simple;
-	bh=Pe8r3IFjp70w7luE1DSCFUwMqCvmEyFD3zw6Z9Skl6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OBU5KIJhMF7JLrDn32ohY/uQ7oPLAtfX0oM6F1EvBogq/wIWBMPN2eTkTLF17Vk1XGvgBUc7EqTG6HwLB3ch3uysLPsCFGJWCchTnKlI4q6YiZBTpHK6hdCSftQj/8Mf14ru1hdYEMHWMBLD7VMb/RTskxTUEoo3hGurWWQN6Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTXZemVz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785944630; c=relaxed/simple;
+	bh=NtIKYv/gbVBTyTBDVBQKCA7WjdwwTdA+SicJPSMsEZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQ2E8NP4EfIfoj3EUsXGdq/RUHOBwYxqigcytfn+AGQbX0eUKwX1wkOWrzGpAXxgFCLXbp1Nem8CqHk2le1gCMLszvWAhmA63QIIPqTKogjpCWvdoNw/rLFXK9T9THM+KoAOFVc+Nzcv+CTmvNnJAqJ1PXlF0mt7iTHmV9AVWAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jwAb+LjQ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTXZemVz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C6231F00A3D;
-	Wed,  5 Aug 2026 14:36:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785940564;
-	bh=O7hi9ni/YCDPq9EKVl5mlFO/wpk9AXsaavaXh1PW9yo=;
-	h=Date:From:To:Cc:Subject;
-	b=aTXZemVzkpdxSnwCxxz8U7kUYmSvdTeLoI6wzZqwZi4GOET7JTjO6RU/sTIh8aUnM
-	 m8GCFiHY/QxI3CI763a6L2R2O+M4OXQ2JDYF6WM0b9XhJNi4VJJWXMttpOlkSz6/4G
-	 eE/aLfPBiZ3O3XoaN1QKh/DVvtCfxHIaSBNSj7AFSOV/RfMl6SJGGvbEEFgLpULZmr
-	 PMLAZQMW0NuN29wsSNx6s3R/1eiV0iX4z9kFUmabh6wbYbdceVm+Dm8QyMU217cV3m
-	 mxhi9klbt2OhklBN/NWcKGGESYxFfLzvhVSBmvpztZcsAHCUbM2pYpdYqve+0MmIaP
-	 dYeeYE5pG1fQQ==
-Date: Wed, 5 Aug 2026 15:36:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Cen Zhang <zzzccc427@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Pauli Virtanen <pav@iki.fi>
-Subject: linux-next: manual merge of the bluetooth tree with the origin tree
-Message-ID: <anNKULWanUsTk3xb@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwAb+LjQ"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2cc7e86e7aeso12729895ad.2
+        for <linux-next@vger.kernel.org>; Wed, 05 Aug 2026 08:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785944628; x=1786549428; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=m1J7SSBjgEa6FdrQUEoTL9+VAKmrJkzpYBXqLuwulzw=;
+        b=jwAb+LjQpJ9jJ8E7UMhsAOdAndXzfvqTcud9OOgb4it14gj6W0e/VjQv3nZ/o+hblT
+         2S4/wy9fiRqPa+hGYuEIJV+vmwACPz6kDgpXvKzN0DIEHMbnjFOongVhEnhLmVibBsqI
+         oVDahp0rr4er0wlrnMnPtg11iZEGvxcK68eEl3V9bv5amPSIiR0FbbUlrsv6wuAQCv6Z
+         cHyXluScXl91l3//+BkE6CktIjhEVJI6nTuy2AG2gXI7XNIb54zpe/OIQOj6RxlB6jLJ
+         w7zuLUzmsNmuYxp3klWlLAe2knI92wL1Z5hWD2ReGhlqc1elqim9R2eH+wYn0hpnatD0
+         Zebg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785944628; x=1786549428;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=m1J7SSBjgEa6FdrQUEoTL9+VAKmrJkzpYBXqLuwulzw=;
+        b=LVIxBck05NkwmknumfOFL3fQ4J9+FDkfy9QDvxRJc/x81681uNKYGvU1ZxAsveF7Dd
+         KSpOmj0QkM+vWS4lrZbPR9GrctfPvpZzNqbvdV76vHwU/fnaAvULyFGpyiw+KRAVUbEh
+         SLQDWfL/AADtb5pgJqwc+Y99165AZWx5rkHLnQFQcDDDaTQ55KqZ4rL2kcGYQoj/jf5G
+         BhGukgpus/W0hSED4ntQ1jUdz1I3ANg+DHIMa9Ur7iq/9KiF1o/gXfeAM7pkB4s+Ayr7
+         p7owUO/V8f26783Kvzl8u8JyWcX+9W4HktcCBtMFQ0/77CaXDP86r2f6Qh73nNM3lOZO
+         qYEg==
+X-Forwarded-Encrypted: i=1; AHgh+RoMOn/b43httlIk2tt7sou7dhZSY8sEVeYZV0HHAanoKFNcoxO3aN0OBWlkCXSYSqeNxAy30NzCsjNN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp+hDjwW0HuvFrhoy4vFBqPlp2GouZJesOirnEt+9eHI2joVAi
+	u+3PZEj3WUmh54Hyhwp1LzWsovzpsI1kS63YENPx5uULrGzWuBlUSNmj
+X-Gm-Gg: AR+sD12+543USP8cM+t5ryS9Ukc3LvahK8WDRjrlaRB1LwpuY+x6KIux2abHvylkimA
+	S+FiYvAULfnkQlwMeyEPlhOm2OhjvGvJPLehqi+NSyZmkSzkzRoWKH0YUaNXgTv2qt1wjgyjsWD
+	crDw9bOb4J8Klx+0RWNxcOWGJogdMDxaJ8+CZkf59Ir1RyyU+sBNuHLph63KRJAC+wgXOtQrYgy
+	dnwiP9bHNN4wptvOeYilG4nStZxuZ2/Dqz3TMaltk0h7xSuM4ZjFDfLL10ZeJpQ3kUFmlC41mKB
+	gnz+zlFaK1jp/Mhj8+7fglUnNnx2mdabldhvOWTVPAvxPzJxaELkx6lVsfVFN8r7CB8DbkqoGHz
+	CQNJ8yuudHWBcdLciOIyKuSJQ19YAfBF2IMXhqEQLVSmg6QrxJSyhKVzviIcX3Co1dm4kE8zLxz
+	APciBciTIfW5QaMmdztkc+08G6RX7+xem7XPx2VHObPXnd+p8bOLniTTtgxOCq3YnQ3gbGPH9Ty
+	7COFZL7SeJYMK1OINGvvPPP/g+9rw==
+X-Received: by 2002:a17:90a:d2c8:b0:38e:5ab7:ce9b with SMTP id 98e67ed59e1d1-3903c690565mr8536520a91.21.1785944628487;
+        Wed, 05 Aug 2026 08:43:48 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:bf3a:ac93:79c4:84fd])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-315a2e6bdb1sm970893eec.18.2026.08.05.08.43.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Aug 2026 08:43:47 -0700 (PDT)
+Date: Wed, 5 Aug 2026 08:43:44 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Fixes tags need work in the input-current tree
+Message-ID: <anNZ64NWtyOmbP3c@google.com>
+References: <anMXcUERgpvSGpVz@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fMHHB175ZJGFbCzb"
-Content-Disposition: inline
-
-
---fMHHB175ZJGFbCzb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <anMXcUERgpvSGpVz@sirena.org.uk>
 
-Hi all,
+On Wed, Aug 05, 2026 at 11:58:57AM +0100, Mark Brown wrote:
+> In commit
+> 
+>   08dfae0f8bed3 ("Input: synaptics-rmi4 - propagate F54 worker errors to V4L2 queue")
+> 
+> Fixes tag
+> 
+>   Fixes: 3a762dbd5347 ("Input: synaptics-rmi4 - add support for F54 diagnostics")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
+>     Just use
+> 	git log -1 --format='Fixes: %h ("%s")'
 
-Today's linux-next merge of the bluetooth tree got a conflict in:
+Sorry, accidentally dropped "[media]" prefix from the commit subject,
+will fix it up.
 
-  net/bluetooth/6lowpan.c
+Thanks.
 
-between commit:
-
-  518aa9505fa10 ("Bluetooth: 6lowpan: hold L2CAP conn across debugfs contro=
-l")
-
-=66rom the origin tree and commits:
-
-  d740cf77461a4 ("Bluetooth: add annotations for l2cap_data locking context=
-")
-  d138ff8690c8e ("Bluetooth: 6lowpan: hold L2CAP conn across debugfs contro=
-l")
-
-=66rom the bluetooth tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined net/bluetooth/6lowpan.c
-index d504a363a30f3,30f4afa18bc8f..0000000000000
---- a/net/bluetooth/6lowpan.c
-+++ b/net/bluetooth/6lowpan.c
-@@@ -1007,6 -1007,8 +1007,8 @@@ static int get_l2cap_conn(char *buf, bd
-  		return -ENOENT;
-  	}
- =20
-+ 	lockdep_assert_held(&hcon->hdev->lock);
-+=20
-  	*conn =3D l2cap_conn_hold_unless_zero(hcon->l2cap_data);
- =20
-  	BT_DBG("conn %p dst %pMR type %u", *conn, &hcon->dst, hcon->dst_type);
-
---fMHHB175ZJGFbCzb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpzSk8ACgkQJNaLcl1U
-h9BL0gf/QLJncCmSz+n5SisG29xzP99OVhTMrlAeo4zHuxHDOBN2CrfMSTAUMG3E
-lLnOC5AFnpTsSntI4S7CGD85MJdG23mEVu8YO1y9snuTVd0Xpg2pmqZZDVZjBYDF
-WXbEgfT6a5wBb2pPkYgo3FWKSs66YURkhz7I/8I2vh/xyH64Swz2xp0I+vKrFu9Y
-eFXesgZRk7gvhzFnHDcUOwp7Zld2PZfvZCVZImJOcBFUBxcEZIvpW3FtgTJZzhS4
-4BYWxMuECARS+qBpAEtaif+osziHyZnvrALERHh6RZOpdSyvf7bmJXloume9xbdT
-rn0VwvoFi6D4LybvwKXKpJy3r3bBrQ==
-=Kthg
------END PGP SIGNATURE-----
-
---fMHHB175ZJGFbCzb--
+-- 
+Dmitry
