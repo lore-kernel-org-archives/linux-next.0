@@ -1,73 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E4C46D54C;
-	Thu,  6 Aug 2026 14:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10B23264D5
+	for <linux-next@vger.kernel.org>; Thu,  6 Aug 2026 14:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786026130; cv=none; b=swqOR0ulF9Djt391mr9jXWXRIrHuL+NuzhS6kTxq8fRWDyZOc5xyXHiE+jIRptY48GIOLpyQaS2x/JTwMc8iVShERdAdkHvtbuJ+SoaV4nJn7JxnchzB8RRPWONYOXjhbiJF6EwhQlbmniGlXALVf+QS2q/OxLkFZ/t747/oJd8=
+	t=1786027720; cv=none; b=Y/mXdTH6gs9yr9/Hg0IDYY9uZE7PZ7OstQLd2btLGxHmfQHowurgsIdUnDKLPHTdfxJb9xHQCpMOzLQepwiNWh5QrMFBewd9GbkceR6KW7qgK6WMGtk+jpANrPbosMNFQj/YZHyKhdzOcqnRVMGLGVRZgIrOLdHqvIp43SLFKZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786026130; c=relaxed/simple;
-	bh=Knf2APEwY8gJ88age+oYqpG8mXGk3ZBEQkxrShUwNDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pcNtrAoW2qGtOiCb6DdnifIqTpe/4uHX4erNyoC2j2C4pYHM02ks/8XZiGJpoTKC1Pah89Ra/gZUbw+iZ2iEs9LEui1Kd6y43kA/NaeJqdYS7ER1K8ucUsJC32ngcPTRVIWYQB4u/j+GtErWnvRs4ASDDy3hN2i3WEiTsfHk6nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/e7bUj4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786027720; c=relaxed/simple;
+	bh=ulyqk7NZ3+QFtU68zIwIuhYDDl17Wu5uLVd81oEdaWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+5szET4RBIRhh33oLABprm/aegNst5L3tt6EFEzQ3cFvAPIi6m/ppd8Sbe5jAgVg1r5jl3MukuSYU34QzHp6hyOv4D6u8RJcZKbGCgIc1b/LgPXjT5NTjKwNGnR7UK38CMDBZEY7gYQv33c94tRu81mbUNEIHpduT6Tn4dd0Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NFL3bvsK; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/e7bUj4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91B2D1F000E9;
-	Thu,  6 Aug 2026 14:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786026126;
-	bh=xIqp+iUn0Lk+VRL8A7taQBs4mTcpwoG8zAl4TFwLE30=;
-	h=Date:From:To:Cc:Subject;
-	b=T/e7bUj4RHyjHD8vQbFjq3mKmju9uiDAqtYATSW+E2JgEAc/HFks5dq+0/jIwtbXR
-	 rr5P9mtPqI4CdLMTj4400ZMIK+UgTzG+NYXQmdImA/gOkfsJ38+JDIi+PkBuQZLswk
-	 Yw1ZYrm4XGM4jgw7dVqdnvYP1Q0S4BZ06qEy5d21rJKFr0U/6zsW38JUcrsaJa8HHr
-	 nuFPJC4gQiQ9s18NATvBk/i7zMwGX4Bz8scq53QCHkk9H9LKG6qiDiAe9LocOt8vic
-	 d3PuzA2RR4yiFEpw2YbDVz9n+9slphuG4JuujdYDUZkx9V7AsdAGCOqhzFXuRvB4Bl
-	 L3HlISZelyC6A==
-Date: Thu, 6 Aug 2026 15:22:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the modules tree
-Message-ID: <anSYivRW4p13OsDB@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NFL3bvsK"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f633e6058so1952929f8f.0
+        for <linux-next@vger.kernel.org>; Thu, 06 Aug 2026 07:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1786027717; x=1786632517; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=QNwXSUgKoPcyqn+NrBsrVopGu5vE735KoQi9uCLWNww=;
+        b=NFL3bvsKUjEwpw7GsuCx2SpHfsXrqWWQO8GCWs4YDKeWlp9TGXH6b38jD+gMH4T77l
+         wer3IgK+bN7fIX9EglG06gV+KvofvS4JEhN+VGroX+siXUznw38D79RNcd2Br7vzEUDm
+         wdpa5keXWDpJICn8+PbI+exlQ0G2n7nwq13lElW+ihQNVMKFxwe+N56J6LHifWbg3/hy
+         J6LLoz4ftO61Htwy9a2l8SpBneVfgigTyYJYhIpbH1Lx5rhzrpaNKCvkE8Ow3STXDPVW
+         pyk1xyb82F78el9Jf3tGILnh74o3B8MSD3aPodOWsRICFn5CV4WidLJglc4tJhBWO3fH
+         XPhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786027717; x=1786632517;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QNwXSUgKoPcyqn+NrBsrVopGu5vE735KoQi9uCLWNww=;
+        b=W+J63dwcL/+7SgIdBEolno9jVvueysQCDU8bqs2cVHye7XukVCm+2uC+kkjycK8EZg
+         4tN+6foP9vpayI5eomyK19OXTchCbLx4XzMu0MG2xUP18KNs81LF8Z6GKbdeZaqxt1Wq
+         p1jXGfDwBNceqgKwiEeTBQnL0ExI5KqzQpHN+k22KwnM8V6abz+5PdIStayG6yZj832C
+         AtKF+K73OIQy80FYF6xoyTu3aAPYNCY59nK2MpoTm/eS2BTfDFPNL/mBI9KfLN3l4/Ti
+         WcWkulzR2T9hhjf/7sS0dpkmvT+4hwML+SaU3pXIgMtpWlm/TB/Q8LoseHPOidBDfQsZ
+         DHeg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp15vPNO4y+BfsqUI/AE7cluFHH7ssmzEfrXOF1R2lnr7pZMf/bLBvYvXrsGCybNao8NBZXe9xs01q0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5QmkthL0xEc3vmD/BMOrexzq7mfLnNHbl4lTkFTiz+FalPo6k
+	F7Jxjj0GZ2L6tZWO1wnhEB+GJRXu3jCjUiZXDK0dV6F3gV0SAIfeND6eKjwj3tL4XgDWqkZb9Mu
+	3CAYhWUs=
+X-Gm-Gg: AR+sD12J4hKGsG6rox+gJQEWGGCdupJNbPQesWPu40E4op8s4Vsh9pj1P3/iugw7Wmb
+	DksCFYB6M3wk4MrcasaKgJtJNCjo3krxJ31Zroo3fIgK1TCruHpduSv9nHazjt4GhkuaNRkhIEw
+	BPabzAlRF8bBz4D5NfAug8i8P0zE1zqbCC+FljXHcYQRdTfr7Sxhbylmrt4uqzxTHTtu+r40150
+	9Y+590kJJWWvdUoAM9MPBfm+xjLUSu8gN/eXeeh4SVROP0w03YRKKHr1vD8QlgYA6jW4OU3wchM
+	iPDyzgAqLDTDJVT3eSRVZiOUHZcB9AgZPDlnJ2DZrwRVAQV3mvpUy311xHvSVd4/KBE0PvnlLQ/
+	jNRGSueJl15sjaIAfDQrgCkmoHzB3RqcAHf3QDANcw3UQBmzMn75ZK74bbQ1rDHIRgEeAnpV0ZM
+	HhWjNSpowqUkRRiwnXchwiPxiHTNxMHsl37D+NJJqO0TXN+jGZ3ZGKOt+kf61/Dck1KRyqLQxoi
+	FKU8DW0WSq7B4IRIBrLeotQ8g==
+X-Received: by 2002:a05:6000:491d:b0:47f:ec8a:214f with SMTP id ffacd0b85a97d-47fec8a2195mr24915601f8f.15.1786027716768;
+        Thu, 06 Aug 2026 07:48:36 -0700 (PDT)
+Received: from ?IPV6:2a07:de40:8100:0:fc6c:f9a2:4a0a:6354? ([2001:af0:8000:1409:193:86:92:181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47ff7b18374sm6932705f8f.23.2026.08.06.07.48.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Aug 2026 07:48:36 -0700 (PDT)
+Message-ID: <b68df62b-d032-4e19-a4d0-c3d13b9d49ec@suse.com>
+Date: Thu, 6 Aug 2026 16:48:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UsRbcFKjY0/8/a0R"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Missing signoff in the modules tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org
+References: <anSYivRW4p13OsDB@sirena.org.uk>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <anSYivRW4p13OsDB@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 8/6/26 4:22 PM, Mark Brown wrote:
+> Commit
+> 
+>   ca2e2d7b6e758 ("module: validate string table section types")
+> 
+> is missing a Signed-off-by from its committer
 
---UsRbcFKjY0/8/a0R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixed now.
 
-Commit
-
-  ca2e2d7b6e758 ("module: validate string table section types")
-
-is missing a Signed-off-by from its committer
-
---UsRbcFKjY0/8/a0R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp0mIoACgkQJNaLcl1U
-h9Awqgf/fYqlhBBx6dEuER4YEMGmTYGPCdhfWBytiFpS1c6SU2PC05uAFl2vbF3F
-H1PExzHBTUYrncVj/wcAZciMC3IvkeVy4oFOz7uhZ9A/9Gn2lutQ5i0JTL0GImeL
-S+Ht1Q4vQL789Nph/iT4PJES8tPIwaa1I9l8esVjAJjO20vOCYYX00krvvjBPFgK
-nfgXy+bOECsD3Y4JL4oXNbvneGqF9vsp4FWzJrXYQkra+mAZv9iBg4f0Ju5uegLh
-Rz79g2rXLxF9DSjwpgypRl/SQJTYXWxwTZB8Thh7NTZYzviR7NjQkXBgUCSBnSIS
-Z79hwf8H6vdk4I8fy2GwskTHoTH0zA==
-=KvYq
------END PGP SIGNATURE-----
-
---UsRbcFKjY0/8/a0R--
+-- 
+Thanks,
+Petr
