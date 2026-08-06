@@ -1,88 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8B9341ABB;
-	Thu,  6 Aug 2026 17:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786036975; cv=none; b=eXJlqiZdzDIkIIbRD/2mUOU4ZkNnNSd6gcJxfY1XUSwA0SaEh6FuLUH63zy6P44RBAFpxZRQxErpDoWNZaLGS7HSe1BcXRtvBHKlwlR4vezymbAjqGn5kvk4CbNmRDtMYrwbFcxf4ztQ2REhxTnVmJ7L0351e+YWX7UUVVULYmQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786036975; c=relaxed/simple;
-	bh=BRXX8fl26snSVq0xnkOSbYn/ibQDEqgktaFe1GxMFtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CzJStUJgZnd2/WAlUJFhewfPDR5KVyC6ds/J7mTpsh6SAAu2E3gM0ysEE43Idhp48dBIe9Yi4Dg/tK6wJ+GbRuuQWJcFpff8uf8053NP2eh1zWgtSMXjkFcMOwIizqyYMRjmqj/WaPOFOVv8syzfWMBvAEtuoEj8DMW6vQb0c6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJFo6HWB; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D8C369D7A
+	for <linux-next@vger.kernel.org>; Thu,  6 Aug 2026 17:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786038838; cv=pass; b=KbFyeOdC90FT0E3AwKOTMKlfecTLmUBoss5ItLf2pLeC0+8lv+9sGIdRvmvdymkM4/47ZjtjJuw93qSJ21sIW6Whh4W9N08deGnPiJwOXVkWXuLNiWlUNrmyTGBSHwAE0pVF5Yr5LJWvkfQgUm4zpDbDOtVb7NtIa4ZChZohsYA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786038838; c=relaxed/simple;
+	bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oDzBqVOmr9FufV7P8oemI7I82fp+8NIjCr8VM+Vvai/B5AIouZ6BFo6QnNz1IHjE5qqkrJqKxpb1wT6oBsigE0AbffnRtsjZOYHT5V5Z1/7K648dWGCAFRunNPugwLoUFx9431uiej9oVdK1+quLdLxCxqqSExST/JjVLg6ICqk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oo+j6KEe; arc=pass smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJFo6HWB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2631F00A3E;
-	Thu,  6 Aug 2026 17:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786036973;
-	bh=BRXX8fl26snSVq0xnkOSbYn/ibQDEqgktaFe1GxMFtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YJFo6HWB8skwlTvk3lvyAEG9d3OZMKFzkwLzxOKGrOPmjgKTX0uChVdAhGfts5MMk
-	 mBYbOUNWtGIGDE7C42kNcDUENxaPdSwS2GkqXwsfz7jS2Z4keSmWrmf48ZL0P3AaXs
-	 P3cAWRJqxZr+ZaTQZQPb7mh10iQ89LpsRJEuQa1aUUgLEUaUGk5Ivf1fqbVShd/iEA
-	 uOdduYtcp3lPDFeqkWKh4ridb+pzenB7lmWSUti5G0eznclzbUuAPjTNtEcURWWcd9
-	 woyf+NRPThKQ/cU8R90abit1b935xC6Fes9jIKj2LMslDaaqvAFmqFXnBNr8bcHHeJ
-	 hy+VvZZi7X2Yg==
-Date: Thu, 6 Aug 2026 18:22:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, gary@kernel.org,
-	linux-next@vger.kernel.org, a.hindborg@kernel.org,
-	acourbot@nvidia.com, aliceryhl@google.com, bjorn3_gh@protonmail.com,
-	boqun@kernel.org, dakr@kernel.org, daniel.almeida@collabora.com,
-	gary@garyguo.net, lossin@kernel.org, rust-for-linux@vger.kernel.org,
-	tamird@kernel.org, tmgross@umich.edu, work@onurozkan.dev
-Subject: Re: [GIT PULL] pin-init changes for v7.3-rc1
-Message-ID: <d743e4e9-94ea-482b-984f-cfb1a3b60393@sirena.org.uk>
-References: <20260805190012.2934907-1-gary@kernel.org>
- <20260806170101.67544-1-ojeda@kernel.org>
- <ace18b0e-bda1-417b-adb2-2ba7c36f1c1c@sirena.org.uk>
- <CANiq72k9hzdU8QF32HEdvpaz9K7JxE2vxfyRFVjaePciyzgnTg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oo+j6KEe"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2cf4c37dbe6so2672455ad.2
+        for <linux-next@vger.kernel.org>; Thu, 06 Aug 2026 10:53:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786038836; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Y3ZgTnMX1s1qzUVTw/QMnmeYhzx3tv0BiDc6sPX4MXkgEGDNhb3hZ0l+Pt4cNXt8RF
+         bUPvKy3uhIZcFnDUPjisDb8VBzFiRa0jiqlXNJa275jZdzg+QMPXwagAaA3yPvj9B9fh
+         1bO1a1EULbZfqt54ovPHKBl829SfQa8dT+0HgNWoo+uMIjWcyTnWMIC6mBwMe5gxDAK8
+         BlzvBNpybX9WfvHyhjgnDst/1L4MBpU3Yfds17RzwdiF4Meq243OIdjgGOcpfL/kcElD
+         nKW4R9Z2JbFoOHcKumDLcmkqiVTxB9Ft8NQoauE7aplBNLzgI+Q1dFVLidXBTuzKl7Z+
+         FZ2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
+        fh=XoM/IJT04BOcv6HIqWS7lA/1UUD4NZmOtQvBvkaINHw=;
+        b=CWic4B3/Dv4pAbcdIVZssBUCBpG6iy9l6AasUIZSl+yox9R78HSrZjyTHE9YR5Gerz
+         CGzb3X/4AorxjaPVKvVt0NubRqaTC3eDPGymD2pBK84p6dSoz8Bx+PocEA5UdqLHnTnY
+         +/DEYVEUGsfvlg/dNpRpJl2QWWLHb7K3XNnlEvYwYFQ+/w9ZKGiN3oni8Vqhc3fRibPa
+         A+PDaAIPbnZRHfGjWL5bjXeOp+BnE4jGXRSacIjsJVfTLST61uTOWEMGN2t0kOhsO4Sn
+         wHlpwEgOVzBJJlA4TvvRn3RhEcnf7h8tkCY9R9PTXFcGDY4H/u1nJbf3avz/oU96IELn
+         n2DA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786038836; x=1786643636; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
+        b=oo+j6KEeFbR9o3HjUJmzLjJtVse+ageMUPIzirvwVisIR5nTWdF67S3z3e1VI7UBxM
+         wMMvChHvbOafjTCOn2AYozEolxEKAKxcn9WWc+rdT4B1YlgcGroAzSBBOS0iQhomOfWQ
+         z1RkbuOAD9dYuubMMM9gEZJkSkylub4v+6z/Tm8nZ7r8MAor3eNBpL5lOdljtOq4eA20
+         Qx4bXJlWJYL7jLjoWVYzk/BArc/K37jlrJvqqBNUn6KYtCShAI446+ZCTB8rQHdDBzlE
+         BACFMRY1QDqiK1Zj06a5/D3+ejpePaAyduRq353APp37Se/xjKJA9svWJP8HF4TgQTEY
+         BzRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786038836; x=1786643636;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
+        b=eZs8BM86gZK6CmqCpHYnoVTHA+m9iltLS+CuUm/1c/FphSK5DJqwWWWoqzicLyM6P7
+         Ty5ycZsnuX+ktUIjr2WzT50C371Z6nafz3qIf7JBrcUKXjzUlLYjkvjpKoEATcaydVn9
+         BSUwemFbKlVuNtHBqOMQKSMV4asIh7x7co1fY1rq7jtWOvyYpgdjmZhN5iPy93pKcuIc
+         UBMzWgaohfpSi3frLi1+N6nV0yNzmZodyxmQFHNIX+vriCuFcF/KQYQxzProRiKz9mGi
+         L3g4lNdSfNPM9PKbrhF40HoxTADoQKYmQMpYDIxPOxQvGNNaEPxDBg+I8KkGdx5iQ9tW
+         qElw==
+X-Forwarded-Encrypted: i=1; AHgh+RqsHEOhmsQmmlZtnjl9R6EFUl10qQGNZHfEcC/WvKTzV2aSwJQnjGgH71SF8/PY3NLcWwaBKjHqRv7j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN1c9xoEf3M3dHKVEInEexNP1x9yGDvjzing7uVCIt2gnK1imK
+	UuHE53ABalx8MC4D1XUXHNurelt4NcTyAyA8/A+Dui4kU/TjV23eGY41qX9DimdbD/+q75KrYb8
+	mvFFxtzSZqCeoUWe8rAffqfC2AkTDL38=
+X-Gm-Gg: AR+sD12oGhE11rKY04eHsMAszRzo8KtEE6GTK9eIduIlE845bUgDMSgDg7yHR08FBX4
+	6Dow/Ffd2hQzEDF0feaEI9D7vR3+vfGQld0ANX64bzXqlKX5TdlunZGPqffEiuVavsBv+9i1f4H
+	0R6V6GM3htbn3YvIJnnT2m4uYE5ScXT1kkyCCEr3+feX/Mmc64aplN+9MAF6I5Crlv3fX1HSYJC
+	G9uSo5Oz1izhNxY3+XOiTsx3j0aOfeTjuTsfPtDAU7HED/qHA235iqNPSM6pYY6wyM4WB10Feh8
+	qnbSdRza9B9+5ZP1XSB5zWhk65EZr8xRMG6ImG/+ZXLMMHQlHhNk/CcKhm/taArFtAPM1h1y3fg
+	ZybfIVPGUEjGtUqP1Br/oi4cGRqM6R3Z+1oPBAhMC0wR5BRmPjHHqqc/SD1SW
+X-Received: by 2002:a17:903:19cf:b0:2cc:f4d4:29a0 with SMTP id
+ d9443c01a7336-2d0cab0db0dmr153501185ad.3.1786038836158; Thu, 06 Aug 2026
+ 10:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/+KATg0/ptjgF20c"
-Content-Disposition: inline
-In-Reply-To: <CANiq72k9hzdU8QF32HEdvpaz9K7JxE2vxfyRFVjaePciyzgnTg@mail.gmail.com>
-X-Cookie: Brain fried -- Core dumped
-
-
---/+KATg0/ptjgF20c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20260805190012.2934907-1-gary@kernel.org> <20260806170101.67544-1-ojeda@kernel.org>
+ <ace18b0e-bda1-417b-adb2-2ba7c36f1c1c@sirena.org.uk> <CANiq72k9hzdU8QF32HEdvpaz9K7JxE2vxfyRFVjaePciyzgnTg@mail.gmail.com>
+ <d743e4e9-94ea-482b-984f-cfb1a3b60393@sirena.org.uk>
+In-Reply-To: <d743e4e9-94ea-482b-984f-cfb1a3b60393@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 6 Aug 2026 19:53:41 +0200
+X-Gm-Features: AUfX_mxalOypU0rpE7BnWTwTbtLAHW7HGYNPe48IeVPHDHscmiN_P_36vZMyZtc
+Message-ID: <CANiq72mzVuEfaf0xuDLMy1M25Xu+G2WvEVC-E8Xna52hPTn9Pg@mail.gmail.com>
+Subject: Re: [GIT PULL] pin-init changes for v7.3-rc1
+To: Mark Brown <broonie@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, gary@kernel.org, linux-next@vger.kernel.org, 
+	a.hindborg@kernel.org, acourbot@nvidia.com, aliceryhl@google.com, 
+	bjorn3_gh@protonmail.com, boqun@kernel.org, dakr@kernel.org, 
+	daniel.almeida@collabora.com, gary@garyguo.net, lossin@kernel.org, 
+	rust-for-linux@vger.kernel.org, tamird@kernel.org, tmgross@umich.edu, 
+	work@onurozkan.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 06, 2026 at 07:09:58PM +0200, Miguel Ojeda wrote:
-> On Thu, Aug 6, 2026 at 7:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
+On Thu, Aug 6, 2026 at 7:22=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> Yes.
 
-> > The merge commit for what?
+Thanks!
 
-> I think you merge driver-core-next after the rust-next/pin-init ones,
-> so I assume in the driver-core-next one, right?
+(Please let me know if you prefer a proper patch etc., of course)
 
-Yes.
-
---/+KATg0/ptjgF20c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp0wuYACgkQJNaLcl1U
-h9AYowf/eSno3Y0EUujoK+DOrwvEd4iNxS4CtcT0AAJEGEhi32p0RE6FiICYW6nO
-ebQcqbimLKNGYo/7sW42fz00o6Q6Ykc0BcC2UP8lg/c/zM+G96AUmj8yn++hdR/s
-pnGo8jndVMhh3YLN2uA3cLM/k0QbmzHfPs22xF0CO9u/W1OzCpalkTb6C4g4hMM5
-l0rremBcpWoizEaXjjsMjVYdpDvrAstSH/Gv33HTLUOer451DrtxNBkrNt94V0AA
-P/Na4WxMdFvZkiXJzWqjskooRpt9xpOr5a1uCLdC/v6QkYlHrMvgKwCU0hocXXAX
-MfHWkLGRzr50rZDjDSR6xJZwbSg9cQ==
-=AKrO
------END PGP SIGNATURE-----
-
---/+KATg0/ptjgF20c--
+Cheers,
+Miguel
