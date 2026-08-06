@@ -1,115 +1,118 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D8C369D7A
-	for <linux-next@vger.kernel.org>; Thu,  6 Aug 2026 17:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786038838; cv=pass; b=KbFyeOdC90FT0E3AwKOTMKlfecTLmUBoss5ItLf2pLeC0+8lv+9sGIdRvmvdymkM4/47ZjtjJuw93qSJ21sIW6Whh4W9N08deGnPiJwOXVkWXuLNiWlUNrmyTGBSHwAE0pVF5Yr5LJWvkfQgUm4zpDbDOtVb7NtIa4ZChZohsYA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786038838; c=relaxed/simple;
-	bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oDzBqVOmr9FufV7P8oemI7I82fp+8NIjCr8VM+Vvai/B5AIouZ6BFo6QnNz1IHjE5qqkrJqKxpb1wT6oBsigE0AbffnRtsjZOYHT5V5Z1/7K648dWGCAFRunNPugwLoUFx9431uiej9oVdK1+quLdLxCxqqSExST/JjVLg6ICqk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oo+j6KEe; arc=pass smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B955D377AAF
+	for <linux-next@vger.kernel.org>; Thu,  6 Aug 2026 18:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786039480; cv=none; b=nuZRxNklg8ttOHXqgNN9Utvis+fKI2fccYXBJN3oAzFs7d7LEOaqircBeGZI/4yvF8om2sZPSMJFvTvWjw2F3XeOMBk8Tnf95A20hbVTIMmyh2WhFEYGITE3scvYLgxh90xtXliZlJkaD7In8ov3S91O4ZXivyjCpHdvFTPS93E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786039480; c=relaxed/simple;
+	bh=vPvaHwcu6FAmQu9hdrB/0LcbG0V+Nli8cg+nIZTKTD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pu42YOd2DY0Lm07f06mfhbuSldrUOtH9biFRGabYCcolTMFv6wO/NiobGFgAm4xg4p8oolLmH+YbMenT63axhS/G+6hKz+SXhi3iAkdC3V0UV2nfD+b9KaSpOuEFd8APks9deHFtFVht99hmtuQqX5LNLIbw9Yl6FJ7DUERDOAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b8UTpaC3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oo+j6KEe"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2cf4c37dbe6so2672455ad.2
-        for <linux-next@vger.kernel.org>; Thu, 06 Aug 2026 10:53:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786038836; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Y3ZgTnMX1s1qzUVTw/QMnmeYhzx3tv0BiDc6sPX4MXkgEGDNhb3hZ0l+Pt4cNXt8RF
-         bUPvKy3uhIZcFnDUPjisDb8VBzFiRa0jiqlXNJa275jZdzg+QMPXwagAaA3yPvj9B9fh
-         1bO1a1EULbZfqt54ovPHKBl829SfQa8dT+0HgNWoo+uMIjWcyTnWMIC6mBwMe5gxDAK8
-         BlzvBNpybX9WfvHyhjgnDst/1L4MBpU3Yfds17RzwdiF4Meq243OIdjgGOcpfL/kcElD
-         nKW4R9Z2JbFoOHcKumDLcmkqiVTxB9Ft8NQoauE7aplBNLzgI+Q1dFVLidXBTuzKl7Z+
-         FZ2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
-        fh=XoM/IJT04BOcv6HIqWS7lA/1UUD4NZmOtQvBvkaINHw=;
-        b=CWic4B3/Dv4pAbcdIVZssBUCBpG6iy9l6AasUIZSl+yox9R78HSrZjyTHE9YR5Gerz
-         CGzb3X/4AorxjaPVKvVt0NubRqaTC3eDPGymD2pBK84p6dSoz8Bx+PocEA5UdqLHnTnY
-         +/DEYVEUGsfvlg/dNpRpJl2QWWLHb7K3XNnlEvYwYFQ+/w9ZKGiN3oni8Vqhc3fRibPa
-         A+PDaAIPbnZRHfGjWL5bjXeOp+BnE4jGXRSacIjsJVfTLST61uTOWEMGN2t0kOhsO4Sn
-         wHlpwEgOVzBJJlA4TvvRn3RhEcnf7h8tkCY9R9PTXFcGDY4H/u1nJbf3avz/oU96IELn
-         n2DA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786038836; x=1786643636; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
-        b=oo+j6KEeFbR9o3HjUJmzLjJtVse+ageMUPIzirvwVisIR5nTWdF67S3z3e1VI7UBxM
-         wMMvChHvbOafjTCOn2AYozEolxEKAKxcn9WWc+rdT4B1YlgcGroAzSBBOS0iQhomOfWQ
-         z1RkbuOAD9dYuubMMM9gEZJkSkylub4v+6z/Tm8nZ7r8MAor3eNBpL5lOdljtOq4eA20
-         Qx4bXJlWJYL7jLjoWVYzk/BArc/K37jlrJvqqBNUn6KYtCShAI446+ZCTB8rQHdDBzlE
-         BACFMRY1QDqiK1Zj06a5/D3+ejpePaAyduRq353APp37Se/xjKJA9svWJP8HF4TgQTEY
-         BzRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786038836; x=1786643636;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Jc1jh0ttXWG3ZdxZkpe0Uwx+K8bHo/xKpsBu0RnOWoU=;
-        b=eZs8BM86gZK6CmqCpHYnoVTHA+m9iltLS+CuUm/1c/FphSK5DJqwWWWoqzicLyM6P7
-         Ty5ycZsnuX+ktUIjr2WzT50C371Z6nafz3qIf7JBrcUKXjzUlLYjkvjpKoEATcaydVn9
-         BSUwemFbKlVuNtHBqOMQKSMV4asIh7x7co1fY1rq7jtWOvyYpgdjmZhN5iPy93pKcuIc
-         UBMzWgaohfpSi3frLi1+N6nV0yNzmZodyxmQFHNIX+vriCuFcF/KQYQxzProRiKz9mGi
-         L3g4lNdSfNPM9PKbrhF40HoxTADoQKYmQMpYDIxPOxQvGNNaEPxDBg+I8KkGdx5iQ9tW
-         qElw==
-X-Forwarded-Encrypted: i=1; AHgh+RqsHEOhmsQmmlZtnjl9R6EFUl10qQGNZHfEcC/WvKTzV2aSwJQnjGgH71SF8/PY3NLcWwaBKjHqRv7j@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN1c9xoEf3M3dHKVEInEexNP1x9yGDvjzing7uVCIt2gnK1imK
-	UuHE53ABalx8MC4D1XUXHNurelt4NcTyAyA8/A+Dui4kU/TjV23eGY41qX9DimdbD/+q75KrYb8
-	mvFFxtzSZqCeoUWe8rAffqfC2AkTDL38=
-X-Gm-Gg: AR+sD12oGhE11rKY04eHsMAszRzo8KtEE6GTK9eIduIlE845bUgDMSgDg7yHR08FBX4
-	6Dow/Ffd2hQzEDF0feaEI9D7vR3+vfGQld0ANX64bzXqlKX5TdlunZGPqffEiuVavsBv+9i1f4H
-	0R6V6GM3htbn3YvIJnnT2m4uYE5ScXT1kkyCCEr3+feX/Mmc64aplN+9MAF6I5Crlv3fX1HSYJC
-	G9uSo5Oz1izhNxY3+XOiTsx3j0aOfeTjuTsfPtDAU7HED/qHA235iqNPSM6pYY6wyM4WB10Feh8
-	qnbSdRza9B9+5ZP1XSB5zWhk65EZr8xRMG6ImG/+ZXLMMHQlHhNk/CcKhm/taArFtAPM1h1y3fg
-	ZybfIVPGUEjGtUqP1Br/oi4cGRqM6R3Z+1oPBAhMC0wR5BRmPjHHqqc/SD1SW
-X-Received: by 2002:a17:903:19cf:b0:2cc:f4d4:29a0 with SMTP id
- d9443c01a7336-2d0cab0db0dmr153501185ad.3.1786038836158; Thu, 06 Aug 2026
- 10:53:56 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b8UTpaC3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1786039477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UdWNLqxBTwuE6w10Ve999INMwLQmIiCcOtzwbxqd7dc=;
+	b=b8UTpaC3g5Knhu38d1nOJGRNFuXXReljug75yPyCQAoNvKvoKqdJLBGgvu1n8++2q9Ep9A
+	VB5h8cYtMXuHiugN4llqsN3/V/o7lUcn+4y88TvBRC6DVc8HC6Lg7yeYWbCdRm/f+agxG3
+	MUFwrJ+IMEnH3yRePeFn/nAzf4UsAlc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-216-0fYC2DPjNy2QV6YK08rhMA-1; Thu,
+ 06 Aug 2026 14:04:34 -0400
+X-MC-Unique: 0fYC2DPjNy2QV6YK08rhMA-1
+X-Mimecast-MFC-AGG-ID: 0fYC2DPjNy2QV6YK08rhMA_1786039473
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7E791956096;
+	Thu,  6 Aug 2026 18:04:32 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.54])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 21D20180034C;
+	Thu,  6 Aug 2026 18:04:29 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  6 Aug 2026 20:04:32 +0200 (CEST)
+Date: Thu, 6 Aug 2026 20:04:28 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the sysctl tree with the
+ mm-nonmm-unstable tree
+Message-ID: <anTMrBYXYKCpmoCX@redhat.com>
+References: <amjpZ1aYsps44ExZ@sirena.org.uk>
+ <20260728134755.501c6ac650c7a3868ae00614@linux-foundation.org>
+ <ntrhorleb6tok47d6nr2k7xrpqwkwwfk5cie4v7pc3feia6tmd@hxxgjkkcc2vu>
+ <ckrmakyl5pqqdileg6cuusekutpeuz5mtcpic64ml3zzgolwvj@2hnt7zcwqpvu>
+ <20260804131407.40a4c72c38c482718894dd9a@linux-foundation.org>
+ <kmpimojpjnn53b3mlezkmokoxk5ugtikrupxtobnsl25uhg7kl@xjwnvn577wsa>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260805190012.2934907-1-gary@kernel.org> <20260806170101.67544-1-ojeda@kernel.org>
- <ace18b0e-bda1-417b-adb2-2ba7c36f1c1c@sirena.org.uk> <CANiq72k9hzdU8QF32HEdvpaz9K7JxE2vxfyRFVjaePciyzgnTg@mail.gmail.com>
- <d743e4e9-94ea-482b-984f-cfb1a3b60393@sirena.org.uk>
-In-Reply-To: <d743e4e9-94ea-482b-984f-cfb1a3b60393@sirena.org.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Aug 2026 19:53:41 +0200
-X-Gm-Features: AUfX_mxalOypU0rpE7BnWTwTbtLAHW7HGYNPe48IeVPHDHscmiN_P_36vZMyZtc
-Message-ID: <CANiq72mzVuEfaf0xuDLMy1M25Xu+G2WvEVC-E8Xna52hPTn9Pg@mail.gmail.com>
-Subject: Re: [GIT PULL] pin-init changes for v7.3-rc1
-To: Mark Brown <broonie@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, gary@kernel.org, linux-next@vger.kernel.org, 
-	a.hindborg@kernel.org, acourbot@nvidia.com, aliceryhl@google.com, 
-	bjorn3_gh@protonmail.com, boqun@kernel.org, dakr@kernel.org, 
-	daniel.almeida@collabora.com, gary@garyguo.net, lossin@kernel.org, 
-	rust-for-linux@vger.kernel.org, tamird@kernel.org, tmgross@umich.edu, 
-	work@onurozkan.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kmpimojpjnn53b3mlezkmokoxk5ugtikrupxtobnsl25uhg7kl@xjwnvn577wsa>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Aug 6, 2026 at 7:22=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
+Joel, et al,
+
+First of all, sorry for the hassle caused by my patches ;)
+
+On 08/05, Joel Granados wrote:
 >
-> Yes.
+> On Tue, Aug 04, 2026 at 01:14:07PM -0700, Andrew Morton wrote:
+> >
+> > How about I remove
+> >
+> > 	sysctl: move the "cad_pid" entry from pid_table[] to kern_reboot_table[]
+> > 	https://lore.kernel.org/al4C572uhLdBvyzH@redhat.com
+> >
+> > and
+> >
+> > 	sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_SYSCTL
+> > 	https://lore.kernel.org/amdveg1m4E4uQlGv@redhat.com
+> >
+> > from mm.git then forget all about them ;)
+>
+> Works for me. I had already picked up the first, I'll add the second to
+> sysctl-next and they will go upstream through the sysctl tree.
 
-Thanks!
+From [PATCH -mm v2 0/1] sysctl: remove CONFIG_PROC_SYSCTL, it just mirrors CONFIG_SYSCTL
 
-(Please let me know if you prefer a proper patch etc., of course)
+	If this patch is accepted, I'll send a couple of followup cleanups:
 
-Cheers,
-Miguel
+		kernel/sysctl.c:
+			collapse the now-identical CONFIG_SYSCTL nesting
+
+		drivers/parport/procfs.c, fs/dcache.c, and fs/file_table.c:
+			drop the CONFIG_PROC_FS checks, now it is clear that
+			CONFIG_SYSCTL depends on it
+
+Now that I see both patches in
+https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/log/?h=jag/sysctl
+let me ask..
+
+Can I send these (minor) cleanups based on sysctl-next to you right now
+(before I forget it ;) ?
+
+Or it would be better to do this later, after they go upstream?
+
+Oleg.
+
