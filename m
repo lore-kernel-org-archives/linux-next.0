@@ -1,69 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4CC381E9A;
-	Thu,  6 Aug 2026 04:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F75D344D8C;
+	Thu,  6 Aug 2026 05:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785990584; cv=none; b=Kcf5UfbOcpIl9hd4X3ec3Hd5ZD37qvNk8ukNF9zUgRmU9fievgVHhWAR7CkEIbHLq5fRuU8odApGOsK4nMuuCuxShFzre4Lxnb3c3lvhd48MLTBRocHeFvOCVJBL6npPkRgLq0QFY+4++AE/0WrypCLzXgjTGGsRypVKez5Yd0c=
+	t=1785995550; cv=none; b=sMDnjq9UakE79TnOlFDWQQBbXt7Iwkv8HtDgR+odaWdTh5GekYkGQUcSh5G+jOJOjpOZqm4LQi4A0Jh7IIphyRzl2kD6wD7YEEoSZfph0bLI8etcDCDn9m0EntmhP2ofbO39gTDQ+xJ8W9msBQLMJ2IRwkvMJ3YjFNJv33XRy5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785990584; c=relaxed/simple;
-	bh=7CW8Mojz4tTHJtxhvNY+//zqS7ohbSQ0PPY1CWQ9nuM=;
+	s=arc-20240116; t=1785995550; c=relaxed/simple;
+	bh=B4Q49MV2oxYDlIScKgtBHV01axw+STZVEGPu9VuN4XI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOBVyToL0WFBCRNxjsx1Dqrl9bY4Zj5n9nZ+q02i7Y0xQS0eeLw95+up8VZ8sWbBu1cxQ6G/Og0QOXezmSGKF7khIbyZZhHsVf6NG8Yx5duy58mzIE4sW1pr1TdjzuW65scw5528j3SApUNxJneYdvpEbmaI5N1H4uWdg0ClqIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eU2U0F9G; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=cL+5giJXVvRcUz9n4pDVUMTQImEfUFLeat4Kqxi1V0HTPev60laIk0yRsIW/8No/EfoqCn05yt/ItdAzPCkddBTeVLIqEhHw6NmAC1Vcsgq0phxxCzYKeO6VVEvAEOkLzfeje0XOnZiX/r7MfB2IhoUg66KiFZ0sGmMDq9xLpi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIfyyRDj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eU2U0F9G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785990582; x=1817526582;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7CW8Mojz4tTHJtxhvNY+//zqS7ohbSQ0PPY1CWQ9nuM=;
-  b=eU2U0F9GJYZY8d8wEFlkC/8UqNst6f/8uJ8NO2A2cj2awtdv0lW5Fii2
-   y/aITJaTQ1emYWn0ZYg7is+S3gl6J+voBu2Cbsa2T20zv0iaAIk10KSW+
-   4aRaU52SrH10+ynVrmKLOklQ46AMD0p8i5p49O9qwzFZ8ZhmNZNrsumPO
-   Mf4sxxmHb/aKcd5ZDK9KrPIPJD3eETRWnxw4fL6WEpN4xyY0LLGEnIFHy
-   Im5Lj5EX5nU/EZmhjtfWo7NFKIY9vaheKeCEW1Y1Uc6LG9+RVKbcQjxo5
-   3KwnNle2+q629LXL0ZQUQMsd615emfJNlz/OhcTm4pfNWjd5OrPb1OZlM
-   Q==;
-X-CSE-ConnectionGUID: Ztqu2XFvS+Cjx066c+HX0w==
-X-CSE-MsgGUID: pG+IMVNsRmSTK/OjauHdAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11866"; a="85700023"
-X-IronPort-AV: E=Sophos;i="6.25,207,1779174000"; 
-   d="scan'208";a="85700023"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2026 21:29:42 -0700
-X-CSE-ConnectionGUID: mLQTR0OkQ/2wCOMWalBDJQ==
-X-CSE-MsgGUID: rBVBeQQARBiEmx1VFZ4j5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,207,1779174000"; 
-   d="scan'208";a="257693647"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 05 Aug 2026 21:29:39 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wrpjc-00000000E8v-0vnM;
-	Thu, 06 Aug 2026 04:29:36 +0000
-Date: Thu, 6 Aug 2026 12:29:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Bert Karwatzki <spasswolf@web.de>,
-	linux-next@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	amd-gfx@lists.freedesktop.org,
-	"# = v7 . 1" <stable@vger.kernel.org>,
-	Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Rafal Ostrowski <rafal.ostrowski@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] drm/amd/display: fix usage of DC_FPU_{BEGIN,END} with
- PREEMPT_RT
-Message-ID: <202608061233.eufnR5Qm-lkp@intel.com>
-References: <20260801071724.12998-1-spasswolf@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIfyyRDj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F341F000E9;
+	Thu,  6 Aug 2026 05:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785995549;
+	bh=554sNPfuHcR1Bkq2y9SrgHxmggPTwv4NEYX575dvhdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GIfyyRDjCOOoMGRG4WgFrH0hTiYXek1GG9sebLVO8ijTWltfqIp5L2zDXD3XeyAZ4
+	 T6kkYkqA4j7xPJUqV5XNTFswarCjw0xhiRWrzvb3lH52Uwt8gwj8m+1nMFZ57BJIYX
+	 NAJ1eHfcV1MBFnvnamg9H5KbAyc+0wn5yB2YJyl7+6zNeQhEVaLNSSVTPlK87tWpSy
+	 FK64mVrmPHilh29HWSXb1qs6tVbwL/nZTsoUm3B9sTC67uNXQVJNhucih3Zv1DyvLL
+	 O4JnAiZCrcOFfe4Q6SZ79xTstgvfD5FHFRPXb79mnQR5QXDTWrBlzR1Zmp8EAp1oGr
+	 Wuhb73QFn5diw==
+Date: Thu, 6 Aug 2026 05:52:26 +0000
+From: Harry Yoo <harry@kernel.org>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org, 
+	linux-next@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Mark Brown <broonie@kernel.org>
+Subject: Re: rust compile failure in next-20260730
+Message-ID: <anQftbfg8EWMmxZc@dev>
+References: <20260731122826.737703-1-spasswolf@web.de>
+ <20260731192522.GA1014697@ax162>
+ <DKFD0ZKHC2I8.19PUYUR6N6KFN@garyguo.net>
+ <anCkbMyUIscmAheK@tardis.local>
+ <7c39e6cb-0ccf-4a50-a853-0f6012b05044@kernel.org>
+ <DKFF147BG8PR.I12RKSRFQS1B@garyguo.net>
+ <11a8bf75-8fc1-4d32-a350-6bf8156dd8ab@kernel.org>
+ <DKG2TQ94TGLB.3EO7ZNVKB50KY@garyguo.net>
+ <7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -72,60 +53,63 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260801071724.12998-1-spasswolf@web.de>
+In-Reply-To: <7189ebb5-ae48-4466-9055-1ab1b0b5ef7c@kernel.org>
 
-Hi Bert,
+On Tue, Aug 04, 2026 at 12:35:42PM +0200, Vlastimil Babka (SUSE) wrote:
+> On 8/4/26 12:10, Gary Guo wrote:
+> > On Mon Aug 3, 2026 at 10:04 PM BST, Vlastimil Babka (SUSE) wrote:
+> >> On 8/3/26 17:32, Gary Guo wrote:
+> >>> On Mon Aug 3, 2026 at 4:10 PM BST, Vlastimil Babka (SUSE) wrote:
+> >>>> On 8/3/26 16:23, Boqun Feng wrote:
+> >>>>> On Mon, Aug 03, 2026 at 02:57:49PM +0100, Gary Guo wrote:
+> >>>>>> 
+> >>>>>> We could also unconditionally use `kvfree_rcu_head` here, and
+> >>>>>> add
+> >>>>>> 
+> >>>>>>     #[cfg(not(CONFIG_KVFREE_RCU_BATCHED))]
+> >>>>>>     pub type kvfree_rcu_head = callback_head;
+> >>>>>> 
+> >>>>>> to bindings.rs?
+> >>>>>> 
+> >>>>> 
+> >>>>> This option is currently not maintainable unless it becomes a
+> >>>>> maintainer-aware way to handle things like this.
+> >>>>> 
+> >>>>>> (Or even better, changing `#define` to `typedef` so bindgen takes care of
+> >>>>>> everything).
+> >>>>>> 
+> >>>>> 
+> >>>>> Yes, this is better IMO, but it's up to slab maintainers. :-)
+> >>>>
+> >>>> Can you elaborate a bit please, how would that look like?
+> >>> 
+> >>> I was thinking of doing `typedef struct rcu_head kvfree_rcu_head;` but of course
+> >>> that didn't work because you can't use typedef to create `kvfree_rcu_head` :)
+> >>> 
+> >>> However, something like this could work?
+> >>> 
+> >>>     #ifdef CONFIG_KVFREE_RCU_BATCHED
+> >>>     ...
+> >>>     #else
+> >>>     struct kvfree_rcu_head {
+> >>>         struct rcu_head head;
+> >>>     };
+> >>>     #endif
+> >>> 
+> >>> and everywhere add a cast everywhere that expects kvfree_rcu_head == rcu_head.
+> >>> 
+> >>> but this would indeed be more complex :(
+> >>
+> >> So you mean like this? Doesn't seem so complex and seems to compile here
+> >> with CONFIG_KVFREE_RCU_BATCHED both disabled and enabled.
+> > 
+> > I thought that a lot more places have to be updated, but it looks from your diff
+> > below that this is simple enough.
+> 
+> Thanks. The slab/for-next branch now includes the slab changes.
 
-kernel test robot noticed the following build errors:
+The slab changes looks good to me, thanks!
 
-[auto build test ERROR on next-20260804]
-[cannot apply to drm-misc/drm-misc-next linus/master v7.2-rc6 v7.2-rc5 v7.2-rc4 v7.2-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bert-Karwatzki/drm-amd-display-fix-usage-of-DC_FPU_-BEGIN-END-with-PREEMPT_RT/20260805-170330
-base:   next-20260804
-patch link:    https://lore.kernel.org/r/20260801071724.12998-1-spasswolf%40web.de
-patch subject: [PATCH] drm/amd/display: fix usage of DC_FPU_{BEGIN,END} with PREEMPT_RT
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20260806/202608061233.eufnR5Qm-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 16.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260806/202608061233.eufnR5Qm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202608061233.eufnR5Qm-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_surface.c: In function 'dc_create_plane_state':
->> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_surface.c:89:9: error: implicit declaration of function 'DC_RUN_WITH_PREEMPTION_ENABLED' [-Wimplicit-function-declaration]
-      89 |         DC_RUN_WITH_PREEMPTION_ENABLED(plane_state = kvzalloc_obj(*plane_state, GFP_ATOMIC));
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/DC_RUN_WITH_PREEMPTION_ENABLED +89 drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_surface.c
-
-    82	
-    83	/*******************************************************************************
-    84	 * Public functions
-    85	 ******************************************************************************/
-    86	struct dc_plane_state *dc_create_plane_state(const struct dc *dc)
-    87	{
-    88		struct dc_plane_state *plane_state;
-  > 89		DC_RUN_WITH_PREEMPTION_ENABLED(plane_state = kvzalloc_obj(*plane_state, GFP_ATOMIC));
-    90	
-    91		if (NULL == plane_state)
-    92			return NULL;
-    93	
-    94		kref_init(&plane_state->refcount);
-    95		dc_plane_construct(dc->ctx, plane_state);
-    96	
-    97		return plane_state;
-    98	}
-    99	
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- 
+Cheers,
+Harry / Hyeonggon
