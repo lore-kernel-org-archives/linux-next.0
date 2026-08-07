@@ -1,40 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BEF44A41B;
-	Fri,  7 Aug 2026 15:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21F5378D87;
+	Fri,  7 Aug 2026 16:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786117482; cv=none; b=bVq+fZBCAU3uRPPpckxEbPSSnJNU9ecZkj5QX9Dk4043U/5eZ4DfOfyaH1xsi+u7NUVTsbXlAshvP6Qi+NP39d33yxEC5ubCxytzQJYVt2p9PMvoEtXBEDKeKASsPUdbz+E8VPoeymsiVUG7TWInC60yrhYXKisDH7YnIAeJGiw=
+	t=1786118957; cv=none; b=AAmSSO9irlOxbkjVkaGqk/cpsSuFL/Pm+FuelwudXRRJOmD4r6orRx+0bOQskln2G7B9WLq5bTJNRMnuij6x0xzc9CFjt/76M8lI3era9phhQX6bMbbSpTC3VDgJxBUBfqZ7BIsjSGT7HQEXQMXyNeUIgNQOQnMi4+apdEk/LkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786117482; c=relaxed/simple;
-	bh=Cbb6/aRrUytBqNWL+Ejh8XPmcz5BXtNmptWzvgkcWrM=;
+	s=arc-20240116; t=1786118957; c=relaxed/simple;
+	bh=+7NZQhMvHFGCkgxPB9PZncWw+3/JjGh1+3FpCeyDccs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YTz1G5LoR0GRgJB/9uqleyb/6NwUIl5z35Uzh543oh0aPRMAkCfujaPDfGjQ92trZocp/kETaCoQVTu8CxenJM71HJKZ2fHaMhnFyR1XLu7Z5wi0ypFCEbh8Ckp5Ogq2bJs7NRvnNQyXHhvn0LjhBHqMI4YOccTe+iuhri58dBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlT/GpmO; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=oHKJcPvLmrW/PofQaBZJeh5KFSYWcVVxCVAVR4A4K9JCaF2PGgQ5tMrXOJdIhtVQauGL4FLQGXfZrr7Z7zR9644/zmopwTdiNrHp1lpZoTPC2Tkc3nxY/YnkIu5d4X7K250AnRXR4tKgUQs1Gv2qhOTQrxurIn3ImZjf4seCFzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9CVQ72a; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlT/GpmO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CAA1F00A3A;
-	Fri,  7 Aug 2026 15:44:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9CVQ72a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5FCA1F000E9;
+	Fri,  7 Aug 2026 16:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786117481;
-	bh=t/puPAHa3kU8JVox1ahYJAO1h4+piCIwj+aDZnntzlo=;
+	s=k20260515; t=1786118956;
+	bh=lZImYV+sIfUsqZG4gTWULE6ZJI00opd0m5dzEPrG2KQ=;
 	h=Date:From:To:Cc:Subject;
-	b=HlT/GpmOxUcDO/e4soccVCdtmgqBj14XAy+FG2F4owd3QlKaVW+XMjKxZmmirsxre
-	 Dl/zg+cLGUwPjBXYn6bBheAcXR3AW24wd2YDp4y4zf6YFEFXWfWpNDQmMEJWwuKS8F
-	 MlVZ8KOi51QrfcI0WhWyeTjJWt455VawrVFq/7GXQ5du+3gQ4ot9ve9lu/fkSRrw70
-	 qgqLWsueDZNfEliI76I5Tr0Iop6a9kxsh0awSc2Aiqf7tg/FDolv9LxnSyFmwL9qWI
-	 w+VpGeBXS5v6XtFgGi9hI3YZ2zYXeQNGL8iW9BSDZcgBoASVxB06r+nKErAdAjgcUt
-	 llVoVhMi8H6hw==
-Date: Fri, 7 Aug 2026 16:44:36 +0100
+	b=h9CVQ72aXS9ZM7cE7ff1R7gpUtlYo2YgYVveMTmYfthxkDwKhr6fOb5WmbbBrzSiv
+	 Q0abop+9rkVb7IDe/v4QM7vM+Tx6x2YC1GpM+tvP/ty2HrfALQIPpmccSr8Uf0WFRW
+	 2KmL41GSmJzve0x9+7BhiqeRAz/TfkcIDUskYYV01EbvU3EL4fES2zZkfpFVe3HK8N
+	 aSvZzyYHiSZBVzPMbMqywZfSG9Dz+L/jKX+gu1ULaNn0FIwcffU1QkSujXbUIa5I/b
+	 b1s3P+jwwqMNVNag5ie4wvFJZXHVeK/ux9xXlOMidLA5EywcN9g9EXfrCsLCaFjUUP
+	 Ukbs6M/k7uKaw==
+Date: Fri, 7 Aug 2026 17:09:13 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>,
-	Roman Li <Roman.Li@amd.com>
+To: John Johansen <john.johansen@canonical.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the amdgpu tree
-Message-ID: <anX9ZElBEqtJ6py-@sirena.org.uk>
+Subject: linux-next: build failure after merge of the apparmor tree
+Message-ID: <anYDKXW7kHsWByqu@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,44 +40,43 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qMDQ88ps1nQCZA30"
+	protocol="application/pgp-signature"; boundary="8DN1uSFCdZz4wETv"
 Content-Disposition: inline
 
 
---qMDQ88ps1nQCZA30
+--8DN1uSFCdZz4wETv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi all,
 
-After merging the amdgpu tree, today's linux-next build (x86_64
+After merging the apparmor tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-/tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2_0/dml21/src/dml2_core/dml2_core_dcn5_funcs_mode_programming.c:11:13: error: stack frame size (2400) exceeds limit (2048) in 'dcn5_mode_programming' [-Werror,-Wframe-larger-than]
-   11 | static bool dcn5_mode_programming(struct dml2_core_calcs_mode_programming_ex *in_out_params)
-      |             ^
+/tmp/next/build/security/apparmor/net.c:320:41: error: address of 'needput' will always evaluate to 'true' [-Werror,-Wpointer-bool-conversion]
+  320 |         end_current_label_crit_section(label, &needput);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ^~~~~~~
 1 error generated.
 
-Probably caused by commit
+Caused by commit
 
-   992694ad28584 (drm/amd/display: Enable DCN6 sources compilation)
+   bbb153c86dafa (apparmor: optimize current_label_crit_section() with needput)
 
-though I didn't specifically check.  I have used the tree from
-next-20260806 instead.
+I have used the tree from next-20260806 instead.
 
---qMDQ88ps1nQCZA30
+--8DN1uSFCdZz4wETv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp1/WMACgkQJNaLcl1U
-h9DR8wgAgdU1dW3v5WSQ3oOCFciAP4KH9N5A7NKl7zDZAXUOCxsJ2+k5LBpi4Q0Y
-3A2hMx12MocTM36+0K/eBreVOZWDGCFF719tPNrRmYs0gCxYrWFVtCUvDTJTOv/R
-ngcP+Mcg7Hhs4PXNU6+llmv7G1ga5M0mzQXXUmF15Ksn6fvVYLnxN5wSDQJ1enr5
-rCxn1r/q9UXlOxjvV2ppQ/Fnxx0C18JoPsWpD1C/L+oNLm+7xPjlzUrfOeSO6IZp
-uzBgOe2pvHe3C0SA93WMGaZ1pG+0At7Jg7GBX1H2p/9wsWPM2Avjn3ceRg50nQw2
-21O3e7OXemvz3Uo+e5YNeVcofUtWLA==
-=G7kB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp2AygACgkQJNaLcl1U
+h9AwqQf/WSLgeC4W+0SsJV3ZnAzhDTm//eiFk66fL2mHk+gITVssPHfli/1a9VBd
+9RuCmN5l71C1cL4l9ddhAmnKEPdPRN/3xwUhGw9noGzc80nJ4j/KOZEkaxL9s0EG
+ZnlmMQZdyl/N3UW9rYKQBSDaCur9NBeViInYuNKV448N9g7fP+hBYgIOUc2UApRR
+AZY7cYH4hGWoaFirDycV5WNosp41PZSrPnZ2EpxeElv+M+NL32fQLmKKk86hB33Y
+PdJEMdKscwmiJCb/O7mQyBc5s1MqINXAvW0UD3zv0YpDd+Ef6a2ZKqzq65DkQ52M
+JB6azUy3Ww+v2H8Haoa0YtGrpNjfeQ==
+=xXoy
 -----END PGP SIGNATURE-----
 
---qMDQ88ps1nQCZA30--
+--8DN1uSFCdZz4wETv--
