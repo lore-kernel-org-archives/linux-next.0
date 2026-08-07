@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBB1306B3D;
-	Fri,  7 Aug 2026 14:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7E23BB13B;
+	Fri,  7 Aug 2026 14:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786113765; cv=none; b=T8zUrmI/jlX7GbB8bzPLnhdSiEngOs1eSF6xG03swyXCzHYTjRe+AB2Bje2AIFYVgCVCoIMpM22Z3u4pl1fl7eHMd4aJ2Q7Fx6YElzsJJ3HM5N51xxeoB+jGV3xS9Z0h1szrGXS85swPOpFkNIyMDXkj2wyiBQivX0GlKpVPOFM=
+	t=1786113794; cv=none; b=q7ga30Fn0Aqcttvj6UPdQuG3Y9mbT93+VQOzC4TNdVrpXbsKwU7dnV8yQoRqrOvuCfgPwLwc3WrdnpuJ1wpWbQRJRoGIY7sM6quzGO+DH46yyg7PxBNUolv0RtQMRhDlo13M2KFfdj7rA7SVLAFRB6RUrXrnS47aLz5/MZT0hok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786113765; c=relaxed/simple;
-	bh=R1AgV9my29YUCB4SCAatvG/i5CV7xobF7ZIsIkWZ9LI=;
+	s=arc-20240116; t=1786113794; c=relaxed/simple;
+	bh=0YqDS5r8TVgu7IsC/KC43dMUgaXZKl+QLdcWIFAk/EI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cdr/tHZ/QBw7/gNg4wCacb2yGH9Y7RpoCcByBG33Z3zRqdH9S5chVBFPfOSVLELS0Kkld897PMDF1cpQoLtaBv6J4Lmwj3JMjCARPc4dYxFLGCsd85MWjaLyd1CdbgbM3EQzPX2+nPDk6ljagb/5QVQWeII5hKbw6cqaARKl4vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qv4xBqrV; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Vh8JBXPfCo1PDZ7Zwe4XS3d064Uzbv6/8eetj6sAmhYTJ0P+k+GwYUC3QpKH3A2UhZsxZtS5CPRrQ0AZnsV2OWI+P6w7afg6QPPIyHhZ0zm9oN2TV8DnJW1qJhslqybGYAik+GPGMl1X7cPcKOgPpgGjooRG9ZHrDfyLXdigsr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjj3/7Kb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qv4xBqrV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9721F00ADE;
-	Fri,  7 Aug 2026 14:42:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjj3/7Kb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FFC1F00AC4;
+	Fri,  7 Aug 2026 14:42:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786113753;
-	bh=rB4q/78dFKqcvJJUoBC0pj2Qd5uo6Y6M2f24vIDPlWs=;
+	s=k20260515; t=1786113776;
+	bh=VdwGpuBsIMSdUUZpa1SC6i0wbOq9wdCggYK01AzpwMY=;
 	h=Date:From:To:Cc:Subject;
-	b=Qv4xBqrVOhMyuIKrYLAQbCCThmIsrpAuLwUcYC5vizaJMMEby84DOo68tFkfNQcpA
-	 NmTYH+A0W2CBDJlnrDLQMDB68w3cvOaWI6QXVsgaDPyQnpKo3W9TJpaHfKiI0EMO7q
-	 eV7ZXsM08tqjB4F+d5xSsTMpjrLg1kDOG/6ZMEpfugzB6/QBhaaJ/SDJj9WV5kHCEN
-	 tmIkS7uLEyhRU5peL4aIF8pLj1UHJh4KiGLEXjUNKA+jqHLy74Nam8zf/gXiW/J50X
-	 61dKssfOOx8yAiTIVE/nLrfuF7+utrVlebJTdTSDf55SJHhQwwDucjuV+y/b/Qli63
-	 WngvDQBmdtpAQ==
-Date: Fri, 7 Aug 2026 15:42:28 +0100
+	b=fjj3/7Kb4ApnotXDuPrihjWBlQEhY5Ege6xMzyD9QWdUMeFlQ7oeBPcnyT1g65maz
+	 DYrKbx7Sper+IkeMaRjYoowaAoacRS41Xg7T7gx5lqR5ZIiJMNWYQmfD0r5h59wV/c
+	 DUMtABvSBFK89ANxpJTU4Wr+NOCsGqqoJOguxGmCNlWis5Gf27jX5+pFKd7YaUurKZ
+	 IvZdMwPcYcmD00eAXXRm5E7oq1gvvQxKB6eEm6jdIwQoWqj0xf6qfrbusWLwqQr97p
+	 7Tmxrd23Nfm4TJyW0G5tJWy326Yeve519Oi9CyL8M+WiL7aIz3IBwMEISbInoy+RUV
+	 l6eI9ubeI8InA==
+Date: Fri, 7 Aug 2026 15:42:52 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc: Linu Cherian <linu.cherian@arm.com>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Fangzhi Zuo <jerry.zuo@amd.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Will Deacon <will@kernel.org>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <anXu1CnuHQo-fKId@sirena.org.uk>
+	Ray Wu <ray.wu@amd.com>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <anXu7K7kjkoJHEbZ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,36 +43,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="B073ScwDdTjtsKjI"
+	protocol="application/pgp-signature"; boundary="R5k9hXJEqYTJYcOx"
 Content-Disposition: inline
 
 
---B073ScwDdTjtsKjI
+--R5k9hXJEqYTJYcOx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  arch/arm64/tools/cpucaps
+  drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
 
 between commits:
 
-  94104e3cfa803 ("arm64: cpufeature: Rename BBML2_NOABORT as BBML3")
-  12aab25ca56ee ("arm64: errata: work around NVIDIA Olympus device store/lo=
-ad ordering")
+  3141e3d61469b ("drm/amd/display: Check for tg ops in dce110_set_avmute")
+  443290d70b01e ("drm/amd/display: Add AV mute wait frames to dce110_set_av=
+mute")
 
-=66rom the arm64 tree and commits:
+=66rom the drm-fixes tree and commit:
 
-  27a263e1a0fa2 ("KVM: arm64: Move GICv3 broken SEIS implementation detecti=
-on to a CPU errrata")
-  0dbb49dcdbbe9 ("arm64: Add ARM64_HAS_NV2P1 capability")
-  5be1b8de27dce ("arm64: Add ARM64_HAS_NV3 capability")
+  414da24137ace ("drm/amd/display: Add AV mute wait frames to dce110_set_av=
+mute")
 
-=66rom the kvm-arm tree.  (Only the arm64 tree touches this file one of
-the other commits says!)
+=66rom the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -81,43 +78,109 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc arch/arm64/tools/cpucaps
-index 0ee42b0cc8d34,f88d7898489f9..0000000000000
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@@ -52,6 -51,9 +52,8 @@@ HAS_LS64_
-  HAS_LSUI
-  HAS_MOPS
-  HAS_NESTED_VIRT
-+ HAS_NV2P1
-+ HAS_NV3
- -HAS_BBML2_NOABORT
-  HAS_PAN
-  HAS_PMUV3
-  HAS_S1PIE
-@@@ -121,7 -123,7 +123,8 @@@ WORKAROUND_CAVIUM_TX2_219_TV
-  WORKAROUND_CLEAN_CACHE
-  WORKAROUND_DEVICE_LOAD_ACQUIRE
-  WORKAROUND_DISABLE_CNP
-+ WORKAROUND_GICv3_BROKEN_SEIS
- +WORKAROUND_NVIDIA_OLYMPUS_1027
-  WORKAROUND_PMUV3_IMPDEF_TRAPS
-  WORKAROUND_QCOM_FALKOR_E1003
-  WORKAROUND_QCOM_ORYON_CNTVOFF
+This is a pretty clear example of the sorts of issues the constant
+cherry picking causes.
 
---B073ScwDdTjtsKjI
+diff --combined drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
+index f5b3a2eff94a0,f91ce2b4b1bfa..0000000000000
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
+@@@ -607,11 -607,10 +607,10 @@@ dce110_translate_regamma_to_hw_format(c
+  }
+ =20
+  static bool
+- dce110_set_output_transfer_func(struct dc *dc, struct pipe_ctx *pipe_ctx,
+- 				const struct dc_stream_state *stream)
++ dce110_set_output_transfer_func(struct set_output_transfer_func_params *p=
+arams)
+  {
+- 	(void)dc;
+- 	struct transform *xfm =3D pipe_ctx->plane_res.xfm;
++ 	struct transform *xfm =3D params->xfm;
++ 	const struct dc_stream_state *stream =3D params->stream;
+ =20
+  	xfm->funcs->opp_power_on_regamma_lut(xfm, true);
+  	xfm->regamma_params.hw_points_num =3D GAMMA_HW_POINTS_NUM;
+@@@ -1348,10 -1347,7 +1347,7 @@@ void dce110_set_avmute(struct pipe_ctx=20
+  		 * process the mute state, especially after link re-establishment
+  		 * with HDMI 2.0 scrambling enabled.
+  		 */
+- 		if (enable && pipe_ctx->stream_res.tg &&
+- 		    pipe_ctx->stream_res.tg->funcs->is_tg_enabled &&
+- 		    pipe_ctx->stream_res.tg->funcs->wait_for_state &&
+- 		    pipe_ctx->stream_res.tg->funcs->is_tg_enabled(pipe_ctx->stream_res.=
+tg)) {
++ 		if (enable && pipe_ctx->stream_res.tg->funcs->is_tg_enabled(pipe_ctx->s=
+tream_res.tg)) {
+  			int i;
+ =20
+  			pipe_ctx->stream_res.tg->funcs->wait_for_state(pipe_ctx->stream_res.tg=
+, CRTC_STATE_VACTIVE);
+@@@ -2826,23 -2822,26 +2822,26 @@@ static void program_surface_visibility(
+ =20
+  }
+ =20
+- static void program_gamut_remap(struct pipe_ctx *pipe_ctx)
++ static void program_gamut_remap(struct program_gamut_remap_params *params)
+  {
++ 	struct transform *xfm =3D params->xfm;
++ 	const struct dc_stream_state *stream =3D params->stream;
+  	int i =3D 0;
+  	struct xfm_grph_csc_adjustment adjust;
++=20
+  	memset(&adjust, 0, sizeof(adjust));
+  	adjust.gamut_adjust_type =3D GRAPHICS_GAMUT_ADJUST_TYPE_BYPASS;
+ =20
+ =20
+- 	if (pipe_ctx->stream->gamut_remap_matrix.enable_remap =3D=3D true) {
++ 	if (stream->gamut_remap_matrix.enable_remap =3D=3D true) {
+  		adjust.gamut_adjust_type =3D GRAPHICS_GAMUT_ADJUST_TYPE_SW;
+ =20
+  		for (i =3D 0; i < CSC_TEMPERATURE_MATRIX_SIZE; i++)
+  			adjust.temperature_matrix[i] =3D
+- 				pipe_ctx->stream->gamut_remap_matrix.matrix[i];
++ 				stream->gamut_remap_matrix.matrix[i];
+  	}
+ =20
+- 	pipe_ctx->plane_res.xfm->funcs->transform_set_gamut_remap(pipe_ctx->plan=
+e_res.xfm, &adjust);
++ 	xfm->funcs->transform_set_gamut_remap(xfm, &adjust);
+  }
+  static void update_plane_addr(const struct dc *dc,
+  		struct pipe_ctx *pipe_ctx)
+@@@ -3188,13 -3187,13 +3187,13 @@@ static void dce110_program_front_end_fo
+  				plane_state->rotation);
+ =20
+  	/* Moved programming gamma from dc to hwss */
+- 	if (pipe_ctx->plane_state->update_flags.bits.full_update ||
+- 			pipe_ctx->plane_state->update_flags.bits.in_transfer_func_change ||
+- 			pipe_ctx->plane_state->update_flags.bits.gamma_change)
++ 	if (pipe_ctx->plane_state->update_bits.full_update ||
++ 			pipe_ctx->plane_state->update_bits.in_transfer_func_change ||
++ 			pipe_ctx->plane_state->update_bits.gamma_change)
+  		hws->funcs.set_input_transfer_func(dc, pipe_ctx, pipe_ctx->plane_state);
+ =20
+- 	if (pipe_ctx->plane_state->update_flags.bits.full_update)
+- 		hws->funcs.set_output_transfer_func(dc, pipe_ctx, pipe_ctx->stream);
++ 	if (pipe_ctx->plane_state->update_bits.full_update)
++ 		hwss_set_output_transfer_func(dc, pipe_ctx);
+ =20
+  	DC_LOG_SURFACE(
+  			"Pipe:%d %p: addr hi:0x%x, "
+
+--R5k9hXJEqYTJYcOx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp17tQACgkQJNaLcl1U
-h9DrTgf+Mq369FXAPL2yITFnZSj+zYCGy93i7syHULj8iwgghEOVcipYTcvhxqjd
-M3OSsPMqU7cc7psPpuqQaRGh94D4GIMquh29DQ5gHmSDcltn8lFQLqWB/Uhg3ZEP
-ySiZBhDQJ5oUkTcMNSSPp1FOTA6VFuZPrehYMuXgelJhVaNXboPIBCiepBk588yT
-LLye1CrYYQYzeHcKzJWcBrRklgYLnOi9p1Bm6w5J5w2rJOM5gve6zd7EEVchkeI5
-JP4zLOGxBpsoThL5KJaSIOgidokEhT9RevEW41qw4YH3Urn+Ig+B4KRQ8odfbGNS
-ae2O8H+g7ksHA9zUYw7l8LxSsQuo4Q==
-=2p0D
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp17usACgkQJNaLcl1U
+h9C5ugf/Y8dGx6/ndTxTAdsSVmVR1w+gbOx0DVSGU/6OKS4M/MWm/0ketBXAgrLx
+HrDkcnRuBQduATAevluif2Rt9WJi3SDIBeZUulFC3PFzoseVAzQSpnxttChedPef
+QFqf0/jk9kYa2A7CbZWWxJNHrGonNSeB1OeRdfYsLfHOl1QZwQeMnkjjggwyhLE/
+owjhBgFcMZ7s3IxnaNiqAwESlRWDVKifJAWiwmkq1AAdWtpWeVoQm9BmCLyngxhg
+ECX78grzJUYoVpMSwYXypIguVh1GILH/6c1ZxCgH67WbERjyA3awTRYH8icvyfj6
+DzAFH8YFb1O77/minMzlw625qw4V6g==
+=bZGt
 -----END PGP SIGNATURE-----
 
---B073ScwDdTjtsKjI--
+--R5k9hXJEqYTJYcOx--
