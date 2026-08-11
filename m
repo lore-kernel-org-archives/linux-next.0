@@ -1,71 +1,112 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5907D4519B5;
-	Tue, 11 Aug 2026 17:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1529235A385
+	for <linux-next@vger.kernel.org>; Tue, 11 Aug 2026 19:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786469128; cv=none; b=Pp5Pamouem/aQkezB+8a52av1+LSGyH1zIXaVtcyvDIKlUrSg3X2GNP9hzXfVRN7REL+i7O4xVmyQCV4Y6IUQ7/oHTJNx5AqBlru9gDQ57bfalDAReSYOM698Ljlzq48Mj7JAb/fNlka9Tk1+XfSJyYV8SESsH4wwvKSmJMpDSE=
+	t=1786476737; cv=none; b=nMM9NftgOo+EvQTLoYBGN5zbGiWp+39jCH9472qK8BWw6oPXpqlgB1iEqRGNGJqllyckc4HXbY1q6L+dgxTB57D4s5kN5eB9tqWAkN4vt67QbLFYVp7Tpr3+U1niB7ovt3BnT8l8Nkz9CjuXtc3Hu/Xm7OmGc2kZ1+SEoZuUDMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786469128; c=relaxed/simple;
-	bh=5KlOBzBYIW+1+bdaCOSJqCM9vkbvSg24mSmW9KGLweI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQp8jASYcrMbIhBpA14EkRuJ+LfAZDZUhHpDhBpuMXG296mJ1iOxshbc3fdS2DaqOoNu0ibXCbkJt94xRvumEJ0jTjDNWcXV34Gm80dJaSFKb3F9woI8FEJNQJr/cbkLd+gKGrCrVMnMo9w+g1h6//h2HMxzhZab+O2X5IT5+xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HZJn2qbX; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HZJn2qbX"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=L+BWV05XO4xsqcbnbkoKMlIwrmfz8Tu32HRZx+hIv1c=; b=HZJn2qbXUgzXXaZEP+9ipj9RAj
-	YLYbtlaS8m+3BUwE2mbVH0SojkklOwS4V3j1bOZMvGXSQh8U42EbS3jKyyR+puJmzICy3x85QrFey
-	+roexCs5I/qjib7vVLNsLeRI7+1TatSLh/1umZImbSusRSorqAOp3D53E45Xm9wRNfsqiXiuNGUyY
-	CTTuQZpgwVWeTCrSsXfB2I3uaM2cyOB+B0tEODRGz176uETl9X7eUAg2138AZyVEEqRDaG0wJlSLS
-	z3mFs0IneNZFyGffSHgOf9edw2SRJyoAKui/Ii97qbFvxY12IyC+fVPfzhUOe1F6I2l7u5uxx+cx4
-	9qxd9/Xg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wtqE9-0000000Edny-0p20;
-	Tue, 11 Aug 2026 17:25:25 +0000
-Message-ID: <e7911812-9b99-4f94-be6b-597bf202ffeb@infradead.org>
-Date: Tue, 11 Aug 2026 10:25:24 -0700
+	s=arc-20240116; t=1786476737; c=relaxed/simple;
+	bh=8sXu92IbswWFhdVnXtiUMswKltcBL+HinntoBxpVHYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=speJo9QpoDRWmMkgYbhBcpcomRJouiwONUH6M15dPk3q9c8frxc0ecF6hbmqRmAnMRdkzbzdSoJgn9ZoAHBMEkbmrolcMM5Bax02GlOQ1DAtWi9Z1HadubO3jXGU66KcqMUg5d2nyt13ErUR+xzOHUH0S1+qjW6/s8+njhLDHMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5c27e38ee18so92786e0c.1
+        for <linux-next@vger.kernel.org>; Tue, 11 Aug 2026 12:32:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786476724; x=1787081524;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=6dxU6rP+//DIRi/ippTzhmVJSz9UFoWNDvQlc4klwCQ=;
+        b=ho2fnZ1b2XGs3hiKRqbNb1uwGABAW65O4XWUmbRneAESQHwHU1AOwKpSzfFeGgMhTU
+         gdCOjybdyZEagZCINWkdkdPUGeD3VFw2qSOiibtqRfwqRmiCnlSgugVzKgb4rDbZRxKP
+         hHu9ESezEAprJAEYyZWK0O6n1E+U9jjxAyA+rNp+5G+ZdPnCt3GnLse253Oo12bNm0+v
+         YWBeDJg8UY+ld0oc+jskxkulgivH8Y4llj3P0IhpmSqyxOE3tWMhbR6wpcUjyiqpeGKy
+         gZ6L2hP2Got8LrnqGBMspPnL8AAnxdxulSlJrsvuCdVNJg7K7kgcN/LLo00Aezdcsed9
+         6jPg==
+X-Forwarded-Encrypted: i=1; AHgh+RpUBKRSPMYD+RYtXXkWypf/spiHjRo8r45b3iMYNYkI5nfyEpmsfA/pf7MlnblA1cp4X/gJgv5onazq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwzd2NMMdSFiEkUumuuwtCTl2Zn9Nj7QjSgjWXzvM+d5FIwPvH
+	GfkDNhzdXzDXtGsN13tcgo9qKdmoiXBdU0aP8t2kwcLcDKr4/agPuBG/HZoUqY/o
+X-Gm-Gg: AR+sD11ojITiwi1Is6Vm8AV+zFxlcyooWsY9hF9TGylZpihBAjMZbplLSbXRgfAYqXb
+	Uq6I6D53Xxrhx084RAPCpZfKKmBTbnisgsnpwmgZREuAINgfbRTVgZXKrRNzKY/11EY/cbqmmBA
+	JJ1bTneIH9z2mdansVfu4JdaWyK5jjy6cxdgkIlIKUWM5c2LWBQELyhnr42aNmAutdrzD4aXCSV
+	v9cT3PVhxflEeX+fqP1rRWOsv0bCQ8ijDMC8midBXsZJ6q5J2f9hMMKda/M7bOUL/xFiSHBQVwg
+	zRnsKE9FQdQOa5Vw9UZHv9X/EfgaFJzWy8bznZpIbJ76CD/Q1VCxDBaKeqD2qgpBQjV3fonQpjT
+	3gu/ss1j3BUF9Br9ZYNoAxBQVfRJHnZZ3RanCKo3wEPab8Kx6qSumnioPGtltrVpYfyK8ZPA8mp
+	nutwUlzO7Netxkz5FkvdsUhY7jbrE7yiPb5UgaDzm/xPhXatsR4ZZZwR7BBYMSDaSmIyEQ0IUzG
+	jVScUK1nieEzls+H4VaWJyFxw==
+X-Received: by 2002:a05:6122:218e:b0:5c1:31ed:157 with SMTP id 71dfb90a1353d-5c45050123amr866302e0c.13.1786476724522;
+        Tue, 11 Aug 2026 12:32:04 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c45b12affesm379816e0c.0.2026.08.11.12.32.03
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2026 12:32:03 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-74748e3a4d1so77081137.3
+        for <linux-next@vger.kernel.org>; Tue, 11 Aug 2026 12:32:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpZETbCMwGNs0VGWPSP14hv8cRR4e/BM5H2+3/jhggAX3Vy3muKdcdC+DuVTSQ22qzV/qaCwmkNf77C@vger.kernel.org
+X-Received: by 2002:a05:6102:5f04:b0:74d:cef6:af78 with SMTP id
+ ada2fe7eead31-76b5598e33fmr1625891137.7.1786476723540; Tue, 11 Aug 2026
+ 12:32:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Aug 11 (include/linux/mm.h)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linux Memory Management List <linux-mm@kvack.org>
-References: <antIrd2ds2OiEsl5@sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <antIrd2ds2OiEsl5@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
+In-Reply-To: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 11 Aug 2026 21:31:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW+L4ETtgYtmovtXWDSLuAT82q1PLYn9JwXswH0m5qxKg@mail.gmail.com>
+X-Gm-Features: AUfX_mziC06PKWgCBftkgZ_Em2aRuwDQ3gIZrRcp47cIrrphe5thKj2xx_2tvgc
+Message-ID: <CAMuHMdW+L4ETtgYtmovtXWDSLuAT82q1PLYn9JwXswH0m5qxKg@mail.gmail.com>
+Subject: Re: [MAINTAINERS SUMMIT] Any feedback for -next?
+To: Mark Brown <broonie@kernel.org>
+Cc: ksummit@lists.linux.dev, Thierry Reding <thierry.reding@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mark (et al),
 
+On Tue, 11 Aug 2026 at 19:16, Mark Brown <broonie@kernel.org> wrote:
+> I was reminded by some of the maintainers summit threads that it would
+> be a good idea to check in about how things are going with -next and if
+> anyone has any ideas for things that could be done better.  I've flagged
+> this as a maintainers summit topic just in case but I think it's quite
+> probably more of a list thing.
+>
+> Mostly it's been business as usual, hopefully I'll get better at doing
+> merges as time goes on.  That said the list of visible changes I wrote
+> seems a bit long:
 
-On 8/11/26 9:07 AM, Mark Brown wrote:
-> Hi all,
-> 
-> Changes since 20260810:
-> 
+[...[
 
-New 'make htmldocs' warnings:
+>  - Started sending out a weekly summary of the state of the world -
+>    perhaps there's extra stuff I could be adding in there?
 
-WARNING: include/linux/mm.h:2326 function parameter 'vma' not described in 'vma_is_cow_mapping'
-WARNING: include/linux/mm.h:2326 Excess function parameter 'desc' description in 'vma_is_cow_mapping'
+Thanks, I wasn't aware of that!
 
+>  - I live in Europe not Austraila which has messed with some people's
+>    schedules.
+
+If this is the only minus point I could come up with, then everything
+must be working fine ;-)
+
+Seriously, linux-next is working as well as ever before!
+Thanks a lot!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-~Randy
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
