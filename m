@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE61369D71;
-	Tue, 11 Aug 2026 15:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87718399361;
+	Tue, 11 Aug 2026 15:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786461340; cv=none; b=ZlkXTE678woAbzP349rcK59G84X7+CoghUWqnNKFkCNZy4w2NMv2Di1VGS2OZXfMfelpPcAbgrMIQEZaYUSoiDIMK4ZnoFUrr7ggn6WxpiybWkdNEYashKofUhxUuyyfxgy2m5Q7e5EQg1gLyu3hY9Bijog4e7fDFGerxjNsLys=
+	t=1786461681; cv=none; b=cCwgdSCMTZf7Q2Qj+NhLSK/r7Kv0CZRGrYQbylO4J1u/2Llh3JWhpCmJAhSKO8Axbo2lZji6Vyu0dXSR8nY45IcwMWlJ51086DfjtU9XOPsr/YEUVV3qvZGy0kaYxCRQGBfsKn9DmrBXhI++8jswo9VWtdQjXrfl7vxaRg5Zmwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786461340; c=relaxed/simple;
-	bh=e04YXYj3P6JKbZjMO78H2/qHGVQ9mb2eReXj9r9FouI=;
+	s=arc-20240116; t=1786461681; c=relaxed/simple;
+	bh=fvyUr+9cOrATIdvQeZIJ2jQaf+G21eTIttHA9PWlytQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=f61mNJd9aTb04SUgrIuSR0txb05V6JH8zCp9xJWgdU9LOqTKZgyMNEcEMIqeCLg2tHvAcseWwAutnHeIBsRi8mR0yC0oVLxhtYjv/XViQrfu/6m8RdlANBnKEtIoSQwKCE1dOY0umZ0Vhl1SkUlQU3NsyJeYXkLBG2dV3++yj9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln+cIipQ; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Bmb6EODW5rlveJYb945jnSFhN9XzX3OvcSCgNw7ubAbcbKCcO9oAuUbhLpt3dk0dDiM1dehnBVKk7a4nfXfvtFq8LjBd0gWODLtmb6+enqtlNwUCwQqxXjTQuDNAdMz7/W6f5tQeWK1a61sJVJVDnGEGerrQ6zufWEpi0bOgPG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zar26ahr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln+cIipQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8819B1F000E9;
-	Tue, 11 Aug 2026 15:15:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zar26ahr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD001F000E9;
+	Tue, 11 Aug 2026 15:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786461339;
-	bh=BK9ZHAB16zdsNQzm9fzc3YNg7h04rWD1jucbBnZPc4c=;
+	s=k20260515; t=1786461679;
+	bh=GZi9EngiVn0naHpGfjR/4Yyis+5nC8sk+OoKkyEpkV0=;
 	h=Date:From:To:Cc:Subject;
-	b=ln+cIipQDKa1qMhblBAbUR8kGeu4MJQSFd7p1rFHhmYsX3UoGZYyMOH0FpnASbAYj
-	 1PpujgGqNQun8ZkhxBiEsYKLK1YFiEr9V3BDMK/QwVjKsefmEnQEFMHINz0TKoE4sx
-	 7biVlrqlEkDAd8pvmd/f/L38PuwFM4BxtdG8fsZR+PRJLc289pDNpKZrqiiliBsdHX
-	 /OHHvdZD0W5O1k49tY69iqX+NiKWT0JmX/WUruUGSR7zWykincp/GQOt1G6BOMnk7W
-	 Ag8je/a2g7Jcd0jL4jzyDMqUZd1qA0G2WHrKjxn5lm/y68QWpio64+GiX8F9sWp6jr
-	 rW6zQmIMKjTOQ==
-Date: Tue, 11 Aug 2026 16:15:34 +0100
+	b=Zar26ahr2sopJg9TIQyHHg/2WaCQwMksZuXGmSS7D38TzsfUSLcT31AIM8LA7DNg1
+	 irShBHFF0qCedGAlfQWiflDDYl5mdd9Dz52Id/M3kymapOfUwy/BU0cpHtFHfNLSOD
+	 eSdl0mrft+BA4x0wuBGZiozTI7fnUZmPGCiq2j2hCeBSONJCimhB0HAgielmwWfuvj
+	 OQ4MP5H0g6KyYZw+z9l+VgyrYS35J+gN6d0vtpiSTTxMk/tuK5EQbOuC7+/G2VJDvo
+	 hDtkqtA2zrK1bDULfqUU/7MmF461UVlD+2tbdOyVssRiPOdEV5UKdPFmyjmxZ4tCCQ
+	 4+4IGjUxOirUg==
+Date: Tue, 11 Aug 2026 16:21:15 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Guru Das Srinagesh <linux@gurudas.dev>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Mukesh Kumar Chaurasiya <mkchauras@gmail.com>
-Subject: linux-next: manual merge of the char-misc tree with the rust tree
-Message-ID: <ans8lsGbkro4pO6N@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the pwm tree with the rust tree
+Message-ID: <ans961J686zSzNE6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,31 +42,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pE3Ge7QndP22UbZI"
+	protocol="application/pgp-signature"; boundary="Co0ONIovww4vJ3d/"
 Content-Disposition: inline
 
 
---pE3Ge7QndP22UbZI
+--Co0ONIovww4vJ3d/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+Today's linux-next merge of the pwm tree got a conflict in:
 
-  rust/uapi/uapi_helper.h
+  drivers/pwm/pwm_th1520.rs
 
 between commit:
 
-  cdfcaa36ac93a ("rust: uapi: replace direct asm-generic/ioctl.h include wi=
-th linux/ioctl.h")
+  7488dc14b05aa ("rust: io: mem: return DevresLt from IoMem/ExclusiveIoMem:=
+:into_devres()")
 
 =66rom the rust tree and commit:
 
-  f14e0c8183bc7 ("rust_binder: report netlink transactions")
+  b4e94b0418ad6 ("pwm: th1520: use vertical import style")
 
-=66rom the char-misc tree.
+=66rom the pwm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -77,34 +75,53 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc include/uapi/linux/kvm.h
-index 70e36e6a0ad4b,9fc8dfdfd65ff..0000000000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -997,7 -997,7 +997,8 @@@ struct kvm_enable_cap=20
-  #define KVM_CAP_S390_KEYOP 247
-  #define KVM_CAP_S390_VSIE_ESAMODE 248
-  #define KVM_CAP_S390_HPAGE_2G 249
- -#define KVM_CAP_ARM_PMU_V3_STRICT 250
- +#define KVM_CAP_PPC_COMPAT_CAPS 250
-++#define KVM_CAP_ARM_PMU_V3_STRICT 251
+diff --cc drivers/pwm/pwm_th1520.rs
+index e4387f4fedd9b,543bd8dea846b..0000000000000
+--- a/drivers/pwm/pwm_th1520.rs
++++ b/drivers/pwm/pwm_th1520.rs
+@@@ -20,16 -20,24 +20,22 @@@
+  //!   this method is not used in this driver.
+  //!
  =20
-  struct kvm_irq_routing_irqchip {
-  	__u32 irqchip;
+ -use core::ops::Deref;
+  use kernel::{
+      clk::Clk,
+-     device::{Bound, Core, Device},
++     device::{
++         Bound,
++         Core,
++         Device, //
++     },
+ -    devres,
+      io::{
+ -        mem::IoMem,
+ +        mem::DevresIoMem,
+          Io, //
+      },
+-     of, platform,
++     of,
++     platform,
+      prelude::*,
+-     pwm, time,
++     pwm,
++     time, //
+  };
+ =20
+  const TH1520_MAX_PWM_NUM: u32 =3D 6;
 
---pE3Ge7QndP22UbZI
+--Co0ONIovww4vJ3d/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp7PJYACgkQJNaLcl1U
-h9C72wf/dl3K7yOAbcctQzFU+BonA1h+yfIOD9hianTZNBwZ14nb6z7W5DoQ3rnx
-C+hcp8wNCJ35en7L1ZQaYd5z7qRtuTdXHui8l38nR+Bdg/NIGj/vPcyj7UGCW0jl
-retiNp3InqgABwzLH9fw8Tm/Bk6NIUynvfyO5W8V+T+55N19H2EuhnzfE3QZitZV
-+iuFJQzOLUoZ73phesqhklY67mgE5T9pXAbsif/GlKVOALG/Kw2nX8VNKW5FRhcE
-vnCq71zJJpO252esN+h17ajh+G7XSQHQFo1G2Gl9NfiXGFTuzAcOq3Wb2e/0WXtg
-zMf2YyNo9tk3Es7BxOEGO9v4WbgWaQ==
-=P2uv
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp7PeoACgkQJNaLcl1U
+h9B1AAf/ZdvewbvZ4HF/FBnZbcfjIct7jGOgVw2JcPBA0zY7BT74fFrl15UpTPEn
+aXmryZqqgB9wg8nqeWa1XGI/n9Ww94DLsR8yYjN9ngaxofXKf2ZqpQ0FvqPgXdKS
+Xy+xZRzn5yktRZtpbZj6ON+vP+y99q8BeeGXlXZvve6oqvXKtyWOANBjTWJU6HrU
+vwWXUMd43HuxhGuLP6x4RtFa5OVLZzREyldFC6SL/mgtluW9QQe3wbBi/LU/e2ej
+CI+tRsixBdi/rdAZRG49kGYkY9uc7qCiFjsCDq8EC8tNJ5+jN/MQxYBwALuLCGib
+1Id4Tpe7sYIpKTHsO/3OC48xKrIWcg==
+=Y0co
 -----END PGP SIGNATURE-----
 
---pE3Ge7QndP22UbZI--
+--Co0ONIovww4vJ3d/--
