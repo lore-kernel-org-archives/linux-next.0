@@ -1,38 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEC943F8A7;
-	Tue, 11 Aug 2026 12:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D612F335081;
+	Tue, 11 Aug 2026 14:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786452899; cv=none; b=oQWMHNqkPYeF01YbuKBS8+k9TBYpPYP0S3q3fSukXyspTf2IMl4MNLlNlTfSFG7Lb8WL94fR3VZ+CNUw9x3rmssmevKiJNr3C8Vd2B29F9X/e3K/lPmIOVkLNJ+zf2tULjBITdv1mZv7KKPuBka9IRCcH0GzgExIDyIvHOkpKGk=
+	t=1786459864; cv=none; b=RIoXjVdbQY073ywSVJokKbRWWtGFPCcJJAyzQrv9meAymP6bZA6ZkIAhbxIwjsO7zZkqf5M7yl+BCjlvfZtZ/yPcmTd4hH9igK0/xpN67/fnyJEcC1qkPUbLfen9aOPlmSt/mG7l1+KdmbzMz2CQCqZl5Y2s7jHaR2xi/wM+Zso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786452899; c=relaxed/simple;
-	bh=gQyVCDVWLB/QVyHW4dKBi5dYMoNp39ha9nC7NEyh6B8=;
+	s=arc-20240116; t=1786459864; c=relaxed/simple;
+	bh=xzwYX9/LYT3m2zvht9bQpl4E44gjH74FpCNqQ+0keBU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JR1t2gHQNr640V4+cwH5nfz5JGMex5RUxfZXrE6c/12n23sPz0fDKx7tDVV3xavQGDXYVM4lFQtKwVdlbqGRxvQ0R7YZ+3M9ypw8skG7ikVyjzqRhfpGI6S1p8afaCTL6d4UGHsl/e94htNsgGEINznAAC0vwEmqYnM38wWhNjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5WIFPi2; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=MF7nNuk4sn5BUlSyb0GnHpPgeW7FSaloIf54sxQeVPUBuuQnPhlyQlxibKCb6baeWKtsQ0pJ3Smn2IzT5V0zq9JVBdpvc179w0ZfjaikB8dNf3RoPXBAY4Bs2C/YDo3osXebmuHDbmzW3kXiztQXXURdL29E/UD2YitIUVAa3v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aieD9pNA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5WIFPi2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 162F61F000E9;
-	Tue, 11 Aug 2026 12:54:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aieD9pNA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 119561F000E9;
+	Tue, 11 Aug 2026 14:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786452897;
-	bh=201ZixQLvCOUtApKnA60+mdDq5sTo+9ov0K92d/oUus=;
+	s=k20260515; t=1786459863;
+	bh=lZLEFxwHnTjcUy11TS0BSHGRkQLA+a3EgdMErVx/zXM=;
 	h=Date:From:To:Cc:Subject;
-	b=W5WIFPi2/hjEe5GaivfbxMKcRpuZbgrakK2tiRjKqMaQSbmEY2/2E25UqXnHw2TP6
-	 Ei7Nvvmf6Mk0+1vejodKRpDydf+HBWRHi3wkEw1VTZrU/YBv/krYEQ8Ri0T/b48mW+
-	 ATDtfqH5ofV9SowRh0uble9BpGWGAgKuM9yg6bO+g2ZMDWvblabupvC6UGXxyTlNNN
-	 dSg00qtJ1JcW6/uwwGUjxPKe6AlFbPDYiSbKHblVqMVS+zp+bnDDPpoIQEYN8J6sKA
-	 J2Tqufzr4/sxGK4PBClYc5BLJ+Cqn7dGy6TRNHQ51jFPsY7ffnJvZWOR98Bpa/+CRs
-	 pSwgUu7labAUA==
-Date: Tue, 11 Aug 2026 13:54:54 +0100
+	b=aieD9pNAlfAvIfnZwOK/VicCryOoCk7Cr5csvdOJlpEUrm2V+mMAbr0gB/n+XXQXb
+	 yDTpMJQ7cQsSYYvR5nsDviRNuVcpoIXc25uBIDL43dvh57WiCIiXySKIAAjE+BcWSD
+	 jR0FxNTzTmLzdZgzoX2bAJiTvZyxi4YVK3vF11zx7j8sby9lJiYMLY83/No1RXeRy4
+	 cW2HOuypxODydNal39O9qHF00/O/ZztkaeuXHDwcG7uphlHGDc+UWu9hdK9DTYo+qZ
+	 NUv1zWFupIcgZVuh1jCoD8JlGqFJnTC7xJY/PfxJZx876ouI1nIMFsQht5FhfJyhcz
+	 N5FKiFg/zeCFg==
+Date: Tue, 11 Aug 2026 15:50:59 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the f2fs tree
-Message-ID: <ansbnhNDd8s8Inc6@sirena.org.uk>
+To: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Amit Machhiwal <amachhiw@linux.ibm.com>,
+	Congkai Tan <congkai@amazon.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the powerpc tree
+Message-ID: <ans20_e3b_8XJsvA@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,42 +44,67 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yyS9yRx4vd0rvYnU"
+	protocol="application/pgp-signature"; boundary="cWzzLaUfllgGqgQe"
 Content-Disposition: inline
 
 
---yyS9yRx4vd0rvYnU
+--cWzzLaUfllgGqgQe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the f2fs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-/tmp/next/build/fs/f2fs/inode.c:1065:6: error: call to undeclared function 'current_is_kswapd'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
- 1065 |         if (current_is_kswapd()) {
-      |             ^
+  include/uapi/linux/kvm.h
 
-Caused by commit
+between commit:
 
-   7451b3cd93b30 (f2fs: call __add_ino_entry out of the eviction path)
+  ac3e65ddddf31 ("KVM: PPC: Introduce KVM_CAP_PPC_COMPAT_CAPS and wire up i=
+octl")
 
-I have used the tree from next-20260810 instead.
+=66rom the powerpc tree and commit:
 
---yyS9yRx4vd0rvYnU
+  ad220e275c398 ("KVM: arm64: Add KVM_ARM_VCPU_PMU_V3_STRICT vCPU feature")
+
+=66rom the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc include/uapi/linux/kvm.h
+index 70e36e6a0ad4b,9fc8dfdfd65ff..0000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -997,7 -997,7 +997,8 @@@ struct kvm_enable_cap=20
+  #define KVM_CAP_S390_KEYOP 247
+  #define KVM_CAP_S390_VSIE_ESAMODE 248
+  #define KVM_CAP_S390_HPAGE_2G 249
+ -#define KVM_CAP_ARM_PMU_V3_STRICT 250
+ +#define KVM_CAP_PPC_COMPAT_CAPS 250
+++#define KVM_CAP_ARM_PMU_V3_STRICT 251
+ =20
+  struct kvm_irq_routing_irqchip {
+  	__u32 irqchip;
+
+--cWzzLaUfllgGqgQe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp7G50ACgkQJNaLcl1U
-h9DIBAf+LpgZK4JZ9aeTeOu1BeIoaPkb8ocBJZg45kAgAizfOoWdiWsbptrxL5k9
-F4E60/tWPql7cI9T9dOT4jnQFz0TfbpK9YZwiq79e50LBGv5ViQhh/ep1ItC7XNV
-xfy9HcOQ5WMe7zCrgxcOuO+5TpVWWFXySbcxReulGRxYOQpgl/dh8EaJX5KEI6a4
-SRZJE6+mo0M4VqQ2OvRFXsNQfJ24NzjIruGGhaAnzToy5awEyx696DnIDE8coWie
-NSqyGC1IZgEvUVOY6QXiDmlW4uwhAD4xMEO9x2qjAPn2oB/vWDF0zBGAL8wpt+EC
-rZtQZYYI8+7K/H8MbqX0DeKmoNLmsw==
-=yfiQ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp7NtIACgkQJNaLcl1U
+h9BhNwf/QYsGL2KxD2WMeeYcQ1th7fwdr1zUEbUMbE5ljcnaiMjrLtV6I9VG0OWb
+0X+hce4hNRh8IMJjIxUW2ygGetQ1qxzycpEhuwfE9Dp587MA8VJR5Q6Ml9RSVpbX
+X3lTPtJpZ/V/l8Jvmh7Uyw2/PENPUfFSaY5BDNdR9ziKmnSxaLDFupwPZ1IPFXR6
+rs2kmRAVADg4G+zttIiTYgKCgVKEGBKZ+w+fzjpSK6nrN3jdnxj+0MYM7XmDZgd+
+RG145dO7MMqJ1RrYe4t+47g55hNFw1WRKW+lFB5uIBf8F82zbyK/MQUK65OSN4dK
++/l2ToOyxO+o4rQZps2YfvQf7D+5Hg==
+=hvw/
 -----END PGP SIGNATURE-----
 
---yyS9yRx4vd0rvYnU--
+--cWzzLaUfllgGqgQe--
