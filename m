@@ -1,67 +1,85 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DF934F247;
-	Wed, 12 Aug 2026 11:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631D24248DA
+	for <linux-next@vger.kernel.org>; Wed, 12 Aug 2026 11:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786534949; cv=none; b=O+oIDyJZlVvM/vkAmWZqfJ6oSIAXAG7oa3mA6vPNx4itnM3MXLP9pprPMixOzZ5kd83p4NeCk1c0z2MwmXC3CIbh6q7L92ESCkEqbOeRS1NX/4YL0H6DgFf/9HZkt/66XcWF5pakEv12PGnCTRViJtwu8EgIsbF22vEZYSLdwyA=
+	t=1786535181; cv=none; b=t8chP8ThfxWrf9KEP5zRdRTSyFRVlNpEeog40/I6KWMa09E85xOhoGNdW4j56yCe9YjSGvro5yfvF1PHcnFYnzt/1rrSmlHYjCGJg5fAVOLmQckW6RnZPkJuY3mYr2229tBZTmk7exHfxrGPTfKUaaesZc8gp/3jgSXi0BlCt5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786534949; c=relaxed/simple;
-	bh=tfmJki5qxRWimdNixr1xqQQBBeBzj1HBy5//OOOQIlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Id5TT644lJevmrm5DsXfu27Kx/m+lDUIbWvS+TpNhVDeHfWnNue3Ympa0pEAuWJl+yt0FQufmvqgTk2/Q1F4YyOYT+9Uvk539v+IvggkzDzw9V/x/wsOhawXNEwipXn4Lns+RjosJfRXhlIWy6ZyMhJIlcn18gmfgWEjsN3FQ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=AXVdG0sP; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+	s=arc-20240116; t=1786535181; c=relaxed/simple;
+	bh=rchE5u8VSUZskhzAO+miNNScJA7MqLswi5CheczdV1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rKED4W0vj3E8P4oGmlAiWw4bDFATKbKl3lc/nnqFTxH43n3CnJzSZ11HTG6KCMoJSuUL7jsJCTAQiQXGu1KU4brZMHIoRYvU09yLAYiVsF7imeF8i53vsSa0vf6m0THy4fvVB4zhoHHgWTXuiK57VPgSwBOlV40NNPT1gbvF130=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YarXZQ4z; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="AXVdG0sP"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tfmJki5qxRWimdNixr1xqQQBBeBzj1HBy5//OOOQIlo=; b=AXVdG0sP2YJvAFaWuc/iDvC+9s
-	w9tdNJV52pDfLbf4K6j/ml4v35WZ1yjEDzAP7jY59q9sidF556otZe0Kg5+OYu6tXMM6hnYidKY7L
-	LK4++qt+Bu4MubVcTCAuONLy0tKNBpjVVxgjBVtZBl7JaYDRrLqnB/vmcCjGkGe6yfdJwC0hnekcZ
-	L0eZSUA4TDlqsr6cCOXVtJEtFAXGWeDl1dt9OoEjUFhCYdGzzGm7Ox1VrY1V6lhaI0DN3UanXEjrW
-	2nhPwLCdHhxhLfRU9qyIppKRFSzqViGogHkZmF0JqZpyVbuiMLbyJEeo03DNRsg3g2WwGyh3bU/n2
-	phBBEWLA==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1wu7Ll-004Jdg-19;
-	Wed, 12 Aug 2026 11:42:25 +0000
-Date: Wed, 12 Aug 2026 04:42:21 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: ksummit@lists.linux.dev, Thierry Reding <thierry.reding@kernel.org>, 
-	linux-next@vger.kernel.org
-Subject: Re: [MAINTAINERS SUMMIT] Any feedback for -next?
-Message-ID: <anxaYg9XL7nD9w40@gmail.com>
-References: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YarXZQ4z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 153051F000E9
+	for <linux-next@vger.kernel.org>; Wed, 12 Aug 2026 11:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786535180;
+	bh=O1518Yc38lOM7aj8FrnS8cDCbr6lNwMopZIOo5jRgpo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=YarXZQ4zKxXpUSeHmiJ+l/n4UXPT9PVYZN3PYNvqaKXowsv12GkxfmMmRCd0p9MC0
+	 SQyKtN6lN5m+AXI3iruRd5ANWR6AjncPVajbSDs4HK3XmhgQvQd6fq/iOSpNBHHRVr
+	 Kt6TCPB+fsWvkXoNGs47D/24oD84FaOAONzJxvlbjemaSFU7svm4XpI9zkBTfb18mX
+	 lg2ws/yNwNZinMIGVBu5W2V3/25XDY0Gwv+bVv2ON4rqTqXs0TSoKMY8xrPyCpIJ1J
+	 Mm67cMrPveUskFZO6BeELwr3lAJnDq1iVFxi9ydbc480oMQyjXSmSG5pD5TQaBs+xI
+	 1E1s/AgIrQBhA==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39faf9e2c62so5830111fa.3
+        for <linux-next@vger.kernel.org>; Wed, 12 Aug 2026 04:46:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoZRRz4AKWyRMN9OJOPRinYJUOVpmdJxJ+TpB4ET05H8+RcwW3JpJjPcXK6DQsbqbpNUOwgGi2TacLs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7/D/f4PDp68wMIECNNhaPDR2u99NofwTLZ1o0wZ3FujIWSEyO
+	FTkOdYyao0imyChc4/V6ojgxcgqRomrB6p8JYQjERFn5rI/z3KbdmtvSBbk9OPMUGm6gRMQdIaw
+	52kSlF3C+ybGjUZ1BvG6ByQXafHpJ/CA=
+X-Received: by 2002:a2e:bc82:0:b0:39b:d04:b778 with SMTP id
+ 38308e7fff4ca-3a10d4a100cmr4737681fa.5.1786535178546; Wed, 12 Aug 2026
+ 04:46:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
-X-Debian-User: leitao
+References: <annVRNepH48qe6b8@sirena.org.uk>
+In-Reply-To: <annVRNepH48qe6b8@sirena.org.uk>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Wed, 12 Aug 2026 13:45:58 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i7pZCi80w8sOiA7F_w52-iqNoVeX_DTDTEjgAptOMobA@mail.gmail.com>
+X-Gm-Features: AUfX_mycxnkWFLMjsP0pgHjrHuFkxR9wCvN4KQZv0JXDUbvaX-bl05gKbpNKZGc
+Message-ID: <CAJZ5v0i7pZCi80w8sOiA7F_w52-iqNoVeX_DTDTEjgAptOMobA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the pm tree
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 11, 2026 at 05:54:59PM +0100, Mark Brown wrote:
-> Any other ideas?
+Hi Mark,
 
-I'm new to this area, so please forgive what might be a silly
-question: would it make sense for maintainers' -next trees to keep
-a stable git history?
+On Mon, Aug 10, 2026 at 3:42=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> Hi all,
+>
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> make[6]: *** No rule to make target 'drivers/thermal/qcom/qcom-spmi-adc-t=
+m5-gen3.o', needed by 'drivers/thermal/qcom/'.  Stop.
+>
+> Caused by commit
+>
+>    948ee3a74f356 (thermal/drivers/qcom: add support for PMIC5 Gen3 ADC th=
+ermal monitoring)
+>
+> I have used the tree from next-20260807 instead.
 
-Some maintainer trees are already stable and append-only, which
-gives linux-next users/testers stable commits to point to, instead
-of ephemeral commits that can disappear later due to history
-rewrites.
+Sorry for the delay, I was traveling.
 
-Would getting rid of these ephemeral commits make linux-next easier
-to work with?
+I've just remerged my linux-next branch to avoid exposing the
+problematic material, so this issue should be gone now.
+
+Thanks!
