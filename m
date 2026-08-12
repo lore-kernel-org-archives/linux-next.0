@@ -1,100 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB21470EA2;
-	Wed, 12 Aug 2026 16:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535947D440;
+	Wed, 12 Aug 2026 16:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786553119; cv=none; b=Y2weJtezBciljS8Qolqe3DFQQoyBqxqyNIDjYRPjhTDXhjUFNENnLQQL1a0zjs2+3nu2ncAz0fI9UtErlPHJRPK3r0lbm8jJPy2erd1yMGQ6fnUocfXbiK/bBNISYuPpuDyAbVfB4Aj1Pr+GbhwfKeFiII/J6oO2Evk362piHhA=
+	t=1786553132; cv=none; b=fkHJ18I1ZcE37lT1hBUvkerX164+h7LjyQI8J32UQj9eKP7iK1IQSfWC3/SCyM6kf4gg+5HSTyhO1ZHgoYVePQn40wzAj5w6PeHVyd8IfFhyEFAZIyerk1mbEsyFkJ+x/jecRwSsCosA6ipgO6TH3yt1k/JNN/RKFmJixKES2vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786553119; c=relaxed/simple;
-	bh=KZ05atHrzp2Z4d3nrNt6dr6skL9g8NiVgqEwqyIKYLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fk3rb1JdCXLADjQDxjccuRe1JGKGgC4JSks4A/WR6Pu3HlOM31us9LZgDGFpE+P42eyf8lDX2gjjfr1GUHkLcc8ya+Ks3wP9cWf6bOfV59wKLsBDE5TbdajzH1enG3TXJvueknt8FXd7s4bR01Jkp98oYXhImUvXESO3hjdZIdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRTjdH+Y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786553132; c=relaxed/simple;
+	bh=TQHXuHPhsjnx1xR2feFhKfg1lyR1LQEOeTRBZM7p0Nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UsvRNGLXSfcSNT/Az57lnjg6Pfq8HfFucZ5MaAE/THm2U6b2AlIpnZnzXEZSrqcUXcgnmexAMj/3CGo3FFNbpsshkiHq0g0JGKcLaHzRrvn/jleqv+KYEKsBWcH93KBTdsX+wpBfFQetbZOh70tvTLETbGXTKxKtWTWJk3aeuVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQ9iNs+B; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRTjdH+Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A461F000E9;
-	Wed, 12 Aug 2026 16:45:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQ9iNs+B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F0A1F000E9;
+	Wed, 12 Aug 2026 16:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786553116;
-	bh=PyGw4V3TYBaD1KIvKbgCepkk8Gc+npemiH5pmNzZ1t0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PRTjdH+Y9dqXfshj3/FbKIbn6D6TvbbbCEY4QdpdNrUWJ8jy2wSEx42CIMc+SPQHV
-	 IRW7wzLx1m9vA2yvuOjmwHjyW9SC54LF2GwaSb56gn5JsEI3S8xJV7sdnjGE8tt9Fq
-	 ZQ/mJpZeNS64cyd34ZK4Ok4U4C79f8sI8+28qRLdv/lVuyDVA51GXmPU/C22l27HRE
-	 CQWlWaWpoOvd/2Dp6I/Asw8PUUfixkqsBpu/fuBdkJ4Eg9FWBFQdhucqFu0EyJtpwH
-	 1I8JwE0UcBTTlx//eBH+9USZQm8cYp6syIZOErPeMnNfCFUB5LFp/cTAMALSnJT4Qe
-	 yeSFcwGwEVXAA==
-Date: Wed, 12 Aug 2026 12:45:15 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Mark Brown <broonie@debian.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	ksummit@lists.linux.dev, Thierry Reding <thierry.reding@kernel.org>,
-	Breno Leitao <leitao@debian.org>, linux-next@vger.kernel.org
-Subject: Re: [MAINTAINERS SUMMIT] Any feedback for -next?
-Message-ID: <anyjG-mMuaDox3eN@laps>
-References: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
- <anxTFWS4KAMqGNGT@monoceros>
- <1a34c486-2fb5-41e3-991f-23bf82468412@sirena.org.uk>
+	s=k20260515; t=1786553131;
+	bh=BvFVVlep9vFMeh5MZgAXQf9ORT2C3/s+8FvGqtkfdA4=;
+	h=Date:From:To:Cc:Subject;
+	b=MQ9iNs+BNO287mh4HFugKnZe3VrAVvPPlQHBpaMVP/jAjJsDdVKlAwygcKSBrMpz5
+	 r7NiI9JJBXsRPkWTHMwCDX7XTzS3ZavokO3DOr8Hf0XtwS49c4gTZlvUnoGb/HDd2t
+	 dWGibsG28RWi0qn8b2YW1waf96coVxO9YIYvgsHbCuHLQ4JkSg4FD1z7sHu87kKdXp
+	 YO/izusYswYocIuS+n3o8cPbqWniFyc0uhl7lm9DokT7UvCUMMa0ayMHJmnmTUT3SI
+	 imXsBD+3UgE1OwYi+tIuY8DAjUxZyKK6f8+YblRNUjpBN5WZLdreNGXE+izCojUk8P
+	 NK352V31bmaBA==
+Date: Wed, 12 Aug 2026 17:45:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Alex Tran <alex.tran@oss.qualcomm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the gpio-brgl tree with the origin tree
+Message-ID: <anyjJ6DSHWCjuB97@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+8I3DUiYXKoI93HH"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1a34c486-2fb5-41e3-991f-23bf82468412@sirena.org.uk>
 
-On Wed, Aug 12, 2026 at 05:37:30PM +0100, Mark Brown wrote:
->On Wed, Aug 12, 2026 at 01:19:05PM +0200, Uwe Kleine-König wrote:
->> On Tue, Aug 11, 2026 at 05:54:59PM +0100, Mark Brown wrote:
->
->> > Any other ideas?
->
->> One thing I recently wondered is if it would make sense to not merge one
->> tree after another into the same tree, but first create pairs, then
->> merge two pairs, ...
->
->> The advantage is that if commit B breaks something there are less
->> intermediate trees that don't contain B and you can still test on e.g.
->> D+E.
->
->> I'm not convinced the advantages outweight the additional effort, but
->> IMHO this is a bit similar to the request by the filesystem guys to have
->> a tree with only filesystem changes.
->
->> So this is just an idea that might be worth to be thought about by more
->> than just me.
->
->Yeah, there was also Sasha was talking about something with trying to
->make loosely topic based subtrees.  As you mention there's a scripting
->and comprehensibility cost to doing something like this, both when
->building the tree and when trying to understand the results.  If people
 
-Right. I have an experiment that I ran here:
-https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linux-next.git/ where I
-scripted something that generates those *-next branches based on category tags
-I've added to the manifest:
-https://gist.github.com/sashalevin/15dbe4cfe2e2a3c4706788b07ef48079 .
+--+8I3DUiYXKoI93HH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->actually want the intermediate trees directly like with the filesystems
->stuff then sure, but if there's no demand for the specific combinations
->of trees I'm not sure it's worth it.
->
->There's also the issue of incremental build benefits.
+Hi all,
 
-Which is mostly the reason I kept silent on this thread :)
+Today's linux-next merge of the gpio-brgl tree got a conflict in:
 
-My original goal with that work was to evaluate AI merge conflict resolution
-and measure it against the work that both the -next folks do as well as Linus.
+  drivers/gpio/gpio-by-pinctrl.c
 
-I suppose that if folks are interested, this is something I can keep running
-consistently, with the caveat that conflict resolutions are purely AI driven,
-which could be enough for something we feed to CI and bots.
+between commit:
 
--- 
-Thanks,
-Sasha
+  67ff4bf723c8b ("gpio: gpio-by-pinctrl: Apply initial value in direction o=
+utput wrapper")
+
+=66rom the origin tree and commit:
+
+  408866669ce01 ("gpio: gpio-by-pinctrl: Apply initial value in direction o=
+utput wrapper")
+
+=66rom the gpio-brgl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpio/gpio-by-pinctrl.c
+index fb8440acb31d9,f54efd635f139..0000000000000
+--- a/drivers/gpio/gpio-by-pinctrl.c
++++ b/drivers/gpio/gpio-by-pinctrl.c
+@@@ -54,11 -54,11 +54,11 @@@ static int pin_control_gpio_direction_o
+  {
+  	int ret;
+ =20
+ -	ret =3D pin_control_gpio_set(chip, offset, val);
+ +	ret =3D pinctrl_gpio_direction_output(chip, offset);
+  	if (ret)
+  		return ret;
+ =20
+ -	return pinctrl_gpio_direction_output(chip, offset);
+ +	return pin_control_gpio_set(chip, offset, val);
+  }
+ =20
+  static int pin_control_gpio_probe(struct platform_device *pdev)
+
+--+8I3DUiYXKoI93HH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp8oyYACgkQJNaLcl1U
+h9AEtgf9FMnPRYP73JQsCcLZcJnFSgzP+lUoZJVbzeqCp8cPWQ2Cv6/YtDoACvyt
+qKYYk/w72hG2Om1rNynIFXnJqqu2l+UdRDKuRvlZiLCx7ANAi83sA0+h3JPWrbgA
+tXma6CC+APP4rAvo2bcb250bTAtNcSltsSmXcCwApflSq1PoXNScfOMPNZggzaSE
+eoaR3sJ61UA+J4cRnvlmKF9ULCeUYsAqliejxSBn2LGWTwjg5ZCyqLePPYyK6hea
+NOAyHkGsYQKQk1mHhdqkiTZxDnM1QvM/6+s5/5lYBvn11ichwaPulK16WnaOJCRr
+zRE1XmBCa/OJqH9LoSbNYGB/PWEtfQ==
+=Qh8W
+-----END PGP SIGNATURE-----
+
+--+8I3DUiYXKoI93HH--
