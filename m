@@ -1,41 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517AD44236C;
-	Wed, 12 Aug 2026 12:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FD343E48D;
+	Wed, 12 Aug 2026 12:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786537220; cv=none; b=rHhRb9SQvJXJN5b5IdzR18vNQCC2Z0lW4udM66V2+6TsGLdtgBVT3opiPCrhoI02xEeqVqA18AHF8sBhGagW9/i6yhlf33YC50O06InjoEK0n578jY0l48Tm0Ygn84zKhm+sLGC5uhWR/Y3M3KKQstYracgCV67ixnV6vE1Pu34=
+	t=1786537228; cv=none; b=m9eEkT8W5oW69DibnG43lgcXfmmPmNekwGgJQYYEeo7zUzYofCajF/4BXXzMZMoTeDnlb7k/qpvZKbV8xNEJ/aUkirT1j1zJw0wXQLcAsivCyGVbk3817G7sA2NDfX/oCohE/Zdb2Dz7xVKRsrZkw3XCVvNsw4L1jnf/syThPDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786537220; c=relaxed/simple;
-	bh=EIMzlivRPXFsiVgIvi5dCGPfb7PUha/r/v8c2ALRnP8=;
+	s=arc-20240116; t=1786537228; c=relaxed/simple;
+	bh=36w9BuICedvDr9m99q5T+Phk8HiYkD5ocPCOnWTAJeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=h69JSVHneT1wdh3mg2j6A/97z0YQymNMR39hc4mY4MbUkFPGE41UCtY6lkadFwKF26vRqBUYzZuvJ+aKdeYlk+p+EY4kF2nZ4MwN3ZwnPQVC9kZEvxldbjt67HloimsnlqVxR67tSVXitEwuXOs4H1pu/iHn8648qQVrtw4kbEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzG+InON; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=l2pz5Horm+J0hRCryH8mW29b2bD1/t2oqLs+luDEli8CUuRS1HYcFZrFX0CPoi/CuFe8u2dhndCU0ldOo4bPaRX5cZkrfyPisG4hj6bFlLZMJydhmrkf1sZYPu3XAilxA5zCJIsXvHGe2hejbxpQcX6X53ug0L4xtuOL6Ksk4aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTPhdVUm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzG+InON"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41EF21F000E9;
-	Wed, 12 Aug 2026 12:20:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTPhdVUm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 730481F000E9;
+	Wed, 12 Aug 2026 12:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786537218;
-	bh=M++JHH9FE3FNHJ33/UcXJPT1h5likwtm4j+ioYhQc+I=;
+	s=k20260515; t=1786537226;
+	bh=zk4AEmk3QoNg2GSD+NVru5ucNbQrH5AbyQH8h0ef0P0=;
 	h=Date:From:To:Cc:Subject;
-	b=TzG+InONulOKXHgqr4xNQ4ZqmpP3f7+zB+586TXlZ6az6RNQ6G4+gHra8QfRtmIah
-	 uA6f1asjs+Ld+LG7DqVHLRMw9wCHsFKjGAXZ6WtVnAhqND2iw4xW4P9RWaJIEuGJZq
-	 UC9udG4CHomjnE/W8AY+XOFbt82u8woAfqJRc69a2Li1Pc39X8GvzW/E+vqeZ+TCO2
-	 SXvnCRb1bok0744UfzPinpfqituk9JGwXW+Jyzbou8kAaraVyWbHWiipIDfrdKIsSe
-	 aeZimWJPjSAkoRYKyVtbQZg4lhckYJ53ZzOfSgYMLIxSKozyJXbk3G+iQaSC+OAuXc
-	 gM1KcnWYD485Q==
-Date: Wed, 12 Aug 2026 13:20:14 +0100
+	b=aTPhdVUm5ZSWs6h9Fn6oP410OPQ3ZzNgFNqdIVoXJH07JGmFk7bui/mcjCdGXAVD0
+	 H4Fv7dtsIssNIBzpB5KlXQpo7NFRaYD+Zay/0vznyoVbu5JQ484zN7SU9NT5gwny1e
+	 MRkcVEbdtaUS9kyA8SAa9hTIqXW5o4+oaKi2u+s28VWzcxNoV7zLuuEi6vH34tiBpJ
+	 7UT2i1hl5h9DCcOoqPSR7k/w5MxxoOlIbVXUuznJFpKPXk9/YUwwlATEBEoWhOGvoO
+	 wZh526ud4XjIzHLdXrTczHRIlBBt98xguRaVWTO9E+I7P7nSUQS+mpxHiOyVNcLGzO
+	 g1dY9KTYvy28A==
+Date: Wed, 12 Aug 2026 13:20:23 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes tree
-Message-ID: <anxk_iYSi8waaGvh@sirena.org.uk>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Fixes tags need work in the thermal tree
+Message-ID: <anxlB1gpN0gc5Swe@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,202 +40,41 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vk8sGFR1HbDB4ZBv"
+	protocol="application/pgp-signature"; boundary="rtZD0nevD6VVwaKj"
 Content-Disposition: inline
 
 
---vk8sGFR1HbDB4ZBv
+--rtZD0nevD6VVwaKj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+In commit
 
-Today's linux-next merge of the drm tree got a conflict in:
+  ef1000de37fa8 ("thermal/drivers/qcom: Fix missing spmi adc tm5 gen3 file")
 
-  drivers/gpu/drm/scheduler/sched_entity.c
+Fixes tag
 
-between commits:
+  Fixes: 948ee3a74f35 ("add support for PMIC5 Gen3 ADC thermal monitoring")
 
-  67cf83ac8316a ("Revert "drm/sched: Embed run queue singleton into the sch=
-eduler"")
+has these problem(s):
 
-=66rom the drm-misc-fixes tree and commit:
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
 
-  2df5efb45425b ("drm/sched: Remove redundant entity->rq initialization and=
- checks")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined drivers/gpu/drm/scheduler/sched_entity.c
-index 672b5c57ed8e9,c51101ec70c16..0000000000000
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@@ -129,43 -129,14 +129,42 @@@ int drm_sched_entity_init(struct drm_sc
-  		return -ENOMEM;
- =20
-  	INIT_LIST_HEAD(&entity->list);
-- 	entity->rq =3D NULL;
-  	entity->guilty =3D guilty;
-  	entity->priority =3D priority;
-  	entity->last_user =3D current->group_leader;
- +	entity->rq_priority =3D drm_sched_policy =3D=3D DRM_SCHED_POLICY_FAIR ?
- +			      DRM_SCHED_PRIORITY_KERNEL : priority;
-  	entity->num_sched_list =3D num_sched_list;
-  	entity->sched_list =3D num_sched_list > 1 ? sched_list : NULL;
- -	entity->rq =3D &sched_list[0]->rq;
-  	RCU_INIT_POINTER(entity->last_scheduled, NULL);
-  	RB_CLEAR_NODE(&entity->rb_tree_node);
- +
- +	if (!sched_list[0]->sched_rq) {
- +		/* Since every entry covered by num_sched_list
- +		 * should be non-NULL and therefore we warn drivers
- +		 * not to do this and to fix their DRM calling order.
- +		 */
- +		pr_warn("%s: called with uninitialized scheduler\n", __func__);
- +	} else {
- +		enum drm_sched_priority p =3D entity->priority;
- +
- +		/*
- +		 * The "priority" of an entity cannot exceed the number of
- +		 * run-queues of a scheduler. Protect against num_rqs being 0,
- +		 * by converting to signed. Choose the lowest priority
- +		 * available.
- +		 */
- +		if (p >=3D sched_list[0]->num_user_rqs) {
- +			dev_err(sched_list[0]->dev, "entity with out-of-bounds priority:%u num=
-_user_rqs:%u\n",
- +				p, sched_list[0]->num_user_rqs);
- +			p =3D max_t(s32,
- +				  (s32)sched_list[0]->num_user_rqs - 1,
- +				  (s32)DRM_SCHED_PRIORITY_KERNEL);
- +			entity->priority =3D p;
- +		}
- +		entity->rq =3D sched_list[0]->sched_rq[entity->rq_priority];
- +	}
- +
-  	init_completion(&entity->entity_idle);
- =20
-  	/* We start in an idle state. */
-@@@ -308,9 -279,6 +307,6 @@@ void drm_sched_entity_kill(struct drm_s
-  	struct drm_sched_job *job;
-  	struct dma_fence *prev;
- =20
-- 	if (!entity->rq)
-- 		return;
--=20
-  	spin_lock(&entity->lock);
-  	entity->stopped =3D true;
-  	drm_sched_rq_remove_entity(entity->rq, entity);
-@@@ -357,14 -325,11 +353,11 @@@ EXPORT_SYMBOL(drm_sched_entity_kill)
-   */
-  long drm_sched_entity_flush(struct drm_sched_entity *entity, long timeout)
-  {
-- 	struct drm_gpu_scheduler *sched;
-+ 	struct drm_gpu_scheduler *sched =3D
-+ 		container_of(entity->rq, typeof(*sched), rq);
-  	struct task_struct *last_user;
-  	long ret =3D timeout;
- =20
-- 	if (!entity->rq)
-- 		return 0;
--=20
-- 	sched =3D entity->rq->sched;
-  	/*
-  	 * The client will not queue more jobs during this fini - consume
-  	 * existing queued ones, or discard them on SIGKILL.
-@@@ -445,10 -410,12 +438,10 @@@ static void drm_sched_entity_wakeup(str
-  {
-  	struct drm_sched_entity *entity =3D
-  		container_of(cb, struct drm_sched_entity, cb);
- -	struct drm_gpu_scheduler *sched =3D
- -		container_of(entity->rq, typeof(*sched), rq);
- =20
-  	entity->dependency =3D NULL;
-  	dma_fence_put(f);
- -	drm_sched_wakeup(sched);
- +	drm_sched_wakeup(entity->rq->sched);
-  }
- =20
-  /**
-@@@ -475,7 -442,8 +468,7 @@@ EXPORT_SYMBOL(drm_sched_entity_set_prio
-  static bool drm_sched_entity_add_dependency_cb(struct drm_sched_entity *e=
-ntity,
-  					       struct drm_sched_job *sched_job)
-  {
- -	struct drm_gpu_scheduler *sched =3D
- -		container_of(entity->rq, typeof(*sched), rq);
- +	struct drm_gpu_scheduler *sched =3D entity->rq->sched;
-  	struct dma_fence *fence =3D entity->dependency;
-  	struct drm_sched_fence *s_fence;
- =20
-@@@ -609,7 -577,7 +602,7 @@@ void drm_sched_entity_select_rq(struct=20
- =20
-  	spin_lock(&entity->lock);
-  	sched =3D drm_sched_pick_best(entity->sched_list, entity->num_sched_list=
-);
- -	rq =3D sched ? &sched->rq : NULL;
- +	rq =3D sched ? sched->sched_rq[entity->rq_priority] : NULL;
-  	if (rq !=3D entity->rq) {
-  		drm_sched_rq_remove_entity(entity->rq, entity);
-  		entity->rq =3D rq;
-@@@ -633,8 -601,9 +626,8 @@@
-  void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
-  {
-  	struct drm_sched_entity *entity =3D sched_job->entity;
- -	struct drm_gpu_scheduler *sched =3D
- -		container_of(entity->rq, typeof(*sched), rq);
-  	bool first;
- +	ktime_t submit_ts;
- =20
-  	trace_drm_sched_job_queue(sched_job, entity);
- =20
-@@@ -645,22 -614,18 +638,22 @@@
-  		xa_for_each(&sched_job->dependencies, index, entry)
-  			trace_drm_sched_job_add_dep(sched_job, entry);
-  	}
- -	atomic_inc(sched->score);
- +	atomic_inc(entity->rq->sched->score);
-  	WRITE_ONCE(entity->last_user, current->group_leader);
- =20
-  	/*
-  	 * After the sched_job is pushed into the entity queue, it may be
-  	 * completed and freed up at any time. We can no longer access it.
- +	 * Make sure to set the submit_ts first, to avoid a race.
-  	 */
- +	sched_job->submit_ts =3D submit_ts =3D ktime_get();
-  	first =3D spsc_queue_push(&entity->job_queue, &sched_job->queue_node);
- =20
-  	/* first job wakes up scheduler */
-  	if (first) {
- -		sched =3D drm_sched_rq_add_entity(entity);
- +		struct drm_gpu_scheduler *sched;
- +
- +		sched =3D drm_sched_rq_add_entity(entity, submit_ts);
-  		if (sched)
-  			drm_sched_wakeup(sched);
-  	}
-
---vk8sGFR1HbDB4ZBv
+--rtZD0nevD6VVwaKj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp8ZP0ACgkQJNaLcl1U
-h9AGpwf+KP1qSuFZf8wAC3Yw3KnffYPbrIbarqq+/S5i+TozpssFS2VIsRSgKBYg
-442CyjTm/EjgNSVHyFrfYJj4FcIDNupWljPRDDz78V8Ej5sULM5LeoRUoMab41o5
-d99L49TccY/4EDGY9N7m3RKxFJhH3/PqCpmhEzs1SGVxNGRcirxOW9p4qi5g9f4/
-Uw9IF6eSeAS08E1LtzWNfzwnkYEtcYI6caDFsxHjvcj/DvucIxJRMMKeK7imOWaL
-dC/ckOuc9BPuidIfuPsUze19ZT6r7LlkgMVMLate6PczZAIzGKBljztf3SbxEqCq
-N+TniMDdamkc0w9cNtFC8i7qBY1l9w==
-=66VA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp8ZQYACgkQJNaLcl1U
+h9DFGQf/SRhcyB0Byhaeuvd45qSM7noWvM34XChNW5Nlr9ZW8yw+ORX9YONc3811
+HFXCwYVLtOPF+DksbfoZ6gS7leaPWp2tCbNMLG8nUQb3jm0A2cHNUCCKwwwcwOcl
+ypnvf25k9VxLl6sxNS3NXCKPaTK/TVYQ0Yo7UGTDraW+O+yTA5U+OTpEs3D7eI5d
+Pg5S0XNCI4ez7bfn2TvhNnY0+owR4ytLtzvxmiW9M3weGOnGODjxI1dSDy0/Orlw
+c7iXCF1HRHfZY+e59XQODPaZhOZ/k0kAhA57XgqRsy7Gk/sjwzQUDYAiMlt813ex
+mFI4dp08k0ZrXIjf135uB/2B4TlvJw==
+=3qw2
 -----END PGP SIGNATURE-----
 
---vk8sGFR1HbDB4ZBv--
+--rtZD0nevD6VVwaKj--
