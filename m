@@ -1,133 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD56A4854EA;
-	Wed, 12 Aug 2026 15:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB4F476689;
+	Wed, 12 Aug 2026 15:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786549510; cv=none; b=kIfmXHaZgeBD9WDx+DqPp3Xn8otiZrSq+/hIJ3r4Yw5nM1/rF6vbotM1vsNbmaBr4eectRZjlw/POOybl4wkyJV5YUxn9KHh+1uWbBILWHzT7i/tKf3giI7yZKyN2GbqoT9gsohyoWRSCqK5HlReEdrobhWdGnQ96eu7o6Sojrw=
+	t=1786550378; cv=none; b=dutTXkM8I3UnSB0ilHmx0kB+1U0VVPvvpwtsDY8uzUoc0imBHW4HRcRtNTtOj2hbT5empR9lxUCZMkl0F8aM+xbAYV0+6qrUNzOH/UkpR6GvfSnH24oCPm94STyrbR/rtyeXb66GT07vebB792bCl8+sO6xHRcNFoJxggV5EzAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786549510; c=relaxed/simple;
-	bh=ZTBJGjOWt+J57CKG5k4D3gmlTq5PDFmJ3VvuIQM/Chc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PwbBOM/ogAlhUECo6Vg756acIiZuEWPe8yKWn4iww9BwNfxQGFIvCkM8k0RR1gfaRLXIY6g3H46ar4OdGzz9sNKjWmePckcYAEFz9RZ5PMnESL2AVbrjKnUCNVTH5amag6wF5D2pEWsgUy7fDuoYs8kQkH5AZCekaZgJPo+WuZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNawWARV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786550378; c=relaxed/simple;
+	bh=4UtsdmhHOz4+CfNG1LFd/YTv8e1FCYmWcxWqVHJJNro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tm6Fo4E8AgEZ3FcwsVSOLLbiuQz+RLRRjOXuUpmxPh9SIoH1bPijT8oxyDlogOfXhaPBi2DftSHSl/zwGMfWAvc1ybqO5/mamIjpg5Qp1r2bpul5tHdhje/du182y4UkTXV/ewvFPaqTOFlJdBLacd4nVAOsLW3/OKuaxNutYyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLkjl6uE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNawWARV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A561F00A3A;
-	Wed, 12 Aug 2026 15:45:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLkjl6uE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEED91F000E9;
+	Wed, 12 Aug 2026 15:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786549509;
-	bh=T7JPD4B+641airvUelShyGzuiDCSndbrW7wqSJKw0QY=;
-	h=Date:From:To:Cc:Subject;
-	b=RNawWARVw8vBCVWBlTUkMSUvulRMorxiATotBZoVwU95Fiw9pDzVUT1zNDl8M9YSd
-	 qL2nKdFZSI9J2sji+k7Tlp0ksYjtlrvmxEa5Mdn21Ujpqv8KXJKCkR/IOqVzAEwt83
-	 jQzTYGOga6OObHw+sHYxusHAkaLOGNbv0ATO3Vp049nZKAfDO5iURyLv1dKHGBYBwG
-	 9czr849QweF7WBQiaQMqGMWo8qb1cvkklIgu+/fII+vz78mok+u/nhVV24kgO1N0XY
-	 u7fwWNffWY6XKV5KhosB9YiT8Dirqii/DOo42FW3ksnz/YK/xJPYs6Lyc334Trk4IF
-	 +iE3Fiw+jDsog==
-Date: Wed, 12 Aug 2026 16:45:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Gangliang Xie <ganglxie@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Xiang Liu <xiang.liu@amd.com>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes tree
-Message-ID: <anyVAMjiBIKSgktr@sirena.org.uk>
+	s=k20260515; t=1786550377;
+	bh=dVrURgH2KpXxgvHO/qTtIsF9Joxm5i6JVe3Cni4GjYk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=FLkjl6uE/ogjuVHjuZ3SY1v0h2W23kN0jLq3gbpveOmPmwIwTQBlNvG4q7Ej+fQlN
+	 zcx8ZnE4931h25Lao78faAojuZ7wSXgJ4oTl0VNsDkhU0DtsUVopSxu/nMMCZhKXqE
+	 b5o6pSjw25JGtoI3oRcP90kGPRxoS/PxxEkpJ4794HtQHwXeEqGW/knbJkWJR7/KbZ
+	 7Ix50IxqTETcadVYv3mvZrUFxo8v01GyN/EP4JLgDEBeiBvgrrP6L6t5gRCCm4piYS
+	 1hhD7AGyPZbdDBPoAahyDOily+X6eC9gEz+FrwF/DSqnOyZxjA91FgSohIxw+ZSsLR
+	 2BPla1KNOPXjg==
+Date: Wed, 12 Aug 2026 16:59:32 +0100
+From: Lee Jones <lee@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Breno Leitao <leitao@debian.org>, Mark Brown <broonie@kernel.org>,
+	ksummit@lists.linux.dev, Thierry Reding <thierry.reding@kernel.org>,
+	linux-next@vger.kernel.org
+Subject: Re: [MAINTAINERS SUMMIT] Any feedback for -next?
+Message-ID: <20260812155932.GV1072730@google.com>
+References: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
+ <anxaYg9XL7nD9w40@gmail.com>
+ <20260812112723.643f9502@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="W9FEyKEu0P44CSuu"
-Content-Disposition: inline
-
-
---W9FEyKEu0P44CSuu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260812112723.643f9502@gandalf.local.home>
 
-Hi all,
+On Wed, 12 Aug 2026, Steven Rostedt wrote:
 
-Today's linux-next merge of the drm tree got a conflict in:
+> On Wed, 12 Aug 2026 04:42:21 -0700
+> Breno Leitao <leitao@debian.org> wrote:
+> 
+> > On Tue, Aug 11, 2026 at 05:54:59PM +0100, Mark Brown wrote:
+> > > Any other ideas?  
+> > 
+> > I'm new to this area, so please forgive what might be a silly
+> > question: would it make sense for maintainers' -next trees to keep
+> > a stable git history?
+> > 
+> > Some maintainer trees are already stable and append-only, which
+> > gives linux-next users/testers stable commits to point to, instead
+> > of ephemeral commits that can disappear later due to history
+> > rewrites.
+> > 
+> > Would getting rid of these ephemeral commits make linux-next easier
+> > to work with?
+> 
+> This has come up at the Maintainers Summit in the past. I believe it is
+> even in the article I posted earlier in another thread.
+> 
+>    https://lwn.net/Articles/1050027/
+> 
+> We are even discussing issues about this in that other thread as well:
+> 
+>   https://lore.kernel.org/all/0a8c1e90-1de1-4a76-b0fa-e367a4bd4f55@sirena.org.uk/
+> 
+> I try to keep my linux-next branch clean, but I do rebase to add tags. I do
+> on occasion remove commits if they prove to be totally broken. That's rare
+> but I rather have that then having to push something to Linus where a bunch
+> of commits are simply reverted.
 
-  drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
++1
 
-between commit:
+FWIW, I have always reserved the right to rebase in order to remove,
+move around, reword and otherwise fix-up commits and do so often.  To
+that end my 'next' branches are not, have ever been, nor do I intend
+them to ever be, stable.
 
-  67cf83ac8316a ("Revert "drm/sched: Embed run queue singleton into the sch=
-eduler"")
-
-=66rom the drm-misc-fixes tree and commits:
-
-  4a33d82e224c8 ("drm/amdgpu: protect XCP scheduler selection")
-  fa1531170d2c9 ("drm/amdgpu: add check for xcp id")
-  6e8a3c24bd75f ("drm/amdgpu: bounds check xcp_id in release_sched")
-  7445035dd3f22 ("drm/amdgpu: bounds check xcp ip block index")
-  62d8b452615fd ("drm/amdgpu: Fix kobject cleanup in xcp sysfs")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
-index 42be8ee155dde,35faea0ff17ff..0000000000000
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
-@@@ -466,16 -467,20 +467,21 @@@ int amdgpu_xcp_open_device(struct amdgp
-  void amdgpu_xcp_release_sched(struct amdgpu_device *adev,
-  				  struct amdgpu_ctx_entity *entity)
-  {
- -	struct drm_gpu_scheduler *sched =3D
- -		container_of(entity->entity.rq, typeof(*sched), rq);
- +	struct drm_gpu_scheduler *sched;
- +	struct amdgpu_ring *ring;
-+ 	struct amdgpu_xcp_mgr *xcp_mgr =3D adev->xcp_mgr;
- =20
-- 	if (!adev->xcp_mgr)
-+ 	if (!xcp_mgr)
-  		return;
- =20
- +	sched =3D entity->entity.rq->sched;
-  	if (drm_sched_wqueue_ready(sched)) {
- -		struct amdgpu_ring *ring =3D to_amdgpu_ring(sched);
- +		ring =3D to_amdgpu_ring(entity->entity.rq->sched);
-- 		atomic_dec(&adev->xcp_mgr->xcp[ring->xcp_id].ref_cnt);
-+=20
-+ 		mutex_lock(&xcp_mgr->xcp_lock);
-+ 		if (ring->xcp_id < xcp_mgr->num_xcps && xcp_mgr->xcp[ring->xcp_id].vali=
-d)
-+ 			atomic_dec(&xcp_mgr->xcp[ring->xcp_id].ref_cnt);
-+ 		mutex_unlock(&xcp_mgr->xcp_lock);
-  	}
-  }
- =20
-
---W9FEyKEu0P44CSuu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp8lP8ACgkQJNaLcl1U
-h9Bjagf7BsMxK8nfyVpLS47rsL9RcMgypvKEhTNVx5IN4U8LugSzNaNulT4PelwY
-28aDjzODL7i/oXQy1z3qOR3YUPZUcQ2zpgifMPml3mWok9GleXGFiCvF0JQKIjJR
-LFF2CYeFBLZIA3y5NY3WD8J0iFZsZEhadMDdVlfVtpvypoM1zrpRSXiWmyEcopzK
-8Fs7+d9xvkH7QQljrxfpVlQR7OsluZcOlZFd/9rvK01TMPbwl//fkm68C0wfaqtt
-tytKwFljitrn3P8DtYVxQaBNx6b9Ufdos0uoD5nh/pZlawlaKB3KuB/M03u9hSMM
-0QhZLAuOaWJLbWhoBZnPAmX9gXE8CQ==
-=a72N
------END PGP SIGNATURE-----
-
---W9FEyKEu0P44CSuu--
+-- 
+Lee Jones
