@@ -1,40 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535947D440;
-	Wed, 12 Aug 2026 16:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B73476062;
+	Wed, 12 Aug 2026 17:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786553132; cv=none; b=fkHJ18I1ZcE37lT1hBUvkerX164+h7LjyQI8J32UQj9eKP7iK1IQSfWC3/SCyM6kf4gg+5HSTyhO1ZHgoYVePQn40wzAj5w6PeHVyd8IfFhyEFAZIyerk1mbEsyFkJ+x/jecRwSsCosA6ipgO6TH3yt1k/JNN/RKFmJixKES2vM=
+	t=1786554181; cv=none; b=NHfihdiCtb8FR1hV+81iTirOHdOKCpHqBuAR5a/buj2X9iuff7ihjhbkgW5XSvCkfyA6z+5T13Jpx5QetGh8zrNNvATKp/zVc7rShmn0TuqgNWtnL8Jw2wlAMBHkP5p/qaB5H5JDtUaF+cnkwVe4d9zSDabzVjGwQN4IYkoqzTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786553132; c=relaxed/simple;
-	bh=TQHXuHPhsjnx1xR2feFhKfg1lyR1LQEOeTRBZM7p0Nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UsvRNGLXSfcSNT/Az57lnjg6Pfq8HfFucZ5MaAE/THm2U6b2AlIpnZnzXEZSrqcUXcgnmexAMj/3CGo3FFNbpsshkiHq0g0JGKcLaHzRrvn/jleqv+KYEKsBWcH93KBTdsX+wpBfFQetbZOh70tvTLETbGXTKxKtWTWJk3aeuVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQ9iNs+B; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQ9iNs+B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F0A1F000E9;
-	Wed, 12 Aug 2026 16:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786553131;
-	bh=BvFVVlep9vFMeh5MZgAXQf9ORT2C3/s+8FvGqtkfdA4=;
-	h=Date:From:To:Cc:Subject;
-	b=MQ9iNs+BNO287mh4HFugKnZe3VrAVvPPlQHBpaMVP/jAjJsDdVKlAwygcKSBrMpz5
-	 r7NiI9JJBXsRPkWTHMwCDX7XTzS3ZavokO3DOr8Hf0XtwS49c4gTZlvUnoGb/HDd2t
-	 dWGibsG28RWi0qn8b2YW1waf96coVxO9YIYvgsHbCuHLQ4JkSg4FD1z7sHu87kKdXp
-	 YO/izusYswYocIuS+n3o8cPbqWniFyc0uhl7lm9DokT7UvCUMMa0ayMHJmnmTUT3SI
-	 imXsBD+3UgE1OwYi+tIuY8DAjUxZyKK6f8+YblRNUjpBN5WZLdreNGXE+izCojUk8P
-	 NK352V31bmaBA==
-Date: Wed, 12 Aug 2026 17:45:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Alex Tran <alex.tran@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the gpio-brgl tree with the origin tree
-Message-ID: <anyjJ6DSHWCjuB97@sirena.org.uk>
+	s=arc-20240116; t=1786554181; c=relaxed/simple;
+	bh=7sLy1n0dzVSc/IKumf0swPxkdcgtOfpmWz8/Ielf2Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pe5WZzBmaFKi2d8SCAPFF+Dp68rpWyj/GW1queF+6CJqpYlMNqDme6xijCrNaWpJEuzZTO/xJ00+HhUBIasq8ejvdgaK8PI0qFSKO4uWjlq0Rj3b5Iw3ahIIm0DFJCawjTmDjO/zDXnHyLxbbRShSXeqJFEF3yVXcPorrVSERfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117BA1F000E9;
+	Wed, 12 Aug 2026 17:02:57 +0000 (UTC)
+Date: Wed, 12 Aug 2026 18:02:55 +0100
+From: Mark Brown <broonie@debian.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	ksummit@lists.linux.dev, Thierry Reding <thierry.reding@kernel.org>,
+	Breno Leitao <leitao@debian.org>, linux-next@vger.kernel.org
+Subject: Re: [MAINTAINERS SUMMIT] Any feedback for -next?
+Message-ID: <f5d7c700-823e-4cc4-8d81-1743d19a93db@sirena.org.uk>
+References: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
+ <anxTFWS4KAMqGNGT@monoceros>
+ <1a34c486-2fb5-41e3-991f-23bf82468412@sirena.org.uk>
+ <anyjG-mMuaDox3eN@laps>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,72 +33,50 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+8I3DUiYXKoI93HH"
+	protocol="application/pgp-signature"; boundary="8Y5zqUJEijjnY5yx"
 Content-Disposition: inline
+In-Reply-To: <anyjG-mMuaDox3eN@laps>
+X-Cookie: !07/11 PDP a ni deppart m'I  !pleH
 
 
---+8I3DUiYXKoI93HH
+--8Y5zqUJEijjnY5yx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Aug 12, 2026 at 12:45:15PM -0400, Sasha Levin wrote:
+> On Wed, Aug 12, 2026 at 05:37:30PM +0100, Mark Brown wrote:
 
-Today's linux-next merge of the gpio-brgl tree got a conflict in:
+> > actually want the intermediate trees directly like with the filesystems
+> > stuff then sure, but if there's no demand for the specific combinations
+> > of trees I'm not sure it's worth it.
 
-  drivers/gpio/gpio-by-pinctrl.c
+> > There's also the issue of incremental build benefits.
 
-between commit:
+> Which is mostly the reason I kept silent on this thread :)
 
-  67ff4bf723c8b ("gpio: gpio-by-pinctrl: Apply initial value in direction o=
-utput wrapper")
+> My original goal with that work was to evaluate AI merge conflict resolution
+> and measure it against the work that both the -next folks do as well as Linus.
 
-=66rom the origin tree and commit:
+> I suppose that if folks are interested, this is something I can keep running
+> consistently, with the caveat that conflict resolutions are purely AI driven,
+> which could be enough for something we feed to CI and bots.
 
-  408866669ce01 ("gpio: gpio-by-pinctrl: Apply initial value in direction o=
-utput wrapper")
+Like I say if it's useful to people I'm not completely against the idea,
+I'd just rather not pay the costs if nobody is going to benefit from it.
 
-=66rom the gpio-brgl tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined drivers/gpio/gpio-by-pinctrl.c
-index fb8440acb31d9,f54efd635f139..0000000000000
---- a/drivers/gpio/gpio-by-pinctrl.c
-+++ b/drivers/gpio/gpio-by-pinctrl.c
-@@@ -54,11 -54,11 +54,11 @@@ static int pin_control_gpio_direction_o
-  {
-  	int ret;
- =20
- -	ret =3D pin_control_gpio_set(chip, offset, val);
- +	ret =3D pinctrl_gpio_direction_output(chip, offset);
-  	if (ret)
-  		return ret;
- =20
- -	return pinctrl_gpio_direction_output(chip, offset);
- +	return pin_control_gpio_set(chip, offset, val);
-  }
- =20
-  static int pin_control_gpio_probe(struct platform_device *pdev)
-
---+8I3DUiYXKoI93HH
+--8Y5zqUJEijjnY5yx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp8oyYACgkQJNaLcl1U
-h9AEtgf9FMnPRYP73JQsCcLZcJnFSgzP+lUoZJVbzeqCp8cPWQ2Cv6/YtDoACvyt
-qKYYk/w72hG2Om1rNynIFXnJqqu2l+UdRDKuRvlZiLCx7ANAi83sA0+h3JPWrbgA
-tXma6CC+APP4rAvo2bcb250bTAtNcSltsSmXcCwApflSq1PoXNScfOMPNZggzaSE
-eoaR3sJ61UA+J4cRnvlmKF9ULCeUYsAqliejxSBn2LGWTwjg5ZCyqLePPYyK6hea
-NOAyHkGsYQKQk1mHhdqkiTZxDnM1QvM/6+s5/5lYBvn11ichwaPulK16WnaOJCRr
-zRE1XmBCa/OJqH9LoSbNYGB/PWEtfQ==
-=Qh8W
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp8pz4ACgkQJNaLcl1U
+h9AS7AgAgYGc7prywsT2WcPi8RizASlnCsJ5GrpFFgI9KpadEv8rDGEAOWVY7aE0
+kXzkDDejC40jMnh13WHkI8pLq8+w7UP1/Sne/fn36MhY+8wz7UGY+CtV3e25iZzC
+6Ss9BZGwVvyjccZB5cDkZgkGNUu7LahqxGKASmSoXceJ2VXcVr8FbV87xzYqe6Ob
+ZVficLv/powL+/zCYs2dsQOAUT2X8WwOcX9tjIAxacSbt6qXkRHYCkpP1n880nhY
+wQHhCWJ2sFms8Tbd3Xfppau6oWkUSXLblWferyfw1yqCYRW6OoPx5Hkm+JUBrze/
+zPTeZOtsj7e8SG3wfXeNrg7raKss3w==
+=+5M6
 -----END PGP SIGNATURE-----
 
---+8I3DUiYXKoI93HH--
+--8Y5zqUJEijjnY5yx--
