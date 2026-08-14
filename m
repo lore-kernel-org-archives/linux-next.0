@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79E93A9DBA;
-	Fri, 14 Aug 2026 16:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A4448C8DC;
+	Fri, 14 Aug 2026 16:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786723987; cv=none; b=KuTc1sAuQAOQ9PpVYEv1ktBNf4zLpozmooEu8tZG4s5z+g1n8nx33AuVJFqxX3fJ5JIqHL/m4xsWoE85QavJ7v90pulSU/0S93kmqP/TVERBf3+Cjyp1vAvW/bG3PCN2avRmkkAh3Q92qQcqegtlA/oJ9/6iWOWU3Auo1Q4Ds3g=
+	t=1786723994; cv=none; b=UThDN62vDZvuifGKk9nLTo1fl5dCzxSMqxLu46ZSDQn8uiJcjIJw61x0wSOpDomdxCAFiQ2fCPHPS6+AW6QlGsgvxcMLWh/Q9ctPbkbLdGCE++utKELXcKeWzlSiE4nrYrNbXpx4y+WFWgeh5/lxAj50XIMAYTESMd6ajuo5Zt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786723987; c=relaxed/simple;
-	bh=EYOxkd4UHYqJKmtjtQSSn7b8tPqa/mnCg36OtGGysBA=;
+	s=arc-20240116; t=1786723994; c=relaxed/simple;
+	bh=cOLZ1vs29Wg5DvmttKcMegSrb6MRXWe55Q/DFtpfDvs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C/nWyw752twOFf6VSSw84/pEi4ls2AJYiSu2kvYA6tz2tP60Mu8+vPb5eQ3y4AC8riBuDxgqZC0vQCi91RffJ1YVqlKdASB+0ToKlnKk5g1Uuj3PD0MBKT/g23Tga37XcXQJCt868GUcGDfBu7TzM05ZmM8e4mrh88eppHAWTaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6Wd8tcL; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=dKtPSstQGyGYnk+KWxQ3V6PSbwwqec+lLHBi9fRrc9WB0wIYPLteUQhZWMv39vQTnfIj+xgyCtV3xyTSYjFNbP0kJ0odvHLp9dd0YaHQAmQHARWgQzji1JxP9TDWjvyWOQAbhxVZlLNTHeneWPSC7giaFMo8bunQ6OX66v73FlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0NA1Shi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6Wd8tcL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC0541F000E9;
-	Fri, 14 Aug 2026 16:12:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0NA1Shi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C4E21F00A3A;
+	Fri, 14 Aug 2026 16:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786723979;
-	bh=0GUK+NGdlu7jSk4REVUite5f3pFmQ85eHnIH2kij4TM=;
+	s=k20260515; t=1786723988;
+	bh=Wt2jGEmy/CePDPbgFSlTdU5gxhpcN7zful8HHBrXzrg=;
 	h=Date:From:To:Cc:Subject;
-	b=b6Wd8tcLVZxeO+bTVz7MBo0X6wrblmyvHMXIu8hwJGlsFkHkUEgglR4LTM+C7aV/G
-	 wFK8dgSWivgi6/TC4e3IQAyXjT4vKaGd95pqLL7d88DHJhlID6Mtywob3EpX0FMfmp
-	 6gQxF13iQK5sB/pYYAX1L3L6zXPYDI6Ftru84GI+zA/fBlG/hlm4HQxpNV/qtNDozD
-	 LFXJCB/Lb80s7LJ2Q4HWDMukJW92TZMbc85GHDLqvlt8TZ0w0EAccmJ7MPFwunCR5X
-	 Sh/Ojq29Sp6L9uxgatY0c5cVtXMU/XpfZwK/tz/W+aPocbsU3S6D1VqLpMpI718VlV
-	 8dyOt01UeKo+g==
-Date: Fri, 14 Aug 2026 17:12:56 +0100
+	b=C0NA1Shirt4742/nNOUSf28bKsCEzYoJ3A5070SSUy90jwBtMPyjcI7MCXqGLtz6N
+	 w3JVz+xX/qHOvdYS2xUMpTRJf4ceDdv0vQspIupAUC+zjQxsNAUQ9w8eh9LXnfiGO5
+	 P/RfMArxg95mb6aJwgCifIAtdahjJqgH0Ap7Y3kH+CgB+lSpeU8OY8WK1gCwvQyrA2
+	 OaQM8cXuskFkotzi6gvJKzipwUlaYySbnl4EariscCrN1Aq1XsqTROHWqa054sJNKC
+	 8PkQVMsty3TbA/PrMV9RUTp2YRMi4r8oeRnclGZKcRCHaX8M5h9JQWm7QYKWPBj5Vb
+	 ounmKtgM8JPYw==
+Date: Fri, 14 Aug 2026 17:13:04 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Helge Deller <deller@gmx.de>, Shixiong Ou <oushixiong@kylinos.cn>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the fbdev tree
-Message-ID: <an8-iMG1haqotufX@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Aug 14
+Message-ID: <an8-kASiXVgQCAMj@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,63 +39,76 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pL/hq/iVhCWufopW"
+	protocol="application/pgp-signature"; boundary="pb0ucql5CCzjvO+y"
 Content-Disposition: inline
 
 
---pL/hq/iVhCWufopW
+--pb0ucql5CCzjvO+y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi all,
 
-After merging the fbdev tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Changes since 20260813:
 
-/tmp/next/build/drivers/video/fbdev/aty/aty128fb.c:2027:6: error:
-variable 'info' is used uninitialized whenever 'if' condition is true
-[-Werror,-Wsometimes-uninitialized]
- 2027 |         if (!pcim_request_region(pdev, 2, "aty128fb MMIO")) {
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/video/fbdev/aty/aty128fb.c:2096:22: note:
-uninitialized use occurs here
- 2096 |         framebuffer_release(info);
-      |                             ^~~~
-/tmp/next/build/drivers/video/fbdev/aty/aty128fb.c:2027:2: note: remove
-the 'if' if its condition is always false
- 2027 |         if (!pcim_request_region(pdev, 2, "aty128fb MMIO")) {
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 2028 |                 printk(KERN_ERR "aty128fb: cannot reserve MMIO region\n");
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 2029 |                 goto err_free_info;
-      |                 ~~~~~~~~~~~~~~~~~~~
- 2030 |         }
-      |         ~
-/tmp/next/build/drivers/video/fbdev/aty/aty128fb.c:2001:22: note:
-initialize the variable 'info' to silence this warning
- 2001 |         struct fb_info *info;
-      |                             ^
-      |                              = NULL
+The drm tree acquired a conflict with the origin tree.
 
-Caused by commit
+The drm tree acquired multiple conflicts with the origin tree.
 
-  99c188b02c281 (fbdev: aty128fb: Convert to managed PCI and ioremap API)
+The drm tree acquired a conflict with the mm-unstable tree.
 
-I have used the tree from next-20260813 instead.
+The drm-xe tree acquired a conflict with the drm-fixes tree.
 
---pL/hq/iVhCWufopW
+The fbdev tree acquired a build failure, I used the version from
+next-20260813 instead.
+
+Non-merge commits (relative to Linus' tree): 14006
+ 12365 files changed, 837765 insertions(+), 254639 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 429 trees (counting Linus' and 133 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--pb0ucql5CCzjvO+y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp/PocACgkQJNaLcl1U
-h9Bmrgf/TJj74cqgh1MCqTvgZC4h9K812jEDgKGQeCTxSlVRJKRFNoHPdDG69Tol
-6KsJTwfg9PBk+Me9Hf1BnG9Ed3lQ5MbNVBB9hZGfi9TH5S+rIbYC+sSxTg0FAqWt
-9saTBi2TJ9CzXI7cZ8yPBShWYG0wMW3cOJe0YrBXlM+pHkT56zBEWcBiAepIblBX
-1P6R5KjY/jGqn0v+YJakP26cDJESop77gwXuURQ+B3MABRG2fvaVxDAZ5B7u7PZV
-ga6eM8aFRf9vzVYvqwNHO5EQgfVRkTnwXzZGDHZ/dalrH4z+y/RWtdGjncghaN2x
-G5/EnZD6ui4wVUXBafMwAjWMpiQRXA==
-=Vdos
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmp/Po8ACgkQJNaLcl1U
+h9Ctbwf+NwA8NT4AbmT6/5AwttQ/UY7wP5iJKVAkTQ+MbqPWNyGOH7oAJA6/gB4O
+EntewoiRTaZRCWSkkTIeaXOLfOuwAa14TnjYupDyhoHZSCVK6y9QThNGLx2D5dDg
+o1oeUcrMNtR+hRaiAFPKus6G0ckzmhJQTSGL9SZkZ4ryh8td76r6I06oKxVK4B44
+Z8oB0P0GXP/z84MgVIJLPqfTOWI4g5dQ4Fp13hEtwCW7zdQDulPpMrmsAkmBH8mx
+w8OI/JOLlTqoycpy5hmS7pehceMiRB5nfBVxA35iJijUEnsOKTu6sIoVgqGMtd9Q
+Q4AkErdcnEs3GwaAMO5OWrddQj44zQ==
+=sSyM
 -----END PGP SIGNATURE-----
 
---pL/hq/iVhCWufopW--
+--pb0ucql5CCzjvO+y--
