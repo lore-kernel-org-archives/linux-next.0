@@ -1,406 +1,206 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7D410F2
-	for <linux-next@vger.kernel.org>; Sat, 15 Aug 2026 02:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AAF345EDF;
+	Sat, 15 Aug 2026 08:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786761025; cv=none; b=Q/tmC3MjkyPyL+6XbUue43xcygbrz4jAII2QgOfrmkBrZ+2KUJ0vsRrrq9i05kx5fquAFHKfDZeJ9KhM1qv5qC2zE3PpJ6niYrtnB0o9U7NO41zYeLCwhPUiel811vTPxkB4zIA/59NXOYrTk2BQzdpo2Q6hychKrg83LmPDEhQ=
+	t=1786783494; cv=none; b=gS10K66fMY2g6T9tBTG6S6/fpk514W2drTgT24ITc72oXXYA4/8BwC5FOYJCYCPwHX2ZJyZayhC1JWP3poRBsr47VqPOTqb13YGjg6xh5fExDnNSM2aLTxZJqoFwg03JUHj1dNYTEVvwu7iahK9+iCjgHPwdxAjzfcQg71zZgL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786761025; c=relaxed/simple;
-	bh=0oo8dfTJu3/oy8KZ9DFx+Zr9Kg7ZFiH1lb+mQM1nv4g=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=mJiNYT2PXuIeoCfZrlhrSsUaoH2XcNP2kbHiiKC7d2RkheAXT0GkD4sy5DFLi6Ltd22H5+dKYgdv+CCy8ZInhqb99lQQTJwXV6tQLg4ZXvz0QtIWo2F8AveWEL+9uG//nIyHJtuMfEiToLo6PiYZVcDmrT+61Bs+EdjAPqIIfcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=O0iR4Sv4; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1786783494; c=relaxed/simple;
+	bh=bVCCefdajcGVavaMEPrFKUg64Lx4SLUNvI25tI9ZX7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ka6csdux06QMtYELm827Bp7uTNd3QcnGwIBwr0EA+kjWMuBkhAbbo1wMOW1X740cwsmOFp5Nlit8N1gBglL8ep2oyKyTQ7+nKC4oxal3dI1utewlziutkwoa9KTBwgSsVq4qBIERFMTb9sYLSascN7RX3NrJrKg5W3fFAWwhXBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=JzCm/eOR; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="O0iR4Sv4"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cbee846deecso1842123a12.1
-        for <linux-next@vger.kernel.org>; Fri, 14 Aug 2026 19:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1786761022; x=1787365822; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=89WCDtcfxLaPoVM9n7/LSXeHhcV180iZbVUcIKKygAc=;
-        b=O0iR4Sv43EiHEVkh6Lk/oi3lbqMwlR8Y8ZWTLdB1TTFjdTghjsc6uZa8PjVWtJNNr3
-         ov7sxunrSOGoiKQg/ovZKApOnkekWZVl9G1ssYS3DBMyxVEujECOY276Oc3w4yeFYr+C
-         FxOXPqhqbOXykcmEFHmgNp9VXr+zgcdOTBjNlfzaNtjVaYjo3csTE9csYt2cwQe/huh1
-         Q/COXm3YdMDGF1/HwCw24nIKfehaOL+oAnga9B36zx+DVuIGe8iX+fhmCPtC56mAi+nj
-         xsNlVQOvVXtBsDRHsOxGbdRDm/CD6v/y++BSMXjWH7mPdQ5uAgvnnXzobdcfKA9UOkG3
-         /tRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786761022; x=1787365822;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=89WCDtcfxLaPoVM9n7/LSXeHhcV180iZbVUcIKKygAc=;
-        b=Uf6lwucRMRo+XNueWnlm9xEhYTi3X0hB7fu+g69FT8/s0uSjamK3yziyhJpfKTPqNP
-         TT5CxqJn1xnZ++ICkcDGulvXDJ6nZnLYv+g4MrokbXbABuDkKigZlVPEhxTlcnHKRo0s
-         uvWWEKtjqKl7hliNZ+CRAeLAD+blq6z6WBim+L7snHE7Kulyq+xhOw4FiCk1hOuq7MNq
-         V2aBm+98lpLKDzpBv7Kzt9B1GLV68EZOIh+zUGtwQPcTUSESKC+uyCJxwzYEIXmb40gi
-         hFyz3qS0/Q3D5plPIAb+xT1UCK88LoOLT3T4IvcOKw2szfThR9T7XqnPw/r0tNY4AbyM
-         uXEA==
-X-Gm-Message-State: AOJu0YxR/GfQbzCYzPynRx4MubFsN7lvhd+zHJ30q/QzeijYz0T0gEZ+
-	QU/3T5rvduY2g0kab64z1t9bjzVNDh0v3JVacP3zPCK4j2Rn3igjYMr5qF9ZLl0hva2ubnAxKzT
-	O6G5d
-X-Gm-Gg: AR+sD11A08oe9PbkAxyRqO5LoZmgnGMVL3wcb0rTVddqhJ+L8YltfCTww0B+GHiULKq
-	sN//qAtR7CXV4Wi+f8tuZZZieS0R4co1uQ2ERNFTZtdigkVfwPWNOZgR70dmIAzjP3suCCDsT0S
-	hr1lbVEP1AVt6cwW8Upr4bhumvBwuAiZR38oQn9VXjlM6VkijPqhyyjlkXn6Ma8qgLFWtBLH24F
-	vFW5rdhDMmBqr+gRC4iRBUg1CYMxvysi47WhVcdPYoVPkBl0fn5EMqRm2khNiv5VyTsm8q+ynND
-	Fw2//mhq6GLEdBRqXTzGw621IZltyHTCjnd8iTo2FFvXTbjaxOtEg1jYPSLDyT1fEqUqflw9rkL
-	CVDt7UjvyPwLzsj5KVNLkiXORyhgMjCrwNIsQSV+5W+ooLcmeGrzh98s/NJUFKwXE7heDYlxZOB
-	Q3DK4uHHvXKysJWqO0Bq322+oncSHe/L7OuMxXuFEP66jV/KOzpF/2/Q==
-X-Received: by 2002:a05:6a20:d80c:b0:3c4:2eb6:c3a0 with SMTP id adf61e73a8af0-3cc71d13a66mr12664406637.30.1786761021938;
-        Fri, 14 Aug 2026 19:30:21 -0700 (PDT)
-Received: from 9a65d8f5b626 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3218d3f398dsm9709841eec.22.2026.08.14.19.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Aug 2026 19:30:20 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="JzCm/eOR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1786783479; x=1787388279; i=deller@gmx.de;
+	bh=Lgpk3Vpo735lkElOMXA7w3H2sraWGYbHbEbcWqWlkE4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=JzCm/eORES3zZmmfjVFhhXPUg4wrY2isW1DcTwdLjkITlPfpgLnviDRX5Hv7jS5P
+	 verkGMylCQZJT9HO4RgfXjJ/vHs5agiMMAM2JhG6t6BuFqCgbtU0tJMIcLuppaONt
+	 Gbp3jOSTRdVj+BbPhTwhS/3D/F/mINh2+MEeCj/RlO40BfVBFTaHkcstn+NrtN8PB
+	 G5J9x5UEucOQuOdOhcNYhjQQooXpVQqfzs6knMz5cptycjcmSt2k01a04aCGpJ6lP
+	 +OcVcHGL7vs6pFuItz3piyMMaPwndK7mFTvIn7eFFphgm+yseCrua380yeysq1PRO
+	 vOt6CvhlAZzHmyPYow==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from client.hidden.invalid by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MkHMZ-1wXLhf43Rp-00n5fU; Sat, 15
+ Aug 2026 10:44:39 +0200
+Message-ID: <41962598-2237-4150-8c45-2436bf07efbd@gmx.de>
+Date: Sat, 15 Aug 2026 10:44:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 4477a78374a57c3809b172ad30cceabda48c47c6
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 15 Aug 2026 02:30:20 -0000
-Message-ID: <178676101951.3719.10356970836799138577@9a65d8f5b626>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the fbdev tree
+To: Mark Brown <broonie@kernel.org>, Shixiong Ou <oushixiong@kylinos.cn>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <an8-iMG1haqotufX@sirena.org.uk>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <an8-iMG1haqotufX@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PXUrq8G+Up9hmip7fAk+LNpkcLaKQF9hfO6De0GtEN7OuvofDgw
+ FcgOsuVS3lc+myM0rk/RosHZ52pbQW05ovhrzBbQwHU9vYJRhWD512dMsS3bCGR8K0KZBbd
+ 4Zvub+d/cJH92dhmLhCYSfVCYtvrtsckO5WSq6Ho3Kc/jLukWjRboaqLlT8Igbn67X3y1a1
+ yFsPAWyC0OIq4TeuLwHEg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LTfGWRaaouk=;zZw9C9F8c+5WWEq3F4eEJAO7zcO
+ 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
+ IAlQZRZyQ8gGsTNw==
 
+On 8/14/26 18:12, Mark Brown wrote:
+> After merging the fbdev tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> /tmp/next/build/drivers/video/fbdev/aty/aty128fb.c:2027:6: error:
+> variable 'info' is used uninitialized whenever 'if' condition is true
+> [-Werror,-Wsometimes-uninitialized]
+>   2027 |         if (!pcim_request_region(pdev, 2, "aty128fb MMIO")) {
+>        |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ....
+> Caused by commit
+>=20
+>    99c188b02c281 (fbdev: aty128fb: Convert to managed PCI and ioremap AP=
+I)
+This is fixed now in the fbdev for-next tree.
 
-
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/4477a78374a57c3809b172ad30cceabda48c47c6/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 4477a78374a57c3809b172ad30cceabda48c47c6
-origin: maestro
-test start time: 2026-08-14 16:21:46.590000+00:00
-
-Builds:	   72 ✅    2 ❌    0 ⚠️
-Boots: 	  141 ✅    1 ❌    0 ⚠️
-Tests: 	34439 ✅ 4979 ❌ 8350 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: bcm2837-rpi-3-b-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6a7f53a562f33761c0c5c01c
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.device_error_logs.devices_error_logs_test_device_error_logs_py
-      last run: https://d.kernelci.org/test/maestro:6a7f5d4062f33761c0c6a00f
-      history:  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_76
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb6a
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_79
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb7f
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: lemans-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
-      last run: https://d.kernelci.org/test/maestro:6a7fa85c62f33761c0ca6231
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-      - kselftest.futex.futex_run_sh_global_requeue_multiple
-      last run: https://d.kernelci.org/test/maestro:6a7fa93f62f33761c0ca6400
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-Hardware: mt8390-genio-700-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_11201000_usb_0
-      last run: https://d.kernelci.org/test/maestro:6a7f54d562f33761c0c5e052
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_112a1000_usb_0
-      last run: https://d.kernelci.org/test/maestro:6a7f54d562f33761c0c5e04d
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_112b1000_usb_0
-      last run: https://d.kernelci.org/test/maestro:6a7f54d562f33761c0c5e04a
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: sm8750-mtp
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6a7f539062f33761c0c5bf82
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.timers.timers_set-timer-lat
-      last run: https://d.kernelci.org/test/maestro:6a7f5bdd62f33761c0c69405
-      history:  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: sun50i-a64-pine64-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6a7f53af62f33761c0c5c041
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_11201000_usb_0
-      last run: https://d.kernelci.org/test/maestro:6a7f574662f33761c0c619e7
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_11290000
-      last run: https://d.kernelci.org/test/maestro:6a7f574662f33761c0c619e6
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_112a1000_usb_0
-      last run: https://d.kernelci.org/test/maestro:6a7f574662f33761c0c619e4
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_112b1000_usb_0
-      last run: https://d.kernelci.org/test/maestro:6a7f574662f33761c0c619e2
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.mm.mm_ksft_hugetlb_sh_thuge-gen
-      last run: https://d.kernelci.org/test/maestro:6a7f94ee62f33761c0c9c9ce
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_75
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb63
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_78
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb78
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb44
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: lemans-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6a7f545b62f33761c0c5c592
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.clone3
-      last run: https://d.kernelci.org/test/maestro:6a7f53b262f33761c0c5c04d
-      history:  > ❌  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.devices-exist
-      last run: https://d.kernelci.org/test/maestro:6a7f545162f33761c0c5c571
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6a7f546062f33761c0c5c5aa
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.gpio
-      last run: https://d.kernelci.org/test/maestro:6a7f578e62f33761c0c61f3f
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-exist
-      last run: https://d.kernelci.org/test/maestro:6a7f545262f33761c0c5c574
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.proc
-      last run: https://d.kernelci.org/test/maestro:6a7f541162f33761c0c5c305
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.proc.proc_read
-      last run: https://d.kernelci.org/test/maestro:6a7f5ab562f33761c0c68de4
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: qcs9100-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_22000000_displayport-controller_2215c000
-      last run: https://d.kernelci.org/test/maestro:6a7f5a9b62f33761c0c68b82
-      history:  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
-      last run: https://d.kernelci.org/test/maestro:6a7f5a9a62f33761c0c68b37
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.mm.mm_ksft_hugetlb_sh
-      last run: https://d.kernelci.org/test/maestro:6a7f94ee62f33761c0c9c9cc
-      history:  > ❌  > ⚠️  > ⚠️  > ⚠️  > ⚠️  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb59
-      history:  > ✅  > ✅  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb57
-      history:  > ✅  > ✅  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a7f548b62f33761c0c5cb58
-      history:  > ✅  > ✅  > ✅  > ✅  > ⚠️  
-            
-Hardware: kaanapali-mtp
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.clone3
-      last run: https://d.kernelci.org/test/maestro:6a7f53c562f33761c0c5c0cb
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_clock-controller_3d64000
-      last run: https://d.kernelci.org/test/maestro:6a7f5c0b62f33761c0c69597
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6a7f542462f33761c0c5c434
-      history:  > ✅  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6a7f60ce62f33761c0c701f6
-      history:  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: lemans-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.device-error-logs
-      last run: https://d.kernelci.org/test/maestro:6a7f53e062f33761c0c5c192
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.devices-exist
-      last run: https://d.kernelci.org/test/maestro:6a7f544c62f33761c0c5c55d
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_af54000
-      last run: https://d.kernelci.org/test/maestro:6a7fa85c62f33761c0ca627a
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_af5c000
-      last run: https://d.kernelci.org/test/maestro:6a7fa85c62f33761c0ca6278
-      history:  > ✅  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a7f540662f33761c0c5c245
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6a7f542562f33761c0c5c492
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.timers.timers_posix_timers
-      last run: https://d.kernelci.org/test/maestro:6a7fac8762f33761c0ca8a8e
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: mt8390-genio-700-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_11201000_usb_0_hub_1
-      last run: https://d.kernelci.org/test/maestro:6a7f54d562f33761c0c5e051
-      history:  > ✅  > ✅  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_usb_11201000_usb_0_hub_2
-      last run: https://d.kernelci.org/test/maestro:6a7f54d562f33761c0c5e050
-      history:  > ✅  > ✅  > ✅  > ✅  > ⚠️  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a7f540062f33761c0c5c238
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.futex.futex_run_sh_global_requeue_multiple
-      last run: https://d.kernelci.org/test/maestro:6a7f59b562f33761c0c654b1
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-Hardware: qcs9100-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_8c0000_i2c_890000_i2c-mux_70_i2c_1_bridge_58
-      last run: https://d.kernelci.org/test/maestro:6a7f5a9a62f33761c0c68b56
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a7f540162f33761c0c5c23b
-      history:  > ✅  > ❌  > ✅  > ❌  
-            
-      - kselftest.futex.futex_run_sh_global_requeue_multiple
-      last run: https://d.kernelci.org/test/maestro:6a7f5ac062f33761c0c68ec3
-      history:  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a7f4d5b62f33761c0c586cd
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: sm8750-mtp
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.clone3
-      last run: https://d.kernelci.org/test/maestro:6a7f53c062f33761c0c5c0b5
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a7f540462f33761c0c5c23f
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Helge
