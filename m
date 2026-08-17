@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A07A3D9545;
-	Mon, 17 Aug 2026 15:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65EB43A7F7;
+	Mon, 17 Aug 2026 15:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786980478; cv=none; b=VRy3McD5juYSM7upplDAVBs/j8WDf/r8rDQAY4CCG3WcwyTTWg9DQIQ7IiLOA5MoblsBR3ggE0dU1FO4EjLxtqYBIgI7Z1wWE6rl+ULFemUsppz7jhsGLl7wz87VbVZQm3i2m+nq+95JKTq03SODmFOSGAllowVl4Yd5L/Lm/YI=
+	t=1786980677; cv=none; b=VTTw4wDDOs0GRRauGicgng82PBmUUNL4U61LFMsFeKVat7+uFm80+BHfU9qHdNdqKkPUrxDggSMGJXdULd/BXpTFvDI9Hdo6JwlI58mpRE/KWuxPdkbeLSAgJB1FtN/6jyRunbuFfjBv7QpwaTBXFnhfw2hyau5ucze+rINMFuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786980478; c=relaxed/simple;
-	bh=BE3ZuTENy47Hm8/qPo51cSuKNf4b8nCA//3W3rwlUQQ=;
+	s=arc-20240116; t=1786980677; c=relaxed/simple;
+	bh=IorIHw98UY26CI71Z/fIb1DkUsjJ7k5BpL1iYdLZR6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S+TDsdKK/c4kYsr84iio0chwcrmbkRt4sJa0RfarFTixI/BPHWEii3QeSsl4lx7DqBV8HzTbdjjRMD0X+reisabsgrJhBmAd35LOoA3/BpnRsQLEBfwofiCsaEhDGqMtBNpg7MvUyWm2pAvECGjkOCO6gnkawugx0L/QHoajBd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3B3x5HA; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=TRnIsl67xY5JN6lWY9w2baGYrG/2bA+XdctBWEwfDgqBVP/OKa1L65MUD3uksjZ5RF69fBrk6vugO4wVlt8GZoZmbzPk6HZfofisaUnqNXyjAPUo/5SyHO7eaCvKY3L8I5De1ZOYKKU4NEDnQ/9cqczMdKJtlE3JQ9d3Nsk9r40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUjgT7e9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3B3x5HA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5B4E1F00A3A;
-	Mon, 17 Aug 2026 15:27:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUjgT7e9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209EE1F000E9;
+	Mon, 17 Aug 2026 15:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786980477;
-	bh=jxfpnvbhiaHLnsy8VZZheLUiY+p7GB7+Q0WLzAeRaB0=;
+	s=k20260515; t=1786980675;
+	bh=7KNCPOKMWxdL60bSxrdpOdEjJ85lxwCVgFz0XuHlwps=;
 	h=Date:From:To:Cc:Subject;
-	b=j3B3x5HAWGzV92wItQaUzF4qMFuxVK2CMn8vqJBxHYlafXG0NaCN7qZ3exgqiLzKA
-	 0lKwrLoZa+AKrFH+kOTDVKG1yXjUxZ5+1SEzBizwNJ0eP+KjpPMRilBqE0OGfGIYSG
-	 OlcIqo4YefYY9GJOCcSfEhZe9tcvE2OETUGQWkrbZctmD92cJH3/DPS5xuhTBo4jBd
-	 02nnEAYfFphx9uoX8noX+MgYebts6g3FZdCjsHLlriXobCm1Yao4mpmALt0m9P8ODx
-	 xpTBHA6tQ/xibc9FvGtULG6BJ9G/LzVwkTpDo5b9ZGX8Pq+X1N9NwcD6EbbEaSyXZn
-	 UazoutKBqj0BA==
-Date: Mon, 17 Aug 2026 16:27:52 +0100
+	b=BUjgT7e9QlUdrMkmKWP6KkDzeliZ+nd4xTVLafg9B3iPGIiJwDH9FT8syKKdPiC51
+	 jGM0nQc7PLNCvJwU4TJwAy1SM9apLk1vjcb5hRk1vtBLS7NERTwEGvXOy4CInolpxB
+	 Nv2LdBBwUN0/KGS97gAd2wnO77MNxBEZ9TjKUbgJMgzZP1o12uu6Z5Ea6ZEHK6CFJQ
+	 /29G7shWezJCtp9m8uBNnTgtBJv6pA58V/z5xzxMsiVhCrCHkMwOKpabbnxKQzft6v
+	 gxe4L0/xh05p13p0U7mBTsxQ/jb5iHJtHKrANyDqzQEXPO670KYOUAXIrfuXkxKjJ+
+	 bFH84+7FaBhEA==
+Date: Mon, 17 Aug 2026 16:31:11 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Yang Wang <kevinyang.wang@amd.com>
-Subject: linux-next: manual merge of the drm tree with the origin tree
-Message-ID: <aoMoeEtvdJzu6cS2@sirena.org.uk>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Brian Masney <bmasney@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the clk tree
+Message-ID: <aoMpP0R8qSzhuEId@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,344 +42,43 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XytuleQJXo+FUOAx"
+	protocol="application/pgp-signature"; boundary="5MFWbvZlIEC9/rOD"
 Content-Disposition: inline
 
 
---XytuleQJXo+FUOAx
+--5MFWbvZlIEC9/rOD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  drivers/gpu/drm/amd/pm/amdgpu_pm.c
+ERROR: modpost: drivers/clk/clk-scmi-oem.ko: missing MODULE_LICENSE()
+WARNING: modpost: drivers/clk/clk-scmi-oem.ko: missing MODULE_DESCRIPTION()
+ERROR: modpost: drivers/clk/clk-scmi.ko: symbol 'scmi_clk_oem_init' undefined!
+ERROR: modpost: drivers/clk/clk-scmi-oem.ko: symbol 'scmi_proto_clk_ops' undefined!
 
-between commit:
+Caused by commit
 
-  1849a64165ccc ("drm/amd/pm: use milliwatts for GPU power sensors")
+   77369b1e6a371 (clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver)
 
-=66rom the origin tree and commits:
+I have used the tree from next-20260814 instead.
 
-  757ba0790bafe ("drm/amd/pm: use milliwatts for GPU power sensors")
-  f5998f4d71b23 ("drm/amd/pm: Simplify SoC power printing in debugfs")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined drivers/gpu/drm/amd/pm/amdgpu_pm.c
-index 85b089a3dc414,c0e677328af57..0000000000000
---- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-+++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-@@@ -34,6 -34,7 +34,7 @@@
-  #include <linux/nospec.h>
-  #include <linux/pm_runtime.h>
-  #include <linux/string_choices.h>
-+ #include <linux/units.h>
-  #include <asm/processor.h>
- =20
-  #define MAX_NUM_OF_FEATURES_PER_SUBSET		8
-@@@ -98,6 -99,37 +99,37 @@@ const char * const amdgpu_pp_profile_na
-  	"UNCAPPED",
-  };
- =20
-+ static int amdgpu_pm_parse_long_params(char *str, long *params,
-+ 				       uint32_t max_params,
-+ 				       uint32_t *num_params)
-+ {
-+ 	const char delimiter[] =3D { ' ', '\n', '\0' };
-+ 	uint32_t count =3D 0;
-+ 	char *sub_str;
-+ 	int ret;
-+=20
-+ 	if (!params || !num_params)
-+ 		return -EINVAL;
-+=20
-+ 	while ((sub_str =3D strsep(&str, delimiter)) !=3D NULL) {
-+ 		if (strlen(sub_str) =3D=3D 0)
-+ 			continue;
-+ 		if (count >=3D max_params)
-+ 			return -EINVAL;
-+ 		ret =3D kstrtol(sub_str, 0, &params[count]);
-+ 		if (ret)
-+ 			return -EINVAL;
-+ 		count++;
-+ 		if (!str)
-+ 			break;
-+ 		while (isspace(*str))
-+ 			str++;
-+ 	}
-+ 	*num_params =3D count;
-+=20
-+ 	return 0;
-+ }
-+=20
-  /**
-   * amdgpu_pm_dev_state_check - Check if device can be accessed.
-   * @adev: Target device.
-@@@ -761,8 -793,6 +793,6 @@@ static ssize_t amdgpu_set_pp_od_clk_vol
-  	long parameter[64];
-  	char buf_cpy[128];
-  	char *tmp_str;
-- 	char *sub_str;
-- 	const char delimiter[3] =3D {' ', '\n', '\0'};
-  	uint32_t type;
- =20
-  	if (count > 127 || count =3D=3D 0)
-@@@ -797,22 -827,10 +827,10 @@@
-  		tmp_str++;
-  	while (isspace(*++tmp_str));
- =20
-- 	while ((sub_str =3D strsep(&tmp_str, delimiter)) !=3D NULL) {
-- 		if (strlen(sub_str) =3D=3D 0)
-- 			continue;
-- 		if (parameter_size >=3D ARRAY_SIZE(parameter))
-- 			return -EINVAL;
-- 		ret =3D kstrtol(sub_str, 0, &parameter[parameter_size]);
-- 		if (ret)
-- 			return -EINVAL;
-- 		parameter_size++;
--=20
-- 		if (!tmp_str)
-- 			break;
--=20
-- 		while (isspace(*tmp_str))
-- 			tmp_str++;
-- 	}
-+ 	ret =3D amdgpu_pm_parse_long_params(
-+ 		tmp_str, parameter, ARRAY_SIZE(parameter), &parameter_size);
-+ 	if (ret)
-+ 		return ret;
- =20
-  	ret =3D amdgpu_pm_get_access(adev);
-  	if (ret < 0)
-@@@ -1385,11 -1403,9 +1403,9 @@@ static ssize_t amdgpu_set_pp_power_prof
-  	struct amdgpu_device *adev =3D drm_to_adev(ddev);
-  	uint32_t parameter_size =3D 0;
-  	long parameter[64];
-- 	char *sub_str, buf_cpy[128];
-- 	char *tmp_str;
-+ 	char buf_cpy[128];
-  	char tmp[2];
-  	long int profile_mode =3D 0;
-- 	const char delimiter[3] =3D {' ', '\n', '\0'};
- =20
-  	/* Reject empty/whitespace strings - fuzzing found this is not validated=
- */
-  	if (count =3D=3D 0 || sysfs_streq(buf, ""))
-@@@ -1407,19 -1423,11 +1423,11 @@@
-  		while (isspace(*buf))
-  			buf++;
-  		strscpy(buf_cpy, buf, sizeof(buf_cpy));
-- 		tmp_str =3D buf_cpy;
-- 		while ((sub_str =3D strsep(&tmp_str, delimiter)) !=3D NULL) {
-- 			if (strlen(sub_str) =3D=3D 0)
-- 				continue;
-- 			ret =3D kstrtol(sub_str, 0, &parameter[parameter_size]);
-- 			if (ret)
-- 				return -EINVAL;
-- 			parameter_size++;
-- 			if (!tmp_str)
-- 				break;
-- 			while (isspace(*tmp_str))
-- 				tmp_str++;
-- 		}
-+ 		ret =3D amdgpu_pm_parse_long_params(buf_cpy, parameter,
-+ 						  ARRAY_SIZE(parameter) - 1,
-+ 						  &parameter_size);
-+ 		if (ret)
-+ 			return ret;
-  	}
-  	parameter[parameter_size] =3D profile_mode;
- =20
-@@@ -2015,6 -2023,7 +2023,7 @@@ static int pp_dpm_clk_default_attr_upda
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 1) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 4) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 5, 0) ||
-+ 		      gc_ver =3D=3D IP_VERSION(11, 5, 1) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 2) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 3) ||
-  		      amdgpu_is_multi_aid(adev)))
-@@@ -2023,7 -2032,8 +2032,8 @@@
-  		if (!((gc_ver =3D=3D IP_VERSION(10, 3, 1) ||
-  		       gc_ver =3D=3D IP_VERSION(10, 3, 0) ||
-  		       gc_ver =3D=3D IP_VERSION(11, 0, 2) ||
-- 		       gc_ver =3D=3D IP_VERSION(11, 0, 3)) && adev->vcn.num_vcn_inst >=
-=3D 2))
-+ 		       gc_ver =3D=3D IP_VERSION(11, 0, 3) ||
-+ 		       gc_ver =3D=3D IP_VERSION(11, 5, 1)) && adev->vcn.num_vcn_inst >=
-=3D 2))
-  			*states =3D ATTR_STATE_UNSUPPORTED;
-  	} else if (DEVICE_ATTR_IS(pp_dpm_dclk)) {
-  		if (!(gc_ver =3D=3D IP_VERSION(10, 3, 1) ||
-@@@ -2036,6 -2046,7 +2046,7 @@@
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 1) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 4) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 5, 0) ||
-+ 		      gc_ver =3D=3D IP_VERSION(11, 5, 1) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 2) ||
-  		      gc_ver =3D=3D IP_VERSION(11, 0, 3) ||
-  		      amdgpu_is_multi_aid(adev)))
-@@@ -2044,7 -2055,8 +2055,8 @@@
-  		if (!((gc_ver =3D=3D IP_VERSION(10, 3, 1) ||
-  		       gc_ver =3D=3D IP_VERSION(10, 3, 0) ||
-  		       gc_ver =3D=3D IP_VERSION(11, 0, 2) ||
-- 		       gc_ver =3D=3D IP_VERSION(11, 0, 3)) && adev->vcn.num_vcn_inst >=
-=3D 2))
-+ 		       gc_ver =3D=3D IP_VERSION(11, 0, 3) ||
-+ 		       gc_ver =3D=3D IP_VERSION(11, 5, 1)) && adev->vcn.num_vcn_inst >=
-=3D 2))
-  			*states =3D ATTR_STATE_UNSUPPORTED;
-  	} else if (DEVICE_ATTR_IS(pp_dpm_pcie)) {
-  		if (amdgpu_is_multi_aid(adev))
-@@@ -3943,18 -3955,14 +3955,14 @@@ out_pm_put
-  	return size;
-  }
- =20
-- static int parse_input_od_command_lines(const char *buf,
-- 					size_t count,
-- 					u32 *type,
-- 					long *params,
-- 					size_t params_max,
-+ static int parse_input_od_command_lines(const char *buf, size_t count,
-+ 					u32 *type, long *params,
-+ 					uint32_t max_params,
-  					uint32_t *num_of_params)
-  {
-- 	const char delimiter[3] =3D {' ', '\n', '\0'};
-  	uint32_t parameter_size =3D 0;
-  	char buf_cpy[128] =3D {0};
-- 	char *tmp_str, *sub_str;
-- 	int ret;
-+ 	char *tmp_str;
- =20
-  	if (count > sizeof(buf_cpy) - 1)
-  		return -EINVAL;
-@@@ -3979,28 -3987,8 +3987,8 @@@
-  		break;
-  	}
- =20
-- 	while ((sub_str =3D strsep(&tmp_str, delimiter)) !=3D NULL) {
-- 		if (strlen(sub_str) =3D=3D 0)
-- 			continue;
--=20
-- 		if (parameter_size >=3D params_max)
-- 			return -EINVAL;
--=20
-- 		ret =3D kstrtol(sub_str, 0, &params[parameter_size]);
-- 		if (ret)
-- 			return -EINVAL;
-- 		parameter_size++;
--=20
-- 		if (!tmp_str)
-- 			break;
--=20
-- 		while (isspace(*tmp_str))
-- 			tmp_str++;
-- 	}
--=20
-- 	*num_of_params =3D parameter_size;
--=20
-- 	return 0;
-+ 	return amdgpu_pm_parse_long_params(tmp_str, params, max_params,
-+ 					   num_of_params);
-  }
- =20
-  static int
-@@@ -4013,10 -4001,7 +4001,7 @@@ amdgpu_distribute_custom_od_settings(st
-  	long parameter[64];
-  	int ret;
- =20
-- 	ret =3D parse_input_od_command_lines(in_buf,
-- 					   count,
-- 					   &cmd_type,
-- 					   parameter,
-+ 	ret =3D parse_input_od_command_lines(in_buf, count, &cmd_type, parameter,
-  					   ARRAY_SIZE(parameter),
-  					   &parameter_size);
-  	if (ret)
-@@@ -4892,9 -4877,8 +4877,8 @@@ static int amdgpu_debugfs_pm_info_pp(st
-  {
-  	uint32_t mp1_ver =3D amdgpu_ip_version(adev, MP1_HWIP, 0);
-  	uint32_t gc_ver =3D amdgpu_ip_version(adev, GC_HWIP, 0);
-- 	uint32_t value, mwatt, centiwatt;
-  	uint64_t value64 =3D 0;
-- 	uint32_t query =3D 0;
-+ 	uint32_t value;
-  	int size;
- =20
-  	/* GPU Clocks */
-@@@ -4915,25 -4899,22 +4899,22 @@@
-  		seq_printf(m, "\t%u mV (VDDGFX)\n", value);
-  	if (!amdgpu_dpm_read_sensor(adev, AMDGPU_PP_SENSOR_VDDNB, (void *)&value=
-, &size))
-  		seq_printf(m, "\t%u mV (VDDNB)\n", value);
-- 	size =3D sizeof(uint32_t);
-- 	if (!amdgpu_dpm_read_sensor(adev, AMDGPU_PP_SENSOR_GPU_AVG_POWER, (void =
-*)&query, &size)) {
-- 		mwatt =3D query;
-- 		centiwatt =3D DIV_ROUND_CLOSEST(mwatt, 10);
-+ 	if (!amdgpu_dpm_read_sensor(adev, AMDGPU_PP_SENSOR_GPU_AVG_POWER, (void =
-*)&value, &size)) {
-  		if (adev->flags & AMD_IS_APU)
-- 			seq_printf(m, "\t%u.%02u W (average SoC including CPU)\n", centiwatt /=
- 100, centiwatt % 100);
-+ 			seq_printf(m, "\t%u.%02u W (average SoC including CPU)\n",
-+ 				   (u32)(value / MILLIWATT_PER_WATT), (u32)(value % MILLIWATT_PER_WAT=
-T) / 10);
-  		else
-- 			seq_printf(m, "\t%u.%02u W (average SoC)\n", centiwatt / 100, centiwat=
-t % 100);
-+ 			seq_printf(m, "\t%u.%02u W (average SoC)\n",
-+ 				   (u32)(value / MILLIWATT_PER_WATT), (u32)(value % MILLIWATT_PER_WAT=
-T) / 10);
-  	}
-- 	size =3D sizeof(uint32_t);
-- 	if (!amdgpu_dpm_read_sensor(adev, AMDGPU_PP_SENSOR_GPU_INPUT_POWER, (voi=
-d *)&query, &size)) {
-- 		mwatt =3D query;
-- 		centiwatt =3D DIV_ROUND_CLOSEST(mwatt, 10);
-+ 	if (!amdgpu_dpm_read_sensor(adev, AMDGPU_PP_SENSOR_GPU_INPUT_POWER, (voi=
-d *)&value, &size)) {
-  		if (adev->flags & AMD_IS_APU)
-- 			seq_printf(m, "\t%u.%02u W (current SoC including CPU)\n", centiwatt /=
- 100, centiwatt % 100);
-+ 			seq_printf(m, "\t%u.%02u W (current SoC including CPU)\n",
-+ 				   (u32)(value / MILLIWATT_PER_WATT), (u32)(value % MILLIWATT_PER_WAT=
-T) / 10);
-  		else
-- 			seq_printf(m, "\t%u.%02u W (current SoC)\n", centiwatt / 100, centiwat=
-t % 100);
-+ 			seq_printf(m, "\t%u.%02u W (current SoC)\n",
-+ 				   (u32)(value / MILLIWATT_PER_WATT), (u32)(value % MILLIWATT_PER_WAT=
-T) / 10);
-  	}
-- 	size =3D sizeof(value);
-  	seq_printf(m, "\n");
- =20
-  	/* GPU Temp */
-
---XytuleQJXo+FUOAx
+--5MFWbvZlIEC9/rOD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqDKHgACgkQJNaLcl1U
-h9DZBQf/eNAsmIZK8Etkb64PLV2NFGZKa3vhLC8EIOFwp1MWUw4T58JLzdFMBozN
-YJlVSzGUHP9K3YGVqanPtYzoxiyZNAZNwzybeJwXNV9OU5CRemXHVUgOTwb032Jv
-MUT8gpfKOmmp5AulhsUMsK5BrF1kSyCuVlWOKnw1fJ7U7x8OflHzVChytBPqERE2
-ZAFrJmMiw08y6qXyF6E8B5a37isPAjzx/fuhnPI31sJ69st5Q7riw41DKnBWP7ne
-0dvTAdx2wUMId4c1jCIuRA+YM7IRmG7meZy26ZJVY09CJ0GcKnDV2nNf/COBtqcQ
-du7/7sBgM6V4ODrGs1V7tkOb7IzYzA==
-=HG6f
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqDKT4ACgkQJNaLcl1U
+h9DHRgf/WAIqTna5oW9KRBVmjFg1DonzHDV8GyG3TvC29RS44GO6aWNGEUu6Ixdy
+W6UPCZ96eAWcQZS20OCxcAVJH7CChdvXuuhQL5duOcGKHUchuloMHHrbx3CpJ9rt
+ldtU87ay/3OTEqfNRmSC9leWgHeLEJUA9jBP+SPwFldwUcTEpWTQ7aSxAB2gTuek
+I1m+/dvbBOR92b3jZy12DzkRlGEsLkdrH5qq+8Hy4Emcvw91p/kdMMy93K/yZwu/
+Tvubs06w94N3G9R4dTcCQqWA5pVdw3OPrbHNQkVhVwCImNdSBPejIhH1eXLvP3d2
+O8p4m11I17TJWkgjzH1HqGHBs4hg9A==
+=mW+E
 -----END PGP SIGNATURE-----
 
---XytuleQJXo+FUOAx--
+--5MFWbvZlIEC9/rOD--
