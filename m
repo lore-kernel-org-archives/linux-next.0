@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61E73FAE1B;
-	Mon, 17 Aug 2026 12:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA5B40A921;
+	Mon, 17 Aug 2026 12:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786969348; cv=none; b=szHgF47Gxl0hGgnFhuEwxCaL7Vo2hMWKRWHozywljiJapTd3GjMA4P60d2sDea+xxxXCBtC5gtAn4iHF2j/qxDlqIm2j9MyViTyxCfDms7vv+sX+HV0vksVKTygwlO83GeyEMJtBcc/b50FtjBbMA4x2+RHQJNQbM5qxVmMMjKk=
+	t=1786969360; cv=none; b=VGov2POkD7fwbCt0S6l8sPf0YnYMe5O/v7W9LAAjNKUm4GWiXdEz31nmgEKXoSanRLYJBn+sR4q/2tBW9fNTRFGWDQL1mNSxaqKRjr8hYQOrNgHqb6B8REJWGvL+8TKl98cx3gvkKpSnfFZ9CN3VYX0WQFaDyzu6I02omheIhNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786969348; c=relaxed/simple;
-	bh=BUaTFFcTpU52ZrZ1zwApq4rgKy6f7OyVd03i3MG8jtQ=;
+	s=arc-20240116; t=1786969360; c=relaxed/simple;
+	bh=UiH1tJFOjJCoKtZuYCpIT9QPi8pAJHU/9ZDEGITnRCs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DyANiYLuu0yBaTlPe/NhOFWtorJewztgaVY7NxHeAXBRAtT7vi2Ga64lms7xcX6NyDUBXUQwVRtpXcBnj/OeSO3h7SDVgPouBK/WoNPceWvLgPl2RA4jAxQosMCr/CS9nD3mdMWhiD0WFBJpSHwBIG8GTpXVhq8FqgrxAysFEuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hn6KJrMt; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=AJYK3VJaajKOs0IZVSkXbaFw4Nd6Jw24tn+JmCEAPsVw8eMEhK8IWVHB8Z4iMq00A7Qogfnd0Kb07itx+ngHLo+bMvBHNxHdxIM14Oy6WP5vGdTlAn/Ha9TszIYwuWx5A2enVIITs2EG5Yq7sQ9n9OkSUbfqpCbZ5yh568D7P9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BosPbCJ9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hn6KJrMt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 888A71F000E9;
-	Mon, 17 Aug 2026 12:22:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BosPbCJ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF22F1F000E9;
+	Mon, 17 Aug 2026 12:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786969347;
-	bh=iUSMjzCpdi8VJ49g/7FnSxKKfDVNDcKtDS+Rt5YCeqI=;
+	s=k20260515; t=1786969359;
+	bh=BgIb5j1O+kwI0/CJl2x7ikGeG/Dkd0/bX68IFZqwrJ0=;
 	h=Date:From:To:Cc:Subject;
-	b=Hn6KJrMtEnmObrwFTzcQei6QorjVHLUurpRwvCy2WQZidKjOwYoljh25Bt/91zP+1
-	 gYIjC4J5iPckmCpYNiHU9N0h1r7/p1iJ/ZCG5MP2akdbn3g4Ks682zwwNqNaBDHd/I
-	 8qrLZ2mIfcVwJ0Stt2DAVCzBomC56AWGbDEsd/qSjrUGwfD6yOZnKVpRfUwjkVpYxy
-	 68+b4nRQmd70uz2FDnWTI4UK1mGJ16HjZC0nwZ/ardFovqjH7i68XEOn9W4ymti13V
-	 cYIi0xg2/0qiVdc4nnX2TSMJ6Kkq/jbRZHquH8wF9AZAllrf+zvwDckEYRlsPaHPHT
-	 9xl+yk5OAviPQ==
-Date: Mon, 17 Aug 2026 13:22:24 +0100
+	b=BosPbCJ9PZbEkghvJgN8mD+YORxGKauElsn3LtrzeNFD3A6vRA7FZSXX3qaOr6bB3
+	 7v0HWniLxkoZUuNaAkyEYx4p4+82W4oytVmpnKLC5pFoM0CE1tG+eCCaY9G4ZyzW4W
+	 1GHBxCiV+q9pbapzFjCyQ39wzl/FELTzIY5P+i+cx7uOk6g5Zm9zAfLBnN5Pr+tl37
+	 +l9vfV6gpvq29TptxhBWFImrelZKYCyqvWOu46RnTl9Q6/FB9p6gKbtRbSnwbnsIjE
+	 OanncXNs1YDAk++coprfbzVRO2nW7ZZRAmMusru4ptVwaRG1/6KU5NoIaGHQXdwCkW
+	 luFwWLpW7nYRg==
+Date: Mon, 17 Aug 2026 13:22:34 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the risc-v-fixes tree
-Message-ID: <aoL9ALPE0zLSKEU4@sirena.org.uk>
+Subject: Missing signoff in the input-current tree
+Message-ID: <aoL9Chia7eJRNqQB@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,33 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kcfG+ScB7uDTOTNl"
+	protocol="application/pgp-signature"; boundary="wHkSY9wUAKK9UfBG"
 Content-Disposition: inline
 
 
---kcfG+ScB7uDTOTNl
+--wHkSY9wUAKK9UfBG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Commit
 
-  8d9d4fd2a15ff ("riscv: patch: skip fixmap mapping when kernel text is already writable")
+  ad255410cbfbb ("Input: elan_i2c - optimize update speed for IC Type 0x19.")
 
 is missing a Signed-off-by from its author
 
---kcfG+ScB7uDTOTNl
+--wHkSY9wUAKK9UfBG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqC/P8ACgkQJNaLcl1U
-h9CEPwgAhciEyBLGuS5oP2rHpMKBe0QoZZ3S261iGvokhctf/jZcg7eTFlOULxb9
-9Y8Q9MjOoLd+0JRs/iJ/3nCVnkoCwBGAhqOnC1ZyDq8+EFKWBrye38/saZTUIfNh
-174JKXjmaZiTDhIKBbjomuxhSwmk5xSaoSiiIKDmWq+aDI/BwFB4hcUv5BWp6rpU
-y+CbVMSikHm0DqbGhw3MDNpTu5fc9qvopRTXufXkzu/9eBD4GPEvjcKTEmhMb90G
-SLVR3gKZ8LRSGnRXXUf6klL3mMYp/8qRDHXR3/Qx38ZGpdwwq9orx7b1/S897J+D
-ng73oAHdIrDJaQPfCvTLjZ4bOh0utQ==
-=vwUZ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqC/QoACgkQJNaLcl1U
+h9AfPwf+JC7Y1JrpdjyEsVd6qtiRs1ge7SwkbOeoRmWz0/J8oR2RcWWjlO0x7EwY
+PWd+LghiH3rGL1g+S4xoisgwcbCL4EnAr1TEIHh81Ppn5zCHvGwg3pvqXFOR+/kC
+g+BU85tC9Uh4ceR46p6jVGO4FkSdqOhGPzXbj48agWr9D+Idf1vkejSCcLLCJSPQ
+bXuulq0nmaOd6frYdsLk2ZjtPLqROGXBVgBQ/kdy+JQ4vx+UCPDrNHJOUdsaK6am
+Vq4MT+MvXSIkjmZuBhC7cxvYudqqBVm+Ox/npsNauGi9W/95VZM6LcJHjL6JTtfc
+FUW5bANkwlpQjlSNhhDL4Py27wHHMg==
+=P2bp
 -----END PGP SIGNATURE-----
 
---kcfG+ScB7uDTOTNl--
+--wHkSY9wUAKK9UfBG--
