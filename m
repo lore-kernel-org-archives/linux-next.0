@@ -1,57 +1,57 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C1345349C
-	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 16:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474A445348D
+	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 16:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786984338; cv=none; b=cttR105ogKqWPE7PY1KscJs/I+ZIKm7ghzUVQ1y9yrQ9aZc9dgKtelGI7S79OCz0n0T6BFmGO4Ew+6OvC0FtVpsqgpaqOrwqWJSfgeokAsQ+Z3PurrHoFYQu2UJ7scEmW4WjcuIwCzicvccNj1uZCxvT+nVw/N2ED14oTqN3u5U=
+	t=1786984394; cv=none; b=R9s3c6iQBTOJ/JwbH8HY/rwExA5ENeBbADSOed8JMrP0BiPbCtFwrH1yIO2Ej1nRZHhYblLxlygFLY7v4wrK1RHMtqE+ueS9KWlEP4mwkOK7FKhHNLNiO3J+UY3fQzB/vvc6Ciz8VMWmLhIHm8xc1eVGEglWbrilNfMDVPq3HDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786984338; c=relaxed/simple;
-	bh=dKWsaFwZEy9KA7vqCWRxPjalUgr6jgn+NqfqfRpLCfo=;
+	s=arc-20240116; t=1786984394; c=relaxed/simple;
+	bh=I9FcAf1XumOSvisEKv8JkCp2JzqhJhKccTb9moxLAQk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YwrcDg5vnRA7hfRmWBqgEiIx4z/5m/P10WQARBzqPjYFGQg9Xperx7PmurJ8/dy5mFjDYLOmkIBdy0GO6dMI2jLllillN+M7As0C+D/0CipLcXLb8s7xRBjFcq2NYoXGvoelgYVeikBWtQKvoa3MARa1osQes3axawQVnyxoWXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XF2BGBNg; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=Q8s90ZcPZEnK6820G5r9n54byKuY8bUJI31Qf9RZsjUhfd8px//IBbAmUrNNj9lMLtRk+Wz/UsUoneUtlf8lWiGvaSlV5Ij68u1Jq+B85yHdbZ1NUnMw2NSY+50ErUD2HbZ7q42XTo23EJ0np4JSGttvz1tEGJL01dOhycbpmdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSz/7LdT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XF2BGBNg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B4F1F00A3F
-	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 16:32:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSz/7LdT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD251F00A3E
+	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 16:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786984337;
-	bh=SpbPyYHXcWpwTzxq7M/tW4XyT33sXZZUmdXolRoBZt0=;
+	s=k20260515; t=1786984391;
+	bh=Dd91vnrNCzBGsOdcr9xe0vpj6BFHMKoviCBWPFL9jOo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=XF2BGBNgOC2f7hZ3CfWlwXxGHpu//AItwcqotBfxxt8W+1/ZH0A4HJ+R8VrMdO+6E
-	 YsBLD5c/KZ/2VBVJRO3hJCvpSiws6agFu6/Mimo570N0OCCH0F3SiYv3lOUJ3DaN0K
-	 IqICATJSpQuT9/GafPjFVKNSSvP+e5KizxHFIxBa1PXQQOdYdLE1x1KTZva4DSuSMb
-	 zm0vqfjfpei4iqfpumLml72RVa4pc8y+A/PGbqcMqGXpm/yB+mYxwzktAfyF35zF6k
-	 RK8EjjfpQ1Cd3wB1sh0Wzu0v1SaU3ygVToj9X3yy0BuCkitynhXNnyjMNQEo6PBpi4
-	 Ee+A4uYvhYw3A==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b14d1f9315so3007529e87.2
-        for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 09:32:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpEbcvoar6X5zE+17c/eHg5nPs42F7gBbqUXPhPTypSTCqgFeIB5Agaf7DOw2j5wwmW+z6vezWVubPD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3hgNJekLlAAgckiVUbHSJDgaUdz6kt2uaeupBJUKMmZtszOcm
-	7c/4ihHpO/uWrUtkyQWij+mZiIFgH33KKMk1hNBJmC0k4WENTWfq3I9G3AKAP5ddr+HVfLyC/BN
-	BaTBel3aKnfZKK+5DRRchEaA4XV5JxHY=
-X-Received: by 2002:a05:6512:a35c:b0:5ae:b24c:7723 with SMTP id
- 2adb3069b0e04-5b470671d86mr275932e87.17.1786984335486; Mon, 17 Aug 2026
- 09:32:15 -0700 (PDT)
+	b=fSz/7LdT/UqjJb8zxpx3A0ZySHAWkLNShE/QgUs0dDhdFg4WJWLBG6OcICkWK3B2D
+	 as08AKMr1D4zEuGnfQpH6I4qWmasPgchbiJmspsUcU18D0YXeZ3VWMqTGxrqqHEXH6
+	 Y4m1QTBjv/nj+Kw8DBYAXFJ+5qo+8k61rN6PXXhvUaiyiWQpFG3F3LW6VD1bvVAYV5
+	 /nsa+6wQd3fbnzcywa/8RaWnbvv3oViIkIyC9RXP/r70ypn3ObfSt+12G8DXO+hWnc
+	 JGeUbK7kjSj/t08nz40IU0gWn5rV467CgqU2Hk+puTYZEQ7hnds9m1/TmHplcQj5hF
+	 0Mx/I3oOa7pOw==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-39dbe684115so493621fa.1
+        for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 09:33:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqTQtVVYh+PtfNUPmmLK6cnDlc2+yABrbBQ+ymqv4C4aov/belCgElemsRS3HjlM//LzuIU8TcnE7pU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyPPyrmg1Jq+D55posbBsf7IPIIudLGD2c1e49zY1SGopP9At1
+	Fxyb7WeSw85POv6CJlhwTWM0qZm+2DuSqmLLDSPeZEsKQ6QyDa7x9MCCKSKKJDFoftjaUpia/Et
+	QCDdfvoR02+rJTNA3uL2OvewlIqhJ6L4=
+X-Received: by 2002:a05:651c:43d0:20b0:38e:8357:c5ae with SMTP id
+ 38308e7fff4ca-3a176a46b94mr401831fa.9.1786984390080; Mon, 17 Aug 2026
+ 09:33:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aoMBM9KoZItu0aNb@sirena.org.uk>
-In-Reply-To: <aoMBM9KoZItu0aNb@sirena.org.uk>
+References: <aoMBS1M5brWvJzRE@sirena.org.uk>
+In-Reply-To: <aoMBS1M5brWvJzRE@sirena.org.uk>
 From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Mon, 17 Aug 2026 18:31:46 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gvxu6dzToOhh-xsP539Mjtczz7oTLiMXFeMvA+U=3Zgw@mail.gmail.com>
-X-Gm-Features: AcwNN1Xo3Dhs4_yeK_CrJhqjV4s_PeoEvEqgE_YdB3wTd_zMvQQ0jWCuWOokUng
-Message-ID: <CAJZ5v0gvxu6dzToOhh-xsP539Mjtczz7oTLiMXFeMvA+U=3Zgw@mail.gmail.com>
+Date: Mon, 17 Aug 2026 18:32:41 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iDx1kRAAbSzZaLx22bb_gyynxgG-Mvwa+O3SPcMmfVew@mail.gmail.com>
+X-Gm-Features: AcwNN1WQz-0Fvrf-xYN2oIb9Qq2Kl4ob9Qj5SWT4UMpdJmpkv5nKw96shQAEvPk
+Message-ID: <CAJZ5v0iDx1kRAAbSzZaLx22bb_gyynxgG-Mvwa+O3SPcMmfVew@mail.gmail.com>
 Subject: Re: Fixes tags need work in the pm tree
-To: Mark Brown <broonie@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	Linux PM <linux-pm@vger.kernel.org>
+	Mark Brown <broonie@kernel.org>, Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -60,13 +60,13 @@ te:
 >
 > In commit
 >
->   68e3c5d8c128e ("thermal/drivers/qcom/spm mbg tm: Fix missing bitfield h=
-eader")
+>   1f371e8f495fb ("thermal/drivers/qcom: Fix missing spmi adc tm5 gen3 fil=
+e")
 >
 > Fixes tag
 >
->   Fixes: c3dce117333c ( "thermal/drivers/qcom: Add support for Qualcomm M=
-BG thermal monitoring")
+>   Fixes: 948ee3a74f35 ("add support for PMIC5 Gen3 ADC thermal monitoring=
+")
 >
 > has these problem(s):
 >
@@ -74,22 +74,4 @@ BG thermal monitoring")
 >     Just use
 >         git log -1 --format=3D'Fixes: %h ("%s")'
 
-Thanks for the report!
-
-Daniel, there are two of these in linux-next now and both have been
-pulled from you.
-
-Unfortunately, this cannot be fixed without changing commit IDs which
-would require resetting my thermal branch (which I had wanted to
-avoid).
-
-You may either resend the last pull request
-(https://lore.kernel.org/linux-pm/468d3bf3-fbdb-4548-bde8-1c94ad6f15da@oss.=
-qualcomm.com/)
-with the Fixes: tags fixed, in which case I'll replace the top-most
-merge in linux-pm.git/thermal with a new merge, or resend the previous
-pull request (https://lore.kernel.org/linux-pm/91946ecf-05a2-4479-bade-3d08=
-03bdcba2@oss.qualcomm.com/)
-with the fixes folded in.
-
-Whichever you prefer, but please let me know which one you will be doing.
+And this is the second one.
