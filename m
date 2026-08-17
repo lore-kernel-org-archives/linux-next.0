@@ -1,100 +1,81 @@
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C3839733E
-	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 14:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EA23EAC74;
+	Mon, 17 Aug 2026 14:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786975420; cv=none; b=LFWlg5xf+VBDLypz0TRaGDB2Q+cyDzu64FQIhqRUHiwD1ojqQ5UBij4yu+cj4VJDYSV0fRTuLCXTIU/0nNx93oZU1V+cD2czpLATUk6goX5vdPof5tHVdfqaAh9iUcNzJCg9Ay5cPeGRnMzGAR0IbT6HM2jwR5G9N8eQBtp6H8o=
+	t=1786975651; cv=none; b=gnIFP2TtJasnyJcH4q/dZBWYtPeOZQuZyuXSa1gIEtLc3Y+690fVDFP1tmzQ0MBA7THoVEH2X8Q6iC34HucQ++i2X/MU7ulhdaGLJGvQraOZ6Q/opZf6GYvYoIMpiUc7NykfsBoaoh9tzyvm3GDzOrOIOlrA2EJD0Yk8kQ7tfck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786975420; c=relaxed/simple;
-	bh=xwv+wv9cGCeevDWQgXAXAs9yzFDvRy9bue+MVB/DDmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TlU5WCqYp1qDta4VdrzQwJ+/l+ZE81fEHmgHq1RolsstEptXOfmRlENclkkiXRy0teKgv6bvv/UO3P7FTzKkD6MdV5gB6F9p+lFtOwI+pdQqhEu72DtifF/SXJ62ipq+ahbOrf/TVovaDhyJH6HJC9GVrvZophzJm3MwGhePIxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=IMKTe1JY; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1786975651; c=relaxed/simple;
+	bh=8J2pwyslpjvORHAvoPzw+yHaOYhOvuW5WeTThlq6778=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjdGFSLA67uJ3/SFXySodEarpOkFMTeFj9j0T4A8cHqLVpsVpIhuwt4YnFyGDzTfuR77Fq451IwbZ25T/TtPDWZw1qVRcUygX9mcs9Xe4GI4D1HA3FuiZCy70k5jErJDNF3EAQZL4e8BQU93+oit6bBlLbb3RzRwCctJWxD4D2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxpTkSeT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="IMKTe1JY"
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7f3ece23165so1991998a34.0
-        for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 07:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1786975416; x=1787580216; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=dayFXk3I1VUoGifz4ZIxAnmlzh/MSoGWOYp8W7oi8qA=;
-        b=IMKTe1JYeNdL1qwT4qY/pviNRcjNztEoKOnQq+1DEd+D6plEpssfLcnChrI9n/g576
-         M/jyZ7XGVW6hK09kGpjCEjIKjZtRFZS3YkZZgbPz2BqtVry1+B7+8q84MSDcSp2G817v
-         DicP82Rj0EaciZWgMWgSFY+xU5r398Xp0QPgj0Jci3cvmhkpqgWs5RAAsUwWFwagNf0f
-         w8TWbVhoZKuZTs4LVC8n4nroY+NHmeWdDhC05qmicgaWuJkuc4gC8ouKLEVQEu6YbLoQ
-         Cifpv1pogbNxHXgaRNKQWFv9WSRuKuJC5Vl6b234bNsZkzv5TPna7RNJXYK5D4xvJjuB
-         p+9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786975416; x=1787580216;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dayFXk3I1VUoGifz4ZIxAnmlzh/MSoGWOYp8W7oi8qA=;
-        b=R6sfyZb0RC5luGPrLoR6BVxxnr9iEGZ+rBxNJsefL5rj6IRTv4LZHZ07DQtyrnANlJ
-         N49/QHPDRsi78gLAW16FsqUn1tLn/3WgYzsGhJixnO/0I+MUM8BGkS43v/ZBmsJY3V1M
-         jy0EN0ooauDSIIHEgT5FBf1ZVKuarGqqzhMbp6rbmGYe1SZIs6T2MItSJVTIqWMUqYb7
-         rsQRAZeaYiCZON29YCgN3MGjd5BFJfoCQdH8uMt/VjRzg0k8OOjifNk51YB6o+BjF0c2
-         l2c+v9hF5uto+SMD7+m6gAcBleQFY7OJPtLxb+q6zTYEmG2QXM0QwL2a0lGD0mdTk88B
-         I4Fw==
-X-Forwarded-Encrypted: i=1; AHgh+RqcErbOjBjgLeDWRwyFCj9VcO7Rr30okSMNzN35uy6TgIQ9xXWrLnoSUrwKZV7ubpt+wW8E9buJpAlq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVRh+Kdjha5e/BZ9zzZoJUVgK0G8tsHIxrqnFXYwxES56mIccZ
-	5oS2YBw2ybcdIo1rfen7VhnJWyUnBaUY0aTinwmfXXkCoO1d2FLjomFEAk+/yPMasPc=
-X-Gm-Gg: AR+sD12FAMhyUFsEZRlLEYgIXLq1LKZLZpLA3Wui5dPOU04m0JAeJmYDGYxxd7ZofZl
-	LB24QlHAQhBuCjYrGPT6xa1tN4T4jCdLgSJutabfkvpPCZuFbTWIRrZBBvHwHt1ux9EtQJ9IaFb
-	BICvrMIPSNWORlg8iQoD2lylcsdKhOI50u6CenWuVRZK/Kn7n3g3vSw1T/IOk1Ek17UR+Ux9W5/
-	UzIts8Zdo8exDhPoERCnMsvvcDGAOMRS6XcgP6cORRDziwZif8b70DwT7kj99SEHV8a0A3n5ict
-	FY8yAxO8tIqrT+pebLcM7iWVW5GH2FbJdr2oaCYRxbl1u/Y+bsr6ak1PalSGhdBRRBje32btNIY
-	+4F/moiIdOieMrd65TFrtB6NqYOu/yUElDWgGlMR32s9bnQ9bqoJfT7VDEV6XDH/yB7Tt9iXEPE
-	Ox1zkJsCrwqMJFO8fXBG2UcuQDqU4rOcA0HDzVTvIaGiyK9QUgs9dfpBPnQyNCxrioqJ8Mv+S9H
-	VWwSXx6GxlI5szx2NmrzqI+ALhWKfe3bFMBa/N2Plpmevhy
-X-Received: by 2002:a05:6830:2992:b0:7f1:ddf1:c731 with SMTP id 46e09a7af769-7f3de608861mr25049614a34.13.1786975416436;
-        Mon, 17 Aug 2026 07:03:36 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7f41c0f3598sm1796925a34.20.2026.08.17.07.03.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2026 07:03:35 -0700 (PDT)
-Message-ID: <93c7c45a-09c7-413d-b83b-beab1d3a3a38@kernel.dk>
-Date: Mon, 17 Aug 2026 08:03:34 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxpTkSeT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E473A1F00A3A;
+	Mon, 17 Aug 2026 14:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786975649;
+	bh=8J2pwyslpjvORHAvoPzw+yHaOYhOvuW5WeTThlq6778=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SxpTkSeTo48RMfz5rOPvcZfEYUqBEqesTf6fpHJwbDbpX+sgDmcgBEJa9+9g8QUQ7
+	 DzdVh9w48elyvt5T0S4ImqID/VeyDt39po110b07J7MCIyXzg1oEQrZ1yhgrs77JJS
+	 l8fVvEo2qTNcJy2MAezLxurDFCjIH82/QkM4j6M1E2TcWVglYncQjtanYPs5g9/8bz
+	 FhpyRGOyH3xKWVcUwvJYQhhPDdPISNhD7owLoCayRGBcu6cUsck6p3UlVwMLsMTJWl
+	 gwfRao41Iu461NtuyAqj6yiC33c/fFtZuVCrAH3vKIoMTgdENjRzjH43T1rJhzORyn
+	 20KdZsmR2Nszg==
+Date: Mon, 17 Aug 2026 15:07:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: Missing signoff in the block tree
+Message-ID: <70dfdef3-7d3a-4c46-8027-35baa5310625@sirena.org.uk>
+References: <aoMBWuoLh1bAEUYU@sirena.org.uk>
+ <93c7c45a-09c7-413d-b83b-beab1d3a3a38@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Missing signoff in the block tree
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>
-References: <aoMBWuoLh1bAEUYU@sirena.org.uk>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <aoMBWuoLh1bAEUYU@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="reYZOccyihF3q5IK"
+Content-Disposition: inline
+In-Reply-To: <93c7c45a-09c7-413d-b83b-beab1d3a3a38@kernel.dk>
+X-Cookie: Obey all traffic laws.
 
-On 8/17/26 6:40 AM, Mark Brown wrote:
-> Commits
-> 
->   8ce883fd068b7 ("nvme-apple: Drop the PRP null check chicken bit")
->   ea2160c7b7818 ("nvme-apple: Require page aligned buffers on the admin queue")
->   69d22a6b2f698 ("nvme: Add a quirk for page aligned admin queue buffers")
->   cc0fec9b42cfb ("nvme-apple: Never set the opcode in the NVMMU TCB")
->   94dd5804938d6 ("nvme-apple: Don't set a DMA direction for commands without a data transfer")
->   87d5b9864c811 ("nvme-apple: Destroy the admin queue on removal")
-> 
-> are missing a Signed-off-by from their committers
 
-Keith, fix your scripts...
+--reYZOccyihF3q5IK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Jens Axboe
+On Mon, Aug 17, 2026 at 08:03:34AM -0600, Jens Axboe wrote:
+> On 8/17/26 6:40 AM, Mark Brown wrote:
 
+> > are missing a Signed-off-by from their committers
+
+> Keith, fix your scripts...
+
+https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc-tools.git/
+
+might be useful.
+
+--reYZOccyihF3q5IK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqDFZ0ACgkQJNaLcl1U
+h9DFYwf+POLu5kLQ642faAdl06k33BMD1M31lmkAv9z48TJHS4oia816sobAMO+E
+BsrMjIGnA1PWV3yElmWwPZ4/4CQFAoc5y5QLS9T9aRjLzU1bnXff4l//JhoVG3/6
+7SFAWznmHCl1Yex0BlUocWoRfsRqllGNMEq0757tAQMEEa1oqzicGqxEynxZseGI
+BMlSJ76GRhmdIDbV44M/f2vj1zPxb0jZFXGsiSADkuMBBw/QTcZXNtgnE5wv2RXq
+rhXf3NlchdhMWNKt4WG9pj5UJWJX23cIoG8jZYWCJA9qrW0iOHdd2KGgw20ruuz2
+iq1g8+zpcE+U1wXYoN4T9r/Bq1zyzg==
+=XXQT
+-----END PGP SIGNATURE-----
+
+--reYZOccyihF3q5IK--
