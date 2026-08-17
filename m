@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E253B47D3;
-	Mon, 17 Aug 2026 12:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5C741A938;
+	Mon, 17 Aug 2026 12:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786970424; cv=none; b=WjrRvy8Wmyk7v1R3PTipDuZXeXfP1nFkcrE8UzwanOgneIVso+Xv9WfxocJDBpMO8LpT6SaBjg3JITKXm72BSGKv6euVNtYKACE7S1AimRhKP1yHQeBYIy7m4wrF61u2oAZEtk0pWWTmn8GdpPFzjbXVE604tgu4kocVDVW1N18=
+	t=1786970438; cv=none; b=u+2Oy3wQIMegzps5IJn8cMskzEXn2YBqHXVHZUdRp2SYI9TCjXzGePV6sHNpskXGS8mVZRkdAdX1UW7zqBBo2SOX6P9nccz61SVgMqZbFFVR4bF9INe8UkkdL0wcYQR3aWlGwp/G1E3NNvGwQ1IWjfG8yMJVKUnenrpX19vZjww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786970424; c=relaxed/simple;
-	bh=DOmiot8SUNObg42unfbIxWwT/GbLezpkOWbPMtLqGSw=;
+	s=arc-20240116; t=1786970438; c=relaxed/simple;
+	bh=XaPPOjNKspbl1mTcQAclG6jJOg3EWMpARUmF4Ktevvs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cxMndn/JWbiXwO8EB6spAVEPvmi869fjCH1JBi44lg0AJg3Pv0iumWTvVjwbrDzvVeEIzf6qSl3qy3agMeCtw42M5T6NzZTO/OhJhl903lB2LGlsbxVrS8uiijxhse9aofaRfp9b4sQaW87sROw2I440O5hhHHLObLLlsOl+r5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d45yWIZK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=DSWVd9KS305xA2poT5xXF9xyiHB4KrKMz4xoDODfQ9ypoo0p28mJevBBSezhWHe4iJUtG2+ffI8Il7i7IDas6s/vh75lDJwN/ocnY5caGliv4zRdG7cBSoM9FvdpKHmzeL57V5gxg6rkun8fC46KmsHbBlHQn/+wlgwN+YUsrmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDBkRfNc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d45yWIZK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F1C1F000E9;
-	Mon, 17 Aug 2026 12:40:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDBkRfNc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82FFF1F00A3A;
+	Mon, 17 Aug 2026 12:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786970423;
-	bh=+rgJnE2dOm5T4xMMtlwcvCsszB4lrAqyxIW7muAv8VM=;
+	s=k20260515; t=1786970437;
+	bh=Yb9e9k2WB6WN5kZHbVIYBg1PLPBpk5uUgu+sncfRDgA=;
 	h=Date:From:To:Cc:Subject;
-	b=d45yWIZK6n/HSZouEqUrZ/vKQ8EhNvO2zJWteOYZjz7kZIpxAf8/Ndg7ltLhrd5Lk
-	 2G3Dt8AgyCLJcc7PAcawt9sReY6aX+TMkBFhujwlFsSY2077uxvmDD1I9ijQqh3gZl
-	 TungI65Ypwv5cDKu4vAvsfefidUQDDjhfnZJp7mkw0MbvK6/MF9zknw1+AYKc9P43E
-	 1+22mvD2xfuI6jOKdrvQVvstFDaLBIdrltwbKYL8/5Xftwsd0CsDnphCMEZugm9lRt
-	 UUMxzC9UiOAEMsSdu5Czh35G+VlgewAbz/V5L8BK97rSOiGsk7KlsfklfbTlwfGQY3
-	 50H5UmEkYUTCQ==
-Date: Mon, 17 Aug 2026 13:40:19 +0100
+	b=HDBkRfNcwAoWIAWDjm9DmgMXAdx22UlxjljdtnfocvSwAO1tmLH86AP45pXvum3Y5
+	 PYoAym+KOtlWM1/VLfHNoRtNZgasq6iFH8c9sM6PnelZQPG0vGRws/0zGOlnHMp/tp
+	 GVQ3M5CpEcVgPRkAYa6VoN8JMg6qSjwns4ygNT9QJ0Aw5s3ghVLHQTUnCX+Y56jf8f
+	 OK7T0pcGS9+fT+RI+RBA2zEHz/SB8G9tS3C8ONRWRee5oFYiAM9ynDyR38mxYj//9e
+	 0D/W7RW4wOMBHFcMlgTkbOdcTB1c39C2q0qL8gzcr1yMZoQ7Bb/QCSkvLVT1Sethqn
+	 eFt+GXGeeW6bw==
+Date: Mon, 17 Aug 2026 13:40:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Fixes tags need work in the pm tree
-Message-ID: <aoMBM9KoZItu0aNb@sirena.org.uk>
+Subject: Missing signoff in the input tree
+Message-ID: <aoMBPTH3mtDVI62j@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,41 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GLHXnqZYaoTeXWCS"
+	protocol="application/pgp-signature"; boundary="VWvfn/Gy9I48+RcK"
 Content-Disposition: inline
 
 
---GLHXnqZYaoTeXWCS
+--VWvfn/Gy9I48+RcK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-In commit
+Commit
 
-  68e3c5d8c128e ("thermal/drivers/qcom/spm mbg tm: Fix missing bitfield header")
+  ad255410cbfbb ("Input: elan_i2c - optimize update speed for IC Type 0x19.")
 
-Fixes tag
+is missing a Signed-off-by from its author
 
-  Fixes: c3dce117333c ( "thermal/drivers/qcom: Add support for Qualcomm MBG thermal monitoring")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format='Fixes: %h ("%s")'
-
---GLHXnqZYaoTeXWCS
+--VWvfn/Gy9I48+RcK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqDATIACgkQJNaLcl1U
-h9D08Af/bOInHnbW8rFg+UcCZrgIhLTwsLhQsOtsUdhy2PbeiJ9U3u1VJqDmtEpe
-B3P9OWsVF+MRPD3hIEwabNg4XRAp7aa0lz1h4yTwCFt/qT8botgd68NOzwzHiA6o
-po3hKQ0I3efrN61SJSzjsIGJ11ay3TYyPxcdtb/r/O15E+B5Eo5iR2eXfD/auIEc
-61sBZtM/6nXKkEnbHPOsq8VxHITnZcdagwFmklTur0tZ9/cqt5Y+gjHUoYx1Sri6
-lvaAZt0TcFoMCRp/nDRfhh+cP7Hn6GnOu0MuzVvxqmtWW6znDxV/MqNwWskRfTd2
-vsxQvrIFrtzOY+de22Q3HZOVaec/dA==
-=2egA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqDAT0ACgkQJNaLcl1U
+h9DC9Qf+Mps4JdlHy2fYAxvinRb+FzcbEiySFPrCIz8PoKlmw4nYLBdldlrLZBOH
+lVXVsiBMiMY0qpNfWuyJcAxqJU7RBhvw9bDzACmn9doCzY3sppqcvzB38NUzeks+
+yePLKDW2rpa8Q7JIUZCkpWvwrII21DK5rII0AFRSKwpsA6w70s+7fovxKWeQwM5R
+bAt0Dhmcbqsueywhgumbrnwe3yOLwryF8Hng0BdfmVdN3qac5U+TchHzYdQh82N/
+SADvpbjbK8vNKtwcbqY+pQwPW1fnOaWcDLbfiDQ96lGXJOs1CdR0S2Y/WKGW3cSD
+IcTs6yEQFZG0AAaCazwR1c4gNfuBQw==
+=e7sF
 -----END PGP SIGNATURE-----
 
---GLHXnqZYaoTeXWCS--
+--VWvfn/Gy9I48+RcK--
