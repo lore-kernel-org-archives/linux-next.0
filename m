@@ -1,77 +1,120 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474A445348D
-	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 16:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9391B463B6C;
+	Mon, 17 Aug 2026 17:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786984394; cv=none; b=R9s3c6iQBTOJ/JwbH8HY/rwExA5ENeBbADSOed8JMrP0BiPbCtFwrH1yIO2Ej1nRZHhYblLxlygFLY7v4wrK1RHMtqE+ueS9KWlEP4mwkOK7FKhHNLNiO3J+UY3fQzB/vvc6Ciz8VMWmLhIHm8xc1eVGEglWbrilNfMDVPq3HDQ=
+	t=1786986649; cv=none; b=ZEGqOb3fkZFHR2P7tCh/tOQGdVAdBWNuGIBjfhuybXeuNIb5U2H7F15SCrJFJGAu8Ha1ee828MEuhxw5QU8LZPis2+H4PXivUyTY8LTdlaNlYagtSIjLkPtQdtjRHkyDHtOWa8zgII0mAx/VhXcKdp76P9HMV19sf/Ra900Ne0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786984394; c=relaxed/simple;
-	bh=I9FcAf1XumOSvisEKv8JkCp2JzqhJhKccTb9moxLAQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q8s90ZcPZEnK6820G5r9n54byKuY8bUJI31Qf9RZsjUhfd8px//IBbAmUrNNj9lMLtRk+Wz/UsUoneUtlf8lWiGvaSlV5Ij68u1Jq+B85yHdbZ1NUnMw2NSY+50ErUD2HbZ7q42XTo23EJ0np4JSGttvz1tEGJL01dOhycbpmdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSz/7LdT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786986649; c=relaxed/simple;
+	bh=sPsm6iyF4FXkHFEBsF7XCZirPFPHuy7iRNlg9k71gc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BfI593pVSU2x6dz0IQx/mdb+OgZGnPn4Nm9B3Hw8Le+s7mv0oqlulrIq+kPLRbe/DPe4ErWJaXhbUq4REZiY6eGuy49+DlumWxui7aK+tllEMXcnkwQ2Boz8J/LEgEqLBr5YzrG0P160JEsU6kKiYhdnU32Fkj0JzA8maeQxyos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNTd2spZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSz/7LdT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD251F00A3E
-	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 16:33:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNTd2spZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7224F1F000E9;
+	Mon, 17 Aug 2026 17:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786984391;
-	bh=Dd91vnrNCzBGsOdcr9xe0vpj6BFHMKoviCBWPFL9jOo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fSz/7LdT/UqjJb8zxpx3A0ZySHAWkLNShE/QgUs0dDhdFg4WJWLBG6OcICkWK3B2D
-	 as08AKMr1D4zEuGnfQpH6I4qWmasPgchbiJmspsUcU18D0YXeZ3VWMqTGxrqqHEXH6
-	 Y4m1QTBjv/nj+Kw8DBYAXFJ+5qo+8k61rN6PXXhvUaiyiWQpFG3F3LW6VD1bvVAYV5
-	 /nsa+6wQd3fbnzcywa/8RaWnbvv3oViIkIyC9RXP/r70ypn3ObfSt+12G8DXO+hWnc
-	 JGeUbK7kjSj/t08nz40IU0gWn5rV467CgqU2Hk+puTYZEQ7hnds9m1/TmHplcQj5hF
-	 0Mx/I3oOa7pOw==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-39dbe684115so493621fa.1
-        for <linux-next@vger.kernel.org>; Mon, 17 Aug 2026 09:33:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqTQtVVYh+PtfNUPmmLK6cnDlc2+yABrbBQ+ymqv4C4aov/belCgElemsRS3HjlM//LzuIU8TcnE7pU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyPPyrmg1Jq+D55posbBsf7IPIIudLGD2c1e49zY1SGopP9At1
-	Fxyb7WeSw85POv6CJlhwTWM0qZm+2DuSqmLLDSPeZEsKQ6QyDa7x9MCCKSKKJDFoftjaUpia/Et
-	QCDdfvoR02+rJTNA3uL2OvewlIqhJ6L4=
-X-Received: by 2002:a05:651c:43d0:20b0:38e:8357:c5ae with SMTP id
- 38308e7fff4ca-3a176a46b94mr401831fa.9.1786984390080; Mon, 17 Aug 2026
- 09:33:10 -0700 (PDT)
+	s=k20260515; t=1786986648;
+	bh=AAg1PFaxS+ZHc0nWuRHGt/wftHzCNpBXbfK6V3xrzxo=;
+	h=Date:From:To:Cc:Subject;
+	b=KNTd2spZz0h8VezhpYsRsGTljd7JRFeeZ4hobCTS/onc7HrDMKQgZKrgUhRWYI49F
+	 844r3LRfIeii4N5h8updmS5ziLfKL3aYGrBVvTZGNXxquwz8Xe4oPnHoumC1UEypC7
+	 4wqxRM/RmR2FpGQFB5hZT+Ld3wmtU1Nfmk7sGlCipYvCQvRTw5hJHlE0z8mqCtYJLy
+	 9swBmzeuYUG0f0KW9s2/zzPcNbWA/An7fLDhLi4qWSqkF2iz1mFgJSVBucSiDbcNZ1
+	 EmQuMAHZmTqBO4+xVWm+VvTk++CGhG7K22Oxd9/Mtn/hJfVGAsI79sCM/SlJuiKczq
+	 eBSy7eVuDYGsw==
+Date: Mon, 17 Aug 2026 18:10:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Aug 17
+Message-ID: <aoNAlJOO3ypV8ma_@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aoMBS1M5brWvJzRE@sirena.org.uk>
-In-Reply-To: <aoMBS1M5brWvJzRE@sirena.org.uk>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Mon, 17 Aug 2026 18:32:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iDx1kRAAbSzZaLx22bb_gyynxgG-Mvwa+O3SPcMmfVew@mail.gmail.com>
-X-Gm-Features: AcwNN1WQz-0Fvrf-xYN2oIb9Qq2Kl4ob9Qj5SWT4UMpdJmpkv5nKw96shQAEvPk
-Message-ID: <CAJZ5v0iDx1kRAAbSzZaLx22bb_gyynxgG-Mvwa+O3SPcMmfVew@mail.gmail.com>
-Subject: Re: Fixes tags need work in the pm tree
-To: Daniel Lezcano <daniel.lezcano@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4ICqvgAGqYiHB688"
+Content-Disposition: inline
 
-On Mon, Aug 17, 2026 at 2:40=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> In commit
->
->   1f371e8f495fb ("thermal/drivers/qcom: Fix missing spmi adc tm5 gen3 fil=
-e")
->
-> Fixes tag
->
->   Fixes: 948ee3a74f35 ("add support for PMIC5 Gen3 ADC thermal monitoring=
-")
->
-> has these problem(s):
->
->   - Subject does not match target commit subject
->     Just use
->         git log -1 --format=3D'Fixes: %h ("%s")'
 
-And this is the second one.
+--4ICqvgAGqYiHB688
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi all,
+
+Changes since 20260814:
+
+The net-next tree acquired a conflict with the origin tree.
+
+The clk tree acquired a build failure, I used the tree from
+next-20260814 instead.
+
+The drm tree acquired a conflict with the origin tree.
+
+The drm tree lost it's build failure.
+
+The fbdev tree lost it's build failure.
+
+The driver-core tree acquired a conflict with the pm tree.
+
+The driver-core tree acquired a conflict with the drm tree.
+
+The kunit tree acquired a conflict with the spi tree.
+
+Non-merge commits (relative to Linus' tree): 14621
+ 12628 files changed, 859191 insertions(+), 259750 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 429 trees (counting Linus' and 133 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--4ICqvgAGqYiHB688
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqDQJQACgkQJNaLcl1U
+h9DUhQf9Fvo5w/bmbFjHCcx76fn9zJPzHlED6QL3D++jqjDfOsrf3UwXknVsdyJ3
+KrfY947Nemydfeiv5RQCJ1KQZlJa1K6h0Q1ay1sdIoFdwVN8L29jStFODfxnCv2a
+imcIuR8Qbj782AxCtZhSauS9IGfOps3cIzwBony1smwYCjuUPKW1PMP8lFvB+kjV
+WMwfM0kFrKb36UXqfQDifyidUYVzv+5NxF+bB98F1JD8kmVvBGHpuUF56bZvjBlT
+LS+2jJgD0M96j/2+A7Gx+THr52vcIhKhWBYCgu0+sGhRQSULlVsuPE0HrDJDNBYm
+diEPhW6gkH6brunqyx+smJeQHyn4Nw==
+=JNCq
+-----END PGP SIGNATURE-----
+
+--4ICqvgAGqYiHB688--
