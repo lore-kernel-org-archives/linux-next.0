@@ -1,56 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036339EF25;
-	Tue, 18 Aug 2026 14:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39C539FCCC;
+	Tue, 18 Aug 2026 15:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787064276; cv=none; b=dFgsG2QmvojEMp6dUQQVzIvHUE4anZKjK7hi5h1jSkaDIZBpek6J+Wl5cqUJPa75XJel6MRoY/91O4eeioKeS3onuDbflgkNSAKEeMImQhdKpj4/8KmIRK3u3D02pUAWreb8unkxfKWPOP79mCQ3FBN1/fDAuyP5Yj8WvP2PyEc=
+	t=1787067740; cv=none; b=gjSmfG6/j/r3+xINX4gIkLzPy6jA9CjNGgTz+V8TnwSNFSggetwZjEIADgVCFOSSARoQlPY/xSuBK3i1eII0tq3elMgAHE1RYhTClnmYlgFsIe2QrwAcTnC/vNhX5jtpSaA/bioYXDhZRIJY/+z4HU2K3cH/qsY6OuhdQhprpq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787064276; c=relaxed/simple;
-	bh=VJ3VrkGIqKu4rRcYlBwibjLN/NuLwO/s/AYVP6CYXuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNxLEOe7lrA2yc89CJNCHWl6dSNB1CQoRFBW7dYtpet/uJN3gswQ0qhj+dFtVEge+ABtRlsoEu05HcAE2W6d8snFJjpU+Pe/gXKa4jzPdIYqMA6PleZFqW74w+F85dCUdaXZ9mmPjZVFELXQcmMJ+YOk0n20sIpn0Z8VEiiekXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJ3oq4/F; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787067740; c=relaxed/simple;
+	bh=hC3xUW6k0/SOOjDVOKBHw5ydn6Tlu3NNxynTswHfjGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LJDVw1y6V7ZNDt6hMQMZetaYPCtqE2yZN+TLs73k7B5bvqQkVsSZobTGBYXcw9f8RFisC+IkzelEkkgmNTT+f42LoZc25pD5h4SkcqAzAcrWgL6kLQyOn9iQNbtcVI926dw7nu9mcTg0Q8KqpGGz4K59dXynS46r/QnX87njwtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFre9z19; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJ3oq4/F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EEFA1F000E9;
-	Tue, 18 Aug 2026 14:44:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFre9z19"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5BD1F000E9;
+	Tue, 18 Aug 2026 15:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787064273;
-	bh=8+iw/VruUZ82Bdc8x9y+IT3lK07tu6bWBpSoM1qju6w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OJ3oq4/FzEwZzZ/uTXISDQO7Mr8KOooDzPHbUCEwwoCxoiMUYj9CgplYFaRBUHUW1
-	 d2fNo+bEYVYP2/FZIBySKzWEiQHQKSkgUwIGN++x8b88DOjwU3eN7+7viCj8DqETRc
-	 JCkSRBwl0g1WNWIPzx7mmWKkzhho2ymEo23w2EoFGI33aOAtkTtGm9h7/8AKuYRHLL
-	 e5IS0RBj0wgX4za0YAOVRyrJbTHnmyhH0Kat9XtBSVo8kTzDywZdMxwxtZ5fJhdHrl
-	 Rf/LR0p28AaQKyHZTx/Wh3beHGDXp2MuRHtJiRx2vccbtHTZoE6RlEqHRuuBgjMMeo
-	 +7sdbIm0t3lEA==
-Date: Tue, 18 Aug 2026 15:44:27 +0100
+	s=k20260515; t=1787067739;
+	bh=RaDGdLiPv2EmQQbZt+T8bkbpyP7qc0zApNJocHZ9w2g=;
+	h=Date:From:To:Cc:Subject;
+	b=MFre9z19BFNJim+WjNBEHJvFYAvshcYf03qiv78r61igPgTl5YS7KlYk7lQG3/Ex3
+	 YnecrIR6W5kMXE9Ajhs3XXAL5bh9LvhREP3PUctTzHbNiNg9LVw/3vaDWUiE0Cfvyq
+	 gimgMMJaAqO6Ilxc8zCUwHW01ZiRokOOiI93FOovqUop1G3wN9zTwWp9tQwSOTnQzT
+	 JIjORYKwMuWN/RQwzQ5ia5KycvPYNgGw7lwaDJ0knyo5HTx5LGXbMgveq4x1JtGEkM
+	 4j5FfYadyXbH8f7vP4KhLY0ezQ1JSdswNSg3rq8lOicMoCQCBoGCsSTaXHQE8gkTFb
+	 6EatDYpLdg9Xg==
+Date: Tue, 18 Aug 2026 16:42:14 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Gary Guo <gary@garyguo.net>,
-	Miguel Ojeda <ojeda@kernel.org>, Dave Jiang <dave.jiang@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>, Zhi Wang <zhiw@nvidia.com>,
-	Benno Lossin <lossin@kernel.org>, linux-next@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>, rust-for-linux@vger.kernel.org,
-	Boqun Feng <boqun@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
-Subject: Re: [PATCH -next] rust: fwctl: replace `__pinned_init` with
- `raw_try_init`
-Message-ID: <21017f30-df8f-40e0-ab54-ffbf326b6c43@sirena.org.uk>
-References: <20260818105350.361218-1-ojeda@kernel.org>
- <20260818125558.GB5432@nvidia.com>
- <DKS3G1HH0835.P8T7VT9VW24I@garyguo.net>
- <20260818132022.GC5432@nvidia.com>
- <0e0c9ee9-ce44-49cf-b5c5-3764f260f1b5@sirena.org.uk>
- <DKS53ZVUOF01.12DKD5ITC77TI@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Ivan Vecera <ivecera@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Petr Oros <poros@redhat.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aoR9VmKllVGwmQn_@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -58,40 +44,73 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hOlFe18Bdi+DU2OS"
+	protocol="application/pgp-signature"; boundary="J1djk/adf4QELX7h"
 Content-Disposition: inline
-In-Reply-To: <DKS53ZVUOF01.12DKD5ITC77TI@kernel.org>
-X-Cookie: Smile!  You're on Candid Camera.
 
 
---hOlFe18Bdi+DU2OS
+--J1djk/adf4QELX7h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 18, 2026 at 04:30:16PM +0200, Danilo Krummrich wrote:
+Hi all,
 
-> In this specific case it is indeed what Gary already explained; the API was
-> removed and unexpectedly gained a new user.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Ah, OK.  That's the sort of thing that -next is intended to catch,
-though it does sound like a shared branch for the removal would've been
-helpful to cope with people wanting to add new users of the removed API.
-It's also a bit surprising that a new user appeared during the merge
-window, I guess that's a last minute addition.
+  drivers/dpll/dpll_core.c
 
---hOlFe18Bdi+DU2OS
+between commit:
+
+  33f016b23a219 ("dpll: fix NULL deref in dpll_device_ops() during teardown=
+ race")
+
+=66rom the net tree and commit:
+
+  b1d0c412088e3 ("dpll: add STATE_CONNECTED_OVERRIDE pin capability")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/dpll/dpll_core.c
+index a320eeb829ad2,245f625f4b3b4..0000000000000
+--- a/drivers/dpll/dpll_core.c
++++ b/drivers/dpll/dpll_core.c
+@@@ -882,7 -881,14 +882,11 @@@ dpll_pin_register(struct dpll_device *d
+  	if (WARN_ON(!ops) ||
+  	    WARN_ON(!ops->state_on_dpll_get) ||
+  	    WARN_ON(!ops->direction_get) ||
+- 	    WARN_ON(ops->supported_ffo && !ops->ffo_get))
+ -	    WARN_ON(ops->measured_freq_get &&
+ -		    (!dpll_device_ops(dpll)->freq_monitor_get ||
+ -		     !dpll_device_ops(dpll)->freq_monitor_set)) ||
++ 	    WARN_ON(ops->supported_ffo && !ops->ffo_get) ||
++ 	    WARN_ON((pin->prop.capabilities &
++ 		     DPLL_PIN_CAPABILITIES_STATE_CONNECTED_OVERRIDE) &&
++ 		    !(pin->prop.capabilities &
++ 		      DPLL_PIN_CAPABILITIES_STATE_CAN_CHANGE)))
+  		return -EINVAL;
+ =20
+  	mutex_lock(&dpll_lock);
+
+--J1djk/adf4QELX7h
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqEb8oACgkQJNaLcl1U
-h9AQFwf+N5H6HYAXr17Bt5+sfzs/tcIKIDrgtfHKZ4ETpBJG5DQUWO9CYmyoG3DA
-GV9ojLi3xyvmpb2gvjWKDpx07EsjSZwdXhu5lu551KADjGuI1bucP04aacMau/bO
-vnRiLDiWdIGiEW1SxVkYHrOEvvAh1l4s19yUcsC7xlrS3UpPUaIKmUluKhSVeFxK
-Ixg5KCibGcthA7qKSh2HO0Z+afAIiDi1UCvanQcMfW6Ry8gESBot8Yay/VL40bqJ
-Q8Rt9vMC9RXCDyCkLauChmZ38KnJ85TWRKIYBNbGaP37FBEJtT7Ictg9cHwrXSkb
-QluXKuhjXh3hdsH6oHTnz6FrpVmmUQ==
-=GfEz
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqEfVUACgkQJNaLcl1U
+h9C1Cgf/Yz2C78TE2rYsN47V9qOLRpTAwd3Cn/jrcvhuDE01XTdh6/kjdntMJKYm
+a+zhoPr5PGk27kJQuh2P2J98evWd/ST1f42jcD6Gnm95/j/b2vWsXyX0FZFgYrvd
+NfnmA7BwREW0tGpHevJU56XmtIN5gyY8yIzceDIUsHdm/VVxKxkFl5dSTFSqUNe+
+n1lyfgOc5pZPnjVOWA45cjdfw6/dfHBQAjACn3DFhAIcNAc8tbkMFb5JfwIFglSa
+MngIytaWIDmOdIbD8MjMWYW92ibSkyOv2mFswwIxkCl27xQBVAJDLOFhLjd80OTq
+OrlPDH7ugUPCfqCrnVLiYv7wWFD4fw==
+=poR7
 -----END PGP SIGNATURE-----
 
---hOlFe18Bdi+DU2OS--
+--J1djk/adf4QELX7h--
