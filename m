@@ -1,135 +1,80 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040BB30C16B
-	for <linux-next@vger.kernel.org>; Tue, 18 Aug 2026 07:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6147941D13B;
+	Tue, 18 Aug 2026 08:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787039097; cv=none; b=lk9Ar4r7iqJ3r6HT2zb/PJfHhF5Hktquc0w9t4KRJ/xd0RatJ+EXljHSrkcMYag0qzBq0t+Wh7MpzcWHexDwy+AglvVdfjrW503afrhQen5urFZZrzeBkD1HGHCEa82opAghRpXSRTrmSUc4nG5kodUDOOaumW93MTY5T17a+Ys=
+	t=1787042426; cv=none; b=cVu/jH95Qfqkh7ud6SD431FrE1k8LY0CRKup1lwJFbIUVIYIRcAwibDjklXF+UCloJHRWZVwwMdXfFaTAga4YIC3iewOtJI1HjCLCAGSsxLTvdhj0pd7cdGnqCyyQiCEZAcVEmZsqKtHLfldVUzvKG3aw8tmINGH0oFFnX3Uy1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787039097; c=relaxed/simple;
-	bh=Iej4eU5W78oziB5zm4NfwEF1ium/94tlFfi6eWFUw1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hftAp3odpzfGlulFPBLr0cjXNQAZcS5YQWK0IyRVHFAFbxQQVSVOgUlgSOGYl0BqGfFppTMddR2MzumL+gBedcN0lhF11LkBCz21HVevq3ACopyWbcfXh/kU9gFKA95noHEhL91tUowLjeYwUHCLI97DNh9CZy0VOsok6THjDmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5c30d9adfa7so1437550e0c.3
-        for <linux-next@vger.kernel.org>; Tue, 18 Aug 2026 00:44:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787039092; x=1787643892;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=vIQdH00bLKUzNocHq++D7HzcsBQN8QHWHN9amRSakpE=;
-        b=jWdpwq830rb9yjVSI37p/63kSpFZJoUWFPPN4uUpTEN0+vQF2yhVxs+CrtK4lNU4uW
-         M77Q9uwzr1Ehb1yt3YU8tvHAgl5ciui7OVwxderoBrMt0UpGD7a10WH1soAUw3qH/o02
-         1U6vgJ6xYYHiCSm5OTrlrkRr2fex6x81s1REdeIe+WiN7jlypHC++YEpjfZWqi3HTGr/
-         4O1Pt8QnUo5Nhb4TKJt4jrDUAaKSUzGm/sq5b5MOegTzYAmH9hdEx9J5bFLEsAZ02Ywj
-         cioYzXPY74GhxP/7LexLnpjlUDRWkszN6I6lTwaj915tzlhBdyQQ6OaAhkOk0vR+YexN
-         V9pA==
-X-Forwarded-Encrypted: i=1; AHgh+RpnQVuk5v8FbhpRoFUXZFX+aBs0yKL9hly9m4d50aHPmQFdg/IpT8WKfwexdM3YDoRN0V8TFMqrOOfV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+TRWbaXH7IsUc4iWfL5iM9P0Kqy6AKMGiAAHg2WSpxSPS9NtN
-	erA44FhvNbDfWrCCtAENZY4Os54aHHCMqOwd9SuYGVuFo5GQFDGl3S1Kt4kinWpq
-X-Gm-Gg: AR+sD100Ur/fqZhJ+lcKaCIjOxNLEiT534QzC8BCguls8CgDIX+fhDWcoRPgCDVMTXO
-	d0vDAQtSH4xdxEbw32Kl0ozFwCaFI5nZEkthivcqShgMqXa385+6w0rVq9lCu9tHlU03orxElbA
-	Yp3tj7vqARNMFeMovo7dxSLkA1mWE41xObKJkz5But5FBgdz3ZWX937AXTAz92sqdzXaMWvL/LG
-	QyUkUcmayJJyrnED1JW5PzwQAoa1aktxKmR/M+3LuGpYH2KY3U+nrqUtWLm0IYSqSILT6ZSWaPW
-	pni5tXCU7H1WlA/IrQ8UV0ZqBXXXv16hjWQbB3qIuAQz2p9NClyucFqujEJBVw9rtoix7SOmaFI
-	zNcUGZ+UYGFAO6gUU4g9GHWoD25dYuq7KGKSe0XSyi42RpWHhwW1AoQhE/VMGfpi/rNqoFDKzGZ
-	O2F7wf6PquKtYprlHrSaddwqahedEeNGa7bNpRHvo2NiZ7WttMUkRDz0hzLKv7ZWvwncblhPgE7
-	i0E4mSiLOtYwsOb58yGQOf6V0M+ZA==
-X-Received: by 2002:a05:6102:5124:b0:775:369:4671 with SMTP id ada2fe7eead31-7750369a6e6mr697578137.4.1787039091950;
-        Tue, 18 Aug 2026 00:44:51 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-773c5089913sm2866680137.8.2026.08.18.00.44.51
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Aug 2026 00:44:51 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5c2c0e261aeso1214331e0c.0
-        for <linux-next@vger.kernel.org>; Tue, 18 Aug 2026 00:44:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpmxgL/2bJGbVEINRLbTvu55aSErT9hUUuKzG1Oq5lyFl7llraAasZmNKEwpAry5vILRYB0Omctawbv@vger.kernel.org
-X-Received: by 2002:a05:6122:3c48:b0:5bd:c27a:dafd with SMTP id
- 71dfb90a1353d-5c591c4062cmr6183693e0c.3.1787039091069; Tue, 18 Aug 2026
- 00:44:51 -0700 (PDT)
+	s=arc-20240116; t=1787042426; c=relaxed/simple;
+	bh=Zq+bidDgjuagOOYnSbtUagNCBX0rdfiOekmRGVR+b1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kp8p9vxvmG+U4Y6an5+WjViw1FCzpYpr2RhtgEgPEGJfhLiFFRBNvCMP0iILmnt/RqdpVSH6nemOx5seuoGS24IKZnNmQb3FwL6HjeOyGGJWOUNiQEMwcJZWxTH5aptOFtUFaU3NmKHzBGv3ehdfd/eF8Yfju1Dzeny7aiCMGCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=ovXqpnY/; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="ovXqpnY/"
+Received: from relayfre-01.paragon-software.com (relayfre-01.paragon-software.com [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 503351D27;
+	Tue, 18 Aug 2026 08:41:12 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=ovXqpnY/;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 3AC2621BD;
+	Tue, 18 Aug 2026 08:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1787042423;
+	bh=rx7DwMPvh0Ve5TjcFqwF2QBX0puqDlMN1yi9k4nDxko=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ovXqpnY/jMo00c/bx15JnFjWkkz64ycQ4A0aeRHiA2yyRSGB2L4KYxYTTco7Fy42O
+	 IrjkqPxZbOOEVn0FE8UYg9X1fZB8wk0ilSGyZOkhAeue/Af9XyOEtOnl0a79zGawo5
+	 CduJv+vKyJYC9UkF5QpMtKmdit6UCzVvPZCb0MjM=
+Received: from [192.168.66.128] (172.30.20.177) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 18 Aug 2026 11:40:21 +0300
+Message-ID: <25137e25-2aa0-466f-afdf-6bf48d5456ba@paragon-software.com>
+Date: Tue, 18 Aug 2026 10:40:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <anyjJ6DSHWCjuB97@sirena.org.uk>
-In-Reply-To: <anyjJ6DSHWCjuB97@sirena.org.uk>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Aug 2026 09:44:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUgoTR-ThkUnbjE9tOH89FwXRChZTY-tu1q9QY78tZDng@mail.gmail.com>
-X-Gm-Features: AcwNN1VWkY6H3Fxugs4F-nml2llKqZBADH-wv_PyLnWNaEq_C4m2brkOjyw2ugI
-Message-ID: <CAMuHMdUgoTR-ThkUnbjE9tOH89FwXRChZTY-tu1q9QY78tZDng@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the gpio-brgl tree with the origin tree
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fixes tags need work in the ntfs3 tree
 To: Mark Brown <broonie@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Alex Tran <alex.tran@oss.qualcomm.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+CC: <linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>
+References: <aoL86l8BmU7b3_oh@sirena.org.uk>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <aoL86l8BmU7b3_oh@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Hi Mark,
+On 8/17/26 14:22, Mark Brown wrote:
 
-On Wed, 12 Aug 2026 at 18:59, Mark Brown <broonie@kernel.org> wrote:
-> Today's linux-next merge of the gpio-brgl tree got a conflict in:
+> In commit
 >
->   drivers/gpio/gpio-by-pinctrl.c
+>    d18b300d80d7e ("fs/ntfs3: fix out-of-bounds read in read_log_rec_buf()")
 >
-> between commit:
+> Fixes tag
 >
->   67ff4bf723c8b ("gpio: gpio-by-pinctrl: Apply initial value in direction output wrapper")
+>    Fixes: 20fd9f64c005 ("fs/ntfs3: Add NTFS journal")
 >
-> from the origin tree and commit:
+> has these problem(s):
 >
->   408866669ce01 ("gpio: gpio-by-pinctrl: Apply initial value in direction output wrapper")
->
-> from the gpio-brgl tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+>    - Subject does not match target commit subject
+>      Just use
+> 	git log -1 --format='Fixes: %h ("%s")'
 
-Thanks for your resolution!
+Fixed it, now subject is correct.
 
-> --- a/drivers/gpio/gpio-by-pinctrl.c
-> +++ b/drivers/gpio/gpio-by-pinctrl.c
-> @@@ -54,11 -54,11 +54,11 @@@ static int pin_control_gpio_direction_o
->   {
->         int ret;
->
->  -      ret = pin_control_gpio_set(chip, offset, val);
->  +      ret = pinctrl_gpio_direction_output(chip, offset);
->         if (ret)
->                 return ret;
->
->  -      return pinctrl_gpio_direction_output(chip, offset);
->  +      return pin_control_gpio_set(chip, offset, val);
->   }
->
->   static int pin_control_gpio_probe(struct platform_device *pdev)
+Regards,
+Konstantin
 
-I think this is wrong: the origin tree has v2, while the gpio-brgl tree
-has v3 of the same patch.
-
-[v2] https://lore.kernel.org/20260724-gpio-pinctrl-output-set-val-v2-1-cad55d025636@oss.qualcomm.com/
-[v3]https://lore.kernel.org/20260810-gpio-pinctrl-output-set-val-v3-1-8e35222b5c8c@oss.qualcomm.com/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
