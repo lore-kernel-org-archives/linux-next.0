@@ -1,94 +1,119 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772AF43F8B3;
-	Wed, 19 Aug 2026 09:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CF2449B39;
+	Wed, 19 Aug 2026 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787131880; cv=none; b=k7D40Q4tX8Q27gxR/tFMlhEACD4QGH05NvhOS8tZazI2SoHZTC7X8Buy6mnPqDcyAbuhqKgEJi8GvzPayVPg+phv7bLguw+qLzV1CM5IctFK0exTq4BgooEF7E7iP8zzQGfOLYwCfMKIyJSeWejNxbKL45YEMDlww5e9AGGFNXk=
+	t=1787138039; cv=none; b=pdce7yg/frlNV8FTVwglItNGBJbIIHrj0F0oTjyRWsLHUPuwYC8gdiA/J2xLAtCg0gjUy0g2eIuqhJm0LPPAjPDpA0dTJ8GNSW1Nl+zUgU/JtD3qoe7VbytMl03hz38r31On8yd6BkILwfFfSybesTS7Udi93XvY2L7ICq/W5OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787131880; c=relaxed/simple;
-	bh=3u3xlMJ5fpbZzxsclW4XVg2U0FbIpBnl65cYigskGc0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EMr+b2+jGCwSLITUfYIVAOr25SiDMtIQyV3HrKRDTE0dsQapkDzomSTtsXKwjtfQ9uvjKxgAIfcC5UlA/qRZ6qMwcQYSgdHGoPtQm6BBRhhR3I5XqJ7NNcVUZIT+SmzStmtwaGWv9vpne+DyWdAcUexunixnMWmdoj/QhF4aj8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CCnVvrQb; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1787138039; c=relaxed/simple;
+	bh=oAX3bhKaUAo9JFdskeAroY4UCO7I2Zqlw+niLlwjEfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6N62VUteJRRhngpBI/mghN/PPul2Mg+W0QgfVuBIYl8Yzv6L85zqVYaVHqI49RQI05kqxL5XuuwmyNH596GW8E84Oem3schbiBFznVWjlFsN0cZLu02QZvC8LS00rMqXcAno8T5GckattKHTrQr+puT2+qwSL68WDtigf2Ga0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGCsEYOn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CCnVvrQb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787131876; x=1818667876;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=3u3xlMJ5fpbZzxsclW4XVg2U0FbIpBnl65cYigskGc0=;
-  b=CCnVvrQbbGHHcUTSuuF72GMYfYCJYpMV465bMEVxNYZX6BkO4ZEBawFq
-   G+JwGoL+OsHcQEGBJ/BxLcHXEaXbtSnLRmjaatsUj7Fx17g8ZD9oG+MsX
-   phidYGY6VDrbqX8ar7kFSQFiEr5bH/B+glsRODTj8TG091uf/BK/nfQRB
-   iiteP15gY1CAYvfKUkVhvuYao27BbLbbuEjZkmuA/k5+Lgs28Ha0B1iN5
-   If9Q61KSXyb47dbqqohDAYDTbAyjsFJGsISO0fHfPfgz9HKvNO6pKTtm2
-   00NxhmI58PAp7BYjXO4ixf4BiqCSDGRDL8wUI7T7E8sf94Zjr3ZyF9WNG
-   g==;
-X-CSE-ConnectionGUID: t12A2uVLQhadd3V9MsddaA==
-X-CSE-MsgGUID: z7/dGF9eR4aStoKWcOTHsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="113185479"
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
-   d="scan'208";a="113185479"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 02:31:12 -0700
-X-CSE-ConnectionGUID: 2PuugOzfQAeylrVcZiNS/g==
-X-CSE-MsgGUID: 42QGZO9kSMWCtkqYS0dWAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
-   d="scan'208";a="262230989"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.152])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 02:31:10 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>, Simona Vetter <simona.vetter@ffwll.ch>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Unexpected files in the drm-intel tree
-In-Reply-To: <aoR9fNYRhmWDNJtz@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
- 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
-References: <aoR9fNYRhmWDNJtz@sirena.org.uk>
-Date: Wed, 19 Aug 2026 12:31:07 +0300
-Message-ID: <cbd77031f484d0c044666c4fc11fd3ef273459bb@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGCsEYOn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563DE1F000E9;
+	Wed, 19 Aug 2026 11:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787138038;
+	bh=bQyqNlGMHs5nqRBvTyCHF4lb3YR4KkTOTMsXe9kCyF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BGCsEYOn81tBrY1UAuwJPJt6DHak8hlYVqtIQn9kK+XfwP9NNZoWiGPWt8Y6CJ0mf
+	 aSaXnn954tgP7kNpPIUApnKo+YnQuVOE/boQHJ10tG961xJXMk79Ucf0tggmXo2xbn
+	 809bsxLLS/LFhksxZf0u6wgtg0NFdPvYWHWNqfMN7IrZw9NIJhkii6doF8An/21493
+	 UUPJ1BtCQssFtTj7QgZi7nA11WAFV+Qvyg4N0Knyh5qUH5K+aF0VhC/rHO16tCAJj2
+	 4ieNSiVHyfftnDQCDimOUmmt+Cs2/XErtMhltP3pCaw7u5m4IRRrcM9osw9a7glLsw
+	 rtaPa0bYAalag==
+Date: Wed, 19 Aug 2026 12:13:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: DRI <dri-devel@lists.freedesktop.org>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Fixes tags need work in the drm-intel tree
+Message-ID: <1f884bfe-f8be-45fe-97d6-a64547b1bf6d@sirena.org.uk>
+References: <aoR9bznCkJHwK4DY@sirena.org.uk>
+ <178712337932.24680.17671628229026350089@jlahtine-mobl>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-On Tue, 18 Aug 2026, Mark Brown <broonie@kernel.org> wrote:
-> Commit
->
->   ac3baea883dab ("drm/panel: find_panel_by_fwnode() return a counted reference")
->
-> added this unexpected file:
->
->  drivers/gpu/drm/drm_panel.c.orig
-
-So this has been reported before for drm-misc [1] and drm-xe [2] trees,
-and has been fixed in the drm-misc tree by commit 651b0bd0922b
-("drm/panel: remove accidentally committed .orig file").
-
-Similar to what Joonas said in [3], this should really only be reported
-once for the tree *and* branch where it originated. There's not a lot of
-value in reporting again whenever something gets merged somewhere else.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0iMeaOiPWA95IxHH"
+Content-Disposition: inline
+In-Reply-To: <178712337932.24680.17671628229026350089@jlahtine-mobl>
+X-Cookie: Allow 6 to 8 weeks for delivery.
 
 
-BR,
-Jani.
+--0iMeaOiPWA95IxHH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Wed, Aug 19, 2026 at 10:09:39AM +0300, Joonas Lahtinen wrote:
 
-[1] https://lore.kernel.org/r/al9cE1PAYd9jyCfZ@sirena.org.uk
-[2] https://lore.kernel.org/r/annCRqegoQ9PBClJ@sirena.org.uk
-[3] https://lore.kernel.org/r/178712337932.24680.17671628229026350089@jlahtine-mobl
+> You may want to include the repository name in the body of the message,
+> not just title. The full repo name would help, too.
 
--- 
-Jani Nikula, Intel
+It's whatever the tree is called in -next; I think the general hope is
+that if you have included a tree that is -next you'll be aware of what
+it is.  As a reminder the trees I currently have you (amost others) as a
+contact for are:
+
+   drm-intel-fixes:
+       https://gitlab.freedesktop.org/drm/i915/kernel.git for-linux-next-fixes
+
+   drm-intel:
+       https://gitlab.freedesktop.org/drm/i915/kernel.git for-linux-next
+
+> As there's no drm-intel tree, one would assume drm-intel-next, the
+> below commit is not there. Seems to be from drm-misc-next.
+
+> It seems to also be drm-intel-next-fixes tree which has been reset to
+> equal drm/drm-next to prepare for -next-fixes PRs.
+
+> Maybe you want to only send the notification once per unique HEAD
+> (ignoring merges)? That'd then target the original commit and
+> any cherry-picks.
+
+That's what happens currently, these notifications are generated based
+on checks done on the new non-mainline commits that appear in your tree
+each day.
+
+Are you sure this isn't something that you've picked up in one of your
+inter-tree DRM merges?  There's a general pattern of DRM trees sending
+unadressed issues to their upstream and being slow with sending the
+fixes, then the same issue appearing in all the other DRM trees as you
+the various DRM branches cross merge with each other.  For Fixes stuff
+that's just going to happen unfortunately given that you don't rebase.
+The common case here is that downstreams are sending things to their
+upstreams, in general it is useful for the upstream maintainers to get
+notified about issues.
+
+Please don't top post, reply in line with needed context.  This allows
+readers to readily follow the flow of conversation and understand what
+you are talking about and also helps ensure that everything in the
+discussion is being addressed.
+
+--0iMeaOiPWA95IxHH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqFj/EACgkQJNaLcl1U
+h9DM2Af9FgJW5i0Z0Hu16HAqh/sx9HUY4QHlpumj3HjmsVNADXw5lOSB4LpqsrXR
+6AOrrvKuY3Z1g3bEwmgYnXwXo66fQRbkXnAsqxtkAVnpZCBwiHL2RZtiFJk8dlNL
+Tc2Ap0OMM/ndC77gshvMPnhGwbPos2hqd+FNDnHL7HSf+JEdeLTLEmsTyCoihI8E
+Ia6B0a7N+kgGE9zh/m+lZ1RSzhkRhx8I8LwIZEI5MtzdVStlW0cEs9+QyKctS1kz
+XmTEcsMMYufkMkb9d1Z4XuO4ltJgm2hjmNCy0tm11IE+5LHGF9QKUnshQF43tuCo
+89gwCxX2Jj8TH5bYnB6SMqdBmAt6qQ==
+=eTpw
+-----END PGP SIGNATURE-----
+
+--0iMeaOiPWA95IxHH--
