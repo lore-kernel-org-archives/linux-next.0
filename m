@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CF2449B39;
-	Wed, 19 Aug 2026 11:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F3836AB5A;
+	Wed, 19 Aug 2026 12:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787138039; cv=none; b=pdce7yg/frlNV8FTVwglItNGBJbIIHrj0F0oTjyRWsLHUPuwYC8gdiA/J2xLAtCg0gjUy0g2eIuqhJm0LPPAjPDpA0dTJ8GNSW1Nl+zUgU/JtD3qoe7VbytMl03hz38r31On8yd6BkILwfFfSybesTS7Udi93XvY2L7ICq/W5OE=
+	t=1787141564; cv=none; b=egFvZqajiOfFrs8p273xhCFHtdNQZBwq9wRZtZQW/4Z1B6YwLGii2q73kTZj6yQ52yG0J1wVhn6DbVOKSytmoN14lgQA7pzNHsFFdlPNgIBSo8NWGcAgF0NgdE4oy6b0FuYnxfqtH6r7jgz4dfXHgowt4sBeWM1F9DUfYItvcbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787138039; c=relaxed/simple;
-	bh=oAX3bhKaUAo9JFdskeAroY4UCO7I2Zqlw+niLlwjEfA=;
+	s=arc-20240116; t=1787141564; c=relaxed/simple;
+	bh=0n6soWwj5wPKFhngBoROsUICqVaWPs2I79nhRGQ1eHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n6N62VUteJRRhngpBI/mghN/PPul2Mg+W0QgfVuBIYl8Yzv6L85zqVYaVHqI49RQI05kqxL5XuuwmyNH596GW8E84Oem3schbiBFznVWjlFsN0cZLu02QZvC8LS00rMqXcAno8T5GckattKHTrQr+puT2+qwSL68WDtigf2Ga0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGCsEYOn; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNxWCbnE7WQK/3X1AnHoH0t6GINvkKroY5l5j2oDB3ehRvhnC12u4Ugzb3oCv1JqwQq4v/GWnpWEjfnkyr1tZ+sUAc+7ICQikWq7lRVtX/Gcs3WN+FKnsZ/TKmm+8YKZP+4KPqjWAwB1vMVRKtSKLhQoNqDK5DXv9rCG0rxa04A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzJHiCbq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGCsEYOn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563DE1F000E9;
-	Wed, 19 Aug 2026 11:13:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzJHiCbq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79AE1F000E9;
+	Wed, 19 Aug 2026 12:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787138038;
-	bh=bQyqNlGMHs5nqRBvTyCHF4lb3YR4KkTOTMsXe9kCyF0=;
+	s=k20260515; t=1787141563;
+	bh=C/OCnBh2+Bwi09gb9qHRbFFL6oQmAq5hReVyPfFAbCA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BGCsEYOn81tBrY1UAuwJPJt6DHak8hlYVqtIQn9kK+XfwP9NNZoWiGPWt8Y6CJ0mf
-	 aSaXnn954tgP7kNpPIUApnKo+YnQuVOE/boQHJ10tG961xJXMk79Ucf0tggmXo2xbn
-	 809bsxLLS/LFhksxZf0u6wgtg0NFdPvYWHWNqfMN7IrZw9NIJhkii6doF8An/21493
-	 UUPJ1BtCQssFtTj7QgZi7nA11WAFV+Qvyg4N0Knyh5qUH5K+aF0VhC/rHO16tCAJj2
-	 4ieNSiVHyfftnDQCDimOUmmt+Cs2/XErtMhltP3pCaw7u5m4IRRrcM9osw9a7glLsw
-	 rtaPa0bYAalag==
-Date: Wed, 19 Aug 2026 12:13:53 +0100
+	b=UzJHiCbqOjtKEPHcE/yhg6Mt7X5Hwf2ERYrbg+8xW+xp+ZT9WpKFa0l9OOwaPvbi1
+	 FbErRLzdHyUBHtHoGeK/20UTYqbzG8+48ZUXHNfvEhGgVvsVy/J56RXdvF0ii2164H
+	 zNIqfUrsjN5vPR4PNHGwCz/Ef+i3y2vnK5mLZyAqY5/2ll38V0mIp48kHq4HoRpEZ7
+	 SgJj8qofWxMB0+Br/Om43JSOksEX6hweEN3EmhA/7kQENrHV0qU3IHsiJ1ynI8LG26
+	 FsA3yW1qiXrAnR9n3TISVHHi3+IbKD8MPp4IcVl27EOjpSCAYpEGBaGrL0pEAdgo89
+	 jAi/zQwm+TKog==
+Date: Wed, 19 Aug 2026 13:12:38 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: DRI <dri-devel@lists.freedesktop.org>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Fixes tags need work in the drm-intel tree
-Message-ID: <1f884bfe-f8be-45fe-97d6-a64547b1bf6d@sirena.org.uk>
-References: <aoR9bznCkJHwK4DY@sirena.org.uk>
- <178712337932.24680.17671628229026350089@jlahtine-mobl>
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: Unexpected files in the drm-intel tree
+Message-ID: <07e2d455-ae76-46aa-821a-a455118c60d4@sirena.org.uk>
+References: <aoR9fNYRhmWDNJtz@sirena.org.uk>
+ <cbd77031f484d0c044666c4fc11fd3ef273459bb@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,74 +46,68 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0iMeaOiPWA95IxHH"
+	protocol="application/pgp-signature"; boundary="G3zcZBlb/+C9HnFm"
 Content-Disposition: inline
-In-Reply-To: <178712337932.24680.17671628229026350089@jlahtine-mobl>
+In-Reply-To: <cbd77031f484d0c044666c4fc11fd3ef273459bb@intel.com>
 X-Cookie: Allow 6 to 8 weeks for delivery.
 
 
---0iMeaOiPWA95IxHH
+--G3zcZBlb/+C9HnFm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Aug 19, 2026 at 10:09:39AM +0300, Joonas Lahtinen wrote:
+On Wed, Aug 19, 2026 at 12:31:07PM +0300, Jani Nikula wrote:
+> On Tue, 18 Aug 2026, Mark Brown <broonie@kernel.org> wrote:
 
-> You may want to include the repository name in the body of the message,
-> not just title. The full repo name would help, too.
+> > Commit
 
-It's whatever the tree is called in -next; I think the general hope is
-that if you have included a tree that is -next you'll be aware of what
-it is.  As a reminder the trees I currently have you (amost others) as a
-contact for are:
+> >   ac3baea883dab ("drm/panel: find_panel_by_fwnode() return a counted reference")
 
-   drm-intel-fixes:
-       https://gitlab.freedesktop.org/drm/i915/kernel.git for-linux-next-fixes
+> > added this unexpected file:
 
-   drm-intel:
-       https://gitlab.freedesktop.org/drm/i915/kernel.git for-linux-next
+> >  drivers/gpu/drm/drm_panel.c.orig
 
-> As there's no drm-intel tree, one would assume drm-intel-next, the
-> below commit is not there. Seems to be from drm-misc-next.
+> So this has been reported before for drm-misc [1] and drm-xe [2] trees,
+> and has been fixed in the drm-misc tree by commit 651b0bd0922b
+> ("drm/panel: remove accidentally committed .orig file").
 
-> It seems to also be drm-intel-next-fixes tree which has been reset to
-> equal drm/drm-next to prepare for -next-fixes PRs.
+> Similar to what Joonas said in [3], this should really only be reported
+> once for the tree *and* branch where it originated. There's not a lot of
+> value in reporting again whenever something gets merged somewhere else.
 
-> Maybe you want to only send the notification once per unique HEAD
-> (ignoring merges)? That'd then target the original commit and
-> any cherry-picks.
+There's no database of issues here, the check that's being done is based
+purely on the new commits and diffstat that just appeared when we fetched
+the tree.  Deduplicating things is in general a depresssingly hard
+problem even for basic stuff (eg, is this a new issue or a recurrance of
+an old issue?), and the much more common case is that there's downstream
+trees sending problematic commits to their upstreams which the upstreams
+would like to know about.  DRM is quite unusual in the amount of
+sideways merging that goes on between parallel trees, and can also be on
+the higher side for the length of time issues get left for once they've
+been merged into other trees.
 
-That's what happens currently, these notifications are generated based
-on checks done on the new non-mainline commits that appear in your tree
-each day.
+What I would have hoped would have happened here is that whichever tree
+originally had the issue would have fixed it before they sent it to be
+merged elsewhere, then it wouldn't pop up in all the other trees, or if
+the original issue already got merged then a fix would be sent promptly
+before other trees start picking things up.  In this case it looks like
+-next first saw this on July 21st and the fix wasn't posted until 10th
+August (then applied on the 11th) so there was unfortunately plenty of
+time for things to propagate around.
 
-Are you sure this isn't something that you've picked up in one of your
-inter-tree DRM merges?  There's a general pattern of DRM trees sending
-unadressed issues to their upstream and being slow with sending the
-fixes, then the same issue appearing in all the other DRM trees as you
-the various DRM branches cross merge with each other.  For Fixes stuff
-that's just going to happen unfortunately given that you don't rebase.
-The common case here is that downstreams are sending things to their
-upstreams, in general it is useful for the upstream maintainers to get
-notified about issues.
-
-Please don't top post, reply in line with needed context.  This allows
-readers to readily follow the flow of conversation and understand what
-you are talking about and also helps ensure that everything in the
-discussion is being addressed.
-
---0iMeaOiPWA95IxHH
+--G3zcZBlb/+C9HnFm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqFj/EACgkQJNaLcl1U
-h9DM2Af9FgJW5i0Z0Hu16HAqh/sx9HUY4QHlpumj3HjmsVNADXw5lOSB4LpqsrXR
-6AOrrvKuY3Z1g3bEwmgYnXwXo66fQRbkXnAsqxtkAVnpZCBwiHL2RZtiFJk8dlNL
-Tc2Ap0OMM/ndC77gshvMPnhGwbPos2hqd+FNDnHL7HSf+JEdeLTLEmsTyCoihI8E
-Ia6B0a7N+kgGE9zh/m+lZ1RSzhkRhx8I8LwIZEI5MtzdVStlW0cEs9+QyKctS1kz
-XmTEcsMMYufkMkb9d1Z4XuO4ltJgm2hjmNCy0tm11IE+5LHGF9QKUnshQF43tuCo
-89gwCxX2Jj8TH5bYnB6SMqdBmAt6qQ==
-=eTpw
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqFnbYACgkQJNaLcl1U
+h9C7iAf6AgNJhQWTkBsSQw4F+7KObOf+iJAyNGSkX6TUOXpmUvGy4Vr1zUCG1OJV
+NtSctTaq1X8BzQibvSyclAA/oGrVjzs3JfST1D81jqZRqZT4+OwCmnhpMyn6CXYh
+s7hY5FmHRLaREqf4Q8mrAJ+d18YMSg0kYqFIllPGRDX6F7erkAe8hEB0pHL9Q6+/
+Qe3zz78PtU+GZMSF+ySBFVC3i/wmtO+rLEH9n/2YWFT+DMqGMxsLiY7CRUqHxGXY
+SsecaPhoR0Rh5o37Zu1S844oJlKOHYc22DQaeywEEuhG8H+FiqzxzTp/0ym/zQqE
+FvF63lygNB3OwigjdGan5Sm/lRtWPQ==
+=/bmt
 -----END PGP SIGNATURE-----
 
---0iMeaOiPWA95IxHH--
+--G3zcZBlb/+C9HnFm--
