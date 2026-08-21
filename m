@@ -1,105 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010022139C9;
-	Fri, 21 Aug 2026 15:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787326325; cv=none; b=JVo6pDGXNWug3J7UmGUH4qpkJZbYYmH1qNWYH9m05y18VD3uKS/z7AKtkQyFSFRjQLEP/K/rJj5ARpROeAZ3h8u7Jl1gE5rtJ2lUDIxOIBlt4fuDj/zpKVaUjSzMogu5Rgmr+BEQiXAJl4WlHNziy+2NNmsV8hYraKFt+c5O3Mc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787326325; c=relaxed/simple;
-	bh=YlxxWOpqex0q9N0YXGawGklK8uRIEULi6U9tNFkbF7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pqAdcupztBx5tzIcmAWXNQL5W1C+9CYyXTUKgpm5Ljhnd9EthoeDrSkDDfR2X3FdcI9bTR3p0H7tjEXKem0rynnpMgCTuNvodfz3/YC04SrltpAAXPBv38KMMLGQZnGV9wERvkNdq+6Cs404ns+gTNcbeGpBg0hqCbGG0YS6P/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8g3yqqQ; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA7F30D407
+	for <linux-next@vger.kernel.org>; Fri, 21 Aug 2026 16:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.182
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787331379; cv=pass; b=OT7tGuGhp4IpFMV8hAaXgOQk2g1vTReTOv5uss3ZT7FTlUi126vZ5vcWKR66PmNoGzk+FldGzrsjRvM/hKCMs6m4fij2c3WMsImohzorVQm4s6C2sM7NeAP1SE2U7E6jKFlR19OSlBQjt41Cuqp0xAnfe6CqKnsXflRaFvuHINg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787331379; c=relaxed/simple;
+	bh=h1BJ8TU5vP80zzDCoTURV2b2SzrkzqoC5BW8rzFmNNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MW505wytUamPA5/+8vjKYO7VuGSM7WTYQLKs1vs1rRnffXP30c4vihtiWOU39pUdV9FwD2Y0ldsuMI9NEAjwDa6OrKWI1tAhXI0fdGsjbSZHDQA1eMKjUgOmLz1TuYy+KWARo8hLcboxPANUmyvU5tQBdaBsr2cQE/HNPDcCc/M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYwz4CO0; arc=pass smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8g3yqqQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A6C01F000E9;
-	Fri, 21 Aug 2026 15:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787326323;
-	bh=EtXnNV9lc8Jnn44/YaPqoRnQ2zaSWzTY7apFS+0Rua0=;
-	h=Date:From:To:Cc:Subject;
-	b=K8g3yqqQVsLMKIpiSnfd1lSJB1Bc5SO1wfRFzNqBYn3TXeIN8KKw/EmjCyI0T4MhM
-	 9JoTFTVBPgo6h0ZfDMfZbCiNGHOC8OZbJU6/02Xm0EHwr51KKn/nSa7St+yFiprTOY
-	 QG9Vb48OBne8iJ7rK+OwOUAjff4wuyULjyW8JxFvQ6sxUWN2upsY4jLFKAQMHdLLuy
-	 L6chRgwgw257vrDq2qzkcWm6oIs5ZQHFaTtNcyNrQa62lkXcHqzeLKmKCTHDsWgMZJ
-	 OaePv9jL4OByPpJ+3X9uAyodh25JzI4wqoSjsqy9mgyIofd+Bqf5lkvVyDfPLTOso7
-	 hHqhMbgfuurUg==
-Date: Fri, 21 Aug 2026 16:32:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Aug 21
-Message-ID: <aohvcP8ch-Zn6tV-@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYwz4CO0"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-cbe4c537ad6so133388a12.0
+        for <linux-next@vger.kernel.org>; Fri, 21 Aug 2026 09:56:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787331378; cv=none;
+        d=google.com; s=arc-20260327;
+        b=bl/EaxYGZvSU88CcepQWsVy1on/YvG9SN8RapxCYdg/pwRP20gyy4mp6HZMVt++JNo
+         Bdwxe65+Ti2SUTO0VP2vuC5P+RKolXeBDVwAmYF7Q4MUJL6UsdweWRVW2PhfB5aN0okH
+         ZplQgdhanQp7MfoL3wbfK06Uh/zjFnGsnNoRQg3pre7prGbRwgcBOrlTW1nHvS2zD57N
+         UFGtSfJl1vecZfbQDyaqq0ZX/ohWAAfUFBFQKmmFpnH4+GNCkbdUvnupX504qTo1SPk7
+         fUDdDiPzpOH8JesbZUDZwyCwcSeYhVkxEF/WkdeRpSjpC7c3L1TANMQ44NVRO1dEdxf7
+         5yHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=h1BJ8TU5vP80zzDCoTURV2b2SzrkzqoC5BW8rzFmNNs=;
+        fh=AiLpdKTEBbSIvfnwYT01F/5JzFDATUWF6y3fFTmvAxI=;
+        b=cqxIlHC5Iqvsxjo22xRSQ/+TfA2ORHhCwDRyO94ooI8roPxuZ8kz09w55CtBatemjt
+         PX65Kk6YxrFV+5Paxo2E5eTxoOrGx02PpTLcmlnnOZ3pG28JM1jWZGp8uyzhdPRkEiqX
+         t9JekAnQ5xhyp0Mn7JRWh3Jh3Y+XWSvTCIEuxv2X3RuYjsiq581fDgLl8z7d7w8EcJgm
+         HHFXDEunTPZVOjLjDaLNpxa0A7d4m8CbErmcEqR4bUFdqzan8QrjUQB/W09JTJmMCzhK
+         N30t9C/VsZtOEpieriGAeLRr5AK2H31vQ2t21D+ZS/3Qg/QLkb6nSMx63dHvAbs7wZvS
+         3vCw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787331378; x=1787936178; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=h1BJ8TU5vP80zzDCoTURV2b2SzrkzqoC5BW8rzFmNNs=;
+        b=jYwz4CO0v/m4afxF65Zo9rW8iqaiAd3vswZY1fdjXJ9kw2aCx5nZt3G+t4tLE0x9Cc
+         hysZSUbSWLBFwBnFvOPp1u4gekcbxG/uZTjUOmqvDN/xwVjbZBs/a3h24K5kSEsgrrhw
+         IrPW/jtyIlbQLO3hmBpLau6+9+AYDmIZZiO7/3qUA7kHQKkluE07YX+Nnfwc/8HL/2Iv
+         x2+dp4uVrLccQh3aAGuoZffNntTlia6zrefulXEi1L7VC5TuXuDQjxY1Nl4x8yglQMuU
+         527pPHv+jcR9s7UpJQREljmEDIFu5CATYW8X1oBtdgNjHyDIQzw1kikLgp6o1ITnnCHi
+         l85A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787331378; x=1787936178;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=h1BJ8TU5vP80zzDCoTURV2b2SzrkzqoC5BW8rzFmNNs=;
+        b=Swkk0x5YXD47YRzx8gIbOTXBlBybg3tNOYECPCtZL29vubwCBX4j3q1ABUangD1n6E
+         c1L4OvbP1XsKPQJfmY7d+J8K4X09zyxpGf48EVwnkD8yqUoDtIWds1OnqVCf9UyBGsjQ
+         viqwkDu28RJK3zFbg9pIUos2/a0c8TI8MaQe0AusGC4UAZ9mIhJ0Z9CV7kkTFlJeSxN3
+         AgNtzSvhDVPyPT5zVazgyueelibp+AMYxrOim93Oh+My8SqLrjao7JEiqfT//5bjdaAB
+         18yFodcw5kQLAKtJjHdC5T/v43tph2wpgKuHLd6fK0vL4oe0s8yCwkEPcEVRQUAT8fW0
+         28wA==
+X-Forwarded-Encrypted: i=1; AHgh+RrUETJY/EO5en36MwfJtxBm23OGj2NsNbAtVstmXX/3UW2Pp0+0AbAEmKGm/2bDujGCihujpZcsUARE@vger.kernel.org
+X-Gm-Message-State: AFuF++lt9x20ykFP69lh17+X5jTc+ccGQlr6mFWbaELAFdWKMwygXeQb
+	D+R0vy8cwjq2cfViHE9HNZM2PiCTqktdgeIyfwKnoqmmrwQuq453wHCznFwbzYQDMCI3Ao4LMgf
+	MK7DyJrFNT5ZGbQkI0WRMqrS3lA8fFEc=
+X-Gm-Gg: AR+sD11uL8tsFpgZJ1DcuwVbQTDNLnIMP3ujzkkFontaN3lirRsDuZIB+h6j5b5tg52
+	0dori1gH0qQ6bI7SSAUAaHsD2e/wKe7exhA1+38EkUii6dfgFuC/GI2JDGbUx9faY9WvAmFu+aV
+	o/pEGoZiEkKKeIHZnyI4h47NrzRyKN6rihT4kHA62BIVDmrHUxubMpbYrbnq+nFcOhGbEGo6YOE
+	ZZ3grNE348WUSNqE3yOofQv7a3J2ELMjCCINux8db7QZVq/q2kOgGeka5V9uNlUpjdnMSG1oFRf
+	LThVU6M360mBy9035UQJ3BSFb8VzH+uPjBrcYUBSO+CkIISnmQtpukFV0ys8GyfduRG7hJddsTM
+	yLTazdp19kleC4NXvGEHbPHEqnG6wWwx0QX7/ZeuCMUmIEUpPrj28oZQ/Yl2X
+X-Received: by 2002:a17:902:e945:b0:2d5:cbd3:8eb1 with SMTP id
+ d9443c01a7336-2d64b162c6dmr70531775ad.3.1787331377760; Fri, 21 Aug 2026
+ 09:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XOq2oLSUtKk8eXKJ"
-Content-Disposition: inline
+References: <20260818105350.361218-1-ojeda@kernel.org> <20260818125558.GB5432@nvidia.com>
+ <DKS3G1HH0835.P8T7VT9VW24I@garyguo.net> <20260818132022.GC5432@nvidia.com>
+ <0e0c9ee9-ce44-49cf-b5c5-3764f260f1b5@sirena.org.uk> <20260818142300.GE5432@nvidia.com>
+ <CANiq72mOqWw0gxCCcJSyWRVC_OXSt92g5HmAOx6OL4xp3fcC1w@mail.gmail.com> <20260818204621.GB61595@nvidia.com>
+In-Reply-To: <20260818204621.GB61595@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 21 Aug 2026 18:56:05 +0200
+X-Gm-Features: AcwNN1UPPo1HjSlbQdYsVq1-8l_CCc_BwGMrEvcWp7isi9phs1jBKNG1davq0E0
+Message-ID: <CANiq72nS2zDKShxyxcO2EyV6R_6F8x2Pzj_Fs0n86wXBBx6E3Q@mail.gmail.com>
+Subject: Re: [PATCH -next] rust: fwctl: replace `__pinned_init` with `raw_try_init`
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Miguel Ojeda <ojeda@kernel.org>, Dave Jiang <dave.jiang@intel.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Zhi Wang <zhiw@nvidia.com>, Benno Lossin <lossin@kernel.org>, 
+	linux-next@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
+	rust-for-linux@vger.kernel.org, Boqun Feng <boqun@kernel.org>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 18, 2026 at 10:46=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> w=
+rote:
+>
+> It is fine, just give it some thought. Your PR has a list of
+> conflicts, and I saw one other of these pin ones there as well.
+>
+> Imagine adoption making it 10x and it won't scale. If there are things
+> to adjust in Rust or process or whatever now is probably a good time
+> to work on it.
+>
+> You don't want to end up stuck later on where you can't do the
+> refactorings you want to do because of unmanageable merge conflicts!
 
---XOq2oLSUtKk8eXKJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Semantic conflicts are fairly rare for us so far -- this cycle we
+happened to have two reworks going on at the same time. Normal
+conflicts have also been fine and not too onerous either.
 
-Hi all,
+Given the treewide nature of the Rust tree, I think it is bound to
+happen from time to time, i.e. even in years from now. Part of the
+idea of the tree was precisely to handle this sort of change. It is
+also why sometimes I close the tree late.
 
-Changes since 20260820:
+Of course, I agree that if it multiplies wildly, then it doesn't
+scale. But we have been able to handle those in different ways so far.
 
-None.
+At the end of the day, it is about striking a good balance. For things
+like this instance, where we have a couple one-liner conflicts, then
+it can be simpler to just close the change than a staged approach that
+we did other times, as long as Linus and Mark are OK with it (a year
+or two ago I asked Linus about possibly doing this kind of rework in a
+different manner, but we didn't need it so far).
 
-Non-merge commits (relative to Linus' tree): 7073
- 5989 files changed, 509370 insertions(+), 156446 deletions(-)
+In fact, the only "surprise" here was really the fwctl change that
+arrived after the merge window had already opened. Otherwise, this
+cycle would have been business as usual.
 
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 429 trees (counting Linus' and 133 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---XOq2oLSUtKk8eXKJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqIb28ACgkQJNaLcl1U
-h9BHVgf/breD3HSqmJ2jsjqNwIGLtt2SocY13OngvynVfRq+ELEzKMOYVgR/rjvI
-3a1FZ/+wmW6PbKSsoy+0an/4UigN3ZpooEBWrjdQhb0xKyga0C7/jCy877e1ZqH+
-X3TGSCbjv4r8Cl817pUbNE1Yo4SGIorPXA5BvBv25t2JJbaErWzQBQvttxN66lno
-iWrl6rdKBqnD/AjQ42+SCDZb5W992LUKCoGwr97eGW1ghMJoA4gveaYJ4lC2ivpy
-+tA8Q+VWUoo7bIWEquXiCSs2TUX6mWjd+0xPKpjeEbVzpVyrxISZkOXPu0nLgfO3
-j0pGH+9nz339zE1u31yLNLLpUd5UsQ==
-=p1Uu
------END PGP SIGNATURE-----
-
---XOq2oLSUtKk8eXKJ--
+Cheers,
+Miguel
