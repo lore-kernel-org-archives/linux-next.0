@@ -1,228 +1,211 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010015.outbound.protection.outlook.com [52.101.46.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B653B379998;
-	Fri, 21 Aug 2026 19:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787341386; cv=none; b=mXn37XjvGeyyJgc8hGFepp8hj7OXwFyLEC70+uTG0gPmO1Q5KZANbx4tcXQyYAIXepawVh8nyHWlC3Z2dPuj6qEgwJGffJ8aJvybuoII7TIOvrcKygcP2fa95tZt4NbUkYvA93bjzRVVRtx/nmorwLR06NBUfaknQukWZ9YdZQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787341386; c=relaxed/simple;
-	bh=G0svtlu1QmxLiarmrO1zKwVAI3q88e0H/dtteetL69k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ewsNb/te6Ub1EXAw3jZIqZoHp9pjQCm67zpyQMG6KQjbxOxLz4U0QXI1a9n4VKA0Cy74JZKRc/MeMUMxUZVzOQTLvSxW5Xvz+bTIWpBA8tk/oLk6Ef6DLCXEY6r6NGE6Vikd9oKk/Y+mr5rs78gdzAPGTAckfioGT7jXx9t4Ajk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=qqg6a3Ne; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F502AD16;
+	Fri, 21 Aug 2026 20:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787344276; cv=fail; b=ucC0+jfseEfIyhdjc+MvyxZJeqqE6jIRFbaNou0McnrqtkHWfgadtn2IB0j0ofnJLAg5KPegZ3Ormc9KLNiWeEDP1biwfHFzfwNmO0wQxsmaOtSewWhpSUHl74F2Lz26eRwqVwjJdBfASB9+ZOTfM2agjJmap283HgMl//CenhE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787344276; c=relaxed/simple;
+	bh=TjAH84fQqFE4LGe8uj1DWkLDrg85UxPqioX4Xy19MM8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ow4KFbuofiiO4x7sPw/lYy6wD5ZPpZNM7S1CHtr2FmbBTOmTxcLr6Q4roBN4f4NcFuJt1lV0gZFSaPsJ2sljSiHe9aqvyGWbTe2TZKWS7151H6Z0qwJEqt9FVsVZEc/52FOCUuSHq3fKUWI7GsP/PxRimWlb3U2Pi17ICLcp31g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JCNuHoKL; arc=fail smtp.client-ip=52.101.46.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="qqg6a3Ne"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1787341375; x=1787946175; i=spasswolf@web.de;
-	bh=L/wGrymbJre+BwdT2dFIcH2imnHsz2YncuuQg3ewfY4=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qqg6a3NeAuN36Jwbo0hDEgF1VCfqZakng2bsvOcGOQ4amRXdKcY+j/8/2VG7fAqJ
-	 c0nNNE0E8ROKKkIEBXrEc9ZDJuszDmJlA2WoSTAcixTn6ARDAexezS0BxCsZnjz08
-	 dd/E+mQztHKXXiBQbM5ZuNDVNW5h2akgVobc6/9MdMgbwK9IlI25K1PgP5vm/giJ9
-	 e2UkxB8jm49ZiIqrlNAxO2BlViR442gd+5MYV/VOin0Bpig1DF3HVOrRin7hsbu4b
-	 anSBDZfv7+gSYZ7g+/Hf3apeZqrXLcO4EEL/8l0Y0l01oYkHxIFK3UIs0O8055gce
-	 9B5ZK9/s9yIZjhHEPA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3m59-1wyKDc2d1v-00Bfy1; Fri, 21
- Aug 2026 21:42:55 +0200
-Message-ID: <7ac562a41bc25f459c2102a01f2d07f2437984b8.camel@web.de>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JCNuHoKL"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GexMJlqLQ2s3KbCcGxR+zo5WomF6FO7ryl5jmPQ9B0kKvjRRnt6YwS9XYYWUXwv8D2uJvhC+dZReOTX9MALFtM0MBqArrx27E5mOpGxoaXiDphB+ffOR1Tn9fNBmDxA/QT2/+E4llpKt9PvwunsChqp1lN0E+bfplVD1uqqdIBAPeWT9sx/HvLPXkTr9XHls3ofAxcNxmiibc6i6M1x2/kn7IVo6e4gFrg/MKllQEMXnL9lDs9auI+4NB0r0JgccYZJCGJXcgaCfJoJuHmNMUC9PuApkKsyFlybeklls/TQJLAEll5swFvZkME5qywR4BFsmVs0HZeO9M+qduPFJmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r9A4QSwjELSel4rxSzKpeDeVBrmK/VyIEgYQBeDJ1rU=;
+ b=smvaZ8zVnBQU+7b4l3j4Uh+PHq2JDOe3f/9quzjkESnBdvsSnb4m489mYwh6M/2um6TvcQUiix6MnUKXzeRrEmcqH6fIX+ceFQz4wsDATz8T+TfiTyscm/hFgDgTv+8yWpXw99F4HBCtP9dY7HSvuaJoAbYYT77zMaAWuTDIrk8AetbjBgp+diZBAu00Cl0SBCf4I0yGtCdn19cmnQYJwOSUDpym3WMsO3utq8B4sJQB9TVesYjJcrUMjTPPnbLoV/LdOiDVjVywCGecY9kK+H0dmR4YG2ywp/04a0Of78Qg8RJdnxEEDPzMknWJjsjb32mIwyrha03MjnsQRpLO9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r9A4QSwjELSel4rxSzKpeDeVBrmK/VyIEgYQBeDJ1rU=;
+ b=JCNuHoKLAMy+zO3WW/hqgMm0i+x9D5BzaCcutCFA1wZ0A1bgr3lv7bMgQ30YJ3+a0KdYse/psPPNciHs7pOL9R3zq4RfqxOxghD81e1m68wIezR0khn5J2cVj3Z0Rtg4LWfmxngjOBk7WqNiVawGx1Z2MizjuR3PDl5XptbRlz0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
+ by CH3PR12MB7641.namprd12.prod.outlook.com (2603:10b6:610:150::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.11; Fri, 21 Aug
+ 2026 20:31:08 +0000
+Received: from DM4PR12MB8476.namprd12.prod.outlook.com
+ ([fe80::2d79:122f:c62b:1cd8]) by DM4PR12MB8476.namprd12.prod.outlook.com
+ ([fe80::2d79:122f:c62b:1cd8%6]) with mapi id 15.21.0339.010; Fri, 21 Aug 2026
+ 20:31:06 +0000
+Message-ID: <edb965a1-3d35-4dd6-924f-52e88b91a8fd@amd.com>
+Date: Fri, 21 Aug 2026 14:31:04 -0600
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/8] display: fix blend_mode for non-overlay planes
-From: Bert Karwatzki <spasswolf@web.de>
-To: Joshua Peisach <jpeisach@ubuntu.com>, linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, 
- Leandro Ribeiro <leandro.ribeiro@collabora.com>, "Wentland, Harry"
- <Harry.Wentland@amd.com>, Leo Li	 <Sunpeng.Li@amd.com>, Alex Hung
- <alex.hung@amd.com>, 	amd-gfx@lists.freedesktop.org, Jesse Zhang
- <jesse.zhang@amd.com>, Amber Lin	 <Amber.Lin@amd.com>, Mario Limonciello
- <mario.limonciello@amd.com>, amd-gfx	
- <amd-gfx-bounces@lists.freedesktop.org>, spasswolf@web.de
-Date: Fri, 21 Aug 2026 21:42:52 +0200
-In-Reply-To: <DKUUGMJ1H5N5.2FRQG3ZKH6SNB@ubuntu.com>
+To: Bert Karwatzki <spasswolf@web.de>, Joshua Peisach <jpeisach@ubuntu.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+ Leandro Ribeiro <leandro.ribeiro@collabora.com>,
+ "Wentland, Harry" <Harry.Wentland@amd.com>, Leo Li <Sunpeng.Li@amd.com>,
+ amd-gfx@lists.freedesktop.org, Jesse Zhang <jesse.zhang@amd.com>,
+ Amber Lin <Amber.Lin@amd.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, amd-gfx
+ <amd-gfx-bounces@lists.freedesktop.org>, Melissa Wen <mwen@igalia.com>,
+ "Wheeler, Daniel" <Daniel.Wheeler@amd.com>
 References: <514c5423b98376e2e6f1fe4bb56c0f3607b4cd52.camel@web.de>
-	 <20260814151701.65222-1-spasswolf@web.de>
-	 <DKUUGMJ1H5N5.2FRQG3ZKH6SNB@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.2-10+b1 
+ <20260814151701.65222-1-spasswolf@web.de>
+ <DKUUGMJ1H5N5.2FRQG3ZKH6SNB@ubuntu.com>
+ <7ac562a41bc25f459c2102a01f2d07f2437984b8.camel@web.de>
+Content-Language: en-US
+From: Alex Hung <alex.hung@amd.com>
+In-Reply-To: <7ac562a41bc25f459c2102a01f2d07f2437984b8.camel@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4P222CA0030.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:303:114::35) To DM4PR12MB8476.namprd12.prod.outlook.com
+ (2603:10b6:8:17e::15)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O+jFhhnhcUrZ1gERpbv9PR2Fcp7lLTp8UzDx1qSErBLirjkrFyI
- z7kh6LKWbHEAxrZJ4bo32KiRk06VgYiTNIppELl72dRYvbqRf02cSRWFFW+4BD08+86tund
- u415Qa7WoqJD/wIRnjjtkdHLmsEDWASUvm6Jf+9xspLlc6sWmq+H+zJjelld/YXIb3M6sLL
- fx5TudJeLjjilHCEHl5Yg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:w9SszOOEqzk=;5q4DHI0TJ1Aqbofx6LDB6RSrMjm
- O6ghSnCUx7WZTu7FuqPUqGMUbTqqV5ESVOk7BCAwUq2lfHMMxc0iF3Va12ZheCftODk6Xxaik
- XOKCpDJL6xZCO3cwUaJ22y+luENvDHS4/ifRFO6g/hXVKzRQfQAmRZhy9QLgwLBN25x3qq/Lc
- eMxIO1oy9U0vTPPUeCcpzbVoLPZW2rsMu7mwbWH+B9/75kvqS6QN/2BztziJkOR6oWZ6vfcl/
- IkwLte2qIjOwLu1NB7eAjSDWIfhSfKkDSCo0wOIU6SLsM56114BydFxoDwQHlUhe67BdPxZ6E
- 7lWpNTxNoBVaxVS5GyDI4O8h4RhNOAz2Dgo1g6PGvsBjkXvpeA2Gkaw3wHTMnRr993y7st0ii
- n84ayMzJ+V30CaGNvr2xnOeyZnnJSgIV+0FVm1YRwcNg34043LuaxrZEN15jjL4vM+hcfdHLS
- O7g2pkHK9WqH/f/YZzzRNzqr6CzchimT6C90EEcBVIBWS0DCGtBkGHLZpm0XjRt6RP4irDfGV
- tqX46q4Mkv3AaZbuQOdyIqK0YPb6YKmgG9e4NOn0bLgkLofVzkSkt5mKRobUGP17bOx/rqBie
- 2Qb/R4CxHslCpgy5SkYIGbtYUuQdFIUbAi/H8epdjnsP4MjN12QZSx1wz6WyFrS4o76cGft12
- EWQC/kv98iloSrTf490YSf9tPYKvedVR0dI51C/V0h3eW3SqBkRLpGHJMNZqOEDvg+9c3jDuQ
- AKMj6B8d0ESKZ+bdjxbowLVntf4in8O7Uw0x3fubpej8ezzDjIxQBU4YVNnGk3l48HzJXOl/i
- Wx7S9ILXEUw0Xb6BGaGiIx7GBA2eauMQy/sViVnl6Oiot7wSWx2+MrJklJK17nsOYR/9QRr0k
- 8jF5QyEMmE4KEvMivp6GRGbGu3ZTOKgKd2lA6VTAch0PBlhpqAFtP0CwchyElX7AAizCG1UOj
- 4MSJANGRT0fkOtds3b5/URNyDfTy4Lt9KbBrT9ePp0UwymV1djcKr1UYsyO8a/qZ7fi+e3k+d
- o8Pyiv4se7gsBCfSrZYRQD3SZqHsNkmBtwSPuTLjsq5Zfel0h0FgwfGg9hHT7Fn2CDpE0WAkp
- hIKev8RMfAwSBIyyAiOxzO/YQZhplvkiHgO52+4QFAMXiGDaAb3X8RZbNpG5iIFco4lQf79OW
- 13c4hectCLsganZ5OyWm9yqbidnkFW1Ysj4FCGr4kiZP4v12h0Vwm6mH5eeX+iFXXxHX4fgIv
- B8d5smCSIInDmlNt2KAAgs6M0cLN6Mwzwmnzwz/2vv9cCqmVGlsjzXZ6LFBr0rYpcTRIvqGY1
- I5b0cQfV0B+sFAO0ZAFH9BYW7Vk+B+va+VH/CFD2jam9PxOF9VK7wR8JSyW4NNsCH3N3UtIB2
- 9FFzJy/avuHcsWNmedjEiiMaLGiFMXHJuFEf/VZlFGOZG3V5bc/QcXpgt8PTEwnNtwgA7TSOj
- vCQSliLqKkMcR8fb8TME5EPC5BYvcTsxKZ3pacEJ03OfbZSuyVlDe9rZXOky+vRTf59kTRCAg
- WxfyJPu1s5X5zTla7lenzyMUXW7ZxESCv5I/8SePvF2SL27xSSZOmxUvnykr2g2Yd0QcTrsws
- WKELUnHALz2xlbmJD+mfc55JztX32RX4u9FVWpj/CX1a8AsY9i6t2YRaaSdSoEUf3g0PU8sFb
- Xif1VccaDEOvcRpJD0kQ70MrwS5WxE/lNIZpvU0zidpFv1HkYKN1Ht2QQ1BXsHpN8jvRYkXeG
- ltOvwuvFJwSoVnEfHSi+0DOezuPL8sdsE8Si8cITDDKtEerLmkf3jLZwtpyOUoIkUAxXqhHna
- e/vEmga7zIgvLA8mPovhE8cisO9AjftQQqd6wMpyUXzly1YGL6HFC70/0PzfForrc2eTHLQs/
- pZ3BgI3ErUcvgNPA8b39oDotjVueJrKJ24oXXeaF1tL1bHON8qcwn6nzeWF2AhWJHbZsNA0tN
- IJ0io7dnPgY6IUXyvi1IK9j9tOr93I3Nf7Y3k3tE6HlxgVzru4eLfN2v/IAxeq4J73GDaPk/Z
- /vdis1+jHThJqG7KHGxhVbfi7VLi7CtF7TEfV58QBv1A0SwtTMLQRnTF9nWBIAr7r3LQpGzzi
- VncrKgSboGgTxclY0II495A1EqnLXfVUNSIaF8smQT3PSUTjwICW1HQCiEVGty3T/TSYKKS+Q
- fiwciG/9pRZ6sqt8AjlQRgPACDxPrSFdeUa7P8kodFKpgViFMt+/36p5UbCOCGHsmWAm6+/3R
- YYT0rLjmn84wtVM2zd63pU9uz47usxH1oL4EahIjlSR78cmWYTQv3za6aF5g431tkuZ3ZwMjj
- hMszTI9Ac5OqYBg75GL0/o0BZJ6Dyn5Sljd6meFmAlyu26JyGE5q4wnikqWBcslQkzVmOlVCF
- JCkvqKY70lPfx1jTiMfcQzArAfH8H0hYciErBuIfrHYysHq7YtC/8hbh3izq825e5F129nTjZ
- aARgYT4YsOaRD1Tv/1fKbBkRlYWH/SRp4W/iImVeweQt9RDXOViOr4hmTSxWLwHUwQpqDnLgB
- fVCOaKqJ2kf44zsVnw9HyrMI/b9OiO/6dM1zsgzPLQPD6bbDVT8aA8JqCAJ1/su0BVi6LbNoh
- EEB3MJxKFE4tCpReRP/Rkt98lKcm40wGPqVQvhh/okk+N2b539tOYJlWCclCnFu1PDySPP3SX
- 8E/UBbd8lZVpagQFS1qxTSlwOV08f+bAWJssmSFYkiRwxtSU0CG47/tFN4g7VQ9a/mTL2rhuC
- ku+q2RGb8W8iz/X4E9a20GBMlDpiaWv9Inn8ifEeHwMKSj8ccrxgMJV/IPw2mysk+UgX6uINb
- tv4nABXeAttVLc7g/1+zINct9ttY3ATkxSArENCA/BYXmZzkAdUuqa/XmY1kzp29sZtKqs9Kp
- 6hN/Nv8nkf3zLnYikSZg4itOa5/zmx0nKJaDeFiWa+CgmMXlTls1JUPTKCKPNZpspXwq41oAo
- JDBHdE7KvLWcFktnfl83FCDY+qZfYzEKMcN9iuNz/vhxaFTX0Jslr/9Eb0wZHnfRM5pmINS7q
- XUetEGGvVpzTXjNIw5cJWepQe+V/rJxPTuicQmYVamidlPDPBQz/UG0hjtMPWf6COx9eJBtKy
- z1f6RnZmwa4/o7WGqAdWPyfcaRuNveG6jAPkZs1/Y0gBGpr0GWnGVO5VpNLLwGqmdR4xucUya
- ejdY5OzUjJHqFO9/Qekl6FOQn8JUd06cdl4PKX7E88UXcsTTLEm3+VNUraOl7clajIUX7Zx7L
- Er+ki6P4E6rVpSyWWGsqEoK3AohxnlUbk5wANZglzYG8+Jzh5InduoBpoNBbt5RWQnMj8FzXx
- GfLSKO2PvxwwbE6JqkP9Ty72cPoXCQ1h+N4n2HW6Wg+2h2Y4HFwlAizSCdxNJPocaD3AfYYS6
- MxMIt2ptp1JtFdTx5KeCohvGAW8HvMzxT+RUmxnBSYbxcWMh2bgql4pvzVVcmkjTNZ60pZBiu
- EiwD/l88AMk91j7xYJEN2gbiJUfMtDlUw4dLqi1ssfKwVqwUlqRmq0S89Uz0RUn5ZvOi6LR3p
- dKEjL1nJsdu0X03fWGljezE1ymOEVWBELHyVfhRCYLCcbVNDubNxUFMj8b44EX/eTsDwGdhfG
- LcduksR4xXplGgHyb7GKus5e0c2ux3vKmfn8JJF6rBnoeMUNbOg/HPTrzjisivZlLUFSZvUpR
- kYTkhzpf18cV8B0z9Lox4sUnwSIm1sX8LoNwZKaUEaG0AOPPehbbhCnrHY4g+XxHgydUkbfPm
- tVYnlhh75qir3XA7THRLeOUhfyP+83f+HmYzpzOr+7E06mDBtm3rPgTQfvKhr8rzP9fT7wpYj
- tGG+WsMVOEkG8fKYJqeXOYRkwLTKI4+fGDqO56C2Mb7werec7+S399PvjMy+lSb3h8oiAfmFQ
- Wmo9OvxUojOMP1l8/ihvoy/hAvuueG7w+ZcYS9bjNtWD7GVijlsFRQ0Ah03omrwugMInhprk1
- TfMaccBD4wv2G1NL7rg3uZAFgT10FSmCo7HvqfTCFlYL9QDXU6wTUp/qoUfmIGdthyBlViJWL
- H0umLerqnWCrgGoSaTrcDg3Gjm0CCA7hqbW5pw9zl/dvsOAqLwSV0QfEAFVlQFGar1afJq/p8
- Wh81XSPsef9+naptoszUdH6kRIFiaiklz2soCTY9iw4cdElGZCoaqbcvOKjO1iUVq1mtHUGk3
- m+QOKE1u/ny65S6waql1iT53NJX+GQaLiN3BO6tCKBEcQ9sNuAFYXAoKNgTUtHbmoNLETaFf3
- Yg/UKjqF1xN3W+opCKK6zdA+6wQJ8gkgd5dK085vkoI8pCFQw73ZTepr8B1WSBgQ6VBj0+/os
- y00aL462XrsxrJhWLDINgO9gosTikVJnzWzHKPmTcZ3mYMNCmGKligQr3VvELb6MQ87G3s0nv
- 5kUvgXfsU5PyQIvBY9hmrV4yXdvyAdwI3/4fg0knM3g4fM2xlslMLGXJxTvlPkXyE393t5Czq
- RJbtw3SX+3sWJxzlndOg/X1YsZ7WC2KEr7/5IrISBlrXTfzKY4irpImet0PhKHN4A8zVUnp7F
- CY21XMz+nI7SJh8wkRiICrby1iON/u3eGnWJIBdrK55b1EER7Qcz6Vk9ujjXX5nXQqSG16MlZ
- w1Us4skPQApZZvr9mWYe8eLe5tLIQX6J/SMciJe6369xAGBGLBK2+SKLEycKyvvAVvyMwAdMz
- 8dakHZzJrGZVxT1qpjVwx91zLPMT2vSM5F77djvzA5OOm6JyDVyXC1jCg7Wz1W+ys3MpZ1Pr6
- s73q/IEl5mrgZOBOogY2KbK9wzPIptZ31TKlNeMLAOjGBiRWogoLZ4OsGaGoe/Bwi70nyvTys
- w8cqWm63LILaCCeh0OkAgH3Lfyz9+4glZ/0SYYLCW2zHHNEodPGhORqUIaFYCOxeXS7srFl2t
- 4gc7K3XVUG5TeujhgxGqe91rnJZdsy7Lg4dzdb0IDUw7SLRMwaOcN/YuSkokVjbP8JxATccNe
- 0eRrsmBInTDYYO3wDhpnoAf8tjCwt+3XmXluaRn4Uh8JotgwqVuyiyLVP2Vv/vztyMuL3Yidg
- yCOJ5ipas7iXfGhBmD+aEYmdFQ3wXAF4LRrf/NUNQf5oMYMMwj3psICoUJuFY104pkupfnAmX
- EKtbbbnVd0ZpH7lJPE7zsi3BGvcNzOqWuB0umVWSgcNUFQp69qnghVQTekHySaC3b+fT5TzTT
- eo3J4aRVEp78jAVN9wtcM5tBj+1GbVi5tY1EIsicNP6DZDKu+X9gkIhPb8oZTZuAObR4GedYf
- rnrYU60Rino3TpvlFPBlWKPPjhNcVsPPwevgN0mJNPOSKEa8vk/cqFBo5aMtWd+MCUIiOh20E
- JYKAWzh5qxYD//X1IGISlRCMkUb6ErNIB5iuCschtEY7sMPB7W86Sg5+0htrCHgq+OGqQgqA7
- xe9j8ZqVkofiudtaH/SjLfHbBivxuSZGk+t6MD1QPai60Mzt4p5Hyh/CA1XUiQJtG69+JNDxq
- e57fCCKTqH7vaYrd/1G+/vohHPV4NcL54UNDBt/QfStOu6+QcgGnbFFXyvul5FUIgR1mbQ68e
- 5csbaYvQ28mw76dGCXB1nXAke8E5+ehLtxKPz6VyHfZMKd4yUQr9PilOgceZVyAV24CdBs9ex
- 6kUoa2a/IZ2kd21jIJQVOaDVi+hP2WmxqVwXJITPV6lYn3/c9R9+A/u4ZOPaLFwLeHMkYjJWJ
- n7d/VYueIjV4hSdhPjA9wv8rg7b6ADkr6nQn0f02naXp/5lG6JasvvxWXGIiwidvklmt4xbmg
- joxCEAb2nmvS1zLb9zEbOkfjGFP3kmeUrb+86YM0QPuKRtVWmerMaKbcpZHN/6SjljJRb4PzJ
- hJ9JhYYbA5qJvWvsUUSwg4VPXMys3GIn1m35AxN8Ts6A+3K6uEWzi3VPqKmoesUgBUtR/Npv5
- p6AxjFlkUI5YSJcD90WqM4yHLYPLyKxh4B+ZgPQ+o8Z7AB3mlu6ZRG4XWLbrblrEOnyHOMqqT
- YXdZ0tIg1A4w5HLDZOyqC6iEpTi3H33TgZyFv9h5cY5kP5/t9Gv7m9lyUBYCEtklOqLbtI3UU
- hyHBbLXrvPDhV36hNKJmltyRQ7j9im2vsQl2AzcI9SkH4w7qUQad0Tupz4pP0bdAPbslIeTAu
- SV0Woev3aqZr72nAWyYkPd0M0YfH65S193buzkwJ1i6O4PPHBZz+j0HvpOkU6KTQoojp0S6kD
- gMaH4Say6OGGmvSEpdokImi9NqIDztJv1bkaeCJvCOikjrxXdC19c8ByyvCCsiK4OUgOvmlt8
- Wb2cu56n+VkQOUrsrcEwPRENrX8TQ4wrSHPUTbte6nfgsS+RT6LWRx5VOknYv1VCBeYu+NYbT
- 3TR89gxfbFnamlHgyUca7ioWBNFeMKQp5IW9HNrdUCXrzL430asz1bzqXab5v6NvKvSvx20vh
- z8y3qlJJKdfwuJ4NuvsmbqXMrcCLizTHRwSvu2kdf5DFf8sFMQX1VNZfUO10DFV/fkPt1Qatk
- Or26Vo17McQa+y5jnH9Thjn4BWgw95kwow1NnpiuyucQWMP2LDOJ8ffANS0PC6is3TZfzI3Sh
- H5nm0wf69Xo908YOnHuYqrlXSueETi6aEq2uBGxXEeHzs632yMWBUvTWgB/hkqNogQe2bzAVO
- gkFoqoZ5n/2hZixE9ZWQ=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|CH3PR12MB7641:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4deda4a9-2a90-49a2-09cb-08deffc320c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|4143699003|56012099006|11063799006|10067099003|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	VMw7R7KvLFk3iyWIH7cMgp91Y3HzzHILRAUjKOVVupvbhjT8p/nlTeHWwjSLGg0/paVd2Wjuohc3O70Qnyj52C2xfS7xTr0nfT8a3fK1xyfBKB0czwAy19+IGpKXwcW8XdGwwRwmN6x0eEK1Jgj3MkQSUkrhCvETvnKCzze+hF9xqW+ln4/nn30jfVoMzU/GTAgpzLN6WKma6kkjWCD2vEvhCchmhy0/tBFzqjSkBvgeRSNMAn3CC62yzy5kjO00d09dn3LU72swT+FLpIhDdFN055ZdywNdACgsAZmg2CWM+8nCSHmi7+TVhs3BgOW+hex23cNdlrKI+OqbeA9I/x+2Qt9PgMhw2h1+xooQu2mQkhNVy2z7L+Ovo4syhmunxiCXqRgFV7zofGuT5uuKNCOmUFxCAK6RE1xQMqZoY8uYP93j+rkPln/cjqcqhlRtXJekLP5KMn4M0mxbMtQuIXWVxyNytCR8ZvMf17RwvHNVc/S07VAExwJGHRMSqqniuvziMQ87ifN589F6SmKYRZzjvIWFu3onvsgYPbiwHrGJhxrUyAcorcmkZBYCc48AuIzBD9OvhJaToaZOYTkljNDCAtQnx2/dmCUzCSczruuNiVZu9Yy4NqiZAVxwubrt
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(4143699003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NTdxNm5vY2pZcWhqczJMcktXMHBsbkxjd0I5bDlyQUpoUmpFdDFIenEwZ1k0?=
+ =?utf-8?B?am96d2d6VldVc1BlcGZIemRtaS9VMkFtdTFDZjRNL3VoNHV3TlgvbE9BckM4?=
+ =?utf-8?B?ZkZYTFFrejBTeVJVUGR2a3BkWlJvWTYvNkhBVmRwOXh0citQMWVUVnpIdERu?=
+ =?utf-8?B?QTcrSE84SnAraFJxM2gzenk2WGRuUGhCbFZ2Y0hFSCtKQzBoem9SWlc2M2M0?=
+ =?utf-8?B?TXBNK3BwTlFNUGI4cUVINWY0SXVObjBtZ1d6RDJiN2Fncmd0Qys0L2pyQUhC?=
+ =?utf-8?B?V2FDV2R4UGFieU5UdmVEUlkxN1V6S005TUgyRmZkYUxidGl1d0IxN2o5NVJl?=
+ =?utf-8?B?bXQwWFNhcDRtVVhQbmQzanowZ0ZmYXBnOWZ5WEIzMUozS002QXUyVW9PQkZy?=
+ =?utf-8?B?a2U3RzByVURHTDZ2cEtXdVpCNXllUU0wOHgyUXR1SFdZazJzTlB6TzhaY0tL?=
+ =?utf-8?B?SkhBUkgrVStnSFU2blRqZnFSK2pwMG0ySExObmxKRXhHd3lkUGNnS21QeHJB?=
+ =?utf-8?B?cHZsV3d6WmxlUWZLekxpK2x3SjRPU0xlRFRlNE45UVB2SkxveFJDRWhpdFVl?=
+ =?utf-8?B?SDc4MHVlNkk0QWU2OWkrZlRieWtWQzZURHpIMm1XWHhlZHNkYWVQUENwUDNl?=
+ =?utf-8?B?a0hsRlpCUTQ3eG9kaEI1RllZMTJ5ZkdDRXNQU0hJTXhLTVRMWGpkSm5RdXFG?=
+ =?utf-8?B?clhBbHBQSGpGbGJFYy8rbjJhUWdPSkFwRmR5N0JqT1FDRzEwUXByYkZsNys2?=
+ =?utf-8?B?TVgrN0hCaWRkTjV2aG9odTVTR1ZIMndBS2h3ZEMwMWdlbm1meVl1RXRJSVJm?=
+ =?utf-8?B?QUdUTU5vbm9BMlBLdUpjME1aV01wZlNHY3lGQ0c2WGJadnFmNzk4ODc0eXRl?=
+ =?utf-8?B?QXNPSDBLa0RKL09jQXRreEQvYjVUUFd6aXlucGdsRW5ON3FLK3R3bWMya1Bp?=
+ =?utf-8?B?RDVTbnVMOW83cUFyZVVsYmdhemQrWmJQLzdSdS8rNlZkakZwaE1tTklZZ3o4?=
+ =?utf-8?B?a3ZYbU1TanBTdFZsV0dWQTYrQ2l4OG5mVDBaa2NiZTdkN3RLSks2Q1RSQUxP?=
+ =?utf-8?B?Z0RkQzg4aEQvU2t5b3BJUXhNQitpOG4rZG0xR3dOOXNjLzJ5M2cyem9mT21y?=
+ =?utf-8?B?SmhFR0c2TTYwb1J0M2NCYW9YNyt0aUNwZHY2RHBUc3F3ekg1c0VjWGFKb0lu?=
+ =?utf-8?B?OEFUaUJkNVBrdTF5K3dIT2JNNHhHb3FGNldUK1p0RERibHVwVmFnSkIzZzl4?=
+ =?utf-8?B?NllYSXRWR05sTnRIN1dRSEhtS01uVnlDY2pSKzVOY1EzZGlhbGJYUXloNEJm?=
+ =?utf-8?B?TFBBbUJSUU9JM1U2ai9WTTc4ei9KQ0JmSEdtU1dQRlVrVWZ1N0dnbHVUMDls?=
+ =?utf-8?B?eThiQW1hTjB0T2M0OUlpMmp4U05TWnU1QVUrYjl4dEo1Rllwb2JVY21FKzV3?=
+ =?utf-8?B?b3BkTW9vRm9mVTd1NUljaC9DWGxNT2UyMjducDRwZUV0MTc4UmlVTm56NUFZ?=
+ =?utf-8?B?Mjg2cnJWUW52S1I3SXQ3SEo1STFLZnlsL2dKRlRHYkhueGNTV250UUlnT1FM?=
+ =?utf-8?B?VmRpdVhlNzBjRjNUVTQ1WTNlQ3Y4RDBMTUVvd0prYWhPbHIyZGxtQTAyM3Iv?=
+ =?utf-8?B?Z0JUNFdjTzhmMzRQNUV2dmlaRWJOZlFIZHpZYWpBRzRhRmw3V2xKSXpyTWVB?=
+ =?utf-8?B?ZGdYNTVJWm1GVWhkNFZ5eStDZnkxeE1NYjRnMnZpR1RDbGNzTkluY203T1lz?=
+ =?utf-8?B?c2s0eC9IdEI2bkgvNkpGdFZhRUs5VVNSRk5nZ1JweEF6cFQrNUZNUmxzb0JE?=
+ =?utf-8?B?dmZ3VVkyS24xUk5MZEpDekpEYy9iWFU2U0dVMzk2cE14SlRnSENUd0VPYUZ0?=
+ =?utf-8?B?UHdieG1Zd20rWXZRNmFzNFFwZEtMOUhtQndPd0J3cFBDT1B2Q0lZTjlUYUpq?=
+ =?utf-8?B?VkRtRkorRGN6V1BSTzZHUTVmMTNqci8vR2RYNjZ1T250eVNFdFZpREM2aGJo?=
+ =?utf-8?B?amVoVW4ySFNvUGdVUEp2MU1va1EzMzQwUzZJcHNSQXVJUHJod2ZZT2ZZRlpN?=
+ =?utf-8?B?ZWpIaTc5MzVxTHdUTGxINW5IRTZXMHRNbjQwd3ZhVnB0TjZYcUp5OWh2N0lQ?=
+ =?utf-8?B?bjVhdzBKcVlmWFJsSmRwTm9jTG0xeTZWeHRCS3U5Vkl2Z0RxRGh5WlZ4Z1Ju?=
+ =?utf-8?B?NDZFVXRsUmFMTXhxbzgzS0RUM2h4VUJTaU5FeGhJVW5Qdjc1KzJpdUxQVkNO?=
+ =?utf-8?B?Ym1VOUlHZDgwYnZHZ2lMWWNzVFIzUE42SlRXWWJyMlJFLzVHZDBEL1JMU2ww?=
+ =?utf-8?B?ZnRBM2Z4VnBrNTlVL0FKc2Jrb1Vwck1DYTNESk5vOTBZaGNEbytxQT09?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4deda4a9-2a90-49a2-09cb-08deffc320c8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 20:31:06.8282
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KyvCMQfn8MGTB4N61eZAaH2b+72odUf//QthtFOxgB4tlp9AomUagWPF73RBV+ZvA5HIgZgUKLiMV5fxUdS24w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7641
 
-Am Freitag, dem 21.08.2026 um 14:47 -0400 schrieb Joshua Peisach:
-> On Fri Aug 14, 2026 at 11:17 AM EDT, Bert Karwatzki wrote:
-> > Previously drm_plane_create_blend_mode_property() was only called for
-> > planes of type DRM_PLANE_TYPE_OVERLAY. Since commit commit 860e748bddc=
-c
-> > ("drm: ensure blend mode supported if pixel format with alpha exposed"=
-)
-> > this results in warnings from validate_blend_mode_for_alpha_formats().
-> > We fix this here by calling drm_plane_create_blend_mode_property() for
-> > all plane types if the plane is supporting a format with
-> > per_pixel_alpha.
-> >=20
-> > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> > ---
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c  | 5 ++++-
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 3 +--
-> >  2 files changed, 5 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c b/=
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> > index 62eac6e65334..a6a54351ea56 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> > @@ -755,13 +755,16 @@ int amdgpu_dm_crtc_init(struct amdgpu_display_ma=
-nager *dm,
-> >  	struct drm_plane *cursor_plane;
-> >  	bool has_degamma;
-> >  	int res =3D -ENOMEM;
-> > +	struct dc_plane_cap dummy_cap =3D {
-> > +		.per_pixel_alpha =3D 1,
-> > +	};
-> > =20
-> >  	cursor_plane =3D kzalloc_obj(*cursor_plane);
-> >  	if (!cursor_plane)
-> >  		goto fail;
-> > =20
-> >  	cursor_plane->type =3D DRM_PLANE_TYPE_CURSOR;
-> > -	res =3D amdgpu_dm_plane_init(dm, cursor_plane, 0, NULL);
-> > +	res =3D amdgpu_dm_plane_init(dm, cursor_plane, 0, &dummy_cap);
-> > =20
-> >  	acrtc =3D kzalloc_obj(struct amdgpu_crtc);
-> >  	if (!acrtc)
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b=
-/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> > index 824ef3ce5de0..4c0c6a8a0dac 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> > @@ -2208,8 +2208,7 @@ int amdgpu_dm_plane_init(struct amdgpu_display_m=
-anager *dm,
-> >  	if (res)
-> >  		return res;
-> > =20
-> > -	if (plane->type =3D=3D DRM_PLANE_TYPE_OVERLAY &&
-> > -	    plane_cap && plane_cap->per_pixel_alpha) {
-> > +	if (plane_cap && plane_cap->per_pixel_alpha) {
-> >  		unsigned int blend_caps =3D BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-> >  					  BIT(DRM_MODE_BLEND_PREMULTI) |
-> >  					  BIT(DRM_MODE_BLEND_COVERAGE);
->=20
-> Not sure where the full patch set is, but this does make the warning
-> go away.
->=20
-> Tested-by: Joshua Peisach <jpeisach@ubuntu.com>
+This looks like a fix for the same problem Melissa tried to address in
 
-This is actually the only patch, the 1/8 is an artifact from using=20
-git format-patch which I forgot to remove.
+https://lore.kernel.org/amd-gfx/DS0PR12MB65342AEDED0D035DFA92E4189CA32@DS0PR12MB6534.namprd12.prod.outlook.com/T/#mf6847a9e8d013adae40afa3c2ca0c64ebd3fcb50
 
-Bert Karwatzki
+Please advise if it is for a different issue.
+
+Thanks.
+
+On 8/21/26 13:42, Bert Karwatzki wrote:
+> Am Freitag, dem 21.08.2026 um 14:47 -0400 schrieb Joshua Peisach:
+>> On Fri Aug 14, 2026 at 11:17 AM EDT, Bert Karwatzki wrote:
+>>> Previously drm_plane_create_blend_mode_property() was only called for
+>>> planes of type DRM_PLANE_TYPE_OVERLAY. Since commit commit 860e748bddcc
+>>> ("drm: ensure blend mode supported if pixel format with alpha exposed")
+>>> this results in warnings from validate_blend_mode_for_alpha_formats().
+>>> We fix this here by calling drm_plane_create_blend_mode_property() for
+>>> all plane types if the plane is supporting a format with
+>>> per_pixel_alpha.
+>>>
+>>> Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+>>> ---
+>>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c  | 5 ++++-
+>>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 3 +--
+>>>   2 files changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
+>>> index 62eac6e65334..a6a54351ea56 100644
+>>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
+>>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
+>>> @@ -755,13 +755,16 @@ int amdgpu_dm_crtc_init(struct amdgpu_display_manager *dm,
+>>>   	struct drm_plane *cursor_plane;
+>>>   	bool has_degamma;
+>>>   	int res = -ENOMEM;
+>>> +	struct dc_plane_cap dummy_cap = {
+>>> +		.per_pixel_alpha = 1,
+>>> +	};
+>>>   
+>>>   	cursor_plane = kzalloc_obj(*cursor_plane);
+>>>   	if (!cursor_plane)
+>>>   		goto fail;
+>>>   
+>>>   	cursor_plane->type = DRM_PLANE_TYPE_CURSOR;
+>>> -	res = amdgpu_dm_plane_init(dm, cursor_plane, 0, NULL);
+>>> +	res = amdgpu_dm_plane_init(dm, cursor_plane, 0, &dummy_cap);
+>>>   
+>>>   	acrtc = kzalloc_obj(struct amdgpu_crtc);
+>>>   	if (!acrtc)
+>>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+>>> index 824ef3ce5de0..4c0c6a8a0dac 100644
+>>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+>>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+>>> @@ -2208,8 +2208,7 @@ int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
+>>>   	if (res)
+>>>   		return res;
+>>>   
+>>> -	if (plane->type == DRM_PLANE_TYPE_OVERLAY &&
+>>> -	    plane_cap && plane_cap->per_pixel_alpha) {
+>>> +	if (plane_cap && plane_cap->per_pixel_alpha) {
+>>>   		unsigned int blend_caps = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+>>>   					  BIT(DRM_MODE_BLEND_PREMULTI) |
+>>>   					  BIT(DRM_MODE_BLEND_COVERAGE);
+>>
+>> Not sure where the full patch set is, but this does make the warning
+>> go away.
+>>
+>> Tested-by: Joshua Peisach <jpeisach@ubuntu.com>
+> 
+> This is actually the only patch, the 1/8 is an artifact from using
+> git format-patch which I forgot to remove.
+> 
+> Bert Karwatzki
+
