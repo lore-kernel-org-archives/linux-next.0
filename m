@@ -1,140 +1,81 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0202357CE0
-	for <linux-next@vger.kernel.org>; Fri, 21 Aug 2026 02:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E409C4766B9;
+	Fri, 21 Aug 2026 11:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787279414; cv=none; b=i63LFP/7kdvDZH98dE0lfCVl4IWfS8dMJgdbVtu5Wh5xbAczFVqn4N6Hv/OP5k21O9q0BZ5iOMTJy/7be31bP7EY+riErL8NJkwkXjejs1MTCY8Ghf0oR7cFefNXblhmpB04DOX8M0yUVJ6S6k5TeSgWK6/byesiCdCgIe9Uhfg=
+	t=1787313412; cv=none; b=ClcT2MOr2UwNzuasUCLuojrpvM4goatHF2Ougoo+j0tQhK+bLWBwld70yOKeWnFwRnav1RxTE6UESZz4CDcY5lCK3AsqEyryMlPsMyrY+sUOYGoqjEYYBmCfIXk/pNt4rNVWrupRRgekLXFlAiigb7A7+nd9rDVwDlRk3csEuuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787279414; c=relaxed/simple;
-	bh=LohUXukngQznpafHjRsMPCWvk0FZLz82+6WnMb+3qcE=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=o2oWXwqk3TAtHYHA6w8ozLK3byKVKOWCPQB3tyUiJi91UaO0A4zdiK9A0vkR/0YuXCTz4K/jUDr7uMaTBn8krSfZ/6143QDqD3h8DjNil12VFqFjiqpSE7aQd5J4emOi8jdyoAVzZang+gwPi3wThLApH209t3Cl/9X5tvWYJVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=J7MKXlSL; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1787313412; c=relaxed/simple;
+	bh=mC5ClPhVjLtJYs5hma+TJd0uMfQ2/SzOCyZ/H/UKHWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KwiSSizLJgw+UG60b0OPJTyhmvkW3QFoS6TKuFF4Z4rt1FEtzWUXJFCZRen+KaWD8TVlKrqgcvgxgMjGbiGIfoIUQr7pTVYK/aAjkQmpenBWa+dMrs1uKW+q6GguicyjARfNoK5GgrVH6J3nxsToEGo1BM1SRU+cS/AUQn3SKxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4u4XS+S; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="J7MKXlSL"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-38e42560ebcso352967a91.1
-        for <linux-next@vger.kernel.org>; Thu, 20 Aug 2026 19:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1787279411; x=1787884211; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=cmIfrmS9gVjFdlJI4xMnRrpZAapJMEbLFVTtV9O/nZQ=;
-        b=J7MKXlSLREDgACk7u9h9m4iladZIN6I81tmeW8wbrJSpwkFB/wIQlDIrSnOVpfEp2K
-         TRC8EB+hauGH48JOtbg0TCSt8YQFtl83DS8LPBk6OU7hEcx6UrIfEYNLPHCPkSOUnkwj
-         FGSNuGQ9P+Rh2oVkljAFQX/pGq41bPseQJCctbf/w/33mfYly2l0Oo2uZOyB8lhMLcEi
-         9uJUUsgx41UE3NactrQXzQFWwOUFE+NxaUwlCoFiiEP8dyiEgbG9cVhrHC5rWYUztS2G
-         Xgew4stht/GsqnDq2SQiKei+H0AKLE5V58gyRUOgkECh9pvFRYQjuGNaRX5Z9Kc18Aop
-         gMMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787279411; x=1787884211;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cmIfrmS9gVjFdlJI4xMnRrpZAapJMEbLFVTtV9O/nZQ=;
-        b=kf98bpBuVMiRBFutGOteX7HrU140FHwYuPUyZwSeqxlFVYmVaj2aE4Hjvf2afM5R5Z
-         EEQl27bHMyAWrfnng9zcgudBNFnnhof3pNdAuttG277iXTkY8iJcVmVNZm+lCQHd8e/r
-         4TrzCHtHjv+c91FwBcTexGvHMdvoBjE5aMey+pvZCPMakvzQRdzOk1BrN2FpRSLfCcRv
-         u6gTmFrBI5J1Jz04df1mPBSOwOyXMbNJHftytDX7B6rCnQuq5emYlfpv1Gg9qY8VziI8
-         CnahAl1hTe6zCL4Dx/hc+jWOw8JRYeEc3MiQLESdLisJtc2Np+lBsRdebWJtMWwpHmu/
-         QHmA==
-X-Gm-Message-State: AFuF++nVyUxBzM6FJpyMmj4WF8Qp8AClZrmbsDThU42sSjhVRIhvhpR8
-	tuv6qmyoLIn/Y5X6k/1cGSvTu6oby25VWixkEVCJOg1ZHQNqxwEn12lcYZr0nslo26NcMnqmUPd
-	SqnAg
-X-Gm-Gg: AR+sD13szXDqEUPBf1/0AbJDtcg7HQwQY7ys0tQ5d6w4YRJ7ghbREUyWY9KzEZ9UXBd
-	9PTdMoqW5zVrh67i2z5NNlqkJKTLbIceCQCxjcC9K3G46cIx1/Yx5KRTf1nm1VruM5CLN1inUvZ
-	224KfHSnAplZaSvYEq4kKNplkRKNJ1wYlfKklEeLaKUj4jwlmgsCfYHTHgSe2mV2EViEjTwFUrO
-	+k4fZ2GEW1H4Jfx2CJ68MGoLnjQ5ySKxLsBldNrS5RN/9gGn6YGuXVLa4JWPF9iOHsGE7UNLs6i
-	iUDkUfks4R1ufVoML6TvqdaNbrw6JBmyg59qOX/WSKciwA3gQcE/PQE7j0eYGPbZJLA8VT19UOe
-	aueTnC/AvqD7bgvWp/49/imR66RaCxEHb6rnBFRtBTJvPgRQQj6tWtuhe24HdtvPVDTbl5x7cuc
-	9+qK30/GFCHZfdswS5aT8yiJF+E3sjFjA3oPf35cN3pWC4hGBJLNmzT6xBEA==
-X-Received: by 2002:a17:90b:4c11:b0:38e:7168:281 with SMTP id 98e67ed59e1d1-395c3878304mr4453963a91.10.1787279411102;
-        Thu, 20 Aug 2026 19:30:11 -0700 (PDT)
-Received: from b455de3d9de8 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327bf14376asm21827116eec.24.2026.08.20.19.30.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Aug 2026 19:30:10 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4u4XS+S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1ED31F000E9;
+	Fri, 21 Aug 2026 11:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787313410;
+	bh=f4MmHGhvqb/HqGEG0HopWR4CC8m6IQaQX+RjcSWnFzw=;
+	h=Date:From:To:Cc:Subject;
+	b=A4u4XS+SQlpBCfvKJgMIMoY5cR3a+ZXdOcQVl58wlnz/A9GqYEEfXNnDHuLyOZ2IN
+	 FM/3O36cNpcpmnzwzKdFxMxDwl4QtEo7WUZwGlBjJrsCSQmfwcuu0q3hR8HON0FToZ
+	 dsvYUQ6L+1uAmaGtVF0YcF/hMdeig+gmp5rWFwW4QNs/MVkxX9mnGYM1lBqrxLo+Dz
+	 YWczqqhjIiX3bgC6j/ienvjc/5WtxQfyDMI3R9TZP/7iXI1CUcVRahi7qNyrAu2eKz
+	 CVt91bCbToveTtGoB4AgaMWtw/u1Y6p5Twa4NOJiz4dRpYTp9IOqQgmJM7dXKl1Kt2
+	 DN33DwIRtTZfA==
+Date: Fri, 21 Aug 2026 12:56:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Fixes tags need work in the mm-nonmm-unstable tree
+Message-ID: <aog8_8UJwW2xSpQT@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 7079a12d7506b07fb53b54a664bfad5fa9b16d70
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Fri, 21 Aug 2026 02:30:09 -0000
-Message-ID: <178727940926.1021.1272583136106176420@b455de3d9de8>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fFGedz9Yxqr4rkOQ"
+Content-Disposition: inline
 
 
+--fFGedz9Yxqr4rkOQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+In commit
 
-Status summary for next/master
+  aa060b1946136 ("USB: gadgetfs: do not WARN about excessively large memory allocations")
 
-Dashboard:
-https://d.kernelci.org/c/next/master/7079a12d7506b07fb53b54a664bfad5fa9b16d70/
+Fixes tag
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 7079a12d7506b07fb53b54a664bfad5fa9b16d70
-origin: maestro
-test start time: 2026-08-20 14:23:57.721000+00:00
+  Fixes: b3c466ce5129 ("page allocator: do not sanity check order in the fast=
 
-Builds:	   72 ✅    2 ❌    0 ⚠️
-Boots: 	  144 ✅    7 ❌    0 ⚠️
-Tests: 	23062 ✅ 4533 ❌  777 ⚠️
+has these problem(s):
 
-### POSSIBLE REGRESSIONS
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
 
-  No possible regressions observed.
+--fFGedz9Yxqr4rkOQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-### FIXED REGRESSIONS
-    
-Hardware: imx8mp-verdin-nonwifi-dahlia
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_memslot_perf_test
-      last run: https://d.kernelci.org/test/maestro:6a87993a62f33761c0f83ba0
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: sun50i-a64-pine64-plus
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.kvm.kvm_memslot_perf_test
-      last run: https://d.kernelci.org/test/maestro:6a87b5bd62f33761c0f9c4ca
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqIPP4ACgkQJNaLcl1U
+h9CZwgf/RNdMybslcQW800uNAnNPbUC8sA8iXlOmvHGDtOw2qX3PwF0EjHJrR2XS
+N/FQSxCxSucGO44m19m+jRm95Ez4HQmwgM2DXfhCLox8GC7C+CnslVq+NPrqlxf6
+Q1t8+/+bPn9yAfZpgEL+Kljgy5Q1+WE0K+17PU2QFP1hVWa3icOA6cozMRqIsTjh
+WHLdjW0awcUWj0LCBwtWFazJkNbQs+lCBiW429gVBj7xP6bMBg+MpTpvH8WWi4aX
+UDZ5R0/TX+UGXQkhqAkZjPTyge0Tf5HnpaT42PcvWX5J7IHTZGtI66xDxjNCIR6l
+O1po5Tz9c1lIVr0OONH+3+/dYN12bw==
+=2SVN
+-----END PGP SIGNATURE-----
 
-
-### UNSTABLE TESTS
-    
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_spi_11010000_can_0
-      last run: https://d.kernelci.org/test/maestro:6a876cdb62f33761c0f52b4d
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--fFGedz9Yxqr4rkOQ--
