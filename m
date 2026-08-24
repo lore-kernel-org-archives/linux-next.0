@@ -1,259 +1,175 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA893374A1B;
-	Mon, 24 Aug 2026 09:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA153B42CE
+	for <linux-next@vger.kernel.org>; Mon, 24 Aug 2026 10:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787564047; cv=none; b=QIVphsANRtdU0qQivnleZqML26m8bq/BUK9o6xVN3G+fVtpqjtrHoVNgVi5rH97bGCtFAkSTe1+7PgZRM6x3q9U6QIk/pYkLinEhmsJ3r8ip4O9uZbOkiowcRmL0I+Yi2UQI/ZzQPY89v0iOFrtR/K11Sv0m8VwmNoOINpUxcSc=
+	t=1787566033; cv=none; b=iJsb5EizinkIuBhVFv/ZTDIDNu+kkyvyfZSG8vSY0+II5/m24KekP2KGiHBvxLsdMyppKeQY0kdDv5PngeLIGHoVenY9jCp6J9OTb1fedPgbQxq3S8QeHNjngcrFDp5iYBKCnpCXqIQS212b/2aTHFcb7voqeN2UarcVOZbRAJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787564047; c=relaxed/simple;
-	bh=TmScHWdvhhjrCIxVa1G8pE9eRJzcoMeGrIsyfP82JWw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RZiu+3IHlN2OtTlw03C7mAikBKa6xIE06121a0j8Ughu4iOykhjGa4M9AIF/2w6eoS8cQC88Y6RvQz7c2lbgSpJBG7mRYhBoZwdUoI5Y/1Yg7LyVfFvXFXaMGW1hR8BrnkFeI83I/9P9l6z9i7Du+EX4gPRMsh4ZKgLOLmQyt9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=s3FLsZAN; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1787566033; c=relaxed/simple;
+	bh=FeKhEJOLtsR0OSp5zSfjeZb70L45wBtbjze91lWid94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MY3P/QnEZJzmCgOZBCn3v4fCHwpRBomxjCr/LeS8xBH8OATKrRccJ+ac8sPD/J+F9de+W4v4bKp1q332q48feKMHr/s84nIThRtpIze4UwOQOVMbzuD2fkh/DsWzQXd5jgYvNHZmXbZV1v4DJbPWVOitqAzpVQ9HLNRDm8LK1gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JY26VEMF; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="s3FLsZAN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1787564034; x=1788168834; i=spasswolf@web.de;
-	bh=NnrtWTSI+yTC1O8xCprjsvmA8g5+c7EGm+vGNiBKslk=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=s3FLsZANkgNhrPEZM2RChJGa0pU4ZbPxXF8+ggMmdqjVSV5a1+XifHbyk2Fy3BRw
-	 Okqtl3wY1EId5xmyMyjF+dwnqqYD1V5ycbfKHFbXKjfLzULFrSuldrcscSatyLn8F
-	 C+r788d57MgxMEl3a4lnYqUQJF7nTevb67Jp2B1eHagC9mgNypgXtVuK98/6B8pja
-	 eEZ2AqXZAf32IcI7TgSQSrfHvqffonDlFtfN4qJNq5WXrBgDCjFLVuKft32FVDbjh
-	 CZuuXHUIrwf66LmswEWk9H0ubRrSM94KztPkk1Yd3SIbvody2rp8vvXzwaVZUYRb4
-	 KpBYtjgBfb7DFFvqJQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIyeU-1xESqW1qxu-00RHCx; Mon, 24
- Aug 2026 11:33:54 +0200
-Message-ID: <228da09239b8944dffbe175133434171b163ad7c.camel@web.de>
-Subject: Re: [PATCH 1/8] display: fix blend_mode for non-overlay planes
-From: Bert Karwatzki <spasswolf@web.de>
-To: Alex Hung <alex.hung@amd.com>, Joshua Peisach <jpeisach@ubuntu.com>, 
-	linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, 
- Leandro Ribeiro <leandro.ribeiro@collabora.com>, "Wentland, Harry"
- <Harry.Wentland@amd.com>, Leo Li	 <Sunpeng.Li@amd.com>,
- amd-gfx@lists.freedesktop.org, Jesse Zhang	 <jesse.zhang@amd.com>, Amber
- Lin <Amber.Lin@amd.com>, Mario Limonciello	 <mario.limonciello@amd.com>,
- amd-gfx <amd-gfx-bounces@lists.freedesktop.org>,  Melissa Wen
- <mwen@igalia.com>, "Wheeler, Daniel" <Daniel.Wheeler@amd.com>,
- spasswolf@web.de
-Date: Mon, 24 Aug 2026 11:33:53 +0200
-In-Reply-To: <edb965a1-3d35-4dd6-924f-52e88b91a8fd@amd.com>
-References: <514c5423b98376e2e6f1fe4bb56c0f3607b4cd52.camel@web.de>
-	 <20260814151701.65222-1-spasswolf@web.de>
-	 <DKUUGMJ1H5N5.2FRQG3ZKH6SNB@ubuntu.com>
-	 <7ac562a41bc25f459c2102a01f2d07f2437984b8.camel@web.de>
-	 <edb965a1-3d35-4dd6-924f-52e88b91a8fd@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.2-10+b1 
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JY26VEMF"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-481595afa73so266892f8f.0
+        for <linux-next@vger.kernel.org>; Mon, 24 Aug 2026 03:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1787566030; x=1788170830; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=iEFHmYMkDTSXJZFNXwL1AX76LI3IFY5Vpud0ERmcRDE=;
+        b=JY26VEMFJBrEjAjJoENwQOJQfmFBnTfun3w9FymvUBn1Foce5B9uzRaMkc4bya2BhE
+         H5zGB6y6b67p2l1PLaarZ+E+zlFcMukU9TS2Klnul4Lu3TYjoJPIS2QdhHk6qUNU6vsD
+         zQaw0cr6P3tY7iUcbTEFAlkkg6uK3e7B5G9n2BqlktTRXZZg4Yec61RqmKrOaY2I9IkO
+         2Chb9JV4sG3nuzH8ka9HV4bLYcvIV78ysxfxTCNkuiunlFY0F/C6AiTY1fEHdMwX+qP9
+         rhcawP/esVxnJJvbXBluyK3fWYeYfNigF2RZK4h2BNhMy6Ulv8tr228naspY41spxlLU
+         ubCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787566030; x=1788170830;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=iEFHmYMkDTSXJZFNXwL1AX76LI3IFY5Vpud0ERmcRDE=;
+        b=hBVmKXlBCqjabN6Q1oMFLCGADR1kAD3/X6prjgZsWbCernCJU9YnnPoudInfzLShEK
+         rI3EQW6XZwpezy9EmKa70N8gXa50wIWh6Dua2YV2LIIXp33CV5GqySAVSbAef9F7nOeO
+         QT1QoGSrE+IkwmF9TfG9svQDAxaqifMUUqCAf00iVhIr/tWbmnQMZ7S3Pu1I9oTIR5Qb
+         XYA02IyqOhE7HXOnWXimeFI/xfKiDaTxcPu4GkTREWUGWEz9VgiCPb3Wqv4UKyDJAwvo
+         +3PqX/Y0GjkuHBSO/n6zvAOMtyFyx9Ku6XjnpFSY3aM8BOnQiJHrmxqIF27k7+svgvQr
+         xGtQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrzk7W687HF5z/sDXYzkgpdQMfyM+SBctiSrM9s+LIwXoQu8LHYLSWcWVohc5lb7znwtG6vZqlUmcPS@vger.kernel.org
+X-Gm-Message-State: AFuF++lZr2f/ZMphTJ9oBniO2U7vo5Wv/vj+rikA2tirptx0cuRqW2Bz
+	YrZZIw5qncNQpRPlYP8m/7NbbmZ6Rtj6NyHG+zahAJead7rdz5zWCfVP849dVyruZiLjkG0ohsD
+	lzFpxdfs=
+X-Gm-Gg: AR+sD12rJ/gKQfP4B/+V4cMAyt5JpR8KDcec2jKu3pRSIdUMmkJVebDSQNiB4lEA/aE
+	1cjiuFSRzhBP5/nOiEvcrViKnx+uTrNo/kBHMXSaoprL0bBKte4H/UrM1VUDHU4KIiMigg7sCZm
+	tdK397PP1PAcAsAJfzMBR6IIG4YFHV4CjHyZ6Pdakyhbc/8smcF9RCsrOLI3iH+sq7z4f1V3LA9
+	EgMwXtZwB2SrZlB9osajJwZIQ1E0OnOrId6ksgXDN+EhrKt2fhu0a0JD8Tth/C++DL5JB6BxVx3
+	aZ9UArYP9ZmOQFE4jSQbW23d/cbm7OXxGKyhi4zUiYSZP82LBl23scJwTHm/HkSLIMEaPoJQs6G
+	ENK37XumZNjEzavN6OoleHC6o2IdXgUieZl8U653VrtoxHHKicFNDSrC6MLk0IO42JUP9SOVNdq
+	on8Bzf7iRakSnvmoi9/lgrYLd2eDQHdTWRg8m9eY0IWe1w9BjReOX5qA==
+X-Received: by 2002:a05:6000:1448:b0:47f:9283:1f9a with SMTP id ffacd0b85a97d-482c0b92fb6mr15111694f8f.2.1787566029963;
+        Mon, 24 Aug 2026 03:07:09 -0700 (PDT)
+Received: from ?IPV6:2001:1a48:8:903::e14? ([2001:1a48:8:903::e14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482c9b69a60sm7789214f8f.1.2026.08.24.03.07.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Aug 2026 03:07:09 -0700 (PDT)
+Message-ID: <b1adf43b-f37c-4c8b-8370-d5f8f179678a@suse.com>
+Date: Mon, 24 Aug 2026 12:07:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7SphhXu5O8oqZbbf0nDGpDPVKr+oPcR/8Fk/22xJzTpe/FumONF
- dgYbTZnDnMgR94zkX5S7q/WbnoR7ehZdozFlwOLFEDXnuPFSg/ZOTuimds6j1RKcx9NfN7H
- 1ihRBtyB82JYRQk3cbMUU2pzC4u2iueeGg8OMqPSI9wZ1R/yC2cRkdQeq9+7GLptHCGAxnE
- 7VXba4EG6TTcZ7G+4489g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BkJn6NUSvew=;HJWLGyUYLhOnbnlTe+I71GRNxic
- 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
- 4HVXE1aFL/s=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [MAINTAINERS SUMMIT] Any feedback for -next?
+Content-Language: en-US
+To: Mark Brown <broonie@debian.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ ksummit@lists.linux.dev, Thierry Reding <thierry.reding@kernel.org>,
+ Breno Leitao <leitao@debian.org>, linux-next@vger.kernel.org
+References: <1025da50-3e21-43c7-a761-4f65ed5e5069@sirena.org.uk>
+ <anxTFWS4KAMqGNGT@monoceros>
+ <1a34c486-2fb5-41e3-991f-23bf82468412@sirena.org.uk>
+ <CAMuHMdVEejuG-Dyr4DXgg3MhtDY6n5cDYPotRiGXeSGv0AcA+g@mail.gmail.com>
+ <a0e4b0ac-41d1-40bb-b704-67ba71e8ce43@sirena.org.uk>
+From: Vlastimil Babka <vbabka@suse.com>
+Autocrypt: addr=vbabka@suse.com; keydata=
+ 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
+ pYekxJujNeEDkUlky0Y=
+In-Reply-To: <a0e4b0ac-41d1-40bb-b704-67ba71e8ce43@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Freitag, dem 21.08.2026 um 14:31 -0600 schrieb Alex Hung:
-> This looks like a fix for the same problem Melissa tried to address in
->=20
-> https://lore.kernel.org/amd-gfx/DS0PR12MB65342AEDED0D035DFA92E4189CA32@D=
-S0PR12MB6534.namprd12.prod.outlook.com/T/#mf6847a9e8d013adae40afa3c2ca0c64=
-ebd3fcb50
->=20
-> Please advise if it is for a different issue.
->=20
-> Thanks.
->=20
-> On 8/21/26 13:42, Bert Karwatzki wrote:
-> > Am Freitag, dem 21.08.2026 um 14:47 -0400 schrieb Joshua Peisach:
-> > > On Fri Aug 14, 2026 at 11:17 AM EDT, Bert Karwatzki wrote:
-> > > > Previously drm_plane_create_blend_mode_property() was only called =
-for
-> > > > planes of type DRM_PLANE_TYPE_OVERLAY. Since commit commit 860e748=
-bddcc
-> > > > ("drm: ensure blend mode supported if pixel format with alpha expo=
-sed")
-> > > > this results in warnings from validate_blend_mode_for_alpha_format=
-s().
-> > > > We fix this here by calling drm_plane_create_blend_mode_property()=
- for
-> > > > all plane types if the plane is supporting a format with
-> > > > per_pixel_alpha.
-> > > >=20
-> > > > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> > > > ---
-> > > >   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c  | 5 ++++=
--
-> > > >   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 3 +--
-> > > >   2 files changed, 5 insertions(+), 3 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.=
-c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> > > > index 62eac6e65334..a6a54351ea56 100644
-> > > > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> > > > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> > > > @@ -755,13 +755,16 @@ int amdgpu_dm_crtc_init(struct amdgpu_displa=
-y_manager *dm,
-> > > >   	struct drm_plane *cursor_plane;
-> > > >   	bool has_degamma;
-> > > >   	int res =3D -ENOMEM;
-> > > > +	struct dc_plane_cap dummy_cap =3D {
-> > > > +		.per_pixel_alpha =3D 1,
-> > > > +	};
-> > > >  =20
-> > > >   	cursor_plane =3D kzalloc_obj(*cursor_plane);
-> > > >   	if (!cursor_plane)
-> > > >   		goto fail;
-> > > >  =20
-> > > >   	cursor_plane->type =3D DRM_PLANE_TYPE_CURSOR;
-> > > > -	res =3D amdgpu_dm_plane_init(dm, cursor_plane, 0, NULL);
-> > > > +	res =3D amdgpu_dm_plane_init(dm, cursor_plane, 0, &dummy_cap);
-> > > >  =20
-> > > >   	acrtc =3D kzalloc_obj(struct amdgpu_crtc);
-> > > >   	if (!acrtc)
-> > > > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane=
-.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> > > > index 824ef3ce5de0..4c0c6a8a0dac 100644
-> > > > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> > > > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> > > > @@ -2208,8 +2208,7 @@ int amdgpu_dm_plane_init(struct amdgpu_displ=
-ay_manager *dm,
-> > > >   	if (res)
-> > > >   		return res;
-> > > >  =20
-> > > > -	if (plane->type =3D=3D DRM_PLANE_TYPE_OVERLAY &&
-> > > > -	    plane_cap && plane_cap->per_pixel_alpha) {
-> > > > +	if (plane_cap && plane_cap->per_pixel_alpha) {
-> > > >   		unsigned int blend_caps =3D BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-> > > >   					  BIT(DRM_MODE_BLEND_PREMULTI) |
-> > > >   					  BIT(DRM_MODE_BLEND_COVERAGE);
-> > >=20
-> > > Not sure where the full patch set is, but this does make the warning
-> > > go away.
-> > >=20
-> > > Tested-by: Joshua Peisach <jpeisach@ubuntu.com>
-> >=20
-> > This is actually the only patch, the 1/8 is an artifact from using
-> > git format-patch which I forgot to remove.
-> >=20
-> > Bert Karwatzki
+On 8/13/26 14:36, Mark Brown wrote:
+> On Thu, Aug 13, 2026 at 09:31:58AM +0200, Geert Uytterhoeven wrote:
+>> On Wed, 12 Aug 2026 at 18:44, Mark Brown <broonie@debian.org> wrote:
+> 
+>> > > The advantage is that if commit B breaks something there are less
+>> > > intermediate trees that don't contain B and you can still test on e.g.
+>> > > D+E.
+> 
+>> Sounds like a nice idea to me!
+>> And you can put the trees that usually cause the most conflicts in
+>> the same subgroup ;-)
+> 
+>> It may also help in bisecting an issue.  I have the impression "git
+>> bisect" on linux-next (against Linus' tree, not against yesterday's
+>> next) shows me more "a merge base must be tested" test points than
+>> expected/optimal.
+> 
+> IME it tends to walk down the linear history of -next until it find
+> which branch introduced the regression.  I've never investigated in
+> detail but my feeling is that the inefficiency is more driven by the
+> size of the branch it lands on.
 
-Patch 2 of this series
+When bisecting -next, I actually use the "git bisect --first-parent" mode
+first explicitly to find the culprit branch (or precisely, its merge), then
+do a second bisect only within it. It avoids wild changes of the tree
+between bisection steps due to the differing bases.
 
-https://lore.kernel.org/amd-gfx/DS0PR12MB65342AEDED0D035DFA92E4189CA32@DS0=
-PR12MB6534.namprd12.prod.outlook.com/T/#mf6847a9e8d013adae40afa3c2ca0c64eb=
-d3fcb50
+The suggested binary tree merging approach would make this strategy somewhat
+more difficult.
 
-is fixing the same issue, I think.
+>> > There's also the issue of incremental build benefits.
+> 
+>> That should be more or less the same as before. After all you're
+>> building the same number of times, it's just the changes that are
+>> reshuffled. And you do use ccache, I hope?
+> 
+> No ccache, it was enabled in the past but it got turned off by Stephen,
+> I suspect the reuse over what you get from just doing incremental builds
+> is questionable.  We did have mediocre experiences with it on KernelCI
+> too.
+> 
+> The thing isn't just the number of builds, it's how often those builds
+> change headers that trigger full rebuilds, and we're only sampling the
+> builds rather than actually doing every single one so that the merge
+> completes in a viable amount of time.  That might miss stuff, but due to
+> the way trees are ordered it will likely be only things that will get
+> resolved before they go anywhere near Linus anyway.
 
-Bert Karwatzki
