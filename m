@@ -1,127 +1,60 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ECF376475;
-	Mon, 24 Aug 2026 13:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7AA41DE1B
+	for <linux-next@vger.kernel.org>; Mon, 24 Aug 2026 13:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787577608; cv=none; b=RCpDEwNMv8CY3tHfstzwDSifQ5sjcE/qm+Mj1pYUQ3G67Cklo3nWFVOj12u+JkLDnZIgyId7YFEdH8CT9fpuasoMQa5FWBJxYejB8psFnpB1fsSHMPgM6N0DrL1qKcw68GcRnbuLoM62DfHfhE1xCo5xDPGywnro6vJznrntiDo=
+	t=1787577991; cv=none; b=Rbh/9hhIBsDaVKV+71I4dP7oA0fTfFeLX70vPlck8Bo3M5pUcBvoCxmO7YhAIGtHgqmwvoo3Q9Jcz83TpuKIVuBBuOSsRVHXFXmhHHGNQxlNS7ntvHgWJpO+m1+Vm/QWrIfyd8E1XOSSCjTn+AEFEaS5MGC4FpkyhRuYq715yGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787577608; c=relaxed/simple;
-	bh=AajvA+vBW/ciRYYvOF4afhDw/DsWTxJOs1mC4aiTb3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Uy9g77ueTag/q9+PbUgzAXaV8nuQWP7ZeGOHPRxY6Uff29SheBEW7B08B25Cm5Z3J6M+aqWLRsUFlBx0/QEOUZgpIsOTzflZMH7TvJJSWlgIDGxNhlnnD+qulz9V+WhmzURpQkE6777Cfqp4s58BYAdGrHd4FiVDMNLfLVhXY9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqMT4zN/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787577991; c=relaxed/simple;
+	bh=U2hrydN4YRwg5EFXqFdcVvzcAI9UOoA+D5AJxX30fmQ=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=H77tgn5RjTtj/QyOEcfZLVun0cdRVmEe3VNsA4VuJ4AKxAaK+JY/VPc5V+GBVpXmPy81lK2mqkdmXidUB7MYFgiVk6VA1T5JRDmPWm9UjzaXYh5M/IVjEU2vCWVkz69g9gxs1EkZhoPj+8B+bDfJpV+b+q6nQRn+eIi3IKONpb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=cqc6uFFb; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqMT4zN/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0621F000E9;
-	Mon, 24 Aug 2026 13:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787577607;
-	bh=JnA47twE9Czkep3DqwO5j7HBHdJmvCFVMmXePyAX2dA=;
-	h=Date:From:To:Cc:Subject;
-	b=MqMT4zN/2RZ3L2EPV6RUpiQzzgKyyxXsOxXdLUyrHsl2+BOKa7AePNVo2SetSUI1j
-	 2gTeBG0R5Rai1szUPNR4+imIUjwI4RA6e6t81OhWLGA/8OlFpEhWHHTuacbaqIiUM2
-	 TO1iRCbXpBlZLHC17/JUf6JnC0E99XAUSGBGjCT0aO8Pv6XMNuuD9QhOYmQU0iuSAG
-	 NijvPbgJpMlK9lEoFv/pJrirP4F4S9kozXLkBxp8aNAYKYcEDQlxkvBPD71ZhR1lpb
-	 g+/bOMa3cnGW8D2k0q0u9IYbEahSdcHbO0ji8dkcYmfHRylaR1eaNAnUp1EY5aOIYI
-	 J6AwjTg2iY2TQ==
-Date: Mon, 24 Aug 2026 14:20:03 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: -next status half way through the v7.3 merge window
-Message-ID: <baac51e0-a665-4f82-801e-6fa8d53b68c5@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="cqc6uFFb"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6VVY/0AurABC9rkehz7NS3fVzW5lk7veV8CeajuTN9k=; b=cqc6uFFbwkyHacyGL7uKicKwYO
+	IKGDe+E+H70hXFVYoh2sssFI+pyPxT5xJVad+Q1ZxR1HRHJ94McaFkUD5HSiHH3PMmOwzVmoaf6Ol
+	gk7ydEqTARICqG+ngW2dtHb4FLzKy3AEI3JJZr/kbrObIvr6t9BZPFdr8WPdKbr61JqG4l/5/cfu6
+	PfN7xass3hNCSW8tc6iFyjk2LOXUOpIJOTlILTIocYOCFP0y05ETQ4Z8o2faBJC0QGxP0LewS8wV8
+	6Kq+Oh2cdRh8VimIh87sIVOhXWHO75V1a+1MB6ZTx+oo8xpBHoo9sGvWt1dX07tlOfJ+UwtTNZ3AE
+	VxuwOSAQ==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.99.5)
+	id 1wyUh2-00000000YwB-1qi9;
+	Mon, 24 Aug 2026 10:26:28 -0300
+Message-ID: <250be9700243abbc7e08406856b93357@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, Namjae
+ Jeon <linkinjeon@kernel.org>
+Subject: Re: -next for CIFS
+In-Reply-To: <e2f818f5-c2cd-4975-9be8-f73101a36081@sirena.org.uk>
+References: <d6f9af6b5fb15945b594c5fec0ad9d7e@manguebit.org>
+ <e2f818f5-c2cd-4975-9be8-f73101a36081@sirena.org.uk>
+Date: Mon, 24 Aug 2026 10:26:28 -0300
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2U91IzkKiZz+4Rxt"
-Content-Disposition: inline
-X-Cookie: Accuracy, n.:
+Content-Type: text/plain
 
+Mark Brown <broonie@kernel.org> writes:
 
---2U91IzkKiZz+4Rxt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Mon, Aug 24, 2026 at 09:42:20AM -0300, Paulo Alcantara wrote:
+>
+>> The new -next for CIFS patches are in
+>
+>>         https://git.manguebit.org/linux.git cifs-next
+>
+> Thanks, I've updated and will use this tree from tomorrow.
 
-Hi Linus,
-
-The merge window seems to be going quite smoothly from a -next point of
-view, relatively few conflicts thus far from reodrdering as you merge
-things or similar.
-
-No trees are held at old versions
-
-Trees with signoff problems:
-
-  arm-soc	(missing author)
-  arm-soc	(missing committer)
-  fbdev		(missing author)
-  fbdev		(missing committer)
-  risc-v-fixes	(missing author)
-
-The fbdev one should already be fixed, the arm-soc one is the one that's
-been there for a while.  The risc-v-fixes one was only introduced on
-Friday.
-
-Non-merge commits relative to Linus' tree: 3673
- 3380 files changed, 177907 insertions(+), 85668 deletions(-)
-
-Top trees adding commits to -next:
-
-  482	char-misc
-  186	staging
-  175	mm-unstable
-  170	kvm-x86
-  161	usb
-  152	drivers-x86
-  150	clk
-  129	pinctrl
-  120	qcom
-  98	net
-
-Trees adding duplicate commits to -next:
-
-  54 vhost
-  19 nfc-fixes
-  15 drm-xe
-   9 clockevents
-   8 hyperv-fixes
-   3 kvms390
-   3 fuse
-   2 pinctrl
-   2 mediatek
-   2 drm-xe
-   2 drm
-   2 clk
-   2 char-misc
-   1 vfs-fixes
-   1 usb
-   1 mfd
-   1 kvm-arm
-   1 char-misc
-   1 broadcom
-
-Thanks,
-Mark
-
---2U91IzkKiZz+4Rxt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqMRQIACgkQJNaLcl1U
-h9BgLQf9FF346kHTjuZDIyxQ1H3yG9RZbWuNN/YrhaOkCDF2+TviLHHfV+Kc6Uy4
-X1NGRyReHDH8qwe3ehEaX2UhgjGOotF30s5WF/kYgb6lougQ6T7zRCB2viCossSJ
-8RPi9Nh2n65F3UniS4+pS0mGrniLJ0UxFUWODt9KZ8u0dcSkHsOZGyUt7zkexrdI
-X29588SwW5dapkvTCK0o/QMcokWCdgxJyG944atuvxApd7m2SKxpDEqYtoTVA+F1
-4CWid/kBm+8icfF0YPHroBQp2lLr/IZsbE1B0Wv0bwAedwNR4aJ5ORwaVekG0VCU
-X8F9ceBL+/YY4lrmuF2Ih4V/0kKWTw==
-=JghD
------END PGP SIGNATURE-----
-
---2U91IzkKiZz+4Rxt--
+Thanks Mark!
