@@ -1,37 +1,31 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6359A36A37E;
-	Mon, 24 Aug 2026 19:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E238B140;
+	Mon, 24 Aug 2026 22:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787598926; cv=none; b=I4xUd/zm4ji0r6KYUvnw7lzRKLF4lMjUTxTc5LAgIG6QCmzJWNRrJa8Gn1yGn/BWY7uTBjdqe8iY+0D0a2n3IALJRwGN48Nz7zqjboJZXfEq7e64biYwwTTTQeD2YTM2dtXjux5vn4FK868wicaDRIbCu8B8KPCWewo5hQ8D5SA=
+	t=1787609302; cv=none; b=FN9xNy69mFP2LOaiXJqPhCRsKdKTvEPW0wOw7Bpi0SYkSt8UtrqMZCegJ9u12zThGlPooQdLvLBmAoOzAJ5MwjcDZQFcDcvROWDCq2VPWrEKn47Nt4D00nDEX8/2qQg0OTmlz1+zy+mrW4MHrbReHps6bUpiEUY4Oszikc81Xlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787598926; c=relaxed/simple;
-	bh=HqNXYXT/K5L4WdeDMjIhWkk3929AA47cz9x7eg47Tb4=;
+	s=arc-20240116; t=1787609302; c=relaxed/simple;
+	bh=0y7MOLS3KRJrVhig+cuqm2xT/M13wl0wkQvEnOAoSww=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PysHkncPlHK3CcQblCMX7uFBihEXemFEhYOr65FzTIVf+QLvfhOpvauzEFvNjRI4NTmY39pmK+RqKbtIvlOwLCIJ2EalYSWbZF8qhreBU2sr0H7m2h+I8gp7Ex6WPxdSv+tnTLNLeZnxsD9WeNrogZNvPDAnwMNCqjeuWrZaqj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AzMKfU2i; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AzMKfU2i"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=C7emD2Ak7PVgPwlA8d2PECNEaLVbFqROe+sgjgxQXs4=; b=AzMKfU2imNx6L6lbzhXR+Mcl/A
-	6rNeBoAIg8NO24KwMajZ7+5X+vtzZQpnMj2BmV7s/nh27UMNJMy63Jda43VMGIwx7csvk/RZj8zxi
-	LXDMgIsQN4xzbvHOMZZKEHpVC7q5dk8XdDOapgKVl6MvUZ61LwkSg1HQilPpWdPd/MqkGemED2hS6
-	gQgcKIY5vpDlOLorgQ2rjmFhYeISMrUyK0JnOW2m+xoK1PAiHI1quRGOjGwLPPNCHaOb0sE8erODw
-	ZpE0N8FPxf2axHMnOyZuMx61yKtn23OtpDsR/N37tSEup1n/7mEQegGqTf67ilftbmBkGh1gZ+8rU
-	blvZIryA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wya8a-0000000HIbb-3GLr;
-	Mon, 24 Aug 2026 19:15:16 +0000
-Message-ID: <580f9129-de4a-472e-bebb-d08d9cabad7f@infradead.org>
-Date: Mon, 24 Aug 2026 12:15:16 -0700
+	 In-Reply-To:Content-Type; b=fUeXQpe8l8nImhqMdkCyBD2fHCgxlroQhlZbO+5J/KHZ8ZcdnaUf4GC5d0KG6J5AWhwoE4cznG7nXnTlx5ZNgyjqFCItIJBu4FQ84ALaKkYUSQtBX+vnCj6jS0zEpoUE4zzO4epMAryDjPZHNO0W2U842S6GtQSK1A9DQ5AwKeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67OM6tEq059496;
+	Tue, 25 Aug 2026 07:06:55 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67OM6tDC059492
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 25 Aug 2026 07:06:55 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
+Date: Tue, 25 Aug 2026 07:06:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,38 +33,43 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Aug 21
- (drivers/thermal/qcom/qcom-spmi-mbg-tm.ko)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Linux ARM MSM <linux-arm-msm@vger.kernel.org>, amitk@kernel.org,
- Thara Gopinath <thara.gopinath@gmail.com>
-References: <aohvcP8ch-Zn6tV-@sirena.org.uk>
+Subject: Re: [PATCH v6] loop: Fix NULL pointer dereference in lo_rw_aio()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
+        oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        Hillf Danton <hdanton@sina.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>
+References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
+ <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aohvcP8ch-Zn6tV-@sirena.org.uk>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Anti-Virus-Server: fsav315.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-
-
-On 8/21/26 8:32 AM, Mark Brown wrote:
-> Hi all,
+On 2026/08/24 0:57, Markus Elfring wrote:
+> …
+>> Therefore, this patch introduces a grace period for …
 > 
-> Changes since 20260820:
-> 
-> None.
-> 
-> Non-merge commits (relative to Linus' tree): 7073
->  5989 files changed, 509370 insertions(+), 156446 deletions(-)
+> See also once more:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v7.2#n94
 
-on x86_64 allmodconfig:
+OK. I can do "s/this patch introduces/introduce/".
 
-WARNING: modpost: drivers/thermal/qcom/qcom-spmi-mbg-tm.ko: module uses symbol 'devm_iio_channel_get' from namespace 'IIO_CONSUMER', but does not import it.
-WARNING: modpost: drivers/thermal/qcom/qcom-spmi-mbg-tm.ko: module uses symbol 'iio_read_channel_processed' from namespace 'IIO_CONSUMER', but does not import it.
+sashiko did not find problems with my patch
+( https://sashiko.dev/#/patchset/8dedfc40-9cae-44ff-9960-e0eb1825e963%40I-love.SAKURA.ne.jp ).
 
--- 
-~Randy
-
+Bart did not like my proposed solution and is making a series, but 
+sashiko found problems with Bart's series
+( https://sashiko.dev/#/patchset/8330ca0e-b4d9-451a-bc0d-a50178194ea8@I-love.SAKURA.ne.jp and
+https://sashiko.dev/#/patchset/2efb1032-34b9-4c31-b6fc-4aa9b1d60895@I-love.SAKURA.ne.jp ).
+I still cannot catch why Bart's approach can become safe without synchronize_rcu() and
+drain_workqueue().
