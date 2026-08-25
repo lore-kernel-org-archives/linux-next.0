@@ -1,134 +1,100 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34FF3FAE19;
-	Tue, 25 Aug 2026 12:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA173D8901;
+	Tue, 25 Aug 2026 13:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787660730; cv=none; b=ZEinsicylOHtcy0LwzcGDbm8mb2Whdk0je4Hv02MfxoLHP2TpY6CW1/i+sCd5HwjaqOPhp/+tufIWLT53QBDTFVFo41m4+m2dlqWeYiZrezdoWrEpA1szTAW+C4cjEnCDSQABvrNZ4TROFDpR829eqSCHQao+eVO8zJsKaRC7/c=
+	t=1787663341; cv=none; b=GqErdQoJJxA0A/J6HL4HWIUTpBYgSb+BietazWExNooTdnM8Sk45TFaawgX173aH9/aHxeRb9Axb1kJ1o42Lqp8JhhXS9swXqVZoQjFhI+7VR/dZdCRI8c7HVyfmj4l9B7of4BAtLz/xSNNPWiHjxcj3F5mzg7+8YFAv/B4cqo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787660730; c=relaxed/simple;
-	bh=vP/TsZuK2FhMyvwRjXLMdV1rMSYFkJZN+L47fOFJYNE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XPD1+4SPzRtzPSwz5uXa/PAG1+1xiEm//rsso5julZTby2xf4YEwJepz6Fh55YOzSkJH0B1Z6rv+d5fSKi0kBfIUJ5Ho5toVZlNGsTvGfiNPFEnh6i81YaH4BXQXL3mHyg9VrNAhJtbWSZ5nkTKftgTpaf7W1p9Nb6MVPERKtNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NbzNpGQR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=X2rvMVZZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zgeGWqio; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4IUb6Uxy; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1787663341; c=relaxed/simple;
+	bh=h9bIC1azBym00rT0PXVDQKnSGZoOBXonKHhDXdHv/M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PNIZswHLRG7GgXNnp6ZEWuzv8YlMCmtYxubiBEwN0nCYTMFi/ZOpCYZD/AHq/JLmsS3NZShPDUaNCQRljyPiFz70s44arj3yCob/CyobkyJaFqWiee0OnfBWOa8wCu4opzSpHnh5+HwLsgcqeW2JcVXQgT/r4Vr+kYvNGC9WClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJzWvfD9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NbzNpGQR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="X2rvMVZZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zgeGWqio";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4IUb6Uxy"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 87CB286E09;
-	Tue, 25 Aug 2026 12:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787660722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nldmatI/F4BfH9K/Gso5mJ/b+JO7nJgeuoCDl5pifgU=;
-	b=NbzNpGQRflnAqacq30LZ09jZ00k7azP3G0MVkajzE5VOwatGxuIZTwLLE2lVDaU8imvRxr
-	XfFROjqqnNEPU5vllbyQ/pMlQgy+MJdhIlS/BkVIKx4Ahk2Y1PtHj9zOF2oCypTyDdGXt9
-	5gB8EqYRo8keRE866W/po3IO67/pIp4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787660722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nldmatI/F4BfH9K/Gso5mJ/b+JO7nJgeuoCDl5pifgU=;
-	b=X2rvMVZZkuI1bzKTh2aAMTro4QbKy7ax6KBhXi4mggL0LRtCiQBrPTSziCRLsrO5WacQ0X
-	fhOTCGM/3dCO5mCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787660718; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nldmatI/F4BfH9K/Gso5mJ/b+JO7nJgeuoCDl5pifgU=;
-	b=zgeGWqioG/1rvRazoDeoe7XmnnmU66f+4xRWT4oV1gy55ZtRCqB64oRVdTQmyIv1kUqXeg
-	Shgswi+GYmEiKRJ/KkvGcPAdJi+sixAMs/9XFzFBVra5AF/7tzOH9FzD7goIOWPKrrlJ/C
-	xn7+zrJgsoKamvaE/soyVHagekfgIfU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787660718;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nldmatI/F4BfH9K/Gso5mJ/b+JO7nJgeuoCDl5pifgU=;
-	b=4IUb6UxyU8jHXbpksFUmvZ4n52oizI4/PMp1q950RhhqsFW+GpomR7V6gJHzRvrOAWeibh
-	oyD6+2hGFz3/t6CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF8751342D;
-	Tue, 25 Aug 2026 12:25:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QTY9KqmJjWpXeAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 25 Aug 2026 12:25:13 +0000
-Date: Tue, 25 Aug 2026 14:25:13 +0200
-Message-ID: <87ecfms7yu.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJzWvfD9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D937D1F000E9;
+	Tue, 25 Aug 2026 13:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787663338;
+	bh=7S2OHiZRLrBzMKxXlGS0TeKgoxe+74QJ3jHppDjDjcg=;
+	h=Date:From:To:Cc:Subject;
+	b=FJzWvfD9s7JzQnjrqO28d5NTmz0vQ1sM4PFo5N3suw4lfKSZpjJ438upVztQqZWod
+	 6xJeGVQ3ajGLXB1ceGkjduaKzh5qbw+PXxk9dycoyYP6PqwZur2tCjv6EozFYWg1np
+	 28/mHW04h58nsVRiwXysYQa7w7QeRV9h5mEYaJ9U01shk+0J0hxe+vthunPPHxQgss
+	 fOWtfl66SB3d4IiF3UvBHR/0tuQu9T2ZiikQ76Et5syUh3uHIYiHIvz1xx3iemVV6p
+	 JIJu6pJ/gvdpv0eeD4qUofUXZdoGtwjujs60xXyZwoiMygRopyf3tzrZoGDHKVfhe3
+	 p5rmct6JXcptw==
+Date: Tue, 25 Aug 2026 14:08:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-current tree
-In-Reply-To: <ao2HDGjk3grFh7w9@sirena.org.uk>
-References: <ao2HDGjk3grFh7w9@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
+Subject: linux-next: duplicate patch in the bluetooth tree
+Message-ID: <ao2T50J2OT-wlZke@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-
-On Tue, 25 Aug 2026 14:14:04 +0200,
-Mark Brown wrote:
-> 
-> Hi all,
-> 
-> After merging the sound-current tree, today's linux-next build
-> (arm64 defconfig) failed like this:
-> 
-> ERROR: modpost: sound/core/snd-rawmidi.ko: local symbol 'snd_rawmidi_kernel_release' was exported 
-> 
-> Caused by commit
-> 
->    ab21bde6b13cd (ALSA: rawmidi: Another workaround for false-positive mutex lockdep warning)
-> 
-> I have used the tree from next-20260824 instead.
-
-My bad, it was a prematured patch.  I dropped it now and will resubmit
-the proper one.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gc4hddyfb8luuHbL"
+Content-Disposition: inline
 
 
-thanks,
+--gc4hddyfb8luuHbL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Takashi
+Hi all,
+
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
+
+  0c9d2588a514f ("Bluetooth: btusb: limit RTL8761B BROKEN_EXT_SCAN quirk to 0bda:a728")
+  14a97a38ba8f2 ("Bluetooth: eir: Fix OOB read in eir_get_service_data()")
+  1c08039e3887f ("Bluetooth: RFCOMM: Validate MTU in rfcomm_apply_pn() to prevent infinite loop")
+  1fcf216462ec3 ("Bluetooth: btnxpuart: Validate the FW dump header length")
+  262cb784c96cb ("Bluetooth: btmtksdio: Fix out-of-bounds DMA read in the TX path")
+  26cf20d065b31 ("Bluetooth: hci_sync: add conditional locking annotations")
+  32b42c0704fdd ("Bluetooth: hci_bcm: fix usage_count leak when autosuspend_delay is negative")
+  40c621391de93 ("Bluetooth: RFCOMM: serialize security confirmation handling")
+  486f8908aa587 ("Bluetooth: ISO: fix use-after-free of listener socket in iso_conn_ready")
+  54c03e6bc7188 ("Bluetooth: btmtk: Do not discard the subsystem reset timeout")
+  762385e862009 ("Bluetooth: hci_bcm4377: Ignore reserved PHY in ext adv reports on BCM4378")
+  771e812f94b32 ("Bluetooth: btmtk: Do not report success when subsys reset fails")
+  951d9f743029b ("Bluetooth: btmtksdio: Take exclusive ownership of the SKB before TX")
+  99672791e9c9f ("Bluetooth: mgmt: fix 'hdev->discovery.uuids' NULL dereference")
+  9db7e5fffbaec ("Bluetooth: L2CAP: reject accept queue add unless BT_LISTEN")
+  9e257e3586428 ("Bluetooth: hci_h5: fix usage_count leak when autosuspend_delay is negative")
+  aadb3cd4bbb47 ("Bluetooth: do not leak an hci_conn when a second LE connect is rejected")
+  b8d936018ce2b ("Bluetooth: hci_uart: Fix false success return in hci_uart_setup()")
+  bc2791e60e082 ("Bluetooth: hci_intel: fix usage_count leak when autosuspend_delay is negative")
+  be766d775060e ("Bluetooth: hci_core: use skb_get() instead of skb_clone() for req_skb")
+  d1b752f552896 ("Bluetooth: L2CAP: access chan->conn safely in get/setsockopt")
+  d2d1c215ce117 ("Bluetooth: hci_conn: re-enable advertising only for peripheral role")
+  d67f4a43e7ef8 ("Bluetooth: L2CAP: fix race l2cap_sock_cleanup_listen() vs. put_chan")
+  e4d6d16f1be19 ("Bluetooth: hci_event: clear HCI_LE_ADV only on a created connection")
+  ed516e3f1aa61 ("Bluetooth: hci_sync: Clear HCI_CMD_PENDING when dropping the last request")
+  f716a05f49671 ("Bluetooth: btnxpuart: Check remote M.2 connector availability before pwrseq")
+  fe3897b4ab57b ("Bluetooth: RFCOMM: serialize session teardown")
+
+--gc4hddyfb8luuHbL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqNk+YACgkQJNaLcl1U
+h9DUgwf/cHYGmggCxKsoL4FifyrWvGVwzvxMwYZI5r2pmrj2FmYup8Joexapxxgv
+Zfi8trw/nlekE/eS+G22HRsXUoDCyabvghuEcCYq4Dv6RrGqniMDqXUc06Q8+2Fu
+ZBczTD/Q+wiMbErGekfHeYTdyzdpHAZO+zlw3krs8BiNhnxH7SNK/TmSmu0V9QrL
+WyfvqgO4JfohFiGQmWCfNdz+IZuKsy+/tMszPye1EY3eeMgQF5QRLW3WvxVincPK
+bJVWpe4/WBDLCeITDokBttd2pVjXr7EtzgPwnbUrgztbeKHeGBEI3IhYoJO7Z7yU
+PGe4uEGiZDgbE9NZLWrqDgD/hyXvhQ==
+=efOd
+-----END PGP SIGNATURE-----
+
+--gc4hddyfb8luuHbL--
