@@ -1,103 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D5E35E1AE
-	for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 18:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3362D30C16A;
+	Tue, 25 Aug 2026 19:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787684382; cv=none; b=LFpOaspcEzqQQY0BmahBwbd73G8fSbmhpNotOEx4Je56nndBm/SoK6tj1O9MPA8ogFD1Sx/L9/mpicnCm8+Tvii4I+c6TZINXEY7Lwim7J5rxVjQSh7g3sqctN37DNY9yJpv3uB2J0dKUiVRf3Tjj7hyW+U9cI4CyUAuxkVN3Kk=
+	t=1787687873; cv=none; b=tqJSZ09Z8BL5h+AYzlNEw66swlB16eiWPGBhHavH5mF1XCBt4tGBRR8FgkmaNKV2ntPD4Z8WBhU3dINPjo2ZukBo1ZZKv68Gc1MV88hU1ThNkMqWkkKboDEYnj+l8EQWTdYOM5b7ZVm7nsCJRVHqCsVa5s1vevIgh2jFSTdMXE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787684382; c=relaxed/simple;
-	bh=5plKsS+uASIQTYQh34Fh2nX4JFfVtwB6LE/z3YWdG5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rzJLfN3tEF5pdceOC99Z24ZwndJOXa5Crvl9gSfWtDUpq1siQCuaKJJEkPH1DU1vjM25qde+uZ+t9K9hT6uBpQN3Gf2D0AjhbzQED6MwM4Fpbeq7advT4GBpSbrLHH8MxOz4wbMju5sddZAVyqfMgTKNa3Pue/C23QNClk+WCrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7dsB30x; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787687873; c=relaxed/simple;
+	bh=BBDZ/X4zTZXqEjNRs79qtKWcMFZwO8ClPQzsG+JmqAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8wqkrk2zNsGn7EgPVHqEvHoIwujvzBQWuEQiAkMlXm8bXW7LbPLIXcBggTATpxQ2s+majP3PJ9qoNefqO6AMkI8wN0HgX2ZrhVflfcJ1q2cPkuTCSQOJpbEfA/hbaz4iutB2EIjABAFlVm3gcx5ZM2yWqsoY1gbIB2tigjiRh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L6dboAeI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7dsB30x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4671F00ADF
-	for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 18:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787684380;
-	bh=kWidqxLeQBllMhAA1iM7Mqn8zXuNune5V1hwmAATg08=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=l7dsB30xdbKqaBlqTEW1raA26FCfGn7PRAbDqe1JQaaj7aDbALB/shqwB0TEaAbbm
-	 d4wkABbKU64pPmXToGPbpNE2dVuij2zd9Xueuijs3uFN1GK1IswnSRzbfnk1E19mZ1
-	 nLNrH8dhEHsIuB1oAbZRf+A7ZCRSsnSFWAbfwxGHvsfICEbBab0uMbfCyHstFOOW9V
-	 8XI8DBRbrKodkpOoG//quMNWhYk/3NpOMqHKIZV/8mvWreQm2I/CNfBE8W9tCuzitt
-	 dZy3QThdxA5TQ5fiYkH82mU3YLlQ0f+YCaD5dlNQHN24A3Se5o9Sfoea/2vexvrU2r
-	 mGq7cFkfBZEhQ==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39c86ce9e29so458671fa.3
-        for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 11:59:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrdfiknH9pXQUZ/1QOe5fCt4zH/PMF4/Dz+k6o7RWOfxsRVTlur4CMj8HahdUMOTaANrNeehzlmOTDx@vger.kernel.org
-X-Gm-Message-State: AFuF++lkznLEH27JeufOTIPPArt4CU/SXCnLNarOTRH/DJGtp9f0RxtE
-	wzZk5bpAOtlre9YM90Zi+TaeJr/Am30C+O5yNGjxdQx4AmiVJqA3o0dGPWMFTFTj0WH1iJoDG28
-	mTnCpB4yFbLNbTaiZch5B9OPPXfXqB18=
-X-Received: by 2002:a2e:bc05:0:b0:3a1:1d3b:67f1 with SMTP id
- 38308e7fff4ca-3a1fd6188bfmr1473361fa.7.1787684378885; Tue, 25 Aug 2026
- 11:59:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L6dboAeI"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=t2OCrl5qlYlY8Ug18KCwNXeOxCWPYYl1AZP3jtdkFbs=; b=L6dboAeIhXziYSX24Fqw9m3THq
+	HtlXOKeYNgltfSE2L+EUZlkJTfkxMGQ2fSVw3B2ba7BOae5gpQNistv+zbTHZvQhvatU406htD7xd
+	sdpaH1xwdImBG2nrn7pXShMF9/fn0OTE6SuoHC3ySuyi28l1M2Lp2E0mvZdFre5zFjSaH+lG9+SUv
+	ynySmTUR02/WZF4frhPDo2GkZdXoTrVzYBWRRl7nggDPf65OwTmVeCRgWeTVIswpAcHtOExx0PKz3
+	Py2esHyA4QbcdtdA6JvasXjTs4LAODwauhRGpTdZhoHRDsLQxQn7yi5z9AD1YhqH9KO9Funx2ONvD
+	OzQT+7UQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wyxHJ-00000009dWQ-0SEC;
+	Tue, 25 Aug 2026 19:57:49 +0000
+Date: Tue, 25 Aug 2026 20:57:48 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Please include pagemap header cleanup in -next
+Message-ID: <ao3zvOo2nkMxaDY5@casper.infradead.org>
+References: <aox4v6paR4IbJr8j@casper.infradead.org>
+ <29f8f296-e49c-4960-aadb-f27d863ba773@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aohvcP8ch-Zn6tV-@sirena.org.uk> <580f9129-de4a-472e-bebb-d08d9cabad7f@infradead.org>
- <6027571.DvuYhMxLoT@rafael.j.wysocki> <20260825184825.GA1276817@ax162>
-In-Reply-To: <20260825184825.GA1276817@ax162>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Tue, 25 Aug 2026 20:58:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gDQAbyo+KTgQ8CzUfJ6cv4xg6-rHbH-HcbfXCWX9Wc7g@mail.gmail.com>
-X-Gm-Features: AcwNN1VLCAgpQgZ5gnFi1h3xxTxb9gpzZyNBAdh2QJR2jPjdOdRMq_hwtYolxl0
-Message-ID: <CAJZ5v0gDQAbyo+KTgQ8CzUfJ6cv4xg6-rHbH-HcbfXCWX9Wc7g@mail.gmail.com>
-Subject: Re: linux-next: Tree for Aug 21 (drivers/thermal/qcom/qcom-spmi-mbg-tm.ko)
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Mark Brown <broonie@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux ARM MSM <linux-arm-msm@vger.kernel.org>, amitk@kernel.org, 
-	Thara Gopinath <thara.gopinath@gmail.com>, Linux PM <linux-pm@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29f8f296-e49c-4960-aadb-f27d863ba773@sirena.org.uk>
 
-On Tue, Aug 25, 2026 at 8:48=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> On Tue, Aug 25, 2026 at 03:27:32PM +0200, Rafael J. Wysocki wrote:
-> > On Monday, August 24, 2026 9:15:16 PM CEST Randy Dunlap wrote:
-> > >
-> > > On 8/21/26 8:32 AM, Mark Brown wrote:
-> > > > Hi all,
-> > > >
-> > > > Changes since 20260820:
-> > > >
-> > > > None.
-> > > >
-> > > > Non-merge commits (relative to Linus' tree): 7073
-> > > >  5989 files changed, 509370 insertions(+), 156446 deletions(-)
-> > >
-> > > on x86_64 allmodconfig:
-> > >
-> > > WARNING: modpost: drivers/thermal/qcom/qcom-spmi-mbg-tm.ko: module us=
-es symbol 'devm_iio_channel_get' from namespace 'IIO_CONSUMER', but does no=
-t import it.
-> > > WARNING: modpost: drivers/thermal/qcom/qcom-spmi-mbg-tm.ko: module us=
-es symbol 'iio_read_channel_processed' from namespace 'IIO_CONSUMER', but d=
-oes not import it.
-> >
-> > Does the appended patch address it?
-> >
-> > Interestingly enough, it doesn't complain for me when I build the
-> > thermal tree merged on top of the current mainline.
->
-> FWIW, I sent a fix for this two weeks ago that explains the semantic
-> conflict:
->
->   https://lore.kernel.org/20260812-qcom-spmi-mbg-tm-ns-modpost-error-v1-1=
--d849390d2714@kernel.org/
->
-> You will only see it when the IIO tree is merged against the thermal
-> tree.
+On Tue, Aug 25, 2026 at 02:44:54PM +0100, Mark Brown wrote:
+> On Mon, Aug 24, 2026 at 06:00:47PM +0100, Matthew Wilcox wrote:
+> > Hi Mark,
+> > 
+> > As discussed on IRC, please include
+> > 
+> > git://git.infradead.org/users/willy/pagecache.git headers
+> > 
+> > The net effect is to reduce the number of files depending on pagemap.h
+> > from ~9100 to ~1400 on an x86 allmodconfig build.  The Intel test robot
+> > has been steadily building random configs on random architectures and
+> > finding new missing includes, so there may be some build breakages that
+> > it hasn't tested.
+> > 
+> > My plan is to send this to Linus on Thursday or Friday.  I don't see the
+> > point in letting it soak longer; any problems it causes are build
+> > problems.
+> 
+> As I noted in the regular build error mail it hit a build fail on an arm
+> multi_v7_defconfig so I didn't merge this today.  It's pretty surprising
+> that the build bot didn't hit that one TBH since the file that broke
+> hasn't changed since v7.2 AFAICT, I would guess that there's some other
+> implicit include cleanup work that's interacting badly with this effort
+> but I haven't investigated at all.
+> 
+> BTW I added the -next list, please CC requests for -next there for
+> visibility.
 
-I missed that one, thanks for the pointer!
+Thanks; I looked for it in the Documentation and didn't find it.
+
+I fixed up the one you mentioned   Then I installed an arm32
+crosscompiler and built arm allmodconfig.  And then Intel's test robot
+found another.  So in total, three more fixes:
+
+drivers/dma/ste_dma40.c
+drivers/ufs/host/ufs-qcom.c
+drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+
+Pushed out a new version (e02cb91d4644)
