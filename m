@@ -1,83 +1,117 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7DB3F39D1;
-	Tue, 25 Aug 2026 23:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0CB23EA94;
+	Tue, 25 Aug 2026 23:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787700550; cv=none; b=mXFLuY8T0nW6vkGNCjWUB4mH9xDrQH0TmcRbiellezbVuANCzHPpE3SQm+zuSAW6YeFLDToIWODlXBDsl/o87QFgsoByFZKaup+jFF7ZsmPuaVYrUYKSZYMQLf2u4VHId7d6bA2dJYkzR4A7itQ9qFux7dESuYfGMovJgki5XR0=
+	t=1787700639; cv=none; b=l21rDIQpDXvAJPFdtKDAct/byC1NoA8MP8SSXttFDuh0HTAGjqkWUqZtUPJ9OfYZFc5/4ugjpGniYBzHUOkdQ4r4mv8OcH4Q5+t43b5C+4xUpb8UX0GQ4ZdBIjcpQrvn0upO4beT+4yEBzpHA4MMsfW365gO5kHdt45wQC3a2CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787700550; c=relaxed/simple;
-	bh=F71Ivknk/fr/y3IOr8bjll/4HgnUcbsJFkUXK6ul6q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ui4zmJcH22uhCtnTqsuMoK1QRng43RyzSgVsGKXOP9FlyxufYZfVsYnGIn5mLPUhYgjhjaUnej4M/jV/VsEpWLf7d9Q9jWRonF4StjBPK360HDP7ZVM8KKcviYw5Rsi+HFELHo1zsn4wbjdRHDQ6zmeiHs+9M08kwLuPt8eTYTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67PNS2L0041321;
-	Wed, 26 Aug 2026 08:28:02 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67PNS2Xq041305
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 26 Aug 2026 08:28:02 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <f342e48a-1ce5-4bbe-aa6f-c8f31a5c98bb@I-love.SAKURA.ne.jp>
-Date: Wed, 26 Aug 2026 08:28:01 +0900
+	s=arc-20240116; t=1787700639; c=relaxed/simple;
+	bh=FhwD2Lhw62saKFxzWwPHKQlyWlQKlUu6LBvXuNtC/Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ctjTV/v0ZvuJV7DZ3tul0nMoPbJyEBAkh0BZErz9LRPo45lob7ojoo9e47DRrecnP4X3IalOA7eONxOt2dj+3RoUG36FnfpYLX726sNh6dtQIMmmIUV2nsyThzuhgzQC2953ibJNBBN6OuQ3K58A0G1RcbHRdGmUllipgC/XF4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldApTpci; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldApTpci"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C7E1F000E9;
+	Tue, 25 Aug 2026 23:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787700637;
+	bh=UthDDKYiFjnMTTaK4H33rHcgW5Z+m4/ADkeHqNHXo2U=;
+	h=Date:From:To:Cc:Subject;
+	b=ldApTpcitTDDZD3pKwvRVHIHADGNCyzZ6leENNHSoRWhygFXqxaSkCAABWqSZCFJA
+	 YImLycog4d4ULJ6uS13P3aNkl36ov3qzf+qRqkqQRZyk+W+u7J3AyEFxWG9S2cAuaT
+	 2D1uUMRUWBSpurGCajZhB6gMo/7/kCzT2oWumigK18SlJ7Obh1A8TdQBufLNz/rhmx
+	 5CF+1au6ZqnteEwGbbKFD/oluHpVEnVYNDjQDjzcuQKHeZvhY1+6GCmVHZBTP9elSQ
+	 XH1hOMaMoGQMnlRqrqPU7FScPOmSpDnhJV2vZUobv3ZV5g8qX0+pZimDJKtSsyxDp1
+	 D3kj45sKMyDbQ==
+Date: Wed, 26 Aug 2026 00:30:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Aug 25
+Message-ID: <ao4lmmsKhODIlMr1@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] loop: Fix NULL pointer dereference in lo_rw_aio()
-To: Bart Van Assche <bvanassche@acm.org>,
-        Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
-        oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        Hillf Danton <hdanton@sina.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
-        linux-btrfs@vger.kernel.org
-References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
- <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
- <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
- <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
- <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
- <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
- <845464ce-43c0-45b3-94ea-ccc830fbc76f@acm.org>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <845464ce-43c0-45b3-94ea-ccc830fbc76f@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav415.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d1zlVXB1QfBqGgkt"
+Content-Disposition: inline
 
-On 2026/08/26 7:18, Bart Van Assche wrote:
->> you also recognized that we can't call drain_workqueue() or flush_workqueue().
->>
->> Therefore, I chose to temporarily drop lo->lo_disk->open_mutex in order to
->> make it possible to safely perform drain_workqueue().
-> 
-> There is another possibility: set QUEUE_FLAG_DYING in __loop_clr_fd() before modifying queue limits and clear it again after modifying queue
-> limits has finished. Feedback on the patch below is welcome.
-> 
 
-See https://lkml.kernel.org/r/26717cb6-81b0-4d5d-a5db-669283f9bb9d@I-love.SAKURA.ne.jp .
+--d1zlVXB1QfBqGgkt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +    /* Wait until all I/O-related work has finished. */
-> +    flush_workqueue(lo->workqueue);
+Hi all,
 
-I don't know about QUEUE_FLAG_DYING manipulation, but we know we can't call
-flush_workqueue() while holding open_mutex.
+Changes since 20260824:
 
-Please post as a standalone patch (subject starting with "[PATCH" than "Re: [PATCH")
-that can be applied on current linux.git tree, so that sashiko can review your patch.
+The drm-misc-fixes tree acquired a conflict with the origin tree.
+
+The sound-current tree acquired a build failure, I used the version from
+next-20260824 instead.
+
+The bluetooth tree acquired a conflict with the master tree.
+
+The sound tree acquired a build failure, I used the version from
+next-20260824 instead.
+
+The kvm-x86 tree acquired a conflict with the kvm tree.
+
+The pagemap-headers tree was added but did not build so was not merged.
+
+Non-merge commits (relative to Linus' tree): 3249
+ 3050 files changed, 116622 insertions(+), 59970 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 425 trees (counting Linus' and 131 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--d1zlVXB1QfBqGgkt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqOJZkACgkQJNaLcl1U
+h9D+ygf+MpbRUKqjK1lsowdxbbQJyjzt8K9DeYx8caS4/RxZEUZZvyzyDqA3QQc5
+RQAItIQ3pTUE6S4dI10AN6kW0RYaD/IDwlTicGNusM5fxe4WM8QsgQ4SwDEtb9TW
+Vmsq0o7Vy2PQel97FdV2YiS7m16cPt7Nj12bsaAeAyG4qQiz8MolxZ3AWv7MpNss
+NO+GqxF+J4Qvh8GnmHdJilbNaa98XdlJ0wK1LN+lKfSKAHbwrzqq+ScfaBU8gJFf
+SGnezJr0pVe0PZGRCU3ZZa0b0ETO1i0Gf1shH4/wZDXH7d4QLAKxmmWqtKBrHdVo
+dV5dGcZIrrVQhF4qtNQD6drtvGW0IQ==
+=vS0K
+-----END PGP SIGNATURE-----
+
+--d1zlVXB1QfBqGgkt--
