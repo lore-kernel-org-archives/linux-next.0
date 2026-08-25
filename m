@@ -1,231 +1,128 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA1A312814
-	for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 02:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E3B3E44FD
+	for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 08:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787625015; cv=none; b=ofG5VkdaeMuMt7pjpx3oeWxleKi2DT9+JziNRUNaJqs/DvclA+7p5Ku6WwbQQ6fvjR45FdffCZA1zUYmK+rbkWsk4QfuCzLZpGq5vjRC4qm37ODYMVzlr2NKr3izxTD+y1oY18NzNCgeRpt43ndFtXIgCS/NDt/e67ZmOnLelKU=
+	t=1787646934; cv=none; b=TRYGD78bIEaJugwEintwXM6daxuAKFEpirSlIgMnC6hcRMCIx2iiAKniSjrSrKR6Zn0tNZ5uyA7XOkJRNdhzdXqXknaRKWMkfIq5Qgu17C+J+1UNiR9exuR8zOypzUGvkGcgPTB/g3AkLg1Wdp7ORx61rgrJnhFn32lByaSSQpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787625015; c=relaxed/simple;
-	bh=8TBkO5Z66yjLLxufe7XC38bcdVDXWE+QnSyInMiBY2Q=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=Kr/M3PFBY7Fema1XzdWWYtnKmJULv1dBUfrdB1XmbBTChzoJYWGw1YSf08kxEjjVo3s1Ap3Fb8heIF+DmbFE2t3TEnSRsMiTGTz6X2P/s2KCf410m8p601mxwAAvYJslRATrp2jzAOtoT2kT2ddC2e1ToroXDAtWEkmiuyIORC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=bzGyX4Aj; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1787646934; c=relaxed/simple;
+	bh=mB78j5ZOv6Ezj6SK0kxwq+8Uenu8mtUtvQnFzconLr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UiarcF27CYZCuR8gefGhdrWl1811HmOw9w4kUQMtA1YNt+12BAJzI2CSU7GLtSqGW2PxSMPp843H3Eb3TrmUtEAUI9MAaj6nQsr2bbs2LJYrdtWvYrABJ7m6hpfYe6m6GQiRlk6Y3zsLDRKSAF3OIj+V8KeL1rvXCROj+A8KCUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Ck0F4znW; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="bzGyX4Aj"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-84862b0d5aeso3250847b3a.2
-        for <linux-next@vger.kernel.org>; Mon, 24 Aug 2026 19:30:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Ck0F4znW"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c1c52d920b8so635654966b.2
+        for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 01:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1787625012; x=1788229812; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=x0PyWwfRndstsxU4m/gLt2GVNxcvZRoLPU1ZYhjieUY=;
-        b=bzGyX4Aj5S1rCQE3offMnzy00EzBZ+sz/G8ExEtLA+GUxIp4tjy8MI968bjnaM93DA
-         7QUT+bTHGYw8C9ink9hoRJMS6yNc5ZMY61YYroVvtcdV5WrU67RbxSt5ftIqWXD8V8AG
-         hUsGzq0wC8dnLdzv4kW8Tsr3RATvkfQANWCQJhTKrVXtMaFOQBkm39198z9+5d2gJ9b+
-         X7xsZO8qyTnwVRzOEMYRqNrtHo7Ifwgts3gWhkZz4DNhUHyg2INBNIvdAZSV6pPh7Ou5
-         Ydof5oTn5aOYKV18P0wXhRa7oyxvc811y9gy3ZSamB5aWgb0JbGGDVvVWtH25Xks6RWZ
-         bFnw==
+        d=baylibre.com; s=google; t=1787646930; x=1788251730; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=of5Uec3jjr7upxknpPY99XlCkVHmiPSn7WC84fmmgzk=;
+        b=Ck0F4znWkuRXFTcXdE2b2wDhv5BunR7uypxznot3tWTV+oSdjxF3s/LIoDLHDDs2un
+         0/5VfUb2K5aWWktLA7m5GJ/lm0lZdbUVYYwVoD2RRY5/WH6JljNrU4fJqfDi7pC+2D0c
+         +uRlLS2dCVHob4IUWoqlzguhXLtjx4bnWyjjabNPRS06LaDZXm1JmWHRnpOVgmgi+AYf
+         P6ufewkeykEcm6K3+tMdWDpK9cPKMU5ApydFbUn11TSEYeKl0mjLnyr/IxHqRG4fSzey
+         eOrBfen9ZmXKR6MynKsSLc0Up6fzHvwejK8l884wD4G6tFgrunyhtCaoOk6wCMpnlRWv
+         Sp1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787625012; x=1788229812;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+        d=1e100.net; s=20251104; t=1787646930; x=1788251730;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=x0PyWwfRndstsxU4m/gLt2GVNxcvZRoLPU1ZYhjieUY=;
-        b=Oe24vra20/CbGs0auvweEy8/G6Znb5itykNdOndcUg7MXKn/E7Xf5hw8JHPWZVz/Bi
-         eRifPSIfKIqsi6+pfhqH4U+xbgdZBIOLlQT65oVJ8XHBLKABM9WZStA7W7hF9UmT5Ix3
-         L/i1cDmVFwfRFCn/mIhx4Ms1O9EAwvOHfqd+HeoXbVaBJxcA1XsM4Ru0Uhc01OUuEfV3
-         ZTW+oB959laA2jQ8c0/+sSZeiUxKn933EqmngIu2/5Tab/zeDR7DVobLBOm7D6QpMX96
-         o14gN8/VTC9k6wYmKN2hMYQUF1gDsa/yRjZgR8GCnv47ijsCKbu1sFbKUH+KNVT/ImOt
-         NFng==
-X-Gm-Message-State: AFuF++nYzC8m0HBK2GhBZKyjvJv2Pzm4cLrZrBI39rOEXiQvrhT/jcuS
-	fMtktwCA4ip+jjShBApNyArxae/pVer7rOlRe73BIFyZdR/hadkXstU0UfT6vP/Jbp0zvjj4duQ
-	hbX0q
-X-Gm-Gg: AR+sD11vUGWS9kWHoYavn3bdOK7wo8oKeg/2NSA+lTth60+8Yd9S+7Lbe0Fk28lJCaQ
-	X6ve7zWwKDfXs/3nHXm2LXdCsH7hEiD5KZKyk2KKio+cNyD4sxLyA95u9mPI5oKvz1o62Q215G4
-	mFdIUyYgUdQ032q3gGqwLsXrbdWzp3266wjWhdMFtMIU90nlsu+baz+9vjkjeRvVtKoAkqbUUnf
-	cqkUpLpzig/LjckguUTOHnU2VyHkhqUoNqog1s3dIulx7LibkBvlRg3j6zGjYHKqmaSQdUS6ReH
-	lUNh/VuxDaEsjI5aQQ2bYZ1UjycqRU9qLPKdufJyY7cNinBzvS6xQkoOCN9MFR9tP41PuYE6XJK
-	VJXoaY0aMNLu6u2QfEzkyIK3oEFCDl7fbjsQRKzH7UdEdwLCDbVVErFjOn2kI+QguzUjkWrxogj
-	R7tJgfabH8wQ3UHe395KSzaMZEnwSqL+2pTBkysUoZPFL0Dc0vcn2enSU2xa6LfZk=
-X-Received: by 2002:a05:6a21:a96:b0:3c3:954d:278d with SMTP id adf61e73a8af0-3cd3009cf0fmr28731710637.9.1787625012496;
-        Mon, 24 Aug 2026 19:30:12 -0700 (PDT)
-Received: from b455de3d9de8 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3280782f09fsm23293173eec.20.2026.08.24.19.30.11
+        bh=of5Uec3jjr7upxknpPY99XlCkVHmiPSn7WC84fmmgzk=;
+        b=eE/d/pIZSQmg+7CjRr/0kRPJNVDKwelOFUZ/fKfJRKwWRzSb7f/mnnJWoOK9+nLUx5
+         CNLQGGt5zGHtNRAXMTh8f1JmZ19PGcqtLWgZLbpZ7JuQFOrhb7Il6IunFXng8rB9uqOJ
+         seT/K+WmSFFgFcDq8rq13Uv4S6FSZr19ZOFV1HJ+f/CEfYuasjE4Ue6+kmqKkmf5VG7T
+         p+fUaM1KFUsIvSnlZNAVfUNsweKXE9pNxOIEn/V+Sl3hz/v/8/n5zMEbNX9LDJhWc3jb
+         WPaDZQ/eoxg2RzDEZOmqshl7IVtuMt8tr68faPs/dfFy562l8HjKcDzIPQ9XobutRiUA
+         xCrw==
+X-Forwarded-Encrypted: i=1; AHgh+RqYLoNd4MJMT4Md0X8eEvVcEUPyqz4/tmRP3hfZl79p+Z4fCSwSsvu64di95GQq+vOvBugdsTZ5wA2r@vger.kernel.org
+X-Gm-Message-State: AFuF++lkn+uxacSgQCDkSmnNJEVD6O/HcBJUi/RrwAMu7EBeJjCS6YgF
+	a20WNbiFY7WB8oOjjkr5fgp85Iul5D/ALL/+zeQ1tKo16uuukX1h6K96aQyGydGxAuM=
+X-Gm-Gg: AR+sD13V6tHLaFwW+KWY94En+zjJQwQk9YYFG4uNGMxMTZNmNfXmGPyAHGqdQdQurqr
+	ksafRcZ9g2GQ3XZ6fb1cyHzWfGrpldTClD7dKx7Er5J159xCu2epT9Ei4diEXnCl28stW+wfiEj
+	NMwTP3YdmC8PIUNNrCFQAi6yljufJs5Ar94VfmXjN1jOzjrzEB9c7i59L7ZBp8I2W+sEJm2B1EU
+	7hcVo282C1bkcMTUXS0K0Vgqnn88f+e/ejaBVGH6egUrAmka1Hc/4WnYqmroMBmHRchSBMwwZSF
+	SHzgL3PJcw5fqN6rcMWkvXnRN96t8GXZfu4efu2A8f3PW/Qqsj8UOuYuy0G7DoD8IEN1Db9/W9O
+	Sr8YhqcZLSn4AXa4veNONUr9TtMSKMby124maXaEqqwiBF8w3wgtn9JEWnBlPnGc3fAstn+1UHo
+	4wgstjgDpx00/ZR4M0tYqzmNQq0VtikhZI4EhuOhFDss0VBT5GBj0FnGnknqZsk1MW7ck4CGzjD
+	DYfCkvx6Ah0vKwT54rdCavoF1oOHJYMj62fp9sye9DwRxROQdwxW6jmeVTG
+X-Received: by 2002:a17:907:948b:b0:c15:f4bb:e663 with SMTP id a640c23a62f3a-c24e5a50b56mr505005366b.10.1787646924418;
+        Tue, 25 Aug 2026 01:35:24 -0700 (PDT)
+Received: from localhost (p200300f65f19a904037016a565660d5e.dip0.t-ipconnect.de. [2003:f6:5f19:a904:370:16a5:6566:d5e])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-c24e1adf5c2sm360475766b.28.2026.08.25.01.35.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 19:30:11 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 Aug 2026 01:35:20 -0700 (PDT)
+Date: Tue, 25 Aug 2026 10:35:20 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the rtc tree with the origin tree
+Message-ID: <ao1TiE4KG4m9xXWr@monoceros>
+References: <aow6wPvEaMCIWmY3@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 4b18edbd8e70f7e6860d56370f13244896d0f95c
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 25 Aug 2026 02:30:11 -0000
-Message-ID: <178762501061.2879.3983482847181311187@b455de3d9de8>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sg6tl4quizmpr2m7"
+Content-Disposition: inline
+In-Reply-To: <aow6wPvEaMCIWmY3@sirena.org.uk>
 
 
+--sg6tl4quizmpr2m7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: linux-next: manual merge of the rtc tree with the origin tree
+MIME-Version: 1.0
 
-Hello,
+On Mon, Aug 24, 2026 at 01:36:16PM +0100, Mark Brown wrote:
+> diff --cc drivers/rtc/rtc-rzn1.c
+> index 305f10a8a85b6,1e1676a7f3cc9..0000000000000
+> --- a/drivers/rtc/rtc-rzn1.c
+> +++ b/drivers/rtc/rtc-rzn1.c
+> @@@ -16,6 -18,8 +18,7 @@@
+>   #include <linux/init.h>
+>   #include <linux/iopoll.h>
+>   #include <linux/module.h>
+>  -#include <linux/mod_devicetable.h>
+> + #include <linux/of.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/pm_runtime.h>
+>   #include <linux/rtc.h>
 
-Status summary for next/master
+Looks ok and is probably simple enough for Linus to sort out, but
+mentioning it in the PR is a good idea.
 
-Dashboard:
-https://d.kernelci.org/c/next/master/4b18edbd8e70f7e6860d56370f13244896d0f95c/
+Thanks for your notification.
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 4b18edbd8e70f7e6860d56370f13244896d0f95c
-origin: maestro
-test start time: 2026-08-24 13:39:12.891000+00:00
+Best regards
+Uwe
 
-Builds:	   71 ✅    3 ❌    0 ⚠️
-Boots: 	  186 ✅    1 ❌    0 ⚠️
-Tests: 	34738 ✅ 5320 ❌ 8172 ⚠️
+--sg6tl4quizmpr2m7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-### POSSIBLE REGRESSIONS
+-----BEGIN PGP SIGNATURE-----
 
-  No possible regressions observed.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqNU8UACgkQj4D7WH0S
+/k6mCAgAg8ykU4rieI971UmoIvp2A/gwzDJ1me3qkLhjZYPhpWAcZiKDMlfd8A3Y
+YsVfM7rLJSrJGzQzwn0geeHdn5pxD+30L1DZ7KyjU/zmv/qDN9JTIHXRDD858doT
+OqnU+YL/0uNGPf0thxt3yifAdPjDVB4aT0CiNqCkhH4NwJWNNAAOMt64jlDSm/60
+mlkG/7g2z6JmwaQW+ZipJuNoqxYcevjqdLKP5VH6Rl1LNKCMw5fVIFZtKw5JkaY5
+ZFbDsjnG2uXbTu/htwMwxdWY2O5rRg5PkHv0BPs6u+7C3qmQzI6+Rcnay/koDYtV
+lpRIUKSfoF1A0SSQ0cEpEUIDV6pSPw==
+=KJiY
+-----END PGP SIGNATURE-----
 
-
-### FIXED REGRESSIONS
-    
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_spi_11010000_can_0
-      last run: https://d.kernelci.org/test/maestro:6a8c56fa62f33761c00f0617
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa
-      last run: https://d.kernelci.org/test/maestro:6a8c544b62f33761c00ec806
-      history:  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_60
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f7597
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_63
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75ac
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_61
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75a3
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_62
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75aa
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_63
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75b1
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_64
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75b8
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_57
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f7586
-      history:  > ✅  > ✅  > ⚠️  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75e1
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_72
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75ef
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75f6
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_57
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f7584
-      history:  > ✅  > ✅  > ⚠️  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_69
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75d8
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75df
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_71
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75e6
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_72
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75ed
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75f4
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_57
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f7585
-      history:  > ✅  > ✅  > ⚠️  > ✅  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_69
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75d9
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75e0
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_71
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75e7
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_72
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75ee
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a8c5f5d62f33761c00f75f5
-      history:  > ⚠️  > ⚠️  > ✅  > ⚠️  > ⚠️  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a8c52d962f33761c00e7f4f
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-
-
-
-This branch has 2 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--sg6tl4quizmpr2m7--
