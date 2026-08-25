@@ -1,107 +1,111 @@
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D19B47CC8F
-	for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 14:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2BE44E055;
+	Tue, 25 Aug 2026 15:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787668024; cv=none; b=Nl3vPX3UQLo8mfzktOFANtr2uXvltOWN9FZjEoutQYbWCD2s2vA8iy6EmSbZIZsJsW6NBoGvcg7Q7JuYNgCg/XIIcelUDD4SHLkP1x+obEW1+zmiOHs8s7aSgyeZZmbhxfwKvdyfqsMKTHCYfFNNEbIdm6EKvEa7qNpm2JKbhQ0=
+	t=1787670873; cv=none; b=dPqbeCy3LQKKbedg4JDd77uRx6gPHIYslcZpQWzx2ZcLzNfsESXd1weksq54B0xlc6KGXEYQ617UC/RitPuntxyS7dH5B0+0NXEiDBS81QOOSFdWVA/A3tKACJ/d0Jng8b7sWXaP/aHnZQjSkhEO2bO+GxWYC8JpL3c4Mf/YHoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787668024; c=relaxed/simple;
-	bh=iggwS5qNk0O6dpFnEPch1q6f2uoYHUpDTK99QoQUsmk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Xo8J6agvf1RU1rUedQfSMphq1WEQMxxFMlwTrsPdey3cwzDOMwlwh/zxk6DWC9wbB5LPxvQeQpZT10tQ2XG8fSJbSz1qFG9tgz5wzVUx4W85EaBSLpSZGdZf/JprkoxAvWUgOQCvyBW+IIGQ8FnYfaHuR+B/uGMd/aWK3xfG2KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UlTmcQtE; arc=none smtp.client-ip=209.85.216.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UlTmcQtE"
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38ecc48b3c2so8301494a91.1
-        for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 07:27:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787668022; x=1788272822; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=p7z5jNTdUBIQty4rQGf4wGM+0E3saDplq3UPpEgCikk=;
-        b=UlTmcQtESf/RPBr8k5uCo9KWdaXSpyVK8dpGxRDmKYu+q+2oqkxhfUnEOU6dUiBfHg
-         a1OyUccp/+luY39pgn7jg6TVUFJsA9kCd8wlurlxuz2yP27j7jl3g/ViF+wbIZNvYsPU
-         xzIp+nRT0F6kbJuD5jtnFdyvF9ePSUMez5MArdBYNB7wAlkgHTmJXsG/qBshYPoZYhwc
-         Dl7w/Q7dvx9FVVt6I0PeUH4QyFOoBfsaT70Gz/w35wkBdLMDiw/scHO6fIaZIfkjruwa
-         3q2WG6wcDD8vOpRvyjzqMmn7xPxtmchgEArOm7deAfLlg/FAYwf41gmqEplRJbMyKLqN
-         CMlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787668022; x=1788272822;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=p7z5jNTdUBIQty4rQGf4wGM+0E3saDplq3UPpEgCikk=;
-        b=rBxz/lHE64yc5u9DP8wNNMln0weeyuUZxbE2DU/Xn3ShJzmSQC+7Fml68S7m8zIbA7
-         D3acI7mdShk+9K+Mor4eA11bgwwxqpK0WOZIy2ig6EkZF1f1qYG/D70cEmwgtmv1SpcV
-         0bSTJltXxc8QwSOmYjcC/uVD7BWq6MiUjlLXC0DARMdct+RC+IJUZZ8ZStVdbTs+fvHn
-         AZEFJ8WSIXJgfIhhxzfmp0xtNqou2JRwtkayQhx07SyZUXNqLVguq4RNQ6FqGduN/2CV
-         0pId98vvHymtbtHBHXL7Q0g5t/zGrvXVknIGIrDNUTWntQEPjTCrraXLOO22cd+rmYLR
-         rDsg==
-X-Forwarded-Encrypted: i=1; AHgh+Rp6lm8LGTEXVSIhSPLJsENMIR/m7XdNTViBT4H+LVCWpdZu12meSIcVT1vCwVB0ptIK4QdyXniZyD96@vger.kernel.org
-X-Gm-Message-State: AFuF++nDxctZkAROuJQ1lRG5Ndl6gslf/l/CZDme7btPFOPTun01lg1O
-	Y/VhsNApaBWyr3HZH30VAkSJrzAivwqFIy/NFgPhVRiXO58m7Dr6Nx0fYv4pkYu8yaX1A2WRyFK
-	Z9p0RNg==
-X-Received: from pgec18.prod.google.com ([2002:a63:9612:0:b0:c86:61a1:3390])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5867:b0:395:4de4:92c8
- with SMTP id 98e67ed59e1d1-395df4dcdbcmr55013906a91.15.1787668022148; Tue, 25
- Aug 2026 07:27:02 -0700 (PDT)
-Date: Tue, 25 Aug 2026 07:27:01 -0700
-In-Reply-To: <CABgObfa3xML+PJK0242GiHs1warwSrf4ikN4wTTtwOUdFazhRw@mail.gmail.com>
+	s=arc-20240116; t=1787670873; c=relaxed/simple;
+	bh=3RZDchxNIKlMF+YZZY5dokjhg564AFEZHqUtAa9+kZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDDVNhKl6nx4dckeW0I8Z55sBgVsnKM+TCSFZnIapOYvhOShSwlEil9ENL034RIfUb4XP5V2dQGnByspbMCffje6ojV5vd3FvVFq4vJvqq/YPol1nY/nFNGLEVQYth0FEQ31zfVjGYCLSpY4E2ff43hJesFVvEHV4REjWk/WA/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67PFDXrN052354;
+	Wed, 26 Aug 2026 00:13:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67PFDX2t052350
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 26 Aug 2026 00:13:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
+Date: Wed, 26 Aug 2026 00:13:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ao2ZkNr2eHlUD2RH@sirena.org.uk> <CABgObfa3xML+PJK0242GiHs1warwSrf4ikN4wTTtwOUdFazhRw@mail.gmail.com>
-Message-ID: <ao2mNbsvmROAna2V@google.com>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with the kvm tree
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] loop: Fix NULL pointer dereference in lo_rw_aio()
+To: Bart Van Assche <bvanassche@acm.org>,
+        Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
+        oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        Hillf Danton <hdanton@sina.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
+        linux-btrfs@vger.kernel.org
+References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
+ <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
+ <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
+ <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
+ <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav412.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue, Aug 25, 2026, Paolo Bonzini wrote:
-> On Tue, Aug 25, 2026 at 3:33=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
-rote:
-> >
-> > Hi all,
-> >
-> > Today's linux-next merge of the kvm-x86 tree got a conflict in:
-> >
-> >   tools/testing/selftests/kvm/steal_time.c
-> >
-> > between commit:
-> >
-> >   15a9a2ba0c546 ("Merge tag 'kvm-x86-selftests2-7.3' of https://github.=
-com/kvm-x86/linux into HEAD")
-> >
-> > from the kvm tree and commit:
-> >
-> >   12c2a7f18f579 ("Merge branch 'selftests2'")
-> >
-> > from the kvm-x86 tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tre=
-e
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularl=
-y
-> > complex conflicts.
->=20
-> Thanks, this is just a small difference in how I fixed the conflict
-> between multiple kvm-x86 pull requests. Either version is fine, and
-> Sean will force-push to Linus's tree at some point anyway.
+On 2026/08/25 7:53, Bart Van Assche wrote:
+> On 8/24/26 3:06 PM, Tetsuo Handa wrote:
+>> but sashiko found problems with Bart's series ( https://sashiko.dev/
+>> #/patchset/8330ca0e-b4d9-451a-bc0d-a50178194ea8@I-love.SAKURA.ne.jp
+>> and https://sashiko.dev/#/patchset/2efb1032-34b9-4c31-
+>> b6fc-4aa9b1d60895@I-love.SAKURA.ne.jp ).
+> 
+> Thanks, I had not yet seen this feedback from Sashiko. My conclusion is
+> that two of the three Sashiko findings are wrong. I will fix the third
+> one - the finding about the potential wait-die deadlock.
+> 
 
-I force-pushed using kvm/next, so this should go away.  Thanks!
+As of commit fe4c990e6a30 ("loop: Add __guarded_by() annotations") in block-loop branch,
+
+  modprobe loop
+  losetup /dev/loop0 testfile.img; losetup /dev/loop1 /dev/loop0; losetup -D
+  sleep 1
+  losetup /dev/loop1 testfile.img; losetup /dev/loop0 /dev/loop1; losetup -D
+
+causes lockdep warning. This is a false positive, but we need to avoid it anyway.
+
+>> I still cannot catch why Bart's approach can become safe without
+>> synchronize_rcu() and drain_workqueue().
+> 
+> Agreed that drain_workqueue() or flush_workqueue() is necessary. I do
+> not agree that an explicit synchronize_rcu() call is required. Waiting
+> until the request queue is frozen includes this call implicitly.
+> See also __percpu_ref_switch_to_atomic().
+
+OK. You recognized that we need drain_workqueue() or flush_workqueue(), and
+
+On 2026/08/25 8:24, Bart Van Assche wrote:
+> On 8/24/26 3:53 PM, Bart Van Assche wrote:
+>> On 8/24/26 3:06 PM, Tetsuo Handa wrote:
+>>> I still cannot catch why Bart's approach can become safe without
+>>> synchronize_rcu() and drain_workqueue().
+>>
+>> Agreed that drain_workqueue() or flush_workqueue() is necessary. I do
+>> not agree that an explicit synchronize_rcu() call is required. Waiting
+>> until the request queue is frozen includes this call implicitly.
+>> See also __percpu_ref_switch_to_atomic().
+> 
+> A correction: it is not safe to call drain_workqueue() nor to freeze the
+> request queue in __loop_clr_fd(). I'm considering to modify the comment
+> in that function as follows:
+
+you also recognized that we can't call drain_workqueue() or flush_workqueue().
+
+Therefore, I chose to temporarily drop lo->lo_disk->open_mutex in order to
+make it possible to safely perform drain_workqueue().
