@@ -1,124 +1,351 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2693CAA49;
-	Wed, 26 Aug 2026 10:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443BC1990A7;
+	Wed, 26 Aug 2026 11:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787740741; cv=none; b=Iw3x3e76XGQzAIC56sZZfqcltIILdJFMcX4A3kN4KOnm7DPszUDJwWLA+yX2q1mLRc2WRtjzlAdWaRL7DznuRWXxgWbNaIPspZf3AOTF5apyVQVXkh9Ex0Pk3wrheZqHLm27lYoqjGGuJCagol++LmLnkF0SaYDHh1gyuAZkdsg=
+	t=1787745178; cv=none; b=X9NqqeBzyqSbV8CGsK7DD0AVEiDz2NdDhpJzq5U3UgZDxCNEp6PlV00TrPo2KBAU89vmp1aciRYqX+HhWl2v7rSKK9Og34FxewkGW116jDUyoo+cpmdqwBFovPiYXR7ElVIwa5OIeGSgNllnxA7BZW1Hcv3psKXCSX/W6bj48Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787740741; c=relaxed/simple;
-	bh=aNqnHUAaUhTGvvVwE9ECDTRoDx01i/L5nzyGJk3/rHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tPuY4aQjGQtNffDrRzGCwd3nGA0YgC0B/w1PGOEC4ngY/VuTHV7vS/iyLZ6EKTwF1CmrWmaQVszIr5CdJOB8wNK08qtr9aiNzMoimItYocDJ0a+QmUqV0sdPe3yXoTDzj08dpIsUbUspa1lCJjq3bdr7VKFukjwkh2CwaduKhxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67QAbvDZ079437;
-	Wed, 26 Aug 2026 19:37:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67QAbusX079434
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 26 Aug 2026 19:37:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
-Date: Wed, 26 Aug 2026 19:37:54 +0900
+	s=arc-20240116; t=1787745178; c=relaxed/simple;
+	bh=rT1jkwEg5MSTjgZT7XEd0Z8Dytt+J30vH9sZGDmYMUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fnh93LoKTo4fqoNAQQEdrnaLnhrB6KdoF/8JSUnlO6HnbA+BGMJQSou3yJoJfIiHhQr9+MtsSHbsIXyUjjQdYJKwUza4zezwEWxWpi0V0oRyTPCKbYZlQkzNjV4VruPTJhNPApAJ3VPbzMXa7bpfLUC6WXEW/nK7BYwkp/L/hpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2OGi2cA; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2OGi2cA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED251F000E9;
+	Wed, 26 Aug 2026 11:52:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787745176;
+	bh=iRWRkd0hh7NrpUS5yE2QLfqEtCKKKQGDAZF4IlZG2oE=;
+	h=Date:From:To:Cc:Subject;
+	b=c2OGi2cAPPXOAYKLZsziyiNnAvK8t7iU77VLCW+1A+ypJMoxdPahVJnDq5ucQFllx
+	 d+ZiklmUfqdPtXq6IyZ7fpmGheobqfWAZ7Ye77ZDFlsL7OpDMjzlCVF9S71UggV7+B
+	 zPsXlcYe8Bch/6FXUCeCd+rbAlsH5nX4MwdFef8Ou5CdzLFOE5m8wBJpamiNaFVjf2
+	 F3G2W4wB/6DG444VtZDHSosyA2nlWGmaqbW+M/J3/J3dSc4dj+vANWJQyOdmqqo6JK
+	 CxmHGrCaTjmXVL7GCdw/mlLkhyHoDmJeFzVQMR7M+Dki1OH3O+NnaAqEEPlToEK858
+	 xLEaw3jNnPqMA==
+Date: Wed, 26 Aug 2026 12:52:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Dave Airlie <airlied@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+Subject: linux-next: manual merge of the drm-misc-fixes tree with the origin
+ tree
+Message-ID: <ao7TlLDCvDc9KS2q@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] loop: Fix NULL pointer dereference in lo_rw_aio()
-To: Bart Van Assche <bvanassche@acm.org>,
-        Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
-        oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        Hillf Danton <hdanton@sina.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
-        linux-btrfs@vger.kernel.org
-References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
- <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
- <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
- <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
- <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
- <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
- <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav211.rs.sakura.ne.jp
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BcRjPkRg30TfJc73"
+Content-Disposition: inline
 
-On 2026/08/26 8:16, Bart Van Assche wrote:
-> On 8/25/26 8:13 AM, Tetsuo Handa wrote:
->> On 2026/08/25 7:53, Bart Van Assche wrote:
->>> A correction: it is not safe to call drain_workqueue() nor to freeze the
->>> request queue in __loop_clr_fd(). I'm considering to modify the comment
->>> in that function as follows:
->>
->> you also recognized that we can't call drain_workqueue() or flush_workqueue().
->>
->> Therefore, I chose to temporarily drop lo->lo_disk->open_mutex in order to
->> make it possible to safely perform drain_workqueue().
-> 
-> My sentence was incomplete: I should have written that it is not safe to
-> call drain_workqueue() nor flush_workqueue() from __loop_clr_fd() while
-> the request queue is frozen. It is not clear to me how draining or
-> flushing the workqueue from inside __loop_clr_fd() could cause trouble
-> if this happens with the queue unfrozen since disk->open_mutex is not
-> acquired by the memory reclaim code?
 
-I don't know how "since disk->open_mutex is not acquired by the memory reclaim
-code" is relevant...
+--BcRjPkRg30TfJc73
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Current situation is a result of what we had considered 4 years ago; we don't need
-to destroy workqueue (note that destroy_workqueue() implies drain_workqueue()) from
-__loop_clr_fd() ( https://lkml.kernel.org/r/20220330052917.2566582-16-hch@lst.de ).
+Hi all,
 
-Since there is a
+Today's linux-next merge of the drm-misc-fixes tree got conflicts in:
 
-  Chain exists of:
-    (wq_completion)loop0 --> system_transition_mutex/1 --> &disk->open_mutex
-  
-   Possible unsafe locking scenario:
-  
-         CPU0                    CPU1
-         ----                    ----
-    lock(&disk->open_mutex);
-                                 lock(system_transition_mutex/1);
-                                 lock(&disk->open_mutex);
-    lock((wq_completion)loop0);
+  drivers/gpu/drm/nouveau/nvkm/engine/disp/head.h
+  drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/disp.c
 
-dependency, but my proposal to forbid binding loop device to pseudo files
-( https://lkml.kernel.org/r/148efba2-a0b6-47d7-ac76-b19d2f4b696c@I-love.SAKURA.ne.jp )
-was rejected by Christoph, we are stuck in a
+between commit:
 
-  Draining workqueue with open_mutex held causes creating a complex lock dependency
-  chain involving the global system_transition_mutex. (Maybe there are other paths
-  that create similar dependency chain if we drain workqueue with open_mutex held.)
+  804cb093b245c ("drm/nouveau/disp/r535: Add scanline position support + he=
+ad state support")
 
-versus
+=66rom the origin tree and commits:
 
-  Not draining workqueue causes NULL pointer dereference in lo_rw_aio().
+  c6659e0ffc19b ("drm/nouveau/disp: move GSP head-timing ISR and vblank hel=
+pers to tu102.c")
+  5bb489b333237 ("drm/nouveau/gsp: fix vblank interrupts on GB20x")
 
-collision. Therefore,
+=66rom the drm-misc-fixes tree.
 
-  Draining workqueue *without open_mutex held* can avoid creating a complex lock
-  dependency chain involving the global system_transition_mutex and can also avoid
-  NULL pointer dereference in lo_rw_aio().
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-is my solution.
+diff --combined drivers/gpu/drm/nouveau/nvkm/engine/disp/head.h
+index b642729c254fe,5976498da9094..0000000000000
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/head.h
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/head.h
+@@@ -56,6 -56,8 +56,8 @@@ int gv100_head_new(struct nvkm_disp *,=20
+  void gv100_head_state(struct nvkm_head *head, struct nvkm_head_state *sta=
+te);
+  void gv100_head_rgpos(struct nvkm_head *head, u16 *hline, u16 *vline);
+ =20
++ extern const struct nvkm_head_func tu102_gsp_head;
++=20
+  #define HEAD_MSG(h,l,f,a...) do {                                        =
+      \
+  	struct nvkm_head *_h =3D (h);                                           =
+ \
+  	nvkm_##l(&_h->disp->engine.subdev, "head-%d: "f"\n", _h->id, ##a);     \
+diff --combined drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/disp.c
+index e77733a5d9c3c,f5f22173fc2c1..0000000000000
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/disp.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/disp.c
+@@@ -400,16 -400,16 +400,16 @@@ r535_sor_dp_audio(struct nvkm_ior *sor
+  		r535_sor_dp_audio_mute(sor, false);
+  }
+ =20
+- static void
+- r535_sor_dp_vcpi(struct nvkm_ior *sor, int head, u8 slot, u8 slot_nr, u16=
+ pbn, u16 aligned_pbn)
++ static int
++ r535_dp_vcpi(struct nvkm_ior *sor, int head, u8 slot, u8 slot_nr, u16 pbn=
+, u16 aligned_pbn)
+  {
+  	struct nvkm_disp *disp =3D sor->disp;
+  	struct NV0073_CTRL_CMD_DP_CONFIG_STREAM_PARAMS *ctrl;
+ =20
+  	ctrl =3D nvkm_gsp_rm_ctrl_get(&disp->rm.objcom,
+  				    NV0073_CTRL_CMD_DP_CONFIG_STREAM, sizeof(*ctrl));
+- 	if (WARN_ON(IS_ERR(ctrl)))
+- 		return;
++ 	if (IS_ERR(ctrl))
++ 		return PTR_ERR(ctrl);
+ =20
+  	ctrl->subDeviceInstance =3D 0;
+  	ctrl->head =3D head;
+@@@ -429,12 -429,20 +429,20 @@@
+  	ctrl->MST.sendACT =3D 0;
+  	ctrl->MST.singleHeadMSTPipeline =3D 0;
+  	ctrl->MST.bEnableAudioOverRightPanel =3D 0;
+- 	WARN_ON(nvkm_gsp_rm_ctrl_wr(&disp->rm.objcom, ctrl));
++ 	return nvkm_gsp_rm_ctrl_wr(&disp->rm.objcom, ctrl);
++ }
++=20
++ static void
++ r535_sor_dp_vcpi(struct nvkm_ior *sor, int head, u8 slot, u8 slot_nr, u16=
+ pbn, u16 aligned_pbn)
++ {
++ 	const struct nvkm_rm_api *rmapi =3D sor->disp->engine.subdev.device->gsp=
+->rm->api;
++=20
++ 	WARN_ON(rmapi->disp->dp.vcpi(sor, head, slot, slot_nr, pbn, aligned_pbn)=
+);
+  }
+ =20
+  static int
+- r535_sor_dp_sst(struct nvkm_ior *sor, int head, bool ef,
+- 		u32 watermark, u32 hblanksym, u32 vblanksym)
++ r535_dp_sst(struct nvkm_ior *sor, int head, bool ef,
++ 	    u32 watermark, u32 hblanksym, u32 vblanksym)
+  {
+  	struct nvkm_disp *disp =3D sor->disp;
+  	struct NV0073_CTRL_CMD_DP_CONFIG_STREAM_PARAMS *ctrl;
+@@@ -461,6 -469,15 +469,15 @@@
+  	return nvkm_gsp_rm_ctrl_wr(&disp->rm.objcom, ctrl);
+  }
+ =20
++ static int
++ r535_sor_dp_sst(struct nvkm_ior *sor, int head, bool ef,
++ 		u32 watermark, u32 hblanksym, u32 vblanksym)
++ {
++ 	const struct nvkm_rm_api *rmapi =3D sor->disp->engine.subdev.device->gsp=
+->rm->api;
++=20
++ 	return rmapi->disp->dp.sst(sor, head, ef, watermark, hblanksym, vblanksy=
+m);
++ }
++=20
+  static const struct nvkm_ior_func_dp
+  r535_sor_dp =3D {
+  	.sst =3D r535_sor_dp_sst,
+@@@ -545,16 -562,21 +562,21 @@@ r535_sor_hdmi_ctrl_audio(struct nvkm_ou
+  static void
+  r535_sor_hdmi_audio(struct nvkm_ior *sor, int head, bool enable)
+  {
+- 	struct nvkm_device *device =3D sor->disp->engine.subdev.device;
+- 	const u32 hdmi =3D head * 0x400;
+-=20
+  	r535_sor_hdmi_ctrl_audio(sor->asy.outp, enable);
+  	r535_sor_hdmi_ctrl_audio_mute(sor->asy.outp, !enable);
++ 	sor->disp->func->gsp.hdmi_gcp(sor, head, enable);
++ }
+ =20
+- 	/* General Control (GCP). */
+- 	nvkm_mask(device, 0x6f00c0 + hdmi, 0x00000001, 0x00000000);
+- 	nvkm_wr32(device, 0x6f00cc + hdmi, !enable ? 0x00000001 : 0x00000010);
+- 	nvkm_mask(device, 0x6f00c0 + hdmi, 0x00000001, 0x00000001);
++ static void
++ r535_sor_hdmi_infoframe_avi(struct nvkm_ior *sor, int head, void *data, u=
+32 size)
++ {
++ 	sor->disp->func->gsp.hdmi_infoframe_avi(sor, head, data, size);
++ }
++=20
++ static void
++ r535_sor_hdmi_infoframe_vsi(struct nvkm_ior *sor, int head, void *data, u=
+32 size)
++ {
++ 	sor->disp->func->gsp.hdmi_infoframe_vsi(sor, head, data, size);
+  }
+ =20
+  static void
+@@@ -582,8 -604,8 +604,8 @@@ r535_sor_hdmi =3D=20
+  	.ctrl =3D r535_sor_hdmi_ctrl,
+  	.scdc =3D r535_sor_hdmi_scdc,
+  	/*TODO: SF_USER -> KMS. */
+- 	.infoframe_avi =3D gv100_sor_hdmi_infoframe_avi,
+- 	.infoframe_vsi =3D gv100_sor_hdmi_infoframe_vsi,
++ 	.infoframe_avi =3D r535_sor_hdmi_infoframe_avi,
++ 	.infoframe_vsi =3D r535_sor_hdmi_infoframe_vsi,
+  	.audio =3D r535_sor_hdmi_audio,
+  };
+ =20
+@@@ -608,31 -630,6 +630,6 @@@ r535_sor_cnt(struct nvkm_disp *disp, un
+  	return 4;
+  }
+ =20
+- static void
+- r535_head_vblank_put(struct nvkm_head *head)
+- {
+- 	struct nvkm_device *device =3D head->disp->engine.subdev.device;
+-=20
+- 	nvkm_mask(device, 0x611d80 + (head->id * 4), 0x00000002, 0x00000000);
+- }
+-=20
+- static void
+- r535_head_vblank_get(struct nvkm_head *head)
+- {
+- 	struct nvkm_device *device =3D head->disp->engine.subdev.device;
+-=20
+- 	nvkm_wr32(device, 0x611800 + (head->id * 4), 0x00000002);
+- 	nvkm_mask(device, 0x611d80 + (head->id * 4), 0x00000002, 0x00000002);
+- }
+-=20
+- static const struct nvkm_head_func
+- r535_head =3D {
+- 	.state =3D gv100_head_state,
+- 	.rgpos =3D gv100_head_rgpos,
+- 	.vblank_get =3D r535_head_vblank_get,
+- 	.vblank_put =3D r535_head_vblank_put,
+- };
+-=20
+  static struct nvkm_conn *
+  r535_conn_new(struct nvkm_disp *disp, u32 id)
+  {
+@@@ -1404,35 -1401,6 +1401,6 @@@ static const struct nvkm_event_fun
+  r535_disp_event =3D {
+  };
+ =20
+- static void
+- r535_disp_intr_head_timing(struct nvkm_disp *disp, int head)
+- {
+- 	struct nvkm_subdev *subdev =3D &disp->engine.subdev;
+- 	struct nvkm_device *device =3D subdev->device;
+- 	u32 stat =3D nvkm_rd32(device, 0x611c00 + (head * 0x04));
+-=20
+- 	if (stat & 0x00000002) {
+- 		nvkm_disp_vblank(disp, head);
+-=20
+- 		nvkm_wr32(device, 0x611800 + (head * 0x04), 0x00000002);
+- 	}
+- }
+-=20
+- static irqreturn_t
+- r535_disp_intr(struct nvkm_inth *inth)
+- {
+- 	struct nvkm_disp *disp =3D container_of(inth, typeof(*disp), engine.subd=
+ev.inth);
+- 	struct nvkm_subdev *subdev =3D &disp->engine.subdev;
+- 	struct nvkm_device *device =3D subdev->device;
+- 	unsigned long mask =3D nvkm_rd32(device, 0x611ec0) & 0x000000ff;
+- 	int head;
+-=20
+- 	for_each_set_bit(head, &mask, 8)
+- 		r535_disp_intr_head_timing(disp, head);
+-=20
+- 	return IRQ_HANDLED;
+- }
+-=20
+  static void
+  r535_disp_fini(struct nvkm_disp *disp, bool suspend)
+  {
+@@@ -1659,7 -1627,7 +1627,7 @@@ r535_disp_oneinit(struct nvkm_disp *dis
+  		nvkm_gsp_rm_ctrl_done(&disp->rm.objcom, ctrl);
+ =20
+  		for_each_set_bit(i, &disp->head.mask, disp->head.nr) {
+- 			ret =3D nvkm_head_new_(&r535_head, disp, i);
++ 			ret =3D nvkm_head_new_(disp->func->gsp.head, disp, i);
+  			if (ret)
+  				return ret;
+  		}
+@@@ -1703,12 -1671,20 +1671,20 @@@
+  	if (ret)
+  		return ret;
+ =20
+- 	ret =3D nvkm_gsp_intr_stall(gsp, disp->engine.subdev.type, disp->engine.=
+subdev.inst);
++ 	/* Chips that raise head-timing interrupts on a separate low-latency
++ 	 * vector report it as a second DISP interrupt table entry, exposed
++ 	 * as instance 1 by the RM engine-index translation (see
++ 	 * r570_gsp_xlat_mc_engine_idx()). Their high-latency vector
++ 	 * (instance 0) is left unhandled as no event nouveau enables is
++ 	 * routed to it, and without a handler it stays masked.
++ 	 */
++ 	ret =3D nvkm_gsp_intr_stall(gsp, disp->engine.subdev.type,
++ 				  disp->func->gsp.intr_low_latency ? 1 : disp->engine.subdev.inst);
+  	if (ret < 0)
+  		return ret;
+ =20
+  	ret =3D nvkm_inth_add(&device->vfn->intr, ret, NVKM_INTR_PRIO_NORMAL, &d=
+isp->engine.subdev,
+- 			    r535_disp_intr, &disp->engine.subdev.inth);
++ 			    disp->func->gsp.intr, &disp->engine.subdev.inth);
+  	if (ret)
+  		return ret;
+ =20
+@@@ -1741,6 -1717,7 +1717,7 @@@ r535_disp_new(const struct nvkm_disp_fu
+  	rm->uevent =3D hw->uevent;
+  	rm->sor.cnt =3D r535_sor_cnt;
+  	rm->sor.new =3D r535_sor_new;
++ 	rm->gsp =3D hw->gsp;
+  	rm->ramht_size =3D hw->ramht_size;
+ =20
+  	rm->root.oclass =3D gpu->disp.class.root;
+@@@ -1782,6 -1759,8 +1759,8 @@@ r535_disp =3D=20
+  	.dp =3D {
+  		.get_caps =3D r535_dp_get_caps,
+  		.set_indexed_link_rates =3D r535_dp_set_indexed_link_rates,
++ 		.sst =3D r535_dp_sst,
++ 		.vcpi =3D r535_dp_vcpi,
+  	},
+  	.chan =3D {
+  		.set_pushbuf =3D r535_disp_chan_set_pushbuf,
 
-Can you agree with my solution?
+--BcRjPkRg30TfJc73
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqO05MACgkQJNaLcl1U
+h9CATQf/eTmz4L9PldBgbRXKE1nOTca5dubEoc9B+iIZxzIFATgaP38XjuSdnNPC
+24CNMAHj4cKDL1lR6GWBBX/12q4PxJNP5uFuTy51+20ymenrTRlyCSg3YSz7RsmR
+OwucwUXHx5W0Z9MaeDgFV9WDMRdwbzOI60vx5lo36iaXo+j1sxeP2PLbqHUFR1lX
+9GtbdeTPRvNKCv03zEYf98pzZMdN1PDdUACfpOHOTiqRsIiO7wxVAsPI611HEwVj
+63zC4Wo+sYzlkDixyZpbkLc6KlXD6blfIoqfzlxu3ZDUOmluB8in4A8O8l5Y1wUl
+XMz0TJPT9gIfQU1h13EGP4ckOg9Buw==
+=vvaO
+-----END PGP SIGNATURE-----
+
+--BcRjPkRg30TfJc73--
