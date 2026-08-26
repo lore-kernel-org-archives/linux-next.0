@@ -1,120 +1,220 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23FB3F88A6;
-	Wed, 26 Aug 2026 13:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4150F38759C;
+	Wed, 26 Aug 2026 17:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787752547; cv=none; b=udUa9Uj8e3C9ozRq1lmN++MSVC/vi9XYncZo/KzqZncYHZdJer6+n4oK9ke1+HesVmhih4tDcyS8Ira3SE1MhoJGfr1G8h9GLpSI0EyjGmBTR3+jXxBtQsMRqj2Hu8Amf43ZXbfNgTNLYiR9PQSVKSXlW8b/5wrt77BBxYDiNV8=
+	t=1787766299; cv=none; b=DQwHZ8SIp6yQTQBWE+JmerJxMk/TgRgdQcV2iCyRTSEwlv7qdgg/nBHpxx+g1bBQOD2cVFqrpqBoy970egsiX3DygYqznrAAi0kBmuKsoSF7GN2SyjVptTDG6TmcEukJ/tcxyH1AmWKjACOUUOtI1uuIa4ctERYB1u1lYVbTiN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787752547; c=relaxed/simple;
-	bh=RUVTKw/VG54r1eefxdJR7ylBNa84J4JvSA+VIPShnd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UZVwHrCPxe3Hm//q6C5yU1XiZKkiYe+xcXNxn3YmgYTYoyachqCIE0RQpHpIHZbAxABDye9R2U29D8jT4boFWWHZzY6vGEE0C0lwEyU2pYgx6ucfaq6CluzA/6eLdjQS4/9vfSZiCWVLru5fySrZLYzDfEuF8PPCbPtt6pa8x5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GO5XP2Cm; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787766299; c=relaxed/simple;
+	bh=Cjej1b9ulZD4SLUQ65giMci24Ri25n5cpkeOZilNV4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fin0ynrAetuPs9jQYKJuWaYJFlq/WkPSe7GfMnb+jhwNBaeOadvLI4gYbnK0ENBqGaHGcTf3evqeNLVGfOSq7AfGQNvBdaZ0CBUAmc+qC+QAqzMvJw4qCNCBCDFMJ9QdqRAkcPsFRIHf2jm1NGj/plyQqTLzvprl1aa5gIgtd5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=OFqb6n8G; arc=none smtp.client-ip=199.89.1.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GO5XP2Cm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE4C1F000E9;
-	Wed, 26 Aug 2026 13:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787752545;
-	bh=Df8kS+YpI3r0tWz7CuHdfyakM1azwA4JtMxzFyOyBMU=;
-	h=Date:From:To:Cc:Subject;
-	b=GO5XP2Cm6i+Dsw0fQq/BrOSz2GthPcX4IZnyCI3s/TKF6EeZC3dgYSmbVHMzIjk1W
-	 nLFV6JjkQdZPATXzoXs7xQLTNKVocz/Tu/AVj07PiKk0vQ4egV1T6mfVdO+xVeny4k
-	 62U7IYql386nW3eM0v56z+PdwRC3WEXfPUqxXDOFBS1ENobxcbRdUp94+kg6HBlwuF
-	 mSmjzumb9WyWF8NjdpUsAoVvILb014lN+eDTdWNNBsE8bbx+SGgy1icLuFBbXhaAxa
-	 n37lrmeHRodh1kZSoVj7zoPcBqMWGLWjf9RwV4pbfEUqi20GJPXzUInAe2vt+yAm+b
-	 IaYiNfJm+DotA==
-Date: Wed, 26 Aug 2026 14:55:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Aug 26
-Message-ID: <ao7wXip7ilZWBzTM@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="OFqb6n8G"
+Received: from localhost (localhost [127.0.0.1])
+	by 013.lax.mailroute.net (Postfix) with ESMTP id 4hVX8n71kxzlfvpx;
+	Wed, 26 Aug 2026 17:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1787766265; x=1790358266; bh=pKO6GRYJSRPMTr9pvNHVs822
+	TckI3HU9vvYb2xgjpAU=; b=OFqb6n8GcMt8UWt8cEPiFHdWAFNtin5l+i5VB6wP
+	jTVOkEhfPtcdFjxv0Me7UiKOA2z0h0xP8UyT55M0bTYMwsyoKNj27kluU9XeeN+S
+	vI1gSBHZsSOUWObkuiYnWNpWlJB95IbAA7U766Gkr5Ga0NUDakR9q3aF1vuXJPOc
+	tC5IfBnbtS7iK4O/1o1CiOeJMbz7UAxPGHr9X0x5hX3HgdtzK0Dkpy1j+p5n/zwr
+	DO4vdhdnXALV+9+IYemXGPhNutqDu3XKj0YfT/WiQImBFSIcx16OHu9gRF02ulZF
+	RZ9CRZdGUVBC2c8EfJPH6b+iEy49QWhlQzkLD3tF9enSvg==
+X-Virus-Scanned: by MailRoute
+Received: from 013.lax.mailroute.net ([127.0.0.1])
+ by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 3siDX9OQjeDl; Wed, 26 Aug 2026 17:44:25 +0000 (UTC)
+Received: from [100.80.227.50] (unknown [104.135.182.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4hVX8N5fq6zlfvpH;
+	Wed, 26 Aug 2026 17:44:20 +0000 (UTC)
+Message-ID: <d2f387b9-031a-4306-9323-56f98a8241b7@acm.org>
+Date: Wed, 26 Aug 2026 10:44:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="znhwLp5C5vwWRAfi"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] loop: Fix NULL pointer dereference in lo_rw_aio()
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
+ oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
+ Hillf Danton <hdanton@sina.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
+ linux-btrfs@vger.kernel.org
+References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
+ <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
+ <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
+ <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
+ <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
+ <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
+ <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
+ <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 8/26/26 3:37 AM, Tetsuo Handa wrote:
+> Current situation is a result of what we had considered 4 years ago; we don't need
+> to destroy workqueue (note that destroy_workqueue() implies drain_workqueue()) from
+> __loop_clr_fd() ( https://lkml.kernel.org/r/20220330052917.2566582-16-hch@lst.de ).
+> 
+> Since there is a
+> 
+>    Chain exists of:
+>      (wq_completion)loop0 --> system_transition_mutex/1 --> &disk->open_mutex
+>    
+>     Possible unsafe locking scenario:
+>    
+>           CPU0                    CPU1
+>           ----                    ----
+>      lock(&disk->open_mutex);
+>                                   lock(system_transition_mutex/1);
+>                                   lock(&disk->open_mutex);
+>      lock((wq_completion)loop0);
+
+This ABBA locking scenario can only be triggered if a loop device is
+bound to a sysfs attribute with read or write methods that lock
+system_transition_mutex, e.g. /sys/kernel/power, isn't it?
+
+> dependency, but my proposal to forbid binding loop device to pseudo files
+> ( https://lkml.kernel.org/r/148efba2-a0b6-47d7-ac76-b19d2f4b696c@I-love.SAKURA.ne.jp )
+ > was rejected by Christoph, we are stuck in a
+ >
+>    Draining workqueue with open_mutex held causes creating a complex lock dependency
+>    chain involving the global system_transition_mutex. (Maybe there are other paths
+>    that create similar dependency chain if we drain workqueue with open_mutex held.)
+> 
+> versus
+> 
+>    Not draining workqueue causes NULL pointer dereference in lo_rw_aio().
+> 
+> collision. Therefore,
+> 
+>    Draining workqueue *without open_mutex held* can avoid creating a complex lock
+>    dependency chain involving the global system_transition_mutex and can also avoid
+>    NULL pointer dereference in lo_rw_aio().
+> 
+> is my solution.
+
+Releasing and reacquiring disk->open_mutex from __loop_clr_fd() seems
+risky to me. There is plenty of code in block/bdev.c that assumes that
+disk->open_mutex is not released by lo_release().
+
+I think there is another solution: instead of draining the workqueue
+from inside __loop_clr_fd(), postpone it until the next time the loop
+device is bound. See also the patch below.
+
+Regarding your earlier request for a Sashiko review: I will look into
+configuring Sashiko such that I can run "sashiko review ${commit_id}"
+locally. The only part I'm missing right now is a Sashiko API key.
+
+Thanks,
+
+Bart.
+
+loop: Serialize I/O and queue limits updates
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 119758b45e47..1406932fae93 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1086,6 +1086,12 @@ static int loop_configure(struct loop_device *lo, 
+blk_mode_t mode,
+  			error = -ENOMEM;
+  			goto out_unlock;
+  		}
++	} else {
++		/*
++		 * Wait until all work related to a previously bound file has
++		 * finished.
++		 */
++		flush_workqueue(lo->workqueue);
+  	}
+
+  	/* suppress uevents while reconfiguring the device */
+@@ -1154,11 +1160,27 @@ static int loop_configure(struct loop_device 
+*lo, blk_mode_t mode,
+  static void __loop_clr_fd(struct gendisk *disk, struct loop_device *lo)
+  	__must_hold(&disk->open_mutex)
+  {
++	struct request_queue *q = lo->lo_queue;
+  	struct queue_limits lim;
++	unsigned int memflags;
+  	struct file *filp;
+  	gfp_t gfp = lo->old_gfp_mask;
+  	int err;
+
++	/*
++	 * Prevent that new asynchronous I/O is submitted while queue limits
++	 * are being modified.
++	 */
++	blk_queue_flag_set(QUEUE_FLAG_DYING, q);
++
++	/* Wait until asynchronous I/O has finished. */
++	memflags = blk_mq_freeze_queue(q);
++	blk_mq_unfreeze_queue(q, memflags);
++
++	/* Wait until I/O dispatching has finished. */
++	blk_mq_quiesce_queue(q);
++	blk_mq_unquiesce_queue(q);
++
+  	mutex_lock(&lo->lo_mutex);
+  	filp = lo->lo_backing_file;
+  	lo->lo_backing_file = NULL;
+@@ -1169,17 +1191,12 @@ static void __loop_clr_fd(struct gendisk *disk, 
+struct loop_device *lo)
+  	lo->lo_sizelimit = 0;
+  	memset(lo->lo_file_name, 0, LO_NAME_SIZE);
+
+-	/*
+-	 * Reset the block size to the default.
+-	 *
+-	 * No queue freezing needed because this is called from the final
+-	 * ->release call only, so there can't be any outstanding I/O.
+-	 */
+-	lim = queue_limits_start_update(lo->lo_queue);
++	/* Reset the block size to the default. */
++	lim = queue_limits_start_update(q);
+  	lim.logical_block_size = SECTOR_SIZE;
+  	lim.physical_block_size = SECTOR_SIZE;
+  	lim.io_min = SECTOR_SIZE;
+-	queue_limits_commit_update(lo->lo_queue, &lim);
++	queue_limits_commit_update(q, &lim);
+
+  	invalidate_disk(disk);
+  	loop_sysfs_exit(lo);
+@@ -1217,6 +1234,9 @@ static void __loop_clr_fd(struct gendisk *disk, 
+struct loop_device *lo)
+  	WRITE_ONCE(lo->lo_state, Lo_unbound);
+  	mutex_unlock(&lo->lo_mutex);
+
++	/* Reallow I/O. */
++	blk_queue_flag_clear(QUEUE_FLAG_DYING, q);
++
+  	fput(filp);
+  }
 
 
---znhwLp5C5vwWRAfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi all,
-
-We are in the merge window, please do not add any non-fix patches to
--next.
-
-Changes since 20260825:
-
-The mm trees were reorganised, with the akpm, slab and memblock trees
-replaced by new mm and mm-fixes trees.
-
-The sound-current tree lost it's build failure.
-
-The drm-misc tree acquired a conflict with the origin tree.
-
-The sound tree lost it's build failure.
-
-The pwrseq tree acquired a build failure, I used the version from
-next-20260825.
-
-The pagemap-headers tree was added and successfully built.
-
-Non-merge commits (relative to Linus' tree): 1785
- 1751 files changed, 63639 insertions(+), 20180 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 425 trees (counting Linus' and 131 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---znhwLp5C5vwWRAfi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqO8F0ACgkQJNaLcl1U
-h9ANcgf/W//roNCagAiHSf4G65BC8LyCa7CV6ijpxH0xUq8gcfFJS/pD5LBIAChP
-/zbXtwKU2LSKl/B1Risa7yEviVMnQDuTv7QnerBu+PkWiOh+PwQDHtQQX4UP3gLY
-MLmdnSTNyQOlzHtpfXa0ChP117YoGxyOoPCGcS9GjgXBpYnlWSayjQeGZb8ANOtu
-R6G3Y9SmygcRpRhdxawLt89ZHQITJO8LqJJzD8JPkHhwJEddXohJB0e3y0zLtKfx
-LFhdC2VHRsxP7NKpKebDaMAyWj5BGaX4h4+4SK/0HjPHPXCdKG1J8Dgwaq7vJ3Xo
-B0GoFl53J6yEsi+GemOlnsRumBzjXw==
-=GSSX
------END PGP SIGNATURE-----
-
---znhwLp5C5vwWRAfi--
