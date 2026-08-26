@@ -1,282 +1,90 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5272F84F
-	for <linux-next@vger.kernel.org>; Wed, 26 Aug 2026 02:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85813C0A07;
+	Wed, 26 Aug 2026 10:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787711438; cv=none; b=gXQieZCgZ2V4qTdIPahMCGSYnI4uR+ap/KWDHDW4q41lqvxDX4Y/c3FqL7ZmyLxzSrs9p35l1BpeUWk1kxQHVAmU9LzAOXEf8YFcuWt6H7lbdATwPby08A0e2uRCEUuazfKbx8+eNZc8kxlMmXBbSkgA40VdwJ9QnPO/Lk8Pd8k=
+	t=1787739691; cv=none; b=PcJgfXbPwDnVD+swVEguDdzz+eDRzv+MPA2VYWm/Er1vqMuDSmt5iHSFoZr77+DAEWNRwnutCc1oGWPSd1r3hVB9m4+8No9Jrn2nq6VaoZmYT24a8x7ByCu1ZnWz5hs+yh/Ob6iP8X9UXGFDSY+3vKaCkPjxZI1VYtkLnDbIs0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787711438; c=relaxed/simple;
-	bh=nYbV30b4DLkITNljrWPbadI1MiZhVNG/zT6VavRiIic=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=CeErERIZp17VzBjd2MQJOdV0q8jo187Cyt8EHiCGih8yVRGzxGzX7oVjY6F5IeA+XQrYk5xDMuUDYiXGqc74UqMAqWwbk3/1GtfU80AAbpnLR4ZcjmsV7K9DvPcH/KO+1bmP4Vda6zgoeCELTwJ1NiCyoMOtpOtxxRaQpAtLSYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=eZvwohnH; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1787739691; c=relaxed/simple;
+	bh=POX/YMveAu+KX2uCmi5Uo4cKPHVRBpn6C4m5QNJ715I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnCfC6HNpL7TYYIdDxdrXpubrWcGu7467VXkfRnqGEsh40IQmAsr6xUBXeytLFrrqDXN2c8VNIBjWYszMp4wkzyrDVkqH7O4dmrf/B0gWHZsVy14Hj47cPSGGUjq2JKRwAmgRsH4I1IKO3fy5HxDuePC/VNhgoUNOGIyWGL4H84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=he+L3ERj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="eZvwohnH"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-38e041ea211so646731a91.0
-        for <linux-next@vger.kernel.org>; Tue, 25 Aug 2026 19:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1787711435; x=1788316235; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=5QIMrafC4uUlxrwWEcnlSyGIzmNcOedoLpHqlw8/ai0=;
-        b=eZvwohnHOhKkTeWFwFqtyYBmg9CV/Cy7nswKQfZlOMD3GKmKBjGKIKU2aQD6DD3f+K
-         p0SHNC9Hma77QfWd9D0aA1wzoX7eQbe1H6jMhHrxPWIaWq6qRrUyBiunh0AAlC6lBRZE
-         y6/DoRG/HO05nXaCNqXW82ceZDF/c/jhUM4D2fM7eLQeihFUOmeisLrfsHtzhrGd+8uJ
-         jJ0SHbbGrdbv/KC6CCQv0ozYdcuR2Z762XrdPtG7CHKbw84wbOxV83ViH5cDSH/5oYVy
-         WL9CMWpBY5zxTeOvVLoWOxJH9OMUiOYTjyyWT1oJv2Oef8stLqaDUPG7SGtbsIuUDQYb
-         6HQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787711435; x=1788316235;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5QIMrafC4uUlxrwWEcnlSyGIzmNcOedoLpHqlw8/ai0=;
-        b=CUfBhzVunDMej/cdRHxJOF0zudNQgcNFhOzNJXBxs5E+7J751WcM+46hktWgb1kl1t
-         C9mHYdi0cjzugw0HeinImQmd9W3vzoOlvDjA+dpXwZ1pSRf5vg6XuauSJtCfLKcIEfLg
-         gjbOtR6j+xRx4+SJOWJzDxg05Y2pjfnGwDWGe9kIxVMZPTSuuv+BzhVaB/lciuKq6kPd
-         TsaYmMLArg3hI5+gpJVW6Ueyzso0h2wvT1xCg8n/rNeZZCXQ4Ffe/fP+GpZEbR4Nh3KI
-         lF41PLfPY/kwi38i/KvzaALO/qsM/LNLibIBCBALruYiCcW5aId8QSpB6/c2FbNOZrtP
-         icog==
-X-Gm-Message-State: AFuF++mIJNXrRfS1qIv6uE2q0G8W5vOkeT7Ku9EjYffRHq2QXvnk9YLl
-	f1hkRMAvj079L3lq2u1ytaP4qEl4CFkoi22tjeUYh3VnMWKBTcEGjOZVI12H6C7oTu7unawhNWo
-	RNH1+
-X-Gm-Gg: AR+sD118aD6HmtnRoZBCZjC3fWZ99WDb8Ykj+FGAZLvncdVt8iVfXrYF4Y/Ro4+VbJk
-	H4GT4GR7agd6HRgFiExWYIYZWywXf6mRL2RGD9KmZ4t74GF+JaU7+frGwhAufuHsncCmrpvKCZw
-	N6rbTOPWPGUd1yDQGnZvvATa+gO4MwdU5mdE1Jt92d0l5Fn2YnYtRlBKsnN5ml4W4ip1nrveKBp
-	wiqJSzH/ZQ46UNyvXdBx0EovYJ34P/7FZFlQks0wVzejUHr2sQNrR3S/won/31Zw7ik+d6HmY+3
-	5Pf2yw4efgCMJCnBjoTySGiSeCKSyk5E24brkgHv6VjGVvAP3lFllcTOaL9Sz7gflIy+LXAVt+a
-	Jc9rsI5BSeHEhD9reMB8WRJuVnCfqlqwrZEh73y9U+Hltu2a1BfwHhTginH2BAehZMGcV1i9Zcg
-	OIrYaF/sLI5mKZiiIUMfPHCwIo+oOy8mox4XS3raMM6am4tWQOUZvqCCH/8F3NbRA=
-X-Received: by 2002:a17:90b:4b04:b0:36d:9e0b:3801 with SMTP id 98e67ed59e1d1-3966d5f900dmr7035921a91.8.1787711435090;
-        Tue, 25 Aug 2026 19:30:35 -0700 (PDT)
-Received: from b455de3d9de8 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3283d60c291sm5386281eec.6.2026.08.25.19.30.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 19:30:34 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="he+L3ERj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E101F000E9;
+	Wed, 26 Aug 2026 10:21:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1787739689;
+	bh=V4ZoqREWKBTRVg5Xn9QozpDz1SHMaORIEQ1sJJ24y7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=he+L3ERjvLJF+HhBWPGlFU631R+nhAUjQrBb4XbYA7uSGfYyCb0C46Z9EDpfBwNVN
+	 vs7GHzPDRIpU3HeU+l3PXa3L7P6RcmSw/5AZYYRqbt9nGHr+25xRSg3DDjLwdxqSgf
+	 FGS2pLhzlJXzzR44xoUfxT9ode8TL62gzzvvqXaE=
+Date: Wed, 26 Aug 2026 11:22:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: spasswolf@web.de, alexander.deucher@amd.com,
+	regressions@lists.linux.dev, leandro.ribeiro@collabora.com,
+	mwen@igalia.com, alex.hung@amd.com, mario.limonciello@amd.com,
+	jesse.zhang@amd.com, Amber.Lin@amd.com,
+	amd-gfx@lists.freedesktop.org, linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: warnings from validate_blend_mode_for_alpha_formats() in
+ next-20260715
+Message-ID: <2026082651-spinning-cornbread-33ba@gregkh>
+References: <20260716152933.6744-1-spasswolf@web.de>
+ <20260825212815.48959-1-mikhail.v.gavrilov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - a8406e6c0b793ce0788019683837c40855b55995
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Wed, 26 Aug 2026 02:30:34 -0000
-Message-ID: <178771143404.3315.12996312992763552709@b455de3d9de8>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260825212815.48959-1-mikhail.v.gavrilov@gmail.com>
 
+On Wed, Aug 26, 2026 at 02:28:15AM +0500, Mikhail Gavrilov wrote:
+> Hi,
+> 
+> this is not a linux-next-only issue any more: 860e748bddcc came in with the
+> drm-next pull of the 7.3 merge window, so it now warns on plain mainline. Here
+> it fires 16 times on every boot - 8 per GPU, on the 4 primary and 4 cursor
+> planes of each of the two cards in this machine:
+> 
+>   [PLANE:44:plane-0] pixel format with alpha exposed but blend mode not setup
+>   WARNING: drivers/gpu/drm/drm_mode_config.c:872 at drm_mode_config_validate+0xa16/0x13b0
+> 
+> I ran into it on 7.2.0-2709dd5ae32f, bisected it to 860e748bddcc and confirmed
+> by reverting that commit, before I found this thread. Hardware:
+> 0000:03:00.0 Navi 31 (DCN 3.2) and 0000:0f:00.0 Raphael iGPU (DCN 3.1.5).
+> 
+> Nobody has put this on regzbot yet, so:
+> 
+> #regzbot introduced: 860e748bddcc
+> #regzbot title: drm: WARNING at drm_mode_config_validate() for planes exposing alpha without a blend mode property
+> #regzbot monitor: https://lore.kernel.org/all/20260813143605.106104-1-mwen@igalia.com/
+> 
+> Status as far as I can see it: Melissa Wen's v3 series (monitored above) fixes
+> amdgpu for both DCN and DCE, has Reviewed-by from Alex Hung and Tested-by from
+> Daniel Wheeler, and I tested it here too - the warnings are gone on both GPUs.
+> It is in neither linux-next nor amd-staging-drm-next so far. 271e90eb5f9f
+> ("drm: use drm_warn() in validate_blend_mode_for_alpha_formats()") turns the
+> splat into a plain warning and went to drm-next on 2026-08-20 as part of
+> drm-misc-next-fixes-2026-08-20, but has not reached mainline either. Other
+> drivers are being fixed in separate threads (imx dcss, rockchip, vkms).
+> 
+> Since this was introduced during the 7.3 merge window, the fixes should land
+> in 7.3 rather than wait for the next one.
 
+I can confirm this regression.  It's hitting me here too on Linus's
+latest tree.  It's not good to boot and have a bunch of warnings already
+happening, resulting in a "tainted" kernel before I have the chance to
+break anything manually myself...
 
-Hello,
+thanks,
 
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/a8406e6c0b793ce0788019683837c40855b55995/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: a8406e6c0b793ce0788019683837c40855b55995
-origin: maestro
-test start time: 2026-08-25 13:55:14.264000+00:00
-
-Builds:	   72 ✅    2 ❌    0 ⚠️
-Boots: 	  180 ✅    1 ❌    0 ⚠️
-Tests: 	33020 ✅ 5193 ❌ 6808 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-exist
-      last run: https://d.kernelci.org/test/maestro:6a8da78862f33761c016639d
-      history:  > ✅  > ❌  
-            
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_spi_11010000_can_0
-      last run: https://d.kernelci.org/test/maestro:6a8daa7562f33761c016b4a8
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: lemans-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-exist
-      last run: https://d.kernelci.org/test/maestro:6a8da78362f33761c0166391
-      history:  > ❌  > ✅  
-            
-Hardware: qcs615-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000
-      last run: https://d.kernelci.org/test/maestro:6a8dc3fe62f33761c017d51a
-      history:  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_display-controller_ae01000
-      last run: https://d.kernelci.org/test/maestro:6a8dc3fe62f33761c017d519
-      history:  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_ae90000
-      last run: https://d.kernelci.org/test/maestro:6a8dc3fe62f33761c017d517
-      history:  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_dsi_ae94000
-      last run: https://d.kernelci.org/test/maestro:6a8dc3fe62f33761c017d515
-      history:  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_ae94400
-      last run: https://d.kernelci.org/test/maestro:6a8dc3fe62f33761c017d513
-      history:  > ❌  > ✅  
-            
-Hardware: sm8750-mtp
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a8da73c62f33761c0165ab9
-      history:  > ❌  > ✅  
-            
-      - kselftest.proc
-      last run: https://d.kernelci.org/test/maestro:6a8da74a62f33761c0165b86
-      history:  > ❌  > ✅  
-            
-Hardware: qcs8300-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6a8da73962f33761c0165aad
-      history:  > ❌  > ✅  
-            
-      - kselftest.futex.futex_run_sh_global_requeue_multiple
-      last run: https://d.kernelci.org/test/maestro:6a8db26562f33761c01701d2
-      history:  > ❌  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: imx8mp-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_60
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850ad
-      history:  > ✅  > ❌  > ✅  > ✅  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_event_spurious_wm8960audio_63
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850c2
-      history:  > ✅  > ❌  > ✅  > ✅  > ❌  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_61
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850b9
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_62
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850c0
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_63
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850c7
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_name_wm8960audio_64
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850ce
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_57
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c018509c
-      history:  > ✅  > ⚠️  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850f6
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_72
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c0185104
-      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_default_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c018510b
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_57
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c018509a
-      history:  > ✅  > ⚠️  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_69
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850ee
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850f4
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_71
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c01850fb
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_72
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c0185102
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_invalid_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c0185109
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_57
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c018509b
-      history:  > ✅  > ⚠️  > ✅  > ✅  > ⚠️  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_69
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850ef
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_70
-      last run: https://d.kernelci.org/test/maestro:6a8dce4962f33761c01850f5
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_71
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c01850fc
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_72
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c0185103
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.alsa.alsa_mixer-test_write_valid_wm8960audio_73
-      last run: https://d.kernelci.org/test/maestro:6a8dce4a62f33761c018510a
-      history:  > ⚠️  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a8dadc762f33761c016d423
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+greg k-h
