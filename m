@@ -1,138 +1,212 @@
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9B3451CC;
-	Thu, 27 Aug 2026 17:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923B5241686;
+	Thu, 27 Aug 2026 21:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787851715; cv=none; b=Jna51FTH4lH6bJFRKSmtUDja261/jlLWovMjb9wNjjjCemQCr+q4rbgb3chsEK+Thl9Y2dkZcQ32lulYlTO1wUS3zqoF5/HGo1jY8Mp/SRkRfzOxGH303Hu6pxPR0SD1c4Q8UpWhTr8ZFXN+PfG8qCDyOfznX6NLJmqoRw5bv/I=
+	t=1787864863; cv=none; b=PY38cXy55aW9PaXF7NoD/TZnK6XGC53wlfVrZHIZZNKcFlQtf6gUMmac3bhvfQ7Tle4Z8rMh13SszwUImyDRoJx6MXKEH7Fw7h1yhReTM+siaYkM0RwP+5qEMgLWEd+6k5t7vlYxwb8gHGluABlZoPKz5jsl2MyvWoGRrPOvXrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787851715; c=relaxed/simple;
-	bh=+bVSqeETuoDw1BqSpntt2L1pf1LIQ9cwzg+2T8/W+SI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtL6S17WbYkgEGp4PamKrbcR8D3xPAEnmKdShiaqzuFhIGTKmGKyxjlNMZcW6jSt3TAEaH1PS34ISHjbi8TnsZO6Sd7D3Md50dpw4oW8zWl6x23OxFWywfJTbBh3/VSewj4IhAaKYq/OtvR8PM9Let0HE+E7TPv6JVxuAdDE8Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=l8MZr2zg; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1787864863; c=relaxed/simple;
+	bh=MVKR6Pzrh5/lF15W562Ofyk5fmn1OdffMASDTRdZFps=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QmGNaxtRPjLiJF6DWwjCLIR5he2hx6UHs18bo1KRr14y7PdXx/xs275alPiVYk9lI4PuKC1nBqHUokUcRgqiOfRMMoTn692+p7QAO4D9ugHXnRnXx6Fd3NGDqA8sAfhp39WLK2WVBHzi+h9nBym0ynGRHZZ2fFD1XIYrD8eBLOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=njWA3koQ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="l8MZr2zg"
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4hW7lj4Q59z1XM0p7;
-	Thu, 27 Aug 2026 17:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1787851701; x=1790443702; bh=uCX4aVXwG7lP1Y2cPRH5ADHi
-	/a1CbPD/0uCVhN6bZJs=; b=l8MZr2zgBnfuV3VV3T3fA7yVO+6R/3zmvNlC8ef7
-	nvKlHA2cAduk1+ivotVcwM9Tz78WylwH/lZ28K13GZQn+pH4wdfAWxEuuIHd7nkx
-	z0GwO+8XXTJQSAX1/MTmQhRHiTCGHczkncOF2AC57jGs//yZp31fF+jyvS/4L6KY
-	RtDDuEqRSxL/vJzp+Zcq5LxKLkoj7g69Mzkwen50H/tqxO5J8YCF0y7ii/aZBwdT
-	IWmJ8XMVF8Cfw3K9GU7nUKgVUZKsgLRJClcsWKpxdqRNBY/TMzeM3DoP6WfqBXIb
-	BN+jpDwvzgWakt/fxHDdy2raDKCQSW5dLZp02tQKXfPrkA==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id KR0o28xEvOmE; Thu, 27 Aug 2026 17:28:21 +0000 (UTC)
-Received: from [100.80.227.50] (unknown [104.135.182.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4hW7lN0m3dz1XM0p2;
-	Thu, 27 Aug 2026 17:28:15 +0000 (UTC)
-Message-ID: <c0df5f39-d103-4e36-9807-df0ae0247772@acm.org>
-Date: Thu, 27 Aug 2026 10:28:14 -0700
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="njWA3koQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1787864830; x=1788469630; i=spasswolf@web.de;
+	bh=nRFDhaUwXIpLuDk3iWQUwhzno7/oihih62AfZPsxbcQ=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=njWA3koQP/zz02RoVbXej5yrA00SHF5DAagJmrTejv5k/3hGy+WAZ+/afSXBd1ln
+	 uqoL5FlyfQBKwDgCj51ESJe2XFSv8JylkjZXRWobNHcqS5SgnMvTrgBzBNPopVng7
+	 Wp2cnQQFoRgqYxaqY1SVS+axoyw7HYBPtAc/4bj0su160bbIzpwXd5P7kC8sFpGhD
+	 L8oPvoQwZdjpZIa2xPu5mq/aNhAFPicbqqqA2rIRtY29zyhJE5EjMCTf4fR1cM/oZ
+	 ChnUKck/LLFoezq0p6wHfanYJbUMxE1oNOTFOn3hbKk6VXqL1/B7zGAZ1e+IAHtHY
+	 B+YGzpFATvKrqpAanQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m9J-1x0WOU3AnL-00EZ3j; Thu, 27
+ Aug 2026 23:07:09 +0200
+Message-ID: <bd31938661f178abaa68d3958bacdc1ebb70ff5c.camel@web.de>
+Subject: Re: [PATCH v7.2-rc6] drm/amd/display: fix usage of
+ DC_FPU_{BEGIN,END} with PREEMPT_RT
+From: Bert Karwatzki <spasswolf@web.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-rt-devel@lists.linux.dev, amd-gfx@lists.freedesktop.org, Mikhail
+ Gavrilov	 <mikhail.v.gavrilov@gmail.com>, Alex Deucher
+ <alexander.deucher@amd.com>,  Rafal Ostrowski <rafal.ostrowski@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, Thomas Gleixner	
+ <tglx@linutronix.de>, spasswolf@web.de
+Date: Thu, 27 Aug 2026 23:07:08 +0200
+In-Reply-To: <20260827124931.ocQEF6MW@linutronix.de>
+References: <202608061233.eufnR5Qm-lkp@intel.com>
+	 <20260807124944.154232-1-spasswolf@web.de>
+	 <20260827124931.ocQEF6MW@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.2-10+b1 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] loop: Fix NULL pointer dereference in lo_rw_aio()
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
- oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
- Hillf Danton <hdanton@sina.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
- linux-btrfs@vger.kernel.org
-References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
- <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
- <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
- <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
- <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
- <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
- <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
- <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
- <d2f387b9-031a-4306-9323-56f98a8241b7@acm.org>
- <e5518546-701e-4d3c-a077-18e34aa8c188@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <e5518546-701e-4d3c-a077-18e34aa8c188@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FLlOinNoAtPvryHrUdhVjzwwbi6AJBeMaErejUpJnr3lgrmbPgN
+ lsn7tFl6s8OyIke16QXKk3fvEIRW2wwBfg02FplE7yMNiNSt1yHVqQWkwvPsUfEBfe/dcgV
+ mdI0cO8r8fLgl5xVB5AlB8fjKukQRJIPpEAWcLh7dagnsqYSkTjCfaimnNRhAl2c1U4Wgb9
+ 5UJVCWSUDbO1HcEWhxNjw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1SueLRKDMEk=;EB7DoTz2zd9YmVPsxpY2n518BSp
+ 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
+ d3of9SJQFTjTrqXbk2ZfvlatKCTPdlXy
 
-On 8/27/26 8:30 AM, Tetsuo Handa wrote:
-> While Sashiko considers a static blk_mq_freeze_queue() sufficient to avoid
-> the NULL pointer dereference, relying on freezing the queue inside __loop_clr_fd()
-> while holding `disk->open_mutex` is a dangerous decision.
-> 
-> It is true that blk_mq_freeze_queue() alone is equivalent to
-> synchronize_rcu() + drain_workqueue() + blk_mq_freeze_queue().
-> 
-> Although omitting drain_workqueue() causes lockdep to stop complaining, not
-> using drain_workqueue() does not avoid the runtime deadlock situation shown below.
-> As long as there is a possibility of an in-flight I/O holding or waiting on a
-> lock that subsequently tries to acquire `disk->open_mutex`, the deadlock
-> risk remains. Lockdep will remain silent here simply because it cannot inspect
-> the wake-up conditions inside wait_event() during a queue freeze.
-> 
-> Here is the exact execution timeline that leads to the silent deadlock:
-> 
-> Thread 1:                         Thread 2:                         Thread 3:
-> ========================================================================================
->                                                                      Holds a global lock
->                                                                      (e.g., system_transition_mutex).
-> 
->                                    Block core increments
->                                    `q_usage_counter`.
-> 
-> Block core holds `disk->open_mutex`.
-> 
-> lo_release() tries to wait for
-> `q_usage_counter` to reach 0
-> via blk_mq_freeze_queue()
->    => BLOCKED by Thread 2.
->                                    loop_handle_cmd() tries
->                                    to hold the global lock
->                                      => BLOCKED by Thread 3.
->                                                                      Tries to hold
->                                                                      `disk->open_mutex`
->                                                                        => BLOCKED by Thread 1.
-> ========================================================================================
-> 
-> Since Thread 1 will never release `disk->open_mutex`, Thread 3 can never release
-> the global lock, and Thread 2 can never reach blk_mq_end_request() to unblock Thread 1.
-> 
-> I've tried offloading __loop_clr_fd() entirely to task_work context in v3 patch, but
-> it did not work due to module lifecycle restrictions
-> ( https://sashiko.dev/#/patchset/fda8abc8-6aa2-463b-bf72-865f6b838034@I-love.SAKURA.ne.jp ).
-> 
-> Therefore, I consider that temporarily releasing `disk->open_mutex` within the process
-> context to safely perform flushing/draining before clearing the backing file pointer
-> is the most robust architectural solution to break this deadlock chain.
+Am Donnerstag, dem 27.08.2026 um 14:49 +0200 schrieb Sebastian Andrzej Sie=
+wior:
+> On 2026-08-07 14:49:42 [+0200], Bert Karwatzki wrote:
+> > On PREEMPT_RT kernels kvzalloc_obj() can sleep because spin_lock is
+> > converted to rt_mutex. dc_create_plane_state() can be called while
+> > inside an FPU-guarded region, resuling in "scheduling while atomic"
+> > errors on PREEMPT_RT kernels.
+> >  Fix this by calling kvzalloc_obj() with DC_RUN_WITH_PREEMPTION_ENABLE=
+D().
+> > Also fix the error path in dc_create_stream_for_sink().
+> >=20
+> > Fixes: 3539437f354b ("drm/amd/display: Move FPU Guards From DML To DC =
+- Part 1")
+> > Link: https://lore.kernel.org/lkml/20260723123449.6494-1-spasswolf@web=
+.de/
+> > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+>=20
+> Thank you Bert. Got this somewhere in the meantime?
 
-I'm going to drop patch "loop: Serialize I/O and queue limits updates"
-from my patch series and leave it to someone else to solve this issue
-since none of the proposed fixes that have been discussed so far make me
-enthusiast.
+No, this is seems to be stuck somewhere ...
 
-Thanks,
+>=20
+> Could the FPU regions with disabled preemption be limited to where we
+> have actually have FPU usage in way that you don't have to worry when it
+> is needed to use DC_RUN_WITH_PREEMPTION_ENABLED() and when not? Also the
+> dc_fpu_begin()/ end() can nest and if they do the usage of
+> DC_RUN_WITH_PREEMPTION_ENABLED() is futile, isn't it?
+>=20
 
-Bart.
+I'm not very familiar with the amd display engine, and it's a lot of code,
+but there I think there's some room for improvement, e.g. dml2_destroy():
+
+dml2_destroy is called from dc_state_free() from within DC_FP_{START,END}(=
+)
+and then basically just calls vfree with DC_RUN_WITH_PREEMPTION_ENABLED().
+(directly or through dml21_destroy()). Here both the DC_FP_*() tags and
+DC_RUN_WITH_PREEMPTION_ENABLED() could be dropped I think (not tested, yet=
+)
+
+Regarding nesting DC_FP_*()s: When I was searching for the cause of the
+kernel panics I monitored every DC_FP_{START,END}() with printk(), and I
+don't think I encountered nesting (the logs are lost unfortunately)
+
+
+> The first usage kernel_fpu_begin() saves the FPU state to the user task.
+> kernel_fpu_end() does not restore it. Therefore the subsequent
+> invocation of kernel_fpu_begin() is cheaper.
+>=20
+> Sebastian
+
+Bert Karwatzki
