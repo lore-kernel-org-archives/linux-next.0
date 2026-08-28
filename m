@@ -1,123 +1,164 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206753B0AFB;
-	Fri, 28 Aug 2026 09:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637C945FFAC;
+	Fri, 28 Aug 2026 13:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787910917; cv=none; b=WIJtYYzYPpPCvSMZeLfwc1ySXgazUGbrAxODHa93mgpcGrpEiLZjWpgLjvDoMizMaCY5K90BEEdyPINb+aN3oGKkF2fEvYyXNK8x6NUvlh3dDVu/Ca6iw8Y0JKAIgutiLgl7UQS3EhefRFLRUU6eZuvVo3zt/FWWnuX54YNvqeA=
+	t=1787923663; cv=none; b=rRviAeNuxiaVaMNJDxrSdsafCNMs4CX0jvGDWwTaWZ5fIWGP0J4yci0hTCaN0pNWVpypPwnwK+P0sdeYP9sATb77yy/VfPUnq3m+mc1qQviXqfYUAMeE7ntb1hBpVSxZ7bDN3nfCzksrS6aJ3bTgD3U10An/YQ27Jo7cM24eGLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787910917; c=relaxed/simple;
-	bh=6oeqrrY3k3q1ZVQ2gGGMhJWL9Q7YvpYDFMSe9Q3tE4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b36qM+czL/pN7uGgS1qwUZHlJeP7OFbLfYNPo0uQ/io5lQjWI2CtrsIVWWX846t/TnEBQEsYN7Q9euK/ge53q87nHEP4qDjLiGtDT/8LUSr1KX8ooPXyleEwCb3TtrTRfjnEgRREvQmpN7dU5mXBh0fDaNJmeuzzedqF1fRzgXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fSkxkPMb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DaWZaMUw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1787923663; c=relaxed/simple;
+	bh=CpSpzPjzDmQTaw98gZP8nSp26OiFMquYXWbQXnMWkl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hnsVPV6B/+BSW52DSaTinnL4d3PDgSa5fkF4eiRPbbTv4X60s0fnNCf2IERQuwWx7oawjuSmbJrsYc3LRkt0oeQ9ErvOGP8e0waJKyRIE8+kosjWrsL8sLlcFOE8tbGbh7AMo8WUvpweQxjpN8vrdJVAKChp++P+BB6q4miy3mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abMQUCU5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fSkxkPMb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DaWZaMUw"
-Date: Fri, 28 Aug 2026 11:55:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1787910912;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HfL4Lo4u9mCbo/tmoWJN+iDCB3yeeS2jnrmcd3fTXps=;
-	b=fSkxkPMbo207cmjv/vbHhPd1wtpBWn1vUFASAs4KQr4I+QSwfsgvKb+O3uKLW2OvaXQReP
-	VkEUCepmHO30eVxgs0lBVZnxv6JrIefLSBXT5KydWyezcRXU1pq46TGbF1HSGtDBPPr99A
-	2nfYWZ7ehNDPEbMEdCkieEPZulV+1CagHXYuIT05RKfrLsLv+ivp3l/5JGe5Nub8wZk+li
-	Xda/r+fYYWOEhF8g1ZS4fjZyWrgT+5rrIyFL0JlCQYhw6RbIP/tWAxMvTlyhZ4qF8h3EtY
-	TQysGAWc7zEUNmJV/zzP/lYVYjtCtsX1CQ8a4AvYx4sMHXDoT0Zza8tvPaI1EA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1787910912;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HfL4Lo4u9mCbo/tmoWJN+iDCB3yeeS2jnrmcd3fTXps=;
-	b=DaWZaMUwsTr2V0hzD3+LQ0nml7NJQd3XP8j/hrwD++N2PID7st9W1OrcmihxPzH2FXWs3o
-	C1Y2/KI9lJO5xEBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, amd-gfx@lists.freedesktop.org,
-	Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Rafal Ostrowski <rafal.ostrowski@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v7.2-rc6] drm/amd/display: fix usage of
- DC_FPU_{BEGIN,END} with PREEMPT_RT
-Message-ID: <20260828095511.zrVXJUrU@linutronix.de>
-References: <202608061233.eufnR5Qm-lkp@intel.com>
- <20260807124944.154232-1-spasswolf@web.de>
- <20260827124931.ocQEF6MW@linutronix.de>
- <bd31938661f178abaa68d3958bacdc1ebb70ff5c.camel@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abMQUCU5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199991F000E9;
+	Fri, 28 Aug 2026 13:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787923656;
+	bh=YTCgUoAZ1ZfbO0L3ubdbAAlcEQUDIr3UnJj3q/JxPiw=;
+	h=Date:From:To:Cc:Subject;
+	b=abMQUCU54E80mxD2Jr9Zgxx7dgkK7wu/QPHf/BNYBPZEDE75qSffMSDUbT7ADiqWR
+	 /0HYTDq7HesfiZEfuHK95ujOPqZ0uw3/+KZWYS61jb/9yEMW3Ota0Gevix/DTWyPVo
+	 mdTzB6dQmHz6C6BCZrRw/RLeRW6wDpI/MethHVLT/MHFmw4Jvq5M3S3/xz+0yaroin
+	 SK+6SqoJbRyz2QU6wIjqqf9BY/aSFCYM+Or9YD1K+nxVADHvrXGemNctTlg+8f3PYa
+	 l2gWXTdfYXPaD/LAkFbjdwLisIavyQyaAbBuo5IsHdI/atEgPY0nB0GEqzMRUn5rfy
+	 sysBvAxcMwIhQ==
+Date: Fri, 28 Aug 2026 14:27:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Raag Jadav <raag.jadav@intel.com>,
+	Ramesh Babu B <ramesh.babu.b@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with the origin tree
+Message-ID: <apGMw8Xl8Si7WupD@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UV7McFlZIvnc2/cB"
 Content-Disposition: inline
-In-Reply-To: <bd31938661f178abaa68d3958bacdc1ebb70ff5c.camel@web.de>
 
-On 2026-08-27 23:07:08 [+0200], Bert Karwatzki wrote:
-> Am Donnerstag, dem 27.08.2026 um 14:49 +0200 schrieb Sebastian Andrzej Siewior:
-> > On 2026-08-07 14:49:42 [+0200], Bert Karwatzki wrote:
-> > > On PREEMPT_RT kernels kvzalloc_obj() can sleep because spin_lock is
-> > > converted to rt_mutex. dc_create_plane_state() can be called while
-> > > inside an FPU-guarded region, resuling in "scheduling while atomic"
-> > > errors on PREEMPT_RT kernels.
-> > >  Fix this by calling kvzalloc_obj() with DC_RUN_WITH_PREEMPTION_ENABLED().
-> > > Also fix the error path in dc_create_stream_for_sink().
-> > > 
-> > > Fixes: 3539437f354b ("drm/amd/display: Move FPU Guards From DML To DC - Part 1")
-> > > Link: https://lore.kernel.org/lkml/20260723123449.6494-1-spasswolf@web.de/
-> > > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> > 
-> > Thank you Bert. Got this somewhere in the meantime?
-> 
-> No, this is seems to be stuck somewhere ...
 
-halp!
+--UV7McFlZIvnc2/cB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > Could the FPU regions with disabled preemption be limited to where we
-> > have actually have FPU usage in way that you don't have to worry when it
-> > is needed to use DC_RUN_WITH_PREEMPTION_ENABLED() and when not? Also the
-> > dc_fpu_begin()/ end() can nest and if they do the usage of
-> > DC_RUN_WITH_PREEMPTION_ENABLED() is futile, isn't it?
-> > 
-> 
-> I'm not very familiar with the amd display engine, and it's a lot of code,
-> but there I think there's some room for improvement, e.g. dml2_destroy():
-> 
-> dml2_destroy is called from dc_state_free() from within DC_FP_{START,END}()
-> and then basically just calls vfree with DC_RUN_WITH_PREEMPTION_ENABLED().
-> (directly or through dml21_destroy()). Here both the DC_FP_*() tags and
-> DC_RUN_WITH_PREEMPTION_ENABLED() could be dropped I think (not tested, yet)
-> 
-> Regarding nesting DC_FP_*()s: When I was searching for the cause of the
-> kernel panics I monitored every DC_FP_{START,END}() with printk(), and I
-> don't think I encountered nesting (the logs are lost unfortunately)
+Hi all,
 
-I am not saying it is nesting, just the START/STOP API is able to deal
-this. Otherwise kernel_fpu_being/end() could be used directly. And
-DC_RUN_WITH_PREEMPTION_ENABLED() is not able to deal with nesting.
+Today's linux-next merge of the drm-xe tree got a conflict in:
 
-On PREEMPT_RT it could be bad for the max observed latency if this nests
-or has otherwise an unbound runtime. For crypto there an maximum amount
-of input data which can be processed within a single FPU disabled
-section. The "cheaper" second kernel_fpu_begin() makes it possible.
+  drivers/gpu/drm/xe/xe_i2c.c
 
-> > The first usage kernel_fpu_begin() saves the FPU state to the user task.
-> > kernel_fpu_end() does not restore it. Therefore the subsequent
-> > invocation of kernel_fpu_begin() is cheaper.
-> > 
-> > Sebastian
-> 
-> Bert Karwatzki
+between commits:
 
-Sebastian
+  e766abbc5191b ("drm/xe/i2c: use platform_device_set_fwnode()")
+  0f485f88656af ("drm/xe/i2c: use device_create_managed_software_node()")
+  5d8ed6b64220a ("drm/xe/i2c: Allow per domain unique id")
+  f43fa4b8522ba ("drm/xe/i2c: Fix the interrupt handling")
+  244abef7f280a ("drm/xe/i2c: Keep the i2c controller always enabled")
+
+=66rom the origin tree and commits:
+
+  a55b76b8bc2c4 ("drm/xe/i2c: Fix the interrupt handling")
+  76cc14e2faed1 ("drm/xe/i2c: Keep the i2c controller always enabled")
+
+=66rom the drm-xe tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpu/drm/xe/xe_i2c.c
+index 399099ff0dbc1,d8fa68206f418..0000000000000
+--- a/drivers/gpu/drm/xe/xe_i2c.c
++++ b/drivers/gpu/drm/xe/xe_i2c.c
+@@@ -111,9 -111,14 +111,9 @@@ static int xe_i2c_register_adapter(stru
+  {
+  	struct pci_dev *pci =3D to_pci_dev(i2c->drm_dev);
+  	struct platform_device *pdev;
+ -	struct fwnode_handle *fwnode;
+  	int ret;
+  	u32 id;
+ =20
+ -	fwnode =3D fwnode_create_software_node(xe_i2c_adapter_properties, NULL);
+ -	if (IS_ERR(fwnode))
+ -		return PTR_ERR(fwnode);
+ -
+  	id =3D (pci_domain_nr(pci->bus) << 16) | pci_dev_id(pci);
+ =20
+  	/*
+@@@ -123,16 -128,14 +123,16 @@@
+  	 * platform_device_register_full() is done.
+  	 */
+  	pdev =3D platform_device_alloc(adapter_name, id);
+ -	if (!pdev) {
+ -		ret =3D -ENOMEM;
+ -		goto err_fwnode_remove;
+ -	}
+ +	if (!pdev)
+ +		return -ENOMEM;
+ +
+ +	ret =3D device_create_managed_software_node(&pdev->dev,
+ +						  xe_i2c_adapter_properties,
+ +						  NULL);
+ +	if (ret)
+ +		goto err_pdev_put;
+ =20
+  	pdev->dev.parent =3D i2c->drm_dev;
+ -	pdev->dev.fwnode =3D fwnode;
+ -	i2c->adapter_node =3D fwnode;
+  	i2c->pdev =3D pdev;
+ =20
+  	ret =3D platform_device_add(pdev);
+@@@ -143,6 -146,8 +143,6 @@@
+ =20
+  err_pdev_put:
+  	platform_device_put(pdev);
+ -err_fwnode_remove:
+ -	fwnode_remove_software_node(fwnode);
+ =20
+  	return ret;
+  }
+@@@ -150,6 -155,7 +150,6 @@@
+  static void xe_i2c_unregister_adapter(struct xe_i2c *i2c)
+  {
+  	platform_device_unregister(i2c->pdev);
+ -	fwnode_remove_software_node(i2c->adapter_node);
+  }
+ =20
+  /**
+
+--UV7McFlZIvnc2/cB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqRjMIACgkQJNaLcl1U
+h9DmTwf+LwEdmVPYgyAxtmX65fZhuPt0PgvL2RudnZJQ/AczD9Wx8btZR6eSqJzf
++kSMVh1lbKZFGkeQOGrQVQF9EdEW0MmHj7AyfIYIfcVfiV8ah83cR2B612pHwDY/
+NkIby/y4Hd6P97DXFGFEA04T40E8S5ICZebAoMrYg3t+1xQQAhtZPKqxE86VDjdX
+KirRuaXjbQnQCS20U43ueZKJ5bZ5/Z2aZzjBRo1xTlQky3y3ZzUo/XV2VSOq5bKT
+PRGligbt2r3fCM5S9wmex+EuVNFx9xx2fnDRUFw5PfJAJvfB3BJTgSsGghr7Fm3n
+mU7pRQ+csiFpNPdixRs7pw4aVze6Pw==
+=uGsR
+-----END PGP SIGNATURE-----
+
+--UV7McFlZIvnc2/cB--
