@@ -1,68 +1,96 @@
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FC428F5
-	for <linux-next@vger.kernel.org>; Sat, 29 Aug 2026 00:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE20D35957
+	for <linux-next@vger.kernel.org>; Sat, 29 Aug 2026 00:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787961961; cv=none; b=mqD5IUbKLq2o59zeCHbq84fPVrsZHLFWUQcHTq12ASQANBB4ZBZVdOho9wXiqoaPRGSVhgeBWdfeirf7niq2EvIsiqgCNFLhLClioxd5KJJQrBPhbsPnC3SRLBWHGczr+WfUz2KvcaE30CGWcXHn4DhRXj46OS5W1rDUPlRYAc8=
+	t=1787964137; cv=none; b=TtPqJBQaJW1DIuV2NfIBlXTgPqQ/G7Iql3a7ZCP5EgYQ0MGutmdnjOs6yzdDWGHv2WXAu15EcUvARoih26y67wA9r1GKOs4FoLSMwRJaF+psXMMqU9OZAJAyEE/OJEPrgXt3z9+I2UjDweyoMHbjZtt5WE/SGnSWfXjcizBu5gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787961961; c=relaxed/simple;
-	bh=dc+M8bT533lUgNdI1CJPcGXe8RulqjlUPvBFRBEBZ7Y=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=sIlTZSXIbbGMP38P1Fj8KiB9eWDGbEc5Zp1tueF6eTPr5U7vbPMtKuSzsbOnon0btJa+QYHLmNmHkbKZf07MzV3iQ3QOKw3lGdM41TiK4B1/eAbK0ETiC+9Dgd1pCDRR1YT/VVY1xHV+faEuG3pRkqaeY4HDfPaVEFjH8568SdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=LKh17wRe; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+	s=arc-20240116; t=1787964137; c=relaxed/simple;
+	bh=uwNP/z7p5vV/59/TkFQAhOu92IQzuPMVcuHaKTVX/fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kr9vM4Egbsf9qmySVez1544WFDL/fl4rf0gTNDOn32GhD1oLRAtrIBgKgwgN5gEZX+eNPnEnyBBmH/R1Fj1is2iltoQFbppRZ5o2nBHeFbbwX/IXClgNz4FoM3ui7it7SCCzugKD7ZK3JMAdk7NiI9dBoGn+ju9X5a0TV8Ibw1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gi8BSiB4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="LKh17wRe"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oc0Vacopu6C3Akpd5IxrTUp/yKbC9r23ziFbWCIFDq8=; b=LKh17wReFEYa3zdBKc69bkO6vO
-	tkz3fwW323GQJYNGXjdzZ0N+bUdNvK1Yf27erAafgOiYTS7JUmYrx1bBpKO7L8rvUXZldokbf1qHZ
-	oJwUyMR5PFVJUyJJafHCBXWqTZJpvzrS4JIEWvtV/s/z0AlV/oywFugK7RIDJDvyzeyVXu6dFgODn
-	N3Xo4Ty0Lh57Dwz0XHSFEfzeptdqBYp0X9B1tHv2eP9Z9Ypm6Gew3vAbAnMhm1nchyImo1zJXRmja
-	1IkNGsSq0EYj40HaJew0hKKbLJgmwOCLZq8QLMmtcU/9KkmYRxQNh9Y7fvuoFTGLDvdpoqyIJ9+gX
-	Fnip5vrw==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.99.5)
-	id 1x06a5-00000000CUK-3O3A;
-	Fri, 28 Aug 2026 21:05:57 -0300
-Message-ID: <752329b497166aed63d62ceb9c663012@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, Namjae
- Jeon <linkinjeon@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gi8BSiB4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7BF1F000E9;
+	Sat, 29 Aug 2026 00:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787964136;
+	bh=8j3MdT+qVCM+z/RU1OPLHltEm/6Dl3UA9rbOZzrY9wM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Gi8BSiB4A9ovF7OYqE8rqZv9Ei9QGpg9uS0kcDmguVUGzY1z0Wys86UgLUW+34CZj
+	 novNQ0VsBQ9ZXbHrHUWFTSXnAe7fzU0wbSNlVUnajqw+1dPuJ9zYO5xOSy/T4hxZnO
+	 crd88mvYQlSh43FHt4mJbpwfemTIuhpuFwDv5eVeyWWoz9CeKHJvc83/pMcuGqtbSO
+	 QPklKWS74lejnVZka+E4TCpl6UiuxBSQe4HEl/e90nTsG0iLsgKLANdzF34pEypm3k
+	 Ms0FThQFJkufS0OIRh4kdL5GBPHe2XNsmMPQIXPuI1eln3rNFVtP6Uc6YH1sF+AX5/
+	 bUOMS9XSOccyg==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id EE9AA1AC527F; Sat, 29 Aug 2026 01:42:12 +0100 (BST)
+Date: Sat, 29 Aug 2026 01:42:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Paulo Alcantara <pc@manguebit.org>
+Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org,
+	Namjae Jeon <linkinjeon@kernel.org>
 Subject: Re: -next for CIFS
-In-Reply-To: <e2f818f5-c2cd-4975-9be8-f73101a36081@sirena.org.uk>
+Message-ID: <apIq5P0XbbRHDf37@sirena.co.uk>
 References: <d6f9af6b5fb15945b594c5fec0ad9d7e@manguebit.org>
  <e2f818f5-c2cd-4975-9be8-f73101a36081@sirena.org.uk>
-Date: Fri, 28 Aug 2026 21:05:57 -0300
+ <752329b497166aed63d62ceb9c663012@manguebit.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aoljx4N/QJIdiozx"
+Content-Disposition: inline
+In-Reply-To: <752329b497166aed63d62ceb9c663012@manguebit.org>
+X-Cookie: My vaseline is RUNNING...
 
-Hi Mark,
 
-Mark Brown <broonie@kernel.org> writes:
+--aoljx4N/QJIdiozx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Aug 24, 2026 at 09:42:20AM -0300, Paulo Alcantara wrote:
->
->> The new -next for CIFS patches are in
->
->>         https://git.manguebit.org/linux.git cifs-next
->
-> Thanks, I've updated and will use this tree from tomorrow.
+On Fri, Aug 28, 2026 at 09:05:57PM -0300, Paulo Alcantara wrote:
+> Mark Brown <broonie@kernel.org> writes:
 
-I've noticed that CIFS patches from
+> >> The new -next for CIFS patches are in
 
-        https://git.manguebit.org/linux.git cifs-next        
+> >>         https://git.manguebit.org/linux.git cifs-next
 
-aren't still appearing in linux-next.
+> > Thanks, I've updated and will use this tree from tomorrow.
 
-Are you having any issues with it?  Please let me know.
+> I've noticed that CIFS patches from
+
+>         https://git.manguebit.org/linux.git cifs-next       =20
+
+> aren't still appearing in linux-next.
+
+> Are you having any issues with it?  Please let me know.
+
+Not that I noticed, though it's possible there was some network issue
+fetching and got 67176fe3cb4d5cf6fbb821777877bba83efc048f.  I have seen
+some systems having issues serving stuff with scrapers?  I'll check
+again on Monday but if nothing else that commit will be there.
+
+--aoljx4N/QJIdiozx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqSKuQACgkQJNaLcl1U
+h9C5Fgf+KR55AO56v7MpeOJSUwP8zdgTDKlWJr7/QSLZ6M0wNR9eSK/ai/jLOyVh
+zP4B4MJdpg33h3ixRV4xCweOrt64g6bTViiHZbiQe5Za/nu3qo3L6YJ3SFZZA+IL
+WfW11OxM/xItHDavfKN1+8QatXzm8Z4pzhrT7EWddiMg7LI0x7Omw/waTR3UJo+n
+B773tHSCmnX3dX2CJqcfhsj4bgz00AEBRPQe++RQohHdT/ELpAqU0wpEqqbyeTm1
+GjRJ/RcPUc1r3ZkK5K8Hm4RBXDTcuPyTXPVfgUxTUldbeD+ytDBRXzbs3smEUyVt
+sjgWc5e7Yt9dMCmTsu1xz8EEqy5ofA==
+=Gf3R
+-----END PGP SIGNATURE-----
+
+--aoljx4N/QJIdiozx--
