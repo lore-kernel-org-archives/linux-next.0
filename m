@@ -1,132 +1,196 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752DF2AF00
-	for <linux-next@vger.kernel.org>; Sat, 29 Aug 2026 02:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BF22CCB9;
+	Sat, 29 Aug 2026 05:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787970659; cv=none; b=B8q0Uv9aThazTSMeK2qYm+wz8/3sNVYDHiqVc9+hGLjYFK/giOptzsQ78wPgUzqQnlGQj5YaR1AePRhHHYU+2p772gqtzngal6GrP6AFqVgSuxy6CPLTgdFOGWaFo/gc1HWkKsjIiywidCRJFr8KKD58yhkZrZIzjSF1/Rsp5pY=
+	t=1787980701; cv=none; b=Jgb+edLcZvz5neiGoyln2qmDjpt+vLE/IOSswIerZ0T3WAH/HHOyXoE/9Fwjz5RBiaZ69Lu3ia6S5MVJ+CVPEYyQwpyE/j3o9ToZx2xWewnaSBaHhuHRZdmyCTQaYc9gnxu5rQLF0DWf6iS1fU0FEcJAlH8s+Rmm0/15Telygh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787970659; c=relaxed/simple;
-	bh=I7ZDdibq7PDrBnA/UtlVW7keyoeDaOIbppHh+/ThbzE=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=pX6N1rAiLjaM2nkq+fo2FHVjogIvdVngYOieAaed5hYucBlnltIiHhMvbfRf6joSZI7bpFQ5Y/hvpUBgJnFuapOuHLT5sZQVg5PoKJq41QtWrml/k1OHC4QBL2/WIQgpNyHC+Kd81g9q6vp9/FEjpm9sZLanB2fNp/XhMtEOrXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=anVsjL3r; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="anVsjL3r"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2d71e253c90so15426835ad.0
-        for <linux-next@vger.kernel.org>; Fri, 28 Aug 2026 19:30:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1787970658; x=1788575458; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=lskFnVsaB2GeD5X517YR9maszQLUoNbAbk/EmvG0MJ0=;
-        b=anVsjL3ryry2GM0fQir1iF3yOqvBWekGncHMnkhKMyXsdvrG3xJFs4cVbNWfimAL7P
-         gOETvdu4peBFk1Gh/gl9cf8OPQ9K3ScahyUsQgFPI3h6WBaz7QRCF8klvkITx3pnAQyM
-         NjII0Yj7NG8fLWWPb/hK022i+Y7oN/HP2bA9so9ezTij+2wVdrxfXX00kQ0iD8/h+WdO
-         4IXlj2Hwr4u6v4tv4q3SC7d+nbpG+H8b2xwlhcrM6iKVqExy5Oqr5yd+H7j3pmTA6bro
-         OUEqH0PKPIopjpN49tReGYldKCC45rj8aDamVk09O1XlUHmDPtMgUZMQIuLc35/Qnz6O
-         4lew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787970658; x=1788575458;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lskFnVsaB2GeD5X517YR9maszQLUoNbAbk/EmvG0MJ0=;
-        b=A1zOEnQH9UYFJrN2RffblAIq2dZAi9WUxsh8GQ6NGXULbiC3H6YnheNv21a7fP7mV8
-         yeQAPdBgisY9fGZsYzgFTil9nyB51KORxF/y/a2TzG8tS1HuJLBRec2YdijFWgYgBRGV
-         8wH/F1QE7143c/rubdpE2XPhazZ7x0ix9dU5uKkCJ+DT+rf9dcXHEEajS+4F9hyEqlVz
-         hi8ivL1SY3sGNX2NTqDSK2ePueQ5MX/0ziEULL3mVTfLdfe8+frobzINoA6B5jllH4uf
-         1p+bbArNvFPZLZ75f/chUUgla3vqP6FrfMA2PsTYGDY7SuCAXH0MQJznYZXh/zWF6Qli
-         vETQ==
-X-Gm-Message-State: AFuF++mlRSbCjICJlXoS5Hk4GMp5eFSITfaOHfVgQOJo9tgEe6xmR8WI
-	IsqLNFBdOW2i95eIlZq5/R+kDz0/K/wT3HP0Nwzux4Zrg4iHduCwIPrmeOcx4E3Zf2o=
-X-Gm-Gg: AR+sD12LnWZjxfoU/qPdrIpQq3KmAzo92lV6hDRHfqJ1UrJxDFdk53cHQLOW6wBYb/f
-	dszHU1h6plYy29zFgc1WIM0SN7eTkztDzMqxUtyfr0y43RpJ6yrY0spoCiX4avXMcNocREzzVuL
-	LJX8Y6jUFMX3126iLM1Pwi2Mazae7q8STeR6Ss+MmiqU0fOewxmvv7j8+Pg/8yA8qc6VmuuoVmM
-	xXw+vRuzKF3tx8btXYqMxj/B+lOflPMNlCUwpkQ7vk6llfDRCOMkqJTG0slmD4LVf8VXOEicK/f
-	/jB/VP76fLW+YMTUMDyTOfGYm2zQvHOMsAiIDtAiENmIBg025RwcMyvXHIzNCTo8J0ygGeBOt9R
-	Ua2/iLFzRAafq0FCyjH01KFkAZd83ybP/5VwQlGwgpCnN4NCWNrORn4NS0s1sWVGc2j5P3H56Jv
-	Rmqv0FpA8cXHkbYH+KLX/HBJTgIiF63clPxGhYluov1gMW7SY3U4D4
-X-Received: by 2002:a17:902:ebcb:b0:2c9:e846:a57e with SMTP id d9443c01a7336-2d74cfcdb1emr242930865ad.0.1787970657766;
-        Fri, 28 Aug 2026 19:30:57 -0700 (PDT)
-Received: from b455de3d9de8 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3286f99585csm9471973eec.21.2026.08.28.19.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Aug 2026 19:30:57 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1787980701; c=relaxed/simple;
+	bh=qRwZ5NpNVPKe2b6/4sk8juFJHvLZLl114q8bZtIi3iw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j0FAdIfomSR3cJRlJimvyVzpWhgB7+3XmR8d9YLQvWl01UBo3rfSYbwZm9SqzB2duVqwgASWvRVwKr4gGVZgsmBK3oXmBpt6f4LPnPyQeVtFoF9rpGxHGlXS0wXqYEMvwtncZX+HGSkY8J+qKnSsW4BON4/PYDzyx5Dh6xLyBxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67T5H1Rj003598;
+	Sat, 29 Aug 2026 14:17:01 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67T5H01E003595
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 29 Aug 2026 14:17:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <903a22a2-432c-4e72-bc09-7898becf2f3e@I-love.SAKURA.ne.jp>
+Date: Sat, 29 Aug 2026 14:17:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - e30626823a406725ce29bc75cb8ec467d3e1e326
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 29 Aug 2026 02:30:57 -0000
-Message-ID: <178797065666.6229.7754067742086305552@b455de3d9de8>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] loop: Fix NULL pointer dereference in lo_rw_aio()
+To: Bart Van Assche <bvanassche@acm.org>,
+        Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
+        oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        Hillf Danton <hdanton@sina.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
+        linux-btrfs@vger.kernel.org
+References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
+ <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
+ <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
+ <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
+ <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
+ <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
+ <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
+ <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
+ <d2f387b9-031a-4306-9323-56f98a8241b7@acm.org>
+ <e5518546-701e-4d3c-a077-18e34aa8c188@I-love.SAKURA.ne.jp>
+ <c0df5f39-d103-4e36-9807-df0ae0247772@acm.org>
+ <c2ab2547-63b3-48cf-87c1-fc53219e360a@I-love.SAKURA.ne.jp>
+ <d0471919-9b71-4d24-9fb8-5f1d7f3792ca@acm.org>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <d0471919-9b71-4d24-9fb8-5f1d7f3792ca@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav411.rs.sakura.ne.jp
+X-Virus-Status: clean
 
+On 2026/08/29 1:29, Bart Van Assche wrote:
+> On 8/28/26 8:53 AM, Tetsuo Handa wrote:
+>> +     * wait for already started loop_queue_rq() to complete.
+>> +     */
+>> +    synchronize_rcu();
+> 
+> Calling synchronize_rcu() to wait for ongoing loop_queue_rq() calls to
+> complete won't work if anyone would set BLK_MQ_F_BLOCKING for the
+> request queues created by the loop driver.
 
+Excuse me, but this ordering is correct (reviewed by Gemini and sashiko).
 
-Hello,
+>                                            Please use the block-layer
+> APIs instead of open-coding these. I'm referring to
+> blk_mq_quiesce_queue() and blk_mq_wait_quiesce_done().
+> 
+> Freezing the request queue must happen before waiting for ongoing
+> loop_queue_rq() calls to finish.
 
-Status summary for next/master
+I and Gemini cannot catch what you want to say here.
 
-Dashboard:
-https://d.kernelci.org/c/next/master/e30626823a406725ce29bc75cb8ec467d3e1e326/
+> Calling synchronize_rcu() does not prevent new I/O to be submitted. What
+> prevents io_uring to submit more I/O asynchronously, e.g. if a file
+> descriptor that refers to a loop device instance has been registered in
+> the fixed-file table?
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: e30626823a406725ce29bc75cb8ec467d3e1e326
-origin: maestro
-test start time: 2026-08-28 14:42:53.284000+00:00
+Calling synchronize_rcu() makes sure that no more queue_work() calls are
+made from loop_queue_work() from loop_queue_rq(). Since loop_queue_rq() is
+called with RCU read lock, subsequent loop_queue_rq() calls which are made
+after synchronize_rcu() returned shall see lo->lo_state != Lo_bound and
+return with BLK_STS_IOERR.
 
-Builds:	   68 ✅    2 ❌    0 ⚠️
-Boots: 	  158 ✅    2 ❌    0 ⚠️
-Tests: 	22645 ✅ 4137 ❌  700 ⚠️
+> 
+>> +    /*
+>> +     * Now that no more works are scheduled by loop_queue_rq(),
+>> +     * wait for already scheduled works to complete.
+>> +     */
+>> +    drain_workqueue(lo->workqueue);
+>> +    /*
+>> +     * Now that no more AIO requests are scheduled by lo_rw_aio(),
+>> +     * wait for already started AIO to complete.
+>> +     */
+>> +    blk_mq_unfreeze_queue(lo->lo_queue, blk_mq_freeze_queue(lo->lo_queue));
+> 
+> Freezing the request queue must happen before lo->workqueue is drained.
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: gs101-oriole
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6a91aa58c5867fba946c4a9b
-      history:  > ✅  > ✅  > ✅  > ❌  > ❌  
-            
+Again, I and Gemini cannot catch what you want to say here.
 
+Calling drain_workqueue() after synchronize_rcu() makes sure that no more
+loop_handle_cmd() calls are made from loop_process_work() from loop_workfn()
+and loop_rootcg_workfn().
 
-### FIXED REGRESSIONS
+Calling blk_mq_freeze_queue() after drain_workqueue() after synchronize_rcu()
+does wait for completion of all pending I/O requests which has been scheduled
+via loop_queue_rq(), by waiting for q_usage_counter to reach 0. Also, this
+synchronize_rcu() => drain_workqueue() => blk_mq_freeze_queue() ordering
+guarantees that q_usage_counter won't be incremented again after it once
+reached 0, due to the lo->lo_state != Lo_bound check in loop_queue_rq().
+This makes it possible to call blk_mq_unfreeze_queue() immediately after
+blk_mq_freeze_queue().
 
-  No fixed regressions observed.
+> 
+>> +    /* Step 2: Perform remaining cleanup, with open_mutex held. */
+>> +    mutex_lock(&disk->open_mutex);
+> 
+> After having obtained disk->open_mutex, lease add something like the
+> following: WARN_ON_ONCE(lo->lo_state == Lo_bound). Even if this
+> condition can't be triggered today, this may help with detecting bugs in
+> future loop driver changes.
 
+Did you mean WARN_ON_ONCE(lo->lo_state != Lo_rundown) ?
 
-### UNSTABLE TESTS
-    
-Hardware: mt8395-genio-1200-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_spi_11010000_can_0
-      last run: https://d.kernelci.org/test/maestro:6a91b556c5867fba946d0c14
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
+> 
+>> @@ -1168,8 +1186,6 @@ static void __loop_clr_fd(struct loop_device *lo)
+>>       /* let user-space know about this change */
+>>       kobject_uevent(&disk_to_dev(lo->lo_disk)->kobj, KOBJ_CHANGE);
+>>       mapping_set_gfp_mask(filp->f_mapping, gfp);
+>> -    /* This is safe: open() is still holding a reference. */
+>> -    module_put(THIS_MODULE);
+>>         disk_force_media_change(lo->lo_disk); 
+> 
+> I don't think that it's acceptable to invoke __loop_clr_fd()
+> asynchronously in its entirety. I think at least the following code
+> should be executed synchronously from lo_release():
+> 
+>     loop_sysfs_exit(lo);
+> 
+>     mutex_lock(&lo->lo_mutex);
+>     WRITE_ONCE(lo->lo_state, Lo_unbound);
+>     mutex_unlock(&lo->lo_mutex);
+> 
 
+Doing so breaks the whole protection provided by the Lo_rundown state. As soon
+as lo->lo_state becomes Lo_unbound, lo_open() will succeed and loop_configure()
+will start changing an lo object before WQ context cleans up that lo object.
 
+>> @@ -1769,8 +1797,20 @@ static void lo_release(struct gendisk *disk)
+>>       need_clear = (lo->lo_state == Lo_rundown);
+>>       mutex_unlock(&lo->lo_mutex);
+>>   -    if (need_clear)
+>> -        __loop_clr_fd(lo);
+>> +    /*
+>> +     * In order to flush pending I/O requests before clearing the backing
+>> +     * device, defer __loop_clr_fd() to WQ context. The Lo_rundown state
+>> +     * guarantees that lo_open() will fail with -ENXIO.
+>> +     */
+>> +    if (need_clear) {
+>> +        /*
+>> +         * Grab all references that will be dropped as soon as
+>> +         * returning from lo_release() and releasing disk->open_mutex.
+>> +         */
+>> +        get_device(disk_to_dev(disk));
+>> +        __module_get(disk->fops->owner);
+>> +        queue_work(system_long_wq, &lo->lo_clr_work);
+>> +    }
+>>   }
+> 
+> Please convert the above code to the "early return" style that is used
+> elsewhere in the kernel.
 
-This branch has 1 pre-existing build issues. See details in the dashboard.
+That is OK. But after you agreed that my patch works as expected.
 
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+> 
+> Why system_long_wq instead of lo->workqueue?
 
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+That is a deadlock. We can't flush a work in lo->workqueue from inside
+WQ callback function where that work is associated with.
