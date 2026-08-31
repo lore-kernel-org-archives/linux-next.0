@@ -1,176 +1,110 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68B2473C8D;
-	Mon, 31 Aug 2026 15:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610374749C6;
+	Mon, 31 Aug 2026 15:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788191509; cv=none; b=BE2e6IVqUy/psO0tqjeaR7AUmHE2+LbaQm7Ecf1WAr5Owws9fnfdd8EVlnYPOhQTddXEjp7sjsBYasZJqJbaCg8COXbQviCs7E4/ew8DZT3TYzSo1se2UUYyxpNG13cwnzvCMUYR2VWUFNwXgq+JLB75eNQBPEtck6K5frTHcAo=
+	t=1788191688; cv=none; b=bRRwu+o3qAqDGdrXvz9qjq/Jwc3suHd/flfIk17OXrRRqyvGnfFaWfZhYPhywnVyMmgatNDi6ZiYAZD0n3ZjGIIAkhcWAiQhnCZmeKQn3fkzT8XUjCj4yF858k28oz1agl4KpxAN7k4vnlFfxQXD/7n2ihynSHpNXSYTAzKPfMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788191509; c=relaxed/simple;
-	bh=bBVowiB5dS8JjB/FFWssLYEWYbCErytHxenCEPiDcoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PkV5hnBLX7/JzF6Vdf2fzwbrsOsODNoIaEYXFGHYPuDds1IFdIuB3KYyv9yKe0MW6yizvL0S8TC0a6KpbVFjoQ5gU+RuDykh56A8lPqRjNBgwH/vnFqkJHu2qY7VpA/h8R0ZIA8b21YReCoSPKadlXcHikJRoccaTWYplCivrSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67VFnte6047028;
-	Tue, 1 Sep 2026 00:49:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67VFntWh047025
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 1 Sep 2026 00:49:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <30528b67-6ff9-4512-892b-f48d819e100f@I-love.SAKURA.ne.jp>
-Date: Tue, 1 Sep 2026 00:49:51 +0900
+	s=arc-20240116; t=1788191688; c=relaxed/simple;
+	bh=3ZI3BVzQ6ArZuHEKQMwId/WUsQen5TVAx0mt2oPTk70=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hKBFZLJ8WK7foO1Qxt25osRq28mftzrAsyre5XE8fUfkdSE/g14vcptFzG84LnyvK/H9maJqhGC7gw9y9XEOHd9WxsTbuRwRdnDSj3nBOsxsYgpcoiqMLhco2xorss1U+JxhRs4gVu9u19JV3MNooigv0TW/hGJ/1XYfoZ4znf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2MA5c6N; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2MA5c6N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 577C51F000E9;
+	Mon, 31 Aug 2026 15:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788191687;
+	bh=vYMGH2pkKT/lNroPaZtldkJbj7DNNgnofQZ6f6vjLqU=;
+	h=Date:From:To:Cc:Subject;
+	b=M2MA5c6NukrEw6XjeIMKpVXvlDJc9tO66y3sM0sYNmu4jyhmnFPj9AbZoCJwA1Xu5
+	 eQ3FiQ9ZV9+cPKV1KoiSeMT+F6R/qoZylHIQqs6AR/UMP9cjeW7TxoHnZaiy/TP0UE
+	 DuFauPjmolv4xAjsPaJ7ABYIak1UAAEE7w4EU5d9uhIa8XOPAieXI8FDS7UZPVjpze
+	 pS7FuLKSrdgMhgMUf+xxvAhMdV5kyfLzuIC5kWuyGTP/LNLzJ2FbiFqi3jXQuI8s95
+	 /3YygDnEm3JpBqievSbsfvr9jLKQ9FHYKa+/dRCZ7uu1A/xfBHihQUPb/iwEss9LTC
+	 8fZHLZguGexxg==
+Date: Mon, 31 Aug 2026 16:54:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Aug 31
+Message-ID: <apWjwwWlbgpY5une@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] loop: Fix NULL pointer dereference in lo_rw_aio()
-To: Tao Cui <cui.tao@linux.dev>, brauner@kernel.org
-Cc: Markus.Elfring@web.de, axboe@kernel.dk, broonie@kernel.org,
-        bvanassche@acm.org, dlemoal@kernel.org, hch@infradead.org, hch@lst.de,
-        hdanton@sina.com, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        lkp@intel.com, oe-lkp@lists.linux.dev, oliver.sang@intel.com,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        Tao Cui <cuitao@kylinos.cn>
-References: <6a770a9c-2642-4392-9b9c-609836693f36@I-love.SAKURA.ne.jp>
- <20260831141143.704821-1-cui.tao@linux.dev>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20260831141143.704821-1-cui.tao@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav211.rs.sakura.ne.jp
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vKAAAvGvW66e4M37"
+Content-Disposition: inline
 
-Thank you for joining to this thread, Tao.
 
-On 2026/08/31 23:11, Tao Cui wrote:
-> From: Tao Cui <cuitao@kylinos.cn>
-> 
-> Hi Tetsuo, Bart,
-> 
->> +	/* Step 1: Flush all outstanding I/O, without open_mutex held. */
->> +	/*
->> +	 * Now that loop_queue_rq() sees lo->lo_state != Lo_bound,
->> +	 * wait for already started loop_queue_rq() to complete.
->> +	 */
->> +	synchronize_rcu();
-> 
-> Your reply to Bart says loop_queue_rq() is called with RCU read
-> lock, but I don't see one.  The two call sites of ->queue_rq() are
-> blk_mq_dispatch_rq_list() and __blk_mq_issue_directly(), and
-> neither is wrapped in rcu_read_lock().  Direct issue from
-> blk_mq_submit_bio() runs in process context with no RCU read-side
-> critical section, so synchronize_rcu() does not wait for a
-> loop_queue_rq() that is already running there.  Only the softirq
-> dispatch path is an implicit RCU reader.
+--vKAAAvGvW66e4M37
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-You can read sashiko's raw logs at https://sashiko.dev/#/log/49552 .
+Hi all,
 
-  Okay, let's break this down. My initial thought is to examine how the `blk_mq_run_dispatch_ops`
-  macro is implemented. Specifically, how does it handle RCU read locks? It wraps the provided
-  `dispatch_ops` in either `rcu_read_lock()` or `srcu_read_lock()`, depending on the `BLK_MQ_F_BLOCKING`
-  flag. The loop device, however, is set up *without* this `BLK_MQ_F_BLOCKING` flag. Therefore,
-  `loop_queue_rq` executes under the protection of `rcu_read_lock()`.
+Changes since 20260828:
 
-  Now, the critical question: Does the `synchronize_rcu()` call in `__loop_clr_fd` effectively address
-  the potential race conditions? Since `loop_queue_rq()` is indeed RCU-protected, `synchronize_rcu()` will
-  correctly wait for all currently executing instances of `loop_queue_rq()` to complete. Furthermore,
-  the `lo_state` transition to `Lo_rundown` before calling `__loop_clr_fd` ensures that any *new* calls to
-  `loop_queue_rq()` will see this state and return an error. This perfectly fences the execution of
-  `loop_queue_rq()`. Moreover, `drain_workqueue()` then makes sure all queued works are completed, and
-  these are scheduled by `loop_queue_rq()`. This is great; all scheduled works are completed before
-  clearing `lo->lo_backing_file`.
+The repository for the configfs tree was changed.
 
-> 
-> The window is still closed by the steps below, so this is not a
-> correctness bug, but the synchronize_rcu() is not doing what the
-> comment claims.  blk_mq_quiesce_queue() +
-> blk_mq_wait_quiesce_done(), as Bart suggested, would express the
-> intent directly.
+The drm tree acquired a conflict with the drm-intel-fixes tree.
 
-synchronize_rcu() + drain_workqueue() can be implied by blk_mq_freeze_queue() + blk_mq_unfreeze_queue().
-But why are you talking about blk_mq_quiesce_queue() + blk_mq_wait_quiesce_done() ?
+The hwmon-staging tree gained a build failure, I used the version from
+next-20260828 instead.
 
-> 
->> +	/*
->> +	 * Now that no more AIO requests are scheduled by lo_rw_aio(),
->> +	 * wait for already started AIO to complete.
->> +	 */
->> +	blk_mq_unfreeze_queue(lo->lo_queue, blk_mq_freeze_queue(lo->lo_queue));
-> 
-> About this step, in your follow-up you wrote:
-> 
->>   (1) since we are in lo_release() with disk_openers(disk) == 0, the activity of
->>       incrementing/decrementing q_usage_counter (incremented before loop_queue_rq()
->>       is called, and decremented after loop_queue_rq() returned BLK_STS_IOERR)) will
->>       cease shortly
-> 
-> The decrement timing here is only true for the error path.  For
-> BLK_STS_OK the reference is held until the request is freed, which
-> is what makes blk_mq_freeze_queue() wait for requests that already
-> passed the state check, including the loop workqueue worker that
-> completes them.  That is the property step 1 relies on, and it is
-> worth stating in the comment.
-> 
-> What is still open is Bart's question about io_uring fixed files:
-> if submissions can continue after the last close, "cease shortly"
-> does not hold, and it is the freeze wait that actually drains them.
+Non-merge commits (relative to Linus' tree): 1222
+ 1254 files changed, 37062 insertions(+), 9470 deletions(-)
 
-If submissions can continue _forever_ despite disk_openers(disk) == 0, what
-mechanism was preventing this problem from occurring until Linux 7.0 ?
+----------------------------------------------------------------------------
 
-> 
->> +	if (need_clear) {
->> +		/*
->> +		 * Grab all references that will be dropped as soon as
->> +		 * returning from lo_release() and releasing disk->open_mutex.
->> +		 */
->> +		get_device(disk_to_dev(disk));
->> +		__module_get(disk->fops->owner);
->> +		queue_work(system_long_wq, &lo->lo_clr_work);
->> +	}
-> 
-> With teardown now asynchronous, between the last close()
-> returning and the work item finishing, lo_open() and
-> LOOP_CONFIGURE return -ENXIO.  That is the same behavior change
-> that led to the revert of the earlier attempt (bf23747ee053,
-> xfs/259).  Moving the xfstests side to the tests is one thing, but
-> userspace that closes a loop device and immediately reconfigures
-> it now needs to handle a transient -ENXIO.  Is that acceptable, or
-> should the retry happen in the kernel?
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-Does whether the teardown being synchronous or asynchronous matter so much?
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
-I don't think we can control when e.g. udev-worker becomes the thread
-who actually calls __loop_clr_fd()
-( https://lkml.kernel.org/r/9f8b5ab0-efbc-4cf3-a1f8-b43377416946@I-love.SAKURA.ne.jp ).
-Even if an existing user app calls close() immediately followed by open(),
-we can't prove that __loop_clr_fd() is synchronously called by that user app
-because udev-worker can jump in and udev-worker becomes the thread who actually
-calls __loop_clr_fd().
+Below is a summary of the state of the merge.
 
-   An user app     udev-worker
-   -----------     -----------
-                    open()
-    close()
-    open() // => succeeds due to Lo_bound state
-    ioctl(LOOP_CONFIGURE) // => fails with -EBUSY due to Lo_bound state
-    close() // <= gives up due to ioctl() failure
-                    close() // => becomes  Lo_rundown and __loop_clr_fd() is called
+I am currently merging 426 trees (counting Linus' and 132 trees of bug
+fix patches pending for the current release).
 
-A claim that mentions that the kernel is unable to release forever due to a refcount
-leak bug is valid. But a claim that mentions that the kernel cannot prove that
-this -ENXIO or -EBUSY problem never happens is invalid. Programs that use the loop
-device have to be prepared for transient errors.
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--vKAAAvGvW66e4M37
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqVo8IACgkQJNaLcl1U
+h9BTkAf8D2M89Hpnvcpz2n4PmAGQqE+UGK7BUPOlbmmCbqnj4kn4knGIQv7uTrUX
+rW+nvjzFtDSrBe9D4fruByUH6+ZqUAa1q71y30yI6vHAZIcmLf/Y2DtvAu/DEgN0
+m5V02vrnMQu851OGzRAKghkAe8g0WlUBwFi2U/BE1OIcuwq/53kVtE5hsq1XA237
+f9iNI2SNWHj5eZs1m1e45CtjOCpJli48LdGxR3uOgCP+IGFBDW98C9SD3oJsrZIk
+rWmmkrYglyMmcqOPzK8XWPLMstKSAr1DvryKcwyyxDD1YRSvJUWm5/Q5xXfnKrDB
+C6GbD5COxsiZD3zjRdsNyjAB6FrC/w==
+=1zFI
+-----END PGP SIGNATURE-----
+
+--vKAAAvGvW66e4M37--
