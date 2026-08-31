@@ -1,92 +1,72 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041FE23BCEE;
-	Sat, 29 Aug 2026 05:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B6D51044C;
+	Mon, 31 Aug 2026 13:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787982978; cv=none; b=Jo0/defSIlwSCJfOLgTb+/2SvCqrQchTitB5kwsNajJ8KohgntkOb0ss2r1pknwRx4J4fDo0bJSRyjLiY2A+D7FzV9r9nkdp7E3Aovtxxx+Ffnoyv4CNhRvA3u5br9Ri5KSkNPLECAX3LWHNG5jIV/1v18xCT6v4Zs8j/4XbRoM=
+	t=1788183777; cv=none; b=uI7sW9TC4iRdXecfyhH05A2F4BFIMV1+RCGIaq3CC0fh2Ld+ypyar4o06LtDuefOb2OTxUoLa5RlNABIS8PuY+D3FBqyET3ILYpUK+QNiVe4GxGUUQiwM6Uf0o5H3cJMfUuy3JjwMR4FobDt+AHytMZPlUJ63RJiH55XpnJ5tHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787982978; c=relaxed/simple;
-	bh=2FOUWMlsR+RkhsyUYBfHnH37vrxo71hxEejjjfPLUuA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ggidxcd1vERInS8c55tuko6b3je1qbRZ3Zu23pi1BiArbCLjHOiyiKd9xiBCSYfhC5NHr22RHI2XjBU3lHI2f07bnxr+UocBmIQh9HUvmYM7sCEN57kdPcg0Z5nRkkbUWfv6CcV90qIepQr/jhRNRH/x+AhpFPssnJTSxknEUG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 67T5tYcN010762;
-	Sat, 29 Aug 2026 14:55:34 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 67T5tYl1010759
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 29 Aug 2026 14:55:34 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6a770a9c-2642-4392-9b9c-609836693f36@I-love.SAKURA.ne.jp>
-Date: Sat, 29 Aug 2026 14:55:33 +0900
+	s=arc-20240116; t=1788183777; c=relaxed/simple;
+	bh=83eycDDa+6VAb/Jgt9R1IVNpFe6nTHGMDInfYMOOMm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ji5GWxcGqergTBg9KZP22Zdif8It3uP1mS6cTiaGZXCd/uMuOfn4ZXYB69j+wzRF+C13GBoe9SGx+kJgilMbHVdL1stT0qx9bmoILiXAL/TvTQtBAIJoBTdh/1pAmZ6GaJVB7NJrcxWzfR6zvLjd1IQLzrIpbPzEHCkhybw35+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1RhKW+i; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1RhKW+i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C8AD1F00A3D;
+	Mon, 31 Aug 2026 13:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788183776;
+	bh=Ya33kDWixwjrnq/6g024BHdFb/dQs9yHXemL01fqS04=;
+	h=Date:From:To:Cc:Subject;
+	b=b1RhKW+iekvOT9ccn2dMsD2097FdSsKnLUCi4DX4QvXWZs04Uc1NowimJiYZKxAgB
+	 VwXXMaKYyqv6zAuPr/gmSO4zVXcCfNIAz/X+UiPum/loAFDk7Enb+rLS9B05HEjbNf
+	 o8XUbU2rX5wLVtsyuxgEl1hM+jRUBdKFzvnw/0NI9xOwcqeJ2b88TKds4I8916P7Rs
+	 TWAi7P3njn52qJ86NESCECjQPScAwOeNw1k+ovgG/mOryHBrUGIGM5LW/VCXrGCFTO
+	 Mv+t4tLG6rSle7NBm2bEwZkg/szd7VLRyUOvZJxye2tKHdW/lVNeTJnTqgzhVAKO7S
+	 3ZGvpg+U9I7OQ==
+Date: Mon, 31 Aug 2026 14:42:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andreas Gruenbacher <agruenba@redhat.com>,
+	Steven Whitehouse <swhiteho@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the gfs2 tree
+Message-ID: <apWE3TM7LTTCd65h@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] loop: Fix NULL pointer dereference in lo_rw_aio()
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Bart Van Assche <bvanassche@acm.org>,
-        Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
-        oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        Hillf Danton <hdanton@sina.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
-        linux-btrfs@vger.kernel.org
-References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
- <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
- <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
- <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
- <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
- <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
- <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
- <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
- <d2f387b9-031a-4306-9323-56f98a8241b7@acm.org>
- <e5518546-701e-4d3c-a077-18e34aa8c188@I-love.SAKURA.ne.jp>
- <c0df5f39-d103-4e36-9807-df0ae0247772@acm.org>
- <c2ab2547-63b3-48cf-87c1-fc53219e360a@I-love.SAKURA.ne.jp>
- <d0471919-9b71-4d24-9fb8-5f1d7f3792ca@acm.org>
- <903a22a2-432c-4e72-bc09-7898becf2f3e@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <903a22a2-432c-4e72-bc09-7898becf2f3e@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav415.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BEPI5Xe5LDIvQzlC"
+Content-Disposition: inline
 
-On 2026/08/29 14:17, Tetsuo Handa wrote:
->                                                                 Also, this
-> synchronize_rcu() => drain_workqueue() => blk_mq_freeze_queue() ordering
-> guarantees that q_usage_counter won't be incremented again after it once
-> reached 0, due to the lo->lo_state != Lo_bound check in loop_queue_rq().
 
-Well, this part was inaccurate. Since q_usage_counter is incremented before
-loop_queue_rq() is called, it is possible that q_usage_counter itself can be
-incremented even after synchronize_rcu() => drain_workqueue() => blk_mq_freeze_queue()
-sequence.
+--BEPI5Xe5LDIvQzlC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-But what makes this ordering safe are
+Commit
 
-  (1) since we are in lo_release() with disk_openers(disk) == 0, the activity of
-      incrementing/decrementing q_usage_counter (incremented before loop_queue_rq()
-      is called, and decremented after loop_queue_rq() returned BLK_STS_IOERR)) will
-      cease shortly
+  391f1e1e60fd8 ("fs: gfs2: Fix typos in comments")
 
-  (2) since there is no pending work in lo->workqueue, no I/O will be made to
-      backing file
+is missing a Signed-off-by from its author
 
-.
+--BEPI5Xe5LDIvQzlC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqVhNwACgkQJNaLcl1U
+h9ArhQf/Slk4uxfhtiHhFLwraegivTMJpF6Avx7AEgEegp+xVVnOX2FkFEesng96
+LJqCGM+HAUZoEDOTzr0HzExSm9tvAyWp+/zht6HnOF8kTpK2TlQM1hFI8ZX+Sd8R
+QK5Z1PGVYsmnL+AuWOmnRoIOcdEvz2D9i3G/+zQ3F28Uql3qF+f1yxZ0N6r38TQ8
+6INOa1xXY7V3sdOAxRIxSYq+bO7MabKYAOqS68J5Bs22jnZCzup2o1ejyVAzIDFQ
+OaO0W3h8jhLbCWPXyNecjt3sB48kooAQvxKCUf3JJ1TyDsBl17HTReUQhT7i5tWF
+vokGvQo7vwBHojwc/cXDNun74ThS5Q==
+=ZCDk
+-----END PGP SIGNATURE-----
+
+--BEPI5Xe5LDIvQzlC--
