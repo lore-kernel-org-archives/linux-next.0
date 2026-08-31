@@ -1,102 +1,119 @@
-Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459254CCDED;
-	Mon, 31 Aug 2026 16:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E322431A44;
+	Mon, 31 Aug 2026 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788192893; cv=none; b=CdljANNH+DKTWqPqum6LZ3XME9zYjSwCNEni7ltT2YE2/tGPZBq8BGwo8oh3xVDdzZnJVrzjy97qdjVrRPIQ3/YHkqKsI1k+C3UfrDKMs+1UgcRkTRRdqiLf3Idr5DigazHlqaYFfLMix77G6WiFQXVkImyZlqH4kWyenJETQ30=
+	t=1788193048; cv=none; b=ndPFt72/xcYfv05KPmG5rePxthpzuz/rNkMLaA0PhdDEGpdUjX3M+DfsEm3FiAa5FT6Is02jEXHzYvHOC7Psp6rFEKkWOGadw/37hlDd1tWlc+9hnDbsvk1YbI+h/FTMHPdMvgOYjzLQm5Uo0BID0gXpkjZcOJOivgBY74dCWx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788192893; c=relaxed/simple;
-	bh=QNwcsZjJFVrXdEUCCIjgAGniheS835dXsn4vUs5xqng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+gNqCnXtJQcPHPbA2ZqbFwki+CVRi2ZsRpU8MZoDCeBV/IZb4ShPq3AVFUuf8MPxy+2q3fiC21M96kWFDk1OmnZ7QNFCxyhKgBososgzqSwzvzjOD++3K1SDTbEZZvQcc4AJ1nvnHOJBJLkYYAcqNXCI3I7RbijBuUOTRlsyKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4q1GZ52I; arc=none smtp.client-ip=199.89.1.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1788193048; c=relaxed/simple;
+	bh=rQECf6Qk1JH2DZEX2vMFUpsJpTRAZnk06ZKcod7UTdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FhIuRxbtw1/bP7L36s6jPsWJqg7IG/ce1FTarDYZ/A+sZkXV8p7+y29d06AM3JAwW5z18LFN77DdtkVivNi8DK7fvkKgIuckX8ZZPAhhBqwUP5Z2nA4Ito0v1JTxUgQKYNjly3YUGPkmIGysYvMXhm96i0L43l22u2kBz4qhI/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgpA0bOw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4q1GZ52I"
-Received: from localhost (localhost [127.0.0.1])
-	by 013.lax.mailroute.net (Postfix) with ESMTP id 4hYYwp5WLdzlfvps;
-	Mon, 31 Aug 2026 16:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1788192882; x=1790784883; bh=QNwcsZjJFVrXdEUCCIjgAGni
-	heS835dXsn4vUs5xqng=; b=4q1GZ52IPMwMCZTI7qns+0qxTqPa80tDzWBakZW8
-	vh5ZTwqi9nR6cFCFQxzRhGLhzHTAGSmKZYUJ27rk+QkNb+kem+fKCm7oG8htVyuj
-	/5Nj8OjyRZdz4P3B5H5CJgjzlwYcZykNZADke1kIyNKJSU+j363eV+SOEVpteawK
-	rXk5QZmcPj/UwMMI3GgccRJij3GCu2qbUw1o5Z5fTRHJYtdhY2dWQyfsRx2s6M+6
-	YmqO2AhIU3kol6ENGjFj7Yn4+25H8wDqRHElcRy1aHdotJhsS/xnN06IwOnimkuM
-	pFE7/QbJT3IWe0FqRsDnz/goozangZuvn++9npvefaCzJQ==
-X-Virus-Scanned: by MailRoute
-Received: from 013.lax.mailroute.net ([127.0.0.1])
- by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id mixfySwKtzaB; Mon, 31 Aug 2026 16:14:42 +0000 (UTC)
-Received: from [IPV6:2a00:79e0:2ed2:d:a104:ffdc:9983:687c] (unknown [104.135.182.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4hYYwX6WNtzlfvpM;
-	Mon, 31 Aug 2026 16:14:36 +0000 (UTC)
-Message-ID: <d7e26d4b-d9b9-47c0-9658-c241499209b5@acm.org>
-Date: Mon, 31 Aug 2026 09:14:35 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgpA0bOw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2C61F000E9;
+	Mon, 31 Aug 2026 16:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788193047;
+	bh=iCbdZ3CV7cu5OGRFaAlZvrRXg96SB6jTilyoyi+d8kE=;
+	h=Date:From:To:Cc:Subject;
+	b=JgpA0bOwMXn773M2rOzUY4HdKuYPW/GI39USUGyM2WBUydGot5tE/BlOATGIb0ezV
+	 efG1gFSpP9vt7C1bcu6+gSdhysNVaYDKCGa2KHb7Lo8nT0C2TNOQZ1AjgMhTzLzoU+
+	 59S6yUbfhqG1L2uRxVyV4na0HiDTV99bMpkuLfzLgajhLiahP65BcAqgxDGPMkjLOU
+	 EbfM4YSD0CH0mnWUWXdviwQXjHEsjd3tfw3Jdqb6s16dxSq2AaZRo66nuHmiQMBGXy
+	 thsK2VVbayB+ToHSz9+wa/6RmNM65lBMz2gcOPEwSEbc3jaQA5cBXBQ9pWj1Jan7Zl
+	 xjvVpDQTrbpmw==
+Date: Mon, 31 Aug 2026 17:17:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -next status as at v7.3-rc1
+Message-ID: <2b8505af-3a2b-4e43-9112-4f8e2ff70a18@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] loop: Fix NULL pointer dereference in lo_rw_aio()
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, lkp@intel.com,
- oe-lkp@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
- Hillf Danton <hdanton@sina.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Mark Brown <broonie@kernel.org>, Oliver Sang <oliver.sang@intel.com>,
- linux-btrfs@vger.kernel.org
-References: <8dedfc40-9cae-44ff-9960-e0eb1825e963@I-love.SAKURA.ne.jp>
- <550ff0b4-df39-46d2-9781-c8688df10c93@web.de>
- <38ad64c1-edc7-431d-8f52-fba572ebf3eb@I-love.SAKURA.ne.jp>
- <372ca5f6-81a0-4f6c-8f55-ebeeada9f955@acm.org>
- <27bcb147-bead-4432-8cd0-981489f36228@acm.org>
- <c41e9198-86a8-4bcd-a608-6f457b24f345@I-love.SAKURA.ne.jp>
- <7e51bca8-218a-40b8-8ff8-fc59671f5add@acm.org>
- <3bb080d0-4421-4012-8a62-6a2bf165cbd9@I-love.SAKURA.ne.jp>
- <d2f387b9-031a-4306-9323-56f98a8241b7@acm.org>
- <e5518546-701e-4d3c-a077-18e34aa8c188@I-love.SAKURA.ne.jp>
- <c0df5f39-d103-4e36-9807-df0ae0247772@acm.org>
- <c2ab2547-63b3-48cf-87c1-fc53219e360a@I-love.SAKURA.ne.jp>
- <d0471919-9b71-4d24-9fb8-5f1d7f3792ca@acm.org>
- <903a22a2-432c-4e72-bc09-7898becf2f3e@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <903a22a2-432c-4e72-bc09-7898becf2f3e@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8nfkB+OBH0hbjYlz"
+Content-Disposition: inline
+X-Cookie: Sell by date stamped on bottom.
 
-On 8/28/26 10:17 PM, Tetsuo Handa wrote:
-> Calling synchronize_rcu() makes sure that no more queue_work() calls are
-> made from loop_queue_work() from loop_queue_rq(). Since loop_queue_rq() is
-> called with RCU read lock, subsequent loop_queue_rq() calls which are made
-> after synchronize_rcu() returned shall see lo->lo_state != Lo_bound and
-> return with BLK_STS_IOERR.
 
-Please add a comment above the synchronize_rcu() call that explains the
-purpose of that call.
+--8nfkB+OBH0hbjYlz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> That is OK. But after you agreed that my patch works as expected.
-I appreciate your work and agree that this patch takes the right
-direction. But I would appreciate it if you would take another look at
-my review comments.
+Hi Linus,
+
+The merge window just closed so things are expectedly quiet, really
+nothing much to remark on at all.  Most of the commits in -next are
+things people had ready to go, though at least nfsd and vhost have old
+stuff (but vhost has many duplicates so possibly some fun thing there,
+didn't check).
+
+Trees being held at old versions:
+
+  hwmon-staging  	next-20260828	(looks like a mangled application)
+
+Trees with signoff problems:
+
+  arm-soc	(missing author)
+  arm-soc	(missing committer)
+  fs-next	(missing author)
+  gfs2		(missing author)
+  risc-v-fixes	(missing author)
+
+The gfs2 thing is new today.
+
+Non-merge commits relative to Linus' tree: 1222
+ 1254 files changed, 37062 insertions(+), 9470 deletions(-)
+
+Top trees adding commits to -next:
+
+  109	drm-xe
+  85	vfs-brauner
+  72	bpf-next
+  62	drm-intel
+  60	vhost
+  49	nfsd
+  45	bluetooth
+  44	renesas
+  36	drm-misc-fixes
+  35	mm-nonmm-unstable
+
+Trees adding duplicate commits to -next:
+
+   54 vhost
+   27 bluetooth
+   24 drm-xe
+   19 nfc-fixes
+    9 clockevents
+    8 hyperv-fixes
+    8 drm-intel
+    4 i2c-rust
+    2 mediatek
 
 Thanks,
+Mark
 
-Bart.
+--8nfkB+OBH0hbjYlz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqVqRIACgkQJNaLcl1U
+h9C62Af9GNlVeW/hZ2/SgWtNKPgVWa76Oo0fLKrktk/q8UbkPjXOJVDMvTCRsnp/
+xdqqSY3FE0nBZCYDZbfzLmIjLlOjtzs/5NGbr8GlciYKEeMtDH97GE7FN6rmc5zJ
+XJpOrGQS2pI5zGl/Jy8+LdFRqKd/Xz0EO+aVTZ9C/RaY8ikbNt5f5jPBwYWahTMW
+QHEvUu3R3UDIlg6dPRVAHYMFIGM4WlFZ5CnT8Si5sbfWW3nMdvq6pmK8b0QglVQc
+iNe4L3GnMl++U8GXxe1obsaDvEAjPSM+tyZZSe0Mt004p+OKa7dVzu3udnOmD0y3
+BFlbyMroPtZeAQnSbhCNzrP/k5q3rg==
+=PmND
+-----END PGP SIGNATURE-----
+
+--8nfkB+OBH0hbjYlz--
