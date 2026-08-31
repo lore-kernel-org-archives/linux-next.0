@@ -1,91 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mta0.migadu.com (out-3.mta0.migadu.com [91.218.175.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0305421231;
-	Mon, 31 Aug 2026 13:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A9B4C6EE7
+	for <linux-next@vger.kernel.org>; Mon, 31 Aug 2026 14:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183816; cv=none; b=TKf3RwkkWo1bkpAqMrf28XGMQIzEPTVFa90qZEUMEiuqv9swKqb9odwhh6qvKSFON/i6HyfPfKjOqNfQVJvOWdATkbPsbx/iOjGuV17GyqxzdawjUlB6yE8jG8oS3ySTM4PctzEG++NQ/y5kA55MDqDjYhu4JJG5zD0fqOu3OQk=
+	t=1788185528; cv=none; b=t9vIXB+5e5tHAHcjiIhrbF/xMV6ds0KVXUVIscTo2hPFxP3rVQOF39aZiOuPTNz+o3DawVk29P06dd04P+GM+uSG3/TiKs5kycI58YKm0QyQpHnkCkqM9rUKdCZEmyEXvBlnj3GGHbgxpiEab0R1Zkf1lHoFLQNqnKSEwtuhES4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183816; c=relaxed/simple;
-	bh=DMeZ/J4WohudPWMLAm1nxH4f/56JlDG166iIAUTtaMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C+T2c5hv2lWlTQ/iz+yFVTEAPmx3Wth+sNjS/f80zSjq4ORioeQOqZOfA4o/Au7gpIz+Cm5Ugg86z4kV8/f2u+nK1ugjqG5UgUqa6GpUNhKekgliyO8lVwsaeUeNvk1A2wCfxi+F1I2khY1I3o4TTMU5iZsMAzyiB4wxk4yZqQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFCeOOyC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788185528; c=relaxed/simple;
+	bh=qeMdGEKedWl1FPeoapg8nysRoTiyOSWg/nAFOX53SYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=upW9dmai1CZqd96xmevvhvY8Y+NpTOMM4JEePw/bFnI7jORGlYWIquIvV3nkY87aGNsfly91zJyY8d6Qmthk4vi84y4sR/7zY8o5nGjOj9DYyBsyWC5uKJIz4UYT2nqCRVL6oG6Wn9AvXiqj+WjnNrmBHlwV1pvCFGPuQQK7RVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UpySgTxB; arc=none smtp.client-ip=91.218.175.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFCeOOyC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182201F00A3F;
-	Mon, 31 Aug 2026 13:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183813;
-	bh=pYypBu0OzMZ+quzdWoEKqzqwmmrXDJcbe9Fbm2RcwKg=;
-	h=Date:From:To:Cc:Subject;
-	b=dFCeOOyCVRt6WDOssWe2f5DTXlAAJV0Av9HTdiS7RoMn0HborkSECc7qNWKwguyW3
-	 ukLEL1NTYd0AU1Y0HnR2gdWJQEC20FRwUd4rzEm/k+dJchkvFV0oBIQaJAVT6bsiZ3
-	 PbuHtNWrUs/QGVFyajSgG1ZGegbKQQ0/FixrcwcNVOPmin/+udCzTWwvVBh+JJ5i0C
-	 GOJq9BbgfWpaI2gExykBCZRYD6GWHyh5C7YnYztTJgsIt0tzf1toRw58rMW4LislEJ
-	 LVDdqjbMYWRxk//RLr4PqGYtvAOIuiFXU9Z4mEGq9ir2CAq9kZPgZ4eVYqU//nKErN
-	 LVal7z8/v6F7Q==
-Date: Mon, 31 Aug 2026 14:43:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the hwmon-staging tree
-Message-ID: <apWFAoNOz2pX5xiJ@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UpySgTxB"
+X-Envelope-To: linux-next@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=qeMdGEKedWl1FPeoapg8nysRoTiyOSWg/nAFOX53SYI=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1788185524; v=1; x=1788790324;
+ b=UpySgTxB7rkxUGIyTpQnQIDRnAUoPGeDYZFzZECpxJvXHmpZxm3bwcfx5EYnMnsVdYEBOYwa
+ iu01b13XW9kL8gEQd9HmWD5Y8i8so2ASmXRCDFz73mNWh9S7xSpbLxxHF4uc9GXR/ezP/Q+SGPU
+ 7WbKYyaxgv7iBNoEUydmSMWs=
+X-Envelope-To: linux-next@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 0c74ffbab702f936;
+	Mon, 31 Aug 2026 14:11:54 +0000
+X-Mizu-Trace-ID: 0c74ffbab702f936
+X-Migadu-Flow: FLOW_OUT
+From: Tao Cui <cui.tao@linux.dev>
+To: penguin-kernel@i-love.sakura.ne.jp,
+	brauner@kernel.org
+Cc: Markus.Elfring@web.de,
+	axboe@kernel.dk,
+	broonie@kernel.org,
+	bvanassche@acm.org,
+	dlemoal@kernel.org,
+	hch@infradead.org,
+	hch@lst.de,
+	hdanton@sina.com,
+	linux-block@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	lkp@intel.com,
+	oe-lkp@lists.linux.dev,
+	oliver.sang@intel.com,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	cui.tao@linux.dev,
+	Tao Cui <cuitao@kylinos.cn>
+Subject: Re: [PATCH v7] loop: Fix NULL pointer dereference in lo_rw_aio()
+Date: Mon, 31 Aug 2026 22:11:43 +0800
+Message-ID: <20260831141143.704821-1-cui.tao@linux.dev>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6a770a9c-2642-4392-9b9c-609836693f36@I-love.SAKURA.ne.jp>
+References: <6a770a9c-2642-4392-9b9c-609836693f36@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CB+AxacBKJqsqFR9"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+From: Tao Cui <cuitao@kylinos.cn>=0D
 
---CB+AxacBKJqsqFR9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi all,
-
-After merging the hwmon-staging tree, today's linux-next build
-(arm64 defconfig) failed like this:
-
-/tmp/next/build/drivers/hwmon/hwmon.c:344:13: error: redefinition of 'is_hwmon_device'
-  344 | static bool is_hwmon_device(struct device *dev)
-      |             ^~~~~~~~~~~~~~~
-/tmp/next/build/drivers/hwmon/hwmon.c:321:13: note: previous definition of 'is_hwmon_device' with type 'bool(struct device *)' {aka '_Bool(struct device *)'}
-  321 | static bool is_hwmon_device(struct device *dev)
-      |             ^~~~~~~~~~~~~~~
-/tmp/next/build/drivers/hwmon/hwmon.c:321:13: warning: 'is_hwmon_device' defined but not used [-Wunused-function]
-
-
-Caused by commit
-
-   40b20f8e6b53e (hwmon: Ensure that 'dev' passed to hwmon_notify_event() is a hwmon device)
-
-and the more intentional seeming
-
-   a40a97b27cd6b (hwmon: Ensure that 'dev' passed to hwmon_notify_event() is a hwmon device)
-
-interacting, I assume some cherry pick issue or something.  I have used
-the tree from next-20260828 instead.
-
---CB+AxacBKJqsqFR9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqVhQEACgkQJNaLcl1U
-h9AlKgf/XXstOviZB5vAFQZCrSlIdiPIUbpS7QqIwn5NSDAqpD/87na4blQxwEkR
-PYrmWeeZBT6MEtoIij0JrRZikf6SlSpD1ERFpGpar1rc19xATOYQ8r+DvC9JPW7h
-AiOoTFAOZussc23f//kF0oiQH4AdHHF29VJ7VffMZECyWRy8jaXSaCfGfMB2Y0rU
-JKBeZ+9LifZ5PmATgZPMIJt/t4Z+X2li/cfuBipiZEtivaXUx5+1qh+1Ue/LjPFf
-pAIhlRsCYFhH9lnOaszmRiuKe75+EZO0DKT8SoP63mLa7Z4kcf5uvoTBEwdGUyV1
-1uKG4QRewjuEGSmIeNwsVzwl+vR0TA==
-=a6aG
------END PGP SIGNATURE-----
-
---CB+AxacBKJqsqFR9--
+Hi Tetsuo, Bart,=0D
+=0D
+> +	/* Step 1: Flush all outstanding I/O, without open_mutex held. */=0D
+> +	/*=0D
+> +	 * Now that loop_queue_rq() sees lo->lo_state !=3D Lo_bound,=0D
+> +	 * wait for already started loop_queue_rq() to complete.=0D
+> +	 */=0D
+> +	synchronize_rcu();=0D
+=0D
+Your reply to Bart says loop_queue_rq() is called with RCU read=0D
+lock, but I don't see one.  The two call sites of ->queue_rq() are=0D
+blk_mq_dispatch_rq_list() and __blk_mq_issue_directly(), and=0D
+neither is wrapped in rcu_read_lock().  Direct issue from=0D
+blk_mq_submit_bio() runs in process context with no RCU read-side=0D
+critical section, so synchronize_rcu() does not wait for a=0D
+loop_queue_rq() that is already running there.  Only the softirq=0D
+dispatch path is an implicit RCU reader.=0D
+=0D
+The window is still closed by the steps below, so this is not a=0D
+correctness bug, but the synchronize_rcu() is not doing what the=0D
+comment claims.  blk_mq_quiesce_queue() +=0D
+blk_mq_wait_quiesce_done(), as Bart suggested, would express the=0D
+intent directly.=0D
+=0D
+> +	/*=0D
+> +	 * Now that no more AIO requests are scheduled by lo_rw_aio(),=0D
+> +	 * wait for already started AIO to complete.=0D
+> +	 */=0D
+> +	blk_mq_unfreeze_queue(lo->lo_queue, blk_mq_freeze_queue(lo->lo_queue));=
+=0D
+=0D
+About this step, in your follow-up you wrote:=0D
+=0D
+>   (1) since we are in lo_release() with disk_openers(disk) =3D=3D 0, the =
+activity of=0D
+>       incrementing/decrementing q_usage_counter (incremented before loop_=
+queue_rq()=0D
+>       is called, and decremented after loop_queue_rq() returned BLK_STS_I=
+OERR)) will=0D
+>       cease shortly=0D
+=0D
+The decrement timing here is only true for the error path.  For=0D
+BLK_STS_OK the reference is held until the request is freed, which=0D
+is what makes blk_mq_freeze_queue() wait for requests that already=0D
+passed the state check, including the loop workqueue worker that=0D
+completes them.  That is the property step 1 relies on, and it is=0D
+worth stating in the comment.=0D
+=0D
+What is still open is Bart's question about io_uring fixed files:=0D
+if submissions can continue after the last close, "cease shortly"=0D
+does not hold, and it is the freeze wait that actually drains them.=0D
+=0D
+> +	if (need_clear) {=0D
+> +		/*=0D
+> +		 * Grab all references that will be dropped as soon as=0D
+> +		 * returning from lo_release() and releasing disk->open_mutex.=0D
+> +		 */=0D
+> +		get_device(disk_to_dev(disk));=0D
+> +		__module_get(disk->fops->owner);=0D
+> +		queue_work(system_long_wq, &lo->lo_clr_work);=0D
+> +	}=0D
+=0D
+With teardown now asynchronous, between the last close()=0D
+returning and the work item finishing, lo_open() and=0D
+LOOP_CONFIGURE return -ENXIO.  That is the same behavior change=0D
+that led to the revert of the earlier attempt (bf23747ee053,=0D
+xfs/259).  Moving the xfstests side to the tests is one thing, but=0D
+userspace that closes a loop device and immediately reconfigures=0D
+it now needs to handle a transient -ENXIO.  Is that acceptable, or=0D
+should the retry happen in the kernel?=0D
+=0D
+Thanks,=0D
+Tao=0D
