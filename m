@@ -1,111 +1,149 @@
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E95D431A44
-	for <linux-next@vger.kernel.org>; Tue,  1 Sep 2026 15:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48583411A1B
+	for <linux-next@vger.kernel.org>; Tue,  1 Sep 2026 15:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.173
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788276465; cv=pass; b=BqxeLh9Ef5USWTSaS1ZVqz/1cyjrkZWW7UyMTVmerSWHt7Rg8GMHIggANAi4oa2ZW2rTt8FZxKiGG6xIUUbJRDDGT99PnFLdQG+vVcvd60qwnXtPq/KY0GR30OtaTNYPdCfbA76gyuzGEjuXY7FxVmZ3BLn3tUES3MY7vFVOFxA=
+	t=1788276628; cv=pass; b=sr5s4LRoe+s1meE9gv5lWar9zKb5IeBzaMKOwEPbcfn2Vbzk1VbJd+6TP7iRw8KoqEVgRUxRGUzjElIjpvCsoED4p3bQQ+hah0UxzHL/saU7Y9uuYw/8s1V9BrTPU5Oo7iLDjWjeMLraa58Z2ufQvDcVhXaF3Qa/kzI5Cs0YLwo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788276465; c=relaxed/simple;
-	bh=4lqu9gWlS0n7RIQuOa0OikwNpJC9qcg8pW3SWLxdotE=;
+	s=arc-20240116; t=1788276628; c=relaxed/simple;
+	bh=oGeNoOa+p9ZzuwZnVouBlcSvBe+Jh3Gib2Kiy0uoXuY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k4pt0VrIxvsntBIic+yVwo9nMuBAVlMQUu4YNh/koZqkmN1vvyIpXyZzXno/gClXyl5LTnjQyy713mZRKjRG4BFo0tlpuERxEisJGJ1p9FNN7OZt9HRFeFwXlVwyQZ0yW2MMJuotuI3VFHl8QAdzS9M2Dc0SyVZ7+EUlvVNkyFE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JBvqoVPt; arc=pass smtp.client-ip=209.85.215.177
+	 To:Cc:Content-Type; b=snOqVuxklMws6N3b6fTuwvAh4RWJVvB3GzVA3RkS1IKfS9/S3LB1KCYxQ6+mnSTpbo0ibVhTA8yEX5HSjaVu87Bpa/fNtfuZS9NN5hMFxG6ulp01Cko1DQ/3JMYXzdtYt2L1GuHERlbTvh9A/Zs9c3rAIE6x+Zl4jSAyfg0fhjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=R8esj2ZC; arc=pass smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JBvqoVPt"
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-cbedd5aece4so978332a12.0
-        for <linux-next@vger.kernel.org>; Tue, 01 Sep 2026 08:27:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788276463; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="R8esj2ZC"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cc1a4c62804so4381507a12.3
+        for <linux-next@vger.kernel.org>; Tue, 01 Sep 2026 08:30:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788276627; cv=none;
         d=google.com; s=arc-20260327;
-        b=nGJOR9GTkuV+gfjONWxmGXTGTXqHl8e0ogtPx3DW1hLmbC5gQ3el2cM6lusp8AdlAv
-         qTt/VX1atjQzMu8/ecnuN2m7CaTKiaRAWpL3uncDftb/2tohVFiN2dZFlZJBV0u4gJEe
-         i+hKXNX+CfI87Wi7QOkVt55JXK6A2WNgdlHB6NmdmgV8jqaN4iQXbsNehxJ9aC7B68Gm
-         TgXwJ9WhiEqySk4fF3RFgljEGnd/aMOJLvDH214VGc4AGviVtYyicdYQi6JTRGV3fZKL
-         KDy8l6va1TSlzCG6E6VOOIaT+P09qgpCOBqyTEZhglUxDQtW3u1F4dr9l5uxuOjZ+MK2
-         NlQw==
+        b=pxI9Bpji9jbJjV3ChDqaxV6iLDZ4wYWdJzMg4szXfctLflAkS1lkr9lX/8ruOJXwx/
+         hCN7QM2veZxZQUgmd5RgOzYJ8jXI+yfFhxpdc3A5+can4ykKAPn2Ya69jn0t3cDIhCf+
+         Zu4VVNHjSPAr+kvtmed7AoFpMU/8M5fmbRn7KHXznpBKnKbfGBcXPA3/gd8D7me4c4Zk
+         sCtUAMWf86+nGthRFmVNNle6uG8/WSmWEQ58RLrQW0LHu4YbK0AbdADZuw/iDuwqgSAJ
+         XV1Xk3785agflIqWEejVgqVrMxCOz6jYdEBrVc5zvNm0wOQy3sl8tlc6gOaiGGEa3YnV
+         CvqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=H2oOeplF/9Pvz963Pn9pPnOoBzf1I6bdaQ4cw9nB6sQ=;
-        fh=oIwyXNFfJsbR9TBkL4XbG8NV4Y4+QGuwRlAFxE+zF9I=;
-        b=IF9GScA7yrDu8AU0KBFphxtPBBbwNdXXYqzDowBymaouVvb9O4AMcNnsBV4yqvGztM
-         flORzDio0ewbKuqdGybUebFUZEo8BVT4fJlMiy069ePO1KoFB8IvlDcUHYjRpeUfHuqU
-         vaJtBB0t7roA2eSXdZLfp8mvWgWx1itmrBaNAuET9Q+Q1ula+pTc/AJ8PIJcciw3WM3x
-         V+qCaRWc/osfUvcUtxPoQo81Zi2z0XEIs8I/nx8LznAHUm4KPaLGIM2P38SHUFqk8Dcz
-         2TGoJep+brNUqj3M8Xexrkblg/ISu6VTo45JE7rlPTSsKUtofthqhQdyvmQLITJCj1El
-         Mb+A==;
+        bh=z5rWp6/FMPiff7KV5XUE+nXFQ+JqVYy4oIJa29s1gF8=;
+        fh=Z0vKaNSHrpi5VhdCYuaK4dPv/jnRzb1TF5fgFT7/YxU=;
+        b=IT/f2E6rICx/FeS8+sDM83YCdeF3zAFoEp6k9/8bePDvUjzIbTJVOoN8giDDrfJ/VP
+         8NAnywytcq1XQK7a/HOeKSQxpWK+c3UYMAHksIsyftcyE0+jP/54eJTCz8zkcydybLbs
+         1jvEWcy7ppDKygdikr8cmDpjhkxPfwnOhACpJwIhE38kZSN7LTlrNAOv+sGXb8Do8/NZ
+         nhKmbPCvrXFsNqGyepaSFbhXEvBskd1+g077Y5rWrljJe2O+rZ0QzRJ0+TgsjyAaovj5
+         tYgUauaPyK2l3nPEEWln8c8zAAjVoajNSzHhUB6AJLF/SloFyQGhAXNbR19BnJuTCpij
+         bwqg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788276463; x=1788881263; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1788276627; x=1788881427; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=H2oOeplF/9Pvz963Pn9pPnOoBzf1I6bdaQ4cw9nB6sQ=;
-        b=JBvqoVPtP8JZaSLZkPqvggmaVtKs1wDnOMuETZBC1BmqIh1dCLz74GV6AzyiR06ZeU
-         MzqFr8CF+7DmWTMmIkvAXwDTwDHpEA32w7Za+n8y4st6GdvAMz6uTpOnjWTK6kVuV+zT
-         6heItjDyuBpFv0zSGUIwMQR6VZRkqJiTkz4EMDaxM9U9w036XSJvT3p2rdEF0tBi4x+G
-         fyJsGIEx4W6PFUKG1RNg8vQIIu9tSBKD7mgiJ5T0eJwU4zYnm52qsD4G8M1qIN5RLAN6
-         skUDu3HHz5iAIGsfdhxk0zhlOkhJtAXGGaGBebhB0QghIk492GaOsmaJOUZTTK0tkLuQ
-         skUg==
+        bh=z5rWp6/FMPiff7KV5XUE+nXFQ+JqVYy4oIJa29s1gF8=;
+        b=R8esj2ZC1MQ3zauvBv9MGbowj5sTEI6PjKk72+RbINZVnrRd7qXe0OU7lzUPFvgCEM
+         svxpC4pk2DVJIA/Dv4M2cazo9rdXMPv1gVGJr0Inf9fQgb6S5iaA+3w27NYjVK3G1rGV
+         Jgg96YDlxIQueCYFcyS0PyPzSp9ZY64sBFgOjxxpiMIi+i8NgkOQ71w53c5ecix62sQ8
+         CrAS8Wl8t5/E4FZN3WJKf9eWly6hqs3WZh7F2DkkEdAupUX8NrZuEqtvCrznK3ogfXNN
+         aJsgFa0fuUAGlJHg5wTSgSp821QfmoNyPGLWWvW43qRe/pegIXkG+e8xvOS9CR9cE0Hc
+         rUmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788276463; x=1788881263;
+        d=1e100.net; s=20251104; t=1788276627; x=1788881427;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=H2oOeplF/9Pvz963Pn9pPnOoBzf1I6bdaQ4cw9nB6sQ=;
-        b=Tl8x8HufCg+SyZ3HXjf408F+Okw7hYhEdYA0Mpro7NYSbo/GURQSvFwAzEDatu1wZS
-         9i47/8EUGIA3Ix1xT0KUwcstEcMmJCp7ObHVNuVLMG9GfT7/e61oVQjG1N6kkXmmEf62
-         QkG/MhLLqsW6/H9qSEPMEEeS3ECFHehf+7WucC8mbhNQwBT63UrI6DDZNRetbCL+Kz0s
-         lLximAs0TdeIRNXx012QIoQCGvWWSWevc1csV3XE+8HkmDYPf3cbIc6JeRXIHME9bDkr
-         Xp2qiu0nkYbQqWIf1S3XF1GVrTFVwYYpFOoiVpxADR/cvk3xxmo8tLuCgul2ZxdJqHwK
-         JmQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwHEA9+CIYa1QSD/amYAq0gZiwEgOGDDj4VCpKvPBNFzhlVQbxYwq+nEw3gKXRGoG7vfK/mfmn5JP4M@vger.kernel.org
-X-Gm-Message-State: AFuF++mVgjCvlrYRRBzSxd3DZeU67IVKoOHP4CeWKPHpVa7v0HZLSTaN
-	JglbvrmAnfLvtg4zw/LgxFV6J1ciWK8CvvCMhzzxiZn5ipe9eAex2o91t/Hbstcd+FfPuYtc1f5
-	x4ROMyOKergBimxE70TdD6MiF3VWtqh3A5xb24Ayr
-X-Gm-Gg: AYBFou2hg+CgQaXLa+VSk9lpH5XPUUl6O2TXBpczWylTjv5kAQW6xxXi9ByvusGXYx3
-	yXZYS6WmycJXHwlwP5xx20E7gPeqPb4w8Vnl+hT+y8862VjAqPQ4yi0A8BWtPE1vQi/x5SOebbL
-	/2lTh5xUgLgCGU1ElNLwGJ1Vn3mmS/G2/T73lgjXg687Cv4qIpEvMWspllI9xB/Izan+6PckbVL
-	2OliLPqPa/LrpecMN1mdqmeloxyb1PotbQyS5bFC0ZscMSK6Q9337NKPyAAAkMmGBps/0AIkHyZ
-	HBYyzDABRw6O/Cl6zc4rInOPLsK/f0RpAH0kImANnErvgw==
-X-Received: by 2002:a17:90b:2dcd:b0:398:9bd3:d6d2 with SMTP id
- 98e67ed59e1d1-3990f85e07fmr5272363a91.12.1788276463399; Tue, 01 Sep 2026
- 08:27:43 -0700 (PDT)
+        bh=z5rWp6/FMPiff7KV5XUE+nXFQ+JqVYy4oIJa29s1gF8=;
+        b=ALWLvRV2lLSyatPcvQFoSr89d9pzZh2alZhB/iHfwTF+1j6v8o9WxMGu+S9YtB5h17
+         xcRZw6BGfDcIO5TkCXCsHbE6IZJ0n5FBz7q4SzW75AIUlGjtSuJ5Z1O/pkpUZVWb9Rqc
+         71PCVvKb4g2hDQnmHyLSAt9sNaenUIGUl7yzAybWedolbty0DkXE2Uh0SdxiY9cTxERE
+         K5uUDuOeuVEs+YE0nt3zYamURvvCqKCdaax5E7T7AefvFgoM6dtS3D6mJ/fYOjlvuyX7
+         nrgdU04zl2sJFKVbTaV3kee/UEW7tTXYQ6IeU54XL38iMoZ6YmUyGRtA4B5LoBM1NcLl
+         ECUQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp+79SM+bg/UhFG7D7ArNClAVbfxlM+LTctipki1vo6QOhzPiR59CNvBItDyAO0TtDMTJf6elE+/s5i@vger.kernel.org
+X-Gm-Message-State: AFuF++kFHoYChoFfaiQ1dOgUwKmpts/FXWDlWTcwJ26nq38T7w8Jiyie
+	q6R8jd1mG79/Qs6Ll6cHGUQjmq9jFpqrD5P5yo6GIKDbhINNKPynDdBeMJEWN11UiH5eU+ZUI89
+	8w+uW2c+cX7a7tafQAhy+QU7T582pSQUXKw/HXn+z
+X-Gm-Gg: AR+sD12SaXQEHr81onqXQPYm/jlU7zhcRdmFvF4z1xBpdtC/Yu5371I/pYQsZLHvRvB
+	dWd3Gpn9Py4FPLeAfnsInVTXQDkxIh/97+h33xctz9uHs44PscsHc6qw1ZZLxO1qu2WWSUhEM6Z
+	nebf8cvli/aQ9eOGHPVMByMPRkHlBsATTUPi5Pl60VEwL43nl+1cGOXrl+SrfKHtetjjZ97SLp2
+	TUIu3GCABbq7cuQ/R4q4wTS53BgX1BUpld1ozfWdUwyNGddEupuGIdbBnhHAPotHKHewy2AoPN3
+	ZA096M3esUpyJzzIv2o5WqHucg9i2ixzD59WGnp9NmZx
+X-Received: by 2002:a05:6a21:a8a:b0:3d3:ad3c:49a5 with SMTP id
+ adf61e73a8af0-3d3ad3c6457mr43951622637.19.1788276626517; Tue, 01 Sep 2026
+ 08:30:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <apa4DlzuPqZi72gp@sirena.org.uk>
-In-Reply-To: <apa4DlzuPqZi72gp@sirena.org.uk>
+References: <apbYZsfaO9BnB8nm@sirena.org.uk>
+In-Reply-To: <apbYZsfaO9BnB8nm@sirena.org.uk>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 1 Sep 2026 11:27:31 -0400
-X-Gm-Features: AcwNN1XnoIQhddvDbZmKovnMpLgo1ZPfjGgnaFz791sMCGU_Z8cHC_adkH7DUCc
-Message-ID: <CAHC9VhSQYmtS69OuVpA53q7x0PgTACG5YvdQ-mqj821Bjdp-eA@mail.gmail.com>
-Subject: Re: Missing signoff in the security tree
+Date: Tue, 1 Sep 2026 11:30:14 -0400
+X-Gm-Features: AcwNN1Xq90Ba1WRvtyU8kMeoJcWIIGgbEGSH8V_oysbwx7BB9WV_M54j0vbNtas
+Message-ID: <CAHC9VhQQGcKJU_HF78cMSuCPf=2tj8xW78ELOYwb1xJJU8tuRA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the security tree with the
+ vfs-brauner-fixes tree
 To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, =?UTF-8?B?SsOpcsOpbXkgSmVhbg==?= <Jeremy.Jean@oss.cyber.gouv.fr>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 1, 2026 at 7:33=E2=80=AFAM Mark Brown <broonie@kernel.org> wrot=
+On Tue, Sep 1, 2026 at 9:51=E2=80=AFAM Mark Brown <broonie@kernel.org> wrot=
 e:
 >
-> Commit
+> Hi all,
 >
->   5598cab53f535 ("lsm: don't call security_backing_file_free() multiple t=
-imes")
+> Today's linux-next merge of the security tree got a conflict in:
 >
-> is missing a Signed-off-by from its committer
-
-My apologies, this is now fixed in the LSM tree.  Thanks for the heads up M=
-ark.
+>   include/linux/ns/ns_common_types.h
+>
+> between commit:
+>
+>   82e9343260dfc ("nsfs: keep namespace tree fields stable until after RCU=
+ grace period")
+>
+> from the vfs-brauner-fixes tree and commit:
+>
+>   f675d2e955696 ("lsm: add LSM blob and hooks for namespaces")
+>
+> from the security tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc include/linux/ns/ns_common_types.h
+> index 6ed6b497831c7,5cfe0ce3c8818..0000000000000
+> --- a/include/linux/ns/ns_common_types.h
+> +++ b/include/linux/ns/ns_common_types.h
+> @@@ -116,8 -116,13 +116,11 @@@ struct ns_common
+>         struct dentry *stashed;
+>         const struct proc_ns_operations *ops;
+>         unsigned int inum;
+>  +      struct ns_tree;
+>  +      struct rcu_head ns_rcu;
+> + #ifdef CONFIG_SECURITY
+> +       void *ns_security;
+> + #endif
+>  -      union {
+>  -              struct ns_tree;
+>  -              struct rcu_head ns_rcu;
+>  -      };
+>   };
+                                \
+Looks reasonable, thanks Mark.
 
 --=20
 paul-moore.com
