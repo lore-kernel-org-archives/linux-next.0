@@ -1,61 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA4F3CFF62;
-	Tue,  1 Sep 2026 01:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A66368D74;
+	Tue,  1 Sep 2026 11:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788227261; cv=none; b=HSeS0B00o/yoGU5EjzQisYYfwMLUPPyfyQZ3tN+83nnRDGiIky2dTsaFk478TNXBb8/xIN4vdwtFc42k02iJWxmRsFlm9Odn0/x2XicnmG4usEEFn1uZtjjCkJoXMCm0Hoy5jaFHJsxYEISPsrcnmzhqEygWOSkLSvcYuV1Grps=
+	t=1788262176; cv=none; b=rXt6gmu337fzl2Lyi8SkLsdfwUQERr3pjmTdRoFLSStQ0aVYfpVxAEuqvhD0OrV9eJYhxx6lKbTbZkpw4Uw+qJeV5ju2KLE7VGH5l3bH9TUBlADINYN+q/I0PlCjycSFWqbf47r32ccalXUpgVE2dzYZ3DbLLePG7/VFyk1Mvko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788227261; c=relaxed/simple;
-	bh=RKxzqc9OhnVUOh3qHozCjh7T1CJIA4dk3TuAwUMw9os=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Q/cK2r58C8kCjK5DlT1Tl3AvFxiUc276A4M7PFjQPQdgqAttUnnbLjBZEXAukw17994iW99Ezg3GVhpOXtoeAtcZnjrIs1BPJlEoqDqRppTx1seu66ueTdIBJwznnjOTsFCG1gmHkTblaVZEmYl/6X41aL0km/2qaw5sTXTUPYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsZ6Lo9Z; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788262176; c=relaxed/simple;
+	bh=zD/QKhO4e1xsEPj6nhzGBZQ1U4jatt8skzRPYtkEybo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=akO8C1n8+rAPliPdxr+ufuDoj5LBA08JnZlZk2NrDUxTBzje7/+QSzEjYlhe9hiX7ZC8t78PWu+Ie6CDu6QbLH9pjRuL03MDoG9SGerTzttxqh+wCihOvvkamDUwkZBMhCn6148eWDyMhkLea3gt+9Hm0RYuMW1NHdNZfseHUhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BCVJvmhN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsZ6Lo9Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC101F000E9;
-	Tue,  1 Sep 2026 01:47:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCVJvmhN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4E41F000E9;
+	Tue,  1 Sep 2026 11:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788227243;
-	bh=VU1A0I+4rhrqmuV2PfmzYIUV6CnltACrGDwnKwjSUv0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=TsZ6Lo9ZTFp//L0tOacSKPgvxtxHyEOXWsOmaVHAqTYkV3etlgvt4ci2pDmJyMY3G
-	 swxBQhfO3bFUzprI1rhceBt7pmnrRdKygWM5qKPqWnpNhP+CmHAdAwRtzJee6O9E2+
-	 w6eaz10MRrQetP97LBscSSL2MmFkOwU0nZvBvpRd9F8OlIbqnr7wPwpmiAbChxay6B
-	 njmn8aU+tIuKCBxX7NTWOioFgGooVnCUQZt9M6FbXUyHoF3DXCy16uzzxIWCbsSF28
-	 MyTo+luBXYgJPROd2P+1ZNQ+4MlOU6yeF+3LKRAt+GHe2gYTSkrrrHkl16cfYOOYiF
-	 ppIbJZ0TU+E3Q==
-Date: Mon, 31 Aug 2026 19:47:21 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-cc: Palmer Dabbelt <palmer@dabbelt.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, linux-kernel@vger.kernel.org, 
-    linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the risc-v-fixes tree
-In-Reply-To: <06a13fc5-7efd-4a77-ab0e-5f1caf35ba5d@sirena.org.uk>
-Message-ID: <2cb1c894-f075-4512-d6e1-ce9ea3c945e1@kernel.org>
-References: <aog9BzBzb-2Yfgyz@sirena.org.uk> <06a13fc5-7efd-4a77-ab0e-5f1caf35ba5d@sirena.org.uk>
+	s=k20260515; t=1788262174;
+	bh=/Iyb8/k4rRD6W+DXbibyXh+1dU1PMI0/fTnF/bkpN8E=;
+	h=Date:From:To:Cc:Subject;
+	b=BCVJvmhNSz9kVZwYacQUT/pIK+DHD80NQ8mw3xjBV5LmlF7kkg3Tgpi0kcyfQ5lge
+	 qTfQdUnXrEq4wHmln5qk207HbzI8M7bH+d3i275Lgr1HjpO+bHPulIGsgNmN572XGO
+	 CwgPel2UfAGMvEZTQjPIlO7jM9oTs3oFtAaDM78SXTyBhX8WLJculvlH/67qem1KKb
+	 k/ye5M3gjlEqwfKtIbI79yUIl8C/zAOXZUtjTtlIYNCafFeTQ0iGsNddR6iLrWZrx3
+	 ZaG6ML00aolL6dx9SqdNTscd/p1Ur662Sqs1QWCwnUD3yfclxu0dZDayYz6GBFwFd0
+	 rd+JNbLtS6v0w==
+Date: Tue, 1 Sep 2026 12:29:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the risc-v-fixes tree
+Message-ID: <apa3G5qHROwJl5PU@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-
-On Mon, 31 Aug 2026, Mark Brown wrote:
-
-> On Fri, Aug 21, 2026 at 12:56:55PM +0100, Mark Brown wrote:
-> > Commit
-> > 
-> >   3c98c44748385 ("riscv: patch: skip fixmap mapping when kernel text is already writable")
-> > 
-> > is missing a Signed-off-by from its author
-> 
-> This issue is still present today.
-
-This should be fixed now.  Sorry for the delay
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UuTobIx+5ERMwnjv"
+Content-Disposition: inline
+Frllom: Mark Brown <broonie@kernel.org>
 
 
-- Paul
+--UuTobIx+5ERMwnjv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Commit
+
+  8718e5a3090bb ("riscv: patch: skip fixmap mapping when kernel text is already writable")
+
+is missing a Signed-off-by from its author
+
+--UuTobIx+5ERMwnjv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqWtxoACgkQJNaLcl1U
+h9D09Af8CzceNeQNMOxl1kI8aDIgXWhfGO4CxE+r+5UhnBXxbM1PHFHOXvmzdO6a
+Ze9B7J6nhMRgUXkf63C6pO9/kOr8Rli43dH7a00DYNbYKAH4XKArnmwwT7Bga4yu
+VyKAlca7UgRGUBakFqEBwsOBW6Fuj/XhOT0gDqeSH1ERgcMBE4+5jjiQqIkeSrn7
+Ph1OL+ApGbIO4clDeuFu8QoSipOZMu7+7E0Z/PtDxODEtHi+vMkSjBYKT41/6RnQ
+UiDky7nftzwP8jdR49r8UtsU45xP/Q3ZcBGRQUcD4zMGsszBAViyQrvpEz/P2axp
+ekO2aJ3fADF7tlCxvJXRToSu/xUHeA==
+=HWsK
+-----END PGP SIGNATURE-----
+
+--UuTobIx+5ERMwnjv--
