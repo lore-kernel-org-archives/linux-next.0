@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A66368D74;
-	Tue,  1 Sep 2026 11:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDFD36196C;
+	Tue,  1 Sep 2026 11:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788262176; cv=none; b=rXt6gmu337fzl2Lyi8SkLsdfwUQERr3pjmTdRoFLSStQ0aVYfpVxAEuqvhD0OrV9eJYhxx6lKbTbZkpw4Uw+qJeV5ju2KLE7VGH5l3bH9TUBlADINYN+q/I0PlCjycSFWqbf47r32ccalXUpgVE2dzYZ3DbLLePG7/VFyk1Mvko=
+	t=1788262419; cv=none; b=Hk0agK4dPznd5ykEeItJ1aYmDcBg4rPgmUwT8ZVZ3yEm2Ryr7VDhujyQT0OrLPiY6lQqO/eGhApiFGXIDKRlUP2oKknAQEKrOEpCwaotcCh+BbUMiE56G1dt4vWamnPp1gVoJ9Z6Vm8KUWKZ/mLQZFUzO5o9ia/umF9d9wo2Vuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788262176; c=relaxed/simple;
-	bh=zD/QKhO4e1xsEPj6nhzGBZQ1U4jatt8skzRPYtkEybo=;
+	s=arc-20240116; t=1788262419; c=relaxed/simple;
+	bh=1nF6mG/x52NRdbXKbDsHP2XhPvpal85jDNa0iDAspyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=akO8C1n8+rAPliPdxr+ufuDoj5LBA08JnZlZk2NrDUxTBzje7/+QSzEjYlhe9hiX7ZC8t78PWu+Ie6CDu6QbLH9pjRuL03MDoG9SGerTzttxqh+wCihOvvkamDUwkZBMhCn6148eWDyMhkLea3gt+9Hm0RYuMW1NHdNZfseHUhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BCVJvmhN; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=ZwYple0g6L577rvUVKAzNk1Fw63og0VWcNKxuRrw15ylfnSLG6Kri+WzrZt1H9PCvODMZN1xuNoe1HxvvUm736EtwzsrzxX+Jv3e4LjE20VXW3iG6DZworqeCWve1V4+GFHcuMIjGtuEYkrIWv5X6dz3TAZg2JKJtFVnaSM1aF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWyw9Jho; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCVJvmhN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4E41F000E9;
-	Tue,  1 Sep 2026 11:29:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWyw9Jho"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 179F91F000E9;
+	Tue,  1 Sep 2026 11:33:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788262174;
-	bh=/Iyb8/k4rRD6W+DXbibyXh+1dU1PMI0/fTnF/bkpN8E=;
+	s=k20260515; t=1788262417;
+	bh=JlnJ7Uukhg8VkzKB+re1koB0u/aQUiCwqFkjDu/49lE=;
 	h=Date:From:To:Cc:Subject;
-	b=BCVJvmhNSz9kVZwYacQUT/pIK+DHD80NQ8mw3xjBV5LmlF7kkg3Tgpi0kcyfQ5lge
-	 qTfQdUnXrEq4wHmln5qk207HbzI8M7bH+d3i275Lgr1HjpO+bHPulIGsgNmN572XGO
-	 CwgPel2UfAGMvEZTQjPIlO7jM9oTs3oFtAaDM78SXTyBhX8WLJculvlH/67qem1KKb
-	 k/ye5M3gjlEqwfKtIbI79yUIl8C/zAOXZUtjTtlIYNCafFeTQ0iGsNddR6iLrWZrx3
-	 ZaG6ML00aolL6dx9SqdNTscd/p1Ur662Sqs1QWCwnUD3yfclxu0dZDayYz6GBFwFd0
-	 rd+JNbLtS6v0w==
-Date: Tue, 1 Sep 2026 12:29:31 +0100
+	b=cWyw9JhodSZNB5Rh75XjAm7pJp3qJ8mtJ7np7FymN6w6r/b2icBMDUXLTRDahswOc
+	 Y8grEw9UYYoZUCAeTpSOhr4k/yG4uTg0VtsjUNee7bthHDNx+++E6AhaSvKysp/hXy
+	 fF2OVfQQiQq/0WJZBjQiL2PaWAldDVpulEVrMPwIpbpYLQtH96xVqLH3+8RCytwj7/
+	 y3Lk+OyNdmg0rAfiTic8TNUYuUidxIBfDPGfrwmRrgKGGi1S9UEIZTjAE1FhoI66Mr
+	 3eyrz/mVlIIiX5mkDkXyVqyUTtwgrrQAhGV/lLp6iP+eraPwx70uBsftFwoTp9EqgO
+	 SfK/8T2aQffEQ==
+Date: Tue, 1 Sep 2026 12:33:34 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>
+To: Paul Moore <paul@paul-moore.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the risc-v-fixes tree
-Message-ID: <apa3G5qHROwJl5PU@sirena.org.uk>
+Subject: Missing signoff in the security tree
+Message-ID: <apa4DlzuPqZi72gp@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,34 +39,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UuTobIx+5ERMwnjv"
+	protocol="application/pgp-signature"; boundary="g41wv0L2r30z2gfC"
 Content-Disposition: inline
-Frllom: Mark Brown <broonie@kernel.org>
 
 
---UuTobIx+5ERMwnjv
+--g41wv0L2r30z2gfC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Commit
 
-  8718e5a3090bb ("riscv: patch: skip fixmap mapping when kernel text is already writable")
+  5598cab53f535 ("lsm: don't call security_backing_file_free() multiple times")
 
-is missing a Signed-off-by from its author
+is missing a Signed-off-by from its committer
 
---UuTobIx+5ERMwnjv
+--g41wv0L2r30z2gfC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqWtxoACgkQJNaLcl1U
-h9D09Af8CzceNeQNMOxl1kI8aDIgXWhfGO4CxE+r+5UhnBXxbM1PHFHOXvmzdO6a
-Ze9B7J6nhMRgUXkf63C6pO9/kOr8Rli43dH7a00DYNbYKAH4XKArnmwwT7Bga4yu
-VyKAlca7UgRGUBakFqEBwsOBW6Fuj/XhOT0gDqeSH1ERgcMBE4+5jjiQqIkeSrn7
-Ph1OL+ApGbIO4clDeuFu8QoSipOZMu7+7E0Z/PtDxODEtHi+vMkSjBYKT41/6RnQ
-UiDky7nftzwP8jdR49r8UtsU45xP/Q3ZcBGRQUcD4zMGsszBAViyQrvpEz/P2axp
-ekO2aJ3fADF7tlCxvJXRToSu/xUHeA==
-=HWsK
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqWuA0ACgkQJNaLcl1U
+h9BUngf/UIpdrOgoW5wKXRApVA9qyFiyNrSLeXE1Qz79ivpgmfWFrScqVpHJQROd
+31i+Pyg6FpE6w10QXy7EPPyAMsgGWuqzWBGcyJ1foAffIdNZOO5OzA+pJWCm/Gv7
+l6VMTNgEK2+tslO3519Y+NGIo30CpJrhmgtDsbDkuj3ud2BSZ4hMGdoCwHMV7c9J
+YrBxs+VrMEtRpdWzflz/u6z8OoUEfMaBTkM1XOcbEzBz+RRAxWlbo0JQ7qPUfeiI
+waLmCbyMuir5nBQUwO13pnNiT+/w30sbpFED5wnswlB+vAETPks9Gji/mYSTh4Ak
+Bo/iYTIHoxJ714qDFVZfhbRC+dVKNQ==
+=WfQY
 -----END PGP SIGNATURE-----
 
---UuTobIx+5ERMwnjv--
+--g41wv0L2r30z2gfC--
