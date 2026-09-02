@@ -1,42 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B3247CC99;
-	Wed,  2 Sep 2026 12:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B7E483806;
+	Wed,  2 Sep 2026 12:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788350786; cv=none; b=F3zsL5+RgwSHYdak4puM+IexwKYjky4WAzyXxo4cf5W+jhDltaQkXvOPgrwX6cYr6G1uJEHgwsC1lohJmPo1JHaLo0pdD1Yz5XT8ejOrfgmcYAGxoK7k7r3siWRHWYHksaybdDhZSzOR/aXKbVC15SkRtLBkfiZVRaIcrTE3DHs=
+	t=1788350836; cv=none; b=V3XirNhzPd6+RpKxVsPq5ac0RB7crrlF/Xu4AfCIJDoKJIeCeSz0mUDR7V/BQhAjmQkLiskq/6Hwq9SsP5E2j3+YI5BONGcorgTlA0751/8EHVk+x9UhrfLaAZAyFCSFtA1eTyusmu5r8X7ZBtUvTBCH5gID8pjZv8l0osm+RCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788350786; c=relaxed/simple;
-	bh=xs9bjvvOt6oGhHLtmqfCpEIeN2LYlqBLb0R+6rLJv9k=;
+	s=arc-20240116; t=1788350836; c=relaxed/simple;
+	bh=eo20NXsokeOVNi4bzjTPLmC8UsSWkvEfNu6JVDhocc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kcfylfXznmIl5qfqxlRdjlCZUzY4YKKhziliwSsxb3h6Xe3kO1Zi9JBuyhgutRncJc+czGd1q+tIjOmChPd9u2blgCdTJiur9tyFb4hrg3wEeRQg9g7cKKXP4JZBjBHn8n6JztE0SAh8SpDoUdJIvj0l4VZQSL5beVzxmAR5RUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gsb55AJz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=FQGmi5iF4u0n6UQ2dxmyqAoe6mimPSEjv12FekU4ShGW7eusWdG8SBWf2mnisZfx/v5sLUWwhlOIHOqdfL3CyIkx8aXCyvtBXRwbdWqGWj/0WBbd1/sM2lwPnl+E7W+obNSvydNsTPUrRu2hD8FI1NXf6VJx7T6/doDcHWHigCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFSwvTWe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gsb55AJz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFAF1F00A3A;
-	Wed,  2 Sep 2026 12:06:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFSwvTWe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC4B81F000E9;
+	Wed,  2 Sep 2026 12:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788350774;
-	bh=h6jI+2pEuVnTlqYVcD3a2kQzHMNf+Qllh+Pp0JldYqo=;
+	s=k20260515; t=1788350813;
+	bh=lhxLYWDVF46E2X4TTKJ0yOsFaUzEL30qbTiLjDr85gM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Gsb55AJzT2NqHLtuANiNbhQd9yMJEXyXAUyVfsc/W3HaUvBD+9qGYAIvk2L55D7gx
-	 huyS7BEzquV8lNzKxBzwRNOPHC1XRJH3frANb/jFGNEC/2FQBn7zMtQBiMdPKPQi6O
-	 zYN8i34Sp/cuLE+DOrP/hANGdBNLumqJnHiJb+5JcuqVarkuC2nZS/VB+1maq5lk2h
-	 H2MZRKGj2nxCb7oExBO6g3jdS2s9fTxhUztcDndkDlAcZbhdTm9iU0T/3USqVH2dO9
-	 lvoF3mMFGeV7FL0JKEN6h9/veIQHOT35zwSqnlqAoca/NcMjUxZd0JpTQqUuqoSW2J
-	 /IX2wtKOMEzQQ==
-Date: Wed, 2 Sep 2026 15:06:09 +0300
+	b=iFSwvTWeLKUk4K51Q0QYMfXQ+xgTDg/YRycDJeZsVQycK14mHOp78APwSSUe6DRsS
+	 s1J/HBgdJ1Wb4jl2//MhKBNQtZ6F4oHymbpXweQcMYZKIIb3yfLDhjPo0Jk+xLrUD1
+	 bfTvdpjkoTmANiNZyWbCdJGVb+RPKUoKIfksZ7we6tKfuo1ShDfOk9DOyWOt6VMj5q
+	 q5rVfjyweBLnGflsZrFAgcoDrNBf878XulEJ4E9XS7dRYRoLCw9vywe6qHgQHuzrBp
+	 m4vtI6vFDK1tuZFHc93hr2GcZleJI/IebblQCUtaM1rGo3SNKMK9xgnkQ+gJXIwtfb
+	 0pNMUa/1gRwqw==
+Date: Wed, 2 Sep 2026 15:06:48 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+Cc: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: manual merge of the mm-nonmm-unstable tree with the
  mm,mm-fixes tree
-Message-ID: <apgRMUMN6DVFmJ8u@kernel.org>
+Message-ID: <apgRWNxxf2AwTZWl@kernel.org>
 References: <apf4WaZ8D0P6W-FX@sirena.org.uk>
+ <apgEi1GacpI4T5m2@gremlin>
+ <0ba3c22c-e9bb-4a3f-b5c3-63e00a5396ee@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,35 +47,28 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <apf4WaZ8D0P6W-FX@sirena.org.uk>
+In-Reply-To: <0ba3c22c-e9bb-4a3f-b5c3-63e00a5396ee@sirena.org.uk>
 
-On Wed, Sep 02, 2026 at 11:20:09AM +0100, Mark Brown wrote:
-> Hi all,
+On Wed, Sep 02, 2026 at 12:19:30PM +0100, Mark Brown wrote:
+> On Wed, Sep 02, 2026 at 12:12:22PM +0100, Lorenzo Stoakes (ARM) wrote:
+> > On Wed, Sep 02, 2026 at 11:20:09AM +0100, Mark Brown wrote:
 > 
-> Today's linux-next merge of the mm-nonmm-unstable tree got a conflict in:
+> > > between commits:
+> > >
+> > >   0d171c47f2be6 ("mm/secretmem: properly account locked pages")
 > 
->   mm/secretmem.c
+> > > from the mm,mm-fixes tree and commit:
+> > >
+> > >   d2c5e077cbeaf ("mm/secretmem: properly account locked pages")
+> > >
+> > > from the mm-nonmm-unstable tree.
 > 
-> between commits:
+> > LGTM, thanks!
 > 
->   0d171c47f2be6 ("mm/secretmem: properly account locked pages")
->   a31a4988ca3e8 ("set_memory: add number of pages parameter to set_direct_map APIs")
-> 
-> from the mm,mm-fixes tree and commit:
-> 
->   d2c5e077cbeaf ("mm/secretmem: properly account locked pages")
-> 
-> from the mm-nonmm-unstable tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> BTW note the above duplicate commits.
 
-Thanks, Mark!
- 
+This is a transition artifact :)
+
 -- 
 Sincerely yours,
 Mike.
