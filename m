@@ -1,112 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF60483BF4;
-	Wed,  2 Sep 2026 12:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788352125; cv=none; b=lMe676ngC32aO7RD+sEkW2sVCRf228waYJANJtDoxTvOTLiZyF9jek1Wgu/M/LYjkHd2SAHB3Pg0nuZqaBSXFze6Lo0R3REjKIPztWJkRPBSp+7GeF9uB0SkG6axL9rvy8cII2TYEOUW6oZROQU4EIxCs2+NwDLmCn6F+paJsek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788352125; c=relaxed/simple;
-	bh=N7m+wWf0Q9Y2kqGKdmWCKlZlP+MbTCjlTRwZjbRz5Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B+iU4ZyYyUcwRgwBLeq5fpz8t7jxSLREqeMTAQVwatcICnBelRjStw5j72iC1IjbOhKR9rCkrdGRiBZdAAH9wPT0TrZ3S/hIR029x4xOUtDG6ADqvripnI5c18El9ldC2OIcu0uLSEdXYJqqQGf1Uuj71c50sf7RmBKjooQy62Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdFFO7Q3; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E694547ECF2
+	for <linux-next@vger.kernel.org>; Wed,  2 Sep 2026 12:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788352587; cv=pass; b=l9hWRuNy4kGiFRkaZl1MauApsNwqmF4tajgeXhZGY0w/Ht/RsnhjZmv0TwZHlAhD+GOs+8BxcyfdYuT2zPXf/aLTt87cvtAA/QytnZhWsgACECcfX0NE1rTDCTIU7OIQyV0F7yTLJM+HjA2Jk9lsOabH7JbmIyCdtDlvSqxp2vE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788352587; c=relaxed/simple;
+	bh=l4Av1tnk1DJx0lSAkYYujTq4Pm3LS+q9DUKaEcW0p0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J+qmYNBm4YRDNDfiSzM8KDl+SvQ5nTr5mlTQT8ViADFhaw91ELhPITXAAFeJi3euVMfTwdt7frK1Aj5M2nZdyRjYVs6EbRU+D0xJRm7e+lXwxByJQ30OEq0z4bmRI3WWFz/Ah08PWFXSzLdhxLnMdm8CQ8f5c2rpj3Jl5tbUGK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=icBZMDs6; arc=pass smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdFFO7Q3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD7D1F000E9;
-	Wed,  2 Sep 2026 12:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788352124;
-	bh=utQjPpj8FM1uqJwF14GGRswgo6ul2luFDaEAxY2Jm30=;
-	h=Date:From:To:Cc:Subject;
-	b=fdFFO7Q3moqXjNM6f+V8g9F9sd6LTnUbvU281/S5yR0i2Qfuah6N1HGs2cHGE8GIW
-	 zNMleD9AvmvgGoSshI1NPL6nf8fLTGqnHzHfeIO0tt6Ij+lcASVRpYRHtQcYLzu8gK
-	 93+QAbsuRkeKxC/R7TTYr2NTT/6Q+S5QWWkW/ThG48Coko412DQT9BztvrRedJ9RMa
-	 gavJYjFizIJwjMumiv3EoVkCIs8SBF6Yu3ImJctDGxwXBXPJmphDOLUEW6bB8UKxJy
-	 V3Cnx79kHL1IuVrQFHIIJbpLaFgTnDDiEKjWcx3oiwrQi1VF+tXhgOaBcPVRuh6zur
-	 T2wXOggMF2WRQ==
-Date: Wed, 2 Sep 2026 13:28:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 2
-Message-ID: <apgWeHvdb5Ta9IE4@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icBZMDs6"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-38dfe7eb825so898227a91.0
+        for <linux-next@vger.kernel.org>; Wed, 02 Sep 2026 05:36:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788352585; cv=none;
+        d=google.com; s=arc-20260327;
+        b=q1amTfrAMz9j2DE7/blNKSfdCNzCszEJr88P21CtKV5j6C4XFREAeghFIIJ+ZeKjMy
+         8/jnVVUrnw6iNKYiRopH1cudIsCEm85OShrLK0906uHLT5MpR2ZUCx6IDIzmj4Cnqba8
+         /pritNvoFJICG/mtNHhCyS4/+BJpgKomPDPoRX2mv3xCI4aHvO8Rqf8EAq80u1tZs5ZM
+         oDyfIIP6MYBYQfn6aiBZDtB1905cu4kpEI42hkdmaO59JQv4WiKICnnmPqrCTowlw1eL
+         /AJlwKSbqDJYE75P+HIC67jWq6rUr4RwWZ4i8cbjmLhxrx/WYyxWtppO5XoUlDnnPn+S
+         6lbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=AKF+zPcaGnIjcBYSYaoawLCl82XfK40W4BF+GG+bvXE=;
+        fh=N5bBprHIWIkEp56pMl2rVelIPbKQnDAqjll2PUCNQtE=;
+        b=p2J7UAo4wyAKoZdZzzLDXR500E1+Ydi8Gfsx4B4503NmPP4IWfe72rE+d1hHBCX2Lx
+         +1BE/JZ6texQc1Ovnh9d61r9fQeCVnYKyH2XIxws7E8gkDC9Jdba7c1+PwbTVZWm9lme
+         XeMJCVpvm86+0HbDKjb2G3rhRZTLv4qcqPDHEnuM8G6M1xg+p9RdKEciPCk6mfgNRHSM
+         D/HR9tLMNI/PV3f/xSHMpClrwSorNmhC/lFSYHIAYI+VjJQtvR/GEdBYdsk5qk/7GTeg
+         cgtdyLXERti8HEynHgIpINcrmmlJM8SACOSLyypsbgaQ4FQA8fbitu1wsScKCgH+CM6M
+         lomg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788352585; x=1788957385; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=AKF+zPcaGnIjcBYSYaoawLCl82XfK40W4BF+GG+bvXE=;
+        b=icBZMDs6gdGThp9mnSjY93nd4DczNlmpeEcj75C33xVyZEn/RjDNuZNkK9bhRlnsCw
+         rQ3C24Z2fnBv6y1ylf/Hd4yM4p2oURSuHsorEQasIJujska7orqkl1SG3ll84ixBYOrc
+         cxw+paPBljTpEg1vIh27Wm0zfcaZMTLQkZZ3iW3cLK7+5t9zqD5bjMUzi5y34otFLu55
+         pIEyo2ga/mwgI6ulhrG4y9MQWZ6qA40ra6w0QlCcS8vRsp3eQhP6jqkxiTEpRdr+MPpO
+         K5Cw3Kn8r/G+kzpl1xP8XAU3Pf1SYHxle4cP83GY1fnlUeJWw8qndvRqD+Tbv0L76a//
+         Royg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788352585; x=1788957385;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=AKF+zPcaGnIjcBYSYaoawLCl82XfK40W4BF+GG+bvXE=;
+        b=fOULV6Qa9415LxA1nscLGx1G7HOZ1OOUPxbFP5o86Yuuc7zuElSWZOM7ZSq4PJybP1
+         9O3HUPxJ0aYMRgBFL/RCW1ih8of2SjwrUFkdAmxF26KSTA41eInw3nzT+zEGu+gClhoY
+         yUj4bd6FXKpMXRU4wXYSN8xufoOtKo/Cx1s68nUC+J6ejXrlL2gYS2m3iaW/zgTpr9Fx
+         awZHb8XZYyERjNclkvZWUPnSXUpk5GJdupy+B0pGlBI+U1OYIAIw+gpWtndxPFQizTVs
+         NwYGiCNR9d2UB2Ytth/FSpLWGOrf8OfNWk3omr6diJZTJ4+haZ7I73wy9COQwNlnv4G2
+         yObQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzwl9QZD0HvrrjWeWy64I2nZT5QmhqpL2bLbJy3xIWuunG4Sh837cyu1OUd+gzRI4wrp2+e20xQMXMF@vger.kernel.org
+X-Gm-Message-State: AFuF++n5QuS/FvbrxSeIcBQ12jXznKkvUkBUQY/28epegYPGeurABsij
+	eAKGPNVWlTYERIPLCuHjmJ2P9pdfBFV9VDD1y9e9SuhZEJ8wqeuWmVloDtDgcKJhjPR4hU0Sem1
+	c/dIGGiQ8LhMtBWTQDc16ZHpxFHLKTNA=
+X-Gm-Gg: AYBFou3apK8+BojEQSN6LdUzw3oHic1YKpU3IKvTUlclKa2T0m/v+P9XRTuzDoMGQQQ
+	yl7rfygry5H8fscpSXNaZbfKTEKQ4s9t3oEOb1CAYwGo9Ie7pyO4fkVG3l+I4wGotdtg5YoMl/0
+	wrN3gwOdukckLQFztdsHxv4JMebnC1P4sLP/3Lbf4lSmcQEoIi2YDo5HLeXanRnqQBSN//6m+R8
+	DqqgAV+l/j413BMwmaenXM/P38RUq8eY2T5SQKjaExShhj2IIIBz8Gu0AgHfs9fRU+dbKdR6HN8
+	6wULue55+KrDMGvoKN9VOinhGadf7cLt3NySTB/fjN3H4+nBhMjLwaAPo80JdCMhoP2aIA5+1ow
+	FwBgtGfRgBaN0flBRulJDekKofdYNK0KDtuGuaNPm9aLmX1H8gY9Y4Bo8
+X-Received: by 2002:a17:90b:2b8b:b0:398:ba9e:75ff with SMTP id
+ 98e67ed59e1d1-39aee12c707mr7182503a91.21.1788352584935; Wed, 02 Sep 2026
+ 05:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1XoHWedcBw+qpSk0"
-Content-Disposition: inline
+References: <apgNYDiSiPmNZspF@sirena.org.uk>
+In-Reply-To: <apgNYDiSiPmNZspF@sirena.org.uk>
+From: Bui Duc Phuc <phucduc.bui@gmail.com>
+Date: Wed, 2 Sep 2026 19:36:11 +0700
+X-Gm-Features: AcwNN1Vtr0Lsg-kbSWCKKSOZOMM-LcknKctZC3VLEs2BTvZp3shOSfxe4zqP398
+Message-ID: <CAABR9nFEbNxQ_oWCvZobOJnmCBdhAdTYfrm=sMzygh28CMFFtA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the gpio-brgl tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mark,
 
---1XoHWedcBw+qpSk0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the report.
 
-Hi all,
+>
+> /tmp/next/build/drivers/gpio/gpio-altera.c: In function 'altera_gpio_probe':
+> /tmp/next/build/drivers/gpio/gpio-altera.c:224:21: error: 'irq' undeclared (first use in this function); did you mean 'girq'?
+>   224 |                 if (irq != -ENXIO)
+>       |                     ^~~
+>       |                     girq
+>
 
-Changes since 20260901:
+This was my mistake.
+This issue was caused by using 'irq' instead of 'mapped_irq' in
+altera_gpio_probe().
+I haven't encountered this situation before. Should I send a v2 with this fix,
+or should I send a separate patch to fix it?
 
-The mm-nonmm-unstable tree acquired a conflict with the mm tree.
-
-The mm-nonmm-unstable tree acquired a conflict with the mm,mm-fixes tree.
-
-The iio tree acquired a conflict with the iio-fixes tree.
-
-The gpio-brgl tree acquired a build failure, I used the version from
-next-20260901 instead.
-
-Non-merge commits (relative to Linus' tree): 2510
- 2745 files changed, 167264 insertions(+), 27011 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 426 trees (counting Linus' and 132 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---1XoHWedcBw+qpSk0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqYFncACgkQJNaLcl1U
-h9B9ugf+OSYljyxbsu6jnh0/ELnIxY1VFZnTtBKH9cIZDUpW3GeK3Zf6/xHNRS/Q
-hmDCosY0dXYsnWEny3R9zAVvSqmnMxmTc+BTaX03pMcrCSkYwIqR1ihARn2UWfZa
-k9oPdG7kUKWojbJtTq/VTJosh5t9X62Uq5VcvfFbJ5RefmzrU83ImVByVbdsq66c
-gyRgFAQG3klYAQ0/H45lFoO77uBvswLKmh+jbCjONV2ZIE0SPhoSKHHmPxD8YLNQ
-9XCskMAXsPaiZaeSJ0mtfUnJpJ84oKklXC0gPEiEWSEj06ildUov8ahpe3lSeD61
-Dyc75he+sw9lv6WnKGcOqG6lZRGSoA==
-=FG4Q
------END PGP SIGNATURE-----
-
---1XoHWedcBw+qpSk0--
+Best regards,
+Phuc
