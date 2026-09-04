@@ -1,83 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2037551993D;
-	Fri,  4 Sep 2026 18:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097FF51E43F;
+	Fri,  4 Sep 2026 18:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788545496; cv=none; b=hXHQ60G4ucLEEp+Fx/7DqLy60RE/yr1J2+A86F5lEfSgJt0kNNXVrSMGyAIgbOpOJZd5zYMcH9NLNO8Hyl5gX43lRQCbjtw5REyVWmx53ckJZYEUsbizczjGEUDs6LfeToFMaxWwHjD/Wr7W4hrU6aWG57zxL4+6S7NXBDB8hbs=
+	t=1788546961; cv=none; b=lo8X/e8SRG+8f2TAt+kvr/iUkXRYMaqwXkA4x6T6NYPnQa2SikF3Y4DdRe0PiPOb21iIIuy/Q2SJSQvz9YoUEVPkODhd2QL4UACaqitX1RPpJejALLmDFTSn1LDiNNLuSR5K4gXAbinflNzlOqL6daqwd6nXpEXjhf6fC2G28y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788545496; c=relaxed/simple;
-	bh=XGGiULzKxbsxMPwMm0rzgoRz2gHuP34SyUxw6Q/rCxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GqCpkhMtaoisZUNYLPV3j+3fPpjwX8/UWPsL4Slsd4rVUbcIoMyrC8OsQL7Xfc788mauEAfYgYF5BQhC5dTqJDmY3hTiaTG0BzEU1iQwsbv7GAT9nDFsSRb6i4scuyaUckF5fKNiRJi0m1dLxsID3hVWnpCMDgs1I2e+i4KgRJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAG0DrCF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788546961; c=relaxed/simple;
+	bh=n936EpbmcusfU14UodCSYyAujaqKY+TYJiDTthYeU5Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=SmylFCL97KqCu1JOYHnE6lNCyyASeO4T+JXOvCraofL9ZYtVJhIM1G8yDpXr8o+hn6atVEu+I6Otl9Z8WN3OqE1o2pmf0UfFp30OeaBJeXBTeuKxmcvZbKZB9RyaECRNdTRm4Ya89UfEGr5LeZt9jODscNo5EFH5/mo9jm8EC8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1EyUNV9W; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAG0DrCF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 716131F00A3D;
-	Fri,  4 Sep 2026 18:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788545493;
-	bh=0TkkvokzXAQ2u4nXOczocp1spZDiEVbEAmQgLZLTlPs=;
-	h=Date:From:To:Cc:Subject;
-	b=hAG0DrCFXbdp0ZElmFA3VgvYlfcYrlOcFCGmQ/h+++SXmS3i9A5S8UgmnTSv1lkcZ
-	 arZXyCrc3o2SAXKM0cw1i9r3B8a862rMSvKtV9z+PIlW5muxpBVSUKvFmtfS4twHve
-	 3W7adJ4tD+i28GpUWFTBkIRRR6ZQNpsQVUPh+EVdyEA/j7etfN3lZevKwLMFyYiOv0
-	 l1F3v2ZFkVVOCNMCUea1OaWKPtOAML3biOH0ezwuA+w9oXG55kSrS8abK7fbGoAkZJ
-	 64qCERJm1Sgc7PAOlkSF4AbfrCZUidGochYg8JHNjucI0AW6nlnKIHIY6LELT+DgZr
-	 TpamqiM4dhnLw==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 6B4C41AC52F1; Fri, 04 Sep 2026 19:11:31 +0100 (BST)
-Date: Fri, 4 Sep 2026 19:11:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Golla Nagendra <nagendra.golla@amd.com>, Vinod Koul <vkoul@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the dmaengine tree
-Message-ID: <apsJ089VAvtYHRpP@sirena.co.uk>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1EyUNV9W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B491F00A3D;
+	Fri,  4 Sep 2026 18:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1788546959;
+	bh=I30u9zCE0YevZf3NSqMe25cL/Wy1MD4kJk0l05DMgMk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=1EyUNV9WPJh2tyFiCTV5U0EGxGioKPwqcD5jUVhZsOPQMXJWTFUIDYwx5Ws2jRUij
+	 VRCe/9M/laHqPUygfQAb3XrdnaCFq0Nz6xpE2r8rEEbPhO4g3CD1ZTv31s4E++0c64
+	 qz26iqznCNfvAk+W+K57XLCc9RT4LlGRTDUEQZYY=
+Date: Fri, 4 Sep 2026 11:35:58 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Disha Goel
+ <disgoel@linux.ibm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the fs-next tree with the origin
+ tree
+Message-Id: <20260904113558.b8e68cf4ada8ee538ffafd76@linux-foundation.org>
+In-Reply-To: <apsJzO0mzuBJhH8l@sirena.co.uk>
+References: <apsJzO0mzuBJhH8l@sirena.co.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TBlVQDcZQGDKIi29"
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 4 Sep 2026 19:11:24 +0100 Mark Brown <broonie@kernel.org> wrote:
 
---TBlVQDcZQGDKIi29
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi all,
+> 
+> Today's linux-next merge of the fs-next tree got a conflict in:
+> 
+>   tools/testing/selftests/Makefile
+> 
+> between commit:
+> 
+>   4ff32f084c158 ("selftests/filesystems: fix missing and stale TARGETS entries")
+> 
+> from the origin tree and commit:
 
-Hi all,
+"origin tree"?  I assume mm.git's mm-nonmm-unstable was intended.
 
-After merging the dmaengine tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> 
+>   5550456dad376 ("selftests/filesystems: Move file_stressor to dedicated subdirectory")
+> 
+> from the fs-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-/tmp/next/build/drivers/dma/xilinx/zynqmp_dma.c:1171:1: error: unused label 'err_disable_pm' [-Werror,-Wunused-label]
- 1171 | err_disable_pm:
-      | ^~~~~~~~~~~~~~~
-
-Caused by commit
-
-   3f30db282c28c (dmaengine: zynqmp_dma: Fix chan probe/remove error handling)
-
-I have used the version from next-20260903 instead.
-
---TBlVQDcZQGDKIi29
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqbCdIACgkQJNaLcl1U
-h9DvOgf+IeVM3Ied/lpzvsw/ClqUrmawOV59X6rlatYuGHtTE1jZSJTjvids7f/m
-H7KZxO+H4Q8LgJlxeyGlYmY3loN0eeBOUqvkuqNFIpQD0vUkwsfUm9XaDiTpALl/
-tn8obkUSPgTUgR+JbqbZJRMP/AKeM9scr74lvbUwd7TxTtk0klSFI2Iugz0YYEEp
-CQxWd6wPVoVbuJ1oLUxePSDUJFcRPQqAQ32Sf2DzLby14uPm+i5a0Zm1v/H151E1
-ZwJuUVZzr9880ZCbRobT5mWVj8pc5kPb8F1OZs0ukLhS6DlWljvkT7+LgkFhnksa
-QTEmeXkwItEomBAVFgi/tQXDNiIEwg==
-=dmyv
------END PGP SIGNATURE-----
-
---TBlVQDcZQGDKIi29--
+OK, thanks.  I'll send "selftests/filesystems: fix missing and stale
+TARGETS entries" over to Christian.
