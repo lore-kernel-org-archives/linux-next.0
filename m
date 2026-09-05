@@ -1,197 +1,112 @@
-Received: from mail-oo2-f8.google.com (mail-oo2-f8.google.com [74.125.231.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1287933C195
-	for <linux-next@vger.kernel.org>; Sat,  5 Sep 2026 09:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2687B324B24;
+	Sat,  5 Sep 2026 14:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788600992; cv=none; b=oRxmrAzW5tEX6v/1O1lHJOM25Ow642IRse+YJ1rG0ZolNo11gcM+OaxZdrEY8O4k+GyA0oaaGKToenojMTYMe6LRfCCLaYWs+Plzsc5prFtsP8inEXwC4EJ416xDHszM2eoZUmz5Gtjw/K+fZtNrKj8D+/c+plbDnvFaJk0b+c0=
+	t=1788618351; cv=none; b=IkNtCben9y7XSAi/WDjsdoBRh/769I0Bj+4PNI6i5wwA2rQ4kanfAOp7UfkyUfSWNMtmrtDFupRewlP3PnIchP0z9O0po8JypfGwYTuyhVf9YmJ7k4Lyn1V84zGCqicGVKqlPwhlUImzFVdNri4gYL6NB2Z/Fgnph/5heu6wHCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788600992; c=relaxed/simple;
-	bh=k2a8/qj8h3YZlya+lum6bv5Dx6h0AJ8unJW6DGemFBQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AFTtGc0GFxpn31bPpNtSwuImr8ENh3ojhm4kBHwvHiAhqdvvFCmCnoJK/tNkXMWR95D1QO0PNjTEd9Vb0kFebskTSJm7lsbfUSNp7pB1N3Tzt9eJx+1CyclwpLzYgN3T20oIBMZYhyhAJXWH2f1+UVWcho4JiK11RWsNikmwses=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo2-f8.google.com with SMTP id 006d021491bc7-6b128c3af4bso162742eaf.0
-        for <linux-next@vger.kernel.org>; Sat, 05 Sep 2026 02:36:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788600990; x=1789205790;
-        h=content-type:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=u8QIbO6qq/VtrlPFuyvu6M2c620u5TE9s1ljdILDbuE=;
-        b=WY4lCqMz+YS507AIRtZv/o990uItYmo6m/7bgXxufx4l4nD+a6h+pj0hCb3+6egr46
-         Sgfy2wIkFTgNdGcoJiyWYQuX+tmWRIHpmptwLrXU1oE4X+jlQhHTn483QVv8kmioMoq9
-         R9nsQJz4KXsyuUNZPCIr5IGGR/fCg+Z6zo45HMODk+c6npFYD4UylFAxyxDCqipciu4I
-         fg0141FVR+Kd4YoFx4VSM55IgXEJOuXQmts5/AUq37FYM+fowQxo/8EofitwWTkUvEDI
-         sr/GVuHNCxdvJ7pTiJfBhvzjKlq7eCHiGmc1OIzR8lnA/3teKN2lb1wynFlX+YgDxw/w
-         Ibiw==
-X-Forwarded-Encrypted: i=1; AKwUvBxIDT9gOx7Nqhzg1hdthSWscer33HnIVpNZA2KD6S0V8OmfZr8P/EzraZKuR3II6XfRov5HDatED8As@vger.kernel.org
-X-Gm-Message-State: AFuF++nU0cSt8oiUx8sUIywOqLGsHOZTbFtmaEcjtz3UpXcB5Htv+Hqi
-	wti9f9EWKRJCobirLTEG/Vwy8CsnanWA2rUVT3S/8b5i9SnXnXWAcOmUoSlCbVRm4pLq8YHIEEd
-	nrMGyLXgy4MyZw4d1Kt7oCpxjyQtCt9T8aad6C3LgZNrABOcD1q+TBu00oqs=
+	s=arc-20240116; t=1788618351; c=relaxed/simple;
+	bh=jndXAAKHidpqftMQBa26cKlXG5nvYlOXafytPCALO5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hDklFlvx/tg1A+J+Sa9ePF4UHoO4XaApLQtcDSUSB/+Ra3fJlqR0cJz4g+QVnZN+jsi77SH41qncOZNFWP0+WLU1sl3COW0ZZMKUk5deeTxgIKjk8PiBndmanP8SUBXCi2ObXfdexXpP6cRvWNW3TEI6POkV1cmTgQMMH0KOdvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dUGZCBem; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dUGZCBem"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788618348; x=1820154348;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jndXAAKHidpqftMQBa26cKlXG5nvYlOXafytPCALO5Q=;
+  b=dUGZCBemVzGI3Yv0mWk75ahfd3A1Z1XFKypefigZ9uzvtfTw7lm14ADA
+   tKxNXruVYTPPHNQj93pV4Knloab5ThDFwJTtUbLjKWb9LbQMjcsKbtp0D
+   YbmC1JXiYpeg2SyzZ89+Cbh5lQFmNLBoJ5m9He3IHuO6l/A6TrePx6dzR
+   cdtIRem0BHzDwWceKcK8sEIL2h4LHb5HT559bOFCsTdE2+vmA6p8NMxIX
+   bIAJZrianiAE03HPERatIyp137ui+njaHNK8fwhvmPzaoR7HMahBP8XAZ
+   3wqghnF2uh/yq8Bc1ID/waBkxnClk8cbsrP5WDxTFQ4d19C7wQZ5rnBR7
+   A==;
+X-CSE-ConnectionGUID: XH7xWYRCQ02VGJu+2MvdLQ==
+X-CSE-MsgGUID: RAvUzEy+Tiyo2asooDXV/w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11896"; a="99755054"
+X-IronPort-AV: E=Sophos;i="6.25,263,1779174000"; 
+   d="scan'208";a="99755054"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2026 07:25:46 -0700
+X-CSE-ConnectionGUID: 8U27AxlCS3SUnHoCDZJdLA==
+X-CSE-MsgGUID: iracYlDuRPuLQIaGChvIkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,263,1779174000"; 
+   d="scan'208";a="272247298"
+Received: from lkp-server01.sh.intel.com (HELO 73f3364bc37e) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Sep 2026 07:25:42 -0700
+Received: from kbuild by 73f3364bc37e with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x2rKs-000000000Z9-3kZH;
+	Sat, 05 Sep 2026 14:25:38 +0000
+Date: Sat, 5 Sep 2026 22:25:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	lkp@intel.com, oe-lkp@lists.linux.dev,
+	Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Hillf Danton <hdanton@sina.com>, Mark Brown <broonie@kernel.org>,
+	Oliver Sang <oliver.sang@intel.com>, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v8] loop: Fix NULL pointer dereference in lo_rw_aio()
+Message-ID: <202609052240.ovdWUOyj-lkp@intel.com>
+References: <dc2f1e00-5e10-4e02-9415-c6ecb2cbc6b3@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:e845:0:b0:6b7:8396:f3c9 with SMTP id
- 006d021491bc7-6b78396f826mr4796032eaf.43.1788600989955; Sat, 05 Sep 2026
- 02:36:29 -0700 (PDT)
-Date: Sat, 05 Sep 2026 02:36:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a9be29d.2e659fcc.61e1a.0004.GAE@google.com>
-Subject: [syzbot] [kernel?] linux-next test error: WARNING in __change_page_attr_set_clr
-From: syzbot <syzbot+e623a6a4fd4d4cac4504@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, luto@kernel.org, 
-	mingo@redhat.com, peterz@infradead.org, sfr@canb.auug.org.au, 
-	syzkaller-bugs@googlegroups.com, tglx@kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc2f1e00-5e10-4e02-9415-c6ecb2cbc6b3@I-love.SAKURA.ne.jp>
 
-Hello,
+Hi Tetsuo,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    af5f12805e5c Add linux-next specific files for 20260904
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ddb215580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bb4a32c282cc2ec7
-dashboard link: https://syzkaller.appspot.com/bug?extid=e623a6a4fd4d4cac4504
-compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+[auto build test ERROR on axboe/for-next]
+[also build test ERROR on linus/master v7.3-rc1 next-20260904]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a9682d8d7552/disk-af5f1280.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d8aedd3c373f/vmlinux-af5f1280.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ab370493357/bzImage-af5f1280.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/Tetsuo-Handa/loop-Fix-NULL-pointer-dereference-in-lo_rw_aio/20260904-085046
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
+patch link:    https://lore.kernel.org/r/dc2f1e00-5e10-4e02-9415-c6ecb2cbc6b3%40I-love.SAKURA.ne.jp
+patch subject: [PATCH v8] loop: Fix NULL pointer dereference in lo_rw_aio()
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20260905/202609052240.ovdWUOyj-lkp@intel.com/config)
+compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 0edd1b088cc36b4faee80358c925a91e16006258)
+rustc: rustc 1.96.0 (ac68faa20 2026-05-25)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260905/202609052240.ovdWUOyj-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e623a6a4fd4d4cac4504@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609052240.ovdWUOyj-lkp@intel.com/
 
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-kfence: initialized - using 2097152 bytes for 255 objects at 0xffff88823be00000-0xffff88823c000000
-Console: colour VGA+ 80x25
-printk: console [ttyS0] enabled
-printk: console [ttyS0] enabled
-printk: legacy bootconsole [earlyser0] disabled
-printk: legacy bootconsole [earlyser0] disabled
-Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-... MAX_LOCKDEP_SUBCLASSES:  8
-... MAX_LOCK_DEPTH:          48
-... MAX_LOCKDEP_KEYS:        8192
-... CLASSHASH_SIZE:          4096
-... MAX_LOCKDEP_ENTRIES:     1048576
-... MAX_LOCKDEP_CHAINS:      1048576
-... CHAINHASH_SIZE:          524288
- memory used by lock dependency info: 106625 kB
- memory used for stack traces: 8320 kB
- per task-struct memory footprint: 1920 bytes
-mempolicy: Enabling automatic NUMA balancing. Configure with numa_balancing= or the kernel.numa_balancing sysctl
-ACPI: Core revision 20260408
-APIC: Switch to symmetric I/O mode setup
-x2apic enabled
-APIC: Switched APIC routing to: physical x2apic
-..TIMER: vector=0x30 apic1=0 pin1=0 apic2=-1 pin2=-1
-clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x1fb63109b96, max_idle_ns: 440795265316 ns
-Calibrating delay loop (skipped) preset value.. 4399.99 BogoMIPS (lpj=21999980)
-Last level iTLB entries: 4KB 64, 2MB 8, 4MB 8
-Last level dTLB entries: 4KB 64, 2MB 32, 4MB 32, 1GB 4
-mitigations: Enabled attack vectors: user_kernel, user_user, guest_host, guest_guest, SMT mitigations: auto
-Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
-Spectre V2 : Mitigation: IBRS
-RETBleed: Mitigation: IBRS
-ITS: Mitigation: Aligned branch/return thunks
-Spectre V2 : User space: Mitigation: STIBP via prctl
-MDS: Mitigation: Clear CPU buffers
-TAA: Mitigation: Clear CPU buffers
-MMIO Stale Data: Vulnerable: Clear CPU buffers attempted, no microcode
-Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
-Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
-Spectre V2 : Enabling IBPB for BPF
-Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
-active return thunk: its_return_thunk
-Spectre V2 : Spectre BHI mitigation: SW BHB clearing on syscall and VM exit
-x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
-x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
-x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
-x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
-x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'standard' format.
-------------[ cut here ]------------
-CPA detected W^X violation: 8000000000000023 -> 0000000000000023 range: 0xffffffffa0000000 - 0xffffffffa0000fff PFN 140600
-WARNING: arch/x86/mm/pat/set_memory.c:725 at verify_rwx arch/x86/mm/pat/set_memory.c:722 [inline], CPU#0: swapper/0/0
-WARNING: arch/x86/mm/pat/set_memory.c:725 at __change_page_attr arch/x86/mm/pat/set_memory.c:1892 [inline], CPU#0: swapper/0/0
-WARNING: arch/x86/mm/pat/set_memory.c:725 at __change_page_attr_set_clr+0x1d69/0x2820 arch/x86/mm/pat/set_memory.c:2064, CPU#0: swapper/0/0
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
-RIP: 0010:verify_rwx arch/x86/mm/pat/set_memory.c:722 [inline]
-RIP: 0010:__change_page_attr arch/x86/mm/pat/set_memory.c:1892 [inline]
-RIP: 0010:__change_page_attr_set_clr+0x1d79/0x2820 arch/x86/mm/pat/set_memory.c:2064
-Code: 00 00 e8 ba 6c 4d 00 48 8b 4c 24 30 4c 8d 81 ff 0f 00 00 48 8d 3d 07 be 02 0f 48 8b b4 24 a0 00 00 00 4c 89 f2 4c 8b 4c 24 50 <67> 48 0f b9 3a e9 8d 00 00 00 e8 88 6c 4d 00 4c 89 f8 48 c1 e8 03
-RSP: 0000:ffffffff8ea07820 EFLAGS: 00010293
-RAX: ffffffff817a6b66 RBX: 8000000140600023 RCX: ffffffffa0000000
-RDX: 0000000000000023 RSI: 8000000000000023 RDI: ffffffff907d2980
-RBP: ffffffff8ea07ad0 R08: ffffffffa0000fff R09: 0000000000140600
-R10: dffffc0000000000 R11: fffffbfff1d40ef4 R12: 8000000000000000
-R13: 0000000000000002 R14: 0000000000000023 R15: 8000000000000002
-FS:  0000000000000000(0000) GS:ffff888124cbf000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88823ffff000 CR3: 000000000eb48000 CR4: 00000000003506f0
-Call Trace:
- <TASK>
- change_page_attr_set_clr+0x398/0x11d0 arch/x86/mm/pat/set_memory.c:2152
- change_page_attr_clear arch/x86/mm/pat/set_memory.c:2190 [inline]
- set_memory_x+0xd6/0x110 arch/x86/mm/pat/set_memory.c:2351
- its_alloc arch/x86/kernel/alternative.c:236 [inline]
- its_allocate_thunk arch/x86/kernel/alternative.c:258 [inline]
- emit_its_trampoline arch/x86/kernel/alternative.c:834 [inline]
- patch_retpoline arch/x86/kernel/alternative.c:945 [inline]
- apply_retpolines+0x8e9/0x15a0 arch/x86/kernel/alternative.c:1010
- alternative_instructions+0x3a/0x100 arch/x86/kernel/alternative.c:2283
- arch_cpu_finalize_init+0xb2/0x1f0 arch/x86/kernel/cpu/common.c:2643
- start_kernel+0x310/0x3e0 init/main.c:1153
- x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:310
- x86_64_start_kernel+0x137/0x1b0 arch/x86/kernel/head64.c:291
- common_startup_64+0x13e/0x157
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	e8 ba 6c 4d 00       	call   0x4d6cc1
-   7:	48 8b 4c 24 30       	mov    0x30(%rsp),%rcx
-   c:	4c 8d 81 ff 0f 00 00 	lea    0xfff(%rcx),%r8
-  13:	48 8d 3d 07 be 02 0f 	lea    0xf02be07(%rip),%rdi        # 0xf02be21
-  1a:	48 8b b4 24 a0 00 00 	mov    0xa0(%rsp),%rsi
-  21:	00
-  22:	4c 89 f2             	mov    %r14,%rdx
-  25:	4c 8b 4c 24 50       	mov    0x50(%rsp),%r9
-* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
-  2f:	e9 8d 00 00 00       	jmp    0xc1
-  34:	e8 88 6c 4d 00       	call   0x4d6cc1
-  39:	4c 89 f8             	mov    %r15,%rax
-  3c:	48 c1 e8 03          	shr    $0x3,%rax
+All errors (new ones prefixed by >>):
 
+>> error[E0063]: missing field `post_release` in initializer of `block_device_operations`
+   --> rust/kernel/block/mq/gen_disk.rs:128:58
+   |
+   128 |         const TABLE: bindings::block_device_operations = bindings::block_device_operations {
+   |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `post_release`
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
