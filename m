@@ -1,141 +1,219 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021103.outbound.protection.outlook.com [52.101.95.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B652F396D15
-	for <linux-next@vger.kernel.org>; Sat,  5 Sep 2026 22:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788647129; cv=none; b=jsSBTc2FS2LevISyXvjklCwaYs5tYEj3gebzDFZEetB2eAAFYR20U2RyxpfC4iynHIEXK+g4Q9seBupCiSZcy7V17XbA8KW/8X5aqmVuc3DBpAEL4gMEvq4KlO7Orb4D+p/DZfeReNSP70GUT7LsZpyPfhTLnuMqXE2Kde4A16o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788647129; c=relaxed/simple;
-	bh=ngl+xzOiaCR8FkeiD4BZS6Ct3WMCnpj/FpxmjdQvCcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrI1jS/q1qD0gaKQw94+tYp+yV2cTm5hR3nOEGtLlINVTuzn73WfYOMXcA+/zbkflx369kkSrTcjdeh4jKl42kEdmeTxwtjQS/HibFza08B2LrG4EQ5F1ZS176BLDQ9ZuPoji0fvGfsSfzOGE5yrElBVaPQUV/6RZ6TbUTl1nE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yko1n5Vv; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AA2377A87;
+	Sat,  5 Sep 2026 23:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788651708; cv=fail; b=k0PizOe/4X0YxqKPF3+ammrkK9zLKVVoB9W00H4La48St5SXyJvIYPWhxX5ub3Bd5pSgOmkLpWKgqB9hPg/GAjK6ORRSgkKIjzPlnP9o2cPOAAIELmP/9N45JOGGMcOVxOWnhzwzlpn37RhuwkL4EZmarjvUffimxbLPXXY6A8s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788651708; c=relaxed/simple;
+	bh=8J62Fal+HWMWrRXBt3/NMAJehFVg90VRJKLTMb1iDRg=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=cwl12/9cQZKfAA/qiBE7vKxxBijKoQL4OvyZHUfNxWR0AL8MbNWOiTC18ByJZPdQJLi/TnVau4fxS3hPO4P1AB1DCMHKWKIOaj+lveB4Qch6QtpzjNO0Ozq3C+zwW7X+AWpLIcKfxOXEUesGnDRg7NZNzFCBNiOuLPFhcE3T+bo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=rZenkSQT; arc=fail smtp.client-ip=52.101.95.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yko1n5Vv"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so1961978e87.0
-        for <linux-next@vger.kernel.org>; Sat, 05 Sep 2026 15:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788647125; x=1789251925; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=up7v4iXfsfw0NZXjJnHOv6nLKWdrBroAhEtbXWzurTc=;
-        b=Yko1n5Vv/Tc2A8zdvPoBbgp6SM8eBEIkWYOuDzAz4fSY67/fu392y7t5MA6R1EKGNF
-         SK+FwkqXQUY9AVomM4tlte/H3OIWCPIIzU1UIcKgKqVBMnkqTT6ZvHbJ66T4bKcg6HO2
-         0G+gTtr9X/39aTY9oErNXoqw/AVrX0c1K1YG1c+8wZH3Si0bZHhvA6TUb5VAMZq1CRsd
-         QsgbhgJ+U7n+TD4ayL5W2+I062w5aoIaZ5SA/PB2fNNa91csnCdlMnzZ6C9bTOmg/Tno
-         2L7P7VG5ybCWRDa81o46+WzLzOTx/WwJI0rNHxUOplNjZ6hBdjo9h2+FXRmXMGWvEQTs
-         7TNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788647125; x=1789251925;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=up7v4iXfsfw0NZXjJnHOv6nLKWdrBroAhEtbXWzurTc=;
-        b=T0m7cWyepgiDHfW2KCuWICdy8XYIjGAWA8qX7Zccu1Ut2h+NSIg6gVFvDj9bhrjT3t
-         JwfTI2/c8G7d55CVJtiBpw+VnNE5zZwSDiiTLB3VMbj6UqtOST70pmX+pZLjLyfnZUhJ
-         DrdkfqB7Utz0JUsD5Vb5t9NIm7xWX0hleXGakn2rTkUVRk0KHaWG0kd5MHz+o1m/xWGr
-         WuWtaTB5QxLL6ztCsSIBTdRsEhbWDFa2jEHu/u/cOz08oc1OkEVWJV/NQdYStb4IaLf2
-         3D6cvSWbt740Ti6z+qOMPVpYJPaODOlcnNfVhwdOXnfSRaD/jCe7TowLMr5sFdPopzG4
-         OIDA==
-X-Forwarded-Encrypted: i=1; AKwUvBwuKUBnmEo1SUrI96rVSNBuV/OWAW8xIUNuk7plhP0V7DSFAOU9TfHAlH1/u63hAAtSV94bxQNzz95I@vger.kernel.org
-X-Gm-Message-State: AFuF++nTMJKH9svCV24W3auNKgBTLO0XyrGWxqb3IouPA3P4ZVxktLg2
-	RHqtK5aQT7rKJQn0sLD+BOXM3Q3imy2j6CR2QzBOoe3u0P0V9t+WTxVAssUp0HB+
-X-Gm-Gg: AYBFou1llSb3SvsAUXu0/ln8ZC+NUPYX2p8Jcgi6geTUdNuI1nB6awFfaxlC6Bx22Ve
-	qtysmg0EEGFQT/APh5pQvls9n+irCvqkGFD4YAU+lmOkVw/30QTAIicDIWjDda11JSP1+bgQqFd
-	KBOFpzv7RIzhC400uhtasYrL8Mxdbjwtv8p7RNYzXbCypYMb9UMkgJEI27H3UTUG8vsnx6xRtUO
-	guKmcIoLvBzM1YbA2V3eW6++OvAisYHzOz97PwqODfMWi85IB/oQ22UEJMEYyFKIiKSyNWGs4Kg
-	DybTUymG/Y8qjSxq8gcWKBY2QIHtXExJgS6vxUyp9Z23R/u5XQKotqXIFib5TAClFMIXDA1aB/8
-	dlITj42nCY3AnGc21S4PH+ox0M6o1emi27PdEp1BroME3hWqwdRR/gQWyxauvE7CDN/s6WkVyBA
-	BOWlxmGYJ+71ohGju/6E1/pZxgKqp01f+4IWtlQZoc9AtMIjk7NKCCp7LiGSZDVaNFN0qYWeGew
-	dBX
-X-Received: by 2002:a05:6512:3503:b0:5b5:e8d5:7fff with SMTP id 2adb3069b0e04-5b616f0ba95mr2232510e87.8.1788647125226;
-        Sat, 05 Sep 2026 15:25:25 -0700 (PDT)
-Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:7b92:9ac1:b9ef:5287])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b6166f6c00sm1299495e87.35.2026.09.05.15.25.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Sep 2026 15:25:24 -0700 (PDT)
-Date: Sun, 6 Sep 2026 00:25:24 +0200
-From: Klara Modin <klarasmodin@gmail.com>
-To: Manuel Ebner <manuelebner@mailbox.org>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>, 
-	Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	Felix.Kuehling@amd.com, Mukul Joshi <mukul.joshi@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Mark Brown <broonie@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux@vger.kernel.org, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: [PATCH 1/3] drm/gem: Add callback for when handle count goes to 0
-Message-ID: <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="rZenkSQT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YkauZ6UXaIrUEKJpjN3FOh3vq9pp+PHxIGqBYDKJh6R6uC6+2aa5cHrzgrH3/kjelNVdb7zUcE4m0OUxME75V06PBRMEykj9UA3YP0AImPil7NZr8iIwa+6WH7JmyVJw7o4rdlduKPW7QSwvJO7JqwWFEi5PGHrFNSEeqY2vOVU4ytbeV9chdQhl+Epear264U3twtAXAAnE4uOsCsdvl8DmqxDlUmn7pSgOLZFOJZ20t8Jfr9+m4Jekgv7MHq1rJzNvVXZcPFMt2k0UANxiw9hpABknlPMw9sc1zgRY7sAgM0T3sa0iVwoST4Kg3+Prkh8NFAsyp/ldmtlH+mkQSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mIB0AbbOiizT+k/SU1OhIONYhQFtqMGet282QJiBN68=;
+ b=XigSSyoOSBlCoTDXr9k2tcHvJai38rmYNsnrkqS6IdkBaoLqzIKZ/s822wGfep1dQx80/+m/Vzh/8AAyMLGNKo6xnZ3tNcpoOhOfaI02qsm59JuOAm6Uxx2yJ+7d0iVkf6hXfLsJmjt0iGvBy01sx7SvB5YmcjOHVupqonPDnsHtUT0YQkeXVV2WljZFrxQD63vzvmSh/fwg5ESNqzOzXiPTmT9jWv/nWjDQjgY6k7by8UGyxttb36f9kbmYbX7Mp1cWF+bsV70rkqMXcBpvTRxdDULiG45KJX8MsnK82HyJl4dXH4gLmwHa955CAnEsz9vhAfR1OMWQW2PDh4YqLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mIB0AbbOiizT+k/SU1OhIONYhQFtqMGet282QJiBN68=;
+ b=rZenkSQTPK73cjk1t/wLA58YYsMqn07nxqzg70xglZXzaECrX6FiXGBGNuSF4vXTMa5q6ZXeuLOaBXH0upBHJ5HEfsUSeOOpM9fLIO2JUCWZJgS4TLYOq3Zunr2dMvD0eY8JLC0xi0PViY2zM7S2GcbHIksfd+jhw28Op6SH3Vc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4ab::19)
+ by LO5P265MB9367.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4c5::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Sat, 5 Sep
+ 2026 23:41:44 +0000
+Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::f60b:1537:68d7:4fc1]) by LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::f60b:1537:68d7:4fc1%4]) with mapi id 15.21.0382.014; Sat, 5 Sep 2026
+ 23:41:44 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 06 Sep 2026 00:41:43 +0100
+Message-Id: <DL7S4168J4I2.1OPCZMLQX9NA1@garyguo.net>
+Cc: "Thorsten Leemhuis" <linux@leemhuis.info>, "Alex Deucher"
+ <alexander.deucher@amd.com>, <amd-gfx@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <Felix.Kuehling@amd.com>, "Mukul Joshi"
+ <mukul.joshi@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, "Mark Brown" <broonie@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, <rust-for-linux@vger.kernel.org>, "Linux Next
+ Mailing List" <linux-next@vger.kernel.org>
+Subject: Re: [PATCH 1/3] drm/gem: Add callback for when handle count goes to
+ 0
+From: "Gary Guo" <gary@garyguo.net>
+To: "Klara Modin" <klarasmodin@gmail.com>, "Manuel Ebner"
+ <manuelebner@mailbox.org>
+X-Mailer: aerc 0.22.0
 References: <20260831183311.1090131-1-alexander.deucher@amd.com>
  <20260831183311.1090131-2-alexander.deucher@amd.com>
  <aaef18cd-ab55-4fb8-8563-ca3a5ea9cbc6@leemhuis.info>
  <e8a53eb241b2cc912e9cfad5f6a0120aa9683481.camel@mailbox.org>
+ <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
+In-Reply-To: <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
+X-ClientProxiedBy: LO4P123CA0182.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a4::7) To LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:4ab::19)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e8a53eb241b2cc912e9cfad5f6a0120aa9683481.camel@mailbox.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LOAP265MB8560:EE_|LO5P265MB9367:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13585489-bb47-466f-425b-08df0ba73e71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|1800799024|10070799003|366016|376014|7416014|10067099003|56012099006|4143699003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	/1u6GwNKHa8jxRZhG/4IsbqYrf/CbOL1qLaXTxqbcZwcgB4dAKNfLa1ZG4kPblHqaKl/zqf/tykI/uHJbav8izhk6HHFgPzeaXLOIL0I/86dL2VLJZK4juFMgTQUl1YwWgWlSTE1OsmU2k4Z6An6E5Ssv3E15JNfmsr0nEhO98yURjWtqpW7fCLAM/ls4gc4KMqdWhbGMBkVcmxtMGLukeyZD8GigJwOKDVbEbPZd1o+b4nbTeddGDZJab26D/JSVAbqSVyhMXgZ80877r+1MP1/1euTouB6+eXrJMV8020vgHHewivmFbvMP8IR844+qfWO4dvQL3AI8NMQ+TUT7sMlj40pS4pzQt4SqcwjDFeuaML33kP6fSvD0utKC1yYJ2oxwC7WcWYbjcQ+CczyB/3px3qldRGXoSUuL7k/icgRTEJnf+124pY7e36frA9LQP1RUNov/AIDCWhd9z2EUmfXVQCSZo/QOj6/CSrAjhW0zQ69q4557Eq1oKIVMDHBS9o1eAaD2EgbwgqBT8OKWfxbrCNhCKXbayQZwTCI0LaLII6CUCcOZXqiRW5Kn0qW2iw9zl8Hj5+mAcGpC9JrQmgZEzDpn2z3qXcRHkjE80V8In+6LxqaPbV1G1SQsQWh
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(10070799003)(366016)(376014)(7416014)(10067099003)(56012099006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1RhVXNvMVBjN2ltNFBma0QrWW90eXdRbzlZQUFtdHRRYkx0T2ExS0RxUGhS?=
+ =?utf-8?B?VkRSaGVFS25STmxiejFTREViWThJY1pmZ2ZxU3l6QlozOHpnZ201Q1E2Q1VH?=
+ =?utf-8?B?dEZFaXVKa3RoWVBzS09vWDZHcFVFempDNitMbjlhekdDUzNzR1FYVGx1elpa?=
+ =?utf-8?B?VnB2Z3d6UXY3bUlMbUxQVWhCL1dNSnUzSHUxZW5HMTlCT0JxWkw0K0hqeGV5?=
+ =?utf-8?B?dllTRGNWRjFhK09UaktRckE2cmRKUkprUEV0VSt4ODl5STdZRjdndlZ6di9k?=
+ =?utf-8?B?ZFVzSCtRWURSVlpSQzE3UkowOS84MjJmQUxJbkU3S1JrTkdrMlgvT2dGbVVj?=
+ =?utf-8?B?V1lEdHZueU0vS2VYODQrU3lZN1hCYmlCdW1wSFBTZDZaSERKaGRqbkxVbHg0?=
+ =?utf-8?B?ZDZQZmxsK2dpd3M5bksrMXMrcm5reEJyR3U2VldWcjhoRXM4M1NLcTduN20y?=
+ =?utf-8?B?TFJLRHVDMy9ONHB0Wjc2TVpsMnh0c0dkbVJKNlpjeWdEeGhuOHNKVWtnOVZh?=
+ =?utf-8?B?K29HUjhpaWV1dWJtcVVJeTdZNElyLzJvT0JaWVVJTDFIaWFLeDdOdnJ4TzFr?=
+ =?utf-8?B?aFg2WmcyOW1vYXpEejY0TFFENmk4QWhiZGtHUDd3L3N2MVVCYXo2cEpNOEo3?=
+ =?utf-8?B?VUVvVzJFVzIzYjdnczJIQm4vdHIwSzhOeUF3LzFJYkxxekpGY0d1aWRVMTFO?=
+ =?utf-8?B?L3BISjEzdEk5R1BVbFhMMW50UW00OG91dW13RjlKYnZkQmpBU29ROVY4R25Y?=
+ =?utf-8?B?eFNhcFhINmRHUGl4N2VRZmQrNWd1TURVS1kvZTdpYUV2L0tiSndyN291NEx3?=
+ =?utf-8?B?VVNYK1d1eDhtNUZZOU9LaWdlMGdUalREL0ZuaVYrMktESHNaZlVObk9iYm5I?=
+ =?utf-8?B?UXZJakt3ZnVQRmtWQ3EzT05iM3ZlZ0xOZWhtYXpGZ25QSmZXTmdYbUpPaHl3?=
+ =?utf-8?B?RVhzKzRlTjcvWjFDUWJjd3hzWnVETmFCa1J4TWhBYVN6bzd6UzFCeE16VWp6?=
+ =?utf-8?B?cTVqVGkzTWxPNERPb2thUk40SVBmb3BUSkFocE1NM1Q4Q0ZHZTlwNWZSbll6?=
+ =?utf-8?B?NHJYU3ZTUVAwWVBhWkZ4cGo2dVg4NmhQZ1pHT2VoUUluWGtoZlloYk4xYVJu?=
+ =?utf-8?B?czQrcXJaZWFXekxFenZiZTladnBMSXFNWFNLb3FiM3Vxd1VFbk9oRGtoN0Y1?=
+ =?utf-8?B?MmVQc09UbENSeEpsck9hbCtDN1dHMitKMTVla01rUVRmTWMzU0JpVkFtcWRo?=
+ =?utf-8?B?Q2RaSHpOOWM2ejFiSVRqZkxubkg1aTF2ajkvNmdmS2lRcTQ3RnNML1RZSVpV?=
+ =?utf-8?B?d2MxY3pkT2FEelZmUmJza2ZVTTZGTkdzMXU5OW5MMmE3Z0xJUEpvak9uT0Yv?=
+ =?utf-8?B?QUpTcDdrRGFpblIwRzROYjRuZW0vMDQ1bUJRQ3RBeFRab2RJVS9BWkxrV1Ro?=
+ =?utf-8?B?SGtVRG5sVW9VQUV4TERLYlcwMnlFTm1VZ2dnbTRRclA2OWF3UEpFalFiNG85?=
+ =?utf-8?B?a0E4cmxxbnFRZDZtR1JqeGpDeVVVYXdhcXhKSWMvbmtRbVpEdkFaTXpSUFlw?=
+ =?utf-8?B?NEkxWm1sOWRjd0FYcnNPQ2ZqMWNoSERLSDVTbWd2ZytBREFFNnFWbjJ3eXU5?=
+ =?utf-8?B?QnM2VkZRd0h4OFYyYWV4cnBkVEtZZXFRWWF0MEQ0enpMTkxLZ0FPOXJPWjhs?=
+ =?utf-8?B?MHUyRFhZTTJlR3NVS2VteHVtNEpVUGFNNHAxemV6bHk1anE0eXpWU0lYTzE2?=
+ =?utf-8?B?MEpjaUFzQkxNYndwQ0taTG0yaVdweWdVckwzTmc0Mm96bmNKdzlhczVHdmgx?=
+ =?utf-8?B?MVZkL0x0Z1lHaUdJQURla1NOL1BvRlRQcEZlRTU3aU56djRRQkozMnpZbFlw?=
+ =?utf-8?B?SWd2SU9NQTQvdVZlbkFMbTViY1pDTzNOaUlhYkpnTFMrcGVZL0ZtUmQ2YXpO?=
+ =?utf-8?B?UzNKSElwQm5aeWdScVhDMmhDVm1hN3RZTy9HLzlFZ0VQNkFIZ2NtTUdzWjk2?=
+ =?utf-8?B?QzlpalJlQkg3ai9GVWQvWWM3M0hlRHQvWGNXUkUwVG16OVAzWGZ6RkdMZENn?=
+ =?utf-8?B?RUNSVEJkZEpTajdKM0UydHhRL0pQNzFUanZ2YTNCV0RuTkkwUHhudjhLODlk?=
+ =?utf-8?B?RHQvMVFFbitsaHBGZm9EWXg1Z3dXSlJOcmNtV0VVY1dXTGZYZHBCYmxGT1o2?=
+ =?utf-8?B?MGs2TWlmZ2tSallLUVNBZEszdzRSRFRWM25VTGhKNVlvTVJIY01ScWFXTTlT?=
+ =?utf-8?B?Nmg2S1RwZXJ4TldYa2xKSDhGZCtzS05LZTRKVGZKVlRhN3JSalkxdzZxaDd3?=
+ =?utf-8?B?TTdKRFJvaXFNTitPMXNwWUpUZElWeE8zOUphRWVHMWczQ2tkWjg1UT09?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13585489-bb47-466f-425b-08df0ba73e71
+X-MS-Exchange-CrossTenant-AuthSource: LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2026 23:41:44.5636
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ph4F6JalFVLreOg9uEAyS2mPGQ4C5x1juU4VtjjgMXs9Geyelx9PaUfHw0QXrIKYzqJlIfXIZHrk6ehjWNm4wg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO5P265MB9367
 
-On 2026-09-05 11:31:41 +0200, Manuel Ebner wrote:
-> On Sat, 2026-09-05 at 07:36 +0200, Thorsten Leemhuis wrote:
-> > On 8/31/26 20:33, Alex Deucher wrote:
-> > > From: Mukul Joshi <mukul.joshi@amd.com>
-> > > ...
-> > ...
-> > 
-> > > > error[E0063]: missing field `handle_free` in initializer of `drm_gem_object_funcs`
-> > > >    --> rust/kernel/drm/gem/mod.rs:265:58
-> > > >     |
-> > > > 265 |     const OBJECT_FUNCS: bindings::drm_gem_object_funcs = bindings::drm_gem_object_funcs {
-> > > >     |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `handle_free`
-> > > > 
-> > > > error: aborting due to 1 previous error
-> > > > 
-> > > > For more information about this error, try `rustc --explain E0063`.
-> > > > make[2]: *** [rust/Makefile:799: rust/kernel.o] Error 1
-> > > > make[1]: *** [/builddir/build/BUILD/kernel-7.3.0-build/kernel-next-20260904/linux-7.3.0-0.0.next.20260904.221.vanilla.fc43.aarch64/Makefile:1442: prepare] Error 2
-> > > > make: *** [Makefile:256: __sub-make] Error 2
-> > """
-> > Full log:
-> > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-43-aarch64/10951622-next-next-all/builder-live.log.gz
-> > 
-> > Reverting this change and 2/3 from this set fixed the problem for me.
+On Sat Sep 5, 2026 at 11:25 PM BST, Klara Modin wrote:
+> On 2026-09-05 11:31:41 +0200, Manuel Ebner wrote:
+>> On Sat, 2026-09-05 at 07:36 +0200, Thorsten Leemhuis wrote:
+>> > On 8/31/26 20:33, Alex Deucher wrote:
+>> > > From: Mukul Joshi <mukul.joshi@amd.com>
+>> > > ...
+>> > ...
+>> >=20
+>> > > > error[E0063]: missing field `handle_free` in initializer of `drm_g=
+em_object_funcs`
+>> > > > =C2=A0=C2=A0 --> rust/kernel/drm/gem/mod.rs:265:58
+>> > > > =C2=A0=C2=A0=C2=A0 |
+>> > > > 265 |=C2=A0=C2=A0=C2=A0=C2=A0 const OBJECT_FUNCS: bindings::drm_ge=
+m_object_funcs =3D bindings::drm_gem_object_funcs {
+>> > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^^=
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `handle_free`
+>> > > >=20
+>> > > > error: aborting due to 1 previous error
+>> > > >=20
+>> > > > For more information about this error, try `rustc --explain E0063`=
+.
+>> > > > make[2]: *** [rust/Makefile:799: rust/kernel.o] Error 1
+>> > > > make[1]: *** [/builddir/build/BUILD/kernel-7.3.0-build/kernel-next=
+-20260904/linux-7.3.0-0.0.next.20260904.221.vanilla.fc43.aarch64/Makefile:1=
+442: prepare] Error 2
+>> > > > make: *** [Makefile:256: __sub-make] Error 2
+>> > """
+>> > Full log:
+>> > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/nex=
+t/fedora-43-aarch64/10951622-next-next-all/builder-live.log.gz
+>> >=20
+>> > Reverting this change and 2/3 from this set fixed the problem for me.
+>
+> That leaves only the documentation without the feature so might as well
+> drop 3/3 too in that case?
+>
+> Otherwise, the following also fixes it for me:
+>
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index e1ebad77ebe2..847e0ee38863 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -278,6 +278,7 @@ impl<T: DriverObject, Ctx: DeviceContext> Object<T, C=
+tx> {
+>          vm_ops: core::ptr::null_mut(),
+>          evict: None,
+>          rss: None,
+> +        handle_free: None,
 
-That leaves only the documentation without the feature so might as well
-drop 3/3 too in that case?
+IMO this should use
 
-Otherwise, the following also fixes it for me:
+    ..pin_init::zeroed()
 
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index e1ebad77ebe2..847e0ee38863 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -278,6 +278,7 @@ impl<T: DriverObject, Ctx: DeviceContext> Object<T, Ctx> {
-         vm_ops: core::ptr::null_mut(),
-         evict: None,
-         rss: None,
-+        handle_free: None,
-     };
- 
-     /// Returns the `Device` that owns this GEM object.
+to set all other fields as zero rather than explicitly listing all of them.
 
-> 
-> Verified.
-> 
-> Thanks
->  Manuel
-> > 
-> > Ciao, Thorsten
-> > > ...
+Best,
+Gary
 
-Regards,
-Klara Modin
+>      };
+> =20
+>      /// Returns the `Device` that owns this GEM object.
+>
+>>=20
+>> Verified.
+>>=20
+>> Thanks
+>>  Manuel
+>> >=20
+>> > Ciao, Thorsten
+>> > > ...
+>
+> Regards,
+> Klara Modin
+
+
