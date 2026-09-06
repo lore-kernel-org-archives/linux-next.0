@@ -1,219 +1,195 @@
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021103.outbound.protection.outlook.com [52.101.95.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AA2377A87;
-	Sat,  5 Sep 2026 23:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788651708; cv=fail; b=k0PizOe/4X0YxqKPF3+ammrkK9zLKVVoB9W00H4La48St5SXyJvIYPWhxX5ub3Bd5pSgOmkLpWKgqB9hPg/GAjK6ORRSgkKIjzPlnP9o2cPOAAIELmP/9N45JOGGMcOVxOWnhzwzlpn37RhuwkL4EZmarjvUffimxbLPXXY6A8s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788651708; c=relaxed/simple;
-	bh=8J62Fal+HWMWrRXBt3/NMAJehFVg90VRJKLTMb1iDRg=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=cwl12/9cQZKfAA/qiBE7vKxxBijKoQL4OvyZHUfNxWR0AL8MbNWOiTC18ByJZPdQJLi/TnVau4fxS3hPO4P1AB1DCMHKWKIOaj+lveB4Qch6QtpzjNO0Ozq3C+zwW7X+AWpLIcKfxOXEUesGnDRg7NZNzFCBNiOuLPFhcE3T+bo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=rZenkSQT; arc=fail smtp.client-ip=52.101.95.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D49F29993F
+	for <linux-next@vger.kernel.org>; Sun,  6 Sep 2026 14:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788705635; cv=none; b=kmLxI/yM8+PDMfP1xvUwpbnd/MoszP9fjc8mdhaYk6Lvst8B15bOfw4BLw7o/C9ShIcfVy/aRSWhEqmozjCUD4l3oPJjBeSKaNiTLtVqt/qDDuvn8HpDeO+QN5You8ISrPhSlVbg3fOhn78XK52bIcvcACSkv5KPRi4aq+QVVl4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788705635; c=relaxed/simple;
+	bh=s1q8WzzGuo8hVRRm/KWVtatN8Kh6Mlwms8kGOAbFfn8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=muglKpqCmiQG0bnrCOfIRpFzkWH0S7FSeQYxwVV0AYhUe9RRIjrTsLaCq1sqtdTm2tvbbXWfuYkuFozIAtOmxTxKPW4qWh0RG+T9a5gpPe76PbjZeIjjkyt3y3ltKeHi7Lg9UMLXuo4V+yuAC8e+9YHVJ7O7KTu01AIBl0nygyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oD6ta1yM; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="rZenkSQT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YkauZ6UXaIrUEKJpjN3FOh3vq9pp+PHxIGqBYDKJh6R6uC6+2aa5cHrzgrH3/kjelNVdb7zUcE4m0OUxME75V06PBRMEykj9UA3YP0AImPil7NZr8iIwa+6WH7JmyVJw7o4rdlduKPW7QSwvJO7JqwWFEi5PGHrFNSEeqY2vOVU4ytbeV9chdQhl+Epear264U3twtAXAAnE4uOsCsdvl8DmqxDlUmn7pSgOLZFOJZ20t8Jfr9+m4Jekgv7MHq1rJzNvVXZcPFMt2k0UANxiw9hpABknlPMw9sc1zgRY7sAgM0T3sa0iVwoST4Kg3+Prkh8NFAsyp/ldmtlH+mkQSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mIB0AbbOiizT+k/SU1OhIONYhQFtqMGet282QJiBN68=;
- b=XigSSyoOSBlCoTDXr9k2tcHvJai38rmYNsnrkqS6IdkBaoLqzIKZ/s822wGfep1dQx80/+m/Vzh/8AAyMLGNKo6xnZ3tNcpoOhOfaI02qsm59JuOAm6Uxx2yJ+7d0iVkf6hXfLsJmjt0iGvBy01sx7SvB5YmcjOHVupqonPDnsHtUT0YQkeXVV2WljZFrxQD63vzvmSh/fwg5ESNqzOzXiPTmT9jWv/nWjDQjgY6k7by8UGyxttb36f9kbmYbX7Mp1cWF+bsV70rkqMXcBpvTRxdDULiG45KJX8MsnK82HyJl4dXH4gLmwHa955CAnEsz9vhAfR1OMWQW2PDh4YqLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mIB0AbbOiizT+k/SU1OhIONYhQFtqMGet282QJiBN68=;
- b=rZenkSQTPK73cjk1t/wLA58YYsMqn07nxqzg70xglZXzaECrX6FiXGBGNuSF4vXTMa5q6ZXeuLOaBXH0upBHJ5HEfsUSeOOpM9fLIO2JUCWZJgS4TLYOq3Zunr2dMvD0eY8JLC0xi0PViY2zM7S2GcbHIksfd+jhw28Op6SH3Vc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4ab::19)
- by LO5P265MB9367.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4c5::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Sat, 5 Sep
- 2026 23:41:44 +0000
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1]) by LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1%4]) with mapi id 15.21.0382.014; Sat, 5 Sep 2026
- 23:41:44 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 06 Sep 2026 00:41:43 +0100
-Message-Id: <DL7S4168J4I2.1OPCZMLQX9NA1@garyguo.net>
-Cc: "Thorsten Leemhuis" <linux@leemhuis.info>, "Alex Deucher"
- <alexander.deucher@amd.com>, <amd-gfx@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <Felix.Kuehling@amd.com>, "Mukul Joshi"
- <mukul.joshi@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, "Mark Brown" <broonie@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, <rust-for-linux@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: [PATCH 1/3] drm/gem: Add callback for when handle count goes to
- 0
-From: "Gary Guo" <gary@garyguo.net>
-To: "Klara Modin" <klarasmodin@gmail.com>, "Manuel Ebner"
- <manuelebner@mailbox.org>
-X-Mailer: aerc 0.22.0
-References: <20260831183311.1090131-1-alexander.deucher@amd.com>
- <20260831183311.1090131-2-alexander.deucher@amd.com>
- <aaef18cd-ab55-4fb8-8563-ca3a5ea9cbc6@leemhuis.info>
- <e8a53eb241b2cc912e9cfad5f6a0120aa9683481.camel@mailbox.org>
- <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
-In-Reply-To: <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
-X-ClientProxiedBy: LO4P123CA0182.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a4::7) To LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:4ab::19)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oD6ta1yM"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-398d2b28acfso1879859a91.1
+        for <linux-next@vger.kernel.org>; Sun, 06 Sep 2026 07:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788705633; x=1789310433; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=9VYFtOUs9e8rShoNMIR91vWddUTxEe+7XBSxba8ZkAM=;
+        b=oD6ta1yMpeH4kXGEm15K9LL8FhKwXKk3NtbwpofrYfyTSVLw2rIrCcOUFlY3vJQRGb
+         JNZGtwGQXEQ6EqDPXxbN+KK8MtAYKlKXcZ9S+fnRmgpw0TWA6E6aPDmXjGe6m9MRmiQA
+         rFIQz5/WLpzO5xFp5xfvTMpKBL15gcQm9IW5UTjvRmMLoCNj3cI+JKC6jlGVvhjbMBPi
+         fbKyXu1Ktds+T5MyaDQjY3bPOc8UxQO613VvOD5PpFS5KOL5FRIuqbG3BsyzUbI7lgdG
+         F4kx5DprDOTKClA/egozbL/NnrlQqusUTdZAmGqZD9zvPU2ayV3csxgOT9FurehALWSr
+         qp9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788705633; x=1789310433;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9VYFtOUs9e8rShoNMIR91vWddUTxEe+7XBSxba8ZkAM=;
+        b=n6XrMeASsfBIZ6ItTLzVO5xkZRw8/+eTspQA/lURdg6Wb9cCMJ+oQ7ZrWLfcmo2I82
+         Tkkhdj2awEf3EJMgkMad5kF9JUlEuHPPHSoRtBVXCKjTvO4aVtZJctFJyKFhxuuNYaI/
+         oY/m2m0lfMBP4Z2Te38xjobW7m1ZqfIMj8RL7vZcPWOA9XhDERS3M8GzrhAuDPSn0pP/
+         yQq3/bQHxN7NCMjtQ1eqNNke9QyLQKL0wqMaMEkstFZEbkhaavL9NiqDVGe89km6dxuh
+         0BBk96F+KrxMscziv0GhOQ2RZtDItXaSM3/5VJsT0oSfnmvrEzlE9p3oqOMp2iHUTwHT
+         gKjA==
+X-Forwarded-Encrypted: i=1; AKwUvBxhZDaRLyi69jK7oUY53OrgzWZJusxaLNvtqKvB9t1SCydyfT+iEHeIiftH3cmTLEyhdqkQwFnrU9rX@vger.kernel.org
+X-Gm-Message-State: AFuF++n0Mkt4Hfc5MSNf06rBQG0ZYlG/cIlGkjDF18v19u+//f7sSC+7
+	qU95/kucrAaHj6VYrr6YOZpBtKswZwYSZ2oUVAdFJ1z+NL6HxBIWNhMJ
+X-Gm-Gg: AYBFou2KLnS1E+VYZoEfw3nBkqcwMQ6QLddXHMZjSoQEUowSF3M1IplPSnS6rLnKTUP
+	DdGpEFwEvUCrwcVXYvBSny2kheByjW90UXUMgmI0DHOzD11vOfSfSJdiQuXxgbNSuZo4rop6i0c
+	MgfpwYJH7MM9e4/N4Rbrl0N1CUia/KkYLKDV5FarO/4Xtnqt/zfRzxKXYxza/IZabKjOGxbEioV
+	3KZtflWO8opiqxCske189ZO74i3hZg/P1fYbUa3EOxMnT19a2Yj/ETnWUNenY6WwL0sfrUPsple
+	pwTdLldaulhGuAyMF6vllKbz1kKZdwx9otwbPwYa/nDfbA1PC/GrV0V7bAmdcWe5tWIOUUu6obA
+	ZvYHaGxMPo7T8uaQUj6mqnK5ywm/ufLPUPp4HyOrwovzg6r5j9dR8eGkbPqKHwsosp8mR3QHaD3
+	N2QWXKbOeaIeCwmGz6MikHxSVWXCvsnukyimG0Mfwo2LVR0WCMwF7ue3N2/KGSsQ9HsNEsEhaBF
+	50zs8dA/a/rnIOnwFA+Nwd/McKSb17q3vZZQBfRoSdm
+X-Received: by 2002:a17:90b:57cb:b0:398:9be6:f998 with SMTP id 98e67ed59e1d1-39b262e2139mr28656965a91.23.1788705632700;
+        Sun, 06 Sep 2026 07:40:32 -0700 (PDT)
+Received: from pve-server ([49.205.216.49])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339ac24d7esm32567878eec.15.2026.09.06.07.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Sep 2026 07:40:31 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: syzbot <syzbot+5a7a23af225c215902e7@syzkaller.appspotmail.com>
+Cc: jack@suse.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: [syzbot] [ext4?] linux-next test error: general protection fault in __bh_submit
+In-Reply-To: <6a9c44cc.0a3344eb.391530.000c.GAE@google.com>
+Date: Sun, 06 Sep 2026 19:58:26 +0530
+Message-ID: <mrtuxxmd.ritesh.list@gmail.com>
+References: <6a9c44cc.0a3344eb.391530.000c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LOAP265MB8560:EE_|LO5P265MB9367:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13585489-bb47-466f-425b-08df0ba73e71
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|10070799003|366016|376014|7416014|10067099003|56012099006|4143699003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	/1u6GwNKHa8jxRZhG/4IsbqYrf/CbOL1qLaXTxqbcZwcgB4dAKNfLa1ZG4kPblHqaKl/zqf/tykI/uHJbav8izhk6HHFgPzeaXLOIL0I/86dL2VLJZK4juFMgTQUl1YwWgWlSTE1OsmU2k4Z6An6E5Ssv3E15JNfmsr0nEhO98yURjWtqpW7fCLAM/ls4gc4KMqdWhbGMBkVcmxtMGLukeyZD8GigJwOKDVbEbPZd1o+b4nbTeddGDZJab26D/JSVAbqSVyhMXgZ80877r+1MP1/1euTouB6+eXrJMV8020vgHHewivmFbvMP8IR844+qfWO4dvQL3AI8NMQ+TUT7sMlj40pS4pzQt4SqcwjDFeuaML33kP6fSvD0utKC1yYJ2oxwC7WcWYbjcQ+CczyB/3px3qldRGXoSUuL7k/icgRTEJnf+124pY7e36frA9LQP1RUNov/AIDCWhd9z2EUmfXVQCSZo/QOj6/CSrAjhW0zQ69q4557Eq1oKIVMDHBS9o1eAaD2EgbwgqBT8OKWfxbrCNhCKXbayQZwTCI0LaLII6CUCcOZXqiRW5Kn0qW2iw9zl8Hj5+mAcGpC9JrQmgZEzDpn2z3qXcRHkjE80V8In+6LxqaPbV1G1SQsQWh
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(10070799003)(366016)(376014)(7416014)(10067099003)(56012099006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N1RhVXNvMVBjN2ltNFBma0QrWW90eXdRbzlZQUFtdHRRYkx0T2ExS0RxUGhS?=
- =?utf-8?B?VkRSaGVFS25STmxiejFTREViWThJY1pmZ2ZxU3l6QlozOHpnZ201Q1E2Q1VH?=
- =?utf-8?B?dEZFaXVKa3RoWVBzS09vWDZHcFVFempDNitMbjlhekdDUzNzR1FYVGx1elpa?=
- =?utf-8?B?VnB2Z3d6UXY3bUlMbUxQVWhCL1dNSnUzSHUxZW5HMTlCT0JxWkw0K0hqeGV5?=
- =?utf-8?B?dllTRGNWRjFhK09UaktRckE2cmRKUkprUEV0VSt4ODl5STdZRjdndlZ6di9k?=
- =?utf-8?B?ZFVzSCtRWURSVlpSQzE3UkowOS84MjJmQUxJbkU3S1JrTkdrMlgvT2dGbVVj?=
- =?utf-8?B?V1lEdHZueU0vS2VYODQrU3lZN1hCYmlCdW1wSFBTZDZaSERKaGRqbkxVbHg0?=
- =?utf-8?B?ZDZQZmxsK2dpd3M5bksrMXMrcm5reEJyR3U2VldWcjhoRXM4M1NLcTduN20y?=
- =?utf-8?B?TFJLRHVDMy9ONHB0Wjc2TVpsMnh0c0dkbVJKNlpjeWdEeGhuOHNKVWtnOVZh?=
- =?utf-8?B?K29HUjhpaWV1dWJtcVVJeTdZNElyLzJvT0JaWVVJTDFIaWFLeDdOdnJ4TzFr?=
- =?utf-8?B?aFg2WmcyOW1vYXpEejY0TFFENmk4QWhiZGtHUDd3L3N2MVVCYXo2cEpNOEo3?=
- =?utf-8?B?VUVvVzJFVzIzYjdnczJIQm4vdHIwSzhOeUF3LzFJYkxxekpGY0d1aWRVMTFO?=
- =?utf-8?B?L3BISjEzdEk5R1BVbFhMMW50UW00OG91dW13RjlKYnZkQmpBU29ROVY4R25Y?=
- =?utf-8?B?eFNhcFhINmRHUGl4N2VRZmQrNWd1TURVS1kvZTdpYUV2L0tiSndyN291NEx3?=
- =?utf-8?B?VVNYK1d1eDhtNUZZOU9LaWdlMGdUalREL0ZuaVYrMktESHNaZlVObk9iYm5I?=
- =?utf-8?B?UXZJakt3ZnVQRmtWQ3EzT05iM3ZlZ0xOZWhtYXpGZ25QSmZXTmdYbUpPaHl3?=
- =?utf-8?B?RVhzKzRlTjcvWjFDUWJjd3hzWnVETmFCa1J4TWhBYVN6bzd6UzFCeE16VWp6?=
- =?utf-8?B?cTVqVGkzTWxPNERPb2thUk40SVBmb3BUSkFocE1NM1Q4Q0ZHZTlwNWZSbll6?=
- =?utf-8?B?NHJYU3ZTUVAwWVBhWkZ4cGo2dVg4NmhQZ1pHT2VoUUluWGtoZlloYk4xYVJu?=
- =?utf-8?B?czQrcXJaZWFXekxFenZiZTladnBMSXFNWFNLb3FiM3Vxd1VFbk9oRGtoN0Y1?=
- =?utf-8?B?MmVQc09UbENSeEpsck9hbCtDN1dHMitKMTVla01rUVRmTWMzU0JpVkFtcWRo?=
- =?utf-8?B?Q2RaSHpOOWM2ejFiSVRqZkxubkg1aTF2ajkvNmdmS2lRcTQ3RnNML1RZSVpV?=
- =?utf-8?B?d2MxY3pkT2FEelZmUmJza2ZVTTZGTkdzMXU5OW5MMmE3Z0xJUEpvak9uT0Yv?=
- =?utf-8?B?QUpTcDdrRGFpblIwRzROYjRuZW0vMDQ1bUJRQ3RBeFRab2RJVS9BWkxrV1Ro?=
- =?utf-8?B?SGtVRG5sVW9VQUV4TERLYlcwMnlFTm1VZ2dnbTRRclA2OWF3UEpFalFiNG85?=
- =?utf-8?B?a0E4cmxxbnFRZDZtR1JqeGpDeVVVYXdhcXhKSWMvbmtRbVpEdkFaTXpSUFlw?=
- =?utf-8?B?NEkxWm1sOWRjd0FYcnNPQ2ZqMWNoSERLSDVTbWd2ZytBREFFNnFWbjJ3eXU5?=
- =?utf-8?B?QnM2VkZRd0h4OFYyYWV4cnBkVEtZZXFRWWF0MEQ0enpMTkxLZ0FPOXJPWjhs?=
- =?utf-8?B?MHUyRFhZTTJlR3NVS2VteHVtNEpVUGFNNHAxemV6bHk1anE0eXpWU0lYTzE2?=
- =?utf-8?B?MEpjaUFzQkxNYndwQ0taTG0yaVdweWdVckwzTmc0Mm96bmNKdzlhczVHdmgx?=
- =?utf-8?B?MVZkL0x0Z1lHaUdJQURla1NOL1BvRlRQcEZlRTU3aU56djRRQkozMnpZbFlw?=
- =?utf-8?B?SWd2SU9NQTQvdVZlbkFMbTViY1pDTzNOaUlhYkpnTFMrcGVZL0ZtUmQ2YXpO?=
- =?utf-8?B?UzNKSElwQm5aeWdScVhDMmhDVm1hN3RZTy9HLzlFZ0VQNkFIZ2NtTUdzWjk2?=
- =?utf-8?B?QzlpalJlQkg3ai9GVWQvWWM3M0hlRHQvWGNXUkUwVG16OVAzWGZ6RkdMZENn?=
- =?utf-8?B?RUNSVEJkZEpTajdKM0UydHhRL0pQNzFUanZ2YTNCV0RuTkkwUHhudjhLODlk?=
- =?utf-8?B?RHQvMVFFbitsaHBGZm9EWXg1Z3dXSlJOcmNtV0VVY1dXTGZYZHBCYmxGT1o2?=
- =?utf-8?B?MGs2TWlmZ2tSallLUVNBZEszdzRSRFRWM25VTGhKNVlvTVJIY01ScWFXTTlT?=
- =?utf-8?B?Nmg2S1RwZXJ4TldYa2xKSDhGZCtzS05LZTRKVGZKVlRhN3JSalkxdzZxaDd3?=
- =?utf-8?B?TTdKRFJvaXFNTitPMXNwWUpUZElWeE8zOUphRWVHMWczQ2tkWjg1UT09?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13585489-bb47-466f-425b-08df0ba73e71
-X-MS-Exchange-CrossTenant-AuthSource: LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2026 23:41:44.5636
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ph4F6JalFVLreOg9uEAyS2mPGQ4C5x1juU4VtjjgMXs9Geyelx9PaUfHw0QXrIKYzqJlIfXIZHrk6ehjWNm4wg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO5P265MB9367
 
-On Sat Sep 5, 2026 at 11:25 PM BST, Klara Modin wrote:
-> On 2026-09-05 11:31:41 +0200, Manuel Ebner wrote:
->> On Sat, 2026-09-05 at 07:36 +0200, Thorsten Leemhuis wrote:
->> > On 8/31/26 20:33, Alex Deucher wrote:
->> > > From: Mukul Joshi <mukul.joshi@amd.com>
->> > > ...
->> > ...
->> >=20
->> > > > error[E0063]: missing field `handle_free` in initializer of `drm_g=
-em_object_funcs`
->> > > > =C2=A0=C2=A0 --> rust/kernel/drm/gem/mod.rs:265:58
->> > > > =C2=A0=C2=A0=C2=A0 |
->> > > > 265 |=C2=A0=C2=A0=C2=A0=C2=A0 const OBJECT_FUNCS: bindings::drm_ge=
-m_object_funcs =3D bindings::drm_gem_object_funcs {
->> > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^^=
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `handle_free`
->> > > >=20
->> > > > error: aborting due to 1 previous error
->> > > >=20
->> > > > For more information about this error, try `rustc --explain E0063`=
-.
->> > > > make[2]: *** [rust/Makefile:799: rust/kernel.o] Error 1
->> > > > make[1]: *** [/builddir/build/BUILD/kernel-7.3.0-build/kernel-next=
--20260904/linux-7.3.0-0.0.next.20260904.221.vanilla.fc43.aarch64/Makefile:1=
-442: prepare] Error 2
->> > > > make: *** [Makefile:256: __sub-make] Error 2
->> > """
->> > Full log:
->> > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/nex=
-t/fedora-43-aarch64/10951622-next-next-all/builder-live.log.gz
->> >=20
->> > Reverting this change and 2/3 from this set fixed the problem for me.
+syzbot <syzbot+5a7a23af225c215902e7@syzkaller.appspotmail.com> writes:
+
+> Hello,
 >
-> That leaves only the documentation without the feature so might as well
-> drop 3/3 too in that case?
+> syzbot found the following issue on:
 >
-> Otherwise, the following also fixes it for me:
+> HEAD commit:    32b6ef9a5d0e Add linux-next specific files for G20260902
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14b44125580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=32ceed1c94c11059
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a7a23af225c215902e7
+> compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
 >
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index e1ebad77ebe2..847e0ee38863 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -278,6 +278,7 @@ impl<T: DriverObject, Ctx: DeviceContext> Object<T, C=
-tx> {
->          vm_ops: core::ptr::null_mut(),
->          evict: None,
->          rss: None,
-> +        handle_free: None,
-
-IMO this should use
-
-    ..pin_init::zeroed()
-
-to set all other fields as zero rather than explicitly listing all of them.
-
-Best,
-Gary
-
->      };
-> =20
->      /// Returns the `Device` that owns this GEM object.
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/9a1f38fb6f24/disk-32b6ef9a.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/f3152eed43a4/vmlinux-32b6ef9a.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e7fbd36e1b12/bzImage-32b6ef9a.xz
 >
->>=20
->> Verified.
->>=20
->> Thanks
->>  Manuel
->> >=20
->> > Ciao, Thorsten
->> > > ...
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5a7a23af225c215902e7@syzkaller.appspotmail.com
 >
-> Regards,
-> Klara Modin
+> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+> CPU: 0 UID: 0 PID: 4945 Comm: jbd2/sda1-8 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
+> RIP: 0010:const_folio_flags include/linux/page-flags.h:345 [inline]
+> RIP: 0010:folio_test_dropbehind include/linux/page-flags.h:600 [inline]
+> RIP: 0010:__bh_submit+0x22d/0x8d0 fs/buffer.c:1109
+> Code: c1 e8 03 48 89 44 24 18 42 80 3c 20 00 74 08 48 89 df e8 26 f6 d7 ff 48 89 5c 24 28 48 8b 1b 4c 8d 7b 08 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 04 f6 d7 ff 4d 8b 3f 4c 89 fe 48
+> RSP: 0018:ffffc9001016f868 EFLAGS: 00010202
+> RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffffffff84b96ff9
+> RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888075a7a660
+> RBP: 0000000000009801 R08: ffff888075a7a6bf R09: 1ffff1100eb4f4d7
+> R10: dffffc0000000000 R11: ffffed100eb4f4d8 R12: dffffc0000000000
+> R13: ffff888075a7a640 R14: ffff8880123a17e0 R15: 0000000000000008
+> FS:  0000000000000000(0000) GS:ffff888124ccb000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fe1ee627da0 CR3: 0000000074fa8000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  jbd2_journal_commit_transaction+0x22a9/0x5cd0 fs/jbd2/commit.c:751
+>  kjournald2+0x3bc/0x750 fs/jbd2/journal.c:200
+>  kthread+0x38b/0x480 kernel/kthread.c:436
+>  ret_from_fork+0x514/0xb70 arch/x86/kernel/process.c:158
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:const_folio_flags include/linux/page-flags.h:345 [inline]
+> RIP: 0010:folio_test_dropbehind include/linux/page-flags.h:600 [inline]
+> RIP: 0010:__bh_submit+0x22d/0x8d0 fs/buffer.c:1109
+> Code: c1 e8 03 48 89 44 24 18 42 80 3c 20 00 74 08 48 89 df e8 26 f6 d7 ff 48 89 5c 24 28 48 8b 1b 4c 8d 7b 08 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 04 f6 d7 ff 4d 8b 3f 4c 89 fe 48
+> RSP: 0018:ffffc9001016f868 EFLAGS: 00010202
+> RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffffffff84b96ff9
+> RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888075a7a660
+> RBP: 0000000000009801 R08: ffff888075a7a6bf R09: 1ffff1100eb4f4d7
+> R10: dffffc0000000000 R11: ffffed100eb4f4d8 R12: dffffc0000000000
+> R13: ffff888075a7a640 R14: ffff8880123a17e0 R15: 0000000000000008
+> FS:  0000000000000000(0000) GS:ffff888124dcb000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f87c696cf80 CR3: 000000000eb48000 CR4: 00000000003526f0
+> ----------------
+> Code disassembly (best guess):
+>    0:	c1 e8 03             	shr    $0x3,%eax
+>    3:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+>    8:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1)
+>    d:	74 08                	je     0x17
+>    f:	48 89 df             	mov    %rbx,%rdi
+>   12:	e8 26 f6 d7 ff       	call   0xffd7f63d
+>   17:	48 89 5c 24 28       	mov    %rbx,0x28(%rsp)
+>   1c:	48 8b 1b             	mov    (%rbx),%rbx
+>   1f:	4c 8d 7b 08          	lea    0x8(%rbx),%r15
+>   23:	4c 89 f8             	mov    %r15,%rax
+>   26:	48 c1 e8 03          	shr    $0x3,%rax
+> * 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
+>   2f:	74 08                	je     0x39
+>   31:	4c 89 ff             	mov    %r15,%rdi
+>   34:	e8 04 f6 d7 ff       	call   0xffd7f63d
+>   39:	4d 8b 3f             	mov    (%r15),%r15
+>   3c:	4c 89 fe             	mov    %r15,%rsi
+>   3f:	48                   	rex.W
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
+
+#syz test
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 427d8a817cd5..f46fa6413032 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1106,7 +1106,8 @@ static void __bh_submit(struct buffer_head *bh, blk_opf_t opf,
+ 
+ 	bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
+ 
+-	if (folio_test_dropbehind(bh->b_folio) && op_is_write(opf))
++	if (bh->b_folio && folio_test_dropbehind(bh->b_folio) &&
++	    op_is_write(opf))
+ 		bio_set_flag(bio, BIO_COMPLETE_IN_TASK);
+ 
+ 	if (IS_ENABLED(CONFIG_FS_ENCRYPTION))
 
