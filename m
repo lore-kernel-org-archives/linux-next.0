@@ -1,201 +1,192 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346ED378D7D;
-	Mon,  7 Sep 2026 14:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F2951FCB6;
+	Mon,  7 Sep 2026 17:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788790796; cv=none; b=DwgvpOpcxeuJ6lQuppFk9mDjmLSD3qYU61l1Rdy2TYthqFqHQQfE6EIfyvFGM9oyqyr8dUU4FgcBm+nSOwpFeRgxqtnlfXzxvhiCqAms/tAipAZx6+FzlQVKHRHU3wmDbMR3ThPtBKoQa6aRYHlcEv7B3A+lsjTNbCjsQnoF950=
+	t=1788802159; cv=none; b=AYLyhcu2KNXxoJhV0AOODeBBUI6eUmWkUpen8CWukRWIyCBOTqXzgRvDqzOo+R+6QkXtZthGZeKyccKHbWsHUlYONTW+6a/p/rk2zV6V9YjDy8hiooFCfpSqglOe15C3e2k2yMbFoNY1YbK5/QX0rqaFwpynrd06wgNXDooUf9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788790796; c=relaxed/simple;
-	bh=eN7CWY2gfmcryQVI/MSeKzYUfNkKxilglzsnqc8nIvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qaRggs9zcnFzLDHwcoZTuj0lRTZMprS6YCb7uyV3l7tFmEiiW3TF9qCD/EqJpGM/dYWzDT8YUvmZ84mMpNUwOxbPa6NSAJqHB0LtZ+SXx9x42+61P4Kge87P3H88e4r8S7/r78SZcCvRZyFgIrnzkB0YddZcDqPL5AqmPy90UQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=j9ZEavmk; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1788802159; c=relaxed/simple;
+	bh=PPWqAM4aqsNRcs+1+J9eJDez+drLkfXvqky6p0IDjIk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JBGK9OBrKWUgDChsF6VLldMiut+2OtB7pED2T5SEo2ZIVfQb15HfQtY7zWK9pHlCoO5b5Yt1LJHqQIdIpHgRnf6RFAm8QsZIQrF9pd8jZnWSlVSpuLK314MoFK5XRqQTem+CooZclHe101bFvtRPBcL2WOJApZ+eZmCAEK80/j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=SNwliic8; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="j9ZEavmk"
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="SNwliic8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1788790786; x=1789395586; i=spasswolf@web.de;
-	bh=GnMP+KCTCgbdas0U1IyYmNs2t5yhn7KLiMgPLuSCKsQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	s=s29768273; t=1788802144; x=1789406944; i=spasswolf@web.de;
+	bh=LTy/z4lx1Mguza4pQs79QasfJi+cSq33OddQzK23WtQ=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=j9ZEavmkb+kbY4cT7GqB7tjmE6MNdIBXXD7QV4T5JL9gohgxaDOln9rJibryFcIe
-	 LFhSbSpn8lCuC4B9VZet61nesABa//Inaim+QXAXaw8xTmGowptw+lZwElp28ndb9
-	 xJkUK1dNvkig9NmHz8yfwS3OUW6WCASXG1P+c2ANKuf6kirI7Ut973zaB9WhXRHnI
-	 jqlLv7k383jRwRTwxqRC7wMsFHIDTCN7MQk5u49DxtdAVdhSEbWE6nlaMZ6z8kCyq
-	 8t3pr4sBAQWJotl893yPFcTvNnczHlyDqmVg8RtZHuxWetQJuOo+WbCIcZDE/tsUj
-	 AEDAh8kDLwSmElEFmQ==
+	b=SNwliic88WrmiaSn5WJVaEYnmtdCTZUhNvFo5jLv2n3QI2gBHsgulk1J+/54x5wp
+	 wMTdZBfypyoeSussozxUrcYmv8BmA1vLfxZO3iYsXtqavWQnga51t20ny/yvfEIz6
+	 hRD/rgXEeUQDQ2cSxTBMY3eYGbJc8cHWvFO27dFUFfeTc5kYSrkSrkx8kQLR+uYP2
+	 hiKh43r4BHzBk7BQBumhRD2mZDv3PsYS1bxIloq0J20v862NTYGwI4K53ez7Us/FE
+	 IRQidmCTSC8WnVji+I8TjxlOzZxRElDCbkORS0ma3sUeoRZB5GaUCq11E3hxFvPTL
+	 kz1Cv6W46s90geBPEA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from client.hidden.invalid by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MgiXO-1wMZFn1Y0S-00cL9v; Mon, 07
- Sep 2026 16:14:11 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZB4F-1xPmhV16kz-00SBXq; Mon, 07
+ Sep 2026 19:29:04 +0200
+Message-ID: <57252878c60f15fbcf9d3c8904cc690db0998272.camel@web.de>
+Subject: Re: [PATCH] mm: memcontrol: fix compilation
 From: Bert Karwatzki <spasswolf@web.de>
-To: linux-kernel@vger.kernel.org
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-next@vger.kernel.org
-Subject: [PATCH] mm: memcontrol: fix compilation
-Date: Mon,  7 Sep 2026 16:14:07 +0200
-Message-ID: <20260907141409.215031-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.55.0
+To: sashiko-reviews@lists.linux.dev
+Cc: mkoutny@suse.com, tj@kernel.org, hannes@cmpxchg.org, spasswolf@web.de, 
+	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 07 Sep 2026 19:29:03 +0200
+In-Reply-To: <20260907141808.3F4581F00A3A@smtp.kernel.org>
+References: <20260907141409.215031-1-spasswolf@web.de>
+	 <20260907141808.3F4581F00A3A@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.2-10+b1 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:G2vb6+5FFlvznn/JhEyhzyxR3dV+ribanwtr5FETGq1US3wHy9a
- Cp4Epu3nkl5eJh9BkXNyP7WDCvmxo15b2Z4JRU9GrXnDpskX8A0cEJZLovEvhnHnQa3K4J5
- b3hkWmmo6PYURqKLTQ1jF6Ar2s3dylmlu2ykY/eJqgjp6lZkgTVHnyrhxT7n/h846kDFO9D
- pvFUaGhKiRRRz19R5XEYg==
+X-Provags-ID: V03:K1:RcuJ6Nq87kKufc3HOMOKgLFTMvj3WHc8Nxfwa3zTt94+mzOV8h/
+ 1uAM9qrJlesh3sncbhjToGHaxFwtNV5XWG9DIG1qt0j1W0wa6Wbw0N7y25yCnj8ZUN0bGMh
+ XxMWuxPW2bvctOftQJ3AFLFAFZg9kD5XIQDURHg5gn4in6vrZWOs+EYRp8RehW/ZUBxxQhk
+ fFZLh4M89DGLwUCkD/cLA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0myuOc/617M=;rMjm9APOiDPPlN7GhWqter35nr8
- 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
- c=
+UI-OutboundReport: notjunk:1;M01:P0:HKwn7S0gN5Y=;jXNTR6fl7pWJZOJHu2h1ttjqyKQ
+ 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
 
-Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-=2D--
- mm/memcontrol.c | 1 +
- 1 file changed, 1 insertion(+)
+Am Montag, dem 07.09.2026 um 14:18 +0000 schrieb sashiko-bot@kernel.org:
+> Thank you for your contribution! Sashiko AI review found 1 potential iss=
+ue(s) to consider:
+> - [Low] Redundant include of <linux/irq_work.h>
+> --
+>=20
+> commit e46ef07a908650625b6fdf687c2624752ae3ff9c
+> Author: Bert Karwatzki <spasswolf@web.de>
+>=20
+> mm: memcontrol: fix compilation
+>=20
+> This commit attempts to fix a compilation issue by including
+> <linux/irq_work.h> in mm/memcontrol.c.
+>=20
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 307203301a2a5..4740f519883a3 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -72,6 +72,7 @@
+> >  #include "memcontrol-v1.h"
+> > =20
+> >  #include <linux/uaccess.h>
+> > +#include <linux/irq_work.h>
+>=20
+> [Severity: Low]
+> Is this additional include necessary? I noticed that <linux/irq_work.h> =
+is
+> already unconditionally included slightly earlier in this same file:
+>=20
+> mm/memcontrol.c:
+> #include <linux/kmemleak.h>
+> #include <linux/irq_work.h>
+> #include "internal.h"
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 5b9e0ebd42ae..e50135df6e82 100644
-=2D-- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -71,6 +71,7 @@
- #include "memcontrol-v1.h"
-=20
- #include <linux/uaccess.h>
-+#include <linux/irq_work.h>
-=20
- #define CREATE_TRACE_POINTS
- #include <trace/events/memcg.h>
-=2D-=20
-2.55.0
+Yes, the include is neccessary because irq_work.h is not already include
+in next-20260904.
 
-In next-20260904 compilation fails with this error:
+In next-20260907 it's not included, either, but it is no longer necessary,
+as mm/memcontrol.c no longer use struct irq_work_queue.
 
-mm/memcontrol.c: In function =E2=80=98try_charge_memcg=E2=80=99:
-mm/memcontrol.c:2859:41: error: implicit declaration of function =E2=80=98=
-irq_work_queue=E2=80=99; did you mean =E2=80=98drain_workqueue=E2=80=99? [=
--Wimplicit-function-declaration]
- 2859 |                                         irq_work_queue(&memcg->hig=
-h_irq_work);
-      |                                         ^~~~~~~~~~~~~~
-      |                                         drain_workqueue
-  CC [M]  drivers/usb/typec/ucsi/ucsi.o
-  CC [M]  drivers/usb/typec/tipd/core.o
-mm/memcontrol.c: In function =E2=80=98mem_cgroup_alloc=E2=80=99:
-mm/memcontrol.c:4234:9: error: implicit declaration of function =E2=80=98i=
-nit_irq_work=E2=80=99; did you mean =E2=80=98init_irq_proc=E2=80=99? [-Wim=
-plicit-function-declaration]
- 4234 |         init_irq_work(&memcg->high_irq_work, high_irq_work_func);
-      |         ^~~~~~~~~~~~~
-      |         init_irq_proc
-  CC [M]  drivers/net/wireless/mediatek/mt76/mt792x_acpi_sar.o
-mm/memcontrol.c: In function =E2=80=98mem_cgroup_css_free=E2=80=99:
-mm/memcontrol.c:4443:9: error: implicit declaration of function =E2=80=98i=
-rq_work_sync=E2=80=99 [-Wimplicit-function-declaration]
- 4443 |         irq_work_sync(&memcg->high_irq_work);
-      |         ^~~~~~~~~~~~~
 
-explicitly including include/linux/irq_work.h fixes the issue.
 
 Bert Karwatzki
