@@ -1,119 +1,176 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10A8568FD9
-	for <linux-next@vger.kernel.org>; Tue,  8 Sep 2026 15:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98365562611
+	for <linux-next@vger.kernel.org>; Tue,  8 Sep 2026 16:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788882410; cv=pass; b=F2ckzwmjbB9A7bJjhnOTF2lkKAs5p2KNh+hkkHVuPC46naB04f0f/KyuNViMcwZCMlRtBE835t8Yf9xlXjaQivqBBdGMW6ELtOEi2Nk9/x0jADsrVb6gs/15VNGp+3DqvMPQnR+8U/8vyCq+vJudpnfkkdE+PhTMZI6tN3bfcs8=
+	t=1788883453; cv=pass; b=mXfgwnRaq9Qk3Lg/rphtdP3CL3MNsqh5HX4IL8EfXyigcSwqV67p5hwsnFdLEN8k8rojgxDGHnnlT2ndmj/sGvTBzLAvD4tJC+TJpTpCuCKjG9vU911iUp06D/+k83BSt6gV9qdEeVulKZPWAvT8FNPKsTxHKlm19n0msSliKes=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788882410; c=relaxed/simple;
-	bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
+	s=arc-20240116; t=1788883453; c=relaxed/simple;
+	bh=uy4f6Kdc75tGu226T9MOyKUIXwCE0AeSTkoqwgmc2T8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCjtmD0cCt1zrVtDd8WSxVVm9ieOdn9Ipj01gjm6r+sLBXK8HvzbIUstzdxPvlS5J5YcyeZTU8Feadmkyo8+YadknRP7KC17v8E/vRIuwH7IcWTTG2b98A7/xHA+HkJ2La+FfZOaeScnp6OiJMw7+W4YuT2ybPal13rwpJEz2Xs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V33dWjqg; arc=pass smtp.client-ip=74.125.228.12
+	 To:Cc:Content-Type; b=Y4dgX4mLNax/qIHszg07PayiXgeotcNqY/WN8k4C/nXul10I6isTGiOzq7Cw1PquuR1jhYDe1e4If2n56NpCKtU2tQ2l/LKsw7NmzIzE9293A10u1/1Vbu1ku3GtxSbTLZEpX5zbWQFQ8g4yW2QnanYCoRwF45EbcO3X3qKow1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8eJg1JP; arc=pass smtp.client-ip=74.125.227.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V33dWjqg"
-Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc44f8f356bso105383a12.1
-        for <linux-next@vger.kernel.org>; Tue, 08 Sep 2026 08:46:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788882408; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8eJg1JP"
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c7e7a51196so76751e0c.0
+        for <linux-next@vger.kernel.org>; Tue, 08 Sep 2026 09:04:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788883450; cv=none;
         d=google.com; s=arc-20260327;
-        b=dhGJen5JAAWTsoabD4+0SVRGvjMchKHqO/3M10a/Isw312At44DU0kz73JA1BJR5RZ
-         d3JUfNAt7d6PsfWeNq2kdbPJ2HSdrX4CLckZaY0m95Qib4kTzlIev4efez+ffANrLiEk
-         YxTcCqGm52oS+M8pZyuiOCv1jzWweDHcyGdrB57qTDvd3s+kvS7oLrm0eN7Yz8okrWDO
-         Mkcki9CKbr212OXIrReZmJLY89uSXWHTHX0Xuq1eYi40hamLdMGPnRlQj5fuaiPzsTLZ
-         6acqAnDVvVQGI/d4AZLbgOAj1VCcAhaair2e/2WgD/94FY9JFAB0iElx5XPcBJunEr2k
-         Y9wQ==
+        b=oYoigjJfNkHABEJvY4z76i69ydExEvufLxDosfNitLWQi8ub1sLQR6YlThSdXNNdmp
+         sJrG+bgfjGfpocfmq8UEyZqrjNAMqutlKD/uWg/xykOCRxIeXStzjKdHMRvTNIqqPOiH
+         GGvXlAKmSBkAeGt1Y90YmEu40BwufpCUg/i01MXqH39EtMefLUF2qvLlGxjOzNkzYzrG
+         KcARg7HI2qq3VMvjokMfFinn0UZcxUnof0Q73v1MM5FoJacQI71mzxWiCAAcTeUCNQ9G
+         lellMrJ9X/j6Tvzr+VxRfHisccCZqOHGmpMehIKQyk8LwyqHGwTAQ4zkGbV57MiT0401
+         i67g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
-        fh=Q2KBvvLxwTJNzH3lTXQZnO7/3RDMYZ/ID96Yt7LEIIk=;
-        b=AufzRFo3P9wuNunSd/3lZZYQ5BPIlDLnjYJEwPpsEj5+8P8wl/8rAP+0DcpLbvn5H8
-         o/FLlMPw53aYaLNollDR8b8gBlemneH5bqloszMLlBjaFVnwOW/SNEqXcc2B0yiukR2e
-         iU5OT/IU8Q3lwK9g6yNfTnAVKm0B8qyY3+UavaRKd0O5IjZ4je/feOd4jAn/P+GLt+jX
-         mKj3EBDVM52p/MclkYySzL8R1hBLp3LKYvExgYTB2XQ9WRcbl8FpQtSA1taOHRrrNzC6
-         ChOgT1ICM40q7MJEDzKAxf3XOBG6RT8jRhFssUqa00As2qtsHaapeDoor9TvEHLur0Wt
-         uGkg==;
+        bh=nt0kh0XYrPSHGJubgJUC0bfBx9LloKYXdOD5FMiKas0=;
+        fh=xL5wvx31eQgU7YrT/qXTcjx6598AbtL1BELZ90H3jAM=;
+        b=ozsMylEdJU8nK0rZtHHEV6WbEAvhcpke0+pSnQtyMc98FxchCr0rrXWNerbgLclunp
+         OXVN96W6P1YXWHAScIGQMubLSB7ABDg3EcWuq01YlcMFinw60xc/l4EG2lIfbnfpP9op
+         0D5/zFunItRGfRSNfK1zAwq6Q3KvI+5f79BGiKHkZWYr5sK3HJ4Pq4QIG081XuV8Nuw3
+         YLXPxkbcPUkF3DFc+z64t1uwt8iyQREU0jgcxkUBsmRoKXgjRZcAcsUrDNCbhfcb0hr9
+         iAIPl7N6vc9YtP8eZaQhtu50JCyHF0oU5XH8tmJ6GKSkYO1DRNw3gcgE6w/pRMxm+v+B
+         64rQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788882408; x=1789487208; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788883450; x=1789488250; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
-        b=V33dWjqgqonodEsVOrgcPFV9kxRX6VCt4J3XRIcKlrclVTKZuiKXT8X0PGCOM4PD3J
-         q8ejc6U5ijSHZLRkva4CLm/wMHE0qxQXOqC5mzAXSL9gsKndijMhFUBOi2hEyHXGnXrg
-         k+3sVjwjPmPe++2yGMtMOCR/zb5j5/tsk4uAN/9JXjWTG4bfZDO4K+QR4CK/PCu8DPNt
-         1K0AmbkxeSx4g5TfzbM3yRB7pKDRDLhiES2l+4IiTvFsmFxcS1qY92ucYpSDiHLyiw2B
-         zU/c4wXLv9XXaiLe8lI4OeZ8jj/ZfKsi7OPY2LMSL7X51QhCBz73uZgWCQ5buJ37zT1c
-         qqGw==
+        bh=nt0kh0XYrPSHGJubgJUC0bfBx9LloKYXdOD5FMiKas0=;
+        b=b8eJg1JPoG+Gbh/kbk74UvSjzM0KTnl1QMEiVUZQgC5qIaC8bKzWUOKp3zU/bzMHcW
+         DGLopUwf3rrnTyYE9s5XljN6mEjbk8E2HnmFQSUFrTR9IA2otwg8QBhiSg/pcwvbS65g
+         lesjUzDMxk/9iH0RVryCMeBrt4OLGWrj1K5kVx2ryQMMlWb+d3YV8gen8mz63hyKlluE
+         apW8x8RedsYgyMLM8iUUw/KYqcHTGKTAxY23iJ6Nl6o2KklbsVmpylijp5mVXnP9+Cph
+         JnFczgjGVFZIF1OINh4UHYy32yGNW83wOLoKXRDkQWGP+jV2d4IY37jpx3yjnUPx2Te7
+         kDlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788882408; x=1789487208;
+        d=1e100.net; s=20251104; t=1788883450; x=1789488250;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
-        b=eQ4GoG1r7dTVbAqicIIkb74Bu6RI73mMQ2NPN172AhDt3n/NGB9PuQMhkyD6mkGCMy
-         3/QSvVqfjOKNLxTgjZu2YVFpwSWWImbYumc2jNapSKQdt2IZ3khgbd8axILQaa0bOYxY
-         Lg3P+s80GErv0w4iuhACgSuE0Xz7IFUdbv/gvWBia5dPVTA44HeCOXT2P5qZpXDQ78hl
-         dvPqqVuewFsYZGUPeS+EVt4LKh82rjEV099MMlzQ/X6+zyIvXH/UfuAQ+KAew7y5ULYy
-         I+4EsebeC6n022GIBUgNLi6Ug/JQ/Hmfb1OdTrhU456pclH6n2FIAoAbapZJMuBUJ13/
-         0u0Q==
-X-Forwarded-Encrypted: i=1; AKwUvByZDxDpVKc3r0t1V2W54r6iXWxiZXFyV00CmSIDP404RJlh882e0ydEvIe7B/7e7ksSISpfUDcgPYFv@vger.kernel.org
-X-Gm-Message-State: AFuF++mAMRgPCDBlWaB9IqCCzrXGPrnfxDUPlSJoOwyJuP7CrxS+ANgK
-	2uAdRk7NPNUluvmO4eBoTgv0LsIagt37WTKXhMLHptPsZ8QGtTK6sj8UKnvM2x2kGJStzXxj51V
-	rDwiapuSGE+Je3KV0tl+IBl6ku6idkxc=
-X-Gm-Gg: AYBFou2Ss+iMoO1i1bobs5ea4zTgfYlGwQLznSMwNJSeSvr0v6oKeeOoh/i+dToBYIF
-	mgmaqCu18yf2WvstIRgSUgl4pypXGXtkVadiv8YMrlbSLDROWatPEXsRZvHJ2zxIAWewBc1t1F1
-	4zqrLtfdhm85HtRUjHQgbpzjzwNqqC3GA8IXDhuzWgm5v24WRouYBrrKEfqBAQc18EIc76qfd3v
-	vrzgr4+4RjDVEHfXnuUsVMCql7Er2KCmlaIfAPM4M/0rx/aAfyJ80Ohuj2Mv2QgREKXhsUilt3e
-	YDzdBxBndyVV9Gpz4dGQxx+/7I+pwVkAA1Si1NtccsTl7YduuKoqmLoDKqhAnlRjkmr5iBal95c
-	nF89OxQ5YmMxBjSJycbG9Fy8yC9MHRJwIan+m9cdQE95suFYaMGpdGLZCjqE7
-X-Received: by 2002:a17:90b:498c:b0:398:a2e4:c784 with SMTP id
- 98e67ed59e1d1-39b3d5c4449mr20100311a91.1.1788882408145; Tue, 08 Sep 2026
- 08:46:48 -0700 (PDT)
+        bh=nt0kh0XYrPSHGJubgJUC0bfBx9LloKYXdOD5FMiKas0=;
+        b=jyAiAEFtgRNdushsjKTJme0SOQG7iVy3kzsE2lsYE9bRTbCaPwHieEv0qWN6BLCLLJ
+         PodRJ5ajEmKwMuV+6Yf/l2pVxf8grUQq+aKqv2wwDSqGiivcl/YjkrUH+o9ivSk0iT4+
+         tIdLIXn2wcg0iZMKst/sOJqWBK27F0J6Y0Mkv2EJN8P2x8ERAuIEDpTwRG7wqgMaCxjE
+         tf8gzxm4ntQ504ht6z6zm/CqoolV1mLz/l1K5ilve/YzKoImDqEMCgnKW9SSNQgut544
+         D5Q4as2WFBybsatQ6vBVLF1sgjlXKXM9QvmMu3cXQyH/1gePm4Fw+mXFbB1f3SCVI+LJ
+         QX/w==
+X-Forwarded-Encrypted: i=1; AKwUvBwMAmD/3GKcIqWmsyjK6MrDFeDHXGcVah4PETshpf+esTxTvK8hpjym2bIRuUIAbDMQI7EQOwQrsl/w@vger.kernel.org
+X-Gm-Message-State: AFuF++ntKFq7jmNMYcGiIILTi9v1fP/2VN1b5QRGJqX3mbCsDFAjSjr2
+	N4LwsGVTuYpp2OpCj921tGY3fgq2GZYRgbzD7zuxgmMWWN8zexKNJoixZha8A1ySJ2zxZQufCjm
+	AzAHxfUkVL+/DYe7dcgmCOm+PkMOZIGk=
+X-Gm-Gg: AYBFou3eiwTN/HRzRnSiJos67RPBYKV6ocT83WWIOkZ4oD66Hsq5FNWj0OktFj3wJrp
+	A6F4tl3QS1AMTXw1xVrS4mqnRBvNnC2IxZ9QRoM0+Fj9FudJYrDIVxaQEgf3sLUJ+MMjv3M5uDh
+	Mw+3hSP60DdQNUKafGKkibA6BaagTme91A1EJ8twVjGWFX/FqaUOIJdLkbSWQVWQG3rDMnEnyf0
+	CpOGj6VZ3gRXvAT+/8bE+twtGSdE/aHNAgAvMC8kbaoBpKbpq+k3tjFwDHiR3QqisAwTw50jK/e
+	Te+DR0FDs3+qxggXaQSHPI54x2FkLqEopg2m8t4YTjXQ9zhvw3Te7M0N+X6JJctTwPdFftmFjad
+	4aCdrnY74v9z61EBVMdHEBlP83VNQLkE=
+X-Received: by 2002:a05:6122:a5c7:10b0:5c1:24b6:a1e0 with SMTP id
+ 71dfb90a1353d-5c7fbaf3b05mr2679642e0c.3.1788883450339; Tue, 08 Sep 2026
+ 09:04:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4da62a4b-c4ef-492a-9a27-b56bd4784acf@suse.de> <1b3d0eb2-9e9a-4d4e-b8c0-ff966033ef03@leemhuis.info>
-In-Reply-To: <1b3d0eb2-9e9a-4d4e-b8c0-ff966033ef03@leemhuis.info>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 8 Sep 2026 17:46:30 +0200
-X-Gm-Features: AcwNN1UZy9klDHYXIQdjFGVCMKJTy69JyKumGJIN9nRq9tK-al_paSfA5ZANsw8
-Message-ID: <CANiq72mUW5d1dOQDgpYjuKoUaZAi-im7j3v30Wd4KTDznmM9zw@mail.gmail.com>
-Subject: Re: rust: Build error in DRM bindings
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	"open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>, Mukul Joshi <mukul.joshi@amd.com>, 
+References: <20260831183311.1090131-1-alexander.deucher@amd.com>
+ <20260831183311.1090131-2-alexander.deucher@amd.com> <aaef18cd-ab55-4fb8-8563-ca3a5ea9cbc6@leemhuis.info>
+ <e8a53eb241b2cc912e9cfad5f6a0120aa9683481.camel@mailbox.org> <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
+In-Reply-To: <apyTR-f8W6Jt7uP5@soda.int.kasm.eu>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 8 Sep 2026 12:03:57 -0400
+X-Gm-Features: AcwNN1UGWQ08V1C6NZZQaio8lehal8RQn4GKIdJFwvOdWZL0ItwTZuEEeLAGaiw
+Message-ID: <CADnq5_PjN8X9V0PQ=no39NCAGM9Hp1JezOuKNpHqwo1=WfsPQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm/gem: Add callback for when handle count goes to 0
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Manuel Ebner <manuelebner@mailbox.org>, Thorsten Leemhuis <linux@leemhuis.info>, 
 	Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Felix Kuehling <Felix.Kuehling@amd.com>, 
-	Linux kernel regressions list <regressions@lists.linux.dev>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+	dri-devel@lists.freedesktop.org, Felix.Kuehling@amd.com, 
+	Mukul Joshi <mukul.joshi@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Mark Brown <broonie@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 8, 2026 at 5:35=E2=80=AFPM Thorsten Leemhuis <linux@leemhuis.in=
-fo> wrote:
+On Mon, Sep 7, 2026 at 3:25=E2=80=AFAM Klara Modin <klarasmodin@gmail.com> =
+wrote:
 >
-> And I already wondered if I'm the only one that is running into this, as
-> I reported this a few days ago already. Pseudo-patch to work around this
-> can be found here:
+> On 2026-09-05 11:31:41 +0200, Manuel Ebner wrote:
+> > On Sat, 2026-09-05 at 07:36 +0200, Thorsten Leemhuis wrote:
+> > > On 8/31/26 20:33, Alex Deucher wrote:
+> > > > From: Mukul Joshi <mukul.joshi@amd.com>
+> > > > ...
+> > > ...
+> > >
+> > > > > error[E0063]: missing field `handle_free` in initializer of `drm_=
+gem_object_funcs`
+> > > > >    --> rust/kernel/drm/gem/mod.rs:265:58
+> > > > >     |
+> > > > > 265 |     const OBJECT_FUNCS: bindings::drm_gem_object_funcs =3D =
+bindings::drm_gem_object_funcs {
+> > > > >     |                                                          ^^=
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `handle_free`
+> > > > >
+> > > > > error: aborting due to 1 previous error
+> > > > >
+> > > > > For more information about this error, try `rustc --explain E0063=
+`.
+> > > > > make[2]: *** [rust/Makefile:799: rust/kernel.o] Error 1
+> > > > > make[1]: *** [/builddir/build/BUILD/kernel-7.3.0-build/kernel-nex=
+t-20260904/linux-7.3.0-0.0.next.20260904.221.vanilla.fc43.aarch64/Makefile:=
+1442: prepare] Error 2
+> > > > > make: *** [Makefile:256: __sub-make] Error 2
+> > > """
+> > > Full log:
+> > > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/ne=
+xt/fedora-43-aarch64/10951622-next-next-all/builder-live.log.gz
+> > >
+> > > Reverting this change and 2/3 from this set fixed the problem for me.
+>
+> That leaves only the documentation without the feature so might as well
+> drop 3/3 too in that case?
+>
+> Otherwise, the following also fixes it for me:
+>
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index e1ebad77ebe2..847e0ee38863 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -278,6 +278,7 @@ impl<T: DriverObject, Ctx: DeviceContext> Object<T, C=
+tx> {
+>          vm_ops: core::ptr::null_mut(),
+>          evict: None,
+>          rss: None,
+> +        handle_free: None,
+>      };
+>
+>      /// Returns the `Device` that owns this GEM object.
+>
 
-You are definitely not the only one! I have been seen it in my CI too
--- I didn't reply here or there because I had already seen the other
-replies in the other thread and I expected it to be folded or dropped
-the next day or so.
+Can you send this as a proper patch?
 
-But, yeah, it is painful to have it in linux-next.
+Thanks,
 
-Cheers,
-Miguel
+Alex
+
+> >
+> > Verified.
+> >
+> > Thanks
+> >  Manuel
+> > >
+> > > Ciao, Thorsten
+> > > > ...
+>
+> Regards,
+> Klara Modin
