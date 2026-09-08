@@ -1,100 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224C655409F;
-	Tue,  8 Sep 2026 15:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788880960; cv=none; b=MXUjvOtHviscDmSaypgc73ybpJK+wEnnP9lghYF0t4+j8joBsgfCLdoqYt5u6qDU+BP1MztwKIjvQK6Uu1r5+bNE2U4bLKoKsvJtm5VZzbD3hdQvcpOEPIk32D/SnXKB+HKHHP9LeEQdQEATyF4celSFxNYSMHcShjayUHMsjog=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788880960; c=relaxed/simple;
-	bh=gj7JIuERcOTGR68Njp+98tTAK6VQecEwQn+jCmaVA3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWW8LF3NDgpFwjKT6teSKdaJjlJQuSAc1h28YsZyDFOM8gVl5O7h087CbLouk2pV10BSZhX/qQBCaSUf8mJk7h7Cmlx8CMY9Z12Wq16e2iMr2mkITWiItq5qB7jrcxYYjRhiNEE/AvMtRzL4fQ12EP3qvEuK0ddlI4X/Z96+O1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPbAemoO; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10A8568FD9
+	for <linux-next@vger.kernel.org>; Tue,  8 Sep 2026 15:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788882410; cv=pass; b=F2ckzwmjbB9A7bJjhnOTF2lkKAs5p2KNh+hkkHVuPC46naB04f0f/KyuNViMcwZCMlRtBE835t8Yf9xlXjaQivqBBdGMW6ELtOEi2Nk9/x0jADsrVb6gs/15VNGp+3DqvMPQnR+8U/8vyCq+vJudpnfkkdE+PhTMZI6tN3bfcs8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788882410; c=relaxed/simple;
+	bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RCjtmD0cCt1zrVtDd8WSxVVm9ieOdn9Ipj01gjm6r+sLBXK8HvzbIUstzdxPvlS5J5YcyeZTU8Feadmkyo8+YadknRP7KC17v8E/vRIuwH7IcWTTG2b98A7/xHA+HkJ2La+FfZOaeScnp6OiJMw7+W4YuT2ybPal13rwpJEz2Xs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V33dWjqg; arc=pass smtp.client-ip=74.125.228.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPbAemoO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A021F00A3A;
-	Tue,  8 Sep 2026 15:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788880951;
-	bh=cHMBp6i7INBNLIc6sx2XBcLlbWaM9vvHRGdTgduCTYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WPbAemoOa8A4rITV/C6EFYULS6YrhsmJV0nmbdSVox1ASEKctBaAF25WpPDsm8/WF
-	 BMhTevd1GC2jEu1gmQrUW5ArJZ3g20w7T5GRraXS2CgVAWWjQTzW4WUTEF/5Ekgi7F
-	 TfHymkLf4XcMDxrYW3wNhYoVx2fZHTte0dV6NlGf37d6rmMGGP7OqL8uRkiphtLM2I
-	 CMwZwjSiu+9Ru5O5sUhI35tdiZrXJZDFBe/59lPN64X/Gq418orK+V+OF7Uhe75oz9
-	 nHhs8xm0GPzqI2jOxAfC2xME42bZXAHyK4GLLFs3Zno9uM2nKdrluU9eJB7tdUyTOG
-	 LXTABEgO4T6uw==
-Date: Tue, 8 Sep 2026 16:22:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>,
-	Alex Huang <Alex.Huang2@amd.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <fba3bcaf-628e-46a2-9c81-c8beee5e5e07@sirena.org.uk>
-References: <aqAVSgsypMch2c0v@sirena.org.uk>
- <5d3de44a-c382-4ce6-8f52-62696e67fcd0@sirena.org.uk>
- <CADnq5_MiNmzkDqZRk70_RmJaJWTEXFtu0c+eV3TJ_At=uvJ54Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V33dWjqg"
+Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc44f8f356bso105383a12.1
+        for <linux-next@vger.kernel.org>; Tue, 08 Sep 2026 08:46:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788882408; cv=none;
+        d=google.com; s=arc-20260327;
+        b=dhGJen5JAAWTsoabD4+0SVRGvjMchKHqO/3M10a/Isw312At44DU0kz73JA1BJR5RZ
+         d3JUfNAt7d6PsfWeNq2kdbPJ2HSdrX4CLckZaY0m95Qib4kTzlIev4efez+ffANrLiEk
+         YxTcCqGm52oS+M8pZyuiOCv1jzWweDHcyGdrB57qTDvd3s+kvS7oLrm0eN7Yz8okrWDO
+         Mkcki9CKbr212OXIrReZmJLY89uSXWHTHX0Xuq1eYi40hamLdMGPnRlQj5fuaiPzsTLZ
+         6acqAnDVvVQGI/d4AZLbgOAj1VCcAhaair2e/2WgD/94FY9JFAB0iElx5XPcBJunEr2k
+         Y9wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
+        fh=Q2KBvvLxwTJNzH3lTXQZnO7/3RDMYZ/ID96Yt7LEIIk=;
+        b=AufzRFo3P9wuNunSd/3lZZYQ5BPIlDLnjYJEwPpsEj5+8P8wl/8rAP+0DcpLbvn5H8
+         o/FLlMPw53aYaLNollDR8b8gBlemneH5bqloszMLlBjaFVnwOW/SNEqXcc2B0yiukR2e
+         iU5OT/IU8Q3lwK9g6yNfTnAVKm0B8qyY3+UavaRKd0O5IjZ4je/feOd4jAn/P+GLt+jX
+         mKj3EBDVM52p/MclkYySzL8R1hBLp3LKYvExgYTB2XQ9WRcbl8FpQtSA1taOHRrrNzC6
+         ChOgT1ICM40q7MJEDzKAxf3XOBG6RT8jRhFssUqa00As2qtsHaapeDoor9TvEHLur0Wt
+         uGkg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788882408; x=1789487208; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
+        b=V33dWjqgqonodEsVOrgcPFV9kxRX6VCt4J3XRIcKlrclVTKZuiKXT8X0PGCOM4PD3J
+         q8ejc6U5ijSHZLRkva4CLm/wMHE0qxQXOqC5mzAXSL9gsKndijMhFUBOi2hEyHXGnXrg
+         k+3sVjwjPmPe++2yGMtMOCR/zb5j5/tsk4uAN/9JXjWTG4bfZDO4K+QR4CK/PCu8DPNt
+         1K0AmbkxeSx4g5TfzbM3yRB7pKDRDLhiES2l+4IiTvFsmFxcS1qY92ucYpSDiHLyiw2B
+         zU/c4wXLv9XXaiLe8lI4OeZ8jj/ZfKsi7OPY2LMSL7X51QhCBz73uZgWCQ5buJ37zT1c
+         qqGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788882408; x=1789487208;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WDHmQZuMHbf5qYqxvV/utcQu5YS7zXBqPLQhJFSMwks=;
+        b=eQ4GoG1r7dTVbAqicIIkb74Bu6RI73mMQ2NPN172AhDt3n/NGB9PuQMhkyD6mkGCMy
+         3/QSvVqfjOKNLxTgjZu2YVFpwSWWImbYumc2jNapSKQdt2IZ3khgbd8axILQaa0bOYxY
+         Lg3P+s80GErv0w4iuhACgSuE0Xz7IFUdbv/gvWBia5dPVTA44HeCOXT2P5qZpXDQ78hl
+         dvPqqVuewFsYZGUPeS+EVt4LKh82rjEV099MMlzQ/X6+zyIvXH/UfuAQ+KAew7y5ULYy
+         I+4EsebeC6n022GIBUgNLi6Ug/JQ/Hmfb1OdTrhU456pclH6n2FIAoAbapZJMuBUJ13/
+         0u0Q==
+X-Forwarded-Encrypted: i=1; AKwUvByZDxDpVKc3r0t1V2W54r6iXWxiZXFyV00CmSIDP404RJlh882e0ydEvIe7B/7e7ksSISpfUDcgPYFv@vger.kernel.org
+X-Gm-Message-State: AFuF++mAMRgPCDBlWaB9IqCCzrXGPrnfxDUPlSJoOwyJuP7CrxS+ANgK
+	2uAdRk7NPNUluvmO4eBoTgv0LsIagt37WTKXhMLHptPsZ8QGtTK6sj8UKnvM2x2kGJStzXxj51V
+	rDwiapuSGE+Je3KV0tl+IBl6ku6idkxc=
+X-Gm-Gg: AYBFou2Ss+iMoO1i1bobs5ea4zTgfYlGwQLznSMwNJSeSvr0v6oKeeOoh/i+dToBYIF
+	mgmaqCu18yf2WvstIRgSUgl4pypXGXtkVadiv8YMrlbSLDROWatPEXsRZvHJ2zxIAWewBc1t1F1
+	4zqrLtfdhm85HtRUjHQgbpzjzwNqqC3GA8IXDhuzWgm5v24WRouYBrrKEfqBAQc18EIc76qfd3v
+	vrzgr4+4RjDVEHfXnuUsVMCql7Er2KCmlaIfAPM4M/0rx/aAfyJ80Ohuj2Mv2QgREKXhsUilt3e
+	YDzdBxBndyVV9Gpz4dGQxx+/7I+pwVkAA1Si1NtccsTl7YduuKoqmLoDKqhAnlRjkmr5iBal95c
+	nF89OxQ5YmMxBjSJycbG9Fy8yC9MHRJwIan+m9cdQE95suFYaMGpdGLZCjqE7
+X-Received: by 2002:a17:90b:498c:b0:398:a2e4:c784 with SMTP id
+ 98e67ed59e1d1-39b3d5c4449mr20100311a91.1.1788882408145; Tue, 08 Sep 2026
+ 08:46:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tEWCGMc5H55jZNzj"
-Content-Disposition: inline
-In-Reply-To: <CADnq5_MiNmzkDqZRk70_RmJaJWTEXFtu0c+eV3TJ_At=uvJ54Q@mail.gmail.com>
-X-Cookie: The world is not octal despite DEC.
-
-
---tEWCGMc5H55jZNzj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <4da62a4b-c4ef-492a-9a27-b56bd4784acf@suse.de> <1b3d0eb2-9e9a-4d4e-b8c0-ff966033ef03@leemhuis.info>
+In-Reply-To: <1b3d0eb2-9e9a-4d4e-b8c0-ff966033ef03@leemhuis.info>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 8 Sep 2026 17:46:30 +0200
+X-Gm-Features: AcwNN1UZy9klDHYXIQdjFGVCMKJTy69JyKumGJIN9nRq9tK-al_paSfA5ZANsw8
+Message-ID: <CANiq72mUW5d1dOQDgpYjuKoUaZAi-im7j3v30Wd4KTDznmM9zw@mail.gmail.com>
+Subject: Re: rust: Build error in DRM bindings
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	"open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>, Mukul Joshi <mukul.joshi@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Felix Kuehling <Felix.Kuehling@amd.com>, 
+	Linux kernel regressions list <regressions@lists.linux.dev>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 08, 2026 at 11:15:36AM -0400, Alex Deucher wrote:
-> On Tue, Sep 8, 2026 at 10:07=E2=80=AFAM Mark Brown <broonie@kernel.org> w=
-rote:
+On Tue, Sep 8, 2026 at 5:35=E2=80=AFPM Thorsten Leemhuis <linux@leemhuis.in=
+fo> wrote:
+>
+> And I already wondered if I'm the only one that is running into this, as
+> I reported this a few days ago already. Pseudo-patch to work around this
+> can be found here:
 
-> > > Caused by commit
+You are definitely not the only one! I have been seen it in my CI too
+-- I didn't reply here or there because I had already seen the other
+replies in the other thread and I expected it to be folded or dropped
+the next day or so.
 
-> > >    65198b3d0738 (drm/amd/display: Use HDMI FreeSync range from common=
- EDID parser)
+But, yeah, it is painful to have it in linux-next.
 
-> > Sorry, that should be f65198b3d07389afdcb48e4ad00fea2aded95dfd.
-
-> > > I have continued to use the version from next-20260831 instead.
-
-> Fixed here:
-> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/730c6d8072d8d9a6d=
-bfd06c7c5ab4479167a792a
-
-Thanks for getting on top of this so quickly.  This also suggests that
-there's some issues with the setup of your KUnit tests and those of drm
-in general, kunit is run as part of the coverage for -next and didn't
-trip up.  --alltests is enabled so everything coverable should be being
-covered but I see a distinct lack of any DRM stuff getting run.
-
---tEWCGMc5H55jZNzj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqgKDIACgkQJNaLcl1U
-h9DM2Af/f0C7C3wM/y2X3P+8Jnhe6naxs8ZefQH9Pm1AMtKE2mBHDy/R5TjgwazT
-Rvg35scV34k4ko7zkfZHdnHVgeZthGEzpSde2unAcMyScx/40fUiTvlbdnIdV+R+
-EHohf59bUkGIlRfDPujG3UKQh8UI+l+D/3nQtJE7PMkzScjMz4BpCiMt15fZMJAj
-WKXomzVtJ6ndTdb0YHUo/+JyO2sZFrXfZ3i8m8d6riz3yw8DUGujgb94v+jZ7LXw
-U36CB7ufEv+fBf+QaUriPqs3+YgrUYwC5azOpshC2ZSmVcl6Sjzzl0gHdzvpv+B+
-5w+TiujVd1NpQm8WTVdRFOmS2XvMAQ==
-=aJXx
------END PGP SIGNATURE-----
-
---tEWCGMc5H55jZNzj--
+Cheers,
+Miguel
