@@ -1,154 +1,128 @@
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FB251A72A;
-	Tue,  8 Sep 2026 15:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.166
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788880517; cv=none; b=Elmk1FvZNhj8sXNZJgeXxbeOjZeGsgW+jo5hMsRCVaaSpYIp2qnAtsIOvFcAyhh0YpTCJcBPqNEs4jws8rWygAi8IgPTgLDVgGqMfLwUX3fhqWwHE/Yi2F3iAgaK9t7D/0SxF72lUrrZO2xnDFweIZ7NtZJ3963OxGBRS96Sof0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788880517; c=relaxed/simple;
-	bh=npBVPIx/WRGawCVtXNGKZVl2Ht00Z+1uN1WEVDLUYEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=VnAHNWUYKwnQEDtKnv6MTQ1/aFKyzy2mVudiRPnRXsgbb+HoqNKRYPvfL3Bx9G46TuZdex+N1s/LtpzGJHhio3qx7Jemh/ZXCPbx86LIsN9IVV+c82pzJ0n4DtrlvbRGo9vAD7tzGaK6CwNFl58ltz+fkTOlXE54gS6R+IVO2hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=bzDV0iRa; arc=none smtp.client-ip=188.68.63.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB5A534458
+	for <linux-next@vger.kernel.org>; Tue,  8 Sep 2026 15:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788880557; cv=pass; b=mY0VGFyPoVcrd1K9YVpzcxLMB64NTwjeLEHPrUCLMLhj8dvqLXZwZj0SR5jH92cGirPrGwKE5sZcAkstY8tis51g81q7f6kMV4IDLpGaOGQubhpWZdosXyc5p6OdZXv9P4hjF04cQ6yFDpbfe3y6f8J+bEPgk1cQ9PTaptNsQ6U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788880557; c=relaxed/simple;
+	bh=CwgTXRyt6y4ZSmfmvQpYiUTiFQ8bOpJfy6S0oEkKA2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GVKBjm7Nw0qyX9pnz1U0yvNzeqUr2s51V99nYS3p4VzDtU5ipXOh2esGpnJzUQTD6fm4lk6Tr5nfzjfWPiYZw2v91uJ9tQ7EB7HPWgQHs85gjEV1cWrXD6zeJBqCdGDV6/OXQ9z5LB54/MkPBAakZqzIwzktx3oA/L+gKKdu/os=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCB6PChy; arc=pass smtp.client-ip=74.125.227.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="bzDV0iRa"
-Received: from mors-relay-8202.netcup.net (localhost [127.0.0.1])
-	by mors-relay-8202.netcup.net (Postfix) with ESMTPS id 4hfSD270bqz48f7;
-	Tue,  8 Sep 2026 17:14:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
-	s=key2; t=1788880499;
-	bh=npBVPIx/WRGawCVtXNGKZVl2Ht00Z+1uN1WEVDLUYEM=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=bzDV0iRasfIGoJ4eLj1TCVT70hJaEAOMRX7MIRrV5legW5CJh40FsucJFRm0xinxd
-	 VSRAH2lnZTCW26I73YqQH0CzEhv+UKgfhE3rNts3CcTlfL6fLhwLarUaXQjI2TvO64
-	 tHz6Z+I4GbUQbkfjVjwf82ds839gkPvHpHG51VbJlS+aMOX104cO14AS1n9+xE8FbD
-	 QrItJsNcCCsnr+xemks/qx8yPJsQ1p5UXz/mZ56jGa1OWzbYJh9u4bUYkRhBM0g3qe
-	 Z/Bc9BKJ2feWuNglm1ngFw7E42dPdaGaPgU1OLaaySRHe6l/zH9smHiomdWlZFBTL3
-	 P4n3lkhjff7dA==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay-8202.netcup.net (Postfix) with ESMTPS id 4hfSD26JNLz48V3;
-	Tue,  8 Sep 2026 17:14:58 +0200 (CEST)
-Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4hfSD13Gv4z8svL;
-	Tue,  8 Sep 2026 17:14:57 +0200 (CEST)
-Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
-	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 983795F9C3;
-	Tue,  8 Sep 2026 17:14:56 +0200 (CEST)
-Authentication-Results: mxe9fb;
-        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=linux@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
-Received-SPF: pass (mxe9fb: connection is authenticated)
-Message-ID: <1b3d0eb2-9e9a-4d4e-b8c0-ff966033ef03@leemhuis.info>
-Date: Tue, 8 Sep 2026 17:14:55 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCB6PChy"
+Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-396672b2566so876394a91.2
+        for <linux-next@vger.kernel.org>; Tue, 08 Sep 2026 08:15:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788880549; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ra5JvBC6KpuUp6B/+CM/MnROqQ/QXMIMPSWGoqZOmS8MODbAH+tcHnzwmuWQ5mpJwJ
+         ydteKarp3U4mYM/SR/oCrcz8ra6WpRFqAby4jAf81qVssCSqnYNo6umYYnj0AqL6yxIZ
+         ejR8XpG75TGY99gJ8cqRO85g1I+G6Ujs1fgLjYFYHvOoZz+UnZspdNYqyKJov7X/57a4
+         3iXWPEUJFxUzPyUqt0pkaMRlJ7nTWDFQt4OtnUO/6ahN5r0MJfuYlvL2wBqJfvgHzmqQ
+         Qglf/v0PIFNIHJLsDR6qxrX/Wf2Np0rqc/Lsi4tXiwHZWCXA5v1CKsVYSGyuAbRghnme
+         Ydkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=48I/5ZV3M8PQW+Nd+AVAKmbCj8LyPvNeg4eQe0wKYGc=;
+        fh=yAVFr1j3dZ8Gu9xzmZ5kL/BRIMbSijrnEKnZ5MWaIL4=;
+        b=E7XnFpN1cHc6vhBmaNp4zhQR8JppSgLu2ShTuCv20f1jwN9TP8t1ujgF1hMdXQbP1+
+         kSVQ3MDaUTMKpruU5YfEZ6ec5KBdF2YZU37U6lyuM1YxJfBMQ+fxd9tzBnz/+jEo/Q7j
+         fevFHxx3ErCWdnKaBuCtWsZYFYJb52Bsb17QXg0qmqAa1fxv/8krXyFHcURIqO6t2N4T
+         PdTaQQIv2E1ogidmXkqd6GE1llrNByBkqy+ZX8BR1KCgpknArYKymLgeUSW0t0F2D9Mf
+         jk/Egw6YW9ekqeo4M69R+Ye3dRZKTXJKqhdh8OdBfFsIYIl6ot++iTO8AhUV/ocTvQDL
+         HCHA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788880549; x=1789485349; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=48I/5ZV3M8PQW+Nd+AVAKmbCj8LyPvNeg4eQe0wKYGc=;
+        b=TCB6PChyZ7w2s5+u+dxkHVUnCPzlnA8mA3sUxkUH625PqZQd+zNfGkRddUbbLhFBcb
+         oV8rX86MfPh5V2inN+9cW+i4CT8KcvalPWlZCTE3wdQcp76m9OmCthDJWQYt5SQdo8Fj
+         F6Zj2a8zGeQrGeRjMnUv1lahFwr9suRt4qULQ+zrZIktx/+uh54aIP9slBgkp9QxAo3b
+         9+OQgNPTPHHipBykwV+3LcSS8yTvwuP5UaAk+cZ6Rho8XOo2A/JrUdM3dCR6208M/n+y
+         QbRUOvtPwyrBwQL3JXag7e9ftbnqiITsJs7JaSL+1AaLaaWbF5kC3awqLLxFLA8M4/Rf
+         V9QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788880549; x=1789485349;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=48I/5ZV3M8PQW+Nd+AVAKmbCj8LyPvNeg4eQe0wKYGc=;
+        b=r/IksL7M85wHB5Swb1JP+5YfBfDK8HWDK8+hbXA8Brp2pdXYsuD00WGG/7iI4eb+Cq
+         PyQkFnBKDbe8G8ulyY+wCBCJhx/n4xjtXzmBQTAkisqsdj093TYW9MW+iifqMxRlq9qj
+         cAKE5a4yPykw7DhTBSUG62Ddn6y22bIgVigbMAFOclIysRXyJHuZPIzaooGixwIMqsq0
+         8xOUoOwSGLcsx5Wzm8N/6Orb2Jqp/0HWT6v+5WrSUMFRL9hNIhcxuU15Rp5MjVnhDtrk
+         UTlh7HY/95MiLLWjlZ8Eq7+JOlIqdew11FiYZdSitTbrwtbkqP+p2z0kyUpWHrDTtdMS
+         DCNQ==
+X-Forwarded-Encrypted: i=1; AKwUvByj+UVY4wbu69T34UyGRP/vyKHnxWq47SULS7KNX6SXsdmDUlczUcfC3+9y/OS2f43GUSODjeON4Lhz@vger.kernel.org
+X-Gm-Message-State: AFuF++l/T2Db6pXg9PrsAcd582eE0X74+Aq222cOKbj6xhWJOUvrE+Lc
+	L9uix/HE2qxM3PqqJdgUXQclZhviaNRXss/BuQKXaQJzXi/aHAX2MABu2g7rj4zDIF1ZVISvRYY
+	NZk7YuozfISu+gYOE17hDRF022lp0UPU=
+X-Gm-Gg: AYBFou1fQ7Fanv3WPAWoEpMu6KyKvC481mL+ZWfEydOQ62XjQbaBIGl8Yn4LiL80tvp
+	cQalPDOYcX8DVxfA5LKdhTpzfQoS591XP1L1ZQ3WTYuTlDH9CS5r25LmO4AsCOPp7gE6Sx8a2h1
+	+qqJHN7Kg5+VNpUuk80/5/ecteoSMNaluNfgY/QD3cAIM1inF2me7DlkO5OqeELUj4jhmJTTK5L
+	hkNUs6hOEU6W8+zXJj9QpYtdRCw7d6mS6RJYTyWlFYtNHuPZSj0ZmUGilj19Kbvyueq6dx/pqCM
+	wYYIF7FCPPQJntEN5bJS12VayH9UBputvXfn/jexDTyvi0AhHuUm39IypvcytZMUvPLg0QcSOQY
+	fkbdFqBBUamOlt5OsZgwv5Pfg5tELqBA=
+X-Received: by 2002:a17:90b:2dc5:b0:381:bcfb:e710 with SMTP id
+ 98e67ed59e1d1-39b9a99459fmr4622408a91.3.1788880548969; Tue, 08 Sep 2026
+ 08:15:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: rust: Build error in DRM bindings
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel <dri-devel@lists.freedesktop.org>,
- "open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
-References: <4da62a4b-c4ef-492a-9a27-b56bd4784acf@suse.de>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 MEK4
-Cc: Mukul Joshi <mukul.joshi@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Felix Kuehling <Felix.Kuehling@amd.com>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Mark Brown <broonie@kernel.org>
-In-Reply-To: <4da62a4b-c4ef-492a-9a27-b56bd4784acf@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <178888049708.3336765.16009071836980567864@mxe9fb.netcup.net>
-X-NC-CID: +8MkgHCp8RC5tsRYXFuTLb6WzoXvHmnlhMHKCi6gQfsCOicsRNQ=
+References: <aqAVSgsypMch2c0v@sirena.org.uk> <5d3de44a-c382-4ce6-8f52-62696e67fcd0@sirena.org.uk>
+In-Reply-To: <5d3de44a-c382-4ce6-8f52-62696e67fcd0@sirena.org.uk>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 8 Sep 2026 11:15:36 -0400
+X-Gm-Features: AcwNN1VnTXeV8V659QiKMCwYI-2o7Ug_RreQwrzcUErxFzh7ylh_yBH27lIHOHY
+Message-ID: <CADnq5_MiNmzkDqZRk70_RmJaJWTEXFtu0c+eV3TJ_At=uvJ54Q@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>, 
+	Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, 
+	Alex Huang <Alex.Huang2@amd.com>, Mario Limonciello <superm1@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/8/26 09:11, Thomas Zimmermann wrote:
+On Tue, Sep 8, 2026 at 10:07=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Tue, Sep 08, 2026 at 03:01:50PM +0100, Mark Brown wrote:
+> > Hi all,
+> >
+> > After merging the drm-misc tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >
+> > ERROR: modpost: drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/tests/a=
+mdgpu_dm_connector_test.ko: symbol 'parse_hdmi_amd_vsdb' undefined!
+> >
+> > Caused by commit
+> >
+> >    65198b3d0738 (drm/amd/display: Use HDMI FreeSync range from common E=
+DID parser)
+>
+> Sorry, that should be f65198b3d07389afdcb48e4ad00fea2aded95dfd.
+>
+> > I have continued to use the version from next-20260831 instead.
+>
 
-> when building the Rust-DRM bindings with v7.3-rc2, I get
-> 
->>>>
-> 
->   RUSTC L rust/kernel.o
-> error[E0063]: missing field `handle_free` in initializer of
-> `drm_gem_object_funcs`
->    --> /home/tzimmermann/Projekte/linux/rust/kernel/drm/gem/shmem.rs:130:52
->     |
-> 130 |     const VTABLE: bindings::drm_gem_object_funcs =
-> bindings::drm_gem_object_funcs {
->     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `handle_free`
-> 
-> error[E0063]: missing field `handle_free` in initializer of
-> `drm_gem_object_funcs`
->    --> /home/tzimmermann/Projekte/linux/rust/kernel/drm/gem/mod.rs:265:58
->     |
-> 265 |     const OBJECT_FUNCS: bindings::drm_gem_object_funcs =
-> bindings::drm_gem_object_funcs {
->     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `handle_free`
-> 
-> error: aborting due to 2 previous errors
-> 
-> For more information about this error, try `rustc --explain E0063`.
-And I already wondered if I'm the only one that is running into this, as
-I reported this a few days ago already. Pseudo-patch to work around this
-can be found here:
-https://lore.kernel.org/all/apyTR-f8W6Jt7uP5@soda.int.kasm.eu/
+Fixed here:
+https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/730c6d8072d8d9a6dbf=
+d06c7c5ab4479167a792a
 
-But for bisectibility I think it would be best if that fix could be
-folded into the culprit.
-
-Ciao, Thorsten
+Alex
