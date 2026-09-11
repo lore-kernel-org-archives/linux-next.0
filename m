@@ -1,109 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B96373C00;
-	Fri, 11 Sep 2026 16:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7141C3B1EC8
+	for <linux-next@vger.kernel.org>; Fri, 11 Sep 2026 16:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789142591; cv=none; b=tiIqBCgjYXuyOqY8QOaZHsgoVW1KTVGIVwBkvewJFEgGzQQNXySCq9e66hZwGbmHtl7IiZtwv0DKsXKM4wji7wT1cwMZ8rIokPwDK7IH3Ku2cVwTu1SWAXxWnvSWhvSFES4EjUoLxaSoxnTxsoU8kBRTEnxAjcGzqd/zLcBdlac=
+	t=1789145961; cv=none; b=U/gcDzPCYtkSQe73Csv9rlOHftWvCuIcByqDS4ftnOut3tsLOaFCt/8VVWqySaR0h+MnMZ1WjHRcQeefB/0Ye2NMKtuS9rVSWLHpC/1RXPARMqdPZ9ec4V4RAl34gMj5q3G6mkig+4AkOS7CdWiBPtLYn823YQ2TR9Y0X9U9Rw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789142591; c=relaxed/simple;
-	bh=9cmHKCShSs7onPXDV0ZP9jEOZt1qD7ycClQRsC0pwP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ctjWP/FQUVgswe0UT/AvEKSSTTYpXJ1+mSxvGvrQuQH+RahRWNtUCNTWDKjKgXP3PBz0bLwCYvjUVHJZLAEnWAR2Ut7s32SliZEYo0AhikzsYiuIdQ8AR/k0/BxH4CcVYIvv9Oe/suvO0cwYmFyth0sdDgkpRvEIHB0uJUttFEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcaPDQWR; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789145961; c=relaxed/simple;
+	bh=2xFq+mJLGKsr1RwrzUjn2Avzut/7ZC8X+I2KGp6BxFo=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=rOiKTM9y0Xu2cJKEnTbADg52dZzDdagwNs6zlB/qzdNaN2wTqKyfyIhIg8xtHCRBEHsK2bQGKKj7SkjziZzkH7J+mNKkHQ9VoYW31mRGA4FdbOiIvkcGeHOEkCS2Spi2CIHM9haheGrpY2JBf1S8d+KBOmhE9OvHfnZxCyJTJ+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=jiMp72WC; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcaPDQWR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF611F000FF;
-	Fri, 11 Sep 2026 16:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789142589;
-	bh=2TX0tmqAhwBVLbhXgXPpRYuiFTGe4oFXIWqVhqt8FAA=;
-	h=Date:From:To:Cc:Subject;
-	b=NcaPDQWRAAXwDOlucqEk1ItPbZnY9Y/4ACsVKRxUA+0HZeOUNHvJJeMludnUnUW3y
-	 dqE+FMuCzeIMMJcyJvsrS2YYWx4hAkn9VltSDYsLGmFAq1e6V8mONlKYy4oS/RTVFb
-	 IWBqYNuMtFtNSiqWCu8AzjD+Nn063mHFSJxGb9eG6fnytGML/mHUB2a9/moMJxZcPS
-	 KMW+PYQ/Uc+sXLqsKLjCT56ad+yjhkAEmxVRoSqgUosllZqLXXXumTtGsXtUGJQqsH
-	 dWCLjvvpO8Qz3Ye6WOmEg2zJN3UCyU4F18BNgTFi8LTetRDnoVWTHHsTP0fKFVSKh0
-	 mGNVy+5DErw8A==
-Date: Fri, 11 Sep 2026 17:03:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 11
-Message-ID: <aqQmOinJ6fmNjQR6@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="jiMp72WC"
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7e9fc3de7ceso787107a34.1
+        for <linux-next@vger.kernel.org>; Fri, 11 Sep 2026 09:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1789145946; x=1789750746; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=SRtWZSQeyKNAMCOPqyycUsTBH2sja6J1xsz9HJwDp0c=;
+        b=jiMp72WCexT9LaAAb1/Ar6R2Gu3+eWkXxireMehHIJ1Waup44TGdvdkNbrVmvCEelm
+         VEyQuVoR2e94A4lGhhfQqkh2tvqUlxPg+NZVmaPWN1DiBjQQRRupjSzecf7LsnfK0keD
+         YsK8EAesHKb1Gk9CnyNhwurBKBynNjzYQx9PPdIZXv1uGxQM4I3E69Tbs8Wgd3AeX1+o
+         EPUr/WICvptNJh5KV6HRz1VE+LYPvu1Edrhv+0S3YcLtbmhU7NC+7JfK2iSbSXStSHv3
+         4hO75y9dsexyRBX9XVii35puwiL3Dp41nSognkBqwU839XFYYDYbe/63SB3S0DuyVR0g
+         t9lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789145946; x=1789750746;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=SRtWZSQeyKNAMCOPqyycUsTBH2sja6J1xsz9HJwDp0c=;
+        b=fmgU/Kq4I4U7Qe0a/7G+u5xO7MAUe7DjmYFc6NZyhdzhg0DB7Tb2Su39ATgQJx7X5x
+         rOHXsNyyrGs+LOgVY2d2I4RJnmi4JAQRH6JnXEUBNhPtYW7CX/suhKxydxlg7pt+5589
+         nToo4j5QkYoPqnQqJYFrFOWz3QDHg01guG0eE5TaVzpHpbIAW1pDIup6NXogIjnCoK2S
+         E2cADsNhg/miO5CQ3ehoYpQSbRLAS3emhPLHktALBOxTgYA6KKBkG0gdMaF01K2yzwyV
+         feYHI8dRkW2wdO8TDrDEzNwDCafV3Rify3oCsd1JpvMBCLzMWezyhbUi6cbzsiN1bkon
+         0VGA==
+X-Forwarded-Encrypted: i=1; AKwUvBzQb421U+AzyayTsDzm/2RHlAlrA5BCEM36gJd0j/mWMiAzQvGaxANxRmNdd/uOKSd0Zfw4ZvL/gm7B@vger.kernel.org
+X-Gm-Message-State: AFuF++ka4/8PNO/YxdMbZwM5o8/y/wEcIbHgLhaaxU073lA2dw7MlfJI
+	lWTP3dF+FFFp3fn9CkVMYF8ssPjWrjJFW8r4Sep39HFSDKCzqQe9gUB7dv3A/LGgob0=
+X-Gm-Gg: AYBFou3JB5vlQMAeqGZKYIxryOjfa0cNRCWRgHtwUeQ6Ult9bM/JK8wunyLXCRIv4Pc
+	ksrVKbIQkXOGxaHk6tNEqmo/12S3r+RrXYDvtsUHY0pNjSrlCCeztbutgxsote2o5/02QxdlSV1
+	zXarNlbEG/t56LFKarN8H9dlKIHUCGrfq+mieAsDkPuQX85HcjhWD0UTNcxLl28lC7TDEy3sUfL
+	IorTjNZo4MCIC6kMDVR8yuzhxiXSwVK8VrANcuiUJnqIkKhVnJNOmLwx+wIo6UNfrX/k7tSlbXc
+	E+y701toSxqMt8f4LVBXavXgQEqWPrhObRH7+s0ualZEFLoCfFu/1cfSHCDYy/4G6bJhmDNi75o
+	ppZyU2ZdwZdQ+DiFhcje3q1WwrIT+4jE219ixEW1XlhZcej7OSnqZLLLPyiDNgadZY7EFeKr9Dv
+	TbUDn0ERcXd4x9EfZBt5y0NcmvIiO1mVZs92dUDdAD2g5fG+QlFgMkz4LPXd0Mphw6QGy11VsJl
+	A==
+X-Received: by 2002:a05:6830:67e7:b0:7fa:ab72:9df8 with SMTP id 46e09a7af769-803ff4481a3mr4129270a34.16.1789145945784;
+        Fri, 11 Sep 2026 09:59:05 -0700 (PDT)
+Received: from 41049dfc76e5 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-803f59ea4a6sm2818725a34.5.2026.09.11.09.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Sep 2026 09:59:05 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cwvAfuWfb01HRVk2"
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Subject: [REGRESSION] next/master: (build)unused function 'parse_edid_cea'
+ [-Werror,-Wunused-function] in dri...
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Fri, 11 Sep 2026 16:59:04 -0000
+Message-ID: <178914594374.4423.11399857311284391817@kernelci.org>
 
+New build issue found on next/master:
 
---cwvAfuWfb01HRVk2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+unused function 'parse_edid_cea' [-Werror,-Wunused-function] in drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_connector.o (drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_connector.c) [logspec:kbuild,kbuild.compiler.error]
+---
 
-Hi all,
+Log excerpt:
+=====================================================
+/tmp/kci/linux/drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_connector.c:3690:23: error: unused function 'parse_edid_cea' [-Werror,-Wunused-function]
+ 3690 | STATIC_IFN_KUNIT bool parse_edid_cea(struct amdgpu_dm_connector *aconnector,
+      |                       ^~~~~~~~~~~~~~
+1 error generated.
 
-Changes since 20260910:
+=====================================================
 
-The drm tree acquired a conflict with the drm-fixes tree.
+When fixing this issue, please attribute this report according to the
+patch submission rules:
 
-The drm tree lost it's build failure.
+Reported-by: kernelci.org bot <bot@kernelci.org>
+Link: https://lore.kernel.org/all/178914594374.4423.11399857311284391817@kernelci.org/
 
-The amdgpu tree acquired a conflict with the drm-misc,drm-fixes tree.
+For complete logs and details about the environment used, see the issue
+on the KernelCI dashboard:
 
-Non-merge commits (relative to Linus' tree): 5339
- 5513 files changed, 295025 insertions(+), 77962 deletions(-)
+- dashboard: https://d.kernelci.org/i/maestro:2cd0ade6ddcd35907ea4715e9aedcfbb461a8dc5
+- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+- commit HEAD:  68142f986ff04b2b70b31db00f719bf690f64a9a
+- tags: next-20260911
 
-----------------------------------------------------------------------------
+# Builds where the incident occurred:
 
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+## x86_64_defconfig+kselftest+x86-board on (x86_64):
+- compiler: clang-21
+- config: None
+- dashboard: https://d.kernelci.org/build/maestro:6aa4271720239ade90232fa2
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
+#regzbot introduced: f2bfbc3554ca6919484030729424b9dee2942d24..68142f986ff04b2b70b31db00f719bf690f64a9a
+#regzbot link: https://d.kernelci.org/i/maestro:2cd0ade6ddcd35907ea4715e9aedcfbb461a8dc5
 
-Below is a summary of the state of the merge.
+#kernelci issue maestro:2cd0ade6ddcd35907ea4715e9aedcfbb461a8dc5
 
-I am currently merging 427 trees (counting Linus' and 132 trees of bug
-fix patches pending for the current release).
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---cwvAfuWfb01HRVk2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqkJjkACgkQJNaLcl1U
-h9AFwgf7BsbAM9D+TSPdYBQbOiPoMkxeVClFbxmRGJKdC7MfFsbD+lywVa05VJft
-4yuqebxyHse9bM3WsIdKO5jMZ25QOLOyeJRtFHXDj+lSd2PIcIQG5UaUA9LmcqrI
-uUUSybW1WXNhABJCu8wM8RTYR+woTFWI20/CGXXbAV68IRDqGUWgQTwZ8PBvl+tm
-6wZrhce7VcbWhpVTE+KzZjpFXBDbb/s1clC/9px4ZD/f6q5ukWl1bBbn2sYoXDwa
-G+LIPE3aDkEXkb1LK/wEnkYqA5AKDvdkhVargyxkIVPzOjURS/1SCPDKmE2Vz1F6
-pPHkv6VhpM/OCA2flvhKs/heGipP5g==
-=m/jv
------END PGP SIGNATURE-----
-
---cwvAfuWfb01HRVk2--
+Made with love by the KernelCI team - https://kernelci.org
