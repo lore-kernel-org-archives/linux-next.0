@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10D139022A;
-	Fri, 11 Sep 2026 13:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0462F60B2;
+	Fri, 11 Sep 2026 15:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789133155; cv=none; b=alBy8l9OXKL0DBmc1nxBibPyXT1Qpqss1FRqyxH/I8SoJ7eVtRqxc2Twt3JyQ97GZtK5zr+zYOEQfB3kFBRmhVL3Y5t/XtTqFXt2dfKKbLCARuNW9muUlYkpduAps57+9WCbT/R0K7NJCnyILKH7HfplKAoXdnkxLKdOrmXc33U=
+	t=1789139402; cv=none; b=E1pjcOgxpZTovmLGxSwETC2uKV8+q4nPZXrJ3kmnGMk7zYX/miUYzZ2K1XmyXEkznt+dLJ9jd5NVH8tvdpGlwJ1xDVnPuevRdYUO2F4wkdeS0OoqWCJww1cQJRvDbJfXghaoCR5fy0XPim7ueAFVr4RVxCUEzq81sOhJhd3jyiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789133155; c=relaxed/simple;
-	bh=gu7upPOG4hlz/kv5UXXrOclnt8mPjJNMpA4+aXsDh/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lh3at9wJWEE5omXty4eYlsvc+y9vYI6j6lhF3WcLLKZ8C8kCvRaKtyw8oH83AOtPdGIzj7JJMYekMM46xJkHYwV6bEoVjtDsp8j2GMJ58E83DzUnKaODHYSKJi/OHe03LYGg3sXJC6gknEqa5L5n+vzTqEfY2Qjmf/FHE3FZEyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9wskWpp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789139402; c=relaxed/simple;
+	bh=NEbPSZ2t00eU18Z5kxCrMQCqugRoIk0GDnvLDMI8x/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GC0LkJWhBpOmSgc761V8M1j4OxbQyeUwl1vQNmCgfUlA98eHzeSlGIZSswXfUQ1W0QIozlvArvrBKnei6XQzpeCLI48Y3/F2VePPKdon+uxQGeON10y+PVqV2hsIBZI0laBAeOLwmumyuBuAcjiid8BC0EMHK8mE2JVFp1PPp7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMkcoDsT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9wskWpp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54E11F000FF;
-	Fri, 11 Sep 2026 13:25:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMkcoDsT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E151F000FF;
+	Fri, 11 Sep 2026 15:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789133145;
-	bh=2d4r3VHRQmgYBwHRCy8gMha+5LuVm+feNz9NctvM7do=;
-	h=Date:From:To:Cc:Subject;
-	b=B9wskWpprZaGp4xY7b1q1wA07T8lU+xSE3AT+V1FAfdA8coNQYRLjp9IgB6NltbQv
-	 tns/6sNZru4oRYAd5D6y0aQtvfQvcqhyaa2GG31mfmaqjo0owtCBnAtju4wWUfZGAf
-	 mc7rCrxvtM/4mKKO9KoqcMc86dhC2w1b2XUTk/R910z/lAWjq8vxZF4h7Pjz7Vn+F9
-	 6knMWpzquSr5Evn6JJSYcbGcjwdSYmJRz5nUdyD9C85xW/E6QOMX8tURd9IygMIJC7
-	 ew9bIStr8TC7sIn/R8wymz34piVv/mJKj3SfDZRQB6t/u+KlvVVAn30gFuLlwKzorv
-	 MtJG55FCm/WoQ==
-Date: Fri, 11 Sep 2026 14:25:38 +0100
+	s=k20260515; t=1789139400;
+	bh=OZM5g0rSgwoNM6soW2oPcrS1vpn8S3mwVUqbQA7qr34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AMkcoDsThp6Kp6zr/xdcXcsyslcanXAulZRLL33UUkq1kKY8UO5zBKCSooqpUwhT2
+	 KINgu3P/IRe4Tij8ksdF7V0GRVaKGq344q/tw/pr0LZ9Di3/X3f3NC7ZgRmVSKIhGz
+	 jsROJGEMwvuOpxxK7mMxbXPl1OtUMDdOWP8rMcxMIoFpX2YC+cAzA0aDTdgyyWPmIv
+	 VyChy5FgjUbaiaA9I+Oh5kdMMVscMgTfQDhfvO3Nl0xUXdBOyC8PTYYzFYaMbdc3w2
+	 XxlXDH63hSDMP7guUg6SLvu4bBcbnS3XFgHC+wQpf8bJ0U31nS5WG1zjMfRyOGbZqc
+	 4pwshBpJsXesQ==
+Date: Fri, 11 Sep 2026 16:09:53 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Alex Deucher <alexdeucher@gmail.com>
 Cc: Alex Deucher <alexander.deucher@amd.com>,
@@ -52,9 +52,10 @@ Cc: Alex Deucher <alexander.deucher@amd.com>,
 	Tom Chung <chiahsuan.chung@amd.com>,
 	Wenjing Liu <wenjing.liu@amd.com>,
 	YiPeng Chai <YiPeng.Chai@amd.com>
-Subject: linux-next: manual merge of the amdgpu tree with the
+Subject: Re: linux-next: manual merge of the amdgpu tree with the
  drm-misc,drm-fixes tree
-Message-ID: <aqQBUuTVpgnTkQ8k@sirena.org.uk>
+Message-ID: <b727a292-7d88-457f-ad7f-e0149d9777ab@sirena.org.uk>
+References: <aqQBUuTVpgnTkQ8k@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -62,278 +63,370 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WxgIsQnhghkXxs0V"
+	protocol="application/pgp-signature"; boundary="0mf8J3IckdF05zKY"
 Content-Disposition: inline
+In-Reply-To: <aqQBUuTVpgnTkQ8k@sirena.org.uk>
+X-Cookie: Piece of cake!
 
 
---WxgIsQnhghkXxs0V
+--0mf8J3IckdF05zKY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Sep 11, 2026 at 02:25:38PM +0100, Mark Brown wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the amdgpu tree got conflicts in:
+>=20
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.h
+>   drivers/gpu/drm/amd/display/dc/clk_mgr/dcn60/dcn60_clk_mgr.c
 
-Today's linux-next merge of the amdgpu tree got conflicts in:
+*sigh*  This isn't the right fixup in a similar way to what happened
+earlier this week.  In this case it looks like whatever you are doing
+has massively confused git too, there's horrible messes in files that
+didn't show up as needing merge resolutions.  I've done something that
+builds but I'm confident it doesn't work, especially given that it's
+layered on top of the cleanup of the earlier fallout which I'm also
+confident didn't work.
 
-  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.h
-  drivers/gpu/drm/amd/display/dc/clk_mgr/dcn60/dcn60_clk_mgr.c
+Please, could you have a look at your processes so that you are not
+continually introducing noisy conflicts with your own work so that when
+there is an actual conflict like seems to be happening here it's
+actually visible when doing the resolution rather than showing up as
+build failures like this. =20
 
-between commits:
+One thing that would be very helpful if you have a super invasive change
+would be to actively merge up branches that conflict so they're not so
+visible externally, this looks a lot like something we went through the
+entire last release cycle with *huge* conflicts caused by splitting up a
+big file needing to be redone every time either your fixes or new work
+touched that file, when there's a change in a conflict I have to redo
+the whole merge.
 
-  cfdcf5571c310 ("drm/amd/display: Consult MCCS FreeSync cap only if reques=
-ted & supported")
-  87ceb8cba73d0 ("drm/amdgpu: skip the VMID 0 flush for VRAM")
-  7fca7acd60a22 ("drm/amd/display: Honor Broadcast RGB for BT.2020 RGB outp=
-ut")
-  bd4f284df04d7 ("drm/amdgpu: Wire up dmem cgroup reclaim for VRAM manager")
-  f65198b3d0738 ("drm/amd/display: Use HDMI FreeSync range from common EDID=
- parser")
-  ee28f3446dde3 ("drm/amd/display: Clean up FreeSync capability detection")
-  ef2e8220c9644 ("drm/amd/display: Check actual state during commit_tail")
-  730c6d8072d8d ("drm/amd/display: Drop KUnit tests for removed parse_hdmi_=
-amd_vsdb()")
-
-=66rom the drm-misc,drm-fixes tree and commits:
-
-  7ea37c0f06787 ("drm/amd/display: Force FreeSync range minimum on quirky p=
-anels")
-  dd7f86c389aea ("drm/amd/display: Update dcn60 clkmgr interfaces")
-  ab07c95defdd9 ("drm/amd/display: Apply workaround to limit SopCount for n=
-ow")
-  48c4aaeef6219 ("drm/amdgpu/ttm: Make buffer copy source readonly")
-  762e89c63a388 ("drm/amd/display: Guard against empty DCN6 UTM QoS table")
-  b5b05ce478a10 ("drm/amd/display: Rename carried dce clock manager functio=
-ns for dcn10")
-  ecaca20be81ce ("drm/amdgpu: Remove is_idle (trivial cases)")
-  b7146153a6754 ("drm/amdgpu: Add bad page preloading and pre-reservation s=
-upport")
-  e3d5618d4dad3 ("drm/amd/display: Test GPU memory allocation")
-  985c7177f630c ("drm/amd/display: Cover amdgpu_dm_encoder_init")
-  01678168f9d55 ("drm/amd/display: Cover amdgpu_dm_connector_atomic_check")
-  0d3ff9e9bbbc7 ("drm/amd/display: Cover amdgpu_dm_connector_get_modes")
-  889f15060c3da ("drm/amd/display: Cover amdgpu_set_panel_orientation")
-  5113a08a4ba47 ("drm/amd/display: Cover amdgpu_dm_prune_primary_tile_modes=
-")
-  11b7722b8ac69 ("drm/amd/display: Refactor hdmi_frl_status_polling_work fo=
-r Kunit testing")
-  4827661d374b9 ("drm/amd/display: Cover hdmi_frl_status_polling_work")
-  8dade94422319 ("drm/amd/display: Cover amdgpu_dm_create_i2c")
-  2eee94d2e09e4 ("drm/amdgpu: query the reserved info with get_fw_reserved_=
-info")
-  1f47aaf3ff0d8 ("drm/amd/display: Add HDMI 2.1 FreeSync support for AMD VS=
-DB")
-  fa3389c713799 ("drm/amd/display: Add HDMI 2.1 VRR support for HF-VSDB")
-  8982d9555267a ("drm/amd/display: Guard DAL port idle optimizations by ASI=
-C rev")
-  9f915dcc9f1a7 ("drm/amd/display: Test DM atomic private state helpers")
-  c8130c0538f08 ("drm/amd/display: Test affected MST DSC CRTC selection")
-  1903ffbca1b1b ("drm/amd/display: Test cursor commit")
-  b56e334dbd557 ("drm/amd/display: Test vblank event arming")
-  0e956130a2705 ("drm/amd/display: Test page flip interrupt state update")
-  3bc69baf5e153 ("drm/amd/display: Test CRTC memory domain change detection=
-")
-  9885f7d5bd6fb ("drm/amd/display: Test PSR dirty rectangle filling")
-  d0f8af4787d0a ("drm/amd/display: Test plane reset decision")
-  334a9a3bf317e ("drm/amd/display: Test link and sink dump")
-  448defc23908c ("drm/amd/display: Test HDCP update")
-  00eaae7bca217 ("drm/amd/display: Add override capability for UTM table pa=
-rams")
-  094901372adc0 ("drm/amd/display: Dump clock registers in HW init instead =
-of SW init")
-  022236eaa63bb ("drm/amd/display: Honor Broadcast RGB for BT.2020 RGB outp=
-ut")
-  0412b1064a3bd ("drm/amd/display: Cover EDID CEA parsing helpers")
-
-=66rom the amdgpu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-index 016957cac1f29,0e313d7916a4b..0000000000000
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index 774028dd9ff48,c99a84bb040e5..0000000000000
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gp=
+u/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 2db5fd0e72d16..0c19188df3755 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2941,7 +2941,7 @@ STATIC_IFN_KUNIT bool modereset_required(struct drm_c=
+rtc_state *crtc_state)
+ EXPORT_IF_KUNIT(modereset_required);
+=20
+ STATIC_IFN_KUNIT int
+-fill_plane_color_attributes(struct drm_atomic_commit *state,
++fill_plane_color_attributes(const struct drm_atomic_commit *state,
+ 			    const struct drm_plane_state *plane_state,
+ 			    const enum surface_pixel_format format,
+ 			    enum dc_color_space *color_space)
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gp=
+u/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+index 27753bf50b706..256d2c0e5fba3 100644
 --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
 +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c
-index e2e76e56edb5b,676046ea2da1d..0000000000000
+@@ -1242,7 +1242,8 @@ bool update_planes_and_stream_adapter(struct dc *dc,
+ 				      struct dc_stream_state *stream,
+ 				      struct dc_stream_update *stream_update,
+ 				      struct dc_surface_update *array_of_surface_update);
+-int fill_plane_color_attributes(const struct drm_plane_state *plane_state,
++int fill_plane_color_attributes(const struct drm_atomic_commit *state,
++				const struct drm_plane_state *plane_state,
+ 				const enum surface_pixel_format format,
+ 				enum dc_color_space *color_space);
+ bool modereset_required(struct drm_crtc_state *crtc_state);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c b/=
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c
+index d3d362a99674e..d76ebf145dfc3 100644
 --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c
 +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c
-@@@ -3717,43 -3902,95 +3872,111 @@@ void amdgpu_dm_update_freesync_caps(str
-  	     connector->display_info.monitor_range.max_vfreq =3D=3D 0))
-  		parse_edid_displayid_vrr(connector, edid);
- =20
- -	if (edid && (sink->sink_signal =3D=3D SIGNAL_TYPE_DISPLAY_PORT ||
- -		     sink->sink_signal =3D=3D SIGNAL_TYPE_EDP)) {
- -		if (amdgpu_dm_connector->dc_link &&
- -		    amdgpu_dm_connector->dc_link->dpcd_caps.allow_invalid_MSA_timing_pa=
-ram) {
- -			amdgpu_dm_connector->min_vfreq =3D connector->display_info.monitor_ran=
-ge.min_vfreq;
- -			amdgpu_dm_connector->max_vfreq =3D connector->display_info.monitor_ran=
-ge.max_vfreq;
- -			if (amdgpu_dm_connector->max_vfreq - amdgpu_dm_connector->min_vfreq > =
-10)
- -				freesync_capable =3D true;
- -		}
- +	has_vsdb =3D get_amd_vsdb(amdgpu_dm_connector, &vsdb_info) !=3D 0;
- =20
- -		get_amd_vsdb(amdgpu_dm_connector, &vsdb_info);
- +	if (has_vsdb) {
- +		amdgpu_dm_connector->vsdb_info =3D vsdb_info;
- +
- +		/* copy refresh rate info as long as VSDB advertises FreeSync */
- +		if (vsdb_info.freesync_supported) {
- +			amdgpu_dm_connector->min_vfreq =3D vsdb_info.min_refresh_rate_hz;
- +			amdgpu_dm_connector->max_vfreq =3D vsdb_info.max_refresh_rate_hz;
- +
- +			connector->display_info.monitor_range.min_vfreq =3D
- +				vsdb_info.min_refresh_rate_hz;
- +			connector->display_info.monitor_range.max_vfreq =3D
- +				vsdb_info.max_refresh_rate_hz;
- +		}
- +	} else {
- +		/* fall back to the base EDID range when there is no VSDB */
- +		amdgpu_dm_connector->min_vfreq =3D connector->display_info.monitor_rang=
-e.min_vfreq;
- +		amdgpu_dm_connector->max_vfreq =3D connector->display_info.monitor_rang=
-e.max_vfreq;
- +	}
- +
- +	if (sink->sink_signal =3D=3D SIGNAL_TYPE_DISPLAY_PORT ||
- +	    sink->sink_signal =3D=3D SIGNAL_TYPE_EDP) {
- +		if (amdgpu_dm_connector->dc_link &&
- +		    amdgpu_dm_connector->dc_link->dpcd_caps.allow_invalid_MSA_timing_pa=
-ram &&
- +		    amdgpu_dm_connector->max_vfreq - amdgpu_dm_connector->min_vfreq > 1=
-0)
- +			freesync_capable =3D true;
- =20
-  		if (vsdb_info.replay_mode) {
- -			amdgpu_dm_connector->vsdb_info.replay_mode =3D vsdb_info.replay_mode;
- -			amdgpu_dm_connector->vsdb_info.amd_vsdb_version =3D vsdb_info.amd_vsdb=
-_version;
-  			amdgpu_dm_connector->as_type =3D ADAPTIVE_SYNC_TYPE_EDP;
-  		}
- +	} else if (has_vsdb && sink->sink_signal =3D=3D SIGNAL_TYPE_HDMI_TYPE_A)=
+@@ -3666,42 +3666,6 @@ STATIC_IFN_KUNIT bool parse_edid_cea_dmcu(struct amd=
+gpu_display_manager *dm,
+ 		u8 *edid_ext, int len,
+ 		struct amdgpu_hdmi_vsdb_info *vsdb_info)
  {
- +		sink->edid_caps.freesync_vcp_code =3D vsdb_info.freesync_mccs_vcp_code;
- =20
-- 		if (vsdb_info.freesync_supported &&
-- 		    amdgpu_dm_connector->max_vfreq - amdgpu_dm_connector->min_vfreq > 1=
-0)
-- 			freesync_capable =3D true;
-+ 	} else if (drm_edid &&
-+ 		  (sink->sink_signal =3D=3D SIGNAL_TYPE_HDMI_TYPE_A ||
-+ 		   sink->sink_signal =3D=3D SIGNAL_TYPE_HDMI_FRL)) {
-+ 		i =3D parse_hdmi_amd_vsdb(amdgpu_dm_connector, edid, &vsdb_info);
-+ 		if (i >=3D 0) {
-+ 			amdgpu_dm_connector->vsdb_info =3D vsdb_info;
-+ 			sink->edid_caps.freesync_vcp_code =3D vsdb_info.freesync_mccs_vcp_code;
-+=20
-+ 			if (vsdb_info.freesync_supported) {
-+ 				amdgpu_dm_connector->min_vfreq =3D vsdb_info.min_refresh_rate_hz;
-+ 				amdgpu_dm_connector->max_vfreq =3D vsdb_info.max_refresh_rate_hz;
-+ 				if (amdgpu_dm_connector->max_vfreq - amdgpu_dm_connector->min_vfreq >=
- 10)
-+ 					freesync_capable =3D true;
-+=20
-+ 				connector->display_info.monitor_range.min_vfreq =3D vsdb_info.min_ref=
-resh_rate_hz;
-+ 				connector->display_info.monitor_range.max_vfreq =3D vsdb_info.max_ref=
-resh_rate_hz;
-+ 			}
-+ 		}
-+=20
-+ 		drm_dbg_driver(adev_to_drm(adev),
-+ 			       "VRR: amd_vsdb i=3D%d fs_sup=3D%d min=3D%d max=3D%d fs_capable=
-=3D%d\n",
-+ 			       i, vsdb_info.freesync_supported,
-+ 			       vsdb_info.min_refresh_rate_hz,
-+ 			       vsdb_info.max_refresh_rate_hz, freesync_capable);
-+=20
-+ 		/*
-+ 		 * If AMD VSDB didn't provide a valid FreeSync range, fall back to
-+ 		 * the HDMI 2.1 VRR capability parsed from the HF-VSDB.
-+ 		 */
-+ 		if (!freesync_capable && connector->display_info.hdmi.vrr_cap.supported=
-) {
-+ 			struct drm_hdmi_vrr_cap *vrr_cap =3D
-+ 				&connector->display_info.hdmi.vrr_cap;
-+=20
-+ 			drm_dbg_driver(adev_to_drm(adev),
-+ 				       "VRR: HF-VSDB fallback: hdmi_vrr=3D1 vrr_cap[sup=3D%d min=3D%d=
- max=3D%d] mrange_max=3D%d\n",
-+ 				       vrr_cap->supported, vrr_cap->vrr_min, vrr_cap->vrr_max,
-+ 				       connector->display_info.monitor_range.max_vfreq);
-+=20
-+ 			if (vrr_cap->supported && vrr_cap->vrr_min > 0) {
-+ 				amdgpu_dm_connector->min_vfreq =3D vrr_cap->vrr_min;
-+ 				amdgpu_dm_connector->max_vfreq =3D vrr_cap->vrr_max ?
-+ 					vrr_cap->vrr_max :
-+ 					connector->display_info.monitor_range.max_vfreq;
-+=20
-+ 				/*
-+ 				 * VRRMAX =3D 0 in the HF-VSDB means "up to the Base
-+ 				 * Refresh Rate". If the EDID also did not provide a
-+ 				 * monitor range max, fall back to the Base Refresh
-+ 				 * Rate (the highest refresh rate of the preferred
-+ 				 * timing) so a valid VRR range is still reported to
-+ 				 * userspace.
-+ 				 */
-+ 				if (!amdgpu_dm_connector->max_vfreq) {
-+ 					struct drm_display_mode *brr_mode =3D
-+ 						amdgpu_dm_get_highest_refresh_rate_mode(amdgpu_dm_connector, true);
-+=20
-+ 					if (brr_mode)
-+ 						amdgpu_dm_connector->max_vfreq =3D
-+ 							drm_mode_vrefresh(brr_mode);
-+ 				}
-+=20
-+ 				if (amdgpu_dm_connector->max_vfreq -
-+ 				    amdgpu_dm_connector->min_vfreq > 10)
-+ 					freesync_capable =3D true;
-+=20
-+ 				connector->display_info.monitor_range.min_vfreq =3D
-+ 					amdgpu_dm_connector->min_vfreq;
-+ 				connector->display_info.monitor_range.max_vfreq =3D
-+ 					amdgpu_dm_connector->max_vfreq;
-+ 			}
-+ 		}
-  	}
- =20
-  	if (amdgpu_dm_connector->dc_link)
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.h
-index ce900844602e5,e42a0d53b549b..0000000000000
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.h
-diff --cc drivers/gpu/drm/amd/display/dc/clk_mgr/dcn60/dcn60_clk_mgr.c
-index 7dd88d90eba2f,138afa7afc861..0000000000000
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn60/dcn60_clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn60/dcn60_clk_mgr.c
+-	int i;
+-
+-	/* send extension block to DMCU for parsing */
+-	for (i =3D 0; i < len; i +=3D 8) {
+-		bool res;
+-		int offset;
+-
+-		/* send 8 bytes a time */
+-		if (!dc_edid_parser_send_cea(dm->dc, i, len, &edid_ext[i], 8))
+-			return false;
+-
+-		if (i+8 =3D=3D len) {
+-			/* EDID block sent completed, expect result */
+-			int version, min_rate, max_rate;
+-
+-			res =3D dc_edid_parser_recv_amd_vsdb(dm->dc, &version, &min_rate, &max_=
+rate);
+-			if (res) {
+-				/* amd vsdb found */
+-				vsdb_info->freesync_supported =3D 1;
+-				vsdb_info->amd_vsdb_version =3D version;
+-				vsdb_info->min_refresh_rate_hz =3D min_rate;
+-				vsdb_info->max_refresh_rate_hz =3D max_rate;
+-				/* Not enabled on DMCU*/
+-				vsdb_info->freesync_mccs_vcp_code =3D 0;
+-				return true;
+-			}
+-			/* not amd vsdb */
+-			return false;
+-		}
+-
+-		/* check for ack*/
+-		res =3D dc_edid_parser_recv_cea_ack(dm->dc, &offset);
+-		if (!res)
+-			return false;
+-	}
+-
+ 	return false;
+ }
+ EXPORT_IF_KUNIT(parse_edid_cea_dmcu);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_connecto=
+r_test.c b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_connector_=
+test.c
+index 8107be27d324e..19ead11b5e73c 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_connector_test.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_connector_test.c
+@@ -6140,57 +6140,16 @@ static bool dm_test_dmcu_is_init(struct dmcu *dmcu)
+ 	return true;
+ }
+=20
+-static bool dm_test_dmcu_send_cea(struct dmcu *dmcu, int offset,
+-				  int total_length, u8 *data, int length)
+-{
+-	return true;
+-}
+-
+-static bool dm_test_dmcu_recv_ack_ok(struct dmcu *dmcu, int *offset)
+-{
+-	*offset =3D 0;
+-	return true;
+-}
+-
+-static bool dm_test_dmcu_recv_ack_fail(struct dmcu *dmcu, int *offset)
+-{
+-	return false;
+-}
+-
+-static bool dm_test_dmcu_recv_vsdb_found(struct dmcu *dmcu, int *version,
+-					 int *min_frame_rate, int *max_frame_rate)
+-{
+-	*version =3D 2;
+-	*min_frame_rate =3D 24;
+-	*max_frame_rate =3D 60;
+-	return true;
+-}
+-
+-static bool dm_test_dmcu_recv_vsdb_none(struct dmcu *dmcu, int *version,
+-					int *min_frame_rate, int *max_frame_rate)
+-{
+-	return false;
+-}
+-
+ static const struct dmcu_funcs dm_test_dmcu_funcs_vsdb =3D {
+ 	.is_dmcu_initialized =3D dm_test_dmcu_is_init,
+-	.send_edid_cea =3D dm_test_dmcu_send_cea,
+-	.recv_edid_cea_ack =3D dm_test_dmcu_recv_ack_ok,
+-	.recv_amd_vsdb =3D dm_test_dmcu_recv_vsdb_found,
+ };
+=20
+ static const struct dmcu_funcs dm_test_dmcu_funcs_novsdb =3D {
+ 	.is_dmcu_initialized =3D dm_test_dmcu_is_init,
+-	.send_edid_cea =3D dm_test_dmcu_send_cea,
+-	.recv_edid_cea_ack =3D dm_test_dmcu_recv_ack_ok,
+-	.recv_amd_vsdb =3D dm_test_dmcu_recv_vsdb_none,
+ };
+=20
+ static const struct dmcu_funcs dm_test_dmcu_funcs_ackfail =3D {
+ 	.is_dmcu_initialized =3D dm_test_dmcu_is_init,
+-	.send_edid_cea =3D dm_test_dmcu_send_cea,
+-	.recv_edid_cea_ack =3D dm_test_dmcu_recv_ack_fail,
+-	.recv_amd_vsdb =3D dm_test_dmcu_recv_vsdb_none,
+ };
+=20
+ /*
+@@ -6295,37 +6254,6 @@ static void dm_test_parse_cea_dmcu_empty(struct kuni=
+t *test)
+  */
+ static void dm_test_parse_cea_dmcu_no_dmcu(struct kunit *test)
+ {
+-	struct amdgpu_display_manager *dm =3D dm_test_alloc_dm_dmcu(test, NULL);
+-	struct amdgpu_hdmi_vsdb_info vsdb =3D {0};
+-	u8 ext[DMUB_EDID_CEA_DATA_CHUNK_BYTES] =3D {0};
+-	bool ret;
+-
+-	/* res_pool->dmcu is NULL, so the CEA send returns false. */
+-	ret =3D parse_edid_cea_dmcu(dm, ext, DMUB_EDID_CEA_DATA_CHUNK_BYTES,
+-				  &vsdb);
+-	KUNIT_EXPECT_FALSE(test, ret);
+-}
+-
+-/**
+- * dm_test_parse_cea_dmcu_vsdb_found - Test the DMCU reports an AMD VSDB
+- * @test: KUnit test context
+- */
+-static void dm_test_parse_cea_dmcu_vsdb_found(struct kunit *test)
+-{
+-	struct amdgpu_display_manager *dm =3D
+-		dm_test_alloc_dm_dmcu(test, &dm_test_dmcu_funcs_vsdb);
+-	struct amdgpu_hdmi_vsdb_info vsdb =3D {0};
+-	u8 ext[DMUB_EDID_CEA_DATA_CHUNK_BYTES] =3D {0};
+-	bool ret;
+-
+-	ret =3D parse_edid_cea_dmcu(dm, ext, DMUB_EDID_CEA_DATA_CHUNK_BYTES,
+-				  &vsdb);
+-	KUNIT_EXPECT_TRUE(test, ret);
+-	KUNIT_EXPECT_TRUE(test, vsdb.freesync_supported);
+-	KUNIT_EXPECT_EQ(test, vsdb.amd_vsdb_version, 2);
+-	KUNIT_EXPECT_EQ(test, vsdb.min_refresh_rate_hz, 24);
+-	KUNIT_EXPECT_EQ(test, vsdb.max_refresh_rate_hz, 60);
+-	KUNIT_EXPECT_EQ(test, vsdb.freesync_mccs_vcp_code, 0);
+ }
+=20
+ /**
+@@ -9159,7 +9087,6 @@ static struct kunit_case amdgpu_dm_connector_tests[] =
+=3D {
+ 	KUNIT_CASE(dm_test_send_cea_dmub_unavailable),
+ 	KUNIT_CASE(dm_test_parse_cea_dmcu_empty),
+ 	KUNIT_CASE(dm_test_parse_cea_dmcu_no_dmcu),
+-	KUNIT_CASE(dm_test_parse_cea_dmcu_vsdb_found),
+ 	KUNIT_CASE(dm_test_parse_cea_dmcu_vsdb_none),
+ 	KUNIT_CASE(dm_test_parse_cea_dmcu_multi_chunk),
+ 	KUNIT_CASE(dm_test_parse_cea_dmcu_ack_fail),
+diff --git a/drivers/gpu/drm/amd/display/dmub/inc/dmub_cmd.h b/drivers/gpu/=
+drm/amd/display/dmub/inc/dmub_cmd.h
+index 45385f9eb8932..58826291827b1 100644
+--- a/drivers/gpu/drm/amd/display/dmub/inc/dmub_cmd.h
++++ b/drivers/gpu/drm/amd/display/dmub/inc/dmub_cmd.h
+@@ -1957,6 +1957,10 @@ enum dmub_cmd_type {
+ 	 * Command type used for interfacing with DPIA.
+ 	 */
+ 	DMUB_CMD__DPIA =3D 77,
++        /**
++         * Command type used for EDID CEA parsing
++         */
++        DMUB_CMD__EDID_CEA =3D 79,
+ 	/**
+ 	 * Command type used for getting usbc cable ID
+ 	 */
+@@ -6926,6 +6930,72 @@ struct dmub_rb_cmd_transmitter_set_phy_fsm {
+ 	struct dmub_rb_cmd_transmitter_set_phy_fsm_data data; /**< payload */
+ };
+=20
++/**
++ * Maximum number of bytes a chunk sent to DMUB for parsing
++ */
++#define DMUB_EDID_CEA_DATA_CHUNK_BYTES 8
++
++/**
++ *  Represent a chunk of CEA blocks sent to DMUB for parsing
++ */
++struct dmub_cmd_send_edid_cea {
++        uint16_t offset;        /**< offset into the CEA block */
++        uint8_t length; /**< number of bytes in payload to copy as part of=
+ CEA block */
++        uint16_t cea_total_length;  /**< total length of the CEA block */
++        uint8_t payload[DMUB_EDID_CEA_DATA_CHUNK_BYTES]; /**< data chunk o=
+f the CEA block */
++        uint8_t pad[3]; /**< padding and for future expansion */
++};
++
++/**
++ * Result of VSDB parsing from CEA block
++ */
++struct dmub_cmd_edid_cea_amd_vsdb {
++        uint8_t vsdb_found;             /**< 1 if parsing has found valid =
+AMD VS
++DB */
++        uint8_t freesync_supported;     /**< 1 if Freesync is supported */
++        uint16_t amd_vsdb_version;      /**< AMD VSDB version */
++        uint16_t min_frame_rate;        /**< Maximum frame rate */
++        uint16_t max_frame_rate;        /**< Minimum frame rate */
++        uint8_t freesync_mccs_vcp_code; /**< Freesync MCCS VCP code */
++};
++
++/**
++ * Result of sending a CEA chunk
++ */
++struct dmub_cmd_edid_cea_ack {
++        uint16_t offset;        /**< offset of the chunk into the CEA bloc=
+k */
++        uint8_t success;        /**< 1 if this sending of chunk succeeded =
+*/
++        uint8_t pad;            /**< padding and for future expansion */
++};
++
++/**
++ * Specify whether the result is an ACK/NACK or the parsing has finished
++ */
++enum dmub_cmd_edid_cea_reply_type {
++        DMUB_CMD__EDID_CEA_AMD_VSDB     =3D 1, /**< VSDB parsing has finis=
+hed */
++        DMUB_CMD__EDID_CEA_ACK          =3D 2, /**< acknowledges the CEA s=
+ending i
++s OK or failing */
++};
++
++/**
++ * Definition of a DMUB_CMD__EDID_CEA command.
++ */
++struct dmub_rb_cmd_edid_cea {
++        struct dmub_cmd_header header;  /**< Command header */
++        union dmub_cmd_edid_cea_data {
++                struct dmub_cmd_send_edid_cea input; /**< input to send CE=
+A chun
++ks */
++                struct dmub_cmd_edid_cea_output { /**< output with results=
+ */
++                        uint8_t type;   /**< dmub_cmd_edid_cea_reply_type =
+*/
++                        union {
++                                struct dmub_cmd_edid_cea_amd_vsdb amd_vsdb;
++                                struct dmub_cmd_edid_cea_ack ack;
++                        };
++                } output;       /**< output to retrieve ACK/NACK or VSDB p=
+arsing results */
++        } data; /**< Command data */
++
++};
++
+ /**
+  * struct dmub_cmd_cable_id_input - Defines the input of DMUB_CMD_GET_USBC=
+_CABLE_ID command.
+  */
+@@ -7797,6 +7867,12 @@ union dmub_rb_cmd {
+ 	 * Definition of a DMUB_CMD__DPIA_SET_TPS_NOTIFICATION command.
+ 	 */
+ 	struct dmub_rb_cmd_set_tps_notification set_tps_notification;
++
++        /**
++         * Definition of a DMUB_CMD__EDID_CEA command.
++         */
++        struct dmub_rb_cmd_edid_cea edid_cea;
++
+ 	/**
+ 	 * Definition of a DMUB_CMD_GET_USBC_CABLE_ID command.
+ 	 */
 
---WxgIsQnhghkXxs0V
+--0mf8J3IckdF05zKY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqkAVEACgkQJNaLcl1U
-h9B18wf+O4BnhT7H/aO8cuSri6Ola9XQp3+sbtNbQwxMjgUJHj3IXJAu4Xs0vYn7
-WKsSrqxlr0dUYBcPbSYJzDWtBOOolWDS0CMId3au7CImqenyiqFWt5UI7vAhp4l+
-Qs4vUjeG1KAKnbZA/p9/bGKchb3PnvivT4bn5HiMRbsIcWhtTbfp0gNfuUS8BHGz
-zmkT3cJ5dZq5m0X7fv4i7KMq9VObxVILkWwFnCFC+cR5hlaFdicn1ZCa4FIuQLID
-nzUYOUXiyj9SkStsYASGhDbpN7p6Q4zwHHcggfxw38B3XXVPLeSqP4eZhz0TYQWg
-R3LP3ic7ZxCEPoIwHq7aNndi+VklwQ==
-=VuTo
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqkGcAACgkQJNaLcl1U
+h9CW6gf9GHms+yasklG7FQQzdJducRyDgb1f4HH7nxpZgyUbhJGiDHTkEKvXCPwU
+e0mWbUHFzq8DJg1ZwUKMaf+exp7bmMX7bRDUqMWLKxbRZIx0+Gq8yW/PFOc4/GSc
+jwFwOCbX9nJT7Kcro+jguD7l/P56SSFHxU4LCNtjXvfkRcCbNznzpSk3D11yVedh
+atA2pha5swCG2TGPgf/KKWkg+ISZgbL2p9mfo1LtvueqkrVRjk0DAuhuZzTZtlKi
+lI1vbxaQtJN1x0WHJmaapThL4ONZ3/onawq30qhtgP88ZrmMlmM06K0Bp0VYF7xB
++OHej55NVBSqZ7uijuiHD3QIGt1Lkg==
+=BtXi
 -----END PGP SIGNATURE-----
 
---WxgIsQnhghkXxs0V--
+--0mf8J3IckdF05zKY--
