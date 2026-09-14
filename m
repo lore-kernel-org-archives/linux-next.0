@@ -1,140 +1,119 @@
-Received: from mail-pz2-f37.google.com (mail-pz2-f37.google.com [74.125.228.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DA149B5C1
-	for <linux-next@vger.kernel.org>; Mon, 14 Sep 2026 17:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFD6496D5E;
+	Mon, 14 Sep 2026 19:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789408746; cv=none; b=WjyfO6t6G8nncDqLox8EROOXEzVt/yBogZ+McxMI4eakJhrhAim0CGz7JDTEcUZXwlqshBSVNIPAEQdsoZvcgsB6me93qhMFMnNecjt9GXwxVfsWAuF+gpx47Z0xZ2OFGEhBuO7WaKMFx5XYuW2uWOU1+/Mg2gshtxIl5IEVPHc=
+	t=1789415624; cv=none; b=JIHllI4e0jZMQCzEpwpdQzitXEf4qiAFq/CiUyVIdjlDo8pl576Kw1XmelJklvTQUb5uEHSOeyBKZ6HTX/W1sglK0vklw8BeiNKLW1gyJNcG7OdUSSh8F/oXmKYUrWEvVYIdsTX1ahcZC/qEYIPl/0fMP1j+IR3EOYugrzaeoMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789408746; c=relaxed/simple;
-	bh=WzleuQKnB3OB7pki3mFoHDobbeyqCiA/ye/oWvO1CbU=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=QqSw/AYG1GRKDuu65s9CEMypMVh8r+wLNmoFHMAS6GVJN1cMpWAiL0cPPYkuULy+XPd5q+VSlrVl6cFzcowDnmG5JADH/9Xla6/dpG7oNa3JU8PRpGnNQIfERIKL5LlRrA0wnyvVoSLHazX7z36i9g+Qzmt+OitVj9LjVvh74K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=g9kanPk9; arc=none smtp.client-ip=74.125.228.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1789415624; c=relaxed/simple;
+	bh=E2pDS5GaSNUQXDT27nNSw2vgkOr9Ijzb9Rp2UNGR1Ds=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IXwMZrNFb+C/xGg3N0d363FJp5OKa2FJto3CKihiTNztr+fwGginilTxlGXK4TzNdtkpUBs0FZpW+rop3zxss5LTfxirOkOeEmuhbngrMeF5xOBwxK5YaSxC6nbLoQkKNW0fy28cdpfQ93klSERNQhjby0h9BjTYwqCyKDX3M3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SXx7rO6q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X1NEAzsG; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="g9kanPk9"
-Received: by mail-pz2-f37.google.com with SMTP id 41be03b00d2f7-cc4bdf8acd6so1707382a12.1
-        for <linux-next@vger.kernel.org>; Mon, 14 Sep 2026 10:59:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1789408744; x=1790013544; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=oZap9/ymhT7fY0nhpoaZDLWxf8RD3Ap+R6zOXM0ESLg=;
-        b=g9kanPk9Kc8smNci68mhWOEfKEkS1wzx6E2WsjSoshMgpXnmgR/4cfYUDyc8xGbmwg
-         n0PzVQKDLOh8F8oyRjdkcAWjAhRgGk8/rAiBxBN7nynmIKpDPwUkBOisHWJOxQmDXlwS
-         fP4T5cWFm0YZ+QtrgexNJSYsSpFxBg52g+GFXw7cMfNsseBsXNs8xK3g6snDeUTUuNPT
-         HXS3NOFDAYTVttur14TQRyGazmmNGDhTYfvJTxKPAw8ggsC/Hc8MrNuSaK0ONwgrNhAe
-         YD2aMZIGeMJ5Oc/N/xKqCB5g7YFq+ONtPgwRvBLxS1WI7OSN8GaLRBW2BiYGX4cIBkN2
-         d6yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789408744; x=1790013544;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oZap9/ymhT7fY0nhpoaZDLWxf8RD3Ap+R6zOXM0ESLg=;
-        b=Mg5Sun0ssfzBPyIFCtrZbAube9pjI9dsXpSk8ok59xgCznHgpDWY4pCHIwVj6iqbfD
-         Rar4/lE6eh0g4AlPtBoLKhKRE1qyks1OM6gM0INu6XC/Y90YaPm5th8Wv+5rPptAFX4v
-         /PuxY62wuh5swdTVH7uFrwIExcY2F+v5/Ulk9AtkysWfzf8m2jDIexZI2uGB7Qn4IM95
-         nuzP8mDxSnYZ549Yz/8nd/7BT4y/+W000RbXvUPKSEuWFmKkFZpJq/8uujymO3+CSIBk
-         LaGazzd31Ik2NAm1mRbchg2iiVhH0dvmoGa5qRzS/OOgYfaDRizwf+5cOnQs3g7InMhk
-         EixQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxWWgiLi7pocrhVHO/fBoR4L3nJxdmtC+1EwGZZCiqAiXBV+9bqNTpOroeKXPXvM5kGfVl6pXVNAifl@vger.kernel.org
-X-Gm-Message-State: AFuF++nLG1RYl2cVgqGbiFyfrjLLJSbUC4qQCiycTzcRFbJD4SClqe/d
-	qByD4kXMHTBVm/MmQtEx3FQK9hOotHJsvfYalrslnXNhSgccyuSvtqnd3wkiAiqD0Y6Ssq8q/PX
-	DsoBl
-X-Gm-Gg: AYBFou2X14HmzDyxNLL38MbXFbqqKtX0RdjQboGpWQv3lzV50rGPmde9GvinTTyeeP6
-	7MmOBpRsHz8TPLTOayHNvkKRHppm6OXDcy55TlJG4DFNHLZarlHXNsrK73EbeJft3LMtx9zb+FV
-	qstnUhILHHsAn4VIgdO8iAHowpcV48+w66m5CKvLia0hmNbJp9I43YrP4jNbOrQxiNE7Is378LW
-	xWe8zzb/A3tWQt8ZARtZ9FsBFN3XChJsE7GaxefAapIigEq/Yeci4PL1DJayMGVl7Yb8JmRORHt
-	sKOs4lcvaQBsx049tDJrt3VLKthM9VgteCg9jQWaWaI68c5mqXAyAkYNxlFaTnlLuRRVKOqiMpY
-	21RhByv4IOrTivxw45XVnvjcajNVjJ4OH8od5hBlARgBjKCfxwb+fwn36AhZXIjiWg6j8uetzZY
-	UGYoAF9RdFpRAYgIxAM05oEghpmZIfDf9aJxgutw+iNWRRshEm4LEjGZRkrpHTgY8=
-X-Received: by 2002:a05:6a20:4323:b0:3d2:df:1854 with SMTP id adf61e73a8af0-3db4044754dmr6642371637.6.1789408743790;
-        Mon, 14 Sep 2026 10:59:03 -0700 (PDT)
-Received: from 41049dfc76e5 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33ba4e9a3casm26677436eec.12.2026.09.14.10.59.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 10:59:03 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SXx7rO6q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X1NEAzsG"
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfout.stl.internal (Postfix) with ESMTP id 080071D00086;
+	Mon, 14 Sep 2026 15:53:37 -0400 (EDT)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Mon, 14 Sep 2026 15:53:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1789415617;
+	 x=1789502017; bh=opaCvCnTuRSbqkN6v+2aHUWMlgp5xCP12xi1paNZ7Uc=; b=
+	SXx7rO6qIQgZ8O0wzKw8K9aaUJzr0t0oZlP92QFKdwqH3sy4D66HQ5imYyVjHimY
+	4Q5NjIAlfuADMRh2NQgR2csXnodBozzW0fTiaCLDIioVEYt0AynT2QvdNQq97AQR
+	y0Fqw4ykudDpB2jOOm/V1N6yVJOnWAiOqGK/XIMh9UUz+1EAXuyW9v03jq4XgAP2
+	2mHLYxRRGQ6FUtBt0LyVH51Z/qUhqj39vHKlxC5B7YOLk75UVrBPAxOIs+nntDBs
+	yPIiJ+Tp1tHR0N9v9NAq8cQCqeoI0v3PVlyOkf3YKoXLiGCfViVquCUeZtF2MeTg
+	SnYRdmgdCLB/bAAivP9mAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789415617; x=
+	1789502017; bh=opaCvCnTuRSbqkN6v+2aHUWMlgp5xCP12xi1paNZ7Uc=; b=X
+	1NEAzsG1IAZML9OZDVCbJTAd6PZiIScmF6EQz6HoillENg5x9iKA5PA6e+tdk3Bp
+	PypF9f1EZcvBnWTdclhq8+hMC5rtFMrz5P55YboUD74+Dts/ZWZbghSrXr/6DGr9
+	sJy/ZeJw3Yg/UnkAN0KUvIyMSAy6M13rEQ3njzgcsaPCgZTEtXTrpY3R5hY2d4H1
+	yHRsrNqP87qcOIXEmi1ZzBFdrzlJ0EXacUnBUUalwKvVeiVG27oNX8zTdVlYV+5G
+	BPeWDeVFPDAVKmV5Mub2cFtGdOe3sAibLjPgx0vv7otMZsLrepsonn6oX+niUPf4
+	exLakNAWHLwCmxMhJ3yAQ==
+X-ME-Sender: <xms:v1CoalVLJjEK375I8AcdnZVD6OC4H5j7V-eX8kfLza3iqkRtZodU7A>
+    <xme:v1CoagZF51gy7ynRbWZHjM4_cbvfzlRTOX3Ufyhx5H0lW2eAC7W9sRDxnpYMT7TjZ
+    EITYBhNXSKk7gf-EHLxGaKADUZCwhe04Pu6M76Fq5SAEKIo0SBmXfpW>
+X-ME-Proxy-Cause: dmFkZTFJURTY62Q7SjjrdQBiZ9cK/QsrasdOpZ0C4CYJUiQ8fvYo5xjoK5R5hMDCs5S+mQ
+    4mAz41kXkBUv1l6Ddaa2CyFUStIFEeH1kJgJXUZXCb/OB1VNX7p65ppX+f9DVlMONBQ+tu
+    flzVfJFJIHs740LfRcASx4VtYsjrCfL7Yl2YOLhpICiTIU08KSUD9RAKbSiL9fp/32SgGh
+    zL8SHSRsUNlTljWE6f7j1yPE5YJKIELrlXKP7RmGb7P/YaXFU6WwPdj7YOZvVlTjNslSVf
+    1jO4D+MTMvJbB1ZkG02tSEDwMweIH90UaaDct50l4nhV9wCsh1xG1hk0Zb2+II+9L0vufl
+    /hj0Qtgo1YMFrIf5mNeAH33MAuc4kuVjBL48lbyPzQb19vUkqkFHuhwPEW0et0VPrFaMYP
+    lt+eg6kbYVfci/rFwAh6Q435bhox3yfM+k3d3/jTl87/6UmEDI7gsu3slWu63QTCLUqz7q
+    2sNgGQ1lVHJihAlaKG75Vb0SiR2INSxfvffKh7MLcSm6qTsE1aQ7YFef7KZR3UOjfFAHXA
+    gLmHBrv6KVVDdSTHFydHLqzsfVRrLIEXmn9q/0ltU1HAvx4ZAUMQgfY7WJCm6FaVOvRuPI
+    BaIVzh0cMBzjPiaRTNsl+4dappa2Dvu8HCyCw6xjfju23e4Eznp2uABiRklA
+X-ME-Proxy: <xmx:wFCoanC0J5EtlPbP4_25RowBHhyM5I-veJHZduujJNKiIspCFs9sPw>
+    <xmx:wFCoakZacQzLrx6V3EqUzdeTs0SdXOM4s7_Kd6vzCW-XHks_MTbJSQ>
+    <xmx:wFCoaq7m-LKVRJOt8bawE0kMJeMaH7nnhhn6jMAFf0xtfLnN-D_G_w>
+    <xmx:wFCoala2Q-U8mB3lS6H1MDeuO6RvdOMLt3t4hPiMED5wX5DDI30XIA>
+    <xmx:wVCoajF7Z1GjnWQObrlfo8_TigsADRNglTK9FlQPS9NxekYjYlzzAZFt>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 6595732A0084; Mon, 14 Sep 2026 15:53:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: 
- =?utf-8?b?W1JFR1JFU1NJT05dIG5leHQvbWFzdGVyOiAoYnVpbGQp4oCYdHBtX3Rpc19yZXN1?=
- =?utf-8?b?bWXigJkgdW5kZWNsYXJlZCBoZXJlIChub3QgaW4gYSBmdW5jdGlvbik7IGRpZCB5?=
- =?utf-8?b?b3UgbWVhbiAuLi4=?=
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Mon, 14 Sep 2026 17:59:03 -0000
-Message-ID: <178940874287.1087.18054581149136757738@kernelci.org>
+X-ThreadId: AmIRJ1Q9JmRB
+Date: Mon, 14 Sep 2026 21:53:00 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mark Brown" <broonie@kernel.org>, soc@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>
+Message-Id: <b6ca14bc-a4f6-477b-bbb0-da12d27b61af@app.fastmail.com>
+In-Reply-To: <aqgf5o_gSUQH1AF0@sirena.co.uk>
+References: <amY1zEUOGFe4Op6W@sirena.org.uk>
+ <fd352f58-8100-4b0f-ac8c-25b08d0e2886@sirena.org.uk>
+ <aqgf5o_gSUQH1AF0@sirena.co.uk>
+Subject: Re: Missing signoff in the arm-soc tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-New build issue found on next/master:
+On Mon, Sep 14, 2026, at 18:25, Mark Brown wrote:
+> On Mon, Aug 03, 2026 at 06:25:57PM +0100, Mark Brown wrote:
+>> On Sun, Jul 26, 2026 at 05:29:00PM +0100, Mark Brown wrote:
+>> > Commit
+>> > 
+>> >   3edcea7f0413e ("Merge branch 'arm/fixes' into for-next")
+>> > 
+>> > is missing a Signed-off-by from its committer (and also isn't showing up
+>> > as a merge).
+>> 
+>> This issue (and the matching author signoff) is still present today.
+>
+> These issues are *still* present today.  It's making noise whenever I
+> check -next for ongoing issues, it'd be good if the branch could be
+> rebuilt.
 
----
-‘tpm_tis_resume’ undeclared here (not in a function); did you mean ‘tpm_tis_remove’? in drivers/char/tpm/tpm_tis.o (drivers/char/tpm/tpm_tis.c) [logspec:kbuild,kbuild.compiler.error]
----
+I assume you hit this on the branch I pushed out earlier today, which
+started fresh from 7.3 with just a single merge. I've amended that
+commit with an S-o-b now, but I'm not sure if that is what you are
+asking.
 
-Log excerpt:
-=====================================================
-/tmp/kci/linux/drivers/char/tpm/tpm_tis.c:249:61: error: ‘tpm_tis_resume’ undeclared here (not in a function); did you mean ‘tpm_tis_remove’?
-  249 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
-      |                                                             ^~~~~~~~~~~~~~
-/tmp/kci/linux/include/linux/util_macros.h:136:44: note: in definition of macro ‘PTR_IF’
-  136 | #define PTR_IF(cond, ptr)       ((cond) ? (ptr) : NULL)
-      |                                            ^~~
-/tmp/kci/linux/include/linux/pm.h:316:19: note: in expansion of macro ‘pm_sleep_ptr’
-  316 |         .resume = pm_sleep_ptr(resume_fn), \
-      |                   ^~~~~~~~~~~~
-/tmp/kci/linux/include/linux/pm.h:375:9: note: in expansion of macro ‘SYSTEM_SLEEP_PM_OPS’
-  375 |         SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn) \
-      |         ^~~~~~~~~~~~~~~~~~~
-/tmp/kci/linux/include/linux/pm.h:417:9: note: in expansion of macro ‘_DEFINE_DEV_PM_OPS’
-  417 |         _DEFINE_DEV_PM_OPS(name, suspend_fn, resume_fn, NULL, NULL, NULL)
-      |         ^~~~~~~~~~~~~~~~~~
-/tmp/kci/linux/drivers/char/tpm/tpm_tis.c:249:8: note: in expansion of macro ‘DEFINE_SIMPLE_DEV_PM_OPS’
-  249 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
-      |        ^~~~~~~~~~~~~~~~~~~~~~~~
+When you write "and also isn't showing up as a merge", do you mean
+your script has an exception for merge commits to not need S-o-b
+but fails to detect this one as a merge? I see that about half the
+merges in linux-next (including your daily merges) are not signed off,
+so I'm not sure if we are all doing this wrong the same way, or if
+there is a different problem with the soc tree.
 
-=====================================================
-
-When fixing this issue, please attribute this report according to the
-patch submission rules:
-
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Link: https://lore.kernel.org/all/178940874287.1087.18054581149136757738@kernelci.org/
-
-For complete logs and details about the environment used, see the issue
-on the KernelCI dashboard:
-
-- dashboard: https://d.kernelci.org/i/maestro:70dc580f14443e704913c358990be2bc69fa5c28
-- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-- commit HEAD:  1a1de54f7369cd2b5bac0f265910e60ad3a6b4c3
-- tags: next-20260914
-
-# Builds where the incident occurred:
-
-## x86_64_defconfig+allnoconfig+x86-board on (x86_64):
-- compiler: gcc-14
-- config: None
-- dashboard: https://d.kernelci.org/build/maestro:6aa828c820239ade90355cb6
-
-#regzbot introduced: 68142f986ff04b2b70b31db00f719bf690f64a9a..1a1de54f7369cd2b5bac0f265910e60ad3a6b4c3
-#regzbot link: https://d.kernelci.org/i/maestro:70dc580f14443e704913c358990be2bc69fa5c28
-
-#kernelci issue maestro:70dc580f14443e704913c358990be2bc69fa5c28
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+      Arnd
