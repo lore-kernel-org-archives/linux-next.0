@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD14483804;
-	Mon, 14 Sep 2026 14:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7964745D92E;
+	Mon, 14 Sep 2026 16:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789397523; cv=none; b=CUdHA+ksgc22o+4TyiLnLLH3x4B24knMXXC/pyPkpAnmZVHjVmh5nZvpvUALVmQPpuTLNZr/e73rQluqV/GcdqbX1vhZOmetPrlq+49xE6p7RnVPU5djt9hHW+hZarNFPnek3ZTWrG46q/adfRvX4eKSp0CYKICDxNC8Ij2Qg5w=
+	t=1789402872; cv=none; b=swHWJg8rp2wzEF0l6rcSlnV2c/WlR59ley5ELskw7LoGZXUfQbLnYzkJkr6vPEyXW+VJi2BacgBvgsZDhIR+GeTcZ5t/z2u7YKTihKTItmvohyAi3SEBTxrsvzI2LS/7yc16YAOi5+fEyd4ePskVnnxBO61EBrZ4Ilpqb9rQo9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789397523; c=relaxed/simple;
-	bh=deJL8CaA/aa/1J0Lh9emvShdffy6/lpY2urOD9H78IY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oQt5EwCCf8lO6Zhmf81Y7MDvNYn3akFejjtr68o25FyN/q1T91z07cMYANj5EmS1CW55LgbHrlR9cY9du2tA39a4jeu5YhWZV+L8VKltUGxaO00NdLKIChQoZ8CwTClh3ZpbYCdvrl5yrLWmWpjICsmfae9Pt03EdpCHJxm3lag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLRnfYg+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789402872; c=relaxed/simple;
+	bh=/bO5qNuP1pUX1PnajAGXd+khgxb18oa4IpyXSEEmsPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZH+iu5awtUxMyFRN0QqEwMmVCxAgcO1mtLikUnM4HruJy6G2WJO2bW3C81HgMQxrQZ6w1culvnYNJAE+A1UzvSkPnXSYLWj0T9ngFjZBM1VcZ7hOCwue+7BMCAuYvOdhZKS2TDSsh+eTxJZwSG9V809cVR231hnP93w83GX6FI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBTAFStb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLRnfYg+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806C71F000FF;
-	Mon, 14 Sep 2026 14:52:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBTAFStb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 277761F000FF;
+	Mon, 14 Sep 2026 16:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789397520;
-	bh=MGn0WF9VaZ2rAjh6B6vmM6kux/GxiWOZxbDZKzpjocQ=;
-	h=Date:From:To:Cc:Subject;
-	b=bLRnfYg+VNOkbSG4hUNbjr2BitExmDXeWyK4J3ZwNOUkVOH5rEIi6JNAaOwnzuv4k
-	 hrufMoGQFLmpf3vELioKeXIUN7oWoqcskXLlfGUhl4SEgPnieJhQQBtFTUO+uk7Z++
-	 NkiMYFP8XH9ojDMsPC6tKDfGbzVxj/Tkq5DsgKOWfFGpusAQhyhQqjoaiXvRepcUHk
-	 9pqXuFCnnczQFvN7g4lCq82+KT9b1v9kh0QJUjsZOJ+/0Dqe6YUqLDuyT9/NAJF6lP
-	 TbSBNPl66opcor+KIPeFJjFMe+fVlLoU+N6SP/VIRC7qBSE3q7k07s0oqHqK84w3Uj
-	 6DkgiDYcIUFVQ==
+	s=k20260515; t=1789402871;
+	bh=zYKr3NiUgUyNyH1y8MtqFMSJp8mpfVLZKZzX/LOAlV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PBTAFStbQLARC4HuDHngeFOoExwU/C7eI8CkVjYH8K887hqeJdUurI50Tun08okge
+	 LQNblmV8EBiAxPROXUbqiES0LNZYT1wyD5LaI0d2bLiVdM95hcp9pqWLsM9Nr2Urhk
+	 annkdUFjuviwslvfDMNGgqJfI81CvpHn0cGUWnC5Z1SQ5k0lP7GLuoCeGL1f3dF7WJ
+	 5gy93LHs+8ClcTHRNYjLYB/A0iQ9ZEhwMUTexbZ26YEU3DOO/7t/VR5WiBWmOKLX4I
+	 FzrqoUw2/qp2tvUokL6XwAmLu8Dpd0rca7t+g9+Iuhtjozi+sBV7QVm3cdwPYGYrvx
+	 q6W3PmxD48QlQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 6BEF41AC52F1; Mon, 14 Sep 2026 15:51:58 +0100 (BST)
-Date: Mon, 14 Sep 2026 15:51:58 +0100
+	id F35181AC52F1; Mon, 14 Sep 2026 17:20:54 +0100 (BST)
+Date: Mon, 14 Sep 2026 17:20:54 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the phy-next tree
-Message-ID: <aqgKDgDpqlnQPgDz@sirena.co.uk>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the bluetooth tree
+Message-ID: <aqge5mzXV3KZZ0-p@sirena.co.uk>
+References: <aqQARvWlSUQEHMtw@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,169 +43,44 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wfolRsssPp10KuHp"
+	protocol="application/pgp-signature"; boundary="SybeoVo5kGhEUcLi"
 Content-Disposition: inline
+In-Reply-To: <aqQARvWlSUQEHMtw@sirena.org.uk>
+X-Cookie: Not recommended for children.
 
 
---wfolRsssPp10KuHp
+--SybeoVo5kGhEUcLi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Sep 11, 2026 at 02:21:10PM +0100, Mark Brown wrote:
+> Commits
+>=20
+>   e40edfa049b96 ("Bluetooth: SMP: Zeroize raw key data on the stack in sm=
+p_e()")
+>   ee0662ba1e0a5 ("Bluetooth: hci_sync: Serialize local codec list cleanup=
+")
+>   6691666bb4b22 ("Bluetooth: hci_qca: Do not write to the serial port aft=
+er it is closed")
+>=20
+> are missing a Signed-off-by from their committers
 
-After merging the phy-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+The issues are still present today.
 
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:761:18: error: incompatible pointer to integer conversion initializing 'u16' (aka 'unsigned short') with an expression of type 'const u16[4]' (aka 'const unsigned short[4]') [-Wint-conversion]
-  761 |         .off_ana_lane = (const u16[]) { 0x100, 0x200, 0x300, 0x400 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:761:18: error: suggest braces around initialization of subobject [-Werror,-Wmissing-braces]
-  761 |         .off_ana_lane = (const u16[]) { 0x100, 0x200, 0x300, 0x400 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                         {                                           }
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:763:18: error: incompatible pointer to integer conversion initializing 'u16' (aka 'unsigned short') with an expression of type 'const u16[4]' (aka 'const unsigned short[4]') [-Wint-conversion]
-  763 |         .off_dig_lane = (const u16[]) { 0x1100, 0x1200, 0x1300, 0x1400 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:763:18: error: suggest braces around initialization of subobject [-Werror,-Wmissing-braces]
-  763 |         .off_dig_lane = (const u16[]) { 0x1100, 0x1200, 0x1300, 0x1400 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                         {                                               }
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:776:20: error: incompatible pointer to integer conversion initializing 'u32' (aka 'unsigned int') with an expression of type 'const u32[9]' (aka 'const unsigned int[9]') [-Wint-conversion]
-  776 |         .driving_params = (const u32[]) {
-      |                           ^~~~~~~~~~~~~~~
-  777 |                 [0] = 0,
-      |                 ~~~~~~~~
-  778 |                 [1] = 0,
-      |                 ~~~~~~~~
-  779 |                 [2] = 0,
-      |                 ~~~~~~~~
-  780 |                 [3] = MT8195_DRIVING_PARAM_3_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  781 |                 [4] = MT8195_DRIVING_PARAM_4_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  782 |                 [5] = MT8195_DRIVING_PARAM_5_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  783 |                 [6] = MT8195_DRIVING_PARAM_6_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  784 |                 [7] = MT8195_DRIVING_PARAM_7_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  785 |                 [8] = MT8195_DRIVING_PARAM_8_DEFAULT
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  786 |         },
-      |         ~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:776:20: error: suggest braces around initialization of subobject [-Werror,-Wmissing-braces]
-  776 |         .driving_params = (const u32[]) {
-      |                           ^~~~~~~~~~~~~~~
-      |                           {
-  777 |                 [0] = 0,
-      |                 ~~~~~~~~
-  778 |                 [1] = 0,
-      |                 ~~~~~~~~
-  779 |                 [2] = 0,
-      |                 ~~~~~~~~
-  780 |                 [3] = MT8195_DRIVING_PARAM_3_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  781 |                 [4] = MT8195_DRIVING_PARAM_4_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  782 |                 [5] = MT8195_DRIVING_PARAM_5_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  783 |                 [6] = MT8195_DRIVING_PARAM_6_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  784 |                 [7] = MT8195_DRIVING_PARAM_7_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  785 |                 [8] = MT8195_DRIVING_PARAM_8_DEFAULT
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  786 |         },
-      |         ~
-      |          }
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:761:18: error: initializer element is not a compile-time constant
-  761 |         .off_ana_lane = (const u16[]) { 0x100, 0x200, 0x300, 0x400 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:791:18: error: incompatible pointer to integer conversion initializing 'u16' (aka 'unsigned short') with an expression of type 'const u16[4]' (aka 'const unsigned short[4]') [-Wint-conversion]
-  791 |         .off_ana_lane = (const u16[]) { 0x0, 0x100, 0x200, 0x300 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:791:18: error: suggest braces around initialization of subobject [-Werror,-Wmissing-braces]
-  791 |         .off_ana_lane = (const u16[]) { 0x0, 0x100, 0x200, 0x300 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                         {                                         }
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:793:18: error: incompatible pointer to integer conversion initializing 'u16' (aka 'unsigned short') with an expression of type 'const u16[4]' (aka 'const unsigned short[4]') [-Wint-conversion]
-  793 |         .off_dig_lane = (const u16[]) { 0x1000, 0x1100, 0x1200, 0x1300 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:793:18: error: suggest braces around initialization of subobject [-Werror,-Wmissing-braces]
-  793 |         .off_dig_lane = (const u16[]) { 0x1000, 0x1100, 0x1200, 0x1300 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                         {                                               }
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:806:20: error: incompatible pointer to integer conversion initializing 'u32' (aka 'unsigned int') with an expression of type 'const u32[9]' (aka 'const unsigned int[9]') [-Wint-conversion]
-  806 |         .driving_params = (const u32[]) {
-      |                           ^~~~~~~~~~~~~~~
-  807 |                 [0] = 0,
-      |                 ~~~~~~~~
-  808 |                 [1] = 0,
-      |                 ~~~~~~~~
-  809 |                 [2] = 0,
-      |                 ~~~~~~~~
-  810 |                 [3] = MT8196_DRIVING_PARAM_3_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  811 |                 [4] = MT8196_DRIVING_PARAM_4_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  812 |                 [5] = MT8196_DRIVING_PARAM_5_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  813 |                 [6] = MT8196_DRIVING_PARAM_6_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  814 |                 [7] = MT8196_DRIVING_PARAM_7_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  815 |                 [8] = MT8196_DRIVING_PARAM_8_DEFAULT
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  816 |         },
-      |         ~
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:806:20: error: suggest braces around initialization of subobject [-Werror,-Wmissing-braces]
-  806 |         .driving_params = (const u32[]) {
-      |                           ^~~~~~~~~~~~~~~
-      |                           {
-  807 |                 [0] = 0,
-      |                 ~~~~~~~~
-  808 |                 [1] = 0,
-      |                 ~~~~~~~~
-  809 |                 [2] = 0,
-      |                 ~~~~~~~~
-  810 |                 [3] = MT8196_DRIVING_PARAM_3_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  811 |                 [4] = MT8196_DRIVING_PARAM_4_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  812 |                 [5] = MT8196_DRIVING_PARAM_5_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  813 |                 [6] = MT8196_DRIVING_PARAM_6_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  814 |                 [7] = MT8196_DRIVING_PARAM_7_DEFAULT,
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  815 |                 [8] = MT8196_DRIVING_PARAM_8_DEFAULT
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  816 |         },
-      |         ~
-      |          }
-/tmp/next/build/drivers/phy/mediatek/phy-mtk-dp.c:791:18: error: initializer element is not a compile-time constant
-  791 |         .off_ana_lane = (const u16[]) { 0x0, 0x100, 0x200, 0x300 },
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-   6fe4d5beac728 (phy: phy-mtk-dp: Add support for MT8196 eDP PHY)
-
-I have used the tree from next-20260911 instead.
-
---wfolRsssPp10KuHp
+--SybeoVo5kGhEUcLi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqoCg0ACgkQJNaLcl1U
-h9CTMgf9Ho3QOZZKTFFFHfUgPVXUcdbZcrJDefUS9VkCPBebhPuJ8y09hBw3NIHn
-hL2yR1F8Wo55UY7FF1a1jRq/nx9mNWbvhRvZRCYr25DEe4r/pylBugivoJR7hFzS
-k/2xjW440sPa+Uh7pT0KfygsPG0s72tVElBFfxOAcwa5rhspSJnB/4hrSELWJhmQ
-xUud1gV8n2mjrXVM5WZFXkCLynF+T4jvSbZrplYd6R/J3/QGPIy/kUGu7gkV0HgX
-GKYtZjIb8flfy9Qx2YUc9hIc3ugVjKBLxIDgAyYIm82YgWTxWSGBTJSBk2Jxsa5t
-f0TeaDXSAlmgrgdnchCFAR6riFwLWg==
-=skVQ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqoHuYACgkQJNaLcl1U
+h9BRIwf9Foa1x8xgzpWAJeE/Z08qvXfAkO8OCZhsyCA/S6Qkh9pGsfU3/U7zKDPQ
+yJwvscIkHmoZT0jS6Bkl8tU0hvsFUsW9+hMXmz11s1mqtB9N7UB494ij7vNLF5l1
+GNfgNfJLRO3at4p1DrHgN0vGPH+fat/9RVNMZ6ZT2GZ5YtxKCwg1iNrPZ+06h98M
+UOOwIrRUfdmQbRWN4UWDpHZkBEowpnEHC6YMVJL2O2ACcXMI02leTRw13mkaQvhT
+XqTnnzH3ih+e8pbGpL4hVc6toxF6bWGIGPvBJZAgoP7yDCuHj8afj+En4xGvR7EK
+8QDmcgHg+11ieIgzmghNd3zqeSZuTg==
+=s7WK
 -----END PGP SIGNATURE-----
 
---wfolRsssPp10KuHp--
+--SybeoVo5kGhEUcLi--
