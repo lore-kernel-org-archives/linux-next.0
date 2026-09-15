@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1585E3B47F5;
-	Tue, 15 Sep 2026 12:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B793B6BF4;
+	Tue, 15 Sep 2026 12:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789475151; cv=none; b=s9/rzZ2TtaYdVz1MM4NBEUSfuFGx+i8qMxggFitT9redwR+6GrolZ+xBY1vWAYKD2f7L8vxtaN7SRjX1IAStudfLHItWtRHkg3IqKZNLnZ4iyW2K6JwqwJFqfwRisfwiBOo2aWN9+V37U8HhMFiuKgh5eq+SG7QqdTg0e9lAjQI=
+	t=1789475995; cv=none; b=kRn9PmmeYSMfhNmXdDFavoSc+g1JTLmRj75JJEnklYrMiOgzW6f9OAnAQKFh4EEkxbL32pB2O0xEpxmGqD0JUnvnx5A95iVvhlmoUyPiKfq5VIcqrhQl5WIW/R/l9ElMYuHPyc58C1qx0omTxMQIhnxMLlGoIcVcyy+hBkOXLL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789475151; c=relaxed/simple;
-	bh=0vrZ27TWxC9cE9UwgrK49wDe0LIanW44xi5oyU07R9A=;
+	s=arc-20240116; t=1789475995; c=relaxed/simple;
+	bh=Egakq25gJHXak7LQY+RvqVAB11rZnHQIMgMrzAVXNFo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lu1CUJPPdwYTTwB54JzA4VuWUm/06b6hxczfiWrplaMvxDZRc0XKdh1seHTUsLk1+itHjeQW1t9ReSUG5LR/gbS/3th967gw53TqaJwBwdxGGaEw/0qWtb5A/+7dz1ookAEM87ER92zUPkQP6ehuGdUzeOOBC9+A2rTUR09oGw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zdn+CwTH; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=HbW3gDX9ilOVPQvBSk6GiTkSdtIKha/GN433zkZZ//YdUiU3nUPBJ5ZGCFzlcsYWSFs98+SHMvbmbPu8AQnNDGmNieyBBJShk4ocyWRxvnJyO8xvpKBy79Nf5I8UnSWYwIM79xZSapODitMvn7KswOkxCcWX1J2alJOXUu3E8m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IB2omJI2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zdn+CwTH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE501F00898;
-	Tue, 15 Sep 2026 12:25:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IB2omJI2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30EBD1F00893;
+	Tue, 15 Sep 2026 12:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789475149;
-	bh=HHYAPAF1wxEqtbhhunxpqcNfazQuKu21weORcfBXlFM=;
+	s=k20260515; t=1789475994;
+	bh=CwbRfgd9dCZvkwIasjy8dmwPwy2Eynj7KtzOQj5ZzZM=;
 	h=Date:From:To:Cc:Subject;
-	b=Zdn+CwTHp1YAY5XQkTjBDbaqxheyAc+9UBEtLA4h02PfTMofg6gr20xSr4+GnNb6N
-	 m0aH5gkgHLXa0PKI+zAKNVfnqg8tyq4IdQsLrBjaz1Te65uJulw++g74zXEWuEqn4Y
-	 AElxszaQ28IqPuUp+XpNbIiW5fN0NckxqguKs5RzgE6TeHOJxopa1l4+1cNnQnfA07
-	 L7qfqAWjp1phFf6/2y6QmnJ6AFLDbEDBE0VANB/Vt5ZuyqQDdot7bMxnNlXqljRelK
-	 xIhVM8IBfR5GnPsU3vTUQfbbh9fTBkFOCnfZJLO+4bS5bkmzp42Vqu1sq1cWD3EbXA
-	 dVBgImY8Aeguw==
-Date: Tue, 15 Sep 2026 13:25:46 +0100
+	b=IB2omJI2R+o+j8lxKswhkpaXw0QTrkihl77TNs5lOOUcHvD5RvKv4CMssR2YfzBwg
+	 uA61lUBHeaXngXUbgJ5Zv8R15LUOzfnYMauhhEMncyrbYxOpprNHrdbHzvie7tWu0u
+	 tojCGLAu1vT7lg183QTx3V+g/muIiDZhpPYz/vtCvNZaAxyYxhk5EC5umPFojuN9Lp
+	 HvmMg/E4klAB823Mf2E9zirfaKV+j2Aewkw4xXaHsWGGBkqj9ZmySJVWsJTVWhI4ff
+	 BVlyNUjk2L4AlS8hg7n+iOIAhs5Feg6sfMgY0vwNR9XsMXHbs6xR0iU1Y61CzRFmCR
+	 eFxtqhDChv/nQ==
+Date: Tue, 15 Sep 2026 13:39:50 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Hyunchul Lee <hyc.lee@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ntfs tree
-Message-ID: <aqk5SpZbYVU452_A@sirena.org.uk>
+Subject: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <aqk8lgbBXNArYeia@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,41 +40,77 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8RgCh9avGBEJPwXH"
+	protocol="application/pgp-signature"; boundary="3y3XF04vbQKK4b/n"
 Content-Disposition: inline
 
 
---8RgCh9avGBEJPwXH
+--3y3XF04vbQKK4b/n
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi all,
 
-After merging the ntfs tree, today's linux-next build
-(arm multi_v7_defconfig) failed like this:
+After merging the vfs-brauner tree, today's linux-next build
+(arm64 kselftest) failed like this:
 
-arm-linux-gnueabihf-ld: fs/ntfs/mft.o: in function `ntfs_prepare_mft_folio_units':
-/tmp/next/build/fs/ntfs/mft.c:3116:(.text+0x63ec): undefined reference to `__aeabi_uldivmod'
+  CC       acct_syscall
+  CC       cgroupstats
+  CC       taskstats_fill_stats_tgid
+  CC       breakpoint_test_arm64
+  CC       step_after_suspend_test
+  CC       test_cachestat
+  CC       wait_inotify
+  CC       test_pids
+  CC       test_hugetlb_memcg
+  CC       test_kill
+  CC       test_cpuset
+  CC       test_kmem
+  CC       test_cpu
+  CC       test_zswap
+  CC       test_core
+  CC       test_freezer
+  CC       test_memcontrol
+  CC       clone3_clear_sighand
+  CC       clone3
+  CC       clone3_set_tid
+  CC       clone3_cap_checkpoint_restore
+  CC       proc_filter
+  CC       unshare_test
+  CC       close_range_test
+  CC       coredump_notify_signal_helper
+  CC       coredump_socket_test
+coredump_socket_test.c: In function 'coredump_socket_coredump_thread':
+coredump_socket_test.c:677:35: error: implicit declaration
+of function 'get_peer_pidfd_thread'; did you mean
+'get_peer_pidfd'? [-Wimplicit-function-declaration]
+  677 |                 fd_thread_pidfd = get_peer_pidfd_thread(fd_coredump);
+      |                                   ^~~~~~~~~~~~~~~~~~~~~
+      |                                   get_peer_pidfd
+coredump_socket_test.c:752:17: error: implicit declaration
+of function 'crashing_child_thread'; did you mean
+'crashing_child_memory'? [-Wimplicit-function-declaration]
+  752 |                 crashing_child_thread();
+      |                 ^~~~~~~~~~~~~~~~~~~~~ crashing_child_memory
 
 Caused by commit
 
-   107857fee6272 (ntfs: write MFT folios through mapped I/O units)
+   b956027e73bee (selftests/coredump: check the dumping thread's pidfd)
 
 I have used the tree from next-20260914 instead.
 
---8RgCh9avGBEJPwXH
+--3y3XF04vbQKK4b/n
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqpOUkACgkQJNaLcl1U
-h9Ag+Af/UFLC/kYNfRUO+xdqZkI5Ry7+zDkGYQJi6ONb1xiTnGbUeDjzFPBMPNIA
-VIS4R+8A6sC9dCXrHFw3lk1qVnJznNF5iWk65kLibaV0kdtjdtZ5UIA5RcJT6DoY
-T6J26gEL7vBZqyf8HViExwb87S1aFcbXbblratjj/7yudahA37cLL2f4T1VPvbU8
-AF/+ukhd+zwYju4Wg/1r7XYJev0vGSfELQgsXPTWCLFZsdY2382iU2Mb0PgBj+Hm
-HVLLbUvCOG4XbRlkBa06mO0yKqESCV8F27X9EzQz/5VvT8JZ8a3HniEUUlAT9r/0
-2fiJdpcgp7nXLarhLM00WcMpAV/XjA==
-=49BZ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqpPJUACgkQJNaLcl1U
+h9Btqgf/Z9ElleHfyVBtUQW7D/Bxrr2/kmm8qWdKCUOremTzzs/c5zq0czuzBtQ0
+sQ2EcUHDPN4lrusAjtmxgm3N10guHjPt0TpIpvm3KEjYUkm88Ki2VIiwVUhyuINf
+UVi1fiDoECu/FSAn4xow6TNoC7FQVBWwaokkjJzyKhYUV9fQnq7GGdUP1rrIJAoJ
+/rDf28zVa7gWixrMyKoZNm2dgQT+JS5LwujgJb7PzHYD5Xun3dpy3c/v7UVfAGMt
+YGG4QyQNEs6tMraKRwwm5Ol0vlcPEAEihd/lHZSiCWxFzq3cZCk1W6bjEwrQPH13
+Q7xqxNM4N66NfGtLmOBZLVdH6KrjVw==
+=0VmY
 -----END PGP SIGNATURE-----
 
---8RgCh9avGBEJPwXH--
+--3y3XF04vbQKK4b/n--
