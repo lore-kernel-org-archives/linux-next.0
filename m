@@ -1,46 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C394535C686;
-	Tue, 15 Sep 2026 14:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5143B9D81;
+	Tue, 15 Sep 2026 14:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789482027; cv=none; b=U4GaWoEvn2os9ysiLk665dNruCaa2S3DVyuclir0H5ZGuvB/7oasvAdNqzVNA2EtjShTunbleiyK56oBLoE8I4BKYTQQ4oYslu5B6PXQlvraLR5/DetN9N8sQ1molQpkm3hp//3YcP9SFuTw2La3N5TdxlIOPt2Zc0Q0KbvsvGg=
+	t=1789482995; cv=none; b=tZ02Oy2OQYSht5QR8A2uyBN5wQ6QJ7C2LA8CkqPPgGhxp2Ci60YIFBV1qeDiQDLEIkyFE2XV7Jv9OeWgw3QjQmIo+AX56nGkWPy27dslqjcHPH2b5dJsmwRGTqjL2q1w3Evwo3gvihqnPwrkVPBNFlAu4Dx69HxRIjx0RNjQOi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789482027; c=relaxed/simple;
-	bh=PdjuIbUKue1uQ3zmvIysQrJ+zfckfYP7m5mfNpqQ4Bw=;
+	s=arc-20240116; t=1789482995; c=relaxed/simple;
+	bh=cnT2NDH0W3+AOUMlMBEWCpQelxBeGsZyc5CYQe5WgE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YkLMXJ2/tvdzOSIkXjCBvPRW3Np88E70jTzlszsP/DP4SwKJkWefsDOaN2QMFfRtH95hHkAhKSzjKXEUvYk3PIOclku/SGXgmwr1mtvEuRA+vfuS2W9FsNSXvHHCSaWpyk2JRoO9L1wKClX2XZ/ub+/wLjViGCbtP5uNQcIsnrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrG7dgY4; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=jc3a8FLNj1JO8InaPFMFDFqpElObZ6bX49M5ykOezNVZ2kQF//VURgglgdcDigQBCldjwanzi2DfrcjYPmJp+X7StljruUivWu5uuaPmc7ck6tDFImv4XhHwnKSDu8UQyQWwuVRzNaLS7J9RDAICEcPdSBYXWE3mwjju+9V4tGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8ElJrB5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrG7dgY4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9B11F00898;
-	Tue, 15 Sep 2026 14:20:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8ElJrB5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674CF1F000FF;
+	Tue, 15 Sep 2026 14:36:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789482026;
-	bh=MEsKI0LWezyhAWDQneqjdlMYSgB+3NODkCoVF3H5uR8=;
+	s=k20260515; t=1789482993;
+	bh=pre5/60EdsoFZkP5TOwGJVFWOlszP98LTb5epi2ki04=;
 	h=Date:From:To:Cc:Subject;
-	b=VrG7dgY4EunCHTT2EDJCct8kZjT5Iw72myINzHmivsb4o9OLT3yEY1Csgm/QTYVOy
-	 RxY1aG6Vy86EoQRasC837V03GAfJ28JwGRhtC0qEBcc9VAKQuZOwb+DQZIFXMdCvjR
-	 uJacPPq8FM44Xxxcc5x6pSi+yMIbRheV0BDvMjc/VyMHbij0L5nB/EB63L89BXF97m
-	 K+5MYyo9miXJZX+KYEI+QO7s/6ybWmOIdF9MHwrA+9mxn6OkaaLFNQS2kqDeil/6jj
-	 lUvP721w8vpjIFXjWbDfUsTXphkcUGquGOf14+yR0qlp1OEGLMmQJHKPNSmrjIcCbq
-	 qChJ4hJyd/+hQ==
-Date: Tue, 15 Sep 2026 15:20:22 +0100
+	b=j8ElJrB5V+9o+LZcYFz4zqm0Tq8+hnUpzLAhp/feErZU4vzNP9M10cnoEwNFH/kS3
+	 TO0PObhPGpzA0M1WeWvLVgTEH/yy4IXNeJ9dMiFULZyJMOW/qjYNOdTIQqGdw1FaAs
+	 HkbTS5vOqbZIZgRacvcZx1m4pUJUqWe+DvNqpL2ywvgPyBaMMk8ehfpqrnMwSHUEMs
+	 8CFtmk0PZg7I5AzqZFdBsrajrIf+iOjyxbgeIM1sn1QuGSrSts9yJb+8k/dhyVeQib
+	 GVF1vRmfIuUx3QuBsAJzmxrMX038nUg9dY6PWnuJNeu45wNgiucPb/VTw09iNMbJyu
+	 05GNL1qZUZ+tg==
+Date: Tue, 15 Sep 2026 15:36:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
+To: Jeff Johnson <jjohnson@kernel.org>,
+	Ath10k List <ath10k@lists.infradead.org>
+Cc: Aaradhana Sahu <aaradhana.sahu@oss.qualcomm.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the wireless-next tree with the wireless
- tree
-Message-ID: <aqlUJnjxj1lroNev@sirena.org.uk>
-Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the ath-next tree with the wireless tree
+Message-ID: <aqlX7ecTiq6x0uMh@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,31 +44,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IBC+52lWwiJAH663"
+	protocol="application/pgp-signature"; boundary="oVy3I7wzxgJhHRU8"
 Content-Disposition: inline
 
 
---IBC+52lWwiJAH663
+--oVy3I7wzxgJhHRU8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+Today's linux-next merge of the ath-next tree got a conflict in:
 
-  drivers/net/wireless/virtual/mac80211_hwsim_main.c
+  drivers/net/wireless/ath/ath12k/wifi7/ahb.c
 
 between commit:
 
-  87840d4a3a21b ("wifi: mac80211_hwsim: don't hand frames to mac80211 while=
- stopping")
+  ce9d5197d651c ("wifi: ath12k: ahb: Revert undocumented ABI and dead code")
 
 =66rom the wireless tree and commit:
 
-  41416127e37e4 ("wifi: mac80211_hwsim: overwrite report SKB")
+  c3bace8584ca7 ("wifi: ath12k: add support to load shared firmware on mult=
+iPD")
 
-=66rom the wireless-next tree.
+=66rom the ath-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -81,86 +77,34 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/net/wireless/virtual/mac80211_hwsim_main.c
-index b9446577ff499,9f895ad718e9b..0000000000000
---- a/drivers/net/wireless/virtual/mac80211_hwsim_main.c
-+++ b/drivers/net/wireless/virtual/mac80211_hwsim_main.c
-@@@ -6540,13 -6543,51 +6548,58 @@@ static int hwsim_cloned_frame_received_
-  			goto out;
-  	}
+diff --cc drivers/net/wireless/ath/ath12k/wifi7/ahb.c
+index 6e9e9034cba1a,a8f5cf8cc2a63..0000000000000
+--- a/drivers/net/wireless/ath/ath12k/wifi7/ahb.c
++++ b/drivers/net/wireless/ath/ath12k/wifi7/ahb.c
+@@@ -57,7 -108,8 +59,8 @@@ static int ath12k_wifi7_ahb_probe(struc
+  	ab->hw_rev =3D desc->hw_rev;
+  	ab->hif.ops =3D desc->ops;
+  	ab_ahb->scm_auth_enabled =3D desc->auth_enabled;
++ 	ab_ahb->supports_multipd =3D desc->supports_multipd;
+ -	ab_ahb->userpd_id =3D ath12k_wifi7_ahb_get_userpd_id(ab);
+ +	ab_ahb->userpd_id =3D ATH12K_AHB_USERPD_ID_0;
+  	if (!ab_ahb->userpd_id)
+  		return -EOPNOTSUPP;
  =20
- +	/*
- +	 * Serialise against mac80211_hwsim_stop() - mac80211 doesn't allow
- +	 * frames reported while the HW is down, hence the ->started check
- +	 * must be under mutex.
- +	 */
- +	mutex_lock(&data2->mutex);
- +
-+ 	/* look for the skb matching the cookie passed back from user */
-+ 	if (info->attrs[HWSIM_ATTR_COOKIE] &&
-+ 	    info->attrs[HWSIM_ATTR_ADDR_TRANSMITTER]) {
-+ 		u64 cookie =3D nla_get_u64(info->attrs[HWSIM_ATTR_COOKIE]);
-+ 		struct sk_buff *orig_skb, *found =3D NULL;
-+ 		struct mac80211_hwsim_data *txdata;
-+ 		struct ieee80211_tx_info *txi;
-+ 		const u8 *transmitter;
-+ 		unsigned long flags;
-+=20
-+ 		transmitter =3D nla_data(info->attrs[HWSIM_ATTR_ADDR_TRANSMITTER]);
-+ 		txdata =3D get_hwsim_data_ref_from_addr(transmitter);
-+ 		if (!txdata || txdata->netgroup !=3D data2->netgroup)
- -			goto out;
-++			goto out_unlock;
-+=20
-+ 		spin_lock_irqsave(&txdata->pending.lock, flags);
-+ 		skb_queue_walk(&txdata->pending, orig_skb) {
-+ 			uintptr_t skb_cookie;
-+=20
-+ 			txi =3D IEEE80211_SKB_CB(orig_skb);
-+ 			skb_cookie =3D (uintptr_t)txi->rate_driver_data[0];
-+=20
-+ 			if (skb_cookie =3D=3D cookie) {
-+ 				found =3D orig_skb;
-+ 				break;
-+ 			}
-+ 		}
-+=20
-+ 		/* that's weird */
-+ 		if (!found) {
-+ 			spin_unlock_irqrestore(&txdata->pending.lock, flags);
- -			goto out;
-++			goto out_unlock;
-+ 		}
-+=20
-+ 		if (frame_data_len > found->len &&
-+ 		    pskb_expand_head(found, 0, frame_data_len - found->len,
-+ 				     GFP_ATOMIC)) {
-+ 			spin_unlock_irqrestore(&txdata->pending.lock, flags);
- -			goto out;
-++			goto out_unlock;
-+ 		}
-+ 		skb_trim(found, 0);
-+ 		skb_put_data(found, frame_data, frame_data_len);
-+ 		spin_unlock_irqrestore(&txdata->pending.lock, flags);
-+ 	}
-+=20
-  	/* check if radio is configured properly */
- =20
-  	if ((data2->idle && !data2->tmp_chan) || !data2->started)
 
---IBC+52lWwiJAH663
+--oVy3I7wzxgJhHRU8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqpVCUACgkQJNaLcl1U
-h9B38Af/eKnFBgtukYy3uaCoiS2tMZBywYhcddFGeS3lTwc0NgZEIHQSlOlbQ61R
-XZ84CAPu69WaEV5T8mFybJiqDlKSpYMzX3IGAlu24eUL7MZz2D1b5D8tqzC3w52Z
-rAI5Droy4LblWw7Lfa/8wrswyrjqhW9ASonWBNdUD2a9ptzKN1vZyav4tY/ZopeF
-3j6+laxXnpY5lVWngVSFg3Q8DqqJdr2FE5cm9iZhnIYL0QsIqKaE3l+DOGtx3nIn
-2gxk4tjf5rF1xNKsJ9vdamC89jGuE6T6969kfoGMAz+ePj6LBTIKBXXvDbOwc84o
-e4MS487B8onAPdGQ2cYImV5tlJtlAw==
-=u395
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqpV+0ACgkQJNaLcl1U
+h9DDPgf8CyjNTnzKVU1HignMgbwOc6nJKVE5GLApSRoQAB7dSjYGmMuPjABH6zvY
+5PPjQfI/wXzyEeFWaMO6QgbnQhNZtOVe9LZoo5knWGYlb+P5JVRu+n1OZN/yfzrn
+/Or4RiE0RR2TNF0Wyp9wpjgFGUxHwvOAotkkYSoN6BapjnfKR794nsrfVm4rxtUy
+pG7ptYMIsgiBRadZD59Kv0NUryxEFZBSKV11t+XirVdFw6MQDKCJh72v2sXnivjC
+lFdtNjy0ZDNpHBj7xsKpUZDos/skbGQTyRVfk5Xo05m1BpEQSfhkBtfsdXBeDVpl
+9rkZfih1FWYbuqlVvp2RM2vEDG39ng==
+=SBvH
 -----END PGP SIGNATURE-----
 
---IBC+52lWwiJAH663--
+--oVy3I7wzxgJhHRU8--
