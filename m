@@ -1,149 +1,80 @@
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF924FC8E4
-	for <linux-next@vger.kernel.org>; Wed, 16 Sep 2026 14:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13EA51355B;
+	Wed, 16 Sep 2026 14:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789567492; cv=none; b=KgRWMWB2YhKtC60M/baL3YpUwZnXjdOa70N6Q9PFcDtwhqMsu2qD4ebtxefoOm3FQgp985AM81+yLptu11IqeHQ7DzYKpyGCN8PpYV9OaLApYteXfOPU4FcJsyg2Kf7K59usEYKbtzhXqx/S5dlu6V9E49utNi3s+d2nroo9GrE=
+	t=1789568678; cv=none; b=gWxYBW0E9Q+WlGCvgAh1RDkBUHVP6k8ydh1QQInpY0IrKhTzXLhBmeEebou2uGAn3QcnI3vP4XqavBwkR6H0wffuUX5Dm0M/+XcwIn9gUz91Y855zA4w5od8QnbBqHzDgHL5DQ8CWvOZ10LxkWrKhxTXdZEnfcEc4QUP9PggVB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789567492; c=relaxed/simple;
-	bh=yCiYcTNBz8+BXwyIqCd92V0vfBE7FloiftRXuSUMbYs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MPHtr9bARhu2nfw6K3OzHEp+KjCYE+xU+O0PV4/wdXUHLJfFJdtCo6u4HASawHQ8EfXXYL22ZB9aIeLI8UsQ3tdPzLywu2h4UkYsHGnDQreQ6Nzixq6jIZ9uNOarSCJUf8DQAdifVDDk8nZ1/EiHD+khBjprH23OSTAW0GqQbN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TDSJGcjc; arc=none smtp.client-ip=209.85.214.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1789568678; c=relaxed/simple;
+	bh=yJ2NAM0LpWKZdnca4jMkeaTkoAipNu1J8SrBUIxHwDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODZayjlYJSQ6/YaEt82i+GGR6MWg0ivwuBuWC/usC7ROft0m2ooxDScrlVVOSSuAXtuaXkVfhvHZnxN5psLVOZpnxi7os6Qp0TkvwW9VE7VNZyhs3+usrWq9ipPSMSumtqsYKPfoi8v4GWxhBdQ7jFTem95x7SR/YM3pKxlx7U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DN9SkkW7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TDSJGcjc"
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2d63bad3d09so87822655ad.3
-        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2026 07:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789567490; x=1790172290; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bkD52sPu/bJAaJfk1wwgQ+AXBcPzHqCEyyKPMsu6QEE=;
-        b=TDSJGcjc8GO9QRgyQhQByxRHWapk0Jw3yY5Pm3uCF4VHKDQvY4HfMD3YbTWqDNjEzP
-         SPmVeraZG3woip56HBYLOPwR9CwgJTjVF58Tyg2BnEH1Pxqw0TMGduPsS7NXprv5psrA
-         6tau8UrBPsH0n4pbdartzwMvm1p1m9KqlB/Rf2ep/JiPJlDBelsgtZ5YqS8VEvnsx8Sd
-         3J/A5FdSa2wOv44pGlPyvOF4/XYbCtdS+g7WPMU830p/9sY5BAER8ICPDnHmEERFXVEz
-         l9wr/On1OCOvsNrqpRgznjGX8G5g71mxEb3m60aVzK1KoXblU6dBQ0y0XtXqnm/TJMpc
-         PY8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789567490; x=1790172290;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=bkD52sPu/bJAaJfk1wwgQ+AXBcPzHqCEyyKPMsu6QEE=;
-        b=Msdk7ZzXVjzCIHm8ZDHll51Y7rIN2eSUyrV/WuVSQPvlPfILADf6sp1HwSDoKbW50q
-         1r9Mj0MgQS44waAuTuARr7m9p0BCoi8DeN23yePJ+KEVtlDjvUCb3H0SJNJFnYzUDljT
-         g85ArOfoYhkeTgeigaNwo4ayGsNsYVf5NaIz7tEsZJGrOHOUIF6eggnOQDzuATO6nbw6
-         3xOM/nyHpsmiCQPzWUyQK5fvpc8pCvSYmX2KHM/XtLCCIBNc4iHpcHH/LhlIWfihiD3J
-         K12JnemsVli8tniy12iGV9R9DubdLww5e3D/JgZKkvlBJ5QwSdK+Mi2fruA1dRJOSWMu
-         Nk3A==
-X-Forwarded-Encrypted: i=1; AKwUvBy3TB+cHWCYDt/UpfC4CYsJZuxSqPlr0sekNoP+UYhLlUzuUyo4fZaE8g1QrVb1LTvZvSTvzYrtMVDa@vger.kernel.org
-X-Gm-Message-State: AFuF++kpSUh4aRZrrFcQ4wgHj9LW7wnn7zEcW/QSBTeESmX0PweHyOwQ
-	0VI4swgB9EQXt1AtxPb+Z5W8FKgea14s2T5Dd0cxk+Ic5PkIj/nkfDvA+4H0O+qXK75bt+LMgkA
-	rgK5yxg==
-X-Received: from plgo11.prod.google.com ([2002:a17:902:d4cb:b0:2dd:48f8:1e12])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1990:b0:2dd:3ddf:b876
- with SMTP id d9443c01a7336-2dd8cc8bc70mr56891885ad.0.1789567489818; Wed, 16
- Sep 2026 07:04:49 -0700 (PDT)
-Date: Wed, 16 Sep 2026 07:04:49 -0700
-In-Reply-To: <aqqap3DngKznNrSA@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DN9SkkW7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2797D1F000FF;
+	Wed, 16 Sep 2026 14:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789568677;
+	bh=r+t8TMvnEg/S8wMNGvfQI5r8XZzjEg9v2zKxhMkNNn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=DN9SkkW7u5UqnyyONVE82AwVzHBH7vtha+0LcgW2indjV8A+Tc0QxZZQ5/HcTzdMM
+	 QIl8j7TIF0WTHb/JV/tF6c77jYGlcKyBIFw4AnqZ1egdBCmT4rT9JAgJbiIsCOSeEY
+	 pcexPHO/n9Nkw9eSMSFaJU7/ZHX03ATOipsIv/VP5hiHSlJSmhAPwl+ximPH9K8Ijz
+	 KCSlaiRnr4U6MDkFOwRckrDFkOVrly5XA8cwp3/qBACDM7BOEQDo60S3z1dmkj+2QP
+	 A6DKb1UWZmW5ESACDodl9bIuZ9VGCeXdUWTXbDHASnceNDzLvuH+LEq8dBIXynV/PC
+	 PHzBxq+4yfooQ==
+Date: Wed, 16 Sep 2026 15:24:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Fuad Tabba <fuad.tabba@linux.dev>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oupton@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the kvm-x86 tree
+Message-ID: <e3dc428b-7dae-4a1f-b2ca-6085b2343d8a@sirena.org.uk>
+References: <aqqap3DngKznNrSA@sirena.org.uk>
+ <aqqiAbgDmfQBLPTA@google.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aqqap3DngKznNrSA@sirena.org.uk>
-Message-ID: <aqqiAbgDmfQBLPTA@google.com>
-Subject: Re: linux-next: build failure after merge of the kvm-x86 tree
-From: Sean Christopherson <seanjc@google.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Fuad Tabba <fuad.tabba@linux.dev>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oupton@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w0XxvTF6wZrZP78A"
+Content-Disposition: inline
+In-Reply-To: <aqqiAbgDmfQBLPTA@google.com>
+X-Cookie: Double!
 
-On Wed, Sep 16, 2026, Mark Brown wrote:
-> Hi all,
-> 
-> After merging the kvm-x86 tree, today's linux-next build
-> (arm64 kselftest) failed like this:
-> 
-> arm64/vgic_its_save.c: In function 'alloc_64k':
-> arm64/vgic_its_save.c:289:21: error: too many arguments to function
-> 'vm_phy_pages_alloc'
->   289 |         gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
->       |                     ^~~~~~~~~~~~~~~~~~
-> In file included from arm64/vgic_its_save.c:24:
-> include/kvm_util.h:1062:21: note: declared here
->  1062 | static inline gpa_t vm_phy_pages_alloc(struct kvm_vm *vm, size_t nr_pages,
->       |                     ^~~~~~~~~~~~~~~~~~
-> 
-> Caused by commits
-> 
->   36a062568ea80 (KVM: selftests: Take the memory region type, not memslot, in page allocators)
->   6c28a0d7cf125 (KVM: selftests: Automatically pick min_gpa for allocations based on region type)
 
-In case anyone cares, I'm woefully behind on sending "thanks".  These came from
-the prep series for enabling PPC selftests.
+--w0XxvTF6wZrZP78A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://lore.kernel.org/all/20260826230511.972824-1-seanjc@google.com
+On Wed, Sep 16, 2026 at 07:04:49AM -0700, Sean Christopherson wrote:
 
-> interacting with commit
-> 
->   6f182db39fb00 (KVM: arm64: selftests: Add ITS table save tests)
-> 
-> from the kvm-arm tree.  I have applied the fixup below and can carry as
-> needed:
+> The test also needs to override/define the memory region.  Not fully tested, but
+> I think it's this:
 
-Given that this is in "fixes", I assume the new test will land in 7.3?  If so,
-this is mostly my problem to deal with when sending Paolo the selftests pull
-(which, FWIW, I'm hoping to do this week so that it can be used as the base for
-PPC selftests support). 
+Thanks for checking, I'll roll your fixup into my resolution tomorrow
+unless someone says otherwise.
 
-> diff --git a/tools/testing/selftests/kvm/arm64/vgic_its_save.c b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-> index 864da01539f3f..9a8a65fd7196b 100644
-> --- a/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-> +++ b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-> @@ -286,8 +286,8 @@ static void setup_memslot(size_t sz)
->  static gpa_t alloc_64k(size_t nr)
->  {
->  	size_t pages_per_64k = vm_calc_num_guest_pages(vm->mode, SZ_64K);
-> -	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
-> -				       TEST_MEMSLOT_INDEX);
-> +	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k,
-> +				       MEM_REGION_TEST_EXTRA);
+--w0XxvTF6wZrZP78A
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The test also needs to override/define the memory region.  Not fully tested, but
-I think it's this:
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/tools/testing/selftests/kvm/arm64/vgic_its_save.c b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-index 864da01539f3..fae8a6c45f88 100644
---- a/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-+++ b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-@@ -279,15 +279,15 @@ static void setup_memslot(size_t sz)
- 	size_t pages = sz / vm->page_size;
- 
- 	gpa_base = ((vm_compute_max_gfn(vm) + 1) * vm->page_size) - sz;
--	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, gpa_base,
--				    TEST_MEMSLOT_INDEX, pages, 0);
-+	vm_override_mem_region(vm, MEM_REGION_TEST_EXTRA, VM_MEM_SRC_ANONYMOUS,
-+			       gpa_base, TEST_MEMSLOT_INDEX, pages);
- }
- 
- static gpa_t alloc_64k(size_t nr)
- {
- 	size_t pages_per_64k = vm_calc_num_guest_pages(vm->mode, SZ_64K);
--	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
--				       TEST_MEMSLOT_INDEX);
-+	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k,
-+				       MEM_REGION_TEST_EXTRA);
- 
- 	TEST_ASSERT(IS_ALIGNED(gpa, SZ_64K),
- 		    "Allocation at 0x%lx is not 64K aligned, GITS_BASER cannot address it",
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqqpqAACgkQJNaLcl1U
+h9CVCAf8CVG2G4jR1Fwwm2OzbHxx3PUgSERyb6vZQHWDV8wfHRELw9CbtnMuOIye
+Hd3UuhadFs1L8jENpVuON9uxC06VNUaNT/j5R2sJcajglDfUnfilF77KCEHGhYWL
+0w6XOFc7fsT3fedVhvjE30XzwoKaWODydjct3FjWv064HR0A0nOzEOecBeBHTn7D
++yYSwQHvfsA222dJiWbhq03rSuW6CCoWE1F/+4PHaKgOiSG4kPAHmojj9YwdlQBU
+C+YWk//yRAu9eTyp9AC8T/27ECL9TIqGIGjxOwWcMg2gEayqfMxp28qKZU4Ssj1X
+ScUFOFww2DGE/eWdBB9Hm0Nb6v4nug==
+=/ej7
+-----END PGP SIGNATURE-----
+
+--w0XxvTF6wZrZP78A--
