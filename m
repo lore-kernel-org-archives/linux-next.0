@@ -1,144 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F606381B1D;
-	Wed, 16 Sep 2026 13:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF924FC8E4
+	for <linux-next@vger.kernel.org>; Wed, 16 Sep 2026 14:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789565620; cv=none; b=ZdBp9ZnLycAlqAqftldkiob/0VPRFvBVtN054PbOFh82pJs0n6NTzATc13ielvkpaSFlugJAd624am/fTJJYNrDZRnPfVMfrR1OMB3s15KJNSbfQOtNOIkwCyfIJkIzK1PB47Crit4Y/qNU7Eb5mm58YGiBYCgxZINVj6p/24ME=
+	t=1789567492; cv=none; b=KgRWMWB2YhKtC60M/baL3YpUwZnXjdOa70N6Q9PFcDtwhqMsu2qD4ebtxefoOm3FQgp985AM81+yLptu11IqeHQ7DzYKpyGCN8PpYV9OaLApYteXfOPU4FcJsyg2Kf7K59usEYKbtzhXqx/S5dlu6V9E49utNi3s+d2nroo9GrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789565620; c=relaxed/simple;
-	bh=Y4NzPUL9L4tIEd9zy59/7Y4AiYMSe/1eG0LgDQEaXsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rTXplXX2G7OJNTQouHf7nxrL4aPkIzEMZaKPRvke2ULIMpS36w712JnljYwDFS0jbpknqP4+dQ6m+uEqMxY6xOTGGzmNwQE6J6oD5DborMePAAKWeRAnhfWM2S9LBI6/d1kpBE3i+m37l7+guGQoQgJu2Aj9zPvjqNDxkniksRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiBbjLOD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789567492; c=relaxed/simple;
+	bh=yCiYcTNBz8+BXwyIqCd92V0vfBE7FloiftRXuSUMbYs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MPHtr9bARhu2nfw6K3OzHEp+KjCYE+xU+O0PV4/wdXUHLJfFJdtCo6u4HASawHQ8EfXXYL22ZB9aIeLI8UsQ3tdPzLywu2h4UkYsHGnDQreQ6Nzixq6jIZ9uNOarSCJUf8DQAdifVDDk8nZ1/EiHD+khBjprH23OSTAW0GqQbN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TDSJGcjc; arc=none smtp.client-ip=209.85.214.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiBbjLOD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4C51F00893;
-	Wed, 16 Sep 2026 13:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789565611;
-	bh=48O5W+8FxmPWYMElE36wRWyIA2XwfxakENPtIBB9GHk=;
-	h=Date:From:To:Cc:Subject;
-	b=RiBbjLODw3pcQwKwCP/6Mv8N1W3Q/am+WxvzIZwUZj5F3U+m19zbafJmc7CtD+duZ
-	 GmDjNescsQB4tqqcaDCEM7NKaal9P4WxpMXgPkz3m3RRScyamrgBGAMVy9wCPAvjDk
-	 x64zU8VWyVoS2rFcdrmGI4jJQdvufxmI+fLk20elOWlbLqrexQ0zjzdW+QaA5c2TM9
-	 P3fwovgCLyF3TlDcUhwHgBrqJsrVDF8sjGsB7UB49vmzNUCvKXBXAMYOC3Fldzu2Ai
-	 a4uzGcosl4vrSpBixNGVgurEZdodL3qG7rDlcQlXcX+Vuq4auK3Mx9Bn+1eiNGMRQ8
-	 Atgmh30QJXeEQ==
-Date: Wed, 16 Sep 2026 14:33:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>,
-	Fuad Tabba <fuad.tabba@linux.dev>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oupton@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kvm-x86 tree
-Message-ID: <aqqap3DngKznNrSA@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TDSJGcjc"
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2d63bad3d09so87822655ad.3
+        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2026 07:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1789567490; x=1790172290; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=bkD52sPu/bJAaJfk1wwgQ+AXBcPzHqCEyyKPMsu6QEE=;
+        b=TDSJGcjc8GO9QRgyQhQByxRHWapk0Jw3yY5Pm3uCF4VHKDQvY4HfMD3YbTWqDNjEzP
+         SPmVeraZG3woip56HBYLOPwR9CwgJTjVF58Tyg2BnEH1Pxqw0TMGduPsS7NXprv5psrA
+         6tau8UrBPsH0n4pbdartzwMvm1p1m9KqlB/Rf2ep/JiPJlDBelsgtZ5YqS8VEvnsx8Sd
+         3J/A5FdSa2wOv44pGlPyvOF4/XYbCtdS+g7WPMU830p/9sY5BAER8ICPDnHmEERFXVEz
+         l9wr/On1OCOvsNrqpRgznjGX8G5g71mxEb3m60aVzK1KoXblU6dBQ0y0XtXqnm/TJMpc
+         PY8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789567490; x=1790172290;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=bkD52sPu/bJAaJfk1wwgQ+AXBcPzHqCEyyKPMsu6QEE=;
+        b=Msdk7ZzXVjzCIHm8ZDHll51Y7rIN2eSUyrV/WuVSQPvlPfILADf6sp1HwSDoKbW50q
+         1r9Mj0MgQS44waAuTuARr7m9p0BCoi8DeN23yePJ+KEVtlDjvUCb3H0SJNJFnYzUDljT
+         g85ArOfoYhkeTgeigaNwo4ayGsNsYVf5NaIz7tEsZJGrOHOUIF6eggnOQDzuATO6nbw6
+         3xOM/nyHpsmiCQPzWUyQK5fvpc8pCvSYmX2KHM/XtLCCIBNc4iHpcHH/LhlIWfihiD3J
+         K12JnemsVli8tniy12iGV9R9DubdLww5e3D/JgZKkvlBJ5QwSdK+Mi2fruA1dRJOSWMu
+         Nk3A==
+X-Forwarded-Encrypted: i=1; AKwUvBy3TB+cHWCYDt/UpfC4CYsJZuxSqPlr0sekNoP+UYhLlUzuUyo4fZaE8g1QrVb1LTvZvSTvzYrtMVDa@vger.kernel.org
+X-Gm-Message-State: AFuF++kpSUh4aRZrrFcQ4wgHj9LW7wnn7zEcW/QSBTeESmX0PweHyOwQ
+	0VI4swgB9EQXt1AtxPb+Z5W8FKgea14s2T5Dd0cxk+Ic5PkIj/nkfDvA+4H0O+qXK75bt+LMgkA
+	rgK5yxg==
+X-Received: from plgo11.prod.google.com ([2002:a17:902:d4cb:b0:2dd:48f8:1e12])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1990:b0:2dd:3ddf:b876
+ with SMTP id d9443c01a7336-2dd8cc8bc70mr56891885ad.0.1789567489818; Wed, 16
+ Sep 2026 07:04:49 -0700 (PDT)
+Date: Wed, 16 Sep 2026 07:04:49 -0700
+In-Reply-To: <aqqap3DngKznNrSA@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+xw00WeumcH4DC+3"
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <aqqap3DngKznNrSA@sirena.org.uk>
+Message-ID: <aqqiAbgDmfQBLPTA@google.com>
+Subject: Re: linux-next: build failure after merge of the kvm-x86 tree
+From: Sean Christopherson <seanjc@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Fuad Tabba <fuad.tabba@linux.dev>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oupton@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Sep 16, 2026, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the kvm-x86 tree, today's linux-next build
+> (arm64 kselftest) failed like this:
+> 
+> arm64/vgic_its_save.c: In function 'alloc_64k':
+> arm64/vgic_its_save.c:289:21: error: too many arguments to function
+> 'vm_phy_pages_alloc'
+>   289 |         gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
+>       |                     ^~~~~~~~~~~~~~~~~~
+> In file included from arm64/vgic_its_save.c:24:
+> include/kvm_util.h:1062:21: note: declared here
+>  1062 | static inline gpa_t vm_phy_pages_alloc(struct kvm_vm *vm, size_t nr_pages,
+>       |                     ^~~~~~~~~~~~~~~~~~
+> 
+> Caused by commits
+> 
+>   36a062568ea80 (KVM: selftests: Take the memory region type, not memslot, in page allocators)
+>   6c28a0d7cf125 (KVM: selftests: Automatically pick min_gpa for allocations based on region type)
 
---+xw00WeumcH4DC+3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In case anyone cares, I'm woefully behind on sending "thanks".  These came from
+the prep series for enabling PPC selftests.
 
-Hi all,
+https://lore.kernel.org/all/20260826230511.972824-1-seanjc@google.com
 
-After merging the kvm-x86 tree, today's linux-next build
-(arm64 kselftest) failed like this:
+> interacting with commit
+> 
+>   6f182db39fb00 (KVM: arm64: selftests: Add ITS table save tests)
+> 
+> from the kvm-arm tree.  I have applied the fixup below and can carry as
+> needed:
 
-arm64/vgic_its_save.c: In function 'alloc_64k':
-arm64/vgic_its_save.c:289:21: error: too many arguments to function
-'vm_phy_pages_alloc'
-  289 |         gpa_t gpa =3D vm_phy_pages_alloc(vm, nr * pages_per_64k, gp=
-a_base,
-      |                     ^~~~~~~~~~~~~~~~~~
-In file included from arm64/vgic_its_save.c:24:
-include/kvm_util.h:1062:21: note: declared here
- 1062 | static inline gpa_t vm_phy_pages_alloc(struct kvm_vm *vm, size_t nr=
-_pages,
-      |                     ^~~~~~~~~~~~~~~~~~
+Given that this is in "fixes", I assume the new test will land in 7.3?  If so,
+this is mostly my problem to deal with when sending Paolo the selftests pull
+(which, FWIW, I'm hoping to do this week so that it can be used as the base for
+PPC selftests support). 
 
-Caused by commits
+> diff --git a/tools/testing/selftests/kvm/arm64/vgic_its_save.c b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
+> index 864da01539f3f..9a8a65fd7196b 100644
+> --- a/tools/testing/selftests/kvm/arm64/vgic_its_save.c
+> +++ b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
+> @@ -286,8 +286,8 @@ static void setup_memslot(size_t sz)
+>  static gpa_t alloc_64k(size_t nr)
+>  {
+>  	size_t pages_per_64k = vm_calc_num_guest_pages(vm->mode, SZ_64K);
+> -	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
+> -				       TEST_MEMSLOT_INDEX);
+> +	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k,
+> +				       MEM_REGION_TEST_EXTRA);
 
-  36a062568ea80 (KVM: selftests: Take the memory region type, not memslot, =
-in page allocators)
-  6c28a0d7cf125 (KVM: selftests: Automatically pick min_gpa for allocations=
- based on region type)
+The test also needs to override/define the memory region.  Not fully tested, but
+I think it's this:
 
-interacting with commit
-
-  6f182db39fb00 (KVM: arm64: selftests: Add ITS table save tests)
-
-=66rom the kvm-arm tree.  I have applied the fixup below and can carry as
-needed:
-
-=46rom ceedc17041d689c99453d14f867d6b0badc8da8b Mon Sep 17 00:00:00 2001
-=46rom: Mark Brown <broonie@kernel.org>
-Date: Wed, 16 Sep 2026 14:18:38 +0100
-Subject: [PATCH] KVM: selftests: Fix up phy_pages_alloc() API rework
- interaction
-
-arm64/vgic_its_save.c: In function 'alloc_64k':
-arm64/vgic_its_save.c:289:21: error: too many arguments to function
-'vm_phy_pages_alloc'
-  289 |         gpa_t gpa =3D vm_phy_pages_alloc(vm, nr * pages_per_64k, gp=
-a_base,
-      |                     ^~~~~~~~~~~~~~~~~~
-In file included from arm64/vgic_its_save.c:24:
-include/kvm_util.h:1062:21: note: declared here
- 1062 | static inline gpa_t vm_phy_pages_alloc(struct kvm_vm *vm, size_t nr=
-_pages,
-      |                     ^~~~~~~~~~~~~~~~~~
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/arm64/vgic_its_save.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/arm64/vgic_its_save.c b/tools/test=
-ing/selftests/kvm/arm64/vgic_its_save.c
-index 864da01539f3f..9a8a65fd7196b 100644
+diff --git a/tools/testing/selftests/kvm/arm64/vgic_its_save.c b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
+index 864da01539f3..fae8a6c45f88 100644
 --- a/tools/testing/selftests/kvm/arm64/vgic_its_save.c
 +++ b/tools/testing/selftests/kvm/arm64/vgic_its_save.c
-@@ -286,8 +286,8 @@ static void setup_memslot(size_t sz)
+@@ -279,15 +279,15 @@ static void setup_memslot(size_t sz)
+ 	size_t pages = sz / vm->page_size;
+ 
+ 	gpa_base = ((vm_compute_max_gfn(vm) + 1) * vm->page_size) - sz;
+-	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, gpa_base,
+-				    TEST_MEMSLOT_INDEX, pages, 0);
++	vm_override_mem_region(vm, MEM_REGION_TEST_EXTRA, VM_MEM_SRC_ANONYMOUS,
++			       gpa_base, TEST_MEMSLOT_INDEX, pages);
+ }
+ 
  static gpa_t alloc_64k(size_t nr)
  {
- 	size_t pages_per_64k =3D vm_calc_num_guest_pages(vm->mode, SZ_64K);
--	gpa_t gpa =3D vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
+ 	size_t pages_per_64k = vm_calc_num_guest_pages(vm->mode, SZ_64K);
+-	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k, gpa_base,
 -				       TEST_MEMSLOT_INDEX);
-+	gpa_t gpa =3D vm_phy_pages_alloc(vm, nr * pages_per_64k,
++	gpa_t gpa = vm_phy_pages_alloc(vm, nr * pages_per_64k,
 +				       MEM_REGION_TEST_EXTRA);
-=20
+ 
  	TEST_ASSERT(IS_ALIGNED(gpa, SZ_64K),
- 		    "Allocation at 0x%lx is not 64K aligned, GITS_BASER cannot address i=
-t",
---=20
-2.47.3
-
-
---+xw00WeumcH4DC+3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqqmqcACgkQJNaLcl1U
-h9DcfAf7B/BbRnFmcCTD3k09Y0n/hk4r9OCNe9IYr5IoWCx9QYR5E9fSey8IAulL
-T8PEUaCA1nNJ4ABKGCH9dP4e7dwBRIDQ1ROQhjhcLdgSQZH8ju+sxiXPpRonITn6
-3Giw/gF6H5FW+VJe6lc2BSSzsh/F0x7kI8YVBfmVn60Se6wE04s3wl00QBxk0KST
-ZEkPDOWxouZDqySQ8p5bE6t+VcJOq1LBeDPCSLagSmzMVdyeTQDq4PfEFn2Jd7ZI
-EOKEFLxSgDri5K4x3s+BedMOSR/of/4Qs9kNX6TwauDPaPXwGDKaoC/r97b5QcwT
-9cA2deqZdeNfb/WIjdVSUw3xuG/mGg==
-=nCXk
------END PGP SIGNATURE-----
-
---+xw00WeumcH4DC+3--
+ 		    "Allocation at 0x%lx is not 64K aligned, GITS_BASER cannot address it",
