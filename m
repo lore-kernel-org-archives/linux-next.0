@@ -1,37 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6B948A8C8;
-	Wed, 16 Sep 2026 12:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2707037A83A;
+	Wed, 16 Sep 2026 12:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789561699; cv=none; b=P8Pw8cg1feGnBjBAFzTNY/X9sf1Lh5zFNzniOAa6QcJDSeYC8WzMdyCd1TcuFtftScHO91F8f+mB6PrH4k4cadIK5bczfKc3qKd9Uh9fl8Erw863Um29je1nw0qzKJrOpozPyKoolveCp3587r6rkbINXEbQVVX/Oh+603b0TOI=
+	t=1789561729; cv=none; b=GTTvZZosnB37FRsXRfeVhldB6yGp/owZa+jgg10OmENfPc5c60yeU7hYyKXD4dNiEDSsafHb3wd4C3Of7zKFlVlaMbi7VIq+ieB5JCsrnkXP10zDrnzi6YK19lKw5mxQ7jYJiffMbj09SaUw16ev8tIImkr02YURZtLNzfIvUts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789561699; c=relaxed/simple;
-	bh=LDIf4OoqJtgPItdlevrLGELIbMV/tH2ju4nxMvyXvMo=;
+	s=arc-20240116; t=1789561729; c=relaxed/simple;
+	bh=Bl8flR5uXHfawaeW50sDThuQyfzxz/+h8mLOIEEr2QQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qyFh8nQdihP9m0+p4XKriPiEzj7qnvOGF++YcWcRGmIPqCCg9+VxEjSudeG+vG7APNO3R8tOp/eDQXsHxTxkmiChf3Kk0AJsXT75EOenyZy8GXXESZ/9G75DWOIhcB/gvQqbjSRfe3WvoFVvWnoTVaBDfIL62PwQTVTC4RaEtpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9hyjh35; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=pkL21sGKa/QSS2TkuFHV7KO7bV+1ZhmAEMvp6mw002dQdPBAfnx3Ma7p+S77crAWkA8pcP0xwPwsOvekXeBMH8pqZp2beUno8uE1vfoyE6uKW9xHFFt2PHwVkamxeLdqXsf+KE26Gm8gtA8fwxpa6OGF6ZOEXqJe/e6ZsZH0zTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iB/JLZCm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9hyjh35"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB5A1F0089B;
-	Wed, 16 Sep 2026 12:28:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB/JLZCm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CEF1F00898;
+	Wed, 16 Sep 2026 12:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789561694;
-	bh=/YJOSD0ShUKwBSdfgtY6Sy2Y1X03OAi4c0u6QT9IPSw=;
+	s=k20260515; t=1789561727;
+	bh=41e2jXQ9KRiieH18b5OaTBX7DGDqBdgoedzOdwpBI9o=;
 	h=Date:From:To:Cc:Subject;
-	b=E9hyjh35loBqp0EmgELudkKNcgBGy/qmP60b+J8VSeTwpT0oxN63rOpMyEcaosp1O
-	 P/42G1I97suifcWf2KoSLkBhItYbxARzmFBHPUz0fd/7Nh3dwOqx/SKt5zPKWYY0S7
-	 I6cZGA74wywic3Yz5i+2QNHTk0f0RRAUrj8RD1W5D2MlWsy+z8EX9dlRfuNjE48EZA
-	 AjuAN0ftPXZkkk/Ko/iXutmmsmbsRevfn2eHQNiE9BzIOJIuYCj8QpV16/h1xWovuU
-	 wvaek9X4iPsN+GMhAbimIkFWU0MhLkuklxSU0+lcLG1iyB2s9Hz+UsViJ0nqOhaKf0
-	 sid+S6nkxNaIw==
-Date: Wed, 16 Sep 2026 13:28:11 +0100
+	b=iB/JLZCmoznhnJD+ffJF+xiKSjJVNzzPEx/HQ87Igw5/LYlNmnfhrF3Ek8qGj8SGU
+	 JlvwcSHZx/M5ndIgqlpTdgrUMXf0Way3GBWSd5P4wAEerxXZekBZMo+TbzLvaVxS1l
+	 tQ0Y60Blt00wyZGkjwtkSY72L3ttWdeFGAjk2szUDAocJJ7RZEwtcmDTzoo+8pUYtS
+	 iV2K5BcNSHmu7RGIR8bjFkYCezKHWkqwcjEr91Ks4p2pX4E+I46mCen+zWh9nst4Rg
+	 YI+i46GnlxDnzmqbpkU+7EoCDTfV0YzTqeM/5q2pGkPp62TIzuFAh3ThqNt9xuWfaF
+	 vjuuW5yewTqfw==
+Date: Wed, 16 Sep 2026 13:28:43 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 15
-Message-ID: <aqqLW7-1tbWU_Poy@sirena.org.uk>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Nemesa Garg <nemesa.garg@intel.com>,
+	Suraj Kandpal <suraj.kandpal@intel.com>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Message-ID: <aqqLe8U_PPOE4u7a@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,87 +49,195 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UwFQFusBJprkbXOe"
+	protocol="application/pgp-signature"; boundary="8qPFsYGPFEyoGWa2"
 Content-Disposition: inline
 
 
---UwFQFusBJprkbXOe
+--8qPFsYGPFEyoGWa2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Changes since 20260914:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-The ntfs tree acquired a conflict with the origin tree.
+  drivers/gpu/drm/i915/display/intel_cursor.c
+  drivers/gpu/drm/i915/display/skl_universal_plane.c
 
-The ntfs tree acquired a build failure, I used the version from
-next-20260914 instead.
+between commit:
 
-The vfs-brauner tree acquired a build failure, I used the version from
-next-20260914 instead.
+  a26204be587c5 ("Revert "drm/i915/display: Clear SEL_FETCH_PLANE_CTL on pl=
+ane disable"")
 
-The mm-nonmm-unstable tree acquired multiple conflicts with the mm tree.
+=66rom the drm-intel-fixes tree and commits:
 
-The bluetooth tree acquired a conflict with the origin tree.
+  d393529394167 ("Revert "drm/i915/display: Clear SEL_FETCH_PLANE_CTL on pl=
+ane disable"")
+  a4c0e7f80429e ("drm/i915/psr: Clear stale sel fetch enable bits on sel fe=
+tch disable")
 
-The wireless-next tree acquired a conflict with the wireless tree.
+=66rom the drm-intel tree.
 
-The ath-next tree acquired a conflict with the wireless tree.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-The amdgpu tree acquired yet another build failure, I marked the display
-KUnit tests as BROKEN.
+diff --combined drivers/gpu/drm/i915/display/intel_cursor.c
+index 90173040d8253,4afd275de86ea..0000000000000
+--- a/drivers/gpu/drm/i915/display/intel_cursor.c
++++ b/drivers/gpu/drm/i915/display/intel_cursor.c
+@@@ -537,7 -537,8 +537,8 @@@ static void i9xx_cursor_disable_sel_fet
+  	struct intel_display *display =3D to_intel_display(plane);
+  	enum pipe pipe =3D plane->pipe;
+ =20
+- 	if (!crtc_state->enable_psr2_sel_fetch)
++ 	if (!crtc_state->enable_psr2_sel_fetch &&
++ 	    !crtc_state->clear_psr2_sel_fetch)
+  		return;
+ =20
+  	intel_de_write_dsb(display, dsb, SEL_FETCH_CUR_CTL(pipe), 0);
+@@@ -570,8 -571,10 +571,10 @@@ static void i9xx_cursor_update_sel_fetc
+  	struct intel_display *display =3D to_intel_display(plane);
+  	enum pipe pipe =3D plane->pipe;
+ =20
+- 	if (!crtc_state->enable_psr2_sel_fetch)
++ 	if (!crtc_state->enable_psr2_sel_fetch) {
++ 		i9xx_cursor_disable_sel_fetch_arm(dsb, plane, crtc_state);
+  		return;
++ 	}
+ =20
+  	if (drm_rect_height(&plane_state->psr2_sel_fetch_area) > 0) {
+  		if (crtc_state->enable_psr2_su_region_et) {
 
-The phy-next tree lost it's build failure.
+diff --combined drivers/gpu/drm/i915/display/skl_universal_plane.c
+index 07a6832933521,2636eba2ba465..0000000000000
+--- a/drivers/gpu/drm/i915/display/skl_universal_plane.c
++++ b/drivers/gpu/drm/i915/display/skl_universal_plane.c
+@@@ -885,7 -885,8 +885,8 @@@ static void icl_plane_disable_sel_fetch
+  	struct intel_display *display =3D to_intel_display(plane);
+  	enum pipe pipe =3D plane->pipe;
+ =20
+- 	if (!crtc_state->enable_psr2_sel_fetch)
++ 	if (!crtc_state->enable_psr2_sel_fetch &&
++ 	    !crtc_state->clear_psr2_sel_fetch)
+  		return;
+ =20
+  	intel_de_write_dsb(display, dsb, SEL_FETCH_PLANE_CTL(pipe, plane->id), 0=
+);
+@@@ -1240,36 -1241,46 +1241,46 @@@ static u32 glk_plane_color_ctl_crtc(con
+  	return plane_color_ctl;
+  }
+ =20
+- static u32 glk_plane_color_ctl(const struct intel_plane_state *plane_stat=
+e)
++ static u32 glk_plane_color_ctl_input_csc(const struct intel_plane_state *=
+plane_state)
+  {
+  	struct intel_display *display =3D to_intel_display(plane_state);
+  	const struct drm_framebuffer *fb =3D plane_state->hw.fb;
+  	struct intel_plane *plane =3D to_intel_plane(plane_state->uapi.plane);
++ 	bool color_pipeline =3D !!plane_state->uapi.color_pipeline;
++ 	bool needs_csc =3D color_pipeline ? plane_state->hw.csc_ff_enable : fb->=
+format->is_yuv;
++ 	u32 ctl =3D 0;
++=20
++ 	if (!needs_csc)
++ 		return 0;
++=20
++ 	if (!icl_is_hdr_plane(display, plane->id)) {
++ 		switch (plane_state->hw.color_encoding) {
++ 		case DRM_COLOR_YCBCR_BT709:
++ 			ctl |=3D PLANE_COLOR_CSC_MODE_YUV709_TO_RGB709;
++ 			break;
++ 		case DRM_COLOR_YCBCR_BT2020:
++ 			ctl |=3D PLANE_COLOR_CSC_MODE_YUV2020_TO_RGB2020;
++ 			break;
++ 		default:
++ 			ctl |=3D PLANE_COLOR_CSC_MODE_YUV601_TO_RGB601;
++ 		}
++ 	} else {
++ 		ctl |=3D PLANE_COLOR_INPUT_CSC_ENABLE;
++ 	}
++=20
++ 	if (plane_state->hw.color_range =3D=3D DRM_COLOR_YCBCR_FULL_RANGE)
++ 		ctl |=3D PLANE_COLOR_YUV_RANGE_CORRECTION_DISABLE;
++=20
++ 	return ctl;
++ }
++=20
++ static u32 glk_plane_color_ctl(const struct intel_plane_state *plane_stat=
+e)
++ {
+  	u32 plane_color_ctl =3D 0;
+ =20
+  	plane_color_ctl |=3D PLANE_COLOR_PLANE_GAMMA_DISABLE;
+  	plane_color_ctl |=3D glk_plane_color_ctl_alpha(plane_state);
+-=20
+- 	if (fb->format->is_yuv && !icl_is_hdr_plane(display, plane->id)) {
+- 		switch (plane_state->hw.color_encoding) {
+- 		case DRM_COLOR_YCBCR_BT709:
+- 			plane_color_ctl |=3D PLANE_COLOR_CSC_MODE_YUV709_TO_RGB709;
+- 			break;
+- 		case DRM_COLOR_YCBCR_BT2020:
+- 			plane_color_ctl |=3D
+- 				PLANE_COLOR_CSC_MODE_YUV2020_TO_RGB2020;
+- 			break;
+- 		default:
+- 			plane_color_ctl |=3D
+- 				PLANE_COLOR_CSC_MODE_YUV601_TO_RGB601;
+- 		}
+- 		if (plane_state->hw.color_range =3D=3D DRM_COLOR_YCBCR_FULL_RANGE)
+- 			plane_color_ctl |=3D PLANE_COLOR_YUV_RANGE_CORRECTION_DISABLE;
+- 	} else if (fb->format->is_yuv) {
+- 		plane_color_ctl |=3D PLANE_COLOR_INPUT_CSC_ENABLE;
+- 		if (plane_state->hw.color_range =3D=3D DRM_COLOR_YCBCR_FULL_RANGE)
+- 			plane_color_ctl |=3D PLANE_COLOR_YUV_RANGE_CORRECTION_DISABLE;
+- 	}
++ 	plane_color_ctl |=3D glk_plane_color_ctl_input_csc(plane_state);
+ =20
+  	if (plane_state->force_black)
+  		plane_color_ctl |=3D PLANE_COLOR_PLANE_CSC_ENABLE;
+@@@ -1611,7 -1622,8 +1622,8 @@@ icl_plane_update_noarm(struct intel_ds
+  	intel_de_write_dsb(display, dsb, PLANE_COLOR_CTL(pipe, plane_id),
+  			   plane_color_ctl);
+ =20
+- 	if (fb->format->is_yuv && icl_is_hdr_plane(display, plane_id))
++ 	if (icl_is_hdr_plane(display, plane_id) &&
++ 	    (fb->format->is_yuv || plane_state->hw.csc_ff_enable))
+  		icl_program_input_csc(dsb, plane, plane_state);
+ =20
+  	skl_write_plane_wm(dsb, plane, crtc_state);
+@@@ -1634,10 -1646,8 +1646,8 @@@ static void icl_plane_update_sel_fetch_
+  	struct intel_display *display =3D to_intel_display(plane);
+  	enum pipe pipe =3D plane->pipe;
+ =20
+- 	if (!crtc_state->enable_psr2_sel_fetch)
+- 		return;
+-=20
+- 	if (drm_rect_height(&plane_state->psr2_sel_fetch_area) > 0)
++ 	if (crtc_state->enable_psr2_sel_fetch &&
++ 	    drm_rect_height(&plane_state->psr2_sel_fetch_area) > 0)
+  		intel_de_write_dsb(display, dsb, SEL_FETCH_PLANE_CTL(pipe, plane->id),
+  				   SEL_FETCH_PLANE_CTL_ENABLE);
+  	else
 
-
-Non-merge commits (relative to Linus' tree): 6418
- 6667 files changed, 364563 insertions(+), 106247 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 427 trees (counting Linus' and 132 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---UwFQFusBJprkbXOe
+--8qPFsYGPFEyoGWa2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqqi1oACgkQJNaLcl1U
-h9C3mQf8CeEIbAS0XUpD3LZxmoynCZpK+eCNjgp0C1ko1w1h3ayo6W74SPnR9g3G
-x3In1z2OZSshoU8GUtdS2DKE1qLNt1FypmzYZXY0gpQvSaIAFzwBOP/H+BFSIDdq
-Npzu4Ijvcx1bSAw5ndIR/B8JMqh1hNyUMDp8oo57DQ5VqiPmAD7Y2qnOxDCjwUrd
-irmQ44PwBZUZYll/0krFHCZahZkFn8RjYSGcB9c3MK0K//Cq7Dw6AjgxpfB3134F
-3+ngm5G3CG+bugYz1gBhBPoetuGhDBodzyCZpjY9yV3UrLSfQif7PNnO8K0dvB+x
-CiC88+VsoOmJEXkfRxPB3fMxnlvzxQ==
-=/MDL
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqqi3oACgkQJNaLcl1U
+h9D/Ugf/R6yXFrQGCQpogWaRdCQ1Q8XAERd7CekAXLWne2yk7j3en3djgcDJ5iAo
+VaeTEKQxwSQKsV5Rutefh1w09BztsOnpxKtOwbEd26E6jWxgB9/81lE7xiHSo6BG
+XrUIQCS/9uGETnOqcFzrhKP5D0LJoriwNZFzM0S/nKCFQ12YQhQtXbL+qMojLTrx
+9AtqnA9ZVagjiVnHBJNb2fcAwtr8R3namds1kgaeaZnVgwy6xb1rgbDeQ2avYVhI
+9ghOSugI9TIkDCTd0goB+XP8nbL1wMqY8a3OpiXoRThXfkT3rIq6IVjlLGcHz1ZJ
+HzL5IEHRdnAtuQ4SH1LQHgMumVZ61Q==
+=IQ4b
 -----END PGP SIGNATURE-----
 
---UwFQFusBJprkbXOe--
+--8qPFsYGPFEyoGWa2--
