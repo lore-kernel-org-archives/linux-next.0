@@ -1,124 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F2F4B0E58;
-	Thu, 17 Sep 2026 20:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0597F336884;
+	Thu, 17 Sep 2026 21:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789675769; cv=none; b=UVOXPfgUtUX1bMCj2wqhxmBqopeEngsO6+wzotcrrCzDGemgFvKryFB4q/9K0/RB5IHQ+R1c4apw2PykxSCpsh4hEImowIJFjkrgshjUbg7kE4wYpAaDJ7ALj9OORhC8LvZ8UAE/wr2ywP8P7bVV+9HIr+rt/B3ebHNjnpKZFJ0=
+	t=1789680168; cv=none; b=dTJMd3clku/faJU12fAU4kePKZm/izkNV6DtKvmzGsgzn32gWAq9cfL1G2pwJ6LxJ0uE5sBpeV7p1/VogpmPMs6HhgQVRQrPTPwwo9+MH98ERMdseH8jvvWCmJw4LMHVQK1LOQ0UWct8XeH1jVvkg/nsUo0kCmaA7M0znf0vhpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789675769; c=relaxed/simple;
-	bh=LrdzPuAeOMCh1XYPVMaYS23p5HuS60Re2k0g1aBk+TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MsdO4LeOKUA4HyemKV1mJlF8CAs0NRngDdvNCMpbI3ZrvwR6PnxlaYuaF+4CeJYrdiDtSlta/UJytgHtzqWXmE5iM9iJ7TtiGSdnQlwk4XGwl/CfbvSvQeOHaUnIuRxW/emd5keLn8ebxhruuCCfZjnKwRLD1mS9V++ilJEQFlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+8pDKl5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789680168; c=relaxed/simple;
+	bh=cz3beJ100hvyn8J52w20seF2119WecGMTTCyXxMv57Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEDgiEkfox3L+SaAfXYDo5vInz8URO7gcjVWwk0V/dyTMnqUfbFLwEFkOS2am+txEx15Gfa6utCH1TM9iB90dUzI+n51O3i0aqViPuWU598h4kxl6Ixvn8A5uuk64JCsks2jtpqX5MdYK1B+BSqobFlzodYCYN0Pdx/eMJgYav0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sy8Q5bc2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+8pDKl5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D691F000FF;
-	Thu, 17 Sep 2026 20:09:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sy8Q5bc2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4741F000FF;
+	Thu, 17 Sep 2026 21:22:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789675763;
-	bh=1VGH7FCPQMH0rOO2TSaoooSKn8+1ZPhH8jHLIKt4FDM=;
-	h=Date:From:To:Cc:Subject;
-	b=m+8pDKl5uTywcpyvpbTq5ETqiLufiozR+urjfs7lN8hF+RsaM5HRJtsqLpsmyDr7R
-	 4dwVm90mm1Hr1qTikh3rpMt9sFo7xhwRIEmTphqfM85VO/fV4vf3Bey5rtHuK5jwDX
-	 k2E83pVgErfPMZPYIatB7lKul7RSvT/E/wxCcZP3hCjwbPLMYHHhbwrsI+GOlB8uhN
-	 m3b4X69n67mtT1Qebfy0aiDANX4mdf08hNf6IRUcTf9RdDAHAkc67/wKE7DWqMSbCq
-	 Zc348MhjIslKz+wi7TGKIUHoi7Nje7u60EOU4qwid+oDfPZTEnib9xKtwc2bzODSgt
-	 PDHWEEhxe0nyQ==
-Date: Thu, 17 Sep 2026 21:09:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Chandrakanth Patil <chandrakanth.patil@broadcom.com>,
+	s=k20260515; t=1789680166;
+	bh=isJtL9Alg5A7U5hdU42lwq10NYoGxCnVR4iazJCAWTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Sy8Q5bc2c0Q5r54SUUpu0nAhRYrHd07s1OtQDK5pebIjw43n7Mjgd4aPPZOQlY/27
+	 itltFMSzWyWNOgzn8ghQFo44myD7bUpzUwFiQ9Qy9tdOtczE5gb9umnRCq1kbZJGiw
+	 IF4WqXA+YEPETv9w9NsfxbzScw9vwy/cScWqN9MBtwm3QEpl11fW4yCEGgGvYv9M6+
+	 EhJNePjXkJ4OyBhYIbmAxr5Yc5IHimezF+tJH5Z6c+t/Sv3ugUDnBkGVhu5o59p2B4
+	 yqPRKp2g1vlYnyHKQ8nqK+U7pFNLz1F9rWGApF2ogLNGzqV09rZKzxo5MRMXivPmiK
+	 bq3siupm7hhuA==
+Date: Thu, 17 Sep 2026 21:22:45 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, David Hildenbrand <david@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Martin K. Petersen" <mkp@kernel.org>,
-	"Milan P. Gandhi" <mgandhi@redhat.com>,
-	Ranjan Kumar <ranjan.kumar@broadcom.com>
-Subject: linux-next: manual merge of the scsi-mkp tree with the origin tree
-Message-ID: <aqxI7qklaslOJL7Q@sirena.org.uk>
+	Zi Yan <ziy@nvidia.com>, Chao Yu <chao@kernel.org>
+Subject: Re: linux-next: manual merge of the fs-next tree with the mm tree
+Message-ID: <aqxaJR1pQZ-rn-W5@google.com>
+References: <aqv9gg4J1n0sB0GU@sirena.org.uk>
+ <20260917121352.05daf1e0017a7d67091ffaff@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/i7+QyKZHgmod3k0"
-Content-Disposition: inline
-
-
---/i7+QyKZHgmod3k0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260917121352.05daf1e0017a7d67091ffaff@linux-foundation.org>
 
-Hi all,
+On 09/17, Andrew Morton wrote:
+> On Thu, 17 Sep 2026 15:48:10 +0100 Mark Brown <broonie@kernel.org> wrote:
+> 
+> > Hi all,
+> > 
+> > 
+> > Today's linux-next merge of the fs-next tree got a conflict in:
+> > 
+> >   fs/f2fs/f2fs.h
+> > 
+> > between commit:
+> > 
+> >   08071592211dc ("f2fs: stop using PG_private")
+> >   32e05e39cb443 ("f2fs: convert the ->private flag helpers to folio-only")
+> > 
+> > from the mm tree and commit:
+> > 
+> >   60105162524e9 ("f2fs: stop using PG_private")
+> > 
+> > from the fs-next tree.
+> 
+> It's risky to cherrypick a couple of patches from a 16-patch series and
+> carry them in a separate tree.  It'll all end up OK in the end, but who
+> verifies that these two are OK as standalone things?
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+I applied the first patch only which looked a standalone. Though, let me
+drop it and see how it'll give the conflicts with other f2fs patches.
 
-  drivers/scsi/mpi3mr/mpi3mr_transport.c
-
-between commits:
-
-  419d129f970aa ("scsi: mpi3mr: Fix target device refcount leak in mpi3mr_s=
-as_port_add()")
-  dba9e2181ca5e ("scsi: mpi3mr: Fix NULL pointer dereference in mpi3mr_sas_=
-port_add()")
-
-=66rom the origin tree and commit:
-
-  29e3f0856e854 ("scsi: mpi3mr: Fix SAS port allocation and registration er=
-ror handling")
-
-=66rom the scsi-mkp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/scsi/mpi3mr/mpi3mr_transport.c
-index 232af978d7372,a3412cd4ca5bc..0000000000000
---- a/drivers/scsi/mpi3mr/mpi3mr_transport.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_transport.c
-@@@ -1504,11 -1560,17 +1560,20 @@@ static struct mpi3mr_sas_port *mpi3mr_s
-  	return mr_sas_port;
- =20
-   out_fail:
-+ 	if (tgtdev) {
-+ 		tgtdev->dev_spec.sas_sata_inf.pend_sas_rphy_add =3D 0;
-+ 		tgtdev->dev_spec.sas_sata_inf.rphy =3D NULL;
-+ 		mpi3mr_tgtdev_put(tgtdev);
-+ 	}
-+=20
-  	list_for_each_entry_safe(mr_sas_phy, next, &mr_sas_port->phy_list,
-- 	    port_siblings)
-+ 	    port_siblings) {
-+ 		mr_sas_phy->phy_belongs_to_port =3D 0;
-  		list_del(&mr_sas_phy->port_siblings);
-+ 	}
- +	if (tgtdev)
- +		mpi3mr_tgtdev_put(tgtdev);
-  	kfree(mr_sas_port);
-  	return NULL;
-  }
-
---/i7+QyKZHgmod3k0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqsSO4ACgkQJNaLcl1U
-h9CR+Af/bBxUrJVzS09JJDunWe7/eXFR+nqv1CanDU8WY4uYmx1Z0wi2Fnbwk/Tc
-rCulUQRvrpLYoQP2jj7wse490DifHM4txQVBdJNkppavzbBUhXJifBq4HKqugDY5
-CukBurJROJFuvHNxAWvX6qVQ/+MqGRij1ux+cd3MIc1ACmPn9Wn9+elpMWdEPjwT
-AjG/I7WWAntFph64wkR2dMfcc6pfZQKV9XAUDYUKtFeNU37QwBJA7TKtiq8b+tx/
-ISUYc0+L3MMHIIIMnIEnfU1g3E9OFxmtjEAfypHxE6lMUjrJ5OpaMA6VG6hGNpPi
-KJlVYvonyr+Tq6MN9F5hSg2NyidYgg==
-=l+gz
------END PGP SIGNATURE-----
-
---/i7+QyKZHgmod3k0--
+> 
+> Also, as the changelogs say,
+> 
+> "It prepares for a future commit that removes PG_private"
+> 
+> and that removal is in mm.git as [16/16], so I'll need to retain these
+> patches so mm.git compiles.
+> 
+> It would have been preferable for the f2fs maintainers to have simply
+> sent along their acks so all this work can remain in the same place.
+> 
+> I'll continue to hold the f2fs patches in mm.git.  Which means they
+> might hit mainline before the f2fs tree is merged.  Or after. 
+> Hopefully Linus's git will figure it out.
+> 
