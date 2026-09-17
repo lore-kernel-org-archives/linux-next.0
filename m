@@ -1,104 +1,99 @@
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com [74.125.228.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E62C53FD35
-	for <linux-next@vger.kernel.org>; Thu, 17 Sep 2026 17:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B974E0B97;
+	Thu, 17 Sep 2026 17:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789664925; cv=none; b=H6HvsyVIw9uKhtDJ0AlR8/zm5Gx8Tlb2FV/s/C+LvI2+hqFcV4NDf5hZaOQwIok2J59NOrxyBqbpJxeplfRwaQIvUPAPXF8on71FwnTQOyRpHU+rCfPDWJM1b5nWH8ymFsm5MSE+QE/x0k6aF0Ak8680Q9E9zVCUrqjroDX2tv8=
+	t=1789665364; cv=none; b=m80R7bAHEQWyVS56wS7mRm6/5bR+V5E9+BGiSDNz0xCgv+E42GxNe5KCAn1YxhbfLQB4DREdsTIhbW3WXboGAAxx/rmhM56ybxlwX6e0N/CKQhbPQ8zuLn0aLYLU22wxWk7Ea3trAgislybg1BLxTESP9XeHdbDFxsjIWmYI5kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789664925; c=relaxed/simple;
-	bh=ezE7e+8hPeD6bknEPOWbSDt55vcUmx1NSW5YZif6bkw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DEGs1L5kdotfDzxGPiOZPRFOQSa4NOPE+ZnmWf6BNsA+wREqXDLjRVNu+U8Gk8lds4qjXUAo7u2h/vNyQ2UgV25+p5qiVoF9ke/fcIxPfK3W3f0jE/w2AvSJypojvj3YhDNsGbWuwTeXaziZlwYqiH9jw98/h8fvuDNAl71UhPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVuYxTvN; arc=none smtp.client-ip=74.125.228.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789665364; c=relaxed/simple;
+	bh=82KYVSZ6+P/lYvCQQCYrH++1VHotiPvySA50BPg7DGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4bCYWkBEXRUIl22R+GTpNVlAdBIdlMXnYFX0X1FZ18PYVF52/Ixgl1T5G7P9yO09MaxPhHXSptP9cTUS1hCIzvazrC4JKZdy5spYstpN/rLbJNiSiC7TAUpTQLjCX6am32H4aMQm89ljX9yFvrMMHTvgEl0smG7qJqbsRnzgz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZlIvVVv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVuYxTvN"
-Received: by mail-pz2-f42.google.com with SMTP id 41be03b00d2f7-cc1ceb47d53so209621a12.0
-        for <linux-next@vger.kernel.org>; Thu, 17 Sep 2026 10:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789664923; x=1790269723; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=ezE7e+8hPeD6bknEPOWbSDt55vcUmx1NSW5YZif6bkw=;
-        b=iVuYxTvNLMPjMAfCW0j0FNuCl+bP66PzxM1D8pkhlu1zOCzoAwveE2Us06+t+lejrl
-         U5wg8NxNiGf5QlOwIvTLXv4a//VHwxWfxCPhiurnZ6vBmPdvfMolH/PWDtbF6TCJOqi2
-         44aZWQNYE/YrlW0rq8dbgX56SbYAhFCMahUnZgXl5dDLyP0S7zRojFPDP2BWMT56Upcl
-         YRSacQvl3TzEjo1yPvbd1YveNaDKieB3p9GI/forJur2LMwo/Smr8Ax3uI3qEzEAJ21G
-         D4BbKbFsLiln5668FLJwWTT34JuzyB5fIMmqZ/Zb6ytdtm6D6HRIxzchRqxnwoQFLUwD
-         6jWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789664923; x=1790269723;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ezE7e+8hPeD6bknEPOWbSDt55vcUmx1NSW5YZif6bkw=;
-        b=JU4ftecntLc4kPnURcqf6f548yxV2KQsrPGhx0ERIhtQHsuyvVIb5wDH+sC5dtKFp3
-         RlHIApIQiCMz7skGqNVaBbMoW6XmQT/GMV5yL9V/CyTRlSenSgKo1cGZrpey3H736ARO
-         yj9DI10ItQukrhSPug8DC/6iVhcP3ovm0w7bxkDYhSZvYHzF9T8XPF5qvcgJZBiIOnBV
-         shwZiucMQPKnQQ6/gJdX68eO83YQunf3n3h98x5p7zpAgYMmRm/IFa6ujVKujtsZQXAZ
-         DAkmNYhyCJUwE6sUBCbCplJrDFyWVyMQaRFthrH4jGt21AvefaPG9oTtiAuLUQHzWXW/
-         xxew==
-X-Forwarded-Encrypted: i=1; AKwUvBwzZ0BbM670U9SZFvDmiMS0sqcVaa9DFfY0ltSTr80B5VMY5RqdKWSAYRIymudv6BS2GnasObmKZq57@vger.kernel.org
-X-Gm-Message-State: AFuF++lSWJP4GmQsCh3SESG+t5gqYcsm1+rA6OV9SXLus4iLaMkUrIeH
-	r1SB55N/hHFAYMfapE4h3mhp3ourYcTvm2S+mNnjJka9MRcdgYwNc9b5
-X-Gm-Gg: AYBFou2joKYiLzsoAggmqTEOzO35tMxokz+dO+H/TOJzUlCACvJwMhh6mrmVw4cnl7r
-	J8mWKCtEqJZoYbHF/ku9WIqQvH0vwQXuowEnJ2qyw3CDR49HQFg6hUxliO1GgGEC2vjGkEyU7MG
-	rJ4yfUfG+R1Zc5q5UjPnl/Gyqjwd+fMBeVml56coVD3yae2CMA44EgXj5LIaRNdfSWh3gSxrd6G
-	Gmtcrncl5U9PqXzEUYeHeUnVW4OcdLj0rsbSpsz4FOKOPWTsksQLaOI/bsvX8IV6Ya6+OQRxV8F
-	/9czjMdnDy/8M8kyq+EK5cB1q5Wxl0g9LadIgOmQnBMpWg3bWVT+8snZwZHzMUID47+6JQHwF/2
-	E/91kOs9IyBUB8C50kpiR5t1XWh6zsYDz8KwDV5lIOE/Dm8PMafD/99xkQgEP5JsJzTW+eSmFP7
-	DkhyXnwIZDxeTnf2gvyhTxPYaiwKodQ/HVGuMl/7D+FEnZnISSx/I31z5wQovjBywyv2stMfsCF
-	HY5yIJsM6OFltJfK5oyGYg9dBmy
-X-Received: by 2002:a17:90b:2c87:b0:39e:4c7e:bc6 with SMTP id 98e67ed59e1d1-39e4c7e0e37mr1026900a91.20.1789664922555;
-        Thu, 17 Sep 2026 10:08:42 -0700 (PDT)
-Received: from [192.168.0.13] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e361b7266sm6066044a91.13.2026.09.17.10.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2026 10:08:42 -0700 (PDT)
-Message-ID: <c80c4e2aee9502d781fb52bcd5c0972ccd3bc7e4.camel@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZlIvVVv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEC61F000FF;
+	Thu, 17 Sep 2026 17:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789665362;
+	bh=82KYVSZ6+P/lYvCQQCYrH++1VHotiPvySA50BPg7DGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IZlIvVVvXfQ/eqTa55hTCAXS2hRuC6mXS/KrW7gTMdCgZ0lB6NUSiFC3L8lJgEEmG
+	 fTGfIcC8BV2hTVhFJwEvLO1i45Porisk0zaRbGpQfBUCWHPtL1H6t6oljr0+S7vcmX
+	 NtjqBRoBzeiguqtp2XmVbmWff/RUwMsQ2uujOCO7iN0ukNX2eGA8niHP88a1VcWiRq
+	 OLrEVpnNQx+iIu4Be84okXvB+oFb9ZlOAq0fXV04xofv/0cXlbIGKiazpUB7av57cb
+	 rsYyrQ4oxADTUxULEWYC+2cbz8ELAJhKj0Z/hWGr7EkyEtYr0ImwW/lZhEUFU1xpKS
+	 r+iUxmJ1BXt3A==
+Date: Thu, 17 Sep 2026 18:15:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
 Subject: Re: Missing signoff in the bpf tree
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Kumar Kartikeya Dwivedi
- <memxor@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>,  Andrii Nakryiko <andrii@kernel.org>, bpf
- <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Date: Thu, 17 Sep 2026 10:08:38 -0700
-In-Reply-To: <9d668d7c-8f85-49ad-bdb9-5cb81fb6f60d@sirena.org.uk>
+Message-ID: <d6274d8b-807e-4546-8bad-29826b47a9a9@sirena.org.uk>
 References: <aqvBPVcN__UX8P85@sirena.org.uk>
-	 <DLHJEZ0K0FV1.SCQLJJQNS1ES@gmail.com>
-	 <66d3f5cd-12df-4000-8459-360ba57cea12@sirena.org.uk>
-	 <DLHJUSTDSQ05.28VUGOV7YPS6V@gmail.com>
-	 <ec2acd16-40e3-46b7-b120-ce9eec70e942@sirena.org.uk>
-	 <DLHK013DCY3J.19Y8X3Z0RTWCI@gmail.com>
-	 <9d668d7c-8f85-49ad-bdb9-5cb81fb6f60d@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-10+b1 
+ <DLHJEZ0K0FV1.SCQLJJQNS1ES@gmail.com>
+ <66d3f5cd-12df-4000-8459-360ba57cea12@sirena.org.uk>
+ <DLHJUSTDSQ05.28VUGOV7YPS6V@gmail.com>
+ <ec2acd16-40e3-46b7-b120-ce9eec70e942@sirena.org.uk>
+ <DLHK013DCY3J.19Y8X3Z0RTWCI@gmail.com>
+ <9d668d7c-8f85-49ad-bdb9-5cb81fb6f60d@sirena.org.uk>
+ <c80c4e2aee9502d781fb52bcd5c0972ccd3bc7e4.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="E1hMGN2GjvYIXJPV"
+Content-Disposition: inline
+In-Reply-To: <c80c4e2aee9502d781fb52bcd5c0972ccd3bc7e4.camel@gmail.com>
+X-Cookie: Whip it, whip it good!
 
-On Thu, 2026-09-17 at 16:03 +0100, Mark Brown wrote:
-> On Thu, Sep 17, 2026 at 01:27:01PM +0200, Kumar Kartikeya Dwivedi wrote:
-> > On Thu Sep 17, 2026 at 1:23 PM CEST, Mark Brown wrote:
->=20
-> > > Do you have a full list of the current committers, I guess there's be=
-en
-> > > more bitrot than just this?
->=20
-> > It's me and Eduard, apart from Alexei, Daniel, and Andrii.
->=20
-> I've added you and Eduard.
 
-Apologies, that's on me, some issue with scripts configuration again.
-What would you like me to do? Force push with SOBs?
+--E1hMGN2GjvYIXJPV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Sep 17, 2026 at 10:08:38AM -0700, Eduard Zingerman wrote:
+> On Thu, 2026-09-17 at 16:03 +0100, Mark Brown wrote:
+> > On Thu, Sep 17, 2026 at 01:27:01PM +0200, Kumar Kartikeya Dwivedi wrote:
+> > > On Thu Sep 17, 2026 at 1:23 PM CEST, Mark Brown wrote:
+
+> > > > Do you have a full list of the current committers, I guess there's been
+> > > > more bitrot than just this?
+
+> > > It's me and Eduard, apart from Alexei, Daniel, and Andrii.
+
+> > I've added you and Eduard.
+
+> Apologies, that's on me, some issue with scripts configuration again.
+> What would you like me to do? Force push with SOBs?
+
+There's no problem I noticed with the tree - this is about making sure
+the list of people who I contact when there's issues with the tree
+includes all the committers.
+
+--E1hMGN2GjvYIXJPV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqsIE0ACgkQJNaLcl1U
+h9D0Ggf/bPNxKd+RtYrnqms34RZdUAd5J70AlyeG0v6NJ0kP9UiE0yLmslT36KIQ
+rGl8uUIgBFsJexouefyvzHQU71hkgRy0aBDnYXUGR0oJxzZCtgDu+oRKGp5c40zc
+QMOVTlvgxU069sqcufzgWFsmHvD6RSvFuldWpleE9C3LC2bGZiK99Hbn0M9bJnTy
+vLWLv0xOrGoH4iTrhCvFQkz9/pSo+QgTSDP+w4PpgqPU1xaw5DqvYMdJG1Khe+4J
+S5whyf+wwRNDVTyMVP/YI6B91MpOV2s2hq4KHp0p+iNaC1gaZXalb+2l+sa/oEyD
+y9lsr04XQmETARlbBX7GUg8zMsr4cA==
+=Ve7z
+-----END PGP SIGNATURE-----
+
+--E1hMGN2GjvYIXJPV--
