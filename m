@@ -1,38 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218F83A9018;
-	Fri, 18 Sep 2026 12:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AAD3B0586;
+	Fri, 18 Sep 2026 12:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789734761; cv=none; b=UBA8soG8/ZLjU+ugSPnaLtuZnSu4tRoaVXqEmkjUfzqzdm08BD0i5IzQkicysepgpMkvYWPsAWf9HZMIa3tRe8QrA3ehYuFbT6gc9VjOMNdfCSQ6mP4SJAWHz6GfQZs3W7vuUX1k9fsbiqCLgu67VzYMCR01u4rcGbZG35lbIn0=
+	t=1789734952; cv=none; b=BNtN0lDWkDvrbqxeZIYuZH45lQfLZqU+ZvXDJAQgZ8vOFZtmoo7swXnf7SjXZPIA6N0xqhw/iQakp8YW+TJIvRG1+K3GlRgEOAy3dTREB5ixb5PNH+PQhnyl3OHy1Y4UeLkBK5X4/GGSq/05zu8qC8gJwLqhkk6zAw9pGoshSmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789734761; c=relaxed/simple;
-	bh=HUIJldC1s/B6sZJemVhJKLNHFeIiJ65p1mO123UEFds=;
+	s=arc-20240116; t=1789734952; c=relaxed/simple;
+	bh=lFb/ccV6+jizE6TGIAjcwsK07RZ9vzh/fvmX6XrndLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iKlg/FFk7SXjeTA8y2Q5U9/psbAhH6cwvJEtSZWfhObJThutFEP9SWM69iq5Ej2SB9UW6H6LI0whaA2zOloiG64DJAw8youawSaKyV27W8Q7bTCS+nPcQ/KTrs4gYEaD4LygSrT6PMpXBEzGCqUIp/yhHSkgxb2Rsc5atQqwlKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq9YnKT7; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=EFtAJ7w2GUzzsHaTZqbsyr24KZFZnYR7esYY/k1j1ahvwXpWKfJQebma1cQIdpBNCxBC+YJODaG2bpJODp9AIJNM5gClwS9ijE0JtDpKp+7mGzf9DF5mTEct2qiOgYklWwJ74kVIjhxBZ+ysLXTm1oy9JnC0iFRgue6fNMFxCD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hh1ioEfM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq9YnKT7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98FA91F000FF;
-	Fri, 18 Sep 2026 12:32:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hh1ioEfM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 989021F000FF;
+	Fri, 18 Sep 2026 12:35:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789734757;
-	bh=TLqWruDjBIPGrL3/klNVugI9whrADCbcBIn7Tw/QjWc=;
+	s=k20260515; t=1789734951;
+	bh=PnfTQJIwz2bXz4YR/myW/Xmj/jc4ylC9Ppwvk0wRffc=;
 	h=Date:From:To:Cc:Subject;
-	b=Gq9YnKT7QcteBEKLcbYVCJH/1aBGhysFjrtp+C6NjhxrzSXz56eGQ89g8l0kgd1VG
-	 aY+xngLD386gHZEMbDfkL+w0wZU/enHAjuqdYUBAsYTingujQm8yYfSThGFceHNKD8
-	 HubNVfp+KwYfU8OZ5mWI15N8sBWoTqYDXrzxbOH8rzrHeVheC55nVmhnxV5jy25J8i
-	 rfizfSSJrZ8XJjr7t/xS+pe/wruTXTHJxNr4BqgUn3JW+UhkbXstkRFl4RXjq1Mada
-	 lAOsY5PyzEuJC1w9oIQq1FQI2L0i2fdtuLu4b9feP1TU9URWZUDgBypXYvguAE43m5
-	 bWcLlPQUvdX1Q==
-Date: Fri, 18 Sep 2026 13:32:34 +0100
+	b=hh1ioEfMS9xPALHNoT9qZJiv0YxV7bSXFUOjwijx0U9D0XvAx2cvZ42jQ3x9wQcFD
+	 dIaZKzeqTPRZAjjBA1DaFzHPEnFA25EQm9Am80Qjl4MC9G6XDRMdFWZTznczCRw78k
+	 Ih+kx3gF0PqPcGO5tWtZZJu8+AZh4Tc5KfU9xdjkj35thh+AwFpxyPsFZOETVUjAGN
+	 tMceet5uQkMbrXxY+rsVLLqSR0++j+A72syILlY0aWhV9kQBB+kTz0i7HmjZ9E7c3p
+	 DY1lkyHcPgt/kyZ9ZrV9oTURS80qp+pSGTFHQ/enleiUgE7HkEGMpke996X41En6bM
+	 w73VsqIjNPOJA==
+Date: Fri, 18 Sep 2026 13:35:47 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the amdgpu tree
-Message-ID: <aq0vYhZXtMqA41wZ@sirena.org.uk>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Carlos Llamas <cmllamas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Tomer Pomeranc <tomerpo@gmail.com>
+Subject: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Message-ID: <aq0wIywjYmlWf77i@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -40,43 +44,55 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zGdOPVzrSrrJ7Kw1"
+	protocol="application/pgp-signature"; boundary="97e8isr3gG5KNoN9"
 Content-Disposition: inline
 
 
---zGdOPVzrSrrJ7Kw1
+--97e8isr3gG5KNoN9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the amdgpu tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-/tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/dc_memory_pool.c:8=
-7:37: error: stack frame size (8264) exceeds limit (2048) in 'dc_memory_poo=
-l_create' [-Werror,-Wframe-larger-than]
-   87 | __must_check struct dc_memory_pool *dc_memory_pool_create(size_t si=
-ze,
-      |                             =20
+  drivers/android/binder.c
 
-I didn't investigate which commit triggered this, I have used the tree
-=66rom next-20260917 instead.
+between commits:
 
---zGdOPVzrSrrJ7Kw1
+  c4c02084d6687 ("binder: fix leaked fd fixups on TF_UPDATE_TXN supersede")
+  22c135635fdd9 ("binder: fix is_failure flag for superseded transaction cl=
+eanup")
+
+=66rom the char-misc.current tree and commit:
+
+  fd2bc059ed466 ("binder: rm -f binder.c")
+
+=66rom the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+(Deleted the file)
+
+--97e8isr3gG5KNoN9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqtL2EACgkQJNaLcl1U
-h9DhHwf9GrDS3NNUvQK4/UYA3dq0Yhgt9uGuefF4/WJhPZcoZNZ8cqvlmiwuU2fJ
-gAQngRGbLsSfCfQIbDnaTnGpGNHti65CT39NufepA3ZLR0F3fWUZzunUQbekUPEp
-S14DQQ+cVQM7uEW39JTvTtQM0j713mjjXU35kpJejCkVB2wQM0i9v0Ev7+ZZugKb
-Ht0JrqEqWLNQijz1BRDKRdRNgeCgUX9A7HzARK416Z3IYbxusBSHJKt7UAFQ9ChQ
-adbDA8wGtRHR6b0Lp8UQTsjF58vLuG7mic5rmpvLt2Z3d9EuyfvS6MAVmBdQ+5Cw
-I9ajibZOkBLspGJqJ/ooRTZOpI9U7Q==
-=e1cd
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqtMCIACgkQJNaLcl1U
+h9DpYQf/Sq+rPDC+ufY6VoLrpav6sS3qn/IVVYGX+0G7yec0tRFWowf7F6Xjufnw
+EpUfVGxM/FblwE/1S0TejMgFKlR8k/ATBj0g000r+GBBd7YvKSomehFuhqqZosOH
+cd02THrSb/o2xmHGJ46zh+RTQgE3RpvGckbo73ZlTQ20M1iucib+Y1otynjWCUS6
+/SRK6Mh2+Ukmg5jZtAvrqnx3oQMxtS5kF/LhoZuk1hBm7bnwnpOfwTJKa8l4nXq9
+jSS1jfJI3ZeP4dYzcnDXgavdAqTOpGJ5pI3eqrymeUJlCaIBTPIQSE1DgrYYgKkU
+9EGtN+NGR3xhHgA0w6nq94NM+/zCkQ==
+=kYo8
 -----END PGP SIGNATURE-----
 
---zGdOPVzrSrrJ7Kw1--
+--97e8isr3gG5KNoN9--
