@@ -1,85 +1,66 @@
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84A2502780
-	for <linux-next@vger.kernel.org>; Fri, 18 Sep 2026 15:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCF6511230;
+	Fri, 18 Sep 2026 16:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789745336; cv=none; b=ZUgPhREBu6dkL2IOYUOsYGU+DzCjqgg2frpI7THo3FA2nt+UqD7QpraA8bC5HEhTCt6kKvI9qYdLVTplyMjfs8Zb/uIGxWXRjHH9Fv5aoKhOfajTd0szte6nH+hp2TgqObXRR4kBm6YwJQdM/ZjS12AV2AykSgDWXw905gRHQqY=
+	t=1789747584; cv=none; b=ApCp+eKCclM9J1Ihqyq5eT9RmA1vh7bMjJGWw2XiBJUFqRjcxL5BLhHQEu1yJgIzKLuuqoKRCf3sRHsGXtWYcJ2NqCcPFE+6gVQ/MljwF6IxnKrxF4e3kgO6ZK0FzeRa/9TvNLtfuCjAxgyvVF1W7wB2s3Lg52HNagrvBgEEni4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789745336; c=relaxed/simple;
-	bh=o3Z3LUZrrCX+7tJfBVe3q1pst3KzWvwiOcA1hLr5jf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RQur7DlmUdtWQ6+dUn/9LJmsmb1rJmVM7Ne/2y5eHxoFl63BEMqTA4COPWb2oHrCBzqqNwr+5usm3ieDKSD/a2NdCDgjBAXikbylFlnYCj705CIlAG/xyYStBsy2NPf4BiK3kAjBIgqYbkdL219KQBawNPJ8pRI8eGHdBPdGY6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=QrES315B; arc=none smtp.client-ip=188.68.63.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1789747584; c=relaxed/simple;
+	bh=pQG99sEvZrzC/b4pNYr6YvveDw7w/AsRi71Sph1eZNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDGieDIQQ7kmdNQh9t8F1xI6Dz+seWOfn0N/we/XV5Xp2Zp2CrhxAnHDB9Xx+bt+f5yAk1PiK0vEUEuqYjA2uuubvjmu8NYNE5lcCOwwxcZyDnGD7EblXlNU9TQgfFBSXa/GZu0V/ZYZnuzIxSJfeQavnDMoGFauQ87F+o31geA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsbDNjMM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="QrES315B"
-Received: from mors-relay8204.netcup.net (localhost [127.0.0.1])
-	by mors-relay8204.netcup.net (Postfix) with ESMTPS id 4hmc3L3gXzz8nZC;
-	Fri, 18 Sep 2026 15:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
-	s=key2; t=1789745326;
-	bh=o3Z3LUZrrCX+7tJfBVe3q1pst3KzWvwiOcA1hLr5jf8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QrES315BaNzIB66rNZ5gBXOgwrGceq8fNlBkt67elC5ocDSRqwz8NT+lzwPCnqam+
-	 g80MpPbQqBo2g0AIo6JfjQnHMtdEUC/omNMh8/41nQCoYfIB4LaMo0md27NPln6Kiu
-	 1pWg3ymqZmlLRhluhsowAnwC9s8MDs+wG8co/RBeoss1x7n64aMqTcaD7wzVpa3wu/
-	 dZbfnSEPy/cTTE0yIpikFX4irvPU7cmaqlTLQBHJ8GdqwXxlOw7++nHTBDx0gLbhZC
-	 LWQy+95v2pp0lrzTsCnYzOESevwj1l42OrAMJQTy94OqvCgiHmkuAUGd8ijuShpbj7
-	 Ovigez8iiEuyA==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay8204.netcup.net (Postfix) with ESMTPS id 4hmc3L2zZZz8nWx;
-	Fri, 18 Sep 2026 15:28:46 +0000 (UTC)
-Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4hmc3K6q8gz8sgW;
-	Fri, 18 Sep 2026 17:28:45 +0200 (CEST)
-Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
-	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 0ADE55FA75;
-	Fri, 18 Sep 2026 17:28:41 +0200 (CEST)
-Authentication-Results: mxe9fb;
-        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
-Received-SPF: pass (mxe9fb: connection is authenticated)
-Message-ID: <5d600227-0396-4e4f-bfcd-8aa5bbb3f548@leemhuis.info>
-Date: Fri, 18 Sep 2026 17:28:39 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsbDNjMM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 802EE1F00898;
+	Fri, 18 Sep 2026 16:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789747582;
+	bh=DgQUG8pDvuuNYYAGh6Yto+5SQzXMUOTzv1Daej2EEbg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
+	b=lsbDNjMMrROkkN2lGaVT0XwcQua/lgqnk2loQCtCiMFCRycl5mDb0PA8FXtQEVxGm
+	 9x1gK4nubI74wLGYzNzHCL7EQwM8EMcrmsGqXnaAqYjYUtEjJbnaVwFmhD8v//Wwvb
+	 DosXYsXJ1VhZf8RGjCvmvZJbPR49QpK5QYMQF8y7mD9pJgp8zoZ2ou+8X3IiMWqPl2
+	 Owy07JFiXceEJMdUOT6IQHl6gN3Jpw/saOLR9+lYvM0ACZnK02ywYTXPTiJsJPuj3s
+	 gCgnP3wAFd+gINAOzlyovCdkHY4MDJCcxaoyYL/RMHPnihggbK2+cVNmmVeLDeAFbo
+	 bK0w0gZbjms5A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3EAB7CE08CF; Fri, 18 Sep 2026 09:06:22 -0700 (PDT)
+Date: Fri, 18 Sep 2026 09:06:22 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the rcu tree
+Message-ID: <a6f5c2a5-f533-43d4-a8e7-62b26b263e84@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <aq0bIgOyDwt51Lot@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IFtSRUdSRVNTSU9OXSBuZXh0L21hc3RlcjogKGJ1aWxkKeKAmHRw?=
- =?UTF-8?Q?m=5Ftis=5Fresume=E2=80=99_undeclared_here_=28not_in_a_function=29?=
- =?UTF-8?B?OyBkaWQgeW91IG1lYW4gLi4u?=
-To: kernelci@lists.linux.dev, kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-References: <178940874287.1087.18054581149136757738@kernelci.org>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: de-DE, en-US
-In-Reply-To: <178940874287.1087.18054581149136757738@kernelci.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <178974532134.2725605.10357210687261113811@mxe9fb.netcup.net>
-X-Rspamd-Server: rspamd-worker-8404
-X-Rspamd-Queue-Id: 0ADE55FA75
-X-NC-CID: MLi1dO2rtv0tOB840t3kDDJiFSQVgkdhRZdijYhiFSvkYjtTvOU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aq0bIgOyDwt51Lot@sirena.org.uk>
 
-On 9/14/26 19:59, KernelCI bot wrote:
-> New build issue found on next/master:
+On Fri, Sep 18, 2026 at 12:06:10PM +0100, Mark Brown wrote:
+> Commit
 > 
-> ---
-> ‘tpm_tis_resume’ undeclared here (not in a function); did you mean ‘tpm_tis_remove’? in drivers/char/tpm/tpm_tis.o (drivers/char/tpm/tpm_tis.c) [logspec:kbuild,kbuild.compiler.error]
-I believe this should be fixed by an updated version of the patch "tpm:
-use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()" that landed in -next
-today (that hit the list shortly after this was posted, just took some
-time to land apparently).
+>   3819612d99983 ("doc: RCU: Fix s/strategem/stratagem/ typo in Requirements.rst")
+> 
+> is missing a Signed-off-by from its author
 
-Ciao, Thorsten
+Good catch, and apologies!
 
-#regzbot resolved: fixed by a updated patch
+I will kick this patch into the post-v7.4 pile.
+
+Costa, please re-send with your Signed-off-by.
+
+							Thanx, Paul
