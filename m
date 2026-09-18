@@ -1,42 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CB638E8BF;
-	Fri, 18 Sep 2026 12:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218F83A9018;
+	Fri, 18 Sep 2026 12:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789734728; cv=none; b=alw+5aq/MGrPJaaWdMrjbFUSfIwdQg8lrKI9mLdWl31vTLclkhjdOZdxI7+YtiV7Z0NEti/dp3RwyJv/r77e2PO7mF8RjHOfZ20JxJjEW0+STgeSD13mzYzQcewvbeHxW8XwNICxq0yXq7Umw7D7wn/nmSFCL+wO6Oj6/j98DrI=
+	t=1789734761; cv=none; b=UBA8soG8/ZLjU+ugSPnaLtuZnSu4tRoaVXqEmkjUfzqzdm08BD0i5IzQkicysepgpMkvYWPsAWf9HZMIa3tRe8QrA3ehYuFbT6gc9VjOMNdfCSQ6mP4SJAWHz6GfQZs3W7vuUX1k9fsbiqCLgu67VzYMCR01u4rcGbZG35lbIn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789734728; c=relaxed/simple;
-	bh=KFAeqhtTXyKa4gFhQrg06ju+1iUL6ti3QWzmDq2VQ9Y=;
+	s=arc-20240116; t=1789734761; c=relaxed/simple;
+	bh=HUIJldC1s/B6sZJemVhJKLNHFeIiJ65p1mO123UEFds=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=INMZ0376yacJQqzzZxZ14IQlZscIgcS3uf2PO32w+EsKwBMBj8Mm37lDS092yYg/P/zqrbnB3TLNlF3CzRQuchrXlM5wntmpq5DL9pSuVKqfOXXys3XJX6x6uVgHHtdtkAY0iUsLF/w9ml98EtRsQTEnTLfx1mvGTBiNRfKgPhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mO043iGq; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=iKlg/FFk7SXjeTA8y2Q5U9/psbAhH6cwvJEtSZWfhObJThutFEP9SWM69iq5Ej2SB9UW6H6LI0whaA2zOloiG64DJAw8youawSaKyV27W8Q7bTCS+nPcQ/KTrs4gYEaD4LygSrT6PMpXBEzGCqUIp/yhHSkgxb2Rsc5atQqwlKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq9YnKT7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mO043iGq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C811F1F000FF;
-	Fri, 18 Sep 2026 12:32:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq9YnKT7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98FA91F000FF;
+	Fri, 18 Sep 2026 12:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789734726;
-	bh=mbzg/UEbf+MOm1966a9nICHfjUQV4C0eJW77QxZqSAQ=;
+	s=k20260515; t=1789734757;
+	bh=TLqWruDjBIPGrL3/klNVugI9whrADCbcBIn7Tw/QjWc=;
 	h=Date:From:To:Cc:Subject;
-	b=mO043iGqb0RgTq+djNkEb/ok1b0YcTmtk0zZOKtlj/twI+pglLjmBHpoezO4IYxz+
-	 Xe3DC4E6jyotlfaDPHodW/iXolSp+rmMp4nmJQwz2BTv5UTpP0OjXis2IFPYetaOtp
-	 V4VMJMaQ3bx7ePwQT+mU8GW/QS3OH9kUiPVt30/JcD/qXbW2bWOuU1RyZ52pU6FVH0
-	 Zxtb+4JURTpZkTtDrRbF3f4TB41fwn9nlD1n2drbBaR9y00j9w+t0DBJyeWsxv+pY6
-	 h4DnI/QHHAZNwIHaXmW5fPWNT2ALxwaEvsPorRnAjHV6l28z6CEE2olfAtaOzcJOli
-	 rZhJa6i16qNvg==
-Date: Fri, 18 Sep 2026 13:32:02 +0100
+	b=Gq9YnKT7QcteBEKLcbYVCJH/1aBGhysFjrtp+C6NjhxrzSXz56eGQ89g8l0kgd1VG
+	 aY+xngLD386gHZEMbDfkL+w0wZU/enHAjuqdYUBAsYTingujQm8yYfSThGFceHNKD8
+	 HubNVfp+KwYfU8OZ5mWI15N8sBWoTqYDXrzxbOH8rzrHeVheC55nVmhnxV5jy25J8i
+	 rfizfSSJrZ8XJjr7t/xS+pe/wruTXTHJxNr4BqgUn3JW+UhkbXstkRFl4RXjq1Mada
+	 lAOsY5PyzEuJC1w9oIQq1FQI2L0i2fdtuLu4b9feP1TU9URWZUDgBypXYvguAE43m5
+	 bWcLlPQUvdX1Q==
+Date: Fri, 18 Sep 2026 13:32:34 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>,
-	Chenyu Chen <chen-yu.chen@amd.com>, James Lin <pinglei.lin@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: linux-next: manual merge of the amdgpu tree with the drm-misc tree
-Message-ID: <aq0vQtb0cXTGuPxJ@sirena.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the amdgpu tree
+Message-ID: <aq0vYhZXtMqA41wZ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,121 +40,43 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uNkFzDPxWkscMViP"
+	protocol="application/pgp-signature"; boundary="zGdOPVzrSrrJ7Kw1"
 Content-Disposition: inline
 
 
---uNkFzDPxWkscMViP
+--zGdOPVzrSrrJ7Kw1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the amdgpu tree got conflicts in:
+After merging the amdgpu tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+/tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/dc_memory_pool.c:8=
+7:37: error: stack frame size (8264) exceeds limit (2048) in 'dc_memory_poo=
+l_create' [-Werror,-Wframe-larger-than]
+   87 | __must_check struct dc_memory_pool *dc_memory_pool_create(size_t si=
+ze,
+      |                             =20
 
-between commits:
+I didn't investigate which commit triggered this, I have used the tree
+=66rom next-20260917 instead.
 
-  2bcec01cf1055 ("drm/amdgpu_dm: Convert to atomic_create_state")
-  87882cd6debd9 ("drm/amdgpu_dm: tests: Fix wrong variable declaration afte=
-r merge conflict")
-  b8bc58515ac49 ("drm/panic: Display panic screen via per-plane callback")
-
-=66rom the drm-misc tree and commits:
-
-  123f78c8fa9c1 ("drm/amd/display: Attach only plane updates that actually =
-changed")
-  055593492a1f7 ("drm/amd/display: Test optional plane property creation")
-  48c78d2199c0f ("drm/amd/display: Test panic flush DCC teardown")
-  7352d162d0401 ("drm/amd/display: Test cursor update without DC stream")
-  128cf6682d2d3 ("drm/amd/display: Test accepted plane atomic check")
-  567aadce7e28a ("drm/amd/display: Test pre-GFX9 plane buffer attributes")
-  9e7ed95bfdd9f ("drm/amd/display: Test modifier list growth failure")
-  80065ab5bcf25 ("drm/amd/display: Test DCC reject for multi-plane format")
-
-=66rom the amdgpu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index cf39db90dfe0a,dcf72ff438889..0000000000000
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-index d357afcb0e93a,ab674a32279f3..0000000000000
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c
-index 1b0d3f16ef1a9,1001cbc334b09..0000000000000
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c
-@@@ -3755,10 -4110,12 +4102,12 @@@ static struct kunit_case amdgpu_dm_plan
-  	KUNIT_CASE(dm_test_atomic_check_helper_failure),
-  	KUNIT_CASE(dm_test_atomic_check_color_pipeline_conflict),
-  	KUNIT_CASE(dm_test_atomic_check_scaling_failure),
-+ 	KUNIT_CASE(dm_test_atomic_check_success),
-  	/* amdgpu_dm_plane_panic_flush() */
-  	KUNIT_CASE(dm_test_panic_flush_no_dc_state),
- +	/* amdgpu_dm_plane_drm_plane_create_state() */
- +	KUNIT_CASE(dm_test_plane_create_state_initializes_state),
-+ 	KUNIT_CASE(dm_test_panic_flush_disables_dcc),
- -	/* amdgpu_dm_plane_drm_plane_reset() */
- -	KUNIT_CASE(dm_test_plane_reset_initializes_state),
-  	/* amdgpu_dm_plane_drm_plane_duplicate_state() */
-  	KUNIT_CASE(dm_test_plane_duplicate_state_copies_fields),
-  	KUNIT_CASE(dm_test_plane_duplicate_state_copies_resources),
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c b/drive=
-rs/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-index 233447dcf6b30..0124d1e7eb0b6 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-@@ -842,7 +842,6 @@ int amdgpu_dm_crtc_init(struct amdgpu_display_manager *=
-dm,
- 	return 0;
-=20
- error_ism_fini:
--	amdgpu_dm_ism_fini(&acrtc->ism);
- 	drm_crtc_cleanup(&acrtc->base);
- fail:
- 	kfree(acrtc);
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crtc_tes=
-t.c b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crtc_test.c
-index ade20e6506780..45a7a35bd5ff5 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crtc_test.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crtc_test.c
-@@ -1666,8 +1666,6 @@ static void dm_test_crtc_reset_state_replaces_existin=
-g(struct kunit *test)
- 	old->stream =3D stream;
- 	crtc->state =3D &old->base;
-=20
--	amdgpu_dm_crtc_reset_state(crtc);
--
- 	/* Old state was destroyed (stream ref dropped) and a new one installed. =
-*/
- 	KUNIT_EXPECT_EQ(test, kref_read(&stream->refcount), 1);
- 	KUNIT_EXPECT_NOT_NULL(test, crtc->state);
-
---uNkFzDPxWkscMViP
+--zGdOPVzrSrrJ7Kw1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqtL0EACgkQJNaLcl1U
-h9ASxwf+Lqz0taae78o3god7qB2eBXr3AJprmMhyZ9wKpz8BTcxvLk8ISGZSOcUD
-2Uu8aOIXCBV3Wz+ebUjAG2lPvvhFQX8+VTKBWOgOaPAPQWgstp30fy+eX6tMkzVq
-H/0thFS6T94jXa/8mnCDCVjeHvihregqwgQN8rJU7ydRym61Cb/xIZVOYTxI/yZd
-J8g7x4jkJkZcjqiUGLnTx9uTDEzgTE4s24nbD9GTfeMSPcSlImFU9aZ74L0eTwdY
-JYYkzjNnJjss4Ozsq9JPqIWMrXqK7bQ/VTDym1h+sPQA/id5dQ7OE/nxftPPQh4Q
-5kwsntnqrMeRKznhgHa2NvD07Kyxzw==
-=8TcT
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqtL2EACgkQJNaLcl1U
+h9DhHwf9GrDS3NNUvQK4/UYA3dq0Yhgt9uGuefF4/WJhPZcoZNZ8cqvlmiwuU2fJ
+gAQngRGbLsSfCfQIbDnaTnGpGNHti65CT39NufepA3ZLR0F3fWUZzunUQbekUPEp
+S14DQQ+cVQM7uEW39JTvTtQM0j713mjjXU35kpJejCkVB2wQM0i9v0Ev7+ZZugKb
+Ht0JrqEqWLNQijz1BRDKRdRNgeCgUX9A7HzARK416Z3IYbxusBSHJKt7UAFQ9ChQ
+adbDA8wGtRHR6b0Lp8UQTsjF58vLuG7mic5rmpvLt2Z3d9EuyfvS6MAVmBdQ+5Cw
+I9ajibZOkBLspGJqJ/ooRTZOpI9U7Q==
+=e1cd
 -----END PGP SIGNATURE-----
 
---uNkFzDPxWkscMViP--
+--zGdOPVzrSrrJ7Kw1--
