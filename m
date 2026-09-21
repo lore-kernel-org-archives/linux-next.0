@@ -1,46 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACBF45D912;
-	Mon, 21 Sep 2026 09:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3438246E01D;
+	Mon, 21 Sep 2026 10:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789984170; cv=none; b=WBzTLMrtJTOqnTi0h+16lnDARG+UpA+twCQl/5UZsyw7QpjPHajsMbpzTBvQ1O6UbfvC3suDfSSxyIxLsO932pvQhmuOK0ViIFX9b2z4/vFr74s9+Z2CRDAMNEsyFiIGA65pA0u/FIZiqIkNZCTYloWicyTpFOnvQA0o7kc7kKg=
+	t=1789986558; cv=none; b=U/6IRb1GDmRiDx19gCww2Ldl1w19emxWqW9mRlBK1pRzBs6r3qzOb421lMt5vNgIyrU4K2xI4YKBRwfWsWr58lunEoq3Lpf7/AOcL3nhG7XzjbP8CpXRY/0FaCEKYYsFsBX/GCg20dZ7wncbiMlu7g8f4HJD5MQSV7APv9kXUPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789984170; c=relaxed/simple;
-	bh=HBsA9PM43GuWZO+qfQBfYt0z5BjFpNX/qpgO9J2YFuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WRaWCqZcPh9D1C8LQckas5b3lwxSCoZ9Jc6k+68L+1oTuUh32im4gBKfXVao536oLlyF4FgwHH97fSvEqkHwetzGG5vKpX7pKvI+JHIH6z85yBroH+BYM8LprczYROa4mDmTyRRyOM2rZo4qy/TszrAwQ/CEDPFkR82CaN1Jfkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4Nq7CGW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789986558; c=relaxed/simple;
+	bh=gg7GufPXHI3MjnU0puBbIoWyRAcap2K6AzjjzkOwcnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHUDTxSBmhan2sYsEqDzl6CRGrcym86xaF8nPZweCZIzf989iuWkQ0MRlys0nfRchYrJAq1GW+DJBMKYilPlIO7pGqdP8b352RWrrI6Cq3/k4WGv1DzhPkh+OwtUIQeafzK/tbpasInFxGllXGrbeCrCYC0VNncpyzolBk0UT9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBYqwUfp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4Nq7CGW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ED91F000FF;
-	Mon, 21 Sep 2026 09:49:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBYqwUfp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988E51F000FF;
+	Mon, 21 Sep 2026 10:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789984168;
-	bh=L7Oq+XJqX0LzSIGBwuR1yRjmlCpODghQmCE1YBpzvP8=;
-	h=Date:From:To:Cc:Subject;
-	b=L4Nq7CGWPnWEOIe3JljlO3NzmADToiH7NKA2Jv6c484u4F1wVvbxE5ydcsqZrTsA9
-	 EfLhu2LBAYz7Pcxiq3LZOqKwDJSsMfLbNfNlI+VgRshwd0fdJ3Vrld7yfqosbNtbPG
-	 jH8KOHoFrNxKndeaotAAbjSQ0M1gOs+KzsUgES35k/Ba93uSOhhj1Hs4CPCP30CTn/
-	 sEfZfoCtElv5g2ZeuqVYSPFhpHgtPfNAsXbnzoyMLbbxv9BbaMlQqX/QAA5D13bo1f
-	 kQLUt4q+bGtK6NgNTVyrvCjlqvvMNRLNNFZRNnzRk85i5/foDhzttvOwk468YTqMBB
-	 GxJmwfbe6lqfA==
+	s=k20260515; t=1789986556;
+	bh=gg7GufPXHI3MjnU0puBbIoWyRAcap2K6AzjjzkOwcnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lBYqwUfp2o9g1150tJrGhlc3WqQTYv+uLcFQffDsdbfYLAFQ650bOOkOyhVXlHIBj
+	 PBEccpWIFxJSRMeteEyxz/RnvPCQGxqnMqZw4RyPWC47On2W2LeN4hexvgL+tbfvjw
+	 N3xHJA1jETRbDy5A9amOy9kmEmDZt5/m/cjwGqhnILFJh95nDrqt1KBLbmGfYVue/v
+	 zb6znGS4WA0e37Iq8Ay1cOndrDm6AbiCmKq4+w5cz9E3vknPjlUuK1bjCgPRYsTWl/
+	 9KqjbGhfY+9ThTEJpziGyT6qBwB8rcxLol6nc9K9A3zBH+nKu3rTPfLn6/Uu3qnktJ
+	 rZtHoTu1PFuxQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id BE60D1AC52F5; Mon, 21 Sep 2026 10:49:25 +0100 (BST)
-Date: Mon, 21 Sep 2026 11:49:25 +0200
+	id D81921AC5363; Mon, 21 Sep 2026 11:29:13 +0100 (BST)
+Date: Mon, 21 Sep 2026 12:29:13 +0200
 From: Mark Brown <broonie@kernel.org>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>
-Cc: Anastasios Papagiannis <tasos.papagiannnis@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <arD9pUBavrJQ8TRT@sirena.co.uk>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Tao Cui <cui.tao@linux.dev>, linux-next@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	cuitao@kylinos.cn
+Subject: Re: next-20260917 and next-20260918: merge of the block tree breaks
+ all zoned devices
+Message-ID: <arEG-YH7Q7ansx6o@sirena.co.uk>
+References: <20260920125846.1806521-1-cui.tao@linux.dev>
+ <20260920231226.771a0e21@canb.auug.org.au>
+ <aq_5QycDLgQGCc86@sirena.org.uk>
+ <d97685b3-f22c-4a27-a7d7-24b2ac7dfbe6@kernel.org>
+ <7141040b-5a15-471f-9bbf-9a18bed864e7@linux.dev>
+ <0ed54aa9-2cc6-4051-abe7-8144f39f6bed@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,79 +50,36 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gZN7iER2B7tM4djM"
+	protocol="application/pgp-signature"; boundary="SUF6pmeD9FlGm4tO"
 Content-Disposition: inline
+In-Reply-To: <0ed54aa9-2cc6-4051-abe7-8144f39f6bed@kernel.org>
+X-Cookie: Too clever is dumb.
 
 
---gZN7iER2B7tM4djM
+--SUF6pmeD9FlGm4tO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Sep 21, 2026 at 11:31:11AM +0900, Damien Le Moal wrote:
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+> Mark, Attaching a v2 diff for corrected the conflict resolution. This is on top
+> of the current linux-next.
 
-  kernel/bpf/helpers.c
+I've replaced the patch with this one.
 
-between commit:
-
-  81c975aae375d ("bpf: Require CAP_PERFMON for kfuncs reading memory")
-
-=66rom the bpf tree and commit:
-
-  3f9d98dfed79f ("bpf: Add user memory access kfuncs for mm_struct")
-
-=66rom the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc kernel/bpf/helpers.c
-index 712dca5a2c5bd,82402d97ce67c..0000000000000
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@@ -4920,12 -5049,14 +5049,14 @@@ BTF_ID_FLAGS(func, bpf_wq_set_callback
-  BTF_ID_FLAGS(func, bpf_wq_start)
-  BTF_ID_FLAGS(func, bpf_preempt_disable)
-  BTF_ID_FLAGS(func, bpf_preempt_enable)
- -BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)
- +BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW | KF_PERFMON)
-  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
-  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
- -BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
- -BTF_ID_FLAGS(func, bpf_copy_from_user_mm, KF_SLEEPABLE)
- -BTF_ID_FLAGS(func, bpf_copy_from_user_mm_str, KF_SLEEPABLE)
- -BTF_ID_FLAGS(func, bpf_copy_from_user_task_str, KF_SLEEPABLE)
- -BTF_ID_FLAGS(func, bpf_get_kmem_cache)
- +BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE | KF_PERFMON)
-++BTF_ID_FLAGS(func, bpf_copy_from_user_mm, KF_SLEEPABLE | KF_PERFMON)
-++BTF_ID_FLAGS(func, bpf_copy_from_user_mm_str, KF_SLEEPABLE | KF_PERFMON)
- +BTF_ID_FLAGS(func, bpf_copy_from_user_task_str, KF_SLEEPABLE | KF_PERFMON)
- +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_PERFMON)
-  BTF_ID_FLAGS(func, bpf_iter_kmem_cache_new, KF_ITER_NEW | KF_SLEEPABLE)
-  BTF_ID_FLAGS(func, bpf_iter_kmem_cache_next, KF_ITER_NEXT | KF_RET_NULL |=
- KF_SLEEPABLE)
-  BTF_ID_FLAGS(func, bpf_iter_kmem_cache_destroy, KF_ITER_DESTROY | KF_SLEE=
-PABLE)
-
---gZN7iER2B7tM4djM
+--SUF6pmeD9FlGm4tO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqw/aQACgkQJNaLcl1U
-h9AFSggAhb2Dk0lPYAKdAuGHjD6ShmhpnW2H8vySrTKhDQJBgSfB2XTc04WiPifh
-o2m/zgOtn1Or26x4Tunfhn36vTga+TlrcK+ZqsWRJ6bHUmX9lSauVaDsa+CZDFe+
-NpcBuXapYDue3rR3B4Obz4vJHSSJA+1skaTPFDIT2Xc8h4QNUdXQeGjcwpz3CYa5
-XImS6fQKnLAbDDMDC8+eppTc3s0j0tjl1FHSNkA8rsnTvhul3Mz0hlicgD2yCmkp
-e6Ei8WQd/Uu34+0tK44SV9pO43yHNzJwJa6xvtpunn8juCc+NVzhzgFygckpWk1I
-fKXiIAGYXiakQHxLBvQD/O+SQX5kHA==
-=acpp
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqxBvkACgkQJNaLcl1U
+h9CU8wf/a0GBTq/Y0ThBWuEpezEY6ooGroVPWRUchrFWiga4hZ2jyKS+rNNJCY0d
+yo5tV89FxXEZEv+JBo3oTL8mdUk4QREfN0wsFtpUP2tnWeiNVDCpE/HakVrsLxYS
+euGjGxYuTG95gJjGrACbjHhZPb57KHOaFMmdjxhrzAXeEUHqLpS1d5wdrLag6NVp
+Wg0GgtoPVHRZabG/uUkk9ABnHw5Ti40qLDaO/H6iinWaCA66DyCPGcZbG1oF27VO
+VTRwNRUBBBeMNqTxA3zWVWIxA8G0Xba9oaoR90jy4djUzOctCh1jbRv/jHcqXol0
+nIhkKI8fNW5IjwEA2hnlOnVG2+ag+w==
+=mgsS
 -----END PGP SIGNATURE-----
 
---gZN7iER2B7tM4djM--
+--SUF6pmeD9FlGm4tO--
