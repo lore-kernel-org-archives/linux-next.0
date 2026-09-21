@@ -1,46 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1073AE1BD;
-	Mon, 21 Sep 2026 08:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0998035C6AA;
+	Mon, 21 Sep 2026 09:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789979102; cv=none; b=OUm8KBKNUDvRRLB2vdln7bv6WOrRT23E+KPK0Gcf/4m1p2qIx1jJtWEYjEgB7ig8wfRGYzvMMt++NZnp/70aVlW9AMFv1oQgRD3UvY5lkJC+UDFxc2nkrUi5JLAGOAcM28uBHWlBDHfBBh+Ib3wu9sZ9XMQb1qWk3TSgwDS+kms=
+	t=1789984143; cv=none; b=tc8Z2O+SvCFnJdNmzTisiBaIP/dtGiZzjisEAsBwAK2uj3zlnGJ6Wp5CCGM4weD4HDIReM9EUV1YNbyM/VcmPefevuam9oS5hxXLv+0H81Ldy09QYJDQBbI9nQaBMy9Gv62td1l2D7hcoD69z40DydaIsYQiAPB4AskOUGFSlPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789979102; c=relaxed/simple;
-	bh=3t0e3F4VfslWuBdGcVFQ9hUz411uxVQF1KTgMoLo1JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltvjiypRYOIwdLVA4JYHCHtTuRqs37KVXLdxR8C0ag6Ne77c4/N9hD+BfpVBu4EK1o7L5xnh+dp/gdxcvLp6kYfa1GTPPX8/kHXTyI493NQDRxA4Dw9zlH9fVSPd2LuK4m8TDq3ZGyIS16OH8tUoizBHpfAu/ovs+fTgPP9A8x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLu7BZBz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789984143; c=relaxed/simple;
+	bh=SoPY4AJ/YZYwe4LoPOMKYexrawiYoGYTfX9ycDZEuZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sxVDUhGNwRwV5WTeTg9wj1xm2VfxSZMwnmhfFChJoMmy683yD9HRb50zMx7bEfmV7k+YZy+pXgt51713+gtqd6uP1IZBLIS8cm1YYIc/uN7AuJo1ymRF+bmyIQOYl96bl1J9kSQHYhPEIVzH/tfUvJ9o7lLdISO9aprXqzYt10A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnMjV7FU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLu7BZBz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3FA1F000FF;
-	Mon, 21 Sep 2026 08:25:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnMjV7FU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D15281F000FF;
+	Mon, 21 Sep 2026 09:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789979100;
-	bh=xDdoMFVwkZuW5V48Pj4XfLchh/Rg4wCVY3CUXYAw3dI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZLu7BZBzgbOtkBRYnS1jyz7lI68Te+SShWBVJmQ408j4cm2Un5eSZhZJY46quBPwq
-	 WMd2zAybk8IZrd1TuYXNAyfyxQiQoVDVCUZVZKwTqraNDEMb2712W59NqEtk6VqHtz
-	 YxcpgTr0PdGE7Ek3bKDzk7lxVzZOcOJ5UYMGXxIrM2xHODFXbV2wYt6L8X9MEcZUb3
-	 0edk4OjL6Vec0pgNbiCVRj/8W1PUzSENzav88HRWaLFt71blacDltBd8CFFREfjDv/
-	 xL6bJaHer/fpCVHZG6nuD1xReEn3SeAqXnMmDgjtkiEM/C6UfM3lOYnQV33BpU66VR
-	 wOxfTMuC531QA==
+	s=k20260515; t=1789984141;
+	bh=4PtBQM8/4lJPiqOGtSMExJYoMVI3LSYR2HJrMhueGqI=;
+	h=Date:From:To:Cc:Subject;
+	b=VnMjV7FUxmWvugCygL/bCXY7tHg0dCpSLeRyXM2MZOpCM8qOyFlu3P5OTK2xPgsrF
+	 vKjs4eOqHn/iRGBJVGoYmzYNP2cLxtSJfSmpPCz1mvTaQHSyc6eRPaRjkStWld+MLD
+	 w+Iasp4cYGDKHdB0vUS+apmRxY0fqMbkJgp7ovqURyfF7vNmYEQOvu5RoEXCig6vMH
+	 4kZXsbLGCyGLiuweg2QUoubgyuqwsDkNY0h1kTynCkWbe86shnztczWPv3mr2mltEw
+	 7lIm1znijtTPJ8yjfseglQVFTOvmBWDIujcVS4r8ZHq9MoGyA9XPC8osgr8csXHjaE
+	 /J3BZRciSORnw==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id E91BC1AC52F3; Mon, 21 Sep 2026 09:24:46 +0100 (BST)
-Date: Mon, 21 Sep 2026 10:24:46 +0200
+	id F122F1AC52F5; Mon, 21 Sep 2026 10:48:56 +0100 (BST)
+Date: Mon, 21 Sep 2026 11:48:56 +0200
 From: Mark Brown <broonie@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Tao Cui <cui.tao@linux.dev>, linux-next@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	cuitao@kylinos.cn
-Subject: Re: next-20260917 and next-20260918: merge of the block tree breaks
- all zoned devices
-Message-ID: <arDpzvyInLOK8MJv@sirena.co.uk>
-References: <20260920125846.1806521-1-cui.tao@linux.dev>
- <20260920231226.771a0e21@canb.auug.org.au>
- <aq_5QycDLgQGCc86@sirena.org.uk>
- <d97685b3-f22c-4a27-a7d7-24b2ac7dfbe6@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the vfs-brauner tree
+Message-ID: <arD9iJWhpXDrNVVL@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,49 +41,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="N14GSpgRFIvMtJQm"
+	protocol="application/pgp-signature"; boundary="9NN7GBfm1x/zsFwN"
 Content-Disposition: inline
-In-Reply-To: <d97685b3-f22c-4a27-a7d7-24b2ac7dfbe6@kernel.org>
-X-Cookie: Too clever is dumb.
 
 
---N14GSpgRFIvMtJQm
+--9NN7GBfm1x/zsFwN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Sep 21, 2026 at 07:37:58AM +0900, Damien Le Moal wrote:
-> On 9/21/26 00:18, Mark Brown wrote:
+Commit
 
-> > I did say when I did that merge that I had no confidence in it but
-> > nobody responded.  Can you please send me a commit on top of current
-> > -next which fixes up the resolution appropriately?  I can drop extra
-> > fixups in relatively easily, it's probably safer to take something that
-> > you have tested.
+  c51e89c5b5db3 ("netfs, afs: Fix symlink reading")
 
-> My apologies for not replying, but I was traveling. I had looked at your
-> resolution but only quickly and I did not notice the incorrect comparison
-> causing the issue.
+is missing a Signed-off-by from its author
 
-No worries, stuff happens - I was just surprised nobody complained about
-the merge TBH.
-
-> I am attaching a diff that cleans up the conflict resolution.
-
-Thanks, that should appear in today's -next all being well.
-
---N14GSpgRFIvMtJQm
+--9NN7GBfm1x/zsFwN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqw6c4ACgkQJNaLcl1U
-h9CplAf/eIQ8mfAEfonr2Nm3JP5mKLLDAqCKMM/1CZOfX8TN8WtiZF2NX5wenGtG
-5hEokmB96wvwYEAPJzIvRncGbZF2D6TYCBE2HgCQHVGv8B3x92AlAD0P84BHrr6+
-emDw6o4BJxblut5W9CV8gFxIGoMoSepi87m9W/c6LW3aYQRcCdZ4JTTPdZO6U6Qt
-nKktxnZWj6E/uVwNK88IpWMEUmiPB1f1k194qTK5wkIl60kZskNLrEa+pZZJplUi
-ElqeYkuUbke7A1iF1tYpc94jAnw8Cdybh4jlLUanjq+ERmEkhllGn9jhBReQlQzc
-xZHNS/Wz+hbYryqa6ZiJCiTVCeMoYQ==
-=Xlur
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqw/YgACgkQJNaLcl1U
+h9A8DQf+Lp4jvcKymwmyyCJskQTfEU+gKFuxas44F+wogQjlGPFWNKEfNfaX4Vm3
+ej9Cc7jwFJgox8XNRH60AzLa7bDSmx9JrcC7diXaXky7hBjnjcjfW8ZVnwU2fhDH
+B5uS6XDhovn29ws07vgFQ/HO1UB4ga5pSEbIMjEU4e1SRgb0bF4cwwcsvz9h/kGU
+pHdufrmnIQKhs+1g7C+ol5U2sR/4/xX8m/0sc2e07pafgbuSscFlOLnD5pPiqud8
+82qg/H9x7jvfHI2Vr62Z5/vb12cFz8YnE4WpHYLMiuNyZZN7OpmNnMeRVi5uivrP
+J9SyJd2kn7CNJcuj4BaF42njH/lqTQ==
+=R7N6
 -----END PGP SIGNATURE-----
 
---N14GSpgRFIvMtJQm--
+--9NN7GBfm1x/zsFwN--
