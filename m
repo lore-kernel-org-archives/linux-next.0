@@ -1,249 +1,79 @@
-Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9723911DC
-	for <linux-next@vger.kernel.org>; Tue, 22 Sep 2026 02:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EDC522F0E;
+	Tue, 22 Sep 2026 08:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790044214; cv=none; b=it2ZopxBHj+rWseDOzx5V8BLDzT/Ubh9/QfE3brQg3cUOHSBjFQMpTsShKInR34QtwL6ecaTpoeDY0ytyaM0NDEAumcpT1u52+0LOj+f4j69Yfd6JuJCJSenR/372oCGma2pIgRUyh99e/DvI7jIN8BR/QezV9DhUu5yK6+Fc1Q=
+	t=1790066521; cv=none; b=e0C9jXMKo8spQvojqnzMdRYinCa/J8cJtnUbl2KJDwjlF04oTlxIZK7Mf1FIAumHnM2IAdie8XFvEN+6nB4xsMfG7034w9EMC7/jiN848FLgEWe98tWAUPuhSF6SirBb6uJoWQz63IOgxQAN/zbtWDCekziDfWFaZN8Oa4+9OUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790044214; c=relaxed/simple;
-	bh=gyke6xwINQIHEg/XPNPvQPzhI0dv7SQPLty9H/rqjh0=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=pSFwa6nJOqs9aTxJfA0YipxFXxRO4MTyTnYFBFLZQ9YULfFdSqB+TMeOvk1ysKqqGGQnDMmNDX5dVh/3CUN2YfI2Cjje7VTLbH65zA8c8jo5RVZ2MlxzKmgSUMHqvPmCZVU9robN0Gls1fLkNYBdcUpafWB8fDcFEbLhgrySGSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=JGn6cYTX; arc=none smtp.client-ip=74.125.227.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1790066521; c=relaxed/simple;
+	bh=TiKWjd9v+drgIKSLvOtt9iAuMKHDigQCof8eUU0cBxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=vDsiEgPRiZH4oSnzy+ElR1e4bgdlKBZD8zKMi56skFXSmX9j3hQkI5L1cWUwTNattRB5fPDg1XH5SMxXBDyWhdHam4/DBEEzXW0jftmgG6jsbIR0ddGGWIn9lZOLnlvKQYmGbJIzIB7uRUp8P2RkDVwr2vTm2WJcUwZtb2jBciY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7ud7gvn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="JGn6cYTX"
-Received: by mail-pj2-f13.google.com with SMTP id d9443c01a7336-2d747ed1368so43181095ad.1
-        for <linux-next@vger.kernel.org>; Mon, 21 Sep 2026 19:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1790044211; x=1790649011; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=5i1iLn5zXy34fexgJCkE8EpVJ2YaTM3DOWG4yeB3fvE=;
-        b=JGn6cYTXqyDPyW7T7tBmgY5vmyxQTtuekBn1oqH1teWtwAC6nKTTTvWtC5PFDp9Xif
-         UkNvak7at9W+Y6eEWFMVLEHW9zTv95MhUXrW3KCOUoKzJZuJPbDB7ft/Ejh4iuEdvsEF
-         oJCu4uXV7XmsUIJ1XMWIKEcQYhc+QDUNw8Rqjt11nD5j+JzLnXOKfFsnxD4DesWCr8gC
-         Q9fFwRZV75Qm1Pg3GQ8h8I4goL+20nasQfEHvbWnVBPWbsOsdsbrUzFEIdFznRrcIHUx
-         wdLvpKdwgr+mDDUmRhjCm3jcK0cpNE9hu2kezo5OgYB/W0YIzVwrsD7tQCcwjJFKAsMF
-         ggsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790044211; x=1790649011;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5i1iLn5zXy34fexgJCkE8EpVJ2YaTM3DOWG4yeB3fvE=;
-        b=Hu0nMGiuaDGfa+b9MD5wulIi32JTRT4IIHuTTNTpnuhQ4nKCfkt2e5dvkehfG/T6fw
-         Izl6O9c9j6bCxdrqibPp4cR0TMiqT1NA5IPJxWhwwJcCfCb6XlVv6etyHvQz4SQhjgar
-         ftRgyBiRSQCb4OcYXJbTjy764UCs6qT4efZBUy1GLC3/c3lx6r5oN3QVQJBQ5wLDtxb/
-         FHodSOCOAIa0CkLx9bTM7fg4QsS8ZCMd3NbPtKRYS+Alj1ZW3RXfJYYOoYQwV5IGVhoe
-         S1sieLuIaDkItDCKGxU7xYYbkJffZsUiRhM9QbOuEwh3vLbPPUanP1i0xbefd5SBFsvI
-         xkNQ==
-X-Gm-Message-State: AFuF++kUPOBDHPHbqjmzs8YPC8cqIbprc1AXpDmbo1WamKeQvH+KcZE4
-	YHJ7Ai+NNPeGY/TowtGubxcfM5Up0AY4CeO8iHwZ3anrdIhy1SJhDO07dy8AzjwhS1U=
-X-Gm-Gg: AYBFou0tl+4hfHf4pBy+VeRFcrjHASS5yJWbkJaFqgTrc9w8/vvpu1LtqO9UjDqglwZ
-	IznHDreICR29edlPy/UKY48NJKZs736SUbtozKtP3ADcui0isLxG969d32GgEWau2z3gsbKXerb
-	tnjqgVJA+OKryFoZOoVG0zO7tRJZy44jlsYFRpBHAUJPylQshCenTTJBhLxJxc6lEEIsEomqkCH
-	HWhT1PmEDgi0UyV3gE4tPOkwAbmq/K9sB5MZqszzilschhibuZD0hMcKyGkYsZcn5+uXI2hfUjn
-	UnM/2AZ4J5ye/a5qygiYuwFIiEO5FVIS7xyIwJPPqqPhzMnuxqnBvdlG8a4Hkkwo85GVcaDdvvE
-	s0zfmXHWngEe2Uglx0h5wObwpI3XzJdNVNX7tSkAnX+FQpEz26T1UGgQBLe6/49jue4gfWHqR8b
-	49l/YNb+wS+yH0pXBfHSkiSYFAWJ+L0CyQNEOnXtzACywkWTOx1oIz4EbM3qA/elw=
-X-Received: by 2002:a17:902:7607:b0:2dd:c100:b2c8 with SMTP id d9443c01a7336-2df5b3951cdmr7865305ad.51.1790044211208;
-        Mon, 21 Sep 2026 19:30:11 -0700 (PDT)
-Received: from ec7b70f3a45c ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33e613014aasm1076703eec.22.2026.09.21.19.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2026 19:30:10 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7ud7gvn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF5C1F000FF;
+	Tue, 22 Sep 2026 08:41:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790066517;
+	bh=7ERpZppPw+B96P8rxonvuoC5Vn+kA3gwdE/13K6aiRM=;
+	h=Date:From:To:Cc:Subject;
+	b=L7ud7gvnaVOPPKVWs2t71QgucONHzudAMTM7vWZpfeOULO01xxbDW7cMe5TbElB79
+	 AH18ifRme1jes9OYxuZlmsHLnM5dh9RWBGKXszJo+dKKxh9NGiZq7RlJKxpe8pBIzC
+	 O3rcI7YAtKILj0L1Pa+baD6Dp2Sh0x/ILIMYb4lUSbp+8Wwt4i0hjPN7c0JaU6Fzpb
+	 lfv+Yv+U97pMVoJYrLhrC08G8g9JhS3WeIGcCZThMeJdBpAZNETLao2sx3HY0QCw2p
+	 0HgMt+y0D61NBDSyyDhYYeGqdancn2kSeFE7TAeyi2adOXLUsLut3qNMajdr4/aL+g
+	 ZkYqo+ptmVydg==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 2519A1AC56BF; Tue, 22 Sep 2026 09:41:49 +0100 (BST)
+Date: Tue, 22 Sep 2026 10:41:49 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the wireless tree
+Message-ID: <arI_TQnqQNOkjorm@sirena.co.uk>
+Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 5c4d4169604b335c38bbc79bc1fc03042981fc6f
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 22 Sep 2026 02:30:10 -0000
-Message-ID: <179004420954.383593.12258090951389986171@ec7b70f3a45c>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i5dxdJal1a7Kz1Qb"
+Content-Disposition: inline
 
 
+--i5dxdJal1a7Kz1Qb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+Commits
 
-Status summary for next/master
+  81550f0ead8c2 ("wifi: cfg80211: preserve hidden-group beacon IE ownership")
+  d6846d11123d1 ("wifi: mac80211: keep fallback association elements alive")
+  81cbf8f3a3d68 ("wifi: mac80211: shut down RX BA session timer on teardown")
 
-Dashboard:
-https://d.kernelci.org/c/next/master/5c4d4169604b335c38bbc79bc1fc03042981fc6f/
+are missing a Signed-off-by from their committers
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 5c4d4169604b335c38bbc79bc1fc03042981fc6f
-origin: maestro
-test start time: 2026-09-21 14:45:10.617000+00:00
+--i5dxdJal1a7Kz1Qb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Builds:	   65 ✅    3 ❌    0 ⚠️
-Boots: 	   29 ✅    4 ❌    0 ⚠️
-Tests: 	25977 ✅ 1013 ❌  712 ⚠️
+-----BEGIN PGP SIGNATURE-----
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - kselftest.kvm
-      last run: https://d.kernelci.org/test/maestro:6ab18025d96a8203de7b7fb2
-      history:  > ✅  > ❌  
-            
-      - kselftest.kvm.kvm_set_memory_region_test
-      last run: https://d.kernelci.org/test/maestro:6ab19001d96a8203de7c0766
-      history:  > ✅  > ❌  
-            
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqyP0wACgkQJNaLcl1U
+h9D5rAf/Z4KITYhxhdxVNFDx4L+ZMw8oaQXKbf7NhAFTG8vr41oEnKPcxhppQo21
+8NzzmOrC2GFty5YlOWifRLwAQYQXImjKe4vpI2Q71LEMXLhp+QeztGMt0If/oCPr
+8YB6Sp4JKDaFddFMsyH9u6gDlTNnWnUG6LTMMwvpnoYq8oriPfGscwjTjLymOo/C
+vPj1/9+SOZkJgnUaMbfUN3d3YJ5lLzZBuvjiAMv83L0549hUZ8M5hh4JCFsGE/fF
+N6bMu4UqJYNRCVq8uLtuOc6FLFL2DjBo/65miItgnQb5mAkzjdO6vR+UbF/k1zoE
+/GWWj8mQlpBZq4EsFoNyt0cWvfgRtg==
+=5CI2
+-----END PGP SIGNATURE-----
 
-
-### FIXED REGRESSIONS
-    
-Hardware: nvidia-p3809-gb300
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6ab15076d96a8203de7973d2
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_0_broadcast_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42d8
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_0_broadcast_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42d9
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_0_broadcast_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42da
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_0_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42d7
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_0_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42db
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_0_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42dc
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_2000000000_broadcast_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42ea
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_2000000000_broadcast_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42eb
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_2000000000_broadcast_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42ed
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_2000000000_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e9
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_2000000000_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42ee
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_2000000000_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42ef
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_broadcast_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e4
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_broadcast_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e5
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_broadcast_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e6
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e3
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e7
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e8
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42de
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42df
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_broadcast_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e0
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42dd
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_locked_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e1
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_5000_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42e2
-      history:  > ❌  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_global_futex_requeue_pi_signal_restart
-      last run: https://d.kernelci.org/test/maestro:6ab16180d96a8203de7a42f1
-      history:  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ab18025d96a8203de7b7fac
-      history:  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: nvidia-p3809-gb300
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ab15077d96a8203de7973d5
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-
-
-
-This branch has 2 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--i5dxdJal1a7Kz1Qb--
