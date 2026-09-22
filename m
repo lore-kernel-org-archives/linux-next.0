@@ -1,119 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80BF53F6B6;
-	Tue, 22 Sep 2026 13:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6BB355049;
+	Tue, 22 Sep 2026 14:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790084212; cv=none; b=kZ28pEuGNYh9N/+RnFovG3V7WWSrWSZEtDq2Jn/Muzg2gqMzbuli3KNqAXYgZW9TGf0eTZUbvk1n8A+BXcKOqWK08Ku0WUMREm++LEc5K83/mcT9iREWMkcDGwVFSfAJWXyE0nEgEVvxfhJr4SK20YY4ZEpfokQ+FlFgMXT8WfI=
+	t=1790085884; cv=none; b=fmrc32aj7puCSToaQKMevS5wp9FAYMx6Jzo07OMyo6TUZd2JIMtD0C6x1367f/HChLuJxD/N1Oz7e/ToqyN3XKyNMrpSk3ETMOh/ZW4j3cGIbEcrBDAozr+rPmuvetNdrTSxBqMR+kUxNcGrvDlMpDUrTu1qfLfvfvC+78EoyAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790084212; c=relaxed/simple;
-	bh=eNZBh6cHAEDzKuClRS5BIy5Td6oZWR8mnoa/ob8kFJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jtlRJk8MAGXVLknf8623nHKcbq1U1zMY4US8SSwD1dmfggZxcNeX0g7E1zkdtwlELMRSz+4Q3V+buonkdh5qeWLA4/3IwmcV5ijrVHi+Yg0vCbWqfq6YR34Sw3jeDOFaHJqdtYQUN9FqNPenu9PCzuqWMjszLGZjvSNI28pVzSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOiV6vGo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790085884; c=relaxed/simple;
+	bh=0xFKdXD2wDEbe2wvrix/CuFLqBR8mf2RGIhagWDB0ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SSxK/8TZE5GjEEDqXfxC1/FGAbYBT4dNX8hDFh0d9Hl+LG9mhK/uu6/3JIXj5kyVQiK1GOrUO1v+R5BhnkEJfEdqrrG7y+ffaOYbzNh/QegT2HkKxvScSnOGhY6lqy5pFrmS4TIR+8ouUqJ/mly2YDS8FELX9FW2c4YK/12tApY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz6rMhUi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOiV6vGo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F481F00899;
-	Tue, 22 Sep 2026 13:36:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gz6rMhUi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0964A1F000FF;
+	Tue, 22 Sep 2026 14:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790084211;
-	bh=6iwpa6YmjIFtqVzmnXXYjuXs5akIU92bwSKTfxNZMRk=;
-	h=Date:From:To:Cc:Subject;
-	b=BOiV6vGoA3PR18TxjTsAU7cJAf8ki3Qcypg4koPXO5JzGf3/bjmV4LatmE3eMT/fK
-	 r4aeTkg6RY7k7fFSf7awJsq9qj3lo4Eb7STNOd078LZrHIOp5uO3OuD3K6gDT7ubiu
-	 cKWZAeFI+Mi5fvSs7yZ6fhaFUKg3dUe5ddcFuMXg2NBRO6uCSosVlc1ZVGo6UOfmIy
-	 pElCD1VjTjT0L1uwceJbhriCz17Lil2eN/TdM9LAQoTzEvbgrKkKQOMLQGoth9oXCc
-	 Uof/OghA7KXI9gz5K3wUb9Li8f90VXOG0BawtgOzluMfU5465/doNDc6GiymN2X7Al
-	 JkOnFQbK1qcXw==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 9CF681AC56C0; Tue, 22 Sep 2026 14:36:45 +0100 (BST)
-Date: Tue, 22 Sep 2026 15:36:45 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 22
-Message-ID: <arKEbZQySYcnkScl@sirena.co.uk>
+	s=k20260515; t=1790085882;
+	bh=4U1ZbDcnirO+55gF4TQ9ickIbASTjPQbJyLywBSoYj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=gz6rMhUiFZQs/2Inq5QL9XIPQeRST9IN90jsFRPXZJ4Z3Are8QQpI3YwkXos2QaSk
+	 Ua904VnAjtaM0IO2/TpnC2fXVDMvf8Rlsbz5XRWJtEm+l6gVdWmmG0DkzHj4qUgohV
+	 IvvSxH+0ZS31cHl5MthOO55H/2MZCxcinriRXhCIo88km38olC5BA42ZpN5ls/Ak8N
+	 jd/CCFKvWRXSCMyRb5MIgiyFpR6P1ML6IFiCvCezimKqsu43XTVYpFIxRRjryUJkcq
+	 Kieb8HSEIuSoqE9kaAu63KeoVrvTBVqjUbwa1wd3LGskkSa+QffuCuUGOMMOxo5l+O
+	 fJuzXGT++pmsQ==
+Date: Tue, 22 Sep 2026 16:04:38 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+	Damien Le Moal <dlemoal@kernel.org>, Hui Peng <benquike@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
+Message-ID: <arKK9oq5wi9mIHHZ@ryzen>
+References: <arKETtHsac_ZwVc4@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cJhaHlhUxtXFDCKN"
-Content-Disposition: inline
-
-
---cJhaHlhUxtXFDCKN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <arKETtHsac_ZwVc4@sirena.co.uk>
 
-Hi all,
+Hello Mark,
 
-Changes since 20260921:
+On Tue, Sep 22, 2026 at 03:36:14PM +0200, Mark Brown wrote:
+> From: Mark Brown <broonie@kernel.org>
+> Date: Tue, 22 Sep 2026 14:07:31 +0200
+> Subject: [PATCH] libata: Fix up semantic conflict in ata_scsi_set_sense()
+> 
+> /tmp/next/build/drivers/ata/libata-scsi.c: In function 'ata_scsi_pass_thru':
+> /tmp/next/build/drivers/ata/libata-scsi.c:3575:25: error: too many arguments to function 'ata_scsi_set_sense'
+>  3575 |                         ata_scsi_set_sense(dev, scmd, ABORTED_COMMAND, 0, 0);
+>       |                         ^~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/ata/libata-scsi.c:206:6: note: declared here
+>   206 | void ata_scsi_set_sense(struct ata_device *dev, struct scsi_cmnd *cmd,
+>       |      ^~~~~~~~~~~~~~~~~~
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/ata/libata-scsi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index afc2bad677bb9..e380d1b68101a 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -3572,7 +3572,7 @@ static unsigned int ata_scsi_pass_thru(struct ata_queued_cmd *qc)
+>  		unsigned int multi_count = 1 << (cdb[1] >> 5);
+>  
+>  		if (!dev->multi_count) {
+> -			ata_scsi_set_sense(dev, scmd, ABORTED_COMMAND, 0, 0);
+> +			ata_scsi_set_sense(dev, scmd, ABORTED_COMMAND, 0);
+>  			return 1;
+>  		}
 
-The nfsd tree acquired multiple conflicts with the nfs-anna tree.
+Your resolution looks correct.
 
-The cpufreq-arm tree acquired a conflict with the pm tree.
+This is the second conflict.
 
-The net-next tree acquired a conflict with the iwlwifi tree.
+The previous conflict can be fixed by SCSI maintainers rebasing
+15de2788c91cc407f7e6fc6a07be27b10048cbce on top of v7.3-rc2.
 
-The bpf-next tree acquired a conflict with the bpf tree.
+I think that would be nice, such that SCSI maintainers will not
+need to report a conflict resolution when sending their PR
+(as the conflict is against v7.3-rc2 which is already on master).
 
-The drm tree merged the existing build failure from the amdgpu tree, I
-used the version from next-20260921 instead.
 
-The scsi-mkp tree acquired a semantic conflict with the libata tree
-which I fixed up.
 
-Non-merge commits (relative to Linus' tree): 8044
- 8597 files changed, 452932 insertions(+), 146409 deletions(-)
+This second conflict is trivial.
 
-----------------------------------------------------------------------------
+I can intentionally wait until the second week of the merge window to send
+the libata pull request (assuming that SCSI sends it the first week).
 
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+That way this simple conflict (the one reported by Mark in this email)
+resolution will only need to be reported in the libata pull request, and
+not in the SCSI pull request.
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
 
-Below is a summary of the state of the merge.
-
-I am currently merging 430 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---cJhaHlhUxtXFDCKN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqyhGwACgkQJNaLcl1U
-h9AOfQf/eyHVYPYEW86A2C1zhaulOQkd1UVP0JpggjNsiAPKFJqGDWEwib9FQIAz
-ThayzXQm0pLdfDkzjLJ59rUj3iTqWjBOsETSUDyIQHjP5W0zCK/ZbleW5x+8SSgo
-nMTXE4scbpDX7npBARb5EACLGb1Q1AzGHSLJZuKJzPRLgEuL0cwCpowSAgm/WTCy
-8E+s5OrpZmwTOUZTCEPmx6c33pAF0HldyfwfShSHsB0BIeDjb+HO4hioQobiWJuo
-JSXI4k+ojzpt7pfYeyaSWitVO034wJBQxnQYPUT9yUaxe5D8N2z5ckcTqeuVFxAT
-BaT5rDrTvf41GCyFl3xTFwM7EwjTyQ==
-=oasw
------END PGP SIGNATURE-----
-
---cJhaHlhUxtXFDCKN--
+Kind regards,
+Niklas
