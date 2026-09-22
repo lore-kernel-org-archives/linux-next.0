@@ -1,66 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E158A47D478;
-	Tue, 22 Sep 2026 11:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5236F284B37
+	for <linux-next@vger.kernel.org>; Tue, 22 Sep 2026 13:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790076945; cv=none; b=XKBvo4YPirWLkBwuK2b5HvEWJQXnRpFsaMbnaIwGR0dt9/Sg9dK2lHZdFTX7mG0ZYgXJT6GHNpB+9IGlhbHPYvKGCU/gLce+U4ckPOk4VrkcUi+eazjTD8AVe34Bk2GeGk3j1MB+MsPm/4qwayOca+mMWxoMwry8KbDIUXtWgJs=
+	t=1790082630; cv=none; b=LtWn2wNGPtH4SnSDIyyQkQKV9l4uqS/V9cElxW+2Wd6kBLXYMVD6XO7jVNm6NQINDMDhofD54jNVNBYs9J6emJV19ml6N/szeGbTAFUuHNK6v5KJscnOXehfKshL+0H8YAb3FBb1MkyfcbeBUbgPmcVETRiYvAIh+q25Md2toZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790076945; c=relaxed/simple;
-	bh=Wo9RXS0kSITj83Hb2CuQE9Dx6nywd4yGsAvptF6naic=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cquya64jAVSBnAzGjgE+4ZBZXOnPIUScsinigSRgJCBn0KrPhgKauzC25RJcbUIC0i+JYlZv7tNMn2cPLUKWCaT3Kp5/NvzsaK6u1AkehMwGpwl+Uv959ZG2fhJR5+eBZyTdJZZgpjI2hHZyeNXlr/7FZk4EGYAutmx9MBOowug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaTVPvQE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790082630; c=relaxed/simple;
+	bh=xGc34cYFgl9gRuxC2uMg/rn1/epk4i2vSKizLYO+Dtg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Z8fKbjmmwW0wCHKeZm9236mZtQ8Fx+oZYCdRvdFEayc1nRilFGnaRwIsSMduYaiEqHxBys18iTtmCAHHc8FGauirsX9u7gIXBWJFcZ0xTZJz14B23mq7nLg+qiFBXaiWkrrfmYRh0pDsAq2wSxkhvrOPNCIlpDOFIqCQpQELyoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8vWtRUL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaTVPvQE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DE91F00898;
-	Tue, 22 Sep 2026 11:35:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8vWtRUL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95A21F00893
+	for <linux-next@vger.kernel.org>; Tue, 22 Sep 2026 13:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790076943;
-	bh=ecd9LSXJtZ8rxLwVQiJYvUqPkFGTHzw1TxeisN7gO4s=;
-	h=Date:From:To:Cc:Subject;
-	b=VaTVPvQEuOOtU/svouiQU9EQPumxKCJf3iyj2plioiwzd8DDMW2dQNo9ZdBcAqJO0
-	 gVI384ERpwS2kDjBvVvPLHSYjTVJldo3wCjA3ZTGru/HIVBu9i8k8ZI/Qr9gHnGQx8
-	 fV7nQY5qKsEN9kIp7asiAKp3DMrGs1+J32cdLQdr4q10UAa1G/jjMC7s5H8LjkXZn6
-	 umeSpGUrZ5zTrszFEKVX7MoLOq7v+fi0jferx89hRcSbv3AR9Kv/Vn1hMrrRt6JKwf
-	 avB83HZOWR9H6xdFygE/XEgUiSMzy2yDOrDb8iTqiLGaQzbU4ndVnYTHywPluU6QLp
-	 GjFz/ixLLrMZQ==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id EF37F1AC56BF; Tue, 22 Sep 2026 12:35:38 +0100 (BST)
-Date: Tue, 22 Sep 2026 13:35:38 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexdeucher@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm tree
-Message-ID: <arJoCiRM1hRbgRb5@sirena.co.uk>
+	s=k20260515; t=1790082629;
+	bh=B2Vaf3G4Jok7VPkAXcd4FFg4UAebg/qxdoTcZSkkoh4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject;
+	b=e8vWtRULzBO1yoXStZEYYHOjHRW4kFZf+lhOMGT0/ibtLG25A1M0hsQFvF2FFodfA
+	 2fl2UBGp5ukz63MiD6pVako2fCRtpHnelJX9naWtqkqeyo3QiiqBru1oOWReHgWUKv
+	 rlHgZfnre+vEreg2Rz3GmmgE1UrGR0E/E2+A801Kh9oyr7xlNNZ3TpTm4HA9J2KOgv
+	 i/LVYmAmYEEvKYgjf5P0ziy7g48pdtBMYEhizu+EjyXTMmRvfra/Zo16KZvadJtEEj
+	 OhTMOzpzs6aqw5UH32FRDdQycbWpkrj2amVpLgrSgVGqBysV6WrtKJlLdZUlgefsWP
+	 cAYLlWDcbfDPg==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 17FB5F40066;
+	Tue, 22 Sep 2026 09:10:28 -0400 (EDT)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Tue, 22 Sep 2026 09:10:28 -0400
+X-ME-Sender: <xms:RH6yauRrdXx7q6flTQj32MnXiaeyiRLt05HudjL4sjNK76sX5uGGIA>
+    <xme:RH6yaumbrIYD6sgw9--3AGJnJjtyc9iRUb82chwLaCLDgRBT-MUlIlyx2Z2cQj7cW
+    Bc6k1qIzzm9XJPgxKIuyOG5-VMyP4JsvNe5TQ4T08IjVs-UsF9czUrW>
+X-ME-Proxy-Cause: dmFkZTFyiJaG6SoLVKZ8p2R8v3wal9uiFWfR69j7sUoehaJbFxTTMsPQoqdrMWsTZJZ68Y
+    6VHQgiOvEzXqy2EypyHjHQgrg2+0cwHY9G5EhwACfy/0K3rmdchYT6+NbZZDS1fsF+dkG3
+    EWmj+etjMmJTPNEWkpO5he4cBU0Lh9HnjfvxLzymVi+OFxgxjF313LWneFBQK8qDvTZfkQ
+    ip7fb4dJ5RUQCWpd0smd8d3xOc9EytnYdpyeTO7dhebjl9QwKIcQ26GNZNiRHe92s18zxr
+    ud3qWxYIt3+RjJ/NAHnBdAVeewvgcxyW53d3xXmnbs03MotClWhcrNaxsrLgkBODWN3gEs
+    HWpoecM4rLrrzRtSgJOsDPTnoqxMs/tWqWGSfUGfyveYSR1IjI0k4bkFpgGx/vOtALhv8I
+    O7e70wkAi5FGEFEJgCDbJmZBcAEheK+oyzn5ONnqSQORHV4m3X8ayZBegv7iwA18JshVRL
+    eqXtGKrcC/o4HEGxWjKJmWod+1RePvs5drQEmcOtRzYvlB6OoJP0VlcihRWlkmhvoH7X9t
+    7HpYP/sLWEIZjcTQaA8wmJh0280iS3v2bOabb4jSPB+1hWqYao5tlxtXGFDAdMPCZpt49c
+    cpeYdDglDW+go+z1b+pqx4T+HzhsEm/V9dl7OfDzkzLHdIYOiNR3KMH0PixA
+X-ME-Proxy: <xmx:RH6yapcJMOJ-IejYu949sONhEGqvN41xTNr_OLVmnOn39tPmYJsFEg>
+    <xmx:RH6yagIZQkQwEtPM3aaJCbY2tmYaVqHTh9xjoqGFWGdw40GlsoJn8Q>
+    <xmx:RH6yauG5rZIy4LqvtC_Akki4ERh2PgyBhum8LBlJloVerufUXQI_bA>
+    <xmx:RH6yajCM1fldHz1CHbTbgYCzRDl_2LLxi7mk4LUi6X0i1bnfOvPc8A>
+    <xmx:RH6yah8r42D4vo4NPzuHk_OFoj1lZCzIHnFuw1OSwKWRn9wc93Rys8o5>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E9BE7780075; Tue, 22 Sep 2026 09:10:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-ThreadId: Axnhf21sy6mB
+Date: Tue, 22 Sep 2026 09:09:57 -0400
+From: "Chuck Lever" <cel@kernel.org>
+To: "Mark Brown" <broonie@kernel.org>, "Chuck Lever" <chuck.lever@oracle.com>
+Cc: "Anna Schumaker" <anna.schumaker@hammerspace.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Next" <linux-next@vger.kernel.org>
+Message-Id: <c2820c5b-94c4-4b30-a6e1-cc7e49210d0d@app.fastmail.com>
+In-Reply-To: <arI_XvccOKuOsjzo@sirena.co.uk>
+References: <arI_XvccOKuOsjzo@sirena.co.uk>
+Subject: Re: linux-next: manual merge of the nfsd tree with the nfs-anna tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi all,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
 
-/tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/dc_memory_pool.c:87:37: error: stack frame size (8264) exceeds limit (2048) in 'dc_memory_pool_create' [-Werror,-Wframe-larger-than]
-   87 | __must_check struct dc_memory_pool *dc_memory_pool_create(size_t size,
-      |                                     ^
+On Tue, Sep 22, 2026, at 4:42 AM, Mark Brown wrote:
+> Hi all,
+>
+> Today's linux-next merge of the nfsd tree got a conflict in:
+>
+>   net/sunrpc/svcsock.c
+>
+> between commits:
+>
+>   2ecf0d2af5da8 ("SUNRPC: resume receiving after a TLS control record")
+>   1a485d8e93a92 ("SUNRPC: treat every TLS error alert as fatal")
+>   d3b4fb1d30749 ("SUNRPC: reject a TLS alert record that is not two 
+> octets")
+>   f547743e6b51f ("SUNRPC: do not credit control-record octets to the 
+> RPC stream")
+>
+> from the nfs-anna tree and commits:
+>
+>   a76d52a01792f ("SUNRPC: Do not credit control-record octets to the 
+> RPC stream")
+>   e263b5d674fcf ("SUNRPC: Reject a TLS alert record that is not two 
+> octets")
+>   ebcbe4a9a7779 ("SUNRPC: Treat every TLS error alert as fatal")
+>   8f765d820c590 ("SUNRPC: Resume receiving after a TLS control record")
+>   7f757c41a8beb ("SUNRPC: Reject a socket that already has an svc_sock 
+> attached")
+>   35ab7140c7bfa ("SUNRPC: Separate the TLS control-record receive from 
+> its policy")
+>   9a4ef884d00cd ("SUNRPC: Close the transport on an unhandled TLS 
+> record type")
+>   eaef7075c6a48 ("SUNRPC: Flush a received record's pages once it is 
+> complete")
+>   1517c61f247f3 ("SUNRPC: Receive RPC records with ->read_sock")
+>   23bec0f9631c2 ("SUNRPC: Bypass sock_recvmsg() for the TLS 
+> control-record receive")
+>   0fce57f554fa6 ("SUNRPC: Skip xpt_reserved accounting for non-UDP 
+> transports")
+>
+> from the nfsd tree.  This looks like different versions of patches being
+> applied with extra stuff then stacked on top.  I've taken the nfsd
+> version but it's possible that's gone wrong, I'm not *super* confident
+> in this.  It feels like there's a coordination issue here.
 
-which I am frustrated to see that I previously reported against the
-amdgpu tree:
+I didn't realize Anna had picked up the TLS-related work. To resolve
+these conflicts:
 
-   https://lore.kernel.org/r/aq0vYhZXtMqA41wZ@sirena.org.uk
+- I can drop the xprtsock.c three (91bdf2ae4a27, 6b91817001fb,
+  21bcc6ccc6cd) from nfsd-next
 
-I have used the version from next-20260921 instead, also pulling in the
-build bodges I've been carrying for amdgpu's bad interactons with
-changes in drm-misc.  There seems to be a pattern with failures in drm
-trees sitting in -next and then getting merged into the main drm tree,
-it seems like there is some process issue that needs work here.
+- I need to keep the svcsock.c four, as there is follow-on work in
+  the NFSD queue that depends on those
+
+Anna, can you drop f547743e6b51, d3b4fb1d3074, 1a485d8e93a9,
+2ecf0d2af5da from nfs-anna?
+
+
+-- 
+Chuck Lever (Come to NFS bake-a-thon! https://nfsv4bat.org)
