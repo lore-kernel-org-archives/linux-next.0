@@ -1,69 +1,130 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C403BF69A;
-	Tue, 22 Sep 2026 08:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D064534AD;
+	Tue, 22 Sep 2026 09:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790066995; cv=none; b=Rjd2Aou9CXrx7FIMtALg81Op+Q1zoXIeu7ZkezUpUhAk+PeZnaCEyEdNzSLzo1WXolbGOeRBuWwStNCnUEh9+LGM39nBSyz756hs/hLfd1LeSa+XQZWvRk+76qEcWjjTeke610hjjQQuvpMX49DuDMUUjdEAAzGkHr2AtwxmlDI=
+	t=1790071186; cv=none; b=qzAfauzM0F1cTQlF2ieUOxob7Lliz10o58JX2NrU5z+aus4F9KnCdRRAPJ6v92aXVe19hMfvTFVefXok2w9kAcGTLpW80VvmF1bYjj8CgDDxb0SmXYAfNt3+vH8bQWVLwzqosWa5wBErUWcykYwXHu9YDEEOP1WNhuZnBOmH1WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790066995; c=relaxed/simple;
-	bh=U8fDp+h/ENm5bFZyQFTlNQ1KY4CZ0VdVFYofRSDngZ0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ylz9H5pq5elrT+4mUXWHKpCml4p37wJPl1PRPtUvgG3WV01rQp7LfJfiCw8rQpGdNYAeAVxmVoILt3zyvQu3WQ2UpHoXQ/gDdWaAYQQ4j/byPWaSndALP9jtLh5bpPU59+ats8LQX5n3FEj7+PoOVdX0m2oM2IfwwzF5vfwUYic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=HsNLlo32; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1790071186; c=relaxed/simple;
+	bh=tGtC+asBDKGqBP7blfxsY+G6AahWsiRqXlyZyeT7cQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ULrxn+6MLW+euz5q8EgIwC/PU0sHP/4+S2ePi4mleq5bW9FfJgVvtrGoXYelpoGtNLAKfDVEKOkGbfLxK6okbIzR90jdThzbjIYqVGmNkk36iLslyoVAfq9dC/tZJKQwx8/fjzhtAkAVT8Mj559A1sPJp1C1plTnA3oOGCu0OdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExbmooO8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="HsNLlo32"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=L4IUwwEhUcHmLxbAU4I9rSSDxUDhG9xZoLHVOLBQjzk=;
-	t=1790066993; x=1791276593; b=HsNLlo32cOq3s4V2gnKhjLgD0DKP2fiS4gndwLGQbUPLmGZ
-	l/aqoe9pyIwzfUkQVYIA5kgdQKSqiBx/DnORqJ96LOOO4BILhE/95mUKrNE3rzzepS4ecAcF1IDQD
-	k9o1OBrpEpx1iU2BfzxmJ89EDLIjFL6ciufDbIn2ha4ywSp81uSZr+s/fbuJhWhuj/Sodf634xRZi
-	069+uBugcogG0rnryKsZCw0G+kanEEu6AUnV4+2eWxgi6rLexxniJUTWArM3+1el9gofVe9BMlf7n
-	GP2DdYmGkUlA8jDpjkLhtdt6J7hB7oldc/Tgf40EKiadSWHN+cBHYbPGFa9yuYLw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__ECDSA_SECP256R1_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1x8wCC-00000006mYU-1Ss4;
-	Tue, 22 Sep 2026 10:49:48 +0200
-Message-ID: <1ba070b7bceb6cf1b912569fa802992ee15876b4.camel@sipsolutions.net>
-Subject: Re: Missing signoff in the wireless tree
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Wireless <linux-wireless@vger.kernel.org>, linux-kernel@vger.kernel.org,
- 	linux-next@vger.kernel.org
-Cc: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>
-Date: Tue, 22 Sep 2026 10:49:47 +0200
-In-Reply-To: <arI_TQnqQNOkjorm@sirena.co.uk>
-References: <arI_TQnqQNOkjorm@sirena.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 (3.60.2-2.fc44) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExbmooO8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 625191F000FF;
+	Tue, 22 Sep 2026 09:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790071184;
+	bh=zsNF2SceFCuuBal0LfyUaDqSllIUoeBL+4wzX9j+/XI=;
+	h=Date:From:To:Cc:Subject;
+	b=ExbmooO8hzRPU0Jgj7ApSqckGVveoWNZLpHecNZ2NwqirOAJbLXXqDdt3Gw2MifeF
+	 imhMHyIaSsA6O9ykVmQ8TlBR89ECtLf6TZNtCQNt1QKrnCBtnfaGRsCzKIBzMal2My
+	 Q0snRC+gADConUlbazJvhZfICB/scssXs/bIV3JERn8WQj5HnxycWeHwPEx0BzSZAz
+	 zX9iYFRfYwSa0QDfConT9+FuN79FzeB8u6gUR1Xe+mDcaI7mhcm5Y9Ip0CmwloJRYS
+	 lxNaDP74aDXNbCvl9LjibWqXGMBI43t/nG2q+CJo0iRwTfGsAwPRtJf4HkFowN6+aK
+	 xsGsush7gMIUw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 0CA3F1AC56BF; Tue, 22 Sep 2026 10:59:41 +0100 (BST)
+Date: Tue, 22 Sep 2026 11:59:40 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sumeet Pawnikar <sumeet4linux@gmail.com>
+Subject: linux-next: manual merge of the cpufreq-arm tree with the pm tree
+Message-ID: <arJRjM9WBBjuXdHG@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Lk3NeTFj/WxrUn60"
+Content-Disposition: inline
 
-On Tue, 2026-09-22 at 10:41 +0200, Mark Brown wrote:
-> Commits
->=20
->   81550f0ead8c2 ("wifi: cfg80211: preserve hidden-group beacon IE ownersh=
-ip")
->   d6846d11123d1 ("wifi: mac80211: keep fallback association elements aliv=
-e")
->   81cbf8f3a3d68 ("wifi: mac80211: shut down RX BA session timer on teardo=
-wn")
->=20
-> are missing a Signed-off-by from their committers
 
-Oops, added - which means a rebase. Judging from your other mail, only
-iwlwifi was affected.
+--Lk3NeTFj/WxrUn60
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-johannes
+Hi all,
+
+Today's linux-next merge of the cpufreq-arm tree got a conflict in:
+
+  drivers/cpufreq/cppc_cpufreq.c
+
+between commit:
+
+  995e7d4680706 ("cpufreq: CPPC: Create the FIE worker before enabling PCC =
+callbacks")
+
+=66rom the pm tree and commit:
+
+  d82d896f00e7b ("cpufreq: Use %pe to print error pointers symbolically")
+
+=66rom the cpufreq-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/cpufreq/cppc_cpufreq.c
+index 09e55bfdca885,f767898ebfb57..0000000000000
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@@ -240,19 -228,16 +240,19 @@@ static int cppc_fie_kworker_init(void
+  	};
+  	int ret;
+ =20
+ -	kworker_fie =3D kthread_run_worker(0, "cppc_fie");
+ -	if (IS_ERR(kworker_fie)) {
+ +	guard(mutex)(&cppc_fie_lock);
+ +
+ +	if (kworker_fie)
+ +		return 0;
+ +
+ +	worker =3D kthread_run_worker(0, "cppc_fie");
+ +	if (IS_ERR(worker)) {
+- 		pr_warn("%s: failed to create kworker_fie: %ld\n", __func__,
+- 			PTR_ERR(worker));
++ 		pr_warn("%s: failed to create kworker_fie: %pe\n", __func__,
+ -			kworker_fie);
+ -		fie_disabled =3D FIE_DISABLED;
+ -		kworker_fie =3D NULL;
+ -		return;
+++			worker);
+ +		return PTR_ERR(worker);
+  	}
+ =20
+ -	ret =3D sched_setattr_nocheck(kworker_fie->task, &attr);
+ +	ret =3D sched_setattr_nocheck(worker->task, &attr);
+  	if (ret) {
+  		pr_warn("%s: failed to set SCHED_DEADLINE: %d\n", __func__,
+  			ret);
+
+--Lk3NeTFj/WxrUn60
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqyUYwACgkQJNaLcl1U
+h9AI+Af+ONtRU6OiMBckCSipT2+6GldTpaZnJyDHveVrZYDRoj+UWxujvj6q9sD+
+pu65O91EcN0LfQh47xS+n0ItCwiefqnBl1uNl9emjTZcd4lAqnRR1YBPdERbGhcB
+4UFmuPU+MB+yiiiOdcJDTYTC5NkYU8LkuP/nkQzsFLDyt5R9hWkcfVmYCFdZNu1s
+l7vfKg321r5CnfpdkI2Q0oMQdZq0CbItW0tC9guHXkGRabR6XiKkEPRIHUrWP1Ps
+Y/JAUZcIymaEEFKwsqpSNxdQqtgxok1N1s9nqaByrx3SiKKXyuwcuQL4uOvqdf0V
+mLqrtGG3Hd3WDPh4FaP9fTmkXFnQzw==
+=ULZp
+-----END PGP SIGNATURE-----
+
+--Lk3NeTFj/WxrUn60--
