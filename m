@@ -1,130 +1,149 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy2-f43.google.com (mail-dy2-f43.google.com [74.125.229.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A043041F35A;
-	Wed, 23 Sep 2026 18:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790186510; cv=none; b=CIE+v80uDaEjkvSI/TuxFjCqCt81XZo+ej4YwgxFubN2MojIqpnIekvzQS0b8baVQRlbimsYNvisvydaKcgbtD8T8x+PheAe6xp8QApmwBNe2OQADFb1XFdFLrvCIHPUQ6xyqvCqBG2L/I2ivi0IRDJFBTpePCjFwY30GwgVL5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790186510; c=relaxed/simple;
-	bh=P3oi0PGDlf4xoKRMZIdGGpE4Q3g7CRonJXX2JvXuSGg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=N7Wg+82G9Kc2F+apkchhtGKS79EpdBNjC2uRoonUhBMIjBfBXhdtGyHwZxbQxFpYYkM9YoQtOocTHEG9qZw4ZhCesr93SoeOV1bPUpXHyov4t0Bwdv/zU//mVmXhP+XqXDEMYpUQ9LECGT2lMJ+3Xb9VH534Uh2hg3UwzS1uP7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=12gnr5p2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7514B47C101
+	for <linux-next@vger.kernel.org>; Wed, 23 Sep 2026 21:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790200659; cv=pass; b=iwxWjnJNOGffkLyZecrhXlRztGog2h97OFqaW3ZrWfZWj7DvmImFy8c9ej0OkBuFSo7km/PL0pAciFsB35guNoS3G1Ec+FdejnxsB3Uop9TSaHel/EKTmsp38Y4ike+RdMgA4IX5PRL07w6jPwJqFB4yUSbJHkACRuoaGxtaxzo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790200659; c=relaxed/simple;
+	bh=9lmjTlgara3Ob1PGZGxjXTpEsubidhy6Ci0I81dgSKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hLHNYwo+yEp74hFudiCWFyStLFdbFwx8ol4Evpehe7gcak2xHd0AShl+fWvQg/83+iuzqqWq4gdto32/H4J4S7YZJ4nn1vJq9lEgr5MYck9ZlBdrc2ehOizn4/ncSav1R6k0xaIfUJDqyZVB/5wxmqu0SfQ0VuW6Qr1N5BaAJbA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMyBogo8; arc=pass smtp.client-ip=74.125.229.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="12gnr5p2"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=i2fkcWjPo33/i5V/T6lRUhSfxbVcuI5QepfXiQgw9nc=; b=12gnr5p2LkszC78CQmmuo4EkD7
-	Aqi9BB8bzGNPkPc6Es6jdRy/uyZnpONUCjkRMu1yxZkbwreX8MZHqaCeQXMAGPGRXVTKfenqIHi8e
-	sexvPV+H9VjQyH0I8067RS3bmA+h9vlp5j6ckXYOqZMh7ldtMPLGDI3cGSO1VvdnhezMuCkG6O+GJ
-	sy3Rxwlr3Aj3ULsXnIyON28Mr18GBIT1srSBNKY2y2Zsc1WzZ1+na7PAwfP9OTNr8rHAU5aaNdEXv
-	srYvin7b7rOKolOJmzL78dfhpM/MbkXiGHKXkcie9V0Xxj96wK1VnUvgxs5r8Dg4PwxGBu6YDUasL
-	/X9Bplzg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1x9RHr-000000097b2-3aFU;
-	Wed, 23 Sep 2026 18:01:44 +0000
-Message-ID: <1799e700-7898-4d63-9c0d-95535af415b0@infradead.org>
-Date: Wed, 23 Sep 2026 11:01:43 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMyBogo8"
+Received: by mail-dy2-f43.google.com with SMTP id 5a478bee46e88-33e4e75342aso38760eec.1
+        for <linux-next@vger.kernel.org>; Wed, 23 Sep 2026 14:57:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790200657; cv=none;
+        d=google.com; s=arc-20260327;
+        b=WIVsEx60VHBzAenVEOtXEgaszwf7aeWbPeo60GWj9ZD+Do1j+boUNHUN47rL/WBqG5
+         9+HJloqxZW3Owud5zudhZPBoK0q5PC2t7MXvBlYvunj/iolGveAWahyVnAk8kvZBYDx1
+         p71/x3HuJepq+zD+diMDjjJB9IddfA2GWWIr099ULvCA9Luw2hr/+AnHLe117y3MGK2K
+         /+hUjBH8XzGOuFR4zqadNkbIfZRftmrOgnQMwpCBjNojtZ2cEC6zAqnVK7/uR+AIYuWd
+         imJ8JDou6ZEOVHw+boNf1MWSBjh9rtb2vdIuyYQ+tXGvV98htVooT3544i7uZT4ZKVNm
+         00Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=T24E2HgBT3Ki1o2tFVN/BRTIkQAmjBNrRpnx59eMnNs=;
+        fh=fMUi8iphDD5DbfGTyGAwvS2TtE6Ph6eZX+Y/Prq4lmc=;
+        b=qyeuqCSpXRyduZHfUYqE2hCvO+F4HHymj8oeTdnfCkTxvXETyi88RL5y6Lo6n6pqhK
+         E1CVeWcnxlfZf3S0L26PR3lM/nM4Er3x5T2yodZHS+/7BakYLnoFhzxadESZtkii1vbb
+         rL0MMeDIqPtAVG3Wt+lMW/HySBHGRDGX1vnt1mkQhG0lmujIQATiD6J8jLFqyonnqn3V
+         nPSOvSd1ZUDqeLaN/QXM8ONKUHhQMG5Srvbbs+CDbhxCHCPJTMfLhrMGvT93wxPUJ9nW
+         y2gbcHvOZcI7PdkHrJtk/iXfXn4NhUZkk7Kmn8n+YqlZyf61FVchj0sS/3ZRLUNkD4Mh
+         VJUQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790200657; x=1790805457; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=T24E2HgBT3Ki1o2tFVN/BRTIkQAmjBNrRpnx59eMnNs=;
+        b=fMyBogo8zqRkDE8O1NjcfKfGeykFFDKBj9/auFya7kA+X48KuDBwHf/Zd7IXrdajPK
+         959NoKP24+BZ4okeXETlG3+Lj52nxG9ykR1PzUN2IFiN8fBhMubwXxlpIvU/KWMV01Dm
+         9GRBeUOK66ZSVrDcal4BUoQVfFdwPPK695q2JpvWLwStSnM/TluSVbRyS8g28UjX2kx5
+         hFHOWvX4OVEHa+krmeEcV2oRcQBvOBiWgk1U89Qf4gRoYfFY8miUijLFmHvY8L7F4vg5
+         nz+zF9z48daIoaokOktLCRddUPdVIVn3g1H054A0fm7/kJm6Ds3BXDKHLxi1VQcxXYGc
+         Icgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790200657; x=1790805457;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=T24E2HgBT3Ki1o2tFVN/BRTIkQAmjBNrRpnx59eMnNs=;
+        b=jKb9wWip+UWGCotWqVDEMusa4v4ktRU3c/nBodfNdyF0Kuf/hYXAAhz8LhhTniLQzE
+         8Dw0jmTkCGgmPKvNjzRN1lQ0htJ02Ncx5KBfQr/5o7zeSDM0sANT0auzfwUvJaM1/4L0
+         jzaethTm7IKnF4PfiVkoO8U2OFTM7jc98zrF35LBCrlrGPau68+GEC3TNRjBczAflqCd
+         lvH4KMBITDK6JwABvzoqqPww0kSaRiWO+vCYIb/w1cBFVDT70TuORApku98VeRFDowOn
+         KaZLXs2uF124UJZOMBqyy4m1qe6uSaZkxOdMjMJNei/Su3jwVf7V5lA92lATM9zT6UbS
+         mVEw==
+X-Forwarded-Encrypted: i=1; AKwUvBywWOFOZrSpj22IAdnxztgrjrvT0CEBw43ksX8NaknI3rKu0YvvFSyOEowrKOXuHWvAcbgUpOhw3GmI@vger.kernel.org
+X-Gm-Message-State: AFuF++nlQqqybnPmDK9nIiKb4YVxklSZOl4Rn5DpQWt2t6YVqZnegsLu
+	qMBxT2u853uBfnQSf2MeAK+pHIKTkckiq1nvZ5z9CCnZ6ZaJe18D7zpKDC+rwlJanFKeDin1iho
+	G3Vj6oak+KNxsi+MBtEu3wUOxnobTl1A=
+X-Gm-Gg: AYBFou3I//KA69OK+8Fj5/jEmpAsb8myB7poyekyGZOm+7r6SXTu61nmkBvDdcpB9Si
+	N/LcyaaOdKKnXXHnsUEa2LNRME8JUkXus/tmQ4qqY0glEmOJJDH9BJBRypko8aKHzADXYdPleM+
+	tWLNrdGnyUeeHlMOmwNEOc1TS0iCKw/xv53ZmZCB8bzUnK8aG85cDZm1zmHtZ/qzfegIv3DDJXq
+	JKXOJcYTWYhhuPCs27LLjnFFEtBvyFw1jRJxFCHdKwpHDDTw2C3d6YMqn4TqQSZlI09lXDCIdib
+	KIR8psxBjRwZxQuSwZ4KP889MMbi5f/UhZv4w/mg89ggbOpyYRE7LlcODGVK3+JzyNZvkqq9NNi
+	amtT+4qwDAGdQ88bTH86rae7leHkdyDJ3CzdjhMMAlQ==
+X-Received: by 2002:a05:7300:7f28:b0:33c:68b:c4d2 with SMTP id
+ 5a478bee46e88-3400657428emr416140eec.2.1790200657406; Wed, 23 Sep 2026
+ 14:57:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [built failure] aicdb.h / __udivdi3
-To: David Laight <david.laight.linux@gmail.com>,
- Manuel Ebner <manuelebnerli@mailbox.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1ccf42a99c89502a7a5e7038ed2ab2aa5a24dd7a.camel@mailbox.org>
- <0aa303bc-d3e9-4670-91e5-8299ddfcb6db@infradead.org>
- <5d00e8d9c5e8118477efcafeb19b1347268bcc38.camel@mailbox.org>
- <20260923171023.5a134671@pumpkin>
-Content-Language: en-US
-In-Reply-To: <20260923171023.5a134671@pumpkin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <arPTRF4qS6o1Q3vD@sirena.co.uk> <CADnq5_NUH1MBU15Vs287by4P37YV+6F1Q3J1e4Q4KuOvPwK9Fw@mail.gmail.com>
+ <arPhsTaiqXPgCqAU@sirena.co.uk>
+In-Reply-To: <arPhsTaiqXPgCqAU@sirena.co.uk>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 23 Sep 2026 17:57:24 -0400
+X-Gm-Features: AclHuK_Sy6gy_cFQzs494m9ICFUjGa5KnK2eKmqxNuEJb4IKFn6VLWZL6MmQkaA
+Message-ID: <CADnq5_OJ=kP+0=iXbpcjsWbTx8=sNfov0wLSW53qLcFU0fmVVg@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@redhat.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, 
+	DRI <dri-devel@lists.freedesktop.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 23, 2026 at 10:27=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
+ote:
+>
+> On Wed, Sep 23, 2026 at 09:45:38AM -0400, Alex Deucher wrote:
+> > On Wed, Sep 23, 2026 at 9:25=E2=80=AFAM Mark Brown <broonie@kernel.org>=
+ wrote:
+>
+> > > neither of which have had any response at all.  It really seems like
+> > > there is some room for improvement in your processes here, currently
+> > > that's three drm trees all held out of -next with the same fairly sim=
+ple
+> > > build issue.  Can I suggest at least check to see if the code you are
+> > > trying to merge is in -next, the drm merge was done after amdgpu had
+> > > been held out of -next for several days.
+>
+> > I sent the PR out on Thursday and you reported the issue on Friday,
+> > then the weekend happened.  It was investigated and fixed, however
+>
+> The actual merge still didn't happen until after I'd reported the issue,
+> and then as ever things are now starting to propagate through the other
+> drm trees.  It seems fairly obvious that there is room for improvement
+> here, for example people could check that the code they're merging has
+> at least made it into -next.
+>
+> > Dave reported a different stack frame warning yesterday so we are
+> > trying to make sure that is resolved as well.  In addition we've been
+> > trying to figure out why our clang builds did not catch it in the
+> > first place.  All the patches should be available momentarily.
+>
+> OK, that sounds more promising than what had been visible to me.  It
+> would be helpful if you could be more communicative regarding these
+> issues, the drm trees and over the past couple of releases especially
+> the amdgpu tree take substantially more of my time than the rest of
+> -next.  Between the frequency of the issues, the length of time they
+> persist, the way your process will obviously trigger such issues and the
+> near total lack of response to my reports it really never feels like
+> that time is valued.
 
+Your reports are valuable and we always take them seriously even if I
+don't reply as quickly as I should.  For the issues at hand they
+should all be fixed with the following patches:
+https://patchwork.freedesktop.org/patch/755725/?series=3D174828&rev=3D1
+https://patchwork.freedesktop.org/patch/755741/?series=3D174834&rev=3D1
+https://patchwork.freedesktop.org/patch/755769/?series=3D172614&rev=3D2
+I'll push a new -next branch with those fixes later today.
 
-On 9/23/26 9:10 AM, David Laight wrote:
-> On Wed, 23 Sep 2026 15:41:59 +0200
-> Manuel Ebner <manuelebnerli@mailbox.org> wrote:
-> 
->> On Tue, 2026-09-22 at 12:25 -0700, Randy Dunlap wrote:
->>> Hi--
->>>
->>> On 9/22/26 11:13 AM, Manuel Ebner wrote:  
->>>> Hi,
->>>>
->>>> I did some built testing with randconf and got some build errors.
->>>>
->>>> First error is:
->>>>   
->>>>> $ make KCFLAGS=-Werror -j8 > make_output.txt
->>>>> aicasm_symbol.c:47:10: fatal error: aicdb.h: No such file or directory
->>>>>    47 | #include "aicdb.h"
->>>>>       |          ^~~~~~~~~  
->>>>
->>>> This could be fixed by installing libdb-devel.
->>>> But than I got this error with the same configuration:
->>>>   
->>>>> $ make KCFLAGS=-Werror -j8 > make_output.txt
->>>>> date
->>>>> drivers/scsi/aic7xxx/aicasm/aicasm: 880 instructions used
->>>>> drivers/scsi/aic7xxx/aicasm/aicasm: 25 of 37 register definitions used
->>>>> /usr/bin/ld.bfd: fs/exfat/super.o: in function `exfat_set_vol_flags.isra.0':
->>>>> super.c:(.text+0x622): undefined reference to `__udivdi3'
->>>>> make[2]: *** [scripts/Makefile.vmlinux:72: vmlinux.unstripped] Error 1
->>>>> make[1]: *** [/home/manuel/skripts/next/Makefile:1390: vmlinux] Error 2
->>>>> make: *** [Makefile:248: __sub-make] Error 2  
->>>>
->>>> What can I do about it?
->>>> Is it me/ my system or the kernel?  
->>>
->>> For the fs/exfat/ build error:
->>>
->>> What is the target (x86_64, i386, arm64, arm, etc.)?  
->>
->> My system is x86_64.
->> But i guess this means the target is 32 bit:
->>> CONFIG_X86_32=y  
->> The rest of the .config is below.
->>
->>> What is the compiler and its version?  
->>
->> gcc (GCC) 16.2.1 20260819 (Red Hat 16.2.1-2)
->>
->>> That error usually means that the target is a 32-bit CPU
->>> and the code in question is doing an unsupported divide or
->>> modulus function.  
->>
->> Can the dependencies in the .config be improved to to make this issue impossible?
->>
->>> It possibly should be using a kernel macro from <linux/math.h>
->>> or other headers.  
->>
->> I figured I didn't successfully checkout next but this shouldn't change this error.
-> 
-> I just tried to build the .config from below against a 'quite recent' linux-next.
-> If fails for a couple of unrelated reasons - I edited the config to fix them.
-> But there isn't a divide in exfat_set_vol_flags().
-> I can't see one in the source either.
-> The usual 'next stage' is to disassemble the .o file and work out which
-> source line is responsible.
-
-I also can build exfat fs successfully with this .config file.
-And as David did, I had a few other build issues aside from exfat fs.
-
--- 
-~Randy
-
+Alex
