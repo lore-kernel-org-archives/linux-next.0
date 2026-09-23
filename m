@@ -1,125 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344B0488219;
-	Wed, 23 Sep 2026 14:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85849486436;
+	Wed, 23 Sep 2026 14:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790172079; cv=none; b=c66tHEpNHk2dvWlEldFtyVovakwkrEAuQD9aXpEz90/+5NhNkj6b5eCmDOkA81aZUTI/CriRI24z4LF92Frx5oWqObNpfggZreKHKGWxxeNeMlC3A8YRfM8CvaW94nYdsTetJBtWLMoI8bNdfxwmasKQ6fxemRy4+n8E8GEaT00=
+	t=1790173622; cv=none; b=iK5Rj1BjU1MtwMS7fLiFUC32dXZ/56+rAGr/CjfIlw3OmfTjMPsFohcgc/2ls1MDgbl0QhWvbpiW0mdq9f5NWQKw48NDr4m7IDTyc/IBMjcquYjxBEZlf8FjzrLkXBJCA1ZJv3SWDlCfNEY7PgDH8gqtcPPVQpCaBVzkK7MLpS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790172079; c=relaxed/simple;
-	bh=lWWYV/6sgrtGiy6kcFwdqaWktcyek5dC6Sfm7CBJFM4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fb4ZapM02JPFIS8ffKeoTuX5VikbaM1Tm3OJIayZWR6AZuFEGlzDJjyk2BVZVNUtaYMJcHCed0SmBDtsDWxFB2jci5xR0su+sENVoLCjEMSU6CAz55YNzLlvcoh3QEqme7/QQ0EHhPWIem9ihr/64H998Et4Y6rY7bsLQimhBp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MdpajThS; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1790173622; c=relaxed/simple;
+	bh=xl8hQ66Pea/KzBDheOEGmZmQITAobwEiu7RYkGDtv70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1Z7xTN5NZ+5OCl+I4Cn2NwV1QWKAo/nILDRW8HB1MMaH0YI5AGjTKxlaHYMn+baCOGnKTsK5J7DPh0Kj9c+96PqoZOAXeprn6V7wvOVRRP5pnjuk24b+KgVn6kE6X0BuhBKSfZCJo9wAtOz8wL974CTjCUmjX+oX6/4p+YaKrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXaDYqCU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MdpajThS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790172077; x=1821708077;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=lWWYV/6sgrtGiy6kcFwdqaWktcyek5dC6Sfm7CBJFM4=;
-  b=MdpajThSKD56z5AZ5/nbDqGHpjvYj3M7X61/8cVtk8YuF/2T9CZFEct8
-   KWe7F1WstHlCSlfQESVTCKSO/ZbCgwgaFLbHWGghnjwPvsACTCBn/Bvg9
-   mMG/F/U4sZRKQQLBCZrulR2ZqKZ64kUDAZAdnrw04kFSthLabaidfUuYw
-   QHonKXjzDIRWt8RMcox9HiOIGdeyxzzuNVKcGmZX1HK1Qp613fXeWpt5z
-   6EQP9coaSR5doLsye9YuVLQMDsejneKclQzS8pbYgVnI7c/lEWevraGyA
-   nBTZPUVx1j2KsE8dHkK6hWjIUCjx3s92KHNct3Z12QU8hPXrLDLnHwEnO
-   A==;
-X-CSE-ConnectionGUID: gGKXYGI+Qtuxu9D/AsFqMQ==
-X-CSE-MsgGUID: 0Dv/Y4JgSdiNZWkL5xDyeQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11913"; a="78423050"
-X-IronPort-AV: E=Sophos;i="6.27,118,1787036400"; 
-   d="scan'208";a="78423050"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2026 07:01:16 -0700
-X-CSE-ConnectionGUID: 4NUtWgeQR9uSbPYK1Rb4WA==
-X-CSE-MsgGUID: 6S8LK0O6SUSe1we/VeL+1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,118,1787036400"; 
-   d="scan'208";a="299871741"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.253])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2026 07:01:14 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@redhat.com>, Alex Deucher
- <alexdeucher@gmail.com>, Simona Vetter <simona.vetter@ffwll.ch>, Intel
- Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXaDYqCU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4C91F00893;
+	Wed, 23 Sep 2026 14:27:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790173620;
+	bh=nawV4SD5a4zB9zV9vsePBxNLyUewNTusmc3h5j7J9As=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=aXaDYqCUT0tJfiAH8aX1Gm2k+6bH77sGQoWSzdN8ojnjKN9Y/QAC4wwUWbCY8b2os
+	 REq0lM5zBHgAHFv+kCcdiUn09MW2FrRraDdGZq2eIEMsXSFXzmBtX7SFwP7wJimBcx
+	 a90AdR9Fp95EX32uhl4uwaLaP4MO362K0PHC5ADHP8xzQwURfqrlFfd5yr3YKIslRp
+	 vVCUPqXU+QNNlYFnfD6bHKjcYRbxS2snhufWfpagF25Q8IJx8O9zxq4BQyrvTYdFLT
+	 fA9QbINJOdkHsGG1VqHP++OMeUmSz4S0fdrLXfBIkpvO4PqczoY+ymXAEsawBjW506
+	 EyL17IIGEFrJw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 722DD1AC573B; Wed, 23 Sep 2026 15:26:57 +0100 (BST)
+Date: Wed, 23 Sep 2026 16:26:57 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@redhat.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the drm-misc tree
-In-Reply-To: <arPTRF4qS6o1Q3vD@sirena.co.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
- 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
+Message-ID: <arPhsTaiqXPgCqAU@sirena.co.uk>
 References: <arPTRF4qS6o1Q3vD@sirena.co.uk>
-Date: Wed, 23 Sep 2026 17:01:11 +0300
-Message-ID: <70527adbe5ab6c73b87abf6a866e8ff34de96d42@intel.com>
+ <CADnq5_NUH1MBU15Vs287by4P37YV+6F1Q3J1e4Q4KuOvPwK9Fw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-On Wed, 23 Sep 2026, Mark Brown <broonie@kernel.org> wrote:
-> Hi all,
->
-> After merging the drm-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> /tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/dc_memory_pool.c:87:37: error: stack frame size (8264) exceeds limit (2048) in 'dc_memory_pool_create' [-Werror,-Wframe-larger-than]
->    87 | __must_check struct dc_memory_pool *dc_memory_pool_create(size_t size,
->       |                       
->
-> which I am exceptionally frustrated to see was caused by commit
->
->   bc3f07516a992 (Merge drm/drm-next into drm-misc-next)
->
-> which merged the bug I originally reported in the amdgpu tree:
->
->   https://lore.kernel.org/r/aq0vYhZXtMqA41wZ@sirena.org.uk
->
-> and then in the drm tree when that was sent upstream without the report
-> having been addressed in any way:
->
->   https://lore.kernel.org/r/arJoCiRM1hRbgRb5@sirena.co.uk
->
-> neither of which have had any response at all.  It really seems like
-> there is some room for improvement in your processes here, currently
-> that's three drm trees all held out of -next with the same fairly simple
-> build issue.  Can I suggest at least check to see if the code you are
-> trying to merge is in -next, the drm merge was done after amdgpu had
-> been held out of -next for several days.
-
-I don't really have a skin in the game, but it all builds fine for me. I
-have CONFIG_FRAME_WARN=2048.
-
-I presume the problem is the compound literal in
-dc_memory_pool_create():
-
-	*pool = (struct dc_memory_pool){
-		.size = size,
-		.capacity = capacity,
-		.unaligned_pool = unaligned_pool,
-		.unaligned_memory = kcalloc(lines + 1, PAGE_SIZE, GFP_KERNEL),
-		.free_list = kcalloc((uint32_t)capacity, sizeof(atomic_t),
-				     GFP_KERNEL),
-		.free_head = ATOMIC_INIT(0),
-	};
-
-sizeof(struct dc_memory_pool) == 2 * PAGE_SIZE, so it's clearly not to
-be stored on stack. However, I think it's up to the compiler whether it
-actually holds all of that on stack or not. It could just generate the
-equivalent code instead.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RRPwIJI3+1SFcBYM"
+Content-Disposition: inline
+In-Reply-To: <CADnq5_NUH1MBU15Vs287by4P37YV+6F1Q3J1e4Q4KuOvPwK9Fw@mail.gmail.com>
+X-Cookie: I've been there.
 
 
-BR,
-Jani.
+--RRPwIJI3+1SFcBYM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jani Nikula, Intel
+On Wed, Sep 23, 2026 at 09:45:38AM -0400, Alex Deucher wrote:
+> On Wed, Sep 23, 2026 at 9:25=E2=80=AFAM Mark Brown <broonie@kernel.org> w=
+rote:
+
+> > neither of which have had any response at all.  It really seems like
+> > there is some room for improvement in your processes here, currently
+> > that's three drm trees all held out of -next with the same fairly simple
+> > build issue.  Can I suggest at least check to see if the code you are
+> > trying to merge is in -next, the drm merge was done after amdgpu had
+> > been held out of -next for several days.
+
+> I sent the PR out on Thursday and you reported the issue on Friday,
+> then the weekend happened.  It was investigated and fixed, however
+
+The actual merge still didn't happen until after I'd reported the issue,
+and then as ever things are now starting to propagate through the other
+drm trees.  It seems fairly obvious that there is room for improvement
+here, for example people could check that the code they're merging has
+at least made it into -next.
+
+> Dave reported a different stack frame warning yesterday so we are
+> trying to make sure that is resolved as well.  In addition we've been
+> trying to figure out why our clang builds did not catch it in the
+> first place.  All the patches should be available momentarily.
+
+OK, that sounds more promising than what had been visible to me.  It
+would be helpful if you could be more communicative regarding these
+issues, the drm trees and over the past couple of releases especially
+the amdgpu tree take substantially more of my time than the rest of
+-next.  Between the frequency of the issues, the length of time they
+persist, the way your process will obviously trigger such issues and the
+near total lack of response to my reports it really never feels like
+that time is valued.
+
+--RRPwIJI3+1SFcBYM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqz4a4ACgkQJNaLcl1U
+h9A94wf+M1lPDJdAyRTU3lKbKctG1Bm/P7odZ/y2RC9cBn/9A7R0J+j7m1rIH8hd
+6vkuE+Vl+QmN/H5wkUP0ZZU4el4RfQOOhVO2ZnIHreVZ1T/dkUysILuhRwZqmQ0b
+oKGju9tjSpVEdVAxmtvC7oEqffSIaJbPOSGl0s2inO5qiGTH/o5woutA1Zn3zwQZ
+rQjkvJ0bX1La7aLLBaBdMlaUj8xj9zOn2ds7JAMgw3RjjStuWnsVCgPYxGL/9Iqu
+kTQGu2BTvpwXYrj7cANAie9IOZwXgY7T3h0OZ0JXKw35IQ6SOU0iE+LYJGCu2BoW
+0NgHp8YgdYWEQaKR/6QpQJ7Xz5Gu+w==
+=LAB6
+-----END PGP SIGNATURE-----
+
+--RRPwIJI3+1SFcBYM--
