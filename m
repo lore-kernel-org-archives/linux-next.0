@@ -1,41 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0382C3F9F50;
-	Thu, 24 Sep 2026 18:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20524C14E5;
+	Thu, 24 Sep 2026 18:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790275989; cv=none; b=JY+iv05CZDwWR3zY9pmvf30Lc+rDAp+LIBTKKLpUx7Zd9flJ5BYaDfgpJDlgCxooBEi82zZ81IekbIJyy5cZEOgrVZdXLkRsMVnNMJRXELCAzDyLC5zmYooqEeqnglVVUL0eT3qKm9c7ayhLTGjy43ZWkP7ghywKLCmUUTjIcXc=
+	t=1790276022; cv=none; b=TU0pQfvn6fcJ1Og69mFIGv8Dea8IBUOWqrjQHfwBVLjoou2iMLYMCwnDs1ST2kwmngZ87+SYP1YywK4u7DU4Te77QFiZ+eKDl/CGLBoxw+E4cATT6jzfI74uwvp+3QoG013wLVC417aRDeJd2sNyTd3gHFTrfKPK8Ba5iv1sWgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790275989; c=relaxed/simple;
-	bh=K5DUxM1GKeSOhm/BHPyi9b09UBbditL9APSXEtfst7M=;
+	s=arc-20240116; t=1790276022; c=relaxed/simple;
+	bh=cJIVJg7y/ThiaIW9IOSkYWuYatWcKBglheJ5PvvdUd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TMMx2JCQiZ6Pl/FIKgU/ZKwau2A2FRymKe/qazrEe3f5PiVFq1FLOJqeJ0CnWyHHs6+BoeLoKXP7RJetrHUk21cHTtvZZqzEZkRfl87jIVAdgOFmTimwJb0+r9sO/9MT79OkUpT6jtIrJ6JBZui6Zhu9PFRhJjcRJG3OE660VwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Usw18Lrx; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Fu7IMCJflmYZ/eh8eFwpbnPSOdVjf/ZLjeos3o6WYNtsWA9Ni9rjS2XICsslOn2xAEz/bbFnXZvUl5sVc6qMfeP9j/qC9sskLFXQ2UM4dvw3/CLt11n1zoY1Tgwlbce5xcv87BZv2Fi5pMfmAZq5DvEZyLlOoG/GfHDWYvunewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbYqLVVF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Usw18Lrx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23901F000FF;
-	Thu, 24 Sep 2026 18:52:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbYqLVVF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A508C1F00893;
+	Thu, 24 Sep 2026 18:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790275976;
-	bh=9b81s0MzFK/H9dQyvYxBZ8T45gU1npKCYvlOgOwV3D4=;
+	s=k20260515; t=1790276013;
+	bh=EAJc/MvMahTOErXSBCuF4+z1u6X4KuNVS10aPK8Idvk=;
 	h=Date:From:To:Cc:Subject;
-	b=Usw18LrxRN8JEmJ4TRCWnUspH7JhwLa5fvYPckCMh+GUqkBuWYlVsmjW2/sBdF574
-	 n+xNe7zNlCgw5+YwM32BnJ1bwijg3EC1D4sGViQN7gkU7kSJVX0NxNKtoMZ8eGTvQP
-	 xGItkTUxtsvwzSJsCQ9O4g1v3n0bCQVSqftMBtXUVXLXi114eZzAr6Nur51VTGdjUz
-	 9MwHw8ndW33sOYklksjJ2ErfoTsyjt84FxlLOcZI+Hu+rkpLOP9FudacfS9TGuJiOu
-	 a9l4l+trG5qEgZFzb2f73ESpS2oZEtOmuCCuqKzWOxqcNvHa+k58725F4PQ+UjXJx+
-	 6v6/2bqwqdfHg==
-Date: Thu, 24 Sep 2026 19:52:52 +0100
+	b=XbYqLVVFU9DayVMde45BtxTRVLCmDkKDb7bLtX5ozDAyOiq5b9dyhqh2VeGRWkrtD
+	 dxI/7TnwbYKx6w6aRnG09cDviIKYTIOxzP5BamN68sC2UVRTW/5vOf7WOcUG7YJTIz
+	 xMV5IoHneGEg2iWADXbzfX/LEVR9dv/+C681RiFhfMqXcTc5ZVuptfwHFLihEg0Ftn
+	 TpilJJAPquLEdgx5TDAdspachlmxoqM2dzn/LaVxwpO7V3fu/YZA0NFZMgvoEvMFsz
+	 zw1ybepgemLbboyoyEoJTqyhDTpgi+H+pzZT9FXC3mMr2bvISKtLAVC8vJlPAfLoUD
+	 gi+5ToYCcKIkw==
+Date: Thu, 24 Sep 2026 19:53:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Daan De Meyer <daan@amutable.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the security tree with the vfs-brauner
- tree
-Message-ID: <arVxhOCoeI129yMJ@sirena.org.uk>
+To: Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Meijing Zhao <zhaomeijing@lixiang.com>,
+	Wandun Chen <chenwandun@lixiang.com>
+Subject: linux-next: manual merge of the liveupdate tree with the mm tree
+Message-ID: <arVxqTLflDLv8XbZ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,34 +45,30 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="olw9VQez6foyi/QR"
+	protocol="application/pgp-signature"; boundary="CjJNE/DrbCfKbldi"
 Content-Disposition: inline
 
 
---olw9VQez6foyi/QR
+--CjJNE/DrbCfKbldi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the security tree got a conflict in:
+Today's linux-next merge of the liveupdate tree got a conflict in:
 
-  include/linux/lsm_hook_defs.h
+  mm/memblock.c
 
-between commits:
+between commit:
 
-  e2f0d6d4569d1 ("fs: port ->setattr() to pass const mnt_idmap")
-  7d0db72041b74 ("fs: port ->mknod() to pass const mnt_idmap")
-  ad664d41535a5 ("fs: port ->tmpfile() to pass const mnt_idmap")
-  16d90b57d8439 ("fs: port xattr to const mnt_idmap")
-  59ffddf0fbeb1 ("fs: port acl to const mnt_idmap")
+  ba13f1f32d96d ("mm: memblock: add missing HugeTLB flag name")
 
-=66rom the vfs-brauner tree and commit:
+=66rom the mm tree and commit:
 
-  16959c469f232 ("lsm: expose mount idmaps to inode hooks")
+  05a84ceadf702 ("memblock: rename KHO_SCRATCH to KHO_NOPRSRV")
 
-=66rom the security tree.
+=66rom the liveupdate tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -79,80 +77,34 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc include/linux/lsm_hook_defs.h
-index c9561564585e7,af9624c30f99d..0000000000000
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@@ -121,29 -120,30 +121,30 @@@ LSM_HOOK(int, -EOPNOTSUPP, inode_init_s
-  	 int *xattr_count)
-  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
-  	 const struct qstr *name, const struct inode *context_inode)
-- LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
-- 	 umode_t mode)
- -LSM_HOOK(int, 0, inode_create, struct mnt_idmap *idmap, struct inode *dir,
-++LSM_HOOK(int, 0, inode_create, const struct mnt_idmap *idmap, struct inod=
-e *dir,
-+ 	 struct dentry *dentry, umode_t mode)
- -LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap =
-*idmap,
- +LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, const struct mnt_=
-idmap *idmap,
-  	 struct inode *inode)
-- LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
-- 	 struct dentry *new_dentry)
-+ LSM_HOOK(int, 0, inode_link, struct mnt_idmap *idmap,
-+ 	 struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
-  LSM_HOOK(int, 0, inode_unlink, struct inode *dir, struct dentry *dentry)
-- LSM_HOOK(int, 0, inode_symlink, struct inode *dir, struct dentry *dentry,
-- 	 const char *old_name)
-- LSM_HOOK(int, 0, inode_mkdir, struct inode *dir, struct dentry *dentry,
-- 	 umode_t mode)
-+ LSM_HOOK(int, 0, inode_symlink, struct mnt_idmap *idmap, struct inode *di=
-r,
-+ 	 struct dentry *dentry, const char *old_name)
-+ LSM_HOOK(int, 0, inode_mkdir, struct mnt_idmap *idmap, struct inode *dir,
-+ 	 struct dentry *dentry, umode_t mode)
-  LSM_HOOK(int, 0, inode_rmdir, struct inode *dir, struct dentry *dentry)
-- LSM_HOOK(int, 0, inode_mknod, struct inode *dir, struct dentry *dentry,
-- 	 umode_t mode, dev_t dev)
-+ LSM_HOOK(int, 0, inode_mknod, struct mnt_idmap *idmap, struct inode *dir,
-+ 	 struct dentry *dentry, umode_t mode, dev_t dev)
-  LSM_HOOK(int, 0, inode_rename, struct inode *old_dir, struct dentry *old_=
-dentry,
-  	 struct inode *new_dir, struct dentry *new_dentry)
-  LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
-  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *=
-inode,
-  	 bool rcu)
-- LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
- -LSM_HOOK(int, 0, inode_permission, struct mnt_idmap *idmap,
-++LSM_HOOK(int, 0, inode_permission, const struct mnt_idmap *idmap,
-+ 	 struct inode *inode, int mask)
- -LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *d=
-entry,
- +LSM_HOOK(int, 0, inode_setattr, const struct mnt_idmap *idmap, struct den=
-try *dentry,
-  	 struct iattr *attr)
- -LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
- +LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, const struct mnt_idmap *=
-idmap,
-  	 struct dentry *dentry, int ia_valid)
-  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
-  LSM_HOOK(int, 0, inode_xattr_skipcap, const char *name)
+diff --cc mm/memblock.c
+index ea0de4b5f3568,f5aaa38cfa313..0000000000000
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@@ -2878,8 -2885,7 +2878,8 @@@ static const char * const flagname[] =3D=20
+  	[ilog2(MEMBLOCK_DRIVER_MANAGED)] =3D "DRV_MNG",
+  	[ilog2(MEMBLOCK_RSRV_NOINIT)] =3D "RSV_NIT",
+  	[ilog2(MEMBLOCK_RSRV_KERN)] =3D "RSV_KERN",
+- 	[ilog2(MEMBLOCK_KHO_SCRATCH)] =3D "KHO_SCRATCH",
++ 	[ilog2(MEMBLOCK_KHO_NOPRSRV)] =3D "KHO_NOPRSRV",
+ +	[ilog2(MEMBLOCK_RSRV_HUGETLB)] =3D "RSV_HUGETLB",
+  };
+ =20
+  static int memblock_debug_show(struct seq_file *m, void *private)
 
---olw9VQez6foyi/QR
+--CjJNE/DrbCfKbldi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq1cYMACgkQJNaLcl1U
-h9CDVAgAgPna414CXjG0vYiCdz3ZMWEHrjP1FuJg0PFwoWTnSxSupBZjAjVBsUH2
-ujyXesIb+mHQIANemFQ0fcjSwR0XxCnVetQ0Ql4Qq1D2tx6IyxveB9hUjLAtXzG3
-11Vcd7o9Qac+Yt/VbqEPqDbmAg46rI8qa+tEvY+8ouOTfVz8QP7tvGURo3Ucbhoo
-DsWrycSomIMvNTSbFh9wJiDqJsBav7eZ2fbRys0AkZ6ejij+o31ZclFSbwsOc9EH
-FARkZo5ibHHVXS+p8xcBBfbBLnu2i1zEI9GOyPLomLzDQ7vaJU6G1pErSMdbyzHf
-rYQWUHynpKp7KSdtfx/2goKYTE3jZA==
-=J1HD
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq1cagACgkQJNaLcl1U
+h9D9ngf8DcpAMCr6Bpk5rKW4E1cnqGhn5z/Q6CNfwd/0mNiPePWELC4aqZg7frxA
++DTY6UYNW+AUEZvv0m6qbhFH89haxC1PamNh4QBD+n6lhwnkrAf73U6gV/g29Zoz
+nIXLNTXhAgPlavclfPlrLvDYETL2sCCVXg2XUhabajgA4DLdSBScOw0RYFs6ryT3
+lPJXILSu1Hk8sdKD/gpFcuBnLxvUtCVTTzBTg+ncP0khL5HS/6urRxQLiLtfQHo8
+f6mKI+fNgqTmw03ieeC34mq67tlrv+CiqmeNBPlG8IL1UWWlymXwBpG8QxOMBqGH
+nudSld7ob0fij4s6b0eeUzVXXE4PBg==
+=f+e8
 -----END PGP SIGNATURE-----
 
---olw9VQez6foyi/QR--
+--CjJNE/DrbCfKbldi--
