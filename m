@@ -1,132 +1,156 @@
-Received: from mail-yx2-f41.google.com (mail-yx2-f41.google.com [74.125.224.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23DA3E168F
-	for <linux-next@vger.kernel.org>; Thu, 24 Sep 2026 16:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CDF4A0134;
+	Thu, 24 Sep 2026 16:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790266951; cv=none; b=bzD3i6k285KAoeaYrdmBuZy/bfTb+WOzSrHRVUinnH0IDQThmTOYIdFLDNKE6TT7OwJ5w4tcV+RL5kFej4DExsEd7uIdCAQwpXXw5zeCMfldJSwLXF4D4TCQAEoZDVNCs/dGz/c9RJ+8ZG8/RVxm4Dy874GUWtAbFjaLQdnvz9w=
+	t=1790268874; cv=none; b=lkjt+jMQ3+Q/ToSA+6pI9MJiMbRKAbGchS6qD85WCJ8hUinVevirNcFJACmjNqdxkYRzuKbiL3jzqyoau9NzdSzWm1Lhvm/ElHO26VLm9JgRsFT40rYh4APFLo9ElmSLpPfo5DHu3GCudo7ucGX43zPKkEAaqrVzor4lCIPOV0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790266951; c=relaxed/simple;
-	bh=eFZ9P9S1QBRJHJr6dZQmKd+qYALkIC8DtqaHa/g1I0c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ATtCQK3Re7t2OcpVF0FfmHz3N/op8PHgnGZ5t+RxGBul2j3HpcXEyj+b2vIYHc/nX6DMCkSrL82d0yNMe1rbeGUouDXQ3cI4bF0ny/GJ7eEwIzLE8SuaJw9WnJwTAhp8nslMQbq6SX5+6OeXX1AQjxltyni3J9hSQvPHlt3RtCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WNWJPl+9; arc=none smtp.client-ip=74.125.224.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790268874; c=relaxed/simple;
+	bh=ej7ynPhVNW1HHrrZ+64/Zrm/RLpj3ZWMpW3KkYztt9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va0gtHNSrDZ+bXaTLSSI8RTaLxFLz+Hh7Sw0/Wi3HzZkU/fJ3CulLhYJBQQn4c9ibV4tYt9x5HTtGGVo4TaPaDFd7DVLtgeyge84ZL0jaPjaMQvV4f7Ml0KuoqPnT+6x+zoNq+JhVPcmG+WzJJvAyWO6O+ecAWo53+zMjWllL/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNCdcQU6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNWJPl+9"
-Received: by mail-yx2-f41.google.com with SMTP id 00721157ae682-8a8288165fbso34497b3.0
-        for <linux-next@vger.kernel.org>; Thu, 24 Sep 2026 09:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790266948; x=1790871748; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=i8/J+pxr/d/k38D5kAKE7gwMuHkeEk36qAmV1V7QTx0=;
-        b=WNWJPl+9kSpzvM3tAkK3y8uW2TmbeZLfYkXkTYsb45DgkPrdzaCXYMRQ0RSJ2u8f0g
-         64PcxDIvrvg+MSvJBMasZEhWoShU2X0O+ruo0+ydmyHuAUsC2Wb1ga3LwKXcBga0JGjT
-         k3r+mN0V20vR7zyWvtJ6SIHP4gNCspYdTtKg0Eydmb7An1mUFO/6VqtqT8riCHhL5GKy
-         B6iUMlU9hebd/Jd8h7ogCrUXLjVbQ3OKdtiMHcQN1KISC/4ivCUsZFgfsJ1RUfUs3xHt
-         ZROs5bkMt55zbV053xqee/LF17f/4/YBkB84NFfZnw0OQXk8YlCmX1/0wnQ1eRFLVZRu
-         9wfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790266948; x=1790871748;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=i8/J+pxr/d/k38D5kAKE7gwMuHkeEk36qAmV1V7QTx0=;
-        b=2vU6ZkBmQQlwMpXofXybFiPQc5LDi3XEghYwoUhVvb4tfdzGcPx0e0OccdghzzP+5R
-         UxGCXKsfw5honhTQg11747u4i5sOQW/HmcO5ePZVQqMyrh5jkyqnHq0mL1ogLo8qLzPd
-         K0+JqtA9RPvTDyFoy/I1JtlqtXP0XTyrKS1PtNPTtTfR6Y7y968qkpKKzKuDiCM+AKE7
-         D+PxGFvafo6dv8eeOTNap6Y5vmmEKTFz222xtafjY55CplX0Qqs0y5x9LaUHWROcIkGU
-         rQnyYHclI1RaWplDKauCt/OZWM+lz1PRSN5ExOStv07XpCZ81k2c5qSGrbEDyELHBkDi
-         7FFg==
-X-Forwarded-Encrypted: i=1; AKwUvBxh7qyzwg5dQo7ZmYH1I71V7nHtVLLiXTS6x95tGRSDXqBbrdNiLIxIV+dHDx1wZBur1RyDorhJ9c6g@vger.kernel.org
-X-Gm-Message-State: AFuF++lnXZdagkmX6ZmZXNYleEJCO+HK+gBhDP5aSLDgVReg0eF0T18v
-	O2YM4p7j47Es/1Adf6tJS581LJjPQcEDZjkjy5Po4ChYZs407LXrFQad
-X-Gm-Gg: AYBFou0om59JjB+RulyIpMmO1I5zXbvSBXDwwZWViPmn3y2CVoG8bk0eiqGUrFwNI8F
-	WUmPXdT9tKNtFR/+/8UQItOeO4fbtT0BrReltSNsqdp77H0Hrj2bNtyRxqGsRDJC3HWtN6iVuhF
-	TMX7qjl+ADxZs7PnJmIxO04TyOEUthYOrmdsfXRf9TSxoPYTkC31vY1/w9sM8bOZvsj7VIjGsVc
-	kordmSEIWwQXTyLZbUfCHdpIe7wINfpdHfu+/nFdh2JvYojy8qvxt1UoVzl1oplt4iIAvafchDJ
-	p/rVP6PoPCqZoPerhiBuECXgC71cBQ7EUhlAf2E23racF8F5uWRIOgj+7sZCZn/OoTxPMaNSYiJ
-	KHJ2xou4h62voV8ryVPVgI30J6yWqVjBMzwsJ43auoluBSYYDJt7uNW0q3a2d9UZ1VAB6PdIfLu
-	wBjsGKyD/PezV5Q5wh2SrkKaP+5ZM6bQ1YLHursi9Qyismv6QzQjmY00wwSQTtBg4DrPUkeTkgu
-	ChA3OchgLeEYHym30YzJ76YyJJoQCeWULD4xRa8QOG28Wq35muT2HkW8JnFEyFaXc9aTnwJLpEk
-	bFM=
-X-Received: by 2002:a05:690c:6607:b0:80c:8d09:3880 with SMTP id 00721157ae682-8a648ec365fmr21043007b3.15.1790266948251;
-        Thu, 24 Sep 2026 09:22:28 -0700 (PDT)
-Received: from localhost ([153.61.198.248])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8a6522ce69fsm10391847b3.27.2026.09.24.09.22.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Sep 2026 09:22:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNCdcQU6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6081F000FF;
+	Thu, 24 Sep 2026 16:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790268872;
+	bh=BkzAkiWdzegc3H0KCcLioXPh2WESOPx/9LTCwHSdQDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kNCdcQU6ajBlxqBQ4LfRJawizexIf/eZEFukJwJ57sYk18nimzTBcWPVDNFLDHySK
+	 rCpOtZA+6PjhIT0E19ZwrY6scDJaa+kMEqqFeyfTdgpH8EUcEUxWofrpidInfRhorz
+	 EV6X5OWA1t8WELdvJb576pvporyY7+awdjs7lKrT6+Ll1DoQ31/5LDLw7+QWcbP3nj
+	 Do3oI4kuwVWIkgszw5O7APGw5hxlzcMtvWkXf5Tvxv/FI94tneDDkfx7FjvLobLgrB
+	 n1n3FLH+U0uyRftC8u+m/goilZncfB7C00KlmZ6CLUe0kDbxn5ZbDuYeweKevJcCBv
+	 Mw8EOwFeVQHaQ==
+Date: Thu, 24 Sep 2026 17:54:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@redhat.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <4ddbd29e-3524-4f4c-b6d7-1e2e677641b5@sirena.org.uk>
+References: <arPTRF4qS6o1Q3vD@sirena.co.uk>
+ <CADnq5_NUH1MBU15Vs287by4P37YV+6F1Q3J1e4Q4KuOvPwK9Fw@mail.gmail.com>
+ <arPhsTaiqXPgCqAU@sirena.co.uk>
+ <CADnq5_OJ=kP+0=iXbpcjsWbTx8=sNfov0wLSW53qLcFU0fmVVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TfUEtMAqWQQDRMnd"
+Content-Disposition: inline
+In-Reply-To: <CADnq5_OJ=kP+0=iXbpcjsWbTx8=sNfov0wLSW53qLcFU0fmVVg@mail.gmail.com>
+X-Cookie: Memory fault -- brain fried
+
+
+--TfUEtMAqWQQDRMnd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 24 Sep 2026 16:22:25 +0000
-Message-Id: <DLNOO145D1Z1.5SN8R6EWX63J@gmail.com>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
-From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-To: "Ihor Solodrai" <ihor.solodrai@linux.dev>, "Mark Brown"
- <broonie@kernel.org>, "Kumar Kartikeya Dwivedi" <memxor@gmail.com>, "Eduard
- Zingerman" <eddyz87@gmail.com>, "Daniel Borkmann" <daniel@iogearbox.net>,
- "Alexei Starovoitov" <ast@kernel.org>, "Andrii Nakryiko"
- <andrii@kernel.org>, "bpf" <bpf@vger.kernel.org>, "Networking"
- <netdev@vger.kernel.org>
-X-Mailer: aerc 0.20.1-349-gb940a4174a3e-dirty
-References: <arUZ_0CU-Zlct_Tt@sirena.org.uk>
- <a5289901-6eff-4c0e-baad-9351817592a1@linux.dev>
-In-Reply-To: <a5289901-6eff-4c0e-baad-9351817592a1@linux.dev>
 
-On Thu Sep 24, 2026 at 4:12 PM UTC, Ihor Solodrai wrote:
-> On 9/24/26 5:39 AM, Mark Brown wrote:
->> Hi all,
->>=20
->> Today's linux-next merge of the bpf-next tree got a conflict in:
->>=20
->>   tools/testing/selftests/bpf/prog_tests/cb_refs.c
->>=20
->> between commit:
->>=20
->>   04ae4ffc57a6b ("selftests/bpf: Check callback map value lock identity"=
-)
->>=20
->> from the bpf tree and commit:
->>=20
->>   11300f54bd887 ("selftests/bpf: Refactor cb_refs selftests")
->>=20
->> from the bpf-next tree.
->>=20
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->>=20
->> (deleted the file, which probably lost the test)
->
-> Hi Mark.
->
-> I submitted 11300f54bd887 ("selftests/bpf: Refactor cb_refs selftests")
-> yesterday to address a non-code conflict between bpf and bpf-next. A
-> test would start failing after bpf is merged into bpf-next.
->
-> Deleting tools/testing/selftests/bpf/prog_tests/cb_refs.c is correct,
-> the tests were moved.
->
-> Thank you for resolving this.
+On Wed, Sep 23, 2026 at 05:57:24PM -0400, Alex Deucher wrote:
 
-+1
+> Your reports are valuable and we always take them seriously even if I
+> don't reply as quickly as I should.  For the issues at hand they
+> should all be fixed with the following patches:
 
-bpf tree was cross merged into bpf-next and all conflicts resolved.
-Next linux-next should be clean. fingers crossed.
+> https://patchwork.freedesktop.org/patch/755725/?series=3D174828&rev=3D1
+> https://patchwork.freedesktop.org/patch/755741/?series=3D174834&rev=3D1
+> https://patchwork.freedesktop.org/patch/755769/?series=3D172614&rev=3D2
 
+> I'll push a new -next branch with those fixes later today.
+
+I'm still seeing at least:
+
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn30/display_mode_vba_30.c: In function =E2=80=98UseMinimumDCFCLK=E2=80=
+=99:
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn30/display_mode_vba_30.c:6666:1: error: the frame size of 2064 bytes i=
+s larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+ 6666 | }
+      | ^
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn31/display_mode_vba_31.c: In function =E2=80=98UseMinimumDCFCLK=E2=80=
+=99:
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn31/display_mode_vba_31.c:7460:1: error: the frame size of 2128 bytes i=
+s larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+ 7460 | }
+      | ^
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn32/display_mode_vba_util_32.c: In function =E2=80=98dml32_UseMinimumDC=
+FCLK=E2=80=99:
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn32/display_mode_vba_util_32.c:3278:1: error: the frame size of 2176 by=
+tes is larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+ 3278 | }
+      | ^
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn314/display_mode_vba_314.c: In function =E2=80=98UseMinimumDCFCLK=E2=
+=80=99:
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l/dcn314/display_mode_vba_314.c:7546:1: error: the frame size of 2128 bytes=
+ is larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+ 7546 | }
+      | ^
+cc1: all warnings being treated as errors
+make[7]: *** [/home/broonie/git/next/sfr/next/scripts/Makefile.build:290: d=
+rivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_util_32.=
+o] Error 1
+make[7]: *** Waiting for unfinished jobs....
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l2_0/display_mode_core.c: In function =E2=80=98dml_prefetch_check=E2=80=99:
+/home/broonie/git/next/sfr/next/drivers/gpu/drm/amd/amdgpu/../display/dc/dm=
+l2_0/display_mode_core.c:6821:1: error: the frame size of 2160 bytes is lar=
+ger than 2056 bytes [-Werror=3Dframe-larger-than=3D]
+ 6821 | }
+      | ^
+
+after merging amdgpu today, note that this is in the -next merge and not
+just the amdgpu tree in isolation.  I am currently holding drm and
+drm-misc at next-20260921, there is a conflict with the old version of
+them though that was just comments but they'll be in the history at the
+point I'm building so possibly whatever git did with the merge is
+causing issues.
+
+Any fixes will also need to propagate into drm and drm-misc.
+
+I'm also still carrying a build fix marking the display KUnit tests as
+BROKEN due to the issues with the conflicting changes with drm-misc
+which several people have noticed, for example there's this from Arnd
+last week:
+
+   https://lore.kernel.org/r/20260915201006.3526945-1-arnd@kernel.org
+
+None of the mails I saw about that or the issues resulting from my
+mismerge got any response either.
+
+--TfUEtMAqWQQDRMnd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq1VcMACgkQJNaLcl1U
+h9DVrwf/fFeeDT5pfDcxHGFhYdqb+fTkCDcSDPtwkCUrKEHGBTabJ2uY/V+h36yq
+BgYE6dIWD14pzaSAhnum5ZSwk8Ht2+mf9uJFA9qx5Pa/TCLMZmkMijGwXMLR7vNe
+oUOINfjXh2fVgdOZ0EfDoFOdOV9xtGI6Ar3sQV5pqvcFg7I5H4xUx8RAQJQdNBUC
+kEB/dcwF2sLC7sHhaTdbkbnuRBgC9fkQbvurG8VJE35xKbd8x3xs3PTUbm4Egx6b
+q+V4Ly9Qm8NZbNu1EvLy8XvgXfR+lpDJ5YjrQpBWPBkTVNJ/9O7dW/rItnEPHdEF
+zbarZkyx0UmPvj5Aw1uvvvcWaAatPA==
+=O+Zt
+-----END PGP SIGNATURE-----
+
+--TfUEtMAqWQQDRMnd--
