@@ -1,39 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829733BE652;
-	Wed, 23 Sep 2026 23:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C56B3BB664;
+	Thu, 24 Sep 2026 10:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790207383; cv=none; b=Axh3CzbQ4QRZ1rAm5lhYESqGAR/A07AZZIcVUDvo/T4PokSN6++YdeImVBIhzmwfNDeY6QY/w/obp7gsOfe6cSjUz7YJVSAILuf/fJtcE5yo0cbUb9p19kufJsUYQLh9lHyf8vZJdcnJJx8a56gBt2SC198ezPRCMczHvwMCsFA=
+	t=1790247239; cv=none; b=bBS3DSktCROsvoIGJn0D3DT0+fsqoAhUk1XIweG5QGSgl7/kMjcGVANbb+6v4j3ohxcnoBWnnbolMf7nNvDhTBFWONewNObx4zVQzY5T4ff1DS7pgGyiYsFgl19KeVJ5kPXE1pyp7kHo6r4Kgg07WEvRpSeeNCMbAWVsaSj01bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790207383; c=relaxed/simple;
-	bh=3uJRhCmRf9TZqNHbk1Lck7Ez2IIoOIVenwDt4RQ4zoM=;
+	s=arc-20240116; t=1790247239; c=relaxed/simple;
+	bh=tJ8yrRPCfBZ0x/hSLR6t6zw4QFx6e7QNrRdH7ZAk+bg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fQWvke1BhH1TJQup1FUc45KIhylONy8PfL+oudltJsjsP02zAK2O1dxgbkVZD/r6xgLQOlL6ET9SbBVO+SUFEyMd8lvtRftzVRpBPyjYUBHSWarH5DKZwlCQfU+7UIedF1uv1XkrosdklfwVkTgq0pNJRI2Q8iBOUiB8bOj6zqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fFCBWeg/; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=IIdAiMwOoMYcCk9lx8/UWhEvcvK5M0FNI0TI+zgzkoWGi7QhGzNCWxeRjEdFx0TX8b7Zf5z7jArI5bets5NXz6ycjfSpudYtV1nUn84irD5oBkX52YWPU8HslUrdqnVqhQnFbctyoBEhmVlxq2ZmRg8I6ZRF185Y/sW64dKpVyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioRLe2Mh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fFCBWeg/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DD51F000FF;
-	Wed, 23 Sep 2026 23:49:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioRLe2Mh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 106F51F000FF;
+	Thu, 24 Sep 2026 10:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790207382;
-	bh=zsUXdHEO17CAVecZMWe0/oL/2w5uWrT/pyQM07ZO4Zc=;
+	s=k20260515; t=1790247238;
+	bh=Bo0KFs181nhqi0shEFNcFHlQX5qdnPO3uuFk9f2sJoA=;
 	h=Date:From:To:Cc:Subject;
-	b=fFCBWeg/wuhh1w+d7YWYmhIoIwugFI/A+uhfAv/v++2wIaIGLyJRJJz5NVEAaRwcm
-	 ZB+NUn2i8j1DFV+Mn86tQGmpnqZ+wf5NvEFC2NHj1XFsWwQhw5b8d5tsrMR4IvbzzE
-	 Qr23qCZhUos6y+TUz2V3eMNfp7m3DjmuI+6KtY0/EEidUSvcj/tmphGtWjYoWadW5V
-	 oJP1oioDt1udqshr022StzDeYNj170Y7tCCfcv49x3xdu8MgfQBLsfcNH9MiRL5Jkv
-	 4O+/Btzas4+dGOrEKZbxjl+GUzcxHQOhanNiuFolGXJgl/pbwnR7HRRKysmTfPzanH
-	 UNqi8u/2l43zQ==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 37FB11AC57C3; Thu, 24 Sep 2026 00:49:40 +0100 (BST)
-Date: Thu, 24 Sep 2026 00:49:40 +0100
+	b=ioRLe2MhDgMmjOqvo3IG5T1f6ylTv+/SiNC9AcdecY0M8FeXXpCSL83E13nS/es2n
+	 HZ1oSI1Ow/K51Q47Qxnf0MTtSQGwxObwP1DkAeVNXR1gpQYSwAvmc0bXcqW0BpkgIS
+	 Hxp78m4uicwKFy+9KvzZs2fmon8j742HsF7qL32HqfJDzcSZBDPEu/uQc3Nio1EK6J
+	 Ha4W35Up8jvcnJ7p+MwkZiwf3G3B433nbRrqR1FK/Ey/HE0RRZCM4xgStxHkAPEvk7
+	 MgLr5s/8AYWDhg1Vv82V3pte++i01qhvLLlGhsOMgV3umuQm59NJsszbGV+aRZt5DW
+	 Sk28Bs4O5S6Kw==
+Date: Thu, 24 Sep 2026 11:53:54 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 23
-Message-ID: <arRllEFKd0N1unr-@sirena.co.uk>
+To: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the drivers-x86 tree
+Message-ID: <arUBQuAfW4HJQHik@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -41,84 +39,34 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VOu8k32yvxaWKkSq"
+	protocol="application/pgp-signature"; boundary="DQhkg+UvwKYZ0Y1S"
 Content-Disposition: inline
 
 
---VOu8k32yvxaWKkSq
+--DQhkg+UvwKYZ0Y1S
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi all,
+Commits
 
-Changes since 20260922:
+  4dabecbb202e8 ("platform/x86: hp-wmi: add Omen Transcend 14 8C58 support")
+  9af7fddef448d ("platform/x86: asus-wmi: suppress -ENODEV warning in fan_curve_get_factory_default()")
 
-The vfs-brauner tree acquired a conflict with the ksmbd tree.
+are missing a Signed-off-by from their authors
 
-The mm-nonmm-unstable tree acquired a conflict with the vfs-brauner-fixes tree.
-
-The vfs-brauner tree acquired a conflict with the mm tree.
-
-The v4l-dvb tree acquired a build failure, I used the version from
-next-20260922 instead.
-
-The drm-misc tree merged the amdgpu build failure from the drm tree
-so it too is now held at an old version, next-20260922 in it's case.
-
-The security tree acquired a conflict with the vfs-brauner tree.
-
-The tip tree acquired a conflict with the ti tree.
-
-The bitmap tree acquired a sematic conflict with the iio tree for which
-I applied a fix.
-
-Non-merge commits (relative to Linus' tree): 8521
- 9234 files changed, 477955 insertions(+), 156105 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 430 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---VOu8k32yvxaWKkSq
+--DQhkg+UvwKYZ0Y1S
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq0ZZMACgkQJNaLcl1U
-h9BvmQf/fu6VnvJzyUMRUV5jYatOmyNqf5dlKJLIVzJqzPg0FsJdNa9CyXZ2QOCH
-wF+tA8+5erLkJPNgXa74bcrzMv7+m5t3G2rvJ8cKaO4hRVugImOu+RNzqZZB/wwj
-qlRXYXzo4CQMeO7/6PXjXMhrAlGHpOJzCyqMATVosK9BM8PlvxNXRN31yg8vC99X
-S6kfY/2DCu9nz5dPWNseD7lqCtM4BF3pAz/9q2hOwEJF3KHCBx5JVTIcXZbrgvdq
-uukQT2vQ8aIjJoVbTH48Po234FRgAT/wcx4mskf/a0vsm6VFpZR85fndAV2y3Oz2
-lNwEpO66I+BrZKEWWHUAsRmtSADYpA==
-=X3LB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq1AUEACgkQJNaLcl1U
+h9COOgf9HWw/EB3UAMG7DWhO/Amx9zMu8qNLxMe0j6kN+JZ5kvp/1OAS8gYUeynU
+qAFF6oeBLD8l75zoX0cd2r/bLF29uBQNtIco45ND1PaUnciWWKeq31k/J/WWywSx
+MAcdJa08W3vHWWSvhqaup+vo+x8jPHJsuhkKpopxl27yI4LTlXwBIpjKf58Fsjf7
+vywxHBHaLBr4kFK1t8ao2Xg03INgSryzyzAOqCKyV3P0WiI7i2r+XlpjvRJ0VtVe
++jkjV5aw6lATQS71lF4q/d3h4w6tClmOBGri7mCHbNodMPUYNx63FRgXoTRonT/E
+RxVMp4WF2tVywBy80TEsiIN5AS2Y6g==
+=LQ+4
 -----END PGP SIGNATURE-----
 
---VOu8k32yvxaWKkSq--
+--DQhkg+UvwKYZ0Y1S--
