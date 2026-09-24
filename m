@@ -1,81 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D28C33EB17;
-	Thu, 24 Sep 2026 22:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B4F4582CC;
+	Thu, 24 Sep 2026 23:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790290095; cv=none; b=k8WxI+TXaBKjDfjpCVjYKH3F0AcVaYXmdWL0cqi3ZUOmzos4Td4INyWwTZzdVKnNz5dvMdzTv3EW+IGkryMjO/p6S1O/GQz/abinHvt+2lXPUeDbk8PWn4iElP7wgPHEEPLtZDP3PvWc8/jvH3qU7rxDqeYk/7Fvs6puiHfD5HI=
+	t=1790292108; cv=none; b=ssn9KZc1G4IgTJwc7dcN+hsB77uWqoSrlIpMn1tN8J8XN5PSSENa3uh6sIm9VyiXkO3yBKSFGa9LJ1ED8jLnTDAfXnC89G7nuU+cwQAc1Zw9smn6qrR99J1bzgvQPLsNPk2NgDPXkRyYCKm1qmT+rrDcG9/s/KUcoEWa7csF6r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790290095; c=relaxed/simple;
-	bh=TxHoypJP2FC9bNqJ5rajs02/SRc4CdC9csDTYV9bTnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBxt8K77gigUtqZ5ylaWnGUz0vhpKpBv706Bzy3vMKZ6/75iZAu1vHL6XUa38E3LPyvJFymHm0tfDfRzTah0nxIneYP0bA9Z5IqBITr0ek4cW9JvAuduLI1UiJExDg2/n9jpUyoISJo0S624rBn9/vVHCgC1ADdOvwU1OUVnniY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sv5FBKWL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790292108; c=relaxed/simple;
+	bh=zjm9WHhqnzUGC8OpvqLpb4EhBDy+h9FJQtvsPJov8hA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RYPvz4LZejEUmQL3F0nAl2apOgf83WgZFcAZvwpB//3Vd/DF5D5POMUxPZquer2WViXJTgn0f7bMsLuz6oaETVHnK0fQMn8mB7KBPcmP+RO+mUutT56xh+L2wg3josPrFBPwgm4qm3cwCZ9iRq4LsKGnAQYmggQ1wpVDK2+wcFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xAt75sjo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sv5FBKWL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A391F000FF;
-	Thu, 24 Sep 2026 22:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790290093;
-	bh=Hu229NCao1/vu+cnkCz5guGKbIs5YLrldrQS4LcsBfo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Sv5FBKWL602ZO6OPjzYNKiFEDNY1SBLeI8b/W+XLoe2v8lHuqPHHcJglun50HtPnu
-	 nrQdHnA7E5KZbNaBHpLWH4tZxIXVAaFd2t+LYlOvlZStnmviMECxEpkCELlMdiEVN0
-	 m5Zzlr5i/v2mqie3vndS0SnfUFRZ7uiFtmU/MZYTgby2ov8y03qeyXcWSNcJYWIEZa
-	 pPMS5cozF4uoYbL+s3quS0p1C4Q5z6AXDj+KiL/rQl23SxQICS6ZVGOG+AqWpujMqs
-	 cPbvZxxjIw3nVcx7z6g5GPo/qabFMdA2PSC5Toa/BP5j/73vjqQch5BIo4Ssm/NYP+
-	 9po6r8Ldf4Ncw==
-Date: Fri, 25 Sep 2026 00:48:10 +0200
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org, Jianping Liu <frankjpliu@tencent.com>,
-	Ming Wang <wangming01@loongson.cn>
-Subject: Re: Missing signoff in the perf tree
-Message-ID: <arWoqiABqzp3Zn6x@x2>
-References: <arWl_CVE0g8dSTSU@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xAt75sjo"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=v0mBWmL2VrrVFCNBRzfbd5T/57AcILdbyrmTf+I6w0w=; b=xAt75sjoutiCYcHH7GmILodivB
+	YIriTMTzClU/lIfN0yOTrjBHtwmZU6kN8risGC5OEF4DZ3WsixEHXcjGJ6K7m6RFSDYqEFmQHOMux
+	kHU3W4XFUtKKv9rav9aorXPMrI589QO6eAcDB1W5Gn9j08Z2fpfKV3Kwtk5Rsz0LiiTs3xIRUVUXS
+	gmoJdGS+AX6BZ/497ETDIZKVn461VXns/vnGMKTksUlMQSjH8yHhMBq28GURAepezCuZuQc2uTPhN
+	NkzgnqItywFWT81fKGCPb7lBTo0DZJ5/jl1PdFjaU6POQFUXfmM+x5Sb37W+6iJ1o+sVc6mk4NdTZ
+	MKbARS1w==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1x9sl6-0000000CNP8-1ypk;
+	Thu, 24 Sep 2026 23:21:44 +0000
+Message-ID: <20d75a7a-2e7a-484f-a267-c21db82dd922@infradead.org>
+Date: Thu, 24 Sep 2026 16:21:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <arWl_CVE0g8dSTSU@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Sep 24 (htmldocs: include/linux/tty.h new
+ build warning)
+To: Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Johan Hovold <johan@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <arWmD5B_Nt3qcBXZ@sirena.org.uk>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <arWmD5B_Nt3qcBXZ@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 24, 2026 at 11:36:44PM +0100, Mark Brown wrote:
-> Commit
+Hi Johan H.,
+
+On 9/24/26 3:37 PM, Mark Brown wrote:
+> Hi all,
 > 
->   4c09f6c47b769 ("perf annotate: Fix NULL pointer dereference in loongarch_call__parse")
+> Changes since 20260923:
 > 
-> is missing a Signed-off-by from its author
 
-The patch had a --- before the author's s-o-b, so it got lost, I'll
-adding it and will force push:
+Please add kernel-doc description for @break_wait:
 
-============================================================
+WARNING: ../include/linux/tty.h:243 struct member 'break_wait' not described in 'tty_struct'
 
-the address-based symbol lookup so that ops->target.sym can still be
-resolved via maps__find_ams() using the already-parsed target address.
-This preserves is_call semantics and keeps TUI navigation working.
+-- 
+~Randy
 
----
-Changes from v1:
-- Instead of returning -1 when the '<sym>' token is absent jump to the
-  address-based symbol lookup so that maps__find_ams() can still resolve
-  ops->target.sym from the already parsed target address.
-
-- Link to v1: https://lore.kernel.org/all/20260423053102.3717015-1-frankljpliu@gmail.com/
----
-
-Fixes: 4ca0d340ce20 ("perf annotate: Fix instruction association and parsing for LoongArch")
-Signed-off-by: Jianping Liu <frankjpliu@tencent.com>
-Reviewed-by: Ming Wang <wangming01@loongson.cn>
-
-======================
-
-
-- Arnaldo
