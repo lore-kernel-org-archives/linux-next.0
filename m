@@ -1,86 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mta0.migadu.com (out-28.mta0.migadu.com [91.218.175.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53913B6BF4;
-	Thu, 24 Sep 2026 15:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404E4A99C4
+	for <linux-next@vger.kernel.org>; Thu, 24 Sep 2026 16:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790263225; cv=none; b=oSO43zI4y9GiHEMNYFx4IZNK48wT4Hk2YD6645p1UpE6RHISxNPVyUSjyhj3aQfT7utDTp6IOurFpSPR9pCgcRsNsD0w++LagD3TlbftEhjq9vAkHc4+F51Xa4JqviKAxjYeO1DhFfPzVPKUFZQqCF5hLTyWA9b0onS2HlWmWUE=
+	t=1790266336; cv=none; b=T2erYdstrxSViUz/A/bt4bgLQwTWUses1dQeYSBVLXcdp3JZsZ/Mdf7gW5EHu7FixGmJpTo+IiOYUw/5XpfYEo821f1BRXXbgAHdAsk/eY9lJk7pfvKnVC+q8XTpMPKDg0Lezx3riJFjq0hf/5RHakjS7gSJzMrestVSd31FCdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790263225; c=relaxed/simple;
-	bh=wffpEIqy82bE5dzisHggBxNd87Jfutu0YdK5t6eDMKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XdTzPOzjgTWZ//QloI+KzEGGC0WJAPFPfB0GGcaqalWkRgZdiRfTHTTa1y3gCc5ksIJz+ChV8kDWYxi1XY6hkOQIC66aJGH8j4ZHd0qLPHKqQrJC8x93lBUYkMbHpBunVtXv7yRrQiAtH8o9DBYnilY75ltmEuRrZvTyBlAraV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO8EWjgv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790266336; c=relaxed/simple;
+	bh=Vea53w4EejSjq+kT9Ps3RZlh+GYWjMqH6GTQQitn++E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cl7mdSGeAjs8g05oaLBkwPTY9Z+M01IS6f049FcDsbjw9vHg4rRvS3+NVWZURHdgulaKsX/zNPCngfJw4sjNZq1giQQGqZQLDN1xrgnH7jgmexMUF9pcwEK4pC4gFEuCYllfHEZ4eb2qHUrawNUzQaMwLlVQXDDnCFwcUEPtVUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KztvoK12; arc=none smtp.client-ip=91.218.175.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO8EWjgv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4492A1F000FF;
-	Thu, 24 Sep 2026 15:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790263224;
-	bh=z0AuueoF+EwbWJC1cvePLMQBYiLt2erxfL4Qv+G2e2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PO8EWjgvZqlB6qVZrDlURrWOYYJIr0ucntqQHxLVuKEice/dYl0Y8Rs/2h1WKzBxz
-	 RkWyDGc4Qedt2hPfgZbGikYJ8RxxeN5NDcF5XhuzeZ4OqIVuNsp8Irb14Nnd/HrraZ
-	 FDxThFEFeUwLml2Oq/gEOgMg3V0UGRFaBrfDk2FLB8PArM2ASE1KexHl7BKM3A8Nkm
-	 FZuO7D0Lp7XNs7vnNsBifmGxa89ZxykJdcFzfdrTfHss5g8EhVvZzKLQ59k5nEQ11s
-	 CC+qzReAKcy3WXYlkOATtBFCF6c8tkoKSmiaQPPBDXBqmA0NqX3NsYFBlvlje1IWx5
-	 cw1DHSaPN/oLg==
-Date: Thu, 24 Sep 2026 16:20:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hui Peng <benquike@gmail.com>, Niklas Cassel <cassel@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Message-ID: <4b5d60b4-fc28-4399-acca-dbb697a1763d@sirena.org.uk>
-References: <arKETtHsac_ZwVc4@sirena.co.uk>
- <ebce4bc6-b210-4e07-ab6e-25f1b2b13a8a@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KztvoK12"
+X-Envelope-To: linux-next@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=Vea53w4EejSjq+kT9Ps3RZlh+GYWjMqH6GTQQitn++E=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1790266330; v=1; x=1790871130;
+ b=KztvoK12FtvhdHVC0pkBT/8I8EPf8DOBRnBqkfs+ROVJpnhL8mPmjT2MaKjPgROVcceJGKOP
+ 8GjhpMYEX2KOuECLfGO0Fqwh53xH7r0IYBr3w9czNpWgBqaSJD2pyJhsSZBKyzUEmrUGnJckAXL
+ nVgUu7U0zIt/8mrpurUrQIzs=
+X-Envelope-To: linux-next@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 08ef9eb8afe2fe83;
+	Thu, 24 Sep 2026 16:12:10 +0000
+X-Mizu-Trace-ID: 08ef9eb8afe2fe83
+X-Migadu-Flow: FLOW_OUT
+Message-ID: <a5289901-6eff-4c0e-baad-9351817592a1@linux.dev>
+Date: Thu, 24 Sep 2026 09:12:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QKDsrnozF8yLWLh2"
-Content-Disposition: inline
-In-Reply-To: <ebce4bc6-b210-4e07-ab6e-25f1b2b13a8a@kernel.org>
-X-Cookie: Oh, so there you are!
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+To: Mark Brown <broonie@kernel.org>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Eduard Zingerman <eddyz87@gmail.com>, Daniel Borkmann
+ <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+ Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <arUZ_0CU-Zlct_Tt@sirena.org.uk>
+Content-Language: en-US
+From: Ihor Solodrai <ihor.solodrai@linux.dev>
+In-Reply-To: <arUZ_0CU-Zlct_Tt@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 9/24/26 5:39 AM, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+> 
+>   tools/testing/selftests/bpf/prog_tests/cb_refs.c
+> 
+> between commit:
+> 
+>   04ae4ffc57a6b ("selftests/bpf: Check callback map value lock identity")
+> 
+> from the bpf tree and commit:
+> 
+>   11300f54bd887 ("selftests/bpf: Refactor cb_refs selftests")
+> 
+> from the bpf-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> (deleted the file, which probably lost the test)
 
---QKDsrnozF8yLWLh2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Mark.
 
-On Wed, Sep 23, 2026 at 02:42:15PM +0900, Damien Le Moal wrote:
-> On 9/22/26 22:36, Mark Brown wrote:
+I submitted 11300f54bd887 ("selftests/bpf: Refactor cb_refs selftests")
+yesterday to address a non-code conflict between bpf and bpf-next. A
+test would start failing after bpf is merged into bpf-next.
 
-> >  		if (!dev->multi_count) {
-> > -			ata_scsi_set_sense(dev, scmd, ABORTED_COMMAND, 0, 0);
-> > +			ata_scsi_set_sense(dev, scmd, ABORTED_COMMAND, 0);
+Deleting tools/testing/selftests/bpf/prog_tests/cb_refs.c is correct,
+the tests were moved.
 
-> This should be:
-> 			ata_scsi_set_sense(dev, scmd, ABORTED_COMMAND,
-> 					   NO_ADDITIONAL_SENSE_INFORMATION);
-
-That should be updated today (without the line wrap since I hand edited
-the patch).
-
---QKDsrnozF8yLWLh2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq1P7MACgkQJNaLcl1U
-h9B2Xwf/ZDbmh9n04lorPotBpnuPxcBDwDXTIBgDaYO1rA8Lc7f6E4SGpxP13Sl+
-4eb6QbwB9VQTknCg6C2mLsDIP3tMF2ynUCrqv+lQ8OhCPVruJZIJkXwW9n1zWcBd
-7kSOZWRLtTvJWtfhgCDW0Eb5ujZHa5++p7AXrVsXUy4O0RCEVhnUbUPX7L0cn99C
-yI8rt+j5lA7R+3mESWM8WBzwa+N/Ugx72FwWGKPQLbDLxqfqYoZD/8QDb6ESUZzX
-DnqA9sSzpXUrtcT3emzbKthHSQDtmR4pNc7k77SU3qTjNbn9eHitIsx03+PmWrA6
-bi3H2DbUJZTDEIG3N/ucikOJxOkeWw==
-=7gSn
------END PGP SIGNATURE-----
-
---QKDsrnozF8yLWLh2--
+Thank you for resolving this.
