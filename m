@@ -1,123 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E70D43F4B7;
-	Thu, 24 Sep 2026 22:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC201443C17
+	for <linux-next@vger.kernel.org>; Thu, 24 Sep 2026 22:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790289428; cv=none; b=Wr33vMR3w739EY63nSst7Zor6JsPCyxat9xf4lfe6wkIpCTCElUJgb9ZPMUoL+INDimfTRK1Mh5/w2Ed12WiaP94JdvMINwevmt2XHnoolyoKNaQBffM8E0OGOHuRh/bXSqDLanazuSGMxPtYwBsn9D97bcGe+CM0UkME84jMK4=
+	t=1790289687; cv=none; b=eZnz90Ow63oxevvLX24WRx98OdtiyUAMj81yc93EZ4TCO8EZZ5bI1nXBeiQyhKwWRYijV+dZi5heY1zv+/xmGXLrPEfflVBJ0Naoeq71h6+OWrx/dud2eIMRwugjvzjvk10g6ZZfDz3uSwiije8+7eOEvSMr/coWg6NEN9wVayo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790289428; c=relaxed/simple;
-	bh=CHis7chu88U5RyZJbFYgIoHNu0ktnicgKehoY3lR5i0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SlyoR1cAUa3ITAqDZntEnS5qNaRtEMaNNk7tR9t9C7Y3/Gm5IMsGVxDePG9/vEFZLGTD5L9CPWbmzUg6S05A7dXpdwOhAdJX2CwkAGNSDMZdNu2dMtjczF9hmEKnSUF8DBCcLnnNTUbqbC3/pVW/jy+9ioH/65wRTnub1H+9JjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDqKsDJi; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790289687; c=relaxed/simple;
+	bh=TUXt6ktVt4Gz6z6+4bfN0D+POleMHD4yZINwWeHeufQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=XZjZrc0tNE4N59XhtdtOV6NvqcjPk4jacdRDLKQ6lKUkCF8jLBmOykzK//KGnYKk8ZGf4Z7kJfWbLhaBsdvM6VGz2SXAgpdTrMMDfCik4mtIdzTINixXcgh0lSTnDBq38RXVz4ksM//KTse0yR9Gb519UoTlJq2oHWi5PXePptc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJOYKVGz; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDqKsDJi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CF41F000FF;
-	Thu, 24 Sep 2026 22:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790289426;
-	bh=Mmeq2nIatjjyNibdqwO71dEtOFXNw44GOutzgMnRb2s=;
-	h=Date:From:To:Cc:Subject;
-	b=fDqKsDJi/l8MGCnyy77g8vPrwAxd7jrnkze1kWDvXmhDB+0aMTzeEFxtyBchdhyoe
-	 /S98qTX3fJ5q/fSmaOOF0q5jlZOcO9IiCDc44Mj8mOpIhNQm/Ob3wLAedxwicDqXsp
-	 4cwrHypd+QCxGkZJ+KbkPfQZNZLrGpNmBjSzcbHCizcZxFewYVz8E0zSSFhgdtqNZJ
-	 QxPxYMudlTuv72GMKLLNJF4L06aXNg4Q0D+uvGJsYghjFMKgCi4YJbON6cYfRG3PCk
-	 TYtT9qRY7o4NhAmmGQ3DZ0HvlDNXSl4AwLhIeamqiCpspm1kLSBVz2D+D0p1o4u7Ee
-	 iw6A9ZO3cyA0Q==
-Date: Thu, 24 Sep 2026 23:37:03 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 24
-Message-ID: <arWmD5B_Nt3qcBXZ@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJOYKVGz"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6350faaso144166f8f.0
+        for <linux-next@vger.kernel.org>; Thu, 24 Sep 2026 15:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790289684; x=1790894484; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id
+         :references:in-reply-to:user-agent:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=pbq8cg5hzV5CsgrEJBLzOPDrWzTdUyY1xmmm7QhjguM=;
+        b=IJOYKVGzTk4I+9HZPZvJ33aLiJ2TzL7RRTWomONTWpRusH9cr/jwI5wj89t7hUIaMc
+         dBVbcLoWIKGmSJikOlcSvmZTqXc8xv2NO4jVa7/4tc9oRoSTJvZxMUZM88MpVaorFRfs
+         14mtiaOqPTG/Idmiqmt2DeOl/yMtuvCcaMjARlu043LCJnRMnYFCYjG6OiDZAZuSA/tP
+         rPeeI+t/QQ3+S8kYRq8gN05Be+UG/A1eVKQJvHC1V/cdjEXLp0QJFbfn+de8oXg/3Eib
+         A3bqV+SIdHbcvbnLWKcipuHyHIAYUpofyrTaayNiEfYrKkn7UDgA6UklLXbHkEo8vSwb
+         UqIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790289684; x=1790894484;
+        h=content-transfer-encoding:content-type:mime-version:message-id
+         :references:in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pbq8cg5hzV5CsgrEJBLzOPDrWzTdUyY1xmmm7QhjguM=;
+        b=zQ5Ll4JjUZ9G7NXkWFQj2j8rFDZjduFVW/cQwsQl4pY5uLlFFlst31/AuxJ+VpDQju
+         GtpZPDtDpGak74Hd+NqXWtO1sbuTji5pZAT6AiXTiVrnshjWhfUhY8loZ2dXuDSVR6zi
+         S27B0DTQ7/NpgvGpUToaScrCD2Akbdath0wTZ21YcCOTrVqHj668K10tLa90bxHmeaa3
+         xV6i8ea8k5zroIXq+9zRjSWWids1c9qntTJ6KIkzsR2yAejmJvaiXHeGeQZ4ItxDu9i2
+         IqBFSRz+myz1BmARHpY5aICOPT4hFShv0D7AP3R3HLuqMcQ9tzPOgzrCeBw3nZ3IOPAM
+         fOqA==
+X-Forwarded-Encrypted: i=1; AKwUvBy7rqmZvPRp/2i57A/Ov6gE4PZ7t3jaRaLQtQ2GIjz2TkhU42fNL/OGCxZinFcwZNpmBYq8/35tjybm@vger.kernel.org
+X-Gm-Message-State: AFuF++mXTWSLEXXj29kUEz5x0wh6Xa7+Qo6My5lG0hv7//BLDgPvSNfM
+	T67LtkCWHF+BV/rB2b7q2E+vb2IZQy1PHlKudByPTTIFawDLKXOlP99k
+X-Gm-Gg: AYBFou0Lr4T3+8XjyqYK/APQlelfid2F/RuEG2xXm7ZmqdGlnwElwl5xonPqRxb8e7R
+	3Kc/lR/1ZvjsuomLZkBkIRyyynphK5Mnrh6vFf40vYK9rt52JIXh0GJdouLtz+efJCiR6UTXnfv
+	HuMy6xxZbIqEcekojD7PLECIH+/bEkGp9+YeCTRTTf4O3oXgCQqOsbUiNAOViz9NyXnesC1MQX8
+	BWJiHAEgto9Hcp0eNwOBaFqHk910SB8jwxKmw2JQK5Eagw0cx17ggD1L801dVcbEt0BYkQNb/G7
+	Z6oGnVhYMD3SOhVPnWYskPRx4npCRVFXYGJLVAewDZShucYa0qoLBtiXG2tqnQUfO6l+9sVC4Xa
+	ed+4gJ5sTw0Uu+P+cguxV95MZ+yBduXTnxU62A056p63K2f3siDdZQYay21kpfi9IkJlxAJQwLc
+	EokRFDVb5nlpq3GVRy4M5GyECMLg+PisaK3ByLNh4s5vVsssRnlYKDcVoMmuhrL7WJsPKN0QHVd
+	B3GSeUwLv/a9ABjM/Jj46+3
+X-Received: by 2002:a05:6000:25e7:b0:487:35d:cb0f with SMTP id ffacd0b85a97d-4887da06e28mr508409f8f.14.1790289683867;
+        Thu, 24 Sep 2026 15:41:23 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([2a01:e0a:880:2dc0:3e8d:e7d3:a406:828c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a30b1dfsm2382883f8f.4.2026.09.24.15.41.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Sep 2026 15:41:23 -0700 (PDT)
+Date: Fri, 25 Sep 2026 00:41:21 +0200
+From: Arnaldo Melo <arnaldo.melo@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+CC: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the perf tree
+User-Agent: Thunderbird for Android
+In-Reply-To: <arWl_CVE0g8dSTSU@sirena.org.uk>
+References: <arWl_CVE0g8dSTSU@sirena.org.uk>
+Message-ID: <9D941A1A-2AAD-4542-BE8D-22B727A1A20B@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1U4HDpMFiBm432tJ"
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
---1U4HDpMFiBm432tJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi all,
+On September 25, 2026 12:36:44 AM GMT+02:00, Mark Brown <broonie@kernel=2E=
+org> wrote:
+>Commit
+>
+>  4c09f6c47b769 ("perf annotate: Fix NULL pointer dereference in loongarc=
+h_call__parse")
+>
+>is missing a Signed-off-by from its author
 
-Changes since 20260923:
+I'll fix and force push=2E
 
-The fs-next/xfs tree acquired a conflict with the mm tree.
-
-The v4l-dvb tree lost it's build failure.
-
-The net-next tree acquired a conflict with the net tree.
-
-The bpf-next tree acquired a conflict with the bpf tree.
-
-The amdgpu tree acquired a conflict with the drm,drm-misc tree.
-
-The security tree acquired a conflict with the vfs-brauner tree.
-
-The liveupdate tree acquired multiple conflicts with the mm tree.
-
-The acpi tree gained a build failure in the final build and many
-warnings earlier on for which I reverted a commit.
-
-One of he mm-nonmm trees gained a build failure in the final build for
-which I reverted a commit.
-
-Non-merge commits (relative to Linus' tree): 9099
- 9664 files changed, 506998 insertions(+), 161450 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 430 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---1U4HDpMFiBm432tJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq1pg4ACgkQJNaLcl1U
-h9BLfAf+KC4Dwim7J5KnNCpQlg+cyM4PfIByJARuddDN5Ue/Gc0QXQry9fd2v2oK
-R67MwzW0J9Vnc3fhW3PsADFYntCjW9fWd+x9SBC6XQEjlxNzVBCjGfm4MwgcInC0
-5jE2gMFvXZQj1kPlVwetJ6cYmO3q28dENVnJoo58Tfos1yZzBAnBGO+QkfWsX/2y
-rj/R0EjCHg2kW6GuqtsyOoIbLhQUT2JbK/OscqKjtHLKZRCL2r9UMX6LTsxiGn2y
-E6Bq7O9W3nrCoRhycxdTi1hbHRi2uLhPyw3F0ZIgB6uIbLF0x9Y+vH3ceV99unj8
-xzhq1lkCeQmqf4mG3W05BWfcozt5Iw==
-=OicX
------END PGP SIGNATURE-----
-
---1U4HDpMFiBm432tJ--
+- Arnaldo 
