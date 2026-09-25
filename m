@@ -1,100 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6032D0614;
-	Fri, 25 Sep 2026 13:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16C04AB3C1;
+	Fri, 25 Sep 2026 14:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790341894; cv=none; b=graLcyI/yFb+82hyQJfA1ivBSZFJMwUAMp1Mg++2b9CoPs2WflSjhqx311NO/CdL/nlAmiS+YGGgwQgbvoEVzcHvCmUm/6ODUYxwnRbe7VSXnK/Ko8ye1iAd3V4LccBsClgGRQPuYXEzM2MTFbXIHuEgKpuQMjaNfEd+lRvE7dw=
+	t=1790346147; cv=none; b=NzUYSf+BkYVQq9AY+5ALbu3nimzFn5M37F9goMLGJKgSw0HXv7+jUUJrvuFL6uvXEWD38TbbmSCcAGgQHvM+VFeENQkyfwf+zvwLF4m8gQq2lyMLZwKzvahGgrNffTlAQbh3NW4m7HU3b4IIFBe4g6o3zOT7dHiYyrqpuEytOKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790341894; c=relaxed/simple;
-	bh=lENP5HJHbc5BO+LSkrByvrmIgcmTuetXKD8cwa1M4xM=;
+	s=arc-20240116; t=1790346147; c=relaxed/simple;
+	bh=6OvlCDBlqfe+Wfi51GEcsiAcHeLuRaFZd2h+Mb4Ww9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eH+F+S2NofPM1M/g3VTEQADrb40FvpypEDbh2/lzu9Veg7PSPug35zijKd5E9CKQftILyxAEu/7ZUU70Feg0AaqUHdYc6YYcyKXsGTExrDKPKqal+fa3QVA0nofqKKKgqlZUHT+j1xTZnGrfKioC2PWJpcGgzeodoynjNsaCaVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aijZ4Y4m; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6hi+efvsFW1XEUNQc3O9UqxUkGyrpBel8s+fRBPZAXnY9Ys79FZC+A35PGQhw8QL4hD24zhojgqGcUlegXGDmC8sLZjYYN5nFyRKwv1PwqyT00PxY6eRZoGQFDwo7U3b6ZERBAbsQBTMOtGboYTHW+8t1OggmFtnvn5QkV1CdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqohbjGS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aijZ4Y4m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223AD1F000FF;
-	Fri, 25 Sep 2026 13:11:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqohbjGS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320A51F000FF;
+	Fri, 25 Sep 2026 14:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790341892;
-	bh=mZmEeamXZmvXJ+d85vwGRKU5//j/nVZOjtPaiXKvqVk=;
+	s=k20260515; t=1790346143;
+	bh=O2c1usmYKIZDPcYrY9Y3fobPzqHu/U/QvOM1YjiSoII=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aijZ4Y4mz7oRNa5ot1avBchyGjwQmgnYDzZpQ+wo82SDEVzzsu6juMo+HTBHLzF/u
-	 +HDCEZYzQd596k5bPOtXZ7svJVWetvLfIrNGl8/it5/W3x4c/p59oKF1KPCo5lrboj
-	 Yc+qqxYxy1hh/nieuwVWIdOJzYseKxyUpuJiAegIGITq9tb5GRe//i7Bpf4HXfNSJk
-	 RAy9sOYyLSaXCOR7BMz8SHeKHxSDwU4ofNmUFBd85CVZ5Jwnm9Tx5BtO5LRKSEsxaw
-	 zodDqD0af1j0ro4HZRaEq/OvkFoGZz6GiFealWNpQ5Pn+QryVyr1Ey7j7XUiparQb7
-	 hooHRijnuZ2EA==
-Date: Fri, 25 Sep 2026 14:11:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Carlos Maiolino <cem@kernel.org>
-Cc: David Hildenbrand <david@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the fs-next tree with the mm tree
-Message-ID: <f9ddfd24-ee1b-47d9-a906-299421247b1d@sirena.org.uk>
-References: <arUS5b85ed6L01qc@sirena.org.uk>
- <arZn0IB-L3hnNniw@cronus.toxiclabs.cc>
+	b=FqohbjGSf+vx72YIqf9tGk/fKK8ZPWJh1gCj04tgPFPU0EhF/7oABLZRW7joMylDR
+	 DqkRaAURcI/XWNvWHa+XYyfbu6sCf+zTrYbP9XOezGiJxHQz7bLpfVSA9GICtLrYBZ
+	 oRIPJdicFAvkJy08oIvSRNSFlnBfIE4eASBxcu8RA3FCIMeBthTX6a73czN+nSpXon
+	 QLRWq6soDSDoN8ijmYcYx5Y1UAMbMilexMcemxRbBP0Yb1HY71BDWRG05wNV3/9Jz8
+	 pvgZjZNgLVdGw5ZoBRh7AtD96Ij0JWaTvyi3oAa7k1ev8Y6VYoJnRhHFPBmwU1VASJ
+	 SKbPXCX54ZFcw==
+Date: Fri, 25 Sep 2026 16:22:18 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jori Koolstra <jkoolstra@xs4all.nl>
+Cc: Mark Brown <broonie@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	Daan De Meyer <daan@amutable.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the security tree with the
+ vfs-brauner tree
+Message-ID: <20260925-anlocken-winkt-glotz-d9135b11a8a3@brauner>
+References: <aqffHOsZaT92Fkg_@sirena.co.uk>
+ <1264706227.899081.1789391881838@kpc.webmail.kpnmail.nl>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="du3HKe/A4rswovkP"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <arZn0IB-L3hnNniw@cronus.toxiclabs.cc>
-X-Cookie: Love America -- or give it back.
+In-Reply-To: <1264706227.899081.1789391881838@kpc.webmail.kpnmail.nl>
 
+On Mon, Sep 14, 2026 at 03:18:01PM +0200, Jori Koolstra wrote:
+> Hi Mark/Christian,
+> 
+> @Mark Wasn't aware that Christian pulled this already. There are some obvious
+> errors in the v5 of the O_CREAT|O_DIRECTORY that Christian also pointed out.
+> I messed something up during rebasing and somehow forgot to format-patch
+> again when sending that series out.
+> 
+> Anyway, finally got back from holiday and fixed everything in the v6, which
+> I sent yesterday. So please don't pull this just yet. I am a bit surprised,
+> because I hadn't gotten an explicit reviewed-by on every patch in the series.
+> 
+> @Christian, could you review the v6 so that we can fix this for next quickly?
 
---du3HKe/A4rswovkP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Sep 25, 2026 at 02:26:25PM +0200, Carlos Maiolino wrote:
-> On Thu, Sep 24, 2026 at 01:09:09PM +0100, Mark Brown wrote:
-
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-
-> Do you mean non-trivial conflicts with linux-next? I always attempt a
-
-With other trees in linux-next.
-
-> merge against Linus's tree before sending a pull-request to check and
-> annotate any possible conflict, but I have never done that for
-> linux-next. I can do that, no problems. Where should I send a
-> notification to? linux-next@vger?
-
-If there's anything interesting it can be helpful for me to get a heads
-up on the resolution but the main thing (and half the point of having
--next) is to coordinate with other trees that you're colliding with.
-You don't specifically need to check, I'll tell you if I notice
-something, but OTOH if you know your work is going to be colliding with
-someone else's it's good to coordinate.
-
---du3HKe/A4rswovkP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq2cv8ACgkQJNaLcl1U
-h9BNfQf9G43wyLRFkV1jgA+zTZ44qdh30goMvaZgUO6SJYgSUz8maxv/dnXrVNIJ
-8RJi7f5yt/2+eUg11Ah1TR2LlUm0TlfVMQ4cNHAqvK+LnfzGXQvTeCw2cHqzbUiF
-dvzcv6+FWQdOyzZkk/3mSz5L83zrQz2ww7urIvT8bC7vnYPYM0I00Bol4qlpH3vv
-Uxqkkjn3BfVszB2SH+7PR6ztWHIuTsEHrVwRpBBzHToqYw3fOrgbMPG1joo1xwjP
-4S9AaGYqtzBx9H3oiuyClD3v7liSxutd+x3esphUqSyqgZelCM7VVCJNpgGxljul
-ZljNJS/qe40XufkdEUVpQx7mTbFrcQ==
-=SUn5
------END PGP SIGNATURE-----
-
---du3HKe/A4rswovkP--
+Sure.
