@@ -1,37 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470604DD3D3;
-	Mon, 28 Sep 2026 15:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4184E431C;
+	Mon, 28 Sep 2026 15:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790607739; cv=none; b=lT4pVRHnPGG/Um5NxlDhGIIQwJLgWMlx5MJ5WbIxnRZgyCz2rX2+tXDxXE3oItZXSlUGuh1jW6GD0+2s0xwfbo1dZlBU71ePNkjWt6AiO/697YGWYzjeYO/H7psTBXE5TtBzvC/dxBQF0c/Ig2EiCOHOK8gEYZwVTjjgGcdhXZc=
+	t=1790607985; cv=none; b=BTy5t0LYDmcyOdAInQsFNNCr290hX7LLZGrE3e8bHymebMPOzpPkV43mrJXtYOdXqhil3rWCa+Wk+hgStWeIL+4dILA0OICwDGoxJl3TK+RbWT4D4CeZrBJSIwK0R769AOoKzy8yY4uuCJvaTbwDYH22rYW31DDLrmjflvBnh0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790607739; c=relaxed/simple;
-	bh=Z/04pWrVi1fGzqP50zDaLCbCVoa9T8lbBQKGRe01BAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EHzkPaoF2w2szwtQOKbvcmjv6LQbc+GZeqo4TX0uN87l8iYFBI/9EC8Ij5mFIZPFvx+06AdhbAEEPgEiIvYqG9/vYlsEPgjlLtmS4nAGgKho89CzdWcjtkiV1xCi/4iUZfYEJVo8nDBDLwj/bctleZZk68EFCOQP9xQsFEx4v8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsJZPrQ0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790607985; c=relaxed/simple;
+	bh=nJAjUMntL0+3YxTbP4hGwOKq1p3SF4zI58hh8DGGWAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJu7mtgBObI+vCdVTof91EJv02DwGvbtp9DGUKOGf/vVXx82kD+uPvIBHiYxyKRs115kHIcc3Yk4GgeconPOGf3m8rNlLgBFRHrF40bhKZmQUIvKdmk+7TxpyoJhJrdbZH/+gdTdhgxvV6fIvIXPbW6k9ZurKCRv7jPB+jw4w6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxl4uvj7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsJZPrQ0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048C21F00893;
-	Mon, 28 Sep 2026 15:02:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxl4uvj7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA151F000FF;
+	Mon, 28 Sep 2026 15:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790607737;
-	bh=o+RYx0LwUxB4xu5X6ZfI4RnbHaC/KSxRN9OcpFCW0oQ=;
-	h=Date:From:To:Cc:Subject;
-	b=fsJZPrQ0FEdm475h9ZXBFHaNGNv5mOpxp/UEntZ9kH89MdKWHl6ulry9vtAMDZE7B
-	 QuBUMXFh9gllX55GzprCSvtUmAOv1KR1YOD6+lWXWpoLC/puZ4juY8jQNFsHztZsuV
-	 PZh3etZZJ0N5b3Cgg/TZevsCpxK7SOrK6Ny2YT4+r0Ir61WcqH1+7CpluppfS9BiBh
-	 qw8UQIAKdJGDtuS2PXpqvRhBg+gySy+0Saw9960NKw/lCTdi8lcvFo2sKeAK21s4SC
-	 hZ1rvvyBKKJDaQKxDfsorJYmrDihHT9UmDJUFJqZuBVsq04MNqRuNG0i6hn5S/hLN5
-	 YZHqWTOV+VVBw==
-Date: Mon, 28 Sep 2026 16:02:14 +0100
+	s=k20260515; t=1790607984;
+	bh=0Onsk/cNBu2snz5ivlHPH+8znvaJFwtXC7DVbyWB1pQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lxl4uvj7p+p3g07vY2TcB2MI47U5CSau9WMkr7xpKT2xAqZG0rf3KsqGKaGl/dXt3
+	 c4hJ4M1B96gt69t7s4MJr/hQrERnIRkoouepZe8GWzbD8GqsnM07dL3OPlTDh2fP84
+	 RW1YRsMzAhF6yj6HE0BvGwJCxnQR+JGQd4I+kpfZSac+xtO98ZpdTJFzj4C/8toxo3
+	 UEwtAjcgarpeGgGV2kEu4vcg2xeI/09DKAQ376PTfr95RSTL9CrfFWWVtxJD8iMRvS
+	 BSzKCNqRYXDW4E1kNoYrBF4Ktl4WEoHsS0S2IVl4ok6PNKPlTieUM8lPUwHEAaondB
+	 WxSm3G+WeOBcg==
+Date: Mon, 28 Sep 2026 16:06:19 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: -next status as at v7.3-rc5
-Message-ID: <d21da1e4-f6ff-4a78-85ce-146c6bb4a9bd@sirena.org.uk>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Quchaosheng <quchaosheng000406@163.com>
+Subject: Re: linux-next: manual merge of the tip tree with the jc_docs tree
+Message-ID: <9acf3e81-a5f3-4bc7-bf5f-32899f1a2021@sirena.org.uk>
+References: <arpymyOST1apXE25@sirena.org.uk>
+ <2ef4f859-6cc6-4dd0-90da-8bf57b519ab7@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,75 +47,49 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/EuMvxLxrwjcNwVF"
+	protocol="application/pgp-signature"; boundary="zRaS2zKzFa/ZheB1"
 Content-Disposition: inline
+In-Reply-To: <2ef4f859-6cc6-4dd0-90da-8bf57b519ab7@linux.ibm.com>
 X-Cookie: All is fear in love and war.
 
 
---/EuMvxLxrwjcNwVF
+--zRaS2zKzFa/ZheB1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Linus,
+On Mon, Sep 28, 2026 at 07:45:54PM +0530, Shrikanth Hegde wrote:
+> On 9/28/26 7:28 PM, Mark Brown wrote:
 
-Things are getting pretty busy as might be expected for this point in
-the cycle.  There's currently a not especially complex but large
-semantic conflict between vfs-brauner and security, vfs-brauner added
-some constness while security added a whole lot of places which needed
-updating.  To make matters worse half of them are wrapped in macros
-which mean neither clang nor GCC do an especially good job of reporting
-what's happening clearly and it all looks like a disaster zone when you
-try to build before doing the sematic resolution.
+> > +++ b/Documentation/scheduler/index.rst
+> > @@@ -23,6 -23,6 +23,7 @@@ Schedule
+> >        sched-stats
+> >        sched-ext
+> >        sched-debug
+> > +     sched-paravirt
+> >   +    sched-preemption
+> >        text_files
 
-No trees are held at old versions
+> Looks correct to me.
+> I guess it clashed since both were beginning around sched-p.
 
-Trees with signoff problems:
+> Sorry, I should have mentioned, But it didn't occur to me when I sent it.
 
-  bluetooth	(missing committer)
-  drivers-x86	(missing author)
+Don't worry about it, trivial conflicts like this don't cause any real
+issues.
 
-Non-merge commits relative to Linus' tree: 10427
- 10844 files changed, 587151 insertions(+), 201979 deletions(-)
-
-Top trees adding commits to -next:
-
-  1546	drm
-  674	net-next
-  663	mm
-  448	qcom
-  337	v4l-dvb
-  337	sound-asoc
-  334	bpf-next
-  263	vfs-brauner
-  235	iio
-  228	tip
-
-Trees adding duplicate commits to -next:
-  16 drm-xe
-  16 drm
-  13 drm-intel
-   9 clockevents
-   4 i2c-rust
-   2 vfs-brauner
-   2 socfpga
-   2 pinctrl-qcom-fixes
-
-Thanks,
-Mark
-
---/EuMvxLxrwjcNwVF
+--zRaS2zKzFa/ZheB1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq6gXUACgkQJNaLcl1U
-h9DMsQf+OqglCt3Zyt24XIFZJKMBhRQ7i1zCg5/L9Gs+b9WMrtpc9xkqzUjD1llr
-gnMgLL2xnayNfrSogo4AqKS6yPx/IeBSLOzzY6rTNCoBQgVv6RbIsn92PJN41KfO
-zOD0nERni3b4FWHyCs5dKubqMk7pLlUVvIHQX2i6UMuI1l8EmssIvEjvnUvo3DdJ
-LCFXAnxHpdOwOEKyZ7twBXGLC40Ye0qiiCEAFzVcomJZ1/sRcZGyL0w8kXmNyf8K
-L3n6IaLNOmkzJLolOY2yYFpvVt/rDUHx139cPCXjIZtGSwT2f8KxcW8NgWJdvXCI
-6O7/WRhGcatTZ5aX+qk+RBt1gkOSdQ==
-=lz+I
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq6gmoACgkQJNaLcl1U
+h9Dn9wf/Y9XiMIVdmgpo03T1fKezBbyF2dL78o8kSKZT1GzgzsqdhKN7/mu4cfKw
+PXBQXMdP3BpERbWRtQPV6O+XDceuUB0uqfL5X3ItuF9vBEcaF9sRTXshPrzaCXAE
+61+BUnvV2A6GjL8/+kSuCnFClc5qelvFG6Tzy3LqwIuEINKbE2eeWC0KMOCigxzo
+NY1WayECr8gMMBpClRqQ6xtxYTo4xTtQyz2AiVmODgny9vzUrIN5g6xl0F5zvygM
+Fo+ggHXwcdpRHZ4Q03NBSLQXmXgrhlIxKbssQhaF6wXa0bPE9huf7kwGKTXW7q/0
+Cp5uUF1FZXecs1nMfITYKKP6R1RITA==
+=hfhM
 -----END PGP SIGNATURE-----
 
---/EuMvxLxrwjcNwVF--
+--zRaS2zKzFa/ZheB1--
