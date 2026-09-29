@@ -1,42 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F7D51DE01;
-	Tue, 29 Sep 2026 14:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AA752120C;
+	Tue, 29 Sep 2026 15:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790693854; cv=none; b=JqIjvH0D+yP/1xMSq+aj48eZuv+4IQt/4q+ZSPfwgDJICuYN2RVSDlEk44uQPtXjTRMxoXNoq29e4dffgSm9kgOK9Gmu1pY7eTQF45JZNA/Naa5hr544Q71wMxgmz4EBbRkEDN/nIbb8lBRmedqPEmCYTwwWkYoZjjjFuWj3jD0=
+	t=1790694239; cv=none; b=QGdEQSINA5mMDvPnp5N77Go9aKZdeuHfpqnXG8f0Scp1waqW4MZ4ibDhPmhnxNFOZJiRpyGW9F54mBerNzsKzHpkJlKSHUj1CbuBoJJMWe4cDF14qgJRCBHNYlY33bsxFgrD8TuEYAJe/DnQbQNCryyhmv3rx+yw5iJ/dasrzSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790693854; c=relaxed/simple;
-	bh=oGxVQoFHRztxIteZvcXsim6691bzBKxm2/431KDfBV0=;
+	s=arc-20240116; t=1790694239; c=relaxed/simple;
+	bh=WaXKcasx1zPtgDUCMIWSKVCSS6YKjFzv63033xnjo/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XamDDLtmaHLTsgSAniGJ1gdqhGOnBovu1PSpm/KWW0BHF095xTyW+Hd0MHVn4hadz9CRbQohjyEu+CNKUL5VcrOpEynbmCwm8K8Bah8dCM4Vrar5aKxrTV3ubYNWEIgyYKB9NGGT8AxI1wluL7kd5Z9i0ICLZhb9XBp2hP3YYp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoWzZjTP; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=kRgMadeDRWZ9MffedSj5bo5+QG+pzJNsJXj3QTLbP51xVe042D0JwN+Nr8QBaW376S5871ogrqgQYoSVB8sHQ81P5c2IPJCENYH2OiXGr1yYI0xF8z1Pmo4yhAfQhzXEVjYf0pklZmmvYU6X/XaHEBx/ULVLZ+j6Nzl1YhfrHGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ib49nVso; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoWzZjTP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B33351F00898;
-	Tue, 29 Sep 2026 14:57:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ib49nVso"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E800C1F000FF;
+	Tue, 29 Sep 2026 15:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790693826;
-	bh=0tVQrgQ+88nslv9N8wiRLc5XBM+MlEB0DNZcY68advo=;
+	s=k20260515; t=1790694224;
+	bh=w+du77RpD5Dku94/DfThISuzR+k3i9B0QTaacDqh74c=;
 	h=Date:From:To:Cc:Subject;
-	b=XoWzZjTPp43B20D1S3UsBjh+F+CjxBTuJE0Xs0Ja1dekyqWFhmXswBHmuKDPemJ3u
-	 gxLQhxXhOaakFxNsDQAVVXYbI2JxQRJ2xTNwdcffYjz4S1V9q+qbYgROaYYzBj6cu4
-	 CzsPrV4hGM8Wj1xAbyeSpQer5l+2Urosll8xEyim1Zh6TYUeiP81y9kbPxLpWcJi48
-	 ds+TLLgDngIJZiEYzBPScKmXRnJqkHhZOJvtlFuLpVB4VQzgL9SoEatP8YK7WBq3bA
-	 XnQeoDxB2ZyrNnWLPDxQUuC78K0icZZxqSenDe+ZXwXs1bcjEc9JLpvu/GGcSqVbPq
-	 hLKF/7+VUMIwg==
-Date: Tue, 29 Sep 2026 15:57:02 +0100
+	b=ib49nVsoB5GIyLxx9V83HQd5RYb4IS7nwDzfjuO2cSHbfypD9g9Xy1WOXYSOINMXQ
+	 FboFI1SAV7JccdX3peJTgK4QEn/+AFUATVfJKnjseB8g9aE4IJF5n3oLfIGiU4VjnM
+	 SUUVgP6xPeWqJYQyYet9iw16+F65ww/sXkNt142MlbyqUi9GHRlIXqyK/37GJXFLml
+	 y2rZGW0lLTun/jnXzgvlKIhL8Lnvo6FnxDLG0oCyC8MIrLT10pQUFbfRCwq8RKAxQP
+	 TyoVGy+FC0eSYXB3pz3V1UBt5vW6UWCmJ7HRVJIoab3d3E5+4uaG1wNP7OgkZ/KALr
+	 RifZjgZg3btSg==
+Date: Tue, 29 Sep 2026 16:03:41 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Petar Stepanovic <pstepanovic@axiado.com>
-Subject: linux-next: manual merge of the gpio-brgl tree with the iio tree
-Message-ID: <arvRvrekUA3zEhYv@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Sep 29
+Message-ID: <arvTTZ5DDHpyfmUX@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,83 +39,73 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eVBgTxCms6nxkWSz"
+	protocol="application/pgp-signature"; boundary="tCj8I6rAsUis+mI2"
 Content-Disposition: inline
 
 
---eVBgTxCms6nxkWSz
+--tCj8I6rAsUis+mI2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the gpio-brgl tree got a conflict in:
+Changes since 20260928:
 
-  MAINTAINERS
+The configfs-rust tree was added.
 
-between commits:
+The bpf-next tree acquired multiple conflicts with the bpf tree.
 
-  02f4bd272bf7b ("iio: adc: add Axiado SARADC driver")
-  a84f9870c16ba ("dt-bindings: iio: adc: add Axiado AX3000/AX3005 SARADC")
+The drm-xe tree acquired a conflict with the origin tree.
 
-=66rom the iio tree and commits:
+The gpio-brgl tree acquired a conflict with the iio tree.
 
-  a7787b818204d ("dt-bindings: gpio: add Axiado AX3005 SGPIO controller")
-  dd36a4b7f391e ("gpio: axiado: add AX3005 SGPIO controller support")
+Non-merge commits (relative to Linus' tree): 11014
+ 11334 files changed, 618644 insertions(+), 208239 deletions(-)
 
-=66rom the gpio-brgl tree.
+----------------------------------------------------------------------------
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-diff --cc MAINTAINERS
-index b6400ebe7d2dd,9aea4c3fd3aee..0000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -4487,15 -4439,15 +4487,24 @@@ S:	Orpha
-  F:	Documentation/devicetree/bindings/sound/axentia,*
-  F:	sound/soc/atmel/tse850-pcm5142.c
- =20
- +AXIADO SARADC DRIVER
- +M:	Petar Stepanovic <pstepanovic@axiado.com>
- +M:	Akhila Kavi <akavi@axiado.com>
- +M:	Prasad Bolisetty <pbolisetty@axiado.com>
- +L:	linux-iio@vger.kernel.org
- +S:	Maintained
- +F:	Documentation/devicetree/bindings/iio/adc/axiado,ax3000-saradc.yaml
- +F:	drivers/iio/adc/axiado_saradc.c
- +
-+ AXIADO SGPIO DRIVER
-+ M:	Petar Stepanovic <pstepanovic@axiado.com>
-+ M:	SriNavmani A <srinavmani@axiado.com>
-+ M:	Prasad Bolisetty <pbolisetty@axiado.com>
-+ L:	linux-gpio@vger.kernel.org
-+ S:	Supported
-+ F:	Documentation/devicetree/bindings/gpio/axiado,ax3005-sgpio.yaml
-+ F:	drivers/gpio/gpio-axiado-sgpio.c
-+=20
-  AXIS ARTPEC ARM64 SoC SUPPORT
-  M:	Jesper Nilsson <jesper.nilsson@axis.com>
-  M:	Lars Persson <lars.persson@axis.com>
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
---eVBgTxCms6nxkWSz
+Below is a summary of the state of the merge.
+
+I am currently merging 431 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--tCj8I6rAsUis+mI2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq70b0ACgkQJNaLcl1U
-h9D6ugf/eC41nXR1VqL0uJygwpGp48jk+/TT6w9T8NLm5Py54SY9Ry8LEpSGy+b5
-GrkJAlTwjjqVGBS4LmrHKySpOA8OTJzj/Eo/bTcw449cuFF27xu1/54UB8Ca0K6m
-G2S/Tp7OSr5VKSAH2nEabAh+eg+Vyv2CVMcgk2XvRARiQWKTqe6DGK2S4qBE4UkM
-xWGuzpAUSE/yD1EepAulPhwxP93cclgljl4nlMwzh3kpUGQX/KfSW8xYjilZ+5Yp
-r+PdKYhH40IgyUw9eoT+fKOZuYzZQmvZsJIo/xxD6cYyZIUlMMNY/w5QIFfILU7g
-VbNa3InCK1aUIXtDkS4iX9mENmgmjg==
-=CeRl
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq700wACgkQJNaLcl1U
+h9BN/Qf9E8wisE0nKOFWaBJoKOs5O/7HNuxl0QOFkzRompGmKkqSEp2k2bswf1HY
+Cz3ZQ/mgWPtiy9S5nBfWrfQcvX79yyzDwG8TqgabWsU2lmQUB069ekQ6wFp/1ZIP
+GiPgRNVbJrHZ7KMR+KWxaqAaMyq2xCBW+0dHTt2oL5jSQM8eZwMUkbNuqX+HpeXj
+5+0m/CnkwaLK2zGsQFyPjuuZ4fmUcdvCA4vBSBC3V+74dJi2x2e7MIAep3rmIrKw
+/8eCz4K6bXu3YGSFbyjqBljfiPlHV2H5zsvVG04+cqwGZQC/VBn9b5zFF+/bsSHI
+NdFxH1qXspcQ4Cm+fCMP7hFqszQQqg==
+=tNRP
 -----END PGP SIGNATURE-----
 
---eVBgTxCms6nxkWSz--
+--tCj8I6rAsUis+mI2--
