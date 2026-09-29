@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE958357CF1;
-	Tue, 29 Sep 2026 14:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E05752ED52;
+	Tue, 29 Sep 2026 14:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790690664; cv=none; b=Ykv7k3UDN93RKedErgDYMeKxGtu9fwLuZq7GHA1fhXNuvQY8b2QkvWsh3FTVxBFICi8tz8Krz0jo67VgAYe+xPvvjAjPVjg7lB7qVIgAGir1VObvOD6J/6DKKRnDjYD8VL4qSCZVO7dVeQqHEzKOwe8ZNHvWS3IpARFmrdfVpc4=
+	t=1790693833; cv=none; b=peiuuILLjsLaZN7Jr0E6K1DxSMQE1vHhQ2T7b9vfrV7preObQW6IBFzLB3bTlhd3JG+oPTO0EsCiZNtvJ/eGd07oBFTI1zBXYz8tb46NF+JMtrq7JUnliTqs9JB0RN+83hhPusuPcyoTJxIKvGnoYxltHbXpvxKDtA8/YuTDT+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790690664; c=relaxed/simple;
-	bh=7Beief/aY40acquAlysDDsDhSM26f/vWWMc4htAyGyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acZ0slbgHlekBCRHMf1T5Q454B32JXZlydbHWONtUb6bwcqWOpKpdse9F4kLS0kKelt8t2U8npdmhGko9sKJhWYMpnz4k3R9u3EhVprudtHxNFvwbA2bqJPOSkVJxDmyo+LCB+VIjawZX2HtbFMV0IZjfQoCx+lCb4tvFFDHRu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSwJFt6s; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790693833; c=relaxed/simple;
+	bh=tvU1xjBhvV8/XxNpEQbMFM8AoW/NZ6ECf2JMNhULMyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YU4DCOJfEoeTzK7wHtwQYj2wychVgFsKNZBVpm1cGfc83tshJMex8FkHfIm7mbdp/jmvToKAMEX1qpKsRVitv0ECYOOW8Qnr5B/iZG4gSDPPL/BZWHEoRm7WC4usxEtLtMLy0PVf1pE4meg8QoCc3g+/uM+Vs3c2KxHPWYk2WDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJkax/Mf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSwJFt6s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2C61F000FF;
-	Tue, 29 Sep 2026 14:04:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJkax/Mf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E1771F000FF;
+	Tue, 29 Sep 2026 14:56:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790690662;
-	bh=XAhgXbQy/5JkeQnS0Q8cSaWD2SwouxVDoHmoWsMEBV8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mSwJFt6sg5LzA/Khk3yIBk8HJ9mSb/mbkicxtMlj2a97b43iGNDDUE/NxBJQrfQxh
-	 /fRWQyLDv9A6yLRxANuifYaiVQVCLYzQZv3jmHvsJIlGl8l/VhGLZWsza6ofzF8bce
-	 yxReF7dm/XDhlrRALCUgtYiGhyg+KbcIJZL4KF8oamef9+QWsuHBCPdNN1YV2eUxuJ
-	 lPCQruvxrfbZB+usxTGZiaoGk7h/GQzEgIrgakgkFCavgM4tifdRPblyh1OaThbHUl
-	 WNQREDaXeX/zcSG1EFqjF+ojBXmmFIamnnosBv4SEbfZUFlZ8Ll8ofr1quuoUxIh04
-	 x53pMe+OETz8A==
-Date: Tue, 29 Sep 2026 15:04:18 +0100
+	s=k20260515; t=1790693805;
+	bh=YLHQOkQJ+bfGfOb0ek05tU4aGkIFHeMeGb8pp/X5qiY=;
+	h=Date:From:To:Cc:Subject;
+	b=AJkax/Mfebr0TLawLB4Rpr78oJCU2zaX9jJNl4ATWR//ozM3meUK3EvlBrNTcXnbT
+	 7z09EUcEoVCE7mBnodKyKE2o+K5wH5/KczjAanUPLTY2XtWTgGFLRgzOPKkDnwcWwU
+	 80UjqKf6bQX4UL429wX2f0GLmi2o9mjTKqCwa75zNE6LI5yei2D6x3zwR5lbgCSKUK
+	 R4tQCIDmPSq4GkLpxha3l50XltqVkq9FZWe79CyjXMwvgFinpHC9nyrgwanKtlCot+
+	 EUd9jgtJYiEc2Iu4Qd02TF3m735h7nG3SF0GCjpHuorsNGBGzGmBD1zIUwiNUFGsgv
+	 Gm69R9q8Z28kw==
+Date: Tue, 29 Sep 2026 15:56:41 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the qcom tree with the arm64 tree
-Message-ID: <2ab1172a-9141-4644-9353-100c01b9b75f@sirena.org.uk>
-References: <arZgzLfF0qjEXPpO@sirena.org.uk>
- <aru_PkpSpqgJlFBg@arm.com>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tangudu Tilak Tirumalesh <tilak.tirumalesh.tangudu@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with the origin tree
+Message-ID: <arvRqS8-Jivj4Rim@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,54 +45,73 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LmHyOwbCQo8tbXuN"
+	protocol="application/pgp-signature"; boundary="EM5IYsxxoGxu3xlg"
 Content-Disposition: inline
-In-Reply-To: <aru_PkpSpqgJlFBg@arm.com>
-X-Cookie: 1 bulls, 3 cows.
 
 
---LmHyOwbCQo8tbXuN
+--EM5IYsxxoGxu3xlg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 29, 2026 at 02:38:31PM +0100, Catalin Marinas wrote:
-> On Fri, Sep 25, 2026 at 12:53:48PM +0100, Mark Brown wrote:
-> > Today's linux-next merge of the qcom tree got a conflict in:
-> >=20
-> >   include/linux/mod_devicetable.h
-> >=20
-> > between commit:
-> >=20
-> >   fe7f2a8054433 ("firmware: smccc: Add an Arm SMCCC bus")
-> >=20
-> > from the arm64 tree and commit:
-> >=20
-> >   fe7f2a8054433 ("firmware: smccc: Add an Arm SMCCC bus")
-> >=20
-> > from the qcom tree.
+Hi all,
 
-> Why does the qcom tree carry these patches? I have a stable branch if
-> they need them.
+Today's linux-next merge of the drm-xe tree got a conflict in:
 
-I wouldn't trust my report of what the conflicting commit is there -
-I've obviously messed up the paste and done the arm64 twice.  I think
-the actual conflict was with 06cb5c457dd57 ("soc: qcom: apr: Drop unused
-apr_device_id") which seems fairly obviously sensible for the tree.
+  drivers/gpu/drm/xe/xe_wa_oob.rules
 
---LmHyOwbCQo8tbXuN
+between commit:
+
+  cc319238e3f66 ("drm/xe: Add wa_14025941587 to xe2, xe3 and xe3p platforms=
+")
+
+=66rom the origin tree and commits:
+
+  d1b210c045f70 ("drm/xe/xe3p_lpg: Add support for Wa_16030224309")
+  9453c528fc909 ("drm/xe: Add wa_14025941587 to xe2, xe3 and xe3p platforms=
+")
+
+=66rom the drm-xe tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/gpu/drm/xe/xe_wa_oob.rules
+index 3001155f8d09e,f35181fc4e49b..0000000000000
+--- a/drivers/gpu/drm/xe/xe_wa_oob.rules
++++ b/drivers/gpu/drm/xe/xe_wa_oob.rules
+@@@ -14,6 -14,7 +14,7 @@@
+  16017236439	PLATFORM(PVC)
+  14019821291	MEDIA_VERSION_RANGE(1300, 2000)
+  14015076503	MEDIA_VERSION(1300)
++ 22016122933	MEDIA_VERSION(1300)
+  14018913170	GRAPHICS_VERSION_RANGE(1270, 1274)
+  		MEDIA_VERSION(1300)
+  		PLATFORM(DG2)
+@@@ -74,3 -75,4 +75,4 @@@
+  14027054324	GRAPHICS_VERSION(3511)
+  14025941587	GRAPHICS_VERSION_RANGE(2001, 3511), FUNC(xe_rtp_match_not_sri=
+ov_vf)
+  		MEDIA_VERSION_RANGE(1301, 3503), FUNC(xe_rtp_match_not_sriov_vf)
++ 16030224309	GRAPHICS_VERSION(3510)
+
+--EM5IYsxxoGxu3xlg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq7xWEACgkQJNaLcl1U
-h9DZJwf/UHJW+K1JFmGpwOcp0Azsxeq7dI9XiwMcVYJDSIQ9kOKDKWP8CFh3jq43
-qKFgQQnNhuBYBLvzFTupjdamsmrMXQf+opsVAG9GrqlUgf8iBrgDD2Qpchdz6uMp
-ToJuSSDhpyvMzm+g/2AcIuRvQunX9Q+zi53LAPriZMEanf0FyALPYJ4ZmsqMstrS
-VV43hgf1DHTtNMKM/MI+pAjgx+BT0YEYS7O1TdUefhUCazWpoNn2rPR64JOA0itm
-NrGyq707A/+bRFzpdzd2iesJWbZforGwdB5EqIqMK/zEUnvh5kqUwj4GEDE9IhvP
-p7/4koIABe745lWaU1AupDB1kd6I8w==
-=4hwJ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq70agACgkQJNaLcl1U
+h9DKKQf+Iex0L+XMWa/tS9hDOOTcSz7mYINZa8BJBc1uwtU+hlQAFticRAGIzUt4
+qxwLVLpNaSnE5eArj/CpymIY4hwPvTaM5WcekAfRWDOXyWr+wQ0tMwtX9B1yEySe
+vHuvKjciYmbe6qr75KoKzi4niBlwr+RJ56PkhlOuWq0e9mv3FLfwFluv6yzNCmZ6
+sG1bD5uSRiTpGF2UU3wXu0kyfZdwsYF/c3U9dZjnFcoQEijAH8M8zUv6qOAf8bAJ
+PTUTo/PAPEDBtc6NpxK+Na3m7KN0QhUWXmznpVdal+jZJU35BO2nj7UM2ADo1f6i
+Byu5oBkSSTq8CUYWnCF2OiYRd46Rdw==
+=v9Tb
 -----END PGP SIGNATURE-----
 
---LmHyOwbCQo8tbXuN--
+--EM5IYsxxoGxu3xlg--
