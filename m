@@ -1,205 +1,127 @@
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+Received: from mail-dy2-f43.google.com (mail-dy2-f43.google.com [74.125.229.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDBB4DD3BC
-	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 15:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790781115; cv=none; b=ScXV5mVExooqdHn2Tj3iCkBv7y4A5DjbJ7h7ytHdxaLXFE3KXKUbwnyqHiNX1hC167I9/jANdFz4xGy5CEAA2yJyF7rujdB0Jiec2vZpmRxAmVswNxpbczjLoxDvVFVMaRSPI+q/UqKtdUFVmWgvPWsORNUh0ChXG9AX/uxZWL4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790781115; c=relaxed/simple;
-	bh=aJK56cyRzXZjWpIBAPw5fRHCWxiO1QJ0/pWjo+GWpRQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=R8AbakOMyUYrnCoh1QgNohZgddMTYgdGg6aNm5AIIFRiYEdpSxzuuotBajQ8HhInmMvDSmaYO6oKfjt+smdAJ7byCoKyDDSUM+X1F9cGmHrYXWfr+o06X7Al8IgyDvoXvfNlV7xwEma1LNctlhEPIEy55Mo6Rd8puEuLLPY68G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wb66/11z; arc=none smtp.client-ip=209.85.214.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A08436E48B
+	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 15:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790781978; cv=pass; b=WXKtiZZhXPfwvobDZHZhLP39u466tx9usIMl7LjPsqPyDh1UvJvZcC9cKH0UeQlzX3E0lCt28BO6PCGw/GGqiebfKj5CDJ9UqUWwaluF9OoqcQsOFeP2nJD7OSgBiUum3qajTUlfug13ORi3qsQLZn2FOE65eHn45pGxpp6TdF4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790781978; c=relaxed/simple;
+	bh=/LS3U6D3bE8RIAvF+h1U8Lgt7te2vLbKOufwxJeZh9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lpp/rr7crA78iHJMeMrwcZtcR5IfWG3CE3sxrttc3NDuHBY/2eyhtvrGk2SYJpFCrBh4Df9zk2klWRk1zX627aasHrZlUFO1Coum9cWE4OWvGs0DyZiOav5rGveVG/QH68QQCr+g3z+K+LaXKotLwHnee8fNlc0BA9ShHDQc0iI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2l7/XlY; arc=pass smtp.client-ip=74.125.229.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wb66/11z"
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2df8d1e91c9so81254695ad.0
-        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 08:11:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2l7/XlY"
+Received: by mail-dy2-f43.google.com with SMTP id 5a478bee46e88-33e79c06622so600123eec.3
+        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 08:26:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790781970; cv=none;
+        d=google.com; s=arc-20260327;
+        b=UpKv99QkyBQfYpnjLd9L1VG2bKHnGibF7WFgE4nVyLlACCZm/17wTG01Pf6g2LH6TO
+         NI6waDkhagUDIJO+8E9dbQJ7dij1Tcdvyuy+XpbQ4o0JeFocg0yVWsmFzvJZUktGyjbH
+         d+Q5sq75jZ1IrXMTTqDYYaNBQL4s6ZXQHAYeOgZWdtUlP9FZWqbJH/JDrTcx2ML/Wzcw
+         o5p8m08ALaXl2xkQJ2W6tI+VBXOwvOJgVZ9Rh4hjje166ay/yziY3ihK3JyYjU6GjYad
+         6PXAZ4Qhk4WEeBesoKk8+AgpasruSS6CQfhfufHEhyLb19znovz9v8c6QHFXm9ZoyN15
+         aQdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/LS3U6D3bE8RIAvF+h1U8Lgt7te2vLbKOufwxJeZh9A=;
+        fh=aO3wck77YW2WBKpGvXoYCJZuYQwTjSSiegJ6inBGw9k=;
+        b=mn1REE6E4nwx6IjI005gXdkyGVfLVbpLHUJFAmhaeTiWGUdLW9VWTPtQvBIcanKCkW
+         6DMdMKoD+9O8IYY2NAnaWBzS/vXgHrBat3yzdhcciUpPJ3DoAQPKosa8FiV2LdtPq2gP
+         wFxByuegHccM5Y0g2pxNBZ4c0t95mXe2p8shC+0CB4YVSxqYbs9hXmsvNZovNd9AWM9y
+         F8wS/IqCMceozSjkjolDBDvf36KXnIS9XyQqs4i/xUtHfkXAhlvEhJx18++YlpKrrt9z
+         Kn+elemoS/3msv5iHarnKpp3y5F3MYNun1CjuGVi8kXq3BFbbzEhSyKKkKn1dhMkG6pl
+         PruQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1790781105; x=1791385905; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=tnYEy85T6L9VUgYpvbipzar1+R2ojY5ljHxm3uRhDeA=;
-        b=wb66/11zVVkg1hhGfYFDt4TsYmICBJphhRh3WZnwfW5BR3TaSwYiyMeWa8LP8geMjT
-         OKwbQuJuyuQ67o3fX2jGCpmJcQZo8zNHXSlptJ+J7kyAeco75LPR1zVIagS3J5c6uem5
-         U4xaefzoaa5uqMehWCCKmr/Jpw3mQ6pEEztOYy2JREQ708hJiXGaGcWbIvSn3EMG9aaG
-         FPrpKo4Yt3RD3fkbuzZeTv3p4LlUDbNRqoK84snlyQhWnJcImEWT66a53cCFxk2hT0hr
-         Jb1thsBHuY97g/e/KyNyLFntEYtlDgblW1gyBGDZDAfQWzdC0F0k1nbDJwojWZk7e/Vq
-         0psA==
+        d=gmail.com; s=20251104; t=1790781970; x=1791386770; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/LS3U6D3bE8RIAvF+h1U8Lgt7te2vLbKOufwxJeZh9A=;
+        b=G2l7/XlY3zQ6NT95T4GJIABV70dQH3YXfhm4enxJMeipuwl+3j1XoUkEd8u8oHldOK
+         esuecKKwebCbmzlTH9xuDG4FzzeSEAX58acn2Sv6Miqp0XhSDE5nU4vxFdfpDOVZZFRc
+         LwN+K2QUSnmzMioeswr6m+PTzU01zYe1ikW/ZbHMWFZtlbNdvpl5a0gl37FJqtb0bRX9
+         5g52nlVMtKtu4x6GY2+fQcJiHz85/rlk573rk9oNCNmlG4aPmR/XFdDVLgpw6NBLOK6Y
+         5SGhhvCUzM97hK80rknNUoW6UjGSqbJUARHn8XvaFHmRFork3u6xX2D8znP/ZC8nJfjg
+         9CIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790781105; x=1791385905;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=tnYEy85T6L9VUgYpvbipzar1+R2ojY5ljHxm3uRhDeA=;
-        b=n9B0ojD0U4WwkWKQQcNuoZNLiKSu5hMEiHWRp8sB/4nD8xEaklrVh5OKHt+6ejB7jC
-         RRq2GoJ/DmfY2QaboEXXEW//ED/EFmaSHmIGvhp3scUPcYyY8uiWtWmJbeSfM1Iult2P
-         dDnh0Gp1QjQbNK70YOCKqiPwsIbc6kPAL6NhNhftl7HesO1pLc28W3qBgy1KQzBv7HCb
-         5HwgB1trQPTBZVXhwCa8tzuPMyA5rk8Iw74nkcEX6Tkm/yH3qDLV/aShWOkaqdFlC3z4
-         +QbQYnROGkn0X16MLPylmDlyrrkCDYwh7wBAIvTydbwF8tRdkmS0XJ/xDXbA8wwbp4EY
-         pBvw==
-X-Forwarded-Encrypted: i=1; AKwUvBxEJi38XxQWppsN+Ua08HiF/7gl7w9/SLVbA1eEx5cfS8JBxmOFl4DrvOQdk3yKsoyIoqiVq7BH0C0g@vger.kernel.org
-X-Gm-Message-State: AFq9FYLjir0pDFbku4aaELmt9x/1PpTw2Hr8zkmnpdSJpFE68TaGpJvd
-	GuBxHfofdnDi7RpQw8tPO/m0rwm+HP6jjiF2JrZP2YmMsiwCw8r7QiEyliEW/xNPj9CMhXeSJfU
-	lqqEHow==
-X-Received: from plrq18.prod.google.com ([2002:a17:902:b112:b0:2e2:c684:16fc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b46:b0:2e2:e0c6:1689
- with SMTP id d9443c01a7336-2e2e4bb71d7mr13947915ad.58.1790781104894; Wed, 30
- Sep 2026 08:11:44 -0700 (PDT)
-Date: Wed, 30 Sep 2026 08:11:44 -0700
-In-Reply-To: <f8d5ab37-7bc5-494f-afec-6bd0cb0c412c@sirena.org.uk>
+        d=1e100.net; s=20260707; t=1790781970; x=1791386770;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/LS3U6D3bE8RIAvF+h1U8Lgt7te2vLbKOufwxJeZh9A=;
+        b=B/gs9gvsw4WJ9n8U+NOOwyts5KRvlZzHp0p2KRizUCMGTa06p6i059xMgz2Kd1oIgH
+         XjPbVGKHU60FH7kqz+qFBl/u06YrYGcjw4/ci41ehUT5TzvgM8/N32QC4VfBdEienkcV
+         ldXO75eNhwOwku2mDsM3sf/rFe1FLHIFLCliwNAJXaQi38DaIpx5nOUhds1bwY/c6bT6
+         CcMmtbwH11ciia0nFP4TQX+g6ZB64LRE9VZE86lh3eULmMUj7lzzFINuaQ5W4wrtS+9/
+         mTc1lHVzWpqWuH8uKoeAJcZopywCX0sOaNRX7YsBnsxTnNxqwHIhnj2RN5qp1d9fSlTz
+         0HAg==
+X-Forwarded-Encrypted: i=1; AKwUvBy9ZvFU6Bx6GrHb8PAAznJr0dRFNpSkf1KjSqDb2REMoZsnHOvIoET+XvujPW3D3xSXaNG44NQuQFNp@vger.kernel.org
+X-Gm-Message-State: AFq9FYKuEk+n6f1kEpu91o0p8r+i7qqNnrk/ZKzMWRiHPX0ebZHH9qVY
+	G+YWb5WL3O1KvKqs/YfS1P+qHee6UMWF5Nmen/P899cw/6VSWEF80JqLLJIeSnLdGgoAws3NJeJ
+	Gf9mIqLygwlRQhTFZ2Uh9CsultVZcJ4w=
+X-Gm-Gg: AYBFou0a23eQM3eDASAuCp/+xRjIIH2BUZIVWSqs6tVl3TEUrahVI5gAPssm2ySMJBL
+	mgb1dnbb0UEynwhsTR4elXdwWjhzmnsVHzpVra8VrSO1/4b+0kU3OAsLwiumgiL4hxM36n9/De4
+	SHAPjsL2JofTDRObzVFRiMjdgl9I+1B+y1u72rGiuy4VsMa4sM2/2QuNPwWnGlfTisSIJFujF5d
+	aAdvHwCcnv3tuPJjLbQ62FglcuHzX3IL437PlKufPCaJJNck1CWO8/1/ZT7/t78/6yRxv56kix7
+	/wgWWyCBr2OtmuqlD4w+U8iUM48MqpIsnpFDEkYSEWwv4NWhGPYnu3n9gy1p8p1Ey9D/txv6hnL
+	q/dVA9rtp/D/i+9Zf30SETPs/UpmvqrjOg2O2ybhARudQFhVcTSF8e9uwLx9O99TRd89cjkRj32
+	JatHSKe70b8rXKzxxbMl8cT/hQmGhugS+a7zrlyIhOZ+B2MdHDcZE=
+X-Received: by 2002:a05:7300:4fa9:b0:33e:8552:6e06 with SMTP id
+ 5a478bee46e88-34cd6003e42mr3012710eec.0.1790781969755; Wed, 30 Sep 2026
+ 08:26:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ar0KIZ8HQEfIRvVJ@sirena.org.uk> <ar0RN3FICQ-PEqNW@google.com> <f8d5ab37-7bc5-494f-afec-6bd0cb0c412c@sirena.org.uk>
-Message-ID: <ar0msIOhuFY0RpCS@google.com>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with the kvm-fixes tree
-From: Sean Christopherson <seanjc@google.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: KVM <kvm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20260929-rust-block-for-v7-4-rc1-b4-v1-0-642a4c1aebd7@kernel.org>
+ <179068244058.1205226.1765319338142659278.b4-ty@b4> <d1381ed8-eab8-4fd7-8b15-1e94876d7099@leemhuis.info>
+In-Reply-To: <d1381ed8-eab8-4fd7-8b15-1e94876d7099@leemhuis.info>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 30 Sep 2026 17:25:56 +0200
+X-Gm-Features: AclHuK_OBw9tG-s9O8MtvXyTH10ESbf_7IiKq4RprYC7l6RRjV0_TwsAnU0VqBg
+Message-ID: <CANiq72nFiT0EoL8Z9iPT3xcPWynofUAs4F2gb6-NWmUQmtBHPw@mail.gmail.com>
+Subject: Re: [GIT PULL PATCH 0/9] Rust changes for v7.4-rc1
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Jens Axboe <axboe@kernel.dk>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Boqun Feng <boqun@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alvin Sun <alvin.sun@linux.dev>, stable@vger.kernel.org, 
+	Priya Bala Govindasamy <pgovind2@uci.edu>, Dylan Zueck <dzueck@uci.edu>, Yuan Tan <ytan089@ucr.edu>, 
+	Sophon Z <aiqubits@hotmail.com>, Qingxiao Xu <qingxiao@tamu.edu>, 
+	Malte Wechter <maltewechter@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Linux kernel regressions list <regressions@lists.linux.dev>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 30, 2026, Mark Brown wrote:
-> On Wed, Sep 30, 2026 at 06:40:07AM -0700, Sean Christopherson wrote:
-> > On Wed, Sep 30, 2026, Mark Brown wrote:
-> 
-> > > between commits:
-> 
-> > >   b630929bcc4c8 ("KVM: selftests: Extend nested x2APIC test to validate disabling x2APIC virt")
-> > >   b0bc51910f039 ("KVM: selftests: Extend nested x2APIC test to validate using eVMCS for vmcs12")
-> 
-> > > from the kvm-fixes tree and commits:
-> 
-> > >   9b2f8146fcef9 ("KVM: selftests: Extend nested x2APIC test to validate disabling x2APIC virt")
-> > >   a4bab1c12fd52 ("KVM: selftests: Extend nested x2APIC test to validate using eVMCS for vmcs12")
-> 
-> > kvm-fixes got force-pushed, which is what's causing the weird conflict.  In a
-> > tree that hasn't refresh from kvm.git, I see:
-> 
-> Ah, I had thought it was an old version of the patch having landed in
-> kvm-x86.  It looked like different versions of the same patch got into
-> each tree so I went with the main fixes branch version as that's what's
-> heading for Linus.  This sort of cherry pick/duplicate stuff is always
-> hard to follow. :(
-> 
-> >   a4bab1c12fd528ccaafee00360e07463873404a9 (kvm/master, kvm/HEAD) KVM: selftests: Extend nested x2APIC test to validate using eVMCS for vmcs12
-> >   9b2f8146fcef9faa73f9dc1bad9a8d6c585cfec8 KVM: selftests: Extend nested x2APIC test to validate disabling x2APIC virt
-> 
-> > versus the newer version:
-> 
-> >   973ea70393e885e540f714904e51bc6cac80e3d7 (kvm/master, kvm/HEAD) KVM: SEV: Do cache maintenance on the source VM *before* clearing SEV state
-> >   8abbc76120a74bfba1851bd97528099d715e45c6 KVM: SEV: Nullify "have run CPUs" mask pointer when freeing it
-> >   b0bc51910f0391fea09c0a1d32352fec2acb2686 KVM: selftests: Extend nested x2APIC test to validate using eVMCS for vmcs12
-> >   b630929bcc4c867c9abc8cd5a0ebee3bb5ce5dcd KVM: selftests: Extend nested x2APIC test to validate disabling x2APIC virt
-> 
-> IIRC my conflict resolution gitk only showed me the two commits that got
-> duplicated, it is filtered by file though.
-> 
-> > >  -	prepare_for_vmx_operation(vmx);
-> > >  +	GUEST_ASSERT_EQ(prepare_for_vmx_operation(vmx), true);
-> 
-> > This resolution will probably break the final selftests build?  kvm-x86/next
-> > moves these asserts into prepare_for_vmx_operation(), load_evmcs(), load_vmcs()
-> > etc.  I.e. kvm-x86/next should "win".
-> 
-> That's entirely plausible, my kselftest build tests are for arm64 only
-> since that's what's native on the build machine.  Sorry about the mess
-> here.
+On Wed, Sep 30, 2026 at 5:07=E2=80=AFPM Thorsten Leemhuis <linux@leemhuis.i=
+nfo> wrote:
+>
+> This series showed up in next today and broke the build for me on
+> various Fedora releases for aarch64 and x86_64; reverting this series
+> fixed that from a quick build test limited to drivers/block/rnull/
+>
+> The full error msg is quote long, find the top of it below. Full log:
+> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/f=
+edora-rawhide-aarch64/11055137-next-next-all/builder-live.log.gz
 
-Ha, no need to apologize, it's our mess.
+Confirmed, I see it e.g. in my arm32 build.
 
-> If you send me a confirmed resolution on top of today's -next I
-> can add the fixup, or I'll try to take look tomorrow?
-
-Here's the fixup.  I'll make sure to push to kvm-x86/next today with the new
-version of kvm/master, so this should disappear in tomorrow's build.
-
-diff --git a/tools/testing/selftests/kvm/x86/nested_x2apic_test.c b/tools/testing/selftests/kvm/x86/nested_x2apic_test.c
-index 52959287500d..2ae698c9aa1c 100644
---- a/tools/testing/selftests/kvm/x86/nested_x2apic_test.c
-+++ b/tools/testing/selftests/kvm/x86/nested_x2apic_test.c
-@@ -61,57 +61,55 @@ static void l1_vmx_code(struct vmx_pages *vmx, struct hyperv_test_pages *hv_page
- 		evmcs_enable();
- 	}
- 
--	GUEST_ASSERT_EQ(prepare_for_vmx_operation(vmx), true);
-+	prepare_for_vmx_operation(vmx);
- 
- 	if (hv_pages) {
--		GUEST_ASSERT(load_evmcs(hv_pages));
-+		load_evmcs(hv_pages);
- 		current_evmcs->hv_enlightenments_control.msr_bitmap = 1;
- 	} else {
--		GUEST_ASSERT(load_vmcs(vmx));
-+		load_vmcs(vmx);
- 	}
- 
- 	prepare_vmcs(vmx, NULL);
- 	vmwrite(GUEST_RIP, (unsigned long)l2_guest_code);
- 
--	control = vmreadz(PIN_BASED_VM_EXEC_CONTROL);
-+	control = vmread(PIN_BASED_VM_EXEC_CONTROL);
- 	control |= PIN_BASED_EXT_INTR_MASK;
- 	vmwrite(PIN_BASED_VM_EXEC_CONTROL, control);
- 
--	control = vmreadz(CPU_BASED_VM_EXEC_CONTROL);
-+	control = vmread(CPU_BASED_VM_EXEC_CONTROL);
- 	control |= CPU_BASED_USE_MSR_BITMAPS | CPU_BASED_TPR_SHADOW;
--	GUEST_ASSERT_EQ(vmwrite(CPU_BASED_VM_EXEC_CONTROL, control), 0);
-+	vmwrite(CPU_BASED_VM_EXEC_CONTROL, control);
- 
--	control = vmreadz(SECONDARY_VM_EXEC_CONTROL);
-+	control = vmread(SECONDARY_VM_EXEC_CONTROL);
- 	control |= SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE |
- 		   SECONDARY_EXEC_APIC_REGISTER_VIRT |
- 		   SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY;
- 	control &= (rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2) >> 32);
--	GUEST_ASSERT_EQ(vmwrite(SECONDARY_VM_EXEC_CONTROL, control), 0);
-+	vmwrite(SECONDARY_VM_EXEC_CONTROL, control);
- 
--	GUEST_ASSERT(!vmlaunch());
--	GUEST_ASSERT_EQ(vmreadz(VM_EXIT_REASON), EXIT_REASON_CPUID);
--	GUEST_ASSERT_EQ(vmwrite(GUEST_RIP,
--			vmreadz(GUEST_RIP) + vmreadz(VM_EXIT_INSTRUCTION_LEN)), 0);
-+	vmlaunch();
-+	GUEST_ASSERT_EQ(vmread(VM_EXIT_REASON), EXIT_REASON_CPUID);
-+	vmwrite(GUEST_RIP, vmread(GUEST_RIP) + vmread(VM_EXIT_INSTRUCTION_LEN));
- }
- 
- static void l1_vmx_code_part2(void)
- {
- 	u64 control;
- 
--	control = vmreadz(CPU_BASED_VM_EXEC_CONTROL);
-+	control = vmread(CPU_BASED_VM_EXEC_CONTROL);
- 	control &= ~CPU_BASED_TPR_SHADOW;
--	GUEST_ASSERT_EQ(vmwrite(CPU_BASED_VM_EXEC_CONTROL, control), 0);
-+	vmwrite(CPU_BASED_VM_EXEC_CONTROL, control);
- 
--	control = vmreadz(SECONDARY_VM_EXEC_CONTROL);
-+	control = vmread(SECONDARY_VM_EXEC_CONTROL);
- 	control &= ~(SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE |
- 			SECONDARY_EXEC_APIC_REGISTER_VIRT |
- 			SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY);
--	GUEST_ASSERT_EQ(vmwrite(SECONDARY_VM_EXEC_CONTROL, control), 0);
-+	vmwrite(SECONDARY_VM_EXEC_CONTROL, control);
- 
--	GUEST_ASSERT(!vmresume());
--	GUEST_ASSERT_EQ(vmreadz(VM_EXIT_REASON), EXIT_REASON_CPUID);
--	GUEST_ASSERT_EQ(vmwrite(GUEST_RIP,
--			vmreadz(GUEST_RIP) + vmreadz(VM_EXIT_INSTRUCTION_LEN)), 0);
-+	vmresume();
-+	GUEST_ASSERT_EQ(vmread(VM_EXIT_REASON), EXIT_REASON_CPUID);
-+	vmwrite(GUEST_RIP, vmread(GUEST_RIP) + vmread(VM_EXIT_INSTRUCTION_LEN));
- }
- 
- static void l1_test_x2apic_intercepts(void)
+Cheers,
+Miguel
