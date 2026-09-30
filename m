@@ -1,154 +1,114 @@
-Received: from mail-ed2-f32.google.com (mail-ed2-f32.google.com [74.125.228.96])
+Received: from mail-vs2-f27.google.com (mail-vs2-f27.google.com [74.125.227.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892333F54AE
-	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 07:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BCD3C4577
+	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 07:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790752073; cv=none; b=IOblkBms87EDcZvAlZMPhWa1lRqDSJauOt6PMTeqryAfz8kQvNnkANCbDYm67ylDevC8hYiIju/BNMy9bm7M1EGjseyCfMRHf/5lrIjcN48D2aWlqrZ5U/Q2UNTSaJVzkYMhOC+TKF/U1o6sTV8PRfjm9ZK6oHQogi6umiPUEsc=
+	t=1790752349; cv=none; b=KVRb5VrgytDYm85BHYErghbB2cTWBhi8vhh7D5eOS3W974+j8+nu8UR2OuQzeT0mdrSkDkoYoS/j9edwmzfLmTb5D/eUdnwgyxaZ3FI4p7pvZUQVaf/oIjuwPLg0VJsr6bHDfsUM65XSYy6lrsS2Yf3bgDckFZev9SSmZ7tIC/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790752073; c=relaxed/simple;
-	bh=rtEvlpc5RFKwgsy5Faq1Dvca+J9Y2+1PDgdNAuQ81Ko=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oe9b8nDH5x/z/r+9mqQC991lOqpCRLwT2wzOk4iE+j2rq3KcJl38aAQYzqcQGOvNaZJpaiI64RO8ZH6f1tR9gsfkwky1wL5EjnXk5FaKAbklq+TnMtb+U0CwwcsbUUlPXad3TTs7qfDq/OwLKenUP1l4teNyH3/b8TVw1xT+80k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Szt92RVN; arc=none smtp.client-ip=74.125.228.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1790752349; c=relaxed/simple;
+	bh=8IWokZ72tDwDWq2sw9b629Rjub6j3ctTrOYI2iTwHJU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UHbJZYomHKmvdSx039EtuuWvFDfp1PeQDyr9gX1TGGVOOJxDUZruVulORaGakTJehlAsEVyNb8vD6X458F3fMQlp0gX7AXzmOQsWgVZwOLeF/843LSWfwsYhP6ZHJMpJ8rFN+aJzbpdPs1Gr3GSVnCRwzEEVVfwvpyIhKe4Nyq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Szt92RVN"
-Received: by mail-ed2-f32.google.com with SMTP id 4fb4d7f45d1cf-6acb8b78d6cso2072211a12.2
-        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 00:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790752070; x=1791356870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:date:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=yPxo5oIesTw/2A8ukKykJpHFhPhcqo3C0UATOY1SYVs=;
-        b=Szt92RVNxsQONHzDiByv/n6PzMGv6h4y6UjVPybFbLRgpjjr8QfsRew1uLr9hQLYxx
-         v70iODpytwPPiZYybLrv13lZWJUfKQw07NWrpb+D7hNlOLrXmxPPFWiy1WUI9OceA/sK
-         I25m64P9h0V38DW/pjKltS3kqj2FjuAo5ymbtKRxkG8XCSrYjUvotKHL2+yE3F9rKsjz
-         Q3+0TLkQl8cLx+wRkjEesdTx9do2aCfAijl1cwDEibmvR8j9goP/sE1l+ksr3fFFp6AT
-         NMdtazOwUg0Yw4UG/z79KEpHrmSYqR8lYQZNc4as5C53Cf9aSkDxPTbRJxJCL9HlEaCv
-         Y7Bg==
+Received: by mail-vs2-f27.google.com with SMTP id 71dfb90a1353d-5c963d7503fso1735173e0c.0
+        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 00:12:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790752070; x=1791356870;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=yPxo5oIesTw/2A8ukKykJpHFhPhcqo3C0UATOY1SYVs=;
-        b=IsrW1F7UyJJCuABcrewprQFOxL6dCxV8K7JzgIoSZYwjVbI3sAErXr/wrdMnJBXG+a
-         tRPjaEipo2/rN9PQKAdmqAL6SNdmM9Ddxj9uwW/prw5ZnnkApYeDHQs53o7plOaveECH
-         0bgTg2cfdsrYyh94wz8zJRNTLp7zOGJwkHHOwzhIYriOVaTq3yXayjQca7rWvCSip9mK
-         0+VTiIqiLL5UJ58D2EODwWRwMTWAfCrzEiMLTyohROcvF8APTIxrsYvHhGKLzqfRegW7
-         kbiNuNJ/UHDu93beUYIN46U2xwyjU/g8xa3JX7Ty6Q1WvRN2ZcMsTIfEnqhrtfVTYq7x
-         qeZQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzdlcYSlTTIa2lGPNI4a7UcNjKoFtkQIatMBmeGHwY6b2FgeqpbUvJSfelCjuQKU8VCpfpf5hJQ4w/e@vger.kernel.org
-X-Gm-Message-State: AFq9FYJKAzLjsxc4MbLGT5MgFlZVIdwSwAz4JCrY2vl3LK2Qrb4vmWvL
-	1Zh8tA1M0voSrUVSA9m4VTN0orrIiXBFq/WCb2WPEaeYP5afXJSMYt6q
-X-Gm-Gg: AYBFou0JtRxFyI5b+WDW9X0olWrgUBwvmMUJ537MYfKv6OcQ85zLDL9eAP2xaluQpfX
-	JtnNEuBURHnQKOi/RIG8ie6NK2Zc8XRQLc9/2pNE4BOQX6vKMfzz+ndzdEVd3Ylv8/ZIZcw6n83
-	Y9z/rdQ8RfuLDWVbtnydBlmA6IJmDVUsE4UtHJEucNYAkZwWnzT2I/iuhHM++HBMJok9TB7UtHH
-	s4nrOTC83Vj1kD59gBPSKP/mP+l8Ni9B5+ynvdJN9mXK/+m0xqlzrdGLbnn2qmCpBBDceGbtpca
-	bGy475PzOkzYP15UDdo5/sRCkGnSSe7dNjv6Cwt/YN1w5mujgrpbk9AlmCB5DjWE7943LcRg1vZ
-	ewnvN7jP5O4w/pAb+hwOYhPUz8bxpVDpcQm2iXy2hshkmjIlZD3CUpFHt6G0Vs/lKIdAdFDwYnA
-	jn5d914frxzCQ2PtGYSuWPRLKTGtFjkGls9IA/kcUI+AwW5uDn9X124c8fkA==
-X-Received: by 2002:a05:6402:4613:b0:6ae:160a:58a6 with SMTP id 4fb4d7f45d1cf-6ae19963b9cmr194812a12.36.1790752069491;
-        Wed, 30 Sep 2026 00:07:49 -0700 (PDT)
-Received: from krava ([173.38.220.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ae1558d9b5sm325750a12.17.2026.09.30.00.07.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 00:07:48 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 30 Sep 2026 09:07:47 +0200
-To: Mark Brown <broonie@kernel.org>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	Florent Revest <florent.revest@linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <ary1Q48NrlD4i_Zf@krava>
-References: <arvRs4KdojDnW1O6@sirena.org.uk>
+        d=1e100.net; s=20260707; t=1790752347; x=1791357147;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ndpnvvggs5Yyo8MyrvMBjpbgjCxaohPqITqE/XVX+nc=;
+        b=fSumsDT7LeIOPkKAq9XNhPW9gXfc3YXauUtNTyDRsnXxsemg0KN1JNHDUkGVFgWF2f
+         F8lz85iWXd5Dh0VC26R5LP71glO83TkXgxPsprtojxXcuY88d6bX6OeUWK1H7n4lYxei
+         YlMYxsdHkyvEDVy5mK+oFOgABo5RGE/V4hvMxsgRYQC62VUWQjgzjNv11gbCTM2Kbh6k
+         y/FH2DKi+edX0eIgLTcdcXnYtWMUMkjr2UBBJJLJBQyFUJPv7bmtV2T57MmxEm0VDuJw
+         s/RMl1urB7Epcz/ldRnmEWXaIJaxW16Sr9oeIP+MPlp9GuK0WupoqHQ3MEsFyshGLXJj
+         pNIA==
+X-Forwarded-Encrypted: i=1; AKwUvByFn9R38IpmsR05gtG6GWFSV1d4ofHQZwXn/NkNPl4ozDLb8uYFGZUkfiPFYIJasaF5EPTLGPY14xdP@vger.kernel.org
+X-Gm-Message-State: AFq9FYJF8/jSRpZgExffMudD7zaC0brnLERYlejAjRrYfuRKUTeJk+vZ
+	hygRQjVUAuwYBL5IngRM8EPBysNo9CQcVKX1kyNnBpZ2+rs6r6W12bdrFp7kmbWt
+X-Gm-Gg: AYBFou103z5l6fBsH3iOq1qGVhTPTzx9+6eTBd49KUMXLmLrU/W5CM09WsvO3ZziIE5
+	stopDjBt9a7NIm6StFqqzVR+UKO+99Of0w1Q6hMiWKnTokzb/vPm0x3igqmlmBPSySYqe5lHLzl
+	nJg42x1hRr+SS70FbRJoqG2zflhJ9z1XdW18Fwv9H3XcN+BodTQJCbrXrm0CJcbWh54pwagjgnl
+	ocRVFpX+KwOM59nZqDIHJlyCrVseX0hH59AZG5Cc7z0jS8bEnZlafjjdNSki1On9eaXsrhkwZFr
+	dFBf0tusBQ/95GZ1g+A3T44kcqs3nf8pwM5+hpE3nXKcUKXDBK/f8RGvXm2nUgZsk6GPpZ1zhoS
+	wLA1zoHPBhOEtTrb3BbVUu6rmgsANV26ZZqT5Twv9/gCx2lAoKNzVX1pAEtF8FO50b9gYoUY6XY
+	Q2ycJ8V1IwEVWeGJw/z1TutBcgurCBkGonHnaJpzrQ1AWlrnfYnKbFncdcm0/pgc6/mZPPwUXaL
+	aUSAmdO57LlQweqhFICHrsCW8w3oKkHcfIb
+X-Received: by 2002:a05:6122:3114:b0:5c9:a60b:e5d7 with SMTP id 71dfb90a1353d-5d67c8c7d32mr60190e0c.17.1790752347196;
+        Wed, 30 Sep 2026 00:12:27 -0700 (PDT)
+Received: from mail-vs2-f37.google.com (mail-vs2-f37.google.com. [74.125.227.37])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5d612e6a4e9sm832389e0c.8.2026.09.30.00.12.27
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Sep 2026 00:12:27 -0700 (PDT)
+Received: by mail-vs2-f37.google.com with SMTP id ada2fe7eead31-7b9c8db8c4eso592397137.1
+        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 00:12:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzZD0PBUMoINCLGm3JrSBRZB3LJ/8ZP1dLcgCfTonj0tS/0/OGpx949lQVySSEgboX2/lN8LJU/j6Dt@vger.kernel.org
+X-Received: by 2002:a05:6102:689a:b0:7a1:f9df:e35a with SMTP id
+ ada2fe7eead31-7be73c8805emr49649137.33.1790752346870; Wed, 30 Sep 2026
+ 00:12:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <arvRs4KdojDnW1O6@sirena.org.uk>
+References: <arp2hp7wRlcK_4D8@sirena.org.uk> <CAMuHMdUYNwi_MZtKGxnLLpUKDVAgRK8zT+2eaOcHAqcecx_LcA@mail.gmail.com>
+ <3fa086ea-2868-4cac-a34b-2389355c31b0@sirena.org.uk>
+In-Reply-To: <3fa086ea-2868-4cac-a34b-2389355c31b0@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 Sep 2026 09:12:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVZpKLzvmRyJ9=jhnT8OhXtTRsHYOAir4S07mzrEa4mkA@mail.gmail.com>
+X-Gm-Features: AclHuK_W0Im8-5f3DLK8-gnVMzw5yRpsmUbP03nV_v3dMuQ6NkoOBdVKvbTWp5g
+Message-ID: <CAMuHMdVZpKLzvmRyJ9=jhnT8OhXtTRsHYOAir4S07mzrEa4mkA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the scsi tree
+To: Mark Brown <broonie@kernel.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Chandrakanth Patil <chandrakanth.patil@broadcom.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, "Martin K. Petersen" <mkp@kernel.org>, 
+	Ranjan Kumar <ranjan.kumar@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 29, 2026 at 03:56:51PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the bpf-next tree got a conflict in:
-> 
->   arch/x86/net/bpf_jit_comp.c
-> 
-> between commit:
-> 
->   17637e1a581a2 ("bpf: Skip detached progs in trampoline images that are still in use")
-> 
-> from the bpf tree and commit:
-> 
->   29fcf9ce4bbdf ("bpf, x86: Use global buffer for trampoline size generation")
-> 
-> from the bpf-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
+Hi Mark,
 
-lgtm, thanks
+On Tue, 29 Sept 2026 at 13:07, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Sep 29, 2026 at 10:48:09AM +0200, Geert Uytterhoeven wrote:
+> > On Mon, 28 Sept 2026 at 16:23, Mark Brown <broonie@kernel.org> wrote:
+>
+> > >         }
+> > >  -      if (tgtdev)
+> > >  -              mpi3mr_tgtdev_put(tgtdev);
+> > >         kfree(mr_sas_port);
+> > >         return NULL;
+> > >   }
+>
+> > Are you sure this is correct?
+> > Martin's conflict resolution in 0b5b2fb484f3b kept the
+>
+> >        if (tgtdev)
+> >                mpi3mr_tgtdev_put(tgtdev);
+>
+> > part.
+>
+> Dunno.  There was another put came in further up the function.
 
-jirka
+Right. So Martin's resolution looks incorrect, too, as it calls
+mpi3mr_tgtdev_put(tgtdev) twice.
 
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc arch/x86/net/bpf_jit_comp.c
-> index 6bca87457e872,6c7a0578760e7..0000000000000
-> --- a/arch/x86/net/bpf_jit_comp.c
-> +++ b/arch/x86/net/bpf_jit_comp.c
-> @@@ -3817,25 -4152,15 +4158,15 @@@ out
->   int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
->   			     struct bpf_tramp_nodes *tnodes, void *func_addr)
->   {
->  -	struct bpf_tramp_image im;
->  +	struct bpf_tramp_image im = {};
-> - 	void *image;
-> - 	int ret;
->   
-> - 	/* Allocate a temporary buffer for __arch_prepare_bpf_trampoline().
-> - 	 *
-> - 	 * We cannot use kvmalloc here, because we need image to be in
-> - 	 * module memory range.
-> - 	 * Since it must be writable use execmem_alloc(EXECMEM_MODULE_DATA)
-> - 	 * that returns writable memory in the module address space.
-> - 	 */
-> - 	image = execmem_alloc(EXECMEM_MODULE_DATA, PAGE_SIZE);
-> - 	if (!image)
-> + 	if (!trampoline_size_image)
->   		return -ENOMEM;
->   
-> - 	ret = __arch_prepare_bpf_trampoline(&im, image, image + PAGE_SIZE, image,
-> - 					    m, flags, tnodes, func_addr);
-> - 	execmem_free(image);
-> - 	return ret;
-> + 	return __arch_prepare_bpf_trampoline(&im, trampoline_size_image,
-> + 					     trampoline_size_image + PAGE_SIZE,
-> + 					     trampoline_size_image, m, flags,
-> + 					     tnodes, func_addr);
->   }
->   
->   static int emit_bpf_dispatcher(u8 **pprog, int a, int b, s64 *progs, u8 *image, u8 *buf)
+Gr{oetje,eeting}s,
 
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
