@@ -1,43 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BC24C6517;
-	Wed, 30 Sep 2026 11:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A218A4BD373;
+	Wed, 30 Sep 2026 12:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790768841; cv=none; b=drC9vGowDhHIgjkclKbPsySl7nocjvR3FmynVCBv9BiofBOWIkaWEKvgRi2Enjy7RsNMg5PnV5CLLGTyKcTieazJ0XYAtl084tSN9W6HPamwkPs9xw9fYOg5Pel8y6h8KFyoWURP7OM82UhmGMscZcbhg0+fqhH4dAeAxfnT95c=
+	t=1790770428; cv=none; b=lMt7NpV2DjlYB/VxuCqkMtki2KFx4sWzOnSnpi3R4aS7ViQOLySmNyqR+Ix9IYWV5NJrBpBom7+gcbl4JMwj3KBRbyGJtUxpm8qNRZ+BEcyJ1SJsTITd7u8wEGqHMQ8fQcFxNbQ4iddSaPd6LGuM5DXcayzUkHASUvCb2fwgFIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790768841; c=relaxed/simple;
-	bh=clWyNGsfSJqZtXJMRLbf4XTOh8iBtytqKh15DZPSEcg=;
+	s=arc-20240116; t=1790770428; c=relaxed/simple;
+	bh=9FpGNfTFf1S/Ukozb67nQJXbP8V2TJQFVE0zX2bbHBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E1T4U7iW4UJDKwMzf1z5yDBx3EMz7g3phAW9sv9Da9wDXILwavIZPGBlxEtqUMFyPZWDtuQlppL0UfyunSJJAArtj5g0IzJ8GKejsnAutTZSH2AlXYG7MTIANHXYi+NVsM9Pi3UKZYm37fZq8lvBOxmklIMRLCngaSsFhZP9REQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDy84lWY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=OeLvC4rPn0HKeXs9nW8ZmpDpxVixq9YtnWrtbdxF2mFuFfIAmkzGwRA9fRwBk0+ZKqsuiFG5VPmYCvN97cJqPb30MtLILlfIvgRs3hINpjUUqLo8X0AyZ1IYZJm7yBiwONjIDJzGDP1misn03poClmbvy1CWl8VMNVs4G+hX5mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+ExrBuL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDy84lWY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9915E1F000FF;
-	Wed, 30 Sep 2026 11:47:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+ExrBuL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC491F000FF;
+	Wed, 30 Sep 2026 12:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790768837;
-	bh=0HGWfOyUn8j4y1bLUmw8qS3uaMiLbaqoWI/p4mxeGsA=;
+	s=k20260515; t=1790770427;
+	bh=gEn//jDKdqgWTRAHO+zQ8xWN0dXBaFIBswswlPw/Wz4=;
 	h=Date:From:To:Cc:Subject;
-	b=jDy84lWYg7Q4MWNDWGgGgQHKqiPLoqeYqIkMNvbbUSZWr/KPV4DJPwkwoJTS8HNGH
-	 phbi6IbvorvIk2XYepc7NOi4PuPkLxwImC6Cr50899IY9R+OntnfhxG0zZcU7E0Iaf
-	 yYSQ07bDBfImsSttg+XlXd1NW7S7slq8ePF/TdjnVwAUuCSU/1+4RjqT1Ay3wdAiis
-	 +jFF5jvFjlk1cb9SiKH7MxQN19D899/6kH20LhiT18qemz+Ka4ufyrgFI/SUgdv4Yg
-	 cmgAYs3BeF3C5Mn2hP7qcGU48opyv3hWa8SZHuOnlTkK9s/Bw++tyQlLRxZn7F6Ivj
-	 Y6GH8bY2BIN0w==
-Date: Wed, 30 Sep 2026 12:47:13 +0100
+	b=Y+ExrBuL9okLGt9u0+nXvwi0E5uSMFG18nKoa13dFHyynoVzXh79GFdxLJJsL8xm+
+	 Qph5z70wXr+8ljRqoMqYNdcQpSUyFKPu08nQ+P2Grqq3nP7s/xU9+LM4UDiK9t8jSP
+	 LwKjMQEH0eI+30U1U5CvjEQC+iKvSrp2n2lIyLyxEMPvMaPUxhbz4gq2kP4+OilQjh
+	 879nZxR/f9yR0VEOX7pAjL/r/sQgDqJlF8BS5q4YTiRystM3WdD4dS6Kc8ZU4QPyCB
+	 3y253WTA+8Wl2Uf5S0qd46g/LaQ6GII6G4+UZF7qgSBpNo16HqXQ3HzZNrFetP2fma
+	 q0PS1ddp+YY2w==
+Date: Wed, 30 Sep 2026 13:13:43 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jim Cromie <jim.cromie@gmail.com>,
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>
-Subject: linux-next: manual merge of the kbuild tree with the
- mm-nonmm-unstable tree
-Message-ID: <arz2wQWcnS9499di@sirena.org.uk>
+	Norbert Szetei <norbert@doyensec.com>
+Subject: linux-next: manual merge of the rdma tree with the origin tree
+Message-ID: <arz896tY_DVOs8sP@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,31 +42,32 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+DJpCzYxDgLzMFaU"
+	protocol="application/pgp-signature"; boundary="W6xSrHRgh371D+3u"
 Content-Disposition: inline
 
 
---+DJpCzYxDgLzMFaU
+--W6xSrHRgh371D+3u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kbuild tree got a conflict in:
+Today's linux-next merge of the rdma tree got a conflict in:
 
-  scripts/kallsyms.c
+  drivers/infiniband/sw/rxe/rxe_verbs.c
 
 between commit:
 
-  edd7005a42d42 ("kallsyms: increase marker density to 16:1 to accelerate l=
-ookups")
+  ae36a5b609ae7 ("RDMA/rxe: validate access flags before swapping the MR's =
+PD")
 
-=66rom the mm-nonmm-unstable tree and commit:
+=66rom the origin tree and commit:
 
-  531980b4b17e9 ("kallsyms: reimplement mksysmap in C")
+  2dac7006b9fb4 ("RDMA/rxe: Reject IB_ACCESS_ON_DEMAND changes after MR cre=
+ation")
 
-=66rom the kbuild tree.
+=66rom the rdma tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -78,53 +76,43 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc scripts/kallsyms.c
-index be42a91113500,ecb444078c1ca..0000000000000
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@@ -26,12 -33,10 +33,11 @@@
-  #include <string.h>
-  #include <ctype.h>
-  #include <limits.h>
--=20
-+ #include <sys/stat.h>
-  #include <xalloc.h>
+diff --cc drivers/infiniband/sw/rxe/rxe_verbs.c
+index 3864284522ebc,21855274f63ae..0000000000000
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.c
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
+@@@ -1331,12 -1331,12 +1331,18 @@@ static struct ib_mr *rxe_rereg_user_mr(
+  	if (err)
+  		return ERR_PTR(err);
  =20
- +#include "../kernel/kallsyms_internal.h"
--=20
-- #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
-+ #include "kallsyms.h"
- =20
-  #define KSYM_NAME_LEN		512
- =20
-@@@ -359,10 -412,11 +415,11 @@@ static void write_src(FILE *out_bin_fil
-  	markers =3D xmalloc(sizeof(*markers) * markers_cnt);
- =20
-  	output_label("kallsyms_names");
-+ 	bin_start =3D bin_pos(out_bin_file);
-  	off =3D 0;
-  	for (i =3D 0; i < table_cnt; i++) {
- -		if ((i & 0xFF) =3D=3D 0)
- -			markers[i >> 8] =3D off;
- +		if ((i & KALLSYMS_MARKER_MASK) =3D=3D 0)
- +			markers[i >> KALLSYMS_MARKER_SHIFT] =3D off;
-  		table[i]->seq =3D i;
- =20
-  		/* There cannot be any symbol of length zero. */
+ +	if ((flags & IB_MR_REREG_ACCESS) &&
+ +	    (access & ~RXE_ACCESS_SUPPORTED_MR)) {
+ +		rxe_err_mr(mr, "access =3D %#x not supported\n", access);
+ +		return ERR_PTR(-EOPNOTSUPP);
+ +	}
+ +
++ 	if ((flags & IB_MR_REREG_ACCESS) &&
++ 	    ((access ^ mr->access) & IB_ACCESS_ON_DEMAND)) {
++ 		rxe_err_mr(mr, "cannot change IB_ACCESS_ON_DEMAND\n");
++ 		return ERR_PTR(-EOPNOTSUPP);
++ 	}
++=20
+  	if (flags & IB_MR_REREG_PD) {
+  		rxe_put(old_pd);
+  		rxe_get(pd);
 
---+DJpCzYxDgLzMFaU
+--W6xSrHRgh371D+3u
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq89sAACgkQJNaLcl1U
-h9C7gQf+KAxV3rtWpsJ+5cfu8PHwNcHrk8ufC+CumR7tWJVy3DUUadts4q3jDuK1
-X/6BBjFDZ56hnMPjILn+/dJaRtg/9tK86JrnE30/ToVnTDUF1yxgh3cBX0iEaBE8
-zID0Am3fijAe58+Godlr4BMgJ/jeDGW9HQ4juEnm/rcAt4C98ONicYoqRtSmfmoL
-/k7FPvRn5e4rfhVDaQbtBtBZGZBRBXvC17hUVGzP2yqbe5xu8C0w1e065Nyxir+w
-Dush7Vdg4niU/0+75CKJ3Ml/3ZkevPUeJlwMkaFIJOb8VusiISfT+7OZ3qk9oNyF
-ElqaQtuaDgtam+SHPIrbrqBDXWORZw==
-=lX94
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq8/PYACgkQJNaLcl1U
+h9BzjQf+NpglwU/5aamvKtH8YhZ+FSlYuNu+K31DH4vvDDnJCtoAe2j/07gZMu1s
+Y2nay3sUeivZ5Nhqxfqe/1KQoinvL5SLuahRaW671VNjIq7zU/K+P5Sna32LXev7
+jbjmiWIvKHUtEqa/IIuymUkBAUHfFKzyIGoLIMe8IkffzIK+DH4MgKPq6iJGMWzr
+Mn1K41ui87ABuY48o01dz1+FysFqrD+Q9E90R7x/nHm2pbR6ZnivWS81/rf1TjcO
+Cq+eOjLmaCyTf+S5suXSVnQ05mu2aVL/b1gNb1PCBYmlQRrJM3yVu4YaB81SjYIE
+H+vBuCNtFZw7qv+fgYnrCFu4Fp4U/w==
+=88iT
 -----END PGP SIGNATURE-----
 
---+DJpCzYxDgLzMFaU--
+--W6xSrHRgh371D+3u--
