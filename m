@@ -1,99 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1313BE630;
-	Wed, 30 Sep 2026 13:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD04DEC09;
+	Wed, 30 Sep 2026 13:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790774833; cv=none; b=jJuaFK1AlDkHEneiH6NKtCAnvsfFJkAbvGGB/hvxjZBmhfBbyq5rxENPJ28e0gouciP/kEFVsc15y8GvSA60pzbTWiAe+LfMg2A8EnDohrgfuRHXliQNMggOdZYCIff5Rkt+jP495+OtxaqqTo4Bqa1UhJngjbjdIiPLMt+hgng=
+	t=1790775591; cv=none; b=FIK61Uwbk/4f8S9FS/PCC5Zj7oqZBYa/mHk3NCTHjGVlQIaEB470hQ23Pk7qzhUu9EjKKLxpLG8lyO5Q26KRaAWShel0zd0PhUakdquX3qXSu9MPz47IFw5aLf2uGS20U01WIwUHsodMyxzNW3sh1FNmPad7puxWcRR1E3xNDuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790774833; c=relaxed/simple;
-	bh=HhMBmLaDmBGARZbVWke/5DP/ICaRb+wBRnSdByK8DdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=krYKnqb2V9nhVrC7mQhDV+nmdz76z24gEPtqI3KzNZT8zcUtGuU7mCkSTvk6PhCEG/3HZrFIHvnbHa4tDOScBzlaRcBw8Ot5CzIdPQ9r77PHgahT3syGiBlgOL2hOEZmKEjthOBqrFfHBojcgEAXFE8SM5ehEox5/BIqfeMHd0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV7qX0jU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790775591; c=relaxed/simple;
+	bh=Vm4jS6jq2vj2KHH3vETEQm+Bg9TaclDm4aw8qivixLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEC8uTC/OVkltBSz3h2zOSIkrmESE3uasyhBxfuc9xAfPcx1726NWndfB9m04SQgnSGF54p31RvqwJzEC5EmBJP4BHFkfC55dfAVgyCSge20d1BsUIr2PLRO0f3ynBVWaDF22YIsjOfduzdPDLLsv444Dy2/ZbdCZgb5mavSHPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tlyN7BlL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k3CCmG5t; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV7qX0jU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 676491F000FF;
-	Wed, 30 Sep 2026 13:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790774813;
-	bh=v7W+ZorZNj2o64DF3tcSLK18njPKa1ya3P8cPLmhYD0=;
-	h=Date:From:To:Cc:Subject;
-	b=AV7qX0jUwiEeru21AX9YwJEWx0MvCc7S0B++R1YjuhoqNeea/ZgFg3EMn6SLvxeYJ
-	 l24gP6ZWobrQQ/huDnlWWJATYv5dnee+f2t+2A7Y+usmekWUT5K1bDF8d5D1vBlAuf
-	 tUZX1568xwbrgSG7ImdTz//V/dU/ER+Y0ZzoD8dEau3tNy2Ci8FAhvchGNObv7HcvX
-	 CNfcr2fHx6OaH4Yzzik3FjoMZtCPpvBjmIrTF7H3f3PTiqiMjRdxotwhSXhZS4ACAY
-	 AMumXTt8R37HId1ih3xJPF7uuI30nVaKKVMzaZ2Y6e2xtLEIlHNLtYxXA7Ncs3NZeL
-	 Lzly9iqoA/uYA==
-Date: Wed, 30 Sep 2026 14:26:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Zhan Xusheng <zhanxusheng@xiaomi.com>,
-	Thomas Gleixner <tglx@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tlyN7BlL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k3CCmG5t"
+Date: Wed, 30 Sep 2026 15:39:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1790775580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zn4VjKK02Il1ozefnBi/Fvnvz8XZiZNWHZGxcZRwyJU=;
+	b=tlyN7BlLpRY/wZQHKMOCT2EQz++YtaCmZZok+iQTAmPuJsWcyQPTq22a2iGGIy8eQtr70Y
+	hxRBAki7JZeMUHjCeSh9cbZ844/Z30C3/FdgR198BmnzNQXRNF9nICtrqDvLg5Mq8bek8G
+	x+pHjqx0rMz3VzYf9T6lDsedSf48Ynxkz6mV19e22OiDeyJ2n13sgYt/7zMKiThmUs7cJh
+	IWeZJiQrZ4yjMy2+1M79W4IB1bf/ehl77pCth2k470P5MLwhg9TUPiTJ+WtOFZ7dfTeYED
+	dAcq51FGV0UBGk4UvBvcB0jpCWXNRXodEexnEPHakl0rOseOQJ203H9osAMnhA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1790775580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zn4VjKK02Il1ozefnBi/Fvnvz8XZiZNWHZGxcZRwyJU=;
+	b=k3CCmG5tDH7aDhIdy3cgi9eNpBKRyafciAS8o1o4BIkH1nPjyELp/KwwgaTk2hk1Q8zTKd
+	uIZNQK/fTNPjJyAg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Zhan Xusheng <zhanxusheng@xiaomi.com>, 
+	Thomas Gleixner <tglx@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure in the final build
-Message-ID: <ar0OGZGN0ftc20Zi@sirena.org.uk>
+Subject: Re: linux-next: build failure in the final build
+Message-ID: <20260930153855-46152e34-6e63-44a9-a2a8-bb659cb8e55c@linutronix.de>
+References: <ar0OGZGN0ftc20Zi@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XbUO6Vv8oTGlPwUt"
-Content-Disposition: inline
-
-
---XbUO6Vv8oTGlPwUt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ar0OGZGN0ftc20Zi@sirena.org.uk>
 
-Hi all,
+Hi Mark,
 
-In the final build today's linux-next build (powerpc allnoconfig) failed
-like this:
+On Wed, Sep 30, 2026 at 02:26:49PM +0100, Mark Brown wrote:
+> In the final build today's linux-next build (powerpc allnoconfig) failed
+> like this:
+> 
+> /tmp/next/build/lib/vdso/gettimeofday.c: In function '__cvdso_clock_gettime_common':
+> /tmp/next/build/lib/vdso/gettimeofday.c:288:31: error: implicit declaration of function 'BITS_PER_TYPE'; did you mean 'BITS_PER_LONG'? [-Wimplicit-function-declaration]
+>   288 |         BUILD_BUG_ON(clock >= BITS_PER_TYPE(msk));
+>       |                               ^~~~~~~~~~~~~
+> /tmp/next/build/include/linux/compiler_types.h:682:23: note: in definition of macro '__compiletime_assert'
+>   682 |                 if (!(condition))                                       \
+>       |                       ^~~~~~~~~
+> /tmp/next/build/include/linux/compiler_types.h:702:9: note: in expansion of macro '_compiletime_assert'
+>   702 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/build_bug.h:40:37: note: in expansion of macro 'compiletime_assert'
+>    40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/build_bug.h:51:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+>    51 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+>       |         ^~~~~~~~~~~~~~~~
+> /tmp/next/build/lib/vdso/gettimeofday.c:288:9: note: in expansion of macro 'BUILD_BUG_ON'
+>   288 |         BUILD_BUG_ON(clock >= BITS_PER_TYPE(msk));
+>       |         ^~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>    ca46a07c4b682 (vdso/gettimeofday: Assert that the clockid fits into the u32 bitmask)
+> 
+> I reverted that commit for today.
 
-/tmp/next/build/lib/vdso/gettimeofday.c: In function '__cvdso_clock_gettime_common':
-/tmp/next/build/lib/vdso/gettimeofday.c:288:31: error: implicit declaration of function 'BITS_PER_TYPE'; did you mean 'BITS_PER_LONG'? [-Wimplicit-function-declaration]
-  288 |         BUILD_BUG_ON(clock >= BITS_PER_TYPE(msk));
-      |                               ^~~~~~~~~~~~~
-/tmp/next/build/include/linux/compiler_types.h:682:23: note: in definition of macro '__compiletime_assert'
-  682 |                 if (!(condition))                                       \
-      |                       ^~~~~~~~~
-/tmp/next/build/include/linux/compiler_types.h:702:9: note: in expansion of macro '_compiletime_assert'
-  702 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-      |         ^~~~~~~~~~~~~~~~~~~
-/tmp/next/build/include/linux/build_bug.h:40:37: note: in expansion of macro 'compiletime_assert'
-   40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ^~~~~~~~~~~~~~~~~~
-/tmp/next/build/include/linux/build_bug.h:51:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-   51 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-      |         ^~~~~~~~~~~~~~~~
-/tmp/next/build/lib/vdso/gettimeofday.c:288:9: note: in expansion of macro 'BUILD_BUG_ON'
-  288 |         BUILD_BUG_ON(clock >= BITS_PER_TYPE(msk));
-      |         ^~~~~~~~~~~~
+It got also pulled from the tip tree:
+https://lore.kernel.org/lkml/874if6j4if.ffs@fw13/
 
-Caused by commit
 
-   ca46a07c4b682 (vdso/gettimeofday: Assert that the clockid fits into the u32 bitmask)
-
-I reverted that commit for today.
-
---XbUO6Vv8oTGlPwUt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq9DhgACgkQJNaLcl1U
-h9Ccrwf/YWDd39a5DH9+nIsWGA2adV+alo3Emtm2dOms0EowsCZlUMtU1t3xC8pG
-8xW0zpdfpWLwEutKftDliBgspgnUtEb7JljJc2x3B9iDrrXcBQ9TqIObBQZ/Q0vi
-HVRsYmePVyEv34fUM40jRsymu+sReSc3/S7dV7XVa0o8C8J3Wcb+d3OokGjibmhq
-HqR3MhZOKCgF+tGbi+Cvj6DlcpQtSLcRTZq7jd1r73DROafI18a9vSuEwsNyhrdm
-N8Hdnf4B5rYcvPaQUAdLj40UD2zVHPKdk8Fd+RVZszX40nKV9AL+zB5WC/xeDhAu
-FPDaJAhIKkl4t3dWl9sUw0+H1/gsLg==
-=fwri
------END PGP SIGNATURE-----
-
---XbUO6Vv8oTGlPwUt--
+Thomas
