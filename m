@@ -1,226 +1,154 @@
-Received: from mail-dl2-f43.google.com (mail-dl2-f43.google.com [74.125.229.171])
+Received: from mail-ed2-f32.google.com (mail-ed2-f32.google.com [74.125.228.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EB436923B
-	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 02:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892333F54AE
+	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 07:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790735417; cv=none; b=dPm/l5z74zmM5WuSQ2hi5RKC0XN9HEvGau9InoCKPtP+dC2pIO+MooAu03RiB5LLtFSi1FERBIJ51fAau9Nc3QXtjV5nODBN/OAwIXYN1N6vkNOGnDSIm2RAs7lCP3F1ReNno6N9+dq+DkPx1ZgwxOYJ0w1CdJp81LeC9E5aOLU=
+	t=1790752073; cv=none; b=IOblkBms87EDcZvAlZMPhWa1lRqDSJauOt6PMTeqryAfz8kQvNnkANCbDYm67ylDevC8hYiIju/BNMy9bm7M1EGjseyCfMRHf/5lrIjcN48D2aWlqrZ5U/Q2UNTSaJVzkYMhOC+TKF/U1o6sTV8PRfjm9ZK6oHQogi6umiPUEsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790735417; c=relaxed/simple;
-	bh=wUQgEhv0yHS3yrOUd1caqAta3LVSGKwxEFiF42yoa5w=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=Gcpk0dbufCTSrkR882Wn/jgywe+E3o2Ia9lrUuWovJjqja3UCSYCJ7ZfSfqiUJdVCjeuqFqWFMyP5IKD83W6TzhM1Ei1XKgT/IJfddVjE8QV+tESdG2orwDw4gODl28ttbvi9FIWb1RQAof/dIkWWxb0vn2dgMRAKrhdZh2SG00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=HffTC1md; arc=none smtp.client-ip=74.125.229.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1790752073; c=relaxed/simple;
+	bh=rtEvlpc5RFKwgsy5Faq1Dvca+J9Y2+1PDgdNAuQ81Ko=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oe9b8nDH5x/z/r+9mqQC991lOqpCRLwT2wzOk4iE+j2rq3KcJl38aAQYzqcQGOvNaZJpaiI64RO8ZH6f1tR9gsfkwky1wL5EjnXk5FaKAbklq+TnMtb+U0CwwcsbUUlPXad3TTs7qfDq/OwLKenUP1l4teNyH3/b8TVw1xT+80k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Szt92RVN; arc=none smtp.client-ip=74.125.228.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="HffTC1md"
-Received: by mail-dl2-f43.google.com with SMTP id a92af1059eb24-1460bcc512eso2820782c88.1
-        for <linux-next@vger.kernel.org>; Tue, 29 Sep 2026 19:30:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Szt92RVN"
+Received: by mail-ed2-f32.google.com with SMTP id 4fb4d7f45d1cf-6acb8b78d6cso2072211a12.2
+        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 00:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1790735414; x=1791340214; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=tlH3hmeCRdhPF+rPtZHyMfi5tQutMhz6Vi44JdQZjDo=;
-        b=HffTC1mdh6oENS3JYNl7my8syffG95xJbyFPLglE8A44oumqizXKNAHirzxciCTRqF
-         +dK+drKwoH52DPG2w+To8d2G/QTlK08Zvf3gyi2mLlYPD65arnxB4eZuDSq7K9B+4dgD
-         kSJHiH8FfZ+Al9M3Rj6F8Iqr1NB3kaEwblcOVSLBJ8YY5plNt9tWrsRcr4ipkTiQg0+g
-         8fTNJ9KL81Saup7Z4WeeA9XbLehgmITcsgj8g/sJje2EXgQVDD5TMZvGxMbJMTQtyHzU
-         RYiN33PfF4dXoLC2kCgBvc2M+HT/JyQCajpm332iFxeQsvK6K3yZwCyWxUS7OFra38Xe
-         8i2Q==
+        d=gmail.com; s=20251104; t=1790752070; x=1791356870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:date:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=yPxo5oIesTw/2A8ukKykJpHFhPhcqo3C0UATOY1SYVs=;
+        b=Szt92RVNxsQONHzDiByv/n6PzMGv6h4y6UjVPybFbLRgpjjr8QfsRew1uLr9hQLYxx
+         v70iODpytwPPiZYybLrv13lZWJUfKQw07NWrpb+D7hNlOLrXmxPPFWiy1WUI9OceA/sK
+         I25m64P9h0V38DW/pjKltS3kqj2FjuAo5ymbtKRxkG8XCSrYjUvotKHL2+yE3F9rKsjz
+         Q3+0TLkQl8cLx+wRkjEesdTx9do2aCfAijl1cwDEibmvR8j9goP/sE1l+ksr3fFFp6AT
+         NMdtazOwUg0Yw4UG/z79KEpHrmSYqR8lYQZNc4as5C53Cf9aSkDxPTbRJxJCL9HlEaCv
+         Y7Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790735414; x=1791340214;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+        d=1e100.net; s=20260707; t=1790752070; x=1791356870;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=tlH3hmeCRdhPF+rPtZHyMfi5tQutMhz6Vi44JdQZjDo=;
-        b=QCgJL9PYRinTGsgb209TbAAkN9WoCzWWB6OhbGW3fad9otKMLdNnvFkrzQFq4oVGod
-         gmRm75dQ72t61+BoBshaph4qY+U2T4sUcYjRZd7X5/w3btwnm2v2i+z1wJHA2Pgzs9ta
-         gf4AfudSNSF68bTRt9Tfe8PK5RdbBBynCzAfOq+6RidPbY+Gviy+FouG9tDT/FkJyini
-         VTLADYs99dFVyg8/gJIuWkEfQo8HnuoPpamfjlxfl0ZSh2GRrX5r7Gv1JcLB2RLi3ljK
-         EnpwRxpMwURFX/kof7u1R3Hyo/a42haPNzvClDH9Vk492M6dAVW88JbWIGqZnKcKx3qD
-         kgww==
-X-Gm-Message-State: AFuF++nsSVv/qkyDMSmLE+uDJDj8U3WrGZ7HEiyWUv9mDqfY0jyhajwn
-	5s1aFbon4Gj/4DYIKYQjZbKGjUcl1lUOyHdxBEn3ngEl0hvDLmm74Di+ZBl29TwgTK/6wztFWud
-	vOxin
-X-Gm-Gg: AYBFou2c69qIJLSltclrBxWkK7d18wHPyZHXYjicyUG7EdnBRhZie+nujiFnenNeq7Q
-	v6exjROw95dQad7NHOL40vfDa5NGbSr0B3rfFc8XkugvsE1kxePeLTPfbthy7XE1WT3MFpXq93E
-	P7QcBNPx+pmYSuo1Rms/iH9FUF5PoiHsSwcDruQLcTcxiPyUjY/cLtuXAEgRmeuEPI95Yh2euy7
-	4gmUwOeDvCvS6GEnkXBFztKnRumYVuAyPf99K9NWhIHHVcNhpQkq7K3P/2ScN+MsPWsQFOJCXOs
-	FfOQsg8By4ghoJxAER5Ke2R+GtH83ElqTJkAmWVKI7lQBHSO/Bx5JQX7fzywcwGh/H1nxXUo2FA
-	G7i1dClIjvBre94kiEoIN7yHPKPAhAjjX6tKkzJzbAks+85najwok1C9Rp2Q4cZ0DQC5SU/pMq/
-	kbr6xzdu52P+BO5Qr3gB86a4bdlETRi+5sDa0MQf75+48w5bc9MRx4CPXsaL6Si2c=
-X-Received: by 2002:a05:701b:4248:10b0:14a:d8fe:3396 with SMTP id a92af1059eb24-14c9f2184afmr1304779c88.27.1790735414291;
-        Tue, 29 Sep 2026 19:30:14 -0700 (PDT)
-Received: from 5a6d9a2c18a2 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14d088e049csm123224c88.8.2026.09.29.19.30.13
+        bh=yPxo5oIesTw/2A8ukKykJpHFhPhcqo3C0UATOY1SYVs=;
+        b=IsrW1F7UyJJCuABcrewprQFOxL6dCxV8K7JzgIoSZYwjVbI3sAErXr/wrdMnJBXG+a
+         tRPjaEipo2/rN9PQKAdmqAL6SNdmM9Ddxj9uwW/prw5ZnnkApYeDHQs53o7plOaveECH
+         0bgTg2cfdsrYyh94wz8zJRNTLp7zOGJwkHHOwzhIYriOVaTq3yXayjQca7rWvCSip9mK
+         0+VTiIqiLL5UJ58D2EODwWRwMTWAfCrzEiMLTyohROcvF8APTIxrsYvHhGKLzqfRegW7
+         kbiNuNJ/UHDu93beUYIN46U2xwyjU/g8xa3JX7Ty6Q1WvRN2ZcMsTIfEnqhrtfVTYq7x
+         qeZQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzdlcYSlTTIa2lGPNI4a7UcNjKoFtkQIatMBmeGHwY6b2FgeqpbUvJSfelCjuQKU8VCpfpf5hJQ4w/e@vger.kernel.org
+X-Gm-Message-State: AFq9FYJKAzLjsxc4MbLGT5MgFlZVIdwSwAz4JCrY2vl3LK2Qrb4vmWvL
+	1Zh8tA1M0voSrUVSA9m4VTN0orrIiXBFq/WCb2WPEaeYP5afXJSMYt6q
+X-Gm-Gg: AYBFou0JtRxFyI5b+WDW9X0olWrgUBwvmMUJ537MYfKv6OcQ85zLDL9eAP2xaluQpfX
+	JtnNEuBURHnQKOi/RIG8ie6NK2Zc8XRQLc9/2pNE4BOQX6vKMfzz+ndzdEVd3Ylv8/ZIZcw6n83
+	Y9z/rdQ8RfuLDWVbtnydBlmA6IJmDVUsE4UtHJEucNYAkZwWnzT2I/iuhHM++HBMJok9TB7UtHH
+	s4nrOTC83Vj1kD59gBPSKP/mP+l8Ni9B5+ynvdJN9mXK/+m0xqlzrdGLbnn2qmCpBBDceGbtpca
+	bGy475PzOkzYP15UDdo5/sRCkGnSSe7dNjv6Cwt/YN1w5mujgrpbk9AlmCB5DjWE7943LcRg1vZ
+	ewnvN7jP5O4w/pAb+hwOYhPUz8bxpVDpcQm2iXy2hshkmjIlZD3CUpFHt6G0Vs/lKIdAdFDwYnA
+	jn5d914frxzCQ2PtGYSuWPRLKTGtFjkGls9IA/kcUI+AwW5uDn9X124c8fkA==
+X-Received: by 2002:a05:6402:4613:b0:6ae:160a:58a6 with SMTP id 4fb4d7f45d1cf-6ae19963b9cmr194812a12.36.1790752069491;
+        Wed, 30 Sep 2026 00:07:49 -0700 (PDT)
+Received: from krava ([173.38.220.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ae1558d9b5sm325750a12.17.2026.09.30.00.07.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 19:30:13 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 30 Sep 2026 00:07:48 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 30 Sep 2026 09:07:47 +0200
+To: Mark Brown <broonie@kernel.org>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	Florent Revest <florent.revest@linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+Message-ID: <ary1Q48NrlD4i_Zf@krava>
+References: <arvRs4KdojDnW1O6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 6474fa070f2b8013b4b87350b775b8c3be6e8aac
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Wed, 30 Sep 2026 02:30:13 -0000
-Message-ID: <179073541290.74017.12520750697527521315@5a6d9a2c18a2>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <arvRs4KdojDnW1O6@sirena.org.uk>
+
+On Tue, Sep 29, 2026 at 03:56:51PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+> 
+>   arch/x86/net/bpf_jit_comp.c
+> 
+> between commit:
+> 
+>   17637e1a581a2 ("bpf: Skip detached progs in trampoline images that are still in use")
+> 
+> from the bpf tree and commit:
+> 
+>   29fcf9ce4bbdf ("bpf, x86: Use global buffer for trampoline size generation")
+> 
+> from the bpf-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+
+lgtm, thanks
+
+jirka
+
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc arch/x86/net/bpf_jit_comp.c
+> index 6bca87457e872,6c7a0578760e7..0000000000000
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@@ -3817,25 -4152,15 +4158,15 @@@ out
+>   int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+>   			     struct bpf_tramp_nodes *tnodes, void *func_addr)
+>   {
+>  -	struct bpf_tramp_image im;
+>  +	struct bpf_tramp_image im = {};
+> - 	void *image;
+> - 	int ret;
+>   
+> - 	/* Allocate a temporary buffer for __arch_prepare_bpf_trampoline().
+> - 	 *
+> - 	 * We cannot use kvmalloc here, because we need image to be in
+> - 	 * module memory range.
+> - 	 * Since it must be writable use execmem_alloc(EXECMEM_MODULE_DATA)
+> - 	 * that returns writable memory in the module address space.
+> - 	 */
+> - 	image = execmem_alloc(EXECMEM_MODULE_DATA, PAGE_SIZE);
+> - 	if (!image)
+> + 	if (!trampoline_size_image)
+>   		return -ENOMEM;
+>   
+> - 	ret = __arch_prepare_bpf_trampoline(&im, image, image + PAGE_SIZE, image,
+> - 					    m, flags, tnodes, func_addr);
+> - 	execmem_free(image);
+> - 	return ret;
+> + 	return __arch_prepare_bpf_trampoline(&im, trampoline_size_image,
+> + 					     trampoline_size_image + PAGE_SIZE,
+> + 					     trampoline_size_image, m, flags,
+> + 					     tnodes, func_addr);
+>   }
+>   
+>   static int emit_bpf_dispatcher(u8 **pprog, int a, int b, s64 *progs, u8 *image, u8 *buf)
 
 
-
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/6474fa070f2b8013b4b87350b775b8c3be6e8aac/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 6474fa070f2b8013b4b87350b775b8c3be6e8aac
-origin: maestro
-test start time: 2026-09-29 15:27:36.830000+00:00
-
-Builds:	   52 ✅    2 ❌    0 ⚠️
-Boots: 	   95 ✅   18 ❌    0 ⚠️
-Tests: 	17228 ✅ 2837 ❌ 1455 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - kselftest.dt
-      last run: https://d.kernelci.org/test/maestro:6abc21465ec73975aa0196bc
-      history:  > ✅  > ❌  
-            
-Hardware: stm32mp157a-dhcor-avenger96
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abc21e75ec73975aa019829
-      history:  > ✅  > ✅  > ❌  > ❌  
-            
-      - ltp.epoll_pwait03
-      last run: https://d.kernelci.org/test/maestro:6abc34b35ec73975aa02a57e
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abc21f75ec73975aa01987a
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - kselftest.kvm.kvm_set_memory_region_test
-      last run: https://d.kernelci.org/test/maestro:6abc1a2e5ec73975aa0184ad
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.mm.mm_ksft_thp_sh_khugepaged
-      last run: https://d.kernelci.org/test/maestro:6abc1a2c5ec73975aa018489
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.mm.mm_ksft_thp_sh_khugepaged_-s_2
-      last run: https://d.kernelci.org/test/maestro:6abc1a2c5ec73975aa01848a
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
-      last run: https://d.kernelci.org/test/maestro:6abc2cfa5ec73975aa01e673
-      history:  > ❌  > ✅  > ✅  
-            
-Hardware: exynos850-e850-96
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6abc0d0e5ec73975aa0155c0
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6abc0d0e5ec73975aa0155c3
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abc0d0e5ec73975aa0155ba
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: nvidia-p3809-gb300
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.mm.mm_ksft_thp_sh_khugepaged
-      last run: https://d.kernelci.org/test/maestro:6abc387f5ec73975aa02ead5
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.mm.mm_ksft_thp_sh_khugepaged_-s_2
-      last run: https://d.kernelci.org/test/maestro:6abc387f5ec73975aa02ead6
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abc0a025ec73975aa014a55
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: stm32mp157a-dhcor-avenger96
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp.dirtyc0w_shmem
-      last run: https://d.kernelci.org/test/maestro:6abc34b25ec73975aa02a187
-      history:  > ✅  > ⚠️  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
-      last run: https://d.kernelci.org/test/maestro:6abc2d075ec73975aa01e740
-      history:  > ❌  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
-      last run: https://d.kernelci.org/test/maestro:6abc2cfa5ec73975aa01e674
-      history:  > ❌  > ✅  > ❌  
-            
-Hardware: nvidia-p3809-gb300
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abc0d105ec73975aa0155de
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-
-
-
-This branch has 1 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
