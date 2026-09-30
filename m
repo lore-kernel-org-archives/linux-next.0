@@ -1,88 +1,226 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl2-f43.google.com (mail-dl2-f43.google.com [74.125.229.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984954E13EA;
-	Tue, 29 Sep 2026 21:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EB436923B
+	for <linux-next@vger.kernel.org>; Wed, 30 Sep 2026 02:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790716732; cv=none; b=UYOf1bEZwnRW6xYvBOvM77wZVhQmu8WW3hY1ZOxK3/xNlvmc6lTvD6HdSOvtmzJShpOtbwVZuEZ/OTgHiUVWS78msBTelmAaJLFu5ygjBQZMSWAxqeaaloVJ9mWbqCL848/J1xiABElviJfQJav7RfnA0gXMoFole+iJVvOYbUI=
+	t=1790735417; cv=none; b=dPm/l5z74zmM5WuSQ2hi5RKC0XN9HEvGau9InoCKPtP+dC2pIO+MooAu03RiB5LLtFSi1FERBIJ51fAau9Nc3QXtjV5nODBN/OAwIXYN1N6vkNOGnDSIm2RAs7lCP3F1ReNno6N9+dq+DkPx1ZgwxOYJ0w1CdJp81LeC9E5aOLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790716732; c=relaxed/simple;
-	bh=R3DsJXmEMaxFIS4azVxkrADIqK6gRKvKuUBojmJy3LM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUoZxVKyPfsZ3Cc/4WaF7YKy5U7q9eoU5m74a27ZPX2zc9nT6uGv7IE/ea5ZT9lGDzKcqR6CKJBfNoD8hAbgw/7LBOzVvxtj7duwlCTZA3yb8SmQLbS4i77CXGYVXKMdvty91Y6tCwZat2etn9d79+ejAVN9WwBeq9FT5h3HIEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQ/nWjJR; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790735417; c=relaxed/simple;
+	bh=wUQgEhv0yHS3yrOUd1caqAta3LVSGKwxEFiF42yoa5w=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=Gcpk0dbufCTSrkR882Wn/jgywe+E3o2Ia9lrUuWovJjqja3UCSYCJ7ZfSfqiUJdVCjeuqFqWFMyP5IKD83W6TzhM1Ei1XKgT/IJfddVjE8QV+tESdG2orwDw4gODl28ttbvi9FIWb1RQAof/dIkWWxb0vn2dgMRAKrhdZh2SG00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=HffTC1md; arc=none smtp.client-ip=74.125.229.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQ/nWjJR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1BF1F000FF;
-	Tue, 29 Sep 2026 21:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790716731;
-	bh=XMXQ1yhGVRtRV7agPkwIHAZz6Vb7FUrIfkgGRZ9x7CA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UQ/nWjJRH6zUA6rbaah+Gv2NZIw9HdRhtsiz4czP4qb8b6t8CU7f+M8xhdwzbhZtH
-	 NRbBTV4bteYvIFhfoJoRZg8BQBiLuOAICw5eNSYXi0DgVR9tmOFz8N/Qeugsrl86w1
-	 QFz0PbKY4S7eVkILpcrPQd0CK2+KZnjW9yXrl0GZnLIyrTK+hJduv5c1qhop0rGblb
-	 sBMw+sjMuVeCniN11fWTDxjOnf0KUELNwY1fIvDvcFotIR3thbNJmQQel0F7DZ9bYy
-	 Web3ZdHAqpVf1yPw1YtTiq9gAjCyvKHa0IqA+Dz67561mRRh9L07AoUacYBgIAXOHk
-	 gxnwuQ8ooSD0A==
-Date: Tue, 29 Sep 2026 22:18:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Odell <loganodell@google.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in the final build
-Message-ID: <e1f9991e-3460-40f3-a551-3bbd74abc043@sirena.org.uk>
-References: <6c7088c6-28dd-4e5b-bcb0-0d951183b884@sirena.org.uk>
- <20260929160712.GA2327182@bhelgaas>
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="HffTC1md"
+Received: by mail-dl2-f43.google.com with SMTP id a92af1059eb24-1460bcc512eso2820782c88.1
+        for <linux-next@vger.kernel.org>; Tue, 29 Sep 2026 19:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1790735414; x=1791340214; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=tlH3hmeCRdhPF+rPtZHyMfi5tQutMhz6Vi44JdQZjDo=;
+        b=HffTC1mdh6oENS3JYNl7my8syffG95xJbyFPLglE8A44oumqizXKNAHirzxciCTRqF
+         +dK+drKwoH52DPG2w+To8d2G/QTlK08Zvf3gyi2mLlYPD65arnxB4eZuDSq7K9B+4dgD
+         kSJHiH8FfZ+Al9M3Rj6F8Iqr1NB3kaEwblcOVSLBJ8YY5plNt9tWrsRcr4ipkTiQg0+g
+         8fTNJ9KL81Saup7Z4WeeA9XbLehgmITcsgj8g/sJje2EXgQVDD5TMZvGxMbJMTQtyHzU
+         RYiN33PfF4dXoLC2kCgBvc2M+HT/JyQCajpm332iFxeQsvK6K3yZwCyWxUS7OFra38Xe
+         8i2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790735414; x=1791340214;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tlH3hmeCRdhPF+rPtZHyMfi5tQutMhz6Vi44JdQZjDo=;
+        b=QCgJL9PYRinTGsgb209TbAAkN9WoCzWWB6OhbGW3fad9otKMLdNnvFkrzQFq4oVGod
+         gmRm75dQ72t61+BoBshaph4qY+U2T4sUcYjRZd7X5/w3btwnm2v2i+z1wJHA2Pgzs9ta
+         gf4AfudSNSF68bTRt9Tfe8PK5RdbBBynCzAfOq+6RidPbY+Gviy+FouG9tDT/FkJyini
+         VTLADYs99dFVyg8/gJIuWkEfQo8HnuoPpamfjlxfl0ZSh2GRrX5r7Gv1JcLB2RLi3ljK
+         EnpwRxpMwURFX/kof7u1R3Hyo/a42haPNzvClDH9Vk492M6dAVW88JbWIGqZnKcKx3qD
+         kgww==
+X-Gm-Message-State: AFuF++nsSVv/qkyDMSmLE+uDJDj8U3WrGZ7HEiyWUv9mDqfY0jyhajwn
+	5s1aFbon4Gj/4DYIKYQjZbKGjUcl1lUOyHdxBEn3ngEl0hvDLmm74Di+ZBl29TwgTK/6wztFWud
+	vOxin
+X-Gm-Gg: AYBFou2c69qIJLSltclrBxWkK7d18wHPyZHXYjicyUG7EdnBRhZie+nujiFnenNeq7Q
+	v6exjROw95dQad7NHOL40vfDa5NGbSr0B3rfFc8XkugvsE1kxePeLTPfbthy7XE1WT3MFpXq93E
+	P7QcBNPx+pmYSuo1Rms/iH9FUF5PoiHsSwcDruQLcTcxiPyUjY/cLtuXAEgRmeuEPI95Yh2euy7
+	4gmUwOeDvCvS6GEnkXBFztKnRumYVuAyPf99K9NWhIHHVcNhpQkq7K3P/2ScN+MsPWsQFOJCXOs
+	FfOQsg8By4ghoJxAER5Ke2R+GtH83ElqTJkAmWVKI7lQBHSO/Bx5JQX7fzywcwGh/H1nxXUo2FA
+	G7i1dClIjvBre94kiEoIN7yHPKPAhAjjX6tKkzJzbAks+85najwok1C9Rp2Q4cZ0DQC5SU/pMq/
+	kbr6xzdu52P+BO5Qr3gB86a4bdlETRi+5sDa0MQf75+48w5bc9MRx4CPXsaL6Si2c=
+X-Received: by 2002:a05:701b:4248:10b0:14a:d8fe:3396 with SMTP id a92af1059eb24-14c9f2184afmr1304779c88.27.1790735414291;
+        Tue, 29 Sep 2026 19:30:14 -0700 (PDT)
+Received: from 5a6d9a2c18a2 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14d088e049csm123224c88.8.2026.09.29.19.30.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2026 19:30:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zefBooLEG3t+1vhR"
-Content-Disposition: inline
-In-Reply-To: <20260929160712.GA2327182@bhelgaas>
-X-Cookie: 1 bulls, 3 cows.
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 6474fa070f2b8013b4b87350b775b8c3be6e8aac
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Wed, 30 Sep 2026 02:30:13 -0000
+Message-ID: <179073541290.74017.12520750697527521315@5a6d9a2c18a2>
 
 
---zefBooLEG3t+1vhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Sep 29, 2026 at 11:07:12AM -0500, Bjorn Helgaas wrote:
-> On Mon, Sep 28, 2026 at 03:13:13PM +0100, Mark Brown wrote:
+Hello,
 
-> > > Caused by commit
+Status summary for next/master
 
-> > >    8a2a9fa37b814 (PCI/IOV: Read VF config values that need not match PF)
+Dashboard:
+https://d.kernelci.org/c/next/master/6474fa070f2b8013b4b87350b775b8c3be6e8aac/
 
-> > > I have reverted that commit for today.
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 6474fa070f2b8013b4b87350b775b8c3be6e8aac
+origin: maestro
+test start time: 2026-09-29 15:27:36.830000+00:00
 
-> > This issue is still present today.
+Builds:	   52 ✅    2 ❌    0 ⚠️
+Boots: 	   95 ✅   18 ❌    0 ⚠️
+Tests: 	17228 ✅ 2837 ❌ 1455 ⚠️
 
-> Sorry, it should be fixed in the current pci/next
-> (81bebadfa0f7 ("Merge branch 'pci/misc'"))
+### POSSIBLE REGRESSIONS
+    
+Hardware: imx6dl-udoo
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.dt
+      last run: https://d.kernelci.org/test/maestro:6abc21465ec73975aa0196bc
+      history:  > ✅  > ❌  
+            
+Hardware: stm32mp157a-dhcor-avenger96
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6abc21e75ec73975aa019829
+      history:  > ✅  > ✅  > ❌  > ❌  
+            
+      - ltp.epoll_pwait03
+      last run: https://d.kernelci.org/test/maestro:6abc34b35ec73975aa02a57e
+      history:  > ✅  > ❌  
+            
 
-Yes, it was gone today.
 
---zefBooLEG3t+1vhR
-Content-Type: application/pgp-signature; name="signature.asc"
+### FIXED REGRESSIONS
+    
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6abc21f75ec73975aa01987a
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - kselftest.kvm.kvm_set_memory_region_test
+      last run: https://d.kernelci.org/test/maestro:6abc1a2e5ec73975aa0184ad
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+      - kselftest.mm.mm_ksft_thp_sh_khugepaged
+      last run: https://d.kernelci.org/test/maestro:6abc1a2c5ec73975aa018489
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+      - kselftest.mm.mm_ksft_thp_sh_khugepaged_-s_2
+      last run: https://d.kernelci.org/test/maestro:6abc1a2c5ec73975aa01848a
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
+      last run: https://d.kernelci.org/test/maestro:6abc2cfa5ec73975aa01e673
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: exynos850-e850-96
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6abc0d0e5ec73975aa0155c0
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6abc0d0e5ec73975aa0155c3
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6abc0d0e5ec73975aa0155ba
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+Hardware: nvidia-p3809-gb300
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.mm.mm_ksft_thp_sh_khugepaged
+      last run: https://d.kernelci.org/test/maestro:6abc387f5ec73975aa02ead5
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+      - kselftest.mm.mm_ksft_thp_sh_khugepaged_-s_2
+      last run: https://d.kernelci.org/test/maestro:6abc387f5ec73975aa02ead6
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq8KzYACgkQJNaLcl1U
-h9Cf/Qf/V9lCMoioXe9nPyv207/P+bJ3rmMZU3COGFV/7kLDbFxeAoJirtWXusfj
-B/rfGvmgpTiEGtdR/lxW56gzvLTzEtbuxbz4G3YB0gdpIghtZ5E76hE3l7kRuY3h
-52xGSU1EhdeVScRdbGjtTrkA2cd1Z1jFSZsFFj9/4WCThYeRTN3B32WMyjOPW7VD
-gv6Yo0KVzONNM3GwVz07UV0E7plzIQsdOqhasE/Ooff1nJ+Gk+zwQadcvseP/lWQ
-sFfobu4IBMD+N4GXbxmjTXf9t26t4vH0TS889p/LoaQNL1Kg4EZZdK2kVrEmK088
-O/hAfquv5I/um9OkGCNFYSt0hRPuCw==
-=xp4U
------END PGP SIGNATURE-----
+### UNSTABLE TESTS
+    
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6abc0a025ec73975aa014a55
+      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
+            
+Hardware: stm32mp157a-dhcor-avenger96
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp.dirtyc0w_shmem
+      last run: https://d.kernelci.org/test/maestro:6abc34b25ec73975aa02a187
+      history:  > ✅  > ⚠️  
+            
+Hardware: sc7180-trogdor-kingoftown
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
+      last run: https://d.kernelci.org/test/maestro:6abc2d075ec73975aa01e740
+      history:  > ❌  > ✅  > ❌  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
+      last run: https://d.kernelci.org/test/maestro:6abc2cfa5ec73975aa01e674
+      history:  > ❌  > ✅  > ❌  
+            
+Hardware: nvidia-p3809-gb300
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6abc0d105ec73975aa0155de
+      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
+            
 
---zefBooLEG3t+1vhR--
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
