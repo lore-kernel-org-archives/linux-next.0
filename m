@@ -1,69 +1,88 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A262486620;
-	Thu,  1 Oct 2026 20:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F9A38B122
+	for <linux-next@vger.kernel.org>; Thu,  1 Oct 2026 20:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790887470; cv=none; b=kdByNg5NE5eiuLRWlKBLyvRNB2abOWU0IjXsniab/6+cXEFeqaePS5AQSXlJuJi5Ko3kYqou+s63jmo+TDrGkaO9FXUl9mlyNCXG4OrKB804MdamXSFcJIwPr3uCAe5He/eO6nE6Unu6y9lT7dfbVUKOTaGU1yfq07HZXu+i+cY=
+	t=1790887781; cv=none; b=Px/5/cuzMPi26kXgejglADXEzYnkQXFvDoAjlAJRjpeJb4PT9O0BAJR2ur9GQxjKi7cmxWqBSlMxzC6sG1qlFj9w8p2CCegHYGyRx3Hh3s7BprWatH5jNu/ek8hQ7W2XWPw0W+rQZadlWrgCIYlfWQYpxrdq2+K5ItrEhttQFXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790887470; c=relaxed/simple;
-	bh=Msm8G96Z8LsGSSGgnwfeBQBqJqjIt1nC0qnxocKxX1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRJ8tWdPtCGFIDVZXTminkVaoHjPp1TSwUowwSRASdkD+SAjPVHFLcdi1OylLiVwzKDG6pTSfvCkZ6r4Z8jpAOMuFZ6AspLPavUH+IgP2qjGV5BnfqGlTjSCROyW83XyhC7tqWeafcUpmTdRT+Hz2Gayh2EvCbZJra0+OG8o2jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AYE0AjWH; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1790887781; c=relaxed/simple;
+	bh=lQLYSulu+INzPkcRHOYKO3LmgaWFC0RQc6vwZli6AS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hrn9B3b4cNAFLMPCm7hm9qpwrT3v+UgPw8PtruuHZ5bNoqO9hzVqKg5RC2iYIde3XrXLjfAbBujvltncyGREjRE45Sfd1BuFLlTXfE7kagyROeF3C3okT+d82LoU02fmxGDJYD0uj108ZXZKZP/gFvxv6fR7/WIlO6HPSQ1wXHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h18K/9Kj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AYE0AjWH"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=BrokjqjJjFZqUTDSv2++iKVr7YyyXPU/fy3hPc1Hrqg=; b=AYE0AjWHoTnpDBXumGyRcPWygA
-	eVsEPKqQQmRWYk7YMNSFlvyTQcWKjfUPXfF8KWAgoFvD0nL6KEZ0yKh3ZYkG6JGgoBdcORRXZCVFE
-	yBbzVOKf8CMCjOoiTV/HU92dEe9qTa9B/1TMVRD+JvL2DKORIdN5wcaDWOOXFRPcHnP3bQp/zXXZL
-	/lwYArC/eEcNqlR8NMMLzGfTCyWcfg6Snq1QbemFr/zuMKYxdIEj76Fd+57kd6jQOPQyMIqZXtoGo
-	BF+zqEwI/xD5pkXE62Z8zLrTfRIlDP7EPs5d9p+IR8NDUT8Jap3023HJ2CX55AgWsFej5Hvxm6FGL
-	S0WHcozg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xCNdh-0000000AB8J-2YGB;
-	Thu, 01 Oct 2026 20:44:25 +0000
-Message-ID: <ec3a09d6-4ba4-41b8-abb1-b59e265f4532@infradead.org>
-Date: Thu, 1 Oct 2026 13:44:24 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h18K/9Kj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 981FF1F00899;
+	Thu,  1 Oct 2026 20:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790887779;
+	bh=mTrV/CCA8S51C41GuT94H4njxTjYb3lZoCizSNePsTM=;
+	h=From:To:Cc:Subject:Date;
+	b=h18K/9KjAfBNx33lWukqVCmr9d/DPEx8xz9UMbaUSzC6A0tEU/xJ6BZ+a83wh1gBc
+	 JVkocnI+VUk3mNbuiV3NsJCG8OWSS0x1MEnVItH+cDEanqzqNjUVcIQkd6DMZh71fI
+	 g0ul1Hngr/f4/eMsOmIWXv/DGgAi/ABZhO0mmy/OVy4QSJDWUS+zil4MXsojSRXcUM
+	 JX7cn2I6ETjtc3XCk45YEMUtIg3gNDMGMC1uIkwv38eXgL5ktXZR1faCiUOXJiioyM
+	 K5hgcOah1y7D09ZoVUM0uP8N5Usm5qN34q/auz1seF+NIRB7VFLFTgpq4gdSbj461j
+	 EsEwUBsb/zmlQ==
+From: Mark Brown <broonie@kernel.org>
+To: Breno Leitao <leitao@debian.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-next@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH] merge_msg: Gather the email addresses for the conflicting tree
+Date: Thu,  1 Oct 2026 21:49:35 +0100
+Message-ID: <20261001204935.635681-1-broonie@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Sep 30 (htmldocs:
- include/linux/tty_driver.h)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Johan Hovold <johan@kernel.org>, Linux Serial <linux-serial@vger.kernel.org>
-References: <ar5CMQqWGUCVevPL@sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <ar5CMQqWGUCVevPL@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+We have a list of conflicting trees and the contacts file, do the lookup of
+the contacts programatically. Skip doing so for the origin tree since it's
+not generally too interesting to tell Linus about these things, and rely on
+the sending MUA to deduplicate addresses.
 
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ merge_msg | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-On 10/1/26 4:21 AM, Mark Brown wrote:
-> Hi all,
-> 
-
-Hi John,
-
-Please add kernel-doc for:
-
-WARNING: ../include/linux/tty_driver.h:92 Enum value 'TTY_DRIVER_RESET_SAVED_TERMIOS' not described in enum 'tty_driver_flag'
-
+diff --git a/merge_msg b/merge_msg
+index f781e0b..e95cbaa 100755
+--- a/merge_msg
++++ b/merge_msg
+@@ -46,6 +46,16 @@ if [ "${#hb[@]}" -gt 1 ]; then
+ 	hbs='s'
+ fi
+ 
++# Rely on the sending MUA to dedupe
++for b in "${hb[@]}"; do
++	if [ "${b}" = "origin" ]; done
++		continue
++	fi
++	bc=$(../tools/get_contacts ${b})
++	IFS=',' read -r -a addrs <<< ${bc}
++	cc+=("${addrs[@]}")
++done
++
+ printf -v subject 'manual merge of the BRANCH tree with the %s tree%s' \
+ 	"${hb[*]}" "$hbs"
+ printf -v update 'The BRANCH tree acquired a conflict with the %s tree%s'. \
+@@ -72,8 +82,7 @@ if [ "$#" -gt 1 ]; then
+ fi
+ 
+ "$tools_dir/message_helper" "${branch[@]}" "$subject" "${cc[@]}" <<EOF
+-FIXME: Add owner of second tree to To:
+-       Add author(s)/SOB of conflicting commits.
++FIXME: Add author(s)/SOB of conflicting commits.
+ 
+ Today's linux-next merge of the BRANCH tree got $conf in:
+ 
 -- 
-~Randy
+2.47.3
 
