@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E81A3B19A9;
-	Thu,  1 Oct 2026 17:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086EA5237B4;
+	Thu,  1 Oct 2026 19:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790875887; cv=none; b=U4k2yQK9qwF7MOCr6oOhdYQRPtEv0KkhydaXefbfPImlzM80eqPFBn8ZZ/r76pjssBATdRdWdEVq/x+KGLX/dgQARHEsRn4FjTTbaa/XvvEgtfAUo//WcE3BYqMjl0hAW8erGsmbgJVUMIZUcdObIxUjS7hHwqkxGkHM9fwSV7g=
+	t=1790882857; cv=none; b=Bglk6oiWGNyjrQR8XXkNzuGK+G8GTXfJhZGvtQtmcz85/CDqa5FynKWgAiE997Lsg8zoqh4+sIGxUX+my0qqogzeVwVdVeDVYV/GHmjUhE6tTfcGFiE7vEp7G/sCHLjhv1t/JdPhAcrJCfX9OV4L+rKE9CGg7BQC2Oh9/IPUZF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790875887; c=relaxed/simple;
-	bh=yCKjm9+h2qCKBCe9AwdN70bhtyt7DGh0hApk/2wTcqY=;
+	s=arc-20240116; t=1790882857; c=relaxed/simple;
+	bh=vn+qqaYk4z6YgEZ+TlE7YA/j53pxar7/x8Q1Br6M+co=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pqo76fok0wIQarFEsntaNIzhhwNwyM/kkgfZ9Kplv3/9VnIdBVf5DuBsaxRk3XW7cO9xdfR0FBZwcRKAGLz9XYXHuCKTBGZ99JiX9WPW+w1xrV5MUNaAuABelepi8Ho4tTIRxyVfCJ9xMs0lBcEsEYwbDWCXnAJS5stpVK8fgNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGGEYrlp; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=FqfHgeX3rwaZ3f7MLw6RkPfEv5dBA5GnGtO51EH9RtK1MIk+5D8Br2fitDTpYqW/Ox2Kf2eIWHigtGyT8av1jYK6xHYtJVpybwtn1yBS3yLzT41CUvbeo5wSkxQ406ArYctLFt78aS6QNxgq9efOv8qlSOnv4vTr+mDiR1/cUJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZ9uKnA6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGGEYrlp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C5151F000FF;
-	Thu,  1 Oct 2026 17:31:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZ9uKnA6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B631F000FF;
+	Thu,  1 Oct 2026 19:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790875885;
-	bh=1cfhNMvIJDm8Sy+ZsesWLZO/KcA2N7nqorQZPk3LipE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
-	b=OGGEYrlpdId/bc8vtYFCwdNtpy4WCi8en0PvYis4OH29EOKJLRopN/r/Feg9zIO5d
-	 EZ2H3uqaGTZGKrh/ZeoQHB9ArYCsEgXNgEsVYdD7WY364LeXEE+xxgCoQaGbiEnvNx
-	 nSmFg5Fij1fuHLJEwQrUEkVQgLMIW7/S6d5KBpyC2o5c//f7Fu6GV1MrTY8aY+JJ6p
-	 SwglLBaXmStK7vWzGfES62jCbJ/28u0eCsgnqXsdxt1R+BU/LhE55meb9lOAl8Bcc4
-	 kutq9gKdjuXOlut+akg8+spyMX2Ng9X61HdC25CihF2JlWCMvfOFXmvo0vmQvhxtuZ
-	 AkA1NBx6hH84A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 03F0CCE09FE; Thu,  1 Oct 2026 10:31:25 -0700 (PDT)
-Date: Thu, 1 Oct 2026 10:31:24 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
+	s=k20260515; t=1790882855;
+	bh=dBN4zbJr8oauLEWEDSbcgR2yKMHy1f9xUTNa1sHzSiQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NZ9uKnA61nmgFbFwNY0AtIsUMAQ0qLBkNzcfUAZLrzHFVUNCBMZAoJPzVKSma/LjY
+	 yfedkCTpFx//jr8DW0MWHPiRlNkarfB11cm201pe1GvHHaAg88ubATab0fGInMkcjg
+	 6rmFf/X5TN9fKs2UwdVk6TaiaestHKHZPhFBFQ+gHohxHiC/BFLm/wIGmiqGayu1/b
+	 8APi1BnXiWV0ckZ/RSbKRexRFuHmYF9Wg9NsirExO88xQeCayYnLPD0jJzH1IxESxW
+	 LNGLQl6oI620uZyzovHmt08Gmwqsi5JqOHuRCYRRvkWxR3259bLhkKJykhjQlxIeiJ
+	 iep9Vq5tqAqhg==
+Date: Thu, 1 Oct 2026 21:27:31 +0200
+From: Nathan Chancellor <nathan@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the rcu tree
-Message-ID: <eeb2e29e-8d08-4755-9b34-366b0bcc2847@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ar5Zd022vYh5cXcI@sirena.org.uk>
+Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: manual merge of the random tree with the kbuild tree
+Message-ID: <20261001192731.GA713751@ax162>
+References: <ar5-4Yq3wtmXTWnD@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -48,17 +45,45 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ar5Zd022vYh5cXcI@sirena.org.uk>
+In-Reply-To: <ar5-4Yq3wtmXTWnD@sirena.org.uk>
 
-On Thu, Oct 01, 2026 at 02:00:39PM +0100, Mark Brown wrote:
-> Commit
+Hi Mark,
+
+On Thu, Oct 01, 2026 at 04:40:17PM +0100, Mark Brown wrote:
+> Today's linux-next merge of the random tree got a conflict in:
 > 
->   d563f311e7e63 ("doc: RCU: Fix s/strategem/stratagem/ typo in Requirements.rst")
+>   init/Kconfig
 > 
-> is missing a Signed-off-by from its author
+> between commit:
+> 
+>   f85147b291e35 ("kbuild: move the toolchain checks into scripts/Kconfig.toolchain")
+> 
+> from the kbuild tree and commit:
+> 
+>   56ff95ee85715 ("random: vDSO: avoid call to memset() when zeroing reserved parameter")
+> 
+> from the random tree.
 
-Apologies!  Second time, too.  OK, I am dropping this patch entirely.
-If I get an updated version of this patch with a proper Signed-off-by,
-I will pull it back in.
+Thanks, I knew this was coming and the resolution almost looks correct
+but...
 
-							Thanx, Paul
+> diff --cc init/Kconfig
+> index ecd71b38fc560,98d8d7fa64c5c..0000000000000
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@@ -1,7 -1,207 +1,5 @@@
+...
+>  -config PAHOLE_VERSION
+>  -	int
+>  -	default "$(PAHOLE_VERSION)"
+>   
+> - source "scripts/Kconfig.toolchain"
+> - 
+
+You appear to have dropped this source line, which I believe is the root
+cause of https://lore.kernel.org/ar5-8C-j_JT5OYQm@sirena.org.uk/.
+Restore it and the resolution should be correct with no build errors.
+
+-- 
+Cheers,
+Nathan
