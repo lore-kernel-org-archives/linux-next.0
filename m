@@ -1,88 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F9A38B122
-	for <linux-next@vger.kernel.org>; Thu,  1 Oct 2026 20:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC955349B6;
+	Thu,  1 Oct 2026 21:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790887781; cv=none; b=Px/5/cuzMPi26kXgejglADXEzYnkQXFvDoAjlAJRjpeJb4PT9O0BAJR2ur9GQxjKi7cmxWqBSlMxzC6sG1qlFj9w8p2CCegHYGyRx3Hh3s7BprWatH5jNu/ek8hQ7W2XWPw0W+rQZadlWrgCIYlfWQYpxrdq2+K5ItrEhttQFXM=
+	t=1790889189; cv=none; b=bX0dfibw318uSFA/1whivDNu13iJ/xymuy81CUqG/sIFlGdUgFrncvRcvb2YouXunhwHoJ1wFfo/i5ktYh24fCXLIssbdFwIpD92vPzJAla24RJ+J3ezD6MoKfKA7ql/dCnyV7qjR/hnHgJbAuv5hCRvvQg19Rgc8Al0RHS7y3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790887781; c=relaxed/simple;
-	bh=lQLYSulu+INzPkcRHOYKO3LmgaWFC0RQc6vwZli6AS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hrn9B3b4cNAFLMPCm7hm9qpwrT3v+UgPw8PtruuHZ5bNoqO9hzVqKg5RC2iYIde3XrXLjfAbBujvltncyGREjRE45Sfd1BuFLlTXfE7kagyROeF3C3okT+d82LoU02fmxGDJYD0uj108ZXZKZP/gFvxv6fR7/WIlO6HPSQ1wXHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h18K/9Kj; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790889189; c=relaxed/simple;
+	bh=YID4gXHFIqMTtUVppI1nwXzJH3gXMKv2tIPQ6gT5e4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeEeK8UEUNoma/2X6gCchImHRYXMYdzLmLbcACFygBwGn8ae3PJpT98x7PxdBC2yciPcFsDXX64e7+M8BTmQen1n6/tfvp0v5fnRso1K9bCId3vmgeRXir8yORXQE9oaWaPYRSC9a7re8piE0BtWSsKpLqau/WeMIT4hSc5TZ0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YikII+iy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h18K/9Kj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 981FF1F00899;
-	Thu,  1 Oct 2026 20:49:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YikII+iy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 524B11F000FF;
+	Thu,  1 Oct 2026 21:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790887779;
-	bh=mTrV/CCA8S51C41GuT94H4njxTjYb3lZoCizSNePsTM=;
-	h=From:To:Cc:Subject:Date;
-	b=h18K/9KjAfBNx33lWukqVCmr9d/DPEx8xz9UMbaUSzC6A0tEU/xJ6BZ+a83wh1gBc
-	 JVkocnI+VUk3mNbuiV3NsJCG8OWSS0x1MEnVItH+cDEanqzqNjUVcIQkd6DMZh71fI
-	 g0ul1Hngr/f4/eMsOmIWXv/DGgAi/ABZhO0mmy/OVy4QSJDWUS+zil4MXsojSRXcUM
-	 JX7cn2I6ETjtc3XCk45YEMUtIg3gNDMGMC1uIkwv38eXgL5ktXZR1faCiUOXJiioyM
-	 K5hgcOah1y7D09ZoVUM0uP8N5Usm5qN34q/auz1seF+NIRB7VFLFTgpq4gdSbj461j
-	 EsEwUBsb/zmlQ==
+	s=k20260515; t=1790889188;
+	bh=ozBDR9ihiLQdoV63c/CIH9/DsGrQtAF/ys9gmVy4Urw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YikII+iyAkLSbiEz9+nK24YSMOQ8TYIZJOvFUQ9DfsRFgfTcncjyz+mHZpXoWq1G6
+	 jjMDH86qljrHn8jNlPffZ480UfXtKgguhAim5XnbNQ/lFYOwkDeSs2eKeSuUrrw21K
+	 EhkOkhRwcGpcpKXOZHP8UpViN5eTVCJKu4irieHzelHLqw4E5oW1iW4L28GBUKqULu
+	 MTGJy7RxXE2tVQ3F4z7SL0RhRp7eHpxOrSe0cOetdD82elLMKUICQxOKajSe15dVF5
+	 jKkDJ69RS+6K4t7X4xSvC9DR/b6LH/zB2/2SWtre4Vcz8BFLGBTjoQCtQFlTpKHGRS
+	 nQ7a1In+nA7Qg==
+Date: Thu, 1 Oct 2026 22:13:03 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Breno Leitao <leitao@debian.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH] merge_msg: Gather the email addresses for the conflicting tree
-Date: Thu,  1 Oct 2026 21:49:35 +0100
-Message-ID: <20261001204935.635681-1-broonie@kernel.org>
-X-Mailer: git-send-email 2.47.3
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: manual merge of the random tree with the kbuild tree
+Message-ID: <e7b1d231-f862-4f58-8cf2-3670066f8451@sirena.org.uk>
+References: <ar5-4Yq3wtmXTWnD@sirena.org.uk>
+ <20261001192731.GA713751@ax162>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QAXylKfppE/EbuiC"
+Content-Disposition: inline
+In-Reply-To: <20261001192731.GA713751@ax162>
+X-Cookie: Do not stamp.
 
-We have a list of conflicting trees and the contacts file, do the lookup of
-the contacts programatically. Skip doing so for the origin tree since it's
-not generally too interesting to tell Linus about these things, and rely on
-the sending MUA to deduplicate addresses.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- merge_msg | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+--QAXylKfppE/EbuiC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/merge_msg b/merge_msg
-index f781e0b..e95cbaa 100755
---- a/merge_msg
-+++ b/merge_msg
-@@ -46,6 +46,16 @@ if [ "${#hb[@]}" -gt 1 ]; then
- 	hbs='s'
- fi
- 
-+# Rely on the sending MUA to dedupe
-+for b in "${hb[@]}"; do
-+	if [ "${b}" = "origin" ]; done
-+		continue
-+	fi
-+	bc=$(../tools/get_contacts ${b})
-+	IFS=',' read -r -a addrs <<< ${bc}
-+	cc+=("${addrs[@]}")
-+done
-+
- printf -v subject 'manual merge of the BRANCH tree with the %s tree%s' \
- 	"${hb[*]}" "$hbs"
- printf -v update 'The BRANCH tree acquired a conflict with the %s tree%s'. \
-@@ -72,8 +82,7 @@ if [ "$#" -gt 1 ]; then
- fi
- 
- "$tools_dir/message_helper" "${branch[@]}" "$subject" "${cc[@]}" <<EOF
--FIXME: Add owner of second tree to To:
--       Add author(s)/SOB of conflicting commits.
-+FIXME: Add author(s)/SOB of conflicting commits.
- 
- Today's linux-next merge of the BRANCH tree got $conf in:
- 
--- 
-2.47.3
+On Thu, Oct 01, 2026 at 09:27:31PM +0200, Nathan Chancellor wrote:
+> On Thu, Oct 01, 2026 at 04:40:17PM +0100, Mark Brown wrote:
 
+> >  -config PAHOLE_VERSION
+> >  -	int
+> >  -	default "$(PAHOLE_VERSION)"
+> >  =20
+> > - source "scripts/Kconfig.toolchain"
+> > -=20
+
+> You appear to have dropped this source line, which I believe is the root
+> cause of https://lore.kernel.org/ar5-8C-j_JT5OYQm@sirena.org.uk/.
+> Restore it and the resolution should be correct with no build errors.
+
+You're quite right, sorry - I got distracted by the complictated bit
+with having to update a non-conflicting file.
+
+--QAXylKfppE/EbuiC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq+zN8ACgkQJNaLcl1U
+h9AJLAf/RRQDWQhKcb3EIrvJsKWP28K081YV9ICO9UPNRYX9wr3cwe+iZIBfGMPW
+fMUzN5Kwn2VWuBWS63BuK4kjpXDhKkCuQRftOoJdyFBgj4t/MrJXC+ir0511DLUF
+KOCYJzt9QJD4KVx5cK55WzuIrsM7T0Rguwt6uvUaXOGUOnlTCDmgFWLhEI3PctDa
+JKI/KlflPr0t1CJS2j+6bjZe2EPZ0+ADh/r8r2QHrSzh6PtAlFyFVXdxyY9L2SIt
+jDe3ccdEKv2zU49IY55ufA9lqnksnM+gCDboJDdImT639u9l6MpFLT13efnOPYXF
+hjoAHzpP0th7h/slrsEyNpkH6/ym1Q==
+=NClQ
+-----END PGP SIGNATURE-----
+
+--QAXylKfppE/EbuiC--
