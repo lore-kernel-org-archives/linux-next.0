@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086EA5237B4;
-	Thu,  1 Oct 2026 19:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25BA4A0F10;
+	Thu,  1 Oct 2026 19:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790882857; cv=none; b=Bglk6oiWGNyjrQR8XXkNzuGK+G8GTXfJhZGvtQtmcz85/CDqa5FynKWgAiE997Lsg8zoqh4+sIGxUX+my0qqogzeVwVdVeDVYV/GHmjUhE6tTfcGFiE7vEp7G/sCHLjhv1t/JdPhAcrJCfX9OV4L+rKE9CGg7BQC2Oh9/IPUZF8=
+	t=1790883018; cv=none; b=YXU6cUSSkO3/yD1m7HGbJHstQN+GBNFDdpqIMpG3qseRaFIXVVmcXa/X9wimnqUTRPE0G5GYbtWb1uzWdgNsSf5FhvsRoCAyuWm3v1BmySTaDofmlUoIt/Dvxi6q+pSeE1c0U7BIDsOcJ9FDQZ3sruGhHnZNYLk4qmHBmoAIKf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790882857; c=relaxed/simple;
-	bh=vn+qqaYk4z6YgEZ+TlE7YA/j53pxar7/x8Q1Br6M+co=;
+	s=arc-20240116; t=1790883018; c=relaxed/simple;
+	bh=LojnI9U3LVbmOWCs1RX/+AMx2dAc6oFQDg5806p8OC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FqfHgeX3rwaZ3f7MLw6RkPfEv5dBA5GnGtO51EH9RtK1MIk+5D8Br2fitDTpYqW/Ox2Kf2eIWHigtGyT8av1jYK6xHYtJVpybwtn1yBS3yLzT41CUvbeo5wSkxQ406ArYctLFt78aS6QNxgq9efOv8qlSOnv4vTr+mDiR1/cUJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZ9uKnA6; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=juMcatE4I7CL1g0r5ny8rGoQ0lxA62i7rm1SIs/bmqq8MnH/HQEAxKfEvTtz/zkq96g8cAJl/9bLr9jY8ER8NeU1ofaWAh1QooVOYgTn753g3wPEM14tQ+JYmUFqBVMYKB+AkIk/8HRyEQS2iXK2T3THVR0DfcWLZJrGyQVNOfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDV7nb+0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZ9uKnA6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B631F000FF;
-	Thu,  1 Oct 2026 19:27:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDV7nb+0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9231F000FF;
+	Thu,  1 Oct 2026 19:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790882855;
-	bh=dBN4zbJr8oauLEWEDSbcgR2yKMHy1f9xUTNa1sHzSiQ=;
+	s=k20260515; t=1790883016;
+	bh=4/2Wx4CfhUAprfyBEjIHOTc5lLBpb1YzaqfM8uby9Q4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NZ9uKnA61nmgFbFwNY0AtIsUMAQ0qLBkNzcfUAZLrzHFVUNCBMZAoJPzVKSma/LjY
-	 yfedkCTpFx//jr8DW0MWHPiRlNkarfB11cm201pe1GvHHaAg88ubATab0fGInMkcjg
-	 6rmFf/X5TN9fKs2UwdVk6TaiaestHKHZPhFBFQ+gHohxHiC/BFLm/wIGmiqGayu1/b
-	 8APi1BnXiWV0ckZ/RSbKRexRFuHmYF9Wg9NsirExO88xQeCayYnLPD0jJzH1IxESxW
-	 LNGLQl6oI620uZyzovHmt08Gmwqsi5JqOHuRCYRRvkWxR3259bLhkKJykhjQlxIeiJ
-	 iep9Vq5tqAqhg==
-Date: Thu, 1 Oct 2026 21:27:31 +0200
+	b=MDV7nb+0hzSO5uOvlOPM44vkg/iaXuaF/e+U1nVezaZ+4L/TT9hRxM4mcvpo8p4FN
+	 Gnaz+BH2umkHqCTxTTgncSV0BaGmeTFY85ooFdYlsXdCPGje5Uip4q1A6iJ0Skg28e
+	 STXEdMfHvINzAfyNv9tA8HYfsCuyXWmk6zTRDtz5NYZTQzT2dBQ6LNPgKxT30T21QJ
+	 kDYCTZr3DWk3XapSkZvDajLqWqZ9zRizilhI36bfnAlNLbP0yF5uVdPN3a89qzAYe+
+	 8Ht8J8Gb2By6I90De0t2+Y9mm0fycS3hMLtkcxE1zLcv8d1Y0Qj+79Trff1aeYBYe0
+	 CBvWrT2a498QQ==
+Date: Thu, 1 Oct 2026 21:30:13 +0200
 From: Nathan Chancellor <nathan@kernel.org>
 To: Mark Brown <broonie@kernel.org>
 Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
-Subject: Re: linux-next: manual merge of the random tree with the kbuild tree
-Message-ID: <20261001192731.GA713751@ax162>
-References: <ar5-4Yq3wtmXTWnD@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the random tree
+Message-ID: <20261001193013.GA713848@ax162>
+References: <ar5-8C-j_JT5OYQm@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -45,44 +43,41 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ar5-4Yq3wtmXTWnD@sirena.org.uk>
+In-Reply-To: <ar5-8C-j_JT5OYQm@sirena.org.uk>
 
-Hi Mark,
-
-On Thu, Oct 01, 2026 at 04:40:17PM +0100, Mark Brown wrote:
-> Today's linux-next merge of the random tree got a conflict in:
+On Thu, Oct 01, 2026 at 04:40:32PM +0100, Mark Brown wrote:
+> Hi all,
 > 
->   init/Kconfig
+> After merging the random tree, today's linux-next build
+> (arm64 defconfig) failed like this:
 > 
-> between commit:
-> 
->   f85147b291e35 ("kbuild: move the toolchain checks into scripts/Kconfig.toolchain")
-> 
-> from the kbuild tree and commit:
-> 
->   56ff95ee85715 ("random: vDSO: avoid call to memset() when zeroing reserved parameter")
-> 
-> from the random tree.
-
-Thanks, I knew this was coming and the resolution almost looks correct
-but...
-
-> diff --cc init/Kconfig
-> index ecd71b38fc560,98d8d7fa64c5c..0000000000000
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@@ -1,7 -1,207 +1,5 @@@
+> In file included from /tmp/next/build/include/linux/list.h:11,
+>                  from /tmp/next/build/include/linux/resource_ext.h:9,
+>                  from /tmp/next/build/include/linux/acpi.h:14,
+>                  from /tmp/next/build/include/acpi/apei.h:9,
+>                  from /tmp/next/build/include/acpi/ghes.h:5,
+>                  from /tmp/next/build/include/linux/arm_sdei.h:8,
+>                  from /tmp/next/build/arch/arm64/kernel/asm-offsets.c:11:
+> /tmp/next/build/include/linux/objpool.h: In function
+> '__objpool_try_get_slot': /tmp/next/build/include/linux/objpool.h:130:42:
+> warning: taking address of packed member of 'struct objpool_slot' may
+> result in an unaligned pointer value [-Waddress-of-packed-member]
+>   130 |         uint32_t head = smp_load_acquire(&slot->head);
 ...
->  -config PAHOLE_VERSION
->  -	int
->  -	default "$(PAHOLE_VERSION)"
->   
-> - source "scripts/Kconfig.toolchain"
-> - 
+> and x86_64 allmodconfig had a similarly bad time with -Werror turned on.
+> 
+> Caused by commit
+> 
+>    56ff95ee85715 (random: vDSO: avoid call to memset() when zeroing reserved parameter)
+> 
+> (which is the only new commit in the random tree.)  I have used the
+> version from next-20260930 instead.
 
-You appear to have dropped this source line, which I believe is the root
-cause of https://lore.kernel.org/ar5-8C-j_JT5OYQm@sirena.org.uk/.
-Restore it and the resolution should be correct with no build errors.
+Just to close the loop for others, I think this is a result of a
+problematic resolution between the random and Kbuild trees, not a
+problem with that change in and of itself.
+
+  https://lore.kernel.org/20261001192731.GA713751@ax162/
 
 -- 
 Cheers,
