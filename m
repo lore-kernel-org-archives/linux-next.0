@@ -1,37 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733F274B46;
-	Thu,  1 Oct 2026 13:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7A274B46;
+	Thu,  1 Oct 2026 13:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790859629; cv=none; b=CS89Sd7TdfPi39jQJhHuB8uk6ywihY31b67GvZ5Eo+0AZ+bySLb9nB8YJetzhl+HjGMkbOpGvFSXw42zw0oR45s+r5ghl329sLuNya7kXFdiorEAmigrGtYoGUq1o6r8ZXhltZJDn3GJc9JZpEoiopeZm7hrss96tfWmVh/nqe8=
+	t=1790859645; cv=none; b=eFpiSMJhnz1mfSVjnwMBcVbONj2Ip4F+zJVI47Dy3kNo/BHBaQdQXCTQnTSXYkhUOLaK8VZ3Q7BOYWBScr0xZ/BUk1OVq0fB3q00RimLvBJuDOC6eScDgaapXzmSjEzzko8KN2A5DYlIYy1e2w47JU1sfUU+/Sa/XZi6I3AI2qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790859629; c=relaxed/simple;
-	bh=liI+FNGV2DQjh5A0J98szsYGeIvV0zlY6tpuTOfkCRQ=;
+	s=arc-20240116; t=1790859645; c=relaxed/simple;
+	bh=7xvMWahvepBm3s7Dmc3/QJBgnq5WKiX2bKv1WGcrweg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HRNyxikjX1j9wrbekwCGna62g/N4379TXo0ezKM9GCVxJW7oeDcs6X5UEtLyklAoNyihWU56n6eNeLzOkluFE0HkkZej+19CU4VpoqhbFmzQbuWXqAWT8C8svhGvhvawl0MbGp9BDEL+o+UdeJg7csfT2/Qx/7rqn0hg7TSp5dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQn2sKy4; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=pDEIK2nrbHiT5uuLeJncI5fzrsQ4yAWqxJA2FGlxZ+DeZZsp/LMD8gXeA7JD5a5nvnaVdJMYutmCrAoi6ZdCDu5XB5d+Rv5HGsvL4GhViyWACXoCbmO6lIuhtTn/DxBx+7Wc2++oADcUxvpOimS9MidcOLTJ9fMuTK1dptmMbgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oL7y0Gmi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQn2sKy4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F0B01F000FF;
-	Thu,  1 Oct 2026 13:00:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL7y0Gmi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B0AF1F000FF;
+	Thu,  1 Oct 2026 13:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790859628;
-	bh=569XK+2UREIktKnTiXYpTH+2d7k78k3kARw50yVAoEU=;
+	s=k20260515; t=1790859644;
+	bh=+4gtj9XiQTZ6PXcJwHaE6gO4vJEn/vMeZ0YJDMsTDlM=;
 	h=Date:From:To:Cc:Subject;
-	b=DQn2sKy44IOwbEw3DcnXa80U93KWqQ1YcOHV61JIzOseFvIYwVngKgH7g/3xsw7PJ
-	 U9GG88Nc0LNKhqzHaAtoK4v3uvUjWfPcWBGsEEFFUfzPP99JNWjxPgqIVBsdb/PTNK
-	 YQD+HQcaFW4cC0+k2SLt5fs67Qdqb4eAZuArTblSMdgyMoHdxAfxmb86NOw3kqCB0T
-	 ZNKd2o3L7m3wFfo+A52m2eBjGQOq18CjNQE0KoibCfEIDofxwUhk4jec058cheyGZA
-	 XbsZmDJ6dFH80usXTgE2tHlY3ou79muewxdRMBMPCJXvewuZCMArQfBLr6TkZw/Nxt
-	 j9n7T6UU0XEuA==
-Date: Thu, 1 Oct 2026 14:00:24 +0100
+	b=oL7y0GmiAz8usstb+G5TXsMTS2pcXV49Vwd3xY9gZ2Y3ycxv/wTq4zaLkhvWsmZ1s
+	 2RJwgFt2qyfMiERcgSUXIVi8O5HS6snGTfXYB4XOXchfDDMQR1Grj/U7vYPmkW+Ac3
+	 Hnrkf6zHXZIGGQ79lnprALtbD5CfC8khsVeUTDcxvWOsSRE64gEJ0olTfm2nWFPOfM
+	 iTGS6a/SoHc5W1eVlJ0+5y63yIb6YiPf3bJjzQNEWHl7PYcr5pWg6wycKq9d3pho+h
+	 SVexnp4Oop4n1RifD1xXSSnj5n7stvhh4uCv82RH4DRXUdc4F8duefLuNtDyVqj0nI
+	 eqkE7Qzp7/56g==
+Date: Thu, 1 Oct 2026 14:00:39 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the kvm-arm-fixes tree
-Message-ID: <ar5ZaM3exK1YreJg@sirena.org.uk>
+Subject: Missing signoff in the rcu tree
+Message-ID: <ar5Zd022vYh5cXcI@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -39,33 +43,33 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jumjAdm4DO8y481I"
+	protocol="application/pgp-signature"; boundary="n281PN+GXlCAOcrS"
 Content-Disposition: inline
 
 
---jumjAdm4DO8y481I
+--n281PN+GXlCAOcrS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Commit
 
-  bc502b86a3cfd ("KVM: arm64: Use stage-1 leaf size for VM_PFNMAP")
+  d563f311e7e63 ("doc: RCU: Fix s/strategem/stratagem/ typo in Requirements.rst")
 
-is missing a Signed-off-by from its committer
+is missing a Signed-off-by from its author
 
---jumjAdm4DO8y481I
+--n281PN+GXlCAOcrS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq+WWcACgkQJNaLcl1U
-h9Aoegf/UcwRDwEo7MelNNbfSZjOSExhj4phbA+I2hLTX7mrlZZMXVQKOaDAqR02
-iera4uttkGTa0pV9SmAJsLzFUnrGS7tSLjRsO+gY6sTiNDgbTf/Q8F4q9NQ/Lvcj
-LmED3vfveHMGLzTMCzH4EX+jGqku3jcBs1WHVR9kALauJK/mMBLncZsMCkVrkZfD
-fFfKqs8yHjiI/hlZYJvPtyiKbbOhQHgAODObNSWbwEx5MNe40f3OJGL/a1M3rnG8
-U/pWPDT9Sy/JyQUa2e6a2FMvGKXdTggKdDCyTP2eVow0REnkUZtPzjPlY1r5+3tL
-9i9Ofr8NrU1GY7ZqdATkO0DZKieeRA==
-=KRY1
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq+WXcACgkQJNaLcl1U
+h9Dkxgf7BaFhfwx9W5SGXgQaG1rI2eWK9oGSY3jYx3zmdsAL1Dxn1WDIqdorD5np
+bIthoZ5hqker9q9ug7POHT47GAbRMr9n2HRKSF0Wtj6pP29oi40sqQ6Scyek7mLF
+65qIww3dci2GOVzmh5skpbsbfzvaSdm06TrmDh6M2EiCVDot0FAcSTJCv6cwk3ju
+Eu3cVfp0DIgYdw/RD58f4H60Y2CkjN1KgfuBDtrVog9P3tzcCO8xYEpFdGPcTuVb
+3sWNcM+wFRdQs1xE/EZL9Eqw87AE/xTk+SMMzs6+1SiH1hNabotjjRodxLBCJU+y
+wFb+NpGxUSnuMjjcOsZ5kkWbGdSIYQ==
+=ieid
 -----END PGP SIGNATURE-----
 
---jumjAdm4DO8y481I--
+--n281PN+GXlCAOcrS--
