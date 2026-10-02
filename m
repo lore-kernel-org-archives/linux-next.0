@@ -1,75 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AC82110E;
-	Fri,  2 Oct 2026 16:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CEA3CEBB9;
+	Fri,  2 Oct 2026 18:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790958267; cv=none; b=YHaAozYIj5vT8Ttp7W846SiZlLhO2Ho3TpLwbbyLCzX0lYslZf+scqtc1KrkWG9n0lZvxwPqqBkcCIXiP8HxwCxqNxMIRl3iSB9L4whrYqPiriWwD4SRdUGNlh1NIMIoN51AnYtsJ8GJHSmZyiA+7l1XJWSzWquVeDhnds/D2Q0=
+	t=1790964768; cv=none; b=qph+B2uh+7kROzxcw4ijnv8xsMA2QHKFfcTQOek6zI8MnPF2N5q2Hmq1qgwBzm5Ni1hOcMX9yViQfSDx9WJtTcyIoTdgm4mro46rvRt2Djh9WvkXocr+IfUI4aGTdqPnvqvqelfO2rGFeBFsQAWbyfkvkFiYNBkUqL9JmoxaIkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790958267; c=relaxed/simple;
-	bh=lxgjUUAnZAZo9Yq50ba0+9DERmTUNAPkrTbxhyNdhU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WLN2Xohw9If+nNkU7jOndxXSsYtGhQY6+WSxD5/k9BKrbSbdMvCMtglHm7vkY6tHGClllk22LOcSw/7mBes+IsVJWzi+Dvbg9BHuO0HzItA6Yw+nXSXfjUtSOojckShRuoMZLlnppG4fgzWlPYPYPNaTn2P40utAkx8+sAGQ5Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVmP6mLW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790964768; c=relaxed/simple;
+	bh=4W2b7vlSXdysadf6+LFeP4pew385QjfKq435W8Vz+fE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F7ydrZW0z9vSNPOs6RXTzqCHXc5OdlJcg+QJmdPDWs+84aKKEydRoI+97a+jZKQHbOQxUCRMWKTNsFOA+yNzqjp/2GyhNd1vLZtNGGckQmMz8g/aLLv7xSHsi8GRe3lGcneUHyNayXimeI4jqSt6ZQzv/UjqlLkRXYbBZoBecow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSEbUyzE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVmP6mLW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F291F000FF;
-	Fri,  2 Oct 2026 16:24:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSEbUyzE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8BF1F00893;
+	Fri,  2 Oct 2026 18:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790958266;
-	bh=XvK+bPpafeOlO7y2OLbae7RD+paZS2cGqHv1W10YMhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BVmP6mLW1tqbuluEuUoEMqw93t8Tb0IMXGPJOXyDU4fZx5GPTy2CWt3FbheBEPupZ
-	 HP6tFQZR7tCq+y8GzQDOsUC8TVuHCZTEJqiUpZGdDnEFXZVIRBMii5BTHStrllWN0t
-	 6uzQcXK+bRXMud9cMGqeseGP1gYfrcOS05PkAfOML/5fD5AhzBY/7t1rNyX+prP4QD
-	 3upKOLf68i1eZtWbiSWRySwYOknegk1dxDF19v47unjApzzPVuDYwPjRLJSXk6btHt
-	 VPC19CiIz1dGeFzE+AiGqlcFGxkyVDq7iaN0hq0qW2k8aqkbPd2EQ3jfk+BOmj+ir7
-	 Vj9Xuf6VWXY7g==
-Date: Fri, 2 Oct 2026 18:24:22 +0200
-From: Nathan Chancellor <nathan@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
-Subject: Re: linux-next: manual merge of the random tree with the kbuild tree
-Message-ID: <20261002162422.GA288990@ax162>
-References: <ar5-4Yq3wtmXTWnD@sirena.org.uk>
- <20261001192731.GA713751@ax162>
- <e7b1d231-f862-4f58-8cf2-3670066f8451@sirena.org.uk>
+	s=k20260515; t=1790964764;
+	bh=PVDybhQR0lJdYcvHYQc8U039ifOVIMYazH1aycCTW70=;
+	h=Date:From:To:Cc:Subject;
+	b=nSEbUyzEKhsI6zK18g81LCQy7qpdOis3ufBPjmiiFxcmw1MAGFx8/1ACKxopxI5D7
+	 lu3e+293IwkWGednT0whizgjF9lZ0WuAbFKe9olwewaua4Wd0WV+kXB74mHs/YdjtF
+	 EtAnhqw8kwI7cH7NN+UBz9xvD89jSvXyldbJHJmpwbBJ2g73XjbejojNNltW4Y+/Ky
+	 I/nGeNwkRjNR9uTYTUbd+T4AWIXUwjXOqEw+3Z6D0mSWAH2oidGJbdyg+usJ6no6qB
+	 fNhppvRuaXnLKIkZId5dJRuK7N8fK3lhYe3jqPHG7H0MV3M/NKpHRUaV9mP011+gif
+	 0RclqvtB3l6Mw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 89C8D1AC57CE; Fri, 02 Oct 2026 19:12:40 +0100 (BST)
+Date: Fri, 2 Oct 2026 19:12:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the clk tree
+Message-ID: <ar_0GFOb5hZfhHHx@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KyhzCljaV80OIyqf"
+Content-Disposition: inline
+
+
+--KyhzCljaV80OIyqf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e7b1d231-f862-4f58-8cf2-3670066f8451@sirena.org.uk>
 
-On Thu, Oct 01, 2026 at 10:13:03PM +0100, Mark Brown wrote:
-> On Thu, Oct 01, 2026 at 09:27:31PM +0200, Nathan Chancellor wrote:
-> > On Thu, Oct 01, 2026 at 04:40:17PM +0100, Mark Brown wrote:
-> 
-> > >  -config PAHOLE_VERSION
-> > >  -	int
-> > >  -	default "$(PAHOLE_VERSION)"
-> > >   
-> > > - source "scripts/Kconfig.toolchain"
-> > > - 
-> 
-> > You appear to have dropped this source line, which I believe is the root
-> > cause of https://lore.kernel.org/ar5-8C-j_JT5OYQm@sirena.org.uk/.
-> > Restore it and the resolution should be correct with no build errors.
-> 
-> You're quite right, sorry - I got distracted by the complictated bit
-> with having to update a non-conflicting file.
+Commits
 
-No worries at all, glad it was something simple in the end! Hopefully
-there should be no more conflicts from that shuffle.
+  d31b7d87d1b28 ("clk: nuvoton: ma35d1: Add missing WDT/WWDT parent clocks")
+  488d2cfdf3c99 ("dt-bindings: clock: ma35d1: Add missing WDT/WWDT parent clocks")
+  9546425453234 ("dt-bindings: clock: ma35d1: Drop CLK_MAX_IDX define")
+  ea2ee01da5555 ("dt-bindings: clock: ma35d1: Document the missing crystal inputs")
+  35ba0118dac01 ("clk: nuvoton: ma35d1: Keep the clock count in the driver")
+  e92291a009f7c ("clk: clk-gpio: do not blame the DT property on probe deferral")
 
--- 
-Cheers,
-Nathan
+are missing a Signed-off-by from their committers
+
+--KyhzCljaV80OIyqf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCar/0CAAKCRAv73Ows9A4
+ia6hAQD3NW9VFHUTrD2416hO2mxKzaw60mSfYzSm9FV4NKmH9gD9EL7jZAmVy776
+8IPe3w8wnZrZiiBErrJ4/O+oJv+d+gw=
+=q8yg
+-----END PGP SIGNATURE-----
+
+--KyhzCljaV80OIyqf--
