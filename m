@@ -1,59 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CF63DDDB1;
-	Fri,  2 Oct 2026 19:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34513CEB8A
+	for <linux-next@vger.kernel.org>; Fri,  2 Oct 2026 21:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790967960; cv=none; b=Naa2UmMhhzOfRO3yVdKBYoxo18Fw9q9eiq2xfIgVva3pfjSLalkiuE3cJi0+3FrMrZzB9nZsg01P7ApMHay5lKA44aXlzurhn2+RhYKnnXc6GqdkUHp73/0RGHncVAINpnQdTlLZiI+SsMhH/+d3V0Af0BHR0AP3iZ0U8qo/kE0=
+	t=1790976365; cv=none; b=B5uWm0dwPzq3sBysLM7JmlYSPWYeNKBonaUdtNjr6kUgq+qG9MAa1uNBXOv8z+kM8eQLi98RuecrTD6vT/M2nAcbGDhNwMqKpldRgp0Uz8PKng6SRxxVX/FF/AiCQkuSGIIrQ5ZfZFBuu8SBlS64zMuP77sfSVcs9U9iwHNCgHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790967960; c=relaxed/simple;
-	bh=jmMcfiwr3YA4ETCySwWhEb3mIvhe2Apuc8vbQakfQmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tgZYPJ3il/A1abAIQ98jOKQAqaVMP6IcZ6c+mha2zA0aYRU0v6fR+slbvzk5qBdiJ7eSi679lUEMXfzL+X2QY8Ic1ZdvGFW+VnrbysErSEnBudECir6MR6KRQ+Li1ZEiok3hq8TyhxPV4uLY3T5SxbRBibm8KTAgJ62jRH0onP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9/o1nJT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790976365; c=relaxed/simple;
+	bh=oFV142JklmfjeuTJ8Sn0fR+mwMIdMQtI7Lr6DSIvH4o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rJPh8kEoyM+G+K0lk0JbM/efQz/WBoez/CSgzq9HBxrN9aYmoeoxQwFpI1Myc7MuS/hpPwk23ZYUSypti+1po6v3Zn7qCRmkFqseOBeWHl8KScPidPMQXcQa2H8kANwJ1KaDF7IWJhiZbK2LVkHbUFefxBQfsMM42Dp1Uv5u2aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ifx4CcWB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9/o1nJT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE731F000FF;
-	Fri,  2 Oct 2026 19:05:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ifx4CcWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFDC1F00898
+	for <linux-next@vger.kernel.org>; Fri,  2 Oct 2026 21:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790967958;
-	bh=9rjSxFrypHsH5/EurS8FfeiStgadl0YePCxY/8OvZYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=H9/o1nJTY5XXYyas0W2UK0+7rcUVlLiAQjRM20SgNFB0E0+0htwt647TWpgbXrAcp
-	 39NS8/YSHzA7zmTQnT6teVoF9DtEcmk4qlL1e67+PEJvyTpipTz0raxfIuMP4KcNNU
-	 49XNHDfEwWQi9LXXKjkNm+J/RFNwo4fd6keTVGip65foK6JwDo9eowO4UorVdzpnJs
-	 iww8DchUFgNTvbEKqMQ65tCDQObarWGMG64/PSsfmOMCVyKgebdcv3hkygG3HGy7ln
-	 ALB6pWQyFdhUjru2JUZ5kRqxIzd7gr7hiFBvr05Ee+4kNIT/koJ58aXW8zWRjhDloF
-	 OxbPZTjFFH9KQ==
-Message-ID: <c64c2270-7eac-4db9-a5d6-6e339be68491@kernel.org>
-Date: Fri, 2 Oct 2026 14:05:57 -0500
+	s=k20260515; t=1790976364;
+	bh=oFV142JklmfjeuTJ8Sn0fR+mwMIdMQtI7Lr6DSIvH4o=;
+	h=From:Date:Subject:To:Cc;
+	b=Ifx4CcWBDsgkibvwPXHhaSbvTs8omP1WofI8ei3OtvsqZNPjmsBt6R9n6Y3Lecjh2
+	 nbPIedgyUEZ2afA9fP7H4viWU34ZkYbc4Hn57/OjanpDKGu7azfGtPfEcdg76GLHYT
+	 06EoU0PVTJcEuRrmK0c7LfDzNtMD9cLqMsJI2ukZmvTKVBa2Qf4173xNm3HGE/gU3z
+	 qWyC5hvVQiXRh2r4OAeOBmhk0jfJJzXOVI+13AKuo0X/w5PuDmWTSs0O+xtAcwrgz7
+	 6nDv0lqAfXnXsqUuceXSEoKtO/amYQ2RDF27IjTQHX5uoBeGnm5l0hXhQqOOM74AFy
+	 9h6HaTrUdjodw==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3a4a82aa383so2080801fa.3
+        for <linux-next@vger.kernel.org>; Fri, 02 Oct 2026 14:26:04 -0700 (PDT)
+X-Gm-Message-State: AFq9FYLEeaWO8+NFAwyump2IiTVuidxjZKFfmTHWLatoq67AyeNpWBr3
+	LJ3759AD+jCqs8fTiGdYZW0PN++8VyllC+N0yhOK/JpLcLfhvkCywQSdKJv7VEr8KzD7agco/gn
+	s56PWwixsACG7UQMTvlDbvSdprWwDmJs=
+X-Received: by 2002:a2e:be0b:0:b0:3a9:71fc:5758 with SMTP id
+ 38308e7fff4ca-3a974f70efdmr1108281fa.27.1790976362986; Fri, 02 Oct 2026
+ 14:26:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Missing signoff in the socfpga tree
-Content-Language: en-US
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 2 Oct 2026 23:25:50 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmNL0HU1pECen0X8P-KGmb0e-j_Q8G0wzqMMXcKx-F1Cw@mail.gmail.com>
+X-Gm-Features: AclHuK_S-X2HZ9NR_hMk_2MQohDcYc-05FI9AHb3s5japDL5CHo3aS9G6CLXlx0
+Message-ID: <CAD++jLmNL0HU1pECen0X8P-KGmb0e-j_Q8G0wzqMMXcKx-F1Cw@mail.gmail.com>
+Subject: linux-next inclusion request: ux500-dts-for-soc
 To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-References: <ar_0ICrJtyU20WDO@sirena.co.uk>
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <ar_0ICrJtyU20WDO@sirena.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mark,
 
+Krzysztof pointed out to me that I should run my SoC stuff through
+linux-next before sending pull requests. He's right.
 
-On 10/2/26 13:12, Mark Brown wrote:
-> Commit
-> 
->    57bf614eb1f31 ("arm64: dts: agilex5: add support for debug daughter card")
-> 
-> is missing a Signed-off-by from its committer
+Can you please include:
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik.git for-next
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-integrator.git
+for-next
 
-Thanks for catching that, it's fixed now.
+Into the linux-next tree?
 
-Dinh
+They will contain a mixture of DTS and SoC patches, the rest for these
+platforms will go in through maintainer trees.
+
+Yours,
+Linus Walleij
