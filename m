@@ -1,40 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CEA3CEBB9;
-	Fri,  2 Oct 2026 18:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A503B059B;
+	Fri,  2 Oct 2026 18:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790964768; cv=none; b=qph+B2uh+7kROzxcw4ijnv8xsMA2QHKFfcTQOek6zI8MnPF2N5q2Hmq1qgwBzm5Ni1hOcMX9yViQfSDx9WJtTcyIoTdgm4mro46rvRt2Djh9WvkXocr+IfUI4aGTdqPnvqvqelfO2rGFeBFsQAWbyfkvkFiYNBkUqL9JmoxaIkM=
+	t=1790964775; cv=none; b=qp0ApvKmCi0HEIReBcuJfoibsvmG2zDmZm+E9FJCta6owZ0Y55xgcuk5BuUOBaFnWVgf9UcZtWuUdVGvbR4KTtM9HFK6ldn+pIxCnooGrWHX0kfVu5kL8n+ufZnX2EGT/2xfnTb4qJfz89TvfuzCE0gmAUh0oq8GGc3vfC86iUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790964768; c=relaxed/simple;
-	bh=4W2b7vlSXdysadf6+LFeP4pew385QjfKq435W8Vz+fE=;
+	s=arc-20240116; t=1790964775; c=relaxed/simple;
+	bh=IxRPzbxtL24WZLHn+dvl0qOBFDAZOIvEQZWA1HyVn1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F7ydrZW0z9vSNPOs6RXTzqCHXc5OdlJcg+QJmdPDWs+84aKKEydRoI+97a+jZKQHbOQxUCRMWKTNsFOA+yNzqjp/2GyhNd1vLZtNGGckQmMz8g/aLLv7xSHsi8GRe3lGcneUHyNayXimeI4jqSt6ZQzv/UjqlLkRXYbBZoBecow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSEbUyzE; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=ZoES+eai0nB88T9QT525ZfY7xjGeyR4CtxdMuH4Taces8iG0Wos5qGLGhUU5FeKAVW/P5f/G9aNFEuwA4Jo5hY81UlMBMCPgXJLAAzfaierXD/gGBXe9i2sR9T4XzdzDj20usoGUM5SeTrEew/ltsDFNgEgjuSe01kCPFQElDEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIvFxm1w; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSEbUyzE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8BF1F00893;
-	Fri,  2 Oct 2026 18:12:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIvFxm1w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E251F000FF;
+	Fri,  2 Oct 2026 18:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790964764;
-	bh=PVDybhQR0lJdYcvHYQc8U039ifOVIMYazH1aycCTW70=;
+	s=k20260515; t=1790964773;
+	bh=OcC3IQv3fAogUo4cfnwQRwjg1p+Rf+1KOqWogvTu7RM=;
 	h=Date:From:To:Cc:Subject;
-	b=nSEbUyzEKhsI6zK18g81LCQy7qpdOis3ufBPjmiiFxcmw1MAGFx8/1ACKxopxI5D7
-	 lu3e+293IwkWGednT0whizgjF9lZ0WuAbFKe9olwewaua4Wd0WV+kXB74mHs/YdjtF
-	 EtAnhqw8kwI7cH7NN+UBz9xvD89jSvXyldbJHJmpwbBJ2g73XjbejojNNltW4Y+/Ky
-	 I/nGeNwkRjNR9uTYTUbd+T4AWIXUwjXOqEw+3Z6D0mSWAH2oidGJbdyg+usJ6no6qB
-	 fNhppvRuaXnLKIkZId5dJRuK7N8fK3lhYe3jqPHG7H0MV3M/NKpHRUaV9mP011+gif
-	 0RclqvtB3l6Mw==
+	b=LIvFxm1wRa9+86RFdrR92Li8jM5yBeceoKOKAGaomlsNbH0AEWWa6/rYWtWNmtaTn
+	 qZopBVz1HsoxPbBnNMm/5HobRMLJsQfQ2BWogmICcu/JB/ixOBpgkX08hsrkiJoSBV
+	 YRSHDPc/Sj+Ff5cLApIbVRCRslYHM06uVXN9U8ZypkqQbkuCao4u5mO+8sVIh4dxRe
+	 F+RQKdFCI8igjwygL40aZOKJb1gTmk/f7euUbnXrb4/ybsgt1BytC9pj2HQ5/BPoF7
+	 JG0nvAsdWyf1lMFJXhPq5/Xzxleh4wCxp8H1VEPLweYkw7+LYyy0Y/ePTt3bVHoAfi
+	 ZYokhZS59gjsQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 89C8D1AC57CE; Fri, 02 Oct 2026 19:12:40 +0100 (BST)
-Date: Fri, 2 Oct 2026 19:12:40 +0100
+	id E16421AC57CE; Fri, 02 Oct 2026 19:12:48 +0100 (BST)
+Date: Fri, 2 Oct 2026 19:12:48 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Dinh Nguyen <dinguyen@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the clk tree
-Message-ID: <ar_0GFOb5hZfhHHx@sirena.co.uk>
+Subject: Missing signoff in the socfpga tree
+Message-ID: <ar_0ICrJtyU20WDO@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,34 +41,29 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KyhzCljaV80OIyqf"
+	protocol="application/pgp-signature"; boundary="ZoaKMMD8bbgEyu/H"
 Content-Disposition: inline
 
 
---KyhzCljaV80OIyqf
+--ZoaKMMD8bbgEyu/H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commits
+Commit
 
-  d31b7d87d1b28 ("clk: nuvoton: ma35d1: Add missing WDT/WWDT parent clocks")
-  488d2cfdf3c99 ("dt-bindings: clock: ma35d1: Add missing WDT/WWDT parent clocks")
-  9546425453234 ("dt-bindings: clock: ma35d1: Drop CLK_MAX_IDX define")
-  ea2ee01da5555 ("dt-bindings: clock: ma35d1: Document the missing crystal inputs")
-  35ba0118dac01 ("clk: nuvoton: ma35d1: Keep the clock count in the driver")
-  e92291a009f7c ("clk: clk-gpio: do not blame the DT property on probe deferral")
+  57bf614eb1f31 ("arm64: dts: agilex5: add support for debug daughter card")
 
-are missing a Signed-off-by from their committers
+is missing a Signed-off-by from its committer
 
---KyhzCljaV80OIyqf
+--ZoaKMMD8bbgEyu/H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCar/0CAAKCRAv73Ows9A4
-ia6hAQD3NW9VFHUTrD2416hO2mxKzaw60mSfYzSm9FV4NKmH9gD9EL7jZAmVy776
-8IPe3w8wnZrZiiBErrJ4/O+oJv+d+gw=
-=q8yg
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCar/0IAAKCRAv73Ows9A4
+iV4sAQDg+aiFr3Gmi7/WboyVGG66ioq4naTi3MwZ2d1rfTFy2AD/Ydd4XUBDiY+O
+H/l6NO/Cn0vrkkPK56SP1XUqEtwTYAw=
+=3+Hn
 -----END PGP SIGNATURE-----
 
---KyhzCljaV80OIyqf--
+--ZoaKMMD8bbgEyu/H--
