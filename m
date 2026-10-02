@@ -1,297 +1,122 @@
-Received: from mail-dy2-f19.google.com (mail-dy2-f19.google.com [74.125.229.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10EA19D8BC
-	for <linux-next@vger.kernel.org>; Fri,  2 Oct 2026 02:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7423737FF60;
+	Fri,  2 Oct 2026 05:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790908233; cv=none; b=NXrIPJiuy12QklYXSwrc7aCl9xFcAE2+v1n6igTPFau1d3FPtzflelIcp39muFvUbZwYvP8JAJdQM/LQSZEKX/uGKXYya6BCBRf06pyugyD32+2oZybr7PuVQoA0hL+d4/EOpkJvp2hWICuTROR6YhSyEwANx3Ft2oy3i1RQ3HM=
+	t=1790919194; cv=none; b=ZMSuE0v3O1Vxwv/W3wCyhKcMf5gX1tnEmotKaMSAj7IrsYs/wE9jqE4ka2A4XDtc3Gvyxvf4PmTLp3YSt5S0fXHdT/vIauUYK0c28beXZ5i1m3/Pbh9iIapHFn9ugJJkQspRDN2N3I9xdsOF6jMelx9P9WgK4cSTeiQZDSHfUw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790908233; c=relaxed/simple;
-	bh=RuTApN0UPe2hPEF8+noB8aZgebLGmPZr/LMzlFVcecQ=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=TzXgq5D/Zgyn3swTrbUQmkCfKfEC6lTWONIy6NwLg18mVF/6Zl2Gi+DeYki8SJyiktx3/frPnbzvyS8qBqV/9gLXJ1vXJINkA1KkS1dqJVu5MQw1CA5ZK5rlXSy3Fv436j27LUd8+dWUiABoRYVaJRukD8O7uL3+WNoyZ5VW4ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=UyksAURr; arc=none smtp.client-ip=74.125.229.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1790919194; c=relaxed/simple;
+	bh=sumuXVY4LWT9F/W95QRzrQM23pI/5wrvTxrj0axw0FM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FlQZKn/StVmTapdgdR7eWyMIT4xL3OhbdxPe0l6vyfHD7t57BGPe3FF2U/DFwP9yuiAep1Q7VBjT+wCytAQEj6FpiwS/s3wmouapS0YrLllM8UbX1ZN7eL9+vsrCmXuFGEMZEUwoEgHRIWlv6sgUl/wtVVUigVUDdKBNmHnV8WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVHGc+qt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="UyksAURr"
-Received: by mail-dy2-f19.google.com with SMTP id 5a478bee46e88-34d2d25127aso1382290eec.1
-        for <linux-next@vger.kernel.org>; Thu, 01 Oct 2026 19:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1790908230; x=1791513030; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=WPt+XjmTF9IMBWFB346uVbnxM2TY5639+HMb8WxiOAU=;
-        b=UyksAURrb8ysHZiODkY0IdYhSzBSzkyE3C6ce7Rx5IJM69GB6GJ7K/3JiecicTEcuy
-         wqeLsIEY5s094yKkW9wjZ3xOAbkUbbfIs/GDTvUqjTKv6sB/wnu9rKGsjwAxLzsSAi5j
-         O2vRDmMHmsyQfs9sUEOO+c8a0WxIgAgG6pXjNEQ1Mc0Q2IxkaS8bPV7yMoPd5FLXJNZR
-         hhXnhRo0zjspLo6u4MpVOgpZuWEnsNe0R8U1x8wDXfGtuqrOPbZXSSUCbwf7RZkZ+Yyf
-         EcJV7x7J+284hu50J2xqFElEVu1jgUSMO+KNguYqQRV/7ehMQ2MYMRhrFS4nIk72wmEN
-         YxrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790908230; x=1791513030;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=WPt+XjmTF9IMBWFB346uVbnxM2TY5639+HMb8WxiOAU=;
-        b=BKDmXocx0+HoE9kiKAEbGX69I5Dog6k+Rjz3roeuGJno+pJbBuhBy2/myJFznouiy6
-         H/KGlpOajuHJEEOeIdb25wGQYAJngK5HdqwhTYZMX2Nb+A7azY6u3RQyWMijRWejwHnU
-         4q9PKy2QaI7ioSH+9VERR4KrybGqdGrF9kr06PDMCfjkKFyn0nqr4LgJP1MosmCuJo51
-         WpPfUUSc5M3DdJVkiGrULMMisoVR0EiHgXfnJoTxm1/e68HgP5tXZe76SYHDArZidqIH
-         DoXGQ5u4qcJkJpKySn90IuxLiCYWabLy8e5OtqVz+AsjH17I2vuONivS4D/y3SetSHqp
-         cTBA==
-X-Gm-Message-State: AFq9FYJ38D8v46FBQJXtKZBgb20hWrb9vWSUStv/LtQRfuWSjd/WFu1g
-	MISn00DGj3/cLtq+OR/VqccvQH0HXm8bi9btrv1bCZj3l16JDRk00eMfNfzyLij3pXKeoOW+yca
-	9VnEA
-X-Gm-Gg: AYBFou1ENEpTCHXMZqr5WiGCVEZnyWDKHL+Feuy/03fjpkA9vcOU77h7h8PiV4dL0QQ
-	q4+f2RAJmaUYqpMQjlBhHBdRph6royiGUdQILWRyKwIJIONmCDi0DvGFM4PrhtwZL/4A5zm+2Yq
-	VxjiTq+3tsF1ew/qIEWGzP3oZKCkK5n94T1+IsztAob+luj6WA5NWNd8Q50lRPHil7/6kry0RL3
-	tRg40dXtmPuDM0TptE3ewiqRHoK/YQSvrZ9k+Ts2gEKsMxlAbpQiA3uiMOcJh6MYM6RmqBDdi90
-	j/7Bacn/SLYQTLyCyDDCDnqITSb4sE0OKPW0Awm519ElJ1COWp72ru7Gw15TK5tbecVeRyzzGAk
-	OUeVibD9APWHJdJvsZmgq7UKL7/Bxig8C3oBgLVUeRosUe7LwwNjiVXP/hodlqDAIxY93koQIdN
-	zRIzb0Q+uKhJToQdBqn2qso40cS9eM4zkUjKh1X1sBwunfa5mytfNm9FO2HndhvMo=
-X-Received: by 2002:a05:7300:f58d:b0:34d:4cb9:f24c with SMTP id 5a478bee46e88-34f150cc0a1mr1343620eec.20.1790908230230;
-        Thu, 01 Oct 2026 19:30:30 -0700 (PDT)
-Received: from 5a6d9a2c18a2 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-34f14fdfc58sm1949228eec.24.2026.10.01.19.30.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2026 19:30:29 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVHGc+qt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA34A1F000FF;
+	Fri,  2 Oct 2026 05:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790919187;
+	bh=x78CIfcKaYrE4I04TsVFJX7v6SVwOy/xgulHq+kTsZk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=VVHGc+qtUcZAtxtg/QPOqy4S4TnBPLeafNRjx3qfYkZI+JP23r4hKMUNDi03sBHRj
+	 /ApD6vrMHca4++7aK0hE9HVXWXoki59/NMAdHTgnFSC9wdsnvVeRiMlHEiiRZC5WzU
+	 jbC41mbDAUr2GzAmRgO9NLl1rS70aP86J7voFkkI1yzM+NhbIrYImsMNuf6QbzJV9g
+	 KUKh266+s8xOxg5DPLQLvFF1oRxrhZMSkJBB+bpy/u9zBpbfzZiHriy8Qu+8VIsF9z
+	 ula1hwgPCeGfAxXZFH2F4D8vTIVoODJlnPp0XEPDGTUikDx6Y/I4xkYa1CAnUG9y8y
+	 07+7Mi7HJTUiw==
+Message-ID: <52ef6837-7183-402d-acc6-8ca15c7e27ca@kernel.org>
+Date: Fri, 2 Oct 2026 07:33:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 9f24d789f03b22941b905ded43cb5ff8eea9ce62
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Fri, 02 Oct 2026 02:30:29 -0000
-Message-ID: <179090822918.179516.16719126299555187781@5a6d9a2c18a2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the phy-next tree with the v4l-dvb
+ tree
+To: Mark Brown <broonie@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Nihal Kumar Gupta <nihal.gupta@oss.qualcomm.com>
+References: <ar5wFFE64tWhmCKg@sirena.org.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <ar5wFFE64tWhmCKg@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 01/10/2026 16:37, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the phy-next tree got a conflict in:
+> 
+>   Documentation/devicetree/bindings/phy/qcom,x1e80100-csi2-phy.yaml
+> 
+> between commits:
+> 
+>   42b96f94929c9 ("dt-bindings: phy: qcom: Add CSI2 C-PHY/DPHY schema")
+>   a93b9de71466f ("dt-bindings: phy: qcom,x1e80100-csi2-phy: Add Glymur compatible")
+> 
+> from the v4l-dvb tree and commit:
+
+Why were these taken via v4l/media tree?
+
+> 
+>   3b0140f37d25b ("dt-bindings: phy: qcom: Add CSI2 C-PHY/DPHY schema")
+> 
+> from the phy-next tree.
+> 
 
 
-
-Hello,
-
-Status summary for next/master
-
-Dashboard:
-https://d.kernelci.org/c/next/master/9f24d789f03b22941b905ded43cb5ff8eea9ce62/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 9f24d789f03b22941b905ded43cb5ff8eea9ce62
-origin: maestro
-test start time: 2026-10-01 16:41:01.054000+00:00
-
-Builds:	   70 ✅    1 ❌    0 ⚠️
-Boots: 	  163 ✅    8 ❌    0 ⚠️
-Tests: 	22121 ✅ 3112 ❌ 3605 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_touchpad_15
-      last run: https://d.kernelci.org/test/maestro:6abeb117a3f195e1aa1834b7
-      history:  > ✅  > ❌  
-            
-Hardware: jetson-agx-orin-industrial-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abebbeca3f195e1aa18d668
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: acer-cbv514-1h-34uz-brya
-  > Config: defconfig+preempt_rt+x86-board
-    - Architecture/compiler: x86_64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abeaacca3f195e1aa17c53c
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abeab70a3f195e1aa17d21f
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: acer-cp514-3wh-r0qs-guybrush
-  > Config: defconfig+preempt_rt+x86-board
-    - Architecture/compiler: x86_64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abeaacea3f195e1aa17c55b
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abeab66a3f195e1aa17ceee
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec15fa3f195e1aa18f64a
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec475a3f195e1aa190b74
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6abea808a3f195e1aa17acac
-      history:  > ❌  > ✅  
-            
-Hardware: r8a779m1-ulcb
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec165a3f195e1aa18f661
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec44ca3f195e1aa190715
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: rk3576-rock-4d
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec168a3f195e1aa18f6f6
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec1e3a3f195e1aa18fc0b
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: rk3588-rock-5b
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec169a3f195e1aa18f6f9
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec207a3f195e1aa18fc9f
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: sun50i-a64-pine64-plus
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt
-      last run: https://d.kernelci.org/test/maestro:6abea9f0a3f195e1aa17c0df
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
-      last run: https://d.kernelci.org/test/maestro:6abee9ada3f195e1aa1a8147
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1416
-      last run: https://d.kernelci.org/test/maestro:6abee8d5a3f195e1aa1a7c4c
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1417
-      last run: https://d.kernelci.org/test/maestro:6abee8d5a3f195e1aa1a7c4b
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
-      last run: https://d.kernelci.org/test/maestro:6abee9bba3f195e1aa1a83ba
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: exynos850-e850-96
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6abebbe8a3f195e1aa18d5f8
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6abebbe8a3f195e1aa18d5fb
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abebbe7a3f195e1aa18d5f2
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: imx6q-sabrelite
-  > Config: multi_v7_defconfig+preempt_rt
-    - Architecture/compiler: arm/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abeb039a3f195e1aa182ea6
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abeb0b4a3f195e1aa18321a
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: mt8390-genio-700-evk
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec164a3f195e1aa18f654
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec792a3f195e1aa19290b
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: rk3399-rock-pi-4b
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec167a3f195e1aa18f664
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6abec460a3f195e1aa190b04
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+ltp
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6abea479a3f195e1aa1770e2
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
-      last run: https://d.kernelci.org/test/maestro:6abee8d5a3f195e1aa1a7c46
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
-      last run: https://d.kernelci.org/test/maestro:6abee8d5a3f195e1aa1a7c45
-      history:  > ❌  > ✅  > ✅  > ❌  > ✅  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+Best regards,
+Krzysztof
