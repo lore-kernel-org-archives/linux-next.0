@@ -1,67 +1,69 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2375747C0F2
-	for <linux-next@vger.kernel.org>; Fri,  2 Oct 2026 10:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECEC480DD4
+	for <linux-next@vger.kernel.org>; Fri,  2 Oct 2026 10:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790936915; cv=none; b=DoJ+143IsX4p29j3KpdF7dzBVJjL8yRnccClG7YKcpOr1xtkGZs68gwMqYVT2WG3xfYwW8iUJI5FWl8PhAYGrdfvmHcuV/sBCIwJAvL2jj0gyg2oI3Gac3CWWVA8u8fFVhQrogWYB69ZuehFKTg3hLKWj3RqpRkdbnkGSVWnnkI=
+	t=1790938313; cv=none; b=gbDq3Cmjq1qsY+pObX6Z/gXXYtVzgk8CnZtdD9RXxFNpsWRdktcIjZ54MZ7ENGEMHE6K10Iq+3KCLgQxc1dIW3ePEuR5HNJzC7sF3TwCqIgqkSbdbjbb0UjeWngcxPKTXi3dY+Y78javvrhFpBEi+QUHs2K6PeJ9NOk2oiDzDaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790936915; c=relaxed/simple;
-	bh=ulZGt3hGW/DWBTKj73zWF29XUQW/kZUlxv4IcnV4FFY=;
+	s=arc-20240116; t=1790938313; c=relaxed/simple;
+	bh=IdiDV2teKyKvxBT9lfil7LD2I+AMLYDHV69XskaWBvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hn/WCPkb0sqATRAhECMLW+7ujC0ncho2QzQ9YYhbyBZbZMuNOBQQkMbFVOge/dQPcWteFxCm+UdCTK6dIByVE7wz+/lA0HjeJyjO4GUNi1iK3JmJWA6ng9vCwOtSZX0k4CxwqaAqJsM1My+Is7bzNZyLqGmtPJzLVTiLmejEHzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=lrQZHkYo; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="lrQZHkYo"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qmQEr/Dj+35mDYom6RMdTBxkcfbDjTwzfcf3Fv3oU7o=; b=lrQZHkYoifLJAG4Vhex+TKnarH
-	Mph+8HPz6atlJaORvsZWnH7mc5VMLMbIhtQ5ijvcLW12N6ZrOtHuhNJtE0+YBC/hqd6sXcRhPOgHY
-	Sjwv9M7GHh0x3fYOeQj8lgyRgLueGMA8VbJ6cUY1jTvmqpDtzK5gS8FSFb7DNUUfItJZR+8pNWOOh
-	Ivpm5YJ+EQIhR3xp7Pvn3wbp78plCp0iWBRUm9E2on02offCTXf81LVKZbC6N9SYwac3FPnu5gEsT
-	fcD3ZvH4pJSDpOS6y53teQXMFzhhx/H6IBD6RKb0nx80pT6HfEHs0hIt3uu2cRJt9O7m1BGo6Exzy
-	kSBXKrvw==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1xCaVB-000nlf-2m;
-	Fri, 02 Oct 2026 10:28:30 +0000
-Date: Fri, 2 Oct 2026 03:28:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Mark Brown <broonie@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CilZ0bwL4A1YUw2g35q3t2efXV8zR1rkr+oWkrA3BYplmuuCIl0AeY0QoihWvuZxTo5Tvdgk8wJCUfE8t8J4GdjDvcCfMSIusKZ9kMPB/opi9X67l7xrkhs/OchdfxfwPv3aQ3WHU8DsROLAuOb0whhVfsWTYLOEi25cooTfeLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6411F000FF;
+	Fri,  2 Oct 2026 10:51:50 +0000 (UTC)
+Date: Fri, 2 Oct 2026 11:51:47 +0100
+From: Mark Brown <broonie@debian.org>
+To: Breno Leitao <leitao@debian.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org
 Subject: Re: [PATCH] merge_msg: Gather the email addresses for the
  conflicting tree
-Message-ID: <ar-HExtECa8SRtMc@gmail.com>
+Message-ID: <d3292265-67f5-4103-8f46-a1b8359a7348@sirena.org.uk>
 References: <20261001204935.635681-1-broonie@kernel.org>
+ <ar-HExtECa8SRtMc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ePRisk3aeB1/G93c"
+Content-Disposition: inline
+In-Reply-To: <ar-HExtECa8SRtMc@gmail.com>
+X-Cookie: Expedience is the best teacher.
+
+
+--ePRisk3aeB1/G93c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261001204935.635681-1-broonie@kernel.org>
-X-Debian-User: leitao
 
-On Thu, Oct 01, 2026 at 09:49:35PM +0100, Mark Brown wrote:
-> +# Rely on the sending MUA to dedupe
-> +for b in "${hb[@]}"; do
-> +	if [ "${b}" = "origin" ]; done
+On Fri, Oct 02, 2026 at 03:28:24AM -0700, Breno Leitao wrote:
+> On Thu, Oct 01, 2026 at 09:49:35PM +0100, Mark Brown wrote:
+> > +# Rely on the sending MUA to dedupe
+> > +for b in "${hb[@]}"; do
+> > +	if [ "${b}" = "origin" ]; done
 
-I am confused about this 'done' here. Shouldn't it be 'then' ?
+> I am confused about this 'done' here. Shouldn't it be 'then' ?
 
-> +		continue
-> +	fi
-> +	bc=$(../tools/get_contacts ${b})
-> +	IFS=',' read -r -a addrs <<< ${bc}
-> +	cc+=("${addrs[@]}")
-> +done
-> +
+Yes, it should be a then - that was a last minute fixup before sending
+that I obviously garbled.
+
+--ePRisk3aeB1/G93c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq/jMIACgkQJNaLcl1U
+h9AjJAf/bPyWJ37rb4XWWW/+ZBYFezBiX4w1/tCjr/2MHqms5FPPkk/rwCjXwCQl
+f3Kdq3rTbc2tOtkfELuDWTAEIltq5YBriQNUqMCMbhbwMdCt/205XfCQJ+6KZdUv
+WGX6rYTVgxzIOpuASIiLFKhhTs7/m0rWGmNxCr4dK1NvpAFvefct7gPVlYX4Fn4x
+2IXLd5mAp1EwAnfBNzX8KMfUqjkfIqlUDCrM+qgmpjI5kZIAC/kYXnyrlQwzEUjk
+ifdtaK1CnLpGBBUJWTAtUbKij8t4bdjqI2YIZGaT6s+mV8PYcF+JabIv6Nk2oPfQ
+lJOM8y9KpBQMAN+QW9uvk9Cf5BGiKA==
+=t59k
+-----END PGP SIGNATURE-----
+
+--ePRisk3aeB1/G93c--
