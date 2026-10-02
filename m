@@ -1,185 +1,127 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF3747D95C;
-	Fri,  2 Oct 2026 23:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76DF25F7B9;
+	Fri,  2 Oct 2026 23:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790982199; cv=none; b=Es3XjxYmt6uP09vckvz5loWIS8V9LBmwpdPwG/8Kn9HHygrZuM2aeyxYCSjycFd+msMjyeo1DFk22ca5659AsPkpppCAlc4QXAA8wt7ewJMxPq2FIo6UByPrgdE5QKRpWzqQZd9WDG9k3IoQL4/+LPaweQycekpD2+gpnYimSRU=
+	t=1790982400; cv=none; b=KfALSFy1f1H1VISnY+TxNtxseoeNSDRJXulsueiyuz388LjUPS5PojC8R10yzhvNICCGpWk+6JcC9EIhdYH2jI7lkK/NYRiUWz6otHWBmhhb6IExoqTJo0S+Jy55heiSOwHQORcIBOK31dy4ZsWxIlZ/FTPGgZ0smkZTCJwRMlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790982199; c=relaxed/simple;
-	bh=+zhJ5n2rQXVJZpnp51czddJ0mgFHdvH5jxSNiAxmzyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X54fcqQjrCqPW3cwb0NBQc1VCAs77xId+oJSFMt+kCYU4QKKyAkNaHMLsNedb2wpUD7bk705tZSD4ICgTr6Gruh5yeHTDMgXilrt5YJyi+5Pa6s7rPagh7w6jHkC6dzPzvfxZWEpq8AEK9p+Gf0Pmrph2BQkSMPQV1wFSYvtUF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUKFWLFB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790982400; c=relaxed/simple;
+	bh=G0ehjrQTHNkoIUtvOrhLgjOSaa2sUAG6/htLVsm0ySs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkzahUHNMm7NjsirXa0gFfVexuprdGF/VUE1lCYHTz4UUvM+IN9mnzoqpkeeGnUuxs/rek0uZX7WhtvupqIEiM8b4pTfAhNzgEJO3PodB9qzt3Cf9/g9J3YUxwlIHDxQIvRtqWxrHWZdA+VGqd4YmVi1ebd5u2TZZaHNp9R+/TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiXSF2C/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUKFWLFB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171891F000FF;
-	Fri,  2 Oct 2026 23:03:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiXSF2C/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B441F000FF;
+	Fri,  2 Oct 2026 23:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790982196;
-	bh=LMv/HjtW/85pT4bAEcJzZ6kcFDGpcguHiAZY9Y4BPUs=;
-	h=Date:From:To:Cc:Subject;
-	b=XUKFWLFB2Ohak/4ODzY1yrLiNj3lVV7mJ/dWr+j3pW5KQ7a3sI26rcVxcMP80Ysge
-	 2gSwdVVW6JHVFlvp+MmjwHy2XC8J0UsychY64QZXLSub0rMae00f4apd9bLu22+ibb
-	 TrxVIJIDO+H15eyVAVzyDCgwRrM+WdniqzyCibnSIX5OCY/ZiWccUn/QKki/OCRPLn
-	 KHmzBsEq2QxVKdX44I/P9hGpQENlHt6Sj7EwJ1xbwLSkyURvozIth6ooGT9SrzlvSX
-	 KnyGAToyXNOpjC3LrGcLxycChWUuiSqnuZvgWzqoFopb8oY4AiXknzrm/CRzr/blcT
-	 /xKAeVFJag/xQ==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id ECA491AC57CE; Sat, 03 Oct 2026 00:03:13 +0100 (BST)
-Date: Sat, 3 Oct 2026 01:03:13 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc: Fuad Tabba <fuad.tabba@linux.dev>,
+	s=k20260515; t=1790982398;
+	bh=/L5zJYgpln1RMs+685EXIcz9wmgL0JHHpmJGUTsDh+g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GiXSF2C/tcsnNKP9r/fJrFmV9qRWCCNsxaWC1Areuy5RVdQnis5UNY+q2TVeNsSdi
+	 2Lj4XGOP53fPB7i3LWP4yJ4rzuJXkqIEGcjTpFXFumqjd++rijV9Y0RpvAn1WXDZB/
+	 XosfrWYk7XSOx/hdyFQvI7WbPyfj6MjNPpRC9SskoOV4IOAJU9ClKhln1Z73B85ZXX
+	 5XpEhWdnsvEyfvMoTSq2VaD3QKATvGYu0q7wiNJN2NgQ9XcCyvknyhrcRPS1R7HE0b
+	 VBZpcQdUDQdMvlPDr1Og2dIIctclLDa0rr9ifF6vCT6BcGF5DUa6Hw77Z6GLwKg9Y2
+	 8RmAtMcAoYAfw==
+Date: Sat, 3 Oct 2026 01:06:32 +0200
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the kvm-arm tree with the origin tree
-Message-ID: <asA4MWPrTXX4Pd-i@sirena.co.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the kbuild
+ tree
+Message-ID: <20261002230632.GA314599@ax162>
+References: <asAzcgDsbNEFIfKV@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ALJyjvfBoNYxYLhw"
-Content-Disposition: inline
-
-
---ALJyjvfBoNYxYLhw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <asAzcgDsbNEFIfKV@sirena.co.uk>
 
-Hi all,
+Hi Mark,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+On Sat, Oct 03, 2026 at 12:42:58AM +0200, Mark Brown wrote:
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+> 
+>   init/Kconfig
+> 
+> between commit:
+> 
+>   f85147b291e35 ("kbuild: move the toolchain checks into scripts/Kconfig.toolchain")
+> 
+> from the kbuild tree and commit:
+> 
+>   eb13a1ff271b0 ("random: vDSO: avoid call to memset() when zeroing reserved parameter")
+> 
+> from the bpf-next tree.
 
-  arch/arm64/kvm/hyp/nvhe/hyp-main.c
+For the record, this change is from Linus's tree, as it was merged in
 
-between commit:
+  ac7445c28e7a ("Merge tag 'random-7.3-rc6-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/crng/random")
 
-  04447b95c62be ("KVM: arm64: Use the host's HCR_EL2 for non-protected VMs =
-in pKVM")
+but presumably your stable base does not have that merge depending on
+whan you started -next so it comes in from the bpf-next merge of Linus's
+tree in
 
-=66rom the origin tree and commits:
+  2b5440b31caf ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf 7.3-rc5")
 
-  872383bd12e11 ("KVM: arm64: Add per-EC entry/exit state marshalling for p=
-rotected guests")
-  06499de8f998e ("KVM: arm64: Skip fixed-feature state flush for protected =
-vCPUs")
+I just wanted to make sure the bpf folks didn't think they were on the
+hook for this conflict, it is only on me with the Kbuild tree now.
 
-=66rom the kvm-arm tree.  I am very unconvinced about the merge below.
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Thanks, the 'source' line looks correct to me now. Did you also shuffle
+CC_OPT_INLINE_MEMSET into scripts/Kconfig.toolchain like below? You had
+it right in
 
-diff --cc arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index ac64a036b0a95,c709a6ff7448b..0000000000000
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@@ -216,7 -693,8 +693,9 @@@ static void sync_debug_state(struct pkv
-  static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
-  {
-  	struct kvm_vcpu *host_vcpu =3D hyp_vcpu->host_vcpu;
- +	u64 host_hcr_mask =3D PKVM_HCR_EL2_HOST_PVM;
-+ 	hyp_entry_exit_handler_fn ec_handler;
-+ 	u8 esr_ec;
- =20
-  	fpsimd_sve_flush();
-  	flush_debug_state(hyp_vcpu);
-@@@ -229,35 -707,60 +708,64 @@@
-  	if (!pkvm_hyp_vcpu_is_protected(hyp_vcpu)) {
-  		if (vcpu_get_flag(host_vcpu, PKVM_HOST_STATE_DIRTY))
-  			flush_hyp_vcpu_state(hyp_vcpu);
- +		host_hcr_mask =3D PKVM_HCR_EL2_HOST_NPVM;
- +	} else {
- +		hyp_vcpu->vcpu.arch.ctxt =3D host_vcpu->arch.ctxt;
-+=20
-+ 		hyp_vcpu->vcpu.arch.hcr_el2 &=3D ~(HCR_TWI | HCR_TWE);
-+ 		hyp_vcpu->vcpu.arch.hcr_el2 |=3D READ_ONCE(host_vcpu->arch.hcr_el2) &
-+ 							 (HCR_TWI | HCR_TWE);
-+=20
-+ 		hyp_vcpu->vcpu.arch.mdcr_el2 =3D host_vcpu->arch.mdcr_el2;
-+ 		hyp_vcpu->vcpu.arch.iflags =3D host_vcpu->arch.iflags;
-  	}
- =20
-  	/* __hyp_running_vcpu must be NULL in a guest context. */
-  	hyp_vcpu->vcpu.arch.ctxt.__hyp_running_vcpu =3D NULL;
- =20
-- 	hyp_vcpu->vcpu.arch.mdcr_el2	=3D host_vcpu->arch.mdcr_el2;
-  	/*
-- 	 * HCR_EL2.VSE is host-owned (a pending virtual SError to inject), not a
-- 	 * trap-control bit, so it must flow to the hyp vCPU alongside TWI/TWE
-- 	 * for the vSError to be delivered. sync_hyp_vcpu() reflects it back.
-+ 	 * A host-injected vSError is masked by the guest's own PSTATE.A, so it
-+ 	 * applies to protected guests too.
-  	 */
- -	hyp_vcpu->vcpu.arch.hcr_el2 &=3D ~HCR_VSE;
- -	hyp_vcpu->vcpu.arch.hcr_el2 |=3D READ_ONCE(host_vcpu->arch.hcr_el2) & HC=
-R_VSE;
- -	hyp_vcpu->vcpu.arch.vsesr_el2 =3D host_vcpu->arch.vsesr_el2;
- +	hyp_vcpu->vcpu.arch.hcr_el2 &=3D ~host_hcr_mask;
- +	hyp_vcpu->vcpu.arch.hcr_el2 |=3D READ_ONCE(host_vcpu->arch.hcr_el2) & ho=
-st_hcr_mask;
- +
-- 	hyp_vcpu->vcpu.arch.iflags	=3D host_vcpu->arch.iflags;
--=20
- +	hyp_vcpu->vcpu.arch.vsesr_el2	=3D host_vcpu->arch.vsesr_el2;
- =20
-  	flush_hyp_vgic_state(hyp_vcpu);
-+ 	flush_hyp_timer_state(hyp_vcpu);
- =20
-  	hyp_vcpu->vcpu.arch.pid =3D host_vcpu->arch.pid;
-+=20
-+ 	switch (ARM_EXCEPTION_CODE(hyp_vcpu->exit_code)) {
-+ 	case ARM_EXCEPTION_IRQ:
-+ 	case ARM_EXCEPTION_EL1_SERROR:
-+ 	case ARM_EXCEPTION_IL:
-+ 		break;
-+ 	case ARM_EXCEPTION_TRAP:
-+ 		/* Nothing was marshalled for this trap, see sync_hyp_vcpu(). */
-+ 		if (ARM_SERROR_PENDING(hyp_vcpu->exit_code))
-+ 			break;
-+=20
-+ 		if (pkvm_hyp_vcpu_is_protected(hyp_vcpu)) {
-+ 			esr_ec =3D ESR_ELx_EC(kvm_vcpu_get_esr(&hyp_vcpu->vcpu));
-+ 			ec_handler =3D entry_hyp_pvm_handlers[esr_ec];
-+ 			if (ec_handler)
-+ 				ec_handler(hyp_vcpu);
-+ 		}
-+ 		break;
-+ 	default:
-+ 		BUG();
-+ 	}
-+=20
-+ 	hyp_vcpu->exit_code =3D 0;
-  }
- =20
-- static void sync_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
-+ static void sync_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu, u32 exit_reason)
-  {
-  	struct kvm_vcpu *host_vcpu =3D hyp_vcpu->host_vcpu;
-+ 	hyp_entry_exit_handler_fn ec_handler;
-+ 	u8 esr_ec;
- =20
-  	fpsimd_sve_sync(&hyp_vcpu->vcpu);
-  	sync_debug_state(hyp_vcpu);
+  https://lore.kernel.org/ar5-4Yq3wtmXTWnD@sirena.org.uk/
 
---ALJyjvfBoNYxYLhw
-Content-Type: application/pgp-signature; name="signature.asc"
+but the patch changed slightly since that resolution ('4294967295' to
+'4294967294') due to a problem I reported
 
------BEGIN PGP SIGNATURE-----
+  https://lore.kernel.org/20261002094932.GA3435055@ax162/
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCasA4MQAKCRAv73Ows9A4
-iZZDAP9uRmnTjPYS/46Ix4X08Lw5JNi3fpKFrsk0zYbKq6sb2QD/aw6ps9HYqWBp
-iz8caPba1xbzkeXwVXzK1CA8vKvVtgs=
-=jcWk
------END PGP SIGNATURE-----
+before the patch was sent upstream, so I wanted to make sure that you
+did not reuse the old resolution (and I didn't see a mention of it in
+this email).
 
---ALJyjvfBoNYxYLhw--
+diff --git a/scripts/Kconfig.toolchain b/scripts/Kconfig.toolchain
+index d708a175fe48..c9d2aef4e355 100644
+--- a/scripts/Kconfig.toolchain
++++ b/scripts/Kconfig.toolchain
+@@ -247,6 +247,11 @@ config CC_HAS_ALLOC_TOKEN
+ config CC_HAS_MULTIDIMENSIONAL_NONSTRING
+ 	def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring__)) = { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
+ 
++config CC_OPT_INLINE_MEMSET
++	string
++	default "-finline-stringops=memset" if $(cc-option,-finline-stringops=memset)
++	default "-mllvm -max-store-memset=4294967294" if $(cc-option,-mllvm -max-store-memset=4294967294)
++
+ config LD_CAN_USE_KEEP_IN_OVERLAY
+ 	# ld.lld prior to 21.0.0 did not support KEEP within an overlay description
+ 	# https://github.com/llvm/llvm-project/pull/130661
+-- 
+Cheers,
+Nathan
