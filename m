@@ -1,52 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDCF4BE443;
-	Fri,  2 Oct 2026 23:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB24F1F938;
+	Fri,  2 Oct 2026 23:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790982715; cv=none; b=n4oL/reo2VG6nfSvjmoKlMpPNMnWpFG6Sk2WmiQcv2e4pUwHHixc+oSVdEUIOTGgokRs2/Lc4+XPQKf8mLCPvgnu9QANybnqR/vVaS3S/YPAAC8WDl4pd5En0PAiQhKm4x9qV38H8z/q5qOtDCFXqFRpg+j3cFE+LVKmiE4LE80=
+	t=1790985443; cv=none; b=ex02JBAERu/V8j2tXciGbf9cjFEJava+zQ+0w7KmRKpZ9pkMXihagWzJIaBHt4pEAjmYo6cDwPe0VvIe1+MWzM2sOCXCkBPw0RBQegOoBYWYiZIF7k6q6faEB7sXYl7tzRNbYh+Heq4SzvFNiPjRnI2airBD7eDiFTStDXhFVbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790982715; c=relaxed/simple;
-	bh=Qg1UBe7pY9qBC27d8UoP7JV+IBLSCT+tqgRgQ4ycH9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fwn511qRlY7lSzrGOTS8tJmhYkxYEIeHLVR6hDFKnQ+8tsP7U7ecvyZq9IadjXZ2MTGuYivCtcEkIJ3rOVynCuarg5fBFXmnLPrM6p+wwF/2xAnLEc/V8qtQi+TTwrtRJqmUGBrTxh2JF8SvrEOY2D48d8g7J4q0BJOi8bYVsUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOYi8Acd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790985443; c=relaxed/simple;
+	bh=u3M+YjOLwTCHkcAfSRTPaMmvGuZawj2f43sNQOdGTwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tnHFh+pv5x+UIXkpkZRvf0OvFb0Ii4x+3bUKaZsZ0z2cYhp3WhgqaAkjRLPJo7xhxYBBPDERdl3Yg6tsPu0oqFKWHgUeM+1dOujy7vptWozinZkRsMo6Bd4ZPqoai/YVfpH2J8KqlKCXKUVCJmMiDuhJ/ZU4fjdFtlzc+eP96zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sppg+HEZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOYi8Acd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A4FB1F000FF;
-	Fri,  2 Oct 2026 23:11:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sppg+HEZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512C81F000FF;
+	Fri,  2 Oct 2026 23:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790982714;
-	bh=wGJL9Dq3oS9dB0mFzdoCJmdQpea+lx2mM7lSgkaajm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZOYi8Acd3mm3RYq7Ae7+7ZG9TZVcqpNhVjBQfBe6lEqKmc8q5VHhdBid2IvkSaBtJ
-	 0jgIh7hS0qQA/EftmD9fBEc5xNSFqHXFNETWPztJ6tcGKmTUEViEZCcwHdmbkOnQpl
-	 EZRW/53plQ60QkkMlrvFcsVD5lVWf7bG+/EXdZLBabKNyz/CRKdpyD+ftW6uCr5jqa
-	 Ex/gzuQgC7Xl6OrLw5XPnjJ3gWn/z3qIKXXr4wBB9YjTre2/g2SPTDxnZLNEgyYJd9
-	 nXc8Th9ANhWAeNXNGrRp8zb43G7ntLe0YtyU+CVupmOW9T5xzFL9247NHcfmsK58ab
-	 GxHfrxNsbR/7A==
+	s=k20260515; t=1790985441;
+	bh=/l/jF3wfO5lq3SKfm4yS9ReGwk0og8BEpQBXmuGsxwM=;
+	h=Date:From:To:Cc:Subject;
+	b=Sppg+HEZC0gb3A3Vxw8mNUjhQgzQILuM0X/QKXhgJSFDT3KsnXIxuY1LgooPDmEfS
+	 z2fqwTpdU0qgQFbL7vn9zf6TYqB/XDYWjuaTCEzObwSOHtv6i93PHYa5E9iODB/FAb
+	 g31q/qJ5bsmTf/Rx3ILb/2TdNZfTuk22y1a/8MjztFC+YE+qUZ6DC7JTIfv2ymMCj0
+	 a3K8gv/tP89+YxcTV5qJrQbn+QcsACRevxnLCs2lLBHjYiLy8Dltgf2mJMeZ2kxTpe
+	 iZ9zwzaeQPmhKN9it4GWXHM+F3C6SVDT+hqeM7dD/Ha/6EfPUu+9t0C1SyTprUxwBr
+	 8oE0hQXmFVuHw==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id B933B1AC57CE; Sat, 03 Oct 2026 00:11:49 +0100 (BST)
-Date: Sat, 3 Oct 2026 01:11:49 +0200
+	id A9A381AC57D0; Sat, 03 Oct 2026 00:57:16 +0100 (BST)
+Date: Sat, 3 Oct 2026 01:57:16 +0200
 From: Mark Brown <broonie@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the kbuild
- tree
-Message-ID: <asA6NZ4QKp4k4nGD@sirena.co.uk>
-References: <asAzcgDsbNEFIfKV@sirena.co.uk>
- <20261002230632.GA314599@ax162>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the landlock tree
+Message-ID: <asBE3Kc-zUsT46XS@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -54,51 +42,42 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mdPHBtUdV1DkW8Cb"
+	protocol="application/pgp-signature"; boundary="8OLJbbKeYBVJ6wZM"
 Content-Disposition: inline
-In-Reply-To: <20261002230632.GA314599@ax162>
-X-Cookie: revolutionary, adj.:
 
 
---mdPHBtUdV1DkW8Cb
+--8OLJbbKeYBVJ6wZM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Oct 03, 2026 at 01:06:32AM +0200, Nathan Chancellor wrote:
-> On Sat, Oct 03, 2026 at 12:42:58AM +0200, Mark Brown wrote:
+Hi all,
 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+After merging the landlock tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> Thanks, the 'source' line looks correct to me now. Did you also shuffle
-> CC_OPT_INLINE_MEMSET into scripts/Kconfig.toolchain like below? You had
-> it right in
+ld.lld: error: unable to find library -lcap
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make[5]: *** [/tmp/next/build/scripts/Makefile.userprogs:29: samples/landlock/sandboxer] Error 1
 
->   https://lore.kernel.org/ar5-4Yq3wtmXTWnD@sirena.org.uk/
+Caused by commit
 
-> but the patch changed slightly since that resolution ('4294967295' to
-> '4294967294') due to a problem I reported
+   98fd5ad4a890e (samples/landlock: Add capability and namespace restriction support)
 
-That will be delayed for today since the scripting has got confused by
-me moving machines in the middle of running the merge but it has gone in
-later in the merge so it should be there in the final tree, and
-hopefully in the right place next time I run -next (due to LPC/MS it'll
-be spotty at best this week, I and everyone likely to provide backup are
-all in Prauge).
+(quite why samples is being built here is unclear to me...), I have used
+the version from next-20261001 instead.
 
---mdPHBtUdV1DkW8Cb
+FWIW the x86_64 allmodconfig build here is actually a cross build, I
+don't have many cross libraries installed.
+
+--8OLJbbKeYBVJ6wZM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCasA6NQAKCRAv73Ows9A4
-icbrAQCi71c2N/fBwDD5SxPZ72da6XxIuVJSK56u4TV8G9zi2gD/Tp0Pe/83URQa
-xX4/VcCmG6bwA/eNxu/ZfGrkCwS8dwk=
-=DnDE
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCasBE3AAKCRAv73Ows9A4
+ifLUAP9jOCwjj2iJg1KYrtpHc9UOQQZ7eOC9zuTKQh0kJkCK0wEA9FgG3haWxWOr
+SJ4N3NAA6MGKUeifE1IKibEQZlPu2Ag=
+=3Cq4
 -----END PGP SIGNATURE-----
 
---mdPHBtUdV1DkW8Cb--
+--8OLJbbKeYBVJ6wZM--
