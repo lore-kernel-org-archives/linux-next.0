@@ -1,131 +1,135 @@
-Received: from mail-pj2-f41.google.com (mail-pj2-f41.google.com [74.125.227.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3723612E8
-	for <linux-next@vger.kernel.org>; Sat,  3 Oct 2026 06:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC5C39182A
+	for <linux-next@vger.kernel.org>; Sat,  3 Oct 2026 08:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791009817; cv=none; b=H3yabJssj9yHO8vtbtOEnDokCTM7XgPceNs3JZ9iNmsS25Fd0seJwdAsTm90awHJGpjv6M83dV/+a1fc18SLeS1h2xwBLqjm/xvuhH6Gz9id5BxmjnvtlkXuurk9JmGt7uM8j6mCGFqF4mMtJeK1o952/ufNlVOwlH5YycVzwGY=
+	t=1791015696; cv=none; b=HKtOqWTnRmUBj8yBAQYV26MGh5O95fmDtHis2BEg6L+3bzGZbSFdkEIwxAfo9d12njZctcyfBT6srxGgi0xGpaiXJbKba4dBDMz0y4+BJe7B7jmcdvoazOHwuZcTsW5ko504JwuAD6wwrX8EJcmE2VZmdmPc6toMd5ZWQ7k9sCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791009817; c=relaxed/simple;
-	bh=ryisnPL+d2gzMUjUclobqs/GmZtuvA4REd2ag8z+s6o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=hrkG7ia3yQuNqLIZFmAwNZBVlrWE8hoOnQSWMS4nR1G2AUBljozX0vNK+Fo/KK1Ylu1KLD5oO675vVxu+1R5YCOMJmgk+vZo2e6VVuDe2dW07g+E20AcRlZXNq/8+U96zJ3D+XRmQPWrV3Q15uVFFPRTWXlhhaLdqTVdQrpzrbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfQ13+5B; arc=none smtp.client-ip=74.125.227.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791015696; c=relaxed/simple;
+	bh=X4VdeE1FyPz/sWJc7SqI1YPmnbk00Gc40R8V09goNYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nM0Fy78lNu1DOaw7/Y57yAzqSxI3aeGBB6xvw58DrvS7r54n4pJg9F+fQjyxM3LWd4muAw6nQJV5FEQFOhnBc6p/FoJ7jDwie89hHjLjRSBLw/NKLL2BBTv8bV/wDutpn+pXBaCI/zfwBKrXOhaVL4O1rAlx5Pn5dEK0yUfbY/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=GoN/KTE8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WWo7Dl4r; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfQ13+5B"
-Received: by mail-pj2-f41.google.com with SMTP id 98e67ed59e1d1-3a7906f463dso153686a91.3
-        for <linux-next@vger.kernel.org>; Fri, 02 Oct 2026 23:43:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791009814; x=1791614614; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=5hea1toWUP43MAmLnSW9JW60/RDmL9+JiV8rQiXNzb0=;
-        b=nfQ13+5B0HEgftrFp+nSVcNUgiZjLXoZD3urM0fouRlujxwYCCbV4l4uozll38Gwx/
-         oIUO7JPcQ7T7RUcgiNI/EZgj6ud67A461F77g6JcVFjjvdAq3kuScF34Cbj45oKOXM3Y
-         nVw8R1OPlYXCunhugielUpz07o8DNZHPIWjO9u5xDJ+3OddzidBXbdKY56NfV5e73UJq
-         Nai+IyrZDyhzFx6pOqCNUDDQ7ECw1KGJl8OjTT6drMIXi8N4eTh+PWBDAONhca/Iut47
-         O4xtlNCCWxPf+h3ZaZnwxKjEuGEv2AQjue6CA2USh1D3LH6UMtLOrvr3JJ5Km494M5kX
-         FoNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791009814; x=1791614614;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5hea1toWUP43MAmLnSW9JW60/RDmL9+JiV8rQiXNzb0=;
-        b=ChG73nTDECESRcdgsy9pVHDxgNBFOH2iTV6D7J2JH2UVa5XgGo1ERx6GNaSp2oOFTg
-         SPkhG96dCopXWwc08oWXaAgtjJhqEg3wsfcgM7vh0IY7r1mBu3bm2DHzMkAAGNgoXhE5
-         d80hG4KaPLtreoolNeHOoBUxUKMppNMVMD0UQHybrYeHHRsIvlFgYztYPxRGVGbD4fnv
-         eUNUFpwW31qz5TF/8QQBWLz5FlPGwmhUXK6mbZCggnI+XL75X42HOZ4Dsy4AhidM08T6
-         Xink6wI3JgvVJERYUwBFX2X4mqx7xMANSYC+8LKoA2j1gsIA5CvqpAw3mc3nXWa2uux1
-         +wRA==
-X-Forwarded-Encrypted: i=1; AKwUvBxqgu43gJKee9qDDwEE/lwbSvg61TzNgaHBgzif3U7U0Dooe0Nvnc3azeVOjQHQcxw+RQwWvfv0/gZ2@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ1fw9QIVfjFwqsLUCGRMquS8VW4ef7MA0L+t3kNZepuP1xThIj
-	I1zLDITxY80VdpQwD7tWYJ6LoUYlrT2SnBmWD3uYfL3J6BLS515SMn6G
-X-Gm-Gg: AYBFou3fxas3oAhu2eeOBomG7wbsBVOV7yMIPQpXeHJ9sh4QEEiUHA7hhjQcX8Z5+yD
-	F50fCWIRYL9uef3ZfKSuuab8v02+C7YhlmnkRGjPcEmwbANBLko/iDjHHPsnNlOkBSSgMxP4jFU
-	1xAQ6qxfFBSshh0LHx3W0S2DpN+EfhRTUlIR7jP6l3aGvA1cEcVgck/RGhnubWpV7ce0HyFZjh8
-	u5bFQRoyfs4SDev3aT1g6EH7aC2CRCrbBdnPTSYd3Hmb8cBgTkN6JyC+pPUVU+xWfw+YdoPaJgB
-	T8ZeSb4GbkdcoiUl0VddIVYAyunw9ioQ9jN4AeJklDKkZCJrbbRbntd0vRGvTblLtrVPxuZM2Mv
-	Q5zID5vT2iZmzc8kMI+jRgnP1J6/2M2n9TqNqMMe/Fut25UNNMq8BQGP+UIoTKc4Z5+M1wO11hl
-	8xIax3m/iYh5/xal85RfCDQbTzOnHN7Ps4bC9tyQtFXWx89NDawUTnZezjFjct/s2tGt5BDql47
-	mkbImSQ9oAwbN3xDGEj3BkbnKIYjmxug3yt72p4/lHKSDQrs8eKzIOYmVfjTuUeSbgocW39VkoP
-	5FU=
-X-Received: by 2002:a17:90b:1c10:b0:3a0:3673:dbc0 with SMTP id 98e67ed59e1d1-3a6ced24dffmr4975882a91.49.1791009813693;
-        Fri, 02 Oct 2026 23:43:33 -0700 (PDT)
-Received: from localhost ([153.61.198.255])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc9f73557f2sm1830292a12.8.2026.10.02.23.43.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Oct 2026 23:43:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="GoN/KTE8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WWo7Dl4r"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D84667A00E0
+	for <linux-next@vger.kernel.org>; Sat,  3 Oct 2026 04:21:34 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Sat, 03 Oct 2026 04:21:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1791015694; x=1791102094; bh=PhzkZQPjeI
+	yIxCAymk0H0E5hLIYzzY/pTw6FpZUP9Qs=; b=GoN/KTE8C3JDHRZXWRTxO50BIb
+	RDchInGqM3/5UXysawZL9IT1RSVAmPUIDH7D1wkpYZmfH1FeY0Hnyx7Pet3y12ae
+	8YpIvIGP9B2zEXT9AejV3JpXRi8T02fQQcvCWNoIfm8oXjJrJcyH06x32NOjo+Ap
+	Ngc8xinqW3ZVn3d2C3Un8vm8MhdD3hG7CWq4OwlACB94/Yw1jnsN985pYy1gVKQH
+	ZN2yk125A1ORVpavw79o+nZ2nBHG3Xtu7YCyZkwY39KaIFgHh3BnWvZfmWoeuhet
+	+NEidOR07SLN5wEYWF1Zy5uXA6KKNvHd5sW2xaLnBDOGj/BzueKXnIy3C9SA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1791015694; x=1791102094; bh=PhzkZQPjeIyIxCAymk0H0E5hLIYzzY/pTw6
+	FpZUP9Qs=; b=WWo7Dl4rxUIL2tgYBRd4YboAjdsn1y/V7cJLHCvVD9bOwDoyi4X
+	CHBiNDP3VHlyhqEcoF10LkgWZwX1aSZUDA3bOdvaLcxvfN5JnaUPMTlO57JEp00B
+	qN/K6z5YBZbdxcisX+EPi4Zi3jvgatqPvlBY3ejAx4tjpRDjG89vqHBIA42IjdkX
+	BkSwXDidvALD4sNwsBvZuR4YQHXamsB4xE0upxDTq37SJJ4Aeo/0FUupYeo7/7LZ
+	q0mGH0thg4DkmDotyNCbXBV7XLbxmii1oHkh8GD6yE7uvlbgxnsH9Obz7B8pJ9K/
+	JSUAo2oPg/wwQar8PgswbS9FQOP3kX4T4jw==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
+	action=sign d=kroah.com a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791015694; d=kroah.com;
+	mf=PGdyZWdAa3JvYWguY29tPg==;
+	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:mYjS3RA8svsje5OB8lI2pLVB9A9eDeondqUZCsFHeO0HiyL
+	jAFFE/54QACDbGVU/I9hcyMk+GMz8Y64GgNGmPKGSI3pXoOw79zzLwh/dLxswpc0
+	dgz1lrqqndGHR8BiLNLcm6bwEQpk3XWsyRE4zSXKsEeLvWvFo+LWVtSfm4eWVah/
+	BQeedRAjOE2g+Mc/mXFzxtnzitsY+6U0LsPutWK7hg1MO58fc6A82Q3b8NZAnIAr
+	yD3+n67c0L5tTxnsxa2vk/XMznP0Ym8tinvhFx5lIwFtf0K5W6rrR3pPkiKeIDsC
+	C9HQ9GPg7II5bFQNOfwjNHZlKKHCW5AiQJ8qZUg==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-disposition,content-type,date,feedback-id,from,
+	in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:aC+fjBY7cgoPMKcmzsJC19H5CiACaOz20/zSf94BfFg=:X4VdeE1FyPz/sWJc7SqI1YPmnbk00Gc40R8V09goNYs=;
+X-ME-Sender: <xms:DbvAasrZDUoLiDUeU9B3IyPVmC-x7_IiMxNj0-tQgdWWS85WayQZtQ>
+    <xme:DbvAaq1HO67ABePCnNA5TUKC5KQuOYoLL_pD5d0UaM0XKYVvVvOjzgVgKnZr9wUaR
+    6oWnJCJTRcPN5QnJ_pf0oxUWXnP7z492-ElLlsu7rbwOI9djeo>
+X-ME-Received: <xmr:DbvAasy0mRQ6b4wN-w4aZ14FyEecxp4yX2ANgzILuN4fAmTI3ApfKy5CU4B7sm3kNQE36XBefOn0FA66isSoHzN0dZ7L3jmpqa4OofARiqI>
+X-ME-Proxy-Cause: dmFkZTEKCKyT+ofjzhPg091sZ1aXPLa5G/o0u1JvKFqxSNEHf1y+FxWGzLq+nGTLiLwj69
+    loaiRCnfiiGHjST/7qSt0FxvSMnkt5NRxa0uIAOkGMwi1Q+uIOYcbPTjb2bqQNxHdAI8TB
+    jmRq7X9jiurL/yUEzSf0zbp+UD8784xSeZxBALVknnKUP5HBHbE9ZO8CiD6DJnddxl9+KE
+    KWdxCGiGprSzyAQAi8QNdxKVtLty4HKhG9y9QltTArQaeDtTVKmpaqYvfdPLJ68UukohXO
+    sPSPd5BSav4+c1KoS71zzM1RW+VsbaQSXY25pqLkOlUJy7YZv0+OBsp5SrP4HOPkNqbWC7
+    CD6djbDltwBMnUcHI9O359u5uJOO6qnuhtl+l0ayk7HekKUFUoUuOTQSY/CtzRlbdYUPgF
+    0IRz3qAVVn8SaI1d6ZXka2nW66ZJkej2YVHL3tqam4zT2c7kOksJ706sr9VgttbwQ6vY1x
+    VGQ1DVHuyzUpFS6GaQAC2FroFKvtUtB3F4hSxTA8GhWggTNg6H60H/+GFlqbkMUJj4JIY9
+    hpZDEO7A5dMt9ZmolTtF+Wcm1LvJ9kTsYeu+poyge5Lwh1cONQjk8SzvMdUrXSYGkvVDaU
+    qryoyaMIKvX8F9TSJsnPhIWJJOpxxgrcGCMxsMWSCJE3BqrRD8Oz/+DMXF9A
+X-ME-Proxy: <xmx:DbvAaujIadQ1ssqZ1FHRP3F-Yz1qzx1y4hFgN-lASY6q0zPe4fdbhg>
+    <xmx:DrvAano-udjOZBk_xaAiLOIEXuK1GECMieNYtXA90poCbMPhreB4pQ>
+    <xmx:DrvAatgIXhAkQAnM7gW3ks6ow1DEI9bd7RbnZ3oPMiDtREGS6J_8-Q>
+    <xmx:DrvAahPv5rqy3mMM5mwOcGGTTW6T1y1EUPIjW3hv0GLbktAUSExwIg>
+    <xmx:DrvAaqSwra7wPIpHSQDred3FX73A1_r2RH8xmSUWZcECTh67O_JVZQDT>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 3 Oct 2026 04:21:33 -0400 (EDT)
+Date: Sat, 3 Oct 2026 10:21:31 +0200
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Cui GaoSheng <cuigaosheng1@huawei.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Ruslan Valiyev <linuxoid@gmail.com>
+Subject: Re: linux-next: manual merge of the tty tree with the tty.current
+ tree
+Message-ID: <2026100311-drab-resize-c885@gregkh>
+References: <ar_0KTUpkndGyONa@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 03 Oct 2026 06:43:32 +0000
-Message-Id: <DLUZZPCXSPYF.1PKXK3MYR3TIU@gmail.com>
-Cc: "Kumar Kartikeya Dwivedi" <memxor@gmail.com>, "Eduard Zingerman"
- <eddyz87@gmail.com>, "Daniel Borkmann" <daniel@iogearbox.net>, "Alexei
- Starovoitov" <ast@kernel.org>, "Andrii Nakryiko" <andrii@kernel.org>, "bpf"
- <bpf@vger.kernel.org>, "Networking" <netdev@vger.kernel.org>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, "KBuild Mailing List"
- <linux-kbuild@vger.kernel.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>, "Lorenzo Stoakes" <ljs@kernel.org>, "Nicolas
- Schier" <nsc@kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the kbuild
- tree
-From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-To: "Nathan Chancellor" <nathan@kernel.org>, "Mark Brown"
- <broonie@kernel.org>
-X-Mailer: aerc 0.20.1-349-gb940a4174a3e-dirty
-References: <asAzcgDsbNEFIfKV@sirena.co.uk> <20261002230632.GA314599@ax162>
-In-Reply-To: <20261002230632.GA314599@ax162>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ar_0KTUpkndGyONa@sirena.co.uk>
 
-On Fri Oct 2, 2026 at 11:06 PM UTC, Nathan Chancellor wrote:
-> Hi Mark,
->
-> On Sat, Oct 03, 2026 at 12:42:58AM +0200, Mark Brown wrote:
->> Today's linux-next merge of the bpf-next tree got a conflict in:
->>=20
->>   init/Kconfig
->>=20
->> between commit:
->>=20
->>   f85147b291e35 ("kbuild: move the toolchain checks into scripts/Kconfig=
-.toolchain")
->>=20
->> from the kbuild tree and commit:
->>=20
->>   eb13a1ff271b0 ("random: vDSO: avoid call to memset() when zeroing rese=
-rved parameter")
->>=20
->> from the bpf-next tree.
->
-> For the record, this change is from Linus's tree, as it was merged in
->
->   ac7445c28e7a ("Merge tag 'random-7.3-rc6-for-linus' of git://git.kernel=
-.org/pub/scm/linux/kernel/git/crng/random")
->
-> but presumably your stable base does not have that merge depending on
-> whan you started -next so it comes in from the bpf-next merge of Linus's
-> tree in
->
->   2b5440b31caf ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/bpf/=
-bpf 7.3-rc5")
->
-> I just wanted to make sure the bpf folks didn't think they were on the
-> hook for this conflict, it is only on me with the Kbuild tree now.
+On Fri, Oct 02, 2026 at 07:12:57PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tty tree got a conflict in:
+> 
+>   drivers/tty/serial/serial_core.c
+> 
+> between commit:
+> 
+>   499485a67fbac ("serial: core: fix NULL pointer dereference in serial_core_unregister_port()")
+> 
+> from the tty.current tree and commit:
+> 
+>   b290393074a14 ("serial: core: fix NULL/dangling port_dev on failed re-register")
+> 
+> from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Thanks for the clarification.
+Ick, this is messy, sorry.  I'll fix it up next week when I get the
+tty.current tree to Linus.
 
-The other reported conflict with pci-current is in the same category.
-2b5440b31caf is what Linus's tree has. it's not bpf-next specific.
-
+greg k-h
