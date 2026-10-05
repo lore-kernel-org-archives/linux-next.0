@@ -1,88 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251C247C0EC;
-	Mon,  5 Oct 2026 10:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9419E4052B6;
+	Mon,  5 Oct 2026 11:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791197841; cv=none; b=f4wEmj+oq6dx1/ih4nQnb4L7xMUIz/DH4F50SGv3S0qBXbIdbYJhsyCKAXWefKIYw5zUXGwqOqmpPb2xfL7Aj0BPLJLCmhUeOTnv9lao8wiy86HgdmotlawpFuCUdYecTldUgEmpH14qIzJ1+ZgY1eSdtmBeMveuWoUdWwPbxAo=
+	t=1791198308; cv=none; b=oUAbkEsP5VTRklc8XHYblB/9lCCo7Pe+Xm53IgBKZOBLpwitjvhbRWcbkFG1J2YO6WwHsbPFOe6W6f2HbPc3JJF+kZGZs1kmU84ICHbOP/XDdV7N1QVNOMlz0HRHr0ziEUPFeu0vKCTGKsEKJ6JQ0NHrRGvXtlxKr5kwbvznHsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791197841; c=relaxed/simple;
-	bh=rTWZbM4pfwc/mDro6FSTBTZK0kbfLYa2SB6GLCsVjUo=;
+	s=arc-20240116; t=1791198308; c=relaxed/simple;
+	bh=X4JH2RKNz5ops4o41CmHzvgGZwRG5jnC1ihF7ad8GU0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0NWRT9EgyTQ7Kh+PmFOp+JdflVr/CJjy+CWaPJ8NcPntSyVxvY4XkTA6WmU8MccIjFRQWt8C51/FpfTLjzQMgLPx+LwZLNCVjb+QvnQAH2iu1M5oG9k6iw3jmUaJv/xVivPPYFs5LotKP6ZoejQqdFhRz2sy0wOZ4NKzHYctrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laR//Kh3; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWTl7FyDJQ+AMsJDsfGbH6cVRQNGUL0s2wRz820a2LhQT0aKTfxxgGKuj4SQ6cEtWBHsrfvLIHg91EJHNrEn05Yyl3/rdbfT6lythPvnmIxxFtTfJoBMpFnrQkzBLba+vWHIpFZxjOJpvPJQ+yxjPfJ2vtWMwyK2CIOumUSsyPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkXbsirI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laR//Kh3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E7FC1F000FF;
-	Mon,  5 Oct 2026 10:57:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkXbsirI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0A01F00893;
+	Mon,  5 Oct 2026 11:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791197839;
-	bh=6xLLwLidZgnUe0TMCSO79E3gVqVzuOWFlmH7vOndOy4=;
+	s=k20260515; t=1791198307;
+	bh=rLTOI5qMt6+OcZNzKlZGKWBrvYlFRltA+A6dOm1NAyg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=laR//Kh3gts/XdkBM8E/qd6ZYaMswfoVRAemzc6WBQhlRiKAvZbRscwDn3Qp5CT/V
-	 bRBM2seDLsiQzoqLIWGl07tKGZUaQ3GGOFpon6LH5yYXnjgRAo+2vQcNeyvi2TmFWh
-	 +If1B+gU10dkaMdyXo4ks4QEs0BPWHbShle+qhrfQpY1PjWpq2DH0IuhQjovzL+1t4
-	 EuSf5LVhEAzv7E/OX6wKAMUXPPvWAefnCZ64TbIP8P2zYBjaSt4iWZhrwTdyO5rojK
-	 AI2AViODoMRvNJP/aHmzmOTgWdw1fB8oSgxwCDTEW22VtaIvSNshtMIyW3wUszMapO
-	 5bzekvd9DHI8g==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 51E621AC57CE; Mon, 05 Oct 2026 11:57:17 +0100 (BST)
-Date: Mon, 5 Oct 2026 12:57:17 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>,
-	Ivan Lipski <ivan.lipski@amd.com>,
+	b=ZkXbsirIFalIU+Rzp08UWkeJ8fi0RpeziDyweJGWt+a8WYEdczL4AoM9bdksMggjO
+	 oe4lgLBIVYgA0asNsQwg7+jCMHdpxqocj/2UeqrJGQIsgs4HrFiCrCPwDS/yivUySN
+	 rHBHydOzCI1UL1G7SrZYkwnWT94QEtSCuc5HlNGoBQQMYnqiXdhT1N3oo/Ej3jClvL
+	 iXVQhGXptMx/H622pWPRQnqIukmq2oe2ISxPyV4G7PjYRnAv9Ze1p+yMi4dQw/xEdb
+	 6aTFtMPEq8AeRGjzjbEVqfDHcE/kinnmIfsltbO9WkvqQRx2m8clldLNIfStzKLtjJ
+	 OlX4pEOBhWerA==
+Date: Mon, 5 Oct 2026 13:05:03 +0200
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Gary Guo <gary@garyguo.net>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ray Wu <ray.wu@amd.com>, Sasha Levin <sashal@kernel.org>,
-	Wenjing Liu <wenjing.liu@amd.com>
-Subject: Re: linux-next: manual merge of the drm tree with the origin tree
-Message-ID: <asOCjVMZtOsKzobZ@sirena.co.uk>
-References: <asOByBk2DUB9J4qI@sirena.co.uk>
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: linux-next: manual merge of the kbuild tree with the rust tree
+Message-ID: <20261005110503.GA1026747@ax162>
+References: <asN8ejNILKW2YWep@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MFXQkl1fDPAmXANa"
-Content-Disposition: inline
-In-Reply-To: <asOByBk2DUB9J4qI@sirena.co.uk>
-X-Cookie: You will forget that you ever knew me.
-
-
---MFXQkl1fDPAmXANa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <asN8ejNILKW2YWep@sirena.co.uk>
 
-On Mon, Oct 05, 2026 at 12:54:00PM +0200, Mark Brown wrote:
+On Mon, Oct 05, 2026 at 12:31:22PM +0200, Mark Brown wrote:
 > Hi all,
->=20
-> Today's linux-next merge of the drm tree got conflicts in:
->=20
->   drivers/gpu/drm/amd/display/dc/dml2_0/Makefile
->   drivers/gpu/drm/amd/display/dc/dml/Makefile
+> 
+> Today's linux-next merge of the kbuild tree got a conflict in:
+> 
+>   scripts/remove-stale-files
+> 
+> between commit:
+> 
+>   a41ec2936d2fe ("rust: doctest: generate Rust kunit test suites")
+> 
+> from the rust tree and commit:
+> 
+>   33bef82263082 ("kbuild: Move gen_init_cpio and gen_initramfs.sh to scripts/")
+> 
+> from the kbuild tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc scripts/remove-stale-files
+> index f1f776caae00a,e46337e4bfb8f..0000000000000
+> --- a/scripts/remove-stale-files
+> +++ b/scripts/remove-stale-files
+> @@@ -27,4 -27,4 +27,6 @@@ rm -f *.spe
+>   
+>   rm -f lib/test_fortify.log
+>   
+>  +rm -f rust/doctests_kernel_generated_kunit.c
+> ++
+> + rm -f usr/gen_init_cpio
 
->   ifneq ($(CONFIG_FRAME_WARN),0)
-> -     ifneq ($(filter y,$(CONFIG_KASAN) $(CONFIG_KCSAN) $(CONFIG_UBSAN)),)
->  -    ifeq ($(filter y,$(CONFIG_KASAN)$(CONFIG_KCSAN)$(CONFIG_UBSAN)),y)
-> ++    ifneq ($(filter y,$(CONFIG_KASAN)$(CONFIG_KCSAN)$(CONFIG_UBSAN)),y)
->           ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_COMPILE_TEST),yy)
+Thanks, looks good to me.
 
-This is wrong - it needs the spaces.
-
---MFXQkl1fDPAmXANa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCasOCjQAKCRAv73Ows9A4
-iRNXAQDBaUhGupjkH4IzKMRv7gP00M7xRgmsytzxV/Wjiya1OgD/aJxeSfDz9FHX
-FArJq6Q0VlKYdEBYGeykwrx9rpl8OwM=
-=qVb2
------END PGP SIGNATURE-----
-
---MFXQkl1fDPAmXANa--
+-- 
+Cheers,
+Nathan
