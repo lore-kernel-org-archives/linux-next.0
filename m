@@ -1,87 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7529B47FAE1;
-	Mon,  5 Oct 2026 12:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D844825B2;
+	Mon,  5 Oct 2026 13:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791204809; cv=none; b=RoCVOsWtLvcKPA48AK/AaYB6WOZ97bPN/IR0AuCitgiTorPa8700NBqNNXUHH08gr7I0NSU5Us8C2eXal/QBqUhI9hfhURDG+ldijhmvB9ho7L34+BYbES4n1ef0GJHLbe+uhjK1VqzZgfxjsX8wGa1DNMouwRONoAewpYYfeRI=
+	t=1791205635; cv=none; b=JDn+o4D1OjfgLRVkv+Q4BksVr4Bk2FQYI6rgx/58kmwsGRrtwrdUZMxmSit9qJOSRgOVim3kuf9z1c1diG4kZRY+OTjMjWoQQu32WWUY+pnWgh5Wk4WY6xRIGeXLXwRRTXOasIKSyRh7R4USuxZjyea6MwLlapBX6CWQhbkW5zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791204809; c=relaxed/simple;
-	bh=2sv5F7Pxf680BSPdRURsepJj9zWVp+vNxXnfJ9PMA6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QC+001SM/HIuzBZUiCyPLVRARr05zhqpJgpby+xzwze8NerD05vttAREgIENQ1jGMoH/RWeg3ydS9MZOdvhFNeOxgUVe0+/i73NLCztk7beaGqtS5UdG4XtM5xDUV7xQM0RYxDznzf3M5mp2O/lC/o0vcYqFLjBRzaHJ7zRSLKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgi5/Ivj; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791205635; c=relaxed/simple;
+	bh=jitezfqwji1pZx3701XLy05q7t2U4eoFU1bJbjXRNCw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GfPKX/fcsTzGQl9/s/VarpmN3BztuXJqWtNrccblPnAMZPdAlC9P1JaxmzrxuZbB/CS7LCGPFp4YYrl1Ntx3MDVPwCLNvvLFbgeDo/sKIYeaZCilBj8huTEa3IfIvrMOpzAjQAQd6eVagSRfRcJ1m5aWdXKkB+C0oh57Bsu9D8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e3OeAfC7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgi5/Ivj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3450A1F000FF;
-	Mon,  5 Oct 2026 12:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791204808;
-	bh=3sQT6X6QceSPrCLlADdIU0slrJlNjENj+tYDAG0hMlU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lgi5/IvjJTziOPv4pWkq2eIPpRTeKeRx0a/dr6qwL/PPSRqFM1OKRbef+Zj9AF8h2
-	 czhMJzE9wYqZS8If1CJuRTW6Z9pD9ByQJOQmMCA8p0tfGtt9/PRsqnyLbQUQKtW0g7
-	 YQNnx9phrqbKBpcZBisGU+vHNDcrRW41EvV8tUPHrKS1Y9mXy5pRfaI3+1Ewgfhy+j
-	 FcnPoAEfqrg52TDDVowectF0fAEzo9VZYPX+wVZEQjTTAz6qL0pruLYD8IHbWrWKcN
-	 d66A05F81yWt8carVGJcq28FysexmxSwfwAr0KiqI5Kt11L78mtBrf8DJKmUvm4tH5
-	 zEC9QcWakaDAw==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id CB1C01AC57CE; Mon, 05 Oct 2026 13:53:25 +0100 (BST)
-Date: Mon, 5 Oct 2026 14:53:25 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the clk tree
-Message-ID: <asOdxWlcjSP0DrB0@sirena.co.uk>
-References: <ar_0GFOb5hZfhHHx@sirena.co.uk>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e3OeAfC7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ED181F000FF;
+	Mon,  5 Oct 2026 13:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1791205633;
+	bh=Ym8fD57TQaFfPwXHnEQHQ0jtTOHEhACYrmL2ZU06asU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=e3OeAfC74li1mJtHeZR88UojvHL0s0g4rgajUh8l/WNSHpEAhA/Kwf000Ab3UmTma
+	 kVg4cWtdmFsLc39aNL6kWZvVR4WGFCC50nmhnKb2chpA0tZ99qKSAG1QF6fb6cMwAb
+	 Y5ngqRZ4052EsI6I9sb2TchAy/kkrxM5iHEsf5wk=
+Date: Mon, 5 Oct 2026 06:07:13 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+ KBuild Mailing List <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, Maciej
+ =?UTF-8?Q?=C5=BBenczykowski?= <maze@google.com>, Wilson Felipe Pereira
+ <wfelipe@google.com>, Wilson Felipe Pereira <wfelipe@google.com>
+Subject: Re: linux-next: manual merge of the kbuild tree with the
+ mm-nonmm-unstable tree
+Message-Id: <20261005060713.afde74805e607478d6bda2ea@linux-foundation.org>
+In-Reply-To: <asN8duP-cEdNqP5I@sirena.co.uk>
+References: <asN8duP-cEdNqP5I@sirena.co.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Tl67HfF8qNE+oEjR"
-Content-Disposition: inline
-In-Reply-To: <ar_0GFOb5hZfhHHx@sirena.co.uk>
-X-Cookie: 10.0 times 0.1 is hardly ever 1.0.
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 5 Oct 2026 12:31:18 +0200 Mark Brown <broonie@kernel.org> wrote:
 
---Tl67HfF8qNE+oEjR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi all,
+> 
+> Today's linux-next merge of the kbuild tree got a conflict in:
+> 
+>   init/Kconfig
+> 
+> between commits:
+> 
+>   d514d23689356 ("init/Kconfig: make config INIT_ENV_ARG_LIMIT user-configurable")
+>   9998f5eea1407 ("init, arch: make CONFIG_COMMAND_LINE_SIZE globally configurable")
+> 
+> from the mm-nonmm-unstable tree and commit:
+> 
+>   f85147b291e35 ("kbuild: move the toolchain checks into scripts/Kconfig.toolchain")
+> 
+> from the kbuild tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
 
-On Fri, Oct 02, 2026 at 07:12:40PM +0100, Mark Brown wrote:
-> Commits
->=20
->   d31b7d87d1b28 ("clk: nuvoton: ma35d1: Add missing WDT/WWDT parent clock=
-s")
->   488d2cfdf3c99 ("dt-bindings: clock: ma35d1: Add missing WDT/WWDT parent=
- clocks")
->   9546425453234 ("dt-bindings: clock: ma35d1: Drop CLK_MAX_IDX define")
->   ea2ee01da5555 ("dt-bindings: clock: ma35d1: Document the missing crysta=
-l inputs")
->   35ba0118dac01 ("clk: nuvoton: ma35d1: Keep the clock count in the drive=
-r")
->   e92291a009f7c ("clk: clk-gpio: do not blame the DT property on probe de=
-ferral")
->=20
-> are missing a Signed-off-by from their committers
+Thanks.
 
-This issue is still present today.
+> diff --combined init/Kconfig
+> index 914c4c3ed7ee4,352601b44b5ca..0000000000000
+> ...
+> [250+ lines of diff]
+>
 
---Tl67HfF8qNE+oEjR
-Content-Type: application/pgp-signature; name="signature.asc"
+yikes.  I think I'll disable Wilson's command-line patches until after
+kbuild has merged up.
 
------BEGIN PGP SIGNATURE-----
+After kbuild is upstream I'll take a look at resurrecting command-line
+patches for a late merge-window thing or I'll bump them into 7.4-rcX. 
+Probably the former.
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCasOdxQAKCRAv73Ows9A4
-iUHfAP0acweMjDdhiPkurKofK7gCLZN35aVsXYMwuF829qR7MAEAqhFFpEfRQVDw
-Rrqdvnydig559DWeIWcGiXP9Q4OhuQw=
-=bIRa
------END PGP SIGNATURE-----
-
---Tl67HfF8qNE+oEjR--
+kbuilders: please try to merge early!
