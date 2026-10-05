@@ -1,172 +1,102 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452094825BE;
-	Mon,  5 Oct 2026 13:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C32654705B;
+	Mon,  5 Oct 2026 13:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791206831; cv=none; b=r2CIaJjXUXvWM7Fp3Pxp+PeWcZ7jJJWbbNi0+0Hbi15r053crIfsaTTFNpZy8LgLBG748lQgXMfm8Kgx0HxwJgJPaoTKUM9157r1jR1M4aYIjh0VE74Wq8KZiWmjR5AM2D+xX+94wcJiVkhQCxgMDDJNqJl62lbEtJfr+j3GXj4=
+	t=1791207152; cv=none; b=HWGppssMkxNsPcGr4Clesp16JMTt5uiBBFT0e/XvvtpcJwVvPrAXka7/kvJ9GVOw5Cs04cV3PCTzxpGOYPskwuONRnvBoDGccFsOFZjjhoZOM1PV82Z3rakuUHUIOpkEPXVebiN7G90Y7lqOmYF7qKfZFHJa8kMMD1SHN7X5eDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791206831; c=relaxed/simple;
-	bh=OBuKhnAld9DbBDrN9DMDLsM/V8Bk+3+MGjoVHuzdbyY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BjR51bV3QPvQ2SHKMYJjesImAumRtIQLbNHlWNUjXdIMdVV0oRSla5KHjBZ42pTfm31mWmYRE/jZalmkPXUzWmE2ZmGtOXRrUzT/Q+cCb+cIiSCxH6Dbfc5oh+svEsbrpRqTbX3YI95LZtFFLnjuC4FXB+MHh3gM3fp//5VDS6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OGckAGu7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Byu8TZIP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZbI+APpX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PNh3YpmB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1791207152; c=relaxed/simple;
+	bh=KfbZgw+MbnLMNDvDtxjij1k4+Qvjn0s0K1i/l50Ut2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgqmZ+h5ZdKBS93w5fZVSNWhXv7t2KQC8vTtRCS50lCA7OIVlm8FzardSb3JnhO+8ke1NrZviLn6AcDFFkPfw7Fu8RN+jFyHDsp3FmRBdyLYZ6MSiADnPWRtLKc6mfWOEatUKGlY/pUZdwe18TJgtv8TKeJ92DzhWENt2hDgONc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaCTm2my; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OGckAGu7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Byu8TZIP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZbI+APpX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PNh3YpmB"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9673E1F7A5;
-	Mon,  5 Oct 2026 13:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1791206790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL7At3AqohyJipgTvTsjYpAaZfcPG0euVlHVnAIERE0=;
-	b=OGckAGu7Ng6ACGs3dzv2kDPo3E6jCSEBykPtOQt4vWP2c3TfwvH0SGREOe6/HB20YOTpLT
-	wioJKQ59IsnwxRE1FsIzveVzfrXS0JWTwHx/IWhsHDL9FK/SEy4VfBocVSfyQCdEHg6I2m
-	HLYlh/YyjxOnXwYQFzQ9cqEOvlw3cT0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1791206790;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL7At3AqohyJipgTvTsjYpAaZfcPG0euVlHVnAIERE0=;
-	b=Byu8TZIP5uzG5uM+zXxwKskUxPmyyZXbAb+ufjH+iOwA4e8slSicB/EvxYCCQAUixYN8rG
-	nMeJikJn75c2/zBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZbI+APpX;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=PNh3YpmB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1791206786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL7At3AqohyJipgTvTsjYpAaZfcPG0euVlHVnAIERE0=;
-	b=ZbI+APpXt6+lYfOrLayVU5asXqTuf5gjPL6Dv24bb9kS+ziDa4J3uzaZG3q41E/sQBjiHg
-	m/eR3RWs1iMG0j7jL5YPEMXmZA9Oq0WduxR9rxkqGYYUfG1HvSQFA/Zg0NBw6xw6kuY1kS
-	3id0KeYPgsZeOI1YU2jE4adYVghGCYw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1791206786;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL7At3AqohyJipgTvTsjYpAaZfcPG0euVlHVnAIERE0=;
-	b=PNh3YpmB9jsOlsuoUQgR1vwdq0uzgucH6zeNoLEcCjOtFlfAI4cRB4u78L5YiyLNJn/qZS
-	M9A+5nkNeNa7IHBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5AB9C132D3;
-	Mon,  5 Oct 2026 13:26:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0tPODYKlw2oPbQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 05 Oct 2026 13:26:26 +0000
-Date: Mon, 05 Oct 2026 15:26:18 +0200
-Message-ID: <87bj98s2h1.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	Baoquan He <hebaoquan@kylinos.cn>,
-	David
- Hildenbrand <david@kernel.org>,
-	Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List
- <linux-next@vger.kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Vlastimil
- Babka <vbabka@kernel.org>
-Subject: Re: linux-next: manual merge of the sound tree with the mm tree
-In-Reply-To: <20261005061403.750dc014ce53e441a3ee6271@linux-foundation.org>
-References: <asOIPgOu7MHRPLWU@sirena.co.uk>
-	<20261005061403.750dc014ce53e441a3ee6271@linux-foundation.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaCTm2my"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2CA1F000FF;
+	Mon,  5 Oct 2026 13:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791207150;
+	bh=HwhbK90GfJPHbz/p1SAwjEYSFhNOACJ0jZSx9FAlqjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iaCTm2mylRf5L2yDz25np2hXPnS7juatpYG6j/X7rUruFK3ban4Xcuvj8VABTFoj4
+	 QC0BBWG/oxfaegPx3vGBGtF/2Vb/SboCt/3YizkrFtnkfxsBB0cWTqhb4YVuXmI5NY
+	 P0A6rqw2HkohdJBxTCeEuzmHkR1cz552XBqXAE/wpdYOmVhC4fobs+djNp5rMVxBzo
+	 MiQzYxtdVqVsoPQyUbNqIypR3BvbmywlGuSIjSorf16Qkcsp3qDHXfqvJK17cY+Pjw
+	 O3YAQKKrbFuRWLrufzuSZzCXbDUyCJHPR1cJJZJuQB422jep2NQPCxwzOzfF2SMvs5
+	 1GVnv1oTqr0Dw==
+Date: Mon, 5 Oct 2026 15:32:24 +0200
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the kbuild
+ tree
+Message-ID: <20261005133224.GA1108555@ax162>
+References: <asAzcgDsbNEFIfKV@sirena.co.uk>
+ <20261002230632.GA314599@ax162>
+ <asA6NZ4QKp4k4nGD@sirena.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.981];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 9673E1F7A5
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <asA6NZ4QKp4k4nGD@sirena.co.uk>
 
-On Mon, 05 Oct 2026 15:14:03 +0200,
-Andrew Morton wrote:
+Hi Mark,
+
+On Sat, Oct 03, 2026 at 01:11:49AM +0200, Mark Brown wrote:
+> On Sat, Oct 03, 2026 at 01:06:32AM +0200, Nathan Chancellor wrote:
+> > On Sat, Oct 03, 2026 at 12:42:58AM +0200, Mark Brown wrote:
 > 
-> On Mon, 5 Oct 2026 13:21:34 +0200 Mark Brown <broonie@kernel.org> wrote:
+> > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your tree
+> > > is submitted for merging.  You may also want to consider cooperating
+> > > with the maintainer of the conflicting tree to minimise any particularly
+> > > complex conflicts.
 > 
-> > Hi all,
-> > 
-> > Today's linux-next merge of the sound tree got a conflict in:
-> > 
-> >   sound/mips/snd-n64.c
-> > 
-> > between commit:
-> > 
-> >   0d62c52af5499 ("ALSA: n64: don't use GFP_DMA when calling dma_alloc_coherent()")
-> > 
-> > from the mm tree and commit:
-> > 
-> >   e81f85fd3ca66 ("ALSA: mips: n64: Handle card removal properly")
-> > 
-> > from the sound tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+> > Thanks, the 'source' line looks correct to me now. Did you also shuffle
+> > CC_OPT_INLINE_MEMSET into scripts/Kconfig.toolchain like below? You had
+> > it right in
 > 
-> Thanks.
+> >   https://lore.kernel.org/ar5-4Yq3wtmXTWnD@sirena.org.uk/
 > 
-> Easy fix: move mm's little one-liner into the alsa tree.
+> > but the patch changed slightly since that resolution ('4294967295' to
+> > '4294967294') due to a problem I reported
 > 
-> Takashi, please can you add this?
+> That will be delayed for today since the scripting has got confused by
+> me moving machines in the middle of running the merge but it has gone in
+> later in the merge so it should be there in the final tree, and
+> hopefully in the right place next time I run -next (due to LPC/MS it'll
+> be spotty at best this week, I and everyone likely to provide backup are
+> all in Prauge).
 
-Sure, I applied now to sound.git tree for-next branch.
+Can you drop the fix up to scripts/Kconfig.toolchain that you added in
 
-> I'll drop the mm.git copy now.
+  855c706f2179 ("Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git")
 
+? I have temporarily handled this conflict in kbuild-for-next to make
+life easier for you in
 
-thanks,
+  fd79efef14d9 ("Merge commit 'ac7445c28e7a' into kbuild-for-next")
 
-Takashi
+and your fix up conflicts with it, as CC_OPT_INLINE_MEMSET is defined
+twice.
+
+-- 
+Cheers,
+Nathan
