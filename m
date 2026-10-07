@@ -1,114 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C1A491589;
-	Wed,  7 Oct 2026 10:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49654396D1A;
+	Wed,  7 Oct 2026 10:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791369141; cv=none; b=nciYDTBcH5g/Z1zgvy1oMrix24wbqrkSODh/zA4SEESRrwkV+Z2uPH86Zrpw/f4bhp1qFMCMuvjOYWXwBw0u6KjOvmrTFABwcExcwCEKtNYwqLMqEmNSkk14qSveBRPZKiZTgkOIYuFdec1vJDtlCRTmJQR2qUqOf+VfvjkAJTw=
+	t=1791369914; cv=none; b=drg0fzYIyl/KaDO6VyRlZK3pJK3GeSo8EDr0q7MS/aH0y2M9GbDoCGVKaWvMJWZGRUFmbb+5cDIxXO6TZj/MMUdaQNfy5kKjlONdik6oEL8yhleSsZkfvDAWbIlmIHqiR7Rf4TUdYdtX702Ba9W2/A5PP6VXWebfWust6xSrqtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791369141; c=relaxed/simple;
-	bh=JBNarp1fX4AnWfPIHZCfKK5sI3oeynq4+aVpACd4RLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mptMqJIIkFlYEVQiSY68foL9ou6zX52BWZW+mYvSIiQhKSat4PZikRYqD9kHLDCnEe4i208g9Q1+yLCEMc/rxsdXIvGhJgWW1TVLZz0rikEVfC6etwRY0yXdWdZn4J1K3gk7zOgPXA48SKHFyXckVFkWTdwieIOPwdfxMahFSWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHtfLyBe; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791369914; c=relaxed/simple;
+	bh=C4LdKU7+HfWE/hERxLoZZiaQeFCIAuMkWkI7tBvQlh8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SMNcHUcDFzjcf0eQ/H99InkFNp6dsP0KxwBLbxOU/nBIbqmD/Jlbd7U/5bZmafOHsRsLQW0Y13GhHCBdJUHIBUs4FUiHtaYJIw9Df1ev7OStkuSRZz6uoa2dhH8J7J7WBnEh72qJvJzv3ORpQ0EoQgv48sweYxIqK4nCyeWQWVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=d90mys02; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHtfLyBe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38FEA1F0089D;
-	Wed,  7 Oct 2026 10:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791369114;
-	bh=4OVbBUcHKkE/cb1pS6KJ+RZ20nzUixVZbErNfYREsNg=;
-	h=Date:From:To:Cc:Subject;
-	b=nHtfLyBenkOtWBQ6l+IKx6VSjsDqIImck4/XCw4hIVp4RTUgQ6AVtGJI2EjxzvPx9
-	 dNtQ71MzvS6bHVCKbj4yiAcJce5Q5QhiV+tre1PQdp0GhzCo7NAGmay6RVYpLqceDJ
-	 eHCn/QLAvCevGRX9grEDbLAdK30U4Fn5l4ldaN8rU5qq/ZBtpgwVmR/xl/LkPHGHlV
-	 ocBHieRmer4toXf4Jpne0SUR+P2KHdPYFgYHq01EE/XuKoiGfM2L19rsHb2mXaz8kd
-	 mw1DQM7OTm1wjeCoIaY+mvB0EMPvoMl9V2D+8ko7ZbNd8WtqZAyP3P5dshRgF9iHuR
-	 PgHirTweyGM5g==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 1D2B01AC57CE; Wed, 07 Oct 2026 11:31:52 +0100 (BST)
-Date: Wed, 7 Oct 2026 12:31:52 +0200
-From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sabrina Dubroca <sd@queasysnail.net>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <asYfmLsfy-SCxXjr@sirena.co.uk>
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="d90mys02"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:To:From:Subject:Message-ID:Content-Transfer-Encoding:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=qB5XLtUrKta+Vg2pME6/sZKkpQlF27LcMPib/SAbYdo=;
+	t=1791369870; x=1792579470; b=d90mys02wfcD/dKBm8sdqacClkkWGVtMs2eJypOjrxIgn5G
+	xw4Egvyt0gmLPL9tG+adDWrpan7Id56ZxzmDLHweAX+vvvrgHPghv79B4m5/piR1t0E6ugf2Qxbrw
+	JYCeNn4F6g7pdno4RaDBINkPEobbHT1FTQy4MbDdd6U1oE9h1lhvA4gOoUln45S2kmvsV6jTUgrKz
+	j1mWg4qrunsGUtgKo7FlR28MLDnLdziVlxYSZgjInGR/dAmPJEWx/oGVcAef0hip5aZqTaKYpw5If
+	EnWFxN+sZIS5bg2BvvR0SEj0pN7ii9qdde9ivJHp1fYKGYTDMUevZkJ3QD1I93SA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__ECDSA_SECP256R1_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1xEP8H-00000007zjt-1Ar9;
+	Wed, 07 Oct 2026 12:44:21 +0200
+Message-ID: <8733c371179651d5fa3f86dd28d8547e3994d3c2.camel@sipsolutions.net>
+Subject: Re: Missing signoff in the wireless tree
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Wireless <linux-wireless@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ 	linux-next@vger.kernel.org
+Date: Wed, 07 Oct 2026 12:44:15 +0200
+In-Reply-To: <asYfk8onC1sBo23Y@sirena.co.uk>
+References: <asYfk8onC1sBo23Y@sirena.co.uk>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-b9irYMaiWFyxhZ9SO1a5"
+User-Agent: Evolution 3.60.2 (3.60.2-2.fc44) 
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9BPwwMjJqDQVsekm"
-Content-Disposition: inline
+X-malware-bazaar: not-scanned
+X-malware-bazaar-2: OK
 
 
---9BPwwMjJqDQVsekm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-b9irYMaiWFyxhZ9SO1a5
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, 2026-10-07 at 12:31 +0200, Mark Brown wrote:
+> Commit
+>=20
+>   6d41af9b469a3 ("wifi: mt76: mt7996: fix uninitialized buf read in mt799=
+6_variant_fem_init()")
+>=20
+> is missing a Signed-off-by from its committer
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Crap. That commit shouldn't even *exist*, but I'd made a mess the other
+day and apparently didn't quite fix it.
 
-  include/net/strparser.h
+Thanks for the heads-up, I'll be rebasing wireless to fix it (again).
 
-between commit:
+johannes
 
-  0984ebc631792 ("strparser: make sure __strp_recv isn't running before tea=
-ring down the parser")
-
-=66rom the net tree and commit:
-
-  02fd0a2111374 ("net: strparser: removed the aborted bit and aborts counte=
-r")
-
-=66rom the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/net/strparser.h
-index 881b7ae344986,3c9c8ca088282..0000000000000
---- a/include/net/strparser.h
-+++ b/include/net/strparser.h
-@@@ -91,11 -87,10 +87,10 @@@ static inline struct strp_msg *strp_msg
-  struct strparser {
-  	struct sock *sk;
- =20
- -	u32 stopped : 1;
- -	u32 paused : 1;
- -	u32 interrupted : 1;
- -	u32 unrecov_intr : 1;
- +	u8 stopped;
- +	u8 paused;
-- 	u8 aborted;
- +	u8 interrupted;
- +	u8 unrecov_intr;
- =20
-  	struct sk_buff **skb_nextp;
-  	struct sk_buff *skb_head;
-
---9BPwwMjJqDQVsekm
+--=-b9irYMaiWFyxhZ9SO1a5
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCasYflwAKCRAv73Ows9A4
-ifVkAQDrjw3qw4QTF5DYA5vUu30DYEVDUNn8TUZs2AzcFq8XugEA9tRNNWF9li8t
-deV9hiIdt/zkL9gjMdW7+Sn3Ou3EyAQ=
-=Nljl
+iQIzBAABCgAdFiEEpeA8sTs3M8SN2hR410qiO8sPaAAFAmrGIn8ACgkQ10qiO8sP
+aAAu4g/+Nu5yQtBBdr6s8oWbh0asFQxTbnr4tw96eJkZsc43mQCJWB1QnGpEW5FI
+kBGuWF17J8OacgXZzmG+55bOl4evY7u7HuQ4q7MQXNyjMpblXkvEN13lYUwuTpLL
+cQNbhkfk0YZp512zeJi8mvD6WJdrRcO1VwcjdyeticgkIBW12paeZk0uxfeSOEst
+yF/7TV7CIT7AxR1EdC16avEAvauyyvi4gP40V0TJBeTYQM1fLYLMYvOfEdGDKzn7
+v4/In2UjKGrmNj6JtfSKXzwQEnmRXdti9v2fn147erSbxL5EUnLfkdcm4aEle7FO
+BvfkWS4rW8RYNyYR1lNZTqax1ft+TVAMjqHCsKHEzVvboBOBjVfaFrVlpFN+FaRr
+E5eeOkv0ndl2wqL0iT8z507bhjWUyZgNebV5GS2smHYYJV2DvTIU/P+nhIDRqaYN
+ntfbSq7mepK6jL/4SviJOBYzmnvYIr1bZu4SX9Gxh0U2Yb+F3FE5FFzkEVM71WNn
+Y2W50qBV+lg8BEOQUoNy4/rqj9uFwwUt7GC95KUFtib1OvWsNkAwRzeNkR6ogUMu
+La4Vkk513acFV6uJm5F7T5gFVnNKl30pJ0TITE/lDcmLVY0P0Vb4QPFKRk1V1ZRW
+5Pkt8vcdQgCAyR8fMcxsSBBHYHcRy5MbxQ/z12gpRPuGTF5Cc0k=
+=hKKG
 -----END PGP SIGNATURE-----
 
---9BPwwMjJqDQVsekm--
+--=-b9irYMaiWFyxhZ9SO1a5--
