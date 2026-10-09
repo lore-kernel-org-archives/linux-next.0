@@ -1,97 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0564F3DAAB8;
-	Fri,  9 Oct 2026 05:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982A84E4C37;
+	Fri,  9 Oct 2026 15:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791522676; cv=none; b=Z8G9uI7v6L8yJSYkq5Kn3flLt1uCiW1Qw0RZ5UP6Y8uQPFIUosDmVolvIDSneXRDkDFZpD1K9gZKYsMpco/KyI3fFkThX5SWApHqkhcsD/fichp/NwyAdRDzYMdiYlPOJm/Xd/vfIzDuiSFEcYkJx8vbLo/uE/mUop7+4qPP1WU=
+	t=1791559099; cv=none; b=Axm8H7bkFvDeZ+gRFDd3mqwsAAfYrj/T1l9WxabB+uFx3uTwP0cAVZTJw05Ud1ydEWXwWP7UAffNzKzVFRTOyWRBqj1ClfyKHy6PynIRhYaY3dGBGyX2yjpAIyY5WRBiyBj4FGXBCnrzPKdUNndU3PSSrNa/FGLgIlylTj0ukuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791522676; c=relaxed/simple;
-	bh=RzkyiB51qcBMO9M9pe/skL3kPgqjbkSNBulhFPoDd80=;
+	s=arc-20240116; t=1791559099; c=relaxed/simple;
+	bh=c/JQbYrD20ZNrZOp/WwsPdHq9rVQbZ6QDJB5EhRpIAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwo6Oi2m5DTnsVjcokZhEoydNOKIJaHB8YJ2EbM8WweOvs+YRnMjL21K5gG0VaEYm5hx0UDJXTqZVUQgj6Cku37d8oM6YOfbVSOyhfrxR5ehleOwM0H0e8jM9D92u8XnmWllFUIY1+TDzqZ5AiYGl/igGk06VRj6AFSxQngarZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B8uiIdEZ; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzpDHrjSuMmvy3rMTobQjcoAvJhfjPpJwiVJuUqZ/+oHqvHs6QDt4wIRR/YV0MjYTTQFK0wgTmwrUf1uRABP4NeMWVTtBxkCvnvutW3JV0cSjfwBmr55k4qbA6TTmt9+uIkLRWHzCP6GbIz0trA/wRBIpxj7K6l3TvROVlJpJJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTSfg5Eg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B8uiIdEZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D0FD1F000FF;
-	Fri,  9 Oct 2026 05:11:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTSfg5Eg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C551F000FF;
+	Fri,  9 Oct 2026 15:18:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791522674;
-	bh=iIl2Cg3RK/sSQdjUu8PWtqQJorCmflCcV7loVaKT08s=;
+	s=k20260515; t=1791559091;
+	bh=yKiYq3nBQChoJq5xFXwMk2/attlyMYfjvd8XtY2spr4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=B8uiIdEZtT5l8fJqbwJZ3epIk/LuQCZNjgx7+XWz+f6NcDedzqismbSB7oS7ckwL2
-	 4UiFs+6GvlLCUujipOaktLe7HMTk8Qaka7QiaqDeQdnJbfWinFd9Er+6ScUCYkJ2R8
-	 6B2h+MSKe8q+ZtKlXP2lfEMRzSdrllKQd/vCUjPusP/NSh7J/O1TTtOmF9ug6Rey1C
-	 JtzAkZ/fdL5wny0HDue3cvJyTy3miIy2nStVtQVt3Vua7MKGFcExldGDBrC3UJNK+S
-	 is3anucNfefxptlwbf4uOyHcTktwmjp9PVANNOOPKx0BpJPOVruq9Vc+fLmMy4gvOl
-	 D464FsKUEDE4Q==
-Date: Thu, 8 Oct 2026 22:11:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Manuel Ebner <manuelebnerli@mailbox.org>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-next@vger.kernel.org
-Subject: Re: [BUG] Build failure in next-20261007 and next-20261008
-Message-ID: <202610082200.752C6C08A5@keescook>
-References: <0ddb5e5e-f801-444c-aa98-0cfe814a3026@paulmck-laptop>
+	b=oTSfg5EgzpqMGgpYGcKSLicKdJ6I20SKyQ0GbPVAEmnvRN+K0pTHmi/TodidoVunr
+	 tpuNi1AwAhWjgG+5Rmn+n2+uu5gDbc5hRfsTmUofaYaETr3QBfjVp9veRxBlGWNPF6
+	 qHu3D7kDFSdshs4rhIx8FtDo2Ow5lmBB1WM5eMQCtuNjeT/QtYMVuxOok4ZD9ypSav
+	 I9s+rnXIEtgVXEUi9x/60TP0tN3RT0/2nma/+2srECfFml1FxFG6lN18bNcdPBwVAA
+	 M0930xKFP8KJ7sLxPlcm2ysxAnXlKtO2IEQe+9I4TGa7wIvfjUu+GDlLKR1o5iBFh3
+	 kIIE+Nckg0bQw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 95CE61AC57CE; Fri, 09 Oct 2026 16:18:06 +0100 (BST)
+Date: Fri, 9 Oct 2026 17:18:06 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Please add the kapi tree to linux-next
+Message-ID: <askFroY6LlF-pQP6@sirena.co.uk>
+References: <20261008142350.3067287-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XVlr3sPH8q4zVAuf"
+Content-Disposition: inline
+In-Reply-To: <20261008142350.3067287-1-sashal@kernel.org>
+X-Cookie: You will forget that you ever knew me.
+
+
+--XVlr3sPH8q4zVAuf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ddb5e5e-f801-444c-aa98-0cfe814a3026@paulmck-laptop>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 08, 2026 at 05:56:21PM -0700, Paul E. McKenney wrote:
-> Building a kernel on CentOS Stream 9 from next-20261007 and next-20261008
-> (and maybe others?)  on an x86 or arm64 system results in a strange
-> build failure featuring:
-> 
-> WARNING: Unable to reopen jobserver read-side pipe: FileNotFoundError(2, 'No such file or directory')
+On Thu, Oct 08, 2026 at 10:23:49AM -0400, Sasha Levin wrote:
+> Hi Mark,
+>=20
+> Could you please add the following branch to linux-next:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/sashal/kapi.git spec
+>=20
+> It contains the kernel api specification framework which I intend to send=
+ to
+> Linus.
 
-What are your make and python versions? (Oh, the answer is going to be
-"CentOS-patched make 4.3")
+Should be there from today.  BTW, note that https:// is generally
+preferred to git - it tends to work better all round for both clients
+and the server.
 
-> The failing systems have a pigz command (which complains bitterly when
-> run without arguments), and the immune system does not.  On the failing
-> systems, "pigz --version" gives me "pigz 2.5".
-> 
-> Do I need a specific version of pigz?  Does this commit need a
-> version-number check?  Are my systems pigz-intolerant?  ;-)
-> 
-> Less flippantly, is this a known problem?  If not, what debugging
-> information can I provide?
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
 
-Having pigz just means the parallelism logic kicks in, so I'm suspecting
-something in scripts/jobserver-exec. That would point to something
-specific to python or make.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and
+     * destined for the current or next Linux merge window.
 
-I haven't seen this reported before, no.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-Ah, and before I could even finish writing this email, my ever helpful
-LLM has reported: "pre-4.4 make (like CentOS's 4.3) closes jobserver
-pipe descriptors in non-recursive recipes but still exports
---jobserver-auth=R,W via MAKEFLAGS, whereas 4.4+ uses a named FIFO
-instead, explaining why it doesn't appear here." And has further found
-that this is CentOS-specific, since they appear to have incorrectly
-backported a patch ("make-4.3-cloexec.patch"), as stock make 4.3 doesn't
-have this problem.
+--XVlr3sPH8q4zVAuf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'll go figure out if there is some proper way to work around CentOS's
-broken make...
+-----BEGIN PGP SIGNATURE-----
 
-(And given this, I would suspect you can't do a '-j...' build of the
-"htmldocs" target either?)
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCaskFqwAKCRAv73Ows9A4
+iRmOAQDHXug5gqF37vSy7cueORA9FLCwCM7EQA+P/qddqn2yPQD+PYRsihwDlNUq
+uFVhyZHmjGGGW3myhJ/ggjVLmm+poA0=
+=e1o8
+-----END PGP SIGNATURE-----
 
--Kees
-
--- 
-Kees Cook
+--XVlr3sPH8q4zVAuf--
