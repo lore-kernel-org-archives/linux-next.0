@@ -1,45 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D410444C51C;
-	Fri,  9 Oct 2026 19:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A21370D5E;
+	Fri,  9 Oct 2026 21:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791574043; cv=none; b=IjnZvlQE2kXEZrVsCS8yY5AHmbFQKK4YgGY3Av20Mchor6AhAFzlmXKtR+OcEQ3+MXq9cqVX/8vnfsv7cS6ryRrSz7zj7co7zqo9MyU3sPq/AVQP158UWgy/wiCUr4fBuqzI74XoFb9HAs8PuLWUm3TL6FJbf6baWaZDwqRcEO0=
+	t=1791581999; cv=none; b=fQhh/ttoqS/QbLrD5/z0RW80NSICA1EzbefB6B0xjNynj1KqIMTluCHnC1JWMjaVGEio9nee9GtidCgto0PeOL7BTkOXEvmb5bSwPCf6CKWulZEMAVoidvdfLnWtUouFLadR5RJAQrtFMh4w4sSF8Tv2nIeyzzwfprLQGCZDuyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791574043; c=relaxed/simple;
-	bh=D7SD21DoMvVyV7YSdZe1MUn1giqdD95rIHlF8jqXGFw=;
+	s=arc-20240116; t=1791581999; c=relaxed/simple;
+	bh=H1oSWJh5fZjQ1XNCXmsBBbTHrJYv8weii6T1h1C2/ZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=anXXd7/hFd1yocS+AcEDacVjV7UXV7b6yGLi43rzqrU5s2YeCNAXDxmIno812WD7A/aSbWwGg3kG0DotGCjP009BuMacdgTrxnV2bXWvPIXQDqYejfmsJ0rPHQDlM2xL7UWpZIaxWVv1rWCENBYTbzv6GoivVMOtVkXfzxvomGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f17/1qy/; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=M13aNuvCb+2gvvyCk9mDLJfdXvEsDSGGKfr75kXhLsfwDG6zBFmpu2hRdkn4Hv9baO7Fhl6KqDyZUWDKnYuF+6114E+abR0/cL1hfjJua+GUdwzDxBzLwSlRX3fJz45479yUrewZtgrdmGv7UPvFjJgF0Nv4dD/jeTHrk64J148=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVDKU9Rv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f17/1qy/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016A61F00893;
-	Fri,  9 Oct 2026 19:27:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVDKU9Rv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5273F1F000FF;
+	Fri,  9 Oct 2026 21:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791574037;
-	bh=js4MQwhe0J98ovKD7yCqc27kGlqgykJcML1tKy1sLwQ=;
+	s=k20260515; t=1791581998;
+	bh=/DIGfdosI8HTT4ZSUkh5GCIGuTYsQcGon1rOmhIuxoY=;
 	h=Date:From:To:Cc:Subject;
-	b=f17/1qy/cYV+gnaeyXQ9DSesbG/YLh3jqKHyUHNi4WRp0Jr/1TyEb+UeQXumvsOSc
-	 U9N50bU1M+n0GJEsW0oURgkvMeD7XPU7NEaVLbltyAtEKlUFRLySZqb2GlvN9e5XWw
-	 LtzrQq0GdsPV0NQ8cNYLkYFc5I92O8CFG0uv3/nc2fDxbeHfc2LjI5BZ8JDT99FEIm
-	 fHi0zima6z5eI8/6+DmZ0S2oCAMDEnNBKgXPrwgl9ScaEsLXkrQS/EEoauQZSdFFTI
-	 NuOvOD67Yyi7pYdikMMDRzlUk2+xmS5in19lrTknBpyy2j00oRDz19n0eJq3/znBVF
-	 7lnDwklsN4ugg==
+	b=JVDKU9Rvbak1j1Rct1f8kmkQTPknc7TnLbU9EA9IzH0J1/mYVXeulZbc588DR/rlY
+	 kPb95slpoe6tIl/sPlWfwPEqvG0z9FgD8yEuuMZPqerfU2oLT4A+5+2eHjRU+Nqy4G
+	 EKKmz53PfDlHH0RhyeTwXgbdfdvNPpXwjnE8Xd0hxtkj5OY4qkgP4HtzIhvqIE/UzS
+	 KiC7Aggb1MenRx9WwjmyFTuTNajXPcUk9Vt17tgxYzn5acnu88aTcWPTEugeTcGAhm
+	 3lqu2ahELOY9U5y6b3zRz8T3I3wh0ug0vjClz6ZZLCVwkvEZEwZHCip2yZbW+1Ofgm
+	 LpCfV0rlUIMvg==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id B49A51AC57D0; Fri, 09 Oct 2026 20:27:14 +0100 (BST)
-Date: Fri, 9 Oct 2026 21:27:14 +0200
+	id 93BD01AC57D0; Fri, 09 Oct 2026 22:39:46 +0100 (BST)
+Date: Fri, 9 Oct 2026 23:39:46 +0200
 From: Mark Brown <broonie@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Greg KH <greg@kroah.com>
+Cc: AmirHossein HajiMohammadi <info@hajimohammadi.net>,
+	David Miller <davem@davemloft.net>,
+	Franco Hector Hugo Montenegro <franco.montenegro.ruke@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>,
+	Hungyu Lin <dennylin0707@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Leonardo Martins Martins <dev.lmmrtns@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	Priyank Rathod <rathodpriyank@google.com>
-Subject: linux-next: manual merge of the pci tree with the pci-current tree
-Message-ID: <aslAEm5Qsgp-9xD9@sirena.co.uk>
+	Luka Gejak <luka.gejak@linux.dev>,
+	Networking <netdev@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Ping-Ke Shih <pkshih@realtek.com>,
+	Rishik Yechuri <epicrishik@gmail.com>,
+	Rishik Yechuri <rishik.yechuri.code@gmail.com>,
+	Rishik Yechuri <rishikyechuri@protonmail.com>,
+	Siho Kim <siho93.kim@gmail.com>,
+	Svyatoslav Nikolenko <nsvatoslav515@gmail.com>
+Subject: linux-next: manual merge of the staging tree with the wireless-next
+ tree
+Message-ID: <aslfIkFxsc9oIqku@sirena.co.uk>
+Mail-Followup-To: Greg KH <greg@kroah.com>,
+	AmirHossein HajiMohammadi <info@hajimohammadi.net>,
+	David Miller <davem@davemloft.net>,
+	Franco Hector Hugo Montenegro <franco.montenegro.ruke@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Wireless <linux-wireless@vger.kernel.org>,
+	Hungyu Lin <dennylin0707@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Leonardo Martins Martins <dev.lmmrtns@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luka Gejak <luka.gejak@linux.dev>,
+	Networking <netdev@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Ping-Ke Shih <pkshih@realtek.com>,
+	Rishik Yechuri <epicrishik@gmail.com>,
+	Rishik Yechuri <rishik.yechuri.code@gmail.com>,
+	Rishik Yechuri <rishikyechuri@protonmail.com>,
+	Siho Kim <siho93.kim@gmail.com>,
+	Svyatoslav Nikolenko <nsvatoslav515@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,31 +80,43 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KaCU7AGt8SUjp5u7"
+	protocol="application/pgp-signature"; boundary="hSDyjtiM2P12w3nY"
 Content-Disposition: inline
 
 
---KaCU7AGt8SUjp5u7
+--hSDyjtiM2P12w3nY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the pci tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  drivers/pci/pcie/aer.c
+  drivers/staging/rtl8723bs/
 
 between commit:
 
-  79c168e2aa957 ("PCI/AER: Skip error recovery on false alarms")
+  c520f3af7df42 ("staging: rtl8723bs: remove the obsolete driver")
 
-=66rom the pci-current tree and commit:
+=66rom the net-next tree and commits:
 
-  d4c842c3af5bc ("PCI/AER: Fix memory leak in aer_recover_work_func() when =
-pci_dev is missing")
+  dbc2fa996f446 ("staging: rtl8723bs: Remove manual ifname allocation")
+  eb903412616ff ("staging: rtl8723bs: make rtl8723_dequeue_writeport() retu=
+rn bool")
+  94f8dd8b96b03 ("staging: rtl8723bs: remove unused monitor interface name")
+  0e5058a181451 ("staging: rtl8723bs: rename PHY_ConvertTxPowerLimitToPower=
+Index()")
+  36d9b855cf944 ("staging: rtl8723bs: make xmitframe_swencrypt() return voi=
+d")
+  18a42264074ae ("staging: rtl8723bs: remove unnecessary parentheses around=
+ prframe->u.hdr.list")
+  6b4405c0f6001 ("staging: rtl8723bs: align function parameters in aes_deci=
+pher")
+  2268c1bf1a861 ("Staging: rtl8723bs: fixed camel case coding style issue.")
+  bbcc68a61f3be ("staging: rtl8723bs: fix block comment style")
 
-=66rom the pci tree.
+et al from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -80,75 +125,17 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/pci/pcie/aer.c
-index 922a726a52a50,c376c3adbefd2..0000000000000
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@@ -1373,16 -1370,9 +1372,15 @@@ static void aer_recover_work_func(struc
-  					   entry.domain, entry.bus,
-  					   PCI_SLOT(entry.devfn),
-  					   PCI_FUNC(entry.devfn));
-- 			continue;
-- 		}
-- 		pci_print_aer(pdev, entry.severity, entry.regs);
-+ 		else
-+ 			pci_print_aer(pdev, entry.severity, entry.regs);
- =20
- +		regs =3D entry.regs;
- +		if (entry.severity =3D=3D AER_CORRECTABLE)
- +			err =3D regs->cor_status & ~regs->cor_mask;
- +		else
- +			err =3D regs->uncor_status & ~regs->uncor_mask;
- +
-  		/*
-  		 * Memory for aer_capability_regs(entry.regs) is being
-  		 * allocated from the ghes_estatus_pool to protect it from
-@@@ -1393,15 -1383,15 +1391,21 @@@
-  		ghes_estatus_pool_region_free((unsigned long)entry.regs,
-  					    sizeof(struct aer_capability_regs));
- =20
-- 		if (err) {
-- 			if (entry.severity =3D=3D AER_NONFATAL)
-- 				pcie_do_recovery(pdev, pci_channel_io_normal,
-- 						 aer_root_reset);
-- 			else if (entry.severity =3D=3D AER_FATAL)
-- 				pcie_do_recovery(pdev, pci_channel_io_frozen,
-- 						 aer_root_reset);
-+ 		if (pdev) {
- -			if (entry.severity =3D=3D AER_NONFATAL)
- -				pcie_do_recovery(pdev, pci_channel_io_normal,
- -						 aer_root_reset);
- -			else if (entry.severity =3D=3D AER_FATAL)
- -				pcie_do_recovery(pdev, pci_channel_io_frozen,
- -						 aer_root_reset);
-++			if (err) {
-++				if (entry.severity =3D=3D AER_NONFATAL)
-++					pcie_do_recovery(pdev,
-++							 pci_channel_io_normal,
-++							 aer_root_reset);
-++				else if (entry.severity =3D=3D AER_FATAL)
-++					pcie_do_recovery(pdev,
-++							 pci_channel_io_frozen,
-++							 aer_root_reset);
-++				}
-++			}
-++
-+ 			pci_dev_put(pdev);
-  		}
-- 		pci_dev_put(pdev);
-  	}
-  }
- =20
+(deleted the files)
 
---KaCU7AGt8SUjp5u7
+--hSDyjtiM2P12w3nY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCaslAEgAKCRAv73Ows9A4
-iUZiAP42/faa30/nshFc5UL2EUUCHO8+SlPH+I2r6UIS0GsQZgEAvPrEvLRrLL7r
-WLOPgSkjN+xCqJSVamuWNJD5wcDF2QY=
-=ER1R
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCaslfHQAKCRAv73Ows9A4
+idVTAQCs9er5Tjczolpw7ZuWp0gNJlb3KN8ExwRqXiSYmMGuowD+LdRvPUbAYuLm
+TqyWXQzFnYiRWYw3H3LsHhYap01LtAM=
+=xqIq
 -----END PGP SIGNATURE-----
 
---KaCU7AGt8SUjp5u7--
+--hSDyjtiM2P12w3nY--
