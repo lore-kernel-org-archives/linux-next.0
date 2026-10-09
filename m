@@ -1,56 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D9A37C923;
-	Thu,  8 Oct 2026 14:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B463176EF;
+	Fri,  9 Oct 2026 00:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791469436; cv=none; b=Ts1myz2u+yEP4ej58WiW+01JQGrA5hS4/G4bdKOOnI3ixfgkuYFUZi5VADbt8w2YQxAJ51xcsXIUDPgKXiczgGqtO4pTHo241LB2h8mu3KrXQxOyMbztVt6h3O5liqc9nYDzrow4ianlcNJFE6305UXia19H1nydCaeGcgZStfM=
+	t=1791507384; cv=none; b=gD10L0BwWxjlbc0RGibsRgJp708m6iYoHE96gEbzltgvEeKf617yLZ8yr9u5tDn4tGEcK4nkaByQzN94KSorZDvsggP+UWyPuHCG2/a8dtetS2NISviq3CH+tZ2Ztu1j/VmKyKpit4J5mbB4trZ7dNqpgiQOyj9fNVU/qys+bI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791469436; c=relaxed/simple;
-	bh=FH8K5T5iwcMbVb5eFlAnwSPC/DKlcLsYI7mBGzMZKrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=okNITYfg7uGFe9pp7eJPjAmQrbrmMC/mm/4+Ok82DdldLk1uKRMF5vDALSZkfU2SYGWH2mG29pAfOzoDWO8b0lcFn/eejY4Goh0KR7mXocAPxz9BLCzvAqH6ix6gOdKTpHfT71elELeaFzasv8Q+7cFv2ixQuiVFU/IEu7Y89Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtGwNC6g; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791507384; c=relaxed/simple;
+	bh=wdLjigYZjy8IjBIlWCmAc4XLW/tD8vl5ODF1pmAi5oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZEITwIx3XrLZ9ivwYQm3Gvxc30bVQgMeApg8le+w0fIB9NL7G2NhycDkST3mgdbYSWZwmoC7ruHDJVbsaMgSnQHsucdvBE9DiYZu3FGtJMSO2ZxdNosDRdJEnQMO+az6SKF5p8KF74avTCP5bTbMxhlNJSkBjfopMAAusHf66HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aw5RMIkW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtGwNC6g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FAB1F000FF;
-	Thu,  8 Oct 2026 14:23:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aw5RMIkW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A6B1F000FF;
+	Fri,  9 Oct 2026 00:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791469435;
-	bh=ubJhzmPg2cvyEPgOx3KoWhDFF3XbH8bTIRtTlGN1KxM=;
-	h=From:To:Cc:Subject:Date;
-	b=gtGwNC6gtXZV8s6YWPlANgjcED2Exy3wN9H51eUBiuoIq23KfiwC43xdj4ypPAUWJ
-	 +wJveputhusON/afhp5fcHUAeLM2SihWObAKrbERdBwP5gDWstj7u1trJuUlmaXV97
-	 arsdRGYFWj5+ZtFuA5g2PWwmkfUmRkRXS/6xisGo3ADUbUksrqTyJMvm0JLcXeOxeA
-	 RlPIoeEwpizs7A9rCYCDcKoo/pkX0Nff0QBEohaELOpsROyCGUbfjAlZHFijQqktBU
-	 4FZAZTQEOXpTib3APw/tp9rVp5tS+CG000CHr2X0iNWV7bLjczT+YrtTkGpcBuakIZ
-	 /p3B3rxJitQHw==
-From: Sasha Levin <sashal@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sasha Levin <sashal@kernel.org>,
-	linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Please add the kapi tree to linux-next
-Date: Thu,  8 Oct 2026 10:23:49 -0400
-Message-ID: <20261008142350.3067287-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20260515; t=1791507381;
+	bh=pm0kTSMT12s8o5tLUX+9ptUiwXok7Gmw4DJmohvTw2Y=;
+	h=Date:From:To:Cc:Subject:Reply-To;
+	b=Aw5RMIkWMtlfi7pNlqoV1IuIVzsUwVt9l8vRSD5FyTNFJRI765VGtGcQRGJIKOD3H
+	 PdzA7VCaU5O1OokFMmVB2IuUfRmnKMTnEb6jVb5kZb2lVawzy2eJJkx900ogdcRmSp
+	 5MnCValPufJTgb1E+aRHcQD6Y6J5e84mcFzESolOwVDXJ3S+etKCuW+zkndiP1Pqyr
+	 eJV6o6nupGZ+qCM7cTCyDGztsNNno8kwmR1W/sOeWX7B6fpsB9nr0s0vIMJyqcYNW5
+	 Iv7JYUCBmdstpA7/BjN3Snxw5J05Hi/oX9E6oMnzd9RCZiNPLdNQgoDccpU7ybas9Z
+	 j/p6UigbmCohQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 51D5DCE399B; Thu,  8 Oct 2026 17:56:21 -0700 (PDT)
+Date: Thu, 8 Oct 2026 17:56:21 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Lorenzo Stoakes <ljs@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Manuel Ebner <manuelebnerli@mailbox.org>,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org
+Subject: [BUG] Build failure in next-20261007 and next-20261008
+Message-ID: <0ddb5e5e-f801-444c-aa98-0cfe814a3026@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Mark,
+Hello!
 
-Could you please add the following branch to linux-next:
+Building a kernel on CentOS Stream 9 from next-20261007 and next-20261008
+(and maybe others?)  on an x86 or arm64 system results in a strange
+build failure featuring:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/sashal/kapi.git spec
+WARNING: Unable to reopen jobserver read-side pipe: FileNotFoundError(2, 'No such file or directory')
 
-It contains the kernel api specification framework which I intend to send to
-Linus.
+However, a kernel really is built, and restarting the build immediately
+after a failure succeeds and generates a good kernel.  Doing a "make
+clean" causes the next build to fail, as does changing a sufficient
+number of source files.
 
--- 
-Thanks,
-Sasha
+My reproducer is:
+
+tools/testing/selftests/rcutorture/bin/kvm.sh --build-only --allcpus --configs TREE02 --trust-make
+
+But a simple "make -jN" suffices.
+
+Bisection converged on this commit:
+
+48ebe1cbbeb5 ("kbuild: compress the kernel with pigz if available")
+
+Reverting this commit gets rid of the bug.
+
+The bug does not happen on my ancient Ubuntu laptop.
+
+The failing systems have a pigz command (which complains bitterly when
+run without arguments), and the immune system does not.  On the failing
+systems, "pigz --version" gives me "pigz 2.5".
+
+Do I need a specific version of pigz?  Does this commit need a
+version-number check?  Are my systems pigz-intolerant?  ;-)
+
+Less flippantly, is this a known problem?  If not, what debugging
+information can I provide?
+
+							Thanx, Paul
