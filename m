@@ -1,44 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB35D39EB59;
-	Mon, 12 Oct 2026 16:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CFA4A387F;
+	Mon, 12 Oct 2026 16:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791820972; cv=none; b=puf9REF6bEuwoYTn52LzUTnQOdbzJ2f6DhecauRI4sMdDJdPZpfqE2Uov0eVlMc8nzeWPXtSmCNZbu0XPFvfcuoOZ53L4qK8OBmLpt5dQ7yqlX7hvR0WSiZwEpDC6b5SPT8J1qcwWs54lIxNZIICcpK7SrwQxURfbvaJaS0XjaE=
+	t=1791822150; cv=none; b=LmRXHQvxFGlzkTmNZ6iaxMAJo3oUb0AuWs2/msBKHv9GvoEgL0azkvtykHbCtYbkLjYrPT/VHUU1wC6am8x/7WBzt1hdq/dxQUFud9l82I/PUfaFxOnhTE2tTWPCfdhklV++4+TTGfbHxBAG7mkwjc4FBSdRJ2/uFYviYz8dYLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791820972; c=relaxed/simple;
-	bh=kMMV4dSgIuIINhs4G4bbHvnLS5XWVNYT7KOjXT95fwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tf9kYMOR9OzggCM53jqn+bIGSytiJjivcy1HoMT/tLNa+eiP5JMDb3B/Vhqs9ajJFBeud86+3/sSiifXsPw8SOovinNc/VTiuFzwODHOa3G5K5TMJIAM/7xbMUydDBRs1pb9jNozoMSFONyVDN5cK1bWvA56FmmdEO1gpn2mxYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrlQtDVp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791822150; c=relaxed/simple;
+	bh=O/whSYI/eilwT/aR+FBkQ9BQ1VdZcPCPbGTmA6igowM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VZrsWh290XY4YM0iwca6MqRojHEw04ZtEPfBpI6dKA1LGnqOgPa+aO0vLgU8U6yEZ2AX0gHEIfUHvYm99fvJvM4aCIjz2o4BoGCgG5ulZJ6ONkE5Fm7qAOLy9WUORrY+u3TFnbCz0jsjr742TzJS3cp6P6ebjWCyqMfaVs5iLTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krhvFx99; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrlQtDVp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F21151F0089B;
-	Mon, 12 Oct 2026 16:02:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krhvFx99"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 479261F0089B;
+	Mon, 12 Oct 2026 16:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791820971;
-	bh=kMMV4dSgIuIINhs4G4bbHvnLS5XWVNYT7KOjXT95fwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DrlQtDVpAWdY2ZNst+h6PAcJZ7lrUA8jlexA1pf+PyEa9ACqlnywBdau677VwsPsn
-	 8w1KHcrgFLS7jRLrF6/dKPKUXFOjEFQYlYULJFcVYExdne0S4feSjlkOPhSZTNIkC4
-	 xpFCPbQZrbgj7YQyFSeQEWzFyLXpwpIFh4a9d+Y3KiEe9krOPNY5t3UuvdxKw8DXST
-	 qzl+rtRsoJdV1bnFbkztQO2tY3G++6qDtWrnOmbRkW9BMp+JbBh+xgpC6NUjPdVdfl
-	 5k7SEgWn/vg2x7/sb87EQYt7isjKoIWVMoqy12FT28KzoDh7FR/vVT2R44/gE+hr0I
-	 BPDum5lSqmrBQ==
-Date: Mon, 12 Oct 2026 17:02:47 +0100
+	s=k20260515; t=1791822149;
+	bh=WvdDyBJ3nYyvMWerAF6QbtnudCx/aF32Hxs83dpFCxg=;
+	h=Date:From:To:Cc:Subject;
+	b=krhvFx99aubfcfbdQTsJt+V1mXqMinmMU+X3Jh/aC8zA3/05C0uv1/oxZZT7u6lpG
+	 gH3taO43+PCOzwZ3SeySxQh80JybVcnx8gJvo3+Vl1rUiJI4hsWMm9hupH4k3dgHn9
+	 8K4MggekyUNUarY0trEa6/3BEwr/ppWFxnYJF2E1FAbpZwLcqchKku+betqhSkqkyw
+	 2vmfQIsGaWjT0xdtpszLaaLvqMlg/+lnNMNdB+RVgdLXBhp4a9QGA1xtBWa0u4eqHb
+	 9/vN9eORrjH48nBI5xL+p704veJnfiMdYbcU95BLDGjMwHtk90kDe56882RiXArDtU
+	 MFTlyzNP5uZiA==
+Date: Mon, 12 Oct 2026 17:22:24 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Ozgur <zgrieee@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>,
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <30b72db8-b92d-4e93-bab8-e82bac8a485f@sirena.org.uk>
-References: <aszji59b6B79a3Hi@sirena.org.uk>
- <CAOFRbGnVCnW4CEvhp_x6t58v0sB2to+6AP0hHYtci0EBnUWQzQ@mail.gmail.com>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Subject: linux-next: manual merge of the drm tree with the qcom tree
+Message-ID: <as0JQLlvuodleN98@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -46,49 +44,156 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NvMt478TcZTwFp0s"
+	protocol="application/pgp-signature"; boundary="NJUZr1DeX2pRx7Hv"
 Content-Disposition: inline
-In-Reply-To: <CAOFRbGnVCnW4CEvhp_x6t58v0sB2to+6AP0hHYtci0EBnUWQzQ@mail.gmail.com>
-X-Cookie: Is this TERMINAL fun?
 
 
---NvMt478TcZTwFp0s
-Content-Type: text/plain; charset=utf-8
+--NJUZr1DeX2pRx7Hv
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 12, 2026 at 05:30:28PM +0300, Ozgur wrote:
-> Mark Brown <broonie@kernel.org>, 12 Eki 2026 Pzt, 16:50 tarihinde =C5=9Fu=
-nu yazd=C4=B1:
-> >
-> > Hi all,
->=20
-> Hi Mark,
->=20
-> i noticed Namjae Jeon's commit (2de2cdd9cc08, ntfs: add pathname
-> access for named streams) is currently present in fs-next and your
-> reported build failure appears to result from this commit interacting
-> with VFS changes that make mnt_idmap const in the ->setattr() and
-> ->getattr() callbacks, and i think fs-next before changes are
-> integrated into linux-next
->=20
-> i compiled linux-next tree but couldnt reproduce the build failure.
+Hi all,
 
-Today's -next hasn't been published...
+Today's linux-next merge of the drm tree got a conflict in:
 
---NvMt478TcZTwFp0s
+  drivers/soc/qcom/qcom-geni-se.c
+
+between commit:
+
+  803f9950a6c6e ("soc: qcom: geni-se: provide PROG_RAM_DEPTH for I2C HUB Se=
+rial Engines")
+
+=66rom the qcom tree and commit:
+
+  d1750c530e9b9 ("soc: qcom: geni-se: Fix fw_end computed before round-up; =
+propagate size to caller")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined drivers/soc/qcom/qcom-geni-se.c
+index 074087c592cc3,6ac2bdc16984c..0000000000000
+--- a/drivers/soc/qcom/qcom-geni-se.c
++++ b/drivers/soc/qcom/qcom-geni-se.c
+@@@ -42,7 -42,7 +42,7 @@@ EXPORT_TRACEPOINT_SYMBOL_GPL(geni_se_re
+   *
+   * GENI based QUP is a highly-flexible and programmable module for suppor=
+ting
+   * a wide range of serial interfaces like UART, SPI, I2C, I3C, etc. A sin=
+gle
+ - * QUP module can provide upto 8 serial interfaces, using its internal
+ + * QUP module can provide up to 8 serial interfaces, using its internal
+   * serial engines. The actual configuration is determined by the target
+   * platform configuration. The protocol supported by each interface is
+   * determined by the firmware loaded to the serial engine. Each SE consis=
+ts
+@@@ -101,26 -101,22 +101,26 @@@
+   * @base:		Base address of this instance of QUP wrapper core
+   * @clks:		Handle to the primary & optional secondary AHB clocks
+   * @num_clks:		Count of clocks
+ + * @prog_ram_depth:	Available CFG RAM depth for instance without SE_HW_PA=
+RAM_2
+   */
+  struct geni_wrapper {
+  	struct device *dev;
+  	void __iomem *base;
+  	struct clk_bulk_data clks[MAX_CLKS];
+  	unsigned int num_clks;
+ +	unsigned int prog_ram_depth;
+  };
+ =20
+  /**
+   * struct geni_se_desc - Data structure to represent the QUP Wrapper reso=
+urces
+   * @clks:		Name of the primary & optional secondary AHB clocks
+   * @num_clks:		Count of clock names
+ + * @prog_ram_depth:	Available CFG RAM depth for instance without SE_HW_PA=
+RAM_2
+   */
+  struct geni_se_desc {
+  	unsigned int num_clks;
+  	const char * const *clks;
+ +	unsigned int prog_ram_depth;
+  };
+ =20
+  static const char * const icc_path_names[] =3D {"qup-core", "qup-config",
+@@@ -924,7 -920,7 +924,7 @@@ void geni_se_rx_dma_unprep(struct geni_
+  }
+  EXPORT_SYMBOL_GPL(geni_se_rx_dma_unprep);
+ =20
+ -int geni_icc_get(struct geni_se *se, const char *icc_ddr)
+ +int geni_icc_get(struct geni_se *se)
+  {
+  	struct geni_icc_path *icc_paths =3D se->icc_paths;
+ =20
+@@@ -1221,7 -1217,7 +1221,7 @@@ int geni_se_resources_init(struct geni_
+ =20
+  	se->has_opp =3D (ret =3D=3D 0);
+ =20
+ -	ret =3D geni_icc_get(se, "qup-memory");
+ +	ret =3D geni_icc_get(se);
+  	if (ret)
+  		return ret;
+ =20
+@@@ -1248,7 -1244,6 +1248,7 @@@ static const struct se_fw_hdr *geni_fin
+  						     enum geni_se_protocol_type protocol,
+  						     u32 *fw_size_out)
+  {
+ +	struct geni_wrapper *wrapper =3D se->wrapper;
+  	struct device *dev =3D se->dev;
+  	const struct elf32_hdr *ehdr;
+  	const struct elf32_phdr *phdrs;
+@@@ -1313,11 -1308,8 +1313,11 @@@
+  		cfg_val_end =3D le16_to_cpu(sefw->cfg_val_offset) +
+  			      le16_to_cpu(sefw->cfg_size_in_items) * sizeof(u32);
+ =20
+ -		prog_ram_depth =3D FIELD_GET(PROG_RAM_DEPTH_MSK,
+ -					   readl_relaxed(se->base + SE_HW_PARAM_2));
+ +		if (wrapper->prog_ram_depth)
+ +			prog_ram_depth =3D wrapper->prog_ram_depth;
+ +		else
+ +			prog_ram_depth =3D FIELD_GET(PROG_RAM_DEPTH_MSK,
+ +					readl_relaxed(se->base + SE_HW_PARAM_2));
+  		if (fw_size >=3D prog_ram_depth) {
+  			dev_err(dev, "Firmware size (%u) exceeds RAM size (%u)\n",
+  				fw_size, prog_ram_depth);
+@@@ -1628,7 -1620,6 +1628,7 @@@ static int geni_se_probe(struct platfor
+  		return PTR_ERR(wrapper->base);
+ =20
+  	desc =3D device_get_match_data(&pdev->dev);
+ +	wrapper->prog_ram_depth =3D desc->prog_ram_depth;
+ =20
+  	if (!has_acpi_companion(&pdev->dev) && desc->num_clks) {
+  		int i;
+@@@ -1681,7 -1672,6 +1681,7 @@@ static const char * const i2c_master_hu
+  static const struct geni_se_desc i2c_master_hub_desc =3D {
+  	.clks =3D i2c_master_hub_clks,
+  	.num_clks =3D ARRAY_SIZE(i2c_master_hub_clks),
+ +	.prog_ram_depth =3D 1020,
+  };
+ =20
+  static const struct of_device_id geni_se_dt_match[] =3D {
+
+--NJUZr1DeX2pRx7Hv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrNBKYACgkQJNaLcl1U
-h9DCvQf/cNP6xzycFuNGZgpc2WR17TOZjf8e5Qj4nc+rlzs8bSbiKjoKJh74CVAI
-Cd0a1N3g+WvYVtQRSvx1FMaTb1Sw6ODGZCSEpijNBgi0oY4bl7/tK/SIl5C9Vrek
-bwc11J1bkrGpgvAALpPttc381k37HW6PwDH0UszJ+YiwAGIMpM3BN4v82AGwPqS2
-eefqr14MhO4VNqnSFbQLyXruIabGFC7HX8vtGr0aNAYxY0H7xTlD76lI4sB7Z+3M
-cbMEYrchb9cQRaEInkwqXE1KS9ok5oN+XSVasRXxsksFS+UT71QAMT/2ZckEV05V
-HcsjN8rvIf/NzxwMqbCBSGpr+Cnqkg==
-=twEO
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrNCT8ACgkQJNaLcl1U
+h9D4Igf+JCJYhSGkBBuHIPTErRr7NEzrQ+I7sdwvMaP4D+w0KKavHOlA/StjL6SI
+eAejIhH5LJg4WxQqJ6eNEeoKtamN0ryS+TgU/GBCmE0gpw40xxAa5w5yS+F4xp92
+6ynftmOL+nicHbHvSK0Lww4in0ex6T0HiZzxbwIAlGksmOqp/a1m2hUQrewacM3T
+jgIt67uudYMT5DHGHlHFDL+RNZQ0t5d3PUCPgwUnb2o0dGJqYC8FbJw7/eHj0XIP
+AKXMqFqVPFZZCOVYj1LaVD4h3KAq2kv1Ave/iDXTXHR4wBcZTL68AONFpt8uxmjl
+QJZG62rB5UZIIyVxiVRcJzpWj60RxA==
+=PCEH
 -----END PGP SIGNATURE-----
 
---NvMt478TcZTwFp0s--
+--NJUZr1DeX2pRx7Hv--
