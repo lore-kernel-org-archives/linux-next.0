@@ -1,274 +1,419 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE03F48EC79
-	for <linux-next@vger.kernel.org>; Mon, 12 Oct 2026 14:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791815443; cv=pass; b=jre8T3pVlH6bRozC1PJt2MRBO0ObdFeRHSiyU909ynPae3eWN6/XD0jeiQEV805iNNjRgqv23mFC8Ajk9rCT0cOF554WtElonNCejz2cHutBAGg2Nx5GIK0KRWMwgSk0P5eb7A81GEhOH9mPjwOMC1Hbiao8R6g//qVayV6KAEU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791815443; c=relaxed/simple;
-	bh=cY/JBGh/hwGpvSrRdbWicIuwFqUbUO1NYgLVdjhfIyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hVAtvTf8GOkGpzVEkREFncbeAngsDMAJHeicyIXe+xRdmzB2WCatZg/2UHE2tkwGjwR2T3NIsI5E6bnTCIlhFEuMpuKiJHZ4p5ikE7oWc1N5/abKS3pVULKM2xD3HaGPoOnebprKiqMNfKWPio+X7qwDehsA4NuoIC/YEb6JEuo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XO6es4hr; arc=pass smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B73A4A0127;
+	Mon, 12 Oct 2026 15:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791820769; cv=none; b=di2h1qx5jxXMhopPL3lWNypq8Ykjh+heT00EWrp08EPgxp2XJLUEV1JGmg8MU29SQhzVy+It4sqwb7HCQupCPTz1m0AbMUlvHn3J1tUqZVkVcU+HLj7Iopk21RdmGpehHag8P79MBJMV9V5c9GVsA4RxB2ppRLhYY2ScOfrZilk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791820769; c=relaxed/simple;
+	bh=lfXUOHb7xMr3m7ybiBhvaJOk6Cil31nNsWApdeH5Xr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QH9iEPfDNYWbPUlK6Jc0WOKJ5TG/YLVfN4rb+CXFEF7VZAljmSYPnGgOFsgOGyfBSPcrPYmtIoSbqevPUuPUspw5+yGj4zZr2ktMUxOTZ0iYcK9224fVOTU30gxXpFDbcPj3fKPepIhxlWdUx7imKnrV2l9yXomrJO2CruW6CE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rcsyjhco; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XO6es4hr"
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-98301b325c4so473806241.1
-        for <linux-next@vger.kernel.org>; Mon, 12 Oct 2026 07:30:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791815441; cv=none;
-        d=google.com; s=arc-20260327;
-        b=dctvffBueD9kJx7VKGP0u7iEyxN2C6DprVB0foH6RUzp0q7/mBZv2+jFOt7ldtVbYO
-         ebL3wFnMQgiuppG9nq5lZ3747wKKOlZNqSedit6BCqeZXfWSWbriLh6DqCAgvRcrtPzN
-         mr303umSdTI8QW6Kx79cmDaCcaSPJB0g2Ky7zIEUr9ITgVi+kh6u/paMNrOP5XttlUSc
-         sEG2HdK1CSC0lKbp9LK9hl8dZ5JI9HB1TeSLF4vdhhnT16bXzkYD9m6gjS50YhluVT3p
-         jyMab/Wk3Otl4pigFrFole4G/DbLBQOeAwAFy1oQeuXffU70n5uRPg5NLM5nhXoNZaBg
-         hmCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=i53cakjPfkVLTz+URoRixAorII/+Ktg3Ujd3YzzVevU=;
-        fh=Rod9Eg6brV/1uKl9ijrl2XaAA7/uddszf+Mymkru070=;
-        b=liTnppBDOFCANX7wbqvzyNWHxmpdtmZUQ1aUjIiRg0INB0G+ZINf0Io4406pES22my
-         uTNYhHCt52jwQmVyCABSvsSDANgMxP1QyHrCW/GX8KyMBrVTtsuMeswv+e0flgb7Lyes
-         RgiVhR2jNLl3nw+3Ys4ZwE9V5kQe9d2yUhLyOXMxzVjIwZl3S+R8qRNknOHYkFL4oHKa
-         NM38Uj2Uutx/nYYV/skHBUHsjn4fODfGeZsLsXCaT4T7kKcAUMnHBGoJsdZdeIBx4mb/
-         CscdQKFGC0yjs1e4NuIYksauCeZ3I03GsGjF0Zprz0XSteaX00xtU3N/urS+2n7gRQDg
-         TmOQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791815441; x=1792420241; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=i53cakjPfkVLTz+URoRixAorII/+Ktg3Ujd3YzzVevU=;
-        b=XO6es4hr7UFZt+vCQzlHIEk7+R1F1N2exL1e+mqPwbW+ZczPJ8bzfHEzdohWJKGhSf
-         Nc9yrKP2zzV2hwrKYrJG9R1amefatBC0W7G82uWdyoifO59VF+1SRpbJbw5j9rUW7kY6
-         /vU/e7lRZHbrrnytLLDUXmy6HYw7Fb/UeDqRtJi4sZvLCGRl5idBu1aomGPGmBJ0vOtX
-         bWrgFHYcJxreDnliqY1LW2jabzkv5+RV/UL/ESshEhy0GQtwdcokNdpFSXtHAUvcQARB
-         3HvfSpavQ/Z5FN8rN7Rxvx5zyxMYNyxgLzhK00dzHXfzW3ejqmC5nyoezH0YXwEqZ3hH
-         L0Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791815441; x=1792420241;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=i53cakjPfkVLTz+URoRixAorII/+Ktg3Ujd3YzzVevU=;
-        b=gnMVZa7SG0unrlQ8nfiMwI26U5+d74rduvf0v0IBji57jJ3TKUTqKouBJmHhjqZhuo
-         ryHorVFSHQLH2UagSRyLSxcyrfXAxSGtbUHGDwAmMXa6Cd6zE2XDSTxR22Tu7U4azUHN
-         0AHkoHO/axIj2mtX6E1kqi4xGxh1po+MYRleagyrvDsOcBRY6cj1PLCSsQ0qgM5k+l1M
-         0gJKrpJ7ZqGR2dEAF3NeNz3c02LewqdN2Ibx9GSlhem4fzRLiLc3m9gaFk2fdGQu23iG
-         nXgm18lYV8B4hfQSHF9ucVWfQz/gMhDsG5++abEoUqPzKbELVDlnzzDhJPoEa7jZjbjO
-         bWaQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx4jaq7I8rP09aVQwiaKzXKgRkjmOixMWdVEgyxC509TFcRRRBT+tiwmNCcJXOAUg5Gl10q1y19s6l2@vger.kernel.org
-X-Gm-Message-State: AFq9FYLdU6bMc+1Fb4Z5OHUKJA7gLE5XglD1bygSTUMt9X1ryQD4pVBa
-	JB52qn4y9T6y0VluC10FAIPuHymkE2y8c9t1OTmlVRXm3GdXs+IsVkDHWllRtdTkQ+MXS8uen/k
-	ACHkAU+D+WihFX58KypUPLpuIgknHeSw=
-X-Gm-Gg: AYBFou0KcZsDVfpsH2Bi0n4smmd0suUtvgQXA4rsjb5pVCrK8ISpz7YL+2+8USfgmEc
-	D3rbc27e5nb/7JUCQ3EzbNjm9TsLf+p6QcdGR0MM3OhHPWuSCsgv1wUnrns2Q45ZlkCVOsiAgGO
-	RZ3AYjPD4ZjYnI1sz6ArN4e+HMkmAjBdbk5gOEiawUoYX/gAbAb1MCzQ05YQ+TgJ/KPd1zFE9Ej
-	Tr/nClfjZ+vVdlgQRoJBWbvWMkOtFbspj+CXWeWc8DNJKvtHyeiPvlL2x06AF+zQzJ3cTdreK3U
-	URVooEq7CwlKjruw8neMO1uLHzFm0DWc8LwtK0EHjTMH/cLd0Yh2Wmg=
-X-Received: by 2002:a05:6102:419f:b0:7c8:18a2:f769 with SMTP id
- ada2fe7eead31-7cb391458acmr2293372137.0.1791815440564; Mon, 12 Oct 2026
- 07:30:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rcsyjhco"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA251F0089B;
+	Mon, 12 Oct 2026 15:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791820767;
+	bh=p0Oy1xgZO7bMYO+znqJGC/z5JxJhnO2Gj6YXrYk3if0=;
+	h=Date:From:To:Cc:Subject;
+	b=RcsyjhcoB1ZvpnrmRxUuFJB5E+L7hXh1kVDMDXcqNmAR2W/KlRNlD58D7wSOa9G6b
+	 WNAyFv087r2MFRuOrRHNTvBpxZWbU2mPaIt0RMBOM+2E9djtYaGQaRJ9iIjbP+Gcu0
+	 JSJKytZeRDDph0Re9Utu2oyzy4PgW/63vw0oBl6pAdFA5/T0DuHQR5FBgAEWduiRrL
+	 iQ2oT8/0BdD/pftrj1OlkYDc17zOqAIACOGCYz1jxO7t79LwYrDFfge0rsJ2Cod/tt
+	 UAV/MuIYU5bXIHMKmRI6OMe/6dzdznRgX5YtquSvmZGAv+cLPPxKSscniA9xE092VA
+	 tLQ6lf4m6DX2Q==
+Date: Mon, 12 Oct 2026 16:59:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, Paul Walmsley <pjw@kernel.org>,
+	Vlastimil Babka <vbabka@kernel.org>
+Subject: linux-next: manual merge of the risc-v tree with the mm tree
+Message-ID: <as0D2sHzh_UnNF5L@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aszji59b6B79a3Hi@sirena.org.uk>
-In-Reply-To: <aszji59b6B79a3Hi@sirena.org.uk>
-From: Ozgur <zgrieee@gmail.com>
-Date: Mon, 12 Oct 2026 17:30:28 +0300
-X-Gm-Features: AclHuK-FGPOheor9BkRHjONa2cvRES-RJIe10Ctv35rk327UqJcfONC6p4NJl7A
-Message-ID: <CAOFRbGnVCnW4CEvhp_x6t58v0sB2to+6AP0hHYtci0EBnUWQzQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XyTK6uThIuKcT8tS"
+Content-Disposition: inline
+
+
+--XyTK6uThIuKcT8tS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Mark Brown <broonie@kernel.org>, 12 Eki 2026 Pzt, 16:50 tarihinde =C5=9Funu=
- yazd=C4=B1:
->
-> Hi all,
+Hi all,
 
-Hi Mark,
+Today's linux-next merge of the risc-v tree got a conflict in:
 
-i noticed Namjae Jeon's commit (2de2cdd9cc08, ntfs: add pathname
-access for named streams) is currently present in fs-next and your
-reported build failure appears to result from this commit interacting
-with VFS changes that make mnt_idmap const in the ->setattr() and
-->getattr() callbacks, and i think fs-next before changes are
-integrated into linux-next
+  arch/riscv/mm/init.c
 
-i compiled linux-next tree but couldnt reproduce the build failure.
+between commit:
 
-Regards
+  f02f1d1437449 ("riscv/mm: fix hotplug page-table destructor handling")
 
-Ozgur
+=66rom the mm tree and commit:
 
->
-> After merging the vfs-brauner tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> /tmp/next/build/fs/smb/client/cifsfs.c:1258:18: error: incompatible funct=
-ion pointer types initializing 'int (*)(const struct mnt_idmap *, struct de=
-ntry *, struct file_kattr *)' with an expression of type 'int (struct mnt_i=
-dmap *, struct dentry *, struct file_kattr *)' [-Wincompatible-function-poi=
-nter-types]
->  1258 |         .fileattr_set =3D cifs_fileattr_set,
->       |                         ^~~~~~~~~~~~~~~~~
-> /tmp/next/build/fs/smb/client/cifsfs.c:1270:18: error: incompatible funct=
-ion pointer types initializing 'int (*)(const struct mnt_idmap *, struct de=
-ntry *, struct file_kattr *)' with an expression of type 'int (struct mnt_i=
-dmap *, struct dentry *, struct file_kattr *)' [-Wincompatible-function-poi=
-nter-types]
->  1270 |         .fileattr_set =3D cifs_fileattr_set,
->       |                         ^~~~~~~~~~~~~~~~~
-> 2 errors generated.
-> make[6]: *** [/tmp/next/build/scripts/Makefile.build:290: fs/smb/client/c=
-ifsfs.o] Error 1
-> make[6]: *** Waiting for unfinished jobs....
-> make[5]: *** [/tmp/next/build/scripts/Makefile.build:551: fs/smb/client] =
-Error 2
-> make[5]: *** Waiting for unfinished jobs....
-> /tmp/next/build/fs/ntfs/namei.c:793:40: error: passing 'const struct mnt_=
-idmap *' to parameter of type 'struct mnt_idmap *' discards qualifiers [-We=
-rror,-Wincompatible-pointer-types-discards-qualifiers]
->   793 |                 stream_vi =3D ntfs_create_named_stream(idmap, dir=
-, base_name,
->       |                                                      ^~~~~
-> /tmp/next/build/fs/ntfs/stream.h:35:58: note: passing argument to paramet=
-er 'idmap' here
->    35 | struct inode *ntfs_create_named_stream(struct mnt_idmap *idmap,
->       |                                                          ^
-> 1 error generated.
->
->
-> Caused by the constification series for mnt_idmap interacting with:
->
->    2de2cdd9cc08f (ntfs: add pathname access for named streams)
->    121e0c35720b2 (smb: client: implement fileattr_set for compression fla=
-gs)
->
-> from the cifs and ntfs trees.  I have applied the fixup below and can
-> carry as needed.
->
-> From 6b75090639b332f5fa52a558edbba295d8bb42fc Mon Sep 17 00:00:00 2001
-> From: Mark Brown <broonie@kernel.org>
-> Date: Mon, 12 Oct 2026 13:55:24 +0100
-> Subject: [PATCH] cifs: Fix semantic conflict with const mnt_idmap
->
-> /tmp/next/build/fs/smb/client/cifsfs.c:1258:18: error: incompatible funct=
-ion pointer types initializing 'int (*)(const struct mnt_idmap *, struct de=
-ntry *, struct file_kattr *)' with an expression of type 'int (struct mnt_i=
-dmap *, struct dentry *, struct file_kattr *)' [-Wincompatible-function-poi=
-nter-types]
->  1258 |         .fileattr_set =3D cifs_fileattr_set,
->       |                         ^~~~~~~~~~~~~~~~~
-> /tmp/next/build/fs/smb/client/cifsfs.c:1270:18: error: incompatible funct=
-ion pointer types initializing 'int (*)(const struct mnt_idmap *, struct de=
-ntry *, struct file_kattr *)' with an expression of type 'int (struct mnt_i=
-dmap *, struct dentry *, struct file_kattr *)' [-Wincompatible-function-poi=
-nter-types]
->  1270 |         .fileattr_set =3D cifs_fileattr_set,
->       |                         ^~~~~~~~~~~~~~~~~
-> 2 errors generated.
->
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  fs/ntfs/named_stream.c | 6 +++---
->  fs/ntfs/stream.h       | 2 +-
->  fs/smb/client/cifsfs.h | 2 +-
->  fs/smb/client/ioctl.c  | 2 +-
->  4 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/ntfs/named_stream.c b/fs/ntfs/named_stream.c
-> index d74bebf90966b..95a3c05f98211 100644
-> --- a/fs/ntfs/named_stream.c
-> +++ b/fs/ntfs/named_stream.c
-> @@ -553,7 +553,7 @@ int ntfs_stream_path_names(struct ntfs_volume *vol,
->   *
->   * Return: Referenced stream inode on success, or ERR_PTR() on failure.
->   */
-> -struct inode *ntfs_create_named_stream(struct mnt_idmap *idmap,
-> +struct inode *ntfs_create_named_stream(const struct mnt_idmap *idmap,
->                 struct inode *dir, __le16 *base_name, int base_len,
->                 __le16 *stream_name, int stream_len)
->  {
-> @@ -988,13 +988,13 @@ static ssize_t ntfs_stream_listxattr(struct dentry =
-*dentry, char *buffer,
->  }
->
->  #ifdef CONFIG_NTFS_FS_POSIX_ACL
-> -static struct posix_acl *ntfs_stream_get_acl(struct mnt_idmap *idmap,
-> +static struct posix_acl *ntfs_stream_get_acl(const struct mnt_idmap *idm=
-ap,
->                 struct dentry *dentry, int type)
->  {
->         return ERR_PTR(-EOPNOTSUPP);
->  }
->
-> -static int ntfs_stream_set_acl(struct mnt_idmap *idmap,
-> +static int ntfs_stream_set_acl(const struct mnt_idmap *idmap,
->                 struct dentry *dentry, struct posix_acl *acl, int type)
->  {
->         return -EOPNOTSUPP;
-> diff --git a/fs/ntfs/stream.h b/fs/ntfs/stream.h
-> index 5cbf6e8f6b681..76b6c9cca5cc0 100644
-> --- a/fs/ntfs/stream.h
-> +++ b/fs/ntfs/stream.h
-> @@ -32,7 +32,7 @@ struct inode *ntfs_stream_lookup_inode_by_name(struct i=
-node *dir,
->                 __le16 *name, int name_len);
->  struct dentry *ntfs_lookup_stream(struct inode *dir, struct dentry *dent=
-ry,
->                 const struct ntfs_stream_path *path);
-> -struct inode *ntfs_create_named_stream(struct mnt_idmap *idmap,
-> +struct inode *ntfs_create_named_stream(const struct mnt_idmap *idmap,
->                 struct inode *dir, __le16 *base_name, int base_len,
->                 __le16 *stream_name, int stream_len);
->  int ntfs_unlink_named_stream(struct inode *dir, struct dentry *dentry);
-> diff --git a/fs/smb/client/cifsfs.h b/fs/smb/client/cifsfs.h
-> index 7600467babb67..e54d3798eb2f7 100644
-> --- a/fs/smb/client/cifsfs.h
-> +++ b/fs/smb/client/cifsfs.h
-> @@ -91,7 +91,7 @@ extern const struct inode_operations cifs_namespace_ino=
-de_operations;
->
->  struct file_kattr;
->  int cifs_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
-> -int cifs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
-> +int cifs_fileattr_set(const struct mnt_idmap *idmap, struct dentry *dent=
-ry,
->                       struct file_kattr *fa);
->
->
-> diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
-> index af4664f5b1202..bb8808289a468 100644
-> --- a/fs/smb/client/ioctl.c
-> +++ b/fs/smb/client/ioctl.c
-> @@ -181,7 +181,7 @@ static int cifs_set_compression(unsigned int xid, str=
-uct dentry *dentry,
->                                             compression_state);
->  }
->
-> -int cifs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
-> +int cifs_fileattr_set(const struct mnt_idmap *idmap, struct dentry *dent=
-ry,
->                       struct file_kattr *fa)
->  {
->         struct cifs_sb_info *cifs_sb =3D CIFS_SB(dentry);
-> --
-> 2.47.3
->
+  79113093e9dc3 ("riscv: convert pgtable_l4|l5_enabled to inline function")
+
+=66rom the risc-v tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined arch/riscv/mm/init.c
+index 6f6b04795bb23,e2b738ca90cf3..0000000000000
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@@ -6,6 -6,11 +6,11 @@@
+   *  Nick Kossifidis <mick@ics.forth.gr>
+   */
+ =20
++ #ifdef CONFIG_64BIT
++ /* riscv_has_extension_likely() cannot be used this early */
++ #define USE_EARLY_PGTABLE_LEVELS
++ #endif
++=20
+  #include <linux/init.h>
+  #include <linux/mm.h>
+  #include <linux/memblock.h>
+@@@ -22,7 -27,6 +27,7 @@@
+  #include <linux/hugetlb.h>
+  #include <linux/kfence.h>
+  #include <linux/execmem.h>
+ +#include <linux/vmemmap-optimization.h>
+ =20
+  #include <asm/alternative.h>
+  #include <asm/fixmap.h>
+@@@ -53,10 -57,8 +58,8 @@@ u64 satp_mode __ro_after_init =3D SATP_MO
+  EXPORT_SYMBOL(satp_mode);
+ =20
+  #ifdef CONFIG_64BIT
+- bool pgtable_l4_enabled __ro_after_init =3D true;
+- bool pgtable_l5_enabled __ro_after_init =3D true;
+- EXPORT_SYMBOL(pgtable_l4_enabled);
+- EXPORT_SYMBOL(pgtable_l5_enabled);
++ bool _pgtable_l4_enabled __ro_after_init =3D true;
++ bool _pgtable_l5_enabled __ro_after_init =3D true;
+  #endif
+ =20
+  phys_addr_t phys_ram_base __ro_after_init;
+@@@ -186,7 -188,7 +189,7 @@@ void __init arch_mm_preinit(void
+  		 */
+  		unsigned long size =3D
+  			DIV_ROUND_UP(memblock_phys_mem_size(), 1024);
+ -		swiotlb_adjust_size(min(swiotlb_size_or_default(), size));
+ +		swiotlb_adjust_size(min(swiotlb_default_pool_size(), size));
+  		swiotlb =3D true;
+  		swiotlb_flags |=3D SWIOTLB_ANY;
+  	}
+@@@ -653,23 -655,23 +656,23 @@@ static void __meminit create_p4d_mappin
+  }
+ =20
+  #define pgd_next_t		p4d_t
+- #define alloc_pgd_next(__va)	(pgtable_l5_enabled ?			\
+- 		pt_ops.alloc_p4d(__va) : (pgtable_l4_enabled ?		\
++ #define alloc_pgd_next(__va)	(pgtable_l5_enabled() ?			\
++ 		pt_ops.alloc_p4d(__va) : (pgtable_l4_enabled() ?	\
+  		pt_ops.alloc_pud(__va) : pt_ops.alloc_pmd(__va)))
+- #define get_pgd_next_virt(__pa)	(pgtable_l5_enabled ?			\
+- 		pt_ops.get_p4d_virt(__pa) : (pgd_next_t *)(pgtable_l4_enabled ?	\
++ #define get_pgd_next_virt(__pa)	(pgtable_l5_enabled() ?			\
++ 		pt_ops.get_p4d_virt(__pa) : (pgd_next_t *)(pgtable_l4_enabled() ? \
+  		pt_ops.get_pud_virt(__pa) : (pud_t *)pt_ops.get_pmd_virt(__pa)))
+  #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
+- 				(pgtable_l5_enabled ?			\
++ 				(pgtable_l5_enabled() ?			\
+  		create_p4d_mapping(__nextp, __va, __pa, __sz, __prot) : \
+- 				(pgtable_l4_enabled ?			\
++ 				(pgtable_l4_enabled() ?			\
+  		create_pud_mapping((pud_t *)__nextp, __va, __pa, __sz, __prot) :	\
+  		create_pmd_mapping((pmd_t *)__nextp, __va, __pa, __sz, __prot)))
+- #define fixmap_pgd_next		(pgtable_l5_enabled ?			\
+- 		(uintptr_t)fixmap_p4d : (pgtable_l4_enabled ?		\
++ #define fixmap_pgd_next		(pgtable_l5_enabled() ?			\
++ 		(uintptr_t)fixmap_p4d : (pgtable_l4_enabled() ?		\
+  		(uintptr_t)fixmap_pud : (uintptr_t)fixmap_pmd))
+- #define trampoline_pgd_next	(pgtable_l5_enabled ?			\
+- 		(uintptr_t)trampoline_p4d : (pgtable_l4_enabled ?	\
++ #define trampoline_pgd_next	(pgtable_l5_enabled() ?			\
++ 		(uintptr_t)trampoline_p4d : (pgtable_l4_enabled() ?	\
+  		(uintptr_t)trampoline_pud : (uintptr_t)trampoline_pmd))
+  #else
+  #define pgd_next_t		pte_t
+@@@ -714,11 -716,11 +717,11 @@@ static uintptr_t __meminit best_map_siz
+  	if (debug_pagealloc_enabled())
+  		return PAGE_SIZE;
+ =20
+- 	if (pgtable_l5_enabled &&
++ 	if (pgtable_l5_enabled() &&
+  	    !(pa & (P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >=3D P4D_SI=
+ZE)
+  		return P4D_SIZE;
+ =20
+- 	if (pgtable_l4_enabled &&
++ 	if (pgtable_l4_enabled() &&
+  	    !(pa & (PUD_SIZE - 1)) && !(va & (PUD_SIZE - 1)) && size >=3D PUD_SI=
+ZE)
+  		return PUD_SIZE;
+ =20
+@@@ -770,14 -772,14 +773,14 @@@ u64 __pi_set_satp_mode_from_fdt(uintptr
+ =20
+  static void __init disable_pgtable_l5(void)
+  {
+- 	pgtable_l5_enabled =3D false;
++ 	_pgtable_l5_enabled =3D false;
+  	kernel_map.page_offset =3D PAGE_OFFSET_L4;
+  	satp_mode =3D SATP_MODE_48;
+  }
+ =20
+  static void __init disable_pgtable_l4(void)
+  {
+- 	pgtable_l4_enabled =3D false;
++ 	_pgtable_l4_enabled =3D false;
+  	kernel_map.page_offset =3D PAGE_OFFSET_L3;
+  	satp_mode =3D SATP_MODE_39;
+  }
+@@@ -840,6 -842,14 +843,14 @@@ static __init void set_satp_mode(uintpt
+ =20
+  	kernel_map.page_offset =3D PAGE_OFFSET_L5;
+ =20
++ 	/* Fall back to SV48 if RISCV_ISA_SV57 isn't enabled */
++ 	if (!IS_ENABLED(CONFIG_RISCV_ISA_SV57) && satp_mode_limit =3D=3D 0)
++ 		satp_mode_limit =3D SATP_MODE_48;
++=20
++ 	/* Fall back to SV39 if RISCV_ISA_SV48 isn't enabled */
++ 	if (!IS_ENABLED(CONFIG_RISCV_ISA_SV48) && satp_mode_limit =3D=3D SATP_MO=
+DE_48)
++ 		satp_mode_limit =3D SATP_MODE_39;
++=20
+  	if (satp_mode_limit =3D=3D SATP_MODE_48) {
+  		disable_pgtable_l5();
+  	} else if (satp_mode_limit =3D=3D SATP_MODE_39) {
+@@@ -868,7 -878,7 +879,7 @@@ retry
+ =20
+  	create_pgd_mapping(early_pg_dir,
+  			   set_satp_mode_pmd,
+- 			   pgtable_l5_enabled ?
++ 			   pgtable_l5_enabled() ?
+  				(uintptr_t)early_p4d : (uintptr_t)early_pud,
+  			   PGDIR_SIZE, PAGE_TABLE);
+ =20
+@@@ -880,7 -890,7 +891,7 @@@
+  	local_flush_tlb_all();
+ =20
+  	if (hw_satp !=3D identity_satp) {
+- 		if (pgtable_l5_enabled) {
++ 		if (pgtable_l5_enabled()) {
+  			disable_pgtable_l5();
+  			memset(early_pg_dir, 0, PAGE_SIZE);
+  			goto retry;
+@@@ -893,6 -903,10 +904,10 @@@ out
+  	memset(early_p4d, 0, PAGE_SIZE);
+  	memset(early_pud, 0, PAGE_SIZE);
+  	memset(early_pmd, 0, PAGE_SIZE);
++ 	if (pgtable_l4_enabled())
++ 		set_bit(RISCV_ISA_EXT_SV48, riscv_isa);
++ 	if (pgtable_l5_enabled())
++ 		set_bit(RISCV_ISA_EXT_SV57, riscv_isa);
+  }
+  #endif
+ =20
+@@@ -1121,11 -1135,11 +1136,11 @@@ asmlinkage void __init setup_vm(uintptr
+ =20
+  #ifndef __PAGETABLE_PMD_FOLDED
+  	/* Setup fixmap P4D and PUD */
+- 	if (pgtable_l5_enabled)
++ 	if (pgtable_l5_enabled())
+  		create_p4d_mapping(fixmap_p4d, FIXADDR_START,
+  				   (uintptr_t)fixmap_pud, P4D_SIZE, PAGE_TABLE);
+  	/* Setup fixmap PUD and PMD */
+- 	if (pgtable_l4_enabled)
++ 	if (pgtable_l4_enabled())
+  		create_pud_mapping(fixmap_pud, FIXADDR_START,
+  				   (uintptr_t)fixmap_pmd, PUD_SIZE, PAGE_TABLE);
+  	create_pmd_mapping(fixmap_pmd, FIXADDR_START,
+@@@ -1133,10 -1147,10 +1148,10 @@@
+  	/* Setup trampoline PGD and PMD */
+  	create_pgd_mapping(trampoline_pg_dir, kernel_map.virt_addr,
+  			   trampoline_pgd_next, PGDIR_SIZE, PAGE_TABLE);
+- 	if (pgtable_l5_enabled)
++ 	if (pgtable_l5_enabled())
+  		create_p4d_mapping(trampoline_p4d, kernel_map.virt_addr,
+  				   (uintptr_t)trampoline_pud, P4D_SIZE, PAGE_TABLE);
+- 	if (pgtable_l4_enabled)
++ 	if (pgtable_l4_enabled())
+  		create_pud_mapping(trampoline_pud, kernel_map.virt_addr,
+  				   (uintptr_t)trampoline_pmd, PUD_SIZE, PAGE_TABLE);
+  	create_pmd_mapping(trampoline_pmd, kernel_map.virt_addr,
+@@@ -1407,7 -1421,7 +1422,7 @@@ static void __init preallocate_pgd_page
+  		if (!p4d)
+  			goto failed;
+ =20
+- 		if (pgtable_l5_enabled)
++ 		if (pgtable_l5_enabled())
+  			continue;
+ =20
+  		lvl =3D "pud";
+@@@ -1415,7 -1429,7 +1430,7 @@@
+  		if (!pud)
+  			goto failed;
+ =20
+- 		if (pgtable_l4_enabled)
++ 		if (pgtable_l4_enabled())
+  			continue;
+ =20
+  		lvl =3D "pmd";
+@@@ -1486,17 -1500,10 +1501,17 @@@ struct execmem_info __init *execmem_arc
+  #endif /* CONFIG_EXECMEM */
+ =20
+  #ifdef CONFIG_MEMORY_HOTPLUG
+ +static void __meminit free_pgtable_page(struct page *page)
+ +{
+ +	if (PageReserved(page))
+ +		free_reserved_page(page);
+ +	else
+ +		pagetable_free(page_ptdesc(page));
+ +}
+ +
+  static void __meminit free_pte_table(pte_t *pte_start, pmd_t *pmd)
+  {
+  	struct page *page =3D pmd_page(*pmd);
+ -	struct ptdesc *ptdesc =3D page_ptdesc(page);
+  	pte_t *pte;
+  	int i;
+ =20
+@@@ -1506,13 -1513,18 +1521,13 @@@
+  			return;
+  	}
+ =20
+ -	pagetable_dtor(ptdesc);
+ -	if (PageReserved(page))
+ -		free_reserved_page(page);
+ -	else
+ -		pagetable_free(ptdesc);
+ +	free_pgtable_page(page);
+  	pmd_clear(pmd);
+  }
+ =20
+ -static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud, bool i=
+s_vmemmap)
+ +static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud)
+  {
+  	struct page *page =3D pud_page(*pud);
+ -	struct ptdesc *ptdesc =3D page_ptdesc(page);
+  	pmd_t *pmd;
+  	int i;
+ =20
+@@@ -1522,7 -1534,12 +1537,7 @@@
+  			return;
+  	}
+ =20
+ -	if (!is_vmemmap)
+ -		pagetable_dtor(ptdesc);
+ -	if (PageReserved(page))
+ -		free_reserved_page(page);
+ -	else
+ -		pagetable_free(ptdesc);
+ +	free_pgtable_page(page);
+  	pud_clear(pud);
+  }
+ =20
+@@@ -1538,7 -1555,10 +1553,7 @@@ static void __meminit free_pud_table(pu
+  			return;
+  	}
+ =20
+ -	if (PageReserved(page))
+ -		free_reserved_page(page);
+ -	else
+ -		__free_pages(page, 0);
+ +	free_pgtable_page(page);
+  	p4d_clear(p4d);
+  }
+ =20
+@@@ -1621,13 -1641,13 +1636,13 @@@ static void __meminit remove_pud_mappin
+ =20
+  	for (; addr < end; addr =3D next) {
+  		next =3D pud_addr_end(addr, end);
+- 		pudp =3D pgtable_l4_enabled ? pud_base + pud_index(addr) : pud_base;
++ 		pudp =3D pgtable_l4_enabled() ? pud_base + pud_index(addr) : pud_base;
+  		pud =3D pudp_get(pudp);
+  		if (!pud_present(pud))
+  			continue;
+ =20
+  		if (pud_leaf(pud)) {
+- 			if (pgtable_l4_enabled) {
++ 			if (pgtable_l4_enabled()) {
+  				pud_clear(pudp);
+  				if (is_vmemmap)
+  					free_vmemmap_storage(pud_page(pud), PUD_SIZE, altmap);
+@@@ -1638,8 -1658,8 +1653,8 @@@
+  		pmd_base =3D pmd_offset(pudp, 0);
+  		remove_pmd_mapping(pmd_base, addr, next, is_vmemmap, altmap);
+ =20
+- 		if (pgtable_l4_enabled)
+- 			free_pmd_table(pmd_base, pudp);
++ 		if (pgtable_l4_enabled())
++ 			free_pmd_table(pmd_base, pudp, is_vmemmap);
+  	}
+  }
+ =20
+@@@ -1652,13 -1672,13 +1667,13 @@@ static void __meminit remove_p4d_mappin
+ =20
+  	for (; addr < end; addr =3D next) {
+  		next =3D p4d_addr_end(addr, end);
+- 		p4dp =3D pgtable_l5_enabled ? p4d_base + p4d_index(addr) : p4d_base;
++ 		p4dp =3D pgtable_l5_enabled() ? p4d_base + p4d_index(addr) : p4d_base;
+  		p4d =3D p4dp_get(p4dp);
+  		if (!p4d_present(p4d))
+  			continue;
+ =20
+  		if (p4d_leaf(p4d)) {
+- 			if (pgtable_l5_enabled) {
++ 			if (pgtable_l5_enabled()) {
+  				p4d_clear(p4dp);
+  				if (is_vmemmap)
+  					free_vmemmap_storage(p4d_page(p4d), P4D_SIZE, altmap);
+@@@ -1669,7 -1689,7 +1684,7 @@@
+  		pud_base =3D pud_offset(p4dp, 0);
+  		remove_pud_mapping(pud_base, addr, next, is_vmemmap, altmap);
+ =20
+- 		if (pgtable_l5_enabled)
++ 		if (pgtable_l5_enabled())
+  			free_pud_table(pud_base, p4dp);
+  	}
+  }
+
+--XyTK6uThIuKcT8tS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrNA9kACgkQJNaLcl1U
+h9Cokwf/XGxeek8Pjpb5ljbeysmSmetay24qxxEE0DZr+uYGRqa1gP01PBY/ibOh
+ZPj+JRddvmIBKJ8O8qxNNS8hzociy6RhMI4kW7CgtqYDRJxwtrMX22xqEYcu40dJ
+Y/Ol/Emn+jTk6eECtrie+rt/Rv6rMrgkLLotypIdAVOwPPeGs/VjLSgAodxyNi9H
+nCJkl0Q0k7vOnKwRUtMtpgkTNMeIgWm/gYJ9X/pAniQoB2z2VGg+L1Lsg107thpF
+7Z1AHePyt/MQT6uuC773zZa9W+9lUYwEgCYYvSfbaRXdSVxUHHlyobeLYUrJMNa+
+ToRy36Wbh0Fo/NlQHqxVlJmCIfVgvQ==
+=NDh/
+-----END PGP SIGNATURE-----
+
+--XyTK6uThIuKcT8tS--
