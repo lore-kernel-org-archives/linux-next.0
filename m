@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CFA4A387F;
-	Mon, 12 Oct 2026 16:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E10E38655A;
+	Mon, 12 Oct 2026 16:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791822150; cv=none; b=LmRXHQvxFGlzkTmNZ6iaxMAJo3oUb0AuWs2/msBKHv9GvoEgL0azkvtykHbCtYbkLjYrPT/VHUU1wC6am8x/7WBzt1hdq/dxQUFud9l82I/PUfaFxOnhTE2tTWPCfdhklV++4+TTGfbHxBAG7mkwjc4FBSdRJ2/uFYviYz8dYLM=
+	t=1791823793; cv=none; b=WNZGG7HZDtC9ULQpk1qg3Qwb7IQRgfThVF5XvFIoPSckYIrtABM5b28Eq4TJb1BH15Htv+KB3GO8SQkMFA/g0/seIWQlEqE49hbR/W6PZjvNcmBAt6/7inig8JASxoKetZlNbGaxMc6Dh0fvPQkR/J/rL+HLixEwIeSnAr4Om8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791822150; c=relaxed/simple;
-	bh=O/whSYI/eilwT/aR+FBkQ9BQ1VdZcPCPbGTmA6igowM=;
+	s=arc-20240116; t=1791823793; c=relaxed/simple;
+	bh=+XyFJs8RhG/8oKKrqGof4RtlE5Q8SdDjgEM5hbR6+Cs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VZrsWh290XY4YM0iwca6MqRojHEw04ZtEPfBpI6dKA1LGnqOgPa+aO0vLgU8U6yEZ2AX0gHEIfUHvYm99fvJvM4aCIjz2o4BoGCgG5ulZJ6ONkE5Fm7qAOLy9WUORrY+u3TFnbCz0jsjr742TzJS3cp6P6ebjWCyqMfaVs5iLTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krhvFx99; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Iex20X8XsKJlGeMz9uFTdJGcRXVPTVnHFuMX90TVV+b5q2vj3/H/0J9T73fNqkqnFMQuZc784pLwWR5A+33jPI6olGCQ9noBkBrbk8mo3nBrheJxafZMynbsMa4/4Gh9uGgkhxsEGSAU6xfMNU1DgtnkpBiO41NUOimcyBy5a5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ey4VgB97; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krhvFx99"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 479261F0089B;
-	Mon, 12 Oct 2026 16:22:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ey4VgB97"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C751F0089B;
+	Mon, 12 Oct 2026 16:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791822149;
-	bh=WvdDyBJ3nYyvMWerAF6QbtnudCx/aF32Hxs83dpFCxg=;
+	s=k20260515; t=1791823792;
+	bh=M8qRe9VTl0D9VD9F/blrY1eiQ5R8O+L6LPf4pYWuS20=;
 	h=Date:From:To:Cc:Subject;
-	b=krhvFx99aubfcfbdQTsJt+V1mXqMinmMU+X3Jh/aC8zA3/05C0uv1/oxZZT7u6lpG
-	 gH3taO43+PCOzwZ3SeySxQh80JybVcnx8gJvo3+Vl1rUiJI4hsWMm9hupH4k3dgHn9
-	 8K4MggekyUNUarY0trEa6/3BEwr/ppWFxnYJF2E1FAbpZwLcqchKku+betqhSkqkyw
-	 2vmfQIsGaWjT0xdtpszLaaLvqMlg/+lnNMNdB+RVgdLXBhp4a9QGA1xtBWa0u4eqHb
-	 9/vN9eORrjH48nBI5xL+p704veJnfiMdYbcU95BLDGjMwHtk90kDe56882RiXArDtU
-	 MFTlyzNP5uZiA==
-Date: Mon, 12 Oct 2026 17:22:24 +0100
+	b=ey4VgB97gFXCDI9FAbEfyL0VEJ3geO4Ey9xSMFSUxus2xVO9mlMtEYiUFrfHjZm5T
+	 VEA14Hm8SbQ500ntt9jQqGy8m0pWcIrQ6kaBA4DRT6/Y15rASM6T0SKCXsTPUNdxzQ
+	 /No28EPT4lV8Ibe7MNc15WSgruTQkV6Wa0NXg7JRT+3gqjuaGufKMpvtG4XhkscFnj
+	 +bt1vwPzP0yHO1bPYfbtirJnvjbI8d2k90GOS99carZ9P4f0Kn2nizgAuw5bvrpSLq
+	 u03pAUA5MV0+8/axpUeqRUWMBs4dtEmM3RFDCU9iwzbH94KT7LN0lPrEdTMnfkiSGy
+	 MbMgYiAm7q0dA==
+Date: Mon, 12 Oct 2026 17:49:49 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Douglas Anderson <dianders@chromium.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Subject: linux-next: manual merge of the drm tree with the qcom tree
-Message-ID: <as0JQLlvuodleN98@sirena.org.uk>
+	Rob Herring <robh@kernel.org>
+Subject: linux-next: manual merge of the mailbox tree with the devicetree tree
+Message-ID: <as0PrXGZghcYA-ZI@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -44,32 +42,35 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NJUZr1DeX2pRx7Hv"
+	protocol="application/pgp-signature"; boundary="L9kfO2VW4phAu214"
 Content-Disposition: inline
 
 
---NJUZr1DeX2pRx7Hv
+--L9kfO2VW4phAu214
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+Today's linux-next merge of the mailbox tree got conflicts in:
 
-  drivers/soc/qcom/qcom-geni-se.c
+  Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt
+  Documentation/devicetree/bindings/mailbox/hisilicon,hi6220-mailbox.txt
 
 between commit:
 
-  803f9950a6c6e ("soc: qcom: geni-se: provide PROG_RAM_DEPTH for I2C HUB Se=
-rial Engines")
+  cfbc5d96e8ff4 ("dt-bindings: mailbox: Delete old 'mailbox.txt' bindings f=
+ile")
 
-=66rom the qcom tree and commit:
+=66rom the devicetree tree and commits:
 
-  d1750c530e9b9 ("soc: qcom: geni-se: Fix fw_end computed before round-up; =
-propagate size to caller")
+  5e80d2b8ecd02 ("dt-bindings: mailbox: Convert hisilicon,hi6220-mbox to DT=
+ schema")
+  559f3950caa69 ("dt-bindings: mailbox: Convert hisilicon,hi3660-mbox to DT=
+ schema")
 
-=66rom the drm tree.
+=66rom the mailbox tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -78,122 +79,21 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/soc/qcom/qcom-geni-se.c
-index 074087c592cc3,6ac2bdc16984c..0000000000000
---- a/drivers/soc/qcom/qcom-geni-se.c
-+++ b/drivers/soc/qcom/qcom-geni-se.c
-@@@ -42,7 -42,7 +42,7 @@@ EXPORT_TRACEPOINT_SYMBOL_GPL(geni_se_re
-   *
-   * GENI based QUP is a highly-flexible and programmable module for suppor=
-ting
-   * a wide range of serial interfaces like UART, SPI, I2C, I3C, etc. A sin=
-gle
- - * QUP module can provide upto 8 serial interfaces, using its internal
- + * QUP module can provide up to 8 serial interfaces, using its internal
-   * serial engines. The actual configuration is determined by the target
-   * platform configuration. The protocol supported by each interface is
-   * determined by the firmware loaded to the serial engine. Each SE consis=
-ts
-@@@ -101,26 -101,22 +101,26 @@@
-   * @base:		Base address of this instance of QUP wrapper core
-   * @clks:		Handle to the primary & optional secondary AHB clocks
-   * @num_clks:		Count of clocks
- + * @prog_ram_depth:	Available CFG RAM depth for instance without SE_HW_PA=
-RAM_2
-   */
-  struct geni_wrapper {
-  	struct device *dev;
-  	void __iomem *base;
-  	struct clk_bulk_data clks[MAX_CLKS];
-  	unsigned int num_clks;
- +	unsigned int prog_ram_depth;
-  };
- =20
-  /**
-   * struct geni_se_desc - Data structure to represent the QUP Wrapper reso=
-urces
-   * @clks:		Name of the primary & optional secondary AHB clocks
-   * @num_clks:		Count of clock names
- + * @prog_ram_depth:	Available CFG RAM depth for instance without SE_HW_PA=
-RAM_2
-   */
-  struct geni_se_desc {
-  	unsigned int num_clks;
-  	const char * const *clks;
- +	unsigned int prog_ram_depth;
-  };
- =20
-  static const char * const icc_path_names[] =3D {"qup-core", "qup-config",
-@@@ -924,7 -920,7 +924,7 @@@ void geni_se_rx_dma_unprep(struct geni_
-  }
-  EXPORT_SYMBOL_GPL(geni_se_rx_dma_unprep);
- =20
- -int geni_icc_get(struct geni_se *se, const char *icc_ddr)
- +int geni_icc_get(struct geni_se *se)
-  {
-  	struct geni_icc_path *icc_paths =3D se->icc_paths;
- =20
-@@@ -1221,7 -1217,7 +1221,7 @@@ int geni_se_resources_init(struct geni_
- =20
-  	se->has_opp =3D (ret =3D=3D 0);
- =20
- -	ret =3D geni_icc_get(se, "qup-memory");
- +	ret =3D geni_icc_get(se);
-  	if (ret)
-  		return ret;
- =20
-@@@ -1248,7 -1244,6 +1248,7 @@@ static const struct se_fw_hdr *geni_fin
-  						     enum geni_se_protocol_type protocol,
-  						     u32 *fw_size_out)
-  {
- +	struct geni_wrapper *wrapper =3D se->wrapper;
-  	struct device *dev =3D se->dev;
-  	const struct elf32_hdr *ehdr;
-  	const struct elf32_phdr *phdrs;
-@@@ -1313,11 -1308,8 +1313,11 @@@
-  		cfg_val_end =3D le16_to_cpu(sefw->cfg_val_offset) +
-  			      le16_to_cpu(sefw->cfg_size_in_items) * sizeof(u32);
- =20
- -		prog_ram_depth =3D FIELD_GET(PROG_RAM_DEPTH_MSK,
- -					   readl_relaxed(se->base + SE_HW_PARAM_2));
- +		if (wrapper->prog_ram_depth)
- +			prog_ram_depth =3D wrapper->prog_ram_depth;
- +		else
- +			prog_ram_depth =3D FIELD_GET(PROG_RAM_DEPTH_MSK,
- +					readl_relaxed(se->base + SE_HW_PARAM_2));
-  		if (fw_size >=3D prog_ram_depth) {
-  			dev_err(dev, "Firmware size (%u) exceeds RAM size (%u)\n",
-  				fw_size, prog_ram_depth);
-@@@ -1628,7 -1620,6 +1628,7 @@@ static int geni_se_probe(struct platfor
-  		return PTR_ERR(wrapper->base);
- =20
-  	desc =3D device_get_match_data(&pdev->dev);
- +	wrapper->prog_ram_depth =3D desc->prog_ram_depth;
- =20
-  	if (!has_acpi_companion(&pdev->dev) && desc->num_clks) {
-  		int i;
-@@@ -1681,7 -1672,6 +1681,7 @@@ static const char * const i2c_master_hu
-  static const struct geni_se_desc i2c_master_hub_desc =3D {
-  	.clks =3D i2c_master_hub_clks,
-  	.num_clks =3D ARRAY_SIZE(i2c_master_hub_clks),
- +	.prog_ram_depth =3D 1020,
-  };
- =20
-  static const struct of_device_id geni_se_dt_match[] =3D {
+(delete the files)
 
---NJUZr1DeX2pRx7Hv
+--L9kfO2VW4phAu214
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrNCT8ACgkQJNaLcl1U
-h9D4Igf+JCJYhSGkBBuHIPTErRr7NEzrQ+I7sdwvMaP4D+w0KKavHOlA/StjL6SI
-eAejIhH5LJg4WxQqJ6eNEeoKtamN0ryS+TgU/GBCmE0gpw40xxAa5w5yS+F4xp92
-6ynftmOL+nicHbHvSK0Lww4in0ex6T0HiZzxbwIAlGksmOqp/a1m2hUQrewacM3T
-jgIt67uudYMT5DHGHlHFDL+RNZQ0t5d3PUCPgwUnb2o0dGJqYC8FbJw7/eHj0XIP
-AKXMqFqVPFZZCOVYj1LaVD4h3KAq2kv1Ave/iDXTXHR4wBcZTL68AONFpt8uxmjl
-QJZG62rB5UZIIyVxiVRcJzpWj60RxA==
-=PCEH
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrND6wACgkQJNaLcl1U
+h9CsVgf+MyJdHT6RbAQfMRnyGN2FtzyhB9dnq/MAFLt02peHWwlgPnwxTS9wQTOW
+6381b9uFSchcJUiGymhMt2s/xjQ+WzUd4KhjVQR4I+FRwf7qfCKtbN9q78fDdOdQ
+L7WEl3nKt/W4AEFBhJQ6znteNN8L+I+vrhITGJqTcfC3OilsRWqjBFO+ug9OpCMW
+7f4JKsaEtZwAD8NUV/X8Dez+dCeQYM05eM4w9Tg/Xo6jZhfYnwTPFkeBQvcNzQnL
+Cx4korQ7yKYjRu/dJRyTmL/mVkOIhszazVqOjdjHD0slWqPeuFGqYJJc9TOK57Tk
+QO55cqUBC+xMD1P4FbBBvltpzWrjkw==
+=CDq8
 -----END PGP SIGNATURE-----
 
---NJUZr1DeX2pRx7Hv--
+--L9kfO2VW4phAu214--
