@@ -1,40 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48C92D94B5;
-	Tue, 13 Oct 2026 13:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B4551C342;
+	Tue, 13 Oct 2026 16:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791898048; cv=none; b=aO0HDiJoAe+FIZ7jsZz/qoCLROSPfakOH90G1L7wKBfSCkHtBVJZnP5ArW974LA1dpMcCFDiY0rfhqqB4RgdiqUVlAO+2iS5eXDqfbXFVEfdqtqymEZCO+g/ItsnbnIag0Pwm5D7EAYM+j2tXxBtmytI9lAeBhjQcmKxgC6NtBg=
+	t=1791908810; cv=none; b=G8Go6yLVl6dnb+8+vW3v6L28jWvoiuphW5DnsBI1X8yS6D1YXkvkeCxt+NaI+tc+Oy8fG8ZVv3oOZ9Ccc6R03gUG8TikKveceChYBLmzsN+UQX4XbSo7VlvDirk42dBYO7s9yHBE+VJEVJuPZKExG4JHQaOHlmmeyrre/GCKwUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791898048; c=relaxed/simple;
-	bh=w1QRhbExC7TZgFJQwELxqmgCySrFQwMS3h8CBxYd9RI=;
+	s=arc-20240116; t=1791908810; c=relaxed/simple;
+	bh=BWnAZjGBmc/3QRrip/3Tp3ARJU0S/eiP7mqEx4CdmXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rShcExf5vy750c6Ydgw70mhtk2FzbxtAg04u9DLmhzYgVqIkbHAYdl+9comW/vO1z6igRYtf52J/czFrteUFIatKuhkpynnlw5BLr8nCE9iK1szACilvtoGenjAXvbf+bGBHLQY9QcIrHefQ+NuCCRGtioGk7kf9DazeQPUci+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq05TxSH; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=JbkWdcRW2ubn5kBghUgu/dYLKJMaU1JAbNVEJgnkWHXlDAk2omcO51SGdkGWNbveVWrz0SzhNn+jdZg4CZS39U3jsdzuAEp+kjMws+kNtPoEqGKtnC8sIQZkOds4T0tqsO13JRPZfAvr7QadQWbAzf12ONIX6AjaLaNHWZQE1r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0Ft0sOk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq05TxSH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3613A1F00899;
-	Tue, 13 Oct 2026 13:27:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0Ft0sOk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 568751F000FF;
+	Tue, 13 Oct 2026 16:26:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791898047;
-	bh=cFfqwwFKvAEYu7MNh9q5aU6OeimHjI0VoWyd1S2+rzk=;
+	s=k20260515; t=1791908808;
+	bh=w5ZeFBzeeHrpGDWLW6tw91Bx1moRTq17q5NJ5hYjjCM=;
 	h=Date:From:To:Cc:Subject;
-	b=kq05TxSHPzxrbry5vcT3zKJyCYvx79ss3y63iXoYlnp4lkHRe3/74ls4MqcXImfJS
-	 5g8WHxaE5E/j2Bb7TNBDyR00Gx+nynyNTl7LuJfzjb0kmG3YrXa/RB2M4qS2uBlqgZ
-	 ZKRduH1VkhoP0qVli/1Gb/CY/vymCWwocDxJtovmLqkx2+qNES6OZvvhcYjwuNIiye
-	 pPiJs0v9qNvsnSvPg8zxwwNyG8LmnKbLXIvf7/mBA12F7L4tH/MDIi5mf4pekvJT7q
-	 h17qYc14/pyru4abVa3Le4aLGwy6RdO9GsRGh608ag0ZBA3nnF1ZdyG/6gnw1gSiX/
-	 OrjKcOK7oAOIg==
-Date: Tue, 13 Oct 2026 14:27:23 +0100
+	b=U0Ft0sOk23TNSvbL1hV0NCnwuviG/S4zgflN1Y+HAplgAVeMXwWqWdu8ZT9n/YfYS
+	 TPTnK6UEH0zFvveYkRGy/WJ+bXVG3/XejHxw+2z0s//xL0YwSskiLiM8ZeFsKJxD21
+	 Ddvd2S8Lw2yFyZRF4YvykZhHLRBW6w0tdjNiTDm+Wu8NUFhNkuSk2sXBsXZcMYoPgg
+	 AGWCVzOtXPti/FHbAZsiohha4hQf+j+1XX9ETui7QuKGzq2GUPO0YuX28Z56YRyTZC
+	 d3pk6OxTfYzwYfLNiPiBTMi/Ckc6WPO1D39m9yZqaN62JZv/+ktDprJN2P5S2kw7zx
+	 q0JKH+qYxqqUg==
+Date: Tue, 13 Oct 2026 17:26:43 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>,
+To: Helge Deller <deller@gmx.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: linux-next: manual merge of the vfs-brauner tree with the ntfs tree
-Message-ID: <as4xu47U3YNaijJI@sirena.org.uk>
+	Lorenzo Stoakes <ljs@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	Vlastimil Babka <vbabka@kernel.org>
+Subject: linux-next: manual merge of the fbdev tree with the mm tree
+Message-ID: <as5bwyKpGQaBZ3CO@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,32 +44,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hocjAuXCZYpADxvx"
+	protocol="application/pgp-signature"; boundary="8jHG3IIaNGIPxodO"
 Content-Disposition: inline
 
 
---hocjAuXCZYpADxvx
+--8jHG3IIaNGIPxodO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+Today's linux-next merge of the fbdev tree got a conflict in:
 
-  fs/ntfs/inode.c
+  drivers/video/fbdev/ssd1307fb.c
 
 between commit:
 
-  1e03db31119eb ("ntfs: clear stale pagecache on initialized-size extension=
-")
+  d4488917e79c7 ("fbdev: defio: assert FBINFO_VIRTFB, drop VM_IO, add VM_MI=
+XEDMAP")
 
-=66rom the ntfs tree and commit:
+=66rom the mm tree and commit:
 
-  d874f8060847c ("iomap: pass iomap_iter_next_fn directly instead of struct=
- iomap_ops")
+  81ae1f9a6c850 ("fbdev: ssd1307fb: check for fb_deferred_io_init() error")
 
-=66rom the vfs-brauner tree.
+=66rom the fbdev tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -76,70 +77,39 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc fs/ntfs/inode.c
-index 206db4e99ef13,cceb42b267051..0000000000000
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@@ -2576,33 -2437,23 +2576,33 @@@ int ntfs_extend_initialized_size(struc
+diff --cc drivers/video/fbdev/ssd1307fb.c
+index db61d710fccb0,8fd96c37ee1ab..0000000000000
+--- a/drivers/video/fbdev/ssd1307fb.c
++++ b/drivers/video/fbdev/ssd1307fb.c
+@@@ -767,9 -767,11 +767,13 @@@ static int ssd1307fb_probe(struct i2c_c
+  	info->fix.smem_start =3D __pa(vmem);
+  	info->fix.smem_len =3D vmem_size;
  =20
-  	err =3D ntfs_attr_map_whole_runlist(ni);
-  	if (err)
- -		return err;
- +		goto out;
- =20
- -	if (!NInoCompressed(ni) && old_init_size < offset) {
- -		err =3D iomap_zero_range(vi, old_init_size,
- -				       offset - old_init_size,
- -				       NULL, ntfs_seek_iomap_next,
- -				       &ntfs_iomap_folio_ops, NULL);
- -		if (err)
- -			return err;
- +	if (!NInoCompressed(ni)) {
- +		/*
- +		 * Zeroing skips holes, so discard cached uninitialized bytes
- +		 * before making them visible to writes or shared mappings.
- +		 */
- +		clear_size =3D max_t(loff_t, i_size_read(vi), new_size);
- +		truncate_pagecache_range(vi, old_init_size, clear_size - 1);
+ +	info->flags =3D FBINFO_VIRTFB;
  +
- +		if (old_init_size < offset) {
- +			err =3D iomap_zero_range(vi, old_init_size,
- +					       offset - old_init_size,
-- 					       NULL, &ntfs_seek_iomap_ops,
-++					       NULL, ntfs_seek_iomap_next,
- +					       &ntfs_iomap_folio_ops, NULL);
- +			if (err)
- +				goto out;
- +		}
-  	}
+- 	fb_deferred_io_init(info);
++ 	ret =3D fb_deferred_io_init(info);
++ 	if (ret) {
++ 		dev_err(dev, "failed to init fb deferred io: %d\n", ret);
++ 		goto fb_defio_error;
++ 	}
  =20
- -
- -	mutex_lock(&ni->mrec_lock);
- +	mutex_lock(&mrec_ni->mrec_lock);
-  	err =3D ntfs_attr_set_initialized_size(ni, new_size);
- -	mutex_unlock(&ni->mrec_lock);
- +	mutex_unlock(&mrec_ni->mrec_lock);
-  	if (err)
-  		truncate_setsize(vi, old_init_size);
- +out:
- +	filemap_invalidate_unlock(vi->i_mapping);
-  	return err;
-  }
+  	i2c_set_clientdata(client, info);
  =20
 
---hocjAuXCZYpADxvx
+--8jHG3IIaNGIPxodO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOMboACgkQJNaLcl1U
-h9DtWQf+JNfApxhRc42kB1vdZU+TfNtBjFKoJXfdKcZFms/kqwMLcrReOXE6DjP/
-Uz+Bhd//Ccn1WZLGUoCjCt7if73T3a3ahNGxyaijsaYjCDEyvN4KRj+55xkVGGPR
-8/+NVJmHdIDg4iG/JFxyq5j1RLei+jCbE8Da6VqRRZJllyLGPYQD3xnjmsg4JmL4
-U5vLvE9sN0uEFrhaTBKn9FVmEYv6BxU7bAi+QyTpYlvr+dsjfBtURFzGAhvZ9+x6
-WvYjv2+G2/rdld/pzuIGUCUQSRh+JWTzNAL/Bj79RM8W1DRaQBH/CMwVJdB2WO/4
-4IV0XNex5r7MvczE/QGKboWpgbfYGA==
-=KJjo
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOW8IACgkQJNaLcl1U
+h9Crqwf9EfBq9M+h79zE3M8YllABJdGhO81wna/MBhOtWaQtjSLAp5bI2LojnSNy
+S3jdKH2k3IxfVWhjCWCqm0+WMvp0arM+Vtz6lifx0X70N7XOVoBVK13t3xKcRMZS
+gse0JK9EwFkaUcrPOHGHTYlP8IlaXDiYMZM6Mef4mm2hCkM/3Gd7AflQBWesXlYa
+YNjFSLc0pA1OZeVIyD1EE3QO1dfLxTa1zWIhq3b72Leh10oEAN7AKGg8XiS/E8jN
+QiR0cEtI7/An0P3cUu/EKXv4yxSqYh6ScpfY7MWm2baXhZzd/qFECRbkUcIerJiR
+3vSWYOYUQX2HvGl1HpfyX2KxpJU7zg==
+=eXfG
 -----END PGP SIGNATURE-----
 
---hocjAuXCZYpADxvx--
+--8jHG3IIaNGIPxodO--
