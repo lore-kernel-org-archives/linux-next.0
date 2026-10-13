@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146F54ED19E;
-	Tue, 13 Oct 2026 13:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F68442B06;
+	Tue, 13 Oct 2026 13:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791897646; cv=none; b=slvsaT6khl8m7VHgeUTGT9V5DL4WJM6TOxQOK81Vqk21IBkKxZFUdWfJOi352xxe6onK3WRhBWw0C4WOEGd/dQxmWOo4hvPjIj11g2doxLfKPXkOIgxncS/4Cz1AdKwlMgJ/nK0wrENRpCVNcCMBfaj1e78F0l8RxbbVC/bb8Gk=
+	t=1791897708; cv=none; b=pRyXdRMJbwklgSpvcQczgUG679gmn8ERAw7zk7vaDfQjo84GhXat6rrlGzGVbF6gsB+dAbenPGMODWaNDA5WMh5JAcIllz0KZkgCE34LPIrLvx1RmKc+8C4XnUdhlG7JrlmaB64dgg6g+k4B6nxKCy9Jcglmt/s8N5f7agZ0ZRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791897646; c=relaxed/simple;
-	bh=ejnjcy3AxsX2ui/tXwYrcPRdx/DyV3oRuth8ikzUK/c=;
+	s=arc-20240116; t=1791897708; c=relaxed/simple;
+	bh=2ssqL6I1wA9w0BdNW3HOgiDIgw5/PeI3361KCKN5UHw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P63VZOEVPxf1gO0wCT8Q7oJcRXoIBMNzAcLSyZgNt1sm66GA/Yo7TD/ioRlb3sXC6duKMnBjD5Pvzb+Y8z6B2HBYDmIJ9YjR4hZ74IT/GLn5LVkq6Q0zgUpAiht8rV49JrQTNcKvJwUL+mRbuyZO5nyY3GDIZSjmR1E3S15q6cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6tX51HR; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=Y5e2vXh4nzG/aM5uaq9NB/jwPJwXuVAGNcLVyIoUxe3k7qbRuALQXErXuPE+aK19lmYN4sCc/Q3jOfCTkzgBTURwyfv+ECSqAix5GF7RnkkPbQxERg1T2BmecSwHWAa91gR6fKwt5mx19ad2J8yORomjbFzbeVl3G8HdGTCnY4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPc3H4Tk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6tX51HR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A85B01F000FF;
-	Tue, 13 Oct 2026 13:20:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPc3H4Tk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F0E1F00893;
+	Tue, 13 Oct 2026 13:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791897645;
-	bh=t0Sakcu0MPeQFn0CFQnaU8zXRpEje8K8KSFdYwTsn20=;
+	s=k20260515; t=1791897707;
+	bh=BSgky8Vv5XUYn9IIBe0B5k7I1Q5euGrXMr/Evg+Iu0Q=;
 	h=Date:From:To:Cc:Subject;
-	b=S6tX51HRq8dZCpP/Dd9idvTIRn5g9Tx9XCYbfFVRpgSbBBtN9HIlElQR2ZkvBI3zg
-	 no4QUSfSL+JkG9KLhFo/3Hz/tXWGFLkEvbKS2gkuxKlOedz3/CEP+vbZ/w1UaGiqac
-	 /5VBcI3SeVBXLEFgX/sso2oys5rUYVSJSOzF4AP07EBUdkY3/Lt7cWQFkqr25iwPRW
-	 LfWWDbi+3jxQP1+T13SrjNdjdAzgTafueDWHhBwPOBjjhd9g/tLi08Y1rJxYmmGiNf
-	 lEFQJwese7GfzKbWi1hgn5Rl/Qnh+YBqtTDgyoOJ/7EiDt/BKAcR1kGLCy1WLG8icn
-	 ux1VyBFNjxgHg==
-Date: Tue, 13 Oct 2026 14:20:41 +0100
+	b=FPc3H4Tkw3/CICkSWBIi3zWRtC+oJz3Plf/iYNbDIYsRbC5CT3NTViT65t4Vfzadu
+	 DcVo6po2SuDKXyQfuUZD1c6Hl084PKT9NZnEOrcPg0fukQQEbsuJkHqQvnMRLhLUr/
+	 3cpUYw47Bezw72SBpPkHOeAbYVtcTVm7cvAU6kwyzc6AiLyjnJnZjd+k3yKBtmzD6b
+	 NxFM5vEHCuXqNtxqtG+F6gkBuidUwjweZ4ynqyESItcjG5EtzriC4f4sDI1q2fu2UB
+	 VUY+1fhMKeDnDEUP+Gte1fT7Kdie9tJH/vT/gN+W89hr334HtHsHKccr74NKPiHVHK
+	 4jirFadtBceKA==
+Date: Tue, 13 Oct 2026 14:21:43 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Christian Brauner <brauner@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Joanne Koong <joannelkoong@gmail.com>,
+Cc: Jiale Yao <yaojiale02@163.com>, Joanne Koong <joannelkoong@gmail.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs-brauner tree with the f2fs tree
-Message-ID: <as4wKTfgH6Ez0Sc2@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the exfat tree
+Message-ID: <as4wZyJGLZ-u1ldu@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -42,11 +42,11 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="evHsjh9hILwanQ+L"
+	protocol="application/pgp-signature"; boundary="28zJca9bmH4iMu0J"
 Content-Disposition: inline
 
 
---evHsjh9hILwanQ+L
+--28zJca9bmH4iMu0J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -55,13 +55,13 @@ Hi all,
 
 Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-  fs/f2fs/file.c
+  fs/exfat/file.c
 
 between commit:
 
-  49e9feb15def9 ("f2fs: rename page_count with cache_count")
+  9965754d857fc ("exfat: drain in-flight DIO before buffered writes")
 
-=66rom the f2fs tree and commit:
+=66rom the exfat tree and commit:
 
   d874f8060847c ("iomap: pass iomap_iter_next_fn directly instead of struct=
  iomap_ops")
@@ -75,35 +75,197 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc fs/f2fs/file.c
-index 1e693f6028474,bd345615956eb..0000000000000
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@@ -5232,8 -5229,8 +5232,8 @@@ static ssize_t f2fs_dio_read_iter(struc
-  	 * the higher-level function iomap_dio_rw() in order to ensure that the
-  	 * F2FS_DIO_READ counter will be decremented correctly in all cases.
-  	 */
- -	inc_page_count(sbi, F2FS_DIO_READ);
- +	inc_cache_count(sbi, F2FS_DIO_READ);
-- 	dio =3D __iomap_dio_rw(iocb, to, &f2fs_iomap_ops,
-+ 	dio =3D __iomap_dio_rw(iocb, to, f2fs_iomap_next,
-  			     &f2fs_iomap_dio_read_ops, 0, NULL, 0);
-  	if (IS_ERR_OR_NULL(dio)) {
-  		ret =3D PTR_ERR_OR_ZERO(dio);
+The fixup below is obviously part done, and I had to do subsequent
+fixups on top of that due to wider semantic changes.  Together with all
+the other conflicts today this merge has been an absolute mess, it seems
+like we could use better coordination here.
 
---evHsjh9hILwanQ+L
+diff --cc fs/exfat/file.c
+index f106db945d8dd,188d921aacd13..0000000000000
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@@ -712,42 -654,98 +712,102 @@@ int exfat_file_fsync(struct file *filp
+  }
+ =20
+  /*
+ - * exfat_zero_new_range - zero [start, end) without overwriting uptodate =
+blocks
+ + * exfat_prepare_valid_range - populate and dirty folios covering [start,=
+ end)
+   *
+ - * Uptodate blocks may contain data written through a shared mapping beyo=
+nd
+ - * valid_size.
+ + * Populate missing blocks via the read path, which zero-fills data
+ + * beyond the current valid_size and skips uptodate blocks.
+ + * Mark entire folios dirty so the newly valid range is written back.
+ + *
+ + * Call before advancing valid_size.
+   */
+ -static int exfat_zero_new_range(struct inode *inode, loff_t start, loff_t=
+ end)
+ +static int exfat_prepare_valid_range(struct inode *inode, loff_t start,
+ +				    loff_t end)
+  {
+  	struct address_space *mapping =3D inode->i_mapping;
+ -	unsigned int blocksize =3D i_blocksize(inode);
+ -	loff_t pos =3D start;
+ -	int err;
+ +	loff_t next, pos =3D start;
+ +	struct folio *folio;
+ +	pgoff_t index;
+ +
+ +	if (pos >=3D end)
+ +		return 0;
+ =20
+  	while (pos < end) {
+ -		loff_t next =3D min_t(loff_t,
+ -				round_down(pos, PAGE_SIZE) + PAGE_SIZE, end);
+ -		struct folio *folio;
+ -		loff_t bpos;
+ +		index =3D pos >> PAGE_SHIFT;
+ +		next =3D min(((loff_t)index + 1) << PAGE_SHIFT, end);
+ =20
+++<<<<<<< HEAD
+ +		balance_dirty_pages_ratelimited(mapping);
+++=3D=3D=3D=3D=3D=3D=3D
++ 		folio =3D filemap_get_folio(mapping, pos >> PAGE_SHIFT);
++ 		if (IS_ERR(folio)) {
++ 			err =3D iomap_zero_range(inode, pos, next - pos, NULL,
++ 					       exfat_iomap_next, NULL, NULL);
++ 			if (err < 0)
++ 				return err;
++ 			pos =3D next;
++ 			continue;
++ 		}
+++>>>>>>> vfs-brauner/vfs.all
+ =20
+ -		if (folio_test_uptodate(folio)) {
+ -			folio_lock(folio);
+ -			if (folio->mapping =3D=3D mapping)
+ -				folio_mark_dirty(folio);
+ -			folio_unlock(folio);
+ -			folio_put(folio);
+ -			pos =3D next;
+ -			continue;
+ -		}
+ +		folio =3D read_mapping_folio(mapping, index, NULL);
+ +		if (IS_ERR(folio))
+ +			return PTR_ERR(folio);
+ =20
+ -		/*
+ -		 * Zero not-uptodate block runs. iomap_zero_range() requires an
+ -		 * unlocked folio, so recheck ->mapping after each call.
+ -		 */
+  		folio_lock(folio);
+++<<<<<<< HEAD
+ +		if (folio->mapping =3D=3D mapping) {
+++=3D=3D=3D=3D=3D=3D=3D
++ 		bpos =3D pos;
++ 		while (bpos < next) {
++ 			loff_t rstart, rend;
++=20
++ 			if (folio->mapping !=3D mapping) {
++ 				folio_unlock(folio);
++ 				err =3D iomap_zero_range(inode, bpos, next - bpos,
++ 						NULL, exfat_iomap_next, NULL, NULL);
++ 				if (err < 0) {
++ 					folio_put(folio);
++ 					return err;
++ 				}
++ 				folio_lock(folio);
++ 				break;
++ 			}
++=20
++ 			if (iomap_is_partially_uptodate(folio,
++ 					offset_in_folio(folio, bpos), blocksize)) {
++ 				bpos +=3D blocksize;
++ 				continue;
++ 			}
++=20
++ 			rstart =3D bpos;
++ 			rend =3D min_t(loff_t, bpos + blocksize, next);
++ 			while (rend < next &&
++ 			       !iomap_is_partially_uptodate(folio,
++ 					offset_in_folio(folio, rend), blocksize))
++ 				rend =3D min_t(loff_t, rend + blocksize, next);
++=20
++ 			folio_unlock(folio);
++ 			err =3D iomap_zero_range(inode, rstart, rend - rstart,
++ 					NULL, exfat_iomap_next, NULL, NULL);
++ 			if (err < 0) {
++ 				folio_put(folio);
++ 				return err;
++ 			}
++ 			folio_lock(folio);
++ 			bpos =3D rend;
++ 		}
++=20
++ 		/*
++ 		 * Dirty only a fully uptodate folio. Dirtying a partial folio could
++ 		 * write uninitialised cache contents over valid on-disk blocks.
++ 		 */
++ 		if (folio->mapping =3D=3D mapping && folio_test_uptodate(folio))
+++>>>>>>> vfs-brauner/vfs.all
+  			folio_mark_dirty(folio);
+ +			pos =3D next;
+ +		}
+  		folio_unlock(folio);
+  		folio_put(folio);
+ -		pos =3D next;
+  	}
+ =20
+  	return 0;
+@@@ -813,9 -807,7 +873,9 @@@ static ssize_t exfat_fallback_buffered_
+ =20
+  	iocb->ki_flags &=3D ~IOCB_DIRECT;
+ =20
+ +	inode_dio_wait(file_inode(iocb->ki_filp));
+ +
+- 	written =3D iomap_file_buffered_write(iocb, from, &exfat_write_iomap_ops,
++ 	written =3D iomap_file_buffered_write(iocb, from, exfat_write_iomap_next,
+  			NULL, NULL);
+  	if (written < 0)
+  		return written;
+@@@ -894,21 -887,13 +954,22 @@@ static ssize_t exfat_file_write_iter(st
+  		}
+  		if (ret < 0)
+  			goto unlock;
+ +
+ +		pos =3D valid_size;
+  	}
+ =20
+ -	if (iocb->ki_flags & IOCB_DIRECT)
+ +	if (iocb->ki_flags & IOCB_DIRECT) {
+  		ret =3D exfat_dio_write_iter(iocb, iter);
+ -	else
+ +	} else {
+ +		/*
+ +		 * Prevent concurrent direct I/O and buffered I/O to the same file
+ +		 * range. Wait for in-flight DIO to finish before dirtying pages.
+ +		 */
+ +		inode_dio_wait(inode);
+  		ret =3D iomap_file_buffered_write(iocb, iter,
+ +				&exfat_write_iomap_ops, NULL, NULL);
++ 				exfat_write_iomap_next, NULL, NULL);
+ +	}
+  	if (ret < 0)
+  		goto unlock;
+ =20
+
+--28zJca9bmH4iMu0J
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOMCgACgkQJNaLcl1U
-h9BMHQf/XdkqHrpQuUO0+Z1vCyoIJvu4LRTVunuXtsmD7fCUX1JMDk21BLSs8bnc
-HgCAS1WdxCw0+Lh65UihpicRoaVwChgg41ctTzk0CGFFlzYIpGYykxmaiLmfkcyQ
-51SSxJ+CMHe+iCGv5yXIWUai+gjFGP9aMtfDTCk2vD4CqGJPXU5uTdnfbAwluYjC
-xbOgUunqnCbLBltAbDRTOplHh16Krpz6QBreUdCGhGfYxNKxaMR8tfdnE4s3tMQV
-ijYIoQ4H9LGlZGAfc+PSUqryPNAvQJEXOCGHSyI6PBvFW4oEThIb7e5c0J+SFR8C
-z9TW3OOoa3eKcPnf6T7Mb7BM3hZE2A==
-=ps9n
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOMGYACgkQJNaLcl1U
+h9CiCwf+Kn9+yS5j8CvAY/C6WGlkThncTAKUdeWok6NJzjN9vizbBc6CuCZmuDY4
+xbnO33K7NSpCoeVIbpjPWDAdH8fD41Uc3vHx8aMGgnqUgdfElXRsE6FIgsVFPB3H
+iYzOsaHeSB6ayNM6wELwDBu/55emRkqc1WV2xONO8KtZhjcha9JeEkXEqM/tHuFY
+w9FVQGyboMOQf3EqlBfSesiMKiqDLlOHmS0uCYw7FMckM7dXkHbYP0ni55J34Tgn
+XFjxCb8BKHfAcyiMQ6dmyMpM9exmwgGV/ZM0u6i4sX/txLhSm0oKr52johccqYdC
+9JWvEkJ29cgwwNAsHaBh+5s4ugo1Uw==
+=xMpk
 -----END PGP SIGNATURE-----
 
---evHsjh9hILwanQ+L--
+--28zJca9bmH4iMu0J--
