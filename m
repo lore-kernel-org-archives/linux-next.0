@@ -1,89 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA0A51FCDD;
-	Tue, 13 Oct 2026 16:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198451FCB0;
+	Tue, 13 Oct 2026 17:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791910226; cv=none; b=olFnjCjvvnVRgbKg6EKb4PRFQU34eml9xoe3oq0A43nGh3IBmZcKZyLTHt6Qix2xwqrzvlJlPbQF2S0BOZ8jOjY3QBJzuUjys3WARrrw0aL+lWJBWWM/Xi4ndK+x2F+Nu2gu35XSEwvYN/HaphZFdLIq7YIPhQLuDHmPoQNxKRQ=
+	t=1791910817; cv=none; b=oipsRe8pTB2VDh6/J99NokR0wRsMbFhxF3b1mraMdIoIjpeNlljUhV8HpvZmF7ogOHqxwn3E2rD8xqSgEFLexcSlIjxQWLNxAN67Yab9fGUVLWAYvyJ3xKyTTzkT/fkEUynN+4pLt0Aap90j3/wKb4wlMG3T6Ui+nycw6Wd411Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791910226; c=relaxed/simple;
-	bh=/lYplHdq3xWTb81t8/N0Bo8BBdDh5vWAuANi0GAaWz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCL/rW4tjfdc7iRYagkXOpIoo+A/KG8q04wFYJZLxxRanQRuhjS1tPDHQLefFZlsE0BwxyA0e+XSzbzgAX308YfoHCcvob+otw+jC79/82luEc98VmiI7JnZDVrMdrqmhPxe9Bq9029QFF5u4jttoGZs5y9UoAtbMziyTTXY6Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ykdjr2IJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791910817; c=relaxed/simple;
+	bh=Oox5P9e71dP0eGmlR8k3E453NWcu+IxspH6EDXk61Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ci8BPama9Xi40SLJXr4TmeY3XZIexiSTWW+mqohizhP2VbzbwPiKdLXAAPEfnG7SE2bFJYJzWKeluul5uWiLJdvIztV/i/H6GdEpzrHgnNboRZdAhZJRL83Uw8mWk5SA3cSoAvqMZoTQ4Qzl3hGqMAsbWia/ZGzJALNgWP+WkZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TN4w5Smd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ykdjr2IJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69661F000FF;
-	Tue, 13 Oct 2026 16:50:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TN4w5Smd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B631F000FF;
+	Tue, 13 Oct 2026 17:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791910225;
-	bh=5tj3tf7AZ1i5KFO69CyARfpXilj9EC0fq+TYKANGurE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ykdjr2IJL2wc+gHvAMfVn8CkXgW60VucB6bBksAy7d+YQzUnclHbOXdwndRyuYIEh
-	 //vgZ6c6zTrksUq9aH6qY8jKv0U9xh1HnasTICXvrhmA4YzICzF5r2ta8M2QYfjIyD
-	 rREqXkE3kZ1fJmlA0fPJFHeW2TS9Y/L7lrcA7NGgkFBy5U9fGyeBoIRYu/M2/q0/Gh
-	 gZT10ij+suCgszEqLocYkbX4yIFFnY0XCd2piqD+7GcBpNk4R5JvY9TKvfG/GXOskr
-	 DD6AMX0jMx+e3yRUhDQ+8KCwPktHPZ/91/k3ZOD51GDWJ4EDyIjMzIqE72auvM83GE
-	 ITAdPW5Q0tRxg==
-Date: Tue, 13 Oct 2026 17:50:20 +0100
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Helge Deller <deller@gmx.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Mike Rapoport <rppt@kernel.org>, Vlastimil Babka <vbabka@kernel.org>
-Subject: Re: linux-next: manual merge of the fbdev tree with the mm tree
-Message-ID: <as5hGf0IS-LccM0_@gremlin>
-References: <as5bwyKpGQaBZ3CO@sirena.org.uk>
+	s=k20260515; t=1791910816;
+	bh=ngJqSC+yt6t1PadhQ5OLvlasXk8cxUnZKa6uhhTn4E8=;
+	h=Date:From:To:Cc:Subject;
+	b=TN4w5SmdPOy1wxYp9T8v5X4U8eGPgXEW+WhCz/11oiC1ZbcNZ6dRTvGRq9Ib3XHNz
+	 UqXds29a6et+qVYXZB+GSqotZNcaWf69OTBx+yLfidu9WmW480JtSp/UtGB8Me0M3y
+	 W96Yiq03J8C+Y5c81lvJ1qQhRe/4LgzrKjdS6x9S9J7leFYroT++DXvkQ9UqNT+o4k
+	 Q/RGmU0CWiO38VfcpVgkuhrnD8PGJkNj9mcY0/qO1doO5cABSbJaDJ5awqAcxaQG6O
+	 ARMXTEn03U/AfWm+AsCTYnYP29Vel/TnElVA2wd5y/fkK+jBzzdzqDytN0x24RQWlC
+	 3wxeq5q7nHhqw==
+Date: Tue, 13 Oct 2026 18:00:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the block tree
+Message-ID: <as5jnDJEt1iZZqZk@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oZzMAfT0G+OLY/kf"
+Content-Disposition: inline
+
+
+--oZzMAfT0G+OLY/kf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <as5bwyKpGQaBZ3CO@sirena.org.uk>
 
-On Tue, Oct 13, 2026 at 05:26:43PM +0100, Mark Brown wrote:
-> Hi all,
->
-> Today's linux-next merge of the fbdev tree got a conflict in:
->
->   drivers/video/fbdev/ssd1307fb.c
->
-> between commit:
->
->   d4488917e79c7 ("fbdev: defio: assert FBINFO_VIRTFB, drop VM_IO, add VM_MIXEDMAP")
->
-> from the mm tree and commit:
->
->   81ae1f9a6c850 ("fbdev: ssd1307fb: check for fb_deferred_io_init() error")
+Hi all,
 
-Wow a conflict between two of my patches I have literally no excuses here :))
+After merging the block tree, today's linux-next build
+(arm64 allnoconfig) failed like this:
 
-> diff --cc drivers/video/fbdev/ssd1307fb.c
-> index db61d710fccb0,8fd96c37ee1ab..0000000000000
-> --- a/drivers/video/fbdev/ssd1307fb.c
-> +++ b/drivers/video/fbdev/ssd1307fb.c
-> @@@ -767,9 -767,11 +767,13 @@@ static int ssd1307fb_probe(struct i2c_c
->   	info->fix.smem_start = __pa(vmem);
->   	info->fix.smem_len = vmem_size;
->
->  +	info->flags = FBINFO_VIRTFB;
->  +
-> - 	fb_deferred_io_init(info);
-> + 	ret = fb_deferred_io_init(info);
-> + 	if (ret) {
-> + 		dev_err(dev, "failed to init fb deferred io: %d\n", ret);
-> + 		goto fb_defio_error;
-> + 	}
->
->   	i2c_set_clientdata(client, info);
->
+ld: Unexpected GOT/PLT entries detected!
+ld: Unexpected run-time procedure linkages detected!
+ld: io_uring/rsrc.o: in function `io_sqe_buffer_register':
+rsrc.c:(.text+0x1a9c): undefined reference to `io_register_dmabuf'
 
-LGTM thanks :)
+Caused by commit
 
---
-Cheers, Lorenzo
+   4bb7978523289 (io_uring/rsrc: add dmabuf backed registered buffers)
+
+I have used the tree from next-20261012 instead.
+
+--oZzMAfT0G+OLY/kf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOY5sACgkQJNaLcl1U
+h9DnUAf/d6vRvuuVUx1NTjtMNjYpMJegpnV+IBns9KPWjTbEPlNyLrSeHpNSsKWW
+v5M9ziI54faH9UqmaHIj7GvbEnN15fGaLJBG08rDlC7QjQNg/XJy9LYvzY3UT2/T
+x6QHK5YjbCs4q/lacVJu3Dlxyt6CtI4OWlPidzmvH9kGhHQhKoePEijWNOyYGqEx
+AlV3ecoNXQrPXOlsUTvlsA/kkPscP7EwhiuQSxZl679rAVSsv1BKlBqdB+FQXvzg
+1Q1PVt9BhjPO34fFCHH67OWHDkXH3RwefY7nRowuNcww+CWy6YKjxR6SMXdbE5RR
+drL3AVxYCTIanr2WPV0PMV1ZkQsUeA==
+=MmWi
+-----END PGP SIGNATURE-----
+
+--oZzMAfT0G+OLY/kf--
