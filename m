@@ -1,444 +1,157 @@
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F53F3A6B66
-	for <linux-next@vger.kernel.org>; Tue, 13 Oct 2026 02:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B959397B1B
+	for <linux-next@vger.kernel.org>; Tue, 13 Oct 2026 07:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791858640; cv=none; b=LsWf4zM+GXTL+zBxfIQ9IYq7+0N4KuUS3/Wk2om9TmsNEAkHkjlAqCvmWIpSEaA2/qCtl0al4G++uXFH8JYXwqbTs75p1Au4SBPC2oqCH/DopnNusRgxBsnoXZsyo+zHLVHpwT4gBbhs9ictbgxFrXZTBMLNerFX98WoIOBxJ70=
+	t=1791878171; cv=none; b=jMGz64uqzUDMhQ01MDnZFn9AbX7smCwTnjvXIGVIXMmeuR3We+nr/OpGm/iCftYhnZ4x+dGluUEHoHlMNNNHccS49uJsLAO0d9UvuDcv8I22Zzg2HJ5AIQ8TfnP77SG8UyeslKpw67EjgoT8w975IYy7z8pvAwvul61dYK1cZeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791858640; c=relaxed/simple;
-	bh=iOQsw13EQetBbd6e6enyDTHfWTWbN1l2VJzLj6KNl/E=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=Yasdc/Y2ruqf9XWWBttPHPseMYa1ChsJF0hCgYXZ60F6qMI/QD8XMQ17GuO1433HklFdXA01EpaApu+ys8mGKEEJPMoXHvIbl5yxEU1ve00/fbzeZqA4Ss3DurErW0BsxrPOqfQOR+aHRs416JIPTjaTjxre2KUglWrMcEhUte4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org; spf=pass smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b=DAsXzwBD; arc=none smtp.client-ip=74.125.82.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.b="DAsXzwBD"
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-30b6dad2382so5793250eec.0
-        for <linux-next@vger.kernel.org>; Mon, 12 Oct 2026 19:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1791858637; x=1792463437; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kmB600h27XYubp7nZZgLjNo8D7Bs8RVBjlDVM/yoguM=;
-        b=DAsXzwBDbQA4qIFvBFP7w6rXSJZlS3Mqrz2MnSk5h6JgnyrucLStOrwXTP/xDOtbFd
-         yYcZrySDdV/UfhyygnRFLimny+0QmbMIf4UVzg7KHvFVAAEuqGi4VzmKC2464r25DjLO
-         1awB3ZEa3u9tb6s3fUEVLkCRuy2+6f1oBvpWa1rvz8heLgGaIg+so/vJt8dG1bEyx3sj
-         fFZ7Q5GJQDq20BRM1ZDgc2Pn9GlzbxGHF7iy2BMeOsBx33dU5Q3LlF4Efnn0dfGfQgak
-         5FMiYvKnnHcF33eNIaspvRCpIp842Cqe8IJCGRGDb4e5LgIs+rokd6up1JvsUM1Mz8gm
-         0a/A==
+	s=arc-20240116; t=1791878171; c=relaxed/simple;
+	bh=FPqUzrLz5+Mbic78aW+tIjOGw4jxHiV4CV8UNQpyUKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PRiR8tzweMks4XaGnUEYU0BpEIHmrl9dJYy/czcCRVQAVJZV1teOpQa3qUvV+YYq1BgSTG4PO7h2pA22P2PtyCTFG/F+gKTYBtHoIyLqoZuy49RPJbTunNaM8vmS56NISJketfvFqIlbr64Neg6Zf/EQOfyQIt/YAkQBsdTEqbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5e37ce204cfso2879714e0c.0
+        for <linux-next@vger.kernel.org>; Tue, 13 Oct 2026 00:56:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791858637; x=1792463437;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kmB600h27XYubp7nZZgLjNo8D7Bs8RVBjlDVM/yoguM=;
-        b=0bOshAdStvrs/ck0JVtncvXgl8lSn6Bt2eR/NOi0dbUgKoiLrHsUp8SAirhU1Dt27W
-         oNgXTllL+uL9dPmVt48BfVzD9YMl9ClPKs2qtkmwM8LtS3jH96veEaWkBsTud8xZ76dO
-         7g+LG+rgDh1icsgXIiRyaxPnpjlW+hBpgBfLMQKM9E4pLcYxUkB/tT/XJgoaVRCqIP20
-         lplAwtONKFpNekiBmI0E+ELL4xFf8URsCar4hmNX6spQHBDEMuEB6TL9G3L1u1GrojLJ
-         45sEEZBOJQsXI1kNWJ9f3NrYfKElHA7f+RyvUHv7HQYEVdKpRyQnZFl71lyw+Ruj07yr
-         o0Eg==
-X-Gm-Message-State: AFq9FYJTqAVGQWk6jkxFheduFzV4GHZCZM/9bjQhCJobu9u+m20Cc1pN
-	xjngjm5w/RWMIwu+hd1eGuECG8VMcR0nfzAfBlq8mitAxd/kDHQV5vuejkbLiIlKrV/q+FORlS8
-	O1Dxu
-X-Gm-Gg: AYBFou1dc4PHz48LFJKsiWeMChbfjZS5zZnxNWFNqo4BLDpWy1W1q9N+f3hBXfqBOzj
-	HltcmpLfwcYULIPcy8KYoqw5pEj3rBz5a+jHM6QJ+RyNmxztQhkvUi5ua+qpTy+4RbC+hUgdgiU
-	8xL+70+iOpCwc2loJQNrF4u3rBUrRahCvWSFUJW3RK9iOMXuesI2zLit5H21iOv+jSV8Elt8mxd
-	Z4u28oL8XiUk2IYYae4pFUmX19HwcS52rWEIVMME+LYNfvrofLHTkvAsclxkxN64n6kUXfqXcsU
-	iMoIrtpamRTsRIpy4ZQ/LxNo6zhv/oa+n3RWCuGCu7Av1lX8mN3SlbMx9cmcfdBCGYHuGnlprnG
-	zuXINqlP7Skzjb4nLKj1OtN+Q7sbleas/R2KhgP2YQPQlsV1aNF0kwoKKa7a/GJ5zWz0SUrK9CA
-	xUK8hBnhQshTXi0pBHXDut2YokP/bI15BcugElJhmsE1oz8I5/3UF7SX0coRTUSHw=
-X-Received: by 2002:a05:7300:ea10:b0:35b:bd35:6ba0 with SMTP id 5a478bee46e88-35bbd35868emr2789949eec.6.1791858636811;
-        Mon, 12 Oct 2026 19:30:36 -0700 (PDT)
-Received: from 244668f92ec4 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-35c89429484sm1155957eec.23.2026.10.12.19.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 19:30:36 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20260707; t=1791878168; x=1792482968;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=9fAWZ7x6Dy4YpG9Dduo7Jtd1E0y1cfkP0evcWuU7n9I=;
+        b=0qbk/P9K56hO+RTgY/K2rBvW1k0hoOjT5QFNxl2jsAllJzgPlCIP/Qq64zxRuk2qBb
+         Uy01EnwIiBDaZGUDUADGrIiEvNSE9AZIS3h9bSNotN1ZXx3YFfAuoIX2TYbuzOOU/mHO
+         JhgrDvqjLT18t0dZcWfAe5rZ7A0BGbNIR/rW4pWdu0wvJqbrQzq1MwrDQCsux9yHU8x4
+         czFJ3VAtdodGiOTZUjqx3qraSaQu+YarN85L0HIfT5o5JlmmzqgeAqsgtUZ+cvmDcFjj
+         M0xEx3a4aRawl/Sy8tZAOGjdjFJm4aaz7G5rJPRKxZubyrqE87GxFAGhAluqJ6acJjiH
+         8pvg==
+X-Forwarded-Encrypted: i=1; AKwUvBzeFgkExNBnnnJ1BckovvjXs/3L9h3WHY/jkJef8pFEqnUa0+YA08U8mpkENTf2gYuUdyfYQtZ//ycf@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ/nNYY8pVFzkbIfpl+DmBdM7lQnUShS/yUwntqotv1QYebh7qo
+	224LaxAg0aQ80o2J793WSdRahUFLW0DxAXPjYXHFPiHEOk90/4PPp4iRXoSEf9Xu
+X-Gm-Gg: AYBFou1LPX69COl4E5Oak0jn1i2wSYj+fZpMY8tapgo1lg5RSXuBiJCC86y5Uuv2kCD
+	bz5/NDxCSQd6Bs2mNbezX2G5XrbTBNpTaz9axTy6tPkQWHzfzzorhMZK5FWgfOEOOLt3lvtVOdZ
+	8qwhtv6si3OvpyFU1IUuXW7tikR/hTfi1Yb3u8xCuf/CT19asoMlM0KuwsRis7GK9dbqTuYffw1
+	VDsoW3zhBdkuRdEZeDMlw1Jbk90fYQ8KPM34YDZdN23bgM+HlZ/M4JVLY1FyTbHKdvpHKzF6voU
+	bIsR9h23Sl6d6kEMlJnhc5q6fDTZz8d0dy6uOpY5EUY0SZ4Cc1Hy6A/bFqPht2rHczOSM4guPGP
+	5kvoH1DV7WJLec6C6tj4v4zT9HpsF/LoGEPXM2HZRHhGxQip/yTlUJPZbY6cgaBNQie3HB0NYok
+	GBxrEJlF8xY13lfJpDtYVQswd6M/Qrj7nlzI2T0EO/0soggHRNQzMoHwjSjQa+q4DhGFNvoJCUl
+	SbYJjTfz5Y354M7Q07gwuObw5OTGVXS3b9dWV3cXZzdd68=
+X-Received: by 2002:a05:6122:3c4d:b0:5e6:cac7:9ff7 with SMTP id 71dfb90a1353d-5e91e7ad625mr3198527e0c.21.1791878167912;
+        Tue, 13 Oct 2026 00:56:07 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5e91cab57c8sm8479163e0c.5.2026.10.13.00.56.07
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2026 00:56:07 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-7c33cc572e6so1919829137.1
+        for <linux-next@vger.kernel.org>; Tue, 13 Oct 2026 00:56:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwDCzNZ7utSK9vd6p8agrY88apGKwweOu0579qgzlV3SLpihEXoTdTvv7NoCa8pEpzCNUj6cuwa7GP2@vger.kernel.org
+X-Received: by 2002:a05:6102:44c1:20b0:7c2:37c5:dd21 with SMTP id
+ ada2fe7eead31-7cb39ffa0c0mr2123690137.17.1791878166862; Tue, 13 Oct 2026
+ 00:56:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 4eb2586bd40db27d77cc5b724ca9386ed0c71d53
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Tue, 13 Oct 2026 02:30:36 -0000
-Message-ID: <179185863562.236562.2378077359279960869@244668f92ec4>
+References: <aslAEm5Qsgp-9xD9@sirena.co.uk>
+In-Reply-To: <aslAEm5Qsgp-9xD9@sirena.co.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Oct 2026 09:55:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVRP2RaDvX1-usBjiYUW0sCaCccd64a=rAH-LubYMkTyg@mail.gmail.com>
+X-Gm-Features: AclHuK8bLxOSxcXpfIpgmHR08UPT6dIGR9_XUIdBL3o1cXFtPLMptGHwNPscJlA
+Message-ID: <CAMuHMdVRP2RaDvX1-usBjiYUW0sCaCccd64a=rAH-LubYMkTyg@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the pci tree with the pci-current tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>, 
+	Priyank Rathod <rathodpriyank@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 9 Oct 2026 at 21:36, Mark Brown <broonie@kernel.org> wrote:
+> Today's linux-next merge of the pci tree got a conflict in:
+>
+>   drivers/pci/pcie/aer.c
+>
+> between commit:
+>
+>   79c168e2aa957 ("PCI/AER: Skip error recovery on false alarms")
+>
+> from the pci-current tree and commit:
+>
+>   d4c842c3af5bc ("PCI/AER: Fix memory leak in aer_recover_work_func() when pci_dev is missing")
+>
+> from the pci tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc drivers/pci/pcie/aer.c
+> index 922a726a52a50,c376c3adbefd2..0000000000000
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@@ -1393,15 -1383,15 +1391,21 @@@
+>                 ghes_estatus_pool_region_free((unsigned long)entry.regs,
+>                                             sizeof(struct aer_capability_regs));
 
+While your resolution looks correct to me, it can be shortened
+by inserting
 
-Hello,
+    if (!pdev)
+            continue;
 
-Status summary for next/master
+here, avoiding the need for breaking long lines.
 
-Dashboard:
-https://d.kernelci.org/c/next/master/4eb2586bd40db27d77cc5b724ca9386ed0c71d53/
+>
+> -               if (err) {
+> -                       if (entry.severity == AER_NONFATAL)
+> -                               pcie_do_recovery(pdev, pci_channel_io_normal,
+> -                                                aer_root_reset);
+> -                       else if (entry.severity == AER_FATAL)
+> -                               pcie_do_recovery(pdev, pci_channel_io_frozen,
+> -                                                aer_root_reset);
+> +               if (pdev) {
+>  -                      if (entry.severity == AER_NONFATAL)
+>  -                              pcie_do_recovery(pdev, pci_channel_io_normal,
+>  -                                               aer_root_reset);
+>  -                      else if (entry.severity == AER_FATAL)
+>  -                              pcie_do_recovery(pdev, pci_channel_io_frozen,
+>  -                                               aer_root_reset);
+> ++                      if (err) {
+> ++                              if (entry.severity == AER_NONFATAL)
+> ++                                      pcie_do_recovery(pdev,
+> ++                                                       pci_channel_io_normal,
+> ++                                                       aer_root_reset);
+> ++                              else if (entry.severity == AER_FATAL)
+> ++                                      pcie_do_recovery(pdev,
+> ++                                                       pci_channel_io_frozen,
+> ++                                                       aer_root_reset);
+> ++                              }
+> ++                      }
+> ++
+> +                       pci_dev_put(pdev);
+>                 }
+> -               pci_dev_put(pdev);
+>         }
+>   }
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 4eb2586bd40db27d77cc5b724ca9386ed0c71d53
-origin: maestro
-test start time: 2026-10-12 18:45:50.698000+00:00
+Gr{oetje,eeting}s,
 
-Builds:	   74 ✅    1 ❌    0 ⚠️
-Boots: 	  112 ✅    0 ❌    0 ⚠️
-Tests: 	44131 ✅ 3286 ❌ 6271 ⚠️
+                        Geert
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: imx6dl-udoo
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - kselftest.device_error_logs
-      last run: https://d.kernelci.org/test/maestro:6acd5cb1a3f195e1aa7055d2
-      history:  > ✅  > ❌  > ❌  > ❌  
-            
-Hardware: jetson-agx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp.futex_wait05
-      last run: https://d.kernelci.org/test/maestro:6acd8d78a3f195e1aa72e853
-      history:  > ✅  > ❌  
-            
-Hardware: jetson-orin-nano-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6acd7f71a3f195e1aa726f14
-      history:  > ✅  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6acd7f71a3f195e1aa726f0f
-      history:  > ✅  > ❌  
-            
-Hardware: nvidia-p3809-gb300
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6acd7ea9a3f195e1aa725cf7
-      history:  > ✅  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6acd7ea9a3f195e1aa725cf2
-      history:  > ✅  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_memcontrol_test_memcg_sock
-      last run: https://d.kernelci.org/test/maestro:6acd7ea9a3f195e1aa725d02
-      history:  > ✅  > ❌  
-            
-Hardware: purwa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_keyboard_3a
-      last run: https://d.kernelci.org/test/maestro:6acd6731a3f195e1aa714aa2
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-Hardware: stm32mp157a-dhcor-avenger96
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp.shmget03
-      last run: https://d.kernelci.org/test/maestro:6acd71bea3f195e1aa71c04d
-      history:  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
-      last run: https://d.kernelci.org/test/maestro:6acd4412a3f195e1aa6f877b
-      history:  > ✅  > ❌  > ❌  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-03
-      last run: https://d.kernelci.org/test/maestro:6acd4412a3f195e1aa6f877a
-      history:  > ✅  > ❌  > ❌  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
-      last run: https://d.kernelci.org/test/maestro:6acd4438a3f195e1aa6f88cc
-      history:  > ✅  > ✅  > ❌  > ❌  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_keyboard_3a
-      last run: https://d.kernelci.org/test/maestro:6acd6762a3f195e1aa714c7f
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_touchpad_15
-      last run: https://d.kernelci.org/test/maestro:6acd6762a3f195e1aa714c7e
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-### FIXED REGRESSIONS
-    
-Hardware: acer-cbv514-1h-34uz-brya
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd6174a3f195e1aa70b38b
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: acer-cp514-2h-1130g7-volteer
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd5fd4a3f195e1aa7076a4
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: acer-cp514-2h-1160g7-volteer
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd5ff9a3f195e1aa7080e9
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: acer-cp514-3wh-r0qs-guybrush
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd606fa3f195e1aa709b96
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: acer-R721T-grunt
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd63eba3f195e1aa70c6ec
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: asus-CM1400CXA-dalboz
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd6018a3f195e1aa708d74
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: asus-CX3402CVA-brya
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd6059a3f195e1aa70994c
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: dell-latitude-3445-7520c-skyrim
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd5feda3f195e1aa707f2b
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - kselftest.cgroup
-      last run: https://d.kernelci.org/test/maestro:6acd5fe7a3f195e1aa707d0a
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_memcontrol
-      last run: https://d.kernelci.org/test/maestro:6acd7c03a3f195e1aa724353
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_memcontrol_test_memcg_sock
-      last run: https://d.kernelci.org/test/maestro:6acd7c03a3f195e1aa72434d
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - ltp.futex_wait05
-      last run: https://d.kernelci.org/test/maestro:6acd7c0ca3f195e1aa724745
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: hp-x360-14a-cb0001xx-zork
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd601fa3f195e1aa708fbf
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: jetson-agx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp.prctl09
-      last run: https://d.kernelci.org/test/maestro:6acd8d77a3f195e1aa72e7bd
-      history:  > ❌  > ✅  
-            
-      - ltp.pselect01
-      last run: https://d.kernelci.org/test/maestro:6acd8d77a3f195e1aa72e7c3
-      history:  > ❌  > ✅  
-            
-Hardware: jetson-agx-orin-industrial-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6acd76d5a3f195e1aa720418
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6acd76d5a3f195e1aa720413
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: jetson-orin-nano-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_freezer
-      last run: https://d.kernelci.org/test/maestro:6acd7f71a3f195e1aa726f06
-      history:  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_freezer_test_cgfreezer_ptrace
-      last run: https://d.kernelci.org/test/maestro:6acd7f71a3f195e1aa726efb
-      history:  > ❌  > ✅  
-            
-Hardware: lenovo-TPad-C13-Yoga-zork
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd60c8a3f195e1aa70a359
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: rk3588-rock-5b
-  > Config: defconfig+preempt_rt
-    - Architecture/compiler: arm64/gcc-14
-      - rt-tests.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6acd5dcba3f195e1aa705c88
-      history:  > ❌  > ✅  > ✅  > ✅  
-            
-      - rt-tests.rt-migrate-test.rt-migrate-test
-      last run: https://d.kernelci.org/test/maestro:6acd5e3da3f195e1aa705eb3
-      history:  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: acer-chromebox-cxi5-brask
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-14
-      - kselftest.iommu.iommu_iommufd_iommufd_viommu_mock_viommu_viommu_alloc_with_data
-      last run: https://d.kernelci.org/test/maestro:6acd600ba3f195e1aa7087a9
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6acd6840a3f195e1aa717c1a
-      history:  > ❌  > ✅  > ✅  > ❌  > ❌  
-            
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - kselftest.kvm
-      last run: https://d.kernelci.org/test/maestro:6acd5fe8a3f195e1aa707d19
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-      - kselftest.kvm.kvm_set_memory_region_test
-      last run: https://d.kernelci.org/test/maestro:6acd7c15a3f195e1aa724aed
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6acd7c09a3f195e1aa72448e
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - ltp.shmget03
-      last run: https://d.kernelci.org/test/maestro:6acd7c0ca3f195e1aa724724
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: jetson-agx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6acd8d74a3f195e1aa72e597
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: jetson-agx-orin-industrial-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6acd76d9a3f195e1aa7204a3
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: jetson-orin-nx-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
-      last run: https://d.kernelci.org/test/maestro:6acd756da3f195e1aa71d8c3
-      history:  > ✅  > ⚠️  > ⚠️  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6acd756ca3f195e1aa71d835
-      history:  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6acd756ca3f195e1aa71d82b
-      history:  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: nvidia-igx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6acd756ca3f195e1aa71d814
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6acd756ca3f195e1aa71d80a
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-Hardware: nvidia-p3809-gb300
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6acd7eada3f195e1aa725da7
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+ltp
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6acd4464a3f195e1aa6f8e6e
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
-      last run: https://d.kernelci.org/test/maestro:6acd4412a3f195e1aa6f8779
-      history:  > ❌  > ✅  > ❌  
-            
-      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
-      last run: https://d.kernelci.org/test/maestro:6acd4403a3f195e1aa6f8606
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1416
-      last run: https://d.kernelci.org/test/maestro:6acd4438a3f195e1aa6f88d5
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
-      last run: https://d.kernelci.org/test/maestro:6acd4438a3f195e1aa6f88cf
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-03
-      last run: https://d.kernelci.org/test/maestro:6acd4438a3f195e1aa6f88cd
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
