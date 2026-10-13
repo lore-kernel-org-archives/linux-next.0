@@ -1,45 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AAF25B0B8;
-	Tue, 13 Oct 2026 11:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09494F30E3;
+	Tue, 13 Oct 2026 11:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791891243; cv=none; b=VS11QLtEdDOY6RDPavcgt7BIMgXKfmQ4Jb558Wx0iQtgZAKI96v7VozRnb24kbi36vOaWiUGdaJ/p+ZnoX7tN+GLEl689BwMpI1bLKgHsAw+yUBSDa6WEGVLUGAaRVFTulh21zUX9xtxC6REQorMnT6p4eoX0rwf/EsqPwIqK5E=
+	t=1791892069; cv=none; b=ReWgVfbTNHAelWZbBfHMOi29lV59vOff4XXoCH/EBTVTPaAwLeBpb0ydFGSlnGLIueGJ7LGcTgSiSvl62TY0uNZVvyYnYtKOWCe6qH1yz4/FyRafmnoZMGcbV4TW527gXy+qjIWjX92uozkj9k9NrQOenezljsYai3PxsX53FmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791891243; c=relaxed/simple;
-	bh=vHy6MWyWktfO4wu5CJ20FPYOgecdctEETXm6mRBAag0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E0sLnTgPb4ZZRGzZi0/QaDgo30M7G5UBfXXLuNyJflEQI6X+MAg7ctxRP+6Ok5HPzvgaLzI5cPh731OlwGU9HRcHABtpJN1aRC3zsbyni4vCouUrb6gnuxwdPqnoUsJltwozf2S0gNmt5d7c0B/wXT4HJ47h/xUp0gT4PMGm39E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNG8IOrf; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791892069; c=relaxed/simple;
+	bh=t+mUPABD3WpHuQb59X2jDhOZS/Nf2ezee5muEqDZjvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CBXxQX4tIPO2q+u2Flx/JrrO6xnfaXI7/l1ns6sD1hN5VjWAiZUvYQ+DO89skJ/sE8dv5gsf3txV0CinEVCF/COGASXJROP7pIPHcg6rIp69u7UmUCPvSg6YZ9lCw8AgNMlAArQbxOyeuBgsLN0nx/4MGSs6VrrOl9i8eBwSvk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYFKKbH1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNG8IOrf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECDA31F000FF;
-	Tue, 13 Oct 2026 11:34:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYFKKbH1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E041F000FF;
+	Tue, 13 Oct 2026 11:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791891242;
-	bh=ruX/XdPz1u9wSVSISSYCvO/r1Ffm3NbDarQT8v4moYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mNG8IOrfXJC46XBcB150FN6FIUAj4bwFJM4mGxQvSSIQJD1iUs8nvaMQ/drZKDvTP
-	 P+ik6SFO7HsacVe7gymwssA4z+gYwq9wAqDTdVShddynXOwzhtnsNOmAMUZQFjrslE
-	 nmGOxXZRyBMrbAvqGvQYB+Bhg2Be24DGdLVs5KS3DsxprOhC0Zkbw23s1jfxt+SYkU
-	 B164LEGqDXcPJlfil/gXJszF8Cwiv6FDE8x+ImkJA4pSHssoegKRetwI45IQqLwzdk
-	 GqyKAiMRuXzP5ru/nqTDTqEqh8Na2aSfHsUrnHCCa9a6CNE4oPohFyHqCw+5QdFihL
-	 OSNeJz8vhQwkA==
-Date: Tue, 13 Oct 2026 12:33:58 +0100
+	s=k20260515; t=1791892067;
+	bh=lThkOVGrF4Xbcq6bgjArT46HNfz6icM3dmbIeKRQBbU=;
+	h=Date:From:To:Cc:Subject;
+	b=mYFKKbH1B0JN9AMqUNvtEUrSuUvOb4sZHyCZPMQUbCq2voPkpDZhlAhfk/BxJWrFU
+	 2GucnZx2YpEFlpanvJ3hYZnrE53ufD5KX0z1k0hSWrNWUHcfZ22hl5AI95u7X+Ikv/
+	 5UZFDnW3SQIHrx4rLKB8Hpd+jdrAfe+CCaoN19CyYVsS7LyAz5REDOxTxmD72diYzL
+	 ynNgnguErbGR9YDXZ9yYPAyUg4hlLUKwiAn1hkymbBhKMYOrxGZpBpnPtmyF/qcQWn
+	 y1g2PNZh3Kw8xn5fcsTYs8mVh9+Tb84/by2gf6EDvWmyUAsPmafzcFeSPPOwejxu7S
+	 N4+ytKG4NNrJQ==
+Date: Tue, 13 Oct 2026 12:47:44 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the drivers-x86 tree
-Message-ID: <6e469d6d-88d6-4455-b49d-e40f9ee1fb8f@sirena.org.uk>
-References: <arUBQuAfW4HJQHik@sirena.org.uk>
- <4ad00775-b067-452b-9869-29d5b6712f66@sirena.org.uk>
- <asOdosd0zROmuzu1@sirena.co.uk>
- <1a363159-02b9-4644-9cc8-38e210d97d5d@sirena.org.uk>
- <8f4e200a-c2fd-29c6-ee4d-a91137b90c12@linux.intel.com>
- <44fe29ee-9692-49f4-aaa7-7201c9cdcaba@kernel.org>
- <d1fa9d26-ba44-5cd5-76cc-1fc91ba9a6d8@linux.intel.com>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 12
+Message-ID: <as4aYETdtAvLpDTC@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -47,47 +39,84 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f35ybG87NQxG6Pbe"
+	protocol="application/pgp-signature"; boundary="BU16VurHDm4oHQL3"
 Content-Disposition: inline
-In-Reply-To: <d1fa9d26-ba44-5cd5-76cc-1fc91ba9a6d8@linux.intel.com>
-X-Cookie: Some equipment shown is optional.
 
 
---f35ybG87NQxG6Pbe
-Content-Type: text/plain; charset=iso-8859-1
+--BU16VurHDm4oHQL3
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 13, 2026 at 02:05:41PM +0300, Ilpo J=E4rvinen wrote:
+Hi all,
 
-> It's not entirely foolproof though as the Signed-off-by could still be=20
-> invalid one e.g. by being different from From and I don't know easy way t=
-o=20
-> extract From from a patch file (consider encodings and multiple From=20
-> lines properly).
+Changes since 20261009:
 
-The script -next uses is:
+The vfs-bruaner tree acquired semantic conflicts with the ntfs and cifs
+trees for which I applied a fixup.
 
-   https://git.kernel.org/pub/scm/utils/next-utils/tools.git/tree/check_com=
-mits?h=3Dmain
+The risc-v tree acquired a conflict with the mm tree.
 
-Greg K-H has a script a bunch of people use which is a bit more friendly
-for using in commit hooks and whatever, I don't have a URL to hand for
-it immediately though.
+The drm tree acquired multiple conflicts with the qcom tree.
 
---f35ybG87NQxG6Pbe
+The drm tree acquired a conflict with the origin tree.
+
+The drm-xe tree acquired a conflict with the origin tree.
+
+The mailbox tree acquired a conflict with the devicetree tree.
+
+The random tree lost it's build failure.
+
+The landlock tree lost it's test failure.
+
+The kspp tree acquired a conflict with the origin tree.
+
+Non-merge commits (relative to Linus' tree): 14973
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 434 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--BU16VurHDm4oHQL3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOFyUACgkQJNaLcl1U
-h9AkWQf+J1u0+L2YaOwFFjbc2961nSU1taNfuBXVeE4RVUHzAyTwmqysElJYqAJ6
-GaF/UzP95J+zTSow0ECPc0pz69sTWdlxu/o5moJVgDM/AA6/DCGMV+OHtJ7gKSEC
-N7zd/lbid/nYird5S6dQhOqB/2VpRcnRwTRl4E6RPvAIVF45EgSbK1muAR9K53rH
-UhaZEJRDJaLkoQ3IYyZ242HaGHTvilCN8MgFsYghd3jvrDWX8uQU2092DFgTbsxy
-XBXxid5PwmUDLRt4y11VEQnfjmnBclkmr9OGx9r4h0L3Wga/yaW//vO9+5AQBxM5
-JDeRtVLb4syBGnIk34BN/UahN1XVuw==
-=sBid
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrOGl8ACgkQJNaLcl1U
+h9BBVwf9GIL9zThKoGyyWOpfcxZ8Yy75an2Ti4qiiAYH9cmlWI4aZ61g4qjKPKIG
+Q1Ljm2Pbl9TiusMIWNXrqguIgHNBBuQ64Dc9vleDU85kGnl+HcnKyaiEyf6pMO5K
+Ta+lMv0CD8PHmiiVw9wQqGVRV6Vq+1fc91zRJwPGQAHze4g3O5quSCBG1xiHoE+g
+hg0CfoBDVL0UafJpUcbP2BjoelL2EA0FBqkilTkXCz+0ScUqZB/dkOz7WjV4jhoE
+LffMr98ooTURGALLLdTz0YsDi5uInnPZ8UlsDmPQe02VzpwwEx0CzdyPQj4NQUh1
+Ais1soVYlA8InXo9n57GXkfDZVIv+A==
+=Os/W
 -----END PGP SIGNATURE-----
 
---f35ybG87NQxG6Pbe--
+--BU16VurHDm4oHQL3--
