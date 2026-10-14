@@ -1,111 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8754C53FD30;
-	Wed, 14 Oct 2026 15:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594575625E9
+	for <linux-next@vger.kernel.org>; Wed, 14 Oct 2026 15:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791990112; cv=none; b=JP7Rt8cZXJGIZSSeiMEc7B1Eh0MlDk+LGNtUgEgoK1c1qw+nIrARSItbp602jxb9msL+mRTkc6Dpbdp5+W9zwHK8a+zd6cT7NxdJZQXy6ebb4+FCfyQwjcgbyzx9Zzm7UZifjIcUyT74/E/+BKTcpeVrMK+7fexoafIhGZiNtQ0=
+	t=1791992907; cv=none; b=jBr8RY4/Ka8DVvsi8piRaZThrpM7Nt4a/8A8cnk2nu4KkZhyL60ks22+qcH+WYT3yMg5PAYOy1+7066UqJ9dO4HoVd69DnzzU9fwpIONgWmyIL3xSD50lnuT2HjcVyPT86jztEf1zegUaX7kg7owac2NV0/8J0jYj6qPhSY7A48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791990112; c=relaxed/simple;
-	bh=DGcQ8TSNbDxsT5XPplkLQ7qMe0fL5Q3cQNunKMU/rQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=W99y4fBza011UvjnSK0lUBVX9fv7GHURe9si29OyLwwwMwMdliwgu4RumVSwBXxheVU26RF398yk1t9QpXJsYRxWoDuvxD0codK6aEaR41KVLrVFPp18qqWAAMP0PLD/D3n2BYwxT7kkZtluYQbMOxbnPJJSwy8BpSuc09TwhDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/alCz1g; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791992907; c=relaxed/simple;
+	bh=CXn14ADe/mur29hJ4L3g9vNBUBaa5yuI90ex0XzVUMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2PQKAtdncbb4keNpHWoecZRgGd+PezmVBSGWNz8lzALCLDZGR0AXMI18HXPL99JyN6wtTtuDU1u5I2VefspAQO7t+P/7BjqqfVpIbIBnRDbDMcRwjLsTLgTG8t9H9gAm0nyK9r/lDsatVBwCNl9UCbBFJyYKSWRdlw5R+vposw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=YUeVeDYA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XJu+9bMp; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/alCz1g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB941F000C4;
-	Wed, 14 Oct 2026 15:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791990109;
-	bh=CUCtsaQQBP11rKBSPMT7ujX/Th7EN1rIbVjnNuSrMdc=;
-	h=Date:From:To:Cc:Subject;
-	b=a/alCz1gLZDKI4HWuC4jZ4IphLxllVICM4H+ceUnt7vD9f6n/O4UZWD1kuYLg1vrK
-	 9MePhvJRc0ppxtQQ01LT8WDooZ7hlOsy3ElPqreJ6olZ5qLGYnjWED3NG1VIMgVzfq
-	 8s0c+K22tSTGr5xJZc8l+jnP5jnuffjGjoOFCB6LA7SdfucLN0amnG4AyGaNetPFBA
-	 DhKlx8M9LFwe1RjAL4LmkWY1fws86uMsD4u6GfahB6JAMJbhue3q81psU7M/Qef+9A
-	 biHL5nJsIZ7dgte2W2Dh87kklFUjusdhJCHNdzZSnSTg/tdRYDn3kIU6Gqz2yH2AjH
-	 xavuEa5/hKa7A==
-Date: Wed, 14 Oct 2026 16:01:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Oct 14
-Message-ID: <as-ZWriemHfo2ymq@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="YUeVeDYA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XJu+9bMp"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id C9BA01D00106
+	for <linux-next@vger.kernel.org>; Wed, 14 Oct 2026 11:48:16 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 14 Oct 2026 11:48:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1791992896; x=1792079296; bh=n0fMzN/YX2
+	P+RrUPlAc4epjyDvgkNWm3kwptx5HO8FA=; b=YUeVeDYANqFB+ees6yKaPf22pM
+	2Caj2lYE+bPMGYdLXthwD5RbDWUrnOr70jWDGr+tCOGwfY1mH8+6irr1LY3+1ive
+	0Y1n6adn2RXbahNdGROgZVC7dNdjCwM/dSM+UlDVqIxDuL/lqG7FXwH1CfxhCJZy
+	WVAcpCcNEH6c2bVOlcBGmKn85Dscj1XAC9PI0/cB58Q597QfMIY5i65QRGBMpyar
+	AF0R4APIco7CMGaS1bz0CLyKoW8qOHHvL3o4OpMSdR9DGOdH8G4P9uAolTfFjROl
+	47UPDvxWyTc16d1YSMn+U+6BXAXP8AfDHPdSefIvYQ6sFwSlPkcAhBnT86iw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1791992896; x=1792079296; bh=n0fMzN/YX2P+RrUPlAc4epjyDvgkNWm3kwp
+	tx5HO8FA=; b=XJu+9bMpT7ywb90L/8e0KqA9a14jiyjk2mlVlI+WSZtaeqXUxI9
+	g7HyWqleAjORH/aN2DKjr9tqsUrXd5nn1dROqXqqixPouN+HrrKFVWONQTYEGNLa
+	vni/+ig9unU26T5EeQdrlI72J23YKIFXIuojAuD+jl6ytOFaocEWEt8jAyixb1lI
+	eprvIJ4ngDJaP5dCGFYGELFeUHEE6S5n8khsK0cEMkxr8Z5p5GMythjrEI9sFTGN
+	63qDGaXbwFR/Uzu1+Tkh2oRd9DnAs6Hhiu0Oo4jwdOvRLJGEyVu43n4uG1L1rB1I
+	PscXVok+qfEsk1v2hs+XS2ghNQgQBSp+/1Q==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=sign d=kroah.com a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791992896; d=kroah.com;
+	mf=PGdyZWdAa3JvYWguY29tPg==;
+	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:pm7OIbub2jKC6kofnMwKittjI6hEmUV+YcRHan2zPy3ZULz
+	n86PQacW8lyPwGSY9gEREEeZsWboO1zGVHZU4M3USYCrIdDz1cUVW8Fgn05gb3Dt
+	N2dswOqn20Hkyq8owXy0LRg7DebjOuiXjy0fTNtR1Dz62Ke1xU5w9bJdZri7x7aO
+	eEkXbsESuwLUaNujqYx5nBGwJILznmfDZ9tJpdy5KHe0fkJOXmAOSrreWV3yzUkd
+	7cDXh/qL/x7vnqJaNW6X4By2l5voPiH6ntBMYIkkC+7NygSVDD4vLHInqhpXbxZo
+	ZiUwIbY+dOsOfxpi8fuRheywVoIkaXdD8l6eP6Q==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-disposition,content-type,date,feedback-id,from,
+	in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:u5Aj9ir90r9u2x3obpNgJw80Fv6TcH3NV3KMn6VSGZ8=:CXn14ADe/mur29hJ4L3g9vNBUBaa5yuI90ex0XzVUMM=;
+X-ME-Sender: <xms:P6TParuUi3WO-mW013OgTqC1AjntdrDuVyi35GFEBQ6y2nuxvoS1-w>
+    <xme:P6TPakYMab7nNHk2s4DyGOFDf2nRombXpfOcsyqYmvuXpSIr1R_Eb6ch-uunQHPLW
+    MzbSI-0YJWLTeVbvDZLzrlPsCJrdAF7ftHU2Dpg_ILNHHMXFSA>
+X-ME-Received: <xmr:P6TPal8n743QBupiNsRSDZkRBw_MfKWQKUDF1bNzQuzzdbCJzFe0Um19JvZmS23HFWOsnHZQqejk7e4PrHY8omKSxHod20Sy7X-o9ITK3Dc>
+X-ME-Proxy-Cause: dmFkZTGpVDHhh9n3k6hrmoFvEmOrgF74qh2eYfPabJhXhsSJIk6fFEkFA7qAu7rshplNgY
+    AXXkS5AIUDNhW1GyO5P2HTSPtPShxsm+TBt/DAGBxWQk4Dit750OA1pvXM4dYtfAOIzpLF
+    9+iwzKWxa2ToFCIs+HmZeMtKXgpXg1Qxc5Jl0wx7vnhmP+KV4sinBqGJFF1rytS7ynZy7Q
+    gM93QcCGMF/5bacITyhadM+mh+5/xsJRluygcMyU7dM2fC9hlusmU8wwUd5k6I25FRgmSk
+    UHnspMAVjmQE37mEIcnk00YfTfTlP9ZaU5bYUdd6qRWV2d941agSke2aYfZvakuRBO4jEI
+    eKJNelqxKUhf/lsItnvCymgnr3BPqxogUrZxXwe8eFtGK1yK7WU6g/BRluiFa/mgavhRsf
+    byhuionRGK8qafapLGBELjnL6iR81ezbJkezGunFhmseSwtDgkc2+lnBqjSEAer0Oo3UoN
+    eVK86G82pRA3IWxwsW2WwU9T14oZtr3cY5tRbwLHw5mA7gWhxaEEXyLGtq0/OSWW2Iu1y6
+    mhIkJQkAKhww0g0mIH2YFjqA8JmN9UrOd79FBuMPM8BcpyAMUrFCeVUqIHLaAu2lhBCWBW
+    oGNuhnwQWPj7r/GS5CpH1TMR6c+uv2ULfdOr9/U8Sk5JWPWe81UVAIzjsTRg
+X-ME-Proxy: <xmx:P6TPagp7qg62F5V6_DYnvGZbRthjKd7nTmo6R2Zpt5gbID5qJd6c1w>
+    <xmx:P6TPaoGxSDSyirFPwCYMKbHIWNEIWJMJ7T2og3LIx06gN0Im0aiAbQ>
+    <xmx:P6TPagmyDzhHXuMjoAIDyaRKm3xiB-rvTHwhG6Zc7VbyNl6wCQqlZg>
+    <xmx:P6TPak_YTQEgV72DmAY-egJ3HNWYq9KUUXTzNpuD--6An9T_6iwXMA>
+    <xmx:QKTPanEJ48PWVvVDltIwqHB2dmjXTIrulMGm6Ox7obv91RX3jqln_HGl>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 14 Oct 2026 11:48:15 -0400 (EDT)
+Date: Wed, 14 Oct 2026 17:48:20 +0200
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: linux-next: manual merge of the usb tree with the modules tree
+Message-ID: <2026101414-remodeler-hypnosis-0620@gregkh>
+References: <as-ZUTCmpY2iZf_T@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="siZ9KvO5tx+ITJXN"
-Content-Disposition: inline
-
-
---siZ9KvO5tx+ITJXN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <as-ZUTCmpY2iZf_T@sirena.org.uk>
 
-Hi all,
+On Wed, Oct 14, 2026 at 04:01:37PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the usb tree got a conflict in:
+> 
+>   drivers/thunderbolt/tb.c
+> 
+> between commit:
+> 
+>   08abfa5a161e1 ("drivers: Replace __MODULE_STRING() with __stringify()")
+> 
+> from the modules tree and commit:
+> 
+>   41d5a1fc28100 ("thunderbolt: Move tb_apple_add_links() to pci.c")
+> 
+> from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc drivers/thunderbolt/tb.c
+> index 9537110a5aa8b,4da608ccbccbf..0000000000000
+> --- a/drivers/thunderbolt/tb.c
+> +++ b/drivers/thunderbolt/tb.c
+> @@@ -10,8 -10,6 +10,7 @@@
+>   #include <linux/errno.h>
+>   #include <linux/delay.h>
+>   #include <linux/pm_runtime.h>
+> - #include <linux/platform_data/x86/apple.h>
+>  +#include <linux/stringify.h>
+>   
+>   #include "tb.h"
+>   #include "tb_regs.h"
 
-Changes since 20261013:
+Looks good to me, thanks!
 
-The s390 tree acquired a conflict with the mm-nonmm-stable tree.
-
-The modules tree acquired a conflict with the drm tree.
-
-The block tree lost it's build failure.
-
-The thunderbolt tree acquired a conflict with the modules tree.
-
-Non-merge commits (relative to Linus' tree): 15567
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 434 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---siZ9KvO5tx+ITJXN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrPmVkACgkQJNaLcl1U
-h9Aq2wf9GSfp+ZaC2GJwEePwWjdqtsZYxj4whHBDAZM5sSWbvVctyDu/MCF8PtPZ
-0McsymcOHnNPo8lLGEZGlgspJCu7Us6gUOf8UZ3Xfe+2qix+oPD0iJG7/XC2oOO7
-BQ/ssk/vI8T5qdPEiEYNT3Z2zwI/emSwg3Ursfx0YQ5h+zz2xcBHKWiOF4g8WGdb
-MIAgNaoGeE32/SwD11mCbAOlOnR0iH1n2+WploNNp2GoNMPEaJ1oNhB5tH4rJwM4
-6qmo1Z+AQXQw/2i44F7bvVrdHIb4cvVx1Y+kTMhBWxBeaZEcLSnB5QeA4o+5PDjo
-/Dr3MBiZWwpezFEkPkH0T3enVxlcGQ==
-=tgnm
------END PGP SIGNATURE-----
-
---siZ9KvO5tx+ITJXN--
+greg k-h
