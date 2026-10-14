@@ -1,151 +1,86 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594575625E9
-	for <linux-next@vger.kernel.org>; Wed, 14 Oct 2026 15:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811FF47140F;
+	Wed, 14 Oct 2026 20:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791992907; cv=none; b=jBr8RY4/Ka8DVvsi8piRaZThrpM7Nt4a/8A8cnk2nu4KkZhyL60ks22+qcH+WYT3yMg5PAYOy1+7066UqJ9dO4HoVd69DnzzU9fwpIONgWmyIL3xSD50lnuT2HjcVyPT86jztEf1zegUaX7kg7owac2NV0/8J0jYj6qPhSY7A48=
+	t=1792008654; cv=none; b=Yx6DjEFiJAJ/yW+/PftlqsNVb4Csilq0kkm5jX9ogOjb+1vmbRsHDEAkwxIkcXDlPgAN1GJvC9hiH3SVBSbbe0m3L8o8//5Ns59m4FgdEIGNy9uTrLK6nLI2WIHVZBirRlRjw6mnR4N2CT7t86JSdmyqVFthj5jGoX06wBz550M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791992907; c=relaxed/simple;
-	bh=CXn14ADe/mur29hJ4L3g9vNBUBaa5yuI90ex0XzVUMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2PQKAtdncbb4keNpHWoecZRgGd+PezmVBSGWNz8lzALCLDZGR0AXMI18HXPL99JyN6wtTtuDU1u5I2VefspAQO7t+P/7BjqqfVpIbIBnRDbDMcRwjLsTLgTG8t9H9gAm0nyK9r/lDsatVBwCNl9UCbBFJyYKSWRdlw5R+vposw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=YUeVeDYA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XJu+9bMp; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	s=arc-20240116; t=1792008654; c=relaxed/simple;
+	bh=98ixtdieNVSxLdi3j8zLKklQttSuSaHvek0k00xCMJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=blfb8xZLYJGinE9wA0yq1XW2O2hqzOqq3a2Wp9hd4HTmp6ci7uigFiP2v2ft0cQvwAF3K3nCQknEMRcsRxpCnKsiBlIZlGmiTKyyZgds2b6k5b1BEeVlD5fw++hL2SxxG197DNUxoqN4aJ0Bm4IEVKbtetAcQ8pxeIBO46roZUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQI676WI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="YUeVeDYA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XJu+9bMp"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id C9BA01D00106
-	for <linux-next@vger.kernel.org>; Wed, 14 Oct 2026 11:48:16 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 14 Oct 2026 11:48:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1791992896; x=1792079296; bh=n0fMzN/YX2
-	P+RrUPlAc4epjyDvgkNWm3kwptx5HO8FA=; b=YUeVeDYANqFB+ees6yKaPf22pM
-	2Caj2lYE+bPMGYdLXthwD5RbDWUrnOr70jWDGr+tCOGwfY1mH8+6irr1LY3+1ive
-	0Y1n6adn2RXbahNdGROgZVC7dNdjCwM/dSM+UlDVqIxDuL/lqG7FXwH1CfxhCJZy
-	WVAcpCcNEH6c2bVOlcBGmKn85Dscj1XAC9PI0/cB58Q597QfMIY5i65QRGBMpyar
-	AF0R4APIco7CMGaS1bz0CLyKoW8qOHHvL3o4OpMSdR9DGOdH8G4P9uAolTfFjROl
-	47UPDvxWyTc16d1YSMn+U+6BXAXP8AfDHPdSefIvYQ6sFwSlPkcAhBnT86iw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1791992896; x=1792079296; bh=n0fMzN/YX2P+RrUPlAc4epjyDvgkNWm3kwp
-	tx5HO8FA=; b=XJu+9bMpT7ywb90L/8e0KqA9a14jiyjk2mlVlI+WSZtaeqXUxI9
-	g7HyWqleAjORH/aN2DKjr9tqsUrXd5nn1dROqXqqixPouN+HrrKFVWONQTYEGNLa
-	vni/+ig9unU26T5EeQdrlI72J23YKIFXIuojAuD+jl6ytOFaocEWEt8jAyixb1lI
-	eprvIJ4ngDJaP5dCGFYGELFeUHEE6S5n8khsK0cEMkxr8Z5p5GMythjrEI9sFTGN
-	63qDGaXbwFR/Uzu1+Tkh2oRd9DnAs6Hhiu0Oo4jwdOvRLJGEyVu43n4uG1L1rB1I
-	PscXVok+qfEsk1v2hs+XS2ghNQgQBSp+/1Q==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
-	action=sign d=kroah.com a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791992896; d=kroah.com;
-	mf=PGdyZWdAa3JvYWguY29tPg==;
-	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:pm7OIbub2jKC6kofnMwKittjI6hEmUV+YcRHan2zPy3ZULz
-	n86PQacW8lyPwGSY9gEREEeZsWboO1zGVHZU4M3USYCrIdDz1cUVW8Fgn05gb3Dt
-	N2dswOqn20Hkyq8owXy0LRg7DebjOuiXjy0fTNtR1Dz62Ke1xU5w9bJdZri7x7aO
-	eEkXbsESuwLUaNujqYx5nBGwJILznmfDZ9tJpdy5KHe0fkJOXmAOSrreWV3yzUkd
-	7cDXh/qL/x7vnqJaNW6X4By2l5voPiH6ntBMYIkkC+7NygSVDD4vLHInqhpXbxZo
-	ZiUwIbY+dOsOfxpi8fuRheywVoIkaXdD8l6eP6Q==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-disposition,content-type,date,feedback-id,from,
-	in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:u5Aj9ir90r9u2x3obpNgJw80Fv6TcH3NV3KMn6VSGZ8=:CXn14ADe/mur29hJ4L3g9vNBUBaa5yuI90ex0XzVUMM=;
-X-ME-Sender: <xms:P6TParuUi3WO-mW013OgTqC1AjntdrDuVyi35GFEBQ6y2nuxvoS1-w>
-    <xme:P6TPakYMab7nNHk2s4DyGOFDf2nRombXpfOcsyqYmvuXpSIr1R_Eb6ch-uunQHPLW
-    MzbSI-0YJWLTeVbvDZLzrlPsCJrdAF7ftHU2Dpg_ILNHHMXFSA>
-X-ME-Received: <xmr:P6TPal8n743QBupiNsRSDZkRBw_MfKWQKUDF1bNzQuzzdbCJzFe0Um19JvZmS23HFWOsnHZQqejk7e4PrHY8omKSxHod20Sy7X-o9ITK3Dc>
-X-ME-Proxy-Cause: dmFkZTGpVDHhh9n3k6hrmoFvEmOrgF74qh2eYfPabJhXhsSJIk6fFEkFA7qAu7rshplNgY
-    AXXkS5AIUDNhW1GyO5P2HTSPtPShxsm+TBt/DAGBxWQk4Dit750OA1pvXM4dYtfAOIzpLF
-    9+iwzKWxa2ToFCIs+HmZeMtKXgpXg1Qxc5Jl0wx7vnhmP+KV4sinBqGJFF1rytS7ynZy7Q
-    gM93QcCGMF/5bacITyhadM+mh+5/xsJRluygcMyU7dM2fC9hlusmU8wwUd5k6I25FRgmSk
-    UHnspMAVjmQE37mEIcnk00YfTfTlP9ZaU5bYUdd6qRWV2d941agSke2aYfZvakuRBO4jEI
-    eKJNelqxKUhf/lsItnvCymgnr3BPqxogUrZxXwe8eFtGK1yK7WU6g/BRluiFa/mgavhRsf
-    byhuionRGK8qafapLGBELjnL6iR81ezbJkezGunFhmseSwtDgkc2+lnBqjSEAer0Oo3UoN
-    eVK86G82pRA3IWxwsW2WwU9T14oZtr3cY5tRbwLHw5mA7gWhxaEEXyLGtq0/OSWW2Iu1y6
-    mhIkJQkAKhww0g0mIH2YFjqA8JmN9UrOd79FBuMPM8BcpyAMUrFCeVUqIHLaAu2lhBCWBW
-    oGNuhnwQWPj7r/GS5CpH1TMR6c+uv2ULfdOr9/U8Sk5JWPWe81UVAIzjsTRg
-X-ME-Proxy: <xmx:P6TPagp7qg62F5V6_DYnvGZbRthjKd7nTmo6R2Zpt5gbID5qJd6c1w>
-    <xmx:P6TPaoGxSDSyirFPwCYMKbHIWNEIWJMJ7T2og3LIx06gN0Im0aiAbQ>
-    <xmx:P6TPagmyDzhHXuMjoAIDyaRKm3xiB-rvTHwhG6Zc7VbyNl6wCQqlZg>
-    <xmx:P6TPak_YTQEgV72DmAY-egJ3HNWYq9KUUXTzNpuD--6An9T_6iwXMA>
-    <xmx:QKTPanEJ48PWVvVDltIwqHB2dmjXTIrulMGm6Ox7obv91RX3jqln_HGl>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Oct 2026 11:48:15 -0400 (EDT)
-Date: Wed, 14 Oct 2026 17:48:20 +0200
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: linux-next: manual merge of the usb tree with the modules tree
-Message-ID: <2026101414-remodeler-hypnosis-0620@gregkh>
-References: <as-ZUTCmpY2iZf_T@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQI676WI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9C31F000C4;
+	Wed, 14 Oct 2026 20:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792008653;
+	bh=BgEgQi7zMz79xeupwXBhijVhnT9szJ81zBDVyBsvSQg=;
+	h=Date:From:To:Cc:Subject:Reply-To;
+	b=UQI676WIjOWbQh8okbqBUrtWWcpPnrEo/MXH6IiFivwmnkeOKa97GOOQoGECvQcYd
+	 1DSTLe2ZzfCDrz7QxImMJFBn6PupmL9HALnUB7EBjRp8880AIdORftPpIhj1PMk7JT
+	 nZztub1hHGPK3PFkfzR6Rl3NKQ4mssy3aVC/FDIFwa8SEDZP98ouBRZ5/UKBJKfzW/
+	 fDTbR5pdxBtH0Sd4/ssrFkrBrheldtHPJZKVO6jHZWaKpUbPHhfWcvFq/kwMvTjGr/
+	 KKDwHj7JWMeRID07WDhNANkXR20Uh7hvLtd5UlAl54B0+O1sR18KQFEXgr5LZ17n9k
+	 QaRca2cCLbbIQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id CA991CE0C87; Wed, 14 Oct 2026 13:10:52 -0700 (PDT)
+Date: Wed, 14 Oct 2026 13:10:52 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: =?iso-8859-1?Q?Sebasti=E1n?= Peyrott <speyrott@gmail.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org
+Subject: [BUG] clamp() low limit 0 greater than high limit points[1] - 1
+Message-ID: <fda0e59f-20e1-4a94-a714-288940dcdd37@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <as-ZUTCmpY2iZf_T@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 14, 2026 at 04:01:37PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the usb tree got a conflict in:
-> 
->   drivers/thunderbolt/tb.c
-> 
-> between commit:
-> 
->   08abfa5a161e1 ("drivers: Replace __MODULE_STRING() with __stringify()")
-> 
-> from the modules tree and commit:
-> 
->   41d5a1fc28100 ("thunderbolt: Move tb_apple_add_links() to pci.c")
-> 
-> from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc drivers/thunderbolt/tb.c
-> index 9537110a5aa8b,4da608ccbccbf..0000000000000
-> --- a/drivers/thunderbolt/tb.c
-> +++ b/drivers/thunderbolt/tb.c
-> @@@ -10,8 -10,6 +10,7 @@@
->   #include <linux/errno.h>
->   #include <linux/delay.h>
->   #include <linux/pm_runtime.h>
-> - #include <linux/platform_data/x86/apple.h>
->  +#include <linux/stringify.h>
->   
->   #include "tb.h"
->   #include "tb_regs.h"
+Hello!
 
-Looks good to me, thanks!
+Recent -next trees have failed allmodconfig builds with the following
+build error:
 
-greg k-h
+drivers/hwmon/minisforum-um780xtx.c: In function ‘um780xtx_sys_point_temp_store’:
+  HDRTEST usr/include/linux/hash_info.h
+././include/linux/compiler_types.h:702:45: error: call to ‘__compiletime_assert_727’ declared with attribute error: clamp() low limit 0 greater than high limit points[1] - 1
+  702 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+././include/linux/compiler_types.h:683:25: note: in definition of macro ‘__compiletime_assert’
+  683 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+././include/linux/compiler_types.h:702:9: note: in expansion of macro ‘_compiletime_assert’
+  702 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+./include/linux/build_bug.h:40:37: note: in expansion of macro ‘compiletime_assert’
+   40 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+./include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+./include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+./include/linux/minmax.h:231:32: note: in expansion of macro ‘__careful_clamp’
+  231 | #define clamp_val(val, lo, hi) __careful_clamp(typeof(val), val, lo, hi)
+      |                                ^~~~~~~~~~~~~~~
+drivers/hwmon/minisforum-um780xtx.c:203:25: note: in expansion of macro ‘clamp_val’
+  203 |                 value = clamp_val(value, 0, points[1] - 1);
+      |                         ^~~~~~~~~
+
+I must confess to being unsure what fix would be appropriate when
+points[1] is zero or negative.
+
+Help?
+
+							Thanx, Paul
