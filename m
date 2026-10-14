@@ -1,126 +1,68 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CC748F00F;
-	Wed, 14 Oct 2026 12:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD934DF4D5;
+	Wed, 14 Oct 2026 12:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791981384; cv=none; b=nfqBV9UOREnWF/cfKZ7pZArZNRDf5NlUrODpluB06qlzKC6uwC5u2KK7WUoYF05/0SgRRBKihz+hNEyfLYRKytymd4nYSxlSgpVbga3e0/kkbnKxkqtjP5wjj6nfSoqiDSX4DL3wAgu7/9/XrEGmgiUdbrsUljeNUlUrnBry7OE=
+	t=1791982370; cv=none; b=cRPDOyTfIZtgzXiP9blaEz7RQ75J1pfrWFrCt8Po6DvWISo+clNctlN8TtI//bWVpIR9Yzy1K96cT08KuobPdwzwszefsZXGA0XW6J2bGVEbk7WEimQc/8GpV+tmEPomI9hsWb8eNYjW/aelFxswKCgyHxn/0OpKgChEXDskJ70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791981384; c=relaxed/simple;
-	bh=myxfStHXDaFwFnNYyT+uFu5fr8q7dSIOwAU02ClFWrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UppOjMQB0EVKv7PGjeDpM5V+If1WQscaLha0PJuGWVF9BuidaPU6f6BdgUA5/5xvhvAG5/GWX2HnlwMTilC9UbZ3BcUVOM3TcGM6/nzWbXluP2hu0QRTPsCBlRXl3b1OMY99y2ZNXeX1FNJ/8z/5Gs2120cSPRo/368hJMzrRjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBDlTbTc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791982370; c=relaxed/simple;
+	bh=3sTwOvgriNAkxKO8TqnSXTOyDdaMDvi2zp31gVBDo10=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g03Vl3ZYE2GswltXmwCBFcCGZC3VW8DgXs6u8TuqIwnI9l/vFx3aMdpTt4gOy5xu4G/dhazrNpK/Dy/yQHJ0xTxydUh67P+RiarYE12xXeq5YXfBGbDx+85AtET/1yDdb2rp1QAXwHaH8X3apsX3v7EUvkxnobI3UQ7ZpqHt+wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; dkim=pass (1024-bit key) header.d=goodmis.org header.i=@goodmis.org header.b=TXOGabp1; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBDlTbTc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEAE91F000FF;
-	Wed, 14 Oct 2026 12:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791981383;
-	bh=R04ns3cQaV+CfxbdiXpUMVrN7FpcfhQ09Y0/Tk5vjMg=;
-	h=Date:From:To:Cc:Subject;
-	b=IBDlTbTciSK4mJUOlb5tlOOIP77x7YPxdebxMUVQflWtwPndwdrewZ3M04ZyetkLs
-	 Mw+5tmV6XwfO5+1l3A/anqNLhdylrbPccuF5Bw0mtqpbQJ9reE2SbqMTEGkIF32tl+
-	 cONI787CIZRJZPQDaF+TQy6VACD91JVPJ4Pzu8eySjGJRbcf0pezdAPw1jJUs9t640
-	 mxpi6nWzIZJhndpOSzF3dPz3vGZq2BsXES6QejPyTQ/JI8T4IFipeg5PCw78oeGbbz
-	 c4uGhmF6EV+gG1F7qpIJwlrzSKX5K8IKG07DwdE3MbG0qD8DlOZtAFoq05B4vlvpT5
-	 uQDs++Q3+m5cw==
-Date: Wed, 14 Oct 2026 13:36:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mete Durlu <meted@linux.ibm.com>
-Subject: linux-next: manual merge of the s390 tree with the mm-nonmm-stable
- tree
-Message-ID: <as93Q-hDP5cW6gaj@sirena.org.uk>
+	dkim=pass (1024-bit key) header.d=goodmis.org header.i=@goodmis.org header.b="TXOGabp1"
+Received: from omf04.hostedemail.com (lb01a-stub [10.200.18.249])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 1B5AAC053E;
+	Wed, 14 Oct 2026 12:51:58 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id E917420024;
+	Wed, 14 Oct 2026 12:51:55 +0000 (UTC)
+Date: Wed, 14 Oct 2026 08:51:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, "Masami Hiramatsu (Google)"
+ <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Sang-Heon Jeon <ekffu200098@gmail.com>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>, Mark Brown
+ <broonie@kernel.org>, Linux kernel regressions list
+ <regressions@lists.linux.dev>
+Subject: Re: [PATCH v2 2/4] tools/bootconfig: Consolidate xbc_init() to
+ error message wrapper
+Message-ID: <20261014085156.2d888407@gandalf.local.home>
+In-Reply-To: <20261013212351.ce16d411abeb7e710eed5157@linux-foundation.org>
+References: <178913597653.248794.1237187523153227751.stgit@devnote2>
+	<178913599508.248794.10388592925402087434.stgit@devnote2>
+	<1dcf2ee8-02f7-41af-b1f4-bff3a16a2c90@leemhuis.info>
+	<20261013212351.ce16d411abeb7e710eed5157@linux-foundation.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Eu7t9jCr9C09oGVq"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 1uiir9pnbqo35mdh6tdeds9keo1uq7wn
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: E917420024
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+b3wfe0omgBjnqULDGpD59Hgpzyj3TBEg=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=goodmis.org; h=date:from:to:cc:subject:message-id:in-reply-to:references:mime-version:content-type:content-transfer-encoding; s=dkim1; bh=3sTwOvgriNAkxKO8TqnSXTOyDdaMDvi2zp31gVBDo10=; b=TXOGabp1/Dmh/OCeExlO+kQQquKiOUcZ2WCZEt1lZhyEnW9xorL/NVw3nb+htd5lzdipwsVAdYXcVywUpJr105XRwQWA8+OtBgdWcE1wJwIPaQQ1KJX/cHRv7Z+hN/G7n7ekEACgfwLzsGZLQpRtwgzZBmOUamfwUWKt7E3vJQo=
+X-HE-Tag: 1791982315-44159
+X-HE-Meta: U2FsdGVkX18K9udf/Xf+1EeQJR4TjeojlXlKYgOyGn85AOTsBbVHSimyk4/czDotc757zOhJxy71wEK+AjPVmeGWiA2WvFpZLqLIyCBDVcMt0RiP2OVYsqc315ZXtbQj+0fo7VNDPlw+UMobNqbf5PiZnI62H/cMCxB1d6NpHhooPXShctirds1ZcIh3kNag0CD9hiOAUfVG5YNtBJjH26YZog22lmRvMtvaZIEU8ASDyM1oZu+mCd5nXRM3JPddjDXXIdXLFVz0iXgLQewaHOXhrANetzksFpoAA5qfKdFaQu4+DKwwEjN5JolUAwzdtYxls+dp7nCcYF91KosPpl0IxhZ/9WsvErF/hEnE32mPEBLPlvnaorYL3d7PD1cB
 
+On Tue, 13 Oct 2026 21:23:51 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
---Eu7t9jCr9C09oGVq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I was surprised to see bootconfig patches in the linux-trace tree, but
+> it seems that's where they're hosted.
 
-Hi all,
+That's because the bootconfig patches were originally created to add more
+complex tracing command line options.
 
-Today's linux-next merge of the s390 tree got a conflict in:
-
-  arch/s390/kernel/traps.c
-
-between commit:
-
-  ed26d6fcf5631 ("s390: implement arch_do_panic")
-
-=66rom the mm-nonmm-stable tree and commit:
-
-  5cc8fe84f9117 ("s390/entry: Save lowcore on invalid kernel stack")
-
-=66rom the s390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/s390/kernel/traps.c
-index 115cb33732476,6b083b9584eb0..0000000000000
---- a/arch/s390/kernel/traps.c
-+++ b/arch/s390/kernel/traps.c
-@@@ -26,7 -26,7 +26,8 @@@
-  #include <linux/entry-common.h>
-  #include <linux/kmsan.h>
-  #include <linux/bug.h>
- +#include <linux/panic.h>
-+ #include <asm/pgmcheck-defs.h>
-  #include <asm/entry-percpu.h>
-  #include <asm/asm-extable.h>
-  #include <asm/irqflags.h>
-@@@ -285,11 -290,12 +292,17 @@@ static void monitor_event_exception(str
-  	}
-  }
- =20
- +void arch_do_panic(void)
- +{
- +	disabled_wait();
- +}
- +
-+ /*
-+  * Content of the faulting CPU's lowcore, copied by stack_invalid().
-+  */
-+ struct lowcore stack_invalid_lowcore;
-+ int stack_invalid_lowcore_used;
-+=20
-  void kernel_stack_invalid(struct pt_regs *regs)
-  {
-  	/*
-
---Eu7t9jCr9C09oGVq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrPd0IACgkQJNaLcl1U
-h9ApOQf/cE04s7VAtRMXHk0CSuQXhc9Wutpy/Xk7dS/jHdz4EZTKAzCVJ8YbF7QU
-2qjQ38SSyhpohC/jiphYd+ZfkAHpKH/GbyLZcjwc80dn6CS71Bz+rAy8ijK4wPe8
-L2/dKNajdP7fseHwB9cqjpkTXFUYjiq9NGQUUfldZb4fru+Vi5nQS4vg+KGVem+9
-d8rLuc4ftZfbdWCZxctcQvQp+N4AZj0ZeWi8s/OcH36q0GzqzLw5hDiuXKRaMOxS
-vRa3Fe6AkisY+xJnhwKi7/8pgoQ4FB6XQNCnr6o7klk0ZAmAUCMSSHdl93lxkZr3
-HhB1G68+fknxUOT2K/nAoG2v662nFA==
-=RVwV
------END PGP SIGNATURE-----
-
---Eu7t9jCr9C09oGVq--
+-- Steve
