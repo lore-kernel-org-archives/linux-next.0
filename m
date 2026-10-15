@@ -1,125 +1,91 @@
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35105581FE
-	for <linux-next@vger.kernel.org>; Thu, 15 Oct 2026 17:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792085079; cv=pass; b=VYhYRZI1pGz6AoxZdDDkI6un0sAz9xGsS9T3mPG6frTpeLfeydLlASd7qYMDAZD5VbRBS5QUU13hC1UDPK66uoNp4qHNQdWGJXGfEBd1WPjgwhuFHONsrpW+U6ojVgRRsPsJf/OVd4pmSclk0KIqTuwmUw3vB0zMox5cVEAfko4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792085079; c=relaxed/simple;
-	bh=J4fwNwwk2Wo4wS0yMEdtE2pEvdPmB5DNJ5kAr2QyFH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pj7ZfLHwx+lNnYN4QokwpOQPkjdw/P6Kglok/22I7iR6jQgMmNwG0a3jJzD4S4fgfVbPsmGjurDueg8Az/fAxTbRydIPHl1rzxY6j62ctZpLzsQxUauO++FblAQ8qTlxyIQO2fTlvFr/9/O89w6I1AJvuI5lpUE/eavL/DNjeiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5AdAOgt; arc=pass smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39FC36D9EE;
+	Thu, 15 Oct 2026 21:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792099700; cv=none; b=ZOefFWMmZQovvUuyACcIFH0OqtB+pAWwnQ3pzTsjEdVw9ewKX8bKZ2DYKa+kFQx3JoDeSsKPmjINgZ0ACzWfDnyWC5rjdDWI7FZd2z0Hnq9XcvxLIQJb7rvZ7yNxg267hlAGQfP32DYuX5FkFxAvQl7P+qM3s0oNDinmefU0nhk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792099700; c=relaxed/simple;
+	bh=eg2p6qVLmzzRrtsu/gnzer/4zbwZ/+xmU0FEDLKG3qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=My8iLyCRZtxZcJXbU4qPE0teszu9xVx9ivZktS7oPyIQHUP3fPJjv+v80QMYP2xaSH8piSHF9kutwMGGU/w8O59w5ATf9113U6U4s94OqOctvTPDB7nG156wQJuKo30MFfyAAfl2sTWU4sOgnkpBLLwTRCCGlNaFm28FAwMbnpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5Y4tlWW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5AdAOgt"
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-45e59205b91so156989fac.2
-        for <linux-next@vger.kernel.org>; Thu, 15 Oct 2026 10:24:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792085069; cv=none;
-        d=google.com; s=arc-20260327;
-        b=inuAn2zcV4tjjoFJgHiDX31Y5KdSmyjIzJ0+vadDnZZQrjtHSKwvDnGTo0F5jSRRPI
-         y7+jACYHwGX2YCISd7282BpomBIZZNArvpwF1OkD82rH6tgbUm5k9PY3YARX0Bb61D36
-         Zi6v8pp/pKYUM3RwQ6zKJg9i9vpspDxJ3gyVWMRrtjpkpqTw58vBnpUJcqY/tclD2x62
-         C1gq5z2cdj1S+1BcXsyEb+Aqa8I5BA74fKsZOh8LUVNJXpkm4xStCEiKNOu8Zc1lErUB
-         imza3fQ3Yf9G583dCGyq2JHTqoP9l34zmVpS2mi+O0oawt7qNY4LJMjBwleiqmWdeEYj
-         IpKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=P1mu4SGh6E5z5qH2iwI9S7XC1+VTXuGAxqDRPc273fU=;
-        fh=7qSFEkmLezVZl2Rd6auLbM2YeiDLaVPqf4Au/ZhbeFw=;
-        b=pUpbwlZCCttaJ9VUNzS+5nWd8jzo0Q088XBM+AiSv+0SOg61uNA+febjgnqUtKu09j
-         927gwGs5cJbcT3/szwcpJcq5DK9CT3C5p9NlIGq6oMRkyUSdePz0tpN4GK2N36TOkQaC
-         1db0HjKWTFnlPsIrT63/Qj7ra9Go0McBP0DF/qofY6POoVt+r3YU2aU5R2mNqV9B5poM
-         RvOTE4tcD2Ki8Iu0Gc4n/Qxs7CLj29+rmXw7wiCQ1pTTjhOeJGXZfLIH3NtdK1JD3kwf
-         hjyGPgrEyhjkcJk8HCIh0yztetl6fYKLDEFxnf/y06zW7D57EGPERSjHYPCeMZFYVgqv
-         nPCg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792085069; x=1792689869; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=P1mu4SGh6E5z5qH2iwI9S7XC1+VTXuGAxqDRPc273fU=;
-        b=b5AdAOgtRBfM7/x5i8Ex8ADfURDmnZW4AqO3Osc7DjSdONosMZulpGc1Gkjf8cyYNs
-         zGQhr6qXEN0/GbjovPiEYry4k60XqAvKkLaH0mGq4+kV7voLsRWlyBJGyx36NxX8JgVH
-         jKa6ydYft0Xmz9HcoG5FcE2eZ0pUzqtjMzuY+kHf4iYAHYcbtfCLxVpkxJv+YM4JlRcm
-         kNcXsvn965VsZiG6z+NRk6/TkOytRpGgWrZqBh95N4x4WCq34wLESoJk0C0ENfkVQrPh
-         jcWo+ExrZVBFvMzVbbX6Zwjnm6c5vCOk6K1ng6kqLxStN2lJaGMEKIJ/rZ7Ka/HfSKTT
-         NswA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792085069; x=1792689869;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=P1mu4SGh6E5z5qH2iwI9S7XC1+VTXuGAxqDRPc273fU=;
-        b=X2Fs3QnXWBXXdl0Z17DbR5z3WqadLq6SctTmz1//ON2yifd2uXmCVmOriehau79+eG
-         uYRl7RIvBpNg81187x2psGS4HRgklo6clQ2jQU06yWSTXEzSQAuZAKNwRKy/5XCGHSKN
-         tGO2SZIHmT/GHgKQ9ufa5+6GHlTxJ8jECMXSBefGvFUcM+AVX88wdyNFKKgBFR8EQ78f
-         /3RlUzx/HOlnolFe87AVsiCpJ2wxRyKy2VsZF6RuJ9yuNHYC3zJD2sSqMfwTvopnrGXp
-         BDbO+ZMBMDss1VsxVwnlF7sWy+UFWydH3SQFs95mtQKPMC2wLdQhMMia7Red65UtD/Tf
-         hojw==
-X-Forwarded-Encrypted: i=1; AKwUvBzOMzSVWrcbzIIic4xaE/idxxqLkFlNNQxPOC2MviEX9tGrvb/OjRzxDMOtmPeYOc1xGPwHP9nHKkd2@vger.kernel.org
-X-Gm-Message-State: AFq9FYICc3icGAxyK+xLlQL0l0fO3uVGu1T9Oki9iDXOhEsTwOm+XyCp
-	rK1D4EE5VQ3ml52RhoYroK/7Kje3ogrj5mEYPfcinCRuc5XkcEgpAD0+cTna4hFfG7A4bLXGYrP
-	TBeXf+kdPLtQqoakAYqPfXZW65+4MokSOk5NB
-X-Gm-Gg: AYBFou3I+lKAKJIYqWncMXQWFuWZsE31vyzyLcTy2kJuo4pAw9FJf6QfqER1NtuoBUk
-	lEdIDjEprlDTiTQEp3TLTcNPVJwFXcDpLZUONnjQeX7dqytZ+6MQDnY7qWfaeMmk1MBEvXkSLc2
-	39CV02P3FM4aWXjLTF+O0S+5xLFlaNbD81IkcGLFbnhBOoBQMx9y1AW3hmZ5jNxDbvTmqSBfADL
-	WT1juCUYEf/R4asrS/ZOj2U3oyRpL1H1sULS/946IOjENATpHkHM9ZwrIS9VE/dEvalMRwfAQzV
-	5ZVWAK1BMt7PEEIPPCnvMJ9HuL4cwU4Wcrufsq0d+CGCNddoJ3yON240mHvjWsj6P79c5YVcZVS
-	w+FR425Y+hIctLtOjpQ9dRwutc2r/l9v+O2UxoQUG8yc0GizcMztJlC0gXPgYusLUZSSyl59WKA
-	JY4a62yyBbj3J6qU5LLMGzTKJckrckx5VRPNn3jxtkY/scSiLOJVI=
-X-Received: by 2002:a05:6808:6c82:b0:4f5:c569:b9dc with SMTP id
- 5614622812f47-50c322d0685mr28531634b6e.0.1792085069043; Thu, 15 Oct 2026
- 10:24:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5Y4tlWW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E2D1F000C4;
+	Thu, 15 Oct 2026 21:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792099699;
+	bh=sLRdfhUyrkQ35GKFnmnaZRuiwBWh567OcXbf10vrH8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=W5Y4tlWWWLJPP/njut4VnE3ZTRxWcwVzUeRWybFUH/83YF8XcmopjIoFbPFdH+8S0
+	 DRkbRKyXt6rFtaP7KIJpf65mg4IsLGedZEo4jQ88Q4QayUp/afYMjsQDNxOZnqTAt4
+	 iNEX+gVCr0f/4yDIAWM9XWjbm5oTLlzviKlCjdF13ypIbn5HXsU1Az6yFsc8K5FMhA
+	 meDRJsoiQS+aMMx6Eibw8nOUOZUzn7JY/3IjLL5aWVoQtEbmjqZQS41Yg630Uh6+pa
+	 C9ape+BO3je0xwBNBi1X/ee1v5aBm0/jFCj97J+9Tmy6Qnya7s2mkx08V+3I6P+7Tj
+	 pKeeCIHtVAF3g==
+Date: Thu, 15 Oct 2026 14:28:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the kbuild
+ tree
+Message-ID: <20261015212815.GA319266@ax162>
+References: <asAzcgDsbNEFIfKV@sirena.co.uk>
+ <20261002230632.GA314599@ax162>
+ <asA6NZ4QKp4k4nGD@sirena.co.uk>
+ <20261005133224.GA1108555@ax162>
+ <asOoLZf9UQkB6SS5@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <atDkPrlfMSiLi5XW@sirena.org.uk>
-In-Reply-To: <atDkPrlfMSiLi5XW@sirena.org.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 15 Oct 2026 19:24:15 +0200
-X-Gm-Features: AclHuK9yTozceFfwI9aW5oCtwI9a085rmXQ-p7Wc724AAxuqKioAl_EVMlXu5UE
-Message-ID: <CANiq72m8pHqc7ssFX1FyQkSgm+rpdgzn7mw8D8WRpHCbXAa4uA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the rust tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>, 
-	Gary Guo <gary@garyguo.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <asOoLZf9UQkB6SS5@sirena.org.uk>
 
-On Thu, Oct 15, 2026 at 4:33=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> Today's linux-next merge of the char-misc tree got a conflict in:
->
->   rust/kernel/miscdevice.rs
->
-> between commit:
->
->   a4082121eeb5c ("rust: miscdevice: use `#[optional]` attribute of `#[vta=
-ble]` macro")
->
-> from the rust tree and commit:
->
->   ba9d2c7ea7f8f ("rust: miscdevice: add registration data to MiscDevice")
->
-> from the char-misc tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
+On Mon, Oct 05, 2026 at 03:37:49PM +0200, Mark Brown wrote:
+> On Mon, Oct 05, 2026 at 03:32:24PM +0200, Nathan Chancellor wrote:
+> 
+> > Can you drop the fix up to scripts/Kconfig.toolchain that you added in
+> 
+> >   855c706f2179 ("Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git")
+> 
+> > ? I have temporarily handled this conflict in kbuild-for-next to make
+> > life easier for you in
+> 
+> Done.
 
-Looks good, thanks Mark.
+This seems to have made its way back into -next, it is currently in the
+efi merge:
 
+  aa5bcff53709 ("Merge branch 'next' of https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git")
+
+I have the following applied locally on top of next-20261015.
+
+diff --git a/scripts/Kconfig.toolchain b/scripts/Kconfig.toolchain
+index 2de66b7bbf70..b0b9a663ddbe 100644
+--- a/scripts/Kconfig.toolchain
++++ b/scripts/Kconfig.toolchain
+@@ -166,11 +166,6 @@ config CC_OPT_ALLOW_STORE_DATA_RACES_PARAM
+ config CC_OPT_NO_ALLOW_STORE_DATA_RACES
+ 	def_string "$(cc-option-str,-fno-allow-store-data-races)"
+ 
+-config CC_OPT_INLINE_MEMSET
+-        string
+-        default "-finline-stringops=memset" if $(cc-option,-finline-stringops=memset)
+-        default "-mllvm -max-store-memset=4294967295" if $(cc-option,-mllvm -max-store-memset=4294967295)
+-
+ config CC_HAS_MNOP_MCOUNT
+ 	def_bool $(cc-option,-mnop-mcount)
+ 
+-- 
 Cheers,
-Miguel
+Nathan
