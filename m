@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018013B5310;
-	Thu, 15 Oct 2026 14:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB30545DA4;
+	Thu, 15 Oct 2026 15:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792074820; cv=none; b=kYqSezSKS3ufbu5lRgmzcdy2CtrKGztIEL3rv0IP5CJlnTXkafQjw+PaqS9cE1dIH9fhqC26eHRRFLAQpMwuW7ACC+TrJu5OXBJXN1N0DO2fGU51hAwf1PgC84jJXjtpBFXCZ8I3hZVcYRkpaqyIKJrc83cUtMq4Tsz/9o7f0ng=
+	t=1792078458; cv=none; b=ZXW5xSgfL4IUxgUtVegb2laKqZqP3e6QVq65kOx8hosi5cHiOK77YcewpGdk1f/kzWi8eRMpsDsiaYfZX6xGhSsNjTqe8/n/AQ1JJr2edh9awTB0TNY8G7bslI/6itMB2vR6C6uoeYetZdak0YRF8gfzXJNSVwvqgL293KSFnEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792074820; c=relaxed/simple;
-	bh=lfd9gQKjca9NaEb7vjvwdkdXg+zvc9o4T9VGjjV5SDU=;
+	s=arc-20240116; t=1792078458; c=relaxed/simple;
+	bh=f+SPdZj8+UTSH9p70a+wY9ahY2t6NLDJ6IZpV8RvhU8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qw67GSTjSaeB7UYYhAfwMWVlwxfh6ZA49e2UCTD3+DKIfTKtyJZKFDF/bwderRrvRt0/9QfhshNAbKSFsSLDsLuGmSsAA3RDwACKAzMbpPz7LWeFAJNMJez7ucNPss7gbhlcW/YGTIHReTH8Ozq2WXbXKTZVU2I/MvRsQUUgksU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZTZ+92V; arc=none smtp.client-ip=100.103.45.18
+	 Content-Disposition; b=VjKyINRRc7vM5NXpYkokVQvQbvPA1O/OR4bO7lWQEYSsZ0L+Lkgso71ArJ/i/GwGxmCfNNXJ1GJa6b019NTmxgy302itk99MTovER+dXjrzjOkJA4H2ZqHSlPuvxbi3bEmSkeyjB9gURYfZk0dy3+RQ56qfhccwSLgqBx2Jmztg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKJnlDm5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZTZ+92V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3DE01F000C5;
-	Thu, 15 Oct 2026 14:33:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKJnlDm5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F701F000C4;
+	Thu, 15 Oct 2026 15:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792074818;
-	bh=eegDdad1A+cIuupTw6io0wkYzgZYFV2DKnj/Y1ZWS3Q=;
+	s=k20260515; t=1792078446;
+	bh=doN+dCbQy4DCSNYmIlUNQHoigLzICB92by7Oo9TUszQ=;
 	h=Date:From:To:Cc:Subject;
-	b=mZTZ+92VpdIcC1BlKnCsaKILpEos8QE53xepxNlByhRZyapJf/xzVgyfdxraulKP5
-	 2DehFzazmxcYkX+Rfsp2TpKXj1bJy9UGt7tE/r6trTCqKb1PjksXCfO/0Kw9ME422r
-	 lXLwKQd/GOop7EORhDIk49HeA34K7AzxJOJ9w+SPW/bVMWNgNUVa5dhMriZ8ml1boG
-	 BISaSsMcbpEoprgN/TivFD324eUhiwwKgXYdw7QdmtOXCCXSrVIqxKxh2rcAKap+56
-	 qEj9NFbTyYqVBMxDVQKfOQfG4Umdq9uj9IK1z/K98IOtQOo09rR0BreZVEeJWbJEPW
-	 cKAarViglc0Rw==
-Date: Thu, 15 Oct 2026 15:33:34 +0100
+	b=MKJnlDm5zLXsAT1us1wQzPGWfz15iiOr+atSUC/dzwTSROl6ApMXWL2Yv/5E8hEv1
+	 CGlzE31TmatQVsT7LR0yVWmkftIGBYAT02tiBu6mCwBFfN67abVveEvwqsHIZZCGwX
+	 TQBfJHZDJrDzjLLJWqFPLvGiN+E+SdczFWhfwWaR1JsUWoz6z/DLH+FqY3oXtK2zho
+	 FXn3fhN6G/9Fgn+Au1T+kFfcSIBVSfa0TeBaKhLpRGArUdXfUDjx4jWBDDV55o9WNL
+	 eLOpi2baRUz/7JAq5S2u95p8TP5K2yJgtAXoHdXtGO9NIWd18TnZW189qL6G6kVG8H
+	 O34Yao8sVJRDg==
+Date: Thu, 15 Oct 2026 16:34:01 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: linux-next: manual merge of the char-misc tree with the rust tree
-Message-ID: <atDkPrlfMSiLi5XW@sirena.org.uk>
+To: Gautam Gala <ggala@linux.ibm.com>, Steffen Eiden <seiden@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Nina Schoetterl-Glausch <nsg@linux.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure in final build
+Message-ID: <atDyad6Dg3msWmW_@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -43,154 +42,44 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZduleBV5OIhY9b0f"
+	protocol="application/pgp-signature"; boundary="wqqMKXvB7gTQK+/6"
 Content-Disposition: inline
 
 
---ZduleBV5OIhY9b0f
+--wqqMKXvB7gTQK+/6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+In the final build, today's linux-next build (s390 defconfig) failed
+like this:
 
-  rust/kernel/miscdevice.rs
+/tmp/next/build/arch/s390/kvm/arm64/../gmap/kvm_mmu.c: In function 's390_kvm_mmu_prepare_memory_region':
+/tmp/next/build/arch/s390/kvm/arm64/../gmap/kvm_mmu.c:83:22: error: 'struct kvm_arch' has no member named 'migration_mode'
+   83 |         if (kvm->arch.migration_mode) {
+      |                      ^
 
-between commit:
 
-  a4082121eeb5c ("rust: miscdevice: use `#[optional]` attribute of `#[vtabl=
-e]` macro")
+Caused by commit
 
-=66rom the rust tree and commit:
+   325380d8e7893 (KVM: s390: arm64: Integrate arm on s390)
 
-  ba9d2c7ea7f8f ("rust: miscdevice: add registration data to MiscDevice")
+I have reverted that for today.
 
-=66rom the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc rust/kernel/miscdevice.rs
-index eacea29e3fb07,ecc142a1b7ea2..0000000000000
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@@ -10,8 -10,12 +10,9 @@@
- =20
-  use crate::{
-      bindings,
-+     container_of,
-      device::Device,
- -    error::{
- -        to_result,
- -        VTABLE_DEFAULT_ERROR, //
- -    },
- +    error::to_result,
-      fs::{
-          File,
-          Kiocb, //
-@@@ -142,29 -180,31 +177,29 @@@ pub trait MiscDevice: Sized + Sync=20
-      /// the VMA initialization by calling methods of `vma`. If the functi=
-on does not return an
-      /// error, the kernel will complete initialization of the VMA accordi=
-ng to the properties of
-      /// `vma`.
- +    #[optional]
-      fn mmap(
--         _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+         _device: <Self::File as ForeignOwnable>::Borrowed<'_>,
-          _file: &File,
-          _vma: &VmaNew,
- -    ) -> Result {
- -        build_error!(VTABLE_DEFAULT_ERROR)
- -    }
- +    ) -> Result;
- =20
-      /// Read from this miscdevice.
- -    fn read_iter(_kiocb: Kiocb<'_, Self::File>, _iov: &mut IovIterDest<'_=
->) -> Result<usize> {
- -        build_error!(VTABLE_DEFAULT_ERROR)
- -    }
- +    #[optional]
--     fn read_iter(_kiocb: Kiocb<'_, Self::Ptr>, _iov: &mut IovIterDest<'_>=
-) -> Result<usize>;
-++    fn read_iter(_kiocb: Kiocb<'_, Self::File>, _iov: &mut IovIterDest<'_=
->) -> Result<usize>;
- =20
-      /// Write to this miscdevice.
- -    fn write_iter(_kiocb: Kiocb<'_, Self::File>, _iov: &mut IovIterSource=
-<'_>) -> Result<usize> {
- -        build_error!(VTABLE_DEFAULT_ERROR)
- -    }
- +    #[optional]
--     fn write_iter(_kiocb: Kiocb<'_, Self::Ptr>, _iov: &mut IovIterSource<=
-'_>) -> Result<usize>;
-++    fn write_iter(_kiocb: Kiocb<'_, Self::File>, _iov: &mut IovIterSource=
-<'_>) -> Result<usize>;
- =20
-      /// Handler for ioctls.
-      ///
-      /// The `cmd` argument is usually manipulated using the utilities in =
-[`kernel::ioctl`].
-      ///
-      /// [`kernel::ioctl`]: mod@crate::ioctl
- +    #[optional]
-      fn ioctl(
--         _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+         _device: <Self::File as ForeignOwnable>::Borrowed<'_>,
-          _file: &File,
-          _cmd: u32,
-          _arg: usize,
-@@@ -178,21 -220,23 +213,21 @@@
-      /// that have different layout on 32-bit and 64-bit userspace. If no =
-implementation is
-      /// provided, then `compat_ptr_ioctl` will be used instead.
-      #[cfg(CONFIG_COMPAT)]
- +    #[optional]
-      fn compat_ioctl(
--         _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+         _device: <Self::File as ForeignOwnable>::Borrowed<'_>,
-          _file: &File,
-          _cmd: u32,
-          _arg: usize,
- -    ) -> Result<isize> {
- -        build_error!(VTABLE_DEFAULT_ERROR)
- -    }
- +    ) -> Result<isize>;
- =20
-      /// Show info for this fd.
- +    #[optional]
-      fn show_fdinfo(
--         _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+         _device: <Self::File as ForeignOwnable>::Borrowed<'_>,
-          _m: &SeqFile,
-          _file: &File,
- -    ) {
- -        build_error!(VTABLE_DEFAULT_ERROR)
- -    }
- +    );
-  }
- =20
-  /// A vtable for the file operations of a Rust miscdevice.
-
---ZduleBV5OIhY9b0f
+--wqqMKXvB7gTQK+/6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrQ5D0ACgkQJNaLcl1U
-h9CGXwf7Bwb62Ia11/V5AHdetcDQBvyJEuzJoEtVnbZr56ZRUAz1R4qsbDVmRQzb
-SGOQ6kOzJAFteY635hIx64Vd9vm2hJwV5d89jJoZaSbnHsogB2sp4jSyjkCDuTm0
-6MeSbfgA01ZhZqhN66SI7/B0OGQaQL9z8eX0GYH78Y6OmKJrRu0UJZHTKhCz17Bb
-XLW9TbIZVqs5zqZDRWVRzH0dBFjmyHt2OQZ5+Y2sfhNyxOCivDYMfLB1wCUG/WmP
-QpQnUlkoLputfCCWcc8uYgwqQsh6S0szUIMezST/y5gDFgIAKLJaYZnBNp0sTZDm
-Uh/6H8cB/Ckk3Z3EQOu6neuuTplWJw==
-=7eNV
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrQ8mkACgkQJNaLcl1U
+h9BRXQf/QKmIXKxw6f37y3U+qujl87P1ElzgEZcS4cKIPmXbbEg4A67gTKsmEKZR
+3uTd5OHb9ZnEEFMe6kJ51XV/WFypodOTP3kfQ5Uli9GE2+7FbIpMr7kN6lfRFp06
+TN4B/IflaCUKSzuuEIkV0Ger14XxU5Cp6w3dXOMLb1djaHxrNeswslhsUnKm+Qhv
+s3RD8ipEeDviu40Dy4PUfMRSFQCQASOlPZWhmnU5/kebHI7KxFTA+6x+eqim5BA4
+RfTQ5urcny4RpTNZ2nH9yIKcgP+6Dmh/ioVBEGzFXqtP7n6XLIg3Gk60NONySQfj
+D99LEB9ZzF4LFXDySgZC2QHYbxmirw==
+=4r0V
 -----END PGP SIGNATURE-----
 
---ZduleBV5OIhY9b0f--
+--wqqMKXvB7gTQK+/6--
