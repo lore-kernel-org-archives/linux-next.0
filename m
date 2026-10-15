@@ -1,143 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3849C309EEB;
-	Wed, 14 Oct 2026 23:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831EBC8CE;
+	Thu, 15 Oct 2026 00:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792019011; cv=none; b=XdzAtsVp9/4emm+C8tjhVPSvYQbhqHIzEPtZpaDLjhM+joN57rYR7uvH+MFAXoDspfIZ3zX+sDuWMA4QUQK5WJTtOQqd9hJHGZn/sZ5zmrolLXMIwNEA3QIPUreAjyUyia0HZ1n8ZHgAEV5+RDtO7MEtxe/RJhQnE9X1O9U9onQ=
+	t=1792023319; cv=none; b=ADg2xIBoZPh1hL8qWSrfbzSedfmUqeESMXnKeVTLInRLmWNQ251vNB9+glYojR1PmuFlLynfg+FYN602LGYgeI7k01sF3Cd8piwOgghDArkE8Ewohg/AzaCvXMFXzG1ogQo9cka5axRpfF9ZhmfPyrBCqtcPZfyF7MiW3UXPxlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792019011; c=relaxed/simple;
-	bh=pNN7bs+HIFLG/tBJ3Lt1YhOWWAw03qYL46p4fKQYYWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVOM0vk/0fRyXHDYQS9GzUsXRL02TiEp0QO4Jxk+x8qwK1ejuUXGCM2IgrQmHzJaB60YyDDRRurpnJEP7MXmT54AIpRyR/ECruGAgdjDoLaH3ZjBrpCnEpq7kHOb6XOJX+Dyc1EI8EtWhJZBC6tHdOzWWBhO2qqK7wl9nzOI/yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i74D6Dy6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792023319; c=relaxed/simple;
+	bh=UsDG9kfDxd/2k1VapBH87PTBBUwyRDmBw4Na/K/UQyY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-Id; b=FBWOwAFl8IejgO0BKcOAIJ6vUuz5YmT6Of+66tJP/KuE5XynopBVnvyrgvMJkIRMIOR3eHTjksGV3RBkHkcb8dln0GWFGrhGLveV/PGfRox3PS/r6jPrtSOnNCMl4gs/YXuBWIcSfIYyxY/JVIuALIja2SJk6GEWS+GA00quzM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3pMNRjk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i74D6Dy6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB06D1F000C4;
-	Wed, 14 Oct 2026 23:03:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3pMNRjk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A06451F000C4;
+	Thu, 15 Oct 2026 00:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792019009;
-	bh=rFQ+xXBVw2G3dOM+1QoqfL3CKXPuv2twnZR0oxUkiFc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
-	b=i74D6Dy6+ybz9t6qaA2NuhDDS0COBDnrGSk9g3B9Ch+vhqXXXYUyrwB/rXjAh+vGv
-	 sE+Q/+a8+fMVDo1+cuDGl6gYzOy+yBpzI0Zq1ZcuwiNVFgyfsaUsL/BB49lu2ysOKv
-	 2CkBh+OocWzHK5j6FctBg83yrd7xqarWmqkTOiR0agNEWrwuBkiP1Wj3WPbL8b7AJR
-	 Ybbviarn0d+DbOZvvdcBmCTCmuoZovw4gnjllxTg6MOa8Xckqzf2J9rWoZ7htlP3vd
-	 VINfT1Y/1jYak2IozXpvTOuEf0HVFrBICn6AVZkywkl/6KmVkFYmOxGdnxO0lsyJni
-	 F7PuAvzHT3sxw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 76B0DCE0C55; Wed, 14 Oct 2026 16:03:29 -0700 (PDT)
-Date: Wed, 14 Oct 2026 16:03:29 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: =?iso-8859-1?Q?Sebasti=E1n?= Peyrott <speyrott@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	linux-hwmon@vger.kernel.org, linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (minisforum-um780xtx) Fix clamp() build failure
- with GCC 11
-Message-ID: <be58a022-4f57-4666-b573-81881de4d779@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <fda0e59f-20e1-4a94-a714-288940dcdd37@paulmck-laptop>
- <20261014214522.243253-1-speyrott@gmail.com>
+	s=k20260515; t=1792023318;
+	bh=0qxweQ3nR9WEGRFyiRmVZV79kJCBfaEjOPO3LF2GMds=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=T3pMNRjk3Khltt1RwSbhY7DnUfXFXEyuMB3yxNH2Rep0WCMfUIm6V7STHpja6RM57
+	 XSy2Dq8aBWOC0Dc5U2Khd/g5NkA3ZSXkYJ1TIjkRxdALrcdMscG1AiRWsAI8Sm8odc
+	 dxpoqNiBLN8bx6nDIbFsqBvlQA8/KoXrhviQvxwBnK1x5G/b0GXFPP0tmB3zAOHwLx
+	 p88Cg7+22YOtCjQNI2yDwOqpNzADgYHXkWOdfOJLgDTwKV9Z2zxlLdu0EPsFmcHsi6
+	 8UVRS63lB+nwT8Ge+KKkMpntfZkZWd0h2Cmh+iglij5mEjay5UqSzMeIOykoRSgalw
+	 LDqmzjLme5EZA==
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Sang-Heon Jeon <ekffu200098@gmail.com>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+Subject: Re: [PATCH v2 2/4] tools/bootconfig: Consolidate xbc_init() to error
+ message wrapper
+Date: Thu, 15 Oct 2026 09:15:14 +0900
+X-Mailer: UndineD 0.1
+In-Reply-To: <20261013212351.ce16d411abeb7e710eed5157@linux-foundation.org>
+References: 178913597653.248794.1237187523153227751.stgit@devnote2
+ 178913599508.248794.10388592925402087434.stgit@devnote2
+ 1dcf2ee8-02f7-41af-b1f4-bff3a16a2c90@leemhuis.info
+ <20261013212351.ce16d411abeb7e710eed5157@linux-foundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261014214522.243253-1-speyrott@gmail.com>
+Message-Id: <20261015001516.A06451F000C4@smtp.kernel.org>
 
-On Wed, Oct 14, 2026 at 06:45:22PM -0300, Sebastián Peyrott wrote:
-> GCC 11 fails to build the driver:
-> 
->   error: call to '__compiletime_assert_727' declared with attribute error:
->   clamp() low limit 0 greater than high limit points[1] - 1
-> 
-> The store function returns -EIO unless points[0] < points[1], so
-> points[1] - 1 cannot be negative when the clamp is reached. GCC 11 jump
-> threading, however, duplicates the clamp() limit check and does not prune
-> the copy in which points[1] is zero, so the compile-time check in clamp()
-> fires on an unreachable path. GCC 8 to 10 and 12 to 16 accept the code.
-> 
-> Select both limits first and use a single clamp_val(). This does not
-> change behavior.
-> 
-> Fixes: 9d980da93bbc ("hwmon: Add Minisforum UM780 XTX EC monitoring and fan control")
-> Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> Closes: https://lore.kernel.org/r/fda0e59f-20e1-4a94-a714-288940dcdd37@paulmck-laptop
-> Assisted-by: LLM
-> Signed-off-by: Sebastián Peyrott <speyrott@gmail.com>
+On Tue, 13 Oct 2026 21:23:51 -0700, Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Wed, 14 Oct 2026 06:04:52 +0200 Thorsten Leemhuis <linux@leemhuis.info> wrote:
+>
+> > On 9/11/26 16:13, Masami Hiramatsu (Google) wrote:
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > 
+> > > Use init_xbc_with_error() for all bootconfig initialization in the
+> > > bootconfig tool instead of showing errors in different way.
+> > > 
+> > > This simplifies the code logic and make it easy to maintain.
+> > > 
+> > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Masami, Andrew, this patch is now twice in -next:
+> > 
+> > e732d7c18d4d6a ("tools/bootconfig: consolidate xbc_init() to error
+> > message wrapper") [merged via: "9eae8e94e61f20 ("Merge branch
+> > 'mm-nonmm-stable' of
+> > https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm")"; next-20261012]
+> > 
+> > 78715511921cc8 ("tools/bootconfig: Consolidate xbc_init() to error
+> > message wrapper") [merged via: "71ee85976d09e8 ("Merge branch 'for-next'
+> > of
+> > https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git")";
+> > next-20261013]
+>
+> OK, thanks, I'll drop the mm.git copy.
 
-Thank you!!!
+Thanks Andrew, I'll keep this in bootconfig/for-next branch. 
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+>
+> I was surprised to see bootconfig patches in the linux-trace tree, but
+> it seems that's where they're hosted.
 
-Though it would be *way* better to fold this back into the original
-commit to avoid breaking bisection.
+Yes, since it was introduced for boot-time tracing originally.
 
-							Thanx, Paul
+Thank you,
 
-> ---
-> Reproduced on next-20261014 (x86_64) with GCC 11.5.0, both with
-> allmodconfig and with defconfig plus this driver; GCC 8.5, 9.5, 10.5,
-> 12.4, 13.4, 14.4, 15.3 and 16.1 build the unmodified driver. With this
-> change, the driver builds without warnings with W=1 using GCC 11, 13, 14,
-> 15 and 16 (x86_64 allmodconfig) and GCC 16 (i386 allmodconfig). A small
-> standalone reproducer of the clamp() pattern fails only with GCC 11, and
-> the patched form builds with GCC 8 through 16.
-> 
-> Tested on the UM780 XTX: the installed driver and this version produce
-> identical rounding and clamping results for both system fan thresholds,
-> with every value verified against the EC registers and the original
-> thresholds restored afterwards. Module load and unload are also clean.
-> 
-> An LLM-based coding assistant helped reproduce and analyse the failure
-> and prepare this patch. I reviewed the change and the test results.
-> 
->  drivers/hwmon/minisforum-um780xtx.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/hwmon/minisforum-um780xtx.c b/drivers/hwmon/minisforum-um780xtx.c
-> index f5d6e18cb651..962ebf41ffb7 100644
-> --- a/drivers/hwmon/minisforum-um780xtx.c
-> +++ b/drivers/hwmon/minisforum-um780xtx.c
-> @@ -180,7 +180,7 @@ static ssize_t um780xtx_sys_point_temp_store(struct device *dev,
->  	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
->  	u8 points[2];
->  	u8 readback;
-> -	long value;
-> +	long value, lo, hi;
->  	int ret;
->  
->  	ret = kstrtol(buf, 10, &value);
-> @@ -198,13 +198,15 @@ static ssize_t um780xtx_sys_point_temp_store(struct device *dev,
->  	if (points[0] >= points[1] || points[1] >= data->sys_point3)
->  		return -EIO;
->  
-> +	if (!sattr->index) {
-> +		lo = 0;
-> +		hi = points[1] - 1;
-> +	} else {
-> +		lo = points[0] + 1;
-> +		hi = data->sys_point3 - 1;
-> +	}
->  	value = DIV_ROUND_CLOSEST(value, 1000);
-> -	if (!sattr->index)
-> -		value = clamp_val(value, 0, points[1] - 1);
-> -	else
-> -		value = clamp_val(value, points[0] + 1,
-> -				  data->sys_point3 - 1);
-> -	points[sattr->index] = value;
-> +	points[sattr->index] = clamp_val(value, lo, hi);
->  
->  	ret = ec_write(um780xtx_sys_point_offsets[sattr->index],
->  		       points[sattr->index]);
-> 
-> base-commit: 4781ca52761e666cf18b591e6bb0478396c90320
-> -- 
-> 2.54.0
-> 
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
