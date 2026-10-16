@@ -1,67 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763CD3264C4;
-	Fri, 16 Oct 2026 12:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D99D48E0DC;
+	Fri, 16 Oct 2026 12:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792153968; cv=none; b=UGX7AATXK6uHIfDNKZA/CTdjU+PFJbNnSx4WfiUix2FRL2hqsnYZeHSGIQNmzdWTgbI8V3JPtAit6+zVAAQW4KpURajjVt0RzPat00wK6XZBmukbxOnwDIn3LI8hh3REvllp1gryLPh07GVqh/qJa+DjFA6ZrWCLkxbbhMZq1UM=
+	t=1792155242; cv=none; b=jJ3Id2mm3APVf7QHxTZJK+gdqBRMgEGYpjVgLQqWb1A/LwMEu+bpUAvTgqr+u4TzEcD/418iwbZHV5i27fX4ir6J2al61dZt+upWsehtvdRjg7Una9wEfDUV7Om0NmyMT71hJanVdGlGNTFNlkiO5SFDO2bokch4QpmLwgqtmks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792153968; c=relaxed/simple;
-	bh=2rt1UTx0GYrvgXs93HDM3aWGQ5pVS6D7BlvWoNFZqpE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Dg+2V+nk3kOI9XTdQ9l9b+iHZCuCA3H8RCbfIsUOYrzGwi6Id0S+czsAiALrA436VxDyGnrcTJJvPhiGr+TLAJY45jYmwfq7WVlYNXtQKRC3JTPhuMgncvINENyjwLij3M0v8ra6COOkILj+0LOM7sVokpZWfX1fQAfg5WRdPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2a6M8mQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792155242; c=relaxed/simple;
+	bh=7G6cmy8vT1lP4Nx6FeikoL7qMjKO+zh3K3gJwFLZxLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AB/OX5rDXU4N1LhZqBmYOOMToba/euWxkweBUHVFK+m0sUuQae0yLIyXz9DJ0kRcdr8UP3F2uH8dv4y+Vw64HKLioX+2PzAW/45/AKPZ82sa0n24t/ieepxxKPfYb1tDX3tSUeDICqufnL9Jo6b/f8OY3Cy1eHrq6WFWE2z0Edc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEvchW85; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2a6M8mQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C11F1F000C4;
-	Fri, 16 Oct 2026 12:32:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEvchW85"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B985A1F000C4;
+	Fri, 16 Oct 2026 12:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792153966;
-	bh=sKwrPftf7M4AYzSS8lZCiNv443HYKbegROeNTv3TEno=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=i2a6M8mQRvk6HXbJlZoWhUrmZYlEREgyq0nHet+tm389RFP9f+qyDC6K3ETAHi14J
-	 ahV6yg2HSENfvFGD+lnU1LwH/9LaV60p94HM3NwTF2DAG/k7vX+khaximvO/xvdR0+
-	 ewg7zYladr9rSjy/CzLgxZdC2A1Gj16GFkyG4MT5IdWmxPDu3eEB26YG/wzGopbgYO
-	 caAzuDuE+kTTMzfiYlKdJHrUGS3/4LhaqX5WZ4UmC83rw9Ra53d6ByQ4NLhErgsOh3
-	 rvMVBHSoL9MH7zT0OJza93m1Y+1dtv/0M+BPRnyN2hf5T2LyaKnJGLVaPm3REs8OlS
-	 i5C+g9Jo/MaFw==
-Date: Fri, 16 Oct 2026 14:32:43 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    Nikolas Koesling <nikolas@koesling.info>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the hid tree
-In-Reply-To: <atIV9kBYjdaxLov3@sirena.org.uk>
-Message-ID: <491524so-s30r-r514-2s0n-68qq21qqsnr1@xreary.bet>
-References: <atIV9kBYjdaxLov3@sirena.org.uk>
+	s=k20260515; t=1792155241;
+	bh=5p3FsW4rBqu1iBY5n5iTvH2CHeYoZGGKw3fGbe6hU2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UEvchW85TNqdT0kfQYujgvPyFdAXTGHgaj5XCSAVd+RjNLLCFOzvZNGVsE92czVgP
+	 827r84RKyf5aOLXT4Ftxow5L4YKczxaKr32Y8yRLyJ7pYSgeUCiIwr5EQb8Bf5YXkB
+	 ASkfNN6xCrK1NeIf9o7tCwnrhrficrNCeudpjCHF2OeGW+lDyhnrXKuNaYbMPG63Lb
+	 DoXwkRFH6TNBlkRoNj50rkqOGGWj70eGhkQnWuNaqxDz4y74/nWYZWewBnna5Q68BK
+	 GL1pvsxLJaHGsToypRI6CsRhVZ0l2dWfnSr/r6bIdRZT+dznXG5fkJIlZr7lV22PYx
+	 wJ1RSXOVyMlcg==
+Date: Fri, 16 Oct 2026 13:53:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the kbuild
+ tree
+Message-ID: <da87fdb8-f359-4745-ae0b-b34950b6df54@sirena.org.uk>
+References: <asAzcgDsbNEFIfKV@sirena.co.uk>
+ <20261002230632.GA314599@ax162>
+ <asA6NZ4QKp4k4nGD@sirena.co.uk>
+ <20261005133224.GA1108555@ax162>
+ <asOoLZf9UQkB6SS5@sirena.org.uk>
+ <20261015212815.GA319266@ax162>
 Precedence: bulk
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZKs0IAUvsbFxF6FK"
+Content-Disposition: inline
+In-Reply-To: <20261015212815.GA319266@ax162>
+X-Cookie: <<<<< EVACUATION ROUTE <<<<<
 
-On Fri, 16 Oct 2026, Mark Brown wrote:
 
-> Hi all,
-> 
-> After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> /tmp/next/build/drivers/hid/hid-pulsar.c:742:4: error: expected '}'
->   742 |           .driver_data = TYPE_KYSONA },
->       |           ^
+--ZKs0IAUvsbFxF6FK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yeah, that's me fat-fingering drivial merge conflict resolution and not 
-noticing, sorry for that.
+On Thu, Oct 15, 2026 at 02:28:15PM -0700, Nathan Chancellor wrote:
 
-I've now pushed for-next that has this fixed.
+> This seems to have made its way back into -next, it is currently in the
+> efi merge:
 
--- 
-Jiri Kosina
-SUSE Labs
+>   aa5bcff53709 ("Merge branch 'next' of https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git")
 
+> I have the following applied locally on top of next-20261015.
+
+I think I persuaded it to go away today.
+
+--ZKs0IAUvsbFxF6FK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrSHmQACgkQJNaLcl1U
+h9DbOQf9GjSynnkq6T3pddFpYMD0qCMYDHgLYLNKMud7t7s0SzXS8Gix8Xuubd7d
+Ig2Yh/4CN2NFWTrYMLNjLZv9ctJt6ofp7gTZfkolkcMY/zXm0DkHFIZDmoArLxNF
+J9Q1Gg3jifx5CEDvmw884dn2GixLGv+hmQMDJfhM8D2hO/LZ59hJaFtwrpCpRf9O
+de1zTE1r/KWWb2jYYvxWshZECK0+Ixdt3Muj2rrbaaORfht+htb5sEKSFS2f6V9A
+Trppc5OPWJ9uSEANVuOC5sbN5sK4ivEHFyXnQ3741kEDDzh8TWhcexpvjwVUycJg
+2hL4/vZnKuzcF9ipXtbFyuzdugxiTg==
+=zA5s
+-----END PGP SIGNATURE-----
+
+--ZKs0IAUvsbFxF6FK--
