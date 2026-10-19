@@ -1,40 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E742A4E4308;
-	Mon, 19 Oct 2026 12:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9744E4C36;
+	Mon, 19 Oct 2026 13:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792414273; cv=none; b=JR+7SroF6eIFjymePu42OozNbagjE80VXUOEemsIYt7dlMMznq4cn2Lhkn7s6MDSm8Ae9t5yJdcgO6fvcP/UOX/36Zu+niY6xouBh49B2C9p2pUiCuQveTBs3t+sNLgudEuiHH50pJLiDkdTZKJEfTAoXl//x+n4bm6P9NP8jLA=
+	t=1792414805; cv=none; b=H/Z0u53IU4FgBDAaoDeHW65MZaAyS3gioAwCLvB4u5Rr9NqJQpoMbJ5uhmcEF+VZI2IfS0lYP5OT0VkmfGwlY3ll84BShNet/xjvXeBYvUr2CugJse6/GBA0jfddlX3ciL0mprlzovAQLI1m3dnKhSONMeO7nwDMlBGoKJg3MEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792414273; c=relaxed/simple;
-	bh=khHh5ooayH62/hPBTZatboWOrzHcGIJYlFHcKZT+VeU=;
+	s=arc-20240116; t=1792414805; c=relaxed/simple;
+	bh=VZywbayhSb24Qw25QP/wz7oSAsaYw9mtnbMYChj+sfM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LE51UjPMTdpRsUuS0tZxWnU1bOPRFWm468tF7l3rI8OGUsrmOT3otQODGnAtIC3/nyg7MDL1kQb2mMgY58UZbXU07kF1wXTSuBY1Fkw1mKPAfzfCA5psA5YsunfLgaXmBVesQTsLZInYVgS+uTR5OHJ+bIR3DhZP9eaQ0s2kU0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1po9/Cv; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=cAcFzUXses/xBtgeNhL2KuNAh0b8MUl0XJRVw6dXFGMoRfkSk8lWmndwgkb7LODh9wpjfwPeQnpwQrA+Iw4BqfVEKHg2UFHA56FngP8Mt/QJvOeDUb6EIQ5TpPkmzopUi9Q2jbPrEVqLAgIDShBq/Le+sTTZVqgy1Ml+/cMTipA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knHrVtwQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1po9/Cv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC33D1F000C4;
-	Mon, 19 Oct 2026 12:51:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knHrVtwQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4991F000C4;
+	Mon, 19 Oct 2026 13:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792414267;
-	bh=kObkMdnvGeSnlUyvgNw6GOVIWwiykyT9/ZgXhMuzqVA=;
+	s=k20260515; t=1792414804;
+	bh=VZywbayhSb24Qw25QP/wz7oSAsaYw9mtnbMYChj+sfM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=C1po9/CvrYHTR59+0FsEfo39j/pq+MxqegpMIj9BwdXMOth35ydrs+x0VEXcrjc7R
-	 S2br5PVLvRLdzYo2YSIfeA/rJ5WS+glDw3DUiI3SxvYrwIlOlOQ/OpnEJJeHvLx70n
-	 poGzH/IT1i60uo36yVelT6jk/pgt/ng0u5cmwuAl8pVplYv5ZdmrOh0jyfun8ajOVi
-	 1BEjCPBKake4CN2aCZqJmyOfFjSA1KJWffluspSD4vEFHeOg20j/g6YXPqxCUaK2hV
-	 UVnWESbbhHE5lWAULgBRqzv6Mp587FI35/0vk4rxgMbBRjl6WGxBoK0UglnHVl3iEu
-	 nM+8uZehMFWUw==
-Date: Mon, 19 Oct 2026 14:50:58 +0200
-From: Carlos Maiolino <cem@kernel.org>
+	b=knHrVtwQ3lbVhBLu/bhOqzvEULh2LvA4ThIBjbIlbU6xE4xrdv4eYWSufvlfUYqXO
+	 tfYgNcHewXYWpTRqWchYQTJDVjlR101pQykshuMrAFH6sfS75Pk4ZGVxHDY9akQVLT
+	 iOkqz0EbFL/FbOVaoPtlhfHgOP65M8/Ajm6ZGMgeZ4ibP+9SIxS7DBuiTRU/rq7TGX
+	 BNnOMpiWSSB0qDiw1+3jx9okGFf7Eh0zY4QmyH0pKsTnwt57WgsmjxGuDxkf29OvIZ
+	 fs1je2mO1nDmrjitWAbVHuEBf5x/YHz4xQOe9B/debVoSEiG24FyA8yao7VPi2n8le
+	 u7bisA3DzYn0A==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 4E8D31AC57D1; Mon, 19 Oct 2026 14:00:01 +0100 (BST)
+Date: Mon, 19 Oct 2026 14:00:01 +0100
+From: Mark Brown <broonie@kernel.org>
 To: Sasha Levin <sashal@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	David Hildenbrand <david@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vlastimil Babka <vbabka@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
 Subject: Re: linux-next: manual merge of the fs-next tree with the mm tree
-Message-ID: <atYR5sFaEEvBYCdC@nidhogg.toxiclabs.cc>
+Message-ID: <atYUUdnkCxX7ZQ__@sirena.co.uk>
 References: <arUS5b85ed6L01qc@sirena.org.uk>
  <arZn0IB-L3hnNniw@cronus.toxiclabs.cc>
  <f9ddfd24-ee1b-47d9-a906-299421247b1d@sirena.org.uk>
@@ -49,74 +54,45 @@ List-Id: <linux-next.vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LKHl6zQDb25PeQro"
 Content-Disposition: inline
 In-Reply-To: <20261019114806.1298980-1-sashal@kernel.org>
+X-Cookie: You will forget that you ever knew me.
+
+
+--LKHl6zQDb25PeQro
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 On Mon, Oct 19, 2026 at 07:48:05AM -0400, Sasha Levin wrote:
 > On Mon, Sep 28, 2026 at 01:48:14PM +0100, Mark Brown wrote:
 > > There is a fixup in -next already which is hopefully OK, I don't recall
 > > it being especially bad so probably Linus would be OK with resolving it.
-> 
+>=20
 > Hi Mark,
-> 
+>=20
 > The fixup in -next takes the mm side of xfs_btree_split_worker()
 > verbatim, which puts xfs_trans_set_context()/xfs_trans_clear_context()
 > back and drops
-> 
-> 23f91a51425e ("xfs: fix NOFS state corruption in btree split worker")
-> 
-> next-20261016 still has it this way.
-> 
-> The two changes are independent:
-> 
-> 2e6a6ca06fec ("xfs: remove dead kswapd flag inheritance from btree split worker")
-> 
-> removes the pflags handling, and the xfs fix replaces the transaction
-> context calls with a local memalloc_nofs_save()/memalloc_nofs_restore().
-> The resolution should keep both. The delta against next-20261016 is
-> below.
-> 
-> Neither tree conflicts with v7.3 here on its own, so whichever of the mm
-> and xfs pull requests goes second will hit this. Andrew, Carlos, could
-> that pull request point Linus at this resolution rather than the one
-> earlier in this thread?
 
-Yeah, I heard about this conflict problem on linux-next and how the NOFS
-state fix just suddenly got dropped by the conflict resolution.
+Thanks for these.
 
-It's on my TODO list to mention that to Linus on my Pull-Request for the
-merge window tomorrow or most late on Wednesday.
+If you have fixups for merges in -next it's much easier if you can send
+an incremental fixup against the merge rather than a completely fresh
+merge, the tooling uses a rerere cache so unless there's a new conflict
+in the same place it's hard to get back to the original conflict.
 
-> 
-> This is the resolution llminus generates:
-> 
-> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-> index 6738d9d1511bc..2434c54a35708 100644
-> --- a/fs/xfs/libxfs/xfs_btree.c
-> +++ b/fs/xfs/libxfs/xfs_btree.c
-> @@ -3007,12 +3007,18 @@ xfs_btree_split_worker(
->  {
->  	struct xfs_btree_split_args	*args = container_of(work,
->  						struct xfs_btree_split_args, work);
-> -	xfs_trans_set_context(args->cur->bc_tp);
-> +	unsigned int		nofs_flags;
-> +
-> +	/*
-> +	 * Don't use xfs_trans_set_context() here: it would overwrite the
-> +	 * caller's saved NOFS state in tp->t_pflags. Use a local scope.
-> +	 */
-> +	nofs_flags = memalloc_nofs_save();
->  
->  	args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
->  					 args->key, args->curp, args->stat);
->  
-> -	xfs_trans_clear_context(args->cur->bc_tp);
-> +	memalloc_nofs_restore(nofs_flags);
->  
->  	/*
->  	 * Do not access args after complete() has run here. We don't own args
-> 
-> -- 
-> Thanks,
-> Sasha
+--LKHl6zQDb25PeQro
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatYUUQAKCRAv73Ows9A4
+ieIDAQDxTZ3qnv0aLwl2Vq5cwUbLm9QuvVtMHd/UYM0OOd0gbQD8CP9R1B96v4ih
+01E+Hibt+vZx8CZAjlhhrtNeFUfWvQs=
+=YI72
+-----END PGP SIGNATURE-----
+
+--LKHl6zQDb25PeQro--
