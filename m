@@ -1,60 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792428887;
-	b=Lynx58SzDKpLLaeET/vFcExu8YTRtwtlivGi3W+R731WyQSBsleYWNHyjY9D6dejlQug
-	 zKLbiXjmhlck3PgobEyMDMHNwHJ0QzjlxBTyVmJSyp0WE15Kl/SfEBcisls3nRt6EMynr
-	 3WJxjb73fihJa/XLDmCoMi+r4SUffEiKymey2WPhvubznl4QUMB05yHejpWBTwsK7CR5W
-	 XtImny0cB8l2yAm+8vPfRQ35ABkIQaC07C93wz3FgDiQ1KDrGH/wk2KwsnmPhS7+F1igB
-	 1oyuF1pi5kRH7VTezOoUp24BLfZL4FLhV8u2/9N2sQAGlW0UnrBkETILQyuaK5ZSW8A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792428887;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 Reply-To:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=F8z8y09+jVKBbKZimDHdTs8APxEMDZ3eZWZtEqP2bQg=;
-	b=bvumkwgReM0aBb8oGEXF6H2JSEShcJOGAZREjXf2Je744WVuxGAf+IjlShAHdS+DnSg/
-	 ZIacTsQIfi2QqK+7bPizz8e8xbSXZMyt8ijcZuzLQ2IrSAX5tGcaHgVI89DGg2Q1n+Uuj
-	 9HQ+13MYB5T0yZypJFScAp3MRXb2KDgi4WTF76nrgAfR5EHxNuq2MCXZcWzagFfY9VDUV
-	 r6eEOJplxVsVromxTH1EsMF+3dI8vy4ozxTnwEPMjDxPGELvl+ftus2vtMFFQ470bG4nR
-	 xsTs2hNCAAtANz04eK3qVkhGHiOVRDanpudwNCo+NKsxYfTr2M067YvDaUSCOCcHdaQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iNfrCfF2;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=170.10.133.124
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792429016;
+	b=bENAYFwhCPuEeK/GY1K3wcTYZ3O3p3p3GyIYkrQa/hNJuEF17WJ7G50s+oOCT2lfIeTW
+	 Re+mEmXrq5sO9PBJgDbB3L9bvnb+NKC1mTNJFtqKvvgLGP79p2bZfIH5h1joFpgrqVIuL
+	 58y8S/AWM73c4K2GlRzxfWSSVNJp3lk+liBXfCVI2UkG455Mc5m0UBZfb4PXsig38jJF8
+	 R+GAiBByWQE9puQpPBmZw1qjTVNN+6wPloM7LpCDF271k13sVzTfJzgCeU8PpUhL/U0ju
+	 t5wxcIuss8n9q4qshgiQf+sMfFYPJBkjv7avBxht+pxjPYBCl0BGlb4LcD3FVGXi6ng==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792429016;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 X-Received:MIME-Version:References:In-Reply-To:From:Date:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=93Mxke0ognMkCH1OvgVhoO05LeJUA+eXnVQ+rwQWPck=;
+	b=jfSz3fTZb2q90oPPUHiBi+fOEY/EtSRryK6Ps4If6Q8bZ5OJ8lZ+jfZTChPRt0e2NnV9
+	 e+ss72ZJ74dcKSW5nIB+nyJis5zLDIsnV6WdFF90NY8jbIp3kOj6Vnrn1kimtx+uIcalB
+	 wYQSS8auN305+AkvCV2sxuBIJAz7WVqVo8qyIFc7ebvxigrW4wN0vdOA2KLebb830flQo
+	 L/5HJPxC1mkMEyeIqwp0oNNsZT9rDGajfDMI+ZKtWoZGJ1f3A7uQioBBPDghSydVXNwVu
+	 WklstZ1imo0I6yY4iPq4WJCCKnsd11lo4pkKdmOi9Dpd4pPrE3j4pjW6qgjb1Uf/9gA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=gLnnaa9J;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=o0CKoNTJ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC5A606A324;
-	Mon, 19 Oct 2026 16:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38582606A31B
+	for <linux-next@vger.kernel.org>; Mon, 19 Oct 2026 16:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 38582606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iNfrCfF2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC121F000C8;
-	Mon, 19 Oct 2026 16:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792428886;
-	bh=F8z8y09+jVKBbKZimDHdTs8APxEMDZ3eZWZtEqP2bQg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
-	b=iNfrCfF22qt69ASu4DIy5bvfZGH2R+H/cN1fb+j0aBwNaUWdKBqb4S82vM8qqwVhq
-	 fJJi85A6fAd2Wxrqj/PTAGLl8eSGPWVqXc118mzfdJZFS1JiTFvRxk8GT1a0yuST/t
-	 Uw5OhjxPpMrp2rncy9sM9SBMQrJKZq5lHwhQR+pTJCeXzmDDWPE5KLUh5FD5ezSAkO
-	 BFX2Uxr9XzpDjn1cP/pJe6S50qpYIaj9KqZgT9Z2z8oLJCOD+g9G/IjuB6+8kEjBmi
-	 KFZ5w042d4cImFxL3KZWxYisdEY6cTQUZN/GFvIOgldipVsL7pTIy6lnLGO7Yd4Bzz
-	 UuWVHYto7Ku6g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 42293CE09FC; Mon, 19 Oct 2026 09:54:46 -0700 (PDT)
-Date: Mon, 19 Oct 2026 09:54:46 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: =?iso-8859-1?Q?Sebasti=E1n?= Peyrott <speyrott@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-hwmon@vger.kernel.org,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (minisforum-um780xtx) Fix clamp() build failure
- with GCC 11
-Message-ID: <04a379a5-f2ab-48b4-96dd-9c6d611224b5@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <fda0e59f-20e1-4a94-a714-288940dcdd37@paulmck-laptop>
- <20261014214522.243253-1-speyrott@gmail.com>
- <2bffbd3b-391d-492f-959c-fb9128bce49b@roeck-us.net>
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=gLnnaa9J;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=o0CKoNTJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1792429015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93Mxke0ognMkCH1OvgVhoO05LeJUA+eXnVQ+rwQWPck=;
+	b=gLnnaa9JWYqEn44JVTPM5DO9ax4Bhw1s6mGajEX/SEA9HMHghHUqVADF4UIowZu7wvORmS
+	jtxKAN3dlYo2OJXZBAknGz+ag3P+c4piJIqrTk3IwSRT9mfPDEQ+5Z9uN2WAteqw/abU3x
+	IV7XVYTBnYdTXvjFb+2ijEUmHAJKky8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-524-BQizjpWHMVWtc7NUyQ7oUQ-1; Mon, 19 Oct 2026 16:56:53 +0000
+X-MC-Unique: BQizjpWHMVWtc7NUyQ7oUQ-1
+X-Mimecast-MFC-AGG-ID: BQizjpWHMVWtc7NUyQ7oUQ_1792429013
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-48c46582442so1509524f8f.0
+        for <linux-next@vger.kernel.org>; Mon, 19 Oct 2026 09:56:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792429012; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OJwFU9mSPgBxLPNRVoDsH0oi0SeCOOc78s9puzjNJuph6LfGExZ+bimsho9T1KutR8
+         v9BV53TrvRXQl/ZgAgbE7H1tgaTlvf+LraLW8G60tUDFmEFcOetigzjyW39/C5Um6+EY
+         T3q9J8YrF/2vchlkZQGwFmsYkSMcgJrqKuOBeVAVEuiQdw6F/Gx7VOyLa2a2TsUnRWpJ
+         z4qNwQPT3mVcmWtNNo79wFxFIJbqCZepaz6WU+jIP5ad5R6G6McMMm3hZPHLswRt6KNN
+         0clzc2wbAvpcZjMWnwBb+M277lD9OfiBj5HaQJ+MavfJazZpLPfs52cx1U0c7gFJI0xf
+         NXfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=93Mxke0ognMkCH1OvgVhoO05LeJUA+eXnVQ+rwQWPck=;
+        fh=ALVUkF/LITbfws09IAVf2GXAX0olYZOWzdYW/LMXLEk=;
+        b=Enx9nAWpEbeHMnCkT1kdZ2O6nOJpUEYG+jme3yy6kESwF6EcY//S7V9hhX3PqovTFK
+         +ePOmtJYl0BHRSb/JQ4cOQz3Xnbm/GXdCxAN6m4LEU2dLyanDd/6iVSvC+Xf6cq350kR
+         PqQGyevhQD8foxugSeDoYNutuIjCd0czwgi8tIBq3aD2hzn86ybjnk0pRHMDGq6f3E7A
+         cVZKk8S1vz/ORm2MsWPOOnU9P/x4kba+1TC5VuMJPDZCdOqY4RnLcx88Jh5IHCjwiXWI
+         BYRNbUSPvAUl506qQfFiGYyj+YkKZU7vI4XqymYrtHk/cukYG7fnVpNLVKeF90vvsMwE
+         n2YQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1792429012; x=1793033812; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=93Mxke0ognMkCH1OvgVhoO05LeJUA+eXnVQ+rwQWPck=;
+        b=o0CKoNTJ9nq0iCDAq/bYcSJuBDOkV7XILTe+hrf2Tw7vlUrTQ8k9kPPDnxuNtN7qCE
+         ibJYBkcHgUkNHPhZclxy5Ac53ja9kLoNNJY9XAMJD20bCpXEYVQ0evd4sTFO04QSLE6u
+         aMjaScCeSDoMtHiE09BOhy7PChTSgXw03wrYvLl+drsFAGAxzDLbC7fflDp91+aRSmeM
+         ZQnzrwfAN/5WNqpKm/KKLhDp7ilL3hSWcIbHRFt6gWNLKh8SVYduIpOb/NzoflgsmnRy
+         OHv0AKFkebFPQ5dzEavMsaMx2BpsAkngXFs39e1DVGN9gISlon2zACSGTxzcj5CwyNv/
+         8OCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792429012; x=1793033812;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=93Mxke0ognMkCH1OvgVhoO05LeJUA+eXnVQ+rwQWPck=;
+        b=Gn8L4yeXzy5o1RTDyNuCXyyz+TAwGW1et4lPazMd6zAAYliwK59/QYqvytwdglKRkh
+         ybzpBllqbZnNY5nywAqhiWNwsLG0Tjfgvnut/0Y2/PgTgxw5wM0xyGn6RmrbNj3v0F1/
+         zBVVhaIl6CGZFFL4sT9PzBeL3g5K44idxf6k25n6roWJbvjadUX/Nw7vepMgXqOC7Dau
+         XMo0COGWlVaXUpdxgOEKxdeUVBTBJFSJcG4DpDm9ZIc0ztgp8NDtsnYvQXHwhnbHlugz
+         /dW74RCxh2LUEVT+06NfRAGOiBci+fxDcE2WeZ7qUfc/FlO+MpnF5N9+kMbsOL+Iu96J
+         T/ZQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzFi6vrSCRk90UULr7np7zffWPzKLE6rT+uEcbC6vRKpb6d5viNgHkKQvIn9MV/m1LRyYujRd67mI0B@vger.kernel.org
+X-Gm-Message-State: AFq9FYKZEVI1uPOenf6I0g9ihOxhLtmXlO+Xuij9Pa6rGzO+iMKnjSUP
+	sB+dG49ifXBTB/hO2uZOxfUtEdR2m1wVmM4/gRyMyYHhRM9Wr4uLtB13rd57JAFjWIe7jUdVxB0
+	T8HN68M65HfDkNPbhtLxYIylneUmUCrTRA3XSckH/xbvEKINSM6zbmdTYkarf8TEy67b66iZeER
+	nqQg1Nly4DLgv1xjdZUoPCIj2smd5RSNacojt0BA==
+X-Gm-Gg: AYBFou2Gyv/s7xJAcZc7BnBgndoO91vfBl04MXEZQs9YryGF0qkpubmMtQTMafYHq+Y
+	UQL0uKhNIVYku+9KqCm0gwpv+HmnzC3B4daMIg6wBQGMbWDLD7/w9peR7Pk6RYy1OH67zXCZPiW
+	tMIHpg0BBUo7RvSYsGQ8Y7Ilym78CY6VMZA5uzUlk0UK81xRMyjcz6exr74WGFbGRDTQ7WLgXEf
+	h/gZYNi6Kw8JewPAGe3BI4ji0fyLkRBtvl1XR3InTa2zFPSjXJzsUC96ZByIw==
+X-Received: by 2002:adf:ffc3:0:b0:48d:f3a4:a6aa with SMTP id ffacd0b85a97d-48e07bc36e1mr12549495f8f.35.1792429012735;
+        Mon, 19 Oct 2026 09:56:52 -0700 (PDT)
+X-Received: by 2002:adf:ffc3:0:b0:48d:f3a4:a6aa with SMTP id
+ ffacd0b85a97d-48e07bc36e1mr12549457f8f.35.1792429012350; Mon, 19 Oct 2026
+ 09:56:52 -0700 (PDT)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,36 +122,39 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2bffbd3b-391d-492f-959c-fb9128bce49b@roeck-us.net>
+References: <atZJV1B79VsZoy8u@sirena.co.uk>
+In-Reply-To: <atZJV1B79VsZoy8u@sirena.co.uk>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 19 Oct 2026 18:56:39 +0200
+X-Gm-Features: AclHuK8vumiua5SMjMCvMOThl3efjoSr2L_M6TnDtZ77TgU9w18ADr4xGbKM-sQ
+Message-ID: <CABgObfYRYCrOj-rHDaDd3LSFMSd0ug-YoB2pD7jDA8ZgMR0sCA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the kvm tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oupton@kernel.org>, Marc Zyngier <maz@kernel.org>, KVM <kvm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 18, 2026 at 09:16:44AM -0700, Guenter Roeck wrote:
-> On Wed, Oct 14, 2026 at 06:45:22PM -0300, Sebastián Peyrott wrote:
-> > GCC 11 fails to build the driver:
-> > 
-> >   error: call to '__compiletime_assert_727' declared with attribute error:
-> >   clamp() low limit 0 greater than high limit points[1] - 1
-> > 
-> > The store function returns -EIO unless points[0] < points[1], so
-> > points[1] - 1 cannot be negative when the clamp is reached. GCC 11 jump
-> > threading, however, duplicates the clamp() limit check and does not prune
-> > the copy in which points[1] is zero, so the compile-time check in clamp()
-> > fires on an unreachable path. GCC 8 to 10 and 12 to 16 accept the code.
-> > 
-> > Select both limits first and use a single clamp_val(). This does not
-> > change behavior.
-> > 
-> > Fixes: 9d980da93bbc ("hwmon: Add Minisforum UM780 XTX EC monitoring and fan control")
-> > Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> > Closes: https://lore.kernel.org/r/fda0e59f-20e1-4a94-a714-288940dcdd37@paulmck-laptop
-> > Assisted-by: LLM
-> > Signed-off-by: Sebastián Peyrott <speyrott@gmail.com>
-> > Tested-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Folded into original patch, as suggested.
+Il lun 19 ott 2026, 18:46 Mark Brown <broonie@kernel.org> ha scritto:
+>
+> Hi all,
+>
+> Today's linux-next merge of the kvm-arm tree got a conflict in:
+>
+>   arch/arm64/kvm/mmu.c
+>
+> between commit:
+>
+>   dd0bc00e3e920 ("Merge branch kvm-arm64/cca-7.4 into kvmarm-master/next")
+>
+> from the kvm tree and commits:
+>
+>   b44a8c32f0116 ("KVM: arm64: Abstract out memory abort handling")
+>   892c8a0bcc8e3 ("Merge branch kvm-arm64/cca-7.4 into kvmarm-master/next")
+>
+> from the kvm-arm tree.
 
-Thank you both!
+Hi Marc/Oliver, is this something that will be fixed on your side by rebasing?
 
-							Thanx, Paul
+Paolo
+
