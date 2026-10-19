@@ -1,77 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792426244;
+	b=lK/9DRH+7/qZqINfhVldYgUCNpcNf8kQfv7qNiRI3/cZqaRSA0DWCNQ5h+KZBvtIeVCA
+	 qIrRyFeQFjt7ALV+s5oP7BmSw4COmNM+IJ+Hv+kpo9SHaXMgeSS7fkmL5Xx+Dt4UEXhuy
+	 yr1memitX4cy/GqFzOmWp34BzzfKEeMG26r6VhEJ0nAQO3C382jaBDNGjcwFSMKt7M75d
+	 7q02vLoUZ8VZTYEfGyT4xPqVdGWQJ6cdNRCOV4f4y/EBJirSnwWsifYrIl+jKFVqzqyqH
+	 s3Rgyhn3lrUghOaqsvwepdlve7L1ypRg+JChv/c2mIyjfDyzODx+MFXa2zaDZZfXzmQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792426244;
+	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=BwqJ94bd75cZjVpXn/TlgXd93/gMvYA1acKy07eUl1c=;
+	b=Dk7ZFovCR86EgOm67yGX7Ij0dyfpAZgRtsoDQqfXfCH3Gz+3zQG+Q5vGnXnxh8YzlGa4
+	 jr5WWiPanxnRdVrRSYs3h5ilLXrlad3DGE2a82/cFsvxNGtv4gA3HAFwRuHh2ddoMX4W5
+	 N3L47zaJZMQfsyhvP6kiIVZYGMhmuqTeOt4Z/sa5jSfR4sowidouLguO434WQgoyshjxt
+	 SUnhjZwQl7ZUzFiso4/xS7FFgSpuPlYVgwXM9VakAUUHScE8vCi2yFR+j7zJykAfSpq4C
+	 CrfL8yFGT4LgCKfwB35ZSNN954Eqob83QpnyUc7CWhzD5IKZ5KGGzdYqBonQQpSW7Xg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J0sdwG2W;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0288A3DF01F;
-	Mon, 19 Oct 2026 13:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792415615; cv=none; b=d0fthWFCiV5mxJnNAIWk1g3Oyw9QRmwMfEJef+BlMm5LApQPHjhzP0dS7t1BSc23nhZsP0+HnfeVx5YXylgl+VQIPZHq8XrV/drpC9lWn1U5USn/j4HOFe+X8sc+5YVPCyr5+YdO7bWmvBnnGiGGqiwnGgRgEu/XtAsb4PBWx3U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792415615; c=relaxed/simple;
-	bh=fHyLx8e/mvzfdb90xSdk8Z/wJtNteHVW1xhS8unvT14=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qcqE3CwRkyisKrmmidGklbhBFuOYq3nJIvlvMLXgzoIJ0xRa4qu1Ny8KlZ9QTQVpHLEAGE148gKkZ55BdIq1SsC4UrUfUeCumvBim7vSzSQPwTWc4bPBu9JxceNo/2Yij3CrPc69hci6LD6kKMxadxEiS53OqETz8HWo+IPnQeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lntdw7zE; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B837606A32D;
+	Mon, 19 Oct 2026 16:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lntdw7zE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5231F000C4;
-	Mon, 19 Oct 2026 13:13:32 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J0sdwG2W
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D22641F000C6;
+	Mon, 19 Oct 2026 16:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792415612;
-	bh=P1yKaRSp7P8GDnHS3UQ51523o4SiuSpwVGuTKweDtEQ=;
+	s=k20260515; t=1792426244;
+	bh=BwqJ94bd75cZjVpXn/TlgXd93/gMvYA1acKy07eUl1c=;
 	h=Date:From:To:Cc:Subject;
-	b=lntdw7zEybCuQkg6hwFuzpss5Sc1uJne0FRNhf2LxxR3a/xFIL8wmCw9x9Rj2pFqX
-	 mlPTFXoUOLmrs4+FkoNVAyPkJXAw4XLxSN/6r5jKTsOhU3M+5NpvJI3c1ZE/N+KYlA
-	 +Th4KXckJuklbxK/JxjTMnqNxqdoOTJtrMKsSHvU9AGgHofHWrDkCEUQcHFoWD28a0
-	 hN/6DNwXmrvKMNbp9wLIqjAI+t+5qRaVAnt2ha5mi3HU/it8vz6vvBQ44ly9kMYbS5
-	 TQYds77yaKXStOS5lNZdihhJvtk8+3WmpsfovrTTCPnvo7kGwwAka7HwzNHfxhswm9
-	 aiOXxcKp4UH0g==
+	b=J0sdwG2WLlP/0a+gCfWUUIzC0AQ8118B1emqMQhvSET1cn14pIomliXRK/EszZVaB
+	 6hgDtgyAHdfKfcDFSL/4FV0GJiaX+QMYilSNdn5pELRLz5MGXrFfn7c3mV632aGyCP
+	 kfYqasO0zusNdTDVw9X9N7Uccngs5DL8EbG+QDpqjheITJSJdK9Qg8JuwPDJY07ZQi
+	 hvSOxYG1r6wiuk+Fo9Z3Nir78SZcFm3Jcm6NyImIlDnjO0XRuXk7sIrYrm9c7cJ5mj
+	 HiQWh7vvEFAbJ+nRnc4143DHmjRIkTwGAd4eSSMSECf/pWODSrAaQqLz8vuoXna/WP
+	 D+5fQhr+gNnWg==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 3A8EE1AC57D1; Mon, 19 Oct 2026 14:13:30 +0100 (BST)
-Date: Mon, 19 Oct 2026 14:13:30 +0100
+	id BD0D01AC57D0; Mon, 19 Oct 2026 17:10:41 +0100 (BST)
+Date: Mon, 19 Oct 2026 17:10:41 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the gpio-intel-fixes tree with the
- gpio-brgl-fixes tree
-Message-ID: <atYXeq9z_aVSt_df@sirena.co.uk>
-Precedence: bulk
+Subject: linux-next: manual merge of the bpf-next tree with the vfs-brauner
+ tree
+Message-ID: <atZBAZTtUd6mr09s@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
+List-Post: <mailto:linux-next@vger.kernel.org>
+List-Help: <mailto:linux-next+help@vger.kernel.org>
 List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
+List-Owner: <mailto:linux-next+owner@vger.kernel.org>
+Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MrbHReloBJOPgGpQ"
+	protocol="application/pgp-signature"; boundary="UDGqM2jls/p2DpRp"
 Content-Disposition: inline
 
 
---MrbHReloBJOPgGpQ
+--UDGqM2jls/p2DpRp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the gpio-intel-fixes tree got a conflict in:
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-  drivers/gpio/gpiolib-acpi-quirks.c
+  kernel/bpf/token.c
 
 between commit:
 
-  5a088d1b72662 ("gpiolib: acpi: Ignore GPIO 11 interrupt on Acer Nitro 16S=
- AI")
+  64cbb36448ff2 ("file: make struct fd_prepare const and kill its err field=
+")
 
-=66rom the gpio-brgl-fixes tree and commit:
+=66rom the vfs-brauner tree and commit:
 
-  6da1f3437435c ("gpiolib: acpi: Ignore GPIO 11 interrupt on Acer Nitro V 1=
-6S AI")
+  f52b699c88634 ("bpf: Don't leak the inode when token creation fails")
 
-=66rom the gpio-intel-fixes tree.
+=66rom the bpf-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -80,57 +99,35 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpio/gpiolib-acpi-quirks.c
-index c1ce4700e2a4d,dbfd82056c3e0..0000000000000
---- a/drivers/gpio/gpiolib-acpi-quirks.c
-+++ b/drivers/gpio/gpiolib-acpi-quirks.c
-@@@ -343,20 -343,22 +343,36 @@@ static const struct dmi_system_id gpiol
-  			.ignore_interrupt =3D "AMDI0030:00@11",
-  		},
-  	},
- +	{
- +		/*
- +		 * Same camera power enable on GPIO 11 as the Acer Nitro V 16S AI
- +		 * above. It also powers the internal microphones.
- +		 * Found in BIOS V1.53
- +		 */
- +		.matches =3D {
- +			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
- +			DMI_MATCH(DMI_PRODUCT_FAMILY, "Acer Nitro 16S AI"),
- +		},
- +		.driver_data =3D &(struct acpi_gpiolib_dmi_quirk) {
- +			.ignore_interrupt =3D "AMDI0030:00@11",
- +		},
- +	},
-+ 	{
-+ 		/*
-+ 		 * GPIO 11 is the power enable of the internal USB camera.
-+ 		 * The firmware drives it high but also lists it in _AEI with
-+ 		 * an empty handler. Requesting it as an input turns the camera
-+ 		 * off, so it never enumerates.
-+ 		 * Found in BIOS V1.14
-+ 		 */
-+ 		.matches =3D {
-+ 			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+ 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Acer Nitro V 16S AI"),
-+ 		},
-+ 		.driver_data =3D &(struct acpi_gpiolib_dmi_quirk) {
-+ 			.ignore_interrupt =3D "AMDI0030:00@11",
-+ 		},
-+ 	},
-  	{
-  		/*
-  		 * Wakeup only works when keyboard backlight is turned off
+diff --cc kernel/bpf/token.c
+index da915a4f972b1,19660ef95ddbd..0000000000000
+--- a/kernel/bpf/token.c
++++ b/kernel/bpf/token.c
+@@@ -169,8 -169,11 +169,11 @@@ int bpf_token_create(union bpf_attr *at
+  	FD_PREPARE(fdf, O_CLOEXEC,
+  		   alloc_file_pseudo(inode, path.mnt, BPF_TOKEN_INODE_NAME,
+  				     O_RDWR, &bpf_token_fops));
+- 	if (fdf->fd < 0)
+ -	if (fdf.err) {
+++	if (fdf->fd < 0) {
++ 		/* no file took over the inode reference */
++ 		iput(inode);
+ -		return fdf.err;
+ +		return fdf->fd;
++ 	}
+ =20
+  	token =3D kzalloc_obj(*token, GFP_USER);
+  	if (!token)
 
---MrbHReloBJOPgGpQ
+--UDGqM2jls/p2DpRp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatYXeQAKCRAv73Ows9A4
-iUM6AP9kleCTjVpXO8iwUCmyIBKqTkzyKcBjaBPyW+6s0dppqQD/QfVkZ9iTKngZ
-PNobnzGBxPK4Rrk91W5gp3rOLBvewQY=
-=Y5gT
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatZA/gAKCRAv73Ows9A4
+iWCvAPkB6ZbL6E1j7g5FYtyC+2t7fVO6dIZrRPranvAHwPucCAEA49FlEn4YlBCE
+t9E6OGS0+1cKXqy1ACJY7o9t+222mw8=
+=aX1v
 -----END PGP SIGNATURE-----
 
---MrbHReloBJOPgGpQ--
+--UDGqM2jls/p2DpRp--
