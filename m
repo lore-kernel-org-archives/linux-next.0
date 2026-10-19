@@ -1,52 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792435145;
-	b=aJK5XhIyWhYgfi7eJBol6p8ZducluINu6Omxbke750n2U5wIp41T/dxKwWfMJZQxmar9
-	 AABLJtMF9BEkWdFBlH70E3Yfc7m6d8ZtNzU/zKetFbfrZLSv1y3WLY5DrnPgDjlm0N/O7
-	 2D2ZF5Ao/tDpIxSjIa35KDYdr7XSSZjmI47+XnikhQYPE8w2CdJ6Qj7HeIw4xS6uMhX5D
-	 29hdyDXgwRLJQcLYWd+EEUiAE4Wa3x9tunmhg3MgPAqOPcas5JVxnvGGSXMcYUqP9Ps2c
-	 wOUDjnR8z6Fw2u/XsqhzmLiJYwW5dJ41rL4g5CSfKFvS0tnjyh0nKNRpsxhSjhDOQ9g==
+	t=1792436926;
+	b=PeTf9H9m5S9Zcc2Ap+9uXeVIODjKbYpbwny/f7UiFpx3xVhp6EfqL7th/fz3Fmrs2/L+
+	 geHHCN9XtLk9SgWlPKhZ7zmkPoUItf8OpouwOac4LjLNmDNiI5b4PumIOAVHKJGQaybu1
+	 CqlseZvHI8ksUoS4u2HBdOf7/kb8Y0grshdub5tDyoKTWDlGVEQTyVnNHau1D8ZyEzjta
+	 ttLWCfik9iOarid/ACzGuj8vL76sCg7kqGPhK4SrnwDAh9Nv0sHavsUS9E2I4qD/L5hsI
+	 L1x2KSLOdGKpoeW3kutU8fHxTQ2sL6uA3fi6mDV9udzywZqjZDvnDz/BK+gpjnNghcA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792435145;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792436926;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=Lz1d74LbmqlytTFMOsdWOIGjYLWrudeYA5nKRa4iYXs=;
-	b=ma3H6BZjfCQVGu28NvenWH1mg15mfeSMxMPQlG7lsTMoRNppKHtOGp3OScXWrc4wYDeg
-	 2ULTiV9kv1cKxbA7V2SA2R+RUC0n0LegJaWHJqJMgKUBHlu2vLtUta9mcp0SADeSaSk4B
-	 7mktDnuMx0WJkA7Nx1DRhyCbOmywewp7rYD4cxazJ/lStXv1Vl0yGVvbMkVjCtyb2L0BI
-	 uhrnQRdcFnDz0/9GdVMaqGezJArAfjXKsuoYl8bJePH321dmK7fC5uViGiEKvxq7lQ3c1
-	 dQmZZ0nMJke5Jzpe/uYFfbq7e4nuu5R31O0EKmYXTwdDB1G8mtzPv4Fpy1MG5VCvzdA==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=y7may8bEy+aaFtVpETlHcyaiUosd9joW4BXuC+gQJMc=;
+	b=KPs8neb/O7DXBJnAdUzyHgV6mYmPO6dM5iLjHJtpIvKMS3Xbva9AF6hmHxY/56ZumqX+
+	 WAQzmIjhkgEnE4rsKqDan64n/C+96/7CyiQQAK6MXZWDbEL/prHbWN7rJfyQeXzlLpx6N
+	 uTMLf8mCcXj/i6Rq8YaMRaTilK56V4meIeX5IGbU5xk+sqStDh2f5HwJ9iJjnfo1JRTMw
+	 8VriTsajuEBU+N8cKlTVMzLdOsuL8To5lyXZOP1FcS+NlF0+u0H33wCS9Yb+iNQOSQsVX
+	 AAGVvFyA0YFT08A9mcOeF/Md6SI2vTqh0L7Z6oBDqoWpr7neOGe4j3chkwjQq5OF0xA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MqAy+dKb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="fS0dp0x/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5138606A331;
-	Mon, 19 Oct 2026 18:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE8A606A31B;
+	Mon, 19 Oct 2026 19:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MqAy+dKb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98AC01F000C4;
-	Mon, 19 Oct 2026 18:39:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fS0dp0x/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE5F1F000C4;
+	Mon, 19 Oct 2026 19:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792435144;
-	bh=Lz1d74LbmqlytTFMOsdWOIGjYLWrudeYA5nKRa4iYXs=;
-	h=Date:From:To:Cc:Subject;
-	b=MqAy+dKb5GTeOIldfOAz8xbCfDA1xm2oVwFzOWckUisCYwL0ZLK0+JJKe9ztCOLFR
-	 S6yrKQnnil4c0ZmFHofTMF82wVlyzLuoWD3KZQzjc+pi/mX+w51tt8hQKgHFTp0Vz6
-	 gRVBqEvAXNf8aWfkjD+OKYzyRXjcYB5WGzHviZHp7qvmv3EOB6VqajzdOtIshpq37q
-	 XysGUytRXUOumlsKK4si8Lt3tlDW3B0RtY4vUkFhdQlEUMhvb4B1T3g32H9qckFLA5
-	 hXPOBZLMfBsAs5K06dcJO9R5xyVWiNqcWYFs/mpeOmb4nQE8ZW2PAaAm56D+UTCVTp
-	 8n2igf8k92suw==
+	s=k20260515; t=1792436925;
+	bh=y7may8bEy+aaFtVpETlHcyaiUosd9joW4BXuC+gQJMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=fS0dp0x/OM4Opzlfkkst1/GOuuwSN+QHCfpFe/i9WxSqGy8RezR1cQpX8C2H0MB7O
+	 JVk0r7REeCJyOzcq/rPj2kjOt73ziQDgcHoYArSEIqWu+EYn7djzL3SxiFAEirmczo
+	 tjT9l/rNPtzuIQjaJjLN8vJz0BX/DNUSrn0dt2+J71S1r08kXqZys7m4S7Ayu67eIP
+	 h2zzJPE01RvjBbi9XpnI+mBRe8/rZD1k5WUKRafZn4lE08BKOZWocaLFeV4Z/cYeBT
+	 jtr3E1cAxkLC2XLH4Kq86rt9eOwM5/apYF6FmsHeZmutNsvUsrtsGUGQm/RLEj9bgM
+	 LGwDzeheS4fAw==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 149F21AC57D0; Mon, 19 Oct 2026 19:38:44 +0100 (BST)
-Date: Mon, 19 Oct 2026 19:38:44 +0100
+	id D51AE1AC57D0; Mon, 19 Oct 2026 20:08:17 +0100 (BST)
+Date: Mon, 19 Oct 2026 20:08:17 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Oct 19
-Message-ID: <atZjtBkk6vf08rkV@sirena.co.uk>
+To: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: Missing signoff in the drivers-x86 tree
+Message-ID: <atZqoXnT_27rGAn9@sirena.co.uk>
+References: <arUBQuAfW4HJQHik@sirena.org.uk>
+ <4ad00775-b067-452b-9869-29d5b6712f66@sirena.org.uk>
+ <asOdosd0zROmuzu1@sirena.co.uk>
+ <1a363159-02b9-4644-9cc8-38e210d97d5d@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,83 +63,47 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZZNluy6jAGL1/fUH"
+	protocol="application/pgp-signature"; boundary="nf+Kwa6RWyLzcWNb"
 Content-Disposition: inline
+In-Reply-To: <1a363159-02b9-4644-9cc8-38e210d97d5d@sirena.org.uk>
+X-Cookie: If in doubt, mumble.
 
 
---ZZNluy6jAGL1/fUH
+--nf+Kwa6RWyLzcWNb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Oct 12, 2026 at 08:03:17PM +0100, Mark Brown wrote:
+> On Mon, Oct 05, 2026 at 02:52:50PM +0200, Mark Brown wrote:
+> > On Mon, Sep 28, 2026 at 03:37:30PM +0100, Mark Brown wrote:
+> > > On Thu, Sep 24, 2026 at 11:53:54AM +0100, Mark Brown wrote:
+> > > > Commits
+> > > >=20
+> > > >   4dabecbb202e8 ("platform/x86: hp-wmi: add Omen Transcend 14 8C58 =
+support")
+> > > >   9af7fddef448d ("platform/x86: asus-wmi: suppress -ENODEV warning =
+in fan_curve_get_factory_default()")
+> > > >=20
+> > > > are missing a Signed-off-by from their authors
+> > >=20
+> > > This issue is still present today.
+> >=20
+> > And today.
+>=20
+> And today - should Ilpo be added to the list of contacts for this tree?
 
-Changes since 20261016:
+And today.
 
-The gpio-intel-fixes tree acquired a conflict with the gpio-brgl-fixes tree.
-
-The hid tree lost it's build failure.
-
-The bpf-next tree acquired a conflict with the vfs-brauner tree.
-
-The drm tree acquired a conflict with the drm-misc-fixes tree.
-
-The regmap tree acquired a conflict with the regmap-fixes tree.
-
-The firewire tree acquired a conflict with the origin tree.
-
-The spi tree acquired a conflict with the origin tree.
-
-The kvm-arm tree acquired a conflict with the kvm tree.
-
-The kvm-arm tree acquired a conflict with the kvm-arm-fixes tree.
-
-The sched-ext tree acquired multiple conflicts with the origin tree.
-
-The landlock tree acquired a conflict with the origin tree.
-
-Non-merge commits (relative to Linus' tree): 16246
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 434 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---ZZNluy6jAGL1/fUH
+--nf+Kwa6RWyLzcWNb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatZjogAKCRAv73Ows9A4
-iRN9AQCX112NswCFh4cxvsQpwIwk1/qV/SF0fWzyolgw97rQLQD+LLodWloIe3In
-mHTzJqgy99xPBacgl3wqtv6GPMRjfg0=
-=RS5C
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatZqoQAKCRAv73Ows9A4
+iVjcAQDZUVy4LAWFb6mkGfvPIIAI2mrV1h213ZcPQe3fj05WfwEApd5r7WLCVJyi
+8PD+bbAPF9w9+je4VLBfZN2pLzUzdAw=
+=DrW9
 -----END PGP SIGNATURE-----
 
---ZZNluy6jAGL1/fUH--
+--nf+Kwa6RWyLzcWNb--
