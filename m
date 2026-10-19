@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792426255;
-	b=svA7uW0xldoxgBCDRfCO6kdWX5s6Odrt+/RhKRNuj0zC7CuDYzXdI/lcDR0QVDY9W7Gv
-	 KwnZg2Pl2FHqOpB+bmHQlkvNikMaH59ij+rz29ooCKDgxA9s96PCCc9Hla8dd0BWt2Sta
-	 A+4+/3DABTuP4ktuK2sBE5iw9dQD1ZLa/HPPoX8zEbRPV50Uom/xNbCEd+Uj1MB2+fVgK
-	 Yx3PrDHRfWHsgIzXYO51dYBqnlXlGzPG5jg1P2bjYK+nVf6DsIsm8zrIZXd8gf1UBg5E4
-	 Rm3LC+3U/kOM7yxjRF156gzObwAg6LCL7FS1b+Q1ytx4d9kxQdtlb7fgrjERd/qfqzw==
+	t=1792426263;
+	b=gWdoiynXAmwEFIs+BENtygLyK/Hix+6uqYB7VUtHRtOpQVovL0qDfu0a5GEid7oJHzPS
+	 i/uhZHqlg3DvPdyTV7tJqjMLgVvWYzsKQexA2bihRU+p476lyNlOs8eqed7vcUD0yaiJX
+	 vh85FmPLPshLrk8tkUCPq0YA9Idg3T4LV+P/d2HPix7uwOH0XtVDCJWOrOIR4IBDS8FE8
+	 tSpn7ZVXvQFJ/1NWgE8W+yz9h6akGgXjty92SmaWEdmFKRLiv97O3aM3Ylc6bLavf3QR3
+	 p3C4a6cl54vdqssTk/c7Eyy4cpgq9LTE5nprDTWW8pvH7xQB4UT1hA6btB1msz+J9CA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792426255;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792426263;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=FrVyBpKml7ICZK9pmoDCMc+mYjD9FqgZjUvQJO4bHoA=;
-	b=JzSdqTyfYR22UchUEzl94orL9ll2IyytfTsLLc2AGTCjbEBDJ4Zg/rcmGqvjW42WDktU
-	 0r0LcSm9+tMQk8JeEn/8G3LP+fwfJJeAy5LePRHMcIgIfVpp+uQ425O9O6W6Le3iQMKa/
-	 hh4cm4qLOY+hesu3PE7UBwG6rKjma7Ts+znc0zpi5a18QtBkqUbvMN3cfBpF9wFkWwLj3
-	 BhelCAmcFdzOM0uCB/zHsHg4HvS9fugHe/2q4gwUon/mg0vnSY9FdXFw9ab185GZ0q5sy
-	 1q8hWTRc8mgJD/SaoGryeXkz0LMZG3UwR80cIUwehnvyuTz8wVm/RvaYvhZSUZbpSBA==
+	bh=JXKMpeb3N1wFbPxiObmKorjUKb5caSt+/0HKW+nbCDA=;
+	b=o7jyDxlUjPXyDkDGiXdnQS1ZIfGm7dEXaMPEi4K3X60cYkF4h6CMSxga7IhNj7ZtQ1bk
+	 4xhMB+jEAkKyOX7tOKYsvSYj4BG73SorVT2b+epiDUFZRSK7q6OFMaq4K5+y7Mcc9su2Z
+	 gWnJBzkCztki6sc3lveDU2Jbr5UiayAY79kIteaWJ1b0sRv7DzhebkSsHwaU3kpyhoUX5
+	 GJca1g7uyGBPN9UonGWIc5gzxpirJvJqnuSc62xN7kYhQENz7fzcaYlHUqi3NmsIuC1Kp
+	 skl5fK5vN0G8zm6mv8ZHIOPQeoeGg29W3aWpeyU2YkCzma9cmVzLzOaC5QQdE3ubLQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dCIdDEQC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IdDjHDTv;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DAB606C160;
-	Mon, 19 Oct 2026 16:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8B7606C933;
+	Mon, 19 Oct 2026 16:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dCIdDEQC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628BC1F000C4;
-	Mon, 19 Oct 2026 16:10:54 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IdDjHDTv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27EB91F000C4;
+	Mon, 19 Oct 2026 16:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792426254;
-	bh=FrVyBpKml7ICZK9pmoDCMc+mYjD9FqgZjUvQJO4bHoA=;
+	s=k20260515; t=1792426262;
+	bh=JXKMpeb3N1wFbPxiObmKorjUKb5caSt+/0HKW+nbCDA=;
 	h=Date:From:To:Cc:Subject;
-	b=dCIdDEQCa/UNn5mSsszII5Z+jfntRwdZkJiZ/VG1/AIBNYabIt9p0zCeslei5Mcyr
-	 Knjslxuwa6YdouB512f+TBhBaJbZVXRlcOyffqKWf26/VJ0aRwaNdMuUDkzbmFOn3x
-	 us5u9Q5NeVvKGgzmdvQXPfkf22IUJsiuqcUa6HkdbN7VACzz/dMZUyjfYH4EG+R3Qz
-	 0/iJBOg8iiRpfp4cnXJ64PJhZAD7/JIAhPBS1e6pkgvaiOhqLvYAWfFo6jsMwonR/u
-	 lzEahWTdJ/PQrRuivLjW51eOg47YU3VKyNA/Ls2Z/nCu5zvC6xGxMpW+cHu5OFROkw
-	 YhUJAZRgACbIw==
+	b=IdDjHDTvINdNvvH6dto+d4iScISIYGBbDCoqHh/s/zq5yICkm5JsgdLrZiBnZtxUn
+	 ps3J1S5QqCSlnC+aEmaaWJDfqV9FdJpIIGOb1H4Bu99zR7pTosLLxVGFv0MJJChKNY
+	 gt5Au73tCykPO+2POS9PZEhIpksThQZ+O0ITYmTsEjElDCZJoBZnAw+F1ioI0+qKY0
+	 matllppSjqbNz5EpXfteuTxvHkMGrePy60CE4W+wgiyl3BUj2BYgGHeq8oPhtuEub6
+	 FBRbk/66sVfp3XOR3riruzKrl+jFB4St49FtKYBYhe5lSmdXMyaEs3NrLWxGUMpiL/
+	 THMWyP5aiXphA==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 370D01AC57D0; Mon, 19 Oct 2026 17:10:52 +0100 (BST)
-Date: Mon, 19 Oct 2026 17:10:52 +0100
+	id DF7BF1AC57D0; Mon, 19 Oct 2026 17:10:59 +0100 (BST)
+Date: Mon, 19 Oct 2026 17:10:59 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc: Frank Li <Frank.Li@nxp.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Michael Reeves <michael.reeves077@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: linux-next: manual merge of the regmap tree with the regmap-fixes
- tree
-Message-ID: <atZBDGieqCrqeE2Y@sirena.co.uk>
+	Richard Leitner <richard.leitner@linux.dev>
+Subject: linux-next: manual merge of the spi tree with the origin tree
+Message-ID: <atZBEx63Bi2iNAEt@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,34 +60,32 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xjfHqFNZ0TkMgBEY"
+	protocol="application/pgp-signature"; boundary="eiodujqucHBSt2AJ"
 Content-Disposition: inline
 
 
---xjfHqFNZ0TkMgBEY
+--eiodujqucHBSt2AJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the regmap tree got conflicts in:
+Today's linux-next merge of the spi tree got a conflict in:
 
-  drivers/base/regmap/regcache.c
-  drivers/base/regmap/regmap-debugfs.c
+  drivers/spi/spi-imx.c
 
-between commits:
+between commit:
 
-  834035934cef9 ("regmap: Remove debugfs before cache teardown")
-  abff0a48b110f ("regmap: Drop map lock during cache init and exit")
+  59eb22641f0c5 ("spi: imx: fix slab corruption from undersized DMA bounce =
+buffers")
 
-=66rom the regmap-fixes tree and commits:
+=66rom the origin tree and commit:
 
-  81556a7aec225 ("regcache: extract locked helpers to replace open-coded lo=
-ck/unlock pairs")
-  a93de1d65c6b5 ("regmap: debugfs: Use guard to simplify code")
+  853de617c4a62 ("spi: use dmaengine_get_dma_device() instead of chan->devi=
+ce->dev")
 
-=66rom the regmap tree (I'll redo these before sending the pull to Linus).
+=66rom the spi tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -97,59 +94,35 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/base/regmap/regcache.c
-index b137ded7fdd44,3b1c2f28d5852..0000000000000
---- a/drivers/base/regmap/regcache.c
-+++ b/drivers/base/regmap/regcache.c
-@@@ -273,14 -291,10 +298,13 @@@ void regcache_exit(struct regmap *map
-  	BUG_ON(!map->cache_ops);
+diff --cc drivers/spi/spi-imx.c
+index 3851c50dbe314,868f963e61371..0000000000000
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@@ -1921,9 -1919,8 +1921,9 @@@ static int spi_imx_dma_package_transfer
+  		return ret;
  =20
-  	regcache_hw_exit(map);
--=20
- -	regcache_locked_exit(map);
- +	if (map->cache_ops->exit) {
-- 		dev_dbg(map->dev, "Destroying %s cache\n",
-- 			map->cache_ops->name);
-++		dev_dbg(map->dev, "Destroying %s cache\n", map->cache_ops->name);
- +		map->cache_ops->exit(map);
- +	}
- =20
-  	kfree(map->reg_defaults);
-+ 	map->reg_defaults =3D NULL;
-  }
- =20
-  /**
-diff --cc drivers/base/regmap/regmap-debugfs.c
-index 9a09df2ba8479,b62a5dce027b4..0000000000000
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@@ -662,12 -641,12 +641,13 @@@ void regmap_debugfs_init(struct regmap=20
- =20
-  void regmap_debugfs_exit(struct regmap *map)
-  {
-+ 	struct regmap_debugfs_node *node, *tmp;
-+=20
-  	if (map->debugfs) {
-  		debugfs_remove_recursive(map->debugfs);
- +		map->debugfs =3D NULL;
-- 		mutex_lock(&map->cache_lock);
-- 		regmap_debugfs_free_dump_cache(map);
-- 		mutex_unlock(&map->cache_lock);
-+ 		scoped_guard(mutex, &map->cache_lock)
-+ 			regmap_debugfs_free_dump_cache(map);
-  		if (map->debugfs_dummy_id >=3D 0) {
-  			ida_free(&dummy_ida, map->debugfs_dummy_id);
-  			map->debugfs_dummy_id =3D -1;
+  	/* Trim the DMA RX buffer and copy the actual data to rx_buf */
+- 	dma_sync_single_for_cpu(controller->dma_rx->device->dev, dma_data->dma_r=
+x_addr,
++ 	dma_sync_single_for_cpu(dmaengine_get_dma_device(controller->dma_rx), dm=
+a_data->dma_rx_addr,
+ -				dma_data->dma_len, DMA_FROM_DEVICE);
+ +				DMA_CACHE_ALIGNED_LEN(dma_data->dma_len),
+ +				DMA_FROM_DEVICE);
+  	spi_imx_dma_rx_data_handle(spi_imx, dma_data, transfer->rx_buf + spi_imx=
+->rx_offset,
+  				   word_delay);
+  	spi_imx->rx_offset +=3D dma_data->data_len;
 
---xjfHqFNZ0TkMgBEY
+--eiodujqucHBSt2AJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatZBDAAKCRAv73Ows9A4
-iQ9BAP0cGccuKxnBt/JRr+NKfXfGXmkwB1X/jNDU5RUGWjWlDQD+K2BqIl09Oyxd
-9/hFf1IBWuHH3wCHHYBIoYtndeGMfwM=
-=vaxh
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatZBEwAKCRAv73Ows9A4
+iR96AP9ETX2qjNW5BNj8OhOo6E5GpiUw2J31vplbel3NjJYriAD/Ul9/t8oqjx8Y
+rSxpsdK4qLsPZ8Ne7n5B6zJ5oOAAVQI=
+=SXEi
 -----END PGP SIGNATURE-----
 
---xjfHqFNZ0TkMgBEY--
+--eiodujqucHBSt2AJ--
