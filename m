@@ -1,62 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.168
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792506010;
-	b=Mf+xEBjC/aDKl0zxZ9G0EE9Wvb3Ds8AXA+ELQq7ZHaos1CzOM2jLiChQe78BB2lC+0zr
-	 VeFEUWkSiM10bVsr4M8GBqQiZlvTh6hqgIyzozNWX1bOXHuSf0noi5Q3cneLVhsnrZV7C
-	 zMDkAPfnSaVrgI3JrGDCh2oHJ12wIcoE3GSUVMFghdP3/6ywLJOhNDqjvOFMEmKOvZ3iy
-	 6/6lhiuowmkOD8DbZebYHz6NeaLTd29Hd/X4Usx01kz3IdMOmj+Hqa9kSq8bKxHhC1Ddj
-	 x6VeevpZnqeV5es0XObFZ/dXfkVbXv0qM74LAiMT9K1wxTkLZI2cCAzXwswuUnJXj2w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792506010;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 X-Infomaniak-Routing;
-	bh=MmtTgqf0itXurfWR15iP0g1i4zaJ4RksSWrfdHa2AsY=;
-	b=eh0wo84Rx/H4lSSwj4N9Tf4VoWBq0oOfpDEAV89LysunZiqdpLr0Ay/SdUR0q2+eqbe9
-	 JtSI0BPgcV8/RpHTQ4OFy6bCF6HfXxFdUhxFpES4OuFgpNEm08LWrmPtlExYFYksDxC9e
-	 DGqDqT14XnZr3cjxFINEUa5CytYhhaQj03sq74wdrrtGolyq7G0EMPB/azpMJEOLeBed0
-	 Is8sbx0M5+RPOj6vPntPGXnuztsHaw2iygzQLhWYGbv8RhxDJxwSUBY1XrSni/qefHPI1
-	 ZXTxIbIXha+wTWrkSnFFOl+DZ6CD1fHnqA2SBRReE8U6YXwLdo+9H2Yzl+bUNpRM3qg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=pm2MmCyU;
-	arc=none smtp.remote-ip=84.16.66.168
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.172
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792508866;
+	b=e4vzcv+gOFQx8+Xds4taqlU8bnlY1iaUE3jpaMazLxPmnAvJlINDHR7lBZGtfETjTkR/
+	 jSDbvzu/nurISbmJpJScp0V11ZvS9qR42r/PZgu8x1OM1CTYbx77jjTJOp49HSK/9jGJn
+	 6Z7cYCNEMLK3LDWv5Y5JFVHh+JZDK8n5XIZRmS2C8x2iGHfwk94vEtOBkWizrj9x1mYoV
+	 hXiJMTDdZsJBY3895kGqJoxLVepmh7iizPCf/ompdy+TofbxtHjpRvHFI6fxe/pU1IEXb
+	 paxcwHzNdjZY6CNWxAUTrs/C0/qN8NIwntEg7laREwNtjDBftOPDHgCSECWPRd6PU/Q==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792508866;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=XwwHKZ7ro+tqYYscVQ/EDll6Ci0suGXNa6eCeqEdl0Y=;
+	b=2tOt2ECWMzdPb4umZvYbBjyJDUAjIc10F3fFSzbMPG5gUlCEIILQJ9VBeMVS0DCeTqGl
+	 n41HG2s+N5KivmlqmOxFrQHtfm8SYAZuTnDde8gEVPK+PTHgDSFHasEYNFW/kF9dQWnP9
+	 +oHwGI6snzT9cllJ8wV55KjUAdpUU0jbhCD5IReCBdjE01jnbSvO35SAN/ZXXEKTuLZqB
+	 pfSVh3TH6LxIIZ8JqxeczxLQugYnUeEBmvPfr/lSsR0cnSL6voB2mZg6uqL6xYcRVHkkn
+	 SQzwAKaEFgQaWqb7QvAMM3kHdH0HuZ85oEoxpLKJP08G1oG2yKdrIZBZS1oCsFgc5DA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=szeredi.hu;
+	spf=pass smtp.mailfrom=szeredi.hu;
+	dkim=pass header.d=szeredi.hu header.i=@szeredi.hu header.a=rsa-sha256 header.s=google header.b=QMCd6zX+;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.172
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A56B606AA37
-	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 14:20:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6A56B606AA37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C76F606A333
+	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 15:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C76F606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=pm2MmCyU
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8F1D5QRwz12nT;
-	Tue, 20 Oct 2026 16:20:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1792506000;
-	bh=MmtTgqf0itXurfWR15iP0g1i4zaJ4RksSWrfdHa2AsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pm2MmCyU8YXiPamKx0lObCB9pvTVIlEXncTSl5f23Ff2IQe8yAtHVrBWS0ez9x7TE
-	 BinDUl/slMZxi7jYkDul31p9lT1xkGAAcQuhReVSO7TabHY0O351oNdroaYEDSLATX
-	 nLwPRZuXF3GcX3QZ7AjiHHvDq+N5hC1ZGc9VjIxI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8F1D0BrLzLwb;
-	Tue, 20 Oct 2026 16:19:59 +0200 (CEST)
-Date: Tue, 20 Oct 2026 16:19:58 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: linux-next: manual merge of the landlock tree with the security
- tree
-Message-ID: <20261020.oa9oezae6aX6@digikod.net>
-References: <atdvaWI6T-HXhtix@sirena.co.uk>
- <20261020.eethaeluo6eK@digikod.net>
+	dkim=pass (1024-bit key, unprotected) header.d=szeredi.hu header.i=@szeredi.hu header.a=rsa-sha256 header.s=google header.b=QMCd6zX+
+Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-3550c917fd3so3994849eec.0
+        for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 08:07:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792508864; cv=none;
+        d=google.com; s=arc-20260327;
+        b=DORPYlAuQ73lfR9qeVoOzO7PLDsnpw1zpKl++DgR3859wR2CuQkiwD402v2acSzceH
+         gO35L69sdsyRjrMbHIGLhF7zFVd3hTJCcOk+JgaM3OFiqx8Kt44dcjHssf8IulJPxkti
+         tSofoTH40AJdIf2OUm9jXq8/hbfJcdcsIrV/v1fN05R8I9Ie5zMP53yds89V/l+aNoR9
+         1E7h6oXg72enEnT9TGIr71UmLGJgFUHt/LPMgrP/IYNkY2n5yba3Ngwh8C5DY8+6GI2O
+         JbEKZQ3TJm+b4i8ThykVgbIsT+0k4Lj3/Z0QXp7Q9cRqFgorUpx99PvsRsYeDDkXOsV+
+         oVdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=XwwHKZ7ro+tqYYscVQ/EDll6Ci0suGXNa6eCeqEdl0Y=;
+        fh=FRQwcwmZaEs4W4k4TdhpyCsdYtYTuC0a78iTP5y667o=;
+        b=iWpVgd02c4Eq9mg7N6MIRP0Zhgw2jJh4Iq0yVnSaTPmf46P8i6MzzcbN92Qin5jMHx
+         bsjk1TRbxbteDkshO95/eNR4yjo5OR/wuBqQBv5h1nFzLIu4qkxMCGu0u2MrjpyxzrbI
+         09U/3xwITVRo8QMHqBcjpKznJcHiHtoJgvcr0SH7PM+1GRSTyYUOkz9nf6xUwUwX+14u
+         ef2osMoPw3WtDUUgUxXABPjh+AtWFlGjaQkd6erzq0RroWhcteo7wQj4nsjmTUAeppPh
+         wCC672p/pjFRXmM0pNsymp7oIUNwpS8ZL6FIbQwqnyoMdgekWb13i3Xglp/vBF1WtW3r
+         v2wQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1792508864; x=1793113664; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XwwHKZ7ro+tqYYscVQ/EDll6Ci0suGXNa6eCeqEdl0Y=;
+        b=QMCd6zX+rxmZMkYXPSupJ+X7sgMAgrEbALc/M7fVNnob0g4l6rDArk29CwPOZW75rK
+         2Rfd9r6BNPcZoEchiU2ls3EsVQmwQAcavDdM1WqgS2I+33Zt3jJLiklKexv8glILmrCM
+         QQCNY7geCZsAH14op3RMab9OYk+5DbO2GX1yU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792508864; x=1793113664;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=XwwHKZ7ro+tqYYscVQ/EDll6Ci0suGXNa6eCeqEdl0Y=;
+        b=PXYY4xDho0ko8JAQ1DhKeXj4KoacPFepgHypWqfpoBBeBlEdfwPlJIp/iw2b7WOCur
+         KAyrMsjhk3L9nE8O4w4ndCzswotw6MVCDddb7TmRxBg7K/ZakZqES/IBI0K5/EZlcTU4
+         /EsrntXOkP2UKckfINgc8W7OnsFHhbGWHduW32nYibc0TmaKtPMv4jRyJ6ZfgG/FSS2o
+         OSp2Ar4TaDDhRfmPnIK/W5gETY/dYRvSJZYf2zfD3xpxpGTlsP0r7g4uYXrz16jeanAE
+         5q0QAZfkJRtW8KmSYT+XqRl+A/+FxjEvu094aFEqXE3gsxSjcBCyVgAAz4wBFAtS/P3O
+         eiSA==
+X-Forwarded-Encrypted: i=1; AKwUvBy8HqaGT56mLXVV+M3LwdAHAF3d1NX9vVewN5xL0Mwsh1mbJFPyeN+J1gRPSkufsKkoKOFGnDLBLE7V@vger.kernel.org
+X-Gm-Message-State: AFq9FYK4CiEuRt6+qfn4cqbG1kVT3tysJjmRZXDOhgkQeS9QAPX8/ekO
+	Yi6V3kF9Dadd83eAHSrYCq9NBeAw9zms8QI0DDTmrVELQchyP5PGka3E2/ivDtkxEZAxd9d6NNo
+	GRCymyAtF9/4PY6NtP+l5ZT4Fr555rdOO18t41waOVQ==
+X-Gm-Gg: AYBFou1aTXsX8feEVMPrMflw8aZ+Ya4mhYLI2H0nA45LV3UhqPAwM6HbfS1u/E2QvZc
+	A8HdihqxhMYpWZB94c/AIlxijMolfk1lSR5U5BxrJ9KZV6eKusmU0WUB8EAZPlPeDwti4z5vk6J
+	bDoSU6bWBHn7g7QnJLb1CRn5WyS4XDRIXAs3ar0Q1kG2m3es4WktNolGBYbygxRgTAQY5TRGS5C
+	zpsC8hKhD34lBPeuj8vHHp0RGGzgiuMD5NRnlqICd4WPmlwfRJxyP7j+OtHsSAnkhNvaNzdhbc4
+	DxWXNuyrlmkaHq39ypnRbn4Utr3OcAhFpXoUGIkMAsiQ0CVnmoy6PQa5COfr2Hn7S3q0ZIv8d5a
+	2Eo+vgDbxfqYQ
+X-Received: by 2002:a05:7300:80c6:b0:328:7033:9b8c with SMTP id
+ 5a478bee46e88-361a12718d4mr21242527eec.6.1792508864209; Tue, 20 Oct 2026
+ 08:07:44 -0700 (PDT)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -66,73 +100,28 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261020.eethaeluo6eK@digikod.net>
-X-Infomaniak-Routing: alpha
+References: <atYKkjN0WgEhpACL@sirena.co.uk> <atZq0WW6UqnzbVx2@sirena.co.uk>
+In-Reply-To: <atZq0WW6UqnzbVx2@sirena.co.uk>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 20 Oct 2026 17:07:19 +0200
+X-Gm-Features: AclHuK9-35ga97_nmD-ywPr1hnQmMO5FBjMOCS93Gv0o2oR3ZoUlqwq2_3NPfD4
+Message-ID: <CAJfpegvnAXoEotjBFn_KXRLmW6eukPo78HpbN7fL+2uG_iB06w@mail.gmail.com>
+Subject: Re: Missing signoff in the fuse tree
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 20, 2026 at 04:14:01PM +0200, Mickaël Salaün wrote:
-> On Tue, Oct 20, 2026 at 02:40:57PM +0100, Mark Brown wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the landlock tree got a conflict in:
-> > 
-> >   include/linux/ns/ns_common_types.h
-> > 
-> > between commit:
-> > 
-> >   436485132d236 ("Automated merge of 'lsm/dev' into 'stable-7.4'")
-> 
-> I cannot find this commit, is it a new one from linux-next?
+On Mon, 19 Oct 2026 at 21:09, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Mon, Oct 19, 2026 at 01:18:26PM +0100, Mark Brown wrote:
+> > Commit
+> >
+> >   5fda61d42e762 ("dax: add fsdev_dax_from_file()")
+> >
+> > is missing a Signed-off-by from its author
+>
+> This is still present today.
 
-Ok, it's a new commit from Paul, part of his pull request.  I guess I'll
-re-create my merge commit...
+Fixed now.  Thanks.
 
-> 
-> I had to create a merge commit because the LSM next branch is too old,
-> so I followed the previous merge resolution from linux-next, but it
-> looks like today's merge commit is different than the previous ones.
-> 
-> > 
-> > from the security tree and commit:
-> > 
-> >   0cbc5a0d65b05 ("Merge branch 'lsm/dev' into master")
-> > 
-> > from the landlock tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > diff --combined include/linux/ns/ns_common_types.h
-> > index 47a5cfe2326a3,fddc62be3b626..0000000000000
-> > --- a/include/linux/ns/ns_common_types.h
-> > +++ b/include/linux/ns/ns_common_types.h
-> > @@@ -116,11 -116,11 +116,11 @@@ struct ns_common 
-> >   	struct dentry *stashed;
-> >   	const struct proc_ns_operations *ops;
-> >   	unsigned int inum;
-> >  -	struct ns_tree;
-> >  -	struct rcu_head ns_rcu;
-> >   #ifdef CONFIG_SECURITY
-> >   	void *ns_security;
-> >   #endif
-> >  +	struct ns_tree;
-> >  +	struct rcu_head ns_rcu;
-> 
-> The previous merge (from yesterday and before [1]) was moving the
-> ns_security at the end of the struct but this new merge commit moves it
-> before the ns_tree field.  Do you know why?
-> 
-> [1] b6926a7ca6e5 ("Merge branch 'next' of
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git")
-> 
-> >   };
-> >   
-> >   #define to_ns_common(__ns)                                    \
-> 
-> 
+Miklos
