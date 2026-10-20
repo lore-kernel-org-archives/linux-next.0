@@ -1,56 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.157.188.8
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792499257;
-	b=hVr1bdGnXP0fyfxdqtgTbrVRkrHUpLWlNbFqidkzQ/qKhoIsIZJsO/T7+PPP8Gzd81NY
-	 B4xU9OLfms9wjYPG2F+cfHv6h7+2vgKS24HTNtu2ao+g/CMShAaW1l6LEquuwDxzeb+Jl
-	 MRbQtlB/PFmXZhW64B5EaYz8/cOHJTSX57y2AUlprhbVoG12rU0eaIkdHAKafFuDuppSR
-	 ZfUNzyiFPUOB1/KhreuffBtQqhMEO9mHFIYMAkjA0w0YrgF45Hktij5Rc3wHUobcAiFfy
-	 g2WrZJa3/yKBvUahyDiOYDv+tFUaDaC6jw/ZeddCO+V0LW4YdAn214Wo55OR7K2fxvg==
+	t=1792499343;
+	b=19lYtSRZUhUmshFYO2sQIKmm+xBRfpl/lE9VPlyEAEUBk2iVW+KfNk+UuI8tHpY6K58a
+	 FpgVfDWEUB4cP7YFHFjiueq4i8UfyX0l9GVfghbzABJQioSp+oFIFd4tSuBK2laRocdpU
+	 g0ToYSWz2E4I9ZpuuRDW9VRLgtyLNcefjNvj37OwN1HWr4UE3W7rYYMCvt1F03MgpXQ5m
+	 XzxT1kFjfiVdDRl0uqKxqJfYC4CzTgWGZMO30N5cnvMi81yJLuXXcglZp2RodYqYiRJgL
+	 CFSZav3Gh1zt44Hide6ux5/qj88yZLP/LGzml00dtk0u6plIPWw3fhqN2o8tQgYmaIA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792499257;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=L1v052d8qMDLag8+odb7NTz38FPumz84h/F352bNnq8=;
-	b=jT52F4Y/65UYvxPCoQEcBaKndbnnJ7ib117eJvbBw3UmN8ABfg4HPKzDglXymp0SMthN
-	 zgFxFj3avqKe4E1a5/BtPlJQ6lnF6KJDr7bkzfAvqmYtmqsroI42VkCQewoIVJfwpMD5+
-	 dhqlkbVg+XM8djl38pzfbFf5lFoshHv+JzvsgsVnbRbQxIbfZO/LvZ5sXz3LoAgZrNfex
-	 BQo63N8cqym1z+Zn0IfLMcvZYXYgFvm/0qdHx6alnoWF6Td3BTvfD2+o+dfkntLBUubPb
-	 yjYCdDbJYmTykV2R4zvyEh7A9nYCcne32oePqkacAux5cg6VTartDgAvdSk/gXCLp2A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792499343;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Infomaniak-Routing;
+	bh=KPbEAvPl/y/xmk/lT++UYTQF1+NtwaKu78SSBDxxR8w=;
+	b=140TLqRPxo7RCK20g7EailQd9nIHbrwjw3rEeThJ3Pfzw/sNMngljUP1b/JHJ0XNszlc
+	 alhfaIsQeYFY3vV896qSh7bdy9F54Ya1rUiR4dSwHUXj+yS8d7Unf1wokYFQJMclSI/5C
+	 paskNqp9aop3hR2qA9+VOGywBg57iiz7iFMZsxr45zzofWrKmkZ9s84m25KuEBl6D6NSW
+	 UUz3sNls5AXOMOtTf1n6nqbI4AIpjBu7W0paxvCkpNZ3V5zHh9OsRB+1P3Vt1gpDirD4m
+	 b5snxD8bHq+opM/7k2jScsz+eMJfi8DWf4qvT1qEc0/T2zHSCif0A9yBmLhT4vZe71Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ac9X0yiH;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=NAqPDYQy;
+	arc=none smtp.remote-ip=45.157.188.8
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C687E606A320;
-	Tue, 20 Oct 2026 12:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BB3606A323
+	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 12:29:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1BB3606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ac9X0yiH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB801F000C4;
-	Tue, 20 Oct 2026 12:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792499256;
-	bh=L1v052d8qMDLag8+odb7NTz38FPumz84h/F352bNnq8=;
-	h=Date:From:To:Cc:Subject;
-	b=Ac9X0yiHCHzDB0uiusHtrC8VWUPe19x9gFZetkBBwO+XqeRS6ltT2MdkPe+iLyyNF
-	 HUY00HJXOhxKRPefVRxnqfBDcPBPDYFrPx9zX/W/lBnZCgMtbRazvikZEblqyG1ae0
-	 LfZ6xcRJzlXDgM+I9lyVKTa81OWNIRbjmr7tLKXXxC6IuwFRk1Rgl+0lmXhijuqOqh
-	 8NpQRAiZNNggQPdhvz+3jkLCBVBdTn3S85HiWGCAywa3ccBELvslpbpbtSVCz7zzE5
-	 ITmTo1mNKQWd0w2mNN0Ve63at7agsmLWKR9zFbOT3JRTA0HTCQ2jnbTuorjvayB5tu
-	 BWNzA76xa7r3Q==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 46DDC1AC5994; Tue, 20 Oct 2026 13:27:34 +0100 (BST)
-Date: Tue, 20 Oct 2026 13:27:34 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: linux-next: manual merge of the char-misc tree with the rust tree
-Message-ID: <atdeNvRKFuQd2qHz@sirena.co.uk>
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=NAqPDYQy
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8BY12qVRz1QTn;
+	Tue, 20 Oct 2026 14:28:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1792499333;
+	bh=KPbEAvPl/y/xmk/lT++UYTQF1+NtwaKu78SSBDxxR8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NAqPDYQyFiwBn7Ubnq+D76aSFPj7HeI9OsB+/dpqs8Z3h+Vf0OUEsGXq+Kwb8e/Oh
+	 xQ+iPNnuWYvItWz/u1NGng+DrAISbQAVr1tTEe14ExyNgYlkCcm5YtCvtKMShqxVfG
+	 zupx2l2VBryJw4cbbO7dY475Hyo/NDPVbraGJUMI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8BY05fDGzr0s;
+	Tue, 20 Oct 2026 14:28:52 +0200 (CEST)
+Date: Tue, 20 Oct 2026 14:28:48 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: test failure after merge of the landlock tree
+Message-ID: <20261020.ij4euziuYovo@digikod.net>
+References: <asmHRyx_uDkK-tJs@sirena.co.uk>
+ <atZepZTcoR9teu-r@sirena.co.uk>
+ <20261019.Za1phooV2oom@digikod.net>
+ <atc6Vczti_EjFrQq@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,74 +66,39 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TWQOKtDu1zPACboN"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <atc6Vczti_EjFrQq@sirena.co.uk>
+X-Infomaniak-Routing: alpha
 
+On Tue, Oct 20, 2026 at 10:54:29AM +0100, Mark Brown wrote:
+> On Mon, Oct 19, 2026 at 11:11:20PM +0200, Mickaël Salaün wrote:
+> > On Mon, Oct 19, 2026 at 07:17:09PM +0100, Mark Brown wrote:
+> 
+> > > This issue is still present today.
+> 
+> > I removed these wrong kunit checks Friday so it should be good now, but
 
---TWQOKtDu1zPACboN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In fact, I updated mic/next Wednesday with a new patch series addressing
+these issues.  I only added two (unrelated) commits on top of that
+Friday.
 
-Hi all,
+> > I notice that linux-next still has the next-20261001/landlock merge
+> > commit instead of the latest changes from mic/next (which should not
+> > conflict).  Could you please confirm that a normal merge works?
+> 
+> It was broken with whatever I fetched yesterday hence me reporting it
+> still broken and merging the old version, I've just started the merge
+> for today so I'll find out this afternoon if the fix worked.
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+The new commits from Wednesday don't add the bogus kunit lines (i.e.
+there is no kunit_suppressed_warning_count() calls anymore), so it's not
+possible to get the same error.
 
-  drivers/android/binder/thread.rs
+Merging mic/next into the current linux-next works for me, and
+./tools/testing/kunit/kunit.py run --alltests works too.  Please let me
+know if anything is wrong.
 
-between commit:
-
-  a12f22b2c9398 ("rust_binder: use pr_*_ratelimited! for printing")
-
-=66rom the rust tree and commit:
-
-  985955d8e6b2b ("rust_binder: wake epoll on self-work queued to poll threa=
-d")
-
-=66rom the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/android/binder/thread.rs
-index e0ed20f510fd1,177e90a1e5a3f..0000000000000
---- a/drivers/android/binder/thread.rs
-+++ b/drivers/android/binder/thread.rs
-@@@ -344,13 -345,13 +345,13 @@@ impl InnerThread=20
-          }
-      }
- =20
--     fn push_return_work(&mut self, reply: u32) {
-+     fn push_return_work(&mut self, reply: u32) -> PushWorkRes {
-          if let Ok(work) =3D ListArc::try_from_arc(self.return_work.clone(=
-)) {
-              work.set_error_code(reply);
--             // Not notifying: Reply to current thread.
--             let _ =3D self.push_work(work);
-+             self.push_work(work)
-          } else {
- -            pr_warn!("Thread return work is already in use.");
- +            pr_warn_ratelimited!("Thread return work is already in use.\n=
-");
-+             PushWorkRes::Ok
-          }
-      }
- =20
-
---TWQOKtDu1zPACboN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdeNgAKCRAv73Ows9A4
-iR59AQDlqUGZ6Vp+3/y0UQ78owUpIT+jhBd2nwa1ygn08VYnfgD9F2krcTtGbic0
-f1pXPtLsMTnBLatpqZSldkj8fednbws=
-=a/Xh
------END PGP SIGNATURE-----
-
---TWQOKtDu1zPACboN--
+Regards,
+ Mickaël
