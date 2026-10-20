@@ -1,74 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792494430;
-	b=GBvnF+ZcxdJVrHaV8ucO8gmBjV9CmHXnn/1xSsE9BHwzCKweg/cGmJLiOXK1yVJ9u1N0
-	 sDZsUmrc/vnZKJ54YZPROk4ck5VzYuvLSobS9z66dgGnuE9VwK88NQ8/AuapqpM+qRc8N
-	 ZfP61+DMWtkFN6qk6aYjhNpeg0yATs/G6AIWhKkEP9g4J/OKUxNU3j43l8UqF4mPHS/6k
-	 WNpjXFbFZtYQHt5KNZPgnX1iAA/3gdZzc9XjP0weoMMup8PXaon7FB7EoeNOD+y+6RXm3
-	 i635oVpYQ3FTxa8pNNX4fYdk+AFgj7eETcifI6TxtguiouauTBsULM4lOJUwS8fpFwQ==
+	t=1792498127;
+	b=B6eM5SFp/4VgRc7woJSh/9v9yYfPco56pY0Ye6T2jQw6Y5/7Fv5S2gE1r4PKEW5u/1+1
+	 LGK/xMeha4ITVB6Ntl1CVZba+ZNKOocaeYtr/uLIkfiOCOE5qkycV+yUaGO23STD6WMRo
+	 gNrVcd+LovJW4d/Fs64z2BRRppY82KxhUZdBTbMSAwVN7x4hRMU65j7VjbA28lgZsb8Ta
+	 fmSDdclAn3Zj+0LcXGbIiQi2bbnMsdC4ILYZFFVU2ZjXV/0SAIZSQ6GQJYNHHeHgpzgd/
+	 Ui8Mk0MuDf8jL3Frn1mI/fR6kCDl0AMeNWbOdxBhUFTL05TMf2qnOTkz4fRNk/P3fjA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792494430;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:Date:To:cc:
-	 Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type;
-	bh=+nnri8KOVD+ERhkDe4Xd/rLUN/DpKeYj7ODaxNj7yac=;
-	b=vY2bzHydKYZzGX0fzIND0hYHOIcz4D7m7LRWy+CPJS5QHpzgTEXoMptiSYhZH40Zk++G
-	 slzK00FtPLs8N2HubX4baDWJZNIWKKEJLbH8f6spZqwnSuEqf9Qx/7Z7tWmZmlinzidFG
-	 eAuFWgtjXmlTCqM6bJzp1lWHBP7IN//NCezgiCY/fnUr1yv9/t4wFJEI7kImyEKh2NEpo
-	 liMBGQnSHD/ghWWMZybwiDPCFhdrWttjzrSi7nHGJPbso5oMY9njotwS2HDfvI3Wd/B4R
-	 hKRHDtUDXs0S+Obe155ANTF4dGwuTEmz6iT1hjmElVdyZd3gN3rhSYgYJ6uqtdRhC8A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792498127;
+	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=o3HYFtbT84qJYX+FGS49qE6dDheWm1z/RgZhsb4Q7ek=;
+	b=fHgidu+nP7KyiI7rs6OD6w80tQiP6HYT4hCzBOALvKyeDnS+ItYY41tIH8Ck910J8QBr
+	 1DacW/UEWMS3xb27PpFJe6TmQH+sH6/xx+AVdmxP/hePel3YbK+a2f7pPo/f47GKFalcP
+	 1TRqYOMoxhsbEH1MkpgnIQMns3KJ8TnUdTzcwVYW7ynvChCZOxs+XaSxX//KP48jKiFRY
+	 M41qJPACVHntISEoe9jcSeIQCI7ZdR1mbJoDu2SMOnaQpgGs6d9MrrvI1NcfCgwpMI3XH
+	 mwtlq6HatKHg3dHPqJl65a/INYAIeV9dpZIHHlEELVtzwaORS2bllhPnxbLiyEsR5wA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=D1r4qRiE;
-	arc=none smtp.remote-ip=192.198.163.12
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A3ay8DbV;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBC2606A319;
-	Tue, 20 Oct 2026 11:07:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8DBC2606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AC9606A31B;
+	Tue, 20 Oct 2026 12:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=D1r4qRiE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792494430; x=1824030430;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=AybVLInNist+fsVCvf7sGNK1znFzY0/gag7DVWJXQ7c=;
-  b=D1r4qRiEW8Tqnpir9+hwyJQKCLZUCyyNKXKvWix0kLaPlMsyoxkB5c3D
-   Or6Dsv3NQI2fawJg1sVWsa2IQfLcH9MWOCAZjsDOCFCqNfHdb+okbJOCg
-   Qj13+bQySsXuIUe+Fuf0vy6c/7UMlCDF8tZGVe8/GX2jvpbGP98QQ4QxT
-   UX+RukdvUxW9WDrY77PriMAP1XEq48v45aPY2qadtFGZix0p8sKPl3yE0
-   e6rxkazkbhU1P/+HUO5sCB1tR3XuUjd6RKpQ8EToheP5P4r93inJ+egaJ
-   P6c1p2pLQamMjELAKN9vPA6tHIAFwL+npMYTpycr+9RKjKdqhTmPZ7EoF
-   g==;
-X-CSE-ConnectionGUID: bBEkQYDwSaKfgKzdyglX3g==
-X-CSE-MsgGUID: ZBuv4EsHQny0n0ZyfX4c5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1096879"
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1096879"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 04:07:10 -0700
-X-CSE-ConnectionGUID: d7bIo4nzTcyCp6bZxT3EtA==
-X-CSE-MsgGUID: wtFbA/3LTjSOY8miVsOiIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="2744933"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.181])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 04:07:07 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 20 Oct 2026 14:07:02 +0300 (EEST)
-To: Mark Brown <broonie@kernel.org>
-cc: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A3ay8DbV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0825A1F000C4;
+	Tue, 20 Oct 2026 12:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792498127;
+	bh=o3HYFtbT84qJYX+FGS49qE6dDheWm1z/RgZhsb4Q7ek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=A3ay8DbVa1wWHxg17DxkKHb3vCbWSfi1ox+BHqlHep0/rx4ZG/Gs2PyrorGSVPEXl
+	 zwVrapUZYB/m9GHL3gCX2uYHBWPmQMrufqVk8p3rQV9qQXOsE2QhwSI1s7ZJQRKagl
+	 rl7zQ8OfPaQqje6Vth7vUJcvogVV9P5oGNJKjyf2Harai41X0IWithef6b6SQ9gIWr
+	 /OtkE53t5X2FTvjmfcEM455Hs1Srm/ymkylnbPWxLbAKBLDg8/S+CR9NdDc7IYSsvh
+	 fPRsCHegPyQJExkPJUqserXIaG60w9H51lOAIvJ0uaI7r1XIxQY34tXPyhRBmQieyU
+	 u+vy6prXFBTHA==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 325841AC57D0; Tue, 20 Oct 2026 13:08:44 +0100 (BST)
+Date: Tue, 20 Oct 2026 13:08:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 Subject: Re: Missing signoff in the drivers-x86 tree
-In-Reply-To: <atZqoXnT_27rGAn9@sirena.co.uk>
-Message-ID: <e1119f07-83cc-8178-3c6a-e87778d3cb16@linux.intel.com>
-References: <arUBQuAfW4HJQHik@sirena.org.uk> <4ad00775-b067-452b-9869-29d5b6712f66@sirena.org.uk> <asOdosd0zROmuzu1@sirena.co.uk> <1a363159-02b9-4644-9cc8-38e210d97d5d@sirena.org.uk> <atZqoXnT_27rGAn9@sirena.co.uk>
+Message-ID: <atdZzEMsMWhzO2gO@sirena.co.uk>
+References: <arUBQuAfW4HJQHik@sirena.org.uk>
+ <4ad00775-b067-452b-9869-29d5b6712f66@sirena.org.uk>
+ <asOdosd0zROmuzu1@sirena.co.uk>
+ <1a363159-02b9-4644-9cc8-38e210d97d5d@sirena.org.uk>
+ <atZqoXnT_27rGAn9@sirena.co.uk>
+ <e1119f07-83cc-8178-3c6a-e87778d3cb16@linux.intel.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -78,54 +64,50 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-
-On Mon, 19 Oct 2026, Mark Brown wrote:
-
-> On Mon, Oct 12, 2026 at 08:03:17PM +0100, Mark Brown wrote:
-> > On Mon, Oct 05, 2026 at 02:52:50PM +0200, Mark Brown wrote:
-> > > On Mon, Sep 28, 2026 at 03:37:30PM +0100, Mark Brown wrote:
-> > > > On Thu, Sep 24, 2026 at 11:53:54AM +0100, Mark Brown wrote:
-> > > > > Commits
-> > > > > 
-> > > > >   4dabecbb202e8 ("platform/x86: hp-wmi: add Omen Transcend 14 8C58 support")
-> > > > >   9af7fddef448d ("platform/x86: asus-wmi: suppress -ENODEV warning in fan_curve_get_factory_default()")
-> > > > > 
-> > > > > are missing a Signed-off-by from their authors
-> > > > 
-> > > > This issue is still present today.
-> > > 
-> > > And today.
-> > 
-> > And today - should Ilpo be added to the list of contacts for this tree?
-> 
-> And today.
-
-Hi Mark,
-
-Something odd is likely going on here. Neither of those commits above are 
-in my tree anymore.
-
-Your latest merge:
-
-commit 233956951080612ff68d0c54f620606c53a1c91c
-Merge: 67f116b3a9f8 98f039265e58
-Author:     Mark Brown <broonie@kernel.org>
-AuthorDate: Mon Oct 19 17:58:11 2026 +0100
-Commit:     Mark Brown <broonie@kernel.org>
-CommitDate: Mon Oct 19 17:58:11 2026 +0100
- 
-    Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git
-
-I don't know how you got that 98f039265e58 but that hasn't been in pdx86 
-tree for multiple days by now:
-
-https://git.kernel.org/pub/scm/infra/transparency-logs/gitolite/git/1.git/commit/?id=1bd7f5b78426fd94a4a3f75c79835a4416809e87
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="P3j17JiV0CwEqRby"
+Content-Disposition: inline
+In-Reply-To: <e1119f07-83cc-8178-3c6a-e87778d3cb16@linux.intel.com>
+X-Cookie: You buttered your bread, now lie in it.
 
 
-$ git log ea40f1e9f07aab937b9a217633be7a1f66260394 | grep -e 4dabecbb202e8 -e 9af7fddef448d
+--P3j17JiV0CwEqRby
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 20, 2026 at 02:07:02PM +0300, Ilpo J=E4rvinen wrote:
 
--- 
- i.
+> Something odd is likely going on here. Neither of those commits above are=
+=20
+> in my tree anymore.
 
+> Your latest merge:
+
+> commit 233956951080612ff68d0c54f620606c53a1c91c
+> Merge: 67f116b3a9f8 98f039265e58
+
+> I don't know how you got that 98f039265e58 but that hasn't been in pdx86=
+=20
+> tree for multiple days by now:
+
+> https://git.kernel.org/pub/scm/infra/transparency-logs/gitolite/git/1.git=
+/commit/?id=3D1bd7f5b78426fd94a4a3f75c79835a4416809e87
+
+That's what I fetched yesterday, I don't know if there was some infra
+issue which caused the fetch to fail.  What I'm seeing for today is
+commit 893018d51f27ec0449155b0afe371aaf65380630, hopefully that's what
+you expected.
+
+--P3j17JiV0CwEqRby
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdZywAKCRAv73Ows9A4
+ieZPAP90JcMoLywyS8JowlZIy+wPuOozvfAHCOSp0rYg1y8G9AD/UH++c7kbWw0p
+FKgloovNB7HW4fQWVt1IKeTNJXSEcwg=
+=neIK
+-----END PGP SIGNATURE-----
+
+--P3j17JiV0CwEqRby--
