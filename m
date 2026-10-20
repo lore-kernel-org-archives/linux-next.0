@@ -1,59 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=83.166.143.168
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792501366;
-	b=Zz3Q8lzZ1lmyICOqtz3LxAplOZ6KHQHwMLAnhacYdZGHWFJRQcJLDJ6QXEuELptN9A+6
-	 zI6V50A2s5cAwUEZN0sZOwrFZDr/9goTEYnZZ+j/36XQnzIiljDu326rkb+dru6WhFWNk
-	 pSp5mFf7Eb+krzeCvt4z8ROJN9Z3nd/M4qCEC3fpps+yQavM4x5UNkahNUnnk5rTZG/d4
-	 jBN7Uqq9Irm0oszC2dTXAO9bcMZJ1ux2lRebV9UoqnRCOTjycmaF5DjPc7lYj0EtaF0ur
-	 DQqOABzWPN5vRSFpQDnahD7l0/ZJ6lmNRrS1rM16awu2WuSZhcyZcXGl97bXk2ZY/Cg==
+	t=1792502225;
+	b=SBPNFIWPpFrlMzFMRUpv+GT/jBIm+pvPawm65bYVGZ/3avPxKcM9uce5A+ufXf9K36jw
+	 o9AGqfmVl+fafiuT2MPPozbNVy12uOtIJN+PZxRXX5HchGcupTE15K6IvUGV/QenZ9n/8
+	 I8PHoq5cby+5S0uU+DjT9Ozr0e9QelRYgi5rfv9UBBUjYMVc12lSiPZrghDyQ8XL6NxkO
+	 tAfjyGcSkPiaB+OGHlfYxBLxMTO3slbKsvj5Pxwc3TJaDimtph4x/X7zF9NRymggu6PP+
+	 kKion+YjaMGoyT+iy82R5ihSqXiDLQ8zqlHeajYqQHIeAtK3nnyvJ0hQnqgePozJi6Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792501366;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=XjqD9mi3a7SlFw0+plMv68LLvm4shJazjoeG4jpWusM=;
-	b=BZjCjW6NGRhollbJN5rvCjmB33gj629kQ9FTOK8UhTVy/jrQ0o5ryXAp8TBH/B0y5zg7
-	 nchaeecd4eU6By48YfEDv9cZJdgbWi2YtVn7Wk3ZUfMEfIgoE2bchkYshZJ/y2iYoXF7P
-	 UkF11RJyar0VisPRZpVOrOnxZDMKkix2iBhcPtI4rVJrhomp/i6o0IGHS2wVB4CN7Xs47
-	 UlS/cdwjbFWXRRJTOImRMJxX5uc9I5thheQL7gU2JstObZjuqzycDOqEzQzXI3J5NZAsG
-	 vzLYCrIbCYSieZfq7AMaqHJkCt5DbEalOsgZsav72F+iI+pYzFUPF47SUUct4glDnHg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792502225;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Infomaniak-Routing;
+	bh=sD6m0KKQF8wj51NTduZuzfl9vCC3ADruqTB7lIN0B1c=;
+	b=vcXKmbAX5QoSC/dBc9FMtx7aSZxSWWpcVU37A2Lqg+S9FSIqIWXOjZG2YmUZ/uWkuOVM
+	 VrWLY5Fmy5NDxv6uX7HeaIchP/95m6U14rF53mOKEmFAuj4qNhdwE2ahieoAicej22jes
+	 gXS+sv+0tVdQNgpPmxWTAu0k8FEGT4lqggRZUXbX8xljsHYaBzrReDLCQj4C1x2kl+ZXQ
+	 yfKdmld3hHs4O7zAWQ2Zb+Kvep6GhAlqtvuRmyiZ8akSI7INjV/hFD+nudIiy9oIacJHc
+	 g6daeu+WUTW60axEP0//VXIgJgG7uqD/cP1h3Wj2HSFWFVh2N3sIMYiqV+XVljh+qKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HbzYp3XP;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=qp9lMfRy;
+	arc=none smtp.remote-ip=83.166.143.168
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA2E606A322;
-	Tue, 20 Oct 2026 13:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AACF606A320
+	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 13:17:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7AACF606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HbzYp3XP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3878A1F000C4;
-	Tue, 20 Oct 2026 13:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792501365;
-	bh=XjqD9mi3a7SlFw0+plMv68LLvm4shJazjoeG4jpWusM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HbzYp3XPWbQAu5Pzb6tJF1leVUTbsxHy1C2Gwt1vOaLXmF5vueonKBv10wEM+F2FC
-	 S9L5BlgxMGkqkC/qGOqgWl/zlkbLoi3rH5edPqJGrJIglphwzUYvtg9K98Plo+FqKA
-	 nZxZTAic4+psAGpRR8g5eJE777qPpGqrlECC+B/GfeXphcECfIfMDPX61Bx5QBcO59
-	 ZsJj+1gVs7FoP9TmOshQKUzjUzXnukgg8j9ZRV31H8A1YbWtmtNEpNdvEsLqvq5p60
-	 6pDbVglkeHPJTt2yVWZykyh7EQ0LW3+CuC8sFfC9aIfcIX08I/uVYm7DScpwUJkP+v
-	 oRO6v1ERQQ01g==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 012641AC5994; Tue, 20 Oct 2026 14:02:42 +0100 (BST)
-Date: Tue, 20 Oct 2026 14:02:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=qp9lMfRy
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8CcS13W7zlr6;
+	Tue, 20 Oct 2026 15:16:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1792502216;
+	bh=sD6m0KKQF8wj51NTduZuzfl9vCC3ADruqTB7lIN0B1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qp9lMfRytMTRB6Rxas+4/39haxy3twrMuHisJDMnCO1hULKRQZ9vp9u0qEwWoRcd9
+	 8OU+N7RDp02FewJFiIMuFdviBccMV76g/uJPzYSagJGIxdhQ4dTFrKpD/ro6TYdzqw
+	 Gl0cpDvbmLy/yKOQw90dQqOkFXGMq3dMvdH/Cczk=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8CcR3VLCzQvM;
+	Tue, 20 Oct 2026 15:16:55 +0200 (CEST)
+Date: Tue, 20 Oct 2026 15:16:51 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
 	Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: test failure after merge of the landlock tree
-Message-ID: <atdmcnGhgZ9U8g_S@sirena.co.uk>
+Message-ID: <20261020.shai5aMoosai@digikod.net>
 References: <asmHRyx_uDkK-tJs@sirena.co.uk>
  <atZepZTcoR9teu-r@sirena.co.uk>
  <20261019.Za1phooV2oom@digikod.net>
  <atc6Vczti_EjFrQq@sirena.co.uk>
  <20261020.ij4euziuYovo@digikod.net>
+ <atdmcnGhgZ9U8g_S@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -63,43 +68,28 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fXeEPFHiEPB49S7C"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261020.ij4euziuYovo@digikod.net>
-X-Cookie: You buttered your bread, now lie in it.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <atdmcnGhgZ9U8g_S@sirena.co.uk>
+X-Infomaniak-Routing: alpha
 
+On Tue, Oct 20, 2026 at 02:02:42PM +0100, Mark Brown wrote:
+> On Tue, Oct 20, 2026 at 02:28:48PM +0200, Mickaël Salaün wrote:
+> > On Tue, Oct 20, 2026 at 10:54:29AM +0100, Mark Brown wrote:
+> 
+> > > > I removed these wrong kunit checks Friday so it should be good now, but
+> 
+> > In fact, I updated mic/next Wednesday with a new patch series addressing
+> > these issues.  I only added two (unrelated) commits on top of that
+> > Friday.
+> 
+> What I have today is f349c073889ff7694b470ca34dae9bd94d47b0cc which is
+> "landlock: Fix superblock use-after-free in release_inode()" rebased on
+> the 16th (I just tried refetching and there was no change).  It seems
+> very surprising that there might have been an infrastructure issue
+> fetching the tree all of Thursday, Friday and Monday?
 
---fXeEPFHiEPB49S7C
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 20, 2026 at 02:28:48PM +0200, Micka=EBl Sala=FCn wrote:
-> On Tue, Oct 20, 2026 at 10:54:29AM +0100, Mark Brown wrote:
-
-> > > I removed these wrong kunit checks Friday so it should be good now, b=
-ut
-
-> In fact, I updated mic/next Wednesday with a new patch series addressing
-> these issues.  I only added two (unrelated) commits on top of that
-> Friday.
-
-What I have today is f349c073889ff7694b470ca34dae9bd94d47b0cc which is
-"landlock: Fix superblock use-after-free in release_inode()" rebased on
-the 16th (I just tried refetching and there was no change).  It seems
-very surprising that there might have been an infrastructure issue
-fetching the tree all of Thursday, Friday and Monday?
-
---fXeEPFHiEPB49S7C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdmcgAKCRAv73Ows9A4
-iURzAQDux0kCgieWr1FCAJaprrrTfJ4xbsq5YVg0IAuk4W+rtQEAnKwF2gvzNgOl
-hzlpLYgUxIQYNpoWnjmN8GTLZYQpUg4=
-=xqp0
------END PGP SIGNATURE-----
-
---fXeEPFHiEPB49S7C--
+Commit 0da3cb3db77e3fe2202ddb637f6d27668dc360f7 appears in the
+transparency log:
+https://git.kernel.org/pub/scm/infra/transparency-logs/gitolite/git/1.git/commit/?id=0da8a8d3dc37ec9a71b76f9739957297d64d4b73
