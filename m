@@ -1,124 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792460703;
-	b=kNX3Y7uscxPnBpl64HwE8o9AbIzQiS/4Rprzu3iltufMaOKC1WCOro39uRT/IjFkfhc3
-	 7cEUPMcqOb5Med+zsyUxXhN4WVeWNY5nzhykCmNz/Dwk0dBkmGg6pzNBpUBT05yDehCnr
-	 x1g1P8+MKs2mDQSw2waDwXmiNIPUo9GrzDv7GMiyFsChea5FDOkADfNZkIUasie2uNfnQ
-	 a0JD0lKCNTfwj+INYbKiQSOf1KMGBe/++piS50AppIATQ+naYGZFruDoCy8+SBWL7nl3v
-	 u8Hz2ue45XsOOaN19WXw33pALuCxGJQFGoYYGOH4I+ei9wNgkFK4uMtKhlN4Cy7hOdg==
+	t=1792463418;
+	b=fEIHHxhEAh3RML0R0RQIYIPj2Z/AJM4jQFNkiGdaCyR91mLw2BdwvKsYXk9GdKZaiBMn
+	 AApcJN+cTr+u267D83gayeWdrQV04EKfpB2f9+1GztTxSfgcbvWlkCyxhgz4Whkvavz1a
+	 sbTWYCalM6L7Py662jZqm8b6cP6C8CD6r8isD9Q+LdtydauZYR5ADVDhjX/cntLJzo8bl
+	 Kyc+a208Kd1fmcKjVp2rUqfQaVg5zW8UjA4qvErF1T9d3Vzm29uEOwVb8cTSKY2pct0aF
+	 Hs2h7H7K/dsfYJqes9jczsCZQvN6T93v+r8tQFBBNAEYSvm6IEd7POZYsQDu6p6PMEQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792460703;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:Mail-Followup-To:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=rZcZfYXBzlUwQ6YnCv3oAfZ9AJiBpXJOG8bn7No/VXU=;
-	b=ejEAFVFvCKuWkCaTrMhWxaOBF4OsC+ah0rBPkZqWYmey2kQPXnLgCA/P7bIPSe7aWNpF
-	 AGfWsLyXK36LNBueqkulH0zJJvn7MYycNGkF2FPk4KooPBDjDVEEuj2bZCXKFJhjNUMo5
-	 jHwi5wtrrL2SnOlLjoDOpLcREJCp+Eiamw2Keh6X5+b5bpJrm+wWrYbcFU1Nex11fxgIU
-	 lSoAHSlt5T+DWxyHo5y4NHho0qDAVY6GAlAiBNxJOm5AV26WSCrGXUuVwP5s8s85KQpyh
-	 UC40ns9or+GeryLlC14WUlJ+UhdGLugV8j5cxVls4I/GJLxJ1ly1cT8KIlv1IMAU4Rw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792463418;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
+	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
+	 Date:Message-ID;
+	bh=on875nKZJBHk0SL2ZPNskSRQKtZcgoVismMJ2P49UNo=;
+	b=Sq54rUm043dyybTmyc2vvO6K7y+n80YYYn0xC4a6YK6yfwcYnDHLHfRHX62uyrcT+d1Z
+	 Uxh3lcDXRsE7xTrRd1vxk+7NVjt//qZJCdOnNEVWWBpBSmA73wmbu2YEqR3s/FOBgtCkO
+	 LPOVeFKirr4w7w/kBEia8MXtKcK8uxFIEAlYM4E0kZaPlIQragDluxL4X/PmUKkI4viA/
+	 y3w1djuPMLGUyQXbknFLstfzGo+VqBvQbK9MpmvQJNZLh7CPhvIRvdqAoh00EIMSlWOG8
+	 4KIH7Pe+O27Gk59DDuJaymyqP0SGP9becNtiUVxk1OmmhQoLJIM5/4Hp5zS5rr0RTRQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=sakamocchi.jp;
-	spf=pass smtp.mailfrom=sakamocchi.jp;
-	dkim=pass header.d=sakamocchi.jp header.i=@sakamocchi.jp header.a=rsa-sha256 header.s=fm2 header.b=dvokr1Iz;
-	dkim=temperror header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=rsqb4gXR;
-	arc=none smtp.remote-ip=103.168.172.157
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=kernelci.org;
+	spf=pass smtp.mailfrom=kernelci.org;
+	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b="R02zK3w/";
+	arc=none smtp.remote-ip=74.125.82.179
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAECE606A323
-	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 01:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAECE606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016E3606A31A
+	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 02:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 016E3606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.a=rsa-sha256 header.s=fm2 header.b=dvokr1Iz;
-	dkim=temperror header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=rsqb4gXR
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CF2F514000CF
-	for <linux-next@vger.kernel.org>; Mon, 19 Oct 2026 21:45:00 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 19 Oct 2026 21:45:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1792460700; x=
-	1792547100; bh=rZcZfYXBzlUwQ6YnCv3oAfZ9AJiBpXJOG8bn7No/VXU=; b=d
-	vokr1Iz1oTOqj/CkKLMNHSZVtPVIRGeV6t9wvqnu6lEiQc69E0Z+TwDI+WHMoqvs
-	xhsbJIkthopcImflHzgNUrbqVoQ1bdTBEJQzFLecWERPJz0EVP+a+IDFBTZ9F6nj
-	ERpybWmeeyJsh7MheuJYIp0OyrW7GikoZUX7V9G3EWzptjXeeOzId/tvsameENvG
-	aKNMhzshHpxjo3tj6NH18FyBZ3Enw+mz6VCL9HCLoLhlcRTbX28KjCLXZlt9fxl7
-	1vYM22RhGUBNodhAyRciLygmu7fjw07P7vYf3gcAGsIpnFPvmNHxeq2MLYgcEf4c
-	kw0+RiUVpOG4dtmcndmhw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1792460700; x=1792547100; bh=rZcZfYXBzlUwQ6YnCv3oAfZ9AJiBpXJOG8b
-	n7No/VXU=; b=rsqb4gXRJBMYUeVVdxJ47aZVSusqxhFrMfGPPgs/VdenOoYF+oc
-	AtQ0iuxY9jpUlHDjQ9KCy+PlE3n1bSL96+wTX2BMdp2qYTZqjvSb66oqNDAKiCa3
-	C8UxD7P48p03qXSVRJUjPPgafuVwb1thJnLiKV7tkfYnV0FX0/Me+S5ARshUoqoF
-	a1GV5SeaSt//Ja2Uv5KDRYa6FHRRziXQO5YIe5nILrRK09Y1GuDJj2Iye0ZPmPqP
-	pVkyNwV68aKMBjCtaak0p9UmQ8HyuFUMUrXXfJCudJTYrNzEG1JiVsgk0oGXYbCO
-	DyECoshGhxlNpgsDMwJvoNoKeER59RXjJag==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=sign d=sakamocchi.jp a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792460700; d=sakamocchi.jp;
-	mf=PG8tdGFrYXNoaUBzYWthbW9jY2hpLmpwPg==;
-	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:KmezOaR5EY5qpxdtlk+frP/O56qvs2ztRcLd3U9PNDFd5d9
-	lY+oPKjlfmkWus3bGWhXreF808Dd/6WiWtezYzKAB3NFVP1fF1kZDmmQbjKsrNh0
-	3qFwlV1knt1dCCYpn5Hkzomzl7/yQkSmk/0lJkeX4bJWppPoD3qeuZ/cM4weldaw
-	xrIoVELHockMGo81z8qThyzycczNAqT7XVNqzlS1l6m9d5Vw8orHs5LoWQYsr2iB
-	vVz02TL1m01xJK0s9krgfNjquEGEjU21TfBpjlfHL0YUP8bgHK9uuqJwFb269kun
-	aW1aR5CJnt5qSopW/bMcA5XzjFfo9xG8azH69/w==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-type,date,feedback-id,from,
-	in-reply-to,mail-followup-to,message-id,mime-version,references,
-	subject,to;
-Message-Instance: m=1; h=sha256:lUvEeXc2GW6k7qtu7v55SWTUciN2VgoSlicBRnD6ZQ4=:GUp/lQENMb6M3mRWSWTQ/ABJrHcYPEzn5ohvebQulng=;
-X-ME-Sender: <xms:nMfWavNvtfHkS4lsL_bbq-o7C_mB6pjtnXo3YuM2S72sjEM1MbnPCQ>
-    <xme:nMfWahuAo8NuJlCQUfjDZOUdrnL3O8rFT9ISS5AwaDzSBHO4VGeTp9dCNlve27Z3n
-    YRGDWV5JkwCjqROTohHXAyJqyfVkxuhvV4YqEycnO0E-nOWLWcjB477>
-X-ME-Received: <xmr:nMfWahVJ-x7K_gM-xrzLHJtOevHDQc5o9zjD604yA0f3i-RARyP02wx8F6zl2PUil4roBcmpUajm6j28BtFv9P7mq0k1>
-X-ME-Proxy-Cause: dmFkZTF96aY4z4lBvgfoihxo8gJ7Tv/YcWB5RRQiAs8g0aRg+C73GFqwIQqaEwbTGJ2oDe
-    JQw2tjAA04sn0Y0tAuKtAQiEF7QPjMYG1c87OGg85QhKw9S4rnmPYcQKAnCZdpAuAD7gYP
-    /1L4+6LfrL7TirPodR+UqIZ/6g6an8GBLyRpCYh4IPvNXGX84sB61AKbIeqOkAeQTJSWhX
-    Ddscm1JGUWiSzrtTr0ThUgk17KpwzstjBoE515qBRKZ6v7V4LWneNFM7kt9EEIgh1+OKb2
-    0EWMUuTkS0TN8P9mW5qIH9ozaeH9uMioxggB3nyg+6dGZHoOF0aKsR6cj956DiC8FPf+nC
-    PqbHbuGvN+/gZL244W5mYgX7vLDIP37IHP13+26GUB7wqr0fh0bDovZ56y5FzjXYcvDqRx
-    3fF10eLicDQAS1mU+2OW+R5siGqlbZApq4lUN64wRgkvUbtE92BSXrDWxiaWOzowQ5rMyN
-    7hNErVOYnWvtHazRx+mKoWXrwf/nTBxf3L2AZbyyKoL9YFVe4EDYDBH8pNZg9yfiKs+GYS
-    9AAEGfT1qumlPNMnkzsPvMYoTiVz2khSd43xPGyjUxIoTYrClz4yKgrlwxvS/BfTdBEUP7
-    UYhkKk//dH839LJdRetPn6jVHOL9OCFY+l6ryNLiuasC1zMkEm63DP3AvKQg
-X-ME-Proxy: <xmx:nMfWaht9lJSikY1_I-s9VGQXvaQVCK5mvw4UYZc4tbsGcNZrC-zDrA>
-    <xmx:nMfWalWQVtjj915SnNn_IjLfLv1-5LhzkSZdZ3wj3FThKW3qt-xjPQ>
-    <xmx:nMfWasmSEgogg6A613J4viw0KlDQOzbxrLBUq8X511XmBercpwMUeQ>
-    <xmx:nMfWamYj_wbYDGfdqA2LbIhHN1PGyt2zSNr0KKVQv3tVR2d7PJ2_dA>
-    <xmx:nMfWar8IpQ38w1dXoBgZo6-muJY5cyxZ_yIMoq-tN0sC6F1_BcvPkQGq>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 Oct 2026 21:44:59 -0400 (EDT)
-Date: Tue, 20 Oct 2026 10:44:56 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the ieee1394 tree with the origin
- tree
-Message-ID: <20261020014456.GA335452@sakamocchi.jp>
-Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Mark Brown <broonie@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <atZBEI6G3PgKHKaW@sirena.co.uk>
+	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=R02zK3w/
+Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-3514b90bb89so7241432eec.1
+        for <linux-next@vger.kernel.org>; Mon, 19 Oct 2026 19:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1792463417; x=1793068217; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=on875nKZJBHk0SL2ZPNskSRQKtZcgoVismMJ2P49UNo=;
+        b=R02zK3w/RS2G/JgX+4XHJ7YBDew1Yr758dZeBYsSZ5+RQgXyn8jqbpX7218CaGQQI7
+         yoxOjbV7TXBL8E15OUUQFEAAaeaQGJ7iX6siL2BN2Eqqypzz/bLFEDEne6qBMAFhZvh7
+         to5EX4qkVUxRMKrcINvGHIQxLghs6C1++RZ9u2fzCD15E8zQuLz4gXuUp4lTXWHyfTPa
+         8pLsOExxGRdjvN1l0wSPAKxRCW0T0BB/fSQhIHYkjSG1jZ3yg4QoirjUqVPUYMmkvWRc
+         9x+7DEBqSV/EtdaNDpgjwJXBN6pNpwpJQCJtChV7IN4cTrqlbKg6E3skTCKsFtdHXLSO
+         zUPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792463417; x=1793068217;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=on875nKZJBHk0SL2ZPNskSRQKtZcgoVismMJ2P49UNo=;
+        b=JEXyyRtFrEwWui5y7ISKOWhT/BMlN5WIGdwombEBgUf0n83fXdRk2ciGfpTVAENNWy
+         9Vo/LsvR5THX6cRN7ju9ynU6oq/XeEpbf6BLdIsSIYb8CNobjsW9SpejFqKW2xtdPT3x
+         BOI1jCwl7iZZ/IGi/DX+pbp495tdD4meZRS6L4Y2EhSWLtSQYMD8s7+Jpzsm/SaS4Toc
+         w+dg5+ZiSOhgoCqGCxh4Fnvq4n0FQhFw7j7dsKX2A2S0FTXShfBIBAIfhrLO0LsRzqfk
+         FCMX91cbtbWT/m0+0p+p3hll284VVpywlbr9uy8EtZgsUdsKImhLTquV/BPn4cuhEjac
+         mwoA==
+X-Gm-Message-State: AFq9FYJnQ4HzCvKLSF3cXH/4oWWFydtdugfcvoJVpltnWSxVZQiawo3A
+	tUnhEqHSS2V0EDWNbsznkp3YRu6H2eWAdt9G0TgTWbrFP2CdLXDVZNHCipmBkAtyNEr2XgcSITF
+	jH7pW
+X-Gm-Gg: AYBFou1cwg9S4taWK1Up3kAvBhBrmwVQjJ84/pgUhEy242Kf3624Y/tTj4J6T7/hpe7
+	YvwRdQwDvji0NtPTPMeTVfnWV5UhK1uFwhqeGf5mVyEnzepHrdJu82Cv8GOcmGQhifyTOFEMyDp
+	ICT16AULDUVBDLfu77HeE59t8Fi+Vf6lFMFsuOZ3g5L38OLTGdMMLysVG2IOgnonO6mFWtsMzVU
+	A3TSGu0hr0NfAsQWr37yg24CM3HvWJkZWknbGma3rEfGHhUUgHePTNqQz5GNmczJ5ytKYXl6Pb6
+	ekguefOrkD/lkB9upfd3w41XHdyjclG3JpZMzikGiNOf5zS9zeRjOWKAWzLUJFmD9850Yr3Ivqb
+	eO8/x+xjN3uIyQkq4YDbYHGFMsy7JMCIr3kwdsvx/dEfrrriHfmgQ4PsPZ39K4K5VIQxg+HiQab
+	Umkk+EeWXTqn5trLzIZQ9c82i99I/cVkcN5NRfvAzX6EQ6/rXFQnFXLC9I0XOyvdM=
+X-Received: by 2002:a05:701b:2319:b0:175:525c:90b4 with SMTP id a92af1059eb24-185125792bamr12532411c88.20.1792463416421;
+        Mon, 19 Oct 2026 19:30:16 -0700 (PDT)
+Received: from 6e52bff8000c ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1830f213ba7sm37898085c88.0.2026.10.19.19.30.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 19:30:15 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -128,53 +87,230 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atZBEI6G3PgKHKaW@sirena.co.uk>
-
-Hi Mark,
-
-Thank you for reporting the merge conflict.
-
-The ieee1394 tree has now been rebased onto v7.3 tag to include a fix from
-this PR[1]. This may have introduced a conflict in the linux-next tree.
-
-I believe that linux-next will merge the v7.3 tag and merges all or
-required branches onto it  within a few days, at which point the conflict
-should disappear. However, I'm not entirely familiar with how you maintain
-the tree.
-
-Please let me know if you encounter any further issues related to ieee1394
-tree.
-
-[1] [GIT PULL] firewire fixes for v7.3-final
-https://lore.kernel.org/lkml/20261018103634.GA346762@sakamocchi.jp/
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 3d229ce89862b8e82d71a9e11d6f840ca272a6d6
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 20 Oct 2026 02:30:15 -0000
+Message-ID: <179246341515.172554.16750654420234694100@6e52bff8000c>
 
 
-Thanks
 
-Takashi Sakamoto
+Hello,
 
-On Mon, Oct 19, 2026 at 05:10:56PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the ieee1394 tree got a conflict in:
-> 
->   drivers/firewire/core-transaction.c
-> 
-> between commit:
-> 
->   7f9f2d6abc40f ("firewire: core: fix race condition in split transaction handling")
-> 
-> from the origin tree and commit:
-> 
->   0f7228de31f1c ("firewire: core: expand close_transaction() into its callers and remove it")
-> 
-> from the ieee1394 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/3d229ce89862b8e82d71a9e11d6f840ca272a6d6/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 3d229ce89862b8e82d71a9e11d6f840ca272a6d6
+origin: maestro
+test start time: 2026-10-19 18:47:47.662000+00:00
+
+Builds:	   59 ✅   17 ❌    0 ⚠️
+Boots: 	   73 ✅    0 ❌    0 ⚠️
+Tests: 	23037 ✅ 2418 ❌ 1472 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
+      last run: https://d.kernelci.org/test/maestro:6ad67b0755fda50760441be2
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
+      last run: https://d.kernelci.org/test/maestro:6ad67b0755fda50760441be1
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
+      last run: https://d.kernelci.org/test/maestro:6ad67bd655fda507604421a9
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6ad6785955fda5076043ec99
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: stm32mp157a-dhcor-avenger96
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp.shmget03
+      last run: https://d.kernelci.org/test/maestro:6ad68e8f55fda50760452e43
+      history:  > ❌  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1416
+      last run: https://d.kernelci.org/test/maestro:6ad67b0755fda50760441be8
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: stm32mp157a-dhcor-avenger96
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp.dirtyc0w_shmem
+      last run: https://d.kernelci.org/test/maestro:6ad68e8e55fda50760452bc7
+      history:  > ⚠️  > ✅  > ✅  > ✅  > ✅  
+            
+      - ltp.epoll_pwait03
+      last run: https://d.kernelci.org/test/maestro:6ad68e8f55fda50760452fd0
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+      - ltp.shmctl05
+      last run: https://d.kernelci.org/test/maestro:6ad68e8f55fda50760452e0b
+      history:  > ❌  > ✅  > ✅  > ❌  > ✅  
+            
+Hardware: mt8195-cherry-tomato-r2
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_timer_10017000
+      last run: https://d.kernelci.org/test/maestro:6ad679d955fda5076044049f
+      history:  > ⚠️  > ✅  > ✅  
+            
+Hardware: mt8183-kukui-jacuzzi-juniper-sku16
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_timer_10017000
+      last run: https://d.kernelci.org/test/maestro:6ad679be55fda5076043ff28
+      history:  > ⚠️  > ⚠️  > ✅  > ✅  
+            
+Hardware: sc7180-trogdor-kingoftown
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
+      last run: https://d.kernelci.org/test/maestro:6ad67bcf55fda5076044212e
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
+      last run: https://d.kernelci.org/test/maestro:6ad67bcf55fda5076044212d
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
+      last run: https://d.kernelci.org/test/maestro:6ad67bcf55fda5076044212b
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
+      last run: https://d.kernelci.org/test/maestro:6ad67c0255fda5076044272d
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1417
+      last run: https://d.kernelci.org/test/maestro:6ad67b0755fda50760441be7
+      history:  > ❌  > ✅  > ❌  > ✅  
+            
+Hardware: qemu-arm64
+  > Config: defconfig+netdev+nfs-root-boot+ltp
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6ad67a2255fda50760440d75
+      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
+            
+
+### NEW BUILD ISSUES
+- Issue: maestro:071b2289158603096de587bfcd71b040198dd84e | version: 1
+  Build: maestro:6ad6681855fda5076042c9b5
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5178:3: error: call to undeclared function 'scx_reenq_wait_dispatching'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration] in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 20:07:08.658486+00:00
+  Culprit: code
+- Issue: maestro:071b2289158603096de587bfcd71b040198dd84e | version: 1
+  Build: maestro:6ad6682355fda5076042ca4a
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5178:3: error: call to undeclared function 'scx_reenq_wait_dispatching'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration] in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 20:07:08.658486+00:00
+  Culprit: code
+- Issue: maestro:73852e14f70c4fa20c57f8f41ccbe2bc6342d96b | version: 1
+  Build: maestro:6ad6683655fda5076042cad6
+  Comment: kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:41:17.560332+00:00
+  Culprit: code
+- Issue: maestro:ffbd67ed9d45c04ccbd3e5f32cf5904fb2ddb780 | version: 1
+  Build: maestro:6ad6685855fda5076042cbc6
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:50:21.854570+00:00
+  Culprit: code
+- Issue: maestro:ffbd67ed9d45c04ccbd3e5f32cf5904fb2ddb780 | version: 1
+  Build: maestro:6ad6685955fda5076042cbd0
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:50:21.854570+00:00
+  Culprit: code
+- Issue: maestro:ffbd67ed9d45c04ccbd3e5f32cf5904fb2ddb780 | version: 1
+  Build: maestro:6ad6685c55fda5076042cbde
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:50:21.854570+00:00
+  Culprit: code
+- Issue: maestro:ffbd67ed9d45c04ccbd3e5f32cf5904fb2ddb780 | version: 1
+  Build: maestro:6ad6685e55fda5076042cbe4
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:50:21.854570+00:00
+  Culprit: code
+- Issue: maestro:ffbd67ed9d45c04ccbd3e5f32cf5904fb2ddb780 | version: 1
+  Build: maestro:6ad6685f55fda5076042cbe7
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:50:21.854570+00:00
+  Culprit: code
+- Issue: maestro:0b3c665aa5978c471800ab879201d48f07e28d7b | version: 1
+  Build: maestro:6ad6684855fda5076042cb7d
+  Comment: kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:29:57.288007+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6683155fda5076042caba
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6683255fda5076042cabd
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6683855fda5076042cb1e
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6683d55fda5076042cb35
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6683e55fda5076042cb38
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6684155fda5076042cb41
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+- Issue: maestro:7ed368722038f8a902f4a6da878dc48b8ba88c66 | version: 1
+  Build: maestro:6ad6684255fda5076042cb62
+  Comment: /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+  First seen: 2026-10-19 19:54:52.398199+00:00
+  Culprit: code
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
