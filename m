@@ -1,60 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792498127;
-	b=B6eM5SFp/4VgRc7woJSh/9v9yYfPco56pY0Ye6T2jQw6Y5/7Fv5S2gE1r4PKEW5u/1+1
-	 LGK/xMeha4ITVB6Ntl1CVZba+ZNKOocaeYtr/uLIkfiOCOE5qkycV+yUaGO23STD6WMRo
-	 gNrVcd+LovJW4d/Fs64z2BRRppY82KxhUZdBTbMSAwVN7x4hRMU65j7VjbA28lgZsb8Ta
-	 fmSDdclAn3Zj+0LcXGbIiQi2bbnMsdC4ILYZFFVU2ZjXV/0SAIZSQ6GQJYNHHeHgpzgd/
-	 Ui8Mk0MuDf8jL3Frn1mI/fR6kCDl0AMeNWbOdxBhUFTL05TMf2qnOTkz4fRNk/P3fjA==
+	t=1792499242;
+	b=mVgsfmsoo3ptuVVP56O4Bx0JIriwM5ezKVCMACJXHTI6mgw8aJ05yM1srU8cKmf9AM+3
+	 EA+nV33GOwkJHRqx17k8vUOC+/l8yMtMXubHCB99zvNV0qjy0WDbkvQYP6R3mBEs/cMNY
+	 5/WriO/KODqGVf4rhqsBymQyWclr3tEADA43yt6MlwhaVth6TlingT06U3gK+DrFd+Imp
+	 COJU8r7csbmeAmxMhJTkaQ1UjrRLcNFQpcMs0DmU56R0a4HSjs/qOFuUuk0GOLxTez/BJ
+	 K0olJCdZpW/3bohdF47SlF+hClzrlrMv0IhxOlNgqHVpGnAYAVNtd0ceIN1NbmVYOOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792498127;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792499242;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=o3HYFtbT84qJYX+FGS49qE6dDheWm1z/RgZhsb4Q7ek=;
-	b=fHgidu+nP7KyiI7rs6OD6w80tQiP6HYT4hCzBOALvKyeDnS+ItYY41tIH8Ck910J8QBr
-	 1DacW/UEWMS3xb27PpFJe6TmQH+sH6/xx+AVdmxP/hePel3YbK+a2f7pPo/f47GKFalcP
-	 1TRqYOMoxhsbEH1MkpgnIQMns3KJ8TnUdTzcwVYW7ynvChCZOxs+XaSxX//KP48jKiFRY
-	 M41qJPACVHntISEoe9jcSeIQCI7ZdR1mbJoDu2SMOnaQpgGs6d9MrrvI1NcfCgwpMI3XH
-	 mwtlq6HatKHg3dHPqJl65a/INYAIeV9dpZIHHlEELVtzwaORS2bllhPnxbLiyEsR5wA==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=EtsZ8r/SGiyK0hppa0l+VctodUPOQfcuG0Rd9GxCXh0=;
+	b=twUvnlFhe0JfNTAUHYXYuKg3HJT3rd36P0W0xGYgTL8gzAt5vLjSNKqZ5YgzD2RuU/cn
+	 bnProdg6EJy7JNm6IuoOAaCQcBiqK0EYbwGedCG4dGaNnOvoinLm096tHmULvoDSYG2h4
+	 75hDwF//RJp9QGtmzgCNS2SHaZVuQUz4k9fGLXGqw5LCxKwGHzSaCN4SV57GZ8axBBKmp
+	 JBq5kzV70kmsimTkK7tiWbOSzfqSpQLWDacicYe6Kr4VhC/3rwkorHunjQNMOvvhJ9MBo
+	 ljLQOwJ92Ynnjf1KvQmLyBrpRLDlTdXE3qVxDSjmK25niOt7g/O1ETHly78Qqplm+OQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A3ay8DbV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="MDL/dPqy";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AC9606A31B;
-	Tue, 20 Oct 2026 12:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7607E606A32A;
+	Tue, 20 Oct 2026 12:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A3ay8DbV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0825A1F000C4;
-	Tue, 20 Oct 2026 12:08:47 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MDL/dPqy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3D21F000C8;
+	Tue, 20 Oct 2026 12:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792498127;
-	bh=o3HYFtbT84qJYX+FGS49qE6dDheWm1z/RgZhsb4Q7ek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=A3ay8DbVa1wWHxg17DxkKHb3vCbWSfi1ox+BHqlHep0/rx4ZG/Gs2PyrorGSVPEXl
-	 zwVrapUZYB/m9GHL3gCX2uYHBWPmQMrufqVk8p3rQV9qQXOsE2QhwSI1s7ZJQRKagl
-	 rl7zQ8OfPaQqje6Vth7vUJcvogVV9P5oGNJKjyf2Harai41X0IWithef6b6SQ9gIWr
-	 /OtkE53t5X2FTvjmfcEM455Hs1Srm/ymkylnbPWxLbAKBLDg8/S+CR9NdDc7IYSsvh
-	 fPRsCHegPyQJExkPJUqserXIaG60w9H51lOAIvJ0uaI7r1XIxQY34tXPyhRBmQieyU
-	 u+vy6prXFBTHA==
+	s=k20260515; t=1792499242;
+	bh=EtsZ8r/SGiyK0hppa0l+VctodUPOQfcuG0Rd9GxCXh0=;
+	h=Date:From:To:Cc:Subject;
+	b=MDL/dPqyQHJkYjBPG9v0ZsMTNag+ZvOkBPkTkKPtli2iriMem5EJFW+GFkRKXT3LG
+	 o6l56EJvHtpRoF/jHhDTEjIz9WLgyxNvTSDUq9kS3bJZwRBrHTI3OzP4OKItRym0Vm
+	 TRCWSynbE6BiW4RiIjqrnVIGUe5NNhkFO9YlF0UN/wS+k10Vccea6TGXhJ5xs8bxu5
+	 0rXkMBi5z5y+LyqJbNHl5pEQyNUIY0nmTK84gRBuq35l7Sqaj+p9fJU6vjfjGeAaDR
+	 atowAvlwMEeAYq+wDQYMOs8twZmx1TPRIrQ6oUr1UlcFdJb7cb8bEaojnLm5Vo5LIT
+	 psAKArmOteHYw==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 325841AC57D0; Tue, 20 Oct 2026 13:08:44 +0100 (BST)
-Date: Tue, 20 Oct 2026 13:08:44 +0100
+	id BA9311AC5994; Tue, 20 Oct 2026 13:27:19 +0100 (BST)
+Date: Tue, 20 Oct 2026 13:27:19 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-Subject: Re: Missing signoff in the drivers-x86 tree
-Message-ID: <atdZzEMsMWhzO2gO@sirena.co.uk>
-References: <arUBQuAfW4HJQHik@sirena.org.uk>
- <4ad00775-b067-452b-9869-29d5b6712f66@sirena.org.uk>
- <asOdosd0zROmuzu1@sirena.co.uk>
- <1a363159-02b9-4644-9cc8-38e210d97d5d@sirena.org.uk>
- <atZqoXnT_27rGAn9@sirena.co.uk>
- <e1119f07-83cc-8178-3c6a-e87778d3cb16@linux.intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mike Rapoport <rppt@kernel.org>, Tal Zussman <tz2294@columbia.edu>,
+	Vlastimil Babka <vbabka@kernel.org>
+Subject: linux-next: manual merge of the block tree with the mm tree
+Message-ID: <atdeJ-91RQrqLke6@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -65,49 +62,107 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="P3j17JiV0CwEqRby"
+	protocol="application/pgp-signature"; boundary="vOS7LxOfm8CwR0Zn"
 Content-Disposition: inline
-In-Reply-To: <e1119f07-83cc-8178-3c6a-e87778d3cb16@linux.intel.com>
-X-Cookie: You buttered your bread, now lie in it.
 
 
---P3j17JiV0CwEqRby
-Content-Type: text/plain; charset=iso-8859-1
+--vOS7LxOfm8CwR0Zn
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 20, 2026 at 02:07:02PM +0300, Ilpo J=E4rvinen wrote:
+Hi all,
 
-> Something odd is likely going on here. Neither of those commits above are=
-=20
-> in my tree anymore.
+Today's linux-next merge of the block tree got a conflict in:
 
-> Your latest merge:
+  block/bio.c
 
-> commit 233956951080612ff68d0c54f620606c53a1c91c
-> Merge: 67f116b3a9f8 98f039265e58
+between commit:
 
-> I don't know how you got that 98f039265e58 but that hasn't been in pdx86=
-=20
-> tree for multiple days by now:
+  d4ee6948bcabb ("block: restore the iterator when rejecting a misaligned b=
+io")
 
-> https://git.kernel.org/pub/scm/infra/transparency-logs/gitolite/git/1.git=
-/commit/?id=3D1bd7f5b78426fd94a4a3f75c79835a4416809e87
+=66rom the mm tree and commit:
 
-That's what I fetched yesterday, I don't know if there was some infra
-issue which caused the fetch to fail.  What I'm seeing for today is
-commit 893018d51f27ec0449155b0afe371aaf65380630, hopefully that's what
-you expected.
+  73a0ff6030afc ("block: fail a short atomic pin in bio_iov_iter_get_pages(=
+)")
 
---P3j17JiV0CwEqRby
+=66rom the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc block/bio.c
+index f5f866bfd89e4,8b3f6dc075275..0000000000000
+--- a/block/bio.c
++++ b/block/bio.c
+@@@ -1308,7 -1345,7 +1345,8 @@@ int bio_iov_iter_get_pages(struct bio *
+  			   unsigned len_align_mask)
+  {
+  	iov_iter_extraction_t flags =3D 0;
+ +	struct iov_iter saved_iter;
++ 	int ret;
+ =20
+  	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+  		return -EIO;
+@@@ -1329,11 -1366,10 +1367,11 @@@
+  	if (bio->bi_bdev && blk_queue_pci_p2pdma(bio->bi_bdev->bd_disk->queue))
+  		flags |=3D ITER_ALLOW_P2PDMA;
+ =20
+ +	saved_iter =3D *iter;
+  	do {
+- 		ssize_t ret;
++ 		ssize_t size;
+ =20
+- 		ret =3D iov_iter_extract_bvecs(iter, bio->bi_io_vec,
++ 		size =3D iov_iter_extract_bvecs(iter, bio->bi_io_vec,
+  				maxlen - bio->bi_iter.bi_size,
+  				&bio->bi_vcnt, bio->bi_max_vecs,
+  				mem_align_mask, flags);
+@@@ -1358,7 -1386,27 +1388,28 @@@
+ =20
+  	if (is_pci_p2pdma_page(bio->bi_io_vec->bv_page))
+  		bio->bi_opf |=3D REQ_NOMERGE;
+- 	return bio_iov_iter_align_down(bio, iter, len_align_mask);
++ 	ret =3D bio_iov_iter_align_down(bio, iter, len_align_mask);
++ 	if (ret)
++ 		return ret;
++=20
++ 	/*
++ 	 * An atomic write is submitted as a single bio, so it has to cover
++ 	 * the whole iterator or it would be torn.
++ 	 */
++ 	if ((bio->bi_opf & REQ_ATOMIC) && iov_iter_count(iter))
++ 		goto out_release_pages;
++ 	return 0;
++=20
++ out_release_pages:
++ 	/*
++ 	 * Release the pages pinned so far before failing, since this bio won't
++ 	 * be submitted to release them.
++ 	 */
++ 	bio_release_pages(bio, false);
++ 	bio_clear_flag(bio, BIO_PAGE_PINNED);
++ 	bio->bi_vcnt =3D 0;
+++	*iter =3D saved_iter;
++ 	return -EINVAL;
+  }
+ =20
+  static struct folio *folio_alloc_greedy(gfp_t gfp, size_t *size,
+
+--vOS7LxOfm8CwR0Zn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdZywAKCRAv73Ows9A4
-ieZPAP90JcMoLywyS8JowlZIy+wPuOozvfAHCOSp0rYg1y8G9AD/UH++c7kbWw0p
-FKgloovNB7HW4fQWVt1IKeTNJXSEcwg=
-=neIK
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdeJwAKCRAv73Ows9A4
+idJjAP9j/pDIwdiWjc/uxgewi3SmmnYV6NkqyZFx/YwD63vkvQEA6z4i50YlRv/w
+w9q4Pb8YglO6Rhvts0+ta2F72vYBMQo=
+=up0d
 -----END PGP SIGNATURE-----
 
---P3j17JiV0CwEqRby--
+--vOS7LxOfm8CwR0Zn--
