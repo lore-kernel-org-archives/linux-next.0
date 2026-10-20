@@ -1,63 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792489964;
-	b=16bK0VOBmgA+ZF78yRk73mUX4yqwG0rLAIboivxfTnxU5cjC/9v9BZaI3VZ74i+kJ2FT
-	 uY+VbmPAImaWfPc3qhCZ+mvuu9i61Y46FsHT3DTEzj6joW3mzeriTaMOKHuwkHkg+zbti
-	 ZUTdTRiB31QvFiOsBg4BCSi5L3pNF95XQgzpWvKkLD9fLP5CHWQDRawEi7JBDDIMuKyFA
-	 GHQmZaIICnptR+tZ6nbA2oEqZAxhbZYUqky2oEwFH+qL2wp/9+IrBcbhElVhpZHslDJ/K
-	 OxQvpD6fzI/SwaO4PJbaIxz2Ugr8Q99MEGS4rEoESn/IkQgkbZtRa4csShD8cWWShFg==
+	t=1792490072;
+	b=pd/HZsOAXS+Uv8yYTyxHqGoDgh5pEtOiBzUafLH33jv+Sx7SZB80hoEblM/FlKptKYJu
+	 G/4+GvnaNOGWJXh2rN6xXrBQBQRhxc3xNaqfh+P0LzisWrXYLDSU90ZEbQv1cZPXyt5PE
+	 LtmapJGGCUnRafbuTuUiZZylGhVeuBjeL4jaVmPygeRmX6VD7kW/gWAfSfufbD7+to52M
+	 0rsYPBSSKVwHb01BLoQ9BXHBAQaYr3f0LnsvziyX/wfT+2V6NGVXwNacX3uY418AVR5GY
+	 hcIF9tbco4Ugp5yyUCuf9YCDUgY/VzZTVWMbKn2BE5uBgvtbbpYtrtihEiMF4L99tuQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792489964;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792490072;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-Cookie;
-	bh=zYRM9MtNeNslk7QcIWF7t4sAkiaD9Q9bb18oY5zf+m8=;
-	b=edFkNhFrL4ZMzKk/+m2AR4uUvsDnquUMYnuVnAQfNRqgJjnI1yqdVWn4y9mmJRjgVqYV
-	 3tNWZedotk7oKGm0VQWQWnxiQS9Ewi1M5Zh1Fb1mRvTojGPu+HrGtMOH37DP9Auj+nEX3
-	 t2lBUPfHRr3D1pkXTwdnnPQ4hhEy5QzeqLQRKi/ock2nNqwCEY1Kfab3wRlJxAwZSxoC7
-	 NWNHZJHDiJpUFvUvR9rvsRbthR5WNi3ZVJbodKaa8kurQkylDnNDmzjTHYozhUpqMWJqW
-	 RwkJHXHEyHnkfJ0pho5nwCELu1dmM8RUBhhZcqACv2AAy/ofYGRE/WY/P34DwhY3m0A==
+	bh=XU02vtpj4WKj/rbk9TEtb2CY+iaX9oVs0uiW/nlc+38=;
+	b=2ayRiIRD19YNuP6WqPHE+JmtbP8rJdHeDACiBSYLrpGi0LnXNnjRJlFX9AGnYYSSIMKB
+	 a1vaVrqvHSjgL3mvcfDUlYh9aQlUMVWRfaSlCwpVDuJSdQ0xQE3qgSa1KonAEPP7JLS0t
+	 a0ge+Pfl+I6SA4l+ZUzhNXnMAP0k9YBw3y/gFLMTFW8Gfbe4FIoEbP2TJsDlMZCdhfAAb
+	 ZMDoGmLoNJ+v2rz1s/tgKiw3qIHp95Y1JO9YKAY9glEC05RZ/OP1uDznNtfSv5tNnW+BJ
+	 9x1kjYCILrwDj0x5g/SKWH+CTv+v8Fxvwfb+LIWQDM1a4LvPBY59bnlgF3B1gTcELIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=imw78RQV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UuGOs1lV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8219E606A31E;
-	Tue, 20 Oct 2026 09:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB80606A31C;
+	Tue, 20 Oct 2026 09:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=imw78RQV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD991F000C6;
-	Tue, 20 Oct 2026 09:52:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UuGOs1lV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD3D1F000C4;
+	Tue, 20 Oct 2026 09:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792489964;
-	bh=zYRM9MtNeNslk7QcIWF7t4sAkiaD9Q9bb18oY5zf+m8=;
+	s=k20260515; t=1792490071;
+	bh=XU02vtpj4WKj/rbk9TEtb2CY+iaX9oVs0uiW/nlc+38=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=imw78RQVyqxXyXIfVMuonDQMs/i7Eb+6b7LC3lr+cWorJbzGr1bDbd73vaSghnnQ2
-	 FKM0pBrRWWAOucPFcZKWr6F3/GmwgTFkKoEaH4uCHjJrUx1hzQTnnWk6JQgF7FXsp/
-	 fSPOlqDeYM+2EnX7JBjLcrxuzsgg5K0TblULfj80ku/rtH1NxTfux4364HakOKuglt
-	 /sMQEWaJx289+o6e+bZAq4UQgjz5nT8QC/34D1NbzZQ0dde4u1EW9hJDDucAa8eHJy
-	 TAxWKafkTwtosxh5nc5w/Wepu6I5eqOXnN2M/CmASSuoN3e1eLuEGdjjQc5WWtmn4h
-	 dRN+hczysa6kQ==
+	b=UuGOs1lV/boJy/jYSxjma4ZO0M62wbFXX2JbzpRWvo0tKGQKUJRDI40vvg1J7g60l
+	 Kktq8aahK9sxls5oxBS8W+f/mZoLIi2IuRpRzNshXcxbuC5JXkGVd/reNW82dRoizM
+	 xq/F6CY17vCRNs2u7j/GdXpYw1iMfcHGZi5of+DWc5Y7u9bGnAWhgp/MfIAU0FkagJ
+	 bY6HsafGt5uBawjbUbpnhqZmE9qgKS7w/3CB0IuQaLhtw9MK1nL58p7QwfVe1QdxdQ
+	 q+QOVtQCNzmcfoC+LflnAZwOAawgl4pbPKEemRcYgMPXitfT/SIMOsY1Jq9GC2eTJW
+	 ndBun4aA/NDGg==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id A2BF11AC57D0; Tue, 20 Oct 2026 10:52:41 +0100 (BST)
-Date: Tue, 20 Oct 2026 10:52:41 +0100
+	id 29F6E1AC57D0; Tue, 20 Oct 2026 10:54:29 +0100 (BST)
+Date: Tue, 20 Oct 2026 10:54:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Devin Wittmayer <lucid_duck@justthetip.ca>
-Cc: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	luyuantao <luyuantao@kylinos.cn>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: linux-next: manual merge of the drm tree with the drm-misc-fixes
- tree
-Message-ID: <atc56cq8Vhz_2M_o@sirena.co.uk>
-References: <atZBBqj4ON6kYWSK@sirena.co.uk>
- <20261019190959.799653-1-lucid_duck@justthetip.ca>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: test failure after merge of the landlock tree
+Message-ID: <atc6Vczti_EjFrQq@sirena.co.uk>
+References: <asmHRyx_uDkK-tJs@sirena.co.uk>
+ <atZepZTcoR9teu-r@sirena.co.uk>
+ <20261019.Za1phooV2oom@digikod.net>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -68,39 +62,40 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gZRriHLnrYvZPd15"
+	protocol="application/pgp-signature"; boundary="WQI98jbIRqyKTEdn"
 Content-Disposition: inline
-In-Reply-To: <20261019190959.799653-1-lucid_duck@justthetip.ca>
+In-Reply-To: <20261019.Za1phooV2oom@digikod.net>
 X-Cookie: You buttered your bread, now lie in it.
 
 
---gZRriHLnrYvZPd15
-Content-Type: text/plain; charset=us-ascii
+--WQI98jbIRqyKTEdn
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 19, 2026 at 12:09:59PM -0700, Devin Wittmayer wrote:
-> On Mon, Oct 19, 2026 at 05:10:46PM +0100, Mark Brown wrote:
-> > This obviously isn't the right merge, it drops the fixes.
+On Mon, Oct 19, 2026 at 11:11:20PM +0200, Micka=EBl Sala=FCn wrote:
+> On Mon, Oct 19, 2026 at 07:17:09PM +0100, Mark Brown wrote:
 
-> Two of those fixes are mine, so I had a go at it. The code that draws
-> the panic screen was moved into drm_panic_helper.c in drm-next, so two of
-> the three need to move with it. The third one, for the panic screen
-> setting, made it through your merge fine. Today's drm-tip has the same
-> gap.
+> > This issue is still present today.
 
-Yes, quite - the move causes issues with tracking conflict resolutions
-unfortunately since it doesn't show up at all to git's idea of a
-conflict.
+> I removed these wrong kunit checks Friday so it should be good now, but
+> I notice that linux-next still has the next-20261001/landlock merge
+> commit instead of the latest changes from mic/next (which should not
+> conflict).  Could you please confirm that a normal merge works?
 
---gZRriHLnrYvZPd15
+It was broken with whatever I fetched yesterday hence me reporting it
+still broken and merging the old version, I've just started the merge
+for today so I'll find out this afternoon if the fix worked.
+
+--WQI98jbIRqyKTEdn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatc56QAKCRAv73Ows9A4
-iRULAQCs9sAS3y+L+3JqxLeJygjCnoKRmyMdvhZ/rwLzPaBMeQEAy5JzFJn9OBZj
-dK3aiCovcvVy7LSBbSTfBsMZ++Kw3w0=
-=64z8
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatc6VAAKCRAv73Ows9A4
+iZ7PAQC7hbnLj8m6w6Yt74Ts/HWwpLMG9QcILnyDuKClQ2hiBgEAoE8XxC1R1lzq
+m/G7Q90zXPhCg7HSRCZ5iDUiUAM/TgQ=
+=hz3m
 -----END PGP SIGNATURE-----
 
---gZRriHLnrYvZPd15--
+--WQI98jbIRqyKTEdn--
