@@ -1,51 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.168
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792505644;
-	b=lKkkjeBDErPkIF8zIWOYZiJlqSxhlDYcmuJz/Xr/vEfexa/HxwWao4mx8WPgErwM39fJ
-	 OVl9cRfv97WbnQSWouPaCfJ9IsEi3xj6rxGtXkgfHynMI04id1FK6B3wnI5P/vHCycbuG
-	 d7bXw1LsePxjuoV40p+af/UgpUdinrU+PjjyU+z3V+R0R3G/GAFlRzbbhu7bELS3bJ6qE
-	 Z4AdGzwf4qhG2r1miy8rtjS73i/o8wPuZX2thYtakWlBuHgT3cJRh9XVgb7uDBd0DNWYf
-	 etp22s9ff4hp0GPAaqbu9itztk6gEu2XqiT1DfbNG5M4heSUVoY36uu7Ka8c8yEQwdQ==
+	t=1792506010;
+	b=Mf+xEBjC/aDKl0zxZ9G0EE9Wvb3Ds8AXA+ELQq7ZHaos1CzOM2jLiChQe78BB2lC+0zr
+	 VeFEUWkSiM10bVsr4M8GBqQiZlvTh6hqgIyzozNWX1bOXHuSf0noi5Q3cneLVhsnrZV7C
+	 zMDkAPfnSaVrgI3JrGDCh2oHJ12wIcoE3GSUVMFghdP3/6ywLJOhNDqjvOFMEmKOvZ3iy
+	 6/6lhiuowmkOD8DbZebYHz6NeaLTd29Hd/X4Usx01kz3IdMOmj+Hqa9kSq8bKxHhC1Ddj
+	 x6VeevpZnqeV5es0XObFZ/dXfkVbXv0qM74LAiMT9K1wxTkLZI2cCAzXwswuUnJXj2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792505644;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792506010;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Infomaniak-Routing;
-	bh=we9TziTBtw3Fo+dRvY9d2iSIdR3WTXnm7XJpz1tL/vg=;
-	b=Tw23v+7o2tXRilbqJqQ1rRkDnIlAhUd5zTFmtfJ9IDcSTW6jD+Fc9KfhztXvz6/cJqvP
-	 S5Fh3VejkPimrE1LPENtU0tRalBRku4gbTo38cy1tvpv1iBsFEy0JySUd8kNtSEDVUDMi
-	 q2SSoA6RXD1hQqD8TypqEFsw3bg+o96VSWkrjc1zsckeOEm0cDIdBdBZ0+oaGzr2MuQkF
-	 uAOhWLWNqaPT8IBNjZyQAjW5AfkYq+dAfNZsB31TXJr42ZeArt+GMqzMeXydLm/Niruzr
-	 56lldm3/u6WUAriVNRqcdtNn5gTDh3KIj6TsbOYwWfhzIPmSE1Z47GpbG/J+vRLhpmA==
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Infomaniak-Routing;
+	bh=MmtTgqf0itXurfWR15iP0g1i4zaJ4RksSWrfdHa2AsY=;
+	b=eh0wo84Rx/H4lSSwj4N9Tf4VoWBq0oOfpDEAV89LysunZiqdpLr0Ay/SdUR0q2+eqbe9
+	 JtSI0BPgcV8/RpHTQ4OFy6bCF6HfXxFdUhxFpES4OuFgpNEm08LWrmPtlExYFYksDxC9e
+	 DGqDqT14XnZr3cjxFINEUa5CytYhhaQj03sq74wdrrtGolyq7G0EMPB/azpMJEOLeBed0
+	 Is8sbx0M5+RPOj6vPntPGXnuztsHaw2iygzQLhWYGbv8RhxDJxwSUBY1XrSni/qefHPI1
+	 ZXTxIbIXha+wTWrkSnFFOl+DZ6CD1fHnqA2SBRReE8U6YXwLdo+9H2Yzl+bUNpRM3qg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=digikod.net;
 	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=ZVXaiuve;
-	arc=none smtp.remote-ip=45.157.188.15
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=pm2MmCyU;
+	arc=none smtp.remote-ip=84.16.66.168
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF2D60A2615
-	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 14:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BDF2D60A2615
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A56B606AA37
+	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 14:20:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6A56B606AA37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=ZVXaiuve
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8DtK0GYKzTjx;
-	Tue, 20 Oct 2026 16:14:01 +0200 (CEST)
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=pm2MmCyU
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8F1D5QRwz12nT;
+	Tue, 20 Oct 2026 16:20:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1792505640;
-	bh=we9TziTBtw3Fo+dRvY9d2iSIdR3WTXnm7XJpz1tL/vg=;
+	s=20191114; t=1792506000;
+	bh=MmtTgqf0itXurfWR15iP0g1i4zaJ4RksSWrfdHa2AsY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZVXaiuvesrknEesQAsvSZCkKb1XsuSeyUorpq57VMwtH5k/pyQxtcTSuV3RG3RJv8
-	 RoL3z3PtAiYnfOe/I6BgHeMfBjVtyTq0sIkxHEQSNu8auWLSxdQe0hoUv3GcRFQIEi
-	 HcoQAg9xAsIQIfZutDkgc6d2NBtium7j7ClZXOoA=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8DtJ1v6dzQZ6;
-	Tue, 20 Oct 2026 16:14:00 +0200 (CEST)
-Date: Tue, 20 Oct 2026 16:13:56 +0200
+	b=pm2MmCyU8YXiPamKx0lObCB9pvTVIlEXncTSl5f23Ff2IQe8yAtHVrBWS0ez9x7TE
+	 BinDUl/slMZxi7jYkDul31p9lT1xkGAAcQuhReVSO7TabHY0O351oNdroaYEDSLATX
+	 nLwPRZuXF3GcX3QZ7AjiHHvDq+N5hC1ZGc9VjIxI=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8F1D0BrLzLwb;
+	Tue, 20 Oct 2026 16:19:59 +0200 (CEST)
+Date: Tue, 20 Oct 2026 16:19:58 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Mark Brown <broonie@kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
@@ -53,8 +54,9 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Christian Brauner <brauner@kernel.org>
 Subject: Re: linux-next: manual merge of the landlock tree with the security
  tree
-Message-ID: <20261020.eethaeluo6eK@digikod.net>
+Message-ID: <20261020.oa9oezae6aX6@digikod.net>
 References: <atdvaWI6T-HXhtix@sirena.co.uk>
+ <20261020.eethaeluo6eK@digikod.net>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -66,65 +68,71 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <atdvaWI6T-HXhtix@sirena.co.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261020.eethaeluo6eK@digikod.net>
 X-Infomaniak-Routing: alpha
 
-On Tue, Oct 20, 2026 at 02:40:57PM +0100, Mark Brown wrote:
-> Hi all,
+On Tue, Oct 20, 2026 at 04:14:01PM +0200, Mickaël Salaün wrote:
+> On Tue, Oct 20, 2026 at 02:40:57PM +0100, Mark Brown wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the landlock tree got a conflict in:
+> > 
+> >   include/linux/ns/ns_common_types.h
+> > 
+> > between commit:
+> > 
+> >   436485132d236 ("Automated merge of 'lsm/dev' into 'stable-7.4'")
 > 
-> Today's linux-next merge of the landlock tree got a conflict in:
-> 
->   include/linux/ns/ns_common_types.h
-> 
-> between commit:
-> 
->   436485132d236 ("Automated merge of 'lsm/dev' into 'stable-7.4'")
+> I cannot find this commit, is it a new one from linux-next?
 
-I cannot find this commit, is it a new one from linux-next?
-
-I had to create a merge commit because the LSM next branch is too old,
-so I followed the previous merge resolution from linux-next, but it
-looks like today's merge commit is different than the previous ones.
+Ok, it's a new commit from Paul, part of his pull request.  I guess I'll
+re-create my merge commit...
 
 > 
-> from the security tree and commit:
+> I had to create a merge commit because the LSM next branch is too old,
+> so I followed the previous merge resolution from linux-next, but it
+> looks like today's merge commit is different than the previous ones.
 > 
->   0cbc5a0d65b05 ("Merge branch 'lsm/dev' into master")
+> > 
+> > from the security tree and commit:
+> > 
+> >   0cbc5a0d65b05 ("Merge branch 'lsm/dev' into master")
+> > 
+> > from the landlock tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > diff --combined include/linux/ns/ns_common_types.h
+> > index 47a5cfe2326a3,fddc62be3b626..0000000000000
+> > --- a/include/linux/ns/ns_common_types.h
+> > +++ b/include/linux/ns/ns_common_types.h
+> > @@@ -116,11 -116,11 +116,11 @@@ struct ns_common 
+> >   	struct dentry *stashed;
+> >   	const struct proc_ns_operations *ops;
+> >   	unsigned int inum;
+> >  -	struct ns_tree;
+> >  -	struct rcu_head ns_rcu;
+> >   #ifdef CONFIG_SECURITY
+> >   	void *ns_security;
+> >   #endif
+> >  +	struct ns_tree;
+> >  +	struct rcu_head ns_rcu;
 > 
-> from the landlock tree.
+> The previous merge (from yesterday and before [1]) was moving the
+> ns_security at the end of the struct but this new merge commit moves it
+> before the ns_tree field.  Do you know why?
 > 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> [1] b6926a7ca6e5 ("Merge branch 'next' of
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git")
 > 
-> diff --combined include/linux/ns/ns_common_types.h
-> index 47a5cfe2326a3,fddc62be3b626..0000000000000
-> --- a/include/linux/ns/ns_common_types.h
-> +++ b/include/linux/ns/ns_common_types.h
-> @@@ -116,11 -116,11 +116,11 @@@ struct ns_common 
->   	struct dentry *stashed;
->   	const struct proc_ns_operations *ops;
->   	unsigned int inum;
->  -	struct ns_tree;
->  -	struct rcu_head ns_rcu;
->   #ifdef CONFIG_SECURITY
->   	void *ns_security;
->   #endif
->  +	struct ns_tree;
->  +	struct rcu_head ns_rcu;
-
-The previous merge (from yesterday and before [1]) was moving the
-ns_security at the end of the struct but this new merge commit moves it
-before the ns_tree field.  Do you know why?
-
-[1] b6926a7ca6e5 ("Merge branch 'next' of
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git")
-
->   };
->   
->   #define to_ns_common(__ns)                                    \
-
-
+> >   };
+> >   
+> >   #define to_ns_common(__ns)                                    \
+> 
+> 
