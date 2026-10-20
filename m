@@ -1,57 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792499242;
-	b=mVgsfmsoo3ptuVVP56O4Bx0JIriwM5ezKVCMACJXHTI6mgw8aJ05yM1srU8cKmf9AM+3
-	 EA+nV33GOwkJHRqx17k8vUOC+/l8yMtMXubHCB99zvNV0qjy0WDbkvQYP6R3mBEs/cMNY
-	 5/WriO/KODqGVf4rhqsBymQyWclr3tEADA43yt6MlwhaVth6TlingT06U3gK+DrFd+Imp
-	 COJU8r7csbmeAmxMhJTkaQ1UjrRLcNFQpcMs0DmU56R0a4HSjs/qOFuUuk0GOLxTez/BJ
-	 K0olJCdZpW/3bohdF47SlF+hClzrlrMv0IhxOlNgqHVpGnAYAVNtd0ceIN1NbmVYOOQ==
+	t=1792499249;
+	b=gpl8mOVLywWbl71n8Y3bJO8uQ6E14yjuD7o05QsuYKfb0hn67caM9Goxuv/6iiqrpkKw
+	 gOSeIXFw15nRtxEpdRaWGCgUSk3Uxh6xG+2zie5tZjtMk104fPlMWbcnEpSAxlNC092V9
+	 /dlnBrslzRjbsNvLScZ4BsxhWmO2xeG2ZMy0hGukjt2u6O4mRD2AUWDMLrcvTL2qzxEBE
+	 yyH3rMKclMeKxn+438WL4E9uLYk5jpmSQ0SRNWIMbrfrAb0V/Ph4M1k0oTmj44yOUGoih
+	 6buR1m/Kbsd05v8dxmj5BUIzHqGAFU1xjh/UUjQWpHpZTH5zVxaXGYotcR5QptQYRew==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792499242;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792499249;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=EtsZ8r/SGiyK0hppa0l+VctodUPOQfcuG0Rd9GxCXh0=;
-	b=twUvnlFhe0JfNTAUHYXYuKg3HJT3rd36P0W0xGYgTL8gzAt5vLjSNKqZ5YgzD2RuU/cn
-	 bnProdg6EJy7JNm6IuoOAaCQcBiqK0EYbwGedCG4dGaNnOvoinLm096tHmULvoDSYG2h4
-	 75hDwF//RJp9QGtmzgCNS2SHaZVuQUz4k9fGLXGqw5LCxKwGHzSaCN4SV57GZ8axBBKmp
-	 JBq5kzV70kmsimTkK7tiWbOSzfqSpQLWDacicYe6Kr4VhC/3rwkorHunjQNMOvvhJ9MBo
-	 ljLQOwJ92Ynnjf1KvQmLyBrpRLDlTdXE3qVxDSjmK25niOt7g/O1ETHly78Qqplm+OQ==
+	bh=+n0OFyyGfDnnXctOkrVom7bxVJwocACuoUpJlcAls08=;
+	b=c2YCc/k0dc7/spfiqsZR8wkAb2JM1Su6hf+fuOA644RnlUmpf3CRFMBWJCYA3oRhK0w2
+	 2/TJhg/tE3yQiE8yIfVD478TwqcaF+iKNrWhKD2xpBRCusFB35I/nmGGnu7s08rUUWeal
+	 K6MyouDPY65Tjv8MowMaUJP2qDBiTUc4qLqc02b+D/6tV+RJTOF7pNO3Bk81Sj+bi3lnt
+	 RhhwakI5cKdCKWtY/o0VlHSN72XAtSK7mkX7714FZPNnkWCydPk6jmz/o6rqM9IuGCUqC
+	 joGlmED3y2QJPdh8LyVbkcETMismA8Oy4BIslVaF37ooiUPu3eJp4lL4AZqj+ELhvNw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="MDL/dPqy";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c495FJ4e;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7607E606A32A;
-	Tue, 20 Oct 2026 12:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5396606A31B;
+	Tue, 20 Oct 2026 12:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MDL/dPqy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3D21F000C8;
-	Tue, 20 Oct 2026 12:27:22 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c495FJ4e
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15BBD1F000CD;
+	Tue, 20 Oct 2026 12:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792499242;
-	bh=EtsZ8r/SGiyK0hppa0l+VctodUPOQfcuG0Rd9GxCXh0=;
+	s=k20260515; t=1792499248;
+	bh=+n0OFyyGfDnnXctOkrVom7bxVJwocACuoUpJlcAls08=;
 	h=Date:From:To:Cc:Subject;
-	b=MDL/dPqyQHJkYjBPG9v0ZsMTNag+ZvOkBPkTkKPtli2iriMem5EJFW+GFkRKXT3LG
-	 o6l56EJvHtpRoF/jHhDTEjIz9WLgyxNvTSDUq9kS3bJZwRBrHTI3OzP4OKItRym0Vm
-	 TRCWSynbE6BiW4RiIjqrnVIGUe5NNhkFO9YlF0UN/wS+k10Vccea6TGXhJ5xs8bxu5
-	 0rXkMBi5z5y+LyqJbNHl5pEQyNUIY0nmTK84gRBuq35l7Sqaj+p9fJU6vjfjGeAaDR
-	 atowAvlwMEeAYq+wDQYMOs8twZmx1TPRIrQ6oUr1UlcFdJb7cb8bEaojnLm5Vo5LIT
-	 psAKArmOteHYw==
+	b=c495FJ4e6ovoCXEKPHqH+LrQK2jQ+E/N4wkxfE46lglJr4q6ONeP4mjP1zxhgAlOy
+	 NHzygDgZHF0l+SLNKWb5njJz424yVkdHdvYWAaVfc5arupmitZhVQgvPOxhQpr9XFZ
+	 DmH2XMoejYbQdtkPHFlKNYLjvT0dxpxhL6Qq+s6SvRkM9dPr1eJFONGWHsvOdSfnk9
+	 9+iuBL+dKUcMW3+gtirGxHfjYIab0B4YjyRthDZsch46X5jbi6moGXfBylJ0KN7OJa
+	 T6xD/BUSJiGkwGaBkuQ0lR0+4Z2en+CmDmAJpX5AQXB5BlIMqZKv+nGVBtJCNWMTdN
+	 mT9c+M5D6dewQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id BA9311AC5994; Tue, 20 Oct 2026 13:27:19 +0100 (BST)
-Date: Tue, 20 Oct 2026 13:27:19 +0100
+	id DB9401AC5994; Tue, 20 Oct 2026 13:27:24 +0100 (BST)
+Date: Tue, 20 Oct 2026 13:27:24 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
+To: Sean Christopherson <seanjc@google.com>
+Cc: KVM <kvm@vger.kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mike Rapoport <rppt@kernel.org>, Tal Zussman <tz2294@columbia.edu>,
-	Vlastimil Babka <vbabka@kernel.org>
-Subject: linux-next: manual merge of the block tree with the mm tree
-Message-ID: <atdeJ-91RQrqLke6@sirena.co.uk>
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: linux-next: manual merge of the kvm-x86 tree with the kvm tree
+Message-ID: <atdeLNa8rtifVnaV@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -62,32 +60,31 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vOS7LxOfm8CwR0Zn"
+	protocol="application/pgp-signature"; boundary="wv56ngulGZy3Rkab"
 Content-Disposition: inline
 
 
---vOS7LxOfm8CwR0Zn
+--wv56ngulGZy3Rkab
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the block tree got a conflict in:
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-  block/bio.c
+  tools/testing/selftests/kvm/x86/nested_x2apic_test.c
 
 between commit:
 
-  d4ee6948bcabb ("block: restore the iterator when rejecting a misaligned b=
-io")
+  994489f04ebbb ("Merge tag 'kvm-x86-selftests-7.4' of https://github.com/k=
+vm-x86/linux into HEAD")
 
-=66rom the mm tree and commit:
+=66rom the kvm tree and commit:
 
-  73a0ff6030afc ("block: fail a short atomic pin in bio_iov_iter_get_pages(=
-)")
+  8b0aa41839602 ("Merge branch 'selftests'")
 
-=66rom the block tree.
+=66rom the kvm-x86 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -96,73 +93,29 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc block/bio.c
-index f5f866bfd89e4,8b3f6dc075275..0000000000000
---- a/block/bio.c
-+++ b/block/bio.c
-@@@ -1308,7 -1345,7 +1345,8 @@@ int bio_iov_iter_get_pages(struct bio *
-  			   unsigned len_align_mask)
-  {
-  	iov_iter_extraction_t flags =3D 0;
- +	struct iov_iter saved_iter;
-+ 	int ret;
+diff --combined tools/testing/selftests/kvm/x86/nested_x2apic_test.c
+index bba301cfc0b5a,2ae698c9aa1ce..0000000000000
+--- a/tools/testing/selftests/kvm/x86/nested_x2apic_test.c
++++ b/tools/testing/selftests/kvm/x86/nested_x2apic_test.c
+@@@ -86,7 -86,7 +86,7 @@@ static void l1_vmx_code(struct vmx_page
+  		   SECONDARY_EXEC_APIC_REGISTER_VIRT |
+  		   SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY;
+  	control &=3D (rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2) >> 32);
+- 	vmwrite(SECONDARY_VM_EXEC_CONTROL, control), 0;
++ 	vmwrite(SECONDARY_VM_EXEC_CONTROL, control);
  =20
-  	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
-  		return -EIO;
-@@@ -1329,11 -1366,10 +1367,11 @@@
-  	if (bio->bi_bdev && blk_queue_pci_p2pdma(bio->bi_bdev->bd_disk->queue))
-  		flags |=3D ITER_ALLOW_P2PDMA;
- =20
- +	saved_iter =3D *iter;
-  	do {
-- 		ssize_t ret;
-+ 		ssize_t size;
- =20
-- 		ret =3D iov_iter_extract_bvecs(iter, bio->bi_io_vec,
-+ 		size =3D iov_iter_extract_bvecs(iter, bio->bi_io_vec,
-  				maxlen - bio->bi_iter.bi_size,
-  				&bio->bi_vcnt, bio->bi_max_vecs,
-  				mem_align_mask, flags);
-@@@ -1358,7 -1386,27 +1388,28 @@@
- =20
-  	if (is_pci_p2pdma_page(bio->bi_io_vec->bv_page))
-  		bio->bi_opf |=3D REQ_NOMERGE;
-- 	return bio_iov_iter_align_down(bio, iter, len_align_mask);
-+ 	ret =3D bio_iov_iter_align_down(bio, iter, len_align_mask);
-+ 	if (ret)
-+ 		return ret;
-+=20
-+ 	/*
-+ 	 * An atomic write is submitted as a single bio, so it has to cover
-+ 	 * the whole iterator or it would be torn.
-+ 	 */
-+ 	if ((bio->bi_opf & REQ_ATOMIC) && iov_iter_count(iter))
-+ 		goto out_release_pages;
-+ 	return 0;
-+=20
-+ out_release_pages:
-+ 	/*
-+ 	 * Release the pages pinned so far before failing, since this bio won't
-+ 	 * be submitted to release them.
-+ 	 */
-+ 	bio_release_pages(bio, false);
-+ 	bio_clear_flag(bio, BIO_PAGE_PINNED);
-+ 	bio->bi_vcnt =3D 0;
-++	*iter =3D saved_iter;
-+ 	return -EINVAL;
-  }
- =20
-  static struct folio *folio_alloc_greedy(gfp_t gfp, size_t *size,
+  	vmlaunch();
+  	GUEST_ASSERT_EQ(vmread(VM_EXIT_REASON), EXIT_REASON_CPUID);
 
---vOS7LxOfm8CwR0Zn
+--wv56ngulGZy3Rkab
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdeJwAKCRAv73Ows9A4
-idJjAP9j/pDIwdiWjc/uxgewi3SmmnYV6NkqyZFx/YwD63vkvQEA6z4i50YlRv/w
-w9q4Pb8YglO6Rhvts0+ta2F72vYBMQo=
-=up0d
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatdeLAAKCRAv73Ows9A4
+iQ2BAPwKDKZbLk2oZmyEPhjtfLyaldWmIYW0V1Jcyv/5M8xDVwEAyu3ApJ3EnUdk
+v6jbPmDPqTwD5YF8bUvTsWaTzYmgEAg=
+=/K4V
 -----END PGP SIGNATURE-----
 
---vOS7LxOfm8CwR0Zn--
+--wv56ngulGZy3Rkab--
