@@ -1,66 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792504076;
-	b=5snDMGTMOTsfh3N4baAPg4/NOYGK/MUdsE/q+zO4/+/rm5OGQCMUWUvN6dz5hTOV1F7V
-	 pDcgxOUVuV9iTYRCJRHDW6sPTm54J4yABrhRYC85vDhYLwNR1sUi1jObSkYtnoCXRM4A+
-	 uhReGDwtWBPZZ5k7nqgeuE8u8syr/ieX3M3voj3Rzrt8n59T1np3ADPxmo1CcJUjkNA3e
-	 +io6/arMZLFb5nn56uEAYwC8vbg26C4MLvbtzCKXJK0Rgfvz0/byEaVDlXbC7viEvThXz
-	 6bC7Ee6NdaY3Okr17vyvtmC3F6vaRM/0fSpaEtMlHnwfipLf7e1kTxs8kYPYrva/giw==
+	t=1792505400;
+	b=Lv5BghvzZEvUKCQi3USIlB7/zPZobYMSN07OwhDXhyAkmFF2FBJccgclK4r/cwkB/6f6
+	 4Ngn2aBFUc+tEQxDTlmyHEwIEeCoOdGS64B8JhcR99nZiW4X5rPzohZA/WjsjtUZTM4r4
+	 9UK6CigVbncEPblE6yC0bx+1lUTixl3Ppl/GG57sMBEI7dPDGWbvUYsdVgf/FnFI074qv
+	 jba1bPZhD26Gn10gaLdcnMZViETRnhPy0qtBTjvOf5JXX7Kvzkgs/xvRcgSBFAq3Bf3Co
+	 a4RpW9ww2mDEGJ87yvehZQ5PNQywBMEz7uxtJc1rTwCZF0bjI8pq1/foAud+II5sGZA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792504076;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 X-Infomaniak-Routing;
-	bh=i7dIlVTrfi2tsXSNOJNuqQjhDng7dLWLXE4flMPdj/Y=;
-	b=4K6HNQDEuP9rxGwEpZT3BXqFe/qP42WweKeOuUQJRo9WgyMU12l4guTxjECZSi2mXAky
-	 Dqp1Ktf9bqCHOS9yOjGX/ygFlGDAjtYeCPIk7lf2xzWH3JfbBx5sZRLs1BpryNMUpxxWr
-	 rOtBxubLU32yDEZ32PWi5w8Pk/wO6YwF3xdvONyjUtbW2xy02Yos+JKkuuoZnVUef9GHp
-	 Ce3hIdn9bbhPvmrS04z63qTdIYGloTzzTLurOSHucQie0/YC8edUaZEY53oH93ccl3+bG
-	 LW7++ahReZsR7DlStwwCREdY39srRzFA43qpk3FeZPQxCAFneOw/HiV6rEcabEtql3g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792505400;
+	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=AwHv8HPvqhf4bKKO6ZBUu+5X4D7kMKQz6gRW8aYiJRc=;
+	b=l8DJw+5wy+TZhT4eL3/YIFTRfZP+qA/LP8APWZeBQWi46krvKuP14we8unOUBuvfUnVt
+	 ynjNqk7cGJjI0G5OB0EzXmRX5ViSo5mXv3I9noFMXGblbO5mgVVXIu2GkbOS2ocQxBmOx
+	 oWc49M7KncJURBz3EfwmnojRNjAK5Vknh0f0HA3X/IvSgxCA7J8V2U9r3pQZjBB6s5qzl
+	 rykC2Y6y0F3+Rb5nM6/yulGo2oQYwPFe+aGuweKUK3yV0/0uN/I4Sjl2uJE4ZmPRK9pfq
+	 /r8hifbl5k89ArtJrLFaOfY8N5GmqnwwZfL/cd1NGN6FsPwUk83rmlwQg32eSgb73ng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=gZQl3Exd;
-	arc=none smtp.remote-ip=185.125.25.12
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z78+H229;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F03606A330
-	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 13:47:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25F03606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75481606A320;
+	Tue, 20 Oct 2026 14:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=gZQl3Exd
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8DJ82dtZz10P;
-	Tue, 20 Oct 2026 15:47:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1792504072;
-	bh=i7dIlVTrfi2tsXSNOJNuqQjhDng7dLWLXE4flMPdj/Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gZQl3Exd96vtnxLoecu9JhzvwJP4Vf3jDDI0+LP0lOwehoF/QRHrziO9uSfreaQLV
-	 zVRcat56+alIwqCX9v6I0UlHT38R19B0D+hj6ZAb3kYlziT1p1UKwn8HsBuvVM8HBc
-	 KhFfRe3lGvJCs32IDEMgAwPgt5Vba0Gg6+SqyCDc=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8DJ75Vbgzt7C;
-	Tue, 20 Oct 2026 15:47:51 +0200 (CEST)
-Date: Tue, 20 Oct 2026 15:47:46 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, helpdesk@kernel.org
-Subject: Re: linux-next: test failure after merge of the landlock tree
-Message-ID: <20261020.Eetahchaez3C@digikod.net>
-References: <asmHRyx_uDkK-tJs@sirena.co.uk>
- <atZepZTcoR9teu-r@sirena.co.uk>
- <20261019.Za1phooV2oom@digikod.net>
- <atc6Vczti_EjFrQq@sirena.co.uk>
- <20261020.ij4euziuYovo@digikod.net>
- <atdmcnGhgZ9U8g_S@sirena.co.uk>
- <20261020.shai5aMoosai@digikod.net>
- <atdtpq6msC2Fhy4I@sirena.co.uk>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z78+H229
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF64B1F000CB;
+	Tue, 20 Oct 2026 14:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792505399;
+	bh=AwHv8HPvqhf4bKKO6ZBUu+5X4D7kMKQz6gRW8aYiJRc=;
+	h=Date:From:To:Cc:Subject;
+	b=Z78+H229PqrNoOuydsnzVD0OEwWMq4Fwz5IK1mOSKlaBuf92E4mQeX8yqx5JfMog/
+	 /VlvIQTIS/hY/y6s9J98hJyTSupGzmdqkSESBdJCa3L9fK/ouFGmp1lqtUgyAE4KiS
+	 IxRsUxPSmYmG9m0kV6yjfk6dCsc9O2pJf9fPbCpBOyhS+hpLF/wam+vYNobtWb1ZMm
+	 ehxx1RaC8YpHCkNZnyZG3225QCOGLH66mFmeRJkyquKowziZN/ChKSWFs5kBCBQ/bD
+	 I0GHh6PiWr1efMSdS1pKGsBYnBpQKlilyycSPs6KLqAL/oeXt+aB5GSIWByAexSo4k
+	 mfTjq1ea/lxjw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id BA3131AC5994; Tue, 20 Oct 2026 15:09:56 +0100 (BST)
+Date: Tue, 20 Oct 2026 15:09:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 20
+Message-ID: <atd2NPxTfe8vjwks@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -70,38 +56,74 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="szR0u2whGL0D3THy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <atdtpq6msC2Fhy4I@sirena.co.uk>
-X-Infomaniak-Routing: alpha
 
-On Tue, Oct 20, 2026 at 02:33:26PM +0100, Mark Brown wrote:
-> On Tue, Oct 20, 2026 at 03:16:51PM +0200, Mickaël Salaün wrote:
-> > On Tue, Oct 20, 2026 at 02:02:42PM +0100, Mark Brown wrote:
-> 
-> > > What I have today is f349c073889ff7694b470ca34dae9bd94d47b0cc which is
-> > > "landlock: Fix superblock use-after-free in release_inode()" rebased on
-> > > the 16th (I just tried refetching and there was no change).  It seems
-> > > very surprising that there might have been an infrastructure issue
-> > > fetching the tree all of Thursday, Friday and Monday?
-> 
-> > Commit 0da3cb3db77e3fe2202ddb637f6d27668dc360f7 appears in the
-> > transparency log:
-> > https://git.kernel.org/pub/scm/infra/transparency-logs/gitolite/git/1.git/commit/?id=0da8a8d3dc37ec9a71b76f9739957297d64d4b73
-> 
-> This probably needs reporting to helpdesk (CCed), when I fetch:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git next
-> 
-> or go to:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?id=f349c073889ff7694b470ca34dae9bd94d47b0cc
-> 
-> what I see is the commit referenced above being the head of your next
-> branch, not this other one you are mentioning.  I'm on the fra mirror.
 
-This head commit correct.  I mean that commit 0da3cb3db77e ("landlock:
-Enforce capability restrictions") was the one that fixed the kunit issue
-and it was part of the commits I pushed Wednesday.  Anyway, it looks
-good now, thanks.
+--szR0u2whGL0D3THy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi all,
+
+Changes since 20261019:
+
+The vfs-brauner tree acquired a conflict with the origin tree.
+
+The block tree acquired a conflict with the mm tree.
+
+The kvm-x86 tree acquired a conflict with the kvm tree.
+
+The char-misc tree acquired a conflict with the rust tree.
+
+The landlock tree acquired a conflict with the security tree.
+
+The landlock tree lost it's build failure.
+
+Non-merge commits (relative to Linus' tree): 17217
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 434 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--szR0u2whGL0D3THy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatd2KwAKCRAv73Ows9A4
+ieBIAQDSgNP3ivS8IcykdFn5t6mFQwiEtSjRtgNxXWcECwaumAD+Nu9/Wieg3dPZ
+8U2AdBbbAvPcdbpdqdgYxRZlhs04VQs=
+=1lnq
+-----END PGP SIGNATURE-----
+
+--szR0u2whGL0D3THy--
