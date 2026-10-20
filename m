@@ -1,101 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.170
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792519477;
-	b=LCn47Da9YkNgdfVtiDt28iLYD1RefBAF++vhk8Yt0XIRXJ/+6GjW9/j3HUPCClO3JNR/
-	 T0GJsOZj3byjRFHf+hdofPqx/e103fScAAP1XOdPyYGaHp0XHp7hViVqLRdExq7T5hD/j
-	 q9o2dvXs0RzV/QOzM2iY9i1V83hagtsp/QVOFxYuOLMk4O1IeSZTGUQI+U/tH8tBXD28p
-	 TVWkVY8QeoYxdJUU5pPkYPjnVJKHlGsOLCOBmlZv6zzh9UAXRtkzJ0vGrEbtCS4oHw54k
-	 egxLfWZ1JWgeAhy/T8GO2jxTLapUs2mfrwuWPcuv00JPa1SWsiKGc2ShIRXGpSfDs7g==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792519477;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=SkOSxYOcLHPXGNYa7jA4h5BWgn2pB/uT8aTkA+ryHZw=;
-	b=ptjf7pGZo74dxL162xMw+0cR5BOrx7THIgNw6mWurxJmPNis4PU6P52qcn6Eagi8T+Ii
-	 ItQlDNehSpvc9KBOdcY5jXfszQJgQEY8O9GWqO53lTwc37hjszzI0KzhjNww3By+UILKN
-	 ZB3WCZhqw6Wrx3bJOxmYgrDECjahxIwezvqmjr5gW2+hKdFKY62OWC1nLG9WxdXQbVAYl
-	 xKGUs53MA2Hi1DQpxP0G7w/RVBTeCzzly1t9GilvByF6eLXHNkNVKda0H7w0NclR+BFXu
-	 l9ljuLDqOLMJhXdoo/Hzjkxjzk+DkIxGd5PRPfqw2o/2SYMzZPxCPXBBMzeTqGXsHrg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ej6hAinx;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.170
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792521788;
+	b=PiqflYacQk9i0Ryz+gZ6MFyv17iHXxaf9eBgy/YNoVm9ZGisiEgSHTdB4sj0S2IKLExm
+	 X2/0a+s8dMfS7XJc2l33ylcUTbuJnEFJ7OuYHWyXf68g7prLfknuH9GMgZXWqGDE7KGqx
+	 elgcDdvfzBfmDtQdL2wbyMTJ44pjYCEy/2+XM2mWM4iunARY7V5+qWTxS4DkjHDTyufEj
+	 C+RhTpHx3XSvJFg8tHFZyE92bcgBkNXhavxoVnuoAiSZv8VM16DRjJUYUL6nHv8a4RfuW
+	 p3HZYTU8cYxe6lPwaFhp5ECagsbvl7Y+aXWnaqaHupGA585bpFc+8ZkIbR7oFp5ed9w==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792521788;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
+	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=lehVgQ0A0MkjnYX71YZAiLrVQVrZjPDtWT7Uym8tVaI=;
+	b=MsCMvyOK3SJdkz7cONiaKwRd720LKQL7APx2+BkgJ13TRhdfOaOhe/ZEGVJd7Fb0m1xK
+	 qI4qzUlBKH1RJOJPKuAEO45YcQoOzHMj6ypjjRigM90FAeAEbtssLfe1K8HATRe1nLd3U
+	 L4SeyyA/Ew7/0FeemRLQk76p5HI30btiv6WHvkb4kcWwGtM7c6ZnDMJAjZt7ot2VxphpW
+	 wXV8q3Ee2HrNpev4KYFTT73xsKO1cDOI8iKs3yS1SkfIIqzXopw8ucnA2cLyKVZNzaZ9b
+	 7Qu6xmQuVK9xiE9YnV8c052Wm8n3vJ0lF3LsMPMnwSdck5pbjFJ9S+kfLfDzkyXql6A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=DSc3LoCw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4475606A31A
-	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 18:04:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4475606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD2B606A319;
+	Tue, 20 Oct 2026 18:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ej6hAinx
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-34c522572bfso370191eec.3
-        for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 11:04:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792519476; cv=none;
-        d=google.com; s=arc-20260327;
-        b=BHJTo6KDT2XGWKP1koE6dN9EYZjLRl5tnvcUtdp1G3d8itdHq0W45MBx2FnxmDtC0Q
-         Rx4U6Mx+iQLbZv5Vf1Y4meugwBFiTBpcjtF4tSqKHm61r1G+zwMd1TTqrclJ7PdKJbB/
-         5T1eEyVhk+TDYLFr2ZFmRCBqGPUTab7ozWmdHs7jaL2VtsLZBIeviJOHpdgr5bR1Lwd4
-         bUyMaJZEBDp6fUYIueIvZLadfHly5G2Xi0/gm6s3ok2t1LMW6RRGz3KL9Nvqca1tWSru
-         yMKXRbgUKftNaqzfqzGrcaDXjQSYjvUdhi4GBv4MCf0Tiia2lqEp5m+vc48SQKQIGuYT
-         eE8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=SkOSxYOcLHPXGNYa7jA4h5BWgn2pB/uT8aTkA+ryHZw=;
-        fh=9pKukPRrjtfwvU6WLS+05y5hE3APSx+GMsxo0DhwlC8=;
-        b=gAimXHQdHNKAnLf7GksJODHZI9OI76DsZi6So/61ZkfpantdRumc6+Z9n92tFYdHTj
-         qMAar5Ohmds/TH8xJ0A7aLMIm/Mi5qHDgw9R/51KN+AgzdFlL16JAxJq8YAoNnQyRgGl
-         8vEDZweEpEvwpQHQ0IcYFqz+HlkgjEr+/yTHu8KmgIItHqw9VGjI6G0oykwjtoMPVI6M
-         JDu5bQ1WcVnN8nPxk2nbB+jRjo4SJYSNoN0pUZCf4vOI8uDneXDrI7LjOV9kinjAsHkV
-         XIZKQqiDS839EMH6VVOlsDL7n2OGHL6jAfKdrx+nPf9zPbfvvurzU8NGskzanhsj2ZFv
-         u+wQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key, unprotected) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=DSc3LoCw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65061F000C9;
+	Tue, 20 Oct 2026 18:43:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792519476; x=1793124276; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=SkOSxYOcLHPXGNYa7jA4h5BWgn2pB/uT8aTkA+ryHZw=;
-        b=ej6hAinxfCnGBlLhraj2kIFUbg+MSlyvMke4duznBwZ8W3fpjYEJ0At6qpWQ8ewsqk
-         A2dwgfA0/V3EHRo3fMyb/1P3bgRcM0LAW8+xN+iur2L1w1zKzRVwg1omL36fgqWHyCzN
-         gRsR5Z6rHqJ6yD6sKbT5h1CrbnhFgRT+49DAEu3w293A03roUXbrgx2WLUgH4P68Gwva
-         wpHC+VzjuZSxb/y6EmH97P4QrKvN3/65uLDN5In4sJJUbE6mwpk2FPibr95/Z6jLKYmw
-         RVxvRNZuUbPnabwaazLy2ZFqlyDIGzAtu/Glms5k09dFLMtkKFGFjjEuTQGoE8dgzE5v
-         fbaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792519476; x=1793124276;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=SkOSxYOcLHPXGNYa7jA4h5BWgn2pB/uT8aTkA+ryHZw=;
-        b=z2rfiYDP+Y7MzrkGcnJZvjzrEiAIB3IGeBQ4By5Yf0fCKLh9t6QevEGZvt3iZxwK5I
-         xasodFZ+Hk1fz03Kd+eCQkNP8++lf9eofMpPYonx+vQjZQajdIy97+qYCnl6xHh1Fng7
-         J3EEamjcOowlVlKxXTu15rJA5pPliEFvIzFHgwTeTNfJlm4wXZJUg2FjiU3fv+KSzVaK
-         g6dk4RgO4l11ydaKBjdN/kNyPc3HY5F3DyREBql72CBVTXdXt66oVMRB5q2hkxSXEU/A
-         HzWHvT/5voKVcCc4j7BtOXxTNDxasCV6EHWXynhvkNow5n7RY63D9QwB8oJvMK8XfIXV
-         TQpg==
-X-Forwarded-Encrypted: i=1; AKwUvBxeDKeCbhCG2U3v21HKPrSDqNHwLwTD5WIllrsnVGp2MXCr7wh5TlwMpz/BJlLlnFb1yH/Z4F2xlNZC@vger.kernel.org
-X-Gm-Message-State: AFq9FYLyyXEDq3vNr9Y73qBIh7dzj21O8oqiTEvxKi61sYCFDnGP2lu0
-	Jfx8MsuXAIeO+JUjRLib1syl+imBvWWHQT/xR64dZJhY+HwMvM1/fNSib+CCfFcezhi8e6OmJzB
-	KFBpTjLHiZvxhyy8ly17EFXB1SHxqspQ=
-X-Gm-Gg: AYBFou0gj77fq4LwPba/t+2mINUW7ejmuiYE7Y9lwvCkx/e5xFkyaYR0CSZSltHdeM/
-	J96EjEfN9z9K68XaskVplqtHlfBZ0/+2jFVkPHSCNDFqyve8ltAJdkL1LyIyCVwLg+DCfL07/Tu
-	7ZXeJ943HmO4ORZlrBcbZLB+DrtgWDLhKnbaiy5AlCCYNAVjrwEf4BbUZlNnBJu/k99rcMaJ2n8
-	8JqS8sePwXvMtX4Vpa4AZvuAi8BczVynqlu6DIvaOEG2ziomxV2KWm0HmIs98GTSyRKsfyW2Z5+
-	E5ywnZFhOc6YNJkkFb1gtfoGIm5Aj+V8ZKRnsp1eKQ/rz5kBUrArp+FrdxneeYYGK4/AhFENHJy
-	re2+qq0ViTQNfptsWzGA502C01w8iCVQEGVu7+h7t9mw3nCEfMRAqwLElsYcL5Ox8xWjuIXImQ0
-	zcKWDvxn0uwEp0k1H5wd+N+6sWUIl4FzmFUORgr2EO/D2EaOs5a1Y=
-X-Received: by 2002:a05:693c:638e:20b0:351:6d7f:e2bc with SMTP id
- 5a478bee46e88-3674db5603dmr18223eec.2.1792519475702; Tue, 20 Oct 2026
- 11:04:35 -0700 (PDT)
+	d=linux-foundation.org; s=korg; t=1792521787;
+	bh=lehVgQ0A0MkjnYX71YZAiLrVQVrZjPDtWT7Uym8tVaI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=DSc3LoCwT738b6gd647I3znQc8CY5HhT7joFJiy66q3pbS0QTt442/uk9VoAmGq5P
+	 rXD3ybdTh6Z/VLxCJL7yJ9xKgcyu68zJQrL01l9KxeuAup2ryCajl6hjwT8QdCJj8/
+	 /MiLvpHW5Plj1ROnZgoDrTddR9u2NUESQDwM7qSo=
+Date: Tue, 20 Oct 2026 11:43:06 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Mark Brown <broonie@kernel.org>, David Hildenbrand <david@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Mike Rapoport <rppt@kernel.org>,
+ Tal Zussman <tz2294@columbia.edu>, Vlastimil Babka <vbabka@kernel.org>
+Subject: Re: linux-next: manual merge of the block tree with the mm tree
+Message-Id: <20261020114306.7a7362dc17e2bf9cdad03373@linux-foundation.org>
+In-Reply-To: <af63d378-d6d2-4fe4-bc2d-15f894b60624@kernel.dk>
+References: <atdeJ-91RQrqLke6@sirena.co.uk>
+	<553dc087-b5d4-4aa0-8e84-4de6eaa45847@kernel.dk>
+	<20261020100055.3e388e03fcd804f0cbde04f5@linux-foundation.org>
+	<af63d378-d6d2-4fe4-bc2d-15f894b60624@kernel.dk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -104,43 +60,58 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <atdeNvRKFuQd2qHz@sirena.co.uk>
-In-Reply-To: <atdeNvRKFuQd2qHz@sirena.co.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 20 Oct 2026 20:04:21 +0200
-X-Gm-Features: AclHuK8uicpeOQVDa7YyBrby-50eUveLy_yF6eUllgv4q-wP0heOlGOe9JdcgNk
-Message-ID: <CANiq72nsZ3u8XfFGRL5nN9jvsMekrB-Rziy-N-XxKg7KAcap3g@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the rust tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 20, 2026 at 2:27=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> Today's linux-next merge of the char-misc tree got a conflict in:
->
->   drivers/android/binder/thread.rs
->
-> between commit:
->
->   a12f22b2c9398 ("rust_binder: use pr_*_ratelimited! for printing")
->
-> from the rust tree and commit:
->
->   985955d8e6b2b ("rust_binder: wake epoll on self-work queued to poll thr=
-ead")
->
-> from the char-misc tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
+On Tue, 20 Oct 2026 11:13:23 -0600 Jens Axboe <axboe@kernel.dk> wrote:
 
-Looks fine, thanks!
+> On 10/20/26 11:00 AM, Andrew Morton wrote:
+> > On Tue, 20 Oct 2026 06:45:16 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+> > 
+> >> On 10/20/26 6:27 AM, Mark Brown wrote:
+> >>> Hi all,
+> >>>
+> >>> Today's linux-next merge of the block tree got a conflict in:
+> >>>
+> >>>   block/bio.c
+> >>>
+> >>> between commit:
+> >>>
+> >>>   d4ee6948bcabb ("block: restore the iterator when rejecting a misaligned bio")
+> >>>
+> >>> from the mm tree and commit:
+> >>>
+> >>>   73a0ff6030afc ("block: fail a short atomic pin in bio_iov_iter_get_pages()")
+> >>>
+> >>> from the block tree.
+> >>
+> >> I suspected as much when I saw Andrew pick it up. Andrew, perhaps
+> >> let's queue it where it belongs?
+> > 
+> > I was hoping to get some review feedback before sending it over
+> > formally.
+> > 
+> > I'll send it now.
+> 
+> Applied - can you double check? Flow is a bit different in there
+> compared to the one you patched against, entirely hand applied.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/commit/?h=for-7.4/block&id=40d070cbb1906896d6fd65c39722d2411830ed9f
 
-Cheers,
-Miguel
+Integration lgtm, thanks.
+
+
+The error path leaves bio->bi_iter.bi_size still reflecting the bytes
+extracted before the failure which is untidy, but no caller appears to
+use it.
+
+
+I'll also send over Daehyeon's "iov_iter: validate extracted segment
+for bvec alignment", v2.
+
+He showed that we can allow misaligned direct I/O to be accepted when
+it should have failed with -EINVAL.  Daehyeon reproduced the problem
+and showed misaligned bvecs reaching a bio-based driver.  We shouldn't
+rely on drivers to enforce an alignment requirement which should have
+been checked earlier.
