@@ -1,59 +1,124 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.157
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792444541;
-	b=4dYcvpRUngkOT22T0enBS6gxnfegTILMiGunjgdRQPbxV5ZSRjS4OfVl4xsoc0hu9y7a
-	 quM4Q97RxUy6iug82KHCR9aQwo4Jb+cYEbk1J699apevxa/T0iA+nUjv1VL4YQt6FZJGo
-	 QlZ5bgkrAaVV08lBST8eU5Z7ifxTxkjbqmim+idPP2m/W2AHs9A35aH1f4VyN1sZT+MpU
-	 eo6LD4UdSRkGhQ5XBwTNimpyA53OuE0+jYR6OjhASqQgqTX4/AojNnxMJBV7oB1YKQoMC
-	 ikpGXFFd/IbTgJvahQbDMGH0kZQBrTcn5BhXJTLVc2KYzVB/OZ8Zhv8ALwK9xhJrypw==
+	t=1792460703;
+	b=kNX3Y7uscxPnBpl64HwE8o9AbIzQiS/4Rprzu3iltufMaOKC1WCOro39uRT/IjFkfhc3
+	 7cEUPMcqOb5Med+zsyUxXhN4WVeWNY5nzhykCmNz/Dwk0dBkmGg6pzNBpUBT05yDehCnr
+	 x1g1P8+MKs2mDQSw2waDwXmiNIPUo9GrzDv7GMiyFsChea5FDOkADfNZkIUasie2uNfnQ
+	 a0JD0lKCNTfwj+INYbKiQSOf1KMGBe/++piS50AppIATQ+naYGZFruDoCy8+SBWL7nl3v
+	 u8Hz2ue45XsOOaN19WXw33pALuCxGJQFGoYYGOH4I+ei9wNgkFK4uMtKhlN4Cy7hOdg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792444541;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Infomaniak-Routing;
-	bh=8IMF7hTqdNkXpd4HECOEYsdpLHrhvh1mKYSlApFzxVE=;
-	b=h2CFOaCmU3N2gr3SWLU3zhalB0GWuck82PLpE840mKJr1RRd3jYelHcP4RSzMm6f/vL1
-	 wqVKt4Eh2dY+tG9GHCDM50jAObb3FzzirvS0p1/BEFFPY6MyM+JDHSFc+f1YTr5+HKUwY
-	 C2BvyGnFDoqCUL5WaoK6/J16CP1KcKEddcH0YoozitEXmDgRvU11PdWeNjq5dD2LpQxGQ
-	 4zVEzT/beOk21u5e+rrrDTsFTy8bvDyy3bMCJ2vgbZhHRCPEtuqWGENOWu4kHfz7+vwdp
-	 5E/FGjrnwaDmUlUn3q8oTgbZiBByIGBJ4LQIYjzUgW8Q62I3hcjLLlXnBltuo/bmL0g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792460703;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
+	 Received:Date:From:To:Cc:Subject:Message-ID:Mail-Followup-To:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=rZcZfYXBzlUwQ6YnCv3oAfZ9AJiBpXJOG8bn7No/VXU=;
+	b=ejEAFVFvCKuWkCaTrMhWxaOBF4OsC+ah0rBPkZqWYmey2kQPXnLgCA/P7bIPSe7aWNpF
+	 AGfWsLyXK36LNBueqkulH0zJJvn7MYycNGkF2FPk4KooPBDjDVEEuj2bZCXKFJhjNUMo5
+	 jHwi5wtrrL2SnOlLjoDOpLcREJCp+Eiamw2Keh6X5+b5bpJrm+wWrYbcFU1Nex11fxgIU
+	 lSoAHSlt5T+DWxyHo5y4NHho0qDAVY6GAlAiBNxJOm5AV26WSCrGXUuVwP5s8s85KQpyh
+	 UC40ns9or+GeryLlC14WUlJ+UhdGLugV8j5cxVls4I/GJLxJ1ly1cT8KIlv1IMAU4Rw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=mYNKIAey;
-	arc=none smtp.remote-ip=185.125.25.10
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	dmarc=pass header.from=sakamocchi.jp;
+	spf=pass smtp.mailfrom=sakamocchi.jp;
+	dkim=pass header.d=sakamocchi.jp header.i=@sakamocchi.jp header.a=rsa-sha256 header.s=fm2 header.b=dvokr1Iz;
+	dkim=temperror header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=rsqb4gXR;
+	arc=none smtp.remote-ip=103.168.172.157
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1D6606A31D
-	for <linux-next@vger.kernel.org>; Mon, 19 Oct 2026 21:15:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F1D6606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAECE606A323
+	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 01:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAECE606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=mYNKIAey
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j7pH82xSvzRGW;
-	Mon, 19 Oct 2026 23:15:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1792444532;
-	bh=8IMF7hTqdNkXpd4HECOEYsdpLHrhvh1mKYSlApFzxVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mYNKIAeyE7hggaNuBB+8TBVu+IXrasxUGp1CAJHLSqf9kc+DdU2x+jmHpZtifFAk4
-	 uCx2G9ChYrNrT5Xh7Ljf7kiLAq6yboNu0k12HyPwcxuaLnm592j2J2KToLtev3lQ23
-	 XedfOcCLZaS4cPtvotd0SiFSWSWtJVO419RNlHKk=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4j7pH75qpyzDNP;
-	Mon, 19 Oct 2026 23:15:31 +0200 (CEST)
-Date: Mon, 19 Oct 2026 23:15:29 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+	dkim=pass (2048-bit key, unprotected) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.a=rsa-sha256 header.s=fm2 header.b=dvokr1Iz;
+	dkim=temperror header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=rsqb4gXR
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CF2F514000CF
+	for <linux-next@vger.kernel.org>; Mon, 19 Oct 2026 21:45:00 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Oct 2026 21:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1792460700; x=
+	1792547100; bh=rZcZfYXBzlUwQ6YnCv3oAfZ9AJiBpXJOG8bn7No/VXU=; b=d
+	vokr1Iz1oTOqj/CkKLMNHSZVtPVIRGeV6t9wvqnu6lEiQc69E0Z+TwDI+WHMoqvs
+	xhsbJIkthopcImflHzgNUrbqVoQ1bdTBEJQzFLecWERPJz0EVP+a+IDFBTZ9F6nj
+	ERpybWmeeyJsh7MheuJYIp0OyrW7GikoZUX7V9G3EWzptjXeeOzId/tvsameENvG
+	aKNMhzshHpxjo3tj6NH18FyBZ3Enw+mz6VCL9HCLoLhlcRTbX28KjCLXZlt9fxl7
+	1vYM22RhGUBNodhAyRciLygmu7fjw07P7vYf3gcAGsIpnFPvmNHxeq2MLYgcEf4c
+	kw0+RiUVpOG4dtmcndmhw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1792460700; x=1792547100; bh=rZcZfYXBzlUwQ6YnCv3oAfZ9AJiBpXJOG8b
+	n7No/VXU=; b=rsqb4gXRJBMYUeVVdxJ47aZVSusqxhFrMfGPPgs/VdenOoYF+oc
+	AtQ0iuxY9jpUlHDjQ9KCy+PlE3n1bSL96+wTX2BMdp2qYTZqjvSb66oqNDAKiCa3
+	C8UxD7P48p03qXSVRJUjPPgafuVwb1thJnLiKV7tkfYnV0FX0/Me+S5ARshUoqoF
+	a1GV5SeaSt//Ja2Uv5KDRYa6FHRRziXQO5YIe5nILrRK09Y1GuDJj2Iye0ZPmPqP
+	pVkyNwV68aKMBjCtaak0p9UmQ8HyuFUMUrXXfJCudJTYrNzEG1JiVsgk0oGXYbCO
+	DyECoshGhxlNpgsDMwJvoNoKeER59RXjJag==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+	action=sign d=sakamocchi.jp a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792460700; d=sakamocchi.jp;
+	mf=PG8tdGFrYXNoaUBzYWthbW9jY2hpLmpwPg==;
+	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:KmezOaR5EY5qpxdtlk+frP/O56qvs2ztRcLd3U9PNDFd5d9
+	lY+oPKjlfmkWus3bGWhXreF808Dd/6WiWtezYzKAB3NFVP1fF1kZDmmQbjKsrNh0
+	3qFwlV1knt1dCCYpn5Hkzomzl7/yQkSmk/0lJkeX4bJWppPoD3qeuZ/cM4weldaw
+	xrIoVELHockMGo81z8qThyzycczNAqT7XVNqzlS1l6m9d5Vw8orHs5LoWQYsr2iB
+	vVz02TL1m01xJK0s9krgfNjquEGEjU21TfBpjlfHL0YUP8bgHK9uuqJwFb269kun
+	aW1aR5CJnt5qSopW/bMcA5XzjFfo9xG8azH69/w==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+	action=mi-m=1; hc=13;
+	hn=cc,content-disposition,content-type,date,feedback-id,from,
+	in-reply-to,mail-followup-to,message-id,mime-version,references,
+	subject,to;
+Message-Instance: m=1; h=sha256:lUvEeXc2GW6k7qtu7v55SWTUciN2VgoSlicBRnD6ZQ4=:GUp/lQENMb6M3mRWSWTQ/ABJrHcYPEzn5ohvebQulng=;
+X-ME-Sender: <xms:nMfWavNvtfHkS4lsL_bbq-o7C_mB6pjtnXo3YuM2S72sjEM1MbnPCQ>
+    <xme:nMfWahuAo8NuJlCQUfjDZOUdrnL3O8rFT9ISS5AwaDzSBHO4VGeTp9dCNlve27Z3n
+    YRGDWV5JkwCjqROTohHXAyJqyfVkxuhvV4YqEycnO0E-nOWLWcjB477>
+X-ME-Received: <xmr:nMfWahVJ-x7K_gM-xrzLHJtOevHDQc5o9zjD604yA0f3i-RARyP02wx8F6zl2PUil4roBcmpUajm6j28BtFv9P7mq0k1>
+X-ME-Proxy-Cause: dmFkZTF96aY4z4lBvgfoihxo8gJ7Tv/YcWB5RRQiAs8g0aRg+C73GFqwIQqaEwbTGJ2oDe
+    JQw2tjAA04sn0Y0tAuKtAQiEF7QPjMYG1c87OGg85QhKw9S4rnmPYcQKAnCZdpAuAD7gYP
+    /1L4+6LfrL7TirPodR+UqIZ/6g6an8GBLyRpCYh4IPvNXGX84sB61AKbIeqOkAeQTJSWhX
+    Ddscm1JGUWiSzrtTr0ThUgk17KpwzstjBoE515qBRKZ6v7V4LWneNFM7kt9EEIgh1+OKb2
+    0EWMUuTkS0TN8P9mW5qIH9ozaeH9uMioxggB3nyg+6dGZHoOF0aKsR6cj956DiC8FPf+nC
+    PqbHbuGvN+/gZL244W5mYgX7vLDIP37IHP13+26GUB7wqr0fh0bDovZ56y5FzjXYcvDqRx
+    3fF10eLicDQAS1mU+2OW+R5siGqlbZApq4lUN64wRgkvUbtE92BSXrDWxiaWOzowQ5rMyN
+    7hNErVOYnWvtHazRx+mKoWXrwf/nTBxf3L2AZbyyKoL9YFVe4EDYDBH8pNZg9yfiKs+GYS
+    9AAEGfT1qumlPNMnkzsPvMYoTiVz2khSd43xPGyjUxIoTYrClz4yKgrlwxvS/BfTdBEUP7
+    UYhkKk//dH839LJdRetPn6jVHOL9OCFY+l6ryNLiuasC1zMkEm63DP3AvKQg
+X-ME-Proxy: <xmx:nMfWaht9lJSikY1_I-s9VGQXvaQVCK5mvw4UYZc4tbsGcNZrC-zDrA>
+    <xmx:nMfWalWQVtjj915SnNn_IjLfLv1-5LhzkSZdZ3wj3FThKW3qt-xjPQ>
+    <xmx:nMfWasmSEgogg6A613J4viw0KlDQOzbxrLBUq8X511XmBercpwMUeQ>
+    <xmx:nMfWamYj_wbYDGfdqA2LbIhHN1PGyt2zSNr0KKVQv3tVR2d7PJ2_dA>
+    <xmx:nMfWar8IpQ38w1dXoBgZo6-muJY5cyxZ_yIMoq-tN0sC6F1_BcvPkQGq>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 Oct 2026 21:44:59 -0400 (EDT)
+Date: Tue, 20 Oct 2026 10:44:56 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
-Subject: Re: linux-next: manual merge of the landlock tree with the origin
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the ieee1394 tree with the origin
  tree
-Message-ID: <20261019.wivie2AeLei1@digikod.net>
-References: <atZRsj4ON6zuh9XN@sirena.co.uk>
+Message-ID: <20261020014456.GA335452@sakamocchi.jp>
+Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Mark Brown <broonie@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <atZBEI6G3PgKHKaW@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -63,41 +128,49 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <atZRsj4ON6zuh9XN@sirena.co.uk>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <atZBEI6G3PgKHKaW@sirena.co.uk>
 
-On Mon, Oct 19, 2026 at 06:21:54PM +0100, Mark Brown wrote:
+Hi Mark,
+
+Thank you for reporting the merge conflict.
+
+The ieee1394 tree has now been rebased onto v7.3 tag to include a fix from
+this PR[1]. This may have introduced a conflict in the linux-next tree.
+
+I believe that linux-next will merge the v7.3 tag and merges all or
+required branches onto it  within a few days, at which point the conflict
+should disappear. However, I'm not entirely familiar with how you maintain
+the tree.
+
+Please let me know if you encounter any further issues related to ieee1394
+tree.
+
+[1] [GIT PULL] firewire fixes for v7.3-final
+https://lore.kernel.org/lkml/20261018103634.GA346762@sakamocchi.jp/
+
+
+Thanks
+
+Takashi Sakamoto
+
+On Mon, Oct 19, 2026 at 05:10:56PM +0100, Mark Brown wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the landlock tree got a conflict in:
+> Today's linux-next merge of the ieee1394 tree got a conflict in:
 > 
->   security/landlock/domain.h
+>   drivers/firewire/core-transaction.c
 > 
 > between commit:
 > 
->   3d8cc52db2f86 ("landlock: Drop __counted_by from landlock_domain.handled_masks")
-
-This commit was merged with v7.3-rc7
-
+>   7f9f2d6abc40f ("firewire: core: fix race condition in split transaction handling")
 > 
 > from the origin tree and commit:
 > 
->   395c985dac578 ("landlock: Wrap per-layer access masks in struct layer_config")
-
-This commit should no longer be in linux-next, it was a previous
-mic/next branch.  The new mic/next branch now properly handles the
-merge.
-
+>   0f7228de31f1c ("firewire: core: expand close_transaction() into its callers and remove it")
 > 
-> from the landlock tree.  I kept the __counted_by in the hope that the
-> refactoring helped the compiler figure out what's going on.
-
-The "Drop __counted_by" is correct and my new mic/next branch (from
-Friday) is based on v7.3-rc7, so I guess the next-20261001/landlock
-merge should just be removed.
-
+> from the ieee1394 tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -105,169 +178,3 @@ merge should just be removed.
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
-> 
-> diff --combined security/landlock/domain.h
-> index 428c1d9890dbf,60e8eb2d6ac27..0000000000000
-> --- a/security/landlock/domain.h
-> +++ b/security/landlock/domain.h
-> @@@ -130,10 -130,15 +130,15 @@@ struct landlock_hierarchy 
->   		 */
->   		log_new_exec : 1;
->   	/**
-> - 	 * @quiet_masks: Bitmasks of access that should be quieted (i.e. not
-> + 	 * @quiet_access: Bitmasks of access that should be quieted (i.e. not
->   	 * logged) if the related object is marked as quiet.
->   	 */
-> - 	struct access_masks quiet_masks;
-> + 	struct access_masks quiet_access;
-> + 	/**
-> + 	 * @quiet_permission: Per-member quiet bitmasks for permission types in
-> + 	 * this layer.
-> + 	 */
-> + 	struct permission_masks quiet_permission;
->   #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
->   };
->   
-> @@@ -217,7 -222,7 +222,7 @@@ struct landlock_domain 
->   		 * @work_free: Enables to free a domain within a lockless
->   		 * section.  This is only used by landlock_put_domain_deferred()
->   		 * when @usage reaches zero.  The fields @usage, @num_layers and
-> - 		 * @handled_masks are then unused.
-> + 		 * @layers are then unused.
->   		 */
->   		struct work_struct work_free;
->   		struct {
-> @@@ -233,23 -238,16 +238,16 @@@
->   			 */
->   			u32 num_layers;
->   			/**
-> - 			 * @handled_masks: Contains the subset of filesystem and
-> - 			 * network actions that are restricted by a domain.  A
-> - 			 * domain saves all layers of merged rulesets in a stack
-> - 			 * (FAM), starting from the first layer to the last one.
-> - 			 * These layers are used when merging rulesets, for user
-> - 			 * space backward compatibility (i.e. future-proof), and
-> - 			 * to properly handle merged rulesets without
-> - 			 * overlapping access rights.  These layers are set once
-> - 			 * and never changed for the lifetime of the domain.
-> - 			 *
-> - 			 * Not annotated with __counted_by(num_layers): clang
-> - 			 * miscomputes the counter address for a FAM nested in
-> - 			 * an anonymous struct within a union, which trips
-> - 			 * FORTIFY:
-> - 			 * https://github.com/llvm/llvm-project/pull/228309
-> + 			 * @layers: Per-layer access configuration.  A domain
-> + 			 * saves all layers of merged rulesets in a stack (FAM),
-> + 			 * starting from the first layer to the last one.  These
-> + 			 * layers are used when merging rulesets, for user space
-> + 			 * backward compatibility (i.e. future-proof), and to
-> + 			 * properly handle merged rulesets without overlapping
-> + 			 * access rights.  These layers are set once and never
-> + 			 * changed for the lifetime of the domain.
->   			 */
-> - 			struct access_masks handled_masks[];
-> + 			struct layer_config layers[] __counted_by(num_layers);
->   		};
->   	};
->   };
-> @@@ -259,7 -257,7 +257,7 @@@ landlock_get_fs_access_mask(const struc
->   			    const u16 layer_level)
->   {
->   	/* Handles all initially denied by default access rights. */
-> - 	return domain->handled_masks[layer_level].fs |
-> + 	return domain->layers[layer_level].handled.fs |
->   	       _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
->   }
->   
-> @@@ -267,14 -265,14 +265,14 @@@ static inline access_mask_
->   landlock_get_net_access_mask(const struct landlock_domain *const domain,
->   			     const u16 layer_level)
->   {
-> - 	return domain->handled_masks[layer_level].net;
-> + 	return domain->layers[layer_level].handled.net;
->   }
->   
->   static inline access_mask_t
->   landlock_get_scope_mask(const struct landlock_domain *const domain,
->   			const u16 layer_level)
->   {
-> - 	return domain->handled_masks[layer_level].scope;
-> + 	return domain->layers[layer_level].handled.scope;
->   }
->   
->   /**
-> @@@ -293,7 -291,7 +291,7 @@@ landlock_union_access_masks(const struc
->   
->   	for (layer_level = 0; layer_level < domain->num_layers; layer_level++) {
->   		union access_masks_all layer = {
-> - 			.masks = domain->handled_masks[layer_level],
-> + 			.masks = domain->layers[layer_level].handled,
->   		};
->   
->   		matches.all |= layer.all;
-> @@@ -329,4 -327,63 +327,63 @@@ static inline void landlock_get_domain(
->   		refcount_inc(&domain->usage);
->   }
->   
-> + /**
-> +  * landlock_permission_is_denied - Check if a permission request is denied
-> +  *
-> +  * @domain: The enforced domain.
-> +  * @permission_bit: The LANDLOCK_PERMISSION_* flag to check.  Must have
-> +  *                  exactly one bit set.
-> +  * @request_value: Compact bitmask to look for (e.g. the result of
-> +  *                 landlock_ns_type_to_bit()).  Must have exactly one bit set.
-> +  *
-> +  * Iterate from the youngest layer to the oldest.  For each layer that handles
-> +  * @permission_bit, check whether @request_value is present in the layer's
-> +  * allowed bitmask.  Return on the first (youngest) denying layer.
-> +  *
-> +  * Return: The youngest denying layer + 1, or 0 if allowed.
-> +  */
-> + static inline size_t
-> + landlock_permission_is_denied(const struct landlock_domain *const domain,
-> + 			      const access_mask_t permission_bit,
-> + 			      const u64 request_value)
-> + {
-> + 	ssize_t layer;
-> + 
-> + 	BUILD_BUG_ON(sizeof(permission_bit) > sizeof(u32));
-> + 
-> + 	if (WARN_ON_ONCE(hweight32(permission_bit) != 1) ||
-> + 	    WARN_ON_ONCE(hweight64(request_value) != 1))
-> + 		return domain->num_layers;
-> + 
-> + 	for (layer = domain->num_layers - 1; layer >= 0; layer--) {
-> + 		u64 allowed;
-> + 
-> + 		if (!(domain->layers[layer].handled.permissions &
-> + 		      permission_bit))
-> + 			continue;
-> + 
-> + 		/*
-> + 		 * Current callers pass only permission types with an explicit
-> + 		 * case below.  The default catches a new caller missing its
-> + 		 * member mask.
-> + 		 */
-> + 		switch (permission_bit) {
-> + 		case LANDLOCK_PERMISSION_NAMESPACE_USE:
-> + 			allowed = domain->layers[layer].allowed.ns_types;
-> + 			break;
-> + 		case LANDLOCK_PERMISSION_CAPABILITY_USE:
-> + 			allowed = domain->layers[layer].allowed.caps;
-> + 			break;
-> + 		default:
-> + 			WARN_ONCE(1, "Unknown permission %u\n",
-> + 				  (unsigned int)permission_bit);
-> + 			return layer + 1;
-> + 		}
-> + 
-> + 		if (!(allowed & request_value))
-> + 			return layer + 1;
-> + 	}
-> + 	return 0;
-> + }
-> + 
->   #endif /* _SECURITY_LANDLOCK_DOMAIN_H */
-
-
