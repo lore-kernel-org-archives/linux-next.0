@@ -1,75 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.59.206.189
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792510304;
-	b=uTbF+3K8vS4TjGjs/Y73KjSrUhnA3gWt2RHshr/WEggjiMct73ohTLMuh7uHWawiy20c
-	 /vVdzMkfEkk97CiH4/EeBSDJpwK7vRNmMQMgZhTtsXc/wirWihC7HyQtSLwa8vkWnmrk3
-	 Xh1TgfxtpAOVvUr3WGkFp2mhbajqMfnVtjB9zPr81roXZ/dEQk44qVSjaN3EaUlT0dzfm
-	 OrJdnHJA+YxtyenxmfyiHI75Pvh0/89Iyyce4dwxgzHhjF84G7T4G8RTcyxBJI6tc+4sC
-	 M9XVTZNmqlg0yaW55mxKkMv6Tv/GQkHq747vyQZWYpZCl2Kplekuky4wa9cGln1qwAA==
+	t=1792512830;
+	b=W7Zr5wB5UNnVdg36T4x+yrDQXWkXjCkQfvfYX1VnKn25NWEQVSedcgOyA4bhTy2l+ygp
+	 RoMZVNqHPJ7ZSRJblzcIxkvbEfKlPyCU2S9AjdlF88Mgp75eXen3E9RrNC6/w+Tmb1hTZ
+	 2nqM+QD0BAzlSxl81JNbcuJWzUd4xpkas57PHgpyhX1Bfvg6+a0DU9TczghKwSU5alkUz
+	 ToUEl6yEHdWcrq2JZl5aTC+54h6DV5pIi860jR1fZwp1u6uJgjpikQrB3UMFENarnen1q
+	 PxcKLZnPAmtmf+g4r/lhsWKXJpa1qPMFjSjf0HXCDrHp5YvdLRdAplUKp5QFP9dh1YQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792510304;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:X-Virus-Scanned:
-	 X-Spam-Flag:X-Spam-Score:X-Spam-Level:X-Spam-Status:Received:Received:
-	 Received-SPF:Message-ID:Date:MIME-Version:User-Agent:From:Subject:To:
-	 Cc:References:Content-Language:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-PPP-Message-ID:X-Rspamd-Server:
-	 X-Rspamd-Queue-Id:X-NC-CID;
-	bh=qdlQbyEWnTCNWapvNxuWGp2W6cx40EOLnNWu8HxqknY=;
-	b=QTyoo0UxN4D+twq2UFiNIWbNYbhyMwOf3gt+kakR1iMsliwWwyZ0wtEuKvoDHEzYe7yq
-	 CTq7eON4bVrEd6grpw/8YHWp4nJWsKKsXksdaIT752ckMMxKEs5nk7AHPgs9NAkCGQp/H
-	 upqfK3aPmraMJlR6bmJ8uua3mDr7SMd9stSL4cahHWFb5ha/2A2zHZwd/11Otu5Ye4PuN
-	 muVk9dHJ9+L7F5JRSFEvVgpXSOFdV4unYfyIbAym0OyIoqGstXnzAR6Y1AsPcDfWNO8i5
-	 mBpkXj2mMVWlw31qAWrdJfs8SuShMVXt1GNJTBQ/Coa+dBeFfab1yMeBV91gnwMlWwA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792512830;
+	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding;
+	bh=21xL5Xt7fgOygZiIQ1tbQetGmQvRIV3CMYur/E8Kap8=;
+	b=wnP4wnWrs5hqvAwzblR1EyIV4X6zh1SworynbmxJzs6wgitgj+PzN/9AMr9EEja+7mVK
+	 RZbJvfuH3LidohpHvYDMkI5eKhEG1gEiUpRvb/pI0dah5NNy2ECEx8HBG6hbN7kCR4OAf
+	 OTpFam5j4PsUDc4MOfSmTyGO9P7hrXmXzyjbktX/pY7cCy+L18PABA7tFFJvMJa5xquwt
+	 QarvuPUrMNTguK4dd5/mlbzXlU/HDaQSBlaojA2DenNnDdSKm2kb0RZ26NOjzgPsjLRKh
+	 tPvTo6U3kzSg3O60nx3MxF8KDHPF7Pjhw/kpxYBAMI0DSfFIBpP3oDm2SyKqtlhVzSg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=leemhuis.info;
-	spf=pass smtp.mailfrom=leemhuis.info;
-	dkim=pass header.d=leemhuis.info header.i=@leemhuis.info header.a=rsa-sha256 header.s=key2 header.b=DG3AVRNG;
-	arc=none smtp.remote-ip=194.59.206.189
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [194.59.206.189])
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9464660A263A
-	for <linux-next@vger.kernel.org>; Tue, 20 Oct 2026 15:31:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9464660A263A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=leemhuis.info header.i=@leemhuis.info header.a=rsa-sha256 header.s=key2 header.b=DG3AVRNG
-Received: from relay02-mors.netcup.net (localhost [127.0.0.1])
-	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4j8Gbr1yskz4PCp;
-	Tue, 20 Oct 2026 17:31:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
-	s=key2; t=1792510296;
-	bh=+XfIc7m/uiIjhXMkyO+VufQrB6iFMEZcUr9sPe8arlY=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=DG3AVRNGGO6Re4yJuNENFc8H10dSlmgQACFJhPLNkCBYnwsgDXV08wOJfXdigCk6C
-	 3KWofCPUiRPLruVLySSQpgFu6h/0M+GVMc6QhnXSE98zaeFXuwmoyuKnTFPfpFKDJ8
-	 Ngw4HFUDiTWbBqrA2pBtyG2DMFHhjT5x2N5zdiZGFihXsqqpueFPyOlBjkKArYe9vQ
-	 A85zQ2YP7ezmsBBAGJTFyWre+PTE1Udz5MOe7/feQSdCBkbxRRAhzBVlMJUuSmh97S
-	 B5I0nEmqP+kZKfBPxsq3S28bzG+u1X59zIAbS7Etstb4BG4AO686VqS/I9esfQT7TP
-	 +lSe2NtEhzxrA==
-Received: from policy01-mors.netcup.net (unknown [46.38.225.35])
-	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4j8Gbr1G2jz7xQy;
-	Tue, 20 Oct 2026 17:31:36 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at policy01-mors.netcup.net
-X-Spam-Flag: NO
-X-Spam-Score: -2.901
-X-Spam-Level: 
-Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy01-mors.netcup.net (Postfix) with ESMTPS id 4j8Gbq3dZkz8v1t;
-	Tue, 20 Oct 2026 17:31:35 +0200 (CEST)
-Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
-	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 9B9F55F9DE;
-	Tue, 20 Oct 2026 17:31:30 +0200 (CEST)
-Authentication-Results: mxe9fb;
-        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
-Received-SPF: pass (mxe9fb: connection is authenticated)
-Message-ID: <d79574f5-fe28-4bb4-a68f-d8f2d0932a20@leemhuis.info>
-Date: Tue, 20 Oct 2026 17:31:30 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04356606A319;
+	Tue, 20 Oct 2026 16:13:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD841F000C4;
+	Tue, 20 Oct 2026 16:13:48 +0000 (UTC)
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@gmail.com>,
+	Chuck Lever <cel@kernel.org>,
+	Anna Schumaker <anna.schumaker@hammerspace.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Tim Menninger <tmenninger@everpuredata.com>,
+	Yongjian Mu <ymu@everpuredata.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: [PATCH linux-next] xprtrdma: fix up the nfs/nfs-anna merge of the Write chunk head trim
+Date: Tue, 20 Oct 2026 12:13:46 -0400
+Message-ID: <20261020161346.3711926-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <as4aacUf2Q78FMvY@sirena.org.uk>
+References: <as4aacUf2Q78FMvY@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -79,41 +53,83 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: =?UTF-8?Q?Re=3A_=5BREGRESSION=5D_next/master=3A_=28build=29/tmp/kci?=
- =?UTF-8?Q?/linux/kernel/sched/ext/ext=2Ec=3A5690=3A68=3A_error=3A_=E2=80=98?=
- =?UTF-8?B?c3RydWN0IHNjeF9kLi4u?=
-To: kernelci@lists.linux.dev, kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-References: <179243994358.157792.10951804910694087418@kernelci.org>
-Content-Language: de-DE, en-US
-In-Reply-To: <179243994358.157792.10951804910694087418@kernelci.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <179251029090.1553448.13952556346973502681@mxe9fb.netcup.net>
-X-Rspamd-Server: rspamd-worker-8404
-X-Rspamd-Queue-Id: 9B9F55F9DE
-X-NC-CID: HuIQ0zKUwVBFlN8Vl+Pe2O0XCTZem0tBMBfMYJQT8IdfbISfCzc=
 
-On 10/19/26 21:59, KernelCI bot wrote:
-> New build issue found on next/master:
-> 
-> ---
-> /tmp/kci/linux/kernel/sched/ext/ext.c:5690:68: error: ‘struct scx_dispatch_q’ has no member named ‘pcpu’ in kernel/sched/build_policy.o (kernel/sched/build_policy.c) [logspec:kbuild,kbuild.compiler.error]
+Two fixes for the same Write chunk payload corruption meet in
+linux-next. In the nfs tree, commit a0db57fee35e ("xprtrdma: Fix Write
+chunk payload corruption on a short reply header") trims
+head[0].iov_len in rpcrdma_decode_msg(). In the nfs-anna tree,
+commit 9ee534a75912 ("xprtrdma: trim head iovec when the payload
+arrives via a Write chunk") trims it in rpcrdma_inline_fixup() and
+reduces buflen by the same amount.
 
-This afaics was caused my a mishap in a merge conflict resolution or
-something like that -- and gone today.
+The merge resolution keeps the caller-side trim. By the time
+rpcrdma_inline_fixup() runs, head[0].iov_len already equals copy_len,
+so the block added by the nfs-anna commit never runs and its buflen
+reduction in rq_rcv_buf and rq_private_buf is lost. The helper is also
+still passed xdr_pad_size(writelist), while its kernel-doc now
+describes @writelist as the number of bytes conveyed by the Write
+chunk.
 
-#regzbot dup:
-https://lore.kernel.org/regressions/179243994625.157792.5761151975328981641@kernelci.org/
-#regzbot dup:
-https://lore.kernel.org/regressions/179243994757.157792.6578749550685907930@kernelci.org/
-#regzbot
-dup:https://lore.kernel.org/regressions/179243994891.157792.7812879229965993143@kernelci.org/
-#regzbot dup:
-https://lore.kernel.org/regressions/179244354354.160074.15935947483852417783@kernelci.org/
-#regzbot resolve: fixed, was a mishap in a merge conflict resolution or
-something like that
+Drop the caller-side trim and pass the full Write chunk length, so
+that rpcrdma_inline_fixup() is the only place that trims head[0] and
+reduces buflen. Compute the pad with xdr_pad_size() in the helper, so
+the padding from the nfs commit stays correct for lengths that are not
+a multiple of four. Its rpclen calculation and empty reply check stay
+in rpcrdma_decode_msg().
+
+Fixes: 53ab189bdc14 ("Merge branch 'linux-next' of git://git.linux-nfs.org/projects/anna/linux-nfs.git")
+Link: https://lore.kernel.org/all/as4aacUf2Q78FMvY@sirena.org.uk/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+Mark, this applies on top of next-20261020 and is meant to be folded into the
+nfs-anna merge resolution.
+
+Tim's reproducer passes with either resolution, since head[0] is trimmed in
+both. The only behavioral difference is the buflen reduction. I found no reader
+on the Write chunk READ decode path that uses the extra buflen, so this
+restores the nfs-anna buflen change as reviewed rather than fixing an observed
+failure.
+
+Chuck, Anna, Trond: does this match what you want Linus to see?  Neither tree
+is in mainline yet, so whichever pull request goes second will hit this
+conflict.
+
+This comes from our llminus-assisted integration tree. Build tested with W=1
+only; I have no RPC/RDMA setup to run it.
+
+ net/sunrpc/xprtrdma/rpc_rdma.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
+index c0d5042f3b660..69d4e35d49ef5 100644
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -1010,7 +1010,7 @@ rpcrdma_inline_fixup(struct rpc_rqst *rqst, char *srcp, int copy_len,
+ 	char *destp;
+ 	struct page **ppages;
+ 	int page_base;
+-	int pad = writelist & 3;
++	int pad = xdr_pad_size(writelist);
+ 	unsigned int delta;
+ 
+ 	/* The head iovec is redirected to the RPC reply message
+@@ -1267,14 +1267,9 @@ rpcrdma_decode_msg(struct rpcrdma_xprt *r_xprt, struct rpcrdma_rep *rep,
+ 		rpclen &= ~3;
+ 	if (unlikely(!rpclen))
+ 		return -EIO;
+-	if (writelist && rpclen < rqst->rq_rcv_buf.head[0].iov_len) {
+-		rqst->rq_rcv_buf.head[0].iov_len = rpclen;
+-		rqst->rq_private_buf.head[0].iov_len = rpclen;
+-	}
+ 
+ 	r_xprt->rx_stats.fixup_copy_count +=
+-		rpcrdma_inline_fixup(rqst, base, rpclen,
+-				     xdr_pad_size(writelist));
++		rpcrdma_inline_fixup(rqst, base, rpclen, writelist);
+ 
+ 	r_xprt->rx_stats.total_rdma_reply += writelist;
+ 	return rpclen + xdr_align_size(writelist);
+-- 
+2.53.0
 
