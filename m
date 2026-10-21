@@ -1,54 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792590176;
-	b=5NhF0es8U8bm2Vvm0i7LQWPgqmvCXw2zW5tpqzhA8gDQCdgYA/JafXcX5yRaasGHSrSs
-	 f0R3+mlUqolgeGDKbo8LUAAUDi9Ex5pjniSVRaG+HIwySQaWJ45hSeGOGDDT4C1CNc9Sg
-	 28r/vBaWhR0cbe4LLQ4CAwUfpbQK1UntbctO1QM06wFN7LSVpXLdlw4mnLk354lb6VKz7
-	 ZHBrMv5NZJIftMqF4jByHQy7aQEGjaOdBan/dtkAjeynaOhy20Ijsb+EhlyzdY4U69RZt
-	 uDrPDmrIiCCEs3gFvmUmIs15LCgxbpDrxyawkNN6Yk6dvGV3AJ+s64s8DgrmlEuegdA==
+	t=1792590316;
+	b=Z7sbFj+/6foAJobUlKM+wmnHbSW2IyB+ZVkdAiKXKjTPJ/nv9hj2huCU2KNqSIuKI+lo
+	 nWuz0eepOxgn3BkaRuL9KLHzEDAQXXzubg8U5ZabiRPZ1hCqenC+pALnOxi2At78t8tKA
+	 6szu5IyNtlbutVMNH3hZKOgabpLx/6ajZ0U8TPwtPUnZsETv0/upzTSrdl3b9MEbgIE24
+	 p9iHVfI77cjYRwbdFU5nS7KszMKk5+irJGYRkQHZCXy1MRVEXAWHLX+Hi/uJxXu7ECkdh
+	 OFN5CiXtxs4zuw5n8Pj564T1Eu3pL4bNm8sWCSac+UewM0g/HnKYGTKZZeqeh6Fd/pA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792590176;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792590316;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=QkW0fQj9RjNj1AO7xA9jvfIo/INrrrGAe76USPFlo04=;
-	b=EaH5XlixmTN/i1P12n1yjFYwg3NYMs8gSjhriCwEi9pMIgHsyuyhRQvNGhNdzGyuuCgG
-	 Ehoxb2PFV8HzeUhq1rmj/8+VKCs2xyVm3VpzFy11zvILOcuI2Yobpe+GySrIK1XWM6LvJ
-	 FkJTf1r/ccVztQwwnY3DEaxU9L2K4bcMYpyXQ3vOYzoIH6rQiG6/gyHAA8dnzI4gY3KmU
-	 SLwwsfLhDVLzpGHntjjRiJ4HruDayyza+okiOOweDDs7rAYuC8SrDuTqEtnwitWq0Iy3S
-	 GGzXXKIkFcSsL6kjltmBQFZzdjcHcM4WWsrFFYOZVTwOLgh/bjaHY2H3FbSC0uvgpCg==
+	bh=5pK3nSJ4wLpKfoQCQKqWUDREBlLUyktJJbQs5rz8ksE=;
+	b=jBFvl2UtUh3ltgpMRD4ppFzaOc3OAdjjlPhwEa+h3nJF9ci4hjHCflc996jq5cqJnR8F
+	 hJFrZ5AloiV2s8cz0DmHH181JIcXR2Aotxwa+F4hVgpTUxmClrvnyxSzNt2ly1Ug4TxIe
+	 GPoinmffuNmQJY8ztJ32an74C7AvHQytBo9GnQVSYVZp1MlDJx3lNHNgW1mSRvOXJi05I
+	 s19VJOgpEw78a2LE0HDVJ4A0Y8lGu/NUTg08N69NLnGhfDymQOzYKmODbuldm+c+OA35V
+	 bOY3q9qXTkbc0rIxxFpIpptsm3o4qpoPXsl8xxAb9aHSkegGFj68dRtgyons+qcP7Yw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="kPS/x7Ve";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="PaI9DRN/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23760606A339;
-	Wed, 21 Oct 2026 13:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD29606A31A;
+	Wed, 21 Oct 2026 13:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kPS/x7Ve
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7881F000C7;
-	Wed, 21 Oct 2026 13:42:55 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PaI9DRN/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D891F000C5;
+	Wed, 21 Oct 2026 13:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792590175;
-	bh=QkW0fQj9RjNj1AO7xA9jvfIo/INrrrGAe76USPFlo04=;
+	s=k20260515; t=1792590315;
+	bh=5pK3nSJ4wLpKfoQCQKqWUDREBlLUyktJJbQs5rz8ksE=;
 	h=Date:From:To:Cc:Subject;
-	b=kPS/x7VeOoKYHyxcZ4iUkPmIdo4qGuoyOXTwfTLiAgKVddigh+vju2toetgFNjitx
-	 2hlaj0pF0iY7zvV/GKhSGdVAfIlWgiefAv9eE77VEI1ZNA7qCwnPQnDM3dKunyz0sZ
-	 bUQNNqniQpxSIwbNJQ0XathzKy2OGL60pfGB3lfJlmWg1Is1JEHmaZptco13jZlWZe
-	 JDAkfbvgJT7u6dYqw3ZX6hAyyvb1XWeCPzBpphSymSOUp8WYoTnSvqiflMo88ZQ8ZX
-	 3FNsjWouMsh1kzEqtljJQbywyGtik9GwJCdXdAubG4SkJaTs+ep3+T88apb1We4Ixe
-	 zSebqaEPJQtAw==
+	b=PaI9DRN/ig4skT8UNdqqxdYirbU2mI+PrsWHx7KkE1eBVLs8tiM1R0syaMfnV2Wpy
+	 Mn4+iu/xFKhvpsaBZcY7m7UnR51KIgvNDbGxtsPK/zWkKDoziQyLfCN08pvNUmcvux
+	 +6/XUHGrVGxrx+1P3HD+v1/7PZC7EUBsZsUy0k3BoCDItHAF00MZr11YFJZV5Zd3RL
+	 NSgLRJ2JK9T4EXfSv4Hvyjj23Gz+t40PAR19GGziPKi1Vd+uBSpO8cyJKl1IUuAMri
+	 oNp0g2WdVIQkczGQn5ZfqvV3CtbmGwFXV7d0E6ZVTL4CYymnyuf2Tx5/v6fFSap2O8
+	 xZ+Z4Xu2W0Bsw==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 0E2A51AC5996; Wed, 21 Oct 2026 14:05:54 +0100 (BST)
-Date: Wed, 21 Oct 2026 14:05:53 +0100
+	id 4A41D1AC5996; Wed, 21 Oct 2026 14:45:11 +0100 (BST)
+Date: Wed, 21 Oct 2026 14:45:11 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the gpio-brgl tree with the origin tree
-Message-ID: <ati4sVaUOZm_N6pa@sirena.co.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 21
+Message-ID: <atjB56qH6sl4yo3w@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,107 +57,71 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/kRsCuVibXfu5WDr"
+	protocol="application/pgp-signature"; boundary="uFq43R0oQpOopVds"
 Content-Disposition: inline
 
 
---/kRsCuVibXfu5WDr
+--uFq43R0oQpOopVds
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the gpio-brgl tree got a conflict in:
+Changes since 20261020:
 
-  drivers/gpio/gpiolib-kunit.c
+The kbuild-current tree acquired a conflict with the origin tree.
 
-between commit:
+The bluetooth-fixes tree acquired a conflict with the net tree.
 
-  851bb4a429916 ("gpio: kunit: fix GPIO device reference leak with __free()=
-")
+The rust tree acquired a conflict with the kbuild-fixes tree.
 
-=66rom the origin tree and commit:
+The mm tree acquired a conflict with the origin tree.
 
-  c3e8906112e0c ("gpio: kunit: factor out common code for waiting for devic=
-e probe")
+The gpio-brgl tree acquired a conflict with the origin tree.
 
-=66rom the gpio-brgl tree.
+Non-merge commits (relative to Linus' tree): 16460
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
-diff --cc drivers/gpio/gpiolib-kunit.c
-index 6a2c8b34f34bb,c5d4637ea2c58..0000000000000
---- a/drivers/gpio/gpiolib-kunit.c
-+++ b/drivers/gpio/gpiolib-kunit.c
-@@@ -27,9 -29,21 +29,23 @@@
- =20
-  #define GPIO_TEST_PROVIDER_NGPIO	4
- =20
- +KUNIT_DEFINE_ACTION_WRAPPER(gpio_device_put_wrapper, gpio_device_put, str=
-uct gpio_device *);
- +
-+ static void gpio_test_device_check_bound(struct kunit *test,
-+ 					 struct device *dev, bool expected)
-+ {
-+ 	bool bound =3D false;
-+=20
-+ 	wait_for_device_probe();
-+ 	scoped_guard(device, dev)
-+ 		bound =3D device_is_bound(dev);
-+=20
-+ 	if (expected)
-+ 		KUNIT_ASSERT_TRUE(test, bound);
-+ 	else
-+ 		KUNIT_ASSERT_FALSE(test, bound);
-+ }
-+=20
-  /*
-   * The test provider tracks per-line direction and value so that lines ca=
-n be
-   * driven as both inputs and outputs - this is needed to exercise input a=
-s well
-@@@ -772,9 -737,7 +739,8 @@@ static void gpio_hog_assert(struct kuni
-  	struct property_entry properties[2];
-  	struct platform_device *pdev;
-  	struct fwnode_handle *fwnode;
- +	struct gpio_device *gdev;
-  	struct gpio_desc *desc;
-- 	bool bound =3D true;
-  	int ret;
- =20
-  	fwnode =3D software_node_fwnode(&gpio_test_provider_swnode);
-@@@ -792,12 -755,10 +758,12 @@@
-  	wait_for_device_probe();
- =20
-  	/* The hog must have configured the line with the expected direction. */
-- 	gdev =3D gpio_device_find_by_label(GPIO_CONSUMER_NAME);
- -	struct gpio_device *gdev __free(gpio_device_put) =3D
- -			gpio_device_find_by_label(GPIO_TEST_PROVIDER);
-++	gdev =3D gpio_device_find_by_label(GPIO_TEST_PROVIDER);
-  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, gdev);
- =20
- +	ret =3D kunit_add_action_or_reset(test, gpio_device_put_wrapper, gdev);
- +	KUNIT_ASSERT_EQ(test, ret, 0);
- +
-  	desc =3D gpio_device_get_desc(gdev, offset);
-  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, desc);
- =20
+----------------------------------------------------------------------------
 
---/kRsCuVibXfu5WDr
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 434 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--uFq43R0oQpOopVds
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCati4sQAKCRAv73Ows9A4
-iQ37AQCoe9UJxGwNP4aJD7FDDIVAaaOXQmuCNZULNGC0DOxpBwEAs1uqqnTuvWxv
-uJMciNuJ+aQPZu56042eBHIWO0E6KQg=
-=M5eQ
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatjB2QAKCRAv73Ows9A4
+icomAP9IUMq5lQ/83TsaNtekPtT14SMNAaWcRMtcQ46lTuon2wEAgW/DueS4ZRCn
+BbUemcnO0RUCIhxkPA+vUaBIG8FSLg0=
+=5QZv
 -----END PGP SIGNATURE-----
 
---/kRsCuVibXfu5WDr--
+--uFq43R0oQpOopVds--
