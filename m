@@ -1,56 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792591076;
-	b=etWFemumrb2cwjEYvV6FVwPf1jDjewIpGmODkGZYyw6g7/zhXmHq5w5JnCFHCijeOqzc
-	 icpHaZ7RUgONksCHikUOVTnLdX6yUXWEeP0oaki7iPWrGJL3FP/JdiUT7RZsJkCeYivBa
-	 aa1WsOqfiy0GL39Nq4HWlnbxmNssRzppJ8D5VF8m/mUhhdVSr4W5PWHd7tniyTfXeNLX2
-	 xv2ynhLOlKSk4Xoy71kdz34ljDoh1MQWIa+MgfquMKU8knu4xMupY4JWmBSS03m5FBW6v
-	 U11lQkk4lzrw0TPwXywM8RZAD0Igr+twzs0xFX6d37lSp/QqFC8NUno10NHkd1Lh9dQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792591076;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=eJuMiTB5KqqxHu+kRpvR+2NBQvBa3j/Debz07+GL6LQ=;
-	b=dWHVPi69WvT88OW1A04Qbjlco6pHSMarf6Co3kgYjfhcwB7a7fWcnzhZLytj7M1RNBOi
-	 mEPtybc/XRxYEVBxLr7CmIHyoAzhtaYQpP3fXBmIulczlUTo9b0P9COQS2XDSiKD+cdOC
-	 OTo6AQ7OAllGlgrfjMXjXntPdfULf6WEO1wLfjRrhKaFlrTnNxDY1BngHwoBPQgoIFyf/
-	 3dapT4b57nRAaKPoFPakCycTKeJd2fqHsmLbBqKqZUa/W37Jo7/51E3wfuERX2DiQ82zs
-	 Ugj8CznGEy8AUyHTxlhy9lbUT9foB0/IYo5MbYi7gK+geABuhJ6AQOviGY0OJ6KawbA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Em7Cvs/z";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.43
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792593636;
+	b=dZnM3uRSkD7XSQan2sJnOUT40icbGqpkLjQI+dBtIrXxNSj6+89h8/xgnHfeCpkzt0xQ
+	 IvXfJv3J4f60RgQ00T0Jcmx9uSiq1K8Y/sjdRQZuGxK3bvHNL2nIDyw+vKl/exxGnAaH8
+	 t7+SFRSr5v5muXm1DnRfNKLVONF1gaCGgUnLRwzHn7moBLsIYr3J+oGG2HIt1UeUQTpQE
+	 8eF1ZJNvsCjb7ASRnuRrqZZaEuhA7IwCKTQmn7iQxV93VZ2RH1tcD0myEeT/FZ1cYjm+T
+	 e/neqSFox6MSRMNqPov/Zh1gdyHFPVN517chqWk6K8Jyxrmvth3/Ag0njOPhHB9UeUw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792593636;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=0Gn2S/EOjHmywEEzdPOIvC1yoyDIbnmRdYYynFb0JCU=;
+	b=LQ9XPWRL00J2fBnnKIHngiYsYBQZW4tfgEmiUlnxPXC+YACzZ2QZI90tqp8mhioZI29l
+	 Kp2xNxlICNHdKcFx20o/vrVeOIo+0vgTNOF6e02Tn4GeWqfyFImEkhdKd3zEYL/Au4Wqm
+	 iV3ZZF2gwPoTuxT/a1AZxw3/gX4peNfgmpypFzU2e5jjoiTsfBy/drgXqJF2T9JYsEEHp
+	 snbkNatpJjDkJ7jmSVuls/V8B58ulxORBcuvvXBiapqZ5fcT5gdT8BZOrqz/IJNbd1msU
+	 xsxuj08wpcg79FG7bl7AwH35xlz0U0IPEnKsaSGa8JLvNgH+5TY/wNj4IAK/92IBf6g==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YOtiR39o;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.43
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DD5606A31A;
-	Wed, 21 Oct 2026 13:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91352606A319
+	for <linux-next@vger.kernel.org>; Wed, 21 Oct 2026 14:40:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91352606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Em7Cvs/z
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CCB91F000C4;
-	Wed, 21 Oct 2026 13:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792591075;
-	bh=eJuMiTB5KqqxHu+kRpvR+2NBQvBa3j/Debz07+GL6LQ=;
-	h=Date:From:To:Cc:Subject;
-	b=Em7Cvs/zoZnbIJM1G2IdehHFQdua+PeJgewXqzxQUcdZYOjTx4uMwOlISfxHMwGpl
-	 wKgmf4Redu+NYRNJJzyt2cG/llt9H5B54P/80fFIJqO89Wi2oULtJtQaKXuZQ1FQPe
-	 Yg30TBlSxN84KKQi412asV0DZMVOLx8BbB0Jsj6gu6KJaBdc7k+CytxE/RfRGPoBzF
-	 cRCDGOyjn8P5ao5Nt/2Di94YxpihLi3oEwDl2EzDjeq4pxru+0pYNcdqVID0BsxQWY
-	 ywum5elhZ/ZnGll8oiBS1NCBw4sd1tOxdAZmXMDfjttmrywDfa1X7vKItIcC/Xjaja
-	 vohvYSirPaRDA==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 980A61AC5994; Wed, 21 Oct 2026 13:19:41 +0100 (BST)
-Date: Wed, 21 Oct 2026 13:19:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: linux-next: manual merge of the rust tree with the kbuild-fixes tree
-Message-ID: <atit3cSBFwe9cDY7@sirena.co.uk>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YOtiR39o
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c2afa22e1dcso98293266b.1
+        for <linux-next@vger.kernel.org>; Wed, 21 Oct 2026 07:40:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792593634; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Xg9sdlU8sZ1NKrbrOFUHo339W3PF8KDY6yCO8Qzbv2e6woL1CAmJgqvCd2EIj0xPcd
+         l7scna/PuuU2FfbJhts39V+64kHH2WdMZBult/KnVzxO9P2vJpfmTeVyrDT8tfnc2w4n
+         nZgygzqa0YW/nH2o9ejAuuBW+I1NplW/UWGVxkxsKrZRQtPudDpJEspkHIIc8EWnC2vd
+         MxN3Vyw+6wJDv2tSm3UCjtWS9Rq2Rp49/fMzBcWVbx46lpTc2gSkGL/1XS3qok+5O5vx
+         2bPb4Tjwh+HiC/igoPRVVfTQhjmQjbaubbh3+QR8JccfxHrA7ClkIrEDCWJWCYqvGcOa
+         KuCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=0Gn2S/EOjHmywEEzdPOIvC1yoyDIbnmRdYYynFb0JCU=;
+        fh=6/W3rDxwhLhGapxXsNve74yf5tJdG41WARkW2PR9cP4=;
+        b=bazLZ0BN45Zr8GrNohYmE/hxb4Wk+4X4+HlEkMl90ORkGWHZftRnxj/t/2SVh+EInn
+         3LTSj01sz/mjywuiw+PSUq34bCe79sZJzmdm0wEzzAF4wbbXGNMWG6YISB+/UlF4g6os
+         6hTA3gEl7r9t4Q/dFANIwx+DptIzosWFSjAoztIcLjYbgikD2OZbXUQlkBTWwPMBUB59
+         pUl5V2w0+L4kbilQ+8btkNWbDD4T9w9EkeCdUYpiJWfZQ1yjf18MUggNIOGmGWVLT+ji
+         Z/w5YP97pzHWFMHPiT1xv8Npgv+3956MkaObA6rBHHiwDadkRXp1cBflg8BrJJ3gCPkA
+         Sp3A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792593634; x=1793198434; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=0Gn2S/EOjHmywEEzdPOIvC1yoyDIbnmRdYYynFb0JCU=;
+        b=YOtiR39oWEq1NTpzYsD+O/moSozbEa3Eg4RSnKJy49DnFb+9W1tBNxOPOsrLRow/rt
+         BKBrrgzC9CPN/ElxyNzs3dFY/pPyqRQE4CoqEPDfMQ8Ils4ANla9wilhdGn5zr2VUBsh
+         XDClU5phi6C7HW5g7q4x4E+4fhhH+VQbFfTlKkYhue2wVkIqODpirKs7DYiD9NHgOAD1
+         weJZNd0fgXEY46TQzfKEp2ZOQ9bKLcvHSgTAooQyE4W6vR0n3dycaUcgNAy5MwJJwboQ
+         hopm5fU9nBm0YxyruqOpnDGw+OptacQuZQVNU+r0yL5AcOfOgY2vsxeMhNU33b82YSYu
+         dbxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792593634; x=1793198434;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0Gn2S/EOjHmywEEzdPOIvC1yoyDIbnmRdYYynFb0JCU=;
+        b=MaxrbyxtA3xlqjjHUh8uKpFp0GFG3B1J3sv2AB4kMQKZCb4+IC9Ok1HybkEabo+MuQ
+         iYUXFhIFDE3FtX4BBskz2JTqtxcOY6FVHHCAff6UTrY/CKJFZ0KZtq5xlUlfChoHHLIs
+         L5BXukZR5bZ09zrGJyhqhSml9LQ5uj0F2fFpcfHXDvF9JCjpSwtdwxbWVpNye+qYFvuy
+         lYld9YXewU/z/fF9bbu3kH/YLkExwK7cMLAdnCeN6uJTo/g4RiKAQ2PCtEBeNRuYDMF1
+         XQnEaA+Fs+nhWPJ8gwjb0dBGK+jGaiXhF9v1sEiRm7XV+FD7xIZR4B6RyPQQR+w143dX
+         Cmzg==
+X-Forwarded-Encrypted: i=1; AKwUvBx1l7zOOCtoPJOSfwdDz+wQMxRhPh48N/lmE6RzixoT7RKZmncr/eBm2kH8T7CXRrZG/FC4aAUxLfIb@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ/Nc9MG/fQOkwP12hNuyfgo+8r7Ts7WKzvgCRDJR+OATaVpFVb
+	44fkkC1EQ9ot4iY+0///59S9tmdRsAGDgm3zccC4/cXWsGOsbTUJ2Qrh9zWfynDN9tH7aYTdq+T
+	k4S1lDvlOKF3R9X56moQQf4ktvmUdLd0=
+X-Gm-Gg: AYBFou2Bhi0r9hjBw2TKqz/cTxsyT0S4eXPX68e98wnryI+Qe4z2981zsYHH0U5Agdu
+	eBVtmTgxduvdHMehifoBL9RbYQ34MaP8sAt99yAQqyrTyN3hBTfxGC9r1Cdl1xjtJEQladHRxXm
+	gioQQb+rstY/GZfyPZJtsPZgwWtn79IJuJ9HYziFtgaJoad9xbzuv5C4H/gCtGG/tTK8JzaV1vv
+	l3koYqNTHAEy4h0bW53sDeo9d4ikpVpuSO48dfK2OgA7CoOfboWzU+uzvPM+zg4Lopm3dVJEL6q
+	/wMU+HkmZiGuyHJ88zRYhjwomHIByWtZ2S79LmRnfhBQ/rIZUXjKrEWnhkJtiPVO85hO+xauKNe
+	4PsFHz+UEEqtyFtxV+piW5dVKpD2OpCd/WS9la33fmC/cBRD0LVerDUCBGA60OftiEgftlg==
+X-Received: by 2002:a17:907:cd07:b0:c40:b59:1b with SMTP id
+ a640c23a62f3a-c4679a0ad6cmr205617466b.44.1792593633650; Wed, 21 Oct 2026
+ 07:40:33 -0700 (PDT)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,298 +104,90 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ub0y7tD3ArN9k/RK"
-Content-Disposition: inline
-
-
---Ub0y7tD3ArN9k/RK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <atibhAMcgKle37-g@sirena.co.uk>
+In-Reply-To: <atibhAMcgKle37-g@sirena.co.uk>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Wed, 21 Oct 2026 16:40:22 +0200
+X-Gm-Features: AclHuK9P_pXHpQjeIJNu3hhCsP1EXBsiHMxAkTG5K31baLilLfCNdBeEfFXeaCo
+Message-ID: <CA+=Fv5SUHkGtBPgzg9C1qGf6aiiFTVpStPd6Os3mTrz_+_5dKA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the kbuild-current tree with the
+ origin tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, 
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>, Kees Cook <kees@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Matt Turner <mattst88@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mark,
 
-Today's linux-next merge of the rust tree got a conflict in:
+On Wed, Oct 21, 2026 at 1:01=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> Hi all,
+>
+> Today's linux-next merge of the kbuild-current tree got a conflict in:
+>
+>   arch/alpha/boot/Makefile
+>
+> between commit:
+>
+>   c437950dceb88 ("alpha: add self-extracting compressed kernel boot stub"=
+)
+>
+> from the origin tree and commit:
+>
+>   0d4d70da348b0 ("kbuild: Mark the gzip recipes as recursive")
+>
+> from the kbuild-current tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc arch/alpha/boot/Makefile
+> index 7c2a41c1e2a06,b050753e90157..0000000000000
+> --- a/arch/alpha/boot/Makefile
+> +++ b/arch/alpha/boot/Makefile
+> @@@ -39,14 -38,9 +39,14 @@@ ifdef INITR
+>         cat $(INITRD) >> $@
+>   endif
+>
+>  -# Compressed kernel image
+>  -$(obj)/vmlinux.gz: $(obj)/vmlinux FORCE
+>  -      +$(call if_changed,gzip)
+>  +# Self-extracting compressed kernel image: a small ELF stub (see
+>  +# compressed/) with the real vmlinux linked in compressed, which aboot
+>  +# loads and enters like a plain vmlinux.
+>  +$(obj)/compressed/vmlinux: vmlinux FORCE
+>  +      $(Q)$(MAKE) $(build)=3D$(obj)/compressed $@
+>  +
+>  +$(obj)/vmlinuz: $(obj)/compressed/vmlinux FORCE
+> -       $(call if_changed,copy)
+> ++      +$(call if_changed,copy)
+>         @echo '  Kernel $@ is ready'
+>
 
-  init/Kconfig
+Thanks for resolving this.
 
-between commit:
+This recipe now only copies the completed image, so I think it
+should stay without '+'. Matt's series moved compression into
+arch/alpha/boot/compressed/Makefile, where the change should be:
 
-  f85147b291e35 ("kbuild: move the toolchain checks into scripts/Kconfig.to=
-olchain")
+ $(obj)/vmlinux.bin.gz: $(obj)/vmlinux.bin FORCE
+- $(call if_changed,gzip)
++ +$(call if_changed,gzip)
 
-=66rom the kbuild-fixes tree and commit:
+The existing vmlinux.nh.gz gzip recipe in arch/alpha/boot/Makefile
+still needs the '+' from the kbuild patch.
 
-  3504d1bce9920 ("rust: kunit: use `file!()` inside `kunit_assert!`")
+Maybe adjust the resolution accordingly?
 
-=66rom the rust tree.
+Thanks,
+Magnus
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined init/Kconfig
-index 046ae0bf11863,24b019104d886..0000000000000
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@@ -1,6 -1,198 +1,6 @@@
-  # SPDX-License-Identifier: GPL-2.0-only
- -config CC_VERSION_TEXT
- -	string
- -	default "$(CC_VERSION_TEXT)"
- -	help
- -	  This is used in unclear ways:
- =20
- -	  - Re-run Kconfig when the compiler is updated
- -	    The 'default' property references the environment variable,
- -	    CC_VERSION_TEXT so it is recorded in include/config/auto.conf.cmd.
- -	    When the compiler is updated, Kconfig will be invoked.
- -
- -	  - Ensure full rebuild when the compiler is updated
- -	    include/linux/compiler-version.h contains this option in the comment
- -	    line so fixdep adds include/config/CC_VERSION_TEXT into the
- -	    auto-generated dependency. When the compiler is updated, syncconfig
- -	    will touch it and then every file will be rebuilt.
- -
- -config CC_IS_GCC
- -	def_bool $(success,test "$(cc-name)" =3D GCC)
- -
- -config GCC_VERSION
- -	int
- -	default $(cc-version) if CC_IS_GCC
- -	default 0
- -
- -config CC_IS_CLANG
- -	def_bool $(success,test "$(cc-name)" =3D Clang)
- -
- -config CLANG_VERSION
- -	int
- -	default $(cc-version) if CC_IS_CLANG
- -	default 0
- -
- -config AS_IS_GNU
- -	def_bool $(success,test "$(as-name)" =3D GNU)
- -
- -config AS_IS_LLVM
- -	def_bool $(success,test "$(as-name)" =3D LLVM)
- -
- -config AS_VERSION
- -	int
- -	# Use clang version if this is the integrated assembler
- -	default CLANG_VERSION if AS_IS_LLVM
- -	default $(as-version)
- -
- -config LD_IS_BFD
- -	def_bool $(success,test "$(ld-name)" =3D BFD)
- -
- -config LD_VERSION
- -	int
- -	default $(ld-version) if LD_IS_BFD
- -	default 0
- -
- -config LD_IS_LLD
- -	def_bool $(success,test "$(ld-name)" =3D LLD)
- -
- -config LLD_VERSION
- -	int
- -	default $(ld-version) if LD_IS_LLD
- -	default 0
- -
- -config RUSTC_VERSION
- -	int
- -	default $(rustc-version)
- -	help
- -	  It does not depend on `RUST` since that one may need to use the version
- -	  in a `depends on`.
- -
- -config RUST_IS_AVAILABLE
- -	def_bool $(success,$(srctree)/scripts/rust_is_available.sh)
- -	help
- -	  This shows whether a suitable Rust toolchain is available (found).
- -
- -	  Please see Documentation/rust/quick-start.rst for instructions on how
- -	  to satisfy the build requirements of Rust support.
- -
- -	  In particular, the Makefile target 'rustavailable' is useful to check
- -	  why the Rust toolchain is not being detected.
- -
- -config RUSTC_LLVM_VERSION
- -	int
- -	default $(rustc-llvm-version)
- -
- -config RUSTC_LLVM_MAJOR_VERSION
- -	int
- -	default $(shell,expr $(rustc-llvm-version) / 10000)
- -
- -config RUSTC_CLANG_LLVM_COMPATIBLE
- -	bool
- -	default y if CC_IS_CLANG && RUSTC_LLVM_MAJOR_VERSION =3D $(shell,expr $(=
-cc-version) / 10000)
- -	help
- -	  This indicates whether Rust and Clang use LLVM of the same major
- -	  version.
- -
- -	  Operations involving handling LLVM IR or bitcode (e.g. cross-language
- -	  LTO) require the same LLVM major version to work properly. For best
- -	  compatibility it is recommended that the exact same LLVM is used.
- -
- -config ARCH_HAS_CC_CAN_LINK
- -	bool
- -
- -config CC_CAN_LINK
- -	bool
- -	default ARCH_CC_CAN_LINK if ARCH_HAS_CC_CAN_LINK
- -	default $(cc_can_link_user,$(m64-flag)) if 64BIT
- -	default $(cc_can_link_user,$(m32-flag))
- -
- -# Fixed in GCC 14, 13.3, 12.4 and 11.5
- -# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D113921
- -config GCC_ASM_GOTO_OUTPUT_BROKEN
- -	bool
- -	depends on CC_IS_GCC
- -	default y if GCC_VERSION < 110500
- -	default y if GCC_VERSION >=3D 120000 && GCC_VERSION < 120400
- -	default y if GCC_VERSION >=3D 130000 && GCC_VERSION < 130300
- -
- -config CC_HAS_ASM_GOTO_OUTPUT
- -	def_bool y
- -	depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
- -	depends on $(success,echo 'int foo(int x) { asm goto ("": "=3Dr"(x) ::: =
-bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
- -
- -config CC_HAS_ASM_GOTO_TIED_OUTPUT
- -	depends on CC_HAS_ASM_GOTO_OUTPUT
- -	# Detect buggy gcc and clang, fixed in gcc-11 clang-14.
- -	def_bool $(success,echo 'int foo(int *x) { asm goto (".long (%l[bar]) - =
-=2E": "+m"(*x) ::: bar); return *x; bar: return 0; }' | $CC -x c - -c -o /d=
-ev/null)
- -
- -config TOOLS_SUPPORT_RELR
- -	def_bool $(success,env "CC=3D$(CC)" "LD=3D$(LD)" "NM=3D$(NM)" "OBJCOPY=
-=3D$(OBJCOPY)" $(srctree)/scripts/tools-support-relr.sh)
- -
- -config CC_HAS_ASM_INLINE
- -	def_bool $(success,echo 'void foo(void) { asm inline (""); }' | $(CC) -x=
- c - -c -o /dev/null)
- -
- -config CC_HAS_ASSUME
- -	bool
- -	# clang needs to be at least 19.1.0 since the meaning of the assume
- -	# attribute changed:
- -	# https://github.com/llvm/llvm-project/commit/c44fa3e8a9a44c2e9a575768a3=
-c185354b9f6c17
- -	default y if CC_IS_CLANG && CLANG_VERSION >=3D 190100
- -	# supported since gcc 13.1.0
- -	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D106654
- -	default y if CC_IS_GCC && GCC_VERSION >=3D 130100
- -
- -config CC_HAS_NO_PROFILE_FN_ATTR
- -	def_bool $(success,echo '__attribute__((no_profile_instrument_function))=
- int x();' | $(CC) -x c - -c -o /dev/null -Werror)
- -
- -config CC_HAS_COUNTED_BY
- -	bool
- -	# clang needs to be at least 20.1.0 to avoid potential crashes
- -	# when building structures that contain __counted_by
- -	# https://github.com/ClangBuiltLinux/linux/issues/2114
- -	# https://github.com/llvm/llvm-project/commit/160fb1121cdf703c3ef5e61fb2=
-6c5659eb581489
- -	default y if CC_IS_CLANG && CLANG_VERSION >=3D 200100
- -	# supported since gcc 15.1.0
- -	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D108896
- -	default y if CC_IS_GCC && GCC_VERSION >=3D 150100
- -
- -config CC_HAS_COUNTED_BY_PTR
- -	bool
- -	# supported since clang 22
- -	default y if CC_IS_CLANG && CLANG_VERSION >=3D 220100
- -	# supported since gcc 16.0.0
- -	default y if CC_IS_GCC && GCC_VERSION >=3D 160000
- -
- -config CC_HAS_BROKEN_COUNTED_BY_REF
- -	bool
- -	# https://github.com/llvm/llvm-project/issues/182575
- -	default y if CC_IS_CLANG && CLANG_VERSION < 220100
- -
- -config CC_HAS_ALLOC_TOKEN
- -	def_bool $(cc-option,-falloc-token-max=3D123)
- -
- -config CC_HAS_MULTIDIMENSIONAL_NONSTRING
- -	def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring__)) =
-=3D { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
- -
- -config LD_CAN_USE_KEEP_IN_OVERLAY
- -	# ld.lld prior to 21.0.0 did not support KEEP within an overlay descript=
-ion
- -	# https://github.com/llvm/llvm-project/pull/130661
- -	def_bool LD_IS_BFD || LLD_VERSION >=3D 210000
- -
- -config RUSTC_HAS_UNNECESSARY_TRANSMUTES
- -	def_bool RUSTC_VERSION >=3D 108800
- -
- -config RUSTC_HAS_FILE_WITH_NUL
- -	def_bool RUSTC_VERSION >=3D 108900
- -
- -config RUSTC_HAS_FILE_AS_C_STR
- -	def_bool RUSTC_VERSION >=3D 109100
- -
- -config RUSTC_HAS_SUSPICIOUS_RUNTIME_SYMBOL_DEFINITIONS
- -	def_bool RUSTC_VERSION >=3D 109800
- -
- -config PAHOLE_VERSION
- -	int
- -	default "$(PAHOLE_VERSION)"
- +source "scripts/Kconfig.toolchain"
- =20
-  config CONSTRUCTORS
-  	bool
-@@@ -1262,17 -1454,6 +1262,17 @@@ config USER_N
- =20
-  	  If unsure, say N.
- =20
- +config USER_NS_MAP_KUNIT_TEST
- +	tristate "KUint test for user namespace map insertion" if !KUNIT_ALL_TES=
-TS
- +	depends on USER_NS && KUNIT
- +	default KUNIT_ALL_TESTS
- +	help
- +	  This builds the KUnit test for user namespace uid/gid map insertion.
- +	  It validates map insertion, limits, dynamic allocation of the
- +	  extended extents array, and mapping sorting functions.
- +
- +	  If unsure, say N.
- +
-  config PID_NS
-  	bool "PID Namespaces"
-  	default y
-diff --git a/scripts/Kconfig.toolchain b/scripts/Kconfig.toolchain
-index a99d875489eed..279ebadaac04f 100644
---- a/scripts/Kconfig.toolchain
-+++ b/scripts/Kconfig.toolchain
-@@ -267,9 +267,6 @@ config LD_CAN_USE_KEEP_IN_OVERLAY
- 	# https://github.com/llvm/llvm-project/pull/130661
- 	def_bool LD_IS_BFD || LLD_VERSION >=3D 210000
-=20
--config RUSTC_HAS_SPAN_FILE
--	def_bool RUSTC_VERSION >=3D 108800
--
- config RUSTC_HAS_UNNECESSARY_TRANSMUTES
- 	def_bool RUSTC_VERSION >=3D 108800
-=20
-
---Ub0y7tD3ArN9k/RK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatit2AAKCRAv73Ows9A4
-iR3vAP4t11QZrffbLOQbr+R9hrJsXjIXvTe21SdbNM2SSd7v4wEAmgkFK361+MeX
-Em2sCdRmjfawrqL1YpgYdbo7PSWS3ws=
-=BKAi
------END PGP SIGNATURE-----
-
---Ub0y7tD3ArN9k/RK--
+>   $(obj)/main.o: $(obj)/ksize.h
