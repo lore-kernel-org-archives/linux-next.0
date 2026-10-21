@@ -1,64 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792550215;
-	b=OAIIgXGTiuyw8D+ZLJAMH2mjtqhYht8+928w6sjCmGGpaaeWKX5EBYqqarRixxAxZQBQ
-	 UvZfjsVg5TGpzt7ioZkBk/6P5C5/wBPdsgEJSJW9V+mCbyrXZV1bddd2PLknEUCApJ5Hk
-	 zxYaB0AHbpgOTkUvtv4j6t39jIlXgxB+Bm6TLLOoHiVF0QMcaY/P3Moew7NoZ1yLHAioP
-	 sh6iiambR6aCQyIPu+Gkwv3zYVE4rRIvDen3pCxwJe2gihhgiIW5YMkRK+w9jZ8hK0vcD
-	 Mhp+dW1wPvp+zMrQpOnJPfsQkE33QdJGcCyX8bKxT6bgRdqo+bJQUJeZ/FQuhvHrHiQ==
+	t=1792580488;
+	b=2RdLEuc7a/r4yNHpltH5zStIGKFGYbo3rAiHXZnp3Raveab/JwdgVzSItTK1ZgCEG9Tc
+	 I1bao5OqMFxFMPXcoEvSnegYYQbEjkhViwrxQJvlERWFqVNdPtC2l2hLnEy9CdoiA+FWJ
+	 D5tnOKJICQoa54XiofBDOY1C1hHO/mZZXza3mycth7MJNXPtUse5R0DaCuDd1X+P/U0+h
+	 Nhdb/Sd8kNXoPsBO40MApkIc1v0iQ6bf0z1eRwREoGHdNXj86Lz3w0+oWPvNSqaKoVEWX
+	 DNQo2csu9pK/7zBDmiv0EI9fel3iy31L6D20iMXms0UcTawQivNCMVAjfXZ0OoPSzsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792550215;
-	h=Received:DKIM-Signature:Received:Subject:From:In-Reply-To:References:
-	 X-PR-Tracked-List-Id:X-PR-Tracked-Message-Id:X-PR-Tracked-Remote:
-	 X-PR-Tracked-Commit-Id:X-PR-Merge-Tree:X-PR-Merge-Refname:
-	 X-PR-Merge-Commit-Id:Message-Id:Date:To:Cc;
-	bh=4fPiYyEubu0Ml4FBwEpKN6u8qKRkMaDj7/lrHBELfic=;
-	b=Ul+3xxnQZN1qWd/gNqopTH8spEmavsTVF5Ids2mt7xS+D6sn88yPrIF/wo7Na5AsuqNa
-	 oU5e9YuKxqdwJem/caC1b5VtSvyn2HklBbWepskP4UyYKBtev+lwPq/rLgVY+ICF7jdao
-	 zBQz1pCVaW0Br4nt3O93LjdAkplCpdJAhPqWv3yH97YwC6PBsSYyE6E9YaP7qRXtW5lsQ
-	 JJT9dfqhBBo2spjI2OaLnVr1yocjxZ8WgZSSPyuJINCBkDjhs6QFRl2mFZ7+XnBJi1KvJ
-	 T/1Zaf38pa2hs2MDG/vLl4JVVq69mU5DD/jip8/Er/wGqeHZChXmYIJHkp4eiLqrpGw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792580488;
+	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=/eRK0Q4H1a69gz0iEY9sz+8XiJ9fTW+fHc8T0efA3Fo=;
+	b=zO3xvZYW84a22E5w8JfwYIwd8qzqGBZUf+WNwtyzEpw7mpmXASYYNNXx0Jw655WomgW5
+	 mQ5Rr+6nYtK/2WAr8ZC8F9TFvrordVXtlfrn+KPyNbGAXJpZMoTO/9uqvqBfViqC6cOTd
+	 IYPOJ6hic0rSuJcACYUTVqtDuzSIb2H3oQW0QEA2iafmQuwHMtVDzseJkpjzkf8J2dJ/m
+	 R8dxgTK04S2H3fcAlb0KSJEqvWkNLrG8Z/+qUqC8TFg2zzQOzHO/vwXzCE1KNKQeRAd1L
+	 2yFLYN0zkTI2uqmVqdVI69uE/VxqjT4Zyk9DAzvVFD5p2XE8UwueOSBCz2h78G3aFVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HvDI+Kvm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PuDALw9u;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C759606A31B;
-	Wed, 21 Oct 2026 02:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28BE606A31B;
+	Wed, 21 Oct 2026 11:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HvDI+Kvm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084FD1F000C9;
-	Wed, 21 Oct 2026 02:36:55 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PuDALw9u
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C541F000CA;
+	Wed, 21 Oct 2026 11:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792550215;
-	bh=4fPiYyEubu0Ml4FBwEpKN6u8qKRkMaDj7/lrHBELfic=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=HvDI+Kvm/YhtJPNb0DudzJKo7wOhkOcF33lKrizaCLD8M+A95pYvzkSpTpihkCY07
-	 9OTMGgb7LpcG0kWOI/G927FVmBi8c3Lwm7NjmGlvrKysrCz0eqbsLG8IAUTUyD/5LK
-	 QqfN/H/kCOXAQLzKOXRyc3BNwG6MgSxAlTgV9YfIBEb1ueVhC6o/Q0aEaLZr7YMH/e
-	 Ur3HjXYILLhBM47FYkQNaC66gH1e0z2n9Yc7wI1qNhXbg4IMIVhfKZEdCnWLjiiFyN
-	 SP0VoLD9XF4YblOtytaN21BW2IsR/SmGphbW0hOUWve3Yb0GAal4XFDwQyo3WuOhZT
-	 5nBDKXcXSBXAQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F149D3809A18;
-	Wed, 21 Oct 2026 02:36:54 +0000 (UTC)
-Subject: Re: [GIT PULL] smb client changes for v7.4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <fcf60d2f4382fc7ccd77ea41c5e55b50@manguebit.org>
-References: <fcf60d2f4382fc7ccd77ea41c5e55b50@manguebit.org>
-X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <fcf60d2f4382fc7ccd77ea41c5e55b50@manguebit.org>
-X-PR-Tracked-Remote: https://git.manguebit.org/linux.git tags/cifs-for-7.4
-X-PR-Tracked-Commit-Id: 78f73985846465a25a7bd1d89904053661f3ca92
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 32543b09681a142ff1803d87609060f491355346
-Message-Id: <179255021352.339009.10598672340543121937.pr-tracker-bot@kernel.org>
-Date: Wed, 21 Oct 2026 02:36:53 +0000
-To: Paulo Alcantara <pc@manguebit.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, Mark Brown <broonie@kernel.org>, linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20260515; t=1792580487;
+	bh=/eRK0Q4H1a69gz0iEY9sz+8XiJ9fTW+fHc8T0efA3Fo=;
+	h=Date:From:To:Cc:Subject;
+	b=PuDALw9upIUdSx0azjjAnV/AYIZ7HCeVxbQNzokXZsxB1kr2BZCQJ0MgVydx1i6k7
+	 5vIWi5FjWKSfko6FiFBpLlIdSp5HiPCpoC243CIFejhmnmG06eCHCUSbYWVmcHXjMp
+	 h2wcqiOBLNSOAKk7EuvjtDXYMg0jCvfwRnMuZ7gQUo0D3uo6DY52Uj43HldEFBXYhe
+	 esIfP0IX0TJh1O6erldm1715SQ67a51Ly19vaU6TARVp0eAvwN7XYuVCXN1lhhuzLi
+	 rcICG9jHHGLpAaytfERaXbjcqFq5LaXM92z/6mKYTn6vx+kKDqsyIViHntz1qlcSeb
+	 jZKmPUneQwXrw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 259161AC5994; Wed, 21 Oct 2026 12:01:24 +0100 (BST)
+Date: Wed, 21 Oct 2026 12:01:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Magnus Lindholm <linmag7@gmail.com>,
+	Matt Turner <mattst88@gmail.com>
+Subject: linux-next: manual merge of the kbuild-current tree with the origin
+ tree
+Message-ID: <atibhAMcgKle37-g@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -67,16 +61,73 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="88Ull06e83rgnJc4"
+Content-Disposition: inline
 
-The pull request you sent on Fri, 16 Oct 2026 20:52:42 -0300:
 
-> https://git.manguebit.org/linux.git tags/cifs-for-7.4
+--88Ull06e83rgnJc4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/32543b09681a142ff1803d87609060f491355346
+Hi all,
 
-Thank you!
+Today's linux-next merge of the kbuild-current tree got a conflict in:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+  arch/alpha/boot/Makefile
+
+between commit:
+
+  c437950dceb88 ("alpha: add self-extracting compressed kernel boot stub")
+
+=66rom the origin tree and commit:
+
+  0d4d70da348b0 ("kbuild: Mark the gzip recipes as recursive")
+
+=66rom the kbuild-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/alpha/boot/Makefile
+index 7c2a41c1e2a06,b050753e90157..0000000000000
+--- a/arch/alpha/boot/Makefile
++++ b/arch/alpha/boot/Makefile
+@@@ -39,14 -38,9 +39,14 @@@ ifdef INITR
+  	cat $(INITRD) >> $@
+  endif
+ =20
+ -# Compressed kernel image
+ -$(obj)/vmlinux.gz: $(obj)/vmlinux FORCE
+ -	+$(call if_changed,gzip)
+ +# Self-extracting compressed kernel image: a small ELF stub (see
+ +# compressed/) with the real vmlinux linked in compressed, which aboot
+ +# loads and enters like a plain vmlinux.
+ +$(obj)/compressed/vmlinux: vmlinux FORCE
+ +	$(Q)$(MAKE) $(build)=3D$(obj)/compressed $@
+ +
+ +$(obj)/vmlinuz: $(obj)/compressed/vmlinux FORCE
+- 	$(call if_changed,copy)
+++	+$(call if_changed,copy)
+  	@echo '  Kernel $@ is ready'
+ =20
+  $(obj)/main.o: $(obj)/ksize.h
+
+--88Ull06e83rgnJc4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatibgAAKCRAv73Ows9A4
+iXtBAP449H8f4IXGpD76a4y/ZfJJCmDEsaKx8EU8qYwm6gjINAEA6Wt8EHRtda1g
+2jsKm3YlUD5mlvB2Ngq8NUKqQZBiZg8=
+=4Zgr
+-----END PGP SIGNATURE-----
+
+--88Ull06e83rgnJc4--
