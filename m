@@ -1,70 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792607828;
-	b=0F7qWApbkjOI0Lm8sLoQIkCS/+7yPbjhvTmBLlvMU7uLT/b62o1Y8dR76BAoxWtGfB7e
-	 QgvByers5/bc3EIyUsyNBdjkS5sdCXh+CGeo4VbiKfd6ObTIPpcFYJYTW1md/B6e+qT0j
-	 BvoDpRDlKxUAhNLza+7Psld7ffQZv0UvvOC0954e0FDBTmxEJ/VWTvC52fgkJy+FggE+W
-	 rlCyOBGYeIMxr3kUY369AMM6dEJF8b2Ewd+k5CUMkIMCT6b25XX7uJzI6rKOxI+UTJInd
-	 y+jb09VEDn1B34uNUt1nrVnsNgFpFz7cxfizQfO8J9uMgCOF97UEhpoW+2FFQ7dUcVg==
+	t=1792609142;
+	b=njhMKKdLe7o2EP9gQqT47HiCcunZTtfe1J7KvLHKBDhkpq8ZGMwQ+Tb8CIn4tL8XMgUJ
+	 Z52w7w6fYFsGx0AsoClwaiYiZHF4NG/Bf+trrsnjMsrhWwlGLWne7UFCIyY5PmSk/sHk5
+	 yFmeum9s3DAIrWvVxc0UfHfNv1Og7UjRpFUVN8wDKJ5KlF/Eas9oYbq/H/yy3HIuDqfUR
+	 FPjDxT1zNnUgFgnBL/BBIuLMHKi+8coA0ajlHQ2nAfT9B+fjSHgc1LdERZ1BTf8GLqA3P
+	 IHY/N9ZltbY8e3C+eQ4vD2mIpdBE7LSFS/flYKWJnN42R5zJ1PICNDjlsX0CjpStFdQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792607828;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:X-Spam-Status:X-Spam-Checker-Version;
-	bh=cEyN7X0zp2+0JdttZ7TpyT+KfHeqvxl19fVkd42ChWk=;
-	b=ZvZmZbv1AIlR9GKeJ1EJq216th197UkgNBVpM0awvopfHl52u/lV5AoPVrxxj3LuoJ4n
-	 wXieMWmWOKld7o7tE2nyd7FIaVS531FbcYlXMC09HmfJUIkCDMJtpuWGzU9N+T7ldaW3+
-	 l81RkQNyYgZaB/IiiPE/08fD5WOHysYxIxnWi7I0tGjIXfyveSdvTTcDD4BkzOscmBU1E
-	 M+5V9A0XU2SgWyQfePPagAS2MreEHK6NQMmKur18t2hWsoT+Q3VUhkVs7Lr3jm34jgO5b
-	 zHBsTi005ktZO13w29A9rjMKMIo7k1nu7maMBWLHwTzpjaBiHWMKBrw6ICR7N7eqMHg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792609142;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=IE46uUimPZ2OrMix9QdgrETw93S8Yz4lO5oDBNbPDxM=;
+	b=V3wfFI9IuvpwTreblg3/c70Rkfxv6PqgeH7H4GL5kxnmt0H4DLDzvLyWajnFzvhdw+tR
+	 I66DtHw4lHB0V9pM/U8kjXJZB6V6CVTqWuchrqpJdyygqsto7elPGj0TkUo/z3NXB82Kw
+	 pYYlpW1v37ydMZ7wcKaS/q0WHqElIlnyNXJtRQXkL5kFcOXoxFGpSZTMTNGZxRd86rPq7
+	 jk51hkkIlQKeja+5GnP8jQp5NQITrzA7Rd8PderzwNzyTTsAliruZ4sh7npYiL6KmoSpy
+	 UCESxxWCJJsQq/TBtmJj80ER0GsCF/lJ4IVTFsCQYEieHY+gbGidkdkCpPBoVd/X08g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=netfilter.org;
-	spf=pass smtp.mailfrom=netfilter.org;
-	dkim=pass header.d=netfilter.org header.i=@netfilter.org header.a=rsa-sha256 header.s=2025 header.b=EUMZdeVA;
-	arc=none smtp.remote-ip=217.70.190.124
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B2SzQHwM;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2DC70606A319;
-	Wed, 21 Oct 2026 18:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2DC70606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC26606A319;
+	Wed, 21 Oct 2026 18:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=netfilter.org header.i=@netfilter.org header.a=rsa-sha256 header.s=2025 header.b=EUMZdeVA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1792607818;
-	bh=cEyN7X0zp2+0JdttZ7TpyT+KfHeqvxl19fVkd42ChWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EUMZdeVA1gFJfNLWqbQT25dFPmL/MMbhL6IbDykKMiy5J0oveadXClkaYNVimLH+s
-	 Fqoi0cvB0u5fmfo1ktKhovFRd2x/L4JbCQg1CdGR2IylnsJHvHh/as3ITf1PZbkPAP
-	 NDdBZ9Jfojsoq8BQ6ausnswY9Mo7oQRjRHQZY1KBwpCPS75atf6AQqCMfDuqLcqymb
-	 AVQk7c6NjVSdBT65I0r5F4grJ+q5cVJoxH1jaTOYo6Zhehi6ZfuO5HF6+NRdY1T6li
-	 y6ATV5BcTCXty0zVd0LGu9rDK6Yt8aOmDo0GyTqnH3UsO+yRzAOh2nfyOJnikEAkTy
-	 AacOfsNe+q/ag==
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with UTF8SMTPSA id 837AE60055;
-	Wed, 21 Oct 2026 20:36:58 +0200 (CEST)
-Date: Wed, 21 Oct 2026 20:36:55 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	David Miller <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B2SzQHwM
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F8991F000C1;
+	Wed, 21 Oct 2026 18:59:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792609142;
+	bh=IE46uUimPZ2OrMix9QdgrETw93S8Yz4lO5oDBNbPDxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=B2SzQHwMFu/kHIndlhBoY4fqkhEQ82z/N/IvKA74NRjlF5OEClO79qeUgsOOtGzWn
+	 jFdOlJ8fEMULZny7pDtgJloVpJfJmzvB/c+sS4Pgc9OQ3Q/k5qEww6H2uG6pCCxPLg
+	 2czxJADB8Yju5JWOHIdv8QT0UYqmgTfCbGPYQ7BqhqhQ9YE9JiPPsk/UJ3+Ya0RpCa
+	 q2nD1FdlbforpMLEIbkktkaQQIpV83pkiodsVuhnu3sL5ppAiFGS+eoWFptcoRl4PE
+	 u8mDzq2WIZTfF60IqTyXEaVhsSr+rOoZhLFa86GJWxt0G96z29qK6zQXNV5Ydsa8ZP
+	 pzqzRK1sV4OfQ==
+Date: Wed, 21 Oct 2026 11:58:57 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Magnus Lindholm <linmag7@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
+	Kees Cook <kees@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Liu Chao <liuc63@xiaopeng.com>, Networking <netdev@vger.kernel.org>,
-	Piotr Kubik <piotr@kubik.pl>
-Subject: Re: linux-next: manual merge of the bluetooth-fixes tree with the
- net tree
-Message-ID: <atkGR7UxW4kAeUdE@chamomile>
-References: <atiblfL12VddJgjU@sirena.co.uk>
- <atioPA8ofnC-PCGi@chamomile>
- <d6f50e2e-adcc-4d85-9be3-ff24cb8f8cc2@redhat.com>
+	Matt Turner <mattst88@gmail.com>
+Subject: Re: linux-next: manual merge of the kbuild-current tree with the
+ origin tree
+Message-ID: <20261021185857.GB2608581@ax162>
+References: <atibhAMcgKle37-g@sirena.co.uk>
+ <CA+=Fv5SUHkGtBPgzg9C1qGf6aiiFTVpStPd6Os3mTrz_+_5dKA@mail.gmail.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -76,57 +65,62 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d6f50e2e-adcc-4d85-9be3-ff24cb8f8cc2@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+=Fv5SUHkGtBPgzg9C1qGf6aiiFTVpStPd6Os3mTrz_+_5dKA@mail.gmail.com>
 
-On Wed, Oct 21, 2026 at 03:00:56PM +0200, Paolo Abeni wrote:
-> On 10/21/26 13:55, Pablo Neira Ayuso wrote:
-> > @netdev maintainers: Please, see below.
-> > 
-> > On Wed, Oct 21, 2026 at 12:01:41PM +0100, Mark Brown wrote:
-> > > Hi all,
-> > > 
-> > > Today's linux-next merge of the bluetooth-fixes tree got a conflict in:
-> > > 
-> > >    net/netfilter/nf_conntrack_netlink.c
-> > > 
-> > > between commit:
-> > > 
-> > >    cd37ab22a74e0 ("netfilter: nf_conntrack_netlink: fix inverted IPv6 tuple filter")
-> > > 
-> > > from the net tree and commit:
-> > > 
-> > >    1ae2d094b0200 ("netfilter: ctnetlink: fix inverted IPv6 address match in dump filter")
-> > > 
-> > > from the bluetooth-fixes tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particularly
-> > > complex conflicts.
-> > 
-> > Sorry for this: This patch is duplicated, one variant went into
-> > net.git and another into net-next.git.
-> > 
-> > Two possibilities:
-> > 
-> > - Revert 1ae2d094b020 ("netfilter: ctnetlink: fix inverted IPv6
-> >    address match in dump filter") in net-next.git
-> > 
-> > or
-> > 
-> > - Revert cd37ab22a74e ("netfilter: nf_conntrack_netlink: fix inverted
-> >    IPv6 tuple filter")
-> > 
-> > before net-next.git gets merged into net.git, because these two
-> > patches address the same issue.
->
-> The 2 patches are equivalent, right? We pull net into net-next before
-> sending the net-next PR; I think the easier solution would
-> be manually solving the conflict at that time. I understand that accepting
-> either 'net' or 'net-next' variant would be ok.
+On Wed, Oct 21, 2026 at 04:40:22PM +0200, Magnus Lindholm wrote:
+> On Wed, Oct 21, 2026 at 1:01 PM Mark Brown <broonie@kernel.org> wrote:
+> >
+> > Hi all,
+> >
+> > Today's linux-next merge of the kbuild-current tree got a conflict in:
+> >
+> >   arch/alpha/boot/Makefile
+> >
+> > between commit:
+> >
+> >   c437950dceb88 ("alpha: add self-extracting compressed kernel boot stub")
+> >
+> > from the origin tree and commit:
+> >
+> >   0d4d70da348b0 ("kbuild: Mark the gzip recipes as recursive")
+> >
+> > from the kbuild-current tree.
 
-Yes, either variant should be fine.
+Thank you for the heads up, I have let Linus know about this one since
+it is a little tricky.
 
-Thanks
+  https://lore.kernel.org/20261021184723.GA2608581@ax162/
+
+> Thanks for resolving this.
+> 
+> This recipe now only copies the completed image, so I think it
+> should stay without '+'. Matt's series moved compression into
+> arch/alpha/boot/compressed/Makefile, where the change should be:
+> 
+>  $(obj)/vmlinux.bin.gz: $(obj)/vmlinux.bin FORCE
+> - $(call if_changed,gzip)
+> + +$(call if_changed,gzip)
+> 
+> The existing vmlinux.nh.gz gzip recipe in arch/alpha/boot/Makefile
+> still needs the '+' from the kbuild patch.
+
+Correct, thank you for catching this.
+
+> Maybe adjust the resolution accordingly?
+
+Since the conflict came from Linus's tree, I have resolved this in
+kbuild-fixes-for-next so that Mark does not have to worry about this:
+
+  https://git.kernel.org/kbuild/c/83deedcf85af511dc120b3cd8ee597d211cdf2fb
+
+On a related note, is your tree flowing into -next? The recent
+pull requests for alpha have come from your lindholm/alpha tree but
+Next/Trees shows Matt's mattst88/alpha. Should that be changed? It would
+not have saved much here since I send my pull request to Linus before
+c437950dceb88 was applied in your tree as far as I can tell but it is
+always good to catch these things early.
+
+-- 
+Cheers,
+Nathan
