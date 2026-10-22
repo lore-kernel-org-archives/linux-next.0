@@ -1,84 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792677548;
-	b=pVwMagXmvNRrXsMIH2I+VYJNTloN1/F6AaHKPFoBKvyeXpeuuUhRwQQo5ty0uSP1OwTB
-	 cRXXli9MOoiLkizmS3a/ommtYqR+lm2RFm/iTfm7etGmp1JKcnbAC4LYmOfK7+y6djrDP
-	 SZJapSfW0vLCcadHNk6c5pQ3dNPlVvfGseIVd4MCgoqT/KM32wTVLQ8OpdG+qOr49g1cw
-	 47bHCP66St7tx8xOz5VSi3sTz3Tpxo9e4Y+g1sF6OAJ8kxncfcTWLcXj8QlfOjAkq+vxx
-	 2T7o1HAzvsvKzX+9qakc9D7/lSaxTXR4Aex2AICcSN5ma+3bXRjlw9bMENhWUok5Ygw==
+	t=1792680140;
+	b=SRvDlcJaa/4J9QK/8gCXo9Y3xIjLg4OnSlYmOyoEniWwshfC7Woe+tpAkglMI8kGCphC
+	 DxskkuFo42kMsFrgROzQBxNOrwAe5zpRM5nWNZsL6AgqI3Vo6hpaLofwB5lIxJn7IzfXW
+	 x/ao2IgiPvuRFqHLvGUQMWrxlyLsyw3eY06qHoJDSMw8tHKW86PYVqY3QjLjEW2qm8U7C
+	 9suCqC9zbgUTPBw9uiSTbg3xU4yUuBuJQbvvCd3ahglnws1mH5HVtWNKenZ0FTLAZoLhE
+	 VH2V7V5MUpsptuPjUW5yX6nUA2QMfV3v8qHizjumFtDhIr7VU7cXTnZsJ3d44YvIdYQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792677548;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:To:
-	 Cc:Reply-To:Date:Message-ID;
-	bh=yapslLW8DJgafvTO1QZsoaeneeL8j2kAUWpgSuLBw/0=;
-	b=sAzL05dMJ8EBrb/yZAH4UYKVCynrXCrM65XHerO3o1Yf5SbsU0I0Yvbd/P4pSOWnLPzT
-	 0gZiRAUXOcnNzrZHXsl2KcF3Xg83sM849cJ/e1vmCAJ66MdUOj8SENEXJK+OuG6bSWaNR
-	 eCm7WY17HCiAxVUyZyEC8jx/Ci0qbyDxeZx7t4QyxXVy5ZZXTffYpVsAFtRByNrCmtV+j
-	 0KcrLmmZ6dg1Ti/BRZCJecTy8sRYBmY82wa0UnZMrwkxmTbiFBshs1rlyviVsaP7JlhVM
-	 x6eFNNDqclGeemcoexAs/2OW5tz13eUc7rQu9FfzeX2hkjnegXe1e5rVxSTAWGoSVxw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792680140;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=Y/LUBFBKFZ6pOnoBKgntXD5HdgzoU+tx/ippvDPRFz8=;
+	b=XosuQmf5vH2HQOxXXqXsWLXWITqnbrxofaWrytTSdtfhq/DGBZCtccsFhIEzWOp0+R12
+	 dJJayXPXk0xA9btaPH2Li43hxXM1s23Pt1wHxYPSOpykA+JCE1g7OKuiAFbQkqwxix/9x
+	 MPTH1Ds9nvwQf/+izF5cUIenIxDIR9EdB2wqoCX1fMA7yDMCOhwNn0ay105sCxMA0x6KG
+	 crYFzX4NBAlrvhbLKtwRXKXvOkg7ukmIqgGOkxjp10UvamIiRPevU764lH3P55Mg5kFoR
+	 xY+GyYi7scNJ3C/Co9qAsf/eIwjvBLu24Hl3wPxPT8WJLzAWtH/yck7xNzT8yiSDpvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kernelci.org;
-	spf=pass smtp.mailfrom=kernelci.org;
-	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b="Le/cKqPi";
-	arc=none smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QwWnv18G;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8458E606A31A
-	for <linux-next@vger.kernel.org>; Thu, 22 Oct 2026 13:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8458E606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BAA606A319;
+	Thu, 22 Oct 2026 14:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=Le/cKqPi
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-35d0be18c71so1032110eec.1
-        for <linux-next@vger.kernel.org>; Thu, 22 Oct 2026 06:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1792677546; x=1793282346; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=yapslLW8DJgafvTO1QZsoaeneeL8j2kAUWpgSuLBw/0=;
-        b=Le/cKqPinGKdgsjy4iOLTyE+J2TbYRfhoW655YJbVqNcQRfBZTd2TH0doV1BhADHy9
-         QZoNZDB7YqsFj3c0Qm0/8EVPQliuZ4B7Fd9yBtr3jP62xTBjRi1GbbukG4ayr7DTntkt
-         wuyvwAqQbBTaVT946XuD7uiiANLNnMRiV+WLvYyIT+YMn2KCnRJnrSV6v+nQCMHCcQqM
-         4bJ2gXqBa6Wx58/lNuS6p17JhDfZ3YtFNlpGA1lMwbT9oqyvNNw/tthdcoKonxJU+KW8
-         /pjyChG1luGqofNXuKHBm6xS4nsw4Zi5wKl6K6JYgFm1lnQm/MM++buXt4mkgjJXiAna
-         Krcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792677546; x=1793282346;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=yapslLW8DJgafvTO1QZsoaeneeL8j2kAUWpgSuLBw/0=;
-        b=GcSbedCz8tkqQZh0bGyPnaZ8KdFZQDvKz1eErgiosnz0gw/RMuuq+9lKr2ZRTbFpxW
-         jyBRrHBpXo7l+lv2ZaWCdwrGnRHlK8XUSFg5rGwLRFrT2iKokavogNzrP3PS0uQFVk8g
-         8uNSSMPkvEfCnFCqOJbPgRDwhoc1S3IsV9kz1LVvPCGDqElNR+DRUsok2NjfXNFUyqhl
-         7hQw6f6uL4+DHVNnQ1iL0u4PkjMmk56avUE/CeQW2XOu5q0VfZKq+LLnvUPeS7jOwjvS
-         jOvlU1ZxPnriMLM1f/+MjCATmo8H8OdLOLUkA7G7EoOQOPf2x3tlU7Vqd/Rfui+o4h9G
-         uXfA==
-X-Forwarded-Encrypted: i=1; AKwUvBw4gEP6ZGeVK+O3k27sip2ZzVXeisT69aS2not+JiptKCG1iRBXOJtktTSX+GJJ7p5zaPBPRvmLlyY2@vger.kernel.org
-X-Gm-Message-State: AFq9FYL7Du/HwivxiweK7SPFbNu8WJRvnyCPUQYdTYWqXJ3Gm5z+tZU3
-	CXwTv1iGkvFP8Af2TqZ0Sj5gbvAeqGQtcaTaP9OrS2rjnbn8dXD394uNX0zRnLIGfwM=
-X-Gm-Gg: AYBFou1ltmj7u8PjbheXzBmnr2VrHHGYlnkKhnlnbKRfTG1i6qyckVU0PdohIzV85VI
-	XrNsQ/GARIMeJZ35LdIcF9ZW5Gn1YCjGQfKK4NxbARQM7JDRT0fbOcq/PKVZpRaET3ttpdtLEGg
-	PHuOnidG055hlWSulvHAreXqfklAfucu6i5+6uxV38mpm+4+iO2wKrO81hinXIyU4H2bPogFdAz
-	X/eg/07x6526yQybA3X3cxknv8oDksirAVVCjUT2HzHRKL5e6i8jad08Z4YX3uCu0BiU+7PMu6n
-	Fn1+pGU3pvGkkCF1bAbIEmzBEdZ9eil73tkSyr2iadhVEOqAnMFy1VPt0cHTj0fOUueVXd/q1ep
-	0J/U5Oz7xnXxCujBcoGR/yt65NZIRKD/gcV9sOPr9HZ226mLvXhWGOmej9/D5QHPLLfSbu6EzDC
-	BXBsfkKDw3ndA8MGD8tdIU3mEUpaPp3z6UOUOQ0Lag9uYCMA/GNma0Bo4u8lrQRJSNU3ySzvuyP
-	myt6vOqm3vAN/wAgbsf8nRMtMpT4uupsHQaL/QBFkfwnneRAw==
-X-Received: by 2002:a05:701b:2086:20b0:155:734:9cc9 with SMTP id a92af1059eb24-192f442b6d4mr3254838c88.16.1792677546254;
-        Thu, 22 Oct 2026 06:59:06 -0700 (PDT)
-Received: from 6e52bff8000c ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1903bb7f098sm23639534c88.12.2026.10.22.06.59.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 06:59:05 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QwWnv18G
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D1F1F000C1;
+	Thu, 22 Oct 2026 14:42:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792680139;
+	bh=Y/LUBFBKFZ6pOnoBKgntXD5HdgzoU+tx/ippvDPRFz8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=QwWnv18GDdspYldAzA7jwq1orZiwP7kwD51CJLmUI/hA7JOIigj13YSsCGdmecAvc
+	 46Af8XgaSPB0/af488hSXMzWXBZVYhz8feqjz6tYcWXLwhnafFM9RDkg39VH8qCo88
+	 5tE9J8PdRTbOpIYqlb8uDjAZ2Qj03gqPOknl6+GfjnlxGEq5DXEWXRPg4qsEq/kJ1A
+	 ud1/u0zwCXeBpft9qDuksliQChVPjBmBY9KSWVHGjLckqW6imzLu9eXF3Kd3bwkWip
+	 9qq4z16OLDLz4mvuBRQYs+8RF3hME3KlSwqBioPcsuHFFkBOcWurQkDU9bXbu0ZLSs
+	 7REL9rmOdlKLQ==
+From: Sasha Levin <sashal@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Anup Patel <anup@brainfault.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Jinyu Tang <jinyu.tang@linux.dev>,
+	Atish Patra <atish.patra@linux.dev>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: riscv: Implement kvm_arch_pre_fault_allowed()
+Date: Thu, 22 Oct 2026 10:42:16 -0400
+Message-ID: <36adc119db9b30984c0df4d1846c0f29e4e46c07.1792679974.git.sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <CABgObfaH4-Ud4VR=GC8giDmWGJWS-tvYSmPOs4TtWg2hm4ocqw@mail.gmail.com>
+References: <CABgObfaH4-Ud4VR=GC8giDmWGJWS-tvYSmPOs4TtWg2hm4ocqw@mail.gmail.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -88,56 +71,55 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: [REGRESSION] next/master: (build)arch/riscv/kvm/kvm.ko: symbol
- 'kvm_arch_pre_fault_allowed' undefine...
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: regressions@lists.linux.dev, linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 22 Oct 2026 13:59:05 -0000
-Message-ID: <179267754360.302120.2153520610797426540@kernelci.org>
+Content-Transfer-Encoding: 8bit
 
-New build issue found on next/master:
+Commit caa63620f9e3 ("KVM: Allow architectures to disallow pre-fault")
+requires every architecture that selects KVM_GENERIC_PRE_FAULT_MEMORY to
+implement kvm_arch_pre_fault_allowed(), and there is no generic default.
 
+Commit e8b32e377951 ("KVM: riscv: Implement KVM_PRE_FAULT_MEMORY") was
+written before that hook existed, so it selects the option without
+implementing the hook. With both commits in the same tree, riscv builds
+with KVM enabled fail to link:
+
+  ld.lld: error: undefined symbol: kvm_arch_pre_fault_allowed
+  >>> referenced by kvm_main.c
+  >>>               virt/kvm/kvm_main.o:(kvm_vcpu_pre_fault_memory) in archive vmlinux.a
+
+The riscv implementation does not refuse pre-faulting in any state, so
+return 0 to keep its current behaviour.
+
+Fixes: e8b32e377951 ("KVM: riscv: Implement KVM_PRE_FAULT_MEMORY")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-arch/riscv/kvm/kvm.ko: symbol 'kvm_arch_pre_fault_allowed' undefined! in Module.symvers (/tmp/kci/linux/scripts/Makefile.modpost:147) [logspec:kbuild,kbuild.modpost]
----
+Paolo, this is needed when kvm-riscv-7.4-1 is merged into kvm/next.
+Feel free to squash it into the merge instead.
 
-Log excerpt:
-=====================================================
-ERROR: modpost: arch/riscv/kvm/kvm.ko: symbol 'kvm_arch_pre_fault_allowed' undefined!
+Mark, next-20261022 already fails to link, so linux-next needs this on
+top of the kvm-riscv merge.
 
-=====================================================
+Build-tested with a riscv tinyconfig plus KVM=y on next-20261022 and on
+kvm/next with kvm-riscv-7.4-1 merged. Not runtime tested.
 
-When fixing this issue, please attribute this report according to the
-patch submission rules:
+ arch/riscv/kvm/mmu.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Link: https://lore.kernel.org/all/179267754360.302120.2153520610797426540@kernelci.org/
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index e8673cfa69668..738d9ee1eac9d 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -754,6 +754,11 @@ int kvm_riscv_mmu_map(struct kvm_vcpu *vcpu, struct kvm_memory_slot *memslot,
+ 	return ret;
+ }
+ 
++int kvm_arch_pre_fault_allowed(struct kvm_vcpu *vcpu)
++{
++	return 0;
++}
++
+ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+ 				    struct kvm_pre_fault_memory *range)
+ {
+-- 
+2.53.0
 
-For complete logs and details about the environment used, see the issue
-on the KernelCI dashboard:
-
-- dashboard: https://d.kernelci.org/i/maestro:9c12526508454935ec55c5be5b9699f5296ee63b
-- giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-- commit HEAD:  bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
-- tags: next-20261022
-
-# Builds where the incident occurred:
-
-## defconfig on (riscv):
-- compiler: gcc-14
-- config: None
-- dashboard: https://d.kernelci.org/build/maestro:6ada0faa55fda507606868e9
-
-#regzbot introduced: 9a482184d910775cf648863148944945b74e2815..bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
-#regzbot link: https://d.kernelci.org/i/maestro:9c12526508454935ec55c5be5b9699f5296ee63b
-
-#kernelci issue maestro:9c12526508454935ec55c5be5b9699f5296ee63b
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
