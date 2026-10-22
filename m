@@ -1,56 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792669636;
-	b=G8Akk97Vz56OKCv9gyWktCylgFqt74+oBtY5OAERb/F1pSWBaAguiU6IQsVVlAxVEh1s
-	 HHoHen7PgHVJc40jBiSmsFlyuvQc79syTq4kGD3WZ2n6F0oUSn1r8elSCTm/hmYC8mJ0z
-	 WwE67H/VoRGKIGHrV+QJRLHajXeHbVMineFCqcUp+lsL+05Sec75CchaEhh0TiJ1I0KUc
-	 lxKUohxEd2eBk3DvSoSasZPsN2LuvbdKd2rpYMxu6/jUZgadaS9JQ6q+C6CoSQnaUbCZ1
-	 BbYixXEdPpwnD1/1JkZiOAGhpMvEjuhKYtGuzjDBnLZV04ek4bU70zbNiepPaJRfmQA==
+	t=1792671758;
+	b=ufxXfaLopeVkMLFSlDEyvZt3CzPQgZOPEbH1a90a5PeRi8JNE9p1oD9mJG5PYKm3tsyj
+	 0ovKTNQOvB2Br+pBvBiQ2xUzSU8N23JAtG6mJfb34pM6H7Hwdo8mcext46Pf0lEwUdyUT
+	 cjPVVxSyHTnIQYdJvVAqRJ0SRPPoWStleLedBtqZ9AoJ9TXo7KCN8Tkbw9wSyYDpfU43g
+	 XMlm46Dg3x1HekqbES3QwtIv9gy0jA9FMjLj3b3egL8ccPjGgFgM7Z08CAuRujjSAkhAB
+	 ThhIAEtOcpdusd935ogruun1WJh5puSiw1PN/LEu5D0exH5q2t9ZM6JIGtOPw3dCUEw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792669636;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792671758;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=EP0p8TkafN3QQnnmNUx+hSQ9exkYsh7jf0voP7LEZmM=;
-	b=kbsZXMpp+CvFmAsZvPM1iBQyohRrdZ7O/TnUqobbTU9UIOYj0uoSoDscbZWzUYGBkC07
-	 Qo0rh+P2nlH7vW9pmgsBFnHEahN4QhwAm/224Za9l9m71xeXuUKZ6Vt1qIXP/pJN393RV
-	 wrVqd3tOFs8tA3lzsiTmtfUERe4JPWcPIGWjPQCd4q/NVYoRZCFz2YeXRN8jefw2BgAHD
-	 ijVk/uf+4+dXQFcuo/swDKAsSpTTDL+A0FKkxlb5MQkDfUPGNeZsngZ+gb4DNB298AEtx
-	 AIneokgGf/+dgG8mO8PD46KCYetI74qQHoh+oRFvuLhjLUbOyHO/IIcYEBI1lLHSEXg==
+	bh=r4bapHc0d8zMkW91rbIKb96mc8vXGPvaOjCeerXZYmA=;
+	b=3LQz1Jr29PeIYAbFwvoGTVDNLXxrWCP8Ssbg2ExBu+y/eKfSJAmzWjSNbdtJ6/kX6hxH
+	 5s5c3dEQFNyp8XpQfzWZMZ4W36SVGeqIbF01NsMmvhn3dX2lLUzY2/KQeECJVyTYKItmJ
+	 fuMFqOx+43FbK3bMzQkRoDNHgxfCxiJWOCLvZcKQ6GG4nwxS8sXuv353C8VEzldyvsw1S
+	 oZVGswbpPyPHUSVf7iMLOsqNrAt2n21PfMW2oAcw1FBYzTSD2EdlxF1ji1DT5nNjkT6O2
+	 Z+Xb4NMYbC+DLU0zkcmhDtlaPkGW735TMhdecGj7UJwdzLMu/64GtRPhFCmty1ekIqw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FQHOiO8o;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SxZvBxVT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F4F606A319;
-	Thu, 22 Oct 2026 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8216D606A319;
+	Thu, 22 Oct 2026 12:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FQHOiO8o
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DEAE1F000C1;
-	Thu, 22 Oct 2026 11:47:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SxZvBxVT
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6A81F000C1;
+	Thu, 22 Oct 2026 12:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792669635;
-	bh=EP0p8TkafN3QQnnmNUx+hSQ9exkYsh7jf0voP7LEZmM=;
+	s=k20260515; t=1792671758;
+	bh=r4bapHc0d8zMkW91rbIKb96mc8vXGPvaOjCeerXZYmA=;
 	h=Date:From:To:Cc:Subject;
-	b=FQHOiO8or8DqcGHB0p+KocgPNy6aBfAe6Kw47pngKq4iyGzXHYQrVvXfqQfSxhw0c
-	 weBWLUuj0J5r+36VY3Ch1BB08Rtjmo2B1PmlF13w5V1xcna3BsA7sySL0Af0RdyGxr
-	 YAumb5Ii/77FqZaWPSBUW5Mf+1LKWp5y1ktcgBYG5MwjYqHnmJfW4lHnE8n5GSuJbr
-	 FOO0q1SQBTvGgUI/ckaiG1xTvsZiPARJDjkqPYLKPXH91RLOenm3Rq6JUPvHEmVd12
-	 aKr6tLPjQNUYiDnbkIqcII/w6+Ak8TwqivjM9M2Mv6pDnMrHwVIP5Edxau9b+Zc5Ep
-	 A+BJrXMoRMGWg==
+	b=SxZvBxVTpo3Vz0rSFUZMljTqwJMa6tOcKLSDPkeUwj1LaTsoMnmDz4sySxqzw3LE0
+	 2PIVrCIZkwlbpZCyvyJcdIyetUamvRnbQJW7DYerAjQbm/ZRau/LVbqRxC4HYDounM
+	 0QAw+khls0GTGjqTmALrYcDKLDZHF17yxABIDFxGB3n2YCv4SUt+dpNIFRINvNUshb
+	 f6BKo5MKRbfBzpXOVTFJhILOWOGIvxp1QVMsMy2X+RtRaoCn/hydPQooMjZ5Xrpztt
+	 gj2yHOTfUQM0QAMyijGUHn0rcJYRk9dL8CmEh/2OENG4NB2/oTBenRHeLYkmL96Pel
+	 iSbEReYfWiHNQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id DB9951AC5994; Thu, 22 Oct 2026 12:47:12 +0100 (BST)
-Date: Thu, 22 Oct 2026 12:47:12 +0100
+	id E73861AC5994; Thu, 22 Oct 2026 13:22:35 +0100 (BST)
+Date: Thu, 22 Oct 2026 13:22:35 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Anup Patel <anup@brainfault.org>
-Cc: Jinyu Tang <jinyu.tang@linux.dev>, KVM <kvm@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Steffen Eiden <seiden@linux.ibm.com>
-Subject: linux-next: manual merge of the kvm-riscv tree with the kvm tree
-Message-ID: <atn3wGrmrvW0vQKi@sirena.co.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 22
+Message-ID: <atoAC5Fty6TZWQ4X@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,61 +57,63 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s80RrSSL0CN6hqOI"
+	protocol="application/pgp-signature"; boundary="xAeAmEag2OPFihPa"
 Content-Disposition: inline
 
 
---s80RrSSL0CN6hqOI
+--xAeAmEag2OPFihPa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm-riscv tree got a conflict in:
+Changes since 20261020:
 
-  arch/riscv/kvm/Kconfig
+The kvm-riscv tree acquired a conflict with the kvm tree.
 
-between commit:
+Non-merge commits (relative to Linus' tree): 15945
 
-  b62a0bf95825a ("KVM: Replace CONFIG_KVM_MMIO with __KVM_NO_MMIO")
 
-=66rom the kvm tree and commit:
+----------------------------------------------------------------------------
 
-  e8b32e3779513 ("KVM: riscv: Implement KVM_PRE_FAULT_MEMORY")
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-=66rom the kvm-riscv tree.
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Below is a summary of the state of the merge.
 
-diff --cc arch/riscv/kvm/Kconfig
-index 2e3c4e6c1cd7d,8ac209e8ac870..0000000000000
---- a/arch/riscv/kvm/Kconfig
-+++ b/arch/riscv/kvm/Kconfig
-@@@ -26,6 -28,8 +26,7 @@@ config KV
-  	select KVM_COMMON
-  	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
-  	select KVM_GENERIC_HARDWARE_ENABLING
-+ 	select KVM_GENERIC_PRE_FAULT_MEMORY
- -	select KVM_MMIO
-  	select VIRT_XFER_TO_GUEST_WORK
-  	select SCHED_INFO
-  	select GUEST_PERF_EVENTS if PERF_EVENTS
+I am currently merging 434 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
 
---s80RrSSL0CN6hqOI
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--xAeAmEag2OPFihPa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatn3vAAKCRAv73Ows9A4
-ieFzAQDqzvTh+tnMhkAUVjeOgw05D+uqatGRotcXH8xbrFd1tQD/UL8D9lg8zWXo
-xLtOwlv7xCW4N7jq2vDZn+JOHnUhgAU=
-=fqle
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCatoACwAKCRAv73Ows9A4
+ibZ4AQCrOFtVoxLw2QgRps2K14514JNInDikP/7EHsvrukmnRAEAxECTfcQ2b8NH
+HDcqvV8/kcT7i0Eprco8QMZ29AfLFAc=
+=SZmb
 -----END PGP SIGNATURE-----
 
---s80RrSSL0CN6hqOI--
+--xAeAmEag2OPFihPa--
