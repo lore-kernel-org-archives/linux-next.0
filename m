@@ -1,121 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=170.10.129.124
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792680735;
-	b=3UV+9kHRDD7bO9ytnjNHoerJrAjP2Sq9KPEHoabHgum+iCnQGCifklf5lPTkIQgpcxKI
-	 RC7jESH0WL8QINcDxu1SjpVHJwnjQyFN9YE/tFkaBHXpVYeyg2LbujIVSw/gUCw+PL0nV
-	 QC35miYDFfXErxmR11Nk7voJM2+MtKHcd5kFHzQmJNNmsdyoDFfYLDI/g0cWJW/KCRpkF
-	 CsjCedoXpDzOOL1KwMRcLui8j7dHtXTDS4EvE6IN/lT+OrggfGqJTmQXBr4BSq/ZUX8Sh
-	 QK5kv61qVxMk3kDyNjl4Iny2g/Z2ucv0kf4nGnf7DgNxVlEhX8Wkkotj8ra7x75zYSA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792680735;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 X-Received:MIME-Version:References:In-Reply-To:From:Date:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=wqyTtRBZvnyrEsl379QgY7jQoqueXCh5qRvjx+WApRM=;
-	b=OUHY+8OxdaBKWUkbrM02fp2m76joJowuBgvs+5FXTUNQNDVbntmAZM2H+OEvSD/+jJ2W
-	 DRigrX/mXMURba/KnyK5d1oM42Sum/nbwENamQlGCoahoycKSBU8BUQSaxHaGmee6l2QP
-	 IzdAjpgSwqxjKAsHjHk8r89/TTkCA6RdfFBcuSXJj1k73N+4ZuAmPDj5A3cvZCAfwAIFb
-	 9s6hHKMn/Fr1uGj5T75RP1P0c+9iUDeXq0HPs9AllgXuNl6gBTbCoOfYTOtBWV7yuCm+v
-	 RCVSNdzZnEB08GyYFehjeTiK7YNGjG2vGEG+3YxPRSZ9VItDdsmtkmEYbM87W2Omrjw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=BB86Hx9V;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=FWmexS4o;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=170.10.129.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.50
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792722650;
+	b=XppNVjKed6RLWTG/cow2Xcskhj0hIaMnqKJy8k9iH4RgvaCd/x8ItGXHT0CVkbmUCgo2
+	 GTrv089EDZ3/wsvt7X8V3HIflibKx6bBLw+RG46aUHNPuIPUlgWxpBQSARWdpSVwJUjwr
+	 z0H1OqiROgYSkS5Xp1PM+FmXSeXE58AWIL2KcG928YbWzv3VbHLV7b5sa0EzI8A9TYA4H
+	 FEPCFdVfCjI48Y1aT13c/NEfJVQO2eToJLe7W0V/oVY2nJZhUbdEXRc+Jh/hl7OzjXVjA
+	 yp3/5/MG0/2AvtK12Q7sMtr49LexWI9OYMSOgBo4xyYpYBcyPZ+vZLJze0t/RdKeg4w==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792722650;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
+	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
+	 Date:Message-ID;
+	bh=u6+8SX0LGdiQAbmL9OPy4zRXST66y/YobUc6YWorOKs=;
+	b=o1W2XRFUAAeWtLFbTiRWUumZNNUrb2DTEq5vXYMp+qoKY3gD/tdUCukNFyIjrWk7tcKO
+	 bpvhoMADVGbXZhIzntKQOck6GgXm5QtGvNKalU7yIwTmMTBuoUsQ3HuddO6YxYQxb/fHm
+	 ap/ZV+/bv/CzQv7CpIqSKSnpSKWuO0ZOlf9z3POde0FXfP8CFiXs0yE4IgiNTv2vJlnuJ
+	 lvAYFz0D1wD3xWNLj2/YYaXU2xw7SgokWKk9OKgPnxqeG3recxFuVeYsmjLLyg29PiTkG
+	 ooNzEyVGy1jzRJpsK/rjpVTY9qzYOxepfIgK+RqXTH7YwKliRYsRt//rractXgQsDSA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=kernelci.org;
+	spf=pass smtp.mailfrom=kernelci.org;
+	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=FAlDju60;
+	arc=none smtp.remote-ip=74.125.82.50
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE82606A326
-	for <linux-next@vger.kernel.org>; Thu, 22 Oct 2026 14:52:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DFE82606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C26B606A319
+	for <linux-next@vger.kernel.org>; Fri, 23 Oct 2026 02:30:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C26B606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=BB86Hx9V;
-	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=FWmexS4o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1792680734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wqyTtRBZvnyrEsl379QgY7jQoqueXCh5qRvjx+WApRM=;
-	b=BB86Hx9V95LuaqLjeV9KfAIB/BTxzx+42wJfmhpj5Ct90/o9+K0ih8ct9VOZDpENi5pRka
-	15U7DuAMA4kWp/nZaAHQp6hHIz38LOwiNb3ruXxFcub20EmULDTRan2+eNT+zYMmqJzDsv
-	XN8SC1drt/Fqg3zfZ9Ym7ONEuWXHwcU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-7g6v4dDoMQuECyeg2DMwdA-1; Thu, 22 Oct 2026 10:52:09 -0400
-X-MC-Unique: 7g6v4dDoMQuECyeg2DMwdA-1
-X-Mimecast-MFC-AGG-ID: 7g6v4dDoMQuECyeg2DMwdA_1792680728
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-48dea677afcso768901f8f.1
-        for <linux-next@vger.kernel.org>; Thu, 22 Oct 2026 07:52:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792680728; cv=none;
-        d=google.com; s=arc-20260327;
-        b=r0YhGogRA7ZJQghvehnjVSG+bRp0aLDKQATsNFDmHRQ4VXWzz8CSVcLO5EVdIA9f+Q
-         WlEG3LH530Y3ErZ+Ss2PtbZ6yRH/IiSyz4vDuSbN5MdPk+oPCj+prMC2gTKmIM7m9oNO
-         nXPnRb9+24s2e0Zfsbbksr/HYoumeprv6f6MEGyk44uplkbmsNC5TGssUtvpK+QFUewz
-         R3PJLt44gAPl7bVLYUbrygQTSmqZ0ezkftECHg2roIWA8th0adN2l5lbu9aYWUMlVOlp
-         Loy+Yi3j5KUIbZnou8pPBxqQXDG7CX8+oT2TNL4O1lycAysHjtHbVe3kclHE8fHxOgBW
-         T0Dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=wqyTtRBZvnyrEsl379QgY7jQoqueXCh5qRvjx+WApRM=;
-        fh=OiIfyK9NCWWndpGxCVeQl5o37FAWyIx9NVOyQdZXxtU=;
-        b=fITro7leSkoPN2cxZ66qAJ97217DU7YUQPHeMRFb1KbxjjH8cLSx2rVblCxlu6DIIS
-         TuRJ1MaYKngVBSm44PPGVm63pusfg9kUMMnLXLqGVj/mjjCgfgq9olJ4Pn1/GQ0hdOyW
-         rTH6QdcXB0lG2LFoSGdU00LZWwhj/NdiAGshfwQAGHw5v8KFFpNr5SFIhcM5py1RPHOV
-         3vhHLjgepVjqQDjOrNR73gHe3lQSwD0RIIXN0dOiAE7SGSP7jJXV/0xWs8dZhTbLToNf
-         T9WAVB1Zs0Da27ZOQq0blSL+wWZqX3ZiWRindjWeuAO9SnJIXvaE1nTqxfPtP1WRi7IM
-         MYbQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=FAlDju60
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-156cbe59622so435097c88.0
+        for <linux-next@vger.kernel.org>; Thu, 22 Oct 2026 19:30:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1792680728; x=1793285528; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=wqyTtRBZvnyrEsl379QgY7jQoqueXCh5qRvjx+WApRM=;
-        b=FWmexS4oqL5psvnuSNji5MfojzfX6NMGbUcZ+DcJEmYL+GMrlw/XRcJljgzP00HjDj
-         NUzB1fgTEq6kR1ViNKEHZ4pOCMxGMnqV3SWfxZnB6Z8QGunXcRZrOu1yow5Qwgw1p3MB
-         Lyjn2vlmaYJ4bvj+d7heNlg7T8j0RBgVcaZ+Yx16dNj01foxFUJXtl9SwAkVHGs2x3TJ
-         ljG8ryPgZT8v6yJeqar+8cOjFpMY4OhvGG91lPE2yy+QCZgRZMWrvoUxkJmWaemB8NID
-         iMr8Rj261U7wrMNfBYq8U/CzaV8nX1Ds21KeFE4k0B1l06OfBh0bpmObk2UcZrywzUi9
-         mVyg==
+        d=kernelci.org; s=google; t=1792722648; x=1793327448; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=u6+8SX0LGdiQAbmL9OPy4zRXST66y/YobUc6YWorOKs=;
+        b=FAlDju60dz+lI9j8i+suHl+cE8R8xIHO7L/p/S0Kr6K3nw4TDcGDGdEpFj8oDpLJe8
+         agWgVV6S9BBfA3Xy8LydZlq3E/kFjBFy/0pzxN2YHRPheE/WuLp/zlt3nL1f7ptjUtDB
+         ksw7E9g1ZLuehPSVkno66dk+eqi2g5ca08eDT/ILMTAr52jClxRIAZi/klwtDeD9Fuy7
+         wrld0ExMkU99oS0wMOntFAfAReW/Q39D7ZSQ4+GD9FknxL2yt2XSnr9kYvaHtzujhzmD
+         mj18VFvrl/BDwQxX9+/ztHZZ+p67fYHbJ7O9u5BQhYzL9LKLlUPnc5s89kQ4K7dWc0jF
+         bZKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792680728; x=1793285528;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1792722648; x=1793327448;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=wqyTtRBZvnyrEsl379QgY7jQoqueXCh5qRvjx+WApRM=;
-        b=EoByy0PhBOP27nsCRX0Kyyx3UuwZ1cl+pGRJ9jONJgbY+CHsZo/hzvo3dRMnFpiv7Q
-         +02q8avVlIyVl+wHdnhWjaO5nmR5ETgsCCBb/668/Mku3IESm0PbKoj2FIZ4an1K+VH4
-         HnKtpIj5tgGMnu44oTnSWrcM+73xLEwb0rHjmFqanZssA1evq/veb58IEdBI9BSI5mCV
-         iyx7C0DThG70NZ/xbSCKey5e4dOD7zDjJ7qrLvIwixj/TIbS48k47sTKEzIb2Ay7sHG9
-         2M0KIcXYNq2eRehfHcWgOId+/2ziIwzfc3zNfWuhKpHESMz7IhjNEEtvvQp0CyjPNnFT
-         p8Mw==
-X-Forwarded-Encrypted: i=1; AKwUvBy0pgSI4fQ9kpRcFPgM6BCepnVvoItWeb75RffVfaJds66zkDnXTwzPx0gLt4Bg3rk36oFJAAXcDmZR@vger.kernel.org
-X-Gm-Message-State: AFq9FYLMaBmmxSePq12Q+ie+TX5uLS1D4856eNXfiIWlkLu2vXQXXITt
-	Ps5S+iqrtTECaN12xafapLS+LlVf4UCR1A03Wz5d7Dp3+AjwXVQM66Gx8A5wQgAP+qMtwlQvyhR
-	TGxnc847IfLDFSl6ErqKjJ//YI3jsR7xK+0DMZ5Xwp8t57q3WsinZNoo75e81Z+sHN5wZFo4DzH
-	mpd/Qvu9ZlLboQb+muxu66rRWBJ8dAuyDHWQCNvQ==
-X-Gm-Gg: AYBFou1cq1o7nKNf8971OD+Yo2vmMhkZgUBlXg64CDxOGh8xfVnohxWI9O9KuEoNLKg
-	t882jZms4u9svkQvEkhaR6n+4WJ9YUDpklNfpno5gNGxlfjMOLtJ3M5mY6WJE/IkR0j1FgFh8j0
-	KADRYnFBQ0etNmnmvf5gCnmqXQVhkN4w8ZPzZ42lF7cEvwqixuOaXE9Kr67Y3HqJKNcX48y1fCc
-	orAcDhM54z6B2yOrvktgQLVt1cSl903S0/hD/uDRCoASiVKrQ7bcDPXwZth1Q==
-X-Received: by 2002:a5d:584e:0:b0:488:8347:a110 with SMTP id ffacd0b85a97d-48e2d102cb0mr5941238f8f.7.1792680728054;
-        Thu, 22 Oct 2026 07:52:08 -0700 (PDT)
-X-Received: by 2002:a5d:584e:0:b0:488:8347:a110 with SMTP id
- ffacd0b85a97d-48e2d102cb0mr5941198f8f.7.1792680727670; Thu, 22 Oct 2026
- 07:52:07 -0700 (PDT)
+        bh=u6+8SX0LGdiQAbmL9OPy4zRXST66y/YobUc6YWorOKs=;
+        b=G18f8XNj4eN5NGR0Xxs+dmyIzvugGijvYIJNkyVHOI6w7SFMRYWTZnPvTnZuEt4K1f
+         P7e9bfp87cGvovZXYoJKjairFufYFM81D+dYjAD6lmbbb6WmBKBdLifzMid8/FTi+kZy
+         0WsUuItfilzcJjaOqENRK97TYWtkfsGmSPixOxBlDMNBoByH4mcKU3GcIgd0Rokry+lk
+         0uuTizAPehn/DrxVpDZ4TvHPM0vU4YOB4NLjfpLRXgjQ9BhkWgtg5tZXWLoq/dmkOWBa
+         XKkEnRv28mtGTcRZKmWgfr4IDj/h0KyY3C5yyev0OEaeHm+dvXRCMBXlCBFjIjdGaaDk
+         80Gw==
+X-Gm-Message-State: AFq9FYLyLPLm3olS0PQheN1q15vTXRPIAVO8n1wvGSQ/asF/Ymh+Wmo/
+	z3sWmQyc/YXhYTaLmduQooLFA78l6ZxNSLc5E/HdweYHAL04HewVtG06ToWWKjSmlmqjWZxr5sw
+	S4Nnf
+X-Gm-Gg: AYBFou1kjc62IQa9Xfv6KgEKV930IPthFwZ2Qq9N1nOUB3SKdzhg9JTp8qUJ99JCJFi
+	grtWlOhwTfqg4WUH6hYJONF3F3rPQBUsf9/kaT7z9mEgaUKnZnYjhBPz5ALPNdwNQTPUUE5d+gy
+	akvtjnp2h/sw/m+GtFKlYI6BXuyOBkRwyioFwv4rU9HfSYVhN6gh5o52VDkz2xtzYb2/mMANi9S
+	aODEYOLqyv+qd1NGIHZP8U82yqGgRKu9vbboFPS5KkIXbwWcd2GAieGjr5BHzLBCbhh+E5jIbIJ
+	DMHmEW84LPc9KTWyHDRfuiEiIXm7dPtqMqlX8wy7oIFB3NA8AtMg1G2peWLcPC3o3yEQ2PvHd8N
+	5Ka7G3SEh/fQes020ZpkCd3PcJegfPe6off6oCeH7p60+0lMbvgKb9WwzuMG47LFW5PZhcNkEYF
+	7EHDJlMOj2vcke8L/BrN94KFU+qNacQws1PhRb2oQc+xYkwE54K2D+lKPnlaQ8d+PUOBUy9MEmw
+	jLdVXHsxlSxCnAoaDnDuLHdDhfmQkt/3L1eQfORTGObK/P0
+X-Received: by 2002:a05:7022:2582:b0:143:3c9f:10a6 with SMTP id a92af1059eb24-19592c39602mr2358003c88.4.1792722648069;
+        Thu, 22 Oct 2026 19:30:48 -0700 (PDT)
+Received: from 6e52bff8000c ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-195e5163e64sm2119088c88.1.2026.10.22.19.30.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2026 19:30:47 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -125,55 +88,327 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <CABgObfaH4-Ud4VR=GC8giDmWGJWS-tvYSmPOs4TtWg2hm4ocqw@mail.gmail.com>
- <36adc119db9b30984c0df4d1846c0f29e4e46c07.1792679974.git.sashal@kernel.org>
-In-Reply-To: <36adc119db9b30984c0df4d1846c0f29e4e46c07.1792679974.git.sashal@kernel.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 22 Oct 2026 16:51:55 +0200
-X-Gm-Features: AclHuK_FNMnKU9XQXzMyqQJBnCAE8EKPJnl7xQPFMv72VXmRnTfH3i81qFyOj9g
-Message-ID: <CABgObfYuP+jeOZhZYaUrUX2-z0zWMH2Ch=hdizkzmKHLB6KALw@mail.gmail.com>
-Subject: Re: [PATCH] KVM: riscv: Implement kvm_arch_pre_fault_allowed()
-To: Sasha Levin <sashal@kernel.org>
-Cc: Anup Patel <anup@brainfault.org>, Mark Brown <broonie@kernel.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, Marc Zyngier <maz@kernel.org>, Jinyu Tang <jinyu.tang@linux.dev>, 
-	Atish Patra <atish.patra@linux.dev>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-next@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Fri, 23 Oct 2026 02:30:47 -0000
+Message-ID: <179272264722.329188.4773475583351189022@6e52bff8000c>
 
-On Thu, Oct 22, 2026 at 4:42=E2=80=AFPM Sasha Levin <sashal@kernel.org> wro=
-te:
->
-> Commit caa63620f9e3 ("KVM: Allow architectures to disallow pre-fault")
-> requires every architecture that selects KVM_GENERIC_PRE_FAULT_MEMORY to
-> implement kvm_arch_pre_fault_allowed(), and there is no generic default.
->
-> Commit e8b32e377951 ("KVM: riscv: Implement KVM_PRE_FAULT_MEMORY") was
-> written before that hook existed, so it selects the option without
-> implementing the hook. With both commits in the same tree, riscv builds
-> with KVM enabled fail to link:
->
->   ld.lld: error: undefined symbol: kvm_arch_pre_fault_allowed
->   >>> referenced by kvm_main.c
->   >>>               virt/kvm/kvm_main.o:(kvm_vcpu_pre_fault_memory) in ar=
-chive vmlinux.a
->
-> The riscv implementation does not refuse pre-faulting in any state, so
-> return 0 to keep its current behaviour.
->
-> Fixes: e8b32e377951 ("KVM: riscv: Implement KVM_PRE_FAULT_MEMORY")
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
-> Paolo, this is needed when kvm-riscv-7.4-1 is merged into kvm/next.
-> Feel free to squash it into the merge instead.
 
-Yup, done. It will be in tomorrow's linux-next via kvm/next.
 
-I'll send the RISC-V PR to Linus next week, so if he complains it will
-be there in kvm/next ready for 7.5. :)
+Hello,
 
-Paolo
+Status summary for next/master
 
+Dashboard:
+https://d.kernelci.org/c/next/master/bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
+origin: maestro
+test start time: 2026-10-22 13:22:31.022000+00:00
+
+Builds:	   64 ✅    2 ❌    0 ⚠️
+Boots: 	  195 ✅    2 ❌    0 ⚠️
+Tests: 	41708 ✅ 3685 ❌ 5680 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: hamoa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_keyboard_3a
+      last run: https://d.kernelci.org/test/maestro:6ada2d4855fda5076069e92a
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: jetson-agx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_stress_sh
+      last run: https://d.kernelci.org/test/maestro:6ada4bbc55fda507606b06cf
+      history:  > ✅  > ❌  
+            
+      - ltp.pselect01
+      last run: https://d.kernelci.org/test/maestro:6ada4bc855fda507606b095a
+      history:  > ✅  > ❌  
+            
+Hardware: jetson-nano-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6ada1b6a55fda50760692aaa
+      history:  > ✅  > ❌  
+            
+      - kselftest.futex.futex_run_sh_args_t_500000_broadcast_owner_futex_requeue_pi
+      last run: https://d.kernelci.org/test/maestro:6ada247c55fda50760699f76
+      history:  > ✅  > ❌  
+            
+Hardware: jetson-tx2-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_stress_sh
+      last run: https://d.kernelci.org/test/maestro:6ada229a55fda50760699497
+      history:  > ✅  > ❌  
+            
+Hardware: purwa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:6ada1bf655fda50760693790
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: sun50i-a64-pine64-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa.alsa_pcm-test_default_time7_sun50ia64audio_0_0_PLAYBACK
+      last run: https://d.kernelci.org/test/maestro:6ada228955fda50760698c01
+      history:  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: stm32mp157a-dhcor-avenger96
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp.nanosleep01
+      last run: https://d.kernelci.org/test/maestro:6ada29f555fda5076069d599
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+      - ltp.shmget03
+      last run: https://d.kernelci.org/test/maestro:6ada29f555fda5076069d50a
+      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6ada135455fda5076068ab17
+      history:  > ❌  > ❌  > ✅  > ✅  > ✅  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6ada145855fda5076068b3fe
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - kselftest.kvm
+      last run: https://d.kernelci.org/test/maestro:6ada16b455fda5076068cf1c
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.kvm.kvm_nested_tsc_scaling_test
+      last run: https://d.kernelci.org/test/maestro:6ada25f055fda5076069b51d
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: jetson-agx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp.clock_nanosleep02
+      last run: https://d.kernelci.org/test/maestro:6ada4bc555fda507606b0805
+      history:  > ❌  > ✅  
+            
+      - ltp.epoll_pwait03
+      last run: https://d.kernelci.org/test/maestro:6ada4bc855fda507606b08d0
+      history:  > ❌  > ✅  
+            
+      - ltp.poll02
+      last run: https://d.kernelci.org/test/maestro:6ada4bc855fda507606b0947
+      history:  > ❌  > ✅  
+            
+      - ltp.prctl09
+      last run: https://d.kernelci.org/test/maestro:6ada4bc855fda507606b094c
+      history:  > ❌  > ✅  
+            
+Hardware: jetson-nano-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6ada247a55fda50760699ed9
+      history:  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6ada247a55fda50760699ece
+      history:  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_stress_sh
+      last run: https://d.kernelci.org/test/maestro:6ada247a55fda50760699f3f
+      history:  > ❌  > ✅  
+            
+Hardware: jetson-orin-nano-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6ada5e0555fda507606b7329
+      history:  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6ada5e0555fda507606b7324
+      history:  > ❌  > ✅  
+            
+Hardware: jetson-tx1-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_stress_sh
+      last run: https://d.kernelci.org/test/maestro:6ada247a55fda50760699f2e
+      history:  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: beaglebone-black
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - kselftest.acct
+      last run: https://d.kernelci.org/test/maestro:6ada133c55fda5076068aa65
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+      - kselftest.breakpoints.breakpoints_step_after_suspend_test
+      last run: https://d.kernelci.org/test/maestro:6ada144855fda5076068b3f0
+      history:  > ❌  > ❌  > ⚠️  > ⚠️  > ⚠️  
+            
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - kselftest.kvm.kvm_set_memory_region_test
+      last run: https://d.kernelci.org/test/maestro:6ada25f055fda5076069b4ed
+      history:  > ✅  > ❌  > ✅  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6ada25e655fda5076069ae94
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+      - ltp.shmget03
+      last run: https://d.kernelci.org/test/maestro:6ada25e955fda5076069b117
+      history:  > ✅  > ❌  > ✅  
+            
+Hardware: jetson-agx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6ada4bc555fda507606b0727
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: jetson-agx-orin-industrial-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6ada2d6c55fda5076069e9e5
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: jetson-orin-nx-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
+      last run: https://d.kernelci.org/test/maestro:6ada25a655fda5076069aaa2
+      history:  > ⚠️  > ❌  > ❌  
+            
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6ada25a655fda5076069aa4e
+      history:  > ❌  > ✅  > ❌  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6ada25a655fda5076069aa49
+      history:  > ❌  > ✅  > ❌  
+            
+Hardware: nvidia-e5020-vera
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6ada229a55fda5076069943e
+      history:  > ✅  > ❌  > ✅  
+            
+Hardware: nvidia-igx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_freezer
+      last run: https://d.kernelci.org/test/maestro:6ada25e255fda5076069ac66
+      history:  > ✅  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_freezer_test_cgfreezer_ptrace
+      last run: https://d.kernelci.org/test/maestro:6ada25e255fda5076069ac5b
+      history:  > ✅  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6ada25e255fda5076069ac76
+      history:  > ✅  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6ada25e255fda5076069ac71
+      history:  > ✅  > ❌  > ✅  
+            
+Hardware: sc7180-trogdor-kingoftown
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
+      last run: https://d.kernelci.org/test/maestro:6ada24cd55fda5076069a023
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
+      last run: https://d.kernelci.org/test/maestro:6ada24cd55fda5076069a022
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
+      last run: https://d.kernelci.org/test/maestro:6ada24fe55fda5076069a528
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1416
+      last run: https://d.kernelci.org/test/maestro:6ada1fed55fda50760695b4f
+      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1417
+      last run: https://d.kernelci.org/test/maestro:6ada1fed55fda50760695b4e
+      history:  > ❌  > ✅  > ✅  > ❌  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
+      last run: https://d.kernelci.org/test/maestro:6ada1fed55fda50760695b49
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-03
+      last run: https://d.kernelci.org/test/maestro:6ada1fed55fda50760695b47
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
+      last run: https://d.kernelci.org/test/maestro:6ada206d55fda50760697ce3
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: stm32mp157a-dhcor-avenger96
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp.dirtyc0w_shmem
+      last run: https://d.kernelci.org/test/maestro:6ada29f455fda5076069d2b1
+      history:  > ✅  > ✅  > ✅  > ⚠️  > ⚠️  
+            
+      - ltp.shmctl05
+      last run: https://d.kernelci.org/test/maestro:6ada29f555fda5076069d4d2
+      history:  > ❌  > ✅  > ✅  > ❌  > ✅  
+            
+
+### NEW BUILD ISSUES
+- Issue: maestro:9c12526508454935ec55c5be5b9699f5296ee63b | version: 1
+  Build: maestro:6ada0faa55fda507606868e9
+  Comment: arch/riscv/kvm/kvm.ko: symbol 'kvm_arch_pre_fault_allowed' undefined! in Module.symvers (/tmp/kci/linux/scripts/Makefile.modpost:147) [logspec:kbuild,kbuild.modpost]
+  First seen: 2026-10-22 13:42:27.867356+00:00
+  Culprit: code
+- Issue: maestro:9c12526508454935ec55c5be5b9699f5296ee63b | version: 1
+  Build: maestro:6ada0fad55fda507606868ec
+  Comment: arch/riscv/kvm/kvm.ko: symbol 'kvm_arch_pre_fault_allowed' undefined! in Module.symvers (/tmp/kci/linux/scripts/Makefile.modpost:147) [logspec:kbuild,kbuild.modpost]
+  First seen: 2026-10-22 13:42:27.867356+00:00
+  Culprit: code
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
