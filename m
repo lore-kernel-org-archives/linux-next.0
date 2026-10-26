@@ -1,55 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793014080;
-	b=mnorehMSu8gVFeJSb0R2tZCP6oeHVzDm71QT9bWt2Lu9TmqosWNYXuN3TKiKxpSMKSaZ
-	 N5DxO67wZs+X2eesr4fOSX92vmOeQJXliUBLs05KNKKW0Z+AyZhwU8JR/bt5drMVvLk7c
-	 pp87qVhpUky5Puyi2w+2aGGgE15MM3dskiJ6rwGgG1dd5oA62KD00SIVhZFp3lv4sKeg6
-	 fi32HzkGeMRDytDYwpWE7tFFG+eEciM2qJI/A7ddfyhQqRc4bZLsGTuW/SwHYr2ayseTC
-	 HmUevY5FnxDz5L/LT9Nu1FE1IPGshg2icPFc9K9JRXB2KO6qGVMpyRYVBN9eB80GIZQ==
+	t=1793017001;
+	b=xVwv5gFGDNDtaPuloEcXmjaoKxnvOja3GiZgeo+Wm06Hi+vb1X8V8DxkTBZ+jMa7h96k
+	 CI1KPzJzaPYYPP4vKLnvKkVsZWTpuWlgcRnrpMtlQgBiuboHwN/Xm0vFnCr8uezoFhaZe
+	 cbmfn1nKZQQWm3YXXErwcgFugkU/1ABsYWINwudRb9zGQiE5tQ2p2OBNWqBk2FdXpiyMj
+	 hhlRtO6+NxfNg3+jza6SPiCSJCvJ5qskaXANQ7UEE+AuNLhGllG5aJX0KQrCEBq2jJoaf
+	 ElTCGBDpn2JlLSrWidAxHrQIzaJMn9XjRciKPOZvjxAW/+DVrEa05KA8kc7L0GWXQxQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793014080;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793017001;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=XjcH+8ozQ0OtvBExYzwz/N97y/cZUV7XDXCgJnpVkeQ=;
-	b=NpcmvooUTiD4SfK2T0UhtH9zQNYXY4V0aw5ho5Kfpro+/RU7yOz/vFM1BN4zY60Te7Me
-	 a6ugGulYr74q81me+uMeiWbtEORlBUfuAo/2XejqciVTI72mkibdBVvk2YaLe9Ewte6iG
-	 AYKSzZZMPKbbzbEDNz+Cz8j/2N/4oOGarCxm9Xt9JmbVfkVAp98+acrl8dJCD4/lPvFaL
-	 tN5EuoN+2Rv0ncg5LCyq2+HnZhkWDjTsRlKHUvVZ7/Uj62UL/DkHfeM0JeTukD+FzH1Qf
-	 IUiWpCOzvcA6S/kEC21NtNJyAP1X7p6I/1LBPBr+hZgpAkTT4reEBggW1knM5e880dQ==
+	bh=OIRau+K059U9bsoMz+fliJDGjqrERsFkJBBiagvCp88=;
+	b=Qy5spVOXsUfDKioJ0q1cfHRzuau0exempFWZ64R1TR7TCi9bHlc3PE3Qt38otq0nRkP0
+	 POeWSli1UQEubg6fvSiO5u7OEs1ZI4OdEpzwcJA32uIUAqlzpvokrgodtL0sV1NlYw2aw
+	 0KN/vEeA9HkbHuBmjXpYFVfDCoDvBskHHSD60PelxeAPYBPUJqA2Vzfj/EByO6AISX75/
+	 Rd+SiGtPtXLxMXUNiQR5ASk456MdaHHmC9aSsOg56Kx8Kj/7a59rOP1ZnXcbo65nugSWu
+	 lkklVkzyFG0a6bj1XRFp5lRHjEvXbhmS01+/msOy22dqgBRjzNcbEYK+hvNeEM8qxgg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mclNBKeT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SoeX1zY3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD478606A32F;
-	Mon, 26 Oct 2026 11:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF10606A31A;
+	Mon, 26 Oct 2026 12:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mclNBKeT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393E81F031E4;
-	Mon, 26 Oct 2026 11:27:59 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SoeX1zY3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EC71F01825;
+	Mon, 26 Oct 2026 12:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793014079;
-	bh=XjcH+8ozQ0OtvBExYzwz/N97y/cZUV7XDXCgJnpVkeQ=;
+	s=k20260515; t=1793017001;
+	bh=OIRau+K059U9bsoMz+fliJDGjqrERsFkJBBiagvCp88=;
 	h=Date:From:To:Cc:Subject;
-	b=mclNBKeTfeA0EzhI37JcUjbelbvU1JdlcqM1EuXThSMc1KXWS7QJWskoEg+j7Hkax
-	 C4KS2tKW0y9AbMfdTRcEstmYRACMllo9y9aTsnmenklv5a/0Gq1V9JNiLiQfnFqMXp
-	 lYWmn0Gqdr+vHZS6nrtHQO4hWMe3xEcY9Uc4/5huYQCiMo5G/aTfJUjCTndlx8ORSx
-	 iE4G8pBVWVFdv+hSLQLTbJLDHfgWqpVW7E3AdUqNCqGXqZiHkiCJMbRjZwWASeg+e/
-	 ck+2FYW4zUOKgpebNdkQRB4fQsclKbxJmcv45khNdtdIOl125caG6MpggcIEm+ukk9
-	 Rg2IMbgn9yKkQ==
+	b=SoeX1zY3viN6rGWSMONQeAuTuKGc4Fn9punMS2hcuAlfXBG0RHKhLiyVvsC3244JR
+	 sAhoDd1ROM5+o5vYelvp36y+EKJ0gEyeF6+bd4TfZ6Dkc5D/VDqRj4iE6zkz+fn8Do
+	 J16ZHN+Plwivxt+jWs5GjDVfgKmVmsFPeIIALxMdQnWZHhb/qd6pch/zH2AlVcHSiX
+	 Of0i7NuYzZDDHhC0gfIDFbc+jGp/yI6+vPn7H2ADjqjiWFXriPRsIDj32YCIWwnPxV
+	 cDwPECG9jWXHqVEh54Lehz98cOj546E9F1TBahuhLtDIuEpY2EBjasMJZYtsM72b7d
+	 YHV4cXrqZfrCA==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 6755F1AC5994; Mon, 26 Oct 2026 11:27:56 +0000 (GMT)
-Date: Mon, 26 Oct 2026 11:27:56 +0000
+	id A9DE01AC5994; Mon, 26 Oct 2026 12:16:38 +0000 (GMT)
+Date: Mon, 26 Oct 2026 12:16:38 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the ftrace tree with the origin tree
-Message-ID: <at85PHp8XY92t-R8@sirena.co.uk>
+Subject: linux-next: build failure after merge of the libata tree
+Message-ID: <at9EpoN5yijg6WE5@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,63 +58,53 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+mvPS1a0JNMBLnEY"
+	protocol="application/pgp-signature"; boundary="aCfe1SnZC9KnUTxa"
 Content-Disposition: inline
 
 
---+mvPS1a0JNMBLnEY
+--aCfe1SnZC9KnUTxa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the ftrace tree got a conflict in:
+After merging the libata tree, today's linux-next build (arm64
+defconfig) failed like this:
 
-  kernel/trace/trace_btf.h
+/tmp/next/build/drivers/ata/libata-scsi.c: In function 'ata_scsi_pass_thru':
+/tmp/next/build/drivers/ata/libata-scsi.c:3586:25: error: too many argument=
+s to function 'ata_scsi_set_sense'
+ 3586 |                         ata_scsi_set_sense(dev, scmd, ABORTED_COMMA=
+ND, 0, 0);
+      |                         ^~~~~~~~~~~~~~~~~~
+/tmp/next/build/drivers/ata/libata-scsi.c:206:6: note: declared here
+  206 | void ata_scsi_set_sense(struct ata_device *dev, struct scsi_cmnd *c=
+md,
+      |      ^~~~~~~~~~~~~~~~~~
 
-between commit:
 
-  3f942403bbad3 ("Merge tag 'probes-v7.4' of git://git.kernel.org/pub/scm/l=
-inux/kernel/git/trace/linux-trace")
+Caused by commit
 
-=66rom the origin tree and commit:
+   3bab8c7e0c6ba (ata: libata-scsi: abort multi-sector pass-through command=
+s when multi_count is 0)
+  =20
+interacting with
 
-  13d8f2241106d ("Merge remote-tracking branch 'ftrace/ftrace/for-next' int=
-o trace/merge/for-next")
+   c44f095a9d176 (scsi: ata: libata: Use combined sense codes)
 
-=66rom the ftrace tree.
+which is now in Linus' tree.  I have moved the merge fixup I was
+previously carrying on the scsi-mkp tree to the block tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --combined kernel/trace/trace_btf.h
-index b3d408e6a7f6c,54731bb4eab40..0000000000000
---- a/kernel/trace/trace_btf.h
-+++ b/kernel/trace/trace_btf.h
-@@@ -19,7 -19,6 +19,7 @@@ const struct btf_member *btf_find_struc
-  						const char *member_name,
-  						u32 *anon_offset,
-  						const struct btf_type **container_type);
- +
-  #ifdef CONFIG_DEBUG_INFO_BTF
-  void btf_trim_retval(unsigned long func, unsigned long *retval, bool *pri=
-nt_retval,
-  		     int *fmt, bool hex);
-
---+mvPS1a0JNMBLnEY
+--aCfe1SnZC9KnUTxa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCat85PAAKCRAv73Ows9A4
-iTOoAP4tcTLuoa1WoSYxPK+bKixSrX+iQ1BOs0iW2ZMpyUbnvwD7B2dFAY2+4oXP
-C8HxkU1QKvlXSqsibL0KV3IgOQi/Ywo=
-=tIoo
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCat9EpgAKCRAv73Ows9A4
+ieBZAP9zTVrOo/KmKscP1I7pJTPezbiBBG0GPfheKcJ/He4ETQEA7zWQvHCkCO2E
+5lZMqD4aND9aqqB/VnkHZ890VBVjqwI=
+=8qFp
 -----END PGP SIGNATURE-----
 
---+mvPS1a0JNMBLnEY--
+--aCfe1SnZC9KnUTxa--
