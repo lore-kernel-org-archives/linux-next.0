@@ -1,56 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793195048;
-	b=JzEqJvPfnRJdPPrxWSrkabwlM2ROLhfvgRVvhdeRNmguRf8f+Fupv/d/y/r46JRcJpvM
-	 iVqfj6R9OIKCiTUHbBLXkEb4r3A7FnejBAAXnELzbcxIyWYvBGrg6Iy7LcQqInblg80Nu
-	 811fen7TVScuzxrk70uBdrbMoM4E+YtpC4lOryfyFOjWvyyKvO4zTHGmqs8eTmUdhC9aY
-	 hPP3nzbJ2f1+0NtIVkPHdvAO7YC+S0eAHSzsrIX4nh6TdK+zDrwcVD3c86vuu7EyDFLeg
-	 bPOVYejSVBYuYX+Qf/yKk54TNMBCBUoMlyxHWnh0Pd3r4Lo/702rTFm9YDe7kqsKNgQ==
+	t=1793198595;
+	b=yb4cDgg1Fw7Yv8IYrlVqlFqrS1eTkiFlJjDdZvz+2bw/vbDd5sfQEgA8N80rtJSb0JH+
+	 xUjFFI7CAPhdiHnm5ppexPsYJpgCySWV/PWG47D7VQXfprAPw//n+3uITsXso4SE8yRwg
+	 vtQ6aqgd8n0HdJaELD8KtOa7XbzlW/ty+jjJf5CkbqhPGSVsroPNJ/mSAjzofqF5WKZ1g
+	 c7qMOiNHViKxOFYOsdB3DXp/nMKgrFtOIHk8KaR4ckmEgPOUp2ypYY8kbXbWhaF2RpkQN
+	 hayHwORLRnJj9qJXrBptiC7f5U1YQ7pdSsckO3DYlHogm8OZtqQU4H4Uh90Cspb08EA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793195048;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793198595;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=0F9qs9e4Bp6igALqMO8Z/9sbXVyVE1i0oy0JLqsS03I=;
-	b=MVSni0zFVVPAmyfSe6jARIGia/FUhI8tkB0Gwh4E0uh5exhb97Ezd4Sc86vtFwUA1LIm
-	 zeEeoje1iltqeWaDoRqWcThpJJOUzt7X0oR7LCzHJMI4szHAzW4qlQN1pxidPxsyLMhgx
-	 8oV4IdQbyaoikG5Dx3UWHcPYFjsDL5kGKoJlakinakbLPxxdA+IOYHaTBKe4Dpq5/aCN2
-	 NsXKLViSl4k/kzZUof2KJlvxEJHIjG6HcRso67VwrbmNRin7wIr7Vnfl6jq9PWclpGF1j
-	 sZOO4lE2z1n5A2vvrMo/8wxEBz28HUVQv1WXnk+3EAyxDP7oOt7NPAsPqAEh1vCPv1w==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=Iew3CyqRE2BB2lmlDEMJ24EaaybNUYl1ymLtS7Q4+P4=;
+	b=nYG9WpXNGvnioa36R6rU7hm3vbiemyB/ztw1gKlOYvpWM5F1SVo9ztVUrDw7omm6BFUK
+	 12P1a5rqt8TCzcT7I3q/9GSSkQ/igxguosMxWw3Xx+mkGeEaV6C+Gjv46dBe87B7x9jxg
+	 FaOCVQPQxwuZVXeTaOuB3vGq7NVNyhVPQT0dOPwEBIOdZ+oP42+yp0LtjCrYPmUwrdpup
+	 YpQRebr6QXeek2drlwrM1h8Mzg5dY0+rhJ8d6Q7+H1vNTt2qm9i9r0rqQjTCIyl1UqLae
+	 3pDZoHzrA2FL5glho7vToEBdosaOzEccMLV4qoGl6cc9rk2xUvlK0ntqchID0/WZk9g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HbUWnEBa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oP9sRGHx;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52F3606A31A;
-	Wed, 28 Oct 2026 13:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FC3606A31A;
+	Wed, 28 Oct 2026 14:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HbUWnEBa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 339F51F01825;
-	Wed, 28 Oct 2026 13:44:06 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oP9sRGHx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA1E1F01825;
+	Wed, 28 Oct 2026 14:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793195047;
-	bh=0F9qs9e4Bp6igALqMO8Z/9sbXVyVE1i0oy0JLqsS03I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HbUWnEBatjqsz+CpxDpXrfL0ipkt2xIuMbA0LZXaJefKYJZ5lRQakGxvXu5mi52dl
-	 0BljvlFa0x+ijluMlUMNvZQYIiLUw84DimbD167DW1z59vHNWTaWqqet3e4bvwpu/B
-	 qtRTABbI3cYz54kyJbicrEqRoAiTeFMzmPcu4nTjhn1haILI06cNYYn623AbE37tkZ
-	 o6uhngt7l0Uw97gGt2JaYNFVoun/iY/YD3BkUoAWosFNJgz2tI1fnk4o66xqiunVtk
-	 VjK/JNkgoACAi8bzzjBVxHhedYg2NzrbbV6ErgAqxZ8q+dg8kV6YMlMKtd+9vWqAyv
-	 gjxEgCzcOiLkA==
-Date: Wed, 28 Oct 2026 13:44:03 +0000
+	s=k20260515; t=1793198594;
+	bh=Iew3CyqRE2BB2lmlDEMJ24EaaybNUYl1ymLtS7Q4+P4=;
+	h=Date:From:To:Cc:Subject;
+	b=oP9sRGHxLfkNLKO+4xtJ1HwpDR7R3YpaOHJysiTONwsv2WrX3qGrY2bYIGFzicrMP
+	 AjwPiGNfGfBySLATVqQrkB2ipfUsLvQvWJdZ1hPG9aLPR8ih/avpQ9x7cv/WZzWVdR
+	 4aayy3RpiSX+Qc7lwJQhP+JbvSayhp7A/LXWnacLLRYRlkAdGClKAAJ2nnjeNhqxGh
+	 RoHPNCiavS33YWbw/md+rusIhkW7SFUG7tELS8qN978Dc+TE4OWDY2jKDUN6CZ2sge
+	 Xc5RNO6fAfV/7DfdaznqUCQvCIixTCNhgGLcnW4kjIUqa0C3m18nmMfFXloS7diSx1
+	 P9ifOLdRe6Uuw==
+Date: Wed, 28 Oct 2026 14:43:11 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Kenneth Feng <kenneth.feng@amd.com>,
-	Kevin Wang <kevin.wang@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the amdgpu tree with the origin tree
-Message-ID: <cb647aad-e931-467e-a693-05207dfdd9ce@sirena.org.uk>
-References: <auH4hkxipwOwNz44@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 28
+Message-ID: <auIJ_zR_Ojt8avG7@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,81 +55,69 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Bgo1tJgDojouYbhj"
+	protocol="application/pgp-signature"; boundary="70GZv1w6EOM4G7nH"
 Content-Disposition: inline
-In-Reply-To: <auH4hkxipwOwNz44@sirena.org.uk>
-X-Cookie: Pushing 30 is exercise enough.
 
 
---Bgo1tJgDojouYbhj
+--70GZv1w6EOM4G7nH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 28, 2026 at 01:28:42PM +0000, Mark Brown wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the amdgpu tree got a conflict in:
->=20
->   drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c
->=20
-> between commit:
->=20
->   a2eae9f4fa1b0 ("drm/amd/pm: add zero fan stop temperature support on sm=
-u 14.0.2")
->=20
-> from the origin tree and commits:
->=20
->   f990c94a2633d ("drm/amd/pm: add zero fan stop temperature support on sm=
-u 14.0.2")
->   1b63bb397db20 ("drm/amd/pm:restate all customized OD features on every =
-table upload for smu 13.0.0/smu 14.0.2")
->   d2c1e98658b6c ("drm/amd/pm: report smu energy accumulator updates")
->   8d4ce79aff1cd ("drm/amd/pm: preserve committed OD features for SMU 14.0=
-=2E2")
->=20
-> from the amdgpu tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi all,
 
-Also needs this additional fixup to cope with the cherry picking:
+Changes since 20261027:
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c b/drivers=
-/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c
-index cdd308ced4f9a..24a3d61d8ea66 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c
-@@ -2603,10 +2603,6 @@ static int smu_v14_0_2_od_restore_table_single(struc=
-t smu_context *smu, long inp
- 		od_table->OverDriveTable.FanZeroRpmEnable =3D
- 					boot_overdrive_table->OverDriveTable.FanZeroRpmEnable;
- 		break;
--	case PP_OD_EDIT_FAN_ZERO_RPM_STOP_TEMP:
--		od_table->OverDriveTable.FanZeroRpmStopTemp =3D
--					boot_overdrive_table->OverDriveTable.FanZeroRpmStopTemp;
--		break;
- 	case PP_OD_EDIT_FAN_ZERO_RPM_STOP_TEMP:
- 		od_table->OverDriveTable.FanZeroRpmStopTemp =3D
- 					boot_overdrive_table->OverDriveTable.FanZeroRpmStopTemp;
+The ceph tree acquired a conflict with the origin tree.
 
---Bgo1tJgDojouYbhj
+The amdgpu tree acquired a conflict with the origin tree.
+
+Non-merge commits (relative to Linus' tree): 3219
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 434 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--70GZv1w6EOM4G7nH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrh/CIACgkQJNaLcl1U
-h9AjsAf+KGLv9i9ZEeoz4S32AMjh8iUBArxGCKnb0Qbvuo5nKSqcVf8XjCEkwpE+
-gSC5mtRkB7w2fUwktTOVQfFW/tNTq6F8XsltDN62gmLTA3leGz0w46VWl921bqzi
-C33Br4nNWt78LivcDVzpTX5fnsA6VrYLt63gtyJklotGZM5rzyW1K2iYx9x1nazq
-Xsk2nXNSf05aA8eV+eSEImZaqU5B0HqmdbinvLFx4HVBWk3k5Wc6SgGXqDy4VdEH
-bucKWBxlOnjb4YyzXGqpteskTarG5mAyw70a+sTCY6RrTkPi9kS4R4y6LqYjS5Da
-4NhwnWlmgwFGRj2KlzfmWcP3PF3okA==
-=qJMJ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmriCf8ACgkQJNaLcl1U
+h9ClzQf/aCzroPZ9lLrXc1dCAv4qBWCoMSXIUYtwg84R1GqOtlzFJY/p8XKVe1Ez
+ofJ9/O/Rxvm8KiqAOIm/z581jwNz+bz17u4Glz3TQ3Xrq/g+jGeB4FiPMvidqErB
+xWX/SwGBe6YDlIUIUP0Wg0io9faJgIYYf3UpkPnjCYnhDejqsaJjgMbCHvnGka/B
+bvZCndT8xoN1Ch0I8Sd6buO1T1FCG4QsAi7F2EuStmaqtKxseYR2/mA2vVby5Z71
+Ml8u2lI1pwqVRiU9zFuZTebrCkGgC3fQky4A5fKy0OtFY4CrQzMFt5bsBS7MD20A
+U2senFgQv7NO4x0cTSq3zneUAMV2qg==
+=20ck
 -----END PGP SIGNATURE-----
 
---Bgo1tJgDojouYbhj--
+--70GZv1w6EOM4G7nH--
