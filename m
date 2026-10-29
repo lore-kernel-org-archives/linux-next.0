@@ -1,85 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793241022;
-	b=sjqFzFXlDkUOD2tiVDGFRuK299dtv5Bd4m19Dz7jgYVtFTd1Zv4QJyjpatXHN3nm/Wu6
-	 3i5nttBmg3OmO7eIikkESuJZ0pl2htm8aaGq+oDjm+e9zN0tZStNWlKUXOrerzotZ2uHR
-	 HYUQjmGyRVA4//etINZEG1TPKrAtjBJcHhR77wqb339qB3dAW6eoJIdZJzBPZrdtXSSii
-	 xT/BE7VmjDxy8BJENlBsxENnaJbYqythUHrb7JQTZkJMSdGWqNVHKzjMeGeCzBtpgdMES
-	 pQ2q2GJfDwAUW1Ty+FkpAbE4a/8SbFMF5wIyYt08/C/N3FBRWvcOQdhS5mUYAFZy30w==
+	t=1793283474;
+	b=wYDkYfqGJpduYwoQHl2juFxOrZf6jjBVVxsx0TYqj+yCTWZVKKegIelRsaZvE6J0M6Mm
+	 aulkd02NET56FdpzG9qIbMaAQVfXbhzXX31+hCCaeSLCeUiZsQq2L4m6q6/0NVKmuKtIv
+	 yfakLRwF4PNx5MT3Z5bLeonRm9QB7t+y8LaEMYYU8VcAxRtHLqudt/UwZUTQQ/eNaD7FA
+	 fFCxes8YvFoshyWmol+53bVPOg5IXKCBRssKaNphYcuOhRtXPBXZg77sgAGsUcVfzCTVD
+	 55ant/Wq0j18B6per3NJ+hlN4gsZPuoGrTa8p/YtBhHPhxnFSWc6rbglKQeh6TnkXEQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793241022;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
-	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
-	 Date:Message-ID;
-	bh=lRURtPOaB+l/ED4YPsebjSOZGpJRBzkvJlTF5dwc38A=;
-	b=BCSp48RXVhKp8xJzGyJb0S8CtHrRGu0WS7AYJ1tjko1ipQF2rjoZvtWy+AUbw5xovTXB
-	 KG23o64eE8o8T62diEEqZYHEMy9BB/CkJMHGDM9NXZ3u6sRaZrG2WjkASi1MrXwzYqVa0
-	 6dFXg67e58ZPqLs2lfQ7Vks+4nm751CgeRZ6PYX2jnxXOfgccybNxhOrcoI21mxwaoX3o
-	 7LX4Q0ISLzbSRZPK1LJZWALNS+PaarS7mVoAIe3eN4OTxOrJz+o0TFcKwoG5GBSSUAiTw
-	 u4wRPbLZFcM0VCF8v6tMMM0bv7qybPTOrJMbYgAL0tgOnxsIAPJCUwwawvwBUv0gfhA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793283474;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=ZGzPxtLEIASh5v8GJvNps6xy+CY7bnAktG1HiW2ABhc=;
+	b=HKR6xGHaf0XmZGfGBYFb7Q4MossHhSdHKiU2Ed9oH4h8XeGdmvZXkbQRnobmy6kAAGcE
+	 yVKyYNIadBhWUdV83jSnhROvKcD9kxhkPEbaoq1AJ6w36R6gUec9ZZoCQxZI6joeaB6FQ
+	 9sfk1ZtGM2pjUZpIO6eqR6MVmHNUaxYTyw6pU/V63uLubXvIbGGhdKEpV3v1rCvwxdoBN
+	 E2uWkTdnBw2tnDO0pfqBUA/u01JbTV+i5gu4XsHyywtPJmnv07uKguRPgLUeCxp7VV+pd
+	 innbhWzKZWNC+P2E8A8lt0RrvrvYZKrU1GkJltZkQiVp0VKJu3kR9iOObWVhDIH+8Vw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kernelci.org;
-	spf=pass smtp.mailfrom=kernelci.org;
-	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=RR8opcYp;
-	arc=none smtp.remote-ip=74.125.82.177
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LC95WxYV;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9FF606A31E
-	for <linux-next@vger.kernel.org>; Thu, 29 Oct 2026 02:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3B9FF606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99F5606A31D;
+	Thu, 29 Oct 2026 14:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=RR8opcYp
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-35c76e9614aso2356274eec.0
-        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2026 19:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1793241020; x=1793845820; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=lRURtPOaB+l/ED4YPsebjSOZGpJRBzkvJlTF5dwc38A=;
-        b=RR8opcYpNfUur+twtaTrvmGOqItw8HEPrGnn663fLVEyBDGEA8H3KXxF0SLQyA1Dmy
-         AMq6VWSF7dL/i1flP42jA6t4QfqIQ5RUAFuVGL2WDl1rGBqWGLDh9bVys3rdYQaaU65Y
-         HKClCC5uxIaoog2vmDbOCRxfW1v3kxjYKWg+KfuOMtWn7yQKCd96nSqBaH9QjTnz64ge
-         r4jRwMK5iDCMOobfEku/NAY86uA64UQ2OdmFzEBQemQv90WgDMFbmtH/g5sQ5IxgwXE4
-         9g/6yM38sWD9RJwKcCTWuDJLXm+tlsd3ciDCw/fpOOnpr19EP0DmwmEd3gPA/Ze2zrVJ
-         vYNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793241020; x=1793845820;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lRURtPOaB+l/ED4YPsebjSOZGpJRBzkvJlTF5dwc38A=;
-        b=fNcLV+S6V7bcXTwFVP1xRX8FIieDESG+9xQ0+Fk5Hv7D2VO1/TqiGuCTTIu6skWK5m
-         Wvnb6QRqJxBv65afxJwziKlvcSveg7vdeR9eCydV+49PjSO7yZJglJxAie9TSt1iHhtP
-         B/TaxuEJhkZ1TR1ACMgOX4Bx6CVVbe0k6kzyUQ7PsxU+tIZfi16QB2D0JMEGjSW6dF3/
-         JORshTGDiKl0f7sWc+zlp3rKWuibfnxJZUVkDuh2hiPFh5R1Lf4w+LUB4owShhhhEPQt
-         n6cBjTj5jf34ywlS8rLH2o//jIhYsQbHS2An8Fcj00ibFlCvjHGmk2FTYu4+SONvg3bZ
-         k3pQ==
-X-Gm-Message-State: AFq9FYIcs3e4Nws5D6eY09tcaYRlUOgWhFTNwKCJR3/fH88DrJoWOtjU
-	qxQImxM6A4i4g9UCQ+WQRBZUJ+y75fY04T8SHbDTb0S21ATmOfUJcQx/l32/TdqwYZBddpGko7S
-	5TTEL
-X-Gm-Gg: AYBFou1vG0A2h7jnakNXymGrV7r3jlXAawnaAdlpnq9ZSq/lpmZ3bsvVYBrotdYMYIi
-	uV6BVCUmdoMzU9CDIxDH+bh+r3JBf1vMuU7KitIuc3bxLC9oVHl+7oMeMuylAAH5qhCdhB+vmcT
-	Jd9BPdGsx+UpnYp8pXO+/0KaSCCHK6bsbHWw0rvfj6Bjb6SyVRMdfN026i4Sv3nvNsB/oFnM3q1
-	VPm2he1cA90bh5V3+Gqart9TL2u77bPGUJZV/pVvYjUtu096/eHA35RcEOE9+KzDwlZ/tYddO+C
-	2b8AAnU8TktRf2VlmNqAaQAY6bN1TnFqNLz7Ucny2ENQSYo2EdwUDmaUX638B9FfGB6uTSSol/A
-	ZEMUhFgDX/pPkUdn2aT9Z/TwWqqSrjD96GfeExGyTV68HbEc64gVmk3hdWBNUvMEJz9HdITpkXi
-	+DUKXpz5uUkprk54iVsMBFht9HfNtajqRkQ7AAy9iEa4x8RFiBZOg9PHpqsIzb2Z2XrwvwLze8e
-	zShyIPXQdlH8reGmjZGYj4EAnVg8GKFRWXrKe4AxRnJn9lkBCGUT1e03BQtEr0OCFr1Ycnhlqpu
-	d+6/Qa0hmJYYyWWwQeeHhCQqTi6DEswknyLiDI1lldQ=
-X-Received: by 2002:a05:693c:415c:20b0:35f:2bc:82d3 with SMTP id 5a478bee46e88-36a203f17c6mr6199355eec.15.1793241019850;
-        Wed, 28 Oct 2026 19:30:19 -0700 (PDT)
-Received: from 4cb1f8191411 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a239a56e9sm11684188eec.27.2026.10.28.19.30.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2026 19:30:19 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LC95WxYV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEDB51F01825;
+	Thu, 29 Oct 2026 14:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793283473;
+	bh=ZGzPxtLEIASh5v8GJvNps6xy+CY7bnAktG1HiW2ABhc=;
+	h=Date:From:To:Cc:Subject;
+	b=LC95WxYVZywPVHOZD/8qJ0ugk/2tvuhkhKkyhHCBck9tW9Qqvigy0gLzt/bxNoNqi
+	 IOjPBT9cObu5cIjE9ObGeQym3xati08UOEsSj9KNK92h7oF7FYk7DiN/07uSb9xj7T
+	 PyrFIEf9COYcWw1eNUYR+u7UGL4Fvxv074XURQF5wz+ZcgSfKuh9MwvBvEm62FUKNk
+	 MkLfXtUn+PQq8zHHjoxDQBJWj3h1NTC/QOfqXJeX6wMBsLTQ1mG1q14Jh3ljUe21W0
+	 yHDee8e6aIPZPTBMM91kFUIFSCD4iDtPySzgWkB42AJygURXiPuKo13Z4epJauRbez
+	 r5jDSgB37eidA==
+Date: Thu, 29 Oct 2026 14:17:50 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the
+ vfs-brauner-fixes tree
+Message-ID: <auNVjjjxWnmPOLUj@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -89,385 +56,157 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 6d0933ae9d46674a6ea63a87e9e9ab4e662670c9
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Thu, 29 Oct 2026 02:30:19 -0000
-Message-ID: <179324101869.62542.17101532952333251766@4cb1f8191411>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3wPxrIIxSqRRX/oS"
+Content-Disposition: inline
 
 
+--3wPxrIIxSqRRX/oS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi all,
 
-Status summary for next/master
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-Dashboard:
-https://d.kernelci.org/c/next/master/6d0933ae9d46674a6ea63a87e9e9ab4e662670c9/
+  tools/testing/selftests/Makefile
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 6d0933ae9d46674a6ea63a87e9e9ab4e662670c9
-origin: maestro
-test start time: 2026-10-28 15:19:56.132000+00:00
+between commit:
 
-Builds:	   72 ✅    1 ❌    0 ⚠️
-Boots: 	  234 ✅   16 ❌    0 ⚠️
-Tests: 	45354 ✅ 3709 ❌ 7516 ⚠️
+  073d71c5118f4 ("selftests/filesystems: add a test for freezing a shared b=
+lock device")
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: jetson-orin-nano-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6ae23afe5c0836a8c2f1daa0
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6ae23afe5c0836a8c2f1da9b
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.capabilities
-      last run: https://d.kernelci.org/test/maestro:6ae230e75c0836a8c2f0e484
-      history:  > ✅  > ❌  
-            
+=66rom the vfs-brauner-fixes tree and commit:
 
+  c6c917c1ecb48 ("Merge branch 'vfs-7.4.misc' into vfs.all")
 
-### FIXED REGRESSIONS
-    
-Hardware: jetson-agx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6ae24ff56eff83db85beab40
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6ae24ff56eff83db85beab3b
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_stress_sh
-      last run: https://d.kernelci.org/test/maestro:6ae24ff56eff83db85beab9f
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - ltp.futex_wait05
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beaef5
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - ltp.nanosleep01
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beae1c
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-      - ltp.pselect01
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beae6c
-      history:  > ❌  > ❌  > ✅  > ✅  > ✅  
-            
-      - ltp.select02
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beaef3
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: jetson-nano-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.futex
-      last run: https://d.kernelci.org/test/maestro:6ae21d7a5c0836a8c2ef8476
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-      - kselftest.futex.futex_run_sh_args_t_500000_broadcast_owner_futex_requeue_pi
-      last run: https://d.kernelci.org/test/maestro:6ae226f05c0836a8c2f0264c
-      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: jetson-orin-nano-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_stress_sh
-      last run: https://d.kernelci.org/test/maestro:6ae23afe5c0836a8c2f1dae7
-      history:  > ❌  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: jetson-orin-nx-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6ae227665c0836a8c2f02ec9
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6ae227665c0836a8c2f02ec4
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: nvidia-igx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
-      last run: https://d.kernelci.org/test/maestro:6ae227a25c0836a8c2f0363b
-      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
-      last run: https://d.kernelci.org/test/maestro:6ae21e4b5c0836a8c2ef8dbb
-      history:  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-02
-      last run: https://d.kernelci.org/test/maestro:6ae21d915c0836a8c2ef8682
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-03
-      last run: https://d.kernelci.org/test/maestro:6ae21d915c0836a8c2ef8681
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-04
-      last run: https://d.kernelci.org/test/maestro:6ae21d915c0836a8c2ef8680
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_keyboard_3a
-      last run: https://d.kernelci.org/test/maestro:6ae2348c5c0836a8c2f14a0d
-      history:  > ❌  > ✅  
-            
+=66rom the vfs-brauner tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-### UNSTABLE TESTS
-    
-Hardware: hpe-proliant-dl345-gen11
-  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
-    - Architecture/compiler: x86_64/gcc-15
-      - kselftest.kvm
-      last run: https://d.kernelci.org/test/maestro:6ae21bc25c0836a8c2ef67c1
-      history:  > ✅  > ❌  > ❌  > ✅  > ❌  
-            
-      - kselftest.kvm.kvm_set_memory_region_test
-      last run: https://d.kernelci.org/test/maestro:6ae22b055c0836a8c2f06ae3
-      history:  > ✅  > ❌  > ❌  > ✅  > ❌  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ae22afb5c0836a8c2f0648b
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - ltp.shmget03
-      last run: https://d.kernelci.org/test/maestro:6ae22afd5c0836a8c2f066c7
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-      - ltp.statx07
-      last run: https://d.kernelci.org/test/maestro:6ae22b025c0836a8c2f06a64
-      history:  > ❌  > ❌  > ❌  > ⚠️  > ⚠️  
-            
-Hardware: jetson-agx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ae24ff96eff83db85beac31
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-      - ltp.copy_file_range01
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb204
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.copy_file_range02
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb205
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.epoll_pwait03
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beadd6
-      history:  > ✅  > ❌  > ❌  > ✅  > ❌  
-            
-      - ltp.io_uring01
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb210
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.io_uring02
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb211
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.io_uring03
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb212
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.memfd_create03
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb203
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.perf_event_open01
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb202
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.poll02
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beae5f
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-      - ltp.prctl09
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beae6a
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-      - ltp.shmget03
-      last run: https://d.kernelci.org/test/maestro:6ae24ffc6eff83db85beae5c
-      history:  > ❌  > ✅  > ❌  > ✅  > ✅  
-            
-      - ltp.statx01
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb206
-      history:  > ❌  > ❌  > ❌  > ⚠️  > ❌  
-            
-      - ltp.statx04
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb207
-      history:  > ❌  > ❌  > ❌  > ⚠️  > ❌  
-            
-      - ltp.statx06
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb209
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.statx08
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb20b
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.statx09
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb20c
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.statx10
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb20d
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.statx11
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb20e
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.statx12
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb20f
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.writev03
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb1ff
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.writev05
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb200
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-      - ltp.writev06
-      last run: https://d.kernelci.org/test/maestro:6ae250006eff83db85beb201
-      history:  > ✅  > ✅  > ✅  > ⚠️  > ✅  
-            
-Hardware: jetson-agx-orin-industrial-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6ae236675c0836a8c2f18735
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6ae236675c0836a8c2f18730
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ae239775c0836a8c2f1b648
-      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: jetson-nano-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_core
-      last run: https://d.kernelci.org/test/maestro:6ae226ee5c0836a8c2f02570
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6ae226ee5c0836a8c2f025bb
-      history:  > ✅  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6ae226ee5c0836a8c2f025b3
-      history:  > ✅  > ✅  > ❌  > ❌  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_stress_sh
-      last run: https://d.kernelci.org/test/maestro:6ae226ee5c0836a8c2f02613
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.cgroup.cgroup_test_stress_sh_test_cgcore_proc_migration
-      last run: https://d.kernelci.org/test/maestro:6ae226ee5c0836a8c2f025f1
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: jetson-orin-nx-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
-      last run: https://d.kernelci.org/test/maestro:6ae227665c0836a8c2f02f1d
-      history:  > ⚠️  > ⚠️  > ❌  > ✅  > ⚠️  
-            
-Hardware: nvidia-e5020-vera
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
-      last run: https://d.kernelci.org/test/maestro:6ae227de5c0836a8c2f03bd3
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: nvidia-igx-orin-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_kmem
-      last run: https://d.kernelci.org/test/maestro:6ae227a25c0836a8c2f035f3
-      history:  > ✅  > ❌  > ✅  > ✅  > ❌  
-            
-      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
-      last run: https://d.kernelci.org/test/maestro:6ae227a25c0836a8c2f035ee
-      history:  > ✅  > ❌  > ✅  > ✅  > ❌  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+ltp
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ae21f7c5c0836a8c2ef993b
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-kingoftown
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
-      last run: https://d.kernelci.org/test/maestro:6ae21e4b5c0836a8c2ef8dbe
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-Hardware: sc7180-trogdor-wormdingler-rev1-boe
-  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
-    - Architecture/compiler: arm64/gcc-14
-      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-01
-      last run: https://d.kernelci.org/test/maestro:6ae21d915c0836a8c2ef8683
-      history:  > ❌  > ❌  > ✅  > ✅  > ❌  
-            
-      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
-      last run: https://d.kernelci.org/test/maestro:6ae21e4c5c0836a8c2ef8e36
-      history:  > ❌  > ✅  > ❌  > ✅  
-            
-Hardware: jetson-tx2-devkit
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.cgroup.cgroup_test_stress_sh
-      last run: https://d.kernelci.org/test/maestro:6ae2245a5c0836a8c2efc45b
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: beaglebone-black
-  > Config: multi_v7_defconfig
-    - Architecture/compiler: arm/gcc-14
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6ae2529c6eff83db85bf0a03
-      history:  > ❌  > ✅  > ✅  > ⚠️  > ⚠️  
-            
+diff --combined tools/testing/selftests/Makefile
+index 07c3719f8b04b,32dde7b95848e..0000000000000
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@@ -34,13 -34,11 +34,13 @@@ TARGETS +=3D exe
+  TARGETS +=3D fchmodat2
+  TARGETS +=3D filesystems
+  TARGETS +=3D filesystems/binderfs
+ +TARGETS +=3D filesystems/configfs
+  TARGETS +=3D filesystems/epoll
+  TARGETS +=3D filesystems/eventfd
+  TARGETS +=3D filesystems/failfs
+  TARGETS +=3D filesystems/fat
+  TARGETS +=3D filesystems/file_stressor
+ +TARGETS +=3D filesystems/freeze
+  TARGETS +=3D filesystems/openat2
+  TARGETS +=3D filesystems/open_tree_ns
+  TARGETS +=3D filesystems/overlayfs
+@@@ -99,7 -97,6 +99,7 @@@ TARGETS +=3D net/packetdril
+  TARGETS +=3D net/ppp
+  TARGETS +=3D net/rds
+  TARGETS +=3D net/tcp_ao
+ +TARGETS +=3D nfsd
+  TARGETS +=3D nolibc
+  TARGETS +=3D pci_endpoint
+  TARGETS +=3D pcie_bwctrl
+@@@ -180,10 -177,6 +180,10 @@@ endi
+  # of the targets gets built.
+  FORCE_TARGETS ?=3D
+ =20
+ +# Remember dry runs for the build report before MAKEFLAGS may be cleared.
+ +KSFT_BUILD_REPORT_DRY_RUN :=3D $(strip $(foreach f,n t q,$(findstring $(f=
+),$(firstword -$(MAKEFLAGS)))))
+ +export KSFT_BUILD_REPORT_DRY_RUN
+ +
+  # Clear LDFLAGS and MAKEFLAGS when implicit rules are missing.  This prov=
+ides
+  # implicit rules to sub-test Makefiles which avoids build failures in test
+  # Makefile that don't have explicit build rules.
+@@@ -228,10 -221,6 +228,10 @@@ ARCH           ?=3D $(SUBARCH
+  export BUILD
+  export KHDR_INCLUDES
+ =20
+ +# Version of the optional KSFT_BUILD_REPORT format written by these rules.
+ +KSFT_BUILD_REPORT_VERSION :=3D 1
+ +include $(top_srcdir)/tools/testing/selftests/build_report.mk
+ +
+  # set default goal to all, so make without a target runs all, even when
+  # all isn't the first target in the file.
+  .DEFAULT_GOAL :=3D all
+@@@ -240,13 -229,11 +240,13 @@@ all
+  	@ret=3D1;							\
+  	for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do	\
+  		BUILD_TARGET=3D$$BUILD/$$TARGET;			\
+ -		mkdir $$BUILD_TARGET  -p;			\
+ +		mkdir -p $$BUILD_TARGET &&			\
+  		$(MAKE) OUTPUT=3D$$BUILD_TARGET -C $$TARGET	\
+ -				O=3D$(abs_objtree)		\
+ -				$(if $(FORCE_TARGETS),|| exit);	\
+ -		ret=3D$$((ret * $$?));				\
+ +				O=3D$(abs_objtree);		\
+ +		status=3D$$?;					\
+ +		$(call ksft_record_build_status,all,$$TARGET);	\
+ +		$(if $(FORCE_TARGETS),[ $$status -eq 0 ] || exit $$status;) \
+ +		[ $$status -eq 0 ] && ret=3D0;			\
+  	done; exit $$ret;
+ =20
+  run_tests: all
+@@@ -303,7 -290,7 +303,7 @@@ ifdef INSTALL_PAT
+  	install -m 744 kselftest/ktap_helpers.sh $(INSTALL_PATH)/kselftest/
+  	install -m 744 kselftest/ksft.py $(INSTALL_PATH)/kselftest/
+  	install -m 744 run_kselftest.sh $(INSTALL_PATH)/
+ -	rm -f $(TEST_LIST)
+ +	: > $(TEST_LIST)
+  	@ret=3D1;	\
+  	for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
+  		BUILD_TARGET=3D$$BUILD/$$TARGET;	\
+@@@ -311,11 -298,9 +311,11 @@@
+  				INSTALL_PATH=3D$(INSTALL_PATH)/$$TARGET \
+  				SRC_PATH=3D$(shell readlink -e $$(pwd)) \
+  				OBJ_PATH=3D$(INSTALL_PATH) \
+ -				O=3D$(abs_objtree)		\
+ -				$(if $(FORCE_TARGETS),|| exit);	\
+ -		ret=3D$$((ret * $$?));		\
+ +				O=3D$(abs_objtree);		\
+ +		status=3D$$?;				\
+ +		$(call ksft_record_build_status,install,$$TARGET); \
+ +		$(if $(FORCE_TARGETS),[ $$status -eq 0 ] || exit $$status;) \
+ +		[ $$status -eq 0 ] && ret=3D0;		\
+  	done; exit $$ret;
+ =20
+ =20
+@@@ -329,9 -314,6 +329,9 @@@
+  		printf "Emit Tests for $$TARGET\n"; \
+  		$(MAKE) -s --no-print-directory OUTPUT=3D$$BUILD_TARGET COLLECTION=3D$$=
+TARGET \
+  			-C $$TARGET emit_tests >> $(TEST_LIST); \
+ +		status=3D$$?; \
+ +		$(call ksft_record_build_status,install,$$TARGET); \
+ +		(exit $$status); \
+  	done;
+  	@VERSION=3D$$(git describe HEAD 2>/dev/null); \
+  	if [ -n "$$VERSION" ]; then \
 
+--3wPxrIIxSqRRX/oS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+-----BEGIN PGP SIGNATURE-----
 
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrjVY0ACgkQJNaLcl1U
+h9AGWwf9HZN9ZZPN9FVw/Yfr7SjSOcZYvHad64XVnBcKEGdjzTrn84FCOesAA9eR
+EORZ8qyltJfqv3n2jB01kfzHA1eA91P3PWRUJtpNRTBqU8OaukVjzMxoii8i0Tcg
+m/AIZIzMnQZwCU2lgpc+u2Temyy27EW5JtNiXCddtPjjtr4XAW7tfpy4Ztnk55bm
+5akRCmlrg06ijTGIVc7XaLspiyy8dYTmlR2HuRZuAu2mGekVTpY1djvxVKf4hToe
+K9HAoF0arkHjb20VVPxFB/wbPm9lycdTpudMRDY9LVMSHwc8fWypYamCliHMo1QF
+t6MBA1CJ7JSLpnmNOajkma/IFaC+bA==
+=H3v3
+-----END PGP SIGNATURE-----
 
-Made with love by the KernelCI team - https://kernelci.org
+--3wPxrIIxSqRRX/oS--
