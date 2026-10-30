@@ -1,65 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793398444;
-	b=vXwbQvXny1/pL4oUkZnreaSwZ21+nTerrbGQJ3OH8C/W9pNADyLMWpn96FjZjbSQfj7R
-	 vq17n+IaPPrAfffh6SLowjd28bcNm22XjlxUP4BTDocDSAjfhCiyQbHOJyCYLj7hhNSEu
-	 brxj6Zm0RV278+oDzkNArEH1Znk04d6ENzhIiwIRssZr78VY2/YXCJizbR6RmwhECwmfP
-	 44CN1ONzn2M3FrEUC4I+cLzc5XV0MfrofHo0geBM92bt+XyPTK/pwn/zTNr/m/JCn+giA
-	 xhWHItXvDgA29r+Dk4Pxg66Wt8Sf4h/9q5L356WQu9gkNdwehsCMovoSKCMF+XFrDlw==
+	t=1793399629;
+	b=h0wWnoP4CuE+I4KIohp1/KFxfH7gtk05jLCTQ3Y0fqtcKSnzQVB2CIVTokdhG1dpuEa3
+	 v+kWpasCn8OiUQmieB8CJPq2CBsPdhakYk4HoCJTPlwtoLXGb+hjZYY5rWRCQq1sEGHmM
+	 IO+NDZeDgmNryskCph7XGTYe1RQQSZWh+3Mo1GDTLkD1Jh+9MG3bx4uKa/YmlHmM4nPyb
+	 g4nFfG5qs3veglqcsaXgxrs+fiJkQAsPmaGJNGnOGc66clud0sftP1VmBat45FwlqsYdG
+	 GywNmoxkPxLTj8G/aqSqTCH3Ep4ev23QlOa6reha6M4ih0OOQC/rEPxmdhArF6Y4Gjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793398444;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=v96p8NzzJuOeaoy5WFJozQBW1mtjfbl/LCeCCkWteFs=;
-	b=gCc78tThhalIftTLInW4hRbgVxYZT2T/VW+rujgDHY2ePvWIytW6A9Tiyir1M+scCnaK
-	 CLN7qKJ8qS0yrKYfJ11pOpL8lTBodpwz54m/eXQxnoWwpbXAGcAyFzv1S4YlbOjaLzJwH
-	 2gNKiD2Kb6Y5PxfChLul34GCeIKjY3LY3ClqJvOhjRzSU50IuRBTOMWSMkeqDm4T5SF3A
-	 Ll2yYP85Fye7CwCzcDeeQWNGwumbJm1vAyFU2gxaJj8d0ytqN86Z4eGDfMIgQnyZHs8F0
-	 LRqv9byWrKHoe9aCtB9K8e+BM4kgqzJohTkpQY8SLmwYk17qeTKNtOQ07CYmLzEyqIw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793399629;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
+	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=ucXB7kIXkR22wptA4ECw1Ukmrn4C7DPZ8GfL9sZbPxg=;
+	b=rKrBVtmwXkeZuj0D6dbtLG34VN+VCkcJjGSjevS4mATU1LX0F9d77ARSw9snpsD+E9lG
+	 M39aVMU/PDAi/TOjHpIgSYuHvl0XETo3yNbdOf2itnWr74tZDAiKvgYl9W2ffzQdRpVY0
+	 EZO5LLG09ewOIo8K8fUxq1MDbfaSm5LOLk6XDFxqXbqkXd04xE77CMjjR3i9Jw4GIgC4y
+	 Qy8rxU0HQbvcWRbm5tE5bi8OF0dwmkG5t+T4U8C6vb4N82yo97LKmsr+jssrvRI9M+vgx
+	 sAF05jI2hDT3X5zPMRrrW8e+6iEE4nrFC/iyBLawY9RR9q1rMQHh6QmmHN8cX5p1rcQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CyowhQHe;
+	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=Vk97GFiK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE97606A31A;
-	Fri, 30 Oct 2026 22:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD373606A31E;
+	Fri, 30 Oct 2026 22:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CyowhQHe
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDEC1F000C1;
-	Fri, 30 Oct 2026 22:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793398443;
-	bh=v96p8NzzJuOeaoy5WFJozQBW1mtjfbl/LCeCCkWteFs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=CyowhQHe5fz4QAIGy6UHWgpltzIXUiXysdD2zazgsYDuqVolAp8VEcVMJNz1JVKba
-	 G3UhLW+RCtqEVyWmzcpxKNJwBgwccXe2sihbaeDYMA7MjdbidCftV/5OoZc76BSbyb
-	 y2iRRlafgM01L2L8TsLcZ56b49Qnl0dGDvVzz+KIcD2TPd5kTknhkyKP75XIgelBs6
-	 Fp9fcLeWhbVYWlosxpMyDGz97/a4U+3Hhw0XpDpqnAGg8jqm0JaHA8hAYuvjezZHq6
-	 FF3Mq19qpYc7s91TQiVW+hQiNY4LNp8eRD91TALZiTojpOSKiyxuWG2YDqR8yAkJYi
-	 BEPTYBmwV53nw==
-From: Sasha Levin <sashal@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	David Hildenbrand <david@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: [PATCH linux-next] riscv/mm: fix up the mm-fixes merge of free_pmd_table()
-Date: Fri, 30 Oct 2026 18:14:01 -0400
-Message-ID: <20261030221401.155797-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <as0D2sHzh_UnNF5L@sirena.org.uk>
+	dkim=pass (1024-bit key, unprotected) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=Vk97GFiK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC75A1F000C1;
+	Fri, 30 Oct 2026 22:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1793399628;
+	bh=ucXB7kIXkR22wptA4ECw1Ukmrn4C7DPZ8GfL9sZbPxg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=Vk97GFiKii5heUCxUE0rGgXFrRQo8z7xlej80GQQndc0rTb+p2aICUANyQvibAKyg
+	 3OoZjHTlLmP6Ja46z3aZqb0EUlojQj/Fyg6xq1NJ0wjDXXR4Sfb69m1VHnONpbtdby
+	 0uhiQy7RzXCMegLzFo3y0rRkPyBUmBm9gD1U7PGY=
+Date: Fri, 30 Oct 2026 15:33:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Alexandre Ghiti <alex@ghiti.fr>, David Hildenbrand <david@kernel.org>,
+ Jisheng Zhang <jszhang@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+ Vlastimil Babka <vbabka@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org
+Subject: Re: [PATCH linux-next] riscv/mm: fix up the mm-fixes merge of
+ free_pmd_table()
+Message-Id: <20261030153347.5641a97e22e18ddff6043416@linux-foundation.org>
+In-Reply-To: <20261030221401.155797-1-sashal@kernel.org>
 References: <as0D2sHzh_UnNF5L@sirena.org.uk>
+	<20261030221401.155797-1-sashal@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -68,49 +62,31 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The mm-fixes merge reuses an older resolution of the conflict in
-remove_pud_mapping() and keeps the free_pmd_table() call that passes
-is_vmemmap. Commit f998a21c2ba5 ("riscv/mm: fix hotplug page-table
-destructor handling") in mm-fixes removed that argument, so a riscv
-build with CONFIG_MEMORY_HOTPLUG fails:
+On Fri, 30 Oct 2026 18:14:01 -0400 Sasha Levin <sashal@kernel.org> wrote:
 
-  arch/riscv/mm/init.c:1657:35: error: too many arguments to function call, expected 2, have 3
+> The mm-fixes merge reuses an older resolution of the conflict in
+> remove_pud_mapping() and keeps the free_pmd_table() call that passes
+> is_vmemmap. Commit f998a21c2ba5 ("riscv/mm: fix hotplug page-table
+> destructor handling") in mm-fixes removed that argument, so a riscv
+> build with CONFIG_MEMORY_HOTPLUG fails:
+> 
+>   arch/riscv/mm/init.c:1657:35: error: too many arguments to function call, expected 2, have 3
+> 
+> Drop the argument to match the mm-fixes version of the call.
+> 
+> ---
+> Mark, this applies on top of next-20261030 and is meant to be folded into
+> the mm-fixes merge resolution. Next/merge.log says it was resolved using
+> a previous resolution, I think the one from the risc-v/mm conflict on
+> 2026-10-12, which had the same problem (next-20261012 has it too).
 
-Drop the argument to match the mm-fixes version of the call.
-
-Fixes: f383866da287 ("Merge branch 'for-next-fixes' of https://git.kernel.org/pub/scm/linux/kernel/git/mm/linux.git")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-Mark, this applies on top of next-20261030 and is meant to be folded into
-the mm-fixes merge resolution. Next/merge.log says it was resolved using
-a previous resolution, I think the one from the risc-v/mm conflict on
-2026-10-12, which had the same problem (next-20261012 has it too).
-
-Build tested with clang: riscv defconfig plus MEMORY_HOTPLUG and
-MEMORY_HOTREMOVE, W=1 build of arch/riscv/mm/ (also mm/memory_hotplug.o and
-mm/sparse-vmemmap.o), and plain defconfig.
-
- arch/riscv/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 2400537a01215..e822fce0af4b0 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1654,7 +1654,7 @@ static void __meminit remove_pud_mapping(pud_t *pud_base, unsigned long addr, un
- 		remove_pmd_mapping(pmd_base, addr, next, is_vmemmap, altmap);
- 
- 		if (pgtable_l4_enabled())
--			free_pmd_table(pmd_base, pudp, is_vmemmap);
-+			free_pmd_table(pmd_base, pudp);
- 	}
- }
- 
-
-base-commit: 7649ba73f9e7e1e04d0b46213e39c79ae09dd55c
--- 
-2.53.0
+Thanks.  The "mm: Fix page-table teardown during memory hot-remove", v3
+series was problematic, but I now have all four patches lined up in
+Muchun's as-sent order in mm-hotfixes-unstable.  I'll push that in the
+next hour or three.  Then hopefully any -next merge resolution can just
+go away.
 
