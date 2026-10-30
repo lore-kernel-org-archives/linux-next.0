@@ -1,55 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793363188;
-	b=4+B8UxQfm6HKJlevql129BZkZ9Qp/GUNGwe8PzOg9G9/JEothjrf6t/QTjPOH/7u5Zao
-	 zUjnk9Jg96ITL1RUILxkfeHUV2ni3RMjfHV3rlRvPCPJ6IaLQAgTfYHvvh1TkV2muxoyb
-	 6eMTGXC3IiT30umGZD57gs3wAlO+BKGtO6p4GQvVMNLwdeyX8cD7kK9dAkkWW6tPn5Pp5
-	 au7p1652hIJmEXrxWHgqhhU4uQOeTlyY+Z72ZPpIa8UGH8ixWvOgANWyglQr9SxhjMXy4
-	 aGh+nyDNxUNbj2RCLVcISIS+LfiPZYhJhzQFhv4cTgbENQwt3lna6YFuSauqRjKxDrg==
+	t=1793372121;
+	b=nHVmI1lM5AKscmt1kssPzPcocM3GJDUhk2KHNnvAC8iB85QqVptNHBGPRsl2S9J0vdRd
+	 73RFtXowIm0UnfaIZhjf5AuPhUAAJ64zavZnxb2ccIhF60I/bQy2luxzgAkFKuhbXDPdE
+	 tD5aKVWGnywBGWf+CgwV6RguR7vxwei3wcYGCGv23/tVNYTzyDVy9pM5+bPr2iwkobEiz
+	 d2skpyD3V2mkA8yEeo1rn1rWy65e/i5wfwFv29FCsL0Nkr8Ksif7S//stWE2PTo1bQ9dJ
+	 UCxDjvXBoEjwJ1LX5WTyx5gLa9C39RZZCDkFytZN8z7Iztu3BN1yMOeQI1l/kR11y+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793363188;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793372121;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-Cookie;
-	bh=ww4hxT+DO/r5Zqh+aXlvOPoLHkrtotsPxdbejagtKQA=;
-	b=LJFBFpBQeiXAt7bcXDpCqj9eDvTU1j98K1diYzLTgGtcCEvSYXg0RLRFgVAFFAzxW09k
-	 ZHsw+ggSxn6//QCisLPiBp/2HMYmH44TEiyi4hms5E66LgBsjjLerEkCd0nxFZU/+bYSl
-	 UUyjGAhk64Y/pWQ/0in2s/I6hFGIOfzvaSB2yrUCuZLMqHzNP3WyzMOCbp+EUS5HbYQ7y
-	 +sGVIk+j7uCvLLNY7TRiMRbYuKqnZ2j/9l6x8JQ2H+4A6U2AQeBimQ7ZCnOc3JjDW1VOI
-	 8YxTxNktN2urqGbGevRuhqC0I+ZtH7LzW8lWnWSPnpphEoC+BuA71W7gXhoBFyEvEgg==
+	bh=nHkDZPb69+uTPpEwG2sgAEgHzwtN/SsqxRJ2qzJHpoY=;
+	b=nqAC8hsOlDdHb5koAp7tKSmjQIaZ/4bHSfugJuBEAQBk8VPIWvOjm4gmVPX2iFFhrqTf
+	 WHQn60gVEYQdbjGcIYcyGUWgM289lnfxxsD8D6qnVUHfOAkelj3bDrJ7V3cx7McT+f4Bh
+	 DJ7qv4lt94Rk5HOticQPt2rzGpwlgVhYBL0Hgti12CcxV7jC/JRWGc9jRTPJznaomJJe+
+	 CjY15UF/80kDxE7/rlMvrik8icigKp8PbVe6dhrAA/rRJ/BI6qnCig76bdtMo1Feno/UV
+	 BNdhkXzCG+D3pas74Y2/nQrvcp/Um8g6IUvYYND/2xdUzLRGmiLCBFKLoZv80eQmJUQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ZJKc1G/m";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cgZpwmOp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2E1606A31A;
-	Fri, 30 Oct 2026 12:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F52606A31F;
+	Fri, 30 Oct 2026 14:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZJKc1G/m
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD091F000C1;
-	Fri, 30 Oct 2026 12:26:25 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cgZpwmOp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D431F000C1;
+	Fri, 30 Oct 2026 14:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793363187;
-	bh=ww4hxT+DO/r5Zqh+aXlvOPoLHkrtotsPxdbejagtKQA=;
+	s=k20260515; t=1793372121;
+	bh=nHkDZPb69+uTPpEwG2sgAEgHzwtN/SsqxRJ2qzJHpoY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZJKc1G/mQupjhQJygc+z+JNzbL+D3IAjfUTh2GBSHHViZ0YvXPCOM9qducl2cBZ69
-	 WMHLwhTj9RO5RcxGvZz5K5qEwHMtBoeVeF2ZxdUn21FoUzailMlq3Ts2MUY9K1WKug
-	 cnLcYr67xldWqsXTxUFcpGc7krUJ7STA362g9c17rbQD3sNCsAO+lv6QnrbV5ksGP0
-	 kKImrPbeqfxKXkg+FjEXVxT2xAUmXcT002oV0S+YYEZLTNimVFxSJp/2GAGWTg2y5I
-	 AhBIM/QUtSKA1T3g7MDqKXhDwyInARdZN07c1pOIoAv4NuMYtoOpsietsORh63Y5Df
-	 6ZaS+o/8GzH9Q==
-Date: Fri, 30 Oct 2026 12:26:23 +0000
+	b=cgZpwmOpQUBBjHKu7ypMVPNVJD5+hfvw1dikmX1fKSIDuMth4ApCaelzuodAFqH4B
+	 BsS36is5IXIczywHSOHiZsFCUOi70W9OGKiQAmAuY7MqZXsZk2joQm5HWLvOsJeOWv
+	 /tDQDuvOnjz4/D8P4PsHUGecmo3BUK3Cy4oGY0/8bfX+UgzI4gJJOMClccxP/AqodK
+	 QaLgCDNC+pC6GU5TGFYJvd91KOBiGeJKaWo04wWR7d5LMphWMwWix/oksCl/cYwSwG
+	 2VPUCni26FgaX8OnUloumN+BDJ+jmR1Aru4n3fawq8EqtljN+I6m3kM5wozfpXuoQv
+	 l2TY6OcwSZRyw==
+Date: Fri, 30 Oct 2026 14:55:16 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>, linux-next@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: Please add the rxarray tree to linux-next
-Message-ID: <a692c537-cf5a-432c-81b4-372a6bfed69c@sirena.org.uk>
-References: <f2df460b-bce2-47f5-97cf-d70773876019@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Alex Deucher <alexdeucher@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Kenneth Feng <kenneth.feng@amd.com>,
+	Kevin Wang <kevin.wang@amd.com>, amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: [PATCH linux-next] drm/amd/pm: fix up the amdgpu merge of the
+ smu 14.0.2 zero fan restore
+Message-ID: <f3a400f2-93cc-49cb-aaaa-41c978b0b842@sirena.org.uk>
+References: <auNVlhF6DGyFYx10@sirena.org.uk>
+ <20261030104101.3496560-1-sashal@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,44 +63,36 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4bHUU/ZlB7d0teFx"
+	protocol="application/pgp-signature"; boundary="pGs0dLWYcmH7SmvC"
 Content-Disposition: inline
-In-Reply-To: <f2df460b-bce2-47f5-97cf-d70773876019@kernel.org>
+In-Reply-To: <20261030104101.3496560-1-sashal@kernel.org>
 X-Cookie: Orders subject to approval.
 
 
---4bHUU/ZlB7d0teFx
+--pGs0dLWYcmH7SmvC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Oct 30, 2026 at 10:22:49AM +0100, Daniel Gomez wrote:
+On Fri, Oct 30, 2026 at 06:41:01AM -0400, Sasha Levin wrote:
 
-> Could you please add this tree and branch to linux-next?
+> Mark, this applies on top of next-20261029 and is meant to be folded into
+> the amdgpu merge resolution.
 
->   https://git.kernel.org/pub/scm/linux/kernel/git/da.gomez/linux.git rxarray-next
+Thanks, I rolled this in today.
 
-> It's for the Rust XArray (rust/kernel/rxarray.rs), a Rust reference
-> implementation of lib/xarray.c [1][2]. PRs will go to Matthew.
-
-How does this relate to the existing rust-xarray tree:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/Rust-for-Linux/linux.git xarray-next
-
-Should that be dropped and replaced with this one?
-
---4bHUU/ZlB7d0teFx
+--pGs0dLWYcmH7SmvC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrkjO4ACgkQJNaLcl1U
-h9AyzAf+NcVnmFUvj8SMQYkpvELk766PYBteyLsL7vrX4jocsXOCCFOfFKnY/i//
-5FV3vhctsckcuzdm+lb23tW7Kuglv02t32cTyJey3Z3+Wr+6w+amMV+Mt2OH/pK0
-4uCJzBb7g8jHk9T0RoNu3fWP/AOXv7QpLxCrg9+qmbPA2FpIs+8J8wtd+3oo8Xq6
-WRRPizodaUnyWKOJxu3TbqvroCQUQ8dBTU2lLVHMAnGvQf6EeneNYen43x8SqcIG
-WqIG2hrSdQtA4zDg1/RQUjBmhLaWkoigLm6pS4TNFkEQ3AG1YlcabhXN4j2QLEvy
-gWxk+8EMZ2WLsOsK6D/2IlDnYhqp4Q==
-=OeF/
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrkr9QACgkQJNaLcl1U
+h9DptAf9G463TVnL+fB4xIKzLw46Xsj1UfKTW6zWoQR1gH9GPUNqxxncia+YulrV
+t1niT1wOmpSVXqag+y5YtwXT5ov1tuSyklpVLBHG8wyqer4E7vjkn25/eXVEs///
+k6tZfaqruBdDkesUmWrMV53mhTp2iwrX5jhnFAnuiaaQdJNWNVJXQH1vTF9xc6GE
+9Qt3Zy8jf0r127arHRrG4lVoEbL4RqpaLoJrYm9fvm8hxULtRQWyRj9zwgd4EtS1
+znnMHt2Yf7fX7oN2Hd2SZ1MTNPKTx7FVKBwGxYUguHlhr1/zibXCDkebIUzho7wh
+f21Ez5buaCNFqUGrLYn1sMH1qqXL7A==
+=9GUG
 -----END PGP SIGNATURE-----
 
---4bHUU/ZlB7d0teFx--
+--pGs0dLWYcmH7SmvC--
