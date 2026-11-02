@@ -1,50 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793639607;
-	b=RqRsmLpDJylq6dYqSVfF4DLHs30x7lvH98LKTj4R7CuR6cIzlQalyag/WBc7ip/W4W5x
-	 qffMFmXSJUuBPyaH88HY/eliWEnYtC5vS8Sn8lLkzm5Hj3MA5U9ODwY3PveFl1Aa4utPx
-	 IAJUYtXu48UU4+9zfv3A203k4+BRxyNvG1v23btFWqiW0Z3P/W8f4/m6NU2ODbiAERWl6
-	 /W92W2HJZHpZsK1MTluPhYsazhoW3rsB0B2zRKVfYYy6SHRJbq5SNaXSj+X8QPjiScRAR
-	 /U2S1JoK71TTRCQxPld4Pw9NmOGAqBWApMiX4WeyPj6Nit0Wj+fYUX9HDDNKmKzkwSw==
+	t=1793641085;
+	b=lr8VsXaESPxCjo/cOYGtfEklpHPEhUt9Xt0eig9p2CHcURXWYH8/5ATqMKmJWHMEyh9Z
+	 YDrUKdEts4RQSPW2JnoAy8vJVP+42R31PFEUYvmZZwibcoTCPGzR9o247gwOeJZZfqZNZ
+	 edAWY29aKOxH0LCcveJ4eWGexVElpvj6S/9JT2GsztiBmpn26d6TQcLqdKwAzJU3c/d4B
+	 ngMU/GJ0YPS9TV+lTJJjCw9f5GII1Bvv80rC7cj0X1Yn6XKv30uhCXIia0CUyfioFhOVv
+	 flN4XQ+TEB1ZwuZzEe+SwzGjPxjlPmYtl0jnNpRW+gJWeWwzxD0/c8c8+yrce79iJ1Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793639607;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=KJT9fyG/SzvgQ470QBdEmeTGHLcloiA8ra5GuK/54FY=;
-	b=L7HSiU7EVUq0KjqP+k/edqWt6V4BT8VxifLEftw7FK9yxWFABlIG8nvtJmzh3eiZMJ32
-	 hqwJzU3OEvbpfcuUB+Ps7ooa02Qu8GRFCeneAWb6ko2ep3ZKA5TAGyXBGHCL6tPUz47R8
-	 rXPHhUXA8NATl5sxIYkCIXySDHuwZdl1hYdQsZECe6HKHNQ0OOfouxN7sbaKuapQfQ97S
-	 /ob9V2uUBfCyXxymB4v5unoGaQ8Pg53nPmCQ81b+QhNcIyJCCoijZc+tYjfZIMnjbvyig
-	 CiF75d67Rr2Q/7lHb/xGYUZCZsn8euw8g5vM6z7WX1ww1xFVvQbMSKxtGXoMsT8rnWg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793641085;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=0Qc2GxRm6ZmtL5R5rxmm+t/gguLUouIujMmTkOzIADQ=;
+	b=EyvTOzZzCWjWDr7vKF2ek8udkK40gC5f79JJxrCGFl3jF2cLz/q5mWKTRiy/gIa5LEl4
+	 bHv7mtFZZG6dcabHvuIyRriBp0hlXCLe05VaaCBlk8S138T50AKz79UVunNoXc/D27bOg
+	 mVz5Nwi3BzAZ4pG5ktt96fvXMP3YmfguesmZZv7fa/8SapglUtmE3cggF9wz8fxtMcfRt
+	 jQRV7DGCU18IcwfSNjxJWjk++9+Awgijg48388ogAfTKRGKDW08IOfXae0ygY7MGQfrsg
+	 tHhAiYB8wqahOdd5tEEb1kEECoEJCwojNz+9z5hWyFo4mcSsGOTx6SKHzpdFp/IqMbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="PbN/5aQ4";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=glQdKfhX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19032606A91E;
-	Mon,  2 Nov 2026 17:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A9D606A90B;
+	Mon,  2 Nov 2026 17:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PbN/5aQ4
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8401F00A17;
-	Mon,  2 Nov 2026 17:13:25 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=glQdKfhX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F751F00A1B;
+	Mon,  2 Nov 2026 17:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793639606;
-	bh=KJT9fyG/SzvgQ470QBdEmeTGHLcloiA8ra5GuK/54FY=;
-	h=Date:From:To:Cc:Subject;
-	b=PbN/5aQ4qkOtHnnnb1vajyfoWXmsSSPYK9Sc0hjCdo7gmUc3Xxcr4tRQKIaeONapI
-	 mGROUq8Bt7B710XUY9h3AIl7JHTbDzdOCy6S/IKQTUA3WHhfs+F8kM0Pvm2jR/HIyh
-	 0aSRd5/ZykhhkJwIG2TgP0nuh/hZEGkuPbLQ/7jAD7dFzebONZ0bjrx5o5vyjNdnuc
-	 n5RMTLv/42E1rC1Yy3tKyYRoI8zJa4R7xovcYn5zq7llGh8qMGbIVI6wFrj++tq7If
-	 cJ6raylSlHUY0Dns1KbUapwPvWB/Ba7SB9zq/YBGm25hx5pEiYWq5+tcga395g7G/n
-	 U+s3Ts8UDkj/w==
-Date: Mon, 2 Nov 2026 17:13:23 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Nov 2
-Message-ID: <aujEs6JVOY-8LIbv@sirena.org.uk>
+	s=k20260515; t=1793641084;
+	bh=0Qc2GxRm6ZmtL5R5rxmm+t/gguLUouIujMmTkOzIADQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=glQdKfhXfnvLTAVJec8U+gWkjHlBwfd5BqI2P5umGI06FIfjN5vQHJ21atZckMGIz
+	 86yWdEC/zXbFO8cm8s6hTw17KZ4oC7mgb2BYmCEfVzJUG9YTUmDUazR6c3rhtPqnAZ
+	 jszfU6qR/pYZdSxLnCLexIwZOslLJ+6w+Mf1F9P2CpQvWwDV72XIPjBd2BimX90XA6
+	 iYfQRyacHJArM+vI856ZmUvbS+SL01BmXePi/JWlxUHeIKe48UVZ4iQkg3TUeWNi56
+	 Z15X4L5HBC4iOWT7jpNpl/D2aSRHBdzqyqZLinETMn/+/NbvO57NuYK40E2+A4g7pU
+	 yyQ2sYImN6pew==
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	=?UTF-8?q?Jouni=20H=C3=B6gander?= <jouni.hogander@intel.com>,
+	Mika Kahola <mika.kahola@intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: [PATCH linux-next] drm/i915/psr: fix up the drm-intel merge of psr2_sel_fetch_apply_su_area()
+Date: Mon,  2 Nov 2026 12:38:02 -0500
+Message-ID: <20261102173802.1658146-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <auijDJ-9T2YhFE80@sirena.org.uk>
+References: <auijDJ-9T2YhFE80@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -54,73 +66,50 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DI3hDjmhmF84cWpP"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+The drm-intel merge keeps the full update clip_area_update() call that
+drm-intel-fixes has under the skip_su_area_calc label. In drm-intel,
+commit dd038a8d440a ("drm/i915/psr: Merge the selective fetch area
+across joined pipes") replaced that call with a plain assignment of
+display_area to psr2_su_area, which now sits right above it, so the
+leftover clip only repeats what the assignment already did.
 
---DI3hDjmhmF84cWpP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Drop it to match the drm-intel version of the function.
 
-Hi all,
+Fixes: 9665afc4c1d9 ("Merge branch 'for-linux-next' of https://gitlab.freedesktop.org/drm/i915/kernel.git")
+Link: https://lore.kernel.org/all/auijDJ-9T2YhFE80@sirena.org.uk/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+Mark, this applies on top of next-20261102 and is meant to be folded into
+the drm-intel merge. The resolution in your mail kept both the
+skip_su_area_calc label and the clip under it. The label was gone by the
+time next-20261102 went out, but the clip stayed behind.
 
-Changes since 20261030:
+With this, intel_psr.c is identical to the drm-intel for-linux-next
+version. No functional change, since the clip is a no-op after the
+assignment. Built with W=1 on x86_64 defconfig.
 
-The staging tree acquired a conflict with the mm-fixes tree.
+ drivers/gpu/drm/i915/display/intel_psr.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-The drm-intel tree acquired multiple conflicts with the drm-intel-fixes tree.
+diff --git a/drivers/gpu/drm/i915/display/intel_psr.c b/drivers/gpu/drm/i915/display/intel_psr.c
+index 6fbaa262b31bd..288836d4a993c 100644
+--- a/drivers/gpu/drm/i915/display/intel_psr.c
++++ b/drivers/gpu/drm/i915/display/intel_psr.c
+@@ -3133,10 +3133,6 @@ static int psr2_sel_fetch_apply_su_area(struct intel_atomic_state *state,
+ 	if (full_update)
+ 		crtc_state->psr2_su_area = display_area;
+ 
+-	if (full_update)
+-		clip_area_update(&crtc_state->psr2_su_area, &display_area,
+-				 &display_area);
+-
+ 	/*
+ 	 * Now that we have the pipe damaged area check if it intersect with
+ 	 * every plane, if it does set the plane selective fetch area.
 
-The turbostat tree acquired a conflict with the origin tree, I did not
-merge the tree due to the extensive conflicts.
+base-commit: 2637bdec0535a2044cd830eba9a79363651d9043
+-- 
+2.53.0
 
-Non-merge commits (relative to Linus' tree): 1906
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 435 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---DI3hDjmhmF84cWpP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmroxLIACgkQJNaLcl1U
-h9AQ5gf/d7KMBbGzYD3iViK6rEcH+c+TqQyo1LKPhJ6cLjGoMqPDiHmr9o8a2k30
-0eSIetjDyymPo4ecr/cjp1ehMSz10Nc3vvDep2wNQStIxQeq6p6ova1a8Hw+El1C
-BEbUv+35z5V3PvL9626TEKUpRLu7r8entLbXqYND9z0NPGQSzWD2CXfBGpsdAH2I
-8HovecN13YErxbiWXNa+bqJNCmvQV+UEfELT+ciA+6H+QEE7yE8ft3Txp4flzrCe
-YUtLvCOiwprHwMS3Fuo69JeobWljaDYAxP34KEV0QqI2tZPTbtfjSiaxGUkr+CHc
-nQtNSFDkYBxzuCUf1fZEeqTYs3e9FQ==
-=3Hcd
------END PGP SIGNATURE-----
-
---DI3hDjmhmF84cWpP--
