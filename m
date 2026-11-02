@@ -1,51 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793644948;
-	b=dImd+DQIsEXLBrpVnUyIUs9TfEiHf5PqNqY5R0xYzpNR7+YiJFtXdAZ3J+MwYQRhgc6c
-	 BGyTWk5mYmPJfAYGeU6Joa8RQpT5KaCdVuqFhDoPgCSphIeRSMiOe+YxMM+yFMTTi6eAL
-	 Bdny/FSMZKApqOnJsN8u+pNKgmYDjYnPHxk+vurln5wPupf9DL467+BSkrSCk83kUU3fq
-	 XtjHLHPRWcKZ8wtRBXXvRr/kceYj7WmDCaxWrpFy86SqcGWUahKMpi3GIJV8WlSiYJjQg
-	 PEMKR2QWI/HwmEg/VTRUm037VpGEKqIN26GE6xv32feU9jebNOq+/YHQCEJrVVb2RKg==
+	t=1793645478;
+	b=ghGDnun3pCAuM4HMjS7nEQ3Tg4pOGFz6tohuSZ7FqClcsgtpXjoiPo3TmSbq+47fOmWX
+	 jOSKT3UcMrXdkMF0OGOyI9hjWpVJI205YjfUWqVw3HM70gqNac1blBE91ReRclgkxkgv4
+	 iNNzyeI9JjVrciCsFM/gW1pHhTb8bRNPou9K37/i2lBqDsTbhiliwzIDWhRrnah/fgihh
+	 FhzKBE3P+iQbIkwQ+uRjxSpEvPDNqwDd+EIBbbhdnq7va6unFSIqojB+ku4kSKGo5AaQ6
+	 WEiWg6INcQTNIqZmOvAcV+siB4RnIE3KM9GQvru5ce+6Vq/CuSFYBYIhPs15fTDtgOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793644948;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition:X-Cookie;
-	bh=0t//kBYKLxqzlV8oCo8GXvLxhgRWVsUvG1mftC8o0TQ=;
-	b=1vR62EcSUEPa2UBIlAU7dKQ7kwWNB0g77KeSFzQPb8EV+KDkXbIWd3Mft5rAUvhBZyLp
-	 nnoWMoSVJjVJm1QBE3TEDt+ylx/Jwv+NpyiP2dJP6jqLURSgW2eXi83MZ9Zpg5tMw7Kmu
-	 UCxTCrjfiyro28LWd0u8c5u2E+ANUf+WhYs2/mYmUDZseBYGfW472aKlzwm8U9qPH6ZNK
-	 bNH0dschtlIOf1H83KrtIjCbiqDwcRpmXJtE+FlNrQ4Gz5DYtb7WlpWJGhhqfgZAHpirO
-	 Q0Uyg+oWbUgtomXCReoHL0IIN3LxoP/wU6qu3POsqW3LSfcku9W6psFOW6NWmcGOQsQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793645478;
+	h=Received:DKIM-Signature:Mime-Version:Content-Transfer-Encoding:
+	 Content-Type:Date:Message-Id:To:From:Subject:Cc:References:
+	 In-Reply-To;
+	bh=otXeKG6/gRRVfdqsTiK4DIFWyfU/stsI1BzcXuDzzyo=;
+	b=SaqIfToDkp/v5IXeGufuKQgEVXsc0MVW4IIsOfj05jz51ltvxIKf3TSIQMh5NrsGPvBC
+	 cNxzKB2oxpMu9c6OpKDySpy8HyqpdjVzfFjzaNFxDPv3rqEiymZXbjBPkIRiefQndA+Ud
+	 l3jF3TPmOT6UpboQofa9dfsyYbkDC8E4WLfpa6iKM0d/V5PFjpAkIzLoUyC/NYZHRhNoL
+	 T0GzwGwmZ3lo6rC1YB2EztIBx2HD4vfHi0Ees4SmnXheihJJyw/fckxybCwA3APFc8tX8
+	 FjDUbBITHTjtFSLsTcGPRszTrreh48DQRDXc7dM3eWbcAt/pi4RX5mtgISyGBQC7/zg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R10gR67L;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T8e9UgiF;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C08606A324;
-	Mon,  2 Nov 2026 18:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C41E606A326
+	for <linux-next@vger.kernel.org>; Mon,  2 Nov 2026 18:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R10gR67L
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC851F00A16;
-	Mon,  2 Nov 2026 18:42:26 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T8e9UgiF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B5D1F00A17;
+	Mon,  2 Nov 2026 18:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793644947;
-	bh=0t//kBYKLxqzlV8oCo8GXvLxhgRWVsUvG1mftC8o0TQ=;
-	h=Date:From:To:Cc:Subject;
-	b=R10gR67LobDagMZG931/Nsz8tt8Qh25jTxMZvaSXglnG5R9cF9p5+ItmfbDUkq9nc
-	 nDAm9vXvLOiViWKwrGOHvpCMHEaQ279iM8M9F3MA7ilAjvR3gzce3lyDFRJ8KbuqR1
-	 Hq1OkR+EqmCHjipl+U09kW9icjnKlu/CoJxSaaGhlqak3Sa3skXoHbGdP81mjfMTUP
-	 0BceFrznXQyULUPmBpl4tPmc/5F/lN+JsqmE91288uFe+rq/0w2vN3+mvHNMtcYyLc
-	 KJr9raFUCDhBuvXslOtIpZepLnql9LjwRCLLHcFz7VgYxJXKLCpaQyHCvpbMLvYkJr
-	 yL/nFJr1P6qvA==
-Date: Mon, 2 Nov 2026 18:42:24 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Airlie <airlied@redhat.com>
-Subject: -next status as at v7.4-rc1
-Message-ID: <7c965777-2d84-4006-8c12-862e4e020b73@sirena.org.uk>
+	s=k20260515; t=1793645478;
+	bh=otXeKG6/gRRVfdqsTiK4DIFWyfU/stsI1BzcXuDzzyo=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To;
+	b=T8e9UgiFwdH6mxjIKF0JFIdqmskIpM26NiN2xPXdEp8Lt++6ltlhiWTXkrLr0UxgG
+	 EoFPlz4BHgbtx3aZPyPcK9+dK8xmrk8zIl9IM/+9iMg1psdbDySeKULyTtlD8ObXIC
+	 hjoLhX2P+n1KRlHo4ZTXdAt4qXNXgikreECS/G7mRrwp2TtfbCOk0l0CHPUmZTulQ1
+	 o6an0XahklNEV+Ea9qEwgJXBMmliOcPe+h4WwoYH5rEcAVUAmfMatHBB4AUfH7Wydp
+	 65Z8Kuw1PG7EYHyUTwOREIQ/RUg/CWq4Pgezthn9qD65Z3HygAYRyWaahNhmFNB5TI
+	 uR9qLnvaUMYaA==
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -54,103 +48,69 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZFfrlkMH9QCX+Imw"
-Content-Disposition: inline
-X-Cookie: Used with permission.
-
-
---ZFfrlkMH9QCX+Imw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 02 Nov 2026 19:51:13 +0100
+Message-Id: <DMKY979I29AF.BS1DF5YAZMOY@kernel.org>
+To: "Rodrigo Vivi" <rodrigo.vivi@intel.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [RFC] linux-next: replace the DRM trees with a single
+ drm-for-linux-next
+Cc: "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Jani
+ Nikula" <jani.nikula@linux.intel.com>, "Joonas Lahtinen"
+ <joonas.lahtinen@linux.intel.com>, "Tvrtko Ursulin" <tursulin@ursulin.net>,
+ "Matthew Brost" <matthew.brost@intel.com>,
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Alex Deucher"
+ <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, "Mark Brown"
+ <broonie@kernel.org>, <linux-next@vger.kernel.org>
+References: <aujZcJBUyQ7iX_PM@intel.com>
+In-Reply-To: <aujZcJBUyQ7iX_PM@intel.com>
 
-Hi Linus,
+On Mon Nov 2, 2026 at 7:41 PM CET, Rodrigo Vivi wrote:
+> Hi folks,
+>
+> We'd like to replace most of the DRM trees in linux-next with a single
+> branch:
+>
+>   https://gitlab.freedesktop.org/drm/tip.git#drm-for-linux-next
+>
+> It replaces these entries:
+>
+>   drm/drm-next, drm/drm-fixes
+>   drm-misc/for-linux-next, drm-misc/for-linux-next-fixes
+>   drm-intel/for-linux-next, drm-intel/for-linux-next-fixes
+>   drm-xe/drm-xe-next
+>   drm-rust/for-linux-next, drm-rust/for-linux-next-fixes
+>   amdgpu (agd5f/linux.git#drm-next)
+>
+> drm-exynos, drm-msm, drm-msm-fixes, drm-msm-lumag, drm-nova and etnaviv
+> are not part of it and stay as they are.
+>
+> The main reason is to reduce the conflict pain that Mark constantly faces=
+.
+> All of them should be handled already when we are rebuilding drm-tip.
+>
+> During this work, I realized that drm-xe is a big culprit for leaking
+> future work without a blackout date from -rc6 to <next>-rc1.
+> So, another quick solution would be to get a drm-xe for-linux-next like
+> the other domains are doing. However, I still believe that this unified
+> one will make Mark's life much easier anyway.
+>
+> The unified branch is rebuilt by dim together with drm-tip. It has all th=
+e DRM
+> -fixes, drm-next, -next-fixes and driver -next branches merged, with
+> the conflicts between them already resolved on our side. From -rc6
+> until -rc1 (per Linus' tree) the driver -next branches are left out, so
+> nothing for the following merge window lands early.
 
-The second half of the merge window ran pretty smoothly, and there's not
-been enough time for people to do too much fun so everything is quiet at
-the minute. =20
-
-I do see quite a lot of commits that didn't make it into mainline over
-the merge window, most of that appears to just be trees that rebase
-routinely so the actual code will have been merged but I do see a lot of
-DRM commits where that shouldn't be the case - copying David in case
-there's something more than just people not adjusting what gets pushed
-into -next going on there.
-
-No trees are held at old versions but I dropped the turbostat tree today
-as there seems to be some rebase confusion which resulted in it having
-something that diverged prior to whatever was sent to mainline over the
-weekend with horrible conflicts.
-
-Trees with signoff problems:
-
-  mm-fixes	(missing author)
-  mm		(missing author)
-
-(the same commit in both)
-
-Non-merge commits relative to Linus' tree: 1906
- 1782 files changed, 77157 insertions(+), 27681 deletions(-)
-
-Top trees adding commits to -next:
-
-  238	amdgpu
-  151	mm-fixes
-  146	drm-xe
-  85	drm-intel
-  81	mm-nonmm-unstable
-  57	btrfs
-  53	nfsd
-  50	sound-asoc
-  49	bpf-next
-  47	rockchip
-
-Trees adding duplicate commits to -next:
-  60 amdgpu
-  23 turbostat
-  13 nvmem
-  10 drm-intel
-   8 drm-xe
-   6 slimbus
-   4 fastrpc
-   3 socfpga
-   3 drm-intel
-   2 sysctl
-   2 riscv-soc-fixes
-   1 vfs-fixes
-   1 at91
-
-Top trees with commits in next-20261019 that didn't get merged:
-
-  210	mm
-  96	amdgpu
-  91	ntfs
-  84	drm-xe
-  82	ksmbd
-  81	drivers-x86
-  69	ieee1394
-  32	paulmck
-  32	btrfs
-  31	mm-nonmm-unstable
-
-Thanks,
-Mark
-
---ZFfrlkMH9QCX+Imw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmro2Y8ACgkQJNaLcl1U
-h9Ao/Af9FddnjZSc3f4ceOLuju6+YAWpEwwFaCQfRJsXvf1xXv9qmm3Nh5uOrO2N
-H0otSvHPxqQweWebOGZJrqtUgDOvAMXzmasLNYjngS+9NsBWwVUJkUOjdaI31KER
-fMdZUhJwxyGKLYAs8x/YSQybCQ+8qMv5yOukjzB6ONZJlhHJjLJ+1LYCrmRjzBFA
-irQI2MNLKMW2V1PwUpdlNUnYxZRc5t6ZScTopzFnzdJjcZt5mpPOtxKAK9MevE3Q
-N81ollNjAM9z2rqt0Pf+S7y/scSz9MBecihBmLx6//R0cyHPVlpnIMsy9E4VkWlo
-U5cGQ8IbzUp5az4sX0AzbMuc+MFh5g==
-=m/G9
------END PGP SIGNATURE-----
-
---ZFfrlkMH9QCX+Imw--
+Seems reasonable; I assume the logic for individual trees would remain? I.e=
+.
+-next goes into tip/for-linux-next until -next-fixes is fast forwarded? IOW=
+,
+trees keep control over when exactly -next closes for the upcoming merge wi=
+ndow?
