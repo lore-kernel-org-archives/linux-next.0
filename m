@@ -1,52 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793624623;
-	b=WXuq46hhzIKD3AYEPRaqBltwUmY9pVpBQ74rNKjqmdOAGd2c6qOsT+eJxfUrYudQVghJ
-	 hWqxIzjga2e0NOjf+Ct10nfmj+yO8by/DP9YJM1CnTsbmucF+Ta6EgbVPHUeg5Vos82Tm
-	 76hAEBIs4kKP0CbEkKD8N6KMzHi74Or8b9spMEl4UucjbCeFIYFHRrf/b0pn4Or3MeifS
-	 vaEA3D4tUmeqN8ryRF7zQsfI0u0BcbZIaveped/bFgTm1MZqlHhRGquYc+yH1FYGVpuic
-	 wWG8Dub6vNs0oPlDcK4Zvu88MrmoZHDiXzu6LvcFXAmgqN7DtHAL95uDfhWZIlJcBZQ==
+	t=1793628520;
+	b=uev5ROoWPnYSwaVqUanWyIbic0i0x/BkC68clgXy7z+8FN8ySbROI47b/eDnX9QWQnt7
+	 2p79W/5oZJle3yHfyNgyYa5usqJm2Ja2GmfjITgjMO2Nrojn1pQYf3pUsCrkNlm6vep7a
+	 NuTbuDp1sJ89Uc+4sZrUPBJtpZJnQHQG0BX7R6kunFNd0nnP33hTEEyv1aEFxTpdbuzXq
+	 /uAIrFfRbrFg6O8Qt61S+vTXygGL6WT9F0YUFtiNguN5WLXQiwrdgTf5YEH27vb8rBw6T
+	 CggmtnKA1uBXmoEcptao62gKTDn+oJqQFAvcjsWgivVdve7feL0vHu7iYNs3xuezrww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793624623;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793628520;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=GhahHf/z9a1SpWspTc2G+jNJcATeYX6H/XNF5eqjU/4=;
-	b=HOOi9d/m4+SeRupEseWxmmFalG7DvB73Qb2BqOIis0VLRkxIqwT1XUquK5TbrQJo4w+y
-	 1NNIKuL3iXH6menS5KfwhaB6/xYujTFCctFkuuJFbENj3GHqlJSQ0pW2ToeOEDfyQ96WO
-	 iWSq3MUqjYSYGrLKevh51PzffYsVXXYx/rTMi7+uLNFRyw2xc4GHn/Rwwm9ijkFkQV+f9
-	 QpQj4Bt4ByX/4BXfZYSTidu4CXRV5HWBbp68lIDKabZGTPd1mbttZXBCF3lzQ0U9dtV7O
-	 h+ZdPSYj+ikDCYXnae5gJngM5ZzoLNqNkg5eMlFDTxq38wEIhDItFaQfJJoYtUjscRA==
+	bh=+aBypL6dTRQngXP8lrpR9n29mZ+faRZiRjbSPzxb8tI=;
+	b=S1sczNdI78qe3ZpAgqdvBwAZNA5hzciZPVOj8NFpcuDJZjdtrbQfgATglqnNXQeMr2f2
+	 bjCbFA6atjN5u3TRiuwJiYQYHeXcoeV6E3x7XokSqo5gFBqfJUZb6PbGAT9XZGLgGs2SZ
+	 DTOnKzNKyEwQ6NgfBMFtuBuhzwTuSSifSO8V2EV8RmawD/TRDO7Cuo6UkeVoSCSg1BWXG
+	 dEF/es8syIxz+BVwzTU/Chelrs+VK+P3c3jhaFj6emIb82i1diHb3IHr75WUyoRozm0bS
+	 7LCOVfvJ0a2qakabe8qB1NufdMz4rhXA+P1HW9fGIJrp0saJwa/79tUKrHgI5GaMExQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i5U6CWpC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LbHYCId8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3BD606A32C;
-	Mon,  2 Nov 2026 13:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB649606A326;
+	Mon,  2 Nov 2026 14:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i5U6CWpC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFF61F00A16;
-	Mon,  2 Nov 2026 13:03:41 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LbHYCId8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B3781F00A17;
+	Mon,  2 Nov 2026 14:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793624623;
-	bh=GhahHf/z9a1SpWspTc2G+jNJcATeYX6H/XNF5eqjU/4=;
+	s=k20260515; t=1793628519;
+	bh=+aBypL6dTRQngXP8lrpR9n29mZ+faRZiRjbSPzxb8tI=;
 	h=Date:From:To:Cc:Subject;
-	b=i5U6CWpCflpR9ofnMvaQPwxaA5g8d00JLQK3yiug6hvpMsFqreB4fasgNjPPgZONj
-	 2JsW/ee/4n2XYTZgUaaJXwayi/MPcZmqwRx6BKVxc3KbB0UVGF0liIBcsav48En2EH
-	 ItMZx5P150YTEp7IJLHixDZl+A4kdbs4P83PgB9F72oasyfU0i+4sJAujY1dVyQh2R
-	 Eo9v96uB39/6u7yQxb1KNVfIB4SSb1YNgCfOU1WqLlN+4KovK8JN4VLtB4quXy32KU
-	 v/uwCjVUEoeD+xpigxHVjDBtis5nARmHypi7AhpyCM6EypAW9JbyXcnoQSB5/MyDy3
-	 pQk9ROi0DcqnQ==
-Date: Mon, 2 Nov 2026 13:03:39 +0000
+	b=LbHYCId87toupimJ8yFIvEarDNau0+Wm1mF6kFtse0IbY3lxPpHd/yI9g2T31jDqt
+	 ITaRT481SJ9gF+PlnDxcyatjcUmOikTato42J5c2hfSi5qeha1GB/2Smm015D3OjVn
+	 oAVQFNdjdaj+j9Thr5erVAE51vLHHmL2w5R07TdyA91Tt+cSKi0ubQ2Aihsgg6kbel
+	 xhPtX4G8faR5EXc153I7NNQ0OxHNqiEk8/l0wlCOME3MAri8TIeBnHc4XsFSLZkH0Z
+	 m1fVAidGovsR/yPO89Iy4Afw5m1gwBjGCl3kG3tsBrBF6ItpvSzJHEjnelGluCq7eD
+	 vFREkqqHXPJ9A==
+Date: Mon, 2 Nov 2026 14:08:34 +0000
 From: Mark Brown <broonie@kernel.org>
-To: David Hildenbrand <david@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the mm tree
-Message-ID: <auiKK8qMNyXVpN5R@sirena.org.uk>
+Subject: Fixes tags need work in the bpf-next tree
+Message-ID: <auiZYnNYLEgcR6TT@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,33 +60,41 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zbHLEATU/J4mGlGw"
+	protocol="application/pgp-signature"; boundary="wkwjSDYh2aF5NlZk"
 Content-Disposition: inline
 
 
---zbHLEATU/J4mGlGw
+--wkwjSDYh2aF5NlZk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+In commit
 
-  cd240bd6c820c ("xarray: clear the new head's parent before freeing the old head")
+  b73855c31c7be ("libbpf: Enforce program limit only for loaded programs")
 
-is missing a Signed-off-by from its author
+Fixes tag
 
---zbHLEATU/J4mGlGw
+  Fixes: c9b2a0975c39 ("libbpf: Reject excessive program counts in generated loaders")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format='Fixes: %h ("%s")'
+
+--wkwjSDYh2aF5NlZk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmroiioACgkQJNaLcl1U
-h9B3BggAgdYIa1kei6n+A27k+lSrbSiW6+Nh5IB5z5AbwNkRab42f/eJOi7eWEn5
-PhsVwjwKLPaRP7CceGnC8pelQX/FEOsLXquTQXm5/28DSj+utI22LOMRDGqhB2Km
-xr6UQD4UUlLjmPSawogJ+TYow+viKj+5XWcMYF7OtrfPLCIYsJUkN6eMEg54vzzY
-25A9DDEGiL9Ln1H86+TB4rfiVftf5qS26kHd1cUaYj3RgIjCLmc1X6AiFLC6x8ph
-H+i8Z0Dvi3hwT4ERooYc9TbG0pEScYLN7K8WkTp/YtL29cDwicsG+AlX9WKv93Nm
-eGDjaZ3xqXpueeI35VkAx3Tns11WLg==
-=eC9V
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmromWIACgkQJNaLcl1U
+h9BxSwf7BzEHGD35ZV1PCUyFainmKf9svpXDsXx+SaiU8mYWORbWGurMf6iRWMQI
+5LTkwFrl9/mRoKBxcZTo8qJtEmt7xyIFEHcooQoQaDc2M6sYgR2Alja+0l7n2nT4
+HFJgL4ANd23gRf5qoDugHxNxcc6K4GOKiKnprqX1sVhR7NcDGY9N1ldVrBNviyuE
+M8VOZ0A1o3sxwDWpIH4r5X57lJIjm0wCMbw7iNlgzA7q8PlGr6w6QFReYCo9yhmN
+kTtdNXJmmtGTzwVLpV86Q4KxOq7qiDaZ7XiOm3agNeqZIuqQO/Ljcc9AuR/8TnuR
+XaRIC4KVRzfryR7yH/lgNjgl7H7ciA==
+=3PmE
 -----END PGP SIGNATURE-----
 
---zbHLEATU/J4mGlGw--
+--wkwjSDYh2aF5NlZk--
