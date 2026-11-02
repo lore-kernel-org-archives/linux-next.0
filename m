@@ -1,85 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793638598;
-	b=Zl+ptTwi+oNTTvsi1KxCbRkdX9wT0Fgby+ULZaY3LFN8rprixInoPyWOv5Lb7rg4OUO5
-	 zGDU2bzHsTMAv28pYOQbgBX+zTeiLaAdOywlJRaV5OC/XS9cn+o92LWi3/1K6V8+VgnuV
-	 3Y0Nnzls+mCXDVOfGuiHPFrJQDEzH36jJ5xpQN3lvu62jdqLJx6G88DHJc9U4/jbFIZM6
-	 0f/rArcf1OcX7tR10PnsEbn5UXdQaLKdUsRyndRVBErdjMYRG2DSdw48/0qHhRhWaqpKH
-	 AzdBCZ66SdmT2DhRKr0bZEPLSEWxzpg5anj+3IB8MvQfg+sgDLHhJY5D8vvCw3TutLA==
+	t=1793639607;
+	b=RqRsmLpDJylq6dYqSVfF4DLHs30x7lvH98LKTj4R7CuR6cIzlQalyag/WBc7ip/W4W5x
+	 qffMFmXSJUuBPyaH88HY/eliWEnYtC5vS8Sn8lLkzm5Hj3MA5U9ODwY3PveFl1Aa4utPx
+	 IAJUYtXu48UU4+9zfv3A203k4+BRxyNvG1v23btFWqiW0Z3P/W8f4/m6NU2ODbiAERWl6
+	 /W92W2HJZHpZsK1MTluPhYsazhoW3rsB0B2zRKVfYYy6SHRJbq5SNaXSj+X8QPjiScRAR
+	 /U2S1JoK71TTRCQxPld4Pw9NmOGAqBWApMiX4WeyPj6Nit0Wj+fYUX9HDDNKmKzkwSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793638598;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
-	 Cc:Subject:From:To:X-Mailer:References:In-Reply-To;
-	bh=fwjIWZZN+Xku/wuznq5Djc9dY6oT6GSmRAkG+xrsrHw=;
-	b=oETHe/YCU5ZUODycE3E8w9n/8BKYWEGSqf6r0PsGUah80Nxqfme6jPvd0Glqb7NmybpO
-	 EEqLvXvJVz4I3BbvqZhXyp/taiu3OHfKCgYIu2mH5i37pUk6yoHS8dEvLm/939Vzld5ee
-	 nRsao0nes5oUULvUjKWAbyaafBsKoArKsoWRjDdjZt2QAXrep/efbMEY+XmId8A9kOzBk
-	 FkCw5B0Js/OLaZu5tnGwS040a0B8sHZj0wn9w3dg7JIpwyZ3XerzzxSY1dtcReWlLkjXc
-	 fo9rJ7Q5My21aTzBtobhWsY+MZNS0nBd4bCYbZu57odOFCSEi/Xuf3KVfVxJZCykzkQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793639607;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=KJT9fyG/SzvgQ470QBdEmeTGHLcloiA8ra5GuK/54FY=;
+	b=L7HSiU7EVUq0KjqP+k/edqWt6V4BT8VxifLEftw7FK9yxWFABlIG8nvtJmzh3eiZMJ32
+	 hqwJzU3OEvbpfcuUB+Ps7ooa02Qu8GRFCeneAWb6ko2ep3ZKA5TAGyXBGHCL6tPUz47R8
+	 rXPHhUXA8NATl5sxIYkCIXySDHuwZdl1hYdQsZECe6HKHNQ0OOfouxN7sbaKuapQfQ97S
+	 /ob9V2uUBfCyXxymB4v5unoGaQ8Pg53nPmCQ81b+QhNcIyJCCoijZc+tYjfZIMnjbvyig
+	 CiF75d67Rr2Q/7lHb/xGYUZCZsn8euw8g5vM6z7WX1ww1xFVvQbMSKxtGXoMsT8rnWg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gQPBCdN0;
-	arc=none smtp.remote-ip=209.85.215.169
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="PbN/5aQ4";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A94606A32D
-	for <linux-next@vger.kernel.org>; Mon,  2 Nov 2026 16:56:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 73A94606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19032606A91E;
+	Mon,  2 Nov 2026 17:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gQPBCdN0
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-cdaefe02d5dso1748280a12.1
-        for <linux-next@vger.kernel.org>; Mon, 02 Nov 2026 08:56:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793638598; x=1794243398; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=fwjIWZZN+Xku/wuznq5Djc9dY6oT6GSmRAkG+xrsrHw=;
-        b=gQPBCdN0ky7g6NTtQ3EStf4AoqYXYe0mvkYYWBdgWkEBAAYnEd9QMLgNWRc9w4B4U0
-         K3raciejRcckVb6b/RpzthiCzmLRJPgBw7TcktVk1pzWCQYoHoTFP6nE32OkMzCJ6vW/
-         40PmJnMenMr3LD94LFviVg89uX0p51VSaHPXIOA9k+T7X9D+DaMg7AbPXuBp6WJDlUxx
-         1YjjOmDZ9I6qjaONDe7tdvrT0hRKbXGDb+zzYzRXvjGX5swDjiMeMJULBwNkBlGdL7qi
-         BHpTjztF2qgxLxOz1bO1pctvkcD/mXDaRcY9CBbEl3Kc8iSMMjDo+q7At8EfFywjycZ7
-         PJgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793638598; x=1794243398;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=fwjIWZZN+Xku/wuznq5Djc9dY6oT6GSmRAkG+xrsrHw=;
-        b=KmweWYI4WJ5KGgLXU+uhaaSrurWy4zIxgPHa12+k4QRvDiDLF2Uqg4UgAsVZkF9pQ4
-         xs2jGSd03tZKrD9WBjBaYZCTa6uhIIEJcjma+84hSkQohDp/u7hsNzp3Ys1XkVa/ACh+
-         tqCU6yHOToL4BKns9MAe4ikOTcOtp98POE8X+oS/clcPsNK6mq9L+RfazDzEUMh1+vN0
-         uRLCMpbiCErsoxrlqc3nV/8oIjR434U6WMJkhAWKydA8obkdEfGT+/AiuITtVFiVIzF6
-         lGbBw+mQTjMTDb2OWyxnxPmGaOrfl72WhXT8Jn7PTe1o8BO1nmSFghPHDvsDafrAyWA/
-         gL5w==
-X-Forwarded-Encrypted: i=1; AKwUvBximLxl7FxASQdHxLx4f35hXxrQkm+ZkhNuoXwQ0jev+je7jnGFWNp7YP8C5gmByP7/3zRcqh3Na0dj@vger.kernel.org
-X-Gm-Message-State: AFq9FYLtpmWaJxtML4U/RyH355No2/g3wx/77hr8Xlk1PjRagrcltzF/
-	FRR1Nw0PtGFVaft166awnIhBXVFxEy/G5c6wfXSukOllkj8jn85c4M1XFwv81g==
-X-Gm-Gg: AYBFou1WRXIRLSgmh4X6jtvSqv/pkituxVLcWe0Yhl2KYs3d02Ei3+zNF7B6/A2rvYm
-	0BIFpSEqaZS0F//TJmPZe8Km2an8Ez0vMzIQDbB0WilnqhkyqFSUhxuqXk+ffiT/LFwIJSoeNm3
-	tmtYd0MI+kLWP1DHo2BRRPdsLcIpIxQm5wQx8+RYqToxsP+yX41hFLizI7oq7JRItDiCKf9tCPk
-	7kEaTfKG5etUBl7L+wEB0rpLqHDXuXvxYn9JoLvxkbw6OKiWXsnEGSbsWEYf0BxhkIGRBcY0Pe7
-	EJGZgSp3MP3T39YhCqFrPoFZxdAg+uVfHirE4tfkE+YduTOKe3Ajr5A/HU4N6X3hDxF2qYhvfx2
-	4bAgXof5qymBscg/NmQg87djzp1AWp3NUc+o6WoLOE7Zk6LHACI/7mtgHiDvhjkiCZQLiYpF7Mk
-	MXSYpqrVJqpfDAa26yF1nWx82F3iI+h5loLHzyaO9MaChAxf1RbM2ASOHd0aQyE6uFEcW+8BbMN
-	88WHDkMyiyNhEwtU4dP8ZeU0C0DOQunAXT8BDJ3tkAfa5j7Ns283MAUantpT/7VyfTAcRunBEnj
-	kulRZRUz0vpifZMKufoQxWJalEio0R5mYFjhAzVYuiMvnm1ZuWUtPD/mR2WEl/eOGtUv/gw/dEp
-	jHDfQ0m/hYshj/PhsIkWhGD/mGGHq0W8Q4Kst3TBUvgpIavpT/1gv6DSP
-X-Received: by 2002:a05:6a21:b91:b0:3e2:ea7:618 with SMTP id adf61e73a8af0-3e928c5ffd7mr9018818637.18.1793638597595;
-        Mon, 02 Nov 2026 08:56:37 -0800 (PST)
-Received: from localhost ([153.61.198.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8aada6c2c28sm2229529b3a.43.2026.11.02.08.56.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2026 08:56:34 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PbN/5aQ4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8401F00A17;
+	Mon,  2 Nov 2026 17:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793639606;
+	bh=KJT9fyG/SzvgQ470QBdEmeTGHLcloiA8ra5GuK/54FY=;
+	h=Date:From:To:Cc:Subject;
+	b=PbN/5aQ4qkOtHnnnb1vajyfoWXmsSSPYK9Sc0hjCdo7gmUc3Xxcr4tRQKIaeONapI
+	 mGROUq8Bt7B710XUY9h3AIl7JHTbDzdOCy6S/IKQTUA3WHhfs+F8kM0Pvm2jR/HIyh
+	 0aSRd5/ZykhhkJwIG2TgP0nuh/hZEGkuPbLQ/7jAD7dFzebONZ0bjrx5o5vyjNdnuc
+	 n5RMTLv/42E1rC1Yy3tKyYRoI8zJa4R7xovcYn5zq7llGh8qMGbIVI6wFrj++tq7If
+	 cJ6raylSlHUY0Dns1KbUapwPvWB/Ba7SB9zq/YBGm25hx5pEiYWq5+tcga395g7G/n
+	 U+s3Ts8UDkj/w==
+Date: Mon, 2 Nov 2026 17:13:23 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 2
+Message-ID: <aujEs6JVOY-8LIbv@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -88,34 +53,74 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 02 Nov 2026 16:56:33 +0000
-Message-Id: <DMKVTEMTLA43.8R6RXYD1UMWN@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>
-Subject: Re: Fixes tags need work in the bpf-next tree
-From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-To: "Mark Brown" <broonie@kernel.org>, "Kumar Kartikeya Dwivedi"
- <memxor@gmail.com>, "Eduard Zingerman" <eddyz87@gmail.com>, "Daniel
- Borkmann" <daniel@iogearbox.net>, "Alexei Starovoitov" <ast@kernel.org>,
- "Andrii Nakryiko" <andrii@kernel.org>, "bpf" <bpf@vger.kernel.org>,
- "Networking" <netdev@vger.kernel.org>
-X-Mailer: aerc 0.20.1-355-gf870624f6c37
-References: <auiZYnNYLEgcR6TT@sirena.org.uk>
-In-Reply-To: <auiZYnNYLEgcR6TT@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DI3hDjmhmF84cWpP"
+Content-Disposition: inline
 
-On Mon Nov 2, 2026 at 2:08 PM UTC, Mark Brown wrote:
-> In commit
->
->   b73855c31c7be ("libbpf: Enforce program limit only for loaded programs"=
-)
->
-> Fixes tag
->
->   Fixes: c9b2a0975c39 ("libbpf: Reject excessive program counts in genera=
-ted loaders")
 
-yeah. it's wrong, but it's too far behind to fix. We don't force push to ad=
-dress such mistakes.
+--DI3hDjmhmF84cWpP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi all,
+
+Changes since 20261030:
+
+The staging tree acquired a conflict with the mm-fixes tree.
+
+The drm-intel tree acquired multiple conflicts with the drm-intel-fixes tree.
+
+The turbostat tree acquired a conflict with the origin tree, I did not
+merge the tree due to the extensive conflicts.
+
+Non-merge commits (relative to Linus' tree): 1906
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 435 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--DI3hDjmhmF84cWpP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmroxLIACgkQJNaLcl1U
+h9AQ5gf/d7KMBbGzYD3iViK6rEcH+c+TqQyo1LKPhJ6cLjGoMqPDiHmr9o8a2k30
+0eSIetjDyymPo4ecr/cjp1ehMSz10Nc3vvDep2wNQStIxQeq6p6ova1a8Hw+El1C
+BEbUv+35z5V3PvL9626TEKUpRLu7r8entLbXqYND9z0NPGQSzWD2CXfBGpsdAH2I
+8HovecN13YErxbiWXNa+bqJNCmvQV+UEfELT+ciA+6H+QEE7yE8ft3Txp4flzrCe
+YUtLvCOiwprHwMS3Fuo69JeobWljaDYAxP34KEV0QqI2tZPTbtfjSiaxGUkr+CHc
+nQtNSFDkYBxzuCUf1fZEeqTYs3e9FQ==
+=3Hcd
+-----END PGP SIGNATURE-----
+
+--DI3hDjmhmF84cWpP--
