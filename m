@@ -1,61 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793728233;
-	b=oG6kGwSuqmqDlKjNs3o/wWwPaa2z+BLzxpJt72yq0Zld82joyLRc+kb05+jaR7xJsuaM
-	 k0+xK4XiO/sy/X1bGyaLZnNFrHl+fThwHHN9gREA1IhC3SlyWs8wOoAHs1D8IG7Hw74bH
-	 /xwyibqzl/wha3++fcoj7zumumx0Q1MP/n3Xsa8hLBbanyF/MpVKXB4cA1RSoD4LpEh9D
-	 IeRDKCS8lYspHdHPf0G5H1M0cN6wq5pgJFNIIPcWzrViC3zd7LBSjO14HzNKCfz7Lnr4C
-	 CDuQNoKhHHmcsWJO+UWVS8k4YcuPQf3VTVmH9Qfx4ayhWrCWGLWbAPKnsY23hfyax6A==
+	t=1793734373;
+	b=PqCXoS7fAlpCIwtD9miX1ietz3Bb6dgqFzAaE5iGxs5v0lxueeCf8PpPLr6X1iSFn4lW
+	 EoxCSYiq3qqE5Z3m7TlRMrPHolN6oYIut6vtEuvVo2l0vcPqIfbr1GTxMqGWV4WhoA1Ve
+	 eHaBEDRd/lo6cdPzn25tYWW7lsA+Fwtzxb8ZerR4wHtGt//OMGIsWcUgM6TJ16Fs3Cb3r
+	 s2iIfvUNlm7vbumxL9STECzvst51xsx0qujFbn9fCkC7BUa6URh/kyCN0wwUWeKZDL8sC
+	 g50h2ZqKUMuag/H1wkMya0lIKwkedf8ShcC79sxM0EtzhZx5aK75HU0QTUarVIUjkWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793728233;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=Fh8hKPEmfpfH08+CBHMiDGbs/Ucm/feTU6t/Oc0vPbQ=;
-	b=S6d7z1+q4Vkf1WC0em7msoHpOWdOT+Nr/8ln67gtkvLjFXyUIUt6qbW8f+RE6XgE7t4N
-	 Sb/fKaTrIDwig/O4C/Oxg/f/o2C5nf1XYCaOhFPX/sITDqyYMdzrlZV/yzvdgR/gUUTGC
-	 lgaccFu1MShLXU1/G7qTQAnWpUjlQyjOQPFn7MoTTbgB+VBX9yJHPsOjy3VHX569Ca6qp
-	 m+pKPfmrWL5JtHcJ3xkXcsutwxDNY2LFrc7S9KoSrpz3LOTJr5Rw/oXAXNsoXirMwfVJs
-	 zClAHSvC3d4ssdhN8BFTnDhpcBy/M7UYbgu+F0MmimzBe5IYsBNjkDA7xy3Sm2YljGA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793734373;
+	h=Received:DKIM-Signature:Content-Type:Date:Message-Id:From:Subject:Cc:
+	 To:Mime-Version:Content-Transfer-Encoding:References:In-Reply-To;
+	bh=mxr5cRlVOVG88TMoFMPx9vx/LyLkzTQJUEcWvdoSHPA=;
+	b=MY23WWIuLstzhXYbAnnt/0rTjhtWA2uRMrOAULTHmUN3djBrE0hlE+lcMnNomuy9gyTe
+	 k9eKrkP7wPu5YtD7+iX2QWAbXRPItwOxYWcWbauxKH/gkGqcalvGJVgqoacv/qrew9Dfp
+	 fFUL2jmzdfhry1aR8XW1jHOxZBv8F3y4qIVu3MZwXevH45GTBuTiRyNOeGQptkMqnwz+T
+	 0OTmGbkqYGkCY52oNjDF1FroPZNKafgE/O27qPOevhV1vbQnEXvOJAxZeEBJLFpD9CfaE
+	 4HPuBY2xQurd6whExMe5pus8GT8JZtgH/Suz/1rDuihF3oTOEq+ZIyIkd8o2LquWpOw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gmFnJEpx;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oqWHPIAV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74715606A31B;
-	Tue,  3 Nov 2026 17:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B2D606A31B
+	for <linux-next@vger.kernel.org>; Tue,  3 Nov 2026 19:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gmFnJEpx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7CDE1F000C1;
-	Tue,  3 Nov 2026 17:50:30 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oqWHPIAV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024751F00919;
+	Tue,  3 Nov 2026 19:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793728233;
-	bh=Fh8hKPEmfpfH08+CBHMiDGbs/Ucm/feTU6t/Oc0vPbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gmFnJEpxZO9WYoOlsaDnsBE3CyU3esz1uI+3ZbQPNbsTuViqN9+b91du2KFHUWJwc
-	 Xmxa5l4OhotJ84bWOCvhh8pLnJm+khNRvDegNQ9+R+NAh5ME5Ser9/10ykWd1QDiYJ
-	 5Yffcg4ioC9ZNROPNax4sWE6r0cQWPUNGn01S/oH3J0QAKlcQl8zV8/5+GNLc2jMQj
-	 OaJSOQBuosOIYQGJX7VL+XpH+EBH4uSku4BGlWbewq1yrLlXuVVMIzMwUadnOCofd/
-	 qkdRZRZKXuM2sS5QGCDtEmugS6IwqGNPl3vhWXXNBkYtgpwkQ57hehHOBR0xktbfj4
-	 URQWXM53UYF0A==
-Date: Tue, 3 Nov 2026 17:50:28 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Qiliang Yuan <odys.yuan@gmail.com>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <b3685e93-ada9-46dc-b359-e9457f32b3c8@sirena.org.uk>
-References: <aunq4v24N-Gzx_n3@sirena.org.uk>
- <DMLRD9KZPGMA.17182J5DEZ43B@gmail.com>
+	s=k20260515; t=1793734373;
+	bh=mxr5cRlVOVG88TMoFMPx9vx/LyLkzTQJUEcWvdoSHPA=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To;
+	b=oqWHPIAVXApBlYlYrQkTS+6lQGvh6NYK+Cv/uctWTllf1caUDBNDdQuh2llf5GuSf
+	 6BimkvX6jLdX8bdmK6m+0vjSWT3rwDBB1EWWdGL+QZPZc4LXAk1U6J/iJSnle00b78
+	 0TjhuC5L+9jWYv7FKIOER0ACu2n5wkcs2V6WBuHwXxr3Mdf4q9OhXlFWoTvneJ+LXs
+	 zuP3An8xXC3/KT6h3CJj4CGSNMVPYzJnU2yNtdFLMJ4bpeUMeBAW/dVslaSfUP68vf
+	 sVpCE4lF+M3MhiLMHkNvPzR5QI9RHqPE9rw6vIUvic27iejI3z8a8s1swlvf0K6vR1
+	 mddFiqdJmPSmw==
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 03 Nov 2026 20:32:48 +0100
+Message-Id: <DMLTRKUXTL3P.11VRVU1A8ERMG@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [RFC] linux-next: replace the DRM trees with a single
+ drm-for-linux-next
+Cc: "Rodrigo Vivi" <rodrigo.vivi@intel.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "Jani Nikula" <jani.nikula@linux.intel.com>, "Joonas
+ Lahtinen" <joonas.lahtinen@linux.intel.com>, "Tvrtko Ursulin"
+ <tursulin@ursulin.net>, "Matthew Brost" <matthew.brost@intel.com>,
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Alex Deucher"
+ <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, "Mark Brown"
+ <broonie@kernel.org>, <linux-next@vger.kernel.org>
+To: "Dave Airlie" <airlied@gmail.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,47 +65,84 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5CQYsZ3VpxExZq4F"
-Content-Disposition: inline
-In-Reply-To: <DMLRD9KZPGMA.17182J5DEZ43B@gmail.com>
-X-Cookie: Small is beautiful.
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+References: <aujZcJBUyQ7iX_PM@intel.com>
+ <DMKY979I29AF.BS1DF5YAZMOY@kernel.org> <aujikV14tF6K1Xqw@intel.com>
+ <DMKZR0YZV1CX.DWVK9V47GR1J@kernel.org>
+ <CAPM=9tww=CJdxzvfUvLwQ6V4uoszg8JrB1XCAcp15upM-xPvSg@mail.gmail.com>
+In-Reply-To: <CAPM=9tww=CJdxzvfUvLwQ6V4uoszg8JrB1XCAcp15upM-xPvSg@mail.gmail.com>
 
+On Tue Nov 3, 2026 at 3:05 AM CET, Dave Airlie wrote:
+> It might be time to pull back to -rc6 though, we could just keep the
+> rust tree in -next separate,
 
---5CQYsZ3VpxExZq4F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Agreed, I think that makes sense (I am thinking more about occasional cases
+where we may need a few days more due to cross-tree dependencies). Otherwis=
+e,
+that's an option too, but I'd like to avoid a special case; if we take the
+proposed approach, I'd rather try and see how it goes.
 
-On Tue, Nov 03, 2026 at 05:40:04PM +0000, Alexei Starovoitov wrote:
-> On Tue Nov 3, 2026 at 2:08 PM UTC, Mark Brown wrote:
+> It shouldn't cause any extra conflicts, but I'd rather not keep all
+> the -next trees in -next once
+> we merge this, otherwise we may end up with trees getting ahead of the
+> next cycle again.
 
-> > and likely others from the bpf-next tree.  Given the nature of the
-> > conflict and my total lack of familiarity with this code it seems
-> > vanishingly unlikely that I'd be able to do a sensible merge here,
-> > instead I will hold the bpf-next tree at the version from next-20261102.
-> > If someone could help me out with the merge here that would be very much
-> > appreciated.
+I'm not entirely sure what you mean by "keep all the -next trees in -next",=
+ but
+just to clarify:
 
-> Yep. It wasn't easy.
-> bpf tree is now ffwded and merged into bpf-next.
-> Conflict is resolved.
+I'm proposing that linux-next only merge the unified tip/for-linux-next bra=
+nch.
+The per-tree for-linux-next branches would remain as inputs to that branch,
+preserving their existing selection logic.
 
-Thanks!
+IOW, linux-next merges tip/for-linux-next, and tip/for-linux-next merges
+$tree/for-linux-next, rather than $tree/$tree-next.
 
---5CQYsZ3VpxExZq4F
-Content-Type: application/pgp-signature; name="signature.asc"
+I.e. the ultimate source of what is linux-next material remains to be $tree=
+.
 
------BEGIN PGP SIGNATURE-----
+In general, I think that this is more accurate and probably less error pron=
+e
+(unless all trees really commit to tagging and sending their final -next PR=
+ at
+the global cutoff).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrqHuMACgkQJNaLcl1U
-h9CpUQgAg1CqeadP6VK2bdsf5Z3sX2CCyoCIwUBWxPz69i1bdh11cMbFq55g0IKR
-Q4TeFJZnjDtOLEPmUrHXeLOuFeMRLdAdteabjbyUYgoTdhACPBwA5zIzHxtIepRM
-IPtv940EyHzwcH4rXjbR3TjVg8NnNzQEK+Wm5dcuSnzqRCdKf35hS+8kPqtrnVcu
-dSPIPLZrqCVeUW9vdPd8tkfvJVoEqbyz+bCwZQeAncHZpE/9CdDxgOvPe+dbQHDA
-JqiY7lCqOteP2DN3aMeP0Mznfk4lHAWx44rsjcaG6gcRP8vva8NzHUYaESadD7RD
-Z+oV+aDE9Gi2x4I8KRhRNIMf5bLCkA==
-=IWXd
------END PGP SIGNATURE-----
+For instance, let's say a tree closes (i.e. tags the last -next tag of the
+cycle) a few days before -rc6, it could happen that subsequent commits to
+$tree-next still appear in linux-next because tip still picks them up until
+after -rc6. So, after -rc6 those commits (that were in linux-next for a few
+days) would disappear from linux-next again.
 
---5CQYsZ3VpxExZq4F--
+Not that big of a deal, but technically they didn't even belong in linux-ne=
+xt
+for only a few days.
+
+If we kept $tree/for-linux-next, tip would never pick those commits up, bec=
+ause
+a tree that closed a few days before -rc6 would already have switched
+$tree/for-linux-next to $tree/$tree-next-fixes.
+
+So, in the end, it comes down to whether each tree's closure controls what
+enters linux-next, or whether maintainers need to coordinate their branch
+updates around a single cutoff defined by tip. While the latter sounds like=
+ the
+ideal case, I'm not entirely sure if it isn't too strict in practice. I'm
+thinking more generally here, from a practical or organisational point of v=
+iew.
+
+(For instance, in practice Intel has sometimes sent its final -next PR a co=
+uple
+of days before -rc6 and continued applying changes afterwards; I think thei=
+r
+cutoff is generally around -rc5/-rc6.)
+
+> I'm not sure need to have that complexity for everyone, but if we need
+> to keep the rust tree as an extra then I'm fine with that for now,
+> until it stabilises.
+
+Appreciate it, but I'd prefer not to special case it; I can see how my drm-=
+rust
+example focused the discussion on that case, whereas my concern is more gen=
+eral.
