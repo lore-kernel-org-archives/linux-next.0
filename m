@@ -1,101 +1,143 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.52
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793741097;
-	b=BYWh3YV/+ljI+3uVowZ78hpnfj5MZA2f/pcIvzJDlVggL5SOatwpFOrfdYJKUQEJc0tE
-	 9MBKmAaGBsjiBOVBk+m3XcV9CDw6G8+QhZ50CD5tgLogQozjd3LKR9jh6HXHbNqM6d0ov
-	 jt2yjNtsw1E99Yy6yr0sWeTqY05ydipRDHiZpgSlBUCIL6Ys+rU1Fo4/XqSf0fICv1R88
-	 sv8+vg4yDu19aWn9ocwfZnP8HR5t5iQ8/h72tKqlmoCS3E3RF1RIJTUBiqytChmFJ14u9
-	 Kj1I1wFUhF17JR1lserolRMe9SGkGlHA/cNv0MwEGtBr9HuVnZN+7i5REJ+5EEW3Z8Q==
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=192.198.163.19
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1793745555;
+	b=wssinJEjUQFcKoY7vDe0SAstJtcbWsnXGES8fNPA0U8cR66lBfwgwe1aH1h4n+MqbcEQ
+	 6m14bMDeoi/F/bS6gFEobbucKzS34NmAdpZkFJ9EWWos9PHjpkcohlzAU0DEmdOKlgiy8
+	 5pQWdJH9yOu4Fcqc/2VxFI1uydQw4TDt0x2buiWX0Wd65zkTekxtAybbh/mspYYaRAhpz
+	 B+eTRVGCXeC2fzj3cI/OwHgtOnAbxWChOxOUBBWeri0GbzJZju8vq1QCJ6MjM6kqpcQWj
+	 PhDlXadNpDW88kaZ2bBF5waRXf/7W2qvuqxO9kooNtLdeEFEsCv1KBk+cjIynEscMDg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793741097;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=griRhT58RktvO7sgJyedxK3XqWlFRaj4fFKAMoaHwtI=;
-	b=exMGIjXwT8in13pBYPjrc7D7OX5qbikwfxk/0hK4zkmdlY/6LHTq6g3zoesleYIeKhqc
-	 DuzmRX7pyG/Uj3PUNr3JWmyEq6gD71Zm/f85TD4n+bgRRJKr2d2xmfMw08cIxsd33eX6m
-	 +ekLWosp8vG3pl4INFRUyCyHbUSojD6uhCXkq/lbiB9c/jhNeq8VrMCkVBJalBPfSyfQ2
-	 RFFkP0Kemc0Ihg2k4sidkAiiCs8ftVWdA/mszKf3fzHjJWTXXUNKIiJ5kotyCrAEYfweb
-	 FwKBSFozJRqJ8Gn2OIc/eaiFOiICztGkNYhLFTUyFbBQrjSuT2IarhdIwC/6gmSfLSQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793745555;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Received:
+	 Received:Received:Received:Date:From:To:CC:Subject:Message-ID:
+	 References:Content-Type:Content-Disposition:In-Reply-To:
+	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
+	bh=6mau/Ckf7IPMs/XKiENtgaDJJhQ9L5F38yiyg1ZSJns=;
+	b=E6vU9ZAgTL1nocOuZd2FnX6HEDS+8kl8vP5v85RkQdewB/wUDp8+YaukPn1g53ScXQZS
+	 jPhYhm5n7bLbUTw91rRiZCr4eCmivk6vYO5InbSAUqgYNwmDQkJKfhSUzavm2dOUdsBz2
+	 S5SWNdg3E/D11x9pbxNinbTmh0T12GP3BAO1TGm/LM7pylueU6q8FyGAg1nqRFilj/BAj
+	 OoZSvyseS7GXAzh3Lw0tygU/yNAybmH0kPIu7QK7tZGimDGbDIStULayoq9t+K5IpN+U7
+	 Q3DOaZ/Nr922SBeI1BajnjLdc//xq409vqtbwvEFifclx9ogXTXbNNUYYcmxblNFLLA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=r7XcFa9K;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.52
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PWsY44JS;
+	arc=fail smtp.remote-ip=192.198.163.19
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B6606A31B
-	for <linux-next@vger.kernel.org>; Tue,  3 Nov 2026 21:24:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C70B6606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB32606A31B
+	for <linux-next@vger.kernel.org>; Tue,  3 Nov 2026 22:39:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AB32606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=r7XcFa9K
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-1abaaf33a56so2286c88.1
-        for <linux-next@vger.kernel.org>; Tue, 03 Nov 2026 13:24:56 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793741096; cv=none;
-        d=google.com; s=arc-20260327;
-        b=fPtwSETtP1D6VPyUzyzvN/zP3rKt/alY4FECXCvQzv3s4jWvR6n54KhtQXC/L1PtdZ
-         O8UoNhWrewVMUd7Meoxns+hxVqe6lLTYiqraUmpzCxqGqHAL7Ln1wA8Tfr56ya73H5D9
-         Fbl61p93wR0wJGDm5wh4JdEIMvp2eLdpyzwDMrD4xb5KT+5hCkyCBX5/t9IJ6rzCewje
-         KGDzN7bw+o/Erxeu+2BsGTD54u/HBwqBFIoCQ/YamACKS88NF0Cke2kE1qlrmimQ2XbH
-         r+T3um8pPzvdIU+Bs8C+QeSKP7AMEzRTL1MDIiEpRHKHrmNLGcfQe6g5zxsIHgObheBZ
-         8wYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=griRhT58RktvO7sgJyedxK3XqWlFRaj4fFKAMoaHwtI=;
-        fh=950RayN/eODURZJj7oT0LYtzKGVHn2u+kzIAWJ6rigI=;
-        b=lGUh6Igp3qqtmVcAu523erX2N5yp3ReAsGpTeHhjDisdxZFTbj7RhKdKJ29hbsQsrC
-         00FmjlzCZOhd+UpA8Uu+IGf8fnSiWtYGUqxIN/LViXedOx8mlREuz6a+VxNnl3SJMbsy
-         lYEh6YGuawgxZHsyZ67dSHI+7teWoHoKFMv55Q7ft7H84P0i1uVKxF1vFzOZg2I9FFta
-         o4ZWlFt8Z8N6fNyUkUy4LlO05JhmtMuPCqy7/7Tcob4lcc/l8vQjI87h3wR1Q6CM9mjy
-         /4bfEqL3WzGr7IPIWvsBkuKxAVExQLrCNswANLWRkna9DJOKqoG5Qir4/d6uLXxRUd0m
-         NkdA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793741096; x=1794345896; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=griRhT58RktvO7sgJyedxK3XqWlFRaj4fFKAMoaHwtI=;
-        b=r7XcFa9Kdmm1MPn+RGwozrZ2uQEzX7+qc6z5vMZHhVeTlhVz/FrPg2qqKIHJv+aVry
-         fW2kR5iuAqwOKYv9fY5CAelQBA5ZArViLXt+IeeVXKC+2QGTxtuljWgWs+Jq56QQeyOg
-         Z9LWjH0Sx5VpN2POvzUrdgths9r/ixwajSG0GDdwyDUDmEFfbVlyahc/+YFp6tbnKKaQ
-         tq6Cs1rA4eyxN/BkylYwpQVH5lxQ7J0uG67Qs53nkkRJAPmhS6AQGqq4cmIjML2TnzdN
-         amM/IaCocsm1gH8dLfxVm8dGYX2FVGDMtDqJexBA1iGtlvjZtDftaWTaHg9/EPm7LxSk
-         jjEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793741096; x=1794345896;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=griRhT58RktvO7sgJyedxK3XqWlFRaj4fFKAMoaHwtI=;
-        b=n8yIQ7V2+zOrX5VXaPp8L2kBJKdu7Y3Q0yR+HEyPFc3VA4BAmDGK6IcgAcRPDtW4fG
-         kBHRkhIHOhX8GblY33XNgVO2ds/Zank5woWT4zjOUTLVpYNqiMiwgZYm+DSU5md5U86u
-         igwqsqyfAmHwHGxqurG6qnfF3E+fpy5FCqYmIL49EnvbqnRqH57XhTngbFkgl2xyGgmK
-         j41xzKO25B6mXHuxzROt7VVQD7BdhFNXYc6QOdeEjCcRH4Gn3Z67O+KLbfAB/EWldULi
-         3Y/o3FXmbEQT+L2Rcqy1J4jy/e6y6Og7e1dqTDiGu1kAWVAz4//NSwGw0Mv763yJnknG
-         dxUQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxCTUe86clU5OfbaxWx86s1WH+LpP8FNM8F9YWWYgbmJvEdnkthJpXrbQawbmFmE6DEwS02jhFQmkwM@vger.kernel.org
-X-Gm-Message-State: APuU4Z+cY5iTTIvODf3Lf5lkZBCWc8FrCrCukqQc1ZklNKEx0XvKQli2
-	e7kbKsK9SKYnGnp13uE2J7Ky+yqIC81bsk775/XYabPgxYR+OiQCdc3ukMssMCeL590hAnmUUbr
-	40/urUvRKYVCZ7lwzFRbtH70t6sKNpXg=
-X-Gm-Gg: AYBFou3Yk22VV1nJUzQ2r/xHiIewslzLmWPqazqLoKmAofzsRQyoTlsC/yG5S5Ch9T/
-	tUDOMk4ZULp/dhpEPN4wUHjacna/51T7HDqDKNh30K7yiXLaFXdu1sW+gn9J9Ak2wu9smn88+ZU
-	PbDkyFXKNccnxhozfglDoBPjTlsNcdIkGvFRyl0fkxaoNpaALAmSJF94dyk/77VA4BADYmVZ6+s
-	PsYcdJaeVTAetrkk8KAihdZqySJvo5XLiPcRGCwF5q20bOrwJS554J3Yr3VU817AQXm0ZI02fS6
-	CQDo1hXA0p/civ9rs9wAk7Z5OCSe7k8JkIH4YbmngT2xwViiSXwnU+IPrgvmGWwgSvvQssRSQ4c
-	QaPjQKHyRrhaqBg39wq9UP2rz9hXmr8J02uyDG9M++jHX4TTIaUjhmzGk8T0YoSMaws/BE3ufcx
-	p8p1I7lN+byN+dzdOPsZWZf18=
-X-Received: by 2002:a05:701b:418d:10b0:190:e602:c769 with SMTP id
- a92af1059eb24-1ac59143aeamr34394038c88.1.1793741095721; Tue, 03 Nov 2026
- 13:24:55 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PWsY44JS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793745553; x=1825281553;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=IUfCtJ0/6P1B5WIv9QHIbG2j84OEghAZYOQHYPr3BAk=;
+  b=PWsY44JSl3Ka5jqovJ+6mzhI1dHD5HCefCV1cNmEmNssvh8V462G81pg
+   7g939KeuJSDC6XNhANlPbl9UrPUwRNHRxdoIUhCvsOe6oIiGmltxibmU3
+   pvwqiukEaI13oJOoWuwGzjpiqrSTb8AO2syA75h77TDZukHxIiCXURVg2
+   oQ7ova2RWGdDqQ2HlWQXU3x2j4WMPAO2SCDIL451qnjU1j0cEsKmmfHao
+   dFGXaBGcaeWqOGsD6741jSrqwUxKaQQw5V9VLWDV49hwddYqsTnB2kSqb
+   cOYStduN731Si735sOQ/fKCWa3Vk28Vglr3ihXEaos754r9PLx4FIC1mV
+   g==;
+X-CSE-ConnectionGUID: ljhqZqLsT0+r/hzMovnxwA==
+X-CSE-MsgGUID: YYoHuEtWQn+X1fZextY9ZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2590449"
+X-IronPort-AV: E=Sophos;i="6.27,194,1787036400"; 
+   d="scan'208";a="2590449"
+Received: from fmviesa013.fm.intel.com ([10.60.135.153])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 14:39:12 -0800
+X-CSE-ConnectionGUID: 8RXQv26eQniETE0pLp8EvA==
+X-CSE-MsgGUID: XCNEzi/tRYyWmIJNYorKFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,194,1787036400"; 
+   d="scan'208";a="8407791"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa013.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 14:39:12 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Tue, 3 Nov 2026 14:39:11 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Tue, 3 Nov 2026 14:39:11 -0800
+Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.59) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Tue, 3 Nov 2026 14:39:11 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TOZTkfn0CXq3WNYr5rwaQH0gnKM7D/DJVVzTjQdFeo3wCM97uV1C+Ymr1M7cSbaQvIPI90OmVICtHuldl7bfXcf0yVS1PljCBwdrdDLO+unUSNG7WQYDsl56/2/DLykwAqrlyxEK0fAh6cV7AcMrhlalF+MfDqLyXPBtSnq9Qbd+VrIL9oLTDMeLOvCFf4QCHFSYJVGn0IDKCyTDRWRVN0QOwML4yrdJ4CVNFeLhePVi7wYk5GnDbpTAcSq7xqRCk97Vx1e6i/3qbGH9NZIwLVWF9iDzqLsiym9j+8sL6cFrKmLOw1sZVuDbOG2Wu6Ih8/yaBiq45/mCxiUOCopHjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6mau/Ckf7IPMs/XKiENtgaDJJhQ9L5F38yiyg1ZSJns=;
+ b=TQXN7WywHCGXIHHTCP+9xxlPp3rfvjWxEJbs0aPnlUiZaMyoi/Kr6tkmBRMllrsyfN82VVR1JW1jmCI9isAL18DkDYnL/NqGGCDLKyJHWo02F3LjdlIzLRpVa3Gj1Oft4szJje7MfV9ltDpTbnEDAJm5NZVDb0683HEi1TsEVHGG7Lna5Jqz6M3p6RNv62sEiLplnJcS+QIIryPeY4DeCLrMfO4uShNLqgy17UTyYGazjINKbLHVT2Y6M8z/90f+x1qiUPv0aorEpnYrJG+4st1O2vKK1l9IDcxJLzUPqnRlyosAPkcV1kAS4D+rzExPMkP7x4+ZlpjPGIqC35sibA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA0PR11MB7187.namprd11.prod.outlook.com (2603:10b6:208:441::12)
+ by DSVPR11MB9743.namprd11.prod.outlook.com (2603:10b6:8:34d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Tue, 3 Nov 2026
+ 22:39:08 +0000
+Received: from IA0PR11MB7187.namprd11.prod.outlook.com
+ ([fe80::be96:3f58:953d:6565]) by IA0PR11MB7187.namprd11.prod.outlook.com
+ ([fe80::be96:3f58:953d:6565%4]) with mapi id 15.21.0569.011; Tue, 3 Nov 2026
+ 22:39:08 +0000
+Date: Tue, 3 Nov 2026 17:39:02 -0500
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Danilo Krummrich <dakr@kernel.org>
+CC: Dave Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	Matthew Brost <matthew.brost@intel.com>, Thomas =?iso-8859-1?Q?Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, Alice Ryhl <aliceryhl@google.com>, "Alex
+ Deucher" <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?=
+	<christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, Mark Brown
+	<broonie@kernel.org>, <linux-next@vger.kernel.org>
+Subject: Re: [RFC] linux-next: replace the DRM trees with a single
+ drm-for-linux-next
+Message-ID: <aupihiB5RvfgB1lH@intel.com>
+References: <aujZcJBUyQ7iX_PM@intel.com>
+ <DMKY979I29AF.BS1DF5YAZMOY@kernel.org>
+ <aujikV14tF6K1Xqw@intel.com>
+ <DMKZR0YZV1CX.DWVK9V47GR1J@kernel.org>
+ <CAPM=9tww=CJdxzvfUvLwQ6V4uoszg8JrB1XCAcp15upM-xPvSg@mail.gmail.com>
+ <DMLTRKUXTL3P.11VRVU1A8ERMG@kernel.org>
+ <aupFKGpAwAiGXN0U@intel.com>
+ <DMLVPRO7XF7F.21199FO61MFRD@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <DMLVPRO7XF7F.21199FO61MFRD@kernel.org>
+X-ClientProxiedBy: SJ0PR03CA0096.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::11) To IA0PR11MB7187.namprd11.prod.outlook.com
+ (2603:10b6:208:441::12)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -105,232 +147,195 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <aujZcJBUyQ7iX_PM@intel.com> <CADnq5_M5SjooHDGt3T=69mTqYW0rjwM25Y8r9dgi8gDJEWYt7A@mail.gmail.com>
- <aupFpMdhZD7vcP0b@intel.com>
-In-Reply-To: <aupFpMdhZD7vcP0b@intel.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 3 Nov 2026 16:24:42 -0500
-X-Gm-Features: AclHuK8C6NStvAz1dQJfq2azB7y9C2eQ418Bin_47lR5VnRJH3htDrx2QjporTI
-Message-ID: <CADnq5_MNaSCYhkQ0LMLyObVHZidaEC_J2BD=GG0tKbsmvwC2+g@mail.gmail.com>
-Subject: Re: [RFC] linux-next: replace the DRM trees with a single drm-for-linux-next
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Dave Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	dri-devel@lists.freedesktop.org, Mark Brown <broonie@kernel.org>, 
-	linux-next@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PR11MB7187:EE_|DSVPR11MB9743:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91ee388d-d749-4ce4-f441-08df39fb45b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|23010399003|1800799024|7416014|376014|22082099003|18002099003|4143699003|261022105027099003|56012099006|11063799006|261009223027099003|261026121527099003|261026140227099003|261028144727099003|261102123227099003|261022075727099003|261021121427099003|261021135927099003|10067099003|6133799003;
+X-Microsoft-Antispam-Message-Info: P7DDDStPBtnspwWiY9CYqINB4vgS2HO8V5+nSanFWSHHy5EOS/UlFzX0JM/Oh21XstnBSifBqrQlaVlzY5VvmQdhc+dgLEVdLbtNAZJkY/pXSf5WwFBX1DLEvGfDJOjvVe4L7Ziv75a2D85PC/irKxD7BJgfSAbo0L8xzSyXWPBvB26UYWmbwquW8lM+Ld3WWI8jIYKiu61r98BDwJMrxdbyPf/dNNCF/9LmlI0qvh+1Nh05rVv0hp3Y5p+f+2PAxyGUMELbw3CyuTTR4LPEjtGUG1l57dv56thcuilDB+MhYe4K9faK7igRcymvCFJl3hqsUkrubNBe6fMZ+DwrLkuqpZ/HdMGQUCrQqYr9DmbfEs0T+SBPQ2iIK3kLpqlYh4FUv/K8OMM9xPuHc1abZ3N5eespUIi1jgxC71L+pcOV3BR5k+AGaPU6/ei1fNVRUCrvYjS4w3QoHcDNC02SvqHmHFvwo0uiqvtrNMGc9+2h047sK0hY2CAm5j3JAGMDUUT7h/u3CBD2saUT1yzNC4SOoGxChvSD3dSURjRfT4f7Qeuif5jEglNbl77kI7mhtnf+MDr/me3o7Z8xbTIgbHTk1mHJ1UYbs11biDokSiwdRzLIfTc0wvTn2IzuxOUl
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7187.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(7416014)(376014)(22082099003)(18002099003)(4143699003)(261022105027099003)(56012099006)(11063799006)(261009223027099003)(261026121527099003)(261026140227099003)(261028144727099003)(261102123227099003)(261022075727099003)(261021121427099003)(261021135927099003)(10067099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ms8W4gKb4CCtIilG9+hhlclU2AhF0CsiPSX49Jfj4QSi8OztMEXt38w/+3Lc?=
+ =?us-ascii?Q?+q1pM85iY6soVXTvxe2DNObNyFfWecWlARmQQ3AA82Gt+xRH/dB1j6o2b/g0?=
+ =?us-ascii?Q?2x+TrUKBPH1wkUiHHn2kmay/MpyrkEjOKkGeXLIb+5ohaFJRFI8Vy79TMqTK?=
+ =?us-ascii?Q?HiUkZ9SvBEYHZbWFcJwUc7GqvByZ3f5aX7kLiHg3yfkSanIBdHuWlUUZ9/tK?=
+ =?us-ascii?Q?LaWftxiX+dgIrdil7ikv8X5XxGAU/NOfMdLkN8PKMFduHIzwrJ34r5tHWELO?=
+ =?us-ascii?Q?t/prTOrE5t0LGimE7kdEH+kVo1Rz+f9sCfUU74GB0eB0/1L1nhbHHHbnXqIe?=
+ =?us-ascii?Q?wIbddD1N+EIUGmu/Ckfv7Rb9tfvrjP8xewG9imod/+EmiN4AZE6JRvaItetC?=
+ =?us-ascii?Q?KUF8z7ZSWtqme1SfyDDCCWmB+ws4v7KvUtueUMVmhs+/A1GkcBfdOiuv2HXs?=
+ =?us-ascii?Q?bJ+1bD+QFZzOA7j0B4rZylU4+97XosToG9hoJK1ZiZA5TpxvG4Y/hvpurjGp?=
+ =?us-ascii?Q?9+Ivqh8GfCCZxnycan0EJzUMhUXesltqZeP23xUhtg5fevhmLd6Fb2AfNmQm?=
+ =?us-ascii?Q?bZT9s9VzZ8pFw6C3BdF4aCV0yFAt/Oa8Mk+CFnnfB8qBV6KRs5y50pt59/R5?=
+ =?us-ascii?Q?f2VIkL3Y6WccSsrAD71am8/IhY/0ZdxJ4UF4j/kuE/a1W5NSj1k59chEX925?=
+ =?us-ascii?Q?Z65imVMp1ndVJccBLUbWjoU1JXBA2BCCXo3GQMaEw4I1TUqZ9HmynJgnPSUr?=
+ =?us-ascii?Q?Rq/Cjw4ej9PsE50NLG0dDiP0JbLhXo+8gwa1FcFybZwwaziS6gZAntSkjoi2?=
+ =?us-ascii?Q?CddRdBvD7MfYGMbxIKzU2RbtChVfRPY3u4aYFG5GFEJXD5rFOyLnDr5Ekg+U?=
+ =?us-ascii?Q?594Ty50y0LJn0w5+XEJeVexWcbFl78uyTp/xvKQMUy5MJBupuZWBEAl9ubV5?=
+ =?us-ascii?Q?3BZjJxW2kZax85LE8WjHaPRlHhs/2l3BZ5wVdzFLqc1t2j3pPpyNgyA5FFrW?=
+ =?us-ascii?Q?XDO4TByjQHBV4WK5QemfkV3pOsYiJYvx8vRZ/oVflBAgFjP/C0HsqawJ6CfW?=
+ =?us-ascii?Q?IZHAxmF0CVvxuqpGia6cMOlmUesYuNy6DvGw1erqmgm4jLlc2jLDwwhXNcvl?=
+ =?us-ascii?Q?oQcm58eBsREvO0A8ZekjtHBgZRV9xUf9DwDoSuY4DXJaILoQ+FSpiw5GEUKV?=
+ =?us-ascii?Q?FL7NrB26OOVQLtaGJ2qOuyk3/3qDqCMxTIi9+5r5xwLJ4hJwg235IZGf2/ks?=
+ =?us-ascii?Q?Bqkfx0RWQlGDH0dmKpkF4iyNn+O2+fa2C7dGISsrVpw6AeGKhA8x3cIqNh7L?=
+ =?us-ascii?Q?Up0TlWhIWi5nGq+J+k9XZ5zIt4S8janTuG+Lvj7x7aBPPmOX898Xtk3osypa?=
+ =?us-ascii?Q?bLmuC757BrGfwVKeln1weT9kv4cpan5hzyv9JHIFiQO7vHtA0/jjCb6gPUbY?=
+ =?us-ascii?Q?UVEUIq1fib9ktEwD1kegDdChUtPO1YTrPLBYHU2ZBe11UtUMITeNJCHYEOO6?=
+ =?us-ascii?Q?aKCfvGp5h8wl3Hl62EEq8F79tbbDqj/1CVPkufO9WZ940dD+8JoRCkVRQZHn?=
+ =?us-ascii?Q?CrloSSUDdwdlTCNyKWOI0mOiPhllPZ/tMiw2MTfuWsxiwCJIuf+sdHQURwxK?=
+ =?us-ascii?Q?RwNPGQEttu6k16/ajObHgSddUoIAl2CSen+EN95Z+uBLUcgtPpoh3AVcfHci?=
+ =?us-ascii?Q?pD/kSBsbGCy3uaG5BtfkmMZ2EGTiYZR9zg7rkxjxQgKj3vB+dTnPcNA+K+UE?=
+ =?us-ascii?Q?b5V4JQ6tgg=3D=3D?=
+X-Exchange-RoutingPolicyChecked: 1gAjP7lEQpZ2kvkpaldJsgqPdWMBxBdi3hv21Iru9ZyedwivwWVAVSKxhH6Tb/I0gplobLp8ipSfKUn4K9Beq3c9nAW6JQUoCiPQo9mIuWdletrtO+vFUfG0D+kYbILl9QRRAg+f5mzd2ZJ4/KGdOYlOIQ8SOcJkdTbUNdsLuomXZwcxQaCmWGTpEvgZw1hYHTeKGJm04nZfaaOwgQlVY916jOchkyCdxLn9ujwycMK+eZhOorIlR8n2WnbMwJlteFNPbarLQW5cK1d8ym0zCNE3mAywJpEid2NGREllttSJ2uSR6LnDicj1qDeimdgPJSx3qwIKdw9nqtk/YJ70ew==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91ee388d-d749-4ce4-f441-08df39fb45b6
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7187.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 22:39:08.1824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GrGAzFmPWb6WWtXlCf15eszqXW7ofTMadHQzt4gyLZUw8fCVhk6NoElXF6/bvxiv4Z5m/lO6mLuqbgdQuNukBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DSVPR11MB9743
+X-OriginatorOrg: intel.com
 
-On Tue, Nov 3, 2026 at 3:35=E2=80=AFPM Rodrigo Vivi <rodrigo.vivi@intel.com=
-> wrote:
->
-> On Mon, Nov 02, 2026 at 06:07:15PM -0500, Alex Deucher wrote:
-> > On Mon, Nov 2, 2026 at 1:51=E2=80=AFPM Rodrigo Vivi <rodrigo.vivi@intel=
-.com> wrote:
-> > >
-> > > Hi folks,
-> > >
-> > > We'd like to replace most of the DRM trees in linux-next with a singl=
-e
-> > > branch:
-> > >
-> > >   https://gitlab.freedesktop.org/drm/tip.git#drm-for-linux-next
-> > >
-> > > It replaces these entries:
-> > >
-> > >   drm/drm-next, drm/drm-fixes
-> > >   drm-misc/for-linux-next, drm-misc/for-linux-next-fixes
-> > >   drm-intel/for-linux-next, drm-intel/for-linux-next-fixes
-> > >   drm-xe/drm-xe-next
-> > >   drm-rust/for-linux-next, drm-rust/for-linux-next-fixes
-> > >   amdgpu (agd5f/linux.git#drm-next)
-> > >
-> > > drm-exynos, drm-msm, drm-msm-fixes, drm-msm-lumag, drm-nova and etnav=
-iv
-> > > are not part of it and stay as they are.
-> > >
-> > > The main reason is to reduce the conflict pain that Mark constantly f=
-aces.
-> > > All of them should be handled already when we are rebuilding drm-tip.
-> > >
-> > > During this work, I realized that drm-xe is a big culprit for leaking
-> > > future work without a blackout date from -rc6 to <next>-rc1.
-> > > So, another quick solution would be to get a drm-xe for-linux-next li=
-ke
-> > > the other domains are doing. However, I still believe that this unifi=
-ed
-> > > one will make Mark's life much easier anyway.
-> > >
-> > > The unified branch is rebuilt by dim together with drm-tip. It has al=
-l the DRM
-> > > -fixes, drm-next, -next-fixes and driver -next branches merged, with
-> > > the conflicts between them already resolved on our side. From -rc6
-> > > until -rc1 (per Linus' tree) the driver -next branches are left out, =
-so
-> > > nothing for the following merge window lands early.
-> > >
-> > > It contains the DRM fixes too, so it would go where "drm" is today.
-> > >
-> > > During the past weeks I have confirmed that the drm blackout period
-> > > works well on this new branch.
-> > >
-> > > The dim changes:
-> > >
-> > >   d875049d2b29 dim: build a unified drm-for-linux-next branch
-> > >   3009867cd318 dim: keep -next branches out of drm-for-linux-next dur=
-ing the freeze
-> > >   https://gitlab.freedesktop.org/drm/maintainer-tools/-/commits/maste=
-r
-> > >
-> > > AMD:
-> > > Alex, Christian: linux-next takes amdgpu from
-> > > agd5f/linux.git#drm-next today, which differs from drm-amdgpu-next in
-> > > drm-tip. Is drm-amdgpu-next fine for linux-next?
+On Tue, Nov 03, 2026 at 10:04:28PM +0100, Danilo Krummrich wrote:
+> On Tue Nov 3, 2026 at 9:33 PM CET, Rodrigo Vivi wrote:
+> > On Tue, Nov 03, 2026 at 08:32:48PM +0100, Danilo Krummrich wrote:
+> >> IOW, linux-next merges tip/for-linux-next, and tip/for-linux-next merges
+> >> $tree/for-linux-next, rather than $tree/$tree-next.
 > >
-> > They should be the same.  I just mirror drm-amdgpu-next to
-> > agd5f/linux.git#drm-next in case anyone is still looking there.
->
-> That's fine. But please let us know your thoughts on either going with
-> this approach proposed here or with the other approach proposed by
-> Danilo, where we in xe and you would need to create a for-linux-next
-> and for-linux-next-fixes.
->
-> Both xe and amd are leaking next.next patches into linux-next right now.
-> And we definitely need to stop that.
+> > For this to work we need:
+> > 1. xe to create for-linux-next for-linux-next-fixes
+> > 2. amd to create for-linux-next for-linux-next-fixes
+> 
+> Huh, I thought all the trees are doing this already. Well, that explains
+> where the the problem comes from. :)
+> 
+> In any case, drm-misc, drm-rust and drm-intel already have for-linux-next and
+> for-linux-next-fixes, and the implementation is generic. So, adding it to xe and
+> amd is trivial.
 
-I'm not quite sure I understand what you are proposing.  Is the idea
-that there would effectively be one drm-next composed from all of the
-constituent drm-next or drm-next-fixes trees (depending whether we are
-in or out of the blackout period) and that is what higher level -next
-trees would integrate?  Isn't that what -next-fixes is supposed to be?
- Maybe we just need better documentation for the upstream -next
-maintainers?  Maybe the actual vendor -next branches should just be
-renamed to something like vendor-dev and then during the blackout
-period vendor-next points to vendor-next-fixes and then after that
-vendor-next points to vendor-dev.
+Agreed.
 
-Alex
+> 
+> > 3. All maintainers to agree to move their -next-fixes on the same day that
+> > they are sending the last PR. Or have a new dim sub-command dim final-pr
+> 
+> That's what drm-misc, drm-rust and drm-intel promise, yes.
 
->
-> Thanks,
-> Rodrigo.
->
+Well, 
+https://drm.pages.freedesktop.org/maintainer-tools/maintainer/maintainer-drm-intel.html#drm-intel-next-fixes
+
+We promise 'after' not at the same time, nor right-after.
+We never specified how much after. I was always doing this on the next week,
+or even couple weeks later.
+
+So, I can tell that when I'm handling the drm-intel-next-fixes I was not
+doing it right after. So, we certainly had leaks from drm-intel-next, at
+least during my rounds for sure.
+
+Right, we just found the other source of the issue and that points back to me
+again, I know :)
+
+Oh, we have another complication in the -intel part.
+we have a separate drm-intel-gt-next but the -next-fixes and -fixes are just
+one. And the maintainers taking care of the -next -gt-next and -next-fixes are
+3 different people each round. :(
+
+> 
+> Something like dim request-pull --final seems like a reasonable helper to me.
+
+I like the --final option. Except that this doesn't work for -intel and we would
+need a different blackout mechanism there.
+
+> 
+> > 4. Instrument dim to have this secondary reconstructed tree instead of the
+> > implemented chop.
+> 
+> I think for this part isn't different; tip/for-linux-next just merges one or the
+> other.
+
+But it is a new pass... The current proposal here is still a single pass and
+it chops/derive the drm-for-linux-next in the middle of the pass.
+
+For a separate one you need the second pass that is the merge of the drm-next
+with all the individual for-linux-next* ones.
+
+> 
+> > 5. Prepare every committer to deal with this extra build time and extra
+> > conflict resolution.
+> 
+> Which extra build time and conflict resolution? You have two tip trees in either
+> case, no? One that contains $tree/$tree-next and one that doesn't.
+
+In the second pass you can get duplicated or different conflicts.
+
+> 
+> > I honestly prefer the simple chop solution. But it would be okay by me
+> > if you take the lead and implement the dim changes for this flow.
+> 
+> I don't mind doing this. :)
+> 
+> >> I.e. the ultimate source of what is linux-next material remains to be $tree.
+> >> 
+> >> In general, I think that this is more accurate and probably less error prone
 > >
-> > Alex
+> > I would argue the other way around.
 > >
-> > >
-> > > All other maintainers, please ack if you are okay with this approach.
-> > >
-> > > Mark, you're in Cc for visibility only. Once we have all the acks, I'=
-ll
-> > > send you the formal request. After linux-next switches, we stop
-> > > updating the old for-linux-next* branches (patch below).
-> > >
-> > > Thanks,
-> > > Rodrigo.
-> > >
-> > > ---
-> > > dim: stop updating the per-repo for-linux-next branches
-> > >
-> > > linux-next now pulls the unified drm-for-linux-next branch instead.
-> > >
-> > > Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > > ---
-> > >  dim | 53 -----------------------------------------------------
-> > >  1 file changed, 53 deletions(-)
-> > >
-> > > diff --git a/dim b/dim
-> > > index e3f616b..b3ed8f7 100755
-> > > --- a/dim
-> > > +++ b/dim
-> > > @@ -658,52 +658,6 @@ function dim_range_diff
-> > >         fi
-> > >  }
-> > >
-> > > -# update for-linux-next* branches
-> > > -function update_linux_next # branch next next-fixes fixes [for-linux=
--next] [for-linux-next-fixes]
-> > > -{
-> > > -       local branch linux_next linux_next_fixes linux_fixes for_linu=
-x_next for_linux_next_fixes repo remote
-> > > -
-> > > -       cd $DIM_PREFIX/drm-tip
-> > > -       branch=3D$1
-> > > -       linux_next=3D$2
-> > > -       linux_next_fixes=3D$3
-> > > -       linux_fixes=3D$4
-> > > -       for_linux_next=3D${5:-for-linux-next}
-> > > -       for_linux_next_fixes=3D${6:-for-linux-next-fixes}
-> > > -
-> > > -       repo=3D$(branch_to_repo $branch)
-> > > -
-> > > -       if [[ $repo !=3D $(branch_to_repo $linux_next) ]] ; then
-> > > -               return
-> > > -       fi
-> > > -
-> > > -       remote=3D$(repo_to_remote $repo)
-> > > -
-> > > -       git_fetch_helper $remote
-> > > -
-> > > -       if [ -n "$for_linux_next_fixes" ] ; then
-> > > -               echo -n "Pushing $linux_fixes to $for_linux_next_fixe=
-s... "
-> > > -               git_push $remote +$remote/$linux_fixes:$for_linux_nex=
-t_fixes
-> > > -               echo "$DONE_OR_SKIP"
-> > > -       fi
-> > > -
-> > > -       if git merge-base --is-ancestor $remote/$linux_next_fixes $re=
-mote/$linux_fixes ; then
-> > > -               # -fixes has caught up to dinf, i.e. we're out of the=
- merge
-> > > -               # window. Push the next queue.
-> > > -               echo -n "Out of merge window. Pushing $linux_next to =
-$for_linux_next... "
-> > > -               git_push $remote +$remote/$linux_next:$for_linux_next
-> > > -               echo "$DONE_OR_SKIP"
-> > > -       else
-> > > -               # dinf is ahead of -fixes, i.e. drm-next has already =
-closed for
-> > > -               # the next merge window and we've started to gather n=
-ew fixes
-> > > -               # for the current -next cycle. Push dinf
-> > > -
-> > > -               echo -n "Pushing $linux_next_fixes to $for_linux_next=
-... "
-> > > -               git_push $remote +$remote/$linux_next_fixes:$for_linu=
-x_next
-> > > -               echo "$DONE_OR_SKIP"
-> > > -       fi
-> > > -}
-> > > -
-> > >  function check_conflicts # tree
-> > >  {
-> > >         if git diff | grep -q '\(<<<<<<<\|=3D=3D=3D=3D=3D=3D=3D\|>>>>=
->>>\||||||||\)' ; then
-> > > @@ -1192,13 +1146,6 @@ function dim_push_branch
-> > >
-> > >         git_push $remote $branch "$@"
-> > >
-> > > -       update_linux_next $branch drm-intel-next drm-intel-next-fixes=
- drm-intel-fixes
-> > > -       update_linux_next $branch drm-intel-gt-next drm-intel-next-fi=
-xes drm-intel-fixes \
-> > > -               for-linux-next-gt "" # no for-linux-next-gt-fixes for=
- now
-> > > -       update_linux_next $branch drm-misc-next drm-misc-next-fixes d=
-rm-misc-fixes
-> > > -       update_linux_next $branch drm-rust-next drm-rust-next-fixes d=
-rm-rust-fixes
-> > > -       update_linux_next $branch drm-amd-next drm-amd-next-fixes drm=
--amd-fixes
-> > > -
-> > >         dim_rebuild_tip
-> > >  }
-> > >
+> > The reason that we are seeing so much escapes from next-next into linux-next
+> > might be exactly by the fact that the blackout right now depends on 2 separate
+> > actions to help simultaneously (last PR + rebase of -next-fixes). What most
+> > of us are not doing.
+> 
+> Interesting, why is that? It seems to work perfectly fine in drm-misc, drm-rust
+> and drm-intel.
+> 
+> The only thing maintainers need to do is push $tree-next to $tree-next-fixes at
+> the cutoff. The rest is automatically handled by dim already.
+
+> 
+> >> For instance, let's say a tree closes (i.e. tags the last -next tag of the
+> >> cycle) a few days before -rc6, it could happen that subsequent commits to
+> >> $tree-next still appear in linux-next because tip still picks them up until
+> >> after -rc6. So, after -rc6 those commits (that were in linux-next for a few
+> >> days) would disappear from linux-next again.
+> >> 
+> >> Not that big of a deal, but technically they didn't even belong in linux-next
+> >> for only a few days.
+> >
+> > But well, this is a good catch and a bug on the current proposal indeed.
+> > Should we move that to -rc5 to -rc1? We just need to ensure that everyone
+> > have at least 1 PR after -rc5 and we are all aligned.
+> >
+> > The only caveat is that patches landing in drivers-next during -rc5/-rc6 will
+> > take a few days more to propagate, but it shouldn't be the end of the world.
+> > It is still a couple weeks before the merge-window.
+> >
+> >> 
+> >> If we kept $tree/for-linux-next, tip would never pick those commits up, because
+> >> a tree that closed a few days before -rc6 would already have switched
+> >> $tree/for-linux-next to $tree/$tree-next-fixes.
+> >
+> > Well, if you don't move your -next-fixes at the same time of your last PR
+> > you are leaking that as well. And this is happening.
+> 
+> Where is this happening?
+
+Mark complains for a while of the number of escapes of next-next into linux-next.
+Perhaps the current flow is only working well for -misc and -rust.
+
+> 
+> > At least now we know why it is happening (besides xe and amd sending
+> > straight from -next instead of having the -for-linux-next branches).
+> 
+> I think if xe and amd would have those branches there'd not be a problem to
+> begin with.
+> 
+> But independent of that, I think it is nice to give the "fully merge conflict
+> resolved thing" to Mark. :)
+
+yes, that's the goal. Reduce conflict's for him and stop the 'leaks'.
+
+Thanks,
+Rodrigo.
