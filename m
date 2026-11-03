@@ -1,50 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793709067;
-	b=VwxofwBi1rvS+mX2A++vya/oNNPpkX6u6/pShmfV95SDtW/hDSdOEyPZjFgT0Ev9sl3I
-	 3Ld5twnWnyV8CM39wClT0Dm2SbqtBG84xFegXQIpz8mLm2tguMcSBTUN1EasldmxnOO2Q
-	 cWr0C+4zTq24tuJidvy6k5XshXea1+PAyBvY5q1hF+v48c9+GbdziY8nHRvNGKNIvpU98
-	 L++mrUqYv56MHWlbnGFnkrKyHyEwXJ8WnH+UCE18eSNFlRhVS9WFmDyhYX9kY8c27NzMA
-	 XnaraJKGnZTHntnFM5Emeaw5YrnsTQu+Tw2miUNA0OXSHHBpowvj0DQd+T5AEAz4zOA==
+	t=1793714899;
+	b=O8/lHRjXeS3RhOeKe5goRic4L4/dFf0y3C46Jjardc4uq+sbH0zT/AP2w8CYhEh7jYAu
+	 rYyPDLCTrs/vtGlxHngD9+q7RYEOWEvGfXWqIO+bey3Gnlo5C6XnCr+IGJ7n/qDwUhaPE
+	 Ict/f2LFjefGPyYrK4WgGYWis7cNj+4ZNNQNb02tc+0NROnMdz0gUf35922MhuYJGAzxV
+	 ACWnLUdr7PU/auDtLM1UYIJzFGg+ysukadlVEe26mpADkZvPN8tGgtvgdKJtARnAgNwcJ
+	 +0TxKh03OgA5jzGNboU2GQbuzfyU5RPJ0KMhcaRU6r3UOi/pe36G7dj2CjKlDSZbhAA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793709067;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793714899;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=QBcqKmclROYeCOX7A4e5v1bv867bbF3DOoJrAggdBz4=;
-	b=SPBwFRv+R60TJ4hgElYwymJUkb4i2BoNnxUpw7rB328Q0gFl5m7SttrYPDB5zKkk4O6l
-	 PgWBwQhtE0hCiffTHMBcM0hSJ2/W8qkaZF6zVx2RwPOm8/z/iNSctYT0QGhN0e29x7hSl
-	 LQE20M6Iij09DSwahwUFq15GJzaamSbT+LRoYgLSzHjtJMSWF2RfqD8lmC35vA09HPQyt
-	 2EtmtDEXZQcI0zn5aXSFgcbKOlM1yp1MuHdpA7kRwW9hIRYl5Ak+pJ/IvDT0O/BEGhUad
-	 5pUiTh7USW2dbKw5RN6B2tQhbWouWQMLbp7AmzXMLHkfIXRfe70YlJqBVhvqGxugouQ==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=G6/DjyF7KKrhq2ihxZk1jTJ/qEo49ZkCozqJFemoqt0=;
+	b=hDxEFuRFEZPckORTDHB5FoJyepN0MA7uHCnkQC4sMR9wveixjNg6DVOK8gblREJy0Wr/
+	 0pwq0y3BHAKzEO915IlfhH95XL8JwWQBzY7Lg31ONYhcOvU1BUYbzkP6WHDtyn2KHglK3
+	 uRFs1f8hnb0mBJfbqPNJfXnpEjV3YpqA+oMpK52C46oGXOzCW2NeJea03kO2nP5jz8Mxy
+	 F9vw3/dQCUoTpSSwP8b5gMPaAXHEzkxn9AalcbueHkCT70Yjl9pRkRHrK1oTHpM6MMACC
+	 OG8csHUrHcdhY6b7WTJP9EoiiTG8AviFxV0wlW2iRdu72Tlf+bFFGROJPVRWMzkwAFg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RiYjQKPy;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PPd+6hml;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AEE606EE83;
-	Tue,  3 Nov 2026 12:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7377C606A324
+	for <linux-next@vger.kernel.org>; Tue,  3 Nov 2026 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RiYjQKPy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7301F000C1;
-	Tue,  3 Nov 2026 12:31:05 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PPd+6hml
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D1EA1F00919;
+	Tue,  3 Nov 2026 14:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793709066;
-	bh=QBcqKmclROYeCOX7A4e5v1bv867bbF3DOoJrAggdBz4=;
-	h=Date:From:To:Cc:Subject;
-	b=RiYjQKPytzzgIQOoHpEYAvO942+U0C4Jdzg3IHUflSLtY6IczTP7W2ekp/NoIWuzN
-	 HLzG2WiBGiJUZpceDXY6c35SvU9gYa6t4+m/BlkAe0zgUT4V/Cy0KIDpiVZHT4XlvQ
-	 1ehUHgGs3HUyegxQK0/dYObx/A59hwDv4vWdchfLqLJT4BYEbG0BzAfyW12OhFvltr
-	 3fnICJSQ6QpiUSI7obNQ3xXY9pu4S97nySTacyLBRMBd4+g2vDaDR4iM2CXp7SHyWe
-	 uVQRcmtkzZ9RBFDSORcVU8ZpohtcOtljSVoWKXXnr3emaPmPVkrpfcnRT6zVpCcK/N
-	 DxJMEvPXf2BoQ==
-Date: Tue, 3 Nov 2026 12:31:02 +0000
+	s=k20260515; t=1793714899;
+	bh=G6/DjyF7KKrhq2ihxZk1jTJ/qEo49ZkCozqJFemoqt0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PPd+6hmlGgrKBYp1ejEBhCd+A3l3J6kZ4YKjufZHg0xVuhKhtRGQnfR6VxNqfLO1O
+	 1mZdvltSnED+sesL/6U4HWMVPBwZDJpkdcQbDrfAj+STQYXV7m8ibteIXWKSyI0ABJ
+	 cBOsV2D9YKgdE1FS2ZBHK913ReJ8evZLUdegJlPL1Al1xePasGtrIALIVZ5maFbXzo
+	 m1vs0dyTBWlqMyFCVfGgOBEQmtUg0toegcAAQ2YzR89d1FEqGN7/TLTAYZJfW6rPeQ
+	 C5Kr8xSbp2CrWoAFQ29urR/k9iMElygp3MzstzWLNEzV81K7buGsA1lZInNwAAZIyN
+	 T5Y/AKnRGA6iw==
+Date: Tue, 3 Nov 2026 14:08:15 +0000
 From: Mark Brown <broonie@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the vhost tree
-Message-ID: <aunUBu8EQC-pEUGr@sirena.org.uk>
+To: Magnus Lindholm <linmag7@gmail.com>
+Cc: Matt Turner <mattst88@gmail.com>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: please add lindholm/alpha.git for-next
+Message-ID: <53d08222-b062-4552-ac8b-237b78e856c2@sirena.org.uk>
+References: <CA+=Fv5Q-iKk7qhN7TEbv4LuUeNau2iKwSb=vjx_a1w8-6mgEFw@mail.gmail.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,33 +58,58 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="62tK8vmu5O3YEvs6"
+	protocol="application/pgp-signature"; boundary="tV7u7SYTx9CbHZfC"
 Content-Disposition: inline
+In-Reply-To: <CA+=Fv5Q-iKk7qhN7TEbv4LuUeNau2iKwSb=vjx_a1w8-6mgEFw@mail.gmail.com>
+X-Cookie: Small is beautiful.
 
 
---62tK8vmu5O3YEvs6
+--tV7u7SYTx9CbHZfC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commit
+On Mon, Nov 02, 2026 at 08:22:42PM +0100, Magnus Lindholm wrote:
+> Hi Mark,
+>=20
+> I'd like to wire up my alpha repo into linux-next, could you add the foll=
+owing
+> tree as alpha-lindholm?
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/lindholm/alpha.git
+>   branch: for-next
+>   contact: Magnus Lindholm <linmag7@gmail.com>
 
-  9494608239a5f ("vhost-scsi: validate event queue descriptor direction")
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
 
-is missing a Signed-off-by from its committer
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and
+     * destined for the current or next Linux merge window.
 
---62tK8vmu5O3YEvs6
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--tV7u7SYTx9CbHZfC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrp0/8ACgkQJNaLcl1U
-h9DUUgf/WdPMGZ5g7Om5HMtsmLKSePAr01UEBzkPJuOeWd1cu/zU5rfpENADFtrc
-zJvteKoDLJoRnTdPLzOir1bF3b7PG8Z9Pohu9UXThl3ocY/6FWeKOrczIXp0AXhY
-f4HT1wCYupdDm7TEpXveL1c+NF/HivpFiChKYEJJmoSLCdiNH5aE9IG0MntxLJgi
-RtfGVz5ynPYkStzjEs9ibtME/ERt8tPyhv7jMqPaTccl5JDqu7521Li+BU7Tmnha
-ujzhHOsHdVjtRAWfT2nkoGRXeRThU95mlYa/BPg/dBzpcu3nqpC/Mnmafygd/JSb
-hCpkn4yP//qPOuEGKZof7v1HbofyWA==
-=k+3u
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrp6s8ACgkQJNaLcl1U
+h9C4Iwf9FjRnN9/vrs40iiOfqcrPgACILWon0Lol21z1Ts0OT17TZ6iLPGS/WWqm
++zF7t/OjJs0+mgqeG9Y7uzsFTBec1ZkBzK+yATx/L+YJm9s/6xwmB15HHqcA0qPa
+DrJlFHvRureIcfsnT4CcrpgMN+1tpM9QmOKqzU5DNrKvYyhgmCzwtKzRwTSPyz1j
+Q2F5SVK7cUeiq8dPRTetH5mi8dPkMPe8Ayp5tzI3dCc5qssR0+Z7U2NOgjDL2BjK
+GpAVkQ43RcFBS8IXLBtGHyBsUdQJISlRmciS97yo8LIUtZY4ez8/7iSxGYzVnHXR
+ULv8eWf06Ghq3rYX5VSw8XCnvo9xzA==
+=A18H
 -----END PGP SIGNATURE-----
 
---62tK8vmu5O3YEvs6--
+--tV7u7SYTx9CbHZfC--
