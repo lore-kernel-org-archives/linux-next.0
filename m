@@ -1,45 +1,70 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793790493;
-	b=FEbHbt2XlOXZf88odStwlIfUonhsYnIa/8nIWwLCzMro/gjjJcQxdEkWV8BWS2shJE7J
-	 I/hnmIpTVzbag6VRjXAptGbC9qlpVdC7xLiJbvSr85w0ElvQlhAl792uyprkmVqx2eRE5
-	 wGH3uqEG3FqVf2B2J0EQNIkhCTuIC60XbbL35easgQde+9M8MjbnP2h3ZUqfJotpxQWCr
-	 61jN2RkdSbKW0ESEw+GrVUDF51tz7QYl0Ny+nVteqBqcdtOGCJZExE+XKs9Vd8/WLmGdV
-	 Kp+ZrNPNN4PlvzILM9yZ6QwaKq679EJBCnktSGFyXxk72bcBrgEk6hfsssuxENTtYww==
+	t=1793792941;
+	b=Qtbjeyn70mii7WPTu73+gNa0u+yPwMcY5cw7QoP2biCPZ3jOkCXFh9bzb0As1wJsU9sB
+	 cRr0Ek/f4xxhfJfRSOW16rk4fnIY2vZ6DTz6CRXV4t5iumOBzaOotupbYriHdPMV4xBFS
+	 cjPynXqjDaMTNBHQmueKc7UKZszNKauC5SkO+MrYNaDIxtkjUNeJwdQ2DCR3DBAI4upyU
+	 R5yLRtYDHu7UBe5QSFYL3rgxDmUGAALzR5W7Odvf7tSOZoSCLmKalT6G6u8Io0y1VIlZ4
+	 oOsdj+00L8RmuDSLS6OvDA4nzLCQlt2StC0NMfZJOGor6wPFjRUMKXpFHMFXSa+Bpog==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793790493;
-	h=Received:DKIM-Signature:Mime-Version:Content-Transfer-Encoding:
-	 Content-Type:Date:Message-Id:To:From:Subject:Cc:References:
-	 In-Reply-To;
-	bh=u0pzNhc88EQWfEvdKmTmCWvYxL0guJ9gozKWEalXU4U=;
-	b=GM/kKqy/X0VmhiwHHtoYBwZLMxZo+VBAfvefFVitnGd2eoUKP+ybjRamPvNLYxcqr1WO
-	 bmQvOiV7/+KoZFmayTzkYV/CnI+8xxjqYM8cWSz8QAHkXeijdrteBlocD5Vn3/GSS5igS
-	 xGklvBb0ICATnHWDg2+D2e8IqTxj95/1d3WLzfjY9qwKJE0Z5xzKAT0zLziCzhNybHnQW
-	 DKeSMagSHTYGOA0i0j9syD8f1SDXAlOW7xMG+PE6mSlJFYT1qs6k1kqSOS8DIpG4xaVtC
-	 JMQXeFppljO2jlDlCTbM0gbiX1Jt+i66DI0nXaLOC/7M2SeG6ODFZeKkDaETmWCIJdQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793792941;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=COuggtR3/6hXgRSWHvUvL0nAwNilMsudL7OYm2wb3uA=;
+	b=fKs5FRnEZP/432/FmbUNm23j1YSoznxwoPEa3/mYqJZxbA7OjciInW3MpzEo4eU4KDVi
+	 fjIPtqqGZdRTdSEAPKDrLIIeEabI3s3mYtZAQVC8YTKyJcA4vjoq05sssYufn5uVipC11
+	 4y+aWfNXM/hZSKmU+eNiboapB1LqsKTA8tcDPa6D4lqHsB1wED2/7E6JseEH5twDHy4bw
+	 ZcEHg94OIlTmadvPLwTkSXvMRLGgci4qQnTz4YiONjiDVOWz0StaWMJc6OCLHiz3Z2jyv
+	 HON+yXggcV77w68nH93WNTJdkkWpWP21vxjSgPTl2bdbnm6AIiFTTsJn+34dz1qqwig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oNoFUyHE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jh6bYscY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5792C606A326
-	for <linux-next@vger.kernel.org>; Wed,  4 Nov 2026 11:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F28606A31B;
+	Wed,  4 Nov 2026 11:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oNoFUyHE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4711F000C1;
-	Wed,  4 Nov 2026 11:08:09 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jh6bYscY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478051F00919;
+	Wed,  4 Nov 2026 11:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793790492;
-	bh=u0pzNhc88EQWfEvdKmTmCWvYxL0guJ9gozKWEalXU4U=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To;
-	b=oNoFUyHEbgkk5cIKOy0xO8hz/PBgZm1fpGpyJXJ5kZ4HpiLdM3tqZTCHhQtE9a2On
-	 xeMI5/n+XtP3rOh7e8G8EqJsWYRc+xineIDIymEqx1oiHaS18sXV2AobdPow+oEAhq
-	 mpBjBcgtkA5ZMHhloH5JuhIa2bmRmy9Kjr+5F3wofARCGElHxxCoWBe8pr4+I2irvG
-	 BJTeWC8WJBuiXl2DMKvA6r4lPhL7ZeONoExfbTsDBStdf0HkKqmnJUVmpitto4EMmp
-	 yzw+Jogix8A0y9f31OkeOwjIcJ3DQPaV28B+y5sTJTZxvYdjdulRfgk173yMmUXua5
-	 iyTvDxg9aDz5g==
+	s=k20260515; t=1793792940;
+	bh=COuggtR3/6hXgRSWHvUvL0nAwNilMsudL7OYm2wb3uA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jh6bYscYFdaQKfEqGI4vtk+J3HQZUIqmLNS85G+vlG2UsOuqHqd0KaNO0PYGCc/Bp
+	 7enJXBpQWC/8U9BQasVldPXb8We8MR0JydzKUgfYFXE4c1CleEVtT1fy9PaWliLEpt
+	 AWnN3Ei2cUli8swbba/n3Xffav9piqkQZSAFiRnIzqhGc68HW37U6zvtZ82WgGFHt9
+	 nsrk8Dk4m1NpcqljHWiq10WgE9HN+1Mnxi3aaBEnWt+72QEZhkHqcFXBgmvcFjckJi
+	 fIe7eZ9bGhBegO7CgR/rwHMxdNnBHE7wnzP0eT6gqt8hufbhWpusksFRuO/QcEHLan
+	 l8qX5fcZZsTsA==
+Date: Wed, 4 Nov 2026 11:48:54 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Dave Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	Sasha Levin <sashal@kernel.org>
+Subject: Re: [RFC] linux-next: replace the DRM trees with a single
+ drm-for-linux-next
+Message-ID: <5ed2348f-83db-468e-981b-2bc62fc2bac5@sirena.org.uk>
+References: <aujZcJBUyQ7iX_PM@intel.com>
+ <e14e582e-d9d1-4c95-a23e-cf1e6f2feabd@leemhuis.info>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -48,74 +73,58 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 04 Nov 2026 12:08:08 +0100
-Message-Id: <DMMDNQ0GD6AP.6HPRG6JWUEYQ@kernel.org>
-To: "Dave Airlie" <airlied@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [RFC] linux-next: replace the DRM trees with a single
- drm-for-linux-next
-Cc: "Rodrigo Vivi" <rodrigo.vivi@intel.com>, "Alex Deucher"
- <alexdeucher@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Jani
- Nikula" <jani.nikula@linux.intel.com>, "Joonas Lahtinen"
- <joonas.lahtinen@linux.intel.com>, "Tvrtko Ursulin" <tursulin@ursulin.net>,
- "Matthew Brost" <matthew.brost@intel.com>,
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Alice Ryhl" <aliceryhl@google.com>, "Alex Deucher"
- <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, "Mark Brown"
- <broonie@kernel.org>, <linux-next@vger.kernel.org>
-References: <DMKY979I29AF.BS1DF5YAZMOY@kernel.org>
- <aujikV14tF6K1Xqw@intel.com> <DMKZR0YZV1CX.DWVK9V47GR1J@kernel.org>
- <CAPM=9tww=CJdxzvfUvLwQ6V4uoszg8JrB1XCAcp15upM-xPvSg@mail.gmail.com>
- <DMLTRKUXTL3P.11VRVU1A8ERMG@kernel.org> <aupFKGpAwAiGXN0U@intel.com>
- <DMLVPRO7XF7F.21199FO61MFRD@kernel.org>
- <CADnq5_N-6_T8EnihjoTSqpHGb_mZPogi6z=Ti-7_oue5d07oTw@mail.gmail.com>
- <aupktBCwcN_coHEH@intel.com> <DMLY7GDT8VBO.EE1P01ZX2HPK@kernel.org>
- <auqaZdocMvOIxN1c@intel.com>
- <CAPM=9tzu6MYQ-Y0iYK=2PLiM5=1BsEN+Q5WnmYh=hkKnLJ4b1Q@mail.gmail.com>
-In-Reply-To: <CAPM=9tzu6MYQ-Y0iYK=2PLiM5=1BsEN+Q5WnmYh=hkKnLJ4b1Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KUqRJAUzGYuVbdLS"
+Content-Disposition: inline
+In-Reply-To: <e14e582e-d9d1-4c95-a23e-cf1e6f2feabd@leemhuis.info>
+X-Cookie: All rights reserved.
 
-On Wed Nov 4, 2026 at 4:29 AM CET, Dave Airlie wrote:
-> Yes this is the thing I like, while I like maintainers having freedom,
-> relying on them to do something manually every release at the same
-> time doesn't seem to scale so well.
 
-I think maintainers have to do something manually every release in both cas=
-es.
+--KUqRJAUzGYuVbdLS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The difference is between "everyone has to do it at the exact cutoff day" v=
-s.
-"everyone has to fast-forward their -next-fixes branch" (which to be fair h=
-as to
-be done in both cases).
+On Wed, Nov 04, 2026 at 06:49:29AM +0100, Thorsten Leemhuis wrote:
+> On 11/2/26 19:41, Rodrigo Vivi wrote:
 
-For the former, a tree that closes before the global cutoff can still leak
-following-cycle work into linux-next.
+> >   drm/drm-next, drm/drm-fixes
+> >   drm-misc/for-linux-next, drm-misc/for-linux-next-fixes
+> >   drm-intel/for-linux-next, drm-intel/for-linux-next-fixes
+> >   drm-xe/drm-xe-next
+> >   drm-rust/for-linux-next, drm-rust/for-linux-next-fixes
+> >   amdgpu (agd5f/linux.git#drm-next)
 
-I.e. the global switch is automatic, but doesn't ensure correctness by itse=
-lf.
-In order to be correct, maintainers have to do something manually.
+> > drm-exynos, drm-msm, drm-msm-fixes, drm-msm-lumag, drm-nova and etnaviv
+> > are not part of it and stay as they are.
 
-So eventually it comes down to whether doing the correct thing derives from=
- an
-explicit operation (i.e. fast-forward -next-fixes, or just add the --final
-helper), or an implicit commitment to push and tag branches on a specific d=
-ay.
+> > The main reason is to reduce the conflict pain that Mark constantly faces.
+> > All of them should be handled already when we are rebuilding drm-tip.> [...]
 
-I think it is better to derive the tree status from its actual state rather=
- than
-a promise about that state at a specified cutoff day.
+> Please correct me if I'm wrong: this seems to mix up patches for the
+> current cycle (e.g., -fixes branches) with those for the next one -- so
+> I assume the former won't end up in next/pending-fixes anymore?
 
-> If we can't have the tool enforce what we send to -next after -rc6
-> then it's going to have gaps.
+I'm hoping is that the theory is that they will work like a lot of other
+trees and merge all the fixes branches first, push that out as something
+I can pick up, then merge the other branches on top of that.  That works
+well elsewhere, I'd expect it to also work well for DRM.  One of the
+goals from my point of view is that the mess caused by all the cherry
+picking is resolved by DRM and isn't visible to -next.
 
-I don't think either option can enforce correctness. The difference is that=
- one
-approach relies on a timing promise about the tree state, while the other u=
-ses
-the tree state itself to make the decision.
+--KUqRJAUzGYuVbdLS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrrG6UACgkQJNaLcl1U
+h9BieAf/bQ8OVo6pNYJbXv1ww6DbkYA1dhBBojhY2XSltMdi6CY+6igpIXQ1xs8q
+rlkJfzwQn371HAh3uUJBgW0Kj+mpOBDMyIUtxQoMHfUEWwt8EUFwDSwNIZ0CRqq5
+6tREnTudUG5xlDJ3fZwSq2aeecH5apxdcenmOeGIvOO2H0VjfR+lWXoXiyzwv+Zl
+QfaG3Jnp8jx2oYwu4tFVmgGx2DKq4CRJiQmhZl/B6ZLoKC712hjUdCnqckxe/b10
+Vgq8N+VA2XYZHmf78ty77MGGh8fJWbE++SmC5x/QLEeQy9gw0cdR105mql7HkpBi
+qApVQv6LrttSypeumKSfhcwSExCYYg==
+=VIlo
+-----END PGP SIGNATURE-----
+
+--KUqRJAUzGYuVbdLS--
