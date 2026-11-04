@@ -1,69 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793796365;
-	b=dSPGiAGOBwmfqAjkoD1WHFDqLsaiNFpz1N+lNORZr4q2V7CMJQ/eQgTwUQxkHe3vftwZ
-	 uOmkQwQi9Hrbl0H82SxC4RsHP+u3JLSqsjI1vtRdn8VoI96e74o9aJyvrXDsRj4sv8ZMG
-	 5eBWvVcei7samLP40igHzzb97EA9BQp8ZUupvtiRIPpRuNw8ZcB4kHZubMq66f2069THr
-	 J55s3g2dtHtJ8zeUlffOeqIF6m2rIu/bQnXR4Q8jU7PJmhlZtBLX9QbUYQ5dLH8lzZ6A+
-	 D2BOi2OTUu9O4zROKZ8qyulhXkMO6toDIJkehkB1iKL+NK5Clb4xdrOd/n/XtNpsxJw==
+	t=1793800159;
+	b=zxD2Idb0NR2CHoZutDFhwqL4qISzbKgL8/4e1nM4z+M+yyx5I6yQzYF7oz6zAYVX/SBs
+	 PW2YavkpGY3+ch7/VRCJJalAqgbgSA3ul7zeXcuJArEqlsHVDb8dJeJI6C4+j7uWim3IY
+	 psq4IzaxLqq0ajbDp2p+lpLEdybU0cmZWfhkFi5Z0XjAjLv7oXfqxg0ngEW+2DCe9o35f
+	 NEI3X/5qQnpuKZ6flnqHM9MGQYevHLjpWTxyOfC1l1FRrkbc19jt09/HmTVmArZf1AdFp
+	 WXwgRMjYaiOpHiXmKhy5y6aK5eT8KsV96OWF0dkdCgFIKzU2+Q3ds4ttjZMzNj85jTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793796365;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793800159;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=PFEBhpVkx/Db8FKRqQ1f85p8DYST/pInzrhzPSOP1ko=;
-	b=XoVfZW5N6DwVoRlp6DUoKogVcWMefUdAlKFGlR/vYPn2/yMgP4fn+MpX9Z7dRc/zI9v8
-	 v8bSGlbOnrDMBQKmkDIb3HfYVRuT2ykR8/w769RA6xpN4mZOhx9XxfKiRqomABY3hc3Du
-	 eNZSP31HthockKGTI3OVhUVp9PsWQA18ChUVv0S0J9B8tO3Z3mBIlrHXMOt/eS5QB7dd9
-	 k5wVfm5V+o9nwR8e87F/gPYxCOtnI1Tnc8tspWkjnn/rdRp8x6Y62ITXTQS8jQ126qcxs
-	 JFy96k6Un2CUgPMoFRD5d/LNNysOUEGhBmQyJy2VURaD+GM94UBkkn4plgpzuYeFTlQ==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=VnP+ywtmwpsUeB+1YP0ciFWt3att8mKkpSXyQncrKEY=;
+	b=O2NhJowFdoj7ZpaA5w7NjGBMl/QDfppQnkz5/6Wnhnum1d8f9kYXSr5GJ6GFoVmQLlyt
+	 hWfwF2DqtjxXc1AtRGvtHI+p1Q9j+l51+EBCKpPglrqVgufHvtq3rLvXn4iikbbPaiZFE
+	 RmALPu+LycNdCbOQ5I7xs7lTJoZfeK98sTlIvXPfbGsk7WLn34yDdlBQuiyaQciLNWOAg
+	 31rYWEDgmH0N+unsnN9I/c4LdL1Z1dgS5NCshHpZrDmlavNBXi/K6FcjJrgTzCwbsvAOT
+	 qszNmRQ35jgJ6o5Gwae4CTM/u5Ar1PGdGyy0Z5Z3F44rZi/gvyXCauGKP/rnxpZnYpA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iirwKghM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iukcgD2B;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61A9606A326;
-	Wed,  4 Nov 2026 12:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC00606A31B;
+	Wed,  4 Nov 2026 13:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iirwKghM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86BEE1F000C1;
-	Wed,  4 Nov 2026 12:46:04 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iukcgD2B
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D3091F000C1;
+	Wed,  4 Nov 2026 13:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793796364;
-	bh=PFEBhpVkx/Db8FKRqQ1f85p8DYST/pInzrhzPSOP1ko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iirwKghMMMh85yOn9eMgrtze/QVFlkbamubxCg5KXK9uIiE1xxZkFy3spIr9QXM00
-	 me/JMZv1X13+X32IwTbGLy0yRlrLX2QZ6uTUB4aIpHpiAf8e4QAjKi/7eZSHXH8AqP
-	 kjBT4yuLGNXCODj1eVe+1wAZqYYQz7qExZfH+SEyjf+8umNgHoh1s/jdGeil4W9p9T
-	 Q5AueLgnrVkMw0bqofKC/zJ9+oxC5JncAqIr3Q9Sy0lmUQy2KNSM/s1ca83C36OpZq
-	 Jxs/ryagZN9leSZ5n7M/mX0dR0jrHdHigb+cJWn7zBm91YQjiPMl+XrxV4OCVIbsTW
-	 IvgWW2yoYnUtg==
-Date: Wed, 4 Nov 2026 07:46:03 -0500
-From: Sasha Levin <sashal@kernel.org>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Dave Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, Mark Brown <broonie@kernel.org>,
-	linux-next@vger.kernel.org,
-	Linux kernel regressions list <regressions@lists.linux.dev>
-Subject: Re: [RFC] linux-next: replace the DRM trees with a single
- drm-for-linux-next
-Message-ID: <auspCwOuROyorRnv@laps>
-References: <aujZcJBUyQ7iX_PM@intel.com>
- <e14e582e-d9d1-4c95-a23e-cf1e6f2feabd@leemhuis.info>
+	s=k20260515; t=1793800158;
+	bh=VnP+ywtmwpsUeB+1YP0ciFWt3att8mKkpSXyQncrKEY=;
+	h=Date:From:To:Cc:Subject;
+	b=iukcgD2BUGZMwOOj8MZxZl4L+vKOsZeydY3a2qyKBoctZQj4EL1dRuSNx12ppQ4/M
+	 eeqxKy6SMNNvBlYoJyOl6Tx1cWRFoqCvSNEjd985U0M094W9PUDIhBSfXvfD0NtDpH
+	 RYQh0fGVwfhBhy2F9wKsbM32xVfimmI2nGdvzU17LhqgDJJl2l11QHMREAyp4Demtb
+	 YzB6OZ1JG06vMSUb1MLHW9ZZtBBkA8Ayn50LLgkC3nzwoJMHAbfhmrC8mUNI3Hw59T
+	 6oaFeoyF3spPwfB2oc4YHfi6bkuWlT+8xAxlNzDrkHTosEAewJG+botkTaojqZ0Dn0
+	 2wI2CyM2EOJ6w==
+Date: Wed, 4 Nov 2026 13:49:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 4
+Message-ID: <aus32xrsahXYfc6l@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -73,67 +54,71 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Y1ElHorL0q6hilAn"
 Content-Disposition: inline
-In-Reply-To: <e14e582e-d9d1-4c95-a23e-cf1e6f2feabd@leemhuis.info>
 
-On Wed, Nov 04, 2026 at 06:49:29AM +0100, Thorsten Leemhuis wrote:
->On 11/2/26 19:41, Rodrigo Vivi wrote:
->>
->> We'd like to replace most of the DRM trees in linux-next with a single
->> branch:
->>
->>   https://gitlab.freedesktop.org/drm/tip.git#drm-for-linux-next
->>
->> It replaces these entries:
->>
->>   drm/drm-next, drm/drm-fixes
->>   drm-misc/for-linux-next, drm-misc/for-linux-next-fixes
->>   drm-intel/for-linux-next, drm-intel/for-linux-next-fixes
->>   drm-xe/drm-xe-next
->>   drm-rust/for-linux-next, drm-rust/for-linux-next-fixes
->>   amdgpu (agd5f/linux.git#drm-next)
->>
->> drm-exynos, drm-msm, drm-msm-fixes, drm-msm-lumag, drm-nova and etnaviv
->> are not part of it and stay as they are.
->>
->> The main reason is to reduce the conflict pain that Mark constantly faces.
->> All of them should be handled already when we are rebuilding drm-tip.> [...]
->
->Please correct me if I'm wrong: this seems to mix up patches for the
->current cycle (e.g., -fixes branches) with those for the next one -- so
->I assume the former won't end up in next/pending-fixes anymore?
->
->Do we care? Or is this a situation along the lines of "yeah, that's a
->downside of this, but given the upsides, we do this nevertheless"?
->
->For my work it was kind of nice to have the two tracks separated, as it
->allowed me to easily check "is this fix for a recent regression in
->pending-fixes, as it should, because it should be fixed this cycle".
->
->Side note: two years ago there was also the idea to increase testing of
->pending-fixes or branches feeding into it separately, but it afaics got
->no real traction:
->
->linus-next: improving functional testing for to-be-merged pull requests
->https://lore.kernel.org/all/ZyI-Y00J3DBUkon3@sashalap/
 
-This is actually still happening today, just evolved a bit!
+--Y1ElHorL0q6hilAn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I have a tree similar to linux-next, but it's fully automated, using LLMs for
-conflict resolutions, and generated a few times a day:
+Hi all,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linux-next.git/
+The releases for Friday and Monday (6th and 9th) might not happen due to
+the magnificence of the rail system in the UK.
 
-Instead of just a single tree, it builds the tree with categories, grouping
-them into "%s-next" trees for easier testing by subsystem or theme, and later
-merges them all into the one big "all-next" branch.
+Changes since 20261103:
 
-The equivalent of the auto-pending-fixes branch you mentioned would be the
-"fixes-next" branch, and for the drm folks it would be the "drm-next" branch.
+None.
 
-This whole thing is still being very much used today, finding real problems :)
+Non-merge commits (relative to Linus' tree): 2922
 
--- 
-Thanks,
-Sasha
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 436 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--Y1ElHorL0q6hilAn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrrN9oACgkQJNaLcl1U
+h9Bs3gf/QotQ6oI9krepRzHGwUUZfjx8qpjrrftpg3SmvSDQlj9d8orbEzEyk8HJ
+lOuQOj+KrqxJeSRS7gy+2tEcz81w4xsqsyhuC+3GL1OzJzLNWf09qPxm80/YwpEt
+MCJVHam729oNDUDzR5azM8jNJwolgYpD63vSNJv8N5DvtrhFS3wx/y5oXmkn3vIt
+rBK2vT0vOyjeltI7R8FYClqAYOx4/k+8zq7QEDqhDVeLKc0W9ENHdeKC7MmAWmNH
+dtgq7kKplkPCgKg6gO4OE9zjGUmLFubHs+//EE3wkH6WZoDFAKUXLmZydUWxYqli
+n87ZgSbV+6VUE7rADqual0M9Hv2tQg==
+=Goda
+-----END PGP SIGNATURE-----
+
+--Y1ElHorL0q6hilAn--
