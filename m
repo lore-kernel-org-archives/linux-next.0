@@ -1,70 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=188.68.63.102
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793771426;
-	b=AjMyfLl1wkWSa86bbOGsWKW160oNGUqzNu76WW2nGuFGq18AqzVOgGc9nqQlWBEc/SKR
-	 PTKfErm9DwGMYKSSRthuUhZbgBjHojCsyr7DEd810SBZx2dEJh65nsfJzKLq6D1C5VjnW
-	 ZGHkoLfx5EXFUniqGm1it9FYQdNctblv6jXuyuujqQO99DweS34av2X6wA/Dpf1MGGaHl
-	 hpKLjHOfKkUNXT5fJjbnqGYlDPI8pOxAJkk97PahsEznC2xjcfbf7XvwjwN8T0oIjI39Y
-	 tUDUKrZQ+f9siNcmglynK4VJX649Xh1eny0zrtKLH+/rEwr7Zi2oCX7z6rpa7mH6XBQ==
+	t=1793790493;
+	b=FEbHbt2XlOXZf88odStwlIfUonhsYnIa/8nIWwLCzMro/gjjJcQxdEkWV8BWS2shJE7J
+	 I/hnmIpTVzbag6VRjXAptGbC9qlpVdC7xLiJbvSr85w0ElvQlhAl792uyprkmVqx2eRE5
+	 wGH3uqEG3FqVf2B2J0EQNIkhCTuIC60XbbL35easgQde+9M8MjbnP2h3ZUqfJotpxQWCr
+	 61jN2RkdSbKW0ESEw+GrVUDF51tz7QYl0Ny+nVteqBqcdtOGCJZExE+XKs9Vd8/WLmGdV
+	 Kp+ZrNPNN4PlvzILM9yZ6QwaKq679EJBCnktSGFyXxk72bcBrgEk6hfsssuxENTtYww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793771426;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received-SPF:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 References:From:Content-Language:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-PPP-Message-ID:X-Rspamd-Server:
-	 X-Rspamd-Queue-Id:X-NC-CID;
-	bh=xpM1kSM/NC7zOWXch+Ztl6vkzKz+o3yaC7ihB20EGb8=;
-	b=uPRhSF8w3e+OyZ1gu8ZMQEZJZ9IDxB0Axfj9KXHQQvtoaCn86+ZBjMmpl7Q3lcGSY0g5
-	 tNb+e0zKq+GunsHdZw8Mfvf/K6F0d2eiKD8osMA9luJ/nVC0EMxJaclHY6kB1dVhXa1i7
-	 t7u84BL0zYTC4+oP9IOoaH7g10pJyqBHLmuLDEhOmu48wdMu3FNgoMkkNDlMqNu43lrwN
-	 STUFC1XG6OJLyOLJgjRWOb0OmAffan28u7pSR4B3hAe7v+lOgmIcv1wmTIr2iWU1kXHpu
-	 /ynyc0kj8ddz04a4B+vGmFgnw5YThyO04UzzuUflykhgWzFC+xE7yosRVYFc4RBJlaA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793790493;
+	h=Received:DKIM-Signature:Mime-Version:Content-Transfer-Encoding:
+	 Content-Type:Date:Message-Id:To:From:Subject:Cc:References:
+	 In-Reply-To;
+	bh=u0pzNhc88EQWfEvdKmTmCWvYxL0guJ9gozKWEalXU4U=;
+	b=GM/kKqy/X0VmhiwHHtoYBwZLMxZo+VBAfvefFVitnGd2eoUKP+ybjRamPvNLYxcqr1WO
+	 bmQvOiV7/+KoZFmayTzkYV/CnI+8xxjqYM8cWSz8QAHkXeijdrteBlocD5Vn3/GSS5igS
+	 xGklvBb0ICATnHWDg2+D2e8IqTxj95/1d3WLzfjY9qwKJE0Z5xzKAT0zLziCzhNybHnQW
+	 DKeSMagSHTYGOA0i0j9syD8f1SDXAlOW7xMG+PE6mSlJFYT1qs6k1kqSOS8DIpG4xaVtC
+	 JMQXeFppljO2jlDlCTbM0gbiX1Jt+i66DI0nXaLOC/7M2SeG6ODFZeKkDaETmWCIJdQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=leemhuis.info;
-	spf=pass smtp.mailfrom=leemhuis.info;
-	dkim=pass header.d=leemhuis.info header.i=@leemhuis.info header.a=rsa-sha256 header.s=key2 header.b=N8pYvAtB;
-	arc=none smtp.remote-ip=188.68.63.102
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.102])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oNoFUyHE;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A39606A31B
-	for <linux-next@vger.kernel.org>; Wed,  4 Nov 2026 05:50:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 00A39606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5792C606A326
+	for <linux-next@vger.kernel.org>; Wed,  4 Nov 2026 11:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=leemhuis.info header.i=@leemhuis.info header.a=rsa-sha256 header.s=key2 header.b=N8pYvAtB
-Received: from mors-relay-2502.netcup.net (localhost [127.0.0.1])
-	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4jKDzy5W8Nz6SKp;
-	Wed,  4 Nov 2026 06:50:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
-	s=key2; t=1793771406;
-	bh=oHVJWiy3U+a8GaE1yrP42/pAzc9O0SkUyb+JyZJSHLk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N8pYvAtBnctS7+/T7j6NTj26DydHV0xco55qdrlqT/FdttLuXZJIYaHdqCLsOl/hu
-	 +Wk02u9Kd8xHgXF4MRwlxDnCPaxUUAkYPAh00TE7Fm80RfbcrlMMtzAoZsD82jv1Vx
-	 io6AIudCaQHa7VY/DvAVdvYqrahrO8OHk3oo4At2BWxnBbXOfBIuV3SplEpsdKEwEX
-	 LWP/vdd+1cz+rw8p2sYL5HBsq3acQdD8spZ0lzOUznc+FwmWJyAJIvYt7rKJe0nRcU
-	 tXi4pHnqwesQjVnYN7SfLPrDlTqIiM3Jn80flYNaLbp4LLL5zK9DTkWdrJGf2txfkK
-	 p9plFIKOT5I2w==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4jKDzQ41hvz51MC;
-	Wed,  4 Nov 2026 06:49:38 +0100 (CET)
-Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4jKDzN1hNfz8sgw;
-	Wed,  4 Nov 2026 06:49:36 +0100 (CET)
-Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
-	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 93D395F8D5;
-	Wed,  4 Nov 2026 06:49:30 +0100 (CET)
-Authentication-Results: mxe9fb;
-        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
-Received-SPF: pass (mxe9fb: connection is authenticated)
-Message-ID: <e14e582e-d9d1-4c95-a23e-cf1e6f2feabd@leemhuis.info>
-Date: Wed, 4 Nov 2026 06:49:29 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oNoFUyHE
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4711F000C1;
+	Wed,  4 Nov 2026 11:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793790492;
+	bh=u0pzNhc88EQWfEvdKmTmCWvYxL0guJ9gozKWEalXU4U=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To;
+	b=oNoFUyHEbgkk5cIKOy0xO8hz/PBgZm1fpGpyJXJ5kZ4HpiLdM3tqZTCHhQtE9a2On
+	 xeMI5/n+XtP3rOh7e8G8EqJsWYRc+xineIDIymEqx1oiHaS18sXV2AobdPow+oEAhq
+	 mpBjBcgtkA5ZMHhloH5JuhIa2bmRmy9Kjr+5F3wofARCGElHxxCoWBe8pr4+I2irvG
+	 BJTeWC8WJBuiXl2DMKvA6r4lPhL7ZeONoExfbTsDBStdf0HkKqmnJUVmpitto4EMmp
+	 yzw+Jogix8A0y9f31OkeOwjIcJ3DQPaV28B+y5sTJTZxvYdjdulRfgk173yMmUXua5
+	 iyTvDxg9aDz5g==
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -73,75 +48,74 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 04 Nov 2026 12:08:08 +0100
+Message-Id: <DMMDNQ0GD6AP.6HPRG6JWUEYQ@kernel.org>
+To: "Dave Airlie" <airlied@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
 Subject: Re: [RFC] linux-next: replace the DRM trees with a single
  drm-for-linux-next
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>, Dave Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: dri-devel@lists.freedesktop.org, Mark Brown <broonie@kernel.org>,
- linux-next@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- Sasha Levin <sashal@kernel.org>
-References: <aujZcJBUyQ7iX_PM@intel.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: de-DE, en-US
-In-Reply-To: <aujZcJBUyQ7iX_PM@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <179377137140.504435.7483767212284432776@mxe9fb.netcup.net>
-X-Rspamd-Server: rspamd-worker-8404
-X-Rspamd-Queue-Id: 93D395F8D5
-X-NC-CID: SwunQHd1+WXMQ0eI+CQDOcUbWn/zR4kndxWVmHBQdfhLDe+mDoM=
+Cc: "Rodrigo Vivi" <rodrigo.vivi@intel.com>, "Alex Deucher"
+ <alexdeucher@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Jani
+ Nikula" <jani.nikula@linux.intel.com>, "Joonas Lahtinen"
+ <joonas.lahtinen@linux.intel.com>, "Tvrtko Ursulin" <tursulin@ursulin.net>,
+ "Matthew Brost" <matthew.brost@intel.com>,
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Alex Deucher"
+ <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, "Mark Brown"
+ <broonie@kernel.org>, <linux-next@vger.kernel.org>
+References: <DMKY979I29AF.BS1DF5YAZMOY@kernel.org>
+ <aujikV14tF6K1Xqw@intel.com> <DMKZR0YZV1CX.DWVK9V47GR1J@kernel.org>
+ <CAPM=9tww=CJdxzvfUvLwQ6V4uoszg8JrB1XCAcp15upM-xPvSg@mail.gmail.com>
+ <DMLTRKUXTL3P.11VRVU1A8ERMG@kernel.org> <aupFKGpAwAiGXN0U@intel.com>
+ <DMLVPRO7XF7F.21199FO61MFRD@kernel.org>
+ <CADnq5_N-6_T8EnihjoTSqpHGb_mZPogi6z=Ti-7_oue5d07oTw@mail.gmail.com>
+ <aupktBCwcN_coHEH@intel.com> <DMLY7GDT8VBO.EE1P01ZX2HPK@kernel.org>
+ <auqaZdocMvOIxN1c@intel.com>
+ <CAPM=9tzu6MYQ-Y0iYK=2PLiM5=1BsEN+Q5WnmYh=hkKnLJ4b1Q@mail.gmail.com>
+In-Reply-To: <CAPM=9tzu6MYQ-Y0iYK=2PLiM5=1BsEN+Q5WnmYh=hkKnLJ4b1Q@mail.gmail.com>
 
-On 11/2/26 19:41, Rodrigo Vivi wrote:
-> 
-> We'd like to replace most of the DRM trees in linux-next with a single
-> branch:
-> 
->   https://gitlab.freedesktop.org/drm/tip.git#drm-for-linux-next
-> 
-> It replaces these entries:
-> 
->   drm/drm-next, drm/drm-fixes
->   drm-misc/for-linux-next, drm-misc/for-linux-next-fixes
->   drm-intel/for-linux-next, drm-intel/for-linux-next-fixes
->   drm-xe/drm-xe-next
->   drm-rust/for-linux-next, drm-rust/for-linux-next-fixes
->   amdgpu (agd5f/linux.git#drm-next)
-> 
-> drm-exynos, drm-msm, drm-msm-fixes, drm-msm-lumag, drm-nova and etnaviv
-> are not part of it and stay as they are.
-> 
-> The main reason is to reduce the conflict pain that Mark constantly faces.
-> All of them should be handled already when we are rebuilding drm-tip.> [...]
+On Wed Nov 4, 2026 at 4:29 AM CET, Dave Airlie wrote:
+> Yes this is the thing I like, while I like maintainers having freedom,
+> relying on them to do something manually every release at the same
+> time doesn't seem to scale so well.
 
-Please correct me if I'm wrong: this seems to mix up patches for the
-current cycle (e.g., -fixes branches) with those for the next one -- so
-I assume the former won't end up in next/pending-fixes anymore?
+I think maintainers have to do something manually every release in both cas=
+es.
 
-Do we care? Or is this a situation along the lines of "yeah, that's a
-downside of this, but given the upsides, we do this nevertheless"?
+The difference is between "everyone has to do it at the exact cutoff day" v=
+s.
+"everyone has to fast-forward their -next-fixes branch" (which to be fair h=
+as to
+be done in both cases).
 
-For my work it was kind of nice to have the two tracks separated, as it
-allowed me to easily check "is this fix for a recent regression in
-pending-fixes, as it should, because it should be fixed this cycle".
+For the former, a tree that closes before the global cutoff can still leak
+following-cycle work into linux-next.
 
-Side note: two years ago there was also the idea to increase testing of
-pending-fixes or branches feeding into it separately, but it afaics got
-no real traction:
+I.e. the global switch is automatic, but doesn't ensure correctness by itse=
+lf.
+In order to be correct, maintainers have to do something manually.
 
-linus-next: improving functional testing for to-be-merged pull requests
-https://lore.kernel.org/all/ZyI-Y00J3DBUkon3@sashalap/
+So eventually it comes down to whether doing the correct thing derives from=
+ an
+explicit operation (i.e. fast-forward -next-fixes, or just add the --final
+helper), or an implicit commitment to push and tag branches on a specific d=
+ay.
 
-Ciao, Thorsten
+I think it is better to derive the tree status from its actual state rather=
+ than
+a promise about that state at a specified cutoff day.
+
+> If we can't have the tool enforce what we send to -next after -rc6
+> then it's going to have gaps.
+
+I don't think either option can enforce correctness. The difference is that=
+ one
+approach relies on a timing promise about the tree state, while the other u=
+ses
+the tree state itself to make the decision.
