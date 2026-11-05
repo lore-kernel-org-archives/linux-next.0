@@ -1,63 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793831715;
-	b=R1Cgtvv+MVKEXKYt8joNhmmej/0j/6+MeydvevgMPmhoUKGJTEy9SDzt6dOhnfAy520j
-	 gH16Q7W2TNyzCfBVrXkMY+I4luHYdLP2vtpvXagwtor9AqlUO8eANxrrrujK6r4rpznng
-	 PVpbBycMrk5pD3bFjBmlpB2jPDbGhzVg5y6RdmsMuJJ8dgOIyzMritM0JCeYH7Hvo+pP8
-	 Mr7P3RHdnEQ3VNro9rZrDVqRg2GHnaqSIi7MFjDuhtHq0yLCbjdvsrxNBqR3xSABFK8JN
-	 e4sju5Xp55eq15x+R9TCvFXHIIS2FeNJQT+Ru99YAqQH7VctL6Hi23Vj3YcVoZ0J5+w==
+	t=1793845826;
+	b=rwPUo01DJanHRWDL0flUZSXdsDuTVuQS51uvpP7kZHICbEmXvwayATNH610xoS0U3YCT
+	 F+a4sKKZxCT91wl5jjsC+JEDz+Jc/v+AAg5DJzAx/tL9+SFlqfKokvViaXNheIsm/IKS3
+	 UP30+mT3sRmXNoyUlRnHEj+iRkmeSg+4+UsxATVa2ACyozO0QAW6dBhNyX8Wc4EM9HX4P
+	 CdVatLpeZo1SrZfz2ir9rw9gAjJ+1DipSR8AyOAIeLLdawurv/bwxeT8xCT3PlGwMfQyL
+	 FfMOq1JJYo3pDwoPygV9MkdRPZX8wM4AgVqTJ2bqQmOdFiFZOHn2psuE1BHo7B89Msw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793831715;
-	h=Received:DKIM-Signature:Content-Type:Date:Message-Id:Subject:Cc:To:
-	 From:Mime-Version:Content-Transfer-Encoding:References:In-Reply-To;
-	bh=b9rrLA8vq8kbHeVnEqzwo8GkMq00BCC6WSP2R9K6GIE=;
-	b=qj4SFx7yPTzm6pemw+20S/SUqwX0vSZYnM/2arui8nA1tihh28G9jYP5s0nVNYSz8laF
-	 0A8mWalWJpMxlbi0D+V4Xi2xusMHH2FQED5p+5JFdeeVS9ZfZR5x+LhF7uIDykzW5jRhd
-	 0EE7CYcJ2d7plPV0M2m90IQWwMHstNvUsruVcQCWbxz/85bFfWFZdVN2HoD6mKpqnwQuc
-	 flZdpSDJvGopLiWrs16qWId7qfkg5niIeVxiWjFmHVknu+r2636OtybxN7ptTTmVBxriY
-	 4H4x+ZcrI4r0X+iQjplxq0cg/WAibSABzhA/nHAIUZ4Iph2z9Sc5bCbARhvQyNxhJ6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793845826;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
+	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
+	 Date:Message-ID;
+	bh=SmhGAH9lbKrfuLZcZkaBtmGpUhnVeZEUFGZqfVx6jbw=;
+	b=JiuDih3SGz0Ff35f0fnfNI4QEMAT0L44iYH2jp/oLulEneWgWT9CuhoFXUbruxFqhxfH
+	 e2Q8kZLFmXMQBgAhnJNzXut6BHsokdhowRWJDGK06hLqpyFQo0aekyeRv5iUU9BS4tvyi
+	 nUuhFcZyHYooZrdpar002qnxhJz9q//sI9llyOUp1XOdhuSVREjTJYdtsT9Fb9LAaGpoU
+	 9einwpMyzwll4ag35FvHmZ1pOC2U0fACFly16rN4ol4Xu9oRq0q5p2OSl8Y2LqdGZVy38
+	 Zvc2sRwWxr6iSquweNUWHlEUUjHFBjGeIbob0+xksz3T3oggwMbJjiF0TSxqoxbRgMw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hm4CXr0O;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=kernelci.org;
+	spf=pass smtp.mailfrom=kernelci.org;
+	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=V0jrk7+d;
+	arc=none smtp.remote-ip=74.125.82.173
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998A2606A337
-	for <linux-next@vger.kernel.org>; Wed,  4 Nov 2026 22:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44D8606A31B
+	for <linux-next@vger.kernel.org>; Thu,  5 Nov 2026 02:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A44D8606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hm4CXr0O
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF2381F00919;
-	Wed,  4 Nov 2026 22:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793831715;
-	bh=b9rrLA8vq8kbHeVnEqzwo8GkMq00BCC6WSP2R9K6GIE=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To;
-	b=hm4CXr0OyEQEjl3Ky4AWo+pbM6UTltNrHiK6EI89KbmvbVrNOL4RXVaMf8hq3QKzH
-	 vJfaoRF8WO0NFEPiE938aeWdOSGhtoP0iPGxk0QnVuJOZnPFWSeujv79GoW8yq7nzA
-	 bwZGIdDrWpsi2rNQfNUUq7KBPEJa6mjxRP3Ti1Lb1kPInEIRXC5MovL1V2ZxDkI8TW
-	 Vk7jsvOCB9JKZwwB54aXKwOPH9vHhKpb/Gr6SVdBDkd419gcGD0r2qVu7+ed1YQf/a
-	 QUmvX8qb2/KzD9ZQiQePwcgz3gwv4FWIteFajzfa8BqDBMMpe6tu6PAE2HhVR4ezsj
-	 peRtOdzGwikcg==
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 04 Nov 2026 23:35:10 +0100
-Message-Id: <DMMS9R5JJ4ME.TBIB1TNLB3IP@kernel.org>
-Subject: Re: [RFC] linux-next: replace the DRM trees with a single
- drm-for-linux-next
-Cc: "Dave Airlie" <airlied@gmail.com>, "Alex Deucher"
- <alexdeucher@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Jani
- Nikula" <jani.nikula@linux.intel.com>, "Joonas Lahtinen"
- <joonas.lahtinen@linux.intel.com>, "Tvrtko Ursulin" <tursulin@ursulin.net>,
- "Matthew Brost" <matthew.brost@intel.com>,
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Alice Ryhl" <aliceryhl@google.com>, "Alex Deucher"
- <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, "Mark Brown"
- <broonie@kernel.org>, <linux-next@vger.kernel.org>
-To: "Rodrigo Vivi" <rodrigo.vivi@intel.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=V0jrk7+d
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-36a1947498bso3594763eec.1
+        for <linux-next@vger.kernel.org>; Wed, 04 Nov 2026 18:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1793845824; x=1794450624; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=SmhGAH9lbKrfuLZcZkaBtmGpUhnVeZEUFGZqfVx6jbw=;
+        b=V0jrk7+di5j8bGhN0ZkMaiiBMyz88n1VbPOOoQ3BjaJ2bUPIdgMJQ1gtO1c1tR4XAV
+         HtSdqr8DzfKB18EPaEESlimWDO6jHHKg3imWMQeJiBVlDmSbL+E64cjgDVQYYgNvL2gu
+         VgBoDjXBZDOm8clmvSMSPvN1VbzzrD8p1mLMV0leywqZyjnFy2YZZ8UQhs6qDmfgvkfK
+         1WyTvXjj8boNnvuD3i8iuwQXmspE7F6h4BS0IgulXlNTpZwE/KtC5BjJ9wibyzvqVxUW
+         n350ExQZB1sDaP9jex2kOr/UggnH7WbUS/G1+g/ZtJ/CbDr1G2IGgTfcm0xEYf3uENbk
+         gLTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793845824; x=1794450624;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=SmhGAH9lbKrfuLZcZkaBtmGpUhnVeZEUFGZqfVx6jbw=;
+        b=hVJqgUGyNdRsh+IZMg5ATPRoA6VC5Fqjo2D8ojSyY/t33i8SEfVR9NP5+oBF6Pxp0D
+         nZfvr63/XE84p5oIURdi7+MLmVA6QOwqcFuaKVVu7r9qjWoSlphi6abVn3lVjzAKsOY4
+         +ws7/3dyGPFsNuqHm/rh9r7sHf9+tRVtSHRx/gveOYE44okXEfOcLa5r0K20YR0Fz9sK
+         eeu2u7UpOcJEFvjbMGn0ATeKB6SFJNNGZvj7yt7JPcvTvasz0EfmqwIIKPoTO8rdA14z
+         6hjEFG0r5ZCGUyGxN/j9UFkgPWPJUY5HgQoNhHfF8VmS0JfSSKSqDemBE2opuj+D+ea4
+         B/Ew==
+X-Gm-Message-State: APuU4Z+VuRpcRPFi7YdbJTZK1bRZqmbeq/D2+bOzZvyIIJRrxqUcupHC
+	KNT0P0uDSX81JQpD8S7AZJwmrp9ww6IYumkfSV4QYudyYuMQWrsKBYJAxSUTNIQVyddA5YQ8pFB
+	m+pDW
+X-Gm-Gg: AYBFou1oXznGzo1ohI9t+xlcoemDqFPNwMV8Vwe+zlIR5J9hT6T65w2G4BiknZn64hm
+	IEtwlloLnh5ddREJR1HjdUYyyWRVKSfUWmDSz+X4Bz3nCNAa1IyUr1P3duGVQoHG4pcmEYlc4eT
+	oxeVh+aA8Zu34dvCt+hvY0hH+SMRogqkfCBT1bxcUZ53aTiKquzYl94FCckVi6Ys3g+NDGdcFI0
+	i+KC7VHo+CtYP1Fa09BoPPnCvu3IEWpmB3jRKAyHjQaunPaXsMiOmppczsoH+dC9Y5EimJDoqOH
+	qE1fXrSHzn/MRalktU6pchV8YHv666UWXmzcSfqRCyf8wMnFpikGBvUwOn1a9eqftguvnZS/Uq4
+	mEIuwrWvgEs0u26Mux/3dTYQI50aiqKsqMQLAiDwwuhTPXK4Bx6FdS/+RyPydTSOzvMSGEbcfSC
+	ZmCXX2o3pImS9BCdAJ5Z2IyOImiMqrI0344jBFjGLb3paJa5cm9HUJSLGgNLfXarh7UsAtLdLYx
+	vpAuyVEUYA46v4/FsHDwZU2PYtGHbc741Z+R/ghMyTEbyvL5VWZLDa0w44JrnlPJChI4cWuwd9R
+	Cpk3cuEvYfVyauwYLXWbhA==
+X-Received: by 2002:a05:7022:7f0b:b0:1a5:32b2:9053 with SMTP id a92af1059eb24-1ac5e22ad00mr25563639c88.37.1793845824024;
+        Wed, 04 Nov 2026 18:30:24 -0800 (PST)
+Received: from 34406640b1f4 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c1c283sm12552932c88.4.2026.11.04.18.30.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 18:30:23 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -66,109 +88,447 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-References: <CAPM=9tww=CJdxzvfUvLwQ6V4uoszg8JrB1XCAcp15upM-xPvSg@mail.gmail.com> <DMLTRKUXTL3P.11VRVU1A8ERMG@kernel.org> <aupFKGpAwAiGXN0U@intel.com> <DMLVPRO7XF7F.21199FO61MFRD@kernel.org> <CADnq5_N-6_T8EnihjoTSqpHGb_mZPogi6z=Ti-7_oue5d07oTw@mail.gmail.com> <aupktBCwcN_coHEH@intel.com> <DMLY7GDT8VBO.EE1P01ZX2HPK@kernel.org> <auqaZdocMvOIxN1c@intel.com> <CAPM=9tzu6MYQ-Y0iYK=2PLiM5=1BsEN+Q5WnmYh=hkKnLJ4b1Q@mail.gmail.com> <DMMDNQ0GD6AP.6HPRG6JWUEYQ@kernel.org> <autvCxZuSCxFjtgr@intel.com>
-In-Reply-To: <autvCxZuSCxFjtgr@intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 8b7179210b22f8e48a82c5ceacb9d56a9c4cfec4
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 05 Nov 2026 02:30:23 -0000
+Message-ID: <179384582276.341757.17070207335647004433@34406640b1f4>
 
-On Wed Nov 4, 2026 at 6:44 PM CET, Rodrigo Vivi wrote:
-> On Wed, Nov 04, 2026 at 12:08:08PM +0100, Danilo Krummrich wrote:
->> On Wed Nov 4, 2026 at 4:29 AM CET, Dave Airlie wrote:
->> > Yes this is the thing I like, while I like maintainers having freedom,
->> > relying on them to do something manually every release at the same
->> > time doesn't seem to scale so well.
->>=20
->> I think maintainers have to do something manually every release in both =
-cases.
->>=20
->> The difference is between "everyone has to do it at the exact cutoff day=
-" vs.
->> "everyone has to fast-forward their -next-fixes branch" (which to be fai=
-r has to
->> be done in both cases).
->>=20
->> For the former, a tree that closes before the global cutoff can still le=
-ak
->> following-cycle work into linux-next.
->
-> On that I already agreed that we should move the blackout from -rc6 to -r=
-c5.
-> So, the only thing that every maintainer needs to ensure is to prepare,
-> at least, one PR after -rc5 and we won't have absolutely any leak.
->
-> And I believe we are all already doing this anyway, so again, there won't=
- be any
-> special thing that maintainers would need to do to ensure correctness.
 
-It doesn't change the fundamental problem if we define the global cutoff so=
-oner
-or later.
 
-To preserve both properties, each tree's transition would have to coincide =
-with
-the global cutoff., otherwise it can happen that either stuff leaks into
-linux-next that doesn't belong there (tree state updated before cutoff), or
-you're not getting linux-next exposure in the first place (tree state updat=
-ed
-after cutoff).
+Hello,
 
-Making the cutoff day sooner makes it much more unlikely to leak stuff into
-linux-next, as closing a tree before -rc5 would be pretty odd.
+Status summary for next/master
 
-But that trades the leakage risk for patches added after -rc5 losing linux-=
-next
-exposure until they reach drm-next. That may be preferable, but it still lo=
-ses
-intended linux-next coverage.
+Dashboard:
+https://d.kernelci.org/c/next/master/8b7179210b22f8e48a82c5ceacb9d56a9c4cfec4/
 
-In a normal cycle this would mean that trees collect up to a full week of
-patches without them seeing linux-next, which is a concern for me as well.
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 8b7179210b22f8e48a82c5ceacb9d56a9c4cfec4
+origin: maestro
+test start time: 2026-11-04 13:54:09.915000+00:00
 
-More generally it remains that correctness is based on a timing promise abo=
-ut
-the tree state rather than the tree state itself (which is the actual sourc=
-e of
-truth).
+Builds:	   73 ✅    2 ❌    0 ⚠️
+Boots: 	  232 ✅   20 ❌    0 ⚠️
+Tests: 	50952 ✅ 3306 ❌ 9199 ⚠️
 
-I don't see why we would want to make this kind of compromise where we prev=
-ent
-intended linux-next exposure for up to a week, while the existing per-tree
-selection logic in dim we have today can preserve both properties:
-following-cycle work stays out of linux-next, and work for the upcoming mer=
-ge
-window gets linux-next exposure before entering drm-next.
+### POSSIBLE REGRESSIONS
+    
+Hardware: aws-ec2-arm64
+  > Config: defconfig+aws-ec2
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb431e5b429d354eeabef8
+      history:  > ✅  > ❌  
+            
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp.af_alg07
+      last run: https://d.kernelci.org/test/maestro:6aeb61bf5b429d354eebf5e8
+      history:  > ✅  > ❌  
+            
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - kselftest.kvm.kvm_nested_tsc_scaling_test
+      last run: https://d.kernelci.org/test/maestro:6aeb62805b429d354eebffa7
+      history:  > ✅  > ✅  > ✅  > ❌  > ❌  
+            
+      - ltp.epoll_wait02
+      last run: https://d.kernelci.org/test/maestro:6aeb62785b429d354eebfaa6
+      history:  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: imx6q-sabrelite
+  > Config: multi_v7_defconfig
+    - Architecture/compiler: arm/gcc-14
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb4bdd5b429d354eeb6301
+      history:  > ✅  > ✅  > ❌  > ❌  > ❌  
+            
+Hardware: jetson-agx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp.epoll_pwait03
+      last run: https://d.kernelci.org/test/maestro:6aeb9b275b429d354eee980c
+      history:  > ✅  > ✅  > ❌  > ❌  
+            
+      - ltp.poll02
+      last run: https://d.kernelci.org/test/maestro:6aeb9b275b429d354eee987a
+      history:  > ✅  > ❌  > ❌  > ❌  
+            
+      - ltp.shmget03
+      last run: https://d.kernelci.org/test/maestro:6aeb9b275b429d354eee98b4
+      history:  > ✅  > ✅  > ❌  > ❌  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_af5c000
+      last run: https://d.kernelci.org/test/maestro:6aeb54ad5b429d354eebd322
+      history:  > ✅  > ❌  > ❌  
+            
+Hardware: sun50i-a64-pine64-plus
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.alsa.alsa_pcm-test_default_time7_sun50ia64audio_0_0_CAPTURE
+      last run: https://d.kernelci.org/test/maestro:6aeb483f5b429d354eeb3a4e
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: sc7180-trogdor-kingoftown
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-03-segmentation-03
+      last run: https://d.kernelci.org/test/maestro:6aeb44cb5b429d354eeb02d3
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+Hardware: nvidia-p3809-gb300
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6aebb3015b429d354eef2628
+      history:  > ✅  > ❌  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6aebb3015b429d354eef2623
+      history:  > ✅  > ❌  
+            
 
-To me a fixed global cutoff in tip comes down to either one of the two:
 
-  (1) Make a compromise where e.g. patches that belong in linux-next get up=
- to a
-      week delayed exposure.
+### FIXED REGRESSIONS
+    
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - kselftest.x86.x86_syscall_numbering_64
+      last run: https://d.kernelci.org/test/maestro:6aeb62825b429d354eec006a
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+      - ltp.futex_wait05
+      last run: https://d.kernelci.org/test/maestro:6aeb62795b429d354eebfbe5
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+      - ltp.poll02
+      last run: https://d.kernelci.org/test/maestro:6aeb62785b429d354eebfacf
+      history:  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: jetson-agx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp.pselect01
+      last run: https://d.kernelci.org/test/maestro:6aeb9b275b429d354eee9883
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+Hardware: jetson-tx2-nx-devkit
+  > Config: defconfig+lab-setup
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_freezer
+      last run: https://d.kernelci.org/test/maestro:6aeb4b125b429d354eeb5ad2
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_freezer_test_cgfreezer_time_migrate
+      last run: https://d.kernelci.org/test/maestro:6aeb4b125b429d354eeb5ace
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_af54000
+      last run: https://d.kernelci.org/test/maestro:6aeb54ad5b429d354eebd324
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6aeb6c005b429d354eeceb67
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6aeb6c005b429d354eeceb68
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: qcs6490-rb3gen2
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.devices-exist
+      last run: https://d.kernelci.org/test/maestro:6aeb44a25b429d354eeb0194
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000
+      last run: https://d.kernelci.org/test/maestro:6aeb6eba5b429d354eecf7c6
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_display-controller_ae01000
+      last run: https://d.kernelci.org/test/maestro:6aeb6eba5b429d354eecf7c5
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_dsi_ae94000
+      last run: https://d.kernelci.org/test/maestro:6aeb6eba5b429d354eecf7c0
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_edp_aea0000
+      last run: https://d.kernelci.org/test/maestro:6aeb6eba5b429d354eecf7be
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_ae94400
+      last run: https://d.kernelci.org/test/maestro:6aeb6eba5b429d354eecf7bc
+      history:  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_aec2a00
+      last run: https://d.kernelci.org/test/maestro:6aeb6eba5b429d354eecf7bb
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: qcs9100-ride
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ed0
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_display-controller_ae01000
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ecf
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_af54000
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ecd
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_displayport-controller_af5c000
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ecb
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_dsi_ae94000
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3eca
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_dsi_ae96000
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ec8
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_ae94400
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ec7
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_ae96400
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ec6
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_aec2a00
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ec5
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_display-subsystem_ae00000_phy_aec5a00
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ec4
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_8c0000_i2c_890000_i2c-mux_70_i2c_0_bridge_58
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ea8
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_8c0000_i2c_890000_i2c-mux_70_i2c_1_bridge_58
+      last run: https://d.kernelci.org/test/maestro:6aeb731e5b429d354eed3ea7
+      history:  > ❌  > ✅  > ✅  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp9.VP9-TEST-VECTORS-GStreamer-VP9-V4L2.vp90-2-15-segkey-webm
+      last run: https://d.kernelci.org/test/maestro:6aeb44dd5b429d354eeb041d
+      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
+            
+Hardware: hamoa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.coredump
+      last run: https://d.kernelci.org/test/maestro:6aeb441e5b429d354eeae5c2
+      history:  > ❌  > ❌  > ✅  
+            
+Hardware: nvidia-p3809-gb300
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
+      last run: https://d.kernelci.org/test/maestro:6aebb3015b429d354eef267c
+      history:  > ❌  > ✅  
+            
+      - ltp.clock_nanosleep02
+      last run: https://d.kernelci.org/test/maestro:6aebb3075b429d354eef28db
+      history:  > ❌  > ✅  
+            
+      - ltp.epoll_wait02
+      last run: https://d.kernelci.org/test/maestro:6aebb3075b429d354eef28dc
+      history:  > ❌  > ✅  
+            
+Hardware: jetson-agx-xavier-devkit
+  > Config: defconfig+lab-setup
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_memcontrol_test_memcg_high_sync
+      last run: https://d.kernelci.org/test/maestro:6aeb53665b429d354eebca17
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
 
-  (2) Require each tree's transition to following-cycle work to coincide wi=
-th
-      the global cutoff, in *addition* to managing its branches correctly.
 
->> I.e. the global switch is automatic, but doesn't ensure correctness by i=
-tself.
->> In order to be correct, maintainers have to do something manually.
->>=20
->> So eventually it comes down to whether doing the correct thing derives f=
-rom an
->> explicit operation (i.e. fast-forward -next-fixes, or just add the --fin=
-al
->> helper), or an implicit commitment to push and tag branches on a specifi=
-c day.
->>=20
->> I think it is better to derive the tree status from its actual state rat=
-her than
->> a promise about that state at a specified cutoff day.
->>=20
->> > If we can't have the tool enforce what we send to -next after -rc6
->> > then it's going to have gaps.
->>=20
->> I don't think either option can enforce correctness. The difference is t=
-hat one
->> approach relies on a timing promise about the tree state, while the othe=
-r uses
->> the tree state itself to make the decision.
+### UNSTABLE TESTS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb440d5b429d354eeace41
+      history:  > ✅  > ✅  > ❌  > ❌  > ✅  
+            
+Hardware: hpe-proliant-dl345-gen11
+  > Config: x86_64_defconfig+lab-setup+x86-board+kselftest
+    - Architecture/compiler: x86_64/gcc-15
+      - kselftest.kvm
+      last run: https://d.kernelci.org/test/maestro:6aeb4e3e5b429d354eeb7cdc
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+      - kselftest.kvm.kvm_set_memory_region_test
+      last run: https://d.kernelci.org/test/maestro:6aeb62805b429d354eebff77
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb62765b429d354eebf8fa
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+      - ltp.clock_nanosleep02
+      last run: https://d.kernelci.org/test/maestro:6aeb62785b429d354eebfaa1
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+      - ltp.prctl09
+      last run: https://d.kernelci.org/test/maestro:6aeb62785b429d354eebfb42
+      history:  > ✅  > ❌  > ✅  > ❌  
+            
+      - ltp.shmget03
+      last run: https://d.kernelci.org/test/maestro:6aeb62785b429d354eebfb49
+      history:  > ✅  > ❌  > ✅  > ❌  
+            
+Hardware: jetson-agx-orin-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb9b245b429d354eee9662
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+      - ltp.futex_wait05
+      last run: https://d.kernelci.org/test/maestro:6aeb9b275b429d354eee994d
+      history:  > ❌  > ❌  > ✅  > ❌  
+            
+      - ltp.splice08
+      last run: https://d.kernelci.org/test/maestro:6aeb9b275b429d354eee98cf
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: jetson-agx-orin-industrial-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6aeb667e5b429d354eec1212
+      history:  > ✅  > ❌  > ✅  > ❌  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6aeb667e5b429d354eec120d
+      history:  > ✅  > ❌  > ✅  > ❌  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb6a805b429d354eecdce2
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: jetson-nano-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem
+      last run: https://d.kernelci.org/test/maestro:6aeb56145b429d354eebdb7f
+      history:  > ❌  > ✅  > ✅  > ❌  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6aeb56145b429d354eebdb7a
+      history:  > ❌  > ✅  > ✅  > ❌  
+            
+Hardware: jetson-orin-nx-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
+      last run: https://d.kernelci.org/test/maestro:6aeb57415b429d354eebe09b
+      history:  > ⚠️  > ⚠️  > ❌  > ⚠️  
+            
+Hardware: jetson-tx2-devkit
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6aeb53085b429d354eebc846
+      history:  > ✅  > ✅  > ❌  > ✅  
+            
+      - kselftest.futex
+      last run: https://d.kernelci.org/test/maestro:6aeb4cd75b429d354eeb7259
+      history:  > ✅  > ❌  > ❌  > ✅  
+            
+      - kselftest.futex.futex_run_sh_args_t_500000_broadcast_locked_futex_requeue_pi
+      last run: https://d.kernelci.org/test/maestro:6aeb530b5b429d354eebc8a7
+      history:  > ✅  > ❌  > ❌  > ✅  
+            
+Hardware: jetson-xavier-nx-devkit
+  > Config: defconfig+lab-setup
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_freezer
+      last run: https://d.kernelci.org/test/maestro:6aeb4d0e5b429d354eeb7507
+      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_freezer_test_cgfreezer_vfork
+      last run: https://d.kernelci.org/test/maestro:6aeb4d0e5b429d354eeb74ff
+      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
+            
+Hardware: lemans-evk
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_usb_a800000_hub_2
+      last run: https://d.kernelci.org/test/maestro:6aeb54ac5b429d354eebd249
+      history:  > ✅  > ✅  > ⚠️  
+            
+Hardware: nvidia-e5020-vera
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.cgroup.cgroup_test_cpuset_prs_sh
+      last run: https://d.kernelci.org/test/maestro:6aeb559d5b429d354eebd95a
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+      - kselftest.cgroup.cgroup_test_kmem_test_kmem_memcg_deletion
+      last run: https://d.kernelci.org/test/maestro:6aeb559c5b429d354eebd8f9
+      history:  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: qemu-arm64
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aeb43725b429d354eeac474
+      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
+            
+Hardware: sc7180-trogdor-wormdingler-rev1-boe
+  > Config: defconfig+lab-setup+arm64-chromebook+CONFIG_MODULE_COMPRESS=n+CONFIG_MODULE_COMPRESS_NONE=y
+    - Architecture/compiler: arm64/gcc-14
+      - fluster.debian.v4l2.gstreamer_vp8.VP8-TEST-VECTORS-GStreamer-VP8-V4L2.vp80-01-intra-1417
+      last run: https://d.kernelci.org/test/maestro:6aeb443a5b429d354eeafa76
+      history:  > ❌  > ✅  > ❌  > ❌  > ✅  
+            
+Hardware: nvidia-p3809-gb300
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6aebb3055b429d354eef2718
+      history:  > ❌  > ❌  > ✅  > ❌  > ❌  
+            
 
+
+
+This branch has 1 pre-existing build issues. See details in the dashboard.
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
