@@ -1,55 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793883913;
-	b=rFe/NfeZaaQC6AuQ+bKrnVcKIhNk3zf7E9lsV4TEblfaUCI6UItKVHPf97xRjSSbWDYy
-	 0oSjeBqcWRbfQT2Vqxk18KTpZCN6Piys8etJpAQwwo8KjeeEoRSM7uWcSiG2vlD/1Hnt0
-	 GMaERyznSYBvX/J5ZXPRksbMQtjDgkyXon5bLrI7kdjDplBCBOTo7KYL0sU5OeBxiXhBQ
-	 s1D7puqzjh5XUNLAXaLMb4DPK7af8c/7EbTTtiKwluHIANH5ud1s9OfoeQvAiZQ2AA6yk
-	 Nn4tDBaZgJwQR9R0EcyT02flhihULdTqruGikA+PzMCLbLff10UMms2F0R5KrFSi5iw==
+	t=1793885972;
+	b=Ua8XAqJfwEphSjRds40EPkGaJJElsmIWo5ipzX4lLfiXkGRlt+RWx0XzWKKRJc7TXFXZ
+	 1UBTS8secYpK6/Q0elGO3ceGELESVAzTald5AsOBCNWPfHXLINI1Y9g3hl+AeJvbEqOJ7
+	 NRVtUM5kq4KAAMnbyZP0iVS/SkJCn1kZy9MhJSwsB7becXcGkfhTEB9a6ttwKaNSP2Y/I
+	 tlDGqRV/myA21BqltnMg3tWEDZHmtXUnigUynLi9fxqhxZnf+recG+EaORJHTlcYZZqUJ
+	 0FKrc4KKsDJkMi3KRJTaNMNZxlGnqLhCn7Wb0WHu6Y9kTYOPnKBSlAQtQM1gcxk2m6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793883913;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793885972;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=3RgQWlmxjKmIIIaRP+hCX7cVIije+8zVOuEZz3JeD74=;
-	b=nIFlzbDy2jbYR4jIM1wXVBaerd4D4uuqUhnngQOv0glxv8uCxb871demh7nq7iTtoc0/
-	 K69NSKT65ZH4rtWrJEpxz3qX9D7yXdk0jn4lN5cGFV72YP7rwEccdDxaeQpQbxuB6RSqJ
-	 23vK18csWPP42T12/dP1LRSNZgpk4x+l1qNKPCNDV7PL/5k82Ck8tK18/ozvyxOjaR/ao
-	 0sjzZO0hAG65Ay6guA/SgGDHXAaX81Kz/h7VAzNlGgeeZ7wA4oc41zvku8i5mXIONOVaW
-	 PtP5i4O/RkeQBHY/LrRnKG5sUlR4vuRDv2GBTXWC/4pICWNrOc0q2aMz4l3SzmzAtNQ==
+	bh=M/Yw+/Wn9XYUmXtB8QbUyJClTm0Y0fz3vcZQBscEvrU=;
+	b=s2zzVFyrlL/0gDuieJle348y+S2V4ueKse2NPGvA4B0tFwAf2CxLhWYZkewObHziLRRq
+	 OnnO/68zDqlaWpVZNdlN2IOLd4msajy1IGyITzhChwDG3qlfbe3viHfybWiiesc2UwGOG
+	 Ds/oBgMxK/nECucV6z06+j4mJZd3pUaS3Ai/dpy92Q6/iPEz1wBwR2Hf5x2tHIT0Z7lLV
+	 m0GS9oSq2/42zUIEb9U4amyWVQaQPcl34wrzSSNIAUA5qTMnABGVVh6/d9g0N2F6P7LfI
+	 edqryCCoT1w6h1vzIIgbZz8OasOmXl+ggKT4HIx3swAX1+5iFqTCHUWcayDZ9gvhSmg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BukH0N2f;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fdEQkCEP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A434606A335;
-	Thu,  5 Nov 2026 13:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939CA606A31B;
+	Thu,  5 Nov 2026 13:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BukH0N2f
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103D21F00A17;
-	Thu,  5 Nov 2026 13:05:10 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fdEQkCEP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF0B1F000C1;
+	Thu,  5 Nov 2026 13:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793883912;
-	bh=3RgQWlmxjKmIIIaRP+hCX7cVIije+8zVOuEZz3JeD74=;
+	s=k20260515; t=1793885972;
+	bh=M/Yw+/Wn9XYUmXtB8QbUyJClTm0Y0fz3vcZQBscEvrU=;
 	h=Date:From:To:Cc:Subject;
-	b=BukH0N2fCETNXA66jDzpOA0i4+m17lLR1TYpBzvT0XW9HDiBvX3GqEpXIN7TsObNl
-	 qfqKjKsHytAK/dCoyTN4DmhfnyI6Khatb8msr0u2T1CwK/B3YJL3J51WM20Qrav47U
-	 km7e7/RmcvQr7G2tf8mE5LpAMn4iin9HHFBmDw9a8LPK4qxCBA62VQMxMQFpFD5uRC
-	 NsB+fSisuwSBBe/Vny6uZULUiBxNUOYBZDpqnklk5ZBA9rQnsSz2anCrJ9/my7rf7A
-	 RtoogUiOErtdvGfYhTbwyoJJeTfmxbg68SW+c/iAjNso8kw5tmLh+885YGAl0hxCb+
-	 EGglWqKqMeVOQ==
-Date: Thu, 5 Nov 2026 13:05:08 +0000
+	b=fdEQkCEPVbqU57vWNN+LJTNDDV58ny9IpbQfVLanGZMZPqnXDln1xlDUbTAwv5r0V
+	 tr6o/GZ7oXqGq7TwWBYgy9YMbu8EGr2k0GMMkOGGosPAhxw00TlrV0RZdmEH80LFAV
+	 jpn3eJAkyC0Khv8+CDGSqbisaJBrzAzqpTfgdN2qnIrM/zDB2Nc6VoUEyI8HgW/LXS
+	 1WjK43mtFzNLlCauGAgv0XqFs66wQnyCvMCDVkW4qTNsORRew7958DD+IMUW/UrGdP
+	 SECkwzgITtmJ+WdqUFQyEwCzmxH5D+gVL9aaQESpfFEbLFQ84YHRB7swNs1KczEtF/
+	 OZs7m5geP7MJQ==
+Date: Thu, 5 Nov 2026 13:39:28 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ivy Lopez <skunkolee@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Lee Jones <lee@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the w1 tree with the char-misc.current
- tree
-Message-ID: <aux_BMw8rXApWEu6@sirena.org.uk>
+Subject: linux-next: build failure after merge of the leds-lj tree
+Message-ID: <auyHEHDcjYRWM5ip@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,88 +56,54 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9R7HviFh8MulKpa5"
+	protocol="application/pgp-signature"; boundary="QtfFEAqw6t6ovE4v"
 Content-Disposition: inline
 
 
---9R7HviFh8MulKpa5
+--QtfFEAqw6t6ovE4v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the w1 tree got a conflict in:
+After merging the leds-lj tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/w1/masters/ds2482.c
+/tmp/next/build/drivers/leds/leds-pca955x.c:544:37: error: use of undeclared identifier 'client'
+  544 |         device_for_each_child_node_scoped(&client->dev, child) {
+      |                                            ^
+/tmp/next/build/drivers/leds/leds-pca955x.c:544:37: error: use of undeclared identifier 'client'
+/tmp/next/build/drivers/leds/leds-pca955x.c:554:25: error: use of undeclared identifier 'client'
+  554 |                         devm_release_action(&client->dev, pca955x_fwnode_put,
+      |                                              ^
+/tmp/next/build/drivers/leds/leds-pca955x.c:559:35: error: use of undeclared identifier 'client'
+  559 |                 res = devm_add_action_or_reset(&client->dev,
+      |                                                 ^
+/tmp/next/build/drivers/leds/leds-pca955x.c:562:11: error: incompatible pointer to integer conversion returning 'void *' from a function with result type 'int' [-Wint-conversion]
+  562 |                         return ERR_PTR(res);
+      |                                ^~~~~~~~~~~~
+5 errors generated.
 
-between commit:
 
-  e4f673632fa82 ("w1: ds2482: set the strong pull-up with its byte")
+Caused by commit
 
-=66rom the char-misc.current tree and commit:
+   abeb74220fefe (leds: pca955x: Take a reference on the child firmware node)
 
-  8847bbf3adfc5 ("w1: fix spelling mistakes in comments across the subsyste=
-m")
+I have used the tree from next-20261104 insted.
 
-=66rom the w1 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/w1/masters/ds2482.c
-index 5498bb04f7cec,70854336a1731..0000000000000
---- a/drivers/w1/masters/ds2482.c
-+++ b/drivers/w1/masters/ds2482.c
-@@@ -437,16 -423,24 +437,16 @@@ static u8 ds2482_w1_set_pullup(void *da
- =20
-  	/* if delay is non-zero activate the pullup,
-  	 * the strong pullup will be automatically deactivated
-- 	 * by the master, so do not explicitly deactive it
-+ 	 * by the master, so do not explicitly deactivate it
- +	 *
- +	 * The setting is used up by the next byte on any channel of the chip:
- +	 * ds2482_w1_write_byte() makes it, in one go with the byte.
-  	 */
- -	if (delay) {
- -		/* both waits are crucial, otherwise devices might not be
- -		 * powered long enough, causing e.g. a w1_therm sensor to
- -		 * provide wrong conversion results
- -		 */
- -		ds2482_wait_1wire_idle(pdev);
- -		/* note: it seems like both SPU and APU have to be set! */
- -		retval =3D ds2482_send_cmd_data(pdev, DS2482_CMD_WRITE_CONFIG,
- -			ds2482_calculate_config(DS2482_REG_CFG_SPU |
- -						DS2482_REG_CFG_APU));
- -		ds2482_wait_1wire_idle(pdev);
- -	}
- +	if (!delay)
- +		return 1;
- =20
- -	return retval;
- +	pchan->spu =3D true;
- +	return 0;
-  }
- =20
- =20
-
---9R7HviFh8MulKpa5
+--QtfFEAqw6t6ovE4v
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrsfwMACgkQJNaLcl1U
-h9BOhgf+Ne7LH5lVBBM1f4bSreJmCPTjHajTkiQTLTI/U8GspLKDixbnowDAX/Mg
-1OVg4Ktia9BbYmT2w2j/BEiFfvEq4yZDwopUyAlvnl1fEMw4I+3dhWQ/FPd6UMbw
-QR2dad1vZjZB6mB4ZkO8KYXWjI4JNfmC7IemjZaIsHeNASmWgEERO6uefucJXIgJ
-uODZcaTG4V0soM2ZSA92vguwa54lX0PBuSAE6rWGhOe/4OmdHaCDgpiWjHRPP5Ha
-gLMPL4LhRGelggrSokzdlS3h/6DD69tDaiBTAla6VqdnNd9m8gSvkZZa7HQwXaB7
-XRKUt3fsfV/lEcjwn8+3LywuVrzhYQ==
-=f/lE
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrshw8ACgkQJNaLcl1U
+h9BmeAf+O05MiAV2NIVa01XhnHIygBSwORs4S+2xQ+VkpcpadhIAxS1HknNB6jQX
+YTb8mw6Vm76mJZYyXDLSoPEv+o63z3e1s6Np6XXOAlhM5kWeeSzwHQst7jKi1SYX
+lKgk+KboTdqfvUU3HhhCmI3LUiHic4CpfxFUWgPb3Scaf65WQotWZ6/qDMFr6VUK
+/tQ/UYEharzTKIIrgV87sVO69jKan6UGhUSWTn3ELfVNae14kYnqTQSilXvklgRS
+VFdbnyfos0zJ5ZEWragNjd2kfof9r7TUq3F1hmYXQZc0y6tMwTLhQTEEDo8DaeX5
+6s9PuQB7cxup3WRa0Abm7mQ/K5lMfA==
+=MF/R
 -----END PGP SIGNATURE-----
 
---9R7HviFh8MulKpa5--
+--QtfFEAqw6t6ovE4v--
