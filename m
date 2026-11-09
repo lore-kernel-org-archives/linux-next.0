@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794227538;
-	b=msB3vH+m71VDnhnGRcqDm1ORlKUMGf+VVfpoHvniwqHDMw3r3Loxns97sfcWH9P9neyC
-	 Ql2liWh6moz4WDJeLL+vtycQViB/FRixTdehjflZduR1Y5cnpePYq3f/3viSDYf5zNkg5
-	 r37PJtCP0HeNr0bbi/42i8CLkMWIiu+iAYTqMLVsAMkV0olAs05pcJGh5ol5Bg9Y6ZdzB
-	 rQEY2J0EadKWIvkSk3Au9ejBzAvHD5mGYIWwjZKdYpPppm3eGurNqIPmoKQu3BGoECcyc
-	 M6jQpixQrKi2g7keM0zLdQkmWeGvMUg18EkvKe/TFCtuhFcImFJNrhd9LkjJqMNSCfA==
+	t=1794231034;
+	b=t12pAUmQGIJ6j+ztWm8sB1E7cizzU3FAqUnspFqo7mofP6BYRRv8CfyGpk4Xw0/ENaAT
+	 5+0I4c5imt+hxUCg7peOKtin8BT0JagtJ0MD+u2S6GiMVq/NRhenHJUMrxHRwWJnNNLSB
+	 pAU+zCJqe0tSv3wF3eqdQnoPONvx/F7SapMO03MEhqYPZcTx1YehVp6uCpEjjK24GHjHC
+	 GH3jV6neMhJOFUIsXFGUD+X14O8A86lGi2fSVxO5DCqjwGOfzRb1Q9Ik3vDlR6UpnJesz
+	 eUoasZ3NXN/lm2odo77QLO3SGatWfbe0YbfM+YLo0QPKCArzPyiEYli345rpAz1A8+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794227538;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794231034;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=rRahu7+ghGWvG/w1/MODNtWwwwbr25JxkuWHLv7mvl4=;
-	b=pvyWJNhSAjdOPXix+y1ybJpjzYlzcUhcMVj57ML05eNZhM9ZtR2j4uThkKuE2gQx5hac
-	 RWRyMJAYaZJHgXRk9k6n/s2w6/T+95vxCgjj7MACWmJR8QHKoBVCrVaI53jVv2meXTIDz
-	 8K/Yq6MzI9y1M/9Llo54yulMEC+1AL7s4KOpCVrGUZ1FndkAbIZDSHZiAIyqKLaUWWS6o
-	 zsw6vSFuklhJ3/SfW8YMWZqqEHFYAB9WD1t0yk8NtVDIZf/2Si0xzdGPQjORTnTRNqv1b
-	 WzlwgVnriaogk0Pby1Gc+8nD1P4+xk5fiOcmoljEl6aHFeHPKxZNjWAfsJtfMwqaX/Q==
+	bh=U8GP8qeIGmDVOAF79UdnUwOveOV1uQuqDk3hF33gnNE=;
+	b=QI9qnmPC660PhiuBL9N9t8vhI8PZYBmSv6qZJpK6JLJhSVIsclZKeBWpDQ8q7ntpsg/o
+	 sA60IhUMktmVBsMnxPYOURU7y8ymSZeSU1PUlXYGpaXZ18UFwg+OVk8bSg40WOjWO9tJ8
+	 xxz8ZbBv6Nx7nKp26CfH3C8m3v5zZSoFY5UynKgHgDpGe1XI9SuG1+GZmGxP+bt+vT8v4
+	 olG7/3UB6bdPsaGhrd1doXc5nxfAJoIN9xJnuJ3WFwoJR8vrfGY5ayr8mP4XsaR1V8Jj/
+	 9fU2vPLZKbYes97KQ5ysktKaRUfndmDwI8NKomJXUYIYXtXuc1wanOd4r3+MdlYRFuA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TRAaarR7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PV7+l0Ds;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F30606A331;
-	Mon,  9 Nov 2026 12:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A436B606A322;
+	Mon,  9 Nov 2026 13:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TRAaarR7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DEBE1F008A3;
-	Mon,  9 Nov 2026 12:32:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PV7+l0Ds
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4581F0089F;
+	Mon,  9 Nov 2026 13:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794227537;
-	bh=rRahu7+ghGWvG/w1/MODNtWwwwbr25JxkuWHLv7mvl4=;
+	s=k20260515; t=1794231034;
+	bh=U8GP8qeIGmDVOAF79UdnUwOveOV1uQuqDk3hF33gnNE=;
 	h=Date:From:To:Cc:Subject;
-	b=TRAaarR75p3tZFRKgt/Z5AKmOxaeZyEniyA1daYQVa8xnpmp26Nd0GOYWK8ub9ERA
-	 V7kq8Wz7i3dNl8vwm/xubwEo1JP/Y+1igPo5V8RsZLuJaNxCLYvfVgI0uRtCh+oRct
-	 FfxB9WtcFgvpJnpHGhR7c9dhSOzG8IafWaMCiudsgJo4HhNSNNmFzStKAeEqnFj9BU
-	 cJTlNLydUOYC1jux6GCUOe4WSIicWeVNHdWNRk8M3QMI9gPNyCt6IdiinbttnGJJZa
-	 BpowtOo3qmahMZrHGOqsEVg5GxrRsSLYyC5/FN5MWv2862y58tWTOaoj4PD+OIyvWy
-	 /Sv92eImVuVaQ==
+	b=PV7+l0DsnKXEF8qXzYgySh+PgDhCJEsmE9/XjwWtAc3cJuSgU3+qM73hpA4n7Ss+3
+	 j0x5PAhPhM6K0gpwTGiM3sJKyJQPehmENq3CKi9oPFyals6i4Ag35crstVnwA19p8/
+	 uLYRQ6kSO3vvbN0oPH2XzIgNVwHV7OKizDL0Rogwp3q+vNpTgH1dydRJIgeKWCkV7V
+	 QB17dJCP/zLq6dQmTzbFFn2o3hXCKUSmaCBFTKZd50/J6ZZFzDqjIqvo6Wyv+VIetj
+	 oJ5iVphaDmTYPOdkKK3eDXuiG7olQycPInCFSUI1KF30k3G0Z5e8nl3lOorftOkWgW
+	 L53owBXthpgSQ==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 1B34B1AC5995; Mon, 09 Nov 2026 12:32:15 +0000 (GMT)
-Date: Mon, 9 Nov 2026 12:32:15 +0000
+	id CEA561AC5995; Mon, 09 Nov 2026 13:30:31 +0000 (GMT)
+Date: Mon, 9 Nov 2026 13:30:31 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+To: Frank Li <Frank.li@nxp.com>
+Cc: Jaidev Shastri <jaidevshastri@vt.edu>, Kees Cook <kees@kernel.org>,
+	Kees Cook <kees+treewide@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drivers-memory-fixes tree with the
- origin tree
-Message-ID: <avG9T_NrXRjVDgjh@sirena.co.uk>
+Subject: linux-next: manual merge of the imx-mxs tree with the origin tree
+Message-ID: <avHK9yttDdx1O5P8@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,21 +60,20 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ujEC44Ov2VwRuRhw"
+	protocol="application/pgp-signature"; boundary="Jc8v7mgOUfPS4Y+W"
 Content-Disposition: inline
 
 
---ujEC44Ov2VwRuRhw
+--Jc8v7mgOUfPS4Y+W
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drivers-memory-fixes tree got a
-conflict in:
+Today's linux-next merge of the imx-mxs tree got a conflict in:
 
-  drivers/memory/fsl_ifc.c
+  drivers/firmware/imx/imx-scu-irq.c
 
 between commit:
 
@@ -84,10 +82,10 @@ oc_obj() family")
 
 =66rom the origin tree and commit:
 
-  a78ee2e05f7c7 ("memory: fsl_ifc: Clear fsl_ifc_ctrl_dev on probe failure =
-and removal")
+  f144d9f031b01 ("firmware: imx: scu: publish the SCU IPC handles with rele=
+ase semantics")
 
-=66rom the drivers-memory-fixes tree.
+=66rom the imx-mxs tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -96,42 +94,37 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/memory/fsl_ifc.c
-index db2d239aeba89,83991c05a6a5c..0000000000000
---- a/drivers/memory/fsl_ifc.c
-+++ b/drivers/memory/fsl_ifc.c
-@@@ -207,15 -210,15 +210,15 @@@ static int fsl_ifc_ctrl_probe(struct pl
+diff --cc drivers/firmware/imx/imx-scu-irq.c
+index bc22b10ddb20f,4f24e3c08a652..0000000000000
+--- a/drivers/firmware/imx/imx-scu-irq.c
++++ b/drivers/firmware/imx/imx-scu-irq.c
+@@@ -219,7 -223,15 +223,15 @@@ int imx_scu_enable_general_irq_channel(
+  	if (ret)
+  		return ret;
  =20
-  	dev_info(&dev->dev, "Freescale Integrated Flash Controller\n");
- =20
-- 	fsl_ifc_ctrl_dev =3D devm_kzalloc_obj(&dev->dev, *fsl_ifc_ctrl_dev);
-- 	if (!fsl_ifc_ctrl_dev)
- -	ctrl =3D devm_kzalloc(&dev->dev, sizeof(*ctrl), GFP_KERNEL);
-++	ctrl =3D devm_kzalloc_obj(&dev->dev, *fsl_ifc_ctrl_dev);
-+ 	if (!ctrl)
++ 	/*
++ 	 * imx_scu_irq_group_enable() tests imx_sc_irq_ipc_handle from other
++ 	 * drivers' probe paths and then passes it to imx_scu_call_rpc().
++ 	 * Publish it with release semantics so that the SCU state it points
++ 	 * to is visible to them.
++ 	 */
++ 	smp_store_release(&imx_sc_irq_ipc_handle, ipc);
++=20
+ -	cl =3D devm_kzalloc(dev, sizeof(*cl), GFP_KERNEL);
+ +	cl =3D devm_kzalloc_obj(dev, *cl);
+  	if (!cl)
   		return -ENOMEM;
  =20
-- 	dev_set_drvdata(&dev->dev, fsl_ifc_ctrl_dev);
-+ 	dev_set_drvdata(&dev->dev, ctrl);
- =20
-  	/* IOMAP the entire IFC region */
-- 	fsl_ifc_ctrl_dev->gregs =3D of_iomap(dev->dev.of_node, 0);
-- 	if (!fsl_ifc_ctrl_dev->gregs) {
-+ 	ctrl->gregs =3D of_iomap(dev->dev.of_node, 0);
-+ 	if (!ctrl->gregs) {
-  		dev_err(&dev->dev, "failed to get memory region\n");
-  		return -ENODEV;
-  	}
 
---ujEC44Ov2VwRuRhw
+--Jc8v7mgOUfPS4Y+W
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavG9TgAKCRAv73Ows9A4
-iXrSAQC7lhzRjSUAy6EexCQyxrtvlgfatmNxcCvg/DJ7cxEsNQD/Rm49w5vdf1pg
-XyFP2U49jvfQiWg3K2IFJlCoSp1WEQI=
-=WFKt
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavHK9wAKCRAv73Ows9A4
+ieqAAP0dDqZXsZ9lQ4XwukRDx4cW+B0zXYJj6DrP3O1K4YJskQEA2Aa9hs038lbL
+Yuz0ygfmkoOydQ1HYijQDdBjYgoStAo=
+=35Lq
 -----END PGP SIGNATURE-----
 
---ujEC44Ov2VwRuRhw--
+--Jc8v7mgOUfPS4Y+W--
