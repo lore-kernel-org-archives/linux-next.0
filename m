@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794233774;
-	b=oUTIDNSUvBiwR0Zk4qoxK+0Jv5tUWGAoWlVgL+oGZVvNMb3IiyIbetG2pVxTqOd+gw6B
-	 9aGbqDge1YQzOiXWs7hrEOUxIGtz9uoWfKq29MwszXScuka3EZTpi1D+D/LDWwnN684Rh
-	 DFSq7t9Odj+tJoDX5VmFs9I39uFnd6Hy254q7bebG5bg5Cj4kg7I3EvC+VJTQ4sHsK4tm
-	 nKy8ziSurKVUIWhe7UvPrxC2X6S22/rk7a0K/KNttnjQAbSUJ9f/FrhVwKtjnROAXU7K0
-	 DNyo1sXjBfuenS8suXgCqpSynphEpnsqAbcq9VgvFdRhq+iqKLxGUGHpfoTemIo+7Iw==
+	t=1794234462;
+	b=XSEpHRaynIsz4LOFzzRHikHaedbAjGox0zHpxUEC0okMiWG10rn4ErSAulRSN2hRIp9X
+	 02Goz/XB9ETTH/JFhPatn9+W5UjK7KKZw+3PLx10Y0nEsK4ny0z3ignEfOVvUN5lg4h3x
+	 5ip0AQWdFOBTk7DhOx8C6JJTG/qE3m4tthatFp5DfrynxdVFE6As7r6hnWjLViEyu4jua
+	 Luo4GdsaAdBWomGMWd7T9ZaFgoSVgz3OmKXFYPTOmlAIop+96mMUFrY4gtEkV4UFw+bFA
+	 IuyODspMbSXb1+Tt41l7EmmHHhm6U1HhLq4U1h18IWQU2WSNM3HncXIE6vPG3hroKnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794233774;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794234462;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=XVNIwEQ8pLTzkElkDwQw58fDWsDxI4n5recMRom1ZgE=;
-	b=BB1Ni7x2ca7Ba9ckzNf7pbDLvV9gbJRvUHryHAAsAh6goPAdOu5hlslaNY+lFeL/5cNK
-	 K8dupZy04pxhXhPW94IIX7Nrm/WD9GgYPJIDg6H4FPcCCIOPA94zeJDivCa1kQx9BFxm/
-	 sS86+AbLk7DSGKusAJ8hxG1bfO9gW9EPmzA1CzVlyX44i5RJ6qSfjYPnlOR5LYI4QW1rM
-	 0rFIeN1Vc3ZKrj4I1wYJUbiCwDt3p3uDF+B6Amdzw8GPKo5BYJfghHSU4Lfk0P5A3IDbW
-	 Cz13GhNkZtB1jFlI5AViFyBcOAlRINXQ2iPjbfSI36muO4liD1y5hlJP7wgqp1gADIg==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=PzgDZXq8mAESvBTnLI3pkcJef2Jyc+p//dJfUjQ3P80=;
+	b=syqmDd+QUi+5w2isU0fTJZqx5h38bwfEstl8p85oripace4r7lkvq1NKbspnbB4oECgh
+	 LFszNTwVmCWeqb6agfuR8KnTx1tnAyVomlyYJkgCVFJLDsh9tRAmakHXJAStMbNWrEq5B
+	 wIwPre7xym3771c7tOsCbvHCRp3OHt6wImxCz9Vtf68hwcYptRF9HCtaw02A1V7zhUfdT
+	 nZWvs8af26NVqlS6annmh+StHuuo/l0+7c/fduaeoGvZW+JqbVIzG8CjRTYGDtVxhM8F3
+	 SygX5i7Z2PWu8Xcvos0/9uGz2gxSh0HxUkd+A4dPNCaCRGgzwLio0Py7PBesulX3FgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="V0fZX/Y8";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="NEO7l5Q/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C20606A31C;
-	Mon,  9 Nov 2026 14:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0641B606A31C;
+	Mon,  9 Nov 2026 14:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V0fZX/Y8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95A31F0089F;
-	Mon,  9 Nov 2026 14:16:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NEO7l5Q/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19451F0089F;
+	Mon,  9 Nov 2026 14:27:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794233774;
-	bh=XVNIwEQ8pLTzkElkDwQw58fDWsDxI4n5recMRom1ZgE=;
-	h=Date:From:To:Cc:Subject;
-	b=V0fZX/Y8v4M7O5nGdrT19Mm2wOIFqFV8yN9HeIVAsoc6n8nI15oeKmmjivyXsiSma
-	 pbrj08wdDkWLBEQHH43Qg1pyjPrm199C87UXBnll5iZuOVSvBTe76vUCN0kw/vzro4
-	 /G9CAF23h8ZyxN5Uw1X1X69e80+1myOp3ZXMnVR0TnS/oB77LlnAZRNUa2cmTfVFXF
-	 xGvEYxaL/GD15BRh3Qc8NrUwWpmlMmQuVl1qNBiYrJjUZNt7cZq72j5iHHO4dh4KoX
-	 oqmWMXND+ZsEoYvW9MvNONr98RNowRvj7O5sDq9CACOQD/3+8mNLzz9yXHUs5JmQDf
-	 d4TAIhmrJKAeQ==
+	s=k20260515; t=1794234461;
+	bh=PzgDZXq8mAESvBTnLI3pkcJef2Jyc+p//dJfUjQ3P80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NEO7l5Q/8gfWe7ST1NMNUvdrXUnOb46nH40Z0mJ7HO5U/x/zP0JShPJb0Gg1WXOp0
+	 eAhhto0pjlPS7am1i/GFTSDAckK/DbFKxOC+plO7ZYwi1AfIZKvuZJhKsoqD4BqIMC
+	 olpliISC0MDGA2WoM1a1RpnX64fKZ2F6x+a5wL55M91lzSQZ2X5ppSpti2BP9ZTPDr
+	 RW/4IQNLx3jXd5a9mhemtpAJ8OfCeN2+GXI/mWkewyuN63Eh1Dk1OybN0RySirUW9O
+	 HaxvY2TTL0KrueNhIh/4fYs+eEu8f8i9dN0o0E7fVs7rbwwV+8NsbXdRmteUY5m/w8
+	 DgXpJhNWXG05Q==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id B69331AC5995; Mon, 09 Nov 2026 14:16:11 +0000 (GMT)
-Date: Mon, 9 Nov 2026 14:16:11 +0000
+	id 7C00D1AC5995; Mon, 09 Nov 2026 14:27:39 +0000 (GMT)
+Date: Mon, 9 Nov 2026 14:27:39 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Ijae Kim <ae878000@gmail.com>, Kees Cook <kees@kernel.org>,
-	Kees Cook <kees+treewide@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Myeonghun Pak <mhun512@gmail.com>
-Subject: linux-next: manual merge of the spi tree with the origin tree
-Message-ID: <avHVqxBSnJH3CtrE@sirena.co.uk>
+To: Lee Jones <lee@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the leds-lj tree
+Message-ID: <avHYW2Xy7zS5pwRl@sirena.co.uk>
+References: <auyHEHDcjYRWM5ip@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,64 +60,64 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ktM/vQR4f+IuPp+s"
+	protocol="application/pgp-signature"; boundary="gdNVRn4qK34rS7Oy"
 Content-Disposition: inline
+In-Reply-To: <auyHEHDcjYRWM5ip@sirena.org.uk>
+X-Cookie: Victory or defeat!
 
 
---ktM/vQR4f+IuPp+s
+--gdNVRn4qK34rS7Oy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Nov 05, 2026 at 01:39:28PM +0000, Mark Brown wrote:
+> Hi all,
+>=20
+> After merging the leds-lj tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> /tmp/next/build/drivers/leds/leds-pca955x.c:544:37: error: use of undecla=
+red identifier 'client'
+>   544 |         device_for_each_child_node_scoped(&client->dev, child) {
+>       |                                            ^
+> /tmp/next/build/drivers/leds/leds-pca955x.c:544:37: error: use of undecla=
+red identifier 'client'
+> /tmp/next/build/drivers/leds/leds-pca955x.c:554:25: error: use of undecla=
+red identifier 'client'
+>   554 |                         devm_release_action(&client->dev, pca955x=
+_fwnode_put,
+>       |                                              ^
+> /tmp/next/build/drivers/leds/leds-pca955x.c:559:35: error: use of undecla=
+red identifier 'client'
+>   559 |                 res =3D devm_add_action_or_reset(&client->dev,
+>       |                                                 ^
+> /tmp/next/build/drivers/leds/leds-pca955x.c:562:11: error: incompatible p=
+ointer to integer conversion returning 'void *' from a function with result=
+ type 'int' [-Wint-conversion]
+>   562 |                         return ERR_PTR(res);
+>       |                                ^~~~~~~~~~~~
+> 5 errors generated.
+>=20
+>=20
+> Caused by commit
+>=20
+>    abeb74220fefe (leds: pca955x: Take a reference on the child firmware n=
+ode)
+>=20
+> I have used the tree from next-20261104 insted.
 
-Today's linux-next merge of the spi tree got a conflict in:
+This issue is still present today.
 
-  drivers/spi/spi-amlogic-spisg.c
-
-between commit:
-
-  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
-oc_obj() family")
-
-=66rom the origin tree and commit:
-
-  67e3d31893ab5 ("spi: amlogic-spisg: Balance runtime PM and clock cleanup")
-
-=66rom the spi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/spi/spi-amlogic-spisg.c
-index c59df9b115eed,33c5cbf57cb87..0000000000000
---- a/drivers/spi/spi-amlogic-spisg.c
-+++ b/drivers/spi/spi-amlogic-spisg.c
-@@@ -706,9 -707,7 +707,7 @@@ static int aml_spisg_clk_init(struct sp
- =20
-  	clk_set_min_rate(spisg->pclk, SPISG_PCLK_RATE_MIN);
- =20
-- 	clk_disable_unprepare(spisg->pclk);
--=20
- -	tbl =3D devm_kcalloc(dev, (DIV_NUM + 1), sizeof(*tbl), GFP_KERNEL);
- +	tbl =3D devm_kzalloc_objs(dev, *tbl, (DIV_NUM + 1));
-  	if (!tbl)
-  		return -ENOMEM;
- =20
-
---ktM/vQR4f+IuPp+s
+--gdNVRn4qK34rS7Oy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavHVqwAKCRAv73Ows9A4
-iX40AP9It3uTjHeLF44xAE0DxTbneRTJx2+dXJY+pVL3fkf4awD+Jqbe+6JlFOWi
-TsetuipjZTodwztHBZJoNr8c07nQAwI=
-=D9Fs
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavHYWwAKCRAv73Ows9A4
+iePXAQDSbGE5N3BAvpq7us47E2YW+F62vw/yajeOx3L0FPRf5QD/S8Yh+E+abufg
+BReLo69pdZSUtccHJs2KLqyrqhIphgQ=
+=y0f6
 -----END PGP SIGNATURE-----
 
---ktM/vQR4f+IuPp+s--
+--gdNVRn4qK34rS7Oy--
