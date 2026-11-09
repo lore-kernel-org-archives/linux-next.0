@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794231034;
-	b=t12pAUmQGIJ6j+ztWm8sB1E7cizzU3FAqUnspFqo7mofP6BYRRv8CfyGpk4Xw0/ENaAT
-	 5+0I4c5imt+hxUCg7peOKtin8BT0JagtJ0MD+u2S6GiMVq/NRhenHJUMrxHRwWJnNNLSB
-	 pAU+zCJqe0tSv3wF3eqdQnoPONvx/F7SapMO03MEhqYPZcTx1YehVp6uCpEjjK24GHjHC
-	 GH3jV6neMhJOFUIsXFGUD+X14O8A86lGi2fSVxO5DCqjwGOfzRb1Q9Ik3vDlR6UpnJesz
-	 eUoasZ3NXN/lm2odo77QLO3SGatWfbe0YbfM+YLo0QPKCArzPyiEYli345rpAz1A8+Q==
+	t=1794233400;
+	b=j8wseCjANJBxeakU1VJUAlHWudqlbiDfqrpitBE6bJrwLWCoyE0zUPKq90pr6YXWZsvJ
+	 Mp2F5RxVaC/ys+yo5mA4MbTFSbaAuuQHCgt5k26HfsnwA6H8zewVSzFr52LRZ+NBbxPXB
+	 KrCSs/MljeMf/7MzVsmM8kXa1C4mZw8/RE9tfwKsZiJEUqSLVt4WQhqtgQfxDGuQILo4R
+	 wIvCLXh80I926p0kc/R1yO86wQGi8m/oOZVVwzFuQC/GeIcP0NaPCSCEieNuMgk9T7JFv
+	 7xLXh+hZN+XIfgo6fOqkqu7i3AjFCkDRDCYJpofTu8JsQNfJ4WpiCTB8Mu45K+3PqEA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794231034;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794233400;
 	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=U8GP8qeIGmDVOAF79UdnUwOveOV1uQuqDk3hF33gnNE=;
-	b=QI9qnmPC660PhiuBL9N9t8vhI8PZYBmSv6qZJpK6JLJhSVIsclZKeBWpDQ8q7ntpsg/o
-	 sA60IhUMktmVBsMnxPYOURU7y8ymSZeSU1PUlXYGpaXZ18UFwg+OVk8bSg40WOjWO9tJ8
-	 xxz8ZbBv6Nx7nKp26CfH3C8m3v5zZSoFY5UynKgHgDpGe1XI9SuG1+GZmGxP+bt+vT8v4
-	 olG7/3UB6bdPsaGhrd1doXc5nxfAJoIN9xJnuJ3WFwoJR8vrfGY5ayr8mP4XsaR1V8Jj/
-	 9fU2vPLZKbYes97KQ5ysktKaRUfndmDwI8NKomJXUYIYXtXuc1wanOd4r3+MdlYRFuA==
+	bh=PO7g+lGXttnlXl0BDZq1t0lE88+kSOof69kb/rSlr68=;
+	b=cpU5g4XwvqOYsn8/GWIHyH6tC7cP/Uml7jBsbLUt7MbNn1hcxu5W87Zs+sH75GCSFlVr
+	 4Ibvz+jA9nDLLTgoGB5+SkqJG8vzRDPDy1lA303sQkbd51qIx7mC7wmMIbnjfQEcEdjVM
+	 NwxFgEk/3g6ghdg4L4ZNom8mkkz5e4Os785pP4uSjMdxWkS9A/+W+JypYEMfZwSGNWzVw
+	 E/we2MaZkjWDtAS0i9RSqSSuzH80viGMUXnvbT8R/Vw57kWyKa8YZwaj49k2YwDJjPTWM
+	 2w2smF3+2ICSnIy69ddQRwixbv3wvqNgpSqXOUjZf/anbLAVzdHV5trXWgCHIcP4xqA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PV7+l0Ds;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IY4NdzoD;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A436B606A322;
-	Mon,  9 Nov 2026 13:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE288606A32A;
+	Mon,  9 Nov 2026 14:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PV7+l0Ds
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4581F0089F;
-	Mon,  9 Nov 2026 13:30:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IY4NdzoD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 940D21F00900;
+	Mon,  9 Nov 2026 14:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794231034;
-	bh=U8GP8qeIGmDVOAF79UdnUwOveOV1uQuqDk3hF33gnNE=;
+	s=k20260515; t=1794233399;
+	bh=PO7g+lGXttnlXl0BDZq1t0lE88+kSOof69kb/rSlr68=;
 	h=Date:From:To:Cc:Subject;
-	b=PV7+l0DsnKXEF8qXzYgySh+PgDhCJEsmE9/XjwWtAc3cJuSgU3+qM73hpA4n7Ss+3
-	 j0x5PAhPhM6K0gpwTGiM3sJKyJQPehmENq3CKi9oPFyals6i4Ag35crstVnwA19p8/
-	 uLYRQ6kSO3vvbN0oPH2XzIgNVwHV7OKizDL0Rogwp3q+vNpTgH1dydRJIgeKWCkV7V
-	 QB17dJCP/zLq6dQmTzbFFn2o3hXCKUSmaCBFTKZd50/J6ZZFzDqjIqvo6Wyv+VIetj
-	 oJ5iVphaDmTYPOdkKK3eDXuiG7olQycPInCFSUI1KF30k3G0Z5e8nl3lOorftOkWgW
-	 L53owBXthpgSQ==
+	b=IY4NdzoD43npkVTVsKG/giSpu4B2mGBlw9WAAMntDnXckodYf5BWCxhTenS39lF3e
+	 pKPM/nC1k+/t/0UXXAQjPG506TLfZIDBYX132wGDGpbAm7Oja6YihhCbxBVclLLM1n
+	 Qi0rFX8PMjVbUEEZ+312+tlBGEKChblSbW/vRcFAU69fyCOP2h5LgArITffmPCGRtM
+	 q+yLWh2K3Q8FVZ4DUWnhnJ9hKY3SaIzKOYakp5JfEQ+0dJGCjJpp2gO8ieKzQKbD46
+	 +LYKjHS+LJpX6U1+uj3p2dZK7an1dZMBud+OHtrhSY8tB0khS03CnuvDaFwB/PJ95N
+	 0OiaeO1zitAeg==
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id CEA561AC5995; Mon, 09 Nov 2026 13:30:31 +0000 (GMT)
-Date: Mon, 9 Nov 2026 13:30:31 +0000
+	id 59E161AC5995; Mon, 09 Nov 2026 14:09:57 +0000 (GMT)
+Date: Mon, 9 Nov 2026 14:09:57 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Jaidev Shastri <jaidevshastri@vt.edu>, Kees Cook <kees@kernel.org>,
-	Kees Cook <kees+treewide@kernel.org>,
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the imx-mxs tree with the origin tree
-Message-ID: <avHK9yttDdx1O5P8@sirena.co.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Subject: linux-next: manual merge of the sound-asoc tree with the origin tree
+Message-ID: <avHUNWGDMmhAUeX4@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,20 +60,20 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Jc8v7mgOUfPS4Y+W"
+	protocol="application/pgp-signature"; boundary="Ux8Rnc84bPPA4enI"
 Content-Disposition: inline
 
 
---Jc8v7mgOUfPS4Y+W
+--Ux8Rnc84bPPA4enI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the imx-mxs tree got a conflict in:
+Today's linux-next merge of the sound-asoc tree got a conflict in:
 
-  drivers/firmware/imx/imx-scu-irq.c
+  sound/soc/amd/acp/acp-sdw-sof-mach.c
 
 between commit:
 
@@ -82,10 +82,10 @@ oc_obj() family")
 
 =66rom the origin tree and commit:
 
-  f144d9f031b01 ("firmware: imx: scu: publish the SCU IPC handles with rele=
-ase semantics")
+  7de8faa0fb6ed ("ASoC: amd: acp: add ACP7.B/7.F SoundWire link count for m=
+achine driver")
 
-=66rom the imx-mxs tree.
+=66rom the sound-asoc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -94,37 +94,53 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/firmware/imx/imx-scu-irq.c
-index bc22b10ddb20f,4f24e3c08a652..0000000000000
---- a/drivers/firmware/imx/imx-scu-irq.c
-+++ b/drivers/firmware/imx/imx-scu-irq.c
-@@@ -219,7 -223,15 +223,15 @@@ int imx_scu_enable_general_irq_channel(
-  	if (ret)
-  		return ret;
+diff --cc sound/soc/amd/acp/acp-sdw-sof-mach.c
+index 8336eb5c82ea9,1d7487c872657..0000000000000
+--- a/sound/soc/amd/acp/acp-sdw-sof-mach.c
++++ b/sound/soc/amd/acp/acp-sdw-sof-mach.c
+@@@ -374,16 -406,28 +406,28 @@@ static int mc_probe(struct platform_dev
+  	struct snd_soc_card *card;
+  	struct amd_mc_ctx *amd_ctx;
+  	struct asoc_sdw_mc_private *ctx;
+- 	int amp_num =3D 0, i;
++ 	int amp_num =3D 0, i, dmic_num;
+  	int ret;
  =20
-+ 	/*
-+ 	 * imx_scu_irq_group_enable() tests imx_sc_irq_ipc_handle from other
-+ 	 * drivers' probe paths and then passes it to imx_scu_call_rpc().
-+ 	 * Publish it with release semantics so that the SCU state it points
-+ 	 * to is visible to them.
-+ 	 */
-+ 	smp_store_release(&imx_sc_irq_ipc_handle, ipc);
-+=20
- -	cl =3D devm_kzalloc(dev, sizeof(*cl), GFP_KERNEL);
- +	cl =3D devm_kzalloc_obj(dev, *cl);
-  	if (!cl)
+ -	amd_ctx =3D devm_kzalloc(&pdev->dev, sizeof(*amd_ctx), GFP_KERNEL);
+ +	amd_ctx =3D devm_kzalloc_obj(&pdev->dev, *amd_ctx);
+  	if (!amd_ctx)
   		return -ENOMEM;
  =20
+  	amd_ctx->acp_rev =3D mach->mach_params.subsystem_rev;
+- 	amd_ctx->max_sdw_links =3D ACP63_SDW_MAX_LINKS;
++ 	switch (amd_ctx->acp_rev) {
++ 	case ACP7B_PCI_REV:
++ 	case ACP7F_PCI_REV:
++ 		amd_ctx->max_sdw_links =3D ACP7X_SDW_MAX_LINKS;
++ 		break;
++ 	default:
++ 		amd_ctx->max_sdw_links =3D ACP63_SDW_MAX_LINKS;
++ 		break;
++ 	}
++ 	if (mach->pdata) {
++ 		pdm_pdata =3D mach->pdata;
++ 		amd_ctx->pdm_sel =3D pdm_pdata->pdm_sel;
++ 	}
+ -	ctx =3D devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ +	ctx =3D devm_kzalloc_obj(&pdev->dev, *ctx);
+  	if (!ctx)
+  		return -ENOMEM;
+  	ctx->codec_info_list_count =3D asoc_sdw_get_codec_info_list_count();
 
---Jc8v7mgOUfPS4Y+W
+--Ux8Rnc84bPPA4enI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavHK9wAKCRAv73Ows9A4
-ieqAAP0dDqZXsZ9lQ4XwukRDx4cW+B0zXYJj6DrP3O1K4YJskQEA2Aa9hs038lbL
-Yuz0ygfmkoOydQ1HYijQDdBjYgoStAo=
-=35Lq
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavHUNQAKCRAv73Ows9A4
+iYOBAP0ZH01fRdfFMKKeX/yhUT+2+UuXUppidcDj0mZn/YZkewD/XcicxaSvP9Hn
+psT9zWQn3VLdxSPnju+P62LmZQcJaQM=
+=tyCZ
 -----END PGP SIGNATURE-----
 
---Jc8v7mgOUfPS4Y+W--
+--Ux8Rnc84bPPA4enI--
