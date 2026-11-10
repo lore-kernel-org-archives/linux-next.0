@@ -1,59 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794335905;
-	b=N1aPTjcDYLjVMWVy9lbi2uzWPah6QdqG97xLwVs9sgyySFmPuf+2xh7m34aXyWR03hHs
-	 CzeWSbaNWktmzu00Zb2AkCZu8KAtvBn85JEaM53JnOmF06oOyDN+tQbjs8umwOlv21hky
-	 fOu+bTRUJec4PP/VXqxxUiQQIJnLkjFoV1F/WWm07G3C1mse8gPl1eTQydwbWuFNIbY6j
-	 Xn+GoFzr8mfid9EcZ9s+vcLVaA3Qu1YK9cqNA2G92/iWcB9l5r+mojs+WNtsluC/7kUFs
-	 5SHIYEjsL+SE8FsZ7YPgzcmAe7mqTqj0dM/OtScK83EY3ErVz31naTA8tAAGExCWdKw==
+	t=1794336979;
+	b=se9yGb14dp+V3m+FS3/S7S/9J4Qe3SV4JRnpnVizWXH//zTeXXpwtU5sdBZNiZUV5ErR
+	 Q8OrHbDzzdm/3BMeINSrd4NtUNgsoO6n/C1QyIBXXl2KnelNA8TRBD7cb1VtUd050w0pp
+	 NiGLSo27lUf9hRr0NQAOuS97oT6L1i9Ko/IIWsGOXiiY4fad3PNOGKVlcD/EOBycNXhIA
+	 zbkavkMlUqe9EF2vrsbPu/M8EK24MKPwFiQgponPbwMcmB8KG6VPqY+NAPzvrbddwprcE
+	 ORrIhiQb8/kpv7Ii42+XrcgtMK5u4bMaQHmiB/AOb/QDEL7ebDcFRtS9VE+Eo599xhg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794335905;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794336979;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 Mail-Followup-To:MIME-Version:Content-Type:Content-Disposition;
-	bh=mKdOvaOn4HSWA9Ds2Oo+Efh7wRd4xkw0x8BsJCaM+C4=;
-	b=ikzGcOH/DeRE32hjj09LX8YEWeOpHk60RSZcZNq+GWv1uLcT3nDRGp+8pF2J6od20kcn
-	 dSrnv6tcgOUIfE42xxVqZ4LI3O6X82tpvMxcRJwnOFcrhfSsKqlGNIllfBWY1a6YI0uBc
-	 1DDkxiX1SsS/awSmNS5poLbGvYIShsNklQ/Jvt7rL+1kDiEoePa1Irp7kyNinXnHbc9lG
-	 lR2Zft4TUPlrbzWdm1HY8fioboIIbKuBtD+pkGTKl9qq6fMbsVEaAzJ+zz6TtSxmdmUYW
-	 nFKeZnYX9yqzEVS1l4EVfVvj5q05xWrBl9aMMA+WHNw7y0CECiuMdYQ2OClAqqLLeEA==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=USlTfriYHgjlxaXxljcz0E95A2J8alevE3LYvzPAPfM=;
+	b=lcvXQVFhthVshxswxwXWsFaJhjRUzFge0IcA8p1MlRYSQIaSjyXT8Ji0smKbTxSo6u2r
+	 4FKdHqgr7FJg3MJXluSBw9+AM2KAm0tO7nTptxx9vbW7c/V8pm+48yD7uoqzhmyqi/9rq
+	 d4cnPZSwhoE8OL7gYn1/c+H6qh5Ldse+BNSbArCnyRH//7aYB0JIYnMzEwiPjynZ8oXDg
+	 RC02arUJ8IFpoHkVKIWFYUodMsVTZ2clxtU8jQftZRdQjF6qjOQS3F8a0AmMMZ2yMNlWw
+	 LAfF1BAIoWuCH5Qse4ajAki9hh1lu552k7yse9WSO98IihNWbpzvEMqjc1cFiRkmJvA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aiYUVWFJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kKiHM9Dy;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07569606A32A;
-	Tue, 10 Nov 2026 18:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E75606A323;
+	Tue, 10 Nov 2026 18:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aiYUVWFJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF831F0089F;
-	Tue, 10 Nov 2026 18:38:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kKiHM9Dy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070971F0089F;
+	Tue, 10 Nov 2026 18:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794335904;
-	bh=mKdOvaOn4HSWA9Ds2Oo+Efh7wRd4xkw0x8BsJCaM+C4=;
-	h=Date:From:To:Cc:Subject;
-	b=aiYUVWFJWKeG3tH3E+k37w82TGrQarjmZz+VOsM7wOZ3yi4F5tnyWuFX5azofG/h2
-	 QGVlLprJTr7tFZkM2BEwO6sr5npagG+FTpSg4oec15bdAfw7A5G8WjvGItILwL5OB5
-	 rjsj5OT1mK6lMRd05sQ3AGzEp3sgI5wFYKUh709DusP3YSswgw3bWKWmLNRaNnF7Pw
-	 rKvCXeoXslZNkF/96Ehx73rxANPEdSUzGPZh0A7TD047OFUUYLntVCOK8TVHSy0KdV
-	 aUjYNEOSaX7lQCRdsyMFmp2h9AR330Y9Ix1eEvqXjCnQBKc7Tlg/psvC+78vdPylVQ
-	 WgitzpvGpzzsQ==
-Date: Tue, 10 Nov 2026 18:38:20 +0000
+	s=k20260515; t=1794336978;
+	bh=USlTfriYHgjlxaXxljcz0E95A2J8alevE3LYvzPAPfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kKiHM9DyJ+wZzTye9IssSXbhKCo7btcIMa975u+wCcqaf19XH3zXzjO84TIqbNbir
+	 s4E4H1wEg2dbYwQ0ZJrj7aYiXVuqrrji6G5IoJXXSWTLZMqMILf4y1sqOHOx4mak6U
+	 GpsF+0B63NMtR8b+wn7yBnskyHuLgklcAJI59GS7HN4igAvhwyG8iTgdQI3fr/ltgX
+	 XaeAWiJ8PKJsDxmlObkGKJTiAX3+ubkZx49qEc8Q/P1A+rBwjhM/KC9+E6LNyDPoMM
+	 vG2FH74R1mErJI7i7ar9DEhwTyv+qlEiAVy/le3QX43X0Ino5EFEVcpbh4BaKTIIko
+	 99uZ48kBAlwAQ==
+Date: Tue, 10 Nov 2026 18:56:15 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Ulf Hansson <ulfh@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the wireless-next tree with the wireless
- tree
-Message-ID: <avNknAkxmfCcf4Ra@sirena.org.uk>
-Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the pmdomain-fixes tree
+Message-ID: <60f76f85-8a5f-4b3e-afec-ab4e69315ff5@sirena.org.uk>
+References: <avNHazNbGtMQJ5pV@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,72 +58,142 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="13qAi4U3V0gvNGsk"
+	protocol="application/pgp-signature"; boundary="oxClQKruZyneNn6U"
 Content-Disposition: inline
+In-Reply-To: <avNHazNbGtMQJ5pV@sirena.org.uk>
+X-Cookie: You can't take damsel here now.
 
 
---13qAi4U3V0gvNGsk
+--oxClQKruZyneNn6U
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Nov 10, 2026 at 04:33:51PM +0000, Mark Brown wrote:
+> Hi all,
+>=20
+> After merging the pmdomain-fixes tree, today's linux-next build
+> (arm multi_v7_defconfig) failed like this:
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+This also affects the pmdomain tree.  Also, I still had your Linaro
+address as a contact for all your trees - I've updated this to your
+kernel.org one since the Linaro one started bouncing.
 
-  net/mac80211/mlme.c
+> In file included from /tmp/next/build/include/linux/device.h:32,
+>                  from /tmp/next/build/include/linux/platform_device.h:13,
+>                  from /tmp/next/build/drivers/pmdomain/imx/gpc.c:11:
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c: In function 'imx_gpc_remove':
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:25: error: invalid storage=
+ class for function 'imx_gpc_driver_init'
+>   554 | builtin_platform_driver(imx_gpc_driver)
+>       |                         ^~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/device/driver.h:294:19: note: in definition=
+ of macro 'builtin_driver'
+>   294 | static int __init __driver##_init(void) \
+>       |                   ^~~~~~~~
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:1: note: in expansion of m=
+acro 'builtin_platform_driver'
+>   554 | builtin_platform_driver(imx_gpc_driver)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~
+> In file included from /tmp/next/build/include/linux/printk.h:6,
+>                  from /tmp/next/build/include/asm-generic/bug.h:31,
+>                  from /tmp/next/build/arch/arm/include/asm/bug.h:60,
+>                  from /tmp/next/build/include/linux/bug.h:5,
+>                  from /tmp/next/build/include/linux/instrumented.h:10,
+>                  from /tmp/next/build/include/linux/atomic/atomic-instrum=
+ented.h:17,
+>                  from /tmp/next/build/include/linux/atomic.h:82,
+>                  from /tmp/next/build/include/asm-generic/bitops/lock.h:5,
+>                  from /tmp/next/build/arch/arm/include/asm/bitops.h:245,
+>                  from /tmp/next/build/include/linux/bitops.h:67,
+>                  from /tmp/next/build/include/linux/kernel.h:23,
+>                  from /tmp/next/build/include/linux/clk.h:13,
+>                  from /tmp/next/build/drivers/pmdomain/imx/gpc.c:7:
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:25: error: initializer ele=
+ment is not constant
+>   554 | builtin_platform_driver(imx_gpc_driver)
+>       |                         ^~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/init.h:265:55: note: in definition of macro=
+ '____define_initcall'
+>   265 |                 __attribute__((__section__(__sec))) =3D fn;
+>       |                                                       ^~
+> /tmp/next/build/include/linux/init.h:275:9: note: in expansion of macro '=
+__unique_initcall'
+>   275 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
+>       |         ^~~~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/init.h:277:35: note: in expansion of macro =
+'___define_initcall'
+>   277 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .ini=
+tcall##id)
+>       |                                   ^~~~~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/init.h:306:41: note: in expansion of macro =
+'__define_initcall'
+>   306 | #define device_initcall(fn)             __define_initcall(fn, 6)
+>       |                                         ^~~~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/device/driver.h:298:1: note: in expansion o=
+f macro 'device_initcall'
+>   298 | device_initcall(__driver##_init);
+>       | ^~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/platform_device.h:345:9: note: in expansion=
+ of macro 'builtin_driver'
+>   345 |         builtin_driver(__platform_driver, platform_driver_registe=
+r)
+>       |         ^~~~~~~~~~~~~~
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:1: note: in expansion of m=
+acro 'builtin_platform_driver'
+>   554 | builtin_platform_driver(imx_gpc_driver)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/include/linux/init.h:176:30: error: expected declaration =
+or statement at end of input
+>   176 | #define THIS_MODULE ((struct module *)0)
+>       |                              ^~~~~~
+> /tmp/next/build/include/linux/platform_device.h:304:41: note: in expansio=
+n of macro 'THIS_MODULE'
+>   304 |         __platform_driver_register(drv, THIS_MODULE, KBUILD_MODNA=
+ME)
+>       |                                         ^~~~~~~~~~~
+> /tmp/next/build/include/linux/device/driver.h:296:16: note: in expansion =
+of macro 'platform_driver_register'
+>   296 |         return __register(&(__driver) , ##__VA_ARGS__); \
+>       |                ^~~~~~~~~~
+> /tmp/next/build/include/linux/platform_device.h:345:9: note: in expansion=
+ of macro 'builtin_driver'
+>   345 |         builtin_driver(__platform_driver, platform_driver_registe=
+r)
+>       |         ^~~~~~~~~~~~~~
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:1: note: in expansion of m=
+acro 'builtin_platform_driver'
+>   554 | builtin_platform_driver(imx_gpc_driver)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c: At top level:
+> /tmp/next/build/drivers/pmdomain/imx/gpc.c:503:13: warning: 'imx_gpc_remo=
+ve' defined but not used [-Wunused-function]
+>   503 | static void imx_gpc_remove(struct platform_device *pdev)
+>       |             ^~~~~~~~~~~~~~
+>=20
+> AFAICT this is caused by commit
+>=20
+>    d7262971a2acc (pmdomain: imx: gpc: remove all initialized power domain=
+s)
+>=20
+> though I don't really see how.  I have used the tree from next-20261109
+> instead.
 
-between commit:
 
-  4af2b71495a3f ("wifi: mac80211: fix use-after-free on TTLM disconnect")
 
-=66rom the wireless tree and commit:
-
-  1d8b10787a3d3 ("wifi: mac80211: mlme: partially handle UHR updates")
-
-=66rom the wireless-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc net/mac80211/mlme.c
-index b5efc6ccc9853,456b289bb072b..0000000000000
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@@ -8488,9 -8983,12 +8985,13 @@@ static void ieee80211_rx_mgmt_beacon(st
-  					       elems->cisco_dtpc_elem);
- =20
-  	ieee80211_ml_reconfiguration(sdata, elems);
- -	ieee80211_process_adv_ttlm(sdata, elems,
- -				      le64_to_cpu(mgmt->u.beacon.timestamp));
- +	if (!ieee80211_process_adv_ttlm(sdata, elems,
- +					le64_to_cpu(mgmt->u.beacon.timestamp)))
- +		goto free;
-+ 	if (!ieee80211_rx_mgmt_beacon_uhr_param_upd(local, link, link_sta, elems,
-+ 						    config_bw_out.ap_non_dbe_width,
-+ 						    dbe_enabled_before))
-+ 		goto free;
- =20
-  apply:
-  	ieee80211_link_info_change_notify(sdata, link, changed);
-
---13qAi4U3V0gvNGsk
+--oxClQKruZyneNn6U
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrzZJwACgkQJNaLcl1U
-h9BjAwf/ew+L+dUwmMO18voeptA+nJNY8kpCO/ji9x+Saf3ajXjdurRSbsZNjLzz
-zJm9K+BDLJL11C0JfPhIet0QdUSTg4KSwjy/+BKoZput+kkjcKFLSdZZzpYqT9DN
-8RyHLkRDANi+edBB2mnfToUbYGtCXw4C62F73jbtGAf5ZLG+tMD/1ZDQ+j75A671
-mlfWV23G0HHxOdc+sM293yfi3wfDDFca0ILgC+aJuSaFNb6daXL9XNAoEkqa58Sk
-5pSLkDNb6UVjF1+u3X8ZHSafsqypSiovaH9d6REaD/WHnXGiHFBWRfQY30N9vFDJ
-yKWmMk7fJoXFF5zBHhHBp4DdZrzVXg==
-=MqN3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrzaM4ACgkQJNaLcl1U
+h9BHxwf/R5EenoofSUuCmkz1Vr34Fyo4uJCGucjKkfttrMOpQ6tfAX5uxnHBEbmJ
+PMSuOuQB6ybtGsJXdxaupc9IJeWJAcYhoyTr7Nc8fGDHSkMeV25KOloCJBR7SEEg
+Fbmo1l3+Khom/j55Op8ac6bFreUIWqu8ez55ZDO8ZKl9G1xM+PpYLvhEaSfv6VPF
+LtM7nAwMkzcd1OKDqn/AaP6mIi0GH3mUaVWgNI14MoGMA4OTj1XSfWqunTZOe53a
+tXi1k7NlV5Bk61CBaGwl+t3fqA5B/DlbEmEPIdrjlI2UzlBMsbt6iaJYlIW7x11B
+oLfHMum9848xNC53AUEvKQ7TfNU29w==
+=Jlnw
 -----END PGP SIGNATURE-----
 
---13qAi4U3V0gvNGsk--
+--oxClQKruZyneNn6U--
