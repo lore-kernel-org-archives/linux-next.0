@@ -1,56 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794409201;
-	b=y9s0TokXQ7VwV9pAUwCL+TxplONGgYK7s8myR76ijGxJyoVJnx3OkN/l2oZFMMFCVFBT
-	 iobEkCVoEStgAinKtBZPyZt8IGCgMpD2dxvh+VSULiIfbSPMqVq8pu6ACQJNDIINlS7bV
-	 NUReTtiALcG/enlHO9js1e2Xz2Hw/A3w19I8+VHNzlvx2P3a2PqQ5L8/vuTvoFISiPx5c
-	 tm7WiFTnhxEyVoIXG7D5dDq0asjcmRzCHZ6VRMTjD8cRJces4GKCc721IwKa9I2PDI9Vo
-	 1VwoBF2j16428toVeFLjN5ahE8yJzovhtqmz40+ArjsZdU0Gm1LemRbE+a2gtSjOqpw==
+	t=1794413670;
+	b=3ipKfLezdW4w5dyplK4KukEMTrtWpzbyafUIMks4yUhmmDUPuz9+1Lo4+fc1anQyDrGH
+	 +Kai+afz0hYpiSOvclGiCGIRTvV7UAV+vCWQKMJTgT/BCZeO2w6zDnpiVYOyCYPryvSx7
+	 O2ea1kN9uWlO3yEtKT6joq//wDwz8NoSjSK5kBPg7r90vIwwotspuTryXDFgRIufEckdr
+	 AWQvgL5DKtO/882aTqJ5/JoRptkRBVSc5NBR8eOK1nsy798bkuoiWQ2Ta4ZQSzxQ/Q5fh
+	 Ufl6m4Xc2KICLC5XVd1XA8zuxyoM5Bi30F3r8uy/iUSQKI0SnkdnDcFKT43UAjvj7Rw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794409201;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=ypiC4uNdfcoGbAoTjz+aGTLh9KVOkc1XPsD+CPrl5Aw=;
-	b=Eq4Svbmnhc9B50ESkFQ9AEUITuAitkTFpp6hYNzTfmkxUSzDZ3LqVsZXudQk08bP19ZA
-	 CBVa1Ohqb4B9MXolqp8y7UU0tDEZ4+uNYXyfb+VAAp0BUPW4sauC3nk75fuZQFaU83Qd+
-	 +wYyXYUMlIF2KLy3PoheIpRXyZlwN68eSN3QJg2VtMhLA+nYl6Qh9hKOwBNwZnn30iPZN
-	 hF1nwVSPwcQJZGfnBszShiyL3csGeQbw1TWDsQO0mEvLvat49FFlgvKK+oW/HdBD139Wh
-	 W9uhKwAmtbA0DqbWBa/apq3RBk8ShIR+L9AxAOl0L/9wv79KqVwlBIIiksN8IJVeCOQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794413670;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=waVa0swUhVILDQ3Fdt9NwC388Zn+UttTKWbxLoq2k0s=;
+	b=ehtlpvbhtYOI6/21ByST0fQLgf3T0Ij/Vv7xDOa8Cm2SauBqK6H21KxwXze6Qs/sp/Fu
+	 wPz5xnO2+bVLw1X4ENrOFYqxXnO92lZbCxO/yDqGVptjLtjLqi9Vtb57nj3gp9vVaosap
+	 dfvcER43IIXnuH9WKB3QDad2hnOWGXg6uMO+qbiny3hPe7OIefnDMr0Wa696FwE2mLxWs
+	 TK228EomX6b0qlnoaMEtCIHbOL7JMkfEbhsZ+31W7tg7xRZsnOkqmg8HW/f7ou4jr3VNE
+	 BtTJIp9eNxQNG7KLeYUl4pUsvknGZVSuNnGLou07wl6AbgS6rSlym2Zh4da4PWbBF8w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GarvISh1;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=To8g6BJ6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B1F60A5BFE;
-	Wed, 11 Nov 2026 15:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6A606A324;
+	Wed, 11 Nov 2026 16:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GarvISh1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E96D1F00A0A;
-	Wed, 11 Nov 2026 14:59:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=To8g6BJ6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D25B1F00A07;
+	Wed, 11 Nov 2026 16:14:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794409201;
-	bh=ypiC4uNdfcoGbAoTjz+aGTLh9KVOkc1XPsD+CPrl5Aw=;
-	h=Date:From:To:Cc:Subject;
-	b=GarvISh1kpXSifRwdSycH+m4H/8UuNppcE2/JM3eQF8f2KvVd8KuXYbH09zVO+hiC
-	 qmK/12oxLtHpjm6YnqhgOmc6hIk7kYKR2tswf2t2XOgdVWv/aM1FuTkMAMP+dtIblZ
-	 6rYIw11Gtd+8Xq2YCjMK692kLwnu3l5BAjkuaqPRPS2v+1kxRyRxcev3m0YdSygM41
-	 czV2qc6IxkG4RdTd+Fg/qftiEWleyuvlzMkB4bTmznT019SXsZraZTV6o5I1b63Rw5
-	 o7G5ihlXnaPPEC5OsAajaJIj1oTe1rw+Uogqussaz3QUaUVuvgQig0RsYegeuzqhCL
-	 qx+0Y9LZs5ufg==
-Date: Wed, 11 Nov 2026 14:59:56 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nsc@kernel.org>
-Subject: linux-next: manual merge of the rust-fixes tree with the
- kbuild-current tree
-Message-ID: <avSC7GXOwnbuycR8@sirena.org.uk>
+	s=k20260515; t=1794413670;
+	bh=waVa0swUhVILDQ3Fdt9NwC388Zn+UttTKWbxLoq2k0s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=To8g6BJ6/R18EgHt+BPeAHAVBQbuXk+t6aIFx2fn332bSqauYGxIX/MhTCqN4+MGd
+	 ONerEaPLhIWKa6BYiQzy9Dt9em18MCRu5Z+LROMLZse3SPa18WvY1YByGKq/Q80ZVA
+	 IybU0qgALTugrvS/EnJa/0gmU4kIQqopiAZHZJnggWryksTuMTqRkL+IZXxgi6S/+C
+	 hDWhJWIRxfSbtd6BScuCTFZMH4NIBoOB0hE/y26arVXZ6a1H5DlUP82BcxDL1ayokQ
+	 BrNA5M+ZSvTYC+LbA2xAFIBtmSz4zlZoGkfaxvlkVO5KhPcaqZhiiLy9/vmka5XMvo
+	 g8MGR+fGcvhIQ==
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alex Deucher <alexdeucher@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: [PATCH linux-next] drm/amd/display: give the dprx CRC test its connector state back
+Date: Wed, 11 Nov 2026 11:14:27 -0500
+Message-ID: <20261111161427.3274232-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <avNxxfHK_Zh2GN2o@sirena.org.uk>
+References: <avNxxfHK_Zh2GN2o@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,77 +63,52 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OYsxV2iGVwCNs3L0"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+The merge fixup in commit c62c2736d82f ("amdgpu: Merge merge merge
+cherry-pick cherry-pick cherry-pick") dropped the call to
+drm_atomic_helper_connector_reset(), which drm-misc removed. But that
+call is what gave the test's connector a state, so the assert right
+after it always fails now.
 
---OYsxV2iGVwCNs3L0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Create the state with drm_atomic_helper_connector_create_state()
+instead, and check it before storing it: cleanup would choke on an
+error pointer in connector->state.
 
-Hi all,
+Fixes: af8e519642bd ("Merge branch 'drm-next' of https://gitlab.freedesktop.org/agd5f/linux.git")
+Link: https://lore.kernel.org/all/avNxxfHK_Zh2GN2o@sirena.org.uk/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+The amdgpu_dm_crc KUnit suite goes from 34/35 to 35/35 with this.
 
-Today's linux-next merge of the rust-fixes tree got a conflict in:
+ .../gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-  scripts/Makefile.autofdo
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c
+index 2b94d1bcaf62c..32b33d72dd0f3 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c
+@@ -694,6 +694,7 @@ static void dm_test_crtc_set_crc_source_dprx_connector(struct kunit *test)
+ 	struct amdgpu_device *adev = dm_kunit_alloc_adev(test);
+ 	struct amdgpu_crtc *acrtc = dm_test_alloc_crc_crtc(test, adev);
+ 	struct amdgpu_dm_connector *aconn;
++	struct drm_connector_state *state;
+ 	int ret;
+ 
+ 	aconn = kunit_kzalloc(test, sizeof(*aconn), GFP_KERNEL);
+@@ -704,7 +705,9 @@ static void dm_test_crtc_set_crc_source_dprx_connector(struct kunit *test)
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 	ret = kunit_add_action_or_reset(test, dm_test_crc_connector_cleanup, &aconn->base);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+-	KUNIT_ASSERT_NOT_NULL(test, aconn->base.state);
++	state = drm_atomic_helper_connector_create_state(&aconn->base);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
++	aconn->base.state = state;
+ 	aconn->base.state->crtc = &acrtc->base;
+ 	/* Balance the reference the state destroy drops for a set CRTC. */
+ 	drm_connector_get(&aconn->base);
 
-between commit:
+base-commit: 793807ca13bf3072fc6d16ce6d90e9ab9beff2a5
+-- 
+2.53.0
 
-  3df238d7a9f5a ("kbuild: AutoFDO: Disable Profi (-fno-sample-profile-use-p=
-rofi)")
-
-=66rom the kbuild-current tree and commit:
-
-  1178120c3bed1 ("kbuild: rust: support stabilized flag `-Cprofile-sample-u=
-se` for Rust >=3D 1.100")
-
-=66rom the rust-fixes tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc scripts/Makefile.autofdo
-index 55fda66ad960c,32c18df237f1b..0000000000000
---- a/scripts/Makefile.autofdo
-+++ b/scripts/Makefile.autofdo
-@@@ -13,10 -13,8 +13,10 @@@ endi
-  ifdef CLANG_AUTOFDO_PROFILE
-    CFLAGS_AUTOFDO_CLANG +=3D -fprofile-sample-use=3D$(CLANG_AUTOFDO_PROFIL=
-E) -ffunction-sections
-    CFLAGS_AUTOFDO_CLANG +=3D -fsplit-machine-functions
- +  CFLAGS_AUTOFDO_CLANG +=3D $(if $(call clang-min-version,210000),-fno-sa=
-mple-profile-use-profi)
--   RUSTFLAGS_AUTOFDO_CLANG +=3D -Zprofile-sample-use=3D$(CLANG_AUTOFDO_PRO=
-FILE) -Zfunction-sections=3Dy
-+   RUSTFLAGS_AUTOFDO_CLANG +=3D $(if $(call rustc-min-version,110000),-Cpr=
-ofile-sample-use,-Zprofile-sample-use)=3D$(CLANG_AUTOFDO_PROFILE) -Zfunctio=
-n-sections=3Dy
-    RUSTFLAGS_AUTOFDO_CLANG +=3D -Cllvm-args=3D-split-machine-functions
- +  RUSTFLAGS_AUTOFDO_CLANG +=3D -Cllvm-args=3D-sample-profile-use-profi=3D=
-false
-  endif
- =20
-  ifdef CONFIG_LTO_CLANG_THIN
-
---OYsxV2iGVwCNs3L0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0gusACgkQJNaLcl1U
-h9DH5Qf+J72YfvUWtVgi4IA0eW3JrXE6n5BBML8P3P2IhD8dm5ldpr1wLEBrwuq6
-sYg+kfO/8rllR0CPAncnktNJWzgW764lqSgZczl8xTLrHOnO8edW7aRBcm/Pb480
-FP5S4Iud0s0ueHhwwu8F1w2Nwjvr4PIlkGb19pi59+SZAGzAiCkaYK2pa0x+N7Mn
-KXyk3S9qf8JlLmtwzZLWgksJb0Cdz/DwhOBMJoqgvhM6t022mGUkePgMGyv23Ato
-io+aub9uLk7nyiMoo8DLtC5mne9S7oU7jS/j0LCJdyJIJNO/vIsa18JYEPy6CxqR
-z2auSoa0BXh9s5O3BDCumqZ5LW/OcA==
-=Hv0S
------END PGP SIGNATURE-----
-
---OYsxV2iGVwCNs3L0--
