@@ -1,50 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794361141;
-	b=p7aGTOxTl+90Asw/9AGk+SvxqdEv13KCACzUELtt4whIYyQihTtlZy02eCDNtw1Pxvng
-	 dph4m3dc7DmTWi5VnFGMe62SXKGzeuMWYfz5TpvlTB+9qHob+iTDAjl8csVyWED/hO93Z
-	 X5/uesLYQZbr+Owrqt4vI7ceD0S66hbF3F3CuD1es3z68kLDSDVRQ+MH/jwTOVpikd+mU
-	 I64GC345X8c64BlNkOKlqcnfFVWnRpKjwSIZ01ljTdZ79EyJlHoLnYjxq6W3VAAx97LoN
-	 m6u2fbjVf3lbfhPeIaG5Rc2zCZcN71G0Sx2Dz8VJ31RUenKErxACTxJnydNyGikIbFA==
+	t=1794364832;
+	b=LSxLLjlCZ4ezAoVdrsACMNReCZ+48sHQBw26ZLWTvJVrSejbUWjNuHiYn2hVhZzWrFrK
+	 iophjp928smjOJ0UjEtcSHFiIWTnDWlSGbhEdbC/5UqSV5hwWAGXit88tmtWskqMtqUcF
+	 vxvsZPfst/w8guuP7OOjfM+sdR2H6mIpruPMv5QjPfj0Rc0rrNk655hGDdwOXC1T2zOYO
+	 nqys1vQ6JNgn66iqx0Vv4IeWkgTwyRRGiIm6lTUdtK6hF+hJg7kEdCJFZMNyIz7vYYRXr
+	 0FZNXGLE02W9M+KCqD6MJ/g7EPm4Z/oUIWIrIRz6/HMe04TBBB7FDZMJc2ja3cnjkCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794361141;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=YN32uCiQtqq9aFcjtm+9jPqhd3Nau3hVhZJ0Lm2Cc7E=;
-	b=CxA3pvtUiAaQ6FEy5+CLkBIuHVs1vdiU/FDRLPb4tOCgtDlQzJcF6wxY1zSYMpIBpo9H
-	 e0lQjsIiMXgycQMycEvJP40QEq9vcYSavfni6mks3lMcwAUPqAFBhMtcLDWQW3G2x5/Xd
-	 XJy3BJX0QJcetXqbTLl4MbFxsF/2I6tWTt0hUKpjS0JuHuEhzDMpuCRt+bDt2SLtNrBqB
-	 eZ46Glbv6gNNLG5ufY5BZegzWlLLUOJFOIAqkJ7nRsMckLr6ECEiA3+NOf2XVhoN7ek34
-	 3UDpwJqJXCPWHynKm8arypbD/yq5e1+xGapEat4NdPbt6hXZgSWEuqYgUYCjogLi4Xg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794364832;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=gEo0FDfWP2rBHOYzffmKUuZaHK928f06NWiJJc6SpR4=;
+	b=v1OCcUCv/hLjtckPZi5NfX7p8GMBYa9UL0s6tP0lFssHwJ96L9B5fKc11gVzgccabIxG
+	 5z+0Wvkx1e8mEQipXiVIuntPMXDQ9dcq7n/Ur1qpX7BE860LmpcPox4X7tfWA8dDS4W2Z
+	 jOl9l3+FOmgZia/9tJAHDbMMNaLppPDY4dJF/HvR29BvqWeoGov0zCHGMJDRf3IPceb9F
+	 P1uQU9jT7rfCWvYrODARezwCHESXZI9uhLYlfJwKozBB3/5gBsh0h7j3tnOL4MJIgWMhI
+	 4Q3eLsysmUh5B8eUg8As2Ry0E7nX7shpwWHt/eBJmvPuz8/adOh2kRWU4rQrOD/ijHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hGsQ7bJ2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kHAlrSnP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B4C606A31C;
-	Wed, 11 Nov 2026 01:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B998606A31C;
+	Wed, 11 Nov 2026 02:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hGsQ7bJ2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB531F0093C;
-	Wed, 11 Nov 2026 01:39:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kHAlrSnP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECAF1F0089F;
+	Wed, 11 Nov 2026 02:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794361141;
-	bh=YN32uCiQtqq9aFcjtm+9jPqhd3Nau3hVhZJ0Lm2Cc7E=;
-	h=Date:From:To:Cc:Subject;
-	b=hGsQ7bJ2nEehftUdQDQiS1UAGwNwCCvWw4Q3+3OSV182sO4pvURYdwK7zmCdG68lv
-	 zA2Z+qXr8j1zJhndFo5cLn2EATNkk+5+6TXf9y2wT0hPsj/Hc3KhcllnmxKGk28j0a
-	 RANZSqrbLF7FA+2HTCNnTsqPCuCp5yGODauHAXbkwU1ivkKL0Wmp/FgyPIejxoTAvV
-	 hh3olRG1/3JNb5LcOzqzSkhqqRS5MQkixttxM3dihjrFCQhSgAv2N/RyWtXIH9U3v6
-	 T8xFj9sQNUJBtMHTeZMGxdx648/QjGey5xUQu3d3nqXMwVK4dKgHh6VkKkj+rflmS7
-	 TCw9hgEB02rLA==
-Date: Wed, 11 Nov 2026 01:38:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Nov 10
-Message-ID: <avPHMuq_SfegVdhe@sirena.org.uk>
+	s=k20260515; t=1794364831;
+	bh=gEo0FDfWP2rBHOYzffmKUuZaHK928f06NWiJJc6SpR4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=kHAlrSnPbNl0mTDrm73d9q4Nu9GGyOhlKC36k3PlkmpE4yVHel/JU4h/UpHMGkZF/
+	 MYsTk9Ti9Ovod1BVYiZVhDnf/3r9/w/2LS9M12ARugPS4K7N0YgZZ04a8jJNJra7y1
+	 DvM1T1KQYoiB+7TuNVPPrg9wh/nDxfxw0Z5KL57O/9pSaXV5HBWFzcrtPwKyD2Jsw5
+	 GS29erLAGMO3AmPDvX/YSzriS4PYlauOFk92/x8scBYZFl8zJcXzUUDoR/ekthgA4j
+	 RUHsACguK0VzYqSGQnB92MPiabCcqIutuUd/oA3DZzkJs2pGAmd+1pjdzMHPqmFl5b
+	 WoUtxunFev4rQ==
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Johannes Berg <johannes.berg@intel.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: [PATCH linux-next] wifi: nl80211: fix double wdev_put() from the wireless-next merge
+Date: Tue, 10 Nov 2026 21:40:29 -0500
+Message-ID: <20261111024029.759859-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <avNx0gmZTCIjln1Y@sirena.org.uk>
+References: <avNx0gmZTCIjln1Y@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -54,95 +61,50 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m9R3FbLwzhyismd4"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+The wireless tree has commit 5e25f6b1b18d ("wifi: nl80211: fix ERR_PTR
+use on wdev disappearance"), which returns right away when
+__nl80211_lock_held_wdev() fails. wireless-next changed the same lines
+in commit a357675fd740 ("wifi: cfg80211: enable context analysis") and
+still jumps to out_err there. The merge kept the wireless-next version.
 
---m9R3FbLwzhyismd4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That is a double put: the helper has already dropped the wdev reference
+by the time it fails, and out_err drops it again.
 
-Hi all,
+Just return the error, like the wireless fix does.
 
-Changes since 20261109:
+Fixes: cf03388aa81e ("Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git")
+Link: https://lore.kernel.org/all/avNx0gmZTCIjln1Y@sirena.org.uk/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+Mark, this is against next-20261110. Please fold it into the wireless-next
+merge.
 
-The btrfs tree acquired a conflict with the btrfs-fixes tree.
+Johannes, wireless-next has the same double put on its own until wireless
+gets merged into it.
 
-The pmdomain-fixes tree acquired a build failure, I used the version
-=66rom next-20261109 instead.
+Found by comparing with our llminus-assisted integration tree. Build tested
+only.
 
-The tegra tree acquired multiple conflicts with the origin tree.
+ net/wireless/nl80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The clk tree acquired a conflict with the origin tree.
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index d695040cc85cb..8a5c9dd9d0dba 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -9079,7 +9079,7 @@ static int nl80211_dump_station(struct sk_buff *skb,
+ 				err = __nl80211_lock_held_wdev(rdev, netns,
+ 							       wdev);
+ 				if (err)
+-					goto out_err;
++					return err;
+ 
+ 				/* try again locked now */
+ 				locked = true;
 
-The net-next tree acquired a conflict with the origin tree.
+base-commit: 793807ca13bf3072fc6d16ce6d90e9ab9beff2a5
+-- 
+2.53.0
 
-The bpf-next tree acquired a conflict with the origin tree.
-
-The wireless-next tree acquired multiple conflicts with the wireless tree.
-
-The mm tree acquired a conflict with the mm-fixes tree.
-
-The pmdomain tree acquired a build failure, I used the version from
-next-20261109 instead.
-
-The amdgpu tree acquired substantial conflicts with the origin and
-amdgpu-fixes trees.
-
-The rcu tree acquired a conflict with the origin tree.
-
-The drivers-x86 tree acquired a build failure, I used the version from
-next-20261109 instead.
-
-Non-merge commits (relative to Linus' tree): 5254
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 436 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---m9R3FbLwzhyismd4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrzxzEACgkQJNaLcl1U
-h9AGrAgAgmsObGbn5DBk6iPv81T8n7NY69myCbzHMAr2lQ/XG1zYmtxr9LNU9eis
-foxVLQEax4gc3sI3pvxdizW2oFU4DBoMaipw8XxgKsQiVfiMHjMVK4pE9+S5l1O2
-T9+RbSVdhYrI+whwFAWQgMRpPQmexAlAx0+IqHYOIxGsVddY8jNZRV1cH+OREsMT
-IdqmImxBxlwSlcTcnBz9JJTMvcm6UvZ1HgAnfop0Im3WpgLNWVZIXzKPjJjAU4jS
-xaJnFkWRaBm4GlEQXwUd+/Fy15ueIQG8pNosyX29RQvDm3wnchyIB1ByyKFNXnL2
-BpZQHm7E7w4mcv1hMGGg/Ay8NCYrtg==
-=EbrE
------END PGP SIGNATURE-----
-
---m9R3FbLwzhyismd4--
