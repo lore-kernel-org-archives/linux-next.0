@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794407685;
-	b=GgBm5SGaoVJxI1RS4o5K5wFvO96L/ZGEl1L3NftZ/KW31inPLfZ4xKcBIfVY9b+iQIzW
-	 vHiG5i91SuMyH7ZOsGBwqBhob9/iVbhbalDywRkyVm6C8k0x5pd36XaPlkcehsdtMWnhE
-	 4wGeZB3k89r7rd9e43iqlwJOkyFft2i9JRNqc2D84HMPREn6TbvGDV1Q0L6eLpYpKC4+M
-	 WeMY6Kxipe1/mT4RSVvJ7X6DQ1XzlslubpW+ghX6E26pBSpF+VStGYbn5UoP6vALZDdTN
-	 V2O9gDtoNwyJyQihEJhG8keZgiqwx5TlnaB6ybGOz7W1N1ppvz6e9rwASuxNEf2gBIA==
+	t=1794409201;
+	b=y9s0TokXQ7VwV9pAUwCL+TxplONGgYK7s8myR76ijGxJyoVJnx3OkN/l2oZFMMFCVFBT
+	 iobEkCVoEStgAinKtBZPyZt8IGCgMpD2dxvh+VSULiIfbSPMqVq8pu6ACQJNDIINlS7bV
+	 NUReTtiALcG/enlHO9js1e2Xz2Hw/A3w19I8+VHNzlvx2P3a2PqQ5L8/vuTvoFISiPx5c
+	 tm7WiFTnhxEyVoIXG7D5dDq0asjcmRzCHZ6VRMTjD8cRJces4GKCc721IwKa9I2PDI9Vo
+	 1VwoBF2j16428toVeFLjN5ahE8yJzovhtqmz40+ArjsZdU0Gm1LemRbE+a2gtSjOqpw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794407685;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794409201;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=/BYwmTLc268SpihxQ/Qh7SWKMglfN7RDmuZifcHy5Zs=;
-	b=ewdZfs6e665rdPLswW3Iup47iS1M5Tgk6Ph97njCMJBI4hIBgyCJryPnBa5rIHunGz3J
-	 gCakhvQqt5i5hKru0ntjU7h0pyZv+DecASPi3ZXwSv78pj3dc7zPJ+R/AARfg0Ec6CD7g
-	 Bcs3iRnuM/gc56ejHM4S6uzDsqjBMrv3ny8kGnTW3Dd99XcOA7YOV1gRhFGcD6teI5g3s
-	 5UwXLhBG7Bu1K8fHSgoqRoW757afu5sYQniuDHWnxhVX7q6G3MhqT7ERHwazNLhnfnDRf
-	 BHDPW3zSkL5oWst/yz7DtNi8d9ymSz5HM2D/K755+1iVv3MGk6Ngcn2PzZbZjYAOcPg==
+	bh=ypiC4uNdfcoGbAoTjz+aGTLh9KVOkc1XPsD+CPrl5Aw=;
+	b=Eq4Svbmnhc9B50ESkFQ9AEUITuAitkTFpp6hYNzTfmkxUSzDZ3LqVsZXudQk08bP19ZA
+	 CBVa1Ohqb4B9MXolqp8y7UU0tDEZ4+uNYXyfb+VAAp0BUPW4sauC3nk75fuZQFaU83Qd+
+	 +wYyXYUMlIF2KLy3PoheIpRXyZlwN68eSN3QJg2VtMhLA+nYl6Qh9hKOwBNwZnn30iPZN
+	 hF1nwVSPwcQJZGfnBszShiyL3csGeQbw1TWDsQO0mEvLvat49FFlgvKK+oW/HdBD139Wh
+	 W9uhKwAmtbA0DqbWBa/apq3RBk8ShIR+L9AxAOl0L/9wv79KqVwlBIIiksN8IJVeCOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DiseoniZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GarvISh1;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E5A606A32A;
-	Wed, 11 Nov 2026 14:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B1F60A5BFE;
+	Wed, 11 Nov 2026 15:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DiseoniZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 351411F00A05;
-	Wed, 11 Nov 2026 14:34:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GarvISh1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E96D1F00A0A;
+	Wed, 11 Nov 2026 14:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794407684;
-	bh=/BYwmTLc268SpihxQ/Qh7SWKMglfN7RDmuZifcHy5Zs=;
+	s=k20260515; t=1794409201;
+	bh=ypiC4uNdfcoGbAoTjz+aGTLh9KVOkc1XPsD+CPrl5Aw=;
 	h=Date:From:To:Cc:Subject;
-	b=DiseoniZsx80fPtrAj7S3wCet9rxXCD2+hkv14jx4muWmZg6pkzva/HRgfebj3Owj
-	 efWnt6bKfSREFk3JcmSTfHQ2oIaAmf0eOHfystWI2xNgiR6BUFXx8Lycw4izWk2ofj
-	 NTj3NhAqdWrwsQ8ObaX//qblMIJBVXJYyt1LZI65NuPx5ylUQtSzi71R4iDNXjfX8x
-	 3I6fTVcvoFZlCcDKg111fb0b05ewKqb1MqytT5Q8bpA6Dch73hTTJDeBSzzIp1cqYR
-	 vsPAee8XVaUT02mUyZaOHhkFG8laUwICatcQYphXp5Xu7RjdToxOL2YPc/2eEhvHVT
-	 IyiKGRQ99HjYg==
-Date: Wed, 11 Nov 2026 14:34:40 +0000
+	b=GarvISh1kpXSifRwdSycH+m4H/8UuNppcE2/JM3eQF8f2KvVd8KuXYbH09zVO+hiC
+	 qmK/12oxLtHpjm6YnqhgOmc6hIk7kYKR2tswf2t2XOgdVWv/aM1FuTkMAMP+dtIblZ
+	 6rYIw11Gtd+8Xq2YCjMK692kLwnu3l5BAjkuaqPRPS2v+1kxRyRxcev3m0YdSygM41
+	 czV2qc6IxkG4RdTd+Fg/qftiEWleyuvlzMkB4bTmznT019SXsZraZTV6o5I1b63Rw5
+	 o7G5ihlXnaPPEC5OsAajaJIj1oTe1rw+Uogqussaz3QUaUVuvgQig0RsYegeuzqhCL
+	 qx+0Y9LZs5ufg==
+Date: Wed, 11 Nov 2026 14:59:56 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Kiryl Shutsemau <kas@kernel.org>,
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: linux-next: manual merge of the fuse tree with the vfs-brauner-fixes
- tree
-Message-ID: <avR9APrG3b5DUOEs@sirena.org.uk>
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nsc@kernel.org>
+Subject: linux-next: manual merge of the rust-fixes tree with the
+ kbuild-current tree
+Message-ID: <avSC7GXOwnbuycR8@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,30 +61,32 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5AEo8DJ8wMV8bWwX"
+	protocol="application/pgp-signature"; boundary="OYsxV2iGVwCNs3L0"
 Content-Disposition: inline
 
 
---5AEo8DJ8wMV8bWwX
+--OYsxV2iGVwCNs3L0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the fuse tree got a conflict in:
+Today's linux-next merge of the rust-fixes tree got a conflict in:
 
-  fs/fuse/dev.c
+  scripts/Makefile.autofdo
 
 between commit:
 
-  80beb226de50b ("fuse: don't move pipe buffers into the page cache")
+  3df238d7a9f5a ("kbuild: AutoFDO: Disable Profi (-fno-sample-profile-use-p=
+rofi)")
 
-=66rom the vfs-brauner-fixes tree and commit:
+=66rom the kbuild-current tree and commit:
 
-  9c1fd690cbb1f ("fuse: reject unmovable folios before stealing them")
+  1178120c3bed1 ("kbuild: rust: support stabilized flag `-Cprofile-sample-u=
+se` for Rust >=3D 1.100")
 
-=66rom the fuse tree.
+=66rom the rust-fixes tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -92,230 +95,42 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined fs/fuse/dev.c
-index a5c08a00cf83b,e7d9c506afaac..0000000000000
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@@ -1099,6 -1099,138 +1099,6 @@@ static int fuse_copy_do(struct fuse_cop
-  	return ncpy;
-  }
+diff --cc scripts/Makefile.autofdo
+index 55fda66ad960c,32c18df237f1b..0000000000000
+--- a/scripts/Makefile.autofdo
++++ b/scripts/Makefile.autofdo
+@@@ -13,10 -13,8 +13,10 @@@ endi
+  ifdef CLANG_AUTOFDO_PROFILE
+    CFLAGS_AUTOFDO_CLANG +=3D -fprofile-sample-use=3D$(CLANG_AUTOFDO_PROFIL=
+E) -ffunction-sections
+    CFLAGS_AUTOFDO_CLANG +=3D -fsplit-machine-functions
+ +  CFLAGS_AUTOFDO_CLANG +=3D $(if $(call clang-min-version,210000),-fno-sa=
+mple-profile-use-profi)
+-   RUSTFLAGS_AUTOFDO_CLANG +=3D -Zprofile-sample-use=3D$(CLANG_AUTOFDO_PRO=
+FILE) -Zfunction-sections=3Dy
++   RUSTFLAGS_AUTOFDO_CLANG +=3D $(if $(call rustc-min-version,110000),-Cpr=
+ofile-sample-use,-Zprofile-sample-use)=3D$(CLANG_AUTOFDO_PROFILE) -Zfunctio=
+n-sections=3Dy
+    RUSTFLAGS_AUTOFDO_CLANG +=3D -Cllvm-args=3D-split-machine-functions
+ +  RUSTFLAGS_AUTOFDO_CLANG +=3D -Cllvm-args=3D-sample-profile-use-profi=3D=
+false
+  endif
  =20
- -static int fuse_check_folio(struct folio *folio)
- -{
- -	if (folio_mapped(folio) ||
- -	    folio->mapping !=3D NULL ||
- -	    (folio->flags.f & PAGE_FLAGS_CHECK_AT_PREP &
- -	     ~(1 << PG_locked |
- -	       1 << PG_referenced |
- -	       1 << PG_lru |
- -	       1 << PG_active |
- -	       1 << PG_workingset |
- -	       1 << PG_reclaim |
- -	       1 << PG_waiters |
- -	       LRU_GEN_MASK | LRU_REFS_MASK))) {
- -		dump_page(&folio->page, "fuse: trying to steal weird page");
- -		return 1;
- -	}
- -	return 0;
- -}
- -
- -/*
- - * Attempt to steal a page from the splice() pipe and move it into the
- - * pagecache. If successful, the pointer in @pagep will be updated. The
- - * folio that was originally in @pagep will lose a reference and the new
- - * folio returned in @pagep will carry a reference.
- - */
- -static int fuse_try_move_folio(struct fuse_copy_state *cs, struct folio *=
-*foliop)
- -{
- -	int err;
- -	struct folio *oldfolio =3D *foliop;
- -	struct folio *newfolio;
- -	struct pipe_buffer *buf =3D cs->pipebufs;
- -
- -	folio_get(oldfolio);
- -	err =3D unlock_request(cs->req);
- -	if (err)
- -		goto out_put_old;
- -
- -	fuse_copy_finish(cs);
- -
- -	err =3D pipe_buf_confirm(cs->pipe, buf);
- -	if (err)
- -		goto out_put_old;
- -
- -	BUG_ON(!cs->nr_segs);
- -	cs->currbuf =3D buf;
- -	cs->len =3D buf->len;
- -	cs->pipebufs++;
- -	cs->nr_segs--;
- -
- -	if (cs->len !=3D folio_size(oldfolio))
- -		goto out_fallback;
- -
- -	newfolio =3D page_folio(buf->page);
- -
- -	if (folio_test_large(newfolio))
- -		goto out_fallback;
- -
- -	/*
- -	 * A swap backed, anonymous or mapped folio can never be moved into the
- -	 * page cache.  fuse_check_folio() would catch these below, but only
- -	 * after the steal has already removed the folio from its mapping, so
- -	 * check them here, while the answer is still meaningful.
- -	 */
- -	if (folio_test_swapbacked(newfolio) || folio_test_anon(newfolio) ||
- -	    folio_mapped(newfolio))
- -		goto out_fallback;
- -
- -	/*
- -	 * This is a new and locked page, it shouldn't be mapped or
- -	 * have any special flags on it
- -	 */
- -	if (WARN_ON(folio_mapped(oldfolio)))
- -		goto out_fallback;
- -	if (WARN_ON(folio_has_private(oldfolio)))
- -		goto out_fallback;
- -	if (WARN_ON(folio_test_dirty(oldfolio) ||
- -				folio_test_writeback(oldfolio)))
- -		goto out_fallback;
- -	if (WARN_ON(folio_test_mlocked(oldfolio)))
- -		goto out_fallback;
- -
- -	if (!pipe_buf_try_steal(cs->pipe, buf))
- -		goto out_fallback;
- -
- -	folio_clear_uptodate(newfolio);
- -	folio_clear_mappedtodisk(newfolio);
- -
- -	if (fuse_check_folio(newfolio) !=3D 0)
- -		goto out_fallback_unlock;
- -
- -	err =3D lock_request(cs->req);
- -	if (err)
- -		goto out_fallback_unlock;
- -
- -	replace_page_cache_folio(oldfolio, newfolio);
- -
- -	folio_get(newfolio);
- -
- -	if (!(buf->flags & PIPE_BUF_FLAG_LRU))
- -		folio_add_lru(newfolio);
- -
- -	/*
- -	 * Release while we have extra ref on stolen page.  Otherwise
- -	 * anon_pipe_buf_release() might think the page can be reused.
- -	 */
- -	pipe_buf_release(cs->pipe, buf);
- -
- -	*foliop =3D newfolio;
- -	folio_unlock(oldfolio);
- -	/* Drop ref for ap->pages[] array */
- -	folio_put(oldfolio);
- -	cs->len =3D 0;
- -
- -	err =3D 0;
- -out_put_old:
- -	/* Drop ref obtained in this function */
- -	folio_put(oldfolio);
- -	return err;
- -
- -out_fallback_unlock:
- -	folio_unlock(newfolio);
- -out_fallback:
- -	cs->pg =3D buf->page;
- -	cs->offset =3D buf->offset;
- -
- -	err =3D lock_request(cs->req);
- -	if (!err)
- -		err =3D 1;
- -
- -	goto out_put_old;
- -}
- -
-  static int fuse_ref_folio(struct fuse_copy_state *cs, struct folio *folio,
-  			  unsigned offset, unsigned count)
-  {
-@@@ -1153,9 -1285,16 +1153,9 @@@ int fuse_copy_folio(struct fuse_copy_st
-  				return fuse_ref_folio(cs, folio, offset, count);
-  			}
-  		} else if (!cs->len) {
- -			if (cs->move_folios && folio &&
- -			    offset =3D=3D 0 && count =3D=3D folio_size(folio)) {
- -				err =3D fuse_try_move_folio(cs, foliop);
- -				if (err <=3D 0)
- -					return err;
- -			} else {
- -				err =3D fuse_copy_fill(cs);
- -				if (err)
- -					return err;
- -			}
- +			err =3D fuse_copy_fill(cs);
- +			if (err)
- +				return err;
-  		}
-  		if (folio) {
-  			void *mapaddr =3D kmap_local_folio(folio, offset);
-@@@ -1627,7 -1766,7 +1627,7 @@@ static ssize_t fuse_dev_splice_read(str
-  		 * Need to be careful about this.  Having buf->ops in module
-  		 * code can Oops if the buffer persists after module unload.
-  		 */
- -		bufs[page_nr].ops =3D &nosteal_pipe_buf_ops;
- +		bufs[page_nr].ops =3D &default_pipe_buf_ops;
-  		bufs[page_nr].flags =3D 0;
-  		ret =3D add_to_pipe(pipe, &bufs[page_nr++]);
-  		if (unlikely(ret < 0))
-@@@ -1791,6 -1930,9 +1791,6 @@@ static ssize_t fuse_dev_do_write(struc
-  		if (!smp_load_acquire(&fch->initialized) || !fch->connected)
-  			goto copy_finish;
- =20
- -		/* Don't try to move folios (yet) */
- -		cs->move_folios =3D false;
- -
-  		err =3D fuse_notify(fch->conn, oh.error, nbytes - sizeof(oh), cs);
-  		goto copy_finish;
-  	}
-@@@ -1834,6 -1976,8 +1834,6 @@@
-  	set_bit(FR_LOCKED, &req->flags);
-  	spin_unlock(&fpq->lock);
-  	cs->req =3D req;
- -	if (!req->args->page_replace)
- -		cs->move_folios =3D false;
- =20
-  	if (oh.error)
-  		err =3D nbytes !=3D sizeof(oh) ? -EINVAL : 0;
-@@@ -1934,6 -2078,7 +1934,6 @@@ static ssize_t fuse_dev_splice_write(st
-  				goto out_free;
- =20
-  			*obuf =3D *ibuf;
- -			obuf->flags &=3D ~PIPE_BUF_FLAG_GIFT;
-  			obuf->len =3D rem;
-  			ibuf->offset +=3D obuf->len;
-  			ibuf->len -=3D obuf->len;
-@@@ -1948,6 -2093,9 +1948,6 @@@
-  	cs.nr_segs =3D nbuf;
-  	cs.pipe =3D pipe;
- =20
- -	if (flags & SPLICE_F_MOVE)
- -		cs.move_folios =3D true;
- -
-  	ret =3D fuse_dev_do_write(fud, &cs, len);
- =20
-  	pipe_lock(pipe);
+  ifdef CONFIG_LTO_CLANG_THIN
 
---5AEo8DJ8wMV8bWwX
+--OYsxV2iGVwCNs3L0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0fP8ACgkQJNaLcl1U
-h9B58gf/a+cW2KVrTPoMwlryNjCwNMsnLGeZSZlGPLaD8bRopA3L8iil5gtV3fvG
-c53BZj9+G2PZzhFxwkb2Rl3ztndtu0UL1UvBv/pGLl7Ax3CH9UIFKDKQL8e76X7i
-xVje8kIZOF4Mk1INf4mWMwW+GaDq7iNUfkzBF/nIfu/+qiSY4BXB7Yxjnz0jhQMO
-YYSY+1igrAe/9TyG/w5gU3noU2PwQgG2oXOSpeKVMl82KxxahyjXhnpbfOw0f6SP
-5N12XPKptmAQF4e1bwgDuDky7ny6s8xvyDW4zdGSGAOcv+oxDdc4N4UrbKf7Nqi2
-qa8S966FSrZaDdRzwRfTmSEUL+rC5g==
-=Uhhy
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0gusACgkQJNaLcl1U
+h9DH5Qf+J72YfvUWtVgi4IA0eW3JrXE6n5BBML8P3P2IhD8dm5ldpr1wLEBrwuq6
+sYg+kfO/8rllR0CPAncnktNJWzgW764lqSgZczl8xTLrHOnO8edW7aRBcm/Pb480
+FP5S4Iud0s0ueHhwwu8F1w2Nwjvr4PIlkGb19pi59+SZAGzAiCkaYK2pa0x+N7Mn
+KXyk3S9qf8JlLmtwzZLWgksJb0Cdz/DwhOBMJoqgvhM6t022mGUkePgMGyv23Ato
+io+aub9uLk7nyiMoo8DLtC5mne9S7oU7jS/j0LCJdyJIJNO/vIsa18JYEPy6CxqR
+z2auSoa0BXh9s5O3BDCumqZ5LW/OcA==
+=Hv0S
 -----END PGP SIGNATURE-----
 
---5AEo8DJ8wMV8bWwX--
+--OYsxV2iGVwCNs3L0--
