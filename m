@@ -1,60 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.10
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794364834;
-	b=Is1GPDHdRLMy2J0UvPFrhTUkYZVa5IG1UEQad202yCNVuY9e4ZlLa9fuvEpPiV0J1xmZ
-	 bJU6ePbVK/ZHrhu44OPMppFvLFebc2iDeopsNwa7s3KVd1M2JBpqMPZjv31pd3gR8IfVm
-	 ZODwOBc1d0k5svkVH4s33/9UI97v6MoCyGOcyhJ3/+b+9VTRG/XqmSMWlJXimcHfqw0CW
-	 H8nEDMFxH4SK3q4HBgBtSGOKbi49yIk69a7N4OdHn/aSpMoTwgj4/5fNo8E2zwYwb74AV
-	 00PKZTQcg1cPKTPF+hudsyihwbEO5G6Kk1/wucSBC18+/JIAlSN75M38QfKGoiJ6fMQ==
+	t=1794391726;
+	b=uwePMBeSd7yLN8PWoX4qtdlXQhWvYwvfsCv/Rv+msX5Sd2rEEki+sjT7WAE+PKKmEsub
+	 dTzvuDtj0tvHm20O3srBn07l0vIwhJUwixHmbUht2L8/pofDutF5Hw6ysWyNVHo3k8tpS
+	 uPVNKB1hlKMRAlyICQFnLIHoLFAecYl4HJzqAyhDhDHSyTOucpFHTrcKeJAonj0Rzvi1g
+	 KvPsVuMJ/9o8iMGhn9Or3kSR6AgwswpRn3DcBzuKQf5WCYXf1IXfCo6Ds0I1hfrT8gJL+
+	 BVnI9pdmYbRFiCJCPu8JekMyNHYvz/T/7y3GZYrmLHv9xv1fIHcxDR2Ac7phYrSbwbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794364834;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=7WX1G6+ktrzrYe81d7r8LDzTp8bhfw3CI+SJD6UOSx8=;
-	b=zh2f0z2Cid3gLwPpuSOHVy0pm/XNLOD3nI40BEJkyD2UCHP0XBSR3t6mVNMOr3Xs6rBB
-	 oH1E+K31RaMg5qeRevNaR2BlwXtZ8YVL66MQWEiDAq3zAiSvVJBT6uYbhS7WCsbnKWN+D
-	 I8xRySLB9xrnsy5fRhV/zWj38jXLtNezoaIHJGxXg7tVYkDQBpf8220DJc9XgfO0rf39N
-	 QvC8SKoJ87X+NkVBJjYQqaV7/EYriXq0pCXumm66p2G10l5MmiFjix39nt47eiw+TeGEe
-	 ix/lnJz0TLXBPKzdn9Ijn9Khp4BONtjJDWEcDSvRofOS3LiScxzAgV6jYC8iQlOg+Pw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794391726;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=FhBibYlotlIoriDD1qZMd/y5gNpVeKGTwgYsEGhsCmk=;
+	b=t1Hg2StYA4h/BDh1N2fEiMNHBtnXE8rtaZsLD2pM+tXV+bgP3ebC2GZ1+yE78Gjaiz4D
+	 LnDYvLKZcCS8ixYq8fAY6OqEf0Ts9/6omogXvgY7qfbbqb1Bh9FGnYu6HvZbtP6z7gjLc
+	 mkK///mswyxRNG7GpyTMGwF729cJlEaSYR1gtJDn7p+0QhwsGfXLv2WFDhaofz79agXud
+	 rUx/ByP1+gQ3oLOfM3Tx1HdVU5iPsx/aBPClKfOvEMU8ae50Oi6ifO5A4imZVpOgoJ0S8
+	 zXMqnf5alDxKJZvadEuFbKP6JllPMr4W7bGG1Fv24BNuAldd/9e5BYg/ykebIbu05zQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fbnD2TDo;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UMBw5aEW;
+	arc=none smtp.remote-ip=192.198.163.10
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA692606A321;
-	Wed, 11 Nov 2026 02:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C753E606A321;
+	Wed, 11 Nov 2026 10:08:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C753E606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fbnD2TDo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592001F0089F;
-	Wed, 11 Nov 2026 02:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794364834;
-	bh=7WX1G6+ktrzrYe81d7r8LDzTp8bhfw3CI+SJD6UOSx8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fbnD2TDo3nIPlZPLq77gTlkKiW32wuwflv7k/RYG+fX5rpoK5K+UnMOYffoxMCvpB
-	 QjoZHUoLm477ErGm8kHNSLV6T5IY+zo6dRFlW0efUpiqBPUqnF6wZDZXp3N28QLtEf
-	 cDK2kpvRhtDXwNYQAt3zInpc2q+hHyWieyuTBT2A3wq1zmb+GqVA1saVuKf8MlWjwJ
-	 pyFpiOai+0hImMYeE3heFWfIdGDFIsZV5x1CnBPUA9Wl2iBUHhFfXKkA2h5OCJ0yox
-	 7qr6Ik3lKV3N/XhnZhaxXrDJkhQhZpitGzlkgxtlFx9B/h6KNAo7y5r0rbUK8Sk7Mf
-	 +BoUEqwowTfsA==
-From: Sasha Levin <sashal@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UMBw5aEW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794391725; x=1825927725;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IVhhbKFchMhBrB8bslTPRbh+ZFM/fCOPyUOsFOiln2E=;
+  b=UMBw5aEW9rKqG7y1cUqfLrVfSY3wr8eKOhajStvNV2RvNs9GbmxoYoUF
+   /GSs/yw00uvQ6Wd30WQl4ifk4CDfZwmslLOV57wSpJBUdEwwbCkvOggZG
+   w9gMlalJGFRaKYoIB52BZ3jiW4oq9PioVDO7OuKYZCtMPzUmeF2ZjAAha
+   CAswvpQAJewGweXgs3lRXvqwsOk2Xrp0osg8+6UHywmkm8Wj/b1eLok+2
+   /C30pKrbOVv/TQO+w1FaoTiCDldS1ZaZQhJZH9LGxvgJrbjEo3Hb9TaRZ
+   6gfByet1DeUltPh6A3J8LMwJx0InQRracTB7IcJVPN5/0JBwBRTKOE2pX
+   g==;
+X-CSE-ConnectionGUID: FjoPB2UwTN2oKlHGbivkTg==
+X-CSE-MsgGUID: wJbQ9TttR4mfxr2hET/EeA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11962"; a="3061356"
+X-IronPort-AV: E=Sophos;i="6.27,207,1787036400"; 
+   d="scan'208";a="3061356"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 02:08:45 -0800
+X-CSE-ConnectionGUID: 8UP6BIxpQnCYIyMsm7H+tw==
+X-CSE-MsgGUID: 1Ovx2FjoR5iUqstVISgPNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,207,1787036400"; 
+   d="scan'208";a="8456495"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.142])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 02:08:43 -0800
+Date: Wed, 11 Nov 2026 12:08:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mark Brown <broonie@kernel.org>
-Cc: Alex Deucher <alexdeucher@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Ilya Shidlovskiy <shidlovskiyilya@gmail.com>,
-	Kenneth Feng <kenneth.feng@amd.com>,
-	Kevin Wang <kevin.wang@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: [PATCH linux-next] drm/amd/pm: bring back od_uclk_changed dropped by the amdgpu merge
-Date: Tue, 10 Nov 2026 21:40:32 -0500
-Message-ID: <20261111024032.760400-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <avNxxfHK_Zh2GN2o@sirena.org.uk>
-References: <avNxxfHK_Zh2GN2o@sirena.org.uk>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
+	Muhammad Bilal <meatuni001@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
+Message-ID: <avQ-pxuGfWjcaDGt@ashevche-desk.local>
+References: <avO8Wax_1SEQ3Yy5@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,95 +81,32 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avO8Wax_1SEQ3Yy5@sirena.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The amdgpu tree adds od_uclk_changed to struct smu_table_context in
-commit 62d932f72037 ("drm/amd/pm: smu13.0.0: refresh the UCLK DPM table
-after an OD_MCLK change"). It sits right next to user_od_feature_mask,
-which mainline added too, so amdgpu_smu.h conflicts, and the merge
-dropped the new field.
+On Wed, Nov 11, 2026 at 12:52:41AM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: modpost: drivers/platform/x86/hp/hp-bioscfg/hp-bioscfg.ko: symbol 'strnchrnul' undefined!
+> 
+> Caused by commit
+> 
+>    e7cf4282a8694 (platform/x86: hp-bioscfg: fix heap OOB in hp_enforce_single_line_input())
+> 
+> I have used the tree from next-20261109 instead.
 
-After that, commit c62c2736d82f ("amdgpu: Merge merge merge cherry-pick
-cherry-pick cherry-pick") made smu_od_uclk_changed() return false and
-removed the code that sets the flag. So DC never re-reads the UCLK
-levels after an overdrive change, which is the whole point of
-commit b7483797b085 ("drm/amd: let DC re-read UCLK DPM levels after an
-OD_MCLK change").
+The fix patch is available.
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/commit/?h=for-next&id=4815f2e9494dc258c0d3a35e384ce41b92b690ea
+Today's PDx86 snapshot should be good AFAICS.
 
-Keep both fields and put the removed code back.
-
-Fixes: af8e519642bd ("Merge branch 'drm-next' of https://gitlab.freedesktop.org/agd5f/linux.git")
-Link: https://lore.kernel.org/all/avNxxfHK_Zh2GN2o@sirena.org.uk/
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-Mark, this is against next-20261110. Please fold it into the amdgpu merge;
-it replaces the smu_od_uclk_changed() part of c62c2736d82f.
-
-With this the three files are the same as in the amdgpu tree.
-
-Found by comparing with our llminus-assisted integration tree. Build tested
-only.
-
- drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c            | 9 ++++++++-
- drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h        | 2 ++
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c | 2 ++
- 3 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-index ff51ff875bfed..86e34e814fe6a 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-@@ -601,6 +601,9 @@ static void smu_restore_dpm_user_profile(struct smu_context *smu)
- 			ret = smu->ppt_funcs->restore_user_od_settings(smu);
- 			if (ret)
- 				dev_err(smu->adev->dev, "Failed to upload customized OD settings\n");
-+			else if (smu_od_uclk_changed(smu))
-+				/* DC read the stock UCLK levels in its init_hw */
-+				amdgpu_dm_update_memclk_states(smu->adev);
- 		}
- 	}
- 
-@@ -3701,7 +3704,11 @@ static int smu_baco_set_state(void *handle, int state)
-  */
- bool smu_od_uclk_changed(struct smu_context *smu)
- {
--	return false;
-+	bool changed = smu->smu_table.od_uclk_changed;
-+
-+	smu->smu_table.od_uclk_changed = false;
-+
-+	return changed;
- }
- 
- bool smu_mode1_reset_is_support(struct smu_context *smu)
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h b/drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
-index 41d665591d62a..2a0cdc6e80596 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
-+++ b/drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h
-@@ -434,6 +434,8 @@ struct smu_table_context {
- 	void				*user_overdrive_table;
- 
- 	uint32_t			user_od_feature_mask;
-+	/* Set when an OD commit/restore changed the UCLK levels */
-+	bool				od_uclk_changed;
- 
- 	struct smu_driver_table driver_tables[SMU_DRIVER_TABLE_COUNT];
- };
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-index 02bd2b15066cc..1a02ba70d3000 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-@@ -1306,6 +1306,8 @@ static void smu_v13_0_0_od_refresh_uclk_table(struct smu_context *smu)
- 		dev_err(smu->adev->dev, "Failed to refresh UCLK dpm table!\n");
- 		return;
- 	}
-+
-+	smu->smu_table.od_uclk_changed = true;
- }
- 
- static int smu_v13_0_0_emit_clk_levels(struct smu_context *smu,
-
-base-commit: 793807ca13bf3072fc6d16ce6d90e9ab9beff2a5
 -- 
-2.53.0
+With Best Regards,
+Andy Shevchenko
+
 
