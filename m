@@ -1,58 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794415300;
-	b=lw7gWRVLtBdQPWJOFV7z9GEPNkIg54SqBmSqeYlmPXsXQ2xkXmoDDennKYGNtgoufply
-	 RJ8SW5g5ri7nIQGmX35xGGs4iyuvsoxabNb+2OL3ZClUeBpfdlIPpO2AL53XTorHsHhP5
-	 cBgXLE5STSJEnSR/WiZEOtfIM6MrrNFVlGcXKsSH7z4fTKCDR7lNIqvoNX7jvkmSnM5Zh
-	 1mZDgRot+PHDUffoSUjGi2shADLcRtSHlNjgATQ49xGzpzgf3xR//5xQpBlP9uQRDPU19
-	 0rCLgudZIuQQBpK3j3mxKP0x8HzrPUP4l17sSEBfOYOa4oXQ0uKWLeA+2iW0MC34U2g==
+	t=1794419076;
+	b=gPDExN6F5vdjYaJ1uEbPHqBJrvhgr37p0PccleJs7igXR4LDO3CTJRGnjNkIUTMFaGOb
+	 YqroNv8LTyA7Sn6h6Ieof+q/ukmVVf0DWcRegRlQKmk8FBQ+yQ+tGHm+8FvsdPNruJ1Dh
+	 z+1zZIcacOP4iRVd5srgcqlwgtoBXKb4BgUz+cAttC/a7uO33QufbxjxEeTwHwiF9U66r
+	 T3WE34KEE5AgKXRHH+FMz41b+xRVAVEoDcimcUQKyW6DhRe5qCrwVHcGFhJYSUcF2oYEl
+	 O301WtCyU51XJnQ9TVJN51YiMtcXSNfxz3jWfvRCMwno4sMc5qsdv9/cTZYWFSX66VA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794415300;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794419076;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=wANOiiKjW/qxgOjivfXeHivizU1b5gZ1N2dFw0ft0dI=;
-	b=ERZo5p5ArYKni3z6zEFZAByKO26zuUdlm2FUKm46xUubLaenGYZtM9+IZ+kL+cj0tfUo
-	 Nm29gG2ow6Tnob3J5Uyqr2BdxlNepHxr2lglMu1Em6ilUv+k9ksZscVBuisnxmCl0izST
-	 n8diP5GDMJmtJlQtLCeTRw2KZCguGRB1iIoL7dsLO6SPLp5q1fCyzp1EixfMoY/zL8g/U
-	 eT+UJ1C57Vi2/gkckk7RTSnOaiEkXfZNiG7mrTLRpXFG2R15YKfZBFw/mwe5nOn8GSlKy
-	 SrMCSc2zfypkRO17f2XHj9EmJbCS8gtWnKbfqTG+4I6A8UkVM0F29PNv6RpGBWMPU2A==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=ybRw0ZlrRJAFpdQu9B5v/NsFAfk4/b1SORGlH2Ul+2U=;
+	b=FgIk3OXRWKiU2TOL5a5soZatw7CiK8h2/9FZnjsp9YKpeGVSjnZfdUDeQoNKzQm/HwrU
+	 Aq7JQEZgGYoqeMb6ktmC6JJouq4Xxd1edRPVpOgOO9TTx6zEVgjNyFAe2WDScmxNkVRQG
+	 Xfuf2u/+gP/oBV4U1ICh1IEncB+fQO7VxmdZqYlTukrgr/8YUuLgFEF8wYpb3OdOg42Ou
+	 39F77+Oa7cp7w40LQTsKTerADK1epPSRxoBRKSsCJs9VWCpALWof6jenAveskVFW2BfSu
+	 ZznzgUnYpzQtR6G0cfT7QECJiWl9UDdlpOV5ACG1RQputnR051wGDxtq9q1Gz3ZdAiQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FlvU4NQc;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HBv4WPrd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3375606A88C;
-	Wed, 11 Nov 2026 16:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA28606A331;
+	Wed, 11 Nov 2026 17:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FlvU4NQc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10AF1F00A05;
-	Wed, 11 Nov 2026 16:41:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HBv4WPrd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C305B1F00A09;
+	Wed, 11 Nov 2026 17:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794415300;
-	bh=wANOiiKjW/qxgOjivfXeHivizU1b5gZ1N2dFw0ft0dI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FlvU4NQc12rxI9uqQ8F0nP4NqkoI8fJgUgazUFAD/7pUcydeWm7sxiam7wAsFC8QW
-	 icifKHsodJq4XOqFvLkaa3jjp+wfDvVdh4NYpA8u5Y4TB1yfqHGWzuivr/bUK9d542
-	 8pRuQzkbj7U6TOlY3+QWP8c20KVTYDv6kpmgP8gOMFExUA979LF4pylhj37iY0O7tk
-	 vd/VzRc17KVzKzItCY70ltTUSkAlLij4ck7jwW6IWkmhPCuFyLYb1/1CJNKHzLwzpu
-	 ASS+Cv11uDSJBu/nSGSsdmy9TYUjdJqMlwbG0F24SFJ36hujiXCtKG1no5Sd6fP9/e
-	 3IWHKjGYRuz0w==
-Date: Wed, 11 Nov 2026 16:41:36 +0000
+	s=k20260515; t=1794419076;
+	bh=ybRw0ZlrRJAFpdQu9B5v/NsFAfk4/b1SORGlH2Ul+2U=;
+	h=Date:From:To:Cc:Subject;
+	b=HBv4WPrdbTYSvNSBfPPoE8sADTP77cdHU69z9ZggME9+uMBkGo0LSvF6PWbuOb9TE
+	 /VcC8wQxdQveSTNsDvUiO84NUthSBILMoDkbPPBrZuune4zd6XVoj2hv78gtvt4LU0
+	 ubsz2uql/BNvDNmGx9RRxcqt7NpdIXAgF4/ZT1/p88NFpSk4H7QNpsXW8221BW4gp4
+	 p4GBX8MCBjfGzIT9BWYlJZXBdpu0n7wAgPrb1VH19PZRMyDOjsaKRSFAh/se3a++yL
+	 94J/i16eohLPEc40dhJLTTkyQLjzqt512RfWajgLXrkSt6rZu0z/qziFdXq/OEM+dz
+	 qj5cu0tFDYPFg==
+Date: Wed, 11 Nov 2026 17:44:33 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Alex Deucher <alexdeucher@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Alex Hung <alex.hung@amd.com>, Maxime Ripard <mripard@kernel.org>,
-	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: [PATCH linux-next] drm/amd/display: give the dprx CRC test its
- connector state back
-Message-ID: <7602a3b1-225c-4262-9336-c7c1913ee60d@sirena.org.uk>
-References: <avNxxfHK_Zh2GN2o@sirena.org.uk>
- <20261111161427.3274232-1-sashal@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 11
+Message-ID: <avSpgZm3mocwprs1@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -63,43 +55,83 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WqOsds+BakThmrX7"
+	protocol="application/pgp-signature"; boundary="szWOCY1/YMUR5XtT"
 Content-Disposition: inline
-In-Reply-To: <20261111161427.3274232-1-sashal@kernel.org>
-X-Cookie: Do not pick the flowers.
 
 
---WqOsds+BakThmrX7
+--szWOCY1/YMUR5XtT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Nov 11, 2026 at 11:14:27AM -0500, Sasha Levin wrote:
-> The merge fixup in commit c62c2736d82f ("amdgpu: Merge merge merge
-> cherry-pick cherry-pick cherry-pick") dropped the call to
-> drm_atomic_helper_connector_reset(), which drm-misc removed. But that
-> call is what gave the test's connector a state, so the assert right
-> after it always fails now.
+Hi all,
 
-> Create the state with drm_atomic_helper_connector_create_state()
-> instead, and check it before storing it: cleanup would choke on an
-> error pointer in connector->state.
+Changes since 20261110:
 
-Yeah, that fixup was obviously just a build fixup rather than an attempt
-to actually get things working.
+The fuse tree acquired a conflict with the vfs-brauner-fixes tree.
 
---WqOsds+BakThmrX7
+The rust-fixes tree acquired a conflict with the kbuild-current tree.
+
+The pmdomain-fixes tree lost it's build failure.
+
+The pmdomain tree lost it's build failure.
+
+The wireless-next tree acquired a conflict with the wireless tree.
+
+The drm-intel tree acquired a conflict with the drm-intel-fixes tree.
+
+The mmc tree acquired a conflict with the origin tree.
+
+The drivers-x86 tree lost it's build failure.
+
+The leds-lj tree lost it's build failure.
+
+Non-merge commits (relative to Linus' tree): 5729
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 436 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--szWOCY1/YMUR5XtT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0mr8ACgkQJNaLcl1U
-h9CE8QgAhJWQI2k3RC2lcfC2jUckW0yU+e4yAoHkrAdZnRIbB+sf/pUgYNmQbCqP
-Sc46MRT/fR2pFUABhg6E/ZV/oPY6jzbZmrE+OwCX0HF/czujDiXvuUqpjXANUZ2a
-Wns/LsAGuEQLxYD+3g4B1s/1L/HAmFycKquloPQ7NIp9HM9Z5+FAQCtSOKzf+Q05
-6WNw8hm2Fxfr/87Ouoql2chhHW2hzRIRVXkCR6IrmhIvOjcpU0+ylgFJjSGEtXfA
-/YMsDVHGRY2gwpJKVqNjTKKysrK3q8QwYw5qhASw0+ChDe5ZvDs7daVJA+FBvFXR
-QneFm9L3SyBwL9OhvIrF5+5ss2BOIQ==
-=dFTH
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0qYAACgkQJNaLcl1U
+h9AH4Qf/cz5HNtfQ8uVKxmLhUue1FBs7Uh2EY91f6R5gFSoxObMglG8mtdQ5b81k
+4PXSaAFSr9jyJdLFLZ3pGpKXXcL6At1WRVhwuf6kJ6MG9iBTuL37f8VyMaToK7dg
+9wjmyC4fJk3L97CmgDpt/e3lpV74Ph2/2RrO0YOOtSXn5De3ybQkZS3grbKAAGQ/
+6uqU/wuO2g0zk8Reun3Ds6mv3AJLRooVzgqhpJBZPsBNV8q7q/5MGlONqPvsH615
+hyIzCmSTx4Axrtpq98Cp0KNEXRGeT8XCyz9km7JtX3u5v/rwABTT1WvOfTxaiEKc
+L0LJ8rt3jOea1G2s14aZp5t8CY7pOQ==
+=INJl
 -----END PGP SIGNATURE-----
 
---WqOsds+BakThmrX7--
+--szWOCY1/YMUR5XtT--
