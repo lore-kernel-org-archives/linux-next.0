@@ -1,123 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=205.220.168.131
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794398657;
-	b=NHHFn2obLhtGLYFEsmUgh0e0tjb65zIleHuhsE/mo19aO2bIZOauUBPcZT8tIQUwAPgk
-	 /EZGiuw5CRj8rEAWfFop323dJhOxN2C9HdnQrnxkcGMMBpBIb/k+YkCJlAW6GqkRKZZcY
-	 fN430fw+d0vF+ZR0+1K/+7a9uhTtqzJEbYbegzekv750Aq/IKjxYk8ENgvm/EqxPub1b/
-	 K3EqgmUy9YRbRJVoLgDBbHyUKNXxg1UqsdT+ql9MKu+eKDigTZxnS9wOFqrj8Du3HLuvq
-	 Qje7HUYvmejQQLrOtLMTGdtrGExNIkW6QU4FBJCGQlcDP9ZJdQ6tgNLGTSzRrdwkOMg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794398657;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:MIME-Version:
-	 References:In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:
-	 Cc:Content-Type:Content-Transfer-Encoding:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=X1OC0sm6myreOr6GJJBSVSvkHjaBBncy/JIQDF7f5Ok=;
-	b=UyKhE7OPsi2yJ68W2ar/disfSUErcmQtF5JUJ+4vqSAhiBqlpEm99P/JbKwwJn0Y0ZDE
-	 bGP6hRiqWvdX2KByVt2B1OfoN2P9d4Fkjmtjz7oqoTGSzlAjQSQ9UeEdSuVOVBv8DlxDG
-	 Jg3q1WcGugOMaTLoRqvSLKkyf/lPFvYBWniYA6tpq2oFiM9XwTfKA5W8G0ap0pwRlgqSs
-	 5mzHR097JXSrLTA5F1YNuyjONIjtihK3gTroDjzhYYccRgZdZcREGJB3Z63/9RMNyVwPV
-	 HgUPHNNYLfD3jRnBi0NzqBnPiWW13XlpvB+4TDtJYyd3UTRsCy2zd6q30sfZkynyBbw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=hlF7V0pk;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=fJIYfsna;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794407685;
+	b=GgBm5SGaoVJxI1RS4o5K5wFvO96L/ZGEl1L3NftZ/KW31inPLfZ4xKcBIfVY9b+iQIzW
+	 vHiG5i91SuMyH7ZOsGBwqBhob9/iVbhbalDywRkyVm6C8k0x5pd36XaPlkcehsdtMWnhE
+	 4wGeZB3k89r7rd9e43iqlwJOkyFft2i9JRNqc2D84HMPREn6TbvGDV1Q0L6eLpYpKC4+M
+	 WeMY6Kxipe1/mT4RSVvJ7X6DQ1XzlslubpW+ghX6E26pBSpF+VStGYbn5UoP6vALZDdTN
+	 V2O9gDtoNwyJyQihEJhG8keZgiqwx5TlnaB6ybGOz7W1N1ppvz6e9rwASuxNEf2gBIA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794407685;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=/BYwmTLc268SpihxQ/Qh7SWKMglfN7RDmuZifcHy5Zs=;
+	b=ewdZfs6e665rdPLswW3Iup47iS1M5Tgk6Ph97njCMJBI4hIBgyCJryPnBa5rIHunGz3J
+	 gCakhvQqt5i5hKru0ntjU7h0pyZv+DecASPi3ZXwSv78pj3dc7zPJ+R/AARfg0Ec6CD7g
+	 Bcs3iRnuM/gc56ejHM4S6uzDsqjBMrv3ny8kGnTW3Dd99XcOA7YOV1gRhFGcD6teI5g3s
+	 5UwXLhBG7Bu1K8fHSgoqRoW757afu5sYQniuDHWnxhVX7q6G3MhqT7ERHwazNLhnfnDRf
+	 BHDPW3zSkL5oWst/yz7DtNi8d9ymSz5HM2D/K755+1iVv3MGk6Ngcn2PzZbZjYAOcPg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DiseoniZ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF5E606A330
-	for <linux-next@vger.kernel.org>; Wed, 11 Nov 2026 12:04:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AAF5E606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E5A606A32A;
+	Wed, 11 Nov 2026 14:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=hlF7V0pk;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=fJIYfsna
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABBe1IJ1409616
-	for <linux-next@vger.kernel.org>; Wed, 11 Nov 2026 12:04:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	X1OC0sm6myreOr6GJJBSVSvkHjaBBncy/JIQDF7f5Ok=; b=hlF7V0pkEwNptY6I
-	k2qXpgfx4SV+EbsQQ9Lp2+M448er1GPThyxTMxu1Hvn9wzwZwxUAz9uID0YSAYKi
-	H0IHQtNgUjB67AGWSXNT8UoqMGcvYo3HtLThXMVI1l+KiRPR/8dMg2p8p8mdotxY
-	Ud60S9JdjuJLfb8xesADWi1W0HC+4qYKzZD4iVN+gTn1dIYI7nOxy/gL949s24cI
-	HrCdSEk4aificEBQDtmBc8rJBEG9wO151qOTo4clJzhbEp+Yiwmg0B6QyiA+GKo2
-	7rfKmcDvaBdg3c1tMGbVB3HrTyIs9Bu1Ap6B2UOs2vAX15bv0xiI1WNelN1aSa2K
-	K6cjrA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hvgjdhqq6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-next@vger.kernel.org>; Wed, 11 Nov 2026 12:04:15 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3ade5b3ae97so2463652a91.1
-        for <linux-next@vger.kernel.org>; Wed, 11 Nov 2026 04:04:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794398655; cv=none;
-        d=google.com; s=arc-20260327;
-        b=MUk18rJxTfMHXtNJg0DqPImwt7i6m4qE3NApzb+L5Y+zPe051BV4yVl7cWySH1N5e7
-         /W7xYu8dJvvWyaGqHVBW4bYTUdqNtfnAq6SKNnPSS5xn0G8cxTM92Ut2/4bVX8ZRqsh1
-         Orw9KsMYjkDI1coxAablETkTRkZZcbFS2Y2sltJBia/8YVLW0sPbxI5/X/JK0e1Xzf2z
-         f0p+1Pm9j/ZkzdR0x5K2THoXPXhsQJnY8gdT9ZVh/sfnQTsAbC05OYGyGkZIGLYOm8Pl
-         Ro0d8TpRCwMu96+g+8UTPqK0Bw/Oc211qHY5AQE2ytvluDMoziHf2/aXERxdbGLTR003
-         0Tmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=X1OC0sm6myreOr6GJJBSVSvkHjaBBncy/JIQDF7f5Ok=;
-        fh=tBuQuidt2P+doPcJ04R8phjxJB+9qqr+lZUCVQy3cbA=;
-        b=AR3+JRPYTSUYbW4XdEdJbwHkUkHcr6f/CzLwYHKD9zOtm50s9Y7WP9nIOE85/Cx9l1
-         TV3UGOsjx0jaPhC1fZJadomMHLBeO8R6w06eP7N9mpuhBV60g1xauPxTzWwtF+q0BiQ5
-         O7sKMxfB1sBdUa68o3pVWxXv/ZJ5pzeWXaOBV+foI4fcuWyAv4h94q2WSKvjsPFgyJAT
-         7s3S0aN6mNwkcK8xdqcv64WthUPz9E4/estZm70KxnLu4t2DDgHZx+8gFjdqI5FEgCYe
-         EVxT4FnDQ6SEyFbXUTouTStvSK6aWMGRw76IUjdMu3R74ZYEjoZWZYRPacxh+nd1IH5V
-         HyqQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794398655; x=1795003455; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=X1OC0sm6myreOr6GJJBSVSvkHjaBBncy/JIQDF7f5Ok=;
-        b=fJIYfsnaMJ7W2uS5zL5++SusZCyP5EncgY8brkQ72VQjS3/i1Z0vYn3YkK3WzV4vMd
-         jvzTqgR5n0uQJ7C/vCM94/7V8pMfr70gdBdbsHSEAjUZX9ZxiB04ICAiWV5rX18nCgAn
-         NOH4xDTUWUNUKpGWnl8BMO0MoEvFZTY66u3s5Im2YdDnVRbhdYOffeJtdWLCN+EG63Nr
-         nWxTRcin1vT4P1eiBH5gwndbvoFt2p9FuI2QQePyItV+u0Y0MmwT/pyLLR8b6zkKKmfN
-         5tF9PpZVPfglKRWpVhlhhfDIiLsF6H0XyUPRN16cXEsPjBHm1v1NAS42lZ45EVND7+XK
-         eMsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794398655; x=1795003455;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=X1OC0sm6myreOr6GJJBSVSvkHjaBBncy/JIQDF7f5Ok=;
-        b=GwLw7TTpbyurRkervToP9Yg4FjF8Y/jNqKQv/XWpbdH534KvEbbhizxBINzpHNhnoi
-         RVENQTuYdl520MsyFyxpDIoMwVBDREbALQ4deZqvdSGRfuHlqu5tJb+6rhqpw1BCfcLS
-         z6ulbOgSMItB2CfYTFEwTxnc+WB3zgkWfFllpx20tsMFZsv7V6tVATwFg9PGYQ/2cjbC
-         oRX1JfYYz9FN0vezfdYM8DOR+rQkoegn+mQwpTmOqMe9VKZKqsdxPj8eKfsAyler/tFl
-         p9ETX+UH1q4oTWYwDkrraZUtF9KRyTySnF+LmeIHtQkgzx+Y0h5S7DszhFqgwPo+62ne
-         gOlA==
-X-Forwarded-Encrypted: i=1; AL+hErEg13oT2wZOgkRSpVY75xuk2n3IOl5mnmCiSamzFIT0kwXzqJupskXv04c5LbOmL22Gu+hXtugrEegu@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Yh16g8OEf5H+StMxtZ5FaxEPNU8hyZTAqPs50x46Npo5QyZxV
-	XUq+9hsqsWtCcE7F24iFkSKOsKs6P0CZ+ypgL1ibcoust6sPTS2HJGDJdlCZ622b1N+mQgJ/tmr
-	PsfFeyzBpIcERmiI4BGJYlHpOtk/vL94VWS47rAV3WVN7WegAXiLRztKCYhJllE40uqN3Oq6jNp
-	rHJQsyv9RpkgspXs8qcuQGOfJ7TVri6z/pPI0J9aU=
-X-Gm-Gg: AYBFou0a8obhj5QuxlKvw1L4Az4K6JLp5rhaNRuHukjGK8V+Ttfx6VsXM283lOWOt0+
-	YI1u7w6zSmYcLYzySeeLOHWXP2BPYuZcr4sbbe4iTQxJEh+fAdJZlSwlQNHQDAde+gxFNcx9BnC
-	C4JqPHmbZCItwsOsEaW/1KDafFgPjUw62/cxD07gcIgizXliFa76thvcbNJA==
-X-Received: by 2002:a17:90b:1b01:b0:3b0:92b2:2e73 with SMTP id 98e67ed59e1d1-3b167b067a7mr4571670a91.28.1794398655144;
-        Wed, 11 Nov 2026 04:04:15 -0800 (PST)
-X-Received: by 2002:a17:90b:1b01:b0:3b0:92b2:2e73 with SMTP id
- 98e67ed59e1d1-3b167b067a7mr4571647a91.28.1794398654542; Wed, 11 Nov 2026
- 04:04:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DiseoniZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 351411F00A05;
+	Wed, 11 Nov 2026 14:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794407684;
+	bh=/BYwmTLc268SpihxQ/Qh7SWKMglfN7RDmuZifcHy5Zs=;
+	h=Date:From:To:Cc:Subject;
+	b=DiseoniZsx80fPtrAj7S3wCet9rxXCD2+hkv14jx4muWmZg6pkzva/HRgfebj3Owj
+	 efWnt6bKfSREFk3JcmSTfHQ2oIaAmf0eOHfystWI2xNgiR6BUFXx8Lycw4izWk2ofj
+	 NTj3NhAqdWrwsQ8ObaX//qblMIJBVXJYyt1LZI65NuPx5ylUQtSzi71R4iDNXjfX8x
+	 3I6fTVcvoFZlCcDKg111fb0b05ewKqb1MqytT5Q8bpA6Dch73hTTJDeBSzzIp1cqYR
+	 vsPAee8XVaUT02mUyZaOHhkFG8laUwICatcQYphXp5Xu7RjdToxOL2YPc/2eEhvHVT
+	 IyiKGRQ99HjYg==
+Date: Wed, 11 Nov 2026 14:34:40 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Kiryl Shutsemau <kas@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: linux-next: manual merge of the fuse tree with the vfs-brauner-fixes
+ tree
+Message-ID: <avR9APrG3b5DUOEs@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -127,171 +59,263 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <avNHazNbGtMQJ5pV@sirena.org.uk> <60f76f85-8a5f-4b3e-afec-ab4e69315ff5@sirena.org.uk>
-In-Reply-To: <60f76f85-8a5f-4b3e-afec-ab4e69315ff5@sirena.org.uk>
-From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Date: Wed, 11 Nov 2026 13:04:02 +0100
-X-Gm-Features: AclHuK92GSy_gMaTKyxzETTYIzUWMCxU52fK90bi8tHK7knblyXvPBzpxSsGGMY
-Message-ID: <CAPx+jO8CsTTXY3G_EKgrHR4N0td7QUinM4gA8=_odckjb0p4WQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the pmdomain-fixes tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Ulf Hansson <ulfh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5AEo8DJ8wMV8bWwX"
+Content-Disposition: inline
+
+
+--5AEo8DJ8wMV8bWwX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=E7tYNqdl c=1 sm=1 tr=0 ts=6af459bf cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8 a=ToB9MXPV58jh7MJZ1wAA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: 3Hd-RUjtMgVDmDdzDSN5gkE9YkkqYgG1
-X-Proofpoint-GUID: 3Hd-RUjtMgVDmDdzDSN5gkE9YkkqYgG1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDA0NyBTYWx0ZWRfXzLI75vxMd7tl
- EvTBMaUzj0Gr/kyVBGnh/+g+qliwnQsjlidBuABx1ZzX+XpeJBvwWFbQ0Ae20Bi2ef1mgXLksXB
- +gqgfC1upGU+LKdVOu5M9JMwje/t22yqFUfqgGWQC2CZWzxJTwLI92hvUMjDZ9qHYNFh7vd3EfN
- rGcVuo5R5n28IJMID7ydDKB1rNG78ML1859/Z4Kv0ThbliKViOk9twbTArbZ/TL+WsRVQ8kg0BR
- YKckUOVcwPBV3SmiijE57vuDXyzBvljJe3i7kDcMA58q4q2NmSQvEmRHfGWqIiYpFXYaQfgtJNr
- 6tiItGdX97m02/2nphgAuR5k5PHpA1ICa77msPCs/SbHRH5F/OcgfEGs01ymFapzk4YfXcjE8GK
- M4MrdDknMX7OOcLgDacWQp+qDA9tyCjPHGqTwpBEaxMEiZ+Ys3K3iGoQXmaxLGVqMfhspOv0CGD
- szNwtLa4gVwNFOB/6IQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDA0NyBTYWx0ZWRfX/vozVd2gM1E+
- jvR1kQ+oETAKTpIFBHaNwRF1kSQVfV7NanL/JqM1rIWl8GmkHmYgC9SqfVcizxaBZ83nuWziUr+
- 1Dj7fenkY7v1lA+qt1HF4AL6DJgRhyI=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-11_02,2026-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- malwarescore=0 clxscore=1011 bulkscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611110047
 
-On Tue, Nov 10, 2026 at 7:56=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Tue, Nov 10, 2026 at 04:33:51PM +0000, Mark Brown wrote:
-> > Hi all,
-> >
-> > After merging the pmdomain-fixes tree, today's linux-next build
-> > (arm multi_v7_defconfig) failed like this:
->
-> This also affects the pmdomain tree.  Also, I still had your Linaro
-> address as a contact for all your trees - I've updated this to your
-> kernel.org one since the Linaro one started bouncing.
+Hi all,
 
-Thanks!
+Today's linux-next merge of the fuse tree got a conflict in:
 
-The next and fixes branch should be updated now.
+  fs/fuse/dev.c
 
-Kind regards
-Uffe
+between commit:
 
+  80beb226de50b ("fuse: don't move pipe buffers into the page cache")
 
->
-> > In file included from /tmp/next/build/include/linux/device.h:32,
-> >                  from /tmp/next/build/include/linux/platform_device.h:1=
-3,
-> >                  from /tmp/next/build/drivers/pmdomain/imx/gpc.c:11:
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c: In function 'imx_gpc_remove=
-':
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:25: error: invalid stora=
-ge class for function 'imx_gpc_driver_init'
-> >   554 | builtin_platform_driver(imx_gpc_driver)
-> >       |                         ^~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/device/driver.h:294:19: note: in definiti=
-on of macro 'builtin_driver'
-> >   294 | static int __init __driver##_init(void) \
-> >       |                   ^~~~~~~~
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:1: note: in expansion of=
- macro 'builtin_platform_driver'
-> >   554 | builtin_platform_driver(imx_gpc_driver)
-> >       | ^~~~~~~~~~~~~~~~~~~~~~~
-> > In file included from /tmp/next/build/include/linux/printk.h:6,
-> >                  from /tmp/next/build/include/asm-generic/bug.h:31,
-> >                  from /tmp/next/build/arch/arm/include/asm/bug.h:60,
-> >                  from /tmp/next/build/include/linux/bug.h:5,
-> >                  from /tmp/next/build/include/linux/instrumented.h:10,
-> >                  from /tmp/next/build/include/linux/atomic/atomic-instr=
-umented.h:17,
-> >                  from /tmp/next/build/include/linux/atomic.h:82,
-> >                  from /tmp/next/build/include/asm-generic/bitops/lock.h=
-:5,
-> >                  from /tmp/next/build/arch/arm/include/asm/bitops.h:245=
-,
-> >                  from /tmp/next/build/include/linux/bitops.h:67,
-> >                  from /tmp/next/build/include/linux/kernel.h:23,
-> >                  from /tmp/next/build/include/linux/clk.h:13,
-> >                  from /tmp/next/build/drivers/pmdomain/imx/gpc.c:7:
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:25: error: initializer e=
-lement is not constant
-> >   554 | builtin_platform_driver(imx_gpc_driver)
-> >       |                         ^~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/init.h:265:55: note: in definition of mac=
-ro '____define_initcall'
-> >   265 |                 __attribute__((__section__(__sec))) =3D fn;
-> >       |                                                       ^~
-> > /tmp/next/build/include/linux/init.h:275:9: note: in expansion of macro=
- '__unique_initcall'
-> >   275 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
-> >       |         ^~~~~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/init.h:277:35: note: in expansion of macr=
-o '___define_initcall'
-> >   277 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .i=
-nitcall##id)
-> >       |                                   ^~~~~~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/init.h:306:41: note: in expansion of macr=
-o '__define_initcall'
-> >   306 | #define device_initcall(fn)             __define_initcall(fn, 6=
-)
-> >       |                                         ^~~~~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/device/driver.h:298:1: note: in expansion=
- of macro 'device_initcall'
-> >   298 | device_initcall(__driver##_init);
-> >       | ^~~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/platform_device.h:345:9: note: in expansi=
-on of macro 'builtin_driver'
-> >   345 |         builtin_driver(__platform_driver, platform_driver_regis=
-ter)
-> >       |         ^~~~~~~~~~~~~~
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:1: note: in expansion of=
- macro 'builtin_platform_driver'
-> >   554 | builtin_platform_driver(imx_gpc_driver)
-> >       | ^~~~~~~~~~~~~~~~~~~~~~~
-> > /tmp/next/build/include/linux/init.h:176:30: error: expected declaratio=
-n or statement at end of input
-> >   176 | #define THIS_MODULE ((struct module *)0)
-> >       |                              ^~~~~~
-> > /tmp/next/build/include/linux/platform_device.h:304:41: note: in expans=
-ion of macro 'THIS_MODULE'
-> >   304 |         __platform_driver_register(drv, THIS_MODULE, KBUILD_MOD=
-NAME)
-> >       |                                         ^~~~~~~~~~~
-> > /tmp/next/build/include/linux/device/driver.h:296:16: note: in expansio=
-n of macro 'platform_driver_register'
-> >   296 |         return __register(&(__driver) , ##__VA_ARGS__); \
-> >       |                ^~~~~~~~~~
-> > /tmp/next/build/include/linux/platform_device.h:345:9: note: in expansi=
-on of macro 'builtin_driver'
-> >   345 |         builtin_driver(__platform_driver, platform_driver_regis=
-ter)
-> >       |         ^~~~~~~~~~~~~~
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c:554:1: note: in expansion of=
- macro 'builtin_platform_driver'
-> >   554 | builtin_platform_driver(imx_gpc_driver)
-> >       | ^~~~~~~~~~~~~~~~~~~~~~~
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c: At top level:
-> > /tmp/next/build/drivers/pmdomain/imx/gpc.c:503:13: warning: 'imx_gpc_re=
-move' defined but not used [-Wunused-function]
-> >   503 | static void imx_gpc_remove(struct platform_device *pdev)
-> >       |             ^~~~~~~~~~~~~~
-> >
-> > AFAICT this is caused by commit
-> >
-> >    d7262971a2acc (pmdomain: imx: gpc: remove all initialized power doma=
-ins)
-> >
-> > though I don't really see how.  I have used the tree from next-20261109
-> > instead.
->
->
+=66rom the vfs-brauner-fixes tree and commit:
+
+  9c1fd690cbb1f ("fuse: reject unmovable folios before stealing them")
+
+=66rom the fuse tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --combined fs/fuse/dev.c
+index a5c08a00cf83b,e7d9c506afaac..0000000000000
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@@ -1099,6 -1099,138 +1099,6 @@@ static int fuse_copy_do(struct fuse_cop
+  	return ncpy;
+  }
+ =20
+ -static int fuse_check_folio(struct folio *folio)
+ -{
+ -	if (folio_mapped(folio) ||
+ -	    folio->mapping !=3D NULL ||
+ -	    (folio->flags.f & PAGE_FLAGS_CHECK_AT_PREP &
+ -	     ~(1 << PG_locked |
+ -	       1 << PG_referenced |
+ -	       1 << PG_lru |
+ -	       1 << PG_active |
+ -	       1 << PG_workingset |
+ -	       1 << PG_reclaim |
+ -	       1 << PG_waiters |
+ -	       LRU_GEN_MASK | LRU_REFS_MASK))) {
+ -		dump_page(&folio->page, "fuse: trying to steal weird page");
+ -		return 1;
+ -	}
+ -	return 0;
+ -}
+ -
+ -/*
+ - * Attempt to steal a page from the splice() pipe and move it into the
+ - * pagecache. If successful, the pointer in @pagep will be updated. The
+ - * folio that was originally in @pagep will lose a reference and the new
+ - * folio returned in @pagep will carry a reference.
+ - */
+ -static int fuse_try_move_folio(struct fuse_copy_state *cs, struct folio *=
+*foliop)
+ -{
+ -	int err;
+ -	struct folio *oldfolio =3D *foliop;
+ -	struct folio *newfolio;
+ -	struct pipe_buffer *buf =3D cs->pipebufs;
+ -
+ -	folio_get(oldfolio);
+ -	err =3D unlock_request(cs->req);
+ -	if (err)
+ -		goto out_put_old;
+ -
+ -	fuse_copy_finish(cs);
+ -
+ -	err =3D pipe_buf_confirm(cs->pipe, buf);
+ -	if (err)
+ -		goto out_put_old;
+ -
+ -	BUG_ON(!cs->nr_segs);
+ -	cs->currbuf =3D buf;
+ -	cs->len =3D buf->len;
+ -	cs->pipebufs++;
+ -	cs->nr_segs--;
+ -
+ -	if (cs->len !=3D folio_size(oldfolio))
+ -		goto out_fallback;
+ -
+ -	newfolio =3D page_folio(buf->page);
+ -
+ -	if (folio_test_large(newfolio))
+ -		goto out_fallback;
+ -
+ -	/*
+ -	 * A swap backed, anonymous or mapped folio can never be moved into the
+ -	 * page cache.  fuse_check_folio() would catch these below, but only
+ -	 * after the steal has already removed the folio from its mapping, so
+ -	 * check them here, while the answer is still meaningful.
+ -	 */
+ -	if (folio_test_swapbacked(newfolio) || folio_test_anon(newfolio) ||
+ -	    folio_mapped(newfolio))
+ -		goto out_fallback;
+ -
+ -	/*
+ -	 * This is a new and locked page, it shouldn't be mapped or
+ -	 * have any special flags on it
+ -	 */
+ -	if (WARN_ON(folio_mapped(oldfolio)))
+ -		goto out_fallback;
+ -	if (WARN_ON(folio_has_private(oldfolio)))
+ -		goto out_fallback;
+ -	if (WARN_ON(folio_test_dirty(oldfolio) ||
+ -				folio_test_writeback(oldfolio)))
+ -		goto out_fallback;
+ -	if (WARN_ON(folio_test_mlocked(oldfolio)))
+ -		goto out_fallback;
+ -
+ -	if (!pipe_buf_try_steal(cs->pipe, buf))
+ -		goto out_fallback;
+ -
+ -	folio_clear_uptodate(newfolio);
+ -	folio_clear_mappedtodisk(newfolio);
+ -
+ -	if (fuse_check_folio(newfolio) !=3D 0)
+ -		goto out_fallback_unlock;
+ -
+ -	err =3D lock_request(cs->req);
+ -	if (err)
+ -		goto out_fallback_unlock;
+ -
+ -	replace_page_cache_folio(oldfolio, newfolio);
+ -
+ -	folio_get(newfolio);
+ -
+ -	if (!(buf->flags & PIPE_BUF_FLAG_LRU))
+ -		folio_add_lru(newfolio);
+ -
+ -	/*
+ -	 * Release while we have extra ref on stolen page.  Otherwise
+ -	 * anon_pipe_buf_release() might think the page can be reused.
+ -	 */
+ -	pipe_buf_release(cs->pipe, buf);
+ -
+ -	*foliop =3D newfolio;
+ -	folio_unlock(oldfolio);
+ -	/* Drop ref for ap->pages[] array */
+ -	folio_put(oldfolio);
+ -	cs->len =3D 0;
+ -
+ -	err =3D 0;
+ -out_put_old:
+ -	/* Drop ref obtained in this function */
+ -	folio_put(oldfolio);
+ -	return err;
+ -
+ -out_fallback_unlock:
+ -	folio_unlock(newfolio);
+ -out_fallback:
+ -	cs->pg =3D buf->page;
+ -	cs->offset =3D buf->offset;
+ -
+ -	err =3D lock_request(cs->req);
+ -	if (!err)
+ -		err =3D 1;
+ -
+ -	goto out_put_old;
+ -}
+ -
+  static int fuse_ref_folio(struct fuse_copy_state *cs, struct folio *folio,
+  			  unsigned offset, unsigned count)
+  {
+@@@ -1153,9 -1285,16 +1153,9 @@@ int fuse_copy_folio(struct fuse_copy_st
+  				return fuse_ref_folio(cs, folio, offset, count);
+  			}
+  		} else if (!cs->len) {
+ -			if (cs->move_folios && folio &&
+ -			    offset =3D=3D 0 && count =3D=3D folio_size(folio)) {
+ -				err =3D fuse_try_move_folio(cs, foliop);
+ -				if (err <=3D 0)
+ -					return err;
+ -			} else {
+ -				err =3D fuse_copy_fill(cs);
+ -				if (err)
+ -					return err;
+ -			}
+ +			err =3D fuse_copy_fill(cs);
+ +			if (err)
+ +				return err;
+  		}
+  		if (folio) {
+  			void *mapaddr =3D kmap_local_folio(folio, offset);
+@@@ -1627,7 -1766,7 +1627,7 @@@ static ssize_t fuse_dev_splice_read(str
+  		 * Need to be careful about this.  Having buf->ops in module
+  		 * code can Oops if the buffer persists after module unload.
+  		 */
+ -		bufs[page_nr].ops =3D &nosteal_pipe_buf_ops;
+ +		bufs[page_nr].ops =3D &default_pipe_buf_ops;
+  		bufs[page_nr].flags =3D 0;
+  		ret =3D add_to_pipe(pipe, &bufs[page_nr++]);
+  		if (unlikely(ret < 0))
+@@@ -1791,6 -1930,9 +1791,6 @@@ static ssize_t fuse_dev_do_write(struc
+  		if (!smp_load_acquire(&fch->initialized) || !fch->connected)
+  			goto copy_finish;
+ =20
+ -		/* Don't try to move folios (yet) */
+ -		cs->move_folios =3D false;
+ -
+  		err =3D fuse_notify(fch->conn, oh.error, nbytes - sizeof(oh), cs);
+  		goto copy_finish;
+  	}
+@@@ -1834,6 -1976,8 +1834,6 @@@
+  	set_bit(FR_LOCKED, &req->flags);
+  	spin_unlock(&fpq->lock);
+  	cs->req =3D req;
+ -	if (!req->args->page_replace)
+ -		cs->move_folios =3D false;
+ =20
+  	if (oh.error)
+  		err =3D nbytes !=3D sizeof(oh) ? -EINVAL : 0;
+@@@ -1934,6 -2078,7 +1934,6 @@@ static ssize_t fuse_dev_splice_write(st
+  				goto out_free;
+ =20
+  			*obuf =3D *ibuf;
+ -			obuf->flags &=3D ~PIPE_BUF_FLAG_GIFT;
+  			obuf->len =3D rem;
+  			ibuf->offset +=3D obuf->len;
+  			ibuf->len -=3D obuf->len;
+@@@ -1948,6 -2093,9 +1948,6 @@@
+  	cs.nr_segs =3D nbuf;
+  	cs.pipe =3D pipe;
+ =20
+ -	if (flags & SPLICE_F_MOVE)
+ -		cs.move_folios =3D true;
+ -
+  	ret =3D fuse_dev_do_write(fud, &cs, len);
+ =20
+  	pipe_lock(pipe);
+
+--5AEo8DJ8wMV8bWwX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0fP8ACgkQJNaLcl1U
+h9B58gf/a+cW2KVrTPoMwlryNjCwNMsnLGeZSZlGPLaD8bRopA3L8iil5gtV3fvG
+c53BZj9+G2PZzhFxwkb2Rl3ztndtu0UL1UvBv/pGLl7Ax3CH9UIFKDKQL8e76X7i
+xVje8kIZOF4Mk1INf4mWMwW+GaDq7iNUfkzBF/nIfu/+qiSY4BXB7Yxjnz0jhQMO
+YYSY+1igrAe/9TyG/w5gU3noU2PwQgG2oXOSpeKVMl82KxxahyjXhnpbfOw0f6SP
+5N12XPKptmAQF4e1bwgDuDky7ny6s8xvyDW4zdGSGAOcv+oxDdc4N4UrbKf7Nqi2
+qa8S966FSrZaDdRzwRfTmSEUL+rC5g==
+=Uhhy
+-----END PGP SIGNATURE-----
+
+--5AEo8DJ8wMV8bWwX--
