@@ -1,59 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794413670;
-	b=3ipKfLezdW4w5dyplK4KukEMTrtWpzbyafUIMks4yUhmmDUPuz9+1Lo4+fc1anQyDrGH
-	 +Kai+afz0hYpiSOvclGiCGIRTvV7UAV+vCWQKMJTgT/BCZeO2w6zDnpiVYOyCYPryvSx7
-	 O2ea1kN9uWlO3yEtKT6joq//wDwz8NoSjSK5kBPg7r90vIwwotspuTryXDFgRIufEckdr
-	 AWQvgL5DKtO/882aTqJ5/JoRptkRBVSc5NBR8eOK1nsy798bkuoiWQ2Ta4ZQSzxQ/Q5fh
-	 Ufl6m4Xc2KICLC5XVd1XA8zuxyoM5Bi30F3r8uy/iUSQKI0SnkdnDcFKT43UAjvj7Rw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794413670;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=waVa0swUhVILDQ3Fdt9NwC388Zn+UttTKWbxLoq2k0s=;
-	b=ehtlpvbhtYOI6/21ByST0fQLgf3T0Ij/Vv7xDOa8Cm2SauBqK6H21KxwXze6Qs/sp/Fu
-	 wPz5xnO2+bVLw1X4ENrOFYqxXnO92lZbCxO/yDqGVptjLtjLqi9Vtb57nj3gp9vVaosap
-	 dfvcER43IIXnuH9WKB3QDad2hnOWGXg6uMO+qbiny3hPe7OIefnDMr0Wa696FwE2mLxWs
-	 TK228EomX6b0qlnoaMEtCIHbOL7JMkfEbhsZ+31W7tg7xRZsnOkqmg8HW/f7ou4jr3VNE
-	 BtTJIp9eNxQNG7KLeYUl4pUsvknGZVSuNnGLou07wl6AbgS6rSlym2Zh4da4PWbBF8w==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=To8g6BJ6;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.180
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794414464;
+	b=FcipSiHtQ9AKXvqlRoIYJxenQwbZ9luXYRtY5DEGV8s+QafNFA0d/BTrrcfE9BCRiB1e
+	 PqV/ot1n7P/PcuRmww8rTQzGgTtIgC4OeiXjHCbDb9qs4rxK8J44UWtDHWw0gWxbn2jqI
+	 x40jqC+EVLhDWjak2OsoO8AgwMaOB+lpSpTv+GD9VKrnVbLuBs8LPBYR0sDTxLqF0fIEh
+	 WC6JYhODh1potyNbBxByjOpIZHxwYJfVep0PXIE2RmtNCV9p0pS5Xa5TlwkoKqtWsXl8N
+	 LJCfxiP3v7vhV0s9H2G3fO0+H24EQp/L2HCdcaC1rXJiNbBZoNx38DwQEvJ+R54rRAw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794414464;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=4xdk0BSQIUx4RwKz5HGHAlu0ZFnzjgWp1hYTFbEu5CU=;
+	b=ym7yKxUJWUtN9fffJVxyNjSl/TJ8ET5JUWtPUfbYG7dy1yd3Re+ltGQdmFWINeCSvy4t
+	 gOkgF14hI2miXt7/CSXNu/qUFIlctWdlqI60t/30pNomYyTHWb2GNs9xaWcrImd+27/3f
+	 yeWUbHm3SxU+8EPSCX5Lk5DEx1melZvg3I7Ptwl0Qx5T+Vai1FE9pCjqz4LeUVgeUtn1v
+	 CYJq2B7ro8cZuZFu5zC+Q2jg+Lg3JA7doVqw6fj+YD7CReWLpejY7XHhPzg4Zs9V9ggr7
+	 qx3wqutre3m/42UTHnCPEPurnGbhfFN9D4x0SHl1RlzVVL6fpr6La+pBFcThy/JhfNg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LVdq0ZL3;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.180
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6A606A324;
-	Wed, 11 Nov 2026 16:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ABE606A324
+	for <linux-next@vger.kernel.org>; Wed, 11 Nov 2026 16:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 57ABE606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=To8g6BJ6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D25B1F00A07;
-	Wed, 11 Nov 2026 16:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794413670;
-	bh=waVa0swUhVILDQ3Fdt9NwC388Zn+UttTKWbxLoq2k0s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=To8g6BJ6/R18EgHt+BPeAHAVBQbuXk+t6aIFx2fn332bSqauYGxIX/MhTCqN4+MGd
-	 ONerEaPLhIWKa6BYiQzy9Dt9em18MCRu5Z+LROMLZse3SPa18WvY1YByGKq/Q80ZVA
-	 IybU0qgALTugrvS/EnJa/0gmU4kIQqopiAZHZJnggWryksTuMTqRkL+IZXxgi6S/+C
-	 hDWhJWIRxfSbtd6BScuCTFZMH4NIBoOB0hE/y26arVXZ6a1H5DlUP82BcxDL1ayokQ
-	 BrNA5M+ZSvTYC+LbA2xAFIBtmSz4zlZoGkfaxvlkVO5KhPcaqZhiiLy9/vmka5XMvo
-	 g8MGR+fGcvhIQ==
-From: Sasha Levin <sashal@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alex Deucher <alexdeucher@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: [PATCH linux-next] drm/amd/display: give the dprx CRC test its connector state back
-Date: Wed, 11 Nov 2026 11:14:27 -0500
-Message-ID: <20261111161427.3274232-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <avNxxfHK_Zh2GN2o@sirena.org.uk>
-References: <avNxxfHK_Zh2GN2o@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LVdq0ZL3
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-33bb5afa736so93024eec.1
+        for <linux-next@vger.kernel.org>; Wed, 11 Nov 2026 08:27:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794414463; cv=none;
+        d=google.com; s=arc-20260327;
+        b=n4P2jlA8pxDOOU3udEvvp2oeDjTP7uglKy5C5B7OZP50i1WTrYtU2Sf0lvOn4qXAiG
+         Meu5LQ2UhxZ39aXrB40M2LHWAXRCiYDoeGt7ZYw8BTnhYXdHn9hMf0jAAY+uCyeY0TB4
+         O2b/KVwORTIMMTyCSHhsGnrnPuLGgyyjb1vHTauThzcPW7CCbAuCY4j52xzpy+k8ak4q
+         vOMrCHqV5+Mm+mRZFSIGVCd6OCSosnlzPzNDGZuu8ktOGFRpiGhwmlXaeykiswh4T12a
+         X4aD/UmZfyt19mhtuy7McYIExvZC2ExPUDOR32AgrP1EyhbEY/PCgFvfw5f/tb2Ui8rQ
+         KhqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=4xdk0BSQIUx4RwKz5HGHAlu0ZFnzjgWp1hYTFbEu5CU=;
+        fh=09EEqmhJisUpcYZ53rrb2iUTXKBI75AiC6LH/mUCdcA=;
+        b=UCgdls/EudxVkoIWauXVNHnrkDR0Ho2RW14JQF9YgNRt3PvWnhFzZUWfZ50UDjooj4
+         Nx2IxlTBYVB+PzZPcIzf7llIAcxAfdmtBS44fpqvJWh8cCHMoiSZNVsnbWNsGm2Ctdlk
+         eAtFLSC8+ld7Fn4+fYeujiXUP5mShNpVNgIRMCKrbuNBkBu5vKaVng4S6PPFp5LQLrbR
+         GdxBK7mj3UrCcZz4/hFPkemQZpdQfSrjHRd+6sLN6hhMvsDD4hTz5sbMHeF8uIUkgdWK
+         KQCl45m2yQBRNckfaJYV/6isfNCEQcN9R8Oe+4s0zSBG1Cv7BGs2MOxs0v3I1PTdK7Q8
+         +Wxg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794414463; x=1795019263; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=4xdk0BSQIUx4RwKz5HGHAlu0ZFnzjgWp1hYTFbEu5CU=;
+        b=LVdq0ZL3sZPzYW1pLPrV0cLEj3jwdj2Zg7RoE2RuOl2Hhv3wgcEiaJO901riGgUhRp
+         IRmN3MLywL9Pn7R2fVW8nhJVR+LInKI2Qr5BxzQDfDshUwk+yGiqksCMb7nETFstAL0t
+         aYyyQGr/YToFkc71VnaALv9merv+obCMqfGTJQeotkpUrl9b0/WwXHs7DrLaktruuqtx
+         rS3+69M9Qm3zNCI6D1TF1zXhsnBD2CbJv+rFim55I9GGur6FBs5ZrHlYQ9NKw6Kh71n3
+         O+4cIuAANTLZPxlzg4y+yM++fGnOwYdoJRQG8fWa3t99az16xcQ60brbYKgNLRNuKF4R
+         momA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794414463; x=1795019263;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4xdk0BSQIUx4RwKz5HGHAlu0ZFnzjgWp1hYTFbEu5CU=;
+        b=Wurb+kTbIAn13u1rmp0l5LoiZeMhEt1ZWp8SHcdXrINX/QP0SplBXwHqytBFBcbisI
+         sh/DwKFzvIbu9EILrvYbv+Rh6C8daqX2EbazOUqKi4L/ZvfpartRns4oc3aeVP9yDh6C
+         mIbFLphpGRyLAs3uv6RHyzARdOXyKcYsKzmzPj3fZcVnZ8zn/Bb7miqX2k++/l5At7Vh
+         uZT0ZfT83TdOhEuf18gSHhf0H9VMxJeZqRz0Zao68kDwCGVE11WalXI+L3d/n5oo/mDS
+         n5N1mkmJmiijdKkhYq9TLsAqn9fNF6ANURztTIKXMPJwrlbvwSrYvyyJWKN/IgQ9CvRW
+         7dAg==
+X-Forwarded-Encrypted: i=1; AL+hErH0F1YUbfWqGXkdMemtLarA0XNOiXOhM97BYaI8dkPQyG5JHe59wGvgDaZhT+DlOQZ/0kg2lOVovCkY@vger.kernel.org
+X-Gm-Message-State: APuU4Z/Wd6mQ6UE7B/P+gTBXZE0nYtpDsg8DUlgmMoheyMDpTuLBpG8T
+	/+T+5ipbFs2ESeVuTsw1XdFi0KIqzolo/RzIvfrl0L3qdOjLxRE6Y3HYDT7yESioZcs5GMNBt84
+	ek/Ovi2Iw6qYbttpjsKtW7+x+7MLDY6Y=
+X-Gm-Gg: AYBFou3b8Io8WKbxrGzreJuCF8PJx+HbJ2rH0v96ZnxKC0BjDxRdWuYLEggzTRtsTFz
+	96P14KiSgHhDwZJjP9BvS3QON9E2bzxnsyvbrVJ2Hhr2BarasSxnzJCkruicpMadkdQdX+mgV4y
+	ix1V3PV5Vwaa2UBRYbQfeJ0pcSIBPNHV9uRvrjhO5N0Z9hw1g54NoNDIwqRjW5zGMOTtis4lgoc
+	1NR3gOmO3aTX1bfNeABss4b6jNf3+Tk3g6MpTc+psJ7fFF8i1gTgYBTl5WJcPlY0aq8YvWoGXYt
+	7bWIie/SXHt/WH8sjdQk/MmLwBr4a8w488Jb+WqTCmpIpQedspPP3X7ezisxzMJfmnRbldF4yn7
+	Dbh1PvKHPzmK0BFlKnANTBoWXHf7B4kL13O8F0ux2H+YYzjl+zFS2Erx8n8LY9QJP/8nlsgfQur
+	QL8ggjaE5faspcFNuiO7y5z0dm+0ZPFYGs7fNZHYXtO2hV+To6uvmNGgSBUm/sDGwkIU5N3/lbJ
+	9eG/EgKnoEhGyGG4JYrwSQlnEEbdvC+wA4=
+X-Received: by 2002:a05:7300:7aa5:b0:36a:e7a:e89 with SMTP id
+ 5a478bee46e88-37685c76d17mr4975850eec.2.1794414463417; Wed, 11 Nov 2026
+ 08:27:43 -0800 (PST)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -63,52 +106,29 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <avSC7GXOwnbuycR8@sirena.org.uk>
+In-Reply-To: <avSC7GXOwnbuycR8@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 11 Nov 2026 17:27:28 +0100
+X-Gm-Features: AclHuK8AgFv2RXK-XtwjJ8NP3w2QWHz_WEO_LIt_zbf7rr4iTP2nvLvmm5WOtgA
+Message-ID: <CANiq72nu0CQtZxODepvZOEoD0biE56Jx_2-exBvB8psL_Ynk8g@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust-fixes tree with the
+ kbuild-current tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
+	KBuild Mailing List <linux-kbuild@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nsc@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The merge fixup in commit c62c2736d82f ("amdgpu: Merge merge merge
-cherry-pick cherry-pick cherry-pick") dropped the call to
-drm_atomic_helper_connector_reset(), which drm-misc removed. But that
-call is what gave the test's connector a state, so the assert right
-after it always fails now.
+On Wed, Nov 11, 2026 at 4:00=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
 
-Create the state with drm_atomic_helper_connector_create_state()
-instead, and check it before storing it: cleanup would choke on an
-error pointer in connector->state.
+Looks fine of course, thanks!
 
-Fixes: af8e519642bd ("Merge branch 'drm-next' of https://gitlab.freedesktop.org/agd5f/linux.git")
-Link: https://lore.kernel.org/all/avNxxfHK_Zh2GN2o@sirena.org.uk/
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-The amdgpu_dm_crc KUnit suite goes from 34/35 to 35/35 with this.
-
- .../gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c
-index 2b94d1bcaf62c..32b33d72dd0f3 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_crc_test.c
-@@ -694,6 +694,7 @@ static void dm_test_crtc_set_crc_source_dprx_connector(struct kunit *test)
- 	struct amdgpu_device *adev = dm_kunit_alloc_adev(test);
- 	struct amdgpu_crtc *acrtc = dm_test_alloc_crc_crtc(test, adev);
- 	struct amdgpu_dm_connector *aconn;
-+	struct drm_connector_state *state;
- 	int ret;
- 
- 	aconn = kunit_kzalloc(test, sizeof(*aconn), GFP_KERNEL);
-@@ -704,7 +705,9 @@ static void dm_test_crtc_set_crc_source_dprx_connector(struct kunit *test)
- 	KUNIT_ASSERT_EQ(test, ret, 0);
- 	ret = kunit_add_action_or_reset(test, dm_test_crc_connector_cleanup, &aconn->base);
- 	KUNIT_ASSERT_EQ(test, ret, 0);
--	KUNIT_ASSERT_NOT_NULL(test, aconn->base.state);
-+	state = drm_atomic_helper_connector_create_state(&aconn->base);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
-+	aconn->base.state = state;
- 	aconn->base.state->crtc = &acrtc->base;
- 	/* Balance the reference the state destroy drops for a set CRTC. */
- 	drm_connector_get(&aconn->base);
-
-base-commit: 793807ca13bf3072fc6d16ce6d90e9ab9beff2a5
--- 
-2.53.0
-
+Cheers,
+Miguel
