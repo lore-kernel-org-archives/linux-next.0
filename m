@@ -1,54 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794358366;
-	b=JZgSTGfmSGcZjRSmpWM/kixuek0vDZj4SHMg3dhvE5YXHRs/PzT2/yqJNOpSo4nNmSrz
-	 8Pj6WFL1Jpq4/bVZdsZJ+VHBL4Hv/4cxidkteq4O3ztmckTmWOF3rwiePyahhARE6JQJa
-	 NtTfLHtGZ6yEtGVAWYmoBH6nJmhtqgJupjf4d8IzlcLGshz4WM7Ds1Wc5p0PzgXmgGW5p
-	 bcIuNiL5egkA6gEC6VWZgi+9sumX3nahi4TlReOETw4NdSv26gkLyP6Bn4wVBA9PmMdiS
-	 dHEXWf5Pzx7phVbYqpfTfazQUE9O9Xink62QJZgZOdBxiLedX2VMJZPF5FeEkQb/Pzw==
+	t=1794361141;
+	b=p7aGTOxTl+90Asw/9AGk+SvxqdEv13KCACzUELtt4whIYyQihTtlZy02eCDNtw1Pxvng
+	 dph4m3dc7DmTWi5VnFGMe62SXKGzeuMWYfz5TpvlTB+9qHob+iTDAjl8csVyWED/hO93Z
+	 X5/uesLYQZbr+Owrqt4vI7ceD0S66hbF3F3CuD1es3z68kLDSDVRQ+MH/jwTOVpikd+mU
+	 I64GC345X8c64BlNkOKlqcnfFVWnRpKjwSIZ01ljTdZ79EyJlHoLnYjxq6W3VAAx97LoN
+	 m6u2fbjVf3lbfhPeIaG5Rc2zCZcN71G0Sx2Dz8VJ31RUenKErxACTxJnydNyGikIbFA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794358366;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794361141;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=YMyutFEugDgQRViMx4h+fLyzjQAiATXS7cL+gnKt9H0=;
-	b=KP464pIpbwsTmPPDqf6IDUYatJG2iYDzcZ5fVZi2u8zi636vJoZJdKuIJC7VM6DGB/la
-	 Xwkiv3qNJHd2ErQHOstJKVUflX3M5YJjkawRd2wfLSYt2TCiVPnqBQq/+cdLQmsnCVfHJ
-	 lnVKH01PkNiJ0ofCYeBI+uoMHlce63PYoJbvQ9IT92onBgvQ36DFCj1taJoqid0i5/oXZ
-	 VF3i/IRWq3CuX5wykRU/TMQ9SSVNfeKLDIV6lEawjyhOlwWGe2yuhmK6fjNvS0Jt4wDBh
-	 0W8tp1DF+rj1DWgVL2lvR6n8RzJpVKp0KFigs7ic/hlzAYlC6nwyzMpQB/HJF/MVhAw==
+	bh=YN32uCiQtqq9aFcjtm+9jPqhd3Nau3hVhZJ0Lm2Cc7E=;
+	b=CxA3pvtUiAaQ6FEy5+CLkBIuHVs1vdiU/FDRLPb4tOCgtDlQzJcF6wxY1zSYMpIBpo9H
+	 e0lQjsIiMXgycQMycEvJP40QEq9vcYSavfni6mks3lMcwAUPqAFBhMtcLDWQW3G2x5/Xd
+	 XJy3BJX0QJcetXqbTLl4MbFxsF/2I6tWTt0hUKpjS0JuHuEhzDMpuCRt+bDt2SLtNrBqB
+	 eZ46Glbv6gNNLG5ufY5BZegzWlLLUOJFOIAqkJ7nRsMckLr6ECEiA3+NOf2XVhoN7ek34
+	 3UDpwJqJXCPWHynKm8arypbD/yq5e1+xGapEat4NdPbt6hXZgSWEuqYgUYCjogLi4Xg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OPeETZni;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hGsQ7bJ2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07338606A31C;
-	Wed, 11 Nov 2026 00:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B4C606A31C;
+	Wed, 11 Nov 2026 01:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OPeETZni
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DCE1F0089F;
-	Wed, 11 Nov 2026 00:52:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hGsQ7bJ2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB531F0093C;
+	Wed, 11 Nov 2026 01:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794358365;
-	bh=YMyutFEugDgQRViMx4h+fLyzjQAiATXS7cL+gnKt9H0=;
+	s=k20260515; t=1794361141;
+	bh=YN32uCiQtqq9aFcjtm+9jPqhd3Nau3hVhZJ0Lm2Cc7E=;
 	h=Date:From:To:Cc:Subject;
-	b=OPeETZniu5d6wPvMima8rknOenjAp7z+jKvR4Pdjjx7DjHMRKsXnVYz3AsGvJRk9/
-	 resH/YHJOygSaCg6+g4DF3muGs8W98rU8OYLZH7IXs3ROVmANbWhdj9J/925unCeEb
-	 8WswN4aaNPan3lBbW5oDNgKOzFWHI9ynhNWiLKbe754+FpM/oOSOVc3/upjdJOFqv2
-	 um4QFRee2YDs9bC7Ksx03F76qXv4VPP8Wpu0J3rmpR1ywQuk8Ce6ysFBjCm+XLcQjA
-	 z5ZXzUMaIAlVL4j0U2sua1DHbQWExKalNVXRLSq0bWwdaFjLkGy0shSsc3OaHQSsCs
-	 Ufs71HLR1Ho9Q==
-Date: Wed, 11 Nov 2026 00:52:41 +0000
+	b=hGsQ7bJ2nEehftUdQDQiS1UAGwNwCCvWw4Q3+3OSV182sO4pvURYdwK7zmCdG68lv
+	 zA2Z+qXr8j1zJhndFo5cLn2EATNkk+5+6TXf9y2wT0hPsj/Hc3KhcllnmxKGk28j0a
+	 RANZSqrbLF7FA+2HTCNnTsqPCuCp5yGODauHAXbkwU1ivkKL0Wmp/FgyPIejxoTAvV
+	 hh3olRG1/3JNb5LcOzqzSkhqqRS5MQkixttxM3dihjrFCQhSgAv2N/RyWtXIH9U3v6
+	 T8xFj9sQNUJBtMHTeZMGxdx648/QjGey5xUQu3d3nqXMwVK4dKgHh6VkKkj+rflmS7
+	 TCw9hgEB02rLA==
+Date: Wed, 11 Nov 2026 01:38:58 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
-	Muhammad Bilal <meatuni001@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drivers-x86 tree
-Message-ID: <avO8Wax_1SEQ3Yy5@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 10
+Message-ID: <avPHMuq_SfegVdhe@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,40 +55,94 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="apjTMldALHbD2LvJ"
+	protocol="application/pgp-signature"; boundary="m9R3FbLwzhyismd4"
 Content-Disposition: inline
 
 
---apjTMldALHbD2LvJ
+--m9R3FbLwzhyismd4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the drivers-x86 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Changes since 20261109:
 
-ERROR: modpost: drivers/platform/x86/hp/hp-bioscfg/hp-bioscfg.ko: symbol 'strnchrnul' undefined!
+The btrfs tree acquired a conflict with the btrfs-fixes tree.
 
-Caused by commit
+The pmdomain-fixes tree acquired a build failure, I used the version
+=66rom next-20261109 instead.
 
-   e7cf4282a8694 (platform/x86: hp-bioscfg: fix heap OOB in hp_enforce_single_line_input())
+The tegra tree acquired multiple conflicts with the origin tree.
 
-I have used the tree from next-20261109 instead.
+The clk tree acquired a conflict with the origin tree.
 
---apjTMldALHbD2LvJ
+The net-next tree acquired a conflict with the origin tree.
+
+The bpf-next tree acquired a conflict with the origin tree.
+
+The wireless-next tree acquired multiple conflicts with the wireless tree.
+
+The mm tree acquired a conflict with the mm-fixes tree.
+
+The pmdomain tree acquired a build failure, I used the version from
+next-20261109 instead.
+
+The amdgpu tree acquired substantial conflicts with the origin and
+amdgpu-fixes trees.
+
+The rcu tree acquired a conflict with the origin tree.
+
+The drivers-x86 tree acquired a build failure, I used the version from
+next-20261109 instead.
+
+Non-merge commits (relative to Linus' tree): 5254
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 436 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--m9R3FbLwzhyismd4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrzvFgACgkQJNaLcl1U
-h9CKjwf/aH77X4uQaMn/aq70REgB08ZeZfCIlqDskJ1hqYSL8UHGkBfWA+dBKUHm
-cuwY3D35UjPlRcFjO34qgFPu509gPkLkRW24gt+RMBwDr+Fzkj7QYMF/Ax8CY3i5
-qwawOFj2UpEXpUNXDXvZVt7ua+/fm4U+DEQL9KDavArYHtuJK4hjPneiKhliMwaW
-OqvhQ+4kZFw8T78K7xWAgoJBS0HuvvE8Vgj7i2Md+nknjeBWvs7Ntsnp3irZixdI
-teZDr+NfHZmUfItVHCkEsRXN3S5b3c2xV8UQUD5CMOEWK5U/Ty8ZxwBPRH0IiAUW
-HwbxPv+F/BOFNS/dLROc5zvCo4TjnA==
-=nyqO
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrzxzEACgkQJNaLcl1U
+h9AGrAgAgmsObGbn5DBk6iPv81T8n7NY69myCbzHMAr2lQ/XG1zYmtxr9LNU9eis
+foxVLQEax4gc3sI3pvxdizW2oFU4DBoMaipw8XxgKsQiVfiMHjMVK4pE9+S5l1O2
+T9+RbSVdhYrI+whwFAWQgMRpPQmexAlAx0+IqHYOIxGsVddY8jNZRV1cH+OREsMT
+IdqmImxBxlwSlcTcnBz9JJTMvcm6UvZ1HgAnfop0Im3WpgLNWVZIXzKPjJjAU4jS
+xaJnFkWRaBm4GlEQXwUd+/Fy15ueIQG8pNosyX29RQvDm3wnchyIB1ByyKFNXnL2
+BpZQHm7E7w4mcv1hMGGg/Ay8NCYrtg==
+=EbrE
 -----END PGP SIGNATURE-----
 
---apjTMldALHbD2LvJ--
+--m9R3FbLwzhyismd4--
