@@ -1,60 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794352268;
-	b=IjlMiHwDz94RwzO0xnQKHLraz1eIRaYH9zOs1joWpAkbTgo2fwWNcZRpP7EDsOcq5vhH
-	 v8EtZJiU6sohWdAVsytVvpKJnBFSwyhVsOVJPQoEWXWpcHpYe2X2K11cHhs/+hWsFjstX
-	 IUYDOvX0grDrtpnLUURT/NYahe6YKRsprqRrTB+1J1uQp7y7OmVawVXOVTIq0lJ0PG91d
-	 RA5y3s1SfmazxJcn+BQdl00uFS3QwRlU7xPQGnGrIqcGTLnAeAhA8VHpp27vxwGXcdCz9
-	 deqwkUR+9T/ung6cYAD/bX/1HoOHDQ6c7BTDXjHX17nHBQW+wVu9UL0ZvBWifGKrWIg==
+	t=1794358366;
+	b=JZgSTGfmSGcZjRSmpWM/kixuek0vDZj4SHMg3dhvE5YXHRs/PzT2/yqJNOpSo4nNmSrz
+	 8Pj6WFL1Jpq4/bVZdsZJ+VHBL4Hv/4cxidkteq4O3ztmckTmWOF3rwiePyahhARE6JQJa
+	 NtTfLHtGZ6yEtGVAWYmoBH6nJmhtqgJupjf4d8IzlcLGshz4WM7Ds1Wc5p0PzgXmgGW5p
+	 bcIuNiL5egkA6gEC6VWZgi+9sumX3nahi4TlReOETw4NdSv26gkLyP6Bn4wVBA9PmMdiS
+	 dHEXWf5Pzx7phVbYqpfTfazQUE9O9Xink62QJZgZOdBxiLedX2VMJZPF5FeEkQb/Pzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794352268;
-	h=Received:DKIM-Signature:Date:From:To:CC:Subject:User-Agent:
-	 In-Reply-To:References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=MYCoROHDaYVZU65zrhHmzLL5b5Uww6lu+Rr/UYB0+4M=;
-	b=gjrqL5T82kFkyXhP0WNcZ7e0+tHt7/XUF9IXwjMQHV3Ia2Vhrv05UtMGAHAszEAkeV7S
-	 UXf9YXJ4yE+/IN9PwcEwaW4KFbw5hIktqXANzNeWzZ4sCrpP+ka9XwO/TufGDLyQf1s/U
-	 q3mnx4ilswY1xwc4ZTD86HDQ3y8PNJxm+wr4hsJ19Z5DwWLsiMC/meVQ2Vp3DL5+GsYk0
-	 n3hecJNNdWlB6vp3ZHKuhy2ADbLZ/AuxN8mMTYkGik2LNAkywbBmBphLYxn+i9b32kf8Z
-	 XUrRvHYprdak3nk0L7g5TSqanjaxPEJPBl1MCqqdveXi3XVOwKYMfxvjRlR/rsNme5g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794358366;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=YMyutFEugDgQRViMx4h+fLyzjQAiATXS7cL+gnKt9H0=;
+	b=KP464pIpbwsTmPPDqf6IDUYatJG2iYDzcZ5fVZi2u8zi636vJoZJdKuIJC7VM6DGB/la
+	 Xwkiv3qNJHd2ErQHOstJKVUflX3M5YJjkawRd2wfLSYt2TCiVPnqBQq/+cdLQmsnCVfHJ
+	 lnVKH01PkNiJ0ofCYeBI+uoMHlce63PYoJbvQ9IT92onBgvQ36DFCj1taJoqid0i5/oXZ
+	 VF3i/IRWq3CuX5wykRU/TMQ9SSVNfeKLDIV6lEawjyhOlwWGe2yuhmK6fjNvS0Jt4wDBh
+	 0W8tp1DF+rj1DWgVL2lvR6n8RzJpVKp0KFigs7ic/hlzAYlC6nwyzMpQB/HJF/MVhAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ltpwhv/h";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OPeETZni;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9351606A31C;
-	Tue, 10 Nov 2026 23:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07338606A31C;
+	Wed, 11 Nov 2026 00:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ltpwhv/h
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D641F0093C;
-	Tue, 10 Nov 2026 23:11:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OPeETZni
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DCE1F0089F;
+	Wed, 11 Nov 2026 00:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794352267;
-	bh=MYCoROHDaYVZU65zrhHmzLL5b5Uww6lu+Rr/UYB0+4M=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References;
-	b=ltpwhv/hypmB7bU2ZmevuKSNbQJ1jx3kv+gUx8DwTWn1b5KP911Sawoe26+9m+Zzu
-	 0VVDE4aKlTZGvEk+4h+md2al7tBhJEYl61CyXfkDpyprKQLu7ZOaAmljQdUxGp+r+Q
-	 cn04SkVGcJppqLFm3hBzv7yn3XuDwwIjHaRz28svwiDB514iHy/UjvSKAN9TmOfpCi
-	 egptsT7tZAn9xHMKd5SW+ci5++S8LkG6j+3c59wO/wtqimN5vqWj59msa0TwlvNqCZ
-	 i144zY46mozG7VGySo/KUrpd+AIGPCCpXzsFuNP6+o7YGWQSLSyF5uJ1b8ZZVgObkM
-	 pmwPL6wL4DDGg==
-Date: Tue, 10 Nov 2026 15:11:05 -0800
-From: Kees Cook <kees@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>, Mark Brown <broonie@kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
-CC: Kees Cook <kees+treewide@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rcu tree with the origin tree
-User-Agent: K-9 Mail for Android
-In-Reply-To: <09ebf7bb-f802-4bbb-ae78-dc4b45c1f693@nvidia.com>
-References: <avNzIwARUFPlPyrF@sirena.org.uk> <09ebf7bb-f802-4bbb-ae78-dc4b45c1f693@nvidia.com>
-Message-ID: <BC2DBE03-C21B-420A-B163-324BF3C57F2C@kernel.org>
+	s=k20260515; t=1794358365;
+	bh=YMyutFEugDgQRViMx4h+fLyzjQAiATXS7cL+gnKt9H0=;
+	h=Date:From:To:Cc:Subject;
+	b=OPeETZniu5d6wPvMima8rknOenjAp7z+jKvR4Pdjjx7DjHMRKsXnVYz3AsGvJRk9/
+	 resH/YHJOygSaCg6+g4DF3muGs8W98rU8OYLZH7IXs3ROVmANbWhdj9J/925unCeEb
+	 8WswN4aaNPan3lBbW5oDNgKOzFWHI9ynhNWiLKbe754+FpM/oOSOVc3/upjdJOFqv2
+	 um4QFRee2YDs9bC7Ksx03F76qXv4VPP8Wpu0J3rmpR1ywQuk8Ce6ysFBjCm+XLcQjA
+	 z5ZXzUMaIAlVL4j0U2sua1DHbQWExKalNVXRLSq0bWwdaFjLkGy0shSsc3OaHQSsCs
+	 Ufs71HLR1Ho9Q==
+Date: Wed, 11 Nov 2026 00:52:41 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>, Mark Gross <markgross@kernel.org>,
+	Muhammad Bilal <meatuni001@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Message-ID: <avO8Wax_1SEQ3Yy5@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,23 +58,41 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="apjTMldALHbD2LvJ"
+Content-Disposition: inline
 
 
+--apjTMldALHbD2LvJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On November 10, 2026 12:17:07 PM PST, Joel Fernandes <joelagnelf@nvidia=2E=
-com> wrote:
->Thanks for the report! This will save us some pain down the line=2E I hav=
-e rebased
->rcu/next on Linux -rc2 and resolved the conflict=2E
+Hi all,
 
-These changes were sent for rc1 but Linus ran out of time to apply them, s=
-o, next least disruptive tag was rc2=2E Sorry for the pain; I tried my best=
-! :)
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--Kees
+ERROR: modpost: drivers/platform/x86/hp/hp-bioscfg/hp-bioscfg.ko: symbol 'strnchrnul' undefined!
 
---=20
-Kees Cook
+Caused by commit
+
+   e7cf4282a8694 (platform/x86: hp-bioscfg: fix heap OOB in hp_enforce_single_line_input())
+
+I have used the tree from next-20261109 instead.
+
+--apjTMldALHbD2LvJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrzvFgACgkQJNaLcl1U
+h9CKjwf/aH77X4uQaMn/aq70REgB08ZeZfCIlqDskJ1hqYSL8UHGkBfWA+dBKUHm
+cuwY3D35UjPlRcFjO34qgFPu509gPkLkRW24gt+RMBwDr+Fzkj7QYMF/Ax8CY3i5
+qwawOFj2UpEXpUNXDXvZVt7ua+/fm4U+DEQL9KDavArYHtuJK4hjPneiKhliMwaW
+OqvhQ+4kZFw8T78K7xWAgoJBS0HuvvE8Vgj7i2Md+nknjeBWvs7Ntsnp3irZixdI
+teZDr+NfHZmUfItVHCkEsRXN3S5b3c2xV8UQUD5CMOEWK5U/Ty8ZxwBPRH0IiAUW
+HwbxPv+F/BOFNS/dLROc5zvCo4TjnA==
+=nyqO
+-----END PGP SIGNATURE-----
+
+--apjTMldALHbD2LvJ--
