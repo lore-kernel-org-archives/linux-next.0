@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794414477;
-	b=Gq5j/LBjYUEaNltf6bu0yeHzElGZ5+0hWzb/pxLj3dA2x+zKoORsKYctmy+gq0GhRkv6
-	 2oBSjW3mZJEKxfeqN5n5gJXYG/Sfk3xVnpzY9OEYj6xdRGrIjwEFZDn/Kotrb97E9F0jn
-	 GGAMaEr7D0ei2NyTWkw8SYbLe3Pf3yZjdaP322xKwu/gBfAP74SeMoKifvQ/hIV30X+gN
-	 XVPDSFY9iakhVqlZ69OYHoqLFtIl/FWN2PhkiAtXZATcpEZi1XiImfV8TcyaIWmq+RGpj
-	 /8lpgC35FBXH4p6W5IOjEWrs4MGf43QNdqcvZNaC9NxO7329VSPTc3PgQ4PiBlQ075g==
+	t=1794414499;
+	b=n+XcK9LU18buNf1m57mndFldL1foXFRgLVjNdtdeVwhjneMpZgcd2oC+pxwO9vcnesRk
+	 QpOUlPeLleONfsZF4jzus5GS/p2/LEqac/GvpSt0T1hkGOHEI5c9LBZOzAVfEEDVq2hPn
+	 Xr+dH/4Gddi40QQO2nY0Qvo/HKBZeyxZSCzHCeK79Cx+N+zozTHV/YZKYKRZqDPGpsDA5
+	 O7Rm8nXhYRzizgRwLRJpbT2IY972JcOy2LtcA0RMiMOwgtIge2oLtcF4YSFSSNIEDRwW4
+	 fGYcgeNjeHmsviLdISXp4UFSx393a8FnK2yOip9z8pkiGjb+r/QGZPhRSh/cvFSx9AA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794414477;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794414499;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 Mail-Followup-To:MIME-Version:Content-Type:Content-Disposition;
-	bh=zv/NjWTrnYAdrYyWH8zse+XbPnWGT1UmxGtvNPceWL4=;
-	b=VRUT/5Q/b8WgKfFf+NBjmhy/eNfku1zqt1AkhvWr1W8KC6cqzFdwuXcGKgzFc6IIgxX1
-	 6bRgFGuBcWrAciRebhlKHcVF9gbFpaZ1lp3cfWOVsJpCnL+tNdg1ScAqxdlS9J6cZYsko
-	 /tJBAReY4ara4PP/kZ8SSjyG0zGhivJitCMlsLr/xzYolFSzsDaJ3zOTww0Y9mVqts/yS
-	 3pGVP8frpW/XDIVKGyfW1ZCiLh3rwu4lsJbv8mMXul7TEOzBGo6ftR5qD9xpjeNer8M4T
-	 /q8OMJni3/sFDlSg+xlOkhxLuMmd80rEsSvR7/ceGaBJPVjoX12MwpU/ykzJdv8OkDw==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=F/P7xksbuJ6mdsb06SrrKj8pKQP+jAbMmCMBzirJ3rk=;
+	b=F/Hg7ubBowBOnlEdiGkaftwDnI9bQTkn9znEbKC+t5Yefzl5GV3ODIdhkHMiEDE9HL2A
+	 rSBl3yJwYLOCIYgq7z9mTogB5wBinBIZteQFI4HhLSqzh3WMGmO1PaR9s9d1eI8oFa3tp
+	 VT8/vnuVW0taP63y5Owy/SzXloaZDScWwj6CbuYabBgpMmK2n06Nw5I/kkXUU8anXzzBN
+	 6g+37c1J+eDiCEmuVAncMkL4aaIJtpEmp5J96edo3vsvG5ep84ofbLgioPUNRQApgo272
+	 5EXty3xqRd/6gYiFBn71V4eQyNrgXf+VrGjgqpNwK00IL0IhAWGkAh5kGjVFJ7ufklQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="bm/bp0in";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QrOFs5f5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47667606A321;
-	Wed, 11 Nov 2026 16:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA43606A32A;
+	Wed, 11 Nov 2026 16:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bm/bp0in
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4EE31F00A05;
-	Wed, 11 Nov 2026 16:27:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QrOFs5f5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A429C1F00A05;
+	Wed, 11 Nov 2026 16:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794414477;
-	bh=zv/NjWTrnYAdrYyWH8zse+XbPnWGT1UmxGtvNPceWL4=;
+	s=k20260515; t=1794414498;
+	bh=F/P7xksbuJ6mdsb06SrrKj8pKQP+jAbMmCMBzirJ3rk=;
 	h=Date:From:To:Cc:Subject;
-	b=bm/bp0inzSl+Ao4J+w4ZHt7yp0hCJtTPUceJECXdBOI/rSfUN0u1zizidYffmJyBp
-	 PmClQ0n5MBiASXzNIHQ6gTbUnn2wdjdYn3ZSGhZJfIRBa6gq+G6Tso/L/wZK4mm0k5
-	 QKQ/f/c9CNAFpK/O39vcEk0fI3yMIqDhSpaLddfQV3ONzpBcxtBI13FpEx1mAHg+Y0
-	 p6Y9m8V0boa3mNL40Xlr2TwlCdLUXojlLNwCOJelWKbgA3NdonnqKlCfibxeY95fA4
-	 Khvbfi1KLbvvsgOeY+FmCeKwND3ouiSHyP+gRj8aJLYjZBchunKVc8wX824H4GWnUe
-	 3GaH1BWOEwPLA==
-Date: Wed, 11 Nov 2026 16:27:53 +0000
+	b=QrOFs5f5GvRB0IDh0ZtDRLuEX+hxqyb9OQWFJh9VLjHmEsir76O6ErTD7WqQ0c+0j
+	 ImA0rPNk1Fgs3KClrmsAzs1la/lALnwTuCao6uBCMTfwP3hxpXHG5q3VKum+oPbKjH
+	 7gXX7d4X1Z45WE87v8VorGUot64hTCLJNjyWB0nQHuFJbutn2oF2x3PMae11vkJER5
+	 ifCBtOBnGpqze9He7HYfPENUXhWfVbf4P1J1ysztEjd7fnL6cJ413T3yYaNaRCttvL
+	 W5wUw4i9LCovmSK+Wql0JjKeoetIYZZ9RtFJ0mqkyeTgSk231c2nkjiQ3uN3mtpreE
+	 Gi+d8QkWdIbHA==
+Date: Wed, 11 Nov 2026 16:28:14 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
+Cc: Jouni =?iso-8859-1?Q?H=F6gander?= <jouni.hogander@intel.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the wireless-next tree with the wireless
- tree
-Message-ID: <avSXifk4jPbFdQO0@sirena.org.uk>
-Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>,
-	Wireless <linux-wireless@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mika Kahola <mika.kahola@intel.com>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Message-ID: <avSXnsYmYkIrge5W@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,31 +64,69 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WcrKEVERQQCbA1Wv"
+	protocol="application/pgp-signature"; boundary="9/G13HJc/YtuFupn"
 Content-Disposition: inline
 
 
---WcrKEVERQQCbA1Wv
+--9/G13HJc/YtuFupn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  net/wireless/nl80211.c
+  drivers/gpu/drm/i915/display/intel_psr.c
 
-between commit:
+between commits:
 
-  5e25f6b1b18d5 ("wifi: nl80211: fix ERR_PTR use on wdev disappearance")
+  9bf9ced37e60a ("drm/i915/psr: Clear CFF state on flip flush")
+  4247f4e2c10ea ("drm/i915/psr: Re-arm PSR after flush")
+  6b3ea5a07eac0 ("drm/i915/psr: Flush on cursor update also when not using =
+Selective Fetch")
+  e30830d21860f ("drm/i915/psr: Don't clip plane state destination rectangl=
+e")
+  b56721c32eb3a ("drm/i915/psr: Disable linked plane sel fetch as well")
+  94cb1f08b197d ("drm/i915/display: Add enabled pipe planes into state for =
+selective fetch")
+  cbe565475988d ("drm/i915/psr: Clear selective fetch area when duplicating=
+ plane state")
 
-=66rom the wireless tree and commits:
+=66rom the drm-intel-fixes tree and commits:
 
-  5dbf2415ca982 ("wifi: nl80211: avoid double wdev_put()")
-  a357675fd7406 ("wifi: cfg80211: enable context analysis")
+  233e3453eb705 ("drm/i915/psr: Clear CFF state on flip flush")
+  731ed8af13bde ("drm/i915/psr: Re-arm PSR after flush")
+  043ab39fe2daa ("drm/i915/psr: Flush on cursor update also when not using =
+Selective Fetch")
+  82a273802e29b ("drm/i915/psr: Allow Panel Replay and PSR2 with joiner")
+  81492de01598e ("drm/i915/psr: Resolve the PSR encoders through the joiner=
+ primary")
+  dd038a8d440a9 ("drm/i915/psr: Merge the selective fetch area across joine=
+d pipes")
+  ce234fd7ac01d ("drm/i915/psr: Derive the alignment loop condition from th=
+e SU area")
+  6a33b0c495174 ("drm/i915/psr: Split the selective fetch calculation into =
+helpers")
+  384679cd97c88 ("drm/i915/psr: Take the selective fetch area from pipe_src=
+")
+  e9b810694a5b1 ("drm/i915/psr: Exclude the joiner secondary from active_no=
+n_psr_pipes")
+  20470bb876bcf ("drm/i915/psr: Track all joined pipes for frontbuffer trac=
+king")
+  8621f3bcea6b0 ("drm/i915/psr: Don't clip plane state destination rectangl=
+e")
+  8330f2041b95f ("drm/i915/psr: Remove drm_info_once on failed selective fe=
+tch area")
+  1e922ed8c092a ("drm/i915/psr: Skip sel fetch support check for invisible =
+planes")
+  b10c83af60cbc ("drm/i915/psr: Disable linked plane sel fetch as well")
+  0d173898b1115 ("drm/i915/display: Add enabled pipe planes into state for =
+selective fetch")
+  bd58f0e221386 ("drm/i915/psr: Clear selective fetch area when duplicating=
+ plane state")
 
-=66rom the wireless-next tree.
+=66rom the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -97,823 +135,654 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined net/wireless/nl80211.c
-index e7dd32880598f,5189366809db0..0000000000000
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@@ -230,11 -230,12 +230,12 @@@ cfg80211_get_dev_from_info(struct net *
-   *
-   * Returns with wiphy mutex held unless there was an error.
-   */
-- static struct wireless_dev *
-- nl80211_lock_and_recheck(struct cfg80211_registered_device *rdev,
-- 			 struct net *netns, u32 wdev_id)
-+ static int nl80211_lock_and_recheck(struct cfg80211_registered_device *rd=
-ev,
-+ 				    struct net *netns, u32 wdev_id,
-+ 				    struct wireless_dev **wdev)
-+ 	__cond_acquires(0, &rdev->wiphy.mtx)
+diff --combined drivers/gpu/drm/i915/display/intel_psr.c
+index 0ae347fe6cd19,bd16563603249..0000000000000
+--- a/drivers/gpu/drm/i915/display/intel_psr.c
++++ b/drivers/gpu/drm/i915/display/intel_psr.c
+@@@ -36,6 -36,7 +36,7 @@@
+  #include "intel_cursor_regs.h"
+  #include "intel_ddi.h"
+  #include "intel_de.h"
++ #include "intel_display.h"
+  #include "intel_display_irq.h"
+  #include "intel_display_regs.h"
+  #include "intel_display_rpm.h"
+@@@ -1597,6 -1598,13 +1598,13 @@@ static bool intel_sel_update_config_val
+  	struct intel_dp *intel_dp =3D intel_attached_dp(connector);
+  	struct intel_display *display =3D to_intel_display(intel_dp);
+ =20
++ 	if (crtc_state->joiner_pipes && !crtc_state->dsc.compression_enable &&
++ 	    crtc_state->output_format =3D=3D INTEL_OUTPUT_FORMAT_YCBCR420) {
++ 		drm_dbg_kms(display->drm,
++ 			    "Selective update not enabled, uncompressed joiner does not suppor=
+t YUV 4:2:0\n");
++ 		goto unsupported;
++ 	}
++=20
+  	if (HAS_PSR2_SEL_FETCH(display) &&
+  	    !intel_psr2_sel_fetch_config_valid(intel_dp, crtc_state) &&
+  	    !HAS_PSR_HW_TRACKING(display)) {
+@@@ -1744,8 -1752,8 +1752,8 @@@ static bool _panel_replay_compute_confi
+ =20
+  	/* Remaining checks are for eDP only */
+ =20
+- 	if (to_intel_crtc(crtc_state->uapi.crtc)->pipe !=3D PIPE_A &&
+- 	    to_intel_crtc(crtc_state->uapi.crtc)->pipe !=3D PIPE_B)
++ 	/* Every joined pipe needs its own PSR/Panel Replay register block. */
++ 	if (intel_crtc_joined_pipe_mask(crtc_state) & ~(BIT(PIPE_A) | BIT(PIPE_B=
+)))
+  		return false;
+ =20
+  	/* 128b/132b Panel Replay is not supported on eDP */
+@@@ -1802,6 -1810,19 +1810,19 @@@ static void psr2_dc3co_disable_work(str
+  	mutex_unlock(&intel_dp->psr.lock);
+  }
+ =20
++ /* Frontbuffer bits for every pipe driving this PSR/Panel Replay instance=
+=2E */
++ static unsigned int psr_frontbuffer_mask(struct intel_dp *intel_dp)
++ {
++ 	struct intel_display *display =3D to_intel_display(intel_dp);
++ 	unsigned int mask =3D 0;
++ 	enum pipe pipe;
++=20
++ 	for_each_pipe_masked(display, pipe, intel_dp->psr.pipe_mask)
++ 		mask |=3D INTEL_FRONTBUFFER_ALL_MASK(pipe);
++=20
++ 	return mask;
++ }
++=20
+  static void
+  psr2_dc3co_flush_locked(struct intel_dp *intel_dp, unsigned int frontbuff=
+er_bits)
   {
-- 	struct wireless_dev *wdev;
-+ 	struct wireless_dev *tmp;
+@@@ -1817,8 -1838,7 +1838,7 @@@
+  	 * At every frontbuffer flush flip event modified delay of delayed work,
+  	 * when delayed work schedules that means display has been idle.
+  	 */
+- 	if (!(frontbuffer_bits &
+- 	    INTEL_FRONTBUFFER_ALL_MASK(intel_dp->psr.pipe)))
++ 	if (!(frontbuffer_bits & psr_frontbuffer_mask(intel_dp)))
+  		return;
  =20
-  	wiphy_lock(&rdev->wiphy);
+  	mod_delayed_work(display->wq.unordered, &intel_dp->psr.dc3co_work,
+@@@ -1849,7 -1869,7 +1869,7 @@@ void intel_psr_set_non_psr_pipes(struc
+  	active_pipes =3D intel_calc_active_pipes(state, active_pipes);
  =20
-@@@ -242,7 -243,7 +243,7 @@@
-  	    !net_eq(wiphy_net(&rdev->wiphy), netns)) {
-  		wiphy_unlock(&rdev->wiphy);
-  		put_device(&rdev->wiphy.dev);
-- 		return ERR_PTR(-ENODEV);
-+ 		return -ENODEV;
+  	crtc_state->active_non_psr_pipes =3D active_pipes &
+- 		~BIT(to_intel_crtc(crtc_state->uapi.crtc)->pipe);
++ 		~intel_crtc_joined_pipe_mask(crtc_state);
+  }
+ =20
+  void intel_psr_compute_config(struct intel_dp *intel_dp,
+@@@ -1877,17 -1897,6 +1897,6 @@@
+  		return;
+  	}
+ =20
+- 	/*
+- 	 * FIXME figure out what is wrong with PSR+joiner and
+- 	 * fix it. Presumably something related to the fact that
+- 	 * PSR is a transcoder level feature.
+- 	 */
+- 	if (crtc_state->joiner_pipes) {
+- 		drm_dbg_kms(display->drm,
+- 			    "PSR disabled due to joiner\n");
+- 		return;
+- 	}
+-=20
+  	/* Only used for state verification. */
+  	crtc_state->panel_replay_dsc_support =3D connector->dp.panel_replay_caps=
+=2Edsc_support;
+  	crtc_state->has_panel_replay =3D _panel_replay_compute_config(crtc_state=
+, conn_state);
+@@@ -1899,6 -1908,14 +1908,14 @@@
+  		return;
+ =20
+  	crtc_state->has_sel_update =3D intel_sel_update_config_valid(crtc_state,=
+ conn_state);
++=20
++ 	/* Plain PSR1 is not supported with joiner. */
++ 	if (crtc_state->joiner_pipes && !crtc_state->has_panel_replay &&
++ 	    !crtc_state->has_sel_update) {
++ 		drm_dbg_kms(display->drm,
++ 			    "PSR disabled, PSR1 not supported with joiner\n");
++ 		crtc_state->has_psr =3D false;
++ 	}
+  }
+ =20
+  void intel_psr_get_config(struct intel_encoder *encoder,
+@@@ -2179,6 -2196,7 +2196,7 @@@ static void intel_psr_enable_locked(str
+  	intel_dp->psr.panel_replay_enabled =3D crtc_state->has_panel_replay;
+  	intel_dp->psr.busy_frontbuffer_bits =3D 0;
+  	intel_dp->psr.pipe =3D to_intel_crtc(crtc_state->uapi.crtc)->pipe;
++ 	intel_dp->psr.pipe_mask =3D intel_crtc_joined_pipe_mask(crtc_state);
+  	intel_dp->psr.transcoder =3D crtc_state->cpu_transcoder;
+  	/* DC5/DC6 requires at least 6 idle frames */
+  	val =3D usecs_to_jiffies(intel_get_frame_time_us(crtc_state) * 6);
+@@@ -2398,6 -2416,7 +2416,7 @@@ static void intel_psr_disable_locked(st
+  	intel_dp->psr.psr2_sel_fetch_cff_enabled =3D false;
+  	intel_dp->psr.active_non_psr_pipes =3D 0;
+  	intel_dp->psr.pkg_c_latency_used =3D 0;
++ 	intel_dp->psr.pipe_mask =3D 0;
+  	cancel_delayed_work(&intel_dp->psr.dc3co_work);
+  	intel_dp->psr.dc3co_allowed =3D false;
+  }
+@@@ -2623,6 -2642,24 +2642,24 @@@ static void intel_psr_force_update(stru
+  	intel_de_write(display, CURSURFLIVE(display, intel_dp->psr.pipe), 0);
+  }
+ =20
++ /*
++  * The joiner secondary has no encoders of its own, its uapi.encoder_mask=
+ is
++  * zero. PSR is a transcoder level feature driven by the primary, so take=
+ the
++  * encoders from there. Only valid once the state has been swapped in, i.=
+e.
++  * from the commit phase.
++  */
++ static u32 psr_encoder_mask(const struct intel_crtc_state *crtc_state)
++ {
++ 	struct intel_crtc *primary_crtc;
++=20
++ 	if (!intel_crtc_is_joiner_secondary(crtc_state))
++ 		return crtc_state->uapi.encoder_mask;
++=20
++ 	primary_crtc =3D intel_primary_crtc(crtc_state);
++=20
++ 	return to_intel_crtc_state(primary_crtc->base.state)->uapi.encoder_mask;
++ }
++=20
+  void intel_psr2_program_trans_man_trk_ctl(struct intel_dsb *dsb,
+  					  const struct intel_crtc_state *crtc_state)
+  {
+@@@ -2635,7 -2672,7 +2672,7 @@@
+  		return;
+ =20
+  	for_each_intel_encoder_mask_with_psr(display->drm, encoder,
+- 					     crtc_state->uapi.encoder_mask) {
++ 					     psr_encoder_mask(crtc_state)) {
+  		struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
+ =20
+  		if (!dsb)
+@@@ -2646,9 -2683,11 +2683,11 @@@
+  		break;
+  	}
+ =20
+- 	intel_de_write_dsb(display, dsb,
+- 			   PSR2_MAN_TRK_CTL(display, cpu_transcoder),
+- 			   crtc_state->psr2_man_track_ctl);
++ 	/* The joined pipes drive one transcoder, so program it once. */
++ 	if (!intel_crtc_is_joiner_secondary(crtc_state))
++ 		intel_de_write_dsb(display, dsb,
++ 				   PSR2_MAN_TRK_CTL(display, cpu_transcoder),
++ 				   crtc_state->psr2_man_track_ctl);
+ =20
+  	if (!crtc_state->enable_psr2_su_region_et)
+  		return;
+@@@ -2733,12 -2772,11 +2772,11 @@@ static void clip_area_update(struct drm
+  		overlap_damage_area->y2 =3D inter.y2;
+  }
+ =20
+- static bool intel_psr2_sel_fetch_pipe_alignment(struct intel_crtc_state *=
+crtc_state)
++ static void intel_psr2_sel_fetch_pipe_alignment(struct intel_crtc_state *=
+crtc_state)
+  {
+  	struct intel_display *display =3D to_intel_display(crtc_state);
+  	const struct drm_dsc_config *vdsc_cfg =3D &crtc_state->dsc.config;
+  	u16 y_alignment;
+- 	bool su_area_changed =3D false;
+ =20
+  	/* ADLP aligns the SU region to vdsc slice height in case dsc is enabled=
+ */
+  	if (crtc_state->dsc.compression_enable &&
+@@@ -2747,18 -2785,12 +2785,12 @@@
+  	else
+  		y_alignment =3D crtc_state->su_y_granularity;
+ =20
+- 	if (crtc_state->psr2_su_area.y1 % y_alignment) {
++ 	if (crtc_state->psr2_su_area.y1 % y_alignment)
+  		crtc_state->psr2_su_area.y1 -=3D crtc_state->psr2_su_area.y1 % y_alignm=
+ent;
+- 		su_area_changed =3D true;
+- 	}
+ =20
+- 	if (crtc_state->psr2_su_area.y2 % y_alignment) {
++ 	if (crtc_state->psr2_su_area.y2 % y_alignment)
+  		crtc_state->psr2_su_area.y2 =3D ((crtc_state->psr2_su_area.y2 /
+  						y_alignment) + 1) * y_alignment;
+- 		su_area_changed =3D true;
+- 	}
+-=20
+- 	return su_area_changed;
+  }
+ =20
+  /*
+@@@ -2768,8 -2800,7 +2800,7 @@@
+  static void
+  intel_psr2_sel_fetch_et_alignment(struct intel_atomic_state *state,
+  				  struct intel_crtc *crtc,
+- 				  struct drm_rect *display_area,
+- 				  bool *cursor_in_su_area)
++ 				  struct drm_rect *display_area)
+  {
+  	struct intel_crtc_state *crtc_state =3D intel_atomic_get_new_crtc_state(=
+state, crtc);
+  	struct intel_plane_state *new_plane_state;
+@@@ -2797,7 -2828,6 +2828,6 @@@
+ =20
+  		clip_area_update(&crtc_state->psr2_su_area, &new_plane_state->uapi.dst,
+  				 display_area);
+- 		*cursor_in_su_area =3D true;
+  	}
+  }
+ =20
+@@@ -2874,6 -2904,11 +2904,11 @@@ intel_psr_apply_su_area_workarounds(str
+  {
+  	struct intel_display *display =3D to_intel_display(crtc_state);
+ =20
++ 	/*
++ 	 * Called on the merged area, with the joiner primary crtc_state. The
++ 	 * secondary has no encoders of its own and the WAs below have to see
++ 	 * the whole SU region that goes into PSR2_MAN_TRK_CTL.
++ 	 */
+  	/* Wa_14014971492 */
+  	if (!crtc_state->has_panel_replay &&
+  	    ((IS_DISPLAY_VERx100_STEP(display, 1400, STEP_A0, STEP_B0) ||
+@@@ -2891,39 -2926,22 +2926,22 @@@
+  		intel_psr_apply_pr_link_on_su_wa(crtc_state);
+  }
+ =20
+- int intel_psr2_sel_fetch_update(struct intel_atomic_state *state,
+- 				struct intel_crtc *crtc)
++ static void psr2_sel_fetch_compute_su_area(struct intel_atomic_state *sta=
+te,
++ 					   struct intel_crtc *crtc,
++ 					   bool *full_update)
+  {
+- 	struct intel_display *display =3D to_intel_display(state);
+- 	const struct intel_crtc_state *old_crtc_state =3D
+- 		intel_atomic_get_old_crtc_state(state, crtc);
+  	struct intel_crtc_state *crtc_state =3D intel_atomic_get_new_crtc_state(=
+state, crtc);
+  	struct intel_plane_state *new_plane_state, *old_plane_state;
+  	struct intel_plane *plane;
+  	struct drm_rect display_area =3D {
+  		.x1 =3D 0,
+  		.y1 =3D 0,
+- 		.x2 =3D crtc_state->hw.adjusted_mode.crtc_hdisplay,
+- 		.y2 =3D crtc_state->hw.adjusted_mode.crtc_vdisplay,
++ 		.x2 =3D drm_rect_width(&crtc_state->pipe_src),
++ 		.y2 =3D drm_rect_height(&crtc_state->pipe_src),
+  	};
+- 	bool full_update =3D false, su_area_changed;
+  	int i;
+ =20
+- 	/*
+- 	 * Selective fetch is not always usable, for instance it is dropped
+- 	 * while pipe CRC is active. The planes keep their selective fetch
+- 	 * enable bit set in hardware over that, and a plane disabled while
+- 	 * selective fetch is off never gets the bit cleared. Once selective
+- 	 * fetch comes back the hardware would resume fetching for a plane that
+- 	 * is no longer enabled and keep its DDB range reserved, so have the
+- 	 * plane update drop the bit for every plane of the pipe as selective
+- 	 * fetch is turned off.
+- 	 */
+- 	crtc_state->clear_psr2_sel_fetch =3D old_crtc_state->enable_psr2_sel_fet=
+ch &&
+- 		!crtc_state->enable_psr2_sel_fetch;
+-=20
+- 	if (!crtc_state->enable_psr2_sel_fetch)
+- 		return 0;
++ 	*full_update =3D false;
+ =20
+  	crtc_state->psr2_su_area.x1 =3D 0;
+  	crtc_state->psr2_su_area.y1 =3D -1;
+@@@ -2931,8 -2949,8 +2949,8 @@@
+  	crtc_state->psr2_su_area.y2 =3D -1;
+ =20
+  	if (!psr2_sel_fetch_pipe_state_supported(crtc_state)) {
+- 		full_update =3D true;
+- 		goto skip_su_area_calc;
++ 		*full_update =3D true;
++ 		return;
   	}
  =20
   	/*
-@@@ -251,19 -252,22 +252,22 @@@
-  	 */
-  	put_device(&rdev->wiphy.dev);
- =20
-- 	if (!wdev_id)
-- 		return NULL;
-+ 	if (!wdev_id) {
-+ 		*wdev =3D NULL;
-+ 		return 0;
-+ 	}
- =20
-- 	list_for_each_entry(wdev, &rdev->wiphy.wdev_list, list) {
-- 		if (wdev->identifier !=3D wdev_id)
-+ 	list_for_each_entry(tmp, &rdev->wiphy.wdev_list, list) {
-+ 		if (tmp->identifier !=3D wdev_id)
+@@@ -2953,8 -2971,9 +2971,9 @@@
+  		    !old_plane_state->uapi.visible)
   			continue;
-- 		if (wdev->netdev && !net_eq(dev_net(wdev->netdev), netns))
-+ 		if (tmp->netdev && !net_eq(dev_net(tmp->netdev), netns))
+ =20
+- 		if (!psr2_sel_fetch_plane_state_supported(new_plane_state)) {
+- 			full_update =3D true;
++ 		if (new_plane_state->uapi.visible &&
++ 		    !psr2_sel_fetch_plane_state_supported(new_plane_state)) {
++ 			*full_update =3D true;
   			break;
-- 		return wdev;
-+ 		*wdev =3D tmp;
-+ 		return 0;
+  		}
+ =20
+@@@ -3003,58 -3022,117 +3022,122 @@@
+ =20
+  		clip_area_update(&crtc_state->psr2_su_area, &damaged_area, &display_are=
+a);
   	}
-  	wiphy_unlock(&rdev->wiphy);
++ }
  =20
-- 	return ERR_PTR(-ENODEV);
-+ 	return -ENODEV;
-  }
- =20
-  /* like nl80211_lock_and_recheck() but under RCU, for wdev_hold() */
-@@@ -290,36 -294,51 +294,51 @@@ nl80211_wdev_by_id_rcu(struct cfg80211_
-  /*
-   * Must have wdev_hold(), acquire the wiphy mutex. This has to
-   * look up the wdev again (otherwise it could deadlock against
--  * wdev removal), so it can return an error pointer.
-+  * wdev removal), so it can return NULL.
-   */
-- static struct wireless_dev *
-- __nl80211_lock_held_wdev(struct cfg80211_registered_device *rdev,
-- 			 struct net *netns, struct wireless_dev *wdev)
-+ static int __nl80211_lock_held_wdev(struct cfg80211_registered_device *rd=
-ev,
-+ 				    struct net *netns,
-+ 				    struct wireless_dev *wdev)
-+ 	__cond_acquires(0, &rdev->wiphy.mtx)
-  {
-  	u32 wdev_id =3D wdev->identifier;
-+ 	struct wireless_dev *tmp;
-+ 	int err;
- =20
-  	/* the wdev reference was keeping the wiphy alive */
-  	get_device(&rdev->wiphy.dev);
-  	wdev_put(wdev);
- =20
-- 	return nl80211_lock_and_recheck(rdev, netns, wdev_id);
-+ 	err =3D nl80211_lock_and_recheck(rdev, netns, wdev_id, &tmp);
-+ 	if (err)
-+ 		return err;
+- 	/*
+- 	 * TODO: For now we are just using full update in case
+- 	 * selective fetch area calculation fails. To optimize this we
+- 	 * should identify cases where this happens and fix the area
+- 	 * calculation for those.
+- 	 */
+- 	if (crtc_state->psr2_su_area.y1 =3D=3D -1) {
+- 		drm_info_once(display->drm,
+- 			      "Selective fetch area calculation failed in pipe %c\n",
+- 			      pipe_name(crtc->pipe));
+- 		full_update =3D true;
++ static void psr2_sel_fetch_set_su_area(struct intel_atomic_state *state,
++ 				       u8 joined_pipes, int y1, int y2)
++ {
++ 	struct intel_display *display =3D to_intel_display(state);
++ 	struct intel_crtc *crtc;
 +=20
-+ 	if (WARN_ON(!tmp || tmp !=3D wdev)) {
-+ 		wiphy_unlock(&rdev->wiphy);
-+ 		return -EINVAL;
++ 	for_each_intel_crtc_in_pipe_mask(display, crtc, joined_pipes) {
++ 		struct intel_crtc_state *crtc_state =3D
++ 			intel_atomic_get_new_crtc_state(state, crtc);
++=20
++ 		crtc_state->psr2_su_area.y1 =3D y1;
++ 		crtc_state->psr2_su_area.y2 =3D y2;
++ 	}
++ }
++=20
++ /*
++  * One transcoder means one SU region. Joining splits the image horizonta=
+lly, so
++  * the pipes share the Y range. Returns false if no joined pipe has any d=
+amage.
++  */
++ static bool psr2_sel_fetch_merge_su_area(struct intel_atomic_state *state,
++ 					 u8 joined_pipes)
++ {
++ 	struct intel_display *display =3D to_intel_display(state);
++ 	struct intel_crtc_state *crtc_state;
++ 	struct intel_crtc *crtc;
++ 	int y1 =3D INT_MAX, y2 =3D INT_MIN;
++=20
++ 	for_each_intel_crtc_in_pipe_mask(display, crtc, joined_pipes) {
++ 		crtc_state =3D intel_atomic_get_new_crtc_state(state, crtc);
++=20
++ 		/* An empty area must not drag the merged one down. */
++ 		if (crtc_state->psr2_su_area.y1 =3D=3D -1)
++ 			continue;
++=20
++ 		y1 =3D min(y1, crtc_state->psr2_su_area.y1);
++ 		y2 =3D max(y2, crtc_state->psr2_su_area.y2);
+  	}
+ =20
+- 	if (full_update)
+- 		goto skip_su_area_calc;
++ 	if (y1 =3D=3D INT_MAX)
++ 		return false;
+ =20
+- 	intel_psr_apply_su_area_workarounds(crtc_state);
++ 	psr2_sel_fetch_set_su_area(state, joined_pipes, y1, y2);
++=20
++ 	return true;
++ }
++=20
++ /*
++  * Merging only grows the area, so a cursor that missed its own pipe's ar=
+ea can
++  * end up partially covered. Realign on the merged area until it stops gr=
+owing.
++  */
++ static void psr2_sel_fetch_align_su_area(struct intel_atomic_state *state,
++ 					 u8 joined_pipes)
++ {
++ 	struct intel_display *display =3D to_intel_display(state);
++ 	struct intel_crtc *crtc;
++ 	bool su_area_changed;
+ =20
+  	do {
+- 		bool cursor_in_su_area =3D false;
++ 		su_area_changed =3D false;
+ =20
+- 		/*
+- 		 * Adjust su area to cover cursor fully as necessary
+- 		 * (early transport). A visible cursor is in the state
+- 		 * even when it is not updated by itself as all planes
+- 		 * of the pipe are added into the state before the plane
+- 		 * checks when selective fetch is enabled.
+- 		 */
+- 		intel_psr2_sel_fetch_et_alignment(state, crtc, &display_area,
+- 						  &cursor_in_su_area);
++ 		for_each_intel_crtc_in_pipe_mask(display, crtc, joined_pipes) {
++ 			struct intel_crtc_state *crtc_state =3D
++ 				intel_atomic_get_new_crtc_state(state, crtc);
++ 			struct drm_rect display_area =3D {
++ 				.x1 =3D 0,
++ 				.y1 =3D 0,
++ 				.x2 =3D drm_rect_width(&crtc_state->pipe_src),
++ 				.y2 =3D drm_rect_height(&crtc_state->pipe_src),
++ 			};
++ 			struct drm_rect old_su_area =3D crtc_state->psr2_su_area;
+ =20
+- 		su_area_changed =3D intel_psr2_sel_fetch_pipe_alignment(crtc_state);
++ 			/* Needs the planes already pulled into the state. */
++ 			intel_psr2_sel_fetch_et_alignment(state, crtc, &display_area);
+ =20
+- 		/*
+- 		 * If the cursor was outside the SU area before
+- 		 * alignment, the alignment step (which only expands
+- 		 * SU) may pull the cursor partially inside, so we
+- 		 * must run ET alignment again to fully cover it. But
+- 		 * if the cursor was already fully inside before
+- 		 * alignment, expanding the SU area won't change that,
+- 		 * so no further work is needed.
+- 		 */
+- 		if (cursor_in_su_area)
+- 			break;
++ 			intel_psr2_sel_fetch_pipe_alignment(crtc_state);
++=20
++ 			su_area_changed |=3D !drm_rect_equals(&crtc_state->psr2_su_area,
++ 							    &old_su_area);
++ 		}
++=20
++ 		if (su_area_changed)
++ 			psr2_sel_fetch_merge_su_area(state, joined_pipes);
+  	} while (su_area_changed);
++ }
++=20
++ static int psr2_sel_fetch_apply_su_area(struct intel_atomic_state *state,
++ 					struct intel_crtc *crtc,
++ 					bool full_update)
++ {
++ 	struct intel_crtc_state *crtc_state =3D intel_atomic_get_new_crtc_state(=
+state, crtc);
++ 	struct intel_plane_state *new_plane_state, *old_plane_state;
++ 	struct intel_plane *plane;
++ 	struct drm_rect display_area =3D {
++ 		.x1 =3D 0,
++ 		.y1 =3D 0,
++ 		.x2 =3D drm_rect_width(&crtc_state->pipe_src),
++ 		.y2 =3D drm_rect_height(&crtc_state->pipe_src),
++ 	};
++ 	int i;
++=20
++ 	/*
++ 	 * On full update the whole pipe is fetched, the plane loop below then
++ 	 * gives every visible plane its full area. Plane states come out of
++ 	 * the duplicate with a zero sized area, so this has to run on full
++ 	 * update as well.
++ 	 */
++ 	if (full_update)
++ 		crtc_state->psr2_su_area =3D display_area;
+ =20
+ +skip_su_area_calc:
+ +	if (full_update)
+ +		clip_area_update(&crtc_state->psr2_su_area, &display_area,
+ +				 &display_area);
+ +
+  	/*
+  	 * Now that we have the pipe damaged area check if it intersect with
+  	 * every plane, if it does set the plane selective fetch area.
+@@@ -3107,6 -3185,82 +3190,82 @@@
+  	psr2_man_trk_ctl_calc(crtc_state, full_update);
+  	crtc_state->pipe_srcsz_early_tpt =3D
+  		psr2_pipe_srcsz_early_tpt_calc(crtc_state, full_update);
++=20
++ 	return 0;
++ }
++=20
++ int intel_psr2_sel_fetch_update(struct intel_atomic_state *state,
++ 				struct intel_crtc *crtc)
++ {
++ 	struct intel_display *display =3D to_intel_display(state);
++ 	const struct intel_crtc_state *old_crtc_state =3D
++ 		intel_atomic_get_old_crtc_state(state, crtc);
++ 	struct intel_crtc_state *crtc_state =3D intel_atomic_get_new_crtc_state(=
+state, crtc);
++ 	struct intel_crtc *joined_crtc;
++ 	bool full_update =3D false;
++ 	u8 joined_pipes;
++ 	int ret;
++=20
++ 	/*
++ 	 * Selective fetch is not always usable, for instance it is dropped
++ 	 * while pipe CRC is active. The planes keep their selective fetch
++ 	 * enable bit set in hardware over that, and a plane disabled while
++ 	 * selective fetch is off never gets the bit cleared. Once selective
++ 	 * fetch comes back the hardware would resume fetching for a plane that
++ 	 * is no longer enabled and keep its DDB range reserved, so have the
++ 	 * plane update drop the bit for every plane of the pipe as selective
++ 	 * fetch is turned off.
++ 	 */
++ 	crtc_state->clear_psr2_sel_fetch =3D old_crtc_state->enable_psr2_sel_fet=
+ch &&
++ 		!crtc_state->enable_psr2_sel_fetch;
++=20
++ 	if (!crtc_state->enable_psr2_sel_fetch)
++ 		return 0;
++=20
++ 	/* The joined pipes are handled in one go from the primary. */
++ 	if (intel_crtc_is_joiner_secondary(crtc_state))
++ 		return 0;
++=20
++ 	joined_pipes =3D intel_crtc_joined_pipe_mask(crtc_state);
++=20
++ 	for_each_intel_crtc_in_pipe_mask(display, joined_crtc, joined_pipes) {
++ 		psr2_sel_fetch_compute_su_area(state, joined_crtc, &full_update);
++=20
++ 		/* One pipe falling back takes all of them with it. */
++ 		if (full_update)
++ 			break;
 + 	}
 +=20
-+ 	return 0;
-  }
- =20
-- static struct wireless_dev *
-- nl80211_lock_held_wdev(struct cfg80211_registered_device *rdev,
-- 		       struct genl_info *info, struct wireless_dev *wdev)
-+ static int nl80211_lock_held_wdev(struct cfg80211_registered_device *rdev,
-+ 				  struct genl_info *info,
-+ 				  struct wireless_dev *wdev)
-+ 	__cond_acquires(0, &rdev->wiphy.mtx)
-  {
-+ 	int err;
++ 	/*
++ 	 * TODO: For now we are just using full update in case selective fetch
++ 	 * area calculation fails. To optimize this we should identify cases
++ 	 * where this happens and fix the area calculation for those.
++ 	 */
++ 	if (!full_update && !psr2_sel_fetch_merge_su_area(state, joined_pipes))
++ 		full_update =3D true;
 +=20
-  	info->user_ptr[1] =3D NULL;
-- 	wdev =3D __nl80211_lock_held_wdev(rdev, genl_info_net(info), wdev);
-- 	if (IS_ERR(wdev))
-- 		return wdev;
-+ 	err =3D __nl80211_lock_held_wdev(rdev, genl_info_net(info), wdev);
-+ 	if (err)
-+ 		return err;
- =20
-  	if (!wdev_running(wdev)) {
-  		wiphy_unlock(&rdev->wiphy);
-- 		return ERR_PTR(-ENETDOWN);
-+ 		return -ENETDOWN;
-  	}
- =20
-- 	return wdev;
-+ 	return 0;
-  }
- =20
-  static int validate_beacon_head(const struct nlattr *attr,
-@@@ -1358,6 -1377,7 +1377,7 @@@ static int __nl80211_prepare_wdev_dump(
-  				       struct cfg80211_registered_device **rdev,
-  				       struct wireless_dev **wdev,
-  				       struct nlattr **attrbuf, bool lock)
-+ 	__cond_acquires(0, &(*rdev)->wiphy.mtx)
-  {
-  	struct net *netns =3D sock_net(cb->skb->sk);
-  	u32 wdev_id;
-@@@ -1410,13 -1430,15 +1430,15 @@@
-  		if (!*wdev)
-  			return -ENODEV;
-  	} else {
-+ 		int ret;
++ 	if (!full_update) {
++ 		/*
++ 		 * The WAs clamp the SU region that ends up in the per
++ 		 * transcoder PSR2_MAN_TRK_CTL, so they have to run on the
++ 		 * merged area rather than on the per pipe ones. crtc_state is
++ 		 * the joiner primary, the only one carrying the encoders the
++ 		 * WAs look at, and the merge guarantees a non empty area.
++ 		 */
++ 		intel_psr_apply_su_area_workarounds(crtc_state);
++ 		psr2_sel_fetch_set_su_area(state, joined_pipes,
++ 					   crtc_state->psr2_su_area.y1,
++ 					   crtc_state->psr2_su_area.y2);
 +=20
-  		get_device(&(*rdev)->wiphy.dev);
-  		rcu_read_unlock();
- =20
-  		/* things may have changed since the lookup or last dumpit */
-- 		*wdev =3D nl80211_lock_and_recheck(*rdev, netns, wdev_id);
-- 		if (IS_ERR(*wdev))
-- 			return PTR_ERR(*wdev);
-+ 		ret =3D nl80211_lock_and_recheck(*rdev, netns, wdev_id, wdev);
++ 		psr2_sel_fetch_align_su_area(state, joined_pipes);
++ 	}
++=20
++ 	for_each_intel_crtc_in_pipe_mask(display, joined_crtc, joined_pipes) {
++ 		ret =3D psr2_sel_fetch_apply_su_area(state, joined_crtc, full_update);
 + 		if (ret)
 + 			return ret;
-  	}
- =20
-  	/* 0 is the first index - add 1 to parse only once */
-@@@ -1430,6 -1452,7 +1452,7 @@@ static int nl80211_prepare_wdev_dump(st
-  				     struct cfg80211_registered_device **rdev,
-  				     struct wireless_dev **wdev,
-  				     struct nlattr **attrbuf)
-+ 	__cond_acquires(0, &(*rdev)->wiphy.mtx)
-  {
-  	return __nl80211_prepare_wdev_dump(cb, rdev, wdev, attrbuf, true);
-  }
-@@@ -3415,6 -3438,9 +3438,9 @@@ static int nl80211_send_wiphy(struct cf
-  			if (rdev->wiphy.sar_capa)
-  				CMD(set_sar_specs, SET_SAR_SPECS);
-  			CMD(assoc_ml_reconf, ASSOC_MLO_RECONF);
-+=20
-+ 			if (rdev->wiphy.flags & WIPHY_FLAG_SMD_TRANSITION_CLIENT)
-+ 				CMD(execute_st, EXECUTE_SMD_TRANSITION);
-  		}
-  #undef CMD
- =20
-@@@ -4679,8 -4705,9 +4705,8 @@@ static int nl80211_set_wiphy(struct sk_
-  			return -EOPNOTSUPP;
- =20
-  		if (rdev->wiphy.n_radio) {
- -			old_radio_rts_threshold =3D kcalloc(rdev->wiphy.n_radio,
- -							  sizeof(u32),
- -							  GFP_KERNEL);
- +			old_radio_rts_threshold =3D kzalloc_objs(u32,
- +							       rdev->wiphy.n_radio);
-  			if (!old_radio_rts_threshold)
-  				return -ENOMEM;
-  		}
-@@@ -5380,6 -5407,8 +5406,8 @@@ static int nl80211_new_interface(struc
-  }
- =20
-  static int nl80211_del_interface(struct sk_buff *skb, struct genl_info *i=
-nfo)
-+ 	/* clang cannot see pre_doit acquiring it for us */
-+ 	__must_hold(&((struct cfg80211_registered_device *)info->user_ptr[0])->w=
-iphy.mtx)
-  {
-  	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-  	struct wireless_dev *wdev =3D info->user_ptr[1];
-@@@ -5438,6 -5467,8 +5466,8 @@@ static int nl80211_validate_key_link_id
-  					struct wireless_dev *wdev,
-  					int link_id, bool pairwise)
-  {
-+ 	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-+=20
-  	if (pairwise) {
-  		if (link_id !=3D -1) {
-  			GENL_SET_ERR_MSG(info,
-@@@ -5454,7 -5485,9 +5484,9 @@@
-  					 "link ID must be set for MLO group key");
-  			return -EINVAL;
-  		}
-- 		if (!(wdev->valid_links & BIT(link_id))) {
-+ 		/* for SMD transition support the driver must check itself */
-+ 		if (!(wdev->valid_links & BIT(link_id)) &&
-+ 		    !(rdev->wiphy.flags & WIPHY_FLAG_SMD_TRANSITION_CLIENT)) {
-  			GENL_SET_ERR_MSG(info, "invalid link ID for MLO group key");
-  			return -EINVAL;
-  		}
-@@@ -5564,6 -5597,8 +5596,8 @@@ static int nl80211_get_key(struct sk_bu
-  	if (!rdev->ops->get_key)
-  		return -EOPNOTSUPP;
- =20
-+ 	mac_addr =3D cfg80211_get_key_mac_addr(wdev, 0, pairwise, mac_addr);
-+=20
-  	if (!cfg80211_valid_key_idx(wdev, key_idx, type, mac_addr))
-  		return -ENOENT;
- =20
-@@@ -5765,6 -5800,10 +5799,10 @@@ static int nl80211_new_key(struct sk_bu
-  	if (!rdev->ops->add_key)
-  		return -EOPNOTSUPP;
- =20
-+ 	mac_addr =3D cfg80211_get_key_mac_addr(wdev, key.p.cipher,
-+ 					     key.type =3D=3D NL80211_KEYTYPE_PAIRWISE,
-+ 					     mac_addr);
-+=20
-  	if (cfg80211_validate_key_settings(rdev, wdev, &key.p, key.idx,
-  					   key.type, mac_addr)) {
-  		GENL_SET_ERR_MSG(info, "key setting validation failed");
-@@@ -5794,7 -5833,7 +5832,7 @@@ static int nl80211_del_key(struct sk_bu
-  	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-  	int err;
-  	struct wireless_dev *wdev =3D info->user_ptr[1];
-- 	u8 *mac_addr =3D NULL;
-+ 	const u8 *mac_addr =3D NULL;
-  	struct key_parse key;
-  	int link_id =3D nl80211_link_id_or_invalid(info->attrs);
- =20
-@@@ -5820,6 -5859,10 +5858,10 @@@
-  		return -EINVAL;
-  	}
- =20
-+ 	mac_addr =3D cfg80211_get_key_mac_addr(wdev, 0,
-+ 					     key.type =3D=3D NL80211_KEYTYPE_PAIRWISE,
-+ 					     mac_addr);
-+=20
-  	if (!cfg80211_valid_key_idx(wdev, key.idx, key.type, mac_addr))
-  		return -EINVAL;
- =20
-@@@ -7707,6 -7750,13 +7749,13 @@@ static int nl80211_parse_ap_update(stru
-  			return err;
-  	}
- =20
-+ 	attr =3D attrs[NL80211_ATTR_HE_OBSS_PD];
-+ 	if (attr) {
-+ 		err =3D nl80211_parse_he_obss_pd(attr, &params->he_obss_pd);
-+ 		if (err)
-+ 			return err;
 + 	}
 +=20
   	return 0;
   }
  =20
-@@@ -8940,6 -8990,7 +8989,7 @@@ static int nl80211_fill_station_info(st
- =20
-  static int nl80211_dump_station(struct sk_buff *skb,
-  				struct netlink_callback *cb)
-+ 	__context_unsafe("can't cope with the locked variable")
-  {
-  	struct cfg80211_registered_device *rdev;
-  	struct wireless_dev *wdev;
-@@@ -9026,10 -9077,10 +9076,10 @@@
-  				memset(&ctx->sinfo, 0, sizeof(ctx->sinfo));
- =20
-  				/* this fails if the wdev is being removed */
-- 				wdev =3D __nl80211_lock_held_wdev(rdev, netns,
-- 								wdev);
-- 				if (IS_ERR(wdev))
-- 					return PTR_ERR(wdev);
-+ 				err =3D __nl80211_lock_held_wdev(rdev, netns,
-+ 							       wdev);
-+ 				if (err)
-+ 					return err;
- =20
-  				/* try again locked now */
-  				locked =3D true;
-@@@ -9148,6 -9199,7 +9198,7 @@@ static int nl80211_dump_station_done(st
-  }
- =20
-  static int nl80211_get_station(struct sk_buff *skb, struct genl_info *inf=
-o)
-+ 	__context_unsafe("can't cope with the locked variable")
-  {
-  	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-  	struct wireless_dev *wdev =3D info->user_ptr[1];
-@@@ -9198,11 -9250,8 +9249,8 @@@
-  		/* the wdev pointer is only valid until unlocking after this */
-  		info->user_ptr[1] =3D NULL;
-  		/* can fail if the wdev is being removed */
-- 		wdev =3D __nl80211_lock_held_wdev(rdev, genl_info_net(info),
-- 						wdev);
-- 		if (IS_ERR(wdev)) {
-- 			err =3D PTR_ERR(wdev);
-- 		} else {
-+ 		err =3D __nl80211_lock_held_wdev(rdev, genl_info_net(info), wdev);
-+ 		if (!err) {
-  			locked =3D true;
-  			err =3D rdev_get_station(rdev, wdev, mac_addr, &sinfo);
-  		}
-@@@ -10320,8 -10369,6 +10368,6 @@@ static int nl80211_dump_mpath(struct sk
-  	err =3D nl80211_prepare_wdev_dump(cb, &rdev, &wdev, NULL);
-  	if (err)
-  		return err;
-- 	/* nl80211_prepare_wdev_dump acquired it in the successful case */
-- 	__acquire(&rdev->wiphy.mtx);
- =20
-  	if (!rdev->ops->dump_mpath) {
-  		err =3D -EOPNOTSUPP;
-@@@ -10520,8 -10567,6 +10566,6 @@@ static int nl80211_dump_mpp(struct sk_b
-  	err =3D nl80211_prepare_wdev_dump(cb, &rdev, &wdev, NULL);
-  	if (err)
-  		return err;
-- 	/* nl80211_prepare_wdev_dump acquired it in the successful case */
-- 	__acquire(&rdev->wiphy.mtx);
- =20
-  	if (!rdev->ops->dump_mpp) {
-  		err =3D -EOPNOTSUPP;
-@@@ -11993,7 -12038,7 +12037,7 @@@ static int nl80211_trigger_scan(struct=
-=20
- =20
-   out_free:
-  	rdev->scan_req =3D NULL;
-- 	kfree(request);
-+ 	kfree_rcu(request, rcu_head);
- =20
-  	return err;
-  }
-@@@ -13076,8 -13121,6 +13120,6 @@@ static int nl80211_dump_scan(struct sk_
-  		kfree(attrbuf);
-  		return err;
-  	}
-- 	/* nl80211_prepare_wdev_dump acquired it in the successful case */
-- 	__acquire(&rdev->wiphy.mtx);
- =20
-  	dump_include_use_data =3D
-  		attrbuf[NL80211_ATTR_BSS_DUMP_INCLUDE_USE_DATA];
-@@@ -13216,8 -13259,6 +13258,6 @@@ static int nl80211_dump_survey(struct s
-  		kfree(attrbuf);
-  		return res;
-  	}
-- 	/* nl80211_prepare_wdev_dump acquired it in the successful case */
-- 	__acquire(&rdev->wiphy.mtx);
- =20
-  	/* prepare_wdev_dump parsed the attributes */
-  	radio_stats =3D attrbuf[NL80211_ATTR_SURVEY_RADIO_STATS];
-@@@ -15420,10 -15461,8 +15460,8 @@@ static int nl80211_tx_mgmt(struct sk_bu
-  	/* pre_doit didn't lock the wiphy mutex, try without */
-  	err =3D cfg80211_mlme_mgmt_tx_unlocked(rdev, wdev, &params, cookie);
-  	if (err =3D=3D -EAGAIN) {
-- 		wdev =3D nl80211_lock_held_wdev(rdev, info, wdev);
-- 		if (IS_ERR(wdev)) {
-- 			err =3D PTR_ERR(wdev);
-- 		} else {
-+ 		err =3D nl80211_lock_held_wdev(rdev, info, wdev);
-+ 		if (!err) {
-  			err =3D nl80211_tx_mgmt_locked(rdev, wdev, &params,
-  						     cookie);
-  			wiphy_unlock(&rdev->wiphy);
-@@@ -18294,7 -18333,8 +18332,7 @@@ nl80211_parse_non_evac_channel(struct c
-  			       struct cfg80211_chan_def *chandef)
-  {
-  	struct nlattr **channel_parsed __free(kfree) =3D
- -		kcalloc(NL80211_ATTR_MAX + 1, sizeof(*channel_parsed),
- -			GFP_KERNEL);
- +		kzalloc_objs(*channel_parsed, NL80211_ATTR_MAX + 1);
-  	int ret;
- =20
-  	if (!channel_parsed)
-@@@ -18329,7 -18369,8 +18367,7 @@@ static int nl80211_nan_set_non_evac_cha
-  		n_channels++;
- =20
-  	struct cfg80211_nan_non_evac_channels *channels __free(kfree) =3D
- -		kzalloc(struct_size(channels, chandefs, n_channels),
- -			GFP_KERNEL);
- +		kzalloc_flex(*channels, chandefs, n_channels);
-  	if (!channels)
-  		return -ENOMEM;
- =20
-@@@ -19996,6 -20037,148 +20034,148 @@@ nl80211_epcs_cfg(struct sk_buff *skb=
-, s
-  	return rdev_set_epcs(rdev, dev, val);
-  }
- =20
-+ static int nl80211_prepare_st(struct sk_buff *skb, struct genl_info *info)
-+ {
-+ 	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-+ 	struct net_device *dev =3D info->user_ptr[1];
-+ 	struct wireless_dev *wdev =3D dev->ieee80211_ptr;
-+ 	struct cfg80211_st_prep_request req =3D {};
-+ 	bool have_link =3D false;
-+ 	int err;
-+=20
-+ 	if (!wdev->valid_links)
-+ 		return -EINVAL;
-+=20
-+ 	if (!(rdev->wiphy.flags & WIPHY_FLAG_SMD_TRANSITION_CLIENT))
-+ 		return -EOPNOTSUPP;
-+=20
-+ 	if (dev->ieee80211_ptr->conn_owner_nlportid &&
-+ 	    dev->ieee80211_ptr->conn_owner_nlportid !=3D info->snd_portid)
-+ 		return -EPERM;
-+=20
-+ 	if (wdev->iftype !=3D NL80211_IFTYPE_STATION &&
-+ 	    wdev->iftype !=3D NL80211_IFTYPE_P2P_CLIENT)
-+ 		return -EOPNOTSUPP;
-+=20
-+ 	if (!info->attrs[NL80211_ATTR_MLD_ADDR] ||
-+ 	    !info->attrs[NL80211_ATTR_MLO_LINKS])
-+ 		return -EINVAL;
-+=20
-+ 	req.ap_mld_addr =3D nla_data(info->attrs[NL80211_ATTR_MLD_ADDR]);
-+=20
-+ 	if (ether_addr_equal(req.ap_mld_addr, wdev->u.client.connected_addr))
-+ 		return -EINVAL;
-+=20
-+ 	if (info->attrs[NL80211_ATTR_IE]) {
-+ 		req.elems =3D nla_data(info->attrs[NL80211_ATTR_IE]);
-+ 		req.elems_len =3D nla_len(info->attrs[NL80211_ATTR_IE]);
-+ 	}
-+=20
-+ 	if (info->attrs[NL80211_ATTR_EXT_MLD_CAPA_AND_OPS])
-+ 		req.ext_mld_capa_ops =3D
-+ 			nla_get_u16(info->attrs[NL80211_ATTR_EXT_MLD_CAPA_AND_OPS]);
-+=20
-+ 	err =3D nl80211_process_links(rdev, req.links,
-+ 				    IEEE80211_MLD_MAX_NUM_LINKS,
-+ 				    NULL, 0, info);
-+ 	if (err)
-+ 		goto free;
-+=20
-+ 	for (int link_id =3D 0; link_id < ARRAY_SIZE(req.links); link_id++) {
-+ 		if (req.links[link_id].bss) {
-+ 			have_link =3D true;
-+ 			break;
-+ 		}
-+ 	}
-+=20
-+ 	if (!have_link) {
-+ 		err =3D -EINVAL;
-+ 		goto free;
-+ 	}
-+=20
-+ 	return cfg80211_prepare_st(rdev, dev, &req);
-+ free:
-+ 	for (int link_id =3D 0; link_id < ARRAY_SIZE(req.links); link_id++)
-+ 		cfg80211_put_bss(&rdev->wiphy, req.links[link_id].bss);
-+ 	return err;
-+ }
-+=20
-+ static int nl80211_execute_st(struct sk_buff *skb, struct genl_info *info)
-+ {
-+ 	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-+ 	struct net_device *dev =3D info->user_ptr[1];
-+ 	struct wireless_dev *wdev =3D dev->ieee80211_ptr;
-+ 	struct cfg80211_st_exec_request req =3D {
-+ 		.drain_tids =3D 0xFF, /* only 8 TIDs in ST preparation */
-+ 	};
-+=20
-+ 	if (!wdev->valid_links)
-+ 		return -EINVAL;
-+=20
-+ 	if (!(rdev->wiphy.flags & WIPHY_FLAG_SMD_TRANSITION_CLIENT))
-+ 		return -EOPNOTSUPP;
-+=20
-+ 	if (dev->ieee80211_ptr->conn_owner_nlportid &&
-+ 	    dev->ieee80211_ptr->conn_owner_nlportid !=3D info->snd_portid)
-+ 		return -EPERM;
-+=20
-+ 	if (wdev->iftype !=3D NL80211_IFTYPE_STATION &&
-+ 	    wdev->iftype !=3D NL80211_IFTYPE_P2P_CLIENT)
-+ 		return -EOPNOTSUPP;
-+=20
-+ 	if (!info->attrs[NL80211_ATTR_MLD_ADDR])
-+ 		return -EINVAL;
-+=20
-+ 	req.ap_mld_addr =3D nla_data(info->attrs[NL80211_ATTR_MLD_ADDR]);
-+=20
-+ 	if (info->attrs[NL80211_ATTR_TID_BITMAP]) {
-+ 		u16 drain_tids =3D
-+ 			nla_get_u16(info->attrs[NL80211_ATTR_TID_BITMAP]);
-+=20
-+ 		if (drain_tids > 0xFF)
-+ 			return -EINVAL;
-+=20
-+ 		req.drain_tids =3D drain_tids;
-+ 	}
-+=20
-+ 	if (info->attrs[NL80211_ATTR_IE]) {
-+ 		req.elems =3D nla_data(info->attrs[NL80211_ATTR_IE]);
-+ 		req.elems_len =3D nla_len(info->attrs[NL80211_ATTR_IE]);
-+ 	}
-+=20
-+ 	return rdev_execute_st(rdev, dev, &req);
-+ }
-+=20
-+ static int nl80211_abandon_st(struct sk_buff *skb, struct genl_info *info)
-+ {
-+ 	struct cfg80211_registered_device *rdev =3D info->user_ptr[0];
-+ 	struct net_device *dev =3D info->user_ptr[1];
-+ 	struct wireless_dev *wdev =3D dev->ieee80211_ptr;
-+ 	const u8 *ap_mld_addr;
-+=20
-+ 	if (!wdev->valid_links)
-+ 		return -EINVAL;
-+=20
-+ 	if (dev->ieee80211_ptr->conn_owner_nlportid &&
-+ 	    dev->ieee80211_ptr->conn_owner_nlportid !=3D info->snd_portid)
-+ 		return -EPERM;
-+=20
-+ 	if (!(rdev->wiphy.flags & WIPHY_FLAG_SMD_TRANSITION_CLIENT))
-+ 		return -EOPNOTSUPP;
-+=20
-+ 	if (wdev->iftype !=3D NL80211_IFTYPE_STATION &&
-+ 	    wdev->iftype !=3D NL80211_IFTYPE_P2P_CLIENT)
-+ 		return -EOPNOTSUPP;
-+=20
-+ 	if (!info->attrs[NL80211_ATTR_MLD_ADDR])
-+ 		return -EINVAL;
-+=20
-+ 	ap_mld_addr =3D nla_data(info->attrs[NL80211_ATTR_MLD_ADDR]);
-+=20
-+ 	return rdev_abandon_st(rdev, dev, ap_mld_addr,
-+ 			       info->attrs[NL80211_ATTR_LOCAL_STATE_CHANGE]);
-+ }
-+=20
-  #define NL80211_FLAG_NEED_WIPHY		0x01
-  #define NL80211_FLAG_NEED_NETDEV	0x02
-  #define NL80211_FLAG_NEED_RTNL		0x04
-@@@ -20115,6 -20298,7 +20295,7 @@@ static bool nl80211_need_wdev_ref(u32 i
-  static int nl80211_pre_doit(const struct genl_split_ops *ops,
-  			    struct sk_buff *skb,
-  			    struct genl_info *info)
-+ 	__context_unsafe("can't cope with the need_rtnl variable")
-  {
-  	struct cfg80211_registered_device *rdev =3D NULL;
-  	struct net *netns =3D genl_info_net(info);
-@@@ -20184,11 -20368,9 +20365,9 @@@
-  			wiphy_lock(&rdev->wiphy);
-  		} else {
-  			/* without rtnl, things may have changed since lookup */
-- 			wdev =3D nl80211_lock_and_recheck(rdev, netns, wdev_id);
-- 			if (IS_ERR(wdev)) {
-- 				err =3D PTR_ERR(wdev);
-+ 			err =3D nl80211_lock_and_recheck(rdev, netns, wdev_id, &wdev);
-+ 			if (err)
-  				goto out;
-- 			}
-  		}
-  		locked =3D true;
-  	} else if (rdev && !need_rtnl) {
-@@@ -21345,6 -21527,24 +21524,24 @@@ static const struct genl_small_ops nl80
-  		.internal_flags =3D IFLAGS(NL80211_FLAG_NEED_NETDEV_UP |
-  					 NL80211_FLAG_NO_WIPHY_MTX),
-  	},
-+ 	{
-+ 		.cmd =3D NL80211_CMD_PREPARE_SMD_TRANSITION,
-+ 		.doit =3D nl80211_prepare_st,
-+ 		.flags =3D GENL_UNS_ADMIN_PERM,
-+ 		.internal_flags =3D IFLAGS(NL80211_FLAG_NEED_NETDEV_UP),
-+ 	},
-+ 	{
-+ 		.cmd =3D NL80211_CMD_EXECUTE_SMD_TRANSITION,
-+ 		.doit =3D nl80211_execute_st,
-+ 		.flags =3D GENL_UNS_ADMIN_PERM,
-+ 		.internal_flags =3D IFLAGS(NL80211_FLAG_NEED_NETDEV_UP),
-+ 	},
-+ 	{
-+ 		.cmd =3D NL80211_CMD_ABANDON_SMD_TRANSITION,
-+ 		.doit =3D nl80211_abandon_st,
-+ 		.flags =3D GENL_UNS_ADMIN_PERM,
-+ 		.internal_flags =3D IFLAGS(NL80211_FLAG_NEED_NETDEV_UP),
-+ 	},
-  };
- =20
-  static struct genl_family nl80211_fam __ro_after_init =3D {
-@@@ -21687,6 -21887,7 +21884,7 @@@ struct nl80211_mlme_event=20
-  	const u8 *req_ies;
-  	size_t req_ies_len;
-  	bool reconnect;
-+ 	const u8 *mld_addr;
-  };
- =20
-  static void nl80211_send_mlme_event(struct cfg80211_registered_device *rd=
-ev,
-@@@ -21709,12 -21910,17 +21907,17 @@@
- =20
-  	if (nla_put_u32(msg, NL80211_ATTR_WIPHY, rdev->wiphy_idx) ||
-  	    nla_put_u32(msg, NL80211_ATTR_IFINDEX, netdev->ifindex) ||
-- 	    nla_put(msg, NL80211_ATTR_FRAME, event->buf_len, event->buf) ||
-+ 	    (event->buf_len &&
-+ 	     nla_put(msg, NL80211_ATTR_FRAME, event->buf_len, event->buf)) ||
-  	    (event->req_ies &&
-  	     nla_put(msg, NL80211_ATTR_REQ_IE, event->req_ies_len,
-  		     event->req_ies)))
-  		goto nla_put_failure;
- =20
-+ 	if (event->mld_addr &&
-+ 	    nla_put(msg, NL80211_ATTR_MLD_ADDR, ETH_ALEN, event->mld_addr))
-+ 		goto nla_put_failure;
-+=20
-  	if (event->reconnect &&
-  	    nla_put_flag(msg, NL80211_ATTR_RECONNECT_REQUESTED))
-  		goto nla_put_failure;
-@@@ -22202,7 -22408,6 +22405,6 @@@ void cfg80211_links_removed(struct net_
+@@@ -3332,7 -3486,7 +3491,7 @@@ void intel_psr_wait_for_idle_locked(con
   		return;
  =20
-  	cfg80211_wdev_release_link_bsses(wdev, link_mask);
-- 	wdev->valid_links &=3D ~link_mask;
+  	for_each_intel_encoder_mask_with_psr(display->drm, encoder,
+- 					     new_crtc_state->uapi.encoder_mask) {
++ 					     psr_encoder_mask(new_crtc_state)) {
+  		struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
+  		int ret;
  =20
-  	msg =3D nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
-  	if (!msg)
-@@@ -22266,6 -22471,169 +22468,169 @@@ void nl80211_mlo_reconf_add_done(str=
-uc
-  	nl80211_send_mlme_event(rdev, dev, &event, GFP_KERNEL);
-  }
+@@@ -3621,8 -3775,7 +3780,7 @@@ void intel_psr_invalidate(struct intel_
+  			continue;
+  		}
  =20
-+ void nl80211_st_preparation_response(struct cfg80211_registered_device *r=
-dev,
-+ 				     struct net_device *dev,
-+ 				     struct cfg80211_st_preparation_resp_data *data)
-+ {
-+ 	struct nl80211_mlme_event event =3D {
-+ 		.cmd =3D NL80211_CMD_PREPARE_SMD_TRANSITION,
-+ 		.buf =3D data->buf,
-+ 		.buf_len =3D data->len,
-+ 		.req_ies =3D data->req_elems,
-+ 		.req_ies_len =3D data->req_elems_len,
-+ 		.mld_addr =3D data->ap_mld_addr,
-+ 	};
+- 		pipe_frontbuffer_bits &=3D
+- 			INTEL_FRONTBUFFER_ALL_MASK(intel_dp->psr.pipe);
++ 		pipe_frontbuffer_bits &=3D psr_frontbuffer_mask(intel_dp);
+  		intel_dp->psr.busy_frontbuffer_bits |=3D pipe_frontbuffer_bits;
+ =20
+  		if (pipe_frontbuffer_bits)
+@@@ -3693,8 -3846,7 +3851,7 @@@ void intel_psr_flush(struct intel_displ
+  			continue;
+  		}
+ =20
+- 		pipe_frontbuffer_bits &=3D
+- 			INTEL_FRONTBUFFER_ALL_MASK(intel_dp->psr.pipe);
++ 		pipe_frontbuffer_bits &=3D psr_frontbuffer_mask(intel_dp);
+ =20
+  		if (pipe_frontbuffer_bits =3D=3D 0)
+  			goto unlock;
+@@@ -3981,7 -4133,7 +4138,7 @@@ void intel_psr_lock(const struct intel_
+  		return;
+ =20
+  	for_each_intel_encoder_mask_with_psr(display->drm, encoder,
+- 					     crtc_state->uapi.encoder_mask) {
++ 					     psr_encoder_mask(crtc_state)) {
+  		struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
+ =20
+  		mutex_lock(&intel_dp->psr.lock);
+@@@ -4004,7 -4156,7 +4161,7 @@@ void intel_psr_unlock(const struct inte
+  		return;
+ =20
+  	for_each_intel_encoder_mask_with_psr(display->drm, encoder,
+- 					     crtc_state->uapi.encoder_mask) {
++ 					     psr_encoder_mask(crtc_state)) {
+  		struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
+ =20
+  		mutex_unlock(&intel_dp->psr.lock);
+@@@ -4609,6 -4761,10 +4766,10 @@@ void intel_psr_compute_config_late(stru
+  		crtc_state->has_sel_update =3D false;
+  		crtc_state->enable_psr2_su_region_et =3D false;
+  		crtc_state->enable_psr2_sel_fetch =3D false;
 +=20
-+ 	nl80211_send_mlme_event(rdev, dev, &event, GFP_KERNEL);
-+ }
-+=20
-+ void nl80211_st_execution_response(struct cfg80211_registered_device *rde=
-v,
-+ 				   struct net_device *dev,
-+ 				   struct cfg80211_st_execution_resp_data *data)
-+ {
-+ 	size_t link_info_size =3D NLA_HDRLEN +
-+ 				nla_total_size(sizeof(u8)) +
-+ 				nla_total_size(ETH_ALEN) +
-+ 				nla_total_size(ETH_ALEN);
-+ 	struct nlattr *nested;
-+ 	struct sk_buff *msg;
-+ 	int link_count =3D 0;
-+ 	void *hdr;
-+ 	int i =3D 1;
-+=20
-+ 	for (unsigned int link =3D 0; link < IEEE80211_MLD_MAX_NUM_LINKS; link++=
-) {
-+ 		if (!data->links[link].bssid ||
-+ 		    WARN_ON(!data->links[link].local_addr))
-+ 			continue;
-+=20
-+ 		link_count++;
-+ 	}
-+=20
-+ 	msg =3D nlmsg_new(100 + data->len + link_info_size * link_count,
-+ 			GFP_KERNEL);
-+ 	if (!msg)
-+ 		return;
-+=20
-+ 	hdr =3D nl80211hdr_put(msg, 0, 0, 0, NL80211_CMD_EXECUTE_SMD_TRANSITION);
-+ 	if (!hdr) {
-+ 		nlmsg_free(msg);
-+ 		return;
-+ 	}
-+=20
-+ 	if (nla_put_u32(msg, NL80211_ATTR_WIPHY, rdev->wiphy_idx) ||
-+ 	    nla_put_u32(msg, NL80211_ATTR_IFINDEX, dev->ifindex) ||
-+ 	    nla_put(msg, NL80211_ATTR_MLD_ADDR, ETH_ALEN, data->ap_mld_addr))
-+ 		goto nla_put_failure;
-+=20
-+ 	if (!data->len)
-+ 		goto send;
-+=20
-+ 	if (nla_put(msg, NL80211_ATTR_FRAME, data->len, data->buf))
-+ 		goto nla_put_failure;
-+=20
-+ 	nested =3D nla_nest_start(msg, NL80211_ATTR_MLO_LINKS);
-+ 	if (!nested)
-+ 		goto nla_put_failure;
-+=20
-+ 	for (unsigned int link =3D 0; link < IEEE80211_MLD_MAX_NUM_LINKS; link++=
-) {
-+ 		const u8 *bssid =3D data->links[link].bssid;
-+ 		const u8 *local_addr =3D data->links[link].local_addr;
-+ 		struct nlattr *nested_mlo_links;
-+=20
-+ 		if (!bssid || !local_addr)
-+ 			continue;
-+=20
-+ 		nested_mlo_links =3D nla_nest_start(msg, i);
-+ 		if (!nested_mlo_links)
-+ 			goto nla_put_failure;
-+=20
-+ 		if (nla_put_u8(msg, NL80211_ATTR_MLO_LINK_ID, link) ||
-+ 		    nla_put(msg, NL80211_ATTR_BSSID, ETH_ALEN, bssid) ||
-+ 		    nla_put(msg, NL80211_ATTR_MAC, ETH_ALEN, local_addr))
-+ 			goto nla_put_failure;
-+=20
-+ 		nla_nest_end(msg, nested_mlo_links);
-+ 		i++;
-+ 	}
-+ 	nla_nest_end(msg, nested);
-+=20
-+ send:
-+ 	genlmsg_end(msg, hdr);
-+=20
-+ 	genlmsg_multicast_netns(&nl80211_fam, wiphy_net(&rdev->wiphy), msg, 0,
-+ 				NL80211_MCGRP_MLME, GFP_KERNEL);
-+ 	return;
-+=20
-+  nla_put_failure:
-+ 	nlmsg_free(msg);
-+ }
-+=20
-+ void nl80211_st_done(struct cfg80211_registered_device *rdev,
-+ 		     struct net_device *dev)
-+ {
-+ 	struct wireless_dev *wdev =3D dev->ieee80211_ptr;
-+ 	struct nlattr *nested;
-+ 	struct sk_buff *msg;
-+ 	void *hdr;
-+ 	int i =3D 1;
-+=20
-+ 	msg =3D nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
-+ 	if (!msg)
-+ 		return;
-+=20
-+ 	hdr =3D nl80211hdr_put(msg, 0, 0, 0,
-+ 			     NL80211_CMD_COMPLETED_SMD_TRANSITION);
-+ 	if (!hdr) {
-+ 		nlmsg_free(msg);
-+ 		return;
-+ 	}
-+=20
-+ 	if (nla_put_u32(msg, NL80211_ATTR_WIPHY, rdev->wiphy_idx) ||
-+ 	    nla_put_u32(msg, NL80211_ATTR_IFINDEX, dev->ifindex) ||
-+ 	    nla_put(msg, NL80211_ATTR_MLD_ADDR, ETH_ALEN,
-+ 		    wdev->u.client.connected_addr))
-+ 		goto nla_put_failure;
-+=20
-+ 	nested =3D nla_nest_start(msg, NL80211_ATTR_MLO_LINKS);
-+ 	if (!nested)
-+ 		goto nla_put_failure;
-+=20
-+ 	for (unsigned int link =3D 0; link < IEEE80211_MLD_MAX_NUM_LINKS; link++=
-) {
-+ 		struct cfg80211_internal_bss *bss;
-+ 		struct nlattr *nested_mlo_links;
-+=20
-+ 		if (!(wdev->valid_links & BIT(link)))
-+ 			continue;
-+=20
-+ 		bss =3D wdev->links[link].client.current_bss;
-+ 		if (WARN_ON(!bss))
-+ 			continue;
-+=20
-+ 		nested_mlo_links =3D nla_nest_start(msg, i);
-+ 		if (!nested_mlo_links)
-+ 			goto nla_put_failure;
-+=20
-+ 		if (nla_put_u8(msg, NL80211_ATTR_MLO_LINK_ID, link) ||
-+ 		    nla_put(msg, NL80211_ATTR_BSSID, ETH_ALEN, bss->pub.bssid) ||
-+ 		    nla_put(msg, NL80211_ATTR_MAC, ETH_ALEN,
-+ 			    wdev->links[link].addr))
-+ 			goto nla_put_failure;
-+=20
-+ 		nla_nest_end(msg, nested_mlo_links);
-+ 		i++;
-+ 	}
-+ 	nla_nest_end(msg, nested);
-+=20
-+ 	genlmsg_end(msg, hdr);
-+=20
-+ 	genlmsg_multicast_netns(&nl80211_fam, wiphy_net(&rdev->wiphy), msg, 0,
-+ 				NL80211_MCGRP_MLME, GFP_KERNEL);
-+ 	return;
-+=20
-+  nla_put_failure:
-+ 	nlmsg_free(msg);
-+ }
-+=20
-  void nl80211_send_ibss_bssid(struct cfg80211_registered_device *rdev,
-  			     struct net_device *netdev, const u8 *bssid,
-  			     gfp_t gfp)
++ 		/* Plain PSR1 is not supported with joiner. */
++ 		if (crtc_state->joiner_pipes)
++ 			crtc_state->has_psr =3D false;
+  	}
+ =20
+  	/* Wa_18037818876 */
 
---WcrKEVERQQCbA1Wv
+--9/G13HJc/YtuFupn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0l4gACgkQJNaLcl1U
-h9CSJQf+PWiF1lS+wvW9HYZAAUXEOcbDxsIrWu1sWC/kyqYzyMS1tbcyG5ngO7W9
-ViKZw2DrqWiRzOmaTc3mM4hgVZuDtYRNyqzeEpL8GhcoK3f7qDWBJKQwMi8al8Ag
-IRh01RiyaVr/cLSuWGV6NxtZ1xQ0U9DT6xyha8/2OI5MdaqEitAvCCuMIYEPgeHT
-dmqPIPbAWUpp5sNO0opITUewNBik2oAsfdH1zFFITprn4gBJ4YMuZr+pJ68iCzIw
-W6ewb2JLVzRcZfJgc6gvGgJem0AgZh8vLjNubnV+o2K3pXWEKA9F708f8AGKiQkO
-S9RPmgr4myqYa2jV1gtISq8/G1n8Lw==
-=NdNc
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0l50ACgkQJNaLcl1U
+h9AkwQf/XXDo43RPkKONKU/GDUXtEdXWkV1PKLS3G1FPULOwhA6CTVkN2bSMiL3w
+zv7CKTgtv/bdm9NLowQ/wQLcH+/U2n83gpKJPyvXZjHiAKxJCF01RNXuLGhNHnTu
+jxjC/p0yOWKWjDTjmYkIfNVkqX8tf0UXGo9JhE6TS25HPthrBKeSWVGfJ7H9eHtY
+hAi1ENBbzqNc39v65k74quMRcfO8WvSAQqfR7QNRaNim59MUvpQgHsXmnXSoytxS
+45lgzV9sZIbHhIx7KkkXjNpBmkEJ6i7KfdoXT6ZkWlQC/hC9uyyBYoNdAGcc8R+X
+8IL+tlCEuew1Qc+48nki0KNU5zk5nQ==
+=334l
 -----END PGP SIGNATURE-----
 
---WcrKEVERQQCbA1Wv--
+--9/G13HJc/YtuFupn--
