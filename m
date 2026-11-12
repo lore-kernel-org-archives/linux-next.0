@@ -1,59 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794500682;
-	b=abl4Vxl9AnusKfo0Kw7hAnhmBUgatHfk7Uzt4VtveA42bPAvvTi09cKf9vHsuhaxUIDA
-	 Rvg+Gll9rxXjnW07bhJRGmhpob/ZdssjbvcrgLt5mSJsav8ZTXZKsEaLJyqAn2T2dOWkO
-	 1yMFP4Ml8BKYof1wsOlFT+BPgLJg+ZbtMgVP05Dzkonwh03GuPCW6tSgNl7FOdNGa7mKx
-	 Te+sdO54QrIcZQvbtt1aQlI5xvzLrqa59jcrOUJ6xsTJA2FxfgQRfjYQlMM5WrMnZLbjN
-	 x+Otonu8uo+r9vHyy9W8a/yXnu6RrCbMK5PqpGkDhDP00+W55TbaktuLDPhnK2U6p+A==
+	t=1794502490;
+	b=ZJBatHA/iNvYOB4BX52l+9ecSNVeb+JI1v2lMHTwHrI7aZEvahF2ZEuEqQ4PMvG2E2Wa
+	 q4C03H923D88fuaIzh+E8+ICj+1P/rfjdIwGg/mvOKKZ9fm7w4aTucrXFUa4E0oA6g06o
+	 kALO4fDp+GvzE+g9wyi7w6/LCXISwfvz27SUzCWA6MVF0O2aIftFa56f/IXG9s8EBNqec
+	 rwVDsczWLVByBrQ9szIHz+se4wsGBRT3wUUaRRtzAa4Rnm3I9IBYrR07u1gP1okGgqHDc
+	 bKfgLAsFmHMiOTxl6PD40divqghGnadZKdQuGoVCqCn2iAeNwteemISGRJm1qrvWPrQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794500682;
-	h=Received:DKIM-Signature:Resent-From:Resent-Date:Resent-Message-ID:
-	 Resent-To:Date:From:To:Cc:Subject:Message-ID:MIME-Version:
-	 Content-Type:Content-Disposition;
-	bh=DT+h+JcnJMC5K+aI0iJBzII0VFDN5E+Q8ZUaJ7gUHxA=;
-	b=zHDPj8Pemm6lXOUFtF8Ft0LNrAjKaA+89a2Xr/Ek2IqbQAkhaxu//S45pHyjEL90xFPx
-	 M1jRgOHdbA/Nh/WyER9eRRX79PMJhO3jgMi/F+R8YDAsNF8RpnWFiKm54Hcruo0bDhpvq
-	 jIkeqJ8wOaVT/tB3TU6kSYPjRCU3imRR4eBkOH3dWuYDcQJTzgzz28W9TEm5m2TYDwDgL
-	 wq5W2lRdMuufefZTakpPT/RwBbXFanidfJesGo+pGSJC3tDoOufuVPznaNKgxKu1ADeno
-	 W9dRwyIHStMKg+V82JqM/2fAFDVPGggJzEyTFTXCSCbLR7yWhdwbZ7xNt1RYjq1iKqg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794502490;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=Bw9lp8JxraQCUa7imhgE/6xePoXKhhxbsG8AElA/I/0=;
+	b=FB0Pz4rdehdwY+WrZ/J74DgHntmjJvyaqOJDsVZLqsK3Eb5u+m06dPjlcR1pzKKa31TO
+	 Oy3gLvazRwL51KqmAxI5Xo5oorJiRI3wRfb3y6460x2yQybYRlAvrYl+RIGPuhyw1Zd+1
+	 Yi7OOt42NQdDayEQeD0gfWSbN8QVh9nLRYvsKy1FnLd+gvLzl3uloiAbE+nEMQUe6SJz6
+	 wylQQxSJWH8Ir3nNY6jMtZxhMnjsoLVYUustRpYI+7n7bKwe0RWTxCUARHcdmkAmVRX/g
+	 BlyA0N1HZ+iYVrrkN4RyFkAsaP/f+Tf+fReh1cGdO+hhGqUwDZoH5zByngTNq/fN5Pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EdAFWECW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dFGF+syu;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4AF606A330;
-	Thu, 12 Nov 2026 16:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08628606A31C;
+	Thu, 12 Nov 2026 16:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EdAFWECW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3168E1F000C5;
-	Thu, 12 Nov 2026 16:24:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dFGF+syu
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED3F91F000C4;
+	Thu, 12 Nov 2026 16:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794500681;
-	bh=DT+h+JcnJMC5K+aI0iJBzII0VFDN5E+Q8ZUaJ7gUHxA=;
-	h=Resent-From:Resent-Date:Resent-To:Date:From:To:Cc:Subject;
-	b=EdAFWECWyqtLyZwic21C1yZWLvg1hBrfhz9KEGhOkwdUd7QETLXkasA45VWe0Hllu
-	 q4kKVJwohlB9ZnHhzvWK9GU2ijaCO7MfES5BBukCOfvOT9G/CEU3f3DulRtzyfSURl
-	 wgh1cHhrn4Aw9b8CZ2joCwYz+WrpiZBfQ3Zipn5/VcMMkXt46u1smEAT6KiL2v52p+
-	 HV/2+bSS2Css7PiwiuyPrfU+4O7CkhcGHbqg16d2++IGmACQWxg8Kb78yqNHfQ5BfN
-	 Z/zt9kIZZCa75fAF+MymeWoD1ii2yJEQ7mS+5hi0jvvM6pGGIwAXYVvlDBXbW+iGvO
-	 8xdsIX+aL264g==
-Resent-From: Mark Brown <broonie@kernel.org>
-Resent-Date: Thu, 12 Nov 2026 16:24:38 +0000
-Resent-Message-ID: <avXoRl7VVy6qcgBe@sirena.org.uk>
-Resent-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Date: Thu, 12 Nov 2026 16:00:18 +0000
+	s=k20260515; t=1794502489;
+	bh=Bw9lp8JxraQCUa7imhgE/6xePoXKhhxbsG8AElA/I/0=;
+	h=Date:From:To:Cc:Subject;
+	b=dFGF+syun1+iuXQ29DDghc7ae2KbAveo0mtkBhTPLqW8IDjs2YHxz4nTIDcx0V9gG
+	 dOEilNHjTlaem49/cfQMUj+MlB9pXFLpoRkMM0PQkSPHKkGHKLXRHFsAmTDP88w3R3
+	 PShSfPRPcgltE/BVzl8zIK2nYkS7RUfdL42t75uImBNYW87OSe1BUoc3YIHxdU4aCJ
+	 VymscX5hiLi65BWtHZKih2XwpmcP/qtbgVK19+SFnN1kvAZ2C0P0k2Lt6P/uiRiqE5
+	 BcPUiHci9ozb98Y22TBEDC4gkB3B5yy7eOWXU1UgZx3jjpuzJrdnMRA18NtP0M+FyT
+	 kWP4NpEl8mFTA==
+Date: Thu, 12 Nov 2026 16:54:46 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Rosen Penev <rosenp@gmail.com>
-Subject: linux-next: manual merge of the phy-next tree with the origin tree
-Message-ID: <avXijqnyZv1ALU1j@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 12
+Message-ID: <avXvVg8Dzn73mu8_@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -64,107 +55,81 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r8eKzl++w86RryZb"
+	protocol="application/pgp-signature"; boundary="gQ7fdVK6n+i5kaBL"
 Content-Disposition: inline
 
 
---r8eKzl++w86RryZb
+--gQ7fdVK6n+i5kaBL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the phy-next tree got a conflict in:
+Changes since 20261111:
 
-  drivers/phy/mediatek/phy-mtk-tphy.c
+The perf tree acquired a conflict with the perf-current tree.
 
-between commit:
+The vfs-brauner tree acquired a conflict with the mm-fixes tree.
 
-  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
-oc_obj() family")
+The v4l-dvb tree acquired a conflict with the origin tree.
 
-=66rom the origin tree and commit:
+The net-next tree acquired a conflict with the origin tree.
 
-  6d4333dfb6057 ("phy: mediatek: tphy: simplify main allocation")
+The net-next tree acquired a conflict with the net tree.
 
-=66rom the phy-next tree.
+The bpf-next tree acquired a conflict with the origin tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+The drivers-x86 tree acquired a conflict with the pm tree.
+
+The phy-next tree acquired a conflict with the origin tree.
+
+Non-merge commits (relative to Linus' tree): 5916
 
 
-diff --combined drivers/phy/mediatek/phy-mtk-tphy.c
-index 22273a4df9b25,e9b9e667b3195..0000000000000
---- a/drivers/phy/mediatek/phy-mtk-tphy.c
-+++ b/drivers/phy/mediatek/phy-mtk-tphy.c
-@@@ -340,10 -340,10 +340,10 @@@ struct mtk_tphy=20
-  	struct device *dev;
-  	void __iomem *sif_base;	/* only shared sif */
-  	const struct mtk_phy_pdata *pdata;
-- 	struct mtk_phy_instance **phys;
-- 	int nphys;
-  	int src_ref_clk; /* MHZ, reference clock for slew rate calibrate */
-  	int src_coef; /* coefficient for slew rate calibrate */
-+ 	int nphys;
-+ 	struct mtk_phy_instance *phys[] __counted_by(nphys);
-  };
- =20
-  #if IS_ENABLED(CONFIG_DEBUG_FS)
-@@@ -1572,21 -1572,19 +1572,19 @@@ static int mtk_tphy_probe(struct platfo
-  	struct mtk_tphy *tphy;
-  	struct resource res;
-  	int port, ret;
-+ 	size_t nphys;
- =20
-- 	tphy =3D devm_kzalloc_obj(dev, *tphy);
-+ 	nphys =3D of_get_child_count(np);
-+ 	tphy =3D devm_kzalloc(dev, struct_size(tphy, phys, nphys), GFP_KERNEL);
-  	if (!tphy)
-  		return -ENOMEM;
- =20
-+ 	tphy->nphys =3D nphys;
-+ 	tphy->dev =3D dev;
-  	tphy->pdata =3D of_device_get_match_data(dev);
-  	if (!tphy->pdata)
-  		return -EINVAL;
- =20
-- 	tphy->nphys =3D of_get_child_count(np);
-- 	tphy->phys =3D devm_kzalloc_objs(dev, *tphy->phys, tphy->nphys);
-- 	if (!tphy->phys)
-- 		return -ENOMEM;
--=20
-- 	tphy->dev =3D dev;
-  	platform_set_drvdata(pdev, tphy);
- =20
-  	sif_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@@ -1617,7 -1615,7 +1615,7 @@@
-  		struct phy *phy;
-  		int retval;
- =20
- -		instance =3D devm_kzalloc(dev, sizeof(*instance), GFP_KERNEL);
- +		instance =3D devm_kzalloc_obj(dev, *instance);
-  		if (!instance)
-  			return -ENOMEM;
- =20
+----------------------------------------------------------------------------
 
---r8eKzl++w86RryZb
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 436 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--gQ7fdVK6n+i5kaBL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr14o0ACgkQJNaLcl1U
-h9CGXQf8CTt4OAZJp+5t1FiG+e+pC9RbDx6okWHBGEs+5tlz/74wyt3MKX8obB0d
-42Xu2sao6+wgnisHHJYeyPfoi/+vBCcwWh7COhI454isQq3e6romLohiU0B/yqh1
-fy8TiPiyQjj5SCw5t4pfFe+U3y7h+ycRUCaM1psf9vCSgLdL6cnLK7eGIRxz7Mqm
-yXISVJMlW28QSPTjTfRp8/kCGLNrj40drvlInSJGuDNCMqAhi64xiMP8tMpk0Yay
-WHeFivjNk959FU4D0M/0RXPL7JB8fTVBWMOuvgibzpEen1i/2ycNf9dMcbkmmxZd
-E7Aa0dRXDZYCkjGUC8JHeo3Zv9OftQ==
-=S41h
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr171UACgkQJNaLcl1U
+h9CYYwf+M5ClImY+tPOFASAkRbk0k/P/W7JFh37zWAtCSchQdYI6XFHAYQy4qaad
+OIP/I0UwXjyW846U0BGzCmvQ92OTbll0iwC5T9knSu9QRpAdWKtPxZh1FjeoirVt
+b2TguwJ7VERfjSGzz9sI4xQahSKP0JBGMGDmHgkNuIiO67g207OdhPSwwnjchQ19
+jH7Am+ypr9Kd4dpl5CicvZ9oozbybp6XgZkU3ATdxy8rNRlksUwf8xTBw2lM9lzE
+QGVr2Y5516l2f9R5Tn7Ckc9BJLwaTNguOlGldUfZtAPhzHJlCcQgxQqLKOHDJeBO
+QrpkKBV5YQ0CHRfMqSv/PSBmHZKcCg==
+=dglh
 -----END PGP SIGNATURE-----
 
---r8eKzl++w86RryZb--
+--gQ7fdVK6n+i5kaBL--
