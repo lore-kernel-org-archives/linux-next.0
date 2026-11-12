@@ -1,92 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794497384;
-	b=z/+gspdlWYpEr9jNq9zAbW4XXmFgijnMQFM/G1sOuZ5yvLhpRarPs7ju7u3WqD/IfVe0
-	 0OdAWMONS7J1vIGaYbASJ8DWLKDg0cQj87Wke9BUIuwF2b5yAIZgrJ0CHamEqsUpkcU76
-	 rA+Y7E3hGByRLJnIMFimlK5PvfS1HUlvHWVgiUysGCb0zV9OEKNmaj8VgiT31BSVusqo6
-	 VBKAMHhD8k0uVpDUf80cEGfFrQs3rsBWUFK8PEOzxLjuaX/8F7AEck6EeyncRKEFlG/Sf
-	 jpslzB+sgaDdGD+YK7Lf2dixxGqWotMGHiAw5vRWDEmrxem6nl3EGofg1iRAm5FBnJw==
+	t=1794500682;
+	b=abl4Vxl9AnusKfo0Kw7hAnhmBUgatHfk7Uzt4VtveA42bPAvvTi09cKf9vHsuhaxUIDA
+	 Rvg+Gll9rxXjnW07bhJRGmhpob/ZdssjbvcrgLt5mSJsav8ZTXZKsEaLJyqAn2T2dOWkO
+	 1yMFP4Ml8BKYof1wsOlFT+BPgLJg+ZbtMgVP05Dzkonwh03GuPCW6tSgNl7FOdNGa7mKx
+	 Te+sdO54QrIcZQvbtt1aQlI5xvzLrqa59jcrOUJ6xsTJA2FxfgQRfjYQlMM5WrMnZLbjN
+	 x+Otonu8uo+r9vHyy9W8a/yXnu6RrCbMK5PqpGkDhDP00+W55TbaktuLDPhnK2U6p+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794497384;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer;
-	bh=oSZaE9Jkg31B2OjfxIU50Lt37gIuMNU6vFeXv49uKjs=;
-	b=DLkqi+ZxCfxUNSFKr1BanzDpAFglZeSNqoqHZI28/mToydZr7qLwTuuftkao7aY9V08g
-	 tkaIJpS/GoQ0z0ONMdijEeCOUMojfhYwM844tlQdj2AX84FWYgnuRWq4w07gBbqNt6zO4
-	 d/sT5nYJX8CtB4GbnsQvXTZWQKrd46+cht0GZjtryNp01RBAr2srgYkivMFM/7HXyiW65
-	 UfHfFv5/WFuSTLDihKH5OKA42JNg087Gvq4AUGMdkojdHkzW9CEDrwCRS0KY7aRNLH/J/
-	 hO64WJfaH4vEDP1EDai6uFrM5Ze0SHaYjo3eF40ffb1mqHIGa1iJ4dSTd7HjOvV4WFA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794500682;
+	h=Received:DKIM-Signature:Resent-From:Resent-Date:Resent-Message-ID:
+	 Resent-To:Date:From:To:Cc:Subject:Message-ID:MIME-Version:
+	 Content-Type:Content-Disposition;
+	bh=DT+h+JcnJMC5K+aI0iJBzII0VFDN5E+Q8ZUaJ7gUHxA=;
+	b=zHDPj8Pemm6lXOUFtF8Ft0LNrAjKaA+89a2Xr/Ek2IqbQAkhaxu//S45pHyjEL90xFPx
+	 M1jRgOHdbA/Nh/WyER9eRRX79PMJhO3jgMi/F+R8YDAsNF8RpnWFiKm54Hcruo0bDhpvq
+	 jIkeqJ8wOaVT/tB3TU6kSYPjRCU3imRR4eBkOH3dWuYDcQJTzgzz28W9TEm5m2TYDwDgL
+	 wq5W2lRdMuufefZTakpPT/RwBbXFanidfJesGo+pGSJC3tDoOufuVPznaNKgxKu1ADeno
+	 W9dRwyIHStMKg+V82JqM/2fAFDVPGggJzEyTFTXCSCbLR7yWhdwbZ7xNt1RYjq1iKqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jtMlgnpc;
-	arc=none smtp.remote-ip=74.125.82.44
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EdAFWECW;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3909606A339
-	for <linux-next@vger.kernel.org>; Thu, 12 Nov 2026 15:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C3909606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4AF606A330;
+	Thu, 12 Nov 2026 16:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jtMlgnpc
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-1b244fb7fffso5511214c88.1
-        for <linux-next@vger.kernel.org>; Thu, 12 Nov 2026 07:29:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794497383; x=1795102183; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=oSZaE9Jkg31B2OjfxIU50Lt37gIuMNU6vFeXv49uKjs=;
-        b=jtMlgnpco4UwKxbq+hTJuGkYqUS6+/veHha0WAaU9XXa2kFStd7XS2On4fXy3hmxSj
-         x6FAOjEmuFrh/l6t0p/PJGW5oROum2TzcUzL2MKm0jnE4MkNXiOAgMb3zVO4WkvuhSlA
-         atNfJMDBizEMX+jTWl1hCvDKytA6s7lxSLPofs1M0yoNLM+ar0uHXAPsHKWxg8GEmJbR
-         iUMzG2j498hETIReLsACRKC9ujRiBk0s8XJec6huxMFlw2ugh9uKRrWmOF6ep3AXh5D1
-         qt/GdN4NOvDvvBg+GmbwbGCFOOaReO0/BvxFcC/u0f5YIBZ4v+uaJ8yFc56KRYW58r6t
-         hWMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794497383; x=1795102183;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oSZaE9Jkg31B2OjfxIU50Lt37gIuMNU6vFeXv49uKjs=;
-        b=LYqSyR+wl9MUXDXTUENicilLCmfgjH1nfdIPvZOaLV0/Ee1SoL85LrLe9ArDKFH4Hu
-         VScYg0Jkema3rOA/zLjOTHfQwwwedXtaRn9hQo6pjmeC2lWwDjejcqrendgWxiyfvGsD
-         68cgsa9Wi7Q5yMOcw8O0aOt/zzGRs+csURhsWP6inmfVYrdx4Jkni+5HhQOcDxBicoVg
-         ewXWOnMMG/R2aK0hQEtE+drdtj3xaDsdklU/LGmsNuKmxKBVSDf81GfNXI/4LBGvM23e
-         2RgK1Ye1DwL52/0dcAKeX4Un0nvDbET5BuvJWYy5iqzsRgP4u/x4orzEUUnlusK6NUnr
-         LDQA==
-X-Forwarded-Encrypted: i=1; AL+hErG42Lbk3LS5mTWgMzNnUJPDPdInq2s1EgFC9ByXzAiTXEN1DC5EA52i1yUsaFEENf90I9Ka0GFCtyBL@vger.kernel.org
-X-Gm-Message-State: APuU4Z9DLCSaSDU4g9esgorrvQ9RpzEGfB2VDsEPneZwHQNvarVzPGYQ
-	zrRSkC1YU3+gGskRP1KPP08LJ7WHvs2JQFxLjJxq1hleWKM7l2R76JcV
-X-Gm-Gg: AYBFou3VrocrKrS8fNMpQFCj8QPZNjojFeuyxcBye78Ew4HaHJY/WrtmajgDeuyiAHB
-	OhOzor3SmYWB0VwZresbqbJJV2T+xB+iR90ogXGY/x7O0G4ASBtRZb1xNiCC5w5dXPLONIDnbjF
-	VHzyjDhesbjOtnjstZ5zNPYwxzHKYY7gm4YerECdW9Oftw6DCtii5dNUM8rX6P3B74oWZf3GiNQ
-	upHLIUmCQsDNP6QFlj0uSlZyEHDZ4iMSKvVCa7sqwvIgsq/k7cxHatmFvsEmLocYQKWWPzXb2TH
-	ITxb6y8ZObr+9ZYQx5UqhuQLEIgXiaUxTKuFhReWRkYurcaTvKIpYPNKHYtMJ1KSx4ZoV2lYGbJ
-	ONR/0iUltefZHBhWk0HY9yoAOliuoyQTWv9ZB3lwUOKPwJJo8ndT+amncKkpOxgd4+QclVGFTcP
-	+3KDaD61547hg0nqpar+diDIs6aPFtwlSSGH3xe1vnZmas7hggaTN9/K8IODURqPI/d9kUoIw8y
-	NbmP96JTFwocyjKCs6sc2geYKy+d9JLz7bcfA4LZNfXzUGsc+yVCFmPSUWIAs76ql/pSR8mfyv4
-	wsWB1PKrxxxuOX/wOoG0dGhujQ==
-X-Received: by 2002:a05:7022:c91:b0:191:444:425 with SMTP id a92af1059eb24-1b3c023cb0bmr4915582c88.2.1794497382427;
-        Thu, 12 Nov 2026 07:29:42 -0800 (PST)
-Received: from [127.0.1.1] ([161.33.196.121])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b5029ecb1bsm564469c88.1.2026.11.12.07.29.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 07:29:41 -0800 (PST)
-From: TAKANO Mitsuhiro <takano32@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, James Clark <james.clark@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, TAKANO Mitsuhiro <takano32@gmail.com>
-Subject: Re: linux-next: manual merge of the perf tree with the perf-current tree
-Date: Thu, 12 Nov 2026 15:29:39 +0000
-Message-ID: <179449737932.73597.12778815944082557280@gmail.com>
-In-Reply-To: <avW648YFgbci03ra@sirena.org.uk>
-References: <avW648YFgbci03ra@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EdAFWECW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3168E1F000C5;
+	Thu, 12 Nov 2026 16:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794500681;
+	bh=DT+h+JcnJMC5K+aI0iJBzII0VFDN5E+Q8ZUaJ7gUHxA=;
+	h=Resent-From:Resent-Date:Resent-To:Date:From:To:Cc:Subject;
+	b=EdAFWECWyqtLyZwic21C1yZWLvg1hBrfhz9KEGhOkwdUd7QETLXkasA45VWe0Hllu
+	 q4kKVJwohlB9ZnHhzvWK9GU2ijaCO7MfES5BBukCOfvOT9G/CEU3f3DulRtzyfSURl
+	 wgh1cHhrn4Aw9b8CZ2joCwYz+WrpiZBfQ3Zipn5/VcMMkXt46u1smEAT6KiL2v52p+
+	 HV/2+bSS2Css7PiwiuyPrfU+4O7CkhcGHbqg16d2++IGmACQWxg8Kb78yqNHfQ5BfN
+	 Z/zt9kIZZCa75fAF+MymeWoD1ii2yJEQ7mS+5hi0jvvM6pGGIwAXYVvlDBXbW+iGvO
+	 8xdsIX+aL264g==
+Resent-From: Mark Brown <broonie@kernel.org>
+Resent-Date: Thu, 12 Nov 2026 16:24:38 +0000
+Resent-Message-ID: <avXoRl7VVy6qcgBe@sirena.org.uk>
+Resent-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Date: Thu, 12 Nov 2026 16:00:18 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rosen Penev <rosenp@gmail.com>
+Subject: linux-next: manual merge of the phy-next tree with the origin tree
+Message-ID: <avXijqnyZv1ALU1j@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -96,27 +63,108 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: kpatch-send.py
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r8eKzl++w86RryZb"
+Content-Disposition: inline
 
-Hi Mark,
 
-Thanks for the notice. One thing worth knowing: the full stop is
-intentional, so keeping it in the resolution is the right outcome.
+--r8eKzl++w86RryZb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It came out of review. James asked for it on v2:
+Hi all,
 
-  https://lore.kernel.org/all/a188c604-46c0-48fb-9cbd-9eacad88b5c9@linaro.org/
+Today's linux-next merge of the phy-next tree got a conflict in:
 
-and v3 added it:
+  drivers/phy/mediatek/phy-mtk-tphy.c
 
-  https://lore.kernel.org/all/20261107022145.1713159-1-takano32@gmail.com/
+between commit:
 
-The copy in the perf tree is that v3. The copy in perf-current is the v2
-that predates the review, so perf-current is the stale one - nothing more
-than the period is missing from it.
+  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
+oc_obj() family")
 
-Thanks,
-TAKANO
+=66rom the origin tree and commit:
 
+  6d4333dfb6057 ("phy: mediatek: tphy: simplify main allocation")
+
+=66rom the phy-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+
+diff --combined drivers/phy/mediatek/phy-mtk-tphy.c
+index 22273a4df9b25,e9b9e667b3195..0000000000000
+--- a/drivers/phy/mediatek/phy-mtk-tphy.c
++++ b/drivers/phy/mediatek/phy-mtk-tphy.c
+@@@ -340,10 -340,10 +340,10 @@@ struct mtk_tphy=20
+  	struct device *dev;
+  	void __iomem *sif_base;	/* only shared sif */
+  	const struct mtk_phy_pdata *pdata;
+- 	struct mtk_phy_instance **phys;
+- 	int nphys;
+  	int src_ref_clk; /* MHZ, reference clock for slew rate calibrate */
+  	int src_coef; /* coefficient for slew rate calibrate */
++ 	int nphys;
++ 	struct mtk_phy_instance *phys[] __counted_by(nphys);
+  };
+ =20
+  #if IS_ENABLED(CONFIG_DEBUG_FS)
+@@@ -1572,21 -1572,19 +1572,19 @@@ static int mtk_tphy_probe(struct platfo
+  	struct mtk_tphy *tphy;
+  	struct resource res;
+  	int port, ret;
++ 	size_t nphys;
+ =20
+- 	tphy =3D devm_kzalloc_obj(dev, *tphy);
++ 	nphys =3D of_get_child_count(np);
++ 	tphy =3D devm_kzalloc(dev, struct_size(tphy, phys, nphys), GFP_KERNEL);
+  	if (!tphy)
+  		return -ENOMEM;
+ =20
++ 	tphy->nphys =3D nphys;
++ 	tphy->dev =3D dev;
+  	tphy->pdata =3D of_device_get_match_data(dev);
+  	if (!tphy->pdata)
+  		return -EINVAL;
+ =20
+- 	tphy->nphys =3D of_get_child_count(np);
+- 	tphy->phys =3D devm_kzalloc_objs(dev, *tphy->phys, tphy->nphys);
+- 	if (!tphy->phys)
+- 		return -ENOMEM;
+-=20
+- 	tphy->dev =3D dev;
+  	platform_set_drvdata(pdev, tphy);
+ =20
+  	sif_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@@ -1617,7 -1615,7 +1615,7 @@@
+  		struct phy *phy;
+  		int retval;
+ =20
+ -		instance =3D devm_kzalloc(dev, sizeof(*instance), GFP_KERNEL);
+ +		instance =3D devm_kzalloc_obj(dev, *instance);
+  		if (!instance)
+  			return -ENOMEM;
+ =20
+
+--r8eKzl++w86RryZb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr14o0ACgkQJNaLcl1U
+h9CGXQf8CTt4OAZJp+5t1FiG+e+pC9RbDx6okWHBGEs+5tlz/74wyt3MKX8obB0d
+42Xu2sao6+wgnisHHJYeyPfoi/+vBCcwWh7COhI454isQq3e6romLohiU0B/yqh1
+fy8TiPiyQjj5SCw5t4pfFe+U3y7h+ycRUCaM1psf9vCSgLdL6cnLK7eGIRxz7Mqm
+yXISVJMlW28QSPTjTfRp8/kCGLNrj40drvlInSJGuDNCMqAhi64xiMP8tMpk0Yay
+WHeFivjNk959FU4D0M/0RXPL7JB8fTVBWMOuvgibzpEen1i/2ycNf9dMcbkmmxZd
+E7Aa0dRXDZYCkjGUC8JHeo3Zv9OftQ==
+=S41h
+-----END PGP SIGNATURE-----
+
+--r8eKzl++w86RryZb--
