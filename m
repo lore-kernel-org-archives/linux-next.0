@@ -1,54 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794489064;
-	b=tPJKhp/dy3aqzsY2zPWhihO6ighBjoKO4M04UGRzrst+TerNfHtlN7oZySHltgVeXMQ0
-	 UFAizszCeA5JXMi8FxOGvZTOYOCTZ4la+JJFJIep0rEPInnt4b+aKWrro8jopR1NpAlpM
-	 IQgxFvUxlCErZkqauAB9YA7HXjUHbXma6ooSMmVMuLIoffATEo9Tgzi6aRcLwnEO3E+uR
-	 WHCS7AeOQ03+fAvDfw5kOck41Z6lASM+s6veo9cHuhX+Y+1gB/jVP4MZW7Oobxi9xIFX8
-	 LJUobJFLYN7q0g7JdfM9XLYINVPSlgRmQuH7hTuhQjffNZ99uJsrHQFQKuZ925SrqMQ==
+	t=1794489224;
+	b=fx0FHQfdT5v1S+OTrQIYQu9igxfwtP4xdK77lhXFQxknHfMLqQagLTPHl7aF4lK2PU6i
+	 Nsf6DMajwI4qqcISn10vPWia+P11zBIjuln81h4Z78hBsxxI1467AoYF07TVpOilWrbZw
+	 QFRtopacnKMm8TEltk8xpNp85BZ9vN6Xoy1n4FeC1d8ieg8xriIThGXCJSS+bvO5ZEJo8
+	 wfYmV72Q1ZKexoiC5ymCLI0Zzb0hPUWNT+D8ES9jAyoXL23+bDatHh/G4o8mvNE+azuLQ
+	 mFzxi3ZugXnl4yuwDnQJYzsrVMLkpF+0AvXo11AqJvH1ZeJzBkSbCbCwD6YSP4OBVFA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794489064;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794489224;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=PA2XrRJ1jEDBZ4cWD5Zb7Rw2dDKemUDo6+rbWVKhUVM=;
-	b=h8oW63SnwwVmT98dTyN2FdOs26LOVv4coYZRHGHbB22n0DQscGlx1UYWmdCpn684/lVN
-	 gmJxjXJmP5QAq+v2v4BTErfBlWPLj+t3q3TjH8nqvE1wUSyolZCLnA/061K2PKLuEy5nd
-	 lUbzwPnooMJsxfs8tMK2BN3k/yfkcIDqt61veb13Ud+u5bixGU1rOQBB7SkEiCzT1lqhR
-	 Nifc+2G2WeAYbemC6R/xsfsGMrQo9TxiY0q6KmbKT78LEyABJglnSCys8eyrM2BHo08YZ
-	 e+HqZlpEwDI6LBy4MBwLeuNuzexEmbcLpqnBO+4mPkrk5GgFyFdIADbi2Xr+bgS7I4Q==
+	bh=tXlQoa63mc0Tao3dTUby6YfxVwOOPUnmbpD1nQxV4oM=;
+	b=QKViU5KLc4j37l4fKc4fGpvTOBsWqhsDPB2OqKu2PuNGlX7GIEhyRa/y2Ct2qu2Gd+/q
+	 +geRkNPktLQxmdswUAShkxjYUHJGyFWmbym7ORwPEAU0xqeKbj+ArvnWEDYP3RJNejc43
+	 iTaC9Fx6A+XHa7YMOKSGb0qKq8Hk38j4DGLU/FqUVAxRIE6WehG+aSUb0MlOH7ECdTRFi
+	 BvqcLQL1Mn8YR21XmsaFQ31B5vBiJhDYbiYybdoJVVjDAVmC46zT9SHT9bzKZFZrQzeFO
+	 w116MmhPdQhEMARGuF3BjF9EcbNWDAZS5mcoqIwA3l7uHxVpNfUGhDmDUPdBsDfI9VA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="TjB9/dRd";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g6t3P+WV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E2360A261D;
-	Thu, 12 Nov 2026 13:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567E9606A333
+	for <linux-next@vger.kernel.org>; Thu, 12 Nov 2026 13:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TjB9/dRd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D8A81F00A05;
-	Thu, 12 Nov 2026 13:11:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g6t3P+WV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFB31F00A0E;
+	Thu, 12 Nov 2026 13:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794489063;
-	bh=PA2XrRJ1jEDBZ4cWD5Zb7Rw2dDKemUDo6+rbWVKhUVM=;
+	s=k20260515; t=1794489223;
+	bh=tXlQoa63mc0Tao3dTUby6YfxVwOOPUnmbpD1nQxV4oM=;
 	h=Date:From:To:Cc:Subject;
-	b=TjB9/dRdFTUdvHmXK/Un7MNf9qz0q5hKhNHTUQ/IMNGSYLboZ2dedJrENx0AoKBzH
-	 gxpBYpiAdcSlSgkBTk6V1tLgM0JK7LW/XAZEZCz6BLb4VcttGuK2CbnsCFg66QKGI0
-	 n3/qYxduye6mvak7P7VOp/KAy8Ibm1slJZgY32rMPa+dcflbcVJOv4kzK62VqwIs4O
-	 gBDwfoL3U/8yAL4g1EMA3O3LKKccmwMiWKtvaV8mEbj/uPOMBWFQ6/d0fYQL9IfsSl
-	 K3aKO7brBg/6wq3K1xUFhjL3a1Pdg19rED/3XQPblEJWS+8KXInPlByn/OrPqFtXiU
-	 YJdoUbuEVmspw==
-Date: Thu, 12 Nov 2026 13:10:59 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	TAKANO Mitsuhiro <takano32@gmail.com>
-Subject: linux-next: manual merge of the perf tree with the perf-current tree
-Message-ID: <avW648YFgbci03ra@sirena.org.uk>
+	b=g6t3P+WVxNzN3sdMdSZFqdixRjx+DVo+8ViWBdZ30cRqN14KkPvqSUZ0J/CcHoLYT
+	 I8wSqHFcHnOW36OJSN9VVOmchvCoSqUvdr6pWGM45dvsQIlMDxDVMI5DBDNQo6GalC
+	 Er7OtkhFa6pZh7Gg3fLquZoA2zeFApulzV2IRljBpR3cUCwFjUiMVToKvUu/qMVmbF
+	 6TUFolrbodoLrU18oPqYSRK10biU+2+8IribdnmnJWZR+hlaP3v+jgbkvkRA8nMQWn
+	 OKvlpule7PwdkrbZKVtI2/WZ7Ha1125K8k5lSKhbavfsSbuzPDgRDKf83fzl0TqK4U
+	 NAvBupZ91xB7g==
+Date: Thu, 12 Nov 2026 14:13:39 +0100
+From: Thorsten Blum <blum@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org
+Subject: linux-next: Add blum/linux.git for-next
+Message-ID: <avW7g6pH3ILcSAkq@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,74 +54,16 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YDXyM6BlI+CK27Me"
-Content-Disposition: inline
-
-
---YDXyM6BlI+CK27Me
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mark,
 
-Today's linux-next merge of the perf tree got a conflict in:
+Could you please add
 
-  tools/perf/pmu-events/arch/arm64/ampere/ampereonex/memory.json
+  https://git.kernel.org/pub/scm/linux/kernel/git/blum/linux.git for-next
 
-between commit:
+to linux-next?
 
-  a89a17e152c8e ("perf vendor events arm64 AmpereOneX: Deprecate BPU_FLUSH_=
-MEM_FAULT")
-
-=66rom the perf-current tree and commit:
-
-  294b096cafe17 ("perf vendor events arm64 AmpereOneX: Deprecate BPU_FLUSH_=
-MEM_FAULT")
-
-=66rom the perf tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-The -next copy of the cherry pick has an extra '.'.
-
-diff --combined tools/perf/pmu-events/arch/arm64/ampere/ampereonex/memory.j=
-son
-index 114f95e41e0d5,b0934a7b252c3..0000000000000
---- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/memory.json
-+++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/memory.json
-@@@ -35,7 -35,7 +35,7 @@@
-          "ArchStdEvent": "MEM_ACCESS_CHECKED_WR"
-      },
-      {
- -        "PublicDescription": "This event is deprecated. Refer to new even=
-t GPC_FLUSH_MEM_FAULT. Flushes due to memory hazards",
- +        "PublicDescription": "This event is deprecated. Refer to new even=
-t GPC_FLUSH_MEM_FAULT Flushes due to memory hazards",
-          "EventCode": "0x121",
-          "EventName": "BPU_FLUSH_MEM_FAULT",
-          "BriefDescription": "This event is deprecated. Refer to new event=
- GPC_FLUSH_MEM_FAULT",
-
---YDXyM6BlI+CK27Me
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr1uuIACgkQJNaLcl1U
-h9AJwQf7B+OURkT3hKzx1jkUCrc6mVAUgrRHnV4hHYzSE5QP7cvnJqdHhFpYj9RP
-e9/R7ZTSYfoJ1ROuZe1jcrQ+gZzJnG+snQ7/A7mRt4pUdwNiuT1uZ2YL7+sJs5pG
-3k24qd+XPqvn+3yKGInAqIycNC0B5CfDdi8j2iXZewK1rgg/zM+P3XVqcCCvh4KJ
-oi5E6YJqYXGkiSPRIu+jJbz0IqzH8GjPWAjenS0RaLddxt12pDjcVNFi5eKykuqO
-ikQl6EywPdmHIJEEUVbZNmFIVn4DbxwKHK8NNc/yGfMQSiNALA0PLQRk93bETAKi
-7NF+r7UX5C+2Q/lM8dYzKE+eD99tkQ==
-=w995
------END PGP SIGNATURE-----
-
---YDXyM6BlI+CK27Me--
+Thanks,
+Thorsten
