@@ -1,62 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794586613;
-	b=M21qTHjqZkJ91q+5RYSsD+Qb0SyxRUM6PXlyjv3V08V7bw5c/CC7O4N2CVMEL2EmjQiv
-	 nUngzGQ18bWHh70P0+pdv/MiIfejusYgPrgX0Pd6EEiy7397Z9mbFwjv2RBqZLyrlz2+G
-	 K6m8yV2+woTy4+5MzBmEKR0YrtnLjUD1LWt8iu/GIuygypHgxxSZTCrsvzOoLZm/VtVQx
-	 8fW8wSooW21JHh6gDVe/EpL16HNLR1Nf86g8MlZXyN9fmN9ANdsWZATCqOsuckpW+29sc
-	 XEo6bhczbVx0apHWLQ5OZYhsIysNu3RtIlk7zNMMrk8Tp+KA0wfhYI1Ri+leRzzAdRQ==
+	t=1794588041;
+	b=om1LcIdwtC6pDhHdnJv6FhkxA9MnHpGRmyJx/GiuSLDdTnBvehwTvaK1GIfMfE2+G2wJ
+	 O8ulndvQUVoZkO7a7PUKEdSR7dvKZrNae0vAcTRyJMYs38bwG/P2n26PGjVVu309WnNhC
+	 vNpvXdtE/CIo/1+jippsm6gzT+kGBam70CXR+wChakvOamM82Kv/fP67Mti2geBmvcXZN
+	 IfePQNyES4QrhS6XFJAfcaisVToZMjuNZbTiWBYntjs5Rig7IdAMqn8bXMMMFq4X210xh
+	 Fy/cVQBDKJI3eUwf5CBAo0oV+P9yp4F5Gf9zmA8ac1DYX37WaCreBeYWKz7sRcdBcXA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794586613;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794588041;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=CVtKY2baAFqQRZbKIAhuVTcQeg51Dsb2Tf0U1oZ+Jro=;
-	b=AWRICsqMXUsm0rrn9Wj/AHZYDhJtjuKfvBbi15QpXvMADNKe5ZOLPMaPbAPmO/6AH6CW
-	 DhpXg8TdRHjGIjPK+HzvgDkjLOWTF6tApEI6WO8PMqwCJTurcAmegJchrZ4tD7MsjtelW
-	 p9BR/7dKxkrMxOYbfDQ5nwkbNzyoa1mLzvqMikhvUzuP1yu/+yw/uUlVQt60+XQvEfIk0
-	 kv0aUwlu6eYguZg1ashe30v4xMlrLKgQzRkCPo2+xiqkIPuzMnV2DXOz26NqHVdErzalL
-	 kZe5mmXg/IYZvwND18LPLN6HKjACDBjis1j2xiLpH2c74qVCY30S1F9XkgHA92+17qA==
+	bh=85964OVloL+1j6FH7vvajKsfPug+kiq7TaGh13chvfE=;
+	b=RypMXg4iJmaT3MPZiwgsw8JRsgP0Xannf28k3KuB0DWyHjbnJPINg3a8bAsT1HRizgsd
+	 pDjdwXtf0GJspljUvUl3t0JkwLi6NyXhpbMxpgde84G80a9PR4kjzpcJguBV8IXrWztUr
+	 wUVJV8XhsiJJEnWx7PG1xe/Bg7ri2hhcpzMyA2ab7hu9WzRSUT6B2NL0B5dXj77i+HU4h
+	 FGNVm2824zrNymZBsLmTiIJb+eVrul489IU5v+3Ij2oGVCb7zUf2rs8pl3CC9uG4mZyFl
+	 G8T6UhHp2h1VpoiQBpFJpK6xl/rU0ukJ5bxXwpXfLbSmBqEmFXOGiklg9DcvTc9VhPg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ou9UlLra;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UTIpiyQ4;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2989606AE0F;
-	Fri, 13 Nov 2026 16:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868786070236;
+	Fri, 13 Nov 2026 16:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ou9UlLra
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD991F000C5;
-	Fri, 13 Nov 2026 16:16:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UTIpiyQ4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B347E1F000C9;
+	Fri, 13 Nov 2026 16:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794586612;
-	bh=CVtKY2baAFqQRZbKIAhuVTcQeg51Dsb2Tf0U1oZ+Jro=;
+	s=k20260515; t=1794588041;
+	bh=85964OVloL+1j6FH7vvajKsfPug+kiq7TaGh13chvfE=;
 	h=Date:From:To:Cc:Subject;
-	b=ou9UlLra4LK+xJLE/zAyTNqUJTN29nb19guDGIaorpNjG7Yg41XCOF26QNTvepmcJ
-	 XzJn03IadGfZcWNl5WsW/z3Nc5+4sHoWXsWendDUDEOHjuPqQIvsgIhyU17Wo5hkCX
-	 GcMwc1+EBRMv3i/iTMzf+HLSo52CXKhDiCgsNsruntVpiLi+d6WOAxdzcN4lFxg20A
-	 uIEzdaTDyZ3HLCb9LedBOV6wfJy1N7+Oj0bnUh3XPIoyn2B/LmZcSiEY4kIEuV6L8d
-	 DcYy7BWVFLzb1rmQbRNRM/Z2tkT26t8vcmyfJBpSRVu5olldaKBLtY2QMAV9m38MGw
-	 v9tMLMSjpRqFg==
-Date: Fri, 13 Nov 2026 16:16:47 +0000
+	b=UTIpiyQ4lZDjNnyT2JviYdtwrDzpHR4YRwjqsorhb6a0HIz1r9ZLTaXjktgHE82zK
+	 4o+EzBUBPLhC9QLMh/4ZYqCQo45ngmW2poPs+ZsRgQ10UCfEv7+8jZTvk1myDRODKd
+	 XVweza2bOAANDeR6Tn0MjY+q3BxUXfn50QoxkBXBgtLe/7JQulD9aDVbtsK6G33h8U
+	 byYP8jw5hJfpxAL1aXE1EBR3bJnrRORnBENhiIfq8qmxYpMnZ49XW0A6NiV+D6JZDy
+	 vhb7KKmo/ehPkG7uM4ZxqQldDMOPtYI2ibWqdJoiHDGtkdESfMruU8JH41dxOeA1wa
+	 UMCF7KI3kqN7w==
+Date: Fri, 13 Nov 2026 16:40:37 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: Daniel Charles <daniel.charles@intel.com>,
-	Dave Airlie <airlied@redhat.com>,
-	DRI <dri-devel@lists.freedesktop.org>,
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Chang Yu <marcus.yu.56@gmail.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Raag Jadav <raag.jadav@intel.com>,
-	Riana Tauro <riana.tauro@intel.com>,
-	Satyanarayana K V P <satyanarayana.k.v.p@intel.com>,
-	Vinay Belgaumkar <vinay.belgaumkar@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
-Message-ID: <avc376Z6nj4HlOnJ@sirena.org.uk>
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: linux-next: manual merge of the iio tree with the v4l-dvb tree
+Message-ID: <avc9hVyv0ldmYFmK@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -67,43 +61,30 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XMSiqA4Qoh9OzPbI"
+	protocol="application/pgp-signature"; boundary="ZBjj7nrf1+GAUFsB"
 Content-Disposition: inline
 
 
---XMSiqA4Qoh9OzPbI
+--ZBjj7nrf1+GAUFsB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-xe tree got conflicts in:
+Today's linux-next merge of the iio tree got a conflict in:
 
-  drivers/gpu/drm/xe/xe_lmtt.c
-  drivers/gpu/drm/xe/xe_pm.c
+  MAINTAINERS
 
-between commits:
+between commit:
 
-  fc0ba46fd8278 ("drm/xe: Access GT MMIO after pcode init")
-  a17c5ed0dc715 ("drm/xe/pm: Apply tile workarounds after PCODE initializat=
-ion")
-  3654a4d734df9 ("drm/xe/pf: Program LMTT directory pointer from each GT's =
-init path")
+  644428ae65c1a ("dt-bindings: media: i2c: Add Mira016 image sensor")
 
-=66rom the drm-fixes tree and commits:
+=66rom the v4l-dvb tree and commit:
 
-  641ffb2132839 ("drm/xe/pm: Apply tile workarounds after PCODE initializat=
-ion")
-  a8653bee6a040 ("drm/xe/pf: Program LMTT directory pointer from each GT's =
-init path")
-  c9edd9cf7e613 ("drm/xe/pf: Use multicast writes for early-generation LMTT=
- config")
-  be082ef8157b7 ("drm/xe/pm: skip BO eviction on iGPU for non-hibernation s=
-leep")
-  ff03d9510426e ("drm/xe/pm: Introduce xe_device_suspend/resume()")
+  bdb0e2d5271b5 ("dt-bindings: iio: light: add as7343")
 
-=66rom the drm-xe tree.
+=66rom the iio tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -112,225 +93,54 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --git a/drivers/gpu/drm/xe/xe_lmtt.c b/drivers/gpu/drm/xe/xe_lmtt.c
-index 8fba3c01fac29..ea2a3eeefccd7 100644
---- a/drivers/gpu/drm/xe/xe_lmtt.c
-+++ b/drivers/gpu/drm/xe/xe_lmtt.c
-@@ -220,14 +220,8 @@ static void lmtt_setup_dir_ptr_gt(struct xe_gt *gt, u3=
-2 config)
- 	struct xe_reg reg;
- 	u32 val_read;
-=20
--	if (GRAPHICS_VER(xe) < 20) {
--		reg =3D LMEM_CFG;
--		xe_mmio_write32(&gt->mmio, reg, config);
--		return;
--	}
--
- 	if (xe_gt_is_main_type(gt)) {
--		reg_mcr =3D XE2_LMEM_CFG_MCR;
-+		reg_mcr =3D GRAPHICS_VER(xe) < 20 ? LMEM_CFG_MCR : XE2_LMEM_CFG_MCR;
- 		xe_gt_mcr_multicast_write(gt, reg_mcr, config);
- 		val_read =3D xe_gt_mcr_unicast_read_any(gt, reg_mcr);
- 		xe_gt_assert_msg(gt, val_read =3D=3D config, "LMEM_CFG_MCR: %#x !=3D %#x=
-\n",
-diff --git a/drivers/gpu/drm/xe/xe_pm.c b/drivers/gpu/drm/xe/xe_pm.c
-index 61d68c09189f7..f73f68bd449b8 100644
---- a/drivers/gpu/drm/xe/xe_pm.c
-+++ b/drivers/gpu/drm/xe/xe_pm.c
-@@ -167,59 +167,38 @@ static void xe_rpm_lockmap_release(const struct xe_de=
-vice *xe)
- }
-=20
- /**
-- * xe_pm_suspend - Helper for System suspend, i.e. S0->S3 / S0->S2idle
-+ * xe_pm_needs_bo_evict() - Check if bo eviction is needed
-+ * @xe: The xe device.
-+ * @hibernate: Hibernation event
-+ *
-+ * Return: %true if bo eviction is needed, %false otherwise.
-+ */
-+bool xe_pm_needs_bo_evict(struct xe_device *xe, bool hibernate)
-+{
-+	return IS_DGFX(xe) || hibernate;
-+}
-+
-+/**
-+ * xe_pm_suspend - Helper for System suspend, i.e. S0->S3 / S0->S2idle / S=
-0->S4
-  * @xe: xe device instance
-+ * @hibernate: true if preparing for S4 hibernation, false for < S4 suspend
-  *
-  * Return: 0 on success
-  */
--int xe_pm_suspend(struct xe_device *xe)
-+int xe_pm_suspend(struct xe_device *xe, bool hibernate)
- {
--	struct xe_gt *gt;
--	u8 id;
- 	int err;
-=20
- 	drm_dbg(&xe->drm, "Suspending device\n");
- 	xe_pm_block_begin_signalling();
- 	trace_xe_pm_suspend(xe, __builtin_return_address(0));
-=20
--	err =3D xe_pxp_pm_suspend(xe->pxp);
-+	err =3D xe_device_suspend(xe, hibernate, false);
- 	if (err)
--		goto err;
-+		drm_dbg(&xe->drm, "Device suspend failed %d\n", err);
-+	else
-+		drm_dbg(&xe->drm, "Device suspended\n");
-=20
--	xe_late_bind_pm_suspend(&xe->late_bind);
--
--	for_each_gt(gt, xe, id)
--		xe_gt_suspend_prepare(gt);
--
--	xe_display_pm_suspend(xe);
--
--	/* FIXME: Super racey... */
--	err =3D xe_bo_evict_all(xe);
--	if (err)
--		goto err_display;
--
--	for_each_gt(gt, xe, id) {
--		err =3D xe_gt_suspend(gt);
--		if (err)
--			goto err_display;
--	}
--
--	xe_irq_suspend(xe);
--
--	xe_display_pm_suspend_late(xe);
--
--	xe_i2c_pm_suspend(xe);
--
--	drm_dbg(&xe->drm, "Device suspended\n");
--	xe_pm_block_end_signalling();
--
--	return 0;
--
--err_display:
--	xe_display_pm_resume(xe);
--	xe_pxp_pm_resume(xe->pxp);
--err:
--	drm_dbg(&xe->drm, "Device suspend failed %d\n", err);
- 	xe_pm_block_end_signalling();
- 	return err;
- }
-@@ -232,71 +211,18 @@ int xe_pm_suspend(struct xe_device *xe)
-  */
- int xe_pm_resume(struct xe_device *xe)
- {
--	struct xe_tile *tile;
--	struct xe_gt *gt;
--	u8 id;
- 	int err;
-=20
- 	xe_pm_block_begin_signalling();
- 	drm_dbg(&xe->drm, "Resuming device\n");
- 	trace_xe_pm_resume(xe, __builtin_return_address(0));
-=20
--	err =3D xe_pcode_ready(xe, true);
-+	err =3D xe_device_resume(xe, false);
- 	if (err)
--		return err;
-+		drm_dbg(&xe->drm, "Device resume failed %d\n", err);
-+	else
-+		drm_dbg(&xe->drm, "Device resumed\n");
-=20
--	for_each_tile(tile, xe, id)
--		xe_wa_apply_tile_workarounds(tile);
--
--	for_each_gt(gt, xe, id)
--		xe_gt_resume_early(gt);
--
--	xe_display_pm_resume_early(xe);
--
--	/*
--	 * This only restores pinned memory which is the memory required for the
--	 * GT(s) to resume.
--	 */
--	err =3D xe_bo_restore_early(xe);
--	if (err)
--		goto err;
--
--	xe_i2c_pm_resume(xe, true);
--
--	xe_sysctrl_pm_resume(xe);
--
--	xe_irq_resume(xe);
--
--	for_each_gt(gt, xe, id) {
--		err =3D xe_gt_resume(gt);
--		if (err)
--			break;
--	}
--
--	/*
--	 * Try to bring up display before bailing from GT resume failure,
--	 * so we don't leave the user clueless with a blank screen.
--	 */
--	xe_display_pm_resume(xe);
--	if (err)
--		goto err;
--
--	err =3D xe_bo_restore_late(xe);
--	if (err)
--		goto err;
--
--	xe_pxp_pm_resume(xe->pxp);
--
--	if (IS_VF_CCS_READY(xe))
--		xe_sriov_vf_ccs_register_context(xe);
--
--	xe_late_bind_pm_resume(&xe->late_bind);
--
--	drm_dbg(&xe->drm, "Device resumed\n");
--	xe_pm_block_end_signalling();
--	return 0;
--err:
--	drm_dbg(&xe->drm, "Device resume failed %d\n", err);
- 	xe_pm_block_end_signalling();
- 	return err;
- }
-@@ -461,6 +387,9 @@ static int xe_pm_notifier_callback(struct notifier_bloc=
-k *nb,
- 		struct xe_validation_ctx ctx;
-=20
- 		reinit_completion(&xe->pm_block);
-+		if (!xe_pm_needs_bo_evict(xe, action =3D=3D PM_HIBERNATION_PREPARE))
-+			break;
-+
- 		xe_pm_block_begin_signalling();
- 		xe_pm_runtime_get(xe);
- 		(void)xe_validation_ctx_init(&ctx, &xe->val, NULL,
-@@ -485,6 +414,9 @@ static int xe_pm_notifier_callback(struct notifier_bloc=
-k *nb,
- 	case PM_POST_SUSPEND:
- 		complete_all(&xe->pm_block);
- 		xe_pm_wake_rebind_workers(xe);
-+		if (!xe_pm_needs_bo_evict(xe, action =3D=3D PM_POST_HIBERNATION))
-+			break;
-+
- 		xe_bo_notifier_unprepare_all_pinned(xe);
- 		xe_pm_runtime_put(xe);
- 		break;
+diff --cc MAINTAINERS
+index 8b93281252d75,0017755f593bc..0000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -1511,22 -1490,13 +1511,29 @@@ S:	Maintaine
+  F:	Documentation/devicetree/bindings/iio/light/ams,as73211.yaml
+  F:	drivers/iio/light/as73211.c
+ =20
++ AMS AS7343 DRIVER
++ M:	Chang Yu <marcus.yu.56@gmail.com>
++ L:	linux-iio@vger.kernel.org
++ S:	Maintained
++ F:	Documentation/devicetree/bindings/iio/light/ams,as7343.yaml
++ F:	drivers/iio/light/as7343.c
++=20
+ +AMS MIRA016 DRIVER
+ +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+ +M:	Philippe Baetens <philippebaetens@gmail.com>
+ +L:	linux-media@vger.kernel.org
+ +S:	Maintained
+ +F:	Documentation/devicetree/bindings/media/i2c/ams,mira016.yaml
+ +F:	drivers/media/i2c/mira016.c
+ +
+ +AMS MIRA220 DRIVER
+ +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+ +M:	Philippe Baetens <philippebaetens@gmail.com>
+ +L:	linux-media@vger.kernel.org
+ +S:	Maintained
+ +F:	Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
+ +F:	drivers/media/i2c/mira220.c
+ +
+  AMT (Automatic Multicast Tunneling)
+  M:	Taehee Yoo <ap420073@gmail.com>
+  L:	netdev@vger.kernel.org
 
---XMSiqA4Qoh9OzPbI
+--ZBjj7nrf1+GAUFsB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr3N+4ACgkQJNaLcl1U
-h9BLqAf/a3VOhfxKmfNmCvWN2ecgw9zW1XzW85UjqSaB8G+zpEtW4dYS6Z1nfuoi
-uKQfq5WhY/uibOk++SEfu7ImvrcesgyeIiyfKyud1NZOU9gHtjqBLY6QNmoEdrbY
-QizOViLZzd/2EdDSnSrxvK8CfVvbhBPiQHrm58s1Dh54f3IGCQZZsWL7XU5Kdblv
-vjt7r0ukVD0amxvJOqisObSOhRhLFBtfzLbaDLHhiirkB7TdmMwgVjq6yg1YPS1+
-Z4Cx4E1FVDPm/NAQamngiBzyosfZGK/M+4RIKkqB41f9uv3QJ3FfYfWmcCe2W2GZ
-LNtT6dfWmMA28P9x/UTgh2IwQAwvmg==
-=+BY7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr3PYQACgkQJNaLcl1U
+h9BbiQf+PoFSZmJ+GdVKV1DSAeoJhRH1Qp9Isv4TOp2qNBfIeALQ1X3t5WFA8fe5
+GB5dR3V3X/4AK2CXzPLHajur0FuqN0zNiIo/kgU0GNv5azK9AM6BXtk2ZVjZZ+Bq
+IgCRoQujNUw2mipBf0a3Hv+bm+CQYw2o+/wCmXmJzGmCCFVOl4cEvypAdtxVqQ7s
+QErmy6ZJYxKHu1x1BSlXsmToHY0DE1P/LifIrtPLWQmRn+dXUNcC6moKjYwcS6Kh
+A9wQfdMMFmXJRJMpIdqPqC3frkreCgtE3PJ8jxo+q8/7RRS90U9fdvvL9uPyhGfP
+as6S6TnV/bBc3Dym/3nTgBeqInMSEw==
+=rBfe
 -----END PGP SIGNATURE-----
 
---XMSiqA4Qoh9OzPbI--
+--ZBjj7nrf1+GAUFsB--
