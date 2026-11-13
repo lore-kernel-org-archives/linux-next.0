@@ -1,55 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794592331;
-	b=NwgjE2ywzwVOeASBqCLeHtvqfLI15IHF29sR7LefBqeFdZjP4thnArdW2sCIo0QTbWAS
-	 oenXd4TAMfuRH9WdcTkGUYIHUep/ey+6DehfH2y+QZEO/EUk+SkkO1saRkXYTr0SOzSS5
-	 iXzDh9p+3nGGlQi2fLFZF02kHgn966Wx5KW62VyEIeDSdNCbdA+51FcYSqBzF9FkZWZau
-	 mDypLNLUatjMY6ze9tZLux5XxF/PzTSLXGhN4bnACkmcwH+IYpji1EEgZWKO7ioaaVtqS
-	 Ho+6poWGE538JeaRnrb6Ndrc1Slb0rYr3+CATAY7tUm6NKjZuKfWzhZFq6ApIT4lZbQ==
+	t=1794592388;
+	b=FygvT4k5HLNPX9tXQf8cD4tmioBp5egRdsTbL7Ws3+uY3KTgtTzpMWlVayQAt0SqlSmC
+	 aMAe0qsQunfj50wxA9X0Bg9lL4V0U/GpBLuhzBVU0spbFBwE+fHWgv0k9EgT9q+8A0q0y
+	 YM28i6a1PNRjAyW9S2JPhaSJpcMbHt6Gq80Ma3izLUZwYpj4PsqG4tpNnee7zec4QrdFO
+	 5xwKmmi6cWKmxFQVpoaQeXhdv+vzJk0+tC6XR0sYC+HvN1NgDJU/RUyAK0Nk7sJbdsZ88
+	 5R1cMHFZl45g+4eelXH63XnCYTssB8bc0KTKs9+6PQxh2CzffXN9MunkUfVhx5ntcZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794592331;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=TLfdLaAUVLYd6fQ/6w4Lz5M40jHznIS5PWWPQ+bnEik=;
-	b=t80HGh54/3xXQhHy7E21+rIneX97ld/yPBOsgPfZ74mm//3v2qssiI9iIEzpChQkjDww
-	 dMKcSfIhfID8rhr4j6d97dUX/teXXSKhmdsMhDsLrmiSmze98FlhTXmPCGXB3jIvqlfNQ
-	 0u9EF5TSAcJf5cn/qU4fKdFtImXF5Hg22haw8qMsA5qCew12pq26gSmrecsffIe8TLp3f
-	 bV/KelRRdhI3/Ew1KKcYxteGB1nFZaXbQa+414jK0JsYL+li4KCnE7Od0yzqrY7qiGrc4
-	 +cZqGtMKeE3dPLqeeadPDQus63KLI1/QSgBN2SQn0J9NYS8iKJbvGE+u32JS9xhfL1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794592388;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=mkop3rNd8ipKCUS88Gl2+z9hJebRyc+Xc7ELZ0zw3hc=;
+	b=O4keWkxJZslVp6m4lAnBdQnHTR2mDElJ3k5UUTxF+P7mWs8rNtjdt5g1F26XvnqOtAet
+	 FLP1pOjvoHQ9CtpOPMpV4Q8uhJ4K+Ciar19kTp8xf10UDb5h1SS//KIJFxQaS7Ab6f0wJ
+	 EQy8SWo27y4/al+loVqheGDxt0rIByNmdZTwDMov+6PIFdy+qsGTRKwhuEVgoN90zsFRa
+	 lF0MZKf78FByuLRgZXl/GjhxobWGv334BrE0GFwdan9Wsvadl6tyqMdLvXMO3XINnVrEY
+	 YYyxUEHhXCNsxr3LunKgOkxFdhyLEQQTjdwJ8055yB4MBZKS+vSFWbb7yqAgWXBxsbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AHOrGHa3;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G2zbNCC+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD989606A89F
-	for <linux-next@vger.kernel.org>; Fri, 13 Nov 2026 17:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23AB606A883;
+	Fri, 13 Nov 2026 17:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AHOrGHa3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7BB1F000C7
-	for <linux-next@vger.kernel.org>; Fri, 13 Nov 2026 17:52:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G2zbNCC+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF49C1F000C4;
+	Fri, 13 Nov 2026 17:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794592331;
-	bh=TLfdLaAUVLYd6fQ/6w4Lz5M40jHznIS5PWWPQ+bnEik=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=AHOrGHa3RR3bIuxBKQb0usafo01oLa4TRvcYVtcQ339CdsVDd7oKDUgRKahZ29O1p
-	 Z88zPIcUQVGNWxWM/uSxjDpHB4Me3EHuulsHzsWSEKjVHWafiFhgwDh8dM0Ie40Cl+
-	 9YA6tvNpWvKHTU+eE9XbNOn5SR0K6I+7ce9GJhRzSv/rdKeOa6MvhC3f45xs2dXR18
-	 LRsVPWdFHurRzqNL0DYOJb2yAT8bpy8wjwX9AJM5hdTSCWeILYyU5V07Jb+DLFBuGZ
-	 Rb7JsG+DpG94KdSFCIMyf3MioSGYROhyq2dSU0bm1DOu2oAT/04w68Lm1K56Fz4PGd
-	 YL87JkOe8tSmA==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5bfbc67991cso1195642e87.0
-        for <linux-next@vger.kernel.org>; Fri, 13 Nov 2026 09:52:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGFpR1isejCLb4uC+vSBMVuBg4KjfSgetV3C/lT3IhBNOwRfwoz1ADIFyX8Oc0ikwizmQ1OvQ0pIa0u@vger.kernel.org
-X-Gm-Message-State: APuU4Z+iutq0vgEEzLRruYSxp7X6DcAQeNiTFzIpvT1aZM2J3W9ELXwR
-	7yIQ7KzvAxx8JQ3JaLSx6r/TjThyvjglCsrXFnvgfH5gGCbDUjsFkZGjzUOQzZCmmFTqLCtMY75
-	0TTFoVCJukdmdiogjd/IBImVyGBI0I94=
-X-Received: by 2002:a05:6512:32cc:b0:5c1:4e17:1ee7 with SMTP id
- 2adb3069b0e04-5c170b67a73mr1455562e87.57.1794592330111; Fri, 13 Nov 2026
- 09:52:10 -0800 (PST)
+	s=k20260515; t=1794592388;
+	bh=mkop3rNd8ipKCUS88Gl2+z9hJebRyc+Xc7ELZ0zw3hc=;
+	h=Date:From:To:Cc:Subject;
+	b=G2zbNCC+lAUQ+yyqki/MLp0zEh3NokPrJHRNgCU5kpFntkQCcEwomUrZrP6v3le1G
+	 W/dNKydA75ZIPMr81qBoyzWX6b3g5d2Df9RsNUQckfbsLWky06h6TdQyRz8dFHHll5
+	 J4z4Enn1yQNURY7x1vvISY0ATuXTNddQGXEK3szj2SRY14KhYQeQymzsshS/C6Rcq+
+	 rYcBvEKMowpdaOscZjC+6Yq0tUc/tCnoQ34my1B+XOejV+z19i6zQREQegXBjvEfMi
+	 nj4tEiAB9v9JKNCRwmXQRQ0sUfXtHG6vva2PlevGBfQ6kyKWlhK/gQBBaFp537HquS
+	 bgx633JWNcj/g==
+Date: Fri, 13 Nov 2026 17:53:05 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 13
+Message-ID: <avdOgYI0LjP2WH-N@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,49 +54,84 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <avdHa2nh2QNmbiOM@sirena.org.uk>
-In-Reply-To: <avdHa2nh2QNmbiOM@sirena.org.uk>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 13 Nov 2026 18:51:57 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnitCp=jodR0r0ndEjZbkpZeNBdJYzNtWStHXnVdCJoYA@mail.gmail.com>
-X-Gm-Features: AclHuK8MLdUCyhFEjv1MkVZK8OPB5YIGVQI3u9mpreDZXUHsybRiZjbCSCzAgfQ
-Message-ID: <CAD++jLnitCp=jodR0r0ndEjZbkpZeNBdJYzNtWStHXnVdCJoYA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the pinctrl tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZxL9G7tV3DfEZZQy"
+Content-Disposition: inline
 
-On Fri, Nov 13, 2026 at 6:22=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
 
-> After merging the pinctrl tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> /tmp/next/build/drivers/pinctrl/pinctrl-scmi.c:425:22: error: no member n=
-amed 'function_flags_get' in 'struct scmi_pinctrl_proto_ops'; did you mean =
-'function_groups_get'?
->   425 |                 ret =3D pinctrl_ops->function_flags_get(pmx->ph, =
-i, &pin_only,
->       |                                    ^~~~~~~~~~~~~~~~~~
->       |                                    function_groups_get
-> /tmp/next/build/include/linux/scmi_protocol.h:806:8: note: 'function_grou=
-ps_get' declared here
->   806 |         int (*function_groups_get)(const struct scmi_protocol_han=
-dle *ph,
->       |               ^
-> 1 error generated.
->
->
-> Caused by commit
->
->    b5848e117035 (pinctrl: scmi: give no groups to pin-only functions)
+--ZxL9G7tV3DfEZZQy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Argh my bad I wrongly assumed the commits were independent, not so.
+Hi all,
 
-I've backed it out.
+Changes since 20261112:
 
-Yours,
-Linus Walleij
+The clk tree acquired multiple conflicts with the origin tree.
+
+The asm-generic tree acquired a build failure, I used the version from
+next-20261112 instead.
+
+The drm tree acquired a conflict with the riscv-dt tree.
+
+The drm tree acquired extensive conflicts with the drm-fixes tree.
+
+The amdgpu tree acquired a conflict with the drm-fixes tree.
+
+The drm-xe tree acquired a conflict with the drm-fixes tree.
+
+The iio tree acquired a conflict with the v4l-dvb tree.
+
+The pinctrl tree acquired a build failure, I used the version from
+next-20261112 instead.
+
+Non-merge commits (relative to Linus' tree): 6094
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 436 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--ZxL9G7tV3DfEZZQy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr3ToAACgkQJNaLcl1U
+h9B4CAf+JS2s56x+9YZs30Fy0WH/AhTXI5PBhmoozyuSC2xznjhSHkgwPKfUX6fI
+T+7cPh25mKqNdphGN2Jf8bT1gAQMObp4dHVb+buMx08spYRiGMH/SIPkZ1H+X/3X
+vNHtQVtAkUtFAKsGLv/4oydM2HAjeo+ZvcYb6IzkWNJFlBnpXtZKYsWepzGZzVru
+AXHWhrnDf33MsDBZ8HA8Z/jujgWhnTFrsqBKLPlYmW4peKJOdrGu2f7EFJ51zBXj
+5FOWVAR8FFM6HBRLwtL2Q/mrOgd2682/Q5sv3UrpRrfPuXHesc1/o5zNhSbore+T
+EYWoiFyECN3jSTOQjfpikl01t+D0Og==
+=kOd/
+-----END PGP SIGNATURE-----
+
+--ZxL9G7tV3DfEZZQy--
