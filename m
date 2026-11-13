@@ -1,55 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794580950;
-	b=a6kjJLe/uP8JkVJgnN4l2wuJCJKDSJU8hpYJVeruSnel7kfom08+bcrs0JTQhz1hG4c3
-	 9b9xyyJxTY+ALLC7xbZQHLe8ywJ5hTkO/ekSNq+ZplTz/ICGK4IOsLutcLrDJ3cl8irHQ
-	 6Gm191s6YLuuqBjNk+M6k02DcA9JtnQ4ZoOimua79vmZNQCzGf/Tf93P2335DN3dX68tC
-	 z5BlL9Rq2C1ySXEuQga1hG/P+fOG9UhuPKCb6j8G/uFSUSN5Y/O1Bvo3qyqDNiP/SwgQQ
-	 8xq7QFiElE1nDpSlyAJs9TdJDu2vXmVm/uZjM3Oppd1Y54+3FGU6zxzBoz5HVVTYyTA==
+	t=1794582299;
+	b=2VWAh1JwQR7s8No+aPRHTnKC3Y3+gYJL+HhmeNIUZAckGtYTdilt4tExwrAWELajSw4l
+	 6tdpVm+1Eaugg0o/VtAMjep9oQUnPG+aYEgxjJE0Cs0q+pRTZeSulQAmDVGxWgXOup9j3
+	 KgZwdRn6B4z49KzTX9ND+2IISENAQhRkOxYhsVtM5SZmDHTE3R1Rm8fJrtCEgia0Imkmx
+	 VvIRji/DnlD5AXYhuQcQs8LEnUcNgymiKrVWjLy6T4BFYc3u8N1f3bdLz4y8p8WZRKufN
+	 lsuvSkO2xM87fMf3Hup56vstgUra00jP6B4Vob62E1pUmAiRuh7CwH/UQw5B8LWNCHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794580950;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794582299;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=Bx5JSIj4taaYF57uIG81WZuKix9lw9kbm56fQE4YOhg=;
-	b=U48DYVtACcOf5xtCitn2mM5wIDR+W7vmKX69+NHaye4bysqEFfzE3py4ewTL8vp+cDxH
-	 7AjxbwxCBDFq40nwRI+uiuPBLeuAYuoHOrjfkdiED+JugcrdMkvwx6g0tR/QgxV+4+AnV
-	 kSkqOaiLjwXRxW+/qUm00cDDgHxcnKdpz88O84Tk48TSYHU+N+kCINAc1wrKLT8AfRgnV
-	 jyW7JH+EhjwlWmnQhAh0CuZ8o1wt+aftPcRpYejV3ov5a8ICIpqfdlt7w9OjHThMb07bx
-	 DoT6sKfB+bm+RfX6FZ3uhllzvVjZdlCxxUJ9XLH0tTkYyp441fULbKF6mKG8DE5EsIA==
+	bh=B8r08F7CiB7ffv9nMyjitdMPnpUkVfo5F2a5rSdsPRU=;
+	b=TF9khxjK0Q+rd625ogLkNU+uIQmwYBl3n/1Hc9891zEsCH5IGtk9KzJqs7Paay/XCMiG
+	 J3WluSuLe5hadBXObrieEQBsC/eVprf5Q6N1yHHbDBPsTbqbqPycm/B4JeiYdf88qLyi2
+	 o/EuB24mbSxvPlcnHqY5P6a2EAUzpgK+CzZjJeiFPO4pzNM+tVjChTs4lH8+L1ealEnze
+	 2/qYyctiT3xpG7n4WP5Ms1db27juSyRQXTJyZ0OfQ2cxEtqXrXIGLlDBbiGxvpHqwU5rD
+	 tpaafw3ATGixWXkmUR4tNtWdlS7uu/83skvA5qDWDv7a5Sfg8p0lX9m1oXVZXQpNp7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iwPpLg8k;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bYgohbRp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790EB606A32D;
-	Fri, 13 Nov 2026 14:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41816606A327;
+	Fri, 13 Nov 2026 15:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iwPpLg8k
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DA601F000C7;
-	Fri, 13 Nov 2026 14:42:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bYgohbRp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290F21F000C4;
+	Fri, 13 Nov 2026 15:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794580950;
-	bh=Bx5JSIj4taaYF57uIG81WZuKix9lw9kbm56fQE4YOhg=;
+	s=k20260515; t=1794582299;
+	bh=B8r08F7CiB7ffv9nMyjitdMPnpUkVfo5F2a5rSdsPRU=;
 	h=Date:From:To:Cc:Subject;
-	b=iwPpLg8keaB1k9ef6yh4iyY8CXXuNq6f+yxhPAmsLbkoRlhDZdLFKuxyT6FWsyEXj
-	 SYsYJ9sg5O3gB8CoSddumpkoweapMSClhriJyNWZt/8gGCRyVKW3AIjvahVzVjQ20R
-	 Vp3+8seStKnpqG2Q1oPX2CQOCLFyZi9CBBs2ay33UmGyi+VhEQy1GcvWKk5UMxzf/o
-	 bXdK88Kuu/y05g046wXbp4kGhT8qFfrTSPJaaqUHxtAO5j//w3FBsi+9ek7eTrk6hJ
-	 i/7HwQH6WhKzPA9e8cU0H6EfRek3LIy7HmmG8f8ELM5Yb658FrxhU0TtM2IvMvzV56
-	 jte1vF+dlRNLQ==
-Date: Fri, 13 Nov 2026 14:42:25 +0000
+	b=bYgohbRpqfTSVPU9py74kJDFrB0f+rwZBzdt09wkyYuwX/owpnqmtCwnyP0WtxIu6
+	 t6J/ZUzwsx4lXy/FFFwBcrD0qPveet4WhZy23dq6GIgCogGPu37gNsFfgRiGvVBPGx
+	 y7PA0KhMP4we7RRsiSrWe1gmJJ2614Ol36yZmZ3Yb3m0ncpXFGJj21TBsUyiY6WQT0
+	 GrbnPkvo+9axP+6urQS5vOX18MwVIMqh+uAd7NzTsUnax9K6PpJmzoees/7RKpFWW3
+	 ++xr61te7pzISob/ApKJS9V5Sb2iYGt6ldvTYOAnwfgXb44OPGpMylPjxdBDfDFISd
+	 IkM4PjDJnY6Qg==
+Date: Fri, 13 Nov 2026 15:04:55 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Brian Masney <bmasney@redhat.com>, Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
-	Brian Masney <masneyb@kernel.org>, Kees Cook <kees@kernel.org>,
-	Kees Cook <kees+treewide@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: Arnd Bergmann <arnd@arndb.de>, Thomas Huth <thuth@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the clk tree with the origin tree
-Message-ID: <avch0WAFqmKQHd_1@sirena.org.uk>
+Subject: linux-next: build failure after merge of the asm-generic tree
+Message-ID: <avcnFxad0xS5KrZs@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,191 +56,149 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="R3xg1ru6BtpYPMXW"
+	protocol="application/pgp-signature"; boundary="zH5JWtwHrMr3/R3d"
 Content-Disposition: inline
 
 
---R3xg1ru6BtpYPMXW
+--zH5JWtwHrMr3/R3d
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the clk tree got a conflict in:
+After merging the asm-generic tree, today's linux-next build
+(arm64 kselftest) failed like this:
 
-  drivers/clk/socfpga/clk-s10.c
+  CC       vdso_test_chacha
+/usr/include/asm-generic/int-ll64.h: Assembler messages:
+/usr/include/asm-generic/int-ll64.h:20: Error: unknown mnemonic `typedef' -- `typedef __signed__ char __s8'
+/usr/include/asm-generic/int-ll64.h:21: Error: unknown mnemonic `typedef' -- `typedef unsigned char __u8'
+/usr/include/asm-generic/int-ll64.h:23: Error: unknown mnemonic `typedef' -- `typedef __signed__ short __s16'
+/usr/include/asm-generic/int-ll64.h:24: Error: unknown mnemonic `typedef' -- `typedef unsigned short __u16'
+/usr/include/asm-generic/int-ll64.h:26: Error: unknown mnemonic `typedef' -- `typedef __signed__ int __s32'
+/usr/include/asm-generic/int-ll64.h:27: Error: unknown mnemonic `typedef' -- `typedef unsigned int __u32'
+/usr/include/asm-generic/int-ll64.h:30: Error: unknown mnemonic `__extension__' -- `__extension__ typedef __signed__ long long __s64'
+/usr/include/asm-generic/int-ll64.h:31: Error: unknown mnemonic `__extension__' -- `__extension__ typedef unsigned long long __u64'
+/usr/include/linux/posix_types.h:25: Error: unknown mnemonic `typedef' -- `typedef struct{'
+/usr/include/linux/posix_types.h:26: Error: unknown mnemonic `unsigned' -- `unsigned long fds_bits[1024/(8*sizeof(long))]'
+/usr/include/linux/posix_types.h:27: Error: junk at end of line, first unrecognized character is `}'
+/usr/include/linux/posix_types.h:30: Error: unknown mnemonic `typedef' -- `typedef void(*__kernel_sighandler_t)(int)'
+/usr/include/linux/posix_types.h:33: Error: unknown mnemonic `typedef' -- `typedef int __kernel_key_t'
+/usr/include/linux/posix_types.h:34: Error: unknown mnemonic `typedef' -- `typedef int __kernel_mqd_t'
+/usr/lib/linux/uapi/arm64/asm/posix_types.h:5: Error: unknown mnemonic `typedef' -- `typedef unsigned short __kernel_old_uid_t'
+/usr/lib/linux/uapi/arm64/asm/posix_types.h:6: Error: unknown mnemonic `typedef' -- `typedef unsigned short __kernel_old_gid_t'
+/usr/include/asm-generic/posix_types.h:15: Error: unknown mnemonic `typedef' -- `typedef long __kernel_long_t'
+/usr/include/asm-generic/posix_types.h:16: Error: unknown mnemonic `typedef' -- `typedef unsigned long __kernel_ulong_t'
+/usr/include/asm-generic/posix_types.h:20: Error: unknown mnemonic `typedef' -- `typedef __kernel_ulong_t __kernel_ino_t'
+/usr/include/asm-generic/posix_types.h:24: Error: unknown mnemonic `typedef' -- `typedef unsigned int __kernel_mode_t'
+/usr/include/asm-generic/posix_types.h:28: Error: unknown mnemonic `typedef' -- `typedef int __kernel_pid_t'
+/usr/include/asm-generic/posix_types.h:32: Error: unknown mnemonic `typedef' -- `typedef int __kernel_ipc_pid_t'
+/usr/include/asm-generic/posix_types.h:36: Error: unknown mnemonic `typedef' -- `typedef unsigned int __kernel_uid_t'
+/usr/include/asm-generic/posix_types.h:37: Error: unknown mnemonic `typedef' -- `typedef unsigned int __kernel_gid_t'
+/usr/include/asm-generic/posix_types.h:41: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_suseconds_t'
+/usr/include/asm-generic/posix_types.h:45: Error: unknown mnemonic `typedef' -- `typedef int __kernel_daddr_t'
+/usr/include/asm-generic/posix_types.h:49: Error: unknown mnemonic `typedef' -- `typedef unsigned int __kernel_uid32_t'
+/usr/include/asm-generic/posix_types.h:50: Error: unknown mnemonic `typedef' -- `typedef unsigned int __kernel_gid32_t'
+/usr/include/asm-generic/posix_types.h:59: Error: unknown mnemonic `typedef' -- `typedef unsigned int __kernel_old_dev_t'
+/usr/include/asm-generic/posix_types.h:72: Error: unknown mnemonic `typedef' -- `typedef __kernel_ulong_t __kernel_size_t'
+/usr/include/asm-generic/posix_types.h:73: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_ssize_t'
+/usr/include/asm-generic/posix_types.h:74: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_ptrdiff_t'
+/usr/include/asm-generic/posix_types.h:79: Error: unknown mnemonic `typedef' -- `typedef struct{'
+/usr/include/asm-generic/posix_types.h:80: Error: unknown mnemonic `int' -- `int val[2]'
+/usr/include/asm-generic/posix_types.h:81: Error: junk at end of line, first unrecognized character is `}'
+/usr/include/asm-generic/posix_types.h:87: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_off_t'
+/usr/include/asm-generic/posix_types.h:88: Error: unknown mnemonic `typedef' -- `typedef long long __kernel_loff_t'
+/usr/include/asm-generic/posix_types.h:89: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_old_time_t'
+/usr/include/asm-generic/posix_types.h:90: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_time_t'
+/usr/include/asm-generic/posix_types.h:91: Error: unknown mnemonic `typedef' -- `typedef long long __kernel_time64_t'
+/usr/include/asm-generic/posix_types.h:92: Error: unknown mnemonic `typedef' -- `typedef __kernel_long_t __kernel_clock_t'
+/usr/include/asm-generic/posix_types.h:93: Error: unknown mnemonic `typedef' -- `typedef int __kernel_timer_t'
+/usr/include/asm-generic/posix_types.h:94: Error: unknown mnemonic `typedef' -- `typedef int __kernel_clockid_t'
+/usr/include/asm-generic/posix_types.h:95: Error: unknown mnemonic `typedef' -- `typedef char*__kernel_caddr_t'
+/usr/include/asm-generic/posix_types.h:96: Error: unknown mnemonic `typedef' -- `typedef unsigned short __kernel_uid16_t'
+/usr/include/asm-generic/posix_types.h:97: Error: unknown mnemonic `typedef' -- `typedef unsigned short __kernel_gid16_t'
+/usr/include/linux/types.h:12: Error: unknown mnemonic `typedef' -- `typedef __signed__ __int128 __s128 __attribute__((aligned(16)))'
+/usr/include/linux/types.h:13: Error: unknown mnemonic `typedef' -- `typedef unsigned __int128 __u128 __attribute__((aligned(16)))'
+/usr/include/linux/types.h:31: Error: unknown mnemonic `typedef' -- `typedef __u16 __le16'
+/usr/include/linux/types.h:32: Error: unknown mnemonic `typedef' -- `typedef __u16 __be16'
+/usr/include/linux/types.h:33: Error: unknown mnemonic `typedef' -- `typedef __u32 __le32'
+/usr/include/linux/types.h:34: Error: unknown mnemonic `typedef' -- `typedef __u32 __be32'
+/usr/include/linux/types.h:35: Error: unknown mnemonic `typedef' -- `typedef __u64 __le64'
+/usr/include/linux/types.h:36: Error: unknown mnemonic `typedef' -- `typedef __u64 __be64'
+/usr/include/linux/types.h:38: Error: unknown mnemonic `typedef' -- `typedef __u16 __sum16'
+/usr/include/linux/types.h:39: Error: unknown mnemonic `typedef' -- `typedef __u32 __wsum'
+/usr/include/linux/types.h:55: Error: unknown mnemonic `typedef' -- `typedef unsigned __poll_t'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:88: Error: unknown mnemonic `struct' -- `struct user_pt_regs{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:89: Error: unknown mnemonic `__u64' -- `__u64 regs[31]'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:90: Error: unknown mnemonic `__u64' -- `__u64 sp'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:91: Error: unknown mnemonic `__u64' -- `__u64 pc'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:92: Error: unknown mnemonic `__u64' -- `__u64 pstate'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:93: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:95: Error: unknown mnemonic `struct' -- `struct user_fpsimd_state{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:96: Error: unknown mnemonic `__uint128_t' -- `__uint128_t vregs[32]'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:97: Error: unknown mnemonic `__u32' -- `__u32 fpsr'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:98: Error: unknown mnemonic `__u32' -- `__u32 fpcr'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:99: Error: unknown mnemonic `__u32' -- `__u32 __reserved[2]'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:100: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:102: Error: unknown mnemonic `struct' -- `struct user_hwdebug_state{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:103: Error: unknown mnemonic `__u32' -- `__u32 dbg_info'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:104: Error: unknown mnemonic `__u32' -- `__u32 pad'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:105: Error: unknown mnemonic `struct' -- `struct {'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:106: Error: unknown mnemonic `__u64' -- `__u64 addr'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:107: Error: unknown mnemonic `__u32' -- `__u32 ctrl'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:108: Error: unknown mnemonic `__u32' -- `__u32 pad'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:109: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:110: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:114: Error: unknown mnemonic `struct' -- `struct user_sve_header{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:115: Error: unknown mnemonic `__u32' -- `__u32 size'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:116: Error: unknown mnemonic `__u32' -- `__u32 max_size'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:117: Error: unknown mnemonic `__u16' -- `__u16 vl'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:118: Error: unknown mnemonic `__u16' -- `__u16 max_vl'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:119: Error: unknown mnemonic `__u16' -- `__u16 flags'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:120: Error: unknown mnemonic `__u16' -- `__u16 __reserved'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:121: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:253: Error: unknown mnemonic `struct' -- `struct user_pac_mask{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:254: Error: unknown mnemonic `__u64' -- `__u64 data_mask'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:255: Error: unknown mnemonic `__u64' -- `__u64 insn_mask'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:256: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:260: Error: unknown mnemonic `struct' -- `struct user_pac_address_keys{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:261: Error: unknown mnemonic `__uint128_t' -- `__uint128_t apiakey'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:262: Error: unknown mnemonic `__uint128_t' -- `__uint128_t apibkey'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:263: Error: unknown mnemonic `__uint128_t' -- `__uint128_t apdakey'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:264: Error: unknown mnemonic `__uint128_t' -- `__uint128_t apdbkey'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:265: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:267: Error: unknown mnemonic `struct' -- `struct user_pac_generic_keys{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:268: Error: unknown mnemonic `__uint128_t' -- `__uint128_t apgakey'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:269: Error: junk at end of line, first unrecognized character is `}'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:273: Error: unknown mnemonic `struct' -- `struct user_za_header{'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:274: Error: unknown mnemonic `__u32' -- `__u32 size'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:275: Error: unknown mnemonic `__u32' -- `__u32 max_size'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:276: Error: unknown mnemonic `__u16' -- `__u16 vl'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:277: Error: unknown mnemonic `__u16' -- `__u16 max_vl'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:278: Error: unknown mnemonic `__u16' -- `__u16 flags'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:279: Error: unknown mnemonic `__u16' -- `__u16 __reserved'
+/usr/lib/linux/uapi/arm64/asm/ptrace.h:280: Error: junk at end of line, first unrecognized character is `}'
+make[1]: *** [../lib.mk:230: /tmp/next/arm64_kselftest/kselftest/vDSO/vdso_test_chacha] Error 1
 
-between commit:
+Caused by commit
 
-  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
-oc_obj() family")
+   625b37748a148 (treewide: Stop defining __ASSEMBLY__ for assembler files)
 
-=66rom the origin tree and commit:
+I have used the tree from next-20261112 instead.
 
-  51805c5218c7e ("clk: socfpga: stratix10: register the SP timer clocks ear=
-ly")
-
-=66rom the clk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/clk/socfpga/clk-s10.c
-index aad66f8d069d2,1976789b5166a..0000000000000
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@@ -382,33 -397,112 +397,111 @@@ static int s10_clk_register_pll(const s
-  	return 0;
-  }
- =20
-- static int s10_clkmgr_init(struct platform_device *pdev)
-+ static struct stratix10_clock_data *s10_clk_data;
-+=20
-+ static struct stratix10_clock_data *s10_clk_data_alloc(void __iomem *base)
-  {
-- 	struct device_node *np =3D pdev->dev.of_node;
-- 	struct device *dev =3D &pdev->dev;
-  	struct stratix10_clock_data *clk_data;
-- 	void __iomem *base;
-- 	int i, num_clks;
-+ 	int i;
- =20
-- 	base =3D devm_platform_ioremap_resource(pdev, 0);
-- 	if (IS_ERR(base)) {
-- 		pr_err("%s: failed to map clock registers\n", __func__);
-- 		return PTR_ERR(base);
-- 	}
--=20
-- 	num_clks =3D STRATIX10_NUM_CLKS;
-- 	clk_data =3D devm_kzalloc_flex(dev, *clk_data, clk_data.hws, num_clks);
- -	clk_data =3D kzalloc(struct_size(clk_data, clk_data.hws, STRATIX10_NUM_C=
-LKS),
- -			   GFP_KERNEL);
-++	clk_data =3D kzalloc_flex(*clk_data, clk_data.hws, STRATIX10_NUM_CLKS);
-  	if (!clk_data)
-- 		return -ENOMEM;
-+ 		return NULL;
- =20
-  	clk_data->base =3D base;
-- 	clk_data->clk_data.num =3D num_clks;
-+ 	clk_data->clk_data.num =3D STRATIX10_NUM_CLKS;
- =20
-- 	for (i =3D 0; i < num_clks; i++)
-- 		clk_data->clk_data.hws[i] =3D ERR_PTR(-ENOENT);
-+ 	for (i =3D 0; i < STRATIX10_NUM_CLKS; i++)
-+ 		clk_data->clk_data.hws[i] =3D ERR_PTR(-EPROBE_DEFER);
- =20
-+ 	return clk_data;
-+ }
-+=20
-+ static void s10_clk_register_early(struct stratix10_clock_data *clk_data)
-+ {
-  	s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
- =20
-+ 	s10_clk_register_c_perip(s10_early_perip_c_clks,
-+ 				 ARRAY_SIZE(s10_early_perip_c_clks), clk_data);
-+=20
-+ 	s10_clk_register_cnt_perip(s10_early_perip_cnt_clks,
-+ 				   ARRAY_SIZE(s10_early_perip_cnt_clks),
-+ 				   clk_data);
-+=20
-+ 	s10_clk_register_gate(s10_early_gate_clks,
-+ 			      ARRAY_SIZE(s10_early_gate_clks), clk_data);
-+ }
-+=20
-+ /*
-+  * The registered clocks keep using the mapping and clk_data, so neither =
-is
-+  * released once the early clocks have been registered.
-+  */
-+ static int s10_clkmgr_setup(struct device_node *np)
-+ {
-+ 	struct stratix10_clock_data *clk_data;
-+ 	void __iomem *base;
-+=20
-+ 	base =3D of_iomap(np, 0);
-+ 	if (!base) {
-+ 		pr_err("%s: failed to map clock registers\n", __func__);
-+ 		return -ENOMEM;
-+ 	}
-+=20
-+ 	clk_data =3D s10_clk_data_alloc(base);
-+ 	if (!clk_data) {
-+ 		iounmap(base);
-+ 		return -ENOMEM;
-+ 	}
-+=20
-+ 	s10_clk_register_early(clk_data);
-+ 	s10_clk_data =3D clk_data;
-+=20
-+ 	return 0;
-+ }
-+=20
-+ static int s10_clkmgr_add_provider(struct device_node *np)
-+ {
-+ 	static bool added;
-+ 	int ret;
-+=20
-+ 	if (added)
-+ 		return 0;
-+=20
-+ 	ret =3D of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+ 				     &s10_clk_data->clk_data);
-+ 	if (ret)
-+ 		return ret;
-+=20
-+ 	added =3D true;
-+=20
-+ 	return 0;
-+ }
-+=20
-+ static void __init s10_clkmgr_early_init(struct device_node *np)
-+ {
-+ 	if (s10_clkmgr_setup(np))
-+ 		return;
-+=20
-+ 	if (s10_clkmgr_add_provider(np))
-+ 		pr_err("%s: failed to add clock provider\n", __func__);
-+ }
-+=20
-+ CLK_OF_DECLARE_DRIVER(stratix10_clkmgr, "intel,stratix10-clkmgr",
-+ 		      s10_clkmgr_early_init);
-+=20
-+ static int s10_clkmgr_init(struct platform_device *pdev)
-+ {
-+ 	struct stratix10_clock_data *clk_data;
-+ 	int i, ret;
-+=20
-+ 	if (!s10_clk_data) {
-+ 		ret =3D s10_clkmgr_setup(pdev->dev.of_node);
-+ 		if (ret)
-+ 			return ret;
-+ 	}
-+=20
-+ 	clk_data =3D s10_clk_data;
-+=20
-  	s10_clk_register_c_perip(s10_main_perip_c_clks,
-  				 ARRAY_SIZE(s10_main_perip_c_clks), clk_data);
- =20
-
---R3xg1ru6BtpYPMXW
+--zH5JWtwHrMr3/R3d
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr3IdEACgkQJNaLcl1U
-h9D5Sgf/br1IrC5Ga/GctaBdJ+Shz230XXIgTF8GfCl9sStLxMr64FC3qNS3Q1CZ
-ZtJwKjUT9NeCm+tBXbYP6CcMBTehLNzlJcBxblGGM6SE6uYv5HfaYgJNXlxOmtlo
-fJWf5ZyxpOEy4L3bEQKuHKdcXAHDqeH7OdHSL7XNJ2PdqiKVC1QMZGv9b3ezL0Xe
-JFsd109wkXEBPKbA4ZnCqtw2Dn/YUXCqskjW5h7AGQj4gaptsrWdmKcupg0WE+CT
-lRYhytx2N8/WBBwgSH9NO0OC/tunbT01CU8aYuRnltCuvQ3eCIp4a9QiZY8OVYGN
-3nM3i+IO4qy2cnZn0ghbUqMdlfWTQA==
-=NidW
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr3JxYACgkQJNaLcl1U
+h9DcTAgAgzSMmq47eN/JS2TLfCVr8CsTcM2Am3diWK9vj9Z3gJ4GaZk7RXtXx/to
+fsS85Eju1VSEF9eFMHRBNEpMq8uV4Zyv1iIvDERxuFB0QgSdIgRsR64VDyA1WFMG
+PhI+9H3SEcpNFRH5PVeR4aLxapAPM+1Z+b2l6n1q9lYk3wKBs3AOxRVSVBhkNUeY
+R6gEcrrGLH8H+CxUJG9h5qf42QCytSwSmb1gAtLJ+dO3Tjj4sm5PhPMsBqzP8qEa
+QKS6aCznmAp99LPQ4RMuayHXLYXWMuVtgwo9Q+DEu/oPpWhs6ua+dW4/6BG9I57I
+dEAIskZUJdbybKrfKjPF1oY80DBZHA==
+=/PK9
 -----END PGP SIGNATURE-----
 
---R3xg1ru6BtpYPMXW--
+--zH5JWtwHrMr3/R3d--
