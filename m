@@ -1,85 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794684979;
-	b=pUlGKrhFKFAUkIWvHaiTTviA3bs0lHx48rTK2Fno5Yujf67FcHHfQj6TTE51KCdYFtvf
-	 chb2bMJT4gWK6XbQYF3LxtVf0tYjgEG6Pz/GcSFY8MbWAJF0Ns/6sZnKZQXt91jzn9jHC
-	 D/0xX+3SzDX6hwt4do8rlss6CdWq2BeKu+yLp7k6uVde/DmOL17+pRC20xh/RqElMB+1J
-	 8+OuH8CwszIQdJZu5J3X4xMJtcdLooQ2X7hmyYcRqnnneymrp51ZRsjMAGpZpr+NORyHk
-	 93qmH2OQyph7HWi3PECUpOM2tK7yl/Nu9uYjjS8xXITlSI1jevr/gBhsYPtjoh3kM0A==
+	t=1794781723;
+	b=UfpiekPX4wf4+FfVmYxqVcroY0BMmVuCaI4OEj/RNdoVr4P1b4Bo2EBVOlngmqPSKxDx
+	 sKYexceqQaxgu6fsFMFoL7T8eKncmEVybFq3C/D2WU4TRNmrz7BAksydX93rEw0LQJQas
+	 bVuMMatZq9lftX+2tFS2dIYaGu4Vm7BzScMeW3cYyQdUQfygJrddSSGJki3jgeyVxHnzo
+	 ee71ljhYsrAbvm2a+zUNCD5qHil5/+3EZEhgqHt9H5bj8JI+ts3EcH5de+xssYh0k32vX
+	 PdXrS/CEgCqNujhTgG/yLzAwUfGmX3sQfc4fDE2pS/sueCvthCAJW9SvBG0w0H3p4Xw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794684979;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
-	 Cc:Subject:From:To:X-Mailer:References:In-Reply-To;
-	bh=8zVUItnPHFNIUP4Z+vabblcyhI1ThNWFGye2ryxOmnY=;
-	b=kAx6yVI4XOv+XM/CzvIhJiDU1yIG455yQK8jplIAL7kwCPHXzS63+s6PZerTQqIWe0lA
-	 5XMp2LY0GzRtwCq3uvtrP2ziTgfyjLxV0ytYUP2ahG5fM/kf7YtqfbY//jku4KARrrfCU
-	 b5AEQRceJ3HeVNOGhU5GTaE/ezNybKub2jg4CNZnmsBQz3Y61PxaLgl5YULtZx8F8af2k
-	 pZuB4FJWLm0dv6Y17BijFpbUTdVv0zAu0qNc6In1+zpaqhI7QF4dLij4GsHF05NqY1oM3
-	 yJgmUoQD+RVkfWA8IiLJ/z7gcMcNWGIVIeVA9KOrJJF/TlldsnxHi9EwR0pBSODiv6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794781723;
+	h=Received:DKIM-Signature:Mime-Version:Content-Transfer-Encoding:
+	 Content-Type:Date:Message-Id:Subject:Cc:To:From:References:
+	 In-Reply-To;
+	bh=eqS1kiyzjUYtpNhX1JXOAbWIfkJx9vqsPOZR2GyPQzs=;
+	b=v9xZiYczWr8Vom/mSlboJ/OKI7ERVbpS3dy2SynmOukYup4m+QG/WuRCIg2lHsDj6asT
+	 OKwHwwMjAjQRomRcPbz/FaxwqOpX2gv/u/zzbfOLaMw++By02Af0Q7mnc+rQerbjPbaXT
+	 hoMW9Ot4Gei4SEqeufwSEJxLgJyfI+6V69RhLlaiKA69137lt5g0sDiWSAwQfpN3hXTTx
+	 2ZG4MxCSDRGFKEbV8VMX28mbadR+1v58nUEWT2N73nn4xoC2cBzrRudZLs7FmZPaMHw1l
+	 RNJ8pduzpy+f2Hcu68ixq2dYpZfxerJ/O7hs0bK6sVMNaQDO3Ka/0t9oZ9MAR0gqtYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=FZLxnZCh;
-	arc=none smtp.remote-ip=209.85.216.49
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gI5kQf1Z;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD14606A329
-	for <linux-next@vger.kernel.org>; Sat, 14 Nov 2026 19:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1CD14606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDFF606A323
+	for <linux-next@vger.kernel.org>; Sun, 15 Nov 2026 22:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=FZLxnZCh
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3b0e61a4decso2793081a91.2
-        for <linux-next@vger.kernel.org>; Sat, 14 Nov 2026 11:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794684978; x=1795289778; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=8zVUItnPHFNIUP4Z+vabblcyhI1ThNWFGye2ryxOmnY=;
-        b=FZLxnZChQdyk+y/moM6mcBlLd9ZNuBhzt+gBd6Ols7VyBVMrSNtdAkaKCydZLm4B22
-         ICuUw3eK91GGD4OKs5+ktA4ssURexzME56B4NihRNiC1LOxfvZoAYle1rhZIbFivaJu7
-         Czn8mFXFNCxYt1mzJWwixcgMfWdYAynr0PqRdRwswhq9LYt4zcgfR8rWJqBBvYL8tK6N
-         CxkwQl+3hLLGYadKwqsKLA6/xFDoBWwRD/TPGiSTGPTOQ+dR/UweDP0Nhp+uRTR6gs8K
-         prGyDJbJkDZe8EJIFSo/glcotCm4LOHr+cuCkyz3RFMrcBIqVCR/ij8hj3Y8eyH7jOHh
-         jETA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794684978; x=1795289778;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8zVUItnPHFNIUP4Z+vabblcyhI1ThNWFGye2ryxOmnY=;
-        b=ZwrOtfXuLWEkvBc08uLeCK9R4q7bVZgu205OmTovojKBAsRq/pFq02HGiDJ+oiCtMs
-         aNGhyD0dB+j4HvTbeGb0nqMsToN2y49E8jpY9LccneyFcyuHQRG40WAgX8X+SzfNmz3O
-         pY/2RKHcMAyltlbWhmGxzZSfkPKmZTqjhTjKi2VBKzUhdlWOf2ANHLUrL8BvvI3puOIA
-         klYUm3FfS/0WLeqiHBys8xHCpjzfnP5/r9mxHTFW9XAl2jYPtvNnebABY0iA1hy1jKVl
-         sNDZV6QOGQSJ+ipXgiS+FWd/SEIOrRXrk8YZ5sLp+Xe/3Ojb6pw4rY0sZ/QR4ess4w6N
-         LP0A==
-X-Forwarded-Encrypted: i=1; AL+hErHlEtOqx8RIjO2hu/3pl6WyweMPxV98JObhOa7nUMGHBq5jjCGMpmoN9QnV4f6Im6oqP9+ZmxXSZGJy@vger.kernel.org
-X-Gm-Message-State: APuU4Z94jBVL9nYnGtSS22TkXjHyHXo/1bDTUdOLRrzGBbzUVlRuoiHn
-	DFSauQOigUHViQesVlqBdFApkiy3ZjORqRrfXlavJH4WvTeoDw1s0wcN
-X-Gm-Gg: AYBFou3mQb950+D8AwPHug6THLd6/AfDi8Ms/3bvncldnudRkQDlSHnnn36dCTyL5Bv
-	tx9tGqoIiq+t9pCq83JREe5kvgFWYZYgfSaHoyWClCLjZlRrl36N9ol8lNmntWej8dhNZlg6xfb
-	0mvgK3OjZsLY6y04aqKtHRL+thBVXkZpMsiPjuz35PvLRDpGauIO5QWSZkFa78WncYAb+OZD+U+
-	mUt+zLsCIbRqnnQrvx+JDliKU4fXmaMHbQ10bnkzInTQtNXaV04Zj85o8Tj0Zv8pMUjMzYrgbNp
-	TdedAvdbwA6jJWIzdUHOz9KJeEq2DlA369Jj5nBmshEE49wiWxbOkgEh2zuUUiYXeSJfKcVfKnU
-	2xdoFStX6lAYNsLq+4iKtCY/oqpHVVOannEo5dHXqqE0m76njgEn61cyTy8LPBEAskH7UbCGxhC
-	JXB6GThMfBfvkEPTZWJHx5Frf5njjNm1RGCkpY9UGXui8yo++MtipMsZ1dlSRffB4JqfUt/Oc0R
-	ppZA4XMpvkhUNjMmipgaA2C73McbZ2q5WxFfM0+zXTu1DJP9AGYH29+NQllkTpd/wNIKOdZ6BvG
-	QEEblZZF36jxpcUzyCI2C4OyBC9xjDr0broPaHxnys7QC51nBlelbbCfMcgHrXjyczo460+bgnJ
-	idaIerFPtcK25SrbsoVbs4lpkDCS/We0rEFyR+V9JJuu4BXOViUmqSYs=
-X-Received: by 2002:a17:90b:4ccc:b0:3ac:a203:e0a5 with SMTP id 98e67ed59e1d1-3b1b0b6676fmr5703275a91.11.1794684978409;
-        Sat, 14 Nov 2026 11:36:18 -0800 (PST)
-Received: from localhost ([153.61.198.245])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aeb179fasm9924002a91.4.2026.11.14.11.36.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Nov 2026 11:36:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gI5kQf1Z
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8068D1F000C5;
+	Sun, 15 Nov 2026 22:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794781723;
+	bh=eqS1kiyzjUYtpNhX1JXOAbWIfkJx9vqsPOZR2GyPQzs=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To;
+	b=gI5kQf1ZFI2CFDcOq61uRCQKqGNALCx+WRddx7DSOSqVygmvUvMpgA6SRbvy0EPeB
+	 kVVkPw6s+qdfiFg6GPQPoImRhmtR0Hp0S2X3eYqPq9Y0lvfZvt3dsayyz5tfdJEOmi
+	 tmmM2t5Zfv3hRmqLbwURaobFIdCoReF+riSrQfqZP7ilMEyggDyBmsC+M16xZ8Wf7e
+	 PgzYf9UXMsPUSyYXFTHCGId3MQ2uYhbRBEUwuFa0mIRr+ULvRr8ZH3mT3Q+sKN89QG
+	 JIOUO0rVevcNlEg4xVgFqLffOSEBQSlJ3ZMNunLnpSHIMTNgrMH7EX8rhHTGtHty9P
+	 SfH5bGjMB1cnA==
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -91,40 +51,91 @@ Precedence: list
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 14 Nov 2026 19:36:17 +0000
-Message-Id: <DMV6Q8SFLQ72.2AIN7VRB1JJOW@gmail.com>
-Cc: "Kees Cook" <kees@kernel.org>, "Kees Cook" <kees+treewide@kernel.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the origin
- tree
-From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-To: "Mark Brown" <broonie@kernel.org>, "Kumar Kartikeya Dwivedi"
- <memxor@gmail.com>, "Eduard Zingerman" <eddyz87@gmail.com>, "Daniel
- Borkmann" <daniel@iogearbox.net>, "Alexei Starovoitov" <ast@kernel.org>,
- "Andrii Nakryiko" <andrii@kernel.org>, "bpf" <bpf@vger.kernel.org>,
- "Networking" <netdev@vger.kernel.org>
-X-Mailer: aerc 0.20.1-355-gf870624f6c37
-References: <avNO8cuAdnwv9D_5@sirena.org.uk>
-In-Reply-To: <avNO8cuAdnwv9D_5@sirena.org.uk>
+Date: Sun, 15 Nov 2026 23:28:39 +0100
+Message-Id: <DMW50R7OLMBC.2937FMZK59SIH@kernel.org>
+Subject: Re: [RFC] linux-next: replace the DRM trees with a single
+ drm-for-linux-next
+Cc: "Dave Airlie" <airlied@gmail.com>, "Alex Deucher"
+ <alexdeucher@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Jani
+ Nikula" <jani.nikula@linux.intel.com>, "Joonas Lahtinen"
+ <joonas.lahtinen@linux.intel.com>, "Tvrtko Ursulin" <tursulin@ursulin.net>,
+ "Matthew Brost" <matthew.brost@intel.com>,
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Alex Deucher"
+ <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>, "Mark Brown"
+ <broonie@kernel.org>, <linux-next@vger.kernel.org>
+To: "Rodrigo Vivi" <rodrigo.vivi@intel.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <aupFKGpAwAiGXN0U@intel.com>
+ <DMLVPRO7XF7F.21199FO61MFRD@kernel.org>
+ <CADnq5_N-6_T8EnihjoTSqpHGb_mZPogi6z=Ti-7_oue5d07oTw@mail.gmail.com>
+ <aupktBCwcN_coHEH@intel.com> <DMLY7GDT8VBO.EE1P01ZX2HPK@kernel.org>
+ <auqaZdocMvOIxN1c@intel.com>
+ <CAPM=9tzu6MYQ-Y0iYK=2PLiM5=1BsEN+Q5WnmYh=hkKnLJ4b1Q@mail.gmail.com>
+ <DMMDNQ0GD6AP.6HPRG6JWUEYQ@kernel.org> <autvCxZuSCxFjtgr@intel.com>
+ <DMMS9R5JJ4ME.TBIB1TNLB3IP@kernel.org> <auz6sKjP98m3IoG3@intel.com>
+ <DMNO09PAED4M.34GSWNA0Q55E1@kernel.org>
+In-Reply-To: <DMNO09PAED4M.34GSWNA0Q55E1@kernel.org>
 
-On Tue Nov 10, 2026 at 5:05 PM UTC, Mark Brown wrote:
-> Hi all,
->
-> Today's linux-next merge of the bpf-next tree got a conflict in:
->
->   kernel/bpf/cfg.c
->
-> between commit:
->
->   0af298e62e5cf ("treewide: refresh kmalloc_obj() conversions")
->
-> from the origin tree and commit:
->
->   6771f70a47332 ("bpf: Remove is_state_visited(), bpf_compute_scc() and i=
-ter.depth")
->
-> from the bpf-next tree.
+On Fri Nov 6, 2026 at 12:27 AM CET, Danilo Krummrich wrote:
+> Sure, I'm happy to look into this.
 
-Thanks. It's resolved now.
+This is now implemented in [1]; here's a brief summary of how it works.
 
+Currently, for each tree that already has a for-linux-next branch,
+$tree/for-linux-next points to $tree/$tree-next when $tree/$tree-next-fixes=
+ is
+an ancestor of $tree/$tree-fixes. Otherwise it points to $tree/$tree-next-f=
+ixes.
+This is the existing selection rule in dim; with my changes, drm-for-linux-=
+next
+follows the same logic.
+
+The merge order dim applies for drm-tip is:
+
+  1. All -fixes branches, then drm-next.
+  2. All per-tree -next-fixes branches.
+  3. The configured per-tree for-linux-next branches.
+  4. Record drm-for-linux-next.
+  5. Merge the remaining -next and topic branches to complete drm-tip.
+
+Of course we could easily avoid either the explicit -next or -next-fixes me=
+rge,
+depending on which of the two for-linux-next is equal to, but keeping it
+explicit is harmless and keeps things simple for branch-specific overrides.
+
+dim pull-request, which wraps git request-pull, now asks:
+
+	Close this tree for the upcoming merge window? (y/N)
+
+Answering yes fast-forwards -next-fixes to the requested tag, updates
+for-linux-next and rebuilds tip. --close-tree and --keep-tree-open bypass t=
+he
+prompt. For trees still open, dim normally prompts during -rc4 through -rc7=
+,
+inclusive.
+
+To enable your tree for integration through drm-for-linux-next, add "$tree
+for-linux-next" to drm_tip_config in nightly.conf, after all -next-fixes en=
+tries
+and before -next/topic branches (keeping the existing entries).
+
+Trees can migrate individually; coordination with the linux-next maintainer=
+s to
+replace each tree's separate inclusions can be done once the corresponding =
+tree
+is covered by drm-for-linux-next and drm-for-linux-next is merged by linux-=
+next.
+
+(Note: dim technically doesn't need an explicit for-linux-next branch to ap=
+ply
+this logic. However, I did kinda like that it gives maintainers an explicit
+branch to indicate what exactly goes into linux-next besides the -fixes bra=
+nch.
+Besides that, the code already exists in dim.)
+
+[1] https://gitlab.freedesktop.org/drm/maintainer-tools/-/merge_requests/11=
+5
