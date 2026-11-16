@@ -1,54 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794847431;
-	b=YzormqFi2AgOUF3j0PIuCsiuqlR4VJa8xz+U8tXOjeLb53TfAr4ydU8MRxsfgV+Y55SX
-	 cxTqNw9FLm5+YzDQ+AH8PpgGj/Q/rFGrjrEIC76pamXKekj+MVnV+/zGw/pfqh1+bVgUG
-	 yj9Se8V+jYLQJvTLMZX1aTV2hRn9caJ8q8yi+/BYsgwt6sQxUSnost0DWsHlxWOlARn2N
-	 /t1hyn9uiTMs9WCFBLk6L8Nkbbo6G7xjxm3UOdud0yUHXRfVj4ZT8O6cop9Om0nxNGvkI
-	 Qa7M1GsVJPAsqGFi7QU/GezTf3xzJY1FHTcbGMZ1VYasTtukJJGkXLC4hNJer9quiuw==
+	t=1794855998;
+	b=ZtTFAMn2mwCka9p5DpwpH36S/hQafz4QEjt3fnGgo9cGBRauF8TwFyNndHMqghEyfZIw
+	 XXg5/uxMxRBdn7CI4vuaINVxiC7W07y4wYLf6HsZMiyjvF3KSIaNs+20km2spTuyofp9s
+	 AXIvp7TJPe2UxCRV5J6ho3jHzxUcGZomBZB0gUi/egWpeBxKgatCHxCM4YvCvUxvTrmh8
+	 d186I66sshq9EvzIkELaKmk8mMc2iVNfifexVSgRJpELEJqbNuCMti62m8j8Fkobb2VC7
+	 7LpSQQnUtZt0+F4D/X4ks6acmp31QFxIxAqFrqIB1N5BJ/PrTeD5pT3N+GY6YR6Id1Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794847431;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794855998;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=ye/hK2doMI3EoGzSdThmb4Gz7dllWhG/+IfmHJjN0XQ=;
-	b=vTvWNyWN46LxtZ9wVXS1dNaXIohVaOVS80ul579cVaO+r0nzNASWFfrapyhMUObfvH60
-	 0SDKzdul/+NhVXq5xDA3iIinQ53rgupSRXL8+f2EEm73l4rJwTe4SR/Yf/CEoWapMk6aq
-	 vUKiPHj8YhnxyI1dujqnMpdjlSWLbRq1V4iDQVAMqTFRZB1PwvXjJrUyrknlOLu13+6A6
-	 49FSdN7p3zmGPuJGgyPmPeekSLW9q0p7Uc2wonyGdxCJyhA4qgDGeXTjEUwbrBQGVp9t1
-	 9avIiWBkicOBJnB+l7ZjHHLVhsh7OxHaTPfcYXbaYycPfxPOK6EcR7db/3pYg1r0xgg==
+	bh=Dj+i9Txau6O4tBsHZjW1TYuRB/tYQJZ/8C2VHdsjpYU=;
+	b=QuAp2uTD7jcMUFgE92EFhPwnHgcDj40l5Y+mI2Zy9922sqbIrghUm4+6N1XPJu0uxbeg
+	 Aiqv45qMPJuxx1KX8qWFnl4qDuNbvoZZ+VM0x54+MhRcWFjuFB2g3IL3Ib8XFut3490y+
+	 mNkAWIx9rCsvXhXSL11kL48vnUW8+kbBx5cswve8A0ETxDa4b0E89nTjQxlVX1HKj2STf
+	 U5HtAk7yMJywd5N6Xyt+DVOJEyfp6Prf0x2v0WurvF/99WHFBXQOzXCis02ctjnvQGdg8
+	 1623n/Jp1LUTyOOrAx/5+x2lvPKlFyYdMfBjEUU/Ep0NOgMvValEpIYU5Cb1UcTwkcQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EnjLPxC2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WuBgkW7H;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E706606A329;
-	Mon, 16 Nov 2026 16:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5E1606BA3F;
+	Mon, 16 Nov 2026 19:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EnjLPxC2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C031F000CA;
-	Mon, 16 Nov 2026 16:43:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WuBgkW7H
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA1A1F000C4;
+	Mon, 16 Nov 2026 19:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794847430;
-	bh=ye/hK2doMI3EoGzSdThmb4Gz7dllWhG/+IfmHJjN0XQ=;
+	s=k20260515; t=1794855997;
+	bh=Dj+i9Txau6O4tBsHZjW1TYuRB/tYQJZ/8C2VHdsjpYU=;
 	h=Date:From:To:Cc:Subject;
-	b=EnjLPxC2kOoxVtS1jG4VH2MAc375eHh6qiZ2+hFrjoZ3JfOgoKfAehUEmEJVUM9W3
-	 EzyB7g3Z8pcKEedlZKpgnnCkjjqNqHwE4rg2hIyhJB83mPkkvRWFN6cKJaTi1z+3bO
-	 m2wWPo6PR4o8YxKR2xdnQhokVSswPWwea7YYuja7Z4NqQBGk+pPzaO5GA9GLtZQXnI
-	 PPaRBey61HNxv1lG9mQs67q4GIncu9MebvVQn6FLYnlYVTFyaFbwDoMhlzILFQFXpQ
-	 ElmhrmsG5GSiTG34mb2LTK944cHL2asiHeKwIrYYaCaxr56xm+SdSuwhkZ739FcvAN
-	 LAYBEtD215Oyw==
-Date: Mon, 16 Nov 2026 16:43:47 +0000
+	b=WuBgkW7HU5oJsCmVtFOIbUN27M/v9C9i4r7WniXZ0kDV5t3+Wo9ixoULU9K1dtLhb
+	 AAmeDOlHWuwYg1VDxBr+gl1paOrR667uMZlV6mmoWQzmLz07OyGsagIYK3Rz2ECLh0
+	 Jd8XdDBoyC7bfTW6iKTI+WVxQaJ2kB5SgE7KTdrgxV6YOBglBK3O4ZsAPbLQ2AaY5R
+	 EasR92eHRVoadYSJBF+QYYQNAfCtrq9EhJpjcOFO33ZsywHj0Swcu9ugAWPS/p5J8+
+	 CUzqcCoZmAmKCy8AarqzGhE62/1xXlPv2ekC3qjOVg3DUi88UIa35093VFzPV+tQsk
+	 XyoFLaM2sIW4Q==
+Date: Mon, 16 Nov 2026 19:06:33 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	Linux Crypto List <linux-crypto@vger.kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Thorsten Blum <blum@kernel.org>
-Subject: linux-next: manual merge of the crypto tree with the origin tree
-Message-ID: <avsyw-Q9dfMw45zX@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <avtUOSIWVojTuTvx@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,33 +56,31 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H927aFy//RcS94+R"
+	protocol="application/pgp-signature"; boundary="Q0og5S7UwvY1pqPE"
 Content-Disposition: inline
 
 
---H927aFy//RcS94+R
+--Q0og5S7UwvY1pqPE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the crypto tree got a conflict in:
+Today's linux-next merge of the drm tree got conflicts in:
 
-  drivers/char/hw_random/virtio-rng.c
+  drivers/gpu/drm/xe/xe_pci.c
+  drivers/gpu/drm/xe/xe_pm.c
 
 between commit:
 
-  0f7bf47f5a0cc ("hwrng: virtio - prevent use-after-free after a failed res=
-tore")
+???
 
-=66rom the origin tree and commits:
+=66rom the drm-fixes tree and commit:
 
-  a3eaee98eecc4 ("hwrng: virtio - prevent use-after-free after a failed res=
-tore")
-  277b0dae660c3 ("hwrng: virtio - simplify probe_common()")
+???
 
-=66rom the crypto tree.
+=66rom the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -94,138 +89,268 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --combined drivers/char/hw_random/virtio-rng.c
-index 45d87c0614a5e,892720b1ac6f9..0000000000000
---- a/drivers/char/hw_random/virtio-rng.c
-+++ b/drivers/char/hw_random/virtio-rng.c
-@@@ -70,7 -70,7 +70,7 @@@ static void request_entropy(struct virt
-  static unsigned int copy_data(struct virtrng_info *vi, void *buf,
-  			      unsigned int size)
-  {
-- 	unsigned int idx, avail;
-+ 	unsigned int idx;
- =20
-  	/*
-  	 * vi->data_avail was set from the device-reported used.len and
-@@@ -81,13 -81,13 +81,13 @@@
-  	 * steered into adjacent slab memory, including under
-  	 * speculation.
-  	 */
-- 	avail =3D min(vi->data_avail, sizeof(vi->data));
-- 	if (vi->data_idx >=3D avail) {
-+ 	if (vi->data_idx >=3D sizeof(vi->data)) {
-  		vi->data_avail =3D 0;
-  		request_entropy(vi);
-  		return 0;
-  	}
-- 	size =3D min(size, avail - vi->data_idx);
-+ 	vi->data_avail =3D min(vi->data_avail, sizeof(vi->data) - vi->data_idx);
-+ 	size =3D min(size, vi->data_avail);
-  	idx =3D array_index_nospec(vi->data_idx, sizeof(vi->data));
-  	memcpy(buf, vi->data + idx, size);
-  	vi->data_idx +=3D size;
-@@@ -150,17 -150,17 +150,17 @@@ static void virtio_cleanup(struct hwrn
- =20
-  static int probe_common(struct virtio_device *vdev)
-  {
-- 	int err, index;
-- 	struct virtrng_info *vi =3D NULL;
-+ 	int err;
-+ 	struct virtrng_info *vi;
- =20
-  	vi =3D kzalloc_obj(struct virtrng_info);
-  	if (!vi)
-  		return -ENOMEM;
- =20
-- 	vi->index =3D index =3D ida_alloc(&rng_index_ida, GFP_KERNEL);
-- 	if (index < 0) {
-- 		err =3D index;
-- 		goto err_ida;
-+ 	vi->index =3D ida_alloc(&rng_index_ida, GFP_KERNEL);
-+ 	if (vi->index < 0) {
-+ 		err =3D vi->index;
-+ 		goto err;
-  	}
-  	snprintf(vi->name, sizeof(vi->name), "virtio_rng.%d", vi->index);
-  	init_completion(&vi->have_data);
-@@@ -177,7 -177,8 +177,8 @@@
-  	vi->vq =3D virtio_find_single_vq(vdev, random_recv_done, "input");
-  	if (IS_ERR(vi->vq)) {
-  		err =3D PTR_ERR(vi->vq);
-- 		goto err_find;
-+ 		ida_free(&rng_index_ida, vi->index);
-+ 		goto err;
-  	}
- =20
-  	virtio_device_ready(vdev);
-@@@ -187,9 -188,7 +188,7 @@@
- =20
-  	return 0;
- =20
-- err_find:
-- 	ida_free(&rng_index_ida, index);
-- err_ida:
-+ err:
-  	vdev->priv =3D NULL;
-  	kfree(vi);
-  	return err;
-@@@ -245,26 -244,27 +244,27 @@@ static int virtrng_freeze(struct virtio
- =20
-  static int virtrng_restore(struct virtio_device *vdev)
-  {
-+ 	struct virtrng_info *vi;
-  	int err;
- =20
-  	err =3D probe_common(vdev);
-- 	if (!err) {
-- 		struct virtrng_info *vi =3D vdev->priv;
-+ 	if (err)
-+ 		return err;
-+ 	vi =3D vdev->priv;
- =20
-- 		/*
-- 		 * Set hwrng_removed to ensure that virtio_read()
-- 		 * does not block waiting for data before the
-- 		 * registration is complete.
-- 		 */
-- 		vi->hwrng_removed =3D true;
-- 		err =3D hwrng_register(&vi->hwrng);
-- 		if (!err) {
-- 			vi->hwrng_register_done =3D true;
-- 			vi->hwrng_removed =3D false;
-- 		}
-- 	}
-+ 	/*
-+ 	 * Set hwrng_removed to ensure that virtio_read()
-+ 	 * does not block waiting for data before the
-+ 	 * registration is complete.
-+ 	 */
-+ 	vi->hwrng_removed =3D true;
-+ 	err =3D hwrng_register(&vi->hwrng);
-+ 	if (err)
-+ 		return err;
- =20
-- 	return err;
-+ 	vi->hwrng_register_done =3D true;
-+ 	vi->hwrng_removed =3D false;
-+ 	return 0;
-  }
- =20
-  static const struct virtio_device_id id_table[] =3D {
+diff --git a/drivers/gpu/drm/xe/xe_pci.c b/drivers/gpu/drm/xe/xe_pci.c
+index 12ff5c9025478..3bd68ed9daa81 100644
+--- a/drivers/gpu/drm/xe/xe_pci.c
++++ b/drivers/gpu/drm/xe/xe_pci.c
+@@ -417,16 +417,17 @@ static const struct xe_device_desc bmg_desc =3D {
+ 	.dma_mask_size =3D 46,
+ 	.has_display =3D true,
+ 	.has_fan_control =3D true,
++	.has_fixed_vram_channels =3D true,
+ 	.has_flat_ccs =3D 1,
+ 	.has_mbx_power_limits =3D true,
+ 	.has_mbx_thermal_info =3D true,
+ 	.has_gsc_nvm =3D 1,
+ 	.has_heci_cscfi =3D 1,
+ 	.has_i2c =3D true,
+-	.has_late_bind =3D true,
+ 	.has_pre_prod_wa =3D 1,
+ 	.has_soc_remapper_telem =3D true,
+ 	.has_sriov =3D true,
++	.late_bind_mask =3D BIT(XE_LB_FW_FAN_CONTROL),
+ 	.max_gt_per_tile =3D 2,
+ 	MULTI_LRC_MASK,
+ 	.needs_scratch =3D true,
+@@ -487,6 +488,8 @@ static const struct xe_device_desc cri_desc =3D {
+ 	.has_sriov =3D true,
+ 	.has_sysctrl =3D true,
+ 	.has_temp_sentinel =3D true,
++	.late_bind_mask =3D BIT(XE_LB_FW_FAN_CONTROL) |
++			  BIT(XE_LB_FW_OCODE),
+ 	.max_gt_per_tile =3D 2,
+ 	MULTI_LRC_MASK,
+ 	.require_force_probe =3D true,
+@@ -722,8 +725,9 @@ static int handle_gmdid(struct xe_device *xe,
+=20
+ 	*graphics_ip =3D find_graphics_ip(ver);
+ 	if (!*graphics_ip) {
+-		drm_err(&xe->drm, "Hardware reports unknown graphics version %u.%02u\n",
+-			ver / 100, ver % 100);
++		xe_log_err(xe, REGS, -EINVAL,
++			   "Hardware reports unknown graphics version %u.%02u\n",
++			   ver / 100, ver % 100);
+ 	}
+=20
+ 	ret =3D read_gmdid(xe, GMDID_MEDIA, &ver, media_revid);
+@@ -736,8 +740,9 @@ static int handle_gmdid(struct xe_device *xe,
+=20
+ 	*media_ip =3D find_media_ip(ver);
+ 	if (!*media_ip) {
+-		drm_err(&xe->drm, "Hardware reports unknown media version %u.%02u\n",
+-			ver / 100, ver % 100);
++		xe_log_err(xe, REGS, -EINVAL,
++			   "Hardware reports unknown media version %u.%02u\n",
++			   ver / 100, ver % 100);
+ 	}
+=20
+ 	return 0;
+@@ -798,6 +803,7 @@ static int xe_info_init_early(struct xe_device *xe,
+ 	xe->info.has_device_uid =3D desc->has_device_uid;
+ 	xe->info.has_drm_ras =3D desc->has_drm_ras;
+ 	xe->info.has_fan_control =3D desc->has_fan_control;
++	xe->info.has_fixed_vram_channels =3D desc->has_fixed_vram_channels;
+ 	/* runtime fusing may force flat_ccs to disabled later */
+ 	xe->info.has_flat_ccs =3D desc->has_flat_ccs;
+ 	xe->info.has_mbx_power_limits =3D desc->has_mbx_power_limits;
+@@ -806,7 +812,6 @@ static int xe_info_init_early(struct xe_device *xe,
+ 	xe->info.has_heci_gscfi =3D desc->has_heci_gscfi;
+ 	xe->info.has_heci_cscfi =3D desc->has_heci_cscfi;
+ 	xe->info.has_i2c =3D desc->has_i2c;
+-	xe->info.has_late_bind =3D desc->has_late_bind;
+ 	xe->info.has_llc =3D desc->has_llc;
+ 	xe->info.has_mert =3D desc->has_mert;
+ 	xe->info.has_page_reclaim_hw_assist =3D desc->has_page_reclaim_hw_assist;
+@@ -819,11 +824,13 @@ static int xe_info_init_early(struct xe_device *xe,
+ 		desc->has_sriov;
+ 	xe->info.has_sysctrl =3D desc->has_sysctrl;
+ 	xe->info.has_temp_sentinel =3D desc->has_temp_sentinel;
++	xe->info.require_force_probe =3D desc->require_force_probe;
+ 	xe->info.skip_guc_pc =3D desc->skip_guc_pc;
+ 	xe->info.skip_pcode =3D desc->skip_pcode;
+ 	xe->info.needs_scratch =3D desc->needs_scratch;
+ 	xe->info.needs_shared_vf_gt_wq =3D desc->needs_shared_vf_gt_wq;
+ 	xe->info.multi_lrc_mask =3D desc->multi_lrc_mask;
++	xe->info.late_bind_mask =3D desc->late_bind_mask;
+=20
+ 	xe->info.probe_display =3D IS_ENABLED(CONFIG_DRM_XE_DISPLAY) &&
+ 				 xe_modparam.probe_display &&
+@@ -1328,7 +1335,7 @@ static void d3cold_toggle(struct pci_dev *pdev, enum =
+toggle_d3cold toggle)
+ 	}
+ }
+=20
+-static int xe_pci_suspend(struct device *dev)
++static int __xe_pci_suspend(struct device *dev, bool hibernate)
+ {
+ 	struct pci_dev *pdev =3D to_pci_dev(dev);
+ 	struct xe_device *xe =3D pdev_to_xe_device(pdev);
+@@ -1337,7 +1344,7 @@ static int xe_pci_suspend(struct device *dev)
+ 	if (xe_survivability_mode_is_boot_enabled(xe))
+ 		return -EBUSY;
+=20
+-	err =3D xe_pm_suspend(xe);
++	err =3D xe_pm_suspend(xe, hibernate);
+ 	if (err)
+ 		return err;
+=20
+@@ -1355,6 +1362,16 @@ static int xe_pci_suspend(struct device *dev)
+ 	return 0;
+ }
+=20
++static int xe_pci_suspend(struct device *dev)
++{
++	return __xe_pci_suspend(dev, false);
++}
++
++static int xe_pci_freeze(struct device *dev)
++{
++	return __xe_pci_suspend(dev, true);
++}
++
+ static int xe_pci_resume(struct device *dev)
+ {
+ 	struct pci_dev *pdev =3D to_pci_dev(dev);
+@@ -1484,7 +1501,12 @@ static int xe_pci_runtime_idle(struct device *dev)
+ }
+=20
+ static const struct dev_pm_ops xe_pm_ops =3D {
+-	SET_SYSTEM_SLEEP_PM_OPS(xe_pci_suspend, xe_pci_resume)
++	.suspend =3D pm_sleep_ptr(xe_pci_suspend),
++	.resume =3D pm_sleep_ptr(xe_pci_resume),
++	.freeze =3D pm_sleep_ptr(xe_pci_freeze),
++	.thaw =3D pm_sleep_ptr(xe_pci_resume),
++	.poweroff =3D pm_sleep_ptr(xe_pci_suspend),
++	.restore =3D pm_sleep_ptr(xe_pci_resume),
+ 	SET_RUNTIME_PM_OPS(xe_pci_runtime_suspend, xe_pci_runtime_resume, xe_pci_=
+runtime_idle)
+ };
+ #endif
+diff --git a/drivers/gpu/drm/xe/xe_pm.c b/drivers/gpu/drm/xe/xe_pm.c
+index d95f0d128ed49..e73192b03074a 100644
+--- a/drivers/gpu/drm/xe/xe_pm.c
++++ b/drivers/gpu/drm/xe/xe_pm.c
+@@ -166,13 +166,19 @@ static void xe_rpm_lockmap_release(const struct xe_de=
+vice *xe)
+ 			 &xe_pm_runtime_d3cold_map);
+ }
+=20
++static bool xe_pm_needs_bo_evict(struct xe_device *xe, bool hibernate)
++{
++	return IS_DGFX(xe) || hibernate;
++}
++
+ /**
+- * xe_pm_suspend - Helper for System suspend, i.e. S0->S3 / S0->S2idle
++ * xe_pm_suspend - Helper for System suspend, i.e. S0->S3 / S0->S2idle / S=
+0->S4
+  * @xe: xe device instance
++ * @hibernate: true if preparing for S4 hibernation, false for < S4 suspend
+  *
+  * Return: 0 on success
+  */
+-int xe_pm_suspend(struct xe_device *xe)
++int xe_pm_suspend(struct xe_device *xe, bool hibernate)
+ {
+ 	struct xe_gt *gt;
+ 	u8 id;
+@@ -186,17 +192,19 @@ int xe_pm_suspend(struct xe_device *xe)
+ 	if (err)
+ 		goto err;
+=20
+-	xe_late_bind_wait_for_worker_completion(&xe->late_bind);
++	xe_late_bind_pm_suspend(&xe->late_bind);
+=20
+ 	for_each_gt(gt, xe, id)
+ 		xe_gt_suspend_prepare(gt);
+=20
+ 	xe_display_pm_suspend(xe);
+=20
+-	/* FIXME: Super racey... */
+-	err =3D xe_bo_evict_all(xe);
+-	if (err)
+-		goto err_display;
++	if (xe_pm_needs_bo_evict(xe, hibernate)) {
++		/* FIXME: Super racey... */
++		err =3D xe_bo_evict_all(xe);
++		if (err)
++			goto err_display;
++	}
+=20
+ 	for_each_gt(gt, xe, id) {
+ 		err =3D xe_gt_suspend(gt);
+@@ -249,7 +257,7 @@ int xe_pm_resume(struct xe_device *xe)
+ 		xe_wa_apply_tile_workarounds(tile);
+=20
+ 	for_each_gt(gt, xe, id)
+-		xe_gt_idle_disable_c6(gt);
++		xe_gt_resume_early(gt);
+=20
+ 	xe_display_pm_resume_early(xe);
+=20
+@@ -290,7 +298,7 @@ int xe_pm_resume(struct xe_device *xe)
+ 	if (IS_VF_CCS_READY(xe))
+ 		xe_sriov_vf_ccs_register_context(xe);
+=20
+-	xe_late_bind_fw_load(&xe->late_bind);
++	xe_late_bind_pm_resume(&xe->late_bind);
+=20
+ 	drm_dbg(&xe->drm, "Device resumed\n");
+ 	xe_pm_block_end_signalling();
+@@ -461,6 +469,9 @@ static int xe_pm_notifier_callback(struct notifier_bloc=
+k *nb,
+ 		struct xe_validation_ctx ctx;
+=20
+ 		reinit_completion(&xe->pm_block);
++		if (!xe_pm_needs_bo_evict(xe, action =3D=3D PM_HIBERNATION_PREPARE))
++			break;
++
+ 		xe_pm_block_begin_signalling();
+ 		xe_pm_runtime_get(xe);
+ 		(void)xe_validation_ctx_init(&ctx, &xe->val, NULL,
+@@ -485,6 +496,9 @@ static int xe_pm_notifier_callback(struct notifier_bloc=
+k *nb,
+ 	case PM_POST_SUSPEND:
+ 		complete_all(&xe->pm_block);
+ 		xe_pm_wake_rebind_workers(xe);
++		if (!xe_pm_needs_bo_evict(xe, action =3D=3D PM_POST_HIBERNATION))
++			break;
++
+ 		xe_bo_notifier_unprepare_all_pinned(xe);
+ 		xe_pm_runtime_put(xe);
+ 		break;
+@@ -707,7 +721,7 @@ int xe_pm_runtime_resume(struct xe_device *xe)
+ 			xe_wa_apply_tile_workarounds(tile);
+=20
+ 		for_each_gt(gt, xe, id)
+-			xe_gt_idle_disable_c6(gt);
++			xe_gt_resume_early(gt);
+=20
+ 		xe_display_pm_resume_early(xe);
+=20
+@@ -755,7 +769,7 @@ int xe_pm_runtime_resume(struct xe_device *xe)
+ 		xe_sriov_vf_ccs_register_context(xe);
+=20
+ 	if (xe->d3cold.allowed)
+-		xe_late_bind_fw_load(&xe->late_bind);
++		xe_late_bind_pm_resume(&xe->late_bind);
+=20
+ out:
+ 	xe_rpm_lockmap_release(xe);
 
---H927aFy//RcS94+R
+--Q0og5S7UwvY1pqPE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7MsIACgkQJNaLcl1U
-h9CsEgf/UlPOorwfsEeifVQO8HHjdNVNiHmqEzdeU8hgSTdARmqjDx142BIqziF3
-jWyZ4I+Gbf3OvE4G65jFs2y7MsO99R+akeHMf+guzW7sntMg7wSY+XlaO34WNaub
-XyGFTqI4scfIikuu+u5iJeuAhc1vlQGZpIkceDwqVRtweol2wY394l29uniCCGo7
-iXY3Xi7Y+JLnZ4viyJkZq5FAZvQx/HYb2VIHIyouduhCqXPxPagrnBzhlbbn+ovx
-LFIGEUYhGtmlkdH7bc4gJ8ctVM1OgnaD6vNgzTEmkhe4AYNcn5CZ6T+4/pmUCB1D
-6jQGy0G1c78md8vC1a2Y2vpo0+mkig==
-=SlGs
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7VDkACgkQJNaLcl1U
+h9AIgQf/RYlRatVQCIYyNfee0N5sIiyP+grsVMn99s0hFOGp3w/dYiGsNhQGBrVK
+2C1gHK04vLb+dB35WiV5SoEMry5fC4q5Fq3MHlGyaLuYGGEoVOIxv6pKfCHsljfp
+A/16aMbe9HuXDEHLB3qusdynfuCTL5FMjEEVLg4C3nP4P4u4UEj6R+fXJsn18Se9
+Nzg+KJjKV3Mwme89X6psC4W0xWdkjYVH/xHj7ovaOl6GLEiHuzpTYMx6AqIfPV43
+r27Ubo4baP/AOQPkt+sAQkKWw7woHf2lKhU1P0u5VI8ztPm/OoG919hQ0aiiw9/x
+cZBVzNqJ3Q8Z/GUPQRYmQPcH3WoIoA==
+=a5ym
 -----END PGP SIGNATURE-----
 
---H927aFy//RcS94+R--
+--Q0og5S7UwvY1pqPE--
