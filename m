@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794865853;
-	b=EfGcrWXa/PR5A8BmJedw6xGY/5iYUHpUsFzjQzpzM7DnfbzB6ah1SGKmWVR0RG2Df+If
-	 xkqaAnPi8lsAViTpYNwBdQdt18/s2jciAqAlYsE5Oy864XQHIHGdgtjojaoVC8treSg0/
-	 u0tUca2bSFpLggji0+2atQgF9tdsUKaQmVLLZvo1LThtC90S9I1gpyIWzgyFOBP25lTc0
-	 2uN3QBmWAAiBwmfgDinYIgdjB2R3+1BTVuzYc0revATq3frIcC+V5hoa8AEohvjzwN15i
-	 RTFtvoaPdSCRHGE3cDwMtHw9ATmIl/weQ1qu0RApu8ZnJMGQZks4c0xqDnDHERQH1Yg==
+	t=1794865891;
+	b=jX+NDI28BiU2/URUOjYedKRCDxP/J0feJ+FbEa2284a08rGTJHI3TB3sQjUnBT4abdhp
+	 TI0vaXSWAazGoB8SWd6ZoUIlCPaIrr9ePDQIrQExjXnXHDhVWX8OzwDe78RZuT4ueeoDb
+	 wOnJbRjPqi3uXsxdet6EmzrTP6K/NGOZV7FxIIdiGcSOHV7IB4xxb5hdM5BA+HbiqBryI
+	 lXOl39ncbQnunANS5EH1mMyAbNKuw8ghIoroWuqGOL3rZ5HuBXBIWvI8ohWI4qsmpjAbk
+	 FM3pKEXNv4i7qWE/oz6xA8SFTQKW6XEH4wTR+Qk3R7/qfDjMrYTjZfZM733L/Sf2kfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794865853;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794865891;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-Cookie;
-	bh=RLhocTFBLFX1u+UKYUeGwsYASAfHXu4EIw2hqvmM8HA=;
-	b=1mDBF/DAn8dfaJWshyyMpAF0oC1bY/8zgvkYHSyz/KqFUIkAU2U7PDy/+64CoFlQgoio
-	 QiV5zayzSFpYmpDEipXV28bn7dGbl/zsP38yGAyCMJ1kiMPhoqtIgk0WO2KJyybUaLE9v
-	 m/21v+9NI9QXci4Jb4mGZRI4EbxKZL0WaYB0NlJtU2ck0s/E7c9+Hhn4XqfkWguotvN+a
-	 MT8LVVTw6UeZ/lfdfO8H0fLXd1HIA0EHeBV/WJofTM46wBEI0eAL1E22mqftSIEoN1Ub+
-	 IR/nszSLR5Wc1ff7ukDDpLOQ+lNPHv25fqLctZLigLkJChusRn8cmEkhdMmreML5VIg==
+	bh=UM2V+OGhGZv2cKwnuZRMeN4nDl0FU/7LHyfuPTeNZoQ=;
+	b=oDrLTJE/TRI5v384GIblZqxZibNWZKGF4FXWWDVT7xmqXw5XffQIksbK4Fj2rjB0rhqu
+	 7f7+YPOUwUta5Gpjyc2KPKOSgMPA8JXiOOU+WLjyeqLxnb8vLMDgKDjJ92xnNWK48zgkS
+	 95Wl3BssbaIIGc18N56YZu5X6HHnp36C3UHoFkB6C6X78sx40Mq1hIE7X12MnhfveHXNq
+	 8hD45MI+S91k0DrTtuJ2MEAXypiMpLY0lO+3pvS06qEUsCDRY2K06oTsKtsE+DeQi1HmE
+	 EwaNKM2vZozlxBbtaUcVUP5a4aDFQ3gPdOeV0Xx+mwRj+2UdLhl4hzadr9nk/5ayGTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLoUDnIJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="NAQ0/w12";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9E6606A31C;
-	Mon, 16 Nov 2026 21:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F87606A31C;
+	Mon, 16 Nov 2026 21:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLoUDnIJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8931F000C5;
-	Mon, 16 Nov 2026 21:50:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAQ0/w12
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78051F000C4;
+	Mon, 16 Nov 2026 21:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794865852;
-	bh=RLhocTFBLFX1u+UKYUeGwsYASAfHXu4EIw2hqvmM8HA=;
+	s=k20260515; t=1794865890;
+	bh=UM2V+OGhGZv2cKwnuZRMeN4nDl0FU/7LHyfuPTeNZoQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iLoUDnIJHa2c4nVAnCx1Z/Q0aqmhCETxdgYDGOEoCpD6g0u112ZJK0lma3LuTx193
-	 KthE++67nNccnqjecGexoJUj9w2kHugAmNUjQtKV3lBQR32c/fhdP5P4Zo/lz8J1f+
-	 gf4mqnaVPnpXnCtBJucz0HWxadByaP0Az6vGG0/dwVA7tWfCSc75kZVIXjnBnK97Qf
-	 Ox2ghe53L6jZBfrWJk3erwqj9utgjy8kOzZ+9jOgrE+gyXwWV3D+FaeM5WDy4P9EJR
-	 m0R75n62NDA7QI8CtrSDIDRYMtXFpZJRd87TlNrNU9jNjA5NpOpzTLDYxnVEVAxNr2
-	 68s3v0K5hI6BQ==
-Date: Mon, 16 Nov 2026 21:50:48 +0000
+	b=NAQ0/w124SLJCzJOY85CnmtN/PeWA0QmiInN1swqEUSKbo9pPN13aBB+UmCqBdZZ/
+	 lJJdUQVDZ113aTtzmxXcxbwVjgtEvNu8NaWiPddI+PJGY9OHFgAIhpDST1BHIyFnMW
+	 8nmR+1vVgFq+8Uh3naXSzRcuAibyVjQj5oAl7SYPp8pTprwFSt00p74938WLV+p99k
+	 p0o9/Z3Jg/z7muWl8PqFjWKHeThhpJim3NzuR4kDl4TXMeNeZNk55jgCHuIBmTworx
+	 8ezCjZtCoY1mIVpP7QHWeo/8WKwMFRSgeNETecAKxjV5dWrknFy64IGLITLM6TwY/Y
+	 qbcMDZtcKXFeA==
+Date: Mon, 16 Nov 2026 21:51:27 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>
-Subject: Re: Missing signoff in the asm-generic tree
-Message-ID: <3eddac44-1b12-43e2-b7cc-749ad7e63cd3@sirena.org.uk>
-References: <avsfuW1MUYp0jI_I@sirena.org.uk>
- <eb397d2e-a6c7-4838-8240-b3f8854e6109@app.fastmail.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the thermal tree
+Message-ID: <56328964-8d06-452a-adf5-ea37fede069e@sirena.org.uk>
+References: <au4SKRePRjYBItxx@sirena.co.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,43 +58,39 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6iEMeO29qkIgguii"
+	protocol="application/pgp-signature"; boundary="khrs3IThEh+m/65T"
 Content-Disposition: inline
-In-Reply-To: <eb397d2e-a6c7-4838-8240-b3f8854e6109@app.fastmail.com>
+In-Reply-To: <au4SKRePRjYBItxx@sirena.co.uk>
 X-Cookie: Serenity through viciousness.
 
 
---6iEMeO29qkIgguii
+--khrs3IThEh+m/65T
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 16, 2026 at 10:19:28PM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 16, 2026, at 16:22, Mark Brown wrote:
-> > Commit
-> >
-> >   5dfaff16e8b90 ("selftests: vDSO: Fix header search list for=20
-> > vgetrandom-chacha.S")
-> >
-> > is missing a Signed-off-by from its committer
+On Fri, Nov 06, 2026 at 05:45:13PM +0000, Mark Brown wrote:
+> Commit
 >=20
-> Fixed now, thanks for letting me know.
+>   115b4ff52cd35 ("dt-bindings: timer: renesas,tmu: Add SH7305 support")
+>=20
+> is missing a Signed-off-by from its committer
 
-This is still present today.
+This issue is still present today.
 
---6iEMeO29qkIgguii
+--khrs3IThEh+m/65T
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7ergACgkQJNaLcl1U
-h9Dg7Qf+NIAe5xAv+Fk+GvbAoqtNjzMmLKTBqQ+Fg+IMX4wDoZge2FW4TjGismfz
-oDlhFJOvnhhyWy9usx3+rPLMQcCXyRm08Ro0Y8+R0C7vHoY4lP48DG9kzVnlT4F8
-Rj0qTuuq9LhyGijbzjjH33ksCzB8+XTPJy+8QwLsqej9oJGJOrT4sHv0Xu/Hcp/5
-DWEtL07dn0cqxVf+ZV/yMeEqnfw4FG4/9OKNFCoSeewtoMK5GVxWyBl2DUjdeG4d
-3cBrhujLEtoFcSiNM+ir/mi6yGhddMLPf+QqqxXudmXlMh2tdczvMuxdt5s+ikWw
-5VFpZIV99ruZlduvcCaMtILuaCNHyQ==
-=Fidq
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7et4ACgkQJNaLcl1U
+h9Amhwf/UjYt4OJXH8pHQXNXbOQ/55/dTD8L0/A+EEB+6dEAGjke+aEXqezBcNB9
+iWOywYjWi8MG8OYPbsDxwuP2eiKe1JZzHgHfbfSsE/AFBQBTXiHYeeBaVWgwZDEh
+lngfwVyG03uUEa3iA1AGCZBAXBvuQ/nd7+XaSgnCoOzb0nxM87Nj+ncmImQ6kFOT
+YYpObr0F2mbsnyX4Hm9EHjv3Y8maQuQK5k/zkm5jgfo9HTtxw5cqIcLcYwIibZNd
+IccxrxN6aEyR3f7vt9/uX2B2FkIIYhgCNC98KDHG11dPtZCMV3jJsNOGfyQZvxsJ
+eY7H2FHmX2XeB+RvUPF0o5aPwplG9w==
+=szXw
 -----END PGP SIGNATURE-----
 
---6iEMeO29qkIgguii--
+--khrs3IThEh+m/65T--
