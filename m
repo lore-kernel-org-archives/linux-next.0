@@ -1,107 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.145
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794822919;
-	b=PWKik1oOnfPXnH/0i/2+iQs31+KdUgoy+kv/dPPCuj8G6/hEJYbsXY1mg9ytYQ7eb64L
-	 nw44WdMyShOsssvoUwzWkVlc2S4nJ5g7YGb6P/lBXBuRVIczI9XglNCtmn2Q4R1vBCwb3
-	 bE/EdVYRH12yJ/q66jeTWCC84i68o0r+RKf3lLqix7DKRmuA1Ll4ZVoTLTt2f0R0erpbj
-	 3OkCPLFdOG4Rl3R7sNQ2UT/oMd+WfFJNCmZ7wOFQub6kdtnPtk8Jwj80HqctVAQ7JvVO4
-	 7DYiRZdId6odz7Cqh+Iw5zhXZB+u0jyUSTGloYPm4CiHJoyGBagyyPDVsKk5oHSxIKg==
+	t=1794823198;
+	b=cRQB6p8n8EqULSD03vbjYW+QzsuIupcjv9QYL2u/U3q76zpfLZmGJLOWfrAkEAmi4snl
+	 N12s7hgIn4iKXjBbAhfkrE2EfGINqaLajTdqReK256MIOp0dSjJ5nouxQF2r+E6vTFs7P
+	 cO/9qWw/wWKbfR2WL2072qgn3Vmx0UamB8O098pIPdRyaT+EaqT2YHq2mASK/+nooHfwC
+	 joOkVKphL4yznX05Ry8VEG9df7yjlTV53p+VLnliBzMc6DX1Gh1BTCQctvFdgKdxfXjH3
+	 VI9IBSxbC/0WKM/kJ66Beb54LfURr5fApiaM7Z6kSytsCBlCJ6zrHP8mHuurtZmI8cA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794822919;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 X-Received:Received:Message-ID:Date:MIME-Version:User-Agent:Subject:
-	 To:Cc:References:Content-Language:From:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=ALeSHsx30eLZ3CRWXR1RtD/2nxh7ufMDip6qkVreLtI=;
-	b=BqcJABJm3tNHSZHsnmxb9khg3F+skJBjNNRrIEbwpijB2YU3bFXKv3fp84GTL7oK1+0Y
-	 AwR36tZJ+IWtkyOECxMNqJ69gL2NzsjfHYtxNidwkg88y61hoZZP9nsU2ApBAYDvt1Ugm
-	 whqJTClpQdj3y9OBGMsh7vfPfyozHXo1BwWtjXrW3lJ844Ab8xTjzVwL9bsAGJAtM5cTh
-	 X34PZSIzzV0eNRlDxuNl2nyY0FAt8adKOjgyV2cxlpu54f2lJMIkNrKvmMupb7R32S50c
-	 PWizoDQeTKBjZ3v0PLPxJBe0OfS/W5bkQkDNOhHeMoj5YuV4Ai9LZtR7SfOewReACoA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794823198;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=a7wSifXxoKvCHuLDVxMXLiC5Pkj+xR4ZtCOTj2ufMzM=;
+	b=YNxlwYSa6I8XA/33hng9jBX7iLtYldUyAXre7SvM/boklft8mPjaVtDrTzxRaR5HmPMj
+	 U8aKIwLdmI8ry7HsbCNIkbA20q6a9uwuzGcZywTvPNKTNmtMDvO4SaYjL4a254VY7jOJO
+	 wWkbZdq5krwC2VYd+cWOCeUNEVmssQQF/49p3/B4+6RCpgHV2X/EhA4zQv/YlhUMiLOEJ
+	 1YyVpdNVnDQfA30cwPnHIvXWgw/tIRMqXSsU8ZLs8PPWyOuh9WdKs9RgllJV10Oyp2yOH
+	 wtls5xMYErZb5C9P82j6CqujsZMLXJq7c6//bs+8aTzw93VegS637P0GHM//XmScheg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b="g0n/7uSq";
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=cssHXGGZ;
-	arc=none smtp.remote-ip=170.10.129.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dmarc=pass header.from=arndb.de;
+	spf=pass smtp.mailfrom=arndb.de;
+	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b="dFY8/6ko";
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=qpgIJSFf;
+	arc=none smtp.remote-ip=202.12.124.145
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF16606A32C
-	for <linux-next@vger.kernel.org>; Mon, 16 Nov 2026 09:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9EF16606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E379606A31C
+	for <linux-next@vger.kernel.org>; Mon, 16 Nov 2026 09:59:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E379606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=g0n/7uSq;
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=cssHXGGZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1794822917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ALeSHsx30eLZ3CRWXR1RtD/2nxh7ufMDip6qkVreLtI=;
-	b=g0n/7uSqmCyj9XePZleYfSC7LsPPH8U06D5NwNYjRgfb8PkftgZ0sJlDzjKAK3VkO7rcin
-	0JXLyTB7GWTYznq/ruHeoYqHA+AKaaIcxrMGzg9pf9MpElO51iIsJbfrEb9dmff+g0Izt+
-	B0uWbdDWzD8xx3tCtRNglCavFD6g13k=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-307-41iy3wH5OV-KKWZ7SE4G0g-1; Mon, 16 Nov 2026 04:55:16 -0500
-X-MC-Unique: 41iy3wH5OV-KKWZ7SE4G0g-1
-X-Mimecast-MFC-AGG-ID: 41iy3wH5OV-KKWZ7SE4G0g_1794822915
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-48e4d1e29f3so3104592f8f.3
-        for <linux-next@vger.kernel.org>; Mon, 16 Nov 2026 01:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1794822915; x=1795427715; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ALeSHsx30eLZ3CRWXR1RtD/2nxh7ufMDip6qkVreLtI=;
-        b=cssHXGGZoZoWeZuHuBpH7DMWZnmafYy8CwUKUVYH4VefxCZiEKOHReZ4EyT/hFSrh9
-         +PAh8d+tCwuFnDWbjyMOvDQPpLlRkrB5k4a2P83XrEWrBR7V+K5XUtt+pj+NLZhL8fww
-         NCR5qq7kxHmJedLzfeQA1DWM1PwscgmRaLevv+9FPGtlrvJxahHZozoY+UrHGpLCTeJG
-         s6YZs9mO5MYH3l9dE7LkgwZ2Ex2jiP9hbIpb2DTvEK5ixE5avbOOv1ARAWR4/B+KezU/
-         drGPjtVdns5unS2VuYxdlEI0ceXK9blzGTlHyuxwuMfnxzC2gTSbrB2snTaBXuxF7R0O
-         4PBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794822915; x=1795427715;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ALeSHsx30eLZ3CRWXR1RtD/2nxh7ufMDip6qkVreLtI=;
-        b=u+0qyv8kEN8UDCxH39GOvXHu5sPjDsWLBwAa0qJFxuSIQz0RtS/Ql3hpioQUkwvOLa
-         Ma86Puqs4abO2+IiH48oFbgWLUPRAMb4niLLyHdDRaEvUio6LEJtXQvoSXr9G7tU8c6p
-         1Rggpi5jUmKxRvylJBgvFn7kmCdHEmoZHnh1cDBoebfAqJdDmdedJmCwL9Ns+uQQ0nCk
-         VwYWxHBdFqTgJK8btsnYl2vOd8A+OrFC0Qtdg0v9thUJj4QC/phpm2ebGfQOts66F8Ri
-         Am58lEY9+7a86guk8Dz1GPwnKgpT10Q2Bnd4hw5Eh3RmL/xCU1v/bLJiR5yMSczbahB8
-         qkqg==
-X-Forwarded-Encrypted: i=1; AL+hErGwI2IVvXNx9HkODR9WFL9X9cCrotkms+44a8mEUpKNwM8c1fibwxVG/rcQPNVdtRGIaTTsrngeoGch@vger.kernel.org
-X-Gm-Message-State: APuU4Z9T4hiABtAK60XrJF4nIMyYiUFY7b/4Qr5oMpRviNOpL11UP8uJ
-	d1JH6ayzatCxMGJ5vGpfOjvOn8Y0dizCxtjoPP/BlVJzWkJvlNYI/+zfcAj+g8q9fvl0jAeDbzJ
-	1YuOKz/t1vKiDw3E1JMRGYEcPYxFDBID2QfzM1/KWF/G/wGFhH/dwPhiqNSIIA0I=
-X-Gm-Gg: AZFdTZcbLbp8EjVdtfNzhpTE7pFYPEPyV/J/x6C/up4tp3JzoH4upcVq0KN6IPleq9R
-	N8jbYrZWwChnYLs/pcCKHJLFwtmRIU5fh75LmxUiSJ58FTIUb2GkgEhnOKKgiy1ko4kD3+BTE7s
-	nLSHzYiZbFhIVEjY222RqqB1GQE/BJ4wMOTe2ZV7QHPiwZR9CuF9LJonwTGdcSHXI075BME9fnz
-	f4bRAeCs1ZcdjFKXH/2zI7iGQ62SdnsaJ+eM6AVDZ5UC51MqMVlXlHjl6QGvzLenTrMTqdp8+0x
-	Vq4hB1QbZ4THyNbvnzvPv2wSEaaqT37k51ErMrTv8qq13k30coM/LgeejEtKO7OiYAfC3MbQL5V
-	gIOnLnxu4LpKy5LZ5iYAxri8MpByeDZQ54RcKqJw0kX+B
-X-Received: by 2002:a05:6000:1a8c:b0:48e:6812:5ef1 with SMTP id ffacd0b85a97d-49c713ae346mr21453785f8f.25.1794822915114;
-        Mon, 16 Nov 2026 01:55:15 -0800 (PST)
-X-Received: by 2002:a05:6000:1a8c:b0:48e:6812:5ef1 with SMTP id ffacd0b85a97d-49c713ae346mr21453746f8f.25.1794822914741;
-        Mon, 16 Nov 2026 01:55:14 -0800 (PST)
-Received: from [192.168.0.9] ([47.64.115.75])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5d223b21sm23653382f8f.2.2026.11.16.01.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2026 01:55:14 -0800 (PST)
-Message-ID: <a2ccfd68-c773-416b-8aac-12a7f9caa801@redhat.com>
-Date: Mon, 16 Nov 2026 10:55:12 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=dFY8/6ko;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=qpgIJSFf
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfout.stl.internal (Postfix) with ESMTP id CDEEF1D0013B
+	for <linux-next@vger.kernel.org>; Mon, 16 Nov 2026 04:59:56 -0500 (EST)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Mon, 16 Nov 2026 04:59:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1794823194;
+	 x=1794909594; bh=a7wSifXxoKvCHuLDVxMXLiC5Pkj+xR4ZtCOTj2ufMzM=; b=
+	dFY8/6komEzgoYb3Y2vqmdQiGwlO6M9QWkOeTp1q58POvEO0feMOr3BtLYKxsGnL
+	fGes5D+VCxvJMSm+/dJXaI8KkVe+TjiWVDkG1VH088Wm7nVoWPOWDEQSpJm3xVSb
+	87U1oZGsdTE0EsCaVZxWjNHaMYUiL6d08vSSjY5HV5af/risSCb7yDXcQGxG4JQT
+	YImn8B7w75N8mD6Rl2sIlbrIsNsiY1St7ig1bt/Gcwbpabuv+k1UAF17TgBa1UJJ
+	PwUimbaeNVX7SCt4amaAcX6QOM35evVR06LIhEnsHEr92R6Paz1UBjJ0pKr1KTwt
+	y6MSB+skUVnLS7idt59tLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794823194; x=
+	1794909594; bh=a7wSifXxoKvCHuLDVxMXLiC5Pkj+xR4ZtCOTj2ufMzM=; b=q
+	pgIJSFfk9kLKkBckEyrfisaNXb8+W1olTOiMC+KK9tvz1zC8J4aQ/kwjpNdOONLs
+	+M5ZQ+RtkBfGve2OJ2GRjQ/Xi6UusdOcXWty2s27Ou1hj2AROvaUVcVD8E/1rBEZ
+	ihCenAKZUQMnGf2vP1wmhcS0+oGP2T/7ucnQYj59uGWe0BSLN7fvA+5aAvl2898A
+	dk2byGXTwpXh3huHGRlkGXoXMBxgD+iyX1XwFAjyCHjACo1IUwhpjaTvo6I99t3n
+	ARWuh7MpxGZsU/6FGRc+1bK9zRFQDiX2By/H/0hVhUcM0Vqz/yjqLFCoW4rKqFc/
+	ZEEW6JkBpS3OpK50J+mxg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=arndb.de a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794823194; d=arndb.de;
+	mf=PGFybmRAYXJuZGIuZGU+;
+	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:LgOQxt90INc8b5BSViFpp3Tf7Zx5eGz+29W5QDF9Klcqlx+
+	Tc+sHv7WBBP58eZXbxiUCM2Wu1jkv33vgnnWUTFyWxkHyvuoirp28ku78k8fW2VU
+	GIHcD7848l+jfwZ2JxS+KOfCE9L5jca/O722m6bSOM87GcRM0JiIJnxdNJWaKSA3
+	9qtw83hCys9h3WSWqEKIxe48rFmQO+AZR2msvM+NHc5jkskGpMtD+C0j37LeT9kV
+	g3ZAerYwgJNyM30CpPfW1ojBj10a2CQuOQ1xWduJOuc1S3Flrk9L49c99PnQg7Xt
+	HShv55QOhax+afW+etD250yCZdcWBtk/eCDZ+Ow==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:e7Nd2GgF0tQp+32u16V7G6/0sbpsISzg+iXd/rCg4pg=:2oId+2bWZGmI6eNla/jqfSiJnIqNQs3cMc8kEg3AMDQ=;
+X-ME-Sender: <xms:GNT6ao11tRSFAd0dOOgykOSzmmY90FPxnHXvFtofvAKTdLVifJCkTw>
+    <xme:GNT6at6OalhevobvhmLgcOURl2Xc1EEzTMqR96x1S_vFiqQd9PGVzdRAaTbi2RTVQ
+    zK5V1qnwKGQ0o1nCyShpGvSE6K7v1O5aVf95ymsKTenGByB2gqbAJfm>
+X-ME-Proxy-Cause: dmFkZTFWmmZvctIyn4mv4NGxgCI0Wc2cqXN5Pwz8jaRG5xa1iEyYknZho3xZfs7kXEg6Kd
+    Gi/FKk09/KzIl2a0vw+Qu4JnXCXcI1TS2yxje/StF+bu0tIxUPwwsHeDpgKG7pimxGsdr+
+    EWU8PcktcPzk2OJ0Ynx6HZF00XrC8sAm+91oalxLbGQB/UIlMGPLg5geXseuk9H9H6nysb
+    DmZLGwSvca18wPJjdoiQgoqOorlnKUl0P4qgtzef1sdSUmudCW49W0meK6duji9dgkIcl6
+    L7miMX4ZAKvigM+jv5VzE+wT+ShUqGGK9Iq7AKh3O6LkV3d+956LR52V1SyzZ2nFudbXa7
+    vUvgWrJcHTSbGzPaLs0mD1GZBNf3FSJ7/6v/1ymZs+2YLwCFfHL98LC0CRfynTwsxS6MMB
+    GQYkvOuFJWnfjRUdD45mX+vgJo3/QjGVVcqYQgcY11tyB/OO2p7T4kJaQKQvg4Kd7wjCeC
+    qsEGjHSQ4fsvUUnhCAEf2zf9wNanQgkciPW1qLsdpb9K6AO8R5ioEfBkAK6hUYC2gcfgkG
+    wFfvNjkS6oc/VRRMKLlVPsJf+O34/u6RtWYml46JjUScbyqSpdbGtjmmsY/2srP0w/aBt0
+    B9yHblFqgZKEZiWCuZQuU9BI2phhJ0g+4mC1OeDuDN/8DBjQXhUBlg4VvKSw
+X-ME-Proxy: <xmx:GNT6ap8elTZNiIr5JqUs7BJMFSCrowARTtkopibtnlLTJEADR-FJvA>
+    <xmx:GNT6apIxK6Lvp9j5etlwfFgWjKEOixj0-g6Q0_7YtEddRK0cJC4Kxg>
+    <xmx:GNT6aqhacLGbRybBQIcm3g6v61DitqDf1T2UTrHk9I6M4ni07JPc4g>
+    <xmx:GNT6ah5wVtzqO5h4aLsH1c0Y_j8usw6H7HL8ppIJVijzTwo8S04PNQ>
+    <xmx:GtT6ahFWXdXDkoySs4Bj_ns6R5nfbkprSoNmmtBwg9hE8fkS2sywk-6k>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id E49AA32A00A0; Mon, 16 Nov 2026 04:59:51 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -111,94 +115,36 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the asm-generic tree
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+X-ThreadId: AOb5ClfA_nYF
+Date: Mon, 16 Nov 2026 10:59:31 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Huth" <thuth@redhat.com>, "Mark Brown" <broonie@kernel.org>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
  linux-next <linux-next@vger.kernel.org>
+Message-Id: <43b9889e-f504-468b-af05-d62e1043edd2@app.fastmail.com>
+In-Reply-To: <a2ccfd68-c773-416b-8aac-12a7f9caa801@redhat.com>
 References: <avcnFxad0xS5KrZs@sirena.org.uk>
  <cdd71b25-9149-476b-b31f-c29b3b2896b7@redhat.com>
  <c96b327e-959a-4363-bb39-f9e313c92b9b@app.fastmail.com>
-Content-Language: en-US
-From: Thomas Huth <thuth@redhat.com>
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <c96b327e-959a-4363-bb39-f9e313c92b9b@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <a2ccfd68-c773-416b-8aac-12a7f9caa801@redhat.com>
+Subject: Re: linux-next: build failure after merge of the asm-generic tree
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Am 13.11.26 um 17:16 schrieb Arnd Bergmann:
-> On Fri, Nov 13, 2026, at 16:45, Thomas Huth wrote:
-> __signed__ char __s8'
->>> /usr/include/asm-generic/int-ll64.h:21: Error: unknown mnemonic `typedef' -- `typedef unsigned char __u8'
-> 1
->>>
->>> Caused by commit
->>>
->>>      625b37748a148 (treewide: Stop defining __ASSEMBLY__ for assembler files)
->>>
->>> I have used the tree from next-20261112 instead.
-> 
->>
->> the fix is:
->>
->>    https://lore.kernel.org/lkml/20261030174323.370687-1-thuth@redhat.com/
->>
->> ... Arnd, could you pick it up into your tree, please?
-> 
-> Sorry about that, I had already applied it locally but forgot to push
-> out the updated branch. Pushed now.
-> 
-> There was another report for the 0day build bot about the same error
-> on powerpc, but not enough information for me to reproduce, so it's
-> possible that we need another fix like this.
-I was finally able to get access to a ppc64 machine and tried to reproduce 
-the problem. But it was just the vdso_test_chacha test again that was 
-failing there due to the __ASSEMBLY__ still being used in /usr/include, i.e. 
-the same problem that we saw on aarch64. I double checked that it gets fixed 
-after applying 
-https://lore.kernel.org/lkml/20261030174323.370687-1-thuth@redhat.com/ , so 
-unless the 0day bot had a very unusal setup, I think we should be fine.
+On Mon, Nov 16, 2026, at 10:55, Thomas Huth wrote:
+> Am 13.11.26 um 17:16 schrieb Arnd Bergmann:
 
-  Thomas
+>> There was another report for the 0day build bot about the same error
+>> on powerpc, but not enough information for me to reproduce, so it's
+>> possible that we need another fix like this.
+> I was finally able to get access to a ppc64 machine and tried to reproduce 
+> the problem. But it was just the vdso_test_chacha test again that was 
+> failing there due to the __ASSEMBLY__ still being used in /usr/include, i.e. 
+> the same problem that we saw on aarch64. I double checked that it gets fixed 
+> after applying 
+> https://lore.kernel.org/lkml/20261030174323.370687-1-thuth@redhat.com/ , so 
+> unless the 0day bot had a very unusal setup, I think we should be fine.
 
+Ok, thanks for checking!
+
+      Arnd
