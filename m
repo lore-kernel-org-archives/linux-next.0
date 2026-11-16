@@ -1,56 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794858122;
-	b=f7g6XPNVlsgAsBfyR3AQVjoNMEtDWx/7reC2yiFM0LpmfTNtnruuF59RGL9F2EAS5AKI
-	 m4NkWYJ/K/q+QA62djBOXekdfOOOluOT4pZKIvbgKbGNyMVPNixL0TA8KzMfqYM5Ns0Xi
-	 axrSoLEAjwbFW1YCUycYFGBiaWVGEvIPm7p1Scayq909fdhbjL6S9w7aidfeR6s9Qt+nN
-	 tI4o5TcBIeW32/R6dlzlg5k5zn1jXFlFZROwoXzE5lsCNMGirUoxRdHXlLn3PQhGQFPpg
-	 YfoY2XXX6vam8A1f6rqaNf8hnXtRuk7wvdlmirHFgymbsEcifbSQXrZR08qiiEdqjoA==
+	t=1794858365;
+	b=ey0s0fA9J1+zP8reBp/ctJU0kgoQiDjSugdMFTDrxm8LPNN280RbmygysMr2Law70fn5
+	 k1CX+H21NwqE09j1Ytf3VzZXqZ1E0xXbIRznLovYcySU8UmLMQhe59/n4EpQQtWatQqiu
+	 i9yDlsmdv9tCt+f2EDRQBCIGSjjk9b5xwrIxyGjO0TehhCHFFoBpO0jy+daNU99K3nW4Y
+	 2yU+Ye47BqcPD9uFlCJba7dkHjjscVcL2YLYJ18WlrsyC98txPIAByiQmHJYRbW00cnCh
+	 8ED7wQwMLuUU7+8vpcXgnKaBCXSgsJtd+yN3K9nsq7UUXKE/oMfK0l9v7shcaHfgyqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794858122;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
-	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=EuLgKYBpwSCcbF29NNjWh5pO2MiL+34iKZg4VF29tUY=;
-	b=0U5GRzBWeYYhM5+EjCUMmeLvCBOcbQ6lawdLnTJjb+Kt+mkLCjzuOLQFes+uean6t3m9
-	 V3cVDufgC3T58MJEPFDjqv6D7LwMZqCkSXbIN2ImgMuZdEUJ1ivmltrwnnLbVLRZAkq8y
-	 S1sSEX4VV9g6Kkk0lXao8niKzXADh+KlsC9IyKYCZ0Y9w1ktMXZQabTlZQ5JZ2VhyI5UX
-	 sp6gRTC9a49gA1CuaT6/d1fGo8FkToqlO5VGMYB/C9V1rjx+/iOXj444MYKAgS6sN5VDC
-	 vJISHYMyHswltatgAjTpRb7RSPZt/pSN67kbHew5dJx5gq763Jt27Obe7UGZB+Btpxw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794858365;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Zth0Y6oSyHMC+KMbtHEQCSeMMwH12xJ7JeHMhVyP3EM=;
+	b=HAS50QlOCIDyXbn8nedThYfGBdSGQzCwNFiWAM3BDSt35GjqR14bfcCpPFBqP1BUMaKM
+	 8ZdAMGsJpd7CBLDNB5hS+tkfcGXqAPkyw6G4TUqyZ0CQn97LT8bvxNgqoPzRzV+XW66Px
+	 bo0f5OH7f+Q7T8SzK6YVr0SEG/DWG9/cKMHeuzssoh4Eas+WzRvuxE5mGTTsNLXt/frxC
+	 T0zb0semeZ6QGN8v7i1GMT6FyqFg0nUFsuMMrw0WfIuVjfOK1jv1optfseI9GWrATaAbI
+	 mVKNAXUfiUFBmxYnINJoBKja9a4NXpLEosmHhiQ2PoxhVrRp1Et96A0qwch7ffUsPVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=HrLAWExd;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ay4xwc/U";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D380A606A31C;
-	Mon, 16 Nov 2026 19:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 93E07606A31C;
+	Mon, 16 Nov 2026 19:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=HrLAWExd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F3D1F000C4;
-	Mon, 16 Nov 2026 19:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux-foundation.org; s=korg; t=1794858122;
-	bh=EuLgKYBpwSCcbF29NNjWh5pO2MiL+34iKZg4VF29tUY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=HrLAWExdLLcKuwcZbFriLGLkv2FjqQdKOFZgQKNpgK1KaZhRv4grZhA3fPyeGxebs
-	 TXcV+QM/ny4IZeo+7EcZQTApRCeuh+yK8z2FDWw/JIvXTc/Fgrxm3XSpqkJSUsyaUV
-	 Bl6amWiNfgH+/kSOIXfS6rSSgsxWsh5e9WPmSNko=
-Date: Mon, 16 Nov 2026 11:42:01 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ay4xwc/U
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9205E1F000C4;
+	Mon, 16 Nov 2026 19:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794858365;
+	bh=Zth0Y6oSyHMC+KMbtHEQCSeMMwH12xJ7JeHMhVyP3EM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ay4xwc/UvqfWEsw3VsBIkMmWMZ9Jq+4o4kDUtj5+DkOGNPrhcCT8M6iVc+9iRHjLr
+	 AJnvztMdBQJjVh2WEosqf8CZJf/9xKgkB0AXAmvgqM7vFPpTrkrJmwi5ECW1FLvIVA
+	 fPtYXB4wBCzOT5AN1rSBaVs6ZX+A0XN12DIDkZkwS7AaleBs5ccpJQhEHXG6spCYcz
+	 /p9TWdGFPPsM760Cf5klfPNcuOYiJD4KhhpdaDzfoRx3p1Pxx09/hjEsec4WuQn7IW
+	 7xyU1XO/FnWU83TCxyNKwp0Hz24410XuZKgO7/zbMm22bpsSlZ6Dkm9hq+Nxm4G0Ce
+	 3bDG5UnD/vn8A==
+Date: Mon, 16 Nov 2026 21:46:01 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>, David
- Hildenbrand <david@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mikhail Zaslonko <zaslonko@linux.ibm.com>,
- Usama Arif <usama.arif@linux.dev>, Vlastimil Babka <vbabka@kernel.org>
-Subject: Re: linux-next: manual merge of the kexec tree with the mm tree
-Message-Id: <20261116114201.71afd94ec31717433939e1fe@linux-foundation.org>
-In-Reply-To: <avtYxJJhIzPVDYVv@sirena.org.uk>
-References: <avtYxJJhIzPVDYVv@sirena.org.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Daehyeon Ko <4ncienth@gmail.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tpmdd-keys tree with the
+ mm-fixes,rxarray tree
+Message-ID: <avtdedZFfQQXbm9f@kernel.org>
+References: <avtYu0Ze50s_CtFu@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,25 +61,36 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avtYu0Ze50s_CtFu@sirena.org.uk>
 
-On Mon, 16 Nov 2026 19:25:56 +0000 Mark Brown <broonie@kernel.org> wrote:
+On Mon, Nov 16, 2026 at 07:25:47PM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tpmdd-keys tree got a conflict in:
+> 
+>   lib/Kconfig
+> 
+> between commits:
+> 
+>   37ff457ec4679 ("assoc_array: discard shortcut when collapsing a leaf-only node")
+>   29f1617aa1dbd ("rust: rxarray: add rust xarray support")
+> 
+> from the mm-fixes,rxarray tree and commit:
+> 
+>   1dbbde3bc4b80 ("lib: Remove assoc_array")
+> 
+> from the tpmdd-keys tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-> Today's linux-next merge of the kexec tree got a conflict in:
-> 
->   kernel/crash_reserve.c
-> 
-> between commit:
-> 
->   ed27d3cb114dd ("mm/hugetlb: allow crashkernel to reuse hugetlb CMA memory")
-> 
-> from the mm tree and commit:
-> 
->   941aef93e9e1d ("kdump: Give crashkernel CMA areas unique names")
-> 
-> from the kexec tree.
+Thanks, I'll resolve this.
 
-OK, thanks.  I'll send Usama's "mm/hugetlb: allow crashkernel to reuse
-hugetlb CMA memory" to kexec people then I shall forget all about it ;)
+Br, Jarkko
