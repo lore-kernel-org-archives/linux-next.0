@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794867946;
-	b=bj7Xy9QNDPoy2EqNP1SpBu2jpqD1vrWN9S2EAKC6j7aFTXwZoVUhTJY2lLRvBwLKSGYd
-	 nIqp+0PvJSQTEV55VGiYHKiVddqqjpF0z+qVWQd/+xmoRBeov2fGbvcjYQOLl+ytUfT7e
-	 zXXp5vqoUuZoOhSl3hk4GWrVcN+N3sXiOn/DIYgFwh/q4f45s2aVfeSs9RdaBq0QF2V+F
-	 Y7yqMfZDyD58DaYSnfASUK2y+FXz7mGjxkcOYiRvM1wKd7RE8KhwI65+YQlhT5hSDDFzx
-	 OhV97BpXRC4LC5QDJ87AD5fIdOD6IaQcK9bbdFQ7f2ZlE5VonkOHdZK492Ah0vtyRSg==
+	t=1794868400;
+	b=K3TfNxiOJq57ILpeCdiR3o8CPMs4mmkTp8202lr463e6xdQvo8yBgdZ7byxe/Rp0925q
+	 WRwIhrJAqR9llzzuQ0rTNgQivRpUabV0YZLlQGnkBGyaSRyGPF0JN8nGoUZ9wLIUOgQWn
+	 rhpUC1FG53lOhlFaX505q5S/EMfXSp7u9vkULqMtsZy5KwxiGCq6/DYDZSfCdS4di+TGf
+	 tQrQEha0NsskKz3Z2goEv9n4EwdBOAnQKKahciivy+W3syZfWciefY6idya1a9YtsLEXa
+	 ny2rlf9TVRwNHFORNmSPDf/oDs7+JEJ0JZZeTJP0jkbsoY1zaRGD3fTqvB3zZDr055A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794867946;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794868400;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-Cookie;
-	bh=RJXFs6Tk3oivnpuAnKh37VNAJjES5oMcJcv7k/Z2+fM=;
-	b=lhRyMhHpqEbXhrJYQ4z8j9PX1EtGd5a4yGKRMyB6K8toXERVassJAozWr+pWvwti04mE
-	 a1qQchfr0zVYq/BI6ago6s+JDvtXxtQipjyopXxUlvpAWk1CfYWPb8pcGQPJ+cYoCkWyL
-	 U7drL23vj8lTRyGamDWY9IDm1qtSXDsqWoyJlAl0ZB6GkMLMNX/U4OSZqGO8VhIFubXob
-	 S24t94Bddj/mvd9gvW1vtaKJmkoIQUPnOdqHGwrbWnBCAI8UsMa27zk32PMl98twPRwYy
-	 U0oh7neXw615+sRAHCAZFM+lxO2ToSibiin0GooK62X1T+jnfnb4x3p+fZ1lIKaX3sw==
+	bh=Q/tZ2Zr78Is40jf7e+nBuzh3+h/n8zK4De9jGrO/udA=;
+	b=Mlzlkj/kOYhNLyqNE3At3RXfv/mPCe189ouyWSXoT6ZQSK8AF7CgEX/vjBWIcSmMGOYl
+	 xKgcrdLQcCayc0WAMNLJgmt8WU/PA+Zo94rpQ4fUQv5WE4pNtT5LegdI/QH8SlbdBIm84
+	 wQQCbs+w/3nDYc5XjT4uvXwv0NOTrzurzqxe7D8fiPq0TccYIUw/gpRR9q8H8QQEbe9Zu
+	 bIq/jZR51E2aVAbhM3FUoKeSZh73vfQa/ocxJm6n27wgHuQQLGIDcMykb15h8qtzmRWLN
+	 GW/Dax4JHa5lLwKCHPWFG2XRjvuWNNvSquGPDFcCfd4i54IOoFoSrxRPkdpDCCi7Yng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OcF+2Rbo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JAZv5oq8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A299E606A31C
-	for <linux-next@vger.kernel.org>; Mon, 16 Nov 2026 22:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A77606A89D
+	for <linux-next@vger.kernel.org>; Mon, 16 Nov 2026 22:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OcF+2Rbo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D00FA1F000C5;
-	Mon, 16 Nov 2026 22:25:45 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JAZv5oq8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 448001F000C4;
+	Mon, 16 Nov 2026 22:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794867946;
-	bh=RJXFs6Tk3oivnpuAnKh37VNAJjES5oMcJcv7k/Z2+fM=;
+	s=k20260515; t=1794868399;
+	bh=Q/tZ2Zr78Is40jf7e+nBuzh3+h/n8zK4De9jGrO/udA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OcF+2RboJr/Qm63cJAFCR66s32A1BNFIsoY2rgbZ8cML1XrlMqemPJVv9nwB474TM
-	 VDaPlZy+a74BzGT1sfx2Oeegp4AcHiq1EghPxQQhiKdFzi42h67bS0A/uOAQIBjxNT
-	 vhZStj0QDFdhpF9W/NyHW1tv2P1nphGDRai9FyCmlcQYOdcHKG1XeLBzzYwvgLsmVO
-	 haFj1A/LK0g4Kg0Z6Zo52pQ3n4qXRQV3TmnDWRz6/1tToTt/2sB0aVAm11VDNOdbrK
-	 SjjGdx6vfgxs/y/F+R4KBKMQk05Xtwk3K412kVXI/CF034AxRJBm2tQbPYpK9+R4rZ
-	 ZlOG+/8f7h21g==
-Date: Mon, 16 Nov 2026 22:25:43 +0000
+	b=JAZv5oq8DmvB/5GOwlplWuKplB0x+0albJYUhDKga6Z1ab/WbryPhsEaPRIGAnQ2G
+	 8i5KgT8Ii6KnaP5z4fDzetMtbF0Vqiwn5bVKkgcz7oCf/O5fSWWZjreIzTBIww+ouU
+	 MCVe9FVQyFeLU1b7b2SmUS5JmkSp0A+EcHU/vKZ0KaSz549H4MX24b2r10yXavYplM
+	 e9DM1kS4aK1R0DGVE7ry92Am2EIXiYrWbtW9y7PEcL+h7zfdsibqmvlAPaKIyJqrg8
+	 qoRZ18mUt08G369prCD3+MsmJW28fuB93U8y0PEquvOTk34rXZ3+9JospaWUxgr1xN
+	 1nIoMuENaRGzg==
+Date: Mon, 16 Nov 2026 22:33:16 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Brian Cain <brian.cain@oss.qualcomm.com>
+To: Thorsten Blum <blum@kernel.org>
 Cc: linux-next@vger.kernel.org
-Subject: Re: hexagon tree inclusion
-Message-ID: <ed29611a-1942-4d7b-bbf6-32da4d3d15a8@sirena.org.uk>
-References: <47317123-f03e-4031-ac4d-b1f06098e2fb@oss.qualcomm.com>
+Subject: Re: linux-next: Add blum/linux.git for-next
+Message-ID: <caf1c9d5-2d25-446c-ae8f-5851cd0a4708@sirena.org.uk>
+References: <avW7g6pH3ILcSAkq@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,26 +57,27 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="btZ57j3FJIkiJau5"
+	protocol="application/pgp-signature"; boundary="mexMzEva49/Gu840"
 Content-Disposition: inline
-In-Reply-To: <47317123-f03e-4031-ac4d-b1f06098e2fb@oss.qualcomm.com>
+In-Reply-To: <avW7g6pH3ILcSAkq@kernel.org>
 X-Cookie: Madness takes its toll.
 
 
---btZ57j3FJIkiJau5
+--mexMzEva49/Gu840
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 13, 2026 at 01:02:54PM -0600, Brian Cain wrote:
+On Thu, Nov 12, 2026 at 02:13:39PM +0100, Thorsten Blum wrote:
 > Hi Mark,
 >=20
-> Would you be willing to include my "for-next" branch in the scope of
-> linux-next trees?
+> Could you please add
 >=20
-> git.kernel.org/pub/scm/linux/kernel/git/bcain/linux.git
+>   https://git.kernel.org/pub/scm/linux/kernel/git/blum/linux.git for-next
+>=20
+> to linux-next?
 
-I've added this, it'll appear from tomorrow.
+This will appear from tomorrow.
 
 Thanks for adding your subsystem tree as a participant of linux-next.  As
 you may know, this is not a judgement of your code.  The purpose of
@@ -95,19 +96,19 @@ been:
 Basically, this should be just what you would send to Linus (or ask him
 to fetch).  It is allowed to be rebased if you deem it necessary.
 
---btZ57j3FJIkiJau5
+--mexMzEva49/Gu840
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7guYACgkQJNaLcl1U
-h9Clawf/d1p1XTqehMgO0obw5sEGi30aYoy06kU8Na4Qb/cj7R9O41nwz3JN51wI
-W97QSgiQ1zHZduZ/csVBvNE/OuQVgTF6pgmAtZgbE5vUxWfmKnUiKQlq7Nf7X/d6
-DmsyTCyqkX7Tb3cRo0tDCRD5oYKQv95vjhBfPNZKW/JIPwq/RBAPCduQb1a1mtjo
-ZcmXRkXF6N6nEoPrUPQUrGYA5rSN6GniGFn+aZPfSorxtq5SHwrQz2MLRCzydVF+
-W6iU3qSYGSNe/rLVTFqjUD1gyEk4sHny6uWPz9Cazcqb1fnR6RiVFxfU4IobKNbm
-0i4BxaknhyMccS+GiUdZM22KDtMqSQ==
-=vKXu
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7hKsACgkQJNaLcl1U
+h9D7tQf+IzTc5ErFQzOOukVKh0IkK5uiAvLs/Qx6yyPbfLVhA9H8/VrYn34+LURP
+1UQnzxQaRHRC6JRtGuMTsBEQLo3R05g3eAhDISWambv4KteXt0UjwVDcyre7tvkZ
+k9veZ7qYUizenKV99Tml8HZqJnPkJY4UGCesFlyf9MjjxDYx15NArZ06LLq2o+fF
+jzwaaARTC+8uq1K9RxkjTvjzGW2DRngQO8RoCA7Tq0AITNZBsNkVVTDoMjbIAOu7
+pXH7A5TNdftSBslilkI7TCM/fyzbDwikv3Loa/EBjrpAF6e3ScKy8k3qRBo0s3I8
+CFLpJ/H0mp8PHPnEhkgMqOxMgwJ7uA==
+=L2Fy
 -----END PGP SIGNATURE-----
 
---btZ57j3FJIkiJau5--
+--mexMzEva49/Gu840--
