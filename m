@@ -1,50 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794866496;
-	b=cVC4dMKXQphTHguyHd/SL3lYZVDiFFU60ziw+DiRCFRPqwE5VsDL6+8D0YNBAt1L4jPx
-	 ZDGgIe3imgn8KM6Ug7Ui+i8sPVvD9eDL8OTOpRlF/WBqdtGlk074Sz3LxoQKFib07w2kD
-	 H94aPcb5Pjz+SbNVR5pKuFUYR7I7GbkXH6bSnU8cVMR+lhfJZxbkmDkmCcIjJ3yujveal
-	 xyxbXsKSE1hgKmzRM6jGbpEooiGIr6bwtqy+XGLoNrenXYzaq/MH4WV9IAkl2G7cSOx+U
-	 g6goOYC2jmkbNUshkmULlepY1Qx3mMj0HEXh1Z+50ZYhZPIATSs98odZE3G6qjst5Ug==
+	t=1794867435;
+	b=FSTwhjP+eK5JtAMvr1dq3m3Mm0xMe+jiM2D5p1tGGFqchKAjFuXlKCdcX2+WpApqV2zH
+	 TMahiXInNlzX+4ZO+4/+Yk+X4aDwOeqbQDG5WZGhs3JwZwMWSpxYBTMKeLfu/f+SvW8mX
+	 69OzOEgn7C2dLs6UVyl+Y9wWsUjHwF3BlSohTVuNoYWP430GXWzOrnDF8VGqT1kvfK4SZ
+	 E8ppZCS9EoE9AcWP2WK4z2rzQb4Efj7xxeTWU9P4/YFOKry/6yJcTRHY0HGIJdLsr729U
+	 3J3CS+6EYiRuJvQ7flX+IbcVgoizQeygz242yT3eT7GAL2ZGWH1VK6rz+5ohLAd5IOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794866496;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794867435;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition:X-Cookie;
-	bh=XoglGBXtMhmw2VSet8h2skltaKtapwd1Z8U+JqkmCYI=;
-	b=PgQT5nyrDCyvBpQ89JT3k1UkJHCfKp3a9x6Qy88go7RN2x2ABBGJH0ZNZAoVSqlnDvMt
-	 UllnE7Vu3OFHnf1mIm4EpGuioL/oow21vMKwJeWoNI6YUl/DSsjCObCTBhFbv1AC8lz57
-	 YS3Qw2OoDPVaaN8kIcTvqcMbBCAXjB8r196cv4Kl3oDgNH5S5Nav6BEXxjSi4qOmaBYUV
-	 PZZxqHoCcYKrH+fZwPFsHy/8oPaN7OVJhAK+LeTCzZHOmJJlZgxLWWRAzbtpIluGi4ztJ
-	 FBg3pNWyAAuv+9YQPiWX7Jk1wUzJpQ7o+aLwSL/PXTQe1WkfNixAkFz18jIDwZoRlQg==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=mliR8LbpLPEncYUFbf9dyqHk+SUbNegdnOB/qGMOmBU=;
+	b=KbFAnHkZkO0s7fnLNQeWR/8bx74IM6/bnL6C7kf9Xl8UvdJOGKsH83ZdqB8W9cPhqG6z
+	 dS8ZgN08/tdqjthSOTYXXmU2DZf37pZyIKXNFL0VPd6vItFRj/+27bcvfC7fPbF3Hd8Z3
+	 gnNBAbT/Ez9MF6nWRosUJSNdnmbt/8EwQYqhf8GbeNf4J/vrr1e8YapkeybSTJdazK8m8
+	 lYT71VX8lQC+YaNkzQ1vhA3XaHx4s4vBzz4KBRFh0tISMfu4Z+18iEFtF5L4KbDvuLwBn
+	 wnnx0CMRgve3yQrHlP1dxr3KUXx9Pn2YrXCxZzVBye+Jk6Y1eJ2YdQx3PBfoY5Au5XQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KWPwb5la;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OrvC9eo7;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20186606A323;
-	Mon, 16 Nov 2026 22:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABEA606A335;
+	Mon, 16 Nov 2026 22:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KWPwb5la
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFFF1F000C5;
-	Mon, 16 Nov 2026 22:01:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OrvC9eo7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A11FE1F000C5;
+	Mon, 16 Nov 2026 22:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794866495;
-	bh=XoglGBXtMhmw2VSet8h2skltaKtapwd1Z8U+JqkmCYI=;
-	h=Date:From:To:Cc:Subject;
-	b=KWPwb5laFONGOrD5gWELHBaUKjdSq7XrYIasSM6rxnOlTFuZEceCN1Ce/rOk6SLAd
-	 CvK1eTcuwdhZcFeYvM1TfOHrq+9c3jwaMElvi3w1TX3z98CHofN8T/8et+1/7bX88+
-	 UrtShOCaZGVtvl+c9OnNfu2FEBlm62ihJQM3OOSti7JjqHRVUbXaS+m6DvgzPftC9+
-	 fQMGDjeKmpvqTzTtKFEn+kY7v05DZFzDlYhNe6y8zk+LqONo4wdc61/LdcJYUhCS4x
-	 UzMy0T3Dm3Q3DXfgewbHYZTHfUDLZ7iBaKY6FBcVFy98jOh8wKKQGBKfvoMTmkn/Es
-	 y8NtRUmyk7mmg==
-Date: Mon, 16 Nov 2026 22:01:32 +0000
+	s=k20260515; t=1794867434;
+	bh=mliR8LbpLPEncYUFbf9dyqHk+SUbNegdnOB/qGMOmBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=OrvC9eo77v9rocDNGyC1ieF/zglD8bVr1k6ZAUwdE5IV1ceatha276TITuguChj1X
+	 YE8qftcEXnISxe0i0v6MyqBCve/nFT+I9U+pEhmHGDgN3t5HBbP6h4lGS9qeb8Vhwf
+	 EiT5uBtX4Oasl80s2UjiA05Lv0nie/RlFtCoFhNZdceVqpZRHs9p5uJhVJ7xfA2VFm
+	 yqwyEr7Oe7vJj7Mhj09v/VZr/YXz7xIwXUTKZZtJi0bIu447xh8+rxtMuSH+lZWlmC
+	 O60oHW0zZ0XjxudStEBWvdPGMu68GQYQXvcc09fW1dFGJ7JJzEYhXW6hxkTQQ/X+iS
+	 jTE096nJfJL5Q==
+Date: Mon, 16 Nov 2026 22:17:11 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: -next status as at v7.4-rc4
-Message-ID: <fdb4a794-36cd-457a-93f4-7196d2d03e33@sirena.org.uk>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: Missing signoff in the thermal tree
+Message-ID: <782a33af-566d-406e-9f4d-52d80cd3c756@sirena.org.uk>
+References: <au4SKRePRjYBItxx@sirena.co.uk>
+ <56328964-8d06-452a-adf5-ea37fede069e@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,76 +60,43 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oityfXyK739OE9Zm"
+	protocol="application/pgp-signature"; boundary="4UxAw7GJdsa5/B0j"
 Content-Disposition: inline
-X-Cookie: Madness takes its toll.
+In-Reply-To: <56328964-8d06-452a-adf5-ea37fede069e@sirena.org.uk>
+X-Cookie: Serenity through viciousness.
 
 
---oityfXyK739OE9Zm
+--4UxAw7GJdsa5/B0j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Nov 16, 2026 at 09:51:27PM +0000, Mark Brown wrote:
+> On Fri, Nov 06, 2026 at 05:45:13PM +0000, Mark Brown wrote:
+> > Commit
+> >=20
+> >   115b4ff52cd35 ("dt-bindings: timer: renesas,tmu: Add SH7305 support")
+> >=20
+> > is missing a Signed-off-by from its committer
+>=20
+> This issue is still present today.
 
-Other than the issues with the kmalloc_obj() treewide change things seem
-to be fairly standard at the minute, the number of other conflicts and
-build failures seem relatively low.  Commit volume is back to normal
-however, last week was a scripting failure rather than a reflection of
-reality.
+=2E..and you've not told me about your new email address so you've
+probably been missing some of these mails :(
 
-Trees being held at old versions:
-
-  battery        	next-20261113
-
-Trees with signoff problems:
-
-  asm-generic	(missing committer)
-  thermal	(missing committer)
-
-Non-merge commits relative to Linus' tree: 6550
- 6825 files changed, 328142 insertions(+), 125221 deletions(-)
-
-Top trees adding commits to -next:
-
-  885	drm
-  314	qcom
-  305	bpf-next
-  297	mm
-  248	net-next
-  212	hwmon-staging
-  189	iio
-  165	mm-nonmm-unstable
-  157	vfs-brauner
-  154	drm-intel
-
-Trees adding duplicate commits to -next:
-  102 amdgpu
-   50 drm
-   20 vfs-brauner
-   20 drm-intel
-   13 btrfs
-   12 btrfs-fixes
-    3 perf
-    3 drm
-    2 sysctl
-    2 mm-nonmm-unstable
-    2 leds-lj
-    2 drm-intel
-
-
---oityfXyK739OE9Zm
+--4UxAw7GJdsa5/B0j
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7fTsACgkQJNaLcl1U
-h9Bqkwf/RGGEHZQGLTsCdOTyCU9uRETBZun5AsvkhR00rP+v6anXxbs00hzBc1HF
-BdEFTPf5dJIsdhvFsiDYQIAJPu3DadPiqsV2pfFFRVSI8ovAmAOOz5+ISZxI90+X
-b8X1qwZ14kcnnzRIltoxYzJDlDydKH2e3gU017BFsj+nXODE5WL15m4evsoC5Bu9
-7q87j/xFzUxaOcYEb2WEKNxlwZbHczTtiqh5WhDCK80mFNay37Y+FO7NbuOMI7Vu
-CgLyPbrvcc3kMR/ZNjZGSpca3TwtkrfPtW1Jd6aLv7Cv0siep3hd1tHwTac+gbyn
-rsBZPRYVRyMNMYeS4rTcxaUiMIAtfg==
-=QxB0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr7gOYACgkQJNaLcl1U
+h9DhAAf8CDZxnGZc1K98zvWJ3MQIf0+p2AMPufE+ulAP0yI17oGnIpjFg2PdbNtj
+exV7AOVR87HQvcFXWwGy/30Wv1K3bEDdicIkPfCi3BfLHuSGAoxMkvlDlHmSnLZP
+hNSPJDv+8M2qzFaM78e60pZH9+dI6UD1UOJWwyXfCy84Zu9pgWU/FGFZeU3XJu+f
+PzJUfjJ9N5ZaXSuherhEbg+wnwzFfpsjjo9pvy9FKqlGsbGJFUKApQ3nEig8plJx
+qvNFQ1GO1BjXD8G3RFuZ8bYNyILLyyRekXnE2e4nnIvWei8qwy8Z7JqJAJRxQ6oh
+cWm2MiLJUDM91HGnXR8JAxFRHv/BFA==
+=eqrL
 -----END PGP SIGNATURE-----
 
---oityfXyK739OE9Zm--
+--4UxAw7GJdsa5/B0j--
