@@ -1,57 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794959162;
-	b=Z+DvIkFSfVTK1gt4W79y698prDRTuJudtkK1luZGrdQWpQMS88LHH1SSE2oFlJJf4hME
-	 4tDmhJW9UsHFDCCX/Q8sAsqfe12ncK6feO4a2OLzJaU8dsJvhyR6HitiIdvpfYdX5BuLS
-	 RNImQBb22tjZXZl+uWOU0GR9iyx4V/YHsNB0EN/PDaWugsA60x2gnLIJi2j7oOTJqcFfq
-	 K47aldifjNGaJ8lOtq/MiB3zm0M1Cf85u6lVZ1vNI+aboSUSF2kn7qwVen1DE5flOJXf1
-	 YrmDBsdcatvEYJ0HFLiZKaeseu34VI8iTZTGrjMsjF9AtUQwIILq7lV4v76ziINQ/RA==
+	t=1794959183;
+	b=bKyYy9l5+EHnY1gmvRD7fgTDv8lXM227UcmsgtJAg7GZiEq5ENfXszmJ9qhDQJWIavaA
+	 2auxRtxpersxK/mqKbLn9xTJY33YdEKBMKOHzgN0LcO4hmOoijY/VAlJ5O6R9YyFGV3tT
+	 8lSW114OKds7vrzir20Xr3psFztdHx120gv9dutsSCkShWrK/YFn+dlCt1U05CPbjHjDx
+	 9SskO2h70Xiq+67mGVqtv6UJRUcHSgn1eHkuTTm3lJxA/ro802OkJMcUxuOCS2+SnhxAA
+	 78HNcrWzSq1eGoWG64yNG8+ziOrm5PkuPuAcjM35SHjYZ7mqWWtrnpxPvAPK03W5MkQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794959162;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794959183;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=gX7qEVROjUcDmlUzDManhUB1ZqI+VFioq1CeSZUAUJ8=;
-	b=Xoo5Hb+WsAZJ5w1U2bmhzA2F26alIBtbJRndDJwlejyafUC9tqSddjXuwN/mHLCxBd5K
-	 M46Njn1ZQ9XSD2j+PMbDrORDn6ASPyAsmaFPNZ6kJ2KEllZOOLbtTv4W5gUPxsBH+ZnfA
-	 o4bl4khd75UXNJkM+kw6XxOxQQlqdtVU2tvsY/8t21MNIwgWcVHah3Xb3Hj61lWO/SsqU
-	 kTHlvCh0gnbg2Qz2H4MWUSyj3HU+0e9rfqjPeAAQDlNQjN+ON5t+/+9949NB1VsxBF3St
-	 bB79M80loeEmTZcZBLhaZi1HKngntUyLtyZ2s4VDIF7JggXIjH/7YfQp2klfLm58feQ==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=1on2HmPE7BPmM3SJfRQgKYqdlw18X4/r5fVaJpdOL7g=;
+	b=CyonWZCnKrqda4Pj+aHnOAOSv0vqypJ6vgd8togBPI3yn14BzE2xpBiuXSYDPmNyf96i
+	 37RRx3t11Z7Yk7+6Pwie7ZZg8PY6BxZwESNMHdwcqZfFtx9X8xP0bOhY65h5OEEOdoM/n
+	 Wv4kFcQJKuzkbgXewEmY9fIqdE+mDMs7BQSwLOIfPNCkWA+W5EP2PQuz2w210DjJPGnvC
+	 nhNCWTCpUz6oH1A/2OqXoQFl0+XNe9eDKzv+4D04cemCtdJ5Hgilmpx+mEUVjcysmSXNI
+	 u2PoGMTGM0YCMHOOM0QT+SyVTrVTSS82dA9Mlq2pBqzKTKYW0QhDmxxiD9Prhqd9nkw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KMnG1P5X;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="B3BAvo/9";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FBA606A32A;
-	Tue, 17 Nov 2026 23:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B675606A32F;
+	Tue, 17 Nov 2026 23:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KMnG1P5X
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3541F000C4;
-	Tue, 17 Nov 2026 23:46:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B3BAvo/9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00351F000C4;
+	Tue, 17 Nov 2026 23:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794959161;
-	bh=gX7qEVROjUcDmlUzDManhUB1ZqI+VFioq1CeSZUAUJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KMnG1P5XIFBivddYb3j/6mQWPxom7F0oKdlem301UNolyvgjCO5F2PkVSbjzW/ZB1
-	 K8kUX8mS1GREi0jR09K4kcLFcd/OF8gAU96BG23GJsQKggEEAx/YhghOo5SOhVQKA9
-	 92bxxj9S4eGKF2mn5eS1CJmFWYnq9t6UZbCbVYieYyHhPptMXlDf7iUKt32J0awaa+
-	 4I1642cgF5GT5ZOuIDB2MuwP8GL683tuvJJ3SQe/0H5eJzB+Y8W6oVWSKJppFhqT8X
-	 1jb57hZRaafiegzxLcDD/mVM2hUGrRVUlARNmQLQFDMBp/lhfwS5p0OscsWOngN4Yk
-	 tUD4lnYIvOm6w==
-Date: Tue, 17 Nov 2026 23:45:57 +0000
+	s=k20260515; t=1794959182;
+	bh=1on2HmPE7BPmM3SJfRQgKYqdlw18X4/r5fVaJpdOL7g=;
+	h=Date:From:To:Cc:Subject;
+	b=B3BAvo/98WMksaUT/wJt/bqw7J6tNAez5W4VxHebjo1kz9N8LeOn0x0DCAStuqGfC
+	 o0dLi+Kko69GDNzRhUD/2YOR04kdfqUbXEVJb/54RoR99JooPQqMqGuTT9p5RsXXKU
+	 hyn5iwKzhr8dXolct/c07pvN8UqeOyWuAPPAUk1Fhd0wRxdVf8/PrSQFNjTji1NX7H
+	 Y7F2aHlwJYdmuhkAC8R0zGPXmlrLH6AKHN+E64YYf2oBVyM8TBMgnpiWtauFsFW30M
+	 ImDeWTurciAM5z62lDPI/jQl7nf1cyV06HikyDhbF8vKM3l1wHe1JA3ap1n38oJL+k
+	 qs/C91EdtIycw==
+Date: Tue, 17 Nov 2026 23:46:19 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the exfat
- tree
-Message-ID: <2d5bddc9-88ea-44b0-b3c0-6e0ca232e02e@sirena.org.uk>
-References: <avxQNpa-V0yefH6d@sirena.org.uk>
- <20261117-unfreiwillig-flohen-detonieren-3a5a97837345@brauner>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 17
+Message-ID: <avznS8QYfxJ4uRN-@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -62,40 +55,91 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+7RQjXaNbBWaBcje"
+	protocol="application/pgp-signature"; boundary="ERyDawtLxbRCd1XO"
 Content-Disposition: inline
-In-Reply-To: <20261117-unfreiwillig-flohen-detonieren-3a5a97837345@brauner>
-X-Cookie: Marriage, n.:
 
 
---+7RQjXaNbBWaBcje
+--ERyDawtLxbRCd1XO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 17, 2026 at 02:45:46PM +0100, Christian Brauner wrote:
-> On Tue, Nov 17, 2026 at 01:01:42PM +0000, Mark Brown wrote:
-> > from the vfs-brauner tree.  A bit unsure about this one, the actual
-> > conflict is exfat_writepages().
->=20
-> Thanks for fixing this up. Dropping the check from exfat_writepages() is
-> right. There's a small fixup needed on top of your resolution:
+Hi all,
 
-I'll add that, thanks - it's applied as a final commit today.
+Changes since 20261116:
 
---+7RQjXaNbBWaBcje
+The hexagon and blum trees were added.
+
+The gfs2 tree acquired a conflict with the origin tree.
+
+The xfs tree acquired a conflict with the origin tree.
+
+The vfs-brauner tree acquired a conflict with the origin tree.
+
+The vfs-brauner tree acquired a conflict with the exfat tree.
+
+The mm-fixes tree acquired a conflict with the origin tree.
+
+The drm-misc tree acquired a conflict with the origin tree.
+
+The vfs-brauner tree acquired a conflict with the mm-nonmm-unstable tree.
+
+The bpf-next tree acquired multiple conflicts with the bpf tree.
+
+The battery tree lost it's build failure.
+
+The paulmck tree acquired a conflict with the rcu tree.
+
+The scsi-mkp tree acquired a conflict with the vfs-brauner tree.
+
+The pagemap-headers tree acquired a conflict with the vfs-brauner tree.
+
+Non-merge commits (relative to Linus' tree): 7474
+
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 438 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--ERyDawtLxbRCd1XO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr85zUACgkQJNaLcl1U
-h9AMPwf+OHVbDaSMM9vn2q3CJFyeU1wpChXH2p9mjVYN79lmzWG0eaC4SchM9rGG
-R7PV5deNjtmW8FIopL1YFWE/XXEHBdMex2Y2gcSpxIYWnGitoayRk7uKNIiVve2v
-VpvcZUyZADDfIopsM7hiLkEIVZAiEq2y+VRSzDD1tE1iSPOl2a05JQOb7c61XlX9
-HsUJxGVxqDj5sRKXfAbpHXmWLlQzTYUpmL9IAOk23fkK0i7c6nBVyJIRrnwHEZIj
-n7/HiKvwGUuAg0xysX8lIvagPJQZGjCOvbdzFvFMRT0Je7toVcSK3FyZl9kMNkz/
-yK0Y8F6gN9hoVHl6QL72g7KFtb+8Dg==
-=5Nh9
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr850oACgkQJNaLcl1U
+h9CwcAf+PyQQVJWUs+lY9/1BjLzaU2k72FG7T37iJXwKJGrKjJBJgVC1l6tXz587
+zO1R/kwvCMW4yTAlWT2bMLY2Cjz1dF/sqBgqgonMbBDzbUilDndsB5h9XKLf1Buk
+MNpHDEm1MGff8UNIlpwkPNXLlNF9Q6uNnNqWMClaYInFgBF4dakJ7UsN1WteTugb
+AdLothLzDJNR9/FZBpXGIcJrTMhZfZf3ZzSbhh9KkPh9leqSofBrTNUBw/nkzksk
+3+z+5T+zqJzUl46W/42JHhJdge/DRkssE1fiSSaXoZ1e0rAh4TgMXLA9Rm5e1aXD
+RZiY7kF9GaZcecuNQm4al3+iXR4rRQ==
+=Ew57
 -----END PGP SIGNATURE-----
 
---+7RQjXaNbBWaBcje--
+--ERyDawtLxbRCd1XO--
