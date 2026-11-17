@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794951567;
-	b=cx6F8JhFgKYYJWFOtaWBlS+dqjLOxX/INl8ZwzNMwCWxJNxQ+dcsFf+DgB8+kLZxzdKV
-	 TtPRoeKWpXVEHRPi1EknR5BOs93H/RKqKz/aTJlzgrsIXFKCJYP+RZ7ProkqhmNSDMVJM
-	 xolc31j7/ne7cP1oCjZUHB0iFME3iJnYPGNn3HCXmkD1aIkCw70ufP9AfVpKtjYqwVobO
-	 q6m9xFiVM2iGiGL4aNiSMVn6C1S8He3A+VBMa9HU5oJyTiOI84NElLzVQdiVHn8HhMpNm
-	 RiDr9FTwf0HYiDAn3ZfYTn9WCCGd4ui3jdUv8bgJqdErQiQ3mlc5UXnovvIHQYvFqaQ==
+	t=1794955473;
+	b=gG6o6N3hWdNObyPl84yMp37eNkh1jI7AaeHHOF6Gv7qA8ucKFPQwWce0Bfk/y8E9aFap
+	 isZPwUach8QTtUAKARMtyVfHlxcK9aZ822yetNA4WtJpfRlsro3+EG5Hw4AaN04UAeC3G
+	 VY3ugOuotpRk0dmGBi8rT2a2CSXch0NPs4KajFe0KAtiU32qcFQmOcbUxxTW5muowfKdR
+	 xff1rZSmUJcavYqExCppl8XvwWyGcvv0mN7G4kp0Z19DqxA7m1DLRY25wI0enKGo76WFs
+	 ZNOcp1i4Rzdb6xlrqXmIFUah42rUdxr3SSfw5eDc2fVfb4IjmlX+4Pxk1HajfJPW3lA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794951567;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794955473;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=oScinXla8iFhsV7Z44c+jwWiVoqHGFAC1o8kLT6Z9DQ=;
-	b=ssltPbeU091a+O9QfKy4sWYjV2J286YpWAqpQ1J/XDcSMn90AoAF/Uw7pgh0TRisFga9
-	 RJuISefhrPbAPBlS/ajrCRzhUh/HHADkUTEYQXZYCeQeeFHSvwV+KJyUMZtQ1DL63DAtg
-	 xZSzp/al8U5IAHuPanGDmmSXKDEC/rdWb8aN7gPkAZ9DUHJbfxU3ieMayqLtsYOqhPnag
-	 gt8CYlNZqfSEuz4/qA3HlNMPI7e7Ix/eelct2w+B2JL6Ta1CSYKj8wId1ibgKifXKgArn
-	 5FxEGC+eKsllVY0sglc58ufENhpV/y3DreqPxaUR5F1J7A4ts9DdI0bTedVHq3ZYmMg==
+	bh=KPn6RbDbf0BjcbjfkEST8d4VOms5lu6bkJ4JXi5PvL8=;
+	b=iq+FSvw8AmgW8BwBH1R9ZtDVeM+wgjEOvweNjdbTX8v7nUoTkV4g6FT1tYUID5qMmQ5j
+	 tj+WOsAzSr4oplrfijnOKjkzx2dxy4KqeWBNUE2S3g1glTKFRc6j5nRCi/WXlu6B+6bFj
+	 bC/9nUemS86rq2wv6aE14K6zuq92R6LT0QxzvY0ci3CHTDrcjGnGEiw8DKZsyOvRX1X+i
+	 IBOFHD4hFWZlTs5BCp/jZzQsjQRf2slD8MQcLxlF9wNRudHR4ZmG2v7JwIKze/XMzeKYz
+	 f/57eVdMYo2e1zlJNqNRu31RLsDExD8otiLK+b8P/4GXagRTzqdRi4eJ0OCsii9EqfQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hJRHO5RE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LJUFJ9Dr;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995DF606A31C;
-	Tue, 17 Nov 2026 21:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1113606A31C;
+	Tue, 17 Nov 2026 22:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hJRHO5RE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D09D1F000C4;
-	Tue, 17 Nov 2026 21:39:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LJUFJ9Dr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B1D1F000C4;
+	Tue, 17 Nov 2026 22:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794951567;
-	bh=oScinXla8iFhsV7Z44c+jwWiVoqHGFAC1o8kLT6Z9DQ=;
+	s=k20260515; t=1794955473;
+	bh=KPn6RbDbf0BjcbjfkEST8d4VOms5lu6bkJ4JXi5PvL8=;
 	h=Date:From:To:Cc:Subject;
-	b=hJRHO5REEBASSbi2j2HIfhVqEMtI55YM9h6JuU4VcBBJYvZ/KsQei5uDiR+tkdrSG
-	 EWNRvw1gnOcKAkk05qNAGSCODBo8EVK1NVKWM+YgxR8WIhsqnSiKYp+B7DqotoemHe
-	 nQvHZ9iIepFsSquSirZGTk1XooLe0K6ypIEfXUrWZ7MNUerX6O9cmnBwTwHpvAgaCa
-	 5/tcMM7tiQyljOuRJMKa5PYXVKvuHNTl+/wywGxnDIzzGIpjcmbqUPgLaATcB1VjGY
-	 kX+XyYGonvEHwG0tYJleeDod1MrJgM8/fiqHYuITnjVld/JZegsbFfyMphh2v4UGgv
-	 sgz1Lbelkz3BQ==
-Date: Tue, 17 Nov 2026 21:39:22 +0000
+	b=LJUFJ9Drq/in6fCvVIjPLcpJZVrhX7ESoBj1uEM86Iw5gJtURgXivwXjyyi8gDds/
+	 EBRIgkvnziBXbwaxet+/ZBe29ENav4zvFb0WLJiKjzufcYZRAUBfbmBrAcxn9x3oZQ
+	 kbYwDjKU9wnZjEJU+bqK4GjFxJWB/UOvCG73QBuT4vhrVvntyesKCyRENNWgMomB7S
+	 3Djxe6Wqj/HYWBeUyocbU5VOUCz5/189ExuUNbjWx1LdJZO8oNTtYxmbR+wr2LMNZp
+	 hCz2oQc8uwaJNvgQnDikvGxntCHYkXuWzuJTLMoH29qO6MezkKQQSP1LVWaR1sq8Xj
+	 R51yAFSZhGmqw==
+Date: Tue, 17 Nov 2026 22:44:28 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>
-Cc: Breno Leitao <leitao@debian.org>,
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <jfern@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <avzJivvibrEmtax3@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: linux-next: manual merge of the paulmck tree with the rcu tree
+Message-ID: <avzYzJYQGafi4gGL@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -62,31 +61,33 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xWHNQ/XToCorKOAZ"
+	protocol="application/pgp-signature"; boundary="c04WuSgqULRMduVx"
 Content-Disposition: inline
 
 
---xWHNQ/XToCorKOAZ
+--c04WuSgqULRMduVx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+Today's linux-next merge of the paulmck tree got a conflict in:
 
-  kernel/bpf/verifier.c
+  tools/testing/selftests/rcutorture/bin/torture.sh
 
 between commit:
 
-  7f1e33230b7c7 ("bpf: Report RCU-tasks quiescent states in do_check()")
+  7ada0a57267ab ("torture: Use ${:+} to save a few lines in torture.sh's to=
+rture_one()")
 
-=66rom the bpf tree and commit:
+=66rom the rcu tree and commit:
 
-  8fd58560b71e9 ("bpf: Verify static subprogs on their own")
+  436f3c6b27de8 ("torture.sh: Add hazptr torturing")
 
-and it appears some other commit that removes the reset of current
-history that I didn't spot from the bpf-next tree.
+=66rom the paulmck tree.  AFAICT the change in the hazptr commit is adding
+quoting that is also covered by the other commit and should have been
+redundant anyway but you really want to double check here.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -95,47 +96,136 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc kernel/bpf/verifier.c
-index 9b228ffbe3fe9,1a8e5a108a681..0000000000000
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@@ -20626,13 -21560,14 +21562,16 @@@ static int do_check_block(struct bpf_=
-ve
-  		struct bpf_insn_aux_data *insn_aux;
-  		int err;
+diff --combined tools/testing/selftests/rcutorture/bin/torture.sh
+index 1b7ad2c15e1ed,90b5e113a0b03..0000000000000
+--- a/tools/testing/selftests/rcutorture/bin/torture.sh
++++ b/tools/testing/selftests/rcutorture/bin/torture.sh
+@@@ -43,10 -43,11 +43,11 @@@ f
+  configs_rcutorture=3D
+  configs_locktorture=3D
+  configs_scftorture=3D
++ configs_hazptr=3D
+  kcsan_kmake_args=3D
  =20
-- 		if (signal_pending(current))
-- 			return -EAGAIN;
-+ 		if (bpf_must_abort())
-+ 			return -EINTR;
+  # Default compression, duration, and apportionment.
+ -compress_concurrency=3D"`identify_qemu_vcpus`"
+ +compress_concurrency=3D"${TORTURE_ALLOTED_CPUS}"
+  duration_base=3D10
+  duration_rcutorture_frac=3D7
+  duration_locktorture_frac=3D1
+@@@ -70,6 -71,7 +71,7 @@@ do_rcutasksflavors=3D"${ifnotaarch64}" #=20
+  do_srcu_lockdep=3Dyes
+  do_atomic_srcu=3Dyes
+  do_rcu_rust=3Dno
++ do_hazptr=3Dyes
  =20
- +		cond_resched_tasks_rcu_qs();
- +
-- 		/* reset current history entry on each new instruction */
-- 		env->cur_hist_ent =3D NULL;
-+ 		/* no insn makes as many ids as there are from here to BPF_INHERITED_ID=
- */
-+ 		if (env->id_gen >=3D BPF_MAX_ID) {
-+ 			verbose(env, "too many ids\n");
-+ 			return -E2BIG;
-+ 		}
+  # doyesno - Helper function for yes/no arguments
+  function doyesno () {
+@@@ -90,6 -92,7 +92,7 @@@ usage ()=20
+  	echo "       --do-all"
+  	echo "       --do-allmodconfig / --do-no-allmodconfig / --no-allmodconfi=
+g"
+  	echo "       --do-clocksourcewd / --do-no-clocksourcewd / --no-clocksour=
+cewd"
++ 	echo "       --do-hazptr / --do-no-hazptr / --no-hazptr"
+  	echo "       --do-kasan / --do-no-kasan / --no-kasan"
+  	echo "       --do-kcsan / --do-no-kcsan / --no-kcsan"
+  	echo "       --do-kvfree / --do-no-kvfree / --no-kvfree"
+@@@ -119,6 -122,11 +122,11 @@@ d
+  		compress_concurrency=3D$2
+  		shift
+  		;;
++ 	--config-hazptr|--configs-hazptr)
++ 		checkarg --configs-hazptr "(list of config files)" "$#" "$2" '^[^/]\+$'=
+ '^--'
++ 		configs_hazptr=3D"$configs_hazptr $2"
++ 		shift
++ 		;;
+  	--config-rcutorture|--configs-rcutorture)
+  		checkarg --configs-rcutorture "(list of config files)" "$#" "$2" '^[^/]=
+\+$' '^--'
+  		configs_rcutorture=3D"$configs_rcutorture $2"
+@@@ -149,6 -157,7 +157,7 @@@
+  		do_kasan=3Dyes
+  		do_kcsan=3Dyes
+  		do_clocksourcewd=3D"${ifnotaarch64}"
++ 		do_hazptr=3Dyes
+  		do_srcu_lockdep=3Dyes
+  		do_atomic_srcu=3Dyes
+  		;;
+@@@ -158,6 -167,9 +167,9 @@@
+  	--do-clocksourcewd|--do-no-clocksourcewd|--no-clocksourcewd)
+  		do_clocksourcewd=3D`doyesno "$1" --do-clocksourcewd`
+  		;;
++ 	--do-hazptr|--do-no-hazptr|--no-hazptr)
++ 		do_hazptr=3D`doyesno "$1" --do-hazptr`
++ 		;;
+  	--do-kasan|--do-no-kasan|--no-kasan)
+  		do_kasan=3D`doyesno "$1" --do-kasan`
+  		;;
+@@@ -185,6 -197,7 +197,7 @@@
+  		do_kasan=3Dno
+  		do_kcsan=3Dno
+  		do_clocksourcewd=3Dno
++ 		do_hazptr=3Dno
+  		do_srcu_lockdep=3Dno
+  		do_atomic_srcu=3Dno
+  		;;
+@@@ -341,8 -354,16 +354,8 @@@ touch $T/successe
+  # Note that quoting is problematic.  So on the command line, pass multiple
+  # values with multiple kvm.sh argument instances.
+  function torture_one {
+ -	local cur_bootargs=3D
+ -	local boottag=3D
+ -
+  	echo " --- $curflavor:" Start `date` | tee -a $T/log
+ -	if test -n "$torture_bootargs"
+ -	then
+ -		boottag=3D"--bootargs"
+ -		cur_bootargs=3D"$torture_bootargs"
+ -	fi
+ -	"$@" "${boottag}" "$cur_bootargs" --datestamp "$ds/results-$curflavor" >=
+ $T/$curflavor.out 2>&1
+ +	"$@" ${torture_bootargs:+--bootargs "$torture_bootargs"} --datestamp "$d=
+s/results-$curflavor" > $T/$curflavor.out 2>&1
+  	retcode=3D$?
+  	resdir=3D"`grep '^Results directory: ' $T/$curflavor.out | tail -1 | sed=
+ -e 's/^Results directory: //'`"
+  	if test -z "$resdir"
+@@@ -720,6 -741,17 +733,17 @@@ the
+  	fi
+  fi
  =20
-  		env->prev_insn_idx =3D prev_insn_idx;
-  		if (env->insn_idx >=3D insn_cnt) {
++ # Calculate hazptr defaults and apportion time
++ if test -z "$configs_hazptr"
++ then
++ 	configs_hazptr=3DCFLIST
++ fi
++ if test "$do_hazptr" =3D "yes"
++ then
++ 	torture_bootargs=3D""
++ 	torture_set "hazptr" tools/testing/selftests/rcutorture/bin/kvm.sh --tor=
+ture hazptr --allcpus --duration "$duration_rcutorture" --configs "$configs=
+_hazptr" --trust-make
++ fi
++=20
+  echo " --- " $scriptname $args
+  echo " --- " Done `date` | tee -a $T/log
+  ret=3D0
 
---xWHNQ/XToCorKOAZ
+--c04WuSgqULRMduVx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr8yYkACgkQJNaLcl1U
-h9BeXwf+KWfYD7XbfMeu1qZsmE2dJOavMRKPtgoztl6WC1kVloG57PWaLojmVVm4
-RQCZZ+/Q/UEadYCy6UJiJJBXgEn6NLCZPeiX7JdCZclFEHkGXKvRO630iS0Q2dRg
-LvnjHXblTQilduMgEGvUePNAu8nfOLXR0MKU1Cns7HOw+9W4Jkjrpnv5t9D7xIXr
-K8ckvau4YztGxSeCTKgs40vdY9xyAaMa4/zNyLY0yb5kx5InQmsGyF0pijJ6K11m
-/OPuYV5QHO0NGGefsJ0bTL1jKtBoCg9zzRQaGtBkHJhbmSFCX7OmqjXMC5Ls9dGy
-OX6tpVnJ0Ll/7YCA8u8ZLhM6Crp6KA==
-=S2f+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr82MsACgkQJNaLcl1U
+h9Ckagf/buYeQjYmSE6CRQ2+gpbYKJKv1+Igp5TCuKI7i0EA6ar8vokZjm00C15B
+LgFVFX6McaUqxXnsRXLNe1GMBswjVup1OutmD+n2TWskKbtvtz5avaiZlIT+AmuG
+vTclDe0QtRV6bEREYBcIqGrxE8rsaPBQGhoC29ePTuS7UovdTk8/9qHELkXG0KsT
+7gyhdMd5Hg0nkppbdy+sFMgNU+VtaBdvqOAqTeZLB4MEo38NlFb06SwfnA09mCQd
+Lop7ptSXNiGd79UPezuZ9zXbbvXB513rWwr+tagyTEySyVZbminFrYhQSKHDpYe3
+u9ZBf9M+UyuCuVf+jPngmLd5yQKNhQ==
+=M4Kr
 -----END PGP SIGNATURE-----
 
---xWHNQ/XToCorKOAZ--
+--c04WuSgqULRMduVx--
