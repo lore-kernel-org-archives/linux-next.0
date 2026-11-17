@@ -1,55 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794957947;
-	b=avYDY2aEYghjIx/VpNj1BFfIxTZXH3R/1TZQP0yatMWnybgoWGLlRN9HUUbt6Myr1QEP
-	 58tDKiOUeX68Gzxssv5h8dOiodqXkFeosmOWolHVvByP/Xn2yjT+I+wwyUnO5rQVkirfQ
-	 c3slVPmUqNSb9JXZMmFC4lc+84jMELC0qgN/s/Jqj39o2hMAAB+rhSybt9ZUTehbG+c12
-	 d7ZiMRaKMzYzs9wvoGQCecP98SMTx3r8F+DXF10HphT7arREf7HCyCR+JS2VKfqDtLMm5
-	 0CAWjNSCXe8RJa9Se8Q+xVfbuuYtCtI4t0gq13dYgYJo36AcBsWToEfc+U9Atx3XpjA==
+	t=1794957971;
+	b=bqnDdQ7C1JGZju+Eim/VxgLxU0bpgAGjyT9bHjagVEDsWnn+vDegnQ1lwyTlX1AAeUyp
+	 9OoKY8oCSJB0+7RDmY33rhegR+6CHT0Y99T5mMKtckKbjmY8EeiKghU3ThPj05y+PD6dZ
+	 G+zlTMID4KvqIxcf939piWG9YARFrRFJn/T6uESfcUHX8OcWFKfcmZHif4FDmsH2X4sjx
+	 cpjnNU4j2t5xkQwRrO257KDaaEubb9Db7GhwDjQ+5efGolcpiUVkf0jR0NTYaNZWPzOrk
+	 sMnjmhMq6tKvVQzql4bNuyrgxzxmfY8dkwGYo+hueGJGT16bUeDXULiodYlZHc1IirQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794957947;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794957971;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=Vfe6Lmb0Y8szuGhbxe934drVDPl1Bo3tH2DpK0EPSUI=;
-	b=0/ihqTddR7ZOi62reiMSeJRkUuN+IpB293NLNL51rx08xBlOvdquDMtVYb4L4J7L/2hg
-	 v/P6VfMb6Ueh0XbzqMaBZt/9VYDSL4fxeBuilGqZIXEJxnoCnLVq4zNsx3Zr++oXSrmfl
-	 KISkn8TZowY0CTIG//sp2RIfXmsv73vBZViXoQwfUB2Ud/52mSbd+zozAjGE0jzfDwTJh
-	 9QZ7DWV5HPuQmgCK4YAfvZcJ2uRBIDaocCccxhtA2ROB3XlCyF9o8EYCB9jCtnmmSXKMq
-	 chc6+J8h0fRS58S2+w5OeLd3K34AOue1Z86ffBXpPqK6XFjq1Kvgq8cEMGmQwJLhGXw==
+	bh=qaJG456rSWJDKSb1mEk5GAh4Um6Ldu7TQKotnHutSOU=;
+	b=aDIB0MEISBigQHSC+SdBBYyv0SLlgZ9dPyQWRM0kCrcxpybdLE35v0ysINFJdwE1MrbC
+	 nfuIrJCJ8yxGguuaf8Rx9rCAfyfx5itXHpievoC9Cg4roOovjRwF0l9jIpGZOzDDWL8XG
+	 OLcB3PJ6VLFOL2umyDepoJfCOSZkTM2JjoMOkpaPPuY4llt8imAgqT3E2GuTgYO52HVNc
+	 /JsO+0vjtEoEJHe+l0ihecJBwrTkiPK2nA4Z5XsLT7AdcbiLLgNY9SeCe4ZNONw6XgSxC
+	 gm/wxXMpQR643e6+oQAer43aLgbAglbW+MNCLkdC+AqTtGdvgoMaxvFmhnR9KBGNV3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DLKfzndJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CGBXVBxZ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD6606A31C;
-	Tue, 17 Nov 2026 23:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2AF606A32C;
+	Tue, 17 Nov 2026 23:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DLKfzndJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9871C1F000C4;
-	Tue, 17 Nov 2026 23:25:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CGBXVBxZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9444E1F000C4;
+	Tue, 17 Nov 2026 23:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794957947;
-	bh=Vfe6Lmb0Y8szuGhbxe934drVDPl1Bo3tH2DpK0EPSUI=;
+	s=k20260515; t=1794957971;
+	bh=qaJG456rSWJDKSb1mEk5GAh4Um6Ldu7TQKotnHutSOU=;
 	h=Date:From:To:Cc:Subject;
-	b=DLKfzndJ2hZs/cARl3B02U3GntvqA5VRjBDbbiO9KN2XI5GbW26XNryBhnVL7vR9k
-	 Xq7JJcgceLE2pfNllmNfmnHPeTn8T7N9uVr87cVuRY4FeNpAImcTIAAo+NT7xJ22+V
-	 q6qh3Jv7TBq72mLlEc3mVsj7b2HqG92pZHbs3ROhjylDACzcjFYzUNmNejzYftEuu+
-	 OZyH/hSt9Xdg9UDQXCrlLcuHzao9zxOXDeJDyZxwQ8siMumflqZroZNbs40dij8D0s
-	 h5fWeDJbV7TyDELl8yFNv0xLPBQc1PZ1XROPBMaqX6wky63I4uQk6tbZVmTRvUOLBR
-	 U7Gl76cRPwUog==
-Date: Tue, 17 Nov 2026 23:25:43 +0000
+	b=CGBXVBxZ4kBrkSxklVAVCi/gBZijrr8oxn119GhoBHzx0N3innik3mofgIbNFE2sx
+	 6/QubP5TE4EHAPUwsAvmvb+SlIFHZlqnJk9SCN/Q9fnwWUpOlTWKjaIAy0j6M6j/ZR
+	 ol3JmWUsiRREddF29eQzamLrQfwgWA0/LfPfio5qWsbWgfzELT5XFKAQo/sAJemMi0
+	 FHlo8a0Bns+xOd3VLw8r4FLWwPFMPQHU9SfQTS3LcOKz2DcAjL2qfrwtH0kK+hDnS/
+	 UwsYL1gLDgM68xvwT+2rauxzBgpPWwz/Q7gRz4pyeYh4XeKq18/zwFmlozyizVHbPX
+	 toEGkeXL4v8nw==
+Date: Tue, 17 Nov 2026 23:26:08 +0000
 From: Mark Brown <broonie@kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Matthew Wilcox <willy@infradead.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Martin K. Petersen" <mkp@kernel.org>,
-	Shao Mingyin <shao.mingyin@zte.com.cn>
-Subject: linux-next: manual merge of the scsi-mkp tree with the vfs-brauner
- tree
-Message-ID: <avzid_ZRuSyAKfRd@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the pagemap-headers tree with the
+ vfs-brauner tree
+Message-ID: <avzikEWdwmyD11rJ@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,31 +58,30 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Y221Hup2Nk3E+UTf"
+	protocol="application/pgp-signature"; boundary="V0VxkwhCc8JEsWId"
 Content-Disposition: inline
 
 
---Y221Hup2Nk3E+UTf
+--V0VxkwhCc8JEsWId
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+Today's linux-next merge of the pagemap-headers tree got a conflict in:
 
-  drivers/scsi/scsi_devinfo.c
+  net/sunrpc/cache.c
 
 between commit:
 
-  6d14b93c111a1 ("scsi: core: let procfs copy in writes")
+  64e4b2814cdc7 ("SUNRPC: let procfs copy out reads")
 
 =66rom the vfs-brauner tree and commit:
 
-  787fd1429b360 ("scsi: scsi_devinfo: Return an error when the proc write f=
-ails")
+  487f6c57f2afc ("sunrpc: Remove pagemap.h")
 
-=66rom the scsi-mkp tree.
+=66rom the pagemap-headers tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -93,66 +90,33 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/scsi/scsi_devinfo.c
-index d9093851b23e0,b1f3bcd739b46..0000000000000
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@@ -678,14 -683,37 +678,19 @@@ static const struct seq_operations scsi
-   * To use, echo "vendor:model:flag" > /proc/scsi/device_info
-   */
-  static ssize_t proc_scsi_devinfo_write(struct file *file,
- -				       const char __user *buf,
- +				       char *buffer,
-  				       size_t length, loff_t *ppos)
-  {
- -	char *buffer;
- -	ssize_t err =3D length;
-+ 	int ret;
-+=20
- -	if (!buf || length>PAGE_SIZE)
- +	if (length =3D=3D PAGE_SIZE && buffer[PAGE_SIZE-1])
-  		return -EINVAL;
- -	buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
- -	if (!buffer)
- -		return -ENOMEM;
- -	if (copy_from_user(buffer, buf, length)) {
- -		err =3D-EFAULT;
- -		goto out;
- -	}
- -
- -	if (length < PAGE_SIZE)
- -		buffer[length] =3D '\0';
- -	else if (buffer[PAGE_SIZE-1]) {
- -		err =3D -EINVAL;
- -		goto out;
- -	}
- =20
-- 	scsi_dev_info_list_add_str(buffer);
-+ 	ret =3D scsi_dev_info_list_add_str(buffer);
-+ 	if (ret)
-+ 		return ret;
-+=20
- -out:
- -	kfree(buffer);
- -	return err;
- +	return length;
-  }
- =20
-  static const struct proc_ops scsi_devinfo_proc_ops =3D {
+diff --cc net/sunrpc/cache.c
+index c6b6701ddf7f6,825e47833e095..0000000000000
+--- a/net/sunrpc/cache.c
++++ b/net/sunrpc/cache.c
+@@@ -27,8 -27,6 +27,7 @@@
+  #include <linux/net.h>
+  #include <linux/workqueue.h>
+  #include <linux/mutex.h>
+- #include <linux/pagemap.h>
+ +#include <linux/uio.h>
+  #include <asm/ioctls.h>
+  #include <linux/sunrpc/types.h>
+  #include <linux/sunrpc/cache.h>
 
---Y221Hup2Nk3E+UTf
+--V0VxkwhCc8JEsWId
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr84nYACgkQJNaLcl1U
-h9CKpggAg+9j/2Q9CwS6GIeMW3VEQRQQZcWFfrGOM07gJ4Ge5hXDywOvrbJH4PJD
-tOZTyWzf8bJM1s2DxATh7MM7xhBFe5vBJGRwAQ2952dNtcSnEG6C2eUqTtfF8FgJ
-Pqbf6ojPMTzQueYzRk1phh13fNTTdp+bAONsaDYGZRJjhBobnaGzjB6424Nnr/FZ
-FEXIu0QfFS8Am+ip4odNXP7JdnL4SBflGcIriqkQVOlXT2j14eXSX3Uy3FWrFji3
-n89O6ryXXq0oQeFpcj0mzdyNMUpv4IlYGlUmivWySLLuFYhk/sk7LOXtOpm1IFIs
-/iBPIRig3btKhytPRAiam9sqdtMMPg==
-=lPXJ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr84o8ACgkQJNaLcl1U
+h9D1lQf+LBFVhQ4doZFfo9E5ODOek0dKrb4ywmMyQeQQsVx4NZRnzBIVvy0nkRd+
+XqoCJ8tYuV/D9pHMkNFBwP/KUdGgipuqklvCU/F2B/UIxTgd/rXzTYb0UtKM2QWV
+aRMfdgNJMQFFNBVV3KMxG0WOgdwaO9GKE/3wFvesF68Zs6OUUx6+hcSDBKheOudk
+/IVUTGdETNtJPFTHwm5bE9t7ThpFKlITOhh3rWBHasaSky4ny82cehrCUc8sG3UL
+I38E8p4niLiThFycKeI5F2E5pnnNcb+JJEj73NoAgvU7g3tLm+afHaG4PXZ26dir
+doMuRmCpRZ9BkJLs3ppBGoJemGSGow==
+=qegc
 -----END PGP SIGNATURE-----
 
---Y221Hup2Nk3E+UTf--
+--V0VxkwhCc8JEsWId--
