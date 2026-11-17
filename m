@@ -1,88 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794910619;
-	b=1CqTsqG6txhnoblzTZYYLKW/IeUxq/pGcdNxbH7CfFz75RNqDQm+XwXvYfG7CwvbRiey
-	 eGjkOJRt5j/323hqXqduMpPJNXQs/PeX88fOrHtgWFb5jI7OOIP48D1Vvix7MwrmjnicB
-	 fEvz0oxrNG/BUZJIJ5kkBjOS9Az0WEiR9ptccAhZKaT8412ec68ctFpXj/bDYS+L0PHFX
-	 YCj8ZBJy1lhglvtCd6IImx+Byoz0Gdctb1yI1c3v8tFBxGywA3BqXTHtAO5gTrF268mhE
-	 75hSqMEveRyGbrI+DA0CZVr2m4YoAbz+RpN7Mwe2H66W777z4kZXcVRwjz3tH5Udczw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794910619;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=UZWhukwqk5/uGCEKqY0bYXFwIBC8tPpLJC7rUK68Cg0=;
-	b=VT/YxzIhSLpfoNuPD95/xpC7JaO87FLYzr/ATue6wsBStj7otomhmoa+GZ/X+P8zHSjh
-	 6gWdzNdDnksvpXcFTXie+5LRDLrFu2FoGf8ArRAgg8GFVMMXDp1930hfe4vBVgyIPcdI8
-	 FZnpwV33PzhHLkv5z0UgzLFong1MkTsOpr9J3NfnBVRibaRKuqLvXbKCEhNEkExdPJ/aM
-	 x25MkV84llGi+IM+CSpIh9gDdBD/O+OEpe0OR4yBPu22kkI7aKuCJaBIhjYe3pVstP/zK
-	 6BXi1l7khR6gaSEn0Hs20uWVuJzFqZAwP/kRPNItQAtP0vlMiEBjvWFbOFkEFxIc8EQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=NQYOU3d4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794912446;
+	b=eBlIYjkFbTamwPlANaQRYKCzRN5DHY527SMi3RhfhbqNnHSTGnbAr4sn8zwCKE764m53
+	 aPhIV3FDIMVZkesrrIySWtV5QObXu0t12Qj2Nrog/aP7WNnk7yteCEzDNM9GtByVTthvQ
+	 08MeWyFGu5QyvKbQQuglYJ4Bhpo6UWU3iIfgsoGStSOZ3SE8tL3AK1FqGVrHh1t7mNIHW
+	 84uYzJ1ihc6505DsHBEeVTCfwzk2ScAxjFHMFMXVCy9r55ThuiWy3hgoK2pUat0jQdiMt
+	 1m4mJq1s3JTPaRG03+5y6GoETQ8HN/wo96zm0AeWOJR9kElhh0f7X5sqEWZ1hLbCSXg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794912446;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=9ihjrGk3q905v6fd32tqxVXlQ5X59DKw3EgepRM6MSs=;
+	b=b40m/lHk3xHujeqDGyCmfZ0U6/J0076Mi6l3k3ic1LxtqK2wCq9AnewyY+80fzILGQzC
+	 HbeUmJOzxicFGLSfdDXgkDeLlYt+64ByOXufujI2y0fMO47qWe7Mg/wZ9a/uOuCP2NfS7
+	 ajzbIOo/CAjoHk3Pg7UEux9OBQO/yHsu14YOdxIRyS7rA2i0weYJ7E7br70TK0cRVyajW
+	 84lNUQCA632Vudnee8P2SFHa6+ulUeK/e07tNPqaNTYpTKZwrf8hBuFJgkfS9OwABWQi7
+	 SQyC8eEh28DrL7jVaz9+5sEFY3kGAjPGepnGJv4vNjKRyxjWdryq2rp7Pjx2B8Il26g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lsnf5+Go;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E363606A33E
-	for <linux-next@vger.kernel.org>; Tue, 17 Nov 2026 10:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9E363606A33E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EC6606A323;
+	Tue, 17 Nov 2026 10:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=NQYOU3d4
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 10EBF20059B;
-	Tue, 17 Nov 2026 11:16:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794910617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UZWhukwqk5/uGCEKqY0bYXFwIBC8tPpLJC7rUK68Cg0=;
-	b=NQYOU3d4C5zwTKP1yxgo4IvBYJIavjBEMZdoxF7vSS8EVjxN/q85SQY/B25rrbX+Mc5eJL
-	UClh4eZRnPyhuIfhPjzoXD8umvMGH5liHs0CCvGwZr/mt00cjK9H9TtEFw1ERVXtwTydD0
-	fa2Mq/PEvJ+2nFE8/AOl2d72zUmv9GaAlv3f6jK+EzIR8aYD68aby5N7nVAJDQsIa88D/K
-	25AM4Zqpz0SFst3Ql3Gx1WpVm+UxA2kDVVW/TaUz/TZkwrZRdpNcpCxbEZhr6+csm7LJLZ
-	e+iJnQdMX06cyqLU0yK9GTQImGDGokhUvhzxt2O42iCNvAtTAuBnAPiIP74R+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794910617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UZWhukwqk5/uGCEKqY0bYXFwIBC8tPpLJC7rUK68Cg0=;
-	b=Kr8ZjPDDYOdK6pv8wvtOnZ3gPn4nr5DAxikGDW91Vleof3sGt0jI9ya23HxnDrcgdNYdZU
-	x6LJePzFHk4rMXl6p9fZ9j15Rhz9mI1ggI5FAxBoheoPs4Mf2njzOixERrCWjlVGI/0i9r
-	yfREFtJ6t6uUSWrlxX6SVODDMXLK3ll1EJD1QGf+i2F66yN76+4B1vuAtOqchpEfaT9eDC
-	agDimXqiygLsGdIp/jw2zA9zPXCwIr7Vcjb4JgZeBVBI3At4f9dXUJORZXZwiIF/hJ2VRo
-	A3BX/80Eq7NDFvyQ5f2WE9fPOlKxRKy04b9nwPkkV/WkMfUThV7rf0x/Q09dRg==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794910617; a=rsa-sha256;
-	cv=none;
-	b=ZUvFYemGBSKKzCcqvv8+KHa0h+1Fro2tCJB/zyde3qKAmPykxEx9tB+BSFDRqoomOxwes0
-	rVtQjpmoOgfhmp+LcRyTcje2w9jktmq8yJlHi+Drd0dKJTWJ62kRVKMnqh0m8rnYEw71aN
-	rqG47Jix3wrs6UlGxjmUWtWBxB9kmdoCX7cogDouzXtyCV7d7jmiENYCxbcDZgw3GQl9Ye
-	NMXx8aAHEHbsGQHBhKaJw8NkdiZAkbPfbIx69IOATAzmf0eSDOeFlQdVi/3qcpteYoQq/A
-	TDPjWSq7AfwC0Vg+RVH8/fr2dtLACaXqmuaC3YOqfDLQFncL072X6w2Kj2jS8A==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <0d9724b190d94495ff1ba266cf1677c7f53fd543.camel@pengutronix.de>
-Subject: Re: Moving reset branches to git.kernel.org
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: broonie@kernel.org, kernel@pengutronix.de, linux-next@vger.kernel.org
-Date: Tue, 17 Nov 2026 11:16:56 +0100
-In-Reply-To: <20261117082157.494071-1-geert@linux-m68k.org>
-References: <dbca57be9066a3853236a6395a7fccd8932bb65b.camel@pengutronix.de>
-	 <20261117082157.494071-1-geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lsnf5+Go
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353671F000C4;
+	Tue, 17 Nov 2026 10:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794912446;
+	bh=9ihjrGk3q905v6fd32tqxVXlQ5X59DKw3EgepRM6MSs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lsnf5+GoN8lr7SfGSFHjh4TxQKlmqxqxS6ANxQ1KLMLrJ8mBPG7XC/K1OnbSZ/NoE
+	 XGtqhaXWl+c430JCrRdY9mVkyvStwNGzP85EVSmmUYyKB6tejX+hhY6Kz88Z9sHJaI
+	 7vCDwcQNCYKQUZuXef4q1iB63YFchYOqxgRDMKI3JtUE7fQQC2cG5+L+Vg7G0n/WUJ
+	 RdPVbCgsenGgyGHSNSF8sax+EEjT8sfUGRy6aoo40Mh6rnpTLdABHolS5kMQI6Dpg/
+	 0A+f8Z65XCZ90VjGJVyQSLd29IgGcq5XqCuZdoyU53qplzMKlsD09jhMpKC73zfr+e
+	 5shb+rQBJFR3g==
+Date: Tue, 17 Nov 2026 10:47:22 +0000
+From: Lee Jones <lee@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mfd tree with the origin tree
+Message-ID: <20261117104722.GB64850@joneslee-macbookpro.roam.internal>
+References: <avtYstt11GO7g85R@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -92,28 +57,102 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avtYstt11GO7g85R@sirena.org.uk>
 
-Hi Geert,
+Kees, et al.,
 
-On Di, 2026-11-17 at 09:21 +0100, Geert Uytterhoeven wrote:
-> Hi Philipp,
->=20
-> On Wed, 01 Jul 2026 at 17:42:07 +0200, Philipp Zabel wrote:
-> > Could you please update the linux-next repo urls to pull the reset/next
-> > and reset/fixes branches from
-> >=20
-> > git://git.kernel.org/pub/scm/linux/kernel/git/pza/linux.git
-> >=20
-> > instead of git.pengutronix.de? I'll send pull requests from the
-> > kernel.org repo from now on.
->=20
-> Oh, so that's why my copy of reset/next is still at v7.0-rc1...
-> Any plans for an update to MAINTAINERS?
+> Today's linux-next merge of the mfd tree got a conflict in:
+> 
+>   drivers/mfd/nct6694.c
+> 
+> between commit:
+> 
+>   4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmalloc_obj() family")
 
-Thank you for reminding me, this is long overdue. Just sent a patch:
+Is there a branch / tag that I can pull this in from?
 
-https://lore.kernel.org/all/20261117-reset-git-tree-v1-1-85185b891ba3@pengu=
-tronix.de/
+> from the origin tree and commit:
+> 
+>   962b44ae8126d ("mfd: nct6694: Allocate USB DMA buffers with kzalloc_obj()")
+> 
+> from the mfd tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --combined drivers/mfd/nct6694.c
+> index dabd83b9d455c,40a29f8e0ff61..0000000000000
+> --- a/drivers/mfd/nct6694.c
+> +++ b/drivers/mfd/nct6694.c
+> @@@ -201,6 -201,7 +201,7 @@@ static void usb_int_callback(struct ur
+>   		break;
+>   	case -ECONNRESET:
+>   	case -ENOENT:
+> + 	case -EPIPE:
+>   	case -ESHUTDOWN:
+>   		return;
+>   	default:
+> @@@ -280,21 -281,25 +281,25 @@@ static int nct6694_usb_probe(struct usb
+>   	struct nct6694 *nct6694;
+>   	int ret;
+>   
+>  -	nct6694 = devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
+>  +	nct6694 = devm_kzalloc_obj(dev, *nct6694);
+>   	if (!nct6694)
+>   		return -ENOMEM;
+>   
+> - 	nct6694->usb_msg = devm_kzalloc_obj(dev, union nct6694_usb_msg);
+> + 	nct6694->usb_msg = kzalloc_obj(*nct6694->usb_msg);
+>   	if (!nct6694->usb_msg)
+>   		return -ENOMEM;
+>   
+> - 	nct6694->int_buffer = devm_kzalloc_obj(dev, *nct6694->int_buffer);
+> - 	if (!nct6694->int_buffer)
+> - 		return -ENOMEM;
+> + 	nct6694->int_buffer = kzalloc_obj(*nct6694->int_buffer);
+> + 	if (!nct6694->int_buffer) {
+> + 		ret = -ENOMEM;
+> + 		goto err_usb_msg;
+> + 	}
+>   
+>   	nct6694->int_in_urb = usb_alloc_urb(0, GFP_KERNEL);
+> - 	if (!nct6694->int_in_urb)
+> - 		return -ENOMEM;
+> + 	if (!nct6694->int_in_urb) {
+> + 		ret = -ENOMEM;
+> + 		goto err_int_buffer;
+> + 	}
+>   
+>   	nct6694->domain = irq_domain_create_simple(NULL, NCT6694_NR_IRQS, 0,
+>   						   &nct6694_irq_domain_ops,
+> @@@ -352,6 -357,10 +357,10 @@@ err_ida
+>   	irq_domain_remove(nct6694->domain);
+>   err_urb:
+>   	usb_free_urb(nct6694->int_in_urb);
+> + err_int_buffer:
+> + 	kfree(nct6694->int_buffer);
+> + err_usb_msg:
+> + 	kfree(nct6694->usb_msg);
+>   	return ret;
+>   }
+>   
+> @@@ -367,6 -376,8 +376,8 @@@ static void nct6694_usb_disconnect(stru
+>   	ida_destroy(&nct6694->gpio_ida);
+>   	irq_domain_remove(nct6694->domain);
+>   	usb_free_urb(nct6694->int_in_urb);
+> + 	kfree(nct6694->int_buffer);
+> + 	kfree(nct6694->usb_msg);
+>   }
+>   
+>   static const struct usb_device_id nct6694_ids[] = {
 
-regards
-Philipp
+
+
+-- 
+Lee Jones
