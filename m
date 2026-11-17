@@ -1,54 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794935736;
-	b=ExCKQPS8SeXjkXmWDrmpRPxIeziC5QkeK61vd7JzHwsk7H8s9lNiuPBfsT3buBSfPMr/
-	 OHokK8iipP4rCIDD4RUVGZdl0deQDkTwdW77EhAd4Jv3Oh41PkTDU2B++qaweFrskAhwG
-	 ldsO3fTbdIGtGbdn+C85t5QvFKpwdbaNVA4SToUnYHq3oWasADIU00V9ES3FR4X9a9oWD
-	 KpBxM6pY0RdCe0rC69NKwvun/Jm67JKEvPH++aid3dfomnik6inZwu+Qswob7FBohNUf2
-	 FIYIHfImCgYxpucAvntRAIG7cYBUJajSELdRlPuByIdzOWnTdRLLgkUal6r8yt3uwrg==
+	t=1794935811;
+	b=Avd4fd5QV15XdRl2kuw0WYB7NsYbwiwnWqi0O/SILWLGh3E+5rPjdrhBOaZxF0zZh09g
+	 qutCSNCNgxkH/ulDVR34MxAh5AaKjLFoEx9PXiunIW0P7k9ONVjn+fwgpD8IBD6TBjzWi
+	 OQsLQSWKDngkHwUnM5O3U5uYk4hQsCuZtaUTBmd8Dj0v44hN8C03FdX7gC0Sc/IWnupj/
+	 dE9lQsD3r4eTkmkYdxRufKmkD52uFM+/SzYa5z//XUEaHKx4P+IfiKC4Lb248FKRM+Pk5
+	 zZUAj8vVuYqX9/krBkbhO38pMReqcxy0L9wA8/TKlpz9RynO/71aOSxtQ9tyu1y02kQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794935736;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794935811;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
 	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=UHwO9ps6Cffev/v5N4F4dtFuW7j8oagFrLQV5xbgkoc=;
-	b=4IBT5bYrL2cia2xec0QkfUC9I7ivWW7xgAbJd3i9f/nlSlxwAbnDhhF1hGPTe4JSlv7A
-	 DYprwM9U0GXmVUyO1I4sGB4PiaQrCxuGUxfcBNwBynCPn/PT7OjukgWnOYiRNsTDPc7h+
-	 RpgZvhrP0wCbnht5WoJjVrLHVIDpwNqpQyKmkuPzfvEASdQKtlwPdawQ0kG+oNfYXnYG3
-	 vcY7Baru1xanHM7X+GdWkwJoivD4+OTNQSGJmZjfw64cmR1lM939KPcwAiyo4uzDTHRNo
-	 kupi4+OupwQUhf3Glu3VkMytKPlDPbZhwTtnVo1Gkw2qIJDKfcowlNLNoaGN1n+93OA==
+	bh=ajQ/NfmaDmDrFinUDbsJiOEob3STJRxwX/RHAbMyYho=;
+	b=vNs3QZPPChJRkXX4rZ8a2rodOn4lfHIOMZUOsicXXo/6SVyQKwbf95tPrOtOdUFqb0Lv
+	 HbYxrrXRjVl5siIV7cs+KmGvxL54UjCNZkv0ey1ARMnyCpRHygSB3TVTiZNiIttOnp9OR
+	 loyjmXn1SMuWJlP6JjqAsVcN4zo8HtNr0XDFTtyJQdnLw7pC0Jf61MecX0YBs1tXhPLlZ
+	 G+Abj4H/pGlv2PHzL9prVn9hLQ7MV+quL0ENzCnmW2NeTSIp1RPx0YY6DiAaQ2zjJxlTm
+	 C/6XlWdBA9WywHrcSpC0Q/S3knmo7iiKIRVfM8uPcxVv/ccSjrYGUhg1ZJAp2G0bM6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=CH7mkpsj;
+	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b="XVt/8iRm";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD2606A31C;
-	Tue, 17 Nov 2026 17:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C022606A880;
+	Tue, 17 Nov 2026 17:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=CH7mkpsj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7DD1F000C5;
-	Tue, 17 Nov 2026 17:15:35 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=XVt/8iRm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83A81F000C4;
+	Tue, 17 Nov 2026 17:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux-foundation.org; s=korg; t=1794935735;
-	bh=UHwO9ps6Cffev/v5N4F4dtFuW7j8oagFrLQV5xbgkoc=;
+	d=linux-foundation.org; s=korg; t=1794935810;
+	bh=ajQ/NfmaDmDrFinUDbsJiOEob3STJRxwX/RHAbMyYho=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=CH7mkpsjRP4JGpRDQfAsaSmd0uO+BhTfNWqzK4HOVIwXRn70PsUCABoQ+39f9K10X
-	 GZRNRxzOZm02CmM/wkZXC79kCN8TUJiq3p1P1Vj9ziG4//mTfqjdaGovyghf5KmJMA
-	 WmDBrUe5K3CaHO1cChnwZXLkndTRAqSO2Hm2L8e0=
-Date: Tue, 17 Nov 2026 09:15:35 -0800
+	b=XVt/8iRm+QjVRzmMMDH9VtuZ9jtsV7Upbp0uS1Jiwrxs+F0PHQYG1A1qTOVr79SkP
+	 hrGYX2F3u2J49FHPQiQjf0LdklIgog7h10Dz1CgsxLCIzxG1UXZs9hJWEwyvd6g01B
+	 okT7x8otO0ziDoQSXDhM/nOQ81/RnImModoUJjag=
+Date: Tue, 17 Nov 2026 09:16:50 -0800
 From: Andrew Morton <akpm@linux-foundation.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Chris Down <chris@chrisdown.name>, Christian Brauner
- <brauner@kernel.org>, Linux Kernel Mailing List
+Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
  <linux-kernel@vger.kernel.org>, Linux Next Mailing List
  <linux-next@vger.kernel.org>
 Subject: Re: linux-next: manual merge of the fs-next tree with the
  mm-nonmm-unstable tree
-Message-Id: <20261117091535.39481792f30792e6067a26a2@linux-foundation.org>
-In-Reply-To: <avx98jYYXsZAmkDN@sirena.org.uk>
-References: <avx98jYYXsZAmkDN@sirena.org.uk>
+Message-Id: <20261117091650.fc2f9558e84f76a5cdbfe7b4@linux-foundation.org>
+In-Reply-To: <avx9_c_HWPAl9i1Q@sirena.org.uk>
+References: <avx9_c_HWPAl9i1Q@sirena.org.uk>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
@@ -62,23 +61,28 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 17 Nov 2026 16:16:50 +0000 Mark Brown <broonie@kernel.org> wrote:
+On Tue, 17 Nov 2026 16:17:01 +0000 Mark Brown <broonie@kernel.org> wrote:
 
+> Hi all,
+> 
 > Today's linux-next merge of the fs-next tree got a conflict in:
 > 
->   fs/proc/kcore.c
+>   kernel/profile.c
 > 
-> between commit:
+> between commits:
 > 
->   6b20f3da3436e ("proc/kcore: allow disabling /proc/kcore at boot")
+>   2ab6daee3c87d ("profile: account for partial /proc/profile reads")
+>   0ff0b873d4d93 ("profile: simplify /proc/profile read layout")
 > 
 > from the mm-nonmm-unstable tree and commit:
 > 
 >   79011a80f0646 ("proc: give kcore, kmsg, the kpage files and profile their own file_operations")
 > 
-> from the fs-next tree.
+> from the fs-next tree.  This essentially discards Andrew's changes, AIUI
+> the conversion to the iterator API ought to achieve roughly the same
+> thing though I may be misunderstanding.  I may also have messed up the
+> merge somewhere.
 
-Thanks.  I'll drop "proc/kcore: allow disabling /proc/kcore at boot".
+OK, thanks, I'll make those two go away for now, will take another
+look in the next -rc cycle.
 
-Chris, could you please redo?  Against fs-next, I guess.  With the
-ro_after_init thing that Kees suggested?
