@@ -1,54 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794916487;
-	b=5RYlkWAZ2xU/DNT/IMKvQ0URK/u+CiZBUcsf6x9TNq+0YKEtHGbQ01qQAsPRCzG3Lnpi
-	 R5zxBKLLU93Xlp8GgQzEZhd782Wg3jtzLBaGwq7RdIaSZNun21L3oH5LtBsE8ApnNPZAq
-	 PoZ6Py+2mcE2vFVSVHHQfSf9qRWQoju3p5gSqrDjK/j+V4ZlVMFFRsc6EYTcvJMxnfJwF
-	 j60YZX1swA9ankhrTVUhOMaDpRv1Y8/ZN0fbu17X7Mc91dq7xrXi25S0sfyG8dM51rYvx
-	 tp+J+dDA4iUg89QucmhgdzgDFteCIRF6Wfr8LbG8n5h8Zg+1cbXPRx3BuT1PdVvfflQ==
+	t=1794920496;
+	b=VmdC3cnCF6JbBMGLycaTJlvZpi2qHCElKVct85Lkimv5KFFAXjJFbBnSnppcWvcgwHEc
+	 jklFQIwp/W3Ddlww+lTuvnKUgVxDZyu/WI2nw2Iq/vdmhpGpfmxlwZRFe9BKzQl1Jt7ad
+	 RmeZiBV+sjup94VWBMarUsNpSfsbruiVK+KnNHx3xtOEykgJqUsEmQJUCnJhwaX9bpRfP
+	 gtK1hZu+yh4AM8Zc4eeHVeyJC3dxwQNPvWdVQabUY0iXXBwjgFmMFdOFELkSTzmHkMfVG
+	 +eM4zJ33vbZtVtN0NkuOj/ii4TiAZjSDhx1kQe2q3Bv8RwU5ouQJkNDl6M5Vg+8ckXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794916487;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794920496;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=n9HR0jteZ7i3l47CGbAAeoGccO/M6Cb8YzdaapwoXGw=;
-	b=JvT4Wg3uJK5oEXOEMpbXhVY1M6cMOfzS/Je7O7X7YhU717Tvsv0rruiq1nIgRL/XE4D7
-	 Cyhe42UGakNQ9n2g54nP2S+4fSRnKdXPL93vhSUXcKoejEdTBMAtDoaC5/Iak6FyWBqWb
-	 utJn7rFRSn5SsyWMKEKFKQlZ/j3M/V2FFA3XczjzdkBZ/G3nJSzUT6VUA7amG3c3z8oRM
-	 VlY/AOSmojAn78IRli2JPrYd+Q9s30n8VOzRDoeUuEZc8yCx/A3PuI1C944rrdlKoRZla
-	 Uv1TMIDiQvq0STMNkRyE3gh8rtNdZyx0+lbYbrtyadZmEn3WtzFNNlR+F83ZPvr979g==
+	bh=+eR9Gpe6KlxQLeknLXAzXGqSX8WKsEweVXsfgaLVexg=;
+	b=Xt/yecmjRDwsH4rccxRO7IvICHPUJxMtDy195mkV7fwYKNzNYoFatbUwljyaoh7L65a2
+	 uGPsss3NzDcw26KmmutryTl/n255AczyfzGxa13eNurgDeUKYjNxVr8Cm1eImDVaIL/BN
+	 ptURkkFrPbwm/oSAoPRw+okYewECCCtrcRcRNaeUY32Z9tl/kBUDw96pNch3n2qT3IDfv
+	 7zmK9dNoPT3a8PC0tLRiRld3RhaUmmmOJio2xTrGFCFucradW5TFePMPY7apHr/8tEI1R
+	 PPa8WeImRAcVNSbwpaSKu52lsFiBuUt6UTvgLLzcFj0DAFKdhvhfehAE1uGOm3G0vVg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OpRgQvSl;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G2y0S0gW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44112606A330;
-	Tue, 17 Nov 2026 11:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78AE606A335;
+	Tue, 17 Nov 2026 13:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OpRgQvSl
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 381281F000C4;
-	Tue, 17 Nov 2026 11:54:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G2y0S0gW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CC61F000C8;
+	Tue, 17 Nov 2026 13:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794916486;
-	bh=n9HR0jteZ7i3l47CGbAAeoGccO/M6Cb8YzdaapwoXGw=;
+	s=k20260515; t=1794920496;
+	bh=+eR9Gpe6KlxQLeknLXAzXGqSX8WKsEweVXsfgaLVexg=;
 	h=Date:From:To:Cc:Subject;
-	b=OpRgQvSlXTSaSMjmxAFnas5BF1gXYcb77pO3YOboprkAVyMcVsSZ218Wc5dj5sav2
-	 vflQKPJckNGgGjt1pQAcK4ssPgTo3X5r3itqdaLitWm9tPbFuyznS2jzqR+VWw5ilI
-	 7Zbru7m/Xoj2TcMg5vnLBqDGvQiND5chH0Kvzu9pr7fGfEID3r5j8MJJPoESeYqwXa
-	 Cizu6lX5OTr7Yjzs0gG36zTsFxjdDPCx0O/QzuixKxdhyxOHZ+1LSP6+yoR08VV8YO
-	 GrfbNyioR+EyXOMmcY+bQkJR0dGS8Q2MSMhdSx/3Z5ri1Au/vu+t0GSA530AS0YpVW
-	 LSRfeesYYHMCA==
-Date: Tue, 17 Nov 2026 11:54:42 +0000
+	b=G2y0S0gWw43WcNiqDW/WnbF+6tfUC3FqtY21Iv3WVSfgeH0KPkro2uhIuWZYOmL6X
+	 exsOuFh0PKRiDspyh38n7dhTyoJPx1FWkTR1mJizI4f/aZoIyPj4xGWRYKFMkBE1xp
+	 BVGYA+dYLn1BNp1L51ora06shidQM4qMumeBQYTGt3iMb5p8h1e9t74GkXFMv3CnmN
+	 vk6mDXaQf+P1+Dq6PwLDrMW/hrxCYNGIky0jJJaSp1csk/0sqAaonrGHRuu2s1z+cf
+	 //XdzJCElhwFx9kJg4q7WSHSot8I3ErjjdgKKTzNBPHU1+iTovO9fWXNX4x5/NFX/+
+	 p1x3BWTqEfvCA==
+Date: Tue, 17 Nov 2026 13:01:32 +0000
 From: Mark Brown <broonie@kernel.org>
-To: David Chinner <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>,
-	linux-xfs@vger.kernel.org
-Cc: Chris Mason <mason@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the xfs tree with the origin tree
-Message-ID: <avxAggF2dYl8eMSx@sirena.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the origin tree
+Message-ID: <avxQLGt-FR3f7pEW@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,31 +57,32 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2MrhXHFioS1OTaqV"
+	protocol="application/pgp-signature"; boundary="7dva2iJBWEU9JtZv"
 Content-Disposition: inline
 
 
---2MrhXHFioS1OTaqV
+--7dva2iJBWEU9JtZv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the xfs tree got a conflict in:
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-  fs/xfs/xfs_file.c
+  kernel/trace/trace_uprobe.c
 
 between commit:
 
-  9e8fc16dc6b47 ("iomap: pass iomap_iter_next_fn directly instead of struct=
- iomap_ops")
+  72d3a5cb0cd73 ("tracing/probes: Enable newly appended probe when target e=
+vent is enabled")
 
 =66rom the origin tree and commit:
 
-  03cbbd80a3e70 ("xfs: restart faults racing with realtime flag changes")
+  44e16d22295bd ("tracing/uprobes: handle errors from resolving the real in=
+ode")
 
-=66rom the xfs tree.
+=66rom the vfs-brauner tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -92,50 +91,67 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc fs/xfs/xfs_file.c
-index d61ea8e2c8e40,8070a07e601f5..0000000000000
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@@ -1980,11 -2039,22 +2040,22 @@@ __xfs_write_fault
-  		lock_mode =3D XFS_MMAPLOCK_EXCL;
-  	}
+diff --cc kernel/trace/trace_uprobe.c
+index fb7991543db7d,34cd4392decfd..0000000000000
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@@ -447,29 -444,8 +448,34 @@@ static bool trace_uprobe_has_same_uprob
+  	return false;
+  }
  =20
-- 	if (IS_DAX(inode))
-+ 	/*
-+ 	 * The caller picked the zoned or the regular path with no lock held.
-+ 	 * The realtime flag cannot change under the MMAPLOCK, so look at it
-+ 	 * again, and start over if it has changed.
-+ 	 */
-+ 	if (xfs_is_zoned_inode(ip) !=3D !!ac) {
-+ 		xfs_warn_ratelimited(ip->i_mount,
-+ 			"RT flag modifying during page fault for inode 0x%llx.",
-+ 			inode->i_ino);
-+ 		ret =3D VM_FAULT_NOPAGE;
-+ 	} else if (IS_DAX(inode)) {
-  		ret =3D xfs_dax_fault_locked(vmf, order, true);
-- 	else
-+ 	} else {
- -		ret =3D iomap_page_mkwrite(vmf, &xfs_buffered_write_iomap_ops,
- +		ret =3D iomap_page_mkwrite(vmf, xfs_buffered_write_iomap_next,
-  				ac);
-+ 	}
-  	xfs_iunlock(ip, lock_mode);
+ +typedef bool (*filter_func_t)(struct uprobe_consumer *self, struct mm_str=
+uct *mm);
+ +
+ +#ifdef CONFIG_PERF_EVENTS
+ +static bool uprobe_perf_filter(struct uprobe_consumer *uc, struct mm_stru=
+ct *mm);
+ +#else
+ +#define uprobe_perf_filter NULL
+ +#endif
+ +
+ +static int trace_uprobe_enable(struct trace_uprobe *tu, filter_func_t fil=
+ter)
+ +{
+- 	struct inode *inode =3D d_real_inode(tu->path.dentry);
+++	struct inode *inode;
+ +	struct uprobe *uprobe;
+ +
+++	inode =3D d_real_data_inode(tu->path.dentry);
+++	if (IS_ERR(inode))
+++		return PTR_ERR(inode);
+++
+ +	tu->consumer.filter =3D filter;
+ +	uprobe =3D uprobe_register(inode, tu->offset, tu->ref_ctr_offset, &tu->c=
+onsumer);
+ +	if (IS_ERR(uprobe))
+ +		return PTR_ERR(uprobe);
+ +
+ +	tu->uprobe =3D uprobe;
+ +	return 0;
+ +}
+ +
+- static int append_trace_uprobe(struct trace_uprobe *tu, struct trace_upro=
+be *to)
++ static int append_trace_uprobe(struct trace_uprobe *tu, struct trace_upro=
+be *to,
++ 			       struct inode *inode)
+  {
+  	int ret;
  =20
-  	sb_end_pagefault(inode->i_sb);
 
---2MrhXHFioS1OTaqV
+--7dva2iJBWEU9JtZv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr8QIEACgkQJNaLcl1U
-h9CSbQf3QB4RrbZT+Eo+3S5JndWSXTiha+TRbQ9Y3ftMgqAskjcWjjR0WFAi1+Q0
-x+huY6ndgJVRNrdE5dFx3/Q07H73A+++RPyECs+SDOP0sSOOQeBxst+CS9VM3Bi+
-gLdM26dEgbQNuv41H3WmByazoKzCF61VUGPeRmMiSEE+SmscXxeplF9DdTV/zfCh
-VcZnhODwAOnwDRKA5Yt1uoqdrq8j2qp3/CRNFcImcE1oqI5PGsBJ4Di1Gu7XRTGf
-yXNcWMVtcfSLu3YJZMpB0t0WOZg1XfNrL4GUmKn6SiepdlRffUTIE6im1PIjZrNs
-39xN1ZixR72em8pIxzy8313nKOAV
-=V56E
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr8UCsACgkQJNaLcl1U
+h9BVCgf/dLQdDiwBID6uDLPVwmz7DY2T7pSrRtUwwvzNhpq2vV1XAaktpayyoa0g
+Ba44snhkI52gS2c1bdUsr74YuWdXd2H3R4HrrmNRUBcDjvFwpT0rN8iumJNWV0n4
+YSB0UvrQnxEfkGbmqctlv1ee8u6hBjhSt9Ev+kC2iWtpU+yxilzMIuXW8ud9m78E
+IBeqlx5H9ab0RvzptAzP0cuWMTvjKDajjxk/fGnl1Kg8DNifX5pPKDX+Ii+8Uu9Z
+moqiqjGtfDOdO71ankq8bLmU4ed5qhYg9y6QrJiknbPGz2e3wncOsLPuoaBGRDW/
+bJzShtT+l2nKsAVkPmQPLSYhNvJ3Tg==
+=Pr35
 -----END PGP SIGNATURE-----
 
---2MrhXHFioS1OTaqV--
+--7dva2iJBWEU9JtZv--
