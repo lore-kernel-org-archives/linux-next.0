@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794914678;
-	b=MOd9G5TtONHbbEHja8YBfFeefMO2TdRVXZK/BmR+sXmuz6E4hAj9mz4cMh1N2qSDtftD
-	 +pOsxrL97QGx41/hv5Gb1w2sJOQ9VjptVP6aT7pXDUBTR3xtAbBow+ZD7/Xx80ws77i5k
-	 re+88vha/QcD724m9JPfKNaHTrd1ejd79jb4tEbc7xnegLnbDZ8GdT6CRfBNFEnYWYHcQ
-	 qE6l2/JY55uMP6eAVRwUUZd9TbjS0C2get9s+YOzECYmagfxufVtLSdmPEHtQjt/m91jm
-	 VJPFiHIATuCiu9rKxtBZuL1Nm3Pbux8QdR64FRDi6A8GY2JNoOKrHVWKplChjf565Wg==
+	t=1794916205;
+	b=CI6BJbO82pkPWwLRR0gBlgRtHi13SFwCW44TlNX2IMAorh11tL7zaENhJ2l5iiXCPdpf
+	 MySw/2Vs+Kga7EBW/UXdHG2WWZE+qoV11+0jeJV0uod8mGElG3YnHhlAL+S2MilKq8XgG
+	 3xYaPEYViw/Gp4GMEARMLqLF+UU43MHoSMNAc6B36lkofKWxCoL2FNoO0m9pohV0nZqLz
+	 jMKUZemGxWAIS9IDJqyKjtQG4BLiR7LunQX7Z2je9lhRPNWN2u34vAGqPeOYxUz67SfUX
+	 +MGHSO6Nb1lgsxSjsTv6Wgd/G2/ArdcYtMP06TO4Gb6I+cUoJPyrNGRZpsD4BAgHJag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794914678;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794916205;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=b9cQAk9LDyNmw6FOHcs3iHeEXGZIuOld4ACCEb7cKIA=;
-	b=ASozWbu8BL8uyBEnx7SnzymHyAC/BArB/JffpUXj1f4/uWl8w60hlaaXnP820Eh6WgGp
-	 /LvUhFgxRYBnM0Tyu/ciJBYOzISPT4RDhXe2/ZFGK770BraKytEUXFmZIaEbO7kIQMClF
-	 n2TEidM3tr9Zu0MVTZhBu3zPzZuBT+VFzyPrj9IODgLWwVKGmvGAxPwXNbBY6KHVx2CrE
-	 RpaAC0W6gdv1ZVrsJZdHrvVWVcYimPoxTErJeSC8Dkg/dI4DBbV1O9V5oi13uBrzTCTRs
-	 5CStL6IERgVvyl+Trg5HZBbiO+fZ8SjefFXy2RfnBrC9nw/TV2TDQxMaiQEmBMafwFQ==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=E5XVEdzDo5JHpV+/pH5z1q3CEsULxV5blNLQaoOgStA=;
+	b=UjkSHLT1A7yr9uzql8ZzS8ByE/eOZVEFxJcaXeewWSgahC97BTgVFepQLwXLNrLXtZde
+	 ltWROu+Q6OPvtDnvchiqeAYiDnSrKnC/vI0NNb0XtE1ozGaFkTOzjvHOPEWUkCROPlrTI
+	 MPXqNmpbiTqWdJIQZ2Wqf/+gj6Xcfm5KLTXBJS+KeBSP09B+/2wdE9irm5HP728fxR640
+	 zjtNLJRYQUz9vReiDBNoUj6+c2T6TOEq4wXLIaerrRbRrQFl0ujMkNtLyxavg43QqXgUL
+	 z88P4JGpkglyl451ts7ZHNwFb4p+x+BsC7B9GuLkUAk4OUyOfe/SduN8l31FW8daFVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gImLORue;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HssZkQHH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90C4606A31C;
-	Tue, 17 Nov 2026 11:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899CB606A323;
+	Tue, 17 Nov 2026 11:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gImLORue
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4D71F000C4;
-	Tue, 17 Nov 2026 11:24:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HssZkQHH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B23F21F000C4;
+	Tue, 17 Nov 2026 11:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794914677;
-	bh=b9cQAk9LDyNmw6FOHcs3iHeEXGZIuOld4ACCEb7cKIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gImLORue2nhvJWpnv0UdiQWj3YvAR9u2Q/mlXde2c7onCKCeYJ1AhTaGkefDZpKHf
-	 2GnotiJQA53sfRymHQ4+KOR01IWVNAkWB6RQq0AwLZBl0PYJiApifULDY4FIU+mvjH
-	 tB8bWUCEspF8L689u6Q+0V+CPqkBInSk9x6z1inkitXPjTUpuZ/aLMHeHeYdbP03xw
-	 iEXUmYIRQDS/xIQs2dz4+dUQy5vX8+XFigeeppsWJPggF0ryVZjyZwCmZ4EvTJ5zA0
-	 I6QikSyWvOW+rnq490i1uzpeG88UeAJ0nzrwmSrlGwaqq1G8bS4LCnnojgeKG0Z7/J
-	 GjeK/Y8CH1Wsw==
-Date: Tue, 17 Nov 2026 11:24:34 +0000
-From: Lee Jones <lee@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
+	s=k20260515; t=1794916205;
+	bh=E5XVEdzDo5JHpV+/pH5z1q3CEsULxV5blNLQaoOgStA=;
+	h=Date:From:To:Cc:Subject;
+	b=HssZkQHHlOSGvb3FMoa3ps12JSnp+LC+S7ElNidy52mn0thnu4c+f4uoxr17qfdzo
+	 3cU73x/t5g8oADE4ToJDb5qrgr5idPS7rbN8b7bs7zKC+KBgkWzEzNF7bCmrLrJPOa
+	 dL7Rw3NQc7Pwi8AnXPRQ8+cdHVKPDv4sCepf4AY5is3bKhUwBMHruJ7rBatkDNZYbr
+	 U+3SAngGvfqMoA4tHFsioSzwCxQOxOR6Ysas9kFcQApBjGiQTMkAcZdNh27cCNqgVb
+	 yIMmyD2AqBtpTkNrnTbDQzQWHl+oAYz4Zb1h57zv7fEbsMobg/1LqLdehGclPGSF8p
+	 PK32RvoZOpiTg==
+Date: Tue, 17 Nov 2026 11:50:01 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andreas Gruenbacher <agruenba@redhat.com>,
+	Steven Whitehouse <swhiteho@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Joanne Koong <joannelkoong@gmail.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the origin tree
-Message-ID: <20261117112434.GA84168@joneslee-macbookpro.roam.internal>
-References: <avtYstt11GO7g85R@sirena.org.uk>
- <20261117104722.GB64850@joneslee-macbookpro.roam.internal>
- <56691895-b885-4c63-a929-c4cfdd7a2dde@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	William Chuang <founder@logarcheon.com>
+Subject: linux-next: manual merge of the gfs2 tree with the origin tree
+Message-ID: <avw_aaazVSUWavzX@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,28 +59,89 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VLS0vNsfEiKtuTyo"
+Content-Disposition: inline
+
+
+--VLS0vNsfEiKtuTyo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <56691895-b885-4c63-a929-c4cfdd7a2dde@sirena.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 17 Nov 2026, Mark Brown wrote:
+Hi all,
 
-> On Tue, Nov 17, 2026 at 10:47:22AM +0000, Lee Jones wrote:
-> > Kees, et al.,
-> > 
-> > > Today's linux-next merge of the mfd tree got a conflict in:
-> > > 
-> > >   drivers/mfd/nct6694.c
-> > > 
-> > > between commit:
-> > > 
-> > >   4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmalloc_obj() family")
-> > 
-> > Is there a branch / tag that I can pull this in from?
-> 
-> It's been in mainline since -rc2.
+Today's linux-next merge of the gfs2 tree got a conflict in:
 
-Okay, I'll rebase.  Thanks.
+  fs/gfs2/inode.c
 
--- 
-Lee Jones
+between commit:
+
+  9e8fc16dc6b47 ("iomap: pass iomap_iter_next_fn directly instead of struct=
+ iomap_ops")
+
+=66rom the origin tree and commit:
+
+  e3280ea8b7396 ("gfs2: Fix NULL pointer dereference in gfs2_seek_data/gfs2=
+_seek_hole")
+
+=66rom the gfs2 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc fs/gfs2/inode.c
+index 75fb1a0c91425,d4678e4832b35..0000000000000
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@@ -2253,9 -2253,11 +2253,11 @@@ loff_t gfs2_seek_data(struct file *file
+ =20
+  	inode_lock_shared(inode);
+  	ret =3D gfs2_glock_nq_init(gl, LM_ST_SHARED, 0, &gh);
+- 	if (!ret)
+- 		ret =3D iomap_seek_data(inode, offset, gfs2_iomap_next);
++ 	if (ret)
++ 		goto out;
+ -	ret =3D iomap_seek_data(inode, offset, &gfs2_iomap_ops);
+++	ret =3D iomap_seek_data(inode, offset, gfs2_iomap_next);
+  	gfs2_glock_dq_uninit(&gh);
++ out:
+  	inode_unlock_shared(inode);
+ =20
+  	if (ret < 0)
+@@@ -2272,9 -2274,11 +2274,11 @@@ loff_t gfs2_seek_hole(struct file *file
+ =20
+  	inode_lock_shared(inode);
+  	ret =3D gfs2_glock_nq_init(gl, LM_ST_SHARED, 0, &gh);
+- 	if (!ret)
+- 		ret =3D iomap_seek_hole(inode, offset, gfs2_iomap_next);
++ 	if (ret)
++ 		goto out;
+ -	ret =3D iomap_seek_hole(inode, offset, &gfs2_iomap_ops);
+++	ret =3D iomap_seek_hole(inode, offset, gfs2_iomap_next);
+  	gfs2_glock_dq_uninit(&gh);
++ out:
+  	inode_unlock_shared(inode);
+ =20
+  	if (ret < 0)
+
+--VLS0vNsfEiKtuTyo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr8P2gACgkQJNaLcl1U
+h9BduQf/ZIvdYEF8U5McVN9Gs80ah8OshHhWFjebbP/kUoXXkykXzPy1QnSLXeBV
+LwmxM/uxiYZXl0CWyqZx6LAHHvb6DpBw1MX2IOG2Jil6gpFZ1whhgBRaUrtW3rgj
+SIcO4CpciF7uSzsOHrVxbSMssNhgnDyzyNq/Dw9oQUdq4PjHb+DTEwerD4t3MECM
+Aa5qCafgqukntT3C+VtayePtav5b+0DIjjsCkgd6FlF8HOfZD6WWTBNgSH6Jyvv7
+AXFLJnqWWwsvo2oN7eSWRfhXCZVJusKMD7VhsFJT8v3nLSzqw5WySjGToDtnVXrV
++4JI0z8L8fkuzti8nQzdWnTprfRG9w==
+=YEm4
+-----END PGP SIGNATURE-----
+
+--VLS0vNsfEiKtuTyo--
