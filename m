@@ -1,53 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794912446;
-	b=eBlIYjkFbTamwPlANaQRYKCzRN5DHY527SMi3RhfhbqNnHSTGnbAr4sn8zwCKE764m53
-	 aPhIV3FDIMVZkesrrIySWtV5QObXu0t12Qj2Nrog/aP7WNnk7yteCEzDNM9GtByVTthvQ
-	 08MeWyFGu5QyvKbQQuglYJ4Bhpo6UWU3iIfgsoGStSOZ3SE8tL3AK1FqGVrHh1t7mNIHW
-	 84uYzJ1ihc6505DsHBEeVTCfwzk2ScAxjFHMFMXVCy9r55ThuiWy3hgoK2pUat0jQdiMt
-	 1m4mJq1s3JTPaRG03+5y6GoETQ8HN/wo96zm0AeWOJR9kElhh0f7X5sqEWZ1hLbCSXg==
+	t=1794913811;
+	b=id2Jpqx4Ta5x2lgKfB+KIAbNI3mjoLuJs9CSdpFqud2FjNN/1M157Fb936JGFPjQ5BJz
+	 gTMWOTyEZaL1eQd5r4300Kmzhq/xvtvNkOOHQ8VNjJ5oVfm439EyuF7aVJI74lwPuAVQj
+	 3Df3GJ3gQK7YcXRVSsCLhLCXF7EsUKIUzd8keOkOZtWYaGRb6BJDAjFonSNeDKkaDAZnI
+	 pDLvx2WSJElQrvBwHR4LtTmJwQfQKPZY4UckL0K9HDE0p+R9gECjn6VEobJnjoPBovmnh
+	 NyI4w5aPEESk/1D2AuQzbYidQLEdDQCwo9f0HpUZ/qk1x1eNIvuMbwTa2A1RRooBMyg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794912446;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794913811;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=9ihjrGk3q905v6fd32tqxVXlQ5X59DKw3EgepRM6MSs=;
-	b=b40m/lHk3xHujeqDGyCmfZ0U6/J0076Mi6l3k3ic1LxtqK2wCq9AnewyY+80fzILGQzC
-	 HbeUmJOzxicFGLSfdDXgkDeLlYt+64ByOXufujI2y0fMO47qWe7Mg/wZ9a/uOuCP2NfS7
-	 ajzbIOo/CAjoHk3Pg7UEux9OBQO/yHsu14YOdxIRyS7rA2i0weYJ7E7br70TK0cRVyajW
-	 84lNUQCA632Vudnee8P2SFHa6+ulUeK/e07tNPqaNTYpTKZwrf8hBuFJgkfS9OwABWQi7
-	 SQyC8eEh28DrL7jVaz9+5sEFY3kGAjPGepnGJv4vNjKRyxjWdryq2rp7Pjx2B8Il26g==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=QxU79itN/fCXiwY1kUU+9UBb++2Vzi/0GRwpZ66iwFg=;
+	b=POhnDpOb5FHBIbmRoS8NIOWOKVMCH2zE8DpQL9Sd3DWywch73z+PPv6721HBECJN8/Nm
+	 5tNvwFG58FCJAOTYpucUJxnYStwAP44+pugmVyYpgzTj1m1dYTRMxBpfgIVI8pgxF5w6/
+	 NJdESOXi97TWW1VIZ+/Vmxcrq/X8IG4QidHCIO1fUqyO6Z5yt/AixYZiqY0Jra4Q/8bRx
+	 BhmerL/fiWA2HElYnWcW/LROMqcAj6P7SscO/0dYcjK2AQS2Iy0WKEHVkrAYYRppQw0Ay
+	 zqE60b5804HzMN+SuAKZOtxw3wNnhkLz0qmP0DR4hKThNEnEtD/IwSaYUAa+YODlvCg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lsnf5+Go;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RLZ1L36b;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EC6606A323;
-	Tue, 17 Nov 2026 10:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C333E606A31C;
+	Tue, 17 Nov 2026 11:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lsnf5+Go
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353671F000C4;
-	Tue, 17 Nov 2026 10:47:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RLZ1L36b
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA5FA1F000C4;
+	Tue, 17 Nov 2026 11:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794912446;
-	bh=9ihjrGk3q905v6fd32tqxVXlQ5X59DKw3EgepRM6MSs=;
+	s=k20260515; t=1794913811;
+	bh=QxU79itN/fCXiwY1kUU+9UBb++2Vzi/0GRwpZ66iwFg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lsnf5+GoN8lr7SfGSFHjh4TxQKlmqxqxS6ANxQ1KLMLrJ8mBPG7XC/K1OnbSZ/NoE
-	 XGtqhaXWl+c430JCrRdY9mVkyvStwNGzP85EVSmmUYyKB6tejX+hhY6Kz88Z9sHJaI
-	 7vCDwcQNCYKQUZuXef4q1iB63YFchYOqxgRDMKI3JtUE7fQQC2cG5+L+Vg7G0n/WUJ
-	 RdPVbCgsenGgyGHSNSF8sax+EEjT8sfUGRy6aoo40Mh6rnpTLdABHolS5kMQI6Dpg/
-	 0A+f8Z65XCZ90VjGJVyQSLd29IgGcq5XqCuZdoyU53qplzMKlsD09jhMpKC73zfr+e
-	 5shb+rQBJFR3g==
-Date: Tue, 17 Nov 2026 10:47:22 +0000
-From: Lee Jones <lee@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
+	b=RLZ1L36bZzwmMMsmB9iPvYjN5K1eHFmwI1TLzgLxX+9cHm4FzgNHMgTD1qXkrTVOG
+	 HDsh4derjS/fcP+P+yLX5YT/zr5XAx8YKoyJwHgti0yPDiSPAenJJsJ+8GU2WecWXW
+	 pL1WUwvxp2hEBiHLFjf6XgKGQ/sjIw8l/4fY0F1F/D5SvvGQLkByD5Ur2jjGS5mNbg
+	 vXjC5AWbDDznWhamb9afYuNPaTpXQKJVJ4N/yEBZx+bCsrarH4XSM3WOVPNdIVRXHz
+	 m/Iyvg15QLU0COj2c7WKmkKJBf8wg1UEslVZviQ2SPX31CDK6R7uXySoY+oDedc0Gv
+	 5ngkL8nCy7iIA==
+Date: Tue, 17 Nov 2026 11:10:06 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the origin tree
-Message-ID: <20261117104722.GB64850@joneslee-macbookpro.roam.internal>
-References: <avtYstt11GO7g85R@sirena.org.uk>
+Subject: Re: linux-next: manual merge of the gpio-brgl tree with the
+ gpio-brgl-fixes tree
+Message-ID: <6c6dceb4-1311-44a6-a25a-e85b984ecc19@sirena.org.uk>
+References: <avtjEdUWiljJ5V7o@sirena.org.uk>
+ <pb6e2wsemefeqkrzcvaqr7nfcsmufttvoooy6y3emypswaqnld@bflexif6xdgg>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,102 +61,44 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jgYT5BH6r5qLycUY"
+Content-Disposition: inline
+In-Reply-To: <pb6e2wsemefeqkrzcvaqr7nfcsmufttvoooy6y3emypswaqnld@bflexif6xdgg>
+X-Cookie: Marriage, n.:
+
+
+--jgYT5BH6r5qLycUY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avtYstt11GO7g85R@sirena.org.uk>
 
-Kees, et al.,
+On Tue, Nov 17, 2026 at 09:16:59AM +0100, Bartosz Golaszewski wrote:
+> On Mon, Nov 16, 2026 at 08:09:53PM +0000, Mark Brown wrote:
 
-> Today's linux-next merge of the mfd tree got a conflict in:
-> 
->   drivers/mfd/nct6694.c
-> 
-> between commit:
-> 
->   4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmalloc_obj() family")
+> > - 				set_bit(GPIOD_FLAG_SHARED_PROXY, &gdev->descs[0].flags);
+> >  -				__set_bit(GPIOD_FLAG_SHARED_PROXY,
+> >  -					  &gdev->descs[0].flags);
+> > ++				__set_bit(GPIOD_FLAG_SHARED_PROXY, &gdev->descs[0].flags);
 
-Is there a branch / tag that I can pull this in from?
+> This should actually keep the atomic set_bit(). In any case, I will send
+> a PR with fixes to Torvalds this week and pull back v7.4-rc4 into
+> gpio/for-next once tagged.
 
-> from the origin tree and commit:
-> 
->   962b44ae8126d ("mfd: nct6694: Allocate USB DMA buffers with kzalloc_obj()")
-> 
-> from the mfd tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --combined drivers/mfd/nct6694.c
-> index dabd83b9d455c,40a29f8e0ff61..0000000000000
-> --- a/drivers/mfd/nct6694.c
-> +++ b/drivers/mfd/nct6694.c
-> @@@ -201,6 -201,7 +201,7 @@@ static void usb_int_callback(struct ur
->   		break;
->   	case -ECONNRESET:
->   	case -ENOENT:
-> + 	case -EPIPE:
->   	case -ESHUTDOWN:
->   		return;
->   	default:
-> @@@ -280,21 -281,25 +281,25 @@@ static int nct6694_usb_probe(struct usb
->   	struct nct6694 *nct6694;
->   	int ret;
->   
->  -	nct6694 = devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
->  +	nct6694 = devm_kzalloc_obj(dev, *nct6694);
->   	if (!nct6694)
->   		return -ENOMEM;
->   
-> - 	nct6694->usb_msg = devm_kzalloc_obj(dev, union nct6694_usb_msg);
-> + 	nct6694->usb_msg = kzalloc_obj(*nct6694->usb_msg);
->   	if (!nct6694->usb_msg)
->   		return -ENOMEM;
->   
-> - 	nct6694->int_buffer = devm_kzalloc_obj(dev, *nct6694->int_buffer);
-> - 	if (!nct6694->int_buffer)
-> - 		return -ENOMEM;
-> + 	nct6694->int_buffer = kzalloc_obj(*nct6694->int_buffer);
-> + 	if (!nct6694->int_buffer) {
-> + 		ret = -ENOMEM;
-> + 		goto err_usb_msg;
-> + 	}
->   
->   	nct6694->int_in_urb = usb_alloc_urb(0, GFP_KERNEL);
-> - 	if (!nct6694->int_in_urb)
-> - 		return -ENOMEM;
-> + 	if (!nct6694->int_in_urb) {
-> + 		ret = -ENOMEM;
-> + 		goto err_int_buffer;
-> + 	}
->   
->   	nct6694->domain = irq_domain_create_simple(NULL, NCT6694_NR_IRQS, 0,
->   						   &nct6694_irq_domain_ops,
-> @@@ -352,6 -357,10 +357,10 @@@ err_ida
->   	irq_domain_remove(nct6694->domain);
->   err_urb:
->   	usb_free_urb(nct6694->int_in_urb);
-> + err_int_buffer:
-> + 	kfree(nct6694->int_buffer);
-> + err_usb_msg:
-> + 	kfree(nct6694->usb_msg);
->   	return ret;
->   }
->   
-> @@@ -367,6 -376,8 +376,8 @@@ static void nct6694_usb_disconnect(stru
->   	ida_destroy(&nct6694->gpio_ida);
->   	irq_domain_remove(nct6694->domain);
->   	usb_free_urb(nct6694->int_in_urb);
-> + 	kfree(nct6694->int_buffer);
-> + 	kfree(nct6694->usb_msg);
->   }
->   
->   static const struct usb_device_id nct6694_ids[] = {
+Yeah, I didn't look up which one was atomic.
 
+--jgYT5BH6r5qLycUY
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Lee Jones
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr8Ng0ACgkQJNaLcl1U
+h9C76gf/fXNdkFxRvSWeo+Wnyzao+KDEYmMbd/SXVSsT0gE6Npepk7cpWSLNceeu
+0PiZs/vY8wRG4BJySiLAYg3L4rAQXgFD4XNAjhLn5V4RGe7BVcy6x4bY3v94sL3L
+2sy2jrDzKmcUNmcBmEsE8sFY3paMwobdfHUiM18JobOydwqiMO40fZ+VWEbNmdL5
+TW0YJUi2+AYTD0nXFGDqkQlNjsl8uQZgx5C+zaYYj3cDMPv9UqkdepJ3CP5Uxg6c
+b/db83ejqcNoPFgiLXGFGAdmnxJP0S390ZsOHTz54DvBw+lDc4j4JLcS7GnfSIrU
+HyFaSC/atnL8kG5UMIC27+j29Yjp/g==
+=LYI6
+-----END PGP SIGNATURE-----
+
+--jgYT5BH6r5qLycUY--
