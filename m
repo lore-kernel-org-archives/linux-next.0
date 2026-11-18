@@ -1,54 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795012661;
-	b=H+IEs92/JNtnN8+GhGO1poH9Ha6Uayo+FgBRd/BXPkqVj/2Ak1OEKmjtl+vhkC126tix
-	 9b66VK8Bl6TsLdx2ZHxZwLl6y/HC1FzY8mOM3y+PVrprEeS5C6C98Mb94ATFg02Vgl4Tp
-	 RwtAJonP9SPupZEWRcQoTGitZMyDuCIkLuW1jKgXeU95ZUiOCvKvjlX7rH7z5Cyb5hVPO
-	 PUfdnsS2eO+te2KveOIunNjl0w3x1WWMWRPJZE4Q960n3lmQ9Oa6tzLNT5NIN3lzpdDoX
-	 I/nyA9ehuu60JQpCBbqAqTRkRaIUnXqre5pJiS/7Q9yPc45Ek81tgqDmcfAOC+i9O+w==
+	t=1795012935;
+	b=cXLL802IZE3nUdcHHsZGkUMZ8jQbJPEnccndZdzzWA1GGM24gX56Wh5FcvmnqL/kDqpL
+	 j7UkY7uG2h4e3EbH0HEK2G+AzVO/FqRejGe5IVLaTI7pd6mkUwMd6+XVnI+yxq0vRZ1H9
+	 xd+4iNyC6YZqj8FKSjXns82SaXEHAoP2V9Z2w4Pzyohjq6TNox4kuxtDCmPy2aSCGGijA
+	 fVJtFmi4MXnTDKCoVrp567SoOPn7W2BHwdLUwxqUDThxJNeAVj9b3ecPxC2ZouzQf2iiv
+	 EURS6QmDkCN6CiwRaEAtAREBxVuaj6a9sDtc+QsXgt7Gw2szxSZogkxfDk5WKsQaRCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795012661;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795012935;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=M8S88rZuNHpGn0XPLr+/UWjHCI32uW3us9gY7vMCoXg=;
-	b=EHVaZMNmj/DpL6ypqArTrHL6LCDQH2tN1bmXB+PprcCZyxOPZXaqMOawesLSKbfnUkz9
-	 NMp/wWo43nedl7gcsHkU6Xcs1se08KHKahMCN+DThbgdtApqM1CspF4Wb4rN1rc9eqoit
-	 I/hEb4dQ06FF9xJXp3el6hj5L096ScvcqGmkhXOVmPW+RWfHU4DktCi2HQ7WtWL2OTvtN
-	 Ej5w3ECx6+4kRu1mvAGrE7S55YulRC2IiNALKTunvmkNvRzwnObncBo8Y5Ljn2KeHmwkn
-	 KE7wKxuGmB8JKBW0knbZFs8NeXSqB9mvR6JI80MY7ojbR8L/r+pdmQJrKRWFZHs8oAQ==
+	bh=y3fa1nWZYsT/yb1lDnlw7P4jbrPzywmk3FjvB3M0fZA=;
+	b=yFv5Bzskc4c8KQhpw9lDHDc7YIFE6LctcfGXPu+MtT9BPnoHaaLs3M/XHCJSllTcsirH
+	 /u4M+mhq/G/bYuZ8wQFMTe0k6hOSaoSFp026k6GlF91pWCBrFN5a0eclc9hefj2FE2NCt
+	 oFgv0Sd1oH8xMsNSJ94zHhh12jEitvzmUYBfQgV/C07oo4ZwPprzZM+q5f+s1iZgLsWFn
+	 IRLjlq/hDhBCGqKcBoP5AwRgZ49EPCpxOHtmdJqvzdHdryWUnGvlcco/QUA9e0kovIg78
+	 QJJYNHZnOjbgB6HTeODexPwwn4aP7y2IbhJh4QNWStVJ8E8gY9Btxbm98JZ99uHOhJg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LcdYtCDI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gWNeP4zW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDBA606A33D;
-	Wed, 18 Nov 2026 14:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50CE606A320;
+	Wed, 18 Nov 2026 14:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LcdYtCDI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF771F000C4;
-	Wed, 18 Nov 2026 14:37:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gWNeP4zW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C18601F000C4;
+	Wed, 18 Nov 2026 14:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795012661;
-	bh=M8S88rZuNHpGn0XPLr+/UWjHCI32uW3us9gY7vMCoXg=;
+	s=k20260515; t=1795012935;
+	bh=y3fa1nWZYsT/yb1lDnlw7P4jbrPzywmk3FjvB3M0fZA=;
 	h=Date:From:To:Cc:Subject;
-	b=LcdYtCDI8cX4enYOJL7MX8xDNT9Ax2YRAK0RXvZ/bat0IKtuRMaxvjH3wH6jBma24
-	 KJWV6XNMVjpLJ0Vff4nm4ewsK1iOJ3m7Aweabl1/Zv/ibbXdh3MmwoIIusSeCBxpPU
-	 KWq4NmKWTAxGV0PI8k+DVWpLgBDX4I7Or2gK/0ANC/l2WvL5aNs7lVMRSLkM1K9s6u
-	 Ws1wS9O43v6Ax+plqlQ1ZlatePKxIFWxu822ow0qD3JzEOZQyJCxHYmYIesc3dfCEO
-	 cp7P/5TakyaTAAJXBlKJK7PgKD4GdOQ8hvit2u7eaFw7cP4EFcvFQHrMAnheq8eZ+q
-	 S7cbr3+vI7F2A==
-Date: Wed, 18 Nov 2026 14:37:37 +0000
+	b=gWNeP4zWhmZ6U02+ERnQyo0eoKv7fVcZpwk1o+n55uWuBxJSmS1GopyJEd876Tud4
+	 QGjcm5BjmyxiANt+SozAJHEC9KNHtOjh3pxwT4lJow+QIBw3jBPUu5YxEn2/XutHTh
+	 Lqo0Q2jSSuE8eUcdtUYtj4h45w70U57W7LJNG7Ww5xF8H06f9G0nYTdzA7+6jBf09a
+	 cQjRoDetPEV//s87Krybq7HdZnxqJHeLzjG2q13dnzzokXeRBF8UxQDSpq98R0cF2V
+	 kBfxqFa5AQxVAn94qvIZkOtYOh/948y78gmgzcjvWLLMfI1Tz7cgNrJ4raJFJfWT9l
+	 LHhCc+zLv70hg==
+Date: Wed, 18 Nov 2026 14:42:11 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	Linux Crypto List <linux-crypto@vger.kernel.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, Imre Kaloz <kaloz@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Simon Wunderlich <sw@simonwunderlich.de>
-Subject: linux-next: manual merge of the mtd tree with the origin tree
-Message-ID: <av24MbMORkbY00UX@sirena.org.uk>
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: linux-next: manual merge of the crypto tree with the mips tree
+Message-ID: <av25Q7bdayobYN_G@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -59,32 +59,32 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LWngBwPTqKzJkmYo"
+	protocol="application/pgp-signature"; boundary="mphx2YdIYQ9Wh8H0"
 Content-Disposition: inline
 
 
---LWngBwPTqKzJkmYo
+--mphx2YdIYQ9Wh8H0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mtd tree got a conflict in:
+Today's linux-next merge of the crypto tree got a conflict in:
 
-  drivers/mtd/maps/lantiq-flash.c
+  arch/mips/configs/ip32_defconfig
 
 between commit:
 
-  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
-oc_obj() family")
+  22df49ef5a332 ("MIPS: ip32_defconfig: drop dead options and add-in driver=
+s, add audio")
 
-=66rom the origin tree and commit:
+=66rom the mips tree and commit:
 
-  fd1cc5b1dc4f2 ("mtd: maps: lantiq-flash: fix NULL pointer dereference on =
-probe")
+  fd29be9b99251 ("crypto: arc4 - Remove obsolete crypto API support for ARC=
+4")
 
-=66rom the mtd tree.
+=66rom the crypto tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -93,39 +93,114 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/mtd/maps/lantiq-flash.c
-index 519126abb9a5c,5c2ace302b50c..0000000000000
---- a/drivers/mtd/maps/lantiq-flash.c
-+++ b/drivers/mtd/maps/lantiq-flash.c
-@@@ -118,11 -118,8 +118,12 @@@ ltq_mtd_probe(struct platform_device *p
- =20
-  	platform_set_drvdata(pdev, ltq_mtd);
- =20
- +	ltq_mtd->map->virt =3D devm_platform_get_and_ioremap_resource(pdev, 0, &=
-ltq_mtd->res);
- +	if (IS_ERR(ltq_mtd->map->virt))
- +		return PTR_ERR(ltq_mtd->map->virt);
- +
-- 	ltq_mtd->map =3D devm_kzalloc_obj(&pdev->dev, struct map_info);
-+ 	ltq_mtd->map =3D devm_kzalloc(&pdev->dev, sizeof(struct map_info),
-+ 				    GFP_KERNEL);
-  	if (!ltq_mtd->map)
-  		return -ENOMEM;
- =20
+diff --combined arch/mips/configs/ip32_defconfig
+index e43a6a1913e08,0c3bae4a7bac4..0000000000000
+--- a/arch/mips/configs/ip32_defconfig
++++ b/arch/mips/configs/ip32_defconfig
+@@@ -9,9 -9,10 +9,9 @@@ CONFIG_RELAY=3D
+  CONFIG_EXPERT=3Dy
+  CONFIG_PROFILING=3Dy
+  CONFIG_SGI_IP32=3Dy
+ -# CONFIG_SECCOMP is not set
+ -CONFIG_PCI=3Dy
+  CONFIG_MIPS32_O32=3Dy
+  CONFIG_MIPS32_N32=3Dy
+ +# CONFIG_SECCOMP is not set
+  CONFIG_MODULES=3Dy
+  CONFIG_MODULE_UNLOAD=3Dy
+  CONFIG_PARTITION_ADVANCED=3Dy
+@@@ -39,10 -40,10 +39,10 @@@ CONFIG_INET6_ESP=3D
+  CONFIG_INET6_IPCOMP=3Dm
+  CONFIG_IPV6_TUNNEL=3Dm
+  CONFIG_NETWORK_SECMARK=3Dy
+ +CONFIG_PCI=3Dy
+  CONFIG_CONNECTOR=3Dy
+  CONFIG_BLK_DEV_LOOP=3Dm
+  CONFIG_BLK_DEV_NBD=3Dm
+ -CONFIG_RAID_ATTRS=3Dy
+  CONFIG_SCSI=3Dy
+  CONFIG_BLK_DEV_SD=3Dy
+  CONFIG_BLK_DEV_SR=3Dy
+@@@ -50,11 -51,16 +50,11 @@@ CONFIG_CHR_DEV_SG=3D
+  CONFIG_SCSI_CONSTANTS=3Dy
+  CONFIG_SCSI_LOGGING=3Dy
+  CONFIG_SCSI_SCAN_ASYNC=3Dy
+ -CONFIG_SCSI_SAS_LIBSAS=3Dy
+  CONFIG_SCSI_AIC7XXX=3Dy
+  CONFIG_AIC7XXX_RESET_DELAY_MS=3D15000
+  CONFIG_NETDEVICES=3Dy
+  CONFIG_BONDING=3Dm
+  CONFIG_DUMMY=3Dm
+ -CONFIG_NET_TULIP=3Dy
+ -CONFIG_DE2104X=3Dm
+ -CONFIG_TULIP=3Dm
+ -CONFIG_TULIP_MMIO=3Dy
+  CONFIG_SGI_O2MACE_ETH=3Dy
+  CONFIG_INPUT_EVDEV=3Dm
+  CONFIG_SERIO_MACEPS2=3Dy
+@@@ -66,12 -72,12 +66,12 @@@ CONFIG_HW_RANDOM=3D
+  CONFIG_WATCHDOG=3Dy
+  CONFIG_FB=3Dy
+  CONFIG_FB_GBE=3Dy
+ -# CONFIG_VGA_CONSOLE is not set
+  CONFIG_FRAMEBUFFER_CONSOLE=3Dy
+  CONFIG_LOGO=3Dy
+ -# CONFIG_LOGO_LINUX_MONO is not set
+ -# CONFIG_LOGO_LINUX_VGA16 is not set
+  # CONFIG_LOGO_LINUX_CLUT224 is not set
+ +CONFIG_SOUND=3Dm
+ +CONFIG_SND=3Dm
+ +CONFIG_SND_SGI_O2=3Dm
+  # CONFIG_USB_SUPPORT is not set
+  CONFIG_RTC_CLASS=3Dy
+  # CONFIG_RTC_HCTOSYS is not set
+@@@ -143,17 -149,28 +143,17 @@@ CONFIG_NLS_ISO8859_15=3D
+  CONFIG_NLS_KOI8_R=3Dm
+  CONFIG_NLS_KOI8_U=3Dm
+  CONFIG_NLS_UTF8=3Dm
+ -CONFIG_KEYS=3Dy
+  CONFIG_CRYPTO_NULL=3Dy
+ -CONFIG_CRYPTO_CBC=3Dy
+ -CONFIG_CRYPTO_ECB=3Dy
+ -CONFIG_CRYPTO_LRW=3Dy
+ -CONFIG_CRYPTO_HMAC=3Dy
+ -CONFIG_CRYPTO_XCBC=3Dy
+ -CONFIG_CRYPTO_MD4=3Dy
+ -CONFIG_CRYPTO_SHA1=3Dy
+ -CONFIG_CRYPTO_SHA256=3Dy
+ -CONFIG_CRYPTO_SHA512=3Dy
+ -CONFIG_CRYPTO_WP512=3Dy
+ -CONFIG_CRYPTO_ANUBIS=3Dy
+  CONFIG_CRYPTO_BLOWFISH=3Dy
+ -CONFIG_CRYPTO_CAMELLIA=3Dy
+  CONFIG_CRYPTO_CAST5=3Dy
+  CONFIG_CRYPTO_CAST6=3Dy
+  CONFIG_CRYPTO_DES=3Dy
+ -CONFIG_CRYPTO_KHAZAD=3Dy
+  CONFIG_CRYPTO_SERPENT=3Dy
+ -CONFIG_CRYPTO_TEA=3Dy
+  CONFIG_CRYPTO_TWOFISH=3Dy
+ +CONFIG_CRYPTO_LRW=3Dy
+ +CONFIG_CRYPTO_MD4=3Dy
+ +CONFIG_CRYPTO_WP512=3Dy
+ +CONFIG_CRYPTO_XCBC=3Dy
+  CONFIG_CRYPTO_DEFLATE=3Dy
+  CONFIG_FONTS=3Dy
+  CONFIG_FONT_8x8=3Dy
 
---LWngBwPTqKzJkmYo
+--mphx2YdIYQ9Wh8H0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr9uDAACgkQJNaLcl1U
-h9DhJAf+LH7UixCB8AKWSxd361pgh3FDwzOMh/OAfG268cfOd9crdFjVl7iZB96J
-6P7jc7pKKqh3hv0ghuuRfkGUWmhZjXbG9CYt/yDe0lSu69TZRuLerbYJNPXYNQmr
-PlOP8lt2j25cFZx1ndmSZ6S2nzBe32vOS200NBLlHzMJRn2VLJszjg53mtwOka/t
-el6LtrQhBq9I2T63RrHe5WCvH3alRpBSDswKdE5ybnbn+ffUbVDVJ1Z1EX88FkJJ
-1lJJN4nn0NCTWqTmbKZ1RtHq4cbJ3jbPcLlWCetPBqOxSmnlI6qQ+0byorfctEK3
-4Sjec7AToi2JaHaN4Yjse6rmcEgr8A==
-=XSA8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr9uUIACgkQJNaLcl1U
+h9DHUgf/aX//h+grKq5l0OahAWlEuzBK6MuB0iw1EPwCFxqpwnfL44UAfRGwxkzv
+LXStnhAnrenEF906e/QqQEsee12nlQZYsRKgqUnkd8IILRzhw6b8sXDbPLKM/5Vb
+pDuvYWD0JJphg/Fw5z2p0hIGUyKbBl4KscaaTniJIkF3GAZFyJEEFjX8yJmBCylz
+v6B1jdqymS/j/P7prGTmX0RI6K4B9WpS+MJ59g4Q/T7oRm85bKdB/WeLBe6/h2iz
+dGOp0bYbaP2SjK0hR6wjWch4kJTYcE46VoKlmRfIhSkMlFSoUN1WHdsLwjT5FqjS
+ocjzmxKOzZrrKMpmq1WfT4Ariw7q7w==
+=yc/y
 -----END PGP SIGNATURE-----
 
---LWngBwPTqKzJkmYo--
+--mphx2YdIYQ9Wh8H0--
