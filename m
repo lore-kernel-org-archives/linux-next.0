@@ -1,53 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795008060;
-	b=wmJLhfc0XC/ulDX15CfiXMNtIZBVA++/l7Hax1/H3TzWEPw6hUznay5qITN+PYS/3pwN
-	 ig6eYjmnoAgwAJjkQwlzI/TC4vSTj6T0qXvB+EJUPCbb+adnMzut7Y9u45XHR1BwpW7Dq
-	 IT3I7mfrVjU/x3+HXkuIfRyIO2O9uPDrBW+MZhGInezPEvQxpVCUqdNOvSpkcw3BAuyG8
-	 tN3WRRyjDSvx6MXWHqXyxq9Xq++2OY6wu04roPAGkYes3OgM8BEya4V7npZqJOIgsOHxo
-	 JY+AJ1VgamC2pb3aEekTkWJYvkIm1LozXWjlDR/v1flqnXYkQ7l7bm6j57VB/QRIC/g==
+	t=1795008549;
+	b=1BguQVKCOj2pqQJVzVZv9vKEAoqxnKZguznrXVIiSRUBnPAvp+feRI0gbJUrhovmwyry
+	 bDf4gr4LR5Tm9aPBXhZpeYkkxPPN30qePMBWuguE2n70kgCRh5KIlbhp8svH73rci1gNe
+	 fTD11ArcoEidsnBKSnFUj/RagES0mCG2fumK95BHKemZO6RSOtZ8kk9B/CnfXn229rkGW
+	 Vw/iHTACmycWXI7H9ITD/LX/cmTl+yUweU7AVdVnw8KyrPDBMwYmNl24uhUgHZO6wNFyG
+	 XV4ruBe92AnQBQtbY+jnXSLtAHT58Pd4Kajo2D1hlhqRqp6xcELh2nVmZSGlxiDSrYw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795008060;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795008549;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=eCD6KYxE7KafmDUvT/CJJctFxELiwnm2j6W6mM8f0nk=;
-	b=NbPx3HuDoFu/6opPFMGoSlcxIPHJebAMkIc6UzVKdWxrRjazx4da5CVxLk7gryM3ArP3
-	 pHBpJpTRzAoT+DM9Ftip5tS/tXd+Z/ZYEYfZTasVYQsETYJsG0oJhCrt/Jy6KE1wZaPqz
-	 gtgsm05aF8z96OvB7FCdi8OxKFUlpmAKf/u8DziXTxaXllmZk9wSZlGVg9khofzgwpbne
-	 yeV1i/uKjiLIMYh+m7UmM+H9CCCd7CaEsI5yUBA7g3kNenOKh+gICNr1SQoU2qxgM/793
-	 RH0vMX2S0Q/q6e15WDX/Xc2KE9GBA08zM1nuMCjTwcLjxSwghxZAkWi4Q8U8BSxeS4g==
+	bh=PsCwN85zBqXoXFGF61lttqvpA2Q06YCNd9/FfpDXxc8=;
+	b=STwHUbYJUoasMwIH8vtbgDda6R+U4qI6VE0UuBqHZ2/WsSbvjZVlmiBteh6HKxIx4FUA
+	 4wwFK5pAhrGjFpykeRebmUH17N8BY/R0VClVnB2SsTkASrPE9T7Bk3gble1O0teW4kPnm
+	 xo8vStpQA17Y1vadQaz6jzHTDNAI9OC9QCO613W//EPStOrISSu7Dn0idhGwaUZWqN+YB
+	 +S+/LGDfY1QvABIDpHItQookNzhd/Ph3i06GlZ9w6fAK+unu5UxrCbKTSzH+5L67bF6Sf
+	 7KFcBFlPy3sGkkIIT06Q7tiQPfJzGRv1OslEnrDRGLGmxytgGRSf+1/TPo6VKTDPidQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="QwXk27I/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="iW/nq7/H";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7B8606A320;
-	Wed, 18 Nov 2026 13:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B73F60A2635;
+	Wed, 18 Nov 2026 13:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QwXk27I/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CEC1F000C4;
-	Wed, 18 Nov 2026 13:20:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iW/nq7/H
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB891F000C5;
+	Wed, 18 Nov 2026 13:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795008060;
-	bh=eCD6KYxE7KafmDUvT/CJJctFxELiwnm2j6W6mM8f0nk=;
+	s=k20260515; t=1795008549;
+	bh=PsCwN85zBqXoXFGF61lttqvpA2Q06YCNd9/FfpDXxc8=;
 	h=Date:From:To:Cc:Subject;
-	b=QwXk27I/cC+svgn8mDcDxcSofs2mRqkgeKA2MJMTjKTbzzmAAT+tNx4TaYzJFS3yd
-	 kySgMzHC5pihsF1tQWhwabWxkG9uJETBudH2KhSaK8w/+VvR81TsVoQ1UwBHGwsKX/
-	 cVUL9LK6uABpCbGwGJlyaM66TZvPWK0gOYJzjiho4RAbIA6OODBr1RKk1h75RAYXCR
-	 O4xwLh85VV92u0eiIUH6zQB1pZo/Egs99vBqEqiH+/y/zsqSkWmBChwVZlr10SfUpX
-	 V+8yZVIObjBZjtQpNxhuzaMmy+T7csxVf3M+cAQg3E7o4HTKuTPv5ctA5YuS4/iNN2
-	 GMMOxyBumSYQw==
-Date: Wed, 18 Nov 2026 13:20:56 +0000
+	b=iW/nq7/H16uZT0IYJgTgEuHQ5bqqnAXRUtcUlCt5misPVfInhNbKNgxtDuh7PTz1a
+	 Vrn3/BqmNqMh607VMp4eupaedixcJXe78J1zU09EDBkfnOl0gainJqM8+e+Rkk9axG
+	 HBe9YGDw61DROxK87IvIVOn4Pkg6b8VIXVPMYeqhgPWonB60mjwg9o6C8ESfTS2Hpj
+	 3tafhjgbWWgIFq2jM41uefu7+e2y4CN3hLYtg3mNSe4ZB2yTQoKYpaBbFCHRO7644r
+	 cSA3TXKkQ6iJ9RC5vB+DMUZ/GvsBPm/GR8fn0OX5acA0PTuPx2UNCS1TBJBqaB3/Ki
+	 pdogIhqkUX55A==
+Date: Wed, 18 Nov 2026 13:29:04 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Chi Zhiling <chizhiling@kylinos.cn>,
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: linux-next: manual merge of the vfs-brauner tree with the exfat tree
-Message-ID: <av2mOPyANz3H59F5@sirena.org.uk>
+	"Martin K. Petersen" <mkp@kernel.org>,
+	Stanley Jhu <stanleyjhu@google.com>
+Subject: linux-next: manual merge of the scsi-fixes tree with the origin tree
+Message-ID: <av2oIDU7KF0EPfbw@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,32 +59,32 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RvYcReLTk4/oCryJ"
+	protocol="application/pgp-signature"; boundary="dNMw2dYTwr9bxi6Q"
 Content-Disposition: inline
 
 
---RvYcReLTk4/oCryJ
+--dNMw2dYTwr9bxi6Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+Today's linux-next merge of the scsi-fixes tree got a conflict in:
 
-  fs/exfat/file.c
+  drivers/ufs/core/ufs-rpmb.c
 
-between commits:
+between commit:
 
-  cfdee4e5f5764 ("exfat: coordinate direct writes with mmap faults")
-  b900c61a3f21b ("exfat: drain dirty pages after forced shutdown")
-  e70ec3eaac957 ("exfat: increase VDL before unlocking initialized folios")
+  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
+oc_obj() family")
 
-=66rom the exfat tree (plus my earlier merges) and commit:
+=66rom the origin tree and commit:
 
-  788f21d1f1923 ("exfat: don't set SB_RDONLY after filesystem errors")
+  7bc9b854cd68e ("scsi: ufs: rpmb: Decouple device lifecycle from devres to=
+ avoid UAF")
 
-=66rom the vfs-brauner tree.  Again, this needs double checking.
+=66rom the scsi-fixes tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -92,140 +93,264 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc fs/exfat/file.c
-index 8078e9bccbe13,b985f4e9b314b..0000000000000
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@@ -1102,13 -899,10 +1123,14 @@@ static ssize_t exfat_file_write_iter(st
-  	loff_t pos, valid_size, end;
-  	int err;
+diff --combined drivers/ufs/core/ufs-rpmb.c
+index 7566733376480,6803f3e62d786..0000000000000
+--- a/drivers/ufs/core/ufs-rpmb.c
++++ b/drivers/ufs/core/ufs-rpmb.c
+@@@ -14,6 -14,7 +14,7 @@@
+  #include <linux/module.h>
+  #include <linux/device.h>
+  #include <linux/kernel.h>
++ #include <linux/slab.h>
+  #include <linux/types.h>
+  #include <linux/rpmb.h>
+  #include <linux/string.h>
+@@@ -27,22 -28,19 +28,19 @@@
+  #define UFS_RPMB_SEC_PROTOCOL		0xEC	/* JEDEC UFS application */
+  #define UFS_RPMB_SEC_PROTOCOL_ID	0x01	/* JEDEC UFS RPMB protocol ID, CDB =
+byte3 */
  =20
-- 	if (unlikely(exfat_forced_shutdown(inode->i_sb)))
-- 		return -EIO;
-+ 	err =3D exfat_emergency_state(inode->i_sb);
-+ 	if (unlikely(err))
-+ 		return err;
+- static const struct bus_type ufs_rpmb_bus_type =3D {
+- 	.name =3D "ufs_rpmb",
+- };
+-=20
+  /* UFS RPMB device structure */
+  struct ufs_rpmb_dev {
+  	u8 region_id;
+  	struct device dev;
+  	struct rpmb_dev *rdev;
+- 	struct ufs_hba *hba;
++ 	struct scsi_device *sdev;
+  	struct list_head node;
+  };
  =20
- +	/* Gap initialization and source faults require blocking operations. */
- +	if (iocb->ki_flags & IOCB_NOWAIT)
- +		return -EAGAIN;
- +
-  	inode_lock(inode);
- =20
-  	ret =3D generic_write_checks(iocb, iter);
-@@@ -1207,51 -993,58 +1229,52 @@@ static ssize_t exfat_file_read_iter(str
-  static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
+- static int ufs_sec_submit(struct ufs_hba *hba, u16 spsp, void *buffer, si=
+ze_t len, bool send)
++ static int ufs_sec_submit(struct ufs_rpmb_dev *ufs_rpmb, u16 spsp,
++ 			  void *buffer, size_t len, bool send)
   {
-  	struct inode *inode =3D file_inode(vmf->vma->vm_file);
- +	struct address_space *mapping =3D inode->i_mapping;
-  	struct exfat_inode_info *ei =3D EXFAT_I(inode);
- +	struct folio *folio =3D page_folio(vmf->page);
- +	loff_t fault_start =3D folio_pos(folio);
- +	loff_t new_valid_size, gap_start;
-  	vm_fault_t ret;
- -	loff_t new_valid_size, mmap_valid_size, fault_page_start;
- -	int err;
- +	int error;
+- 	struct scsi_device *sdev =3D hba->ufs_rpmb_wlun;
++ 	struct scsi_device *sdev =3D ufs_rpmb->sdev;
+  	struct scsi_failure failure_defs[] =3D {
+  		{
+  			.sense_key =3D UNIT_ATTENTION,
+@@@ -62,6 -60,9 +60,9 @@@
+  	};
+  	u8 cdb[12] =3D { };
  =20
-- 	if (unlikely(exfat_forced_shutdown(inode->i_sb)))
-- 		return VM_FAULT_SIGBUS;
- -	err =3D exfat_emergency_state(inode->i_sb);
- -	if (unlikely(err))
- -		return vmf_fs_error(err);
- -
- -	if (!inode_trylock(inode))
- -		return VM_FAULT_RETRY;
- -
- -	mmap_valid_size =3D ((loff_t)vmf->pgoff + 1) << PAGE_SHIFT;
- -	fault_page_start =3D ((loff_t)vmf->pgoff) << PAGE_SHIFT;
- -	new_valid_size =3D min(mmap_valid_size, i_size_read(inode));
- -
- -	if (exfat_get_valid_size(ei) < new_valid_size) {
- -		loff_t zeroed_size =3D exfat_get_zeroed_size(ei);
- -
- -		if (zeroed_size < fault_page_start) {
- -			/*
- -			 * Zero only the gap below the faulting page. The read
- -			 * fault populated its folio and iomap_page_mkwrite()
- -			 * will dirty it.
- -			 */
- -			err =3D exfat_prepare_valid_range(inode, zeroed_size,
- -					fault_page_start);
- -			if (err < 0) {
- -				inode_unlock(inode);
- -				return vmf_fs_error(err);
- -			}
- -		}
- -
- -		/*
- -		 * Track zeroed_size by block, not page, because writeback stops
- -		 * at i_size recording blocks wholly beyond it could skip a
- -		 * later required zeroing.
- -		 */
- -		exfat_advance_zeroed_size(ei,
- -				round_up(new_valid_size, i_blocksize(inode)));
- -		exfat_set_valid_size(ei, new_valid_size);
- -		mark_inode_dirty(inode);
- -	}
-++	error =3D exfat_emergency_state(inode->i_sb);
-++	if (unlikely(error))
-++		return vmf_fs_error(error);
++ 	if (!sdev || !scsi_device_online(sdev))
++ 		return -ENODEV;
++=20
+  	cdb[0] =3D send ? SECURITY_PROTOCOL_OUT : SECURITY_PROTOCOL_IN;
+  	cdb[1] =3D UFS_RPMB_SEC_PROTOCOL;
+  	put_unaligned_be16(spsp, &cdb[2]);
+@@@ -74,13 -75,12 +75,12 @@@
  =20
-  	sb_start_pagefault(inode->i_sb);
- -	file_update_time(vmf->vma->vm_file);
- +	error =3D file_update_time(vmf->vma->vm_file);
- +	if (error) {
- +		ret =3D vmf_fs_error(error);
- +		goto out_pagefault;
- +	}
- +	filemap_invalidate_lock_shared(mapping);
- +
- +	if (folio->mapping !=3D mapping || fault_start >=3D i_size_read(inode)) {
- +		ret =3D VM_FAULT_NOPAGE;
- +		goto out_unlock;
- +	}
- +
- +	/* The faulting folio is already populated; initialize only its gap. */
- +	gap_start =3D max(exfat_get_valid_size(ei), exfat_get_zeroed_size(ei));
- +	error =3D exfat_prepare_range(inode, gap_start, fault_start, true);
- +	if (error) {
- +		ret =3D vmf_fs_error(error);
- +		goto out_unlock;
- +	}
+  /* UFS RPMB route frames implementation */
+  static int ufs_rpmb_route_frames(struct device *dev, u8 *req, unsigned in=
+t req_len, u8 *resp,
+- 					unsigned int resp_len)
++ 				 unsigned int resp_len)
+  {
+  	struct ufs_rpmb_dev *ufs_rpmb =3D dev_get_drvdata(dev);
+  	struct rpmb_frame *frm_out =3D (struct rpmb_frame *)req;
+  	bool need_result_read =3D true;
+  	u16 req_type, protocol_id;
+- 	struct ufs_hba *hba;
+  	int ret;
  =20
- -	filemap_invalidate_lock_shared(inode->i_mapping);
-  	ret =3D iomap_page_mkwrite(vmf, exfat_iomap_next, NULL);
- -	filemap_invalidate_unlock_shared(inode->i_mapping);
- +	if (ret =3D=3D VM_FAULT_LOCKED) {
- +		/* Buffered write may have grown EOF before we locked the folio. */
- +		new_valid_size =3D min(folio_next_pos(folio), i_size_read(inode));
- +		exfat_advance_zeroed_size(ei,
- +				round_up(new_valid_size, i_blocksize(inode)));
- +		if (exfat_advance_valid_size(ei, new_valid_size))
- +			mark_inode_dirty(inode);
- +	}
- +out_unlock:
- +	filemap_invalidate_unlock_shared(mapping);
- +out_pagefault:
-  	sb_end_pagefault(inode->i_sb);
- -	inode_unlock(inode);
+  	if (!ufs_rpmb) {
+@@@ -88,8 -88,6 +88,6 @@@
+  		return -ENODEV;
+  	}
  =20
-  	return ret;
+- 	hba =3D ufs_rpmb->hba;
+-=20
+  	/* req_resp is at the end of an RPMB frame. */
+  	if (req_len < sizeof(*frm_out))
+  		return -EINVAL;
+@@@ -122,7 -120,7 +120,7 @@@
+ =20
+  	protocol_id =3D ufs_rpmb->region_id << 8 | UFS_RPMB_SEC_PROTOCOL_ID;
+ =20
+- 	ret =3D ufs_sec_submit(hba, protocol_id, req, req_len, true);
++ 	ret =3D ufs_sec_submit(ufs_rpmb, protocol_id, req, req_len, true);
+  	if (ret) {
+  		dev_err(dev, "Command failed with ret=3D%d\n", ret);
+  		return ret;
+@@@ -133,7 -131,8 +131,8 @@@
+ =20
+  		memset(frm_resp, 0, sizeof(*frm_resp));
+  		put_unaligned_be16(RPMB_RESULT_READ, &frm_resp->req_resp);
+- 		ret =3D ufs_sec_submit(hba, protocol_id, resp, resp_len, true);
++ 		ret =3D ufs_sec_submit(ufs_rpmb, protocol_id, resp, resp_len,
++ 				     true);
+  		if (ret) {
+  			dev_err(dev, "Result read request failed with ret=3D%d\n", ret);
+  			return ret;
+@@@ -141,7 -140,8 +140,8 @@@
+  	}
+ =20
+  	if (!ret) {
+- 		ret =3D ufs_sec_submit(hba, protocol_id, resp, resp_len, false);
++ 		ret =3D ufs_sec_submit(ufs_rpmb, protocol_id, resp, resp_len,
++ 				     false);
+  		if (ret)
+  			dev_err(dev, "Response read failed with ret=3D%d\n", ret);
+  	}
+@@@ -151,23 -151,31 +151,31 @@@
+ =20
+  static void ufs_rpmb_device_release(struct device *dev)
+  {
+- 	struct ufs_rpmb_dev *ufs_rpmb =3D dev_get_drvdata(dev);
++ 	struct ufs_rpmb_dev *ufs_rpmb =3D
++ 		container_of(dev, struct ufs_rpmb_dev, dev);
+ =20
+- 	rpmb_dev_unregister(ufs_rpmb->rdev);
++ 	put_device(&ufs_rpmb->sdev->sdev_gendev);
++ 	kfree(ufs_rpmb);
   }
+ =20
+  /* UFS RPMB device registration */
+  int ufs_rpmb_probe(struct ufs_hba *hba)
+  {
++ 	struct rpmb_descr descr =3D {
++ 		.type =3D RPMB_TYPE_UFS,
++ 		.route_frames =3D ufs_rpmb_route_frames,
++ 		.reliable_wr_count =3D hba->dev_info.rpmb_io_size,
++ 	};
++ 	struct scsi_device *sdev =3D hba->ufs_rpmb_wlun;
+  	struct ufs_rpmb_dev *ufs_rpmb, *it, *tmp;
+  	u8 dev_id[UFS_RPMB_ID_LEN];
+  	struct rpmb_dev *rdev;
+- 	char *cid =3D NULL;
++ 	char *cid;
+  	int region;
+  	u32 cap;
+  	int ret;
+ =20
+- 	if (!hba->ufs_rpmb_wlun || hba->dev_info.b_advanced_rpmb_en) {
++ 	if (!sdev || hba->dev_info.b_advanced_rpmb_en) {
+  		dev_info(hba->dev, "Skip OP-TEE RPMB registration\n");
+  		return -ENODEV;
+  	}
+@@@ -178,26 -186,22 +186,22 @@@
+  		return -EINVAL;
+  	}
+ =20
+- 	struct rpmb_descr descr =3D {
+- 		.type =3D RPMB_TYPE_UFS,
+- 		.route_frames =3D ufs_rpmb_route_frames,
+- 		.reliable_wr_count =3D hba->dev_info.rpmb_io_size,
+- 	};
+-=20
+  	for (region =3D 0; region < ARRAY_SIZE(hba->dev_info.rpmb_region_size); =
+region++) {
+  		cap =3D hba->dev_info.rpmb_region_size[region];
+  		if (!cap)
+  			continue;
+ =20
+- 		ufs_rpmb =3D devm_kzalloc_obj(hba->dev, *ufs_rpmb);
++ 		ufs_rpmb =3D kzalloc_obj(*ufs_rpmb);
+  		if (!ufs_rpmb) {
+  			ret =3D -ENOMEM;
+  			goto err_out;
+  		}
+ =20
+- 		ufs_rpmb->hba =3D hba;
+- 		ufs_rpmb->dev.parent =3D &hba->ufs_rpmb_wlun->sdev_gendev;
+- 		ufs_rpmb->dev.bus =3D &ufs_rpmb_bus_type;
++ 		get_device(&sdev->sdev_gendev);
++=20
++ 		ufs_rpmb->sdev =3D sdev;
++ 		ufs_rpmb->region_id =3D region;
++ 		ufs_rpmb->dev.parent =3D &sdev->sdev_gendev;
+  		ufs_rpmb->dev.release =3D ufs_rpmb_device_release;
+  		dev_set_name(&ufs_rpmb->dev, "ufs_rpmb%d", region);
+ =20
+@@@ -207,16 -211,14 +211,14 @@@
+  		ret =3D device_register(&ufs_rpmb->dev);
+  		if (ret) {
+  			dev_err(hba->dev, "Failed to register UFS RPMB device %d\n", region);
+- 			put_device(&ufs_rpmb->dev);
+- 			goto err_out;
++ 			goto err_put;
+  		}
+ =20
+  		/* Create unique ID by appending region number to device_id */
+  		cid =3D kasprintf(GFP_KERNEL, "%s-R%d", hba->dev_info.device_id, region=
+);
+  		if (!cid) {
+- 			device_unregister(&ufs_rpmb->dev);
+  			ret =3D -ENOMEM;
+- 			goto err_out;
++ 			goto err_unreg;
+  		}
+ =20
+  		blake2b(NULL, 0, cid, strlen(cid), dev_id, UFS_RPMB_ID_LEN);
+@@@ -227,29 -229,30 +229,30 @@@
+ =20
+  		/* Register RPMB device */
+  		rdev =3D rpmb_dev_register(&ufs_rpmb->dev, &descr);
++ 		kfree(cid);
+  		if (IS_ERR(rdev)) {
+  			dev_err(hba->dev, "Failed to register UFS RPMB device.\n");
+- 			device_unregister(&ufs_rpmb->dev);
+  			ret =3D PTR_ERR(rdev);
+- 			goto err_out;
++ 			goto err_unreg;
+  		}
+ =20
+- 		kfree(cid);
+- 		cid =3D NULL;
+-=20
+  		ufs_rpmb->rdev =3D rdev;
+- 		ufs_rpmb->region_id =3D region;
+-=20
+  		list_add_tail(&ufs_rpmb->node, &hba->rpmbs);
+ =20
+  		dev_info(hba->dev, "UFS RPMB region %d registered (capacity=3D%u)\n", r=
+egion, cap);
+  	}
+ =20
+  	return 0;
++=20
++ err_unreg:
++ 	device_unregister(&ufs_rpmb->dev);
++ 	goto err_out;
++ err_put:
++ 	put_device(&ufs_rpmb->dev);
+  err_out:
+- 	kfree(cid);
+  	list_for_each_entry_safe(it, tmp, &hba->rpmbs, node) {
+  		list_del(&it->node);
++ 		rpmb_dev_unregister(it->rdev);
+  		device_unregister(&it->dev);
+  	}
+ =20
+@@@ -269,6 -272,7 +272,7 @@@ void ufs_rpmb_remove(struct ufs_hba *hb
+  		dev_info(hba->dev, "Removing UFS RPMB region %d\n", ufs_rpmb->region_id=
+);
+  		/* Remove from list first */
+  		list_del(&ufs_rpmb->node);
++ 		rpmb_dev_unregister(ufs_rpmb->rdev);
+  		/* Unregister device */
+  		device_unregister(&ufs_rpmb->dev);
+  	}
 
---RvYcReLTk4/oCryJ
+--dNMw2dYTwr9bxi6Q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr9pjcACgkQJNaLcl1U
-h9CRNQf9HRwh6WivFmXClDihSkALarqzK6aq62JMV6DDbAK2m4r0X7DtC/7qOF2s
-TMWyIiJzaQT61qfrjvSaQv5y+mvQesCil8vzPwz/S6q4XnH2p1ccKS9O/JfNZZNH
-D5rafqw22q2PlAhnDWBX3DEIhXOCPShAt/HsB+MKuItT/Uj+RjimrESv1My3ChAL
-AgbZKp4qFs+HHHCrxvkJdT+rPTCslsCk4MV4oASyMITMkzbfO7ou+aDHbls8icMa
-QnCXLyYpkF7xfYGpcS+tZUFfyAxR7FctMXvONGC2FXWSA/7c4zqD1AwlSNfRBDXp
-qXOb8Amf8m9FcHgLxRcuD8bD/TLLoA==
-=iFxA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr9qCAACgkQJNaLcl1U
+h9CSJwf+K5lXaKSZ3EkDFhQods1NvHdRPpx47eH5zad4CiRLG1RuImSJPBs/3Ehq
+mLnKQSYAsA+TqtuMVmgyX0eAk4RZsfWvJQ18XtPV8U5nWqgKdZuDB+3LlZqywNYf
+SEScfRnMnNsoLfnpqpnz9vHswvBGjqMWbuRQTHcLiej4NHqg/lsel3OEAsi4RmOc
+Vf4oHjZRxVoKrQmuWDEYh4ig6o9QPZOJ+2NzDaWsuuHSHtt/FO4VzLHvCvJyHiWM
+jpGC14ZaXj7tLfSeflishAuFIRoIE2hfq81m3KL+7fNe21xXZP2SiyMGqiZAiwWL
+6u13z0V2T7zQ12Kt6GEALnIP4e2cFg==
+=JMCZ
 -----END PGP SIGNATURE-----
 
---RvYcReLTk4/oCryJ--
+--dNMw2dYTwr9bxi6Q--
