@@ -1,54 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795090321;
-	b=oVL8Mf68mTBFM6S5sdZpIPcfDOMQbgdp/Q5LzC9lsmgOia2BnqakU6AA5TAL+WIrz7qR
-	 hyhkn427qFdOXo6fkFrEZNve2oDXHAnucCMECLVPIm082MY0/q/ODCa8G2B3sdz/j6WCR
-	 XVTNXf7pVjXOQA26P7q7kvgQwgVHfLxgMMRcTjsEy0sQIHzWT3HXFGY763jgCjz3lTe0C
-	 w1QqaF6DaGAjPh599JhYEN2YPQZuFQCcaNB73xrsw2Ocg0p85RcTjrcbcPmuAQTsSE93v
-	 raKsm9db2ITmJQca3WoEmKA9jO3N2CcOIVfmFOss45U/jR4sMQyfapTG0X3gS9QZY2A==
+	t=1795103076;
+	b=f1PiR05XwdCIrQ8s1DQnfeQ5KTfdAhA3rZ3p4fIgBh8zVjhO1cGLK1p4kOn4aJKkSB5F
+	 KYeStzKt7x+etr0OdL3CX9sfkqmMJCsGQZJvIA+tMzUePIp9wh3hxBlYvlHFXyoEtrbJ4
+	 Ac6cvmsMey6B158V4iH2FDkMWz8nQn3HGQihK4pS4vYYPljlnT5bzjopdzC6r35+7128W
+	 LNqyeFuZuRU/05470lYQTeYqc0TVg4klg2Zy+7syqT4pzvK3UFAWWgCfJHCrpFK2KsJfG
+	 3wAyCBHJR7drxwj2FpIX+1hmF1pygciOoXQ87XLMphdbgoRvqKKEHXdX6Z6DzBdxB4Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795090321;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795103076;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=zx41qMkLBFw6hL2FFgypUc2nssdoGcaJqxvzFU5UKXk=;
-	b=3TNwwdxIBntPwXTqJU4J+K6feSi4sB6dod7OXqdd4lMSmUOhZn/asomM+eUbOcvNCo8F
-	 UKIus8ruq7TMAcxkJzS74dzmUOXNfPRcFw8Nedelq6nJ6sQLdmP4dwrnaPwYIVMFknwDi
-	 6zomhMixunQtmtlWWgF03rUKLdEe9aXA68Hqejxx7rS52bhaS8sUPAJMvGcs0dGRLfLxL
-	 AJQ5HmD9+XeJQwshnUowwiwzGGSaD+4qoCfdgilYUSqIZVODlPA9tfpEpNeRJXL89IwjE
-	 QeJ55kR6LpqtMf8NhfSN8V6GqPuyyNcqLcdAXm+prhHa0PgaQw3bNhPwNmnskVQCmeA==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=fKajALr1SOuiezqPFQXO6ObieeUylMrOu7BvN80jN5Q=;
+	b=S8S59+0VfzH7HNuoBlYYx4k7AsXk1nIuXYJJHDZglgilf2AM+UjI2bJ1ajeWHje8VBJY
+	 8snPyB4BbeTRc/Toa1IT1we+FRdGqpPg9pPuYwcEgzSAgU+ODhrIS4PDvVdajZF9DmI12
+	 1LXrliz26OARrs3R5x5g+WzfaTIJHyZopG4VBEuccBbzNSuXgYveGY7jsv5mNW6Dy6rSk
+	 NUBYuGoNhKuW737SB5X0NCdOd9t/KZ7/gMqJrBEoZJ7ExPxapBxGRr8x6ltxLf3qIUfrW
+	 M0izHyqgIZTkzHVwiBpGcqsGlmmMWHtkPFS3BK5ZV2hYCM9OsKf+6u4Z3jvFuf9PVIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m8d83hT8;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hHvZCRIi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745E9606A320;
-	Thu, 19 Nov 2026 12:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BF060A260D;
+	Thu, 19 Nov 2026 15:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m8d83hT8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DBD91F000C6;
-	Thu, 19 Nov 2026 12:11:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hHvZCRIi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC8F1F000C5;
+	Thu, 19 Nov 2026 15:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795090320;
-	bh=zx41qMkLBFw6hL2FFgypUc2nssdoGcaJqxvzFU5UKXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=m8d83hT8DJR++jnER0EEdkTgRPw1fo+K6qmpOF2vh/N/+2ZCB8sZgTzaa09YVU1VW
-	 dL1u2r5mlbZqND3yYkGma6Hk0wjqIU5sxHauZLefLfWMPNqSf+llvF6q7Qejrie6TY
-	 ZN+W0kvJ4h7nbUuzocXZetX/hUpIVTAxXop5KvRtyLZcDyrhT5/P1AwYA6X6GD9aUf
-	 G8kH18mf/7s7EKlPFYk/cCZmkMcQ443wYpWElIMoykrFctUhh+X8o5UqwWlOGFQ9MU
-	 BhZRpEILcR9d6hVisAdS+6tKhtu4A7wvVd29+mMhJJj7KAiKQV7UMKOdhMdquQ2I9T
-	 teN9sKkaK5DOw==
-Date: Thu, 19 Nov 2026 13:11:57 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Chi Zhiling <chizhiling@kylinos.cn>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the exfat
- tree
-Message-ID: <20261119-seltsam-quillt-sensor-0227a2cbb99d@brauner>
-References: <av2mOPyANz3H59F5@sirena.org.uk>
+	s=k20260515; t=1795103075;
+	bh=fKajALr1SOuiezqPFQXO6ObieeUylMrOu7BvN80jN5Q=;
+	h=Date:From:To:Cc:Subject;
+	b=hHvZCRIihe86kTQRhG9R6hll+ozOF5fll1k3HaxjFe6WAw7SKeDJgTROE8kgRwM5+
+	 WJYJae0I3l94j93NSo7X0Rpeqb/FbK/ZVsg3Aq8giHjzJdR455rZ9eW9eW4dfKjcQQ
+	 vY29MZXdoEEMnVM3x6aJxpGkop+hpya9PUMgB//lUF9/G/winBPWRjsnIAYO9BQoZJ
+	 IFD3it/S+jCYA/ejr1cgkf+fcudayQoRdoYGn2XCH2J38g0RCpYRRphysj1ssDcVYB
+	 j3K5LoV7Peci+/78N2T+2Q37yWlCkeOARYIMXdwG0bjTd1o5VVjrmbx4mZEQ5DY8ih
+	 wjz1WWGBpcoGA==
+Date: Thu, 19 Nov 2026 15:44:32 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the ext4 tree
+Message-ID: <av8ZYMRMN2w-w0om@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,11 +54,34 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kPvxn0FsyR5Jlwus"
 Content-Disposition: inline
-In-Reply-To: <av2mOPyANz3H59F5@sirena.org.uk>
 
-On Wed, Nov 18, 2026 at 01:20:56PM +0000, Mark Brown wrote:
-> from the vfs-brauner tree.  Again, this needs double checking.
 
-Looks right to me. Thanks!
+--kPvxn0FsyR5Jlwus
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Commit
+
+  42be4bd54735e ("ext4: fix the logical block counter overflow in indirect migration")
+
+is missing a Signed-off-by from its committer
+
+--kPvxn0FsyR5Jlwus
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/GV8ACgkQJNaLcl1U
+h9Alxgf/XAXQ/jyjSBD96HznCE4JC5+kht+qVfFk24HsX+eDVOOQn6fCXDIg0ZRN
+BV+LsuxCJG4x7Yhwqyi9T4kGUohuFK7Php0viUbKbUnSuYuriLMNzen3ge6QZiKj
+for7K7wFIBpdvRxKEUepyWmsp5+3VMcKKTSZRHcVwIC1HZk6nZFA1GBN6IKmeHf/
+Lbnym/tyujJRCmD6HSSINmM7akdoHDL2v3bwRauVLMvCPm3ZYhe4kg/bDvKCdyEy
+9g0nFzc8+2cFxnoi3szdHKgDQJtWvbjKoI7s/zyU+LfmzGL+yZybHr36SBZLRIUL
+QqkMqB5gsmVEck6zFmbGoMLZex1QLQ==
+=iblp
+-----END PGP SIGNATURE-----
+
+--kPvxn0FsyR5Jlwus--
