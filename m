@@ -1,53 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795109390;
-	b=xVSrFPicgWLm/USwhf6ErlHjcQbbUmPxfVl7J/P4IiBTga36wpYpiTBwSOp/xpQPXuJJ
-	 6c7Jf+LO+BPLu8VQtOnpzdgZPz2UZg8Y8a9NaqwqI+GQKXxHhsxG1AHOxU7V7+3hqEoLM
-	 gwNBkAv+Isa6vIF6Q4qHYC0cUTkSuS+2pAQcXVZ5YC4LSu12IxQooVIioCnUwXmvtAM6f
-	 TpISJ48kVsJjKktId6NfQTFAlkl+OuJyB2fjHpiEz7u940apU2WFNii1gikEKMXN2i7wt
-	 wTSgKOtjFCC2ls94OIrv1t5mJt2FXfbOJjQqfpb8gJUSDuVedyCEz0EBEuswLB2y0fQ==
+	t=1795110531;
+	b=GNEtMFlq5jPHXNi9mHwwThzpg4elW50Rb3xRtwMX1n63mXekZOoLO3GtlzbyLKCb5Ixi
+	 fI9hGI7/zHEHEMGl1zoqRqZnUVoZgsgsnP7eWvc9a0hX3EyHtJEIwXNBkgF6Ug3vwHOZX
+	 KXitPHChMKm1jl12C7h9D4ImdRBcDfjPOq+0T9Z4ydO/+iZXTUD1dL4JBT6AhLo8OjeC6
+	 tuj9Dao4XOc7d9zXiNBKIBUttWMF4SSY0YYjFPwoCNVqUVe3irxZw/3VggKzRuK91sGwu
+	 07MBZoYzJDKu54W1DQyqJ+JgVpmr7+kB8Xb2DiHUDHLZQDHrgV+xusFPrT/O6n1mFow==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795109390;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=wB2sgMKnJtDtEWR3D1pZR9JzcTk5RE7d2g1PbIXERiM=;
-	b=ciaqa6bMHulhubbgdab+JxFzqr52oeI/R8DDngBu+oLPmet0Wn423blr438ePwlmJ54f
-	 Avq3tPkXUt2JSh1MNlJ5g7EIxnYDbh214phU9vkOB/F4gNTXvU52UBfpolhkJRUkeIVBl
-	 AXK4idUOmCAmBcwgwti9krBN37PNHpjHi4Yq/lfISELYa48OGZFzuIeGeA+Un71UjLtvq
-	 CfvfiMCuN66G4PTJ9bFdSiIi7izMK0vWXE7ViTOjMshlw+GhesHsqimfZ+C3zn9qNildI
-	 UjpuycEZowwckrmaxIDj6gvFVxVQtFrh/22Zs/t9f/pQL+Sp/r4HuX3SXGJtVKd/+eA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795110531;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=juzIsGJrbHwJRBg9Tz55nWpau+n9tRXOv+2iyOnacXo=;
+	b=HLr5HceROrUA4FJ5i16gXpwND31sJ8CRPLJXiCCCk1D/O/1YnEcbanSoFr810BcqfqTg
+	 0Z9br++6t1pYqCLmnQwVb1A6kZKewYhJsLJNGSqCeymmqBdVrpUAWKmBKGkU5B4kg0zxa
+	 LUEUK2wJePNtclmZuksNNmnsXtphIhZRW6fU0A8E4Ezoc3+L4rFPPjzz2vBqRiP4+WJBs
+	 haJjPY0QAFCY7ze7x2O1p0K2u7g+n7d3VhnZHyLAq4/aR6C8yBK0eM0/SsaLk1nEKdg46
+	 1isuNugTApXHseKi8fEGyblVA8zT3rPpsPsOIWmJ4KqaKjKjhtdOdg1VJz+e16Ssn3Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQWq+MBI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NmQfptd5;
+	arc=none smtp.remote-ip=192.198.163.8
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525A3606A324;
-	Thu, 19 Nov 2026 17:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593B606A325;
+	Thu, 19 Nov 2026 17:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8593B606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQWq+MBI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACDC61F000C5;
-	Thu, 19 Nov 2026 17:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795109389;
-	bh=wB2sgMKnJtDtEWR3D1pZR9JzcTk5RE7d2g1PbIXERiM=;
-	h=Date:From:To:Cc:Subject;
-	b=hQWq+MBIrLWq6lGFMxODKYDRPYeuj0brCOijufDsrCstdCX5gRVW3ofhCexCl6Ew7
-	 sO+Vg2s84CWLh45djacYIydHNdpAqCImvYwZlZ9Wh9CtMMSqPpZ+S27OI2GRH7ACxK
-	 BRzhPdi4LwUGpTDNHzQ2FuER9SwF5lJRW76Pm1/T6p5/IW7KUlT27kGwHEDGP2u7e7
-	 ezSASlqjFWMwQXZusMwBr3FW6Y29kfY3LcCY7Z4OsNlvivRRryUmQ+VIdRR8r1Jx0W
-	 W8Cc40tw2BzLnmCmzY50hzIE6Hc4wAgvy3v05ibbQG9jy3Cg9B+3uDfWT+wrMN8Bvr
-	 gGGm2Z2mk1lZw==
-Date: Thu, 19 Nov 2026 17:29:46 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NmQfptd5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795110531; x=1826646531;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UlaoukuZS7x22+BAxbH31K4PW51oC55ssrBAHfL27s8=;
+  b=NmQfptd56UBdYgQk1LZmg/od39PWjzwioEhObJi9n2oZq3x+fYcXUgfv
+   6xlEHWz6qLyxmAcMo164piNIqWED8flskNOk8RicAPriVwDQxz9iM4syu
+   9M1XNCcapppdzL+TRd4sER2lmbfLrBx4fCS46IzHd5hyuKDSFbZ8JvnIt
+   lCLDgLY+v/Cqlj+Ipzh+W267CVzOywxs0ig66C4Bgu9wji5PNNuVO9V6p
+   ow4Lo/mU9eRjPdntygiCfeL/uifBDmGbdw6x+JKGmVGmUflxehUXnnt1P
+   Owz/YHUtu5neevq7C8i9Pmj+L5NjkaTU4zUn4I0QAniCuZaI8UAL5ngRQ
+   Q==;
+X-CSE-ConnectionGUID: hHXuyapvRTqpBKlhVuldqg==
+X-CSE-MsgGUID: VzdHcjkKRA2o/EnwOLg3Tw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11971"; a="3870891"
+X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
+   d="scan'208";a="3870891"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2026 09:48:50 -0800
+X-CSE-ConnectionGUID: W3q+yw74TXq/u1ZspQOn6g==
+X-CSE-MsgGUID: Arlvnx/bQgup7FqS2AkVHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
+   d="scan'208";a="10784061"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.61])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2026 09:48:48 -0800
+Date: Thu, 19 Nov 2026 19:48:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the pinctrl-intel tree with the origin
- tree
-Message-ID: <av8yCr4r_U8R_mul@sirena.org.uk>
+Subject: Re: linux-next: manual merge of the pinctrl-intel tree with the
+ origin tree
+Message-ID: <av82fbjKtHu6n66C@ashevche-desk.local>
+References: <av8yCr4r_U8R_mul@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,105 +80,40 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WR6kv7pt4EvtAmgX"
-Content-Disposition: inline
-
-
---WR6kv7pt4EvtAmgX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <av8yCr4r_U8R_mul@sirena.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi all,
+On Thu, Nov 19, 2026 at 05:29:46PM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the pinctrl-intel tree got a conflict in:
+> 
+>   drivers/pinctrl/intel/pinctrl-intel.c
+> 
+> between commit:
+> 
+>   4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmalloc_obj() family")
+> 
+> from the origin tree and commit:
+> 
+>   34925b925793b ("pinctrl: intel: define iterator variables inside for-loop")
+> 
+> from the pinctrl-intel tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Today's linux-next merge of the pinctrl-intel tree got a conflict in:
+Thanks, it is correct resolution.
 
-  drivers/pinctrl/intel/pinctrl-intel.c
+-- 
+With Best Regards,
+Andy Shevchenko
 
-between commit:
 
-  4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmall=
-oc_obj() family")
-
-=66rom the origin tree and commit:
-
-  34925b925793b ("pinctrl: intel: define iterator variables inside for-loop=
-")
-
-=66rom the pinctrl-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/pinctrl/intel/pinctrl-intel.c
-index 51a86975909cf,833640fc40b09..0000000000000
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@@ -1437,10 -1434,10 +1434,10 @@@ static int intel_pinctrl_add_padgroups_
-  					       struct intel_community *community)
-  {
-  	struct intel_padgroup *gpps;
-+ 	unsigned int ngpps =3D community->ngpps;
-  	unsigned int padown_num =3D 0;
-- 	size_t i, ngpps =3D community->ngpps;
- =20
- -	gpps =3D devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
- +	gpps =3D devm_kzalloc_objs(pctrl->dev, *gpps, ngpps);
-  	if (!gpps)
-  		return -ENOMEM;
- =20
-@@@ -1484,7 -1480,8 +1480,8 @@@ static int intel_pinctrl_add_padgroups_
-  	if (community->gpp_size > INTEL_PINCTRL_MAX_GPP_SIZE)
-  		return -EINVAL;
- =20
-+ 	ngpps =3D DIV_ROUND_UP(npins, community->gpp_size);
- -	gpps =3D devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
- +	gpps =3D devm_kzalloc_objs(pctrl->dev, *gpps, ngpps);
-  	if (!gpps)
-  		return -ENOMEM;
- =20
-@@@ -1514,9 -1511,8 +1511,8 @@@ static int intel_pinctrl_pm_init(struc
-  	const struct intel_pinctrl_soc_data *soc =3D pctrl->soc;
-  	struct intel_community_context *communities;
-  	struct intel_pad_context *pads;
-- 	int i;
- =20
- -	pads =3D devm_kcalloc(pctrl->dev, soc->npins, sizeof(*pads), GFP_KERNEL);
- +	pads =3D devm_kzalloc_objs(pctrl->dev, *pads, soc->npins);
-  	if (!pads)
-  		return -ENOMEM;
- =20
-@@@ -1580,9 -1576,9 +1576,9 @@@ int intel_pinctrl_probe(struct platform
-  {
-  	struct device *dev =3D &pdev->dev;
-  	struct intel_pinctrl *pctrl;
-- 	int i, ret, irq;
-+ 	int ret, irq;
- =20
- -	pctrl =3D devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
- +	pctrl =3D devm_kzalloc_obj(dev, *pctrl);
-  	if (!pctrl)
-  		return -ENOMEM;
- =20
-
---WR6kv7pt4EvtAmgX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/MgkACgkQJNaLcl1U
-h9DV4Af+IUz4+wrsNh9UX/M9yuVTLpyYRMKdyDyB/PD6gNs/GmzHgK9D0p7nMKO9
-cKg+j74j2XCCpSgN4WzYwKFlG5ZEYWVLsmaD864TVnfbQXcoCT8GoclhU8SVhrHS
-hWIqsBuVf1ocYdE/4oStpifCvNmCDppKahSDikDnl9JqV87ej7Pgf9WDRwAucf2b
-r2JpsicUiki3Fz09sdolfDwVOAB1cbfQXHixzgeB+9REO4w6hmdgQ3y2dBYKmRch
-gASd9av2nHo5ozQurbeOL9wk/g9n0pYNk4AMo5L62aD+ABFn5DkXGQlA1FBm7K//
-+dnV1Oxs3iAii3BHH+KBRmi5RM8aaw==
-=d6pM
------END PGP SIGNATURE-----
-
---WR6kv7pt4EvtAmgX--
