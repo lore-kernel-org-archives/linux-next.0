@@ -1,50 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795103137;
-	b=1Y5oz1DBV27EXlkbJfrGkTJ/uDSJivLhOdxjk5CbmlyDJ0g3su2L0S8nkHynMK+sA5O0
-	 61KvRgbw/tPLm8vBuoAJ8FuuyOMXPIIQXL1fSI2B8OCDYai/XTWO7GAOIbcQ+K26YTaFu
-	 8VxOYn30A6GsU7U1V0FjpyuQwmHKjyHezPD2RNdzs+KvkpHRieJapjYWnqjkyBc+3RIOV
-	 aQ0JK29vjfN0wtpn7A3jwlRrtvpfnh6IGtQIQPDNUd4ZcmawJ2ZL+JaAxZfQWn3YSj9ZP
-	 y+O6Yt+Go4bjSV6as+8umXTxYAd9r6QTyLqatzGlIQvIaFT4GmpzJWjPdAmWa/Z4NJQ==
+	t=1795103148;
+	b=j4gGl1Udzt4/EiXWU6Z8SDUuWQy33n15G9R3iFnWkcx2XJqDbd7cVMjaVgD8KTljxy4q
+	 rM57jHLuuvT6mpTuw3URjsi84oO6BJ8qxskFAf0DLY7+ExmMUvWZopOr6mnOK6N2LWBCc
+	 XZ6jYWW8B5YhfgJztW09d7BjeOf6YwvI++0PjE8yXsD/46wjwZSN/NQjRE2PPcfUnwOey
+	 LeyMSPQVguWWDXDGB697aCBh8BltU8FhChBrjhUrFY6OQJ5Empep08moA+choUaA4vUmu
+	 tgklpND/Sj0VSQjmleb2KqIlLo9o0kRI/rnHbCuN1q4x6V+OhObogZrgGHipIKmIjGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795103137;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795103148;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition:Farom;
-	bh=QdkOrWQj9y1BN6Sn95bbETHFhevG0nqUhaeoczAxjKA=;
-	b=NzRqUGPq/YFMqasbMFIeYcw1DKlDMExdlgigAj3aVFIvDtVLq8KVT7oI/7fEoei/Rnbz
-	 5EVNrd8TVTq2n7QjmxTbX19iF/1Z6shRxGVyEheGvq2XeEqmFwma/qu1sTGTpdgVZqWo1
-	 SxCLnv05Gy1pcFZG+oAoFDs1WFyj3ocY4OeaSG24Tl9kLDlXtN3rPJdFFssxLMm3TvMJF
-	 MWzqzS+3i2qo+aG9+/vIT+6/SnmTdiolySmFGkzhID69fpsr2DUnQ3AlzyYi3H+pMCWCl
-	 vrkk6u6J+TbQar0wLc7W+0h6TFLqku/lNWseeoqiBILGCNCViF42bx3tdjSbYFhISxw==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=uhwbWbwezQMKTneP5Rq7mAr3OzOECYlGrnFNDcwBY4k=;
+	b=scE/AeJvuFe7CsQk88QC0CXcDpdDEyXrL1/0eH9Tkw+iMT1ndMO2FZnowENqxjy6Qqxc
+	 XrSSV6hH7hPF0iVt4XvYGohwkP8P+YYPLpzfI6T4LLm/KjYjvcdxwyEYDWgxexRvbjWpj
+	 4O4NbYeqgB/M8vAhSC0UEyOodyzVDF2sM+ZUZSoGpWr6Z93i8O5VcdHaxqx1323jruyQw
+	 /hba8wrNtnrhLtY/vg9aXuyPM+RtlZEpt4+7/Q6TOsXHKhxr3wTu8ToJUe/cwshiMNDkr
+	 FEDsffL9yO/r1ml1jxpEaI/Tfml0ZJlw9Nky2XqNiH5xT+ZFj46ziyVxO6t4HGVyfog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JQP8A8aE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mz3hVslT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A13B606A32A;
-	Thu, 19 Nov 2026 15:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB9F606A320;
+	Thu, 19 Nov 2026 15:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JQP8A8aE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5961F000C4;
-	Thu, 19 Nov 2026 15:45:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mz3hVslT
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A011F000C4;
+	Thu, 19 Nov 2026 15:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795103136;
-	bh=QdkOrWQj9y1BN6Sn95bbETHFhevG0nqUhaeoczAxjKA=;
+	s=k20260515; t=1795103147;
+	bh=uhwbWbwezQMKTneP5Rq7mAr3OzOECYlGrnFNDcwBY4k=;
 	h=Date:From:To:Cc:Subject;
-	b=JQP8A8aEcEcUtS8xGEN1bERrEGVFhHEiLkETwO1qkXFkF/0xVb4+hpDt4R5SW/CF4
-	 /3jYUNnVO9qIU8gLPr6yeNYhdqI0d8deaGBi1Lsn527xPkWwmh/LEOWRK2rbeQc+b3
-	 7o6KtbUnnPgEOPdRvoyXsBtmvQyXZE3DzdhDiz+eU5ovNT0S308kbJ0NuLhO7jwmZg
-	 /qDAmnfIaNoh8nTYLD7F2fO/+PqgOwLpeNTHssU/nSYBiPwSRhi0gPNfu5Rh4XcW5B
-	 aI2c6eU7TGEjSW1zC7sj3a5TkrY7FynUVAQpwo3ZbR3MsOd7VbWycNFnsBXFd5Kz+g
-	 iw+c6sNGxzLjQ==
-Date: Thu, 19 Nov 2026 15:45:33 +0000
+	b=Mz3hVslTqsu+fqmTg8nI50cQsB2wkf6Qv2K9S9AEoSE1BOm/aV0JdIHR4LB5Mf5b+
+	 9VIHuwtR1wneAaATA4XFECYp/179AtYqc0Msp5FOOIijDdiHVRuFaf6vnv4Eox912R
+	 xQMjzJzkRzW4pvVeeev23GtYnQmXi//vVKR4kOGcqrirRu0g79o/VVDIxcTYnhQVBg
+	 4/mYZlbVnVZXAYJtRXL6IN9NoJLIie2UvDPAWoFzk8XM+yQHU4emLCWgR/QpKG5vXm
+	 xSG808MhZw0LMNR//arr7hrnJHeuth+VLHcwVdy8op3ii5plfCrT+0yMb0RqamkgaY
+	 fmz6N0AELa5NA==
+Date: Thu, 19 Nov 2026 15:45:43 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the fbdev tree
-Message-ID: <av8ZkEpTI8GdF20A@sirena.org.uk>
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
+Cc: Dezhen Lu <dezhen.lu@student.uni-tuebingen.de>,
+	Edward Srouji <edwards@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Uri Dar <udar@nvidia.com>
+Subject: linux-next: manual merge of the rdma tree with the rdma-fixes tree
+Message-ID: <av8Zp9_kHuIN-wHt@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,36 +60,68 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q+xsiUYLYUJ+lwdd"
+	protocol="application/pgp-signature"; boundary="A3LzIf6/YMNdIb3r"
 Content-Disposition: inline
-Farom: Mark Brown <broonie@kernel.org>
 
 
---q+xsiUYLYUJ+lwdd
+--A3LzIf6/YMNdIb3r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commits
+Hi all,
 
-  82b3e4a350659 ("fbdev: smscufx: allocate the size advertised in smem_len")
-  40c6df95830de ("fbdev: smscufx: keep the usb_device alive while ufx_data is in use")
-  cc8f68ca28201 ("fbdev: smscufx: don't free registered framebuffer on probe error")
+Today's linux-next merge of the rdma tree got a conflict in:
 
-are missing a Signed-off-by from their authors
+  drivers/infiniband/hw/mlx5/devx.c
 
---q+xsiUYLYUJ+lwdd
+between commit:
+
+  b5c11bf975983 ("RDMA/mlx5: Fix DevX umem page size truncation for pages >=
+=3D 4G")
+
+=66rom the rdma-fixes tree and commit:
+
+  bbd8ba74c5a37 ("RDMA/mlx5: Fix DEVX UMEM mailbox size truncation")
+
+=66rom the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/infiniband/hw/mlx5/devx.c
+index 2277160d9a33b,5ba783bc7f9b7..0000000000000
+--- a/drivers/infiniband/hw/mlx5/devx.c
++++ b/drivers/infiniband/hw/mlx5/devx.c
+@@@ -2333,7 -2337,9 +2337,9 @@@ static int devx_umem_reg_cmd_alloc(stru
+  				   int access)
+  {
+  	unsigned long pgsz_bitmap;
+ -	unsigned int page_size;
+ +	unsigned long page_size;
++ 	size_t num_mtt;
++ 	size_t inlen;
+  	__be64 *mtt;
+  	void *umem;
+  	int ret;
+
+--A3LzIf6/YMNdIb3r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/GZwACgkQJNaLcl1U
-h9C/lgf7B7FffRWTuGCp0P8bfx0vVWy09P0g5dJIh4woV9g92z6GJ1e5HiMI9Boq
-jz/80Ajk5BrOioc2DeGjcmS/efiCZvUJvvOJif0EoZanGxLUE41d9v97lBDo3XaN
-T95BxfJd2kbmzU9/OcJjdMz15kQxe01iUwItWIOe6/3Y0J+F8SHx8X2YynMVYNMt
-XRHCVXR/RixbBkZFE4owmmYJLFvTIDq9bjALHUFtG8OFZJd3kWm8FLIchxk82gaO
-QI8dwRf+vzxjv9YYAzgSM9TNKdMc8HICcrcYM9m1SgYrocgTt9NEFWgPnIv7A3Ov
-WGbrbge9h0vlohwGOc0ufgSb7C/MEg==
-=KPXI
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/GaYACgkQJNaLcl1U
+h9AKQgf8Dc29XsDzYzODAXh2othD7+haXtI7SaGZrHDZRznY1TbkI5B/s3TQEzbK
+Gl+paZD4U0cZhkYrzJjL9o/yD0UYC1rot+4LUQK1sD7nD86JrCTqkKrnbsg3JdfS
+l4g65oKW/dIsuL+K0a2N33O0/XNcfK4Uwlw8rX1mFvaaUJ5NOa+PFTAOgKboYwJh
+xPZqvHNmCbwqnUaWbK4PBmDlPhsL7QRhE60u0V8qejGN65vsaNobN67vrYSaBGSu
+QDVSTAOAw9e34Vt3BAEpdElqr3umjxm6lxzkFY7kOuNn0XLD6UERKPg8QJC6tcan
+TdwPEle851TfbkIR922Fw3MHIDqlag==
+=VxH5
 -----END PGP SIGNATURE-----
 
---q+xsiUYLYUJ+lwdd--
+--A3LzIf6/YMNdIb3r--
