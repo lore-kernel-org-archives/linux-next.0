@@ -1,50 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795103076;
-	b=f1PiR05XwdCIrQ8s1DQnfeQ5KTfdAhA3rZ3p4fIgBh8zVjhO1cGLK1p4kOn4aJKkSB5F
-	 KYeStzKt7x+etr0OdL3CX9sfkqmMJCsGQZJvIA+tMzUePIp9wh3hxBlYvlHFXyoEtrbJ4
-	 Ac6cvmsMey6B158V4iH2FDkMWz8nQn3HGQihK4pS4vYYPljlnT5bzjopdzC6r35+7128W
-	 LNqyeFuZuRU/05470lYQTeYqc0TVg4klg2Zy+7syqT4pzvK3UFAWWgCfJHCrpFK2KsJfG
-	 3wAyCBHJR7drxwj2FpIX+1hmF1pygciOoXQ87XLMphdbgoRvqKKEHXdX6Z6DzBdxB4Q==
+	t=1795103137;
+	b=1Y5oz1DBV27EXlkbJfrGkTJ/uDSJivLhOdxjk5CbmlyDJ0g3su2L0S8nkHynMK+sA5O0
+	 61KvRgbw/tPLm8vBuoAJ8FuuyOMXPIIQXL1fSI2B8OCDYai/XTWO7GAOIbcQ+K26YTaFu
+	 8VxOYn30A6GsU7U1V0FjpyuQwmHKjyHezPD2RNdzs+KvkpHRieJapjYWnqjkyBc+3RIOV
+	 aQ0JK29vjfN0wtpn7A3jwlRrtvpfnh6IGtQIQPDNUd4ZcmawJ2ZL+JaAxZfQWn3YSj9ZP
+	 y+O6Yt+Go4bjSV6as+8umXTxYAd9r6QTyLqatzGlIQvIaFT4GmpzJWjPdAmWa/Z4NJQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795103076;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795103137;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=fKajALr1SOuiezqPFQXO6ObieeUylMrOu7BvN80jN5Q=;
-	b=S8S59+0VfzH7HNuoBlYYx4k7AsXk1nIuXYJJHDZglgilf2AM+UjI2bJ1ajeWHje8VBJY
-	 8snPyB4BbeTRc/Toa1IT1we+FRdGqpPg9pPuYwcEgzSAgU+ODhrIS4PDvVdajZF9DmI12
-	 1LXrliz26OARrs3R5x5g+WzfaTIJHyZopG4VBEuccBbzNSuXgYveGY7jsv5mNW6Dy6rSk
-	 NUBYuGoNhKuW737SB5X0NCdOd9t/KZ7/gMqJrBEoZJ7ExPxapBxGRr8x6ltxLf3qIUfrW
-	 M0izHyqgIZTkzHVwiBpGcqsGlmmMWHtkPFS3BK5ZV2hYCM9OsKf+6u4Z3jvFuf9PVIw==
+	 MIME-Version:Content-Type:Content-Disposition:Farom;
+	bh=QdkOrWQj9y1BN6Sn95bbETHFhevG0nqUhaeoczAxjKA=;
+	b=NzRqUGPq/YFMqasbMFIeYcw1DKlDMExdlgigAj3aVFIvDtVLq8KVT7oI/7fEoei/Rnbz
+	 5EVNrd8TVTq2n7QjmxTbX19iF/1Z6shRxGVyEheGvq2XeEqmFwma/qu1sTGTpdgVZqWo1
+	 SxCLnv05Gy1pcFZG+oAoFDs1WFyj3ocY4OeaSG24Tl9kLDlXtN3rPJdFFssxLMm3TvMJF
+	 MWzqzS+3i2qo+aG9+/vIT+6/SnmTdiolySmFGkzhID69fpsr2DUnQ3AlzyYi3H+pMCWCl
+	 vrkk6u6J+TbQar0wLc7W+0h6TFLqku/lNWseeoqiBILGCNCViF42bx3tdjSbYFhISxw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hHvZCRIi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JQP8A8aE;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BF060A260D;
-	Thu, 19 Nov 2026 15:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A13B606A32A;
+	Thu, 19 Nov 2026 15:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hHvZCRIi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC8F1F000C5;
-	Thu, 19 Nov 2026 15:44:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JQP8A8aE
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5961F000C4;
+	Thu, 19 Nov 2026 15:45:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795103075;
-	bh=fKajALr1SOuiezqPFQXO6ObieeUylMrOu7BvN80jN5Q=;
+	s=k20260515; t=1795103136;
+	bh=QdkOrWQj9y1BN6Sn95bbETHFhevG0nqUhaeoczAxjKA=;
 	h=Date:From:To:Cc:Subject;
-	b=hHvZCRIihe86kTQRhG9R6hll+ozOF5fll1k3HaxjFe6WAw7SKeDJgTROE8kgRwM5+
-	 WJYJae0I3l94j93NSo7X0Rpeqb/FbK/ZVsg3Aq8giHjzJdR455rZ9eW9eW4dfKjcQQ
-	 vY29MZXdoEEMnVM3x6aJxpGkop+hpya9PUMgB//lUF9/G/winBPWRjsnIAYO9BQoZJ
-	 IFD3it/S+jCYA/ejr1cgkf+fcudayQoRdoYGn2XCH2J38g0RCpYRRphysj1ssDcVYB
-	 j3K5LoV7Peci+/78N2T+2Q37yWlCkeOARYIMXdwG0bjTd1o5VVjrmbx4mZEQ5DY8ih
-	 wjz1WWGBpcoGA==
-Date: Thu, 19 Nov 2026 15:44:32 +0000
+	b=JQP8A8aEcEcUtS8xGEN1bERrEGVFhHEiLkETwO1qkXFkF/0xVb4+hpDt4R5SW/CF4
+	 /3jYUNnVO9qIU8gLPr6yeNYhdqI0d8deaGBi1Lsn527xPkWwmh/LEOWRK2rbeQc+b3
+	 7o6KtbUnnPgEOPdRvoyXsBtmvQyXZE3DzdhDiz+eU5ovNT0S308kbJ0NuLhO7jwmZg
+	 /qDAmnfIaNoh8nTYLD7F2fO/+PqgOwLpeNTHssU/nSYBiPwSRhi0gPNfu5Rh4XcW5B
+	 aI2c6eU7TGEjSW1zC7sj3a5TkrY7FynUVAQpwo3ZbR3MsOd7VbWycNFnsBXFd5Kz+g
+	 iw+c6sNGxzLjQ==
+Date: Thu, 19 Nov 2026 15:45:33 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
+To: Helge Deller <deller@gmx.de>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the ext4 tree
-Message-ID: <av8ZYMRMN2w-w0om@sirena.org.uk>
+Subject: Missing signoff in the fbdev tree
+Message-ID: <av8ZkEpTI8GdF20A@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,33 +55,36 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kPvxn0FsyR5Jlwus"
+	protocol="application/pgp-signature"; boundary="q+xsiUYLYUJ+lwdd"
 Content-Disposition: inline
+Farom: Mark Brown <broonie@kernel.org>
 
 
---kPvxn0FsyR5Jlwus
+--q+xsiUYLYUJ+lwdd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+Commits
 
-  42be4bd54735e ("ext4: fix the logical block counter overflow in indirect migration")
+  82b3e4a350659 ("fbdev: smscufx: allocate the size advertised in smem_len")
+  40c6df95830de ("fbdev: smscufx: keep the usb_device alive while ufx_data is in use")
+  cc8f68ca28201 ("fbdev: smscufx: don't free registered framebuffer on probe error")
 
-is missing a Signed-off-by from its committer
+are missing a Signed-off-by from their authors
 
---kPvxn0FsyR5Jlwus
+--q+xsiUYLYUJ+lwdd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/GV8ACgkQJNaLcl1U
-h9Alxgf/XAXQ/jyjSBD96HznCE4JC5+kht+qVfFk24HsX+eDVOOQn6fCXDIg0ZRN
-BV+LsuxCJG4x7Yhwqyi9T4kGUohuFK7Php0viUbKbUnSuYuriLMNzen3ge6QZiKj
-for7K7wFIBpdvRxKEUepyWmsp5+3VMcKKTSZRHcVwIC1HZk6nZFA1GBN6IKmeHf/
-Lbnym/tyujJRCmD6HSSINmM7akdoHDL2v3bwRauVLMvCPm3ZYhe4kg/bDvKCdyEy
-9g0nFzc8+2cFxnoi3szdHKgDQJtWvbjKoI7s/zyU+LfmzGL+yZybHr36SBZLRIUL
-QqkMqB5gsmVEck6zFmbGoMLZex1QLQ==
-=iblp
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/GZwACgkQJNaLcl1U
+h9C/lgf7B7FffRWTuGCp0P8bfx0vVWy09P0g5dJIh4woV9g92z6GJ1e5HiMI9Boq
+jz/80Ajk5BrOioc2DeGjcmS/efiCZvUJvvOJif0EoZanGxLUE41d9v97lBDo3XaN
+T95BxfJd2kbmzU9/OcJjdMz15kQxe01iUwItWIOe6/3Y0J+F8SHx8X2YynMVYNMt
+XRHCVXR/RixbBkZFE4owmmYJLFvTIDq9bjALHUFtG8OFZJd3kWm8FLIchxk82gaO
+QI8dwRf+vzxjv9YYAzgSM9TNKdMc8HICcrcYM9m1SgYrocgTt9NEFWgPnIv7A3Ov
+WGbrbge9h0vlohwGOc0ufgSb7C/MEg==
+=KPXI
 -----END PGP SIGNATURE-----
 
---kPvxn0FsyR5Jlwus--
+--q+xsiUYLYUJ+lwdd--
