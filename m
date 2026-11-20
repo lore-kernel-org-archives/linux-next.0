@@ -1,50 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795113384;
-	b=xEX43qPU8bLtO4ZKyrOs9LtnP41GkN8q4vIWrsi+9P6nFWdvbH47NIib6k2hifdFr0ef
-	 qrMgdP5c9Gemr76wn11CUppTo+qJaPUVV52Y8/wmP8HFbmHbM36rMbYWZu2x8ZSP59RY+
-	 shCgVe3+0EBEWCg35d3RnzCZOho8i9oEbZUeiGLrbYlsNYRb7Tt6jJmIw/LOHwdmItcx3
-	 kJNlcf3++cK6Xsc73Dft6Ou9pVeidpzlM7FlvlPnq3BAM+p+YmfHWHqBz2jIYncuDHHr9
-	 GLaxbD/uudj7hTvF6velgfJoyeK3J8inIv1Q5ZGU12n4dvoS+8RbMifnZmLfu1JGJbQ==
+	t=1795134910;
+	b=iDD04dYiRUNfpuqIM3oKASMXO3T0WRIU3ZtlUugMjTLF4uexYvnGNwae5W1aqZJ4iflG
+	 6TRx1W6UvKqH54K0RdSgRD9FW7a1Xyf9xcCxDUKvGessFNZU9gH8iaxCjN5ugCjHEM2o/
+	 5YGfOqVMleoPT1Mi+mUxvm3HOPei3X+IprLAjuR60mfJxctlnpzmzc9A9Wvjl/lAmnDyI
+	 /K7ld/BjUOmWd1heC8tJy1dN0wtdhmnbHUGF+YJLXfWXv+xrP/FinzpmUVttfGyOdEAZy
+	 qceHNl4wPOZUh7ie+UaJORhitWL/hE9VYKQL2GkcQ/qqrtl0kgmFVQbbYWzfP5gt3PA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795113384;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=BHlSCOMCrr1jVkyfGghKlD5GkVt68d3E9cGLbCL9mqk=;
-	b=xy/A9imPiP6kOzTc8TBu+nMY5AXw6xobk7BlE3RGmiZxw6pVWtFc0yEFdTlTwhsei3X9
-	 1AMGuLSx4Cg5DhuOkfzCxa9FfLqzo3K65HdtMF2nBZjN77HmGeAcOJWLKPW2U7VjuKfDH
-	 YMRfg5EQTNJMsEzwR8SgUIsoSrz9DFA1IcHWfgeIVBZhrgFR6fQC160DezLfGVcBhidUB
-	 VxVwUyGi31T8C0Ul73Ji7xBqobhGzNaHWQp7dmnYXFGZIZxVz+s5Ntb5L9mWxc/6L2Bpz
-	 dSjIKC3DlZgdYNJgtMYRcn0gCuHsaqmQfOIRL4IwvGzhyWhPfTwrQ14PElHAXD1HmXw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795134910;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=rcPnb0S0VMJ8ztk6/Lua9wBTwaFCuXSAKzGqIYJcgy0=;
+	b=2xCZq/gUNUUIu8IsnVhbzUoKCdSTNZVIu9A0WO3SEWat2xVko7ZoWhsAwaQnoWIaD0nX
+	 fHZKN18EUXezfMCnRC6CTTP4D+pPJRYgHXq+0x3CsgYM9TbY6OOrpjSrvDD4t+FRW1iI1
+	 yj/PE8i86PQ/5XgwoKz1mCSqrJ7QEb3kxUYyq2kpCf1BdSievTkzqB7I8geyj6VyoGmRN
+	 51RuTuUWl/GZ+Hfr7BODhZZOdqFtQW1On3j5D20hzhGU8UrT2I0fKdRpZYFbo71QwZju7
+	 UMr+sBexhrKYU38u3YtPdEmHL01Mt7FUzz3bo2yZv5uhAIJcq3dV0WCNoES3gn8vUPg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="VVanE/wF";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Zuc7g0F/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B704D606A320;
-	Thu, 19 Nov 2026 18:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A331A606A320;
+	Fri, 20 Nov 2026 00:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VVanE/wF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAADB1F000C5;
-	Thu, 19 Nov 2026 18:36:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zuc7g0F/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79CFF1F000C4;
+	Fri, 20 Nov 2026 00:35:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795113384;
-	bh=BHlSCOMCrr1jVkyfGghKlD5GkVt68d3E9cGLbCL9mqk=;
-	h=Date:From:To:Cc:Subject;
-	b=VVanE/wFZ8/Ht+eYGyqsz/0lOpL5HMplPTTlpbFbiA/edVt3LoO3BsX+ratBunqaG
-	 OuWt08rJiSZkdaVR5GCsVwunih7wvVjZZkxtrt6cd37sHVRaSc+WHgzyRaLjk4GcmY
-	 7qnwla8tf60yebhlhr6allfggvQhF/dP0X430Sjs+83bcpCmswo8FcLhdCiTPnkf+N
-	 mmIP5G9xe2DAshnM9ei7UUg7xCeW2/WUF8jz5oQAi1pToWTCGdHHS6W/S3YMAgVM9r
-	 ncCYFiOUlhag9UcBp170Q5Y1hIGzR31JKxZ0Fk3igFRyQKDKmSNDSQdirV8rufi3RK
-	 2gRNEr8JXGWLw==
-Date: Thu, 19 Nov 2026 18:36:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Nov 19
-Message-ID: <av9BpDfR2CV2Pz4j@sirena.org.uk>
+	s=k20260515; t=1795134910;
+	bh=rcPnb0S0VMJ8ztk6/Lua9wBTwaFCuXSAKzGqIYJcgy0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Zuc7g0F/pu1e3R3C48EurVqsDljw2LumTnjjYJSLqUXLQbjN6OWe58sCbCVoCOqQs
+	 ufT0lMACda/SVSTlpbAqez3upBeLESKk1kPR/ZPTRih4XbE0pub+7pD2QWSc0GxuHF
+	 Ul2f7QyQQE1WSD4QQUvg4DQTLQwFn2TL/efejGAl09GGITlDuckWpldtRRyEGa/Ul2
+	 zKhfZOGGkl8XPQvk3EvuKzAmCD+Vqmq04jNDuygKlNrXhUMnT0bhIiTbAe28ja1jOt
+	 mQAVIOMz5aXAKV0HRFQFstKenB7p5z42T9g9zJPEaURBahdzWxFeFFBcJCEsnVluhe
+	 fF/cHF7juxI4g==
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Chi Zhiling <chizhiling@kylinos.cn>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH linux-next] exfat: check the emergency state in exfat_writeback_range()
+Date: Thu, 19 Nov 2026 19:35:08 -0500
+Message-ID: <20261120003508.2135492-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <av2mOPyANz3H59F5@sirena.org.uk>
+References: <av2mOPyANz3H59F5@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -54,74 +61,54 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SC585TJhjXrTigAp"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+The vfs.all merge in next-20261119 takes the exfat side in
+exfat_writepages(), where b900c61a3f21 ("exfat: drain dirty pages after
+forced shutdown") moved the shutdown check into exfat_writeback_range(),
+but leaves exfat_writeback_range() with exfat_forced_shutdown(). So the
+exfat_emergency_state() check that 788f21d1f192 ("exfat: don't set
+SB_RDONLY after filesystem errors") adds to writeback is lost, and after
+an error with errors=remount-ro writeback keeps writing dirty data.
 
---SC585TJhjXrTigAp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+next-20261118 had exfat_emergency_state() in exfat_writeback_range().
+Put it back.
 
-Hi all,
+Fixes: 026bdab726d8 ("Merge branch 'vfs.all' of https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git")
+Link: https://lore.kernel.org/all/av2mOPyANz3H59F5@sirena.org.uk/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+This is for folding into the vfs.all merge in fs-next. Built fs/exfat on
+x86_64 (defconfig plus EXFAT_FS=m, W=1).
 
-Changes since 20261118:
+ fs/exfat/iomap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The rdma tree acquired multiple conflicts with the rdma-fixes tree.
+diff --git a/fs/exfat/iomap.c b/fs/exfat/iomap.c
+index d0bcf523f48b5..a846fbc450b82 100644
+--- a/fs/exfat/iomap.c
++++ b/fs/exfat/iomap.c
+@@ -374,14 +374,14 @@ static ssize_t exfat_writeback_range(struct iomap_writepage_ctx *wpc,
+ 		struct folio *folio, u64 offset, unsigned int len, u64 end_pos)
+ {
+ 	struct inode *inode = wpc->inode;
++	int error;
+ 
+-	if (exfat_forced_shutdown(inode->i_sb))
+-		return -EIO;
++	error = exfat_emergency_state(inode->i_sb);
++	if (error)
++		return error;
+ 
+ 	if (offset < wpc->iomap.offset ||
+ 	    offset >= wpc->iomap.offset + wpc->iomap.length) {
+-		int error;
+-
+ 		error = __exfat_iomap_begin(inode, offset, len,
+ 				0, &wpc->iomap, false,
+ 				exfat_get_valid_size(EXFAT_I(inode)));
 
-The iio tree acquired a conflict with the origin tree.
+base-commit: adcad7f4e6332cff3d6d7165f41584899f598534
+-- 
+2.53.0
 
-The scsi-mkp tree acquired a conflict with the rdma tree.
-
-The pinctrl-intel tree acquired a conflict with the origin tree.
-
-Non-merge commits (relative to Linus' tree): 8572
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 438 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---SC585TJhjXrTigAp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr/QaQACgkQJNaLcl1U
-h9C4qgf/b4xMPeF2J8JeW6rW6HFUHXzpqxchY22Gm0Di4/FzQPAh4ZJmFcnZRiD3
-f+u8m5k8P35TdWxuxgtle1Vuy6dWhtXdk0ArpH7SVSCCh3RlbPqmtfBJzRvwhZWu
-ovyJ26Fhkx8V/qemK9tNAGVhFrn2jySkgGWjyLfh94rQfJ3joOKgGW94yU5KagkQ
-BV21EgzYGqJgqBqY2whBqg3qtFpef8CMBbw9JvhP88WE5ZGV3buPEUYtOJXlvcjH
-rJIMMbHGs+Fegv1HhqdCIY1c6/MvP2zI+O5GQVdrGZuq+wO17Yc8JRrqT7QYm9uR
-ASJZqjcyD9mK/ixFxXJe8jjjYpi4AA==
-=IJmN
------END PGP SIGNATURE-----
-
---SC585TJhjXrTigAp--
