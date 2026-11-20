@@ -1,50 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795185543;
-	b=e+isB0XDRzacFBBK3uexI+IKhCP0RJuF5BqsUmxLda8EvzBgipSA3ZULbUHquFVLplUu
-	 4IdbRaH8IhuV4tGLcZFzd0o4nMH01wJYp37jpH5sdMmoH/cK8W3xlhU6cHcjvdNRBz0F7
-	 qI2dqphymZ/Ntc37Lk6o85zo2W5OfOlN7XPx1XvHVYk23WREKk9aNDwp/PmyUA11hmDZM
-	 i25pLUPi/n73d+ZSD0KF6KgD1bmIaz9ipEuTrn41AGgz6hM4tCoBbyed9grEjniSa5ESW
-	 be7GTjZLfuhEAnthd1zUlF8qXikKGytNAH3l2++l78ABMzl6AHHKZE0daBUL4zbIcjA==
+	t=1795186530;
+	b=yfhF4SCK50BA0SvNtanLGGJaV+aY1eCuf05tbHykStGVXMgPMpNBklPmjmNKDThPxAeX
+	 72TUITe5yCDWTcGBs10f3YsU5JoTQonRS1EWZGmJCkWxc4O41CE26+4vD7UlKtHQ8drrw
+	 OiLcwSwfDrjGLiMXc+FVeIL////3dhimN576tumOaFW8S091FXG5JnL65ED3q2f4em0j+
+	 eYEw6fqateTYhFjdLWxI1h1gB8e1UM/FBdPaD4d7zqf4QjRApo90WvwSIZO0JKtXK0ujF
+	 3QWcQPFghcuyEADfQUsjl6jJmtYqcitN2hr2WnCKnshW2ucrVtASkEK11qZEPmHy9dQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795185543;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795186530;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=DeomjNBBab8TQimQ9FD08gcii17BGvVDnAwaUlP5DW4=;
-	b=q1ThWo1nCH6AFxNpDztywkdFvAWRD69v4Hf+fKIvWanSEwaHYA0oJv44L+YRRr4pAFK+
-	 orlZ38eZt/XoygMzRk1M9rTPCqQUFBEZpFmDBYObQOAV6MJgjbd/ETtWau3TJPQqhHkG4
-	 z4hgUiXLUKocJtrlCvyvdSkR6Y5vnUlltPrHUEn1dKNosFY7NT7dx2D6aFWZl3dZCjsMM
-	 ScUHoBzE0/l+hvKAI/+Flv3/FtZ2d3v303cQcd0Vl4IYJKHQEvzXkB4u88n9aa3lvTnUh
-	 C/tmkg+NI0nhUGQlOSm4tf8N69g5nDM1gxjtRa0Y5kqeSmi9nLlASu36mJSobGnZm0Q==
+	bh=k2afYDSbhGUGiUhcoGzLE+xs9HwNUM5FrmXjgV49pcQ=;
+	b=Roy+nZN1d6qJNRmpFfuAq/V2e4hUhM4jaKVUVG6n7ZlLjmLxSg/JAwXgx1EZz9iceeGG
+	 +ETy1qsl8RVdt9GJ9N79yXNLPA51lkdf1AizffrMxzWrO+5X1O/+J9pREFqqp06+un/C7
+	 D04bH4oAN2E5BMUyOtMEHcf0XTASSRkl0RdFQeUXo+AVCSZKom0obTHy5o1kxIWnZr3vm
+	 kA58AlA4f0xBmD6JKD3gSlsJlxkRR6oI6GzypzbK7vaisLHpyOa+Esh3R+/hBTtUah2LF
+	 94WMwrXVED4s7KcSmuzeojCLpLHJ4Ydw5xICLXehRxwy1iTeD+K8oM5hvuYj5zYlKrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=awB7pon3;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AgdN17dR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FFD606A326;
-	Fri, 20 Nov 2026 14:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B520D606A325;
+	Fri, 20 Nov 2026 14:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=awB7pon3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927911F000D4;
-	Fri, 20 Nov 2026 14:39:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AgdN17dR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CCA1F000C4;
+	Fri, 20 Nov 2026 14:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795185543;
-	bh=DeomjNBBab8TQimQ9FD08gcii17BGvVDnAwaUlP5DW4=;
+	s=k20260515; t=1795186530;
+	bh=k2afYDSbhGUGiUhcoGzLE+xs9HwNUM5FrmXjgV49pcQ=;
 	h=Date:From:To:Cc:Subject;
-	b=awB7pon3BpKl8ErmTbZ8oaZ5g53MqNx+QRqsre577m96XgxD2RfJw5GjiEceX5vCt
-	 vyZXSrAMewJqJL9B2TgBzHud2a7pZTFpuUmKgG0Xbzjcpi/Gv3RTa28sJbNFOldaXp
-	 ozt5iLvyIDmeNu0cergSUCYzuuXj0PnODEXwExOdW6kXyLgyUscSi+509ZrGrBwArh
-	 bQ60ruMjuxp879pmk4jrz9WWuu7+0BgUA4QiPjht0mhI0gztxymrJmC3H4WGgmuuq+
-	 pAKosRof2Bul/uSF+pNqsPE5+af84kv8P+hVHBeW4PWguxygch2pxCUfOhg9OjFrsy
-	 DmdEyx7HOj4qg==
-Date: Fri, 20 Nov 2026 14:39:00 +0000
+	b=AgdN17dRiKJVb2NOYdow/OGv5jT+kvxYncPbB5koJOb4gpolT+I3ZNBDNvz5UqLR0
+	 sYFZ4+BcPvysnAc0Ejheh2yX0iBQ7tYLP5H9CJhC8CeXbraXZ8G3l78B+rCldNx/TW
+	 hGrSVUA4rxoarrN67weq6geef4WF00uHu6xblKITd/FqXR0DiYG6hq9zJ/BNn9qmZE
+	 jEjA80Ye53+Xm8A02XvnXtrUNmrryDey6Mq58hjLk8w+tqTjkNZSOwLOzwrne3S4OQ
+	 VOnQ8C5MTU4P+c7WogJt/TRtZS6wNw/G5l+UJzL3kglZLUutMe2q8ZA+q1vvAxtKug
+	 oziMUC0eZjBlw==
+Date: Fri, 20 Nov 2026 14:55:26 +0000
 From: Mark Brown <broonie@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Missing signoff in the vhost tree
-Message-ID: <awBbhBu6rFxvnz_d@sirena.org.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the hid tree
+Message-ID: <awBfXhrj8dYTa53z@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,33 +58,47 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+BJd9ZAyRwZeoBz8"
+	protocol="application/pgp-signature"; boundary="ecbcHoamtLU6R967"
 Content-Disposition: inline
 
 
---+BJd9ZAyRwZeoBz8
+--ecbcHoamtLU6R967
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Commit
+Hi all,
 
-  ad74886a8429a ("virtio_net: mask callbacks before handing off NAPI ownership")
+After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-is missing a Signed-off-by from its committer
+/tmp/next/build/drivers/hid/hid-logitech-hidpp.c:4714:4: error: call to undeclared function 'hidinput_disconnect'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+ 4714 |                         hidinput_disconnect(hdev);
+      |                         ^
+/tmp/next/build/drivers/hid/hid-logitech-hidpp.c:4714:4: note: did you mean 'hid_disconnect'?
+/tmp/next/build/include/linux/hid.h:1051:6: note: 'hid_disconnect' declared here
+ 1051 | void hid_disconnect(struct hid_device *hid);
+      |      ^
+1 error generated.
 
---+BJd9ZAyRwZeoBz8
+Caused by commit
+
+   a9c54220eaab7 (HID: logitech-hidpp: disable works before stopping transport)
+
+I have used the tree from next-20261119 instead.
+
+--ecbcHoamtLU6R967
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsAW4MACgkQJNaLcl1U
-h9DpGgf/WqVLAEUTfaS+MPG6iywKJZHEyX449HqFv95Jhct/LoWQlvPf4yP2xuI/
-vEolVAdXHbg6lNSJdjQFpUVJXgnFrKCEaT6k6fjrd+NFoNEWlc1bdJQSxqVH8VrC
-+Sse5W50Pu6RcXIQH1EjpbSOcZahNocMTexN7GGE/86mFGW+LcBBWaOlx8fGNLpF
-TBuTYro/A4o7Y6FhvD0udClfzmnG7cbi5acFeRvw9ph698Ax5TZVYEYw0pJj1Zsu
-USeK/HD8pQm5OaAWbEx8+f2C4gIycos/ZOAT8/mhj7aIE7L0WgyQcQp1o29Q2BxI
-DOSrLX1tjYO92y8hWGP46f8IJD0TyA==
-=sWfT
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsAX10ACgkQJNaLcl1U
+h9BODwf/aFqI49fgLDzSVZRvDEzWoHNnJxs89/sn03ET58BzeYKc9NNoZg1o+8Nu
+BUiIFA1kkuBsb9qTf6SJgbeP9wCThRj+F/QydZZGzhDKZlQ8w6Eq89EpVfmuIcBJ
+lJYwshfpPE2cTdaJRlTf4EnpRyrMvvs2bXk3BXNpQFG6BIAFY0y4ZiDCAwjsnNaP
+jm3RSqQshqdPVcYZLSc04Oqod1atzWfFQoWLjtzj9u3M9PLQjQHes9CaFdlP0n+8
+DXJoDRKNTgdP7v+mKPtS9qnQmWMI8fyCU6GBtexzVEQy1ATyDwEh6rM3MnvyZadu
+R+92gjwKJVQelnMzZjz+102mWEe7zA==
+=bj6Z
 -----END PGP SIGNATURE-----
 
---+BJd9ZAyRwZeoBz8--
+--ecbcHoamtLU6R967--
