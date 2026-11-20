@@ -1,50 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795193137;
-	b=DC706uGmLDkt/OSa1QGP6zWuAXntr62uFGY6urnZmKfeu6IcnapVT6XO0foPuvyWgjrW
-	 fyHoQwUhzYjAADHNGTFc4UiUM9YsOYx3i/kFsPP+i6CedBI7V1JmBuWWSp2s4v0zAF+0z
-	 LceNImSC2JL3q5gY5vhqhUIyzW6eOu1G3GyRl17V85Kpl4YEAxHDlaWCjF5QBgUXY0A/a
-	 wI4MhEmpk2dPCFOS2Fyrm5pxgiutnQkzVtg9L3g4IkZBvhOSmm6SU+4l2MHBREWn+zgik
-	 yoH86qbZQRccKZxtX4mDH+K/adl2hPkzxdqmkce9C87dvpqRHwLPkoheOP2tkFjRyRg==
+	t=1795203910;
+	b=kJ2CDPmFzyxDpC+cEkTqApJDkmxvTUdrNMoORXj+L6GB1U41I5voiboScp+nFbdJE+3b
+	 yOcrb+maLOt3Jb2xkxM5qnpJhDsMh33fGfbrXaqYEZtjxaX5ceCJfJa3vEv6C7zgJ02Mb
+	 qEq8KkFWTVP/bVWTIlRi9od5VYP1ltAblS69tlgSODKfjIHmW4zdnC9ifKkQTliZVhcIC
+	 In2kMgqvlVnQklb+6OzKaS8pxvkJ/6ooxZspv5/Ai9E4oPJcWfbx6bjUU6+d8WjZ3I/s/
+	 4FBpTsIVw4SYI4Fd88CbZ//IAdfgF7QODt71gd/F9VsJ+63rUF1K6NZk47JkS3V8biQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795193137;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=MkG5SYBGk10IwyJzc9Rui0EULxFfXUWH9ljdNHcxL/U=;
-	b=CIQGPOQi6EWnctLX/7Trf4TzY6L8aY5aZJdvgk1eHUVPrcLQLTZaWyGlwzorqdIEuA3h
-	 ZQVfJPiCr0coypisyJi4wkoQWtv8eg8XmKeU6F8FNZpVAJwHje95QKC6dnP1MSy6WHfWp
-	 gNDGjsLLQ5AJNB93XjZrZNR8OgLtPgpIG+A1wohNOfGHcdjFVIjJmn9kCg7ZIfjULJoGN
-	 Eb/sKQmGwVWNRa04GKxJCVQZVONlV+KZTNzZL8ik9jA1xijMDVo1kqbGwHAtfzZjEsDbA
-	 T6aWr3kJixclKBTEzCKKfqFCCS/oNqOLOn1nwwH1eUa/+odzSC3AZb1sd99AIoMWoHA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795203910;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=Wr9zFEBn2Yml3t1O23TLCfk4wIZeWQhiBnnGr65cndY=;
+	b=SHVfntwwqDH6l0BIbWAD3dNiMzuTEzrJiRAx0gfu+/5Z1NFQevzOxBvx4WvNuMSxIOgR
+	 6lO2n7RgLhRrimjK/jWqB6RfyTnNlj3Ftyr0kGnwqKcK0EWLox5q0M+fOpodtxFTbBrUB
+	 7SUpXVC0n/dD+VA1UyDznScw3t1Z1j8k+W2SZ0nsjbxfMQrn1k+66+21lsrqntdiV0euZ
+	 oIplr5ZFGxGkMk4Rv+u/hoJDIbELJZLV/nDr40hmZaCNmmXmZDj32ujr2HmOi8DGRkOqI
+	 6keAFD3klC/1H0E6GLZeGII2VaTgu6YL1V2UE4QGP+lZun5AjVCKf8q0ON1mpdUonZg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DCuV9sDz;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YExeQHFJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ACF606A62C;
-	Fri, 20 Nov 2026 16:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F84A606A6C9;
+	Fri, 20 Nov 2026 19:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DCuV9sDz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4A31F000C4;
-	Fri, 20 Nov 2026 16:45:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YExeQHFJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 748A41F000C6;
+	Fri, 20 Nov 2026 19:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795193137;
-	bh=MkG5SYBGk10IwyJzc9Rui0EULxFfXUWH9ljdNHcxL/U=;
-	h=Date:From:To:Cc:Subject;
-	b=DCuV9sDz+/rxaWpWXbIdToBy8B+2+BeepTUKgO1p8Z3SztVR1mpV4aImWIKHIfHS+
-	 IjyEVe/crLnpfGckF7FfkQLbou1gcr1JiYSBYnFGVu41rn3ww3g/lz/d3XZDMlX2qJ
-	 DpUB1F659jNhUqxa/zDuJZ7YZ5N0gexd/MQobpaHU9HgCX+FFx53nelrxN9wWOvOBn
-	 /szYXLPk9hKn5Nfi9xnv7XOEsFw7e1iICjHNlkj3NAYhiltkO8MHVMBi993xbAATgZ
-	 /Xip01Higm/qxXZ9LrdflOEwlrU9GE9c8vPKSScr46zE/5CBdLFB7Ezczx+anKphEW
-	 W1IYQjjOgd/nw==
-Date: Fri, 20 Nov 2026 16:45:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Nov 20
-Message-ID: <awB5LfezLBAfSkrX@sirena.org.uk>
+	s=k20260515; t=1795203909;
+	bh=Wr9zFEBn2Yml3t1O23TLCfk4wIZeWQhiBnnGr65cndY=;
+	h=From:To:Cc:Subject:Date;
+	b=YExeQHFJiSHA6UcrdNEFs2p8aZMoTwLwB7O3B4zEkhJ9f0yvm8F3PrX5C8MFFMZLv
+	 8jG5CtXIFWqnXOmwat8yCTasuQ4fieaEl0jDhqmwtq/r0t10wFTuNtkby3hysgLQAf
+	 GP6LxYXpfvo2TotPdGj8/5jpjKE3JYqc1dGuBg2Vq8fkuvGAd3hiR3JP1NFmN6k3fc
+	 HjUB6bSMooHyRgBW2B8xGejc7/LmEdR/z9X5HHHg+aDAln4J4QZYp9Xqg1tbefWgwZ
+	 CX0DAkALuAZL5TeAeJirSP65GLoAjiTukA18aPinbqBWEY9GoQH6nWxXkUDh3OPWi0
+	 2u21yjn047yyA==
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Joshua Leivenzon <hacker1024@users.sourceforge.net>,
+	linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: semantic conflict between the hid and pm trees
+Date: Fri, 20 Nov 2026 14:45:07 -0500
+Message-ID: <20261120194507.593601-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -54,81 +62,45 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="REyDMUGa5N3hA1lq"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Hi Mark,
 
---REyDMUGa5N3hA1lq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Once you take the current hid tree again, it has a conflict with the pm
+tree that doesn't break the build.
 
-Hi all,
+d220bf485598 ("HID: asus: Cycle the platform profile from the Zenbook
+Duo profile key") in the hid tree checks
+IS_REACHABLE(CONFIG_ACPI_PLATFORM_PROFILE), and 699041135f75 ("platform
+profile: Extract the core from ACPI") in the pm tree renames that symbol
+to PLATFORM_PROFILE. With both, the check is always false and the
+profile key does nothing.
 
-Changes since 20261119:
+It's the same rename you already fix up in drivers/platform/asus/Kconfig
+in the pdx86 merge. The fix for the merge:
 
-The vfs-brauner tree acquired a conflict with the vfs-brauner-fixes tree.
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -438,7 +438,7 @@ static int asus_platform_profile_cycle(struct asus_drvdata *drvdata)
+ 	struct asus_worker *worker = drvdata->worker;
+ 	struct asus_work_action *action, *pending;
+ 
+-	if (!IS_REACHABLE(CONFIG_ACPI_PLATFORM_PROFILE))
++	if (!IS_REACHABLE(CONFIG_PLATFORM_PROFILE))
+ 		return 0;
+ 
+ 	guard(spinlock_irqsave)(&worker->lock);
+@@ -870,7 +870,7 @@ static void asus_work(struct work_struct *work)
+ 		asus_kbd_wmi_fan(worker->hdev, &action->data.fan_hid_data);
+ 		break;
+ 	case PLATFORM_PROFILE_CYCLE:
+-		if (!IS_REACHABLE(CONFIG_ACPI_PLATFORM_PROFILE))
++		if (!IS_REACHABLE(CONFIG_PLATFORM_PROFILE))
+ 			break;
+ 		ret = platform_profile_cycle();
+ 		if (ret)
 
-The hid tree acquired a conflict with the origin tree.
-
-The hid tree acquired a build failure, I used the version from
-next-20261119.
-
-The drm tree acquired a conflict with the drm-xe-fixes tree.
-
-The amdgpu tree acquired a conflict with the drm-fixes tree.
-
-The leds-lj tree acquired a conflict with the origin tree.
-
-The kapi tree acquired a conflict with the modules tree.
-
-Non-merge commits (relative to Linus' tree): 9049
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 438 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---REyDMUGa5N3hA1lq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsAeSwACgkQJNaLcl1U
-h9DgCAf/SYgFe0lvyLBTuXK0/IyHkn/Lw5tuN2t10fQASG436ud+kNYLHd/2KK5l
-eFA8R6Yh6UHE8hT/QHgz3h6aPFD30rgHYvPnNbVD0a4oJphbPxmgYSsVnHHd9PWJ
-cSMiIMf47NCAk3iwFTxn2y3P1T7jposgC9WeRCkKHGwNvLG8niax4MhBYuWF8fh8
-XVwPiKe2X/yX9CuDG7/BvTLpbu/uktiSD/u6rDwNJpBU7uDYG9gir02K+rk/O0qE
-u3D+uwMnh4HOUkvjM0jl2W6wC0rmkMDnmil/5eiIstSFj76jEgnZvxnx+jOXtgHE
-39NUSCQ166gPO5FMSHRrzOb010uX4Q==
-=8dMV
------END PGP SIGNATURE-----
-
---REyDMUGa5N3hA1lq--
+-- 
+Thanks,
+Sasha
