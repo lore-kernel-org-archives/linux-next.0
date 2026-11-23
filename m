@@ -1,57 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795444647;
-	b=zYv19KFBHj/ljoOQ0rR5vnA3oGM2WQAgr5Ge2/qblYbdswjsFL6/Hg7UnUBupvvfr4RZ
-	 uNmh9bBB59p/WGkoJOf9n62U6j7U8vMty7X51hy1jkePNPjlIP78S917FG479RBQpv2PM
-	 WAcDKc/zS/m1d2tYypCmFxO2tWM4O+SZCt6gfYkYDGZsAYsf5jGWnhdeGyX4aWPsob9AW
-	 G5DcDWv0KrbA0IUGFCOl7ITsWiMhYdPabchb+WG8iNspMftg1h/xOA9cp0/1e+K6ZA1QT
-	 khfLqje4W827bV5FGLjTzPC4dieOQzrg6Vr5N7Qbflxpuc9q4xRx3IkJ6g1RUbmsw6A==
+	t=1795448095;
+	b=ts/yB+aSH7au2qKtTfsJM4J1KZAkG4bfeijgKtbOMlxuWXq6l2Bc2oH+4i5uaR0kDIQT
+	 LYgsciaHRoUAdXX3AxQ8zRGcZyulfpxcs9SxoHMvdZ9r4LqRDp5W4BlX4nYhxrmRnSXrC
+	 yYfk0O5xDmnysIW6OpBdaRHIK5gYw5xP+eg4IRHluDJC+YOYuGek80ubezImU3jI6DCM/
+	 LjXlNp9jUuHvyPFWfBnC9ylhgyZ8OQ2HP/Wv0Pe0zn9TC4jw9zny+v7LVrmWoPuGHfG1H
+	 q/XTyJZgSGkNN5rznbSRyFBQk+XhWQSxx3m/i6vFpKfCAlyGbQiQMFhNDvtvulXOkyw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795444647;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795448095;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=VspRcK8r/bAxbnrJk3ARH5ZGSzxCu7C2u9+3Jvhwp3w=;
-	b=rpt+2M+hYbEXYtE1X6hAncaJM+1HIzi3T6RKolLw5aL1FZzOZxqVzrRyrTyhTE7mhmPM
-	 cwimn9Sp1amDIbCKeJRxG3jko/2idywL9nmzXVnxwu8kCuLr0EkFS6UIy54cfTWnZdDHR
-	 qGl06Njo60uvdaXYSVAJ+lW8dyEwXNufzP0R7XzKPO91VKQI74H746bdarXaklgZ/7Vm5
-	 IJWsLWuxfI98WaZI4fNU5dx2r7pNLgtbkzJ3NKkWYec6hpqrGwv49y2Na52J7TnuSOWjW
-	 /BAhFnkLnIlvVqlToB6q0ugdHU2r3pgdsN3IedZLkfrnIQddXXxhhyuQtFGryc0MaIQ==
+	bh=jf07Udiq2p+O4qiPOafk709qI4gZ7bjn4qKb4VieSNs=;
+	b=ljDqHjcK3bcCDfSS4w3KiTW6/sR0zNozOxJQK4idiBt2E9o8VKBMTJDmWeca3BxH71TR
+	 Fg78XzwcCZ5y+G0VTckumkESAR0W05p9r+FOwIfncKr4eKstjFDyKdnRJnCsAH0yyzSUD
+	 4KqejAW/sXCbODwSlHkSEE298x+iz44qmQqjfClRxpwbpp/RKwui127c41nHsZsRzl5Wk
+	 JWQKPo2shnw/BhhwVyVfnwaKAr5kVzCw1yGBIY5kwA1cS64HIVIRLF+oXQq8udYkL8Q16
+	 r4GLbG2xo/Y7t/rp/Zd3lLmuUbhLQrLO/EcfJVftDpDqkv0HVP/25AZsUhm0iAZEfIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yw6bHTQc;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LukvrL1O;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACADC606A338;
-	Mon, 23 Nov 2026 14:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23665606A31A;
+	Mon, 23 Nov 2026 15:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yw6bHTQc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D35FF1F000CF;
-	Mon, 23 Nov 2026 14:37:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LukvrL1O
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 538881F000CA;
+	Mon, 23 Nov 2026 15:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795444647;
-	bh=VspRcK8r/bAxbnrJk3ARH5ZGSzxCu7C2u9+3Jvhwp3w=;
+	s=k20260515; t=1795448094;
+	bh=jf07Udiq2p+O4qiPOafk709qI4gZ7bjn4qKb4VieSNs=;
 	h=Date:From:To:Cc:Subject;
-	b=Yw6bHTQcHVgcqNULPpheAlLLu11BezjfsgfEgLVBzm5zcM0fZoaTVq0zvAQ21N5RW
-	 qOr1Aat1CtC7n/iUzNsntRPzMbkxUWM84tPYn2PbDDsazKdI7aYVmlDDRb+c6uufqJ
-	 UUALWSOO666PGKMB08kbQ3y2ZxJSsJAXALeebybRHDp6RKBQ5toRFb4FG1/aVz6P7/
-	 fg5X1wn8bZLFbNnx2Bmr6QMU2pehf8asEH6OsMSfCosbPecN2A59yHKK1EEdZf7fse
-	 1Oz3/acOKwckMfc40UYL3X2r9smAtzsFvCLqcEOXzFomIJXzIGoKsr9OP0iapoQNht
-	 ye87HQdx9fLNg==
-Date: Mon, 23 Nov 2026 14:37:23 +0000
+	b=LukvrL1OQMzuaX0VEwj/HCMtNSIDrpmYSWQcjNPwZMimCi6wLM+wuTvu35GSB3ROT
+	 asqksnvpdQ15Vx9YOS2nEk9Nhn0BW+vama/Ic5mFz2Jlc1LlyVMiob95DQEZM/WZlj
+	 KKvKqEAN4LRe4HWykVJb1YGxXtqJkUySln5l7EwAvL88DTuoOInMejp99o355PqkKE
+	 eV7cnkdUOQ5XA0fqT5ZSGbhQQN9WM4r2Nhk3ED8tjXwdS2yZ1EaG8mzTL59wyIjWaP
+	 mdwJ2UpmxM2lUYZOSvlargWJXQRPKw7IEKmRZIjIdpjG74Dln8MieE2s9oZpxSbkVn
+	 dJopZwZ0A5hVA==
+Date: Mon, 23 Nov 2026 15:34:50 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Jeff Johnson <jjohnson@kernel.org>,
-	Ath10k List <ath10k@lists.infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-	Yu Zhang <yu.zhang@oss.qualcomm.com>
-Subject: linux-next: manual merge of the ath-next tree with the
- mm-nonmm-hotfixes-unstable tree
-Message-ID: <awRPo1T3BGWPYOG7@sirena.org.uk>
+	Priyanka Mani <priyankamani2100@gmail.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Message-ID: <awRdGojPVH1LpICe@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -62,30 +59,31 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BM+gsJGj69bNaxLO"
+	protocol="application/pgp-signature"; boundary="XNZJx/CKyAdHbDVI"
 Content-Disposition: inline
 
 
---BM+gsJGj69bNaxLO
-Content-Type: text/plain; charset=iso-8859-1
+--XNZJx/CKyAdHbDVI
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the ath-next tree got a conflict in:
+Today's linux-next merge of the usb tree got a conflict in:
 
-  .mailmap
+  drivers/usb/gadget/function/uvc_configfs.c
 
 between commit:
 
-  7d72815bc36cc ("mailmap: add entry for Yuanfang Zhang")
+  8709574b03899 ("usb: gadget: uvc: fix dwFrameInterval array leak on frame=
+ removal")
 
-=66rom the mm-nonmm-hotfixes-unstable tree and commit:
+=66rom the usb.current tree and commit:
 
-  92039549ef782 (".mailmap: add entry for Yu Zhang(Yuriy)")
+  01ad61c08da9f ("usb: Constify struct configfs_attribute pointers")
 
-=66rom the ath-next tree.
+=66rom the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -94,50 +92,57 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc .mailmap
-index 2478b4943f8c1,da76f7b21654a..0000000000000
---- a/.mailmap
-+++ b/.mailmap
-@@@ -236,11 -225,8 +236,12 @@@ Christoph Paasch <cpaasch@openai.com> <
-  Chuck Lever <cel@kernel.org> <chuck.lever@oracle.com>
-  Chuck Lever <cel@kernel.org> <cel@netapp.com>
-  Chuck Lever <cel@kernel.org> <cel@citi.umich.edu>
-+ Chunkai Deng <chunkai.deng@oss.qualcomm.com> <quic_chunkaid@quicinc.com>
-  Claudiu Beznea <claudiu.beznea@tuxon.dev> <claudiu.beznea@microchip.com>
- +Cl=E9ment L=E9ger <clement.leger@linux.dev> <cleger@kalray.eu>
- +Cl=E9ment L=E9ger <clement.leger@linux.dev> <clement.leger@bootlin.com>
- +Cl=E9ment L=E9ger <clement.leger@linux.dev> <cleger@rivosinc.com>
- +Cl=E9ment L=E9ger <clement.leger@linux.dev> <cleger@meta.com>
-  Coiby Xu <coiby.xu@gmail.com> <coxu@redhat.com>
-  Colin Ian King <colin.i.king@gmail.com> <colin.king@canonical.com>
-  Corey Minyard <minyard@acm.org>
-@@@ -1047,8 -1025,8 +1064,9 @@@ Yixun Lan <dlan@kernel.org> <dlan@gento
-  Yixun Lan <dlan@kernel.org> <yixun.lan@amlogic.com>
-  Yosry Ahmed <yosry@kernel.org> <yosryahmed@google.com>
-  Yosry Ahmed <yosry@kernel.org> <yosry.ahmed@linux.dev>
-- Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com> <quic_yuanfang@quicinc.c=
-om>
-+ Yu Zhang(Yuriy) <yu.zhang@oss.qualcomm.com> <quic_yuzha@quicinc.com>
-  Yu-Chun Lin <eleanor.lin@realtek.com> <eleanor15x@gmail.com>
-++Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com> <quic_yuanfang@quicinc.c=
-om>
-  Yusuke Goda <goda.yusuke@renesas.com>
-  Zack Rusin <zack.rusin@broadcom.com> <zackr@vmware.com>
-  Zhu Yanjun <zyjzyj2000@gmail.com> <yanjunz@nvidia.com>
+diff --cc drivers/usb/gadget/function/uvc_configfs.c
+index a8717c95e5edf,3387060bab55a..0000000000000
+--- a/drivers/usb/gadget/function/uvc_configfs.c
++++ b/drivers/usb/gadget/function/uvc_configfs.c
+@@@ -2143,27 -2027,15 +2028,27 @@@ static const struct configfs_attribute=
+=20
+  	NULL,
+  };
+ =20
+ +static void uvcg_frame_release(struct config_item *item)
+ +{
+ +	struct uvcg_frame *frm =3D to_uvcg_frame(item);
+ +
+ +	kfree(frm->dw_frame_interval);
+ +	kfree(frm);
+ +}
+ +
+ +static const struct configfs_item_operations uvcg_frame_item_ops =3D {
+ +	.release	=3D uvcg_frame_release,
+ +};
+ +
+  static const struct config_item_type uvcg_frame_type1 =3D {
+ -	.ct_item_ops	=3D &uvcg_config_item_ops,
+ +	.ct_item_ops	=3D &uvcg_frame_item_ops,
+- 	.ct_attrs	=3D uvcg_frame_attrs1,
++ 	.ct_attrs_const	=3D uvcg_frame_attrs1,
+  	.ct_owner	=3D THIS_MODULE,
+  };
+ =20
+  static const struct config_item_type uvcg_frame_type2 =3D {
+ -	.ct_item_ops    =3D &uvcg_config_item_ops,
+ +	.ct_item_ops    =3D &uvcg_frame_item_ops,
+- 	.ct_attrs       =3D uvcg_frame_attrs2,
++ 	.ct_attrs_const       =3D uvcg_frame_attrs2,
+  	.ct_owner       =3D THIS_MODULE,
+  };
+ =20
 
---BM+gsJGj69bNaxLO
+--XNZJx/CKyAdHbDVI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsET6IACgkQJNaLcl1U
-h9Dd9wf+O5W91KshoUHKP4qzhSd0UxTthn86Xa21MNViawNhbFGcQrv0hB6vKQhd
-VXzNc9c3z3hQNvukW+dSdqOhgLISHPkMszWM95bZ+ubcmQLqcKXkvVfUl0c/UY4D
-93wpnn8GeAhXoIsoEGEuEw8yLAY4RIbVuSg2EBjhC3ZynX6nCbC53Y5vvhRhv/rx
-Tf6JVFqp+RwW7GoXmQytNJ0Q+3rSKNfdhVuMhrII5cObRHn1wrohhxIMdIVh/5x2
-hOYjOQyIThKQxgeglz05eEn69P06XKWxOkNFfqHU6VAIZlCjagNnd3vPvzMEIUOV
-i7kWKpBrduB4bQugMmgWlRm47kh6NQ==
-=aqLS
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsEXRoACgkQJNaLcl1U
+h9Cnagf/armNty2Wk2k6JlKmR5PF+ZWt7qSkf5GnAhbFAMBLacoDHErnwzOTZiXB
+YxW32XjiBp4YrdwU1Rn+coTKgIaQhEHUE+nZFaYL3SrBUfjgyaBo1fAkxeB98hEH
+vvdFr3h1YwcqXx/cZcvRTe5yHa5k3kCQT5br95awB8fxDjH326gAHquHeYHCmxf+
+5gCwhC5JAtlz1E06Kpy7Y5K9pWYHN/4Kz6uEXmcAp3A3608dzXPaHOMCxbbnImgU
+bGBG2d3ActSXlgLcMkxw6AUiA151vGdD+tAk4NCx2PmslQCj3Rita0d4wsL5GMKB
+vrgyiXZX8YYtlwVeGfLOejZZ/oGQeg==
+=KmEn
 -----END PGP SIGNATURE-----
 
---BM+gsJGj69bNaxLO--
+--XNZJx/CKyAdHbDVI--
