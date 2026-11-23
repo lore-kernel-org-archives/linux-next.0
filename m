@@ -1,64 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795469190;
-	b=asRzY4V06qvHopery7LftAbaEYBk+C7Edn6zCsC5Yq/m19HHiA4LUjhjM0MYAH+T+dTQ
-	 g6ZQO4awWu2pd5wc+SsnGR58iGmWi5RtoAHCveozRfrdGJR+GaOSVrczA2QwFouEfrV+t
-	 Vr6L1d4vuSv/mNTVJd+AHwfbY3gm8JVFTMoWhLu54wJraNwCJ4v1CppRP45ZMkRVCgHpo
-	 3ZB+aPqOXV4i5IKBSqCpBULNMOWhSY/DDFUdhGEF/Cv+ezV6YsSOR8zKcpXOpcENsZR6A
-	 93A5ENdJXg8Hflq9rCWMKhxY4BnL4UMULhr76XqYGE/BbzLPWW2OFPaQHIfbUDaYbbg==
+	t=1795469193;
+	b=unPisVE1tRr2Ip9V7vOg9QWLqwDaAU2WTTV4PCaG1RowD0Be+OTgfUmTnEpGNmPBjcrE
+	 NSLqTpXkcwUE5eIVG0jAl7snQCeFEX3xdj7MkROL2IzHE1zr27VPrryzMypk450wZvS6J
+	 YygwZPpXrXZOKwp5mKZeqfQddjeYMCB/pthi6YJSkxxl+UjYOo1mkpTJgW7bwwKcKHMXe
+	 xG+feM0gB8E4UTr2VJBn00ToozhlG5PWauz2zwSVduqWmv04SrN/LzgJg4tvvAt5UNITO
+	 DOZ+rvNHsKvtnP86+pzwlW+OVfaDcgM5yb4iYcRGFyIQFmoWV0f+0vvwbSa4+qmeStw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795469190;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795469193;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=+iWTLE/0hLAupgxxnA4BzEKPp5orZKZGckOQh2A0pLg=;
-	b=wB3GYUkeiZCr++m/VbGiFX/9cis5J17bir7LSp8nSDGJWpOlIBxQxWEA1cGD5Q8k0pKu
-	 rEyQa0heBe7Zy1OLyQa9AnqRiEzSHYN/+4QA7EVqYIwMlvaFb4n+++PX9ptLpXdNkt+4K
-	 rB76a8B+B0cp14BcmisM8+AG/S63QiNu2LAiAF/xlphsj4wABaTTNrx5B3sMjF/FM1BBp
-	 8Jlg6RFPtZjQMeUHD5EiDHTNT1EAmczY+7PxJrb+AtSZYNfpIaQctlE96HfPf+Wnu/cq/
-	 auWwp9PktyAhupP6XR5McX7cGCNg5iu8aDURDYOztvWG3WEzZGUiPrVwCc60/obvyPw==
+	bh=+5XQrlj4DgcxN8ZJSSekOv8THp0HCbXd/T4gJ+eW8uU=;
+	b=JUVG6URe2YLbtofD58zYyDWyR855WMWPDAVx+ycOQaJuNcqPwAo86b50HWvmRKB1G1HN
+	 LenJ4oTlcVUOg7ZX7rhohyvZC3ODhyvammzF9LAdEhVeCcnKn3MuEAHVIDXKdTsXtc107
+	 X5ROhXDk/HLP+Oo33vGEH3/6Ug2GoLHafUqHSmVrqEChJFne1vBySkNQLbXPu6JcRhqOn
+	 b8rMYCRh259X7qcWCy696ZuTSuSO7Lo6QutpuCzwiYr6itOQPiU7D52pFKs8VtvHj2Msc
+	 OqXBuETh5npX6tst/qn/O21iMbxmVAtK1ano25/AApbFdbENbNa8gZQxnnParKaHLTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hY8lg8xN;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y6bID0Ph;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF14606A32D;
-	Mon, 23 Nov 2026 21:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085F9606A69D;
+	Mon, 23 Nov 2026 21:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hY8lg8xN
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43A61F000D2;
-	Mon, 23 Nov 2026 21:26:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y6bID0Ph
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA73E1F008B2;
+	Mon, 23 Nov 2026 21:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795469190;
-	bh=+iWTLE/0hLAupgxxnA4BzEKPp5orZKZGckOQh2A0pLg=;
+	s=k20260515; t=1795469192;
+	bh=+5XQrlj4DgcxN8ZJSSekOv8THp0HCbXd/T4gJ+eW8uU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=hY8lg8xNR8MktreoktReE9AmEzJfCNfMJezuMp4ZLABd2RdSrVSb/rypc1M+ZL+fI
-	 zUvk/WgZE3QcpSw/Lx2+eknbH/XSXEXV4BiJyMdfU1l5xObRtM7Lv8RJ8UKSEBxLQI
-	 4i0ieflGKeAdOYfqA8c+gNW4WC/i/XsuqFI1bjX7D5cbNisp3TW4xaaKrFsV4Btmsf
-	 qRdKYlc9qN6oaL/Ta4hcetgF1zoIon0GVfBKmNKHl67yEUcyiARN+V1Oo4odpqn2Rz
-	 OzWriP8F5jgsS3Vwr5+TAWzElt/WMHWov+VASVeAXDfzOh7wTdldslwTf5UguIGyz+
-	 HpbVQi9MJh1ew==
+	b=Y6bID0Ph9+xCG5/eu0ldXujAg57x1ht43X5TIjQL4AeYX50R8VSCJB5d8gWvPRp3T
+	 B4+LIswNIQeQ5aFdp36S+gfLQPOT/A2s1Z0jsAh7SaAMkxUP2a7unCwtj3KPShHCc6
+	 H7hUquHporeGsysSLHz1Pb3dCvAw8k3VkGdrP9/9ahWoBaOHNHwV4lrhZy67VbFaFR
+	 Md6Cbs4lsOY/wRSPJpxf2yp849A/yLajVIX9pbhnYqcsKZ+9U57sSOJt0qRkUVGiKA
+	 ASdIrnGX0ep9+5q57mWbbe1POwcohAxJbwRcVtKmWTYgeg3Mk3KXMOn7Wemk12izCU
+	 EtXZ70uJicVcA==
 From: Sasha Levin <sashal@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-phy@lists.infradead.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in the final build
-Date: Mon, 23 Nov 2026 16:26:27 -0500
-Message-ID: <20261123212627.1203724-1-sashal@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Joshua Leivenzon <hacker1024@users.sourceforge.net>,
+	linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: semantic conflict between the hid and pm trees
+Date: Mon, 23 Nov 2026 16:26:30 -0500
+Message-ID: <20261123212630.1203859-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <awR7nSOWkxRm-iP6@sirena.org.uk>
-References: <awR7nSOWkxRm-iP6@sirena.org.uk>
+In-Reply-To: <20261120194507.593601-1-sashal@kernel.org>
+References: <20261120194507.593601-1-sashal@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -70,16 +66,17 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 23, 2026 at 05:45:01PM +0000, Mark Brown wrote:
-> I did not specifically identify the commit that triggered this, it will
-> be some include file reorganisation which causes PHY_TYPE_PCIE from the
-> DT headers to become visible to the driver, clearly there is a
-> namespacing issue going on here.  I have ignored this for today.
+On Fri, Nov 20, 2026 at 02:45:07PM -0500, Sasha Levin wrote:
+> d220bf485598 ("HID: asus: Cycle the platform profile from the Zenbook
+> Duo profile key") in the hid tree checks
+> IS_REACHABLE(CONFIG_ACPI_PLATFORM_PROFILE), and 699041135f75 ("platform
+> profile: Extract the core from ACPI") in the pm tree renames that symbol
+> to PLATFORM_PROFILE. With both, the check is always false and the
+> profile key does nothing.
 
-I sent a fix for the driver yesterday. It renames the driver's enum
-values so they don't clash with the dt-bindings ones:
-
-  https://lore.kernel.org/all/20261122152857.1113943-1-sashal@kernel.org/
+Ping. next-20261123 has the hid tree again, and hid-asus.c still checks
+CONFIG_ACPI_PLATFORM_PROFILE in both places. The fix in my first mail
+still applies.
 
 -- 
 Thanks,
