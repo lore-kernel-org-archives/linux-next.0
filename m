@@ -1,63 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795459028;
-	b=Y5DVp4mgbOpV+s4CGDKpHgdWUSXIooYH6m4l6mSXCaxlxqVPwmBfYemBlc5Ku0Y+NJPT
-	 k6naVj526wPgzdJVjC7SQbI7QNV/YhAx4qJ9Ijyu63/mn2fCg85TcoAjbFLYzGwbWzd3/
-	 X7Yg5gUz6nJ4seCVKC/t+HJanvIOdsf2flJ2qgTOr3qtSqD5Q13Y5r2XsI8sbzxqqnEi/
-	 w4hna8qZE89iBL+uxnoYXoKVxaQfVjeAdp9PrI9UDW+CydtsQeyW3wUKJUl5dosWJxld4
-	 YaWU9elSgcKlRprszP2NFLKTa7kxS7KwI/yG+VUaJzkQVxXgD0VuReZxLZvxti4BMUg==
+	t=1795459146;
+	b=X9ziZChf21RhnapEpYTvID447eh0+wXB+RZlzVtNf2WvwqKNRGgGW9ZeX98ey1x1Krqc
+	 6wcPcZSAwyRF5sWLwKNpyro1AnVhw3CPXdlNskWINEZqohkgyuiQq/ZdubN9Sa3Ge0B14
+	 hZAZwHsa27q7cMYLZWkpymlwtQ6U/hptLoRmsc/oT1ssfqpGNiYC6ka2fHro1sXZai4T3
+	 N05lxztEtw8N8dHT37KBAu2lZxRwFgo3ud3IF5J1yi1ahYwRp1k0cwtlRqIbB9klgPbHa
+	 xLv4bT0Vkt//rCUXigtv44Yam2mU7MzYbmBIwabtq7FWOs7EQI+Fvz3lrfLsKWvGttw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795459028;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795459146;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=looxWG/+q5/Vw/t7DxJr6OInAYdJMZv4YPrI/xd5DsM=;
-	b=IVT40Fp/9AfuxZGl++2Vr83JbPBE+0iZs9mrg9M5D8mSOjE0lu6DF+0vIkv8zldecNSG
-	 BulFnJo5+VuSkwtGWODEZyZQt7xusS/B8Qjw3xtJfMj1cdTKNzcDcfJo6nEUjPfRCvNeG
-	 IfDeFK5hEi0Fh0uepozdhCbTS95TfxdxT/chDc0MlRt0lLQGf9q8rZ5A8850ptgU/+4wM
-	 HVllLo+6+UxMTdxJ27txBktvhGe5NVmppftVf+YPhhMROZyo8UOmxeZV3urA1U2TQApiV
-	 UJo4KB4WPsSxgJRX3coKQvKhwCN59muoBlh38EYI+MaeBnwUsNruSmcFIuLQrwYacqw==
+	 MIME-Version:Content-Type:Content-Disposition:X-Cookie;
+	bh=l/coXYN92zNNYhXdaeU823Es/cADMbebwIixDeYrc8A=;
+	b=AYSf/HE16jeMlXcdJthVPHjs49/XXLjjnrJlwnXFPbhpgHbblIURPTEb3xm/skFZbWte
+	 qtrDE9n67izEzRHnLGSUHDowC8A+ovGReHk6ob680xj5YSQ/kzanjA/AWIT3BExZskL1S
+	 J8gFQS9JAwx+ZgYSzm2I1Gi667fpvMU80OCNdW+Ahpjo4epWkc4tW6bY68HQdtWgIHWea
+	 guXgztwB158YHCap0YX/AuXuG2Q6rl+ICZNkxP8HhUKrxavt2jkFDMd0w8A+j9FnY0/vY
+	 kW7EaBW9gb9ZkfSqZfSno0mR5KDsvVKvxObT4FKWBhh8Esep0IwNFAGJ6Kj9m3TUtrw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BtICSjZC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DxmcYWYH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293F6606A31A;
-	Mon, 23 Nov 2026 18:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2147F606A31A;
+	Mon, 23 Nov 2026 18:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BtICSjZC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9E81F000C0;
-	Mon, 23 Nov 2026 18:37:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DxmcYWYH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A5831F000C0;
+	Mon, 23 Nov 2026 18:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795459027;
-	bh=looxWG/+q5/Vw/t7DxJr6OInAYdJMZv4YPrI/xd5DsM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BtICSjZCnUxpVNbhjaiGsFc6azflAvQIYz3MxIpoCEKPJIQuMK2PkO7nnGRDAUJIi
-	 wSLPa8xGB5STGau4MD3W95LoeHR0WnM/vl0L7nRvR2NRqEx82KQpOZfYXDWzZHreAO
-	 vOFwO+6XRjXF8KE7M4flLAezMX4l8SW6dRCfEEpVYd4BX5Lx6t9NOkBXXcNQcZgHVM
-	 1485RTb/IL/rccnVtG457EM7rbHwHH1WDzp8fqJB7MnxzFo6h3GOsrDYgnkDB9kThA
-	 HV0uX/uGsQiQj/0FqprwH2l2mXf4YdQB9GdueUqygFczRkbO8KPToYLHBDjZAS2sSB
-	 cPQPO51xHVZxA==
-Date: Mon, 23 Nov 2026 18:37:02 +0000
+	s=k20260515; t=1795459145;
+	bh=l/coXYN92zNNYhXdaeU823Es/cADMbebwIixDeYrc8A=;
+	h=Date:From:To:Cc:Subject;
+	b=DxmcYWYHHJgIwSfF+2SPN3AybAwx6cGMwgedzHn4rRQ//suII8jExsarE+JrI/kTv
+	 7fxkX8tESGdL6GShjiyComSy7qCPreqAykycSubyCKrRIiSBoUNJU58zOqs3DfQ4T2
+	 rzX0JGeAaqrKVxX8DX2HOuReD8hLtTO5zhV8w1KfwsXLm9Dwel0xlLkNMDwCshm96I
+	 opmV6xzBQh+I//OGPEzlGpXMxsnJUDYZeiEY+F/KU4CMQwC5I9CmoZlN8vcave4/bB
+	 //QVYwTSU2egi59zjHQZqIolFyNoUlSm33kiU/NIXHAXh40dJgrvOkxapbrMCaobJL
+	 pjXj0XmonpWGA==
+Date: Mon, 23 Nov 2026 18:39:02 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-phy@lists.infradead.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in the final build
-Message-ID: <b7fda918-8355-46da-b7f4-40e1a104279b@sirena.org.uk>
-References: <awR7nSOWkxRm-iP6@sirena.org.uk>
- <c631c19d-4fcc-4881-a6ec-9dad24419fe4@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -next status as at v7.4-rc4
+Message-ID: <ab61988b-1cfb-4563-8e77-9e997c1f33a6@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -68,52 +55,77 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lnXm83msk9DjZBfg"
+	protocol="application/pgp-signature"; boundary="aZ9w3iVnmuJELrHc"
 Content-Disposition: inline
-In-Reply-To: <c631c19d-4fcc-4881-a6ec-9dad24419fe4@kernel.org>
-X-Cookie: Brain off-line, please wait.
+X-Cookie: Truth is free, but information costs.
 
 
---lnXm83msk9DjZBfg
+--aZ9w3iVnmuJELrHc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Nov 23, 2026 at 07:29:57PM +0100, Krzysztof Kozlowski wrote:
-> On 23/11/2026 18:45, Mark Brown wrote:
+Hi Linus,
 
-> > I did not specifically identify the commit that triggered this, it will
-> > be some include file reorganisation which causes PHY_TYPE_PCIE from the
-> > DT headers to become visible to the driver, clearly there is a
-> > namespacing issue going on here.  I have ignored this for today.
+There was a bit of entertainment earlier with the filesystems following
+the trend of introducing API changes after -rc1 which I don't think will
+end up reaching you, but otherwise things have been relatively routine.
+There's been quite a few conflicts coming, plus a few build failures,
+but where there's been something at all complicated people have been
+syncing up sensibly.
 
-> Commit b28eecc89399e5371483f03fecded33a26a8e655 was not really built and
-> exposed all drivers to DT bindings headers. Referencing other headers,
-> including bindings, from kernel-wide headers is another suboptimal
-> choice here.
+No trees are held at old versions
 
-b28eecc89399e (include: linux: phy: Add phy attribute "type" and associated helpers)
+Trees with signoff problems:
 
-> Greg, that's commit in your tree, how about dropping
-> b28eecc89399e5371483f03fecded33a26a8e655? Authors probably built only
-> defconfig and thought they are done...
+  ext4		(missing committer)
+  mediatek	(missing committer)
+  mtd-fixes	(missing committer, new today)
+  thermal	(missing committer)
+  workqueues	(missing author, new today)
 
-The PHY driver is bool and depends on ARCH_QCOM too which doesn't help,
-people would need to do a specifically arm/arm64 all*config to hit
-issues.
+Non-merge commits relative to Linus' tree: 9557
+ 9652 files changed, 488596 insertions(+), 194526 deletions(-)
 
---lnXm83msk9DjZBfg
+Top trees adding commits to -next:
+
+  1151	drm
+  639	net-next
+  421	mm
+  390	bpf-next
+  388	vfs-brauner
+  349	sound-asoc
+  349	qcom
+  309	iio
+  227	hwmon-staging
+  194	v4l-dvb
+
+Trees adding duplicate commits to -next:
+
+   73 drm
+   35 amdgpu
+   13 btrfs
+   12 btrfs-fixes
+   11 drm-intel
+    3 perf
+    2 leds-lj
+    2 drm-intel
+
+Thanks,
+Mark
+
+--aZ9w3iVnmuJELrHc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsEh80ACgkQJNaLcl1U
-h9Dl2gf9FCt7MFuVWqJ2QuA0uGRmg4tYheJXab2Tfeq/ssU9WbF9GWal1gKWxWIf
-8oPxsX90GwEkJkPRQpJ6UjmPkHH8rbv5WjCNj4lJJjohObVTgiwoqdhsyHLgRe5v
-qd3OfnJef1m9ZMMqPgSgwfzOCmsDPdDzOIirX7TLrJqfM7Xem4dcAJfS1yJcm0Xd
-IR5pH9o1DyTyAM/vOa/lGT7H1kbm/wVXq1AtwwPyfyx/WwGC3DXiOfXpoPn4POss
-tvr09T8051n/ZJzlHtFZ/rwjrTlFslhAGfDI532M1GUk0MI1Cjay5JB591LbnwwO
-Y0PVIelL30OBocbwkmUJC83Tn3U8NA==
-=c+yn
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsEiEUACgkQJNaLcl1U
+h9Cn3Af8DiS8Z2+2nlDnFl0gReduHCUptwIMhpVddaKNYgxwkq9GIQGExWSUpQvm
+2XUVcM9wqDgsEvu76cZ7if7shUCVZXftfnhefmGbOka5QzSjCPgo0iKTSx0xntMB
+iG7ywy+Ltb3vf5ayKTXkegm5ZRt7eeutU+zKCPlXburXNiotpm9EUJp5WnpcCB4I
+TvjIKJxW1PKo7nevGzIQ2ixI8ZhqLet19jC1NhhmwLtjoZezqY1U2Hvi4Hn4wSkp
+afGFbNPALU5JYh/BEa9cZV8sbFCivmiYtjX78MWvW+V9mVCwG2Ljgshck/hLlTRg
+lmpouDbGUmJICvRoPUD0Qjd/qksHzg==
+=3ymm
 -----END PGP SIGNATURE-----
 
---lnXm83msk9DjZBfg--
+--aZ9w3iVnmuJELrHc--
