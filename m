@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795469198;
-	b=0zVel/zIznqdEtJhh2lqY08S4pUoE1rwcPGwFLe93rPHt1J7A6U/iav7w+NhFbxDeXay
-	 G2H6z89E4+IkaIdBPNfHA5Kh2iFnn/1WYIazHe6c7jHwvRybKZ/JSImdYIx48Q6TpAJfg
-	 +KfPODsPUwzfNj+3SSNfX2bu9YKnlkPqGT5kf6UycByfgWjXQsPgc45fRZ4vFi+z2Wlsr
-	 hIEV4S4vQRgbRZ5jSzIbMBSwci029egupk+nudYKgRnEgD3UAmuDJ1hDGScSILEVIPtPq
-	 BGVdEzKjcw+MxTaqMxDObW+yi8ofgj7n2JdGTnZOx9Z8hCeF38N9YKrrBEmGGuONojg==
+	t=1795469827;
+	b=Y2Po2FpqNXjkQCRuhJnWukSamYqa28R9MlfSTT9n+SCIIXccXKfILEqCsnhfb8xNuSeJ
+	 l1khJWPoNdszc7n2RBH8Np344QZ64R6On0BuGQj7Qf7GiUxykdXTlMW5zfhRT4KEcPbkB
+	 CDmEtG5b8wFmOAECXviqbKTGZQygOCL7zSVCH4J2uHHcXIQsL/g2WylWgaXQsV2FZHfSs
+	 IEbSJqkGZk8xipCa7MPfhpR79jl9mhHXXmKm7rs+6KgkGQnshN2h1Bb0jMP9Tc7/sD9eM
+	 iwYcK/lJWHE4cXjbsQsGhK1vcEFQGF265dUYE3gUK4+hUyjfZ94J3HCDI1mDDhnJ8xQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795469198;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=E62dkVlr6WaF/Khh+HyCkITN6+/dTf7oxStHhWssKHU=;
-	b=luYLONFJsBtZDG8atGUvCWwOXwPKNbjjJksjiJI0DJXKbv3Ni5dL37j8qay3ifmvOPwQ
-	 mS1h51WdPVbLLXltrgAUqLN9fTv6Tpnk8TDyB9OI12BJbhuS0E2gtaJjqoGY0baEOG39Z
-	 U+JmwmD1tHRbHBulHpmpx+GIwm6ybx18sr3CXvvrabo8T0HNJ+o69elmNZpq5Xv08aZwk
-	 jk4fMker3hcYKMakqeSaWNY7SVWbzVGJPp3kGZTmrTwcsjxB0zwLyW+34Q98qsXbm47sC
-	 /8FNMezzTsbrsLM4qjtrlSNHi9v/1uoWY8ikgG4U5we+WLjZSoEGMtg+2jRRHhFqRVA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795469827;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=hfkI+UHcjK0PbeypYNi+Qj0qIUe7gAIHbiIZnk53oic=;
+	b=Dq5KEH4/DqY7eGnJ5wzZ29OKQLsg74io+qReClTQ1s6MB5Xk8d0PsCIujnXi2XUjfh0e
+	 uILpu0LW+YVQyJrukMipTazbeEwmtlk/QHAnnW1s+/KZlZJoWSHSeqZAxf07WrmaE5nxo
+	 JqK6gjlNvr6ibn/YuIXXcI4xI8ya5jFEJGISYbCY/VcBntUTn+ukNITcBxM5hM2Dgn/D1
+	 fmcOnd2sjZ8fY+gSdjsQkJxpqhCiUkj8IFiIPlzmWgSwcbx1q6rvIQdg/OGL8RskREx+w
+	 RVzrchv57O+JSa2durfPwfxQy1TAlbv96VqmFoJ5P82d9GO2/8JKLQIBPUzbB43zcEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ZijXyvK/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YCBvYv4n;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A43606A333;
-	Mon, 23 Nov 2026 21:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247D9606A321;
+	Mon, 23 Nov 2026 21:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZijXyvK/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E161F000C0;
-	Mon, 23 Nov 2026 21:26:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YCBvYv4n
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A441F000D1;
+	Mon, 23 Nov 2026 21:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795469198;
-	bh=E62dkVlr6WaF/Khh+HyCkITN6+/dTf7oxStHhWssKHU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZijXyvK/M+aN7jKs9h1iStmhmYPsfN/SQT70bzVaiLhtIhG+DQlkbteXWnUO1tnfb
-	 Davg8o4lNznkyidxqofgEeTskhwPakRtcSIXkahAK3lR5Wr6NvhYN7iaFtG2Mo9hMC
-	 ZO4Qbx//+ZUROr0dgsmIIwo6LSR/jLR/WKnbySTYoooGVJZ29cOPawJLTTO84t4mSV
-	 SYVFC80eLGynleTBeooOx0M3wUdmfnDju5cM2YVzY/lZEh1jAdENPUtQxPi68/ylV2
-	 AAX2KjTlyv/l4W3aIIDfH+Zh/q0N2QRiWcQtmSsttG8HeWK48bLxw8gNbq85m7mhF5
-	 z/c30tFCtJpCQ==
-From: Sasha Levin <sashal@kernel.org>
+	s=k20260515; t=1795469826;
+	bh=hfkI+UHcjK0PbeypYNi+Qj0qIUe7gAIHbiIZnk53oic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YCBvYv4nBdIIBNhftjQ+AbOy4sjtQpDuc5l9Wn/hhdIjbYNQfvrCoUIwLnn0uXlC/
+	 if6TrM2NjbriKMG/n4O0DMaXq1m0KDmJ3GJjTvB0T7HL3XoK+u7Am1V+2QN4Q1NIvw
+	 rQpqPmikqoUSnNCspY5k557uPqEAn6Kg/guhxxo1a7IZGRFQdcXVAp55JMrkPaAfIJ
+	 sfkj5Lr2k0K7yi1yIvJeqlQ1RfLD9orJSNcErE8LKgAsxY6fMaqiCOjo1WYNzoG8C6
+	 OkYiZJEnLsLKRus86U23G0M7eD0ovPUoLUwDep8JdjTte8fBJOGmRc4P1/eCbqUFq7
+	 ph5K2OQHCOD+g==
+Date: Mon, 23 Nov 2026 13:37:04 -0800
+From: Namhyung Kim <namhyung@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dmitry Ilvokhin <d@ilvokhin.com>, Ian Rogers <irogers@google.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the fs-next tree with the mm-nonmm-unstable tree
-Date: Mon, 23 Nov 2026 16:26:36 -0500
-Message-ID: <20261123212636.1204307-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261117091650.fc2f9558e84f76a5cdbfe7b4@linux-foundation.org>
-References: <avx9_c_HWPAl9i1Q@sirena.org.uk> <20261117091650.fc2f9558e84f76a5cdbfe7b4@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the perf tree with the
+ mm-nonmm-unstable tree
+Message-ID: <awSyACE_zJCpQkGt@google.com>
+References: <awRHAIi2TSeFOKpB@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -60,23 +60,62 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <awRHAIi2TSeFOKpB@sirena.org.uk>
 
-On Tue, Nov 17, 2026 at 09:16:50AM -0800, Andrew Morton wrote:
-> OK, thanks, I'll make those two go away for now, will take another
-> look in the next -rc cycle.
+Hello,
 
-Hi Mark,
+On Mon, Nov 23, 2026 at 02:00:32PM +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the perf tree got a conflict in:
+> 
+>   tools/include/linux/compiler.h
+> 
+> between commit:
+> 
+>   8bc0233d079e4 ("xarray: switch to __nonnull_args() macro")
+> 
+> from the mm-nonmm-unstable tree and commit:
+> 
+>   bed0673e839c3 ("tools headers compiler: Synchronize compiler_types.h with the kernel sources")
+> 
+> from the perf tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Andrew's two patches are gone from mm-nonmm-unstable, but every next
-tag since next-20261118 still has their read_profile(). The fs-next
-merge applies "profile: Fix up merge" and "profile: More merge fixup",
-and those put it back on top of the iov_iter conversion.
+Thanks for letting me know.  The change looks fine.  I'll note that when
+it happens again during the next merge window.
 
-Without the two fixups, the merge leaves read_profile() as it is in
-79011a80f064 ("proc: give kcore, kmsg, the kpage files and profile their
-own file_operations").
-
--- 
 Thanks,
-Sasha
+Namhyung
+
+> 
+> diff --cc tools/include/linux/compiler.h
+> index fad2c6131a80c,505fbb0080d06..0000000000000
+> --- a/tools/include/linux/compiler.h
+> +++ b/tools/include/linux/compiler.h
+> @@@ -68,15 -34,6 +34,10 @@@
+>   #define __naked __attribute__((__naked__))
+>   #endif
+>   
+>  +#ifndef __nonnull_args
+>  +#define __nonnull_args(x...) __attribute__((__nonnull__(x)))
+>  +#endif
+>  +
+> - /* Are two types/vars the same type (ignoring qualifiers)? */
+> - #ifndef __same_type
+> - # define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+> - #endif
+> - 
+>   /* Enforce static storage duration. */
+>   #define ASSERT_STATIC_STORAGE(name) \
+>   	static typeof(name) * const __always_unused \
+
+
