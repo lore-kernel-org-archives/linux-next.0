@@ -1,60 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795469193;
-	b=unPisVE1tRr2Ip9V7vOg9QWLqwDaAU2WTTV4PCaG1RowD0Be+OTgfUmTnEpGNmPBjcrE
-	 NSLqTpXkcwUE5eIVG0jAl7snQCeFEX3xdj7MkROL2IzHE1zr27VPrryzMypk450wZvS6J
-	 YygwZPpXrXZOKwp5mKZeqfQddjeYMCB/pthi6YJSkxxl+UjYOo1mkpTJgW7bwwKcKHMXe
-	 xG+feM0gB8E4UTr2VJBn00ToozhlG5PWauz2zwSVduqWmv04SrN/LzgJg4tvvAt5UNITO
-	 DOZ+rvNHsKvtnP86+pzwlW+OVfaDcgM5yb4iYcRGFyIQFmoWV0f+0vvwbSa4+qmeStw==
+	t=1795469196;
+	b=gm2yVt8cLQC2woysDFv8mMBzJFxWwjRrBPNe18nIlmJS5KFx+2vwS3mc55Nn+d8ccuJe
+	 adQ4W82P6Lq4D9cNvWEUxh2GvaOucVrqdwXwsnL950i1oxzcOpsyDc++bIHPkW6AAIx9h
+	 nRFHUykMQ3xhGcjWsWK451dusA+zkNAD9L7ZwvsaGM5srLFEWIP2/LYg+cskR3fwVBSNE
+	 wYZ+pynI7GRiueQtOeNtYhvG9w6hxU2Y6OZK0tvHIHYcesQxVAD6klf8y0UtnR9wnoppa
+	 9ojCW9R2Dh6kIAqVzbTabE4yXJnuD6ZqZkXjDIvGLHmpvx4VpdnJnGZP4EmYMllal4A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795469193;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795469196;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=+5XQrlj4DgcxN8ZJSSekOv8THp0HCbXd/T4gJ+eW8uU=;
-	b=JUVG6URe2YLbtofD58zYyDWyR855WMWPDAVx+ycOQaJuNcqPwAo86b50HWvmRKB1G1HN
-	 LenJ4oTlcVUOg7ZX7rhohyvZC3ODhyvammzF9LAdEhVeCcnKn3MuEAHVIDXKdTsXtc107
-	 X5ROhXDk/HLP+Oo33vGEH3/6Ug2GoLHafUqHSmVrqEChJFne1vBySkNQLbXPu6JcRhqOn
-	 b8rMYCRh259X7qcWCy696ZuTSuSO7Lo6QutpuCzwiYr6itOQPiU7D52pFKs8VtvHj2Msc
-	 OqXBuETh5npX6tst/qn/O21iMbxmVAtK1ano25/AApbFdbENbNa8gZQxnnParKaHLTQ==
+	bh=n/WCGzaIaGx4yqucDjys6t5mpX2+KO/sE65etnvEMUo=;
+	b=W7YllKJ19qyYYutogDAF4nCJJia2CuTVXqnY1SlXrkcm4u6OTPQ+adGrF6qQeWIA12sz
+	 CrLKUsX3UO6K8+zFea6vyR1fD56nJkdyhbCyxcIOmm+8Daoeu7DfDeeWRBSob3E0OQ3W4
+	 HW+e+/vt5MElGxfkEMXiJWmqWWltlNelUXuKGkovVs9umXhNjxV8zPBxdF/W7bHqwYTBs
+	 HPuD760cDk0UJ4bdEr+QZ+1xQF53k1I9cfDfyXzCFnnLzhTJb1oo++HJujGBLXepC50wP
+	 oDszAhmBUH3ppiVShWSQRiY2eca3RLh/tlVxpJdTlxkupqgfdfFrx40UrSWLRBIzm6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y6bID0Ph;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LsdBE3ho;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085F9606A69D;
-	Mon, 23 Nov 2026 21:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5167E606A33F;
+	Mon, 23 Nov 2026 21:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y6bID0Ph
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA73E1F008B2;
-	Mon, 23 Nov 2026 21:26:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LsdBE3ho
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06DB51F0089E;
+	Mon, 23 Nov 2026 21:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795469192;
-	bh=+5XQrlj4DgcxN8ZJSSekOv8THp0HCbXd/T4gJ+eW8uU=;
+	s=k20260515; t=1795469195;
+	bh=n/WCGzaIaGx4yqucDjys6t5mpX2+KO/sE65etnvEMUo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Y6bID0Ph9+xCG5/eu0ldXujAg57x1ht43X5TIjQL4AeYX50R8VSCJB5d8gWvPRp3T
-	 B4+LIswNIQeQ5aFdp36S+gfLQPOT/A2s1Z0jsAh7SaAMkxUP2a7unCwtj3KPShHCc6
-	 H7hUquHporeGsysSLHz1Pb3dCvAw8k3VkGdrP9/9ahWoBaOHNHwV4lrhZy67VbFaFR
-	 Md6Cbs4lsOY/wRSPJpxf2yp849A/yLajVIX9pbhnYqcsKZ+9U57sSOJt0qRkUVGiKA
-	 ASdIrnGX0ep9+5q57mWbbe1POwcohAxJbwRcVtKmWTYgeg3Mk3KXMOn7Wemk12izCU
-	 EtXZ70uJicVcA==
+	b=LsdBE3ho4FGr48OyKCgJcupgVtgiP88fGDiAz8U2szVkGhp0AjAdNSd+1HcXoZTo0
+	 ci7erL4ioE3IV1cXcWSm/noVUIpWxL9hh3Apo8/5I87FAsaQ2XN/f7FUMo38ZmtJIy
+	 AAwjkU5Sgs8F16Ee3vO0nimJsnmJ75KEIpI95izvh2m4pGrp788eqdcoZvsHVmt99g
+	 Ye/90fQ0EY7sq6553XuRZxSLaejsKLt82MUmE81PrThuF4RrM8MyyKtBJGVbdB71SA
+	 IMfccvcWxvUSxqgHkdfdU58PjCmKM+CIM5fe+ZM0rAIATVJOly95U0IQ7u6nbzPrkZ
+	 F+H9M8D6m/ojA==
 From: Sasha Levin <sashal@kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Joshua Leivenzon <hacker1024@users.sourceforge.net>,
-	linux-input@vger.kernel.org,
-	linux-pm@vger.kernel.org,
+Cc: Christian Brauner <brauner@kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Chi Zhiling <chizhiling@kylinos.cn>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: semantic conflict between the hid and pm trees
-Date: Mon, 23 Nov 2026 16:26:30 -0500
-Message-ID: <20261123212630.1203859-1-sashal@kernel.org>
+Subject: Re: [PATCH linux-next] exfat: check the emergency state in exfat_writeback_range()
+Date: Mon, 23 Nov 2026 16:26:33 -0500
+Message-ID: <20261123212633.1204021-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261120194507.593601-1-sashal@kernel.org>
-References: <20261120194507.593601-1-sashal@kernel.org>
+In-Reply-To: <20261120003508.2135492-1-sashal@kernel.org>
+References: <av2mOPyANz3H59F5@sirena.org.uk> <20261120003508.2135492-1-sashal@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -66,17 +63,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 20, 2026 at 02:45:07PM -0500, Sasha Levin wrote:
-> d220bf485598 ("HID: asus: Cycle the platform profile from the Zenbook
-> Duo profile key") in the hid tree checks
-> IS_REACHABLE(CONFIG_ACPI_PLATFORM_PROFILE), and 699041135f75 ("platform
-> profile: Extract the core from ACPI") in the pm tree renames that symbol
-> to PLATFORM_PROFILE. With both, the check is always false and the
-> profile key does nothing.
-
-Ping. next-20261123 has the hid tree again, and hid-asus.c still checks
-CONFIG_ACPI_PLATFORM_PROFILE in both places. The fix in my first mail
-still applies.
+Ping. next-20261123 still calls exfat_forced_shutdown() in
+exfat_writeback_range(), so the emergency state check is still lost.
+The patch still applies.
 
 -- 
 Thanks,
