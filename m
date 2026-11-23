@@ -1,57 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795455906;
-	b=uhYSXBJb3pMaMANxgsXxJtX9y3azrXg7drkB2CqJX/rskSjSmUC45PjlYDrI5H5+M9qM
-	 C49ohfArQ8/608LWLJIXq2FDvPM5WyfyjE9GQlKYKy6ztwZcCYev6bI2kHOs17HlaeKYW
-	 L+FFVgl+wMv+skYD+wB3tiU/qQkWheC6W1By3JNojab2KdlO904G6Hy5xbBVoLYR7mcyY
-	 J9L9N7FhqJiOnRtnqydt5QOJD5qH+0x8dHoewPTTlWsrBkFEq/djjM7t94Tjo6264ZW05
-	 cVFO3H//AqqEG7ojauquoQf44gQUmi0VPEomsSmWd/xKOECgxHSFozX5pq5EJlH8K4g==
+	t=1795455924;
+	b=WMvVdjcJYdRnjGjmntnrqoYfILtC5czMNv9IpryJX8rn9TXkOUTgH82HMpiqQDGShjwj
+	 kWBw5E9O2X162m3X3fWWmgQvsaCANZD+ly9j9uQGevXNb2jfpULCLTkcQxpVi9GdtTZq3
+	 JfF7FtV/4eT8S7cAyVslBDCFxhFi/Z60GxiW/a5FVPY1IImvTaRuSr5q0EZCI6u457gOW
+	 bAEuFJNKKF6VJoyYYluUkeUeGIRBH8FylryUgGpm4IQzCThTCo8oSssXdQMSqhEg67Wmr
+	 7BqmBvMkOvv1r0hC8y4/xnHT9j94z9dQqq/NoDxnvXxg5XcA7y7lySV40GGpps2wiYw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795455906;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795455924;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=nLNqxhvAVwdAw8dAHf99r/lF3vOgN6havsFWG39HPFs=;
-	b=AOIPLytQXGA4sGlMW0Ykw9lrFN7DmePxOZoBIAXoiN3NER39v3mrPnIGrpRaA5lBuhsd
-	 JGLWmg4ddDNtIXSic0r5EOpwXL+SNO/T/LcScVc+dD6Cgm7cg/PGJmIS8AM7zZmibLgWl
-	 3N7fwN8Gw+XewGUo0tHfuA+r+w/attqzn9xwZJELBRNeucgvZ9BW8dtTAmmhM+PQwvE25
-	 SE9TYaRlaMN8kis+8YEUmmu7yyqTaQSxc4rBzq3Minh/bkTDV4+E8RI59hUmkrxxCrvVk
-	 AOg+97v5uGtho8+zCzqLtTKRsceZtg/2mkp0bCZjnZzKfIoufArZ/Eb+HJ1YpKWkSMQ==
+	bh=IKSlySScv1/FLO6FYrFecjofDZSXTakkY7/4hkyveT0=;
+	b=dw624xWv+yyMRFzcBD3qDfxPV60eJuBMgmDZdLJoCYl2u2DPiQhTSAStGy6fqHvOB+vA
+	 WXOq0cVa/+ChlGxLgA0Q/Sz8a2JMRvlw8cy5Bt8Hf7xipWh/NNnsRXTIoq8mW67nLvf3L
+	 Ev81I1my8A1o4tnHdJHapNBxXXY1dxYQ5hHDNvfNGisT2eCrq22p5i8e6G/GqldPahyhM
+	 aWQC33snoZqj2kQwHWvM2qx9kQXtT8Y/+PeX84KONSdKzSSLsILS93f2mOCmuM92luomF
+	 O+X2JsKZbQGrEmL8/6jhsKf7IPhIX6P7BK/2iWvM7icC/29yYeSX7iq4hOwb1SuqUmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DNok/Xj+";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xp68NHs3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5392606A31A;
-	Mon, 23 Nov 2026 17:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE628606A321;
+	Mon, 23 Nov 2026 17:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DNok/Xj+
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 357AA1F000E1;
-	Mon, 23 Nov 2026 17:45:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xp68NHs3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325951F000C6;
+	Mon, 23 Nov 2026 17:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795455906;
-	bh=nLNqxhvAVwdAw8dAHf99r/lF3vOgN6havsFWG39HPFs=;
+	s=k20260515; t=1795455924;
+	bh=IKSlySScv1/FLO6FYrFecjofDZSXTakkY7/4hkyveT0=;
 	h=Date:From:To:Cc:Subject;
-	b=DNok/Xj+as6Zve1Lal2pZqqRF4jL50kBlQ4/vZkt8zMNeyNRa0F7+6GP3UOdevG2W
-	 r7qhs9X/PT2HQ3BtCjGM4HYQ59VNImMso8YxEBe+YhClSSH9UJGRRwkHkeKkhCf5sw
-	 7XfHbOVkEU1KOFwKMSkG9KrP5fxijy6iCbE1WmOCIc2VVTDvk5Cmj8mVFNIk+lQQmA
-	 03UbM0geD86nZZ6btyT5IVdGpvA8hHSWJ08Q7JSttWhY8Ryz6R1JV4Ko8sAg7A7Mva
-	 nm82i2zvGRcpMgUALh6FSc+DHFdTMrhKBTrdyXEBzJ1SdQqvdHUMkl+4I76cql0/rp
-	 wAA1o6FrAh8Ew==
-Date: Mon, 23 Nov 2026 17:45:01 +0000
+	b=Xp68NHs3NuzLN8PbZ8K93eWGQ4B+WdHRcQUVftP+p8Fs3jMEyWTQtdtbY9HZpIzxr
+	 9DFchNlzT0hbvtXr32RmD9JaAAUrfFas+bcXcg9raT+S1Myvw1VRJ1EVzCfYJ9l8gL
+	 NhyiwPTho+czAhD0/1zhMzP1A1GfPy3MY52yrSBwVzqLhfk1yzAIOvZWxx7fCoZb9E
+	 cgtR5kmylT3O0J7LqpnkqIR5XNC9LekdbDZolGuKz8qNn3MafAq4/n3FAfcyprORjh
+	 ByCmK1HV+1TrNrxBCcanzon//X3ffDJGdouTagTYHYwNOOsQsaU8tECEuK5TivgYB8
+	 /5repmi84B80Q==
+Date: Mon, 23 Nov 2026 17:45:20 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org,
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure in the final build
-Message-ID: <awR7nSOWkxRm-iP6@sirena.org.uk>
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Shunbo Shi <shishunbo@cmss.chinamobile.com>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Message-ID: <awR7sFLQtxE1tbu9@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -62,54 +58,70 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Vve03y81vknTHsUY"
+	protocol="application/pgp-signature"; boundary="px+xhq2Kr8k734Cc"
 Content-Disposition: inline
 
 
---Vve03y81vknTHsUY
+--px+xhq2Kr8k734Cc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's -next has a build failure in the final build for arm64
-allyesconfig:
+Today's linux-next merge of the usb tree got a conflict in:
 
-In file included from /tmp/next/build/include/linux/phy/phy.h:25,
-                 from /tmp/next/build/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c:15:
-/tmp/next/build/include/dt-bindings/phy/phy.h:15:33: error: expected identifier before numeric constant
-   15 | #define PHY_TYPE_PCIE           2
-      |                                 ^
-/tmp/next/build/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c:47:9: note: in expansion of macro 'PHY_TYPE_PCIE'
-   47 |         PHY_TYPE_PCIE = 1,
-      |         ^~~~~~~~~~~~~
-/tmp/next/build/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c:127:27: error: 'PHY_TYPE_PCIE_GEN2' undeclared here (not in a function); did you mean 'PHY_TYPE_PCIE'?
-  127 |         .phy_type       = PHY_TYPE_PCIE_GEN2,
-      |                           ^~~~~~~~~~~~~~~~~~
-      |                           PHY_TYPE_PCIE
-/tmp/next/build/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c:135:27: error: 'PHY_TYPE_PCIE_GEN3' undeclared here (not in a function); did you mean 'PHY_TYPE_PCIE'?
-  135 |         .phy_type       = PHY_TYPE_PCIE_GEN3,
-      |                           ^~~~~~~~~~~~~~~~~~
-      |                           PHY_TYPE_PCIE
+  drivers/usb/gadget/function/f_hid.c
 
-I did not specifically identify the commit that triggered this, it will
-be some include file reorganisation which causes PHY_TYPE_PCIE from the
-DT headers to become visible to the driver, clearly there is a
-namespacing issue going on here.  I have ignored this for today.
+between commit:
 
---Vve03y81vknTHsUY
+  07ec204e8aecb ("usb: gadget: f_hid: fix race between userspace report upd=
+ate and GET_REPORT response")
+
+=66rom the usb.current tree and commit:
+
+  d034e353e3ef5 ("usb: gadget: fix a few spelling mistakes in comments")
+
+=66rom the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/usb/gadget/function/f_hid.c
+index 428635e580bb7,4befb3d0f58c9..0000000000000
+--- a/drivers/usb/gadget/function/f_hid.c
++++ b/drivers/usb/gadget/function/f_hid.c
+@@@ -637,9 -622,10 +643,9 @@@ static void get_report_workqueue_handle
+  			 * Either get an updated response just serviced by userspace
+  			 * or send the latest response in the list
+  			 */
+ -			req->buf =3D ptr->report_data.data;
+ +			memcpy(req->buf, ptr->report_data.data, req->length);
+  		} else {
+- 			/* If there are no prevoiusly sent reports send empty report */
++ 			/* If there are no previously sent reports send empty report */
+ -			req->buf =3D hidg->get_report.data;
+  			memset(req->buf, 0x0, req->length);
+  		}
+ =20
+
+--px+xhq2Kr8k734Cc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsEe5wACgkQJNaLcl1U
-h9CHYwf7BluoM2ZZkp7ju7XWqJPpH5doRn8uawa/wjWWNvbQIETwbjA0HP4RcjG0
-iylw9YZk4+Zh5da2lV1vCPRKZN86JAU5QQYcs1XYb04KyU3uPOSurh7EBNFVrI+B
-N4rt8wnYvqd8IImHy2Zb3O6tXuPk5X5X3t9rynM8XDklrkdFsJQYUjQ6/el9Z5wf
-hT5uppcWUDF0H1e+eFnMbK/+1NH3jXl7+9qurBUTyuT11lUqo0g9vxDmAvxuzmbp
-ft6Qjki6OnNAex1qH/7eAQvm2X3omAbb+f+9NjhRiHZkeARqfEomWG0JF2/73Vnb
-JDKec3bF8uELGhjSzTH1O48hmaTnFw==
-=udOF
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsEe68ACgkQJNaLcl1U
+h9B89wf/YQJYFdWwLhntZeu4gCIZmGodHxJT1c/IiInq+MtjjKHKJ/vxvL0vOmPk
+G7r7IM0XHTnY8vwlSA7H7Za3+y0ZQkRtcQ8yobKUUDapDUDKW7b+L9oIwA1VjLZA
+94mDf0pckWBW7Jyd8Z0u9iQKi0Qaze6r9HH/CD+edmrus4RGFBum2BiIcTSmFOaW
+OjNOpHKpG9UL2TgV+IZroFx95fzbukMLK+Fs7LmrbyNrZPpUs3VSKJTU/Gk2IcZQ
+EOXB9f57Idg1xK7CrjkVSI3Blohj8X5yHvUyKhmd2uqkdPm+nE+/BUefZfXVYQYS
+8pE30Yyg14VG/c0JDanzH+aCwdcXrw==
+=yXTd
 -----END PGP SIGNATURE-----
 
---Vve03y81vknTHsUY--
+--px+xhq2Kr8k734Cc--
