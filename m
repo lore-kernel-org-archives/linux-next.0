@@ -1,112 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795470569;
-	b=c9QHFJw7UhW0vfZ/BuXDu8oMyRoitp0sjydTb6YBSms/DywTQGcw9SMQV7BJtINbsrGq
-	 A59nTRHFNjd9fR88RseRFG7Of0S/XUKjW+CzfT2Hz/gqFpzQrYhj1YdqgoaLnHc2UZvsg
-	 8TyAMbogcJkSbpgx0/38ioUbpjiwuCN8JBOqcPpXWiHJescZpW5rCbtlFgm/T0kcsGJxl
-	 kZyeU20ViplESoq8P+vKXQurdGpOrcSYN+SGY0rlf/RQ50V8g5Ulo/BVlwU0vK/E6P6DE
-	 XaCKjPZ+LRWWPQjLud36wwLV4fTAIjdziq7wZvtLdzFrsEEwvtg+idTR8QxxiV4HxXw==
+	t=1795487423;
+	b=Q7usH5K18hDoWXgi7FyBZNDyn4sAcZSP4Pn6j0dTNaEIHW5rw/6I5yOQkG+htmVX6wvm
+	 28ejptAJM9cLT4Lws9nT/PNmpU9K4hAXOgVYM7G1Ro/eTE+51bguw7gJANGKyO/NJf2QR
+	 4pKqCp7AYk84ita7VkR4XLYqUQpzAphgq4293FVANJ376ChfNmLOvq38NCthO7TOp+SrE
+	 3saD3H09VPpSoAZrnVRz4fJgsJ7Ye7f0Yw2k2RSSbHxBZKoAVfMWi0Cj58BsJA8OMwQw2
+	 GkMWVCIGUkTArLbRACLb3531G3IVQo1XSXu72NxwWGxeYjnjF4ioEDSlhYIuCopXg1g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795470569;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=imT3cZmm1No1iiPH5Dg6eys3wWLgCTx1cHGRKiZuXwY=;
-	b=OiQ0anzA2O7tq0HvLyBUoZWWv9guTBHm+EK9PUUhMz5CjPJgboPYCT1OEwxmomDUlOjs
-	 xHcYUltlgf6cv6lsBCgo2fOQDDL6RVlSCvkptmichUFwNYiTOIt8v6oBVUFJ3f4AXrrd5
-	 OcQXklnOuMutsoGxCelDv4/+l/rwrsm3YQKswv+clTur0yyQM/TtYZ2FLr3L5wVoBVkD/
-	 3SoFEdCsfNwtIxx3S1Zk41jw0AsjTjKr2gOO3FAyYgyFj7ZbbikneQsBtcmeyS1o7YgBt
-	 wbICoGMjQqdL6+43BfI1/Mo4c9PEuK1WRtvYQ3DqpSnxQ/HrHE+aCxr2++502LzDDDw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795487423;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
+	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
+	 Date:Message-ID;
+	bh=I+XPjJ9Y7DcNDfN9Byn1CqvDoujkzO/GGlDmscaKSYU=;
+	b=T1NVl2A5ynzhEahkXr6ZoORzt6PN2PsXxDK64/ri/n0h67ioZE6o9FHZ9+18pEmaSM1F
+	 w75UkZmNsbCA2sK1QD8vuusI5YaOZZZiqq33d8ggVj94NeWhN5DvE9WTQyU6jI99wlV3F
+	 EUBPuReEcK0ffUiNIWmLdJEtP0Ug7x+jB7ljoriF2fk2hePcf49eL0/tGG5E6TeKZWh4u
+	 kQ10DlpPWk2wY6YOHYf1T4crWYF5CbJjkMS/fGw/bQtOyvXadpq2yNe+WJ+JZSfGhrcRS
+	 vPpP79HFD1U/bBdOvWa71FJ9q0j+nT+Bp0kZ8NrnB0IH+CuU420vUTUTLOAdxqkQLvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=XFEMPgBv;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=RhxkyPxj;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=kernelci.org;
+	spf=pass smtp.mailfrom=kernelci.org;
+	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=BC1oXN2k;
+	arc=none smtp.remote-ip=74.125.82.52
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91825606A321
-	for <linux-next@vger.kernel.org>; Mon, 23 Nov 2026 21:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91825606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9C2606A31E
+	for <linux-next@vger.kernel.org>; Tue, 24 Nov 2026 02:30:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2D9C2606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=XFEMPgBv;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=RhxkyPxj
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANJuRpK3255350
-	for <linux-next@vger.kernel.org>; Mon, 23 Nov 2026 21:49:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	imT3cZmm1No1iiPH5Dg6eys3wWLgCTx1cHGRKiZuXwY=; b=XFEMPgBvu/e+tlYn
-	FrvE+Y9TcI69AQc1mMsSOuh2ZZ4cl/kUqgt6M8NCaPw/sb0mcpLNSMLoHL1Rc+I7
-	ohsLzKhGbewo1AFr/ZaLrx+r7p9BDr1kFwAc0atsbellGtAR509/HG7o8N2UWrGS
-	HwJT0HpeYy8kMCex4ceZ6/Zuo8N44A8I0rJvQbvBvTvIEuFi7Ru5X6MBvLzmsqIQ
-	Qk8AOMVUWC8918kebY9SXfe004UImtqicDrDPCEeJ5h40+6L+1e6qoX+4TctuMhZ
-	u723KOEXej1DYH1JtLV7eqC64K9ac+DQUjEoab/ffR3W1m+XrZJ7XSm7f37lb1ao
-	SAd7EQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4g1pbjjp-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-next@vger.kernel.org>; Mon, 23 Nov 2026 21:49:27 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-94961511b61so643081285a.3
-        for <linux-next@vger.kernel.org>; Mon, 23 Nov 2026 13:49:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=BC1oXN2k
+Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-1b546061d58so8973207c88.1
+        for <linux-next@vger.kernel.org>; Mon, 23 Nov 2026 18:30:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795470566; x=1796075366; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=imT3cZmm1No1iiPH5Dg6eys3wWLgCTx1cHGRKiZuXwY=;
-        b=RhxkyPxjvCUnDvFVe+ILFPksa0yJN9MeRh96aKl0kiOADU8qQv3DalUezF12wodf7H
-         C18u/0Jf6ulfxQMceltUEJm2Us8lU/PnJErNM1nwwlpJpvGTNF/+ogDPJKEB8cMkv8KA
-         1JZYfROLr84aFL2xlTdOTuMhEI7y5KeFg3LGzzwd1OeawP4SEvJZgbdNWI1D/25iTHpq
-         bEiF9+5jTYrFG3Z0f4uyILIxrrGlpw8spx+QspD9FHmDBzVycBwPMRq0yuFFYQb5+cF/
-         wJOdPmdOW0ROWahW3Rt2yJ1HxOfMuaZFz/B6W0UQ8mTYiwAsZN6XqeKk97hDZPg1+pE2
-         w7/Q==
+        d=kernelci.org; s=google; t=1795487422; x=1796092222; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=I+XPjJ9Y7DcNDfN9Byn1CqvDoujkzO/GGlDmscaKSYU=;
+        b=BC1oXN2kDz1BwuZ441hzGPEkq9SmD1t295cBOGmOJN1CvLwT27hIko4lYROeCq7z00
+         lqblJDpSirNHUmiUK2ja/4GNyKXpNL8+NwAvvXTEeGepLhlY1PeU3Vp8qN0w+VlzcZGr
+         y27KfZo2f3U6LXqlY2EA6tdWe6oUZ58s4EqJ3ARmJkhoNrFq1znlWWBWjO5+8iQt0LxD
+         rifbs3rYzqxPJsaR5D+MQBDD9frXLKBvbuhFsijoUU1/HoS3pLBuseQGYg7fheH6hdjC
+         8XkGrcB94XdBkoi5lJj0aK/wVX3+hrWYYOBPmeYGiDbC4ZbyisbIVfkbS8ujZi6Lm39Y
+         TqSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795470566; x=1796075366;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=imT3cZmm1No1iiPH5Dg6eys3wWLgCTx1cHGRKiZuXwY=;
-        b=sk0Qe9l9H3S/pNDG94XpaAomN03TOVEXWnygWx6Tw9BgkOi9Muwc9A/hPiWdMXFvJa
-         XFdDOSeO/FXlypNnIyeBRShIus8F8BeLOP0sNeT1Z5cuJrw4PcKbYLhBhI7H7vYShLMW
-         sHhfsUipz63A8BhYG2hA4en4t6dEV/jH2VbO9CnDRd7fbBKT7ZrTMZ/0H5J/7B0NvdJ0
-         D18venercp9cL2/P6c4VNprjS7oGF76WUI/IoqAwOkUpo89tmT78rctD1rYtWz3zK2Ug
-         wirBEKDZeYYvZK5/0LTprC0xFSRfLvUxnezVkOiC2vAfAmdUN9e2/VtJuhcQbrWBFfDm
-         H+KA==
-X-Forwarded-Encrypted: i=1; AL+hErHTz5tkOaXsZZB8zggs++WLUrgMMndn9A2TEC6UiEg+jawmPGU+x7iXE+rXJESpXVvd3Tj6/JIL8SgN@vger.kernel.org
-X-Gm-Message-State: APuU4Z/lRnmt40aktLbLhsCA88BKOG3LUlR6gnMlWb86VVT39Xz7ye6E
-	/r/3M0uzU19eSjMWcTpY5iTD1nMS+gNJ0NMMuGEgtqsjK9YXjX503vQ1e/8igEfeSNCIo0GqHuJ
-	jseDLQGkNPTmuRI9iIEtXH8fQ+mVJtqCp02u1Om8DfRGZY8EkTEImqT6efkWpV8q9
-X-Gm-Gg: AZFdTZfDeZEZRmh9ZNEZspZfbqv7CF5emksNhjBdQdisqG5TqiDBSTmuobHk5bxoCRp
-	1h+tG05UWaD9RerbzXOCqF+MDEnLMsR0CxIn2357sKdnvjKHq88672QLyewNSwhKCjjgROSxEMH
-	wf/wCx2mEsuPhiOViqNjLNF9l8N3xC7oTG79tzVrWFmlXZGYOiCv+lI+gL3vCA68fQO67OzDxix
-	6U18Vwpnof0zQotLE/G/Q6+hi0thd3SfJCyTsclpUdghbnHGz6pN061LN/Xyp0xkiYahRq5cpgC
-	Cty8XQJRDVxirP6oe8DtOVzNJOlde5KUYwvRRM0lW0sOHQWblq8xgD1sqY7kZ/2mk2NiK246QpJ
-	22CGT3Sg8W2ujuihPu8T3Y1ZhiN9+7aEnXXOJCiVKwGEHQ43Opep1WMinAMs5z+9k8Y1NHeiRoS
-	m4eKJON1RdwT2RULu/UJDLaJ/bZCRgSrMItCo=
-X-Received: by 2002:a05:620a:44d4:b0:944:a46:5c1f with SMTP id af79cd13be357-949ba9a3cddmr2079008885a.40.1795470566524;
-        Mon, 23 Nov 2026 13:49:26 -0800 (PST)
-X-Received: by 2002:a05:620a:44d4:b0:944:a46:5c1f with SMTP id af79cd13be357-949ba9a3cddmr2079007285a.40.1795470565991;
-        Mon, 23 Nov 2026 13:49:25 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:2904:b6b3:45df:9155? ([2a05:6e02:1041:c10:2904:b6b3:45df:9155])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8533579csm340015395e9.2.2026.11.23.13.49.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2026 13:49:25 -0800 (PST)
-Message-ID: <04471857-7d48-418b-bd9f-5c3ff3010e41@oss.qualcomm.com>
-Date: Mon, 23 Nov 2026 22:49:24 +0100
+        d=1e100.net; s=20260707; t=1795487422; x=1796092222;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=I+XPjJ9Y7DcNDfN9Byn1CqvDoujkzO/GGlDmscaKSYU=;
+        b=iUO1+ZDbflKvjFm+J0bCkHR17ZLVHaIr++3TJSFgTUbWZkkEznXndvdzFTB5Rf7Eeu
+         mDNS6cJBpy0S+vup6Nzgm0FHXLhW/OlISL4M8uMIyGsR/vJPxBmqLhkqowQ4J+/NDjyw
+         tYXgtpXCbotiUTjpjq8CLPH9SWUVWGm6efRhMiCQfK6T17i5jaiA1SdiFbE6li8yMhYV
+         ELcuAdR7l9fWe5FXJ7ery3UZTRdF8z2aAuTgJpsLF3Czvk2qZFliOaBRY6gJemVjCEYT
+         I+4XntytRqPw5J4YSbp4vNbjMwzwFDx+ABOcmcnt3DEe6NPDlEKseGqtCfL2rfMDgcE7
+         jVvA==
+X-Gm-Message-State: APuU4Z9yOA/DYA+OGt0AsTSqg+auv6GKhLoUwJkI2MxyvInkeiNMfx8Z
+	bpfAJJONrcSV9pxmkIptXEl9YsgGy95Ypu7IuFxHA3MelY1zEB3TKGSGzV+g7OHMwKc=
+X-Gm-Gg: AZFdTZfa7Wac51Sm9Rx6H5B3VYlbYneqqJLXeov4ZsMj2KXqDXXZBloz0OChWINGu9O
+	lMC5zx6kaIZMmIvhhVILk2mrYuOzHBIgyWu7RuJcysi5PALT6hjqeSeTeYQtLuPZOhwUve3M6w4
+	qfE0FOc8/LFsTniC+mAC2ddZkcXEsi6fi7qk5w8lxV7P0n+kxzJQkgje3Bz5RHy3adUyVn7ASYj
+	dOrYNDoIPcfR/hg3XNui0SguIbjQzM8A8yEw7azbD9eP2axRnjrDtDkOwhhb/ekvECeyPGzIBUV
+	S0T8eSlYKXB63XK03egSYm8Dz/C65r2dZ8R3Vn2s5MOOWGkdwOUVDIrjfHyhnryOaFvzh1EStmL
+	r5XJSapUohWBsGFstUd03Xs7JyFieyOTKrPHMzpX6CTUGhwdVcDzf1DqPWz7WKs9nDsGlUW/3Ja
+	50JFabhWE7M/wcYEHXEXZi9FeIvL7wdJEiQR8b1pv9/3Avk12cKMFlEDncPElLCMEGw56v3S/YM
+	e2LHBW9J02EADBLIFJBhVRvDUOvdd0Er0B3aPFvCw0fMak56y7hvcKcddgJrQu04B0RFvQ3Hn9b
+	8mAqx+HioiBty/+Zwx8Vxg==
+X-Received: by 2002:a05:7022:1701:b0:1a4:c892:b130 with SMTP id a92af1059eb24-1b55feaa6a4mr10861183c88.15.1795487422019;
+        Mon, 23 Nov 2026 18:30:22 -0800 (PST)
+Received: from 52d83ede7c60 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b5566c1142sm30611781c88.2.2026.11.23.18.30.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 18:30:21 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -116,67 +88,120 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Missing signoff in the thermal tree
-To: Mark Brown <broonie@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-References: <au4SKRePRjYBItxx@sirena.co.uk>
- <56328964-8d06-452a-adf5-ea37fede069e@sirena.org.uk>
- <782a33af-566d-406e-9f4d-52d80cd3c756@sirena.org.uk>
- <70a066cf-533e-45c8-9db7-e79727dc6c44@sirena.org.uk>
- <03320894-97d4-46bc-b11e-5fec18146963@sirena.org.uk>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-In-Reply-To: <03320894-97d4-46bc-b11e-5fec18146963@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA4NiBTYWx0ZWRfX4bLwtnqohhXD
- NbvfsjG+gqlIoGSSvfZVlodswKWfAgFBwcWIdggP7wh7Au63GMVFFfcjMT0IIuzMQkhBYvZI2H0
- PIc3JIz3UkI5N5l7b5IlQ3rvXrEgyL3ED5V8zWOLBBGF9fdurd6/9sIo1tCHEym4sXX+p1yYCOS
- ZBEpKsdqJXJtx/GIdEpnwEjUswKCTOXXN3Ln1NCt4SaORsmOA+InUJOYPrsgrmdWRQbz+eQ4KIz
- vFMdBTuYPt+nv4PJHvXIqFhMMVYOIN0JsRCsftuBKuv9JLulx46n5s2AvXbRa0X0cAtaGsw/oLE
- I3M8ffgw7av5kRJkmQP7oEyTvkUgQeuPnLNNJAtKvK9ZvHSlfdvHpSCavQ7x2UunaVoBGQxFmvx
- e4DX6TbyoyLGcQwAoS9eQu0k83NE1Lwpswy0syoxdIV8wyGGtXm7fvwRMgkBmElslHnhVNPTCFz
- A32ri/MnPGOwuJtm/lA==
-X-Authority-Analysis: v=2.4 cv=AeIkjHXG c=1 sm=1 tr=0 ts=6b04b4e7 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=1LtqeKAUxZIeCVZ3D7kA:9
- a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: T4dFbAw1TdI5bocRaCUEbTnYtymZHZpN
-X-Proofpoint-ORIG-GUID: T4dFbAw1TdI5bocRaCUEbTnYtymZHZpN
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA4NiBTYWx0ZWRfX233LlUlXfWSJ
- FC6PID2g73sakUWnEi6ErmxCKTeSa5Oid0TkFmf6fHpOslV07oBECvVLfh94FV4xdEksdehF0ih
- mZ/pg/XzAsXI5y9ITg8/er6bLoKrqBk=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-23_05,2026-11-23_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 clxscore=1011
- suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611230086
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 3191063649dbf7c0d0b768e1f3655e4c5fc6edb5
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Tue, 24 Nov 2026 02:30:21 -0000
+Message-ID: <179548742121.20463.14083979973277133578@52d83ede7c60>
 
-On 11/23/26 19:22, Mark Brown wrote:
-> On Mon, Nov 16, 2026 at 10:18:31PM +0000, Mark Brown wrote:
->> On Mon, Nov 16, 2026 at 10:17:14PM +0000, Mark Brown wrote:
->>> On Mon, Nov 16, 2026 at 09:51:27PM +0000, Mark Brown wrote:
->>>> On Fri, Nov 06, 2026 at 05:45:13PM +0000, Mark Brown wrote:
->>>>> Commit
->>>>>
->>>>>    115b4ff52cd35 ("dt-bindings: timer: renesas,tmu: Add SH7305 support")
->>>>>
->>>>> is missing a Signed-off-by from its committer
->>>>
->>>> This issue is still present today.
->>>
->>> ...and you've not told me about your new email address so you've
->>> probably been missing some of these mails :(
->>
->> Found another address to try.
-> 
-> This issue is still present today.
 
-Noted, thanks
+
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/3191063649dbf7c0d0b768e1f3655e4c5fc6edb5/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 3191063649dbf7c0d0b768e1f3655e4c5fc6edb5
+origin: maestro
+test start time: 2026-11-23 17:45:19.546000+00:00
+
+Builds:	   76 ✅    1 ❌    0 ⚠️
+Boots: 	  217 ✅   21 ❌    0 ⚠️
+Tests: 	34078 ✅ 2017 ❌ 3121 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: exynos850-e850-96
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-15
+      - kselftest.arm64
+      last run: https://d.kernelci.org/test/maestro:6b0493ac99c74e1a99b76f95
+      history:  > ✅  > ✅  > ❌  > ❌  > ❌  
+            
+      - kselftest.breakpoints
+      last run: https://d.kernelci.org/test/maestro:6b0493ac99c74e1a99b76f98
+      history:  > ✅  > ✅  > ❌  > ❌  > ❌  
+            
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6b0493ab99c74e1a99b76f8f
+      history:  > ✅  > ✅  > ❌  > ❌  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: glymur-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
+      last run: https://d.kernelci.org/test/maestro:6b0494ec99c74e1a99b77598
+      history:  > ❌  > ❌  > ❌  > ✅  > ✅  
+            
+Hardware: hamoa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.devices-probe
+      last run: https://d.kernelci.org/test/maestro:6b0489d699c74e1a99b717e7
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
+      last run: https://d.kernelci.org/test/maestro:6b04a14f99c74e1a99b98905
+      history:  > ❌  > ❌  > ❌  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: acer-R721T-grunt
+  > Config: defconfig+preempt_rt+x86-board
+    - Architecture/compiler: x86_64/gcc-14
+      - rt-tests.pi-params
+      last run: https://d.kernelci.org/test/maestro:6b0492e599c74e1a99b7679c
+      history:  > ✅  > ⚠️  > ✅  > ✅  > ✅  
+            
+Hardware: glymur-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000
+      last run: https://d.kernelci.org/test/maestro:6b0494eb99c74e1a99b7754d
+      history:  > ❌  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0
+      last run: https://d.kernelci.org/test/maestro:6b0494eb99c74e1a99b7754b
+      history:  > ❌  > ✅  > ✅  > ✅  > ❌  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0_wifi_0
+      last run: https://d.kernelci.org/test/maestro:6b0494eb99c74e1a99b7754a
+      history:  > ❌  > ✅  > ✅  > ✅  > ❌  
+            
+Hardware: hamoa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.clone3
+      last run: https://d.kernelci.org/test/maestro:6b04896199c74e1a99b71363
+      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
+            
+Hardware: qemu-arm64
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6b04896399c74e1a99b7137b
+      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
+            
+
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
