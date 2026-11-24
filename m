@@ -1,53 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795541507;
-	b=Ne2ookfraImLHr+8LhsppsrI8aIsT+ltsozZlUQ9F2iKKvN7uONPSGAELSVqS4igEo2d
-	 PNxqHEJdsceuKLAHvgjgbVvgl0ycNGNvdG/uljBiGMXg/ViP713wnAGVBJEyMYxl157od
-	 hWuE41BrfhB6mCcNIePgBCTmNna/+3N9ESQRC3+E590fNSS8MW7PVzcpvGpTuD/k7++hP
-	 gsXQhIRl4aHwBmHnz5mqEo4ProJdkscNZ7reEpjRi0x7WAHWvArqaJUAyus9AbQvfTXhP
-	 lL5GKMI4CiQDrvL2hcFAyVyWmTuFQdrDLZurxJgKf/khU0jTNmRFeF75Gfy7hS8qGFw==
+	t=1795542448;
+	b=rT5Jxqad2OcTkPSBz+BJ2f5SCoM1F0G6gk3ta1UNW+Gm1mvW371+oCI7WvO1axPW2p1y
+	 vdgogtZwFxNduCpgRA7Xj8E8IQI7RZMRLzMIqa4VgtWHSYXnei9ZvG1ey22pxnwL6nl8W
+	 oDF+hSrSi+tBaMDx3V6JT9Iqv1R1Jq4m+tjFPsqC5i9mZDTAYpICNdPfQD9rUKm+/saIl
+	 QogNE2gibZdzdF7vEFR5g+BVcSeZosaXXos69xFjQ1ern/Y2FUSbTQeULLX9FMSlg+Bj2
+	 J6qRseo8njmFmB7FYzFu7HgnXRjOJxd/ERhk4jjiXT7itx8ZPNWuDKKawP3BVtt46Dw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795541507;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=7BOhALOWGOqa/3ADOLPrCh1s8Dt3hRUkimSSK/0HERI=;
-	b=1uT00bYyEap83ez7YvThOiJGO7maQsAf6J0AJlmie3k4g1UTER2RvCOZ8HylTZpfSSAf
-	 f0yOiUzzs3IBkhtG/0jTN0RrkkrHYu4zMfzZh/cudxkayM8ffMsF6SMzkYKoLPjp1EfTo
-	 krFAx/DM5awMUuCPMK48li2Cc6U0THf5bvR8KAqSF2+v3xC8dlo7rip4yVo0zUMKahd9y
-	 kpf3+xQY4NV6xb7QHGtnpX1wJ9fBw75J4nPMtgWulCLjtFaLXkhJAjC8A/LyisyQFWSar
-	 22ZZKwb8af+OGSG+M4GPVcmir5zlCcF0Mm9VvNAHBaqcmnIuthXvLDZbxF2nvbYtH/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795542448;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=bdWEFbRsgzPIYKTa6jIj3ybNip24+D6HpGcUy94Q6ms=;
+	b=LbTSaPwNSnr/ZdS1HFS8/Ivs+nc7K3uBOQyIOT4gCO/xAIT+TDGTE2Lzwv4n084tQBDw
+	 5sIgWYf70YW5BWi5krBsezyz/DSicJE18A2aPHw48d6UzzyjugZShes2Fr83Il7u5FUDZ
+	 WiCaNWejbWW87SGzeaO7es1A+cWU7AKfV6OurcsWFGP6XzulOI6GGwI6pjl/FDbcYtqG9
+	 ctBsFbK/bFbx1BAp7TPsM9Z3cWGi3XNM6XmkkCq9jdn8X9wZJhcvKZoOBQfQSIJjEtcE/
+	 PRQwuObRJX+b/GmK70YigDlgujcJ5PcaFlR7p/4A91iKMMImsCdV7M7OqHojTH5SNAQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CWRih7ZI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iW1QITC7;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7089E606A32C;
-	Tue, 24 Nov 2026 17:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F765606A321;
+	Tue, 24 Nov 2026 17:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CWRih7ZI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3E31F000D2;
-	Tue, 24 Nov 2026 17:31:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iW1QITC7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 461DF1F000C0;
+	Tue, 24 Nov 2026 17:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795541507;
-	bh=7BOhALOWGOqa/3ADOLPrCh1s8Dt3hRUkimSSK/0HERI=;
-	h=Date:From:To:Cc:Subject;
-	b=CWRih7ZIF7kmmLYjnUqs1I5+NWmHoabVwpVXiaDSH2n7FF2Pniz4L4N6P49FfAqrb
-	 2rOFHTXmeaS+RpROAhE1RwMt7SBMW+ILqbdK5XBjtksm89QTVioWb8FVMxCnY+BlA1
-	 bSG97On5ze9gUFTL8VrFdKXHpaYmd78EJibXp7+iX9pvF12eUheAENgxu7F7iRRE0R
-	 o+z4hE5xmbVPfdCd1jKZlissKF+MnP9ZkpdB4tpHgqLXXRCiu+Z83FeE9gHVgS6A5H
-	 4KFMhGQSaOTLKmAXNKSi+9P90GuBUg1ASqvavGMNaahFttlEc9jS4+BiJU3YfeABgT
-	 TSOfLrH/Py/gA==
-Date: Tue, 24 Nov 2026 17:31:43 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>,
-	DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <awXJ__-grexFFPb4@sirena.org.uk>
+	s=k20260515; t=1795542448;
+	bh=bdWEFbRsgzPIYKTa6jIj3ybNip24+D6HpGcUy94Q6ms=;
+	h=From:To:Cc:Subject:Date;
+	b=iW1QITC78HmEKvHY1LHgqf5WA8VOaFWjb+vGKR9W7lDLp9s+osWWpEnGAlyksc+73
+	 9fa5ql3eV03w/0KWy/18rCqIRnTd8O5AKuA/a7+nEANNMD+YEuhzAeLosFgXiMe7G1
+	 zC/P1/ES2/Aea+nlTLo8XiEiHQ34MTr9rmP0Q6u4vT8HQY/4xZR/+hyDnsCoXa1mFy
+	 RXfPdWD5/EKUfzXnbdz3Iy4sLdUogT4EA3dQzQLX+357x8a76wqHEFNVh+QIgrzUDR
+	 D9yJU460MvDor4oC1Rs3YiixuPMaC8fQELMuSP75bqtY0pxqpezB41Z54u9BJIkAQo
+	 MQsTe1RO3dVMg==
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Chi Zhiling <chizhiling@kylinos.cn>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH linux-next RESEND] exfat: check the emergency state in exfat_writeback_range()
+Date: Tue, 24 Nov 2026 12:47:26 -0500
+Message-ID: <20261124174726.2223430-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,151 +59,63 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xtez2l9DzSPawuop"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Since next-20261119 the merge of the vfs-brauner tree with the exfat
+tree drops an error check from exfat writeback.
 
---xtez2l9DzSPawuop
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit 788f21d1f192 ("exfat: don't set SB_RDONLY after filesystem
+errors") in the vfs-brauner tree switches the write side shutdown checks
+to exfat_emergency_state(), which also fails after a filesystem error.
+One of them is in exfat_writepages(). Commit b900c61a3f21 ("exfat: drain
+dirty pages after forced shutdown") in the exfat tree moves that check
+from exfat_writepages() into exfat_writeback_range().
 
-Hi all,
+The merge takes the exfat side of exfat_writepages() but keeps
+exfat_forced_shutdown() in exfat_writeback_range(). So after an error
+with errors=remount-ro, writeback keeps writing dirty data to the disk
+instead of dropping it as the vfs-brauner commit intends.
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Use exfat_emergency_state() in exfat_writeback_range(), as
+next-20261118 did.
 
-/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:217:3: error=
-: call to undeclared function 'dma_buf_unmap_attachment_unlocked'; ISO C99 =
-and later do not support implicit function declarations [-Wimplicit-functio=
-n-declaration]
-  217 |                 dma_buf_unmap_attachment_unlocked(buffer->attach,
-      |                 ^
-/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:217:3: note:=
- did you mean 'dma_buf_unmap_sgt_unlocked'?
-/tmp/next/build/include/linux/dma-buf.h:587:6: note: 'dma_buf_unmap_sgt_unl=
-ocked' declared here
-  587 | void dma_buf_unmap_sgt_unlocked(struct dma_buf_attachment *attach,
-      |      ^
-/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:8: error=
-: call to undeclared function 'dma_buf_map_attachment_unlocked'; ISO C99 an=
-d later do not support implicit function declarations [-Wimplicit-function-=
-declaration]
-  438 |         sgt =3D dma_buf_map_attachment_unlocked(attach, DMA_BIDIREC=
-TIONAL);
-      |               ^
-/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:8: note:=
- did you mean 'dma_buf_map_sgt_unlocked'?
-/tmp/next/build/include/linux/dma-buf.h:585:1: note: 'dma_buf_map_sgt_unloc=
-ked' declared here
-  585 | dma_buf_map_sgt_unlocked(struct dma_buf_attachment *attach,
-      | ^
-/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:6: error=
-: incompatible integer to pointer conversion assigning to 'struct sg_table =
-*' from 'int' [-Wint-conversion]
-  438 |         sgt =3D dma_buf_map_attachment_unlocked(attach, DMA_BIDIREC=
-TIONAL);
-      |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~
-/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:553:3: error=
-: call to undeclared function 'dma_buf_unmap_attachment_unlocked'; ISO C99 =
-and later do not support implicit function declarations [-Wimplicit-functio=
-n-declaration]
-  553 |                 dma_buf_unmap_attachment_unlocked(attach, sgt,
-      |                 ^
-
-Caused by commit
-
-   6e0a8f1a83473 (platform/raspberrypi: Add VideoCore shared memory support)
-
-=66rom the broadcom tree.  I have applied Sasha's fixup below
-
-=46rom 60cdd23176d1a7b222ba90427f07c6d10859b744 Mon Sep 17 00:00:00 2001
-=46rom: Sasha Levin <sashal@kernel.org>
-Date: Tue, 24 Nov 2026 09:56:52 -0500
-Subject: [PATCH] linux-next: semantic conflict between the drm-misc and
- broadcom trees
-
-Hi Mark,
-
-The current drm-misc tree has a semantic conflict with the broadcom
-tree that breaks the build:
-
-  drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:217:3: error: call to unde=
-clared function 'dma_buf_unmap_attachment_unlocked'
-  drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:8: error: call to unde=
-clared function 'dma_buf_map_attachment_unlocked'
-
-77e0b2d2f4f3 ("treewide: Rename dma_buf_(un)map_attachment() to
-dma_buf_(un)map_sgt()") in the drm-misc tree renames the functions, and
-6e0a8f1a8347 ("platform/raspberrypi: Add VideoCore shared memory
-support") in the broadcom tree adds a new user of the old names. It is
-the only caller in next-20261123 that the rename doesn't cover.
-
-The fix for the merge:
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: ce0505a38004 ("Merge branch 'vfs.all' of https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git")
+Link: https://lore.kernel.org/all/20261120003508.2135492-1-sashal@kernel.org/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+For folding into the vfs-brauner merge in fs-next. Resent as a new
+thread with the full context, the first posting was a reply in the
+11-18 vfs-brauner/exfat manual merge thread. Applies to next-20261123,
+built fs/exfat on x86_64 (defconfig plus EXFAT_FS=m, W=1).
 
-diff --git a/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c b/drivers/platf=
-orm/raspberrypi/vc-sm-cma/vc_sm.c
-index 2d9bb5f957a37..7ba6e1f2aa6aa 100644
---- a/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c
-+++ b/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c
-@@ -214,9 +214,8 @@ static void vc_sm_clean_up_dmabuf(struct vc_sm_buffer *=
-buffer)
+ fs/exfat/iomap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/exfat/iomap.c b/fs/exfat/iomap.c
+index d0bcf523f48b5..a846fbc450b82 100644
+--- a/fs/exfat/iomap.c
++++ b/fs/exfat/iomap.c
+@@ -374,14 +374,14 @@ static ssize_t exfat_writeback_range(struct iomap_writepage_ctx *wpc,
+ 		struct folio *folio, u64 offset, unsigned int len, u64 end_pos)
  {
- 	/* Handle cleaning up imported dmabufs */
- 	if (buffer->sgt) {
--		dma_buf_unmap_attachment_unlocked(buffer->attach,
--						  buffer->sgt,
--						  DMA_BIDIRECTIONAL);
-+		dma_buf_unmap_sgt_unlocked(buffer->attach, buffer->sgt,
-+					   DMA_BIDIRECTIONAL);
- 		buffer->sgt =3D NULL;
- 	}
- 	if (buffer->attach) {
-@@ -435,7 +434,7 @@ vc_sm_cma_import_dmabuf_internal(struct dma_buf *dma_bu=
-f,
- 		goto error;
- 	}
-=20
--	sgt =3D dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
-+	sgt =3D dma_buf_map_sgt_unlocked(attach, DMA_BIDIRECTIONAL);
- 	if (IS_ERR(sgt)) {
- 		ret =3D PTR_ERR(sgt);
- 		goto error;
-@@ -550,8 +549,7 @@ vc_sm_cma_import_dmabuf_internal(struct dma_buf *dma_bu=
-f,
- 		free_kernel_id(import.kernel_id);
- 	kfree(buffer);
- 	if (sgt)
--		dma_buf_unmap_attachment_unlocked(attach, sgt,
--						  DMA_BIDIRECTIONAL);
-+		dma_buf_unmap_sgt_unlocked(attach, sgt, DMA_BIDIRECTIONAL);
- 	if (attach)
- 		dma_buf_detach(dma_buf, attach);
- 	dma_buf_put(dma_buf);
---=20
-2.47.3
+ 	struct inode *inode = wpc->inode;
++	int error;
+ 
+-	if (exfat_forced_shutdown(inode->i_sb))
+-		return -EIO;
++	error = exfat_emergency_state(inode->i_sb);
++	if (error)
++		return error;
+ 
+ 	if (offset < wpc->iomap.offset ||
+ 	    offset >= wpc->iomap.offset + wpc->iomap.length) {
+-		int error;
+-
+ 		error = __exfat_iomap_begin(inode, offset, len,
+ 				0, &wpc->iomap, false,
+ 				exfat_get_valid_size(EXFAT_I(inode)));
 
+base-commit: 3191063649dbf7c0d0b768e1f3655e4c5fc6edb5
+-- 
+2.53.0
 
---xtez2l9DzSPawuop
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsFyf4ACgkQJNaLcl1U
-h9CmHwf/SU7/iyvVAAI4/nfDtLFEk+idA+aZ5ShlGYjspVTRPkRHcrSl93f1wzO/
-4KDuuhiT9ARlSVOoGMiLuggffJOwOZOtFtB2+s4EDwaUnQBAp63/z/Rn1HGzGn8Y
-kMQ2RL0LX+q+NyVeXFKEX/+3rJRvWT+fuQm0VYRXgqN2uqEHZnpuY+ck4zNzi7ng
-Qptma2rKZDOCeb1jjHnxvYnoWRLG/l6qtohQRY80vkGl9FqCARS9m7ich8ZiSflb
-2XoMMIH4V+b8l0a6FGVKVrCpMGDXIYbWFkM0bWwnTrsdseVQ146zDTSsGacajunu
-mpRoMhSZDVx3nrjQtRi7FhpT5/2vww==
-=q93P
------END PGP SIGNATURE-----
-
---xtez2l9DzSPawuop--
