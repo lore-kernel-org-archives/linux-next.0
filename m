@@ -1,120 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795504775;
-	b=mQbOMRzwr+n75oVwOa2paYqiV/3loK8RsJDPbeOJc46GWknK3xLeveaHZcKA3o6jPjy7
-	 OjPVN93/s3j+kJ6/riUxwfJZyxezuNgPkFg/lMVb/SnyhpI6DRHYVWANw2VBbbrpvNcIr
-	 LK8tFctIzQRoBSuhzuIqkPTfga9/TMjPQsbjqOxopQVWWChyDhGKNRVwyZ8jVIowuWeza
-	 4L4O9jQubfnu1MLC9qh7Shy7Gi/IGGZnqDTvIQ3Zh9cyXzrmu8gRXfRub9ju7uqAdb7t9
-	 jCmIHh/c++Dm5/RR2fZbWPgk3Pr4bOKL91IPfzrgNRah1vnTnjEp5ll6yMZBv54nX3Q==
+	t=1795504826;
+	b=kBxZmSMPsUZu5DwZLxTnJ7Lg99LizcWzxSJlDSUWt2MWLeRNEQUkNMnHeUFh1SCBDqe1
+	 5Vr+TQdGp/BOs9Y7noZfbQpeyIjQ8C2zVymNz4t1SHwyKUy/457sR598bxOl362Y4XXbN
+	 po2Phq9lu1exZCsdRIM1OBlZknPEbu/V1xntFYpujCSVTiuoIAB1MeJ6KQPt8NpZom92W
+	 fBdjrclFD2R5jwL3amhvlOtAUjEgaOmzLCDRKwzLVmQzLVALxqF22QUpuMY3vFuZtNavx
+	 Z62AuLXqmgvZrY0ZoCpCCmnSZC6Khv1QYlJdQd0cnBSeMoCc4SmM5103gfL1Gur6h7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795504775;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=OMmNyxeJFUui1oxMfhrX6P3fAh2O7YAXYST9WFe6/2E=;
-	b=LRNLBsAxrp23uEw0z+xLHVpW892m4Cs2i8XyMBhgy06wuv9+RT3QB+dUuNrNJs1mCrZ7
-	 r1uIUsCQsjxbSy0C7mwc0IcHIspD9jvFqTBzUOpKfg3eSbVobTL0VFIlMD+aq3JxGDINb
-	 /4HKhfauBq17N1MFSlH/DDDSU1uVOE7J0u4A3lCAnOBhmcJpuwe+WMAGQF9odqaMDarCi
-	 Fo9sPuTupIicWP4L+4yMUEKhtE8OUXzOkyXyPVn+25p0AxSURYOuLK5Qfe1DWLk6G8fYs
-	 CBe4X0x0eFJJxpokaC1vyB4ZBUQARyD+QPLwHXvlblllij22e4cVSXz8Jow4RICfZXw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795504826;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=zxTLm5lJGRMPxpsJjM7sJqqCXC6eU9hPG2t9xFY1cv4=;
+	b=ZaOue7vluJWTuOQnwfYLT+cONHtr2nCZfpOeTBoB0H2TpsYjg40LBEVjDZqDifKi3eGR
+	 0ZGrI19B1TZJCa/ntcY27c5TatrRryDGP2en/zlXrDOQ3QluYHBdpJY9fweRz4cEgUiNX
+	 UZHxljZpJf/DxX+ES+zc2mvuIJesDuutJiws92YWjSWfxJqsQIg2K5JQL6rp11mjv9xv6
+	 T8gNq66AYofuhwkbS+5pPfSwx3gRsQ3yim4iw/slKrscsVBSz58tx/b0ru4jnMUIxp5A5
+	 A0w4rXVVMTuyykQq/3s4iP/YchTuleBvfR0AYYocjTjrdY5Lg22A73tprdSri3T+QWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kroah.com;
-	spf=pass smtp.mailfrom=kroah.com;
-	dkim=pass header.d=kroah.com header.i=@kroah.com header.a=rsa-sha256 header.s=fm3 header.b=Tw9MNJ7t;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=O1IS5YQF;
-	arc=none smtp.remote-ip=202.12.124.158
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ilbhi57f;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8E2606A32A
-	for <linux-next@vger.kernel.org>; Tue, 24 Nov 2026 07:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E8E2606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0740E606A31E;
+	Tue, 24 Nov 2026 07:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kroah.com header.i=@kroah.com header.a=rsa-sha256 header.s=fm3 header.b=Tw9MNJ7t;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=O1IS5YQF
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A37857A0535
-	for <linux-next@vger.kernel.org>; Tue, 24 Nov 2026 02:19:34 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 24 Nov 2026 02:19:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1795504773; x=1795591173; bh=OMmNyxeJFU
-	ui1oxMfhrX6P3fAh2O7YAXYST9WFe6/2E=; b=Tw9MNJ7tlQ2XCDoxs5DEYcVbzD
-	gtINA+ld6io/RD9QyemsDG2UeX2Ubp0okulbAqr8j/mLub9VzuDroZJcSBit6a+1
-	Er8z7STWD2oDjzlGnhAS/UkMEyVOdn5YDuN216NNxehhlzGI3x0c87MBvQDxTy0x
-	zuFVaeFd8EqTB6gUpO7sjQm8EHOWnEQ2WIY7dLTynp1/QjBSp+8HONscl62JZ2aK
-	QhepqJP7CIjhHu15sXuvskwUEsnvfwT7uU7KtO2HkpuMgygpCZxGzl993sdROAm4
-	ugP1ei58D02svioEBNLm5ZimNDhFrDpKPHdhT0APB/CdgLaGFZhQjSq5UHOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1795504773; x=1795591173; bh=OMmNyxeJFUui1oxMfhrX6P3fAh2O7YAXYST
-	9WFe6/2E=; b=O1IS5YQFBwTXLQ7EopsJthearMbw0xtugtXSVcw10TCyzCBHqWm
-	AfppiM6nd8FHRN4tdGeCmex9MezfsSSvOwiJXMwYcfD64nkFpWBUHWzx65TpFtvj
-	D0rmJ4ebpKwMMlc2L2Vy8eNTSC2pCp88IMAR5ikGDZoabDUMMojfpessxPFkdDvM
-	cwa74nUKppSsxUJoo+162LsPhDfljFVnVLTEKR7AnA5ccd/tatWhO8p6NH8FxBO2
-	4ywUNW6tXxI4tD3SxpDM80IEWoYqv6NzaKZVA19s3MGY/RhR/q5JAOHj/Zpq47Fx
-	kpU6kX9FT0slQXvpqrYnA4CJH/9owaMwq2w==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=kroah.com a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795504773; d=kroah.com;
-	mf=PGdyZWdAa3JvYWguY29tPg==;
-	rt=PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm3:rsa-sha256:atjPx50oNY5WnM2PlQEWXRWJfqtN3udtxwWoY1himYVr4+G
-	kxSSCYWatdbZqjT9RhZB6deXdM5nfc46BYQhqv6++OsIqoGiMFVnfHAgzuT4DW0F
-	NeKQcoDsd8w9kunSC60SM8Z+yc2vmNfoHBifZx1nbSkhwo10kk6ol1eEa2ZsPviU
-	zBeoke/CU3JVCQF/0lsPOc+DrB83Bb7ih0LWom3cppgXPso9ClYJf3dXsd1wuHN0
-	RaUrol9wKWWDc4Ytn10erERBVedKwG6FdROl8ZEw4P4s5mvQyj7gVB3aHtIK53yC
-	i3ptw7SSxGpxjBPxOhI3aMYxyr26ZDhzmP0OzXA==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-disposition,content-type,date,feedback-id,from,
-	in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:XsS1p2JKQLpauJ3wax7PB/9DlxU8w9/1JkG9AooD41I=:hWbt8nnHPaO5Zs8R9pbecgdpQF4A4fGBa+yk2OOuKxI=;
-X-ME-Sender: <xms:hToFa4qwS7jdMVeix2Dvdn_gCXhOovIUqiSxR1dDf4ty6EaacpMe3g>
-    <xme:hToFa203gKYgZIIZZ9R31dmqLTHm4lQzz9a5LAd3voH1DbhIRhhWBR7QJ6ovYebfX
-    r67wSzLaTLyBxGXjoayn46AMVEsCs6vckhWl_mejNy7gBImlIQ>
-X-ME-Received: <xmr:hToFa4xJWj4mFflX6PLr2nZGKJsYxJ4ddP4rIDovBONfsrXqYKEMGg9MHDnyDsx6fMH7yPSF0W8EGYwNuVp4GSleVz2JV2EceFmQthgO7yI>
-X-ME-Proxy-Cause: dmFkZTGzsDXJ9z3EYyMv8re+RLPHGzoi6MiJhvjAaRUSzBeE74Wxd5Hh4tWNxeI6JnxDi6
-    PKfvSg+UeR5tGlSNuRZSUWXw2mxvmL0A7+uxknOHPOOLfZDFmBiVcZpa1dWhNZlV3ye0Qw
-    mGZDGgDzRakZT0AKYDCFOVvmzDikwREEdqOf1x7EMshCVTmScPG8PfV9VlPU9Jh3PGixvM
-    tzdCvY6nQWJQT7098SFSgvVLxpCGU1BKnH4Y1LoGqt0wmieWJMdM78SGtTwjBrAmA6r7wC
-    s6FyB5tb0392Zr/NW4Xpax/EjSN1/8YF0ySSXp7dzTnq2nWJxqzFhb4+s30aSaPMdQqHhd
-    lJBfscicMDeKUVp4CmUvrTQ3zPaPHouyTwodtjOT/eJorpJCiSTZnhiQRzYdGQGGiW01i1
-    SN7mpqYtA4pST6g+cM8JLAWivUQImaLMk5a296q75Kva23033DzH0pfzNa1W3pYGY+/Mn+
-    /xeeQtpCvD6wSQI1Jw6idKcl7MkUB/Z7+1YcGbRIYB4kG3ryg/vIW+yH16faf08WzRio0h
-    ggeo/5F7SF9j8EKJhcDsGhwQlO9pNUMF4ailiZoOSmtTjiAWU0/jt1ulTOZwV9CjetONnM
-    bJ3lA4Gj1ZdTgtAZm9M9gwj+WRBvav59nN9I9D4fnh6JLyWH5HsQAD0gt1cg
-X-ME-Proxy: <xmx:hToFa6ieDUIR_LbpJcS7MFOCRKf8USkJnFUKSeJ22bhUKylNY9a2Ow>
-    <xmx:hToFazrBhUZr-7wqUp0Mq3wOQaFpX-c8Ro2PbCYMu-lsxGJYTfDmMQ>
-    <xmx:hToFa5g06paLg950PWu1qgo4jdvzccufhHDLJhlkbw0p7XMt6fNVIQ>
-    <xmx:hToFa9MP5MiT7MTTbgxNkrb7Dg4iNUhl6EathQDYUaBvHkZxstsk3g>
-    <xmx:hToFaw1eshj9nOwQsLfDoVm4UyS9okJ6PkbEkjxrDeIFLSFhfMfSz7iE>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Nov 2026 02:19:32 -0500 (EST)
-Date: Tue, 24 Nov 2026 08:19:30 +0100
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Priyanka Mani <priyankamani2100@gmail.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: linux-next: manual merge of the usb tree with the usb.current
- tree
-Message-ID: <2026112422-bubbly-threaten-b4a0@gregkh>
-References: <awRdGojPVH1LpICe@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ilbhi57f
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D18271F000C6;
+	Tue, 24 Nov 2026 07:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795504825;
+	bh=zxTLm5lJGRMPxpsJjM7sJqqCXC6eU9hPG2t9xFY1cv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ilbhi57fNFUpkGZ+JIoxoqI0lk8jEp3HLMD3uJVYpZJnuONnN0Fmsz8VkO4WGMVeq
+	 aNcpOUtJD81qsFOHAv1+zojV+p/PNPWdRQH05DVSx43672VGg5gSBus998w2oF3LLQ
+	 mi3RWAgT+7UOh8xwpiOk96Cgps46R7yHbe71UonGv486IOdH/rxSB/N5FnKmw5r8h/
+	 kpXJjaH5iy56+7ED+DeMCB6TlSB12TGBV3oDjpr9t6RCkFnMT+91gZmbWQJGpHwhzp
+	 gFfCUm0FVqO0i+C8oi2NzeMvZ36V3c3ke1cz8YoJ19n8usWNp8i5M9BLC5xKFvKpY1
+	 8ty8ORRfChtuQ==
+Date: Tue, 24 Nov 2026 12:50:21 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure in the final build
+Message-ID: <awU6tez-f_pEi0Ag@parshuram>
+References: <awR7nSOWkxRm-iP6@sirena.org.uk>
+ <c631c19d-4fcc-4881-a6ec-9dad24419fe4@kernel.org>
+ <b7fda918-8355-46da-b7f4-40e1a104279b@sirena.org.uk>
+ <2fd6f05a-6dfe-40c9-a7ad-44c28af8584b@kernel.org>
+ <0af7abff-2c33-4920-835f-9c5abe73b143@sirena.org.uk>
+ <7ee4f5c9-58cd-4238-be2e-f092acf3c137@kernel.org>
+ <680fcf4e-4e5f-41fd-868a-a0ce58ed77d5@oss.qualcomm.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -124,71 +71,65 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <awRdGojPVH1LpICe@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <680fcf4e-4e5f-41fd-868a-a0ce58ed77d5@oss.qualcomm.com>
 
-On Mon, Nov 23, 2026 at 03:34:50PM +0000, Mark Brown wrote:
-> Hi all,
+On 24-11-26, 03:08, Krishna Kurapati wrote:
 > 
-> Today's linux-next merge of the usb tree got a conflict in:
 > 
->   drivers/usb/gadget/function/uvc_configfs.c
+> On Tue, Nov 24, 2026 at 12:31 AM Krzysztof Kozlowski <krzk@kernel.org>
+> wrote:
+> > 
+> > On 23/11/2026 19:58, Mark Brown wrote:
+> > > helpful to have better compile test coverage for these drivers to help
+> > > avoid such issues, the easier it is to get the code built the better.
+> > 
+> > I'll fix the missing compile test for that driver.
+> > 
 > 
-> between commit:
+> Apologies. I didn't build it for allyesconfig. I did uncover this issue
+> recently when testing on a different branch where the said driver was
+> enabled. I was planning on sending a proper fix along with v9.  There were
+> some fresh comments that came up from maintainer Vinod last week [1].
 > 
->   8709574b03899 ("usb: gadget: uvc: fix dwFrameInterval array leak on frame removal")
+> I was planning on doing two things:
+> 1) Fix up the build error when sending v9.
+> 2) Send on top of phy next [2].
 > 
-> from the usb.current tree and commit:
+> I will take care not to let such things happen from next time from my end.
+> Sorry for the inconvenience caused.
 > 
->   01ad61c08da9f ("usb: Constify struct configfs_attribute pointers")
+> As per mixing phy and usb patches, I know that usb subsystem prefers not
+> mixing up usb patches with others, but in this case, I thought that we must
+> send a complete series instead of sending 4 phy patches and then sending a
+> separate usb patch marking the dependency on phy patches. In that case, I
+> would have had to send usb patch once phy patch was in linux next so that no
+> build error would come up when Greg would have picked usb patch into his
+> tree. Let me know what is preferable in this case.
 > 
-> from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc drivers/usb/gadget/function/uvc_configfs.c
-> index a8717c95e5edf,3387060bab55a..0000000000000
-> --- a/drivers/usb/gadget/function/uvc_configfs.c
-> +++ b/drivers/usb/gadget/function/uvc_configfs.c
-> @@@ -2143,27 -2027,15 +2028,27 @@@ static const struct configfs_attribute 
->   	NULL,
->   };
->   
->  +static void uvcg_frame_release(struct config_item *item)
->  +{
->  +	struct uvcg_frame *frm = to_uvcg_frame(item);
->  +
->  +	kfree(frm->dw_frame_interval);
->  +	kfree(frm);
->  +}
->  +
->  +static const struct configfs_item_operations uvcg_frame_item_ops = {
->  +	.release	= uvcg_frame_release,
->  +};
->  +
->   static const struct config_item_type uvcg_frame_type1 = {
->  -	.ct_item_ops	= &uvcg_config_item_ops,
->  +	.ct_item_ops	= &uvcg_frame_item_ops,
-> - 	.ct_attrs	= uvcg_frame_attrs1,
-> + 	.ct_attrs_const	= uvcg_frame_attrs1,
->   	.ct_owner	= THIS_MODULE,
->   };
->   
->   static const struct config_item_type uvcg_frame_type2 = {
->  -	.ct_item_ops    = &uvcg_config_item_ops,
->  +	.ct_item_ops    = &uvcg_frame_item_ops,
-> - 	.ct_attrs       = uvcg_frame_attrs2,
-> + 	.ct_attrs_const       = uvcg_frame_attrs2,
->   	.ct_owner       = THIS_MODULE,
->   };
->   
+> In case Vinod is fine with the implementation and comments replied to on
+> [1], then this series need not be reverted and the build error can be fixed
+> by Sasha's patch sent today [3]. Else, Greg, please do help revert the
+> series from usb tree. I will rebase v9 on top of phy next after addressing
+> the comments from Vinod.
 
-Looks good, thanks!
+No i dont think I am fine with the approach surprised that it got picked
+up (I guess with usb).
 
-greg k-h
+IF there is no dependencies please split the stuff... It just make it
+harder.
+I guess if Greg can drop offending commit, that might be better way
+
+
+> 
+> [1]: https://lore.kernel.org/all/6ed0793c-76ce-4d04-af5f-8987311c5c0f@oss.qualcomm.com/
+> [2]: https://lore.kernel.org/all/6851ca2b-775e-44d7-b437-d04fd4ea4f21@oss.qualcomm.com/
+> [3]: https://lore.kernel.org/all/20261122152857.1113943-1-sashal@kernel.org/
+> 
+> Regards,
+> Krishna
+
+-- 
+~Vinod
