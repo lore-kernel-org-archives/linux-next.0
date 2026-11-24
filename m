@@ -1,50 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795547141;
-	b=Pes9sNyo3FAMmA/WCIcI8fyiHoFxfpeeGNbIPE54sTJoe7iQwnpXFYLPHYttuOdrc2Ok
-	 0r3xmaQ205T9peOefYXIjbe/44jaHsHKUnubil/11YV/g6s0+2YLaKR5ass+gK4Yub5hn
-	 xU1rm4Gsf1a7PWAZZVEdgpDjGuQDBo3CEczNnptzNsKH8QAyz3JLqQnnpnLUI0yl6MSPX
-	 91stYMRl6rqhQxAj0VQih/xIoO/d4RCx1JmXPgmz5u8LmCyGvjqC20Lyx1xZM4dnhYMv3
-	 Msct4sK7/u/p4wC3sulgNhxscM8YxUl9v+3Te50AxrkyMG4F0t65uGhJC3Hpg4yI97A==
+	t=1795550500;
+	b=khbHcTzDPAfTIreo++w9/AeMcP85aIWEtta+Am+j9yDXMbLiS97pFkUhbrXwZsys8CKD
+	 9mEtgOlbxootlw5jQMvs4ZaXhQ2b6dmp+R7eRqZNYeiDqFC9QT0tM3KaKtWT8zDaUdrbv
+	 +nKLWMUrLbY5HHNwqCczZMgGtJVYpCQHNu2p+V7kGUXU/aEmTZmMVRARn0LFReFTjXBjp
+	 Vj+K6IEHFGRAWNReQYwEunvXb1WIs8WuGSsKcdBnfb5FUxF76jNl4u/aRuAi/bV06JMYH
+	 lEs8yBMoUD7byygf2WM3oSYKbamJFkpxu/pRFIsBsPYRK0HT8k94+ylddicq4F6l0pQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795547141;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=GtulHr0w3fG6K3m+mxAlOwW0vuCnDX034p9HwMk5/eI=;
-	b=WLfb5oJOmMAPfjLq66Nb6vf9GMJ00EfdWBDse/HFTukJQ3gURAQBCx+yWP1lzmE+MZrI
-	 RhOr4Xr0af3IYc8iAH4yzvZoD+67SEbfuvPEJGrKYvEptiwi9S+hjNgocPgL2MOFhs2so
-	 fUBGUuJvGz2w6DRSWP6TRWUK6wFry2cD8ONwo5EZRgxbmKsvgrqmzFAxd4rYj0gLygrQ/
-	 4Vh7CJCGtuCZtsVnxdL94rcblAuKPA6cyU+6UWbscBavo1sH6ab7uPwI8GbM+xOsThc8N
-	 Y1QQeIF5AosAc3w5FNFki+iVoOmUf/OzYEDxW+bWxaMw87cgk8ng0GgcE/Jxb9Xcs6w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795550500;
+	h=Received:DKIM-Signature:Date:From:To:cc:Subject:In-Reply-To:
+	 Message-ID:References:MIME-Version:Content-Type;
+	bh=4CeFBC8F0GpfgjetE6K61fNjfOJ2aKpPtYKIk9sm7lk=;
+	b=aQdI39UmK2Z0XHA3WjHOtFhuRmud1kQpwRu76iATvYR5VkNnjrZZUvgbgoqRz9jGHkHA
+	 4cO5oIm53vacguf3NLTZMvMKTtHwt54w5tmZg8mBy/AZFk8kItazpxjqXNvgmbvjmHAfc
+	 AaXzVRWjpnQva1Gsl0PHTrqA+PbwyRqk6AclTvZUXqdxNKJpiLmCWZh8ffAYdfOuEsLlV
+	 qp3c1mad6ITRFjcP0zpjtX3/XC/tIGv0raikEjENfc+UtJ5hjBinz902qXU1dE1NmChkh
+	 YxrmZjBXooqzIXIzLH2saX4BLJJGn0hk9JPI9Q2vSL7SjKCiTvaEihYSZ1/6+bumRSQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Sl6nrh9/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YylZA1Oc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD3606A326;
-	Tue, 24 Nov 2026 19:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D55606A321;
+	Tue, 24 Nov 2026 20:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sl6nrh9/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 370D51F00AD3;
-	Tue, 24 Nov 2026 19:05:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YylZA1Oc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8E61F000C4;
+	Tue, 24 Nov 2026 20:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795547140;
-	bh=GtulHr0w3fG6K3m+mxAlOwW0vuCnDX034p9HwMk5/eI=;
-	h=Date:From:To:Cc:Subject;
-	b=Sl6nrh9/a8lTN6ndK0CGkLTz84o5cqQJJeSQV+cr1LuPQB/KvbCvu5j6Z0ZTq9WaM
-	 cKpHvwGSo4GgXUejWSuURS9+vZH6CbdwEr4LhEK8yYEfMJ3Tx2s/bNAQlVnHoka2/V
-	 w1r2G0PiyvD6T5Exd8z4WQ/pzUvD11LfE3uLbbGATSbTBeYvKTyIbYAykXzgHDMj8P
-	 PR1Knm1Fuwa4ytwjmKVZ5IDcHd/UGLV2hlhin9S55rn0X6WJ3dCjFl+iCHN6+AeM5n
-	 OIE+sY7vjpd87jw2uyLLOlGS1eWRnLSfjb6L60pcXWRc7MTbaM0mSWBdRa6Rtjzoqu
-	 y/KmRJO8MnJPQ==
-Date: Tue, 24 Nov 2026 19:05:37 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Nov 24
-Message-ID: <awXgAXbCifHSkVSC@sirena.org.uk>
+	s=k20260515; t=1795550499;
+	bh=4CeFBC8F0GpfgjetE6K61fNjfOJ2aKpPtYKIk9sm7lk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References;
+	b=YylZA1OceXzPyMSpM7hOv4QkHchLqjKySsijc/4pbV2VoVUBFAHuTuy5KSJ1KBnhn
+	 tSWbqIxZgtXboumbFlBWuuaPBeh+yL5Tao/wg9eqI6At/JMn6SbW+RUQstQU9QjqcO
+	 h/ej5lZ9JVh496iqe8wDFsAegWlSWNJUEYfL1qfh6ISgDc00tvV30PYBp/dRYGnXQi
+	 2jsx5munzLykzicuVKjn423J5IRWtxEVQzvlrBQprYtiDGfR0cHGNuXPphW6lyp9+F
+	 8MNDrRLb3jonjktng7yy7IbToYHQ2Cy54fO+VYEQwetL9Yr1X7gfavZdUCVs0ukD/1
+	 0k8g+/wpPfQeA==
+Date: Tue, 24 Nov 2026 21:01:37 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
+    Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    Linux Next Mailing List <linux-next@vger.kernel.org>, 
+    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: linux-next: manual merge of the hid tree with the origin tree
+In-Reply-To: <awRJA60QzxdxM0Mo@sirena.org.uk>
+Message-ID: <6rsqp5on-699p-4on2-1q58-p18qp2526435@xreary.bet>
+References: <awRJA60QzxdxM0Mo@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -54,86 +60,48 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uuiXkU4zfEV7gib+"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 23 Nov 2026, Mark Brown wrote:
 
---uuiXkU4zfEV7gib+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi all,
+> 
+> Today's linux-next merge of the hid tree got a conflict in:
+> 
+>   drivers/hid/hid-sensor-custom.c
+> 
+> between commit:
+> 
+>   4dd10fbbeb9c3 ("treewide: Convert devm_kmalloc() family to the devm_kmalloc_obj() family")
+> 
+> from the origin tree and commit:
+> 
+>   ac6c19392c799 ("HID: sensor: custom: Fix state lifetime during removal")
+> 
+> from the hid tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc drivers/hid/hid-sensor-custom.c
+> index c12272479d82d,4d7cb7994dd81..0000000000000
+> --- a/drivers/hid/hid-sensor-custom.c
+> +++ b/drivers/hid/hid-sensor-custom.c
+> @@@ -977,7 -1019,7 +1019,7 @@@ static int hid_sensor_custom_probe(stru
+>   	int ret;
+>   	const struct hid_sensor_custom_match *match;
+>   
+> - 	sensor_inst = devm_kzalloc_obj(&pdev->dev, *sensor_inst);
+>  -	sensor_inst = kzalloc(sizeof(*sensor_inst), GFP_KERNEL);
+> ++	sensor_inst = kzalloc_obj(*sensor_inst);
 
-Hi all,
+This is now merged in Linus' tree and resolved.
 
-Changes since 20261123:
+-- 
+Jiri Kosina
+SUSE Labs
 
-The ext4 tree acquired a conflict with the origin tree.
-
-The bluetooth tree acquired a conflict with the origin tree.
-
-The drm-misc tree acquired a conflict with the net-next tree.
-
-The drm-intel tree acquired a conflict with the origin tree.
-
-The tip tree acquired a conflict with the pm tree.
-
-The net-next tree acquired a semantic conflict with the net tree.
-
-The kvm-arm tree acquired a conflict with the kvm-arm-fixes tree.
-
-The tip and pm trees acquired a semantic conflict.
-
-The drm-misc and broadcom trees acquired a semantic conflict.
-
-The usb tree acquired a conflict with the devictree tree.
-
-Non-merge commits (relative to Linus' tree): 10149
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 438 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---uuiXkU4zfEV7gib+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsF4AAACgkQJNaLcl1U
-h9DK6Af/VcCiDP5FwWcUXo1e0sjgChwGzJaCpoO8yIjJHqZD/5y1mwrhIOJnOYug
-Wkr18P3GZXR0CxPoxMUgw95SRHCXqygfqmYjbL1R5HroswRa51+39pTN4/4T/fH7
-XBI09MwHGYA4T7aFHh5431re9pn2tlqtgCjowydZ6I99TvHHAGQpOgG8b8lKyuhd
-ohSwdqgbMi0ra37NJCEpLUsX/fyMJy0KKW9dwCVN9eR497WEVEL0WFZqG54nsQiR
-1QIB+ezNzbA9185QzKvEeGxxo6I9Q5ll970tDHAMlzzf6+nmyWMnM235lRVsmSNU
-JX34h/kPSnUeu/PQi7mOeiE6RBm7pQ==
-=B1Oc
------END PGP SIGNATURE-----
-
---uuiXkU4zfEV7gib+--
