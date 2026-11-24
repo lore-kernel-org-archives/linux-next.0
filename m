@@ -1,61 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795533761;
-	b=vR/e1sQDKpPUXkq8RBTwyOQmP3tsKbn8DbgVoPmtY8YqVeBOIMJHhv/wg3HiaVlOnLgu
-	 58l9lPsbhk/OMehZ0sX/NyLSNjdEvZSNO0DqI1Fr2WJ8l4dRoopLLAcR/BEmvrBNKY404
-	 YYrWWQ8At1wv//imXGKMto5/8aOjYwS/TQVs9El1edM+HUixV8vwVOUF9EGstL8KlVTsw
-	 Jd5MCUyua5rGUt/KCz+xR1GePHlL153mwp2AsSdBsY6gJEbLxmai7iwwZzEobdlYfmnfB
-	 EERbJ+TkQoTkOf5/JFljhB/xPIYKELNaE0nkrHQIwHT3lP4MLzHJp539XAVYp84aYUQ==
+	t=1795533786;
+	b=gwFV/1wiCJUteik7YwKpJuq3fQgBuvDxnVNXeSHAye5w42tAlJWQmHCg5v7La+EMxOrG
+	 UmP8K9ATcrHsYo9n/dpuT8Luke4Ef13aeJxyW+pj2n9FmmaIP0MqvqNgkpvCD1w5MDPID
+	 gXKE9I8GbF8yTAgB/N2BHsVC8fbMF+2qzk9vqv/qLM0AreZ5Vy6RQQJXNQoUlRSk7zDla
+	 uC32CaGMLXNdN74n7EDZmVJwxkHGZbeoIoqJeqXArgeWfVmR7EC4/R2PU1L/euFkD07X+
+	 AP5DlwpgV4+PUvoNATZTBQTFTbULoc9IteV5fUr1iaGWJOLcYF0CFSr2tAUqGPZ56Ow==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795533761;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795533786;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=rUSlWiMmTskfVsgOz0LZI6AW1duqwGYirj3vzlmXmVI=;
-	b=4grocQHLY9RqYtfmNgfcTYkoVGNcypiCWXR8imM0dD4xgJZquZHNCWwhkrIz+IslWiYK
-	 pzj15Vw0Y8MUSQMzWIJHtgngIAHz1v+D50wQ7GOVFvCkocS+8L2hdfYltHpQkI414cqi9
-	 EGAg681CBdqUfKwDkmeFCBTm6OxNKNE9Cq9t8+tTMttDiTwdmBEY+dcdqvavXihN0L/AW
-	 QgCGBbUYt+oOl4ZOPF2AWfuwIqpxBcLKpqGeG9UBJYc3pJ2G/X6rFcB7zfzXzt4Cp7MvQ
-	 Folis8rdv2WdcqEKrnDeMCu81/ECcTtvkrthOA39YEVLPDBDBfBcrvwjK2TTHrezkeA==
+	bh=Wvro22YPm0sc7VtJ9BRqEaFRBATy0XmQt/Kjw4rfVwc=;
+	b=wkSebuIVGdMwMu6UhLNjzU1+SE2mSRytuAGL/ZvW8RfF4f4zlzVu9CdrFmXwd9mskdkV
+	 oAo/p42TZ2CTvMnFmY5Iimsb7mZ0cn9rB6iC9KuaFjMQVRt/TaF3KgGwE+opVnYJXZRzz
+	 0fwugBy+9Wr/FrjUPyqwBsYRWeXNpceMhNjTEOi/mQ+ei0sULfUbiiADRqVRM9SJbmlGt
+	 cm4IfPg/dmDrp4blkhKz2Olk3UzZk10TIvl+XEFt6m/x5Ilt/cVChwEdoI4+JRIjAGto1
+	 2/bTtqaBJnFHHA2MCkjB32udFJ4XBn7v3Gos0h/qp7HFSR5jJFFyGFl5ovRGLi13g/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Fozh/1pp";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ScyHEDXh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F7A606A31E;
-	Tue, 24 Nov 2026 15:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02712606A31E;
+	Tue, 24 Nov 2026 15:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fozh/1pp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4F041F000C4;
-	Tue, 24 Nov 2026 15:22:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ScyHEDXh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23D61F000CA;
+	Tue, 24 Nov 2026 15:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795533760;
-	bh=rUSlWiMmTskfVsgOz0LZI6AW1duqwGYirj3vzlmXmVI=;
+	s=k20260515; t=1795533785;
+	bh=Wvro22YPm0sc7VtJ9BRqEaFRBATy0XmQt/Kjw4rfVwc=;
 	h=Date:From:To:Cc:Subject;
-	b=Fozh/1ppPOZIjOLvZ4jQwv5GNDwhUO6hZJ/G8o4gnpjp056vsYtbm/lQze2umuPnR
-	 anb3ubJYaduQOlKDkKoGsyFcWa9v+1D3j7/1RH6pX2xxaSdIVg++zM4cRDG1o4FQqp
-	 yVCr5Nz2s19NUeWO12HDY4Y9FWK6TmKx8FBuf5rlaSW4HGVNdXyOTscr0QZ0TqwdKE
-	 utGWZElK4N/eNRMuIbnUcBfclqGcBkN4YH7QK8NZs7HsGRxg6W/JYXLZfEXO/McRMm
-	 6kii3T0JuNsPFwC2PHTeWIBr4yKxStqEvmGKHgkjibvEWiMLzixcUycl0KVci4pywe
-	 0nVAEoDDJVf/g==
-Date: Tue, 24 Nov 2026 15:22:35 +0000
+	b=ScyHEDXhFYB2tiOsKjR4kZ/yobRaQ0r6werkcc7qMLL4evJ0d7TkR5OD5X4ySMDNp
+	 my5x3ECyUJfeWVTPJGvXw0xkdRcDFBnJd21SVIwSHFxxl8pQ9ruW3D4wOMZ6cWqWFU
+	 8rF27ItqvzXe59UoOfj+hCLWDvQ4orTcfrES1fTE0aPutPjL3F17LYog4sHc+ggRt7
+	 nufMNI8uz+BNBytzMy3G8CcV9fSUhi+Z60luI9pHEDkz9NmV6Kz4MHDY3UA2QBogxN
+	 qMpAo35ytzhe5COw6GyPt6Skktu4dY2fSNcuJLVXfCdn4LCELOYMFvi4aNhx8N3ecY
+	 eB8COQwyDgGgw==
+Date: Tue, 24 Nov 2026 15:23:00 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
 	Intel Graphics <intel-gfx@lists.freedesktop.org>,
 	DRI <dri-devel@lists.freedesktop.org>
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Miller <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
+Cc: Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+	Jouni =?iso-8859-1?Q?H=F6gander?= <jouni.hogander@intel.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Networking <netdev@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: linux-next: manual merge of the drm-misc tree with the net-next tree
-Message-ID: <awWru6py7DqF3xJD@sirena.org.uk>
+	Suraj Kandpal <suraj.kandpal@intel.com>,
+	Werner Sembach <wse@tuxedocomputers.com>
+Subject: linux-next: manual merge of the drm-intel tree with the origin tree
+Message-ID: <awWr1C8qQAfrXt2l@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -66,34 +65,36 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SJSvMh+EHNwmA8Q2"
+	protocol="application/pgp-signature"; boundary="s87hUG1Zje37F0sQ"
 Content-Disposition: inline
 
 
---SJSvMh+EHNwmA8Q2
+--s87hUG1Zje37F0sQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  net/core/devmem.c
+  drivers/gpu/drm/i915/display/intel_quirks.c
 
 between commits:
 
-  ede1618064a9b ("net: devmem: detach TX bindings on NETDEV_UNREGISTER")
-  c4466d2c3e776 ("net: devmem: unmap dma_buf synchronously on queue uninsta=
-ll")
+  88d804cd1be9a ("drm/i915/display: Add quirk to force backlight type on so=
+me TUXEDO devices")
+  b03f2f48069e9 ("drm/i915/psr: Adjust Xiaomi Book Pro 14 2026 psr2 disable=
+ quirk")
 
-=66rom the net-next tree and commit:
+=66rom the origin tree and commits:
 
-  77e0b2d2f4f37 ("treewide: Rename dma_buf_(un)map_attachment() to dma_buf_=
-(un)map_sgt()")
+  5bb277d94021f ("drm/i915/psr: Adjust Xiaomi Book Pro 14 2026 psr2 disable=
+ quirk")
+  6d00cec4c9bec ("drm/i915/bios: Add quirk to allow eDP joiner on ASUS ROG =
+Strix SCAR 18")
 
-=66rom the drm-misc tree.  I'm not sure this is an ideal time to be doing
-tree wide refactorings...
+=66rom the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -102,118 +103,53 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc net/core/devmem.c
-index 3714364b5d9a5,a638aa3e806b7..0000000000000
---- a/net/core/devmem.c
-+++ b/net/core/devmem.c
-@@@ -67,84 -64,6 +67,84 @@@ static void net_devmem_dmabuf_binding_r
-  	schedule_work(&binding->unbind_w);
+diff --combined drivers/gpu/drm/i915/display/intel_quirks.c
+index e3303d5146e89,ec3a79c87e73d..0000000000000
+--- a/drivers/gpu/drm/i915/display/intel_quirks.c
++++ b/drivers/gpu/drm/i915/display/intel_quirks.c
+@@@ -108,6 -108,16 +108,16 @@@ static void quirk_enable_dpcd_backlight
+  	drm_info(display->drm, "Applying Enable DPCD Backlight quirk\n");
   }
  =20
- +static void
- +net_devmem_dmabuf_binding_unmap(struct net_devmem_dmabuf_binding *binding)
- +{
- +	mutex_lock(&binding->lock);
- +	if (binding->sgt) {
- +		dma_resv_lock(binding->dmabuf->resv, NULL);
-- 		dma_buf_unmap_attachment(binding->attachment, binding->sgt,
-- 					 binding->direction);
-++		dma_buf_unmap_sgt(binding->attachment, binding->sgt,
-++				  binding->direction);
- +		dma_buf_unpin(binding->attachment);
- +		dma_resv_unlock(binding->dmabuf->resv);
- +		dma_buf_detach(binding->dmabuf, binding->attachment);
- +		binding->sgt =3D NULL;
- +		binding->attachment =3D NULL;
- +	}
- +	mutex_unlock(&binding->lock);
- +}
- +
- +/**
- + * net_devmem_lock_dev() - lock a binding's net_device if still alive
- + * @binding:		devmem binding whose @dev pointer to lock
- + * @dev_tracker:	reftracker for the held net_device reference
- + *
- + * Safely dereference @binding->dev, acquire netdev_lock() on the device,=
- and
- + * verify that @binding->dev has not been cleared while waiting for the l=
-ock.
- + *
- + * Invariant: @binding->dev is set once at bind time and is only ever cle=
-ared to
- + * NULL while holding netdev_lock(dev) (in mp_dmabuf_devmem_uninstall(),
- + * net_devmem_unbind_dmabuf(), or net_devmem_dev_unregister() during
- + * NETDEV_UNREGISTER before synchronize_net() and netdev_run_todo() free =
-the
- + * net_device).
- + *
- + * Taking rcu_read_lock() guarantees that a non-NULL @dev read from
- + * @binding->dev has not yet completed unregister_netdevice_many_notify()
- + * (which waits for an RCU grace period via synchronize_net() after
- + * NETDEV_UNREGISTER before freeing the net_device), so netdev_hold() can
- + * safely acquire a reference before sleeping on netdev_lock(). Once
- + * netdev_lock(dev) is held, re-checking that READ_ONCE(binding->dev) =3D=
-=3D dev
- + * guarantees that the device has not yet been detached from @binding and
- + * cannot finish unregistering until net_devmem_unlock_dev().
- + *
- + * Return: The locked and held net_device if @binding->dev is still non-N=
-ULL,
- + * or NULL if already cleared.
- + */
- +struct net_device *
- +net_devmem_lock_dev(struct net_devmem_dmabuf_binding *binding,
- +		    netdevice_tracker *dev_tracker)
- +{
- +	struct net_device *dev;
- +
- +	rcu_read_lock();
- +	dev =3D READ_ONCE(binding->dev);
- +	if (!dev) {
- +		rcu_read_unlock();
- +		return NULL;
- +	}
- +	netdev_hold(dev, dev_tracker, GFP_ATOMIC);
- +	rcu_read_unlock();
- +
- +	netdev_lock(dev);
- +	if (READ_ONCE(binding->dev) !=3D dev) {
- +		netdev_unlock(dev);
- +		netdev_put(dev, dev_tracker);
- +		return NULL;
- +	}
- +
- +	return dev;
- +}
- +
- +void net_devmem_unlock_dev(struct net_device *dev,
- +			   netdevice_tracker *dev_tracker)
- +{
- +	if (!dev)
- +		return;
- +
- +	netdev_unlock(dev);
- +	netdev_put(dev, dev_tracker);
- +}
- +
-  void __net_devmem_dmabuf_binding_free(struct work_struct *wq)
-  {
-  	struct net_devmem_dmabuf_binding *binding =3D container_of(wq, typeof(*b=
-inding), unbind_w);
++ /*
++  * VBT on some machines defaults the eDP pipe joiner to disabled even tho=
+ugh
++  * the panel requires it to achieve its native mode, so allow it regardle=
+ss.
++  */
++ static void quirk_allow_edp_joiner(struct intel_display *display)
++ {
++ 	intel_set_quirk(display, QUIRK_ALLOW_EDP_JOINER);
++ 	drm_info(display->drm, "Applying allow eDP joiner quirk\n");
++ }
++=20
+  struct intel_quirk {
+  	int device;
+  	int subsystem_vendor;
+@@@ -271,6 -281,9 +281,9 @@@ static struct intel_quirk intel_quirks[
+  	/* Xiaomi Book Pro 14 2026 */
+  	{ 0xb081, 0x1d72, 0x2424, quirk_disable_psr2 },
+  	{ 0xb080, 0x1d72, 0x2424, quirk_disable_psr2 },
++=20
++ 	/* ASUS ROG Strix SCAR 18 G835LXG */
++ 	{ 0x7d67, 0x1043, 0x3b29, quirk_allow_edp_joiner },
+  };
+ =20
+  static const struct intel_dpcd_quirk intel_dpcd_quirks[] =3D {
 
---SJSvMh+EHNwmA8Q2
+--s87hUG1Zje37F0sQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsFq7oACgkQJNaLcl1U
-h9BoaQf+Pf2MBlTrwHV7LBf1OK0NKLZZ6D71LmfJW3avr2B84OhEJ4s0OYiP5954
-SNQ2YIjyn8f8xrpjFEYIHv2NkgJExHFozNC1b3khRJzqX6ExBmCW33qYD+U7shl7
-LCQDCDt8cn6sBLUkcpVhiDd9RitUK17eLV9F9gVvJ4tp743jvNxmr77+eOe8RwWV
-4JDCZdcAJaEaK55z6ckJ69FpzNC0wDmALaO+S8Bz3rde4bREMFWeu5dsQ+GsQCuS
-QxyQenExXFTstHnMpyAJFOX5HF7edmjO9Bgmsl2yyjn5M3g8rZZs7foweX4bxJLq
-Vbq910CKZXddl8pkrXteumQzeUUlNw==
-=aNOo
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsFq9MACgkQJNaLcl1U
+h9A3Dgf/XjP/vcut0dT6mZXkNilCUjlAjH4FUYZzQu8JUxSpT4bp5CYIkvmTVsva
+uv8FKBiFuXRKPaCIwcWYvjPLvInv6OzQraZc9fEwVJEXSGIBB58Jwt8/mrImgKsr
+URrcam8MVzYHgellrFnLCUgknblKiDB4PXEHGkpXNSndnEBCLrUoYxjqbxj5G81Q
+mwHSVSKexmLB5IP7Qt0yJKIBPndjCcl2jFAL/uGmu+Tl8TSmoD6aBdUhUQNL8qGt
+N4H2jCtPgcOR3WIyhCP4q/OiI9F46Y90IIEM2kwoFZ3ZVQHZ5cNkQNCNHQXXNKbP
+rsquhjTbVYW7kNS4u0eYxS5dMEX1UQ==
+=qWAA
 -----END PGP SIGNATURE-----
 
---SJSvMh+EHNwmA8Q2--
+--s87hUG1Zje37F0sQ--
