@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795540791;
-	b=eTakhy4GOvH5ihR9I8vm/LFvtPUMm5w3b9Cttr+MzWY84MlUND8Qeu9dBwFWKKYm3mXV
-	 aSQZ/1C+8UeD1YM/ojqoPUxgw+BJp8rzH+Ueq7e4u2mo94sSSiWd4yy9ToMTGiagx7NWL
-	 cVC/It00+uJ2GMh8b7gd0W1fpXVvRJn6r4a0SYW5llHm8PeXz9Jh9SafquuSKUW08L/A5
-	 levTngldKI5hVHGOXTewuEnXNl1YJ2cDIh29n+v77J7BrtfT4MNar/nldLFfh41jw4BdD
-	 EcYyLTkL8T2hmQaM9mq90SazLrk8DHFc+WS8y1dTkKFiD0EQz8RQOJWWy1JLlFZoq7w==
+	t=1795541507;
+	b=Ne2ookfraImLHr+8LhsppsrI8aIsT+ltsozZlUQ9F2iKKvN7uONPSGAELSVqS4igEo2d
+	 PNxqHEJdsceuKLAHvgjgbVvgl0ycNGNvdG/uljBiGMXg/ViP713wnAGVBJEyMYxl157od
+	 hWuE41BrfhB6mCcNIePgBCTmNna/+3N9ESQRC3+E590fNSS8MW7PVzcpvGpTuD/k7++hP
+	 gsXQhIRl4aHwBmHnz5mqEo4ProJdkscNZ7reEpjRi0x7WAHWvArqaJUAyus9AbQvfTXhP
+	 lL5GKMI4CiQDrvL2hcFAyVyWmTuFQdrDLZurxJgKf/khU0jTNmRFeF75Gfy7hS8qGFw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795540791;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795541507;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=36xsYN2ou1Io3gNicvnMEWUlnY9fY0tPyO5qdsl1DqY=;
-	b=kyh6Z7nZ7U/cp706BROTnFbeWDHEtKOBwbgdWCqX//zO1sdU9UKaNGVWvl2RyOhSpoHK
-	 cG1rZ6qLvuZ6Rhrb4NsHk6ol/dh8G6YXxRCwfj0swYspyvey/nSCcoLlXi6DqIZeHioEb
-	 OJTIBemE2yxJdtHD34iH3sd3Swhp4Q8sO590wbKdjOrukjZ013zx51QsSZCZL1dV4Uhi0
-	 zQvukMbImzYAj4IaORA9ohGZsU0iyTQFahpBLPMaaq5L6nlEC3ncTLfgC8lX+fdbfLTiJ
-	 91CU543WWdbVVVQn4E0kYFW2om2AbPhNHjxMw5O2omdgnQHcZiqbg8m1pG2LmGly2vQ==
+	bh=7BOhALOWGOqa/3ADOLPrCh1s8Dt3hRUkimSSK/0HERI=;
+	b=1uT00bYyEap83ez7YvThOiJGO7maQsAf6J0AJlmie3k4g1UTER2RvCOZ8HylTZpfSSAf
+	 f0yOiUzzs3IBkhtG/0jTN0RrkkrHYu4zMfzZh/cudxkayM8ffMsF6SMzkYKoLPjp1EfTo
+	 krFAx/DM5awMUuCPMK48li2Cc6U0THf5bvR8KAqSF2+v3xC8dlo7rip4yVo0zUMKahd9y
+	 kpf3+xQY4NV6xb7QHGtnpX1wJ9fBw75J4nPMtgWulCLjtFaLXkhJAjC8A/LyisyQFWSar
+	 22ZZKwb8af+OGSG+M4GPVcmir5zlCcF0Mm9VvNAHBaqcmnIuthXvLDZbxF2nvbYtH/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=almdEahm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CWRih7ZI;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC54E606A31E;
-	Tue, 24 Nov 2026 17:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7089E606A32C;
+	Tue, 24 Nov 2026 17:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=almdEahm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30AAF1F000CF;
-	Tue, 24 Nov 2026 17:19:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CWRih7ZI
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3E31F000D2;
+	Tue, 24 Nov 2026 17:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795540790;
-	bh=36xsYN2ou1Io3gNicvnMEWUlnY9fY0tPyO5qdsl1DqY=;
+	s=k20260515; t=1795541507;
+	bh=7BOhALOWGOqa/3ADOLPrCh1s8Dt3hRUkimSSK/0HERI=;
 	h=Date:From:To:Cc:Subject;
-	b=almdEahmTwMlxv/MyJjtJ40dxSPNFwK2mHVfUmM9pnHHDEqzOPaeorAWQKs/bm7Ew
-	 BzBm7UMO997EwP0xRmC9jWdDvMbwkIndPsOsOcsSriDTTVOVD/MabP/Hlq8Rzs6HAI
-	 583Hie2vqUs1T+jDgLHOPHIh+LKXAcHQjaFE8B40j9EbyP4RK4H/ZsCs6eoRoyPwMX
-	 FJvm0cemceW/LmKk/uI2vFF/3wa8gyLcQQtOHwvUQBaTrQKttQoZd9jyop2u74wzzP
-	 aMy4udA3IncqgLaN8D9cCRmnoe9P+GS7IbTc9jNy4jU1LxJPdeiTt2Gbwj/J92YWld
-	 avxErNvUQGXcg==
-Date: Tue, 24 Nov 2026 17:19:46 +0000
+	b=CWRih7ZIF7kmmLYjnUqs1I5+NWmHoabVwpVXiaDSH2n7FF2Pniz4L4N6P49FfAqrb
+	 2rOFHTXmeaS+RpROAhE1RwMt7SBMW+ILqbdK5XBjtksm89QTVioWb8FVMxCnY+BlA1
+	 bSG97On5ze9gUFTL8VrFdKXHpaYmd78EJibXp7+iX9pvF12eUheAENgxu7F7iRRE0R
+	 o+z4hE5xmbVPfdCd1jKZlissKF+MnP9ZkpdB4tpHgqLXXRCiu+Z83FeE9gHVgS6A5H
+	 4KFMhGQSaOTLKmAXNKSi+9P90GuBUg1ASqvavGMNaahFttlEc9jS4+BiJU3YfeABgT
+	 TSOfLrH/Py/gA==
+Date: Tue, 24 Nov 2026 17:31:43 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <awXHMlpalEe2U_vC@sirena.org.uk>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <awXJ__-grexFFPb4@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,95 +58,150 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="suPJIMOqKSEGUNxu"
+	protocol="application/pgp-signature"; boundary="xtez2l9DzSPawuop"
 Content-Disposition: inline
 
 
---suPJIMOqKSEGUNxu
+--xtez2l9DzSPawuop
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-/tmp/next/build/drivers/thermal/intel/intel_hfi.c:407:38: error: too many a=
-rguments to function call, expected single argument 'msr', have 2 arguments
-  407 |         rdmsrq(MSR_IA32_HW_FEEDBACK_CONFIG, msr_val);
-      |         ~~~~~~                              ^~~~~~~
-/tmp/next/build/arch/x86/include/asm/paravirt.h:153:28: note: 'rdmsrq' decl=
-ared here
-  153 | static __always_inline u64 rdmsrq(u32 msr)
-      |                            ^      ~~~~~~~
+/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:217:3: error=
+: call to undeclared function 'dma_buf_unmap_attachment_unlocked'; ISO C99 =
+and later do not support implicit function declarations [-Wimplicit-functio=
+n-declaration]
+  217 |                 dma_buf_unmap_attachment_unlocked(buffer->attach,
+      |                 ^
+/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:217:3: note:=
+ did you mean 'dma_buf_unmap_sgt_unlocked'?
+/tmp/next/build/include/linux/dma-buf.h:587:6: note: 'dma_buf_unmap_sgt_unl=
+ocked' declared here
+  587 | void dma_buf_unmap_sgt_unlocked(struct dma_buf_attachment *attach,
+      |      ^
+/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:8: error=
+: call to undeclared function 'dma_buf_map_attachment_unlocked'; ISO C99 an=
+d later do not support implicit function declarations [-Wimplicit-function-=
+declaration]
+  438 |         sgt =3D dma_buf_map_attachment_unlocked(attach, DMA_BIDIREC=
+TIONAL);
+      |               ^
+/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:8: note:=
+ did you mean 'dma_buf_map_sgt_unlocked'?
+/tmp/next/build/include/linux/dma-buf.h:585:1: note: 'dma_buf_map_sgt_unloc=
+ked' declared here
+  585 | dma_buf_map_sgt_unlocked(struct dma_buf_attachment *attach,
+      | ^
+/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:6: error=
+: incompatible integer to pointer conversion assigning to 'struct sg_table =
+*' from 'int' [-Wint-conversion]
+  438 |         sgt =3D dma_buf_map_attachment_unlocked(attach, DMA_BIDIREC=
+TIONAL);
+      |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~
+/tmp/next/build/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:553:3: error=
+: call to undeclared function 'dma_buf_unmap_attachment_unlocked'; ISO C99 =
+and later do not support implicit function declarations [-Wimplicit-functio=
+n-declaration]
+  553 |                 dma_buf_unmap_attachment_unlocked(attach, sgt,
+      |                 ^
 
 Caused by commit
 
-   437ce3015e51c (thermal: intel: hfi: Disable HFI on shutdown and kexec)
+   6e0a8f1a83473 (platform/raspberrypi: Add VideoCore shared memory support)
 
-=66rom the pm tree interacting with
+=66rom the broadcom tree.  I have applied Sasha's fixup below
 
-   e7f9f17e00130 (treewide: Convert rdmsrq() from a macro to an inline func=
-tion)
-
-I have applied Sasha's fix below.
-
-=46rom eed7d9a619595e153de4f0faca0ff0186b8a4c1b Mon Sep 17 00:00:00 2001
+=46rom 60cdd23176d1a7b222ba90427f07c6d10859b744 Mon Sep 17 00:00:00 2001
 =46rom: Sasha Levin <sashal@kernel.org>
-Date: Tue, 24 Nov 2026 09:56:46 -0500
-Subject: [PATCH] linux-next: semantic conflict between the pm and tip trees
+Date: Tue, 24 Nov 2026 09:56:52 -0500
+Subject: [PATCH] linux-next: semantic conflict between the drm-misc and
+ broadcom trees
 
 Hi Mark,
 
-The current pm tree has a semantic conflict with the tip tree that
-breaks the x86 build:
+The current drm-misc tree has a semantic conflict with the broadcom
+tree that breaks the build:
 
-  drivers/thermal/intel/intel_hfi.c:407:38: error: too many arguments to fu=
-nction call, expected single argument 'msr', have 2 arguments
+  drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:217:3: error: call to unde=
+clared function 'dma_buf_unmap_attachment_unlocked'
+  drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c:438:8: error: call to unde=
+clared function 'dma_buf_map_attachment_unlocked'
 
-437ce3015e51 ("thermal: intel: hfi: Disable HFI on shutdown and kexec")
-in the pm tree uses rdmsrq(MSR_IA32_HW_FEEDBACK_CONFIG, msr_val), and
-e7f9f17e0013 ("treewide: Convert rdmsrq() from a macro to an inline
-function") in the tip tree makes rdmsrq() take only the MSR and return
-the value.
+77e0b2d2f4f3 ("treewide: Rename dma_buf_(un)map_attachment() to
+dma_buf_(un)map_sgt()") in the drm-misc tree renames the functions, and
+6e0a8f1a8347 ("platform/raspberrypi: Add VideoCore shared memory
+support") in the broadcom tree adds a new user of the old names. It is
+the only caller in next-20261123 that the rename doesn't cover.
 
 The fix for the merge:
----
- drivers/thermal/intel/intel_hfi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/intel/intel_hfi.c b/drivers/thermal/intel/inte=
-l_hfi.c
-index e7657d2c4298f..b70f6f7263c5d 100644
---- a/drivers/thermal/intel/intel_hfi.c
-+++ b/drivers/thermal/intel/intel_hfi.c
-@@ -404,7 +404,7 @@ static bool hfi_disable_if_enabled(void)
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c b/drivers/platf=
+orm/raspberrypi/vc-sm-cma/vc_sm.c
+index 2d9bb5f957a37..7ba6e1f2aa6aa 100644
+--- a/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c
++++ b/drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c
+@@ -214,9 +214,8 @@ static void vc_sm_clean_up_dmabuf(struct vc_sm_buffer *=
+buffer)
  {
- 	u64 msr_val;
+ 	/* Handle cleaning up imported dmabufs */
+ 	if (buffer->sgt) {
+-		dma_buf_unmap_attachment_unlocked(buffer->attach,
+-						  buffer->sgt,
+-						  DMA_BIDIRECTIONAL);
++		dma_buf_unmap_sgt_unlocked(buffer->attach, buffer->sgt,
++					   DMA_BIDIRECTIONAL);
+ 		buffer->sgt =3D NULL;
+ 	}
+ 	if (buffer->attach) {
+@@ -435,7 +434,7 @@ vc_sm_cma_import_dmabuf_internal(struct dma_buf *dma_bu=
+f,
+ 		goto error;
+ 	}
 =20
--	rdmsrq(MSR_IA32_HW_FEEDBACK_CONFIG, msr_val);
-+	msr_val =3D rdmsrq(MSR_IA32_HW_FEEDBACK_CONFIG);
- 	if (!(msr_val & HW_FEEDBACK_CONFIG_HFI_ENABLE_BIT))
- 		return false;
-=20
+-	sgt =3D dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
++	sgt =3D dma_buf_map_sgt_unlocked(attach, DMA_BIDIRECTIONAL);
+ 	if (IS_ERR(sgt)) {
+ 		ret =3D PTR_ERR(sgt);
+ 		goto error;
+@@ -550,8 +549,7 @@ vc_sm_cma_import_dmabuf_internal(struct dma_buf *dma_bu=
+f,
+ 		free_kernel_id(import.kernel_id);
+ 	kfree(buffer);
+ 	if (sgt)
+-		dma_buf_unmap_attachment_unlocked(attach, sgt,
+-						  DMA_BIDIRECTIONAL);
++		dma_buf_unmap_sgt_unlocked(attach, sgt, DMA_BIDIRECTIONAL);
+ 	if (attach)
+ 		dma_buf_detach(dma_buf, attach);
+ 	dma_buf_put(dma_buf);
 --=20
 2.47.3
 
 
---suPJIMOqKSEGUNxu
+--xtez2l9DzSPawuop
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsFxzEACgkQJNaLcl1U
-h9AyyQf/UQ6/7XKc4ezbj2vKeRJzc0vF3pqfLj7Y+PsOsUmgWxU6l6euvwOv2YSd
-9gKlo8YBGVaN9KfMQM0dHx3GdgD7x6JnGBOMv2FBZ7i8atdwKsHvXsXVd0l4sdlq
-LnfXAWLLtYdDfG3DVmPEttUkQcOSstwsb+v3nED4tWqBU21k2LtsfnH6AnrpDqVP
-0jAeTPGlTIymYAO+4jfM42pDvoZ+gqPlm9GxCM7HtbYV/6uobJrQk9xtgH/Bxzwt
-+C78PeP7lCiFIN4XV6Bv7feoMIXIT1jnQEqdSzEPv18f62PZBnasNFdNYP3fgv4r
-QP/ebtujjBnWD1pOdsbxYLJ0UsOqzw==
-=i7f3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsFyf4ACgkQJNaLcl1U
+h9CmHwf/SU7/iyvVAAI4/nfDtLFEk+idA+aZ5ShlGYjspVTRPkRHcrSl93f1wzO/
+4KDuuhiT9ARlSVOoGMiLuggffJOwOZOtFtB2+s4EDwaUnQBAp63/z/Rn1HGzGn8Y
+kMQ2RL0LX+q+NyVeXFKEX/+3rJRvWT+fuQm0VYRXgqN2uqEHZnpuY+ck4zNzi7ng
+Qptma2rKZDOCeb1jjHnxvYnoWRLG/l6qtohQRY80vkGl9FqCARS9m7ich8ZiSflb
+2XoMMIH4V+b8l0a6FGVKVrCpMGDXIYbWFkM0bWwnTrsdseVQ146zDTSsGacajunu
+mpRoMhSZDVx3nrjQtRi7FhpT5/2vww==
+=q93P
 -----END PGP SIGNATURE-----
 
---suPJIMOqKSEGUNxu--
+--xtez2l9DzSPawuop--
