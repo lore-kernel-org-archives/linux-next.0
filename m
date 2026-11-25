@@ -1,50 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795615959;
-	b=QwahGz6eS3GsCbP96WnB1eAmocamMYkXcQUW3NOvEVOXz2Gd+iXh1QXUxJVXsXyiAkAV
-	 oGkgHthN5ewbj5YlVPkykeACx7RxosC3MdH2IVXcm7diMCj+FQGOvBqh2ngjxu2BwSwe3
-	 6BDW+8zJ5z38uOiDBKUcX7FnFRDyB36X3v3+SDTXKuCu69p+qyN604w0DKQRF1hsBarcd
-	 2ozHdSdYouguJXSCNQcIsl3TDqpeEXhEs245sCT6hRbZ42+MAo8pVqnWd/2H+jNWYqybj
-	 yV3Fam+2m3wbRPfqhojr7u2koo4etozukX9y2r8SUTLFVacWHo8GTAOHsQ0+QE1uAlA==
+	t=1795615968;
+	b=IE8z6knv86RCmleZnLhfsUlfW0aKMdhwLdKSENFUz1S0iSscOyeGoAQMxhM0zJLtreS/
+	 6Ob/JVY9n3PDtzu9alLIUgWNfgdEL8/hDSmGSyxDo+PPo4e1Sy6XqXbQh6LsWtNZf70b7
+	 x9CIn2+btP9U1mQwCvFrUbosxgYSrWoEE2uPDGACyzK3CN5VC60zt9VdK4/EgHbl2eVyM
+	 hWUPzxE/j1nQoB26TxV6RT6CaRdJ0/+ihI+GAIK++COdmSVsMFA7Il3Og8qIiIElmP4g8
+	 K4uwQ2r9VGeqaCcTZwSadxHZRdsdlOz5p/I6laRaK7tCg9+2d1g8AAmC2THouFWVvfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795615959;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795615968;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=8cI8mj1aPoyrbQVohtDiH9o6Dnrz8xQCLIzcFUmPAA8=;
-	b=XHnmfKq7EDRWvCaBuL4BMf77Iv/5VhLvheRTs9Hcd8oINLjN8jv6/zMcu2c0Kbf0VlbZ
-	 ww5LCy3kSxN3NYp946auIqFWlG78G5hH9GhHp7ZzzlLEqgRO1QAxkw8hu7Al+AgrT8AVd
-	 xG6hRfwQgmQArbYcaFCeMGZCK/zkH7GcHubC2G6amdhwSB5qErEt8xIcLl0z5VqYXg0qg
-	 jhuhP5+PfdH17DLZZy4oo57ky5Zr6RWXrlBJBeU8GEnm86rGWdjGMTbmcRmJ3NJT9zAEB
-	 vEIFFLdJ/+no752gifhamhSuhOC7a8Fg4g69Vh/8o5+7JRYlEPmgTpFffSdMQ+VXcrg==
+	bh=jhW2n5HOR04fx7wWnO2GvflLAxU7Z2JX520hWK8bFeg=;
+	b=VVmLAILbkov642kN05hOp74FzQjSPBazOHFVx64p9Z3SnbD6pmiDPt5OzaowGTJcFhCV
+	 UMT/V2U8C/otqI/RoQCUnrkdzZUVTszG+VCigIQnEw1kCTIMPkvepXnjIcxsXIfz9Aqqx
+	 Y8y1jD7Wsrq2EUgcCV02kxDOlVlDnBpmyflo83FoeMqoHdIkXkuXTd7Ctho0ENHwVsd67
+	 ySNnTlA2jCRMfJ6aAkvIDoveju5Wsxvl52L+8c5RqAZd53uBRYfA3ZUN+dkHWgz5vWzll
+	 b3oVNJx+mj1UrNqRHxoO9lbcERdIQoqTr81jMEpRiNNigFw8tyw75MItVWGL1/TbCgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kR1IjXsT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OVVcTIwq;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E647F606A329;
-	Wed, 25 Nov 2026 14:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41388606A32D;
+	Wed, 25 Nov 2026 14:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kR1IjXsT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 825D61F000CA;
-	Wed, 25 Nov 2026 14:12:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OVVcTIwq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8761F000D0;
+	Wed, 25 Nov 2026 14:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795615958;
-	bh=8cI8mj1aPoyrbQVohtDiH9o6Dnrz8xQCLIzcFUmPAA8=;
+	s=k20260515; t=1795615967;
+	bh=jhW2n5HOR04fx7wWnO2GvflLAxU7Z2JX520hWK8bFeg=;
 	h=Date:From:To:Cc:Subject;
-	b=kR1IjXsTt/C2tRpmTbfhQlIILc2NPRA/S+aVx1tZPCMRz+DdHf9rj0fNCK7ni+ciD
-	 jSavcItl47O9YXYK/OmxiAx0EFfXPgH7P2c13UbktKH5raYq90G5/+Gzhv9GIm8ExV
-	 lb1VsOCMK6JDjIxIz2aa5ueS3PuVUaK1oi9iHx2dyJ98AuTKsGO1FrvNzs629IBChM
-	 n9f59pr+Cdtes+GwHMp+o7CuIzUoVvEkBBBTZMpHEH0IpuW2IZK2gRMvuhh8VzH/RP
-	 Qmq1l0tab6sQa16KaGX2fUz2IGCUGsp7ueJDz+r6URhXrUKs081W+d9Pt5Ax/SEUL8
-	 gDnqjwN19STVQ==
-Date: Wed, 25 Nov 2026 14:12:34 +0000
+	b=OVVcTIwqgAKy3a1HnRxHDWKBPdOXnzCH78xu5155Haadbrl/dfuqfbvCy+kUzxjvR
+	 e600uhlAeKOeYjeHw6kyrgYdm+GAvqKC3mX4ZS88l8D4c6rZiNc4W3JqJhhArsBpUo
+	 IzxZXL8WfUEgL7DxwvsnThYK7q2czqAV5AvTPX0JtySVdo0tQN7rbWQwcEbILu9c8z
+	 ma4VzT5NICKfKaT2kpH0jfVVsiECX1oUsbC/h5dTOrq1sKdyaaZlOfU66j2Yf92zls
+	 kiWauWGO9Q0t9I16+uPlnTPareC3miE70PfGSGhnR612k28rfCJjzSb5fWRjOupDri
+	 JrQixesy2lIkQ==
+Date: Wed, 25 Nov 2026 14:12:44 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Frank Li <Frank.li@nxp.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Fixes tags need work in the imx-mxs tree
-Message-ID: <awbs0mLIUQNX8ZJD@sirena.org.uk>
+Message-ID: <awbs3IFaujlC8454@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,21 +55,21 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u+OTyQeKJrSXjUgS"
+	protocol="application/pgp-signature"; boundary="5G85GjkgiU3lt2CE"
 Content-Disposition: inline
 
 
---u+OTyQeKJrSXjUgS
+--5G85GjkgiU3lt2CE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 In commit
 
-  c7a887a1777bc ("arm64: dts: imx93-imx91-toradex-osm-dev: Fix USB_A source PDO to 900 mA")
+  643255dffcca1 ("arm64: dts: imx95-toradex-osm-dev: Fix USB_A source PDO to 900 mA")
 
 Fixes tag
 
-  Fixes: e8a8c86875f4 ("arm64: dts: Add Toradex OSM iMX93")
+  Fixes: 39be5a7e3ecc ("arm64: dts: Add Toradex OSM iMX95")
 
 has these problem(s):
 
@@ -77,19 +77,19 @@ has these problem(s):
     Just use
 	git log -1 --format='Fixes: %h ("%s")'
 
---u+OTyQeKJrSXjUgS
+--5G85GjkgiU3lt2CE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsG7NEACgkQJNaLcl1U
-h9BoZwf+Kv+4m1J4CvXX4l050Ln9V6MKZzO3N08BEUybyWxFxpQmpq7m2+/aZBie
-M7xXrxqpM7wHRB6yVBXY8x/mBUR1a+pQWqS5gtzlxGvnuyAQadrMGqqV/G6AYaVD
-88v9kPHsQwif0RSOCEmKteMy0h16lQMdGztQ2zBKCon9MSxhBfglvOf2dXbC9U5P
-c/VTnmHUqXG3AHBSG8JIM6qKPPxl6Lh0D3LpEgmiv5Ime39roL0NAlMOpgbC9CEe
-lwF3TREY6zdIkYLWId2HV1qgUka+o2ymdYKRySi1WImKs+7ZKSpSrjTHXiwBQgkt
-B3+A0blaCzGhNIG+XLfGY/fG42FT1Q==
-=1gHv
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsG7NsACgkQJNaLcl1U
+h9AKPwf/a+Z//lOEKwaQZMD7OdU1UiKFcYcnsUfajUNwcZx1aScNoT71CDZoi6+6
+8jOAuNU1g0kysXCGE2YW5/O4kdYrInrSbGEW879bHekH4qouJKZ6SBZEgQrFBNkO
+pFNQjKD8z9asrPiIxUM/OSHJh4rhQNVDL/5GnWPuWG8cA1o+wp4jLWUh2/E7nGHY
+7OZeNShDyvQ/cl/sLtnudIJk7CA1ZhcVgGsbkJakJgOj0BZiyP0bgr0zTTisx4EP
+pwOXCrF5MRCFtTK+3yU0lkWHXzmDL4eHNmgj4cIV/h4tzf8+8K3e4cvOYCvRU0DV
+lLuMeq8NE0D49sd06YjtyHqbi3F9Iw==
+=A/BO
 -----END PGP SIGNATURE-----
 
---u+OTyQeKJrSXjUgS--
+--5G85GjkgiU3lt2CE--
