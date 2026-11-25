@@ -1,56 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795609865;
-	b=jbI4uxfYs4Ijuqe6vpZepXAkX4uIhfrlJkpLkkcBkruf937bDzBrQnTKvZfALuBgLVKN
-	 5pVORbi9KiVz2zDNe8OttAJx4c2/tfFDQJ5Mna0qp0H2QZ+C3fVt5KQZ0pUTJi4dK8EPU
-	 Z6AEKhgh4daEcS2kdnjGbdTS4gmpAdDA7rUDzTOfGvTurIn8q7j+3+juRebKLFV/hSTjq
-	 uJkgYKvOTiy4PomxEwS7CWr46LDqDa5f2OFD2Sg7r9JoLySfVtb8nRLE+TiAXo3ajXQlP
-	 a3DX3ZT6W2FwdIfEPIttvQLVOKQjDZChdNmByYN1R4a1Cu7zHXPCBFT3jmFd8sf/mrg==
+	t=1795610454;
+	b=BstjQtKvJGwjoCYPlL9Oj3wfWRUe5O6mTxyw66pfsiDiHdsKzq4sEmdIqlFeHJbfMdmx
+	 rFo6CqGOOqUrzj+fLR/HaAIMNMMqMhBJ72PpUTii2PPfG+xvXBc36Fpz+Voh8qQLUHv12
+	 IbzTGQKgK/g7gAltmD9k9Dug3z9NnguCC9wvL8mh7TI9zQ9kY+RlczmrUZ4+w35hxg84G
+	 vdjz985wCNA1vyJBdIhZqR9ST/DmPmwmHia7vPx15EqucerprtqUKm/KaiO397t6k7G27
+	 sKrrsZnAfnX0N290KBerkNn59g4md7ddJ//nMhNgERsv7acG8UVcqUOQewUofRFd8Ag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795609865;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795610454;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=e3N56wcC0HGx+Y02qLfxstEXsguXxcSyRh7I3SyoRy8=;
-	b=3gA1bX2Un7xbXD/MReGpy7pVP+vqO93MBnyIB9a2o+zyh30qFhXpOUrxDAIPscuzCZDF
-	 CeGkp95pASlAdzG0ckTLzK23i44l3r3HhE4eenvlGcinnGf/iH8ZK9MHPPMjHje8PXVQz
-	 bBQNEjkmIyrvmGd0JB+Yq+zt/XauDL2ukMhix+DSgvsm31A47xZ/dQ+zOSL3OqNTNw41U
-	 4S26V1EVsruYneqLSU4aWWOs732yjMdUDlC1e2SFjkAX2G6+void+7G4odZG+P+FMQuYJ
-	 uXNVZ/MinjpmYgtuzRMpGZOSyFLbNyyPeXVICplVckyAGIHjfiJHD7IMaNdxz5nH83w==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=gGfYfFlghr0EYsaVgSgs9YOkY8hlabDlJEfwTqOt1zM=;
+	b=GarejYgYjrteg/iQl034DGWCgBw9HWAqPRyG+O6a9CM8dvFakeAk0qU3mgoqWyhz13XE
+	 NUpYnybxyjTcfpEWEwiahvFNi5tJpzvUxmY4P56Cx9vvPsgneo/wjLsY9Eja5iCGgujmV
+	 ynpv4hFToimNVxVn+PlK2aib5/zLYfFHtPazW0dubiSZ4T3hG4YvfyouX3Re0dReaG8mQ
+	 VlsD+v2Dnk/iUBZpOmlcVpAPlp0ez73ksITin8EBafSX0+RT1KkUXe1m0rJA3IbyIjJzF
+	 kNLqOBCehlB3QqHY1hYJ4RuFh43i1PSEt+mge9uqn3K7DYvaZeDTbKkWQHn/Xxp5Y7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dtFYxuRs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="G+/2PmxW";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4974F606A31E;
-	Wed, 25 Nov 2026 12:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668BE606A323;
+	Wed, 25 Nov 2026 12:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dtFYxuRs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55C61F000C0;
-	Wed, 25 Nov 2026 12:31:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G+/2PmxW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007781F000C4;
+	Wed, 25 Nov 2026 12:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795609864;
-	bh=e3N56wcC0HGx+Y02qLfxstEXsguXxcSyRh7I3SyoRy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dtFYxuRs9TMZKxU1/HAq+nDBYuthFPKat3BPGOxjg1Hrjv+v/J3GZ9KnIXrmD1WS/
-	 2GP5/c5evhVX1tXLBWJyF2HAKrrz29oB9g5tFKWghSYDe+SceZaXKV3MbpBwdaChBx
-	 PEBCP6F8ZrBOXT6VpplgaZb2uT3hdm7ZcgiNpq1gNKnMLeBOkPWiyQyXQohtUZA3AE
-	 c9mPL7xaYWOrlco9VYx5q+T14aGBVkHXYVqyl+btTkUhSBnGMhFjDJgWqO0ad28gi9
-	 NVYoWaJCPP2izC83hYoGGXNZhECW9bl1QoDel3MItpTWNxE7vJ5bja4/NCUi9afJAz
-	 O7iR0lwOqiJeA==
-Date: Wed, 25 Nov 2026 12:31:01 +0000
+	s=k20260515; t=1795610454;
+	bh=gGfYfFlghr0EYsaVgSgs9YOkY8hlabDlJEfwTqOt1zM=;
+	h=Date:From:To:Cc:Subject;
+	b=G+/2PmxWGO4nZ6jaWwLRRQptSrNjKUxa8Qka9aLwpCjlcQ0aW1g7mho4iqBjzKMyG
+	 OkYPWQ/4IKrhVZYfUrw8wGmlZcYKTBqdYSsq96nrJHk42Bc146CXGCYxmG25PJhb1P
+	 NnZuH+7IB3y0c89eyW4XvEniHWag6oYxvPobJRjJHsWwj/QKiErlYdDXxNd+KcKTgJ
+	 YJMa5zZ9OZmyHzDE33jSJakHOeKDg/n7KGOXFTyeKKH1lNqjFZr0yrehquI1HMhbJ6
+	 gRu1LJArxJk+Lp/CMjhSrpTa9jqZMP0uTEpVwwT702yYZyv//eTUReDt3VuPPCpfKN
+	 Otz1b3RN74MzQ==
+Date: Wed, 25 Nov 2026 12:40:50 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <b070485d-b89f-4777-a8e9-10fe07c56c2c@sirena.org.uk>
-References: <awXHMlpalEe2U_vC@sirena.org.uk>
- <away4tDOZQoAWXky@gmail.com>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Missing signoff in the perf tree
+Message-ID: <awbXUvbdJt6FcjKc@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,40 +56,33 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hpnrE7TE8Mm/41f7"
+	protocol="application/pgp-signature"; boundary="NLdbdYZFusFqCqtP"
 Content-Disposition: inline
-In-Reply-To: <away4tDOZQoAWXky@gmail.com>
-X-Cookie: -- Owen Meredith
 
 
---hpnrE7TE8Mm/41f7
+--NLdbdYZFusFqCqtP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Nov 25, 2026 at 11:05:22AM +0100, Ingo Molnar wrote:
+Commit
 
-> Technically this is not a 'build failure after the merge of the
-> tip tree', but a 'manual merge of the tip tree with the pm tree',
-> with the semantic conflict that went unnoticed, right?
+  0215d3b0181da ("perf stat: Start tool events when enable_on_exec is used")
 
-Not really, a build failure is something that breaks the build after
-doing a straight up git merge.  Some of those are due to semantic
-conflicts like this one but they all come to my attention as build
-failures.
+is missing a Signed-off-by from its author
 
---hpnrE7TE8Mm/41f7
+--NLdbdYZFusFqCqtP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsG1QQACgkQJNaLcl1U
-h9DTCAf8DFuVlCj+tpuPBn0NL5Z1epko6VLm0d0ehwebjkDj0RIqlGIJGQhOZdsa
-welbH/Psa4YfriPC5jKCcrS+PUUtosQwMz3OoU4/QLP1BsXOzxevyeCw1QaqgISP
-62L9/09EkEGy2nk+vpyE9Q1Gprq88/lQ0/YtJKkskuQtQ6hLnX6hNdKKwFm2t2Hv
-BSPdBKHu0xH7Ry49acYOOkCKTmUnVs0aseScPKqgVdZ3ErqvcazxGGOeuQX6Qbex
-H0Vkh9j2hvpPLITEUZZ/Lti6kqJ/Q2yiys6ll8pQ9dC1rFB501BHy6lFa47MYJI3
-3uewQ6o37bRugEW+6zGSNazFCRKJSg==
-=md+Q
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsG11EACgkQJNaLcl1U
+h9CQQwf+OPLOQt6ygkPQYrZ8dlwngM2qI2/XqIPbAYBcIGz1HByNyqYGUgyflqg8
+M2qpUUIFgL68ULijscMq5h4vXULNH3tWFIgg0knXvTEptY6yCv9uUuu02rTBFElu
+3E/ZSGlBcHb+tU79ODQzE+9/DW92g4zq9vKqz+/i6wED5SGFjZPGTbYEA6Ddzcnq
+bwVJZVNYn/zG/3B5PhugLskLUPvpgufNz+JaLV0Mm9HYKF2aZLSi77Ed1qMF9adZ
+P4pwTPVU50/c3WWKmek0oylTSdBylspv0W47Zcr7GY9ap8O2m6rboAuuYJo8uh8V
+yfaZyNAKF84oEeOxKEgm+g5ZdQATSQ==
+=jwPd
 -----END PGP SIGNATURE-----
 
---hpnrE7TE8Mm/41f7--
+--NLdbdYZFusFqCqtP--
