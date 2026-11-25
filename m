@@ -1,85 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795573820;
-	b=lzRO7C45t8ZhxnlsJrJhkFkD8rwXFw6/JtB0Ov1UMyxeJXQn84fCjeNf1gNXu6yXBOSa
-	 b0xsEp9DgekRaX+eq9jYfeRhTC792lbR+lSDHno/xw2ZdRt23AN2fKfmtpZQPIS6CXnOc
-	 KNuUZXVFISi0zxAZz6BBLo9PjVOC/85aKIWH2hxyoR12MRgXBPoCE1dsR5ESAdzrz3kok
-	 GkHeckAH9ICEh2PP95iV+O7n5e+MKhk6/zrXe7T/cwmZr8DXNE5cg7es0mymt2ZIo+b0G
-	 WzLB9kwZ1p1I8M0cGPzad8YbtoNO3XQrzug5XcAfzP58RDoRg3X9qK1KS96u8OfZ12Q==
+	t=1795596855;
+	b=Ils8X5KR0W0XDJakYXE3jG2vUgJ/ndQo+0kdYEehWormigfsN1hVnPrCb9SYr0G443Vy
+	 571vpftQUsNqz4QOXq/NOb1igfbYwNXdMto0qy/VAj9TO9grnZi3x9fdhQnCdr5y781Gn
+	 sDCSf3/xZn+XAUQ9zubGuma8R+Hmkr10saxGIGheQWBLwXLX9DKMdvQEfa5QDbeAXSTzO
+	 UI5iwblcVXrytbcnpxNlEO0PW8qz9GDtbzLoYrO1QFrFYaxtan5ptLC+jtYOqiF5tXfsN
+	 TyCGZKv16cafkeJJ1uusLeCo06VLyUv8AE3GGZHLXXgTuEDT4zkTT7EA6XXFmKiKtbw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795573820;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
-	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
-	 Date:Message-ID;
-	bh=A5WnWTDzcqANS1dnGi1WKih+jnEwG9AbRq+ZtV8e2kM=;
-	b=2tzS7b6ln+sjfbEAhwFTIBk1LIrQDss3UbtaLWEJZVOlVaocFgbpvrKMGdhCO6Uub2g9
-	 aQ6lps0rBBxt6vh0dMLM3CQfF5/mB3ajPNHMTFsdFaz6tz0gvenyQmmCBxupUA2H+R7FQ
-	 AZBpD8aJhO1H8J2TfmFR/nOtQnLPE/NOByPO8dGnwUme/wGtZzbUq+kMntPtRBnFZzWLG
-	 NVEOrwjcwlvIBCCW8waITAoZOg641Piw49/nchs7swjynUjT7rzkuiJFORgzNtGN+Zghi
-	 0FkuEx5M7T+a+oUsMPixiYuahtNGY3mpRIijkG4jEeQXaPGTHMINZzd81lhhx94doWA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795596855;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=/0+lAOOij2K52U4R0VRs3qIZIOgm3jcSCXFoO01Bohg=;
+	b=Jor8wuPDjq0HYL5fBXjLElWcHDTk57iP+dcboK2GZ0IbadhBzWED3Qzd4HRinjK5XOT6
+	 yGBfY5OAwwoz/RjJbyK0GwA3xfjns9cB5CzEs/TfE0UUDKtS09Xp/eGlJwRftViBu6r6U
+	 1r5+gHIRm/7GlCkcDZXyLo1DHGXKLmuJlVifp5qwPxBie+VSwTwKaaR/d5+6xP3FXFslG
+	 7IPLDaV6PvJ7+j9I0nEK3H8GexJa/I2UfAfwftWeQ1tPneIo4Z0FAruC7l6jviQz/7hRZ
+	 7Q9vpbYz/G1DRm+bpYCkkI7Z/kQRvz5o/ImwUvbkw+pUgVKc5SZjtqz27Yl2b0YcEiw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kernelci.org;
-	spf=pass smtp.mailfrom=kernelci.org;
-	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=NG3uD1Bf;
-	arc=none smtp.remote-ip=74.125.82.50
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=J1yzosnh;
+	arc=none smtp.remote-ip=210.118.77.11
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C43B606A31E
-	for <linux-next@vger.kernel.org>; Wed, 25 Nov 2026 02:30:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C43B606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE42606A321
+	for <linux-next@vger.kernel.org>; Wed, 25 Nov 2026 08:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5AE42606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=NG3uD1Bf
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-1b5786e099cso3364625c88.0
-        for <linux-next@vger.kernel.org>; Tue, 24 Nov 2026 18:30:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1795573818; x=1796178618; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=A5WnWTDzcqANS1dnGi1WKih+jnEwG9AbRq+ZtV8e2kM=;
-        b=NG3uD1BfL4QzmhY57Zj5Hd7qljBqBmtUKdE66+VyRXY8fcR2gfhM3EuPw6AVwFQkzw
-         7svHJQOfsOOPCnHJ+R4xxgkkwltZUACS/X5oWsrzpduaHNfGjQz5TNRJbn2vCQb0Lbf+
-         wI/szxvHR31jHfAqbSB+G3X2K9enx4EwoeHD7LFU2Fokeq3Iabd4fgqAuBO+NNXKgO0H
-         as51MyNZvd4X8rfVxoAacyN9mWBD6seR1hAd34seWteREzBMP8tb+oiroqabE0cmGGjX
-         npVKIQGdB03ozqxwJaElUYSx4io+ypL6St3pyZEDX0XG9PpajK912rgJc1NF9SaggoAg
-         +9yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795573818; x=1796178618;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=A5WnWTDzcqANS1dnGi1WKih+jnEwG9AbRq+ZtV8e2kM=;
-        b=IIvJr9frBKIIkEKeuzfTesA53iwPpp4eoz4kK5LE/GW+K7p3+KiIo0O+mwlQuF5zdo
-         0y5OI8opgJ6KJ/E9Ns56sYu3STSOftmifzLKqImC8DJ7SlYYBWHYHy1zn1A6xduRCp4e
-         ZBaEl7XYXUrjGybuMagt3YzJLwvKQYJC2xV1NrTFI99MBatZpR3rSwR59lnEy37rIVig
-         6a+xo1cKOGoKtlGDVEDVoGaz6Gvk22e+8hDo2mvzCKGwiRqsLt168k/6j9LDPsgV8QbA
-         yEfwwjYHVl51unEsh5M+xd6jXb8ETLbLwtArlKvTd54IQwotZFCnQ1LliwfrB6xG/a1a
-         rOAg==
-X-Gm-Message-State: APuU4Z+8HpTMZ1yhInAytDS95VdNEV8/NEIumadC/n1kvBolHlGzhD52
-	/HQyxnqF6VnuUGrXzKi7WWYc8/P7xFK+z2fT74BoGGiLmoiwLFwv3tFo+Elt3F7IPOC82Bc+3c8
-	S12aL
-X-Gm-Gg: AZFdTZde3lOAWQQhx9c5up4BGZ6BeNGjz0uEoPoYfqkrl+QaIWrm6shcRQvqmRNyo0M
-	YJRZ6nRs94mLnhoTB3cHgNidUiY/abidrCiZaMqlQ+LpyTp2gnDUBazb1XuvN7HaQaqaX0VfhYm
-	G0LpDHLWV9c2St2CSXzexk0Gl5CVM+9aJzlBHRyb/HdYFKbQMpiRDg+83Njdw1JnJXk7JGyFHw4
-	0Sp+cA//VoioBSdm9W8Ldvl4K4NU4FF3G107ryNa7cMnRwjSt/BTJsjviy9BL1VbDTXUqi/062H
-	mT3CSp81UI0BT231p8KyFGmVvYODaH7DCGcTvKl2FiYnZI43TZrQHfw2/LWftSaYwpQ1d7unyLP
-	p+JyKrcehmmOD2HHX/jg7AmZL9U7812rjBodqqgXDGQG+qPXN7t4GthnR5St+Zqe76RA3Ag8/mx
-	BZIz6TzVF4mzxPKYw7SxX8ia49EUQeBB+ESvWIDTWiIl+QjySSRjzAdWmjAKFRjaeUrUd/XQFNG
-	ON+5OdGZJurZN9r73eX+KULMNamZPQWMz/5bzR5WjAglQWMHTVFJL8PnnqHKbfI1nkIx9Hy2Dm/
-	DBiPFr6HrzKSaRm81ObV1Q==
-X-Received: by 2002:a05:701b:4306:20b0:1b2:4c54:d976 with SMTP id a92af1059eb24-1b55ff0e104mr14057295c88.31.1795573818182;
-        Tue, 24 Nov 2026 18:30:18 -0800 (PST)
-Received: from 52d83ede7c60 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b556847fdasm43549946c88.13.2026.11.24.18.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 18:30:16 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=J1yzosnh
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261125085411euoutp01e0525c1f52aaf41c8faea5a1ec79a782~rPdKnCUat2717627176euoutp01F
+	for <linux-next@vger.kernel.org>; Wed, 25 Nov 2026 08:54:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261125085411euoutp01e0525c1f52aaf41c8faea5a1ec79a782~rPdKnCUat2717627176euoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795596851;
+	bh=/0+lAOOij2K52U4R0VRs3qIZIOgm3jcSCXFoO01Bohg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=J1yzosnh8O0FQ+zOv4xV6wlWYSkwmCBvsTdVPW401AfwWJxN4L78IQe8rbJW1vatb
+	 hZcg5/xPfPxRGSsWRLSmDMcAobQidGl/bXypi1JVQNc8fQkRJfeEGt7H6XD6F91xzJ
+	 eatuJhhXprNVbYaTSK0AY0O4RpLts+lTdBydLYKo=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261125085411eucas1p26fb11707f67c2628fd55e71335d08bab~rPdKQhucL0555705557eucas1p2m;
+	Wed, 25 Nov 2026 08:54:11 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20261125085408eusmtip12dc81ec341b1bfaabed6853baaabffe2~rPdIRjxTi1139111391eusmtip1Q;
+	Wed, 25 Nov 2026 08:54:08 +0000 (GMT)
+Message-ID: <3467269e-9929-4c9f-bc19-847976f49527@samsung.com>
+Date: Wed, 25 Nov 2026 09:54:08 +0100
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -89,167 +64,198 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3 2/2] alpha: enable contiguous memory allocation for
+ coherent DMA
+To: Magnus Lindholm <linmag7@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>
+Cc: richard.henderson@linaro.org, mattst88@gmail.com,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-next@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	will@kernel.org, Mark Brown <broonie@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CA+=Fv5QJxoxEoKxRpm5Hisdf=y+VpmM-s_VBC1tDQ2FTCfb08w@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - 3dd8c790a7b7027abdd568e36db5e82ffaea7c77
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Wed, 25 Nov 2026 02:30:16 -0000
-Message-ID: <179557381611.73801.12576648939463775141@52d83ede7c60>
+X-CMS-MailID: 20261125085411eucas1p26fb11707f67c2628fd55e71335d08bab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261124232303eucas1p10f2da7a94c8aa19fa4e406d089c1367e
+X-EPHeader: CA
+X-CMS-RootMailID: 20261124232303eucas1p10f2da7a94c8aa19fa4e406d089c1367e
+References: <20261115103809.1288167-1-linmag7@gmail.com>
+	<20261115103809.1288167-3-linmag7@gmail.com> <awVzJMLVw4wUSqky@monoceros>
+	<CGME20261124232303eucas1p10f2da7a94c8aa19fa4e406d089c1367e@eucas1p1.samsung.com>
+	<CA+=Fv5QJxoxEoKxRpm5Hisdf=y+VpmM-s_VBC1tDQ2FTCfb08w@mail.gmail.com>
+
+Hi Magnus,
+
+On 25.11.2026 00:22, Magnus Lindholm wrote:
+> On Tue, Nov 24, 2026 at 12:32 PM Uwe Kleine-König
+> <u.kleine-koenig@baylibre.com> wrote:
+>> On Sun, Nov 15, 2026 at 11:37:43AM +0100, Magnus Lindholm wrote:
+>>> Select HAVE_DMA_CONTIGUOUS and reserve a default CMA area after the
+>>> machine has initialized its DMA windows. Prefer top-down placement
+>>> below the direct-map and usable RAM limits. Skip the default reservation
+>>> when no direct-map window exists. Explicit cma= ranges retain their
+>>> generic override semantics; top-down placement is a preference, not a
+>>> hard lower bound excluding the first 16 MiB.
+>>>
+>>> Use dma_alloc_contiguous(), which rejects non-blocking callers, before
+>>> falling back to alloc_pages_exact(). Pair both paths with
+>>> dma_free_contiguous(), whose buddy fallback uses free_pages_exact().
+>>> Skip CMA on the GFP_DMA retry after a mapping failure so it cannot
+>>> return the same unsuitable CMA pages. Retain zeroing for CMA memory.
+>>>
+>>> Round the size up to a page boundary in both allocation and free. CMA
+>>> allocates size >> PAGE_SHIFT pages, so an unaligned size could otherwise
+>>> allocate too few pages and overrun the allocation during zeroing. Keep
+>>> the mapping and unmapping lengths consistent with the aligned size.
+>>>
+>>> With CONFIG_DMA_CMA=y, the default CMA_SIZE_MBYTES setting reserves
+>>> 16 MiB without a cma= argument. cma=0 disables the default area.
+>>>
+>>> Signed-off-by: Magnus Lindholm <linmag7@gmail.com>
+>>> ---
+>>>  .../io/dma-contiguous/arch-support.txt        |  2 +-
+>>>  arch/alpha/Kconfig                            |  1 +
+>>>  arch/alpha/kernel/pci_iommu.c                 | 19 +++++++++++++------
+>>>  arch/alpha/kernel/setup.c                     | 15 +++++++++++++++
+>>>  4 files changed, 30 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/Documentation/features/io/dma-contiguous/arch-support.txt b/Documentation/features/io/dma-contiguous/arch-support.txt
+>>> index 3c6ce35d704f..6cd205a991f6 100644
+>>> --- a/Documentation/features/io/dma-contiguous/arch-support.txt
+>>> +++ b/Documentation/features/io/dma-contiguous/arch-support.txt
+>>> @@ -6,7 +6,7 @@
+>>>      -----------------------
+>>>      |         arch |status|
+>>>      -----------------------
+>>> -    |       alpha: | TODO |
+>>> +    |       alpha: |  ok  |
+>>>      |         arc: | TODO |
+>>>      |         arm: |  ok  |
+>>>      |       arm64: |  ok  |
+>>> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+>>> index 6ccb2d230326..cddc1f3af209 100644
+>>> --- a/arch/alpha/Kconfig
+>>> +++ b/arch/alpha/Kconfig
+>>> @@ -30,6 +30,7 @@ config ALPHA
+>>>       select HAVE_ARCH_COMPILER_H
+>>>       select HAVE_ASM_MODVERSIONS
+>>>       select HAVE_DEBUG_KMEMLEAK
+>>> +     select HAVE_DMA_CONTIGUOUS
+>>>       select HAVE_GUP_FAST
+>>>       select HAVE_KERNEL_BZIP2
+>>>       select HAVE_KERNEL_GZIP
+>>> diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
+>>> index 955b6ca61627..19aa5c05de2b 100644
+>>> --- a/arch/alpha/kernel/pci_iommu.c
+>>> +++ b/arch/alpha/kernel/pci_iommu.c
+>>> @@ -408,15 +408,20 @@ static void *alpha_pci_alloc_coherent(struct device *dev, size_t size,
+>>>  {
+>>>       struct pci_dev *pdev = alpha_gendev_to_pci(dev);
+>>>       void *cpu_addr;
+>>> -     long order = get_order(size);
+>>> +     struct page *page;
+>>>
+>>> +     size = PAGE_ALIGN(size);
+>>>       gfp &= ~GFP_DMA;
+>>>
+>>>  try_again:
+>>> -     cpu_addr = (void *)__get_free_pages(gfp | __GFP_ZERO, order);
+>>> +     /* A low-memory retry must not return the same unsuitable CMA pages. */
+>>> +     page = (gfp & GFP_DMA) ? NULL : dma_alloc_contiguous(dev, size, gfp);
+>>> +     if (page)
+>>> +             cpu_addr = page_address(page);
+>>> +     else
+>>> +             cpu_addr = alloc_pages_exact(size, gfp | __GFP_ZERO);
+>>>       if (! cpu_addr) {
+>>> -             printk(KERN_INFO "pci_alloc_consistent: "
+>>> -                    "get_free_pages failed from %ps\n",
+>>> +             pr_info("pci_alloc_consistent: allocation failed from %ps\n",
+>>>                       __builtin_return_address(0));
+>>>               /* ??? Really atomic allocation?  Otherwise we could play
+>>>                  with vmalloc and sg if we can't find contiguous memory.  */
+>>> @@ -426,7 +431,7 @@ static void *alpha_pci_alloc_coherent(struct device *dev, size_t size,
+>>>
+>>>       *dma_addrp = pci_map_single_1(pdev, virt_to_phys(cpu_addr), size, 0);
+>>>       if (*dma_addrp == DMA_MAPPING_ERROR) {
+>>> -             free_pages((unsigned long)cpu_addr, order);
+>>> +             dma_free_contiguous(dev, virt_to_page(cpu_addr), size);
+>> On next-20261123 I get a build error on an ARCH=alpha allmodconfig build
+>>
+>> arch/alpha/kernel/pci_iommu.c: In function ‘alpha_pci_alloc_coherent’:
+>> arch/alpha/kernel/pci_iommu.c:418:41: error: too few arguments to function ‘dma_alloc_contiguous’; expected 4, have 3
+>>   418 |         page = (gfp & GFP_DMA) ? NULL : dma_alloc_contiguous(dev, size, gfp);
+>>       |                                         ^~~~~~~~~~~~~~~~~~~~
+>> In file included from arch/alpha/kernel/pci_iommu.c:14:
+>> include/linux/dma-map-ops.h:105:14: note: declared here
+>>   105 | struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp,
+>>       |              ^~~~~~~~~~~~~~~~~~~~
+>>
+>> which seems to be a conflict between
+>>
+>>         next-20261123~159^2 = f03df6019b56 ("alpha: enable contiguous memory allocation for coherent DMA")
+>>
+>> from
+>> https://git.kernel.org/pub/scm/linux/kernel/git/lindholm/alpha.git for-next
+>>
+>> and
+>>
+>>         next-20261123~104^2~23^2~7 = 31f7e12d621b ("dma-contiguous: pass the NUMA node to dma_alloc_contiguous()")
+>>
+>> from
+>> https://git.kernel.org/pub/scm/linux/kernel/git/kuba/linux.git dma_alloc_coherent_node
+>>
+>> I guess the right thing to do is to pull
+>>
+>>         https://git.kernel.org/pub/scm/linux/kernel/git/kuba/linux.git dma_alloc_coherent_node
+>>
+>> into the alpha tree and fix the offending function call in the merge
+>> commit.
+> Thanks for catching this and identifying the interacting commits.
+>
+> I reproduced the error on next-20261123. In
+> arch/alpha/kernel/pci_iommu.c, I changed:
+>
+> page = (gfp & GFP_DMA) ? NULL : dma_alloc_contiguous(dev, size, gfp);
+>
+> to:
+>
+> page = (gfp & GFP_DMA) ? NULL :
+> dma_alloc_contiguous(dev, size, gfp, dev_to_node(dev));
+>
+> This fixes the allmodconfig pci_iommu.o build. A full DP264 UP build
+> with CMA enabled also passed, as did an object build with CMA disabled.
+> The full allmodconfig build hit an unrelated cgroup sample error
+> involving PATH_MAX and LINE_MAX.
+>
+> I'd prefer to keep the Alpha tree independent of the DMA series.
+> Could we coordinate with Jakub and Marek to carry the adjustment in
+> linux-next and ensure it reaches Linus when both changes are present?
+> I'm happy to help with further testing.
+>
+> If that proves awkward, I can remove the CMA patch from for-next and
+> defer it to a separate Alpha pull request once the DMA changes have
+> landed, updating the caller then.
 
 
+I think that rebasing the alpha changes on top of Jakub's stable tag:
 
-Hello,
+git://git.kernel.org/pub/scm/linux/kernel/git/kuba/linux dma_alloc_coherent_node
 
-Status summary for next/master
+would be the easiest way of handling this conflict as this way we will
+avoid any build breaks and keep the changes bisectable.
 
-Dashboard:
-https://d.kernelci.org/c/next/master/3dd8c790a7b7027abdd568e36db5e82ffaea7c77/
-
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: 3dd8c790a7b7027abdd568e36db5e82ffaea7c77
-origin: maestro
-test start time: 2026-11-24 19:41:44.815000+00:00
-
-Builds:	   76 ✅    1 ❌    0 ⚠️
-Boots: 	  218 ✅   21 ❌    0 ⚠️
-Tests: 	36664 ✅ 2111 ❌ 4174 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: hamoa-crd
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ftrace.ftrace_ftracetest-ktap_event_trigger___test_poll_wait_on_histogram
-      last run: https://d.kernelci.org/test/maestro:6b0630a399c74e1a99c7c0ac
-      history:  > ✅  > ✅  > ✅  > ✅  > ❌  
-            
-Hardware: exynos850-e850-96
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-15
-      - kselftest.arm64
-      last run: https://d.kernelci.org/test/maestro:6b05fe1399c74e1a99c65e07
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-      - kselftest.breakpoints
-      last run: https://d.kernelci.org/test/maestro:6b05fe1399c74e1a99c65e0a
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6b05fe1399c74e1a99c65e01
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
+However if You still want to keep Your CMA changes based on v7.4-rc1 in
+alpha tree, then please provide a stable tag or branch with them.
+I will merge it to dma-mapping-for-next and apply the needed fixup.
 
 
-### FIXED REGRESSIONS
-    
-Hardware: glymur-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
-      last run: https://d.kernelci.org/test/maestro:6b06147599c74e1a99c732fb
-      history:  > ❌  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
-      last run: https://d.kernelci.org/test/maestro:6b06208c99c74e1a99c773dc
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-Hardware: purwa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
-      last run: https://d.kernelci.org/test/maestro:6b061d3199c74e1a99c76df9
-      history:  > ❌  > ❌  > ✅  > ✅  
-            
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6b0608bc99c74e1a99c6d5a1
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6b0621ad99c74e1a99c774be
-      history:  > ❌  > ❌  > ❌  > ❌  > ✅  
-            
-Hardware: mahua-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1c00000
-      last run: https://d.kernelci.org/test/maestro:6b06451699c74e1a99c81d04
-      history:  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1c00000_pcie_0
-      last run: https://d.kernelci.org/test/maestro:6b06451699c74e1a99c81d02
-      history:  > ❌  > ✅  
-            
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-
-### UNSTABLE TESTS
-    
-Hardware: acer-R721T-grunt
-  > Config: defconfig+preempt_rt+x86-board
-    - Architecture/compiler: x86_64/gcc-14
-      - rt-tests.pi-params
-      last run: https://d.kernelci.org/test/maestro:6b05f42599c74e1a99c5ac63
-      history:  > ⚠️  > ✅  > ✅  > ✅  > ✅  
-            
-Hardware: bcm2711-rpi-4-b
-  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6b061b7499c74e1a99c766fb
-      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
-            
-Hardware: glymur-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000
-      last run: https://d.kernelci.org/test/maestro:6b06147499c74e1a99c732b6
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0
-      last run: https://d.kernelci.org/test/maestro:6b06147499c74e1a99c732b4
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0_wifi_0
-      last run: https://d.kernelci.org/test/maestro:6b06147499c74e1a99c732b3
-      history:  > ✅  > ✅  > ✅  > ❌  > ✅  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.clone3
-      last run: https://d.kernelci.org/test/maestro:6b06087799c74e1a99c6cda7
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b0608e999c74e1a99c6d668
-      history:  > ❌  > ❌  > ✅  > ❌  
-            
-Hardware: purwa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b0608ea99c74e1a99c6d66c
-      history:  > ❌  > ✅  > ❌  > ❌  > ❌  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6b061b0799c74e1a99c76442
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
