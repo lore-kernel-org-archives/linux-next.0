@@ -1,52 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795633072;
-	b=I/w0ay0wNtJsUjQBU1koNQwNdryPLAzLVTrYULDeh14Ut6V03GMjwoAm/+lwDiRMS12W
-	 X6uEeI4QmK3IlAULEeSBDsWGpR/QxCGroCn5MTr+11qqFr1JzrVntL6zSgSJj7Y4hNfZT
-	 7TIX1KMPbIax5HU3I8vjXOYJrw8dWUqjVN8hgpm8hiwYiQOjtsJZi2ubeonU8GT5eTHwl
-	 mSNRDjJdOv72SMlVDyByZ+pt1m70rrIw/ZHpXs4JChPGpIWCd//Ze5aPTyTvMhwkeY0F+
-	 p+zwg+ALd2TbRmdAb3MCQYvlAFZQyIfIbUJCidKFojXUEb6jbk4Ta/j0ArYfLXCG2UQ==
+	t=1795633596;
+	b=rNtxvxeTZ+PID/MoKcAaqUrP3qlqikkAncLtAc345sYkUrhGJrJ46EjaBuTu5Yxi/fKL
+	 76AAmK43Ktf7Y0Bcwv5gSpyYGXCrBy/v1MMHLid7frQYtXURlCSXOZ+W3G7aapINmwG5O
+	 F+HHLcSaCPiAvVgwC4hrXBMWdLXJwhSRj7moqQaY08MLM6HJA9zmW+TDBaqIVCVNGavbp
+	 a6yKuAfqoldAy40UcjmyKAutk2YTl2GIZ+Gw2anPsiB9ZfeswwoP0M/dw13qvu6wKWzmu
+	 R8WT5NhfECXV/MiNLA5sd0mQN0xLumd8LYEF47MjZTLAT6YsiPWAo5sNa5cB/xgPmKg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795633072;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795633596;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ONfenFvlXhBiZ+s/vteFkbxDREPIyztUzFSckrPKJwU=;
-	b=Qyc5AofX/1YBEKLAZKvVN/3M0xXyFgZMlJL4ytqpUBrP5HlYlfbdHT3A/EQaq4jUlAiS
-	 KrhTsXrcovGiKjTayshReO8mlQpLbH1UUnHLXk5sKCPlS8foVmsJWqSNe9jZ3qE6uk+G2
-	 cX/B7FyT9tKVJ6xTH1W7z801wOj8PtiPB/WB0ftZXb+tyXVWuHLcMwEGswPxI9lvpdXW+
-	 GzqD45sIytWf57aqew3+rA4uUDiReJm3UwoC+SxCsOzgW1Bfh9IUpSpW5ga4Tv+vYJNel
-	 rcEPlgG/CtjpVo4nZfzVexdsueftelABSPpjarxZV1fymUpZGWcSt+uv+9qIMr/iSzw==
+	bh=YktEvBCKUohHH8t3nDGO/E2Q+nGZUBNsqERxBjijWUg=;
+	b=MbqiPHCR7di4OpeqsEBVnGO52yXiFc1/37LYE/XVm9ZDMH6qjDTe4IyvPnzJTdegkc5f
+	 uMtDx0UIIm7pD7HaF67qV+u0Vd7NsacnWXq/pDYMujVH5HQvu9jTL9Hy+XaIxrby0su6Q
+	 aiENd9E9ArLiIFH3+X8OlSxbiJSGF6TU1nMKOqgrFZBi7JRe6+cTJOJfUKV6n2NlpdTIk
+	 xIIyFaBwcAMkHk3asK9u05T/+H8HGhcYRvnHOv/Pq7olZ6CibmMD3MCvqwTTgYo+m76e5
+	 9LAGHVjjrXw2s55xAWGb/A4AmQvsvKuyNvgG4MsKPF9DjlMXB2/ZstiO1c8NiOeih+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JRGWxMTS;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wu8M+IMd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F8E606A31E;
-	Wed, 25 Nov 2026 18:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F28F606A335;
+	Wed, 25 Nov 2026 19:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JRGWxMTS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF4E1F000D1;
-	Wed, 25 Nov 2026 18:57:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wu8M+IMd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEFA1F000C6;
+	Wed, 25 Nov 2026 19:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795633071;
-	bh=ONfenFvlXhBiZ+s/vteFkbxDREPIyztUzFSckrPKJwU=;
+	s=k20260515; t=1795633596;
+	bh=YktEvBCKUohHH8t3nDGO/E2Q+nGZUBNsqERxBjijWUg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=JRGWxMTSBL8SpLe6ALjI1nfp3NzIDsGbyLfbaf3exnJjWk5q/vgqGKEdUukytxt+C
-	 HyzTl/vm8Xz43Ed6HJ8OuacmwnKrqCks7KUU/IXOZJ1r5HR+AWbeyr1JBYEJb2d2Lp
-	 4k4NM+BIgEEEWNjBED8+SDC1YiLXfr2H4HHPpXFq6JcEsyU6LDLU0DxZYPfMGblorc
-	 ibL/glaLyzPbpsws3a/fbTfH+x11cWP0G1BuPyHwDza1tU26DXJwqO+vIPUx1qmmdI
-	 NoZgoKPwwgoBm8UlX1kE6+nMHbpIHf4K+FTkYF1AavnnO0oYqwp22G1iw7w2x6qohP
-	 e5Odox89v9XTw==
-Date: Wed, 25 Nov 2026 10:57:49 -0800
+	b=Wu8M+IMdeSe4BKNrlsWx5J4KdsHuw0n5u+R0yPrXbNv797dKxoGVBODmC9xfvGQWN
+	 MhQZ+7gWCHZOCXHbmlsg/oUYhlzRJUoQ+MPQgKSGphWQTu6CWqCMayRNnmdvGRTDVR
+	 1D7IuJKwuvxRyhVPxmCyJT04zi+MzPMIk6J/lNmg0oIlDs27u6zXRSvHctYRIX9MYB
+	 GiP+dJupt+PK3CzphzUw7NmzOM/+TPvK4BroBH/GZg5/4y7qlrHZ657wpKsOxjtzaS
+	 nhTXqlFNXVZrckbk2igcHYMrNpNE0jRergAcJqvvD9tjbHVnCEGIStiq9kOIbrGP05
+	 cHJI+r0h2dBgw==
+Date: Wed, 25 Nov 2026 11:06:33 -0800
 From: Namhyung Kim <namhyung@kernel.org>
 To: Mark Brown <broonie@kernel.org>, TAKANO Mitsuhiro <takano32@gmail.com>
 Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
 	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Re: Missing signoff in the perf tree
-Message-ID: <awcvrSCXa-CvH4Ah@google.com>
+Message-ID: <awcxubLIOQ2CNzi2@google.com>
 References: <awbXUvbdJt6FcjKc@sirena.org.uk>
+ <awcvrSCXa-CvH4Ah@google.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,20 +59,23 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <awbXUvbdJt6FcjKc@sirena.org.uk>
+In-Reply-To: <awcvrSCXa-CvH4Ah@google.com>
 
-Hello,
-
-On Wed, Nov 25, 2026 at 12:40:50PM +0000, Mark Brown wrote:
-> Commit
+On Wed, Nov 25, 2026 at 10:57:49AM -0800, Namhyung Kim wrote:
+> Hello,
 > 
->   0215d3b0181da ("perf stat: Start tool events when enable_on_exec is used")
+> On Wed, Nov 25, 2026 at 12:40:50PM +0000, Mark Brown wrote:
+> > Commit
+> > 
+> >   0215d3b0181da ("perf stat: Start tool events when enable_on_exec is used")
+> > 
+> > is missing a Signed-off-by from its author
 > 
-> is missing a Signed-off-by from its author
+> Sorry for the trouble, I'll fix and force push soon.
+> 
+> TAKANO, can I get your sign-off?
 
-Sorry for the trouble, I'll fix and force push soon.
-
-TAKANO, can I get your sign-off?
+Oh, I found it's in the original patch.  Will update.
 
 Thanks,
 Namhyung
