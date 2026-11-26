@@ -1,139 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=192.198.163.14
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795653019;
-	b=lXLkAF0fgc0cTZGxiHCHdfVUrSti++idMtKWTsaT2cf31vSLoyyjKg2gdvxdR+J43g5c
-	 xMG/47smMQofw1Q3aKA6DBO94+NwYOPViXfcdUTSUkgwxGzh/dVRnHeGLOuGO4Q9+GquM
-	 V/cpiPKKXKt/DUt5X4g0KXTGBNieZZUNW92a5FiySdrzqZvMz2W5ms07tM4slEHt3w3Vv
-	 zOmcXVi4IxGbqI0dhSQyW7YNkI1t078mKJMVnpOj41UBrQM0TUStnGij66Kz9H5EB+IIP
-	 2Ojz8/ubx7m07RyAQ3h3AlJl91l69UKUPV8Ou7x6UwC5zvWUOeeHpUygkQ/u5Hwl+ng==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795653019;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Received:
-	 Received:DKIM-Signature:Received:Received:Date:From:To:CC:Subject:
-	 Message-ID:References:Content-Type:Content-Disposition:In-Reply-To:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-	bh=q44XUnr67BfwdNkhq7ERaml17OzVh6VQddCUMI18FOI=;
-	b=HFGsluMqZ+9S3XxDke/CihMGp9ufiXpPpt9kCUvybdDo2buV4lLpNZDO8eXxgWbmFvEC
-	 OWZAJdfQgStX6Oit7B/bUXx5nbSONaQ7OHE00lP4NLRON9YyFspJTbLQkN+GWGXxzGox7
-	 GN14MHHE2WNsmIOwAiKbknLnELplFb8P7f3pM0TEhnhmXInPhNYaWyseTFFodCc/DbDuj
-	 pMvxiVh5UT/I6Uc/CnDc/f107NeoLjJ6jwT+XxDYKmrLE6rDLypMh2g9iUV1Ai7p9EpBh
-	 1j0thD5AeaED91eVzaLNswhGc4yjtHDkxKnzDJr6ZfeGdDiYBxyO3NHUw4pt72PkKaQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=VybA9bWW;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=selector1 header.b=QdZXsZmU;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=192.198.163.14
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.46
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795660237;
+	b=y1yzR5BAJhi40DI6VdS9kIjXvYyFk4BcJwjTPvRnhS+x0kPZ0dnqE4HOxpAPjocHjmPn
+	 qR/1AIy1qLJew52OAzey1T3KXrxB0d5ijke11Z8YV37uC3rXuPaw8xKxkIvDmFsxlwNPp
+	 Ls6FTTzxzCY0Ao/hO6L5S1zVYpvXWcDZQwDml1GkTuPFneY210ImsyTXLn0cVv5LwlFYF
+	 MYRWCmcIq+Fkn6NqpkALbSDOxtm7VPse7zAtbrRCRvA7CVCCw4cLCCNXpCXaJzqC05DXG
+	 MPBI2d/vxacne7M7983+c5XtmuI3zEArbuaVUQhvoK/nPo2wViY+V/4W1SAOUe/L2tQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795660237;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
+	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
+	 Date:Message-ID;
+	bh=KjVDEBC41XajvdSAZQgPRPC7PrvOGrz+Kkflz4JC1OU=;
+	b=1DHeSwDWCa3SFURavgzJ+KS8y5tKyC70yc8JqYW3avRFmwlR0qrxf5tRgj1zcqCSroVw
+	 xASx5sbrMinWNgOiA+LKeI2FnaRLzPDkhLabZYvtudhYTqmyy//sNC0jKgDk/q+Oeaex9
+	 o8AHEbw6Ehp5kNzRxpt7d6Jy+HaHLCf/QZZvpxnfy4zP+EpkDXvSwxi25d8r+u1O0NN2H
+	 BA7f4f7hS5TxS3SPy4zIYqFxsu7ugPWmVqvFnTyVsHaqllLoUmb7eFQ9DzqYWxHNz4CNZ
+	 0jEkYxctEJf7MAW/6RhQqKHtl1gzWLGulkktMgRyPMZgtXezOkgwHhPFGfUrmvKTSdg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=kernelci.org;
+	spf=pass smtp.mailfrom=kernelci.org;
+	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=C3ceIN6w;
+	arc=none smtp.remote-ip=74.125.82.46
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB70606A31E;
-	Thu, 26 Nov 2026 00:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DFB70606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81782606A321
+	for <linux-next@vger.kernel.org>; Thu, 26 Nov 2026 02:30:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 81782606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=VybA9bWW;
-	dkim=pass (1024-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=selector1 header.b=QdZXsZmU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795653019; x=1827189019;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=PcqA26sVmwuPteWITNQZVqX52NG7VmjYuZfmw1mPFZg=;
-  b=VybA9bWWMOQ9OW7OoDdNOGcXv8JIxXt8KHnt7qoetk/vOg0CnnJu57Rs
-   mvTy75FivYpYa2yfPHZMahqNmFhvK1a6j6quQgOl7+H8Uspyi5U88aLHn
-   RIlkjlARLnnrncVaPwhzv3fL5GIsNXIcwvKax32spCEVZGita+iPnxcJj
-   EYuRGft7RzVhS4MeH25brHAqv4Ka7gTLu8hBJItdEJt8mw0HRC3KNb8Xr
-   yB+SeJjtgLe54VPMiWiaYvaYfWQzNnGV6re8uZ79olpXAPOcO6Xf8bl66
-   gDHrhTyadDQceLdSxB4AuNbzao/zvfy9hPi28z3UVDAzVgHLyHRW7wSiy
-   Q==;
-X-CSE-ConnectionGUID: LlZOhdNDQDW/sPrdX99m1g==
-X-CSE-MsgGUID: BP0eVmsLSIW4X/QHcEgyNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4501341"
-X-IronPort-AV: E=Sophos;i="6.27,233,1787036400"; 
-   d="scan'208";a="4501341"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 16:30:19 -0800
-X-CSE-ConnectionGUID: F2dbYKuyS3aHtfVTmcbgqw==
-X-CSE-MsgGUID: YhQQava8RPyrXv6YNU8yqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,233,1787036400"; 
-   d="scan'208";a="12335979"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 16:30:18 -0800
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.57; Wed, 25 Nov 2026 16:30:17 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.57 via Frontend Transport; Wed, 25 Nov 2026 16:30:17 -0800
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.59) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.57; Wed, 25 Nov 2026 16:30:17 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QkyJR7n073CBRpQski6yxhIjLKIVVKmGGqew3RgLFPdNOI3o3AT7bMpwsIdvmlHOWpbJ+7m4RLjyJAf5Ah881bwwLjzn5Vo+P1KNuiZraEgB30NHHzmrN+rb7YDM8izjqOAil6HXGEGAQ87ApUIJqXJmO2d4LACru1WZ1J6ZKpp7rgtffzmcjjsL1gJfok3gmj2GGlj9wnvCH/VsZTTT+nSLlVgzkDrw86/m4hRvaHxrPG4rO5UDNesPkG+Ro4FGPJe1JULPxxeoLUBfaq+v2qGuOsCo4ml0IN/AFc6sl6sBYulJtbrzPq27Yr+qfNqNGgr2gLMLXQdLr9rKhITEAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q44XUnr67BfwdNkhq7ERaml17OzVh6VQddCUMI18FOI=;
- b=oehxwP4YVqVlVq/2DNLNAuomNxLo6bAW5wfwIeNk3pQh2LszzX+Rvn2F0WD/jmVyv4VddDXui4hi7P8qptrqr21ub/l7v+zbyPcoLyYxodc8br2CqQt4ELMGpsGPW2jc/ATlceFAUioTcyJlJA47jS+uLU5Qui8PKeghj8BCatajvN1Q8ElwfALzeK54OkfX3ovS4RfQR8TqHw4IjV59euLQLLKargzrtyxtLwx17kg0RIpQa5eslKW/ps9D5GfHJZRT3sAmTNngzzGxumDqxVr8sQ8txcCE+2ZWOjRCrj3Id9MNFM5zpeR0FsdbVI7eFWzoup/xGb7LvjJk0d3/Ug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q44XUnr67BfwdNkhq7ERaml17OzVh6VQddCUMI18FOI=;
- b=QdZXsZmUJCtwY/W4WX6LRKjHTXxyxPumqtF8sn9iOHGwDhECD28VlUDFRc4mUX6KIjaiWVkNm/QBQjwAgIo87/V2SfnHPzcIF3Q26ubwl1JXLypqxNCth2lEn88dUb09mILHZw0W4vjUvELSXLAQgbV3ASibknME5ghsGKMpmU8=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS6PR11MB362586.namprd11.prod.outlook.com (2603:10b6:8:4c4::14)
- by SAWPR11MB9712.namprd11.prod.outlook.com (2603:10b6:806:4ca::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.6; Thu, 26 Nov
- 2026 00:30:15 +0000
-Received: from DS6PR11MB362586.namprd11.prod.outlook.com
- ([fe80::71a6:38f9:43ed:8f8a]) by DS6PR11MB362586.namprd11.prod.outlook.com
- ([fe80::71a6:38f9:43ed:8f8a%5]) with mapi id 15.21.0662.004; Thu, 26 Nov 2026
- 00:30:15 +0000
-Date: Thu, 26 Nov 2026 08:30:08 +0800
-From: Philip Li <philip.li@intel.com>
-To: Mark Brown <broonie@kernel.org>
-CC: kernel test robot <lkp@intel.com>, Simona Vetter <simona.vetter@ffwll.ch>,
-	Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
-	<dri-devel@lists.freedesktop.org>, <oe-kbuild-all@lists.linux.dev>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <awd9kCflXloWA++W@rli9-mobl>
-References: <awXJ__-grexFFPb4@sirena.org.uk>
- <20261125093804.Ygd8f4XE-lkp@intel.com>
- <5fc38eb6-f999-4aaa-98df-21a0b1bca01b@sirena.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5fc38eb6-f999-4aaa-98df-21a0b1bca01b@sirena.org.uk>
-X-ClientProxiedBy: SJ0PR03CA0029.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::34) To DS6PR11MB362586.namprd11.prod.outlook.com
- (2603:10b6:8:4c4::14)
+	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=C3ceIN6w
+Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-14394530ec6so9047608c88.1
+        for <linux-next@vger.kernel.org>; Wed, 25 Nov 2026 18:30:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci.org; s=google; t=1795660235; x=1796265035; darn=vger.kernel.org;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=KjVDEBC41XajvdSAZQgPRPC7PrvOGrz+Kkflz4JC1OU=;
+        b=C3ceIN6w2ALuP46Lv72cxbuSkuJl0azRsnsHhvLA30NgWr5UqWsabOHDoZBjjgJ9Ep
+         I+6dsp8ZLBhXD12alRxpZDIZsbfjhH4LVJwBkVqxrcmLwvoShyfW0t5Jb9O7uCSuO5nl
+         Gqzc+2SsD48d2RnDNdGuMo0BlqJTNoRWUdoRz/eur1AQNGsp4uUuuUTuNUQYpmApQIp2
+         iCAPTZwi1+TGUDI+eqPO6KthcJt8TTZnMOKQIwVCizgTTa5GOUDGgJTkGY2Dmrg2nqiO
+         EU/p42pf/Vzq1HI4ZTNXtyd/ZhMiD//BaprwgbZpGR7f1tvZAe66THhFwfV54MgLwNlY
+         4PmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795660235; x=1796265035;
+        h=message-id:date:reply-to:cc:to:from:subject
+         :content-transfer-encoding:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=KjVDEBC41XajvdSAZQgPRPC7PrvOGrz+Kkflz4JC1OU=;
+        b=MzmMPUndSUB3w2rqvh9JT11gckXzF2UINObsWI+H0tPulssDK9o+xXDdmTyzD+cNM5
+         btb/tR/1PegTjehHA6gps5R15p9BIgdHqyMl4XPSoVT6blejEk2/Z0dRbiqejhiW2Zcn
+         1KNle485mcM/mkhS2h4N/r2hJXo4zv0+qVfXj7rvteNIT9e3z5k/dr1Pi7/WUXdAyHlc
+         fk3XmdwlleVY6+pawmrxc7JQX52hSBUw0BBbVnfjUqcKyWEBvPevdBTw9Z3CmczkXF9Q
+         fM4grtXHQmTmu0nRf0slVG7mefSPRc7xNon/IAhX/mXDFUTNnVuUXPjmEZYsOkGaxox1
+         uDeQ==
+X-Gm-Message-State: APuU4Z+rOWWAJcLe58h5idIUoCxjRq7arxKEkh2GivdJneTNyqvH1XFC
+	vQ/sluSnsDdn1cajJxPxB97hACfmNz6Jl93wstqEZBx68ipG2trjCMhcTHopMFEhCEy2+XJy+Pc
+	W3y/0
+X-Gm-Gg: AZFdTZfjJHae/n8MgaLIH1lTjmN1PppIoEGzSTZuHCgOfJVG4qmNi3OT/weBrZq7qrf
+	DLtXkmHyx4FUdIH5h1HV7rBnD0byOIRoE0xddLQB3G1ANpmlKrXq8StWvFlQFZzF0uFVhUpot6o
+	pu4dKd0afSxbiWNLtQFLZy4rlQtwSpvNPba4bLB31ekcoP/6+ra7J8myH96ZPRYkZd9dexQpvM2
+	E+UTqdDS4EIDhJz3stuwED/Nsa+5sndXEGleTz2FrW7wg056AFfoOGmgVhpxuSwXcDNJ8wor+Cd
+	XfN8RLbijsepxPV/UCTj7sE2mBu8juyQOwDF+vElNXTmKyNlEgbctcmm7bq7ofRtcr/00sm94IS
+	cmVmuiZax0NXZUHQISO7R2fOB94ARLS0Rtm9ywD60mWfWYpZUckhEQj5uYanQG4SqiDXbMEXWKf
+	VzNGwU6rR8bMlHL05O0QMNx01zRA4lw09UOnnIo87wmTaMWPDiBrDqdGF8LBDXFBM7vxwPbYjQb
+	3mxFZorlOAMU177BfC2pJMoqvl9zmXJOxAUD+nz2eWuJbmYh2foiKU0YyMVkkMVZujcuNDBF9ea
+	oai2KGsl1OVDApuZKPsUrqEfbHB7+QIMsPvGutzFXMY=
+X-Received: by 2002:a05:7301:391c:b0:384:df31:69fd with SMTP id 5a478bee46e88-3856fb6a672mr23059516eec.14.1795660235149;
+        Wed, 25 Nov 2026 18:30:35 -0800 (PST)
+Received: from 52d83ede7c60 ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-386aaae4960sm30748441eec.18.2026.11.25.18.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2026 18:30:34 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -143,73 +89,574 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS6PR11MB362586:EE_|SAWPR11MB9712:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88e40321-98f4-4c47-4c8e-08df4b5470ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|22082099003|18002099003|4143699003|56012099006|11063799006|261026121527099003|261009223027099003|10067099003;
-X-Microsoft-Antispam-Message-Info: d7kOtV2CqTHoaMZdRrhX18Wc3RGiuBeYIk68tETKtch5/N+WuBhXG8FiNYIl2bvvpdJVPv1fZVbb0qgoi4Q32imoSUtPGCXjsopEqh6l9NXr2WmynnBLnqBskuG85aKFhy5YjzxEZlG29Pr36k5QWT3TJUkiT1kS/AOeNp6O88PNR4vxe0Aj4zDmy86XbHgdZl6WWejlwNY0qmouWpLeDEiSePFJARatJMSUq+VMfeHea2hWjtnWgh3tfOo1YWij9zXK+KBkuQL41xf1A5xNpB/OsmSUi0c0qalTVUjUN4bhbq+UspGHTB2JPMq93QugPRrGo0tAXwm7xuCNmNbLuUXJfL4Ecx0Tb8E48Fa1fVJH8RMWiCju6opaZ8WvcyS5frjJjbS0Z4dgs3CdVmx3CwExRpLYmmB4ompPvnM2RmBV4meAHQhzq58aELgk2Od/3XGM8x0GW3yRUbVEjX40C68FwvdBFYPeDrJxbIU9ZvQSBMRgFhlKAKA+DbAjIFyWkYDkFUkBpSBl7yX5IX0QsRVmz6ADspa8Q5iiLVhbrBUF6hAoLinkPJrnt4P5albsB33cx5Y5k/I9bzJ/zsGTbO096ct4tLu9EktmwEX22Ts=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS6PR11MB362586.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(22082099003)(18002099003)(4143699003)(56012099006)(11063799006)(261026121527099003)(261009223027099003)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FVuWtxGzuD9RYmsc8/F35ZoWre46s2uYO5IrNPiXS+3azLY4C8HlRPWTnJAm?=
- =?us-ascii?Q?X2nuSl/gssdkt30HAPEbDFDpje+EXP4sI6umC4AEYUjS34GcJT6b5Wbt7bo0?=
- =?us-ascii?Q?+6LgTHA47O2dWBHqtpk3PzIyxEEJQH0B1ah+EL5qRBVvr3uOuf5o89p6rz/s?=
- =?us-ascii?Q?rtRIpOIZlFFmQv+rxrR72aRYaCm4rMfFtiJoIjO6TPcTXd+2n4ngZQ8TyKYI?=
- =?us-ascii?Q?vgQ5CgEg6jwI64gW61V0Tx4aW0JQ5OWyk/USq6ifn+nOyHZFzcDW2G8dbHCb?=
- =?us-ascii?Q?JIPQJIw/4NqCfpmHDNJ1OYjzkFIBHilrX6M61mpVpLgTBmrmrrYRIUtiedTp?=
- =?us-ascii?Q?zMnPZnTQpeMmonBxlVh3gtvOuooGCvqB1+I5bjvyahNU0J37Ms+dipziw+Q5?=
- =?us-ascii?Q?mC36LhShR2aEkeLMXvzzV1/p+wDHUx33agmZqTDoKG77AzLBtou+gZSuc3ic?=
- =?us-ascii?Q?bv+PQUvtwErdE1tVJqFDPJD7BVGxdxvZbI9Y6qQoFAj/uZWcq0sj/nBYPAWn?=
- =?us-ascii?Q?bhVxf48Yidel/FZFOVf2u2SRwmVP+slMkjU4fb3HwaEdgDxx3IO3wLR9hJWt?=
- =?us-ascii?Q?Zq67qO3MqNBgA/LyhMXISoVTB3JjFVBBKPJTKOtpmg3uqGOd/aSHv7WS24qc?=
- =?us-ascii?Q?WkybY1o7hkeu8sbk14i7vI2jGxg8sgMzfkVRn5Q9YU9u9jWqEHAgALfjwMCs?=
- =?us-ascii?Q?3RnTXHrhzMpSXXOZZhz1PkHF568buQSyfSQ2n+2l2rHNurc2hDZSfU497y5U?=
- =?us-ascii?Q?SGeGhtWuGamoGLAAx3mUVypOWtKe3K8EgOaLHPKdu6IUlnFr5iaeLk7G+kEi?=
- =?us-ascii?Q?CidpflglEMVn0gsEagN5N4ybFcaiLjhE27y/gdpITX1tgA5Gt/kasIHRbwgF?=
- =?us-ascii?Q?1IxNqFEl/D6238hXK0RfKtQUCbgk7PTrq3pM7f+y9TjkY3RnW+RKQ+BZEg3Z?=
- =?us-ascii?Q?vZGigtNyAF2Hsw9SuEjsP0Ehh/uhwL4XYACmA4N5wL9208WXbXmA7xi8eyIw?=
- =?us-ascii?Q?fkHjwm/qLkwEk8YybnvKXFGCcMfVYHfAt2l/U9xjw3sSx53a8ENQUg65cuXL?=
- =?us-ascii?Q?BO+E+MBDwDVuarAFxVSEDI4lX0OnSx8AIGmEUTLkRVnDUq4wbMK7oAI6YlUc?=
- =?us-ascii?Q?2K/C6DPUg88DmoEbsA/iB7rhoiDq2te1zeSERCrgdVNtJRWmoJjjO+gui7p8?=
- =?us-ascii?Q?ST5I2ZmJA1nfuEGcyFrTsqLwgicZWGDIP/lfGUMyu0QRaODGo495WjN/kvWA?=
- =?us-ascii?Q?+4svBvOKuzRQ6gCIoXRaUci4BVdn6OS1SsCDcbecDoxHR2yyhWZ0JEHVBDLl?=
- =?us-ascii?Q?LCVRrYct5IeO+1jXGcR4ZGFhSpedZYW705YuwEbKDFSHNa8m/E6nd3DxwjF+?=
- =?us-ascii?Q?RY9gkzdH9+Mx+sXqAW0nK17UmBPdqWrlLYN852+5o4/X7WsFmMKGIjPeZ7G5?=
- =?us-ascii?Q?10F45R2q8W+93uUl8tnhz0i7s3MSYwxQVZ9nVtjscBoUJAbl5FiEWP6kKCzF?=
- =?us-ascii?Q?yYU+9hXRjT5z/WkGf3UQBGGGU36Dwr9nUzLopmXqXnvrd9wf6lvcbL1H3FsZ?=
- =?us-ascii?Q?7qKpGRqq0Z9mDjRtv2qU90VU3EgR4rDE3kFv069F47py1SAu93Zc0vmzOxhi?=
- =?us-ascii?Q?Q12Vz3WdLqV10z9ydNHfQ9uh0/9GRIKX0NdSJPBTkLq91IeGPCLa8E7z5RsQ?=
- =?us-ascii?Q?lGDiltxyzAb/dY6TsSlukH4moJXUngfBR8Xaw4TsJJvgIV79FazrvKhcdg4y?=
- =?us-ascii?Q?+p6LiuDJJA=3D=3D?=
-X-Exchange-RoutingPolicyChecked: mU2g4MJi4Nb7S6KgFde+X5nHZ+u3GRMAwMsxoMwFaWApWh7pvZiACTgZ5cyjunlmq5FijskPcZe6NK6wB0hK7Tw5yY+HyYmwXHRNfXirQNyk+XBFQDKsNFusvxNOoLds9VwgM0SjTgngqIH/1vI9Ko+E6DuCZKX0WuTzJ95Zi86bEEpKB2/KTdw5/+uPWISJHPjywPMXP+Orm2WTL9zBBJTCoKT4eR68qG2Nbtu+Fs9YRbD0F7GPLreTvmUVgDRFVYSEaimxMX0mr1CtWL76/Tu1NuDG/HGtkbdzx8Z44u6P8IBxTZuumwtwQ1Za9cQ+SWvZwZsuSxig4A3UUJDzjQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88e40321-98f4-4c47-4c8e-08df4b5470ad
-X-MS-Exchange-CrossTenant-AuthSource: DS6PR11MB362586.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 00:30:15.0386
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dvf2l/Rd8hMl5Cr0OMboxITujnFtdf+3rDXT1bNDBzVcIjUaYrPdHAkEeBXzn5oc8DX6494Ugt8+JserN0pZtA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR11MB9712
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Subject: [STATUS] next/master - 9437046953b2fb3bf55b36582450ea0267df82a7
+From: KernelCI bot <bot@kernelci.org>
+To: kernelci-results@groups.io
+Cc: linux-next@vger.kernel.org
+Reply-To: kernelci@lists.linux.dev
+Date: Thu, 26 Nov 2026 02:30:34 -0000
+Message-ID: <179566023429.127422.17496285354923736178@52d83ede7c60>
 
-On Wed, Nov 25, 2026 at 12:26:49PM +0000, Mark Brown wrote:
-> On Wed, Nov 25, 2026 at 09:44:55AM +0800, kernel test robot wrote:
-> > Hi Mark,
-> > 
-> > kernel test robot noticed the following build errors:
-> > 
-> > [auto build test ERROR on next-20261123]
-> > [cannot apply to drm-tip/drm-tip linus/master v7.4-rc4 v7.4-rc3 v7.4-rc2 v7.4-rc4]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> This wasn't even a patch submission.... 
 
-Sorry for this false positive, I will follow up to fix the bot to avoid such
-kind of wrong judgement.
 
-Thanks
+Hello,
+
+Status summary for next/master
+
+Dashboard:
+https://d.kernelci.org/c/next/master/9437046953b2fb3bf55b36582450ea0267df82a7/
+
+giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+branch: master
+commit hash: 9437046953b2fb3bf55b36582450ea0267df82a7
+origin: maestro
+test start time: 2026-11-25 16:12:07.194000+00:00
+
+Builds:	   68 ✅    1 ❌    0 ⚠️
+Boots: 	  140 ✅   17 ❌    0 ⚠️
+Tests: 	39545 ✅ 2375 ❌ 5304 ⚠️
+
+### POSSIBLE REGRESSIONS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6b073e63286e1965ecb86d41
+      history:  > ✅  > ✅  > ✅  > ❌  > ❌  
+            
+Hardware: mahua-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_geniqup_bc0000_i2c_b80000_keyboard_3a
+      last run: https://d.kernelci.org/test/maestro:6b072dd5286e1965ecb7c811
+      history:  > ✅  > ✅  > ❌  
+            
+      - kselftest.proc
+      last run: https://d.kernelci.org/test/maestro:6b072085286e1965ecb6ee16
+      history:  > ✅  > ✅  > ❌  
+            
+Hardware: purwa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.devices-probe
+      last run: https://d.kernelci.org/test/maestro:6b0720d1286e1965ecb6f5ad
+      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
+            
+
+
+### FIXED REGRESSIONS
+    
+Hardware: hamoa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.clone3
+      last run: https://d.kernelci.org/test/maestro:6b072032286e1965ecb6ea42
+      history:  > ❌  > ✅  > ✅  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_crypto_1dfa000
+      last run: https://d.kernelci.org/test/maestro:6b077d1a286e1965ecba0237
+      history:  > ❌  > ✅  > ✅  > ✅  
+            
+Hardware: mahua-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1c00000
+      last run: https://d.kernelci.org/test/maestro:6b072dd5286e1965ecb7c7e6
+      history:  > ❌  > ✅  > ✅  
+            
+      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1c00000_pcie_0
+      last run: https://d.kernelci.org/test/maestro:6b072dd5286e1965ecb7c7e4
+      history:  > ❌  > ✅  > ✅  
+            
+
+
+### UNSTABLE TESTS
+    
+Hardware: bcm2711-rpi-4-b
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp.AD002
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1ad
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  
+            
+      - ltp.AD004
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1ab
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  
+            
+      - ltp.AD006
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1a9
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  
+            
+      - ltp.AD008
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1a7
+      history:  > ⚠️  > ⚠️  > ⚠️  > ✅  
+            
+      - ltp.AD010
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1a5
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD012
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1a3
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD014
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1a1
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD016
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f19f
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD018
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f19d
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD020
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f19b
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD022
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f199
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD024
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f197
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD026
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f195
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD028
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e5
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD030
+      last run: https://d.kernelci.org/test/maestro:6b077512286e1965ecb9f203
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD032
+      last run: https://d.kernelci.org/test/maestro:6b077512286e1965ecb9f201
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD034
+      last run: https://d.kernelci.org/test/maestro:6b077512286e1965ecb9f1ff
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD036
+      last run: https://d.kernelci.org/test/maestro:6b077512286e1965ecb9f1fd
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD038
+      last run: https://d.kernelci.org/test/maestro:6b077512286e1965ecb9f1fb
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD040
+      last run: https://d.kernelci.org/test/maestro:6b077512286e1965ecb9f1f9
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD042
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1f7
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD044
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1f5
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD046
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1f3
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD048
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1f1
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD050
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1ef
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD052
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1ed
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD054
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1eb
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD056
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e9
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD058
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e7
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD060
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f192
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD062
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f190
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD064
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f18e
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD066
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f18c
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD068
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f18a
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD070
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f188
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD072
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f186
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD074
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f184
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD076
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f182
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD078
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f180
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD080
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f17e
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD082
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f17c
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD084
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f17a
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD086
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f178
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD088
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f176
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD090
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f174
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD092
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f172
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD094
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f170
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD096
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f16e
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD098
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f16c
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD100
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f16a
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD102
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f168
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD104
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f166
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD106
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f164
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD108
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f162
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD110
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f160
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD112
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f15e
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD114
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f15c
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD116
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f15a
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD118
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f158
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD120
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f156
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD122
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f154
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD124
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f152
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD126
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f150
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD128
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f14e
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD130
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f14c
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD132
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f14a
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD134
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f148
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD136
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f146
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD138
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f144
+      history:  > ⚠️  > ✅  
+            
+      - ltp.AD140
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f142
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1000
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e3
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1001
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e2
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1002
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e1
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1003
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e0
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1004
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1df
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1005
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1de
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1006
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1dd
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1007
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1dc
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1008
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1db
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1009
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1da
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1010
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1d9
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1011
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1d8
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1012
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1d7
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1026
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c9
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1027
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c8
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1028
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c7
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1029
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c6
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1030
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c5
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1031
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c4
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1032
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c3
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1033
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c2
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1034
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c1
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1035
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1c0
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1036
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1bf
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1037
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1be
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1038
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1bd
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1051
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1e6
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1052
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1b0
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ADS1053
+      last run: https://d.kernelci.org/test/maestro:6b077511286e1965ecb9f1af
+      history:  > ⚠️  > ✅  
+            
+      - ltp.aio01
+      last run: https://d.kernelci.org/test/maestro:6b07729f286e1965ecb9e7fc
+      history:  > ⚠️  > ✅  
+            
+      - ltp.aio02
+      last run: https://d.kernelci.org/test/maestro:6b07729f286e1965ecb9e7fd
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ar_sh
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f021
+      history:  > ⚠️  > ✅  
+            
+      - ltp.cap_bounds
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f026
+      history:  > ⚠️  > ✅  
+            
+      - ltp.check_keepcaps01
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f024
+      history:  > ⚠️  > ✅  
+            
+      - ltp.check_keepcaps02
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f023
+      history:  > ⚠️  > ✅  
+            
+      - ltp.check_keepcaps03
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f022
+      history:  > ⚠️  > ✅  
+            
+      - ltp.file01_sh
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f01d
+      history:  > ⚠️  > ✅  
+            
+      - ltp.filecaps
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f025
+      history:  > ⚠️  > ✅  
+            
+      - ltp.ld01_sh
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f020
+      history:  > ⚠️  > ✅  
+            
+      - ltp.nm01_sh
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f01e
+      history:  > ⚠️  > ✅  
+            
+      - ltp.tar01_sh
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f01c
+      history:  > ⚠️  > ✅  
+            
+      - ltp.unzip01_sh
+      last run: https://d.kernelci.org/test/maestro:6b07749d286e1965ecb9f01a
+      history:  > ⚠️  > ✅  
+            
+Hardware: hamoa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.devices-probe
+      last run: https://d.kernelci.org/test/maestro:6b0720d0286e1965ecb6f595
+      history:  > ❌  > ✅  > ❌  > ❌  
+            
+Hardware: purwa-crd
+  > Config: defconfig+lab-setup+kselftest
+    - Architecture/compiler: arm64/gcc-14
+      - kselftest.timers
+      last run: https://d.kernelci.org/test/maestro:6b072097286e1965ecb6eee3
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+      - kselftest.timers.timers_rtcpie
+      last run: https://d.kernelci.org/test/maestro:6b07423d286e1965ecb87f0a
+      history:  > ❌  > ❌  > ❌  > ✅  > ❌  
+            
+Hardware: qemu-arm64
+  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
+    - Architecture/compiler: arm64/gcc-15
+      - ltp
+      last run: https://d.kernelci.org/test/maestro:6b073e1e286e1965ecb86a65
+      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
+            
+
+
+Sent every day if there were changes in the past 24 hours.
+Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
+
+--
+This is an experimental report format. Please send feedback in!
+Talk to us at kernelci@lists.linux.dev
+
+Made with love by the KernelCI team - https://kernelci.org
