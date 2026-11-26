@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795724342;
-	b=f7F++1C5iCXn7dT6JaPPD97os3NeB21kRLoVTM3inl8t4O+0egv6z+P/FoFsgxhmg4uN
-	 FDnNovD7pfbQKD9dGuhq3UiIcmz60PIj/OCRcGJsZN0WlkTDYexuETkLDi29zd8PBnUWf
-	 8jR04OrockI1TRk4XX65RX4PQtIYXAkKQrCZvIKQGq2t0YCmKTKc5oW+9KIAXKWqbO1Aw
-	 Xte2vHhJQSzNbshf5hKVpF6KYaKPG7r5x3LTQFOHjCrTJGZ+8CL+qTPTxZ8rZlovMAEhY
-	 MHeiy5mdxvqSlQzuOQ7Td/UA5azJE+vGN/2ihqc/8M0bi5sR/cOqslD25xqurhx8vpQ==
+	t=1795735026;
+	b=hlJZOthDBZuuIXOHd+YqOeBcfVQf6MSi5/lrSbaN9YubVZcglSkuVk2S+oT20+eOYDEz
+	 +NCvOllPttXomvKdTJFynYNl45+dzMi0+yetQ1mGxpcgkx3GNBms2cPKB2yjFi1ErMxuu
+	 HqNwBAIX/kNcbN1zKmx4ETF/9yKEClGPAVM53aGezC9Te9huIWS5riJJrg6zygWpLXdLT
+	 c6fKUV9kWQEOUc/HOaDdWfG0SRbPmdk5qnzKvd4ye/IZvOIjBqueFbe+zmHHYp5EvDVw6
+	 oDH6esChobzQ+3UP7n6zPTAoZMYVQjNQL3Hq1ynk1Hpxv+wTLj0xprZdHDDWHg9PvOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795724342;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=MAR7LJCS0SUT3RCdSFs4KBM4b+uQalvzyuF8N4kUcD0=;
-	b=JUXZQU2Hr3N92k1gF4UGPM2BintWgHAq4UXYX8GAacl0PsV2rrmrcwWCpJ+qoAsS00/P
-	 SExtNESqfFDusZFKXCcMaD/lHNucmfNmLxznnjil547sl1ccErl5HUJ+GAygPuaOxUDYD
-	 g5csCR1/RtFoCA4jynIO/TL8Wahe9Qc6zRXu7iBec4j9pPPjMaIDHjmhPyhtPXzi4QgWt
-	 kiB8J8roS/vGgw0TU4tmoRqDAsXffSDcd9BgLtP0lApy+gOOHJpN+5qnoz1ikyu6Uza3I
-	 yRy0RJbIWWqIGrebZskLZta5NkFVNWSUDsTSilz79SrOaN7pWnmkNn/J2WjAdON1VXA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795735026;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=fPaYYz2xYxvoDkUsKrMbXMBJUPqVTod8eYBtQmhIkAM=;
+	b=gJrA5QbzIH5GsP12NXGo2zTnmYfWaYRK7T2ANpmCrBqmOuzyt7Eg+isgdQ8iud6c3hM7
+	 LoTtdLfXenMIoPDLSNdkztLAApwqw+Px46VApFj/fHXXLXKujlG+6A+7JY9ok+FUVcITs
+	 q8381H7Xkj/yaWUbZgedoWLtwyAt8yhvVnG7WDZicdoZ7ggJ8pZGA84iIwuRHdn3ETv/t
+	 NfX7UoGHGWlBpScbYT6zTdo9EcHCA76FwxjiBHOL/vIX8+nJavGXEMKugVtm5XlW1dk81
+	 D84vEaE0jm3Aqmh7vrEJSuagfYpux31bubc03UIkS+OhhVrAYw/YeMdLynxOTP9/MbQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SwLq9jEK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="je/RhZZm";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A7B606A31C;
-	Thu, 26 Nov 2026 20:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE976606A31E;
+	Thu, 26 Nov 2026 23:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SwLq9jEK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293931F000C1;
-	Thu, 26 Nov 2026 20:18:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=je/RhZZm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931DB1F00896;
+	Thu, 26 Nov 2026 23:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795724341;
-	bh=MAR7LJCS0SUT3RCdSFs4KBM4b+uQalvzyuF8N4kUcD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SwLq9jEKlMz6KkGaBndPft5926iaBOJImHZXqwRvTGrypAE1k29/40E3mKG58yguf
-	 08+2iQ6ZiePqjKUNKRVXz6H0q27FcZ++fyWOBARYt1UwenDQfkMGbFU1nWNcHOleKT
-	 wsoYaMZHXprJgNae+1tkEmjvVDJ+ypODumNtb1Z+WNcHWRLVjMW5kDH6btlx45G2ly
-	 GhiHyDsI8jGQYKc696Dvew6v3E0wIVlGZcimFf3aw8acY8a8nE/IYzUVu6n7LJHepp
-	 xNiwdjKpbXiVuSu3ibkLCd+CaY9I9hOba5hxeGmf/8aw652OA+O1yRjYQBOpFP2HUx
-	 ED6IymlgFISgA==
-Date: Thu, 26 Nov 2026 22:18:55 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the liveupdate tree with the kexec
- tree
-Message-ID: <awiULyDeMTGLqKot@kernel.org>
-References: <awhNUUXe4ywAjq8b@sirena.org.uk>
+	s=k20260515; t=1795735026;
+	bh=fPaYYz2xYxvoDkUsKrMbXMBJUPqVTod8eYBtQmhIkAM=;
+	h=From:To:Cc:Subject:Date;
+	b=je/RhZZmQTwR3KMITsSUgI8U0ROIAOE410R9bgQg0vvh7cL+roDSvBIGjH0LuQOB9
+	 Qzz9nxyBiN6a65piWkMBV+xOAt7N42zephvnd9ZBev9cYv3VNtz/cp+2NbP6FOmQRP
+	 1+C09UtuMUDADT0YWqIGRrfs1+48UjMfznCghWJLl6dIdP43O85aWpmN5JmaZQafbs
+	 qYLBruRGH/gMwKO+A22N0EY4lsNZmSmkGA16n31hx5C8MZmOtbMRtNXQTWMNE9A3af
+	 dfGPC9Yx2QuFNPSgqFJMTpDNmrNjMvNatpYZMFKcyDiwk8De04ARKrJEWQl6ZFKE6q
+	 +x8Uuht69ODiw==
+From: Sasha Levin <sashal@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: shared: restore the atomic set_bit() lost in a merge
+Date: Thu, 26 Nov 2026 18:17:04 -0500
+Message-ID: <20261126231704.1303448-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,72 +60,43 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awhNUUXe4ywAjq8b@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 26, 2026 at 03:16:33PM +0000, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the liveupdate tree got a conflict in:
-> 
->   arch/riscv/Kconfig
-> 
-> between commit:
-> 
->   e583fcbe5b585 ("arch, kexec: declare kexec and crash capabilities in Kconfig.kexec")
-> 
-> from the kexec tree and commit:
-> 
->   48ea610913a6d ("riscv: Add support for KHO")
-> 
-> from the liveupdate tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> I imagine this isn't an ideal resolution and the new hunk should also
-> move over to Kconfig.kexec but git rerere won't remember that.
->
-> diff --cc arch/riscv/Kconfig
-> index ed02c6ad0cca2,a5c56252ff44a..0000000000000
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@@ -1120,9 -1116,30 +1120,12 @@@ config ARCH_SELECTS_KEXE
+The v7.4-rc4 merge into gpio/for-next took the for-next version of
+gpio_shared_setup_entry(), which commit cda42ff53c4b ("gpio: shared:
+factor out per-entry setup helper") had moved out of
+gpiochip_setup_shared(). That dropped the change from
+commit 7d1d799d6251 ("gpio: shared: use atomic set_bit() for descriptor
+flags"), so GPIOD_FLAG_SHARED is set with __set_bit() again, and merging
+gpio/for-next into mainline would undo it.
 
-...
+Use set_bit() as mainline does. linux-next has the same change as a
+fixup in its gpio-brgl merge.
+
+Fixes: 45b9f0f3fcb3 ("Merge tag 'v7.4-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+On top of gpio/for-next 0a74985977e8. Built gpiolib-shared.o with an
+arm64 defconfig and W=1.
+
+ drivers/gpio/gpiolib-shared.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
+index 62c3d8a6abdcf..7f8b31ce4b9ec 100644
+--- a/drivers/gpio/gpiolib-shared.c
++++ b/drivers/gpio/gpiolib-shared.c
+@@ -588,7 +588,7 @@ static int gpio_shared_setup_entry(struct gpio_chip *gc,
  
->  -config ARCH_SUPPORTS_KEXEC_PURGATORY
->  -	def_bool ARCH_SUPPORTS_KEXEC_FILE
->  -
-> + config ARCH_SUPPORTS_KEXEC_HANDOVER
-> + 	def_bool 64BIT && MMU
-> + 
+ 		desc = &gdev->descs[entry->offset];
+ 
+-		__set_bit(GPIOD_FLAG_SHARED, &desc->flags);
++		set_bit(GPIOD_FLAG_SHARED, &desc->flags);
+ 		/*
+ 		 * Shared GPIOs are not requested via the normal path. Make
+ 		 * them inaccessible to anyone even before we register the
 
-I'll fix it up in liveupdate/kexec tree.
-
->  -config ARCH_SUPPORTS_CRASH_DUMP
->  -	def_bool y
->  -
->  -config ARCH_DEFAULT_CRASH_DUMP
->  -	def_bool y
->  -
->  -config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
->  -	def_bool CRASH_RESERVE
->  -
->  -config ARCH_SUPPORTS_CRASH_HOTPLUG
->  -	def_bool y
->  -
->   config COMPAT
->   	bool "Kernel support for 32-bit U-mode"
->   	default 64BIT
-
-
-
+base-commit: 0a74985977e851196d69e5364f4787adb03a5fb5
 -- 
-Sincerely yours,
-Mike.
+2.53.0
+
