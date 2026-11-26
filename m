@@ -1,50 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795709885;
-	b=oPq7V+tOqmBFkoV5606BzVhU45NrUQiC53AB+G+WM9X4rVmjT5kutt8l3btUVjkJGViZ
-	 3I5/+XTvtVMAkvxBBiaMwGxvd6U3/iavP0y+yTsK+t6DE1+huWI4yi3Bf9MGnURUm0i6/
-	 onpi+CDrrvarJZozzkhaT8nIVGiNeEa0en6YdwJvvhTS2MfZIszs+YcmMnnR+DKUEW/ZK
-	 nOD4ua9SIp0gyfntGZnEvZgw/hlREx7zJQZFaGai1Lanmt+PiSDzpldvEx02AIVHDAMfq
-	 n2sD3m45uYWlrUjjG9V0FLWIHhWgWnLcCJ7w6PDnkLZ9AS4xg+ZzkocbRhoThGrJ8ww==
+	t=1795709995;
+	b=AVuBhU52pFmzrTa2MLzsDDNLlqPytFuLB8liAMgpQhQqjj10wjBq9qvzj4UQ/MNY75AU
+	 h9bnN7jOEY4s0QIY9/o5AeD4SO9afeEDPsH2Uz3JnvY0YId2eIU72XbqxRB3V/N8ApgEH
+	 p/HSfuStSeGH25mrlCMjRYUCJ46vpUiKwk90Ml2wHKh53h9wumjMLSJJYXavugfLiPxrQ
+	 S5iUk5iZKPgxyBV4hlubA1Ceo7iYKecwaWqvM2EzmBRzh51LyQxPgIpXkDHeNgqKpwQJg
+	 7od13b5HQvhcuXbI1W57HJTn4ild6OSo0nkdm3DR9951lOSauTeT8/Ubd10HYc/AFBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795709885;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795709995;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=3Fz46sF8rJbaa+ohX2ocAdr3doog4m36GooTad8ZLyY=;
-	b=x7HhCPeMJCDZm6CJHq8Mj73OCzfhO9xSW5B6+1kQRSzQeheHpkrqH0mZ5OZ8oJCJcOfK
-	 oZ7RN3kGJZ1ATpYUwzEEPAOym1f6aRwFM/ckUI58iWydsqcKZNRWSQIkb7ZKHanMElAYF
-	 u9qDWm7pWfvzzuWITRB1J/F6m464m7TJdvV64o6Aty+SA2EwybdyAyfVMnislY63yn4/N
-	 xe4s3cgn3UKRAU6Y6WgVJsh8xXHjbeKFz4+GaEUrc9H8OejB8Y8mCpHlzxyNfALKM4Qf/
-	 5HbvGdahBQCx4lg4VV2znj9lYFIqCwz0AfBQkjUI/m/4zwY21PTJHRmZjNOI7VesXbQ==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=pyA6BrWRGqBT9InERBycylr81NGVwDNi1NcN77e1IJo=;
+	b=JSa6fILu+k5WlpFDuexrIgIxAImImH0MBcTGGCJ3jl0LkJrX6V8BQHfYF0n1jxn7Y1cM
+	 5Gh4Ki9bMNFseASC+WVvR5xrx09dlWnq6YJB/1wfmNrpqye341tc3Jnk9KusSawbA/RKp
+	 2Nq8CXMtg3QMCuOm4jS2UmM1TxTFQvR2T2TGIqUpt5bbO2IVdVC5m4RFWbgIw58+qPnx1
+	 UA9NA4beM36NTk1pSwaW0W2RSaGIfnDHkLKlDVrCIJ7G3BtbioPaAMcXKtzlcyFQ1G/vO
+	 552nEiDW+7RjpH08KQi/GEiSzXYy5clmsyBhVoNvIRpefoh2rMIgJ350Fn5Z3p7qdGQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="n4G/8S/W";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XIT+E6O3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32B7606A31C;
-	Thu, 26 Nov 2026 16:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF33606A333;
+	Thu, 26 Nov 2026 16:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n4G/8S/W
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62211F000C0;
-	Thu, 26 Nov 2026 16:18:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XIT+E6O3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7F51F000C4;
+	Thu, 26 Nov 2026 16:19:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795709884;
-	bh=3Fz46sF8rJbaa+ohX2ocAdr3doog4m36GooTad8ZLyY=;
-	h=Date:From:To:Cc:Subject;
-	b=n4G/8S/W48G3ARPkME7d8WAj1mUIUoKcoLYNOTiBjem8atRu7+x6++DQ9jSWIwfpq
-	 9PUDSsAxHxd5CCNWpocZemlrzRC0lrjnVgRvUfElNleOTEmd6uIs+kgc0We9LChyxW
-	 vhj5hn7f+opfUCQlroK2KuKBhXz/JojSFMgAkLUE+l1/+lrN5A1aFvlse+HwTnOC6P
-	 6Ier8fpXidy86UiPyJnzODubGZLOXldpygzgHNh5M1EhaMxbUshimKRjfQmOcIOP11
-	 Hsw522RQ3N1gHAuBmyrB0MrpHeOyoFGLCiy9oVL9JwljVQ6nLIN2IRNl+y8xj9NUeH
-	 zYmX1rMFH2lYw==
-Date: Thu, 26 Nov 2026 16:18:01 +0000
+	s=k20260515; t=1795709994;
+	bh=pyA6BrWRGqBT9InERBycylr81NGVwDNi1NcN77e1IJo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XIT+E6O3QkSAIeSdQUWbAieX64eHJW2apQe7OExqFcnOz051lI+JenPRrjSlYH5XQ
+	 QhKsTt/wafUqyMfWE0dGzGpFyjpzDe4jnLUdntu40sNW91jaumOU4h/2ACGbm4Y33+
+	 Xu8GqitGD2j5egDkk9XHPVCe52obOrZghYb7iYuboVaQqulVP9I3JnEoHstxDgWSet
+	 gghICGrhC1WsR9eQnqkGIa1fHqBPeZwfFzL966bgmaK17A3VFUg4IF6GDwPdrCu6W9
+	 LJpybgQ48uQUsxNLJTkUKV1qtYbTN55SIMtUFhg8SVriJ24SBFNI0GLGj5MaN6pEKL
+	 4TWPfjKjm9AIA==
+Date: Thu, 26 Nov 2026 16:19:51 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Nov 26
-Message-ID: <awhbub5ZRYLWJSBx@sirena.org.uk>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Please drop the kapi tree from linux-next
+Message-ID: <413af506-a99e-4d82-8078-89b8ca5543f2@sirena.org.uk>
+References: <20261126150925.2347325-1-sashal@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -55,90 +57,39 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mqLtQDFNWtlRXCK1"
+	protocol="application/pgp-signature"; boundary="FZeC48/CZXojmDZA"
 Content-Disposition: inline
+In-Reply-To: <20261126150925.2347325-1-sashal@kernel.org>
+X-Cookie: Sank heaven for leetle curls.
 
 
---mqLtQDFNWtlRXCK1
+--FZeC48/CZXojmDZA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Nov 26, 2026 at 10:09:24AM -0500, Sasha Levin wrote:
 
-Changes since 20261125:
-=20
-The rust-xarray tree acquired a conflict with the rust-timekeeping tree.
+> Could you please drop the kapi tree from linux-next:
 
-The arm-soc tree acquired a conflict with the asm-generic tree.
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sashal/kapi.git spec
 
-The scmi tree acquired a conflict with the arm-soc tree.
+> Linus didn't pull it, and it isn't going in the way it is now.
 
-The jc_docs tree acquired a conflict with the bpf-next tree.
+I've updated the config, it'll be gone tomorrow.
 
-The bpf-next tree acquired a conflict with the bpf tree.
-
-The crypto tree acquired a conflict with the arm-soc tree.
-
-The amdgpu tree acquired a conflict with the origin tree.
-
-The drm-xe tree acquired a conflict with the origin tree.
-
-The input tree acquired a conflict with the arm-soc tree.
-
-The kexec tree acquired a conflict with the integrity tree.
-
-The liveupdate tree acquired a conflict with the kexec tree.
-
-The gpio-brgl tree acquired a conflict with the arm-soc tree.
-
-Non-merge commits (relative to Linus' tree): 11005
-
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
-an arm64 build of various kselftests, a KUnit build and run on arm64,
-and a native build of tools/perf.  After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
-sparc64 defconfig and htmldocs.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 438 trees (counting Linus' and 135 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Paul Gortmaker for triage and bug fixes.
-
---mqLtQDFNWtlRXCK1
+--FZeC48/CZXojmDZA
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsIW7gACgkQJNaLcl1U
-h9AREQf/Wbj0m29Op6ogIE0e+mcfZXmWEccF3NRzSzUd1LnGvrQAKJZ3bkue+u5k
-kn6U6IvB+diLBjQ4J3vCmoRIJnRKyy36QD5F4O476SeQPL+9NQuX4nnuXYd+txNC
-vI2aXsCVfnJDkTzXiw94W8oRX4y9//Q5/eg0D65r40/9ARubmsMPhOnKeL2cTwxZ
-UIvdR7WUA0oXhOja7ibTwI1r0XoJrTpcolknyT09z1BPv/7TBTgIpwA7ztRJqKbK
-bL4eLUfZoj29Z0MMl3s8ZAVgn4Qb283ace7sU95/z8vcO9VediQ7BvtQYIpzk9k+
-PTMEzwVxYb/tli3fuO7WFH98XgwtNg==
-=lDQK
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsIXCYACgkQJNaLcl1U
+h9CFCwf/c5sEIiko5m89dseJtE1bGPP5vlqIoLLYQ5hmdZTfQokCiJi0h0VdBm6d
+QRfi/eyny5rKvw6wGHS6iBSgUOfmoQTc+vVl1DYHhh78EMi+wI70KFbPD/4HYrI9
+9w/pWh74/sE0X4dqejbW34Vx3jUrTDpqXYOWTqHnAlvii0tH/tSKYpEKkBjXSSY7
+v8pH8fnuMI+ZzLyXS4sif6n7yj6r3I2uzsApS1+8hS54bdCYHL8YzSazpyS8ZaA/
+XJ4iwHi2bOzu/omXOIY2DmyOhZeqiWR0UGesUOVc7PU24uRjWUUdcGC4fbcoe/fY
+jBRmMvmc3l4mDkbxbiFV+zcQaHXZtw==
+=B/H9
 -----END PGP SIGNATURE-----
 
---mqLtQDFNWtlRXCK1--
+--FZeC48/CZXojmDZA--
