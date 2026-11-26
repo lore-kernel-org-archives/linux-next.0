@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795709995;
-	b=AVuBhU52pFmzrTa2MLzsDDNLlqPytFuLB8liAMgpQhQqjj10wjBq9qvzj4UQ/MNY75AU
-	 h9bnN7jOEY4s0QIY9/o5AeD4SO9afeEDPsH2Uz3JnvY0YId2eIU72XbqxRB3V/N8ApgEH
-	 p/HSfuStSeGH25mrlCMjRYUCJ46vpUiKwk90Ml2wHKh53h9wumjMLSJJYXavugfLiPxrQ
-	 S5iUk5iZKPgxyBV4hlubA1Ceo7iYKecwaWqvM2EzmBRzh51LyQxPgIpXkDHeNgqKpwQJg
-	 7od13b5HQvhcuXbI1W57HJTn4ild6OSo0nkdm3DR9951lOSauTeT8/Ubd10HYc/AFBg==
+	t=1795710119;
+	b=HxDuHtsPI18FWyzZesBfKROrqXccWB+bj1nZ6qnqplWTuMcsJPbaRya3+6h15l6Y9FxO
+	 9O1ZjkehduuD/sUi/adbC4oggkygpZ6SPtNJRQ8CSlwAd9dYF7Z1ZYU7fR7rqQp/gIMhh
+	 6uoy46xT7QIYUBgarhFQjge2j8zOYpkSz9PqLqsyEEI4mJ0DUoEcGC4qIjZUXCThOGwyk
+	 QvLswLo/Pcyh8vFr6I/i0OZdA8fjSY23I45ijMa3IJBecWMzlLSkia3ul/L4V5jx9ycDf
+	 iuD5XHsqUlQRg7jQayApJN11kDpn5BaUdj0FlFXO6uV5OveakMzYjos78KQkK7jksPw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795709995;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795710119;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-Cookie;
-	bh=pyA6BrWRGqBT9InERBycylr81NGVwDNi1NcN77e1IJo=;
-	b=JSa6fILu+k5WlpFDuexrIgIxAImImH0MBcTGGCJ3jl0LkJrX6V8BQHfYF0n1jxn7Y1cM
-	 5Gh4Ki9bMNFseASC+WVvR5xrx09dlWnq6YJB/1wfmNrpqye341tc3Jnk9KusSawbA/RKp
-	 2Nq8CXMtg3QMCuOm4jS2UmM1TxTFQvR2T2TGIqUpt5bbO2IVdVC5m4RFWbgIw58+qPnx1
-	 UA9NA4beM36NTk1pSwaW0W2RSaGIfnDHkLKlDVrCIJ7G3BtbioPaAMcXKtzlcyFQ1G/vO
-	 552nEiDW+7RjpH08KQi/GEiSzXYy5clmsyBhVoNvIRpefoh2rMIgJ350Fn5Z3p7qdGQ==
+	bh=DjyoSkeHrskFt/VYYeEDxpGNevCb5BMjjorrIb9Hv70=;
+	b=qKiJLtjHn6aOj0pm7DGGQgCStl1GgLzT9jijQgAy1zg6QflKGe+8yW2MpaCQXcNLaIUk
+	 gRIf5c2iEUP7lOAdDOCO96NuXp6FRVGp2h7g2V423HupIhoBuJRZtMMFP2gwIBzyIvgdO
+	 Vrsgm6aDYuyeaY7bbi1lRFs1peq/lG/QvCW2XmQRUbLoRfo6RFJCKi9YX5wQgvpWJbGuj
+	 YJYYkjXvUBj/F1VeyHMfY104VBo6vTnQxrQgNa2dA8VBSpTnBgvEqBzz/nU1Xv5sOjM+M
+	 tVMwPoF3M9bjB6tI3+8PEbpS1cf27BvMN7lq2Y8DxkiN5tuaVcqepGD1MSxwQBOHHAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XIT+E6O3;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JmsqiBeY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF33606A333;
-	Thu, 26 Nov 2026 16:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC200606A321;
+	Thu, 26 Nov 2026 16:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XIT+E6O3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7F51F000C4;
-	Thu, 26 Nov 2026 16:19:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JmsqiBeY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E2361F000C6;
+	Thu, 26 Nov 2026 16:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795709994;
-	bh=pyA6BrWRGqBT9InERBycylr81NGVwDNi1NcN77e1IJo=;
+	s=k20260515; t=1795710119;
+	bh=DjyoSkeHrskFt/VYYeEDxpGNevCb5BMjjorrIb9Hv70=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XIT+E6O3QkSAIeSdQUWbAieX64eHJW2apQe7OExqFcnOz051lI+JenPRrjSlYH5XQ
-	 QhKsTt/wafUqyMfWE0dGzGpFyjpzDe4jnLUdntu40sNW91jaumOU4h/2ACGbm4Y33+
-	 Xu8GqitGD2j5egDkk9XHPVCe52obOrZghYb7iYuboVaQqulVP9I3JnEoHstxDgWSet
-	 gghICGrhC1WsR9eQnqkGIa1fHqBPeZwfFzL966bgmaK17A3VFUg4IF6GDwPdrCu6W9
-	 LJpybgQ48uQUsxNLJTkUKV1qtYbTN55SIMtUFhg8SVriJ24SBFNI0GLGj5MaN6pEKL
-	 4TWPfjKjm9AIA==
-Date: Thu, 26 Nov 2026 16:19:51 +0000
+	b=JmsqiBeYc6RDYZctmjbZuGZMGiE3JyFPSGidWSwuw77KjnA9Hjlre0bzdxI13wt0Z
+	 rHN8RtjyQn/WGuzK+6ipQI8Q7/knQBz9kSowsBtd9RB0AUtdPWgtqkWE704BfjbxbF
+	 sKRm6qhFoRc3rm3hyz5qED5PkbyHSGMd8qlHrNkDL758qUk7vomxKdGORjQY4Jhmh9
+	 xBhf0rWzODe6gZUsThipnazNeo1/fLj2buSZvNBhI0FvJcFCiOOWB+5CBFz5em0EhV
+	 XqGG23WlJ2ruIHo1nyT5QQeZlsQ/kqA/g54LNgmU4484wnPG0SG5b1kNDvunRh2tvK
+	 rl8jUMT24NGcw==
+Date: Thu, 26 Nov 2026 16:21:55 +0000
 From: Mark Brown <broonie@kernel.org>
 To: Sasha Levin <sashal@kernel.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Please drop the kapi tree from linux-next
-Message-ID: <413af506-a99e-4d82-8078-89b8ca5543f2@sirena.org.uk>
-References: <20261126150925.2347325-1-sashal@kernel.org>
+Subject: Re: Please add the agents tree to linux-next
+Message-ID: <db9d3e7d-0bbe-4856-9fb0-b7c396650458@sirena.org.uk>
+References: <20261126150925.2347325-2-sashal@kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -57,39 +57,56 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FZeC48/CZXojmDZA"
+	protocol="application/pgp-signature"; boundary="qEPQn2E+6CsevQu9"
 Content-Disposition: inline
-In-Reply-To: <20261126150925.2347325-1-sashal@kernel.org>
+In-Reply-To: <20261126150925.2347325-2-sashal@kernel.org>
 X-Cookie: Sank heaven for leetle curls.
 
 
---FZeC48/CZXojmDZA
+--qEPQn2E+6CsevQu9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Nov 26, 2026 at 10:09:24AM -0500, Sasha Levin wrote:
+On Thu, Nov 26, 2026 at 10:09:25AM -0500, Sasha Levin wrote:
 
-> Could you please drop the kapi tree from linux-next:
+> Could you please add the following branch to linux-next:
 
->   https://git.kernel.org/pub/scm/linux/kernel/git/sashal/kapi.git spec
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linux.git agents
 
-> Linus didn't pull it, and it isn't going in the way it is now.
+> It contains the agent skills series, which I intend to send to Linus.
 
-I've updated the config, it'll be gone tomorrow.
+No problem, it should be there tomorow.
 
---FZeC48/CZXojmDZA
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--qEPQn2E+6CsevQu9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsIXCYACgkQJNaLcl1U
-h9CFCwf/c5sEIiko5m89dseJtE1bGPP5vlqIoLLYQ5hmdZTfQokCiJi0h0VdBm6d
-QRfi/eyny5rKvw6wGHS6iBSgUOfmoQTc+vVl1DYHhh78EMi+wI70KFbPD/4HYrI9
-9w/pWh74/sE0X4dqejbW34Vx3jUrTDpqXYOWTqHnAlvii0tH/tSKYpEKkBjXSSY7
-v8pH8fnuMI+ZzLyXS4sif6n7yj6r3I2uzsApS1+8hS54bdCYHL8YzSazpyS8ZaA/
-XJ4iwHi2bOzu/omXOIY2DmyOhZeqiWR0UGesUOVc7PU24uRjWUUdcGC4fbcoe/fY
-jBRmMvmc3l4mDkbxbiFV+zcQaHXZtw==
-=B/H9
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsIXKMACgkQJNaLcl1U
+h9AGRgf+IqwzLEcBzrwBc+mj1/LpeXDHFo4ry9MVdAzlLdLN68GRFbfbDR73vHgn
+RdhccHPt49bJ9Ng5TMVA/Fzhg0SIICYKvjY5lwVTjbUaOEoUkszqKNd1NwWDFdqe
+eWjV0QUbWcYMs2kOnIv1gmCGR/6yiBi1IgCy1H8+L9ROU1d56YVnG4aCnEQUr2HV
+mjpSFBkWd/MTZeJ50zCCLewUcEMLQNVOvTJjZxNcGgCsHZZxsVXbnpuhrcj9gq2R
+m0/p4nGZ5kAvUtneK2sCNjtNEv8RDmPv3T00yfxB3rofTaQoNyoU3mDdb2dZkh3N
+jPXZvAmc9Kt8keZBbentNHqxDUCMPA==
+=06V9
 -----END PGP SIGNATURE-----
 
---FZeC48/CZXojmDZA--
+--qEPQn2E+6CsevQu9--
