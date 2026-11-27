@@ -1,85 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795746642;
-	b=yr2/0Ti0hVAvpELdkUhp9i92fdMeEHL4PUL7XNxZ4By+bUvvo3scm3e6sL7RifWyJq2t
-	 k2jTTJcc+HhixbFDmyzQDs+/1R9vE4QmArQc6Byc+7v98yLOvuBgC7TqzTXp/FwoOQhur
-	 lk9MozGBeUPIhxfuD2cpK58kzFi1A3+sARDCkabArDM9AkgqDNPqPCGKW0smf86+/byGx
-	 TmS602I6NRlun24NfeV/cl2KeFNFQvPcbNyYJ8SEjX3mfl5d3dYR8GQhfkIEhIyrxQCfm
-	 wpQ2OfjYGgAySbfWSLfVk0ArJ/M4SKSxyiP3V1E2BHlXb4cw4KGOE7FZMQURJXG2DuA==
+	t=1795766706;
+	b=zyNVlqSPsqzVrUNEqIYJPHItHNXe7pkxHDa0xJToLEsJw6GrMZT8m/EOYDjwN+/H8SPx
+	 lPwbGAupFjiFkW2Q+RDOjG92uBTE2Uj64U46rgEjB2jNdWDV8JoBtCLutrYrw0rh1D3nV
+	 uD7BWFw+16lhf6jMlgeyPG0KVkjPA38sTJA0sV4hFgAJNgoUzTTh/yAGzeM66MpXGGr7t
+	 2T5j/oPsI4Z7DjpGaIW1yyvB26P4/6c2i+wMSEOURAFPF9o3ZYpp8lICpj/8gise7TukU
+	 KSPKtk7ih7v5bb7UGSF2JcSeVQtuummbOV6qSXW51n614tsJ/7yF6hZugIw5EgP+P/Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795746642;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
-	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
-	 Date:Message-ID;
-	bh=Kl4So0eLnvakvT4EzLoJq5pzJAsB4uSt+9iJLkcz8GY=;
-	b=dL7XZYqruqjBVf/M8q4U3gkvOCr5skBObB+Rhs6V+BBbgLCVxVqpJRPedFS9LfBdI2We
-	 TXuUbd8R0x5d8m4Ndj1dEbbXuFRDNIevKzpyuR4xRHOmMNeUKWnH0RNq7tGYx8fp/fBzb
-	 sOyQ8sI/toy/kyJbxhax+UUuDEFFcjJUckYLfuzu/FDPcoxSV9MHBHUuPJ6SihEf0lxrO
-	 +AwTv4yMhWh3GMjuHy8onNQhUAhTpTcl58ZnQoPTdEGPgVrjLxLU50qY3dp5CwCOjyqvo
-	 Mkvd5VBEMrm2AEZ9TfRBkFxE++aqBeXbxm91aG+Lg0BIyVeJsWNv4D1FpXPQg0EzyGg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795766706;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=b9EsOhhl5MbUkBFLbXLeMzsujw/yfpfNAxfoGKVG51k=;
+	b=2/CRXsLeCkggRlT+FujZ61G+XZ3UpJ0JGTbGAxlksKIl874qiz5snPOm7t2JZpRRp7Ib
+	 qTwCxxwBVsId4+/ePidVsW3AwP6VoZYNL1tDrHE/FrQcZEyxEv9LCq6lHRf+pTfPViBix
+	 TixubobolstJeSVv470ZBsrRv+/MPrVwRSMANaTTRziwxQ4wfnCRev0RHTFD2Ebaq1qZq
+	 +4WhqMgKGKk0BZ8DA/LJyPTHkEErMhUkqWCXjSLAOG4S+8Rvwu72krafiTUlDbGDhguRf
+	 aDM0y4zhfLMcQUYyFzPNUgAxTeqjC0pJGLNfWbwLZ8GlytFvri7xPqlxkG39YArMKpw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kernelci.org;
-	spf=pass smtp.mailfrom=kernelci.org;
-	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b="g5/A099B";
-	arc=none smtp.remote-ip=74.125.82.182
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=lmKLhork;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC97606A31C
-	for <linux-next@vger.kernel.org>; Fri, 27 Nov 2026 02:30:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4DC97606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C580606A321
+	for <linux-next@vger.kernel.org>; Fri, 27 Nov 2026 08:05:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C580606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=g5/A099B
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-33fb4680717so3802748eec.1
-        for <linux-next@vger.kernel.org>; Thu, 26 Nov 2026 18:30:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1795746641; x=1796351441; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Kl4So0eLnvakvT4EzLoJq5pzJAsB4uSt+9iJLkcz8GY=;
-        b=g5/A099BhECugE3FMs1rxfEQjH1Z9kQwlMeImhPNXFZIGh1Rail95WOWJnGKr654tT
-         e/tS7TtowTTj7jw1ib9elIQEG2+AI1BtduV35n1+NSkkM70y+7kVyDBvIc0eGDyz/XHm
-         uGuMFDenEa1gvsu8qNOtvilajj+V6zuN7VmPDlqfTNcak743Os7QeaOqs8PMKXumAEab
-         s3jnPhaymofWqALwRzgDrsty5CoVeEEQsprGL1sXZdXyxqDqRilgWKDuu92Uxj6/cOYe
-         0zFHbgPh89Y3h02H9D+KBZnZRy8x3u0YoRcXZYw/NAIkAZkFYTqypxSBIvoolHa88OEv
-         2VgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795746641; x=1796351441;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Kl4So0eLnvakvT4EzLoJq5pzJAsB4uSt+9iJLkcz8GY=;
-        b=dCWo5R63jk6yyfFzma45Rg8tpbNvyws2sJSgVEChVqC8kk9XO2y/C6gUaZxPNG/iRn
-         mwLr1/QBJ9uVsdo3KAH8fJB9I6uRPWdx78K7zRpRdgZRoS9Yk+W7Ln+Rfo/KYMr+DqJL
-         8yY9evABS6h9njqlbEnAx5knSCYaJ++MIi3tIEfQUtyC2dFqgifjGxejR7x2xpjb1yHG
-         32skvKPW1LUyXEgsnMlTdrrsQlTi2FwJTxqqgiq3iBfub9sZEsx9OYiYfJShfhV8SbbY
-         36eVzZ8yazN62gjiKmPqfEH9xXsv/98F6eM36/0rtvOpqgYoHt2HWoXTAp+/T6qPPJuO
-         T35g==
-X-Gm-Message-State: APuU4Z/lRZAwed0LUii6HWQxOzTJ5JeSKDF11HDg8v3mav3fVHrtkgZI
-	mqiaHYkyyT8URPqGYiGSvRJeXw62omerCmUBm3xdYaGzdhaTqEli6tAAWzP+jq136TVIMrS7o4V
-	WM7RD
-X-Gm-Gg: AZFdTZdatYrRv+jJqidvbdBpl2f2cjPUvN7smjA122Xo0cnwAoAEgpNmeW+5ptncUu9
-	HM0ww6ecYwLsrG4tGIfQi8/2XKjYm2XavTE9x5cKiKp3K7tyUizM2+UER53EzrQnU5IWaZkG/+3
-	xORQ+0Sle1f/AP+KxJQzIxU6peR0zCPvIdrQ1eX7qVpOj87VaFe64j9BgqDKNtdsjtR1AnL9vKq
-	jlogDKflWIWaREG18MQ7uZ0uUcATMXEyxwspiUW2k86KySaoeBwhoIpgO10sDIalJ3slURHrcBd
-	tnk51Q018x138WcgaS8Hv9GBBnkzrl2/2ih5djmYYqwjNMJ+oyHgRDE9ZQe19wY3jHVYJ8t/KNo
-	P2RiCQn9Dd+u3lzBfY43dDi6UfgcMjUN2wTZqjK5UyS8EvnPYX3ZYSO4GJW0ysbWH3lImPEz4dx
-	lHpOoETDg33BfbTltwsC4Us+xB94iqg6Qh03jb/yWNiWPvu7Z90pdKbkO3r1mJh5oJrAUk7NmOK
-	FJZ+tKVvOpyuTwuvAJu263G5upMX2UVobsVUVhREE2cX8snDIWI2/IHO7LhGvJ0chTsskP9feI+
-	wl3/4sCaG4lmXBK5P82TWA==
-X-Received: by 2002:a05:693c:6205:b0:386:a498:3ab1 with SMTP id 5a478bee46e88-386a4983cc5mr19479196eec.25.1795746641068;
-        Thu, 26 Nov 2026 18:30:41 -0800 (PST)
-Received: from 52d83ede7c60 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385666e7fc3sm59822720eec.8.2026.11.26.18.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 18:30:40 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=lmKLhork
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261127080456euoutp02bdba4e1ea6104c948ade555c35236221~r2EvoACkB0968209682euoutp02U
+	for <linux-next@vger.kernel.org>; Fri, 27 Nov 2026 08:04:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261127080456euoutp02bdba4e1ea6104c948ade555c35236221~r2EvoACkB0968209682euoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795766697;
+	bh=b9EsOhhl5MbUkBFLbXLeMzsujw/yfpfNAxfoGKVG51k=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=lmKLhorkbhc96ziVTzFCZyFRqhVWslhZeZnDqzPfl768Kl0OrzH63gjdzkdEkaj8p
+	 ezMVDO853DxbSEgRO37CBAhlVcOOzG7BjxOSX9wfF0FfHqCUPWKWrkX9hG6n+jp0eJ
+	 ym+Poojt1SNdAbG2//977sH6yzrW3gmKPixHvbNI=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261127080456eucas1p1bd7e7242f8ec2c09eacb6e447ea94c14~r2EvOSE7M3256732567eucas1p1W;
+	Fri, 27 Nov 2026 08:04:56 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261127080455eusmtip2fa0050c4f8fdaa9edae69f83622844aa~r2EuKqPjg1750517505eusmtip2x;
+	Fri, 27 Nov 2026 08:04:55 +0000 (GMT)
+Message-ID: <a9a5161a-195f-497e-9dae-76142a4b5997@samsung.com>
+Date: Fri, 27 Nov 2026 09:04:55 +0100
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -89,149 +64,90 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3 2/2] alpha: enable contiguous memory allocation for
+ coherent DMA
+To: Magnus Lindholm <linmag7@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, richard.henderson@linaro.org,
+	mattst88@gmail.com, linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-next@vger.kernel.org,
+	netdev@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	will@kernel.org, Mark Brown <broonie@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CA+=Fv5RttOgZp9vftYN2XfmV31TyC_o_eSejruM_bbf6v7zfBQ@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - a9c48428cbd8d96b26f92631d0db6f8519c5fcc5
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Fri, 27 Nov 2026 02:30:40 -0000
-Message-ID: <179574664012.181784.14026930300675253889@52d83ede7c60>
+X-CMS-MailID: 20261127080456eucas1p1bd7e7242f8ec2c09eacb6e447ea94c14
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261124232303eucas1p10f2da7a94c8aa19fa4e406d089c1367e
+X-EPHeader: CA
+X-CMS-RootMailID: 20261124232303eucas1p10f2da7a94c8aa19fa4e406d089c1367e
+References: <20261115103809.1288167-1-linmag7@gmail.com>
+	<20261115103809.1288167-3-linmag7@gmail.com> <awVzJMLVw4wUSqky@monoceros>
+	<CGME20261124232303eucas1p10f2da7a94c8aa19fa4e406d089c1367e@eucas1p1.samsung.com>
+	<CA+=Fv5QJxoxEoKxRpm5Hisdf=y+VpmM-s_VBC1tDQ2FTCfb08w@mail.gmail.com>
+	<3467269e-9929-4c9f-bc19-847976f49527@samsung.com>
+	<awa6Owm3eDW3EitJ@monoceros>
+	<CA+=Fv5RttOgZp9vftYN2XfmV31TyC_o_eSejruM_bbf6v7zfBQ@mail.gmail.com>
+
+On 25.11.2026 12:52, Magnus Lindholm wrote:
+> On Wed, Nov 25, 2026 at 11:53 AM Uwe Kleine-König
+> <u.kleine-koenig@baylibre.com> wrote:
+>> On Wed, Nov 25, 2026 at 09:54:08AM +0100, Marek Szyprowski wrote:
+>>> On 25.11.2026 00:22, Magnus Lindholm wrote:
+>>>> Thanks for catching this and identifying the interacting commits.
+>>>>
+>>>> I reproduced the error on next-20261123. In
+>>>> arch/alpha/kernel/pci_iommu.c, I changed:
+>>>>
+>>>> page = (gfp & GFP_DMA) ? NULL : dma_alloc_contiguous(dev, size, gfp);
+>>>>
+>>>> to:
+>>>>
+>>>> page = (gfp & GFP_DMA) ? NULL :
+>>>> dma_alloc_contiguous(dev, size, gfp, dev_to_node(dev));
+>>>>
+>>>> This fixes the allmodconfig pci_iommu.o build. A full DP264 UP build
+>>>> with CMA enabled also passed, as did an object build with CMA disabled.
+>>>> The full allmodconfig build hit an unrelated cgroup sample error
+>>>> involving PATH_MAX and LINE_MAX.
+>>>>
+>>>> I'd prefer to keep the Alpha tree independent of the DMA series.
+>> That's up to you, but in my eyes merging in the immutable branch
+>> provided by Jakub into your tree (or rebasing on top of it as suggested
+>> by Marek) is really the easiest option. That way you don't have to wait
+>> for the change to hit Linus' tree and there is no further need for
+>> coordination or others paying attention to not create non-bisectable
+>> commit graphs.
+>>
+>> However looking at the immutable branch I see it contains both the dma
+>> API change and then separately various adaptions to ethernet drivers.
+>> IMHO the immutable branch should only contain the API changes (that is
+>> the commits up to 31f7e12d621b) to reduce the amount of possible
+>> conflict.
+> Thanks, that makes sense. I guess best is for me  to rebase the Alpha changes
+> onto the shared DMA API changes and update the caller in my CMA commit.
+>
+> As you point out, using only the four API commits through 31f7e12d621b
+> would avoid bringing the Ethernet driver conversions into the Alpha tree.
+>
+> Jakub, Marek, would that commit be a suitable immutable base for this?
+
+Yes, that would also work.
 
 
+> A separate stable tag at that point would be helpful.
+>
+> I'll then rebase, retest, and notify Mark before updating for-next.
 
-Hello,
+Here is a stable tag for You, I'm sorry for the delay:
 
-Status summary for next/master
+https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git dma_alloc_coherent_node_api
 
-Dashboard:
-https://d.kernelci.org/c/next/master/a9c48428cbd8d96b26f92631d0db6f8519c5fcc5/
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: a9c48428cbd8d96b26f92631d0db6f8519c5fcc5
-origin: maestro
-test start time: 2026-11-26 17:03:58.586000+00:00
-
-Builds:	   66 ✅    4 ❌    0 ⚠️
-Boots: 	  187 ✅   20 ❌    0 ⚠️
-Tests: 	37508 ✅ 2297 ❌ 4222 ⚠️
-
-### POSSIBLE REGRESSIONS
-    
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b087d16286e1965ecc47910
-      history:  > ✅  > ❌  > ❌  > ❌  
-            
-Hardware: purwa-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.coredump
-      last run: https://d.kernelci.org/test/maestro:6b087c98286e1965ecc47020
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bd0000
-      last run: https://d.kernelci.org/test/maestro:6b0882ad286e1965ecc4d492
-      history:  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bd0000_pcie_0
-      last run: https://d.kernelci.org/test/maestro:6b0882ad286e1965ecc4d490
-      history:  > ✅  > ❌  
-            
-      - kselftest.timers.timers_set-timer-lat
-      last run: https://d.kernelci.org/test/maestro:6b088786286e1965ecc4e9ff
-      history:  > ✅  > ❌  
-            
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.efivars
-      last run: https://d.kernelci.org/test/maestro:6b0873ea286e1965ecc3ca27
-      history:  > ✅  > ❌  
-            
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
-      last run: https://d.kernelci.org/test/maestro:6b089b19286e1965ecc61f05
-      history:  > ✅  > ❌  
-            
-Hardware: qcs615-ride
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ring-buffer
-      last run: https://d.kernelci.org/test/maestro:6b087421286e1965ecc3cdfa
-      history:  > ✅  > ❌  
-            
-
-
-### FIXED REGRESSIONS
-    
-Hardware: purwa-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b087d1c286e1965ecc479dd
-      history:  > ❌  > ✅  
-            
-
-
-### UNSTABLE TESTS
-    
-Hardware: glymur-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000
-      last run: https://d.kernelci.org/test/maestro:6b088115286e1965ecc4a0f0
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0
-      last run: https://d.kernelci.org/test/maestro:6b088115286e1965ecc4a0ee
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0_wifi_0
-      last run: https://d.kernelci.org/test/maestro:6b088115286e1965ecc4a0ed
-      history:  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ftrace.ftrace_ftracetest-ktap_event_trigger___test_poll_wait_on_histogram
-      last run: https://d.kernelci.org/test/maestro:6b08b85d286e1965ecc7803a
-      history:  > ✅  > ✅  > ❌  > ✅  > ✅  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6b088a81286e1965ecc4fabd
-      history:  > ❌  > ✅  > ❌  > ✅  > ❌  
-            
-
-### NEW BUILD ISSUES
-- Issue: maestro:519b71c76284c9e0a0e9ed341a6f47f0acfcf144 | version: 1
-  Build: maestro:6b08680d286e1965ecc2f29e
-  Comment: variable 'data' is uninitialized when used here [-Werror,-Wuninitialized] in drivers/gpu/drm/amd/amdgpu/imu_v13_0.o (drivers/gpu/drm/amd/amdgpu/imu_v13_0.c) [logspec:kbuild,kbuild.compiler.error]
-  First seen: 2026-11-26 17:49:40.615832+00:00
-  Culprit: code
-- Issue: maestro:519b71c76284c9e0a0e9ed341a6f47f0acfcf144 | version: 1
-  Build: maestro:6b086811286e1965ecc2f2a1
-  Comment: variable 'data' is uninitialized when used here [-Werror,-Wuninitialized] in drivers/gpu/drm/amd/amdgpu/imu_v13_0.o (drivers/gpu/drm/amd/amdgpu/imu_v13_0.c) [logspec:kbuild,kbuild.compiler.error]
-  First seen: 2026-11-26 17:49:40.615832+00:00
-  Culprit: code
-- Issue: maestro:519b71c76284c9e0a0e9ed341a6f47f0acfcf144 | version: 1
-  Build: maestro:6b086842286e1965ecc2f2e6
-  Comment: variable 'data' is uninitialized when used here [-Werror,-Wuninitialized] in drivers/gpu/drm/amd/amdgpu/imu_v13_0.o (drivers/gpu/drm/amd/amdgpu/imu_v13_0.c) [logspec:kbuild,kbuild.compiler.error]
-  First seen: 2026-11-26 17:49:40.615832+00:00
-  Culprit: code
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
