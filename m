@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795789735;
-	b=D3Kj68IApbI9bydqq+4jobP2wT52W/5f80qMuJfgMmDge59ni4w+EkMnRvZHC2VOyABH
-	 wRznbEn0VzQyQeE0w13YD7Hu9RM9DNuYkyPcuiuhIx4R0XH+kHnbeqcIiiImOFeI2K+8G
-	 21hEf48IkynW04ur9R3IglznMFlUz3VG7dpMOl+X44xEtd/B2nMuBfZRF0BSPy08YZE4U
-	 lMKwIE8EMFdOYx+I+y5b9FpKgvIz8rgTKsKcfoju5NWfJRbbhiqk24jEjJKeDvaUyLFua
-	 vQu5TN5pxjdoACZlFoeHWmVhVd+4HhW5H6WwL7R8bohz/D6DMfZBAJoqfEp9QqBCq0w==
+	t=1795789748;
+	b=bAhSNcdmqRig+NdeYTbHPYEucpu5VSEr532NjTYizstQCvZbSRmubtiGYMJoxdn/QtQ6
+	 oXqswdGhn2K1m32PNK9leTbN9OW5c//bpMND08KFHuPrUZfPA0SDL/u6GaFa86A2YtFEe
+	 fvU0GLPgP9rc5oFTW3EOt5PwxeUi5N3pRTBMatd6dSwZW1B60UoBRPgzUkKZW4lSWP88j
+	 vkZR2ILe998PU1n9s3n9omlP2DzfM3Vg0v0VKv2IMH9jrwtZp9A9uKDruHtYDmRGUcpzP
+	 YP8Lym3oTUbSrnd9pYvOE2GtCmsHfA5prA9Ze1pYjyDBuXpzyJPBGvces5IQcU9jF6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795789735;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795789748;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=ctO9FSnU4U0seeRIMh4Nou3mn86PJ1Df6Anh/gflICk=;
-	b=tr/HlV+m0PqjHbugSpjeaImmcDoBq5bNdWPI67mjAiqw8X5YELilxkFi1ocKfGuuYLdm
-	 xtV11Jo0f7MP6oLAAgnZ4EakXsABlbyYsynA3P3hamT2nOgYcgfS9YHDxhE4VKvlLj5VW
-	 dJzSc+QoVo6lFoRC6l5pc6zGyTeAu/pANAJ6HpaaHIkKIv/sdx7+VFfcXG4SroWYRkTjT
-	 R8BT+K1/69770KG0Q2DE2cpRUhuIJRP++qE9W/ieCM4Wh9cLwGE2V0iuiFyctPzmSQI78
-	 PNANpJHaf+3dIQeWHp3/zNoEQQSeVPelB6wTA2af2YN4sZxft/Ia8s60uUA9nEeT1Ww==
+	bh=OOhOpEtUmi8NqmWv0fX2VMmD2P8zJirJDmX8ubh4x6U=;
+	b=NlGStU6/KlvsmCVlVkbwO9McEwSmPmbLqaLBkZoxf1Us2ink9sf7nH2k29F4lUKOIZuD
+	 Rlcrk/TwGxExb/3NRq2Mp2UZuLzcbKhLDl0A7+CrFKplNAzU0bg1hgbK8vJ5/+JEZugBC
+	 C76FlxtS/OPEqnyU7rJMAEoFKbgqSNAWP98ONw6T59VNWs3q+Ni0I8kSk4LadNiWYCLAH
+	 e6YSij3kdkqKa+n2F9LlcTL6Tzu/xzoCw+2ieucHd+hs3Lk24a2rOFID6nQM8RdEgIlsX
+	 GIRjZiYVMCW3G1Y1fKDCAlfkmlGcnfMQ0QSAKncwYa17gMqmLI4BkM1nbidNfHu1lIA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DVT7qceI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LKRdEty6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DDC606A33C;
-	Fri, 27 Nov 2026 14:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5BE606A695;
+	Fri, 27 Nov 2026 14:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DVT7qceI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F42B1F00A15;
-	Fri, 27 Nov 2026 14:28:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LKRdEty6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573DC1F00893;
+	Fri, 27 Nov 2026 14:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795789735;
-	bh=ctO9FSnU4U0seeRIMh4Nou3mn86PJ1Df6Anh/gflICk=;
+	s=k20260515; t=1795789747;
+	bh=OOhOpEtUmi8NqmWv0fX2VMmD2P8zJirJDmX8ubh4x6U=;
 	h=Date:From:To:Cc:Subject;
-	b=DVT7qceIrRFW7u35MRMv31uj7Qkg9FSbPK0JydPBO1tYxnsMPt+qQjW2ydcycPOAk
-	 gxTkXvS62kgsPfUj0lIo/hY69qc/ll8nEHf/aOYxkj108vQL855wd3lv+s1m+BMOje
-	 pNw723OIt2RbVPcIqn10osjFyqCAa9dxr6exoocsTzoTWKsk6T1p119zuWTgWg6uYv
-	 8q3jN2JWXxfnZzyO0EWizQg0JgDLOoLFTN5R9OiMnt3Wv+E2z3A1xOX+lWNC4HZbfG
-	 qbhGySky3KhhaTF5D/fL2y5cx4mWAjMggw5BulHtgEuViAjv/YOo+BZYvorwBUV+oy
-	 X7zKkoK960CdA==
-Date: Fri, 27 Nov 2026 14:28:51 +0000
+	b=LKRdEty6GMyNmKVjFsaWhMjhsXGxfFL6ps+exawhwew41JcoyyhafZb13MOsfYhzV
+	 Nfd+lyKIRCmqjVaQJrlBKZX8tXk788XaTNzDqvU0PC6p/ynuvMkzg/xOuq0Z/7+bvp
+	 taWIotWjGjA3ZNdY3jM+nqusy7jBcppyNnOhLtfiqd3Bb61JiyrVrxpSx8bJF8kDnJ
+	 rm/AJRurdGCeQr/HPLMg0G5+TtK0rmUnBggA7k1mSfG+zu60KFOA/toMkkpDEo6DSZ
+	 WnzOLk5QTldWAperBavLQJxOeWMkQQrBW5fRycAxNlNNSPIwYpf0mcA1qSzOhm3Xwx
+	 rDFOzz0bkg/tg==
+Date: Fri, 27 Nov 2026 14:29:03 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the fuse tree
-Message-ID: <awmTozkMyM-9FEiB@sirena.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Christopher de Guzman <christopher.deguzman@analog.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the hwmon-staging tree with the
+ hwmon-fixes tree
+Message-ID: <awmTr2ry8AkoVBc5@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -58,31 +58,34 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JZSvye0QZAVe47gj"
+	protocol="application/pgp-signature"; boundary="mgZZrDGW4FKx88eO"
 Content-Disposition: inline
 
 
---JZSvye0QZAVe47gj
+--mgZZrDGW4FKx88eO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+Today's linux-next merge of the hwmon-staging tree got a conflict in:
 
-  tools/testing/selftests/filesystems/fuse/.gitignore
+  drivers/hwmon/pmbus/ltc2978.c
 
 between commit:
 
-  0d2c729bdefe0 ("selftests/fuse: test listing directories with long names")
+  43f641c028fed ("hwmon: (pmbus/ltc2978) Fix peak comparison for IEEE-754 c=
+hips")
 
-=66rom the fuse tree and commit:
+=66rom the hwmon-fixes tree and commits:
 
-  ddd75941c4a1b ("selftests/filesystems: test walks racing the unlink of co=
-vered names")
+  f1354de07181d ("hwmon: (pmbus/ltc2978) Fix peak comparison for IEEE-754 c=
+hips")
+  5ced04b8f54e0 ("hwmon: (pmbus/ltc2978) Add support for LT7175 and LT7176P=
+")
 
-=66rom the vfs-brauner tree.
+=66rom the hwmon-staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -91,30 +94,89 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc tools/testing/selftests/filesystems/fuse/.gitignore
-index cd5492659ffcf,3fde4061654cf..0000000000000
---- a/tools/testing/selftests/filesystems/fuse/.gitignore
-+++ b/tools/testing/selftests/filesystems/fuse/.gitignore
-@@@ -6,4 -6,4 +6,5 @@@ write_extend_eof_tes
-  fuse_acl_cache_test
-  fuse_symlink_cache_test
-  fuse_readdir_cache_test
- +fuse_readdir_long_name_test
-+ unlink_reval_test
+diff --combined drivers/hwmon/pmbus/ltc2978.c
+index bd58f786693bf,ca94a3c17e9aa..0000000000000
+--- a/drivers/hwmon/pmbus/ltc2978.c
++++ b/drivers/hwmon/pmbus/ltc2978.c
+@@@ -23,8 -23,8 +23,8 @@@ enum chips=20
+  	/* Managers */
+  	ltc2972, ltc2974, ltc2975, ltc2977, ltc2978, ltc2979, ltc2980,
+  	/* Controllers */
+- 	lt7170, lt7171, ltc3880, ltc3882, ltc3883, ltc3884, ltc3886, ltc3887,
+- 	ltc3889, ltc7132, ltc7841, ltc7880,
++ 	lt7170, lt7171, lt7175, lt7176p, ltc3880, ltc3882, ltc3883, ltc3884,
++ 	ltc3886, ltc3887, ltc3889, ltc7132, ltc7841, ltc7880,
+  	/* Modules */
+  	ltm2987, ltm4664, ltm4673, ltm4675, ltm4676, ltm4677, ltm4678, ltm4680,
+  	ltm4686, ltm4700,
+@@@ -566,6 -566,8 +566,8 @@@ static int ltc2978_write_word_data(stru
+  static const struct i2c_device_id ltc2978_id[] =3D {
+  	{ .name =3D "lt7170", .driver_data =3D lt7170 },
+  	{ .name =3D "lt7171", .driver_data =3D lt7171 },
++ 	{ .name =3D "lt7175", .driver_data =3D lt7175 },
++ 	{ .name =3D "lt7176p", .driver_data =3D lt7176p },
+  	{ .name =3D "ltc2972", .driver_data =3D ltc2972 },
+  	{ .name =3D "ltc2974", .driver_data =3D ltc2974 },
+  	{ .name =3D "ltc2975", .driver_data =3D ltc2975 },
+@@@ -656,6 -658,7 +658,7 @@@ static int ltc2978_get_id(struct i2c_cl
+  	chip_id &=3D LTC2978_ID_MASK;
+ =20
+  	if (chip_id =3D=3D LT7170_ID) {
++ 		const struct i2c_device_id *id;
+  		u8 buf[I2C_SMBUS_BLOCK_MAX];
+  		int ret;
+ =20
+@@@ -664,13 -667,11 +667,11 @@@
+  		if (ret < 0)
+  			return ret;
+ =20
+- 		if (ret < 6)
+- 			return -ENODEV;
+-=20
+- 		if (!strncmp(buf, "LT7170", 6))
+- 			return lt7170;
+- 		if (!strncmp(buf, "LT7171", 6))
+- 			return lt7171;
++ 		for (id =3D &ltc2978_id[0]; strlen(id->name); id++) {
++ 			if (ret >=3D strlen(id->name) &&
++ 			    !strncasecmp(id->name, buf, strlen(id->name)))
++ 				return (int)id->driver_data;
++ 		}
+ =20
+  		return -ENODEV;
+  	}
+@@@ -787,6 -788,8 +788,8 @@@ static int ltc2978_probe(struct i2c_cli
+  	switch (data->id) {
+  	case lt7170:
+  	case lt7171:
++ 	case lt7175:
++ 	case lt7176p:
+  		data->features |=3D FEAT_CLEAR_PEAKS | FEAT_NEEDS_POLLING |
+  				  FEAT_IEEE754;
+  		data->vin_max =3D ltc_peak_max_init(data);
+@@@ -999,6 -1002,8 +1002,8 @@@
+  static const struct of_device_id ltc2978_of_match[] =3D {
+  	{ .compatible =3D "lltc,lt7170" },
+  	{ .compatible =3D "lltc,lt7171" },
++ 	{ .compatible =3D "lltc,lt7175" },
++ 	{ .compatible =3D "lltc,lt7176p" },
+  	{ .compatible =3D "lltc,ltc2972" },
+  	{ .compatible =3D "lltc,ltc2974" },
+  	{ .compatible =3D "lltc,ltc2975" },
 
---JZSvye0QZAVe47gj
+--mgZZrDGW4FKx88eO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsJk6IACgkQJNaLcl1U
-h9DP6Af/VYgNoaiJRMjlOSL/8UBFO8Pp91+1wl1zWhWRynMVtkbn8eslMCqWHUQq
-M9/SBHmYiTx3QHgc1Unj2LyZBIW05OpqciPEckJXHTTtO7iHC6Eb5ULuYsXz26Xu
-8nI6IDimy+yciJmOfzmrCgvDh0uAMjSbXatC9YS4zroiyOoMLhbW16mtBGlyjEuf
-cfuv4bRzeytR/i+sOY9MkwN/A69bUZhWT77wzXs7cp6e4Q4Eh1Cqv1s8/HoOXTeY
-DDRROjfPI4UpiOh3zAD84yXDM5nn25MsoTKNraYOPyr9bwPPpfLu9MGlQFcY+Z2h
-kzSNF+k6dKunDeKAx+ODOUJ3TfLIrA==
-=/dnG
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsJk68ACgkQJNaLcl1U
+h9AXvwf+MtfXDZKOqQxdr9Qqg3P1rj6gx4je/XnbGbrwdebYWBaQMZbZ3QcvVbO5
+3mhf+Kz4WjlOn7RqKZziix9zAL3PsaTzBz/M+33jqc5WNh3jIvAQEn+Mxtb3zuVI
+iPQKRoU0IoQ6w74npgQpwpaGbtHOtBAHj2blqe2MvK/krCye5Xk7a/h92tC/J50d
+SrQJzeq9hUuAu/n6uHXnHFCCz9rBz+Xfo9nVvZdeDmkPPmJro6FH3Cu9wvncE+8G
+vF4NvKSxMjUeWle475b6nUkAGGtovGEgXZglGMtuHaS5BRI636y6x4A4qTsniDNv
+leOc2MPBbeuzebDftgyaoZUKOiHf7g==
+=lw4u
 -----END PGP SIGNATURE-----
 
---JZSvye0QZAVe47gj--
+--mgZZrDGW4FKx88eO--
