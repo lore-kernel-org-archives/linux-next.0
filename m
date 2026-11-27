@@ -1,58 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795802878;
-	b=YlejiZdvVd9n11j8tqjBlEz/QGa2CGccw7Rt9o4ONGsSnfgxUVDrP5r5mlt1PRKRLvtY
-	 CSawldM1K2d/yD43/65Y1+pN/uSlpezsF+SzKhpkwnfpyiKtneKfLy0Rr1rJU82zLILs9
-	 KeXO+cva+iQ6l7P3Wnl/+erDy8uDKjrDJ5HpnyUDdQdMPDbnrJGR1+x782Fn/XeMZzt8M
-	 QbjnSeZfbqmzPBfBlckKIBZz7HH33yFKxnHr7FNZ5aZo4bm+GwBj4swQpFjfq6VUF8CCD
-	 wsKW0BSmcwSN/EIBg32lxj+eUHx5FeU2aprG5OZJhyJZbgkCz1tXBBPeO8wCBfUxo9Q==
+	t=1795813448;
+	b=0sH39pGHSS3lC1pJKvb73k6DKOlYuDcw/nz4UdVjDLIiMlonM4b/9MvZbV5RmKTBjgMI
+	 4kQtucVpXMD+rIV8742+SbazhWlmYXuxn9EFNN6mF2Bq2Ng4k7JH1tadh9sOPk6TNR2Ip
+	 pO74sQ0PVm5BpMvVDFoR8Sxb5J+Qf6VxjvN9NpH/WbqJivk+nQfpjSKlLZPDL46EgMcNk
+	 u3HHDsZFE4NvEFZum52TxWt/xKC1aaxQnBuI2HqrIsnXWge9deOJPyGnT8qluAZe5s9yg
+	 U0RAlk97/hBuuTxy27MNZJel9I8709lzNUuKopsvUcK2mkTu0ZF0d/KjS8S/z5A9OBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795802878;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=5y3gX47aL+a5ECOhXR31llFpbolTM1SdG6tal4/GfNY=;
-	b=UKQ3pmAV7wwA2ShbduszwBKPA8InkOFLKeArQwn0QDPrc70eaLu3Ye2XxSdq2Oua2q3y
-	 /jCQsrzgrWHBjzTo8G9x6o7yVzUzWEaVhNZ8ECfx9AlxKnOZg1lGndpfj3VhXdpfLLa2j
-	 DX5zQMfmOjLhGPa9F8proqkIJsU9zAf8Tygf2vDCqJdqLMKI34O9dMXMas8wz+Hj56V/l
-	 GnJCfY7G5BjXYOx0VaAPGJ7QsSNl0UaF/8PHCzBRx+VGDrc53NQ8CTTPGuhfae7BPBKRM
-	 BF6bkuBqY/5nyBeVQbgLjaOirrXVUuo364u9hihnGWfwJGFTF4b7cxyryZ29juqKyQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795813448;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
+	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=GAoq+RcQ0Lw22y6awH5Xbvi9EvBxYPh9wHpeY9E3FxI=;
+	b=aR9hT3h6qgI/qqILyY4sO2tkw9DQCafefd3wlpPcDjvQ2aegtBbAe/S3+S9AmQ5EevC2
+	 AfVrpWdUnSw07Oxdl3aokkwcL51YDd9tzsnXQzr15iz1qokDp+AYhuiQmS20Vo5Sg7XDs
+	 UokjvKBKzLMacOc835/vzsVXc+v8nBErkNmwP3APilfkkiP4XQwtfSuWrYzVSPgwtxty1
+	 LDZEcOu7E1DNzFGu4v0QEa7Pj0loQZkufhImig4fbHtd6vi6JWmN/hBR496uuPQJsXwZ2
+	 OLRqIO2n9AhLCc/QvB/+2utqKLJfVBEgSPnnXCc/fImSlM4J1F390N2NGrdw5E+B+tg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SXS9hp8R;
+	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=NiW4+rWe;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB83606A326
-	for <linux-next@vger.kernel.org>; Fri, 27 Nov 2026 18:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C3A606A31C;
+	Fri, 27 Nov 2026 21:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SXS9hp8R
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3841F00897;
-	Fri, 27 Nov 2026 18:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795802877;
-	bh=5y3gX47aL+a5ECOhXR31llFpbolTM1SdG6tal4/GfNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SXS9hp8REsinxtrq74vBhzocfJETxiY6fbEUdjF+c0ajw4aFsaLZ6XlNBjBU4pITh
-	 mhH9FqAdsyO8J02fHoWM+1JqIO4DRhJrN0Z4S8JNDGRzFR/9wfocKZbL+RYixrBq42
-	 WhnV8P6VgkNyJFleKUIllhQQ3k3U62K+9zOP0RNFbNDLeO3/8+0+5RvSQiIWZKb/bV
-	 gn+EEHSnO30JlnDRiVipE1F3vy8/pjTKBMC77tEyhPHaIGzjAaMHwwNPK2tM/uZGMl
-	 4ExHfKPzoBSLZgHrsxYbUZRNWp3UAQB14PHQZK9mBk/RLxNVtJ62oeLdLgTzw0SdrR
-	 hjRZ3fSsh0rrg==
-Received: by traversing.sirena.org.uk (Postfix, from userid 1000)
-	id 13DB03475F42; Fri, 27 Nov 2026 18:07:54 +0000 (GMT)
-Date: Fri, 27 Nov 2026 18:07:54 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Magnus Lindholm <linmag7@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Matt Turner <mattst88@gmail.com>
-Subject: Re: linux-next: rebase of alpha-lindholm for-next
-Message-ID: <3e2a1072-7013-4655-b71c-18b03a685754@sirena.org.uk>
-References: <CA+=Fv5TFkNnRrYRfJUrnABEqyWtLrcGFgqHgWZP9yS05eM=P0A@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=NiW4+rWe
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9719D1F00898;
+	Fri, 27 Nov 2026 21:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1795813447;
+	bh=GAoq+RcQ0Lw22y6awH5Xbvi9EvBxYPh9wHpeY9E3FxI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=NiW4+rWe5FKOvFuS5i/sWpWIC14QYmqQsAmnHWhZP1YVkYKstuKxXNLvB82dQdwPC
+	 iqjxX24800k5rGzbu+ENQw/67Mjvr3oQTYop3E9qEzoNszhLgqWotuQiS/v8vvwY9D
+	 CbF2UbPyeYm8GylNmj0DQSVFCdtlKea8Wu1+oBLw=
+Date: Fri, 27 Nov 2026 13:04:07 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Hildenbrand <david@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+ Vlastimil Babka <vbabka@kernel.org>, Chad Aldreda <ca@modelmiser.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Lorenzo Stoakes
+ <ljs@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: linux-next: manual merge of the mm tree with the origin tree
+Message-Id: <20261127130407.a16eb8d76a635c13b024d234@linux-foundation.org>
+In-Reply-To: <awmTUV81zRGpj0Tu@sirena.org.uk>
+References: <awmTUV81zRGpj0Tu@sirena.org.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,38 +58,56 @@ List-Subscribe: <mailto:linux-next+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="avymtHNBNkRMLLlP"
-Content-Disposition: inline
-In-Reply-To: <CA+=Fv5TFkNnRrYRfJUrnABEqyWtLrcGFgqHgWZP9yS05eM=P0A@mail.gmail.com>
-X-Cookie: A watched clock never boils.
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 27 Nov 2026 14:27:29 +0000 Mark Brown <broonie@kernel.org> wrote:
 
---avymtHNBNkRMLLlP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi all,
+> 
+> Today's linux-next merge of the mm tree got a conflict in:
+> 
+>   drivers/ptp/ptp_vmclock.c
+> 
+> between commit:
+> 
+>   e6474ead54b8a ("ptp: vmclock: keep the device state until the last file is closed")
+> 
+> from the origin tree and commit:
+> 
+>   92cdcfbf70344 ("ptp: vmclock: convert mmap hook to mmap_prepare")
+> 
+> from the mm tree.
+> 
 
-On Fri, Nov 27, 2026 at 06:48:44PM +0100, Magnus Lindholm wrote:
+Yup, thanks.  I've resynced with upstream, hit the same thing and
+resolved it thusly:
 
-> I'll update alpha-lindholm, for-next branch, with a non-fast-forward push,
-> rebasing the Alpha queue onto Marek's stable
-> dma_alloc_coherent_node_api tag at 31f7e12d621b.
+static int vmclock_miscdev_mmap_prepare(struct vm_area_desc *desc)
+{
+	struct vmclock_file_state *fst = desc->file->private_data;
+	struct vmclock_state *st = fst->st;
 
-That's fine - you don't need to tell me about stuff like this, my
-scripts just fetch whatever you've pushed and try to merge it again
-=66rom fresh every time I build -next so it's all the same to me.
+	if (READ_ONCE(st->removed))
+		return -ENODEV;
 
---avymtHNBNkRMLLlP
-Content-Type: application/pgp-signature; name="signature.asc"
+	if (!vma_desc_test(desc, VMA_READ_BIT) ||
+	    vma_desc_test(desc, VMA_WRITE_BIT))
+		return -EROFS;
 
------BEGIN PGP SIGNATURE-----
+	/*
+	 * Restrict the read-only mapping so it cannot be upgraded to
+	 * writable later with mprotect().
+	 */
+	vma_desc_clear_flags(desc, VMA_MAYWRITE_BIT);
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCawnG+QAKCRAv73Ows9A4
-iQsWAQD7xCIipCGHIX/Hrcv7SbKb35D/egFd8Ue0KztzN2qY2gEApWtwdGj889zG
-SgwbIIgm22tDq7Re0BFyZ+q7SOMf7QE=
-=gLk4
------END PGP SIGNATURE-----
+	if (vma_desc_size(desc) != PAGE_SIZE || desc->pgoff)
+		return -EINVAL;
 
---avymtHNBNkRMLLlP--
+	mmap_action_ioremap_full(desc, st->res.start >> PAGE_SHIFT);
+	desc->action.error_override = -EAGAIN;
+
+	return 0;
+}
+
