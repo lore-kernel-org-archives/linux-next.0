@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795792241;
-	b=EAXpMtfXvBg40lpDtNnpxTpGaGTM9CisS+3oYdkVKDmoJK6mQectK8Vk6s/7ycqhrDpi
-	 YYp6psjqxVGuW/lvTBXNlvp+hkVqRYs0tUE5/6kYrLHxmTUxwjr5ZfTCe0bZWQLzkNP16
-	 nq1YDuyQRNFX21nBJlbED8HTHvuF8GqX98HkRRMhfP3/HrqYEmCYkxZvyOtRw9Cq1rrYs
-	 OkN2F2xBfeOgQ8MlBu4+5HxiVIC3U+rAFLaEK0Q4ylRaT71F+OXafHcRMwqknx/n6GH9b
-	 QdrHxjUrfvwvQYw/4PJtQAymgwLEqKdJTtPqy2bOcljvPL98UOnNf+ldWMkMLAbWPuA==
+	t=1795794917;
+	b=E+gQC7vaydTV1UTXeDo3xHmgmURLyHYbP5f0XOeZ3TqVreNRXcpOOEGSipGj8GeaNtvu
+	 3A6jggaDEModaaCToWmKdjnw6CJ6bCSZ/0AyHkDUYDCa0Je8zangtyeQq93V7a4YJPYMp
+	 VbSBopkjz5T/BpTHY+hixeNqL3uzRsMUM3Qpc/huEQVgk9PfTvcJwMpeYLFRV+n+HwPwd
+	 RbUGdnr2UOh+KzefpbP8lcoT0REOZqAtkwit9Kaa9TJI1gzXI+3SoAhqyT/AxDwSt1rMK
+	 5E3n+fw+xeGAX2opMHdXlXfwy2WDJuv5nXZQrtJWdcAqvXCz9Dv+SRDEhpvp9ebk9sw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795792241;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795794917;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=2opRClWIpnaCnIbsDa2oUR72bk4FL14QgBJPVF4gaGU=;
-	b=kOk1oLbdaFUkZsPJgYTVd725hwhYHsMRcuBC2zpsabyAd50TfECPMBYnNGNe0s2qGy/D
-	 2i/tSb8WzWpixQreMbmDuptWeA+7aKtSKdqyYuNM0taxlv/ynW9CmtmWIIDFlemMcPN9t
-	 fjY0MUSHlKu0D97EG40mozTuRYteAEcxbZUAPfiQXybeXpx3DM6+wkLDlf7FpexO+DIRo
-	 yIwmRMSrSyfjhNdnv8iaFWYSez+m0XY59Dg3kvD8s/rlfCtCfDVr77QrJBaL21RJH0I7X
-	 gBPhLIl92T+8VDiOPUFCZqfX1zGc1qsQ6MQGH5MXz5Pd2ALB4LtfCYSnqyq/3/s6ong==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=Wi3kzpbgKBsJchefNvbmN+6y+8qa0DUlqe2Frtdyp4o=;
+	b=jXhj7cM1qSE7WknU1tB0fLc7yaRef5BtldVq3L5Vjc5FfmG9GTF9PWlBMueOFNSsXB/b
+	 fQp7oqS7O4JFpcueHs8X5tA/XzVxbotRhqE4idBh0h0/uXlSVr8uj6IZH2AKFJ93h1Aal
+	 yQWEG4fVufu9oD5AwOA3YcpdleMlw9Azeda5Mg6dHM8+6mNIjNFlBAFl7dugQ5NctYLrU
+	 qorEggGeOygDuO0w+KM61mE5GEL8175xaCFx2tc2HZpVe46mnahvB6/A/QmWjGrFy3LYq
+	 scNNKoz8P3NKHXhVcklCyTiS4SRERSan6zfCULnsum3VeQS05l8kOM1nxG3Pcn7IZwg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fgNDK+Ib;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MyTIkzZC;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11311606A31E;
-	Fri, 27 Nov 2026 15:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49397606A31C;
+	Fri, 27 Nov 2026 15:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fgNDK+Ib
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 241CD1F008A0;
-	Fri, 27 Nov 2026 15:10:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MyTIkzZC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A631F000C1;
+	Fri, 27 Nov 2026 15:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795792240;
-	bh=2opRClWIpnaCnIbsDa2oUR72bk4FL14QgBJPVF4gaGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fgNDK+IblV5PtRJTf+ADCZOsoCvkcH6e5y3sZVYhLKFbVMNvBBSag9EIFx/g7h0GR
-	 H52uegR3VcIeHuEKfvTCDE4hTXox2ABCBWqlbj85DCIBsL0awyKiEeJCTY7LNpfZCV
-	 rbp86+CvzW0jF0JxSfmDmL5wQPmsVqnCL28tFQmpgYXNc1CbCGirUAQYnjj3WaSRoM
-	 PEDx1krHKElq4CwR9d4gnRvb6rN0PpJM71FP3w+1ib/zCmAwkwLa6sZLPWMJe4PCZv
-	 Z8moDSv0V0GJ+grqMYH4e78Vp2dBYuX0AaQFA2HhhaBz410U7H6cfG/3G7SDXxheIS
-	 0tYK6mw8dAMNQ==
-Date: Fri, 27 Nov 2026 15:10:36 +0000
+	s=k20260515; t=1795794917;
+	bh=Wi3kzpbgKBsJchefNvbmN+6y+8qa0DUlqe2Frtdyp4o=;
+	h=Date:From:To:Cc:Subject;
+	b=MyTIkzZCbFvX9fO0CRwdXI3fw2iMr7ZBM5u6HOsNqCSZPd5OdTLPzv45eHj0XDrRa
+	 BYsuAI3D4ba1lppGKnDN66fT2/DtjL+mslGMrPvmoJZz6fgORUGDt6gN9qy26nzI1/
+	 8q0Q8W0T9d7t0J+IgmnZeTRWjirAhSDG3nuS8XdyjFQI59Vs8oA0ObDLEFLr5EG68a
+	 oFhYtL5P5mMxPsxWsfyxEcuje/Z7ouaQDAzNrBw/j0zdFGfL7Pdw1VDEtvhHUsPeW/
+	 gqPV+j2XvoBKSCjnxV7RGTqAdueZ23pm3+q/X8+PJRggs7yb6LfDWCBVtXHkQUmcgg
+	 iDNmYtCkmGtow==
+Date: Fri, 27 Nov 2026 15:55:12 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Kees Cook <kees+treewide@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: Re: linux-next: manual merge of the leds-lj tree with the origin tree
-Message-ID: <c05653b5-c8bd-46ca-aaf5-281e8d74f1e6@sirena.org.uk>
-References: <awBqIVPvQaRJN-bU@sirena.org.uk>
- <20261127132946.GT38590@joneslee-macbookpro.roam.internal>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
+Message-ID: <awmn4OTEiDdqyi6t@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,45 +61,113 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JnnO/Klbq6BKFJDY"
+	protocol="application/pgp-signature"; boundary="Pa5uPlxAM9VD/AVg"
 Content-Disposition: inline
-In-Reply-To: <20261127132946.GT38590@joneslee-macbookpro.roam.internal>
-X-Cookie: Sank heaven for leetle curls.
 
 
---JnnO/Klbq6BKFJDY
+--Pa5uPlxAM9VD/AVg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 27, 2026 at 01:29:46PM +0000, Lee Jones wrote:
-> On Fri, 20 Nov 2026, Mark Brown wrote:
+Hi all,
 
-> >  +	leds = devm_kzalloc_objs(dev, *leds, num_leds);
-> > - 	if (!leds) {
-> > - 		ret = -ENOMEM;
-> > - 		goto put_device;
-> > - 	}
-> > + 	leds = devm_kcalloc(dev, num_leds, sizeof(*leds), GFP_KERNEL);
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-> Doesn't this now reallocate leds?
+  kernel/bpf/fixups.c
 
-Looks like it.  It'll go away if you merge up Linus' tree and stop
-getting these noisy commits, or if you send me a patch I can apply it as
-a fixup.
+between commit:
 
---JnnO/Klbq6BKFJDY
+  1879b5e505de9 ("bpf: Emit nospec after calls and atomics that write to th=
+e stack")
+
+=66rom the bpf tree and commit:
+
+  57fae4059380a ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/bpf/b=
+pf 7.4-rc1")
+
+=66rom the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc kernel/bpf/fixups.c
+index 8c3a17a05a4e1,7af8cb886f7d4..0000000000000
+--- a/kernel/bpf/fixups.c
++++ b/kernel/bpf/fixups.c
+@@@ -907,14 -1261,11 +1261,12 @@@ int bpf_convert_ctx_accesses(struct bpf
+  {
+  	struct bpf_subprog_info *subprogs =3D env->subprog_info;
+  	const struct bpf_verifier_ops *ops =3D env->ops;
+- 	int i, cnt, size, ctx_field_size, ret, delta =3D 0, epilogue_cnt =3D 0;
+- 	const int insn_cnt =3D env->prog->len;
++ 	int i, cnt, size, ctx_field_size, ret, epilogue_cnt =3D 0, first =3D 0;
+  	struct bpf_insn *epilogue_buf =3D env->epilogue_buf;
+  	struct bpf_insn *insn_buf =3D env->insn_buf;
+ +	bool nospec, nospec_next =3D false;
+  	struct bpf_insn *insn;
+  	u32 target_size, size_default, off;
+- 	struct bpf_prog *new_prog;
+  	enum bpf_access_type type;
+  	bool is_narrower_load;
+  	int epilogue_idx =3D 0;
+@@@ -995,13 -1336,10 +1337,15 @@@
+  		enum bpf_reg_type ptr_type;
+  		u8 mode;
+ =20
++ 		insn =3D &env->prog->insnsi[i];
++=20
+ -		if (env->insn_aux_data[i].nospec) {
+ -			WARN_ON_ONCE(env->insn_aux_data[i].alu_state);
+ +		/* A call or an atomic gets its nospec in front of the next insn */
+- 		nospec =3D env->insn_aux_data[i + delta].nospec;
+- 		WARN_ON_ONCE(nospec && env->insn_aux_data[i + delta].alu_state);
+++		nospec =3D env->insn_aux_data[i].nospec;
+++		WARN_ON_ONCE(nospec && env->insn_aux_data[i].alu_state);
+ +		nospec |=3D nospec_next;
+- 		nospec_next =3D env->insn_aux_data[i + delta].nospec_result;
+++		nospec_next =3D env->insn_aux_data[i].nospec_result;
+ +
+ +		if (nospec) {
+  			struct bpf_insn *patch =3D insn_buf;
+ =20
+  			*patch++ =3D BPF_ST_NOSPEC();
+@@@ -1101,14 -1423,9 +1429,10 @@@
+  			*patch++ =3D *insn;
+  			*patch++ =3D BPF_ST_NOSPEC();
+  			cnt =3D patch - insn_buf;
+- 			new_prog =3D bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
+- 			if (!new_prog)
+- 				return -ENOMEM;
+-=20
+- 			delta    +=3D cnt - 1;
+- 			env->prog =3D new_prog;
+- 			insn      =3D new_prog->insnsi + i + delta;
++ 			insn =3D bpf_patch_list_add(env, i, insn_buf, cnt);
++ 			if (IS_ERR(insn))
++ 				return PTR_ERR(insn);
+ +			nospec_next =3D false;
+  			continue;
+  		}
+ =20
+
+--Pa5uPlxAM9VD/AVg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsJnWsACgkQJNaLcl1U
-h9Br1gf+J6HyoMjYTgXOXJzESahjjuFE2SQi5QoNWNSoN4AD0cCiXcSHQ2CQi7hR
-8otD2BRrJ4yVkCfovXcV3LNUqvX+wRHVSKRnP3+OZqISYg29cwsnqkYg2a3x5vLG
-oY8JLfU32QEbrV6mRIondoPTDRVibbWwub2zRPH0HS20HaAPnXKCJFF2z7cdsLH2
-8HL8AHc4afTv9ktsd9hO0AmHfN5PzfSQ9cps6gRJbXLvSc0jOfim8NzLWqJdktr4
-IzZR2btJhNDITm7SYrt7Su05p6ayKtmRRssswRCT7dLNdqcQZSrcMvA98III7EqF
-imAj+hmaETKPPjFHhixtkjIl0WJGBg==
-=vPxB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsJp98ACgkQJNaLcl1U
+h9AGVgf9FXfiw6bENsBziiPehzm8ZRaG/+PetmJ73yAjIJ6LDVDHDoNtcWO7Rjog
+vCDHI/Uo33ZJv+dcMRkfmP5FYgzgdR01LZX3gisvRRwCDwd58x+5h4vuQZ88ARM0
+k1HBSHiEaGyNrLzuN1cXe6osTIyiIO4HR+7T8G4iOvhsVC8Q9AfHaLUAR1eQ4/QJ
+mNEtQ1ADyHHxUIhfkLKhK4l8/BtHOoR9l5Z/gWBpXHg5occRC8wsXi9P6hrQArtZ
+3ZxPi4XIqEw2KT8tbWLNyLMND8C6U95/8YFF0Up2hcv7S9enw2gdUq19Aae/rrOH
+NX/D39qZ3husYQbVkZHIgW/OCiQ5Jg==
+=Kkib
 -----END PGP SIGNATURE-----
 
---JnnO/Klbq6BKFJDY--
+--Pa5uPlxAM9VD/AVg--
