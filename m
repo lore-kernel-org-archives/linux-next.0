@@ -1,56 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795794944;
-	b=eP7zoCyBV/hN914bsdw5isbf1kOp0g4epKVTvrlrB4bnylYBde0ZWWifCb9Cu6epQSJK
-	 /7DfRIjSrNWD0jTOWOf3wIQ3vVOCINUuICQLh6NAMPMvKOi9pPtzoV3zIb6OSGXkJFNym
-	 XQt8C6bcPUDl+jLjzca1G1XYiZ5BWgTAYRC0KWwyuIylB5+UIGRi4ADpuQAGw9ADIE4E7
-	 1+zB1ZCnI1hKBQY3NrRA3wDmSt6fthxqflzoek+T7Q5KK80grVZr5KpQKXEJWlSeg+8ro
-	 kX/lb0SKnryYxUJQvsfh46H81I9/b8nJz6YJ6sWZOakswXAclWyuiXeZ8DLzV6JhLVw==
+	t=1795794972;
+	b=Y/A4Y3tkIFBL8w/qYMNa6ltlbrTTfu50no5rMFBoAOWiUQSm7fhQTZXV+V2DfKDYkzdj
+	 YmwlMSMIMITMvjJPlBkhylzM+KL0wa6TqtTOorvYVCsRwqRohUrlsRQV/9OjREFvCXqtJ
+	 XHT2v4Ea60+61kUN0JqWNpD/rQ3q20+BU3kZEFJJuTV2NJFYwp9VrqhIz906m8mTh9riZ
+	 kUGWzDQ2q2SEkvrMPlRK0dFHsCvw5PkqAD7N/0JCJ8JAXHzfT1TdDghZWHvU07lBOXlXp
+	 O+j09fVoGFzLB5X5I0ppQgSXp6wH8FxVTkjlsF/QyO4PoWT+85ZGTrYU+TCSbkyHVXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795794944;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795794972;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 MIME-Version:Content-Type:Content-Disposition;
-	bh=1pqLOfrF4A8gzlm1vcy72kMFFObqAYDDR49GStzDPdE=;
-	b=NysZnNLp7sOfR97QTSZg8O/8TFPiMU9g8lW7wrcWGFbFG/vMwu1nrszSnJGf9CVzY7O1
-	 Jax3y6dP5GtFMk+Wm/W16R5EqRzM+jN1tEihGE1lgsv1GiV1Vkils+4kKHBck2vA4uOj/
-	 j0YQDcyLZGtmmtSTcITNtBz028eebdizkJQbmZXsAGUR69AQQYTaINIbGLsI3rVC53jWd
-	 oO3O7F9dvZ+sI9HHI0TWwKuwG4i3c2YaVGCZzPn+3i+kptQkdIKp5CRgP46O2VNhCKX99
-	 4D6UEgUsgA5AfusHH6DuaAQjyYjGeLCyUOEXLvxoaaX8ImxBToketnBhqoqhnYcNp4w==
+	bh=uFMt57dgI0b7tEErsdqvzNRDZ6jXvxkK6TXtTRipx6c=;
+	b=gQ8YSjoCV7xh5ke5VWoLccfC5ahDzV4Wnuhzk2vjEHRtlVMYuEAuMelOvnJJmI9hZ9wb
+	 BXD2Z776+RR4NfY6pCM33G3LMdiw2DMKh9NksyiTE4hiqJA/CCmYro/oV8sH99dtjRBm6
+	 qdDTRAI92za/vkX13x3YCrHW2Q3C/PiwsFpCcssXnfdrHthciqssCjQgpTTmwnIU53OEK
+	 qy5cjmmyGmgE1CLNUWh7lrvcAT6sxPbD0bEOkUHYgJlkTSrmQ36WpCdBA0Nx7sKH2hCj7
+	 OX0nQIc6Ck2h+EnqkbgQGbYIuHXVspYnof4lRHpemnHZ8c3RCHmjuK3S7aZXqD2lwxA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=esHtmYzR;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="l///ArVr";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0A606A6B2;
-	Fri, 27 Nov 2026 15:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F175E606A327;
+	Fri, 27 Nov 2026 15:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=esHtmYzR
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C2E21F00935;
-	Fri, 27 Nov 2026 15:55:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l///ArVr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C371A1F00897;
+	Fri, 27 Nov 2026 15:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795794944;
-	bh=1pqLOfrF4A8gzlm1vcy72kMFFObqAYDDR49GStzDPdE=;
+	s=k20260515; t=1795794971;
+	bh=uFMt57dgI0b7tEErsdqvzNRDZ6jXvxkK6TXtTRipx6c=;
 	h=Date:From:To:Cc:Subject;
-	b=esHtmYzR9mOJwSZWNxi3fvy2fk8vFZ/W7wPy8e6WxiJNpFT087gCImuyRzyWEfmzB
-	 iE0Jin7VyV6M5L2bPXqB8GTvsi2RJPOJPfBIYP16izzSCDa+TCFEmwU4Lmz0BMk6V2
-	 emd08Qk2pHrlnjPCN8rrlMqWbpxNMHaAAFnEJFHr1jAtjjIAAb5WK4OKOr4nt77PvV
-	 XK9D8hzGUHEbRi9o+Rrg2kNe65AvumeU33FUU1XQpn3jCvpOz/pWF229f8VfvfeBNw
-	 Y5KKeFA89EP/GyF9iN/9l+dEK+oJyhyYiXGTJr6IhHEfEzSMnHUvxGPcY9y89qRydt
-	 /TUxXp2qU5PfQ==
-Date: Fri, 27 Nov 2026 15:55:39 +0000
+	b=l///ArVrO7VLDlYd946LgyRrBQ5kWA376aUgKXJ2cfMyDzQmsbNZyCEd7FLaTS+tD
+	 K0Qzls9MdFM71oM8w4PXF/lFr8WSKui7Eji+Q4s58JgR/UBf8p/hORDb8lHXsOG9vI
+	 mcxEUik5dbTH/6lGwFZsSlD4ltTiaymuJjwROYLY522CsePDYyjZ5Hf976/SHhqOsK
+	 6DVCnxWM1DoduJ1PkRk0OmgvCKu77NygTuwwlFkx2iPSzW1sbbqxDJ7iupRQgC7F+t
+	 8EGlf/MIPix5EfFxRxRoom0Q+liNcpAsSskxn8aejUB2CgGhlpOxGvxFPsjojEj7CE
+	 WeKr9VrTQHIOw==
+Date: Fri, 27 Nov 2026 15:56:08 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <awmn-8pxvHphS_xZ@sirena.org.uk>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Nov 27
+Message-ID: <awmoGBFrT_hKxf8K@sirena.org.uk>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -61,231 +55,79 @@ List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/PoCzhzasBjJC5sz"
+	protocol="application/pgp-signature"; boundary="AgEkFRzFe5UuAtDG"
 Content-Disposition: inline
 
 
---/PoCzhzasBjJC5sz
+--AgEkFRzFe5UuAtDG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+Changes since 20261126:
 
-  kernel/bpf/verifier.c
+The origin tree lost it's test failure.
 
-between commit:
+The vfs-brauner tree acquired a conflict with the fuse tree.
 
-  02d3452bdd80c ("bpf: Set the run context for async callbacks")
+The mm tree acquired a conflict with the origin tree.
 
-=66rom the bpf tree and commit:
+The hwmon tree acquired a conflict with the hwmon-fixes tree.
 
-  d83c595d9480e ("bpf: Put a barrier where no mask fits")
+The bpf-next tree acquired multiple conflicts with the bpf tree.
 
-=66rom the bpf-next tree.
+The leds-lj tree acquired multiple conflicts with the origin tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+The gpio-brgl tree acquired a conflict with the gpio-brgl-fixes tree.
 
-diff --cc kernel/bpf/verifier.c
-index 85fec1f389277,b5dda95c286f7..0000000000000
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@@ -11493,13 -11472,9 +11477,15 @@@ static int push_callback_call(struct bp
-  	if (bpf_is_async_callback_calling_insn(insn)) {
-  		struct bpf_verifier_state *async_cb;
- =20
-+ 		if (state->speculative)
-+ 			return 0;
-  		/* there is no real recursion here. timer and workqueue callbacks are a=
-sync */
- +		/* there is no cgroup to take the storage from */
- +		if (env->prog->aux->cgroup_storage[BPF_CGROUP_STORAGE_SHARED] ||
- +		    env->prog->aux->cgroup_storage[BPF_CGROUP_STORAGE_PERCPU]) {
- +			verbose(env, "async callback in a program with cgroup storage\n");
- +			return -EINVAL;
- +		}
-  		env->subprog_info[subprog].is_async_cb =3D true;
-  		async_cb =3D push_async_cb(env, env->subprog_info[subprog].start,
-  					 insn_idx, subprog,
-@@@ -20834,46 -21913,109 +21938,109 @@@ static int do_check_block(struct bp=
-f_ve
-  			env->insn_idx++;
-  		}
- =20
-- 		if (state->speculative && insn_aux->nospec_result) {
-- 			/* If we are on a path that performed a jump-op, this
-- 			 * may skip a nospec patched-in after the jump. This can
-- 			 * currently never happen because nospec_result is only
-- 			 * used for the write-ops
-- 			 * `*(size*)(dst_reg+off)=3Dsrc_reg|imm32` and helper
-- 			 * calls. These must never skip the following insn
-- 			 * (i.e., bpf_insn_successors()'s opcode_info.can_jump
-- 			 * is false). Still, add a warning to document this in
-- 			 * case nospec_result is used elsewhere in the future.
-- 			 *
-- 			 * All non-branch instructions have a single
-- 			 * fall-through edge. For these, nospec_result should
-- 			 * already work.
-- 			 */
-- 			if (verifier_bug_if((BPF_CLASS(insn->code) =3D=3D BPF_JMP ||
-- 					     BPF_CLASS(insn->code) =3D=3D BPF_JMP32) &&
-- 					    BPF_OP(insn->code) !=3D BPF_CALL, env,
-- 					    "speculation barrier after jump instruction may not have the des=
-ired effect"))
-- 				return -EFAULT;
- -		/* only a store that stays gets it, see bpf_convert_ctx_accesses() */
-++		/* End speculation at a retained store with a trailing barrier. */
-+ 		if (state->speculative && insn_aux->nospec_result && !insn_aux->fastcal=
-l_pattern &&
-+ 		    bpf_is_mem_insn(insn) && BPF_MODE(insn->code) =3D=3D BPF_MEM) {
-  process_bpf_exit:
-  			account_current_path(env);
-- 			mark_verifier_state_scratched(env);
-- 			err =3D bpf_update_branch_counts(env, env->cur_state);
-- 			if (err)
-- 				return err;
-- 			err =3D pop_stack(env, &prev_insn_idx, &env->insn_idx,
-- 					pop_log);
-- 			if (err < 0) {
-- 				if (err !=3D -ENOENT)
-- 					return err;
-- 				break;
-- 			} else {
-- 				do_print_state =3D true;
-- 				continue;
-- 			}
-+ 			bpf_free_verifier_state(env, state, false);
-+ 			memset(state, 0, sizeof(*state));
-+ 			return flow_drain(env);
-+ 		}
-+=20
-+ 		/* if the insn pushed a part, the current state is a part too */
-+ 		for (elem =3D env->head; elem; elem =3D elem->next)
-+ 			again |=3D elem->again;
-+ 		err =3D flow_drain(env);
-+ 		if (err)
-+ 			return err;
-+=20
-+ 		/* the parts of a state meet at the next insn */
-+ 		if (env->insn_idx < insn_cnt &&
-+ 		    (again || bpf_flow_is_bb_start(env, env->insn_idx))) {
-+ 			account_current_path(env);
-+ 			return bpf_flow_deliver(env, state, env->insn_idx, prev_insn_idx, fals=
-e);
-  		}
-  	}
-+ }
- =20
-- 	return 0;
-+ /* What the pass assumed about loops does not hold, see do_check_all() */
-+ static bool pass_needs_restart(struct bpf_verifier_env *env)
-+ {
-+ 	return (env->restart && bpf_flow_loops_lost_bound(env)) || env->guards_l=
-ate;
-+ }
-+=20
-+ /*
-+  * The loops that keep the current state apart pay for the work since the=
- last state, but not
-+  * a loop that the state enters. A trip that is peeled on the budget of a=
- loop belongs to that
-+  * loop. Such trips can use up the budget of an inner loop.
-+  */
-+ static void charge_loops(struct bpf_verifier_env *env, u64 cost)
-+ {
-+ 	const struct bpf_verifier_state *st =3D env->cur_state;
-+ 	const struct loop_stack_entry *e;
-+ 	struct bpf_loop *starved_loop =3D NULL;
-+ 	int fr, i;
-+=20
-+ 	for (fr =3D st->curframe; env->pass && fr >=3D 0; fr--) {
-+ 		for (i =3D st->frame[fr]->loop_stack_cnt - 1; i >=3D 0; i--) {
-+ 			e =3D &st->frame[fr]->loop_stack[i];
-+ 			if ((e->peeled || e->loop->disjoint_apart) &&
-+ 			    (e->trip || e->loop->header !=3D st->insn_idx))
-+ 				e->loop->this_pass.cost +=3D cost;
-+ 			if (e->peeled && e->trip >=3D e->loop->peel_cnt) {
-+ 				if (starved_loop && e->loop->partitioned)
-+ 					starved_loop->this_pass.starved =3D
-+ 						e->loop->this_pass.starves =3D true;
-+ 				return;
-+ 			}
-+ 			if (e->loop->partitioned && !bpf_loop_has_budget(e->loop))
-+ 				starved_loop =3D e->loop;
-+ 		}
-+ 	}
-+ }
-+=20
-+ static int do_check(struct bpf_verifier_env *env)
-+ {
-+ 	bool level2 =3D env->log.level & BPF_LOG_LEVEL2;
-+ 	u64 log_pos =3D env->log.end_pos, diag_pos =3D 0;
-+ 	u64 cost =3D env->cost;
-+ 	int prev_insn_idx, err;
-+=20
-+ 	err =3D bpf_flow_deliver(env, env->cur_state, env->insn_idx, -1, false);
-+ 	while (!err && !(env->path_sensitive && env->cost >=3D env->failing_path=
-_max_cost)) {
-+ 		err =3D bpf_flow_next(env, &prev_insn_idx, &log_pos, &diag_pos);
-+ 		/* at the limit the work on equations is not complete, such a pass prov=
-es nothing */
-+ 		if (err =3D=3D -ENOENT)
-+ 			return bpf_check_limits(env);
-+ 		if (err)
-+ 			break;
-+ 		charge_loops(env, env->cost - cost);
-+ 		cost =3D env->cost;
-+ 		/* A pass logs one basic block at a time. A path-sensitive run logs a f=
-ull path. */
-+ 		bpf_diag_event_log_restore(env, diag_pos);
-+ 		if (!level2) {
-+ 			bpf_vlog_reset(&env->log, log_pos);
-+ 			env->prev_linfo =3D NULL;
-+ 		}
-+ 		err =3D do_check_block(env, prev_insn_idx);
-+ 		if (env->bug)
-+ 			return -EFAULT;
-+ 		/* a pass had no error at this insn, possibly with a state that has mor=
-e values */
-+ 		if (err && env->path_sensitive && is_error_of_state(env, err) &&
-+ 		    (env->cur_state->infeasible || env->cur_state->equations.infeasible=
- ||
-+ 		     !bpf_failing_path_may_end_at(env, env->insn_idx))) {
-+ 			bpf_free_verifier_state(env, env->cur_state, false);
-+ 			memset(env->cur_state, 0, sizeof(*env->cur_state));
-+ 			free_pushed_states(env);
-+ 			err =3D 0;
-+ 		}
-+ 	}
-+ 	/* bpf_flow_edge_unproven() noted it with the state that failed */
-+ 	if (err && !bpf_insn_is_unproven(env))
-+ 		note_error(env, err);
-+ 	env->run_over_budget |=3D !err;
-+ 	return err;
-  }
- =20
-  static int find_btf_percpu_datasec(struct btf *btf)
+Non-merge commits (relative to Linus' tree): 11208
 
---/PoCzhzasBjJC5sz
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at https://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm,
+an arm64 build of various kselftests, a KUnit build and run on arm64,
+and a native build of tools/perf.  After the final fixups (if any), I do
+an x86_64 modules_install followed by builds for x86_64 allnoconfig,
+arm64 allyesconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig and pseries_le_defconfig and i386, s390, sparc and
+sparc64 defconfig and htmldocs.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 438 trees (counting Linus' and 135 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Paul Gortmaker for triage and bug fixes.
+
+--AgEkFRzFe5UuAtDG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsJp/oACgkQJNaLcl1U
-h9Cgdgf/Sd/j3w9NuY65xVxvzrMsCU66equD86VLI+q8OEoqjjKeZqAUhk1XsA6z
-YVMejQHO6276bzqcDELizjYRaUKr2r4erE8MEWtUskbVi0HbLM24swha+CLRURr2
-aZTjo0mk76zMP/7A6tS90ceYH+cgLuSLcQhj4Cuk24FpmFOfVtHgtKi7n6MLruTM
-AgZxI/3mBIDk2fSsl1+qW9jzs9cpVCxZ+eu/Zrz/UNrZ5gzi2hPKxwfktU0N+Ny5
-L0M0US3TYcet8D1jlxe8XAEQweYcQzjsETTf+qH6X5pLrZ4fdD9BTOqtn+d8NUgM
-CpZB9U7mgugBUcHIHol+iHxhKYkNtQ==
-=LfCN
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsJqBcACgkQJNaLcl1U
+h9AaZAf+M/LRENEn8SRNW71rUgJaIDoOeuhUbs38pSPJzWDINKhyp2IcC7zRafES
+L66NJJXuUyMdRVcvYlR2V2HfpnRb9+orOvJxfRhBDFycLIkVRMjp6SE3jqAIWb5b
+5QcZMA1xm0dNmEJpaGocT7CTTdxV8+zNLeldOSKx9UafNf+6lDZrUt0kPFz5P9sU
+sl9rjNPF/G2P+lcozGf4OlcrQhKRhFAYn2sVBqk/8dqpGbuY+aH/AX+2/B46kVzf
+8Wi4819ZbaFGqDeNLgF9VMFkwpBvl4QAz85yQarUipCi/FOdOudUbWjSi261pWNT
+QWNF+c7NdRLvBz8Dh8H4fZYBmAcYXA==
+=Yx16
 -----END PGP SIGNATURE-----
 
---/PoCzhzasBjJC5sz--
+--AgEkFRzFe5UuAtDG--
