@@ -1,85 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795833044;
-	b=fa2tgAnvFLJo94k0mQYQZP1q7Oxx6KGD6RDBhSTztAf/ELIMjUkHDBS7Zp4nH3AFzyaA
-	 dQKHrBF4u2ufnlGyV8HKWRcVwbT1QwQQO3Rrk6DVx47Y1QiWUe2skug+CmJm1jocMfz9D
-	 6PpQn5QdZ83GCvu8xyvyeYZKNcTTu4PXt+Cohr91p2MVHI5U06/KlKA8MDZQxV9HZAg1j
-	 GPqLqPKge82TP6fWZtlTusqiKeDxP3O3mxVRxlqKausRHYYq2BNpx/FYnmDkz7FVjSBWF
-	 4ZWNUGbZzowo4PxYKF+0uWbntcdFXAdRr5L4JgKYZGqWpxSgLORDk3DFDOOGvqXEmzg==
+	t=1795875450;
+	b=ikKJLvbZ1qXDn0n1fgrTlgUKVlkvxTboDAirpTXL3qRAU+Ookpan8YWe3RZpfEPOhDmF
+	 FkG7s78PCgdbJDr1M9dBPE4Khuk++8p2CQya5xxvnmQ4xkx0A3TzI0MnEE9Yys4bikRqh
+	 ZzbZhSQUGcoI1GAUNhE+PzD01Yl+scq8/t2vvugnSdl8Ft2Q+H8u3bMhCfYbAJZIBA/Iy
+	 RcjCKu68Zu6+sl/8HaE4787FbEYpXCZe54nJPIlAly071FUYAgEKR5njq+ZiQuxSAUvtL
+	 pec0242iyKdZ7skVZko1v05wdJr/KFdaZ1O8YBgz9RQEInQcHeslSVbFexW4hoHyRrw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795833044;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Content-Type:
-	 MIME-Version:Content-Transfer-Encoding:Subject:From:To:Cc:Reply-To:
-	 Date:Message-ID;
-	bh=74RJYhBrRJuq1TZuuE7otz7V81+r5+YHTQruOliiQKY=;
-	b=hwMjFZ8YbDe6I/lTokDtOHqf9uDQcsDX0T/veuoV32e5Bdei3TzVH5uxbdmxZLN/jw7x
-	 VUSHFKJbpFqcMOHYxXHHA+nSqJUauNVx1i9mK8aRH8N4PHAxkEBMeScg2Vjd7sOHoht98
-	 p25FETEvlc8IFSe/+B988BK5lk5DgHPb5Y1BDUZgSmm/B7pS+Vwl9NAOZsDHU2ma69UMA
-	 pHEoyCIcsESPwFo1N0jF0vK5ydXG1QRF+4AzpQLrIIeSxBbC3Z8pBsONjrtGFCyJWdYD5
-	 NGWhOfKgT5+KWW1wk0P3PMsvHWyAj21XzwM3o67IcJHcWdrTBgRm+VCsTuu2nnpx+6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795875450;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=2ilhmvCAVbp/eUrqzVbl3GUCjgPoYhCWQ1J7BbOXpiw=;
+	b=JIWzAmUZygCKUDjcMwubYwKCBnrKpzO/abD8b7knRlEzSp2hiPeYEPUv3hRNJpEogqL4
+	 nVb1zJYaCyuPL6QGanAptSwcgQ7k47XT0MX2KpYh1/yKDXP15vSIhkAK0nGfP9xuqstVs
+	 SRazuUdOgFWlE+AhTM1KIHXKXhNmMzojTmPUtJWvjYIGB5h9S++ezwoLkquePiMBLnYcN
+	 9BAnJHii96F75VPf5gIq0xzw+Q8GD3NXzgZ1Dd5k2uJdvKANAB0gNySFrmdHaioU8o638
+	 MLs89qInrXYAg9uOfGHm2QyonUgmPWBKYiC7jDEIDPjLNy86ev8RAwxxgG6PBdgKc0Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kernelci.org;
-	spf=pass smtp.mailfrom=kernelci.org;
-	dkim=pass header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=SbFHZPdV;
-	arc=none smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Z6/KP+IL";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67903606A31C
-	for <linux-next@vger.kernel.org>; Sat, 28 Nov 2026 02:30:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67903606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernelci.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ABC606A324
+	for <linux-next@vger.kernel.org>; Sat, 28 Nov 2026 14:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernelci.org header.i=@kernelci.org header.a=rsa-sha256 header.s=google header.b=SbFHZPdV
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-3282db206d3so6977674eec.0
-        for <linux-next@vger.kernel.org>; Fri, 27 Nov 2026 18:30:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1795833042; x=1796437842; darn=vger.kernel.org;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=74RJYhBrRJuq1TZuuE7otz7V81+r5+YHTQruOliiQKY=;
-        b=SbFHZPdVUXAFxSbTfpRtw/3OE1cPPcW7Tep4aG5jmu4nwjkzd3/Oqj6HQzTKWOYTbi
-         i1TZMByZYVbN1WfPNehW0gujMe23MLfe4efjeL7qkXK9+HwhmPXrJaCK76UFYzbmYyCR
-         uVxPdMXsuqzq3ejXOer+I4XVuAa89SXyrophn0tTQaMibVlyVKsjdKgKVIvJYZ1dqSCd
-         OtuqFOCgeKXTM7WU/byICpXj4Wxyjr6UKctE3i0KBQeSI5J/XSG3hqpiSQYjSysybJgf
-         qdAnoHjx7DKBQGM3xSRPvfZUUupb68cAE04USLr84ph9hvwr+QVSk+7+ophd0FrWAGIp
-         IRKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795833042; x=1796437842;
-        h=message-id:date:reply-to:cc:to:from:subject
-         :content-transfer-encoding:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=74RJYhBrRJuq1TZuuE7otz7V81+r5+YHTQruOliiQKY=;
-        b=F9oW8LF+79axmDe0teet8Kk7cSmG4vP3o8wnefjtzIGnEzK9xJRUpOsCVkBYUMdjTo
-         2adnS6N31aTGQyAhAb0/vyvKpcT6lbV3+iLgEnnXXc0e9Gz2sFufWCqqIEdNtq8iGFYk
-         ScXaM+ItQQq0VJOmEuudbYhcCrzlvluOE63enh4sGhrSklaiD/EoJXfkkYRcQSOFo5Zt
-         mmtznP2m0JTtuuh6enUH5yXWHvNFF+LK+0zR7NvBnz7nf1KMonoGSj9uvefMkUJs3rij
-         GDiEg4J7QTirX7MPPHrzQJvzJ3dFW6fBhKVZ4Vj4aUB0gyRSg532bH9+yK2UpJ+pTuPh
-         WJbg==
-X-Gm-Message-State: APuU4Z9k9HzjtwqxnYrnGY9SUJwnG+yd4Rq5f0hJGOKGN6atH2qcHfaC
-	p0b+4CIzcdphx+ZkBzTgoiArNBycbO39lrYcbU0Kv2XgAmuP6UXVPdobwEJeGjj6vU8efuxfMql
-	eGiKK
-X-Gm-Gg: AZFdTZeFtHjouoRQq8qfOno58RPYtoX5lzUouETe+hqfT9O85BCYAvJwkgdaCXsTdc5
-	awHoZkKtIEIc7e6DVnr5zfGI0AWLRlNSRSd63+5Dq32DqxFosxj5HAqrky8PfOFI/o7fEhOvniH
-	etKCxjwMy+1lufJMRkDeYyC1lUX03kAXvq8NZEyTbz0foqOdgxbfnW6vOpcixi5VcTtaEOYRvy/
-	zk6u0gAGd8EzP6vgcN32zbbCPbvBGudFc4Fj7hpEjKPh7RN2Rn2nHwfhPWrF91qcDLIXtz1MOl3
-	NonQWhyNdcEgqIouS4AEpXwNMGuZytiVzjyOwi8Ud5PeMypCSoEuW88bVlg22kxWzyU2C8rMN2X
-	iZJNm8zPOL/tlfhic93sWr4X1UTEEU5Fuk+pb0wVcf+W75qf8drsiDbbMri9l5RN1OnxJ1M86uv
-	taEOrT1LdnvMH2UT1kMxNCegd3RfcU+Bd3KqrEC5nl+nuWke6KSypKPuRat9KpWEyEsosK6/m2/
-	cZYVNVNKsdEGNPeSRP+wk3S30qwqvx/CGR/is+SGk5SHS/GvIHWStlg1JBeAEbXfwehm2GCZb5B
-	gGmoaHM2pn3uhhmzJ+QPaQ==
-X-Received: by 2002:a05:7300:f498:b0:386:a716:916b with SMTP id 5a478bee46e88-386a7169544mr20226008eec.31.1795833042368;
-        Fri, 27 Nov 2026 18:30:42 -0800 (PST)
-Received: from 52d83ede7c60 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385672c6f31sm75205835eec.15.2026.11.27.18.30.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 18:30:41 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z6/KP+IL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB811F000C1;
+	Sat, 28 Nov 2026 14:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795875449;
+	bh=2ilhmvCAVbp/eUrqzVbl3GUCjgPoYhCWQ1J7BbOXpiw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Z6/KP+ILYSlsxoesOa6nrdnK/oLz4fEDZV1hg1k1frccuXB/RW+vMQMomBjiqACRL
+	 h4K2yxfqtavLQvdk0vLa2uj1i0t4iToBHMXJBobTP/inruHZqwQ9OY93wXU+GK7OXT
+	 DnIXGyELEzoRmkR4SCnPhMjwzofaLTNAgYSQyJACb4LOGZGVBVxbMbCzZxVkD6M6aL
+	 lszpGUEc3RXrOdrRVyek10cQVN6CdGf7Q3MKG5J01MwrHa54xD1/vxEgxwvB/gIAxT
+	 Ric4sc3Eos1FkVDgOtIxyH1pg0ScRLw6tnhI5M/lJSn4qxFUNi9rJOD+4D4DkFk22L
+	 kuygJwZa5XdJQ==
+Date: Sat, 28 Nov 2026 14:17:25 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-next@vger.kernel.org, Alexey Kardashevskiy <aik@amd.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Subject: Re: Please add tsm to linux-next
+Message-ID: <e384bf61-6efe-41e5-aaea-7d0842e26017@sirena.org.uk>
+References: <20261127172316.GP114472@nvidia.com>
 X-Mailing-List: linux-next@vger.kernel.org
 List-Id: <linux-next.vger.kernel.org>
 List-Post: <mailto:linux-next@vger.kernel.org>
@@ -89,204 +57,69 @@ List-Unsubscribe: <mailto:linux-next+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-next+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: [STATUS] next/master - e5aad2bdbbee783611d32599f89cea3f12f9593d
-From: KernelCI bot <bot@kernelci.org>
-To: kernelci-results@groups.io
-Cc: linux-next@vger.kernel.org
-Reply-To: kernelci@lists.linux.dev
-Date: Sat, 28 Nov 2026 02:30:41 -0000
-Message-ID: <179583304157.235983.12672168945201314642@52d83ede7c60>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LJ3q5nDWcSLwl7/X"
+Content-Disposition: inline
+In-Reply-To: <20261127172316.GP114472@nvidia.com>
+X-Cookie: I'm a Lisp variable -- bind me!
 
 
+--LJ3q5nDWcSLwl7/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Nov 27, 2026 at 01:23:16PM -0400, Jason Gunthorpe wrote:
+> Hi Mark,
+>=20
+> Can you add the two git branchs for the TSM tree from:
+>=20
+> TRUSTED EXECUTION ENVIRONMENT SECURITY MANAGER (TSM)
+> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/tsm/linux.git
+>=20
+> This would replace the tree that DanW had under
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/devsec/tsm.git/
+>=20
+> The two branches to pull are for-rc and for-next
 
-Status summary for next/master
+Done, they should appear from Monday.  The existing trees have an
+extensive list of contacts, I've added you so that's now:
 
-Dashboard:
-https://d.kernelci.org/c/next/master/e5aad2bdbbee783611d32599f89cea3f12f9593d/
+Jason Gunthorpe <jgg@nvidia.com>, <sathyanarayanan.kuppuswamy@linux.intel.c=
+om>, <yilun.xu@intel.com>, <sameo@rivosinc.com>, <aik@amd.com>, <suzuki.pou=
+lose@arm.com>, <steven.price@arm.com>, <lukas@wunner.de>
 
-giturl: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-branch: master
-commit hash: e5aad2bdbbee783611d32599f89cea3f12f9593d
-origin: maestro
-test start time: 2026-11-27 16:50:26.339000+00:00
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
 
-Builds:	   66 ✅    4 ❌    0 ⚠️
-Boots: 	  194 ✅   20 ❌    0 ⚠️
-Tests: 	38844 ✅ 2251 ❌ 5510 ⚠️
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and
+     * destined for the current or next Linux merge window.
 
-### POSSIBLE REGRESSIONS
-    
-Hardware: hamoa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b09cfc2286e1965ecceb759
-      history:  > ✅  > ❌  > ❌  > ❌  > ❌  
-            
-Hardware: purwa-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.coredump
-      last run: https://d.kernelci.org/test/maestro:6b09cf45286e1965ecceb1d3
-      history:  > ✅  > ❌  > ❌  
-            
-      - kselftest.device-error-logs
-      last run: https://d.kernelci.org/test/maestro:6b09cf4f286e1965ecceb1ff
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bd0000
-      last run: https://d.kernelci.org/test/maestro:6b09d7b0286e1965eccf5d30
-      history:  > ✅  > ❌  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bd0000_pcie_0
-      last run: https://d.kernelci.org/test/maestro:6b09d7b0286e1965eccf5d2e
-      history:  > ✅  > ❌  > ❌  
-            
-      - kselftest.proc
-      last run: https://d.kernelci.org/test/maestro:6b09cf84286e1965ecceb574
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.proc.proc_proc-readdir-churn
-      last run: https://d.kernelci.org/test/maestro:6b09d9b5286e1965eccf6c74
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.proc.proc_proc-readdir-churn_proc_readdir_remove_current
-      last run: https://d.kernelci.org/test/maestro:6b09d9b5286e1965eccf6c75
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.proc.proc_proc-remove-slow-sysctl
-      last run: https://d.kernelci.org/test/maestro:6b09d9b5286e1965eccf6c51
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.proc.proc_proc-remove-slow-sysctl_proc_sys_slow_write
-      last run: https://d.kernelci.org/test/maestro:6b09d9b5286e1965eccf6c53
-      history:  > ✅  > ✅  > ❌  
-            
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.efivars
-      last run: https://d.kernelci.org/test/maestro:6b09d693286e1965eccf4f2f
-      history:  > ✅  > ❌  > ❌  
-            
-      - kselftest.gpio.gpio_gpio-aggregator_sh
-      last run: https://d.kernelci.org/test/maestro:6b09e1f0286e1965eccfe8bb
-      history:  > ✅  > ✅  > ❌  
-            
-Hardware: qcs615-ride
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6b09fc7c286e1965ecd1d3c5
-      history:  > ✅  > ✅  > ❌  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6b09fc7c286e1965ecd1d3c6
-      history:  > ✅  > ✅  > ❌  
-            
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
+--LJ3q5nDWcSLwl7/X
+Content-Type: application/pgp-signature; name="signature.asc"
 
-### FIXED REGRESSIONS
-    
-Hardware: purwa-evk
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ring-buffer
-      last run: https://d.kernelci.org/test/maestro:6b09d6ce286e1965eccf52c5
-      history:  > ❌  > ❌  > ✅  
-            
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsK4nEACgkQJNaLcl1U
+h9B+bgf/dykxuBaROGvzP7P7+akfZWSnNswAgqdLPhq0ml6eJGHga3gic2R1PHk7
+Wn78SrhuZTAz0M8mevnJUm2K9gPWmzvP1bltT8I0UBwSsPd7P9eq6ORZ/yGNF7GE
+zrJPXm0J93NcTrt9/tAS33Z0/9MzRwEr+fJbVlPAXYfLSe1m1NIfkvtTiieRVuX+
+tv0qFEPZd1sbYM4wP73HpmPnovGpTzxx7UjHFQ1rIJE1b7z6elPBD3CNKZ/cmZXG
+j+Y885EOaxCHfAwJ+kg1tyU59IWQYpH3aEad/scZpeXwha/YX4vVcgkrjmgcdwd8
+sGNv0jc8UVMoji+NusRLaAtt+veEaA==
+=/w6n
+-----END PGP SIGNATURE-----
 
-### UNSTABLE TESTS
-    
-Hardware: glymur-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000
-      last run: https://d.kernelci.org/test/maestro:6b09d484286e1965eccee880
-      history:  > ❌  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0
-      last run: https://d.kernelci.org/test/maestro:6b09d484286e1965eccee87e
-      history:  > ❌  > ✅  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_pcie_1bf0000_pcie_0_wifi_0
-      last run: https://d.kernelci.org/test/maestro:6b09d484286e1965eccee87d
-      history:  > ❌  > ✅  > ✅  > ❌  
-            
-Hardware: hamoa-crd
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ftrace.ftrace_ftracetest-ktap_event_trigger___test_poll_wait_on_histogram
-      last run: https://d.kernelci.org/test/maestro:6b09e1d6286e1965eccfe66c
-      history:  > ✅  > ❌  > ✅  > ✅  > ✅  
-            
-Hardware: lemans-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b09cfc7286e1965ecceb837
-      history:  > ❌  > ✅  > ❌  
-            
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_usb_a800000_hub_2
-      last run: https://d.kernelci.org/test/maestro:6b09fdd3286e1965ecd1e60b
-      history:  > ⚠️  > ✅  > ✅  
-            
-      - kselftest.proc
-      last run: https://d.kernelci.org/test/maestro:6b09cf82286e1965ecceb56a
-      history:  > ✅  > ❌  > ✅  
-            
-Hardware: purwa-crd
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.timers
-      last run: https://d.kernelci.org/test/maestro:6b09cf88286e1965ecceb5a3
-      history:  > ❌  > ✅  > ❌  > ❌  
-            
-      - kselftest.timers.timers_rtcpie
-      last run: https://d.kernelci.org/test/maestro:6b09da68286e1965eccf6ffb
-      history:  > ❌  > ✅  > ❌  > ❌  
-            
-Hardware: purwa-evk
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.devices-probe
-      last run: https://d.kernelci.org/test/maestro:6b09cfc8286e1965ecceb840
-      history:  > ❌  > ✅  > ❌  
-            
-Hardware: qcs615-ride
-  > Config: defconfig+arm64-chromebook+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.ring-buffer
-      last run: https://d.kernelci.org/test/maestro:6b09d6c6286e1965eccf5289
-      history:  > ✅  > ❌  > ✅  
-            
-Hardware: qcs6490-rb3gen2
-  > Config: defconfig+lab-setup+kselftest
-    - Architecture/compiler: arm64/gcc-14
-      - kselftest.dt.dt_test_unprobed_devices_sh_soc_0_iommu_3da0000
-      last run: https://d.kernelci.org/test/maestro:6b09d8ae286e1965eccf6640
-      history:  > ✅  > ❌  > ✅  
-            
-Hardware: qemu-arm64
-  > Config: defconfig+netdev+nfs-root-boot+ltp+crypto+ima
-    - Architecture/compiler: arm64/gcc-15
-      - ltp
-      last run: https://d.kernelci.org/test/maestro:6b09d848286e1965eccf63a0
-      history:  > ✅  > ✅  > ❌  > ✅  > ❌  
-            
-
-
-
-This branch has 3 pre-existing build issues. See details in the dashboard.
-
-Sent every day if there were changes in the past 24 hours.
-Legend: ✅ PASS   ❌ FAIL  ⚠️ INCONCLUSIVE
-
---
-This is an experimental report format. Please send feedback in!
-Talk to us at kernelci@lists.linux.dev
-
-Made with love by the KernelCI team - https://kernelci.org
+--LJ3q5nDWcSLwl7/X--
